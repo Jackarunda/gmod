@@ -1,0 +1,10 @@
+"UnlitGeneric"
+{
+	// Original shader: BaseTimesVertexColorAlphaBlend
+	"$basetexture" "sprites/tex_jack_smokeparticle"
+	"$bumpmap" "sprites/tex_jack_smokeparticle_normal"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+	"$no_fullbright" 1	
+}

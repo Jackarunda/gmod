@@ -1,0 +1,12 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\HaloReach\jarines\marine_monicle_display_diffuse"
+	"$nocull"		"1"
+	"$translucent" 1
+
+	"$blendtintbybasealpha" 1
+
+	"$additive" 1
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.4 .45 .5]"
+}

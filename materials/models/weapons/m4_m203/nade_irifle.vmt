@@ -1,0 +1,9 @@
+VertexLitGeneric
+{
+	"$baseTexture" "models\weapons\m4_m203\nade_irifle"
+	"$selfillum" 1
+	"$surfaceprop" "metal"
+	"$envmap" "env_cubemap"
+	"$bumpmap" "models\weapons\m4_m203\nade_irifle_normal"
+	"$normalmapalphaenvmapmask" "1"
+}

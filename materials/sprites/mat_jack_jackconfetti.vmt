@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	$basetexture "sprites/tex_jack_jackconfetti"
+	$vertexcolor 1
+	$vertexalpha 1
+}

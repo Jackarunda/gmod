@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\weapons\m4_m203\nato"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\m4_m203\nato_ref"
+}

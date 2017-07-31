@@ -1,0 +1,12 @@
+"vertexlitgeneric"
+{
+	"$baseTexture"  "models/jpfilms/metropolice/shared/black"
+
+
+
+	// Cloaking
+	"$cloakPassEnabled" "1"
+	"$cloakFactor" "99"
+	"$refractAmount" "2"
+}
+

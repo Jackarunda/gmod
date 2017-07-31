@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+   "$additive" 1
+   "$basetexture" "Fusion4"
+   "Proxies"
+   {
+      "AnimatedTexture"
+      {
+         "animatedtexturevar" "$basetexture"
+         "animatedtextureframenumvar" "$frame"
+         "animatedtextureframerate" 60
+      }
+   }
+}

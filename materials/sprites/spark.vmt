@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	$basetexture "sprites/spark"
+	$vertexcolor 1
+	$vertexalpha 1
+}
