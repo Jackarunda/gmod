@@ -41,3 +41,7 @@ OpSquads has been included already. Next on the list is JI Defense Solutions.
 - do the same for models and particle effects
 
 - test in gmod
+
+# The Plan
+
+Once most of the content is copied, converted and working, Jackarunda will split the content of this repo up and upload mutliple Worksop items so that everyone can enjoy this content once again. Maintenance and additions will continue from there and Jackarunda will handle the workshop aspect of things.
