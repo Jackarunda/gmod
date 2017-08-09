@@ -1,3 +1,7 @@
+# The Garry's Mod Additions Pack!
+
+Huzzah!
+
 # The Plan
 
 We're taking all of Jackarunda's past addons and resurrecting them into a single big community project to re-upload to the workshop.
