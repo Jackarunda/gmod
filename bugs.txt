@@ -1,6 +1,7 @@
 This file contains a list of known bugs that need to be fixed.
 Jackarunda will handle these eventually, but if you know how to fix it then go ahead. And then mark it as fixed in this file.
 When you enter a new bug, make sure to put your name and the date you discovered it.
+When you add a new bug, make sure also to copypaste any gmod errors, and include the map you were playing on as well as any other relevant details.
 -----------------------------------------------------------------------------------------------------------------------------
 
 Lavaman007 7/31/2017
