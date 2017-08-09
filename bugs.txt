@@ -1,5 +1,7 @@
-This file contains a list of known bugs that need to be fixed. Jackarunda will handle these eventually, but if you know how to fix it then go ahead. And then mark it as fixed in this file.
+This file contains a list of known bugs that need to be fixed.
+Jackarunda will handle these eventually, but if you know how to fix it then go ahead. And then mark it as fixed in this file.
 When you enter a new bug, make sure to put your name and the date you discovered it.
+-----------------------------------------------------------------------------------------------------------------------------
 
 Lavaman007 7/31/2017
 
@@ -12,3 +14,5 @@ Scratch that, it only happens in one specific area, doesent matter which superha
 Gunship moves around dropping mines every few seconds, that seems to work. If its sporadic movements give it line of fire to a zombie it will shoot them. Otherwise it does nothing
 Some problems from the latest version are still there, like spawner zombies still dropping headcrabs, and headcrab canisters dropping an insane amount of headcrabs.
 Roller bomb ALSO only attacks zombies, and the no-friendly-fire ai thing also works
+
+-----------------------------------------------------------------------------------------------------------------------------
