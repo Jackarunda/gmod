@@ -1,5 +1,8 @@
-# gmod
-repo for the gmod addon that adds lots of fun standalone stuff to gmod
+# The Plan
+
+We're taking all of Jackarunda's past addons and resurrecting them into a single big community project to re-upload to the workshop.
+
+Once most of the content is copied, converted and working, Jackarunda will split the content of this repo up and upload mutliple Workshop items so that everyone can enjoy this content once again and use it on their servers bug-free. Maintenance and additions will continue from there and Jackarunda will handle the workshop aspect of things. If you help as a playtester, you will be mentioned in the credits for the packs if you wish. If you help as a coder or file-folder organizer/converter in any way, you will be added as a co-publisher to the workshop items if you wish. This is a community project.
 
 # Contributing
 
@@ -27,6 +30,17 @@ If you think you can help, let Jackarunda know in the gmod Discord.
 
 clone this repo into your gmod/addons directory. It will work just fine in gmod right from there. You can make changes directly. Simple
 
+All the old addons can be found for download here:
+
+FunGuns: https://www.dropbox.com/s/kxxbex74acct06r/FunGuns.7z?dl=0
+Homicide: https://www.dropbox.com/s/qoegratt6amsxdl/Homicide.7z?dl=0
+Defense Solutions: https://www.dropbox.com/s/ac8xg6tibl1gxfr/JIDS.7z?dl=0
+OpSquads: https://www.dropbox.com/s/2k54kb7lq8ikw5o/OpSquads.7z?dl=0
+Explosives: https://www.dropbox.com/s/8inhop8y3panltc/JIEX.7z?dl=0
+SENTs: https://www.dropbox.com/s/7yc1gz3yw8oe88r/SENTs.7z?dl=0
+BFS 2114: https://www.dropbox.com/s/qrpwohdcwypmbvr/JIBFS2114.7z?dl=0
+Old BFS 2114 Wiki: http://jibfs.wikia.com/wiki/JIBFS_Wiki 
+
 # ToDo:
 
 Include content from all the previous addons.
@@ -42,6 +56,12 @@ OpSquads has been included already. Next on the list is JI Defense Solutions.
 
 - test in gmod
 
-# The Plan
+Jackarunda will handle most of the fixing/optimizing of the code.
 
-Once most of the content is copied, converted and working, Jackarunda will split the content of this repo up and upload mutliple Worksop items so that everyone can enjoy this content once again. Maintenance and additions will continue from there and Jackarunda will handle the workshop aspect of things.
+# Custom Additions
+
+If you're a glua coder and want to add new features or items to the pack, let Jackarunda know and make a PR. Custom contributions to the pack are welcome if they are of a quality and style similar to or surpassing that of existing content.
+
+# Bugs
+
+If you find a bug, put it in the bugs.txt file here or tell Jackarunda about it in the gmod channel.
