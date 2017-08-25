@@ -74,11 +74,11 @@ Note that Github recently made a GUI program for doing git operations, but IMO i
 
 Once git and git bash are installed on your machine, start a git bash window (probably from the start menu). Then you need to move the window's operating location into your gmod addons folder, so enter a command that looks something like this:
 
-cd "C:/Users/DickBagMcGee/Program Files (x86)/Steam/steamapps/common/garrysmod/garrysmod/addons"
+`cd "C:/Users/DickBagMcGee/Program Files (x86)/Steam/steamapps/common/garrysmod/garrysmod/addons"`
 
 But obviously the path is unique for you. Note that when git installs they usually add shell extensions so you can right click or shift+right click and open a new git bash window anywhere in your Explorer, which is easier than CDing every time. Now clone this repo into a new folder into your addons folder by using the command:
 
-git clone https://github.com/Jackarunda/gmod.git gmod-additions-pack
+`git clone https://github.com/Jackarunda/gmod.git gmod-additions-pack`
 
 This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly fucked up and you need to delete and re-clone. But that should never happen.
 
@@ -87,20 +87,23 @@ Before you make any changes, always make sure to do the command: `git pull origi
 When you've made changes you want to commit, do the following, in order:
 
 1. make a new branch
-git checkout -b my_new_unique_branch_name
+`git checkout -b my_new_unique_branch_name`
+usually you make a branch name that contains your name and something relating to the work you did
 
 2. stage all the changes you've made
-git add .
+`git add .`
 
-3. commit the changes to your new local branch you just made
-git commit -m "fixing some bugs and adding more hookers"
+3. commit the changes to your new local branch you just made, with a comment
+`git commit -m "fixing some bugs and adding more hookers"`
 
-4. push the branch up to the repo
-git push origin my_new_unique_branch_name
+4. push your branch branch up to the repo
+`git push origin my_new_unique_branch_name`
 
-5. go to your browser, to the github repo page, and click the New Pull Request button for the branch you just made
+5. go to your browser, to the github repo page, and click the pull request button for the branch you just made
 
-6. tell jackarunda about it in discord. We'll look at it, maybe fix a few things, and merge it into the master branch
+6. tell jackarunda about it in discord. We'll look at it, maybe fix a few things, and merge it into the master branch. All done.
+
+7. then you should go back locally and `git checkout master` and then `git pull origin master` to get the latest content right from master. Then you can make more changes and start from step 1.
 
 For more complicated operations regarding git, you can consult the wealth of information on the internet and/or ask jackarunda.
 
