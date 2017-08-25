@@ -96,7 +96,7 @@ usually you make a branch name that contains your name and something relating to
 3. commit the changes to your new local branch you just made, with a comment, by entering 
 `git commit -m "fixing some bugs and adding more hookers"`
 
-4. push your branch branch up to the repo with 
+4. push your branch up to the repo with 
 `git push origin my_new_unique_branch_name`
 
 5. go to your browser, to the github repo page, and click the pull request button for the branch you just made
