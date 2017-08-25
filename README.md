@@ -34,7 +34,7 @@ If you think you can help, let Jackarunda know in the gmod Discord.
 
 You must have a github account, first. You can make one for free.
 
-Ask Jackarunda in the Discord to be added as a collaborator (tell him your github name), and he will find your github account and add you. Being a collaborator is important because it will allow you to push/pull without needing to fork (which is more complicated). Note that being a collaborator is a trusted position, because you will have the ability to fuck up the repo (though if you do, Jackarunda will revoke your permissions and revert the changes).
+Ask Jackarunda in the Discord to be added as a collaborator (tell him your github name), and he will find your github account and add you. Then you go back to github into your profile and accept the collaboration invite. Being a collaborator is important because it will allow you to push/pull without needing to fork (which is more complicated). Note that being a collaborator is a trusted position, because you will have the ability to fuck up the repo (though if you do, Jackarunda will revoke your permissions and revert the changes).
 
 If you're just edting the wiki file or the bugs file, you can just click the little edit buttons here on the github website to edit the files in-browser. Simple.
 
@@ -72,17 +72,17 @@ https://git-scm.com/downloads download and install all this from here
 
 Note that Github recently made a GUI program for doing git operations, but IMO it's kinda pointless since the moment anything goes wrong you have to use the git bash command-line anyways, so might as well not bother. But you can use it if you wish.
 
-Once git and git bash are installed on your machine, start a git bash window (probably from the start menu). Then you need to move the window's operating location into your gmod addons folder, so the command will look something like this:
+Once git and git bash are installed on your machine, start a git bash window (probably from the start menu). Then you need to move the window's operating location into your gmod addons folder, so enter a command that looks something like this:
 
-cd C:/Users/DickBagMcGee/Program Files (x86)/Steam/steamapps/common/garrysmod/garrysmod/addons
+cd "C:/Users/DickBagMcGee/Program Files (x86)/Steam/steamapps/common/garrysmod/garrysmod/addons"
 
-But obviously the path is unique for you. Now clone this repo into a new folder into your addons folder by using the command:
+But obviously the path is unique for you. Note that when git installs they usually add shell extensions so you can right click or shift+right click and open a new git bash window anywhere in your Explorer, which is easier than CDing every time. Now clone this repo into a new folder into your addons folder by using the command:
 
 git clone https://github.com/Jackarunda/gmod.git gmod-additions-pack
 
-This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc.
+This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly fucked up and you need to delete and re-clone. But that should never happen.
 
-Before you make any changes, always make sure to do the command: git pull origin master, because this will pull down the latest version of the repo into your local folder. You always want to be up-to-date.
+Before you make any changes, always make sure to do the command: `git pull origin master`, because this will pull down the latest version of the repo into your local folder. You always want to be up-to-date.
 
 When you've made changes you want to commit, do the following, in order:
 
