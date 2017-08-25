@@ -86,17 +86,17 @@ Before you make any changes, always make sure to do the command: `git pull origi
 
 When you've made changes you want to commit, do the following, in order:
 
-1. make a new branch
+1. make a new branch with 
 `git checkout -b my_new_unique_branch_name`
 usually you make a branch name that contains your name and something relating to the work you did
 
-2. stage all the changes you've made
+2. stage all the changes you've made with 
 `git add .`
 
-3. commit the changes to your new local branch you just made, with a comment
+3. commit the changes to your new local branch you just made, with a comment, by entering 
 `git commit -m "fixing some bugs and adding more hookers"`
 
-4. push your branch branch up to the repo
+4. push your branch branch up to the repo with 
 `git push origin my_new_unique_branch_name`
 
 5. go to your browser, to the github repo page, and click the pull request button for the branch you just made
