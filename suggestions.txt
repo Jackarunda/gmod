@@ -2,3 +2,5 @@ In this file, enter your name, your suggestion, and the date you suggested it, t
 
 Jackarunda 1/24/2018: make the addon not shit
 TheWarKid 1/25/2018: A control pannel in J.I Defense, that has control over all the turrets it's linked to. It holds the whitelist for who not to shoot. Capture that, and it removes everyone but the person who captured it from the whitelist. This makes it so the Turrets and users have something to defend, while allowing multiple people not to get shot by the turrets, allowing for more people in a location that needs defending.
+Thewarkid 1/25/2018: For J.I. Defense, more traps and devices. For example, tripwires, alarms, cameras (with security rooms), and armor. To get a both passive (Cameras and alarms) and active (like a mine or turret) Devices. Along with that, more offensive capabilites. Such as ECM Jammers for the cammeras, binoculars for scouting, lockpicking/locks, raid hooks (Similar to Rainbow Six Siege's Rappel), Peepholes through doors.
+TheWarKid 1/25/2018: J.I. Defense, Be able to add a ability to designate the landing area for the radio, so you can use the radio indoors.
