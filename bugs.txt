@@ -17,3 +17,6 @@ Some problems from the latest version are still there, like spawner zombies stil
 Roller bomb ALSO only attacks zombies, and the no-friendly-fire ai thing also works
 
 -----------------------------------------------------------------------------------------------------------------------------
+TheWarKid 1/28/2018
+
+Most armor, most notabely heavy vests, actually make you go faster then slower. Since this is most likely a value error, there isnt a error code for it.
