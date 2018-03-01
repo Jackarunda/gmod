@@ -1,0 +1,10 @@
+"spritecard"
+{
+
+	"$basetexture" "particles/tex_jack_shockwave"
+	"$nofog" "1"
+	"$translucent" "1"
+	$nocull 1
+	$additive 1
+	$depthblend 0
+}

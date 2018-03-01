@@ -1,0 +1,16 @@
+VertexLitGeneric
+{
+$baseTexture "models\props_equipment/sleeping_jag1"
+$envmap env_cubemap
+$envmapmask "models/props_equipment/sleeping_jag1_ref"
+$envmaptint "[1 1 1]"
+$envmapcontrast ".7"
+$envmapsaturation ".8"
+"$blendtintbybasealpha" "1" 
+"$blendtintcoloroverbase" "0"
+vertexlitgeneric_HDR_dx9
+{
+$envmaptint "[.19 .32 .22]"
+$envmapsaturation ".9"
+}
+}

@@ -1,0 +1,22 @@
+
+"VertexLitGeneric"
+{
+$basetexture "models\DPFilms\jetropolice\Elite\gasmask"
+$bumpmap "models\DPFilms\jetropolice\Elite\normal"
+$selfillum "0"
+
+$phong "1"
+$phongboost ".15"
+$phongexponent 2.75
+$phongtint "[1.05 1 1]"
+$halflambert 0
+$phongfresnelranges "[1 1 10]"
+$ambientocclusion 1
+
+\\$color2 "{200 220 210}"
+\\$blendTintByBaseAlpha "1"
+
+$rimlight "1"	
+$rimlightexponent "5"
+$rimlightboost ".5"
+}

@@ -1,0 +1,7 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "models/weapons/v_models/TS jatch/Glass_diffuse"
+	"$additive" "1"
+	"$nocull" "1"
+
+}

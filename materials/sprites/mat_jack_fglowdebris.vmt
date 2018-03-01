@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "sprites/tex_jack_fglowdebris"
+	"$additive" "1"
+	"$vertexcolor" 1
+	"$vertexalpha" "1"
+}

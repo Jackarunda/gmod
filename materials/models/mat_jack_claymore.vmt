@@ -1,0 +1,9 @@
+VertexLitGeneric
+{
+	"$baseTexture" "models\tex_jack_claymore"
+	"$bumpmap" "models\tex_jack_claymore_normal"
+	"$phong" 1
+	"$phongboost" ".4"
+	"$phongexponent" "80"
+	"$phongfresnelranges"	"[1 1 1]"
+}

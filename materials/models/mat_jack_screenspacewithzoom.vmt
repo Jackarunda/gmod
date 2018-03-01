@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "_rt_FullFrameFB"
+	"$basetexturetransform" "center .5 .5 scale .05 .08 rotate 0 translate 0 0"
+	"$model"	"1"
+}

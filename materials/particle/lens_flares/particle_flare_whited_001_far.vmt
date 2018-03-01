@@ -1,0 +1,15 @@
+"Spritecard"
+{
+// This is a white version of the particle_flare_007b
+	"$basetexture" "particle/lens_flares/particle_flare_whited_001"
+	"$translucent" 1
+	"$additive" 1
+	"$maxdistance" 500
+	"$farfadeinterval" 350
+	"$Startfadesize" 0.1
+	"$Endfadesize" 0.9
+	"$ignorez" 1
+	$depthblend 0
+	$minsize 0.6
+	$maxsize 6
+}

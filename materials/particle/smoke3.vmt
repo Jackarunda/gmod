@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "modulus/particles/Smoke3"
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}

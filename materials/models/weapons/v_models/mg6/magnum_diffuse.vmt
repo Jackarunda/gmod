@@ -1,0 +1,22 @@
+
+"Vertexlitgeneric"
+{
+"$basetexture" "models/weapons/v_models/MG6/Magnum_Diffuse"
+"$bumpmap""models/weapons/v_models/MG6/Magnum_Normals"
+"$nocull" "1"	
+"$phongexponenttexture" "models/weapons/v_models/MG6/Magnum_Specular"
+"$normalmapalphaenvmapmask" "1"
+"$envmaptint" "[ 0.1 0.1 0.2 ]"
+
+"$phong"     "1"
+"$phongexponent"  "30"
+"$phongboost"   "1.6"
+"$phongfresnelranges"   "[1 9 3]"
+                "$phongtint"                   "[0.7 0.9 1]" 
+"$phongalbedotint" "1"
+"$halflambert" "1"
+
+"$rimlight" "1"
+"$rimlightexponent" "26"
+"$rimlightboost" "0.2"
+}

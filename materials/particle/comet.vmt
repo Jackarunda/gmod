@@ -1,0 +1,9 @@
+SpriteCard
+{
+$BASETEXTURE "particle/comet/comet"
+
+$OVERBRIGHTFACTOR 1.5
+
+$ADDSELF 0.5
+$DEPTHBLEND 1
+}

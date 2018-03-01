@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" 	"Models/weapons/w_rocket_jauncher/w_rpg_sheet_burnt"
+	"$bumpmap" "Models/weapons/w_rocket_jauncher/w_rpg_sheet_norm"
+	"$model" 1
+}
+
+
+

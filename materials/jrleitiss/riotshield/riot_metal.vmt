@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "jrleitiss/riotshield/riot_metal"
+	"$bumpmap" "jrleitiss/riotshield/riot_metal_bump"
+	"$envmap"	"env_cubemap"
+	"$envmaptint"	"[ .3 .3 .3 ]"
+	"$normalmapalphaenvmapmask" "1"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

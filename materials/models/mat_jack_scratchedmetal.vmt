@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_scratchedmetal"
+	"$surfaceprop" "metal"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models/tex_jack_scratchedmetal_envmapmask"
+	"$model" 1
+	"$envmaptint" "[.3 .3 .3]"
+}
+

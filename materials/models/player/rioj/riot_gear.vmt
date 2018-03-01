@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\player\rioj\riot_gear"
+  	"$bumpmap" "models\player/rioj\riot_gear_n"
+	"$nocull" 1
+ 	"$phong" "1"
+	"$phongexponent" "94.8"
+	"$phongboost"	"0.35"
+	"$phongfresnelranges"	"[.1 .1 1]"									
+}

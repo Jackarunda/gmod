@@ -1,0 +1,14 @@
+"UnlitGeneric"
+{
+	// Original shader: BaseTimesVertexColorAlphaBlend
+	"$basetexture" "effects/thin_smoke"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+	"$no_fullbright" 1	
+	"$depthblend" "1"
+	"$depthblendscale" 50
+	"$minfadesize" 0
+	"$maxfadesize" 100
+}
+

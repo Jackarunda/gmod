@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+\\$basetexture "models\DPFilms\jetropolice\Elite\black"
+$basetexture "models\DPFilms\jetropolice\Elite\eye_glow"
+//$selfillum "1"
+$selfillumtint "[.5 .5 .5]]"
+Proxies
+{
+PlayerColor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

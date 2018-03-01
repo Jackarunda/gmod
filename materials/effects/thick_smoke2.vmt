@@ -1,0 +1,15 @@
+"UnlitGeneric"
+{
+	// By: The Vman
+	// Original shader: BaseTimesVertexColorAlphaBlend
+	"$basetexture" "effects/thick_smoke2"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+	"$no_fullbright" 1	
+	"$depthblend" "1"
+	"$depthblendscale" 50
+	"$minfadesize" 0
+	"$maxfadesize" 100
+}
+

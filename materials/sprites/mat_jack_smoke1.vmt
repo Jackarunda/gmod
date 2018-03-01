@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "sprites/tex_jack_smoke1"
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}

@@ -1,0 +1,9 @@
+
+<!-- saved from url=(0124)http://subversion.assembla.com/svn/NeuroTecDev/NeuroTanks/materials/particle/particle_flares/particle_flare_007b_nodepth.vmt -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"><style type="text/css"></style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">spritecard
+{
+$basetexture "particle\particle_flares\particle_flare_007b"
+$translucent 1
+$additive 1
+$depthblend 0
+}</pre></body></html>

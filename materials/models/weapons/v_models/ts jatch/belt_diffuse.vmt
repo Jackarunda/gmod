@@ -1,0 +1,10 @@
+"vertexlitgeneric"
+{
+	"$basetexture" "models\weapons\v_models\TS jatch\Belt_diffuse"
+	"$bumpmap" "models\weapons\v_models\TS jatch\belt_normal"
+	"$phong" "1"
+	"$phongexponent" "45"
+	"$phongboost"	"1"
+	"$phongfresnelranges"	"[1 8 6]"
+
+}
