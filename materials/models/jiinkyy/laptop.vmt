@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	$basetexture	"models\jiinkyy\laptop"
+	$surfaceprop	"computer"
+	$model	"1"
+	$selfillum "1"
+	$selfillummask "models/jiinkyy/laptop_illummask"
+	//$bumpmap "models/jiinkyy/laptop_normal"
+	"$blendtintbybasealpha" "0" 
+	"$blendtintcoloroverbase" "0"
+}

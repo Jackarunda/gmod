@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+$basetexture "models\DPFilms\jetropolice\HD_Police\black"
+$envmap "env_cubemap"
+$basealphaenvmapmask 1
+$envmaptint "[.6 .55 .5]"
+Proxies
+{
+PlayerColor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

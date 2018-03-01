@@ -1,0 +1,9 @@
+"UnlitGeneric"
+{
+	"$basetexture" "effects/rollerglow"
+	"$additive" "1"
+	"$vertexalpha" "1"
+	"$vertexcolor" 1
+	"$translucent" "1"
+	$nofog 1
+}

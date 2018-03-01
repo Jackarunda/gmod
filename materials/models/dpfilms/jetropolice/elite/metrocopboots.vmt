@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+$basetexture "models\DPFilms\jetropolice\Elite\black"
+$bumpmap "models\DPFilms\jetropolice\Elite\boots_n"
+
+$phong 1
+$phongboost ".25"
+$phongexponent 3
+$phongtint "[.85 .85 1]"
+$phongfresnelranges "[1 1 30]"
+$ambientocclusion 1
+$detail "models\DPFilms\jetropolice\Elite\detail_leather"
+	$detailscale 4
+
+
+$rimlight "1"	
+$rimlightexponent "1"
+$rimlightboost "1"
+
+}

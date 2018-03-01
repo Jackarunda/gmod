@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "tex_jack_gray200"
+	"$bumpmap" "jrleitiss/riotshield/riot_solid_bump"
+	"$phong" 1
+	"$phongboost" ".4"
+	"$phongexponent" "80"
+	"$phongfresnelranges"	"[1 1 1]"
+	"$surfaceprop" "metal"
+}

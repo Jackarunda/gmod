@@ -1,0 +1,10 @@
+"spritecard"
+{
+
+	"$basetexture" "effects/citadel_sky_card_01"
+	"$nofog" "1"
+	"$translucent" "1"
+	$nocull 1
+	$additive 1
+	$depthblend 0
+}

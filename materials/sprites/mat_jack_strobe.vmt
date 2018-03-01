@@ -1,0 +1,10 @@
+"Sprite"
+{
+	"$spriteorientation" "vp_parallel"
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$basetexture" "sprites/tex_jack_nicespark"
+	"$spriterendermode" "5"
+	"$ignorez" "1"
+	"$model" "1"
+	"$nocull" "1"
+}

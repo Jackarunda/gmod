@@ -1,0 +1,26 @@
+
+"VertexLitGeneric"
+{
+$basetexture "models\DPFilms\jetropolice\HD_Police\gasmask"
+$bumpmap "models\DPFilms\jetropolice\HD_Police\normal"
+$normalmapalphaenvmapmask "1"
+//$selfillum "1"
+//$selfillumtint "[.25 4 4]"
+$envmaptint "[.9 .9 .9]"
+
+$envmap "env_cubemap"
+$ambientocclusion 1
+
+\\$color2 "{255 255 255}"
+\\$blendTintByBaseAlpha "1"
+"$blendtintbybasealpha" "1" 
+"$blendtintcoloroverbase" "0"
+Proxies
+{
+PlayerColor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

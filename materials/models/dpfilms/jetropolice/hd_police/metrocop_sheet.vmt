@@ -1,0 +1,25 @@
+"VertexLitGeneric"
+{
+$baseTexture "models\DPFilms\jetropolice\HD_Police\metrocop_sheet"
+$bumpmap "models\DPFilms\jetropolice\HD_Police\metrocop_sheet_normal"
+$envmap "env_cubemap"
+$normalmapalphaenvmapmask "1"
+$envmaptint "[.8 .8 .8]"
+
+//$selfillum "1"
+
+$detail "models\DPFilms\jetropolice\HD_Police\noise_detail_01"
+	$detailscale 1
+
+//$rimlight "0"	
+//$rimlightexponent "10"
+//$rimlightboost ".45"
+Proxies
+{
+PlayerColor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

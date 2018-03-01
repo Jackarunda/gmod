@@ -1,0 +1,12 @@
+"UnlitGeneric"
+{
+	// Original shader: BaseTimesVertexColorAlphaBlend
+	"$basetexture" "effects/neuro_shell"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+	"$no_fullbright" 1	
+	"$depthblend" "1"
+	"$depthblendscale" 50
+}
+

@@ -1,0 +1,21 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\player\juggerjaut\jager_gear"
+	"$bumpmap" "models\player\juggerjaut\jager_gear_n"
+	//"$nocull" 1
+ 	"$phong" "1"
+	"$phongexponent" "94.8"
+	"$phongboost"	"0.35"
+	"$phongfresnelranges"	"[.1 .1 1]"
+	//"$selfillum" 1
+	"$blendtintbybasealpha" "1" 
+	"$blendtintcoloroverbase" "0"
+Proxies
+{
+PlayerColor
+{
+resultVar	$color2
+default 0.75 0.75 0.75
+}
+}
+}

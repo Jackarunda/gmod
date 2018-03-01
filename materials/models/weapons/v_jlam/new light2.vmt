@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitSelfIlluminatedTexture
+	"$basetexture" "models/Weapons/V_jlam/new light2"
+	"$selfillum" 1
+	"$blendtintbybasealpha" "1" 
+	"$blendtintcoloroverbase" "0"
+	"Proxies"
+	{
+		"Sine"
+		{
+			"resultVar" "$selfIllumTint"
+			"sinemin" 0.10
+			"sinemax" 1.00
+			"sineperiod" 0.50
+		}
+	}
+}

@@ -1,0 +1,11 @@
+"UnlitGeneric"
+{
+	"$basetexture" "particle/spell"
+	$vertexcolor 1
+	$vertexalpha 1
+	$translucent 1
+	$Additive 1
+	$NoCull 1
+	$overbrightfactor 15
+	$nofog 1
+}

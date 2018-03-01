@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+	"$baseTexture" "models\weapons\v_models\r810w\body_tan"
+	"$bumpmap"     "models\weapons\v_models\r810w\body_norm"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" 	"[.06 .06 .06]"
+
+	"$normalmapalphaenvmapmask" 	"1"
+	"$phong" 		"1"
+	"$phongexponent" 	"50"
+	"$phongboost" "1"
+	"$phongfresnelranges" "[1 1.5 3]"
+}

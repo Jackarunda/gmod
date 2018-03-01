@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "models/tex_jack_aidfuel_gasoline"
+	"$envmap" "env_cubemap"
+	//"$halflambert" "1"
+	"$envmaptint" "[.15 .15 .15]"
+	//"$nodecal" "1"
+	"$bumpmap" "models/tex_jack_aidfuel_gasdies_normal"
+	"$blendtintbybasealpha" "1" 
+	"$blendtintcoloroverbase" "0"
+}

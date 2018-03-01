@@ -1,0 +1,21 @@
+"Refract"
+{
+ 	"$model" 1
+ 	"$refractamount" ".15"
+ 	"$bluramount" "0"
+	"$REFRACTTINT" "{255 255 255}"
+	"$scale" "[3 3]"
+	"$dudvmap" "sprites/tex_jack_shockwave_normal"
+	"$normalmap" "sprites/tex_jack_shockwave_normal"
+	"$nocull" 1
+	//"$surfaceprop" "glass"
+	//"$envmap" "env_cubemap"
+	//"$envmapcontrast" "1"
+	//"$envmapsaturation" "[1 1 1]"
+	//"$envmaptint" "[.85 .85 .85]"
+
+	"Refract_DX60"
+	{
+		"$fallbackmaterial" "models/props_c17/frostedglass_01a_DX60"
+	}
+}

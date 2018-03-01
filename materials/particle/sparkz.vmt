@@ -1,0 +1,8 @@
+"UnlitGeneric"
+{
+	"$basetexture" "particle/sparkz"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$translucent" "1"
+                "$Additive"     "1"
+}
