@@ -1,7 +1,7 @@
 ENT.Type 			= "anim"
 ENT.PrintName		= "Canister of Propane"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "J.I. Defense Solutions"
-ENT.Information         = "BLOOIE-SCHLANG"
+ENT.Category			= "JMod - Other"
+ENT.Information         = "Accessories not included"
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true
