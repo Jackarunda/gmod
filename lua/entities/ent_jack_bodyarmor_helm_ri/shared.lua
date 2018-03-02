@@ -1,5 +1,5 @@
 ENT.Type 			= "anim"
-ENT.PrintName		= "Riot Helmet"
+ENT.PrintName		= "JMod - Armor"
 ENT.Author			= "Jackarunda"
 ENT.Category			= "J.I. Defense Solutions"
 ENT.Information         = "BLOOIE-SCHLANG"
