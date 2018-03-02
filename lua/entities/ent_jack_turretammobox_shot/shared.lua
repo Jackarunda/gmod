@@ -1,7 +1,7 @@
 ENT.Type 			= "anim"
 ENT.PrintName		= "12GA Ammo Box"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "J.I. Defense Solutions"
+ENT.Category			= "JMod - Turrets"
 ENT.Information         = "BLOOIE-SCHLANG"
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true
