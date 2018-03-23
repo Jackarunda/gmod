@@ -70,7 +70,6 @@ if(CLIENT)then
 				end
 			end
 		end
-		return -1
 	end
 	hook.Add("AdjustMouseSensitivity","JackysFunGunMouseSensitivity",Adjust)
 

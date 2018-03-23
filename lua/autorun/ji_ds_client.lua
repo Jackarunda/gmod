@@ -73,7 +73,6 @@ if(CLIENT)then
 		if(Ply.JackaSentryControl)then
 			return .001
 		end
-		return -1
 	end
 	hook.Add("AdjustMouseSensitivity","JackyArmorHindrance",Hinder)
 	local function ScreenSpaceEffects()
