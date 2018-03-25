@@ -1,7 +1,7 @@
 ENT.Type 			= "anim"
-ENT.PrintName		= "JMod - Armor"
+ENT.PrintName		= "Riot Helmet"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "J.I. Defense Solutions"
+ENT.Category			= "JMod - Armor"
 ENT.Information         = "BLOOIE-SCHLANG"
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true

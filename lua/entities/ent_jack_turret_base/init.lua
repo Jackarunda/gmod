@@ -303,22 +303,20 @@ function ENT:TakeInputs(key)
 	end
 end
 function ENT:Think()
-	self.Heat=self.Heat-.01
+	self.Heat=self.Heat-.04
 	if(self.Heat<0)then
 		self.Heat=0
 	elseif(self.Heat>=50)then
-		if(math.random(1,5)==1)then
-			local PosAng=self:GetAttachment(1)
-			local Sss=EffectData()
-			Sss:SetOrigin(PosAng.Pos+PosAng.Ang:Forward()*math.random(-7,7))
-			Sss:SetScale(self.Heat/50)
-			util.Effect("eff_jack_gunoverheat",Sss,true,true)
-		end
+		local PosAng=self:GetAttachment(1)
+		local Sss=EffectData()
+		Sss:SetOrigin(PosAng.Pos+PosAng.Ang:Forward()*math.random(-7,7))
+		Sss:SetScale(self.Heat/50)
+		util.Effect("eff_jack_gunoverheat",Sss,true,true)
 	end
 	if(self.Broken)then
 		self.BatteryCharge=0
 		self:SetDTInt(2,0)
-		if(math.random(1,8)==7)then
+		if(math.random(1,2)==1)then
 			local effectdata=EffectData()
 			effectdata:SetOrigin(self:GetPos()+self:GetUp()*math.random(30,55))
 			effectdata:SetNormal(VectorRand())
@@ -354,19 +352,19 @@ function ENT:Think()
 	end
 	if((self.ControllingPly)and(IsValid(self.ControllingPly)))then
 		self:SetDTInt(0,TS_IDLING)
-		self.BatteryCharge=self.BatteryCharge-.01
+		self.BatteryCharge=self.BatteryCharge-.02
 		self:SetDTInt(2,math.Round((self.BatteryCharge/self.MaxCharge)*100))
 		local Fast=self.ControllingPly:KeyDown(IN_SPEED)
 		local Slow=self.ControllingPly:KeyDown(IN_ATTACK2)
 		if(self.ControllingPly:KeyDown(IN_MOVERIGHT))then
-			self:TraverseManually(1,0,Fast,Slow)
+			self:TraverseManually(2,0,Fast,Slow)
 		elseif(self.ControllingPly:KeyDown(IN_MOVELEFT))then
-			self:TraverseManually(-1,0,Fast,Slow)
+			self:TraverseManually(-2,0,Fast,Slow)
 		end
 		if(self.ControllingPly:KeyDown(IN_FORWARD))then
-			self:TraverseManually(0,1,Fast,Slow)
+			self:TraverseManually(0,2,Fast,Slow)
 		elseif(self.ControllingPly:KeyDown(IN_BACK))then
-			self:TraverseManually(0,-1,Fast,Slow)
+			self:TraverseManually(0,-2,Fast,Slow)
 		end
 		if not(WeAreClear)then
 			JackaSentryControlWipe(self.ControllingPly,self.ControllingTerminal,self)
@@ -377,7 +375,7 @@ function ENT:Think()
 				self.NextShotTime=Time+(1/self.FireRate)*math.Rand(.9,1.1)
 			end
 		end
-		self:NextThink(CurTime()+.02)
+		self:NextThink(CurTime()+.05)
 		return true
 	end
 	if not(State==TS_WHINING)then
@@ -403,8 +401,8 @@ function ENT:Think()
 					end
 				end
 			end
-			self.BatteryCharge=self.BatteryCharge-.0025
-			self.NextWatchTime=self.NextWatchTime+.1
+			self.BatteryCharge=self.BatteryCharge-.01
+			self.NextWatchTime=self.NextWatchTime+.2
 		end
 	elseif(State==TS_WATCHING)then
 		if(self.NextScanTime<Time)then
@@ -416,7 +414,7 @@ function ENT:Think()
 		elseif(self.NextGoSilentTime<Time)then
 			self:StandDown()
 		end
-		self.BatteryCharge=self.BatteryCharge-.05
+		self.BatteryCharge=self.BatteryCharge-.2
 	elseif(State==TS_CONCENTRATING)then
 		if(self.NextScanTime<Time)then
 			self.CurrentTarget=self:ScanForTarget()
@@ -427,7 +425,7 @@ function ENT:Think()
 		elseif(self.NextGoSilentTime<Time)then
 			self:StandDown()
 		end
-		self.BatteryCharge=self.BatteryCharge-.025
+		self.BatteryCharge=self.BatteryCharge-.1
 	elseif(State==TS_TRACKING)then
 		if not(IsValid(self.CurrentTarget))then
 			self:SetDTInt(0,TS_CONCENTRATING)
@@ -462,7 +460,7 @@ function ENT:Think()
 					--]]
 					self.NextScanTime=Time+(1/self.ScanRate)*2
 				end
-				if((self.CurrentSweep<(self.GoalSweep+2))and(self.CurrentSweep>(self.GoalSweep-2))and(self.CurrentSwing<(self.GoalSwing+2))and(self.CurrentSwing>(self.GoalSwing-2)))then
+				if((self.CurrentSweep<(self.GoalSweep+4))and(self.CurrentSweep>(self.GoalSweep-4))and(self.CurrentSwing<(self.GoalSwing+4))and(self.CurrentSwing>(self.GoalSwing-4)))then
 					if(self.NextShotTime<Time)then
 						self:FireShot()
 						self.NextShotTime=Time+(1/self.FireRate)*math.Rand(.9,1.1)
@@ -496,7 +494,7 @@ function ENT:Think()
 	end
 	self:SetDTInt(2,math.Round((self.BatteryCharge/self.MaxCharge)*100))
 	self:Traverse()
-	self:NextThink(CurTime()+.02)
+	self:NextThink(CurTime()+.1)
 	return true
 end
 function ENT:OnRemove()
@@ -677,21 +675,21 @@ function ENT:Alert(targ)
 end
 function ENT:Traverse()
 	local PowerDrain=.2*self.TrackRate*self.MechanicsSizeMod^1.5
-	if(self.CurrentSweep>(self.GoalSweep+2))then
-		self.CurrentSweep=self.CurrentSweep-self.TrackRate
+	if(self.CurrentSweep>(self.GoalSweep+4))then
+		self.CurrentSweep=self.CurrentSweep-self.TrackRate*4
 		self:EmitSound("snd_jack_turretservo.wav",66,90)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
-	elseif(self.CurrentSweep<(self.GoalSweep-2))then
-		self.CurrentSweep=self.CurrentSweep+self.TrackRate
+	elseif(self.CurrentSweep<(self.GoalSweep-4))then
+		self.CurrentSweep=self.CurrentSweep+self.TrackRate*4
 		self:EmitSound("snd_jack_turretservo.wav",66,90)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
 	end
-	if(self.CurrentSwing>(self.GoalSwing+2))then
-		self.CurrentSwing=self.CurrentSwing-(self.TrackRate*.6667)
+	if(self.CurrentSwing>(self.GoalSwing+4))then
+		self.CurrentSwing=self.CurrentSwing-(self.TrackRate*.6667)*4
 		self:EmitSound("snd_jack_turretservo.wav",66,110)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
-	elseif(self.CurrentSwing<(self.GoalSwing-2))then
-		self.CurrentSwing=self.CurrentSwing+(self.TrackRate*.6667)
+	elseif(self.CurrentSwing<(self.GoalSwing-4))then
+		self.CurrentSwing=self.CurrentSwing+(self.TrackRate*.6667)*4
 		self:EmitSound("snd_jack_turretservo.wav",66,110)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
 	end
