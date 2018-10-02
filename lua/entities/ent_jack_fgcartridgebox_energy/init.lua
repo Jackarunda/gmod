@@ -64,7 +64,7 @@ function ENT:Use(activator)
 	undo.SetPlayer(self.Spawner)
 	undo.SetCustomUndoText("Undone Cartridges")
 	sound.Play("snd_jack_boxopen.wav",self:GetPos(),70,105)
-	for i=1,8 do
+	for i=1,4 do
 		local Cartridge=ents.Create("ent_jack_fgc_energy_lithium")
 		Cartridge:SetPos(SelfPos+VectorRand()*math.Rand(0,10))
 		Cartridge:SetAngles(VectorRand():Angle())

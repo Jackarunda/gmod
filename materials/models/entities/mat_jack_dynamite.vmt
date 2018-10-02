@@ -1,0 +1,7 @@
+
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "models/entities/tex_jack_dynamite"	
+}
+

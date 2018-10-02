@@ -1,6 +1,6 @@
 ENT.Type="anim"
 ENT.Base="base_anim"
-ENT.PrintName="HandGun Gammma"
+ENT.PrintName="HandGun Gamma"
 ENT.Author="Jackarunda"
 ENT.Information=""
 ENT.Category="JMod - Weapons"

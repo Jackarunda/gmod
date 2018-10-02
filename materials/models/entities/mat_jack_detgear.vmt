@@ -1,0 +1,6 @@
+"vertexlitGeneric"
+{
+	"$baseTexture" "models\entities/tex_jack_detgear"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models/entities/tex_jack_detgear_envmapmask"
+}

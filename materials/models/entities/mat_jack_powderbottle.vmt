@@ -1,0 +1,10 @@
+"vertexlitGeneric"
+{
+	"$baseTexture" "models\entities/tex_jack_powderbottle"
+
+	$phong 1
+	$bumpmap			"models/entities/tex_jack_claymore_normal"
+	$phongexponent			5
+	$phongboost			1.5
+	$phongfresnelranges		"[0 0.5 1]"
+}

@@ -1,0 +1,15 @@
+ VertexLitGeneric 
+{ 
+	"$baseTexture" 			"models\weapons\v_models\jlayjore\M18A1_Claymore" 
+	"$bumpmap"	"models\weapons\v_models\default_normal" //small
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.08 .08 .1]"
+	"$basemapalphaphongmask" 	"1"
+	"$phong" 			"1"
+	"$phongtint" 			"[1 1 0.8]"
+	"$phongexponent" 		"30"
+	"$phongboost" 			"1.5"
+	"$phongfresnelranges"		"[0.5 1.5 3.0]"//"[0.1 0.4 .8]"
+	"$halflambert"			"1"
+}

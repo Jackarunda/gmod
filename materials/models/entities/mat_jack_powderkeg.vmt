@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/entities/tex_jack_powderkeg"
+	"$surfaceprop" "metal"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models/entities/tex_jack_powderkeg_envmapmask"
+	"$model" 1
+}
+

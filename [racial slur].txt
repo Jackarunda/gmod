@@ -1,0 +1,119 @@
+Jackarunda&amp;#039;s Explosives
+http://www.mediafire.com/download/x65dt381abobff8/Jackarunda&#39;s_Explosives.zip
+NOTE: This is an obsolete addon. I am not continuing work on it, so it’s not guaranteed to work properly. To put it in your Gmod, simply drag the Jackarunda’s Explosives folder (not the ZIP) into Addons. Use at your own risk. I got tired of all the model scaling errors garry introduced. Besides, the best parts of this pack were ported into Defense Solutions.
+NOTE: If you can not trigger your remote-rigged explosives by pressing ZERO on your numpad, or if you don’t have a numpad, the concommand “jackie_rdet” exists that will do the same thing. You can bind this command to a key if you want to make things as quick as with the numpad.
+[ENTITY][ABSTRACT] Fuzing Equipment
+a crate serving as an infinite source of all the fuzing and detonating tools, components and materials you could want
+firing devices, detonators, wire, tools, transmitters, fuzes, you name it
+you can carry enough components at one time (in your pockets, slings/vests/pouches/backpacks coming eventually) to setup five (5) explosive devices. The crate is an infinite source, but you can only carry 5 at a time
+having this stuff on your person allows you to set up most explosives in the pack with the optimal (preferred) fuzing behavior with a simple press of your USE key
+components can be taken back from a set-up device (if you decided you don’t wanna arm the bomb just yet)
+[ENTITY] Firework
+explodes in a pretty America-themed explosion
+plays an American classic song-clip very quietly after the explosion
+default fuzing setup is altitudinal, with a barometric bombfuze inserted into the firework’s nose. When armed, firework will detonate upon reaching 3000 units above sea level
+[ENTITY][WEAPON] M112 Demolition Block (Composition C4)
+a simple block of Composition C-4 high-explosive compound
+explosion scales, with larger numbers of blocks in close proximity to eachother producing a larger and more damaging/forceful explosion
+can de-weld and unfreeze props (depending on prop density, distance from explosion, power of explosion etc)
+can blow down map doors (those found on HL2 maps and a lot of TTT maps. Func_door, func_prop_rotating etc door entities)
+default fuzing setup is RF-remote, with a radio-receiver wired to a blasting cap inserted into the block, activated by an RF-enabled Clacker (M57 firing device) held by the user. Unit will detonate when the user (who set the device up) presses zero (0) on his numpad
+left click to place or throw without setting-up, and right click to place or throw while setting-up
+[ENTITY] Dynamite
+Single stick of classic blasting dynamite (sawdust soaked in nitroglycerin and wrapped in paper with a pyrotechnic slow-burn fuze)
+can be activated via sympathetic detonation, from taking burn damage, from being on fire, or by touching a burning object
+can cause minor damage to prop structures, though limited because explosions don’t scale. Multiple sticks of dynamite in a confined space make for a good means of explosive propulsion (like for a cannon)
+dynamite can also be lit by firestarters present in the fuzing equipment that a player can carry. RIGHT click while holding dynamite to light or extinguish the fuze
+[ENTITY] Nitroglycerin Vial
+small sturdy glass container of nitroglycerin (liquid)
+EXTREMELY sensitive to shock, acceleration, gunshot, explosion, friction. Be careful
+good for use as a detonator for less sensitive explosives (attach to a bomb and drop from airplane for makeshift impact fuze)
+[ENTITY][WEAPON] Landmine
+medium-size general purpose scatterable mechanical landmine
+kills target outright with tremendous explosive energy
+can be employed against light vehicles as well as personnel
+mechanical system designed to resist shock impacts such as bullets and explosive shockwaves, only detonating upon long contact
+mechanical fuze system will remain active indefinitely, in clear violation of all humanitarian anti-landmine laws >:)
+press USE to pick up. Left click to throw or place without arming, right click to throw (in scatter mode, which will arm after coming to rest) or place and arm (which will stick the mine to the surface of what it’s resting on
+mines can be obtained infinitely (albeit slowly) from the mine crate
+[ENTITY] Mine Crate
+a metal box that contains a shitload of landmines along with assorted spraypaint canisters and camouflage stencils
+mines can be obtained from this box infinitely, but only at a slow rate
+while holding a landmine, approach the box and press RELOAD. Pressing reload will cycle through the available camouflage options for the mine. Stop pressing reload when you have the pattern you want, and you’ll automatically use the crate to paint your landmine the desired pattern
+[ENTITY][WEAPON] M18A1 Claymore APERS mine
+directional anti-personnel mine that projects steel spheres with a high-explosive over a 60 degree range and is lethal out to 50 meters
+press USE (E) to pick up, then aim and left-click to place. If no suitable position is found, you will just throw it without arming
+claymore can not be armed without fuzing equipment. Default fuzing setup is RF-remote, with a radio-receiver wired to a blasting cap inserted into the mine, activated by an RF-enabled Clacker (M57 firing device) held by the user. Unit will detonate when the user (who set the device up) presses zero (0) on his numpad
+[ENTITY][WEAPON] M67 Fragmentation Grenade
+E (USE) the pick up, right click to pull pin, left click to throw. Right click also lets spoon fly when pin is gone to cook grenade
+RELOAD replaces pin if out, drops grenade otherwise
+high-explosive blows thousands of steel fragments outward for a 5 meter kill radius and 15 meter casualty radius
+possible to throw grenade without pulling the pin if you want to just clock someone on the head
+the plinging noise after you throw the grenade is probably the spoon bouncing on the ground somewhere nearby
+[ENTITY] Incendiary Bomb
+bomb filled with a high-oxygen high-burn-purity incendiary compound that burns like a motherfucker
+upon detonation, burning (napalm-like-substance) scatters within 25 meters, sticking to anything it touches
+napalm will burn on the surface of water
+default fuzing behavior is approximate, with a microwave-based standoff-detonator in the nose. When armed, bomb will detonate whenever it senses that it is rapidly approaching a solid object and has closed to within 15 meters. This makes it easy to air-drop, as it will automatically airburst over the target for maximum fire coverage
+[ENTITY] Mk. 82 General Purpose Bomb
+a simple US-military Mk.82 500-lb iron bomb. Produces lethal shockwave and shrapnel effects within about 40 meters
+default fuzing behavior is impactual, with a contact-fuze inserted in the nose. When armed, bomb will detonate when it strikes a solid surface with sufficient force
+bomb comes sometimes with flavortext written in chalk on its surface by zealous US ordnance workers
+[ENTITY] S-mine
+shrapnellmine, splittermine, springmine. A WWII-era German bounding anti-personnel mine
+mine must be buried, and can only be so in a soft material
+mine waits for a few seconds before launching and exploding
+kill mechanism is shrapnel, and does little damage to hard targets
+left click to place, right click to place and arm
+[ENTITY] High-Explosive Bomb
+HE bomb filled with HE
+falls nose-first
+good for killing soft targets, armor, and structures in close proximity
+default fuze behavior is an impact-fuze in the nose
+[ENTITY] Shrapnel Bomb
+APERS weapon that shreds soft targets
+falls nose-first
+very little damage to structures and armor
+default fuze behavior is proximity based, with a RF-based proximity sensor in the nose which detonates the mine at approxmately 15 meters
+[ENTITY] Cluster Bomb
+explodes into 40 HE bomblets that spread out along the parent bomb’s velocity vector
+good for widespread light damage to armor and structures, and niche anti-personnel applications.
+default fuzing behavior is flight-time, with an anemometer in the nose that detonates the bomb after 1.5 seconds of flight at a speed of at least 20mps
+[ENTITY] Thermobaric (fuel-air) Bomb
+bursts a cloud of flammable mixture into the air and ignites it, using atmospheric oxygen to create a powerful explosion
+does significant widespread damage to structures, but explosive power isn’t concentrated much near the explosion’s center
+large blast radius
+does not work in space, underwater, at high altitude, and works poorly in adverse weather
+default fuzing behavior is proximity-based, with an RF proximity sensor in the nose that detonates the bomb at about 15 meters from the target
+[ENTITY] High Explosive Anti Tank Bomb
+H.E.A.T. bomb uses a munroe-effect shaped charge to blow through obstacles, killing things on the other side
+often destroys obstacle, if not at least knocking it loose
+excellent for use against armored vehicles, bunkers, stronghouses, big walls, tough doors
+weapon MUST be pointed in the direction of the target, and weapon MUST be very close to target if you want it to penetrate. Otherwise it will just spray deadly metal at the surface of the target
+weapon falls nose-first
+default fuzing behavior is impactual, with an impact fuze in the nose
+[ENTITY] Black Powder Keg
+a small wooden barrel of black powder from the 1800s
+extremely flammable, so keep away from fire
+can be stuck with a pyrotechnic fuze from the fuze-kit
+black powder (used to be used as gunpowder) is a LOW explosive, rather than a high explosive (meaning it just burns rapidly, rather than detonating)
+tends to force (and burn) objects more than destroy them
+forcing behavior is ultra-realistic. Unconfined powder explosions do little to propel objects, with most of the gas being wasted in flying off into the air. Carefully confined explosions can be used to propel objects at wicked speeds, and as such this is perfect for use in cannons
+explosive confinement is based on inertia, with constrained high-mass props being the best for propelling projectiles
+beware recoil forces when constructing makeshift cannons
+explosions (and power) scale with multiple barrels
+perfectly-sealed launcher-projectile configurations (properly-fitted barrel/projectile setups) make the powder capable of massive propulsion
+[ENTITY] Black Powder Bottle
+behaves exactly as the black powder keg, but smaller and less powerful. For when you want compact precision cannons ;)
+[ENTITY] Naval Mine
+classic floating naval mine
+very powerful
+very sensitive to contact when armed
+to arm, press E on it (also can disarm)
+mine goes live only when it detects immersion in water after having been armed (so pull the pin and drop it out of your boat, gently)
+mine is only slightly buoyant, so drop it into the water only at low speed (otherwise it might hit the bottom of the body of water and detonate without floating to the surface)
+mine floats just below the surface for maximum concealment
+[ENTITY] Trinitrotoluene
+good old TNT livens up the party every time
+pack of cans of TNT fitted with a pyrotechnic delay fuze
+behaves (scales, destroys, forces, kills) mostly like C4 but is somewhat less powerful (and can’t be stuck to things)
