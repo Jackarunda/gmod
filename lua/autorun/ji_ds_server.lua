@@ -198,8 +198,11 @@ if(SERVER)then
 				New:SetColor(Colr)
 				ply:EmitSound("snd_jack_clothunequip.wav",75,90)
 				JackaGenericUseEffect(ply)
-			end
-		end
+            else
+                ply:ChatPrint("You are not wearing this armour type...")
+            end
+        end
+
 	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	local function JackaSpawnHook(ply)
