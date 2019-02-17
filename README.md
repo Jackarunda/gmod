@@ -34,7 +34,7 @@ If you think you can help, let Jackarunda know in the gmod Discord.
 
 You must have a github account, first. You can make one for free.
 
-Ask Jackarunda in the Discord to be added as a collaborator (tell him your github name), and he will find your github account and add you. Then you go back to github into your profile and accept the collaboration invite. Being a collaborator is important because it will allow you to push/pull without needing to fork (which is more complicated). Note that being a collaborator is a trusted position, because you will have the ability to fuck up the repo (though if you do, Jackarunda will revoke your permissions and revert the changes).
+Ask Jackarunda in the Discord to be added as a collaborator (tell him your github name), and he will find your github account and add you. Then you go back to github into your profile and accept the collaboration invite. Being a collaborator is important because it will allow you to push/pull without needing to fork (which is more complicated). Note that being a collaborator is a trusted position, because you will have the ability to mess up the repo (though if you do, Jackarunda will revoke your permissions and revert the changes).
 
 If you're just edting the wiki file or the bugs file, you can just click the little edit buttons here on the github website to edit the files in-browser. Simple.
 
@@ -80,7 +80,7 @@ But obviously the path is unique for you. Note that when git installs they usual
 
 `git clone https://github.com/Jackarunda/gmod.git gmod-additions-pack`
 
-This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly fucked up and you need to delete and re-clone. But that should never happen.
+This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly messed up and you need to delete and re-clone. But that should never happen.
 
 Before you make any changes, always make sure to do the command: `git pull origin master`, because this will pull down the latest version of the repo into your local folder. You always want to be up-to-date.
 
