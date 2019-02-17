@@ -69,41 +69,37 @@ if(SERVER)then
 			ply:SetAnimation(PLAYER_ATTACK1)
 		end
 	end
-	function JackaBodyArmorUpdate(ply,slot,item,colr)
-		if not(ply.JackyArmor)then ply.JackyArmor={} end
-		if(item)then
-			ply.JackyArmor[slot]={}
-			ply.JackyArmor[slot].Type=item
-			ply.JackyArmor[slot].Colr=colr
-			if(slot=="Suit")then
-				ply.JackyOriginalModel=ply:GetModel()
+	function JackaBodyArmorUpdate(ply, slot, item, colr)
+		if not(ply.JackyArmor) then ply.JackyArmor={} end -- If player does not have an armour table, create one
+		if item then -- Check if Item is not nil
+			ply.JackyArmor[slot] = {}
+			ply.JackyArmor[slot].Type= item
+			ply.JackyArmor[slot].Colr = colr
+			if (slot == "Suit") then
+				ply.JackyOriginalModel = ply:GetModel()
 				JackaSetPlayerModel(ply,ArmorAppearances[item])
-				ply.JackyOriginalColor=ply:GetPlayerColor()
-				ply:SetPlayerColor(Vector(colr.r/255,colr.g/255,colr.b/255))
+				ply.JackyOriginalColor = ply:GetPlayerColor()   
+				ply:SetPlayerColor(Vector(colr.r/255, colr.g/255, colr.b/255)) -- Sets the player colour from the item colour
 			end
-			umsg.Start("JackaBodyArmorUpdateClient")
-			umsg.Entity(ply)
-			umsg.String(slot)
-			umsg.String(item)
-			umsg.Short(colr.r)
-			umsg.Short(colr.g)
-			umsg.Short(colr.b)
-			umsg.End()
-		else
+		else -- Clearing the Armour information
 			ply.JackyArmor[slot]=nil
-			if((slot=="Suit")and(ply.JackyOriginalModel)and(ply.JackyOriginalColor))then
+            item = "nil"
+            colr = Color(0,0,0)
+			if ((slot=="Suit") and (ply.JackyOriginalModel) and (ply.JackyOriginalColor)) then
 				JackaSetPlayerModel(ply,ply.JackyOriginalModel)
 				ply:SetPlayerColor(ply.JackyOriginalColor)
 			end
-			umsg.Start("JackaBodyArmorUpdateClient")
-			umsg.Entity(ply)
-			umsg.String(slot)
-			umsg.String("nil")
-			umsg.Short(0)
-			umsg.Short(0)
-			umsg.Short(0)
-			umsg.End()
 		end
+        
+        umsg.Start("JackaBodyArmorUpdateClient")
+        umsg.Entity(ply)
+        umsg.String(slot)
+        umsg.String(item)
+        umsg.Short(colr.r)
+        umsg.Short(colr.g)
+        umsg.Short(colr.b)
+        umsg.End()
+        
 	end
 	function JackaSentryControl(ply,term,sent)
 		ply.JackaSentryControl=sent
@@ -158,48 +154,50 @@ if(SERVER)then
 		end
 	end
 	hook.Add("PlayerFootstep","JackyArmorFootstep",StepSound)
-	local function RemoveArmor(ply,txt)
-		local derp=string.lower(txt)
-		if(derp=="*drop vest*")then
-			if((ply.JackyArmor)and(ply.JackyArmor.Vest))then
-				local Type=ply.JackyArmor.Vest.Type
-				local Colr=ply.JackyArmor.Vest.Colr
-				JackaBodyArmorUpdate(ply,"Vest",nil,nil)
-				local New=ents.Create(ArmorEntities[Type])
+	local function RemoveArmor(ply, txt)
+		local loweredText = string.lower(txt) -- Convert to lowercase
+        if string.sub(loweredText, 1, 1) == "*" and string.sub(loweredText, string.len(loweredText), -1) == "*" then -- Begins and ends with asterix
+            local strippedText = string.sub(loweredText, 2, string.len(loweredText)-1) -- Remove leading and ending asterix
+            
+            local words = {}
+            for substring in strippedText:gmatch("%S+") do -- Split string into array
+               table.insert(words, substring)
+            end
+            
+            if words[1] ~= "drop" or words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
+            
+            local armourTypes = {
+                ["vest"] = ply.JackyArmor.Vest,
+                ["helmet"] = ply.JackyArmor.Helmet,
+                ["suit"] = ply.JackyArmor.Suit
+            }
+            
+            local armourWord = words[2]
+ 
+            local armour = armourTypes[armourWord]
+            if armour then -- Check if second word is valid armour type
+                local Type= armour.Type
+				local Colr= armour.Colr
+                local capitalised = armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
+				JackaBodyArmorUpdate(ply,capitalised,nil,nil)
+				local New = ents.Create(ArmorEntities[Type])
 				New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
 				New:Spawn()
 				New:Activate()
 				New:SetColor(Colr)
-				ply:EmitSound("snd_jack_clothunequip.wav",70,100)
+                
+                if armourWord ~= "helmet" then -- Hardcoded as an exception because it is a one-off
+                    ply:EmitSound("snd_jack_clothunequip.wav",70,100)
+                else
+                    ply:EmitSound("Flesh.ImpactSoft")
+                end
+                
 				JackaGenericUseEffect(ply)
-			end
-		elseif(derp=="*drop helmet*")then
-			if((ply.JackyArmor)and(ply.JackyArmor.Helmet))then
-				local Type=ply.JackyArmor.Helmet.Type
-				local Colr=ply.JackyArmor.Helmet.Colr
-				JackaBodyArmorUpdate(ply,"Helmet",nil,nil)
-				local New=ents.Create(ArmorEntities[Type])
-				New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
-				New:Spawn()
-				New:Activate()
-				New:SetColor(Colr)
-				ply:EmitSound("Flesh.ImpactSoft")
-				JackaGenericUseEffect(ply)
-			end
-		elseif(derp=="*drop suit*")then
-			if((ply.JackyArmor)and(ply.JackyArmor.Suit))then
-				local Type=ply.JackyArmor.Suit.Type
-				local Colr=ply.JackyArmor.Suit.Colr
-				JackaBodyArmorUpdate(ply,"Suit",nil,nil)
-				local New=ents.Create(ArmorEntities[Type])
-				New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
-				New:Spawn()
-				New:Activate()
-				New:SetColor(Colr)
-				ply:EmitSound("snd_jack_clothunequip.wav",75,90)
-				JackaGenericUseEffect(ply)
-			end
-		end
+            else
+                ply:ChatPrint("You are not wearing this armour type...")
+            end
+        end
+
 	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	local function JackaSpawnHook(ply)
