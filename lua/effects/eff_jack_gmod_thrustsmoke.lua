@@ -18,7 +18,9 @@ function EFFECT:Init(data)
 			local blue=colorangle.r
 			local wind=data:GetStart()
 				
-			local rollparticle = emitter:Add("effects/bubble",Pos+VectorRand()*3)
+            if emitter then
+                local rollparticle = emitter:Add("effects/bubble",Pos+VectorRand()*3)
+            end
 
 			if (rollparticle) then
 				rollparticle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10))+dirkshun)
@@ -70,8 +72,10 @@ function EFFECT:Init(data)
 			
 			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 			
-			local rollparticle = emitter:Add("sprites/mat_jack_smokeparticle",Pos+VectorRand())
-
+            if emitter then
+                local rollparticle = emitter:Add("sprites/mat_jack_smokeparticle",Pos+VectorRand())
+            end
+                
 			if (rollparticle) then
 				rollparticle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10))+dirkshun)
 				
@@ -101,8 +105,10 @@ function EFFECT:Init(data)
 				rollparticle:SetLighting(false)
 			end
 		
-			local particle = emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
-
+            if emitter then
+                local particle = emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
+            end
+            
 			if (particle) then
 				particle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10))+dirkshun)
 				
@@ -134,9 +140,11 @@ function EFFECT:Init(data)
 				particle:SetCollideCallback(function(pertical,hitpos,hitnorm)
 					pertical:SetLifeTime(CurTime()+0.1)
 					pertical:SetDieTime(CurTime()+0.1)
-					
-					local porticel = emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
-
+                    
+                    if emitter then
+                        local porticel = emitter:Add("particle/smokestack", pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
+                    end
+                    
 					if (porticel) then
 						
 						local newvector=hitnorm
