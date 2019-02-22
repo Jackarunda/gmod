@@ -231,6 +231,7 @@ function ENT:Use(activator,caller)
 		self.MenuOpen=true
 		umsg.Start("JackaTurretOpenMenu",activator)
 		umsg.Entity(self)
+		self.TargetingGroup=self.TargetingGroup or {4}
 		umsg.Short(self.BatteryCharge)
 		umsg.Short(self.RoundsOnBelt)
 		umsg.Bool(table.HasValue(self.TargetingGroup,HULL_TINY))
