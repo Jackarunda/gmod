@@ -17,19 +17,6 @@ Some problems from the latest version are still there, like spawner zombies stil
 Roller bomb ALSO only attacks zombies, and the no-friendly-fire ai thing also works
 
 -----------------------------------------------------------------------------------------------------------------------------
-
-Lavaman007 10/1/2018
-
-Target from funguns being destroyed gives errors:
-[ERROR] addons/gmod/lua/effects/eff_jack_targetbust/init.lua:120: Tried to use invalid object (type CLuaEmitter) (Object was NULL or not of the right type)
-  1. Add - [C]:-1
-   2. unknown - addons/gmod/lua/effects/eff_jack_targetbust/init.lua:120
-
-Timer Failed! [Simple][@addons/gmod/lua/effects/eff_jack_targetbust/init.lua (line 102)]
-
-Material from ejected magazines from gunhacks is not properly mapped.
-
------------------------------------------------------------------------------------------------------------------------------
 TheWarKid 1/28/2018
 
 Most armor, most notabely heavy vests, actually make you go faster then slower. Since this is most likely a value error, there isnt a error code for it.
