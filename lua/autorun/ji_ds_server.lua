@@ -164,18 +164,18 @@ if(SERVER)then
                table.insert(words, substring)
             end
             
-            if words[1] ~= "drop" or words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
-            
+            if words[1] ~= "drop" then return end -- Only procede if the "drop" or "drops" command is used
+
             local armourTypes = {
                 ["vest"] = ply.JackyArmor.Vest,
                 ["helmet"] = ply.JackyArmor.Helmet,
                 ["suit"] = ply.JackyArmor.Suit
             }
-            
+
             local armourWord = words[2]
  
-            local armour = armourTypes[armourWord]
-            if armour then -- Check if second word is valid armour type
+            if armourTypes[armourWord] then -- Check if second word is valid armour type
+                local armour = armourTypes[armourWord]
                 local Type= armour.Type
 				local Colr= armour.Colr
                 local capitalised = armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
@@ -192,9 +192,27 @@ if(SERVER)then
                     ply:EmitSound("Flesh.ImpactSoft")
                 end
                 
+                ply:PrintMessage(HUD_PRINTCENTER, "Removed " .. capitalised)
 				JackaGenericUseEffect(ply)
+            elseif words[2] == "iff" then
+                
+                local iffTag = ply:GetNetworkedInt("JackyIFFTag")
+                if iffTag and (iffTag !=0) then
+                    ply:SetNetworkedInt("JackyIFFTag", 0)
+                    local New = ents.Create("ent_jack_ifftag")
+                    
+                    New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
+                    New:Spawn()
+                    New:Activate()
+                    
+                    ply:EmitSound("snd_jack_tinyequip.wav",75,100)
+                    JackaGenericUseEffect(ply)
+                    ply:PrintMessage(HUD_PRINTCENTER,"Removed IFF Tag")
+                else
+                    ply:ChatPrint("You are not wearing an IFF")
+                end
             else
-                ply:ChatPrint("You are not wearing this armour type...")
+                ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing this armour type...")
             end
         end
 
@@ -358,6 +376,12 @@ if(SERVER)then
 			ply:SetModel(ply.JackyOriginalModel)
 			ply:SetPlayerColor(ply.JackyOriginalColor)
 		end
+
+        local iffCon = GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
+        if (iffCon == 0 or iffCon == 2) then 
+            ply:SetNetworkedInt("JackyIFFTag", 0)
+        end
+        
 	end
 	hook.Add("DoPlayerDeath","JackaDeathHook",JackaDeathHook)
 	local function JackaControls(ply,key)
@@ -372,4 +396,15 @@ if(SERVER)then
 		end
 	end
 	hook.Add("KeyRelease","JackaSentryControlsN",JackaControlsN)
+    local function JIDS_OnTeamChange(ply)
+        local iffCon = GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
+        if (iffCon == 1 or iffCon == 2) then 
+            ply:SetNetworkedInt("JackyIFFTag", 0)
+        end
+    end
+    hook.Add("OnPlayerChangedTeam","JIDS_IFFTagRemoval", JIDS_OnTeamChange)
+    
+    --Convars
+    CreateConVar("jids_iff_permanence", "0", FCVAR_LUA_SERVER, "Should IFF's drop on death or team change. 0=Death, 1=TC, 2=Death+TC, 3=Never (user must drop)")
 end
+
