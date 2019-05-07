@@ -12,8 +12,10 @@ end
 
 function ENT:Draw()
 	local Matricks=Matrix()
-	Matricks:Scale(Vector(1,.45,1))
+	Matricks:Scale(Vector(.45,1,1))
 	self.Nice:EnableMatrix("RenderMultiply",Matricks)
+	self.Nice:SetRenderOrigin(self:GetPos()-self:GetUp()*6)
+	self.Nice:SetRenderAngles(self:GetAngles())
 	self.Nice:DrawModel()
 	--self.Entity:DrawModel()
 end

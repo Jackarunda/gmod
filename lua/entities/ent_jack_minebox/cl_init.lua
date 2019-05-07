@@ -21,14 +21,21 @@ function ENT:Initialize()
 		self.MineTable[i]:SetAngles(Up:Angle())
 		self.MineTable[i]:SetParent(self)
 		self.MineTable[i]:SetNoDraw(true)
+		--self.MineTable[i] -- TODO: the mines lose their connection to the box if ever un-rendered, fix this somehow
 	end
 end
 
 function ENT:Draw()
+	local Pos=self:GetPos()
+	local Up=self:GetUp()
+	local Right=self:GetRight()
+	local Forward=self:GetForward()
 	local Matricks=Matrix()
 	Matricks:Scale(Vector(.15,.37,.2))
 	self.Junk:EnableMatrix("RenderMultiply",Matricks)
 	render.SetColorModulation(.4,.4,.4)
+	self.Junk:SetRenderOrigin(Pos+Up*-5+Right*15)
+	self.Junk:SetRenderAngles(Right:Angle())
 	self.Junk:DrawModel()
 	
 	render.SetColorModulation(.7,.7,.7)

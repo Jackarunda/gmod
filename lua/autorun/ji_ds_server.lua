@@ -163,8 +163,7 @@ if(SERVER)then
             for substring in strippedText:gmatch("%S+") do -- Split string into array
                table.insert(words, substring)
             end
-            
-            if words[1] ~= "drop" or words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
+            if words[1] ~= "drop" and words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
             
             local armourTypes = {
                 ["vest"] = ply.JackyArmor.Vest,
@@ -173,7 +172,6 @@ if(SERVER)then
             }
             
             local armourWord = words[2]
- 
             local armour = armourTypes[armourWord]
             if armour then -- Check if second word is valid armour type
                 local Type= armour.Type
