@@ -15,12 +15,16 @@ function ENT:Initialize()
 	
 	self.MineTable={}
 	for i=1,35 do
+		local X,Y,Z=math.Rand(-18,18),math.Rand(-6,6),i*.4
 		self.MineTable[i]=ClientsideModel("models/props_pipes/pipe02_connector01.mdl")
 		self.MineTable[i]:SetMaterial("models/jacky_camouflage/Digi")
-		self.MineTable[i]:SetPos(Pos+Up*i*.4-Up*8+Right*math.Rand(-18,18)+Forward*math.Rand(-6,6))
+		self.MineTable[i]:SetPos(Pos+Up*Z-Up*8+Right*X+Forward*Y)
 		self.MineTable[i]:SetAngles(Up:Angle())
 		self.MineTable[i]:SetParent(self)
 		self.MineTable[i]:SetNoDraw(true)
+		self.MineTable[i].DrawX=X
+		self.MineTable[i].DrawY=Y
+		self.MineTable[i].DrawZ=Z
 		--self.MineTable[i] -- TODO: the mines lose their connection to the box if ever un-rendered, fix this somehow
 	end
 end
@@ -39,7 +43,11 @@ function ENT:Draw()
 	self.Junk:DrawModel()
 	
 	render.SetColorModulation(.7,.7,.7)
-	for key,disc in pairs(self.MineTable)do disc:DrawModel() end
+	for key,disc in pairs(self.MineTable)do
+		disc:SetRenderOrigin(Pos+Up*disc.DrawZ-Up*8+Right*disc.DrawX+Forward*disc.DrawY)
+		disc:SetRenderAngles(Up:Angle())
+		disc:DrawModel()
+	end
 	
 	render.SetColorModulation(1,1,1)
 	self.Entity:DrawModel()

@@ -1,6 +1,6 @@
 include('shared.lua')
 function ENT:Initialize()
-	--gay faget
+	--
 end
 function ENT:Draw()
 	self.Entity:DrawModel()
