@@ -90,6 +90,19 @@ if(SERVER)then
 				ply:SetPlayerColor(ply.JackyOriginalColor)
 			end
 		end
+		
+		if(ply.JackyArmor.OrigRun)then ply:SetRunSpeed(ply.JackyArmor.OrigRun) end
+		ply.JackyArmor.OrigRun=nil
+		
+		if(ply.JackyArmor.Vest)then
+			ply.JackyArmor.OrigRun=ply:GetRunSpeed()
+			local NewSpd=ArmorDisadvantages[ply.JackyArmor.Vest.Type]*ply.JackyArmor.OrigRun
+			ply:SetRunSpeed(NewSpd)
+		elseif(ply.JackyArmor.Suit)then
+			ply.JackyArmor.OrigRun=ply:GetRunSpeed()
+			local NewSpd=ArmorDisadvantages[ply.JackyArmor.Suit.Type]*ply.JackyArmor.OrigRun
+			ply:SetRunSpeed(NewSpd)
+		end
         
         umsg.Start("JackaBodyArmorUpdateClient")
         umsg.Entity(ply)
@@ -317,6 +330,7 @@ if(SERVER)then
 	end
 	hook.Add("EntityTakeDamage","JackaDamageHook",JackaDamageHook)
 	local function ModifyMove(ply,mvd,cmd)
+		--[[ -- Customizable Weaponry 2 conflicts with this because its author is a retard
 		if(ply.JackyArmor)then
 			if(ply.JackyArmor.Vest)then
 				local NewSpd=ArmorDisadvantages[ply.JackyArmor.Vest.Type]*ply:GetRunSpeed()
@@ -328,6 +342,7 @@ if(SERVER)then
 				mvd:SetMaxClientSpeed(NewSpd)
 			end
 		end
+		--]]
 		if(ply.JackaSentryControl)then
 			mvd:SetMaxSpeed(1)
 			mvd:SetMaxClientSpeed(1)
