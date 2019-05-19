@@ -38,7 +38,7 @@ function ENT:OnTakeDamage(dmginfo)
 end
 function ENT:Use(activator,caller)
 	local Tagged=activator:GetNetworkedInt("JackyIFFTag")
-	if((Tagged)and(Tagged!=0))then
+	if ((Tagged) and (Tagged != 0)) then
 		activator:PrintMessage(HUD_PRINTCENTER,"You have an IFF tag equipped already.")
 	else
 		JackaGenericUseEffect(activator)
@@ -54,7 +54,3 @@ end
 function ENT:OnRemove()
 	--aw fuck you
 end
-local function Death(ply)
-	ply:SetNetworkedInt("JackyIFFTag",0)
-end
-hook.Add("DoPlayerDeath","JackyIFFTagRemoval",Death)
