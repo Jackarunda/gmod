@@ -130,5 +130,5 @@ function ENT:Use(activator,caller)
 	end
 end
 function ENT:Think()
-	--haha fag
+	--
 end

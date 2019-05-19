@@ -90,6 +90,19 @@ if(SERVER)then
 				ply:SetPlayerColor(ply.JackyOriginalColor)
 			end
 		end
+		
+		if(ply.JackyArmor.OrigRun)then ply:SetRunSpeed(ply.JackyArmor.OrigRun) end
+		ply.JackyArmor.OrigRun=nil
+		
+		if(ply.JackyArmor.Vest)then
+			ply.JackyArmor.OrigRun=ply:GetRunSpeed()
+			local NewSpd=ArmorDisadvantages[ply.JackyArmor.Vest.Type]*ply.JackyArmor.OrigRun
+			ply:SetRunSpeed(NewSpd)
+		elseif(ply.JackyArmor.Suit)then
+			ply.JackyArmor.OrigRun=ply:GetRunSpeed()
+			local NewSpd=ArmorDisadvantages[ply.JackyArmor.Suit.Type]*ply.JackyArmor.OrigRun
+			ply:SetRunSpeed(NewSpd)
+		end
         
         umsg.Start("JackaBodyArmorUpdateClient")
         umsg.Entity(ply)
@@ -163,9 +176,8 @@ if(SERVER)then
             for substring in strippedText:gmatch("%S+") do -- Split string into array
                table.insert(words, substring)
             end
+            if words[1] ~= "drop" and words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
             
-            if words[1] ~= "drop" then return end -- Only procede if the "drop" or "drops" command is used
-
             local armourTypes = {
                 ["vest"] = ply.JackyArmor.Vest,
                 ["helmet"] = ply.JackyArmor.Helmet,
@@ -177,14 +189,14 @@ if(SERVER)then
             if armourTypes[armourWord] then -- Check if second word is valid armour type
                 local armour = armourTypes[armourWord]
                 local Type= armour.Type
-				local Colr= armour.Colr
-                local capitalised = armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
-				JackaBodyArmorUpdate(ply,capitalised,nil,nil)
-				local New = ents.Create(ArmorEntities[Type])
-				New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
-				New:Spawn()
-				New:Activate()
-				New:SetColor(Colr)
+                local Colr= armour.Colr
+                        local capitalised = armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
+                JackaBodyArmorUpdate(ply,capitalised,nil,nil)
+                local New = ents.Create(ArmorEntities[Type])
+                New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
+                New:Spawn()
+                New:Activate()
+                New:SetColor(Colr)
                 
                 if armourWord ~= "helmet" then -- Hardcoded as an exception because it is a one-off
                     ply:EmitSound("snd_jack_clothunequip.wav",70,100)
@@ -193,7 +205,7 @@ if(SERVER)then
                 end
                 
                 ply:PrintMessage(HUD_PRINTCENTER, "Removed " .. capitalised)
-				JackaGenericUseEffect(ply)
+				        JackaGenericUseEffect(ply)
             elseif words[2] == "iff" then
                 
                 local iffTag = ply:GetNetworkedInt("JackyIFFTag")
@@ -337,6 +349,7 @@ if(SERVER)then
 	end
 	hook.Add("EntityTakeDamage","JackaDamageHook",JackaDamageHook)
 	local function ModifyMove(ply,mvd,cmd)
+		--[[ -- Customizable Weaponry 2 conflicts with this because its author is a retard
 		if(ply.JackyArmor)then
 			if(ply.JackyArmor.Vest)then
 				local NewSpd=ArmorDisadvantages[ply.JackyArmor.Vest.Type]*ply:GetRunSpeed()
@@ -348,6 +361,7 @@ if(SERVER)then
 				mvd:SetMaxClientSpeed(NewSpd)
 			end
 		end
+		--]]
 		if(ply.JackaSentryControl)then
 			mvd:SetMaxSpeed(1)
 			mvd:SetMaxClientSpeed(1)

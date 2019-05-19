@@ -131,8 +131,8 @@ function ENT:Arm()
 	self:SetDTBool(0,true)
 end
 function ENT:Think()
-	--fag
+	--
 end
 function ENT:OnRemove()
-	--gay
+	--
 end
