@@ -419,7 +419,7 @@ function ENT:Think()
 	elseif(State==TS_CONCENTRATING)then
 		if(self.NextScanTime<Time)then
 			self.CurrentTarget=self:ScanForTarget()
-			self.NextScanTime=Time+((1/self.ScanRate)/4)
+			self.NextScanTime=Time+(1/self.ScanRate)
 			if(IsValid(self.CurrentTarget))then
 				self:Alert(self.CurrentTarget)
 			end
@@ -676,22 +676,16 @@ function ENT:Alert(targ)
 end
 function ENT:Traverse()
 	local PowerDrain=.2*self.TrackRate*self.MechanicsSizeMod^1.5
-	if(self.CurrentSweep>(self.GoalSweep+4))then
-		self.CurrentSweep=self.CurrentSweep-self.TrackRate*4
-		self:EmitSound("snd_jack_turretservo.wav",66,90)
-		self.BatteryCharge=self.BatteryCharge-PowerDrain
-	elseif(self.CurrentSweep<(self.GoalSweep-4))then
-		self.CurrentSweep=self.CurrentSweep+self.TrackRate*4
+	local SweepDiff=self.GoalSweep-self.CurrentSweep
+	if(SweepDiff~=0)then
+		self.CurrentSweep=self.CurrentSweep+math.Clamp(SweepDiff,-self.TrackRate*4,self.TrackRate*4)
 		self:EmitSound("snd_jack_turretservo.wav",66,90)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
 	end
-	if(self.CurrentSwing>(self.GoalSwing+4))then
-		self.CurrentSwing=self.CurrentSwing-(self.TrackRate*.6667)*4
-		self:EmitSound("snd_jack_turretservo.wav",66,110)
-		self.BatteryCharge=self.BatteryCharge-PowerDrain
-	elseif(self.CurrentSwing<(self.GoalSwing-4))then
-		self.CurrentSwing=self.CurrentSwing+(self.TrackRate*.6667)*4
-		self:EmitSound("snd_jack_turretservo.wav",66,110)
+	local SwingDiff=self.GoalSwing-self.CurrentSwing
+	if(SwingDiff~=0)then
+		self.CurrentSwing=self.CurrentSwing+math.Clamp(SwingDiff,-self.TrackRate*4,self.TrackRate*4)
+		self:EmitSound("snd_jack_turretservo.wav",66,90)
 		self.BatteryCharge=self.BatteryCharge-PowerDrain
 	end
 	self:SetDTInt(1,self.CurrentSweep)

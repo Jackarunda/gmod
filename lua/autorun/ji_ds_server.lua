@@ -59,7 +59,8 @@ if(SERVER)then
 		ply:SetModel(mod)
 		local simplemodel=player_manager.TranslateToPlayerModelName(mod)
 		local info=player_manager.TranslatePlayerHands(simplemodel)
-		ply:GetHands():SetModel(info.model)
+		local Hans=ply:GetHands()
+		if(IsValid(Hans))then Hans:SetModel(info.model) end
 	end
 	function JackaGenericUseEffect(ply)
 		if(ply:IsPlayer())then
