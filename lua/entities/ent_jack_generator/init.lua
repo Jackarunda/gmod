@@ -115,8 +115,17 @@ function ENT:ShutOff()
 	self:SetDTBool(0,self.State=="Running")
 end
 function ENT:Think()
+	local Time=CurTime()
+	if(self.NextWorkTime<Time)then
+		for key,ent in pairs(self.Dependents)do
+			if not((IsValid(ent))and(IsValid(self.Connections[ent]))and(ent.HasBattery))then
+				if(IsValid(self.Connections[ent]))then self.Connections[ent]:Remove() end
+				if(self.Connections[ent])then self.Connections[ent]=nil end
+				table.RemoveByValue(self.Dependents,ent)
+			end
+		end
+	end
 	if(self.State=="Running")then
-		local Time=CurTime()
 		if not(IsValid(self.FuelTank))then
 			self.FuelTank=nil
 			self.Remaining=0
@@ -133,10 +142,6 @@ function ENT:Think()
 			for key,ent in pairs(self.Dependents)do
 				if((IsValid(ent))and(IsValid(self.Connections[ent]))and(ent.HasBattery))then
 					ent:ExternalCharge(100)
-				else
-					if(IsValid(self.Connections[ent]))then self.Connections[ent]:Remove() end
-					if(self.Connections[ent])then self.Connections[ent]=nil end
-					table.RemoveByValue(self.Dependents,ent)
 				end
 			end
 			self.Remaining=self.Remaining-1
