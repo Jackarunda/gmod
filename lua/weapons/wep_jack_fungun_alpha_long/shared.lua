@@ -314,8 +314,10 @@ if(CLIENT)then
 	function SWEP:DrawHUD()
 		-- *overwrite*  :3
 	end
+	local OldSprint,OldAim=0,0
 	function SWEP:GetViewModelPosition(pos,ang)
-		local Aim=self.dt.Aim/100
+		OldAim=Lerp(FrameTime()*10,OldAim,self.dt.Aim)
+		local Aim=OldAim/100
 		local AimInv=1-Aim
 		
 		local Right=ang:Right()
@@ -334,7 +336,8 @@ if(CLIENT)then
 		if(self.dt.State==3)then
 			pos=pos+self.LaserShake/3
 		end
-		local Held=self.dt.Sprint/100
+		OldSprint=Lerp(FrameTime()*10,OldSprint,self.dt.Sprint)
+		local Held=OldSprint/100
 		if(Held>0)then
 			pos=pos+self.SprintPos.x*Right*Held+self.SprintPos.y*Up*Held+self.SprintPos.z*Forward*Held
 			ang:RotateAroundAxis(Right,self.SprintAng.p*Held)

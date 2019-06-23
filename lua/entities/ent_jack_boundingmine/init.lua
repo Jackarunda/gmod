@@ -3,7 +3,7 @@
 AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 include('shared.lua')
-local UsableMats={MAT_DIRT,MAT_FOLIAGE,MAT_SAND,MAT_SLOSH}
+local UsableMats={MAT_DIRT,MAT_FOLIAGE,MAT_SAND,MAT_SLOSH,MAT_GRASS}
 function ENT:SpawnFunction(ply, tr)
 	local SpawnPos=tr.HitPos+tr.HitNormal*20
 	local ent=ents.Create("ent_jack_boundingmine")

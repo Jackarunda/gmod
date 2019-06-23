@@ -181,7 +181,7 @@ function SWEP:PrimaryAttack()
 	MainTraceData.mask=MASK_SHOT
 	local MainTrace=util.TraceLine(MainTraceData)
 	
-	self:EmitSound("snd_jack_pilefire.wav",75,100)
+	sound.Play("snd_jack_pilefire.wav",self.Owner:GetShootPos(),75,100)
 	self.dt.Extension=1
 	self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	self.Owner:GetViewModel():SetPlaybackRate(.05)

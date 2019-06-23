@@ -207,7 +207,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/mat_jack_smoke3"
 			end
-			local particle = emitter:Add(sprite, vOffset)
+			local particle = Emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(900,1300)*VectorRand()*Scayul)
 			particle:SetAirResistance(1000)
 			particle:SetGravity(VectorRand()*math.Rand(0,2000))

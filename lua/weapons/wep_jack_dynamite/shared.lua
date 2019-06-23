@@ -158,7 +158,7 @@ function SWEP:SecondaryAttack()
 					if(self.dt.Lit==true)then
 						if(SERVER)then self.Weapon:EmitSound("snd_jack_ordnancearm.wav") end
 						self.Owner:SetNetworkedInt("JackyDetGearCount",self.Owner:GetNetworkedInt("JackyDetGearCount")-1)
-						JackyDetGearNotify(self.Owner,"Fuze Lit")
+						if(SERVER)then JackyDetGearNotify(self.Owner,"Fuze Lit") end
 					end
 					self.Owner:ViewPunch(Angle(1,1,0))
 					self:SendWeaponAnim(ACT_VM_IDLE)
