@@ -37,6 +37,25 @@ if(CLIENT)then
 		["Fire-Faraday"]={"sprites/mat_jack_firesuitoverlay",.75},
 		["EOD"]={"sprites/mat_jack_helmoverlay_e",.5}
 	}
+	hook.Add("Initialize","JMOD_INIT",function()
+		surface.CreateFont("JMod-Font",{
+			font="Arial",
+			extended=false,
+			size=35,
+			weight=900,
+			blursize=0,
+			scanlines=4,
+			antialias=true,
+			underline=false,
+			italic=false,
+			strikeout=false,
+			symbol=false,
+			rotary=false,
+			shadow=false,
+			additive=false,
+			outline=false
+		})
+	end)
 	local function JackSentCont(data)
 		local ply=data:ReadEntity()
 		local term=data:ReadEntity()

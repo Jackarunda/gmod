@@ -510,7 +510,7 @@ function ENT:ClearHead()
 	if(math.random(1,10)==5)then
 		local Hits=0
 		for i=0,20 do
-			local Tr=util.QuickTrace(self:GetShootPos(),VectorRand()*30,{self})
+			local Tr=util.QuickTrace(self:GetShootPos(),VectorRand()*20,{self})
 			if((Tr.Hit)and not((Tr.Entity:IsPlayer())or(Tr.Entity:IsNPC())))then
 				Hits=Hits+1
 			end

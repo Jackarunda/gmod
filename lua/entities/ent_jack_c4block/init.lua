@@ -136,6 +136,7 @@ function ENT:Detonate()
 	Explosion.BasePower=ExplosionPower*160
 	Explosion.BlastRadius=BlastRadius
 	Explosion.ParentEntity=self
+	Explosion:SetOwner(self:GetOwner())
 	Explosion:Spawn()
 	Explosion:Activate()
 

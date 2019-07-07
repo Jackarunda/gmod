@@ -133,6 +133,7 @@ function ENT:FireShot()
 		local Grenade=ents.Create("ent_jack_40mmgrenade")
 		Grenade.ParentLauncher=self.Entity
 		self.MostRecentGrenade=Grenade
+		Grenade:SetOwner(self:GetOwner())
 		Grenade:SetNetworkedEntity("Owenur",self.Entity)
 		Grenade:SetPos(SelfPos)
 		local Ang=Dir:Angle()

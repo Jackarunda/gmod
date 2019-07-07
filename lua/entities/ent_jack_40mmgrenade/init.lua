@@ -52,7 +52,7 @@ function ENT:Detonate()
 		if(self.Type=="HE")then
 			local explode=ents.Create("env_explosion")
 			explode:SetPos(self:GetPos())
-			explode:SetOwner(self:GetNetworkedEntity("Owenur"))
+			explode:SetOwner(self:GetOwner() or self:GetNetworkedEntity("Owenur"))
 			explode:Spawn()
 			explode:Activate()
 			explode:SetKeyValue("iMagnitude","190")

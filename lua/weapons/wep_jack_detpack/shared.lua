@@ -205,6 +205,7 @@ function SWEP:Holster()
 			local DroppedPack=ents.Create("ent_jack_c4block")
 			DroppedPack:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20-self.Owner:GetUp()*20)
 			DroppedPack.Owner=self.Owner
+			DroppedPack:SetOwner(self.Owner)
 			DroppedPack:Spawn()
 			DroppedPack:Activate()
 			DroppedPack:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity()*0.5+self.Owner:GetAimVector()*10)
