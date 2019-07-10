@@ -38,13 +38,47 @@ if(CLIENT)then
 		["EOD"]={"sprites/mat_jack_helmoverlay_e",.5}
 	}
 	hook.Add("Initialize","JMOD_INIT",function()
-		surface.CreateFont("JMod-Font",{
+		surface.CreateFont("JMod-Display",{
 			font="Arial",
 			extended=false,
 			size=35,
 			weight=900,
 			blursize=0,
 			scanlines=4,
+			antialias=true,
+			underline=false,
+			italic=false,
+			strikeout=false,
+			symbol=false,
+			rotary=false,
+			shadow=false,
+			additive=false,
+			outline=false
+		})
+		surface.CreateFont("JMod-Stencil",{
+			font="Capture it",
+			extended=false,
+			size=60,
+			weight=100,
+			blursize=0,
+			scanlines=0,
+			antialias=true,
+			underline=false,
+			italic=false,
+			strikeout=false,
+			symbol=false,
+			rotary=false,
+			shadow=false,
+			additive=false,
+			outline=false
+		})
+		surface.CreateFont("JMod-Stencil-S",{
+			font="Capture it",
+			extended=false,
+			size=20,
+			weight=100,
+			blursize=0,
+			scanlines=0,
 			antialias=true,
 			underline=false,
 			italic=false,

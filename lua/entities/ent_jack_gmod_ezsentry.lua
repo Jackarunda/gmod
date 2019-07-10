@@ -6,11 +6,14 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminSpawnable=true -- TODO: fucking like UPGRADING and SELECTING ALLIES
+ENT.ConsumesEZammo=true
+ENT.ConsumesEZpower=true
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
 ENT.PerfSpecs={
 	[EZ_GRADE_BASIC]={
-		MaxAmmo=200,
+		MaxAmmo=300,
 		MaxElectricity=100,
 		SearchTime=7,
 		TurnSpeed=50,
@@ -20,10 +23,13 @@ ENT.PerfSpecs={
 		ResistantArmorMult=.05,
 		ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
 		ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
+		BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"},
+		WhitelistedNPCs={"npc_rollermine"},
+		SpecialTargetingHeights={["npc_rollermine"]=20},
 		FireRate=10,
-		MinDamage=10,
-		MaxDamage=20,
-		Inaccuracy=.06,
+		MinDamage=5,
+		MaxDamage=15,
+		Inaccuracy=.08,
 		ThinkInterval=.25,
 		SearchInterval=1,
 		Efficiency=1
@@ -98,6 +104,7 @@ if(SERVER)then
 		self.Target=nil
 		self.NextTargetReSearch=0
 		self.NextFixTime=0
+		self.NextUseTime=0
 		self.SearchData={
 			LastKnownTarg=nil,
 			LastKnownPos=nil,
@@ -110,9 +117,9 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Canister.ImpactHard")
-			if(data.Speed>1500)then
+			if(data.Speed>1000)then
 				local Dam,World=DamageInfo(),game.GetWorld()
-				Dam:SetDamage(data.Speed/5)
+				Dam:SetDamage(data.Speed/3)
 				Dam:SetAttacker(data.HitEntity or World)
 				Dam:SetInflictor(data.HitEntity or World)
 				Dam:SetDamageType(DMG_CRUSH)
@@ -124,7 +131,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .02)/self.Efficiency
+		amt=(amt or .04)/self.Efficiency
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
@@ -199,6 +206,9 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Use(activator)
+		local Time=CurTime()
+		if(self.NextUseTime>Time)then return end
+		self.NextUseTime=Time+5
 		if(activator:IsPlayer())then
 			local State=self:GetState()
 			if(State==STATE_BROKEN)then return end
@@ -225,9 +235,22 @@ if(SERVER)then
 	function ENT:DetermineTargetAimPoint(ent)
 		if not(IsValid(ent))then return nil end
 		if(ent:IsPlayer())then
-			return ent:GetShootPos()-Vector(0,0,5)
+			if(ent:Crouching())then
+				return ent:GetShootPos()-Vector(0,0,5)
+			else
+				return ent:GetShootPos()-Vector(0,0,15)
+			end
+		elseif(ent:IsNPC())then
+			local Class,Height=ent:GetClass(),0
+			local SpecialTargetingHeight=self.SpecialTargetingHeights[Class]
+			if(SpecialTargetingHeight)then
+				Height=SpecialTargetingHeight;print("A")
+			else
+				Height=ent:OBBMaxs().z-ent:OBBMins().z
+			end
+			return ent:GetPos()+Vector(0,0,Height*.6)
 		else
-			return ent:GetPos()+Vector(0,0,50)
+			return ent:LocalToWorld(ent:OBBCenter())
 		end
 	end
 	function ENT:GetVel(ent)
@@ -262,15 +285,25 @@ if(SERVER)then
 	end
 	function ENT:ShouldShoot(ent)
 		if not(IsValid(ent))then return false end
-		local Gaymode=engine.ActiveGamemode()
+		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
 		if(ent:IsPlayer())then
+			PlayerToCheck=ent
+		elseif(ent:IsNPC())then
+			local Class=ent:GetClass()
+			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
+			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
+			return ent:Health()>0
+		elseif(ent:IsVehicle())then
+			PlayerToCheck=ent:GetDriver()
+		end
+		if(IsValid(PlayerToCheck))then
+			--if(true)then return true end -- debug
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return ent:Alive() and not self:IsAlly(ent) end
-			if(OurTeam)then return ent:Alive() and ent:Team()~=OurTeam end
-			return ent:Alive()
+			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() and not self:IsAlly(PlayerToCheck) end
+			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
+			return PlayerToCheck:Alive()
 		end
-		if(ent:IsNPC())then return ent:Health()>0 end
 		return false
 	end
 	function ENT:CanEngage(ent)
@@ -284,7 +317,7 @@ if(SERVER)then
 			if(self:CanEngage(self.SearchData.LastKnownTarg))then return self.SearchData.LastKnownTarg end
 			return nil
 		end
-		self:ConsumeElectricity()
+		self:ConsumeElectricity(.02)
 		self.NextTargetSearch=Time+self.SearchInterval -- limit searching cause it's expensive
 		local SelfPos=self:GetPos()
 		local Objects,PotentialTargets=ents.FindInSphere(SelfPos,self.TargetingRadius),{}
@@ -327,10 +360,17 @@ if(SERVER)then
 	function ENT:Think()
 		local Time=CurTime()
 		if(self.NextRealThink<Time)then
-			local Electricity=self:GetElectricity()
+			local Electricity,Ammo=self:GetElectricity(),self:GetAmmo()
 			self.NextRealThink=Time+self.ThinkInterval
 			self.Firing=false
 			local State=self:GetState()
+			if(State>0)then
+				if((Ammo<=0)or not(self:AmClearToMove()))then
+					if(State~=STATE_WHINING)then self:SetState(STATE_WHINING) end
+				elseif(State==STATE_WHINING)then
+					self:SetState(STATE_WATCHING)
+				end
+			end
 			if(State==STATE_WATCHING)then
 				local Target=self:TryFindTarget()
 				if(Target)then
@@ -397,7 +437,7 @@ if(SERVER)then
 			elseif(State==STATE_WHINING)then
 				self:Whine(true)
 			end
-			if((Electricity<self.MaxElectricity*.1)and(State>0))then self:Whine() end
+			if(((Electricity<self.MaxElectricity*.1)or(Ammo<self.MaxAmmo*.1))and(State>0))then self:Whine() end
 			if(self.NextFixTime<Time)then
 				self.NextFixTime=Time+10
 				self:GetPhysicsObject():SetBuoyancyRatio(.3)
@@ -412,17 +452,22 @@ if(SERVER)then
 		self:NextThink(Time+.05)
 		return true
 	end
+	function ENT:AmClearToMove()
+		return true -- todo
+	end
 	function ENT:Whine(serious)
 		if(serious)then self:ReturnToForward() end
 		local Time=CurTime()
 		if(self.NextWhine<Time)then
 			self.NextWhine=Time+4
 			self:EmitSound("snds_jack_gmod/ezsentry_whine.wav",70,100)
-			self:ConsumeElectricity()
+			self:ConsumeElectricity(.02)
 		end
 	end
 	function ENT:FireAtPoint(point)
 		if not(point)then return end
+		local Ammo=self:GetAmmo()
+		if(Ammo<=0)then return end
 		local SelfPos,Up,Right,Forward=self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
 		local AimAng=self:GetAngles()
 		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
@@ -439,7 +484,7 @@ if(SERVER)then
 		Eff:SetEntity(self)
 		util.Effect("RifleShellEject",Eff,true,true)
 		sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
-		sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,120,math.random(90,110))
+		sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
 		---
 		local Dmg=math.Rand(self.MinDamage,self.MaxDamage)
 		local ShootDir=(point-ShootPos):GetNormalized()
@@ -453,7 +498,7 @@ if(SERVER)then
 			HullSize=nil,
 			Num=1,
 			Tracer=5,
-			--TracerName="Tracer", -- todo: custom tracer effect the default one sucks
+			TracerName="eff_jack_gmod_smallarmstracer",
 			Dir=ShootDir,
 			Spread=Vector(0,0,0),
 			Src=ShootPos,
@@ -461,6 +506,7 @@ if(SERVER)then
 		}
 		self:FireBullets(Ballut)
 		---
+		self:SetAmmo(Ammo-1)
 		self:ConsumeElectricity()
 	end
 	function ENT:GetTargetAimOffset(point)
@@ -483,18 +529,20 @@ if(SERVER)then
 		local TurnAmtPitch=math.Clamp(-Y,-self.TurnSpeed/8,self.TurnSpeed/8)
 		local TurnAmtYaw=math.Clamp(X,-self.TurnSpeed/4,self.TurnSpeed/4)
 		self:Point(Y+TurnAmtPitch,X-TurnAmtYaw)
+		if((math.abs(TurnAmtPitch)>.5)or(math.abs(TurnAmtYaw)>.5))then
+			sound.Play("snds_jack_gmod/ezsentry_turn.wav",self:GetPos(),60,math.random(95,105))
+		end
 		self:ConsumeElectricity()
-		-- todo: sound
 	end
 	function ENT:Turn(pitch,yaw)
 		local X,Y=self:GetAimYaw(),self:GetAimPitch()
 		local TurnAmtPitch=math.Clamp(pitch,-self.TurnSpeed/8,self.TurnSpeed/8)
 		local TurnAmtYaw=math.Clamp(yaw,-self.TurnSpeed/4,self.TurnSpeed/4)
 		self:Point(Y+TurnAmtPitch,X-TurnAmtYaw)
-		self:ConsumeElectricity()
 		if((math.abs(TurnAmtPitch)>.5)or(math.abs(TurnAmtYaw)>.5))then
 			sound.Play("snds_jack_gmod/ezsentry_turn.wav",self:GetPos(),60,math.random(95,105))
 		end
+		self:ConsumeElectricity()
 	end
 	function ENT:Point(pitch,yaw)
 		if(pitch~=nil)then
@@ -510,6 +558,16 @@ if(SERVER)then
 	end
 	function ENT:OnRemove()
 		--
+	end
+	function ENT:TryLoadAmmo(amt)
+		if(amt<=0)then return 0 end
+		local Ammo=self:GetAmmo()
+		local Missing=self.MaxAmmo-Ammo
+		if(Missing<=0)then return 0 end
+		local Accepted=math.min(Missing,amt)
+		self:SetAmmo(Ammo+Accepted)
+		self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
+		return Accepted
 	end
 elseif(CLIENT)then
 	local function MakeModel(self,mdl,mat,scale,col)
@@ -664,15 +722,15 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*28-Right*7.5-Forward*8,DisplayAng,.075)
-				draw.SimpleTextOutlined("POWER","JMod-Font",200,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("POWER","JMod-Display",200,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod_GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Font",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local Ammo=self:GetAmmo()
 				local AmmoFrac=Ammo/self.MaxAmmo
 				local R,G,B=JMod_GoodBadColor(AmmoFrac)
-				draw.SimpleTextOutlined("AMMO","JMod-Font",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined(tostring(Ammo),"JMod-Font",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("AMMO","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end
@@ -685,7 +743,7 @@ elseif(CLIENT)then
 		elseif(State==STATE_ENGAGING)then
 			LightColor=Color(255,0,0)
 		elseif(State==STATE_WHINING)then
-			local Mul=math.sin(CurTime()*2)
+			local Mul=(math.sin(CurTime()*5))/2+.5
 			LightColor=Color(255*Mul,255*Mul,0)
 		end
 		if(LightColor)then

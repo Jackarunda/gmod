@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture"		"tex_jack_smallarmstracer_front"
+	"$additive"		"1"
+	"$vertexcolor"	"1"
+}

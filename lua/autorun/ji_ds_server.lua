@@ -421,5 +421,10 @@ if(SERVER)then
     
     --Convars
     CreateConVar("jids_iff_permanence", "0", FCVAR_LUA_SERVER, "Should IFF's drop on death or team change. 0=Death, 1=TC, 2=Death+TC, 3=Never (user must drop)")
+
+	-------------
+	hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
+		if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
+	end)
 end
 

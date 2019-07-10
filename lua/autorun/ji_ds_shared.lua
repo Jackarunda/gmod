@@ -43,5 +43,8 @@ EZ_GRADE_COPPER=2
 EZ_GRADE_SILVER=3
 EZ_GRADE_GOLD=4
 EZ_GRADE_PLATINUM=5
+---
+JMod_EZammoBoxSize=300
+JMod_EZammoCrateSize=30
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg
