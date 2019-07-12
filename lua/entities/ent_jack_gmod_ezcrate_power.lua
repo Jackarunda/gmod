@@ -2,18 +2,18 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezcrate"
 ENT.Type="anim"
-ENT.PrintName="EZ Ammo Crate"
+ENT.PrintName="EZ Battery Crate"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.ResourceType="ammo"
-ENT.MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize
-ENT.ChildEntity="ent_jack_gmod_ezammo"
-ENT.ChildEntityResourceAmount=JMod_EZammoBoxSize
-ENT.MainTitleWord="AMMO"
-ENT.ResourceUnit="Count"
+ENT.ResourceType="power"
+ENT.MaxResource=JMod_EZbatterySize*JMod_EZcrateSize
+ENT.ChildEntity="ent_jack_gmod_ezbattery"
+ENT.ChildEntityResourceAmount=JMod_EZbatterySize
+ENT.MainTitleWord="BATTERIES"
+ENT.ResourceUnit="Charge"
 ---
 if(SERVER)then
 	-- lol

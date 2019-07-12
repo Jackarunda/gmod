@@ -7,40 +7,37 @@ ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true -- TODO: fucking like UPGRADING and SELECTING ALLIES
-ENT.ConsumesEZammo=true
-ENT.ConsumesEZpower=true
+ENT.EZconsumes={"ammo","power"}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
-ENT.PerfSpecs={
-	[EZ_GRADE_BASIC]={
-		MaxAmmo=300,
-		MaxElectricity=100,
-		SearchTime=7,
-		TurnSpeed=50,
-		TargetingRadius=20,
-		TargetLockTime=5,
-		ArmorMult=.1,
-		ResistantArmorMult=.05,
-		ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
-		ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
-		BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"},
-		WhitelistedNPCs={"npc_rollermine"},
-		SpecialTargetingHeights={["npc_rollermine"]=20},
-		FireRate=10,
-		MinDamage=5,
-		MaxDamage=15,
-		Inaccuracy=.08,
-		ThinkInterval=.25,
-		SearchInterval=1,
-		Efficiency=1
-	}
+ENT.StaticPerfSpecs={
+	MaxElectricity=100,
+	SearchTime=7,
+	TargetLockTime=5,
+	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
+	ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
+	BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"},
+	WhitelistedNPCs={"npc_rollermine"},
+	SpecialTargetingHeights={["npc_rollermine"]=20},
+	ThinkInterval=.25
+}
+ENT.DynamicPerfSpecs={
+	MaxAmmo=300,
+	TurnSpeed=50,
+	TargetingRadius=20,
+	Armor=10,
+	ResistantArmor=20,
+	FireRate=10,
+	MinDamage=5,
+	MaxDamage=15,
+	Accuracy=1,
+	Efficiency=1,
+	SearchSpeed=1
 }
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.PerfSpecs[EZ_GRADE_BASIC])do
-		-- take the spec from our grade, or the basic spec if not defined
-		self[specName]=self.PerfSpecs[Grade][specName] or value
-	end
+	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade] end
 end
 ----
 local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING=-1,0,1,2,3,4
@@ -68,8 +65,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_phx/oildrum001_explosive.mdl")
-		self.Entity:SetMaterial("models/shiny")
-		self.Entity:SetColor(Color(50,50,50))
+		self.Entity:SetMaterial("models/mat_jack_gmod_ezsentry")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -83,6 +79,13 @@ if(SERVER)then
 		end
 		---
 		self:SetGrade(EZ_GRADE_BASIC)
+		if(IsValid(self.Owner))then
+			local Tem=self.Owner:Team()
+			if(Tem)then
+				local Col=team.GetColor(Tem)
+				if(Col)then self:SetColor(Col) end
+			end
+		end
 		self:InitPerfSpecs()
 		---
 		self:Point(0,0)
@@ -149,19 +152,19 @@ if(SERVER)then
 	end
 	function ENT:DetermineDmgResistance(dmg)
 		for k,typ in pairs(self.ImmuneDamageTypes)do
-			if(dmg:IsDamageType(typ))then return 0 end
+			if(dmg:IsDamageType(typ))then return 1000 end
 		end
 		for k,typ in pairs(self.ResistantDamageTypes)do
-			if(dmg:IsDamageType(typ))then return self.ResistantArmorMult end
+			if(dmg:IsDamageType(typ))then return self.ResistantArmor end
 		end
-		return self.ArmorMult
+		return self.Armor
 	end
 	function ENT:OnTakeDamage(dmginfo) -- todo: less damage from front
 		if(self)then
 			self:TakePhysicsDamage(dmginfo)
-			local ArmorMult=self:DetermineDmgResistance(dmginfo)
-			if(ArmorMult==0)then return end
-			self.Durability=self.Durability-dmginfo:GetDamage()*ArmorMult
+			local Armor=self:DetermineDmgResistance(dmginfo)
+			if(Armor>=1000)then return end
+			self.Durability=self.Durability-dmginfo:GetDamage()/Armor
 			if(self.Durability<=0)then self:Break(dmginfo) end
 			if(self.Durability<=-100)then self:Destroy(dmginfo) end
 		end
@@ -228,6 +231,13 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		self.Owner=activator
+		if(IsValid(self.Owner))then
+			local Tem=self.Owner:Team()
+			if(Tem)then
+				local Col=team.GetColor(Tem)
+				if(Col)then self:SetColor(Col) end
+			end
+		end
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav",65,100)
 		self:ResetMemory()
@@ -318,7 +328,7 @@ if(SERVER)then
 			return nil
 		end
 		self:ConsumeElectricity(.02)
-		self.NextTargetSearch=Time+self.SearchInterval -- limit searching cause it's expensive
+		self.NextTargetSearch=Time+1/self.SearchSpeed -- limit searching cause it's expensive
 		local SelfPos=self:GetPos()
 		local Objects,PotentialTargets=ents.FindInSphere(SelfPos,self.TargetingRadius),{}
 		for k,PotentialTarget in pairs(Objects)do
@@ -488,12 +498,13 @@ if(SERVER)then
 		---
 		local Dmg=math.Rand(self.MinDamage,self.MaxDamage)
 		local ShootDir=(point-ShootPos):GetNormalized()
-		ShootDir=(ShootDir+VectorRand()*math.Rand(0,self.Inaccuracy)):GetNormalized()
+		local Inacc=.08/self.Accuracy
+		ShootDir=(ShootDir+VectorRand()*math.Rand(0,Inacc)):GetNormalized()
 		local Ballut={
 			Attacker=self.Owner or self,
 			Callback=nil,
 			Damage=Dmg,
-			Force=Dmg,
+			Force=Dmg/5,
 			Distance=nil,
 			HullSize=nil,
 			Num=1,
@@ -559,15 +570,27 @@ if(SERVER)then
 	function ENT:OnRemove()
 		--
 	end
-	function ENT:TryLoadAmmo(amt)
+	function ENT:TryLoadResource(typ,amt)
 		if(amt<=0)then return 0 end
-		local Ammo=self:GetAmmo()
-		local Missing=self.MaxAmmo-Ammo
-		if(Missing<=0)then return 0 end
-		local Accepted=math.min(Missing,amt)
-		self:SetAmmo(Ammo+Accepted)
-		self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
-		return Accepted
+		if(typ=="ammo")then
+			local Ammo=self:GetAmmo()
+			local Missing=self.MaxAmmo-Ammo
+			if(Missing<=0)then return 0 end
+			local Accepted=math.min(Missing,amt)
+			self:SetAmmo(Ammo+Accepted)
+			self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
+			return Accepted
+		elseif(typ=="power")then
+			local Powa=self:GetElectricity()
+			local Missing=self.MaxElectricity-Powa
+			if(Missing<=0)then return 0 end
+			if(Missing<self.MaxElectricity*.1)then return 0 end
+			local Accepted=math.min(Missing,amt)
+			self:SetElectricity(Powa+Accepted)
+			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
+			return math.ceil(Accepted)
+		end
+		return 0
 	end
 elseif(CLIENT)then
 	local function MakeModel(self,mdl,mat,scale,col)
