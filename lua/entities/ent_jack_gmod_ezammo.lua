@@ -21,18 +21,20 @@ ENT.BreakNoise="Metal_Box.Break"
 ENT.ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
-		local Eff=EffectData()
-		Eff:SetOrigin(pos)
-		Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
-		Eff:SetEntity(ent)
-		util.Effect(table.Random(self.ShellEffects),Eff,true,true)
+		for i=1,20 do
+			local Eff=EffectData()
+			Eff:SetOrigin(pos)
+			Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
+			Eff:SetEntity(ent)
+			util.Effect(table.Random(self.ShellEffects),Eff,true,true)
+		end
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,240,150,80)
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<27000 -- cutoff point is 300 units when the fov is 90 degrees
+		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())

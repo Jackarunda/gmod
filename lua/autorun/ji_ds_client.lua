@@ -249,4 +249,88 @@ if(CLIENT)then
 		end
 	end
 	hook.Add("PostPlayerDraw","JackyArmorPlayerDraw",JackyArmorPlayerDraw)
+	--- no u ---
+	local blurMat,Dynamic,MenuOpen,YesMat,NoMat=Material("pp/blurscreen"),0,false,Material("icon16/accept.png"),Material("icon16/cancel.png")
+	local function BlurBackground(panel)
+		if not((IsValid(panel))and(panel:IsVisible()))then return end
+		local layers,density,alpha=1,1,255
+		local x,y=panel:LocalToScreen(0,0)
+		surface.SetDrawColor(255,255,255,alpha)
+		surface.SetMaterial(blurMat)
+		local FrameRate,Num,Dark=1/FrameTime(),5,150
+		for i=1,Num do
+			blurMat:SetFloat("$blur",(i/layers)*density*Dynamic)
+			blurMat:Recompute()
+			render.UpdateScreenEffectTexture()
+			surface.DrawTexturedRect(-x,-y,ScrW(),ScrH())
+		end
+		surface.SetDrawColor(0,0,0,Dark*Dynamic)
+		surface.DrawRect(0,0,panel:GetWide(),panel:GetTall())
+		Dynamic=math.Clamp(Dynamic+(1/FrameRate)*7,0,1)
+	end
+	local function PopulateList(parent,friendList,myself,W,H)
+		parent:Clear()
+		local Y=0
+		for k,playa in pairs(player.GetAll())do
+			if(playa~=myself)then
+				local Panel=parent:Add("DPanel")
+				Panel:SetSize(W-35,20)
+				Panel:SetPos(0,Y)
+				function Panel:Paint(w,h)
+					surface.SetDrawColor(0,0,0,100)
+					surface.DrawRect(0,0,w,h)
+					draw.SimpleText(playa:Nick(),"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				end
+				local Buttaloney=vgui.Create("DButton",Panel)
+				Buttaloney:SetPos(Panel:GetWide()-25,0)
+				Buttaloney:SetSize(20,20)
+				Buttaloney:SetText("")
+				local InLikeFlynn=table.HasValue(friendList,playa)
+				function Buttaloney:Paint(w,h)
+					surface.SetDrawColor(255,255,255,255)
+					surface.SetMaterial((InLikeFlynn and YesMat)or NoMat)
+					surface.DrawTexturedRect(2,2,16,16)
+				end
+				function Buttaloney:DoClick()
+					surface.PlaySound("garrysmod/ui_click.wav")
+					if(InLikeFlynn)then
+						table.RemoveByValue(friendList,playa)
+					else
+						table.insert(friendList,playa)
+					end
+					PopulateList(parent,friendList,myself,W,H)
+				end
+				Y=Y+25
+			end
+		end
+	end
+	net.Receive("JMod_Friends",function()
+		if(MenuOpen)then return end
+		MenuOpen=true
+		local Frame,W,H,Myself,FriendList=vgui.Create("DFrame"),300,400,LocalPlayer(),net.ReadTable()
+		Frame:SetPos(40,80)
+		Frame:SetSize(W,H)
+		Frame:SetTitle("Select Allies")
+		Frame:SetVisible(true)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:MakePopup()
+		Frame:Center()
+		Frame.OnClose=function()
+			MenuOpen=false
+			net.Start("JMod_Friends")
+			net.WriteTable(FriendList)
+			net.SendToServer()
+		end
+		function Frame:OnKeyCodePressed(key)
+			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
+		end
+		function Frame:Paint()
+			BlurBackground(self)
+		end
+		local Scroll=vgui.Create("DScrollPanel",Frame)
+		Scroll:SetSize(W-15,H)
+		Scroll:SetPos(10,30)
+		PopulateList(Scroll,FriendList,Myself,W,H)
+	end)
 end

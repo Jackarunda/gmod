@@ -22,7 +22,7 @@ if(SERVER)then
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos+VectorRand())
 		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(.5,1.5)) --amount and shoot hardness
+		effectdata:SetMagnitude(math.Rand(5,10)) --amount and shoot hardness
 		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
 		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
 		util.Effect("Sparks",effectdata,true,true)
@@ -32,21 +32,21 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<27000 -- cutoff point is 300 units when the fov is 90 degrees
+		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,NRG=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)
-			cam.Start3D2D(Pos+Up*10-Right*1.5-Forward*8.5,Ang,.02)
+			cam.Start3D2D(Pos+Up*10-Right*1.5-Forward*8.5,Ang,.025)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("GENERAL PURPOSE BATTERY","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ POWER CELL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(NRG.." CHARGE","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*10-Right*1.5+Forward*8.5,Ang,.02)
+			cam.Start3D2D(Pos+Up*10-Right*1.5+Forward*8.5,Ang,.025)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("GENERAL PURPOSE BATTERY","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ POWER CELL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(NRG.." CHARGE","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end

@@ -52,7 +52,7 @@ if(SERVER)then
 				local Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
 				if(Used>0)then
 					self:SetResource(Resource-Used)
-					for i=1,20 do self:UseEffect(data.HitPos,data.HitEntity) end
+					self:UseEffect(data.HitPos,data.HitEntity)
 					if(Used>=Resource)then
 						self.Loaded=true
 						timer.Simple(.1,function() if(IsValid(self))then self:Remove() end end)

@@ -47,6 +47,8 @@ EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
 ---
 JMod_EZammoBoxSize=300
 JMod_EZbatterySize=100
+JMod_EZpartBoxSize=100
 JMod_EZcrateSize=30
+JMod_EZpartsCrateSize=20
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg

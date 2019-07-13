@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_gmod_ezparts"
+	"$surfaceprop" "wood"
+}

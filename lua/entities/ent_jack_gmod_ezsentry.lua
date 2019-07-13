@@ -6,8 +6,8 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true -- TODO: fucking like UPGRADING and SELECTING ALLIES
-ENT.EZconsumes={"ammo","power"}
+ENT.AdminSpawnable=true -- TODO: fucking like UPGRADING
+ENT.EZconsumes={"ammo","power","parts"}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
 ENT.StaticPerfSpecs={
@@ -18,12 +18,13 @@ ENT.StaticPerfSpecs={
 	ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
 	BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"},
 	WhitelistedNPCs={"npc_rollermine"},
-	SpecialTargetingHeights={["npc_rollermine"]=20},
-	ThinkInterval=.25
+	SpecialTargetingHeights={["npc_rollermine"]=15},
+	MaxDurability=100,
+	ThinkSpeed=1
 }
 ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
-	TurnSpeed=50,
+	TurnSpeed=60,
 	TargetingRadius=20,
 	Armor=10,
 	ResistantArmor=20,
@@ -31,8 +32,8 @@ ENT.DynamicPerfSpecs={
 	MinDamage=5,
 	MaxDamage=15,
 	Accuracy=1,
-	Efficiency=1,
-	SearchSpeed=1
+	Efficiency=.8,
+	SearchSpeed=.5
 }
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
@@ -94,7 +95,7 @@ if(SERVER)then
 		self:SetElectricity(self.MaxElectricity)
 		self:SetState(STATE_OFF)
 		self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
-		self.Durability=100
+		self.Durability=self.MaxDurability
 		self.NextWhine=0
 		---
 		self:ResetMemory()
@@ -254,7 +255,7 @@ if(SERVER)then
 			local Class,Height=ent:GetClass(),0
 			local SpecialTargetingHeight=self.SpecialTargetingHeights[Class]
 			if(SpecialTargetingHeight)then
-				Height=SpecialTargetingHeight;print("A")
+				Height=SpecialTargetingHeight
 			else
 				Height=ent:OBBMaxs().z-ent:OBBMins().z
 			end
@@ -271,14 +272,6 @@ if(SERVER)then
 		else
 			return ent:GetVelocity()
 		end
-	end
-	function ENT:IsAlly(ent) -- TODO DAMNIT
-		local Own=self.Owner
-		if(IsValid(Own))then
-			if(ent==Own)then return true end
-			return false
-		end
-		return false
 	end
 	function ENT:CanSee(ent)
 		if not(IsValid(ent))then return false end
@@ -308,9 +301,12 @@ if(SERVER)then
 		end
 		if(IsValid(PlayerToCheck))then
 			--if(true)then return true end -- debug
+			if((self.Owner)and(ent==self.Owner))then return false end
+			local Allies=(self.Owner and self.Owner.JModFriends)or {}
+			if(table.HasValue(Allies,ent))then return false end
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() and not self:IsAlly(PlayerToCheck) end
+			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
 			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
 			return PlayerToCheck:Alive()
 		end
@@ -371,7 +367,7 @@ if(SERVER)then
 		local Time=CurTime()
 		if(self.NextRealThink<Time)then
 			local Electricity,Ammo=self:GetElectricity(),self:GetAmmo()
-			self.NextRealThink=Time+self.ThinkInterval
+			self.NextRealThink=Time+.25/self.ThinkSpeed
 			self.Firing=false
 			local State=self:GetState()
 			if(State>0)then
@@ -435,10 +431,15 @@ if(SERVER)then
 						if((GottaTurnP>0)or(GottaTurnY>0))then
 							self:Turn(NeedTurnPitch,NeedTurnYaw)
 						end
-						if((GottaTurnP<10)and(GottaTurnY<10))then self.Firing=true end
+						if((GottaTurnP<5)and(GottaTurnY<5))then self.Firing=true end
 					end
 				else
-					self:Disengage()
+					local Target=self:TryFindTarget()
+					if(Target)then
+						self:Engage(Target)
+					else
+						self:Disengage()
+					end
 				end
 			elseif(State==STATE_BROKEN)then
 				if(Electricity>0)then
@@ -588,6 +589,15 @@ if(SERVER)then
 			local Accepted=math.min(Missing,amt)
 			self:SetElectricity(Powa+Accepted)
 			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
+			return math.ceil(Accepted)
+		elseif(typ=="parts")then
+			local Missing=self.MaxDurability-self.Durability
+			if(Missing<=self.MaxDurability*.25)then return 0 end
+			local Accepted=math.min(Missing,amt)
+			self.Durability=self.Durability+Accepted
+			if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
+			self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
+			if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
 			return math.ceil(Accepted)
 		end
 		return 0

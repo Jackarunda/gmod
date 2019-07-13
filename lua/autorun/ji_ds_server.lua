@@ -1,5 +1,6 @@
 include("JI_DS_Shared.lua")
 if(SERVER)then
+	util.AddNetworkString("JMod_Friends") -- ^:3
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -54,7 +55,6 @@ if(SERVER)then
 		["Fire-Faraday"]="ent_jack_suit_fire",
 		["EOD"]="ent_jack_suit_eod"
 	}
-	hook.Add("PlayerInitialSpawn","JackaModInfo",function(ply) timer.Simple(2,function() if(IsValid(ply))then ply:PrintMessage(HUD_PRINTTALK,"Full instructions for J.I. Defense Solutions can be found here: http://jackarundasgames.tumblr.com/defensesolutions",Color(0,175,255)) end end) end)
 	function JackaSetPlayerModel(ply,mod)
 		ply:SetModel(mod)
 		local simplemodel=player_manager.TranslateToPlayerModelName(mod)
@@ -232,6 +232,7 @@ if(SERVER)then
 	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	local function JackaSpawnHook(ply)
+		ply.JModFriends=ply.JModFriends or {}
 		JackaBodyArmorUpdate(ply,"Vest",nil,nil)
 		JackaBodyArmorUpdate(ply,"Helmet",nil,nil)
 		JackaBodyArmorUpdate(ply,"Suit",nil,nil)
@@ -425,6 +426,24 @@ if(SERVER)then
 	-------------
 	hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
 		if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
+	end)
+	--- NO U ---
+	concommand.Add("jmod_friends",function(ply)
+		net.Start("JMod_Friends")
+		net.WriteTable(ply.JModFriends or {})
+		net.Send(ply)
+	end)
+	net.Receive("JMod_Friends",function(length,ply)
+		local List,Good=net.ReadTable(),true
+		for k,v in pairs(List)do
+			if not((IsValid(v))and(v:IsPlayer()))then Good=false end
+		end
+		if(Good)then
+			ply.JModFriends=List
+			ply:PrintMessage(HUD_PRINTCENTER,"JMod EZ friends list updated")
+		else
+			ply.JModFriends={}
+		end
 	end)
 end
 
