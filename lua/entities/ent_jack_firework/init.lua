@@ -100,7 +100,7 @@ function ENT:Detonate()
 	if not(AmericanSongPlaying)then
 		AmericanSongPlaying=true
 		timer.Simple(5,function()
-			local Song="snd_jack_merica"..math.random(1,10)..".wav"
+			local Song="snd_jack_merica"..math.random(1,10)..".mp3"
 			sound.Play(Song,SelfPos,150,95)
 			for key,found in pairs(player.GetAll())do
 				if(found:GetName()=="Jackarunda")then
