@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\props_forest/axe"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\props_forest/axe_ref"
+}

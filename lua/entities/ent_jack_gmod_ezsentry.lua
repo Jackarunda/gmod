@@ -6,8 +6,18 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true -- TODO: fucking like UPGRADING
+ENT.AdminSpawnable=true
 ENT.EZconsumes={"ammo","power","parts"}
+ENT.EZbuildCost=JMod_EZbuildCostSentry
+ENT.EZupgrades={
+	rate=1,
+	grades={
+		{parts=40},--advparts=10},
+		{parts=60,advparts=20},
+		{parts=80,advparts=40},
+		{parts=100,advparts=80}
+	}
+}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
 ENT.StaticPerfSpecs={
@@ -26,8 +36,8 @@ ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
 	TurnSpeed=60,
 	TargetingRadius=20,
-	Armor=10,
-	ResistantArmor=20,
+	Armor=8,
+	ResistantArmor=16,
 	FireRate=10,
 	MinDamage=5,
 	MaxDamage=15,
@@ -97,6 +107,7 @@ if(SERVER)then
 		self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
+		self.UpgradeProgress={}
 		---
 		self:ResetMemory()
 	end
@@ -597,7 +608,9 @@ if(SERVER)then
 			self.Durability=self.Durability+Accepted
 			if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
 			self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
-			if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
+			if(self.Durability>0)then
+				if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
+			end
 			return math.ceil(Accepted)
 		end
 		return 0
@@ -627,7 +640,7 @@ elseif(CLIENT)then
 		if(mat)then render.ModelMaterialOverride(mat) end
 		if(fullbright)then render.SuppressEngingLighting(true) end
 		if(translucenty)then render.SetBlend(translucency) end
-		mdl:SetLOD(8)
+		--mdl:SetLOD(8)
 		mdl:DrawModel()
 		render.SetColorModulation(R,G,B)
 		render.ModelMaterialOverride(nil)
@@ -657,8 +670,10 @@ elseif(CLIENT)then
 		self.CurAimYaw=0
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	local GradeColors={Vector(.3,.3,.3),Vector(.3,.15,.1),Vector(.5,.5,.5),Vector(.6,.4,.2),Vector(.8,.8,.8)}
+	local GradeMats={Material("phoenix_storms/metal"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny")}
 	function ENT:Draw()
-		local SelfPos,SelfAng,AimPitch,AimYaw,State=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState()
+		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		self.CurAimPitch=Lerp(FT*4,self.CurAimPitch,AimPitch)
 		self.CurAimYaw=Lerp(FT*4,self.CurAimYaw,AimYaw)
@@ -737,7 +752,7 @@ elseif(CLIENT)then
 			local CamAngle=AimAngle:GetCopy()
 			CamAngle:RotateAroundAxis(CamAngle:Forward(),-90)
 			CamAngle:RotateAroundAxis(CamAngle:Up(),180)
-			RenderModel(self.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,Vector(.3,.3,.3))
+			RenderModel(self.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,GradeColors[Grade],GradeMats[Grade])
 			---
 			local TriggerAngle=AimAngle:GetCopy()
 			TriggerAngle:RotateAroundAxis(TriggerAngle:Forward(),90)

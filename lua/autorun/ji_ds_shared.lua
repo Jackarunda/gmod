@@ -50,5 +50,7 @@ JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
 JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
+JMod_EZbuildCostSentry={parts=200,power=100,ammo=300,advparts=20}
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg
+-- yeet a wrench

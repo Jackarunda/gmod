@@ -1,0 +1,16 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/props_silo/welding_kit"
+
+//	"$alphatest"				1
+//	"$translucent" "1"
+	"$bumpmap"	   "models/props_silo/welding_kit_normal"
+
+	"$phong" "1" //this turns on the phong effect
+	"$phongexponent"  "20"
+	"$phongboost" "2" //use this to increase/decrease the highlight intensity 
+	"$phongfresnelranges" "[.1 .5 1]" //this are the highlight intensities at different incidence angles from the camera (first value is perpendicular to the camera and the 3rd value is away from the camera)	
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.5 .5 .5]"
+}
