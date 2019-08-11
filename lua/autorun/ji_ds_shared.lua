@@ -44,13 +44,15 @@ EZ_GRADE_SILVER=3
 EZ_GRADE_GOLD=4
 EZ_GRADE_PLATINUM=5
 EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
+EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
 ---
 JMod_EZammoBoxSize=300
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
+JMod_EZadvPartBoxSize=20
 JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
 JMod_EZbuildCostSentry={parts=200,power=100,ammo=300,advparts=20}
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg
--- yeet a wrench
+-- yeet a wrench easter egg

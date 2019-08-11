@@ -10,12 +10,12 @@ ENT.AdminSpawnable=true
 ENT.EZconsumes={"ammo","power","parts"}
 ENT.EZbuildCost=JMod_EZbuildCostSentry
 ENT.EZupgrades={
-	rate=1,
+	rate=2,
 	grades={
-		{parts=40},--advparts=10},
-		{parts=60,advparts=20},
-		{parts=80,advparts=40},
-		{parts=100,advparts=80}
+		{parts=40,advparts=20},
+		{parts=60,advparts=40},
+		{parts=80,advparts=80},
+		{parts=100,advparts=160}
 	}
 }
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
@@ -49,6 +49,12 @@ function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade] end
+	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
+end
+function ENT:Upgrade(level)
+	self:SetGrade(level)
+	self:InitPerfSpecs()
+	self.UpgradeProgress={}
 end
 ----
 local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING=-1,0,1,2,3,4
@@ -104,7 +110,6 @@ if(SERVER)then
 		self:SetAmmo(self.MaxAmmo)
 		self:SetElectricity(self.MaxElectricity)
 		self:SetState(STATE_OFF)
-		self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
 		self.UpgradeProgress={}
@@ -270,7 +275,7 @@ if(SERVER)then
 			else
 				Height=ent:OBBMaxs().z-ent:OBBMins().z
 			end
-			return ent:GetPos()+Vector(0,0,Height*.6)
+			return ent:GetPos()+Vector(0,0,Height*.5)
 		else
 			return ent:LocalToWorld(ent:OBBCenter())
 		end
@@ -670,13 +675,13 @@ elseif(CLIENT)then
 		self.CurAimYaw=0
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	local GradeColors={Vector(.3,.3,.3),Vector(.3,.15,.1),Vector(.5,.5,.5),Vector(.6,.4,.2),Vector(.8,.8,.8)}
+	local GradeColors={Vector(.3,.3,.3),Vector(.3,.15,.1),Vector(.5,.5,.5),Vector(.6,.5,.2),Vector(.8,.8,.8)}
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny")}
 	function ENT:Draw()
 		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
-		self.CurAimPitch=Lerp(FT*4,self.CurAimPitch,AimPitch)
-		self.CurAimYaw=Lerp(FT*4,self.CurAimYaw,AimYaw)
+		self.CurAimPitch=Lerp(FT*2,self.CurAimPitch,AimPitch)
+		self.CurAimYaw=Lerp(FT*2,self.CurAimYaw,AimYaw)
 		-- no snap-swing resets
 		if(math.abs(self.CurAimPitch-AimPitch)>45)then self.CurAimPitch=AimPitch end
 		if(math.abs(self.CurAimYaw-AimYaw)>90)then self.CurAimYaw=AimYaw end

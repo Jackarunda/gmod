@@ -9,6 +9,7 @@ SWEP.Purpose	= ""
 SWEP.Spawnable	= true
 SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
+SWEP.DrawCrosshair=false
 
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
@@ -27,17 +28,6 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
--- models/props_c17/tools_pliers01a.mdl -- hl2
--- models/props_c17/tools_wrench01a.mdl -- hl2
--- models/weapons/w_crowbar.mdl -- hl2
--- models/props_forest/circularsaw01.mdl -- ep2
--- models/props_forest/axe.mdl -- ep2
--- models/props_mining/pickaxe01.mdl -- ep2
--- models/props_silo/welding_helmet.mdl -- ep2
--- models/props_silo/welding_torch.mdl -- ep2
--- models/weapons/w_defuser.mdl -- css
--- models/weapons/w_models/w_toolbox.mdl -- tf2 TODO
-
 SWEP.ShowWorldModel=false
 SWEP.VElements = {
 	["wrench"] = { type = "Model", model = "models/props_c17/tools_wrench01a.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.5, 1.5, 0), angle = Angle(0, 90, -90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
@@ -51,7 +41,7 @@ SWEP.WElements = {
 	["pickaxe"] = { type = "Model", model = "models/props_mining/pickaxe01.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-22.338, 2.596, -1.558), angle = Angle(-92.338, 0, 0), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
 	["mask"] = { type = "Model", model = "models/props_silo/welding_helmet.mdl", bone = "ValveBiped.Bip01_Head1", rel = "", pos = Vector(2, 4, 0), angle = Angle(90, -20, 0), size = Vector(1.1, 1.1, 1.1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
 	["axe"] = { type = "Model", model = "models/props_forest/axe.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7.792, 2, 4), angle = Angle(118.052, 87.662, 180), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["toolbox"] = { type = "Model", model = "models/weapons/w_models/w_toolbox.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7, 6, 0.518), angle = Angle(-180, 85.324, 87.662), size = Vector(0.5, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["toolbox"] = { type = "Model", model = "models/weapons/w_models/w_tooljox.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7, 6, 0.518), angle = Angle(-180, 85.324, 87.662), size = Vector(0.5, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
 	["pack1"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-4.676, -7.792, 0), angle = Angle(180, 108.7, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
 	["pack2"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-3.636, 3.635, 0), angle = Angle(3.506, 68.96, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
@@ -135,22 +125,30 @@ function SWEP:PrimaryAttack(right)
 		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
 		local Ent,Pos=self:WhomIlookinAt()
 		if((IsValid(Ent))and(Ent.EZupgrades))then
-			local Grade=Ent:GetGrade()
-			if(Grade<5)then
-				local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate
-				for resourceType,requiredAmt in pairs(UpgradeInfo)do
-					local CurAmt=Ent.UpgradeProgress[resourceType] or 0
-					if(CurAmt<requiredAmt)then
-						local ResourceContainer=self:FindResourceContainer(resourceType,UpgradeRate)
-						if(ResourceContainer)then
-							self:UpgradeEntWithResource(Ent,ResourceContainer,UpgradeRate)
-							Upgraded=true
-							break
+			local State=Ent:GetState()
+			if(State==-1)then
+				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be repaired before upgrading")
+			elseif(State~=0)then
+				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be turned off to upgrade")
+			else
+				local Grade=Ent:GetGrade()
+				if(Grade<5)then
+					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate
+					for resourceType,requiredAmt in pairs(UpgradeInfo)do
+						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
+						if(CurAmt<requiredAmt)then
+							local ResourceContainer=self:FindResourceContainer(resourceType,UpgradeRate)
+							if(ResourceContainer)then
+								self:UpgradeEntWithResource(Ent,ResourceContainer,UpgradeRate)
+								Upgraded=true
+								break
+							end
 						end
 					end
+					if not(Upgraded)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for upgrade") end
+				else
+					self.Owner:PrintMessage(HUD_PRINTCENTER,"device already highest grade")
 				end
-			else
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"device is already highest possible design quality")
 			end
 		elseif((not(IsValid(Ent))or not(Ent.EZupgrades))and(SelectedBuild>0))then
 			--
@@ -189,8 +187,7 @@ function SWEP:UpgradeEntWithResource(recipient,donor,amt)
 		if((recipient.UpgradeProgress[typ] or 0)<amount)then HaveEverything=false end
 	end
 	if(HaveEverything)then
-		recipient:SetGrade(Grade+1)
-		recipient.UpgradeProgress={}
+		recipient:Upgrade(Grade+1)
 	end
 end
 function SWEP:Pawnch()
@@ -223,7 +220,15 @@ function SWEP:BuildEffect(pos)
 	--
 end
 function SWEP:UpgradeEffect(pos)
-	--
+	local effectdata=EffectData()
+	effectdata:SetOrigin(pos+VectorRand())
+	effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
+	effectdata:SetMagnitude(math.Rand(1,2)) --amount and shoot hardness
+	effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
+	effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
+	util.Effect("Sparks",effectdata,true,true)
+	sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
+	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
 end
 function SWEP:WhomIlookinAt()
 	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})

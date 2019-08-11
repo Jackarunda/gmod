@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/buildables/toolbox/tooljox_red"
+	"$surfaceprop" "metal"
+	"$bumpmap" "models/buildables/toolbox/tooljox_red_envnorm"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.5 .5 .5]"
+	"$phong" "1"
+	"$phongexponent" "30"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "10"
+
+	"$detail" "models\tex_jack_halo_metaldetail"
+	"$detailscale"		"5"
+	"$detailblendfactor"		".5"
+}
