@@ -12,7 +12,7 @@
 	"$normalmapalphaenvmapmask" "1"
 	"$envmaptint" "[.2 .2 .2]"
 
-	"$detail" "models\tex_jack_halo_metaldetail"
+	"$detail" "models\tex_jack_gmod_metaldetail"
 	"$detailscale"		"5"
 	"$detailblendfactor"		".5"
 }

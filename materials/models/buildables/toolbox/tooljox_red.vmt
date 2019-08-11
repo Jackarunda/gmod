@@ -11,7 +11,7 @@
 	"$phongfresnelranges" "[1 1 1]"
 	"$phongboost" "10"
 
-	"$detail" "models\tex_jack_halo_metaldetail"
+	"$detail" "models\tex_jack_gmod_metaldetail"
 	"$detailscale"		"5"
 	"$detailblendfactor"		".5"
 }
