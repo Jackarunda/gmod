@@ -7,8 +7,8 @@ EFFECT.Speed				= 20000;
 EFFECT.Length				= 1024;
 EFFECT.WhizDistance			= 72;
 
-local MaterialMain			= Material( "mat_jack_unscsmallarmstracer_main" );
-local MaterialFront			= Material( "mat_jack_unscsmallarmstracer_front" );
+local MaterialMain			= Material( "mat_jack_smallarmstracer_main" );
+local MaterialFront			= Material( "mat_jack_smallarmstracer_front" );
 
 function EFFECT:GetTracerOrigin( data )
 
