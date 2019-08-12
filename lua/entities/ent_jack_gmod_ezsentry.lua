@@ -247,12 +247,15 @@ if(SERVER)then
 		self:ResetMemory()
 	end
 	function ENT:TurnOn(activator)
+		local OldOwner=self.Owner
 		self.Owner=activator
 		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				if(Col)then self:SetColor(Col) end
+			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
+				local Tem=self.Owner:Team()
+				if(Tem)then
+					local Col=team.GetColor(Tem)
+					if(Col)then self:SetColor(Col) end
+				end
 			end
 		end
 		self:SetState(STATE_WATCHING)
@@ -317,9 +320,9 @@ if(SERVER)then
 		end
 		if(IsValid(PlayerToCheck))then
 			--if(true)then return true end -- debug
-			if((self.Owner)and(ent==self.Owner))then return false end
+			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
 			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,ent))then return false end
+			if(table.HasValue(Allies,PlayerToCheck))then return false end
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
 			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
