@@ -6,7 +6,7 @@ SWEP.PrintName	= "EZ Build Kit"
 SWEP.Author		= "Jackarunda"
 SWEP.Purpose	= ""
 
-SWEP.Spawnable	= true
+SWEP.Spawnable	= false
 SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
 SWEP.DrawCrosshair=false
@@ -25,7 +25,7 @@ SWEP.Primary.Ammo			= "none"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= true
+SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.ShowWorldModel=false
@@ -46,9 +46,17 @@ SWEP.WElements = {
 	["pack2"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-3.636, 3.635, 0), angle = Angle(3.506, 68.96, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 
+SWEP.NextSwitch=0
+SWEP.Buildables={
+	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1}
+}
+
 function SWEP:Initialize()
 	self:SetHoldType("fist")
 	self:SCKInitialize()
+	self.NextIdle=0
+	self:Deploy()
+	self:SetSelectedBuild(0)
 end
 function SWEP:PreDrawViewModel(vm,wep,ply)
 	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
@@ -71,14 +79,11 @@ function SWEP:GetViewModelPosition(pos,ang)
 	return pos,ang
 end
 function SWEP:SetupDataTables()
-	self:NetworkVar("Float",0,"NextMeleeAttack")
-	self:NetworkVar("Float",1,"NextIdle")
-	self:NetworkVar("Int",0,"Combo")
 	self:NetworkVar("Int",1,"SelectedBuild")
 end
 function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
-	self:SetNextIdle(CurTime()+vm:SequenceDuration())
+	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
 function SWEP:CanSee(ent)
 	return not util.TraceLine({
@@ -92,7 +97,7 @@ function SWEP:CountResourcesInRange()
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
 		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
-			local Typ=obj.ResourceType
+			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
 	end
@@ -101,12 +106,38 @@ end
 function SWEP:HaveResourcesToPerformTask(requirements)
 	local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
 	for typ,amt in pairs(requirements)do
-		if(not((ResourcesInRanges[typ])and(ResourcesInRange[typ]>=amt)))then
+		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
 			RequirementsMet=false
 			break
 		end
 	end
 	return RequirementsMet
+end
+function SWEP:ConsumeResourcesInRange(requirements)
+	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
+	while not((AllDone)or(Attempts>1000))do
+		local TypesNeeded=table.GetKeys(RequirementsRemaining)
+		if((TypesNeeded)and(#TypesNeeded>0))then
+			local ResourceTypeToLookFor=TypesNeeded[1]
+			local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
+			local Donor=self:FindResourceContainer(ResourceTypeToLookFor,1) -- every little bit helps
+			if(Donor)then
+				local AmountWeCanTake=Donor:GetResource()
+				if(AmountWeNeed>=AmountWeCanTake)then
+					Donor:SetResource(0)
+					Donor:Remove()
+					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
+				else
+					Donor:SetResource(AmountWeCanTake-AmountWeNeed)
+					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
+				end
+				if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
+			end
+		else
+			AllDone=true
+		end
+		Attempts=Attempts+1
+	end
 end
 function SWEP:FindResourceContainer(typ,amt)
 	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
@@ -115,16 +146,38 @@ function SWEP:FindResourceContainer(typ,amt)
 		end
 	end
 end
-function SWEP:PrimaryAttack(right)
+function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	self:Pawnch()
-	self:SetNextMeleeAttack(CurTime()+.2)
 	self:SetNextPrimaryFire(CurTime()+1)
 	self:SetNextSecondaryFire(CurTime()+1)
 	if(SERVER)then
 		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
-		local Ent,Pos=self:WhomIlookinAt()
-		if((IsValid(Ent))and(Ent.EZupgrades))then
+		local Ent,Pos,Norm=self:WhomIlookinAt()
+		if(SelectedBuild>0)then
+			local Reqs=self.Buildables[SelectedBuild][3]
+			if(self:HaveResourcesToPerformTask(Reqs))then
+				self:ConsumeResourcesInRange(Reqs)
+				Built=true
+				for i=1,20 do
+					timer.Simple(i/100,function()
+						if(IsValid(self))then
+							if(i<20)then
+								sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+							else
+								local Ent=ents.Create(self.Buildables[SelectedBuild][2])
+								Ent:SetPos(Pos+Norm*self.Buildables[SelectedBuild][4])
+								Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
+								Ent.Owner=self.Owner
+								Ent:Spawn()
+								Ent:Activate()
+							end
+						end
+					end)
+				end
+			end
+			if not(Built)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
+		elseif((IsValid(Ent))and(Ent.EZupgrades))then
 			local State=Ent:GetState()
 			if(State==-1)then
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be repaired before upgrading")
@@ -150,12 +203,10 @@ function SWEP:PrimaryAttack(right)
 					self.Owner:PrintMessage(HUD_PRINTCENTER,"device already highest grade")
 				end
 			end
-		elseif((not(IsValid(Ent))or not(Ent.EZupgrades))and(SelectedBuild>0))then
-			--
 		end
 		if((Built)or(Upgraded))then
 			if(Built)then
-				self:BuildEffect(Pos)
+				self:BuildEffect(Pos,SelectedBuild)
 			elseif(Upgraded)then
 				self:UpgradeEffect(Pos)
 			end
@@ -190,15 +241,11 @@ function SWEP:UpgradeEntWithResource(recipient,donor,amt)
 		recipient:Upgrade(Grade+1)
 	end
 end
+local Anims={"fists_right","fists_right","fists_left","fists_left"}--,"fists_uppercut"} -- the uppercut looks so bad
 function SWEP:Pawnch()
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )
-	local anim = "fists_left"
-	if ( math.random(1,2)==1 ) then anim = "fists_right" end
-	if ( self:GetCombo() >= 2 ) then
-		anim = "fists_uppercut"
-	end
 	local vm = self.Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence( vm:LookupSequence( anim ) )
+	vm:SendViewModelMatchingSequence( vm:LookupSequence( table.Random(Anims) ) )
 	self:UpdateNextIdle()
 end
 function SWEP:FlingProp(mdl,force)
@@ -216,26 +263,57 @@ function SWEP:FlingProp(mdl,force)
 	if(force)then Phys:ApplyForceCenter(force/7) end
 	SafeRemoveEntityDelayed(Prop,math.random(5,10))
 end
-function SWEP:BuildEffect(pos)
-	--
+function SWEP:Reload()
+	if(SERVER)then
+		local Time=CurTime()
+		if(self.NextSwitch<Time)then
+			self.NextSwitch=Time+.5
+			local Next=self:GetSelectedBuild()+1
+			if(Next>#self.Buildables)then Next=0 end
+			self:SetSelectedBuild(Next)
+		end
+	end
 end
-function SWEP:UpgradeEffect(pos)
+function SWEP:BuildEffect(pos,buildType)
+	if(CLIENT)then return end
+	local Scale=self.Buildables[buildType][5]
+	self:UpgradeEffect(pos,Scale*4)
+	local eff=EffectData()
+	eff:SetOrigin(pos+VectorRand())
+	eff:SetScale(Scale)
+	util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
+end
+function SWEP:UpgradeEffect(pos,scale)
+	if(CLIENT)then return end
+	scale=scale or 1
 	local effectdata=EffectData()
 	effectdata:SetOrigin(pos+VectorRand())
 	effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-	effectdata:SetMagnitude(math.Rand(1,2)) --amount and shoot hardness
-	effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-	effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
+	effectdata:SetMagnitude(math.Rand(1,2)*scale) --amount and shoot hardness
+	effectdata:SetScale(math.Rand(.5,1.5)*scale) --length of strands
+	effectdata:SetRadius(math.Rand(2,4)*scale) --thickness of strands
 	util.Effect("Sparks",effectdata,true,true)
 	sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
 	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
 end
 function SWEP:WhomIlookinAt()
 	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
-	return Tr.Entity,Tr.HitPos
+	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()
-	self:PrimaryAttack(true)
+	if(self.Owner:KeyDown(IN_SPEED))then return end
+	if(SERVER)then
+		if(self.Owner:KeyDown(IN_WALK))then
+			local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
+			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
+			Kit:SetAngles(self.Owner:GetAimVector():Angle())
+			Kit:Spawn()
+			Kit:Activate()
+			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
+			self:Remove()
+			return
+		end
+	end
 end
 function SWEP:OnRemove()
 	self:SCKHolster()
@@ -250,35 +328,43 @@ function SWEP:Holster( wep )
 	return true
 end
 function SWEP:Deploy()
+	if not(IsValid(self.Owner))then return end
 	local vm = self.Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_draw" ) )
-	self:UpdateNextIdle()
-	if ( SERVER ) then
-		self:SetCombo( 0 )
+	if(vm)then
+		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_draw" ) )
+		self:UpdateNextIdle()
+		self:EmitSound("snds_jack_gmod/toolbox"..math.random(1,7)..".wav",65,math.random(90,110))
 	end
 	return true
 end
 function SWEP:Think()
+	local Time=CurTime()
 	local vm = self.Owner:GetViewModel()
-	local curtime = CurTime()
-	local idletime = self:GetNextIdle()
-	if ( idletime > 0 && CurTime() > idletime ) then
+	local idletime = self.NextIdle
+	if ( idletime > 0 && Time > idletime ) then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_idle_0" .. math.random( 1, 2 ) ) )
 		self:UpdateNextIdle()
 	end
-	local meleetime = self:GetNextMeleeAttack()
-	if ( meleetime > 0 && CurTime() > meleetime ) then
-		self:SetNextMeleeAttack( 0 )
-	end
-	if ( SERVER && CurTime() > self:GetNextPrimaryFire() + 0.1 ) then
-		self:SetCombo( 0 )
+	if(self.Owner:KeyDown(IN_SPEED))then
+		self:SetHoldType("normal")
+	else
+		self:SetHoldType("fist")
 	end
 end
 function SWEP:DrawHUD()
-	local W,H=ScrW(),ScrH()
-	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.8,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.8+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("RMB: salvage/drop kit","Trebuchet24",W*.4,H*.8+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	local W,H,Selected=ScrW(),ScrH(),self:GetSelectedBuild()
+	if(Selected>0)then
+		local Msg="SELECTED: "..self.Buildables[Selected][1].." - "
+		for typ,amt in pairs(self.Buildables[Selected][3])do
+			Msg=Msg..tostring(amt).." "..typ.." "
+		end
+		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
+	end
+	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 
 ----------------- shit -------------------

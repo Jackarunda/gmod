@@ -16,6 +16,26 @@ function ANGLE:GetCopy()
 	return Angle(self.p,self.y,self.r)
 end
 local function stringFromTable(tab)
+	-- todo, what?
+end
+function table.FullCopy( tab )
+
+	if (!tab) then return nil end
+	
+	local res = {}
+	for k, v in pairs( tab ) do
+		if (type(v) == "table") then
+			res[k] = table.FullCopy(v) -- we need to go derper
+		elseif (type(v) == "Vector") then
+			res[k] = Vector(v.x, v.y, v.z)
+		elseif (type(v) == "Angle") then
+			res[k] = Angle(v.p, v.y, v.r)
+		else
+			res[k] = v
+		end
+	end
+	
+	return res
 	
 end
 function jprint(...)

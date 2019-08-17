@@ -3,18 +3,18 @@ local Sprites={"particle/smokestack","particles/smokey","particle/particle_smoke
 function EFFECT:Init(data)
 	local Pos,Scale=data:GetOrigin(),data:GetScale()
 	local Emitter=ParticleEmitter(Pos)
-	for i=0,10*Scayul do
+	for i=0,100 do
 		local Sprite=table.Random(Sprites)
 		local Particle=Emitter:Add(Sprite,Pos)
-		if(particle)then
-			Particle:SetVelocity(math.Rand(10,500)*VectorRand()*Scale)
+		if(Particle)then
+			Particle:SetVelocity(1000*VectorRand()*Scale)
 			Particle:SetAirResistance(1000)
-			Particle:SetDieTime(math.Rand(.5,2)*Scale)
-			Particle:SetStartAlpha(math.Rand(25,255))
+			Particle:SetDieTime(math.Rand(1,2)*Scale)
+			Particle:SetStartAlpha(255)
 			Particle:SetEndAlpha(0)
-			local Size=math.Rand(1,20)*Scale
+			local Size=math.Rand(30,60)*Scale
 			Particle:SetStartSize(Size)
-			Particle:SetEndSize(Size*3)
+			Particle:SetEndSize(Size)
 			Particle:SetRoll(math.Rand(-3,3))
 			Particle:SetRollDelta(math.Rand(-2,2))
 			Particle:SetGravity(Vector(0,0,math.random(-10,-100)))

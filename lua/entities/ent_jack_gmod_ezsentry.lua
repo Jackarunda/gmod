@@ -678,8 +678,8 @@ elseif(CLIENT)then
 		self.CurAimYaw=0
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	local GradeColors={Vector(.3,.3,.3),Vector(.3,.15,.1),Vector(.5,.5,.5),Vector(.6,.5,.2),Vector(.8,.8,.8)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny"),Material("models/shiny")}
+	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
+	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	function ENT:Draw()
 		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()

@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "phoenix_storms/metal"
+	"$surfaceprop" "metal"
+	"$bumpmap" "phoenix_storms/metal_bump"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.5 1 0]"
+}
+
+

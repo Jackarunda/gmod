@@ -11,10 +11,19 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
 ENT.DamageThreshold=140
 ---
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"Resource")
-end
----
+local Props={
+	"models/props_c17/tools_wrench01a.mdl",
+	"models/props_c17/tools_pliers01a.mdl",
+	"models/props_forest/circularsaw01.mdl",
+	"models/props_silo/welding_torch.mdl",
+	"models/props_mining/pickaxe01.mdl",
+	"models/props_silo/welding_helmet.mdl",
+	"models/props_forest/axe.mdl",
+	"models/weapons/w_defuser.mdl",
+	"models/weapons/w_defuser.mdl",
+	"models/props_c17/tools_wrench01a.mdl",
+	"models/props_c17/tools_pliers01a.mdl"
+}
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
 		local SpawnPos=tr.HitPos+tr.HitNormal*40
@@ -45,8 +54,8 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>100)then
-				self.Entity:EmitSound("Wood_Crate.ImpactHard")
-				self.Entity:EmitSound("Wood_Box.ImpactHard")
+				self.Entity:EmitSound("Metal_Box.ImpactHard")
+				self.Entity:EmitSound("Canister.ImpactHard")
 			end
 		end
 	end
@@ -54,23 +63,34 @@ if(SERVER)then
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(dmginfo:GetDamage()>self.DamageThreshold)then
 			local Pos=self:GetPos()
-			sound.Play("Wood_Crate.Break",Pos)
-			sound.Play("Wood_Box.Break",Pos)
-			for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
-				local Box=ents.Create(self.ChildEntity)
-				Box:SetPos(Pos+self:GetUp()*20)
-				Box:SetAngles(self:GetAngles())
-				Box:Spawn()
-				Box:Activate()
+			sound.Play("Metal_Box.Break",Pos)
+			for k,mdl in pairs(Props)do
+				local Item=ents.Create("prop_physics")
+				Item:SetModel(mdl)
+				Item:SetPos(Pos+VectorRand()*5+Vector(0,0,10))
+				Item:SetAngles(VectorRand():Angle())
+				Item:Spawn()
+				Item:Activate()
+				Item:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+				local Phys=Item:GetPhysicsObject()
+				if(IsValid(Phys))then
+					Phys:SetVelocity(self:GetVelocity()/2+Vector(0,0,200)+VectorRand()*math.Rand(10,600))
+					Phys:AddAngleVelocity(VectorRand()*math.Rand(10,3000))
+				end
+				SafeRemoveEntityDelayed(Item,math.random(10,20))
 			end
 			self:Remove()
 		end
 	end
 	function ENT:Use(activator)
-		--
+		if not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
+			activator:Give("wep_jack_gmod_ezbuildkit")
+			activator:SelectWeapon("wep_jack_gmod_ezbuildkit")
+			self:Remove()
+		end
 	end
 	function ENT:Think()
-		--pfahahaha
+		--
 	end
 	function ENT:OnRemove()
 		--aw fuck you
