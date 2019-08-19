@@ -46,6 +46,7 @@ SWEP.WElements = {
 	["pack2"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-3.636, 3.635, 0), angle = Angle(3.506, 68.96, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 
+SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
 SWEP.Buildables={
 	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1}
@@ -312,6 +313,20 @@ function SWEP:SecondaryAttack()
 			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
 			self:Remove()
 			return
+		else
+			local Ent,Pos,Norm=self:WhomIlookinAt()
+			if(Ent.EZsalvage)then
+				local Time=CurTime()
+				if(Time-self.LastSalvageAttempt<.15)then -- safeguard so you don't accidentally #shrek your valuable machines
+					Ent:EZsalvage()
+					self:Pawnch()
+					self:SetNextPrimaryFire(CurTime()+1)
+					self:SetNextSecondaryFire(CurTime()+1)
+				else
+					self.Owner:PrintMessage(HUD_PRINTCENTER,"double click to salvage")
+				end
+				self.LastSalvageAttempt=Time
+			end
 		end
 	end
 end

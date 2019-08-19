@@ -590,6 +590,61 @@ if(SERVER)then
 	function ENT:OnRemove()
 		--
 	end
+	function ENT:EZsalvage()
+		if(self.Salvaged)then return end
+		self.Salvaged=true
+		local scale,pos=1,self:GetPos()+self:GetUp()*20
+		---
+		local effectdata=EffectData()
+		effectdata:SetOrigin(pos+VectorRand())
+		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
+		effectdata:SetMagnitude(math.Rand(1,2)*scale*4) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(.5,1.5)*scale*4) --length of strands
+		effectdata:SetRadius(math.Rand(2,4)*scale*4) --thickness of strands
+		util.Effect("Sparks",effectdata,true,true)
+		---
+		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
+		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+		---
+		local eff=EffectData()
+		eff:SetOrigin(pos+VectorRand())
+		eff:SetScale(scale)
+		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
+		---
+		for i=1,20 do
+			timer.Simple(i/100,function()
+				if(IsValid(self))then
+					if(i<20)then
+						sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+					else
+						local PartsFrac=(self.Durability+self.MaxDurability)/(self.MaxDurability*2)
+						local Box=ents.Create("ent_jack_gmod_ezparts")
+						Box:SetPos(pos+VectorRand()*10)
+						Box:Spawn()
+						Box:Activate()
+						Box:SetResource(PartsFrac*JMod_EZbuildCostSentry.parts*.75)
+						local Amm=self:GetAmmo()
+						if(Amm>0)then
+							local Box=ents.Create("ent_jack_gmod_ezammo")
+							Box:SetPos(pos+VectorRand()*10)
+							Box:Spawn()
+							Box:Activate()
+							Box:SetResource(Amm)
+						end
+						local Powa=self:GetElectricity()
+						if(Powa>1)then
+							local Batt=ents.Create("ent_jack_gmod_ezbattery")
+							Batt:SetPos(pos+VectorRand()*10)
+							Batt:Spawn()
+							Batt:Activate()
+							Batt:SetResource(math.floor(Powa))
+						end
+						self:Remove()
+					end
+				end
+			end)
+		end
+	end
 	function ENT:TryLoadResource(typ,amt)
 		if(amt<=0)then return 0 end
 		if(typ=="ammo")then
