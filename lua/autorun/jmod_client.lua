@@ -1,5 +1,5 @@
 AddCSLuaFile()
-include("JI_DS_Shared.lua")
+include("jmod_shared.lua")
 if(CLIENT)then
 	local ArmorAppearances={
 		--vests
@@ -42,6 +42,23 @@ if(CLIENT)then
 			font="Arial",
 			extended=false,
 			size=35,
+			weight=900,
+			blursize=0,
+			scanlines=4,
+			antialias=true,
+			underline=false,
+			italic=false,
+			strikeout=false,
+			symbol=false,
+			rotary=false,
+			shadow=false,
+			additive=false,
+			outline=false
+		})
+		surface.CreateFont("JMod-Display-S",{
+			font="Arial",
+			extended=false,
+			size=20,
 			weight=900,
 			blursize=0,
 			scanlines=4,
@@ -249,6 +266,113 @@ if(CLIENT)then
 		end
 	end
 	hook.Add("PostPlayerDraw","JackyArmorPlayerDraw",JackyArmorPlayerDraw)
+	--- OLD OPSQUADS CODE ---
+	function JPrint(msg)
+		LocalPlayer():ChatPrint("["..tostring(math.Round(CurTime(),1)).."] "..tostring(msg))
+	end
+	local function JackyOpSquadGiveHelmet(data)
+		local Helm=ClientsideModel("models/haloreach/jarinehelmet.mdl")
+		local Ent=data:ReadEntity()
+		Helm:SetBodygroup(2,math.random(1,2))
+		--Helm:SetBodygroup(1,math.random(0,1)) --their face-models vary too much for this to work
+		if not(Ent)then return end
+		Helm:SetPos(Ent:GetPos())
+		Helm.Wearer=Ent
+		Helm.IsJackyOpSquadHelmet=true
+		Ent.Helmet=Helm
+		local Mat=Matrix()
+		Mat:Scale(Vector(1.15,1,1))
+		Helm:EnableMatrix("RenderMultiply",Mat)
+		Helm:SetParent(Ent)
+		--Helm:SetColor(Color(200,200,200))
+		Helm:SetNoDraw(true)
+		Helm:FollowBone(Ent,6)
+	end
+	usermessage.Hook("JackyOpSquadGiveHelmet",JackyOpSquadGiveHelmet)
+	local function JackyOpSquadCreateRagdollClientHook(ent,ragdoll)
+		if not(ent.JackyOpSquadNPC)then return end
+		ragdoll:SetMaterial(ent:GetMaterial())
+	end
+	hook.Add("CreateClientsideRagdoll","JackyOpSquadCreateRagdollClientHook",JackyOpSquadCreateRagdollClientHook)
+	local function JackySetClientBoolean(data)
+		local Ent=data:ReadEntity()
+		local Key=data:ReadString()
+		local Value=data:ReadBool()
+		Ent[Key]=Value
+	end
+	usermessage.Hook("JackySetClientBoolean",JackySetClientBoolean)
+	local function JackyClientHeadcrabRemoval(data)
+		local Pos=data:ReadVector()
+		timer.Simple(.01,function()
+			for key,rag in pairs(ents.FindInSphere(Pos,90))do
+				if(rag:GetClass()=="class C_ClientRagdoll")then
+					local Moddel=rag:GetModel()
+					if((Moddel=="models/headcrabclassic.mdl")or(Moddel=="models/headcrab.mdl"))then
+						SafeRemoveEntity(rag)
+					end
+				end
+			end
+		end)
+	end
+	usermessage.Hook("JackyClientHeadcrabRemoval",JackyClientHeadcrabRemoval)
+	local function JackyClientRagdollRemoval(data)
+		local Pos=data:ReadVector()
+		timer.Simple(.01,function()
+			for key,rag in pairs(ents.FindInSphere(Pos,90))do
+				if(rag:GetClass()=="class C_ClientRagdoll")then
+					SafeRemoveEntity(rag)
+				end
+			end
+		end)
+	end
+	usermessage.Hook("JackyOpSquadNoRagdoll",JackyClientRagdollRemoval)
+	local function JackyOpSquadRemoveHelmet(data)
+		SafeRemoveEntity(data:ReadEntity().Helmet)
+	end
+	usermessage.Hook("JackyOpSquadRemoveHelmet",JackyOpSquadRemoveHelmet)
+	--local Avg=0
+	--local Count=0
+	local function JackyOpSquadOpaqueDrawFunc(bDrawingDepth,bDrawingSkybox)
+		--Avg=Avg+FrameTime()
+		--Count=Count+1
+		--if(Count>=300)then
+		--	Count=0
+		--	JPrint(Avg/300)
+		--	Avg=0
+		--end
+		for key,helm in pairs(ents.FindByClass("class C_BaseFlex"))do
+			if(helm.IsJackyOpSquadHelmet)then
+				if not(IsValid(helm.Wearer))then
+					SafeRemoveEntity(helm)
+					return
+				end
+				local Pos,Ang=helm.Wearer:GetBonePosition(6) --head
+				local Right=Ang:Right()
+				local Up=Ang:Up()
+				local Forward=Ang:Forward()
+				helm:SetRenderOrigin(Pos-Forward*59+Right*29.7-Up*1.8)
+				Ang:RotateAroundAxis(Up,-190)
+				Ang:RotateAroundAxis(Right,-95)
+				Ang:RotateAroundAxis(Forward,102)
+				Ang:RotateAroundAxis(Ang:Right(),20)
+				helm:SetAngles(Ang)
+				local PosTwo=Pos+Vector(0,0,40) -- all this shit could be avoided if the damn model just had a proper origin
+				local Col=render.GetLightColor(PosTwo)
+				render.SuppressEngineLighting(true)
+				render.SetModelLighting(BOX_TOP,Col.r*1.5,Col.g*1.5,Col.b*1.5)
+				render.SetModelLighting(BOX_BOTTOM,Col.r*.25,Col.g*.25,Col.b*.25)
+				render.SetModelLighting(BOX_RIGHT,Col.r*.25,Col.g*.25,Col.b*.25)
+				render.SetModelLighting(BOX_LEFT,Col.r*.25,Col.g*.25,Col.b*.25)
+				render.SetModelLighting(BOX_FRONT,Col.r*.25,Col.g*.25,Col.b*.25)
+				render.SetModelLighting(BOX_BACK,Col.r*.25,Col.g*.25,Col.b*.25)
+				helm:DrawModel()
+				render.ResetModelLighting(1,1,1)
+				render.SuppressEngineLighting(false)
+			end
+		end
+	end
+	hook.Add("PostDrawOpaqueRenderables","JackyOpSquadOpaqueDrawFunc",JackyOpSquadOpaqueDrawFunc)
+	--- END OLD OPSQUADS CODE ---
 	--- no u ---
 	local blurMat,Dynamic,MenuOpen,YesMat,NoMat=Material("pp/blurscreen"),0,false,Material("icon16/accept.png"),Material("icon16/cancel.png")
 	local function BlurBackground(panel)
@@ -333,4 +457,35 @@ if(CLIENT)then
 		Scroll:SetPos(10,30)
 		PopulateList(Scroll,FriendList,Myself,W,H)
 	end)
+	function JMod_MakeModel(self,mdl,mat,scale,col)
+		local Mdl=ClientsideModel(mdl)
+		if(mat)then Mdl:SetMaterial(mat) end
+		if(scale)then Mdl:SetModelScale(scale,0) end
+		if(col)then Mdl:SetColor(col) end
+		Mdl:SetPos(self:GetPos())
+		Mdl:SetParent(self)
+		Mdl:SetNoDraw(true)
+		return Mdl
+	end
+	function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
+		if(pos)then mdl:SetRenderOrigin(pos) end
+		if(ang)then mdl:SetRenderAngles(ang) end
+		if(scale)then
+			local Matricks=Matrix()
+			Matricks:Scale(scale)
+			mdl:EnableMatrix("RenderMultiply",Matricks)
+		end
+		local R,G,B=render.GetColorModulation()
+		local RenderCol=color or Vector(1,1,1)
+		render.SetColorModulation(RenderCol.x,RenderCol.y,RenderCol.z)
+		if(mat)then render.ModelMaterialOverride(mat) end
+		if(fullbright)then render.SuppressEngingLighting(true) end
+		if(translucenty)then render.SetBlend(translucency) end
+		--mdl:SetLOD(8)
+		mdl:DrawModel()
+		render.SetColorModulation(R,G,B)
+		render.ModelMaterialOverride(nil)
+		render.SuppressEngineLighting(false)
+		render.SetBlend(1)
+	end
 end
