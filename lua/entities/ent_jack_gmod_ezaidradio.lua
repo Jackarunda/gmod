@@ -185,7 +185,7 @@ if(SERVER)then
 		local MsgLength,Path=string.len(msg),"/npc/combine_soldier/vo/"
 		for i=1,math.Round(MsgLength/15) do
 			timer.Simple(i*.75,function()
-				if(IsValid(self))then
+				if((IsValid(self))and(self:GetState()>0))then
 					self:EmitSound(Path..self.Voices[math.random(1,#self.Voices)],65,120)
 				end
 			end)

@@ -38,7 +38,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 							"ent_jack_gmod_ezbattery",
 							"ent_jack_gmod_ezbattery"
 						},
-						["linked ammo"]={
+						["ammo"]={
 							"ent_jack_gmod_ezammo",
 							"ent_jack_gmod_ezammo",
 							"ent_jack_gmod_ezammo",
@@ -60,6 +60,15 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						},
 						["parts crate"]={
 							"ent_jack_gmod_ezcrate_parts"
+						},
+						["hl2 ammo"]={
+							"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
+							"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
+							"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
+							"item_rpg_round","item_rpg_round","item_rpg_round",
+							"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
+							"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
+							"npc_grenade_frag","npc_grenade_frag","npc_grenade_frag"
 						}
 					}
 				}

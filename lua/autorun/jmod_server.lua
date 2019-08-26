@@ -1454,24 +1454,30 @@ if(SERVER)then
 					station.state=EZ_STATION_STATE_BUSY
 					local DropPos=FindDropPosFromSignalOrigin(station.deliveryLocation)
 					if(DropPos)then
-						NotifyAllRadios(stationID,"good drop, package away, returning to base")
 						local DropVelocity=VectorRand()
 						DropVelocity.z=0
 						DropVelocity:Normalize()
-						DropVelocity=DropVelocity*70000 -- MUAHAHAHAHA
+						DropVelocity=DropVelocity*400
 						local Eff=EffectData()
 						Eff:SetOrigin(DropPos)
 						Eff:SetStart(DropVelocity)
 						util.Effect("eff_jack_gmod_jetflyby",Eff,true,true)
-						-- todo: sound
 						local DeliveryItems=JMOD_CONFIG.RadioSpecs.AvailablePackages[station.deliveryType]
-						timer.Simple(1,function()
+						timer.Simple(.9,function()
 							local Box=ents.Create("ent_jack_aidbox")
 							Box:SetPos(DropPos)
-							Box.InitialVel=-DropVelocity/100 -- FUCK
+							Box.InitialVel=-DropVelocity*10
 							Box.Contents=DeliveryItems
+							Box.NoFadeIn=true
+							Box:SetDTBool(0,"true")
 							Box:Spawn()
 							Box:Initialize()
+							---
+							sound.Play("snd_jack_flyby_drop.wav",DropPos,150,100)
+							for k,playa in pairs(ents.FindInSphere(DropPos,6000))do
+								if(playa:IsPlayer())then sound.Play("snd_jack_flyby_drop.wav",playa:GetShootPos(),50,100) end
+							end
+							NotifyAllRadios(stationID,"good drop, package away, returning to base")
 						end)
 					else
 						NotifyAllRadios(stationID,"drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB")
@@ -1515,17 +1521,16 @@ if(SERVER)then
 	end
 	function JMod_EZradioRequest(transceiver,id,ply,pkg)
 		local PackageInfo,Station=JMOD_CONFIG.RadioSpecs.AvailablePackages[pkg],EZ_RADIO_STATIONS[id]
-		print("HI WHAT IS HAPPENING")
-		print(EZ_RADIO_STATIONS)
-		-- TODO: big bug right here that needs to be fixed, ill do it later
-		PrintTable(EZ_RADIO_STATIONS)
+		if not(Station)then
+			JMod_EZradioEstablish(transceiver,id)
+			Station=EZ_RADIO_STATIONS[id]
+		end
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			return "negative on that request, we're currently delivering another package"
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
-			-- math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25))
-			local DeliveryTime,Pos=3,transceiver:GetPos() -- DEBUG
+			local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25)),transceiver:GetPos()
 			Station.state=EZ_STATION_STATE_DELIVERING
 			Station.nextDeliveryTime=CurTime()+DeliveryTime
 			Station.deliveryLocation=Pos

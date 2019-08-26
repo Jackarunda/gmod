@@ -1,0 +1,10 @@
+VertexLitGeneric
+{
+
+	"$basetexture" "models/jessev92/rnl/weapons/parachute/v_parachute2_d"
+	"$bumpmap" "models/jessev92/rnl/weapons/parachute/v_parachute2_b"
+
+	$nocull 1
+	$alphatest 1
+
+}

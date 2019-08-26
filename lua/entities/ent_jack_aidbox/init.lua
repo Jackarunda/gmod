@@ -24,8 +24,13 @@ function ENT:Initialize()
 			self:GetPhysicsObject():AddAngleVelocity(VectorRand()*math.Rand(0,3000))
 		end
 	end)
-	self.Opacity=0
+	self.Opacity=(self.NoFadeIn and 1)or 0
 	self:SetDTFloat(0,self.Opacity)
+	self.Parachuted=self:GetDTBool(0)
+	if(self.Parachuted)then
+		self:GetPhysicsObject():SetDragCoefficient(40)
+		self:GetPhysicsObject():SetAngleDragCoefficient(40)
+	end
 end
 function ENT:PhysicsCollide(data,physobj)
 	if((data.Speed>2000)and(data.DeltaTime>.2))then
@@ -110,11 +115,21 @@ function ENT:MakeSide(pos,ang,dir)
 	SafeRemoveEntityDelayed(Side,math.random(8,16))
 end
 function ENT:Think()
-	self.Opacity=self.Opacity+.01
-	if(self.Opacity>1)then self.Opacity=1 end
-	self:SetDTFloat(0,self.Opacity)
-	self:NextThink(CurTime()+.01)
-	return true
+	if not(self.DoneDropping)then
+		if(self:GetVelocity():Length()<200)then
+			self.DoneDropping=true
+			self:GetPhysicsObject():SetDragCoefficient(1)
+			self:GetPhysicsObject():SetAngleDragCoefficient(1)
+			self:SetDTBool(0,false)
+		end
+	end
+	if not(self.NoFadeIn)then
+		self.Opacity=self.Opacity+.01
+		if(self.Opacity>1)then self.Opacity=1 end
+		self:SetDTFloat(0,self.Opacity)
+		self:NextThink(CurTime()+.01)
+		return true
+	end
 end
 function ENT:OnRemove()
 	--aw fuck you
