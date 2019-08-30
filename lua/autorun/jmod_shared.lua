@@ -36,6 +36,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						["batteries"]={
 							"ent_jack_gmod_ezbattery",
 							"ent_jack_gmod_ezbattery",
+							"ent_jack_gmod_ezbattery",
 							"ent_jack_gmod_ezbattery"
 						},
 						["ammo"]={
@@ -69,6 +70,13 @@ hook.Add("Initialize","JMOD_Initialize",function()
 							"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
 							"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
 							"npc_grenade_frag","npc_grenade_frag","npc_grenade_frag"
+						},
+						["rations"]={
+							"ent_jack_gmod_eznutrients",
+							"ent_jack_gmod_eznutrients",
+							"ent_jack_gmod_eznutrients",
+							"ent_jack_gmod_eznutrients",
+							"ent_jack_gmod_eznutrients"
 						}
 					}
 				}
@@ -1117,6 +1125,7 @@ JMod_EZammoBoxSize=300
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
 JMod_EZadvPartBoxSize=20
+JMod_EZnutrientBoxSize=100
 JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
 JMod_EZbuildCostSentry={parts=200,power=100,ammo=300,advparts=20}

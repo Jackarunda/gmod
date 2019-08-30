@@ -1419,6 +1419,38 @@ if(SERVER)then
 		if not((ply)and(ply:IsSuperAdmin()))then return end
 		JMOD_CONFIG=util.JSONToTable(file.Read("jmod.json"))
 	end)
+	local NextMainThink,NextNutritionThink=0,0
+	hook.Add("Think","JMOD_SERVER_THINK",function()
+		local Time=CurTime()
+		if(NextMainThink>Time)then return end
+		NextMainThink=Time+3
+		---
+		if(NextNutritionThink<Time)then
+			NextNutritionThink=Time+10
+			for k,playa in pairs(player.GetAll())do
+				if(playa.EZnutrition)then
+					if(playa:Alive())then
+						local Nuts=playa.EZnutrition.Nutrients
+						if(Nuts>0)then
+							playa.EZnutrition.Nutrients=Nuts-1
+							local Helf,Max,Nuts=playa:Health(),playa:GetMaxHealth()
+							if(Helf<Max)then
+								playa:SetHealth(Helf+1)
+							elseif(math.Rand(0,1)<.75)then
+								local BoostedFrac=(Helf-Max)/Max
+								if(math.Rand(0,1)>BoostedFrac)then
+									playa:SetHealth(Helf+1)
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end)
+	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
+		ply.EZnutrition=nil
+	end)
 	-- EZ Radio Code --
 	local function NotifyAllRadios(stationID,msg)
 		local Radios=EZ_RADIO_STATIONS[stationID].transceivers
@@ -1530,7 +1562,8 @@ if(SERVER)then
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
-			local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25)),transceiver:GetPos()
+			--math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25))
+			local DeliveryTime,Pos=3,transceiver:GetPos()
 			Station.state=EZ_STATION_STATE_DELIVERING
 			Station.nextDeliveryTime=CurTime()+DeliveryTime
 			Station.deliveryLocation=Pos

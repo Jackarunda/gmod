@@ -42,7 +42,10 @@ if(SERVER)then
 		self.NextLoad=0
 		self.Loaded=false
 		---
-		timer.Simple(.01,function() self:GetPhysicsObject():SetMass(self.Mass) end)
+		timer.Simple(.01,function()
+			self:GetPhysicsObject():SetMass(self.Mass)
+			self:GetPhysicsObject():Wake()
+		end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(self.Loaded)then return end
@@ -76,7 +79,11 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		activator:PickupObject(self)
+		if((self.AltUse)and(activator:KeyDown(IN_WALK)))then
+			self:AltUse(activator)
+		else
+			activator:PickupObject(self)
+		end
 	end
 	function ENT:Think()
 		--pfahahaha

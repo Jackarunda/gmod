@@ -83,7 +83,9 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
+		if(activator:KeyDown(IN_WALK))then
+			activator:PickupObject(self)
+		elseif not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
 			activator:Give("wep_jack_gmod_ezbuildkit")
 			activator:SelectWeapon("wep_jack_gmod_ezbuildkit")
 			self:Remove()
