@@ -29,6 +29,30 @@ if(SERVER)then
 			util.Effect(table.Random(self.ShellEffects),Eff,true,true)
 		end
 	end
+	function ENT:AltUse(ply)
+		local Wep=ply:GetActiveWeapon()
+		if(Wep)then
+			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
+			if(PrimType)then
+				if(PrimSize==-1)then PrimSize=-PrimSize end
+				if(ply:GetAmmoCount(PrimType)<PrimSize*10)then
+					ply:GiveAmmo(PrimSize,PrimType)
+					self:UseEffect(self:GetPos(),self)
+					self:SetResource(self:GetResource()-self.MaxResource*.1)
+					if(self:GetResource()<=0)then self:Remove();return end
+				end
+			end
+			if(SecType)then
+				if(SecSize==-1)then SecSize=-SecSize end
+				if(ply:GetAmmoCount(SecType)<SecSize*5)then
+					ply:GiveAmmo(math.ceil(SecSize/2),SecType)
+					self:UseEffect(self:GetPos(),self)
+					self:SetResource(self:GetResource()-self.MaxResource*.1)
+					if(self:GetResource()<=0)then self:Remove();return end
+				end
+			end
+		end
+	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,240,150,80)
 	function ENT:Draw()

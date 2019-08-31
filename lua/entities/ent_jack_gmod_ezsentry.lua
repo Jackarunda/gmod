@@ -48,7 +48,7 @@ ENT.DynamicPerfSpecs={
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade] end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*JMOD_CONFIG.SentryPerformanceMult end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 end
 function ENT:Upgrade(level)

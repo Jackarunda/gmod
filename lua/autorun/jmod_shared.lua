@@ -10,7 +10,7 @@ game.AddParticles("particles/muzzleflashes_test_b.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
-
+---
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local FileContents=file.Read("jmod_config.txt")
@@ -19,8 +19,15 @@ hook.Add("Initialize","JMOD_Initialize",function()
 			JMOD_CONFIG={
 				Author="Jackarunda",
 				Note="radio packages must have all lower-case names",
+				SentryPerformanceMult=1,
+				FoodSpecs={
+					DigestSpeed=1,
+					ConversionEfficiency=1,
+					EatSpeed=1,
+					BoostMult=1
+				},
 				RadioSpecs={
-					DeliveryTimeAvg=40,
+					DeliveryTimeMult=1,
 					AvailablePackages={
 						["parts"]={
 							"ent_jack_gmod_ezparts",
@@ -1128,6 +1135,7 @@ JMod_EZadvPartBoxSize=20
 JMod_EZnutrientBoxSize=100
 JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
+JMod_EZnutrientsCrateSize=20
 JMod_EZbuildCostSentry={parts=200,power=100,ammo=300,advparts=20}
 JMod_EZbuildCostAidRadio={parts=100,power=100,advparts=40}
 -- TODO

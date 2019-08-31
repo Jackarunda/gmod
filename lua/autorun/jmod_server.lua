@@ -1426,7 +1426,7 @@ if(SERVER)then
 		NextMainThink=Time+3
 		---
 		if(NextNutritionThink<Time)then
-			NextNutritionThink=Time+10
+			NextNutritionThink=Time+10/JMOD_CONFIG.FoodSpecs.DigestSpeed
 			for k,playa in pairs(player.GetAll())do
 				if(playa.EZnutrition)then
 					if(playa:Alive())then
@@ -1437,9 +1437,10 @@ if(SERVER)then
 							if(Helf<Max)then
 								playa:SetHealth(Helf+1)
 							elseif(math.Rand(0,1)<.75)then
+								local BoostMult=JMOD_CONFIG.FoodSpecs.BoostMult
 								local BoostedFrac=(Helf-Max)/Max
 								if(math.Rand(0,1)>BoostedFrac)then
-									playa:SetHealth(Helf+1)
+									playa:SetHealth(Helf+BoostMult)
 								end
 							end
 						end
@@ -1482,7 +1483,7 @@ if(SERVER)then
 		for stationID,station in pairs(EZ_RADIO_STATIONS)do
 			if(station.state==EZ_STATION_STATE_DELIVERING)then
 				if(station.nextDeliveryTime<Time)then
-					station.nextReadyTime=Time+3--math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25)*3)
+					station.nextReadyTime=Time+math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)*3)
 					station.state=EZ_STATION_STATE_BUSY
 					local DropPos=FindDropPosFromSignalOrigin(station.deliveryLocation)
 					if(DropPos)then
@@ -1562,8 +1563,7 @@ if(SERVER)then
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
-			--math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeAvg*math.Rand(.75,1.25))
-			local DeliveryTime,Pos=3,transceiver:GetPos()
+			local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
 			Station.state=EZ_STATION_STATE_DELIVERING
 			Station.nextDeliveryTime=CurTime()+DeliveryTime
 			Station.deliveryLocation=Pos

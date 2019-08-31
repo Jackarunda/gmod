@@ -1,12 +1,12 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
-ENT.PrintName="EZ Nutrient Box"
+ENT.PrintName="EZ Medical Supplies Box"
 ENT.Category="JMod - EZ"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
 ---
-ENT.EZsupplies="nutrients"
+ENT.EZsupplies="medsupplies"
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
 ENT.MaxResource=JMod_EZnutrientBoxSize
 ENT.Model="models/props_junk/cardboard_box003a.mdl"
@@ -18,8 +18,8 @@ ENT.ImpactNoise2="Weapon.ImpactSoft"
 ENT.DamageThreshold=140
 ENT.BreakNoise="Cardboard_Box.Break"
 ---
-ENT.FoodModels={"models/props_junk/garbage_glassbottle001a.mdl","models/props_junk/garbage_glassbottle002a.mdl","models/props_junk/garbage_glassbottle003a.mdl","models/props_junk/garbage_metalcan001a.mdl","models/props_junk/garbage_milkcarton001a.mdl","models/props_junk/garbage_milkcarton002a.mdl","models/props_junk/garbage_plasticbottle003a.mdl","models/props_junk/garbage_takeoutcarton001a.mdl","models/props_junk/GlassBottle01a.mdl","models/props_junk/glassjug01.mdl","models/props_junk/PopCan01a.mdl","models/props_junk/PopCan01a.mdl","models/props/cs_office/trash_can_p8.mdl","models/props/cs_office/Water_bottle.mdl","models/props/cs_office/Water_bottle.mdl","models/noesis/donut.mdl","models/food/burger.mdl","models/food/burger.mdl","models/food/hotdog.mdl","models/food/hotdog.mdl","models/props_junk/watermelon01_chunk01a.mdl","models/props_junk/watermelon01_chunk01b.mdl","models/props_junk/watermelon01_chunk01c.mdl","models/props_junk/watermelon01_chunk02a.mdl","models/props_junk/watermelon01_chunk02c.mdl"}
-if(SERVER)then
+ENT.MediModels={"models/items/healthkit.mdl","models/healthvial.mdl","models/items/medkit_medium.mdl","models/items/medkit_small.mdl","models/items/medkit_large.mdl","models/weapons/w_models/w_syringe.mdl","models/weapons/w_models/w_syringe_proj.mdl","BANDAGE"}
+if(SERVER)then    
 	function ENT:FlingProp(mdl)
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
@@ -61,10 +61,6 @@ if(SERVER)then
 				ply.EZnutrition.NextEat=Time+100/JMOD_CONFIG.FoodSpecs.EatSpeed
 				ply.EZnutrition.Nutrients=ply.EZnutrition.Nutrients+20*JMOD_CONFIG.FoodSpecs.ConversionEfficiency
 				self:SetResource(self:GetResource()-10)
-				if((ply.getDarkRPVar)and(ply.setDarkRPVar)and(ply:getDarkRPVar("energy")))then
-					local Old=ply:getDarkRPVar("energy")
-					ply:setDarkRPVar("energy",math.Clamp(Old+20*JMOD_CONFIG.FoodSpecs.ConversionEfficiency,0,100))
-				end
 				if(self:GetResource()<=0)then self:Remove() end
 				ply:PrintMessage(HUD_PRINTCENTER,"nutrition: "..ply.EZnutrition.Nutrients.."/100")
 			else
