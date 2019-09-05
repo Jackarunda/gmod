@@ -46,9 +46,10 @@ ENT.DynamicPerfSpecs={
 	SearchSpeed=.5
 }
 function ENT:InitPerfSpecs()
+	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*JMOD_CONFIG.SentryPerformanceMult end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*PerfMult end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 end
 function ENT:Upgrade(level)
@@ -65,6 +66,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Float",2,"Electricity")
 	self:NetworkVar("Int",1,"Ammo")
 	self:NetworkVar("Int",2,"Grade")
+	self:NetworkVar("Float",3,"PerfMult")
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -103,6 +105,7 @@ if(SERVER)then
 				if(Col)then self:SetColor(Col) end
 			end
 		end
+		self:SetPerfMult(JMOD_CONFIG.SentryPerformanceMult)
 		self:InitPerfSpecs()
 		---
 		self:Point(0,0)
