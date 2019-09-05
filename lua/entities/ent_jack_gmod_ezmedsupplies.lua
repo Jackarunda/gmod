@@ -3,14 +3,14 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Medical Supplies Box"
 ENT.Category="JMod - EZ"
-ENT.Spawnable=false
-ENT.AdminSpawnable=false
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="medsupplies"
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
 ENT.MaxResource=JMod_EZnutrientBoxSize
-ENT.Model="models/props_junk/cardboard_box003a.mdl"
-ENT.Material="models/mat_jack_gmod_ezammobox"
+ENT.Model="models/items/medjit_large.mdl"
+ENT.Material=""
 ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Cardboard.ImpactHard"
@@ -18,8 +18,8 @@ ENT.ImpactNoise2="Weapon.ImpactSoft"
 ENT.DamageThreshold=140
 ENT.BreakNoise="Cardboard_Box.Break"
 ---
-ENT.MediModels={"models/items/healthkit.mdl","models/healthvial.mdl","models/items/medkit_medium.mdl","models/items/medkit_small.mdl","models/items/medkit_large.mdl","models/weapons/w_models/w_syringe.mdl","models/weapons/w_models/w_syringe_proj.mdl","BANDAGE"}
-if(SERVER)then    
+ENT.MediModels={"models/items/healthkit.mdl","models/healthvial.mdl","models/items/medjit_medium.mdl","models/items/medjit_small.mdl","models/weapons/w_models/w_syringe.mdl","models/weapons/w_models/w_syringe_proj.mdl","models/weapons/w_models/w_bonesaw.mdl","models/bandages.mdl"}
+if(SERVER)then
 	function ENT:FlingProp(mdl)
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
@@ -73,27 +73,13 @@ if(SERVER)then
 elseif(CLIENT)then
 	local TxtCol=Color(255,255,255,80)
 	function ENT:Initialize()
-		self.FoodBox=ClientsideModel("models/props/cs_office/cardboard_box03.mdl")
-		self.FoodBox:SetMaterial("models/mat_jack_aidfood")
-		self.FoodBox:SetParent(self)
-		self.FoodBox:SetNoDraw(true)
-		self.WaterBox=ClientsideModel("models/props/cs_office/cardboard_box03.mdl")
-		self.WaterBox:SetMaterial("models/mat_jack_aidwater")
-		self.WaterBox:SetParent(self)
-		self.WaterBox:SetNoDraw(true)
+		--
 	end
 	function ENT:Draw()
 		local Ang,Pos,Up,Right,Forward=self:GetAngles(),self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
 		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
-		self.FoodBox:SetRenderOrigin(Pos-Right*9-Up*9+Forward*5)
-		self.WaterBox:SetRenderOrigin(Pos+Right*4-Up*9+Forward*5)
-		local BoxAng=Ang:GetCopy()
-		BoxAng:RotateAroundAxis(Up,90)
-		self.FoodBox:SetRenderAngles(BoxAng)
-		self.WaterBox:SetRenderAngles(BoxAng)
-		self.FoodBox:DrawModel()
-		self.WaterBox:DrawModel()
+		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)

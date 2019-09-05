@@ -1423,7 +1423,20 @@ if(SERVER)then
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
 		if(NextMainThink>Time)then return end
-		NextMainThink=Time+3
+		NextMainThink=Time+1
+		---
+		for k,playa in pairs(player.GetAll())do
+			if(playa.EZhealth)then
+				if(playa:Alive())then
+					local Healin=playa.EZhealth
+					if(Healin>0)then
+						playa.EZhealth=Healin-1
+						local Helf,Max=playa:Health(),playa:GetMaxHealth()
+						if(Helf<Max)then playa:SetHealth(Helf+1) end
+					end
+				end
+			end
+		end
 		---
 		if(NextNutritionThink<Time)then
 			NextNutritionThink=Time+10/JMOD_CONFIG.FoodSpecs.DigestSpeed
@@ -1451,6 +1464,7 @@ if(SERVER)then
 	end)
 	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
 		ply.EZnutrition=nil
+		ply.EZhealth=nil
 	end)
 	-- EZ Radio Code --
 	local function NotifyAllRadios(stationID,msg)

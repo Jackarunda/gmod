@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/weapons/w_syringe/w_syringe"
+	"$bumpmap" "models/weapons\w_syringe\w_syringe_normal"
+
+	"$phong" "1"
+//	"$phongexponenttexture" "models\weapons\w_syringe\w_syringe_exponent"
+	"$phongexponent" "1"
+	"$phongboost" "0.1"	
+	"$lightwarptexture" "models\weapons\w_syringe\w_syringe_lightwarp"
+	"$phongfresnelranges"	"[2 5 10]"
+//	"$halflambert" "1"
+
+
+}

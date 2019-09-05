@@ -1,7 +1,7 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 
-SWEP.PrintName	= "EZ Build Kit"
+SWEP.PrintName	= "EZ Medkit"
 
 SWEP.Author		= "Jackarunda"
 SWEP.Purpose	= ""
@@ -30,34 +30,42 @@ SWEP.Secondary.Ammo			= "none"
 
 SWEP.ShowWorldModel=false
 SWEP.VElements = {
-	["wrench"] = { type = "Model", model = "models/props_c17/tools_wrench01a.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.5, 1.5, 0), angle = Angle(0, 90, -90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pliers"] = { type = "Model", model = "models/props_c17/tools_pliers01a.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(2.8, 2.4, -2.5), angle = Angle(0, 180, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["syringe"] = { type = "Model", model = "models/weapons/w_models/w_syringe.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3, 1.5, 4), angle = Angle(0, 0, 180), size = Vector(.5, .5, .5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["bandage"] = { type = "Model", model = "models/bandages.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(1.8, 3.2, -.8), angle = Angle(0, 50, 0), size = Vector(.5, .5, .5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
 SWEP.WElements = {
-	["saw"] = { type = "Model", model = "models/props_forest/circularsaw01.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-6.753, -0.519, 10.909), angle = Angle(104.026, -12.858, -157.793), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["wrench"] = { type = "Model", model = "models/props_c17/tools_wrench01a.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(2.596, 1, 3.635), angle = Angle(0, -90, -90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pliers"] = { type = "Model", model = "models/props_c17/tools_pliers01a.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(4.675, 0, -1.558), angle = Angle(0, 0, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["torch"] = { type = "Model", model = "models/props_silo/welding_torch.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-1.558, 2.596, -8.832), angle = Angle(180, 26.882, 38.57), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pickaxe"] = { type = "Model", model = "models/props_mining/pickaxe01.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-22.338, 2.596, -1.558), angle = Angle(-92.338, 0, 0), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["mask"] = { type = "Model", model = "models/props_silo/welding_helmet.mdl", bone = "ValveBiped.Bip01_Head1", rel = "", pos = Vector(2, 4, 0), angle = Angle(90, -20, 0), size = Vector(1.1, 1.1, 1.1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["axe"] = { type = "Model", model = "models/props_forest/axe.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7.792, 2, 4), angle = Angle(118.052, 87.662, 180), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["toolbox"] = { type = "Model", model = "models/weapons/w_models/w_tooljox.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7, 6, 0.518), angle = Angle(-180, 85.324, 87.662), size = Vector(0.5, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pack1"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-4.676, -7.792, 0), angle = Angle(180, 108.7, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pack2"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-3.636, 3.635, 0), angle = Angle(3.506, 68.96, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+	["saw"] = { type = "Model", model = "models/weapons/w_models/w_bonesaw.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(7.791, 0.518, 0.518), angle = Angle(8.182, -65.974, 0), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["vial"] = { type = "Model", model = "models/healthvial.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(-9, -1.558, 0), angle = Angle(99.35, 92.337, 0), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["bandage3"] = { type = "Model", model = "models/bandages.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(-5.715, 2.596, 3.635), angle = Angle(20.169, -87.663, 0), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["box"] = { type = "Model", model = "models/items/medjit_large.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-14.027, 3.635, -0.519), angle = Angle(-90, 73.636, 90), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["big_syringe"] = { type = "Model", model = "models/weapons/w_models/w_syringe.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(0, 0.557, 4.675), angle = Angle(-180, -118.053, -30.17), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["small_syringe"] = { type = "Model", model = "models/weapons/w_models/w_syringe_proj.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(-6.753, 5.714, 2.596), angle = Angle(3.506, -90, 101.688), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["bandage1"] = { type = "Model", model = "models/bandages.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(0, 1.557, 0.518), angle = Angle(-97.014, 0, 0), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["bandage2"] = { type = "Model", model = "models/bandages.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(-0.519, 4.675, -5.715), angle = Angle(1.169, 5.843, -164.805), size = Vector(1.25, 1.25, 1.25), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["bottle"] = { type = "Model", model = "models/items/medjit_small.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(-11.948, 9.869, -6.753), angle = Angle(-75.974, 3.506, -52.598), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["container"] = { type = "Model", model = "models/items/medjit_medium.mdl", bone = "ValveBiped.Bip01_Pelvis", rel = "", pos = Vector(6.752, 9.869, -1.558), angle = Angle(-115.714, 5.843, -61.949), size = Vector(0.5, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["kit"] = { type = "Model", model = "models/items/healthkit.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-15.065, 0.518, 4.675), angle = Angle(-92.338, -12.858, 97.013), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["mask"] = { type = "Model", model = "models/bloocobalt/l4d/items/cim_fallen_survivor_pocket03.mdl", bone = "ValveBiped.Bip01_Head1", rel = "", pos = Vector(-1, 4.5, 0), angle = Angle(-40.91, -87.663, -90), size = Vector(1.5, 1.5, 1.3), color = Color(255, 255, 255, 255), surpresslightning = false, material = "models/debug/debugwhite", skin = 0, bodygroup = {} },
+	["redkit"] = { type = "Model", model = "models/bloocobalt/l4d/items/w_eq_fieldkit.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-15.065, -1.558, 9.869), angle = Angle(-97.014, -104.027, 3.506), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
+	["defib"] = { type = "Model", model = "models/bloocobalt/l4d/items/w_eq_defibrillator.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-18.182, 1.557, -6.753), angle = Angle(90, 73.636, -5.844), size = Vector(1.5, 1.5, 1.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
 }
-
-SWEP.LastSalvageAttempt=0
-SWEP.NextSwitch=0
-SWEP.Buildables={
-	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1}
+SWEP.Props={
+	"models/healthvial.mdl",
+	"models/bandages.mdl",
+	"models/items/medjit_small.mdl",
+	"models/items/medjit_small.mdl",
+	"models/bloocobalt/l4d/items/w_eq_adrenaline.mdl",
+	"models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl",
+	"models/bloocobalt/l4d/items/w_eq_pills.mdl",
+	"models/bloocobalt/l4d/items/w_eq_pills_cap.mdl",
+	"models/bandages.mdl"
 }
-
 function SWEP:Initialize()
 	self:SetHoldType("fist")
 	self:SCKInitialize()
 	self.NextIdle=0
 	self:Deploy()
-	self:SetSelectedBuild(0)
+	self:SetSupplies(100)
 end
 function SWEP:PreDrawViewModel(vm,wep,ply)
 	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
@@ -71,7 +79,7 @@ end
 local Downness=0
 function SWEP:GetViewModelPosition(pos,ang)
 	local FT=FrameTime()
-	if(self.Owner:KeyDown(IN_SPEED))then
+	if((self.Owner:KeyDown(IN_SPEED))or(self.Owner:KeyDown(IN_ATTACK2)))then
 		Downness=Lerp(FT*2,Downness,10)
 	else
 		Downness=Lerp(FT*2,Downness,0)
@@ -80,166 +88,75 @@ function SWEP:GetViewModelPosition(pos,ang)
 	return pos,ang
 end
 function SWEP:SetupDataTables()
-	self:NetworkVar("Int",1,"SelectedBuild")
+	self:NetworkVar("Int",1,"Supplies")
 end
 function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
 	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
-function SWEP:CanSee(ent)
-	return not util.TraceLine({
-		start=self.Owner:GetShootPos(),
-		endpos=ent:LocalToWorld(ent:OBBCenter()),
-		filter={self.Owner,ent},
-		mask=MASK_OPAQUE
-	}).Hit
-end
-function SWEP:CountResourcesInRange()
-	local Results={}
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
-			local Typ=obj.EZsupplies
-			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-		end
-	end
-	return Results
-end
-function SWEP:HaveResourcesToPerformTask(requirements)
-	local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
-	for typ,amt in pairs(requirements)do
-		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
-			RequirementsMet=false
-			break
-		end
-	end
-	return RequirementsMet
-end
-function SWEP:ConsumeResourcesInRange(requirements)
-	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
-	while not((AllDone)or(Attempts>1000))do
-		local TypesNeeded=table.GetKeys(RequirementsRemaining)
-		if((TypesNeeded)and(#TypesNeeded>0))then
-			local ResourceTypeToLookFor=TypesNeeded[1]
-			local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-			local Donor=self:FindResourceContainer(ResourceTypeToLookFor,1) -- every little bit helps
-			if(Donor)then
-				local AmountWeCanTake=Donor:GetResource()
-				if(AmountWeNeed>=AmountWeCanTake)then
-					Donor:SetResource(0)
-					Donor:Remove()
-					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
-				else
-					Donor:SetResource(AmountWeCanTake-AmountWeNeed)
-					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
-				end
-				if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
-			end
-		else
-			AllDone=true
-		end
-		Attempts=Attempts+1
-	end
-end
-function SWEP:FindResourceContainer(typ,amt)
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:CanSee(obj)))then
-			return obj
-		end
-	end
-end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime()+1)
-	self:SetNextSecondaryFire(CurTime()+1)
+	self:SetNextPrimaryFire(CurTime()+.75)
+	self:SetNextSecondaryFire(CurTime()+.75)
 	if(SERVER)then
-		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
 		local Ent,Pos,Norm=self:WhomIlookinAt()
-		if(SelectedBuild>0)then
-			local Reqs=self.Buildables[SelectedBuild][3]
-			if(self:HaveResourcesToPerformTask(Reqs))then
-				self:ConsumeResourcesInRange(Reqs)
-				Built=true
-				for i=1,20 do
-					timer.Simple(i/100,function()
-						if(IsValid(self))then
-							if(i<20)then
-								sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
-							else
-								local Ent=ents.Create(self.Buildables[SelectedBuild][2])
-								Ent:SetPos(Pos+Norm*self.Buildables[SelectedBuild][4])
-								Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-								Ent.Owner=self.Owner
-								Ent:Spawn()
-								Ent:Activate()
-							end
-						end
-					end)
-				end
+		local AimVec=self.Owner:GetAimVector()
+		if(IsValid(Ent))then
+			local Hit=false
+			if(Ent:IsPlayer())then
+				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+				if((Helf<0)or(Helf>=Max))then return end
+				Ent.EZhealth=(Ent.EZhealth or 0)
+				local Missing=Max-(Helf+Ent.EZhealth)
+				if(Missing<=0)then return end
+				local AddAmt=math.min(Missing,3)
+				self:SetSupplies(self:GetSupplies()-1)
+				Ent.EZhealth=Ent.EZhealth+AddAmt
+				self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
+				Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+				Hit=true
+			elseif((Ent:IsNPC())and(Ent.Health)and(Ent:Health())and(tonumber(Ent:Health())))then
+				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+				if((Helf<0)or(Helf>=Max))then return end
+				local Missing=Max-Helf
+				if(Missing<=0)then return end
+				local AddAmt=math.min(Missing,3)
+				self:SetSupplies(self:GetSupplies()-1)
+				Ent:SetHealth(Helf+AddAmt)
+				self.Owner:PrintMessage(HUD_PRINTCENTER,"health "..Ent:Health().."/"..Max)
+				Hit=true
 			end
-			if not(Built)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
-		elseif((IsValid(Ent))and(Ent.EZupgrades))then
-			local State=Ent:GetState()
-			if(State==-1)then
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be repaired before upgrading")
-			elseif(State~=0)then
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be turned off to upgrade")
-			else
-				local Grade=Ent:GetGrade()
-				if(Grade<5)then
-					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate
-					for resourceType,requiredAmt in pairs(UpgradeInfo)do
-						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
-						if(CurAmt<requiredAmt)then
-							local ResourceContainer=self:FindResourceContainer(resourceType,UpgradeRate)
-							if(ResourceContainer)then
-								self:UpgradeEntWithResource(Ent,ResourceContainer,UpgradeRate)
-								Upgraded=true
-								break
-							end
+			if(Hit)then
+				sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
+				sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
+				for i=1,2 do
+					local EffPos=Pos+VectorRand()*3-AimVec*3
+					local Eff=EffectData()
+					Eff:SetOrigin(EffPos)
+					Eff:SetFlags(3)
+					Eff:SetColor(0)
+					Eff:SetScale(6)
+					util.Effect("bloodspray",Eff,true,true)
+					local EffTwo=EffectData()
+					EffTwo:SetOrigin(EffPos)
+					util.Effect("BloodImpact",EffTwo,true,true)
+					local Tr=util.QuickTrace(EffPos,VectorRand()*30-Vector(0,0,40),{Ent,self.Owner})
+					if(Tr.Hit)then
+						util.Decal("Blood",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
+					end
+				end
+				Ent:RemoveAllDecals()
+				if(self:GetSupplies()<=0)then self:Remove();return end
+				timer.Simple(.05,function()
+					if(IsValid(self))then
+						for i=1,2 do
+							self:FlingProp(table.Random(self.Props),Pos+AimVec*5)
 						end
 					end
-					if not(Upgraded)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for upgrade") end
-				else
-					self.Owner:PrintMessage(HUD_PRINTCENTER,"device already highest grade")
-				end
+				end)
 			end
 		end
-		if((Built)or(Upgraded))then
-			if(Built)then
-				self:BuildEffect(Pos,SelectedBuild)
-			elseif(Upgraded)then
-				self:UpgradeEffect(Pos)
-			end
-		end
-	end
-end
-function SWEP:UpgradeEntWithResource(recipient,donor,amt)
-	local Type,Grade=donor.EZsupplies,recipient:GetGrade()
-	local RequiredSupplies=recipient.EZupgrades.grades[Grade]
-	if not(Type)then return end
-	local CurAmt,DonorCurAmt=recipient.UpgradeProgress[Type] or 0,donor:GetResource()
-	local Limit=RequiredSupplies[Type]
-	local Given=math.min(DonorCurAmt,Limit-CurAmt,amt)
-	recipient.UpgradeProgress[Type]=CurAmt+Given
-	---
-	local Msg="UPGRADING\n"
-	for typ,amount in pairs(RequiredSupplies)do
-		Msg=Msg..typ..": "..tostring(recipient.UpgradeProgress[typ] or 0).."/"..tostring(RequiredSupplies[typ]).."\n"
-	end
-	self.Owner:PrintMessage(HUD_PRINTCENTER,Msg)
-	---
-	if((DonorCurAmt-Given)<=0)then
-		donor:Remove()
-	else
-		donor:SetResource(DonorCurAmt-Given)
-	end
-	local HaveEverything=true
-	for typ,amount in pairs(RequiredSupplies)do
-		if((recipient.UpgradeProgress[typ] or 0)<amount)then HaveEverything=false end
-	end
-	if(HaveEverything)then
-		recipient:Upgrade(Grade+1)
 	end
 end
 local Anims={"fists_right","fists_right","fists_left","fists_left"}--,"fists_uppercut"} -- the uppercut looks so bad
@@ -249,83 +166,91 @@ function SWEP:Pawnch()
 	vm:SendViewModelMatchingSequence( vm:LookupSequence( table.Random(Anims) ) )
 	self:UpdateNextIdle()
 end
-function SWEP:FlingProp(mdl,force)
+function SWEP:FlingProp(mdl,pos,force)
 	local Prop=ents.Create("prop_physics")
-	Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
+	Prop:SetPos(pos)
 	Prop:SetAngles(VectorRand():Angle())
 	Prop:SetModel(mdl)
+	Prop:SetModelScale(.75,0)
 	Prop:Spawn()
 	Prop:Activate()
 	Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 	constraint.NoCollide(Prop,self)
 	local Phys=Prop:GetPhysicsObject()
-	Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
+	Phys:SetMaterial("gmod_silent")
+	Phys:SetVelocity(VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 	Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
 	if(force)then Phys:ApplyForceCenter(force/7) end
 	SafeRemoveEntityDelayed(Prop,math.random(5,10))
 end
 function SWEP:Reload()
-	if(SERVER)then
-		local Time=CurTime()
-		if(self.NextSwitch<Time)then
-			self.NextSwitch=Time+.5
-			local Next=self:GetSelectedBuild()+1
-			if(Next>#self.Buildables)then Next=0 end
-			self:SetSelectedBuild(Next)
-		end
-	end
-end
-function SWEP:BuildEffect(pos,buildType)
-	if(CLIENT)then return end
-	local Scale=self.Buildables[buildType][5]
-	self:UpgradeEffect(pos,Scale*4)
-	local eff=EffectData()
-	eff:SetOrigin(pos+VectorRand())
-	eff:SetScale(Scale)
-	util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
-end
-function SWEP:UpgradeEffect(pos,scale)
-	if(CLIENT)then return end
-	scale=scale or 1
-	local effectdata=EffectData()
-	effectdata:SetOrigin(pos+VectorRand())
-	effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-	effectdata:SetMagnitude(math.Rand(1,2)*scale) --amount and shoot hardness
-	effectdata:SetScale(math.Rand(.5,1.5)*scale) --length of strands
-	effectdata:SetRadius(math.Rand(2,4)*scale) --thickness of strands
-	util.Effect("Sparks",effectdata,true,true)
-	sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+	--
 end
 function SWEP:WhomIlookinAt()
-	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*55,{self.Owner})
 	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
 		if(self.Owner:KeyDown(IN_WALK))then
-			local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
+			local Kit=ents.Create("ent_jack_gmod_ezmedkit")
 			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
 			Kit:SetAngles(self.Owner:GetAimVector():Angle())
 			Kit:Spawn()
 			Kit:Activate()
+			Kit.Supplies=self:GetSupplies()
 			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
 			self:Remove()
 			return
 		else
-			local Ent,Pos,Norm=self:WhomIlookinAt()
-			if(Ent.EZsalvage)then
-				local Time=CurTime()
-				if(Time-self.LastSalvageAttempt<.15)then -- safeguard so you don't accidentally #shrek your valuable machines
-					Ent:EZsalvage()
-					self:Pawnch()
-					self:SetNextPrimaryFire(CurTime()+1)
-					self:SetNextSecondaryFire(CurTime()+1)
-				else
-					self.Owner:PrintMessage(HUD_PRINTCENTER,"double click to salvage")
-				end
-				self.LastSalvageAttempt=Time
+			self:SetNextPrimaryFire(CurTime()+.75)
+			self:SetNextSecondaryFire(CurTime()+.75)
+			if(SERVER)then
+				--[[
+				local Ent=self.Owner
+				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+					if(Ent:IsPlayer())then
+						
+						if((Helf<0)or(Helf>=Max))then return end
+						Ent.EZhealth=(Ent.EZhealth or 0)
+						local Missing=Max-(Helf+Ent.EZhealth)
+						if(Missing<=0)then return end
+						local AddAmt=math.min(Missing,3)
+						self:SetSupplies(self:GetSupplies()-1)
+						Ent.EZhealth=Ent.EZhealth+AddAmt
+						self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
+						Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+						---
+						sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
+						sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
+						for i=1,2 do
+							local EffPos=Pos+VectorRand()*3-AimVec*3
+							local Eff=EffectData()
+							Eff:SetOrigin(EffPos)
+							Eff:SetFlags(3)
+							Eff:SetColor(0)
+							Eff:SetScale(6)
+							util.Effect("bloodspray",Eff,true,true)
+							local EffTwo=EffectData()
+							EffTwo:SetOrigin(EffPos)
+							util.Effect("BloodImpact",EffTwo,true,true)
+							local Tr=util.QuickTrace(EffPos,VectorRand()*30-Vector(0,0,40),{Ent,self.Owner})
+							if(Tr.Hit)then
+								util.Decal("Blood",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
+							end
+						end
+						Ent:RemoveAllDecals()
+						if(self:GetSupplies()<=0)then self:Remove();return end
+						timer.Simple(.05,function()
+							if(IsValid(self))then
+								for i=1,2 do
+									self:FlingProp(table.Random(self.Props),Pos+AimVec*5)
+								end
+							end
+						end)
+					end
+				--]]
 			end
 		end
 	end
@@ -369,19 +294,11 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
-	local W,H,Selected=ScrW(),ScrH(),self:GetSelectedBuild()
-	if(Selected>0)then
-		local Msg="SELECTED: "..self.Buildables[Selected][1].." - "
-		for typ,amt in pairs(self.Buildables[Selected][3])do
-			Msg=Msg..tostring(amt).." "..typ.." "
-		end
-		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
-	end
-	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	local W,H,Supplies=ScrW(),ScrH(),self:GetSupplies()
+	draw.SimpleTextOutlined("Supplies: "..Supplies,"Trebuchet24",W*.4,H*.7,Color(255,255,255,200),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("LMB: heal target","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("RMB: heal self","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 
 ----------------- shit -------------------

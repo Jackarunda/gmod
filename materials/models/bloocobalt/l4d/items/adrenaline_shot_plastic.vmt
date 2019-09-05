@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\bloocobalt\l4d\items/adrenaline_shot_plastic"
+$translucent 1
+$bumpmap "Dev\dev_normal"
+$phong 1
+$phongexponent 120
+$phongfresnelranges "[1 0.5 8]"
+$phongboost 5
+$envmaptint "[.05 .03 .01]"
+$envmap env_cubemap
+	"$nocull" 1
+}

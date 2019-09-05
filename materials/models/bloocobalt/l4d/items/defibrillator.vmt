@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\bloocobalt\l4d\items/defibrillator"
+$bumpmap "effects/flat_normal"
+$selfillum 1
+$phong 1
+$phongboost 1
+$phongexponent 10
+$phongfresnelranges "[0 2 30]"
+	"$nocull" 1
+}
