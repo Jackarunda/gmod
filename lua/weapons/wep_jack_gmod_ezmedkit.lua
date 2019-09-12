@@ -266,7 +266,7 @@ end
 function SWEP:Deploy()
 	if not(IsValid(self.Owner))then return end
 	local vm = self.Owner:GetViewModel()
-	if(vm)then
+	if(IsValid(vm))then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_draw" ) )
 		self:UpdateNextIdle()
 		self:EmitSound("snds_jack_gmod/toolbox"..math.random(1,7)..".wav",65,math.random(90,110))

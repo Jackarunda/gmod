@@ -49,7 +49,9 @@ SWEP.WElements = {
 SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
 SWEP.Buildables={
-	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1}
+	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1},
+	{"EZ Supply Radio","ent_jack_gmod_ezaidradio",JMod_EZbuildCostAidRadio,1,1},
+	{"EZ Automated Field Hospital","ent_jack_gmod_ezfieldhospital",JMod_EZbuildCostAFH,1,1}
 }
 
 function SWEP:Initialize()

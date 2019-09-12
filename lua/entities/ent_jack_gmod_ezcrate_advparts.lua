@@ -8,7 +8,7 @@ ENT.Category="JMod - EZ"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="advparts"
+ENT.ResourceType="advparts"
 ENT.MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize
 ENT.ChildEntity="ent_jack_gmod_ezadvparts"
 ENT.ChildEntityResourceAmount=JMod_EZadvPartBoxSize

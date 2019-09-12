@@ -35,7 +35,7 @@ function ENT:Initialize()
 	local KnockDownMod=1
 	if(self.Thermobaric)then DoorDist=.3;KnockDownMod=3 end
 	
-	util.BlastDamage(self,self:GetOwner() or self,SelfPos,self.BlastRadius,self.BasePower*Mod)
+	util.BlastDamage(self or game.GetWorld(),(self and self.GetOwner and self:GetOwner()) or self,SelfPos,self.BlastRadius,self.BasePower*Mod)
 	util.ScreenShake(SelfPos,99999,99999,self.BasePower/250,self.BlastRadius*1.75)
 	
 	for key,object in pairs(ents.FindInSphere(SelfPos,self.BlastRadius))do
