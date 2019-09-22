@@ -463,7 +463,9 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined("Connected to:","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 					draw.SimpleTextOutlined(self:GetStationID(),"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				end
-				draw.SimpleTextOutlined("Power: "..math.Round(self:GetElectricity()/self.MaxElectricity*100).."%","JMod-Display",0,70,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/self.MaxElectricity
+				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined("Power: "..math.Round(ElecFrac*100).."%","JMod-Display",0,70,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined(StateMsgs[State],"JMod-Display",0,100,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				if(State==STATE_READY)then
 					draw.SimpleTextOutlined('say "supply radio: help"',"JMod-Display-S",0,140,Color(255,255,255,Opacity/2),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,1,Color(0,0,0,Opacity/2))

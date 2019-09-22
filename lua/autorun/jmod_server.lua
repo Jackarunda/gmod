@@ -1465,6 +1465,7 @@ if(SERVER)then
 	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
 		ply.EZnutrition=nil
 		ply.EZhealth=nil
+		ply.EZkillme=nil
 	end)
 	-- EZ Radio Code --
 	local function NotifyAllRadios(stationID,msg)
@@ -1529,11 +1530,14 @@ if(SERVER)then
 					else
 						NotifyAllRadios(stationID,"drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB")
 					end
+				elseif((station.nextNotifyTime<Time)and not(station.notified))then
+					station.notified=true
+					NotifyAllRadios(stationID,"be advised, aircraft on site, drop imminent")
 				end
 			elseif(station.state==EZ_STATION_STATE_BUSY)then
 				if(station.nextReadyTime<Time)then
 					station.state=EZ_STATION_STATE_READY
-					NotifyAllRadios(stationID,"be advised, this outpost is now ready to carry out delivery missions")
+					NotifyAllRadios(stationID,"attention, this outpost is now ready to carry out delivery missions")
 				end
 			end
 		end
@@ -1553,7 +1557,9 @@ if(SERVER)then
 			nextReadyTime=0,
 			deliveryLocation=nil,
 			deliveryType=nil,
-			transceivers={}
+			transceivers={},
+			nextNotifyTime=0,
+			notified=false
 		}
 		table.insert(Station.transceivers,transceiver)
 		EZ_RADIO_STATIONS[id]=Station
@@ -1577,13 +1583,21 @@ if(SERVER)then
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
-			local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+			local DeliveryTime,Pos,Time=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos(),CurTime()
 			Station.state=EZ_STATION_STATE_DELIVERING
-			Station.nextDeliveryTime=CurTime()+DeliveryTime
+			Station.nextDeliveryTime=Time+DeliveryTime
 			Station.deliveryLocation=Pos
 			Station.deliveryType=pkg
+			Station.notified=false
+			Station.nextNotifyTime=Time+(DeliveryTime-3)
 			return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
 		end
 	end
+	concommand.Add("jmod_ez_debug_killme",function(ply)
+		if not(IsValid(ply))then return end
+		if not(GetConVar("sv_cheats"):GetBool())then return end
+		ply.EZkillme=true
+		ply:PrintMessage(HUD_PRINTCENTER,"good luck")
+	end)
 end
 

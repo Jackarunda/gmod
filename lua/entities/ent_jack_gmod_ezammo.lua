@@ -33,7 +33,7 @@ if(SERVER)then
 		local Wep=ply:GetActiveWeapon()
 		if(Wep)then
 			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
-			if(PrimType)then
+			if((PrimType)and(PrimType~=-1))then
 				if(PrimSize==-1)then PrimSize=-PrimSize end
 				if(ply:GetAmmoCount(PrimType)<PrimSize*10)then
 					ply:GiveAmmo(PrimSize,PrimType)
@@ -42,7 +42,7 @@ if(SERVER)then
 					if(self:GetResource()<=0)then self:Remove();return end
 				end
 			end
-			if(SecType)then
+			if((SecType)and(SecType~=-1))then
 				if(SecSize==-1)then SecSize=-SecSize end
 				if(ply:GetAmmoCount(SecType)<SecSize*5)then
 					ply:GiveAmmo(math.ceil(SecSize/2),SecType)

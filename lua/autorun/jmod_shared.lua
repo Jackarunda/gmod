@@ -69,6 +69,9 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						["parts crate"]={
 							"ent_jack_gmod_ezcrate_parts"
 						},
+						["medical supplies crate"]={
+							"ent_jack_gmod_ezcrate_medsupplies"
+						},
 						["hl2 ammo"]={
 							"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
 							"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
@@ -76,7 +79,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 							"item_rpg_round","item_rpg_round","item_rpg_round",
 							"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
 							"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
-							"npc_grenade_frag","npc_grenade_frag","npc_grenade_frag"
+							"weapon_frag","weapon_frag","weapon_frag"
 						},
 						["rations"]={
 							"ent_jack_gmod_eznutrients",
@@ -84,6 +87,21 @@ hook.Add("Initialize","JMOD_Initialize",function()
 							"ent_jack_gmod_eznutrients",
 							"ent_jack_gmod_eznutrients",
 							"ent_jack_gmod_eznutrients"
+						},
+						["medical supplies"]={
+							"ent_jack_gmod_ezmedsupplies",
+							"ent_jack_gmod_ezmedsupplies"
+						},
+						["sentry"]={
+							"ent_jack_gmod_ezsentry"
+						},
+						["supply radio"]={
+							"ent_jack_gmod_ezaidradio"
+						},
+						["medkits"]={
+							"ent_jack_gmod_ezmedkit",
+							"ent_jack_gmod_ezmedkit",
+							"ent_jack_gmod_ezmedkit"
 						}
 					}
 				}

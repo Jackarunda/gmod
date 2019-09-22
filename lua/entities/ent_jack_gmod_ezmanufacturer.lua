@@ -1,52 +1,22 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.PrintName="EZ Automated Field Hospital"
+ENT.PrintName="EZ Manufacturer"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
+ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZconsumes={"power","parts","medsupplies"}
 ENT.EZbuildCost=JMod_EZbuildCostAFH
-ENT.EZupgrades={
-	rate=2,
-	grades={
-		{parts=20,advparts=40},
-		{parts=40,advparts=80},
-		{parts=60,advparts=160},
-		{parts=80,advparts=320}
-	}
-}
 ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
--- config --
-ENT.StaticPerfSpecs={
-	MaxElectricity=100,
-	MaxDurability=100
-}
-ENT.DynamicPerfSpecs={
-	MaxSupplies=50,
-	ElectricalEfficiency=1,
-	HealEfficiency=1,
-	HealSpeed=1
-}
 ----
-function ENT:InitPerfSpecs()
-	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade] end
-end
-function ENT:Upgrade(level)
-	self:SetGrade(level)
-	self:InitPerfSpecs()
-	self.UpgradeProgress={}
-end
-local STATE_BROKEN,STATE_OFF,STATE_ON,STATE_OCCUPIED,STATE_WORKING=-1,0,1,2,3
+local STATE_BROKEN,STATE_OFF,STATE_ON,STATE_WORKING=-1,0,1,2,3
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Float",0,"Electricity")
 	self:NetworkVar("Int",1,"Supplies")
-	self:NetworkVar("Int",2,"Grade")
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -63,7 +33,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/mri-scanner/mri-scanner.mdl")
+		self.Entity:SetModel("models/props_mining/antlion_detector.mdl")
+		self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -84,8 +55,10 @@ if(SERVER)then
 			end
 		end
 		---
-		self:SetGrade(EZ_GRADE_BASIC)
-		self:InitPerfSpecs()
+		self.MaxElectricity=100
+		self.MaxDurability=100
+		self.MaxSupplies=100
+		---
 		self:SetElectricity(self.MaxElectricity)
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
@@ -98,19 +71,17 @@ if(SERVER)then
 		self:SetSupplies(self.MaxSupplies)
 		self.NextHeal=0
 		self.NextEnter=0
-		self.UpgradeProgress={}
-		--
-		self.Pod=ents.Create("prop_vehicle_prisoner_pod")
-		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
-		local Ang,Up,Right,Forward=self:GetAngles(),self:GetUp(),self:GetRight(),self:GetForward()
-		self.Pod:SetPos(self:GetPos()+Up*52+Right*45)
-		Ang:RotateAroundAxis(Up,-90)
-		Ang:RotateAroundAxis(Forward,-85)
-		self.Pod:SetAngles(Ang)
-		self.Pod:Spawn()
-		self.Pod:Activate()
-		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(true)
+		---
+		local Ang=self:GetAngles()
+		Ang:RotateAroundAxis(Ang:Right(),90)
+		self.IntakeChute=ents.Create("prop_physics")
+		self.IntakeChute:SetModel("models/props_phx/construct/metal_tubex2.mdl")
+		self.IntakeChute:SetModelScale(.8,0)
+		self.IntakeChute:SetPos(self:GetPos()+self:GetUp()*30)
+		self.IntakeChute:SetAngles(Ang)
+		self.IntakeChute:Spawn()
+		self.IntakeChute:Activate()
+		timer.Simple(0,function() self.IntakeChuteWeld=constraint.Weld(self,self.IntakeChute,1,1,0,true,true) end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
@@ -204,13 +175,8 @@ if(SERVER)then
 		if(State==STATE_OFF)then
 			self:TurnOn()
 		elseif(State==STATE_ON)then
-			if not(IsValid(self.Pod:GetDriver()))then
-				if(self.NextEnter<CurTime())then activator:EnterVehicle(self.Pod) end
-			end
+			self:TurnOff()
 		end
-	end
-	function ENT:SFX(str)
-		sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
 	end
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
@@ -234,121 +200,14 @@ if(SERVER)then
 		end
 		self.Pod:Fire("lock","",0)
 	end
-	function ENT:Seal()
-		self:SetState(STATE_OCCUPIED)
-		self:SFX("afh_seal")
-		self.Patient=self.Pod:GetDriver()
-		self.NextHeal=CurTime()+3
-		self:ConsumeElectricity()
-	end
-	function ENT:Unseal()
-		self:SetState(STATE_ON)
-		self:SFX("afh_unseal")
-		self.Patient=nil
-		self:ConsumeElectricity()
-	end
-	function ENT:TryStartOperation()
-		if not(IsValid(self.Patient))then return end
-		local Helf,Max=self.Patient:Health(),self.Patient:GetMaxHealth()
-		if(Helf>=Max)then return end -- you're not hurt lol gtfo
-		if(self:GetSupplies()<=0)then return end
-		self:SetState(STATE_WORKING)
-		self:SFX("afh_spoolup")
-		self:ConsumeElectricity()
-	end
-	function ENT:EndOperation(success)
-		self:SetState(STATE_OCCUPIED)
-		if(success)then
-			self:SFX("ding")
-		else
-			self:Whine()
-		end
-		self:ConsumeElectricity()
-	end
 	function ENT:Think()
 		local State,Time,Electricity=self:GetState(),CurTime(),self:GetElectricity()
 		if(self.NextRealThink<Time)then
-			if not(IsValid(self.Pod))then self:Remove();return end
 			self.NextRealThink=Time+.5
-			if(State==STATE_ON)then
-				if(IsValid(self.Pod:GetDriver()))then
-					self:Seal()
-				else
-					if(self.IdleShutOffTime<Time)then
-						self:TurnOff()
-						return
-					end
-				end
-			elseif(State==STATE_OCCUPIED)then
-				if(IsValid(self.Pod:GetDriver()))then
-					self:TryStartOperation()
-				else
-					self:Unseal()
-				end
-				self.IdleShutOffTime=Time+5
-			elseif(State==STATE_WORKING)then
-				if(IsValid(self.Pod:GetDriver()))then
-					self:TryHeal()
-				else
-					self:Unseal()
-				end
-				self.IdleShutOffTime=Time+5
-			end
-		end
-		if(State>0)then
-			if(self.NextHumTime<Time)then
-				self.NextHumTime=Time+3
-				self:SFX("afh_run")
-				self:ConsumeElectricity()
-			end
-			if(Electricity<self.MaxElectricity*.1)then self:Whine() end
-			if(self:GetSupplies()<=self.MaxSupplies*.1)then self:Whine() end
-			if(Electricity<=0)then self:TurnOff() end
+			--
 		end
 		self:NextThink(Time+.1)
 		return true
-	end
-	function ENT:TryHeal()
-		local Time=CurTime()
-		if(self.NextHeal>Time)then return end
-		self.NextHeal=Time+1/self.HealSpeed
-		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
-		if(Supplies<=0)then
-			self:EndOperation(false)
-			return
-		end
-		local Injury=Max-Helf
-		if(Injury>0)then
-			local HealAmt=math.min(Injury,math.ceil(2*self.HealEfficiency^1.5))
-			self.Patient:SetHealth(Helf+HealAmt)
-			self:ConsumeElectricity(2)
-			self:SetSupplies(Supplies-1)
-			for i=1,math.random(1,2) do
-				timer.Simple(math.Rand(.01,.5),function()
-					if(IsValid(self))then self:SFX("ez_robotics/"..math.random(1,42)) end
-				end)
-				timer.Simple(math.Rand(.01,.5),function()
-					if(IsValid(self))then self:SFX("ez_medical/"..math.random(1,27)) end
-				end)
-			end
-			for i=1,math.random(2,4) do
-				timer.Simple(math.Rand(.01,1),function()
-					if(IsValid(self))then
-						local Pos=self:GetPos()+self:GetRight()*math.random(-40,50)+self:GetUp()*math.random(48,52)+self:GetForward()*math.random(-5,5)
-						local Poof=EffectData()
-						Poof:SetOrigin(Pos+VectorRand()*5)
-						util.Effect("eff_jack_Gmod_ezhealpoof",Poof,true,true)
-						if(math.random(1,2)==1)then
-							local Blud=EffectData()
-							Blud:SetOrigin(Pos+VectorRand()*5)
-							util.Effect("BloodImpact",Blud,true,true)
-						end
-					end
-				end)
-			end
-		else
-			self:EndOperation(true)
-		end
 	end
 	function ENT:Whine(serious)
 		local Time=CurTime()
@@ -457,24 +316,17 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
-		self.Camera=JMod_MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.TopCanopy=JMod_MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
-		self.BottomCanopy=JMod_MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		--self.Camera=JMod_MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
 		self.MaxElectricity=100
-		self.OpenAmt=1
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
-	function ENT:Draw()
-		local SelfPos,SelfAng,State,FT,Grade=self:GetPos(),self:GetAngles(),self:GetState(),FrameTime(),self:GetGrade()
-		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+	local DarkSprite=Material("white_square")
+	function ENT:DrawTranslucent()
+		local SelfPos,SelfAng,State,FT=self:GetPos(),self:GetAngles(),self:GetState(),FrameTime()
+		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		---
 		local BasePos=SelfPos+Up*60
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
@@ -485,57 +337,30 @@ elseif(CLIENT)then
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
-		---
-		if(State>1)then
-			self.OpenAmt=math.Clamp(self.OpenAmt-FT*1.3,0,1)--Lerp(FT*2,self.OpenAmt,0)
-		else
-			self.OpenAmt=math.Clamp(self.OpenAmt+FT*1.3,0,1)--Lerp(FT*2,self.OpenAmt,1)
+		local Col=Color(0,0,0,50)
+		render.SetMaterial(DarkSprite)
+		for i=1,30 do
+			render.DrawQuadEasy(BasePos+Up*(i*1.3-5),Up,38,38,Col)
 		end
-		---
-		local DisplayAng=SelfAng:GetCopy()
-		DisplayAng:RotateAroundAxis(Forward,90)
-		if(DetailDraw)then
-			local CamAng=SelfAng:GetCopy()
-			CamAng:RotateAroundAxis(Up,-90)
-			CamAng:RotateAroundAxis(Right,180)
-			JMod_RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
-			---
-			local Matricks=Matrix()
-			Matricks:Scale(Vector(.4,1.45,.5))
-			self.TopCanopy:EnableMatrix("RenderMultiply",Matricks)
-			local TopCanopyAng=SelfAng:GetCopy()
-			TopCanopyAng:RotateAroundAxis(Forward,-10*self.OpenAmt)
-			JMod_RenderModel(self.TopCanopy,BasePos-Up*(17-10*self.OpenAmt)+Right*2,TopCanopyAng)
-			---
-			local Matricks=Matrix()
-			Matricks:Scale(Vector(.4,1.45,.5))
-			self.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
-			local BottomCanopyAng=SelfAng:GetCopy()
-			BottomCanopyAng:RotateAroundAxis(Right,180)
-			JMod_RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
-			---
-			if(State>0)then
-				local Opacity=math.random(50,200)
-				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
-				cam.Start3D2D(BasePos+Up*22+Right*22+Forward*21,DisplayAng,.08)
-				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,0,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("SUPPLIES "..self:GetSupplies().."/"..self.MaxSupplies*EZ_GRADE_BUFFS[Grade],"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				cam.End3D2D()
-			end
-		end
-		if(State<=0)then
-			cam.Start3D2D(BasePos+Up*40+Right*7.8-Forward*50,DisplayAng,1)
-			surface.SetDrawColor(0,0,0,255)
-			surface.DrawRect(39,9,22,12)
-			cam.End3D2D()
-			---
-			cam.Start3D2D(BasePos+Up*11+Right*3.8-Forward*50,DisplayAng,1)
-			surface.SetDrawColor(0,0,0,255)
-			surface.DrawRect(8,9,15,10)
-			surface.DrawRect(77,9,15,10)
-			cam.End3D2D()
-		end
+		--[[
+		local CamAng=SelfAng:GetCopy()
+		--CamAng:RotateAroundAxis(Up,-90)
+		--CamAng:RotateAroundAxis(Right,180)
+		--JMod_RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
+		
+		local Matricks=Matrix()
+		Matricks:Scale(Vector(.4,1.45,.5))
+		self.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
+		local BottomCanopyAng=SelfAng:GetCopy()
+		BottomCanopyAng:RotateAroundAxis(Right,180)
+		JMod_RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
+		
+		local Opacity=math.random(50,200)
+		cam.Start3D2D(BasePos+Up*22+Right*22+Forward*21,DisplayAng,.08)
+		draw.SimpleTextOutlined("POWER "..math.Round(self:GetElectricity()/self.MaxElectricity*100).."%","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		draw.SimpleTextOutlined("SUPPLIES "..self:GetSupplies().."/"..self.MaxSupplies*EZ_GRADE_BUFFS[Grade],"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		cam.End3D2D()
+		--]]
 	end
 	language.Add("ent_jack_gmod_ezfieldhospital","EZ Automated Field Hospital")
 end

@@ -85,8 +85,13 @@ if(SERVER)then
 		elseif not(activator:HasWeapon("wep_jack_gmod_ezmedkit"))then
 			activator:Give("wep_jack_gmod_ezmedkit")
 			activator:SelectWeapon("wep_jack_gmod_ezmedkit")
-			activator:GetWeapon("wep_jack_gmod_ezmedkit"):SetSupplies(self.Supplies or 100)
-			self:Remove()
+			timer.Simple(0,function()
+				local Wep=activator:GetWeapon("wep_jack_gmod_ezmedkit")
+				if(IsValid(Wep))then
+					Wep:SetSupplies(self.Supplies or 100)
+				end
+				self:Remove()
+			end)
 		end
 	end
 	function ENT:Think()
