@@ -190,7 +190,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),150))do
+			for k,targ in pairs(ents.FindInSphere(self:GetPos(),125))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
