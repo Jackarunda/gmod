@@ -195,7 +195,7 @@ if(SERVER)then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.random(.3,.5),function()
+						timer.Simple(math.Rand(.1,.4),function()
 							if(IsValid(self))then
 								if(self:GetState()==STATE_WARNING)then self:Detonate() end
 							end

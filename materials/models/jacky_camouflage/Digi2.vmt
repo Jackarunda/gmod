@@ -1,7 +1,11 @@
 "VertexLitGeneric"
 {
-	// Original shader: BaseTimesLightmap
 	"$basetexture" "models/jacky_camouflage/Digi2"
+	//"$bumpmap" "models/tex_jack_flat_normal"
 	"$surfaceprop" "metal"
 	"$halflambert" "1"
+	//"$phong" "1"
+	//"$phongexponent" "1"
+	//"$phongboost" ".1"
+	//"$phongfresnelranges" "[1 1 1]"
 }

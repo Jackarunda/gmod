@@ -1594,7 +1594,7 @@ if(SERVER)then
 			return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
 		end
 	end
-	concommand.Add("jmod_ez_debug_killme",function(ply)
+	concommand.Add("jmod_debug_killme",function(ply)
 		if not(IsValid(ply))then return end
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		ply.EZkillme=true
