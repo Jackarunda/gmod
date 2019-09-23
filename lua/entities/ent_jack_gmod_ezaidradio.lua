@@ -178,7 +178,7 @@ if(SERVER)then
 		if(self:GetState()<1)then return end
 		self:ConsumeElectricity()
 		if(parrot)then
-			for k,v in pairs(ents.FindInSphere(self:GetPos(),160))do
+			for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
 				if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,parrot) end
 			end
 		end
@@ -192,7 +192,7 @@ if(SERVER)then
 		end
 		timer.Simple(.5,function()
 			if(IsValid(self))then
-				for k,v in pairs(ents.FindInSphere(self:GetPos(),160))do
+				for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
 					if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,msg) end
 				end
 			end

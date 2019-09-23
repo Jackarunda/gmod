@@ -15,7 +15,7 @@ ENT.ModelScale=.5
 ENT.Mass=30
 ENT.ImpactNoise1="drywall.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
 ---

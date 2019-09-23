@@ -102,6 +102,18 @@ hook.Add("Initialize","JMOD_Initialize",function()
 							"ent_jack_gmod_ezmedkit",
 							"ent_jack_gmod_ezmedkit",
 							"ent_jack_gmod_ezmedkit"
+						},
+						["landmines"]={
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine",
+							"ent_jack_gmod_ezlandmine"
 						}
 					}
 				}
@@ -1161,3 +1173,4 @@ JMod_EZbuildCostAFH={parts=400,power=100,advparts=80,medsupplies=50}
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
+-- frickin like ADD npc factions to the whitelist yo, gosh damn

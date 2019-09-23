@@ -15,7 +15,7 @@ ENT.ModelScale=2
 ENT.Mass=50
 ENT.ImpactNoise1="Metal_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ---
 ENT.ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}

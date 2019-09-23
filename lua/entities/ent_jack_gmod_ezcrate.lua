@@ -8,7 +8,7 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"Resource")

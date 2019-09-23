@@ -15,7 +15,7 @@ ENT.ModelScale=.5
 ENT.Mass=30
 ENT.ImpactNoise1="drywall.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ENT.PropModels={
 	"models/items/healthkit.mdl",

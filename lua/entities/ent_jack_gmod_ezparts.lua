@@ -15,7 +15,7 @@ ENT.ModelScale=.8
 ENT.Mass=50
 ENT.ImpactNoise1="Wood_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Wood_Box.Break"
 ---
 if(SERVER)then

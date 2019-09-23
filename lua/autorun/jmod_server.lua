@@ -1,6 +1,7 @@
 include("jmod_shared.lua")
 if(SERVER)then
 	util.AddNetworkString("JMod_Friends") -- ^:3
+	util.AddNetworkString("JMod_MineColor")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1598,6 +1599,15 @@ if(SERVER)then
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		ply.EZkillme=true
 		ply:PrintMessage(HUD_PRINTCENTER,"good luck")
+	end)
+	net.Receive("JMod_MineColor",function(ln,ply)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local Mine=net.ReadEntity()
+		local Col=net.ReadColor()
+		local Arm=tobool(net.ReadBit())
+		if not(IsValid(Mine))then return end
+		Mine:SetColor(Col)
+		if(Arm)then Mine:Arm(ply) end
 	end)
 end
 

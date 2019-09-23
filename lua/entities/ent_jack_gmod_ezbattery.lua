@@ -14,7 +14,7 @@ ENT.Material="models/mat_jack_gmod_ezbattery"
 ENT.ModelScale=.6
 ENT.Mass=50
 ENT.ImpactNoise1="Canister.ImpactHard"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ---
 if(SERVER)then

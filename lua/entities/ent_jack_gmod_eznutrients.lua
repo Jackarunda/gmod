@@ -15,7 +15,7 @@ ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Cardboard.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ENT.BreakNoise="Cardboard_Box.Break"
 ---
 ENT.FoodModels={"models/props_junk/garbage_glassbottle001a.mdl","models/props_junk/garbage_glassbottle002a.mdl","models/props_junk/garbage_glassbottle003a.mdl","models/props_junk/garbage_metalcan001a.mdl","models/props_junk/garbage_milkcarton001a.mdl","models/props_junk/garbage_milkcarton002a.mdl","models/props_junk/garbage_plasticbottle003a.mdl","models/props_junk/garbage_takeoutcarton001a.mdl","models/props_junk/GlassBottle01a.mdl","models/props_junk/glassjug01.mdl","models/props_junk/PopCan01a.mdl","models/props_junk/PopCan01a.mdl","models/props/cs_office/trash_can_p8.mdl","models/props/cs_office/Water_bottle.mdl","models/props/cs_office/Water_bottle.mdl","models/noesis/donut.mdl","models/food/burger.mdl","models/food/burger.mdl","models/food/hotdog.mdl","models/food/hotdog.mdl","models/props_junk/watermelon01_chunk01a.mdl","models/props_junk/watermelon01_chunk01b.mdl","models/props_junk/watermelon01_chunk01c.mdl","models/props_junk/watermelon01_chunk02a.mdl","models/props_junk/watermelon01_chunk02c.mdl"}

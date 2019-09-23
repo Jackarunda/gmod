@@ -488,4 +488,50 @@ if(CLIENT)then
 		render.SuppressEngineLighting(false)
 		render.SetBlend(1)
 	end
+	net.Receive("JMod_MineColor",function()
+		local Ent,NextColorCheck=net.ReadEntity(),0
+		if not(IsValid(Ent))then return end
+		local Frame=vgui.Create("DFrame")
+		Frame:SetSize(200,200)
+		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:SetTitle("EZ Landmine")
+		Frame:MakePopup()
+		local Picker
+		function Frame:Paint()
+			BlurBackground(self)
+			local Time=CurTime()
+			if(NextColorCheck<Time)then
+				if not(IsValid(Ent))then Frame:Close();return end
+				NextColorCheck=Time+.25
+				local Col=Picker:GetColor()
+				net.Start("JMod_MineColor")
+				net.WriteEntity(Ent)
+				net.WriteColor(Color(Col.r,Col.g,Col.b))
+				net.WriteBit(false)
+				net.SendToServer()
+			end
+		end
+		Picker=vgui.Create("DColorMixer",Frame)
+		Picker:SetPos(5,25)
+		Picker:SetSize(190,115)
+		Picker:SetAlphaBar(false)
+		Picker:SetPalette(false)
+		Picker:SetWangs(false)
+		Picker:SetColor(Ent:GetColor())
+		local Butt=vgui.Create("DButton",Frame)
+		Butt:SetPos(5,145)
+		Butt:SetSize(190,50)
+		Butt:SetText("ARM")
+		function Butt:DoClick()
+			local Col=Picker:GetColor()
+			net.Start("JMod_MineColor")
+			net.WriteEntity(Ent)
+			net.WriteColor(Color(Col.r,Col.g,Col.b))
+			net.WriteBit(true)
+			net.SendToServer()
+			Frame:Close()
+		end
+	end)
 end

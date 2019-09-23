@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
-ENT.DamageThreshold=140
+ENT.DamageThreshold=120
 ---
 local Props={
 	"models/props_c17/tools_wrench01a.mdl",
