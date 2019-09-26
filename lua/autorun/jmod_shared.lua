@@ -13,111 +13,123 @@ game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 ---
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
-		local FileContents=file.Read("jmod_config.txt")
-		if(FileContents)then JMOD_CONFIG=util.JSONToTable(FileContents) end
-		if not(JMOD_CONFIG)then
-			JMOD_CONFIG={
-				Author="Jackarunda",
-				Note="radio packages must have all lower-case names",
-				SentryPerformanceMult=1,
-				FoodSpecs={
-					DigestSpeed=1,
-					ConversionEfficiency=1,
-					EatSpeed=1,
-					BoostMult=1
-				},
-				RadioSpecs={
-					DeliveryTimeMult=1,
-					AvailablePackages={
-						["parts"]={
-							"ent_jack_gmod_ezparts",
-							"ent_jack_gmod_ezparts",
-							"ent_jack_gmod_ezparts",
-							"ent_jack_gmod_ezparts",
-							"ent_jack_gmod_ezparts"
-						},
-						["advanced parts"]={
-							"ent_jack_gmod_ezadvparts",
-							"ent_jack_gmod_ezadvparts"
-						},
-						["batteries"]={
-							"ent_jack_gmod_ezbattery",
-							"ent_jack_gmod_ezbattery",
-							"ent_jack_gmod_ezbattery",
-							"ent_jack_gmod_ezbattery"
-						},
-						["ammo"]={
-							"ent_jack_gmod_ezammo",
-							"ent_jack_gmod_ezammo",
-							"ent_jack_gmod_ezammo",
-							"ent_jack_gmod_ezammo",
-							"ent_jack_gmod_ezammo"
-						},
-						["tool kits"]={
-							"ent_jack_gmod_ezbuildkit",
-							"ent_jack_gmod_ezbuildkit"
-						},
-						["ammo crate"]={
-							"ent_jack_gmod_ezcrate_ammo"
-						},
-						["battery crate"]={
-							"ent_jack_gmod_ezcrate_power"
-						},
-						["advanced parts crate"]={
-							"ent_jack_gmod_ezcrate_advparts"
-						},
-						["parts crate"]={
-							"ent_jack_gmod_ezcrate_parts"
-						},
-						["medical supplies crate"]={
-							"ent_jack_gmod_ezcrate_medsupplies"
-						},
-						["hl2 ammo"]={
-							"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
-							"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
-							"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
-							"item_rpg_round","item_rpg_round","item_rpg_round",
-							"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
-							"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
-							"weapon_frag","weapon_frag","weapon_frag"
-						},
-						["rations"]={
-							"ent_jack_gmod_eznutrients",
-							"ent_jack_gmod_eznutrients",
-							"ent_jack_gmod_eznutrients",
-							"ent_jack_gmod_eznutrients",
-							"ent_jack_gmod_eznutrients"
-						},
-						["medical supplies"]={
-							"ent_jack_gmod_ezmedsupplies",
-							"ent_jack_gmod_ezmedsupplies"
-						},
-						["sentry"]={
-							"ent_jack_gmod_ezsentry"
-						},
-						["supply radio"]={
-							"ent_jack_gmod_ezaidradio"
-						},
-						["medkits"]={
-							"ent_jack_gmod_ezmedkit",
-							"ent_jack_gmod_ezmedkit",
-							"ent_jack_gmod_ezmedkit"
-						},
-						["landmines"]={
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine",
-							"ent_jack_gmod_ezlandmine"
-						}
+		local NewConfig={
+			Author="Jackarunda",
+			Version=1,
+			Note="radio packages must have all lower-case names",
+			SentryPerformanceMult=1,
+			MineDelay=1,
+			MinePower=1,
+			FumigatorGasAmount=1,
+			PoisonGasDamage=1,
+			PoisonGasLingerTime=1,
+			FoodSpecs={
+				DigestSpeed=1,
+				ConversionEfficiency=1,
+				EatSpeed=1,
+				BoostMult=1
+			},
+			RadioSpecs={
+				DeliveryTimeMult=1,
+				AvailablePackages={
+					["parts"]={
+						"ent_jack_gmod_ezparts",
+						"ent_jack_gmod_ezparts",
+						"ent_jack_gmod_ezparts",
+						"ent_jack_gmod_ezparts",
+						"ent_jack_gmod_ezparts"
+					},
+					["advanced parts"]={
+						"ent_jack_gmod_ezadvparts",
+						"ent_jack_gmod_ezadvparts"
+					},
+					["batteries"]={
+						"ent_jack_gmod_ezbattery",
+						"ent_jack_gmod_ezbattery",
+						"ent_jack_gmod_ezbattery",
+						"ent_jack_gmod_ezbattery"
+					},
+					["ammo"]={
+						"ent_jack_gmod_ezammo",
+						"ent_jack_gmod_ezammo",
+						"ent_jack_gmod_ezammo",
+						"ent_jack_gmod_ezammo",
+						"ent_jack_gmod_ezammo"
+					},
+					["tool kits"]={
+						"ent_jack_gmod_ezbuildkit",
+						"ent_jack_gmod_ezbuildkit"
+					},
+					["ammo crate"]={
+						"ent_jack_gmod_ezcrate_ammo"
+					},
+					["battery crate"]={
+						"ent_jack_gmod_ezcrate_power"
+					},
+					["advanced parts crate"]={
+						"ent_jack_gmod_ezcrate_advparts"
+					},
+					["parts crate"]={
+						"ent_jack_gmod_ezcrate_parts"
+					},
+					["medical supplies crate"]={
+						"ent_jack_gmod_ezcrate_medsupplies"
+					},
+					["hl2 ammo"]={
+						"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
+						"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
+						"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
+						"item_rpg_round","item_rpg_round","item_rpg_round",
+						"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
+						"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
+						"weapon_frag","weapon_frag","weapon_frag"
+					},
+					["rations"]={
+						"ent_jack_gmod_eznutrients",
+						"ent_jack_gmod_eznutrients",
+						"ent_jack_gmod_eznutrients",
+						"ent_jack_gmod_eznutrients",
+						"ent_jack_gmod_eznutrients"
+					},
+					["medical supplies"]={
+						"ent_jack_gmod_ezmedsupplies",
+						"ent_jack_gmod_ezmedsupplies"
+					},
+					["sentry"]={
+						"ent_jack_gmod_ezsentry"
+					},
+					["supply radio"]={
+						"ent_jack_gmod_ezaidradio"
+					},
+					["medkits"]={
+						"ent_jack_gmod_ezmedkit",
+						"ent_jack_gmod_ezmedkit",
+						"ent_jack_gmod_ezmedkit"
+					},
+					["landmines"]={
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine",
+						"ent_jack_gmod_ezlandmine"
 					}
 				}
 			}
+		}
+		local FileContents=file.Read("jmod_config.txt")
+		if(FileContents)then
+			local Existing=util.JSONToTable(FileContents)
+			if((Existing)and(Existing.Version)and(Existing.Version==NewConfig.Version))then
+				JMOD_CONFIG=util.JSONToTable(FileContents)
+			end
+		end
+		if not(JMOD_CONFIG)then
+			JMOD_CONFIG=NewConfig
 			file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG))
 		end
 	end

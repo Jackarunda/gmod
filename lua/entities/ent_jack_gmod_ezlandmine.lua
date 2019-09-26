@@ -124,7 +124,7 @@ if(SERVER)then
 				playa:SetVelocity(playa:GetVelocity()+Up*200)
 			end
 		end
-		util.BlastDamage(self,self,SelfPos,200,math.random(75,110))
+		util.BlastDamage(self,self.Owner or self,SelfPos,200*JMOD_CONFIG.MinePower,math.random(75,110)*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self.Entity:EmitSound("BaseExplosionEffect.Sound")
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
@@ -195,7 +195,7 @@ if(SERVER)then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.1,.4),function()
+						timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
 							if(IsValid(self))then
 								if(self:GetState()==STATE_WARNING)then self:Detonate() end
 							end

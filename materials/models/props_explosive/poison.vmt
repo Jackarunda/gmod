@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"Models/props_explosive/poison"	
+	"$bumpmap"	      "Models/tex_jack_flat_normal"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[.1 .5 1]"
+}
