@@ -54,7 +54,7 @@ if(SERVER)then
 					obj:TakeDamageInfo(Dmg)
 					if((obj:Health()<Helf)and(math.random(1,6)==3))then
 						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
-						obj:ViewPunch(Angle(5,0,0))
+						if(obj.ViewPunch)then obj:ViewPunch(Angle(5,0,0)) end
 					end
 				end
 			end
