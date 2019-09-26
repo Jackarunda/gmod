@@ -45,13 +45,17 @@ if(SERVER)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*40
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
-					local Dmg=DamageInfo()
+					local Dmg,Helf=DamageInfo(),obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
 					Dmg:SetDamage(3*JMOD_CONFIG.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
-					obj:TakeDamageInfo(Dmg) -- todo: COUGH
+					obj:TakeDamageInfo(Dmg)
+					if((obj:Health()<Helf)and(math.random(1,6)==3))then
+						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
+						obj:ViewPunch(Angle(5,0,0))
+					end
 				end
 			end
 		end
@@ -84,22 +88,26 @@ if(SERVER)then
 elseif(CLIENT)then
 	local Mat=Material("particle/smokestack")
 	function ENT:Initialize()
-		self.Col=Color(math.random(50,80),math.random(80,100),50)
+		self.Col=Color(math.random(100,120),math.random(100,150),100)
 		self.Siz=1
-		--self.Visible=true
-		--self.NextVisCheck=CurTime()+1
+		self.Visible=true
+		timer.Simple(2,function()
+			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
+		end)
+		self.NextVisCheck=CurTime()+6
 	end
 	function ENT:DrawTranslucent()
 		--self:DrawModel()
-		local Eye,SelfPos,Time=EyePos(),self:GetPos(),CurTime()
-		if not(util.TraceLine({start=Eye,endpos=SelfPos,{LocalPlayer(),self}}).Hit)then
-			local Dist=Eye:Distance(SelfPos)
-			if(Dist<700)then
-				local Frac=1-Dist/700
-				render.SetMaterial(Mat)
-				render.DrawSprite(SelfPos,self.Siz,self.Siz,Color(self.Col.r,self.Col.g,self.Col.b,100*Frac))
-			end
+		local Time=CurTime()
+		if(self.NextVisCheck<Time)then
+			self.NextVisCheck=Time+1
+			self.Visible=(math.random(1,5)==2 and 1/FrameTime()>50)
 		end
-		self.Siz=math.Clamp(self.Siz+FrameTime()*100,0,500)
+		if(self.Visible)then
+			local SelfPos=self:GetPos()
+			render.SetMaterial(Mat)
+			render.DrawSprite(SelfPos,self.Siz,self.Siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
+			self.Siz=math.Clamp(self.Siz+FrameTime()*100,0,500)
+		end
 	end
 end

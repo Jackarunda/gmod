@@ -117,6 +117,10 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						"ent_jack_gmod_ezlandmine",
 						"ent_jack_gmod_ezlandmine",
 						"ent_jack_gmod_ezlandmine"
+					},
+					["fumigators"]={
+						"ent_jack_gmod_ezfumigator",
+						"ent_jack_gmod_ezfumigator"
 					}
 				}
 			}
@@ -1186,3 +1190,4 @@ JMod_EZbuildCostAFH={parts=400,power=100,advparts=80,medsupplies=50}
 -- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
+-- gm12 nail function to build kit

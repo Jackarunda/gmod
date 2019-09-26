@@ -18,6 +18,8 @@ SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
 SWEP.SlotPos		= 5
 
+SWEP.InstantPickup=true -- Fort Fights compatibility
+
 SWEP.Primary.ClipSize		= -1
 SWEP.Primary.DefaultClip	= -1
 SWEP.Primary.Automatic		= true

@@ -11,6 +11,8 @@ SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
 SWEP.DrawCrosshair=false
 
+SWEP.InstantPickup=true -- Fort Fights compatibility
+
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
 

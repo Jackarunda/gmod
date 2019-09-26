@@ -65,6 +65,7 @@ if(SERVER)then
 		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
 		if(State==STATE_SEALED)then
 			if(Alt)then
+				self.Owner=activator
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
