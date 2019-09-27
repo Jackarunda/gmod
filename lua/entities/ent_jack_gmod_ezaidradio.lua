@@ -315,11 +315,14 @@ if(SERVER)then
 			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
 			if(Name=="help")then
 				if(State==2)then
-					local Msg='stand near radio\nsay in chat: "supply radio: [package]"\navailable packages are:\n'
+					local Msg,Num='stand near radio\nsay in chat: "supply radio: [package]"\navailable packages are:\n',1
+					self:Speak("",ParrotPhrase)
 					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages)do
-						Msg=Msg..name.."\n"
+						timer.Simple(Num/10,function()
+							if(IsValid(self))then self:Speak(name) end
+						end)
+						Num=Num+1
 					end
-					self:Speak(Msg,ParrotPhrase)
 					return true
 				end
 			elseif(JMOD_CONFIG.RadioSpecs.AvailablePackages[Name])then

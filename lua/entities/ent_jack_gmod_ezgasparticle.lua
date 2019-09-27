@@ -62,7 +62,7 @@ if(SERVER)then
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
-					if((obj:Health()<Helf)and(math.random(1,6)==3))then
+					if((obj:Health()<Helf)and(math.random(1,10)==3)and(obj:IsPlayer()))then
 						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
 						if(obj.ViewPunch)then obj:ViewPunch(Angle(5,0,0)) end
 					end
