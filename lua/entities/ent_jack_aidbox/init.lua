@@ -28,7 +28,7 @@ function ENT:Initialize()
 	self:SetDTFloat(0,self.Opacity)
 	self.Parachuted=self:GetDTBool(0)
 	if(self.Parachuted)then
-		self:GetPhysicsObject():SetDragCoefficient(40)
+		self:GetPhysicsObject():SetDragCoefficient(40*JMOD_CONFIG.RadioSpecs.ParachuteDragMult)
 		self:GetPhysicsObject():SetAngleDragCoefficient(40)
 	end
 end

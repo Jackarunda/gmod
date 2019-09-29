@@ -1418,7 +1418,7 @@ if(SERVER)then
 	end)
 	concommand.Add("jmod_reloadconfig",function(ply)
 		if not((ply)and(ply:IsSuperAdmin()))then return end
-		JMOD_CONFIG=util.JSONToTable(file.Read("jmod.json"))
+		JMOD_CONFIG=util.JSONToTable(file.Read("jmod_config.txt"))
 	end)
 	local NextMainThink,NextNutritionThink=0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()

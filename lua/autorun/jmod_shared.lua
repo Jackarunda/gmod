@@ -31,6 +31,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 			},
 			RadioSpecs={
 				DeliveryTimeMult=1,
+				ParachuteDragMult=1,
 				AvailablePackages={
 					["parts"]={
 						"ent_jack_gmod_ezparts",

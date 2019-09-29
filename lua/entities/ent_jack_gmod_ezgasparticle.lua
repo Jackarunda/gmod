@@ -15,6 +15,7 @@ if(SERVER)then
 		self.LifeTime=math.random(50,100)*JMOD_CONFIG.PoisonGasLingerTime
 		self.DieTime=Time+self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
 		self:RebuildPhysics()
 		self:DrawShadow(false)
 		self.NextDmg=Time+5
@@ -48,7 +49,7 @@ if(SERVER)then
 		if(CLIENT)then return end
 		local Time,SelfPos=CurTime(),self:GetPos()
 		if(self.DieTime<Time)then self:Remove() return end
-		local Force=VectorRand()*2
+		local Force=VectorRand()*4
 		for key,obj in pairs(ents.FindInSphere(SelfPos,300))do
 			if(not(obj==self)and(self:CanSee(obj)))then
 				if(obj.EZgasParticle)then
@@ -70,7 +71,7 @@ if(SERVER)then
 			end
 		end
 		local Phys=self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity()*.2)
+		Phys:SetVelocity(Phys:GetVelocity()*.8)
 		Phys:ApplyForceCenter(Force)
 		self:NextThink(Time+1)
 		return true
@@ -101,6 +102,7 @@ elseif(CLIENT)then
 		self.Col=Color(math.random(100,120),math.random(100,150),100)
 		self.Siz=1
 		self.Visible=true
+		self.Show=true
 		timer.Simple(2,function()
 			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
 		end)
@@ -111,13 +113,13 @@ elseif(CLIENT)then
 		local Time=CurTime()
 		if(self.NextVisCheck<Time)then
 			self.NextVisCheck=Time+1
-			self.Visible=(math.random(1,5)==2 and 1/FrameTime()>50)
+			self.Show=self.Visible and 1/FrameTime()>50
 		end
-		if(self.Visible)then
+		if(self.Show)then
 			local SelfPos=self:GetPos()
 			render.SetMaterial(Mat)
 			render.DrawSprite(SelfPos,self.Siz,self.Siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
-			self.Siz=math.Clamp(self.Siz+FrameTime()*100,0,500)
+			self.Siz=math.Clamp(self.Siz+FrameTime()*200,0,500)
 		end
 	end
 end
