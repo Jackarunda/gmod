@@ -6,7 +6,7 @@ function EFFECT:Init( data )
 	local Vel=data:GetStart()
 	local InitialVel=Vel+VectorRand()*math.Rand(0,300)
 	if(true)then
-		local particle=self.Emitter:Add("mats_jack_halo_sprites/flamelet"..math.random(1,5),Pos)
+		local particle=self.Emitter:Add("mats_jack_gmod_sprites/flamelet"..math.random(1,5),Pos)
 		particle:SetVelocity(InitialVel)
 		particle:SetAirResistance(100)
 		particle:SetGravity(Vector(0,0,200))

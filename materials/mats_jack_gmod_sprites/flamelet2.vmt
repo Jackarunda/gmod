@@ -1,0 +1,10 @@
+"Sprite"
+{
+	"$basetexture" "mats_jack_gmod_sprites/flamelet2"
+	"$spriteorigin" "[ 0.50 0.50 ]"
+	"$spriterendermode" "5"
+	"$ignorez" "0"
+	"$model" "1"
+	"$nocull" "1"
+}
+

@@ -1,8 +1,8 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Base="base_anim"
-ENT.PrintName="Hazard"
-ENT.KillName="Hazard"
+ENT.PrintName="Fire Hazard"
+ENT.KillName="Fire Hazard"
 ENT.IsRemoteKiller=true
 local ThinkRate=22--Hz
 if(SERVER)then
@@ -15,7 +15,7 @@ if(SERVER)then
 				Sound("snds_jack_gmod/fire2.wav")
 			},
 			"eff_jack_gmod_heavyfire",
-			7,
+			15,
 			14,
 			100
 		}
@@ -34,7 +34,7 @@ if(SERVER)then
 		self.NextSound=0
 		self.NextEffect=0
 		self.Range=self.TypeInfo[6]
-		self.Power=25
+		self.Power=5
 	end
 	local function Inflictor(ent)
 		if not(IsValid(ent))then return game.GetWorld() end
@@ -44,12 +44,15 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		local Time,Pos,Dir=CurTime(),self:GetPos(),self:GetForward()
+		print(self:WaterLevel())
 		if(self.NextFizz<Time)then
 			self.NextFizz=Time+.5
-			local Zap=EffectData()
-			Zap:SetOrigin(Pos)
-			Zap:SetStart(self:GetVelocity())
-			util.Effect(self.TypeInfo[3],Zap,true,true)
+			if(math.random(1,2)==2)then
+				local Zap=EffectData()
+				Zap:SetOrigin(Pos)
+				Zap:SetStart(self:GetVelocity())
+				util.Effect(self.TypeInfo[3],Zap,true,true)
+			end
 		end
 		if(self.NextSound<Time)then
 			self.NextSound=Time+1
@@ -57,12 +60,12 @@ if(SERVER)then
 		end
 		if(self.NextEffect<Time)then
 			self.NextEffect=Time+1
-			local Par,Att,Infl=self:GetParent(),self:GetOwner(),Inflictor(self)
+			local Par,Att,Infl=self:GetParent(),self.Owner or self,Inflictor(self)
 			if not(IsValid(Att))then Att=Infl end
 			if((IsValid(Par))and(Par:IsPlayer())and not(Par:Alive()))then self:Remove() return end
 			for k,v in pairs(ents.FindInSphere(Pos,self.Range))do
 				local Class=v:GetClass()
-				if not(Class=="ent_jack_halo_hazard")then
+				if not(Class=="ent_jack_gmod_firehazard")then
 					if((IsValid(v:GetPhysicsObject()))and(self:Visible(v)))then
 						local Dam=DamageInfo()
 						Dam:SetDamage(self.Power*math.Rand(.75,1.25))
@@ -87,10 +90,19 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Ptype=self:GetDTInt(0)
-		if(self.Ptype==0)then self.Ptype=1 end
-		self.TypeInfo=Jhalo_HazardTable[self.Ptype]
-		self.CastLight=math.random(1,5)==1
+		self.Ptype=1
+		self.TypeInfo={
+			"Napalm",
+			{
+				Sound("snds_jack_gmod/fire1.wav"),
+				Sound("snds_jack_gmod/fire2.wav")
+			},
+			"eff_jack_gmod_heavyfire",
+			15,
+			14,
+			100
+		}
+		self.CastLight=math.random(1,10)==1
 		self.Size=self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 	end

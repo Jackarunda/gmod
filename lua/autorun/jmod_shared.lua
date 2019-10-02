@@ -1192,3 +1192,5 @@ JMod_EZbuildCostAFH={parts=400,power=100,advparts=80,medsupplies=50}
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- gm12 nail function to build kit
+-- make the damn radio tell you what's goin on
+-- make recipes be in the config yo

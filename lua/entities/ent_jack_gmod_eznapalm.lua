@@ -14,14 +14,14 @@ if(SERVER)then
 			"Napalm",
 			Model("models/weapons/ar2_grenade.mdl"),
 			{""},
-			"models/mat_jack_halo_brightwhite",
+			"models/mat_jack_gmod_brightwhite",
 			Color(255,255,255),
 			Angle(0,0,0),
-			1200,
+			600,
 			.5,
 			.5,
 			.5,
-			2,
+			5,
 			"eff_jack_gmod_fire",
 			false,
 			true,
@@ -102,11 +102,13 @@ if(SERVER)then
 			local Own=self:GetOwner()
 			if(self.TypeInfo[13])then
 				if((self.NextFizz<Time)and((self.Armed)or not(self.ArmTime)))then
-					self.NextFizz=Time+.1
-					local Zap=EffectData()
-					Zap:SetOrigin(Pos+self.CurVel/ThinkRate)
-					Zap:SetStart(self.CurVel)
-					util.Effect(self.TypeInfo[13],Zap,true,true)
+					self.NextFizz=Time+.2
+					if(math.random(1,2)==1)then
+						local Zap=EffectData()
+						Zap:SetOrigin(Pos+self.CurVel/ThinkRate)
+						Zap:SetStart(self.CurVel)
+						util.Effect(self.TypeInfo[13],Zap,true,true)
+					end
 				end
 			end
 			if(self.TypeInfo[9]>0)then
@@ -157,13 +159,12 @@ if(SERVER)then
 			Dam:SetInflictor(Inflictor(self))
 			tr.Entity:TakeDamageInfo(Dam)
 			timer.Simple(.01,function()
-				local Haz=ents.Create("ent_jack_gmod_hazard")
+				local Haz=ents.Create("ent_jack_gmod_firehazard")
 				Haz:SetDTInt(0,1)
 				Haz:SetPos(tr.HitPos+tr.HitNormal*2)
 				Haz:SetAngles(tr.HitNormal:Angle())
-				Haz:SetOwner(self:GetOwner())
+				Haz.Owner=self.Owner or game.GetWorld()
 				Haz:SetDTEntity(0,self:GetDTEntity(0))
-				Haz.JhaloSpawned=self.JhaloSpawned
 				Haz:Spawn()
 				Haz:Activate()
 				if not(tr.Entity:IsWorld())then Haz:SetParent(tr.Entity) end
@@ -175,9 +176,25 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Ptype=self:GetDTInt(0)
-		if(self.Ptype==0)then self.Ptype=1 end
-		self.TypeInfo=Jhalo_ProjectileTable[self.Ptype]
+		self.Ptype=6
+		self.TypeInfo={
+			"NAPALM",
+			"Napalm",
+			Model("models/weapons/ar2_grenade.mdl"),
+			{""},
+			"models/mat_jack_gmod_brightwhite",
+			Color(255,255,255),
+			Angle(0,0,0),
+			1200,
+			.5,
+			.5,
+			.5,
+			2,
+			"eff_jack_gmod_fire",
+			false,
+			true,
+			false
+		}
 		self.RenderPos=self:GetPos()+self:GetForward()*20
 		self.RenderTime=CurTime()+.175 -- don't draw if we're not fucking moving, gmod sucks so bad
 		self.Mawdel=ClientsideModel(self.TypeInfo[3])

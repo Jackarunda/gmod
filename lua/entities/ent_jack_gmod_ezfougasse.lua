@@ -5,8 +5,8 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Fougasse Mine"
-ENT.Spawnable=false
-ENT.AdminSpawnable=false
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
@@ -34,6 +34,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_c17/oildrum001.mdl")
 		self.Entity:SetMaterial("models/jacky_camouflage/digi2")
+		self:SetModelScale(.6,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -41,7 +42,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(10)
+			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
@@ -54,7 +55,7 @@ if(SERVER)then
 				if((self:GetState()==STATE_ARMED)and(math.random(1,5)==3))then
 					self:Detonate()
 				else
-					self.Entity:EmitSound("Weapon.ImpactHard")
+					self.Entity:EmitSound("Ccanister.ImpactHard")
 				end
 			end
 		end
@@ -78,10 +79,7 @@ if(SERVER)then
 		local Alt=activator:KeyDown(IN_WALK)
 		if(State==STATE_OFF)then
 			if(Alt)then
-				self.Owner=activator
-				net.Start("JMod_MineColor")
-				net.WriteEntity(self)
-				net.Send(activator)
+				self:Arm(activator)
 			else
 				activator:PickupObject(self)
 			end
@@ -89,51 +87,35 @@ if(SERVER)then
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
 			self.Owner=activator
-			self:DrawShadow(true)
 		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:LocalToWorld(self:OBBCenter())
-		local Up=Vector(0,0,1)
-		local EffectType=1
-		local Traec=util.QuickTrace(self:GetPos(),Vector(0,0,-5),self.Entity)
-		if(Traec.Hit)then
-			if((Traec.MatType==MAT_DIRT)or(Traec.MatType==MAT_SAND))then
-				EffectType=1
-			elseif((Traec.MatType==MAT_CONCRETE)or(Traec.MatType==MAT_TILE))then
-				EffectType=2
-			elseif((Traec.MatType==MAT_METAL)or(Traec.MatType==MAT_GRATE))then
-				EffectType=3
-			elseif(Traec.MatType==MAT_WOOD)then
-				EffectType=4
-			end
-		else
-			EffectType=5
-		end
-		local plooie=EffectData()
-		plooie:SetOrigin(SelfPos)
-		plooie:SetScale(1)
-		plooie:SetRadius(EffectType)
-		plooie:SetNormal(Up)
-		util.Effect("eff_jack_minesplode",plooie,true,true)
-		for key,playa in pairs(ents.FindInSphere(SelfPos,50))do
-			local Clayus=playa:GetClass()
-			if((playa:IsPlayer())or(playa:IsNPC())or(Clayuss=="prop_vehicle_jeep")or(Clayuss=="prop_vehicle_jeep")or(Clayus=="prop_vehicle_airboat"))then
-				playa:SetVelocity(playa:GetVelocity()+Up*200)
-			end
-		end
+		local Sploom=EffectData()
+		Sploom:SetOrigin(SelfPos)
+		util.Effect("Explosion",Sploom,true,true)
 		util.BlastDamage(self,self.Owner or self,SelfPos,200*JMOD_CONFIG.MinePower,math.random(75,110)*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self.Entity:EmitSound("BaseExplosionEffect.Sound")
-		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
+		--self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Pos=self:GetPos()
 		if(self)then self:Remove() end
 		timer.Simple(.1,function()
 			local Tr=util.QuickTrace(Pos+Vector(0,0,10),Vector(0,0,-20))
 			if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
+		for i=1,50 do
+			local FireAng=(self:GetUp()+VectorRand()*.2+Vector(0,0,.1)):Angle()
+			local Flame=ents.Create("ent_jack_gmod_eznapalm")
+			Flame:SetPos(SelfPos)
+			Flame:SetAngles(FireAng)
+			Flame:SetOwner(self.Owner or game.GetWorld())
+			Flame.Owner=self.Owner or self
+			Flame:Spawn()
+			Flame:Activate()
+		end
 	end
 	function ENT:Arm(armer)
 		local State=self:GetState()
@@ -145,7 +127,6 @@ if(SERVER)then
 			if(IsValid(self))then
 				if(self:GetState()==STATE_ARMING)then
 					self:SetState(STATE_ARMED)
-					self:DrawShadow(false)
 				end
 			end
 		end)
@@ -190,7 +171,8 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),125))do
+			local SearchPos=self:GetPos()+self:GetUp()*200
+			for k,targ in pairs(ents.FindInSphere(SearchPos,200))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
@@ -228,5 +210,5 @@ elseif(CLIENT)then
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
-	language.Add("ent_jack_gmod_ezlandmine","EZ Landmine")
+	language.Add("ent_jack_gmod_ezfougasse","EZ Fougasse Mine")
 end

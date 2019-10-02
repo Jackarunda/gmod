@@ -39,7 +39,7 @@ function EFFECT:Init( data )
 		particle:SetLighting(false)
 		particle:SetCollide(true)
 	end
-	if((math.random(1,3)==2)and not(GAMEMODE.Lagging))then
+	if(math.random(1,5)==2)then
 		local particle=self.Emitter:Add("sprites/heatwave",Pos)
 		particle:SetVelocity(InitialVel)
 		particle:SetAirResistance(200)
