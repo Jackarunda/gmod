@@ -44,7 +44,7 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		local Time,Pos,Dir=CurTime(),self:GetPos(),self:GetForward()
-		print(self:WaterLevel())
+		--print(self:WaterLevel())
 		if(self.NextFizz<Time)then
 			self.NextFizz=Time+.5
 			if(math.random(1,2)==2)then
@@ -106,7 +106,7 @@ elseif(CLIENT)then
 		self.Size=self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 	end
-	local GlowSprite=Material("mat_jack_halo_glowsprite")
+	local GlowSprite=Material("mat_jack_gmod_glowsprite")
 	function ENT:Draw()
 		local Time,Pos=CurTime(),self:GetPos()
 		render.SetMaterial(GlowSprite)

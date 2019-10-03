@@ -1194,3 +1194,4 @@ JMod_EZbuildCostAFH={parts=400,power=100,advparts=80,medsupplies=50}
 -- gm12 nail function to build kit
 -- make the damn radio tell you what's goin on
 -- make recipes be in the config yo
+-- bring over the homicide hands
