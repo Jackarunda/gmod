@@ -34,7 +34,7 @@ if(SERVER)then
 		self.NextSound=0
 		self.NextEffect=0
 		self.Range=self.TypeInfo[6]
-		self.Power=5
+		self.Power=3
 	end
 	local function Inflictor(ent)
 		if not(IsValid(ent))then return game.GetWorld() end

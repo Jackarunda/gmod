@@ -8,7 +8,7 @@ ENT.PrintName="EZ Fougasse Mine"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(90,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
@@ -33,7 +33,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_c17/oildrum001.mdl")
-		self.Entity:SetMaterial("models/jacky_camouflage/digi2")
+		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
 		self:SetModelScale(.6,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -44,6 +44,7 @@ if(SERVER)then
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
+			self:GetPhysicsObject():SetDamping(.01,3)
 		end)
 		---
 		self:SetState(STATE_OFF)
@@ -62,7 +63,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=5)then
+		if(dmginfo:GetDamage()>=20)then
 			local Pos,State=self:GetPos(),self:GetState()
 			if((State==STATE_ARMED)and(math.random(1,6)==3))then
 				self:Detonate()
@@ -171,7 +172,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
-			local SearchPos=self:GetPos()+self:GetUp()*200
+			local SearchPos=self:GetPos()+self:GetUp()*250
 			for k,targ in pairs(ents.FindInSphere(SearchPos,200))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
@@ -199,15 +200,15 @@ elseif(CLIENT)then
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
-		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
+		local State,Vary,Pos=self:GetState(),math.sin(CurTime()*50)/2+.5,self:GetPos()+self:GetUp()*28
 		if(State==STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),10,10,Color(255,255,255))
+			render.DrawSprite(Pos,20,20,Color(255,0,0))
+			render.DrawSprite(Pos,10,10,Color(255,255,255))
 		elseif(State==STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
+			render.DrawSprite(Pos,30*Vary,30*Vary,Color(255,0,0))
+			render.DrawSprite(Pos,15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
 	language.Add("ent_jack_gmod_ezfougasse","EZ Fougasse Mine")

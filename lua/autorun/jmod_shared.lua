@@ -15,7 +15,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local NewConfig={
 			Author="Jackarunda",
-			Version=1,
+			Version=2,
 			Note="radio packages must have all lower-case names",
 			SentryPerformanceMult=1,
 			MineDelay=1,
@@ -122,6 +122,12 @@ hook.Add("Initialize","JMOD_Initialize",function()
 					["fumigators"]={
 						"ent_jack_gmod_ezfumigator",
 						"ent_jack_gmod_ezfumigator"
+					},
+					["fougasse mines"]={
+						"ent_jack_gmod_ezfougasse",
+						"ent_jack_gmod_ezfougasse",
+						"ent_jack_gmod_ezfougasse",
+						"ent_jack_gmod_ezfougasse"
 					}
 				}
 			}
