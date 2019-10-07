@@ -51,9 +51,10 @@ SWEP.WElements = {
 SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
 SWEP.Buildables={
+	{"Nail","ez nail",{parts=10},1,.2},
 	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1},
 	{"EZ Supply Radio","ent_jack_gmod_ezaidradio",JMod_EZbuildCostAidRadio,1,1},
-	{"EZ Automated Field Hospital","ent_jack_gmod_ezfieldhospital",JMod_EZbuildCostAFH,1,1}
+	{"EZ Automated Field Hospital","ent_jack_gmod_ezfieldhospital",JMod_EZbuildCostAFH,1,2}
 }
 
 function SWEP:Initialize()
@@ -151,6 +152,49 @@ function SWEP:FindResourceContainer(typ,amt)
 		end
 	end
 end
+function SWEP:FindNailPos()
+	local Pos,Vec=self.Owner:GetShootPos(),self.Owner:GetAimVector()
+	local Tr1=util.QuickTrace(Pos,Vec*80,{self.Owner})
+	if(Tr1.Hit)then
+		local Ent1=Tr1.Entity
+		if((Tr1.HitSky)or(Ent1:IsWorld())or(Ent1:IsPlayer())or(Ent1:IsNPC()))then return nil end
+		if not(IsValid(Ent1:GetPhysicsObject()))then return nil end
+		local Tr2=util.QuickTrace(Pos,Vec*120,{self.Owner,Ent1})
+		if(Tr2.Hit)then
+			local Ent2=Tr2.Entity
+			if((Ent1==Ent2)or(Tr2.HitSky)or(Ent2:IsPlayer())or(Ent2:IsNPC()))then return nil end
+			if(not(Ent2:IsWorld())and not(IsValid(Ent2:GetPhysicsObject())))then return nil end
+			local Dist=Tr1.HitPos:Distance(Tr2.HitPos)
+			if(Dist>30)then return nil end
+			return true,Tr1.HitPos,Vec,Ent1,Ent2
+		end
+	end
+end
+function SWEP:Nail()
+	local Success,Pos,Vec,Ent1,Ent2=self:FindNailPos()
+	if not(Success)then return end
+	local Weld=constraint.Find(Ent1,Ent2,"Weld",0,0)
+	if(Weld)then
+		local Strength=Weld:GetTable().forcelimit+3000
+		Weld:Remove()
+		timer.Simple(.1,function()
+			Weld=constraint.Weld(Ent1,Ent2,0,0,Strength,false,false)
+		end)
+	else
+		Weld=constraint.Weld(Ent1,Ent2,0,0,3000,false,false)
+	end
+	local Nail=ents.Create("prop_dynamic")
+	Nail:SetModel("models/crossbow_bolt.mdl")
+	Nail:SetMaterial("models/shiny")
+	Nail:SetColor(Color(50,50,50))
+	Nail:SetPos(Pos-Vec*2)
+	Nail:SetAngles(Vec:Angle())
+	Nail:Spawn()
+	Nail:Activate()
+	Nail:SetParent(Ent1)
+	Ent1.EZnails=Ent1.EZnails or {}
+	table.insert(Ent1.EZnails,Nail)
+end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	self:Pawnch()
@@ -160,22 +204,29 @@ function SWEP:PrimaryAttack()
 		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
 		local Ent,Pos,Norm=self:WhomIlookinAt()
 		if(SelectedBuild>0)then
+			if((self.Buildables[SelectedBuild][2]=="ez nail")and not(self:FindNailPos()))then return end
 			local Reqs=self.Buildables[SelectedBuild][3]
 			if(self:HaveResourcesToPerformTask(Reqs))then
 				self:ConsumeResourcesInRange(Reqs)
 				Built=true
-				for i=1,20 do
+				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][5])
+				for i=1,BuildSteps do
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
-							if(i<20)then
+							if(i<BuildSteps)then
 								sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 							else
-								local Ent=ents.Create(self.Buildables[SelectedBuild][2])
-								Ent:SetPos(Pos+Norm*self.Buildables[SelectedBuild][4])
-								Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-								Ent.Owner=self.Owner
-								Ent:Spawn()
-								Ent:Activate()
+								local Class=self.Buildables[SelectedBuild][2]
+								if(Class=="ez nail")then
+									self:Nail()
+								else
+									local Ent=ents.Create(Class)
+									Ent:SetPos(Pos+Norm*self.Buildables[SelectedBuild][4])
+									Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
+									Ent.Owner=self.Owner
+									Ent:Spawn()
+									Ent:Activate()
+								end
 							end
 						end
 					end)
@@ -271,11 +322,26 @@ end
 function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
-		if(self.NextSwitch<Time)then
-			self.NextSwitch=Time+.5
-			local Next=self:GetSelectedBuild()+1
-			if(Next>#self.Buildables)then Next=0 end
-			self:SetSelectedBuild(Next)
+		if(self.Owner:KeyDown(IN_WALK))then
+			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner}).Entity
+			if(IsValid(Ent))then
+				if((Ent.EZnails)and(#Ent.EZnails>0))then
+					for k,v in pairs(Ent.EZnails)do
+						if(IsValid(v))then v:Remove() end
+					end
+					Ent.EZnails={}
+					constraint.RemoveConstraints(Ent,"Weld")
+					sound.Play("snds_jack_gmod/ez_tools/hit.wav",Ent:GetPos(),60,math.random(80,120))
+					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Ent:GetPos(),60,math.random(80,120))
+				end
+			end
+		else
+			if(self.NextSwitch<Time)then
+				self.NextSwitch=Time+.5
+				local Next=self:GetSelectedBuild()+1
+				if(Next>#self.Buildables)then Next=0 end
+				self:SetSelectedBuild(Next)
+			end
 		end
 	end
 end
@@ -386,6 +452,7 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+R: remove nails","Trebuchet24",W*.4,H*.7+150,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 
 ----------------- shit -------------------
