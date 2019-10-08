@@ -1167,6 +1167,27 @@ elseif(CLIENT)then
 	hook.Add("HUDPaint","JackyDetGearNotifyPaint",DetGearNotify)
 end
 --- END OLD JACKY EXPLOSIVES CODE ---
+function JMOD_WhomILookinAt(ply,cone,dist)
+	local CreatureTr,ObjTr,OtherTr=nil,nil,nil
+	for i=1,(150*cone) do
+		local Vec=(ply:GetAimVector()+VectorRand()*cone):GetNormalized()
+		local Tr=util.QuickTrace(ply:GetShootPos(),Vec*dist,{ply})
+		if((Tr.Hit)and not(Tr.HitSky)and(Tr.Entity))then
+			local Ent,Class=Tr.Entity,Tr.Entity:GetClass()
+			if((Ent:IsPlayer())or(Ent:IsNPC()))then
+				CreatureTr=Tr
+			elseif((Class=="prop_physics")or(Class=="prop_physics_multiplayer")or(Class=="prop_ragdoll"))then
+				ObjTr=Tr
+			else
+				OtherTr=Tr
+			end
+		end
+	end
+	if(CreatureTr)then return CreatureTr.Entity,CreatureTr.HitPos,CreatureTr.HitNormal end
+	if(ObjTr)then return ObjTr.Entity,ObjTr.HitPos,ObjTr.HitNormal end
+	if(OtherTr)then return OtherTr.Entity,OtherTr.HitPos,OtherTr.HitNormal end
+	return nil,nil,nil
+end
 -- EZ radio stations
 EZ_RADIO_STATIONS={}
 EZ_STATION_STATE_READY=1
