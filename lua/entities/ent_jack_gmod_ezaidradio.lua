@@ -8,7 +8,6 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.EZconsumes={"power","parts"}
-ENT.EZbuildCost=JMod_EZbuildCostAidRadio
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
 ----
@@ -69,6 +68,7 @@ if(SERVER)then
 		self.HaveCheckedForSky=false
 		self.ConnectionAttempts=0
 		self.ConnectionlessThinks=0
+		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Supply Radio"][2]
 		---
 		local Path="/npc/combine_soldier/vo/"
 		local Files,Folders=file.Find("sound"..Path.."*.wav","GAME")

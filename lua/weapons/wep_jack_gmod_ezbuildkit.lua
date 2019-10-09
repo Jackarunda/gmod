@@ -50,12 +50,6 @@ SWEP.WElements = {
 
 SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
-SWEP.Buildables={
-	{"Nail","ez nail",{parts=10},1,.2},
-	{"EZ Sentry","ent_jack_gmod_ezsentry",JMod_EZbuildCostSentry,1,1},
-	{"EZ Supply Radio","ent_jack_gmod_ezaidradio",JMod_EZbuildCostAidRadio,1,1},
-	{"EZ Automated Field Hospital","ent_jack_gmod_ezfieldhospital",JMod_EZbuildCostAFH,1,2}
-}
 
 function SWEP:Initialize()
 	self:SetHoldType("fist")
@@ -63,6 +57,14 @@ function SWEP:Initialize()
 	self.NextIdle=0
 	self:Deploy()
 	self:SetSelectedBuild(0)
+	if(SERVER)then
+		self.Buildables={
+			{"Nail","ez nail",{parts=10},.2}
+		}
+		for name,info in pairs(JMOD_CONFIG.Blueprints)do
+			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1})
+		end
+	end
 end
 function SWEP:PreDrawViewModel(vm,wep,ply)
 	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
@@ -85,7 +87,8 @@ function SWEP:GetViewModelPosition(pos,ang)
 	return pos,ang
 end
 function SWEP:SetupDataTables()
-	self:NetworkVar("Int",1,"SelectedBuild")
+	self:NetworkVar("Int",0,"SelectedBuild")
+	self:NetworkVar("String",0,"Msg")
 end
 function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
@@ -209,7 +212,7 @@ function SWEP:PrimaryAttack()
 			if(self:HaveResourcesToPerformTask(Reqs))then
 				self:ConsumeResourcesInRange(Reqs)
 				Built=true
-				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][5])
+				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
 				for i=1,BuildSteps do
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
@@ -221,9 +224,12 @@ function SWEP:PrimaryAttack()
 									self:Nail()
 								else
 									local Ent=ents.Create(Class)
-									Ent:SetPos(Pos+Norm*self.Buildables[SelectedBuild][4])
+									Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
 									Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
 									Ent.Owner=self.Owner
+									--if(self.Buildables[SelectedBuild][5])then
+									--	self.Buildables[SelectedBuild][5](Ent)
+									--end
 									Ent:Spawn()
 									Ent:Activate()
 								end
@@ -341,13 +347,22 @@ function SWEP:Reload()
 				local Next=self:GetSelectedBuild()+1
 				if(Next>#self.Buildables)then Next=0 end
 				self:SetSelectedBuild(Next)
+				if(Next>0)then
+					local Msg="SELECTED: "..self.Buildables[Next][1].." - "
+					for typ,amt in pairs(self.Buildables[Next][3])do
+						Msg=Msg..tostring(amt).." "..typ.." "
+					end
+					self:SetMsg(Msg)
+				else
+					self:SetMsg("")
+				end
 			end
 		end
 	end
 end
 function SWEP:BuildEffect(pos,buildType)
 	if(CLIENT)then return end
-	local Scale=self.Buildables[buildType][5]
+	local Scale=self.Buildables[buildType][4]^.6
 	self:UpgradeEffect(pos,Scale*4)
 	local eff=EffectData()
 	eff:SetOrigin(pos+VectorRand())
@@ -439,12 +454,8 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
-	local W,H,Selected=ScrW(),ScrH(),self:GetSelectedBuild()
-	if(Selected>0)then
-		local Msg="SELECTED: "..self.Buildables[Selected][1].." - "
-		for typ,amt in pairs(self.Buildables[Selected][3])do
-			Msg=Msg..tostring(amt).." "..typ.." "
-		end
+	local W,H,Msg=ScrW(),ScrH(),self:GetMsg()
+	if((Msg)and(Msg~=""))then
 		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
 	end
 	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))

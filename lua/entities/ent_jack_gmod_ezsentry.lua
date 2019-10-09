@@ -8,7 +8,6 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.EZconsumes={"ammo","power","parts"}
-ENT.EZbuildCost=JMod_EZbuildCostSentry
 ENT.EZupgrades={
 	rate=2,
 	grades={
@@ -116,6 +115,7 @@ if(SERVER)then
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
 		self.UpgradeProgress={}
+		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Sentry"][2]
 		---
 		self:ResetMemory()
 	end

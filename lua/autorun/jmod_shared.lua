@@ -15,7 +15,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local NewConfig={
 			Author="Jackarunda",
-			Version=2,
+			Version=3,
 			Note="radio packages must have all lower-case names",
 			SentryPerformanceMult=1,
 			MineDelay=1,
@@ -130,6 +130,20 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						"ent_jack_gmod_ezfougasse"
 					}
 				}
+			},
+			Blueprints={
+				["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
+				["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
+				["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
+				["EZ Advanced Parts Crate"]={"ent_jack_gmod_ezcrate_advparts",{parts=100},1.5},
+				["EZ Ammo Crate"]={"ent_jack_gmod_ezcrate_ammo",{parts=100},1.5},
+				["EZ Medical Supplies Crate"]={"ent_jack_gmod_ezcrate_medsupplies",{parts=100},1.5},
+				["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
+				["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
+				["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5}
+				--["HL2 Buggy"]={"prop_vehicle_jeep_old",{parts=500,power=50,advparts=10,fuel=300},3,function(ent)
+				--	ent:SetModel("models/buggy.mdl")
+				--end)}
 			}
 		}
 		local FileContents=file.Read("jmod_config.txt")
@@ -1211,14 +1225,10 @@ JMod_EZnutrientBoxSize=100
 JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
 JMod_EZnutrientsCrateSize=20
-JMod_EZbuildCostSentry={parts=200,power=100,ammo=300,advparts=20}
-JMod_EZbuildCostAidRadio={parts=100,power=100,advparts=20}
-JMod_EZbuildCostAFH={parts=400,power=100,advparts=80,medsupplies=50}
 -- TODO
 -- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
--- gm12 nail function to build kit
 -- make the damn radio tell you what's goin on
 -- make recipes be in the config yo
 -- bring over the homicide hands

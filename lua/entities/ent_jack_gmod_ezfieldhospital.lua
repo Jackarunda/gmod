@@ -8,7 +8,6 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.EZconsumes={"power","parts","medsupplies"}
-ENT.EZbuildCost=JMod_EZbuildCostAFH
 ENT.EZupgrades={
 	rate=2,
 	grades={
@@ -99,6 +98,7 @@ if(SERVER)then
 		self.NextHeal=0
 		self.NextEnter=0
 		self.UpgradeProgress={}
+		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Automated Field Hospital"][2]
 		--
 		self.Pod=ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
