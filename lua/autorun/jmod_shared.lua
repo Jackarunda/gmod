@@ -15,8 +15,9 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local NewConfig={
 			Author="Jackarunda",
-			Version=4,
+			Version=5,
 			Note="radio packages must have all lower-case names",
+			Hints=true,
 			SentryPerformanceMult=1,
 			MineDelay=1,
 			MinePower=1,
@@ -1207,6 +1208,38 @@ end
 function JMod_IsDoor(ent)
 	local Class=ent:GetClass()
 	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating")or(Class=="func_breakable"))
+end
+--
+local Hints={
+	["crate"]="tap resource against to store \n press E to retrieve resource",
+	["arm"]="alt+E to arm",
+	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
+	["binding"]="remember, console commands can be bound to a key",
+	["detpack stick"]="hold E on detpack then release E to stick the detpack",
+	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
+	["afh"]="E to enter and get healed",
+	["fix"]="tap parts box against to repair",
+	["supplies"]="tap supplies against to refill",
+	["ammobox"]="alt+E to refill ammo of any weapon",
+	["eat"]="alt+E to consume",
+	["friends"]="concommand jmod_friends to specify allies"
+}
+function JMod_Hint(ply,...)
+	if(CLIENT)then return end
+	if not(JMOD_CONFIG.Hints)then return end
+	local HintKeys={...}
+	ply.NextJModHint=ply.NextJModHint or 0
+	ply.JModHintsGiven=ply.JModHintsGiven or {}
+	local Time=CurTime()
+	if(ply.NextJModHint>Time)then return end
+	for k,key in pairs(HintKeys)do
+		if not(table.HasValue(ply.JModHintsGiven,key))then
+			table.insert(ply.JModHintsGiven,key)
+			ply.NextJModHint=Time+2
+			ply:PrintMessage(HUD_PRINTCENTER,Hints[key])
+			break
+		end
+	end
 end
 -- EZ radio stations
 EZ_RADIO_STATIONS={}

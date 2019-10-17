@@ -74,6 +74,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
+		JMod_Hint(activator,"arm")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(State==STATE_OFF)then
 			if(Alt)then

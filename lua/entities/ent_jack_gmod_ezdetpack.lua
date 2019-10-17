@@ -38,7 +38,7 @@ if(SERVER)then
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self.Entity:SetUseType(ONOFF_USE)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(15)
@@ -46,7 +46,6 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.LastUseTime=0
 		self.NextStick=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
@@ -72,40 +71,45 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:Use(activator)
-		local State=self:GetState()
-		if(State<0)then return end
-		local Alt,Time=activator:KeyDown(IN_WALK),CurTime()
-		if(State==STATE_OFF)then
-			if(Alt)then
-				self.Owner=activator
-				self:SetState(STATE_ARMED)
-				self:EmitSound("snd_jack_minearm.wav",60,100)
-			else
-				if((Time-self.LastUseTime<.3)and(self.NextStick<Time))then
-					local Tr=util.QuickTrace(activator:GetShootPos(),activator:GetAimVector()*120,{self,activator})
-					if(Tr.Hit)then
-						if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
-							self.NextStick=Time+.5
-							local Ang=Tr.HitNormal:Angle()
-							Ang:RotateAroundAxis(Ang:Right(),90)
-							self:SetAngles(Ang)
-							self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
-							constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
-							self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
-						end
-					end
+	function ENT:Use(activator,activatorAgain,onOff)
+		JMod_Hint(activator,"arm","detpack det","binding")
+		local Time=CurTime()
+		if(tobool(onOff))then
+			local State=self:GetState()
+			if(State<0)then return end
+			local Alt=activator:KeyDown(IN_WALK)
+			if(State==STATE_OFF)then
+				if(Alt)then
+					self.Owner=activator
+					self:SetState(STATE_ARMED)
+					self:EmitSound("snd_jack_minearm.wav",60,100)
 				else
 					constraint.RemoveAll(self)
 					activator:PickupObject(self)
+					self.NextStick=Time+.5
+				end
+			else
+				self:EmitSound("snd_jack_minearm.wav",60,70)
+				self:SetState(STATE_OFF)
+				self.Owner=activator
+			end
+		else -- player just released the USE key
+			JMod_Hint(activator,"detpack stick","detpack combo")
+			if((self:IsPlayerHolding())and(self.NextStick<Time))then
+				local Tr=util.QuickTrace(activator:GetShootPos(),activator:GetAimVector()*80,{self,activator})
+				if(Tr.Hit)then
+					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
+						self.NextStick=Time+.5
+						local Ang=Tr.HitNormal:Angle()
+						Ang:RotateAroundAxis(Ang:Right(),90)
+						self:SetAngles(Ang)
+						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
+						constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
+					end
 				end
 			end
-		else
-			self:EmitSound("snd_jack_minearm.wav",60,70)
-			self:SetState(STATE_OFF)
-			self.Owner=activator
 		end
-		self.LastUseTime=Time
 	end
 	function ENT:IncludeSympatheticDetpacks(origin)
 		local Powa,FilterEnts,Points=1,ents.FindByClass("ent_jack_gmod_ezdetpack"),{origin}
@@ -180,10 +184,11 @@ if(SERVER)then
 					for i=1,PowerMult do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,140,math.random(90,110)) end
 				end
 				self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-				local Pos=self:GetPos()
 				timer.Simple(.1,function()
-					local Tr=util.QuickTrace(Pos+Vector(0,0,10),Vector(0,0,-20))
-					if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+					for i=1,5 do
+						local Tr=util.QuickTrace(SelfPos,VectorRand()*20)
+						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+					end
 				end)
 				self:WreckBuildings(SelfPos,PowerMult)
 				self:BlastDoors(SelfPos,PowerMult)
@@ -247,10 +252,7 @@ if(SERVER)then
 		return false
 	end
 	function ENT:Think()
-		local Time=CurTime()
-		if(self:IsPlayerHolding())then self.LastUseTime=Time end
-		self:NextThink(Time+.2)
-		return true
+		--
 	end
 	function ENT:OnRemove()
 		--aw fuck you

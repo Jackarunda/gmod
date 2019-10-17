@@ -17,6 +17,7 @@ ENT.ImpactNoise1="Metal_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
 ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
+ENT.Hint="ammobox"
 ---
 ENT.ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then

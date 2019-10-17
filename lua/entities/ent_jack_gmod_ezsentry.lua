@@ -229,12 +229,10 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Use(activator)
-		local Time=CurTime()
-		if(self.NextUseTime>Time)then return end
-		self.NextUseTime=Time+5
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then return end
+			if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
+			JMod_Hint(activator,"supplies","friends")
 			if(State>0)then
 				self:TurnOff()
 			else

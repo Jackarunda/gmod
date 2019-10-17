@@ -63,6 +63,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
+		JMod_Hint(activator,"arm")
 		if(State==STATE_SEALED)then
 			if(Alt)then
 				self.Owner=activator
