@@ -1,7 +1,7 @@
 ENT.Type 			= "anim"
 ENT.PrintName		= "9mm Ammo Box"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "JMod - Turrets"
+ENT.Category			= "JMod (LEGACY) - Sentries"
 ENT.Information         = "BLOOIE-SCHLANG"
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true

@@ -9,4 +9,4 @@ ENT.Information     = "A U.S. Military M67 fragmentation hand grenade with an M2
 ENT.Spawnable       = true
 ENT.AdminSpawnable  = true
 
-ENT.Category        = "JMod - Explosives"
+ENT.Category        = "JMod (LEGACY) - Explosives"

@@ -1591,7 +1591,7 @@ if(SERVER)then
 			Station.deliveryLocation=Pos
 			Station.deliveryType=pkg
 			Station.notified=false
-			Station.nextNotifyTime=Time+(DeliveryTime-3)
+			Station.nextNotifyTime=Time+(DeliveryTime-5)
 			return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
 		end
 	end

@@ -160,7 +160,8 @@ if(SERVER)then
 		self.NextUseTime=Time+.25
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then return end
+			if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
+			JMod_Hint(activator,"supplies","radio comm")
 			if(State>0)then
 				self:TurnOff()
 			else

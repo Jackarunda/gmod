@@ -15,7 +15,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local NewConfig={
 			Author="Jackarunda",
-			Version=5,
+			Version=6,
 			Note="radio packages must have all lower-case names",
 			Hints=true,
 			SentryPerformanceMult=1,
@@ -36,32 +36,19 @@ hook.Add("Initialize","JMOD_Initialize",function()
 				ParachuteDragMult=1,
 				AvailablePackages={
 					["parts"]={
-						"ent_jack_gmod_ezparts",
-						"ent_jack_gmod_ezparts",
-						"ent_jack_gmod_ezparts",
-						"ent_jack_gmod_ezparts",
-						"ent_jack_gmod_ezparts"
+						{"ent_jack_gmod_ezparts",5}
 					},
 					["advanced parts"]={
-						"ent_jack_gmod_ezadvparts",
-						"ent_jack_gmod_ezadvparts"
+						{"ent_jack_gmod_ezadvparts",2}
 					},
 					["batteries"]={
-						"ent_jack_gmod_ezbattery",
-						"ent_jack_gmod_ezbattery",
-						"ent_jack_gmod_ezbattery",
-						"ent_jack_gmod_ezbattery"
+						{"ent_jack_gmod_ezbattery",4}
 					},
 					["ammo"]={
-						"ent_jack_gmod_ezammo",
-						"ent_jack_gmod_ezammo",
-						"ent_jack_gmod_ezammo",
-						"ent_jack_gmod_ezammo",
-						"ent_jack_gmod_ezammo"
+						{"ent_jack_gmod_ezammo",5}
 					},
 					["tool kits"]={
-						"ent_jack_gmod_ezbuildkit",
-						"ent_jack_gmod_ezbuildkit"
+						{"ent_jack_gmod_ezbuildkit",2}
 					},
 					["ammo crate"]={
 						"ent_jack_gmod_ezcrate_ammo"
@@ -88,15 +75,10 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						"weapon_frag","weapon_frag","weapon_frag"
 					},
 					["rations"]={
-						"ent_jack_gmod_eznutrients",
-						"ent_jack_gmod_eznutrients",
-						"ent_jack_gmod_eznutrients",
-						"ent_jack_gmod_eznutrients",
-						"ent_jack_gmod_eznutrients"
+						{"ent_jack_gmod_eznutrients",5}
 					},
 					["medical supplies"]={
-						"ent_jack_gmod_ezmedsupplies",
-						"ent_jack_gmod_ezmedsupplies"
+						{"ent_jack_gmod_ezmedsupplies",2}
 					},
 					["sentry"]={
 						"ent_jack_gmod_ezsentry"
@@ -105,31 +87,19 @@ hook.Add("Initialize","JMOD_Initialize",function()
 						"ent_jack_gmod_ezaidradio"
 					},
 					["medkits"]={
-						"ent_jack_gmod_ezmedkit",
-						"ent_jack_gmod_ezmedkit",
-						"ent_jack_gmod_ezmedkit"
+						{"ent_jack_gmod_ezmedkit",3}
 					},
 					["landmines"]={
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine",
-						"ent_jack_gmod_ezlandmine"
+						{"ent_jack_gmod_ezlandmine",10}
 					},
 					["fumigators"]={
-						"ent_jack_gmod_ezfumigator",
-						"ent_jack_gmod_ezfumigator"
+						{"ent_jack_gmod_ezfumigator",2}
 					},
 					["fougasse mines"]={
-						"ent_jack_gmod_ezfougasse",
-						"ent_jack_gmod_ezfougasse",
-						"ent_jack_gmod_ezfougasse",
-						"ent_jack_gmod_ezfougasse"
+						{"ent_jack_gmod_ezfougasse",4}
+					},
+					["detpacks"]={
+						{"ent_jack_gmod_ezdetpack",8}
 					}
 				}
 			},
@@ -1222,7 +1192,8 @@ local Hints={
 	["supplies"]="tap supplies against to refill",
 	["ammobox"]="alt+E to refill ammo of any weapon",
 	["eat"]="alt+E to consume",
-	["friends"]="concommand jmod_friends to specify allies"
+	["friends"]="concommand jmod_friends to specify allies",
+	["radio comm"]="radio needs to see sky"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end

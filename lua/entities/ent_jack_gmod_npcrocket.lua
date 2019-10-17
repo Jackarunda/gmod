@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type 			= "anim"
 ENT.Base 			= "base_gmodentity"
 ENT.PrintName		= "RPG"
-ENT.Author			= "JMod - NPCs"
+ENT.Author			= "JMod (LEGACY) - NPCs"
 
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false

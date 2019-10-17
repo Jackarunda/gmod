@@ -3,7 +3,7 @@ ENT.Type 			= "anim"
 ENT.PrintName		= "Combine Stalkers"
 ENT.Author			= "Jackarunda"
 ENT.Information		= ""
-ENT.Category		= "JMod - NPCs"
+ENT.Category		= "JMod (LEGACY) - NPCs"
 
 ENT.Spawnable		= true
 ENT.AdminSpawnable	= true

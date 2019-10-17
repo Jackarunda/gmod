@@ -3,7 +3,7 @@
 ENT.Type 			= "anim"
 ENT.PrintName		= "H.E.A.T. Bomb"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "JMod - Explosives"
+ENT.Category			= "JMod (LEGACY) - Explosives"
 ENT.Information         = "stab stab stab"
 
 ENT.Spawnable			= true

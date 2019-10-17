@@ -72,31 +72,31 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
+		local Dude=activator or activatorAgain
+		self.Owner=Dude
 		JMod_Hint(activator,"arm","detpack det","binding")
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=activator:KeyDown(IN_WALK)
+			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF)then
 				if(Alt)then
-					self.Owner=activator
 					self:SetState(STATE_ARMED)
 					self:EmitSound("snd_jack_minearm.wav",60,100)
 				else
 					constraint.RemoveAll(self)
-					activator:PickupObject(self)
+					Dude:PickupObject(self)
 					self.NextStick=Time+.5
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
 				self:SetState(STATE_OFF)
-				self.Owner=activator
 			end
 		else -- player just released the USE key
-			JMod_Hint(activator,"detpack stick","detpack combo")
+			JMod_Hint(Dude,"detpack stick","detpack combo")
 			if((self:IsPlayerHolding())and(self.NextStick<Time))then
-				local Tr=util.QuickTrace(activator:GetShootPos(),activator:GetAimVector()*80,{self,activator})
+				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
 				if(Tr.Hit)then
 					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
 						self.NextStick=Time+.5
@@ -106,6 +106,7 @@ if(SERVER)then
 						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
 						constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
+						Dude:DropObject()
 					end
 				end
 			end
@@ -113,7 +114,7 @@ if(SERVER)then
 	end
 	function ENT:IncludeSympatheticDetpacks(origin)
 		local Powa,FilterEnts,Points=1,ents.FindByClass("ent_jack_gmod_ezdetpack"),{origin}
-		for k,pack in pairs(ents.FindInSphere(origin,200))do
+		for k,pack in pairs(ents.FindInSphere(origin,100))do
 			if((pack~=self)and(pack.JModEZdetPack))then
 				local PackPos=pack:LocalToWorld(pack:OBBCenter())
 				if not(util.TraceLine({start=origin,endpos=PackPos,filter=FilterEnts}).Hit)then
@@ -178,7 +179,7 @@ if(SERVER)then
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion",Blam,true,true)
-				util.ScreenShake(SelfPos,99999,99999,1,500*PowerMult)
+				util.ScreenShake(SelfPos,99999,99999,1,750*PowerMult)
 				for i=1,PowerMult do sound.Play("BaseExplosionEffect.Sound",SelfPos,120,math.random(90,110)) end
 				if(PowerMult>1)then
 					for i=1,PowerMult do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,140,math.random(90,110)) end
@@ -193,24 +194,11 @@ if(SERVER)then
 				self:WreckBuildings(SelfPos,PowerMult)
 				self:BlastDoors(SelfPos,PowerMult)
 				timer.Simple(0,function()
-					util.BlastDamage(self,self.Owner or self,SelfPos,250*PowerMult,200*PowerMult)
+					local ZaWarudo=game.GetWorld()
+					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					util.BlastDamage(Infl,Att,SelfPos,250*PowerMult,200*PowerMult)
 					self:Remove()
 				end)
-			end
-		end)
-	end
-	function ENT:Arm(armer)
-		local State=self:GetState()
-		if(State~=STATE_OFF)then return end
-		self.Owner=armer
-		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.wav",60,110)
-		timer.Simple(3,function()
-			if(IsValid(self))then
-				if(self:GetState()==STATE_ARMING)then
-					self:SetState(STATE_ARMED)
-					self:DrawShadow(false)
-				end
 			end
 		end)
 	end

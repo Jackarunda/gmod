@@ -86,12 +86,15 @@ function ENT:Use(activator,caller)
 	self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 	self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 	for key,item in pairs(self.Contents)do
-		local Yay=ents.Create(item)
-		Yay:SetPos(Pos+VectorRand()*math.Rand(0,30))
-		Yay:SetAngles(VectorRand():Angle())
-		Yay:Spawn()
-		Yay:Activate()
-		Yay:SetUseType(SIMPLE_USE)
+		local ClassName,Num=item,1
+		if(type(item)~="string")then ClassName=item[1];Num=item[2] end
+		for i=1,Num do
+			local Yay=ents.Create(ClassName)
+			Yay:SetPos(Pos+VectorRand()*math.Rand(0,30))
+			Yay:SetAngles(VectorRand():Angle())
+			Yay:Spawn()
+			Yay:Activate()
+		end
 	end
 	JackaGenericUseEffect(activator)
 	timer.Simple(2,function()

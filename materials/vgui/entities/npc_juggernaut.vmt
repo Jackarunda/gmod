@@ -1,7 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "vgui/entities/npc_juggernaut"
-	"$nolod" 1
-	"$vertexalpha" 1
-	"$vertexcolor" 1
-}

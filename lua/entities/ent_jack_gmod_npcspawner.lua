@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type 			= "anim"
 ENT.PrintName		= "Zombie Spawner"
 ENT.Author			= "Jackarunda"
-ENT.Category			= "JMod - NPCs"
+ENT.Category			= "JMod (LEGACY) - NPCs"
 ENT.Information         = ""
 
 ENT.Spawnable			= true
