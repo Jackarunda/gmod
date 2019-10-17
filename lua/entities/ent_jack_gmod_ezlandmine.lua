@@ -46,7 +46,6 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.NextArmTime=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then

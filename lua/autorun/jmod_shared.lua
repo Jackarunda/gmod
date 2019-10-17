@@ -15,7 +15,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then
 		local NewConfig={
 			Author="Jackarunda",
-			Version=3,
+			Version=4,
 			Note="radio packages must have all lower-case names",
 			SentryPerformanceMult=1,
 			MineDelay=1,
@@ -23,6 +23,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 			FumigatorGasAmount=1,
 			PoisonGasDamage=1,
 			PoisonGasLingerTime=1,
+			DetpackPowerMult=1,
 			FoodSpecs={
 				DigestSpeed=1,
 				ConversionEfficiency=1,
@@ -1202,6 +1203,11 @@ function JMOD_WhomILookinAt(ply,cone,dist)
 	if(OtherTr)then return OtherTr.Entity,OtherTr.HitPos,OtherTr.HitNormal end
 	return nil,nil,nil
 end
+--
+function JMod_IsDoor(ent)
+	local Class=ent:GetClass()
+	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating")or(Class=="func_breakable"))
+end
 -- EZ radio stations
 EZ_RADIO_STATIONS={}
 EZ_STATION_STATE_READY=1
@@ -1230,5 +1236,3 @@ JMod_EZnutrientsCrateSize=20
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- make the damn radio tell you what's goin on
--- make recipes be in the config yo
--- bring over the homicide hands

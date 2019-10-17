@@ -97,7 +97,7 @@ if(SERVER)then
 		local Sploom=EffectData()
 		Sploom:SetOrigin(SelfPos)
 		util.Effect("Explosion",Sploom,true,true)
-		util.BlastDamage(self,self.Owner or self,SelfPos,200*JMOD_CONFIG.MinePower,math.random(75,110)*JMOD_CONFIG.MinePower)
+		util.BlastDamage(self,self.Owner or self,SelfPos,150*JMOD_CONFIG.MinePower,math.random(50,100)*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self.Entity:EmitSound("BaseExplosionEffect.Sound")
 		--self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)

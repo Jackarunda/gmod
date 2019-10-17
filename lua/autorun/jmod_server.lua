@@ -1545,6 +1545,7 @@ if(SERVER)then
 	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
+		if(txt=="*trigger*")then JMod_EZ_Remote_Trigger(ply) end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server
@@ -1600,6 +1601,23 @@ if(SERVER)then
 		ply.EZkillme=true
 		ply:PrintMessage(HUD_PRINTCENTER,"good luck")
 	end)
+	concommand.Add("jmod_ez_trigger",function(ply)
+		JMod_EZ_Remote_Trigger(ply)
+	end)
+	function JMod_EZ_Remote_Trigger(ply)
+		if not(IsValid(ply))then return end
+		if not(ply:Alive())then return end
+		sound.Play("snd_jack_detonator.wav",ply:GetShootPos(),55,math.random(90,110))
+		timer.Simple(.75,function()
+			if((IsValid(ply))and(ply:Alive()))then
+				for k,v in pairs(ents.GetAll())do
+					if((v.JModEZremoteTriggerFunc)and(v.Owner)and(v.Owner==ply))then
+						v:JModEZremoteTriggerFunc(ply)
+					end
+				end
+			end
+		end)
+	end
 	net.Receive("JMod_MineColor",function(ln,ply)
 		if not((IsValid(ply))and(ply:Alive()))then return end
 		local Mine=net.ReadEntity()
@@ -1609,5 +1627,32 @@ if(SERVER)then
 		Mine:SetColor(Col)
 		if(Arm)then Mine:Arm(ply) end
 	end)
+	-- copied from Homicide
+	function JMod_BlastThatDoor(ent,vel)
+		local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()
+		sound.Play("Wood_Crate.Break",Pozishun,60,100)
+		sound.Play("Wood_Furniture.Break",Pozishun,60,100)
+		ent:Fire("open","",0)
+		ent:SetNoDraw(true)
+		ent:SetNotSolid(true)
+		if((Moddel)and(Pozishun)and(Ayngul))then
+			local Replacement=ents.Create("prop_physics")
+			Replacement:SetModel(Moddel);Replacement:SetPos(Pozishun+Vector(0,0,1))
+			Replacement:SetAngles(Ayngul)
+			if(Muteeriul)then Replacement:SetMaterial(Muteeriul) end
+			if(Skin)then Replacement:SetSkin(Skin) end
+			Replacement:SetModelScale(.9,0)
+			Replacement:Spawn()
+			Replacement:Activate()
+			if(vel)then Replacement:GetPhysicsObject():SetVelocity(vel) end
+			timer.Simple(3,function()
+				if(IsValid(Replacement))then Replacement:SetCollisionGroup(COLLISION_GROUP_WEAPON) end
+			end)
+			timer.Simple(6,function()
+				if(IsValid(ent))then ent:SetNotSolid(false);ent:SetNoDraw(false) end
+				if(IsValid(Replacement))then Replacement:Remove() end
+			end)
+		end
+	end
 end
 
