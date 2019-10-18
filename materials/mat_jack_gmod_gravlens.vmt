@@ -1,0 +1,18 @@
+"Refract"
+{
+ 	"Refract_DX60"
+	{
+		"$fallbackmaterial" "effects/strider_pinch_dudv_dx60"
+	}
+
+ 	"$model" 1
+ 	"$refractamount" ".4"
+ 	"$bluramount" "0"
+ 	"$dudvmap" "effects/strider_pinch_dudv"
+	"$nofog" "1"
+ 	"$normalmap" "tex_jack_gmod_gravlens_normal"
+	"$bumpframe" "0"
+	"$translucent" "1"
+	"$ignorez" "0"
+	"$forcerefract" 1
+}

@@ -104,7 +104,7 @@ function SWEP:CanSee(ent)
 end
 function SWEP:CountResourcesInRange()
 	local Results={}
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
+	for k,obj in pairs(ents.FindInSphere(self:GetPos(),200))do
 		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
@@ -223,15 +223,18 @@ function SWEP:PrimaryAttack()
 								if(Class=="ez nail")then
 									self:Nail()
 								else
-									local Ent=ents.Create(Class)
-									Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
-									Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-									Ent.Owner=self.Owner
-									--if(self.Buildables[SelectedBuild][5])then
-									--	self.Buildables[SelectedBuild][5](Ent)
-									--end
-									Ent:Spawn()
-									Ent:Activate()
+									local StringParts=string.Explode(" ",Class)
+									if((StringParts[1])and(StringParts[1]=="FUNC"))then
+										local FuncName=StringParts[2]
+										JMOD_LUA_CONFIG.BlueprintFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
+									else
+										local Ent=ents.Create(Class)
+										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
+										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
+										Ent.Owner=self.Owner
+										Ent:Spawn()
+										Ent:Activate()
+									end
 								end
 							end
 						end

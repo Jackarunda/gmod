@@ -11,125 +11,127 @@ game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 ---
-hook.Add("Initialize","JMOD_Initialize",function()
-	if(SERVER)then
-		local NewConfig={
-			Author="Jackarunda",
-			Version=6,
-			Note="radio packages must have all lower-case names",
-			Hints=true,
-			SentryPerformanceMult=1,
-			MineDelay=1,
-			MinePower=1,
-			FumigatorGasAmount=1,
-			PoisonGasDamage=1,
-			PoisonGasLingerTime=1,
-			DetpackPowerMult=1,
-			FoodSpecs={
-				DigestSpeed=1,
-				ConversionEfficiency=1,
-				EatSpeed=1,
-				BoostMult=1
-			},
-			RadioSpecs={
-				DeliveryTimeMult=1,
-				ParachuteDragMult=1,
-				AvailablePackages={
-					["parts"]={
-						{"ent_jack_gmod_ezparts",5}
-					},
-					["advanced parts"]={
-						{"ent_jack_gmod_ezadvparts",2}
-					},
-					["batteries"]={
-						{"ent_jack_gmod_ezbattery",4}
-					},
-					["ammo"]={
-						{"ent_jack_gmod_ezammo",5}
-					},
-					["tool kits"]={
-						{"ent_jack_gmod_ezbuildkit",2}
-					},
-					["ammo crate"]={
-						"ent_jack_gmod_ezcrate_ammo"
-					},
-					["battery crate"]={
-						"ent_jack_gmod_ezcrate_power"
-					},
-					["advanced parts crate"]={
-						"ent_jack_gmod_ezcrate_advparts"
-					},
-					["parts crate"]={
-						"ent_jack_gmod_ezcrate_parts"
-					},
-					["medical supplies crate"]={
-						"ent_jack_gmod_ezcrate_medsupplies"
-					},
-					["hl2 ammo"]={
-						"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
-						"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
-						"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
-						"item_rpg_round","item_rpg_round","item_rpg_round",
-						"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
-						"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
-						"weapon_frag","weapon_frag","weapon_frag"
-					},
-					["rations"]={
-						{"ent_jack_gmod_eznutrients",5}
-					},
-					["medical supplies"]={
-						{"ent_jack_gmod_ezmedsupplies",2}
-					},
-					["sentry"]={
-						"ent_jack_gmod_ezsentry"
-					},
-					["supply radio"]={
-						"ent_jack_gmod_ezaidradio"
-					},
-					["medkits"]={
-						{"ent_jack_gmod_ezmedkit",3}
-					},
-					["landmines"]={
-						{"ent_jack_gmod_ezlandmine",10}
-					},
-					["fumigators"]={
-						{"ent_jack_gmod_ezfumigator",2}
-					},
-					["fougasse mines"]={
-						{"ent_jack_gmod_ezfougasse",4}
-					},
-					["detpacks"]={
-						{"ent_jack_gmod_ezdetpack",8}
-					}
+function JMod_InitGlobalConfig()
+	local NewConfig={
+		Author="Jackarunda",
+		Version=7,
+		Note="radio packages must have all lower-case names",
+		Hints=true,
+		SentryPerformanceMult=1,
+		MineDelay=1,
+		MinePower=1,
+		FumigatorGasAmount=1,
+		PoisonGasDamage=1,
+		PoisonGasLingerTime=1,
+		DetpackPowerMult=1,
+		MicroBlackHoleEvaporateSpeed=1,
+		MicroBlackHoleGravityStrength=1,
+		FoodSpecs={
+			DigestSpeed=1,
+			ConversionEfficiency=1,
+			EatSpeed=1,
+			BoostMult=1
+		},
+		RadioSpecs={
+			DeliveryTimeMult=1,
+			ParachuteDragMult=1,
+			AvailablePackages={
+				["parts"]={
+					{"ent_jack_gmod_ezparts",5}
+				},
+				["advanced parts"]={
+					{"ent_jack_gmod_ezadvparts",2}
+				},
+				["batteries"]={
+					{"ent_jack_gmod_ezbattery",4}
+				},
+				["ammo"]={
+					{"ent_jack_gmod_ezammo",5}
+				},
+				["tool kits"]={
+					{"ent_jack_gmod_ezbuildkit",2}
+				},
+				["ammo crate"]={
+					"ent_jack_gmod_ezcrate_ammo"
+				},
+				["battery crate"]={
+					"ent_jack_gmod_ezcrate_power"
+				},
+				["advanced parts crate"]={
+					"ent_jack_gmod_ezcrate_advparts"
+				},
+				["parts crate"]={
+					"ent_jack_gmod_ezcrate_parts"
+				},
+				["medical supplies crate"]={
+					"ent_jack_gmod_ezcrate_medsupplies"
+				},
+				["hl2 ammo"]={
+					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
+					"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
+					"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
+					"item_rpg_round","item_rpg_round","item_rpg_round",
+					"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
+					"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
+					"weapon_frag","weapon_frag","weapon_frag"
+				},
+				["rations"]={
+					{"ent_jack_gmod_eznutrients",5}
+				},
+				["medical supplies"]={
+					{"ent_jack_gmod_ezmedsupplies",2}
+				},
+				["sentry"]={
+					"ent_jack_gmod_ezsentry"
+				},
+				["supply radio"]={
+					"ent_jack_gmod_ezaidradio"
+				},
+				["medkits"]={
+					{"ent_jack_gmod_ezmedkit",3}
+				},
+				["landmines"]={
+					{"ent_jack_gmod_ezlandmine",10}
+				},
+				["fumigators"]={
+					{"ent_jack_gmod_ezfumigator",2}
+				},
+				["fougasse mines"]={
+					{"ent_jack_gmod_ezfougasse",4}
+				},
+				["detpacks"]={
+					{"ent_jack_gmod_ezdetpack",8}
 				}
-			},
-			Blueprints={
-				["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
-				["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
-				["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
-				["EZ Advanced Parts Crate"]={"ent_jack_gmod_ezcrate_advparts",{parts=100},1.5},
-				["EZ Ammo Crate"]={"ent_jack_gmod_ezcrate_ammo",{parts=100},1.5},
-				["EZ Medical Supplies Crate"]={"ent_jack_gmod_ezcrate_medsupplies",{parts=100},1.5},
-				["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
-				["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
-				["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5}
-				--["HL2 Buggy"]={"prop_vehicle_jeep_old",{parts=500,power=50,advparts=10,fuel=300},3,function(ent)
-				--	ent:SetModel("models/buggy.mdl")
-				--end)}
 			}
+		},
+		Blueprints={
+			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
+			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
+			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
+			["EZ Advanced Parts Crate"]={"ent_jack_gmod_ezcrate_advparts",{parts=100},1.5},
+			["EZ Ammo Crate"]={"ent_jack_gmod_ezcrate_ammo",{parts=100},1.5},
+			["EZ Medical Supplies Crate"]={"ent_jack_gmod_ezcrate_medsupplies",{parts=100},1.5},
+			["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
+			["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
+			["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5},
+			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=200,power=800},2},
+			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,--[[fuel=300,ammo=600--]]},3}
 		}
-		local FileContents=file.Read("jmod_config.txt")
-		if(FileContents)then
-			local Existing=util.JSONToTable(FileContents)
-			if((Existing)and(Existing.Version)and(Existing.Version==NewConfig.Version))then
-				JMOD_CONFIG=util.JSONToTable(FileContents)
-			end
-		end
-		if not(JMOD_CONFIG)then
-			JMOD_CONFIG=NewConfig
-			file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG))
+	}
+	local FileContents=file.Read("jmod_config.txt")
+	if(FileContents)then
+		local Existing=util.JSONToTable(FileContents)
+		if((Existing)and(Existing.Version)and(Existing.Version==NewConfig.Version))then
+			JMOD_CONFIG=util.JSONToTable(FileContents)
 		end
 	end
+	if not(JMOD_CONFIG)then
+		JMOD_CONFIG=NewConfig
+		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG))
+	end
+end
+hook.Add("Initialize","JMOD_Initialize",function()
+	if(SERVER)then JMod_InitGlobalConfig() end
 end)
 
 local ANGLE=FindMetaTable("Angle")
@@ -1212,6 +1214,21 @@ function JMod_Hint(ply,...)
 		end
 	end
 end
+--
+hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
+	if(IsValid(JMOD_BLACK_HOLE))then
+		local BHpos=JMOD_BLACK_HOLE:GetPos()
+		local Bsrc,Bdir=data.Src,data.Dir
+		local Vec=BHpos-Bsrc
+		local Dist=Vec:Length()
+		if(Dist<10000)then
+			local ToBHdir=Vec:GetNormalized()
+			local NewDir=(Bdir+ToBHdir*JMOD_BLACK_HOLE:GetAge()/Dist*20):GetNormalized()
+			data.Dir=NewDir
+			return true
+		end
+	end
+end)
 -- EZ radio stations
 EZ_RADIO_STATIONS={}
 EZ_STATION_STATE_READY=1
