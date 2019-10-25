@@ -14,7 +14,7 @@ game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=7,
+		Version=9,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -26,6 +26,7 @@ function JMod_InitGlobalConfig()
 		DetpackPowerMult=1,
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
+		BuildKitDeWeldSpeed=1,
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,
@@ -115,7 +116,8 @@ function JMod_InitGlobalConfig()
 			["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
 			["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=200,power=800},2},
-			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,--[[fuel=300,ammo=600--]]},3}
+			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=200,advparts=20,power=100,fuel=100},1.5},
+			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2.5}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -129,6 +131,7 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG))
 	end
+	print("JMOD: config file loaded")
 end
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
@@ -1257,3 +1260,4 @@ JMod_EZnutrientsCrateSize=20
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- make the damn radio tell you what's goin on
+-- make nail removal take time

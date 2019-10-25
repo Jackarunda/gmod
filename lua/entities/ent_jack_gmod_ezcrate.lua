@@ -77,7 +77,7 @@ if(SERVER)then
 		Box:Activate()
 		Box:SetResource(Given)
 		activator:PickupObject(Box)
-		Box.NextLoad=CurTime()+1
+		Box.NextLoad=CurTime()+2
 		self:SetResource(Resource-Given)
 		self:EmitSound("Ammo_Crate.Close")
 	end

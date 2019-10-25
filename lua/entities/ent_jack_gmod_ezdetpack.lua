@@ -86,6 +86,8 @@ if(SERVER)then
 					self:EmitSound("snd_jack_minearm.wav",60,100)
 				else
 					constraint.RemoveAll(self)
+					self.StuckStick=nil
+					self.StuckTo=nil
 					Dude:PickupObject(self)
 					self.NextStick=Time+.5
 				end
@@ -104,9 +106,11 @@ if(SERVER)then
 						Ang:RotateAroundAxis(Ang:Right(),90)
 						self:SetAngles(Ang)
 						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
-						constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+						local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
+						self.StuckTo=Tr.Entity
+						self.StuckStick=Weld
 					end
 				end
 			end
@@ -196,7 +200,10 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,250*PowerMult,200*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,300*PowerMult)
+					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
+						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
+					end
 					self:Remove()
 				end)
 			end

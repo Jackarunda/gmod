@@ -57,6 +57,9 @@ function SWEP:Initialize()
 	self.NextIdle=0
 	self:Deploy()
 	self:SetSelectedBuild(0)
+	self.DeWeldEnt=nil
+	self.DeWeldProgress=0
+	self.NextDeWeldProgress=0
 	if(SERVER)then
 		self.Buildables={
 			{"Nail","ez nail",{parts=10},.2}
@@ -332,18 +335,7 @@ function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
 		if(self.Owner:KeyDown(IN_WALK))then
-			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner}).Entity
-			if(IsValid(Ent))then
-				if((Ent.EZnails)and(#Ent.EZnails>0))then
-					for k,v in pairs(Ent.EZnails)do
-						if(IsValid(v))then v:Remove() end
-					end
-					Ent.EZnails={}
-					constraint.RemoveConstraints(Ent,"Weld")
-					sound.Play("snds_jack_gmod/ez_tools/hit.wav",Ent:GetPos(),60,math.random(80,120))
-					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Ent:GetPos(),60,math.random(80,120))
-				end
-			end
+			-- do nothing because dewelding is handled in the think function
 		else
 			if(self.NextSwitch<Time)then
 				self.NextSwitch=Time+.5
@@ -433,7 +425,7 @@ end
 function SWEP:Deploy()
 	if not(IsValid(self.Owner))then return end
 	local vm = self.Owner:GetViewModel()
-	if(vm)then
+	if((IsValid(vm))and(vm.LookupSequence))then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_draw" ) )
 		self:UpdateNextIdle()
 		self:EmitSound("snds_jack_gmod/toolbox"..math.random(1,7)..".wav",65,math.random(90,110))
@@ -454,6 +446,38 @@ function SWEP:Think()
 		self:SetHoldType("normal")
 	else
 		self:SetHoldType("fist")
+	end
+	if(self.NextDeWeldProgress<Time)then
+		self.NextDeWeldProgress=Time+.25
+		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(IN_WALK))and(SERVER))then
+			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
+			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
+				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*2
+				self.Owner:PrintMessage(HUD_PRINTCENTER,"loosening: "..self.DeWeldProgress.."/100")
+				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),65,math.random(80,120))
+				self:Pawnch()
+				if(self.DeWeldProgress>=100)then
+					if((Ent.EZnails)and(#Ent.EZnails>0))then
+						for k,v in pairs(Ent.EZnails)do
+							if(IsValid(v))then v:Remove() end
+						end
+						Ent.EZnails={}
+					end
+					constraint.RemoveConstraints(Ent,"Weld")
+					sound.Play("snds_jack_gmod/ez_tools/hit.wav",Ent:GetPos(),60,math.random(80,120))
+					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Ent:GetPos(),60,math.random(80,120))
+					self.DeWeldProgress=0
+					self.NextDeWeldProgress=Time+2
+				end
+			else
+				self.DeWeldProgress=0
+				self.DeWeldEnt=nil
+			end
+			if(IsValid(Ent))then self.DeWeldEnt=Ent end
+		else
+			self.DeWeldProgress=0
+			self.DeWeldEnt=nil
+		end
 	end
 end
 function SWEP:DrawHUD()
@@ -787,7 +811,7 @@ if(CLIENT)then
 
 		if (!tab) then return end
 
-		// Create the clientside models here because Garry says we can't do it in the render hook
+		-- Create the clientside models here because Garry says we can't do it in the render hook
 		for k, v in pairs( tab ) do
 			if (v.type == "Model" and v.model and v.model != "" and (!IsValid(v.modelEnt) or v.createdModel != v.model) and 
 					string.find(v.model, ".mdl") and file.Exists (v.model, "GAME") ) then

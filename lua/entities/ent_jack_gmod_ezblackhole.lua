@@ -41,7 +41,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 				local ApplyForce,Mul=true,1
 				if(obj:IsPlayer())then
 					ApplyForce=false
-					Mul=.75
+					Mul=Age^2/5000
 				elseif(obj:IsNPC())then
 					if not(table.HasValue(self.PhysNPCs,Class))then ApplyForce=false end
 				end
