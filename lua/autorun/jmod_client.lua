@@ -534,4 +534,50 @@ if(CLIENT)then
 			Frame:Close()
 		end
 	end)
+	net.Receive("JMod_EZbuildKit",function()
+		local Buildables=net.ReadTable()
+		local Kit=net.ReadEntity()
+		local Frame,W,H,Myself=vgui.Create("DFrame"),300,300,LocalPlayer()
+		Frame:SetPos(40,80)
+		Frame:SetSize(W,H)
+		Frame:SetTitle("Select Item")
+		Frame:SetVisible(true)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:MakePopup()
+		Frame:Center()
+		Frame.OnClose=function()
+			--
+		end
+		function Frame:OnKeyCodePressed(key)
+			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
+		end
+		function Frame:Paint()
+			BlurBackground(self)
+		end
+		local Scroll=vgui.Create("DScrollPanel",Frame)
+		Scroll:SetSize(W-15,H)
+		Scroll:SetPos(10,30)
+		---
+		local Y=0
+		for k,itemInfo in pairs(Buildables)do
+			local Butt=Scroll:Add("DButton")
+			Butt:SetSize(W-35,20)
+			Butt:SetPos(0,Y)
+			Butt:SetText("")
+			function Butt:Paint(w,h)
+				surface.SetDrawColor(0,0,0,100)
+				surface.DrawRect(0,0,w,h)
+				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			end
+			function Butt:DoClick()
+				print(k)
+				net.Start("JMod_EZbuildKit")
+				net.WriteInt(k,8)
+				net.SendToServer()
+				Frame:Close()
+			end
+			Y=Y+25
+		end
+	end)
 end

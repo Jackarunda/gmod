@@ -74,7 +74,7 @@ if(SERVER)then
 		if(dmginfo:GetDamage()>self.DamageThreshold)then
 			local Pos=self:GetPos()
 			sound.Play(self.BreakNoise,Pos)
-			for i=1,self:GetResource()/2 do self:UseEffect(Pos,game.GetWorld()) end
+			for i=1,self:GetResource()/2 do self:UseEffect(Pos,game.GetWorld(),true) end
 			self:Remove()
 		end
 	end

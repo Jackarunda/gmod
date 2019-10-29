@@ -2,6 +2,7 @@ include("jmod_shared.lua")
 if(SERVER)then
 	util.AddNetworkString("JMod_Friends") -- ^:3
 	util.AddNetworkString("JMod_MineColor")
+	util.AddNetworkString("JMod_EZbuildKit")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1654,5 +1655,11 @@ if(SERVER)then
 			end)
 		end
 	end
+	net.Receive("JMod_EZbuildKit",function(ln,ply)
+		local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_ezbuildkit")
+		if(IsValid(Wep))then
+			Wep:SwitchSelectedBuild(Num)
+		end
+	end)
 end
 

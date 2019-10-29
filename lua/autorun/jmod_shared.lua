@@ -58,6 +58,9 @@ function JMod_InitGlobalConfig()
 				["battery crate"]={
 					"ent_jack_gmod_ezcrate_power"
 				},
+				["fuel crate"]={
+					"ent_jack_gmod_ezcrate_fuel"
+				},
 				["advanced parts crate"]={
 					"ent_jack_gmod_ezcrate_advparts"
 				},
@@ -111,6 +114,7 @@ function JMod_InitGlobalConfig()
 			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
 			["EZ Advanced Parts Crate"]={"ent_jack_gmod_ezcrate_advparts",{parts=100},1.5},
 			["EZ Ammo Crate"]={"ent_jack_gmod_ezcrate_ammo",{parts=100},1.5},
+			["EZ Fuel Crate"]={"ent_jack_gmod_ezcrate_fuel",{parts=100},1.5},
 			["EZ Medical Supplies Crate"]={"ent_jack_gmod_ezcrate_medsupplies",{parts=100},1.5},
 			["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
 			["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
@@ -1247,6 +1251,7 @@ EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
 EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
 ---
 JMod_EZammoBoxSize=300
+JMod_EZfuelCanSize=100
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
 JMod_EZadvPartBoxSize=20

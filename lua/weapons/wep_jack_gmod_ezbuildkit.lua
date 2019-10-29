@@ -331,6 +331,19 @@ function SWEP:FlingProp(mdl,force)
 	if(force)then Phys:ApplyForceCenter(force/7) end
 	SafeRemoveEntityDelayed(Prop,math.random(5,10))
 end
+function SWEP:SwitchSelectedBuild(num)
+	if(num>#self.Buildables)then num=0 end
+	self:SetSelectedBuild(num)
+	if(num>0)then
+		local Msg="SELECTED: "..self.Buildables[num][1].." - "
+		for typ,amt in pairs(self.Buildables[num][3])do
+			Msg=Msg..tostring(amt).." "..typ.." "
+		end
+		self:SetMsg(Msg)
+	else
+		self:SetMsg("")
+	end
+end
 function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
@@ -339,17 +352,13 @@ function SWEP:Reload()
 		else
 			if(self.NextSwitch<Time)then
 				self.NextSwitch=Time+.5
-				local Next=self:GetSelectedBuild()+1
-				if(Next>#self.Buildables)then Next=0 end
-				self:SetSelectedBuild(Next)
-				if(Next>0)then
-					local Msg="SELECTED: "..self.Buildables[Next][1].." - "
-					for typ,amt in pairs(self.Buildables[Next][3])do
-						Msg=Msg..tostring(amt).." "..typ.." "
-					end
-					self:SetMsg(Msg)
+				local Build=self:GetSelectedBuild()
+				if(Build>0)then
+					self:SwitchSelectedBuild(0)
 				else
-					self:SetMsg("")
+					net.Start("JMod_EZbuildKit")
+					net.WriteTable(self.Buildables)
+					net.Send(self.Owner)
 				end
 			end
 		end

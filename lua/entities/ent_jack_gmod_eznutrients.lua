@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="nutrients"
-ENT.JModPreferredCarryAngles=Angle(0,90,0)
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod_EZnutrientBoxSize
 ENT.Model="models/props_junk/cardboard_box003a.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"

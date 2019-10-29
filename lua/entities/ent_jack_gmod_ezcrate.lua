@@ -7,7 +7,7 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
-ENT.JModPreferredCarryAngles=Angle(0,90,0)
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
 ---
 function ENT:SetupDataTables()

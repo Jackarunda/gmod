@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="parts"
-ENT.JModPreferredCarryAngles=Angle(0,90,0)
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod_EZpartBoxSize
 ENT.Model="models/Items/item_item_crate.mdl"
 ENT.Material="models/mat_jack_gmod_ezparts"
