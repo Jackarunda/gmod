@@ -195,7 +195,10 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Initialize()
 		--self.Camera=JMod_MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		-- models/props_phx/construct/glass/glass_dome360.mdl
+		self.Glassware1=JMod_MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Glassware2=JMod_MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Screen=JMod_MakeModel(self,"models/props_lab/monitor01b.mdl")
+		self.Panel=JMod_MakeModel(self,"models/props_lab/reciever01b.mdl")
 		self.MaxElectricity=100
 	end
 	local function ColorToVector(col)
@@ -214,6 +217,19 @@ elseif(CLIENT)then
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		---
 		self:DrawModel()
+		---
+		if(DetailDraw)then
+			local GlasswareAng=SelfAng:GetCopy()
+			JMod_RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
+			JMod_RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
+			---
+			local ScreenAng=SelfAng:GetCopy()
+			JMod_RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
+			---
+			local PanelAng=SelfAng:GetCopy()
+			PanelAng:RotateAroundAxis(Forward,-90)
+			JMod_RenderModel(self.Panel,BasePos-Up*34-Forward*22+Right*28,PanelAng)
+		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)
 		render.SetMaterial(DarkSprite)

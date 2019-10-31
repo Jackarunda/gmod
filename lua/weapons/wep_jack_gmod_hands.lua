@@ -73,6 +73,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Bool",2,"Fists")
 	self:NetworkVar("Float",1,"NextDown")
 	self:NetworkVar("Bool",3,"Blocking")
+	self:NetworkVar("Bool",4,"IsCarrying")
 end
 
 function SWEP:PreDrawViewModel(vm,wep,ply)
@@ -157,18 +158,25 @@ function SWEP:ApplyForce()
 		if(self.CarryPos)then TargetPos=self.CarryEnt:LocalToWorld(self.CarryPos) end
 		local vec = target - TargetPos
 		local len,mul = vec:Length(),self.CarryEnt:GetPhysicsObject():GetMass()
-		if((len>self.ReachDistance)or(mul>250))then
+		if(len>self.ReachDistance)then
 			self:SetCarrying()
 			return
 		end
 		if(self.CarryEnt:GetClass()=="prop_ragdoll")then mul=mul*2 end
 		vec:Normalize()
 		local avec,velo=vec*len,phys:GetVelocity()-self.Owner:GetVelocity()
+		local Force=(avec-velo/2)*mul
+		local ForceMagnitude=Force:Length()
+		print(ForceMagnitude)
+		if(ForceMagnitude>4000*JMOD_CONFIG.HandGrabStrength)then
+			self:SetCarrying()
+			return
+		end
 		local CounterDir,CounterAmt=velo:GetNormalized(),velo:Length()
 		if(self.CarryPos)then
-			phys:ApplyForceOffset((avec-velo/2)*mul,self.CarryEnt:LocalToWorld(self.CarryPos))
+			phys:ApplyForceOffset(Force,self.CarryEnt:LocalToWorld(self.CarryPos))
 		else
-			phys:ApplyForceCenter((avec-velo/2)*mul)
+			phys:ApplyForceCenter(Force)
 		end
 		phys:ApplyForceCenter(Vector(0,0,mul))
 		phys:AddAngleVelocity(-phys:GetAngleVelocity()/10)

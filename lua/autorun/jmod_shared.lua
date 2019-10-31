@@ -14,7 +14,7 @@ game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=9,
+		Version=10,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -27,6 +27,7 @@ function JMod_InitGlobalConfig()
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
 		BuildKitDeWeldSpeed=1,
+		HandGrabStrength=1,
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,

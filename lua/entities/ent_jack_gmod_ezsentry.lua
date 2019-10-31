@@ -708,8 +708,8 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
-		self.CurAimPitch=Lerp(FT*2,self.CurAimPitch,AimPitch)
-		self.CurAimYaw=Lerp(FT*2,self.CurAimYaw,AimYaw)
+		self.CurAimPitch=Lerp(FT*3,self.CurAimPitch,AimPitch)
+		self.CurAimYaw=Lerp(FT*3,self.CurAimYaw,AimYaw)
 		-- no snap-swing resets
 		if(math.abs(self.CurAimPitch-AimPitch)>45)then self.CurAimPitch=AimPitch end
 		if(math.abs(self.CurAimYaw-AimYaw)>90)then self.CurAimYaw=AimYaw end

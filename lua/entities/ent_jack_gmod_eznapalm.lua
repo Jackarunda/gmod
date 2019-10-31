@@ -160,14 +160,16 @@ if(SERVER)then
 			tr.Entity:TakeDamageInfo(Dam)
 			timer.Simple(.01,function()
 				local Haz=ents.Create("ent_jack_gmod_firehazard")
-				Haz:SetDTInt(0,1)
-				Haz:SetPos(tr.HitPos+tr.HitNormal*2)
-				Haz:SetAngles(tr.HitNormal:Angle())
-				Haz.Owner=self.Owner or game.GetWorld()
-				Haz:SetDTEntity(0,self:GetDTEntity(0))
-				Haz:Spawn()
-				Haz:Activate()
-				if not(tr.Entity:IsWorld())then Haz:SetParent(tr.Entity) end
+				if(IsValid(Haz))then
+					Haz:SetDTInt(0,1)
+					Haz:SetPos(tr.HitPos+tr.HitNormal*2)
+					Haz:SetAngles(tr.HitNormal:Angle())
+					Haz.Owner=self.Owner or game.GetWorld()
+					Haz:SetDTEntity(0,self:GetDTEntity(0))
+					Haz:Spawn()
+					Haz:Activate()
+					if not(tr.Entity:IsWorld())then Haz:SetParent(tr.Entity) end
+				end
 				SafeRemoveEntity(self)
 			end)
 		else
