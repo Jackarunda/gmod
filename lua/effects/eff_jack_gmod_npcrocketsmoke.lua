@@ -167,7 +167,6 @@ function EFFECT:Init(data)
 						pertical:SetLifeTime(CurTime()+0.1)
 						pertical:SetDieTime(CurTime()+0.1)
 						if(emitter)then
-							print(emitter)
 							local porticel = emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
 
 							if (porticel) then

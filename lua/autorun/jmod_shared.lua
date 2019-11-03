@@ -50,7 +50,19 @@ function JMod_InitGlobalConfig()
 				["ammo"]={
 					{"ent_jack_gmod_ezammo",5}
 				},
-				["tool kits"]={
+				["explosives"]={
+					{"ent_jack_gmod_ezexplosives",3}
+				},
+				["chemicals"]={
+					{"ent_jack_gmod_ezchemicals",3}
+				},
+				["fuel"]={
+					{"ent_jack_gmod_ezfuel",4}
+				},
+				["gas"]={
+					{"ent_jack_gmod_ezgas",3}
+				},
+				["build kits"]={
 					{"ent_jack_gmod_ezbuildkit",2}
 				},
 				["ammo crate"]={
@@ -61,6 +73,15 @@ function JMod_InitGlobalConfig()
 				},
 				["fuel crate"]={
 					"ent_jack_gmod_ezcrate_fuel"
+				},
+				["explosives crate"]={
+					"ent_jack_gmod_ezcrate_explosives"
+				},
+				["chemical crate"]={
+					"ent_jack_gmod_ezcrate_chemicals"
+				},
+				["gas crate"]={
+					"ent_jack_gmod_ezcrate_gas"
 				},
 				["advanced parts crate"]={
 					"ent_jack_gmod_ezcrate_advparts"
@@ -106,8 +127,14 @@ function JMod_InitGlobalConfig()
 				},
 				["detpacks"]={
 					{"ent_jack_gmod_ezdetpack",8}
+				},
+				["antimatter"]={
+					"ent_jack_gmod_ezantimatter"
 				}
-			}
+			},
+			RestrictedPackages={"antimatter"},
+			RestrictedPackageShipTime=600,
+			RestrictedPackagesAllowed=true
 		},
 		Blueprints={
 			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
@@ -120,9 +147,23 @@ function JMod_InitGlobalConfig()
 			["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
 			["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
 			["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5},
-			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=200,power=800},2},
-			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=200,advparts=20,power=100,fuel=100},1.5},
-			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2.5}
+			["EZ Chemical Crate"]={"ent_jack_gmod_ezcrate_chemicals",{parts=100},1.5},
+			["EZ Explosives Crate"]={"ent_jack_gmod_ezcrate_explosives",{parts=100},1.5},
+			["EZ Gas Crate"]={"ent_jack_gmod_ezcrate_gas",{parts=100},1.5},
+			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
+			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
+			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
+		},
+		Recipes={
+			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5}},
+			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=200}},
+			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50}},
+			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5}},
+			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20}},
+			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
+			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=10}},
+			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=1,chemicals=100}},
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -1192,6 +1233,7 @@ end
 --
 local Hints={
 	["crate"]="tap resource against to store \n press E to retrieve resource",
+	["item crate"]="tap item against to store \n press E to retrieve item",
 	["arm"]="alt+E to arm",
 	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["binding"]="remember, console commands can be bound to a key",
@@ -1201,6 +1243,7 @@ local Hints={
 	["fix"]="tap parts box against to repair",
 	["supplies"]="tap supplies against to refill",
 	["ammobox"]="alt+E to refill ammo of any weapon",
+	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
 	["eat"]="alt+E to consume",
 	["friends"]="concommand jmod_friends to specify allies",
 	["radio comm"]="radio needs to see sky"
@@ -1255,6 +1298,10 @@ JMod_EZammoBoxSize=300
 JMod_EZfuelCanSize=100
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
+JMod_EZsmallCrateSize=100
+JMod_EZsuperRareResourceSize=100
+JMod_EZexplosivesBoxSize=100
+JMod_EZchemicalsSize=100
 JMod_EZadvPartBoxSize=20
 JMod_EZmedSupplyBoxSize=50
 JMod_EZnutrientBoxSize=100

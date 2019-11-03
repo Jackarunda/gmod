@@ -3,7 +3,7 @@ ENT.Type 			= "anim"
 ENT.PrintName		= "Antlions"
 ENT.Author			= "Jackarunda"
 ENT.Information		= ""
-ENT.Category		= "JMod (LEGACY) - NPCs"
+ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true
 ENT.AdminSpawnable	= true

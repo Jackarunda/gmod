@@ -92,6 +92,8 @@ if(SERVER)then
 				end
 				self:Remove()
 			end)
+		else
+			activator:PickupObject(self)
 		end
 	end
 	function ENT:Think()

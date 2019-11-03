@@ -66,7 +66,6 @@ if(SERVER)then
 					if(IsValid(self))then
 						self.Owner:EmitSound("weapons/rpg/rocketfire1.wav")
 						local rockit=ents.Create("ent_jack_gmod_npcrocket")
-						print(ShootDir)
 						rockit:SetPos(ShootPos+ShootDir)
 						rockit:SetOwner(self.Owner)
 						rockit:SetAngles(GoDirection:Angle())

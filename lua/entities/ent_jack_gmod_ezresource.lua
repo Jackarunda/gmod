@@ -15,7 +15,7 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
+		local SpawnPos=tr.HitPos+tr.HitNormal*20*self.ModelScale
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
@@ -31,6 +31,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.Model)
 		self.Entity:SetMaterial(self.Material)
 		self:SetModelScale(self.ModelScale,0)
+		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -66,6 +67,14 @@ if(SERVER)then
 			if(data.Speed>80)then
 				self.Entity:EmitSound(self.ImpactNoise1)
 				if(self.ImpactNoise2)then self.Entity:EmitSound(self.ImpactNoise2) end
+			end
+			if(self.ImpactSensitivity)then
+				if(data.Speed>self.ImpactSensitivity)then
+					local Pos=self:GetPos()
+					sound.Play(self.BreakNoise,Pos)
+					for i=1,self:GetResource()/2 do self:UseEffect(Pos,game.GetWorld(),true) end
+					self:Remove()
+				end
 			end
 		end
 	end

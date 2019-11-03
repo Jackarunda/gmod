@@ -153,6 +153,7 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 		if(self.SoundLoop2)then self.SoundLoop2:Stop() end
+		if((JMOD_BLACK_HOLE)and(JMOD_BLACK_HOLE==self))then JMOD_BLACK_HOLE=nil end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

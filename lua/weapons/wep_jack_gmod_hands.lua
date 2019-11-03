@@ -167,7 +167,6 @@ function SWEP:ApplyForce()
 		local avec,velo=vec*len,phys:GetVelocity()-self.Owner:GetVelocity()
 		local Force=(avec-velo/2)*mul
 		local ForceMagnitude=Force:Length()
-		print(ForceMagnitude)
 		if(ForceMagnitude>4000*JMOD_CONFIG.HandGrabStrength)then
 			self:SetCarrying()
 			return

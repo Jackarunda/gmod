@@ -3,7 +3,7 @@ ENT.Type 			= "anim"
 ENT.PrintName		= "Combine Dropship"
 ENT.Author			= "Jackarunda"
 ENT.Information		= "This Combine dropship will fly all around the map, dropping rollermines on everything."
-ENT.Category		= "JMod (LEGACY) - NPCs"
+ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true
 ENT.AdminSpawnable	= true

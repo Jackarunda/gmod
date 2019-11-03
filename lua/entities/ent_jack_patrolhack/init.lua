@@ -235,9 +235,9 @@ function ENT:ScanForTarget()
 		if(((potential:IsNPC())or(potential:IsPlayer()))and not((potential==self)or(potential==self.Owner)))then
 			if(self:Visible(potential))then
 				if not((potential:IsPlayer())and not(potential:Alive()))then
-					print(tostring(CurTime()).." tried for "..tostring(potential))
+					--print(tostring(CurTime()).." tried for "..tostring(potential))
 					if(self:TargetMovin(potential))then
-						print(tostring(CurTime()).." got "..tostring(potential))
+						--print(tostring(CurTime()).." got "..tostring(potential))
 						local TargPos=potential:GetPos()
 						local Dist=(TargPos-SelfPos):Length()
 						if(Dist<Closest)then
@@ -376,7 +376,6 @@ function ENT:GetAimPosForTarget()
 	else
 		Hull=ent:GetHullType()
 	end
-	JPrint(Hull)
 	local Add=Vector(0,0,HULL_TARGETING[Hull])
 	Pos=Pos+Add
 	if((ent:IsPlayer())and(ent:Crouching()))then

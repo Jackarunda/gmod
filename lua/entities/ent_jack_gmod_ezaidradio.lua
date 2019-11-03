@@ -68,7 +68,9 @@ if(SERVER)then
 		self.HaveCheckedForSky=false
 		self.ConnectionAttempts=0
 		self.ConnectionlessThinks=0
-		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Supply Radio"][2]
+		if(JMOD_CONFIG.Blueprints["EZ Supply Radio"])then
+			self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Supply Radio"][2]
+		end
 		---
 		local Path="/npc/combine_soldier/vo/"
 		local Files,Folders=file.Find("sound"..Path.."*.wav","GAME")
@@ -316,8 +318,8 @@ if(SERVER)then
 			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
 			if(Name=="help")then
 				if(State==2)then
-					local Msg,Num='stand near radio\nsay in chat: "supply radio: [package]"\navailable packages are:\n',1
-					self:Speak("",ParrotPhrase)
+					local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
+					self:Speak(Msg,ParrotPhrase)
 					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages)do
 						timer.Simple(Num/10,function()
 							if(IsValid(self))then self:Speak(name) end
@@ -326,6 +328,9 @@ if(SERVER)then
 					end
 					return true
 				end
+			elseif(Name=="status")then
+				self:Speak(JMod_EZradioStatus(self,self:GetStationID(),ply),ParrotPhrase)
+				return true
 			elseif(JMOD_CONFIG.RadioSpecs.AvailablePackages[Name])then
 				self:Speak(JMod_EZradioRequest(self,self:GetStationID(),ply,Name),ParrotPhrase)
 				return true
@@ -334,6 +339,7 @@ if(SERVER)then
 		return false
 	end
 	function ENT:EZsalvage()
+		if not(self.EZbuildCost)then return end
 		if(self.Salvaged)then return end
 		self.Salvaged=true
 		local scale,pos=1,self:GetPos()+self:GetUp()*20

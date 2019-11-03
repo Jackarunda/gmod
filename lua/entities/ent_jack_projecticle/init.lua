@@ -22,11 +22,11 @@ function ENT:Initialize()
 	self.HasFallenInWater=false
 	self.Impacted=false
 	
-	if not(self:GetDTFloat(0))then print("WHAT THE DICKS");self:Remove() return end
-	if not(self.Owner)then print("WHAT THE COCKS");self:Remove() return end
-	if not(self.Weapon)then print("WHAT THE TITS");self:Remove() return end
-	if not(self.InitialFlightDirection)then print("WHAT THE PENISES");self:Remove() return end
-	if not(self.InitialFlightSpeed)then print("WHAT THE SCHLONGS");self:Remove() return end
+	if not(self:GetDTFloat(0))then self:Remove() return end
+	if not(self.Owner)then self:Remove() return end
+	if not(self.Weapon)then self:Remove() return end
+	if not(self.InitialFlightDirection)then self:Remove() return end
+	if not(self.InitialFlightSpeed)then self:Remove() return end
 	
 	self.CurrentFlightSpeed=self.InitialFlightSpeed
 	self.CurrentFlightDirection=self.InitialFlightDirection

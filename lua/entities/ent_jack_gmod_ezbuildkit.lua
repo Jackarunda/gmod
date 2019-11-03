@@ -89,6 +89,8 @@ if(SERVER)then
 			activator:Give("wep_jack_gmod_ezbuildkit")
 			activator:SelectWeapon("wep_jack_gmod_ezbuildkit")
 			self:Remove()
+		else
+			activator:PickupObject(self)
 		end
 	end
 	function ENT:Think()

@@ -3,6 +3,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_Friends") -- ^:3
 	util.AddNetworkString("JMod_MineColor")
 	util.AddNetworkString("JMod_EZbuildKit")
+	util.AddNetworkString("JMod_EZworkbench")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1542,6 +1543,14 @@ if(SERVER)then
 					NotifyAllRadios(stationID,"attention, this outpost is now ready to carry out delivery missions")
 				end
 			end
+			if(station.restrictedPackageDelivering)then
+				if(station.restrictedPackageDeliveryTime<Time)then
+					table.insert(station.restrictedPackageStock,station.restrictedPackageDelivering)
+					NotifyAllRadios(stationID,"attention, this outpost has received a special shipment of "..station.restrictedPackageDelivering.." from regional HQ")
+					station.restrictedPackageDelivering=nil
+					station.restrictedPackageDeliveryTime=0
+				end
+			end
 		end
 	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
@@ -1562,7 +1571,10 @@ if(SERVER)then
 			deliveryType=nil,
 			transceivers={},
 			nextNotifyTime=0,
-			notified=false
+			notified=false,
+			restrictedPackageStock={},
+			restrictedPackageDelivering=nil,
+			restrictedPackageDeliveryTime=0
 		}
 		table.insert(Station.transceivers,transceiver)
 		EZ_RADIO_STATIONS[id]=Station
@@ -1575,8 +1587,29 @@ if(SERVER)then
 			return "a"
 		end
 	end
+	local function GetTimeString(seconds)
+		local Minutes,Seconds,Result=math.floor(seconds/60),math.floor(seconds%60),""
+		if(Minutes>0)then
+			Result=Minutes.." minutes"
+			if(Seconds>0)then Result=Result..", "..Seconds.." seconds" end
+		elseif(Seconds>0)then
+			Result=Seconds.." seconds"
+		end
+		return Result
+	end
+	local function StartDelivery(pkg,transceiver,station)
+		local Time=CurTime()
+		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+		station.state=EZ_STATION_STATE_DELIVERING
+		station.nextDeliveryTime=Time+DeliveryTime
+		station.deliveryLocation=Pos
+		station.deliveryType=pkg
+		station.notified=false
+		station.nextNotifyTime=Time+(DeliveryTime-5)
+		return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
+	end
 	function JMod_EZradioRequest(transceiver,id,ply,pkg)
-		local PackageInfo,Station=JMOD_CONFIG.RadioSpecs.AvailablePackages[pkg],EZ_RADIO_STATIONS[id]
+		local PackageInfo,Station,Time=JMOD_CONFIG.RadioSpecs.AvailablePackages[pkg],EZ_RADIO_STATIONS[id],CurTime()
 		if not(Station)then
 			JMod_EZradioEstablish(transceiver,id)
 			Station=EZ_RADIO_STATIONS[id]
@@ -1586,15 +1619,46 @@ if(SERVER)then
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
-			local DeliveryTime,Pos,Time=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos(),CurTime()
-			Station.state=EZ_STATION_STATE_DELIVERING
-			Station.nextDeliveryTime=Time+DeliveryTime
-			Station.deliveryLocation=Pos
-			Station.deliveryType=pkg
-			Station.notified=false
-			Station.nextNotifyTime=Time+(DeliveryTime-5)
-			return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
+			if(table.HasValue(JMOD_CONFIG.RadioSpecs.RestrictedPackages,pkg))then
+				if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then return "negative on that request, neither we nor regional HQ have any of that at this time" end
+				if(table.HasValue(Station.restrictedPackageStock,pkg))then
+					table.RemoveByValue(Station.restrictedPackageStock,pkg)
+					return StartDelivery(pkg,transceiver,Station)
+				else
+					if(Station.restrictedPackageDelivering)then
+						return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
+					else
+						Station.restrictedPackageDelivering=pkg
+						local DeliveryTime=JMOD_CONFIG.RadioSpecs.RestrictedPackageShipTime*math.Rand(.8,1.2)
+						Station.restrictedPackageDeliveryTime=Time+DeliveryTime
+						return "roger, we don't have any of that in stock but we've ordered it from regional HQ, it'll be at this outpost in "..GetTimeString(DeliveryTime)
+					end
+				end
+			else
+				return StartDelivery(pkg,transceiver,Station)
+			end
 		end
+	end
+	function JMod_EZradioStatus(transceiver,id,ply,pkg)
+		local Station,Time,Msg=EZ_RADIO_STATIONS[id],CurTime(),""
+		if(Station.state==EZ_STATION_STATE_DELIVERING)then
+			Msg="this outpost is currently delivering a package"
+		elseif(Station.state==EZ_STATION_STATE_BUSY)then
+			Msg="this outpost is currently preparing for deliveries"
+		elseif(Station.state==EZ_STATION_STATE_READY)then
+			Msg="this outpost is ready to accept delivery missions"
+		end
+		if(#Station.restrictedPackageStock>0)then
+			local InventoryList=""
+			for k,v in pairs(Station.restrictedPackageStock)do
+				InventoryList=InventoryList..v..", "
+			end
+			Msg=Msg..", and has a special stock of "..InventoryList
+		end
+		if(Station.restrictedPackageDelivering)then
+			Msg=Msg..", and has a special delivery of "..Station.restrictedPackageDelivering.." arriving from regional HQ in "..GetTimeString(Station.restrictedPackageDeliveryTime-Time)
+		end
+		return Msg
 	end
 	concommand.Add("jmod_debug_killme",function(ply)
 		if not(IsValid(ply))then return end
@@ -1659,6 +1723,14 @@ if(SERVER)then
 		local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_ezbuildkit")
 		if(IsValid(Wep))then
 			Wep:SwitchSelectedBuild(Num)
+		end
+	end)
+	net.Receive("JMod_EZworkbench",function(ln,ply)
+		local Bench,Name=net.ReadEntity(),net.ReadString()
+		if((IsValid(Bench))and(ply:Alive()))then
+			if(ply:GetPos():Distance(Bench:GetPos())<200)then
+				Bench:TryBuild(Name,ply)
+			end
 		end
 	end)
 end

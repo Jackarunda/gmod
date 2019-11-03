@@ -82,7 +82,6 @@ function ENT:Initialize()
 						HitTraces[i].ObjFrozen=true
 					elseif(table.Count(constraint.GetAllConstrainedEntities(HitTrace.Entity))>1)then
 						if not(HitTrace.Entity.TailFins)then
-							print(HitTrace.Entity)
 							HitTraces[i].HitMass=HitTraces[i].HitMass*3
 							HitTraces[i].ObjConstrained=true
 						end

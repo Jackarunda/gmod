@@ -97,18 +97,10 @@ function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
 	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
-function SWEP:CanSee(ent)
-	return not util.TraceLine({
-		start=self.Owner:GetShootPos(),
-		endpos=ent:LocalToWorld(ent:OBBCenter()),
-		filter={self.Owner,ent},
-		mask=MASK_OPAQUE
-	}).Hit
-end
 function SWEP:CountResourcesInRange()
 	local Results={}
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),200))do
-		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
+	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
+		if((obj.IsJackyEZresource)and(self:Visible(obj)))then
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
@@ -153,7 +145,7 @@ function SWEP:ConsumeResourcesInRange(requirements)
 end
 function SWEP:FindResourceContainer(typ,amt)
 	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:CanSee(obj)))then
+		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:Visible(obj)))then
 			return obj
 		end
 	end
@@ -229,7 +221,11 @@ function SWEP:PrimaryAttack()
 									local StringParts=string.Explode(" ",Class)
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
 										local FuncName=StringParts[2]
-										JMOD_LUA_CONFIG.BlueprintFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
+										if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
+											JMOD_LUA_CONFIG.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
+										else
+											print("JMOD BUILDKIT ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+										end
 									else
 										local Ent=ents.Create(Class)
 										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])

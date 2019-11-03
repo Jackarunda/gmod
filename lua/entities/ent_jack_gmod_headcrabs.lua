@@ -2,7 +2,7 @@ AddCSLuaFile()ENT.Type 			= "anim"
 ENT.PrintName		= "Headcrabs"
 ENT.Author			= "Jackarunda and Jimbomcb"
 ENT.Information		= ""
-ENT.Category		= "JMod (LEGACY) - NPCs"
+ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true
 ENT.AdminSpawnable	= true

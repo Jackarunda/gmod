@@ -8,11 +8,12 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
-ENT.EZconsumes={"power","fuel"}
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
+ENT.EZconsumes={"power","gas"}
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Float",0,"Electricity")
-	self:NetworkVar("Float",1,"Fuel")
+	self:NetworkVar("Float",1,"Gas")
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -38,7 +39,7 @@ if(SERVER)then
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid() then
 			phys:Wake()
-			phys:SetMass(250)
+			phys:SetMass(350)
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
@@ -51,11 +52,12 @@ if(SERVER)then
 		end
 		---
 		self.MaxElectricity=100
-		self.MaxFuel=100
+		self.MaxGas=100
 		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Workbench"][2]
+		self.Buildables=JMOD_CONFIG.Recipes
 		---
 		self:SetElectricity(self.MaxElectricity)
-		self:SetFuel(self.MaxFuel)
+		self:SetGas(self.MaxGas)
 	end
 	function ENT:Destroy(dmginfo)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
@@ -75,7 +77,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>1000)then
+			if(data.Speed>2000)then
 				self:Destroy()
 			end
 		end
@@ -102,6 +104,23 @@ if(SERVER)then
 			if(dmginfo:GetDamage()>120)then self:Destroy() end
 		end
 	end
+	function ENT:BuildEffect(pos)
+		if(CLIENT)then return end
+		local Scale=.5
+		local effectdata=EffectData()
+		effectdata:SetOrigin(pos+VectorRand())
+		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
+		effectdata:SetMagnitude(math.Rand(1,2)*Scale) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(.5,1.5)*Scale) --length of strands
+		effectdata:SetRadius(math.Rand(2,4)*Scale) --thickness of strands
+		util.Effect("Sparks",effectdata,true,true)
+		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
+		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+		local eff=EffectData()
+		eff:SetOrigin(pos+VectorRand())
+		eff:SetScale(Scale)
+		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
+	end
 	function ENT:FlingProp(mdl,force)
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
@@ -118,8 +137,11 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.random(20,40))
 	end
 	function ENT:Use(activator)
-		if((self:GetFuel()>0)and(self:GetElectricity()>0))then
-			--
+		if((self:GetGas()>0)and(self:GetElectricity()>0))then
+			net.Start("JMod_EZworkbench")
+			net.WriteEntity(self)
+			net.WriteTable(JMOD_CONFIG.Recipes)
+			net.Send(activator)
 		end
 	end
 	function ENT:Think()
@@ -180,17 +202,111 @@ if(SERVER)then
 			self:SetElectricity(Powa+Accepted)
 			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
 			return math.ceil(Accepted)
-		elseif(typ=="fuel")then
-			local Fool=self:GetFuel()
-			local Missing=self.MaxFuel-Fool
+		elseif(typ=="gas")then
+			local Fool=self:GetGas()
+			local Missing=self.MaxGas-Fool
 			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxFuel*.1)then return 0 end
+			if(Missing<self.MaxGas*.1)then return 0 end
 			local Accepted=math.min(Missing,amt)
-			self:SetFuel(Fool+Accepted)
-			self:EmitSound("snds_jack_gmod/fuel_load.wav",65,math.random(90,110))
+			self:SetGas(Fool+Accepted)
+			self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
 			return math.ceil(Accepted)
 		end
 		return 0
+	end
+	function ENT:CountResourcesInRange()
+		local Results={}
+		for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
+			if((obj.IsJackyEZresource)and(self:Visible(obj)))then
+				local Typ=obj.EZsupplies
+				Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
+			end
+		end
+		return Results
+	end
+	function ENT:HaveResourcesToPerformTask(requirements)
+		local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
+		for typ,amt in pairs(requirements)do
+			if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
+				RequirementsMet=false
+				break
+			end
+		end
+		return RequirementsMet
+	end
+	function ENT:ConsumeResourcesInRange(requirements)
+		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
+		while not((AllDone)or(Attempts>1000))do
+			local TypesNeeded=table.GetKeys(RequirementsRemaining)
+			if((TypesNeeded)and(#TypesNeeded>0))then
+				local ResourceTypeToLookFor=TypesNeeded[1]
+				local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
+				local Donor=self:FindResourceContainer(ResourceTypeToLookFor,1) -- every little bit helps
+				if(Donor)then
+					local AmountWeCanTake=Donor:GetResource()
+					if(AmountWeNeed>=AmountWeCanTake)then
+						Donor:SetResource(0)
+						Donor:Remove()
+						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
+					else
+						Donor:SetResource(AmountWeCanTake-AmountWeNeed)
+						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
+					end
+					if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
+				end
+			else
+				AllDone=true
+			end
+			Attempts=Attempts+1
+		end
+	end
+	function ENT:FindResourceContainer(typ,amt)
+		for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
+			if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:Visible(obj)))then
+				return obj
+			end
+		end
+	end
+	function ENT:TryBuild(itemName,ply)
+		local Gas,Elec,Built=self:GetGas(),self:GetElectricity(),false
+		if((Gas<=0)or(Elec<=0))then return end
+		local ItemInfo=self.Buildables[itemName]
+		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
+		if(self:HaveResourcesToPerformTask(BuildReqs))then
+			self:ConsumeResourcesInRange(BuildReqs)
+			Built=true
+			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
+			for i=1,BuildSteps do
+				timer.Simple(i/100,function()
+					if(IsValid(self))then
+						if(i<BuildSteps)then
+							sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+						else
+							local StringParts=string.Explode(" ",ItemClass)
+							if((StringParts[1])and(StringParts[1]=="FUNC"))then
+								local FuncName=StringParts[2]
+								if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
+									JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+								else
+									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+								end
+							else
+								local Ent=ents.Create(ItemClass)
+								Ent:SetPos(Pos)
+								Ent:SetAngles(Ang)
+								Ent.Owner=ply
+								Ent:Spawn()
+								Ent:Activate()
+							end
+							self:SetGas(math.Clamp(Gas-5*math.Rand(0,1)^2,0,self.MaxGas))
+							self:SetElectricity(math.Clamp(Elec-5*math.Rand(0,1)^2,0,self.MaxElectricity))
+							self:BuildEffect(Pos)
+						end
+					end
+				end)
+			end
+		end
+		if not(Built)then ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -200,6 +316,7 @@ elseif(CLIENT)then
 		self.Screen=JMod_MakeModel(self,"models/props_lab/monitor01b.mdl")
 		self.Panel=JMod_MakeModel(self,"models/props_lab/reciever01b.mdl")
 		self.MaxElectricity=100
+		self.MaxGas=100
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
@@ -229,6 +346,23 @@ elseif(CLIENT)then
 			local PanelAng=SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Forward,-90)
 			JMod_RenderModel(self.Panel,BasePos-Up*34-Forward*22+Right*28,PanelAng)
+			---
+			if(self:GetElectricity()>0)then
+				local DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Forward,90)
+				DisplayAng:RotateAroundAxis(Up,90)
+				local Opacity=math.random(50,200)
+				cam.Start3D2D(BasePos-Right*24-Forward*53.5-Up,DisplayAng,.04)
+				draw.SimpleTextOutlined("Jackarunda","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("Industries","JMod-Display",0,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/self.MaxElectricity
+				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local GasFrac=self:GetGas()/self.MaxGas
+				local R,G,B=JMod_GoodBadColor(GasFrac)
+				draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.End3D2D()
+			end
 		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)
@@ -249,12 +383,6 @@ elseif(CLIENT)then
 		local BottomCanopyAng=SelfAng:GetCopy()
 		BottomCanopyAng:RotateAroundAxis(Right,180)
 		JMod_RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
-		
-		local Opacity=math.random(50,200)
-		cam.Start3D2D(BasePos+Up*22+Right*22+Forward*21,DisplayAng,.08)
-		draw.SimpleTextOutlined("POWER "..math.Round(self:GetElectricity()/self.MaxElectricity*100).."%","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-		draw.SimpleTextOutlined("SUPPLIES "..self:GetSupplies().."/"..self.MaxSupplies*EZ_GRADE_BUFFS[Grade],"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-		cam.End3D2D()
 		--]]
 	end
 	language.Add("ent_jack_gmod_ezworkbench","EZ Workbench")

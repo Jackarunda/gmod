@@ -15,8 +15,8 @@ if(SERVER)then
 				Sound("snds_jack_gmod/fire2.wav")
 			},
 			"eff_jack_gmod_heavyfire",
-			15,
-			14,
+			20,
+			30,
 			100
 		}
 		----
