@@ -99,7 +99,7 @@ function ENT:Use(activator,caller)
 end
 function ENT:Start()
 	if(self.Remaining>0)then
-		self:EmitSound("snd_jack_genstart.wav")
+		self:EmitSound("snd_jack_genstart.mp3")
 		self.State="Running"
 		self:SetDTBool(0,self.State=="Running")
 		self.NextSoundTime=CurTime()+8
@@ -110,7 +110,7 @@ function ENT:Start()
 	end
 end
 function ENT:ShutOff()
-	self:EmitSound("snd_jack_genstop.wav")
+	self:EmitSound("snd_jack_genstop.mp3")
 	self.State="Off"
 	self:SetDTBool(0,self.State=="Running")
 end
@@ -148,7 +148,7 @@ function ENT:Think()
 		end
 		if(self.NextSoundTime<CurTime())then
 			self.NextSoundTime=CurTime()+3.5
-			self:EmitSound("snd_jack_genrun.wav")
+			self:EmitSound("snd_jack_genrun.mp3")
 		end
 		if(self:WaterLevel()>0)then self:ShutOff() end
 		self:GetPhysicsObject():ApplyForceCenter(VectorRand()*1500)

@@ -23,15 +23,17 @@ ENT.Hint=nil
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		for i=1,3 do
-			local Eff=EffectData()
-			Eff:SetOrigin(pos+VectorRand()*10)
-			util.Effect("StriderBlood",Eff,true,true)
+			if(math.random(1,30)==2)then
+				local Eff=EffectData()
+				Eff:SetOrigin(pos+VectorRand()*10)
+				util.Effect("StriderBlood",Eff,true,true)
+			end
 			if(destructive)then
-				for i=1,2 do
+				for i=1,1 do
 					local Blob=ents.Create("grenade_spit")
 					Blob:SetPos(pos)
 					Blob:SetAngles(VectorRand():Angle())
-					Blob:SetVelocity(VectorRand()*math.Rand(0,500))
+					Blob:SetVelocity((VectorRand()+vector_up)*math.Rand(0,500))
 					Blob:SetOwner(game.GetWorld())
 					Blob:Spawn()
 					Blob:Activate()

@@ -68,7 +68,7 @@ function ENT:Detonate()
 	sound.Play("snd_jack_fragsplodeclose.wav",SelfPos+Vector(0,0,1),75,80)
 	sound.Play("snd_jack_fragsplodefar.wav",SelfPos+Vector(0,0,2),100,80)
 	sound.Play("snd_jack_bigsplodeclose.wav",SelfPos+Vector(0,0,3),81,90)
-	sound.Play("snd_jack_debris"..tostring(math.random(1,2))..".wav",SelfPos,80,90)
+	sound.Play("snd_jack_debris"..tostring(math.random(1,2))..".mp3",SelfPos,80,90)
 	for i=0,30 do
 		local Trayuss=util.QuickTrace(SelfPos,VectorRand()*200,{self.Entity})
 		if(Trayuss.Hit)then

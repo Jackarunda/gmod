@@ -287,11 +287,11 @@ function ENT:DeliverPackage(dz)
 	end
 	timer.Simple(3,function()
 		if(IsValid(self))then
-			sound.Play("snd_jack_flyby_drop.wav",DropPos,150,100)
-			sound.Play("snd_jack_flyby_drop.wav",DropPos,150,100)
-			sound.Play("snd_jack_flyby_drop.wav",DropPos,150,100)
+			sound.Play("snd_jack_flyby_drop.mp3",DropPos,150,100)
+			sound.Play("snd_jack_flyby_drop.mp3",DropPos,150,100)
+			sound.Play("snd_jack_flyby_drop.mp3",DropPos,150,100)
 			for key,ply in pairs(player.GetAll())do
-				ply:EmitSound("snd_jack_flyby_drop_far.wav",70,100)
+				ply:EmitSound("snd_jack_flyby_drop_far.mp3",70,100)
 			end
 		end
 	end)

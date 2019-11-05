@@ -1,8 +1,0 @@
-VertexLitGeneric
-{
-
-	"$basetexture" "models/jessev92/rnl/weapons/parachute/v_parachute1_d"
-	"$bumpmap" "models/jessev92/rnl/weapons/parachute/v_parachute1_b"
-	$alphatest 0
-
-}

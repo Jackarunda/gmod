@@ -40,6 +40,8 @@ end
 SWEP.SwayScale=3
 SWEP.BobScale=3
 
+SWEP.InstantPickup=true -- FF compat
+
 SWEP.Author			= ""
 SWEP.Contact		= ""
 SWEP.Purpose		= ""

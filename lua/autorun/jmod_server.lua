@@ -1524,9 +1524,9 @@ if(SERVER)then
 							Box:Spawn()
 							Box:Initialize()
 							---
-							sound.Play("snd_jack_flyby_drop.wav",DropPos,150,100)
+							sound.Play("snd_jack_flyby_drop.mp3",DropPos,150,100)
 							for k,playa in pairs(ents.FindInSphere(DropPos,6000))do
-								if(playa:IsPlayer())then sound.Play("snd_jack_flyby_drop.wav",playa:GetShootPos(),50,100) end
+								if(playa:IsPlayer())then sound.Play("snd_jack_flyby_drop.mp3",playa:GetShootPos(),50,100) end
 							end
 							NotifyAllRadios(stationID,"good drop, package away, returning to base")
 						end)
@@ -1731,6 +1731,15 @@ if(SERVER)then
 			if(ply:GetPos():Distance(Bench:GetPos())<200)then
 				Bench:TryBuild(Name,ply)
 			end
+		end
+	end)
+	concommand.Add("damnit",function(ply,cmd,args)
+		local Effs={"muzzleflash_pistol_rbull","muzzleflash_smg","muzzleflash_m79","muzzleflash_sr25","muzzleflash_M82","muzzleflash_pistol","muzzleflash_suppressed","muzzleflash_M3"}
+		for k,v in pairs(Effs)do
+			timer.Simple(k/10,function()
+				local Tr=ply:GetEyeTrace()
+				ParticleEffect(v,Tr.HitPos+Tr.HitNormal*20,Angle(-90,0,0))
+			end)
 		end
 	end)
 end

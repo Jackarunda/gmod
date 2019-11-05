@@ -94,7 +94,7 @@ function ENT:Detonate(toucher)
 	self.Entity:EmitSound("BaseExplosionEffect.Sound")
 	self:EmitSound("snd_jack_fragsplodeclose.wav",90,80)
 	self:EmitSound("snd_jack_fragsplodeclose.wav",90,80)
-	sound.Play("snd_jack_debris"..tostring(math.random(1,2))..".wav",SelfPos,80,85)
+	sound.Play("snd_jack_debris"..tostring(math.random(1,2))..".mp3",SelfPos,80,85)
 	if(self)then self:Remove() end
 end
 function ENT:PhysicsCollide(data, physobj)
