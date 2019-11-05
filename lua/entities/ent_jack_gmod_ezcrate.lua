@@ -39,6 +39,7 @@ if(SERVER)then
 		---
 		self:SetResource(0)
 		self.EZconsumes={self.ResourceType}
+		self.NextLoad=0
 		---
 		timer.Simple(.01,function() self:GetPhysicsObject():SetMass(250) end)
 	end
@@ -88,6 +89,8 @@ if(SERVER)then
 		--aw fuck you
 	end
 	function ENT:TryLoadResource(typ,amt)
+		local Time=CurTime()
+		if(self.NextLoad>Time)then return 0 end
 		if(amt<=0)then return 0 end
 		if(typ==self.ResourceType)then
 			local Resource=self:GetResource()
@@ -95,6 +98,7 @@ if(SERVER)then
 			if(Missing<=0)then return 0 end
 			local Accepted=math.min(Missing,amt)
 			self:SetResource(Resource+Accepted)
+			self.NextLoad=Time+.5
 			return Accepted
 		end
 		return 0

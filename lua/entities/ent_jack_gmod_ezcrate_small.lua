@@ -39,16 +39,19 @@ if(SERVER)then
 		---
 		self:SetItemCount(0)
 		self.EZconsumes={self.ItemType}
+		self.NextLoad=0
 		---
 		timer.Simple(.01,function() self:GetPhysicsObject():SetMass(125) end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		local Time=CurTime()
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>100)then
 				self.Entity:EmitSound("Wood_Crate.ImpactHard")
 				self.Entity:EmitSound("Wood_Box.ImpactHard")
 			end
 		end
+		if(self.NextLoad>Time)then return end
 		local Ent=data.HitEntity
 		if((self.ChildEntity==Ent:GetClass())and(Ent:IsPlayerHolding()))then
 			if(self:GetItemCount()<self.MaxItems)then
@@ -58,6 +61,7 @@ if(SERVER)then
 						self:SetItemCount(self:GetItemCount()+1)
 					end
 				end)
+				self.NextLoad=Time+.5
 			end
 		end
 	end
@@ -88,7 +92,7 @@ if(SERVER)then
 		Box:Activate()
 		self:SetItemCount(Resource-1)
 		activator:PickupObject(Box)
-		Box.NextLoad=CurTime()+2
+		self.NextLoad=CurTime()+2
 		self:EmitSound("Ammo_Crate.Close")
 	end
 	function ENT:Think()
