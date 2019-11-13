@@ -25,11 +25,12 @@ ENT.StaticPerfSpecs={
 	TargetLockTime=5,
 	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
 	ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
-	BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"},
+	BlacklistedNPCs={"npc_enemyfinder","bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_bullseye"},
 	WhitelistedNPCs={"npc_rollermine"},
 	SpecialTargetingHeights={["npc_rollermine"]=15},
 	MaxDurability=100,
-	ThinkSpeed=1
+	ThinkSpeed=1,
+	Efficiency=.8
 }
 ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
@@ -41,7 +42,6 @@ ENT.DynamicPerfSpecs={
 	MinDamage=5,
 	MaxDamage=15,
 	Accuracy=1,
-	Efficiency=.8,
 	SearchSpeed=.5
 }
 function ENT:InitPerfSpecs()
@@ -232,7 +232,7 @@ if(SERVER)then
 		if(activator:IsPlayer())then
 			local State=self:GetState()
 			if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
-			JMod_Hint(activator,"supplies","friends")
+			JMod_Hint(activator,"supplies","friends","upgrade")
 			if(State>0)then
 				self:TurnOff()
 			else
@@ -344,7 +344,7 @@ if(SERVER)then
 			return nil
 		end
 		self:ConsumeElectricity(.02)
-		self.NextTargetSearch=Time+1/self.SearchSpeed -- limit searching cause it's expensive
+		self.NextTargetSearch=Time+(.5/self.SearchSpeed^2) -- limit searching cause it's expensive
 		local SelfPos=self:GetPos()
 		local Objects,PotentialTargets=ents.FindInSphere(SelfPos,self.TargetingRadius),{}
 		for k,PotentialTarget in pairs(Objects)do

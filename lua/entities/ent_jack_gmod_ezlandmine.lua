@@ -74,7 +74,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		JMod_Hint(activator,"arm")
+		JMod_Hint(activator,"arm","friends")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(State==STATE_OFF)then
 			if(Alt)then
@@ -190,7 +190,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),125))do
+			for k,targ in pairs(ents.FindInSphere(self:GetPos(),100))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)

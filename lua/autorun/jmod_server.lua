@@ -1435,7 +1435,10 @@ if(SERVER)then
 					if(Healin>0)then
 						playa.EZhealth=Healin-1
 						local Helf,Max=playa:Health(),playa:GetMaxHealth()
-						if(Helf<Max)then playa:SetHealth(Helf+1) end
+						if(Helf<Max)then
+							playa:SetHealth(Helf+1)
+							if(playa:Health()==Max)then playa:RemoveAllDecals() end
+						end
 					end
 				end
 			end
@@ -1452,11 +1455,13 @@ if(SERVER)then
 							local Helf,Max,Nuts=playa:Health(),playa:GetMaxHealth()
 							if(Helf<Max)then
 								playa:SetHealth(Helf+1)
+								if(playa:Health()==Max)then playa:RemoveAllDecals() end
 							elseif(math.Rand(0,1)<.75)then
 								local BoostMult=JMOD_CONFIG.FoodSpecs.BoostMult
 								local BoostedFrac=(Helf-Max)/Max
 								if(math.Rand(0,1)>BoostedFrac)then
 									playa:SetHealth(Helf+BoostMult)
+									if(playa:Health()>=Max)then playa:RemoveAllDecals() end
 								end
 							end
 						end
@@ -1733,6 +1738,7 @@ if(SERVER)then
 			end
 		end
 	end)
+	--[[
 	concommand.Add("damnit",function(ply,cmd,args)
 		local Effs={"muzzleflash_pistol_rbull","muzzleflash_smg","muzzleflash_m79","muzzleflash_sr25","muzzleflash_M82","muzzleflash_pistol","muzzleflash_suppressed","muzzleflash_M3"}
 		for k,v in pairs(Effs)do
@@ -1742,5 +1748,6 @@ if(SERVER)then
 			end)
 		end
 	end)
+	--]]
 end
 

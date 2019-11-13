@@ -97,10 +97,18 @@ function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
 	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
+function SWEP:CanSee(ent)
+	return not util.TraceLine({
+		start=self:GetPos(),
+		endpos=ent:GetPos(),
+		filter={self,self.Owner,ent},
+		mask=MASK_SOLID_BRUSHONLY
+	}).Hit
+end
 function SWEP:CountResourcesInRange()
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(self:Visible(obj)))then
+		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
@@ -145,7 +153,7 @@ function SWEP:ConsumeResourcesInRange(requirements)
 end
 function SWEP:FindResourceContainer(typ,amt)
 	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:Visible(obj)))then
+		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:CanSee(obj)))then
 			return obj
 		end
 	end

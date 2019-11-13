@@ -88,12 +88,22 @@ function ENT:Use(activator,caller)
 	for key,item in pairs(self.Contents)do
 		local ClassName,Num=item,1
 		if(type(item)~="string")then ClassName=item[1];Num=item[2] end
+		local StringParts=string.Explode(" ",ClassName)
 		for i=1,Num do
-			local Yay=ents.Create(ClassName)
-			Yay:SetPos(Pos+VectorRand()*math.Rand(0,30))
-			Yay:SetAngles(VectorRand():Angle())
-			Yay:Spawn()
-			Yay:Activate()
+			if((StringParts[1])and(StringParts[1]=="FUNC"))then
+				local FuncName=StringParts[2]
+				if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
+					JMOD_LUA_CONFIG.BuildFuncs[FuncName](activator,Pos+VectorRand()*math.Rand(0,30),VectorRand():Angle())
+				else
+					print("JMOD RADIO BOX ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+				end
+			else
+				local Yay=ents.Create(ClassName)
+				Yay:SetPos(Pos+VectorRand()*math.Rand(0,30))
+				Yay:SetAngles(VectorRand():Angle())
+				Yay:Spawn()
+				Yay:Activate()
+			end
 		end
 	end
 	JackaGenericUseEffect(activator)

@@ -1241,12 +1241,13 @@ local Hints={
 	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
 	["afh"]="E to enter and get healed",
 	["fix"]="tap parts box against to repair",
-	["supplies"]="tap supplies against to refill",
+	["supplies"]="tap supplies against to refill, tap parts against to repair",
 	["ammobox"]="alt+E to refill ammo of any weapon",
 	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
 	["eat"]="alt+E to consume",
 	["friends"]="concommand jmod_friends to specify allies",
-	["radio comm"]="radio needs to see sky"
+	["radio comm"]="radio needs to see sky",
+	["upgrade"]="use Build Kit to upgrade"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end
@@ -1299,7 +1300,7 @@ JMod_EZfuelCanSize=100
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
 JMod_EZsmallCrateSize=100
-JMod_EZsuperRareResourceSize=100
+JMod_EZsuperRareResourceSize=10
 JMod_EZexplosivesBoxSize=100
 JMod_EZchemicalsSize=100
 JMod_EZadvPartBoxSize=20
@@ -1312,5 +1313,4 @@ JMod_EZnutrientsCrateSize=20
 -- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
--- make the damn radio tell you what's goin on
--- make nail removal take time
+-- add the crate smoke flare

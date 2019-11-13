@@ -202,7 +202,7 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
 		if(State==STATE_OFF)then
-			JMod_Hint(activator,"afh","supplies")
+			JMod_Hint(activator,"afh","supplies","upgrade")
 			self:TurnOn()
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
