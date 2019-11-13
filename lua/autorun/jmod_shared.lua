@@ -175,7 +175,7 @@ function JMod_InitGlobalConfig()
 	end
 	if not(JMOD_CONFIG)then
 		JMOD_CONFIG=NewConfig
-		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG))
+		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
 	print("JMOD: config file loaded")
 end
