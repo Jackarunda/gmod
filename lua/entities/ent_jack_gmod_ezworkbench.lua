@@ -39,7 +39,7 @@ if(SERVER)then
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid() then
 			phys:Wake()
-			phys:SetMass(350)
+			phys:SetMass(500)
 			phys:SetBuoyancyRatio(.3)
 		end
 		---

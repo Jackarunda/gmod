@@ -41,7 +41,11 @@ if(SERVER)then
 		self.EZconsumes={self.ItemType}
 		self.NextLoad=0
 		---
-		timer.Simple(.01,function() self:GetPhysicsObject():SetMass(125) end)
+		timer.Simple(.01,function() self:CalcWeight() end)
+	end
+	function ENT:CalcWeight()
+		local Frac=self:GetItemCount()/self.MaxItems
+		self:GetPhysicsObject():SetMass(50+Frac*250)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		local Time=CurTime()
@@ -59,6 +63,7 @@ if(SERVER)then
 					if(IsValid(Ent))then
 						Ent:Remove()
 						self:SetItemCount(self:GetItemCount()+1)
+						self:CalcWeight()
 					end
 				end)
 				self.NextLoad=Time+.5
@@ -94,6 +99,7 @@ if(SERVER)then
 		activator:PickupObject(Box)
 		self.NextLoad=CurTime()+2
 		self:EmitSound("Ammo_Crate.Close")
+		self:CalcWeight()
 	end
 	function ENT:Think()
 		--pfahahaha

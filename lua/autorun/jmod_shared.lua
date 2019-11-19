@@ -1247,7 +1247,12 @@ local Hints={
 	["eat"]="alt+E to consume",
 	["friends"]="concommand jmod_friends to specify allies",
 	["radio comm"]="radio needs to see sky",
-	["upgrade"]="use Build Kit to upgrade"
+	["upgrade"]="use Build Kit to upgrade",
+	["jmod hands grab"]="RMB to grab objects",
+	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
+	["jmod hands"]="RMB to block, R to put hands down",
+	["jmod hands move"]="punches also can move you (jump boost/climbing)",
+	["unpackage"]="double tap alt+E to unpackage"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end

@@ -41,7 +41,7 @@ if(SERVER)then
 		self.EZconsumes={self.ResourceType}
 		self.NextLoad=0
 		---
-		timer.Simple(.01,function() self:GetPhysicsObject():SetMass(250) end)
+		timer.Simple(.01,function() self:CalcWeight() end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -50,6 +50,10 @@ if(SERVER)then
 				self.Entity:EmitSound("Wood_Box.ImpactHard")
 			end
 		end
+	end
+	function ENT:CalcWeight()
+		local Frac=self:GetResource()/self.MaxResource
+		self:GetPhysicsObject():SetMass(100+Frac*300)
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
@@ -81,6 +85,7 @@ if(SERVER)then
 		Box.NextLoad=CurTime()+2
 		self:SetResource(Resource-Given)
 		self:EmitSound("Ammo_Crate.Close")
+		self:CalcWeight()
 	end
 	function ENT:Think()
 		--pfahahaha
@@ -98,6 +103,7 @@ if(SERVER)then
 			if(Missing<=0)then return 0 end
 			local Accepted=math.min(Missing,amt)
 			self:SetResource(Resource+Accepted)
+			self:CalcWeight()
 			self.NextLoad=Time+.5
 			return Accepted
 		end

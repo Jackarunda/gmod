@@ -1475,6 +1475,13 @@ if(SERVER)then
 		ply.EZhealth=nil
 		ply.EZkillme=nil
 	end)
+	hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)
+		if(veh.EZvehicleEjectPos)then
+			local WorldPos=veh:LocalToWorld(veh.EZvehicleEjectPos)
+			ply:SetPos(WorldPos)
+			veh.EZvehicleEjectPos=nil
+		end
+	end)
 	-- EZ Radio Code --
 	local function NotifyAllRadios(stationID,msg)
 		local Radios=EZ_RADIO_STATIONS[stationID].transceivers
@@ -1723,6 +1730,29 @@ if(SERVER)then
 				if(IsValid(Replacement))then Replacement:Remove() end
 			end)
 		end
+	end
+	function JMod_PackageObject(ent,pos,ang,ply)
+		if(pos)then
+			ent=ents.Create(ent)
+			ent:SetPos(pos)
+			ent:SetAngles(ang)
+			if(ply)then
+				ent.Owner=ply
+				ent:SetOwner(ply)
+			end
+			ent:Spawn()
+			ent:Activate()
+		end
+		local Bocks=ents.Create("ent_jack_gmod_ezcompactbox")
+		Bocks:SetPos(ent:LocalToWorld(ent:OBBCenter())+Vector(0,0,20))
+		Bocks:SetAngles(ent:GetAngles())
+		Bocks:SetContents(ent)
+		if(ply)then
+			Bocks.Owner=ply
+			Bocks:SetOwner(ply)
+		end
+		Bocks:Spawn()
+		Bocks:Activate()
 	end
 	net.Receive("JMod_EZbuildKit",function(ln,ply)
 		local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_ezbuildkit")

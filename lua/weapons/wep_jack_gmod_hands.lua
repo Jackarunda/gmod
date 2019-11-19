@@ -120,8 +120,10 @@ local pickupWhiteList = {
 function SWEP:CanPickup(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
+	if(ent:IsWorld())then return false end
 	local class=ent:GetClass()
 	if pickupWhiteList[class] then return true end
+	if(CLIENT)then return true end
 	if(IsValid(ent:GetPhysicsObject()))then return true end
 	return false
 end
@@ -129,6 +131,7 @@ end
 function SWEP:SecondaryAttack()
 	if not(IsFirstTimePredicted())then return end
 	if(self:GetFists())then return end
+	JMod_Hint(self.Owner,"jmod hands grab","jmod hands drag")
 	if SERVER then
 		self:SetCarrying()
 		local tr = self.Owner:GetEyeTraceNoCursor()
@@ -256,6 +259,7 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
+	JMod_Hint(self.Owner,"jmod hands","jmod hands move")
 	local side="fists_left"
 	if(math.random(1,2)==1)then side="fists_right" end
 	self:SetNextDown(CurTime()+7)

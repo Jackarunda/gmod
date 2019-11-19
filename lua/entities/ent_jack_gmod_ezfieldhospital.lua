@@ -206,7 +206,10 @@ if(SERVER)then
 			self:TurnOn()
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
-				if(self.NextEnter<CurTime())then activator:EnterVehicle(self.Pod) end
+				if(self.NextEnter<CurTime())then
+					self.Pod.EZvehicleEjectPos=self.Pod:WorldToLocal(activator:GetPos())
+					activator:EnterVehicle(self.Pod)
+				end
 			end
 		end
 	end

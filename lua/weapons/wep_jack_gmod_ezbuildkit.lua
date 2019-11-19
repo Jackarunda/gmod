@@ -62,7 +62,8 @@ function SWEP:Initialize()
 	self.NextDeWeldProgress=0
 	if(SERVER)then
 		self.Buildables={
-			{"Nail","ez nail",{parts=10},.2}
+			{"Nail (constraints object)","ez nail",{parts=10},.2},
+			{"(action) Package Object","package",{parts=25},1}
 		}
 		for name,info in pairs(JMOD_CONFIG.Blueprints)do
 			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1})
@@ -200,6 +201,36 @@ function SWEP:Nail()
 	Nail:SetParent(Ent1)
 	Ent1.EZnails=Ent1.EZnails or {}
 	table.insert(Ent1.EZnails,Nail)
+	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+end
+function SWEP:GetPackagableObject()
+	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+	local Ent=Tr.Entity
+	if((IsValid(Ent))and not(Ent:IsWorld()))then
+		if(Ent.EZunpackagable)then self:Msg("No.") return nil end
+		if((Ent:IsPlayer())or(Ent:IsNPC()))then return nil end
+		local Constraints,Constrained=constraint.GetTable(Ent),false
+		for k,v in pairs(Constraints)do
+			if(v.Type~="NoCollide")then Constrained=true;break end
+		end
+		if(Constrained)then self:Msg("object is constrained") return nil end
+		return Ent
+	end
+	return nil
+end
+function SWEP:Package()
+	local Ent=self:GetPackagableObject()
+	if(Ent)then
+		JMod_PackageObject(Ent)
+		sound.Play("snds_jack_gmod/packagify.wav",self:GetPos(),60,math.random(90,110))
+		for i=1,3 do
+			timer.Simple(i/3,function()
+				if(IsValid(self))then
+					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),60,math.random(80,120))
+				end
+			end)
+		end
+	end
 end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
@@ -211,6 +242,8 @@ function SWEP:PrimaryAttack()
 		local Ent,Pos,Norm=self:WhomIlookinAt()
 		if(SelectedBuild>0)then
 			if((self.Buildables[SelectedBuild][2]=="ez nail")and not(self:FindNailPos()))then return end
+			if((self.Buildables[SelectedBuild][2]=="package")and not(self:GetPackagableObject()))then return end
+			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
 			if(self:HaveResourcesToPerformTask(Reqs))then
 				self:ConsumeResourcesInRange(Reqs)
@@ -220,11 +253,15 @@ function SWEP:PrimaryAttack()
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
 							if(i<BuildSteps)then
-								sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+								if(Sound)then
+									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+								end
 							else
 								local Class=self.Buildables[SelectedBuild][2]
 								if(Class=="ez nail")then
 									self:Nail()
+								elseif(Class=="package")then
+									self:Package()
 								else
 									local StringParts=string.Explode(" ",Class)
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
@@ -248,13 +285,13 @@ function SWEP:PrimaryAttack()
 					end)
 				end
 			end
-			if not(Built)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
+			if not(Built)then self:Msg("missing supplies for build") end
 		elseif((IsValid(Ent))and(Ent.EZupgrades))then
 			local State=Ent:GetState()
 			if(State==-1)then
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be repaired before upgrading")
+				self:Msg("device must be repaired before upgrading")
 			elseif(State~=0)then
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"device must be turned off to upgrade")
+				self:Msg("device must be turned off to upgrade")
 			else
 				local Grade=Ent:GetGrade()
 				if(Grade<5)then
@@ -270,20 +307,23 @@ function SWEP:PrimaryAttack()
 							end
 						end
 					end
-					if not(Upgraded)then self.Owner:PrintMessage(HUD_PRINTCENTER,"missing supplies for upgrade") end
+					if not(Upgraded)then self:Msg("missing supplies for upgrade") end
 				else
-					self.Owner:PrintMessage(HUD_PRINTCENTER,"device already highest grade")
+					self:Msg("device already highest grade")
 				end
 			end
 		end
 		if((Built)or(Upgraded))then
 			if(Built)then
-				self:BuildEffect(Pos,SelectedBuild)
+				self:BuildEffect(Pos,SelectedBuild,not Sound)
 			elseif(Upgraded)then
-				self:UpgradeEffect(Pos)
+				self:UpgradeEffect(Pos,nil,not Sound)
 			end
 		end
 	end
+end
+function SWEP:Msg(msg)
+	self.Owner:PrintMessage(HUD_PRINTCENTER,msg)
 end
 function SWEP:UpgradeEntWithResource(recipient,donor,amt)
 	local Type,Grade=donor.EZsupplies,recipient:GetGrade()
@@ -298,7 +338,7 @@ function SWEP:UpgradeEntWithResource(recipient,donor,amt)
 	for typ,amount in pairs(RequiredSupplies)do
 		Msg=Msg..typ..": "..tostring(recipient.UpgradeProgress[typ] or 0).."/"..tostring(RequiredSupplies[typ]).."\n"
 	end
-	self.Owner:PrintMessage(HUD_PRINTCENTER,Msg)
+	self:Msg(Msg)
 	---
 	if((DonorCurAmt-Given)<=0)then
 		donor:Remove()
@@ -368,16 +408,16 @@ function SWEP:Reload()
 		end
 	end
 end
-function SWEP:BuildEffect(pos,buildType)
+function SWEP:BuildEffect(pos,buildType,suppressSound)
 	if(CLIENT)then return end
 	local Scale=self.Buildables[buildType][4]^.6
-	self:UpgradeEffect(pos,Scale*4)
+	self:UpgradeEffect(pos,Scale*4,suppressSound)
 	local eff=EffectData()
 	eff:SetOrigin(pos+VectorRand())
 	eff:SetScale(Scale)
 	util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 end
-function SWEP:UpgradeEffect(pos,scale)
+function SWEP:UpgradeEffect(pos,scale,suppressSound)
 	if(CLIENT)then return end
 	scale=scale or 1
 	local effectdata=EffectData()
@@ -387,8 +427,10 @@ function SWEP:UpgradeEffect(pos,scale)
 	effectdata:SetScale(math.Rand(.5,1.5)*scale) --length of strands
 	effectdata:SetRadius(math.Rand(2,4)*scale) --thickness of strands
 	util.Effect("Sparks",effectdata,true,true)
-	sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+	if not(suppressSound)then
+		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
+		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
+	end
 end
 function SWEP:WhomIlookinAt()
 	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
@@ -416,7 +458,7 @@ function SWEP:SecondaryAttack()
 					self:SetNextPrimaryFire(CurTime()+1)
 					self:SetNextSecondaryFire(CurTime()+1)
 				else
-					self.Owner:PrintMessage(HUD_PRINTCENTER,"double click to salvage")
+					self:Msg("double click to salvage")
 				end
 				self.LastSalvageAttempt=Time
 			end
@@ -465,8 +507,8 @@ function SWEP:Think()
 		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(IN_WALK))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
 			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
-				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*2
-				self.Owner:PrintMessage(HUD_PRINTCENTER,"loosening: "..self.DeWeldProgress.."/100")
+				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*3
+				self:Msg("loosening: "..self.DeWeldProgress.."/100")
 				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),65,math.random(80,120))
 				self:Pawnch()
 				if(self.DeWeldProgress>=100)then
@@ -477,6 +519,8 @@ function SWEP:Think()
 						Ent.EZnails={}
 					end
 					constraint.RemoveConstraints(Ent,"Weld")
+					Ent:GetPhysicsObject():EnableMotion(true)
+					Ent:GetPhysicsObject():Wake()
 					sound.Play("snds_jack_gmod/ez_tools/hit.wav",Ent:GetPos(),60,math.random(80,120))
 					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Ent:GetPos(),60,math.random(80,120))
 					self.DeWeldProgress=0
