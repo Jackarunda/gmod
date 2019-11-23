@@ -55,6 +55,8 @@ SWEP.HoldType = "normal"
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_junk/cardboard_box004a.mdl"
 
+SWEP.UseHands = true
+
 SWEP.AttackSlowDown=.5
 
 SWEP.Primary.ClipSize		= -1
@@ -79,7 +81,7 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:PreDrawViewModel(vm,wep,ply)
-	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
 end
 
 function SWEP:Initialize()

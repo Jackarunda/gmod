@@ -319,7 +319,7 @@ if(SERVER)then
 		elseif(ent:IsVehicle())then
 			PlayerToCheck=ent:GetDriver()
 		end
-		if(IsValid(PlayerToCheck))then
+		if((IsValid(PlayerToCheck))and(PlayerToCheck.Alive))then
 			if(PlayerToCheck.EZkillme)then return true end -- for testing
 			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
 			local Allies=(self.Owner and self.Owner.JModFriends)or {}

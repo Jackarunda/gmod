@@ -1777,6 +1777,11 @@ if(SERVER)then
 				ParticleEffect(v,Tr.HitPos+Tr.HitNormal*20,Angle(-90,0,0))
 			end)
 		end
+		local prop=ents.Create("prop_physics")
+		prop:SetModel("models/lt_c/sci_fi/headset_2.mdl")
+		prop:SetPos(ply:GetPos())
+		prop:Spawn()
+		prop:Activate()
 	end)
 	--]]
 end
