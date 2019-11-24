@@ -61,7 +61,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		Contents:SetNoDraw(true)
+		--Contents:SetNoDraw(true)
 		Contents:SetNotSolid(true)
 		ContentsPhys:Sleep()
 	end
@@ -79,14 +79,7 @@ if(SERVER)then
 			local Pos=self:GetPos()
 			sound.Play("Wood_Crate.Break",Pos)
 			sound.Play("Wood_Box.Break",Pos)
-			for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
-				local Box=ents.Create(self.ChildEntity)
-				Box:SetPos(Pos+self:GetUp()*20)
-				Box:SetAngles(self:GetAngles())
-				Box:Spawn()
-				Box:Activate()
-			end
-			self:Remove()
+			self:ReleaseItem()
 		end
 	end
 	function ENT:OpenEffect(pos)
@@ -119,24 +112,27 @@ if(SERVER)then
 				if(i<4)then
 					self:EmitSound("snd_jack_metallicclick.wav",60,100)
 				else
-					local Pos,Ang,Contents=self:LocalToWorld(self:OBBCenter()),self:GetAngles(),self:GetContents()
-					if(IsValid(Contents))then
-						self:OpenEffect(Pos)
-						Contents:SetPos(Pos+Vector(0,0,30))
-						Contents:SetAngles(Ang)
-						Contents:SetNoDraw(false)
-						Contents:SetNotSolid(false)
-						local Phys=Contents:GetPhysicsObject()
-						if(IsValid(Phys))then
-							Phys:Wake()
-							Phys:SetVelocity(self:GetPhysicsObject():GetVelocity())
-						end
-						self:SetContents(nil)
-					end
-					self:Remove()
+					self:ReleaseItem()
 				end
 			end)
 		end
+	end
+	function ENT:ReleaseItem()
+		local Pos,Ang,Contents,Vel=self:LocalToWorld(self:OBBCenter()),self:GetAngles(),self:GetContents(),self:GetPhysicsObject():GetVelocity()
+		if(IsValid(Contents))then
+			self:OpenEffect(Pos)
+			Contents:SetPos(Pos+Vector(0,0,30))
+			Contents:SetAngles(Ang)
+			Contents:SetNoDraw(false)
+			Contents:SetNotSolid(false)
+			local Phys=Contents:GetPhysicsObject()
+			if(IsValid(Phys))then
+				Phys:Wake()
+				Phys:SetVelocity(Vel)
+			end
+			self:SetContents(nil)
+		end
+		self:Remove()
 	end
 	function ENT:Use(activator)
 		JMod_Hint(activator,"unpackage")

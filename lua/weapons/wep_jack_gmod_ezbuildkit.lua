@@ -209,6 +209,7 @@ function SWEP:GetPackagableObject()
 	if((IsValid(Ent))and not(Ent:IsWorld()))then
 		if(Ent.EZunpackagable)then self:Msg("No.") return nil end
 		if((Ent:IsPlayer())or(Ent:IsNPC()))then return nil end
+		if(Ent:IsRagdoll())then return nil end
 		local Constraints,Constrained=constraint.GetTable(Ent),false
 		for k,v in pairs(Constraints)do
 			if(v.Type~="NoCollide")then Constrained=true;break end

@@ -646,4 +646,7 @@ if(CLIENT)then
 			Y=Y+30
 		end
 	end)
+	net.Receive("JMod_Hint",function()
+		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
+	end)
 end

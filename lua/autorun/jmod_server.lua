@@ -4,6 +4,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_MineColor")
 	util.AddNetworkString("JMod_EZbuildKit")
 	util.AddNetworkString("JMod_EZworkbench")
+	util.AddNetworkString("JMod_Hint")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1579,7 +1580,7 @@ if(SERVER)then
 		if((JMOD_CONFIG)and(JMOD_CONFIG.Hints)and not(SERVER_JMOD_HINT_GIVEN))then
 			SERVER_JMOD_HINT_GIVEN=true
 			timer.Simple(10,function()
-				if(ply)then ply:PrintMessage(HUD_PRINTTALK,"To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt") end
+				if(ply)then JMod_Hint(ply,"customize") end
 			end)
 		end
 	end)
@@ -1777,20 +1778,12 @@ if(SERVER)then
 			end
 		end
 	end)
-	--[[
+	---[[
 	concommand.Add("damnit",function(ply,cmd,args)
-		local Effs={"muzzleflash_pistol_rbull","muzzleflash_smg","muzzleflash_m79","muzzleflash_sr25","muzzleflash_M82","muzzleflash_pistol","muzzleflash_suppressed","muzzleflash_M3"}
-		for k,v in pairs(Effs)do
-			timer.Simple(k/10,function()
-				local Tr=ply:GetEyeTrace()
-				ParticleEffect(v,Tr.HitPos+Tr.HitNormal*20,Angle(-90,0,0))
-			end)
+		ents.FindByClass("prop_ragdoll")[1]:SetPos(ply:GetPos())
+		for i=0,100 do
+			--ents.FindByClass("prop_ragdoll")[1]:SetRagdollPos(i,ply:GetPos())
 		end
-		local prop=ents.Create("prop_physics")
-		prop:SetModel("models/lt_c/sci_fi/headset_2.mdl")
-		prop:SetPos(ply:GetPos())
-		prop:Spawn()
-		prop:Activate()
 	end)
 	--]]
 end

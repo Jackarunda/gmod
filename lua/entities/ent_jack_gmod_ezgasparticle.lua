@@ -58,7 +58,7 @@ if(SERVER)then
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
 					local Dmg,Helf=DamageInfo(),obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(3*JMOD_CONFIG.PoisonGasDamage)
+					Dmg:SetDamage(2.5*JMOD_CONFIG.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())

@@ -1260,7 +1260,8 @@ local Hints={
 	["jmod hands move"]="punches also can move you (jump boost/climbing)",
 	["unpackage"]="double tap alt+E to unpackage",
 	["crafting"]="set resources near workbench in order to use them",
-	["building"]="stand near resources in order to use them"
+	["building"]="stand near resources in order to use them",
+	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end
@@ -1273,8 +1274,10 @@ function JMod_Hint(ply,...)
 	for k,key in pairs(HintKeys)do
 		if not(table.HasValue(ply.JModHintsGiven,key))then
 			table.insert(ply.JModHintsGiven,key)
-			ply.NextJModHint=Time+2
-			ply:PrintMessage(HUD_PRINTCENTER,Hints[key])
+			ply.NextJModHint=Time+1
+			net.Start("JMod_Hint")
+			net.WriteString(Hints[key])
+			net.Send(ply)
 			break
 		end
 	end

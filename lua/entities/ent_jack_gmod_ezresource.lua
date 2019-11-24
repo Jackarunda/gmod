@@ -64,7 +64,7 @@ if(SERVER)then
 					return
 				end
 			end
-			if(data.Speed>80)then
+			if((data.Speed>80)and(self)and(self.ImpactNoise1))then
 				self.Entity:EmitSound(self.ImpactNoise1)
 				if(self.ImpactNoise2)then self.Entity:EmitSound(self.ImpactNoise2) end
 			end
