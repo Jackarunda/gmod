@@ -1,36 +1,12 @@
 # The Garry's Mod Additions Pack!
 
-Huzzah!
-
-# The Plan
-
-We're taking all of Jackarunda's past addons and resurrecting them into a single big community project to re-upload to the workshop.
-
-Once most of the content is copied, converted and working, Jackarunda will split the content of this repo up and upload mutliple Workshop items so that everyone can enjoy this content once again and use it on their servers bug-free. Maintenance and additions will continue from there and Jackarunda will handle the workshop aspect of things. If you help as a playtester, you will be mentioned in the credits for the packs if you wish. If you help as a coder or file-folder organizer/converter in any way, you will be added as a co-publisher to the workshop items if you wish. This is a community project.
+Ha-HA, the fun has been DOUBLED!
 
 # Contributing
 
-We don't really need hardcore functional programming to make this work. If we do, jackarunda will do it. What we really need right now is:
-
-> move all of these files from X folder to Y folder
-
-> combine the content of these files into one file and put it in Z folder
-
-> take the content of this file and put it in a section of another file and delete this file
-
-> see what resources are needed from these files and copy the resources into the new folder
-
-> rename this file and then rename all usages of it in all the other files
-
-> rename this sound file and then replace any usages of it in these files
-
-> look through this folder for any large texture files, and if you find them, downsize them in GIMP or something and replace
-
-> look throgh this folder for large sound files and if you find them, then convert them to MP3 in Audacity or something and replace
-
 If you think you can help, let Jackarunda know in the gmod Discord.
 
-# Setup
+# Setup for Contribution
 
 You must have a github account, first. You can make one for free.
 
@@ -78,7 +54,7 @@ Once git and git bash are installed on your machine, start a git bash window (pr
 
 But obviously the path is unique for you. Note that when git installs they usually add shell extensions so you can right click or shift+right click and open a new git bash window anywhere in your Explorer, which is easier than CDing every time. Now clone this repo into a new folder into your addons folder by using the command:
 
-`git clone https://github.com/Jackarunda/gmod.git gmod-additions-pack`
+`git clone https://github.com/Jackarunda/gmod.git jmod`
 
 This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly messed up and you need to delete and re-clone. But that should never happen.
 
@@ -109,25 +85,8 @@ For more complicated operations regarding git, you can consult the wealth of inf
 
 # ToDo:
 
-Include content from all the previous addons.
-
-OpSquads has been included already. Next on the list is JI Defense Solutions.
-
-- download JIDS source from dropbox
-- copy whatever entities/weapons you like from JIDS into this repo, along with all dependent other entities and effects
-- convert all entities/weapons to single-file format if not already
-- take the sounds from JIDS and copy them into this repo's sound folder (sound/snds_jack_gmod), then replace all instances of their use in the entity/weapon files
-- copy all needed materials and textures from JIDS into respective folders in this repo, keeping the organization scheme the same and renaming if necessary (and replacing usage calls in code if necessary)
-- do the same for models and particle effects
-
-- test in gmod
-
-Jackarunda will handle most of the fixing/optimizing of the code.
-
-# Custom Additions
-
-If you're a glua coder and want to add new features or items to the pack, let Jackarunda know and make a PR. Custom contributions to the pack are welcome if they are of a quality and style similar to or surpassing that of existing content.
+There's a lot more EZ content to be made. Details are typically found in discussions in the discord server.
 
 # Bugs
 
-If you find a bug, put it in the bugs.txt file here or tell Jackarunda about it in the gmod channel.
+If you find a bug, put it in the bugs.txt file here or tell Jackarunda about it in the gmod discord channel.
