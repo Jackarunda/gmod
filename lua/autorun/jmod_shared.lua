@@ -10,6 +10,12 @@ game.AddParticles("particles/muzzleflashes_test_b.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
+if(SERVER)then
+	resource.AddWorkshop("1919689921")
+	resource.AddWorkshop("1919703147")
+	resource.AddWorkshop("1919692947")
+	resource.AddWorkshop("1919694756")
+end
 ---
 function JMod_InitGlobalConfig()
 	local NewConfig={
