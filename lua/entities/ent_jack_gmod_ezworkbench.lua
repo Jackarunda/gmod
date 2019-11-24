@@ -27,6 +27,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
+		JMod_Hint(ply,"crafting")
 		return ent
 	end
 	function ENT:Initialize()

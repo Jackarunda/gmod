@@ -1574,6 +1574,15 @@ if(SERVER)then
 			end
 		end
 	end)
+	local SERVER_JMOD_HINT_GIVEN=false
+	hook.Add("PlayerInitialSpawn","JMOD_INITIALSPAWN",function(ply)
+		if((JMOD_CONFIG)and(JMOD_CONFIG.Hints)and not(SERVER_JMOD_HINT_GIVEN))then
+			SERVER_JMOD_HINT_GIVEN=true
+			timer.Simple(10,function()
+				if(ply)then ply:PrintMessage(HUD_PRINTTALK,"To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt") end
+			end)
+		end
+	end)
 	function JMod_EZradioEstablish(transceiver,id)
 		local Station=EZ_RADIO_STATIONS[id] or {
 			state=EZ_STATION_STATE_READY,

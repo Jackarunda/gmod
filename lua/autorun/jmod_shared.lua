@@ -1252,7 +1252,9 @@ local Hints={
 	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
 	["jmod hands"]="RMB to block, R to put hands down",
 	["jmod hands move"]="punches also can move you (jump boost/climbing)",
-	["unpackage"]="double tap alt+E to unpackage"
+	["unpackage"]="double tap alt+E to unpackage",
+	["crafting"]="set resources near workbench in order to use them",
+	["building"]="stand near resources in order to use them"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end
