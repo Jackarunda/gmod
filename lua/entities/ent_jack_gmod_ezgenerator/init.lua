@@ -67,7 +67,7 @@ function ENT:Use(activator,caller)
 		elseif (!alt) then
 			self:ProducePower(activator)
 		end
-		
+		JMod_Hint(activator, "generator")
 	end
 	
 end
@@ -118,6 +118,8 @@ end
 function ENT:ShutOff()
 	self:EmitSound("snd_jack_genstop.mp3")
 	self:SetState(STATE_OFF)
+	self.NextUse=CurTime()+5
+	self.NextWork=CurTime()+5
 end
 
 function ENT:Think()
