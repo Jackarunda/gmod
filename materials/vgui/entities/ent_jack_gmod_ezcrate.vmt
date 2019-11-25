@@ -1,6 +1,6 @@
 "UnlitGeneric" 
 { 
-	"$basetexture"		"vgui/entities/ent_jack_gmod_ezcrate_medsupplies"
+	"$basetexture"		"vgui/entities/ent_jack_gmod_ezcrate"
 	"$ignorez"		1
 	"$vertexcolor" 		1
 	"$vertexalpha" 		1

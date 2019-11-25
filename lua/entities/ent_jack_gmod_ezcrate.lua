@@ -1,17 +1,113 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.Author="Jackarunda"
+ENT.PrintName="EZ Resource Crate"
+ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
-ENT.Information="glhfggwpezpznore"
-ENT.Spawnable=false
-ENT.AdminSpawnable=false
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
 ---
+ENT.MaxResource=1
+ENT.ChildEntity=""
+ENT.ChildEntityResourceAmount=0
+ENT.MainTitleWord="RESOURCES"
+ENT.ResourceUnit="Units"
+---
+ENT.SupplyTypes = { -- A list of all possible resources, excl. mines and detpacks
+	["generic"] = {
+		MaxResource=1,
+		ChildEntity="",
+		ChildEntityResourceAmount=0,
+		MainTitleWord="RESOURCES",
+		ResourceUnit="Units",
+	},
+	["advparts"] = {
+		MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize,
+		ChildEntity="ent_jack_gmod_ezadvparts",
+		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
+		MainTitleWord="ADV.PARTS",
+		ResourceUnit="Units"
+	},
+	["ammo"] = {
+		MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezammo",
+		ChildEntityResourceAmount=JMod_EZammoBoxSize,
+		MainTitleWord="AMMO",
+		ResourceUnit="Count"
+	},
+	["chemicals"] = {
+		MaxResource=JMod_EZchemicalsSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezchemicals",
+		ChildEntityResourceAmount=JMod_EZchemicalsSize,
+		MainTitleWord="CHEMICALS",
+		ResourceUnit="Units"
+	},
+	["explosives"] = {
+		MaxResource=JMod_EZexplosivesBoxSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezexplosives",
+		ChildEntityResourceAmount=JMod_EZexplosivesBoxSize,
+		MainTitleWord="EXPLOSIVES",
+		ResourceUnit="Units"
+	},
+	["fuel"] = {
+		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezfuel",
+		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		MainTitleWord="FUEL",
+		ResourceUnit="Units"
+	},
+	["gas"] = {
+		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezgas",
+		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		MainTitleWord="GAS",
+		ResourceUnit="Units"
+	},
+	["medsupplies"] = {
+		MaxResource=JMod_EZmedSupplyBoxSize*JMod_EZpartsCrateSize,
+		ChildEntity="ent_jack_gmod_ezmedsupplies",
+		ChildEntityResourceAmount=JMod_EZmedSupplyBoxSize,
+		MainTitleWord="MED.SUPPLIES",
+		ResourceUnit="Units"
+	},
+	["parts"] = { 
+		MaxResource=JMod_EZpartBoxSize*JMod_EZpartsCrateSize,
+		ChildEntity="ent_jack_gmod_ezparts",
+		ChildEntityResourceAmount=JMod_EZpartBoxSize,
+		MainTitleWord="PARTS",
+		ResourceUnit="Units"
+	},
+	["power"] = {
+		MaxResource=JMod_EZbatterySize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezbattery",
+		ChildEntityResourceAmount=JMod_EZbatterySize,
+		MainTitleWord="BATTERIES",
+		ResourceUnit="Charge"
+	},
+	["nutrients"] = {
+		MaxResource=JMod_EZnutrientBoxSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_eznutrients",
+		ChildEntityResourceAmount=JMod_EZnutrientBoxSize,
+		MainTitleWord="RATIONS",
+		ResourceUnit="Units"
+	}
+}
+---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"Resource")
+	self:NetworkVar("String",0,"ResourceType")
+end
+function ENT:ApplySupplyType(typ) 
+	if not(self.SupplyTypes[typ])then return end
+	self:SetResourceType(typ)
+	self.MaxResource=self.SupplyTypes[typ].MaxResource
+	self.ChildEntity=self.SupplyTypes[typ].ChildEntity
+	self.ChildEntityResourceAmount=self.SupplyTypes[typ].ChildEntityResourceAmount
+	self.MainTitleWord=self.SupplyTypes[typ].MainTitleWord
+	self.ResourceUnit=self.SupplyTypes[typ].ResourceUnit
 end
 ---
 if(SERVER)then
@@ -38,7 +134,9 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		self:SetResource(0)
-		self.EZconsumes={self.ResourceType}
+		self:ApplySupplyType("generic")
+		self.EZconsumes={}
+		for k,v in pairs(self.SupplyTypes) do table.insert(self.EZconsumes,k) end
 		self.NextLoad=0
 		---
 		timer.Simple(.01,function() self:CalcWeight() end)
@@ -61,12 +159,14 @@ if(SERVER)then
 			local Pos=self:GetPos()
 			sound.Play("Wood_Crate.Break",Pos)
 			sound.Play("Wood_Box.Break",Pos)
-			for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
-				local Box=ents.Create(self.ChildEntity)
-				Box:SetPos(Pos+self:GetUp()*20)
-				Box:SetAngles(self:GetAngles())
-				Box:Spawn()
-				Box:Activate()
+			if (self.ChildEntity != "" and self:GetResource() > 0) then 
+				for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
+					local Box=ents.Create(self.ChildEntity)
+					Box:SetPos(Pos+self:GetUp()*20)
+					Box:SetAngles(self:GetAngles())
+					Box:Spawn()
+					Box:Activate()
+				end
 			end
 			self:Remove()
 		end
@@ -86,6 +186,7 @@ if(SERVER)then
 		self:SetResource(Resource-Given)
 		self:EmitSound("Ammo_Crate.Close")
 		self:CalcWeight()
+		if(self:GetResource()<=0)then self:ApplySupplyType("generic") end
 	end
 	function ENT:Think()
 		--pfahahaha
@@ -97,7 +198,12 @@ if(SERVER)then
 		local Time=CurTime()
 		if(self.NextLoad>Time)then return 0 end
 		if(amt<=0)then return 0 end
-		if(typ==self.ResourceType)then
+		-- If unloaded, we set our type to the item type
+		if(self:GetResource()<=0 and self:GetResourceType()=="generic" and self.SupplyTypes[typ]) then 
+			self:ApplySupplyType(typ)
+		end
+		-- Consider the loaded type
+		if(typ==self:GetResourceType())then
 			local Resource=self:GetResource()
 			local Missing=self.MaxResource-Resource
 			if(Missing<=0)then return 0 end
@@ -115,6 +221,7 @@ elseif(CLIENT)then
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
 		local DetailDraw=Closeness<45000 -- cutoff point is 500 units when the fov is 90 degrees
+		local i = self:GetResourceType()
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Resource=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
@@ -122,17 +229,17 @@ elseif(CLIENT)then
 			Ang:RotateAroundAxis(Ang:Up(),-90)
 			cam.Start3D2D(Pos+Up*18-Forward*29.8+Right,Ang,.3)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(self.MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Resource.." "..self.ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
 			cam.Start3D2D(Pos+Up*18+Forward*29.9-Right,Ang,.3)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(self.MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Resource.." "..self.ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
 	end
-	language.Add("ent_jack_gmod_ezcrate_ammo","EZ Ammo Crate")
+	language.Add("ent_jack_gmod_ezcrate","EZ Resource Crate")
 end

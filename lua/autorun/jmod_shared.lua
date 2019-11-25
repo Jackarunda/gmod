@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=10,
+		Version=11,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -30,6 +30,7 @@ function JMod_InitGlobalConfig()
 		PoisonGasDamage=1,
 		PoisonGasLingerTime=1,
 		DetpackPowerMult=1,
+		MicroBlackHoleGeneratorChargeSpeed=1,
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
 		BuildKitDeWeldSpeed=1,
@@ -71,32 +72,20 @@ function JMod_InitGlobalConfig()
 				["build kits"]={
 					{"ent_jack_gmod_ezbuildkit",2}
 				},
-				["ammo crate"]={
-					"ent_jack_gmod_ezcrate_ammo"
+				["rations"]={
+					{"ent_jack_gmod_eznutrients",5}
 				},
-				["battery crate"]={
-					"ent_jack_gmod_ezcrate_power"
+				["medical supplies"]={
+					{"ent_jack_gmod_ezmedsupplies",2}
 				},
-				["fuel crate"]={
-					"ent_jack_gmod_ezcrate_fuel"
+				["resource crate"]={
+					"ent_jack_gmod_ezcrate"
 				},
-				["explosives crate"]={
-					"ent_jack_gmod_ezcrate_explosives"
+				["landmine crate"]={
+					"ent_jack_gmod_ezcrate_landmines"
 				},
-				["chemical crate"]={
-					"ent_jack_gmod_ezcrate_chemicals"
-				},
-				["gas crate"]={
-					"ent_jack_gmod_ezcrate_gas"
-				},
-				["advanced parts crate"]={
-					"ent_jack_gmod_ezcrate_advparts"
-				},
-				["parts crate"]={
-					"ent_jack_gmod_ezcrate_parts"
-				},
-				["medical supplies crate"]={
-					"ent_jack_gmod_ezcrate_medsupplies"
+				["detpack crate"]={
+					"ent_jack_gmod_ezcrate_detpacks"
 				},
 				["hl2 ammo"]={
 					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
@@ -106,12 +95,6 @@ function JMod_InitGlobalConfig()
 					"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
 					"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
 					"weapon_frag","weapon_frag","weapon_frag"
-				},
-				["rations"]={
-					{"ent_jack_gmod_eznutrients",5}
-				},
-				["medical supplies"]={
-					{"ent_jack_gmod_ezmedsupplies",2}
 				},
 				["sentry"]={
 					"ent_jack_gmod_ezsentry"
@@ -146,16 +129,9 @@ function JMod_InitGlobalConfig()
 			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
 			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
 			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
-			["EZ Advanced Parts Crate"]={"ent_jack_gmod_ezcrate_advparts",{parts=100},1.5},
-			["EZ Ammo Crate"]={"ent_jack_gmod_ezcrate_ammo",{parts=100},1.5},
-			["EZ Fuel Crate"]={"ent_jack_gmod_ezcrate_fuel",{parts=100},1.5},
-			["EZ Medical Supplies Crate"]={"ent_jack_gmod_ezcrate_medsupplies",{parts=100},1.5},
-			["EZ Nutrients Crate"]={"ent_jack_gmod_ezcrate_nutrients",{parts=100},1.5},
-			["EZ Parts Crate"]={"ent_jack_gmod_ezcrate_parts",{parts=100},1.5},
-			["EZ Battery Crate"]={"ent_jack_gmod_ezcrate_power",{parts=100},1.5},
-			["EZ Chemical Crate"]={"ent_jack_gmod_ezcrate_chemicals",{parts=100},1.5},
-			["EZ Explosives Crate"]={"ent_jack_gmod_ezcrate_explosives",{parts=100},1.5},
-			["EZ Gas Crate"]={"ent_jack_gmod_ezcrate_gas",{parts=100},1.5},
+			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
+			["EZ Landmine Crate"]={"ent_jack_gmod_ezcrate_landmines",{parts=50},1},
+			["EZ Detpack Crate"]={"ent_jack_gmod_ezcrate_detpacks",{parts=50},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
@@ -167,7 +143,7 @@ function JMod_InitGlobalConfig()
 			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5}},
 			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20}},
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
-			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=10}},
+			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
 			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=1,chemicals=100}},
 			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}}
 		}
@@ -182,6 +158,22 @@ function JMod_InitGlobalConfig()
 	if not(JMOD_CONFIG)then
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
+	end
+	if not(JMOD_LUA_CONFIG)then
+		JMOD_LUA_CONFIG={
+			BuildFuncs={
+				spawnHL2buggy = function(playa, position, angles)
+					local Ent = ents.Create("prop_vehicle_jeep_old")
+					Ent:SetModel("models/buggy.mdl")
+					Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
+					Ent:SetPos(position)
+					Ent:SetAngles(angles)
+					Ent.Owner=playa
+					Ent:Spawn()
+					Ent:Activate()
+				end
+			}
+		}
 	end
 	print("JMOD: config file loaded")
 end

@@ -133,7 +133,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_CHARGING)then
-			self.Charge=self.Charge+.1
+			self.Charge=self.Charge+.1*JMOD_CONFIG.MicroBlackHoleGeneratorChargeSpeed
 			if(self.Hum)then
 				self.Hum:ChangePitch(1+self.Charge*2.53)
 			end

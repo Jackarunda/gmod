@@ -36,6 +36,8 @@ function ENT:InitPerfSpecs()
 	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade] end
 end
 function ENT:Upgrade(level)
+	if not(level)then level=self:GetGrade()+1 end
+	if(level>5)then return end
 	self:SetGrade(level)
 	self:InitPerfSpecs()
 	self.UpgradeProgress={}
@@ -323,7 +325,7 @@ if(SERVER)then
 		end
 		local Injury=Max-Helf
 		if(Injury>0)then
-			local HealAmt=math.min(Injury,math.ceil(2*self.HealEfficiency^1.5))
+			local HealAmt=math.min(Injury,math.ceil(3*self.HealEfficiency^2))
 			self.Patient:SetHealth(Helf+HealAmt)
 			self:ConsumeElectricity(2)
 			self:SetSupplies(Supplies-1)

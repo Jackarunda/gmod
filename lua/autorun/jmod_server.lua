@@ -1434,10 +1434,12 @@ if(SERVER)then
 				if(playa:Alive())then
 					local Healin=playa.EZhealth
 					if(Healin>0)then
-						playa.EZhealth=Healin-1
+						local Amt=1
+						if(math.random(1,3)==2)then Amt=2 end
+						playa.EZhealth=Healin-Amt
 						local Helf,Max=playa:Health(),playa:GetMaxHealth()
 						if(Helf<Max)then
-							playa:SetHealth(Helf+1)
+							playa:SetHealth(Helf+Amt)
 							if(playa:Health()==Max)then playa:RemoveAllDecals() end
 						end
 					end
@@ -1721,6 +1723,14 @@ if(SERVER)then
 	concommand.Add("jmod_ez_trigger",function(ply)
 		JMod_EZ_Remote_Trigger(ply)
 	end)
+	concommand.Add("jmod_insta_upgrade",function(ply)
+		if not(IsValid(ply))then return end
+		if not(ply:IsSuperAdmin())then return end
+		local Ent=ply:GetEyeTrace().Entity
+		if((IsValid(Ent))and(Ent.EZupgrades)and(Ent.Upgrade))then
+			Ent:Upgrade()
+		end
+	end)
 	function JMod_EZ_Remote_Trigger(ply)
 		if not(IsValid(ply))then return end
 		if not(ply:Alive())then return end
@@ -1808,7 +1818,7 @@ if(SERVER)then
 			end
 		end
 	end)
-	---[[
+	--[[
 	concommand.Add("damnit",function(ply,cmd,args)
 		ents.FindByClass("prop_ragdoll")[1]:SetPos(ply:GetPos())
 		for i=0,100 do

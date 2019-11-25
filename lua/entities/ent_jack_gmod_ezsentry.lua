@@ -52,6 +52,8 @@ function ENT:InitPerfSpecs()
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 end
 function ENT:Upgrade(level)
+	if not(level)then level=self:GetGrade()+1 end
+	if(level>5)then return end
 	self:SetGrade(level)
 	self:InitPerfSpecs()
 	self.UpgradeProgress={}
@@ -517,7 +519,7 @@ if(SERVER)then
 		sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
 		sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
 		---
-		local Dmg=math.Rand(self.MinDamage,self.MaxDamage)
+		local Dmg=(math.Rand(self.MinDamage,self.MaxDamage)^2)/10
 		local ShootDir=(point-ShootPos):GetNormalized()
 		local Inacc=.08/self.Accuracy
 		ShootDir=(ShootDir+VectorRand()*math.Rand(0,Inacc)):GetNormalized()
