@@ -314,8 +314,13 @@ if(SERVER)then
 		if(State<2)then return end
 		if not(self:UserIsAuthorized(ply))then return end
 		txt=string.lower(txt)
-		if(string.sub(txt,1,14)=="supply radio: ")then
+		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
+		print(BFFreq)
+		if((NormalReq)or(BFFreq))then
 			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
+			if(BFFreq)then
+				Name=string.sub(txt,7)
+			end
 			if(Name=="help")then
 				if(State==2)then
 					local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
@@ -329,10 +334,10 @@ if(SERVER)then
 					return true
 				end
 			elseif(Name=="status")then
-				self:Speak(JMod_EZradioStatus(self,self:GetStationID(),ply),ParrotPhrase)
+				self:Speak(JMod_EZradioStatus(self,self:GetStationID(),ply,BFFreq),ParrotPhrase)
 				return true
 			elseif(JMOD_CONFIG.RadioSpecs.AvailablePackages[Name])then
-				self:Speak(JMod_EZradioRequest(self,self:GetStationID(),ply,Name),ParrotPhrase)
+				self:Speak(JMod_EZradioRequest(self,self:GetStationID(),ply,Name,BFFreq),ParrotPhrase)
 				return true
 			end
 		end

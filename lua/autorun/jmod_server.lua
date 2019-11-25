@@ -1484,11 +1484,33 @@ if(SERVER)then
 		end
 	end)
 	-- EZ Radio Code --
-	local function NotifyAllRadios(stationID,msg)
+	local NotifyAllMsgs={
+		["normal"]={
+			["good drop"]="good drop, package away, returning to base",
+			["drop failed"]="drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB",
+			["drop soon"]="be advised, aircraft on site, drop imminent",
+			["ready"]="attention, this outpost is now ready to carry out delivery missions"
+		},
+		["bff"]={
+			["good drop"]="AIGHT we dropped it, watch out yo",
+			["drop failed"]="yo WHERE THE DROP SITE AT THO soz i gotta get back to base",
+			["drop soon"]="ay dudes watch yo head we abouta drop the box",
+			["ready"]="aight we GOOD TO GO out here jus tell us whatchya need anytime"
+		}
+	}
+	local function NotifyAllRadios(stationID,msgID,direct)
 		local Radios=EZ_RADIO_STATIONS[stationID].transceivers
 		for k,v in pairs(Radios)do
 			if(IsValid(v))then
-				v:Speak(msg)
+				if(direct)then
+					v:Speak(msgID)
+				else
+					if(v.BFFd)then
+						v:Speak(NotifyAllMsgs["bff"][msgID])
+					else
+						v:Speak(NotifyAllMsgs["normal"][msgID])
+					end
+				end
 			else
 				Radios[k]=nil
 			end
@@ -1541,25 +1563,25 @@ if(SERVER)then
 							for k,playa in pairs(ents.FindInSphere(DropPos,6000))do
 								if(playa:IsPlayer())then sound.Play("snd_jack_flyby_drop.mp3",playa:GetShootPos(),50,100) end
 							end
-							NotifyAllRadios(stationID,"good drop, package away, returning to base")
+							NotifyAllRadios(stationID,"good drop")
 						end)
 					else
-						NotifyAllRadios(stationID,"drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB")
+						NotifyAllRadios(stationID,"drop failed")
 					end
 				elseif((station.nextNotifyTime<Time)and not(station.notified))then
 					station.notified=true
-					NotifyAllRadios(stationID,"be advised, aircraft on site, drop imminent")
+					NotifyAllRadios(stationID,"drop soon")
 				end
 			elseif(station.state==EZ_STATION_STATE_BUSY)then
 				if(station.nextReadyTime<Time)then
 					station.state=EZ_STATION_STATE_READY
-					NotifyAllRadios(stationID,"attention, this outpost is now ready to carry out delivery missions")
+					NotifyAllRadios(stationID,"ready")
 				end
 			end
 			if(station.restrictedPackageDelivering)then
 				if(station.restrictedPackageDeliveryTime<Time)then
 					table.insert(station.restrictedPackageStock,station.restrictedPackageDelivering)
-					NotifyAllRadios(stationID,"attention, this outpost has received a special shipment of "..station.restrictedPackageDelivering.." from regional HQ")
+					NotifyAllRadios(stationID,"attention, this outpost has received a special shipment of "..station.restrictedPackageDelivering.." from regional HQ",true)
 					station.restrictedPackageDelivering=nil
 					station.restrictedPackageDeliveryTime=0
 				end
@@ -1619,7 +1641,7 @@ if(SERVER)then
 		end
 		return Result
 	end
-	local function StartDelivery(pkg,transceiver,station)
+	local function StartDelivery(pkg,transceiver,station,bff)
 		local Time=CurTime()
 		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
 		station.state=EZ_STATION_STATE_DELIVERING
@@ -1628,24 +1650,28 @@ if(SERVER)then
 		station.deliveryType=pkg
 		station.notified=false
 		station.nextNotifyTime=Time+(DeliveryTime-5)
+		if(bff)then return "ayo GOOD COPY homie, we sendin "..GetArticle(pkg).." "..pkg.." box right over to "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z).." in prolly like "..DeliveryTime.." seconds" end
 		return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
 	end
-	function JMod_EZradioRequest(transceiver,id,ply,pkg)
+	function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 		local PackageInfo,Station,Time=JMOD_CONFIG.RadioSpecs.AvailablePackages[pkg],EZ_RADIO_STATIONS[id],CurTime()
 		if not(Station)then
 			JMod_EZradioEstablish(transceiver,id)
 			Station=EZ_RADIO_STATIONS[id]
 		end
+		transceiver.BFFd=bff
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
+			if(bff)then return "no can do bro, we deliverin somethin else" end
 			return "negative on that request, we're currently delivering another package"
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
+			if(bff)then return "nah fam we ain't ready yet tryagin l8r aight" end
 			return "negative on that request, the delivery team isn't currently on station"
 		elseif(Station.state==EZ_STATION_STATE_READY)then
 			if(table.HasValue(JMOD_CONFIG.RadioSpecs.RestrictedPackages,pkg))then
 				if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then return "negative on that request, neither we nor regional HQ have any of that at this time" end
 				if(table.HasValue(Station.restrictedPackageStock,pkg))then
 					table.RemoveByValue(Station.restrictedPackageStock,pkg)
-					return StartDelivery(pkg,transceiver,Station)
+					return StartDelivery(pkg,transceiver,Station,bff)
 				else
 					if(Station.restrictedPackageDelivering)then
 						return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
@@ -1657,18 +1683,22 @@ if(SERVER)then
 					end
 				end
 			else
-				return StartDelivery(pkg,transceiver,Station)
+				return StartDelivery(pkg,transceiver,Station,bff)
 			end
 		end
 	end
-	function JMod_EZradioStatus(transceiver,id,ply,pkg)
+	function JMod_EZradioStatus(transceiver,id,ply,bff)
 		local Station,Time,Msg=EZ_RADIO_STATIONS[id],CurTime(),""
+		transceiver.BFFd=bff
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			Msg="this outpost is currently delivering a package"
+			if(bff)then Msg="hey we gettin somethin fo someone else righ now" end
 		elseif(Station.state==EZ_STATION_STATE_BUSY)then
 			Msg="this outpost is currently preparing for deliveries"
+			if(bff)then Msg="hey homie we pretty busy out here right now jus hol up" end
 		elseif(Station.state==EZ_STATION_STATE_READY)then
 			Msg="this outpost is ready to accept delivery missions"
+			if(bff)then Msg="ANYTHING U NEED WE GOTCHU" end
 		end
 		if(#Station.restrictedPackageStock>0)then
 			local InventoryList=""

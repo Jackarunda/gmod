@@ -61,7 +61,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		--Contents:SetNoDraw(true)
+		Contents:SetNoDraw(true)
 		Contents:SetNotSolid(true)
 		ContentsPhys:Sleep()
 	end

@@ -99,6 +99,7 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
 function SWEP:CanSee(ent)
+	if(ent:GetNoDraw())then return end
 	return not util.TraceLine({
 		start=self:GetPos(),
 		endpos=ent:GetPos(),

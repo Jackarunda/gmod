@@ -216,6 +216,7 @@ if(SERVER)then
 		return 0
 	end
 	function ENT:CanSee(ent)
+	 if(ent:GetNoDraw())then return false end
 		return not util.TraceLine({
 			start=self:GetPos(),
 			endpos=ent:GetPos(),
