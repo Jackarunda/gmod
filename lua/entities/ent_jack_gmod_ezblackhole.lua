@@ -6,8 +6,9 @@ ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Micro Black Hole"
 ENT.Spawnable=false
-ENT.AdminSpawnable=false
+ENT.AdminSpawnable=true
 ENT.Blacklist={"func_","_dynamic"}
+ENT.Whitelist = {"func_physbox"}
 ENT.PhyslessPointEnts={"rpg_missile","crossbow_bolt","grenade_ar2","grenade_spit","npc_grenade_bugbait"}
 ENT.PhysNPCs={"npc_cscanner","npc_clawscanner","npc_turret_floor","npc_rollermine"}
 ENT.RagdollifyEnts={"npc_combinegunship","npc_strider","npc_manhack","npc_combinedropship"}
@@ -29,7 +30,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 			end
 		elseif(table.HasValue(self.RagdollifyEnts,Class))then
 			if((SERVER)and(math.random(1,100)==42))then obj:Fire("becomeragdoll","",0) end
-		elseif((IsValid(ObjPhys))and not(obj:IsWorld())and not(obj==self)and not(self:IsBlacklisted(obj)))then
+		elseif((IsValid(ObjPhys))and not(obj==self)and not(self:IsBlacklisted(obj)))then -- not(obj:IsWorld())and 
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
 			if(Dist<Age^1.3*.75)then
@@ -64,6 +65,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 end
 function ENT:IsBlacklisted(ent)
 	local Class=ent:GetClass()
+	if table.HasValue(self.Whitelist, Class) then return false end
 	for k,v in pairs(self.Blacklist)do
 		if(string.find(Class,v))then return true end
 	end
