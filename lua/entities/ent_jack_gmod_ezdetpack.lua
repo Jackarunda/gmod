@@ -4,17 +4,19 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Detpack"
+ENT.PrintName="EZ Detpack (UniDet)"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(90,0,180)
 ENT.JModEZdetPack=true
 ENT.JModRemoteTrigger=true
+ENT.JModUniDet = true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int", 1, "DetMode")
 end
 ---
 if(SERVER)then
@@ -53,6 +55,9 @@ if(SERVER)then
 			if(data.Speed>25)then
 				self.Entity:EmitSound("snd_jack_claythunk.wav",55,math.random(80,120))
 			end
+			if (self:GetState() == STATE_ARMED and self:GetDetMode() == 3 and data.Speed >= 20) then
+				self:Detonate()
+			end
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -83,6 +88,7 @@ if(SERVER)then
 			if(State==STATE_OFF)then
 				if(Alt)then
 					self:SetState(STATE_ARMED)
+					self:SetDetMode(0)
 					self:EmitSound("snd_jack_minearm.wav",60,100)
 				else
 					constraint.RemoveAll(self)
@@ -138,6 +144,7 @@ if(SERVER)then
 	function ENT:JModEZremoteTriggerFunc(ply)
 		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
 		if not(self:GetState()==STATE_ARMED)then return end
+		if self:GetDetMode() != 0 then return end
 		self:Detonate()
 	end
 	function ENT:WreckBuildings(pos,power)
