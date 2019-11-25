@@ -4,12 +4,6 @@ include('shared.lua')
 
 local STATE_OFF, STATE_STARTING, STATE_ON = 0, -1, 1
 
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "Fuel")
-	self:NetworkVar("Int", 1, "Power")
-	self:NetworkVar("Int", 2, "State")
-end
-
 function ENT:SpawnFunction(ply,tr,ClassName)
 	local ent=ents.Create(ClassName)
 	ent:SetPos(tr.HitPos + tr.HitNormal*16)
@@ -41,6 +35,8 @@ function ENT:Initialize()
 	self.NextWork = 0
 	
 	self:SetState(STATE_OFF)
+	self:SetFuel(0)
+	self:SetPower(0)
 	--self.Entity:SetColor(Color(150,150,150))
 end
 
@@ -62,15 +58,14 @@ function ENT:Use(activator,caller)
 		local alt = activator:KeyDown(IN_WALK)
 		
 		if (self.NextUse>CurTime()) then return end
+		self.NextUse = CurTime() + 1
 		
 		if (self:GetState() == STATE_OFF and alt) then
 			self:Start()
 		elseif (self:GetState() == STATE_ON and alt) then
 			self:ShutOff()
-			self.NextUse=CurTime() + 10
 		elseif (!alt) then
 			self:ProducePower(activator)
-			self.NextUse = CurTime() + 1
 		end
 		
 	end
@@ -80,6 +75,7 @@ end
 function ENT:ProducePower(ply)
 
 	local amt = math.min(self:GetPower(), JMod_EZbatterySize)
+	if amt <= 0 then return end
 	
 	local battery = ents.Create(self.BatteryEnt)
 	battery:SetPos(self:GetPos()+self:GetUp()*20)
@@ -87,10 +83,10 @@ function ENT:ProducePower(ply)
 	battery:Spawn()
 	battery:Activate()
 	battery:SetResource(amt)
+	battery.NextLoad=CurTime()+2
 	
 	ply:PickupObject(battery)
-	battery.NextLoad=CurTime()+2
-	battery:SetPower(self:GetPower() - amt)
+	self:SetPower(self:GetPower() - amt)
 	self:EmitSound("Ammo_Crate.Close")
 	
 end
@@ -98,22 +94,24 @@ end
 function ENT:TryLoadResource(typ,amt)
 
 	if self.NextLoad > CurTime() then return 0 end
-	if amt <= 0 or self:GetPower() >= self.MaxPower then return 0 end
+	if amt <= 0 or self:GetFuel() >= self.MaxPower then return 0 end
 	
-	local takeAmt = math.min(amt, self.MaxPower - self:GetPower())
-	self:SetPower(self:GetPower() + takeAmt)
+	local takeAmt = math.min(amt, self.MaxFuel - self:GetFuel())
+	self:SetFuel(self:GetFuel() + takeAmt)
 	self.NextLoad = CurTime() + 1
 	return takeAmt
 
 end
 
 function ENT:Start()
-	if(self:GetFuel() > 0)then
+	if self:GetFuel() > 0 then
 		self:EmitSound("snd_jack_genstart.mp3")
 		self:SetState(STATE_STARTING)
 		self.NextSound=CurTime()+8
 		self.NextUse=CurTime()+10
 		self.NextWork=CurTime()+10
+	else
+		self:EmitSound("buttons/button8.wav")
 	end
 end
 
@@ -130,7 +128,7 @@ function ENT:Think()
 			self:ShutOff()
 			return
 		else
-			local drain = math.min(self:GetFuel(), 2) -- TODO make this configurable?
+			local drain = math.min(self:GetFuel(), 1) -- TODO make this configurable?
 			self:SetFuel(self:GetFuel() - drain)
 			self:SetPower(math.min(self:GetPower() + drain, self.MaxPower))
 		end

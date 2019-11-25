@@ -42,7 +42,7 @@ function ENT:Draw()
 	Ang:RotateAroundAxis(Ang:Forward(),self.RotateAngle)
 	self.RotateAngle=self.RotateAngle+self.RotSpeed
 	if(self.RotateAngle>360)then self.RotateAngle=0 end
-	if(self:GetDTBool(0))then
+	if(self:GetState() != 0)then
 		self.RotSpeed=self.RotSpeed+.035
 	else
 		self.RotSpeed=self.RotSpeed-.035
@@ -91,9 +91,36 @@ function ENT:Draw()
 	self.Turbine:SetRenderAngles(Ang2)
 	self.Turbine:DrawModel()
 	self.Entity:DrawModel()
+
+	local SelfPos,SelfAng = self:GetPos(), self:GetAngles()
+	local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+	local distsqr = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 	
-	-- TODO fancy holographic text
-	
+	if distsqr < 20000 then
+		local DisplayAng=SelfAng:GetCopy()
+		DisplayAng:RotateAroundAxis(DisplayAng:Forward(),90)
+		--DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
+		local Opacity=math.random(50,150)
+		cam.Start3D2D(SelfPos+Up*45-Right*(-20)-Forward*(-20),DisplayAng,.1)
+		
+			local stateStr, R, G, B = "OFF", 255, 0, 0
+			if self:GetState() == 1 then 
+				stateStr, R, G, B = "ON", 0, 255, 0
+			elseif self:GetState() == -1 then 
+				stateStr, R, G, B = "STARTING", 150, 150, 0 
+			end
+			draw.SimpleTextOutlined("STATUS","JMod-Display",100,-150,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			draw.SimpleTextOutlined(stateStr,"JMod-Display",100,-115,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			
+			draw.SimpleTextOutlined("POWER","JMod-Display",200,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			local R,G,B=JMod_GoodBadColor(self:GetPower()/self.MaxPower)
+			draw.SimpleTextOutlined(tostring(self:GetPower()),"JMod-Display",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			
+			local R,G,B=JMod_GoodBadColor(self:GetFuel()/self.MaxFuel)
+			draw.SimpleTextOutlined("FUEL","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			draw.SimpleTextOutlined(tostring(self:GetFuel()),"JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		cam.End3D2D()
+	end
 end
 
 language.Add("ent_jack_gmod_ezgenerator","EZ Generator")
