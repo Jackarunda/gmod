@@ -1,9 +1,8 @@
 -- Jackarunda 2019
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezcrate"
 ENT.Type="anim"
 ENT.PrintName="EZ Generic Crate"
-ENT.Author="Jackarunda, 8Zw"
+ENT.Author="Jackarunda, 8Z"
 ENT.Category="JMod - EZ"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
