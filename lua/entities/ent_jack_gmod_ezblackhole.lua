@@ -34,9 +34,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 		elseif table.HasValue(self.DamageEnts, Class) then
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
-			if SERVER and Dist/MaxRange < 0.1 then
-				self:Rape(obj)
-			end
+			obj:TakeDamage((MaxRange-Dist)/MaxRange*50, obj.Owner, obj)
 		elseif((IsValid(ObjPhys))and not(obj==self)and not(self:IsBlacklisted(obj)))then -- not(obj:IsWorld())and 
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
