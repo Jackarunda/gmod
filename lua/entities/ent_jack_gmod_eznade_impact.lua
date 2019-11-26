@@ -50,7 +50,7 @@ if(SERVER)then
 			if self:GetState() == 1 then
 				self:Detonate()
 			else
-				self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
+				self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
 			end
 		end
 	end

@@ -49,9 +49,7 @@ if(SERVER)then
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
-			if self:GetState() == 1 then
-				self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
-			end
+			self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
