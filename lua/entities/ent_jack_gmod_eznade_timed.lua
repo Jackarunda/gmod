@@ -80,8 +80,8 @@ if(SERVER)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("weapons/pinpull.wav",70,100)
 			end
+			JMod_Hint(activator,"grenade","grenade timed")
 			Dude:PickupObject(self)
-			-- Behold, JANK
 			if Dude:GetActiveWeapon() != "weapon_physcannon" then
 				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)
 					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end

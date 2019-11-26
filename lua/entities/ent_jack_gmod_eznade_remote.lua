@@ -80,6 +80,7 @@ if(SERVER)then
 				timer.Simple(1, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
 				self:EmitSound("weapons/pinpull.wav",70,100)
 			end
+			JMod_Hint(activator,"grenade","grenade remote","binding")
 			Dude:PickupObject(self)
 			if Dude:GetActiveWeapon() != "weapon_physcannon" then
 				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)

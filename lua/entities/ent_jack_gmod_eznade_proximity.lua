@@ -81,8 +81,8 @@ if(SERVER)then
 				timer.Create("ProxNadeBeep_"..self:EntIndex(), 1, 5, function() self:EmitSound("weapons/c4/c4_beep1.wav", 65, 150) end)
 				timer.Simple(6, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
 				self:EmitSound("weapons/pinpull.wav",70,100)
-				
 			end
+			JMod_Hint(activator,"grenade","grenade proximity","friends")
 			Dude:PickupObject(self)
 			if Dude:GetActiveWeapon() != "weapon_physcannon" then
 				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)
