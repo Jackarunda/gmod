@@ -4,11 +4,11 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Impact Grenade"
+ENT.PrintName="EZ Grenade - Timed"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,0,180)
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.JModEZimpactNade=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
@@ -31,7 +31,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx2/garbage_metalcan001a.mdl")
+		self.Entity:SetModel("models/weapons/w_eq_fraggrenade.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -48,9 +48,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			if self:GetState() == 1 then
-				self:Detonate()
-			else
-				self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
+				self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
 			end
 		end
 	end
@@ -79,27 +77,27 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-				timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) end end)
+				timer.Simple(5, function() if IsValid(self) then self:Detonate() end end)
+				self:SetState(STATE_ARMED)
 				self:EmitSound("weapons/pinpull.wav",70,100)
-				-- Behold, JANK
-				if Dude:GetActiveWeapon() != "weapon_physcannon" then
-					hook.Add("KeyPress", "ImpactThrow_" .. self:EntIndex(), function(ply, key)
-						if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("ImpactThrow_" .. self:EntIndex()) return end
-						if ply == Dude then
-							if key == IN_ATTACK then
-									local dir = Dude:EyeAngles():Forward()
-									self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 650 + Vector(0, 0, 1) * 150)
-							end
-							if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("ImpactThrow_" .. self:EntIndex()) return end
-						end
-					end)
 				end
 			end
 			Dude:PickupObject(self)
+			-- Behold, JANK
+			if Dude:GetActiveWeapon() != "weapon_physcannon" then
+				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)
+					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
+					if ply == Dude then
+						if key == IN_ATTACK then
+								local dir = Dude:EyeAngles():Forward()
+								self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 650 + Vector(0, 0, 1) * 150)
+						end
+						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
+					end
+				end)
 		end
 	end
 	function ENT:Think()
-		if self:GetState() == STATE_ARMED and self:WaterLevel() > 0 then self:Detonate() end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
@@ -150,5 +148,5 @@ elseif(CLIENT)then
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
-	language.Add("ent_jack_gmod_ezdetpack","EZ Detpack")
+	language.Add("ent_jack_gmod_eznade_timed","EZ Grenade - Timed")
 end
