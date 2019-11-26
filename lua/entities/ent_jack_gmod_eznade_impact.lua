@@ -81,7 +81,6 @@ if(SERVER)then
 			if(State==STATE_OFF and Alt)then
 				timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) end end)
 				self:EmitSound("weapons/pinpull.wav",70,100)
-				end
 			end
 			Dude:PickupObject(self)
 			-- Behold, JANK
@@ -96,6 +95,7 @@ if(SERVER)then
 						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					end
 				end)
+			end
 		end
 	end
 	function ENT:Think()
@@ -139,16 +139,6 @@ elseif(CLIENT)then
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
-		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==STATE_ARMING)then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),10,10,Color(255,255,255))
-		elseif(State==STATE_WARNING)then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
-		end
 	end
 	language.Add("ent_jack_gmod_eznade_impact","EZ Grenade - Impact")
 end

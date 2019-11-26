@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.JModEZimpactNade=true
+ENT.JModEZtimedNade=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -80,7 +80,6 @@ if(SERVER)then
 				timer.Simple(5, function() if IsValid(self) then self:Detonate() end end)
 				self:SetState(STATE_ARMED)
 				self:EmitSound("weapons/pinpull.wav",70,100)
-				end
 			end
 			Dude:PickupObject(self)
 			-- Behold, JANK
@@ -95,6 +94,7 @@ if(SERVER)then
 						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					end
 				end)
+			end
 		end
 	end
 	function ENT:Think()

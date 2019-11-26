@@ -4,12 +4,14 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Grenade - Timed"
+ENT.PrintName="EZ Grenade - Proximity"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.JModEZimpactNade=true
+ENT.JModEZproximityNade=true
+ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
+ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED,STATE_WARNING=-1,0,1,2
 function ENT:SetupDataTables()
@@ -77,9 +79,10 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-				timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) end end)
+				timer.Create("ProxNadeBeep_"..self:EntIndex(), 1, 5, function() self:EmitSound("weapons/c4/c4_beep1.wav", 65, 150) end)
+				timer.Simple(6, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
 				self:EmitSound("weapons/pinpull.wav",70,100)
-				end
+				
 			end
 			Dude:PickupObject(self)
 			if Dude:GetActiveWeapon() != "weapon_physcannon" then
@@ -93,7 +96,45 @@ if(SERVER)then
 						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					end
 				end)
+			end
 		end
+	end
+	function ENT:CanSee(ent)
+		if not(IsValid(ent))then return false end
+		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())
+		local Tr=util.TraceLine({
+			start=SelfPos,
+			endpos=TargPos,
+			filter={self,ent},
+			mask=MASK_SHOT+MASK_WATER
+		})
+		return not Tr.Hit
+	end
+	function ENT:ShouldAttack(ent)
+		if not(IsValid(ent))then return false end
+		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
+		if(ent:IsPlayer())then
+			PlayerToCheck=ent
+		elseif(ent:IsNPC())then
+			local Class=ent:GetClass()
+			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
+			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
+			return ent:Health()>0
+		elseif(ent:IsVehicle())then
+			PlayerToCheck=ent:GetDriver()
+		end
+		if(IsValid(PlayerToCheck))then
+			if(PlayerToCheck.EZkillme)then return true end -- for testing
+			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
+			local Allies=(self.Owner and self.Owner.JModFriends)or {}
+			if(table.HasValue(Allies,PlayerToCheck))then return false end
+			local OurTeam=nil
+			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
+			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
+			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
+			return PlayerToCheck:Alive()
+		end
+		return false
 	end
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
@@ -156,12 +197,12 @@ elseif(CLIENT)then
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		if(State==STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),10,10,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,20,20,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,10,10,Color(255,255,255))
 		elseif(State==STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,30*Vary,30*Vary,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
 	language.Add("ent_jack_gmod_eznade_proximity","EZ Grenade - Proximity")
