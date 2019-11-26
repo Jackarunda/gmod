@@ -89,7 +89,7 @@ if(SERVER)then
 						if ply == Dude then
 							if key == IN_ATTACK then
 									local dir = Dude:EyeAngles():Forward()
-									self:GetPhysicsObject():SetVelocity(dir * 650 + Vector(0, 0, 1) * 150)
+									self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 650 + Vector(0, 0, 1) * 150)
 							end
 							if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("ImpactThrow_" .. self:EntIndex()) return end
 						end
