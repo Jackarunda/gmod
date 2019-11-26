@@ -47,6 +47,7 @@ if(SERVER)then
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
+			self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal*math.Clamp(data.Speed*2, 50, 150))
 			self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
 		end
 	end
@@ -125,7 +126,7 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300,200)
+					util.BlastDamage(Infl,Att,SelfPos,300,100)
 					self:Remove()
 				end)
 			end
