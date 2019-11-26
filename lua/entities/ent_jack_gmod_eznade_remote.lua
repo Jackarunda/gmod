@@ -32,8 +32,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/maxofs2d/hover_classic.mdl")
-		self.Entity:SetModelScale(0.5)
+		self.Entity:SetModel("models/weapons/w_grenade.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -41,7 +40,6 @@ if(SERVER)then
 		self.Entity:SetUseType(ONOFF_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMaterial("slime")
 			self:GetPhysicsObject():SetMass(15)
 			self:GetPhysicsObject():Wake()
 		end)
@@ -147,8 +145,8 @@ elseif(CLIENT)then
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		if(State==STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,0),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,0),10,10,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,20,20,Color(0,0,255))
+			render.DrawSprite(self:GetPos()+self:GetUp() * 8,10,10,Color(255,255,255))
 		end
 	end
 	language.Add("ent_jack_gmod_eznade_timed","EZ Grenade - Timed")
