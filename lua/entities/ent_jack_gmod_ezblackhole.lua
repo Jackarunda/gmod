@@ -9,6 +9,7 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=true
 ENT.Blacklist={"func_","_dynamic"}
 ENT.Whitelist = {"func_physbox", "func_breakable"}
+ENT.DamageEnts = {"func_breakable"}
 ENT.PhyslessPointEnts={"rpg_missile","crossbow_bolt","grenade_ar2","grenade_spit","npc_grenade_bugbait"}
 ENT.PhysNPCs={"npc_cscanner","npc_clawscanner","npc_turret_floor","npc_rollermine"}
 ENT.RagdollifyEnts={"npc_combinegunship","npc_strider","npc_manhack","npc_combinedropship"}
@@ -30,6 +31,12 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 			end
 		elseif(table.HasValue(self.RagdollifyEnts,Class))then
 			if((SERVER)and(math.random(1,100)==42))then obj:Fire("becomeragdoll","",0) end
+		elseif table.HasValue(self.DamageEnts, Class) then
+			local Vec=Pos-obj:GetPos()
+			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
+			if SERVER and Dist/MaxRange < 0.1 then
+				self:Rape(obj)
+			end
 		elseif((IsValid(ObjPhys))and not(obj==self)and not(self:IsBlacklisted(obj)))then -- not(obj:IsWorld())and 
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
