@@ -47,11 +47,11 @@ if(SERVER)then
 		self.NextStick=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
-		if(data.DeltaTime>0.2 and data.Speed>25)then
+		if(data.DeltaTime>0.2 and data.Speed>30)then
 			if self:GetState() == 1 then
 				self:Detonate()
 			else
-				self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",55,math.random(80,120))
+				self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
 			end
 		end
 	end
@@ -81,25 +81,31 @@ if(SERVER)then
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF)then
 				if(Alt)then
-					timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) self.ReadyFly = true end end)
+					timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) end end)
 					Dude:PickupObject(self)
 					self:EmitSound("weapons/pinpull.wav",70,100)
+							
+					-- Behold, JANK
+					hook.Add("KeyPress", "ImpactThrow_" .. self:EntIndex(), function(ply, key)
+						if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("ImpactThrow_" .. self:EntIndex()) return end
+						if ply == Dude then
+							if key == IN_ATTACK then
+								if ply:GetActiveWeapon() != "weapon_physcannon" then
+									local dir = Dude:EyeAngles():Forward()
+									self:GetPhysicsObject():SetVelocity(dir * 650 + Vector(0, 0, 1) * 150)
+								end
+							end
+							if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("ImpactThrow_" .. self:EntIndex()) return end
+						end
+					end)
+					
 				else
 					Dude:PickupObject(self)
 				end
 			end
 		end
 	end
-	function ENT:GravGunPunt()
-		self.ReadyFly = false
-		return true
-	end
 	function ENT:Think()
-		if self.ReadyFly and !self:IsPlayerHolding() then
-			local dir = self:GetVelocity():GetNormalized() --self.Owner:EyeAngles():Forward()
-			self:GetPhysicsObject():SetVelocity(dir * 650 + Vector(0, 0, 1) * 150)
-			self.ReadyFly = false
-		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
