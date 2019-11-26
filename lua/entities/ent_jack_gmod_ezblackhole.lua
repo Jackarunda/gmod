@@ -31,10 +31,10 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 			end
 		elseif(table.HasValue(self.RagdollifyEnts,Class))then
 			if((SERVER)and(math.random(1,100)==42))then obj:Fire("becomeragdoll","",0) end
-		elseif((table.HasValue(self.DamageEnts,Class))and(obj.TakeDamage))then
+		elseif(table.HasValue(self.DamageEnts,Class))then
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
-			obj:TakeDamage((MaxRange-Dist)/MaxRange*50, obj.Owner, obj)
+			if(obj.TakeDamage)then obj:TakeDamage((MaxRange-Dist)/MaxRange*50,obj.Owner,obj) end
 		elseif((IsValid(ObjPhys))and not(obj==self)and not(self:IsBlacklisted(obj)))then -- not(obj:IsWorld())and 
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
