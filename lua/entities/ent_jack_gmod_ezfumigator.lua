@@ -4,17 +4,15 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Fumigator (UniDet)"
+ENT.PrintName="EZ Fumigator"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.JModUniDet = true
 ---
 local STATE_SEALED,STATE_TICKING,STATE_VENTING=0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int", 1, "DetMode")
 end
 ---
 if(SERVER)then
@@ -52,9 +50,6 @@ if(SERVER)then
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>25)then
 				self.Entity:EmitSound("Canister.ImpactHard")
-			end
-			if (self:GetState() == STATE_ARMED and self:GetDetMode() == 3 and data.Speed >= 20) then
-				self:Detonate()
 			end
 		end
 	end
@@ -109,9 +104,6 @@ if(SERVER)then
 			end)
 		end
 		self:Remove()
-	end
-	function ENT:Detonate()
-		self:Burst()
 	end
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
