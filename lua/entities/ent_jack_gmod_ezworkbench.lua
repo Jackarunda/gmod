@@ -55,7 +55,6 @@ if(SERVER)then
 		self.MaxElectricity=100
 		self.MaxGas=100
 		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Workbench"][2]
-		self.Buildables=JMOD_CONFIG.Recipes
 		---
 		self:SetElectricity(self.MaxElectricity)
 		self:SetGas(self.MaxGas)
@@ -280,7 +279,7 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local Gas,Elec,Built=self:GetGas(),self:GetElectricity(),false
 		if((Gas<=0)or(Elec<=0))then return end
-		local ItemInfo=self.Buildables[itemName]
+		local ItemInfo=JMOD_CONFIG.Recipes[itemName]
 		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
 		if(self:HaveResourcesToPerformTask(BuildReqs))then
 			self:ConsumeResourcesInRange(BuildReqs)
