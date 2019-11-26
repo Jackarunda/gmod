@@ -8,7 +8,7 @@ ENT.PrintName="EZ Impact Grenade"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(90,0,180)
+ENT.JModPreferredCarryAngles=Angle(0,0,180)
 ENT.JModEZimpactNade=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
@@ -44,7 +44,6 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.NextStick=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
@@ -100,6 +99,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
+		if self:GetState() == STATE_ARMED and self:WaterLevel() > 0 then self:Detonate() end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
