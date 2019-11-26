@@ -220,9 +220,9 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,250*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,200*PowerMult)
 					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
-						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,750*PowerMult)
+						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
 					end
 					self:Remove()
 				end)

@@ -93,7 +93,7 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		if self.ReadyFly and !self:IsPlayerHolding() then
-			local dir = self.Owner:EyeAngles():Forward()
+			local dir = self:GetVelocity():GetNormalized() --self.Owner:EyeAngles():Forward()
 			self:GetPhysicsObject():AddVelocity(dir * 500)
 			self.ReadyFly = false
 		end
