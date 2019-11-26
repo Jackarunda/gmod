@@ -31,7 +31,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 			end
 		elseif(table.HasValue(self.RagdollifyEnts,Class))then
 			if((SERVER)and(math.random(1,100)==42))then obj:Fire("becomeragdoll","",0) end
-		elseif table.HasValue(self.DamageEnts, Class) then
+		elseif((table.HasValue(self.DamageEnts,Class))and(obj.TakeDamage))then
 			local Vec=Pos-obj:GetPos()
 			local Dist,Dir=Vec:Length(),Vec:GetNormalized()
 			obj:TakeDamage((MaxRange-Dist)/MaxRange*50, obj.Owner, obj)
