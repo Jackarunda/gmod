@@ -4,12 +4,13 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Grenade - Impact"
+ENT.PrintName="EZ Grenade - Remote"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,0,180)
-ENT.JModEZimpactNade=true
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModEZremoteNade=true
+ENT.JModRemoteTrigger=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -31,7 +32,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx2/garbage_metalcan001a.mdl")
+		self.Entity:SetModel("models/maxofs2d/hover_classic.mdl")
+		self.Entity:SetModelScale(0.5)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -39,6 +41,7 @@ if(SERVER)then
 		self.Entity:SetUseType(ONOFF_USE)
 		---
 		timer.Simple(.01,function()
+			self:GetPhysicsObject():SetMaterial("slime")
 			self:GetPhysicsObject():SetMass(15)
 			self:GetPhysicsObject():Wake()
 		end)
@@ -47,11 +50,7 @@ if(SERVER)then
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
-			if self:GetState() == 1 then
-				self:Detonate()
-			else
-				self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
-			end
+			self.Entity:EmitSound("weapons/flashbang/grenade_hit1.wav",65,math.random(80,120))
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -79,7 +78,7 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-				timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) end end)
+				timer.Simple(1, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
 				self:EmitSound("weapons/pinpull.wav",70,100)
 			end
 			Dude:PickupObject(self)
@@ -101,7 +100,11 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		if self:GetState() == STATE_ARMED and self:WaterLevel() > 0 then self:Detonate() end
+	end
+	function ENT:JModEZremoteTriggerFunc(ply)
+		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
+		if not(self:GetState()==STATE_ARMED)then return end
+		self:Detonate()
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
@@ -141,6 +144,12 @@ elseif(CLIENT)then
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
+		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
+		if(State==STATE_ARMED)then
+			render.SetMaterial(GlowSprite)
+			render.DrawSprite(self:GetPos()+Vector(0,0,0),20,20,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+Vector(0,0,0),10,10,Color(255,255,255))
+		end
 	end
-	language.Add("ent_jack_gmod_eznade_impact","EZ Grenade - Impact")
+	language.Add("ent_jack_gmod_eznade_timed","EZ Grenade - Timed")
 end

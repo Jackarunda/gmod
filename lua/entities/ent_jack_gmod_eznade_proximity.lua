@@ -90,8 +90,11 @@ if(SERVER)then
 					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					if ply == Dude then
 						if key == IN_ATTACK then
-								local dir = Dude:EyeAngles():Forward()
-								self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 650 + Vector(0, 0, 1) * 150)
+							local dir = Dude:EyeAngles():Forward()
+							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 800 + Vector(0, 0, 1) * 200)
+						elseif key == IN_ATTACK2 then
+							local dir = Dude:EyeAngles():Forward()
+							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 500)
 						end
 						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					end

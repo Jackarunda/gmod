@@ -47,9 +47,7 @@ if(SERVER)then
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
-			if self:GetState() == 1 then
-				self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
-			end
+			self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -88,8 +86,11 @@ if(SERVER)then
 					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					if ply == Dude then
 						if key == IN_ATTACK then
-								local dir = Dude:EyeAngles():Forward()
-								self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 650 + Vector(0, 0, 1) * 150)
+							local dir = Dude:EyeAngles():Forward()
+							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 800 + Vector(0, 0, 1) * 200)
+						elseif key == IN_ATTACK2 then
+							local dir = Dude:EyeAngles():Forward()
+							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 500)
 						end
 						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
 					end
