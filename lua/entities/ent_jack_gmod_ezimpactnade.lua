@@ -81,8 +81,7 @@ if(SERVER)then
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF)then
 				if(Alt)then
-					self:SetState(STATE_ARMED)
-					self.ReadyFly = true
+					timer.Simple(1, function() if IsValid(self) then self:SetState(STATE_ARMED) self.ReadyFly = true end end)
 					Dude:PickupObject(self)
 					self:EmitSound("weapons/pinpull.wav",70,100)
 				else
@@ -91,10 +90,14 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:GravGunPunt()
+		self.ReadyFly = false
+		return true
+	end
 	function ENT:Think()
 		if self.ReadyFly and !self:IsPlayerHolding() then
 			local dir = self:GetVelocity():GetNormalized() --self.Owner:EyeAngles():Forward()
-			self:GetPhysicsObject():SetVelocity(dir * 600 + Vector(0, 0, 1) * 100)
+			self:GetPhysicsObject():SetVelocity(dir * 650 + Vector(0, 0, 1) * 150)
 			self.ReadyFly = false
 		end
 	end
