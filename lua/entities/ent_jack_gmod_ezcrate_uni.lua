@@ -10,7 +10,7 @@ ENT.AdminSpawnable = true
 
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
-ENT.MaxItems = 100
+ENT.MaxItems = JMod_EZsmallCrateSize or 100
 ---
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "ItemCount")
@@ -156,11 +156,6 @@ elseif (CLIENT) then
 		local scrollPanel = vgui.Create("DScrollPanel", frame)
 		scrollPanel:SetSize(190, 270)
 		scrollPanel:SetPos(5, 30)
-		scrollPanel:GetVBar():SetHideButtons(true)
-		scrollPanel:GetVBar().Paint = function(self, w, h) end
-		scrollPanel:GetVBar().btnGrip.Paint = function(self, w, h) 
-			draw.RoundedBox(0, 0, 0, w, h, Color(255, 255, 255, 200))
-		end
 		
 		local layout = vgui.Create("DIconLayout", scrollPanel)
 		layout:SetSize(190, 270)

@@ -1312,14 +1312,14 @@ JMod_EZammoBoxSize=300
 JMod_EZfuelCanSize=100
 JMod_EZbatterySize=100
 JMod_EZpartBoxSize=100
-JMod_EZsmallCrateSize=80
+JMod_EZsmallCrateSize=100
 JMod_EZsuperRareResourceSize=10
 JMod_EZexplosivesBoxSize=100
 JMod_EZchemicalsSize=100
 JMod_EZadvPartBoxSize=20
 JMod_EZmedSupplyBoxSize=50
 JMod_EZnutrientBoxSize=100
-JMod_EZcrateSize=20
+JMod_EZcrateSize=30
 JMod_EZpartsCrateSize=20
 JMod_EZnutrientsCrateSize=20
 -- TODO
