@@ -26,7 +26,7 @@ if (SERVER) then
 		local box = net.ReadEntity()
 		local class = net.ReadString()
 		
-		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length() > 70 or !box.Items[class] or box.Items[class] <= 0 then return end
+		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length() > 100 or !box.Items[class] or box.Items[class] <= 0 then return end
 		
 		box.Items[class] = (box.Items[class] > 1) and (box.Items[class] - 1) or nil
 		
@@ -88,7 +88,7 @@ if (SERVER) then
 
         if ent.JModEZstorable and ent:IsPlayerHolding() 
 				and self:GetItemCount() + math.max(ent:GetPhysicsObject():GetVolume()/1000, 1) <= self.MaxItems then
-            self.NextLoad = CurTime() + 1
+            self.NextLoad = CurTime() + 0.5
             self.Items[ent:GetClass()] = (self.Items[ent:GetClass()] or 0) + 1
             self:SetItemCount(self:GetItemCount() + math.max(ent:GetPhysicsObject():GetVolume()/1000, 1))
             timer.Simple(0, function() SafeRemoveEntity(ent) end)
@@ -138,12 +138,51 @@ if (SERVER) then
     end
 elseif (CLIENT) then
 
+	local frame
 	net.Receive("JModUniCrate", function()
 	
 		local box = net.ReadEntity()
 		local items = net.ReadTable()
 		
-		-- TODO UI
+		if frame then frame:Close() end
+		
+		frame = vgui.Create("DFrame")
+		frame:SetSize(200, 300)
+		frame:SetTitle("G.P. Crate")
+		frame:Center()
+		frame:MakePopup()
+		frame.OnClose = function() frame = nil end
+		
+		local scrollPanel = vgui.Create("DScrollPanel", frame)
+		scrollPanel:SetSize(190, 270)
+		scrollPanel:SetPos(5, 30)
+		scrollPanel:GetVBar():SetHideButtons(true)
+		scrollPanel:GetVBar().Paint = function(self, w, h) end
+		scrollPanel:GetVBar().btnGrip.Paint = function(self, w, h) 
+			draw.RoundedBox(0, 0, 0, w, h, Color(255, 255, 255, 200))
+		end
+		
+		local layout = vgui.Create("DIconLayout", scrollPanel)
+		layout:SetSize(190, 270)
+		layout:SetPos(0, 0)
+		layout:SetSpaceY(5)
+		
+		for class, count in pairs(items) do
+		
+			local sent = scripted_ents.Get(class)
+			
+			local button = vgui.Create("DButton", layout)
+			button:SetSize(190, 25)
+			button:SetText(sent.PrintName .. " x" .. count)
+			button.DoClick = function()
+				net.Start("JModUniCrate")
+					net.WriteEntity(box)
+					net.WriteString(class)
+				net.SendToServer()
+				frame:Close()
+			end
+			
+		end
 		
 	end)
 
