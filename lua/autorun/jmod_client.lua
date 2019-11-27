@@ -649,4 +649,44 @@ if(CLIENT)then
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
 	end)
+	net.Receive("JMod_UniCrate", function()
+	
+		local box = net.ReadEntity()
+		local items = net.ReadTable()
+		
+		local frame = vgui.Create("DFrame")
+		frame:SetSize(200, 300)
+		frame:SetTitle("G.P. Crate")
+		frame:Center()
+		frame:MakePopup()
+		frame.OnClose = function() frame = nil end
+		frame.Paint = function(self, w, h) BlurBackground(self) end
+		
+		local scrollPanel = vgui.Create("DScrollPanel", frame)
+		scrollPanel:SetSize(190, 270)
+		scrollPanel:SetPos(5, 30)
+		
+		local layout = vgui.Create("DIconLayout", scrollPanel)
+		layout:SetSize(190, 270)
+		layout:SetPos(0, 0)
+		layout:SetSpaceY(5)
+		
+		for class, count in pairs(items) do
+		
+			local sent = scripted_ents.Get(class)
+			
+			local button = vgui.Create("DButton", layout)
+			button:SetSize(190, 25)
+			button:SetText(sent.PrintName .. " x" .. count)
+			button.DoClick = function()
+				net.Start("JMod_UniCrate")
+					net.WriteEntity(box)
+					net.WriteString(class)
+				net.SendToServer()
+				frame:Close()
+			end
+			
+		end
+		
+	end)
 end

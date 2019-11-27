@@ -19,9 +19,9 @@ end
 ---
 if (SERVER) then
 
-	util.AddNetworkString("JModUniCrate")
+	util.AddNetworkString("JMod_UniCrate")
 	
-	net.Receive("JModUniCrate", function(len, ply)
+	net.Receive("JMod_UniCrate", function(len, ply)
 	
 		local box = net.ReadEntity()
 		local class = net.ReadString()
@@ -123,7 +123,7 @@ if (SERVER) then
         JMod_Hint(activator, "item crate")
         if (self:GetItemCount() <= 0) then return end
 
-		net.Start("JModUniCrate")
+		net.Start("JMod_UniCrate")
 			net.WriteEntity(self)
 			net.WriteTable(self.Items)
 		net.Send(activator)
@@ -137,50 +137,6 @@ if (SERVER) then
         --aw fuck you
     end
 elseif (CLIENT) then
-
-	local frame
-	net.Receive("JModUniCrate", function()
-	
-		local box = net.ReadEntity()
-		local items = net.ReadTable()
-		
-		if frame then frame:Close() end
-		
-		frame = vgui.Create("DFrame")
-		frame:SetSize(200, 300)
-		frame:SetTitle("G.P. Crate")
-		frame:Center()
-		frame:MakePopup()
-		frame.OnClose = function() frame = nil end
-		
-		local scrollPanel = vgui.Create("DScrollPanel", frame)
-		scrollPanel:SetSize(190, 270)
-		scrollPanel:SetPos(5, 30)
-		
-		local layout = vgui.Create("DIconLayout", scrollPanel)
-		layout:SetSize(190, 270)
-		layout:SetPos(0, 0)
-		layout:SetSpaceY(5)
-		
-		for class, count in pairs(items) do
-		
-			local sent = scripted_ents.Get(class)
-			
-			local button = vgui.Create("DButton", layout)
-			button:SetSize(190, 25)
-			button:SetText(sent.PrintName .. " x" .. count)
-			button.DoClick = function()
-				net.Start("JModUniCrate")
-					net.WriteEntity(box)
-					net.WriteString(class)
-				net.SendToServer()
-				frame:Close()
-			end
-			
-		end
-		
-	end)
-
     local TxtCol = Color(10, 10, 10, 220)
     function ENT:Draw()
         local Ang, Pos = self:GetAngles(), self:GetPos()
