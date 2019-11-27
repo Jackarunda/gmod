@@ -29,13 +29,13 @@ if (SERVER) then
 		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length() > 70 or !box.Items[class] or box.Items[class] <= 0 then return end
 		
 		box.Items[class] = (box.Items[class] > 1) and (box.Items[class] - 1) or nil
-		box:SetItemCount(box:GetItemCount() - 1)
 		
 		local ent = ents.Create(class)
 		ent:SetPos(box:GetPos())
 		ent:SetAngles(box:GetAngles())
 		ent:Spawn()
 		ply:PickupObject(ent)
+		timer.Simple(0, function() box:SetItemCount(box:GetItemCount() - math.max(ent:GetPhysicsObject():GetVolume()/1000, 1)) end)
 		
 		box.NextLoad=CurTime()+2
 		box:EmitSound("Ammo_Crate.Close")
@@ -86,11 +86,12 @@ if (SERVER) then
         if (self.NextLoad > CurTime()) then return end
         local ent = data.HitEntity
 
-        if ent.JModEZstorable and ent:IsPlayerHolding() and self:GetItemCount() < self.MaxItems then
-            self.NextLoad = CurTime() + 2
+        if ent.JModEZstorable and ent:IsPlayerHolding() 
+				and self:GetItemCount() + math.max(ent:GetPhysicsObject():GetVolume()/1000, 1) <= self.MaxItems then
+            self.NextLoad = CurTime() + 1
             self.Items[ent:GetClass()] = (self.Items[ent:GetClass()] or 0) + 1
-            self:SetItemCount(self:GetItemCount() + 1)
-            ent:Remove()
+            self:SetItemCount(self:GetItemCount() + math.max(ent:GetPhysicsObject():GetVolume()/1000, 1))
+            timer.Simple(0, function() SafeRemoveEntity(ent) end)
         end
     end
 
@@ -101,7 +102,19 @@ if (SERVER) then
             local Pos = self:GetPos()
             sound.Play("Wood_Crate.Break", Pos)
             sound.Play("Wood_Box.Break", Pos)
-            -- TODO spill the beans
+            
+			for class, num in pairs(self.Items) do
+				for i = 1, num do
+				
+					local ent = ents.Create(class)
+					ent:SetPos(self:GetPos() + VectorRand() * 10)
+					ent:SetAngles(AngleRand())
+					ent:Spawn()
+					ent:Activate()
+				
+				end
+			end
+			
             self:Remove()
         end
     end
@@ -148,14 +161,14 @@ elseif (CLIENT) then
             cam.Start3D2D(Pos + Up * 18 - Forward * 29.8 + Right, Ang, .2)
             draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             draw.SimpleText("G.P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-            draw.SimpleText(Resource .. " Items", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+            draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             cam.End3D2D()
             ---
             Ang:RotateAroundAxis(Ang:Right(), 180)
             cam.Start3D2D(Pos + Up * 18 + Forward * 30.1 - Right, Ang, .2)
             draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             draw.SimpleText("G.P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-            draw.SimpleText(Resource .. " Items", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+            draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             cam.End3D2D()
         end
     end
