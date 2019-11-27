@@ -126,7 +126,6 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_junk/wood_crate002a.mdl")
-		self:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
