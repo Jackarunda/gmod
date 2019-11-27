@@ -119,7 +119,28 @@ function JMod_InitGlobalConfig()
 				},
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
-				}
+				},
+				["grenades"]={
+					{"ent_jack_gmod_eznade_impact",2},
+					{"ent_jack_gmod_eznade_proximity",2},
+					{"ent_jack_gmod_eznade_remote",2},
+					{"ent_jack_gmod_eznade_timed",2},
+				},
+				["impact grenades"]={
+					{"ent_jack_gmod_eznade_impact",8}
+				},
+				["proximity grenades"]={
+					{"ent_jack_gmod_eznade_proximity",8}
+				},
+				["remote grenades"]={
+					{"ent_jack_gmod_eznade_remote",8}
+				},
+				["timed grenades"]={
+					{"ent_jack_gmod_eznade_timed",8}
+				},
+				["timed charges"]={
+					{"ent_jack_gmod_eztimedcharge",4}
+				},
 			},
 			RestrictedPackages={"antimatter"},
 			RestrictedPackageShipTime=600,
