@@ -49,7 +49,7 @@ if(SERVER)then
 		if(CLIENT)then return end
 		local Time,SelfPos=CurTime(),self:GetPos()
 		if(self.DieTime<Time)then self:Remove() return end
-		local Force=VectorRand()*4
+		local Force=VectorRand()*10
 		for key,obj in pairs(ents.FindInSphere(SelfPos,300))do
 			if(not(obj==self)and(self:CanSee(obj)))then
 				if(obj.EZgasParticle)then
@@ -58,12 +58,12 @@ if(SERVER)then
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
 					local Dmg,Helf=DamageInfo(),obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(2.5*JMOD_CONFIG.PoisonGasDamage)
+					Dmg:SetDamage(5*JMOD_CONFIG.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
-					if((obj:Health()<Helf)and(math.random(1,10)==3)and(obj:IsPlayer()))then
+					if((obj:Health()<Helf)and(math.random(1,7)==3)and(obj:IsPlayer()))then
 						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
 						if(obj.ViewPunch)then obj:ViewPunch(Angle(5,0,0)) end
 					end
@@ -73,7 +73,7 @@ if(SERVER)then
 		local Phys=self:GetPhysicsObject()
 		Phys:SetVelocity(Phys:GetVelocity()*.8)
 		Phys:ApplyForceCenter(Force)
-		self:NextThink(Time+1)
+		self:NextThink(Time+3)
 		return true
 	end
 	function ENT:RebuildPhysics()

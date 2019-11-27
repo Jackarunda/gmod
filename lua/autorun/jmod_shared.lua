@@ -1253,6 +1253,11 @@ local Hints={
 	["unpackage"]="double tap alt+E to unpackage",
 	["crafting"]="set resources near workbench in order to use them",
 	["building"]="stand near resources in order to use them",
+	["grenade"]="ALT+E to pick up and arm grenade. LMB for overhand throw and RMB for underhand throw.",
+	["grenade impact"]="Impact grenade detonates on contact with any surface - including when in your hand!",
+	["grenade timed"]="Timed grenade detonates 5 seconds after arming.",
+	["grenade proximity"]="Proximity grenades arm after 5 seconds and detonates when hostiles are near.",
+	["grenade remote"]="Remote grenades can be triggered by saying *trigger* in chat or using concommand jmod_ez_trigger.",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
