@@ -14,7 +14,7 @@ ENT.JModEZstorable = true
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED,STATE_WARNING=-1,0,1,2
+local STATE_BROKEN,STATE_OFF,STATE_ARMING,STATE_ARMED,STATE_WARNING=-1,0,2,1,3
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 end
@@ -79,8 +79,9 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-				timer.Create("ProxNadeBeep_"..self:EntIndex(), 1, 5, function() self:EmitSound("weapons/c4/c4_beep1.wav", 65, 150) end)
+				timer.Create("ProxNadeBeep_"..self:EntIndex(), 1, 5, function() if IsValid(self) then self:EmitSound("weapons/c4/c4_beep1.wav", 65, 150) end end)
 				timer.Simple(6, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
+				self:SetState(STATE_ARMING)
 				self:EmitSound("weapons/pinpull.wav",70,100)
 			end
 			JMod_Hint(activator,"grenade","grenade proximity","friends")

@@ -87,6 +87,7 @@ if (SERVER) then
         local ent = data.HitEntity
 
         if ent.JModEZstorable and ent:IsPlayerHolding() 
+				and (!ent.GetState or ent:GetState() == 0)
 				and self:GetItemCount() + math.max(ent:GetPhysicsObject():GetVolume()/1000, 1) <= self.MaxItems then
             self.NextLoad = CurTime() + 0.5
             self.Items[ent:GetClass()] = (self.Items[ent:GetClass()] or 0) + 1
