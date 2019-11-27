@@ -8,6 +8,7 @@ ENT.PrintName="EZ Fumigator"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
 local STATE_SEALED,STATE_TICKING,STATE_VENTING=0,1,2

@@ -10,7 +10,7 @@ ENT.AdminSpawnable = true
 
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
-
+ENT.MaxItems = 100
 ---
 function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "ItemCount")
@@ -56,6 +56,7 @@ if (SERVER) then
 
     function ENT:Initialize()
         self:SetModel("models/props_junk/wood_crate001a.mdl")
+		self:SetModelScale(1.5)
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)
         self:SetSolid(SOLID_VPHYSICS)
@@ -85,7 +86,7 @@ if (SERVER) then
         if (self.NextLoad > CurTime()) then return end
         local ent = data.HitEntity
 
-        if ent.EZstorable and ent:IsPlayerHolding() and self:GetItemCount() < self.MaxItems then
+        if ent.JModEZstorable and ent:IsPlayerHolding() and self:GetItemCount() < self.MaxItems then
             self.NextLoad = CurTime() + 2
             self.Items[ent:GetClass()] = (self.Items[ent:GetClass()] or 0) + 1
             self:SetItemCount(self:GetItemCount() + 1)
@@ -146,14 +147,14 @@ elseif (CLIENT) then
             Ang:RotateAroundAxis(Ang:Up(), -90)
             cam.Start3D2D(Pos + Up * 18 - Forward * 29.8 + Right, Ang, .2)
             draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-            draw.SimpleText("G. P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+            draw.SimpleText("G.P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             draw.SimpleText(Resource .. " Items", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             cam.End3D2D()
             ---
             Ang:RotateAroundAxis(Ang:Right(), 180)
             cam.Start3D2D(Pos + Up * 18 + Forward * 30.1 - Right, Ang, .2)
             draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-            draw.SimpleText("G. P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+            draw.SimpleText("G.P. CRATE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             draw.SimpleText(Resource .. " Items", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
             cam.End3D2D()
         end
