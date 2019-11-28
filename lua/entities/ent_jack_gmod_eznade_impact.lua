@@ -45,8 +45,18 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
+		self.LastVel=Vector(0,0,0)
+		self.NextDet=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		if((not(IsValid(self.AttachedBomb)))and(self:IsPlayerHolding())and(data.HitEntity.EZdetonateOverride))then
+			self.Entity:EmitSound("Grenade.ImpactHard")
+			self:SetPos(data.HitPos-data.HitNormal)
+			self.AttachedBomb=data.HitEntity
+			self.LastVel=data.HitEntity:GetVelocity()
+			timer.Simple(0,function() self:SetParent(data.HitEntity) end)
+			return
+		end
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			self.Entity:EmitSound("Grenade.ImpactHard")
 			if((self:GetState()==STATE_ARMED)and(data.Speed>200))then
@@ -82,7 +92,7 @@ if(SERVER)then
 				self:EmitSound("weapons/pinpull.wav",60,100)
 				self:SetBodygroup(1,1)
 			end
-			JMod_Hint(activator,"grenade")
+			JMod_Hint(activator,"grenade","mininade")
 			JMod_ThrowablePickup(Dude,self)
 		end
 	end
@@ -104,19 +114,32 @@ if(SERVER)then
 			end
 			self:NextThink(Time+.1)
 			return true
+		elseif(State==STATE_ARMED)then
+			if(IsValid(self.AttachedBomb))then
+				if(self.AttachedBomb:IsPlayerHolding())then self.NextDet=Time+.5 end
+				local CurVel=self.AttachedBomb:GetPhysicsObject():GetVelocity()
+				local Change=CurVel:Distance(self.LastVel)
+				self.LastVel=CurVel
+				if(Change>300)then
+					if(self.NextDet<Time)then self:Detonate() end
+					return
+				end
+				self:NextThink(Time+.1)
+				return true
+			end
 		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		local Sploom=ents.Create("env_explosion")
-		Sploom:SetPos(SelfPos)
-		Sploom:SetOwner(self.Owner or game.GetWorld())
-		Sploom:SetKeyValue("iMagnitude",math.random(70,100))
-		Sploom:Spawn()
-		Sploom:Activate()
-		Sploom:Fire("explode","",0)
+		if(IsValid(self.AttachedBomb))then
+			self.AttachedBomb:EZdetonateOverride(self)
+			JMod_Sploom(self.Owner,SelfPos,3)
+			self:Remove()
+			return
+		end
+		JMod_Sploom(self.Owner,SelfPos,math.random(70,100))
 		util.ScreenShake(SelfPos,20,20,1,500)
 		self:Remove()
 	end
@@ -124,7 +147,6 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		--
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
 	end

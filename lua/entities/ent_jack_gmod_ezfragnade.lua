@@ -109,31 +109,39 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		local Sploom=ents.Create("env_explosion")
-		Sploom:SetPos(SelfPos)
-		Sploom:SetOwner(self.Owner or game.GetWorld())
-		Sploom:SetKeyValue("iMagnitude",math.random(10,20))
-		Sploom:Spawn()
-		Sploom:Activate()
-		Sploom:Fire("explode","",0)
+		JMod_Sploom(self.Owner,self:GetPos(),math.random(10,20))
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
+		local plooie=EffectData()
+		plooie:SetOrigin(SelfPos)
+		plooie:SetScale(.5)
+		plooie:SetRadius(1)
+		plooie:SetNormal(vector_up)
+		util.Effect("eff_jack_minesplode",plooie,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
+		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		for i=1,400 do
 			timer.Simple(i/4000,function()
 				local Dir=VectorRand()
-				Dir.z=Dir.z/5+.1
+				if(OnGround)then
+					Dir.z=Dir.z/4+.2
+				else
+					Dir.z=Dir.z/4-.2
+				end
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(50,90),
-					Force=math.random(1000,10000),
+					Damage=math.random(30,40),
+					Force=math.random(10,100),
 					Num=1,
 					Src=SelfPos,
 					Tracer=1,
 					Dir=Dir:GetNormalized(),
 					Spread=Vector(0,0,0)
 				})
-				if(i==400)then self:Remove() end
+				if(i==400)then
+					JMod_Sploom(self.Owner,self:GetPos(),math.random(10,20))
+					self:Remove()
+				end
 			end)
 		end
 	end
@@ -141,19 +149,18 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		--
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	local GlowSprite=Material("sprites/mat_jack_circle")
 	function ENT:Draw()
 		self:DrawModel()
+		-- sprites for calibrating the lethality/casualty radius
+		--[[
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==STATE_ARMING)then
+		if(State==STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),10,10,Color(255,255,255))
-		elseif(State==STATE_WARNING)then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*52*2,15*52*2,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+Vector(0,0,4),5*52*2,5*52*2,Color(255,255,255))
 		end
+		--]]
 	end
 	language.Add("ent_jack_gmod_ezfragnade","EZ Frag Grenade")
 end

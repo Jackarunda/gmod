@@ -16,8 +16,6 @@ function ENT:SetupDataTables()
 end
 ---
 if(SERVER)then
-	
-
 	function ENT:SpawnFunction(ply,tr)
 		local SpawnPos=tr.HitPos+tr.HitNormal*20
 		local ent=ents.Create(self.ClassName)
@@ -48,6 +46,7 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.NextStick=0
 		self.DisarmProgress=0
+		self.DisarmNeeded=20
 		self.NextDisarmFail=0
 		self.NextDisarm=0
 	end
@@ -67,7 +66,7 @@ if(SERVER)then
 			if(State==STATE_ARMED)then DetChance=DetChance+.1 end
 			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end
 			if(math.Rand(0,1)<DetChance)then self:Detonate() end
-			if((math.random(1,10)==3)and not(State==STATE_BROKEN))then
+			if((math.random(1,20)==3)and not(State==STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
 				self:SetState(STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
@@ -104,8 +103,8 @@ if(SERVER)then
 						JMod_Hint(Dude,"disarm")
 						self.DisarmProgress=self.DisarmProgress+JMOD_CONFIG.BombDisarmSpeed
 						self.NextDisarmFail=Time+1
-						Dude:PrintMessage(HUD_PRINTCENTER,"disarming "..self.DisarmProgress.."/20")
-						if(self.DisarmProgress>=20)then
+						Dude:PrintMessage(HUD_PRINTCENTER,"disarming "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
+						if(self.DisarmProgress>=self.DisarmNeeded)then
 							self:SetState(STATE_OFF)
 							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
 							self.DisarmProgress=0
@@ -140,8 +139,10 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:Detonate()
-		if(self.SympatheticDetonated)then return end
 		if(self.Exploded)then return end
 		self.Exploded=true
 		timer.Simple(math.Rand(0,.1),function()

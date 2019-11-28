@@ -563,12 +563,7 @@ if(SERVER)then
 		if(npc.ShouldRandomlyExplode)then
 			if not(attacker==npc)then
 				local Pos=npc:GetPos()
-				local Sploo=ents.Create("env_explosion")
-				Sploo:SetPos(Pos+VectorRand()*math.Rand(0,100))
-				Sploo:SetKeyValue("iMagnitude","50")
-				Sploo:SetOwner(npc)
-				Sploo:Spawn()
-				Sploo:Activate()
+				JMod_Sploom(npc,Pos+VectorRand()*math.Rand(0,100),50)
 				npc:Remove()
 				Sploo:Fire("explode","",0)
 				timer.Simple(.02,function()
@@ -1260,6 +1255,7 @@ local Hints={
 	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
 	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["disarm"]="tap E to disarm",
+	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
