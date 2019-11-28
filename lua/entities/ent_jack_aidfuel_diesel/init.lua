@@ -95,13 +95,7 @@ function ENT:Fougassplode()
 			end
 		end
 	end
-	local explode=ents.Create("env_explosion")
-	explode:SetPos(SelfPos)
-	explode:SetOwner(self.Entity)
-	explode:Spawn()
-	explode:Activate()
-	explode:SetKeyValue("iMagnitude","30")
-	explode:Fire("Explode",0,0)
+	JMod_Sploom(self.Entity,SelfPos,30)
 	for i=0,25 do
 		local Tr=util.QuickTrace(SelfPos,VectorRand()*math.Rand(200,300),{self})
 		if(Tr.Hit)then

@@ -49,13 +49,7 @@ function ENT:Asplode()
 	if(self.Asploded)then return end
 	self.Asploded=true
 	local SelfPos=self:LocalToWorld(self:OBBCenter())
-	local explode=ents.Create("env_explosion")
-	explode:SetPos(SelfPos)
-	explode:SetOwner(self.Entity)
-	explode:Spawn()
-	explode:Activate()
-	explode:SetKeyValue("iMagnitude","110")
-	explode:Fire("Explode",0,0)
+	JMod_Sploom(self.Entity,SelfPos,110)
 	self:Remove()
 end
 function ENT:Use(activator,caller)

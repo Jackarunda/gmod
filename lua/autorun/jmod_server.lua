@@ -5,6 +5,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_EZbuildKit")
 	util.AddNetworkString("JMod_EZworkbench")
 	util.AddNetworkString("JMod_Hint")
+	util.AddNetworkString("JMod_EZtimeBomb")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -692,13 +693,7 @@ if(SERVER)then
 				end
 				SafeRemoveEntityDelayed(victim,.05)
 				for i=0,20 do
-					local explo=ents.Create("env_explosion")
-					explo:SetOwner(attacker or game.GetWorld())
-					explo:SetPos(victim:GetPos()+VectorRand()*math.Rand(0,500))
-					explo:SetKeyValue("iMagnitude","100")
-					explo:Spawn()
-					explo:Activate()
-					explo:Fire("Explode","",0)
+					JMod_Sploom(attacker,victim:GetPos()+VectorRand()*math.Rand(0,500),100)
 				end
 			end
 		end
@@ -1372,13 +1367,7 @@ if(SERVER)then
 			ent:SetMaterial("")
 		end
 		if(ent.OpSquadUltraMegaSuperPowerDeathZombie)then
-			local explo=ents.Create("env_explosion")
-			explo:SetOwner(ent)
-			explo:SetPos(ent:GetPos()+Vector(0,0,20))
-			explo:SetKeyValue("iMagnitude","135")
-			explo:Spawn()
-			explo:Activate()
-			explo:Fire("Explode","",0)
+			JMod_Sploom(ent,ent:GetPos()+Vector(0,0,20),135)
 			local Poof=EffectData()
 			Poof:SetOrigin(ent:LocalToWorld(ent:OBBCenter())-Vector(0,0,10))
 			util.Effect("eff_jack_gmod_bloodsplosion",Poof,true,true)
@@ -1804,6 +1793,67 @@ if(SERVER)then
 		Bocks:Spawn()
 		Bocks:Activate()
 	end
+	function JMod_WreckBuildings(blaster,pos,power)
+		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
+		local LoosenThreshold,DestroyThreshold=400*power,100*power
+		for k,prop in pairs(ents.FindInSphere(pos,100*power))do
+			local Phys=prop:GetPhysicsObject()
+			if(not(prop==blaster)and(IsValid(Phys)))then
+				local PropPos=prop:LocalToWorld(prop:OBBCenter())
+				if(prop:Visible(blaster))then
+					local Mass=Phys:GetMass()
+					if(Mass<=DestroyThreshold)then
+						SafeRemoveEntity(prop)
+					elseif(Mass<=LoosenThreshold)then
+						Phys:EnableMotion(true)
+						constraint.RemoveAll(prop)
+						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+					else
+						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+					end
+				end
+			end
+		end
+	end
+	function JMod_BlastDoors(blaster,pos,power)
+		for k,door in pairs(ents.FindInSphere(pos,50*power))do
+			if((blaster:Visible(door))and(JMod_IsDoor(door)))then
+				local Vel=(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000
+				JMod_BlastThatDoor(door,Vel)
+			end
+		end
+	end
+	function JMod_Sploom(attacker,pos,mag)
+		local Sploom=ents.Create("env_explosion")
+		Sploom:SetPos(pos)
+		Sploom:SetOwner(attacker or game.GetWorld())
+		Sploom:SetKeyValue("iMagnitude",mag)
+		Sploom:Spawn()
+		Sploom:Activate()
+		Sploom:Fire("explode","",0)
+	end
+	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
+	function JMod_ThrowablePickup(playa,item)
+		playa:PickupObject(item)
+		local HookName="EZthrowable_"..item:EntIndex()
+		hook.Add("KeyPress",HookName,function(ply,key)
+			if not(IsValid(playa))then hook.Remove("KeyPress",HookName) return end
+			if not(ply==playa)then return end
+			if((IsValid(item))and(ply:Alive()))then
+				local Phys=item:GetPhysicsObject()
+				if(key==IN_ATTACK)then
+					timer.Simple(0,function()
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*600*Phys:GetMass()) end
+					end)
+				elseif(key==IN_ATTACK2)then
+					timer.Simple(0,function()
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*200*Phys:GetMass()) end
+					end)
+				end
+			end
+			if(table.HasValue(TriggerKeys,key))then hook.Remove("KeyPress",HookName) end
+		end)
+	end
 	net.Receive("JMod_EZbuildKit",function(ln,ply)
 		local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_ezbuildkit")
 		if(IsValid(Wep))then
@@ -1816,6 +1866,18 @@ if(SERVER)then
 			if(ply:GetPos():Distance(Bench:GetPos())<200)then
 				Bench:TryBuild(Name,ply)
 			end
+		end
+	end)
+	net.Receive("JMod_EZtimeBomb",function(ln,ply)
+		local ent=net.ReadEntity()
+		local tim=net.ReadInt(16)
+		if((ent:GetState()==0)and(ent.Owner==ply)and(ply:Alive())and(ply:GetPos():Distance(ent:GetPos())<=150))then
+			ent:SetTimer(math.min(tim,600))
+			ent.DisarmNeeded=math.min(tim,600)/2
+			ent:NextThink(CurTime()+1)
+			ent:SetState(1)
+			ent:EmitSound("weapons/c4/c4_plant.wav",60,120)
+			ent:EmitSound("snd_jack_minearm.wav",60,100)
 		end
 	end)
 	--[[

@@ -55,6 +55,23 @@ if(CLIENT)then
 			additive=false,
 			outline=false
 		})
+		surface.CreateFont("JMod-NumberLCD",{
+			font="DS-Digital Bold",
+			extended=false,
+			size=35,
+			weight=100,
+			blursize=0,
+			scanlines=0,
+			antialias=true,
+			underline=false,
+			italic=false,
+			strikeout=false,
+			symbol=false,
+			rotary=false,
+			shadow=false,
+			additive=false,
+			outline=false
+		})
 		surface.CreateFont("JMod-Display-S",{
 			font="Arial",
 			extended=false,
@@ -650,10 +667,8 @@ if(CLIENT)then
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
 	end)
 	net.Receive("JMod_UniCrate", function()
-	
 		local box = net.ReadEntity()
 		local items = net.ReadTable()
-		
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(200, 300)
 		frame:SetTitle("G.P. Crate")
@@ -661,20 +676,15 @@ if(CLIENT)then
 		frame:MakePopup()
 		frame.OnClose = function() frame = nil end
 		frame.Paint = function(self, w, h) BlurBackground(self) end
-		
 		local scrollPanel = vgui.Create("DScrollPanel", frame)
 		scrollPanel:SetSize(190, 270)
 		scrollPanel:SetPos(5, 30)
-		
 		local layout = vgui.Create("DIconLayout", scrollPanel)
 		layout:SetSize(190, 270)
 		layout:SetPos(0, 0)
 		layout:SetSpaceY(5)
-		
 		for class, count in pairs(items) do
-		
 			local sent = scripted_ents.Get(class)
-			
 			local button = vgui.Create("DButton", layout)
 			button:SetSize(190, 25)
 			button:SetText(sent.PrintName .. " x" .. count)
@@ -685,8 +695,44 @@ if(CLIENT)then
 				net.SendToServer()
 				frame:Close()
 			end
-			
 		end
-		
+	end)
+	net.Receive("JMod_EZtimeBomb",function()
+		local ent=net.ReadEntity()
+		local frame=vgui.Create("DFrame")
+		frame:SetSize(300,120)
+		frame:SetTitle("Time Bomb")
+		frame:SetDraggable(true)
+		frame:Center()
+		frame:MakePopup()
+		function frame:Paint()
+			BlurBackground(self)
+		end
+		local bg=vgui.Create("DPanel",frame)
+		bg:SetPos(90,30)
+		bg:SetSize(200,25)
+		function bg:Paint(w,h)
+			surface.SetDrawColor(Color(255,255,255,100))
+			surface.DrawRect(0,0,w,h)
+		end
+		local tim=vgui.Create("DNumSlider", frame)
+		tim:SetText("Set Time")
+		tim:SetSize(280, 20)
+		tim:SetPos(10,30)
+		tim:SetMin(10)
+		tim:SetMax(600)
+		tim:SetValue(10)
+		tim:SetDecimals(0)
+		local apply=vgui.Create("DButton", frame)
+		apply:SetSize(100, 30)
+		apply:SetPos(100, 75)
+		apply:SetText("ARM")
+		apply.DoClick=function()
+			net.Start("JMod_EZtimeBomb")
+			net.WriteEntity(ent)
+			net.WriteInt(tim:GetValue(),16)
+			net.SendToServer()
+			frame:Close()
+		end
 	end)
 end

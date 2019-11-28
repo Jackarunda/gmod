@@ -92,6 +92,9 @@ if(SERVER)then
 			self.Owner=activator
 		end
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true

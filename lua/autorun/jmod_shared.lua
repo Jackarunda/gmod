@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=11,
+		Version=12,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -35,6 +35,8 @@ function JMod_InitGlobalConfig()
 		MicroBlackHoleGravityStrength=1,
 		BuildKitDeWeldSpeed=1,
 		HandGrabStrength=1,
+		BombDisarmSpeed=1,
+		ExplosionPropDestroyPower=1,
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,
@@ -163,9 +165,10 @@ function JMod_InitGlobalConfig()
 			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50}},
 			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5}},
 			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20}},
+			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=180}},
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
-			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=1,chemicals=100}},
+			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
 			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}}
 		}
 	}
@@ -581,12 +584,7 @@ if(SERVER)then
 		if(npc.ShouldRandomlyExplode)then
 			if not(attacker==npc)then
 				local Pos=npc:GetPos()
-				local Sploo=ents.Create("env_explosion")
-				Sploo:SetPos(Pos+VectorRand()*math.Rand(0,100))
-				Sploo:SetKeyValue("iMagnitude","50")
-				Sploo:SetOwner(npc)
-				Sploo:Spawn()
-				Sploo:Activate()
+				JMod_Sploom(npc,Pos+VectorRand()*math.Rand(0,100),50)
 				npc:Remove()
 				Sploo:Fire("explode","",0)
 				timer.Simple(.02,function()
@@ -1257,6 +1255,7 @@ local Hints={
 	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["binding"]="remember, console commands can be bound to a key",
 	["detpack stick"]="hold E on detpack then release E to stick the detpack",
+	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
 	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
 	["afh"]="E to enter and get healed",
 	["fix"]="tap parts box against to repair",
@@ -1274,11 +1273,10 @@ local Hints={
 	["unpackage"]="double tap alt+E to unpackage",
 	["crafting"]="set resources near workbench in order to use them",
 	["building"]="stand near resources in order to use them",
-	["grenade"]="ALT+E to pick up and arm grenade. LMB for overhand throw and RMB for underhand throw.",
-	["grenade impact"]="Impact grenade detonates on contact with any surface - including when in your hand!",
-	["grenade timed"]="Timed grenade detonates 5 seconds after arming.",
-	["grenade proximity"]="Proximity grenades arm after 5 seconds and detonates when hostiles are near.",
-	["grenade remote"]="Remote grenades can be triggered by saying *trigger* in chat or using concommand jmod_ez_trigger.",
+	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
+	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
+	["disarm"]="tap E to disarm",
+	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
