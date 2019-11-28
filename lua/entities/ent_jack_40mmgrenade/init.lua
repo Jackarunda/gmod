@@ -50,13 +50,7 @@ function ENT:Detonate()
 		util.ScreenShake(SelfPos,99999,99999,1,750)
 		
 		if(self.Type=="HE")then
-			local explode=ents.Create("env_explosion")
-			explode:SetPos(self:GetPos())
-			explode:SetOwner(self:GetOwner() or self:GetNetworkedEntity("Owenur"))
-			explode:Spawn()
-			explode:Activate()
-			explode:SetKeyValue("iMagnitude","190")
-			explode:Fire("Explode",0,0)
+			JMod_Sploom(self:GetOwner() or self:GetNetworkedEntity("Owenur"),self:GetPos(),190)
 		end
 		for i=0,30 do
 			local Trayuss=util.QuickTrace(SelfPos,VectorRand()*200,{self.Entity})

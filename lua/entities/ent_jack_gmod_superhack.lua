@@ -230,13 +230,7 @@ if(SERVER)then
 	----------------------------------------------------------------------------------*/
 	function KaBewm(npc,attacker,inflictor)
 		if((npc.IsAJIViscerator)and not(npc.IsAJIGunhack))then
-			local explo=ents.Create("env_explosion")
-			explo:SetOwner(npc)
-			explo:SetPos(npc:GetPos()+Vector(0,0,20))
-			explo:SetKeyValue("iMagnitude","50")
-			explo:Spawn()
-			explo:Activate()
-			explo:Fire("Explode","",0)
+			JMod_Sploom(npc,npc:GetPos()+Vector(0,0,20),50)
 			
 			//local poz=npc:GetPos()
 			//util.BlastDamage(npc,npc,poz,100,500)

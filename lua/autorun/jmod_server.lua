@@ -693,13 +693,7 @@ if(SERVER)then
 				end
 				SafeRemoveEntityDelayed(victim,.05)
 				for i=0,20 do
-					local explo=ents.Create("env_explosion")
-					explo:SetOwner(attacker or game.GetWorld())
-					explo:SetPos(victim:GetPos()+VectorRand()*math.Rand(0,500))
-					explo:SetKeyValue("iMagnitude","100")
-					explo:Spawn()
-					explo:Activate()
-					explo:Fire("Explode","",0)
+					JMod_Sploom(attacker,victim:GetPos()+VectorRand()*math.Rand(0,500),100)
 				end
 			end
 		end
@@ -1373,13 +1367,7 @@ if(SERVER)then
 			ent:SetMaterial("")
 		end
 		if(ent.OpSquadUltraMegaSuperPowerDeathZombie)then
-			local explo=ents.Create("env_explosion")
-			explo:SetOwner(ent)
-			explo:SetPos(ent:GetPos()+Vector(0,0,20))
-			explo:SetKeyValue("iMagnitude","135")
-			explo:Spawn()
-			explo:Activate()
-			explo:Fire("Explode","",0)
+			JMod_Sploom(ent,ent:GetPos()+Vector(0,0,20),135)
 			local Poof=EffectData()
 			Poof:SetOrigin(ent:LocalToWorld(ent:OBBCenter())-Vector(0,0,10))
 			util.Effect("eff_jack_gmod_bloodsplosion",Poof,true,true)
@@ -1835,6 +1823,15 @@ if(SERVER)then
 			end
 		end
 	end
+	function JMod_Sploom(attacker,pos,mag)
+		local Sploom=ents.Create("env_explosion")
+		Sploom:SetPos(pos)
+		Sploom:SetOwner(attacker or game.GetWorld())
+		Sploom:SetKeyValue("iMagnitude",mag)
+		Sploom:Spawn()
+		Sploom:Activate()
+		Sploom:Fire("explode","",0)
+	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
 	function JMod_ThrowablePickup(playa,item,hardstr,softstr)
 		playa:PickupObject(item)
@@ -1876,6 +1873,7 @@ if(SERVER)then
 		local tim=net.ReadInt(16)
 		if((ent:GetState()==0)and(ent.Owner==ply)and(ply:Alive())and(ply:GetPos():Distance(ent:GetPos())<=150))then
 			ent:SetTimer(math.min(tim,600))
+			ent.DisarmNeeded=math.min(tim,600)/2
 			ent:NextThink(CurTime()+1)
 			ent:SetState(1)
 			ent:EmitSound("weapons/c4/c4_plant.wav",60,120)

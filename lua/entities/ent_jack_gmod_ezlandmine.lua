@@ -124,16 +124,27 @@ if(SERVER)then
 				playa:SetVelocity(playa:GetVelocity()+Up*200)
 			end
 		end
-		util.BlastDamage(self,self.Owner or self,SelfPos,180*JMOD_CONFIG.MinePower,math.random(75,120)*JMOD_CONFIG.MinePower)
+		util.BlastDamage(self,self.Owner or self,SelfPos,120*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
-		self.Entity:EmitSound("BaseExplosionEffect.Sound")
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-		local Pos=self:GetPos()
-		if(self)then self:Remove() end
-		timer.Simple(.1,function()
-			local Tr=util.QuickTrace(Pos+Vector(0,0,10),Vector(0,0,-20))
-			if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
-		end)
+		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
+		for i=1,200 do
+			timer.Simple(i/2000,function()
+				local Dir=VectorRand()
+				Dir.z=Dir.z/4+.75
+				self:FireBullets({
+					Attacker=self.Owner or game.GetWorld(),
+					Damage=math.random(20,30)*JMOD_CONFIG.MinePower,
+					Force=math.random(10,100),
+					Num=1,
+					Src=SelfPos,
+					Tracer=1,
+					Dir=Dir:GetNormalized(),
+					Spread=Vector(0,0,0)
+				})
+				if(i==200)then self:Remove() end
+			end)
+		end
 	end
 	function ENT:Arm(armer)
 		local State=self:GetState()

@@ -49,6 +49,13 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		if((not(IsValid(self.AttachedBomb)))and(self:IsPlayerHolding())and(data.HitEntity.EZdetonateOverride))then
+			self.Entity:EmitSound("Grenade.ImpactHard")
+			self:SetPos(data.HitPos-data.HitNormal)
+			self.AttachedBomb=data.HitEntity
+			timer.Simple(0,function() self:SetParent(data.HitEntity) end)
+			return
+		end
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			self.Entity:EmitSound("Grenade.ImpactHard")
 		end
@@ -81,7 +88,7 @@ if(SERVER)then
 				self:EmitSound("weapons/pinpull.wav",60,100)
 				self:SetBodygroup(1,1)
 			end
-			JMod_Hint(activator,"grenade","friends")
+			JMod_Hint(activator,"grenade","friends","mininade")
 			JMod_ThrowablePickup(Dude,self)
 		end
 	end
@@ -163,13 +170,13 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		local Sploom=ents.Create("env_explosion")
-		Sploom:SetPos(SelfPos)
-		Sploom:SetOwner(self.Owner or game.GetWorld())
-		Sploom:SetKeyValue("iMagnitude",math.random(50,80))
-		Sploom:Spawn()
-		Sploom:Activate()
-		Sploom:Fire("explode","",0)
+		if(IsValid(self.AttachedBomb))then
+			self.AttachedBomb:EZdetonateOverride(self)
+			JMod_Sploom(self.Owner,SelfPos,3)
+			self:Remove()
+			return
+		end
+		JMod_Sploom(self.Owner,SelfPos,math.random(50,80))
 		util.ScreenShake(SelfPos,20,20,1,500)
 		self:Remove()
 	end
