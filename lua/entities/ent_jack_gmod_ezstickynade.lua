@@ -85,7 +85,7 @@ if(SERVER)then
 				self:EmitSound("weapons/pinpull.wav",60,100)
 			end
 			JMod_Hint(activator,"grenade")
-			JMod_ThrowablePickup(Dude,self)
+			JMod_ThrowablePickup(Dude,self,400,200)
 		end
 	end
 	function ENT:Think()
@@ -126,7 +126,8 @@ if(SERVER)then
 		Blam:SetScale(0.5)
 		util.Effect("eff_jack_plastisplosion",Blam,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
-		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,150,250)
+		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,175,100)
+		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,200)
 		self:Remove()
 	end
 elseif(CLIENT)then
