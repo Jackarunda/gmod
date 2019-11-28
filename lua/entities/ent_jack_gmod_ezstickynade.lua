@@ -53,10 +53,13 @@ if(SERVER)then
 		end
 		if self:GetState() == STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
+			self.Weld = nil
+			if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then self.StickObj = data.HitEntity:GetBaseEnt() end
 			if self.StickObj:IsPlayer() or self.StickObj:IsNPC() then
 				self:SetParent(self.StickObj)
 			else
-				timer.Simple(0, function() constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
+				timer.Simple(0, function() self.Weld = constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
+				timer.Simple(0.1, function() if !IsValid(self.Weld) then self.StickObj = nil end end)
 			end
 		end
 	end
@@ -131,17 +134,21 @@ if(SERVER)then
 		util.Effect("eff_jack_plastisplosion",Blam,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,175,100)
+		--util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,1000)
+		JMod_WreckBuildings(self,SelfPos,0.5)
+		JMod_BlastDoors(self,SelfPos,0.5)
+		
 		if IsValid(self.StickObj) and !self.StickObj:IsWorld() then
 			local dmginfo = DamageInfo()
-			dmginfo:SetDamage(500)
-			dmginfo:SetDamageType(DMG_BLAST)
+			dmginfo:SetDamage((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and 3000) or 500)
+			dmginfo:SetDamageType((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and DMG_GENERIC) or DMG_BLAST)
 			dmginfo:SetInflictor(self)
 			dmginfo:SetAttacker(self.Owner)
 			dmginfo:SetDamagePosition(SelfPos)
 			dmginfo:SetDamageForce((self.StickObj:GetPos()-self:GetPos()):GetNormalized()*1000)
 			self.StickObj:TakeDamageInfo(dmginfo)
 		end
-		--util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,200)
+		
 		self:Remove()
 	end
 elseif(CLIENT)then
