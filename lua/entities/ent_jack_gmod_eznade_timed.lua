@@ -4,14 +4,14 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Grenade - Timed"
+ENT.PrintName="EZminiNade-Timed"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.JModEZtimedNade=true
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
+local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMED=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 end
@@ -31,7 +31,9 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/weapons/w_eq_fraggrenade.mdl")
+		self.Entity:SetModel("models/weapons/w_fragjade.mdl")
+		self.Entity:SetMaterial("models/mats_jack_nades/gnd_ylw")
+		self.Entity:SetModelScale(1.25,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -47,8 +49,7 @@ if(SERVER)then
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
-			self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal*math.Clamp(data.Speed*2, 50, 150))
-			self.Entity:EmitSound("weapons/hegrenade/he_bounce-1.wav",65,math.random(90,130))
+			self.Entity:EmitSound("Grenade.ImpactHard")
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -57,7 +58,6 @@ if(SERVER)then
 		local Dmg=dmginfo:GetDamage()
 		if(Dmg>=4)then
 			local Pos,State,DetChance=self:GetPos(),self:GetState(),0
-			if(State==STATE_ARMED)then DetChance=DetChance+.3 end
 			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end
 			if(math.Rand(0,1)<DetChance)then self:Detonate() end
 			if((math.random(1,10)==3)and not(State==STATE_BROKEN))then
@@ -76,61 +76,47 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-				timer.Simple(5, function() if IsValid(self) then self:Detonate() end end)
-				self:SetState(STATE_ARMED)
-				self:EmitSound("weapons/pinpull.wav",70,100)
+				self:SetState(STATE_PRIMED)
+				self:EmitSound("weapons/pinpull.wav",60,100)
+				self:SetBodygroup(1,1)
 			end
-			JMod_Hint(activator,"grenade","grenade timed")
-			Dude:PickupObject(self)
-			if Dude:GetActiveWeapon() != "weapon_physcannon" then
-				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)
-					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
-					if ply == Dude then
-						if key == IN_ATTACK then
-							local dir = Dude:EyeAngles():Forward()
-							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 800 + Vector(0, 0, 1) * 200)
-						elseif key == IN_ATTACK2 then
-							local dir = Dude:EyeAngles():Forward()
-							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 500)
-						end
-						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
-					end
-				end)
-			end
+			JMod_Hint(activator,"grenade")
+			JMod_ThrowablePickup(Dude,self)
 		end
 	end
 	function ENT:Think()
+		local State,Time=self:GetState(),CurTime()
+		if(State==STATE_PRIMED)then
+			if not(self:IsPlayerHolding())then
+				self:SetState(STATE_ARMED)
+				local Spewn=ents.Create("ent_jack_spoon")
+				Spewn:SetPos(self:GetPos())
+				Spewn:Spawn()
+				Spewn:Activate()
+				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+				self.Entity:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+				self:SetBodygroup(2,1)
+				timer.Simple(3,function()
+					if(IsValid(self))then self:Detonate() end
+				end)
+			end
+			self:NextThink(Time+.1)
+			return true
+		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		timer.Simple(math.Rand(0,.1),function()
-			if(IsValid(self))then
-				local SelfPos,PowerMult=self:GetPos(), 1
-				PowerMult=(PowerMult^.75)*JMOD_CONFIG.DetpackPowerMult
-				--
-				local Blam=EffectData()
-				Blam:SetOrigin(SelfPos)
-				Blam:SetScale(PowerMult)
-				util.Effect("eff_jack_plastisplosion",Blam,true,true)
-				util.ScreenShake(SelfPos,20,20,1,500)
-				sound.Play("BaseExplosionEffect.Sound",SelfPos,100,math.random(90,110))
-				--sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,140,math.random(90,110))
-				self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-				timer.Simple(.1,function()
-					for i=1,5 do
-						local Tr=util.QuickTrace(SelfPos,VectorRand()*20)
-						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
-					end
-				end)
-				timer.Simple(0,function()
-					local ZaWarudo=game.GetWorld()
-					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300,100)
-					self:Remove()
-				end)
-			end
-		end)
+		local SelfPos=self:GetPos()
+		local Sploom=ents.Create("env_explosion")
+		Sploom:SetPos(SelfPos)
+		Sploom:SetOwner(self.Owner or game.GetWorld())
+		Sploom:SetKeyValue("iMagnitude",math.random(100,150))
+		Sploom:Spawn()
+		Sploom:Activate()
+		Sploom:Fire("explode","",0)
+		util.ScreenShake(SelfPos,20,20,1,500)
+		self:Remove()
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -150,5 +136,5 @@ elseif(CLIENT)then
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
-	language.Add("ent_jack_gmod_eznade_timed","EZ Grenade - Timed")
+	language.Add("ent_jack_gmod_eznade_timed","EZminiNade-Timed")
 end
