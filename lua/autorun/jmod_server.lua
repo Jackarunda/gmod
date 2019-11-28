@@ -1836,7 +1836,7 @@ if(SERVER)then
 		end
 	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
-	function JMod_ThrowablePickup(playa,item)
+	function JMod_ThrowablePickup(playa,item,hardstr,softstr)
 		playa:PickupObject(item)
 		local HookName="EZthrowable_"..item:EntIndex()
 		hook.Add("KeyPress",HookName,function(ply,key)
@@ -1846,11 +1846,11 @@ if(SERVER)then
 				local Phys=item:GetPhysicsObject()
 				if(key==IN_ATTACK)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*600*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass()) end
 					end)
 				elseif(key==IN_ATTACK2)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*200*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(softstr or 200)*Phys:GetMass()) end
 					end)
 				end
 			end

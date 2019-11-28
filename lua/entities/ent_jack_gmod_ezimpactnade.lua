@@ -82,7 +82,7 @@ if(SERVER)then
 				Spewn:Spawn()
 				Spewn:SetModel("models/codww2/equipment/no, 69 hand grenade cap.mdl")
 				Spewn:Activate()
-				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*200)
 				self:EmitSound("physics/plastic/plastic_box_impact_hard1.wav",60,100)
 				self:SetBodygroup(2,1)
 			end
