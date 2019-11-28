@@ -53,7 +53,11 @@ if(SERVER)then
 		end
 		if self:GetState() == STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
-			timer.Simple(0, function() constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
+			if self.StickObj:IsPlayer() or self.StickObj:IsNPC() then
+				self:SetParent(self.StickObj)
+			else
+				timer.Simple(0, function() constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
+			end
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -85,7 +89,7 @@ if(SERVER)then
 				self:EmitSound("weapons/pinpull.wav",60,100)
 			end
 			JMod_Hint(activator,"grenade")
-			JMod_ThrowablePickup(Dude,self,400,200)
+			JMod_ThrowablePickup(Dude,self)
 		end
 	end
 	function ENT:Think()
@@ -127,7 +131,17 @@ if(SERVER)then
 		util.Effect("eff_jack_plastisplosion",Blam,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,175,100)
-		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,200)
+		if IsValid(self.StickObj) and !self.StickObj:IsWorld() then
+			local dmginfo = DamageInfo()
+			dmginfo:SetDamage(500)
+			dmginfo:SetDamageType(DMG_BLAST)
+			dmginfo:SetInflictor(self)
+			dmginfo:SetAttacker(self.Owner)
+			dmginfo:SetDamagePosition(SelfPos)
+			dmginfo:SetDamageForce((self.StickObj:GetPos()-self:GetPos()):GetNormalized()*1000)
+			self.StickObj:TakeDamageInfo(dmginfo)
+		end
+		--util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,200)
 		self:Remove()
 	end
 elseif(CLIENT)then
