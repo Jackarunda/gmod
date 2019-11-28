@@ -115,9 +115,9 @@ if(SERVER)then
 		Boom:Spawn()
 		Boom:Fire("explode",0,"")
 		for i=1,15 do
-			local FireAng=(VectorRand()*Vector(1,1,0)+Vector(0,0,0.1)*(math.random()-0.7)):Angle()
+			local FireAng=(VectorRand()*Vector(0.5,0.5,0)+Vector(0,0,0.5)*(-math.random())):Angle()
 			local Flame=ents.Create("ent_jack_gmod_eznapalm")
-			Flame:SetPos(SelfPos+Vector(0,0,10))
+			Flame:SetPos(SelfPos+Vector(0,0,20))
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(self.Owner or game.GetWorld())
 			Flame.Owner=self.Owner or self

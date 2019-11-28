@@ -140,7 +140,7 @@ if(SERVER)then
 		
 		if IsValid(self.StickObj) and !self.StickObj:IsWorld() then
 			local dmginfo = DamageInfo()
-			dmginfo:SetDamage((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and 3000) or 500)
+			dmginfo:SetDamage((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and 3000) or 300)
 			dmginfo:SetDamageType((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and DMG_GENERIC) or DMG_BLAST)
 			dmginfo:SetInflictor(self)
 			dmginfo:SetAttacker(self.Owner)
