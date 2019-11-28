@@ -9,6 +9,7 @@ function ENT:Initialize()
 
 	// Use the helibomb model just for the shadow (because it's about the same size)
 	self.Entity:SetModel("models/shells/shell_gndspoon.mdl")
+	self.Entity:SetModelScale(1.5,0)
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)

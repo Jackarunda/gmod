@@ -124,7 +124,7 @@ if(SERVER)then
 				playa:SetVelocity(playa:GetVelocity()+Up*200)
 			end
 		end
-		util.BlastDamage(self,self.Owner or self,SelfPos,200*JMOD_CONFIG.MinePower,math.random(75,110)*JMOD_CONFIG.MinePower)
+		util.BlastDamage(self,self.Owner or self,SelfPos,180*JMOD_CONFIG.MinePower,math.random(75,120)*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self.Entity:EmitSound("BaseExplosionEffect.Sound")
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)

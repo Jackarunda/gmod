@@ -140,35 +140,6 @@ if(SERVER)then
 		if not(self:GetState()==STATE_ARMED)then return end
 		self:Detonate()
 	end
-	function ENT:WreckBuildings(pos,power)
-		local LoosenThreshold,DestroyThreshold=400*power,100*power
-		for k,prop in pairs(ents.FindInSphere(pos,100*power))do
-			local Phys=prop:GetPhysicsObject()
-			if(not(prop==self)and(IsValid(Phys)))then
-				local PropPos=prop:LocalToWorld(prop:OBBCenter())
-				if(prop:Visible(self))then
-					local Mass=Phys:GetMass()
-					if(Mass<=DestroyThreshold)then
-						SafeRemoveEntity(prop)
-					elseif(Mass<=LoosenThreshold)then
-						Phys:EnableMotion(true)
-						constraint.RemoveAll(prop)
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
-					else
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
-					end
-				end
-			end
-		end
-	end
-	function ENT:BlastDoors(pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,50*power))do
-			if((self:Visible(door))and(JMod_IsDoor(door)))then
-				local Vel=(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000
-				JMod_BlastThatDoor(door,Vel)
-			end
-		end
-	end
 	function ENT:Detonate()
 		if(self.SympatheticDetonated)then return end
 		if(self.Exploded)then return end
@@ -195,8 +166,8 @@ if(SERVER)then
 						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 					end
 				end)
-				self:WreckBuildings(SelfPos,PowerMult)
-				self:BlastDoors(SelfPos,PowerMult)
+				JMod_WreckBuildings(self,SelfPos,PowerMult)
+				JMod_BlastDoors(self,SelfPos,PowerMult)
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
