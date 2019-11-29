@@ -156,6 +156,7 @@ if(SERVER)then
 		end
 		JMod_Sploom(self.Owner,SelfPos,math.random(50,80))
 			
+		
 		for i = 1, 40 do
 			timer.Simple(i/400, function()
 				self:FireBullets({
@@ -168,7 +169,10 @@ if(SERVER)then
 					Src = SelfPos,
 					Dir = self:GetUp(),
 					Spread = Vector(0.1, 0.1, 0),
-					IgnoreEntity = self
+					IgnoreEntity = self,
+					Callback = function(attacker, tr, dmginfo)
+						
+					end
 				})
 				if i == 40 then self:Remove() end
 			end)
@@ -182,8 +186,7 @@ if(SERVER)then
 		if(state==STATE_ARMED)then
 			local pos = self:GetAttachment(1).Pos
 			local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
-			print(self.BeamFrac - trace.Fraction)
-			if math.abs(self.BeamFrac - trace.Fraction) >= 0.01 then
+			if math.abs(self.BeamFrac - trace.Fraction) >= 0.001 then
 				self:Detonate()
 			end
 			self:NextThink(Time+.1)
