@@ -2,7 +2,7 @@
 	EFFECT:Init(data)
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	self.Position=vOffset
 	self.TimeToDie=CurTime()+.5
 	self.Scayul=data:GetScale()

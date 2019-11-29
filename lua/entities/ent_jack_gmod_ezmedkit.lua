@@ -10,7 +10,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
-ENT.JModEZstorable = true
+ENT.JModEZstorable=true
 ---
 local Props={
 	"models/items/healthkit.mdl",

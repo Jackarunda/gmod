@@ -143,7 +143,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTeslaTurretSetCap",tostring(self:GetNetworkedInt("JackIndex")),tostring(value))
 	end
 	
-	local battbutton = vgui.Create("Button",MainPanel)
+	local battbutton=vgui.Create("Button",MainPanel)
 	battbutton:SetSize(80,20)
 	battbutton:SetPos(10,43)
 	battbutton:SetText("Electricity")
@@ -153,7 +153,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTeslaTurretBattery",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local exitbutton = vgui.Create("Button",MainPanel)
+	local exitbutton=vgui.Create("Button",MainPanel)
 	exitbutton:SetSize(80,20)
 	exitbutton:SetPos(106,43)
 	exitbutton:SetText("Exit")
@@ -163,7 +163,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTeslaTurretCloseMenu_Cancel",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local powerbutton = vgui.Create("Button",MainPanel)
+	local powerbutton=vgui.Create("Button",MainPanel)
 	powerbutton:SetSize(80,20)
 	powerbutton:SetPos(200,43)
 	powerbutton:SetText("Activate")

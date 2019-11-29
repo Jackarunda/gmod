@@ -1,6 +1,6 @@
 local GlowSprite=Material("sprites/mat_jack_basicglow")
 function EFFECT:Init(data)
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	self.Pos=vOffset
 	self.DedTiem=CurTime()+2
 	local Spl=EffectData()
@@ -35,16 +35,16 @@ function EFFECT:Think()
 end
 function EFFECT:Render()
 	local TimeLeft=(self.DedTiem-CurTime())/2
-	local dlight = DynamicLight( self:EntIndex() )
-	if ( dlight ) then
-		dlight.pos = self.Pos
-		dlight.r = 255*TimeLeft
-		dlight.g = 255*TimeLeft
-		dlight.b = 255*TimeLeft
-		dlight.brightness = 10
-		dlight.Decay = 12000
-		dlight.Size = 5000
-		dlight.DieTime = CurTime() + 1
+	local dlight=DynamicLight( self:EntIndex() )
+	if( dlight )then
+		dlight.pos=self.Pos
+		dlight.r=255*TimeLeft
+		dlight.g=255*TimeLeft
+		dlight.b=255*TimeLeft
+		dlight.brightness=10
+		dlight.Decay=12000
+		dlight.Size=5000
+		dlight.DieTime=CurTime()+1
 	end
 	render.SetMaterial(GlowSprite)
 	for i=0,10 do

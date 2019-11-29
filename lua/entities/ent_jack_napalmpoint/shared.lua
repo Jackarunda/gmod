@@ -1,5 +1,5 @@
 
-ENT.Type = "anim"
+ENT.Type="anim"
 
 ENT.PrintName		= "Explosion"
 ENT.Author			= "Jackarunda"

@@ -11,7 +11,7 @@ function ENT:OnRemove()
 end
 language.Add("ent_jack_terminal","Sentry Terminal")
 --[[---------------------------------------
---     Super Special Secret w00tzorz     --
+--	 Super Special Secret w00tzorz	 --
 ---------------------------------------]]--
 local Strobe=surface.GetTextureID("sprites/mat_jack_strobe")
 local White=Material("sprites/mat_jack_thermalglow")

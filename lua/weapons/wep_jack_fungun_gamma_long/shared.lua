@@ -40,29 +40,29 @@ SWEP.AimAng=Angle(0,0,1)
 SWEP.ChangesViewForAiming=true
 SWEP.ShowWorldModel=false
 SWEP.ReloadNoise={"snd_jack_heavycutterreload.wav",70,100}
-SWEP.ViewModelBoneMods = {
-	["gun.bone"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet1"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet02"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet03"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet04"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet05"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet06"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet07"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet08"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) },
-	["bone.bullet09"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) }
+SWEP.ViewModelBoneMods={
+	["gun.bone"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet1"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet02"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet03"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet04"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet05"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet06"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet07"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet08"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) },
+	["bone.bullet09"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) }
 }
-SWEP.VElements = {
-	["hurr"] = { type = "Quad", bone = "gun.bone", rel = "", pos = Vector(-2.75, 2.75, -1.9), angle = Angle(90, -20, 180), size = .04, draw_func = JackIndFunGunAmmoDisplay},
-	["narg"] = { type = "Model", model = "models/mass_effect_3/weapons/misc/jeatsink.mdl", bone = "gun.bone", rel = "", pos = Vector(-8.2, 4.7, .35), angle = Angle(0, -90, 0), size = Vector(.1, 1.7, .7), color = Color(255, 255, 255, 255), surpresslightning = true, material = "models/debug/debugwhite", skin = 0, bodygroup = {} },
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/assault_rifles/m-37 jalcon.mdl", bone = "gun.bone", rel = "", pos = Vector(-0, 1.1, .5), angle = Angle(-90, 0, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["herp"] = { type = "Model", model = "models/mass_effect_3/weapons/misc/jeatsink.mdl", bone = "bone.shell1", rel = "", pos = Vector(-1.8, -.8, 1), angle = Angle(-90, -90, 0), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["flarg"] = { type = "Model", model = "models/Mechanics/wheels/wheel_smooth_24f.mdl", bone = "gun.bone", rel = "", pos = Vector(-9, 4.5, .5), angle = Angle(90, 0, 0), size = Vector(.12, .12, .5), color = Color(0, 0, 0, 255), surpresslightning = false, material = "phoenix_storms/gear", skin = 0, bodygroup = {} },
-	["herpitty"] = { type = "Quad", bone = "gun.bone", rel = "", pos = Vector(-7, 3, -1), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.FrontSight},
-	["derpitty"] = { type = "Quad", bone = "gun.bone", rel = "", pos = Vector(1, 3.45, -1.2), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.RearSight}
+SWEP.VElements={
+	["hurr"]={ type="Quad", bone="gun.bone", rel="", pos=Vector(-2.75, 2.75, -1.9), angle=Angle(90, -20, 180), size=.04, draw_func=JackIndFunGunAmmoDisplay},
+	["narg"]={ type="Model", model="models/mass_effect_3/weapons/misc/jeatsink.mdl", bone="gun.bone", rel="", pos=Vector(-8.2, 4.7, .35), angle=Angle(0, -90, 0), size=Vector(.1, 1.7, .7), color=Color(255, 255, 255, 255), surpresslightning=true, material="models/debug/debugwhite", skin=0, bodygroup={} },
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/assault_rifles/m-37 jalcon.mdl", bone="gun.bone", rel="", pos=Vector(-0, 1.1, .5), angle=Angle(-90, 0, 90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["herp"]={ type="Model", model="models/mass_effect_3/weapons/misc/jeatsink.mdl", bone="bone.shell1", rel="", pos=Vector(-1.8, -.8, 1), angle=Angle(-90, -90, 0), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["flarg"]={ type="Model", model="models/Mechanics/wheels/wheel_smooth_24f.mdl", bone="gun.bone", rel="", pos=Vector(-9, 4.5, .5), angle=Angle(90, 0, 0), size=Vector(.12, .12, .5), color=Color(0, 0, 0, 255), surpresslightning=false, material="phoenix_storms/gear", skin=0, bodygroup={} },
+	["herpitty"]={ type="Quad", bone="gun.bone", rel="", pos=Vector(-7, 3, -1), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.FrontSight},
+	["derpitty"]={ type="Quad", bone="gun.bone", rel="", pos=Vector(1, 3.45, -1.2), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.RearSight}
 }
-SWEP.WElements = {
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/assault_rifles/m-37 jalcon.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.181, 1.2, -3.5), angle = Angle(180, 90, 0), size = Vector(1.1, 1.1, 1.1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+SWEP.WElements={
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/assault_rifles/m-37 jalcon.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(3.181, 1.2, -3.5), angle=Angle(180, 90, 0), size=Vector(1.1, 1.1, 1.1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} }
 }
 
 local Glow=Material("sprites/mat_jack_glowything")

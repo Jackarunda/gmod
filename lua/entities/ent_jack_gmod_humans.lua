@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type 			= "anim"
 ENT.PrintName		= "Humans"
 ENT.Author			= "Jackarunda"
-ENT.Information     = ""
+ENT.Information	=""
 ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true

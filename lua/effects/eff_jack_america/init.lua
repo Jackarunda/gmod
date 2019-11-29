@@ -19,7 +19,7 @@ local Shit=Material("sprites/mat_jack_ignorezsprite")
 ------------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	self.Position=vOffset
 	local AddVel=data:GetStart()
 	self.Scale=data:GetScale()
@@ -91,7 +91,7 @@ function EFFECT:Init(data)
 				local Emitter=ParticleEmitter(vOffset+AddVel*i/10)
 				if(Emitter)then
 					for i=0,(101-i)*Scayul do
-						local particle = Emitter:Add("sprites/mat_jack_nicespark",vOffset+VectorRand()*math.Rand(0,2000)*Scayul)
+						local particle=Emitter:Add("sprites/mat_jack_nicespark",vOffset+VectorRand()*math.Rand(0,2000)*Scayul)
 						particle:SetVelocity(Vector(0,0,0))
 						particle:SetAirResistance(1000)
 						particle:SetGravity(Vector(0,0,0))

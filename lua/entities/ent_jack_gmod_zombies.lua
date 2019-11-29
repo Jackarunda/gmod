@@ -372,7 +372,7 @@ if(SERVER)then
 			JackyOpSquadSpawnEvent(npc)
 			npc29=npc
 		end)
-		timer.Simple(1.45,function()                            --FUCK this was alot of work
+		timer.Simple(1.45,function()							--FUCK this was alot of work
 			undo.Create("Zombie Opposition Squad")
 			undo.SetPlayer(ply)
 			if(IsValid(npc1))then undo.AddEntity(npc1) end

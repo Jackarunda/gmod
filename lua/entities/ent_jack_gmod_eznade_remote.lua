@@ -10,7 +10,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.JModRemoteTrigger=true
-ENT.JModEZstorable = true
+ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMED=-1,0,1,2
 function ENT:SetupDataTables()

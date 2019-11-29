@@ -5,8 +5,8 @@ AddCSLuaFile('shared.lua')
 include('shared.lua')
 local PlantableMats={MAT_WOOD,MAT_DIRT,MAT_SAND,MAT_SLOSH,MAT_FOLIAGE}
 function ENT:SpawnFunction(ply, tr)
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_claymore")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_claymore")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -35,8 +35,8 @@ function ENT:Initialize()
 	self.PrettyModel:SetParent(self.Entity)
 	self.PrettyModel:Spawn()
 	self.PrettyModel:Activate()
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(50)
 	end
@@ -110,7 +110,7 @@ function ENT:Detonate()
 	self:Remove()
 end
 function ENT:PhysicsCollide(data, physobj)
-	if (data.Speed > 80 and data.DeltaTime > 0.2) then
+	if(data.Speed>80 and data.DeltaTime>0.2)then
 		self:EmitSound("Plastic_Box.ImpactHard")
 	end
 end

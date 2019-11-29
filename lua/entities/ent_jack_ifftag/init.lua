@@ -4,7 +4,7 @@ AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 include('shared.lua')
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_ifftag")
 	ent:SetPos(SpawnPos)
 	ent:Spawn()
@@ -22,8 +22,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 	self.Entity:SetColor(Color(128,128,128,255))
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(10)
 	end
@@ -38,7 +38,7 @@ function ENT:OnTakeDamage(dmginfo)
 end
 function ENT:Use(activator,caller)
 	local Tagged=activator:GetNetworkedInt("JackyIFFTag")
-	if ((Tagged) and (Tagged != 0)) then
+	if((Tagged) and (Tagged != 0))then
 		activator:PrintMessage(HUD_PRINTCENTER,"You have an IFF tag equipped already.")
 	else
 		JackaGenericUseEffect(activator)

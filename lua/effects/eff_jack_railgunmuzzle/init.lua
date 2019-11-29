@@ -68,14 +68,14 @@ function EFFECT:Init(data)
 	Emitter:Finish()
 	
 	local dlightend=DynamicLight(0)
-    dlightend.Pos=SelfPos
-    dlightend.Size=1000*Scayul
-    dlightend.Decay=2000
-    dlightend.R=100
-    dlightend.G=150
-    dlightend.B=255
-    dlightend.Brightness=4*Scayul
-    dlightend.DieTime=CurTime()+.1
+	dlightend.Pos=SelfPos
+	dlightend.Size=1000*Scayul
+	dlightend.Decay=2000
+	dlightend.R=100
+	dlightend.G=150
+	dlightend.B=255
+	dlightend.Brightness=4*Scayul
+	dlightend.DieTime=CurTime()+.1
 end
 
 function EFFECT:Think()

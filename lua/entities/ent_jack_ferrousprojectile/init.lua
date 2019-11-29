@@ -22,7 +22,7 @@ function ENT:Initialize()
 	end
 	
 	if(self:GetDTBool(0))then
-		local SmokeTrail = ents.Create("env_spritetrail")
+		local SmokeTrail=ents.Create("env_spritetrail")
 		SmokeTrail:SetKeyValue("lifetime",".1")
 		SmokeTrail:SetKeyValue("startwidth","0")
 		SmokeTrail:SetKeyValue("endwidth","10")
@@ -195,7 +195,7 @@ function ENT:WaterSurfaceSplash(InitialCheckPos) --jackarunda is clever
 		local Contents=util.PointContents(CheckPos)
 		if not((Contents==CONTENTS_WATER)or(Contents==CONTENTS_TRANSLUCENT)or(Contents==CONTENTS_TRANSLUCENT+CONTENTS_WATER))then
 			local EffectPower=(self.CurrentFlightSpeed)/25
-			local effectdata = EffectData()
+			local effectdata=EffectData()
 			effectdata:SetOrigin(CheckPos)
 			effectdata:SetNormal(Vector(0,0,1))
 			effectdata:SetRadius(EffectPower)

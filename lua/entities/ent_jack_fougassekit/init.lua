@@ -4,8 +4,8 @@ AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 include('shared.lua')
 function ENT:SpawnFunction(ply, tr)
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_fougassekit")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_fougassekit")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -22,15 +22,15 @@ function ENT:Initialize()
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(50)
 	end
 	self.Entity:SetUseType(SIMPLE_USE)
 end
 function ENT:PhysicsCollide(data, physobj)
-	if (data.Speed > 80 and data.DeltaTime > 0.2) then
+	if(data.Speed>80 and data.DeltaTime>0.2)then
 		self:EmitSound("Plastic_Box.ImpactHard")
 	end
 end

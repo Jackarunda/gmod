@@ -9,8 +9,8 @@ function ENT:SpawnFunction(ply, tr)
 
 	//if not tr.Hit then return end
 
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_powderkeg")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_powderkeg")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -37,8 +37,8 @@ function ENT:Initialize()
 	self.FuzeLit=false
 	self.NextUseTime=CurTime()
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(90)
 		phys:SetMaterial("Wood_Solid")
@@ -146,7 +146,7 @@ end
 
 function ENT:PhysicsCollide(data, physobj)
 	// Play sound on bounce
-	if (data.Speed > 80 and data.DeltaTime > 0.2) then
+	if(data.Speed>80 and data.DeltaTime>0.2)then
 		self.Entity:EmitSound("Wood.ImpactSoft")
 		if(data.Speed>400)then
 			self.Entity:EmitSound("Wood.ImpactHard")

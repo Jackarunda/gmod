@@ -14,7 +14,7 @@ if(SERVER)then
 		self:SetHealth(1)
 
 		local phys=self.Entity:GetPhysicsObject()
-		if (phys:IsValid())then
+		if(phys:IsValid())then
 			phys:Wake()
 			phys:EnableGravity(false)
 			phys:EnableDrag(false)

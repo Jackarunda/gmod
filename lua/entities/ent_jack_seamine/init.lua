@@ -4,8 +4,8 @@ AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 include('shared.lua')
 function ENT:SpawnFunction(ply, tr)
-	local SpawnPos = tr.HitPos + tr.HitNormal*32
-	local ent = ents.Create("ent_jack_seamine")
+	local SpawnPos=tr.HitPos+tr.HitNormal*32
+	local ent=ents.Create("ent_jack_seamine")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -27,8 +27,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 	self.Exploded=false
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(220)
 		phys:SetMaterial("wood")

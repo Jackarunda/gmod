@@ -1,13 +1,13 @@
 function EFFECT:Init(data)
 	local pozishun=data:GetOrigin()
 	local skayul=data:GetScale()
-	local NumParticles = 5*skayul
+	local NumParticles=5*skayul
 	self.Nermal=data:GetNormal()
-	local emitter = ParticleEmitter(data:GetOrigin())
-	for i = 0, NumParticles do
+	local emitter=ParticleEmitter(data:GetOrigin())
+	for i=0, NumParticles do
 		if(true)then
-			local rollparticle = emitter:Add("sprites/heatwave",pozishun+VectorRand()*math.Rand(0,3)*skayul)
-			if (rollparticle) then
+			local rollparticle=emitter:Add("sprites/heatwave",pozishun+VectorRand()*math.Rand(0,3)*skayul)
+			if(rollparticle)then
 				rollparticle:SetVelocity(self.Nermal*math.Rand(100,500)*skayul)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(.05,.2)*skayul

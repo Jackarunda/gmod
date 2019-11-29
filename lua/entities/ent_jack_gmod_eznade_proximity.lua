@@ -11,7 +11,7 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
-ENT.JModEZstorable = true
+ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMING,STATE_ARMED,STATE_WARNING=-1,0,1,2,3,4
 function ENT:SetupDataTables()
@@ -85,33 +85,9 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(IN_WALK)
 			if(State==STATE_OFF and Alt)then
-<<<<<<< HEAD
-				timer.Create("ProxNadeBeep_"..self:EntIndex(), 1, 5, function() if IsValid(self) then self:EmitSound("weapons/c4/c4_beep1.wav", 65, 150) end end)
-				timer.Simple(6, function() if IsValid(self) then self:EmitSound("snd_jack_minearm.wav",60,110) self:SetState(STATE_ARMED) end end)
-				self:SetState(STATE_ARMING)
-				self:EmitSound("weapons/pinpull.wav",70,100)
-			end
-			JMod_Hint(activator,"grenade","grenade proximity","friends")
-			Dude:PickupObject(self)
-			if Dude:GetActiveWeapon() != "weapon_physcannon" then
-				hook.Add("KeyPress", "GrenadeThrow_" .. self:EntIndex(), function(ply, key)
-					if !IsValid(self) or !IsValid(Dude) or !self:IsPlayerHolding() then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
-					if ply == Dude then
-						if key == IN_ATTACK then
-							local dir = Dude:EyeAngles():Forward()
-							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 800 + Vector(0, 0, 1) * 200)
-						elseif key == IN_ATTACK2 then
-							local dir = Dude:EyeAngles():Forward()
-							self:GetPhysicsObject():SetVelocity(ply:GetVelocity() + dir * 500)
-						end
-						if table.HasValue({IN_ATTACK, IN_USE, IN_ATTACK2}, key) then hook.Remove("GrenadeThrow_" .. self:EntIndex()) return end
-					end
-				end)
-=======
 				self:SetState(STATE_PRIMED)
 				self:EmitSound("weapons/pinpull.wav",60,100)
 				self:SetBodygroup(1,1)
->>>>>>> 1bb18291def9ed1153aae05bc41394088098a4a1
 			end
 			JMod_Hint(activator,"grenade","friends","mininade")
 			JMod_ThrowablePickup(Dude,self)
@@ -123,7 +99,7 @@ if(SERVER)then
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
-			filter={self,ent},
+			filter={self,ent,self.AttachedBomb},
 			mask=MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
@@ -174,7 +150,9 @@ if(SERVER)then
 			self:NextThink(Time+.1)
 			return true
 		elseif(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),80))do
+			local Range=80
+			if(IsValid(self.AttachedBomb))then Range=120 end
+			for k,targ in pairs(ents.FindInSphere(self:GetPos(),Range))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
@@ -215,12 +193,12 @@ elseif(CLIENT)then
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		if(State==STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,10,10,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,5,5,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,10,10,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,5,5,Color(255,255,255))
 		elseif(State==STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,15*Vary,15*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,7*Vary,7*Vary,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,15*Vary,15*Vary,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,7*Vary,7*Vary,Color(255,255,255))
 		end
 	end
 	language.Add("ent_jack_gmod_eznade_proximity","EZminiNade-Proximity")

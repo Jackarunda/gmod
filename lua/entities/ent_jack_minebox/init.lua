@@ -9,8 +9,8 @@ function ENT:SpawnFunction(ply, tr)
 
 	//if not tr.Hit then return end
 
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_minebox")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_minebox")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -34,8 +34,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(800)
 		phys:SetMaterial("metal")
@@ -48,7 +48,7 @@ end
 
 function ENT:PhysicsCollide(data,physobj)
 	// Play sound on bounce
-	if (data.Speed > 150 and data.DeltaTime > 0.2) then
+	if(data.Speed>150 and data.DeltaTime>0.2)then
 		self.Entity:EmitSound("Metal_Box.ImpactHard")
 		self.Entity:EmitSound("Weapon.ImpactSoft")
 		self.Entity:EmitSound("Weapon.ImpactSoft")

@@ -16,8 +16,8 @@ local GibModelTable={
 }
 
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_target")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_target")
 	ent:SetPos(SpawnPos)
 	ent:Spawn()
 	ent:Activate()
@@ -33,8 +33,8 @@ function ENT:Initialize()
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(75)
 		phys:SetMaterial("metal")

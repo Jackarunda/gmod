@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type 			= "anim"
 ENT.PrintName		= "J.I. Gunhack"
 ENT.Author			= "Jackarunda"
-ENT.Information     = "A Jackarunda Industries Mk.1 Mod 1 Viscerator. The Mod 1 variant has less armor \nand less speed/agility than the Mod 0 (see Manhacks). The Mod 1s have a small, lightweight, low-powered Combine pulse weapon mounted \nto their frame, complete with a Combine ammo source that must reload itself periodically. This Viscerator's blades are \ndesigned purely for stable flight and recoil control and are not suited for attacking targets with. The Mk.1 Mod 1 software also \ntries to keep the hacks at a safe distance while they bring down their target. This hack also lacks the bursting \ncharge that its melee-oriented cousins posses, and while it always aims for center mass, it tends to always be \nabove its targets and aren't 100% accurate, so incidental headshots aren't uncommon. Hold E while clicking to spawn as hostile."
+ENT.Information	="A Jackarunda Industries Mk.1 Mod 1 Viscerator. The Mod 1 variant has less armor \nand less speed/agility than the Mod 0 (see Manhacks). The Mod 1s have a small, lightweight, low-powered Combine pulse weapon mounted \nto their frame, complete with a Combine ammo source that must reload itself periodically. This Viscerator's blades are \ndesigned purely for stable flight and recoil control and are not suited for attacking targets with. The Mk.1 Mod 1 software also \ntries to keep the hacks at a safe distance while they bring down their target. This hack also lacks the bursting \ncharge that its melee-oriented cousins posses, and while it always aims for center mass, it tends to always be \nabove its targets and aren't 100% accurate, so incidental headshots aren't uncommon. Hold E while clicking to spawn as hostile."
 ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true
@@ -10,7 +10,7 @@ ENT.AdminSpawnable	= true
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
 
-		local selfpos = tr.HitPos + tr.HitNormal * 16
+		local selfpos=tr.HitPos+tr.HitNormal*16
 		
 		local HostileHacks=false
 		if(ply:KeyDown(IN_USE))then HostileHacks=true end

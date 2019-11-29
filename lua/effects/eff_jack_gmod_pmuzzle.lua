@@ -3,15 +3,15 @@ function EFFECT:Init(data)
 	local dirkshun=data:GetNormal()
 	local pozishun=data:GetStart()
 	
-	local NumParticles = 10
+	local NumParticles=10
 	
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local emitter=ParticleEmitter(data:GetOrigin())
 	
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local rollparticle = emitter:Add("particles/flamelet"..math.random(1,3),pozishun+VectorRand()*math.Rand(0,10))
+			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,3),pozishun+VectorRand()*math.Rand(0,10))
 
-			if (rollparticle) then
+			if(rollparticle)then
 				rollparticle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10))+dirkshun*math.Rand(250,750))
 				
 				rollparticle:SetLifeTime(0)
@@ -39,9 +39,9 @@ function EFFECT:Init(data)
 				rollparticle:SetLighting(false)
 			end
 			
-			local rollparticle = emitter:Add("particles/flamelet"..math.random(1,3),pozishun)
+			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,3),pozishun)
 
-			if (rollparticle) then
+			if(rollparticle)then
 				rollparticle:SetVelocity(Vector(math.Rand(-5,5),math.Rand(-5,5),math.Rand(-5,5))+dirkshun*math.Rand(750,2500))
 				
 				rollparticle:SetLifeTime(0)

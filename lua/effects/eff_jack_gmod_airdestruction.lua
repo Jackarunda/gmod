@@ -1,19 +1,19 @@
 function EFFECT:Init(data)
 	
-	local NumParticles = 1
+	local NumParticles=1
 	
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local emitter=ParticleEmitter(data:GetOrigin())
 	
 		local size=data:GetScale()
 		local vel=data:GetScale()
 	
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-5, 5), math.Rand(-5, 5), math.Rand(-5, 5)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-5, 5), math.Rand(-5, 5), math.Rand(-5, 5)))
 		
-			local particle = emitter:Add("sprites/heatwave",Pos)
+			local particle=emitter:Add("sprites/heatwave",Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*100)
 				
 				particle:SetLifeTime(0)

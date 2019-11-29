@@ -186,8 +186,8 @@ function JMod_InitGlobalConfig()
 	if not(JMOD_LUA_CONFIG)then
 		JMOD_LUA_CONFIG={
 			BuildFuncs={
-				spawnHL2buggy = function(playa, position, angles)
-					local Ent = ents.Create("prop_vehicle_jeep_old")
+				spawnHL2buggy=function(playa, position, angles)
+					local Ent=ents.Create("prop_vehicle_jeep_old")
 					Ent:SetModel("models/buggy.mdl")
 					Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
 					Ent:SetPos(position)
@@ -211,18 +211,18 @@ function ANGLE:GetCopy()
 end
 function table.FullCopy( tab )
 
-	if (!tab) then return nil end
+	if(!tab)then return nil end
 	
-	local res = {}
+	local res={}
 	for k, v in pairs( tab ) do
-		if (type(v) == "table") then
-			res[k] = table.FullCopy(v) -- we need to go derper
-		elseif (type(v) == "Vector") then
-			res[k] = Vector(v.x, v.y, v.z)
-		elseif (type(v) == "Angle") then
-			res[k] = Angle(v.p, v.y, v.r)
+		if(type(v)=="table")then
+			res[k]=table.FullCopy(v) -- we need to go derper
+		elseif(type(v)=="Vector")then
+			res[k]=Vector(v.x, v.y, v.z)
+		elseif(type(v)=="Angle")then
+			res[k]=Angle(v.p, v.y, v.r)
 		else
-			res[k] = v
+			res[k]=v
 		end
 	end
 	
@@ -467,15 +467,15 @@ if(CLIENT)then
 	end
 	usermessage.Hook("JackysFGFloatChange",ChangeFloat)
 	
-	local LastViewAng = false
+	local LastViewAng=false
 	local function SimilarizeAngles(ang1, ang2)
-		ang1.y = math.fmod (ang1.y, 360)
-		ang2.y = math.fmod (ang2.y, 360)
-		if math.abs (ang1.y - ang2.y) > 180 then
-			if ang1.y - ang2.y < 0 then
-				ang1.y = ang1.y + 360
+		ang1.y=math.fmod (ang1.y, 360)
+		ang2.y=math.fmod (ang2.y, 360)
+		if math.abs (ang1.y - ang2.y)>180 then
+			if ang1.y - ang2.y<0 then
+				ang1.y=ang1.y+360
 			else
-				ang1.y = ang1.y - 360
+				ang1.y=ang1.y - 360
 			end
 		end
 	end
@@ -486,16 +486,16 @@ if(CLIENT)then
 		local Wep=ply:GetActiveWeapon()
 		if(IsValid(Wep))then
 			if not(Wep.IsAJackyFunGun)then return end
-			local newAng = uCmd:GetViewAngles()
+			local newAng=uCmd:GetViewAngles()
 			if LastViewAng then
 				SimilarizeAngles (LastViewAng, newAng)
-				local ft = FrameTime()*5
+				local ft=FrameTime()*5
 				local argh=.2
 				if(ply:Crouching())then argh=argh-.05 end
 				if(ply:KeyDown(IN_ATTACK2))then argh=argh-.05 end
-				staggerdir =((staggerdir + ft * VectorRand()):GetNormalized())*argh
-				local diff = newAng - LastViewAng
-				diff = diff * ((LocalPlayer():GetFOV())/75)
+				staggerdir =((staggerdir+ft*VectorRand()):GetNormalized())*argh
+				local diff=newAng - LastViewAng
+				diff=diff*((LocalPlayer():GetFOV())/75)
 				local DerNeuAngle=LastViewAng+diff
 				local addpitch=staggerdir.z*ft
 				local addyaw=staggerdir.x*ft
@@ -504,7 +504,7 @@ if(CLIENT)then
 				uCmd:SetViewAngles(DerNeuAngle)
 			end
 		end
-		LastViewAng = uCmd:GetViewAngles()
+		LastViewAng=uCmd:GetViewAngles()
 	end 
 	hook.Add("CreateMove","JackyFGStagger",Stagger)
 	
@@ -1338,11 +1338,10 @@ JMod_EZchemicalsSize=100
 JMod_EZadvPartBoxSize=20
 JMod_EZmedSupplyBoxSize=50
 JMod_EZnutrientBoxSize=100
-JMod_EZcrateSize=30
-JMod_EZpartsCrateSize=20
-JMod_EZnutrientsCrateSize=20
+JMod_EZcrateSize=15
+JMod_EZpartsCrateSize=15
+JMod_EZnutrientsCrateSize=15
 -- TODO
--- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare
