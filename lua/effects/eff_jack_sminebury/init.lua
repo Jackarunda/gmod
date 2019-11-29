@@ -3,7 +3,7 @@
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	
@@ -14,12 +14,12 @@ function EFFECT:Init(data)
 	self.DieTime=CurTime()+.1
 	self.Opacity=1
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 		
 		for i=0, 100*Scayul^2 do
 			local sprite="effects/fleck_cement"..math.random(1,2)
-			local Debris = emitter:Add(sprite,vOffset)
-			if (Debris) then
+			local Debris=emitter:Add(sprite,vOffset)
+			if(Debris)then
 				Debris:SetVelocity(VectorRand()*math.Rand(50,75)*Scayul^0.5+Vector(0,0,math.Rand(50,75)))
 				Debris:SetDieTime(3*math.random(1,2))
 				Debris:SetStartAlpha(255)

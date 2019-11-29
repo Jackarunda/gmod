@@ -10,9 +10,9 @@ ENT.AdminSpawnable	= true
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
 
-		--if (!tr.Hit) then return end
+		--if(!tr.Hit)then return end
 		
-		local selfpos = tr.HitPos + tr.HitNormal * 16
+		local selfpos=tr.HitPos+tr.HitNormal*16
 		
 		local Friendly=false
 		
@@ -74,19 +74,19 @@ if(SERVER)then
 		effectdata:SetEntity(npc)
 		--util.Effect("propspawn",effectdata)
 		
-		for var = 1, Nodes,1  do
+		for var=1, Nodes,1  do
 			MyNodeBuffer[var]:SetName(tostring(npc) .. tostring(var))
 			npc:DeleteOnRemove(MyNodeBuffer[var])
 		end
-		for var = 1, Nodes,1  do
-			if (var != Nodes) then
-				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var + 1)),1)
+		for var=1, Nodes,1  do
+			if(var != Nodes)then
+				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var+1)),1)
 			else
 				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. "1",1)
 			end
 		end
 		
-		local TrackName = tostring(npc) .. "1"
+		local TrackName=tostring(npc) .. "1"
 		npc:Fire("SetTrack",TrackName,0.1)
 		
 		timer.Simple(.1,function()

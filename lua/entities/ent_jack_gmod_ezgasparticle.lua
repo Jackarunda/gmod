@@ -1,13 +1,13 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.PrintName = "EZ Poison Gas"
-ENT.Author = "Jackarunda"
-ENT.Editable = true
-ENT.Spawnable = false
-ENT.AdminSpawnable = false
-ENT.AdminOnly = false
-ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+ENT.PrintName="EZ Poison Gas"
+ENT.Author="Jackarunda"
+ENT.Editable=true
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
+ENT.AdminOnly=false
+ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZgasParticle=true
 if(SERVER)then
 	function ENT:Initialize()
@@ -58,7 +58,7 @@ if(SERVER)then
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
 					local Dmg,Helf=DamageInfo(),obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(5*JMOD_CONFIG.PoisonGasDamage)
+					Dmg:SetDamage(math.random(1,4)*JMOD_CONFIG.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())

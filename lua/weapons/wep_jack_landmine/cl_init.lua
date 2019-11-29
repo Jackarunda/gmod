@@ -3,8 +3,8 @@ include('shared.lua')
 SWEP.PrintName			= "Landmine"			// 'Nice' Weapon name (Shown on HUD)	
 SWEP.Slot				= 4							// Slot in the weapon selection menu
 SWEP.SlotPos			= 1							// Position in the slot
-SWEP.DrawWeaponInfoBox  = false
-SWEP.DrawCrosshair      = false --crosshairs are for big loose pussies
+SWEP.DrawWeaponInfoBox =false
+SWEP.DrawCrosshair	 =false --crosshairs are for big loose pussies
 SWEP.SwayScale=4
 SWEP.BobScale=4
 SWEP.BounceWeaponIcon=false

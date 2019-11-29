@@ -1,16 +1,16 @@
 function EFFECT:Init(data)
 	
-	local NumParticles = 1
+	local NumParticles=1
 	
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local emitter=ParticleEmitter(data:GetOrigin())
 	
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-3, 3), math.Rand(-3, 3), math.Rand(-3, 3)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-3, 3), math.Rand(-3, 3), math.Rand(-3, 3)))
 		
-			local particle = emitter:Add("sprites/spark", Pos)
+			local particle=emitter:Add("sprites/spark", Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(data:GetNormal()*data:GetScale()*5)
 				
 				particle:SetLifeTime(0)

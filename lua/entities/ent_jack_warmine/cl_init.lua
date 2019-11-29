@@ -50,7 +50,7 @@ function ENT:OpenTheMenu(tab)
 		surface.DrawRect(0,0,MainPanel:GetWide(),MainPanel:GetTall()+3)
 	end
 	
-	local exitbutton = vgui.Create("Button",MainPanel)
+	local exitbutton=vgui.Create("Button",MainPanel)
 	exitbutton:SetSize(90,40)
 	exitbutton:SetPos(10,15)
 	exitbutton:SetText("Arm")
@@ -60,7 +60,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaWarMineArm",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local gobutton = vgui.Create("Button",MainPanel)
+	local gobutton=vgui.Create("Button",MainPanel)
 	gobutton:SetSize(90,40)
 	gobutton:SetPos(10,60)
 	if(tab.Already)then
@@ -74,7 +74,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaWarMineSync",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local nobutton = vgui.Create("Button",MainPanel)
+	local nobutton=vgui.Create("Button",MainPanel)
 	nobutton:SetSize(90,40)
 	nobutton:SetPos(10,105)
 	nobutton:SetText("Exit")

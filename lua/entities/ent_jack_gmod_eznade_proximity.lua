@@ -11,6 +11,7 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
+ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMING,STATE_ARMED,STATE_WARNING=-1,0,1,2,3,4
 function ENT:SetupDataTables()
@@ -98,7 +99,7 @@ if(SERVER)then
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
-			filter={self,ent},
+			filter={self,ent,self.AttachedBomb},
 			mask=MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
@@ -149,7 +150,9 @@ if(SERVER)then
 			self:NextThink(Time+.1)
 			return true
 		elseif(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),80))do
+			local Range=80
+			if(IsValid(self.AttachedBomb))then Range=120 end
+			for k,targ in pairs(ents.FindInSphere(self:GetPos(),Range))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
@@ -190,12 +193,12 @@ elseif(CLIENT)then
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		if(State==STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,10,10,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,5,5,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,10,10,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,5,5,Color(255,255,255))
 		elseif(State==STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,15*Vary,15*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+self:GetUp() * 2,7*Vary,7*Vary,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,15*Vary,15*Vary,Color(255,0,0))
+			render.DrawSprite(self:GetPos()+self:GetUp()*2,7*Vary,7*Vary,Color(255,255,255))
 		end
 	end
 	language.Add("ent_jack_gmod_eznade_proximity","EZminiNade-Proximity")

@@ -7,7 +7,7 @@ ENT.Base="ent_jack_turretammobox_base"
 ENT.AmmoType="7.62x51mm"
 ENT.NumberOfRounds=200
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_turretammobox_762")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)

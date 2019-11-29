@@ -36,8 +36,8 @@ function ENT:Initialize()
 	
 	self.Exploded=false
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(20)
 	end

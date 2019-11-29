@@ -4,7 +4,7 @@ if(SERVER)then
 	SWEP.AutoSwitchTo		= false
 	SWEP.AutoSwitchFrom		= false
 	function SWEP:SetupWeaponHoldTypeForAI(t)
-		self.ActivityTranslateAI = {}
+		self.ActivityTranslateAI={}
 		self.ActivityTranslateAI [ ACT_IDLE ] 						= ACT_IDLE_RPG
 		self.ActivityTranslateAI [ ACT_IDLE_RELAXED ] 				= ACT_IDLE_RPG_RELAXED
 		self.ActivityTranslateAI [ ACT_IDLE_STIMULATED ] 			= ACT_IDLE_RPG_RELAXED
@@ -129,8 +129,8 @@ SWEP.Purpose=""
 SWEP.Instructions=""
 SWEP.Category="AI Weapons"
 
-SWEP.Spawnable = false
-SWEP.AdminSpawnable = false
+SWEP.Spawnable=false
+SWEP.AdminSpawnable=false
 
 SWEP.ViewModel="models/weapons/v_rpg.mdl"
 SWEP.WorldModel="models/weapons/w_rocket_launcher.mdl"
@@ -159,7 +159,7 @@ function SWEP:PrimaryAttack()
 end
 
 /*------------------------------------
-    Reload
+	Reload
 ------------------------------------*/
 function SWEP:Reload()
 	return true

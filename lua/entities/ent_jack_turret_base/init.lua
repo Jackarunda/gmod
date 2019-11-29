@@ -172,8 +172,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:SetUseType(SIMPLE_USE)
 	self.Entity:DrawShadow(true)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(200)
 	end
@@ -1020,7 +1020,7 @@ function ENT:FindRepairKit()
 	return nil
 end
 --[[--------------------------------------------------------------
---                    Chat mothafucka                           --
+--					Chat mothafucka						   --
 --------------------------------------------------------------]]--
 local function SentryChat(ply,txt)
 	local Found=false

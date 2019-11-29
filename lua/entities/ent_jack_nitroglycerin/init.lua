@@ -9,8 +9,8 @@ function ENT:SpawnFunction(ply, tr)
 
 	//if not tr.Hit then return end
 
-	local SpawnPos = tr.HitPos + tr.HitNormal*20
-	local ent = ents.Create("ent_jack_nitroglycerin")
+	local SpawnPos=tr.HitPos+tr.HitNormal*20
+	local ent=ents.Create("ent_jack_nitroglycerin")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -37,8 +37,8 @@ function ENT:Initialize()
 	
 	self.LastSpeed=0
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetVelocity(Vector(0,0,0))
 	end
@@ -75,7 +75,7 @@ function ENT:PhysicsCollide(data, physobj)
 	// Play sound on bounce
 	if(data.Speed>400)then
 		self:Detonate()
-	elseif (data.Speed > 50 and data.DeltaTime > 0.2) then
+	elseif(data.Speed>50 and data.DeltaTime>0.2)then
 		local num=math.random(1,3)
 		self.Entity:EmitSound("snd_jack_glass"..num..".wav")
 	end

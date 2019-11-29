@@ -9,8 +9,8 @@ function ENT:SpawnFunction(ply, tr)
 
 	//if not tr.Hit then return end
 
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_mark82")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_mark82")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -40,8 +40,8 @@ function ENT:Initialize()
 	
 	self.Exploded=false
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(600)
 	end

@@ -8,14 +8,14 @@ function EFFECT:Init(data)
 		local NumParticles=10
 		local emitter=ParticleEmitter(data:GetOrigin())
 		for i=0,NumParticles do
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 			local colorangle=Angle(255,255,255)
 			local red=colorangle.p
 			local green=colorangle.y
 			local blue=colorangle.r
 			local wind=data:GetStart()
-			local rollparticle = emitter:Add("effects/bubble",Pos+VectorRand()*3)
-			if (rollparticle) then
+			local rollparticle=emitter:Add("effects/bubble",Pos+VectorRand()*3)
+			if(rollparticle)then
 				rollparticle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10))+dirkshun)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(1,2)
@@ -37,13 +37,13 @@ function EFFECT:Init(data)
 		end
 		return
 	end
-	local NumParticles = 1*Scayul
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local NumParticles=1*Scayul
+	local emitter=ParticleEmitter(data:GetOrigin())
 	
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 				
 			local culur=math.random(175,255)
 			local colorangle=Angle(culur,culur,culur)
@@ -54,9 +54,9 @@ function EFFECT:Init(data)
 				
 			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 				
-			local rollparticle = emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
+			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
 
-			if (rollparticle) then
+			if(rollparticle)then
 				rollparticle:SetVelocity(VectorRand()*math.Rand(0,100)+dirkshun)
 					
 				rollparticle:SetLifeTime(0)
@@ -101,9 +101,9 @@ function EFFECT:Init(data)
 				sprite="sprites/mat_jack_smoke3"
 			end
 		
-			local particle = emitter:Add(sprite, Pos+data:GetNormal()*30) --particles/smokey is a nice volumetric smoke sprite
+			local particle=emitter:Add(sprite, Pos+data:GetNormal()*30) --particles/smokey is a nice volumetric smoke sprite
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(0,100)+dirkshun)
 				
 				particle:SetLifeTime(0)
@@ -135,9 +135,9 @@ function EFFECT:Init(data)
 					pertical:SetLifeTime(CurTime()+0.1)
 					pertical:SetDieTime(CurTime()+0.1)
 					if(IsValid(emitter))then
-						local porticel = emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
+						local porticel=emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
 
-						if (porticel) then
+						if(porticel)then
 							
 							local newvector=hitnorm
 							newvector:Rotate(Angle(90,math.Rand(0,360),90))
@@ -199,14 +199,14 @@ function EFFECT:Init(data)
 	
 	--[[
 	timer.Simple(0.005,function()
-		local NumParticles = 1
+		local NumParticles=1
 		
-		local emitter = ParticleEmitter(data:GetOrigin())
+		local emitter=ParticleEmitter(data:GetOrigin())
 		
-			for i = 0, NumParticles*Scayul do
+			for i=0, NumParticles*Scayul do
 
 
-				local Pos = (data:GetOrigin())
+				local Pos=(data:GetOrigin())
 					
 				local culur=math.random(175,255)
 				local colorangle=Angle(culur,culur,culur)
@@ -217,9 +217,9 @@ function EFFECT:Init(data)
 					
 				//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 					
-				local rollparticle = emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
+				local rollparticle=emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
 
-				if (rollparticle) then
+				if(rollparticle)then
 					rollparticle:SetVelocity(VectorRand()*math.Rand(0,100)+dirkshun)
 						
 					rollparticle:SetLifeTime(0)
@@ -264,9 +264,9 @@ function EFFECT:Init(data)
 					sprite="sprites/mat_jack_smoke3"
 				end
 			
-				local particle = emitter:Add(sprite, Pos+data:GetNormal()*30) --particles/smokey is a nice volumetric smoke sprite
+				local particle=emitter:Add(sprite, Pos+data:GetNormal()*30) --particles/smokey is a nice volumetric smoke sprite
 
-				if (particle) then
+				if(particle)then
 					particle:SetVelocity(VectorRand()*math.Rand(0,100)+dirkshun)
 					
 					particle:SetLifeTime(0)
@@ -298,9 +298,9 @@ function EFFECT:Init(data)
 						pertical:SetLifeTime(CurTime()+0.1)
 						pertical:SetDieTime(CurTime()+0.1)
 						if(emitter)then
-							local porticel = emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
+							local porticel=emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
 
-							if (porticel) then
+							if(porticel)then
 								
 								local newvector=hitnorm
 								newvector:Rotate(Angle(90,math.Rand(0,360),90))

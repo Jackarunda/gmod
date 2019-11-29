@@ -2,11 +2,11 @@ function EFFECT:Init(data)
 	local dirkshun=data:GetNormal()
 	local pozishun=data:GetStart()
 	local skayul=data:GetScale()
-	local NumParticles = 10*skayul
-	local emitter = ParticleEmitter(data:GetOrigin())
-		for i = 0, NumParticles do
-			local rollparticle = emitter:Add("particles/flamelet"..math.random(1,3),pozishun+VectorRand()*math.Rand(0,10)*skayul)
-			if (rollparticle) then
+	local NumParticles=10*skayul
+	local emitter=ParticleEmitter(data:GetOrigin())
+		for i=0, NumParticles do
+			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,3),pozishun+VectorRand()*math.Rand(0,10)*skayul)
+			if(rollparticle)then
 				rollparticle:SetVelocity((Vector(math.Rand(-30,30),math.Rand(-30,30),math.Rand(-30,30))+dirkshun*math.Rand(250,750))*skayul)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(0.025,0.125)*skayul^0.25
@@ -24,8 +24,8 @@ function EFFECT:Init(data)
 				rollparticle:SetCollide(false)
 				rollparticle:SetLighting(false)
 			end
-			local rollparticle = emitter:Add("particles/flamelet"..math.random(1,3),pozishun)
-			if (rollparticle) then
+			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,3),pozishun)
+			if(rollparticle)then
 				rollparticle:SetVelocity((Vector(math.Rand(-5,5),math.Rand(-5,5),math.Rand(-5,5))+dirkshun*math.Rand(750,2500))*skayul)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(0.025,0.125)*skayul^0.5

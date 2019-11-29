@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type 			= "anim"
 ENT.PrintName		= "J.I. Roller Bomb"
 ENT.Author			= "Jackarunda"
-ENT.Information     = "This is a Combine rollermine taken and modified by JI. It can detect and pursue at greater distances \nthan a standard rollermine, is friendly toward humans, and has its shock core replaced with a simple HE \nwarhead. It will attempt to approach enemies and detonate. It will not detonate if it can see friendlies \nwithin its blast radius and will emit a warning sound to try to clear the area. Hold E to spawn with \naltered allegiances."
+ENT.Information	="This is a Combine rollermine taken and modified by JI. It can detect and pursue at greater distances \nthan a standard rollermine, is friendly toward humans, and has its shock core replaced with a simple HE \nwarhead. It will attempt to approach enemies and detonate. It will not detonate if it can see friendlies \nwithin its blast radius and will emit a warning sound to try to clear the area. Hold E to spawn with \naltered allegiances."
 ENT.Category		= "JMod - LEGACY NPCs"
 
 ENT.Spawnable		= true
@@ -10,7 +10,7 @@ ENT.AdminSpawnable	= true
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
 
-		local selfpos = tr.HitPos + tr.HitNormal * 16
+		local selfpos=tr.HitPos+tr.HitNormal*16
 		
 		local HostileRoller=false
 		if(ply:KeyDown(IN_USE))then HostileRoller=true end

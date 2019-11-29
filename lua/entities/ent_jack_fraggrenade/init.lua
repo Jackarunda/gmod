@@ -66,7 +66,7 @@ function ENT:Initialize()
 	self.Heat=0
 	
 	local phys=self.Entity:GetPhysicsObject()
-	if (phys:IsValid()) then
+	if(phys:IsValid())then
 		phys:Wake()
 		phys:SetMass(7)
 	end

@@ -39,7 +39,7 @@ ENT.MechanicsSizeMod=2.2
 ENT.TargetOrganics=false
 ENT.TargetSynthetics=true
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_turret_rocket")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
@@ -54,7 +54,7 @@ function ENT:SpawnFunction(ply,tr)
 	if(Settings.MaxVelocity<7500)then
 		Settings.MaxVelocity=7500
 	end
-    physenv.SetPerformanceSettings(Settings)
+	physenv.SetPerformanceSettings(Settings)
 	return ent
 end
 function ENT:GetCenterMassOf(ent) --make this a member function

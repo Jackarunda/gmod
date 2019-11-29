@@ -1,6 +1,6 @@
 function EFFECT:Init( data )
 	local Pos=data:GetOrigin()
-	self.Emitter = ParticleEmitter( Pos )
+	self.Emitter=ParticleEmitter( Pos )
 	local Scayul=1
 	self.Scayul=Scayul
 	local Vel=data:GetStart()

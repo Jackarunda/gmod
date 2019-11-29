@@ -10,6 +10,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.JModEZtimedNade=true
+ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMED=-1,0,1,2
 function ENT:SetupDataTables()
@@ -103,7 +104,9 @@ if(SERVER)then
 				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
 				self.Entity:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
 				self:SetBodygroup(2,1)
-				timer.Simple(3,function()
+				local Tiem=3
+				if(IsValid(self.AttachedBomb))then Tiem=10 end
+				timer.Simple(Tiem,function()
 					if(IsValid(self))then self:Detonate() end
 				end)
 			end

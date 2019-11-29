@@ -71,7 +71,7 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		local phys=self.Entity:GetPhysicsObject()
-		if phys:IsValid() then
+		if phys:IsValid()then
 			phys:Wake()
 			phys:SetMass(750)
 			phys:SetBuoyancyRatio(.3)

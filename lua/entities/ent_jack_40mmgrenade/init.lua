@@ -7,8 +7,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self.Entity:SetUseType(SIMPLE_USE)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(7)
 	end
@@ -17,7 +17,7 @@ function ENT:Initialize()
 	self.ExplosiveMul=0.5
 end
 function ENT:PhysicsCollide(data, physobj)
-	if (data.Speed > 80 and data.DeltaTime > 0.2) then
+	if(data.Speed>80 and data.DeltaTime>0.2)then
 		self:Detonate()
 	end
 end

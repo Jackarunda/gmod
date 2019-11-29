@@ -11,8 +11,8 @@ function ENT:Initialize()
 	self.Entity:SetCollisionBounds( Vector( -20, -20, -10 ), Vector( 20, 20, 10 ) )
 	self.Entity:PhysicsInitBox( Vector( -20, -20, -10 ), Vector( 20, 20, 10 ) )
 	
-	local phys = self.Entity:GetPhysicsObject()
-	if (phys:IsValid()) then
+	local phys=self.Entity:GetPhysicsObject()
+	if(phys:IsValid())then
 		phys:EnableCollisions( false )		
 	end
 

@@ -4,7 +4,7 @@ if(SERVER)then
 	SWEP.AutoSwitchTo		= false
 	SWEP.AutoSwitchFrom		= false
 	function SWEP:SetupWeaponHoldTypeForAI(t)
-		self.ActivityTranslateAI = {}
+		self.ActivityTranslateAI={}
 		self.ActivityTranslateAI [ ACT_IDLE ] 						= ACT_IDLE_PISTOL
 		self.ActivityTranslateAI [ ACT_IDLE_RELAXED ] 				= ACT_IDLE_RELAXED
 		self.ActivityTranslateAI [ ACT_IDLE_STIMULATED ] 			= ACT_IDLE_RELAXED

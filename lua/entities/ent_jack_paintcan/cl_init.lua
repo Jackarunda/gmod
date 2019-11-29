@@ -127,7 +127,7 @@ function ENT:OpenTheMenu(tab)
 		surface.DrawRect(0,0,ColorPanel:GetWide(),ColorPanel:GetTall()+3)
 	end
 	
-	local exitbutton = vgui.Create("Button",MainPanel)
+	local exitbutton=vgui.Create("Button",MainPanel)
 	exitbutton:SetSize(90,40)
 	exitbutton:SetPos(10,220)
 	exitbutton:SetText("Exit")
@@ -137,7 +137,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaSprayPaintClose",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local gobutton = vgui.Create("Button",MainPanel)
+	local gobutton=vgui.Create("Button",MainPanel)
 	gobutton:SetSize(90,40)
 	gobutton:SetPos(115,220)
 	gobutton:SetText("Paint")
