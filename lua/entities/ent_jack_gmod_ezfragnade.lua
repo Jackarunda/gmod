@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
-ENT.JModEZtimedNade=true
+ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMED=-1,0,1,2
 function ENT:SetupDataTables()
@@ -120,8 +120,9 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
+		local Spred=Vector(0,0,0)
 		for i=1,400 do
-			timer.Simple(i/4000,function()
+			timer.Simple(i/4000+.01,function()
 				local Dir=VectorRand()
 				if(OnGround)then
 					Dir.z=Dir.z/4+.2
@@ -130,16 +131,15 @@ if(SERVER)then
 				end
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(30,40),
+					Damage=math.random(40,50),
 					Force=math.random(10,100),
 					Num=1,
 					Src=SelfPos,
 					Tracer=1,
 					Dir=Dir:GetNormalized(),
-					Spread=Vector(0,0,0)
+					Spread=Spred
 				})
 				if(i==400)then
-					JMod_Sploom(self.Owner,self:GetPos(),math.random(10,20))
 					self:Remove()
 				end
 			end)
