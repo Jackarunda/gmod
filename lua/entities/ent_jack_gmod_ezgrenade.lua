@@ -12,9 +12,12 @@ ENT.Material = nil
 ENT.ModelScale = nil
 ENT.Hints = {"grenade"}
 
+ENT.HardThrowStr = 600
+ENT.SoftThrowStr = 200
 ENT.Mass = 15
 ENT.ImpactSound = "Grenade.ImpactHard"
 ENT.Pin = "ent_jack_spoon"
+ENT.SpoonModel = nil
 
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.JModEZstorable=true
@@ -89,7 +92,7 @@ if(SERVER)then
 				self:Prime()
 			end
 			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
-			JMod_ThrowablePickup(Dude,self)
+			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end
 	
@@ -101,6 +104,7 @@ if(SERVER)then
 				Spewn:SetPos(self:GetPos())
 				Spewn:Spawn()
 				Spewn:Activate()
+				if self.SpoonModel then Spewn:SetModel(self.SpoonModel) end
 				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
 				self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
 			end
