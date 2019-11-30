@@ -9,6 +9,8 @@ ENT.Spawnable=true
 ENT.Model = "models/mechanics/robotics/a2.mdl" --"models/codww2/equipment/model 24 stielhandgranate with frag sleeve.mdl"
 ENT.ModelScale = 0.35
 ENT.SpoonModel = "models/codww2/equipment/model 24 stielhandgranate with frag sleeve cap.mdl"
+ENT.HardThrowStr = 900
+ENT.SoftThrowStr = 400
 ENT.JModPreferredCarryAngles=Angle(90,0,0)
 
 local BaseClass = baseclass.Get(ENT.Base)
@@ -21,9 +23,6 @@ if(SERVER)then
 	function ENT:Initialize()
 		BaseClass.Initialize(self)
 		self:DrawShadow(false)
-		timer.Simple(4,function()
-			if(IsValid(self))then self:Detonate() end
-		end)
 	end
 	
 

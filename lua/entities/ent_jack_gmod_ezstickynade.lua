@@ -8,7 +8,8 @@ ENT.Spawnable=true
 
 ENT.Model = "models/codww2/equipment/no, 74 st grenade.mdl"
 ENT.SpoonModel = "models/codww2/equipment/no, 74 st grenade_pin.mdl"
-
+ENT.HardThrowStr = 400
+ENT.SoftThrowStr = 200
 if(SERVER)then
 
 	function ENT:Prime()
@@ -20,6 +21,9 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
+		timer.Simple(4,function()
+			if(IsValid(self))then self:Detonate() end
+		end)
 	end
 
 	function ENT:PhysicsCollide(data,physobj)
