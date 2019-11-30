@@ -4,7 +4,7 @@ AddCSLuaFile('cl_init.lua')
 AddCSLuaFile('shared.lua')
 include('shared.lua')
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_clusterminebomb")
 	ent:SetPos(SpawnPos)
 	ent.Undoer=ply
@@ -22,8 +22,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 	self.Entity:SetColor(Color(150,150,150))
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(135)
 	end

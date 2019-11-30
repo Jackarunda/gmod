@@ -13,8 +13,8 @@ local DoNotTargetTable={}
 local DoesNotHaveHealthTable={"npc_rollermine","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_grenade_frag","rpg_missile","crossbow_bolt","hunter_flechette","ent_jack_rocket","prop_combine_ball","grenade_ar2","combine_mine","npc_combinedropship","hunter_flechette"}
 local SpecialTargetTable={"rpg_missile","crossbow_bolt"}
 function ENT:SpawnFunction(ply, tr)
-	local SpawnPos = tr.HitPos + tr.HitNormal*50
-	local ent = ents.Create("ent_jack_teslasentry")
+	local SpawnPos=tr.HitPos+tr.HitNormal*50
+	local ent=ents.Create("ent_jack_teslasentry")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -35,8 +35,8 @@ function ENT:Initialize()
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 	self.Entity:SetSolid(SOLID_VPHYSICS)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(100)
 	end

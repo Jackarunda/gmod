@@ -25,8 +25,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 	self.Exploded=false
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(10)
 	end

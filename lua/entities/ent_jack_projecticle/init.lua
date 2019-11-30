@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self.Entity:SetMaterial("models/mat_jack_ice")
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)	
 	self.Entity:SetMoveType(MOVETYPE_NONE)	
-	self.Entity:SetSolid(SOLID_VPHYSICS)    
+	self.Entity:SetSolid(SOLID_VPHYSICS)	
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON) --don't want to shoot yourself in the back of the head
 	self.Entity:DrawShadow(true)
 	
@@ -31,7 +31,7 @@ function ENT:Initialize()
 	self.CurrentFlightSpeed=self.InitialFlightSpeed
 	self.CurrentFlightDirection=self.InitialFlightDirection
 	
-	local SmokeTrail = ents.Create("env_spritetrail")
+	local SmokeTrail=ents.Create("env_spritetrail")
 	SmokeTrail:SetKeyValue("lifetime",".03")
 	SmokeTrail:SetKeyValue("startwidth","0")
 	SmokeTrail:SetKeyValue("endwidth","10")

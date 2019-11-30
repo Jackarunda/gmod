@@ -16,78 +16,78 @@ ENT.ChildEntityResourceAmount=0
 ENT.MainTitleWord="RESOURCES"
 ENT.ResourceUnit="Units"
 ---
-ENT.SupplyTypes = { -- A list of all possible resources, excl. mines and detpacks
-	["generic"] = {
+ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
+	["generic"]={
 		MaxResource=1,
 		ChildEntity="",
 		ChildEntityResourceAmount=0,
 		MainTitleWord="RESOURCES",
 		ResourceUnit="Units",
 	},
-	["advparts"] = {
+	["advparts"]={
 		MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezadvparts",
 		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
 		MainTitleWord="ADV.PARTS",
 		ResourceUnit="Units"
 	},
-	["ammo"] = {
+	["ammo"]={
 		MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezammo",
 		ChildEntityResourceAmount=JMod_EZammoBoxSize,
 		MainTitleWord="AMMO",
 		ResourceUnit="Count"
 	},
-	["chemicals"] = {
+	["chemicals"]={
 		MaxResource=JMod_EZchemicalsSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezchemicals",
 		ChildEntityResourceAmount=JMod_EZchemicalsSize,
 		MainTitleWord="CHEMICALS",
 		ResourceUnit="Units"
 	},
-	["explosives"] = {
+	["explosives"]={
 		MaxResource=JMod_EZexplosivesBoxSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezexplosives",
 		ChildEntityResourceAmount=JMod_EZexplosivesBoxSize,
 		MainTitleWord="EXPLOSIVES",
 		ResourceUnit="Units"
 	},
-	["fuel"] = {
+	["fuel"]={
 		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezfuel",
 		ChildEntityResourceAmount=JMod_EZfuelCanSize,
 		MainTitleWord="FUEL",
 		ResourceUnit="Units"
 	},
-	["gas"] = {
+	["gas"]={
 		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezgas",
 		ChildEntityResourceAmount=JMod_EZfuelCanSize,
 		MainTitleWord="GAS",
 		ResourceUnit="Units"
 	},
-	["medsupplies"] = {
+	["medsupplies"]={
 		MaxResource=JMod_EZmedSupplyBoxSize*JMod_EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezmedsupplies",
 		ChildEntityResourceAmount=JMod_EZmedSupplyBoxSize,
 		MainTitleWord="MED.SUPPLIES",
 		ResourceUnit="Units"
 	},
-	["parts"] = { 
+	["parts"]={ 
 		MaxResource=JMod_EZpartBoxSize*JMod_EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezparts",
 		ChildEntityResourceAmount=JMod_EZpartBoxSize,
 		MainTitleWord="PARTS",
 		ResourceUnit="Units"
 	},
-	["power"] = {
+	["power"]={
 		MaxResource=JMod_EZbatterySize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezbattery",
 		ChildEntityResourceAmount=JMod_EZbatterySize,
 		MainTitleWord="BATTERIES",
 		ResourceUnit="Charge"
 	},
-	["nutrients"] = {
+	["nutrients"]={
 		MaxResource=JMod_EZnutrientBoxSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_eznutrients",
 		ChildEntityResourceAmount=JMod_EZnutrientBoxSize,
@@ -126,7 +126,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_junk/wood_crate002a.mdl")
-		self:SetModelScale(1.5,0)
+		--self:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -152,6 +152,7 @@ if(SERVER)then
 	function ENT:CalcWeight()
 		local Frac=self:GetResource()/self.MaxResource
 		self:GetPhysicsObject():SetMass(100+Frac*300)
+		self:GetPhysicsObject():Wake()
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
@@ -159,7 +160,7 @@ if(SERVER)then
 			local Pos=self:GetPos()
 			sound.Play("Wood_Crate.Break",Pos)
 			sound.Play("Wood_Box.Break",Pos)
-			if (self.ChildEntity != "" and self:GetResource() > 0) then 
+			if(self.ChildEntity != "" and self:GetResource()>0)then 
 				for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
 					local Box=ents.Create(self.ChildEntity)
 					Box:SetPos(Pos+self:GetUp()*20)
@@ -199,7 +200,7 @@ if(SERVER)then
 		if(self.NextLoad>Time)then return 0 end
 		if(amt<=0)then return 0 end
 		-- If unloaded, we set our type to the item type
-		if(self:GetResource()<=0 and self:GetResourceType()=="generic" and self.SupplyTypes[typ]) then 
+		if(self:GetResource()<=0 and self:GetResourceType()=="generic" and self.SupplyTypes[typ])then 
 			self:ApplySupplyType(typ)
 		end
 		-- Consider the loaded type
@@ -221,20 +222,20 @@ elseif(CLIENT)then
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
 		local DetailDraw=Closeness<45000 -- cutoff point is 500 units when the fov is 90 degrees
-		local i = self:GetResourceType()
+		local i=self:GetResourceType()
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Resource=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)
 			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*18-Forward*29.8+Right,Ang,.3)
+			cam.Start3D2D(Pos+Up*10-Forward*20+Right,Ang,.15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*18+Forward*29.9-Right,Ang,.3)
+			cam.Start3D2D(Pos+Up*10+Forward*20-Right,Ang,.15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)

@@ -4,13 +4,13 @@ function EFFECT:Init(data)
 	
 	if(self:WaterLevel()>0)then
 	
-		local NumParticles = 10
+		local NumParticles=10
 		
-		local emitter = ParticleEmitter(data:GetOrigin())
+		local emitter=ParticleEmitter(data:GetOrigin())
 		
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 			if not(data.GetAngle)then return end
 			local colorangle=data:GetAngle()
 			local red=colorangle.p
@@ -18,9 +18,9 @@ function EFFECT:Init(data)
 			local blue=colorangle.r
 			local wind=data:GetStart()
 				
-			local rollparticle = emitter:Add("effects/bubble",Pos+VectorRand()*3)
+			local rollparticle=emitter:Add("effects/bubble",Pos+VectorRand()*3)
 
-			if (rollparticle) then
+			if(rollparticle)then
 				rollparticle:SetVelocity(Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(0,100))+dir)
 					
 				rollparticle:SetLifeTime(0)
@@ -53,13 +53,13 @@ function EFFECT:Init(data)
 		return
 	end
 	
-	local NumParticles = 1
+	local NumParticles=1
 	
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local emitter=ParticleEmitter(data:GetOrigin())
 	if(emitter)then
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 			
 			local colorangle=data:GetAngles()
 			local red=colorangle.p
@@ -69,9 +69,9 @@ function EFFECT:Init(data)
 			
 			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 			if(emitter)then
-				local rollparticle = emitter:Add("sprites/mat_jack_smokeparticle",Pos+VectorRand())
+				local rollparticle=emitter:Add("sprites/mat_jack_smokeparticle",Pos+VectorRand())
 
-				if (rollparticle) then
+				if(rollparticle)then
 					rollparticle:SetVelocity(Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(0,100))+dir*math.Rand(0.1,0.5))
 					
 					rollparticle:SetLifeTime(0)
@@ -101,9 +101,9 @@ function EFFECT:Init(data)
 			end
 			
 			if(emitter)then
-				local rollparticle = emitter:Add("sprites/flamelet"..math.random(1,3),Pos+VectorRand()*2)
+				local rollparticle=emitter:Add("sprites/flamelet"..math.random(1,3),Pos+VectorRand()*2)
 
-				if (rollparticle) then
+				if(rollparticle)then
 					rollparticle:SetVelocity(Vector(math.Rand(-100,100),math.Rand(-100,100),math.Rand(0,100))+dir*math.Rand(0.1,0.5))
 					
 					rollparticle:SetLifeTime(0)
@@ -133,9 +133,9 @@ function EFFECT:Init(data)
 			end
 		
 			if(emitter)then
-				local particle = emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
+				local particle=emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
 
-				if (particle) then
+				if(particle)then
 					particle:SetVelocity(Vector(math.Rand(-50,50),math.Rand(-50,50),math.Rand(-50,50))+dir)
 					
 					particle:SetLifeTime(0)
@@ -167,9 +167,9 @@ function EFFECT:Init(data)
 						pertical:SetLifeTime(CurTime()+0.1)
 						pertical:SetDieTime(CurTime()+0.1)
 						if(emitter)then
-							local porticel = emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
+							local porticel=emitter:Add("particle/smokestack",pertical:GetPos()) --particles/smokey is a nice volumetric smoke sprite
 
-							if (porticel) then
+							if(porticel)then
 								
 								local newvector=hitnorm
 								newvector:Rotate(Angle(90,math.Rand(0,360),90))

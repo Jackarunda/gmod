@@ -584,21 +584,21 @@ if(SERVER)then
 			npc.OpSquadRotorDamage=true
 			JackyOpSquadSpawnEvent(npc)
 			npc32=npc
-			for var = 1, Nodes,1  do
+			for var=1, Nodes,1  do
 				MyNodeBuffer[var]:SetName(tostring(npc) .. tostring(var))
 				npc:DeleteOnRemove(MyNodeBuffer[var])
 			end
-			for var = 1, Nodes,1  do
-				if (var != Nodes) then
-					MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var + 1)),1)
+			for var=1, Nodes,1  do
+				if(var != Nodes)then
+					MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var+1)),1)
 				else
 					MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. "1",1)
 				end
 			end
-			local TrackName = tostring(npc) .. "1"
+			local TrackName=tostring(npc) .. "1"
 			npc:Fire("SetTrack",TrackName,0.1)
 		end)
-		timer.Simple(1.6,function()                            --FUCK this was alot of work
+		timer.Simple(1.6,function()							--FUCK this was alot of work
 			undo.Create("Combine Opposition Squad")
 			undo.SetPlayer(ply)
 			if(IsValid(npc1))then undo.AddEntity(npc1) end
@@ -735,18 +735,18 @@ if(SERVER)then
 		npc.OpSquadRotorDamage=true
 		JackyOpSquadSpawnEvent(npc)
 		npc32=npc
-		for var = 1, Nodes,1  do
+		for var=1, Nodes,1  do
 			MyNodeBuffer[var]:SetName(tostring(npc) .. tostring(var))
 			npc:DeleteOnRemove(MyNodeBuffer[var])
 		end
-		for var = 1, Nodes,1  do
-			if (var != Nodes) then
-				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var + 1)),1)
+		for var=1, Nodes,1  do
+			if(var != Nodes)then
+				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. tostring((var+1)),1)
 			else
 				MyNodeBuffer[var]:Fire("addoutput","OnPass !activator,SetTrack," ..  tostring(npc) .. "1",1)
 			end
 		end
-		local TrackName = tostring(npc) .. "1"
+		local TrackName=tostring(npc) .. "1"
 		npc:Fire("SetTrack",TrackName,0.1)
 		return npc
 	end

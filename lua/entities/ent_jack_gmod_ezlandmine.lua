@@ -8,6 +8,7 @@ ENT.PrintName="EZ Land Mine"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
@@ -39,6 +40,7 @@ if(SERVER)then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
+		self:GetPhysicsObject():SetMass(10)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(10)

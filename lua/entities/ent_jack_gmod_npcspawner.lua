@@ -3,7 +3,7 @@ ENT.Type 			= "anim"
 ENT.PrintName		= "Zombie Spawner"
 ENT.Author			= "Jackarunda"
 ENT.Category			= "JMod - LEGACY NPCs"
-ENT.Information         = ""
+ENT.Information		=""
 
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true
@@ -48,7 +48,7 @@ if(SERVER)then
 		return Targs[math.random(1,#Targs)]
 	end
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal*16
+		local SpawnPos=tr.HitPos+tr.HitNormal*16
 		local ent=ents.Create("ent_jack_gmod_npcspawner")
 		ent:SetPos(SpawnPos)
 		ent:SetNetworkedEntity("Owenur",ply)
@@ -65,7 +65,7 @@ if(SERVER)then
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
-		local phys = self.Entity:GetPhysicsObject()
+		local phys=self.Entity:GetPhysicsObject()
 		if(phys:IsValid())then
 			phys:Wake()
 			phys:SetMass(1000)

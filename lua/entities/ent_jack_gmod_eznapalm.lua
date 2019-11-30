@@ -138,14 +138,14 @@ if(SERVER)then
 		local Att,Pos=self:GetOwner(),(tr and tr.HitPos)or self:GetPos()
 		if not(IsValid(Att))then Att=self end
 		if((tr)and(self.TypeInfo[14]))then
-			local bullet = {}
-			bullet.Num = 1
-			bullet.Src = self:GetPos()
-			bullet.Dir = self:GetForward()
-			bullet.Spread = Vector(0,0,0)
-			bullet.Tracer = 0
-			bullet.Force = 1
-			bullet.Damage = 1
+			local bullet={}
+			bullet.Num=1
+			bullet.Src=self:GetPos()
+			bullet.Dir=self:GetForward()
+			bullet.Spread=Vector(0,0,0)
+			bullet.Tracer=0
+			bullet.Force=1
+			bullet.Damage=1
 			bullet.Attacker=Att
 			self:FireBullets(bullet)
 		end

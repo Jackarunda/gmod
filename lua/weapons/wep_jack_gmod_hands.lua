@@ -50,12 +50,12 @@ SWEP.Instructions	= "you suck"
 SWEP.Spawnable		= true
 SWEP.AdminOnly		= true
 
-SWEP.HoldType = "normal"
+SWEP.HoldType="normal"
 
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_junk/cardboard_box004a.mdl"
 
-SWEP.UseHands = true
+SWEP.UseHands=true
 
 SWEP.AttackSlowDown=.5
 
@@ -114,14 +114,14 @@ function SWEP:CanPrimaryAttack()
 	return true
 end
 
-local pickupWhiteList = {
-	["prop_ragdoll"] = true,
-	["prop_physics"] = true,
-	["prop_physics_multiplayer"] = true
+local pickupWhiteList={
+	["prop_ragdoll"]=true,
+	["prop_physics"]=true,
+	["prop_physics_multiplayer"]=true
 }
 function SWEP:CanPickup(ent)
-	if ent:IsNPC() then return false end
-	if ent:IsPlayer() then return false end
+	if ent:IsNPC()then return false end
+	if ent:IsPlayer()then return false end
 	if(ent:IsWorld())then return false end
 	local class=ent:GetClass()
 	if pickupWhiteList[class] then return true end
@@ -136,7 +136,7 @@ function SWEP:SecondaryAttack()
 	JMod_Hint(self.Owner,"jmod hands grab","jmod hands drag")
 	if SERVER then
 		self:SetCarrying()
-		local tr = self.Owner:GetEyeTraceNoCursor()
+		local tr=self.Owner:GetEyeTraceNoCursor()
 		if((IsValid(tr.Entity))and(self:CanPickup(tr.Entity))and not(tr.Entity:IsPlayer()))then
 			local Dist=(self.Owner:GetShootPos()-tr.HitPos):Length()
 			if(Dist<self.ReachDistance)then
@@ -158,13 +158,13 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:ApplyForce()
-	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos()
-	local phys = self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
-	if IsValid(phys) then
+	local target=self.Owner:GetAimVector()*self.CarryDist+self.Owner:GetShootPos()
+	local phys=self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
+	if IsValid(phys)then
 		local TargetPos=phys:GetPos()
 		if(self.CarryPos)then TargetPos=self.CarryEnt:LocalToWorld(self.CarryPos) end
-		local vec = target - TargetPos
-		local len,mul = vec:Length(),self.CarryEnt:GetPhysicsObject():GetMass()
+		local vec=target - TargetPos
+		local len,mul=vec:Length(),self.CarryEnt:GetPhysicsObject():GetMass()
 		if(len>self.ReachDistance)then
 			self:SetCarrying()
 			return
@@ -192,7 +192,7 @@ end
 function SWEP:OnRemove()
 	if(IsValid(self.Owner) && CLIENT && self.Owner:IsPlayer())then
 		local vm=self.Owner:GetViewModel()
-		if(IsValid(vm)) then vm:SetMaterial("") end
+		if(IsValid(vm))then vm:SetMaterial("") end
 	end
 end
 
@@ -201,9 +201,9 @@ function SWEP:GetCarrying()
 end
 
 function SWEP:SetCarrying(ent,bone,pos,dist)
-	if IsValid(ent) then
-		self.CarryEnt = ent
-		self.CarryBone = bone
+	if IsValid(ent)then
+		self.CarryEnt=ent
+		self.CarryBone=bone
 		self.CarryDist=dist
 		if not(ent:GetClass()=="prop_ragdoll")then
 			self.CarryPos=ent:WorldToLocal(pos)
@@ -211,16 +211,16 @@ function SWEP:SetCarrying(ent,bone,pos,dist)
 			self.CarryPos=nil
 		end
 	else
-		self.CarryEnt = nil
-		self.CarryBone = nil
-		self.CarryPos = nil
+		self.CarryEnt=nil
+		self.CarryBone=nil
+		self.CarryPos=nil
 		self.CarryDist=nil
 	end
 end
 
 function SWEP:Think()
 	if((IsValid(self.Owner))and(self.Owner:KeyDown(IN_ATTACK2))and not(self:GetFists()))then
-		if IsValid(self.CarryEnt) then
+		if IsValid(self.CarryEnt)then
 			self:ApplyForce()
 		end
 	elseif self.CarryEnt then

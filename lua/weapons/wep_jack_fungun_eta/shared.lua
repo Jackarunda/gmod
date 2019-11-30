@@ -44,25 +44,25 @@ SWEP.AimPos=Vector(-2.5, 2,-.5)
 SWEP.AimAng=Angle(1.2,-3.5,0)
 SWEP.ShowWorldModel=false
 SWEP.ReloadNoise={"snd_jack_laserreload.wav",70,100}
-SWEP.ViewModelBoneMods = {
-	["Main Frame"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) }
+SWEP.ViewModelBoneMods={
+	["Main Frame"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) }
 }
-SWEP.VElements = {
-	["hurr"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-1.3, -.4, 2.5), angle = Angle(0, -90, 60.34), size = 0.025, draw_func = JackIndFunGunAmmoDisplay},
-	["narg"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "Main Frame", rel = "", pos = Vector(3.5, -0.2, .8), angle = Angle(2, 180, 5), size = Vector(1.1, 0.6, 0.6), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} },
-	["derp"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "Main Frame", rel = "", pos = Vector(5, -0.2, .8), angle = Angle(0, 0, 0), size = Vector(1.3, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} },
-	["flerp"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "Main Frame", rel = "", pos = Vector(5, -0.2, .8), angle = Angle(0, 0, 0), size = Vector(1.5, 0.4, 0.4), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} },
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/pistols/n7 eajle.mdl", bone = "Main Frame", rel = "", pos = Vector(-0.3, -0.2, 0.8), angle = Angle(0, 90, 0), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["lawl"] = { type = "Model", model = "models/Items/combine_rifle_ammo01.mdl", bone = "Main Frame", rel = "", pos = Vector(-1.2, -0.2, 1.2), angle = Angle(-90, 90, -90), size = Vector(.15, .15, .15), color = Color(100, 100, 100, 255), surpresslightning = false, material = "phoenix_storms/gear", skin = 0, bodygroup = {} },
-	["herp"] = { type = "Model", model = "models/mass_effect_3/weapons/misc/jeatsink.mdl", bone = "Mag", rel = "", pos = Vector(0.1, -.3, 2), angle = Angle(180, 90, 81), size = Vector(1.299, 0.699, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["herpitty"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(10, -1, 3.75), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.FrontSight},
-	["derpitty"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-7, -.98, 3.5), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.RearSight}
+SWEP.VElements={
+	["hurr"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-1.3, -.4, 2.5), angle=Angle(0, -90, 60.34), size=0.025, draw_func=JackIndFunGunAmmoDisplay},
+	["narg"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="Main Frame", rel="", pos=Vector(3.5, -0.2, .8), angle=Angle(2, 180, 5), size=Vector(1.1, 0.6, 0.6), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} },
+	["derp"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="Main Frame", rel="", pos=Vector(5, -0.2, .8), angle=Angle(0, 0, 0), size=Vector(1.3, 0.5, 0.5), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} },
+	["flerp"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="Main Frame", rel="", pos=Vector(5, -0.2, .8), angle=Angle(0, 0, 0), size=Vector(1.5, 0.4, 0.4), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} },
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/pistols/n7 eajle.mdl", bone="Main Frame", rel="", pos=Vector(-0.3, -0.2, 0.8), angle=Angle(0, 90, 0), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["lawl"]={ type="Model", model="models/Items/combine_rifle_ammo01.mdl", bone="Main Frame", rel="", pos=Vector(-1.2, -0.2, 1.2), angle=Angle(-90, 90, -90), size=Vector(.15, .15, .15), color=Color(100, 100, 100, 255), surpresslightning=false, material="phoenix_storms/gear", skin=0, bodygroup={} },
+	["herp"]={ type="Model", model="models/mass_effect_3/weapons/misc/jeatsink.mdl", bone="Mag", rel="", pos=Vector(0.1, -.3, 2), angle=Angle(180, 90, 81), size=Vector(1.299, 0.699, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["herpitty"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(10, -1, 3.75), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.FrontSight},
+	["derpitty"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-7, -.98, 3.5), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.RearSight}
 }
-SWEP.WElements = {
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/pistols/n7 eajle.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.181, 1.363, -3.182), angle = Angle(180, 90, 0), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["narg"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(6.75, 1.35, -3), angle = Angle(2, 180, 5), size = Vector(1.1, 0.6, 0.6), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} },
-	["derp"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(8.25, 1.35, -3), angle = Angle(0, 0, 0), size = Vector(1.3, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} },
-	["flerp"] = { type = "Model", model = "models/Items/AR2_Grenade.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(8.25, 1.35, -3), angle = Angle(0, 0, 0), size = Vector(1.3, 0.4, 0.4), color = Color(255, 255, 255, 255), surpresslightning = false, material = "debug/env_cubemap_model", skin = 0, bodygroup = {} }
+SWEP.WElements={
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/pistols/n7 eajle.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(3.181, 1.363, -3.182), angle=Angle(180, 90, 0), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["narg"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(6.75, 1.35, -3), angle=Angle(2, 180, 5), size=Vector(1.1, 0.6, 0.6), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} },
+	["derp"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(8.25, 1.35, -3), angle=Angle(0, 0, 0), size=Vector(1.3, 0.5, 0.5), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} },
+	["flerp"]={ type="Model", model="models/Items/AR2_Grenade.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(8.25, 1.35, -3), angle=Angle(0, 0, 0), size=Vector(1.3, 0.4, 0.4), color=Color(255, 255, 255, 255), surpresslightning=false, material="debug/env_cubemap_model", skin=0, bodygroup={} }
 }
 
 local LockPlayed=false

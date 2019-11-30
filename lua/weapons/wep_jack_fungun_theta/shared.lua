@@ -45,23 +45,23 @@ SWEP.ShowWorldModel=false
 SWEP.MaxRoundCapacity=5
 SWEP.TakesSmallIron=true
 SWEP.ReloadNoise={"snd_jack_railgunreload.wav",70,100}
-SWEP.ViewModelBoneMods = {
-	["Main Frame"] = { scale = Vector(0.009, 0.009, 0.009), pos = Vector(0, 0, 0), angle = Angle(0, 0, 0) }
+SWEP.ViewModelBoneMods={
+	["Main Frame"]={ scale=Vector(0.009, 0.009, 0.009), pos=Vector(0, 0, 0), angle=Angle(0, 0, 0) }
 }
-SWEP.VElements = {
-	["hurr"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-5, -.2, .4), angle = Angle(0, -90, 60), size = 0.025, draw_func = JackIndFunGunAmmoDisplay},
-	["flarg"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-4.3, -.09, 2.2), angle = Angle(0, -90, 90), size = 0.025, draw_func = JackIndFunGunIronDisplay},
-	["arf"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-4.3, -.175, 1.2), angle = Angle(0, -90, 75), size = 0.025, draw_func = JackIndFunGunIronChamberDisplay},
-	["lawl"] = { type = "Model", model = "models/hunter/blocks/cube025x125x025.mdl", bone = "Main Frame", rel = "", pos = Vector(-1, -.3, 1.45), angle = Angle(0, 90, 0), size = Vector(0.05, 0.05, 0.05), color = Color(255, 255, 255, 255), surpresslightning = true, material = "models/debug/debugwhite", skin = 0, bodygroup = {} },
-	["narg"] = { type = "Model", model = "models/hunter/blocks/cube025x125x025.mdl", bone = "Main Frame", rel = "", pos = Vector(1, -.7, .7), angle = Angle(0, 90, 0), size = Vector(.12, .23, .03), color = Color(255, 255, 255, 255), surpresslightning = true, material = "models/debug/debugwhite", skin = 0, bodygroup = {} },
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/smgs/m-9 jempest.mdl", bone = "Main Frame", rel = "", pos = Vector(1.4, 0, .7), angle = Angle(0, 90, 0), size = Vector(.85, .85, .85), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["derp"] = { type = "Model", model = "models/mass_effect_3/weapons/misc/jhermal clip.mdl", bone = "Slide", rel = "", pos = Vector(2, 0, .45), angle = Angle(-90, 0, 0), size = Vector(0.2, 0.1, 0.2), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["herp"] = { type = "Model", model = "models/mass_effect_3/weapons/misc/jeatsink.mdl", bone = "Mag", rel = "", pos = Vector(0.1, 0, 3), angle = Angle(180, 90, 81), size = Vector(1.299, 0.699, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["herpitty"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(10, -.465, 4.65), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.FrontSight},
-	["derpitty"] = { type = "Quad", bone = "Main Frame", rel = "", pos = Vector(-7, -.415, 4.5), angle = Angle(0, -90, 90), size = 0.025, draw_func = SWEP.RearSight}
+SWEP.VElements={
+	["hurr"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-5, -.2, .4), angle=Angle(0, -90, 60), size=0.025, draw_func=JackIndFunGunAmmoDisplay},
+	["flarg"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-4.3, -.09, 2.2), angle=Angle(0, -90, 90), size=0.025, draw_func=JackIndFunGunIronDisplay},
+	["arf"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-4.3, -.175, 1.2), angle=Angle(0, -90, 75), size=0.025, draw_func=JackIndFunGunIronChamberDisplay},
+	["lawl"]={ type="Model", model="models/hunter/blocks/cube025x125x025.mdl", bone="Main Frame", rel="", pos=Vector(-1, -.3, 1.45), angle=Angle(0, 90, 0), size=Vector(0.05, 0.05, 0.05), color=Color(255, 255, 255, 255), surpresslightning=true, material="models/debug/debugwhite", skin=0, bodygroup={} },
+	["narg"]={ type="Model", model="models/hunter/blocks/cube025x125x025.mdl", bone="Main Frame", rel="", pos=Vector(1, -.7, .7), angle=Angle(0, 90, 0), size=Vector(.12, .23, .03), color=Color(255, 255, 255, 255), surpresslightning=true, material="models/debug/debugwhite", skin=0, bodygroup={} },
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/smgs/m-9 jempest.mdl", bone="Main Frame", rel="", pos=Vector(1.4, 0, .7), angle=Angle(0, 90, 0), size=Vector(.85, .85, .85), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["derp"]={ type="Model", model="models/mass_effect_3/weapons/misc/jhermal clip.mdl", bone="Slide", rel="", pos=Vector(2, 0, .45), angle=Angle(-90, 0, 0), size=Vector(0.2, 0.1, 0.2), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["herp"]={ type="Model", model="models/mass_effect_3/weapons/misc/jeatsink.mdl", bone="Mag", rel="", pos=Vector(0.1, 0, 3), angle=Angle(180, 90, 81), size=Vector(1.299, 0.699, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["herpitty"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(10, -.465, 4.65), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.FrontSight},
+	["derpitty"]={ type="Quad", bone="Main Frame", rel="", pos=Vector(-7, -.415, 4.5), angle=Angle(0, -90, 90), size=0.025, draw_func=SWEP.RearSight}
 }
-SWEP.WElements = {
-	["lol"] = { type = "Model", model = "models/mass_effect_3/weapons/smgs/m-9 jempest.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(4.181, 1.363, -2.5), angle = Angle(180, 90, 0), size = Vector(.85, .85, .85), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+SWEP.WElements={
+	["lol"]={ type="Model", model="models/mass_effect_3/weapons/smgs/m-9 jempest.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(4.181, 1.363, -2.5), angle=Angle(180, 90, 0), size=Vector(.85, .85, .85), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} }
 }
 
 local AlreadyFired=false

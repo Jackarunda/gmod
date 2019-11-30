@@ -9,8 +9,8 @@ function ENT:SpawnFunction(ply, tr)
 
 	//if not tr.Hit then return end
 
-	local SpawnPos = tr.HitPos + tr.HitNormal*16
-	local ent = ents.Create("ent_jack_tntpack")
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
+	local ent=ents.Create("ent_jack_tntpack")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
 	ent:Spawn()
@@ -36,8 +36,8 @@ function ENT:Initialize()
 	self.FuzeLength=1500
 	self.IsJackyTNT=true
 
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(30)
 		phys:SetMaterial("metal")
@@ -145,7 +145,7 @@ end
 
 function ENT:PhysicsCollide(data, physobj)
 	// Play sound on bounce
-	if (data.Speed > 80 and data.DeltaTime > 0.2) then
+	if(data.Speed>80 and data.DeltaTime>0.2)then
 		self.Entity:EmitSound("Metal_Box.ImpactHard")
 	end
 end

@@ -19,9 +19,9 @@ function ENT:Initialize()
 	
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 	
-	local phys = self.Entity:GetPhysicsObject()
+	local phys=self.Entity:GetPhysicsObject()
 	
-	if (phys:IsValid()) then
+	if(phys:IsValid())then
 		phys:Wake()
 		phys:SetMass(1)
 	end
@@ -37,7 +37,7 @@ end
 function ENT:PhysicsCollide(data, physobj)
 	
 	// Play sound on bounce
-	if (data.Speed > 2 and data.DeltaTime > 0.1) then
+	if(data.Speed>2 and data.DeltaTime>0.1)then
 		local loudness=data.Speed*0.4
 		if(loudness>70)then loudness=70 end
 		if(loudness<10)then loudness=10 end
@@ -45,7 +45,7 @@ function ENT:PhysicsCollide(data, physobj)
 	end
 	
 	//bounce like a bitch
-	local impulse = -data.Speed * data.HitNormal * 0.3 + (data.OurOldVelocity * -0.3)
+	local impulse=-data.Speed*data.HitNormal*0.3+(data.OurOldVelocity*-0.3)
 	self:GetPhysicsObject():ApplyForceCenter(impulse)
 end
 

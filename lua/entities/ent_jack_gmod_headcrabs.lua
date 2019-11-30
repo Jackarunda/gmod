@@ -38,7 +38,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:SpawnFunction(ply,tr)
-		if (!tr.Hit) then return end
+		if(!tr.Hit)then return end
 		//Jimbomcb wrote this code really, I just copied it from his SWEP and modified it a little
 		//now to do calculations
 		local InitialPositionVector=tr.HitPos

@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=12,
+		Version=13,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -83,11 +83,20 @@ function JMod_InitGlobalConfig()
 				["resource crate"]={
 					"ent_jack_gmod_ezcrate"
 				},
-				["landmine crate"]={
-					"ent_jack_gmod_ezcrate_landmines"
+				["general purpose crate"]={
+					"ent_jack_gmod_ezcrate_uni"
 				},
-				["detpack crate"]={
-					"ent_jack_gmod_ezcrate_detpacks"
+				["frag grenades"]={
+					{"ent_jack_gmod_ezfragnade",10}
+				},
+				["mini grenades"]={
+					{"ent_jack_gmod_eznade_impact",5},
+					{"ent_jack_gmod_eznade_proximity",5},
+					{"ent_jack_gmod_eznade_remote",5},
+					{"ent_jack_gmod_eznade_timed",5}
+				},
+				["timebombs"]={
+					{"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
 					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
@@ -132,8 +141,7 @@ function JMod_InitGlobalConfig()
 			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
 			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
 			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
-			["EZ Landmine Crate"]={"ent_jack_gmod_ezcrate_landmines",{parts=50},1},
-			["EZ Detpack Crate"]={"ent_jack_gmod_ezcrate_detpacks",{parts=50},1},
+			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
@@ -148,14 +156,23 @@ function JMod_InitGlobalConfig()
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
 			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}}
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}},
+			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5}},
+			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3}},
+			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3}},
+			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3}},
+			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
 	if(FileContents)then
 		local Existing=util.JSONToTable(FileContents)
-		if((Existing)and(Existing.Version)and(Existing.Version==NewConfig.Version))then
-			JMOD_CONFIG=util.JSONToTable(FileContents)
+		if((Existing)and(Existing.Version))then
+			if(Existing.Version==NewConfig.Version)then
+				JMOD_CONFIG=util.JSONToTable(FileContents)
+			else
+				file.Write("jmod_config_OLD.txt",FileContents)
+			end
 		end
 	end
 	if not(JMOD_CONFIG)then
@@ -165,8 +182,8 @@ function JMod_InitGlobalConfig()
 	if not(JMOD_LUA_CONFIG)then
 		JMOD_LUA_CONFIG={
 			BuildFuncs={
-				spawnHL2buggy = function(playa, position, angles)
-					local Ent = ents.Create("prop_vehicle_jeep_old")
+				spawnHL2buggy=function(playa, position, angles)
+					local Ent=ents.Create("prop_vehicle_jeep_old")
 					Ent:SetModel("models/buggy.mdl")
 					Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
 					Ent:SetPos(position)
@@ -190,18 +207,18 @@ function ANGLE:GetCopy()
 end
 function table.FullCopy( tab )
 
-	if (!tab) then return nil end
+	if(!tab)then return nil end
 	
-	local res = {}
+	local res={}
 	for k, v in pairs( tab ) do
-		if (type(v) == "table") then
-			res[k] = table.FullCopy(v) -- we need to go derper
-		elseif (type(v) == "Vector") then
-			res[k] = Vector(v.x, v.y, v.z)
-		elseif (type(v) == "Angle") then
-			res[k] = Angle(v.p, v.y, v.r)
+		if(type(v)=="table")then
+			res[k]=table.FullCopy(v) -- we need to go derper
+		elseif(type(v)=="Vector")then
+			res[k]=Vector(v.x, v.y, v.z)
+		elseif(type(v)=="Angle")then
+			res[k]=Angle(v.p, v.y, v.r)
 		else
-			res[k] = v
+			res[k]=v
 		end
 	end
 	
@@ -446,15 +463,15 @@ if(CLIENT)then
 	end
 	usermessage.Hook("JackysFGFloatChange",ChangeFloat)
 	
-	local LastViewAng = false
+	local LastViewAng=false
 	local function SimilarizeAngles(ang1, ang2)
-		ang1.y = math.fmod (ang1.y, 360)
-		ang2.y = math.fmod (ang2.y, 360)
-		if math.abs (ang1.y - ang2.y) > 180 then
-			if ang1.y - ang2.y < 0 then
-				ang1.y = ang1.y + 360
+		ang1.y=math.fmod (ang1.y, 360)
+		ang2.y=math.fmod (ang2.y, 360)
+		if math.abs (ang1.y - ang2.y)>180 then
+			if ang1.y - ang2.y<0 then
+				ang1.y=ang1.y+360
 			else
-				ang1.y = ang1.y - 360
+				ang1.y=ang1.y - 360
 			end
 		end
 	end
@@ -465,16 +482,16 @@ if(CLIENT)then
 		local Wep=ply:GetActiveWeapon()
 		if(IsValid(Wep))then
 			if not(Wep.IsAJackyFunGun)then return end
-			local newAng = uCmd:GetViewAngles()
+			local newAng=uCmd:GetViewAngles()
 			if LastViewAng then
 				SimilarizeAngles (LastViewAng, newAng)
-				local ft = FrameTime()*5
+				local ft=FrameTime()*5
 				local argh=.2
 				if(ply:Crouching())then argh=argh-.05 end
 				if(ply:KeyDown(IN_ATTACK2))then argh=argh-.05 end
-				staggerdir =((staggerdir + ft * VectorRand()):GetNormalized())*argh
-				local diff = newAng - LastViewAng
-				diff = diff * ((LocalPlayer():GetFOV())/75)
+				staggerdir =((staggerdir+ft*VectorRand()):GetNormalized())*argh
+				local diff=newAng - LastViewAng
+				diff=diff*((LocalPlayer():GetFOV())/75)
 				local DerNeuAngle=LastViewAng+diff
 				local addpitch=staggerdir.z*ft
 				local addyaw=staggerdir.x*ft
@@ -483,7 +500,7 @@ if(CLIENT)then
 				uCmd:SetViewAngles(DerNeuAngle)
 			end
 		end
-		LastViewAng = uCmd:GetViewAngles()
+		LastViewAng=uCmd:GetViewAngles()
 	end 
 	hook.Add("CreateMove","JackyFGStagger",Stagger)
 	
@@ -1317,11 +1334,18 @@ JMod_EZchemicalsSize=100
 JMod_EZadvPartBoxSize=20
 JMod_EZmedSupplyBoxSize=50
 JMod_EZnutrientBoxSize=100
-JMod_EZcrateSize=30
-JMod_EZpartsCrateSize=20
-JMod_EZnutrientsCrateSize=20
+JMod_EZcrateSize=15
+JMod_EZpartsCrateSize=15
+JMod_EZnutrientsCrateSize=15
+
+JMOD_EZ_STATE_BROKEN 	= -1
+JMOD_EZ_STATE_OFF 		= 0
+JMOD_EZ_STATE_PRIMED 	= 1
+JMOD_EZ_STATE_ARMING 	= 2
+JMOD_EZ_STATE_ARMED		= 3
+JMOD_EZ_STATE_WARNING	= 4
+
 -- TODO
--- when you make the radio, give it a "black BFF" mode easter egg
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare

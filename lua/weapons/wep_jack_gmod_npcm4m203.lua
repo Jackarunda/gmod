@@ -4,7 +4,7 @@ if(SERVER)then
 	SWEP.AutoSwitchTo=false
 	SWEP.AutoSwitchFrom=false
 	function SWEP:SetupWeaponHoldTypeForAI(t)
-		self.ActivityTranslateAI = {}
+		self.ActivityTranslateAI={}
 		self.ActivityTranslateAI [ ACT_IDLE ] 						= ACT_IDLE_RIFLE
 		self.ActivityTranslateAI [ ACT_IDLE_RELAXED ] 				= ACT_IDLE_SMG1_RELAXED
 		self.ActivityTranslateAI [ ACT_IDLE_STIMULATED ] 			= ACT_IDLE_SMG1_STIMULATED
@@ -20,14 +20,14 @@ if(SERVER)then
 		self.ActivityTranslateAI [ ACT_COVER_LOW ] 					= ACT_COVER_LOW
 		self.ActivityTranslateAI [ ACT_RANGE_AIM_LOW ] 				= ACT_RANGE_AIM_LOW
 		self.ActivityTranslateAI [ ACT_GESTURE_RELOAD ] 			= ACT_GESTURE_RELOAD_SMG1
-		self.ActivityTranslateAI [ ACT_RUN ]                        = ACT_RUN_RIFLE
-		self.ActivityTranslateAI [ ACT_RUN_RELAXED ]                = ACT_RUN_RIFLE_RELAXED
-		self.ActivityTranslateAI [ ACT_RUN_AGITATED ]               = ACT_RUN_RIFLE_STIMULATED
-		self.ActivityTranslateAI [ ACT_RUN_STIMULATED ]             = ACT_RUN_RIFLE_STIMULATED
-		self.ActivityTranslateAI [ ACT_WALK ]                       = ACT_WALK_RIFLE
-		self.ActivityTranslateAI [ ACT_WALK_AGITATED ]              = ACT_WALK_RIFLE_STIMULATED
-		self.ActivityTranslateAI [ ACT_WALK_STIMULATED ]            = ACT_WALK_RIFLE_STIMULATED
-		self.ActivityTranslateAI [ ACT_WALK_RELAXED ]               = ACT_WALK_RIFLE_RELAXED
+		self.ActivityTranslateAI [ ACT_RUN ]						= ACT_RUN_RIFLE
+		self.ActivityTranslateAI [ ACT_RUN_RELAXED ]				= ACT_RUN_RIFLE_RELAXED
+		self.ActivityTranslateAI [ ACT_RUN_AGITATED ]			  =ACT_RUN_RIFLE_STIMULATED
+		self.ActivityTranslateAI [ ACT_RUN_STIMULATED ]			=ACT_RUN_RIFLE_STIMULATED
+		self.ActivityTranslateAI [ ACT_WALK ]					  =ACT_WALK_RIFLE
+		self.ActivityTranslateAI [ ACT_WALK_AGITATED ]			 =ACT_WALK_RIFLE_STIMULATED
+		self.ActivityTranslateAI [ ACT_WALK_STIMULATED ]			= ACT_WALK_RIFLE_STIMULATED
+		self.ActivityTranslateAI [ ACT_WALK_RELAXED ]			  =ACT_WALK_RIFLE_RELAXED
 	end
 	SWEP.Weight=5
 	SWEP.AutoSwitchTo=false
@@ -282,7 +282,7 @@ SWEP.Contact=""
 SWEP.Purpose=""
 SWEP.Instructions=""
 SWEP.Category="AI Weapons"
-SWEP.Spawnable = false
+SWEP.Spawnable=false
 SWEP.AdminSpawnable=false
 SWEP.ViewModel="models/weapons/v_pistol.mdl"
 SWEP.WorldModel="models/weapons/w_JRifle.mdl" ----w_IRifle if you want combine muzzle flash

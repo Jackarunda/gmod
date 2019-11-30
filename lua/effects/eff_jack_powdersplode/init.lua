@@ -2,12 +2,12 @@
 
 local matRefraction	= Material( "refract_ring" )
 
-local tMats = {}
+local tMats={}
 
-tMats.Glow1 = Material("sprites/light_glow02")
---tMats.Glow1 = Material("models/roller/rollermine_glow")
-tMats.Glow2 = Material("sprites/yellowflare")
-tMats.Glow3 = Material("sprites/redglow2")
+tMats.Glow1=Material("sprites/light_glow02")
+--tMats.Glow1=Material("models/roller/rollermine_glow")
+tMats.Glow2=Material("sprites/yellowflare")
+tMats.Glow3=Material("sprites/redglow2")
 
 for _,mat in pairs(tMats) do
 
@@ -22,34 +22,34 @@ end
 ---------------------------------------------------------*/
 function EFFECT:Init( data )
 
-	self.Position = data:GetOrigin()
-	self.Position.z = self.Position.z + 4
-	self.TimeLeft = CurTime() + 1
-	self.GAlpha = 254
-	self.DerpAlpha = 254
-	self.GSize = 200
+	self.Position=data:GetOrigin()
+	self.Position.z=self.Position.z+4
+	self.TimeLeft=CurTime()+1
+	self.GAlpha=254
+	self.DerpAlpha=254
+	self.GSize=200
 	self.CloudHeight =1*2.5
 	
-	self.Refract = 0
-	self.Size = 48
-	if render.GetDXLevel() <= 81 then
-		matRefraction = Material( "effects/strider_pinch_dudv" )
+	self.Refract=0
+	self.Size=48
+	if render.GetDXLevel()<=81 then
+		matRefraction=Material( "effects/strider_pinch_dudv" )
 	end
 	
-	self.SplodeDist = 2000
-	self.BlastSpeed = 6000
-	self.lastThink = 0
-	self.MinSplodeTime = CurTime() + self.CloudHeight/self.BlastSpeed
-	self.MaxSplodeTime = CurTime() + 6
-	self.GroundPos = self.Position - Vector(0,0,self.CloudHeight)
+	self.SplodeDist=2000
+	self.BlastSpeed=6000
+	self.lastThink=0
+	self.MinSplodeTime=CurTime()+self.CloudHeight/self.BlastSpeed
+	self.MaxSplodeTime=CurTime()+6
+	self.GroundPos=self.Position - Vector(0,0,self.CloudHeight)
 	
-	local Pos = self.Position
+	local Pos=self.Position
 	local Velo=data:GetStart()
 
-	self.smokeparticles = {}
-	self.Emitter = ParticleEmitter( Pos )
+	self.smokeparticles={}
+	self.Emitter=ParticleEmitter( Pos )
 
-	local spawnpos = Pos
+	local spawnpos=Pos
 	
 	local Scayul=data:GetScale()
 	self.Scayul=Scayul

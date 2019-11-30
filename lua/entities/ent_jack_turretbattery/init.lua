@@ -12,7 +12,7 @@ function ENT:ExternalCharge(amt)
 	self:SetCollisionGroup(COLLISION_GROUP_NONE)
 end
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_turretbattery")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
@@ -30,8 +30,8 @@ function ENT:Initialize()
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(60)
 	end

@@ -6,6 +6,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_EZworkbench")
 	util.AddNetworkString("JMod_Hint")
 	util.AddNetworkString("JMod_EZtimeBomb")
+	util.AddNetworkString("JMod_UniCrate")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -76,22 +77,22 @@ if(SERVER)then
 		end
 	end
 	function JackaBodyArmorUpdate(ply, slot, item, colr)
-		if not(ply.JackyArmor) then ply.JackyArmor={} end -- If player does not have an armour table, create one
+		if not(ply.JackyArmor)then ply.JackyArmor={} end -- If player does not have an armour table, create one
 		if item then -- Check if Item is not nil
-			ply.JackyArmor[slot] = {}
+			ply.JackyArmor[slot]={}
 			ply.JackyArmor[slot].Type= item
-			ply.JackyArmor[slot].Colr = colr
-			if (slot == "Suit") then
-				ply.JackyOriginalModel = ply:GetModel()
+			ply.JackyArmor[slot].Colr=colr
+			if(slot=="Suit")then
+				ply.JackyOriginalModel=ply:GetModel()
 				JackaSetPlayerModel(ply,ArmorAppearances[item])
-				ply.JackyOriginalColor = ply:GetPlayerColor()   
+				ply.JackyOriginalColor=ply:GetPlayerColor()   
 				ply:SetPlayerColor(Vector(colr.r/255, colr.g/255, colr.b/255)) -- Sets the player colour from the item colour
 			end
 		else -- Clearing the Armour information
 			ply.JackyArmor[slot]=nil
-            item = "nil"
-            colr = Color(0,0,0)
-			if ((slot=="Suit") and (ply.JackyOriginalModel) and (ply.JackyOriginalColor)) then
+			item="nil"
+			colr=Color(0,0,0)
+			if((slot=="Suit") and (ply.JackyOriginalModel) and (ply.JackyOriginalColor))then
 				JackaSetPlayerModel(ply,ply.JackyOriginalModel)
 				ply:SetPlayerColor(ply.JackyOriginalColor)
 			end
@@ -109,16 +110,16 @@ if(SERVER)then
 			local NewSpd=ArmorDisadvantages[ply.JackyArmor.Suit.Type]*ply.JackyArmor.OrigRun
 			ply:SetRunSpeed(NewSpd)
 		end
-        
-        umsg.Start("JackaBodyArmorUpdateClient")
-        umsg.Entity(ply)
-        umsg.String(slot)
-        umsg.String(item)
-        umsg.Short(colr.r)
-        umsg.Short(colr.g)
-        umsg.Short(colr.b)
-        umsg.End()
-        
+		
+		umsg.Start("JackaBodyArmorUpdateClient")
+		umsg.Entity(ply)
+		umsg.String(slot)
+		umsg.String(item)
+		umsg.Short(colr.r)
+		umsg.Short(colr.g)
+		umsg.Short(colr.b)
+		umsg.End()
+		
 	end
 	function JackaSentryControl(ply,term,sent)
 		ply.JackaSentryControl=sent
@@ -174,65 +175,65 @@ if(SERVER)then
 	end
 	hook.Add("PlayerFootstep","JackyArmorFootstep",StepSound)
 	local function RemoveArmor(ply, txt)
-		local loweredText = string.lower(txt) -- Convert to lowercase
-        if string.sub(loweredText, 1, 1) == "*" and string.sub(loweredText, string.len(loweredText), -1) == "*" then -- Begins and ends with asterix
-            local strippedText = string.sub(loweredText, 2, string.len(loweredText)-1) -- Remove leading and ending asterix
-            
-            local words = {}
-            for substring in strippedText:gmatch("%S+") do -- Split string into array
-               table.insert(words, substring)
-            end
-            if words[1] ~= "drop" and words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
-            
-            local armourTypes = {
-                ["vest"] = ply.JackyArmor.Vest,
-                ["helmet"] = ply.JackyArmor.Helmet,
-                ["suit"] = ply.JackyArmor.Suit
-            }
+		local loweredText=string.lower(txt) -- Convert to lowercase
+		if string.sub(loweredText, 1, 1)=="*" and string.sub(loweredText, string.len(loweredText), -1)=="*" then -- Begins and ends with asterix
+			local strippedText=string.sub(loweredText, 2, string.len(loweredText)-1) -- Remove leading and ending asterix
+			
+			local words={}
+			for substring in strippedText:gmatch("%S+") do -- Split string into array
+			   table.insert(words, substring)
+			end
+			if words[1] ~= "drop" and words[1] ~= "drops" then return end -- Only procede if the "drop" or "drops" command is used
+			
+			local armourTypes={
+				["vest"]=ply.JackyArmor.Vest,
+				["helmet"]=ply.JackyArmor.Helmet,
+				["suit"]=ply.JackyArmor.Suit
+			}
 
-            local armourWord = words[2]
+			local armourWord=words[2]
  
-            if armourTypes[armourWord] then -- Check if second word is valid armour type
-                local armour = armourTypes[armourWord]
-                local Type= armour.Type
-                local Colr= armour.Colr
-                        local capitalised = armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
-                JackaBodyArmorUpdate(ply,capitalised,nil,nil)
-                local New = ents.Create(ArmorEntities[Type])
-                New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
-                New:Spawn()
-                New:Activate()
-                New:SetColor(Colr)
-                
-                if armourWord ~= "helmet" then -- Hardcoded as an exception because it is a one-off
-                    ply:EmitSound("snd_jack_clothunequip.wav",70,100)
-                else
-                    ply:EmitSound("Flesh.ImpactSoft")
-                end
-                
-                ply:PrintMessage(HUD_PRINTCENTER, "Removed " .. capitalised)
-				        JackaGenericUseEffect(ply)
-            elseif words[2] == "iff" then
-                
-                local iffTag = ply:GetNetworkedInt("JackyIFFTag")
-                if iffTag and (iffTag !=0) then
-                    ply:SetNetworkedInt("JackyIFFTag", 0)
-                    local New = ents.Create("ent_jack_ifftag")
-                    
-                    New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
-                    New:Spawn()
-                    New:Activate()
-                    
-                    ply:EmitSound("snd_jack_tinyequip.wav",75,100)
-                    JackaGenericUseEffect(ply)
-                    ply:PrintMessage(HUD_PRINTCENTER,"Removed IFF Tag")
-                else
-                    ply:ChatPrint("You are not wearing an IFF")
-                end
-            else
-                ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing this armour type...")
-            end
-        end
+			if armourTypes[armourWord] then -- Check if second word is valid armour type
+				local armour=armourTypes[armourWord]
+				local Type= armour.Type
+				local Colr= armour.Colr
+						local capitalised=armourWord:sub(1,1):upper() .. armourWord:sub(2) -- Capitalise the first letter, because JackaBodyArmorUpdate requires it
+				JackaBodyArmorUpdate(ply,capitalised,nil,nil)
+				local New=ents.Create(ArmorEntities[Type])
+				New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
+				New:Spawn()
+				New:Activate()
+				New:SetColor(Colr)
+				
+				if armourWord ~= "helmet" then -- Hardcoded as an exception because it is a one-off
+					ply:EmitSound("snd_jack_clothunequip.wav",70,100)
+				else
+					ply:EmitSound("Flesh.ImpactSoft")
+				end
+				
+				ply:PrintMessage(HUD_PRINTCENTER, "Removed " .. capitalised)
+						JackaGenericUseEffect(ply)
+			elseif words[2]=="iff" then
+				
+				local iffTag=ply:GetNetworkedInt("JackyIFFTag")
+				if iffTag and (iffTag !=0)then
+					ply:SetNetworkedInt("JackyIFFTag", 0)
+					local New=ents.Create("ent_jack_ifftag")
+					
+					New:SetPos(ply:GetShootPos()+ply:GetAimVector()*30-ply:GetUp()*20)
+					New:Spawn()
+					New:Activate()
+					
+					ply:EmitSound("snd_jack_tinyequip.wav",75,100)
+					JackaGenericUseEffect(ply)
+					ply:PrintMessage(HUD_PRINTCENTER,"Removed IFF Tag")
+				else
+					ply:ChatPrint("You are not wearing an IFF")
+				end
+			else
+				ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing this armour type...")
+			end
+		end
 
 	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
@@ -398,11 +399,11 @@ if(SERVER)then
 			ply:SetPlayerColor(ply.JackyOriginalColor)
 		end
 
-        local iffCon = GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
-        if (iffCon == 0 or iffCon == 2) then 
-            ply:SetNetworkedInt("JackyIFFTag", 0)
-        end
-        
+		local iffCon=GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
+		if(iffCon==0 or iffCon==2)then 
+			ply:SetNetworkedInt("JackyIFFTag", 0)
+		end
+		
 	end
 	hook.Add("DoPlayerDeath","JackaDeathHook",JackaDeathHook)
 	local function JackaControls(ply,key)
@@ -417,16 +418,16 @@ if(SERVER)then
 		end
 	end
 	hook.Add("KeyRelease","JackaSentryControlsN",JackaControlsN)
-    local function JIDS_OnTeamChange(ply)
-        local iffCon = GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
-        if (iffCon == 1 or iffCon == 2) then 
-            ply:SetNetworkedInt("JackyIFFTag", 0)
-        end
-    end
-    hook.Add("OnPlayerChangedTeam","JIDS_IFFTagRemoval", JIDS_OnTeamChange)
-    
-    --Convars
-    CreateConVar("jids_iff_permanence", "0", FCVAR_LUA_SERVER, "Should IFF's drop on death or team change. 0=Death, 1=TC, 2=Death+TC, 3=Never (user must drop)")
+	local function JIDS_OnTeamChange(ply)
+		local iffCon=GetConVar("jids_iff_permanence"):GetInt() -- 0 is on death, 1=TC, 2=Death+TC, 3=Never
+		if(iffCon==1 or iffCon==2)then 
+			ply:SetNetworkedInt("JackyIFFTag", 0)
+		end
+	end
+	hook.Add("OnPlayerChangedTeam","JIDS_IFFTagRemoval", JIDS_OnTeamChange)
+	
+	--Convars
+	CreateConVar("jids_iff_permanence", "0", FCVAR_LUA_SERVER, "Should IFF's drop on death or team change. 0=Death, 1=TC, 2=Death+TC, 3=Never (user must drop)")
 
 	-------------
 	--- OLD OPSQUADS CODE ---
@@ -1879,6 +1880,21 @@ if(SERVER)then
 			ent:EmitSound("weapons/c4/c4_plant.wav",60,120)
 			ent:EmitSound("snd_jack_minearm.wav",60,100)
 		end
+	end)
+	net.Receive("JMod_UniCrate",function(ln,ply)
+		local box=net.ReadEntity()
+		local class=net.ReadString()
+		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or !box.Items[class] or box.Items[class]<=0 then return end
+		box.Items[class]=(box.Items[class]>1) and (box.Items[class] - 1) or nil
+		local ent=ents.Create(class)
+		ent:SetPos(box:GetPos())
+		ent:SetAngles(box:GetAngles())
+		ent:Spawn()
+		ply:PickupObject(ent)
+		timer.Simple(0, function() box:SetItemCount(box:GetItemCount() - math.max(ent:GetPhysicsObject():GetVolume()/1000, 1)) end)
+		box.NextLoad=CurTime()+2
+		box:EmitSound("Ammo_Crate.Close")
+		box:CalcWeight()
 	end)
 	--[[
 	concommand.Add("damnit",function(ply,cmd,args)

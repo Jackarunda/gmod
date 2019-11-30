@@ -3,8 +3,8 @@ include('shared.lua')
 SWEP.PrintName			= "Stick of Dynamite"			// 'Nice' Weapon name (Shown on HUD)	
 SWEP.Slot				= 4							// Slot in the weapon selection menu
 SWEP.SlotPos			= 1							// Position in the slot
-SWEP.DrawWeaponInfoBox  = false
-SWEP.DrawCrosshair      = false --crosshairs are for big loose pussies
+SWEP.DrawWeaponInfoBox =false
+SWEP.DrawCrosshair	 =false --crosshairs are for big loose pussies
 SWEP.BounceWeaponIcon=false
 
 // Override this in your SWEP to set the icon in the weapon selection

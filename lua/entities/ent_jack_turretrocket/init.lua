@@ -24,8 +24,8 @@ function ENT:Initialize()
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:SetCollisionGroup(COLLISION_GROUP_NONE)
 	self.Entity:SetUseType(SIMPLE_USE)
-	local phys = self.Entity:GetPhysicsObject()
-	if phys:IsValid() then
+	local phys=self.Entity:GetPhysicsObject()
+	if phys:IsValid()then
 		phys:Wake()
 		phys:SetMass(15)
 		--phys:EnableGravity(false)

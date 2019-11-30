@@ -26,7 +26,7 @@ ENT.MechanicsSizeMod=1
 ENT.TargetOrganics=true
 ENT.TargetSynthetics=false
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_turret_pistol")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)

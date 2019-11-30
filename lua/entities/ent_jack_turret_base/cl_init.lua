@@ -485,7 +485,7 @@ function ENT:OpenTheMenu(tab)
 	end
 	--]]
 	
-	local ammobutton = vgui.Create("Button",MainPanel)
+	local ammobutton=vgui.Create("Button",MainPanel)
 	ammobutton:SetSize(80,25)
 	ammobutton:SetPos(10,237)
 	ammobutton:SetText("Ammunition")
@@ -495,7 +495,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTurretAmmo",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local battbutton = vgui.Create("Button",MainPanel)
+	local battbutton=vgui.Create("Button",MainPanel)
 	battbutton:SetSize(80,25)
 	battbutton:SetPos(100,237)
 	battbutton:SetText("Electricity")
@@ -505,7 +505,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTurretBattery",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local exitbutton = vgui.Create("Button",MainPanel)
+	local exitbutton=vgui.Create("Button",MainPanel)
 	exitbutton:SetSize(80,25)
 	exitbutton:SetPos(10,270)
 	exitbutton:SetText("Exit")
@@ -529,7 +529,7 @@ function ENT:OpenTheMenu(tab)
 		surface.DrawRect(0,0,PowerPanel:GetWide(),PowerPanel:GetTall())
 	end
 	
-	local powerbutton = vgui.Create("Button",MainPanel)
+	local powerbutton=vgui.Create("Button",MainPanel)
 	powerbutton:SetSize(80,25)
 	powerbutton:SetPos(100,270)
 	if(On)then
@@ -547,7 +547,7 @@ function ENT:OpenTheMenu(tab)
 		end
 	end
 	
-	local syncbutton = vgui.Create("Button",MainPanel)
+	local syncbutton=vgui.Create("Button",MainPanel)
 	syncbutton:SetSize(80,25)
 	syncbutton:SetPos(10,303)
 	if not(tab.IFFUser)then
@@ -561,7 +561,7 @@ function ENT:OpenTheMenu(tab)
 		RunConsoleCommand("JackaTurretIFF",tostring(self:GetNetworkedInt("JackIndex")))
 	end
 	
-	local buttbutton = vgui.Create("Button",MainPanel)
+	local buttbutton=vgui.Create("Button",MainPanel)
 	buttbutton:SetSize(170,25)
 	buttbutton:SetPos(10,333)
 	buttbutton:SetText("Set Upright")

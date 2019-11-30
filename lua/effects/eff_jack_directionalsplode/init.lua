@@ -3,7 +3,7 @@
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	local Nermul=data:GetNormal()
@@ -29,7 +29,7 @@ function EFFECT:Init(data)
 		return
 	end
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 	
 		for i=0,75*Scayul do
 			local sprite
@@ -47,7 +47,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/mat_jack_smoke3"
 			end
-			local particle = emitter:Add(sprite, vOffset)
+			local particle=emitter:Add(sprite, vOffset)
 			particle:SetVelocity((math.Rand(0,3000)*VectorRand()*Scayul+Nermul*math.Rand(-400,9000)*Scayul)*10)
 			particle:SetAirResistance(7000)
 			particle:SetGravity(VectorRand()*math.Rand(0,10))
@@ -66,8 +66,8 @@ function EFFECT:Init(data)
 		end
 		
 		for i=0, 10*Scayul^2 do
-			local Debris = emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
-			if (Debris) then
+			local Debris=emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
+			if(Debris)then
 				Debris:SetVelocity(VectorRand()*math.Rand(75,500)*Scayul^0.5+Nermul*math.Rand(100,1500)*Scayul^0.5)
 				Debris:SetDieTime(3*math.random(0.6,1))
 				Debris:SetStartAlpha(255)
@@ -84,13 +84,13 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		for i = 0, 20*Scayul^2 do
+		for i=0, 20*Scayul^2 do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
-			local particle = emitter:Add("sprites/mat_jack_nicespark", Pos)
+			local particle=emitter:Add("sprites/mat_jack_nicespark", Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(100, 1000)*Scayul+Nermul*math.Rand(500,3000)*Scayul)
 				
 				particle:SetLifeTime(0)
@@ -118,13 +118,13 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		for i = 0, 10*Scayul^2 do
+		for i=0, 10*Scayul^2 do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
-			local particle = emitter:Add("sprites/mat_jack_nicespark", Pos)
+			local particle=emitter:Add("sprites/mat_jack_nicespark", Pos)
 			
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(Nermul*math.Rand(20,3000)*Scayul)
 				
 				particle:SetLifeTime(0)

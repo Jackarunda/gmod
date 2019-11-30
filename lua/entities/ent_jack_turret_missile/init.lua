@@ -41,7 +41,7 @@ ENT.TargetOrganics=false
 ENT.TargetSynthetics=true
 ENT.MissileLocked=false
 function ENT:SpawnFunction(ply,tr)
-	local SpawnPos=tr.HitPos + tr.HitNormal*16
+	local SpawnPos=tr.HitPos+tr.HitNormal*16
 	local ent=ents.Create("ent_jack_turret_missile")
 	ent:SetPos(SpawnPos)
 	ent:SetNetworkedEntity("Owenur",ply)
@@ -56,7 +56,7 @@ function ENT:SpawnFunction(ply,tr)
 	if(Settings.MaxVelocity<7500)then
 		Settings.MaxVelocity=7500
 	end
-    physenv.SetPerformanceSettings(Settings)
+	physenv.SetPerformanceSettings(Settings)
 	return ent
 end
 local function GetCenterMass(ent)

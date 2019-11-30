@@ -1,0 +1,128 @@
+-- Jackarunda 2019
+AddCSLuaFile()
+ENT.Type="anim"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod - EZ"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Grenade Base"
+ENT.Spawnable=false
+
+ENT.Model = "models/weapons/w_grenade.mdl"
+ENT.Material = nil
+ENT.ModelScale = nil
+ENT.Hints = {"grenade"}
+
+ENT.Mass = 15
+ENT.ImpactSound = "Grenade.ImpactHard"
+ENT.Pin = "ent_jack_spoon"
+
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModEZstorable=true
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"State")
+end
+
+if(SERVER)then
+
+	function ENT:SpawnFunction(ply,tr)
+		local SpawnPos=tr.HitPos+tr.HitNormal*20
+		local ent=ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0,0,0))
+		ent:SetPos(SpawnPos)
+		ent.Owner=ply
+		ent:Spawn()
+		ent:Activate()
+		return ent
+	end
+	
+	function ENT:Initialize()
+		self:SetModel(self.Model)
+		if self.Material then self:SetMaterial(self.Material) end
+		if self.ModelScale then self:SetModelScale(self.ModelScale,0) end
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(ONOFF_USE)
+		---
+		timer.Simple(.01,function()
+			self:GetPhysicsObject():SetMass(self.Mass)
+			self:GetPhysicsObject():Wake()
+		end)
+		---
+		self:SetState(JMOD_EZ_STATE_OFF)
+	end
+	
+	function ENT:PhysicsCollide(data,physobj)
+		if(data.DeltaTime>0.2 and data.Speed>30)then
+			self:EmitSound(self.ImpactSound)
+		end
+	end
+	
+	function ENT:OnTakeDamage(dmginfo)
+		if(self.Exploded)then return end
+		if(dmginfo:GetInflictor()==self)then return end
+		self:TakePhysicsDamage(dmginfo)
+		local Dmg=dmginfo:GetDamage()
+		if(Dmg>=4)then
+			local Pos,State,DetChance=self:GetPos(),self:GetState(),0
+			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end
+			if(math.Rand(0,1)<DetChance)then self:Detonate() end
+			if((math.random(1,10)==3)and not(State==JMOD_EZ_STATE_BROKEN))then
+				sound.Play("Metal_Box.Break",Pos)
+				self:SetState(JMOD_EZ_STATE_BROKEN)
+				SafeRemoveEntityDelayed(self,10)
+			end
+		end
+	end
+	
+	function ENT:Use(activator,activatorAgain,onOff)
+		local Dude=activator or activatorAgain
+		self.Owner=Dude
+		local Time=CurTime()
+		if(tobool(onOff))then
+			local State=self:GetState()
+			if(State<0)then return end
+			local Alt=Dude:KeyDown(IN_WALK)
+			if(State==JMOD_EZ_STATE_OFF and Alt)then
+				self:Prime()
+			end
+			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
+			JMod_ThrowablePickup(Dude,self)
+		end
+	end
+	
+	function ENT:Think()
+		local State,Time=self:GetState(),CurTime()
+		if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
+			if self.Pin then
+				local Spewn=ents.Create(self.Pin)
+				Spewn:SetPos(self:GetPos())
+				Spewn:Spawn()
+				Spewn:Activate()
+				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+				self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+			end
+			self:Arm()
+		end
+	end
+	
+	function ENT:Prime()
+		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:EmitSound("weapons/pinpull.wav",60,100)
+		self:SetBodygroup(1,1)
+	end
+	
+	function ENT:Arm()
+		self:SetBodygroup(2,1)
+		self:SetState(JMOD_EZ_STATE_ARMED)
+	end
+	
+	function ENT:Detonate()
+		if(self.Exploded)then return end
+		self.Exploded=true
+		self:Remove()
+	end
+	
+end
