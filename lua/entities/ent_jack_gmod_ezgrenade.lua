@@ -95,20 +95,16 @@ if(SERVER)then
 	
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
-		if(State==JMOD_EZ_STATE_PRIMED)then
-			if not(self:IsPlayerHolding())then
-				if self.Pin then
-					local Spewn=ents.Create(self.Pin)
-					Spewn:SetPos(self:GetPos())
-					Spewn:Spawn()
-					Spewn:Activate()
-					Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
-					self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
-				end
-				self:Arm()
+		if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
+			if self.Pin then
+				local Spewn=ents.Create(self.Pin)
+				Spewn:SetPos(self:GetPos())
+				Spewn:Spawn()
+				Spewn:Activate()
+				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+				self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
 			end
-			self:NextThink(Time+.1)
-			return true
+			self:Arm()
 		end
 	end
 	
