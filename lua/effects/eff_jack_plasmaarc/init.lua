@@ -25,7 +25,7 @@ function EFFECT:Think()
 end
 function EFFECT:Render()
 	 self.Entity:SetRenderBoundsWS(self.StartPos,self.EndPos)
-	Beamtwo=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
+	local Beamtwo=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
 		[ "$basetexture" ]	= "sprites/spotlight",
 		[ "$additive" ]		= "1",
 		[ "$vertexcolor" ]	= "1",

@@ -77,7 +77,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>2000)then
+			if((data.Speed>2000)and not((data.HitEntity.IsPlayerHolding)and(data.HitEntity:IsPlayerHolding())))then
 				self:Destroy()
 			end
 		end
@@ -295,7 +295,10 @@ if(SERVER)then
 							if((StringParts[1])and(StringParts[1]=="FUNC"))then
 								local FuncName=StringParts[2]
 								if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-									JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+									local Ent=JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+									if(Ent)then
+										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
+									end
 								else
 									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
 								end
@@ -306,6 +309,7 @@ if(SERVER)then
 								Ent.Owner=ply
 								Ent:Spawn()
 								Ent:Activate()
+								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 							end
 							self:SetGas(math.Clamp(Gas-5*math.Rand(0,1)^2,0,self.MaxGas))
 							self:SetElectricity(math.Clamp(Elec-5*math.Rand(0,1)^2,0,self.MaxElectricity))
