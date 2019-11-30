@@ -12,6 +12,8 @@ ENT.Material = nil
 ENT.ModelScale = nil
 ENT.Hints = {"grenade"}
 
+ENT.HardThrowStr = 600
+ENT.SoftThrowStr = 200
 ENT.Mass = 15
 ENT.ImpactSound = "Grenade.ImpactHard"
 ENT.Pin = "ent_jack_spoon"
@@ -90,7 +92,7 @@ if(SERVER)then
 				self:Prime()
 			end
 			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
-			JMod_ThrowablePickup(Dude,self)
+			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end
 	
