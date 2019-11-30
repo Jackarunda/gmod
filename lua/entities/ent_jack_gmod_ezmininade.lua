@@ -30,7 +30,7 @@ if(SERVER)then
 	
 		self.Entity:TakePhysicsDamage(dmginfo)
 		
-		if dmginfo:GetInflictor() != self and dmginfo:GetDamage() >= 5 and self:GetState() != JMOD_EZ_STATE_BROKEN then
+		if dmginfo:GetInflictor() != self and dmginfo:GetDamage() >= 5 and !self.Exploded and self:GetState() != JMOD_EZ_STATE_BROKEN then
 			self:EmitSound("physics/metal/metal_box_impact_bullet2.wav", 75, 200)
 			self:SetState(JMOD_EZ_STATE_BROKEN)
 			local eff = EffectData()
