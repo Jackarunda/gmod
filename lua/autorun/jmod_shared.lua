@@ -1337,6 +1337,14 @@ JMod_EZnutrientBoxSize=100
 JMod_EZcrateSize=15
 JMod_EZpartsCrateSize=15
 JMod_EZnutrientsCrateSize=15
+
+JMOD_EZ_STATE_BROKEN 	= -1
+JMOD_EZ_STATE_OFF 		= 0
+JMOD_EZ_STATE_PRIMED 	= 1
+JMOD_EZ_STATE_ARMING 	= 2
+JMOD_EZ_STATE_ARMED		= 3
+JMOD_EZ_STATE_WARMING	= 4
+
 -- TODO
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
