@@ -59,10 +59,10 @@ if(SERVER)then
 	
 	function ENT:Arm()
 		self:SetState(JMOD_EZ_STATE_ARMING)
+		self:SetBodygroup(2,1)
 		timer.Simple(1, function()
 			if IsValid(self) then
 				self:EmitSound("snd_jack_minearm.wav",60,110)
-				self:SetBodygroup(2,1)
 				self:SetState(JMOD_EZ_STATE_ARMED)
 			end
 		end)
