@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=12,
+		Version=13,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -83,11 +83,20 @@ function JMod_InitGlobalConfig()
 				["resource crate"]={
 					"ent_jack_gmod_ezcrate"
 				},
-				["landmine crate"]={
-					"ent_jack_gmod_ezcrate_landmines"
+				["general purpose crate"]={
+					"ent_jack_gmod_ezcrate_uni"
 				},
-				["detpack crate"]={
-					"ent_jack_gmod_ezcrate_detpacks"
+				["frag grenades"]={
+					{"ent_jack_gmod_ezfragnade",10}
+				},
+				["mini grenades"]={
+					{"ent_jack_gmod_eznade_impact",5},
+					{"ent_jack_gmod_eznade_proximity",5},
+					{"ent_jack_gmod_eznade_remote",5},
+					{"ent_jack_gmod_eznade_timed",5}
+				},
+				["timebombs"]={
+					{"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
 					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
@@ -121,28 +130,7 @@ function JMod_InitGlobalConfig()
 				},
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
-				},
-				["grenades"]={
-					{"ent_jack_gmod_eznade_impact",2},
-					{"ent_jack_gmod_eznade_proximity",2},
-					{"ent_jack_gmod_eznade_remote",2},
-					{"ent_jack_gmod_eznade_timed",2},
-				},
-				["impact grenades"]={
-					{"ent_jack_gmod_eznade_impact",8}
-				},
-				["proximity grenades"]={
-					{"ent_jack_gmod_eznade_proximity",8}
-				},
-				["remote grenades"]={
-					{"ent_jack_gmod_eznade_remote",8}
-				},
-				["timed grenades"]={
-					{"ent_jack_gmod_eznade_timed",8}
-				},
-				["timed charges"]={
-					{"ent_jack_gmod_eztimedcharge",4}
-				},
+				}
 			},
 			RestrictedPackages={"antimatter"},
 			RestrictedPackageShipTime=600,
@@ -153,8 +141,7 @@ function JMod_InitGlobalConfig()
 			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
 			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
 			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
-			["EZ Landmine Crate"]={"ent_jack_gmod_ezcrate_landmines",{parts=50},1},
-			["EZ Detpack Crate"]={"ent_jack_gmod_ezcrate_detpacks",{parts=50},1},
+			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
@@ -169,14 +156,23 @@ function JMod_InitGlobalConfig()
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
 			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}}
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}},
+			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5}},
+			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3}},
+			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3}},
+			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3}},
+			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
 	if(FileContents)then
 		local Existing=util.JSONToTable(FileContents)
-		if((Existing)and(Existing.Version)and(Existing.Version==NewConfig.Version))then
-			JMOD_CONFIG=util.JSONToTable(FileContents)
+		if((Existing)and(Existing.Version))then
+			if(Existing.Version==NewConfig.Version)then
+				JMOD_CONFIG=util.JSONToTable(FileContents)
+			else
+				file.Write("jmod_config_OLD.txt",FileContents)
+			end
 		end
 	end
 	if not(JMOD_CONFIG)then

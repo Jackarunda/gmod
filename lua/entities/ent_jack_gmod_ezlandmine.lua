@@ -40,6 +40,7 @@ if(SERVER)then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
+		self:GetPhysicsObject():SetMass(10)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(10)

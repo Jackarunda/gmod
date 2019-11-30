@@ -9,7 +9,6 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
-ENT.JModEZtimedNade=true
 ENT.JModEZstorable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_PRIMED,STATE_ARMED=-1,0,1,2
@@ -41,7 +40,7 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(ONOFF_USE)
 		---
-		timer.Simple(.01,function()
+		timer.Simple(0,function()
 			self:GetPhysicsObject():SetMass(15)
 			self:GetPhysicsObject():Wake()
 		end)
