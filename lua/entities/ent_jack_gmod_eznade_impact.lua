@@ -20,6 +20,16 @@ if(SERVER)then
 			BaseClass.PhysicsCollide(self, data, physobj)
 		end
 	end
+	
+	function ENT:Arm()
+		self:SetState(JMOD_EZ_STATE_ARMING)
+		timer.Simple(0.2, function()
+			if IsValid(self) then
+				self:SetState(JMOD_EZ_STATE_ARMED)
+			end
+		end)
+	end
+	
 elseif(CLIENT)then
 	language.Add("ent_jack_gmod_eznade_impact","EZminiNade-Impact")
 end
