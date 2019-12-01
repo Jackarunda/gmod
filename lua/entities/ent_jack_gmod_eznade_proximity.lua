@@ -95,7 +95,7 @@ if(SERVER)then
 	end
 	function ENT:CanSee(ent)
 		if not(IsValid(ent))then return false end
-		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())
+		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())+vector_up
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
