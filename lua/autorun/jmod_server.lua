@@ -1797,30 +1797,58 @@ if(SERVER)then
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
 		local LoosenThreshold,DestroyThreshold=400*power,100*power
-		for k,prop in pairs(ents.FindInSphere(pos,100*power))do
-			local Phys=prop:GetPhysicsObject()
-			if(not(prop==blaster)and(IsValid(Phys)))then
-				local PropPos=prop:LocalToWorld(prop:OBBCenter())
-				if(prop:Visible(blaster))then
-					local Mass=Phys:GetMass()
-					if(Mass<=DestroyThreshold)then
+		
+		local allProps = ents.FindInSphere(pos,100*power)
+		local ignored = {}
+		
+		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
+		for _, prop in pairs(allProps) do
+			if prop != blaster and prop:GetPhysicsObject():IsValid() and prop:GetPhysicsObject():GetMass() <= LoosenThreshold then
+				table.insert(ignored, prop)
+			end
+		end
+		table.insert(ignored, blaster)
+		
+		for _, prop in pairs(allProps) do
+		
+			local physObj = prop:GetPhysicsObject()
+			local propPos = prop:LocalToWorld(prop:OBBCenter())
+		
+			if prop != blaster and physObj:IsValid() then
+			
+				local mass = physObj:GetMass()
+			
+				local tr = util.TraceLine({
+					startpos = blaster:GetPos(),
+					endpos = propPos,
+					filter = ignored
+				})
+				if table.HasValue(ignored, prop) or (IsValid(tr.Entity) and tr.Entity == prop) then
+					if mass <= DestroyThreshold then
 						SafeRemoveEntity(prop)
-					elseif(Mass<=LoosenThreshold)then
-						Phys:EnableMotion(true)
+					elseif mass <= LoosenThreshold then
+						physObj:EnableMotion(true)
 						constraint.RemoveAll(prop)
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
 					else
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
 					end
 				end
 			end
 		end
 	end
+	
 	function JMod_BlastDoors(blaster,pos,power)
 		for k,door in pairs(ents.FindInSphere(pos,50*power))do
-			if((blaster:Visible(door))and(JMod_IsDoor(door)))then
-				local Vel=(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000
-				JMod_BlastThatDoor(door,Vel)
+			if JMod_IsDoor(door) then
+				local tr = util.TraceLine({
+					startpos = blaster:GetPos(),
+					endpos = door:LocalToWorld(door:OBBCenter()),
+					filter = blaster
+				})
+				if IsValid(tr.Entity) and tr.Entity == door then
+					JMod_BlastThatDoor(door,(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
+				end
 			end
 		end
 	end
