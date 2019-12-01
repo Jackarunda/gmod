@@ -1818,12 +1818,16 @@ if(SERVER)then
 			
 				local mass = physObj:GetMass()
 			
+				local tbl = table.Copy(ignored)
+				table.RemoveByValue(tbl, prop)
+				
 				local tr = util.TraceLine({
 					startpos = blaster:GetPos(),
 					endpos = propPos,
-					filter = ignored
+					filter = tbl
 				})
-				if table.HasValue(ignored, prop) or (IsValid(tr.Entity) and tr.Entity == prop) then
+				
+				if (IsValid(tr.Entity) and tr.Entity == prop) then
 					if mass <= DestroyThreshold then
 						SafeRemoveEntity(prop)
 					elseif mass <= LoosenThreshold then
