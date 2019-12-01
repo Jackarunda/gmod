@@ -90,10 +90,11 @@ function ENT:Use(activator,caller)
 		if(type(item)~="string")then ClassName=item[1];Num=item[2] end
 		local StringParts=string.Explode(" ",ClassName)
 		for i=1,Num do
+			local Ent=nil
 			if((StringParts[1])and(StringParts[1]=="FUNC"))then
 				local FuncName=StringParts[2]
 				if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-					JMOD_LUA_CONFIG.BuildFuncs[FuncName](activator,Pos+VectorRand()*math.Rand(0,30),VectorRand():Angle())
+					Ent=JMOD_LUA_CONFIG.BuildFuncs[FuncName](activator,Pos+VectorRand()*math.Rand(0,30),VectorRand():Angle())
 				else
 					activator:PrintMessage(HUD_PRINTTALK,"JMOD RADIO BOX ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
 				end
@@ -103,6 +104,11 @@ function ENT:Use(activator,caller)
 				Yay:SetAngles(VectorRand():Angle())
 				Yay:Spawn()
 				Yay:Activate()
+				Ent=Yay
+			end
+			if(Ent)then
+				Ent.Owner=activator
+				if(Ent.SetOwner)then Ent:SetOwner(activator) end
 			end
 		end
 	end
