@@ -1821,11 +1821,7 @@ if(SERVER)then
 				local tbl = table.Copy(ignored)
 				table.RemoveByValue(tbl, prop)
 				
-				local tr = util.TraceLine({
-					startpos = blaster:GetPos(),
-					endpos = propPos,
-					filter = tbl
-				})
+				local tr = util.QuickTrace(pos, propPos - pos, tbl)
 				
 				if (IsValid(tr.Entity) and tr.Entity == prop) then
 					if mass <= DestroyThreshold then
@@ -1841,15 +1837,10 @@ if(SERVER)then
 			end
 		end
 	end
-	
 	function JMod_BlastDoors(blaster,pos,power)
 		for k,door in pairs(ents.FindInSphere(pos,50*power))do
 			if JMod_IsDoor(door) then
-				local tr = util.TraceLine({
-					startpos = blaster:GetPos(),
-					endpos = door:LocalToWorld(door:OBBCenter()),
-					filter = blaster
-				})
+				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
 				if IsValid(tr.Entity) and tr.Entity == door then
 					JMod_BlastThatDoor(door,(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
 				end
