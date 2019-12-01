@@ -108,7 +108,7 @@ function ENT:Use(activator,caller)
 			end
 			if(Ent)then
 				Ent.Owner=activator
-				if(Ent.SetOwner)then Ent:SetOwnwer(activator) end
+				if(Ent.SetOwner)then Ent:SetOwner(activator) end
 			end
 		end
 	end
