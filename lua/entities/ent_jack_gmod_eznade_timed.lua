@@ -7,8 +7,8 @@ ENT.PrintName="EZminiNade-Timed"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_ylw"
-ENT.MiniNadeDamageMin = 100
-ENT.MiniNadeDamageMax = 150
+ENT.MiniNadeDamageMin = 80
+ENT.MiniNadeDamageMax = 120
 
 local BaseClass = baseclass.Get(ENT.Base)
 

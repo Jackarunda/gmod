@@ -176,6 +176,7 @@ if(SERVER)then
 	end
 	function ENT:ShouldAttack(ent)
 		if not(IsValid(ent))then return false end
+		if(ent:IsWorld())then return false end
 		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
 		if(ent:IsPlayer())then
 			PlayerToCheck=ent

@@ -7,8 +7,8 @@ ENT.PrintName="EZminiNade-Proximity"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_red"
-ENT.MiniNadeDamageMin = 50
-ENT.MiniNadeDamageMax = 70
+ENT.MiniNadeDamageMin = 60
+ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "friends"}
 
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
@@ -32,6 +32,7 @@ if(SERVER)then
 	
 	function ENT:ShouldAttack(ent)
 		if not(IsValid(ent))then return false end
+		if(ent:IsWorld())then return false end
 		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
 		if(ent:IsPlayer())then
 			PlayerToCheck=ent

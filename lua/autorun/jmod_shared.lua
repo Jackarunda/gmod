@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=13,
+		Version=14,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -128,6 +128,9 @@ function JMod_InitGlobalConfig()
 				["detpacks"]={
 					{"ent_jack_gmod_ezdetpack",8}
 				},
+				["slams"]={
+					{"ent_jack_gmod_ezslam",5}
+				},
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
 				}
@@ -162,6 +165,7 @@ function JMod_InitGlobalConfig()
 			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3}},
 			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3}},
 			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
+			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -1251,6 +1255,7 @@ local Hints={
 	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["binding"]="remember, console commands can be bound to a key",
 	["detpack stick"]="hold E on detpack then release E to stick the detpack",
+	["slam stick"]="hold E on SLAM then release E to stick the SLAM",
 	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
 	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
 	["afh"]="E to enter and get healed",
