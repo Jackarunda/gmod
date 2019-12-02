@@ -1833,8 +1833,99 @@ if(SERVER)then
 		Sploom:Activate()
 		Sploom:Fire("explode","",0)
 	end
+	local SurfaceHardness={
+		[MAT_METAL]=.95,[MAT_COMPUTER]=.95,[MAT_VENT]=.95,[MAT_GRATE]=.95,[MAT_FLESH]=.5,[MAT_ALIENFLESH]=.3,
+		[MAT_SAND]=.1,[MAT_DIRT]=.3,[MAT_GRASS]=.2,[74]=.1,[85]=.2,[MAT_WOOD]=.5,[MAT_FOLIAGE]=.5,
+		[MAT_CONCRETE]=.9,[MAT_TILE]=.8,[MAT_SLOSH]=.05,[MAT_PLASTIC]=.3,[MAT_GLASS]=.6
+	}
+	function JMod_RicPenBullet(ent,pos,dir,dmg,doBlasts,wreckShit,num) -- Slayer Ricocheting/Penetrating Bullets FTW
+		if not(IsValid(ent))then return end
+		if((num)and(num>10))then return end
+		local Attacker=ent.Owner or ent or game.GetWorld()
+		ent:FireBullets({
+			Attacker=Attacker,
+			Damage=dmg,
+			Force=dmg,
+			Num=1,
+			Tracer=1,
+			TracerName="",
+			Dir=dir,
+			Spread=Vector(0,0,0),
+			Src=pos
+		})
+		local initialTrace=util.TraceLine({
+			start=pos,
+			endpos=pos+dir*50000,
+			filter={ent}
+		})
+		if not(initialTrace.Hit)then return end
+		local AVec,IPos,TNorm,SMul=initialTrace.Normal,initialTrace.HitPos,initialTrace.HitNormal,SurfaceHardness[initialTrace.MatType]
+		if(doBlasts)then
+			util.BlastDamage(ent,Attacker,IPos+TNorm*2,dmg/3,dmg/4)
+			timer.Simple(0,function()
+				local Tr=util.QuickTrace(IPos+TNorm,-TNorm*20)
+				if(Tr.Hit)then util.Decal("FadingScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+			end)
+		end
+		if((wreckShit)and not(initialTrace.HitWorld))then
+			local Phys=initialTrace.Entity:GetPhysicsObject()
+			if((IsValid(Phys))and(Phys.GetMass))then
+				local Mass,Thresh=Phys:GetMass(),dmg/2
+				if(Mass<=Thresh)then
+					constraint.RemoveAll(initialTrace.Entity)
+					Phys:EnableMotion(true)
+					Phys:Wake()
+					Phys:ApplyForceOffset(-AVec*dmg*2,IPos)
+				end
+			end
+		end
+		---
+		if not(SMul)then SMul=.5 end
+		local ApproachAngle=-math.deg(math.asin(TNorm:DotProduct(AVec)))
+		local MaxRicAngle=60*SMul
+		if(ApproachAngle>(MaxRicAngle*1.05))then -- all the way through (hot)
+			local MaxDist,SearchPos,SearchDist,Penetrated=(dmg/SMul)*.15,IPos,5,false
+			while((not(Penetrated))and(SearchDist<MaxDist))do
+				SearchPos=IPos+AVec*SearchDist
+				local PeneTrace=util.QuickTrace(SearchPos,-AVec*SearchDist)
+				if((not(PeneTrace.StartSolid))and(PeneTrace.Hit))then
+					Penetrated=true
+				else
+					SearchDist=SearchDist+5
+				end
+			end
+			if(Penetrated)then
+				ent:FireBullets({
+					Attacker=Attacker,
+					Damage=1,
+					Force=1,
+					Num=1,
+					Tracer=0,
+					TracerName="",
+					Dir=-AVec,
+					Spread=Vector(0,0,0),
+					Src=SearchPos+AVec
+				})
+				if(doBlasts)then
+					util.BlastDamage(ent,Attacker,SearchPos+AVec*2,dmg/2,dmg/4)
+					timer.Simple(0,function()
+						local Tr=util.QuickTrace(SearchPos+AVec,-AVec*20)
+						if(Tr.Hit)then util.Decal("FadingScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+					end)
+				end
+				local ThroughFrac=1-SearchDist/MaxDist
+				JMod_RicPenBullet(ent,SearchPos+AVec,AVec,dmg*ThroughFrac*.7,doBlasts,wreckShit,(num or 0)+1)
+			end
+		elseif(ApproachAngle<(MaxRicAngle*.95))then -- ping whiiiizzzz
+			if(SERVER)then sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",IPos,60,math.random(90,100)) end
+			local NewVec=AVec:Angle()
+			NewVec:RotateAroundAxis(TNorm,180)
+			NewVec=NewVec:Forward()
+			JMod_RicPenBullet(ent,IPos+TNorm,-NewVec,dmg*.7,doBlasts,wreckShit,(num or 0)+1)
+		end
+	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
-	function JMod_ThrowablePickup(playa,item)
+	function JMod_ThrowablePickup(playa,item,hardstr,softstr)
 		playa:PickupObject(item)
 		local HookName="EZthrowable_"..item:EntIndex()
 		hook.Add("KeyPress",HookName,function(ply,key)
@@ -1844,11 +1935,11 @@ if(SERVER)then
 				local Phys=item:GetPhysicsObject()
 				if(key==IN_ATTACK)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*600*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass()) end
 					end)
 				elseif(key==IN_ATTACK2)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*200*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(softstr or 200)*Phys:GetMass()) end
 					end)
 				end
 			end
