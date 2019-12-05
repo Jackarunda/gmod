@@ -2,11 +2,13 @@ include("jmod_shared.lua")
 if(SERVER)then
 	util.AddNetworkString("JMod_Friends") -- ^:3
 	util.AddNetworkString("JMod_MineColor")
+	util.AddNetworkString("JMod_ArmorColor")
 	util.AddNetworkString("JMod_EZbuildKit")
 	util.AddNetworkString("JMod_EZworkbench")
 	util.AddNetworkString("JMod_Hint")
 	util.AddNetworkString("JMod_EZtimeBomb")
 	util.AddNetworkString("JMod_UniCrate")
+	util.AddNetworkString("JMod_EZarmorSync")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -237,11 +239,20 @@ if(SERVER)then
 
 	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
+	function JModEZarmorSync(ply)
+		if not(ply.EZarmor)then return end
+		net.Start("JMod_EZarmorSync")
+		net.WriteEntity(ply)
+		net.WriteTable(ply.EZarmor)
+		net.Broadcast()
+	end
 	local function JackaSpawnHook(ply)
 		ply.JModFriends=ply.JModFriends or {}
 		JackaBodyArmorUpdate(ply,"Vest",nil,nil)
 		JackaBodyArmorUpdate(ply,"Helmet",nil,nil)
 		JackaBodyArmorUpdate(ply,"Suit",nil,nil)
+		ply.EZarmor={}
+		JModEZarmorSync(ply)
 		if((ply.JackaSleepPoint)and(IsValid(ply.JackaSleepPoint)))then
 			if(ply.JackaSleepPoint.NextSpawnTime<CurTime())then
 				ply.JackaSleepPoint.NextSpawnTime=CurTime()+60
@@ -1413,7 +1424,7 @@ if(SERVER)then
 		if not((ply)and(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
-	local NextMainThink,NextNutritionThink=0,0
+	local NextMainThink,NextNutritionThink,NextArmorThink=0,0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
 		if(NextMainThink>Time)then return end
@@ -1460,6 +1471,13 @@ if(SERVER)then
 						end
 					end
 				end
+			end
+		end
+		---
+		if(NextArmorThink<Time)then
+			NextArmorThink=Time+10
+			for k,playa in pairs(player.GetAll())do
+				if(playa:Alive())then JModEZarmorSync(playa) end
 			end
 		end
 	end)
@@ -1582,7 +1600,9 @@ if(SERVER)then
 	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
-		if(txt=="*trigger*")then JMod_EZ_Remote_Trigger(ply) end
+		local lowerTxt=string.lower(txt)
+		if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
+		if(lowerTxt=="*armor*")then JMod_EZ_Remove_Armor(ply);return "" end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server
@@ -1721,6 +1741,10 @@ if(SERVER)then
 			Ent:Upgrade()
 		end
 	end)
+	concommand.Add("jmod_ez_armor",function(ply,cmd,args)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		JMod_EZ_Remove_Armor(ply)
+	end)
 	function JMod_EZ_Remote_Trigger(ply)
 		if not(IsValid(ply))then return end
 		if not(ply:Alive())then return end
@@ -1744,6 +1768,46 @@ if(SERVER)then
 		Mine:SetColor(Col)
 		if(Arm)then Mine:Arm(ply) end
 	end)
+	net.Receive("JMod_ArmorColor",function(ln,ply)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local Armor=net.ReadEntity()
+		local Col=net.ReadColor()
+		local Equip=tobool(net.ReadBit())
+		if not(IsValid(Armor))then return end
+		Armor:SetColor(Col)
+		if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
+	end)
+	local function RemoveArmorSlot(ply,slot)
+		local Info=ply.EZarmor[slot]
+		if not(Info)then return end
+		local Specs=JMod_ArmorTable[slot][Info[1]]
+		timer.Simple(math.Rand(0,.5),function()
+			ply:EmitSound("snd_jack_clothunequip.wav",60,math.random(80,120))
+		end)
+		local Ent=ents.Create(Specs.ent)
+		Ent:SetPos(ply:GetShootPos()+ply:GetAimVector()*30+VectorRand()*math.random(1,20))
+		Ent:SetAngles(AngleRand())
+		Ent.Durability=Info[2]
+		Ent:SetColor(Info[3])
+		Ent:Spawn()
+		Ent:Activate()
+		Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		ply.EZarmor[slot]=nil
+	end
+	function JMod_EZ_Equip_Armor(ply,ent)
+		if not(IsValid(ent))then return end
+		RemoveArmorSlot(ply,ent.Slot)
+		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
+		ply:EmitSound("snd_jack_clothequip.wav",60,math.random(80,120))
+		ent:Remove()
+		JModEZarmorSync(ply)
+	end
+	function JMod_EZ_Remove_Armor(ply)
+		for k,v in pairs(JMod_ArmorTable)do
+			RemoveArmorSlot(ply,k)
+		end
+		JModEZarmorSync(ply)
+	end
 	-- copied from Homicide
 	function JMod_BlastThatDoor(ent,vel)
 		local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()

@@ -212,6 +212,20 @@ if(CLIENT)then
 		end
 	end
 	usermessage.Hook("JackaBodyArmorUpdateClient",JackyArmorUpdate)
+	local EZarmorBoneTable={
+		Torso="ValveBiped.Bip01_Spine2",
+		Head="ValveBiped.Bip01_Head1",
+		LeftShoulder="ValveBiped.Bip01_L_UpperArm",
+		RightShoulder="ValveBiped.Bip01_R_UpperArm",
+		LeftForearm="ValveBiped.Bip01_L_Forearm",
+		RightForearm="ValveBiped.Bip01_R_Forearm",
+		LeftThigh="ValveBiped.Bip01_L_Thigh",
+		RightThigh="ValveBiped.Bip01_R_Thigh",
+		LeftCalf="ValveBiped.Bip01_L_Calf",
+		RightCalf="ValveBiped.Bip01_R_Calf",
+		Pelvis="ValveBiped.Bip01_Pelvis",
+		Face="ValveBiped.Bip01_Head1"
+	}
 	local function JackyArmorPlayerDraw(ply)
 		if not(IsValid(ply))then return end
 		if(ply.JackyArmor)then
@@ -295,6 +309,54 @@ if(CLIENT)then
 					ply.JackyArmor.Helmet.VisualModel:SetParent(ply)
 					ply.JackyArmor.Helmet.VisualModel:SetNoDraw(true)
 					ply.JackyArmor.Helmet.VisualModel:SetMaterial(ArmorAppearances[ply.JackyArmor.Helmet.Type])
+				end
+			end
+		end
+		if((ply.EZarmor)and(ply.EZarmorModels))then
+			for slot,info in pairs(ply.EZarmor)do
+				local Name,Durability,Colr=info[1],info[2],info[3]
+				local Specs=JMod_ArmorTable[slot][Name]
+				if(ply.EZarmorModels[slot])then
+					local Mdl=ply.EZarmorModels[slot]
+					local MdlName=Mdl:GetModel()
+					MdlName=string.Replace(MdlName,"models/models/","models/")
+					--print(MdlName,Specs.mdl)
+					if(MdlName==Specs.mdl)then
+						-- render it
+						local Index=ply:LookupBone(EZarmorBoneTable[slot])
+						if(Index)then
+							local Pos,Ang=ply:GetBonePosition(Index)
+							if((Pos)and(Ang))then
+								local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
+								Pos=Pos+Right*Specs.pos.x+Forward*Specs.pos.y+Up*Specs.pos.z
+								Ang:RotateAroundAxis(Right,Specs.ang.p)
+								Ang:RotateAroundAxis(Up,Specs.ang.y)
+								Ang:RotateAroundAxis(Forward,Specs.ang.r)
+								Mdl:SetRenderOrigin(Pos)
+								Mdl:SetRenderAngles(Ang)
+								local Mat=Matrix()
+								Mat:Scale(Specs.siz)
+								Mdl:EnableMatrix("RenderMultiply",Mat)
+								local OldR,OldG,OldB=render.GetColorModulation()
+								render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
+								Mdl:DrawModel()
+								render.SetColorModulation(OldR,OldG,OldB)
+							end
+						end
+					else
+						-- remove it
+						ply.EZarmorModels[slot]:Remove()
+						ply.EZarmorModels[slot]=nil
+					end
+				else
+					-- create it
+					local Mdl=ClientsideModel(Specs.mdl)
+					Mdl:SetModel(Specs.mdl) -- what the FUCK garry
+					Mdl:SetPos(ply:GetPos())
+					Mdl:SetMaterial(Specs.mat or "")
+					Mdl:SetParent(ply)
+					Mdl:SetNoDraw(true)
+					ply.EZarmorModels[slot]=Mdl
 				end
 			end
 		end
@@ -603,6 +665,52 @@ if(CLIENT)then
 			Frame:Close()
 		end
 	end)
+	net.Receive("JMod_ArmorColor",function()
+		local Ent,NextColorCheck=net.ReadEntity(),0
+		if not(IsValid(Ent))then return end
+		local Frame=vgui.Create("DFrame")
+		Frame:SetSize(200,200)
+		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:SetTitle("EZ Armor")
+		Frame:MakePopup()
+		local Picker
+		function Frame:Paint()
+			BlurBackground(self)
+			local Time=CurTime()
+			if(NextColorCheck<Time)then
+				if not(IsValid(Ent))then Frame:Close();return end
+				NextColorCheck=Time+.25
+				local Col=Picker:GetColor()
+				net.Start("JMod_ArmorColor")
+				net.WriteEntity(Ent)
+				net.WriteColor(Color(Col.r,Col.g,Col.b))
+				net.WriteBit(false)
+				net.SendToServer()
+			end
+		end
+		Picker=vgui.Create("DColorMixer",Frame)
+		Picker:SetPos(5,25)
+		Picker:SetSize(190,115)
+		Picker:SetAlphaBar(false)
+		Picker:SetPalette(false)
+		Picker:SetWangs(false)
+		Picker:SetColor(Ent:GetColor())
+		local Butt=vgui.Create("DButton",Frame)
+		Butt:SetPos(5,145)
+		Butt:SetSize(190,50)
+		Butt:SetText("EQUIP")
+		function Butt:DoClick()
+			local Col=Picker:GetColor()
+			net.Start("JMod_ArmorColor")
+			net.WriteEntity(Ent)
+			net.WriteColor(Color(Col.r,Col.g,Col.b))
+			net.WriteBit(true)
+			net.SendToServer()
+			Frame:Close()
+		end
+	end)
 	net.Receive("JMod_EZbuildKit",function()
 		local Buildables=net.ReadTable()
 		local Kit=net.ReadEntity()
@@ -756,15 +864,15 @@ if(CLIENT)then
 			surface.SetDrawColor(Color(255,255,255,100))
 			surface.DrawRect(0,0,w,h)
 		end
-		local tim=vgui.Create("DNumSlider", frame)
+		local tim=vgui.Create("DNumSlider",frame)
 		tim:SetText("Set Time")
-		tim:SetSize(280, 20)
+		tim:SetSize(280,20)
 		tim:SetPos(10,30)
 		tim:SetMin(10)
 		tim:SetMax(600)
 		tim:SetValue(10)
 		tim:SetDecimals(0)
-		local apply=vgui.Create("DButton", frame)
+		local apply=vgui.Create("DButton",frame)
 		apply:SetSize(100, 30)
 		apply:SetPos(100, 75)
 		apply:SetText("ARM")
@@ -776,4 +884,81 @@ if(CLIENT)then
 			frame:Close()
 		end
 	end)
+	net.Receive("JMod_EZarmorSync",function()
+		local ply=net.ReadEntity()
+		local tbl=net.ReadTable()
+		if not(IsValid(ply))then return end
+		ply.EZarmor=tbl
+		ply.EZarmorModels=ply.EZarmorModels or {}
+	end)
 end
+--[[
+ValveBiped.Bip01_Pelvis
+ValveBiped.Bip01_Spine
+ValveBiped.Bip01_Spine1
+ValveBiped.Bip01_Spine2
+ValveBiped.Bip01_Spine4
+ValveBiped.Bip01_Neck1
+ValveBiped.Bip01_Head1
+ValveBiped.forward
+ValveBiped.Bip01_R_Clavicle
+ValveBiped.Bip01_R_UpperArm
+ValveBiped.Bip01_R_Forearm
+ValveBiped.Bip01_R_Hand
+ValveBiped.Anim_Attachment_RH
+ValveBiped.Bip01_L_Clavicle
+ValveBiped.Bip01_L_UpperArm
+ValveBiped.Bip01_L_Forearm
+ValveBiped.Bip01_L_Hand
+ValveBiped.Anim_Attachment_LH
+ValveBiped.Bip01_R_Thigh
+ValveBiped.Bip01_R_Calf
+ValveBiped.Bip01_R_Foot
+ValveBiped.Bip01_R_Toe0
+ValveBiped.Bip01_L_Thigh
+ValveBiped.Bip01_L_Calf
+ValveBiped.Bip01_L_Foot
+ValveBiped.Bip01_L_Toe0
+ValveBiped.Bip01_L_Finger4
+ValveBiped.Bip01_L_Finger41
+ValveBiped.Bip01_L_Finger42
+ValveBiped.Bip01_L_Finger3
+ValveBiped.Bip01_L_Finger31
+ValveBiped.Bip01_L_Finger32
+ValveBiped.Bip01_L_Finger2
+ValveBiped.Bip01_L_Finger21
+ValveBiped.Bip01_L_Finger22
+ValveBiped.Bip01_L_Finger1
+ValveBiped.Bip01_L_Finger11
+ValveBiped.Bip01_L_Finger12
+ValveBiped.Bip01_L_Finger0
+ValveBiped.Bip01_L_Finger01
+ValveBiped.Bip01_L_Finger02
+ValveBiped.Bip01_R_Finger4
+ValveBiped.Bip01_R_Finger41
+ValveBiped.Bip01_R_Finger42
+ValveBiped.Bip01_R_Finger3
+ValveBiped.Bip01_R_Finger31
+ValveBiped.Bip01_R_Finger32
+ValveBiped.Bip01_R_Finger2
+ValveBiped.Bip01_R_Finger21
+ValveBiped.Bip01_R_Finger22
+ValveBiped.Bip01_R_Finger1
+ValveBiped.Bip01_R_Finger11
+ValveBiped.Bip01_R_Finger12
+ValveBiped.Bip01_R_Finger0
+ValveBiped.Bip01_R_Finger01
+ValveBiped.Bip01_R_Finger02
+ValveBiped.Bip01_L_Elbow
+ValveBiped.Bip01_L_Ulna
+ValveBiped.Bip01_R_Ulna
+ValveBiped.Bip01_R_Shoulder
+ValveBiped.Bip01_L_Shoulder
+ValveBiped.Bip01_R_Trapezius
+ValveBiped.Bip01_R_Wrist
+ValveBiped.Bip01_R_Bicep
+ValveBiped.Bip01_L_Bicep
+ValveBiped.Bip01_L_Trapezius
+ValveBiped.Bip01_L_Wrist
+ValveBiped.Bip01_R_Elbow
+--]]

@@ -27,6 +27,7 @@ if(SERVER)then
 			filter={self,ent,self.AttachedBomb},
 			mask=MASK_SHOT+MASK_WATER
 		})
+		print(Tr.Entity)
 		return not Tr.Hit
 	end
 	

@@ -34,6 +34,7 @@ function JMod_InitGlobalConfig()
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
 		BuildKitDeWeldSpeed=1,
+		ArmorEffectiveness=1,
 		HandGrabStrength=1,
 		BombDisarmSpeed=1,
 		ExplosionPropDestroyPower=1,
@@ -201,20 +202,255 @@ function JMod_InitGlobalConfig()
 	end
 	print("JMOD: config file loaded")
 end
+JMod_ArmorTable={
+	Torso={
+		["Light"]={
+			mdl="models/player/armor_trooper/trooper.mdl", -- tarkov
+			siz=Vector(1,1.05,.9),
+			pos=Vector(-2.5,-4.5,0),
+			ang=Angle(-90,0,90),
+			wgt=5,
+			def=30,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_ltorso"
+		},
+		["Medium-Light"]={
+			mdl="models/player/armor_paca/paca.mdl", -- tarkov
+			siz=Vector(1.05,1.05,.95),
+			pos=Vector(-3,-4.5,0),
+			ang=Angle(-90,0,90),
+			wgt=10,
+			def=40,
+			dur=400,
+			ent="ent_jack_gmod_ezarmor_mltorso"
+		},
+		["Medium"]={
+			mdl="models/player/armor_gjel/gjel.mdl", -- tarkov
+			siz=Vector(1.05,1.05,1),
+			pos=Vector(-3,-6.5,0),
+			ang=Angle(-90,0,90),
+			wgt=20,
+			def=50,
+			dur=500,
+			ent="ent_jack_gmod_ezarmor_mtorso"
+		},
+		["Medium-Heavy"]={
+			mdl="models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
+			siz=Vector(1.05,1.05,1),
+			pos=Vector(-4.5,-12,0),
+			ang=Angle(-85,0,90),
+			wgt=40,
+			def=60,
+			dur=500,
+			ent="ent_jack_gmod_ezarmor_mhtorso"
+		},
+		["Heavy"]={
+			mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_vest.mdl", -- csgo hydra
+			siz=Vector(.9,.9,1),
+			pos=Vector(-10.5,-53.5,0),
+			ang=Angle(-85,0,90),
+			wgt=80,
+			def=70,
+			dur=500,
+			ent="ent_jack_gmod_ezarmor_htorso"
+		}
+	},
+	Head={
+		["Light"]={
+			mdl="models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
+			siz=Vector(1.07,1,1.1),
+			pos=Vector(1,-2,0),
+			ang=Angle(-90,0,-90),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_lhead"
+		},
+		["Medium"]={
+			mdl="models/player/helmet_ulach_black/ulach.mdl", -- tarkov
+			siz=Vector(1.05,1,1.05),
+			pos=Vector(1,-2,0),
+			ang=Angle(-90,0,-90),
+			wgt=15,
+			def=20,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_mhead"
+		},
+		["Heavy"]={
+			mdl="models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
+			siz=Vector(1.1,1,1.1),
+			pos=Vector(1,-3,0),
+			ang=Angle(-90,0,-90),
+			wgt=20,
+			def=30,
+			dur=400,
+			ent="ent_jack_gmod_ezarmor_hhead"
+		}
+	},
+	LeftShoulder={
+		["Light"]={
+			mdl="models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
+			siz=Vector(1,1,1),
+			pos=Vector(0,0,-.5),
+			ang=Angle(-90,-90,-90),
+			wgt=5,
+			def=5,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_llshoulder"
+		},
+		["Heavy"]={
+			mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_left_armor_pad.mdl", -- csgo hydra
+			siz=Vector(1,1,1),
+			pos=Vector(-6,60,-31),
+			ang=Angle(90,-20,110),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_hlshoulder"
+		}
+	},
+	RightShoulder={
+		["Light"]={
+			mdl="models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
+			siz=Vector(1,1,1),
+			pos=Vector(0,0,.5),
+			ang=Angle(-90,-90,-90),
+			wgt=5,
+			def=5,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_lrshoulder"
+		},
+		["Heavy"]={
+			mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_right_armor_pad.mdl", -- csgo hydra
+			siz=Vector(1,1,1),
+			pos=Vector(-32,55,25),
+			ang=Angle(90,30,30),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_hrshoulder"
+		}
+	},
+	LeftForearm={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis
+			siz=Vector(1.1,1,1),
+			pos=Vector(0,0,-.5),
+			ang=Angle(0,-90,-50),
+			wgt=5,
+			def=5,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_slforearm"
+		}
+	},
+	RightForearm={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourrforearm.mdl", -- aegis
+			siz=Vector(1.1,1,1),
+			pos=Vector(-.5,0,.5),
+			ang=Angle(0,-90,50),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_srforearm"
+		}
+	},
+	LeftThigh={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
+			siz=Vector(.9,1,1.05),
+			pos=Vector(-.5,0,-1.5),
+			ang=Angle(90,-85,110),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_slthigh"
+		}
+	},
+	RightThigh={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
+			siz=Vector(.9,1,1.05),
+			pos=Vector(.5,0,1),
+			ang=Angle(90,-95,80),
+			wgt=10,
+			def=10,
+			dur=300,
+			ent="ent_jack_gmod_ezarmor_srthigh"
+		}
+	},
+	LeftCalf={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourlcalf.mdl", -- aegis
+			siz=Vector(1,1,1),
+			pos=Vector(-1.5,-1,-.5),
+			ang=Angle(-180,-83,-180),
+			wgt=5,
+			def=5,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_slcalf"
+		}
+	},
+	RightCalf={
+		["Standard"]={
+			mdl="models/snowzgmod/payday2/armour/armourrcalf.mdl", -- aegis
+			siz=Vector(1,1,1),
+			pos=Vector(-1.5,-1,.5),
+			ang=Angle(-180,-83,-180),
+			wgt=5,
+			def=5,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_srcalf"
+		}
+	},
+	Pelvis={
+		["Standard"]={
+			mdl="models/arachnit/csgoheavyphoenix/items/pelviscover.mdl", -- csgo misc
+			siz=Vector(1.5,1.4,1.8),
+			pos=Vector(71,0,-2),
+			ang=Angle(90,-90,0),
+			wgt=5,
+			def=10,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_spelvis"
+		}
+	},
+	Face={
+		["GasMask"]={
+			mdl="models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
+			siz=Vector(1,1,1),
+			pos=Vector(0,.1,0),
+			ang=Angle(100,180,90),
+			wgt=5,
+			dur=100,
+			msk="",
+			spc="nervegas_immunity",
+			ent="ent_jack_gmod_ezarmor_gasmask"
+		},
+		["BallisticMask"]={
+			mdl="models/arachnit/csgoheavyphoenix/items/mask.mdl", -- csgo misc
+			siz=Vector(1,1,1),
+			pos=Vector(14.5,-68,0),
+			ang=Angle(100,180,90),
+			wgt=5,
+			def=10,
+			dur=100,
+			msk="",
+			ent="ent_jack_gmod_ezarmor_balmask"
+		}
+	}
+}
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
-
 local ANGLE=FindMetaTable("Angle")
 function ANGLE:GetCopy()
 	return Angle(self.p,self.y,self.r)
 end
-function table.FullCopy( tab )
-
+function table.FullCopy(tab)
 	if(!tab)then return nil end
-	
 	local res={}
-	for k, v in pairs( tab ) do
+	for k, v in pairs(tab) do
 		if(type(v)=="table")then
 			res[k]=table.FullCopy(v) -- we need to go derper
 		elseif(type(v)=="Vector")then
@@ -225,9 +461,7 @@ function table.FullCopy( tab )
 			res[k]=v
 		end
 	end
-	
 	return res
-	
 end
 function jprint(...)
 	local items,printstr={...},""
@@ -1278,6 +1512,8 @@ local Hints={
 	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["disarm"]="tap E to disarm",
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
+	["armor"]="ALT+E to select color and wear armor",
+	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
