@@ -99,7 +99,7 @@ if(SERVER)then
 		end
 	end
 	
-	function ENT:PinEffect()
+	function ENT:SpoonEffect()
 		if self.SpoonEnt then
 			local Spewn=ents.Create(self.SpoonEnt)
 			if self.SpoonModel then Spewn.Model = self.SpoonModel end
@@ -132,7 +132,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
-		self:PinEffect()
+		self:SpoonEffect()
 	end
 	
 	function ENT:Detonate()

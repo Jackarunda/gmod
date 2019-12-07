@@ -17,7 +17,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
-		self:PinEffect()
+		self:SpoonEffect()
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)

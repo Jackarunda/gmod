@@ -7,8 +7,10 @@ ENT.PrintName="EZ Impact Grenade"
 ENT.Spawnable=true
 
 ENT.Model = "models/grenades/impact_grenade.mdl"
-ENT.SpoonModel = "models/codww2/equipment/no, 69 hand grenade cap.mdl"
 ENT.ModelScale = 1.5
+
+ENT.SpoonModel = "models/codww2/equipment/no, 69 hand grenade cap.mdl"
+ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 local BaseClass = baseclass.Get(ENT.Base)
 
@@ -17,11 +19,11 @@ if(SERVER)then
 	function ENT:Prime()
 		self:SetState(JMOD_EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
-		self:SetBodygroup(3,1)
+		self:SpoonEffect()
+		self:SetBodygroup(2,1)
 	end
 
 	function ENT:Arm()
-		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMING)
 		timer.Simple(0.2, function()
 			if IsValid(self) then

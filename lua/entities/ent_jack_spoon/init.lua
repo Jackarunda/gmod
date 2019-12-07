@@ -17,7 +17,7 @@ function ENT:Initialize()
 	
 	self.Entity:SetUseType(SIMPLE_USE)
 	
-	self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+	self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 	
 	local phys=self.Entity:GetPhysicsObject()
 	
