@@ -14,7 +14,7 @@ ENT.Hints = {"grenade"}
 
 ENT.HardThrowStr = 600
 ENT.SoftThrowStr = 200
-ENT.Mass = 15
+ENT.Mass = 10
 ENT.ImpactSound = "Grenade.ImpactHard"
 ENT.SpoonEnt = "ent_jack_spoon"
 ENT.SpoonModel = nil

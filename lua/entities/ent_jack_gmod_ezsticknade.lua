@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.Model = "models/grenades/stick_grenade.mdl" -- "models/mechanics/robotics/a2.mdl"
 ENT.ModelScale = 1.5
 ENT.SpoonModel = "models/grenades/stick_grenade_cap.mdl"
-ENT.HardThrowStr = 1200
+ENT.HardThrowStr = 900
 ENT.SoftThrowStr = 600
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 
