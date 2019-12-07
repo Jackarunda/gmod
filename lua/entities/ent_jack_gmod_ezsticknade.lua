@@ -6,25 +6,16 @@ ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Stick Grenade"
 ENT.Spawnable=true
 
-ENT.Model = "models/mechanics/robotics/a2.mdl" --"models/codww2/equipment/model 24 stielhandgranate with frag sleeve.mdl"
-ENT.ModelScale = 0.35
-ENT.SpoonModel = "models/codww2/equipment/model 24 stielhandgranate with frag sleeve cap.mdl"
-ENT.HardThrowStr = 900
-ENT.SoftThrowStr = 400
-ENT.JModPreferredCarryAngles=Angle(90,0,0)
+ENT.Model = "models/grenades/stick_grenade.mdl" -- "models/mechanics/robotics/a2.mdl"
+ENT.ModelScale = 1.5
+ENT.SpoonModel = "models/grenades/stick_grenade_cap.mdl"
+ENT.HardThrowStr = 1200
+ENT.SoftThrowStr = 600
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
 
 local BaseClass = baseclass.Get(ENT.Base)
 
 if(SERVER)then
-
-	util.PrecacheModel("models/codww2/equipment/model 24 stielhandgranate with frag sleeve.mdl")
-	util.AddNetworkString("JModStickNade")
-
-	function ENT:Initialize()
-		BaseClass.Initialize(self)
-		self:DrawShadow(false)
-	end
-	
 
 	function ENT:Prime()
 		self:SetState(JMOD_EZ_STATE_PRIMED)
@@ -32,13 +23,11 @@ if(SERVER)then
 	end
 
 	function ENT:Arm()
-		net.Start("JModStickNade")
-			net.WriteEntity(self)
-		net.Broadcast()
 		self:SetState(JMOD_EZ_STATE_ARMED)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
+		self:SpoonEffect()
 	end
 
 	function ENT:Detonate()
@@ -55,13 +44,13 @@ if(SERVER)then
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
-		for i=1,300 do
-			timer.Simple(i/3000,function()
+		for i=1,400 do
+			timer.Simple(i/4000,function()
 				local Dir=VectorRand()
 				Dir.z=Dir.z/5+.1
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(40,60),
+					Damage=math.random(35,50),
 					Force=math.random(1000,10000),
 					Num=1,
 					Src=SelfPos,
@@ -69,34 +58,11 @@ if(SERVER)then
 					Dir=Dir:GetNormalized(),
 					Spread=Vector(0,0,0)
 				})
-				if(i==300)then self:Remove() end
+				if(i==400)then self:Remove() end
 			end)
 		end
 	end
 	
 elseif(CLIENT)then
-
-	net.Receive("JModStickNade", function()
-		local ent = net.ReadEntity()
-		if IsValid(ent) and IsValid(ent.Deco) then ent.Deco:SetBodygroup(4, 1) end
-	end)
-
-	function ENT:Initialize()
-		self.Deco = ClientsideModel("models/codww2/equipment/model 24 stielhandgranate with frag sleeve.mdl")
-		self.Deco:SetModel("models/codww2/equipment/model 24 stielhandgranate with frag sleeve.mdl")
-		self.Deco:SetPos(self:GetPos() + self:GetForward() * 3)
-		local ang = self:GetAngles()
-		ang:RotateAroundAxis(ang:Right(), 90)
-		self.Deco:SetAngles(ang)
-		self.Deco:SetParent(self)
-	end
-	
-	function ENT:OnRemove()
-		if IsValid(self.Deco) then self.Deco:Remove() end
-	end
-
-	function ENT:Draw()
-		--self:DrawModel()
-	end
 	language.Add("ent_jack_gmod_ezsticknade","EZ Stick Grenade")
 end
