@@ -7,8 +7,8 @@ ENT.PrintName="EZminiNade-Remote"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_blu"
-ENT.MiniNadeDamageMin = 60
-ENT.MiniNadeDamageMax = 80
+ENT.MiniNadeDamageMin = 70
+ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "grenade remote", "binding"}
 ENT.JModRemoteTrigger=true
 
@@ -25,7 +25,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetState(JMOD_EZ_STATE_ARMING)
 		self:SetBodygroup(2,1)
-		timer.Simple(1, function()
+		timer.Simple(.1, function()
 			if IsValid(self) then
 				self:EmitSound("snd_jack_minearm.wav",60,110)
 				self:SetState(JMOD_EZ_STATE_ARMED)

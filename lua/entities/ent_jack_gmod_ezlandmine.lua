@@ -165,7 +165,7 @@ if(SERVER)then
 	end
 	function ENT:CanSee(ent)
 		if not(IsValid(ent))then return false end
-		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())
+		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())+vector_up
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
@@ -176,6 +176,7 @@ if(SERVER)then
 	end
 	function ENT:ShouldAttack(ent)
 		if not(IsValid(ent))then return false end
+		if(ent:IsWorld())then return false end
 		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
 		if(ent:IsPlayer())then
 			PlayerToCheck=ent

@@ -55,6 +55,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(JMOD_EZ_STATE_OFF)
+		self.NextDet=0
 	end
 	
 	function ENT:PhysicsCollide(data,physobj)
@@ -98,17 +99,20 @@ if(SERVER)then
 	
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
-		if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
-			if self.Pin then
-				local Spewn=ents.Create(self.Pin)
-				Spewn:SetPos(self:GetPos())
-				Spewn:Spawn()
-				Spewn:Activate()
-				if self.SpoonModel then Spewn:SetModel(self.SpoonModel) end
-				Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
-				self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+		if(self.CustomThink)then self:CustomThink(State,Time) end
+		if(IsValid(self))then
+			if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
+				if self.Pin then
+					local Spewn=ents.Create(self.Pin)
+					Spewn:SetPos(self:GetPos())
+					Spewn:Spawn()
+					Spewn:Activate()
+					if self.SpoonModel then Spewn:SetModel(self.SpoonModel) end
+					Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+					self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+				end
+				self:Arm()
 			end
-			self:Arm()
 		end
 	end
 	

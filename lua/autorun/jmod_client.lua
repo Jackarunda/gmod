@@ -408,6 +408,41 @@ if(CLIENT)then
 	hook.Add("PostDrawOpaqueRenderables","JackyOpSquadOpaqueDrawFunc",JackyOpSquadOpaqueDrawFunc)
 	--- END OLD OPSQUADS CODE ---
 	--- no u ---
+	local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
+		[ "$basetexture" ]    = "sprites/spotlight",
+		[ "$additive" ]        = "1",
+		[ "$vertexcolor" ]    = "1",
+		[ "$vertexalpha" ]    = "1",
+	})
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function()
+		for k,ent in pairs(ents.FindByClass("ent_jack_gmod_ezslam"))do
+			local pos=ent:GetAttachment(1).Pos
+			if(pos)then
+				local trace=util.QuickTrace(pos,ent:GetUp()*1000,ent)
+				local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
+				local Forward=-ent:GetUp()
+				pos=pos-Forward*.5
+				if(State==JMOD_EZ_STATE_ARMING)then
+					render.SetMaterial(GlowSprite)
+					render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
+					render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
+					render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
+					render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
+				elseif State==JMOD_EZ_STATE_ARMED then
+					render.SetMaterial(BeamMat)
+					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
+					if trace.Hit then
+						render.SetMaterial(GlowSprite)
+						render.DrawSprite(trace.HitPos,8,8,Color(255,0,0,100))
+						render.DrawSprite(trace.HitPos,4,4,Color(255,255,255,100))
+						render.DrawQuadEasy(trace.HitPos,trace.HitNormal,15,15,Color(255,0,0,100),0)
+						render.DrawQuadEasy(trace.HitPos,trace.HitNormal,7,7,Color(255,255,255,100),0)
+					end
+				end
+			end
+		end
+	end)
 	local blurMat,Dynamic,MenuOpen,YesMat,NoMat=Material("pp/blurscreen"),0,false,Material("icon16/accept.png"),Material("icon16/cancel.png")
 	local function BlurBackground(panel)
 		if not((IsValid(panel))and(panel:IsVisible()))then return end
