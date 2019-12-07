@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.Model = "models/grenades/sticky_grenade.mdl"
 ENT.ModelScale = 1.5
 
-ENT.SpoonModel = "models/codww2/equipment/no, 74 st grenade_pin.mdl"
+ENT.SpoonModel = "models/grenades/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 ENT.HardThrowStr = 400
@@ -19,12 +19,11 @@ if(SERVER)then
 
 	function ENT:Prime()
 		self:SetState(JMOD_EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav",60,100)
-		self:SetBodygroup(3,1)
+		self:SetBodygroup(2,1)
+		self:SpoonEffect()
 	end
 
 	function ENT:Arm()
-		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end

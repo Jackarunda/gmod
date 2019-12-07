@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.Model = "models/grenades/impact_grenade.mdl"
 ENT.ModelScale = 1.5
 
-ENT.SpoonModel = "models/codww2/equipment/no, 69 hand grenade cap.mdl"
+ENT.SpoonModel = "models/grenades/impact_grenade_cap.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 local BaseClass = baseclass.Get(ENT.Base)

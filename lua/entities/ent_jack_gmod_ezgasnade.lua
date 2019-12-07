@@ -6,8 +6,9 @@ ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Gas Grenade"
 ENT.Spawnable=true
 
-ENT.Model = "models/codww2/equipment/mk,v cn gas grenade.mdl"
-ENT.SpoonModel = "models/codww2/equipment/mk,v cn gas grenade spoon.mdl"
+ENT.Model = "models/grenades/gas_grenade.mdl"
+ENT.SpoonModel = "models/grenades/gas_grenade_spoon.mdl"
+ENT.ModelScale = 1.5
 
 if(SERVER)then
 
@@ -23,6 +24,7 @@ if(SERVER)then
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
+		self:SpoonEffect()
 	end
 	
 	function ENT:Detonate()
