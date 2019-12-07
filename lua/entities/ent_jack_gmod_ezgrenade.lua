@@ -16,8 +16,10 @@ ENT.HardThrowStr = 600
 ENT.SoftThrowStr = 200
 ENT.Mass = 15
 ENT.ImpactSound = "Grenade.ImpactHard"
-ENT.Pin = "ent_jack_spoon"
+ENT.SpoonEnt = "ent_jack_spoon"
 ENT.SpoonModel = nil
+ENT.SpoonScale = nil
+ENT.SpoonSound = nil
 
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.JModEZstorable=true
@@ -97,20 +99,25 @@ if(SERVER)then
 		end
 	end
 	
+	function ENT:PinEffect()
+		if self.SpoonEnt then
+			local Spewn=ents.Create(self.SpoonEnt)
+			if self.SpoonModel then Spewn.Model = self.SpoonModel end
+			if self.SpoonScale then Spewn.ModelScale = self.SpoonScale end
+			if self.SpoonSound then Spewn.Sound = self.SpoonSound end
+			Spewn:SetPos(self:GetPos())
+			Spewn:Spawn()
+			Spewn:Activate()
+			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+			self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+		end
+	end
+	
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(self.CustomThink)then self:CustomThink(State,Time) end
 		if(IsValid(self))then
 			if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
-				if self.Pin then
-					local Spewn=ents.Create(self.Pin)
-					Spewn:SetPos(self:GetPos())
-					Spewn:Spawn()
-					Spewn:Activate()
-					if self.SpoonModel then Spewn:SetModel(self.SpoonModel) end
-					Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
-					self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
-				end
 				self:Arm()
 			end
 		end
@@ -125,6 +132,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:PinEffect()
 	end
 	
 	function ENT:Detonate()

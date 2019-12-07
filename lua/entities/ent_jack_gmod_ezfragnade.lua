@@ -10,12 +10,14 @@ ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.Model = "models/weapons/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
 ENT.ModelScale = 2
+ENT.SpoonScale = 2
 
 if(SERVER)then
 	
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:PinEffect()
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)

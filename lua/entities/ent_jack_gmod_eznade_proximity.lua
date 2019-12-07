@@ -67,6 +67,7 @@ if(SERVER)then
 				self:SetState(JMOD_EZ_STATE_ARMED)
 			end
 		end)
+		self:PinEffect()
 	end
 	
 	function ENT:Think()

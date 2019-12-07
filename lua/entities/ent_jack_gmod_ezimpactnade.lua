@@ -6,8 +6,9 @@ ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Impact Grenade"
 ENT.Spawnable=true
 
-ENT.Model = "models/codww2/equipment/no, 69 hand grenade.mdl"
+ENT.Model = "models/grenades/impact_grenade.mdl"
 ENT.SpoonModel = "models/codww2/equipment/no, 69 hand grenade cap.mdl"
+ENT.ModelScale = 1.5
 
 local BaseClass = baseclass.Get(ENT.Base)
 

@@ -6,10 +6,12 @@ ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Sticky Bomb"
 ENT.Spawnable=true
 
-ENT.Model = "models/codww2/equipment/no, 74 st grenade.mdl"
+ENT.Model = "models/grenades/sticky_grenade.mdl"
 ENT.SpoonModel = "models/codww2/equipment/no, 74 st grenade_pin.mdl"
+ENT.ModelScale = 1.5
 ENT.HardThrowStr = 400
 ENT.SoftThrowStr = 200
+
 if(SERVER)then
 
 	function ENT:Prime()
