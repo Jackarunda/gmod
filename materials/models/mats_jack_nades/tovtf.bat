@@ -1,0 +1,2 @@
+@echo off
+vtfcmd.exe -folder "D:\Steam\steamapps\common\GarrysMod\garrysmod\addons\ww2nades\materials\models\mats_jack_nades\gen_satchel_charge_*" -output "D:\Steam\steamapps\common\GarrysMod\garrysmod\addons\ww2nades\materials\models\mats_jack_nades" -format "dxt1"
