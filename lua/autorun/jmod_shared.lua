@@ -34,10 +34,12 @@ function JMod_InitGlobalConfig()
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
 		BuildKitDeWeldSpeed=1,
-		ArmorEffectiveness=1,
 		HandGrabStrength=1,
 		BombDisarmSpeed=1,
 		ExplosionPropDestroyPower=1,
+		ArmorExponentMult=1,
+		ArmorDegredationMult=1,
+		ArmorWeightMult=1,
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,
@@ -203,6 +205,63 @@ function JMod_InitGlobalConfig()
 	print("JMOD: config file loaded")
 end
 JMod_ArmorTable={
+	Face={
+		["GasMask"]={
+			mdl="models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
+			siz=Vector(1,1,1),
+			pos=Vector(0,.1,0),
+			ang=Angle(100,180,90),
+			wgt=5,
+			dur=50,
+			msk="",
+			spc="nervegas_immunity",
+			ent="ent_jack_gmod_ezarmor_gasmask"
+		},
+		["BallisticMask"]={
+			mdl="models/arachnit/csgoheavyphoenix/items/mask.mdl", -- csgo misc
+			siz=Vector(1,1,1),
+			pos=Vector(14.5,-68,0),
+			ang=Angle(100,180,90),
+			wgt=5,
+			def=100,
+			dur=100,
+			msk="",
+			ent="ent_jack_gmod_ezarmor_balmask",
+			gayPhysics=true
+		}
+	},
+	Head={
+		["Light"]={
+			mdl="models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
+			siz=Vector(1.07,1,1.1),
+			pos=Vector(1,-2,0),
+			ang=Angle(-90,0,-90),
+			wgt=10,
+			def=40,
+			dur=100,
+			ent="ent_jack_gmod_ezarmor_lhead"
+		},
+		["Medium"]={
+			mdl="models/player/helmet_ulach_black/ulach.mdl", -- tarkov
+			siz=Vector(1.05,1,1.05),
+			pos=Vector(1,-2,0),
+			ang=Angle(-90,0,-90),
+			wgt=15,
+			def=70,
+			dur=150,
+			ent="ent_jack_gmod_ezarmor_mhead"
+		},
+		["Heavy"]={
+			mdl="models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
+			siz=Vector(1.1,1,1.1),
+			pos=Vector(1,-3,0),
+			ang=Angle(-90,0,-90),
+			wgt=20,
+			def=100,
+			dur=200,
+			ent="ent_jack_gmod_ezarmor_hhead"
+		}
+	},
 	Torso={
 		["Light"]={
 			mdl="models/player/armor_trooper/trooper.mdl", -- tarkov
@@ -210,7 +269,7 @@ JMod_ArmorTable={
 			pos=Vector(-2.5,-4.5,0),
 			ang=Angle(-90,0,90),
 			wgt=5,
-			def=30,
+			def=20,
 			dur=300,
 			ent="ent_jack_gmod_ezarmor_ltorso"
 		},
@@ -220,7 +279,7 @@ JMod_ArmorTable={
 			pos=Vector(-3,-4.5,0),
 			ang=Angle(-90,0,90),
 			wgt=10,
-			def=40,
+			def=35,
 			dur=400,
 			ent="ent_jack_gmod_ezarmor_mltorso"
 		},
@@ -240,8 +299,8 @@ JMod_ArmorTable={
 			pos=Vector(-4.5,-12,0),
 			ang=Angle(-85,0,90),
 			wgt=40,
-			def=60,
-			dur=500,
+			def=65,
+			dur=550,
 			ent="ent_jack_gmod_ezarmor_mhtorso"
 		},
 		["Heavy"]={
@@ -250,41 +309,23 @@ JMod_ArmorTable={
 			pos=Vector(-10.5,-53.5,0),
 			ang=Angle(-85,0,90),
 			wgt=80,
-			def=70,
-			dur=500,
-			ent="ent_jack_gmod_ezarmor_htorso"
+			def=80,
+			dur=600,
+			ent="ent_jack_gmod_ezarmor_htorso",
+			gayPhysics=true
 		}
 	},
-	Head={
-		["Light"]={
-			mdl="models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
-			siz=Vector(1.07,1,1.1),
-			pos=Vector(1,-2,0),
-			ang=Angle(-90,0,-90),
+	Pelvis={
+		["Standard"]={
+			mdl="models/arachnit/csgoheavyphoenix/items/pelviscover.mdl", -- csgo misc
+			siz=Vector(1.5,1.4,1.8),
+			pos=Vector(71,0,-2),
+			ang=Angle(90,-90,0),
 			wgt=10,
-			def=10,
-			dur=300,
-			ent="ent_jack_gmod_ezarmor_lhead"
-		},
-		["Medium"]={
-			mdl="models/player/helmet_ulach_black/ulach.mdl", -- tarkov
-			siz=Vector(1.05,1,1.05),
-			pos=Vector(1,-2,0),
-			ang=Angle(-90,0,-90),
-			wgt=15,
 			def=20,
 			dur=300,
-			ent="ent_jack_gmod_ezarmor_mhead"
-		},
-		["Heavy"]={
-			mdl="models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
-			siz=Vector(1.1,1,1.1),
-			pos=Vector(1,-3,0),
-			ang=Angle(-90,0,-90),
-			wgt=20,
-			def=30,
-			dur=400,
-			ent="ent_jack_gmod_ezarmor_hhead"
+			ent="ent_jack_gmod_ezarmor_spelvis",
+			gayPhysics=true
 		}
 	},
 	LeftShoulder={
@@ -294,8 +335,8 @@ JMod_ArmorTable={
 			pos=Vector(0,0,-.5),
 			ang=Angle(-90,-90,-90),
 			wgt=5,
-			def=5,
-			dur=200,
+			def=30,
+			dur=150,
 			ent="ent_jack_gmod_ezarmor_llshoulder"
 		},
 		["Heavy"]={
@@ -303,10 +344,11 @@ JMod_ArmorTable={
 			siz=Vector(1,1,1),
 			pos=Vector(-6,60,-31),
 			ang=Angle(90,-20,110),
-			wgt=10,
-			def=10,
-			dur=300,
-			ent="ent_jack_gmod_ezarmor_hlshoulder"
+			wgt=15,
+			def=60,
+			dur=250,
+			ent="ent_jack_gmod_ezarmor_hlshoulder",
+			gayPhysics=true
 		}
 	},
 	RightShoulder={
@@ -316,8 +358,8 @@ JMod_ArmorTable={
 			pos=Vector(0,0,.5),
 			ang=Angle(-90,-90,-90),
 			wgt=5,
-			def=5,
-			dur=200,
+			def=30,
+			dur=150,
 			ent="ent_jack_gmod_ezarmor_lrshoulder"
 		},
 		["Heavy"]={
@@ -325,10 +367,11 @@ JMod_ArmorTable={
 			siz=Vector(1,1,1),
 			pos=Vector(-32,55,25),
 			ang=Angle(90,30,30),
-			wgt=10,
-			def=10,
-			dur=300,
-			ent="ent_jack_gmod_ezarmor_hrshoulder"
+			wgt=15,
+			def=60,
+			dur=250,
+			ent="ent_jack_gmod_ezarmor_hrshoulder",
+			gayPhysics=true
 		}
 	},
 	LeftForearm={
@@ -337,9 +380,9 @@ JMod_ArmorTable={
 			siz=Vector(1.1,1,1),
 			pos=Vector(0,0,-.5),
 			ang=Angle(0,-90,-50),
-			wgt=5,
-			def=5,
-			dur=200,
+			wgt=10,
+			def=40,
+			dur=150,
 			ent="ent_jack_gmod_ezarmor_slforearm"
 		}
 	},
@@ -350,8 +393,8 @@ JMod_ArmorTable={
 			pos=Vector(-.5,0,.5),
 			ang=Angle(0,-90,50),
 			wgt=10,
-			def=10,
-			dur=300,
+			def=40,
+			dur=150,
 			ent="ent_jack_gmod_ezarmor_srforearm"
 		}
 	},
@@ -361,9 +404,9 @@ JMod_ArmorTable={
 			siz=Vector(.9,1,1.05),
 			pos=Vector(-.5,0,-1.5),
 			ang=Angle(90,-85,110),
-			wgt=10,
-			def=10,
-			dur=300,
+			wgt=15,
+			def=60,
+			dur=250,
 			ent="ent_jack_gmod_ezarmor_slthigh"
 		}
 	},
@@ -373,9 +416,9 @@ JMod_ArmorTable={
 			siz=Vector(.9,1,1.05),
 			pos=Vector(.5,0,1),
 			ang=Angle(90,-95,80),
-			wgt=10,
-			def=10,
-			dur=300,
+			wgt=15,
+			def=60,
+			dur=250,
 			ent="ent_jack_gmod_ezarmor_srthigh"
 		}
 	},
@@ -385,9 +428,9 @@ JMod_ArmorTable={
 			siz=Vector(1,1,1),
 			pos=Vector(-1.5,-1,-.5),
 			ang=Angle(-180,-83,-180),
-			wgt=5,
-			def=5,
-			dur=200,
+			wgt=15,
+			def=40,
+			dur=250,
 			ent="ent_jack_gmod_ezarmor_slcalf"
 		}
 	},
@@ -397,46 +440,10 @@ JMod_ArmorTable={
 			siz=Vector(1,1,1),
 			pos=Vector(-1.5,-1,.5),
 			ang=Angle(-180,-83,-180),
-			wgt=5,
-			def=5,
-			dur=200,
+			wgt=15,
+			def=40,
+			dur=250,
 			ent="ent_jack_gmod_ezarmor_srcalf"
-		}
-	},
-	Pelvis={
-		["Standard"]={
-			mdl="models/arachnit/csgoheavyphoenix/items/pelviscover.mdl", -- csgo misc
-			siz=Vector(1.5,1.4,1.8),
-			pos=Vector(71,0,-2),
-			ang=Angle(90,-90,0),
-			wgt=5,
-			def=10,
-			dur=200,
-			ent="ent_jack_gmod_ezarmor_spelvis"
-		}
-	},
-	Face={
-		["GasMask"]={
-			mdl="models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
-			siz=Vector(1,1,1),
-			pos=Vector(0,.1,0),
-			ang=Angle(100,180,90),
-			wgt=5,
-			dur=100,
-			msk="",
-			spc="nervegas_immunity",
-			ent="ent_jack_gmod_ezarmor_gasmask"
-		},
-		["BallisticMask"]={
-			mdl="models/arachnit/csgoheavyphoenix/items/mask.mdl", -- csgo misc
-			siz=Vector(1,1,1),
-			pos=Vector(14.5,-68,0),
-			ang=Angle(100,180,90),
-			wgt=5,
-			def=10,
-			dur=100,
-			msk="",
-			ent="ent_jack_gmod_ezarmor_balmask"
 		}
 	}
 }

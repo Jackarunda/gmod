@@ -60,6 +60,7 @@ if(SERVER)then
 		JMod_Hint(activator,"armor","armor remove")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(Alt)then
+			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
 			net.Start("JMod_ArmorColor")
 			net.WriteEntity(self)
 			net.Send(activator)

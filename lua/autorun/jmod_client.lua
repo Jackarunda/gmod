@@ -319,8 +319,6 @@ if(CLIENT)then
 				if(ply.EZarmorModels[slot])then
 					local Mdl=ply.EZarmorModels[slot]
 					local MdlName=Mdl:GetModel()
-					MdlName=string.Replace(MdlName,"models/models/","models/")
-					--print(MdlName,Specs.mdl)
 					if(MdlName==Specs.mdl)then
 						-- render it
 						local Index=ply:LookupBone(EZarmorBoneTable[slot])
@@ -669,7 +667,7 @@ if(CLIENT)then
 		local Ent,NextColorCheck=net.ReadEntity(),0
 		if not(IsValid(Ent))then return end
 		local Frame=vgui.Create("DFrame")
-		Frame:SetSize(200,200)
+		Frame:SetSize(200,300)
 		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
 		Frame:SetDraggable(true)
 		Frame:ShowCloseButton(true)
@@ -692,13 +690,14 @@ if(CLIENT)then
 		end
 		Picker=vgui.Create("DColorMixer",Frame)
 		Picker:SetPos(5,25)
-		Picker:SetSize(190,115)
+		Picker:SetSize(190,215)
 		Picker:SetAlphaBar(false)
 		Picker:SetPalette(false)
 		Picker:SetWangs(false)
+		Picker:SetPalette(true)
 		Picker:SetColor(Ent:GetColor())
 		local Butt=vgui.Create("DButton",Frame)
-		Butt:SetPos(5,145)
+		Butt:SetPos(5,245)
 		Butt:SetSize(190,50)
 		Butt:SetText("EQUIP")
 		function Butt:DoClick()

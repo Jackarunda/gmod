@@ -1,0 +1,103 @@
+//Arachnit's super duper cool MLG vmt config, donut steal plz. :(
+
+"VertexLitGeneric"
+{
+//Basic
+	"$BaseTexture" 			    "models/arachnit/csgo/player/ct_heavy/ctm_heavy_upr_body_color"
+	"$BumpMap" 				    "models/arachnit/csgo/player/ct_heavy/ctm_heavy_upr_body_normal"
+//	"$BumpMap" 				    "models/arachnit/shared/flat_normal" 									//< Shared normal map, if the model doesn't have one
+	"$PhongExponentTexture"     "models/arachnit/csgo/player/ct_heavy/ctm_heavy_upr_masks1"
+	
+//	"$Compress"					"models/arachnit/residentevil7/lucas_baker/em3250_face_ao"
+//	"$BumpCompress"				"models/arachnit/residentevil7/lucas_baker/em3250_face_wrinkles_nrmr"
+//	"$Stretch"					"models/arachnit/residentevil7/lucas_baker/em3250_face_ao"
+//	"$BumpStretch"				"models/arachnit/residentevil7/lucas_baker/em3250_face_wrinkles_nrmr"
+
+//Warp
+	"$LightWarpTexture"         "models/arachnit/shared/clothes_wrp2"		//< Change as needed
+	"$PhongWarpTexture"         "models/arachnit/shared/ctm_specwarp" 		//< Change as needed
+	"$FresnelRangesTexture"     "models/arachnit/shared/ctm_fresnelwarp"
+	"$WarpIndex"                "0.11"
+	
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "1" 	//< Change as needed
+//	"$PhongExponent"            "60" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0 .1 1]"
+	"$PhongTint" 			    "[.85 .85 1]"
+	"$PhongDisableHalflambert"  "0"
+	"$PhongAlbedoTint"          "1"
+	"$PhongAlbedoBoost"         "3"
+//	"$BasemapAlphaPhongMask"    "1"
+//	"$NormalmapAlphaPhongMask"  "1"
+	"$ForcePhong"				"1"
+
+//Rimlight
+	"$Rimlight" 			    "1"
+	"$RimMask" 				    "1"
+	"$RimlightExponent"         "6"
+	"$RimlightBoost"            "0.7"
+	"$RimlightAlbedo"           "0.6"
+	"$RimlightTint"             "[0.8 1.0 1.2]"
+	"$FakeRimTint"              "[0.5 0.7 1]"
+	"$FakeRimBoost"             "9"
+
+//Environment map / Reflection
+	"$Envmap"                   "env_cubemap"
+//	"$EnvmapMask"               "models/arachnit/player/tm_separatist/tm_separatist_wrp"
+//	"$EnvmapFresnel" 		    "1"
+//	"$EnvmapFresnelMinMaxExp"   "[.15 .8 1]"
+	"$EnvmapTint" 			    "[.1 .1 .1]"
+	"$EnvmapSaturation"         "-0.6"
+	"$EnvmapContrast" 		    "1"
+	"$EnvmapLightScale"         "0.18"
+//	"$BaseAlphaEnvmapMask"      "1"
+	"$NormalmapAlphaEnvmapMask" "1"
+
+//Other
+	"$Model"                    "1"
+	"$HalfLambert" 			    "1"
+	"$NoDecal" 				    "0"
+	"$NoLod" 				    "0"
+	"$AmbientOcclusion" 	    "1"
+	"$NoCull" 				    "1"
+//	"$SurfaceProp" 			    "metal"
+//	"$BlendTintByBaseAlpha"     "1"
+// 	"$BlendTintColorOverBase"   "0"
+//	"$DisplacementMap" 			"models/arachnit/player/tm_separatist/basetexture"
+//	"$Color2"					"{ 255 255 255 }"	//< RGB colors
+	"$CloakPassEnabled" 		"1" 	//< For SFM and TF2
+//	"$CloakColorTint" 			"[0.4 0.5 1]" // BLU
+//	"$CloakColorTint" 			"[1 0.5 0.4]" // RED
+
+//Transparency
+//	"$Translucent" 			  	 "1"
+//	"$AlphaTest" 			  	 "1"
+//	"$AllowAlphaToCoverage"    	 "1"
+//	"$Additive"    	 			 "1"
+
+
+//Self-Illumination
+//	"$SelfIllum" 			 	  "1"
+//	"$SelfIllumTint" 		 	  "[1 1 1]"
+//	"$SelfIllumFresnel" 	  	  "1"
+//	"$SelfIllumMask" 		   	  "models/arachnit/player/tm_separatist/selfillum"
+//	"$SelfIllum_EnvmapMask_Alpha" "0"
+//	"$SelfIllumMaskScale" 		  "0"
+	
+	
+//CS:GO&L4D2	
+	"$ShadowSaturation"      	  "0.23"
+	"$ShadowSaturationBounds"	  "[-0.1 0.3 0.4 0.7]"
+	"$ShadowContrast"        	  "0.4"
+	"$ShadowTint"            	  "[0 0.5 1 0.2]"
+	"$AmbientReflectionBoost" 	  "0.07"
+	"$DiffuseExp" 			 	  "1.5"
+
+//Detail
+	"$Detail" 				  	  "models/arachnit/shared/leatherdetail" 	//< Change as needed
+	"$DetailScale" 			  	  "16"
+	"$DetailBlendFactor" 	  	  "1.7"
+	"$DetailBlendMode" 		   	  "0"
+//	"$DetailTint" 			  	  "[1 1 1]"
+}

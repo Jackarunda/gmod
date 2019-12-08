@@ -46,6 +46,7 @@ function ENT:OnRemove()
 end
 function ENT:Use(activator,caller)
 	if(activator:IsPlayer())then
+		if((activator.EZarmor)and(#table.GetKeys(activator.EZarmor)>0))then return end
 		if((not(activator.JackyArmor.Vest))and(not(activator.JackyArmor.Suit)))then
 			JackaBodyArmorUpdate(activator,"Vest","Soft Kevlar",self:GetColor())
 			activator:EmitSound("snd_jack_clothequip.wav",70,100)

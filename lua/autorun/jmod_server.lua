@@ -272,6 +272,65 @@ if(SERVER)then
 		end
 	end
 	hook.Add("PlayerSpawn","JackaSpawnHook",JackaSpawnHook)
+	local function EZgetProtectionFromSlot(ply,slot,amt)
+		local ArmorInfo=ply.EZarmor[slot]
+		if not(ArmorInfo)then return 0 end
+		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
+		local Specs=JMod_ArmorTable[slot][Name]
+		local ShouldWarn50=Dur>50
+		ArmorInfo[2]=Dur-amt*math.Rand(.8,1.2)*JMOD_CONFIG.ArmorDegredationMult -- degredation
+		if(ArmorInfo[2]<=0)then
+			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor destroyed")
+			JMod_RemoveArmorSlot(ply,slot,true)
+			JModEZarmorSync(ply)
+		elseif((ArmorInfo[2]<=50)and(ShouldWarn50))then
+			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50% durability")
+			JModEZarmorSync(ply)
+		end
+		return Specs.def or 0
+	end
+	local MaxArmorProtection={
+		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
+	}
+	local function EZarmorScaleDmg(ply,dmgtype,dmgamt,location,isFace)
+		local Block=0
+		if(location==HITGROUP_HEAD)then
+			if(isFace)then
+				Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt)
+			else
+				Block=Block+EZgetProtectionFromSlot(ply,"Head",dmgamt)
+			end
+		elseif(location==HITGROUP_CHEST)then
+			Block=Block+EZgetProtectionFromSlot(ply,"Torso",dmgamt*.67)
+			Block=Block+EZgetProtectionFromSlot(ply,"Pelvis",dmgamt*.33)
+		elseif(location==HITGROUP_LEFTARM)then
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftShoulder",dmgamt*.6)
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftForearm",dmgamt*.4)
+		elseif(location==HITGROUP_RIGHTARM)then
+			Block=Block+EZgetProtectionFromSlot(ply,"RightShoulder",dmgamt*.6)
+			Block=Block+EZgetProtectionFromSlot(ply,"RightForearm",dmgamt*.4)
+		elseif(location==HITGROUP_LEFTLEG)then
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftThigh",dmgamt*.6)
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftCalf",dmgamt*.4)
+		elseif(location==HITGROUP_RIGHTLEG)then
+			Block=Block+EZgetProtectionFromSlot(ply,"RightThigh",dmgamt*.6)
+			Block=Block+EZgetProtectionFromSlot(ply,"RightCalf",dmgamt*.4)
+		elseif(location==HITGROUP_GENERIC)then
+			Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt*.05)*.15
+			Block=Block+EZgetProtectionFromSlot(ply,"Head",dmgamt*.1)*.15
+			Block=Block+EZgetProtectionFromSlot(ply,"Torso",dmgamt*.15)*.2
+			Block=Block+EZgetProtectionFromSlot(ply,"Pelvis",dmgamt*.1)*.1
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftShoulder",dmgamt*.1)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftForearm",dmgamt*.05)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"RightShoulder",dmgamt*.1)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"RightForearm",dmgamt*.05)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftThigh",dmgamt*.1)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"LeftCalf",dmgamt*.05)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"RightThigh",dmgamt*.1)*.05
+			Block=Block+EZgetProtectionFromSlot(ply,"RightCalf",dmgamt*.05)*.05
+		end
+		return 1-((Block/100)*(MaxArmorProtection[dmgtype]))
+	end
 	local function JackyDamageHandling(victim,hitgroup,dmginfo)
 		if(victim.JackyArmor)then
 			local NewScale=1
@@ -355,6 +414,44 @@ if(SERVER)then
 				end
 			end
 			dmginfo:ScaleDamage(NewScale)
+		end
+		if(victim.EZarmor)then
+			local Mul,dmg,ply,amt=1,dmginfo,victim,dmginfo:GetDamage()
+			if((dmg:IsDamageType(DMG_BULLET))or(dmg:IsDamageType(DMG_BUCKSHOT)))then
+				if(hitgroup==HITGROUP_HEAD)then
+					local ApproachVec=dmginfo:GetDamageForce():GetNormalized()
+					local FacingVec=ply:GetAimVector()
+					local DotProduct=FacingVec:DotProduct(ApproachVec)
+					local ApproachAngle=(-math.deg(math.asin(DotProduct))+90)
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_HEAD,ApproachAngle>=135)
+				elseif((hitgroup==HITGROUP_CHEST)or(hitgroup==HITGROUP_STOMACH))then
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_CHEST)
+				elseif(hitgroup==HITGROUP_LEFTARM)then
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_LEFTARM)
+				elseif(hitgroup==HITGROUP_RIGHTARM)then
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_RIGHTARM)
+				elseif(hitgroup==HITGROUP_LEFTLEG)then
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_LEFTLEG)
+				elseif(hitgroup==HITGROUP_RIGHTLEG)then
+					Mul=EZarmorScaleDmg(ply,DMG_BULLET,amt,HITGROUP_RIGHTLEG)
+				end
+			elseif(dmginfo:IsDamageType(DMG_BLAST))then
+				Mul=EZarmorScaleDmg(ply,DMG_BLAST,amt,HITGROUP_GENERIC)
+			elseif(dmginfo:IsDamageType(DMG_SLASH))then
+				Mul=EZarmorScaleDmg(ply,DMG_SLASH,amt,HITGROUP_GENERIC)
+			elseif(dmginfo:IsDamageType(DMG_CLUB))then
+				Mul=EZarmorScaleDmg(ply,DMG_CLUB,amt,HITGROUP_GENERIC)
+			elseif(dmginfo:IsDamageType(DMG_CRUSH))then
+				Mul=EZarmorScaleDmg(ply,DMG_CRUSH,amt,HITGROUP_GENERIC)
+			elseif(dmginfo:IsDamageType(DMG_VEHICLE))then
+				Mul=EZarmorScaleDmg(ply,DMG_VEHICLE,amt,HITGROUP_GENERIC)
+			elseif(dmginfo:IsDamageType(DMG_BURN))then
+				Mul=EZarmorScaleDmg(ply,DMG_BURN,amt,HITGROUP_GENERIC)
+			end
+			local Reduction=1-Mul
+			Reduction=Reduction^(.7*JMOD_CONFIG.ArmorExponentMult)
+			Mul=1-Reduction
+			dmginfo:ScaleDamage(Mul)
 		end
 	end
 	local function JackaScaleDamageHook(victim,hitgroup,dmginfo)
@@ -1777,34 +1874,63 @@ if(SERVER)then
 		Armor:SetColor(Col)
 		if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
 	end)
-	local function RemoveArmorSlot(ply,slot)
+	local function EZgetWeightFromSlot(ply,slot)
+		local ArmorInfo=ply.EZarmor[slot]
+		if not(ArmorInfo)then return 0 end
+		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
+		local Specs=JMod_ArmorTable[slot][Name]
+		return Specs.wgt or 0
+	end
+	local function CalcSpeed(ply)
+		if(not(ply.EZarmor)or not(#table.GetKeys(ply.EZarmor)>0))then
+			ply.EZoriginalWalkSpeed=ply:GetWalkSpeed() or 200
+			ply.EZoriginalRunSpeed=ply:GetRunSpeed() or 400
+		end
+		local Walk,Run=ply.EZoriginalWalkSpeed or 200,ply.EZoriginalRunSpeed or 400
+		local TotalWeight=0
+		for k,v in pairs(JMod_ArmorTable)do
+			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
+		end
+		local WeighedFrac=TotalWeight/225
+		ply:SetWalkSpeed(Walk-(Walk*.7*WeighedFrac))
+		ply:SetRunSpeed(Run-(Run*.7*WeighedFrac))
+	end
+	function JMod_RemoveArmorSlot(ply,slot,broken)
 		local Info=ply.EZarmor[slot]
 		if not(Info)then return end
 		local Specs=JMod_ArmorTable[slot][Info[1]]
 		timer.Simple(math.Rand(0,.5),function()
-			ply:EmitSound("snd_jack_clothunequip.wav",60,math.random(80,120))
+			if(broken)then
+				ply:EmitSound("snds_jack_gmod/armorbreak.wav",60,math.random(80,120))
+			else
+				ply:EmitSound("snd_jack_clothunequip.wav",60,math.random(80,120))
+			end
 		end)
-		local Ent=ents.Create(Specs.ent)
-		Ent:SetPos(ply:GetShootPos()+ply:GetAimVector()*30+VectorRand()*math.random(1,20))
-		Ent:SetAngles(AngleRand())
-		Ent.Durability=Info[2]
-		Ent:SetColor(Info[3])
-		Ent:Spawn()
-		Ent:Activate()
-		Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		if not(broken)then
+			local Ent=ents.Create(Specs.ent)
+			Ent:SetPos(ply:GetShootPos()+ply:GetAimVector()*30+VectorRand()*math.random(1,20))
+			Ent:SetAngles(AngleRand())
+			Ent.Durability=Info[2]
+			Ent:SetColor(Info[3])
+			Ent:Spawn()
+			Ent:Activate()
+			Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		end
 		ply.EZarmor[slot]=nil
+		CalcSpeed(ply)
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
-		RemoveArmorSlot(ply,ent.Slot)
+		JMod_RemoveArmorSlot(ply,ent.Slot)
 		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
 		ply:EmitSound("snd_jack_clothequip.wav",60,math.random(80,120))
 		ent:Remove()
+		CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
 	function JMod_EZ_Remove_Armor(ply)
 		for k,v in pairs(JMod_ArmorTable)do
-			RemoveArmorSlot(ply,k)
+			JMod_RemoveArmorSlot(ply,k)
 		end
 		JModEZarmorSync(ply)
 	end
