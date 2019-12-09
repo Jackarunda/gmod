@@ -33,7 +33,6 @@ if(SERVER)then
 	function ENT:Initialize()
 		self:SetModel("models/weapons/w_jlam.mdl")
 		self:SetModelScale(1.25,0)
-		self:SetColor(Color(150,150,150))
 		self:SetBodygroup(0,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -50,13 +49,7 @@ if(SERVER)then
 		self.NextStick=0
 		self.Damage=500
 		---
-		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				if(Col)then self:SetColor(Col) end
-			end
-		end
+		JMod_Colorify(self)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>25)then
@@ -84,11 +77,7 @@ if(SERVER)then
 		local Dude=activator or activatorAgain
 		self.Owner=Dude
 		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				if(Col)then self:SetColor(Col) end
-			end
+			JMod_Colorify(self)
 		end
 		JMod_Hint(activator,"arm")
 		local Time=CurTime()

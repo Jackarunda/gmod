@@ -238,6 +238,20 @@ if(SERVER)then
 		end
 
 	end
+	function JMod_Colorify(ent)
+		if(IsValid(ent.Owner))then
+			if(engine.ActiveGamemode()=="sandbox")then
+				local Col=ent.Owner:GetPlayerColor()
+				ent:SetColor(Color(Col.x*255,Col.y*255,Col.z*255))
+			else
+				local Tem=ent.Owner:Team()
+				if(Tem)then
+					local Col=team.GetColor(Tem)
+					if(Col)then ent:SetColor(Col) end
+				end
+			end
+		end
+	end
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	function JModEZarmorSync(ply)
 		if not(ply.EZarmor)then return end

@@ -5,14 +5,11 @@ ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ"
 ENT.PrintName="EZ Frag Grenade"
 ENT.Spawnable=true
-
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.Model = "models/weapons/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
 ENT.ModelScale = 2
-
 if(SERVER)then
-	
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
@@ -20,7 +17,6 @@ if(SERVER)then
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end
-
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
@@ -34,11 +30,11 @@ if(SERVER)then
 		plooie:SetNormal(vector_up)
 		util.Effect("eff_jack_minesplode",plooie,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
-		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		local Spred=Vector(0,0,0)
 		for i=1,400 do
 			timer.Simple(i/4000+.01,function()
+				if not(IsValid(self))then return end
 				local Dir=VectorRand()
 				if(OnGround)then
 					Dir.z=Dir.z/4+.2
@@ -55,7 +51,10 @@ if(SERVER)then
 					Dir=Dir:GetNormalized(),
 					Spread=Spred
 				})
-				if(i==400)then
+				if(i==300)then
+					-- delay the blast damage so that the bang can be heard
+					util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
+				elseif(i==400)then
 					self:Remove()
 				end
 			end)
@@ -63,7 +62,6 @@ if(SERVER)then
 	end
 	
 elseif(CLIENT)then
-
 	local GlowSprite = Material("sprites/mat_jack_circle")
 	function ENT:Draw()
 		self:DrawModel()
@@ -78,5 +76,4 @@ elseif(CLIENT)then
 		--]]
 	end
 	language.Add("ent_jack_gmod_ezfragnade","EZ Frag Grenade")
-	
 end
