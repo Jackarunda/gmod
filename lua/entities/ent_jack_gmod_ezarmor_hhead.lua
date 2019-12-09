@@ -3,9 +3,9 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezarmor"
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Armor"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Heavy Helmet"
+ENT.PrintName="EZ Helmet Heavy"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
