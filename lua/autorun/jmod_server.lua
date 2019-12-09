@@ -164,6 +164,7 @@ if(SERVER)then
 		umsg.End()
 	end
 	local function StepSound(ply,pos,foot,snd,vol,filter)
+		-- penis
 		if((ply.JackyArmor)and(ply.JackyArmor.Vest))then
 			if((ply.JackyArmor.Vest.Type=="Kevlar SAPI")or(ply.JackyArmor.Vest.Type=="Soft Kevlar")or(ply.JackyArmor.Vest.Type=="Ballistic Nylon"))then
 				ply:EmitSound("snd_jack_gear"..tostring(math.random(1,6))..".wav",55,math.random(90,110))
@@ -173,6 +174,12 @@ if(SERVER)then
 			local Ptch=math.random(80,90)
 			ply:EmitSound(Snd,75,Ptch)
 			ply:EmitSound(Snd,55,Ptch)
+		end
+		if(ply.EZarmor)then
+			local Num=#table.GetKeys(ply.EZarmor)
+			if(Num>=6)then
+				ply:EmitSound("snd_jack_gear"..tostring(math.random(1,6))..".wav",58,math.random(70,130))
+			end
 		end
 	end
 	hook.Add("PlayerFootstep","JackyArmorFootstep",StepSound)
@@ -1896,19 +1903,15 @@ if(SERVER)then
 		return Specs.wgt or 0
 	end
 	local function CalcSpeed(ply)
-		if(not(ply.EZarmor)or not(#table.GetKeys(ply.EZarmor)>0))then
-			ply.EZoriginalWalkSpeed=ply:GetWalkSpeed() or 200
-			ply.EZoriginalRunSpeed=ply:GetRunSpeed() or 400
-		end
-		local Walk,Run=ply.EZoriginalWalkSpeed or 200,ply.EZoriginalRunSpeed or 400
-		local TotalWeight=0
+		local Walk,Run,TotalWeight=ply.EZoriginalWalkSpeed or 200,ply.EZoriginalRunSpeed or 400,0
 		for k,v in pairs(JMod_ArmorTable)do
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply:SetWalkSpeed(Walk-(Walk*.7*WeighedFrac))
-		ply:SetRunSpeed(Run-(Run*.7*WeighedFrac))
+		ply:SetWalkSpeed(Walk*(1-.7*WeighedFrac))
+		ply:SetRunSpeed(Run*(1-.7*WeighedFrac))
 	end
+	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
 		local Info=ply.EZarmor[slot]
 		if not(Info)then return end
@@ -1917,7 +1920,7 @@ if(SERVER)then
 			if(broken)then
 				ply:EmitSound("snds_jack_gmod/armorbreak.wav",60,math.random(80,120))
 			else
-				ply:EmitSound("snd_jack_clothunequip.wav",60,math.random(80,120))
+				ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
 			end
 		end)
 		if not(broken)then
@@ -1931,13 +1934,16 @@ if(SERVER)then
 			Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
 		end
 		ply.EZarmor[slot]=nil
-		CalcSpeed(ply)
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
+		if(not(ply.EZarmor)or not(#table.GetKeys(ply.EZarmor)>0))then
+			ply.EZoriginalWalkSpeed=ply:GetWalkSpeed()
+			ply.EZoriginalRunSpeed=ply:GetRunSpeed()
+		end
 		JMod_RemoveArmorSlot(ply,ent.Slot)
 		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
-		ply:EmitSound("snd_jack_clothequip.wav",60,math.random(80,120))
+		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
 		ent:Remove()
 		CalcSpeed(ply)
 		JModEZarmorSync(ply)
@@ -1946,6 +1952,7 @@ if(SERVER)then
 		for k,v in pairs(JMod_ArmorTable)do
 			JMod_RemoveArmorSlot(ply,k)
 		end
+		CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
 	-- copied from Homicide
