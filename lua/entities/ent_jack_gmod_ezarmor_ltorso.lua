@@ -5,7 +5,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Armor"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Light Torso Armor"
+ENT.PrintName="EZ Torso Light Armor"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

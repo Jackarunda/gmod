@@ -5,7 +5,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Armor"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Light Helmet"
+ENT.PrintName="EZ Helmet Light"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
