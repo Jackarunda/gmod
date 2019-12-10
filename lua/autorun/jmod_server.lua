@@ -265,6 +265,7 @@ if(SERVER)then
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
+		net.WriteFloat(ply.EZArmorSpeedFrac or 1)
 		net.Broadcast()
 	end
 	local function JackaSpawnHook(ply)
@@ -1908,10 +1909,10 @@ if(SERVER)then
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply.EZArmorSpeedFrac = 1 - 0.7 * WeighedFrac
+		ply.EZArmorSpeedFrac = 1 - 0.8 * WeighedFrac
 		-- Handled in SetupMove hook
-		--ply:SetWalkSpeed(Walk*(1-.7*WeighedFrac))
-		--ply:SetRunSpeed(Run*(1-.7*WeighedFrac))
+		--ply:SetWalkSpeed(Walk*(1-.8*WeighedFrac))
+		--ply:SetRunSpeed(Run*(1-.8*WeighedFrac))
 	end
 	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
@@ -1939,10 +1940,12 @@ if(SERVER)then
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
+		--[[ -- this isn't needed anymore since we're using SetupMove
 		if(not(ply.EZarmor)or not(#table.GetKeys(ply.EZarmor)>0))then
 			ply.EZoriginalWalkSpeed=ply:GetWalkSpeed()
 			ply.EZoriginalRunSpeed=ply:GetRunSpeed()
 		end
+		--]]
 		JMod_RemoveArmorSlot(ply,ent.Slot)
 		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
 		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
@@ -2234,12 +2237,5 @@ if(SERVER)then
 		end
 	end)
 	--]]
-
-	hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-		if ply.EZArmorSpeedFrac then 
-			local origSpeed = cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed() or ply:GetWalkSpeed()
-			mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
-		end
-	end)
 end
 
