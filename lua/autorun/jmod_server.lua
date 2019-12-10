@@ -1908,8 +1908,10 @@ if(SERVER)then
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply:SetWalkSpeed(Walk*(1-.7*WeighedFrac))
-		ply:SetRunSpeed(Run*(1-.7*WeighedFrac))
+		ply.EZArmorSpeedFrac = 1 - 0.7 * WeighedFrac
+		-- Handled in SetupMove hook
+		--ply:SetWalkSpeed(Walk*(1-.7*WeighedFrac))
+		--ply:SetRunSpeed(Run*(1-.7*WeighedFrac))
 	end
 	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
@@ -1955,6 +1957,9 @@ if(SERVER)then
 		CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
+	hook.Add("PlayerSpawn", "JMOD_ARMOR_SPAWN", function(ply)
+		ply.EZArmorSpeedFrac = nil
+	end)
 	-- copied from Homicide
 	function JMod_BlastThatDoor(ent,vel)
 		local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()
@@ -2206,5 +2211,12 @@ if(SERVER)then
 		end
 	end)
 	--]]
+
+	hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
+		if ply.EZArmorSpeedFrac then 
+			local origSpeed = cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed() or ply:GetWalkSpeed()
+			mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
+		end
+	end)
 end
 
