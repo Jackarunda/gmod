@@ -886,9 +886,11 @@ if(CLIENT)then
 	net.Receive("JMod_EZarmorSync",function()
 		local ply=net.ReadEntity()
 		local tbl=net.ReadTable()
+		local spd=net.ReadFloat()
 		if not(IsValid(ply))then return end
 		ply.EZarmor=tbl
 		ply.EZarmorModels=ply.EZarmorModels or {}
+		ply.EZArmorSpeedFrac=spd
 	end)
 end
 --[[

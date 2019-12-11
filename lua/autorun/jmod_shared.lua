@@ -450,6 +450,12 @@ JMod_ArmorTable={
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
+hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
+	if((ply.EZArmorSpeedFrac)and not(ply.EZArmorSpeedFrac==1))then
+		local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
+		mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
+	end
+end)
 local ANGLE=FindMetaTable("Angle")
 function ANGLE:GetCopy()
 	return Angle(self.p,self.y,self.r)

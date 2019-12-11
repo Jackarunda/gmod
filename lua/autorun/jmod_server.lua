@@ -265,6 +265,7 @@ if(SERVER)then
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
+		net.WriteFloat(ply.EZArmorSpeedFrac or 1)
 		net.Broadcast()
 	end
 	local function JackaSpawnHook(ply)
@@ -1908,10 +1909,10 @@ if(SERVER)then
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply.EZArmorSpeedFrac = 1 - 0.7 * WeighedFrac
+		ply.EZArmorSpeedFrac = 1 - 0.8 * WeighedFrac
 		-- Handled in SetupMove hook
-		--ply:SetWalkSpeed(Walk*(1-.7*WeighedFrac))
-		--ply:SetRunSpeed(Run*(1-.7*WeighedFrac))
+		--ply:SetWalkSpeed(Walk*(1-.8*WeighedFrac))
+		--ply:SetRunSpeed(Run*(1-.8*WeighedFrac))
 	end
 	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
@@ -1939,10 +1940,12 @@ if(SERVER)then
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
+		--[[ -- this isn't needed anymore since we're using SetupMove
 		if(not(ply.EZarmor)or not(#table.GetKeys(ply.EZarmor)>0))then
 			ply.EZoriginalWalkSpeed=ply:GetWalkSpeed()
 			ply.EZoriginalRunSpeed=ply:GetRunSpeed()
 		end
+		--]]
 		JMod_RemoveArmorSlot(ply,ent.Slot)
 		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
 		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
@@ -2013,20 +2016,41 @@ if(SERVER)then
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
 		local LoosenThreshold,DestroyThreshold=400*power,100*power
-		for k,prop in pairs(ents.FindInSphere(pos,100*power))do
-			local Phys=prop:GetPhysicsObject()
-			if(not(prop==blaster)and(IsValid(Phys)))then
-				local PropPos=prop:LocalToWorld(prop:OBBCenter())
-				if(prop:Visible(blaster))then
-					local Mass=Phys:GetMass()
-					if(Mass<=DestroyThreshold)then
+		
+		local allProps = ents.FindInSphere(pos,100*power)
+		local ignored = {}
+		
+		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
+		for _, prop in pairs(allProps) do
+			if prop != blaster and prop:GetPhysicsObject():IsValid() and prop:GetPhysicsObject():GetMass() <= LoosenThreshold then
+				table.insert(ignored, prop)
+			end
+		end
+		table.insert(ignored, blaster)
+		
+		for _, prop in pairs(allProps) do
+		
+			local physObj = prop:GetPhysicsObject()
+			local propPos = prop:LocalToWorld(prop:OBBCenter())
+		
+			if prop != blaster and physObj:IsValid() then
+			
+				local mass = physObj:GetMass()
+			
+				local tbl = table.Copy(ignored)
+				table.RemoveByValue(tbl, prop)
+				
+				local tr = util.QuickTrace(pos, propPos - pos, tbl)
+				
+				if (IsValid(tr.Entity) and tr.Entity == prop) then
+					if mass <= DestroyThreshold then
 						SafeRemoveEntity(prop)
-					elseif(Mass<=LoosenThreshold)then
-						Phys:EnableMotion(true)
+					elseif mass <= LoosenThreshold then
+						physObj:EnableMotion(true)
 						constraint.RemoveAll(prop)
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
 					else
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
 					end
 				end
 			end
@@ -2034,9 +2058,11 @@ if(SERVER)then
 	end
 	function JMod_BlastDoors(blaster,pos,power)
 		for k,door in pairs(ents.FindInSphere(pos,50*power))do
-			if((blaster:Visible(door))and(JMod_IsDoor(door)))then
-				local Vel=(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000
-				JMod_BlastThatDoor(door,Vel)
+			if JMod_IsDoor(door) then
+				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
+				if IsValid(tr.Entity) and tr.Entity == door then
+					JMod_BlastThatDoor(door,(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
+				end
 			end
 		end
 	end
@@ -2211,12 +2237,5 @@ if(SERVER)then
 		end
 	end)
 	--]]
-
-	hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-		if ply.EZArmorSpeedFrac then 
-			local origSpeed = cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed() or ply:GetWalkSpeed()
-			mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
-		end
-	end)
 end
 
