@@ -713,17 +713,31 @@ if(CLIENT)then
 	net.Receive("JMod_EZbuildKit",function()
 		local Buildables=net.ReadTable()
 		local Kit=net.ReadEntity()
-		local Frame,W,H,Myself=vgui.Create("DFrame"),300,300,LocalPlayer()
-		Frame:SetPos(40,80)
+		
+		local resTbl = Kit:CountResourcesInRange()
+		
+		local motherFrame = vgui.Create("DFrame")
+		motherFrame:SetSize(400, 300)
+		motherFrame:SetVisible(true)
+		motherFrame:SetDraggable(false)
+		motherFrame:ShowCloseButton(false)
+		function motherFrame:Paint() end
+		motherFrame:MakePopup()
+		motherFrame:Center()
+		function motherFrame:OnKeyCodePressed(key)
+			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+		end
+		
+		local Frame,W,H,Myself=vgui.Create("DFrame", motherFrame),300,300,LocalPlayer()
+		Frame:SetPos(100,0)
 		Frame:SetSize(W,H)
-		Frame:SetTitle("Select Item")
+		Frame:SetTitle("Build Kit")
 		Frame:SetVisible(true)
-		Frame:SetDraggable(true)
+		Frame:SetDraggable(false)
 		Frame:ShowCloseButton(true)
-		Frame:MakePopup()
-		Frame:Center()
 		Frame.OnClose=function()
-			--
+			if resFrame then resFrame:Close() end
+			if motherFrame then motherFrame:Close() end
 		end
 		function Frame:OnKeyCodePressed(key)
 			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
@@ -742,7 +756,7 @@ if(CLIENT)then
 			Butt:SetPos(0,Y)
 			Butt:SetText("")
 			function Butt:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
 				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
@@ -754,24 +768,57 @@ if(CLIENT)then
 			end
 			Y=Y+30
 		end
+		
+		-- Resource display
+		local resFrame = vgui.Create("DFrame", motherFrame)
+		resFrame:SetSize(95, 300)
+		resFrame:SetPos(0, 0)
+		resFrame:SetTitle("Resources")
+		resFrame:SetDraggable(false)
+		resFrame:ShowCloseButton(false)
+		function resFrame:Paint()
+			BlurBackground(self)
+		end
+		local resLayout = vgui.Create("DListLayout", resFrame)
+		resLayout:SetPos(5, 25)
+		resLayout:SetSize(90, 270)
+		
+		for typ, amt in pairs(resTbl) do
+			local label = vgui.Create("DLabel")
+			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
+			label:SetContentAlignment(4)
+			resLayout:Add(label)
+		end
+		
 	end)
 	net.Receive("JMod_EZworkbench",function()
 		local Bench=net.ReadEntity()
 		local Buildables=net.ReadTable()
-		local Frame,W,H,Myself=vgui.Create("DFrame"),500,300,LocalPlayer()
-		Frame:SetPos(40,80)
-		Frame:SetSize(W,H)
-		Frame:SetTitle("Select Item")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:MakePopup()
-		Frame:Center()
-		Frame.OnClose=function()
-			--
+		
+		local resTbl = Bench:CountResourcesInRange()
+		
+		local motherFrame = vgui.Create("DFrame")
+		motherFrame:SetSize(600, 300)
+		motherFrame:SetVisible(true)
+		motherFrame:SetDraggable(false)
+		motherFrame:ShowCloseButton(false)
+		function motherFrame:Paint() end
+		motherFrame:MakePopup()
+		motherFrame:Center()
+		function motherFrame:OnKeyCodePressed(key)
+			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 		end
-		function Frame:OnKeyCodePressed(key)
-			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
+		
+		local Frame,W,H,Myself=vgui.Create("DFrame", motherFrame),500,300,LocalPlayer()
+		Frame:SetPos(100,0)
+		Frame:SetSize(W,H)
+		Frame:SetTitle("Workbench")
+		Frame:SetVisible(true)
+		Frame:SetDraggable(false)
+		Frame:ShowCloseButton(true)
+		Frame.OnClose=function()
+			if resFrame then resFrame:Close() end
+			if motherFrame then motherFrame:Close() end
 		end
 		function Frame:Paint()
 			BlurBackground(self)
@@ -786,8 +833,13 @@ if(CLIENT)then
 			Butt:SetSize(W-35,25)
 			Butt:SetPos(0,Y)
 			Butt:SetText("")
+			local canMake = Bench:HaveResourcesToPerformTask(itemInfo[2])
 			function Butt:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				if canMake then
+					surface.SetDrawColor(50,50,50,100)
+				else
+					surface.SetDrawColor(100,0,0,100)
+				end
 				surface.DrawRect(0,0,w,h)
 				local msg=k..": "
 				for nam,amt in pairs(itemInfo[2])do
@@ -804,6 +856,28 @@ if(CLIENT)then
 			end
 			Y=Y+30
 		end
+		
+		-- Resource display
+		local resFrame = vgui.Create("DFrame", motherFrame)
+		resFrame:SetSize(95, 300)
+		resFrame:SetPos(0, 0)
+		resFrame:SetTitle("Resources")
+		resFrame:SetDraggable(false)
+		resFrame:ShowCloseButton(false)
+		function resFrame:Paint()
+			BlurBackground(self)
+		end
+		local resLayout = vgui.Create("DListLayout", resFrame)
+		resLayout:SetPos(5, 25)
+		resLayout:SetSize(90, 270)
+		
+		for typ, amt in pairs(resTbl) do
+			local label = vgui.Create("DLabel")
+			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
+			label:SetContentAlignment(4)
+			resLayout:Add(label)
+		end
+		
 	end)
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
