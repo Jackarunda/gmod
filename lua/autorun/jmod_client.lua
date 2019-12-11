@@ -899,15 +899,15 @@ if(CLIENT)then
 		layout:SetSize(190, 270)
 		layout:SetPos(0, 0)
 		layout:SetSpaceY(5)
-		for class, count in pairs(items) do
+		for class, tbl in pairs(items) do
 			local sent=scripted_ents.Get(class)
 			local button=vgui.Create("DButton", layout)
 			button:SetSize(190, 25)
 			button:SetText("")
 			function button:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
-				local msg=sent.PrintName .. " x" .. count
+				local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
 				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			button.DoClick=function()

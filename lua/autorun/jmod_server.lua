@@ -2217,15 +2217,18 @@ if(SERVER)then
 	net.Receive("JMod_UniCrate",function(ln,ply)
 		local box=net.ReadEntity()
 		local class=net.ReadString()
-		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or !box.Items[class] or box.Items[class]<=0 then return end
-		box.Items[class]=(box.Items[class]>1) and (box.Items[class] - 1) or nil
+		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
+		
 		local ent=ents.Create(class)
 		ent:SetPos(box:GetPos())
 		ent:SetAngles(box:GetAngles())
 		ent:Spawn()
-		ply:PickupObject(ent)
-		timer.Simple(0, function() box:SetItemCount(box:GetItemCount() - math.max(ent:GetPhysicsObject():GetVolume()/1000, 1)) end)
-		box.NextLoad=CurTime()+2
+		ent:Activate()
+		timer.Simple(0.01, function() ply:PickupObject(ent) end)
+		
+		box:SetItemCount(box:GetItemCount() - box.Items[class][2])
+		box.Items[class] = box.Items[class][1] > 1 and {(box.Items[class][1] - 1), box.Items[class][2]} or nil
+		box.NextLoad = CurTime() + 2
 		box:EmitSound("Ammo_Crate.Close")
 		box:CalcWeight()
 	end)
