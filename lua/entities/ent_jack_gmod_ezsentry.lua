@@ -22,24 +22,20 @@ ENT.JModPreferredCarryAngles=Angle(0,0,0)
 
 ENT.AmmoTypes = {
 	["bullet"] = { -- Simple pew pew
-		Damage = 1,
-		Accuracy = 1
+	
 	}, 
 	["buckshot"] = { -- Multiple bullets based on total damage
-		Damage = 1,
-		Accuracy = 0.7,
+		FireRate = 0.8,
+		Accuracy = 0.8,
 	},
 	["incendiary"] = { -- Lights targets on fire
 		Damage = 0.9,
-		Accuracy = 1,
 	},
 	["he_grenade"] = { -- Explosive projectile
-		Damage = 1,
-		Accuracy = 1,
+	
 	},
 	["bolt"] = { -- Crossbow bolt projectile
 		Damage = 1.5,
-		Accuracy = 1,
 	}
 }
 
@@ -62,9 +58,8 @@ ENT.DynamicPerfSpecs={
 	TurnSpeed=60,
 	TargetingRadius=20,
 	Armor=8,
-	ResistantArmor=16,
-	FireRate=10,
-	Damage=10,
+	FireRate=6,
+	Damage=15,
 	Accuracy=1,
 	SearchSpeed=.5,
 }
@@ -81,10 +76,6 @@ ENT.ModPerfSpecs = {
 	SearchSpeed = 0,
 }
 
-ENT.Mods = { -- dynamically generated, value is -1 for leftMod, 1 for rightMod and 0 for none
-	--{leftMod = "Damage", rightMod = "Accuracy", value = 0},
-} 
-
 -- Debug function!
 -- lua_run ents.GetByIndex(174):DebugSpecs({MaxAmmo = 0, TurnSpeed = 0, TargetingRadius = 0, Armor = 0, FireRate = 0, Damage = 0, Accuracy = 0, SearchSpeed = 0})
 function ENT:DebugSpecs(tbl)
@@ -96,45 +87,29 @@ function ENT:InitPerfSpecs()
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*PerfMult end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value * PerfMult end -- upgrading temp disabled
+	--for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*PerfMult end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
-	
-	-- Initialize the mod table
-	if !self.Mods or table.Count(self.Mods) == 0 then
-		local i = 1
-		for attrib1, _ in SortedPairs(self.ModPerfSpecs) do
-			local j = 1
-			for attrib2, _ in SortedPairs(self.ModPerfSpecs) do
-				if j > i and attrib1 ~= attrib2 then
-					table.insert(self.Mods, {leftMod = attrib1, rightMod = attrib2, value = 0})
-				end
-				j = j + 1
-			end
-			i = i + 1
-		end
-		print("Mods table:")
-		PrintTable(self.Mods)
-	end
-	
-	-- Clean the ModPerfSpecs table
-	for _, v in pairs(self.ModPerfSpecs) do v = 0 end
-	
-	-- Run through the mod table and apply values to ModPerfSpecs
-	for _, tbl in pairs(self.Mods) do
-		self.ModPerfSpecs[tbl.leftMod] = self.ModPerfSpecs[tbl.leftMod] - tbl.value
-		self.ModPerfSpecs[tbl.rightMod] = self.ModPerfSpecs[tbl.rightMod] + tbl.value
-	end
-	
-	-- Now multiply current specs by ModPerfSpecs, scaling from 0.5 to 2
+		
+	-- Multiply current specs by ModPerfSpecs, scaling from 0.5 to 2
 	for attrib, value in pairs(self.ModPerfSpecs) do
 		local oldVal = self[attrib]
-		local ratio = math.abs(value / (table.Count(self.ModPerfSpecs)-1.0)) + 1.0
-		if value > 0 then -- maybe not the best solution but I'm tired
-			self[attrib] = self[attrib] * ratio
+		local ratio = (math.abs(value / (table.Count(self.ModPerfSpecs)-1.0)) + 1.0) * EZ_GRADE_BUFFS[Grade]
+		if value > 0 then
+			self[attrib] = self[attrib] * (ratio^1.5)
 		else
-			self[attrib] = self[attrib] / ratio
+			self[attrib] = self[attrib] / (ratio^1.5)
 		end
-		print("applying value of " .. value .. " (" .. math.Round(ratio, 2) .. ") to " .. attrib .. ": " .. oldVal .. " -> " .. self[attrib])
+		print("applying value of " .. value .. " (" .. (value > 0 and (math.Round(ratio, 1.5)) or math.Round(1/(ratio^1.5), 2)) .. 
+				") to " .. attrib .. ": " .. oldVal .. " -> " .. self[attrib])
+	end
+
+	-- Finally apply AmmoType attributes
+	if self.AmmoTypes[self:GetAmmoType()] then
+		for attrib, mult in pairs(self.AmmoTypes[self:GetAmmoType()]) do
+			print("applying AmmoType multiplier of " .. mult .. " to " .. attrib .. ": " .. self[attrib] .. " -> " .. self[attrib] * mult)
+			self[attrib] = self[attrib] * mult
+		end
 	end
 end
 
@@ -155,6 +130,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int",1,"Ammo")
 	self:NetworkVar("Int",2,"Grade")
 	self:NetworkVar("Float",3,"PerfMult")
+	self:NetworkVar("String",0,"AmmoType")
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -258,7 +234,7 @@ if(SERVER)then
 			if(dmg:IsDamageType(typ))then return 1000 end
 		end
 		for k,typ in pairs(self.ResistantDamageTypes)do
-			if(dmg:IsDamageType(typ))then return self.ResistantArmor end
+			if(dmg:IsDamageType(typ))then return self.Armor * 2 end
 		end
 		return self.Armor
 	end
@@ -555,11 +531,11 @@ if(SERVER)then
 		end
 		if(self.Firing)then
 			if(self.NextFire<Time)then
-				self.NextFire=Time+1/self.FireRate
+				self.NextFire=Time + 1/self.FireRate --  (1/self.FireRate^1.2 + 0.05) 
 				self:FireAtPoint(self.SearchData.LastKnownPos)
 			end
 		end
-		self:NextThink(Time+.05)
+		self:NextThink(Time+.02)
 		return true
 	end
 	function ENT:AmClearToMove()
@@ -592,23 +568,34 @@ if(SERVER)then
 		Eff:SetOrigin(SelfPos+Up*36+AimForward*5)
 		Eff:SetAngles(ShellAng)
 		Eff:SetEntity(self)
-		util.Effect("RifleShellEject",Eff,true,true)
-		sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
-		sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
 		---
 		--local Dmg=(math.Rand(self.Damage*0.75,self.Damage*1.25)^2)/10
-		local Dmg = (self.Damage^2)/10
+		local Dmg, Inacc, ShotCount = self.Damage, 0.08/self.Accuracy, 1 --math.ceil((self.Damage^2)/10), (0.1 / self.Accuracy^1.5), 1
+		local Force = Dmg / 5
 		local ShootDir=(point-ShootPos):GetNormalized()
-		local Inacc=.08/self.Accuracy
+		
+		if self:GetAmmoType() == "buckshot" then
+			ShotCount = math.Clamp(math.Round(Dmg ^ 0.5), 3, 12)
+			Dmg = math.Round(Dmg / ShotCount)
+			util.Effect("ShotgunShellEject",Eff,true,true)
+			sound.Play("weapons/shotgun/shotgun_fire7.wav",SelfPos,70,math.random(110,130))
+			
+		else -- bullet by default
+			util.Effect("RifleShellEject",Eff,true,true)
+			sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
+			sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
+				
+		end
+		
 		ShootDir=(ShootDir+VectorRand()*math.Rand(0,Inacc)):GetNormalized()
 		local Ballut={
 			Attacker=self.Owner or self,
 			Callback=nil,
 			Damage=Dmg,
-			Force=Dmg/5,
+			Force=Force,
 			Distance=nil,
 			HullSize=nil,
-			Num=self.ShotCount,
+			Num=ShotCount,
 			Tracer=5,
 			TracerName="eff_jack_gmod_smallarmstracer",
 			Dir=ShootDir,
