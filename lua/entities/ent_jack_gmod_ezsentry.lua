@@ -97,10 +97,12 @@ function ENT:InitPerfSpecs()
 		local ratio = (math.abs(value / (table.Count(self.ModPerfSpecs)-1.0)) + 1.0) * EZ_GRADE_BUFFS[Grade]
 		if value > 0 then
 			self[attrib] = self[attrib] * (ratio^1.5)
-		else
+		elseif value < 0 then
 			self[attrib] = self[attrib] / (ratio^1.5)
+		else
+			self[attrib] = self[attrib] * EZ_GRADE_BUFFS[Grade] -- only affected by grade
 		end
-		print("applying value of " .. value .. " (" .. (value > 0 and (math.Round(ratio, 1.5)) or math.Round(1/(ratio^1.5), 2)) .. 
+		print("applying value of " .. value .. " (" .. (value > 0 and (math.Round(ratio, 1.5)) or value < 0 and math.Round(1/(ratio^1.5), 2) or EZ_GRADE_BUFFS[Grade]) .. 
 				") to " .. attrib .. ": " .. oldVal .. " -> " .. self[attrib])
 	end
 
