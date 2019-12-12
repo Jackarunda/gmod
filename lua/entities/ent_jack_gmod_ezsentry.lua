@@ -19,6 +19,30 @@ ENT.EZupgrades={
 }
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
+
+ENT.AmmoTypes = {
+	["bullet"] = { -- Simple pew pew
+		Damage = 1,
+		Accuracy = 1
+	}, 
+	["buckshot"] = { -- Multiple bullets based on total damage
+		Damage = 1,
+		Accuracy = 0.7,
+	},
+	["incendiary"] = { -- Lights targets on fire
+		Damage = 0.9,
+		Accuracy = 1,
+	},
+	["he_grenade"] = { -- Explosive projectile
+		Damage = 1,
+		Accuracy = 1,
+	},
+	["bolt"] = { -- Crossbow bolt projectile
+		Damage = 1.5,
+		Accuracy = 1,
+	}
+}
+
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
 	SearchTime=7,
@@ -30,7 +54,8 @@ ENT.StaticPerfSpecs={
 	SpecialTargetingHeights={["npc_rollermine"]=15},
 	MaxDurability=100,
 	ThinkSpeed=1,
-	Efficiency=.8
+	Efficiency=.8,
+	ShotCount=1
 }
 ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
@@ -39,18 +64,76 @@ ENT.DynamicPerfSpecs={
 	Armor=8,
 	ResistantArmor=16,
 	FireRate=10,
-	MinDamage=5,
-	MaxDamage=15,
+	Damage=10,
 	Accuracy=1,
-	SearchSpeed=.5
+	SearchSpeed=.5,
 }
+-- All moddable attributes
+-- Each mod selected for it is +1, against it is -1
+ENT.ModPerfSpecs = {
+	MaxAmmo = 0, 
+	TurnSpeed = 0, 
+	TargetingRadius = 0, 
+	Armor = 0, 
+	FireRate = 0, 
+	Damage = 0, 
+	Accuracy = 0, 
+	SearchSpeed = 0,
+}
+
+ENT.Mods = { -- dynamically generated, value is -1 for leftMod, 1 for rightMod and 0 for none
+	--{leftMod = "Damage", rightMod = "Accuracy", value = 0},
+} 
+
+-- Debug function!
+-- lua_run ents.GetByIndex(174):DebugSpecs({MaxAmmo = 0, TurnSpeed = 0, TargetingRadius = 0, Armor = 0, FireRate = 0, Damage = 0, Accuracy = 0, SearchSpeed = 0})
+function ENT:DebugSpecs(tbl)
+	self.ModPerfSpecs = tbl
+	self:InitPerfSpecs()
+end
+
 function ENT:InitPerfSpecs()
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*PerfMult end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
+	
+	-- Initialize the mod table
+	if !self.Mods or self.Mods == {} then
+		for attrib1, _ in SortedPairs(self.ModPerfSpecs) do
+			for attrib2, _ in SortedPairs(self.ModPerfSpecs) do
+				if attrib1 ~= attrib2 then
+					table.insert(self.Mods, {leftMod = attrib1, rightMod = attrib2, value = 0})
+				end
+			end
+		end
+		print("Mods table:")
+		PrintTable(self.Mods)
+	end
+	
+	-- Clean the ModPerfSpecs table
+	for _, v in pairs(self.ModPerfSpecs) do v = 0 end
+	
+	-- Run through the mod table and apply values to ModPerfSpecs
+	for _, tbl in pairs(self.Mods) do
+		self.ModPerfSpecs[tbl.leftMod] = self.ModPerfSpecs[tbl.leftMod] - tbl.value
+		self.ModPerfSpecs[tbl.rightMod] = self.ModPerfSpecs[tbl.rightMod] + tbl.value
+	end
+	
+	-- Now multiply current specs by ModPerfSpecs, scaling from 0.5 to 2
+	for attrib, value in pairs(self.ModPerfSpecs) do
+		local oldVal = self[attrib]
+		local ratio = math.abs(value / (table.Count(self.ModPerfSpecs)-1.0)) + 1.0
+		if value > 0 then -- maybe not the best solution but I'm tired
+			self[attrib] = self[attrib] * ratio
+		else
+			self[attrib] = self[attrib] / ratio
+		end
+		print("applying value of " .. value .. " (" .. math.Round(ratio, 2) .. ") to " .. attrib .. ": " .. oldVal .. " -> " .. self[attrib])
+	end
 end
+
 function ENT:Upgrade(level)
 	if not(level)then level=self:GetGrade()+1 end
 	if(level>5)then return end
@@ -509,7 +592,8 @@ if(SERVER)then
 		sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
 		sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
 		---
-		local Dmg=(math.Rand(self.MinDamage,self.MaxDamage)^2)/10
+		--local Dmg=(math.Rand(self.Damage*0.75,self.Damage*1.25)^2)/10
+		local Dmg = (self.Damage^2)/10
 		local ShootDir=(point-ShootPos):GetNormalized()
 		local Inacc=.08/self.Accuracy
 		ShootDir=(ShootDir+VectorRand()*math.Rand(0,Inacc)):GetNormalized()
@@ -520,7 +604,7 @@ if(SERVER)then
 			Force=Dmg/5,
 			Distance=nil,
 			HullSize=nil,
-			Num=1,
+			Num=self.ShotCount,
 			Tracer=5,
 			TracerName="eff_jack_gmod_smallarmstracer",
 			Dir=ShootDir,
