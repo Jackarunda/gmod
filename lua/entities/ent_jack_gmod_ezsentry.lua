@@ -100,13 +100,17 @@ function ENT:InitPerfSpecs()
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
 	-- Initialize the mod table
-	if !self.Mods or self.Mods == {} then
+	if !self.Mods or table.Count(self.Mods) == 0 then
+		local i = 1
 		for attrib1, _ in SortedPairs(self.ModPerfSpecs) do
+			local j = 1
 			for attrib2, _ in SortedPairs(self.ModPerfSpecs) do
-				if attrib1 ~= attrib2 then
+				if j > i and attrib1 ~= attrib2 then
 					table.insert(self.Mods, {leftMod = attrib1, rightMod = attrib2, value = 0})
 				end
+				j = j + 1
 			end
+			i = i + 1
 		end
 		print("Mods table:")
 		PrintTable(self.Mods)
