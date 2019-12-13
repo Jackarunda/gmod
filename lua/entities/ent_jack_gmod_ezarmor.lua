@@ -28,7 +28,8 @@ if(SERVER)then
 		self.Specs=JMod_ArmorTable[self.Slot][self.ArmorName]
 		self.Entity:SetModel(self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
-		if(self.ModelScale)then self:SetModelScale(self.ModelScale) end
+		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
+		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

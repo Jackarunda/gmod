@@ -213,8 +213,9 @@ JMod_ArmorTable={
 			ang=Angle(100,180,90),
 			wgt=5,
 			dur=50,
-			msk="",
-			spc="nervegas_immunity",
+			mskmat=Material("mats_jack_gmod_sprites/vignette.png"),
+			spcdef={[DMG_NERVEGAS]=100,[DMG_RADIATION]=50},
+			sndlop="snds_jack_gmod/mask_breathe.wav",
 			ent="ent_jack_gmod_ezarmor_gasmask"
 		},
 		["BallisticMask"]={
@@ -225,7 +226,7 @@ JMod_ArmorTable={
 			wgt=5,
 			def=100,
 			dur=100,
-			msk="",
+			mskmat=Material("mats_jack_gmod_sprites/hard_vignette.png"),
 			ent="ent_jack_gmod_ezarmor_balmask",
 			gayPhysics=true
 		}
@@ -271,7 +272,8 @@ JMod_ArmorTable={
 			wgt=5,
 			def=20,
 			dur=300,
-			ent="ent_jack_gmod_ezarmor_ltorso"
+			ent="ent_jack_gmod_ezarmor_ltorso",
+			gayPhysics=true
 		},
 		["Medium-Light"]={
 			mdl="models/player/armor_paca/paca.mdl", -- tarkov
@@ -281,7 +283,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=35,
 			dur=400,
-			ent="ent_jack_gmod_ezarmor_mltorso"
+			ent="ent_jack_gmod_ezarmor_mltorso",
+			gayPhysics=true
 		},
 		["Medium"]={
 			mdl="models/player/armor_gjel/gjel.mdl", -- tarkov
@@ -291,7 +294,8 @@ JMod_ArmorTable={
 			wgt=20,
 			def=50,
 			dur=500,
-			ent="ent_jack_gmod_ezarmor_mtorso"
+			ent="ent_jack_gmod_ezarmor_mtorso",
+			gayPhysics=true
 		},
 		["Medium-Heavy"]={
 			mdl="models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
@@ -301,7 +305,8 @@ JMod_ArmorTable={
 			wgt=40,
 			def=65,
 			dur=550,
-			ent="ent_jack_gmod_ezarmor_mhtorso"
+			ent="ent_jack_gmod_ezarmor_mhtorso",
+			gayPhysics=true
 		},
 		["Heavy"]={
 			mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_vest.mdl", -- csgo hydra
@@ -383,7 +388,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=40,
 			dur=150,
-			ent="ent_jack_gmod_ezarmor_slforearm"
+			ent="ent_jack_gmod_ezarmor_slforearm",
+			gayPhysics=true
 		}
 	},
 	RightForearm={
@@ -395,7 +401,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=40,
 			dur=150,
-			ent="ent_jack_gmod_ezarmor_srforearm"
+			ent="ent_jack_gmod_ezarmor_srforearm",
+			gayPhysics=true
 		}
 	},
 	LeftThigh={
@@ -407,7 +414,8 @@ JMod_ArmorTable={
 			wgt=15,
 			def=60,
 			dur=250,
-			ent="ent_jack_gmod_ezarmor_slthigh"
+			ent="ent_jack_gmod_ezarmor_slthigh",
+			gayPhysics=true
 		}
 	},
 	RightThigh={
@@ -419,7 +427,8 @@ JMod_ArmorTable={
 			wgt=15,
 			def=60,
 			dur=250,
-			ent="ent_jack_gmod_ezarmor_srthigh"
+			ent="ent_jack_gmod_ezarmor_srthigh",
+			gayPhysics=true
 		}
 	},
 	LeftCalf={
@@ -451,9 +460,9 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
 hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
-	if((ply.EZArmorSpeedFrac)and not(ply.EZArmorSpeedFrac==1))then
-		local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
+	if((ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
+		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
+		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
 	end
 end)
 local ANGLE=FindMetaTable("Angle")

@@ -176,7 +176,7 @@ if(SERVER)then
 			ply:EmitSound(Snd,55,Ptch)
 		end
 		if(ply.EZarmor)then
-			local Num=#table.GetKeys(ply.EZarmor)
+			local Num=#table.GetKeys(ply.EZarmor.slots)
 			if(Num>=6)then
 				ply:EmitSound("snd_jack_gear"..tostring(math.random(1,6))..".wav",58,math.random(70,130))
 			end
@@ -265,7 +265,6 @@ if(SERVER)then
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
-		net.WriteFloat(ply.EZArmorSpeedFrac or 1)
 		net.Broadcast()
 	end
 	local function JackaSpawnHook(ply)
@@ -273,7 +272,12 @@ if(SERVER)then
 		JackaBodyArmorUpdate(ply,"Vest",nil,nil)
 		JackaBodyArmorUpdate(ply,"Helmet",nil,nil)
 		JackaBodyArmorUpdate(ply,"Suit",nil,nil)
-		ply.EZarmor={}
+		ply.EZarmor={
+			slots={},
+			maskOn=true,
+			headsetOn=true,
+			speedFrac=nil
+		}
 		JModEZarmorSync(ply)
 		if((ply.JackaSleepPoint)and(IsValid(ply.JackaSleepPoint)))then
 			if(ply.JackaSleepPoint.NextSpawnTime<CurTime())then
@@ -294,31 +298,31 @@ if(SERVER)then
 		end
 	end
 	hook.Add("PlayerSpawn","JackaSpawnHook",JackaSpawnHook)
-	local function EZgetProtectionFromSlot(ply,slot,amt)
-		local ArmorInfo=ply.EZarmor[slot]
+	local MaxArmorProtection={
+		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
+	}
+	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
-		local ShouldWarn50=Dur>50
+		local ShouldWarn50=Dur>Specs.dur*.5
 		ArmorInfo[2]=Dur-amt*math.Rand(.8,1.2)*JMOD_CONFIG.ArmorDegredationMult -- degredation
 		if(ArmorInfo[2]<=0)then
 			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor destroyed")
 			JMod_RemoveArmorSlot(ply,slot,true)
 			JModEZarmorSync(ply)
-		elseif((ArmorInfo[2]<=50)and(ShouldWarn50))then
+		elseif((ArmorInfo[2]<=Specs.dur*.5)and(ShouldWarn50))then
 			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50% durability")
 			JModEZarmorSync(ply)
 		end
 		return Specs.def or 0
 	end
-	local MaxArmorProtection={
-		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
-	}
 	local function EZarmorScaleDmg(ply,dmgtype,dmgamt,location,isFace)
 		local Block=0
 		if(location==HITGROUP_HEAD)then
 			if(isFace)then
-				Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt)
+				Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt,dmgtype)
 			else
 				Block=Block+EZgetProtectionFromSlot(ply,"Head",dmgamt)
 			end
@@ -352,6 +356,38 @@ if(SERVER)then
 			Block=Block+EZgetProtectionFromSlot(ply,"RightCalf",dmgamt*.05)*.05
 		end
 		return 1-((Block/100)*(MaxArmorProtection[dmgtype]))
+	end
+	local function EZspecialScaleDamage(ply,dmgtype,dmgamt)
+		local Block=0
+		for slot,info in pairs(ply.EZarmor.slots)do
+			if(info)then
+				local Name,Dur,Col=info[1],info[2],info[3]
+				local Specs=JMod_ArmorTable[slot][Name]
+				local ShouldWarn50,ShouldWarn10=Dur>Specs.dur*.5,Dur>Specs.dur*.1
+				if(Specs.spcdef)then
+					for typ,amt in pairs(Specs.spcdef)do
+						if(typ==dmgtype)then
+							Block=Block+amt
+							info[2]=Dur-amt*dmgamt*math.Rand(.0004,.0006)*JMOD_CONFIG.ArmorDegredationMult -- degredation
+							if(info[2]<=0)then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." destroyed")
+								JMod_RemoveArmorSlot(ply,slot,true)
+								JModEZarmorSync(ply)
+							elseif((info[2]<=Specs.dur*.5)and(ShouldWarn50))then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." at 50% durability")
+								JModEZarmorSync(ply)
+							elseif((info[2]<=Specs.dur*.1)and(ShouldWarn10))then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." at 10% durability")
+								JModEZarmorSync(ply)
+							end
+						end
+					end
+				end
+			end
+		end
+		Block=math.Clamp(Block,0,100)
+		print(Block/100)
+		return 1-Block/100
 	end
 	local function JackyDamageHandling(victim,hitgroup,dmginfo)
 		if(victim.JackyArmor)then
@@ -469,6 +505,12 @@ if(SERVER)then
 				Mul=EZarmorScaleDmg(ply,DMG_VEHICLE,amt,HITGROUP_GENERIC)
 			elseif(dmginfo:IsDamageType(DMG_BURN))then
 				Mul=EZarmorScaleDmg(ply,DMG_BURN,amt,HITGROUP_GENERIC)
+			else
+				if(dmginfo:IsDamageType(DMG_NERVEGAS))then
+					Mul=EZspecialScaleDamage(ply,DMG_NERVEGAS,amt)
+				elseif(dmginfo:IsDamageType(DMG_RADIATION))then
+					Mul=EZspecialScaleDamage(ply,DMG_RADIATION,amt)
+				end
 			end
 			local Reduction=1-Mul
 			Reduction=Reduction^(.7*JMOD_CONFIG.ArmorExponentMult)
@@ -1897,7 +1939,7 @@ if(SERVER)then
 		if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
 	end)
 	local function EZgetWeightFromSlot(ply,slot)
-		local ArmorInfo=ply.EZarmor[slot]
+		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
@@ -1909,14 +1951,14 @@ if(SERVER)then
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply.EZArmorSpeedFrac = 1 - 0.8 * WeighedFrac
+		ply.EZarmor.speedfrac=math.Clamp(1-(.8*WeighedFrac*JMOD_CONFIG.ArmorWeightMult),.05,1)
 		-- Handled in SetupMove hook
 		--ply:SetWalkSpeed(Walk*(1-.8*WeighedFrac))
 		--ply:SetRunSpeed(Run*(1-.8*WeighedFrac))
 	end
 	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
-		local Info=ply.EZarmor[slot]
+		local Info=ply.EZarmor.slots[slot]
 		if not(Info)then return end
 		local Specs=JMod_ArmorTable[slot][Info[1]]
 		timer.Simple(math.Rand(0,.5),function()
@@ -1936,7 +1978,7 @@ if(SERVER)then
 			Ent:Activate()
 			Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
 		end
-		ply.EZarmor[slot]=nil
+		ply.EZarmor.slots[slot]=nil
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
@@ -1947,7 +1989,7 @@ if(SERVER)then
 		end
 		--]]
 		JMod_RemoveArmorSlot(ply,ent.Slot)
-		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
+		ply.EZarmor.slots[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
 		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
 		ent:Remove()
 		CalcSpeed(ply)
@@ -1960,9 +2002,6 @@ if(SERVER)then
 		CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
-	hook.Add("PlayerSpawn", "JMOD_ARMOR_SPAWN", function(ply)
-		ply.EZArmorSpeedFrac = nil
-	end)
 	-- copied from Homicide
 	function JMod_BlastThatDoor(ent,vel)
 		local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()
