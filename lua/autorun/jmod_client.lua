@@ -199,14 +199,14 @@ if(CLIENT)then
 			local MaskType,Alive,ThirdPerson=ply.EZarmor.slots["Face"] and ply.EZarmor.slots["Face"][1],ply:Alive(),ply:ShouldDrawLocalPlayer()
 			if(MaskType)then
 				local Specs=JMod_ArmorTable["Face"][MaskType]
-				if((Specs.mskmat)and(Alive)and not(ThirdPerson))then
+				if((Specs.mskmat)and(Alive)and not(ThirdPerson)and(ply.EZarmor.maskOn))then
 					surface.SetMaterial(Specs.mskmat)
 					surface.SetDrawColor(255,255,255,255)
 					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
 					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
 					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
 				end
-				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)
+				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)and(ply.EZarmor.maskOn)
 				if(Play)then
 					if not(MskSndLops[MaskType])then
 						MskSndLops[MaskType]=CreateSound(ply,Specs.sndlop)
@@ -346,47 +346,51 @@ if(CLIENT)then
 		end
 		if((ply.EZarmor)and(ply.EZarmorModels))then
 			for slot,info in pairs(ply.EZarmor.slots)do
-				local Name,Durability,Colr=info[1],info[2],info[3]
+				local Name,Durability,Colr,Render=info[1],info[2],info[3],true
+				if((slot=="Face")and not(ply.EZarmor.maskOn))then Render=false end
+				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Render=false end
 				local Specs=JMod_ArmorTable[slot][Name]
-				if(ply.EZarmorModels[slot])then
-					local Mdl=ply.EZarmorModels[slot]
-					local MdlName=Mdl:GetModel()
-					if(MdlName==Specs.mdl)then
-						-- render it
-						local Index=ply:LookupBone(EZarmorBoneTable[slot])
-						if(Index)then
-							local Pos,Ang=ply:GetBonePosition(Index)
-							if((Pos)and(Ang))then
-								local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
-								Pos=Pos+Right*Specs.pos.x+Forward*Specs.pos.y+Up*Specs.pos.z
-								Ang:RotateAroundAxis(Right,Specs.ang.p)
-								Ang:RotateAroundAxis(Up,Specs.ang.y)
-								Ang:RotateAroundAxis(Forward,Specs.ang.r)
-								Mdl:SetRenderOrigin(Pos)
-								Mdl:SetRenderAngles(Ang)
-								local Mat=Matrix()
-								Mat:Scale(Specs.siz)
-								Mdl:EnableMatrix("RenderMultiply",Mat)
-								local OldR,OldG,OldB=render.GetColorModulation()
-								render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
-								Mdl:DrawModel()
-								render.SetColorModulation(OldR,OldG,OldB)
+				if(Render)then
+					if(ply.EZarmorModels[slot])then
+						local Mdl=ply.EZarmorModels[slot]
+						local MdlName=Mdl:GetModel()
+						if(MdlName==Specs.mdl)then
+							-- render it
+							local Index=ply:LookupBone(EZarmorBoneTable[slot])
+							if(Index)then
+								local Pos,Ang=ply:GetBonePosition(Index)
+								if((Pos)and(Ang))then
+									local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
+									Pos=Pos+Right*Specs.pos.x+Forward*Specs.pos.y+Up*Specs.pos.z
+									Ang:RotateAroundAxis(Right,Specs.ang.p)
+									Ang:RotateAroundAxis(Up,Specs.ang.y)
+									Ang:RotateAroundAxis(Forward,Specs.ang.r)
+									Mdl:SetRenderOrigin(Pos)
+									Mdl:SetRenderAngles(Ang)
+									local Mat=Matrix()
+									Mat:Scale(Specs.siz)
+									Mdl:EnableMatrix("RenderMultiply",Mat)
+									local OldR,OldG,OldB=render.GetColorModulation()
+									render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
+									Mdl:DrawModel()
+									render.SetColorModulation(OldR,OldG,OldB)
+								end
 							end
+						else
+							-- remove it
+							ply.EZarmorModels[slot]:Remove()
+							ply.EZarmorModels[slot]=nil
 						end
 					else
-						-- remove it
-						ply.EZarmorModels[slot]:Remove()
-						ply.EZarmorModels[slot]=nil
+						-- create it
+						local Mdl=ClientsideModel(Specs.mdl)
+						Mdl:SetModel(Specs.mdl) -- what the FUCK garry
+						Mdl:SetPos(ply:GetPos())
+						Mdl:SetMaterial(Specs.mat or "")
+						Mdl:SetParent(ply)
+						Mdl:SetNoDraw(true)
+						ply.EZarmorModels[slot]=Mdl
 					end
-				else
-					-- create it
-					local Mdl=ClientsideModel(Specs.mdl)
-					Mdl:SetModel(Specs.mdl) -- what the FUCK garry
-					Mdl:SetPos(ply:GetPos())
-					Mdl:SetMaterial(Specs.mat or "")
-					Mdl:SetParent(ply)
-					Mdl:SetNoDraw(true)
-					ply.EZarmorModels[slot]=Mdl
 				end
 			end
 		end

@@ -2,9 +2,9 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information=""
-ENT.PrintName="EZ Universal Crate"
+ENT.PrintName="EZ Storage Crate"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 

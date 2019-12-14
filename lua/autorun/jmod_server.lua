@@ -304,6 +304,8 @@ if(SERVER)then
 	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
 		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
+		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
+		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
 		local ShouldWarn50=Dur>Specs.dur*.5
@@ -1759,11 +1761,35 @@ if(SERVER)then
 			end
 		end
 	end)
+	function JMod_EZ_Toggle_Mask(ply)
+		if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Face"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
+		ply.EZarmor.maskOn=not ply.EZarmor.maskOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_mask",function(ply,cmd,args)
+		JMod_EZ_Toggle_Mask(ply)
+	end)
+	function JMod_EZ_Toggle_Headset(ply)
+	if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Ears"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip2.wav",60,math.random(80,120))
+		ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_headset",function(ply,cmd,args)
+		JMod_EZ_Toggle_Headset(ply)
+	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
 		local lowerTxt=string.lower(txt)
 		if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
 		if(lowerTxt=="*armor*")then JMod_EZ_Remove_Armor(ply);return "" end
+		if(lowerTxt=="*mask*")then JMod_EZ_Toggle_Mask(ply);return "" end
+		if(lowerTxt=="*headset*")then JMod_EZ_Toggle_Headset(ply);return "" end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server
@@ -1817,6 +1843,11 @@ if(SERVER)then
 	local function StartDelivery(pkg,transceiver,station,bff)
 		local Time=CurTime()
 		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+		
+		local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, time, pos)
+		DeliveryTime = newTime or DeliveryTime
+		Pos = newPos or Pos
+		
 		station.state=EZ_STATION_STATE_DELIVERING
 		station.nextDeliveryTime=Time+DeliveryTime
 		station.deliveryLocation=Pos
@@ -1833,6 +1864,12 @@ if(SERVER)then
 			Station=EZ_RADIO_STATIONS[id]
 		end
 		transceiver.BFFd=bff
+		
+		local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
+		if override == false then
+			return msg or "negative on that request."
+		end
+		
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			if(bff)then return "no can do bro, we deliverin somethin else" end
 			return "negative on that request, we're currently delivering another package"
