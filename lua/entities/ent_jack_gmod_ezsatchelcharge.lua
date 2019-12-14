@@ -21,7 +21,7 @@ if(SERVER)then
 		BaseClass.Initialize(self)
 		
 		local plunger = ents.Create("ent_jack_gmod_ezsatchelcharge_plunger")
-		plunger:SetPos(self:GetPos()+self:GetForward()*10)
+		plunger:SetPos(self:GetPos()+self:GetForward()*6)
 		plunger:SetAngles(self:GetAngles())
 		plunger:Spawn()
 		plunger.Satchel = self
@@ -47,7 +47,7 @@ if(SERVER)then
 		self.Exploded=true
 		timer.Simple(0,function()
 			if(IsValid(self))then
-				local SelfPos,PowerMult=self:GetPos(), 1.2
+				local SelfPos,PowerMult=self:GetPos(), 1.5
 				--
 				local Blam=EffectData()
 				Blam:SetOrigin(SelfPos)
@@ -67,7 +67,7 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,300*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,200*PowerMult,300*PowerMult)
 					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
 						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
 					end
