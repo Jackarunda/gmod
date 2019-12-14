@@ -350,6 +350,12 @@ if(CLIENT)then
 				if((slot=="Face")and not(ply.EZarmor.maskOn))then Render=false end
 				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Render=false end
 				local Specs=JMod_ArmorTable[slot][Name]
+				
+				if JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets and JMOD_LUA_CONFIG.ArmorOffsets[ply:GetModel()] 
+						and JMOD_LUA_CONFIG.ArmorOffsets[ply:GetModel()][slot] and JMOD_LUA_CONFIG.ArmorOffsets[ply:GetModel()][slot][Name] then
+					table.Merge(Specs, JMOD_LUA_CONFIG.ArmorOffsets[ply:GetModel()][slot][Name])
+				end
+				
 				if(Render)then
 					if(ply.EZarmorModels[slot])then
 						local Mdl=ply.EZarmorModels[slot]

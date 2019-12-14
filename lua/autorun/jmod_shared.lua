@@ -221,7 +221,7 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
-	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={}} end
+	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={}, ArmorOffsets = {}} end
 	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
 		local Ent=ents.Create("prop_vehicle_jeep_old")
 		Ent:SetModel("models/buggy.mdl")
@@ -232,6 +232,26 @@ function JMod_InitGlobalConfig()
 		Ent:Spawn()
 		Ent:Activate()
 	end
+	JMOD_LUA_CONFIG.ArmorOffsets = {
+		--[[
+		["models/cyanblue/fate/astolfo/astolfo.mdl"] = {
+			["Face"] = {
+				["BallisticMask"]={
+					siz=Vector(1,1,0.9),
+					pos=Vector(-11,-62,0),
+					ang=Angle(80,180,90),
+				}
+			},
+			["Torso"] = {
+				["Light"] = {
+					siz=Vector(0.6,0.8,0.8),
+					pos=Vector(0,-4.5,0),
+					ang=Angle(-90,0,90),
+				}
+			}
+		}
+		]]
+	}
 	print("JMOD: config file loaded")
 end
 JMod_ArmorTable={
@@ -486,6 +506,7 @@ JMod_ArmorTable={
 		}
 	}
 }
+
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
