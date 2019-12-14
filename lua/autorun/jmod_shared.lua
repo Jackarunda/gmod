@@ -137,6 +137,9 @@ function JMod_InitGlobalConfig()
 				["landmines"]={
 					{"ent_jack_gmod_ezlandmine",10}
 				},
+				["bounding mines"]={
+					{"ent_jack_gmod_ezboundingmine",8}
+				},
 				["fumigators"]={
 					{"ent_jack_gmod_ezfumigator",2}
 				},
