@@ -13,39 +13,34 @@ ENT.Mass = 20
 ENT.HardThrowStr = 400
 ENT.SoftThrowStr = 200
 
---ENT.JModRemoteTrigger=true
+DEFINE_BASECLASS(ENT.Base)
 
 if(SERVER)then
+
+	function ENT:Initialize()
+		BaseClass.Initialize(self)
+		
+		local plunger = ents.Create("ent_jack_gmod_ezsatchelcharge_plunger")
+		plunger:SetPos(self:GetPos()+self:GetForward()*10)
+		plunger:SetAngles(self:GetAngles())
+		plunger:Spawn()
+		plunger.Satchel = self
+		plunger.Owner = self.Owner
+		self.Plunger = plunger
+		timer.Simple(0, function() plunger:SetParent(self) end)
+	end
 
 	function ENT:Prime()
 		self:EmitSound("weapons/c4/c4_plant.wav")
 		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self.Plunger:SetParent(nil)
+		constraint.NoCollide(self, self.Plunger, 0, 0)
 	end
 
 	function ENT:Arm()
 		self:EmitSound("buttons/button5.wav", 80, 110)
 		self:SetState(JMOD_EZ_STATE_ARMED)
-		
-		local plunger = ents.Create("ent_jack_gmod_ezsatchelcharge_plunger")
-		plunger:SetPos(self:GetPos())
-		plunger:SetAngles(self:GetAngles())
-		plunger.Satchel = self
-		plunger.Owner = self.Owner
-		self.Plunger = plunger
-		plunger:Spawn()
-		timer.Simple(0.05, function()
-			self.Owner:PickupObject(plunger)
-		end)
-		
 	end
-	
-	--[[
-	function ENT:JModEZremoteTriggerFunc(ply)
-		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
-		if not(self:GetState()==JMOD_EZ_STATE_ARMED)then return end
-		self:Detonate()
-	end
-	]]
 	
 	function ENT:Detonate()
 		if(self.Exploded)then return end
