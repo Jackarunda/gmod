@@ -58,7 +58,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator,"armor","armor remove")
+		JMod_Hint(activator,"armor","armor remove","mask","headset")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end

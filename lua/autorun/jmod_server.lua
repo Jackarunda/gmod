@@ -304,6 +304,8 @@ if(SERVER)then
 	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
 		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
+		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
+		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
 		local ShouldWarn50=Dur>Specs.dur*.5
@@ -1759,11 +1761,35 @@ if(SERVER)then
 			end
 		end
 	end)
+	function JMod_EZ_Toggle_Mask(ply)
+		if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Face"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
+		ply.EZarmor.maskOn=not ply.EZarmor.maskOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_mask",function(ply,cmd,args)
+		JMod_EZ_Toggle_Mask(ply)
+	end)
+	function JMod_EZ_Toggle_Headset(ply)
+	if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Ears"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip2.wav",60,math.random(80,120))
+		ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_headset",function(ply,cmd,args)
+		JMod_EZ_Toggle_Headset(ply)
+	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
 		local lowerTxt=string.lower(txt)
 		if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
 		if(lowerTxt=="*armor*")then JMod_EZ_Remove_Armor(ply);return "" end
+		if(lowerTxt=="*mask*")then JMod_EZ_Toggle_Mask(ply);return "" end
+		if(lowerTxt=="*headset*")then JMod_EZ_Toggle_Headset(ply);return "" end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server

@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=14,
+		Version=15,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -54,6 +54,9 @@ function JMod_InitGlobalConfig()
 					{"ent_jack_gmod_ezparts",5}
 				},
 				["advanced parts"]={
+					{"ent_jack_gmod_ezadvparts",2}
+				},
+				["advanced textiles"]={
 					{"ent_jack_gmod_ezadvparts",2}
 				},
 				["batteries"]={
@@ -136,6 +139,18 @@ function JMod_InitGlobalConfig()
 				},
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
+				},
+				["armor"]={
+					"ent_jack_gmod_ezarmor_balmask","ent_jack_gmod_ezarmor_gasmask",
+					"ent_jack_gmod_ezarmor_hlshoulder","ent_jack_gmod_ezarmor_hrshoulder",
+					"ent_jack_gmod_ezarmor_htorso","ent_jack_gmod_ezarmor_lhead",
+					"ent_jack_gmod_ezarmor_llshoulder","ent_jack_gmod_ezarmor_lrshoulder",
+					"ent_jack_gmod_ezarmor_ltorso","ent_jack_gmod_ezarmor_mhead",
+					"ent_jack_gmod_ezarmor_mhtorso","ent_jack_gmod_ezarmor_mltorso",
+					"ent_jack_gmod_ezarmor_mtorso","ent_jack_gmod_ezarmor_slcalf",
+					"ent_jack_gmod_ezarmor_slforearm","ent_jack_gmod_ezarmor_slthigh",
+					"ent_jack_gmod_ezarmor_spelvis","ent_jack_gmod_ezarmor_srcalf",
+					"ent_jack_gmod_ezarmor_srforearm","ent_jack_gmod_ezarmor_srthigh"
 				}
 			},
 			RestrictedPackages={"antimatter"},
@@ -162,13 +177,33 @@ function JMod_InitGlobalConfig()
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
 			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}},
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=20,chemicals=50,advparts=10,advtextiles=10}},
 			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5}},
 			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3}},
 			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3}},
 			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3}},
 			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
-			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}}
+			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}},
+			["EZ Ballistic Mask"]={"ent_jack_gmod_ezarmor_balmask",{parts=10,advtextiles=5}},
+			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,advtextiles=5}},
+			["EZ Heavy Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_hlshoulder",{parts=15,advtextiles=10}},
+			["EZ Heavy Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_hrshoulder",{parts=15,advtextiles=10}},
+			["EZ Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_htorso",{parts=20,advtextiles=30}},
+			["EZ Light Helmet"]={"ent_jack_gmod_ezarmor_lhead",{parts=15,advtextiles=5}},
+			["EZ Light Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_llshoulder",{parts=10,advtextiles=5}},
+			["EZ Light Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_lrshoulder",{parts=10,advtextiles=5}},
+			["EZ Light Torso Armor"]={"ent_jack_gmod_ezarmor_ltorso",{parts=15,advtextiles=10}},
+			["EZ Medium Helmet"]={"ent_jack_gmod_ezarmor_mhead",{parts=20,advtextiles=10}},
+			["EZ Medium-Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_mhtorso",{parts=15,advtextiles=25}},
+			["EZ Medium-Light Torso Armor"]={"ent_jack_gmod_ezarmor_mltorso",{parts=15,advtextiles=15}},
+			["EZ Medium Torso Armor"]={"ent_jack_gmod_ezarmor_mtorso",{parts=15,advtextiles=20}},
+			["EZ Standard Left Calf Armor"]={"ent_jack_gmod_ezarmor_slcalf",{parts=10,advtextiles=5}},
+			["EZ Standard Left Forearm Armor"]={"ent_jack_gmod_ezarmor_slforearm",{parts=10,advtextiles=5}},
+			["EZ Standard Left Thigh Armor"]={"ent_jack_gmod_ezarmor_slthigh",{parts=10,advtextiles=5}},
+			["EZ Standard Pelvis Armor"]={"ent_jack_gmod_ezarmor_spelvis",{parts=10,advtextiles=10}},
+			["EZ Standard Right Calf Armor"]={"ent_jack_gmod_ezarmor_srcalf",{parts=10,advtextiles=5}},
+			["EZ Standard Right Forearm Armor"]={"ent_jack_gmod_ezarmor_srforearm",{parts=10,advtextiles=5}},
+			["EZ Standard Right Thigh Armor"]={"ent_jack_gmod_ezarmor_srthigh",{parts=10,advtextiles=5}}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -186,21 +221,16 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
-	if not(JMOD_LUA_CONFIG)then
-		JMOD_LUA_CONFIG={
-			BuildFuncs={
-				spawnHL2buggy=function(playa, position, angles)
-					local Ent=ents.Create("prop_vehicle_jeep_old")
-					Ent:SetModel("models/buggy.mdl")
-					Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
-					Ent:SetPos(position)
-					Ent:SetAngles(angles)
-					Ent.Owner=playa
-					Ent:Spawn()
-					Ent:Activate()
-				end
-			}
-		}
+	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={}} end
+	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
+		local Ent=ents.Create("prop_vehicle_jeep_old")
+		Ent:SetModel("models/buggy.mdl")
+		Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
+		Ent:SetPos(position)
+		Ent:SetAngles(angles)
+		Ent.Owner=playa
+		Ent:Spawn()
+		Ent:Activate()
 	end
 	print("JMOD: config file loaded")
 end
@@ -460,7 +490,7 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
 hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
-	if((ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
+	if((ply.EZarmor)and(ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
 		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
 		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
 	end
@@ -1536,6 +1566,8 @@ local Hints={
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["armor"]="ALT+E to select color and wear armor",
 	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
+	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
+	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
