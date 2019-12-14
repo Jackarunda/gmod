@@ -192,6 +192,38 @@ if(CLIENT)then
 		end
 	end
 	hook.Add("RenderScreenspaceEffects","JackyArmorSpaceEffects",ScreenSpaceEffects)
+	local MskSndLops={}
+	hook.Add("HUDPaintBackground","JMOD_HUDBG",function()
+		local ply,Play=LocalPlayer(),false
+		if(ply.EZarmor)then
+			local MaskType,Alive,ThirdPerson=ply.EZarmor.slots["Face"] and ply.EZarmor.slots["Face"][1],ply:Alive(),ply:ShouldDrawLocalPlayer()
+			if(MaskType)then
+				local Specs=JMod_ArmorTable["Face"][MaskType]
+				if((Specs.mskmat)and(Alive)and not(ThirdPerson))then
+					surface.SetMaterial(Specs.mskmat)
+					surface.SetDrawColor(255,255,255,255)
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+				end
+				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)
+				if(Play)then
+					if not(MskSndLops[MaskType])then
+						MskSndLops[MaskType]=CreateSound(ply,Specs.sndlop)
+						MskSndLops[MaskType]:Play()
+					elseif(not(MskSndLops[MaskType]:IsPlaying()))then
+						MskSndLops[MaskType]:Play()
+					end
+				end
+			end
+		end
+		if not(Play)then
+			for k,v in pairs(MskSndLops)do
+				v:Stop()
+				MskSndLops[k]=nil
+			end
+		end
+	end)
 	local function JackyArmorUpdate(data)
 		local Ply=data:ReadEntity()
 		local Slot=data:ReadString()
@@ -313,7 +345,7 @@ if(CLIENT)then
 			end
 		end
 		if((ply.EZarmor)and(ply.EZarmorModels))then
-			for slot,info in pairs(ply.EZarmor)do
+			for slot,info in pairs(ply.EZarmor.slots)do
 				local Name,Durability,Colr=info[1],info[2],info[3]
 				local Specs=JMod_ArmorTable[slot][Name]
 				if(ply.EZarmorModels[slot])then
@@ -808,7 +840,7 @@ if(CLIENT)then
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
 	end)
-	net.Receive("JMod_UniCrate", function()
+	net.Receive("JMod_UniCrate",function()
 		local box=net.ReadEntity()
 		local items=net.ReadTable()
 		local frame=vgui.Create("DFrame")
@@ -890,7 +922,6 @@ if(CLIENT)then
 		if not(IsValid(ply))then return end
 		ply.EZarmor=tbl
 		ply.EZarmorModels=ply.EZarmorModels or {}
-		ply.EZArmorSpeedFrac=spd
 	end)
 end
 --[[
