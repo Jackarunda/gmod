@@ -1817,6 +1817,11 @@ if(SERVER)then
 	local function StartDelivery(pkg,transceiver,station,bff)
 		local Time=CurTime()
 		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+		
+		local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, time, pos)
+		DeliveryTime = newTime or DeliveryTime
+		Pos = newPos or Pos
+		
 		station.state=EZ_STATION_STATE_DELIVERING
 		station.nextDeliveryTime=Time+DeliveryTime
 		station.deliveryLocation=Pos
