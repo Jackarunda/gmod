@@ -13,7 +13,7 @@ ENT.SpoonModel = "models/grenades/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 ENT.HardThrowStr = 400
-ENT.SoftThrowStr = 200
+ENT.SoftThrowStr = 300
 
 if(SERVER)then
 

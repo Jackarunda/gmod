@@ -11,7 +11,7 @@ ENT.SpoonEnt = nil
 ENT.ModelScale = 2
 ENT.Mass = 20
 ENT.HardThrowStr = 400
-ENT.SoftThrowStr = 200
+ENT.SoftThrowStr = 300
 
 DEFINE_BASECLASS(ENT.Base)
 
