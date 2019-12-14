@@ -13,7 +13,7 @@ ENT.Mass = 20
 ENT.HardThrowStr = 400
 ENT.SoftThrowStr = 200
 
-ENT.JModRemoteTrigger=true
+--ENT.JModRemoteTrigger=true
 
 if(SERVER)then
 
@@ -24,21 +24,28 @@ if(SERVER)then
 
 	function ENT:Arm()
 		self:EmitSound("buttons/button5.wav", 80, 110)
-		self:SetState(JMOD_EZ_STATE_ARMING)
-		timer.Simple(5,function()
-			if(IsValid(self))then self:SetState(JMOD_EZ_STATE_ARMED) end
-			if IsValid(self.Owner) then self.Owner:EmitSound("buttons/blip1.wav", 50, 150) end
+		self:SetState(JMOD_EZ_STATE_ARMED)
+		
+		local plunger = ents.Create("ent_jack_gmod_ezsatchelcharge_plunger")
+		plunger:SetPos(self:GetPos())
+		plunger:SetAngles(self:GetAngles())
+		plunger.Satchel = self
+		plunger.Owner = self.Owner
+		self.Plunger = plunger
+		plunger:Spawn()
+		timer.Simple(0.05, function()
+			self.Owner:PickupObject(plunger)
 		end)
-		timer.Simple(68, function()
-			if(IsValid(self))then self:EmitSound("buttons/combine_button2.wav", 80, 110) self:SetState(JMOD_EZ_STATE_OFF) end
-		end)
+		
 	end
 	
+	--[[
 	function ENT:JModEZremoteTriggerFunc(ply)
 		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
 		if not(self:GetState()==JMOD_EZ_STATE_ARMED)then return end
 		self:Detonate()
 	end
+	]]
 	
 	function ENT:Detonate()
 		if(self.Exploded)then return end
@@ -73,6 +80,12 @@ if(SERVER)then
 				end)
 			end
 		end)
+	end
+	
+	function ENT:OnRemove()
+		if IsValid(self.Plunger) then
+			SafeRemoveEntityDelayed(self.Plunger, 3)
+		end
 	end
 	
 elseif(CLIENT)then
