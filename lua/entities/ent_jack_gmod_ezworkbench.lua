@@ -277,13 +277,20 @@ if(SERVER)then
 		end
 	end
 	function ENT:TryBuild(itemName,ply)
-		local Gas,Elec,Built=self:GetGas(),self:GetElectricity(),false
+		local Gas,Elec=self:GetGas(),self:GetElectricity()
 		if((Gas<=0)or(Elec<=0))then return end
 		local ItemInfo=JMOD_CONFIG.Recipes[itemName]
 		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
+		
 		if(self:HaveResourcesToPerformTask(BuildReqs))then
+		
+			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+			if override == false then
+				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
+				return
+			end
+		
 			self:ConsumeResourcesInRange(BuildReqs)
-			Built=true
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
 			for i=1,BuildSteps do
 				timer.Simple(i/100,function()
@@ -318,8 +325,9 @@ if(SERVER)then
 					end
 				end)
 			end
+		else
+			ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build")
 		end
-		if not(Built)then ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
