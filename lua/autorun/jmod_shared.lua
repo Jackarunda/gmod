@@ -89,6 +89,24 @@ function JMod_InitGlobalConfig()
 				["frag grenades"]={
 					{"ent_jack_gmod_ezfragnade",10}
 				},
+				["gas grenades"]={
+					{"ent_jack_gmod_ezgasnade",6}
+				},
+				["impact grenades"]={
+					{"ent_jack_gmod_ezimpactnade",10}
+				},
+				["incendiary grenades"]={
+					{"ent_jack_gmod_ezfirenade",6}
+				},
+				["satchel charges"]={
+					{"ent_jack_gmod_ezsatchelcharge",4}
+				},
+				["stick grenades"]={
+					{"ent_jack_gmod_ezsticknade",10}
+				},
+				["sticky bomb"]={
+					{"ent_jack_gmod_ezstickynade",6}
+				},
 				["mini grenades"]={
 					{"ent_jack_gmod_eznade_impact",5},
 					{"ent_jack_gmod_eznade_proximity",5},
