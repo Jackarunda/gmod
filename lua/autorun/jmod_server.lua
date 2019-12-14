@@ -1833,6 +1833,12 @@ if(SERVER)then
 			Station=EZ_RADIO_STATIONS[id]
 		end
 		transceiver.BFFd=bff
+		
+		local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
+		if override == false then
+			return msg or "negative on that request."
+		end
+		
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			if(bff)then return "no can do bro, we deliverin somethin else" end
 			return "negative on that request, we're currently delivering another package"
