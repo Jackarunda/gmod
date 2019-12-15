@@ -221,7 +221,12 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
-	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={}} end
+	print("JMOD: config file loaded")
+	-- jmod lua config --
+	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={},ArmorOffsets={}} end
+	JMOD_LUA_CONFIG.BuildFuncs=JMOD_LUA_CONFIG.BuildFuncs or {}
+	JMOD_LUA_CONFIG.ArmorOffsets=JMOD_LUA_CONFIG.ArmorOffsets or {}
+	
 	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
 		local Ent=ents.Create("prop_vehicle_jeep_old")
 		Ent:SetModel("models/buggy.mdl")
@@ -232,7 +237,281 @@ function JMod_InitGlobalConfig()
 		Ent:Spawn()
 		Ent:Activate()
 	end
-	print("JMOD: config file loaded")
+	
+	local CSSCTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
+			}
+		}
+	}
+	local CSSTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1.2,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(4.5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
+			}
+		}
+	}
+
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"] = CSSTTable
+
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"] = CSSCTTable
+	
+	print("JMOD: lua config file loaded")
 end
 JMod_ArmorTable={
 	Face={
@@ -486,6 +765,7 @@ JMod_ArmorTable={
 		}
 	}
 }
+
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)

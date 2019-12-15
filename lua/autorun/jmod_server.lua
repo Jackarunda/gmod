@@ -9,6 +9,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_EZtimeBomb")
 	util.AddNetworkString("JMod_UniCrate")
 	util.AddNetworkString("JMod_EZarmorSync")
+	util.AddNetworkString("JMod_LuaConfigSync")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1587,7 +1588,7 @@ if(SERVER)then
 		if not((ply)and(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
-	local NextMainThink,NextNutritionThink,NextArmorThink=0,0,0
+	local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
 		if(NextMainThink>Time)then return end
@@ -1642,6 +1643,13 @@ if(SERVER)then
 			for k,playa in pairs(player.GetAll())do
 				if(playa:Alive())then JModEZarmorSync(playa) end
 			end
+		end
+		---
+		if(NextSync<Time)then
+			NextSync=Time+30
+			net.Start("JMod_LuaConfigSync")
+			net.WriteTable((JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets) or {})
+			net.Broadcast()
 		end
 	end)
 	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)

@@ -244,6 +244,14 @@ if(CLIENT)then
 		end
 	end
 	usermessage.Hook("JackaBodyArmorUpdateClient",JackyArmorUpdate)
+	local function CopyArmorTableToPlayer(ply)
+		-- make a copy of the global armor spec table, personalize it, and store it on the player
+		ply.JMod_ArmorTableCopy=table.FullCopy(JMod_ArmorTable)
+		local plyMdl=ply:GetModel()
+		if JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets and JMOD_LUA_CONFIG.ArmorOffsets[plyMdl] then
+			table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
+		end
+	end
 	local EZarmorBoneTable={
 		Torso="ValveBiped.Bip01_Spine2",
 		Head="ValveBiped.Bip01_Head1",
@@ -345,11 +353,17 @@ if(CLIENT)then
 			end
 		end
 		if((ply.EZarmor)and(ply.EZarmorModels))then
+			local Time=CurTime()
+			if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
+				CopyArmorTableToPlayer(ply)
+				ply.NextEZarmorTableCopy=Time+30
+			end
 			for slot,info in pairs(ply.EZarmor.slots)do
 				local Name,Durability,Colr,Render=info[1],info[2],info[3],true
 				if((slot=="Face")and not(ply.EZarmor.maskOn))then Render=false end
 				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Render=false end
-				local Specs=JMod_ArmorTable[slot][Name]
+				local Specs,plyMdl=ply.JMod_ArmorTableCopy[slot][Name],ply:GetModel()
+				
 				if(Render)then
 					if(ply.EZarmorModels[slot])then
 						local Mdl=ply.EZarmorModels[slot]
@@ -593,6 +607,10 @@ if(CLIENT)then
 			end
 		end
 	end
+	net.Receive("JMod_LuaConfigSync",function()
+		JMOD_LUA_CONFIG=JMOD_LUA_CONFIG or {}
+		JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
+	end)
 	net.Receive("JMod_Friends",function()
 		if(MenuOpen)then return end
 		MenuOpen=true
