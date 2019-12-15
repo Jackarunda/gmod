@@ -185,7 +185,7 @@ function JMod_InitGlobalConfig()
 			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
 			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}},
 			["EZ Ballistic Mask"]={"ent_jack_gmod_ezarmor_balmask",{parts=10,advtextiles=5}},
-			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,advtextiles=5}},
+			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,chemicals=10,advtextiles=2}},
 			["EZ Heavy Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_hlshoulder",{parts=15,advtextiles=10}},
 			["EZ Heavy Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_hrshoulder",{parts=15,advtextiles=10}},
 			["EZ Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_htorso",{parts=20,advtextiles=30}},
