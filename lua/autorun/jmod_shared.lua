@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=15,
+		Version=16,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -57,7 +57,7 @@ function JMod_InitGlobalConfig()
 					{"ent_jack_gmod_ezadvparts",2}
 				},
 				["advanced textiles"]={
-					{"ent_jack_gmod_ezadvparts",2}
+					{"ent_jack_gmod_ezadvtextiles",2}
 				},
 				["batteries"]={
 					{"ent_jack_gmod_ezbattery",4}
