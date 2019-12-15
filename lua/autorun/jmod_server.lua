@@ -9,6 +9,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_EZtimeBomb")
 	util.AddNetworkString("JMod_UniCrate")
 	util.AddNetworkString("JMod_EZarmorSync")
+	util.AddNetworkString("JMod_LuaConfigSync")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -1587,7 +1588,7 @@ if(SERVER)then
 		if not((ply)and(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
-	local NextMainThink,NextNutritionThink,NextArmorThink=0,0,0
+	local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
 		if(NextMainThink>Time)then return end
@@ -1642,6 +1643,13 @@ if(SERVER)then
 			for k,playa in pairs(player.GetAll())do
 				if(playa:Alive())then JModEZarmorSync(playa) end
 			end
+		end
+		---
+		if(NextSync<Time)then
+			NextSync=Time+30
+			net.Start("JMod_LuaConfigSync")
+			net.WriteTable((JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets) or {})
+			net.Broadcast()
 		end
 	end)
 	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
@@ -1843,6 +1851,11 @@ if(SERVER)then
 	local function StartDelivery(pkg,transceiver,station,bff)
 		local Time=CurTime()
 		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+		
+		local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, time, pos)
+		DeliveryTime = newTime or DeliveryTime
+		Pos = newPos or Pos
+		
 		station.state=EZ_STATION_STATE_DELIVERING
 		station.nextDeliveryTime=Time+DeliveryTime
 		station.deliveryLocation=Pos
@@ -1859,6 +1872,12 @@ if(SERVER)then
 			Station=EZ_RADIO_STATIONS[id]
 		end
 		transceiver.BFFd=bff
+		
+		local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
+		if override == false then
+			return msg or "negative on that request."
+		end
+		
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			if(bff)then return "no can do bro, we deliverin somethin else" end
 			return "negative on that request, we're currently delivering another package"
