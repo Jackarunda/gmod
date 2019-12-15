@@ -221,7 +221,12 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
-	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={}, ArmorOffsets = {}} end
+	print("JMOD: config file loaded")
+	-- jmod lua config --
+	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={},ArmorOffsets={}} end
+	JMOD_LUA_CONFIG.BuildFuncs=JMOD_LUA_CONFIG.BuildFuncs or {}
+	JMOD_LUA_CONFIG.ArmorOffsets=JMOD_LUA_CONFIG.ArmorOffsets or {}
+	
 	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
 		local Ent=ents.Create("prop_vehicle_jeep_old")
 		Ent:SetModel("models/buggy.mdl")
@@ -506,7 +511,7 @@ function JMod_InitGlobalConfig()
 	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"] = CSSCTTable
 	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"] = CSSCTTable
 	
-	print("JMOD: config file loaded")
+	print("JMOD: lua config file loaded")
 end
 JMod_ArmorTable={
 	Face={
