@@ -55,11 +55,11 @@ if(SERVER)then
 		if(self.NextLoad>CurTime())then return end
 		local ent=data.HitEntity
 		if(IsValid(ent:GetPhysicsObject())and(ent:GetPhysicsObject().GetVolume)and(ent:GetPhysicsObject():GetVolume()))then
-			local Vol=math.ceil(ent:GetPhysicsObject():GetVolume()/500)
+			local Class = ent:GetClass()
+			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume()/500)
 			if ent.JModEZstorable and ent:IsPlayerHolding() and (!ent.GetState or ent:GetState()==0) and self:GetItemCount()+Vol<=self.MaxItems then
-				local Class=ent:GetClass()
 				self.NextLoad=CurTime()+0.5
-				self.Items[Class]=(self.Items[Class] or 0)+1
+				self.Items[Class]={(self.Items[Class] and self.Items[Class][1] or 0)+1, Vol}
 				self:SetItemCount(self:GetItemCount()+Vol)
 				timer.Simple(0,function() SafeRemoveEntity(ent) end)
 			end

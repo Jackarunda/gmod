@@ -410,7 +410,8 @@ function SWEP:Reload()
 					self:SwitchSelectedBuild(0)
 				else
 					net.Start("JMod_EZbuildKit")
-					net.WriteTable(self.Buildables)
+						net.WriteTable(self.Buildables)
+						net.WriteEntity(self)
 					net.Send(self.Owner)
 				end
 			end
