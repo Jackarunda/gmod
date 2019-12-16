@@ -192,6 +192,38 @@ if(CLIENT)then
 		end
 	end
 	hook.Add("RenderScreenspaceEffects","JackyArmorSpaceEffects",ScreenSpaceEffects)
+	local MskSndLops={}
+	hook.Add("HUDPaintBackground","JMOD_HUDBG",function()
+		local ply,Play=LocalPlayer(),false
+		if(ply.EZarmor)then
+			local MaskType,Alive,ThirdPerson=ply.EZarmor.slots["Face"] and ply.EZarmor.slots["Face"][1],ply:Alive(),ply:ShouldDrawLocalPlayer()
+			if(MaskType)then
+				local Specs=JMod_ArmorTable["Face"][MaskType]
+				if((Specs.mskmat)and(Alive)and not(ThirdPerson)and(ply.EZarmor.maskOn))then
+					surface.SetMaterial(Specs.mskmat)
+					surface.SetDrawColor(255,255,255,255)
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+				end
+				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)and(ply.EZarmor.maskOn)
+				if(Play)then
+					if not(MskSndLops[MaskType])then
+						MskSndLops[MaskType]=CreateSound(ply,Specs.sndlop)
+						MskSndLops[MaskType]:Play()
+					elseif(not(MskSndLops[MaskType]:IsPlaying()))then
+						MskSndLops[MaskType]:Play()
+					end
+				end
+			end
+		end
+		if not(Play)then
+			for k,v in pairs(MskSndLops)do
+				v:Stop()
+				MskSndLops[k]=nil
+			end
+		end
+	end)
 	local function JackyArmorUpdate(data)
 		local Ply=data:ReadEntity()
 		local Slot=data:ReadString()
@@ -212,6 +244,28 @@ if(CLIENT)then
 		end
 	end
 	usermessage.Hook("JackaBodyArmorUpdateClient",JackyArmorUpdate)
+	local function CopyArmorTableToPlayer(ply)
+		-- make a copy of the global armor spec table, personalize it, and store it on the player
+		ply.JMod_ArmorTableCopy=table.FullCopy(JMod_ArmorTable)
+		local plyMdl=ply:GetModel()
+		if JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets and JMOD_LUA_CONFIG.ArmorOffsets[plyMdl] then
+			table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
+		end
+	end
+	local EZarmorBoneTable={
+		Torso="ValveBiped.Bip01_Spine2",
+		Head="ValveBiped.Bip01_Head1",
+		LeftShoulder="ValveBiped.Bip01_L_UpperArm",
+		RightShoulder="ValveBiped.Bip01_R_UpperArm",
+		LeftForearm="ValveBiped.Bip01_L_Forearm",
+		RightForearm="ValveBiped.Bip01_R_Forearm",
+		LeftThigh="ValveBiped.Bip01_L_Thigh",
+		RightThigh="ValveBiped.Bip01_R_Thigh",
+		LeftCalf="ValveBiped.Bip01_L_Calf",
+		RightCalf="ValveBiped.Bip01_R_Calf",
+		Pelvis="ValveBiped.Bip01_Pelvis",
+		Face="ValveBiped.Bip01_Head1"
+	}
 	local function JackyArmorPlayerDraw(ply)
 		if not(IsValid(ply))then return end
 		if(ply.JackyArmor)then
@@ -295,6 +349,62 @@ if(CLIENT)then
 					ply.JackyArmor.Helmet.VisualModel:SetParent(ply)
 					ply.JackyArmor.Helmet.VisualModel:SetNoDraw(true)
 					ply.JackyArmor.Helmet.VisualModel:SetMaterial(ArmorAppearances[ply.JackyArmor.Helmet.Type])
+				end
+			end
+		end
+		if((ply.EZarmor)and(ply.EZarmorModels))then
+			local Time=CurTime()
+			if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
+				CopyArmorTableToPlayer(ply)
+				ply.NextEZarmorTableCopy=Time+30
+			end
+			for slot,info in pairs(ply.EZarmor.slots)do
+				local Name,Durability,Colr,Render=info[1],info[2],info[3],true
+				if((slot=="Face")and not(ply.EZarmor.maskOn))then Render=false end
+				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Render=false end
+				local Specs,plyMdl=ply.JMod_ArmorTableCopy[slot][Name],ply:GetModel()
+				
+				if(Render)then
+					if(ply.EZarmorModels[slot])then
+						local Mdl=ply.EZarmorModels[slot]
+						local MdlName=Mdl:GetModel()
+						if(MdlName==Specs.mdl)then
+							-- render it
+							local Index=ply:LookupBone(EZarmorBoneTable[slot])
+							if(Index)then
+								local Pos,Ang=ply:GetBonePosition(Index)
+								if((Pos)and(Ang))then
+									local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
+									Pos=Pos+Right*Specs.pos.x+Forward*Specs.pos.y+Up*Specs.pos.z
+									Ang:RotateAroundAxis(Right,Specs.ang.p)
+									Ang:RotateAroundAxis(Up,Specs.ang.y)
+									Ang:RotateAroundAxis(Forward,Specs.ang.r)
+									Mdl:SetRenderOrigin(Pos)
+									Mdl:SetRenderAngles(Ang)
+									local Mat=Matrix()
+									Mat:Scale(Specs.siz)
+									Mdl:EnableMatrix("RenderMultiply",Mat)
+									local OldR,OldG,OldB=render.GetColorModulation()
+									render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
+									Mdl:DrawModel()
+									render.SetColorModulation(OldR,OldG,OldB)
+								end
+							end
+						else
+							-- remove it
+							ply.EZarmorModels[slot]:Remove()
+							ply.EZarmorModels[slot]=nil
+						end
+					else
+						-- create it
+						local Mdl=ClientsideModel(Specs.mdl)
+						Mdl:SetModel(Specs.mdl) -- what the FUCK garry
+						Mdl:SetPos(ply:GetPos())
+						Mdl:SetMaterial(Specs.mat or "")
+						Mdl:SetParent(ply)
+						Mdl:SetNoDraw(true)
+						ply.EZarmorModels[slot]=Mdl
+					end
 				end
 			end
 		end
@@ -497,6 +607,10 @@ if(CLIENT)then
 			end
 		end
 	end
+	net.Receive("JMod_LuaConfigSync",function()
+		JMOD_LUA_CONFIG=JMOD_LUA_CONFIG or {}
+		JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
+	end)
 	net.Receive("JMod_Friends",function()
 		if(MenuOpen)then return end
 		MenuOpen=true
@@ -603,41 +717,105 @@ if(CLIENT)then
 			Frame:Close()
 		end
 	end)
+	net.Receive("JMod_ArmorColor",function()
+		local Ent,NextColorCheck=net.ReadEntity(),0
+		if not(IsValid(Ent))then return end
+		local Frame=vgui.Create("DFrame")
+		Frame:SetSize(200,300)
+		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:SetTitle("EZ Armor")
+		Frame:MakePopup()
+		local Picker
+		function Frame:Paint()
+			BlurBackground(self)
+			local Time=CurTime()
+			if(NextColorCheck<Time)then
+				if not(IsValid(Ent))then Frame:Close();return end
+				NextColorCheck=Time+.25
+				local Col=Picker:GetColor()
+				net.Start("JMod_ArmorColor")
+				net.WriteEntity(Ent)
+				net.WriteColor(Color(Col.r,Col.g,Col.b))
+				net.WriteBit(false)
+				net.SendToServer()
+			end
+		end
+		Picker=vgui.Create("DColorMixer",Frame)
+		Picker:SetPos(5,25)
+		Picker:SetSize(190,215)
+		Picker:SetAlphaBar(false)
+		Picker:SetPalette(false)
+		Picker:SetWangs(false)
+		Picker:SetPalette(true)
+		Picker:SetColor(Ent:GetColor())
+		local Butt=vgui.Create("DButton",Frame)
+		Butt:SetPos(5,245)
+		Butt:SetSize(190,50)
+		Butt:SetText("EQUIP")
+		function Butt:DoClick()
+			local Col=Picker:GetColor()
+			net.Start("JMod_ArmorColor")
+			net.WriteEntity(Ent)
+			net.WriteColor(Color(Col.r,Col.g,Col.b))
+			net.WriteBit(true)
+			net.SendToServer()
+			Frame:Close()
+		end
+	end)
 	net.Receive("JMod_EZbuildKit",function()
 		local Buildables=net.ReadTable()
 		local Kit=net.ReadEntity()
-		local Frame,W,H,Myself=vgui.Create("DFrame"),300,300,LocalPlayer()
-		Frame:SetPos(40,80)
+		
+		local resTbl = Kit:CountResourcesInRange()
+		
+		local motherFrame = vgui.Create("DFrame")
+		motherFrame:SetSize(430, 340)
+		motherFrame:SetVisible(true)
+		motherFrame:SetDraggable(true)
+		motherFrame:ShowCloseButton(true)
+		motherFrame:SetTitle("Build Kit")
+		function motherFrame:Paint()
+			BlurBackground(self)
+		end
+		motherFrame:MakePopup()
+		motherFrame:Center()
+		function motherFrame:OnKeyCodePressed(key)
+			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+		end
+		
+		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),300,300,LocalPlayer()
+		Frame:SetPos(120,30)
 		Frame:SetSize(W,H)
-		Frame:SetTitle("Select Item")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:MakePopup()
-		Frame:Center()
 		Frame.OnClose=function()
-			--
+			if resFrame then resFrame:Close() end
+			if motherFrame then motherFrame:Close() end
 		end
 		function Frame:OnKeyCodePressed(key)
 			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
 		end
-		function Frame:Paint()
-			BlurBackground(self)
+		function Frame:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
 		end
 		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-35)
-		Scroll:SetPos(10,30)
+		Scroll:SetSize(W-15,H-15)
+		Scroll:SetPos(10,10)
 		---
 		local Y=0
 		for k,itemInfo in pairs(Buildables)do
+			PrintTable(itemInfo)
 			local Butt=Scroll:Add("DButton")
 			Butt:SetSize(W-35,25)
 			Butt:SetPos(0,Y)
 			Butt:SetText("")
+			local Wep=LocalPlayer():GetActiveWeapon()
+			local canMake = Wep:HaveResourcesToPerformTask(itemInfo[3])
 			function Butt:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			function Butt:DoClick()
 				net.Start("JMod_EZbuildKit")
@@ -647,31 +825,63 @@ if(CLIENT)then
 			end
 			Y=Y+30
 		end
+		
+		-- Resource display
+		local resFrame = vgui.Create("DPanel", motherFrame)
+		resFrame:SetSize(105,300)
+		resFrame:SetPos(10,30)
+		function resFrame:Paint(w,h)
+			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+		end
+		local resLayout = vgui.Create("DListLayout", resFrame)
+		resLayout:SetPos(15, 25)
+		resLayout:SetSize(90, 270)
+		
+		for typ, amt in pairs(resTbl) do
+			local label = vgui.Create("DLabel")
+			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
+			label:SetContentAlignment(4)
+			resLayout:Add(label)
+		end
+		
 	end)
 	net.Receive("JMod_EZworkbench",function()
 		local Bench=net.ReadEntity()
 		local Buildables=net.ReadTable()
-		local Frame,W,H,Myself=vgui.Create("DFrame"),500,300,LocalPlayer()
-		Frame:SetPos(40,80)
-		Frame:SetSize(W,H)
-		Frame:SetTitle("Select Item")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:MakePopup()
-		Frame:Center()
-		Frame.OnClose=function()
-			--
-		end
-		function Frame:OnKeyCodePressed(key)
-			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
-		end
-		function Frame:Paint()
+		
+		local resTbl = Bench:CountResourcesInRange()
+		
+		local motherFrame = vgui.Create("DFrame")
+		motherFrame:SetSize(620, 310)
+		motherFrame:SetVisible(true)
+		motherFrame:SetDraggable(true)
+		motherFrame:ShowCloseButton(true)
+		motherFrame:SetTitle("Workbench")
+		function motherFrame:Paint()
 			BlurBackground(self)
 		end
+		motherFrame:MakePopup()
+		motherFrame:Center()
+		function motherFrame:OnKeyCodePressed(key)
+			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+		end
+		
+		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
+		Frame:SetPos(110,30)
+		Frame:SetSize(W,H-30)
+		Frame.OnClose=function()
+			if resFrame then resFrame:Close() end
+			if motherFrame then motherFrame:Close() end
+		end
+		function Frame:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+		end
 		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-35)
-		Scroll:SetPos(10,30)
+		Scroll:SetSize(W-15,H-45)
+		Scroll:SetPos(10,10)
 		---
 		local Y=0
 		for k,itemInfo in pairs(Buildables)do
@@ -679,14 +889,15 @@ if(CLIENT)then
 			Butt:SetSize(W-35,25)
 			Butt:SetPos(0,Y)
 			Butt:SetText("")
+			local canMake = Bench:HaveResourcesToPerformTask(itemInfo[2])
 			function Butt:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
 				local msg=k..": "
 				for nam,amt in pairs(itemInfo[2])do
 					msg=msg..amt.." "..nam..", "
 				end
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			function Butt:DoClick()
 				net.Start("JMod_EZworkbench")
@@ -697,16 +908,37 @@ if(CLIENT)then
 			end
 			Y=Y+30
 		end
+		
+		-- Resource display
+		local resFrame = vgui.Create("DPanel", motherFrame)
+		resFrame:SetSize(95, 270)
+		resFrame:SetPos(10,30)
+		function resFrame:Paint(w,h)
+			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+		end
+		local resLayout = vgui.Create("DListLayout", resFrame)
+		resLayout:SetPos(5, 25)
+		resLayout:SetSize(90, 270)
+		
+		for typ, amt in pairs(resTbl) do
+			local label = vgui.Create("DLabel")
+			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
+			label:SetContentAlignment(4)
+			resLayout:Add(label)
+		end
+		
 	end)
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
 	end)
-	net.Receive("JMod_UniCrate", function()
+	net.Receive("JMod_UniCrate",function()
 		local box=net.ReadEntity()
 		local items=net.ReadTable()
 		local frame=vgui.Create("DFrame")
 		frame:SetSize(200, 300)
-		frame:SetTitle("G.P. Crate")
+		frame:SetTitle("Storage Crate")
 		frame:Center()
 		frame:MakePopup()
 		frame.OnClose=function() frame=nil end
@@ -718,15 +950,15 @@ if(CLIENT)then
 		layout:SetSize(190, 270)
 		layout:SetPos(0, 0)
 		layout:SetSpaceY(5)
-		for class, count in pairs(items) do
+		for class, tbl in pairs(items) do
 			local sent=scripted_ents.Get(class)
 			local button=vgui.Create("DButton", layout)
 			button:SetSize(190, 25)
 			button:SetText("")
 			function button:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
-				local msg=sent.PrintName .. " x" .. count
+				local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
 				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			button.DoClick=function()
@@ -756,15 +988,15 @@ if(CLIENT)then
 			surface.SetDrawColor(Color(255,255,255,100))
 			surface.DrawRect(0,0,w,h)
 		end
-		local tim=vgui.Create("DNumSlider", frame)
+		local tim=vgui.Create("DNumSlider",frame)
 		tim:SetText("Set Time")
-		tim:SetSize(280, 20)
+		tim:SetSize(280,20)
 		tim:SetPos(10,30)
 		tim:SetMin(10)
 		tim:SetMax(600)
 		tim:SetValue(10)
 		tim:SetDecimals(0)
-		local apply=vgui.Create("DButton", frame)
+		local apply=vgui.Create("DButton",frame)
 		apply:SetSize(100, 30)
 		apply:SetPos(100, 75)
 		apply:SetText("ARM")
@@ -776,4 +1008,82 @@ if(CLIENT)then
 			frame:Close()
 		end
 	end)
+	net.Receive("JMod_EZarmorSync",function()
+		local ply=net.ReadEntity()
+		local tbl=net.ReadTable()
+		local spd=net.ReadFloat()
+		if not(IsValid(ply))then return end
+		ply.EZarmor=tbl
+		ply.EZarmorModels=ply.EZarmorModels or {}
+	end)
 end
+--[[
+ValveBiped.Bip01_Pelvis
+ValveBiped.Bip01_Spine
+ValveBiped.Bip01_Spine1
+ValveBiped.Bip01_Spine2
+ValveBiped.Bip01_Spine4
+ValveBiped.Bip01_Neck1
+ValveBiped.Bip01_Head1
+ValveBiped.forward
+ValveBiped.Bip01_R_Clavicle
+ValveBiped.Bip01_R_UpperArm
+ValveBiped.Bip01_R_Forearm
+ValveBiped.Bip01_R_Hand
+ValveBiped.Anim_Attachment_RH
+ValveBiped.Bip01_L_Clavicle
+ValveBiped.Bip01_L_UpperArm
+ValveBiped.Bip01_L_Forearm
+ValveBiped.Bip01_L_Hand
+ValveBiped.Anim_Attachment_LH
+ValveBiped.Bip01_R_Thigh
+ValveBiped.Bip01_R_Calf
+ValveBiped.Bip01_R_Foot
+ValveBiped.Bip01_R_Toe0
+ValveBiped.Bip01_L_Thigh
+ValveBiped.Bip01_L_Calf
+ValveBiped.Bip01_L_Foot
+ValveBiped.Bip01_L_Toe0
+ValveBiped.Bip01_L_Finger4
+ValveBiped.Bip01_L_Finger41
+ValveBiped.Bip01_L_Finger42
+ValveBiped.Bip01_L_Finger3
+ValveBiped.Bip01_L_Finger31
+ValveBiped.Bip01_L_Finger32
+ValveBiped.Bip01_L_Finger2
+ValveBiped.Bip01_L_Finger21
+ValveBiped.Bip01_L_Finger22
+ValveBiped.Bip01_L_Finger1
+ValveBiped.Bip01_L_Finger11
+ValveBiped.Bip01_L_Finger12
+ValveBiped.Bip01_L_Finger0
+ValveBiped.Bip01_L_Finger01
+ValveBiped.Bip01_L_Finger02
+ValveBiped.Bip01_R_Finger4
+ValveBiped.Bip01_R_Finger41
+ValveBiped.Bip01_R_Finger42
+ValveBiped.Bip01_R_Finger3
+ValveBiped.Bip01_R_Finger31
+ValveBiped.Bip01_R_Finger32
+ValveBiped.Bip01_R_Finger2
+ValveBiped.Bip01_R_Finger21
+ValveBiped.Bip01_R_Finger22
+ValveBiped.Bip01_R_Finger1
+ValveBiped.Bip01_R_Finger11
+ValveBiped.Bip01_R_Finger12
+ValveBiped.Bip01_R_Finger0
+ValveBiped.Bip01_R_Finger01
+ValveBiped.Bip01_R_Finger02
+ValveBiped.Bip01_L_Elbow
+ValveBiped.Bip01_L_Ulna
+ValveBiped.Bip01_R_Ulna
+ValveBiped.Bip01_R_Shoulder
+ValveBiped.Bip01_L_Shoulder
+ValveBiped.Bip01_R_Trapezius
+ValveBiped.Bip01_R_Wrist
+ValveBiped.Bip01_R_Bicep
+ValveBiped.Bip01_L_Bicep
+ValveBiped.Bip01_L_Trapezius
+ValveBiped.Bip01_L_Wrist
+ValveBiped.Bip01_R_Elbow
+--]]

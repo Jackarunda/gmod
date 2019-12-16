@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models\SnowzGmod\Payday2\Armour\vest_big_01_df"
+	"$bumpmap" "models\SnowzGmod\Payday2\Armour\vest_big_nm"
+	"$nodecal" "1"
+}

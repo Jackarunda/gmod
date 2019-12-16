@@ -248,6 +248,13 @@ function SWEP:PrimaryAttack()
 			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
 			if(self:HaveResourcesToPerformTask(Reqs))then
+			
+				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
+				if override == false then
+					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
+					return
+				end
+			
 				self:ConsumeResourcesInRange(Reqs)
 				Built=true
 				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
@@ -403,7 +410,8 @@ function SWEP:Reload()
 					self:SwitchSelectedBuild(0)
 				else
 					net.Start("JMod_EZbuildKit")
-					net.WriteTable(self.Buildables)
+						net.WriteTable(self.Buildables)
+						net.WriteEntity(self)
 					net.Send(self.Owner)
 				end
 			end

@@ -1,0 +1,31 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/splinks/KF2/characters/Cosmetics/Masterson_Cosmetic_01_D"
+	"$bumpmap" "models/splinks/KF2/characters/Cosmetics/Masterson_Cosmetic_01_N"
+ 
+
+	"$PhongWarpTexture" "models/splinks/KF2/Shared/phongwarp_metal"
+
+$surfaceprop metal
+$nodecal 1
+$nocull "1"
+$halflambert 0
+$diffuseexp 1.5
+
+ 	"$phong" "1"
+	"$phongexponent" "15"
+	"$phongboost"	"3.5"
+	"$phongfresnelranges"	"[0.02 1 5]"
+
+
+	"$rimlight" "1" 
+	"$rimlightexponent" "10.5" 
+	"$rimlightboost" "0.5" 
+	"$rimmask" 1
+
+
+	$Envmap "env_cubemap" 
+	"$envmaptint" "[0.008 0.008 0.008]"
+	"$Envmapmask" "models/splinks/KF2/characters/Cosmetics/Masterson_Cosmetic_01_s"
+
+}

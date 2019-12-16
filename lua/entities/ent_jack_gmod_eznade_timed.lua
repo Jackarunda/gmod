@@ -2,8 +2,8 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.PrintName="EZminiNade-Timed"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_ylw"

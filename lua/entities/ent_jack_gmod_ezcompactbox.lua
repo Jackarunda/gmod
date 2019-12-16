@@ -2,7 +2,6 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Compact Box"
 ENT.Spawnable=false

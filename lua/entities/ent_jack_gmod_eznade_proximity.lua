@@ -2,8 +2,8 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.PrintName="EZminiNade-Proximity"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_red"
@@ -27,6 +27,7 @@ if(SERVER)then
 			filter={self,ent,self.AttachedBomb},
 			mask=MASK_SHOT+MASK_WATER
 		})
+		print(Tr.Entity)
 		return not Tr.Hit
 	end
 	

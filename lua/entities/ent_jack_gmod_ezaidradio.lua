@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Aid Radio"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -46,13 +46,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				if(Col)then self:SetColor(Col) end
-			end
-		end
+		JMod_Colorify(self)
 		---
 		self.MaxDurability=100
 		self.MaxElectricity=100
@@ -206,11 +200,7 @@ if(SERVER)then
 		self.Owner=activator
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-				local Tem=self.Owner:Team()
-				if(Tem)then
-					local Col=team.GetColor(Tem)
-					if(Col)then self:SetColor(Col) end
-				end
+				JMod_Colorify(self)
 			end
 		end
 		self:SetState(STATE_CONNECTING)

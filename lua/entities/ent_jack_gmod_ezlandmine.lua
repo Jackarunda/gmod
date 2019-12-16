@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Land Mine"
 ENT.Spawnable=true
@@ -126,12 +126,12 @@ if(SERVER)then
 				playa:SetVelocity(playa:GetVelocity()+Up*200)
 			end
 		end
-		util.BlastDamage(self,self.Owner or self,SelfPos,120*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
 		for i=1,200 do
 			timer.Simple(i/2000,function()
+				if not(IsValid(self))then return end
 				local Dir=VectorRand()
 				Dir.z=Dir.z/4+.75
 				self:FireBullets({
@@ -144,6 +144,7 @@ if(SERVER)then
 					Dir=Dir:GetNormalized(),
 					Spread=Vector(0,0,0)
 				})
+				if(i==100)then util.BlastDamage(self,self.Owner or self,SelfPos,120*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower) end
 				if(i==200)then self:Remove() end
 			end)
 		end
