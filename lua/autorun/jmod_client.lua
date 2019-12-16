@@ -771,24 +771,23 @@ if(CLIENT)then
 		local resTbl = Kit:CountResourcesInRange()
 		
 		local motherFrame = vgui.Create("DFrame")
-		motherFrame:SetSize(400, 300)
+		motherFrame:SetSize(430, 340)
 		motherFrame:SetVisible(true)
-		motherFrame:SetDraggable(false)
-		motherFrame:ShowCloseButton(false)
-		function motherFrame:Paint() end
+		motherFrame:SetDraggable(true)
+		motherFrame:ShowCloseButton(true)
+		motherFrame:SetTitle("Build Kit")
+		function motherFrame:Paint()
+			BlurBackground(self)
+		end
 		motherFrame:MakePopup()
 		motherFrame:Center()
 		function motherFrame:OnKeyCodePressed(key)
 			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 		end
 		
-		local Frame,W,H,Myself=vgui.Create("DFrame", motherFrame),300,300,LocalPlayer()
-		Frame:SetPos(100,0)
+		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),300,300,LocalPlayer()
+		Frame:SetPos(120,30)
 		Frame:SetSize(W,H)
-		Frame:SetTitle("Build Kit")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(false)
-		Frame:ShowCloseButton(true)
 		Frame.OnClose=function()
 			if resFrame then resFrame:Close() end
 			if motherFrame then motherFrame:Close() end
@@ -796,23 +795,27 @@ if(CLIENT)then
 		function Frame:OnKeyCodePressed(key)
 			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
 		end
-		function Frame:Paint()
-			BlurBackground(self)
+		function Frame:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
 		end
 		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-35)
-		Scroll:SetPos(10,30)
+		Scroll:SetSize(W-15,H-15)
+		Scroll:SetPos(10,10)
 		---
 		local Y=0
 		for k,itemInfo in pairs(Buildables)do
+			PrintTable(itemInfo)
 			local Butt=Scroll:Add("DButton")
 			Butt:SetSize(W-35,25)
 			Butt:SetPos(0,Y)
 			Butt:SetText("")
+			local Wep=LocalPlayer():GetActiveWeapon()
+			local canMake = Wep:HaveResourcesToPerformTask(itemInfo[3])
 			function Butt:Paint(w,h)
 				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			function Butt:DoClick()
 				net.Start("JMod_EZbuildKit")
@@ -824,17 +827,16 @@ if(CLIENT)then
 		end
 		
 		-- Resource display
-		local resFrame = vgui.Create("DFrame", motherFrame)
-		resFrame:SetSize(95, 300)
-		resFrame:SetPos(0, 0)
-		resFrame:SetTitle("Resources")
-		resFrame:SetDraggable(false)
-		resFrame:ShowCloseButton(false)
-		function resFrame:Paint()
-			BlurBackground(self)
+		local resFrame = vgui.Create("DPanel", motherFrame)
+		resFrame:SetSize(105,300)
+		resFrame:SetPos(10,30)
+		function resFrame:Paint(w,h)
+			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
 		end
 		local resLayout = vgui.Create("DListLayout", resFrame)
-		resLayout:SetPos(5, 25)
+		resLayout:SetPos(15, 25)
 		resLayout:SetSize(90, 270)
 		
 		for typ, amt in pairs(resTbl) do
@@ -852,34 +854,34 @@ if(CLIENT)then
 		local resTbl = Bench:CountResourcesInRange()
 		
 		local motherFrame = vgui.Create("DFrame")
-		motherFrame:SetSize(600, 300)
+		motherFrame:SetSize(620, 310)
 		motherFrame:SetVisible(true)
-		motherFrame:SetDraggable(false)
-		motherFrame:ShowCloseButton(false)
-		function motherFrame:Paint() end
+		motherFrame:SetDraggable(true)
+		motherFrame:ShowCloseButton(true)
+		motherFrame:SetTitle("Workbench")
+		function motherFrame:Paint()
+			BlurBackground(self)
+		end
 		motherFrame:MakePopup()
 		motherFrame:Center()
 		function motherFrame:OnKeyCodePressed(key)
 			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 		end
 		
-		local Frame,W,H,Myself=vgui.Create("DFrame", motherFrame),500,300,LocalPlayer()
-		Frame:SetPos(100,0)
-		Frame:SetSize(W,H)
-		Frame:SetTitle("Workbench")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(false)
-		Frame:ShowCloseButton(true)
+		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
+		Frame:SetPos(110,30)
+		Frame:SetSize(W,H-30)
 		Frame.OnClose=function()
 			if resFrame then resFrame:Close() end
 			if motherFrame then motherFrame:Close() end
 		end
-		function Frame:Paint()
-			BlurBackground(self)
+		function Frame:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
 		end
 		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-35)
-		Scroll:SetPos(10,30)
+		Scroll:SetSize(W-15,H-45)
+		Scroll:SetPos(10,10)
 		---
 		local Y=0
 		for k,itemInfo in pairs(Buildables)do
@@ -889,17 +891,13 @@ if(CLIENT)then
 			Butt:SetText("")
 			local canMake = Bench:HaveResourcesToPerformTask(itemInfo[2])
 			function Butt:Paint(w,h)
-				if canMake then
-					surface.SetDrawColor(50,50,50,100)
-				else
-					surface.SetDrawColor(100,0,0,100)
-				end
+				surface.SetDrawColor(50,50,50,100)
 				surface.DrawRect(0,0,w,h)
 				local msg=k..": "
 				for nam,amt in pairs(itemInfo[2])do
 					msg=msg..amt.." "..nam..", "
 				end
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			function Butt:DoClick()
 				net.Start("JMod_EZworkbench")
@@ -912,14 +910,13 @@ if(CLIENT)then
 		end
 		
 		-- Resource display
-		local resFrame = vgui.Create("DFrame", motherFrame)
-		resFrame:SetSize(95, 300)
-		resFrame:SetPos(0, 0)
-		resFrame:SetTitle("Resources")
-		resFrame:SetDraggable(false)
-		resFrame:ShowCloseButton(false)
-		function resFrame:Paint()
-			BlurBackground(self)
+		local resFrame = vgui.Create("DPanel", motherFrame)
+		resFrame:SetSize(95, 270)
+		resFrame:SetPos(10,30)
+		function resFrame:Paint(w,h)
+			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
 		end
 		local resLayout = vgui.Create("DListLayout", resFrame)
 		resLayout:SetPos(5, 25)
@@ -941,7 +938,7 @@ if(CLIENT)then
 		local items=net.ReadTable()
 		local frame=vgui.Create("DFrame")
 		frame:SetSize(200, 300)
-		frame:SetTitle("G.P. Crate")
+		frame:SetTitle("Storage Crate")
 		frame:Center()
 		frame:MakePopup()
 		frame.OnClose=function() frame=nil end
