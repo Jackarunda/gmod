@@ -19,6 +19,7 @@ if(SERVER)then
 		timer.Simple((IsValid(self.AttachedBomb) and 10 or 3),function()
 			if(IsValid(self))then self:Detonate() end
 		end)
+		self:SpoonEffect()
 	end
 elseif(CLIENT)then
 	language.Add("ent_jack_gmod_eznade_timed","EZminiNade-Timed")

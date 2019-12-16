@@ -1,0 +1,20 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/mats_jack_nades/gas_grenade_d"
+	"$bumpmap" "models/mats_jack_nades/gas_grenade_n"
+                "$ambientocclusion" 1
+                "$ambientoccltexture" ""models/mats_jack_nades/gas_grenade_a"	
+	
+	"$phong" "1"
+	"$phongexponent"				"0"
+	"$phongboost"					"0"
+
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\mats_jack_nades\exponent"
+
+	"$phongfresnelranges"			"[5 7 8]"
+	
+//	"$envmap" "env_cubemap"
+	"$envmaptint" "[0.35 0.35 0.35]"
+	"$normalmapalphaenvmapmask" "1"
+}

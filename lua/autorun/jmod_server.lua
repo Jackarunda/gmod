@@ -2264,8 +2264,10 @@ if(SERVER)then
 						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass()) end
 					end)
 				elseif(key==IN_ATTACK2)then
+					local vec = ply:GetAimVector()
+					vec.z = vec.z + 0.5
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(softstr or 200)*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass()) end
 					end)
 				end
 			end
