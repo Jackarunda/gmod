@@ -37,8 +37,8 @@ if(SERVER)then
 		Boom:SetOwner(Owner)
 		Boom:Spawn()
 		Boom:Fire("explode",0,"")
-		for i=1,50 do
-			timer.Simple(i/50,function()
+		for i=1,30 do
+			timer.Simple(i/120,function()
 				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
 				Gas:SetPos(SelfPos)
 				Gas.Owner=Owner

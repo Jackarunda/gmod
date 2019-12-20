@@ -47,7 +47,7 @@ if(SERVER)then
 		--print(self:WaterLevel())
 		if(self.NextFizz<Time)then
 			self.NextFizz=Time+.5
-			if(math.random(1,2)==2)then
+			if(math.random(1,2)==2 or self.HighVisuals)then
 				local Zap=EffectData()
 				Zap:SetOrigin(Pos)
 				Zap:SetStart(self:GetVelocity())

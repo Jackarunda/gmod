@@ -77,7 +77,7 @@ if(SERVER)then
 			Tr=self.InitialTrace
 			self.InitialTrace=nil
 		else
-			local Filter={self}
+			local Filter={self,self.Creator}
 			if not(self.CanHarmOwner)then table.insert(Filter,self:GetOwner()) end
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask,HitWater,HitChainLink=MASK_SHOT,self.TypeInfo[15],self.TypeInfo[16]
@@ -166,6 +166,7 @@ if(SERVER)then
 					Haz:SetAngles(tr.HitNormal:Angle())
 					Haz.Owner=self.Owner or game.GetWorld()
 					Haz:SetDTEntity(0,self:GetDTEntity(0))
+					Haz.HighVisuals=self.HighVisuals
 					Haz:Spawn()
 					Haz:Activate()
 					if not(tr.Entity:IsWorld())then Haz:SetParent(tr.Entity) end

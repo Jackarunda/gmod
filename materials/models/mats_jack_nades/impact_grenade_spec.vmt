@@ -4,8 +4,6 @@
 	"$bumpmap" "models/mats_jack_nades/impact_grenade_n"
                 "$color2""[0.5 0.5 0.5]"
                 "$additive""1"
-                "$ambientocclusion" 1
-                "$ambientoccltexture" "models/mats_jack_nades/impact_grenade_a"	
 	
 	"$phong" "1"
 	"$phongexponent"				"10"

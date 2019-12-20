@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Bounding Mine"
+ENT.PrintName="EZ Mini Bounding Mine"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -54,7 +54,7 @@ if(SERVER)then
 		if((Tr.Hit)and(table.HasValue(self.UsableMats,Tr.MatType))and(IsValid(Tr.Entity:GetPhysicsObject())))then
 			local Ang=Tr.HitNormal:Angle()
 			Ang:RotateAroundAxis(Ang:Right(),-90)
-			local Pos=Tr.HitPos-Tr.HitNormal*4.7
+			local Pos=Tr.HitPos-Tr.HitNormal*10
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
 			constraint.Weld(self,Tr.Entity,0,0,100000,true)
@@ -101,7 +101,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		JMod_Hint(activator,"arm","friends")
+		JMod_Hint(activator,"arm","bury","friends")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(State==JMOD_EZ_STATE_OFF)then
 			if(Alt)then
@@ -155,21 +155,25 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
-		for i=1,400 do
-			timer.Simple(i/4000+.01,function()
+		for i=1,1000 do
+			timer.Simple(i/10000+.01,function()
+				if not(IsValid(self))then return end
 				local Dir=VectorRand()
-				Dir.z=Dir.z/4-.15
+				Dir.z=Dir.z/5
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(40,50)*JMOD_CONFIG.MinePower,
-					Force=math.random(10,100),
+					Damage=20,
+					Force=50,
 					Num=1,
 					Src=SelfPos,
 					Tracer=1,
 					Dir=Dir:GetNormalized(),
 					Spread=Spred
 				})
-				if(i==400)then
+				if(i==300)then
+					-- delay the blast damage so that the bang can be heard
+					util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
+				elseif(i==1000)then
 					self:Remove()
 				end
 			end)
@@ -195,7 +199,7 @@ if(SERVER)then
 		end
 		Poof:SetScale(1)
 		util.Effect("eff_jack_sminepop",Poof,true,true)
-		util.SpriteTrail(self,0,Color(50,50,50,255),false,8,20,.5,1/(15+1)*0.5,"trails/smoke.vmt")
+		--util.SpriteTrail(self,0,Color(50,50,50,255),false,8,20,.5,1/(15+1)*0.5,"trails/smoke.vmt")
 		self:EmitSound("snd_jack_sminepop.wav")
 		sound.Play("snd_jack_sminepop.wav",self:GetPos(),120,80)
 		timer.Simple(math.Rand(.4,.5),function()
@@ -229,6 +233,7 @@ if(SERVER)then
 		if(State~=JMOD_EZ_STATE_OFF)then return end
 		self.Owner=armer
 		self:SetState(JMOD_EZ_STATE_ARMING)
+		self:SetBodygroup(2,1)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
 			if(IsValid(self))then

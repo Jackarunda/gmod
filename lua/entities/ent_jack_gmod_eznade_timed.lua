@@ -7,8 +7,6 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_ylw"
-ENT.MiniNadeDamageMin = 80
-ENT.MiniNadeDamageMax = 120
 
 local BaseClass = baseclass.Get(ENT.Base)
 

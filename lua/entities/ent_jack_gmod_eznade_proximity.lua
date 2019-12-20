@@ -7,8 +7,6 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_red"
-ENT.MiniNadeDamageMin = 60
-ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "friends"}
 
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}

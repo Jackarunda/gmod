@@ -8,10 +8,11 @@ ENT.Spawnable=true
 
 ENT.Model = "models/grenades/satchel_charge.mdl"
 ENT.SpoonEnt = nil
-ENT.ModelScale = 2
+ENT.ModelScale = 2.5
 ENT.Mass = 20
-ENT.HardThrowStr = 400
-ENT.SoftThrowStr = 300
+ENT.HardThrowStr = 250
+ENT.SoftThrowStr = 125
+ENT.Hints={"arm"}
 
 DEFINE_BASECLASS(ENT.Base)
 
@@ -20,7 +21,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		BaseClass.Initialize(self)
 		
-		local plunger = ents.Create("ent_jack_gmod_ezsatchelcharge_plunger")
+		local plunger = ents.Create("ent_jack_gmod_ezblastingmachine")
 		plunger:SetPos(self:GetPos()+self:GetForward()*6)
 		plunger:SetAngles(self:GetAngles())
 		plunger:Spawn()
@@ -31,29 +32,50 @@ if(SERVER)then
 	end
 
 	function ENT:Prime()
-		self:EmitSound("weapons/c4/c4_plant.wav")
+		self:EmitSound("weapons/c4/c4_plant.wav",60,80)
 		self:SetState(JMOD_EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
-		constraint.NoCollide(self, self.Plunger, 0, 0)
+		constraint.NoCollide(self,self.Plunger,0,0)
+		constraint.Rope(self,self.Plunger,0,0,Vector(0,0,0),Vector(0,0,0),1200,0,0,.5,"cable/cable",false)
 	end
 
 	function ENT:Arm()
-		self:EmitSound("buttons/button5.wav", 80, 110)
+		--self:EmitSound("buttons/button5.wav",60,150)
 		self:SetState(JMOD_EZ_STATE_ARMED)
+	end
+		
+	function ENT:Use(activator,activatorAgain,onOff)
+		local Dude=activator or activatorAgain
+		self.Owner=Dude
+		local Time=CurTime()
+		if(tobool(onOff))then
+			local State=self:GetState()
+			if(State<0)then return end
+			local Alt=Dude:KeyDown(IN_WALK)
+			if(State==JMOD_EZ_STATE_OFF and Alt)then
+				self:Prime()
+				activator:PickupObject(self.Plunger)
+			else
+				activator:PickupObject(self)
+			end
+			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
+		end
 	end
 	
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
+		if(IsValid(self.Plunger))then self.Owner=self.Plunger.Owner end
 		timer.Simple(0,function()
 			if(IsValid(self))then
-				local SelfPos,PowerMult=self:GetPos(), 1.5
+				local SelfPos,PowerMult=self:GetPos(),4
 				--
 				local Blam=EffectData()
 				Blam:SetOrigin(SelfPos)
-				Blam:SetScale(PowerMult)
+				Blam:SetScale(PowerMult/1.5)
 				util.Effect("eff_jack_plastisplosion",Blam,true,true)
 				util.ScreenShake(SelfPos,99999,99999,1,750*PowerMult)
+				for i=1,2 do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,140,math.random(80,110)) end
 				for i=1,PowerMult do sound.Play("BaseExplosionEffect.Sound",SelfPos,120,math.random(90,110)) end
 				self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 				timer.Simple(.1,function()
@@ -67,7 +89,7 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,200*PowerMult,300*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,180*PowerMult)
 					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
 						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
 					end

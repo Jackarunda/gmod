@@ -7,8 +7,6 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_blu"
-ENT.MiniNadeDamageMin = 70
-ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "grenade remote", "binding"}
 ENT.JModRemoteTrigger=true
 

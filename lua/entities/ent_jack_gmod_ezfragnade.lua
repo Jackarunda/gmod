@@ -34,19 +34,19 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		local Spred=Vector(0,0,0)
-		for i=1,400 do
-			timer.Simple(i/4000+.01,function()
+		for i=1,1000 do
+			timer.Simple(i/10000+.01,function()
 				if not(IsValid(self))then return end
 				local Dir=VectorRand()
 				if(OnGround)then
 					Dir.z=Dir.z/4+.2
 				else
-					Dir.z=Dir.z/4-.2
+					Dir.z=Dir.z/3-.3
 				end
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(40,50),
-					Force=math.random(10,100),
+					Damage=30,
+					Force=50,
 					Num=1,
 					Src=SelfPos,
 					Tracer=1,
@@ -55,8 +55,8 @@ if(SERVER)then
 				})
 				if(i==300)then
 					-- delay the blast damage so that the bang can be heard
-					util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
-				elseif(i==400)then
+					util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,40)
+				elseif(i==1000)then
 					self:Remove()
 				end
 			end)
@@ -70,10 +70,10 @@ elseif(CLIENT)then
 		-- sprites for calibrating the lethality/casualty radius
 		--[[
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==STATE_ARMED)then
+		if(State==JMOD_EZ_STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*52*2,15*52*2,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),5*52*2,5*52*2,Color(255,255,255))
+			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*52*2,15*52*2,Color(255,0,0,128))
+			render.DrawSprite(self:GetPos()+Vector(0,0,4),5*52*2,5*52*2,Color(255,255,255,128))
 		end
 		--]]
 	end

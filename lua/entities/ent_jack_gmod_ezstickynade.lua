@@ -7,24 +7,22 @@ ENT.PrintName="EZ Sticky Bomb"
 ENT.Spawnable=true
 
 ENT.Model = "models/grenades/sticky_grenade.mdl"
-ENT.ModelScale = 1.5
+ENT.ModelScale = 2.25
 
 ENT.SpoonModel = "models/grenades/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
-
-ENT.HardThrowStr = 400
-ENT.SoftThrowStr = 300
 
 if(SERVER)then
 
 	function ENT:Prime()
 		self:SetState(JMOD_EZ_STATE_PRIMED)
 		self:SetBodygroup(2,1)
-		self:SpoonEffect()
+		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
 		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SpoonEffect()
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
@@ -51,21 +49,13 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		local Sploom=ents.Create("env_explosion")
-		Sploom:SetPos(SelfPos)
-		Sploom:SetOwner(self.Owner or game.GetWorld())
-		Sploom:SetKeyValue("iMagnitude",math.random(10,20))
-		Sploom:Spawn()
-		Sploom:Activate()
-		Sploom:Fire("explode","",0)
+		JMod_Sploom(self.Owner or game.GetWorld(),SelfPos,190)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Blam=EffectData()
 		Blam:SetOrigin(SelfPos)
 		Blam:SetScale(0.5)
 		util.Effect("eff_jack_plastisplosion",Blam,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
-		util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,175,100)
-		--util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,50,1000)
 		JMod_WreckBuildings(self,SelfPos,0.5)
 		JMod_BlastDoors(self,SelfPos,0.5)
 		

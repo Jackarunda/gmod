@@ -2261,11 +2261,17 @@ if(SERVER)then
 				local Phys=item:GetPhysicsObject()
 				if(key==IN_ATTACK)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass()) end
+						if(IsValid(Phys))then
+							Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass())
+							if(item.EZspinThrow)then
+								Phys:ApplyForceOffset(ply:GetAimVector()*Phys:GetMass()*50,Phys:GetMassCenter()+Vector(0,0,10))
+								Phys:ApplyForceOffset(-ply:GetAimVector()*Phys:GetMass()*50,Phys:GetMassCenter()-Vector(0,0,10))
+							end
+						end
 					end)
 				elseif(key==IN_ATTACK2)then
 					local vec = ply:GetAimVector()
-					vec.z = vec.z + 0.5
+					vec.z = vec.z + 0.1
 					timer.Simple(0,function()
 						if(IsValid(Phys))then Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass()) end
 					end)

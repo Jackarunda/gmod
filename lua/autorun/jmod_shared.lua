@@ -1876,6 +1876,8 @@ local Hints={
 	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
 	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
 	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
+	["blasting machine"]="alt+E on the blasting machine to detonate the satchel charge",
+	["bury"]="can only be buried in grass, dirt, snow or mud",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
 }
 function JMod_Hint(ply,...)
