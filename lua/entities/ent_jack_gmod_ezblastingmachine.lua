@@ -79,7 +79,7 @@ elseif(CLIENT)then
 		--self:DrawModel()
 		self.Mdl:SetRenderOrigin(self:GetPos()+self:GetForward()*30+self:GetUp()*1.5)
 		self.Mdl:SetRenderAngles(self:GetAngles())
-		if(self:GetFired())then print("A");self.Mdl:SetBodygroup(2,1) end
+		if(self:GetFired())then self.Mdl:SetBodygroup(2,1) end
 		self.Mdl:DrawModel()
 	end
 	language.Add("ent_jack_gmod_ezsatchelcharge_plunger","EZ Satchel Charge Plunger")

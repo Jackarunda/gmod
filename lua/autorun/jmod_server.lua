@@ -2099,9 +2099,9 @@ if(SERVER)then
 	end
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
-		local LoosenThreshold,DestroyThreshold=400*power,100*power
+		local LoosenThreshold,DestroyThreshold=300*power,75*power
 		
-		local allProps = ents.FindInSphere(pos,100*power)
+		local allProps = ents.FindInSphere(pos,75*power)
 		local ignored = {}
 		
 		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
@@ -2141,7 +2141,7 @@ if(SERVER)then
 		end
 	end
 	function JMod_BlastDoors(blaster,pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,50*power))do
+		for k,door in pairs(ents.FindInSphere(pos,40*power))do
 			if JMod_IsDoor(door) then
 				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
 				if IsValid(tr.Entity) and tr.Entity == door then
