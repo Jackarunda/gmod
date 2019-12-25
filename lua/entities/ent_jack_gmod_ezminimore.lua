@@ -4,12 +4,12 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Land Mine"
+ENT.PrintName="EZ Mini Claymore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModEZstorable=true
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
@@ -33,8 +33,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_pipes/pipe02_connector01.mdl")
-		self.Entity:SetMaterial("models/jacky_camouflage/digi2")
+		self.Entity:SetModel("models/hunter/blocks/cube025x025x025.mdl")
+		self.Entity:SetModelScale(.7,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -48,6 +48,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
+		JMod_Colorify(self)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -55,7 +56,7 @@ if(SERVER)then
 				if((self:GetState()==STATE_ARMED)and(math.random(1,5)==3))then
 					self:Detonate()
 				else
-					self.Entity:EmitSound("Weapon.ImpactHard")
+					self.Entity:EmitSound("Drywall.ImpactHard")
 				end
 			end
 		end
@@ -78,19 +79,17 @@ if(SERVER)then
 		if(State<0)then return end
 		JMod_Hint(activator,"arm","friends")
 		local Alt=activator:KeyDown(IN_WALK)
+		self.Owner=activator
+		JMod_Colorify(self)
 		if(State==STATE_OFF)then
 			if(Alt)then
-				self.Owner=activator
-				net.Start("JMod_MineColor")
-				net.WriteEntity(self)
-				net.Send(activator)
+				self:Arm(activator)
 			else
 				activator:PickupObject(self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
-			self.Owner=activator
 			self:DrawShadow(true)
 		end
 	end
@@ -98,48 +97,33 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:LocalToWorld(self:OBBCenter())
-		local Up=Vector(0,0,1)
-		local EffectType=1
-		local Traec=util.QuickTrace(self:GetPos(),Vector(0,0,-5),self.Entity)
-		if(Traec.Hit)then
-			if((Traec.MatType==MAT_DIRT)or(Traec.MatType==MAT_SAND))then
-				EffectType=1
-			elseif((Traec.MatType==MAT_CONCRETE)or(Traec.MatType==MAT_TILE))then
-				EffectType=2
-			elseif((Traec.MatType==MAT_METAL)or(Traec.MatType==MAT_GRATE))then
-				EffectType=3
-			elseif(Traec.MatType==MAT_WOOD)then
-				EffectType=4
-			end
-		else
-			EffectType=5
-		end
+		local Up=(-self:GetForward()+self:GetUp()*.2):GetNormalized()
 		local plooie=EffectData()
 		plooie:SetOrigin(SelfPos)
-		plooie:SetScale(1)
-		plooie:SetRadius(EffectType)
+		plooie:SetScale(.75)
+		plooie:SetRadius(2)
 		plooie:SetNormal(Up)
 		util.Effect("eff_jack_minesplode",plooie,true,true)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
-		for i=1,200 do
-			timer.Simple(i/2000,function()
+		for i=1,500 do
+			timer.Simple(i/5000,function()
 				if not(IsValid(self))then return end
-				local Dir=VectorRand()
-				Dir.z=Dir.z/4+.75
+				local Dir=(Up+VectorRand()*.9):GetNormalized()
+				Dir.z=Dir.z/4
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
 					Damage=math.random(20,30)*JMOD_CONFIG.MinePower,
-					Force=math.random(10,100),
+					Force=math.random(1,10),
 					Num=1,
 					Src=SelfPos,
 					Tracer=1,
 					Dir=Dir:GetNormalized(),
 					Spread=Vector(0,0,0)
 				})
-				if(i==100)then util.BlastDamage(self,self.Owner or self,SelfPos,120*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower) end
-				if(i==200)then self:Remove() end
+				if(i==100)then util.BlastDamage(self,self.Owner or self,SelfPos,20*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower) end
+				if(i==500)then self:Remove() end
 			end)
 		end
 	end
@@ -197,9 +181,9 @@ if(SERVER)then
 		return false
 	end
 	function ENT:Think()
-		local State,Time=self:GetState(),CurTime()
+		local State,Time,Dir=self:GetState(),CurTime(),(-self:GetForward()+self:GetUp()*.2):GetNormalized()
 		if(State==STATE_ARMED)then
-			for k,targ in pairs(ents.FindInSphere(self:GetPos(),100))do
+			for k,targ in pairs(ents.FindInSphere(self:GetPos()+Dir*200,150))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
@@ -221,21 +205,31 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--
+		self.Mdl=ClientsideModel("models/Weapons/w_clayjore.mdl")
+		self.Mdl:SetMaterial("models/mat_jack_claymore")
+		self.Mdl:SetPos(self:GetPos())
+		self.Mdl:SetModelScale(.8,0)
+		self.Mdl:SetParent(false)
+		self.Mdl:SetNoDraw(true)
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
-		self:DrawModel()
-		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
+		--self:DrawModel()
+		local Pos,Up,Right,Forward,Ang=self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward(),self:GetAngles()
+		self.Mdl:SetRenderOrigin(Pos-Up*5)
+		Ang:RotateAroundAxis(Right,-15)
+		self.Mdl:SetRenderAngles(Ang)
+		self.Mdl:DrawModel()
+		local State,Vary,Pos=self:GetState(),math.sin(CurTime()*50)/2+.5,self:GetPos()+Vector(0,0,4)+self:GetForward()*2
 		if(State==STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),20,20,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),10,10,Color(255,255,255))
+			render.DrawSprite(Pos,20,20,Color(255,0,0))
+			render.DrawSprite(Pos,10,10,Color(255,255,255))
 		elseif(State==STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*Vary,15*Vary,Color(255,255,255))
+			render.DrawSprite(Pos,30*Vary,30*Vary,Color(255,0,0))
+			render.DrawSprite(Pos,15*Vary,15*Vary,Color(255,255,255))
 		end
 	end
-	language.Add("ent_jack_gmod_ezlandmine","EZ Landmine")
+	language.Add("ent_jack_gmod_ezminimore","EZ Mini Claymore")
 end

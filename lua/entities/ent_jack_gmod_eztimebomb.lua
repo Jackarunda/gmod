@@ -149,7 +149,7 @@ if(SERVER)then
 		timer.Simple(math.Rand(0,.1),function()
 			if(IsValid(self))then
 				if(self.SympatheticDetonated)then return end
-				local SelfPos,PowerMult=self:LocalToWorld(self:OBBCenter()),7
+				local SelfPos,PowerMult=self:LocalToWorld(self:OBBCenter()),6
 				--
 				ParticleEffect("pcf_jack_groundsplode_large",SelfPos,vector_up:Angle())
 				util.ScreenShake(SelfPos,99999,99999,1,3000)

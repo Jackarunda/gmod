@@ -1,2 +1,0 @@
-@echo off
-vtfcmd.exe -folder "D:\Steam\steamapps\common\GarrysMod\garrysmod\addons\jmod\materials\models\mats_jack_nades\plunger_*" -output "D:\Steam\steamapps\common\GarrysMod\garrysmod\addons\jmod\materials\models\mats_jack_nades" -format "dxt1"

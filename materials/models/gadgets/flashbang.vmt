@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\gadgets/flashbang"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongexponent" "50"
+	"$phongboost" ".3"
+}

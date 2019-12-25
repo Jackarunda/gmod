@@ -9,7 +9,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.UsableMats={MAT_DIRT,MAT_FOLIAGE,MAT_SAND,MAT_SLOSH,MAT_GRASS}
+ENT.UsableMats={MAT_DIRT,MAT_FOLIAGE,MAT_SAND,MAT_SLOSH,MAT_GRASS,MAT_SNOW}
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
@@ -162,7 +162,7 @@ if(SERVER)then
 				Dir.z=Dir.z/5
 				self:FireBullets({
 					Attacker=self.Owner or game.GetWorld(),
-					Damage=20,
+					Damage=30,
 					Force=50,
 					Num=1,
 					Src=SelfPos,

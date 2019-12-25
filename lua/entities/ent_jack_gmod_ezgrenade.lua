@@ -84,9 +84,13 @@ if(SERVER)then
 	end
 	
 	function ENT:Use(activator,activatorAgain,onOff)
+		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
 		self.Owner=Dude
 		local Time=CurTime()
+		if((self.ShiftAltUse)and(Dude:KeyDown(IN_WALK))and(Dude:KeyDown(IN_SPEED)))then
+			return self:ShiftAltUse(Dude,tobool(onOff))
+		end
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
@@ -114,6 +118,7 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
+		if(self.Exploded)then return end
 		local State,Time=self:GetState(),CurTime()
 		if(self.CustomThink)then self:CustomThink(State,Time) end
 		if(IsValid(self))then

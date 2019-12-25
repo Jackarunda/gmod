@@ -87,7 +87,7 @@ if(SERVER)then
 		self.Exploded=true
 		timer.Simple(0,function()
 			if(IsValid(self))then
-				local SelfPos,PowerMult=self:GetPos(),3
+				local SelfPos,PowerMult=self:GetPos(),4
 				--
 				local Blam=EffectData()
 				Blam:SetOrigin(SelfPos)
@@ -109,9 +109,6 @@ if(SERVER)then
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,180*PowerMult)
-					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
-						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
-					end
 					self:Remove()
 				end)
 			end

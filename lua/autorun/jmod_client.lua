@@ -1016,6 +1016,18 @@ if(CLIENT)then
 		ply.EZarmor=tbl
 		ply.EZarmorModels=ply.EZarmorModels or {}
 	end)
+	hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
+		local ply,FT=LocalPlayer(),FrameTime()
+		if(ply.EZflashbanged)then
+			if(ply:Alive())then
+				DrawMotionBlur(.001,math.Clamp(ply.EZflashbanged/20,0,1),.01)
+				ply.EZflashbanged=ply.EZflashbanged-7*FT
+			else
+				ply.EZflashbanged=0
+			end
+			if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
+		end
+	end)
 end
 --[[
 ValveBiped.Bip01_Pelvis

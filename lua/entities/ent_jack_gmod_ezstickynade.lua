@@ -34,6 +34,7 @@ if(SERVER)then
 		end
 		if self:GetState() == JMOD_EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
+			self.GotParented=true
 			self.Weld = nil
 			if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then self.StickObj = data.HitEntity:GetBaseEnt() end
 			if self.StickObj:IsPlayer() or self.StickObj:IsNPC() then
@@ -42,6 +43,13 @@ if(SERVER)then
 				timer.Simple(0, function() self.Weld = constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
 				timer.Simple(0.1, function() if !IsValid(self.Weld) then self.StickObj = nil end end)
 			end
+		end
+	end
+	
+	function ENT:CustomThink()
+		if(self.GotParented)then
+			if not(IsValid(self.StickObj))then self:SetParent(nil);return end
+			if((self.StickObj.Health)and not(self.StickObj:Health()>0))then self:SetParent(nil);return end
 		end
 	end
 
