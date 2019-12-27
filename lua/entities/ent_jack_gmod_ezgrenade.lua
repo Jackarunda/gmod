@@ -46,6 +46,7 @@ if(SERVER)then
 		self:SetModel(self.Model)
 		if self.Material then self:SetMaterial(self.Material) end
 		if self.ModelScale then self:SetModelScale(self.ModelScale,0) end
+		if(self.Color)then self:SetColor(self.Color) end
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)

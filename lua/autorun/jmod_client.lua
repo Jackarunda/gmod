@@ -892,7 +892,7 @@ if(CLIENT)then
 				net.Start("JMod_EZbuildKit")
 				net.WriteInt(k,8)
 				net.SendToServer()
-				Frame:Close()
+				motherFrame:Close()
 			end
 			Y=Y+30
 		end
@@ -975,7 +975,7 @@ if(CLIENT)then
 				net.WriteEntity(Bench)
 				net.WriteString(k)
 				net.SendToServer()
-				Frame:Close()
+				motherFrame:Close()
 			end
 			Y=Y+30
 		end

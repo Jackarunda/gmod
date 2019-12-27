@@ -67,6 +67,13 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		MainTitleWord="FUEL",
 		ResourceUnit="Units"
 	},
+	["propellant"]={
+		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezpropellant",
+		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		MainTitleWord="PROPELLANT",
+		ResourceUnit="Units"
+	},
 	["gas"]={
 		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezgas",
