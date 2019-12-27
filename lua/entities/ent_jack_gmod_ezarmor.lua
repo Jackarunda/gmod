@@ -5,6 +5,7 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Armor"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---

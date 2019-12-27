@@ -4,6 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Resources"
 ENT.Information="glhfggwpezpznore"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---

@@ -4,6 +4,7 @@ ENT.Type="anim"
 ENT.Author="TheOnly8Z"
 ENT.PrintName="EZ Satchel Charge Plunger"
 ENT.Spawnable=false
+ENT.NoSitAllowed=true
 
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 

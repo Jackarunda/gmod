@@ -45,16 +45,13 @@ if(SERVER)then
 			if not(IsValid(self))then return end
 			util.BlastDamage(self,self.Owner or self,SelfPos,1000,2)
 			--[[
-			for k,v in pairs(ents.FindInSphere(SelfPos,1000))do
-				if((v:IsPlayer())and(v:Alive())and(self:CanSee(v)))then
-					local ToVec=(SelfPos-v:GetShootPos()):GetNormalized()
-					local DotProduct=v:GetAimVector():DotProduct(ToVec)
-					local ApproachAngle=(-math.deg(math.asin(DotProduct))+90)
-					if(ApproachAngle<60)then
-						net.Start("JMod_Flashbang")
-						net.WriteFloat(1-(v:GetPos():Distance(SelfPos))/1000)
-						net.Send(v)
-					end
+			local Time=CurTime()
+			for k,v in pairs(ents.FindInSphere(SelfPos,500))do
+				if((v:IsNPC())and(self:CanSee(v)))then
+					--local ToVec=(SelfPos-v:GetShootPos()):GetNormalized()
+					--local DotProduct=v:GetAimVector():DotProduct(ToVec)
+					--local ApproachAngle=(-math.deg(math.asin(DotProduct))+90)
+					v.EZnpcStunnedTime=Time+4
 				end
 			end
 			--]]

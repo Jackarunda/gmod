@@ -1,6 +1,6 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/mats_jack_nades/incendiary_grenade_d"
+	"$basetexture" "models/mats_jack_nades/smokesignal"
 	"$bumpmap" "models/mats_jack_nades/incendiary_grenade_n"	
 	
 	"$phong" "1"

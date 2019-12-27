@@ -5,6 +5,7 @@ ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Grenade Base"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 
 ENT.Model = "models/weapons/w_grenade.mdl"
@@ -118,9 +119,9 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
-		if(self.Exploded)then return end
 		local State,Time=self:GetState(),CurTime()
 		if(self.CustomThink)then self:CustomThink(State,Time) end
+		if(self.Exploded)then return end
 		if(IsValid(self))then
 			if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
 				self:Arm()

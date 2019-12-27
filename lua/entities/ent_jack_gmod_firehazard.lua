@@ -3,6 +3,7 @@ ENT.Type="anim"
 ENT.Base="base_anim"
 ENT.PrintName="Fire Hazard"
 ENT.KillName="Fire Hazard"
+ENT.NoSitAllowed=true
 ENT.IsRemoteKiller=true
 local ThinkRate=22--Hz
 if(SERVER)then

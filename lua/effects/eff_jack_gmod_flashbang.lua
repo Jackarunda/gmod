@@ -24,8 +24,11 @@ function EFFECT:Render()
 		dlight.Style=0
 	end
 	if(Frac<.8)then
-		if(EyePos():Distance(self.Position)<1000)then
-			LocalPlayer().EZflashbanged=100*(1-(EyePos():Distance(self.Position))/1000)
+		local Pos,ply=EyePos(),LocalPlayer()
+		if(Pos:Distance(self.Position)<1000)then
+			if not(util.TraceLine({start=Pos,endpos=self.Position,filter={self,ply}}).Hit)then
+				LocalPlayer().EZflashbanged=100*(1-(Pos:Distance(self.Position))/1000)
+			end
 		end
 	end
 end

@@ -5,6 +5,7 @@ ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ Misc."
 ENT.Information=""
 ENT.PrintName="EZ Storage Crate"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 

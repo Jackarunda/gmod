@@ -2,15 +2,33 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.PrintName="EZ Smoke Grenade"
+ENT.PrintName="EZ Signal Grenade"
 ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,140,0)
 ENT.Model = "models/grenades/incendiary_grenade.mdl"
-ENT.Material="models/mats_jack_nades/smokescreen"
+ENT.Material="models/mats_jack_nades/smokesignal"
 ENT.ModelScale = 1.5
 ENT.SpoonScale = 2
 if(SERVER)then
+	function ENT:Use(activator,activatorAgain,onOff)
+		if(self.Exploded)then return end
+		local Dude=activator or activatorAgain
+		self.Owner=Dude
+		local Time=CurTime()
+		if(tobool(onOff))then
+			local State=self:GetState()
+			if(State<0)then return end
+			local Alt=Dude:KeyDown(IN_WALK)
+			if(State==JMOD_EZ_STATE_OFF and Alt)then
+				net.Start("JMod_SignalNade")
+				net.WriteEntity(self)
+				net.Send(Dude)
+			end
+			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
+			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
+		end
+	end
 	function ENT:Prime()
 		self:SetState(JMOD_EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
@@ -37,7 +55,9 @@ if(SERVER)then
 			Foof:SetNormal(self:GetUp())
 			Foof:SetScale(self.FuelLeft/100)
 			Foof:SetStart(self:GetPhysicsObject():GetVelocity())
-			util.Effect("eff_jack_gmod_ezsmokescreen",Foof,true,true)
+			local Col=self:GetColor()
+			Foof:SetAngles(Angle(Col.r,Col.g,Col.b))
+			util.Effect("eff_jack_gmod_ezsmokesignal",Foof,true,true)
 			self.FuelLeft=self.FuelLeft-.5
 			if(self.FuelLeft<=0)then SafeRemoveEntityDelayed(self,1) end
 		end
@@ -46,5 +66,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezsmokenade","EZ Smokescreen Grenade")
+	language.Add("ent_jack_gmod_ezsignalnade","EZ Smoke Signal Grenade")
 end

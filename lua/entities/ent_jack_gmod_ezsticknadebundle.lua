@@ -30,6 +30,7 @@ if(SERVER)then
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
+		self:SetBodygroup(3,1)
 		self:SpoonEffect()
 	end
 	
@@ -79,5 +80,5 @@ if(SERVER)then
 	end
 	
 elseif(CLIENT)then
-	language.Add("ent_jack_gmod_ezsticknade","EZ Stick Grenade")
+	language.Add("ent_jack_gmod_ezsticknadebundle","EZ Gebalte Ladung")
 end

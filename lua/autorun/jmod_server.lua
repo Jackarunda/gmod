@@ -10,6 +10,8 @@ if(SERVER)then
 	util.AddNetworkString("JMod_UniCrate")
 	util.AddNetworkString("JMod_EZarmorSync")
 	util.AddNetworkString("JMod_LuaConfigSync")
+	util.AddNetworkString("JMod_PlayerSpawn")
+	util.AddNetworkString("JMod_SignalNade")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -280,6 +282,10 @@ if(SERVER)then
 			speedFrac=nil
 		}
 		JModEZarmorSync(ply)
+		net.Start("JMod_PlayerSpawn")
+		net.WriteBit(JMOD_CONFIG.Hints)
+		net.Send(ply)
+		-- old code --
 		if((ply.JackaSleepPoint)and(IsValid(ply.JackaSleepPoint)))then
 			if(ply.JackaSleepPoint.NextSpawnTime<CurTime())then
 				ply.JackaSleepPoint.NextSpawnTime=CurTime()+60
@@ -1982,6 +1988,15 @@ if(SERVER)then
 		if not(IsValid(Armor))then return end
 		Armor:SetColor(Col)
 		if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
+	end)
+	net.Receive("JMod_SignalNade",function(ln,ply)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local Nade=net.ReadEntity()
+		local Col=net.ReadColor()
+		local Arm=tobool(net.ReadBit())
+		if not(IsValid(Nade))then return end
+		Nade:SetColor(Col)
+		if(Arm)then Nade:Prime() end
 	end)
 	local function EZgetWeightFromSlot(ply,slot)
 		local ArmorInfo=ply.EZarmor.slots[slot]

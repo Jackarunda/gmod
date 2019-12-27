@@ -4,6 +4,7 @@ ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Time Bomb"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

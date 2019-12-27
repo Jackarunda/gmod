@@ -1,6 +1,7 @@
 AddCSLuaFile()
 include("jmod_shared.lua")
 if(CLIENT)then
+	JMOD_WIND=JMOD_WIND or Vector(0,0,0)
 	local ArmorAppearances={
 		--vests
 		["Ballistic Nylon"]="models/mat_jack_bodyarmor_bn",
@@ -165,6 +166,29 @@ if(CLIENT)then
 		sent.ControllingTerminal=nil
 	end
 	usermessage.Hook("JackaSentryControlWipe",JackSentContWipe)
+	local WindChange,NextThink=Vector(0,0,0),0
+	local Count,Sum=0,0
+	hook.Add("Think","JMOD_CLIENT_THINK",function()
+		local Time=CurTime()
+		if(NextThink>Time)then return end
+		NextThink=Time+5
+		JMOD_WIND=JMOD_WIND+WindChange/10
+		if(JMOD_WIND:Length()>1)then
+			JMOD_WIND:Normalize()
+			WindChange=-WindChange
+		end
+		WindChange=WindChange+Vector(math.Rand(-.5,.5),math.Rand(-.5,.5),0)
+		if(WindChange:Length()>1)then WindChange:Normalize() end
+		--[[
+		Sum=Sum+(1/FrameTime())
+		Count=Count+1
+		if(Count>=100)then
+			LocalPlayer():ChatPrint(tostring(math.Round(Sum/100)))
+			Count=0
+			Sum=0
+		end
+		--]]
+	end)
 	local function Hinder(default)
 		local Ply=LocalPlayer()
 		if(Ply.JackyArmor)then
@@ -764,6 +788,53 @@ if(CLIENT)then
 			Frame:Close()
 		end
 	end)
+	net.Receive("JMod_SignalNade",function()
+		local Ent,NextColorCheck=net.ReadEntity(),0
+		if not(IsValid(Ent))then return end
+		local Frame=vgui.Create("DFrame")
+		Frame:SetSize(200,300)
+		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
+		Frame:SetDraggable(true)
+		Frame:ShowCloseButton(true)
+		Frame:SetTitle("EZ Signal Grenade")
+		Frame:MakePopup()
+		local Picker
+		function Frame:Paint()
+			BlurBackground(self)
+			local Time=CurTime()
+			if(NextColorCheck<Time)then
+				if not(IsValid(Ent))then Frame:Close();return end
+				NextColorCheck=Time+.25
+				local Col=Picker:GetColor()
+				net.Start("JMod_SignalNade")
+				net.WriteEntity(Ent)
+				net.WriteColor(Color(Col.r,Col.g,Col.b))
+				net.WriteBit(false)
+				net.SendToServer()
+			end
+		end
+		Picker=vgui.Create("DColorMixer",Frame)
+		Picker:SetPos(5,25)
+		Picker:SetSize(190,215)
+		Picker:SetAlphaBar(false)
+		Picker:SetPalette(false)
+		Picker:SetWangs(false)
+		Picker:SetPalette(true)
+		Picker:SetColor(Ent:GetColor())
+		local Butt=vgui.Create("DButton",Frame)
+		Butt:SetPos(5,245)
+		Butt:SetSize(190,50)
+		Butt:SetText("ARM")
+		function Butt:DoClick()
+			local Col=Picker:GetColor()
+			net.Start("JMod_SignalNade")
+			net.WriteEntity(Ent)
+			net.WriteColor(Color(Col.r,Col.g,Col.b))
+			net.WriteBit(true)
+			net.SendToServer()
+			Frame:Close()
+		end
+	end)
 	net.Receive("JMod_EZbuildKit",function()
 		local Buildables=net.ReadTable()
 		local Kit=net.ReadEntity()
@@ -1026,6 +1097,26 @@ if(CLIENT)then
 				ply.EZflashbanged=0
 			end
 			if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
+		end
+	end)
+	local NeedAltKeyMsg=true
+	net.Receive("JMod_PlayerSpawn",function()
+		local Key,DoHints=input.LookupBinding("+walk"),tobool(net.ReadBit())
+		if not(Key)then
+			notification.AddLegacy("Your WALK is not bound; JMod items will be mostly unusable.\nPlease bind WALK to the ALT key in your control settings.",NOTIFY_ERROR,5)
+		elseif(Key~="ALT")then
+			if((NeedAltKeyMsg)and(DoHints))then
+				notification.AddLegacy("Remember to use your real WALK key for JMod items instead of ALT.",NOTIFY_GENERIC,5)
+				NeedAltKeyMsg=false
+			end
+		end
+	end)
+	hook.Add("ShouldSit","JMOD_SITANYWHERE_COMPATIBILITY",function(ply)
+		-- let it be known for the record that the SitAnywhere addon author is an idiot
+		local Tr=ply:GetEyeTrace()
+		if((Tr.Entity)and(Tr.Entity.NoSitAllowed))then return false end
+		for k,v in pairs(ents.FindInSphere(Tr.HitPos,10))do
+			if(v.NoSitAllowed)then return false end
 		end
 	end)
 end

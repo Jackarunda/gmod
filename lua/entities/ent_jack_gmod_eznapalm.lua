@@ -3,6 +3,7 @@ ENT.Type="anim"
 ENT.Base="base_anim"
 ENT.PrintName="Projectile"
 ENT.KillName="Projectile"
+ENT.NoSitAllowed=true
 -- this has been copied over from Slayer and modified, which is why it looks so weird
 -- Halo FTW
 local ThinkRate=22--Hz

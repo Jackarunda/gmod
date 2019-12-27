@@ -4,6 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Mini Bounding Mine"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

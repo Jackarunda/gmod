@@ -3,6 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Poison Gas"
 ENT.Author="Jackarunda"
+ENT.NoSitAllowed=true
 ENT.Editable=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
