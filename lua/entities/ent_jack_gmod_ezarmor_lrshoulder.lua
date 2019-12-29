@@ -5,7 +5,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Armor"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Shoulder (L) L. Armor"
+ENT.PrintName="EZ Shoulder (R) L. Armor"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

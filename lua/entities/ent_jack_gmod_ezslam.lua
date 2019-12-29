@@ -80,7 +80,7 @@ if(SERVER)then
 		if(IsValid(self.Owner))then
 			JMod_Colorify(self)
 		end
-		JMod_Hint(activator,"arm")
+		JMod_Hint(activator,"arm","slam stick","slam trigger")
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
@@ -203,7 +203,7 @@ if(SERVER)then
 					self:Detonate()
 				else
 					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,1001)
+						self:Detonate(.1,751)
 					else
 						self:Detonate(.1)
 					end

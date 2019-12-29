@@ -210,7 +210,7 @@ elseif(CLIENT)then
 		self.Mdl:SetMaterial("models/mat_jack_claymore")
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetModelScale(.8,0)
-		self.Mdl:SetParent(false)
+		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")

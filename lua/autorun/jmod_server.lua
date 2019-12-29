@@ -316,7 +316,7 @@ if(SERVER)then
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
 		local ShouldWarn50=Dur>Specs.dur*.5
-		ArmorInfo[2]=Dur-amt*math.Rand(.8,1.2)*JMOD_CONFIG.ArmorDegredationMult -- degredation
+		ArmorInfo[2]=Dur-amt*math.Rand(1.2,1.5)*JMOD_CONFIG.ArmorDegredationMult -- degredation
 		if(ArmorInfo[2]<=0)then
 			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor destroyed")
 			JMod_RemoveArmorSlot(ply,slot,true)
