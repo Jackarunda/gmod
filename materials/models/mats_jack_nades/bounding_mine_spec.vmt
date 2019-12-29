@@ -1,0 +1,18 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/mats_jack_nades/bounding_mine_s"
+	"$bumpmap" "models/mats_jack_nades/bounding_mine_n"
+                "$color2""[0.5 0.5 0.5]"
+                "$additive""1"
+                "$ambientocclusion" 1
+	
+	"$phong" "1"
+	"$phongexponent"				"10"
+	"$phongboost"					"10"
+
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\mats_jack_nades\exponent"
+
+	"$phongfresnelranges"			"[1 1.05 1.25]"
+                "$lightwarptexture"         "models\mats_jack_nades\lightwarp"
+}

@@ -3,7 +3,8 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Resource Crate"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -29,6 +30,13 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		ChildEntity="ent_jack_gmod_ezadvparts",
 		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
 		MainTitleWord="ADV.PARTS",
+		ResourceUnit="Units"
+	},
+	["advtextiles"]={
+		MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize,
+		ChildEntity="ent_jack_gmod_ezadvtextiles",
+		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
+		MainTitleWord="ADV.TEXTILES",
 		ResourceUnit="Units"
 	},
 	["ammo"]={
@@ -57,6 +65,13 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		ChildEntity="ent_jack_gmod_ezfuel",
 		ChildEntityResourceAmount=JMod_EZfuelCanSize,
 		MainTitleWord="FUEL",
+		ResourceUnit="Units"
+	},
+	["propellant"]={
+		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezpropellant",
+		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		MainTitleWord="PROPELLANT",
 		ResourceUnit="Units"
 	},
 	["gas"]={
@@ -177,7 +192,7 @@ if(SERVER)then
 		local Resource=self:GetResource()
 		if(Resource<=0)then return end
 		local Box,Given=ents.Create(self.ChildEntity),math.min(Resource,self.ChildEntityResourceAmount)
-		Box:SetPos(self:GetPos()+self:GetUp()*20)
+		Box:SetPos(self:GetPos()+self:GetUp()*5)
 		Box:SetAngles(self:GetAngles())
 		Box:Spawn()
 		Box:Activate()

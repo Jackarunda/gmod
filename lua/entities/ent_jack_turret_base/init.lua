@@ -226,7 +226,7 @@ function ENT:Use(activator,caller)
 	if(activator==self.CurrentTarget)then self:EmitSound("snd_jack_denied.wav",75,100) return end -- lol dude
 	if(self.IsLocked)then self:EmitSound("snd_jack_denied.wav",75,100) return end
 	if not(self.MenuOpen)then
-		self:SetOwner(activator)
+		self.Owner=activator
 		local Tag=activator:GetNetworkedInt("JackyIFFTag")
 		self:EmitSound("snd_jack_uisuccess.wav",65,100)
 		self.MenuOpen=true
@@ -523,7 +523,7 @@ end
 function ENT:ScanForTarget()
 	local SelfPos=self:GetShootPos()
 	local Closest=self.MaxTrackRange
-	local Owner=self:GetOwner() or self
+	local Owner=self.Owner or self
 	local BestCandidate=nil
 	for key,potential in pairs(ents.FindInSphere(SelfPos,self.MaxTrackRange))do
 		local Size=GetVolyum(potential)
@@ -779,7 +779,7 @@ function ENT:FireShot()
 			Spred=Spred*.4
 		end
 		local Bellit={
-			Attacker=self:GetOwner() or self,
+			Attacker=self.Owner or self,
 			Damage=self.ShotPower,
 			Force=self.ShotPower/60,
 			Num=self.ProjectilesPerShot,

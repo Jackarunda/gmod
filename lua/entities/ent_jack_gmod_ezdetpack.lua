@@ -2,9 +2,10 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Detpack"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -35,6 +36,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_misc/tobacco_box-1.mdl")
 		self.Entity:SetMaterial("models/entities/mat_jack_c4")
+		self.Entity:SetModelScale(1.25,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -155,6 +157,7 @@ if(SERVER)then
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion",Blam,true,true)
+				JMod_Sploom(self.Owner or self or game.GetWorld(),SelfPos,20)
 				util.ScreenShake(SelfPos,99999,99999,1,750*PowerMult)
 				for i=1,PowerMult do sound.Play("BaseExplosionEffect.Sound",SelfPos,120,math.random(90,110)) end
 				if(PowerMult>1)then
@@ -172,7 +175,7 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,300*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,200*PowerMult)
 					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
 						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
 					end

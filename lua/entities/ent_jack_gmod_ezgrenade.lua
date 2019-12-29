@@ -2,9 +2,10 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Grenade Base"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 
 ENT.Model = "models/weapons/w_grenade.mdl"
@@ -12,12 +13,14 @@ ENT.Material = nil
 ENT.ModelScale = nil
 ENT.Hints = {"grenade"}
 
-ENT.HardThrowStr = 600
-ENT.SoftThrowStr = 200
-ENT.Mass = 15
+ENT.HardThrowStr = 500
+ENT.SoftThrowStr = 250
+ENT.Mass = 10
 ENT.ImpactSound = "Grenade.ImpactHard"
-ENT.Pin = "ent_jack_spoon"
+ENT.SpoonEnt = "ent_jack_spoon"
 ENT.SpoonModel = nil
+ENT.SpoonScale = nil
+ENT.SpoonSound = nil
 
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.JModEZstorable=true
@@ -43,6 +46,7 @@ if(SERVER)then
 		self:SetModel(self.Model)
 		if self.Material then self:SetMaterial(self.Material) end
 		if self.ModelScale then self:SetModelScale(self.ModelScale,0) end
+		if(self.Color)then self:SetColor(self.Color) end
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -82,9 +86,13 @@ if(SERVER)then
 	end
 	
 	function ENT:Use(activator,activatorAgain,onOff)
+		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
 		self.Owner=Dude
 		local Time=CurTime()
+		if((self.ShiftAltUse)and(Dude:KeyDown(IN_WALK))and(Dude:KeyDown(IN_SPEED)))then
+			return self:ShiftAltUse(Dude,tobool(onOff))
+		end
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
@@ -97,20 +105,26 @@ if(SERVER)then
 		end
 	end
 	
+	function ENT:SpoonEffect()
+		if self.SpoonEnt then
+			local Spewn=ents.Create(self.SpoonEnt)
+			if self.SpoonModel then Spewn.Model = self.SpoonModel end
+			if self.SpoonScale then Spewn.ModelScale = self.SpoonScale end
+			if self.SpoonSound then Spewn.Sound = self.SpoonSound end
+			Spewn:SetPos(self:GetPos())
+			Spewn:Spawn()
+			Spewn:Activate()
+			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+			self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
+		end
+	end
+	
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(self.CustomThink)then self:CustomThink(State,Time) end
+		if(self.Exploded)then return end
 		if(IsValid(self))then
 			if(State==JMOD_EZ_STATE_PRIMED and not self:IsPlayerHolding())then
-				if self.Pin then
-					local Spewn=ents.Create(self.Pin)
-					Spewn:SetPos(self:GetPos())
-					Spewn:Spawn()
-					Spewn:Activate()
-					if self.SpoonModel then Spewn:SetModel(self.SpoonModel) end
-					Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
-					self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
-				end
 				self:Arm()
 			end
 		end
@@ -125,6 +139,7 @@ if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SpoonEffect()
 	end
 	
 	function ENT:Detonate()

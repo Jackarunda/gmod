@@ -1,9 +1,10 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Time Bomb"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -149,7 +150,7 @@ if(SERVER)then
 		timer.Simple(math.Rand(0,.1),function()
 			if(IsValid(self))then
 				if(self.SympatheticDetonated)then return end
-				local SelfPos,PowerMult=self:LocalToWorld(self:OBBCenter()),8
+				local SelfPos,PowerMult=self:LocalToWorld(self:OBBCenter()),6
 				--
 				ParticleEffect("pcf_jack_groundsplode_large",SelfPos,vector_up:Angle())
 				util.ScreenShake(SelfPos,99999,99999,1,3000)
@@ -167,7 +168,7 @@ if(SERVER)then
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,180*PowerMult)
+					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,120*PowerMult)
 					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
 						util.BlastDamage(Infl,Att,SelfPos,100*PowerMult,1800*PowerMult)
 					end

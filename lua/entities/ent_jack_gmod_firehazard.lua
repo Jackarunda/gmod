@@ -3,6 +3,7 @@ ENT.Type="anim"
 ENT.Base="base_anim"
 ENT.PrintName="Fire Hazard"
 ENT.KillName="Fire Hazard"
+ENT.NoSitAllowed=true
 ENT.IsRemoteKiller=true
 local ThinkRate=22--Hz
 if(SERVER)then
@@ -47,7 +48,7 @@ if(SERVER)then
 		--print(self:WaterLevel())
 		if(self.NextFizz<Time)then
 			self.NextFizz=Time+.5
-			if(math.random(1,2)==2)then
+			if(math.random(1,2)==2 or self.HighVisuals)then
 				local Zap=EffectData()
 				Zap:SetOrigin(Pos)
 				Zap:SetStart(self:GetVelocity())

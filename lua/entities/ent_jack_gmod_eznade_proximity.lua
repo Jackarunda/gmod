@@ -2,13 +2,11 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.PrintName="EZminiNade-Proximity"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_red"
-ENT.MiniNadeDamageMin = 60
-ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "friends"}
 
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
@@ -68,6 +66,7 @@ if(SERVER)then
 				self:SetState(JMOD_EZ_STATE_ARMED)
 			end
 		end)
+		self:SpoonEffect()
 	end
 	
 	function ENT:Think()

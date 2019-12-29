@@ -2,11 +2,11 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Micro Black Hole"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
+ENT.NoSitAllowed=true
 ENT.Blacklist={"func_","_dynamic"}
 ENT.Whitelist={"func_physbox", "func_breakable"}
 ENT.DamageEnts={"func_breakable"}

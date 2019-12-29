@@ -2,13 +2,12 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.PrintName="EZminiNade-Impact"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_blk"
-ENT.MiniNadeDamageMin = 70
-ENT.MiniNadeDamageMax = 110
+ENT.MiniNadeDamage=100
 
 local BaseClass = baseclass.Get(ENT.Base)
 
@@ -28,6 +27,7 @@ if(SERVER)then
 				self:SetState(JMOD_EZ_STATE_ARMED)
 			end
 		end)
+		self:SpoonEffect()
 	end
 	
 	function ENT:CustomThink(state,tim)

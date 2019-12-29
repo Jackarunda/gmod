@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Ammo Box"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -19,15 +19,17 @@ ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ENT.Hint="ammobox"
 ---
-ENT.ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
+local ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
 		for i=1,20 do
-			local Eff=EffectData()
-			Eff:SetOrigin(pos)
-			Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
-			Eff:SetEntity(ent)
-			util.Effect(table.Random(self.ShellEffects),Eff,true,true)
+			timer.Simple(i/200,function()
+				local Eff=EffectData()
+				Eff:SetOrigin(pos)
+				Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
+				Eff:SetEntity(ent)
+				util.Effect(table.Random(ShellEffects),Eff,true,true)
+			end)
 		end
 	end
 	function ENT:AltUse(ply)

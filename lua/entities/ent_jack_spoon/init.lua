@@ -8,8 +8,8 @@ include('shared.lua')
 function ENT:Initialize()
 
 	// Use the helibomb model just for the shadow (because it's about the same size)
-	self.Entity:SetModel("models/shells/shell_gndspoon.mdl")
-	self.Entity:SetModelScale(1.5,0)
+	self.Entity:SetModel(self.Model)
+	self.Entity:SetModelScale(self.ModelScale,0)
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
 	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -17,7 +17,7 @@ function ENT:Initialize()
 	
 	self.Entity:SetUseType(SIMPLE_USE)
 	
-	self.Entity:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+	self.Entity:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 	
 	local phys=self.Entity:GetPhysicsObject()
 	
@@ -41,7 +41,7 @@ function ENT:PhysicsCollide(data, physobj)
 		local loudness=data.Speed*0.4
 		if(loudness>70)then loudness=70 end
 		if(loudness<10)then loudness=10 end
-		self.Entity:EmitSound("snd_jack_spoonbounce.wav",loudness,100+math.random(-20,20))
+		self.Entity:EmitSound(self.Sound,loudness,100+math.random(-20,20))
 	end
 	
 	//bounce like a bitch

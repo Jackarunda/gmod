@@ -2,13 +2,11 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.PrintName="EZminiNade-Remote"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_blu"
-ENT.MiniNadeDamageMin = 70
-ENT.MiniNadeDamageMax = 100
 ENT.Hints = {"grenade", "mininade", "grenade remote", "binding"}
 ENT.JModRemoteTrigger=true
 
@@ -31,6 +29,7 @@ if(SERVER)then
 				self:SetState(JMOD_EZ_STATE_ARMED)
 			end
 		end)
+		self:SpoonEffect()
 	end
 	
 elseif(CLIENT)then

@@ -7,3 +7,7 @@ ENT.Category		= "Jackarunda's Explosives"
 
 ENT.Spawnable		= false
 ENT.AdminSpawnable	= false
+
+ENT.Model = "models/shells/shell_gndspoon.mdl"
+ENT.ModelScale = 1.5
+ENT.Sound = "snd_jack_spoonbounce.wav"

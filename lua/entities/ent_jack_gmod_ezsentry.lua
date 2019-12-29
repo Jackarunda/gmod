@@ -3,8 +3,9 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Sentry"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.EZconsumes={"ammo","power","parts"}

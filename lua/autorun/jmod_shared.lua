@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=14,
+		Version=17,
 		Note="radio packages must have all lower-case names",
 		Hints=true,
 		SentryPerformanceMult=1,
@@ -56,6 +56,9 @@ function JMod_InitGlobalConfig()
 				["advanced parts"]={
 					{"ent_jack_gmod_ezadvparts",2}
 				},
+				["advanced textiles"]={
+					{"ent_jack_gmod_ezadvtextiles",2}
+				},
 				["batteries"]={
 					{"ent_jack_gmod_ezbattery",4}
 				},
@@ -70,6 +73,9 @@ function JMod_InitGlobalConfig()
 				},
 				["fuel"]={
 					{"ent_jack_gmod_ezfuel",4}
+				},
+				["propellant"]={
+					{"ent_jack_gmod_ezpropellant",4}
 				},
 				["gas"]={
 					{"ent_jack_gmod_ezgas",3}
@@ -86,11 +92,26 @@ function JMod_InitGlobalConfig()
 				["resource crate"]={
 					"ent_jack_gmod_ezcrate"
 				},
-				["general purpose crate"]={
+				["storage crate"]={
 					"ent_jack_gmod_ezcrate_uni"
 				},
 				["frag grenades"]={
 					{"ent_jack_gmod_ezfragnade",10}
+				},
+				["gas grenades"]={
+					{"ent_jack_gmod_ezgasnade",6}
+				},
+				["impact grenades"]={
+					{"ent_jack_gmod_ezimpactnade",10}
+				},
+				["incendiary grenades"]={
+					{"ent_jack_gmod_ezfirenade",6}
+				},
+				["satchel charges"]={
+					{"ent_jack_gmod_ezsatchelcharge",4}
+				},
+				["sticky bomb"]={
+					{"ent_jack_gmod_ezstickynade",6}
 				},
 				["mini grenades"]={
 					{"ent_jack_gmod_eznade_impact",5},
@@ -122,6 +143,9 @@ function JMod_InitGlobalConfig()
 				["landmines"]={
 					{"ent_jack_gmod_ezlandmine",10}
 				},
+				["mini bounding mines"]={
+					{"ent_jack_gmod_ezboundingmine",8}
+				},
 				["fumigators"]={
 					{"ent_jack_gmod_ezfumigator",2}
 				},
@@ -136,6 +160,38 @@ function JMod_InitGlobalConfig()
 				},
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
+				},
+				["dynamite"]={
+					{"ent_jack_gmod_ezdynamite",12}
+				},
+				["flashbangs"]={
+					{"ent_jack_gmod_ezflashbang",8}
+				},
+				["smoke grenades"]={
+					{"ent_jack_gmod_ezsmokenade",4},
+					{"ent_jack_gmod_ezsignalnade",4}
+				},
+				["stick grenades"]={
+					{"ent_jack_gmod_ezsticknade",4},
+					"ent_jack_gmod_ezsticknadebundle"
+				},
+				["mini claymores"]={
+					{"ent_jack_gmod_ezminimore",4}
+				},
+				["tnt"]={
+					{"ent_jack_gmod_eztnt",3}
+				},
+				["armor"]={
+					"ent_jack_gmod_ezarmor_balmask","ent_jack_gmod_ezarmor_gasmask",
+					"ent_jack_gmod_ezarmor_hlshoulder","ent_jack_gmod_ezarmor_hrshoulder",
+					"ent_jack_gmod_ezarmor_htorso","ent_jack_gmod_ezarmor_lhead",
+					"ent_jack_gmod_ezarmor_llshoulder","ent_jack_gmod_ezarmor_lrshoulder",
+					"ent_jack_gmod_ezarmor_ltorso","ent_jack_gmod_ezarmor_mhead",
+					"ent_jack_gmod_ezarmor_mhtorso","ent_jack_gmod_ezarmor_mltorso",
+					"ent_jack_gmod_ezarmor_mtorso","ent_jack_gmod_ezarmor_slcalf",
+					"ent_jack_gmod_ezarmor_slforearm","ent_jack_gmod_ezarmor_slthigh",
+					"ent_jack_gmod_ezarmor_spelvis","ent_jack_gmod_ezarmor_srcalf",
+					"ent_jack_gmod_ezarmor_srforearm","ent_jack_gmod_ezarmor_srthigh"
 				}
 			},
 			RestrictedPackages={"antimatter"},
@@ -153,22 +209,57 @@ function JMod_InitGlobalConfig()
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
 		},
 		Recipes={
-			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5}},
 			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=200}},
+			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
+			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5}},
+			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
+			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5}},
+			["EZ Mini Bounding Mine"]={"ent_jack_gmod_ezboundingmine",{parts=20,explosives=5,propellant=5}},
 			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50}},
 			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5}},
 			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20}},
 			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=180}},
-			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
-			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,chemicals=30,explosives=5}},
-			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=50,chemicals=100,advparts=20}},
+			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}},
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=20,chemicals=50,advparts=10,advtextiles=10}},
+			["EZ Propellant"]={"ent_jack_gmod_ezpropellant",{parts=2,chemicals=80}},
 			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5}},
 			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3}},
 			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3}},
 			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3}},
 			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3}},
-			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15}}
+			["EZ Gas Grenade"]={"ent_jack_gmod_ezgasnade",{parts=5,gas=20,chemicals=15}},
+			["EZ Impact Grenade"]={"ent_jack_gmod_ezimpactnade",{parts=5,explosives=10}},
+			["EZ Incendiary Grenade"]={"ent_jack_gmod_ezfirenade",{parts=5,explosives=5,fuel=30}},
+			["EZ Satchel Charge"]={"ent_jack_gmod_ezsatchelcharge",{parts=10,explosives=80}},
+			["EZ Stick Grenade"]={"ent_jack_gmod_ezsticknade",{parts=10,explosives=10}},
+			["EZ Sticky Bomb"]={"ent_jack_gmod_ezstickynade",{parts=10,explosives=10,chemicals=10}},
+			["EZ Dynamite"]={"ent_jack_gmod_ezdynamite",{parts=5,explosives=5}},
+			["EZ Flashbang"]={"ent_jack_gmod_ezflashbang",{parts=10,explosives=2,chemicals=2}},
+			["EZ Gebalte Ladung"]={"ent_jack_gmod_ezsticknadebundle",{parts=50,explosives=50}},
+			["EZ Mini Claymore"]={"ent_jack_gmod_ezminimore",{parts=20,explosives=5}},
+			["EZ Signal Grenade"]={"ent_jack_gmod_ezsignalnade",{parts=10,explosives=1,chemicals=10}},
+			["EZ Smoke Grenade"]={"ent_jack_gmod_ezsmokenade",{parts=10,explosives=1,chemicals=10}},
+			["EZ TNT"]={"ent_jack_gmod_eztnt",{parts=20,explosives=60}},
+			["EZ Ballistic Mask"]={"ent_jack_gmod_ezarmor_balmask",{parts=10,advtextiles=5}},
+			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,chemicals=10,advtextiles=2}},
+			["EZ Heavy Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_hlshoulder",{parts=15,advtextiles=10}},
+			["EZ Heavy Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_hrshoulder",{parts=15,advtextiles=10}},
+			["EZ Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_htorso",{parts=20,advtextiles=30}},
+			["EZ Light Helmet"]={"ent_jack_gmod_ezarmor_lhead",{parts=15,advtextiles=5}},
+			["EZ Light Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_llshoulder",{parts=10,advtextiles=5}},
+			["EZ Light Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_lrshoulder",{parts=10,advtextiles=5}},
+			["EZ Light Torso Armor"]={"ent_jack_gmod_ezarmor_ltorso",{parts=15,advtextiles=10}},
+			["EZ Medium Helmet"]={"ent_jack_gmod_ezarmor_mhead",{parts=20,advtextiles=10}},
+			["EZ Medium-Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_mhtorso",{parts=15,advtextiles=25}},
+			["EZ Medium-Light Torso Armor"]={"ent_jack_gmod_ezarmor_mltorso",{parts=15,advtextiles=15}},
+			["EZ Medium Torso Armor"]={"ent_jack_gmod_ezarmor_mtorso",{parts=15,advtextiles=20}},
+			["EZ Standard Left Calf Armor"]={"ent_jack_gmod_ezarmor_slcalf",{parts=10,advtextiles=5}},
+			["EZ Standard Left Forearm Armor"]={"ent_jack_gmod_ezarmor_slforearm",{parts=10,advtextiles=5}},
+			["EZ Standard Left Thigh Armor"]={"ent_jack_gmod_ezarmor_slthigh",{parts=10,advtextiles=5}},
+			["EZ Standard Pelvis Armor"]={"ent_jack_gmod_ezarmor_spelvis",{parts=10,advtextiles=10}},
+			["EZ Standard Right Calf Armor"]={"ent_jack_gmod_ezarmor_srcalf",{parts=10,advtextiles=5}},
+			["EZ Standard Right Forearm Armor"]={"ent_jack_gmod_ezarmor_srforearm",{parts=10,advtextiles=5}},
+			["EZ Standard Right Thigh Armor"]={"ent_jack_gmod_ezarmor_srthigh",{parts=10,advtextiles=5}}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -186,23 +277,297 @@ function JMod_InitGlobalConfig()
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
-	if not(JMOD_LUA_CONFIG)then
-		JMOD_LUA_CONFIG={
-			BuildFuncs={
-				spawnHL2buggy=function(playa, position, angles)
-					local Ent=ents.Create("prop_vehicle_jeep_old")
-					Ent:SetModel("models/buggy.mdl")
-					Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
-					Ent:SetPos(position)
-					Ent:SetAngles(angles)
-					Ent.Owner=playa
-					Ent:Spawn()
-					Ent:Activate()
-				end
+	print("JMOD: config file loaded")
+	-- jmod lua config --
+	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={},ArmorOffsets={}} end
+	JMOD_LUA_CONFIG.BuildFuncs=JMOD_LUA_CONFIG.BuildFuncs or {}
+	JMOD_LUA_CONFIG.ArmorOffsets=JMOD_LUA_CONFIG.ArmorOffsets or {}
+	
+	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
+		local Ent=ents.Create("prop_vehicle_jeep_old")
+		Ent:SetModel("models/buggy.mdl")
+		Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
+		Ent:SetPos(position)
+		Ent:SetAngles(angles)
+		Ent.Owner=playa
+		Ent:Spawn()
+		Ent:Activate()
+	end
+	
+	local CSSCTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
 			}
 		}
-	end
-	print("JMOD: config file loaded")
+	}
+	local CSSTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1.2,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(4.5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
+			}
+		}
+	}
+
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"] = CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"] = CSSTTable
+
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"] = CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"] = CSSCTTable
+	
+	print("JMOD: lua config file loaded")
 end
 JMod_ArmorTable={
 	Face={
@@ -213,8 +578,9 @@ JMod_ArmorTable={
 			ang=Angle(100,180,90),
 			wgt=5,
 			dur=50,
-			msk="",
-			spc="nervegas_immunity",
+			mskmat=Material("mats_jack_gmod_sprites/vignette.png"),
+			spcdef={[DMG_NERVEGAS]=100,[DMG_RADIATION]=50},
+			sndlop="snds_jack_gmod/mask_breathe.wav",
 			ent="ent_jack_gmod_ezarmor_gasmask"
 		},
 		["BallisticMask"]={
@@ -224,8 +590,8 @@ JMod_ArmorTable={
 			ang=Angle(100,180,90),
 			wgt=5,
 			def=100,
-			dur=100,
-			msk="",
+			dur=150,
+			mskmat=Material("mats_jack_gmod_sprites/hard_vignette.png"),
 			ent="ent_jack_gmod_ezarmor_balmask",
 			gayPhysics=true
 		}
@@ -271,7 +637,8 @@ JMod_ArmorTable={
 			wgt=5,
 			def=20,
 			dur=300,
-			ent="ent_jack_gmod_ezarmor_ltorso"
+			ent="ent_jack_gmod_ezarmor_ltorso",
+			gayPhysics=true
 		},
 		["Medium-Light"]={
 			mdl="models/player/armor_paca/paca.mdl", -- tarkov
@@ -281,7 +648,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=35,
 			dur=400,
-			ent="ent_jack_gmod_ezarmor_mltorso"
+			ent="ent_jack_gmod_ezarmor_mltorso",
+			gayPhysics=true
 		},
 		["Medium"]={
 			mdl="models/player/armor_gjel/gjel.mdl", -- tarkov
@@ -291,7 +659,8 @@ JMod_ArmorTable={
 			wgt=20,
 			def=50,
 			dur=500,
-			ent="ent_jack_gmod_ezarmor_mtorso"
+			ent="ent_jack_gmod_ezarmor_mtorso",
+			gayPhysics=true
 		},
 		["Medium-Heavy"]={
 			mdl="models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
@@ -301,7 +670,8 @@ JMod_ArmorTable={
 			wgt=40,
 			def=65,
 			dur=550,
-			ent="ent_jack_gmod_ezarmor_mhtorso"
+			ent="ent_jack_gmod_ezarmor_mhtorso",
+			gayPhysics=true
 		},
 		["Heavy"]={
 			mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_vest.mdl", -- csgo hydra
@@ -383,7 +753,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=40,
 			dur=150,
-			ent="ent_jack_gmod_ezarmor_slforearm"
+			ent="ent_jack_gmod_ezarmor_slforearm",
+			gayPhysics=true
 		}
 	},
 	RightForearm={
@@ -395,7 +766,8 @@ JMod_ArmorTable={
 			wgt=10,
 			def=40,
 			dur=150,
-			ent="ent_jack_gmod_ezarmor_srforearm"
+			ent="ent_jack_gmod_ezarmor_srforearm",
+			gayPhysics=true
 		}
 	},
 	LeftThigh={
@@ -407,7 +779,8 @@ JMod_ArmorTable={
 			wgt=15,
 			def=60,
 			dur=250,
-			ent="ent_jack_gmod_ezarmor_slthigh"
+			ent="ent_jack_gmod_ezarmor_slthigh",
+			gayPhysics=true
 		}
 	},
 	RightThigh={
@@ -419,7 +792,8 @@ JMod_ArmorTable={
 			wgt=15,
 			def=60,
 			dur=250,
-			ent="ent_jack_gmod_ezarmor_srthigh"
+			ent="ent_jack_gmod_ezarmor_srthigh",
+			gayPhysics=true
 		}
 	},
 	LeftCalf={
@@ -447,13 +821,14 @@ JMod_ArmorTable={
 		}
 	}
 }
+
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
 hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
-	if((ply.EZArmorSpeedFrac)and not(ply.EZArmorSpeedFrac==1))then
-		local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed*ply.EZArmorSpeedFrac)
+	if((ply.EZarmor)and(ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
+		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
+		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
 	end
 end)
 local ANGLE=FindMetaTable("Angle")
@@ -1496,38 +1871,45 @@ function JMod_IsDoor(ent)
 end
 --
 local Hints={
-	["crate"]="tap resource against to store \n press E to retrieve resource",
-	["item crate"]="tap item against to store \n press E to retrieve item",
-	["arm"]="alt+E to arm",
-	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
-	["binding"]="remember, console commands can be bound to a key",
-	["detpack stick"]="hold E on detpack then release E to stick the detpack",
-	["slam stick"]="hold E on SLAM then release E to stick the SLAM",
-	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
-	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
 	["afh"]="E to enter and get healed",
-	["fix"]="tap parts box against to repair",
-	["supplies"]="tap supplies against to refill, tap parts against to repair",
 	["ammobox"]="alt+E to refill ammo of any weapon",
 	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
-	["eat"]="alt+E to consume",
-	["friends"]="concommand jmod_friends to specify allies",
-	["radio comm"]="radio needs to see sky",
-	["upgrade"]="use Build Kit to upgrade",
-	["jmod hands grab"]="RMB to grab objects",
-	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
-	["jmod hands"]="RMB to block, R to put hands down",
-	["jmod hands move"]="punches also can move you (jump boost/climbing)",
-	["unpackage"]="double tap alt+E to unpackage",
-	["crafting"]="set resources near workbench in order to use them",
-	["building"]="stand near resources in order to use them",
-	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
-	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
-	["disarm"]="tap E to disarm",
-	["mininade"]="mininades can be stuck to larger explosives to trigger them",
-	["armor"]="ALT+E to select color and wear armor",
+	["arm"]="alt+E to arm",
 	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
-	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt"
+	["armor"]="ALT+E to select color and wear armor",
+	["binding"]="remember, console commands can be bound to a key",
+	["blasting machine"]="alt+E on the blasting machine to detonate the satchel charge",
+	["building"]="stand near resources in order to use them",
+	["bury"]="can only be buried in grass, dirt, snow or mud",
+	["crafting"]="set resources near workbench in order to use them",
+	["crate"]="tap resource against to store \n press E to retrieve resource",
+	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt",
+	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
+	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
+	["detpack stick"]="hold E on detpack then release E to stick the detpack",
+	["disarm"]="tap E to disarm",
+	["eat"]="alt+E to consume",
+	["fix"]="tap parts box against to repair",
+	["friends"]="concommand jmod_friends to specify allies",
+	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
+	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
+	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
+	["item crate"]="tap item against to store \n press E to retrieve item",
+	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
+	["jmod hands grab"]="RMB to grab objects",
+	["jmod hands move"]="punches also can move you (jump boost/climbing)",
+	["jmod hands"]="RMB to block, R to put hands down",
+	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
+	["mininade"]="mininades can be stuck to larger explosives to trigger them",
+	["slam stick"]="hold E on SLAM then release E to stick SLAM",
+	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
+	["radio comm"]="radio needs to see sky",
+	["slam stick"]="hold E on SLAM then release E to stick the SLAM",
+	["splitterring"]="SHIFT+ALT+E to toggle fragmentation sleeve",
+	["supplies"]="tap supplies against to refill, tap parts against to repair",
+	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
+	["unpackage"]="double tap alt+E to unpackage",
+	["upgrade"]="use Build Kit to upgrade"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end
@@ -1603,3 +1985,4 @@ JMOD_EZ_STATE_WARNING	= 4
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare
+-- santa sleigh aid radio

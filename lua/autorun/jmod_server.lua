@@ -9,6 +9,9 @@ if(SERVER)then
 	util.AddNetworkString("JMod_EZtimeBomb")
 	util.AddNetworkString("JMod_UniCrate")
 	util.AddNetworkString("JMod_EZarmorSync")
+	util.AddNetworkString("JMod_LuaConfigSync")
+	util.AddNetworkString("JMod_PlayerSpawn")
+	util.AddNetworkString("JMod_SignalNade")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -176,7 +179,7 @@ if(SERVER)then
 			ply:EmitSound(Snd,55,Ptch)
 		end
 		if(ply.EZarmor)then
-			local Num=#table.GetKeys(ply.EZarmor)
+			local Num=#table.GetKeys(ply.EZarmor.slots)
 			if(Num>=6)then
 				ply:EmitSound("snd_jack_gear"..tostring(math.random(1,6))..".wav",58,math.random(70,130))
 			end
@@ -265,7 +268,6 @@ if(SERVER)then
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
-		net.WriteFloat(ply.EZArmorSpeedFrac or 1)
 		net.Broadcast()
 	end
 	local function JackaSpawnHook(ply)
@@ -273,8 +275,17 @@ if(SERVER)then
 		JackaBodyArmorUpdate(ply,"Vest",nil,nil)
 		JackaBodyArmorUpdate(ply,"Helmet",nil,nil)
 		JackaBodyArmorUpdate(ply,"Suit",nil,nil)
-		ply.EZarmor={}
+		ply.EZarmor={
+			slots={},
+			maskOn=true,
+			headsetOn=true,
+			speedFrac=nil
+		}
 		JModEZarmorSync(ply)
+		net.Start("JMod_PlayerSpawn")
+		net.WriteBit(JMOD_CONFIG.Hints)
+		net.Send(ply)
+		-- old code --
 		if((ply.JackaSleepPoint)and(IsValid(ply.JackaSleepPoint)))then
 			if(ply.JackaSleepPoint.NextSpawnTime<CurTime())then
 				ply.JackaSleepPoint.NextSpawnTime=CurTime()+60
@@ -294,31 +305,33 @@ if(SERVER)then
 		end
 	end
 	hook.Add("PlayerSpawn","JackaSpawnHook",JackaSpawnHook)
-	local function EZgetProtectionFromSlot(ply,slot,amt)
-		local ArmorInfo=ply.EZarmor[slot]
+	local MaxArmorProtection={
+		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
+	}
+	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
+		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
+		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
-		local ShouldWarn50=Dur>50
-		ArmorInfo[2]=Dur-amt*math.Rand(.8,1.2)*JMOD_CONFIG.ArmorDegredationMult -- degredation
+		local ShouldWarn50=Dur>Specs.dur*.5
+		ArmorInfo[2]=Dur-amt*math.Rand(1.2,1.5)*JMOD_CONFIG.ArmorDegredationMult -- degredation
 		if(ArmorInfo[2]<=0)then
 			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor destroyed")
 			JMod_RemoveArmorSlot(ply,slot,true)
 			JModEZarmorSync(ply)
-		elseif((ArmorInfo[2]<=50)and(ShouldWarn50))then
+		elseif((ArmorInfo[2]<=Specs.dur*.5)and(ShouldWarn50))then
 			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50% durability")
 			JModEZarmorSync(ply)
 		end
 		return Specs.def or 0
 	end
-	local MaxArmorProtection={
-		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
-	}
 	local function EZarmorScaleDmg(ply,dmgtype,dmgamt,location,isFace)
 		local Block=0
 		if(location==HITGROUP_HEAD)then
 			if(isFace)then
-				Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt)
+				Block=Block+EZgetProtectionFromSlot(ply,"Face",dmgamt,dmgtype)
 			else
 				Block=Block+EZgetProtectionFromSlot(ply,"Head",dmgamt)
 			end
@@ -352,6 +365,38 @@ if(SERVER)then
 			Block=Block+EZgetProtectionFromSlot(ply,"RightCalf",dmgamt*.05)*.05
 		end
 		return 1-((Block/100)*(MaxArmorProtection[dmgtype]))
+	end
+	local function EZspecialScaleDamage(ply,dmgtype,dmgamt)
+		local Block=0
+		for slot,info in pairs(ply.EZarmor.slots)do
+			if(info)then
+				local Name,Dur,Col=info[1],info[2],info[3]
+				local Specs=JMod_ArmorTable[slot][Name]
+				local ShouldWarn50,ShouldWarn10=Dur>Specs.dur*.5,Dur>Specs.dur*.1
+				if(Specs.spcdef)then
+					for typ,amt in pairs(Specs.spcdef)do
+						if(typ==dmgtype)then
+							Block=Block+amt
+							info[2]=Dur-amt*dmgamt*math.Rand(.0004,.0006)*JMOD_CONFIG.ArmorDegredationMult -- degredation
+							if(info[2]<=0)then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." destroyed")
+								JMod_RemoveArmorSlot(ply,slot,true)
+								JModEZarmorSync(ply)
+							elseif((info[2]<=Specs.dur*.5)and(ShouldWarn50))then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." at 50% durability")
+								JModEZarmorSync(ply)
+							elseif((info[2]<=Specs.dur*.1)and(ShouldWarn10))then
+								ply:PrintMessage(HUD_PRINTCENTER,Name.." at 10% durability")
+								JModEZarmorSync(ply)
+							end
+						end
+					end
+				end
+			end
+		end
+		Block=math.Clamp(Block,0,100)
+		print(Block/100)
+		return 1-Block/100
 	end
 	local function JackyDamageHandling(victim,hitgroup,dmginfo)
 		if(victim.JackyArmor)then
@@ -469,6 +514,12 @@ if(SERVER)then
 				Mul=EZarmorScaleDmg(ply,DMG_VEHICLE,amt,HITGROUP_GENERIC)
 			elseif(dmginfo:IsDamageType(DMG_BURN))then
 				Mul=EZarmorScaleDmg(ply,DMG_BURN,amt,HITGROUP_GENERIC)
+			else
+				if(dmginfo:IsDamageType(DMG_NERVEGAS))then
+					Mul=EZspecialScaleDamage(ply,DMG_NERVEGAS,amt)
+				elseif(dmginfo:IsDamageType(DMG_RADIATION))then
+					Mul=EZspecialScaleDamage(ply,DMG_RADIATION,amt)
+				end
 			end
 			local Reduction=1-Mul
 			Reduction=Reduction^(.7*JMOD_CONFIG.ArmorExponentMult)
@@ -1543,7 +1594,7 @@ if(SERVER)then
 		if not((ply)and(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
-	local NextMainThink,NextNutritionThink,NextArmorThink=0,0,0
+	local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
 		if(NextMainThink>Time)then return end
@@ -1598,6 +1649,13 @@ if(SERVER)then
 			for k,playa in pairs(player.GetAll())do
 				if(playa:Alive())then JModEZarmorSync(playa) end
 			end
+		end
+		---
+		if(NextSync<Time)then
+			NextSync=Time+30
+			net.Start("JMod_LuaConfigSync")
+			net.WriteTable((JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets) or {})
+			net.Broadcast()
 		end
 	end)
 	hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
@@ -1717,11 +1775,35 @@ if(SERVER)then
 			end
 		end
 	end)
+	function JMod_EZ_Toggle_Mask(ply)
+		if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Face"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
+		ply.EZarmor.maskOn=not ply.EZarmor.maskOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_mask",function(ply,cmd,args)
+		JMod_EZ_Toggle_Mask(ply)
+	end)
+	function JMod_EZ_Toggle_Headset(ply)
+	if not(ply.EZarmor)then return end
+		if not(ply.EZarmor.slots["Ears"])then return end
+		if not(ply:Alive())then return end
+		ply:EmitSound("snds_jack_gmod/equip2.wav",60,math.random(80,120))
+		ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
+		JModEZarmorSync(ply)
+	end
+	concommand.Add("jmod_ez_headset",function(ply,cmd,args)
+		JMod_EZ_Toggle_Headset(ply)
+	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
 		local lowerTxt=string.lower(txt)
 		if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
 		if(lowerTxt=="*armor*")then JMod_EZ_Remove_Armor(ply);return "" end
+		if(lowerTxt=="*mask*")then JMod_EZ_Toggle_Mask(ply);return "" end
+		if(lowerTxt=="*headset*")then JMod_EZ_Toggle_Headset(ply);return "" end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server
@@ -1775,6 +1857,11 @@ if(SERVER)then
 	local function StartDelivery(pkg,transceiver,station,bff)
 		local Time=CurTime()
 		local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+		
+		local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, time, pos)
+		DeliveryTime = newTime or DeliveryTime
+		Pos = newPos or Pos
+		
 		station.state=EZ_STATION_STATE_DELIVERING
 		station.nextDeliveryTime=Time+DeliveryTime
 		station.deliveryLocation=Pos
@@ -1791,6 +1878,12 @@ if(SERVER)then
 			Station=EZ_RADIO_STATIONS[id]
 		end
 		transceiver.BFFd=bff
+		
+		local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
+		if override == false then
+			return msg or "negative on that request."
+		end
+		
 		if(Station.state==EZ_STATION_STATE_DELIVERING)then
 			if(bff)then return "no can do bro, we deliverin somethin else" end
 			return "negative on that request, we're currently delivering another package"
@@ -1896,8 +1989,17 @@ if(SERVER)then
 		Armor:SetColor(Col)
 		if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
 	end)
+	net.Receive("JMod_SignalNade",function(ln,ply)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local Nade=net.ReadEntity()
+		local Col=net.ReadColor()
+		local Arm=tobool(net.ReadBit())
+		if not(IsValid(Nade))then return end
+		Nade:SetColor(Col)
+		if(Arm)then Nade:Prime() end
+	end)
 	local function EZgetWeightFromSlot(ply,slot)
-		local ArmorInfo=ply.EZarmor[slot]
+		local ArmorInfo=ply.EZarmor.slots[slot]
 		if not(ArmorInfo)then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
@@ -1909,14 +2011,14 @@ if(SERVER)then
 			TotalWeight=TotalWeight+EZgetWeightFromSlot(ply,k)
 		end
 		local WeighedFrac=TotalWeight/225
-		ply.EZArmorSpeedFrac = 1 - 0.8 * WeighedFrac
+		ply.EZarmor.speedfrac=math.Clamp(1-(.8*WeighedFrac*JMOD_CONFIG.ArmorWeightMult),.05,1)
 		-- Handled in SetupMove hook
 		--ply:SetWalkSpeed(Walk*(1-.8*WeighedFrac))
 		--ply:SetRunSpeed(Run*(1-.8*WeighedFrac))
 	end
 	local EquipSounds={"snd_jack_clothequip.wav","snds_jack_gmod/equip1.wav","snds_jack_gmod/equip2.wav","snds_jack_gmod/equip3.wav","snds_jack_gmod/equip4.wav","snds_jack_gmod/equip5.wav"}
 	function JMod_RemoveArmorSlot(ply,slot,broken)
-		local Info=ply.EZarmor[slot]
+		local Info=ply.EZarmor.slots[slot]
 		if not(Info)then return end
 		local Specs=JMod_ArmorTable[slot][Info[1]]
 		timer.Simple(math.Rand(0,.5),function()
@@ -1936,7 +2038,7 @@ if(SERVER)then
 			Ent:Activate()
 			Ent:GetPhysicsObject():SetVelocity(ply:GetVelocity())
 		end
-		ply.EZarmor[slot]=nil
+		ply.EZarmor.slots[slot]=nil
 	end
 	function JMod_EZ_Equip_Armor(ply,ent)
 		if not(IsValid(ent))then return end
@@ -1947,7 +2049,7 @@ if(SERVER)then
 		end
 		--]]
 		JMod_RemoveArmorSlot(ply,ent.Slot)
-		ply.EZarmor[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
+		ply.EZarmor.slots[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
 		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
 		ent:Remove()
 		CalcSpeed(ply)
@@ -1960,9 +2062,6 @@ if(SERVER)then
 		CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
-	hook.Add("PlayerSpawn", "JMOD_ARMOR_SPAWN", function(ply)
-		ply.EZArmorSpeedFrac = nil
-	end)
 	-- copied from Homicide
 	function JMod_BlastThatDoor(ent,vel)
 		local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()
@@ -2015,9 +2114,9 @@ if(SERVER)then
 	end
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
-		local LoosenThreshold,DestroyThreshold=400*power,100*power
+		local LoosenThreshold,DestroyThreshold=300*power,75*power
 		
-		local allProps = ents.FindInSphere(pos,100*power)
+		local allProps = ents.FindInSphere(pos,75*power)
 		local ignored = {}
 		
 		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
@@ -2057,7 +2156,7 @@ if(SERVER)then
 		end
 	end
 	function JMod_BlastDoors(blaster,pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,50*power))do
+		for k,door in pairs(ents.FindInSphere(pos,40*power))do
 			if JMod_IsDoor(door) then
 				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
 				if IsValid(tr.Entity) and tr.Entity == door then
@@ -2177,11 +2276,19 @@ if(SERVER)then
 				local Phys=item:GetPhysicsObject()
 				if(key==IN_ATTACK)then
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass()) end
+						if(IsValid(Phys))then
+							Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass())
+							if(item.EZspinThrow)then
+								Phys:ApplyForceOffset(ply:GetAimVector()*Phys:GetMass()*50,Phys:GetMassCenter()+Vector(0,0,10))
+								Phys:ApplyForceOffset(-ply:GetAimVector()*Phys:GetMass()*50,Phys:GetMassCenter()-Vector(0,0,10))
+							end
+						end
 					end)
 				elseif(key==IN_ATTACK2)then
+					local vec = ply:GetAimVector()
+					vec.z = vec.z + 0.1
 					timer.Simple(0,function()
-						if(IsValid(Phys))then Phys:ApplyForceCenter(ply:GetAimVector()*(softstr or 200)*Phys:GetMass()) end
+						if(IsValid(Phys))then Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass()) end
 					end)
 				end
 			end
@@ -2217,15 +2324,18 @@ if(SERVER)then
 	net.Receive("JMod_UniCrate",function(ln,ply)
 		local box=net.ReadEntity()
 		local class=net.ReadString()
-		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or !box.Items[class] or box.Items[class]<=0 then return end
-		box.Items[class]=(box.Items[class]>1) and (box.Items[class] - 1) or nil
+		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
+		
 		local ent=ents.Create(class)
 		ent:SetPos(box:GetPos())
 		ent:SetAngles(box:GetAngles())
 		ent:Spawn()
-		ply:PickupObject(ent)
-		timer.Simple(0, function() box:SetItemCount(box:GetItemCount() - math.max(ent:GetPhysicsObject():GetVolume()/1000, 1)) end)
-		box.NextLoad=CurTime()+2
+		ent:Activate()
+		timer.Simple(0.01, function() ply:PickupObject(ent) end)
+		
+		box:SetItemCount(box:GetItemCount() - box.Items[class][2])
+		box.Items[class] = box.Items[class][1] > 1 and {(box.Items[class][1] - 1), box.Items[class][2]} or nil
+		box.NextLoad = CurTime() + 2
 		box:EmitSound("Ammo_Crate.Close")
 		box:CalcWeight()
 	end)

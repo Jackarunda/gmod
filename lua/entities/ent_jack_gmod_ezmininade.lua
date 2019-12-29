@@ -2,7 +2,6 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Mininade Base"
 ENT.Spawnable=false
@@ -13,8 +12,8 @@ ENT.Material = "models/mats_jack_nades/gnd"
 ENT.ModelScale = 1.25
 ENT.Hints = {"grenade", "mininade"}
 
-ENT.MiniNadeDamageMin = 50
-ENT.MiniNadeDamageMax = 100
+ENT.MiniNadeDamage=100
+ENT.Mass=7
 
 local BaseClass = baseclass.Get(ENT.Base)
 
@@ -66,7 +65,7 @@ if(SERVER)then
 			self:Remove()
 			return
 		end
-		JMod_Sploom(self.Owner,SelfPos,math.random(self.MiniNadeDamageMin,self.MiniNadeDamageMax))
+		JMod_Sploom(self.Owner,SelfPos,self.MiniNadeDamage,self.MiniNadeDamageMax)
 		util.ScreenShake(SelfPos,20,20,1,500)
 		self:Remove()
 	end

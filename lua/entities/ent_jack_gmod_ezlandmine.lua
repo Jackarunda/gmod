@@ -2,9 +2,10 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Land Mine"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -120,12 +121,6 @@ if(SERVER)then
 		plooie:SetRadius(EffectType)
 		plooie:SetNormal(Up)
 		util.Effect("eff_jack_minesplode",plooie,true,true)
-		for key,playa in pairs(ents.FindInSphere(SelfPos,50))do
-			local Clayus=playa:GetClass()
-			if((playa:IsPlayer())or(playa:IsNPC())or(Clayuss=="prop_vehicle_jeep")or(Clayuss=="prop_vehicle_jeep")or(Clayus=="prop_vehicle_airboat"))then
-				playa:SetVelocity(playa:GetVelocity()+Up*200)
-			end
-		end
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))

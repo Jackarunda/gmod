@@ -5,6 +5,7 @@ ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Armor"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
@@ -28,7 +29,8 @@ if(SERVER)then
 		self.Specs=JMod_ArmorTable[self.Slot][self.ArmorName]
 		self.Entity:SetModel(self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
-		if(self.ModelScale)then self:SetModelScale(self.ModelScale) end
+		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
+		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -57,7 +59,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator,"armor","armor remove")
+		JMod_Hint(activator,"armor","armor remove","mask","headset")
 		local Alt=activator:KeyDown(IN_WALK)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
