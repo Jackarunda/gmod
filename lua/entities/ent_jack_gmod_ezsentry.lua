@@ -37,6 +37,9 @@ ENT.AmmoTypes = {
 	},
 	["bolt"] = { -- Crossbow bolt projectile
 		Damage = 1.5,
+	},
+	["ion_ball"]={ -- combine balls
+		Damage=2
 	}
 }
 
@@ -78,7 +81,7 @@ ENT.ModPerfSpecs = {
 }
 
 -- Debug function!
--- lua_run ents.GetByIndex(174):DebugSpecs({MaxAmmo = 0, TurnSpeed = 0, TargetingRadius = 0, Armor = 0, FireRate = 0, Damage = 0, Accuracy = 0, SearchSpeed = 0})
+-- lua_run ents.FindByClass("ent_jack_gmod_ezsentry")[1]:DebugSpecs({MaxAmmo = 0, TurnSpeed = 0, TargetingRadius = 0, Armor = 0, FireRate = 0, Damage = 0, Accuracy = 0, SearchSpeed = 0})
 function ENT:DebugSpecs(tbl)
 	self.ModPerfSpecs = tbl
 	self:InitPerfSpecs()
@@ -88,32 +91,34 @@ function ENT:InitPerfSpecs()
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value * PerfMult end -- upgrading temp disabled
-	--for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*EZ_GRADE_BUFFS[Grade]*PerfMult end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*EZ_GRADE_BUFFS[Grade] end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
-		
+	
 	-- Multiply current specs by ModPerfSpecs, scaling from 0.5 to 2
-	for attrib, value in pairs(self.ModPerfSpecs) do
-		local oldVal = self[attrib]
-		local ratio = (math.abs(value / (table.Count(self.ModPerfSpecs)-1.0)) + 1.0) * EZ_GRADE_BUFFS[Grade]
+	local MaxValue=10
+	for attrib,value in pairs(self.ModPerfSpecs) do
+		local oldVal=self[attrib]
 		if value > 0 then
-			self[attrib] = self[attrib] * (ratio^1.5)
+			local ratio=(math.abs(value/MaxValue)+1)^1.5
+			self[attrib]=self[attrib]*ratio
+			print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		elseif value < 0 then
-			self[attrib] = self[attrib] / (ratio^1.5)
-		else
-			self[attrib] = self[attrib] * EZ_GRADE_BUFFS[Grade] -- only affected by grade
+			local ratio=(math.abs(value/MaxValue)+1)^3
+			self[attrib]=self[attrib]/ratio
+			print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		end
-		print("applying value of " .. value .. " (" .. (value > 0 and (math.Round(ratio, 1.5)) or value < 0 and math.Round(1/(ratio^1.5), 2) or EZ_GRADE_BUFFS[Grade]) .. 
-				") to " .. attrib .. ": " .. oldVal .. " -> " .. self[attrib])
 	end
 
 	-- Finally apply AmmoType attributes
 	if self.AmmoTypes[self:GetAmmoType()] then
 		for attrib, mult in pairs(self.AmmoTypes[self:GetAmmoType()]) do
-			print("applying AmmoType multiplier of " .. mult .. " to " .. attrib .. ": " .. self[attrib] .. " -> " .. self[attrib] * mult)
-			self[attrib] = self[attrib] * mult
+			print("applying AmmoType multiplier of "..mult .." to "..attrib..": "..self[attrib].." -> "..self[attrib]*mult)
+			self[attrib] = self[attrib]*mult
 		end
 	end
+	
+	-- no juking the ammo capacity, fag
+	self:SetAmmo(math.min(self:GetAmmo(),self.MaxAmmo))
 end
 
 function ENT:Upgrade(level)
@@ -572,8 +577,7 @@ if(SERVER)then
 		Eff:SetAngles(ShellAng)
 		Eff:SetEntity(self)
 		---
-		--local Dmg=(math.Rand(self.Damage*0.75,self.Damage*1.25)^2)/10
-		local Dmg, Inacc, ShotCount = self.Damage, 0.08/self.Accuracy, 1 --math.ceil((self.Damage^2)/10), (0.1 / self.Accuracy^1.5), 1
+		local Dmg, Inacc, ShotCount = self.Damage, .06/self.Accuracy, 1 --math.ceil((self.Damage^2)/10), (0.1 / self.Accuracy^1.5), 1
 		local Force = Dmg / 5
 		local ShootDir=(point-ShootPos):GetNormalized()
 		
@@ -582,15 +586,12 @@ if(SERVER)then
 			Dmg = math.Round(Dmg / ShotCount)
 			util.Effect("ShotgunShellEject",Eff,true,true)
 			sound.Play("weapons/shotgun/shotgun_fire7.wav",SelfPos,70,math.random(110,130))
-			
 		else -- bullet by default
 			util.Effect("RifleShellEject",Eff,true,true)
 			sound.Play("snds_jack_gmod/ezsentry_fire_close.wav",SelfPos,70,math.random(90,110))
 			sound.Play("snds_jack_gmod/ezsentry_fire_far.wav",SelfPos+Up,100,math.random(90,110))
-				
 		end
-		
-		ShootDir=(ShootDir+VectorRand()*math.Rand(0,Inacc)):GetNormalized()
+		ShootDir=(ShootDir+VectorRand()*math.Rand(.05,1)*Inacc):GetNormalized()
 		local Ballut={
 			Attacker=self.Owner or self,
 			Callback=nil,
@@ -721,7 +722,7 @@ if(SERVER)then
 		if(typ=="ammo")then
 			local Ammo=self:GetAmmo()
 			local Missing=self.MaxAmmo-Ammo
-			if(Missing<=0)then return 0 end
+			if(Missing<=1)then return 0 end
 			local Accepted=math.min(Missing,amt)
 			self:SetAmmo(Ammo+Accepted)
 			self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
@@ -729,7 +730,6 @@ if(SERVER)then
 		elseif(typ=="power")then
 			local Powa=self:GetElectricity()
 			local Missing=self.MaxElectricity-Powa
-			if(Missing<=0)then return 0 end
 			if(Missing<self.MaxElectricity*.1)then return 0 end
 			local Accepted=math.min(Missing,amt)
 			self:SetElectricity(Powa+Accepted)
