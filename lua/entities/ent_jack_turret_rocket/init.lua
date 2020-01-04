@@ -125,7 +125,7 @@ function ENT:FireShot()
 		local Ang=Dir:Angle()
 		Ang:RotateAroundAxis(Ang:Up(),90)
 		Miss:SetAngles(Ang)
-		constraint.NoCollide(self.Entity,Miss)
+		constraint.NoCollide(self.Entity,Miss,0,0)
 		Miss.InitialVel=self:GetPhysicsObject():GetVelocity()+Dir*1000
 		Miss:Spawn()
 		Miss:Activate()

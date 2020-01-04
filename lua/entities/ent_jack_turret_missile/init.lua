@@ -160,7 +160,7 @@ function ENT:FireMissal()
 	Miss.Target=self.CurrentTarget -- go get em tiger
 	Miss:Spawn()
 	Miss:Activate()
-	constraint.NoCollide(self.Entity,Miss)
+	constraint.NoCollide(self.Entity,Miss,0,0)
 	Miss:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+Dir*400)
 	self.FiredAtCurrentTarget=true
 	self.RoundInChamber=false

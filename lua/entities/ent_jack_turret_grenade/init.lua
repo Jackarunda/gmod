@@ -141,7 +141,7 @@ function ENT:FireShot()
 		Grenade.Type="HE"
 		Grenade:Spawn()
 		Grenade:Activate()
-		constraint.NoCollide(self.Entity,Grenade)
+		constraint.NoCollide(self.Entity,Grenade,0,0)
 		Grenade:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+Dir*7500) --the Mk.19 throws its grenades typically at about 240mps
 		self.FiredAtCurrentTarget=true
 		self.RoundInChamber=false
@@ -183,7 +183,7 @@ function ENT:FireShot()
 					Shell:SetAngles(self:GetAngles())
 					Shell:Spawn()
 					Shell:Activate()
-					constraint.NoCollide(self.Entity,Shell)
+					constraint.NoCollide(self.Entity,Shell,0,0)
 					Shell:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()-Forward*10+Up*30+Right*30+VectorRand()*10)
 					Shell:GetPhysicsObject():AddAngleVelocity(VectorRand()*math.Rand(10,3000))
 					Shell:GetPhysicsObject():SetMaterial("metal_bouncy")

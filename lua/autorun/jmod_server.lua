@@ -12,6 +12,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_LuaConfigSync")
 	util.AddNetworkString("JMod_PlayerSpawn")
 	util.AddNetworkString("JMod_SignalNade")
+	util.AddNetworkString("JMod_ModifyMachine")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -370,6 +371,8 @@ if(SERVER)then
 		local Block=0
 		for slot,info in pairs(ply.EZarmor.slots)do
 			if(info)then
+				if((slot=="Face")and not(ply.EZarmor.maskOn))then return 1 end
+				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 1 end
 				local Name,Dur,Col=info[1],info[2],info[3]
 				local Specs=JMod_ArmorTable[slot][Name]
 				local ShouldWarn50,ShouldWarn10=Dur>Specs.dur*.5,Dur>Specs.dur*.1
@@ -395,7 +398,6 @@ if(SERVER)then
 			end
 		end
 		Block=math.Clamp(Block,0,100)
-		print(Block/100)
 		return 1-Block/100
 	end
 	local function JackyDamageHandling(victim,hitgroup,dmginfo)
@@ -2179,7 +2181,7 @@ if(SERVER)then
 		[MAT_SAND]=.1,[MAT_DIRT]=.3,[MAT_GRASS]=.2,[74]=.1,[85]=.2,[MAT_WOOD]=.5,[MAT_FOLIAGE]=.5,
 		[MAT_CONCRETE]=.9,[MAT_TILE]=.8,[MAT_SLOSH]=.05,[MAT_PLASTIC]=.3,[MAT_GLASS]=.6
 	}
-	function JMod_RicPenBullet(ent,pos,dir,dmg,doBlasts,wreckShit,num) -- Slayer Ricocheting/Penetrating Bullets FTW
+	function JMod_RicPenBullet(ent,pos,dir,dmg,doBlasts,wreckShit,num,penMul,tracerName,callback) -- Slayer Ricocheting/Penetrating Bullets FTW
 		if not(IsValid(ent))then return end
 		if((num)and(num>10))then return end
 		local Attacker=ent.Owner or ent or game.GetWorld()
@@ -2189,10 +2191,11 @@ if(SERVER)then
 			Force=dmg,
 			Num=1,
 			Tracer=1,
-			TracerName="",
+			TracerName=tracerName or "",
 			Dir=dir,
 			Spread=Vector(0,0,0),
-			Src=pos
+			Src=pos,
+			Callback=callback or nil
 		})
 		local initialTrace=util.TraceLine({
 			start=pos,
@@ -2225,7 +2228,7 @@ if(SERVER)then
 		local ApproachAngle=-math.deg(math.asin(TNorm:DotProduct(AVec)))
 		local MaxRicAngle=60*SMul
 		if(ApproachAngle>(MaxRicAngle*1.05))then -- all the way through (hot)
-			local MaxDist,SearchPos,SearchDist,Penetrated=(dmg/SMul)*.15,IPos,5,false
+			local MaxDist,SearchPos,SearchDist,Penetrated=(dmg/SMul)*.15*(penMul or 1),IPos,5,false
 			while((not(Penetrated))and(SearchDist<MaxDist))do
 				SearchPos=IPos+AVec*SearchDist
 				local PeneTrace=util.QuickTrace(SearchPos,-AVec*SearchDist)
@@ -2255,14 +2258,14 @@ if(SERVER)then
 					end)
 				end
 				local ThroughFrac=1-SearchDist/MaxDist
-				JMod_RicPenBullet(ent,SearchPos+AVec,AVec,dmg*ThroughFrac*.7,doBlasts,wreckShit,(num or 0)+1)
+				JMod_RicPenBullet(ent,SearchPos+AVec,AVec,dmg*ThroughFrac*.7,doBlasts,wreckShit,(num or 0)+1,penMul,tracerName,callback)
 			end
 		elseif(ApproachAngle<(MaxRicAngle*.95))then -- ping whiiiizzzz
 			if(SERVER)then sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",IPos,60,math.random(90,100)) end
 			local NewVec=AVec:Angle()
 			NewVec:RotateAroundAxis(TNorm,180)
 			NewVec=NewVec:Forward()
-			JMod_RicPenBullet(ent,IPos+TNorm,-NewVec,dmg*.7,doBlasts,wreckShit,(num or 0)+1)
+			JMod_RicPenBullet(ent,IPos+TNorm,-NewVec,dmg*.7,doBlasts,wreckShit,(num or 0)+1,penMul,tracerName,callback)
 		end
 	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
@@ -2325,19 +2328,28 @@ if(SERVER)then
 		local box=net.ReadEntity()
 		local class=net.ReadString()
 		if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
-		
 		local ent=ents.Create(class)
 		ent:SetPos(box:GetPos())
 		ent:SetAngles(box:GetAngles())
 		ent:Spawn()
 		ent:Activate()
 		timer.Simple(0.01, function() ply:PickupObject(ent) end)
-		
 		box:SetItemCount(box:GetItemCount() - box.Items[class][2])
 		box.Items[class] = box.Items[class][1] > 1 and {(box.Items[class][1] - 1), box.Items[class][2]} or nil
 		box.NextLoad = CurTime() + 2
 		box:EmitSound("Ammo_Crate.Close")
 		box:CalcWeight()
+	end)
+	net.Receive("JMod_ModifyMachine",function(ln,ply)
+		if not(ply:Alive())then return end
+		local AmmoType=nil
+		local Ent,Tbl,HasAmmoType=net.ReadEntity(),net.ReadTable(),tobool(net.ReadBit())
+		if(HasAmmoType)then AmmoType=net.ReadString() end
+		if not(IsValid(Ent))then return end
+		if not(Ent:GetPos():Distance(ply:GetPos())<200)then return end
+		local Wepolini=ply:GetActiveWeapon()
+		if not((Wepolini)and(Wepolini.ModifyMachine))then return end
+		Wepolini:ModifyMachine(Ent,Tbl,AmmoType)
 	end)
 	--[[
 	concommand.Add("damnit",function(ply,cmd,args)

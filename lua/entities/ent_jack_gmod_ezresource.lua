@@ -53,6 +53,7 @@ if(SERVER)then
 		if(self.Loaded)then return end
 		if(data.DeltaTime>0.2)then
 			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<CurTime())and(self:IsPlayerHolding()))then
+				if(self:GetResource()<=0)then self:Remove() return end
 				local Resource=self:GetResource()
 				local Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
 				if(Used>0)then
@@ -97,7 +98,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		--pfahahaha
+		--
 	end
 	function ENT:OnRemove()
 		--aw fuck you
