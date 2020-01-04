@@ -248,13 +248,11 @@ function SWEP:PrimaryAttack()
 			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
 			if(self:HaveResourcesToPerformTask(Reqs))then
-			
 				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
 				if override == false then
 					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 					return
 				end
-			
 				self:ConsumeResourcesInRange(Reqs)
 				Built=true
 				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
@@ -295,6 +293,27 @@ function SWEP:PrimaryAttack()
 				end
 			end
 			if not(Built)then self:Msg("missing supplies for build") end
+		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(IN_WALK)))then
+			local State=Ent:GetState()
+			if(State==-1)then
+				self:Msg("device must be repaired before modifying")
+			elseif(State~=0)then
+				self:Msg("device must be turned off to modify")
+			elseif(self:HaveResourcesToPerformTask({parts=20}))then
+				net.Start("JMod_ModifyMachine")
+				net.WriteEntity(Ent)
+				net.WriteTable(Ent.ModPerfSpecs)
+				if(Ent.AmmoTypes)then
+					net.WriteBit(true)
+					net.WriteTable(Ent.AmmoTypes)
+					net.WriteString(Ent:GetAmmoType())
+				else
+					net.WriteBit(false)
+				end
+				net.Send(self.Owner)
+			else
+				self:Msg("needs 20 Parts nearby to perform modification")
+			end
 		elseif((IsValid(Ent))and(Ent.EZupgrades))then
 			local State=Ent:GetState()
 			if(State==-1)then
@@ -329,6 +348,20 @@ function SWEP:PrimaryAttack()
 				self:UpgradeEffect(Pos,nil,not Sound)
 			end
 		end
+	end
+end
+function SWEP:ModifyMachine(ent,tbl,ammoType)
+	local State=ent:GetState()
+	if(State==-1)then
+		self:Msg("device must be repaired before modifying")
+	elseif(State~=0)then
+		self:Msg("device must be turned off to modify")
+	elseif(self:HaveResourcesToPerformTask({parts=20}))then
+		self:ConsumeResourcesInRange({parts=20})
+		ent:SetMods(tbl,ammoType)
+		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
+	else
+		self:Msg("needs 20 Parts nearby to perform modification")
 	end
 end
 function SWEP:Msg(msg)
@@ -377,7 +410,7 @@ function SWEP:FlingProp(mdl,force)
 	Prop:Spawn()
 	Prop:Activate()
 	Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	constraint.NoCollide(Prop,self)
+	constraint.NoCollide(Prop,self,0,0)
 	local Phys=Prop:GetPhysicsObject()
 	Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 	Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))

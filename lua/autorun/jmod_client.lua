@@ -1115,8 +1115,112 @@ if(CLIENT)then
 		-- let it be known for the record that the SitAnywhere addon author is an idiot
 		local Tr=ply:GetEyeTrace()
 		if((Tr.Entity)and(Tr.Entity.NoSitAllowed))then return false end
-		for k,v in pairs(ents.FindInSphere(Tr.HitPos,10))do
+		for k,v in pairs(ents.FindInSphere(Tr.HitPos,20))do
 			if(v.NoSitAllowed)then return false end
+		end
+	end)
+	local function GetAvailPts(specs)
+		local Pts=0
+		for k,v in pairs(specs)do
+			Pts=Pts-v
+		end
+		return Pts
+	end
+	net.Receive("JMod_ModifyMachine",function()
+		local Ent=net.ReadEntity()
+		local Specs=net.ReadTable()
+		local AmmoTypes,AmmoType,AvailPts=nil,nil,GetAvailPts(Specs)
+		local ErrorTime=0
+		if(tobool(net.ReadBit()))then
+			AmmoTypes=net.ReadTable()
+			AmmoType=net.ReadString()
+		end
+		---
+		local frame=vgui.Create("DFrame")
+		frame:SetSize(600,400)
+		frame:SetTitle("Modify Machine")
+		frame:SetDraggable(true)
+		frame:Center()
+		frame:MakePopup()
+		function frame:Paint()
+			BlurBackground(self)
+		end
+		local bg=vgui.Create("DPanel",frame)
+		bg:SetPos(10,30)
+		bg:SetSize(580,360)
+		function bg:Paint(w,h)
+			surface.SetDrawColor(Color(0,0,0,100))
+			surface.DrawRect(0,0,w,h)
+		end
+		local X,Y=10,10
+		for attrib,value in pairs(Specs)do
+			local Panel=vgui.Create("DPanel",bg)
+			Panel:SetPos(X,Y)
+			Panel:SetSize(275,40)
+			function Panel:Paint(w,h)
+				surface.SetDrawColor(0,0,0,100)
+				surface.DrawRect(0,0,w,h)
+				draw.SimpleText(attrib..": "..Specs[attrib],"DermaDefault",137,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			end
+			local MinButt=vgui.Create("DButton",Panel)
+			MinButt:SetPos(10,10)
+			MinButt:SetSize(20,20)
+			MinButt:SetText("-")
+			function MinButt:DoClick()
+				Specs[attrib]=math.Clamp(Specs[attrib]-1,-10,10)
+				AvailPts=GetAvailPts(Specs)
+			end
+			local MaxButt=vgui.Create("DButton",Panel)
+			MaxButt:SetPos(245,10)
+			MaxButt:SetSize(20,20)
+			MaxButt:SetText("+")
+			function MaxButt:DoClick()
+				if(AvailPts>0)then
+					Specs[attrib]=math.Clamp(Specs[attrib]+1,-10,10)
+					AvailPts=GetAvailPts(Specs)
+				end
+			end
+			Y=Y+50
+			if(Y>=300)then X=X+285;Y=10 end
+		end
+		if(AmmoTypes)then
+			local DComboBox=vgui.Create("DComboBox",bg)
+			DComboBox:SetPos(10,320)
+			DComboBox:SetSize(150,20)
+			DComboBox:SetValue(AmmoType)
+			for k,v in pairs(AmmoTypes)do DComboBox:AddChoice(k) end
+			function DComboBox:OnSelect(index,value)
+				AmmoType=value
+			end
+		end
+		local Display=vgui.Create("DPanel",bg)
+		Display:SetSize(600,40)
+		Display:SetPos(100,315)
+		function Display:Paint()
+			local Col=(ErrorTime>CurTime() and Color(255,0,0,255))or Color(255,255,255,255)
+			draw.SimpleText("Available spec points: "..AvailPts,"DermaDefault",250,0,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			draw.SimpleText("Trade traits to achieve desired performance","DermaDefault",250,20,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+		end
+		local Apply=vgui.Create("DButton",bg)
+		Apply:SetSize(100,40)
+		Apply:SetPos(240,310)
+		Apply:SetText("Accept")
+		function Apply:DoClick()
+			if(AvailPts>0)then
+				ErrorTime=CurTime()+1
+				return
+			end
+			net.Start("JMod_ModifyMachine")
+			net.WriteEntity(Ent)
+			net.WriteTable(Specs)
+			if(AmmoTypes)then
+				net.WriteBit(true)
+				net.WriteString(AmmoType)
+			else
+				net.WriteBit(false)
+			end
+			net.SendToServer()
+			frame:Close()
 		end
 	end)
 end

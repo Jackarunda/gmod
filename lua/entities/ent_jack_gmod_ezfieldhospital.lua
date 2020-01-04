@@ -163,7 +163,7 @@ if(SERVER)then
 		Prop:Spawn()
 		Prop:Activate()
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self)
+		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))

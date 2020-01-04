@@ -1901,6 +1901,7 @@ local Hints={
 	["jmod hands"]="RMB to block, R to put hands down",
 	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
+	["modify"]="use the build kit to modify",
 	["slam stick"]="hold E on SLAM then release E to stick SLAM",
 	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
 	["radio comm"]="radio needs to see sky",
@@ -1980,6 +1981,25 @@ JMOD_EZ_STATE_PRIMED 	= 1
 JMOD_EZ_STATE_ARMING 	= 2
 JMOD_EZ_STATE_ARMED		= 3
 JMOD_EZ_STATE_WARNING	= 4
+
+--[[
+muzzleflash_g3
+muzzleflash_m14
+muzzleflash_ak47
+muzzleflash_ak74
+muzzleflash_6
+muzzleflash_pistol_rbull
+muzzleflash_pistol
+muzzleflash_suppressed
+muzzleflash_pistol_deagle
+muzzleflash_OTS
+muzzleflash_M3
+muzzleflash_smg
+muzzleflash_SR25
+muzzleflash_shotgun
+muzzle_center_M82
+muzzleflash_m79
+--]]
 
 -- TODO
 -- yeet a wrench easter egg
