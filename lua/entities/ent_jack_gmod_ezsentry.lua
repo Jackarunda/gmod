@@ -26,9 +26,10 @@ ENT.AmmoTypes={
 		-- default stats --
 	}, 
 	["Buckshot"]={ -- multiple bullets each doing self.Damage
-		FireRate=.75,
-		Damage=.2,
-		ShotCount=8
+		FireRate=.4,
+		Damage=.35,
+		ShotCount=8,
+		Accuracy=.7
 	},
 	["API Bullet"]={ -- Armor Piercing Incendiary, pierces through things and lights fires
 		FireRate=.75,
@@ -37,8 +38,14 @@ ENT.AmmoTypes={
 	},
 	["HE Grenade"]={ -- explosive projectile
 		MaxAmmo=.5,
-		FireRate=.5,
-		Damage=3
+		FireRate=.4,
+		Damage=3,
+		Accuracy=.8
+	},
+	["Pulse Laser"]={ -- bzew
+		Accuracy=3,
+		Damage=.4,
+		MaxElectricity=2
 	}--[[
 	["bolt"] = { -- crossbow projectile
 		MaxAmmo=.75,
@@ -121,8 +128,13 @@ function ENT:InitPerfSpecs(removeAmmo)
 		end
 	end
 	
-	-- no juking the ammo capacity, fag
-	self:SetAmmo((removeAmmo and 0)or(math.min(self:GetAmmo(),self.MaxAmmo)))
+	if(self:GetAmmoType()~="Pulse Laser")then
+		-- no juking the ammo capacity, fag
+		self:SetAmmo((removeAmmo and 0)or(math.min(self:GetAmmo(),self.MaxAmmo)))
+	else
+		-- except for lasers cause they don't use ammo
+		self:SetAmmo(self.MaxAmmo)
+	end
 end
 
 function ENT:Upgrade(level)
@@ -573,6 +585,7 @@ if(SERVER)then
 		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
 		local AimForward=AimAng:Forward()
 		local ShootPos=SelfPos+Up*38+AimForward*29
+		local AmmoConsume,ElecConsume=1,nil
 		---
 		if(ProjType=="Bullet")then
 			local ShellAng=AimAng:GetCopy()
@@ -625,7 +638,7 @@ if(SERVER)then
 			Eff:SetAngles(ShellAng)
 			Eff:SetEntity(self)
 			---
-			local Dmg,Inacc=self.Damage,.08/self.Accuracy
+			local Dmg,Inacc=self.Damage,.06/self.Accuracy
 			local Force = Dmg/5
 			local ShootDir=(point-ShootPos):GetNormalized()
 			util.Effect("ShotgunShellEject",Eff,true,true)
@@ -692,7 +705,7 @@ if(SERVER)then
 				end
 			end)
 		elseif(ProjType=="HE Grenade")then
-			local Dmg,Inacc=self.Damage,.08/self.Accuracy
+			local Dmg,Inacc=self.Damage,.06/self.Accuracy
 			sound.Play("snds_jack_gmod/sentry_gl.wav",SelfPos,70,math.random(90,110))
 			ParticleEffect("muzzleflash_m79",ShootPos,AimAng,self)
 			sound.Play("snds_jack_gmod/sentry_far.wav",SelfPos+Up,100,math.random(90,110))
@@ -729,10 +742,57 @@ if(SERVER)then
 			Gnd:Spawn()
 			Gnd:Activate()
 			Gnd:GetPhysicsObject():SetVelocity(self:GetVelocity()+ShootDir*Speed)
+		elseif(ProjType=="Pulse Laser")then
+			local Dmg,Inacc=self.Damage,.06/self.Accuracy
+			local Force=Dmg/5
+			local ShootDir=(point-ShootPos):GetNormalized()
+			sound.Play("snds_jack_gmod/sentry_laser"..math.random(1,2)..".wav",SelfPos,70,math.random(90,110))
+			sound.Play("snds_jack_gmod/sentry_far.wav",SelfPos+Up,100,math.random(90,110))
+			ShootDir=(ShootDir+VectorRand()*math.Rand(.05,1)*Inacc):GetNormalized()
+			local Zap=EffectData()
+			Zap:SetOrigin(ShootPos)
+			Zap:SetNormal(ShootDir)
+			Zap:SetStart(self:GetVelocity())
+			util.Effect("eff_jack_gmod_pulselaserfire",Zap,true,true)
+			local Tr=util.TraceLine({
+				start=ShootPos,
+				endpos=ShootPos+ShootDir*20000,
+				mask=-1,
+				filter={self}
+			})
+			if(Tr.Hit)then
+				local Derp=EffectData()
+				Derp:SetStart(ShootPos)
+				Derp:SetOrigin(Tr.HitPos)
+				Derp:SetScale(1)
+				util.Effect("eff_jack_heavylaserbeam",Derp,true,true)
+				local Derp2=EffectData()
+				Derp2:SetOrigin(Tr.HitPos+Tr.HitNormal*2)
+				Derp2:SetScale(1)
+				Derp2:SetNormal(Tr.HitNormal)
+				util.Effect("eff_jack_heavylaserbeamimpact",Derp2,true,true)
+				---
+				local DmgInfo=DamageInfo()
+				DmgInfo:SetAttacker(self.Owner or self)
+				DmgInfo:SetInflictor(self)
+				DmgInfo:SetDamageType(DMG_BURN)
+				DmgInfo:SetDamagePosition(Tr.HitPos)
+				DmgInfo:SetDamageForce(ShootDir*Dmg)
+				DmgInfo:SetDamage(Dmg)
+				if(Tr.Entity.TakeDamageInfo)then Tr.Entity:TakeDamageInfo(DmgInfo) end
+				util.Decal("FadingScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
+				sound.Play("snd_jack_heavylaserburn.wav",Tr.HitPos,60,math.random(90,110))
+			end
+			AmmoConsume=0
+			ElecConsume=.025*Dmg
 		end
 		---
-		self:SetAmmo(Ammo-1)
-		self:ConsumeElectricity()
+		if(math.random(1,2)==2)then
+			local Force=-AimForward*15*self.Damage*self.ShotCount*2
+			if(Force:Length()>2000)then self:GetPhysicsObject():ApplyForceCenter(Force) end
+		end
+		self:SetAmmo(Ammo-AmmoConsume)
+		self:ConsumeElectricity(ElecConsume)
 	end
 	function ENT:GetTargetAimOffset(point)
 		if not(point)then return nil,nil end
@@ -843,7 +903,7 @@ if(SERVER)then
 		if(amt<=0)then return 0 end
 		local MyType=self:GetAmmoType()
 		if(typ=="ammo")then
-			if(MyType=="HE Grenade")then return 0 end
+			if((MyType=="HE Grenade")or(MyType=="Pulse Laser"))then return 0 end
 			local Ammo=self:GetAmmo()
 			local Missing=self.MaxAmmo-Ammo
 			if(Missing<=1)then return 0 end
@@ -852,7 +912,7 @@ if(SERVER)then
 			self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 			return Accepted
 		elseif(typ=="munitions")then
-			if(MyType~="HE Grenade")then return 0 end
+			if((MyType~="HE Grenade")or(MyType=="Pulse Laser"))then return 0 end
 			local Ammo=self:GetAmmo()
 			local Missing=self.MaxAmmo-Ammo
 			if(Missing<=1)then return 0 end
@@ -910,7 +970,7 @@ elseif(CLIENT)then
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	function ENT:Draw()
 		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
-		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+		local Up,Right,Forward,FT,AmmoType=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime(),self:GetAmmoType()
 		self.CurAimPitch=Lerp(FT*3,self.CurAimPitch,AimPitch)
 		self.CurAimYaw=Lerp(FT*3,self.CurAimYaw,AimYaw)
 		-- no snap-swing resets
@@ -1010,11 +1070,13 @@ elseif(CLIENT)then
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod_GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local Ammo=self:GetAmmo()
-				local AmmoFrac=Ammo/self.MaxAmmo
-				local R,G,B=JMod_GoodBadColor(AmmoFrac)
-				draw.SimpleTextOutlined("AMMO","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				if(AmmoType~="Pulse Laser")then
+					local Ammo=self:GetAmmo()
+					local AmmoFrac=Ammo/self.MaxAmmo
+					local R,G,B=JMod_GoodBadColor(AmmoFrac)
+					draw.SimpleTextOutlined("AMMO","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				end
 				cam.End3D2D()
 			end
 		end

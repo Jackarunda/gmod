@@ -39,6 +39,6 @@ function EFFECT:Render()
 	local Flicker=math.Rand(.9,1.1)
 	self.Entity:SetRenderBoundsWS(self.StartPos,self.EndPos)
 	render.SetMaterial(Beamtwo)
-	render.DrawBeam(self.StartPos,self.EndPos,Lerp((self.EndTime-CurTime())/self.Delay,0,3*self.Scayul),0,0,Color(255,100,80,7))
-	render.DrawBeam(self.StartPos,self.EndPos,Lerp((self.EndTime-CurTime())/self.Delay,0,1*self.Scayul),0,0,Color(255,255,255,13))
+	render.DrawBeam(self.StartPos,self.EndPos,Lerp((self.EndTime-CurTime())/self.Delay,0,3*self.Scayul),0,0,Color(255,100,80,28))
+	render.DrawBeam(self.StartPos,self.EndPos,Lerp((self.EndTime-CurTime())/self.Delay,0,1*self.Scayul),0,0,Color(255,255,255,50))
 end

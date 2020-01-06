@@ -46,6 +46,13 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		MainTitleWord="AMMO",
 		ResourceUnit="Count"
 	},
+	["munitions"]={
+		MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezmunitions",
+		ChildEntityResourceAmount=JMod_EZammoBoxSize,
+		MainTitleWord="MUNITIONS",
+		ResourceUnit="Count"
+	},
 	["chemicals"]={
 		MaxResource=JMod_EZchemicalsSize*JMod_EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezchemicals",

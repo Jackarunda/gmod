@@ -536,7 +536,7 @@ function ENT:ScanForTarget()
 					local TargAng=self:WorldToLocalAngles(Ang)
 					if(((TargAng.y>-90)and(TargAng.y<90))and((TargAng.p>-90)and(TargAng.p<90)))then
 						local Dist=(TargPos-SelfPos):Length()
-						if((Dist<Closest)and not(potential==Owner))then
+						if((Dist<Closest)and(not(potential==Owner)or(potential.EZkillme)))then
 							if(Synth)then
 								if(self:MotionCheck(potential))then
 									BestCandidate=potential

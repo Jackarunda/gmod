@@ -1,0 +1,19 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models\Kali\Weapons\AR15\Misc_40mmGrenade_C"
+	"$bumpmap" "models\Kali\Weapons\AR15\Misc_40mmGrenade_N"
+	"$nocull" 1
+
+	"$envmap" "env_cubemap"
+	"$envmapcontrast" "1.5"
+	"$envmapsaturation" "0"
+	//"$envmaptint" "[.2 .15 .1]"
+
+	//"$phong" "1"		
+	"$phongboost" "10"
+	"$phongexponent" "20"
+	"$phongfresnelranges"	"[1 1 1]"
+}
+
+
+
