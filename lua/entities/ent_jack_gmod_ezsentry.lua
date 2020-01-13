@@ -80,6 +80,7 @@ ENT.DynamicPerfSpecs={
 	Accuracy=1,
 	SearchSpeed=.5,
 	TargetLockTime=5,
+	Cooling=1
 }
 -- All moddable attributes
 -- Each mod selected for it is +1, against it is -1
@@ -134,6 +135,7 @@ function ENT:InitPerfSpecs(removeAmmo)
 	else
 		-- except for lasers cause they don't use ammo
 		self:SetAmmo(self.MaxAmmo)
+		self.MaxElectricity=self.MaxAmmo/1.5
 	end
 end
 
@@ -145,7 +147,7 @@ function ENT:Upgrade(level)
 	self.UpgradeProgress={}
 end
 ----
-local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING=-1,0,1,2,3,4
+local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING,STATE_OVERHEATED=-1,0,1,2,3,4,5
 function ENT:SetupDataTables()
 	self:NetworkVar("Float",0,"AimPitch")
 	self:NetworkVar("Float",1,"AimYaw")
@@ -198,6 +200,7 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
+		self.Heat=0
 		self.UpgradeProgress={}
 		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Sentry"][2]
 		---
@@ -471,10 +474,18 @@ if(SERVER)then
 			self.Firing=false
 			local State=self:GetState()
 			if(State>0)then
-				if((Ammo<=0)or not(self:AmClearToMove()))then
-					if(State~=STATE_WHINING)then self:SetState(STATE_WHINING) end
-				elseif(State==STATE_WHINING)then
-					self:SetState(STATE_WATCHING)
+				if(self.Heat>90)then
+					if(State~=STATE_OVERHEATED)then self:SetState(STATE_OVERHEATED) end
+				elseif(State==STATE_OVERHEATED)then
+					if(self.Heat<45)then
+						self:SetState(STATE_WATCHING)
+					end
+				else
+					if((Ammo<=0)or not(self:AmClearToMove()))then
+						if(State~=STATE_WHINING)then self:SetState(STATE_WHINING) end
+					elseif(State==STATE_WHINING)then
+						self:SetState(STATE_WATCHING)
+					end
 				end
 			end
 			if(State==STATE_WATCHING)then
@@ -553,6 +564,21 @@ if(SERVER)then
 				self.NextFixTime=Time+10
 				self:GetPhysicsObject():SetBuoyancyRatio(.3)
 			end
+			---
+			if(self.Heat>55)then
+				local SelfPos,Up,Right,Forward=self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
+				local AimAng=self:GetAngles()
+				AimAng:RotateAroundAxis(Right,self:GetAimPitch())
+				AimAng:RotateAroundAxis(Up,self:GetAimYaw())
+				local AimForward=AimAng:Forward()
+				local ShootPos=SelfPos+Up*38+AimForward*29
+				---
+				local Exude=EffectData()
+				Exude:SetOrigin(ShootPos)
+				Exude:SetStart(self:GetVelocity())
+				util.Effect("eff_jack_heatshimmer",Exude)
+			end
+			self.Heat=math.Clamp(self.Heat-self.Cooling/3,0,100)
 		end
 		if(self.Firing)then
 			if(self.NextFire<Time)then
@@ -586,6 +612,7 @@ if(SERVER)then
 		local AimForward=AimAng:Forward()
 		local ShootPos=SelfPos+Up*38+AimForward*29
 		local AmmoConsume,ElecConsume=1,nil
+		local Heat=self.Damage*self.ShotCount/25
 		---
 		if(ProjType=="Bullet")then
 			local ShellAng=AimAng:GetCopy()
@@ -783,6 +810,7 @@ if(SERVER)then
 				util.Decal("FadingScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
 				sound.Play("snd_jack_heavylaserburn.wav",Tr.HitPos,60,math.random(90,110))
 			end
+			Heat=Heat*3
 			AmmoConsume=0
 			ElecConsume=.025*Dmg
 		end
@@ -791,6 +819,7 @@ if(SERVER)then
 			local Force=-AimForward*15*self.Damage*self.ShotCount*2
 			if(Force:Length()>2000)then self:GetPhysicsObject():ApplyForceCenter(Force) end
 		end
+		self.Heat=math.Clamp(self.Heat+Heat,0,100)
 		self:SetAmmo(Ammo-AmmoConsume)
 		self:ConsumeElectricity(ElecConsume)
 	end
@@ -950,7 +979,7 @@ elseif(CLIENT)then
 		self.VertGear=JMod_MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
 		self.MiniBaseGear=JMod_MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
 		self.MiniVertGear=JMod_MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
-		self.MachineGun=JMod_MakeModel(self,"models/weapons/w_mach_m249para.mdl")
+		self.MachineGun=JMod_MakeModel(self,"models/ez/sentrygun.mdl")
 		self.MainPost=JMod_MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
 		self.ElevationMotor=JMod_MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
 		self.TriggerMotor=JMod_MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
@@ -1037,7 +1066,7 @@ elseif(CLIENT)then
 		local AimAngle=VertGearAngle:GetCopy()
 		AimAngle:RotateAroundAxis(AimAngle:Forward(),-90)
 		local AimUp,AimRight,AimForward=AimAngle:Up(),AimAngle:Right(),AimAngle:Forward()
-		JMod_RenderModel(self.MachineGun,BasePos-AimUp*4+AimForward*7.5-AimRight*.5,AimAngle)
+		JMod_RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*1-AimRight*.5,AimAngle)
 		---
 		local ShieldAngle=AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(),130)
@@ -1089,6 +1118,9 @@ elseif(CLIENT)then
 		elseif(State==STATE_ENGAGING)then
 			LightColor=Color(255,0,0)
 		elseif(State==STATE_WHINING)then
+			local Mul=(math.sin(CurTime()*5))/2+.5
+			LightColor=Color(255*Mul,255*Mul,0)
+		elseif(State==STATE_OVERHEATED)then
 			local Mul=(math.sin(CurTime()*5))/2+.5
 			LightColor=Color(255*Mul,255*Mul,0)
 		end

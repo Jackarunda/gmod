@@ -65,6 +65,9 @@ function JMod_InitGlobalConfig()
 				["ammo"]={
 					{"ent_jack_gmod_ezammo",5}
 				},
+				["munitions"]={
+					{"ent_jack_gmod_ezmunitions",3}
+				},
 				["explosives"]={
 					{"ent_jack_gmod_ezexplosives",3}
 				},
@@ -212,6 +215,7 @@ function JMod_InitGlobalConfig()
 			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=200}},
 			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50}},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5}},
+			["EZ Munitions"]={"ent_jack_gmod_ezmunitions",{parts=100,propellant=100,explosives=100}},
 			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150}},
 			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5}},
 			["EZ Mini Bounding Mine"]={"ent_jack_gmod_ezboundingmine",{parts=20,explosives=5,propellant=5}},
@@ -2006,3 +2010,5 @@ muzzleflash_m79
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare
 -- santa sleigh aid radio
+-- check if ply even exists in reloadconfig so you can use it from teh server console
+-- add Prop Protection compliance
