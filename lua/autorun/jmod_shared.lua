@@ -20,9 +20,10 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=17,
-		Note="radio packages must have all lower-case names",
+		Version=18,
+		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
+		AltFunctionKey=IN_WALK,
 		SentryPerformanceMult=1,
 		MineDelay=1,
 		MinePower=1,

@@ -85,7 +85,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(activator:KeyDown(IN_WALK))then
+		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			activator:PickupObject(self)
 		elseif not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
 			activator:Give("wep_jack_gmod_ezbuildkit")

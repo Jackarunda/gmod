@@ -39,7 +39,7 @@ if(SERVER)then
 		end
 		JMod_Hint(activator,"blasting machine")
 		self.Owner = activator
-		if activator:KeyDown(IN_WALK) then
+		if activator:KeyDown(JMOD_CONFIG.AltFunctionKey) then
 			self:EmitSound("snds_jack_gmod/plunger.wav")
 			self:SetFired(true)
 			timer.Simple(.5, function()

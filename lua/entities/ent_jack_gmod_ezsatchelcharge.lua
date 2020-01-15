@@ -51,7 +51,7 @@ if(SERVER)then
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(IN_WALK)
+			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:Prime()
 				activator:PickupObject(self.Plunger)

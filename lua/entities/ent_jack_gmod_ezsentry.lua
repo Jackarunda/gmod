@@ -29,7 +29,8 @@ ENT.AmmoTypes={
 		FireRate=.4,
 		Damage=.35,
 		ShotCount=8,
-		Accuracy=.7
+		Accuracy=.7,
+		BarrelLength=.75
 	},
 	["API Bullet"]={ -- Armor Piercing Incendiary, pierces through things and lights fires
 		FireRate=.75,
@@ -37,15 +38,17 @@ ENT.AmmoTypes={
 		Damage=.3
 	},
 	["HE Grenade"]={ -- explosive projectile
-		MaxAmmo=.5,
+		MaxAmmo=.334,
 		FireRate=.4,
 		Damage=3,
-		Accuracy=.8
+		Accuracy=.8,
+		BarrelLength=.75
 	},
 	["Pulse Laser"]={ -- bzew
 		Accuracy=3,
 		Damage=.4,
-		MaxElectricity=2
+		MaxElectricity=2,
+		BarrelLength=.75
 	}--[[
 	["bolt"] = { -- crossbow projectile
 		MaxAmmo=.75,
@@ -68,12 +71,13 @@ ENT.StaticPerfSpecs={
 	MaxDurability=100,
 	ThinkSpeed=1,
 	Efficiency=.8,
-	ShotCount=1
+	ShotCount=1,
+	BarrelLength=29
 }
 ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
 	TurnSpeed=60,
-	TargetingRadius=20,
+	TargetingRadius=15,
 	Armor=8,
 	FireRate=6,
 	Damage=15,
@@ -571,7 +575,7 @@ if(SERVER)then
 				AimAng:RotateAroundAxis(Right,self:GetAimPitch())
 				AimAng:RotateAroundAxis(Up,self:GetAimYaw())
 				local AimForward=AimAng:Forward()
-				local ShootPos=SelfPos+Up*38+AimForward*29
+				local ShootPos=SelfPos+Up*38+AimForward*self.BarrelLength
 				---
 				local Exude=EffectData()
 				Exude:SetOrigin(ShootPos)
@@ -610,7 +614,8 @@ if(SERVER)then
 		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
 		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
 		local AimForward=AimAng:Forward()
-		local ShootPos=SelfPos+Up*38+AimForward*29
+		print(self.BarrelLength)
+		local ShootPos=SelfPos+Up*38+AimForward*self.BarrelLength
 		local AmmoConsume,ElecConsume=1,nil
 		local Heat=self.Damage*self.ShotCount/25
 		---
@@ -993,10 +998,13 @@ elseif(CLIENT)then
 		---
 		self.CurAimPitch=0
 		self.CurAimYaw=0
+		---
+		self.LastAmmoType=""
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
+	local AmmoBGs={["Bullet"]=0,["API Bullet"]=0,["Buckshot"]=1,["HE Grenade"]=2,["Pulse Laser"]=3}
 	function ENT:Draw()
 		local SelfPos,SelfAng,AimPitch,AimYaw,State,Grade=self:GetPos(),self:GetAngles(),self:GetAimPitch(),self:GetAimYaw(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT,AmmoType=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime(),self:GetAmmoType()
@@ -1066,6 +1074,10 @@ elseif(CLIENT)then
 		local AimAngle=VertGearAngle:GetCopy()
 		AimAngle:RotateAroundAxis(AimAngle:Forward(),-90)
 		local AimUp,AimRight,AimForward=AimAngle:Up(),AimAngle:Right(),AimAngle:Forward()
+		if(AmmoType~=self.LastAmmoType)then
+			self.LastAmmoType=AmmoType
+			self.MachineGun:SetBodygroup(0,AmmoBGs[AmmoType])
+		end
 		JMod_RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*1-AimRight*.5,AimAngle)
 		---
 		local ShieldAngle=AimAngle:GetCopy()

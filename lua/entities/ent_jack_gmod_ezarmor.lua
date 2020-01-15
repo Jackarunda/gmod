@@ -60,7 +60,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		JMod_Hint(activator,"armor","armor remove","mask","headset")
-		local Alt=activator:KeyDown(IN_WALK)
+		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
 			net.Start("JMod_ArmorColor")

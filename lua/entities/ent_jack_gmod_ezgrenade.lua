@@ -90,13 +90,13 @@ if(SERVER)then
 		local Dude=activator or activatorAgain
 		self.Owner=Dude
 		local Time=CurTime()
-		if((self.ShiftAltUse)and(Dude:KeyDown(IN_WALK))and(Dude:KeyDown(IN_SPEED)))then
+		if((self.ShiftAltUse)and(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))and(Dude:KeyDown(IN_SPEED)))then
 			return self:ShiftAltUse(Dude,tobool(onOff))
 		end
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(IN_WALK)
+			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:Prime()
 			end

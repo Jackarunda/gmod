@@ -74,7 +74,7 @@ if(SERVER)then
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(IN_WALK)
+			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:EmitSound("snds_jack_gmod/ignite.wav",60,100)
 				timer.Simple(.5,function()

@@ -103,7 +103,7 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State<0)then return end
 		JMod_Hint(activator,"arm","bury","friends")
-		local Alt=activator:KeyDown(IN_WALK)
+		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==JMOD_EZ_STATE_OFF)then
 			if(Alt)then
 				self.Owner=activator

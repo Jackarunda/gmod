@@ -64,7 +64,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
+		local State,Alt=self:GetState(),activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		JMod_Hint(activator,"arm")
 		if(State==STATE_SEALED)then
 			if(Alt)then

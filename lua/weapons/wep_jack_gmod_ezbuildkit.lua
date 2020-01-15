@@ -293,7 +293,7 @@ function SWEP:PrimaryAttack()
 				end
 			end
 			if not(Built)then self:Msg("missing supplies for build") end
-		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(IN_WALK)))then
+		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
 			local State=Ent:GetState()
 			if(State==-1)then
 				self:Msg("device must be repaired before modifying")
@@ -433,7 +433,7 @@ end
 function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
-		if(self.Owner:KeyDown(IN_WALK))then
+		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			-- do nothing because dewelding is handled in the think function
 		else
 			if(self.NextSwitch<Time)then
@@ -482,7 +482,7 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
-		if(self.Owner:KeyDown(IN_WALK))then
+		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
 			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
 			Kit:SetAngles(self.Owner:GetAimVector():Angle())
@@ -548,7 +548,7 @@ function SWEP:Think()
 	end
 	if(self.NextDeWeldProgress<Time)then
 		self.NextDeWeldProgress=Time+.25
-		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(IN_WALK))and(SERVER))then
+		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
 			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
 				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*3
