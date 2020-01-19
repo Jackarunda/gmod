@@ -97,6 +97,7 @@ ENT.ModPerfSpecs = {
 	Damage = 0, 
 	Accuracy = 0, 
 	SearchSpeed = 0,
+	Cooling=0
 }
 function ENT:SetMods(tbl,ammoType)
 	self.ModPerfSpecs=tbl
@@ -393,35 +394,9 @@ if(SERVER)then
 		})
 		return not Tr.Hit
 	end
-	function ENT:ShouldShoot(ent)
-		if not(IsValid(ent))then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
-		if(ent:IsPlayer())then
-			PlayerToCheck=ent
-		elseif(ent:IsNPC())then
-			local Class=ent:GetClass()
-			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
-			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
-			return ent:Health()>0
-		elseif(ent:IsVehicle())then
-			PlayerToCheck=ent:GetDriver()
-		end
-		if((IsValid(PlayerToCheck))and(PlayerToCheck.Alive))then
-			if(PlayerToCheck.EZkillme)then return true end -- for testing
-			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
-			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,PlayerToCheck))then return false end
-			local OurTeam=nil
-			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
-			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
-			return PlayerToCheck:Alive()
-		end
-		return false
-	end
 	function ENT:CanEngage(ent)
 		if not(IsValid(ent))then return false end
-		return self:ShouldShoot(ent) and self:CanSee(ent)
+		return JMod_ShouldAttack(self,ent) and self:CanSee(ent)
 	end
 	function ENT:TryFindTarget()
 		local Time=CurTime()
@@ -431,7 +406,7 @@ if(SERVER)then
 			return nil
 		end
 		self:ConsumeElectricity(.02)
-		self.NextTargetSearch=Time+(.5/self.SearchSpeed^2) -- limit searching cause it's expensive
+		self.NextTargetSearch=Time+(.5/self.SearchSpeed) -- limit searching cause it's expensive
 		local SelfPos=self:GetPos()
 		local Objects,PotentialTargets=ents.FindInSphere(SelfPos,self.TargetingRadius),{}
 		for k,PotentialTarget in pairs(Objects)do
@@ -614,9 +589,8 @@ if(SERVER)then
 		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
 		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
 		local AimForward=AimAng:Forward()
-		print(self.BarrelLength)
 		local ShootPos=SelfPos+Up*38+AimForward*self.BarrelLength
-		local AmmoConsume,ElecConsume=1,nil
+		local AmmoConsume,ElecConsume=1,.02
 		local Heat=self.Damage*self.ShotCount/25
 		---
 		if(ProjType=="Bullet")then

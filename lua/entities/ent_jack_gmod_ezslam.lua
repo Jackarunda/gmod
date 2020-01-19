@@ -147,31 +147,6 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:ShouldAttack(ent)
-		if not(IsValid(ent))then return false end
-		if(ent:IsWorld())then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
-		if(ent:IsPlayer())then
-			PlayerToCheck=ent
-		elseif(ent:IsNPC())then
-			local Class=ent:GetClass()
-			return ent:Health()>0
-		elseif(ent:IsVehicle())then
-			PlayerToCheck=ent:GetDriver()
-		end
-		if(IsValid(PlayerToCheck))then
-			if(PlayerToCheck.EZkillme)then return true end -- for testing
-			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
-			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,PlayerToCheck))then return false end
-			local OurTeam=nil
-			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
-			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
-			return PlayerToCheck:Alive()
-		end
-		return true
-	end
 	function ENT:Detonate(delay,dmg)
 		if(self.Exploded)then return end
 		self.Exploded=true
@@ -198,7 +173,7 @@ if(SERVER)then
 		if(state==JMOD_EZ_STATE_ARMED)then
 			local pos = self:GetAttachment(1).Pos
 			local trace = util.QuickTrace(pos,self:GetUp()*1000,self)
-			if((math.abs(self.BeamFrac - trace.Fraction) >= 0.001)and(self:ShouldAttack(trace.Entity)))then
+			if((math.abs(self.BeamFrac - trace.Fraction) >= 0.001)and(JMod_ShouldAttack(self,trace.Entity)))then
 				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
 					self:Detonate()
 				else

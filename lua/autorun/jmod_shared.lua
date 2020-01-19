@@ -1877,13 +1877,14 @@ end
 --
 local Hints={
 	["afh"]="E to enter and get healed",
-	["ammobox"]="alt+E to refill ammo of any weapon",
+	["ammobox"]="ALT+E to refill ammo of any weapon",
 	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
-	["arm"]="alt+E to arm",
+	["arm"]="ALT+E to arm",
 	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
 	["armor"]="ALT+E to select color and wear armor",
 	["binding"]="remember, console commands can be bound to a key",
-	["blasting machine"]="alt+E on the blasting machine to detonate the satchel charge",
+	["black powder pile"]="ALT+E to ignite black powder, E to sweep away",
+	["blasting machine"]="ALT+E on the blasting machine to detonate the satchel charge",
 	["building"]="stand near resources in order to use them",
 	["bury"]="can only be buried in grass, dirt, snow or mud",
 	["crafting"]="set resources near workbench in order to use them",
@@ -1893,7 +1894,7 @@ local Hints={
 	["detpack det"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["detpack stick"]="hold E on detpack then release E to stick the detpack",
 	["disarm"]="tap E to disarm",
-	["eat"]="alt+E to consume",
+	["eat"]="ALT+E to consume",
 	["fix"]="tap parts box against to repair",
 	["friends"]="concommand jmod_friends to specify allies",
 	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
@@ -1907,6 +1908,7 @@ local Hints={
 	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["modify"]="use the build kit to modify",
+	["powder keg"]="ALT+E to open and pour a line of black powder",
 	["slam stick"]="hold E on SLAM then release E to stick SLAM",
 	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
 	["radio comm"]="radio needs to see sky",
@@ -1914,7 +1916,7 @@ local Hints={
 	["splitterring"]="SHIFT+ALT+E to toggle fragmentation sleeve",
 	["supplies"]="tap supplies against to refill, tap parts against to repair",
 	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
-	["unpackage"]="double tap alt+E to unpackage",
+	["unpackage"]="double tap ALT+E to unpackage",
 	["upgrade"]="use Build Kit to upgrade"
 }
 function JMod_Hint(ply,...)
@@ -2007,9 +2009,11 @@ muzzleflash_m79
 --]]
 
 -- TODO
+-- add Prop Protection compliance
+-- black powder keg
+-- workbench categories
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare
 -- santa sleigh aid radio
--- check if ply even exists in reloadconfig so you can use it from teh server console
--- add Prop Protection compliance
+-- make sentry upgrading part of the mod point system

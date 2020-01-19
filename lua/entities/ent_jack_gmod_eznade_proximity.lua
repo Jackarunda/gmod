@@ -28,35 +28,6 @@ if(SERVER)then
 		print(Tr.Entity)
 		return not Tr.Hit
 	end
-	
-	function ENT:ShouldAttack(ent)
-		if not(IsValid(ent))then return false end
-		if(ent:IsWorld())then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
-		if(ent:IsPlayer())then
-			PlayerToCheck=ent
-		elseif(ent:IsNPC())then
-			local Class=ent:GetClass()
-			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
-			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
-			return ent:Health()>0
-		elseif(ent:IsVehicle())then
-			PlayerToCheck=ent:GetDriver()
-		end
-		if(IsValid(PlayerToCheck))then
-			if(PlayerToCheck.EZkillme)then return true end -- for testing
-			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
-			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,PlayerToCheck))then return false end
-			local OurTeam=nil
-			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
-			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
-			return PlayerToCheck:Alive()
-		end
-		return false
-	end
-	
 	function ENT:Arm()
 		self:SetState(JMOD_EZ_STATE_ARMING)
 		self:SetBodygroup(2,1)
@@ -77,7 +48,7 @@ if(SERVER)then
 			if(IsValid(self.AttachedBomb))then Range=120 end
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),Range))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
-					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
+					if((JMod_ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(JMOD_EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
 						timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()

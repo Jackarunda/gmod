@@ -2114,6 +2114,26 @@ if(SERVER)then
 		Bocks:Spawn()
 		Bocks:Activate()
 	end
+	function JMod_SimpleForceExplosion(pos,power,range,sourceEnt)
+		for k,v in pairs(ents.FindInSphere(pos,range))do
+			if not(v==sourceEnt)then
+				local Phys=v:GetPhysicsObject()
+				if(IsValid(Phys))then
+					local EntPos=v:LocalToWorld(v:OBBCenter())
+					local Tr=util.TraceLine({start=pos,endpos=EntPos,filter={sourceEnt,v}})
+					if not(Tr.Hit)then
+						local DistFrac=(1-(EntPos:Distance(pos)/range))^2
+						local Force=power*DistFrac
+						if((v:IsNPC())or(v:IsPlayer()))then
+							v:SetVelocity((EntPos-pos):GetNormalized()*Force/500)
+						else
+							Phys:ApplyForceCenter((EntPos-pos):GetNormalized()*Force*Phys:GetMass()^.25/2)
+						end
+					end
+				end
+			end
+		end
+	end
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
 		local LoosenThreshold,DestroyThreshold=300*power,75*power
@@ -2267,6 +2287,38 @@ if(SERVER)then
 			NewVec=NewVec:Forward()
 			JMod_RicPenBullet(ent,IPos+TNorm,-NewVec,dmg*.7,doBlasts,wreckShit,(num or 0)+1,penMul,tracerName,callback)
 		end
+	end
+	function JMod_ShouldAttack(self,ent)
+		if not(IsValid(ent))then return false end
+		if(ent:IsWorld())then return false end
+		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
+		if(ent:IsPlayer())then
+			PlayerToCheck=ent
+		elseif(ent:IsNPC())then
+			local Class=ent:GetClass()
+			if((self.WhitelistedNPCs)and(table.HasValue(self.WhitelistedNPCs,Class)))then return true end
+			if((self.BlacklistedNPCs)and(table.HasValue(self.BlacklistedNPCs,Class)))then return false end
+			if not(IsValid(self.Owner))then return ent:Health()>0 end
+			if((ent.Disposition)and(ent:Disposition(self.Owner)==D_HT))then
+				return ent:Health()>0
+			else
+				return false
+			end
+		elseif(ent:IsVehicle())then
+			PlayerToCheck=ent:GetDriver()
+		end
+		if((IsValid(PlayerToCheck))and(PlayerToCheck.Alive))then
+			if(PlayerToCheck.EZkillme)then return true end -- for testing
+			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
+			local Allies=(self.Owner and self.Owner.JModFriends)or {}
+			if(table.HasValue(Allies,PlayerToCheck))then return false end
+			local OurTeam=nil
+			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
+			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
+			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
+			return PlayerToCheck:Alive()
+		end
+		return false
 	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
 	function JMod_ThrowablePickup(playa,item,hardstr,softstr)

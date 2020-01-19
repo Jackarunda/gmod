@@ -11,6 +11,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(-90,0,0)
 ENT.JModEZstorable=true
+ENT.EZpowderIgnitable=true
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -65,6 +66,13 @@ if(SERVER)then
 			if(math.Rand(0,1)<DetChance)then self:Detonate() end
 		end
 	end
+	function ENT:Arm()
+		if(self:GetState()==JMOD_EZ_STATE_ARMED)then return end
+		self:EmitSound("snds_jack_gmod/ignite.wav",60,100)
+		timer.Simple(.5,function()
+			if(IsValid(self))then self:SetState(JMOD_EZ_STATE_ARMED) end
+		end)
+	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Hint(Dude,"arm")
@@ -75,10 +83,7 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
-				self:EmitSound("snds_jack_gmod/ignite.wav",60,100)
-				timer.Simple(.5,function()
-					if(IsValid(self))then self:SetState(JMOD_EZ_STATE_ARMED) end
-				end)
+				self:Arm()
 			end
 			Dude:PickupObject(self)
 		end
