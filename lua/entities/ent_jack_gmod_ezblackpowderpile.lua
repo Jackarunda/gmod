@@ -54,7 +54,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		self.Owner=Dude
-		JMod_Hint(activator,"black powder pile")
+		JMod_Hint(activator,"black powder pile","black powder ignite")
 		local Time=CurTime()
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			self:Arm()

@@ -918,6 +918,39 @@ if(CLIENT)then
 		end
 		
 	end)
+	local function PopulateRecipes(parent,recipes,bench,motherFrame)
+		parent:Clear()
+		local W,H=parent:GetWide(),parent:GetTall()
+		local Scroll=vgui.Create("DScrollPanel",parent)
+		Scroll:SetSize(W-15,H-10)
+		Scroll:SetPos(10,10)
+		---
+		local Y=0
+		for k,itemInfo in pairs(recipes)do
+			local Butt=Scroll:Add("DButton")
+			Butt:SetSize(W-35,25)
+			Butt:SetPos(0,Y)
+			Butt:SetText("")
+			local canMake = bench:HaveResourcesToPerformTask(itemInfo[2])
+			function Butt:Paint(w,h)
+				surface.SetDrawColor(50,50,50,100)
+				surface.DrawRect(0,0,w,h)
+				local msg=k..": "
+				for nam,amt in pairs(itemInfo[2])do
+					msg=msg..amt.." "..nam..", "
+				end
+				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			end
+			function Butt:DoClick()
+				net.Start("JMod_EZworkbench")
+				net.WriteEntity(bench)
+				net.WriteString(k)
+				net.SendToServer()
+				motherFrame:Close()
+			end
+			Y=Y+30
+		end
+	end
 	net.Receive("JMod_EZworkbench",function()
 		local Bench=net.ReadEntity()
 		local Buildables=net.ReadTable()
@@ -950,36 +983,38 @@ if(CLIENT)then
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
 		end
-		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-45)
-		Scroll:SetPos(10,10)
-		---
-		local Y=0
-		for k,itemInfo in pairs(Buildables)do
-			local Butt=Scroll:Add("DButton")
-			Butt:SetSize(W-35,25)
-			Butt:SetPos(0,Y)
-			Butt:SetText("")
-			local canMake = Bench:HaveResourcesToPerformTask(itemInfo[2])
-			function Butt:Paint(w,h)
-				surface.SetDrawColor(50,50,50,100)
-				surface.DrawRect(0,0,w,h)
-				local msg=k..": "
-				for nam,amt in pairs(itemInfo[2])do
-					msg=msg..amt.." "..nam..", "
-				end
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			end
-			function Butt:DoClick()
-				net.Start("JMod_EZworkbench")
-				net.WriteEntity(Bench)
-				net.WriteString(k)
-				net.SendToServer()
-				motherFrame:Close()
-			end
-			Y=Y+30
+		local Categories={}
+		for k,v in pairs(Buildables)do
+			local Category=v[3] or "Other"
+			Categories[Category]=Categories[Category] or {}
+			Categories[Category][k]=v
 		end
-		
+		local X,ActiveTab=10,table.GetKeys(Categories)[1]
+		local TabPanel=vgui.Create("DPanel",Frame)
+		TabPanel:SetPos(10,30)
+		TabPanel:SetSize(W-20,H-70)
+		function TabPanel:Paint(w,h)
+			surface.SetDrawColor(0,0,0,100)
+			surface.DrawRect(0,0,w,h)
+		end
+		PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame)
+		for k,cat in pairs(Categories)do
+			local TabBtn=vgui.Create("DButton",Frame)
+			TabBtn:SetPos(X,10)
+			TabBtn:SetSize(70,20)
+			TabBtn:SetText("")
+			TabBtn.Category=k
+			function TabBtn:Paint(x,y)
+				surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
+				surface.DrawRect(0,0,x,y)
+				draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			end
+			function TabBtn:DoClick()
+				ActiveTab=self.Category
+				PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame)
+			end
+			X=X+75
+		end
 		-- Resource display
 		local resFrame = vgui.Create("DPanel", motherFrame)
 		resFrame:SetSize(95, 270)
