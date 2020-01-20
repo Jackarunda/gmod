@@ -107,8 +107,7 @@ function ENT:Use(activator,caller)
 				Ent=Yay
 			end
 			if(Ent)then
-				Ent.Owner=activator
-				--if(Ent.SetOwner)then Ent:SetOwner(activator) end
+				JMod_Owner(Ent,activator)
 			end
 		end
 	end

@@ -169,7 +169,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -341,7 +341,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
-		self.Owner=activator
+		JMod_Owner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
 				JMod_Colorify(self)
@@ -743,7 +743,7 @@ if(SERVER)then
 			Gnd:SetPos(ShootPos)
 			ShootAng:RotateAroundAxis(ShootAng:Right(),-90)
 			Gnd:SetAngles(ShootAng)
-			Gnd.Owner=self.Owner or self
+			JMod_Owner(Gnd,self.Owner or self)
 			Gnd.Dmg=Dmg
 			Gnd:Spawn()
 			Gnd:Activate()

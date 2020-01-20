@@ -15,7 +15,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()

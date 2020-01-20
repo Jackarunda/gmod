@@ -298,7 +298,7 @@ function JMod_InitGlobalConfig()
 		Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
 		Ent:SetPos(position)
 		Ent:SetAngles(angles)
-		Ent.Owner=playa
+		JMod_Owner(Ent,playa)
 		Ent:Spawn()
 		Ent:Activate()
 	end
@@ -1697,7 +1697,7 @@ if(SERVER)then
 			item:EmitSound("snd_jack_ordnancearm.wav")
 			JackyDetGearNotify(playah,"Set: "..armType)
 			item.Armed=true
-			if not(item.Owner)then item.Owner=playah end
+			if not(item.Owner)then JMod_Owner(item,playah) end
 		end
 	end
 	
@@ -2015,8 +2015,6 @@ muzzleflash_m79
 
 -- TODO
 -- add Prop Protection compliance
--- black powder keg
--- workbench categories
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare

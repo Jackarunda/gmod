@@ -25,7 +25,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -76,7 +76,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		JMod_Hint(activator,"arm","detpack det","binding")
 		local Time=CurTime()
 		if(tobool(onOff))then

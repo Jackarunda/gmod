@@ -2097,8 +2097,7 @@ if(SERVER)then
 			ent:SetPos(pos)
 			ent:SetAngles(ang)
 			if(ply)then
-				ent.Owner=ply
-				ent:SetOwner(ply)
+				JMod_Owner(ent,ply)
 			end
 			ent:Spawn()
 			ent:Activate()
@@ -2108,8 +2107,7 @@ if(SERVER)then
 		Bocks:SetAngles(ent:GetAngles())
 		Bocks:SetContents(ent)
 		if(ply)then
-			Bocks.Owner=ply
-			Bocks:SetOwner(ply)
+			JMod_Owner(Bocks,ply)
 		end
 		Bocks:Spawn()
 		Bocks:Activate()
@@ -2287,6 +2285,15 @@ if(SERVER)then
 			NewVec=NewVec:Forward()
 			JMod_RicPenBullet(ent,IPos+TNorm,-NewVec,dmg*.7,doBlasts,wreckShit,(num or 0)+1,penMul,tracerName,callback)
 		end
+	end
+	function JMod_Owner(ent,newOwner)
+		if not(IsValid(ent))then return end
+		if not(IsValid(newOwner))then newOwner=game.GetWorld() end
+		local OldOwner=ent.Owner
+		if((OldOwner)and(OldOwner==newOwner))then return end
+		ent.Owner=newOwner
+		if not(CPPI)then return end
+		if(ent.CPPISetOwner)then ent:CPPISetOwner(newOwner) end
 	end
 	function JMod_ShouldAttack(self,ent)
 		if not(IsValid(ent))then return false end

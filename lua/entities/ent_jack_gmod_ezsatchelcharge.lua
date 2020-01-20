@@ -46,7 +46,7 @@ if(SERVER)then
 		
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
@@ -65,7 +65,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		if(IsValid(self.Plunger))then self.Owner=self.Plunger.Owner end
+		if(IsValid(self.Plunger))then JMod_Owner(self,self.Plunger.Owner) end
 		timer.Simple(0,function()
 			if(IsValid(self))then
 				local SelfPos,PowerMult=self:GetPos(),5

@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -289,7 +289,7 @@ if(SERVER)then
 								local Ent=ents.Create(ItemClass)
 								Ent:SetPos(Pos)
 								Ent:SetAngles(Ang)
-								Ent.Owner=ply
+								JMod_Owner(Ent,ply)
 								Ent:Spawn()
 								Ent:Activate()
 								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end

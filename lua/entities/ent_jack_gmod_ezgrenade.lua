@@ -36,7 +36,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		return ent
@@ -88,7 +88,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		local Time=CurTime()
 		if((self.ShiftAltUse)and(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))and(Dude:KeyDown(IN_SPEED)))then
 			return self:ShiftAltUse(Dude,tobool(onOff))

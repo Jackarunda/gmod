@@ -24,7 +24,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -106,7 +106,7 @@ if(SERVER)then
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==JMOD_EZ_STATE_OFF)then
 			if(Alt)then
-				self.Owner=activator
+				JMod_Owner(self,activator)
 				self:Bury(activator)
 			else
 				activator:PickupObject(self)
@@ -114,7 +114,7 @@ if(SERVER)then
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(JMOD_EZ_STATE_OFF)
-			self.Owner=activator
+			JMod_Owner(self,activator)
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos()+self:GetUp()*20)
@@ -232,7 +232,7 @@ if(SERVER)then
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=JMOD_EZ_STATE_OFF)then return end
-		self.Owner=armer
+		JMod_Owner(self,armer)
 		self:SetState(JMOD_EZ_STATE_ARMING)
 		self:SetBodygroup(2,1)
 		self:EmitSound("snd_jack_minearm.wav",60,110)

@@ -10,19 +10,6 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.EZpowderIgnitable=true
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*15
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
-		ent:SetPos(SpawnPos)
-		ent.Owner=ply
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-		return ent
-	end
 	function ENT:Initialize()
 		self:SetModel("models/cheeze/pcb2/pcb2.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -47,13 +34,13 @@ if(SERVER)then
 		if(self.Ignited)then return end
 		if(dmginfo:IsDamageType(DMG_BLAST))then self:Remove() return end
 		if(dmginfo:IsDamageType(DMG_BURN))then
-			self.Owner=dmginfo:GetAttacker() or game.GetWorld()
+			JMod_Owner(self,dmginfo:GetAttacker())
 			self:Ignite()
 		end
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		JMod_Hint(activator,"black powder pile","black powder ignite")
 		local Time=CurTime()
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
@@ -77,10 +64,10 @@ if(SERVER)then
 			if not(IsValid(self))then return end
 			for k,v in pairs(ents.FindInSphere(self:GetPos(),30))do
 				if(v.EZpowderIgnitable)then
-					v.Owner=self.Owner
+					JMod_Owner(v,self.Owner)
 					v:Arm()
 				elseif(v.EZpowderDetonatable)then
-					v.Owner=self.Owner
+					JMod_Owner(v,self.Owner)
 					v:Detonate()
 				end
 			end

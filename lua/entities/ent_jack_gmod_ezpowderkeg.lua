@@ -19,7 +19,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -64,7 +64,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
+		JMod_Owner(self,Dude)
 		JMod_Hint(Dude,"powder keg")
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			self.Pouring=not self.Pouring
@@ -106,7 +106,7 @@ if(SERVER)then
 			if(Tr.Hit)then
 				local Powder=ents.Create("ent_jack_gmod_ezblackpowderpile")
 				Powder:SetPos(Tr.HitPos+Tr.HitNormal*.1)
-				Powder.Owner=self.Owner
+				JMod_Owner(Powder,self.Owner)
 				Powder:Spawn()
 				Powder:Activate()
 				constraint.Weld(Powder,Tr.Entity,0,0,0,true)

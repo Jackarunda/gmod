@@ -282,7 +282,7 @@ function SWEP:PrimaryAttack()
 										local Ent=ents.Create(Class)
 										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-										Ent.Owner=self.Owner
+										JMod_Owner(Ent,self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 									end

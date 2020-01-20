@@ -25,7 +25,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -81,7 +81,7 @@ if(SERVER)then
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
-				self.Owner=activator
+				JMod_Owner(self,activator)
 				net.Start("JMod_MineColor")
 				net.WriteEntity(self)
 				net.Send(activator)
@@ -91,7 +91,7 @@ if(SERVER)then
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
-			self.Owner=activator
+			JMod_Owner(self,activator)
 			self:DrawShadow(true)
 		end
 	end
@@ -147,7 +147,7 @@ if(SERVER)then
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
-		self.Owner=armer
+		JMod_Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
