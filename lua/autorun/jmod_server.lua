@@ -266,6 +266,20 @@ if(SERVER)then
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	function JModEZarmorSync(ply)
 		if not(ply.EZarmor)then return end
+		ply.EZarmor.Effects={}
+		for slot,info in pairs(ply.EZarmor.slots)do
+			local Disabled=false
+			if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Disabled=true end
+			if((slot=="Face")and not(ply.EZarmor.maskOn))then Disabled=true end
+			if not(Disabled)then
+				local Info=JMod_ArmorTable[slot][info[1]]
+				if(Info.eff)then
+					for k,eff in pairs(Info.eff)do
+						ply.EZarmor.Effects[eff]=true
+					end
+				end
+			end
+		end
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
@@ -280,7 +294,8 @@ if(SERVER)then
 			slots={},
 			maskOn=true,
 			headsetOn=true,
-			speedFrac=nil
+			speedFrac=nil,
+			Effects={}
 		}
 		JModEZarmorSync(ply)
 		net.Start("JMod_PlayerSpawn")
@@ -309,11 +324,8 @@ if(SERVER)then
 	local MaxArmorProtection={
 		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
 	}
-	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+	function JMod_DamageArmor(ply,slot,amt)
 		local ArmorInfo=ply.EZarmor.slots[slot]
-		if not(ArmorInfo)then return 0 end
-		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
-		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
 		local ShouldWarn50=Dur>Specs.dur*.5
@@ -323,9 +335,17 @@ if(SERVER)then
 			JMod_RemoveArmorSlot(ply,slot,true)
 			JModEZarmorSync(ply)
 		elseif((ArmorInfo[2]<=Specs.dur*.5)and(ShouldWarn50))then
-			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50% durability")
+			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50%")
 			JModEZarmorSync(ply)
 		end
+	end
+	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+		local ArmorInfo=ply.EZarmor.slots[slot]
+		if not(ArmorInfo)then return 0 end
+		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
+		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
+		local Specs=JMod_ArmorTable[slot][ArmorInfo[1]]
+		JMod_DamageArmor(ply,slot,amt)
 		return Specs.def or 0
 	end
 	local function EZarmorScaleDmg(ply,dmgtype,dmgamt,location,isFace)
@@ -1577,6 +1597,7 @@ if(SERVER)then
 	--- NO U ---
 	concommand.Add("jmod_friends",function(ply)
 		net.Start("JMod_Friends")
+		net.WriteBit(false)
 		net.WriteTable(ply.JModFriends or {})
 		net.Send(ply)
 	end)
@@ -1588,6 +1609,11 @@ if(SERVER)then
 		if(Good)then
 			ply.JModFriends=List
 			ply:PrintMessage(HUD_PRINTCENTER,"JMod EZ friends list updated")
+			net.Start("JMod_Friends")
+			net.WriteBit(true)
+			net.WriteEntity(ply)
+			net.WriteTable(List)
+			net.Broadcast()
 		else
 			ply.JModFriends={}
 		end
@@ -1649,7 +1675,24 @@ if(SERVER)then
 		if(NextArmorThink<Time)then
 			NextArmorThink=Time+10
 			for k,playa in pairs(player.GetAll())do
-				if(playa:Alive())then JModEZarmorSync(playa) end
+				if((playa.EZarmor)and(playa:Alive()))then
+					if(playa.EZarmor.Effects.nightVision)then
+						for slot,slotInfo in pairs(playa.EZarmor.slots)do
+							local Info=JMod_ArmorTable[slot][slotInfo[1]]
+							if((Info.eff)and(table.HasValue(Info.eff,"nightVision")))then
+								JMod_DamageArmor(playa,slot,.5)
+							end
+						end
+					elseif(playa.EZarmor.Effects.thermalVision)then
+						for slot,slotInfo in pairs(playa.EZarmor.slots)do
+							local Info=JMod_ArmorTable[slot][slotInfo[1]]
+							if((Info.eff)and(table.HasValue(Info.eff,"thermalVision")))then
+								JMod_DamageArmor(playa,slot,.5)
+							end
+						end
+					end
+					JModEZarmorSync(playa)
+				end
 			end
 		end
 		---
@@ -1783,6 +1826,10 @@ if(SERVER)then
 		if not(ply:Alive())then return end
 		ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
 		ply.EZarmor.maskOn=not ply.EZarmor.maskOn
+		local ExtraEquipSound=JMod_ArmorTable["Face"][ply.EZarmor.slots["Face"][1]].eqsnd
+		if((ply.EZarmor.maskOn)and(ExtraEquipSound))then
+			ply:EmitSound(ExtraEquipSound,50,math.random(80,120))
+		end
 		JModEZarmorSync(ply)
 	end
 	concommand.Add("jmod_ez_mask",function(ply,cmd,args)
@@ -2132,6 +2179,9 @@ if(SERVER)then
 			end
 		end
 	end
+	concommand.Add("FUCK",function(ply,cmd,args)
+		ply:SetPos(Vector(-6760.810059,2712.274902,5512.031250))
+	end)
 	function JMod_WreckBuildings(blaster,pos,power)
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
 		local LoosenThreshold,DestroyThreshold=300*power,75*power
@@ -2409,6 +2459,16 @@ if(SERVER)then
 		local Wepolini=ply:GetActiveWeapon()
 		if not((Wepolini)and(Wepolini.ModifyMachine))then return end
 		Wepolini:ModifyMachine(Ent,Tbl,AmmoType)
+	end)
+	hook.Add("PlayerCanSeePlayersChat","JMOD_PLAYERSEECHAT",function(txt,teamOnly,listener,talker)
+		if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+			return JMod_PlayersCanComm(listener,talker)
+		end
+	end)
+	hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,talker)
+		if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+			return JMod_PlayersCanComm(listener,talker)
+		end
 	end)
 	--[[
 	concommand.Add("damnit",function(ply,cmd,args)

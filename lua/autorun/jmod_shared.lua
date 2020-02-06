@@ -20,7 +20,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=19,
+		Version=20,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -41,6 +41,7 @@ function JMod_InitGlobalConfig()
 		ArmorExponentMult=1,
 		ArmorDegredationMult=1,
 		ArmorWeightMult=1,
+		FragExplosions=true,
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,
@@ -188,6 +189,15 @@ function JMod_InitGlobalConfig()
 				["tnt"]={
 					{"ent_jack_gmod_eztnt",3}
 				},
+				["thermal goggles"]={
+					{"ent_jack_gmod_ezarmor_thermals",2}
+				},
+				["night vision goggles"]={
+					{"ent_jack_gmod_ezarmor_nvgs",4}
+				},
+				["headsets"]={
+					{"ent_jack_gmod_ezarmor_headset",8}
+				},
 				["armor"]={
 					"ent_jack_gmod_ezarmor_balmask","ent_jack_gmod_ezarmor_gasmask",
 					"ent_jack_gmod_ezarmor_hlshoulder","ent_jack_gmod_ezarmor_hrshoulder",
@@ -198,7 +208,9 @@ function JMod_InitGlobalConfig()
 					"ent_jack_gmod_ezarmor_mtorso","ent_jack_gmod_ezarmor_slcalf",
 					"ent_jack_gmod_ezarmor_slforearm","ent_jack_gmod_ezarmor_slthigh",
 					"ent_jack_gmod_ezarmor_spelvis","ent_jack_gmod_ezarmor_srcalf",
-					"ent_jack_gmod_ezarmor_srforearm","ent_jack_gmod_ezarmor_srthigh"
+					"ent_jack_gmod_ezarmor_srforearm","ent_jack_gmod_ezarmor_srthigh",
+					"ent_jack_gmod_ezarmor_nvgs","ent_jack_gmod_ezarmor_thermals",
+					"ent_jack_gmod_ezarmor_headset"
 				}
 			},
 			RestrictedPackages={"antimatter"},
@@ -268,7 +280,10 @@ function JMod_InitGlobalConfig()
 			["EZ Standard Pelvis Armor"]={"ent_jack_gmod_ezarmor_spelvis",{parts=10,advtextiles=10},"Apparel"},
 			["EZ Standard Right Calf Armor"]={"ent_jack_gmod_ezarmor_srcalf",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Standard Right Forearm Armor"]={"ent_jack_gmod_ezarmor_srforearm",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Standard Right Thigh Armor"]={"ent_jack_gmod_ezarmor_srthigh",{parts=10,advtextiles=5},"Apparel"}
+			["EZ Standard Right Thigh Armor"]={"ent_jack_gmod_ezarmor_srthigh",{parts=10,advtextiles=5},"Apparel"},
+			["EZ Headset"]={"ent_jack_gmod_ezarmor_headset",{parts=20,power=10},"Apparel"},
+			["EZ Night Vision Goggles"]={"ent_jack_gmod_ezarmor_nvgs",{parts=30,advparts=10,power=20},"Apparel"},
+			["EZ Thermal Goggles"]={"ent_jack_gmod_ezarmor_thermals",{parts=30,advparts=20,power=20},"Apparel"}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -302,7 +317,6 @@ function JMod_InitGlobalConfig()
 		Ent:Spawn()
 		Ent:Activate()
 	end
-	
 	local CSSCTTable = {
 		Face={
 			["GasMask"]={
@@ -565,17 +579,14 @@ function JMod_InitGlobalConfig()
 			}
 		}
 	}
-
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"] = CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"] = CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"] = CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"] = CSSTTable
-
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"] = CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"] = CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"] = CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"] = CSSCTTable
-	
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"]=CSSCTTable
 	print("JMOD: lua config file loaded")
 end
 JMod_ArmorTable={
@@ -603,6 +614,42 @@ JMod_ArmorTable={
 			mskmat=Material("mats_jack_gmod_sprites/hard_vignette.png"),
 			ent="ent_jack_gmod_ezarmor_balmask",
 			gayPhysics=true
+		},
+		["NightVisionGoggles"]={
+			mdl="models/nvg.mdl", -- scp something
+			siz=Vector(1.05,1.05,1.05),
+			pos=Vector(6.5,2.75,0),
+			ang=Angle(-100,0,90),
+			wgt=5,
+			dur=50,
+			mskmat=Material("mats_jack_gmod_sprites/vignette.png"),
+			eqsnd="snds_jack_gmod/tinycapcharge.wav",
+			ent="ent_jack_gmod_ezarmor_nvgs",
+			eff={"nightVision"}
+		},
+		["ThermalGoggles"]={
+			mdl="models/nvg.mdl", -- scp something
+			siz=Vector(1.05,1.05,1.05),
+			pos=Vector(6.5,2.75,0),
+			ang=Angle(-100,0,90),
+			wgt=5,
+			dur=50,
+			mskmat=Material("mats_jack_gmod_sprites/vignette.png"),
+			eqsnd="snds_jack_gmod/tinycapcharge.wav",
+			ent="ent_jack_gmod_ezarmor_thermals",
+			eff={"thermalVision"}
+		}
+	},
+	Ears={
+		["Headset"]={
+			mdl="models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
+			siz=Vector(1.2,1.05,1.1),
+			pos=Vector(.5,3,.1),
+			ang=Angle(130,0,90),
+			wgt=5,
+			dur=50,
+			ent="ent_jack_gmod_ezarmor_headset",
+			eff={"teamComms"}
 		}
 	},
 	Head={
@@ -1876,7 +1923,7 @@ end
 --
 function JMod_IsDoor(ent)
 	local Class=ent:GetClass()
-	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating")or(Class=="func_breakable"))
+	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating"))
 end
 --
 local Hints={
@@ -1905,6 +1952,7 @@ local Hints={
 	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
 	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
+	["headset comms"]="with a headset, only friends and teammates can hear your voip and see your chat",
 	["item crate"]="tap item against to store \n press E to retrieve item",
 	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
 	["jmod hands grab"]="RMB to grab objects",
@@ -1941,6 +1989,15 @@ function JMod_Hint(ply,...)
 			net.Send(ply)
 			break
 		end
+	end
+end
+function JMod_PlayersCanComm(listener,talker)
+	if(listener==talker)then return true end
+	if(engine.ActiveGamemode()=="sandbox")then
+		return ((talker.JModFriends)and(table.HasValue(talker.JModFriends,listener)))
+	else
+		if((talker.JModFriends)and(table.HasValue(talker.JModFriends,listener)))then return true end
+		return listener:Team()==talker:Team()
 	end
 end
 --
@@ -2014,7 +2071,6 @@ muzzleflash_m79
 --]]
 
 -- TODO
--- add Prop Protection compliance
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
 -- add the crate smoke flare

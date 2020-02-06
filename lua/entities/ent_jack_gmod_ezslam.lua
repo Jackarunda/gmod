@@ -135,9 +135,13 @@ if(SERVER)then
 							self.AttachedBomb=Tr.Entity
 							timer.Simple(0,function() self:SetParent(Tr.Entity) end)
 						else
-							local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
-							self.StuckTo=Tr.Entity
-							self.StuckStick=Weld
+							if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
+								timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
+							else
+								local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+								self.StuckTo=Tr.Entity
+								self.StuckStick=Weld
+							end
 						end
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
