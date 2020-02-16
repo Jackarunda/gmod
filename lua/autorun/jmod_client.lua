@@ -2,6 +2,8 @@ AddCSLuaFile()
 include("jmod_shared.lua")
 if(CLIENT)then
 	JMOD_WIND=JMOD_WIND or Vector(0,0,0)
+	JMOD_NUKEFLASH_ENDTIME=0
+	JMOD_NUKEFLASH_POS=nil
 	local ArmorAppearances={
 		--vests
 		["Ballistic Nylon"]="models/mat_jack_bodyarmor_bn",
@@ -142,6 +144,12 @@ if(CLIENT)then
 			outline=false
 		})
 	end)
+	local function CreateClientLag(amt)
+		local W,H=ScrW(),ScrH()
+		for i=0,amt do
+			draw.SimpleText("LAG","DermaDefault",math.random(W*.4,W*.6),math.random(H*.8,H*.9),Color(255,0,0,255*math.Rand(0,1)^10),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+		end
+	end
 	local function JackSentCont(data)
 		local ply=data:ReadEntity()
 		local term=data:ReadEntity()
@@ -170,6 +178,36 @@ if(CLIENT)then
 	local Count,Sum=0,0
 	hook.Add("Think","JMOD_CLIENT_THINK",function()
 		local Time=CurTime()
+		local ply,DrawNVGlamp=LocalPlayer(),false
+		if not(ply:ShouldDrawLocalPlayer())then
+			if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects))then
+				if(ply.EZarmor.Effects.nightVision)then
+					DrawNVGlamp=true
+					if not(IsValid(ply.EZNVGlamp))then
+						jprint("creating")
+						ply.EZNVGlamp=ProjectedTexture()
+						ply.EZNVGlamp:SetTexture("effects/flashlight001")
+						ply.EZNVGlamp:SetBrightness(.025)
+					else
+						local Dir=ply:GetAimVector()
+						local Ang=Dir:Angle()
+						ply.EZNVGlamp:SetPos(EyePos()+Dir*10)
+						ply.EZNVGlamp:SetAngles(Ang)
+						ply.EZNVGlamp:SetConstantAttenuation(.2)
+						local FoV=ply:GetFOV()
+						ply.EZNVGlamp:SetFOV(FoV)
+						ply.EZNVGlamp:SetFarZ(150000/FoV)
+						ply.EZNVGlamp:Update()
+					end
+				end
+			end
+		end
+		if not(DrawNVGlamp)then
+			if(IsValid(ply.EZNVGlamp))then
+				jprint("destroying")
+				ply.EZNVGlamp:Remove()
+			end
+		end
 		if(NextThink>Time)then return end
 		NextThink=Time+5
 		JMOD_WIND=JMOD_WIND+WindChange/10
@@ -226,9 +264,9 @@ if(CLIENT)then
 				if((Specs.mskmat)and(Alive)and not(ThirdPerson)and(ply.EZarmor.maskOn))then
 					surface.SetMaterial(Specs.mskmat)
 					surface.SetDrawColor(255,255,255,255)
-					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
-					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
-					surface.DrawTexturedRect(0,0,ScrW(),ScrH())
+					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
+					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
+					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
 				end
 				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)and(ply.EZarmor.maskOn)
 				if(Play)then
@@ -1141,12 +1179,6 @@ if(CLIENT)then
 			FRcount=0
 		end
 	end
-	local function CreateClientLag(amt)
-		local W,H=ScrW(),ScrH()
-		for i=0,amt do
-			draw.SimpleText("LAG","DermaDefault",math.random(W*.4,W*.6),math.random(H*.8,H*.9),Color(255,0,0,255*math.Rand(0,1)^10),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-		end
-	end
 	local function DrawNoise(amt,alpha)
 		local W,H=ScrW(),ScrH()
 		for i=0,amt do
@@ -1158,7 +1190,7 @@ if(CLIENT)then
 	end
 	local blurMat2,Dynamic2=Material("pp/blurscreen"),0
 	local function BlurScreen()
-		local layers,density,alpha=1,.7,255
+		local layers,density,alpha=1,.4,255
 		surface.SetDrawColor(255,255,255,alpha)
 		surface.SetMaterial(blurMat2)
 		local FrameRate,Num,Dark=1/FrameTime(),3,150
@@ -1173,7 +1205,7 @@ if(CLIENT)then
 	local GoggleDarkness,GogglesWereOn,OldLightPos=0,false,Vector(0,0,0)
 	local ThermalGlowMat=Material("models/debug/debugwhite")
 	hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
-		local ply,FT,SelfPos=LocalPlayer(),FrameTime(),EyePos()
+		local ply,FT,SelfPos,Time=LocalPlayer(),FrameTime(),EyePos(),CurTime()
 		local AimVec=ply:GetAimVector()
 		--CreateClientLag(10000) -- for debugging the effect at low framerates
 		--JMod_MeasureFramerate()
@@ -1205,7 +1237,7 @@ if(CLIENT)then
 					})
 					if not(ply.EZflashbanged)then DrawMotionBlur(FT*50,.8,.01) end
 					--DrawNoise(1000,255)
-					---
+					--[[
 					local Pos=SelfPos-AimVec*20
 					local Tr,TwoLights=util.QuickTrace(SelfPos,AimVec*10000,ply),false
 					if(Tr.Hit)then
@@ -1242,6 +1274,7 @@ if(CLIENT)then
 							Light2.Style=0
 						end
 					end
+					--]]
 				elseif(ply.EZarmor.Effects.thermalVision)then
 					if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
 					DrawColorModify({
@@ -1265,9 +1298,9 @@ if(CLIENT)then
 			if(GoggleDarkness>0)then
 				local Alpha=255*(GoggleDarkness/100)^.5
 				surface.SetDrawColor(0,0,0,Alpha)
-				surface.DrawRect(0,0,ScrW(),ScrH())
-				surface.DrawRect(0,0,ScrW(),ScrH())
-				surface.DrawRect(0,0,ScrW(),ScrH())
+				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
+				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
+				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
 				GoggleDarkness=math.Clamp(GoggleDarkness-FT*100,0,100)
 			end
 			if(ply.EZflashbanged)then
@@ -1278,6 +1311,24 @@ if(CLIENT)then
 					ply.EZflashbanged=0
 				end
 				if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
+			end
+		end
+		if(JMOD_NUKEFLASH_ENDTIME>Time)then
+			local Dist=EyePos():Distance(JMOD_NUKEFLASH_POS)
+			if(Dist<20000)then
+				local TimeFrac,DistFrac=(JMOD_NUKEFLASH_ENDTIME-Time)/10,1-Dist/20000
+				local Frac=TimeFrac*DistFrac
+				DrawColorModify({
+					["$pp_colour_addr"]=Frac*.5,
+					["$pp_colour_addg"]=0,
+					["$pp_colour_addb"]=0,
+					["$pp_colour_brightness"]=Frac*.5,
+					["$pp_colour_contrast"]=1+Frac*.5,
+					["$pp_colour_colour"]=1,
+					["$pp_colour_mulr"]=0,
+					["$pp_colour_mulg"]=0,
+					["$pp_colour_mulb"]=0
+				})
 			end
 		end
 	end)
@@ -1377,6 +1428,33 @@ if(CLIENT)then
 		end
 		return Pts
 	end
+	net.Receive("JMod_NuclearBlast",function()
+		local pos,powa,renj,immolateRange=net.ReadVector(),net.ReadFloat(),net.ReadFloat(),net.ReadFloat()
+		JMOD_NUKEFLASH_ENDTIME=CurTime()+10
+		JMOD_NUKEFLASH_POS=pos
+		local maxRange=250*powa*renj
+		for k,ent in pairs(ents.FindInSphere(pos,maxRange))do
+			if((IsValid(ent))and(ent.GetClass))then
+				local Class=ent:GetClass()
+				if((Class=="class C_ClientRagdoll")or(Class=="class C_HL2MPRagdoll"))then
+					local Vec=(ent:GetPos()-pos)
+					local Dir=Vec:GetNormalized()
+					for i=0,100 do
+						local Phys=ent:GetPhysicsObjectNum(i)
+						if(Phys)then
+							Phys:ApplyForceCenter(Dir*1e10)
+						end
+						local HeadID=ent:LookupBone("ValveBiped.Bip01_Head1")
+						if(HeadID)then -- if it has a Head ID then it's probably a humanoid ragdoll
+							if(Vec:Length()<immolateRange)then
+								ent:SetModel("models/Humans/Charple0"..math.random(1,4)..".mdl")
+							end
+						end
+					end
+				end
+			end
+		end
+	end)
 	net.Receive("JMod_ModifyMachine",function()
 		local Ent=net.ReadEntity()
 		local Specs=net.ReadTable()

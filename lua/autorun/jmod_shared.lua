@@ -10,6 +10,8 @@ game.AddParticles("particles/muzzleflashes_test_b.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
+game.AddParticles( "particles/gb5_fatman.pcf")
+game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"});
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
 	resource.AddWorkshop("1919703147")
@@ -20,7 +22,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=20,
+		Version=21,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -41,6 +43,9 @@ function JMod_InitGlobalConfig()
 		ArmorExponentMult=1,
 		ArmorDegredationMult=1,
 		ArmorWeightMult=1,
+		NukeRangeMult=1,
+		NukePowerMult=1,
+		NuclearRadiationMult=1,
 		FragExplosions=true,
 		FoodSpecs={
 			DigestSpeed=1,
@@ -2000,6 +2005,13 @@ function JMod_PlayersCanComm(listener,talker)
 		return listener:Team()==talker:Team()
 	end
 end
+if(SERVER)then
+	concommand.Add("JMOD_SERVER_DEBUG",function(ply,cmd,args)
+		local Pos=ply:GetEyeTrace().HitPos+Vector(0,0,100)
+		ParticleEffect("fatman_main",Pos,Angle(0,0,0))
+		--fatman_air
+	end)
+end
 --
 hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
 	if(IsValid(JMOD_BLACK_HOLE))then
@@ -2076,3 +2088,6 @@ muzzleflash_m79
 -- add the crate smoke flare
 -- santa sleigh aid radio
 -- make sentry upgrading part of the mod point system
+-- make thermals work with smoke
+-- hide hand icon when in seat or vehicle
+-- make nuke do flashbang

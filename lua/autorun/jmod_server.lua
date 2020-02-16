@@ -13,6 +13,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_PlayerSpawn")
 	util.AddNetworkString("JMod_SignalNade")
 	util.AddNetworkString("JMod_ModifyMachine")
+	util.AddNetworkString("JMod_NuclearBlast")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -229,7 +230,7 @@ if(SERVER)then
 			elseif words[2]=="iff" then
 				
 				local iffTag=ply:GetNetworkedInt("JackyIFFTag")
-				if iffTag and (iffTag !=0)then
+				if iffTag and (iffTag ~=0)then
 					ply:SetNetworkedInt("JackyIFFTag", 0)
 					local New=ents.Create("ent_jack_ifftag")
 					
@@ -2161,7 +2162,7 @@ if(SERVER)then
 	end
 	function JMod_SimpleForceExplosion(pos,power,range,sourceEnt)
 		for k,v in pairs(ents.FindInSphere(pos,range))do
-			if not(v==sourceEnt)then
+			if(not(IsValid(sourceEnt))or(v~=sourceEnt))then
 				local Phys=v:GetPhysicsObject()
 				if(IsValid(Phys))then
 					local EntPos=v:LocalToWorld(v:OBBCenter())
@@ -2179,57 +2180,74 @@ if(SERVER)then
 			end
 		end
 	end
-	concommand.Add("FUCK",function(ply,cmd,args)
-		ply:SetPos(Vector(-6760.810059,2712.274902,5512.031250))
-	end)
-	function JMod_WreckBuildings(blaster,pos,power)
-		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
-		local LoosenThreshold,DestroyThreshold=300*power,75*power
-		
-		local allProps = ents.FindInSphere(pos,75*power)
-		local ignored = {}
-		
-		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
-		for _, prop in pairs(allProps) do
-			if prop != blaster and prop:GetPhysicsObject():IsValid() and prop:GetPhysicsObject():GetMass() <= LoosenThreshold then
-				table.insert(ignored, prop)
+	function JMod_DecalSplosion(pos,decalName,range,num,sourceEnt)
+		for i=1,num do
+			local Dir=VectorRand()*math.random(1,range)
+			Dir.z=-math.abs(Dir.z)/2
+			local Tr=util.QuickTrace(pos,Dir,sourceEnt)
+			if(Tr.Hit)then
+				util.Decal(decalName,Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
 			end
 		end
-		table.insert(ignored, blaster)
-		
-		for _, prop in pairs(allProps) do
-		
-			local physObj = prop:GetPhysicsObject()
-			local propPos = prop:LocalToWorld(prop:OBBCenter())
-		
-			if prop != blaster and physObj:IsValid() then
-			
-				local mass = physObj:GetMass()
-			
-				local tbl = table.Copy(ignored)
-				table.RemoveByValue(tbl, prop)
-				
-				local tr = util.QuickTrace(pos, propPos - pos, tbl)
-				
-				if (IsValid(tr.Entity) and tr.Entity == prop) then
-					if mass <= DestroyThreshold then
+	end
+	function JMod_BlastDamageIgnoreWorld(pos,att,infl,dmg,range)
+		for k,v in pairs(ents.FindInSphere(pos,range))do
+			local EntPos=v:GetPos()
+			local Vec=EntPos-pos
+			local Dir=Vec:GetNormalized()
+			local DistFrac=1-(Vec:Length()/range)
+			local Dmg=DamageInfo()
+			Dmg:SetDamage(dmg*DistFrac)
+			Dmg:SetDamageForce(Dir*1e5*DistFrac)
+			Dmg:SetDamagePosition(EntPos)
+			Dmg:SetAttacker(att or game.GetWorld())
+			Dmg:SetInflictor(infl or att or game.GetWorld())
+			Dmg:SetDamageType(DMG_BLAST)
+			v:TakeDamageInfo(Dmg)
+		end
+	end
+	function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
+		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
+		local maxRange=250*power*(range or 1) -- todo: this still doesn't do what i want for the nuke
+		local maxMassToDestroy=10*power^.8
+		local masMassToLoosen=30*power
+		local allProps = ents.FindInSphere(pos,maxRange)
+		for k,prop in pairs(allProps)do
+			local physObj=prop:GetPhysicsObject()
+			local propPos=prop:LocalToWorld(prop:OBBCenter())
+			local DistFrac=(1-propPos:Distance(pos)/maxRange)
+			local myDestroyThreshold=DistFrac*maxMassToDestroy
+			local myLoosenThreshold=DistFrac*masMassToLoosen
+			if(DistFrac>=.85)then myDestroyThreshold=myDestroyThreshold*7;myLoosenThreshold=myLoosenThreshold*7 end
+			if((prop~=blaster)and(physObj:IsValid()))then
+				local mass,proceed=physObj:GetMass(),ignoreVisChecks
+				if not(proceed)then
+					local tr=util.QuickTrace(pos,propPos-pos,blaster)
+					proceed=((IsValid(tr.Entity))and(tr.Entity==prop))
+				end
+				if(proceed)then
+					if(mass<=myDestroyThreshold)then
 						SafeRemoveEntity(prop)
-					elseif mass <= LoosenThreshold then
+					elseif(mass<=myLoosenThreshold)then
 						physObj:EnableMotion(true)
 						constraint.RemoveAll(prop)
-						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
 					else
-						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
 					end
 				end
 			end
 		end
 	end
-	function JMod_BlastDoors(blaster,pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,40*power))do
-			if JMod_IsDoor(door) then
-				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
-				if IsValid(tr.Entity) and tr.Entity == door then
+	function JMod_BlastDoors(blaster,pos,power,range,ignoreVisChecks)
+		for k,door in pairs(ents.FindInSphere(pos,40*power*(range or 1)))do
+			if(JMod_IsDoor(door))then
+				local proceed=ignoreVisChecks
+				if not(proceed)then
+					local tr=util.QuickTrace(pos,door:LocalToWorld(door:OBBCenter())-pos,blaster)
+					proceed=((IsValid(tr.Entity))and(tr.Entity==door))
+				end
+				if(proceed)then
 					JMod_BlastThatDoor(door,(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
 				end
 			end
@@ -2468,6 +2486,14 @@ if(SERVER)then
 	hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,talker)
 		if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
 			return JMod_PlayersCanComm(listener,talker)
+		end
+	end)
+	concommand.Add("fuck",function()
+		for i=0,100 do
+			local zomb=ents.Create("npc_zombine")
+			zomb:SetPos(Vector(i*150,0,0))
+			zomb:Spawn()
+			zomb:Activate()
 		end
 	end)
 	--[[
