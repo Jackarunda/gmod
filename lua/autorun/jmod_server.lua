@@ -2488,12 +2488,26 @@ if(SERVER)then
 			return JMod_PlayersCanComm(listener,talker)
 		end
 	end)
-	concommand.Add("fuck",function()
+	concommand.Add("fuck",function(ply)
+		--[[
 		for i=0,100 do
 			local zomb=ents.Create("npc_zombine")
 			zomb:SetPos(Vector(i*150,0,0))
 			zomb:Spawn()
 			zomb:Activate()
+		end
+		--]]
+		for j=1,10 do
+			timer.Simple(j/10,function()
+				for k=1,20 do
+					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+					Gas:SetPos(ply:GetEyeTrace().HitPos)
+					JMod_Owner(Gas,ply)
+					Gas:Spawn()
+					Gas:Activate()
+					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,1000))
+				end
+			end)
 		end
 	end)
 	--[[
