@@ -46,7 +46,7 @@ if(SERVER)then
 		---
 		self:SetState(STATE_OFF)
 		self.LastUse=0
-		timer.Simple(4,function() self:Detonate() end) -- debug
+		self.DetTime=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -63,7 +63,6 @@ if(SERVER)then
 		for i=1,20 do
 			self:DamageSpark()
 		end
-		if(self.Hum)then self.Hum:Stop() end
 		SafeRemoveEntityDelayed(self,10)
 	end
 	function ENT:DamageSpark()

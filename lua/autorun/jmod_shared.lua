@@ -2091,3 +2091,4 @@ muzzleflash_m79
 -- make thermals work with smoke
 -- hide hand icon when in seat or vehicle
 -- make nuke do flashbang
+-- add combustible lemons
