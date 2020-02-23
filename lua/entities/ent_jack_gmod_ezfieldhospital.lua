@@ -323,6 +323,10 @@ if(SERVER)then
 			self:EndOperation(false)
 			return
 		end
+
+		local override = hook.Run("JMod_CanFieldHospitalHeal", self, self.Patient)
+		if override == false then return end
+
 		local Injury=Max-Helf
 		if(Injury>0)then
 			local HealAmt=math.min(Injury,math.ceil(3*self.HealEfficiency^2))
