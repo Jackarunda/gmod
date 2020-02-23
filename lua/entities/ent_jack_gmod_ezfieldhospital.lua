@@ -324,42 +324,47 @@ if(SERVER)then
 			return
 		end
 
-		local override = hook.Run("JMod_CanFieldHospitalHeal", self, self.Patient)
+		local override = hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
 		if override == false then return end
 
 		local Injury=Max-Helf
 		if(Injury>0)then
-			local HealAmt=math.min(Injury,math.ceil(3*self.HealEfficiency^2))
+			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency^2))
 			self.Patient:SetHealth(Helf+HealAmt)
 			self:ConsumeElectricity(2)
 			self:SetSupplies(Supplies-1)
-			for i=1,math.random(1,2) do
-				timer.Simple(math.Rand(.01,.5),function()
-					if(IsValid(self))then self:SFX("ez_robotics/"..math.random(1,42)) end
-				end)
-				timer.Simple(math.Rand(.01,.5),function()
-					if(IsValid(self))then self:SFX("ez_medical/"..math.random(1,27)) end
-				end)
-			end
-			for i=1,math.random(2,4) do
-				timer.Simple(math.Rand(.01,1),function()
-					if(IsValid(self))then
-						local Pos=self:GetPos()+self:GetRight()*math.random(-40,50)+self:GetUp()*math.random(48,52)+self:GetForward()*math.random(-5,5)
-						local Poof=EffectData()
-						Poof:SetOrigin(Pos+VectorRand()*5)
-						util.Effect("eff_jack_Gmod_ezhealpoof",Poof,true,true)
-						if(math.random(1,2)==1)then
-							local Blud=EffectData()
-							Blud:SetOrigin(Pos+VectorRand()*5)
-							util.Effect("BloodImpact",Blud,true,true)
-						end
-					end
-				end)
-			end
+			self:HealEffect()
 		else
 			self:EndOperation(true)
 		end
 	end
+
+	function ENT:HealEffect()
+		for i=1,math.random(1,2) do
+			timer.Simple(math.Rand(.01,.5),function()
+				if(IsValid(self))then self:SFX("ez_robotics/"..math.random(1,42)) end
+			end)
+			timer.Simple(math.Rand(.01,.5),function()
+				if(IsValid(self))then self:SFX("ez_medical/"..math.random(1,27)) end
+			end)
+		end
+		for i=1,math.random(2,4) do
+			timer.Simple(math.Rand(.01,1),function()
+				if(IsValid(self))then
+					local Pos=self:GetPos()+self:GetRight()*math.random(-40,50)+self:GetUp()*math.random(48,52)+self:GetForward()*math.random(-5,5)
+					local Poof=EffectData()
+					Poof:SetOrigin(Pos+VectorRand()*5)
+					util.Effect("eff_jack_Gmod_ezhealpoof",Poof,true,true)
+					if(math.random(1,2)==1)then
+						local Blud=EffectData()
+						Blud:SetOrigin(Pos+VectorRand()*5)
+						util.Effect("BloodImpact",Blud,true,true)
+					end
+				end
+			end)
+		end
+	end
+
 	function ENT:Whine(serious)
 		local Time=CurTime()
 		if(self.NextWhine<Time)then
