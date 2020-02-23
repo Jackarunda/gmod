@@ -8,7 +8,7 @@ ENT.PrintName="EZ Micro Tactical Nuclear Bomb"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(-90,0,0)
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -30,9 +30,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_wasteland/laundry_washer001a.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezmbhg")
-		--self.Entity:SetModelScale(.75,0)
+		self.Entity:SetModel("models/props_borealis/bluebarrel001.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -62,6 +60,14 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do
 			self:DamageSpark()
+		end
+		for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
+			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+			Gas:SetPos(self:GetPos())
+			JMod_Owner(Gas,self.Owner or game.GetWorld())
+			Gas:Spawn()
+			Gas:Activate()
+			Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
 		end
 		SafeRemoveEntityDelayed(self,10)
 	end
@@ -114,9 +120,8 @@ if(SERVER)then
 		---
 		SendClientNukeEffect(SelfPos,0,0,0)
 		util.ScreenShake(SelfPos,1000,10,10,2000*Range)
-		local Eff="fatman_main"
-		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="fatman_air" end
-		ParticleEffect(Eff,SelfPos,Angle(0,0,0))
+		local Eff="pcf_jack_nuke_ground"
+		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="pcf_jack_nuke_air" end
 		for i=1,19 do
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,150,math.random(80,110))
 		end
@@ -171,6 +176,7 @@ if(SERVER)then
 			end)
 		end
 		self:Remove()
+		ParticleEffect(Eff,SelfPos,Angle(0,0,0))
 	end
 	function ENT:OnRemove()
 		--
@@ -181,11 +187,19 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--
+		self.Mdl=ClientsideModel("models/thedoctor/fatman.mdl")
+		self.Mdl:SetModelScale(.4,0)
+		self.Mdl:SetPos(self:GetPos())
+		self.Mdl:SetParent(self)
+		self.Mdl:SetNoDraw(true)
 	end
 	function ENT:Draw()
-		self:DrawModel()
-		--
+		local Pos,Ang=self:GetPos(),self:GetAngles()
+		Ang:RotateAroundAxis(Ang:Forward(),-90)
+		--self:DrawModel()
+		self.Mdl:SetRenderOrigin(Pos+Ang:Right()*7)
+		self.Mdl:SetRenderAngles(Ang)
+		self.Mdl:DrawModel()
 	end
 	language.Add("ent_jack_gmod_eznuke","EZ Micro Tactical Nuclear Bomb")
 end

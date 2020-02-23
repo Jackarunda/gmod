@@ -10,7 +10,7 @@ game.AddParticles("particles/muzzleflashes_test_b.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
-game.AddParticles( "particles/gb5_fatman.pcf")
+game.AddParticles( "particles/pcfs_jack_nuclear_explosions.pcf")
 game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"});
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
