@@ -112,7 +112,12 @@ function SWEP:PrimaryAttack()
 				Ent.EZhealth=(Ent.EZhealth or 0)
 				local Missing=Max-(Helf+Ent.EZhealth)
 				if(Missing<=0)then return end
-				local AddAmt=math.min(Missing,3)
+
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
+				if override == false then return end
+				local healAmt = isnumber(override) and override or 3
+
+				local AddAmt=math.min(Missing,healAmt)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent.EZhealth=Ent.EZhealth+AddAmt
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
@@ -123,7 +128,12 @@ function SWEP:PrimaryAttack()
 				if((Helf<0)or(Helf>=Max))then return end
 				local Missing=Max-Helf
 				if(Missing<=0)then return end
-				local AddAmt=math.min(Missing,3)
+
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
+				if override == false then return end
+				local healAmt = isnumber(override) and override or 3
+				
+				local AddAmt=math.min(Missing,healAmt)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent:SetHealth(Helf+AddAmt)
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"health "..Ent:Health().."/"..Max)
@@ -212,11 +222,17 @@ function SWEP:SecondaryAttack()
 			local AimVec=Ent:GetAimVector()
 			local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
 			local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+
 			if not((Helf<0)or(Helf>=Max))then
 				Ent.EZhealth=(Ent.EZhealth or 0)
 				local Missing=Max-(Helf+Ent.EZhealth)
 				if(Missing<=0)then return end
-				local AddAmt=math.min(Missing,2)
+
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
+				if override == false then return end
+				local healAmt = isnumber(override) and override or 2
+
+				local AddAmt=math.min(Missing,healAmt)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent.EZhealth=Ent.EZhealth+AddAmt
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
