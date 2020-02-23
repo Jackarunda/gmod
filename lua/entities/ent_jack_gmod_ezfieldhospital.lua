@@ -255,6 +255,10 @@ if(SERVER)then
 	end
 	function ENT:TryStartOperation()
 		if not(IsValid(self.Patient))then return end
+
+		local override = hook.Run("JMod_CanFieldHospitalStart", self, self.Patient)
+		if override == false then return end
+
 		local Helf,Max=self.Patient:Health(),self.Patient:GetMaxHealth()
 		if(Helf>=Max)then return end -- you're not hurt lol gtfo
 		if(self:GetSupplies()<=0)then return end
