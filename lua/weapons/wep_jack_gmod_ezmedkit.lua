@@ -112,14 +112,14 @@ function SWEP:PrimaryAttack()
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 
+				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+				Ent.EZhealth=(Ent.EZhealth or 0)
+				local Missing=Max-(Helf+Ent.EZhealth)
 				if override ~= nil then
-					local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 					if((Helf<0)or(Helf>=Max))then return end
-					Ent.EZhealth=(Ent.EZhealth or 0)
-					local Missing=Max-(Helf+Ent.EZhealth)
 					if(Missing<=0)then return end
 				end
-
+				
 				local AddAmt=math.min(Missing,healAmt)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent.EZhealth=Ent.EZhealth+AddAmt
@@ -132,11 +132,11 @@ function SWEP:PrimaryAttack()
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 
+				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+				Ent.EZhealth=(Ent.EZhealth or 0)
+				local Missing=Max-(Helf+Ent.EZhealth)
 				if override ~= nil then
-					local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 					if((Helf<0)or(Helf>=Max))then return end
-					Ent.EZhealth=(Ent.EZhealth or 0)
-					local Missing=Max-(Helf+Ent.EZhealth)
 					if(Missing<=0)then return end
 				end
 				
@@ -207,11 +207,11 @@ function SWEP:SecondaryAttack()
 			if override == false then return end
 			local healAmt = isnumber(override) and override or 2
 
+			local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+			Ent.EZhealth=(Ent.EZhealth or 0)
+			local Missing=Max-(Helf+Ent.EZhealth)
 			if override ~= nil then
-				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 				if((Helf<0)or(Helf>=Max))then return end
-				Ent.EZhealth=(Ent.EZhealth or 0)
-				local Missing=Max-(Helf+Ent.EZhealth)
 				if(Missing<=0)then return end
 			end
 
