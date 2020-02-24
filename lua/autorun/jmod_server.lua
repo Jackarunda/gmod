@@ -13,6 +13,7 @@ if(SERVER)then
 	util.AddNetworkString("JMod_PlayerSpawn")
 	util.AddNetworkString("JMod_SignalNade")
 	util.AddNetworkString("JMod_ModifyMachine")
+	util.AddNetworkString("JMod_NuclearBlast")
 	local ArmorDisadvantages={
 		--vests
 		["Ballistic Nylon"]=.99,
@@ -229,7 +230,7 @@ if(SERVER)then
 			elseif words[2]=="iff" then
 				
 				local iffTag=ply:GetNetworkedInt("JackyIFFTag")
-				if iffTag and (iffTag !=0)then
+				if iffTag and (iffTag ~=0)then
 					ply:SetNetworkedInt("JackyIFFTag", 0)
 					local New=ents.Create("ent_jack_ifftag")
 					
@@ -266,6 +267,20 @@ if(SERVER)then
 	hook.Add("PlayerSay","JackyArmorChat",RemoveArmor)
 	function JModEZarmorSync(ply)
 		if not(ply.EZarmor)then return end
+		ply.EZarmor.Effects={}
+		for slot,info in pairs(ply.EZarmor.slots)do
+			local Disabled=false
+			if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Disabled=true end
+			if((slot=="Face")and not(ply.EZarmor.maskOn))then Disabled=true end
+			if not(Disabled)then
+				local Info=JMod_ArmorTable[slot][info[1]]
+				if(Info.eff)then
+					for k,eff in pairs(Info.eff)do
+						ply.EZarmor.Effects[eff]=true
+					end
+				end
+			end
+		end
 		net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
 		net.WriteTable(ply.EZarmor)
@@ -280,7 +295,8 @@ if(SERVER)then
 			slots={},
 			maskOn=true,
 			headsetOn=true,
-			speedFrac=nil
+			speedFrac=nil,
+			Effects={}
 		}
 		JModEZarmorSync(ply)
 		net.Start("JMod_PlayerSpawn")
@@ -309,11 +325,8 @@ if(SERVER)then
 	local MaxArmorProtection={
 		[DMG_BULLET]=.9,[DMG_BLAST]=.9,[DMG_CLUB]=.9,[DMG_SLASH]=.9,[DMG_BURN]=.5,[DMG_CRUSH]=.6,[DMG_VEHICLE]=.4
 	}
-	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+	function JMod_DamageArmor(ply,slot,amt)
 		local ArmorInfo=ply.EZarmor.slots[slot]
-		if not(ArmorInfo)then return 0 end
-		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
-		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
 		local Name,Dur=ArmorInfo[1],ArmorInfo[2]
 		local Specs=JMod_ArmorTable[slot][Name]
 		local ShouldWarn50=Dur>Specs.dur*.5
@@ -323,9 +336,17 @@ if(SERVER)then
 			JMod_RemoveArmorSlot(ply,slot,true)
 			JModEZarmorSync(ply)
 		elseif((ArmorInfo[2]<=Specs.dur*.5)and(ShouldWarn50))then
-			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50% durability")
+			ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50%")
 			JModEZarmorSync(ply)
 		end
+	end
+	local function EZgetProtectionFromSlot(ply,slot,amt,typ)
+		local ArmorInfo=ply.EZarmor.slots[slot]
+		if not(ArmorInfo)then return 0 end
+		if((slot=="Face")and not(ply.EZarmor.maskOn))then return 0 end
+		if((slot=="Ears")and not(ply.EZarmor.headsetOn))then return 0 end
+		local Specs=JMod_ArmorTable[slot][ArmorInfo[1]]
+		JMod_DamageArmor(ply,slot,amt)
 		return Specs.def or 0
 	end
 	local function EZarmorScaleDmg(ply,dmgtype,dmgamt,location,isFace)
@@ -1577,6 +1598,7 @@ if(SERVER)then
 	--- NO U ---
 	concommand.Add("jmod_friends",function(ply)
 		net.Start("JMod_Friends")
+		net.WriteBit(false)
 		net.WriteTable(ply.JModFriends or {})
 		net.Send(ply)
 	end)
@@ -1588,6 +1610,11 @@ if(SERVER)then
 		if(Good)then
 			ply.JModFriends=List
 			ply:PrintMessage(HUD_PRINTCENTER,"JMod EZ friends list updated")
+			net.Start("JMod_Friends")
+			net.WriteBit(true)
+			net.WriteEntity(ply)
+			net.WriteTable(List)
+			net.Broadcast()
 		else
 			ply.JModFriends={}
 		end
@@ -1649,7 +1676,24 @@ if(SERVER)then
 		if(NextArmorThink<Time)then
 			NextArmorThink=Time+10
 			for k,playa in pairs(player.GetAll())do
-				if(playa:Alive())then JModEZarmorSync(playa) end
+				if((playa.EZarmor)and(playa:Alive()))then
+					if(playa.EZarmor.Effects.nightVision)then
+						for slot,slotInfo in pairs(playa.EZarmor.slots)do
+							local Info=JMod_ArmorTable[slot][slotInfo[1]]
+							if((Info.eff)and(table.HasValue(Info.eff,"nightVision")))then
+								JMod_DamageArmor(playa,slot,.5)
+							end
+						end
+					elseif(playa.EZarmor.Effects.thermalVision)then
+						for slot,slotInfo in pairs(playa.EZarmor.slots)do
+							local Info=JMod_ArmorTable[slot][slotInfo[1]]
+							if((Info.eff)and(table.HasValue(Info.eff,"thermalVision")))then
+								JMod_DamageArmor(playa,slot,.5)
+							end
+						end
+					end
+					JModEZarmorSync(playa)
+				end
 			end
 		end
 		---
@@ -1783,6 +1827,10 @@ if(SERVER)then
 		if not(ply:Alive())then return end
 		ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
 		ply.EZarmor.maskOn=not ply.EZarmor.maskOn
+		local ExtraEquipSound=JMod_ArmorTable["Face"][ply.EZarmor.slots["Face"][1]].eqsnd
+		if((ply.EZarmor.maskOn)and(ExtraEquipSound))then
+			ply:EmitSound(ExtraEquipSound,50,math.random(80,120))
+		end
 		JModEZarmorSync(ply)
 	end
 	concommand.Add("jmod_ez_mask",function(ply,cmd,args)
@@ -2114,7 +2162,7 @@ if(SERVER)then
 	end
 	function JMod_SimpleForceExplosion(pos,power,range,sourceEnt)
 		for k,v in pairs(ents.FindInSphere(pos,range))do
-			if not(v==sourceEnt)then
+			if(not(IsValid(sourceEnt))or(v~=sourceEnt))then
 				local Phys=v:GetPhysicsObject()
 				if(IsValid(Phys))then
 					local EntPos=v:LocalToWorld(v:OBBCenter())
@@ -2132,54 +2180,74 @@ if(SERVER)then
 			end
 		end
 	end
-	function JMod_WreckBuildings(blaster,pos,power)
-		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
-		local LoosenThreshold,DestroyThreshold=300*power,75*power
-		
-		local allProps = ents.FindInSphere(pos,75*power)
-		local ignored = {}
-		
-		-- First pass checks for dewelded (and destroyed) props to ignore during vis checks
-		for _, prop in pairs(allProps) do
-			if prop != blaster and prop:GetPhysicsObject():IsValid() and prop:GetPhysicsObject():GetMass() <= LoosenThreshold then
-				table.insert(ignored, prop)
+	function JMod_DecalSplosion(pos,decalName,range,num,sourceEnt)
+		for i=1,num do
+			local Dir=VectorRand()*math.random(1,range)
+			Dir.z=-math.abs(Dir.z)/2
+			local Tr=util.QuickTrace(pos,Dir,sourceEnt)
+			if(Tr.Hit)then
+				util.Decal(decalName,Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
 			end
 		end
-		table.insert(ignored, blaster)
-		
-		for _, prop in pairs(allProps) do
-		
-			local physObj = prop:GetPhysicsObject()
-			local propPos = prop:LocalToWorld(prop:OBBCenter())
-		
-			if prop != blaster and physObj:IsValid() then
-			
-				local mass = physObj:GetMass()
-			
-				local tbl = table.Copy(ignored)
-				table.RemoveByValue(tbl, prop)
-				
-				local tr = util.QuickTrace(pos, propPos - pos, tbl)
-				
-				if (IsValid(tr.Entity) and tr.Entity == prop) then
-					if mass <= DestroyThreshold then
+	end
+	function JMod_BlastDamageIgnoreWorld(pos,att,infl,dmg,range)
+		for k,v in pairs(ents.FindInSphere(pos,range))do
+			local EntPos=v:GetPos()
+			local Vec=EntPos-pos
+			local Dir=Vec:GetNormalized()
+			local DistFrac=1-(Vec:Length()/range)
+			local Dmg=DamageInfo()
+			Dmg:SetDamage(dmg*DistFrac)
+			Dmg:SetDamageForce(Dir*1e5*DistFrac)
+			Dmg:SetDamagePosition(EntPos)
+			Dmg:SetAttacker(att or game.GetWorld())
+			Dmg:SetInflictor(infl or att or game.GetWorld())
+			Dmg:SetDamageType(DMG_BLAST)
+			v:TakeDamageInfo(Dmg)
+		end
+	end
+	function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
+		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
+		local maxRange=250*power*(range or 1) -- todo: this still doesn't do what i want for the nuke
+		local maxMassToDestroy=10*power^.8
+		local masMassToLoosen=30*power
+		local allProps = ents.FindInSphere(pos,maxRange)
+		for k,prop in pairs(allProps)do
+			local physObj=prop:GetPhysicsObject()
+			local propPos=prop:LocalToWorld(prop:OBBCenter())
+			local DistFrac=(1-propPos:Distance(pos)/maxRange)
+			local myDestroyThreshold=DistFrac*maxMassToDestroy
+			local myLoosenThreshold=DistFrac*masMassToLoosen
+			if(DistFrac>=.85)then myDestroyThreshold=myDestroyThreshold*7;myLoosenThreshold=myLoosenThreshold*7 end
+			if((prop~=blaster)and(physObj:IsValid()))then
+				local mass,proceed=physObj:GetMass(),ignoreVisChecks
+				if not(proceed)then
+					local tr=util.QuickTrace(pos,propPos-pos,blaster)
+					proceed=((IsValid(tr.Entity))and(tr.Entity==prop))
+				end
+				if(proceed)then
+					if(mass<=myDestroyThreshold)then
 						SafeRemoveEntity(prop)
-					elseif mass <= LoosenThreshold then
+					elseif(mass<=myLoosenThreshold)then
 						physObj:EnableMotion(true)
 						constraint.RemoveAll(prop)
-						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
 					else
-						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*300*power*mass,propPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
 					end
 				end
 			end
 		end
 	end
-	function JMod_BlastDoors(blaster,pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,40*power))do
-			if JMod_IsDoor(door) then
-				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
-				if IsValid(tr.Entity) and tr.Entity == door then
+	function JMod_BlastDoors(blaster,pos,power,range,ignoreVisChecks)
+		for k,door in pairs(ents.FindInSphere(pos,40*power*(range or 1)))do
+			if(JMod_IsDoor(door))then
+				local proceed=ignoreVisChecks
+				if not(proceed)then
+					local tr=util.QuickTrace(pos,door:LocalToWorld(door:OBBCenter())-pos,blaster)
+					proceed=((IsValid(tr.Entity))and(tr.Entity==door))
+				end
+				if(proceed)then
 					JMod_BlastThatDoor(door,(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
 				end
 			end
@@ -2409,6 +2477,38 @@ if(SERVER)then
 		local Wepolini=ply:GetActiveWeapon()
 		if not((Wepolini)and(Wepolini.ModifyMachine))then return end
 		Wepolini:ModifyMachine(Ent,Tbl,AmmoType)
+	end)
+	hook.Add("PlayerCanSeePlayersChat","JMOD_PLAYERSEECHAT",function(txt,teamOnly,listener,talker)
+		if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+			return JMod_PlayersCanComm(listener,talker)
+		end
+	end)
+	hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,talker)
+		if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+			return JMod_PlayersCanComm(listener,talker)
+		end
+	end)
+	concommand.Add("fuck",function(ply)
+		--[[
+		for i=0,100 do
+			local zomb=ents.Create("npc_zombine")
+			zomb:SetPos(Vector(i*150,0,0))
+			zomb:Spawn()
+			zomb:Activate()
+		end
+		--]]
+		for j=1,10 do
+			timer.Simple(j/10,function()
+				for k=1,20 do
+					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+					Gas:SetPos(ply:GetEyeTrace().HitPos)
+					JMod_Owner(Gas,ply)
+					Gas:Spawn()
+					Gas:Activate()
+					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,1000))
+				end
+			end)
+		end
 	end)
 	--[[
 	concommand.Add("damnit",function(ply,cmd,args)

@@ -1,7 +1,7 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.PrintName="EZ Poison Gas"
+ENT.PrintName="EZ Nuclear Fallout"
 ENT.Author="Jackarunda"
 ENT.NoSitAllowed=true
 ENT.Editable=true
@@ -9,11 +9,11 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.AdminOnly=false
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
-ENT.EZgasParticle=true
+ENT.EZfalloutParticle=true
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
-		self.LifeTime=math.random(50,100)*JMOD_CONFIG.PoisonGasLingerTime
+		self.LifeTime=math.random(100,200)*JMOD_CONFIG.NuclearRadiationMult
 		self.DieTime=Time+self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
@@ -50,31 +50,31 @@ if(SERVER)then
 		if(CLIENT)then return end
 		local Time,SelfPos=CurTime(),self:GetPos()
 		if(self.DieTime<Time)then self:Remove() return end
-		local Force=VectorRand()*10
-		for key,obj in pairs(ents.FindInSphere(SelfPos,300))do
+		local Force=VectorRand()*10-Vector(0,0,50)
+		for key,obj in pairs(ents.FindInSphere(SelfPos,2500))do
 			if(not(obj==self)and(self:CanSee(obj)))then
-				if(obj.EZgasParticle)then
+				if(obj.EZfalloutParticle)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
-					Force=Force-Vec*40
+					Force=Force-Vec*7
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
 					local Dmg,Helf=DamageInfo(),obj:Health()
-					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(math.random(1,4)*JMOD_CONFIG.PoisonGasDamage)
+					Dmg:SetDamageType(DMG_RADIATION)
+					Dmg:SetDamage(math.random(4,20)*JMOD_CONFIG.NuclearRadiationMult)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
-					if((obj:Health()<Helf)and(math.random(1,7)==3)and(obj:IsPlayer()))then
-						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
-						if(obj.ViewPunch)then obj:ViewPunch(Angle(5,0,0)) end
+					if((obj:Health()<Helf)and(obj:IsPlayer()))then
+						obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110))
+						if(obj.ViewPunch)then obj:ViewPunch(Angle(1,0,0)) end
 					end
 				end
 			end
 		end
 		local Phys=self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity()*.8)
+		Phys:SetVelocity(Phys:GetVelocity()*.7)
 		Phys:ApplyForceCenter(Force)
-		self:NextThink(Time+math.Rand(2,4))
+		self:NextThink(Time+math.Rand(4,8))
 		return true
 	end
 	function ENT:RebuildPhysics()
@@ -98,29 +98,10 @@ if(SERVER)then
 		--
 	end
 elseif(CLIENT)then
-	local Mat=Material("particle/smokestack")
 	function ENT:Initialize()
-		self.Col=Color(math.random(100,120),math.random(100,150),100)
-		self.Siz=1
-		self.Visible=true
-		self.Show=true
-		timer.Simple(2,function()
-			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
-		end)
-		self.NextVisCheck=CurTime()+6
+		--self:SetModelScale(10)
 	end
 	function ENT:DrawTranslucent()
 		--self:DrawModel()
-		local Time=CurTime()
-		if(self.NextVisCheck<Time)then
-			self.NextVisCheck=Time+1
-			self.Show=self.Visible and 1/FrameTime()>50
-		end
-		if(self.Show)then
-			local SelfPos=self:GetPos()
-			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,self.Siz,self.Siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
-			self.Siz=math.Clamp(self.Siz+FrameTime()*200,0,500)
-		end
 	end
 end

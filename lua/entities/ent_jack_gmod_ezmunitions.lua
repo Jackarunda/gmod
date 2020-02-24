@@ -19,9 +19,12 @@ ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ---
 if(SERVER)then
-	function ENT:UseEffect(pos,ent)
-		for i=1,10 do
+	function ENT:UseEffect(pos,ent,destroyed)
+		local num=10
+		if(destroyed)then num=1 end
+		for i=1,num do
 			timer.Simple(i/200,function()
+				if not(IsValid(self))then return end
 				local Prop=ents.Create("prop_physics")
 				Prop:SetModel("models/kali/weapons/mgsv/magazines/ammunition/40mm grenade.mdl")
 				Prop:SetModelScale(2,0)
@@ -33,7 +36,7 @@ if(SERVER)then
 				Prop:GetPhysicsObject():SetVelocity(VectorRand()*100)
 				Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				constraint.NoCollide(Prop,self,0,0)
-				SafeRemoveEntityDelayed(Prop,math.random(2,6))
+				SafeRemoveEntityDelayed(Prop,math.Rand(2,6))
 			end)
 		end
 	end

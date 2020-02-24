@@ -75,7 +75,7 @@ if(SERVER)then
 					self:FireBullets({
 						Attacker=self.Owner or game.GetWorld(),
 						Damage=50,
-						Force=50,
+						Force=10,
 						Num=1,
 						Src=SelfPos,
 						Tracer=1,

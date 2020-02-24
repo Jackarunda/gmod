@@ -131,11 +131,15 @@ if(SERVER)then
 						Ang:RotateAroundAxis(Ang:Up(),180)
 						self:SetAngles(Ang)
 						self:SetPos(Tr.HitPos)
-						local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+						if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
+							timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
+						else
+							local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+							self.StuckTo=Tr.Entity
+							self.StuckStick=Weld
+						end
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-						self.StuckTo=Tr.Entity
-						self.StuckStick=Weld
 					end
 				end
 			end
@@ -169,9 +173,8 @@ if(SERVER)then
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,120*PowerMult)
-					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
-						util.BlastDamage(Infl,Att,SelfPos,100*PowerMult,1800*PowerMult)
-					end
+					-- do a lot of damage point blank, mostly for breaching
+					util.BlastDamage(Infl,Att,SelfPos,20*PowerMult,1000*PowerMult)
 					self:Remove()
 				end)
 			end
@@ -204,8 +207,8 @@ elseif(CLIENT)then
 			ang:RotateAroundAxis(ang:Up(),-90)
 			local Up,Right,Forward,FT=ang:Up(),ang:Right(),ang:Forward(),FrameTime()
 			local Amb=render.GetLightColor(SelfPos)
-			local Brightness=((Amb.x+Amb.y+Amb.z)/3)^2
-			local Opacity=math.random(10,255)*Brightness
+			local Brightness=((Amb.x+Amb.y+Amb.z)/3)
+			local Opacity=math.random(50,255)*Brightness
 			cam.Start3D2D(SelfPos+Up*13.3-Right*6-Forward*-6.8,ang,.1)
 				draw.SimpleTextOutlined(GetTimeString(self:GetTimer()),"JMod-NumberLCD",0,0,Color(255,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(200,0,0,Opacity))
 			cam.End3D2D()
