@@ -108,24 +108,29 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
-		for i=1,500 do
-			timer.Simple(i/5000,function()
-				if not(IsValid(self))then return end
-				local Dir=(Up+VectorRand()*.9):GetNormalized()
-				Dir.z=Dir.z/4
-				self:FireBullets({
-					Attacker=self.Owner or game.GetWorld(),
-					Damage=math.random(20,30)*JMOD_CONFIG.MinePower,
-					Force=math.random(1,10),
-					Num=1,
-					Src=SelfPos,
-					Tracer=1,
-					Dir=Dir:GetNormalized(),
-					Spread=Vector(0,0,0)
-				})
-				if(i==100)then util.BlastDamage(self,self.Owner or self,SelfPos,20*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower) end
-				if(i==500)then self:Remove() end
-			end)
+		if(JMOD_CONFIG.FragExplosions)then
+			for i=1,500 do
+				timer.Simple(i/5000,function()
+					if not(IsValid(self))then return end
+					local Dir=(Up+VectorRand()*.9):GetNormalized()
+					Dir.z=Dir.z/4
+					self:FireBullets({
+						Attacker=self.Owner or game.GetWorld(),
+						Damage=math.random(20,30)*JMOD_CONFIG.MinePower,
+						Force=math.random(1,10),
+						Num=1,
+						Src=SelfPos,
+						Tracer=1,
+						Dir=Dir:GetNormalized(),
+						Spread=Vector(0,0,0)
+					})
+					if(i==100)then util.BlastDamage(self,self.Owner or self,SelfPos,20*JMOD_CONFIG.MinePower,30*JMOD_CONFIG.MinePower) end
+					if(i==500)then self:Remove() end
+				end)
+			end
+		else
+			util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,300,90)
+			self:Remove()
 		end
 	end
 	function ENT:Arm(armer)

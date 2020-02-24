@@ -1,4 +1,31 @@
 "VertexlitGeneric"
 {
 	"$basetexture" "models/mishka/props/nvg"
+	"$bumpmap" "models/tex_jack_flat_normal"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" ".1"
+	"$phongfresnelranges" "[1 1 1]"
+
+	//"$envmap" "env_cubemap"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+	
+	Proxies
+	{
+		PlayerWeaponColor
+		{
+			resultVar	$color2 // pass the player color value to Gmod
+			default		0.23 0.35 0.41 // unused for now.
+		}
+		Clamp // clamp the chosen color between 1% and 125% (usually)
+		{
+			min 0.01
+			max 1.25
+			srcVar1 "$color2"
+			resultVar "$color2"
+		}
+	}
 }

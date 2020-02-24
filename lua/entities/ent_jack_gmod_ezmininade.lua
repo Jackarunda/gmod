@@ -60,6 +60,7 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos=self:GetPos()
 		if(IsValid(self.AttachedBomb))then
+			JMod_Owner(self.AttachedBomb,self.Owner or self.AttachedBomb.Owner or game.GetWorld())
 			self.AttachedBomb:EZdetonateOverride(self)
 			JMod_Sploom(self.Owner,SelfPos,3)
 			self:Remove()

@@ -55,7 +55,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 					local Force=Mass*200*PullStrength
 					if(SERVER)then
 						local BreakThreshold=(Age^2/Dist)*30
-						if(BreakThreshold>100)then constraint.RemoveAll(obj);ObjPhys:EnableMotion(true) end
+						if(BreakThreshold>100)then constraint.RemoveAll(obj);ObjPhys:EnableMotion(true);ObjPhys:EnableDrag(false) end
 					elseif(CLIENT)then
 						Force=Force*3
 					end
