@@ -258,10 +258,11 @@ if(SERVER)then
 
 		local override = hook.Run("JMod_CanFieldHospitalStart", self, self.Patient)
 		if override == false then return end
-
-		local Helf,Max=self.Patient:Health(),self.Patient:GetMaxHealth()
-		if(Helf>=Max)then return end -- you're not hurt lol gtfo
-		if(self:GetSupplies()<=0)then return end
+		if override ~= true then
+			local Helf,Max=self.Patient:Health(),self.Patient:GetMaxHealth()
+			if(Helf>=Max)then return end -- you're not hurt lol gtfo
+			if(self:GetSupplies()<=0)then return end
+		end
 		self:SetState(STATE_WORKING)
 		self:SFX("afh_spoolup")
 		self:ConsumeElectricity()
