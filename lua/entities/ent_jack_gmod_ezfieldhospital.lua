@@ -131,7 +131,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .2)/self.ElectricalEfficiency
+		amt=((amt or .2)/self.ElectricalEfficiency^.5)/2
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
@@ -275,7 +275,7 @@ if(SERVER)then
 		local State,Time,Electricity=self:GetState(),CurTime(),self:GetElectricity()
 		if(self.NextRealThink<Time)then
 			if not(IsValid(self.Pod))then self:Remove();return end
-			self.NextRealThink=Time+.5
+			self.NextRealThink=Time+.15
 			if(State==STATE_ON)then
 				if(IsValid(self.Pod:GetDriver()))then
 					self:Seal()
@@ -317,7 +317,7 @@ if(SERVER)then
 	function ENT:TryHeal()
 		local Time=CurTime()
 		if(self.NextHeal>Time)then return end
-		self.NextHeal=Time+1/self.HealSpeed
+		self.NextHeal=Time+1/self.HealSpeed^2.75
 		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
 		if(Supplies<=0)then
 			self:EndOperation(false)
@@ -329,10 +329,10 @@ if(SERVER)then
 
 		local Injury=Max-Helf
 		if(Injury>0)then
-			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency^2))
+			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency))
 			self.Patient:SetHealth(Helf+HealAmt)
 			self:ConsumeElectricity(2)
-			self:SetSupplies(Supplies-1)
+			if(math.random(1,2)==1)then self:SetSupplies(Supplies-1) end
 			self:HealEffect()
 		else
 			self:EndOperation(true)
