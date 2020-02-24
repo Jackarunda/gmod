@@ -246,12 +246,12 @@ function SWEP:SecondaryAttack()
 			Ent.EZhealth=Ent.EZhealth+AddAmt
 			self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
 			Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
-			self:HealEffect()
+			self:HealEffect(Pos)
 		end
 	end
 end
 
-function SWEP:HealEffect()
+function SWEP:HealEffect(Pos)
 	sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
 	sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
 	for i=1,2 do
