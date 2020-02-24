@@ -1,0 +1,26 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_fatman/fatman_body_yellow"
+	"$surfaceprop" "metal"
+	"$model" 1
+	"$phong" 1
+	"$ssbump" 1
+	"$bumpmap" "models/thedoctor/mat_fatman/fatman_body_yellow_NRM"
+	"$normalmapalphaenvmapmask" 1
+	"$envmaptint" "[0.05 0.05 0.05]"
+	"$envmap" "env_cubemap"
+	"$envmapmask"		"models/thedoctor/mat_fatman/fatman_body_yellow_SPEC"
+
+	"$detail" "models/detail_metall_det1"
+	"$detailscale" "32.00"
+	"$detailblendfactor" "1.0"
+	"$detailblendmode" "0"
+
+	"$phong"				"1"
+	"$phongalbedotint"		"1"
+	"$phongboost"			"20"
+	"$phongexponent"		"5"
+	"$phongexponenttexture"	"models\vehicle_exp"
+	"$phongfresnelranges"	"[0 0.1 0]"
+}
+

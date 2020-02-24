@@ -34,32 +34,37 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		local Spred=Vector(0,0,0)
-		for i=1,1000 do
-			timer.Simple(i/10000+.01,function()
-				if not(IsValid(self))then return end
-				local Dir=VectorRand()
-				if(OnGround)then
-					Dir.z=Dir.z/4+.2
-				else
-					Dir.z=Dir.z/3-.3
-				end
-				self:FireBullets({
-					Attacker=self.Owner or game.GetWorld(),
-					Damage=40,
-					Force=50,
-					Num=1,
-					Src=SelfPos,
-					Tracer=1,
-					Dir=Dir:GetNormalized(),
-					Spread=Spred
-				})
-				if(i==300)then
-					-- delay the blast damage so that the bang can be heard
-					util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,40)
-				elseif(i==1000)then
-					self:Remove()
-				end
-			end)
+		if(JMOD_CONFIG.FragExplosions)then
+			for i=1,1000 do
+				timer.Simple(i/10000+.01,function()
+					if not(IsValid(self))then return end
+					local Dir=VectorRand()
+					if(OnGround)then
+						Dir.z=Dir.z/4+.2
+					else
+						Dir.z=Dir.z/3-.3
+					end
+					self:FireBullets({
+						Attacker=self.Owner or game.GetWorld(),
+						Damage=40,
+						Force=10,
+						Num=1,
+						Src=SelfPos,
+						Tracer=1,
+						Dir=Dir:GetNormalized(),
+						Spread=Spred
+					})
+					if(i==300)then
+						-- delay the blast damage so that the bang can be heard
+						util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,40)
+					elseif(i==1000)then
+						self:Remove()
+					end
+				end)
+			end
+		else
+			util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,80)
+			self:Remove()
 		end
 	end
 	

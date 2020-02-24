@@ -73,6 +73,9 @@ if(SERVER)then
 		end
 		Dude:PickupObject(self)
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
@@ -92,11 +95,18 @@ if(SERVER)then
 		Dmg:SetInflictor(self)
 		Dmg:SetDamageType(DMG_BURN)
 		util.BlastDamageInfo(Dmg,SelfPos,750)
-		JMod_SimpleForceExplosion(SelfPos,1000000,600,self)
+		for i=1,5 do
+			timer.Simple(i/10,function()
+				JMod_SimpleForceExplosion(SelfPos,400000,600,self)
+			end)
+		end
 		self:Remove()
 	end
 	function ENT:Think()
 		local Time=CurTime()
+		if(self:IsOnFire())then
+			if(math.random(1,50)==2)then self:Detonate();return end
+		end
 		if(self.Pouring)then
 			local Eff=EffectData()
 			Eff:SetOrigin(self:GetPos())

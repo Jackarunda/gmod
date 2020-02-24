@@ -613,7 +613,7 @@ if(SERVER)then
 				sound.Play("snds_jack_gmod/sentry.wav",SelfPos,70,math.random(90,110))
 				ParticleEffect("muzzleflash_g3",ShootPos,AimAng,self)
 			else
-				util.Effect("PistolShellEject",Eff,true,true)
+				util.Effect("ShellEject",Eff,true,true)
 				sound.Play("snds_jack_gmod/sentry_weak.wav",SelfPos,70,math.random(90,110))
 				ParticleEffect("muzzleflash_pistol",ShootPos,AimAng,self)
 			end

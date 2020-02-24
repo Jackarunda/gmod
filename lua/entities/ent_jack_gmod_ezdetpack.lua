@@ -8,7 +8,7 @@ ENT.PrintName="EZ Detpack"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
----
+--- func_breakable
 ENT.JModPreferredCarryAngles=Angle(90,0,180)
 ENT.JModEZdetPack=true
 ENT.JModEZstorable=true
@@ -109,11 +109,15 @@ if(SERVER)then
 						Ang:RotateAroundAxis(Ang:Right(),90)
 						self:SetAngles(Ang)
 						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
-						local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+						if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
+							timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
+						else
+							local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+							self.StuckTo=Tr.Entity
+							self.StuckStick=Weld
+						end
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-						self.StuckTo=Tr.Entity
-						self.StuckStick=Weld
 					end
 				end
 			end
@@ -176,9 +180,8 @@ if(SERVER)then
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,200*PowerMult)
-					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
-						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
-					end
+					-- do a lot of damage point blank, mostly for breaching
+					util.BlastDamage(Infl,Att,SelfPos,20*PowerMult,1700*PowerMult)
 					self:Remove()
 				end)
 			end
