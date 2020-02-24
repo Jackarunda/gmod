@@ -147,33 +147,7 @@ function SWEP:PrimaryAttack()
 				Hit=true
 			end
 			if(Hit)then
-				sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
-				sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
-				for i=1,2 do
-					local EffPos=Pos+VectorRand()*3
-					local Eff=EffectData()
-					Eff:SetOrigin(EffPos)
-					Eff:SetFlags(3)
-					Eff:SetColor(0)
-					Eff:SetScale(6)
-					util.Effect("bloodspray",Eff,true,true)
-					local EffTwo=EffectData()
-					EffTwo:SetOrigin(EffPos)
-					util.Effect("BloodImpact",EffTwo,true,true)
-					local Tr=util.QuickTrace(EffPos,VectorRand()*30-Vector(0,0,40),{Ent,self.Owner})
-					if(Tr.Hit)then
-						util.Decal("Blood",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
-					end
-				end
-				Ent:RemoveAllDecals()
-				if(self:GetSupplies()<=0)then self:Remove();return end
-				timer.Simple(.05,function()
-					if(IsValid(self))then
-						for i=1,2 do
-							self:FlingProp(table.Random(self.Props),Pos)
-						end
-					end
-				end)
+				self:HealEffect(Ent)
 			end
 		end
 	end
@@ -245,13 +219,18 @@ function SWEP:SecondaryAttack()
 			self:SetSupplies(self:GetSupplies()-1)
 			Ent.EZhealth=Ent.EZhealth+AddAmt
 			self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
-			Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
-			self:HealEffect(Pos)
+			self:HealEffect(Ent)
 		end
 	end
 end
 
-function SWEP:HealEffect(Pos)
+function SWEP:HealEffect(Ent)
+
+	local AimVec=Ent:GetAimVector()
+	local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
+
+	Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+
 	sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
 	sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
 	for i=1,2 do
