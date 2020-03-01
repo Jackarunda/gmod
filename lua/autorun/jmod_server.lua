@@ -1844,8 +1844,38 @@ if(SERVER)then
 		ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
 		JModEZarmorSync(ply)
 	end
+	function JMod_EZ_BombDrop(ply)
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local Boms={}
+		for k,ent in pairs(ents.GetAll())do
+			if((ent.EZdroppableBombArmedTime)and(ent.Owner)and(ent.Owner==ply))then
+				table.insert(Boms,ent)
+			end
+		end
+		local FirstBom,Earliest=nil,9e9
+		for k,bom in pairs(Boms)do
+			if(bom.EZdroppableBombArmedTime<Earliest)then
+				FirstBom=bom
+				Earliest=bom.EZdroppableBombArmedTime
+			end
+		end
+		if(IsValid(FirstBom))then
+			-- knock knock it's pizza time
+			FirstBom:EmitSound("buttons/button6.wav",75,80)
+			timer.Simple(.5,function()
+				if(IsValid(FirstBom))then
+					constraint.RemoveAll(FirstBom)
+					FirstBom:GetPhysicsObject():EnableMotion(true)
+					FirstBom:GetPhysicsObject():Wake()
+				end
+			end)
+		end
+	end
 	concommand.Add("jmod_ez_headset",function(ply,cmd,args)
 		JMod_EZ_Toggle_Headset(ply)
+	end)
+	concommand.Add("jmod_ez_bombdrop",function(ply,cmd,args)
+		JMod_EZ_BombDrop(ply)
 	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
 		if not(ply:Alive())then return end
@@ -1854,6 +1884,7 @@ if(SERVER)then
 		if(lowerTxt=="*armor*")then JMod_EZ_Remove_Armor(ply);return "" end
 		if(lowerTxt=="*mask*")then JMod_EZ_Toggle_Mask(ply);return "" end
 		if(lowerTxt=="*headset*")then JMod_EZ_Toggle_Headset(ply);return "" end
+		if(lowerTxt=="*bomb*")then JMod_EZ_BombDrop(ply);return "" end
 		for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 			if(v.EZreceiveSpeech)then
 				if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server

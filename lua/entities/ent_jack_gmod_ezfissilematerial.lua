@@ -1,44 +1,42 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
-ENT.PrintName="EZ Antimatter"
+ENT.PrintName="EZ Fissile Material"
 ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="antimatter"
+ENT.EZsupplies="fissilematerial"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod_EZsuperRareResourceSize
-ENT.Model="models/thedoctor/darkmatter.mdl"
+ENT.Model="models/kali/props/cases/hard case c.mdl"
 ENT.ModelScale=1
--- 10 micrograms
-ENT.Mass=100
+ENT.Skin=2
+ENT.Mass=150
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.ImpactSensitivity=800
-ENT.DamageThreshold=50
+ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
-ENT.Hint="antimatter"
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		if((destructive)and not(self.Sploomd))then
 			self.Sploomd=true
-			local Blam=EffectData()
-			Blam:SetOrigin(pos)
-			Blam:SetScale(5)
-			util.Effect("eff_jack_plastisplosion",Blam,true,true)
-			util.ScreenShake(pos,99999,99999,1,750*5)
-			for i=1,2 do sound.Play("BaseExplosionEffect.Sound",pos,120,math.random(90,110)) end
-			for i=1,2 do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",pos+VectorRand()*1000,140,math.random(90,110)) end
-			timer.Simple(.1,function() util.BlastDamage(game.GetWorld(),game.GetWorld(),pos,1000,500) end)
+			for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
+				local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+				Gas:SetPos(self:GetPos())
+				JMod_Owner(Gas,self.Owner or game.GetWorld())
+				Gas:Spawn()
+				Gas:Activate()
+				Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
+			end
 		end
 	end
 	function ENT:AltUse(ply)
 		--
 	end
 elseif(CLIENT)then
-	local TxtCol=Color(50,50,50,220)
+	local TxtCol,Trefoil=Color(255,255,255,80),Material("png_jack_gmod_radiation.png")
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
@@ -46,11 +44,14 @@ elseif(CLIENT)then
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Count=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			cam.Start3D2D(Pos+Up*8.5-Right*.5-Forward*6.2,Ang,.012)
+			Ang:RotateAroundAxis(Ang:Up(),-90)
+			cam.Start3D2D(Pos+Up*21.8-Right*.6+Forward*10,Ang,.05)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ ANTIMATTER","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ FISSILE MATERIAL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Count.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			surface.SetDrawColor(255,255,255,80)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128,160,256,256)
 			cam.End3D2D()
 		end
 	end

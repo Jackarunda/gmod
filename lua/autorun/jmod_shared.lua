@@ -11,7 +11,9 @@ game.AddParticles( "particles/pcfs_jack_explosions_large.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 game.AddParticles( "particles/pcfs_jack_nuclear_explosions.pcf")
-game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"});
+game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"})
+PrecacheParticleSystem("pcf_jack_nuke_ground")
+PrecacheParticleSystem("pcf_jack_nuke_air")
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
 	resource.AddWorkshop("1919703147")
@@ -22,7 +24,7 @@ end
 function JMod_InitGlobalConfig()
 	local NewConfig={
 		Author="Jackarunda",
-		Version=21,
+		Version=22,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -171,6 +173,9 @@ function JMod_InitGlobalConfig()
 				["antimatter"]={
 					"ent_jack_gmod_ezantimatter"
 				},
+				["fissile material"]={
+					"ent_jack_gmod_ezfissilematerial"
+				},
 				["dynamite"]={
 					{"ent_jack_gmod_ezdynamite",12}
 				},
@@ -218,7 +223,7 @@ function JMod_InitGlobalConfig()
 					"ent_jack_gmod_ezarmor_headset"
 				}
 			},
-			RestrictedPackages={"antimatter"},
+			RestrictedPackages={"antimatter","fissile material"},
 			RestrictedPackageShipTime=600,
 			RestrictedPackagesAllowed=true
 		},
@@ -230,6 +235,7 @@ function JMod_InitGlobalConfig()
 			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
+			["EZ Micro Tactical Nuclear Bomb"]={{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
 		},
 		Recipes={
@@ -1942,6 +1948,7 @@ local Hints={
 	["black powder pile"]="ALT+E to ignite black powder, E to sweep away",
 	["black powder ignite"]="black powder can ignite powder kegs and anything with a pyro fuze, like dynamite",
 	["blasting machine"]="ALT+E on the blasting machine to detonate the satchel charge",
+	["bomb drop"]="weld/nail bomb to vehicle, then type *bomb* or cmd jmod_ez_bombdrop to detach",
 	["building"]="stand near resources in order to use them",
 	["bury"]="can only be buried in grass, dirt, snow or mud",
 	["crafting"]="set resources near workbench in order to use them",
@@ -1966,6 +1973,7 @@ local Hints={
 	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["modify"]="use the build kit to modify",
+	["nuke det"]="nuke can be triggered remotely or impact-detonated",
 	["powder keg"]="ALT+E to open and pour a line of black powder",
 	["slam stick"]="hold E on SLAM then release E to stick SLAM",
 	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
@@ -2092,3 +2100,4 @@ muzzleflash_m79
 -- hide hand icon when in seat or vehicle
 -- make nuke do flashbang
 -- add combustible lemons
+-- check armor headgear compat with act3, cull models that are too close to the camera

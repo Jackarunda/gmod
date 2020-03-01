@@ -8,7 +8,7 @@ ENT.PrintName="EZ Micro Tactical Nuclear Bomb"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(-90,0,0)
+ENT.JModPreferredCarryAngles=Angle(90,0,0)
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -32,7 +32,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_borealis/bluebarrel001.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
@@ -42,16 +42,24 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
+		self:GetPhysicsObject():EnableDrag(false)
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		self.DetTime=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		if not(IsValid(self))then return end
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>50)then
-				self.Entity:EmitSound("Canister.ImpactHard")
+				self:EmitSound("Canister.ImpactHard")
 			end
-			if(data.Speed>1000)then self:Break() end
+			if((data.Speed>1000)and(self:GetState()==STATE_ARMED))then
+				self:Detonate()
+				return
+			end
+			if(data.Speed>1500)then
+				self:Break()
+			end
 		end
 	end
 	function ENT:Break()
@@ -89,19 +97,36 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:JModEZremoteTriggerFunc(ply)
+		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
+		if not(self:GetState()==STATE_ARMED)then return end
+		self:Detonate()
+	end
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
+		JMod_Hint(activator,"nuke det","detpack det","bomb drop")
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
+				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,100)
+				self.EZdroppableBombArmedTime=CurTime()
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
 			end
 			self.LastUse=Time
+		elseif(State==STATE_ARMED)then
+			JMod_Owner(self,activator)
+			if(Time-self.LastUse<.2)then
+				self:SetState(STATE_OFF)
+				self:EmitSound("snds_jack_gmod/nuke_disarm.wav",70,100)
+				self.EZdroppableBombArmedTime=nil
+			else
+				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to disarm")
+			end
+			self.LastUse=Time
 		end
-		self:Detonate() -- debug
 	end
 	local function SendClientNukeEffect(pos,power,range,immolateRange)
 		net.Start("JMod_NuclearBlast")
@@ -151,6 +176,9 @@ if(SERVER)then
 				---
 				util.BlastDamage(game.GetWorld(),Att,SelfPos,1500*i,1400/i)
 				util.BlastDamage(game.GetWorld(),Att,SelfPos,250*i,4000/i)
+				for k,ent in pairs(ents.FindInSphere(SelfPos,renj))do
+					if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
+				end
 				---
 				JMod_WreckBuildings(nil,SelfPos,powa,renj,i<3)
 				JMod_BlastDoors(nil,SelfPos,powa,renj,i<3)
@@ -176,7 +204,7 @@ if(SERVER)then
 			end)
 		end
 		self:Remove()
-		ParticleEffect(Eff,SelfPos,Angle(0,0,0))
+		timer.Simple(0,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
 	end
 	function ENT:OnRemove()
 		--

@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_rm/darkmatter_liq"
+	"$surfaceprop" "metal"
+	"$model" 1
+	"$phong" 1
+	"$envmaptint" "[0.01 0.01 0.7]"
+	"$envmap" "env_cubemap"
+

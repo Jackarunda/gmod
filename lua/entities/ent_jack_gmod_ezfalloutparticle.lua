@@ -57,16 +57,15 @@ if(SERVER)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*7
 				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
-					local Dmg,Helf=DamageInfo(),obj:Health()
+					local Dmg=DamageInfo()
 					Dmg:SetDamageType(DMG_RADIATION)
 					Dmg:SetDamage(math.random(4,20)*JMOD_CONFIG.NuclearRadiationMult)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
-					if((obj:Health()<Helf)and(obj:IsPlayer()))then
+					if(obj:IsPlayer())then
 						obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110))
-						if(obj.ViewPunch)then obj:ViewPunch(Angle(1,0,0)) end
 					end
 				end
 			end
