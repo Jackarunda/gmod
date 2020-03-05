@@ -12,6 +12,7 @@ game.AddParticles( "particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles( "particles/pcfs_jack_explosions_small.pcf")
 game.AddParticles( "particles/pcfs_jack_nuclear_explosions.pcf")
 game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"})
+game.AddDecal("GiantScorch",{"decals/giant_scorch1","decals/giant_scorch2","decals/giant_scorch3"})
 PrecacheParticleSystem("pcf_jack_nuke_ground")
 PrecacheParticleSystem("pcf_jack_nuke_air")
 if(SERVER)then
@@ -235,7 +236,7 @@ function JMod_InitGlobalConfig()
 			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
-			["EZ Micro Tactical Nuclear Bomb"]={{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
+			["EZ Micro Nuclear Bomb"]={{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
 		},
 		Recipes={
@@ -2101,3 +2102,4 @@ muzzleflash_m79
 -- make nuke do flashbang
 -- add combustible lemons
 -- check armor headgear compat with act3, cull models that are too close to the camera
+-- add headset sounds for beginning and during voip

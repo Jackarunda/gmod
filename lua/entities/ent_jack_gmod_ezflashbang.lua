@@ -56,11 +56,6 @@ if(SERVER)then
 		end)
 		SafeRemoveEntityDelayed(self,10)
 	end
-	concommand.Add("fuck",function(ply,cmd,args)
-		local plooie=EffectData()
-		plooie:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,10))
-		util.Effect("eff_jack_gmod_flashbang",plooie,true,true)
-	end)
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()

@@ -4,6 +4,8 @@ if(CLIENT)then
 	JMOD_WIND=JMOD_WIND or Vector(0,0,0)
 	JMOD_NUKEFLASH_ENDTIME=0
 	JMOD_NUKEFLASH_POS=nil
+	JMOD_NUKEFLASH_RANGE=0
+	JMOD_NUKEFLASH_INTENSITY=1
 	local ArmorAppearances={
 		--vests
 		["Ballistic Nylon"]="models/mat_jack_bodyarmor_bn",
@@ -1315,14 +1317,14 @@ if(CLIENT)then
 		end
 		if(JMOD_NUKEFLASH_ENDTIME>Time)then
 			local Dist=EyePos():Distance(JMOD_NUKEFLASH_POS)
-			if(Dist<20000)then
-				local TimeFrac,DistFrac=(JMOD_NUKEFLASH_ENDTIME-Time)/10,1-Dist/20000
+			if(Dist<JMOD_NUKEFLASH_RANGE)then
+				local TimeFrac,DistFrac=(JMOD_NUKEFLASH_ENDTIME-Time)/10,1-Dist/JMOD_NUKEFLASH_RANGE
 				local Frac=TimeFrac*DistFrac
 				DrawColorModify({
-					["$pp_colour_addr"]=Frac*.5,
+					["$pp_colour_addr"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
 					["$pp_colour_addg"]=0,
 					["$pp_colour_addb"]=0,
-					["$pp_colour_brightness"]=Frac*.5,
+					["$pp_colour_brightness"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
 					["$pp_colour_contrast"]=1+Frac*.5,
 					["$pp_colour_colour"]=1,
 					["$pp_colour_mulr"]=0,
@@ -1429,10 +1431,13 @@ if(CLIENT)then
 		return Pts
 	end
 	net.Receive("JMod_NuclearBlast",function()
-		local pos,powa,renj,immolateRange=net.ReadVector(),net.ReadFloat(),net.ReadFloat(),net.ReadFloat()
+		local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
 		JMOD_NUKEFLASH_ENDTIME=CurTime()+10
 		JMOD_NUKEFLASH_POS=pos
-		local maxRange=250*powa*renj
+		JMOD_NUKEFLASH_RANGE=renj
+		JMOD_NUKEFLASH_INTENSITY=intens
+		local maxRange=renj
+		local maxImmolateRange=renj*.3
 		for k,ent in pairs(ents.FindInSphere(pos,maxRange))do
 			if((IsValid(ent))and(ent.GetClass))then
 				local Class=ent:GetClass()
@@ -1444,10 +1449,12 @@ if(CLIENT)then
 						if(Phys)then
 							Phys:ApplyForceCenter(Dir*1e10)
 						end
-						local HeadID=ent:LookupBone("ValveBiped.Bip01_Head1")
-						if(HeadID)then -- if it has a Head ID then it's probably a humanoid ragdoll
-							if(Vec:Length()<immolateRange)then
+						if(Vec:Length()<maxImmolateRange)then
+							local HeadID=ent:LookupBone("ValveBiped.Bip01_Head1")
+							if(HeadID)then -- if it has a Head ID then it's probably a humanoid ragdoll
 								ent:SetModel("models/Humans/Charple0"..math.random(1,4)..".mdl")
+							else
+								ent:SetColor(Color(20,20,20))
 							end
 						end
 					end

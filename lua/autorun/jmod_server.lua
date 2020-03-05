@@ -1716,6 +1716,19 @@ if(SERVER)then
 			veh.EZvehicleEjectPos=nil
 		end
 	end)
+	function JMod_AeroDrag(ent,forward,mult) -- this causes an object to rotate to point forward while moving, like a dart
+		if(constraint.HasConstraints(ent))then return end
+		if(ent:IsPlayerHolding())then return end
+		local Phys=ent:GetPhysicsObject()
+		local Vel=Phys:GetVelocity()
+		local Spd=Vel:Length()
+		if(Spd<400)then return end
+		mult=mult or 1
+		local Dir,Pos,Mass=Vel:GetNormalized(),Phys:LocalToWorld(Phys:GetMassCenter()),Phys:GetMass()
+		Phys:ApplyForceOffset(Vel*Mass/6*mult,Pos+forward)
+		Phys:ApplyForceOffset(-Vel*Mass/6*mult,Pos-forward)
+		Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*Mass/1000)
+	end
 	-- EZ Radio Code --
 	local NotifyAllMsgs={
 		["normal"]={
@@ -2214,7 +2227,7 @@ if(SERVER)then
 	function JMod_DecalSplosion(pos,decalName,range,num,sourceEnt)
 		for i=1,num do
 			local Dir=VectorRand()*math.random(1,range)
-			Dir.z=-math.abs(Dir.z)/2
+			Dir.z=-math.abs(Dir.z)/6
 			local Tr=util.QuickTrace(pos,Dir,sourceEnt)
 			if(Tr.Hit)then
 				util.Decal(decalName,Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
@@ -2520,6 +2533,9 @@ if(SERVER)then
 		end
 	end)
 	concommand.Add("fuck",function(ply)
+		local Pof=EffectData()
+		Pof:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,1000))
+		util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
 		--[[
 		for i=0,100 do
 			local zomb=ents.Create("npc_zombine")
@@ -2528,6 +2544,7 @@ if(SERVER)then
 			zomb:Activate()
 		end
 		--]]
+		--[[
 		for j=1,10 do
 			timer.Simple(j/10,function()
 				for k=1,20 do
@@ -2540,14 +2557,7 @@ if(SERVER)then
 				end
 			end)
 		end
+		--]]
 	end)
-	--[[
-	concommand.Add("damnit",function(ply,cmd,args)
-		ents.FindByClass("prop_ragdoll")[1]:SetPos(ply:GetPos())
-		for i=0,100 do
-			--ents.FindByClass("prop_ragdoll")[1]:SetRagdollPos(i,ply:GetPos())
-		end
-	end)
-	--]]
 end
 

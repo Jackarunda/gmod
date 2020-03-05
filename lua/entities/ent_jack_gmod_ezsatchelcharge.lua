@@ -36,7 +36,7 @@ if(SERVER)then
 		self:SetState(JMOD_EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
 		constraint.NoCollide(self,self.Plunger,0,0)
-		constraint.Rope(self,self.Plunger,0,0,Vector(0,0,0),Vector(0,0,0),1200,0,0,.5,"cable/cable",false)
+		constraint.Rope(self,self.Plunger,0,0,Vector(0,0,0),Vector(0,0,0),2000,0,0,.5,"cable/cable",false)
 	end
 
 	function ENT:Arm()
