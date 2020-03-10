@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/chappi/moab/moabskin1"
+                "$bumpmap" "models/chappi/moab/moabskin1_n"
+                "$envmap" "env_cubemap"
+                "$normalmapalphaenvmapmask" 1
+                "$envmapcontrast" 1
+	"$envmaptint" "[0.25 0.25 0.25]"
+}

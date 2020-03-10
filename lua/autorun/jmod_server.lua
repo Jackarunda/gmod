@@ -1867,7 +1867,7 @@ if(SERVER)then
 		end
 		local FirstBom,Earliest=nil,9e9
 		for k,bom in pairs(Boms)do
-			if(bom.EZdroppableBombArmedTime<Earliest)then
+			if((bom.EZdroppableBombArmedTime<Earliest)and(constraint.HasConstraints(bom)))then
 				FirstBom=bom
 				Earliest=bom.EZdroppableBombArmedTime
 			end

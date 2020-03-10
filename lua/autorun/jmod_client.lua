@@ -2,10 +2,11 @@ AddCSLuaFile()
 include("jmod_shared.lua")
 if(CLIENT)then
 	JMOD_WIND=JMOD_WIND or Vector(0,0,0)
-	JMOD_NUKEFLASH_ENDTIME=0
-	JMOD_NUKEFLASH_POS=nil
-	JMOD_NUKEFLASH_RANGE=0
-	JMOD_NUKEFLASH_INTENSITY=1
+	local NUKEFLASH_ENDTIME=0
+	local NUKEFLASH_POS=nil
+	local NUKEFLASH_RANGE=0
+	local NUKEFLASH_INTENSITY=1
+	local NUKEFLASH_SMOKE_ENDTIME=0
 	local ArmorAppearances={
 		--vests
 		["Ballistic Nylon"]="models/mat_jack_bodyarmor_bn",
@@ -1315,16 +1316,16 @@ if(CLIENT)then
 				if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
 			end
 		end
-		if(JMOD_NUKEFLASH_ENDTIME>Time)then
-			local Dist=EyePos():Distance(JMOD_NUKEFLASH_POS)
-			if(Dist<JMOD_NUKEFLASH_RANGE)then
-				local TimeFrac,DistFrac=(JMOD_NUKEFLASH_ENDTIME-Time)/10,1-Dist/JMOD_NUKEFLASH_RANGE
+		if(NUKEFLASH_ENDTIME>Time)then
+			local Dist=EyePos():Distance(NUKEFLASH_POS)
+			if(Dist<NUKEFLASH_RANGE)then
+				local TimeFrac,DistFrac=(NUKEFLASH_ENDTIME-Time)/10,1-Dist/NUKEFLASH_RANGE
 				local Frac=TimeFrac*DistFrac
 				DrawColorModify({
-					["$pp_colour_addr"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
+					["$pp_colour_addr"]=Frac*.5*NUKEFLASH_INTENSITY,
 					["$pp_colour_addg"]=0,
 					["$pp_colour_addb"]=0,
-					["$pp_colour_brightness"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
+					["$pp_colour_brightness"]=Frac*.5*NUKEFLASH_INTENSITY,
 					["$pp_colour_contrast"]=1+Frac*.5,
 					["$pp_colour_colour"]=1,
 					["$pp_colour_mulr"]=0,
@@ -1389,17 +1390,50 @@ if(CLIENT)then
 			end
 		end
 	end)
+	local SomeKindOfFog=Material("white_square")
+	hook.Add("PostDrawSkyBox","JMOD_POSTSKYBOX",function()
+		local Time=CurTime()
+		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+			local W,H=ScrW(),ScrH()
+			cam.Start3D2D(EyePos()+Vector(0,0,100),Angle(0,0,0),2)
+			surface.SetMaterial(SomeKindOfFog)
+			surface.SetDrawColor(100,100,100,230*Frac)
+			surface.DrawRect(-W*2,-H*2,W*4,H*4)
+			cam.End3D2D()
+		end
+	end)
 	hook.Add("SetupWorldFog","JMOD_WORLDFOG",function()
+		local Time=CurTime()
 		local ply=LocalPlayer()
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects)and(ply.EZarmor.Effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
 			render.FogMode(0)
 			return true
 		end
+		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+			render.FogMode(1)
+			render.FogColor(100,100,100)
+			render.FogStart(0)
+			render.FogEnd(1000)
+			render.FogMaxDensity(Frac)
+			return true
+		end
 	end)
-	hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function()
+	hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
+		local Time=CurTime()
 		local ply=LocalPlayer()
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects)and(ply.EZarmor.Effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
 			render.FogMode(0)
+			return true
+		end
+		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+			render.FogMode(1)
+			render.FogColor(100,100,100)
+			render.FogStart(1*scale)
+			render.FogEnd(1500*scale)
+			render.FogMaxDensity(Frac)
 			return true
 		end
 	end)
@@ -1432,10 +1466,11 @@ if(CLIENT)then
 	end
 	net.Receive("JMod_NuclearBlast",function()
 		local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
-		JMOD_NUKEFLASH_ENDTIME=CurTime()+10
-		JMOD_NUKEFLASH_POS=pos
-		JMOD_NUKEFLASH_RANGE=renj
-		JMOD_NUKEFLASH_INTENSITY=intens
+		NUKEFLASH_ENDTIME=CurTime()+10
+		NUKEFLASH_POS=pos
+		NUKEFLASH_RANGE=renj
+		NUKEFLASH_INTENSITY=intens
+		if(intens>1)then NUKEFLASH_SMOKE_ENDTIME=CurTime()+30 end
 		local maxRange=renj
 		local maxImmolateRange=renj*.3
 		for k,ent in pairs(ents.FindInSphere(pos,maxRange))do
@@ -1562,6 +1597,13 @@ if(CLIENT)then
 	local function CommNoise()
 		surface.PlaySound("snds_jack_gmod/radio_static"..math.random(1,3)..".wav")
 	end
+	hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
+		if not(ply:Alive())then return end
+		if not(LocalPlayer():Alive())then return end
+		if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+			surface.PlaySound("snds_jack_gmod/radio_start.wav")
+		end
+	end)
 	hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply)
 		if not(ply:Alive())then return end
 		if not(LocalPlayer():Alive())then return end

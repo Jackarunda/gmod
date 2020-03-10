@@ -168,7 +168,7 @@ if(SERVER)then
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
 		if(force)then Phys:ApplyForceCenter(force/7) end
-		SafeRemoveEntityDelayed(Prop,math.random(20,40))
+		SafeRemoveEntityDelayed(Prop,math.random(10,20))
 	end
 	function ENT:Break(dmginfo)
 		if(self:GetState()==STATE_BROKEN)then return end
@@ -334,7 +334,7 @@ if(SERVER)then
 
 		local Injury=Max-Helf
 		if(Injury>0)then
-			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency))
+			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMOD_CONFIG.MedBayHealMult))
 			self.Patient:SetHealth(Helf+HealAmt)
 			self:ConsumeElectricity(2)
 			if(math.random(1,2)==1)then self:SetSupplies(Supplies-1) end

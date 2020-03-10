@@ -117,7 +117,7 @@ function SWEP:PrimaryAttack()
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 
-				local AddAmt=math.min(Missing,healAmt)
+				local AddAmt=math.min(Missing,healAmt*JMOD_CONFIG.MedKitHealMult)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent.EZhealth=Ent.EZhealth+AddAmt
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
@@ -133,7 +133,7 @@ function SWEP:PrimaryAttack()
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 				
-				local AddAmt=math.min(Missing,healAmt)
+				local AddAmt=math.min(Missing,healAmt*JMOD_CONFIG.MedKitHealMult)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent:SetHealth(Helf+AddAmt)
 				self.Owner:PrintMessage(HUD_PRINTCENTER,"health "..Ent:Health().."/"..Max)

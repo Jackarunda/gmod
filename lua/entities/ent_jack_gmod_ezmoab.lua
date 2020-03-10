@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Thermonuclear Bomb"
+ENT.PrintName="EZ Mega Bomb"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -17,7 +17,7 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*50
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
@@ -30,7 +30,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube1x4x1.mdl")
+		self.Entity:SetModel("models/hunter/blocks/cube075x6x075.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -38,7 +38,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(400)
+			self:GetPhysicsObject():SetMass(300)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -57,7 +57,7 @@ if(SERVER)then
 				self:Detonate()
 				return
 			end
-			if(data.Speed>1500)then
+			if(data.Speed>2000)then
 				self:Break()
 			end
 		end
@@ -68,14 +68,6 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do
 			self:DamageSpark()
-		end
-		for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
-			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
-			Gas:SetPos(self:GetPos())
-			JMod_Owner(Gas,self.Owner or game.GetWorld())
-			Gas:Spawn()
-			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
 		end
 		SafeRemoveEntityDelayed(self,10)
 	end
@@ -92,8 +84,11 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(dmginfo:GetDamage()>=100)then
-			if(math.random(1,5)==1)then
+			if(math.random(1,20)==1)then
 				self:Break()
+			elseif(dmginfo:IsDamageType(DMG_BLAST))then
+				JMod_Owner(self,dmginfo:GetAttacker())
+				self:Detonate()
 			end
 		end
 	end
@@ -105,12 +100,12 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"nuke det","detpack det","bomb drop")
+		JMod_Hint(activator,"bomb drop")
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,100)
+				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,100)
 				self.EZdroppableBombArmedTime=CurTime()
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
@@ -128,94 +123,68 @@ if(SERVER)then
 			self.LastUse=Time
 		end
 	end
-	local function SendClientNukeEffect(pos,range)
-		net.Start("JMod_NuclearBlast")
-		net.WriteVector(pos)
-		net.WriteFloat(range)
-		net.WriteFloat(1.1)
-		net.Broadcast()
-	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att,Power=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
+		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
+		--JMod_Sploom(Att,SelfPos,500)
 		---
-		SendClientNukeEffect(SelfPos,9e9)
-		util.ScreenShake(SelfPos,1000,15,15,50000)
-		---
-		for i=0,100 do
-			timer.Simple(i/10,function()
-				for k,playa in pairs(player.GetAll())do
-					playa:EmitSound("ambient/explosions/explode_"..math.random(1,9)..".wav",60,80-i/2)
-				end
-			end)
-		end
+		util.ScreenShake(SelfPos,1000,10,5,8000)
+		local Eff="pcf_jack_moab"
+		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="pcf_jack_moab_air" end
 		for i=1,10 do
-			timer.Simple(i,function()
-				if(i>6)then JMod_DecalSplosion(SelfPos+Vector(0,0,i*100),"GiantScorch",20000,20) end
-				SendClientNukeEffect(SelfPos,9e9)
-			end)
+			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,150,math.random(80,110))
 		end
-		for i=7,17 do
-			timer.Simple(i,function()
-				local Pof=EffectData()
-				Pof:SetOrigin(SelfPos)
-				util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
-			end)
-			if(i==17)then
-				for j=1,10 do
-					timer.Simple(j/10,function()
-						for k=1,20*JMOD_CONFIG.NuclearRadiationMult do
-							local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
-							Gas:SetPos(SelfPos)
-							JMod_Owner(Gas,Att)
-							Gas:Spawn()
-							Gas:Activate()
-							Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,1000*JMOD_CONFIG.NuclearRadiationMult))
-						end
-					end)
-				end
+		---
+		for k,ply in pairs(player.GetAll())do
+			local Dist=ply:GetPos():Distance(SelfPos)
+			if((Dist>2000)and(Dist<15000))then
+				timer.Simple(Dist/6000,function()
+					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav",55,100)
+					util.ScreenShake(ply:GetPos(),1000,10,5,100)
+				end)
 			end
 		end
 		---
-		for i=0,5 do
-			if(i==1)then game.CleanUpMap() end
-			timer.Simple(i,function()
-				for k,ply in pairs(player.GetAll())do
-					local Dmg=DamageInfo()
-					Dmg:SetDamagePosition(SelfPos)
-					Dmg:SetDamageType(DMG_BLAST)
-					Dmg:SetDamage(2000)
-					Dmg:SetAttacker(Att)
-					Dmg:SetInflictor(((IsValid(self))and self) or game.GetWorld())
-					Dmg:SetDamageForce((ply:GetPos()-SelfPos):GetNormalized()*9e9)
-					ply:TakeDamageInfo(Dmg)
-				end
-			end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),6000,1000)
+		timer.Simple(0,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4000,800) end)
+		for k,ent in pairs(ents.FindInSphere(SelfPos,2000))do
+			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		if(IsValid(self))then self:Remove() end
+		JMod_WreckBuildings(self,SelfPos,20)
+		JMod_BlastDoors(self,SelfPos,20)
+		---
+		timer.Simple(.2,function()
+			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
+			if(Tr.Hit)then util.Decal("GiantScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+		end)
+		---
+		self:Remove()
+		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
 	end
 	function ENT:OnRemove()
 		--
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,self:GetRight(),8)
+		JMod_AeroDrag(self,self:GetRight(),7)
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/thedoctor/tsar.mdl")
-		self.Mdl:SetModelScale(.6,0)
+		self.Mdl=ClientsideModel("models/chappi/moab.mdl")
+		self.Mdl:SetModelScale(.75,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
 	end
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
+		Ang:RotateAroundAxis(Ang:Right(),90)
+		Ang:RotateAroundAxis(Ang:Right(),90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Right()*80-Ang:Up()*13)
+		self.Mdl:SetRenderOrigin(Pos-Ang:Right()*17-Ang:Up()*6+Ang:Forward()*6)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end
-	language.Add("ent_jack_gmod_eznuke_big","EZ Thermonuclear Bomb")
+	language.Add("ent_jack_gmod_ezmoab","EZ Mega Bomb")
 end

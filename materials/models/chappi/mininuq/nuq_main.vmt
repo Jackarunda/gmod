@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/chappi/mininuq/nuq_main"
+                "$bumpmap" "models/chappi/mininuq/nuq_main_n"
+                "$envmap" "env_cubemap"
+                "$normalmapalphaenvmapmask" 1
+                "$envmapcontrast" 1
+	"$envmaptint" "[0.3 0.3 0.3]"
+	"$phong" "1"
+	"$phongexponent" "10"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[0 1 20]"
+	"$rimlight" "1"
+	"$rimlightexponent" "1"
+	"$rimlightboost" "1"
+                "$model" 1
+}

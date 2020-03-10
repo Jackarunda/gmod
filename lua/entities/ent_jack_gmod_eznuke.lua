@@ -120,7 +120,7 @@ if(SERVER)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/nuke_disarm.wav",70,100)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,100)
 				self.EZdroppableBombArmedTime=nil
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to disarm")
@@ -184,7 +184,7 @@ if(SERVER)then
 				---
 				SendClientNukeEffect(SelfPos,2000*renj)
 				---
-				if(i==5)then JMod_DecalSplosion(SelfPos,"BigScorch",3000,20) end
+				if(i==5)then JMod_DecalSplosion(SelfPos,"GiantScorch",1000,20) end
 				---
 				if(i==10)then
 					for j=1,10 do

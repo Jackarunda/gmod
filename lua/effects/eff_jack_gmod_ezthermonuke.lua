@@ -4,7 +4,7 @@ function EFFECT:Init(data)
 	local Emitter=ParticleEmitter(Pos)
 	local Sprite="particle/smokestack"
 	local Spd=5000
-	for i=1,50 do
+	for i=1,30 do
 		local Particle=Emitter:Add(Sprite,Pos)
 		if(Particle)then
 			local Vel=Vector(math.Rand(-Spd,Spd),math.Rand(-Spd,Spd),math.Rand(-Spd/6,Spd/6))
@@ -24,7 +24,7 @@ function EFFECT:Init(data)
 			Particle:SetCollide(false)
 		end
 	end
-	for i=1,5 do
+	for i=1,3 do
 		local Particle=Emitter:Add(Sprite,Pos)
 		if(Particle)then
 			Particle:SetVelocity(VectorRand()*math.Rand(0,500)+Vector(0,0,math.Rand(100,8000)))
