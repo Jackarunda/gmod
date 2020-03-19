@@ -12,12 +12,15 @@ game.AddParticles("particles/pcfs_jack_explosions_medium.pcf")
 game.AddParticles("particles/pcfs_jack_explosions_small.pcf")
 game.AddParticles("particles/pcfs_jack_nuclear_explosions.pcf")
 game.AddParticles("particles/pcfs_jack_moab.pcf")
+game.AddParticles("particles/gb5_large_explosion.pcf")
 game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"})
 game.AddDecal("GiantScorch",{"decals/giant_scorch1","decals/giant_scorch2","decals/giant_scorch3"})
 PrecacheParticleSystem("pcf_jack_nuke_ground")
 PrecacheParticleSystem("pcf_jack_nuke_air")
 PrecacheParticleSystem("pcf_jack_moab")
 PrecacheParticleSystem("pcf_jack_moab_air")
+PrecacheParticleSystem("cloudmaker_air")
+PrecacheParticleSystem("cloudmaker_ground")
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
 	resource.AddWorkshop("1919703147")
@@ -2110,4 +2113,5 @@ muzzleflash_m79
 -- make nuke do flashbang
 -- add combustible lemons
 -- check armor headgear compat with act3, cull models that are too close to the camera
--- make radiation apply to a person
+-- models/thedoctor/mani/dave_the_dummy_on_stand_phys.mdl damage reading mannequin
+-- the Mk.8Z

@@ -215,8 +215,12 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:SFX(str)
-		sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
+	function ENT:SFX(str,absPath)
+		if(absPath)then
+			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
+		else
+			sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
+		end
 	end
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
@@ -255,12 +259,12 @@ if(SERVER)then
 	end
 	function ENT:TryStartOperation()
 		if not(IsValid(self.Patient))then return end
-
-		local override = hook.Run("JMod_CanFieldHospitalStart", self, self.Patient)
-		if override == false then return end
-		if override ~= true then
-			local Helf,Max=self.Patient:Health(),self.Patient:GetMaxHealth()
-			if(Helf>=Max)then return end -- you're not hurt lol gtfo
+		---
+		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
+		if override==false then return end
+		if override~=true then
+			local Helf,Max,Rads=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0
+			if((Helf>=Max)and(Rads<=0))then return end -- you're not hurt lol gtfo
 			if(self:GetSupplies()<=0)then return end
 		end
 		self:SetState(STATE_WORKING)
@@ -328,30 +332,39 @@ if(SERVER)then
 			self:EndOperation(false)
 			return
 		end
-
+		---
 		local override = hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
 		if override == false then return end
-
-		local Injury=Max-Helf
-		if(Injury>0)then
-			local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMOD_CONFIG.MedBayHealMult))
-			self.Patient:SetHealth(Helf+HealAmt)
+		---
+		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0
+		if((Injury>0)or(Rads>0))then
+			if(Rads>0)then
+				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
+				self:HealEffect("hl1/ambience/steamburst1.wav",true)
+			else
+				local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMOD_CONFIG.MedBayHealMult))
+				self.Patient:SetHealth(Helf+HealAmt)
+				self:HealEffect()
+			end
 			self:ConsumeElectricity(2)
 			if(math.random(1,2)==1)then self:SetSupplies(Supplies-1) end
-			self:HealEffect()
 		else
 			self:EndOperation(true)
 		end
 	end
 
-	function ENT:HealEffect()
-		for i=1,math.random(1,2) do
-			timer.Simple(math.Rand(.01,.5),function()
-				if(IsValid(self))then self:SFX("ez_robotics/"..math.random(1,42)) end
-			end)
-			timer.Simple(math.Rand(.01,.5),function()
-				if(IsValid(self))then self:SFX("ez_medical/"..math.random(1,27)) end
-			end)
+	function ENT:HealEffect(snd,noBlood)
+		if(snd)then
+			self:SFX(snd,true)
+		else
+			for i=1,math.random(1,2) do
+				timer.Simple(math.Rand(.01,.5),function()
+					if(IsValid(self))then self:SFX("ez_robotics/"..math.random(1,42)) end
+				end)
+				timer.Simple(math.Rand(.01,.5),function()
+					if(IsValid(self))then self:SFX("ez_medical/"..math.random(1,27)) end
+				end)
+			end
 		end
 		for i=1,math.random(2,4) do
 			timer.Simple(math.Rand(.01,1),function()
@@ -360,7 +373,7 @@ if(SERVER)then
 					local Poof=EffectData()
 					Poof:SetOrigin(Pos+VectorRand()*5)
 					util.Effect("eff_jack_Gmod_ezhealpoof",Poof,true,true)
-					if(math.random(1,2)==1)then
+					if((math.random(1,2)==1)and not(noBlood))then
 						local Blud=EffectData()
 						Blud:SetOrigin(Pos+VectorRand()*5)
 						util.Effect("BloodImpact",Blud,true,true)

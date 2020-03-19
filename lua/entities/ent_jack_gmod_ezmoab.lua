@@ -38,7 +38,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(300)
+			self:GetPhysicsObject():SetMass(500)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -128,6 +128,7 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
 		--JMod_Sploom(Att,SelfPos,500)
+		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,600,600) end)
 		---
 		util.ScreenShake(SelfPos,1000,10,5,8000)
 		local Eff="pcf_jack_moab"
@@ -138,7 +139,7 @@ if(SERVER)then
 		---
 		for k,ply in pairs(player.GetAll())do
 			local Dist=ply:GetPos():Distance(SelfPos)
-			if((Dist>2000)and(Dist<15000))then
+			if((Dist>1000)and(Dist<15000))then
 				timer.Simple(Dist/6000,function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav",55,100)
 					util.ScreenShake(ply:GetPos(),1000,10,5,100)
@@ -146,9 +147,10 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),6000,1000)
-		timer.Simple(0,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4000,800) end)
-		for k,ent in pairs(ents.FindInSphere(SelfPos,2000))do
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),3000,200)
+		timer.Simple(.3,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,6000,200) end)
+		timer.Simple(.6,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,9000,200) end)
+		for k,ent in pairs(ents.FindInSphere(SelfPos,3000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---

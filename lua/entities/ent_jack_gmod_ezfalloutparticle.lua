@@ -19,7 +19,7 @@ if(SERVER)then
 		self:SetMaterial("models/debug/debugwhite")
 		self:RebuildPhysics()
 		self:DrawShadow(false)
-		self.NextDmg=Time+5
+		self.NextDmg=Time+1
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -56,16 +56,32 @@ if(SERVER)then
 				if(obj.EZfalloutParticle)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*7
-				elseif((self:ShouldDamage(obj))and(math.random(1,3)==1)and(self.NextDmg<Time))then
-					local Dmg=DamageInfo()
+				elseif((self:ShouldDamage(obj))and(math.random(1,5)==1)and(self.NextDmg<Time))then
+					local DmgAmt=math.random(4,20)*JMOD_CONFIG.NuclearRadiationMult
+					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
+					---
+					local Dmg,Helf=DamageInfo(),obj:Health()
 					Dmg:SetDamageType(DMG_RADIATION)
-					Dmg:SetDamage(math.random(4,20)*JMOD_CONFIG.NuclearRadiationMult)
+					Dmg:SetDamage(DmgAmt)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.Owner or self)
 					Dmg:SetDamagePosition(obj:GetPos())
-					obj:TakeDamageInfo(Dmg)
 					if(obj:IsPlayer())then
+						DmgAmt=DmgAmt/4
+						Dmg:SetDamage(DmgAmt)
+						obj:TakeDamageInfo(Dmg)
+						---
 						obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110))
+						timer.Simple(math.Rand(.1,1),function()
+							if(IsValid(obj))then obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110)) end
+						end)
+						---
+						local DmgTaken=Helf-obj:Health()
+						if(DmgTaken>0)then
+							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken
+						end
+					else
+						obj:TakeDamageInfo(Dmg)
 					end
 				end
 			end

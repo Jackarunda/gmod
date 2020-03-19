@@ -92,7 +92,7 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(dmginfo:GetDamage()>=100)then
-			if(math.random(1,5)==1)then
+			if(math.random(1,3)==1)then
 				self:Break()
 			end
 		end
@@ -110,7 +110,7 @@ if(SERVER)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,100)
+				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,80)
 				self.EZdroppableBombArmedTime=CurTime()
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
@@ -161,35 +161,38 @@ if(SERVER)then
 				local Pof=EffectData()
 				Pof:SetOrigin(SelfPos)
 				util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
-			end)
-			if(i==17)then
-				for j=1,10 do
-					timer.Simple(j/10,function()
-						for k=1,20*JMOD_CONFIG.NuclearRadiationMult do
-							local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
-							Gas:SetPos(SelfPos)
-							JMod_Owner(Gas,Att)
-							Gas:Spawn()
-							Gas:Activate()
-							Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,1000*JMOD_CONFIG.NuclearRadiationMult))
-						end
-					end)
+				if(i==10)then
+					for j=1,10 do
+						timer.Simple(j/10,function()
+							for k=1,30*JMOD_CONFIG.NuclearRadiationMult do
+								local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+								Gas:SetPos(SelfPos)
+								JMod_Owner(Gas,Att)
+								Gas:Spawn()
+								Gas:Activate()
+								Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,1000)+Vector(0,0,2000*JMOD_CONFIG.NuclearRadiationMult))
+							end
+						end)
+					end
 				end
-			end
+			end)
 		end
 		---
 		for i=0,5 do
-			if(i==1)then game.CleanUpMap() end
-			timer.Simple(i,function()
-				for k,ply in pairs(player.GetAll())do
-					local Dmg=DamageInfo()
-					Dmg:SetDamagePosition(SelfPos)
-					Dmg:SetDamageType(DMG_BLAST)
-					Dmg:SetDamage(2000)
-					Dmg:SetAttacker(Att)
-					Dmg:SetInflictor(((IsValid(self))and self) or game.GetWorld())
-					Dmg:SetDamageForce((ply:GetPos()-SelfPos):GetNormalized()*9e9)
-					ply:TakeDamageInfo(Dmg)
+			timer.Simple(i*1.5,function()
+				if(i==4)then
+					game.CleanUpMap()
+				else
+					for k,ply in pairs(player.GetAll())do
+						local Dmg=DamageInfo()
+						Dmg:SetDamagePosition(SelfPos)
+						Dmg:SetDamageType(DMG_BLAST)
+						Dmg:SetDamage(2000)
+						Dmg:SetAttacker(Att)
+						Dmg:SetInflictor(((IsValid(self))and self) or game.GetWorld())
+						Dmg:SetDamageForce((ply:GetPos()-SelfPos):GetNormalized()*9e9)
+						ply:TakeDamageInfo(Dmg)
+					end
 				end
 			end)
 		end

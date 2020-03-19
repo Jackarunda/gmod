@@ -299,6 +299,8 @@ if(SERVER)then
 			Effects={}
 		}
 		JModEZarmorSync(ply)
+		ply.EZhealth=nil
+		ply.EZirradiated=nil
 		net.Start("JMod_PlayerSpawn")
 		net.WriteBit(JMOD_CONFIG.Hints)
 		net.Send(ply)
@@ -1630,19 +1632,32 @@ if(SERVER)then
 		NextMainThink=Time+1
 		---
 		for k,playa in pairs(player.GetAll())do
-			if(playa.EZhealth)then
-				if(playa:Alive())then
-					local Healin=playa.EZhealth
-					if(Healin>0)then
-						local Amt=1
-						if(math.random(1,3)==2)then Amt=2 end
-						playa.EZhealth=Healin-Amt
-						local Helf,Max=playa:Health(),playa:GetMaxHealth()
-						if(Helf<Max)then
-							playa:SetHealth(Helf+Amt)
-							if(playa:Health()==Max)then playa:RemoveAllDecals() end
-						end
+			local Alive=playa:Alive()
+			if((playa.EZhealth)and(Alive))then
+				local Healin=playa.EZhealth
+				if(Healin>0)then
+					local Amt=1
+					if(math.random(1,3)==2)then Amt=2 end
+					playa.EZhealth=Healin-Amt
+					local Helf,Max=playa:Health(),playa:GetMaxHealth()
+					if(Helf<Max)then
+						playa:SetHealth(math.Clamp(Helf+Amt,0,Max))
+						if(playa:Health()==Max)then playa:RemoveAllDecals() end
 					end
+				end
+			end
+			if((playa.EZirradiated)and(Alive))then
+				local Rads=playa.EZirradiated
+				if((Rads>0)and(math.random(1,3)==1))then
+					playa.EZirradiated=math.Clamp(Rads-.5,0,9e9)
+					local Helf,Max=playa:Health(),playa:GetMaxHealth()
+					local Dmg=DamageInfo()
+					Dmg:SetAttacker(playa)
+					Dmg:SetInflictor(game.GetWorld())
+					Dmg:SetDamage(1)
+					Dmg:SetDamageType(DMG_GENERIC)
+					Dmg:SetDamagePosition(playa:GetShootPos())
+					playa:TakeDamageInfo(Dmg)
 				end
 			end
 		end
@@ -2439,6 +2454,13 @@ if(SERVER)then
 		end
 		return false
 	end
+	function JMod_EMP(pos,range)
+		for k,ent in pairs(ents.FindInSphere(pos,range))do
+			if((ent.SetState)and(ent.SetElectricity)and(ent.GetState)and(ent:GetState()>0))then
+				ent:SetState(0)
+			end
+		end
+	end
 	local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
 	function JMod_ThrowablePickup(playa,item,hardstr,softstr)
 		playa:PickupObject(item)
@@ -2533,9 +2555,9 @@ if(SERVER)then
 		end
 	end)
 	concommand.Add("fuck",function(ply)
-		local Pof=EffectData()
-		Pof:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,1000))
-		util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
+		--local Pof=EffectData()
+		--Pof:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,1000))
+		--util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
 		--[[
 		for i=0,100 do
 			local zomb=ents.Create("npc_zombine")
