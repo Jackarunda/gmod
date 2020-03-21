@@ -90,7 +90,7 @@ if(SERVER)then
 			timer.Simple(0,function()
 				local Wep=activator:GetWeapon("wep_jack_gmod_ezmedkit")
 				if(IsValid(Wep))then
-					Wep:SetSupplies(self.Supplies or 100)
+					Wep:SetSupplies(self.Supplies or 50)
 				end
 				self:Remove()
 			end)

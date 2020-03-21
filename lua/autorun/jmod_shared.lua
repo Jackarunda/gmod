@@ -238,65 +238,63 @@ function JMod_InitGlobalConfig()
 			RestrictedPackagesAllowed=true
 		},
 		Blueprints={
+			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
+			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
+			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=300,explosives=1000},1},
+			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
+			["EZ Micro Nuclear Bomb"]={"ent_jack_gmod_eznuke",{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
+			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
 			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
 			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
-			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
-			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
-			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
-			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
-			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
-			["EZ Micro Nuclear Bomb"]={"ent_jack_gmod_eznuke",{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
 			["EZ Thermonuclear Bomb"]={"ent_jack_gmod_eznuke_big",{parts=400,advparts=100,explosives=400,fissilematerial=20},1.5},
-			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=300,explosives=1000},1},
+			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
 		},
 		Recipes={
-			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=200},"Tools"},
-			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50},"Tools"},
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5},"Resources"},
-			["EZ Munitions"]={"ent_jack_gmod_ezmunitions",{parts=100,propellant=100,explosives=100},"Resources"},
-			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150},"Resources"},
-			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5},"Weapons"},
-			["EZ Mini Bounding Mine"]={"ent_jack_gmod_ezboundingmine",{parts=20,explosives=5,propellant=5},"Weapons"},
-			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50},"Weapons"},
-			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5},"Weapons"},
-			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20},"Weapons"},
-			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=180},"Weapons"},
-			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15},"Weapons"},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=20,chemicals=50,advparts=10,advtextiles=10},"Resources"},
-			["EZ Propellant"]={"ent_jack_gmod_ezpropellant",{parts=2,chemicals=80},"Resources"},
-			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5},"Weapons"},
-			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3},"Weapons"},
-			["EZ Gas Grenade"]={"ent_jack_gmod_ezgasnade",{parts=5,gas=20,chemicals=15},"Weapons"},
-			["EZ Impact Grenade"]={"ent_jack_gmod_ezimpactnade",{parts=5,explosives=10},"Weapons"},
-			["EZ Incendiary Grenade"]={"ent_jack_gmod_ezfirenade",{parts=5,explosives=5,fuel=30},"Weapons"},
-			["EZ Satchel Charge"]={"ent_jack_gmod_ezsatchelcharge",{parts=10,explosives=80},"Weapons"},
-			["EZ Stick Grenade"]={"ent_jack_gmod_ezsticknade",{parts=10,explosives=10},"Weapons"},
-			["EZ Sticky Bomb"]={"ent_jack_gmod_ezstickynade",{parts=10,explosives=10,chemicals=10},"Weapons"},
-			["EZ Dynamite"]={"ent_jack_gmod_ezdynamite",{parts=5,explosives=5},"Weapons"},
-			["EZ Flashbang"]={"ent_jack_gmod_ezflashbang",{parts=10,explosives=2,chemicals=2},"Weapons"},
-			["EZ Gebalte Ladung"]={"ent_jack_gmod_ezsticknadebundle",{parts=50,explosives=50},"Weapons"},
-			["EZ Mini Claymore"]={"ent_jack_gmod_ezminimore",{parts=20,explosives=5},"Weapons"},
-			["EZ Signal Grenade"]={"ent_jack_gmod_ezsignalnade",{parts=10,explosives=1,chemicals=10},"Weapons"},
-			["EZ Smoke Grenade"]={"ent_jack_gmod_ezsmokenade",{parts=10,explosives=1,chemicals=10},"Weapons"},
-			["EZ TNT"]={"ent_jack_gmod_eztnt",{parts=20,explosives=60},"Weapons"},
-			["EZ Powder Keg"]={"ent_jack_gmod_ezpowderkeg",{parts=10,propellant=400},"Weapons"},
 			["EZ Ballistic Mask"]={"ent_jack_gmod_ezarmor_balmask",{parts=10,advtextiles=5},"Apparel"},
+			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50},"Tools"},
+			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20},"Weapons"},
+			["EZ Dynamite"]={"ent_jack_gmod_ezdynamite",{parts=5,explosives=5},"Weapons"},
+			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150},"Resources"},
+			["EZ Flashbang"]={"ent_jack_gmod_ezflashbang",{parts=10,explosives=2,chemicals=2},"Weapons"},
+			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5},"Weapons"},
+			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5},"Weapons"},
+			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50},"Weapons"},
+			["EZ Gas Grenade"]={"ent_jack_gmod_ezgasnade",{parts=5,gas=20,chemicals=15},"Weapons"},
 			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,chemicals=10,advtextiles=2},"Apparel"},
+			["EZ Gebalte Ladung"]={"ent_jack_gmod_ezsticknadebundle",{parts=50,explosives=50},"Weapons"},
+			["EZ Headset"]={"ent_jack_gmod_ezarmor_headset",{parts=20,power=10},"Apparel"},
 			["EZ Heavy Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_hlshoulder",{parts=15,advtextiles=10},"Apparel"},
 			["EZ Heavy Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_hrshoulder",{parts=15,advtextiles=10},"Apparel"},
 			["EZ Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_htorso",{parts=20,advtextiles=30},"Apparel"},
+			["EZ Impact Grenade"]={"ent_jack_gmod_ezimpactnade",{parts=5,explosives=10},"Weapons"},
+			["EZ Incendiary Grenade"]={"ent_jack_gmod_ezfirenade",{parts=5,explosives=5,fuel=30},"Weapons"},
+			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5},"Weapons"},
 			["EZ Light Helmet"]={"ent_jack_gmod_ezarmor_lhead",{parts=15,advtextiles=5},"Apparel"},
 			["EZ Light Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_llshoulder",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Light Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_lrshoulder",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Light Torso Armor"]={"ent_jack_gmod_ezarmor_ltorso",{parts=15,advtextiles=10},"Apparel"},
+			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=20,chemicals=50,advparts=10,advtextiles=10},"Resources"},
 			["EZ Medium Helmet"]={"ent_jack_gmod_ezarmor_mhead",{parts=20,advtextiles=10},"Apparel"},
+			["EZ Medium Torso Armor"]={"ent_jack_gmod_ezarmor_mtorso",{parts=15,advtextiles=20},"Apparel"},
 			["EZ Medium-Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_mhtorso",{parts=15,advtextiles=25},"Apparel"},
 			["EZ Medium-Light Torso Armor"]={"ent_jack_gmod_ezarmor_mltorso",{parts=15,advtextiles=15},"Apparel"},
-			["EZ Medium Torso Armor"]={"ent_jack_gmod_ezarmor_mtorso",{parts=15,advtextiles=20},"Apparel"},
+			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=50},"Tools"},
+			["EZ Mini Bounding Mine"]={"ent_jack_gmod_ezboundingmine",{parts=20,explosives=5,propellant=5},"Weapons"},
+			["EZ Mini Claymore"]={"ent_jack_gmod_ezminimore",{parts=20,explosives=5},"Weapons"},
+			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3},"Weapons"},
+			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3},"Weapons"},
+			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3},"Weapons"},
+			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3},"Weapons"},
+			["EZ Munitions"]={"ent_jack_gmod_ezmunitions",{parts=100,propellant=100,explosives=100},"Resources"},
+			["EZ Night Vision Goggles"]={"ent_jack_gmod_ezarmor_nvgs",{parts=30,advparts=10,power=20},"Apparel"},
+			["EZ Powder Keg"]={"ent_jack_gmod_ezpowderkeg",{parts=10,propellant=400},"Weapons"},
+			["EZ Propellant"]={"ent_jack_gmod_ezpropellant",{parts=2,chemicals=80},"Resources"},
+			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15},"Weapons"},
+			["EZ Satchel Charge"]={"ent_jack_gmod_ezsatchelcharge",{parts=10,explosives=80},"Weapons"},
+			["EZ Signal Grenade"]={"ent_jack_gmod_ezsignalnade",{parts=10,explosives=1,chemicals=10},"Weapons"},
+			["EZ Smoke Grenade"]={"ent_jack_gmod_ezsmokenade",{parts=10,explosives=1,chemicals=10},"Weapons"},
 			["EZ Standard Left Calf Armor"]={"ent_jack_gmod_ezarmor_slcalf",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Standard Left Forearm Armor"]={"ent_jack_gmod_ezarmor_slforearm",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Standard Left Thigh Armor"]={"ent_jack_gmod_ezarmor_slthigh",{parts=10,advtextiles=5},"Apparel"},
@@ -304,9 +302,11 @@ function JMod_InitGlobalConfig()
 			["EZ Standard Right Calf Armor"]={"ent_jack_gmod_ezarmor_srcalf",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Standard Right Forearm Armor"]={"ent_jack_gmod_ezarmor_srforearm",{parts=10,advtextiles=5},"Apparel"},
 			["EZ Standard Right Thigh Armor"]={"ent_jack_gmod_ezarmor_srthigh",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Headset"]={"ent_jack_gmod_ezarmor_headset",{parts=20,power=10},"Apparel"},
-			["EZ Night Vision Goggles"]={"ent_jack_gmod_ezarmor_nvgs",{parts=30,advparts=10,power=20},"Apparel"},
-			["EZ Thermal Goggles"]={"ent_jack_gmod_ezarmor_thermals",{parts=30,advparts=20,power=20},"Apparel"}
+			["EZ Stick Grenade"]={"ent_jack_gmod_ezsticknade",{parts=10,explosives=10},"Weapons"},
+			["EZ Sticky Bomb"]={"ent_jack_gmod_ezstickynade",{parts=10,explosives=10,chemicals=10},"Weapons"},
+			["EZ TNT"]={"ent_jack_gmod_eztnt",{parts=20,explosives=60},"Weapons"},
+			["EZ Thermal Goggles"]={"ent_jack_gmod_ezarmor_thermals",{parts=30,advparts=20,power=20},"Apparel"},
+			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=180},"Weapons"}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
@@ -905,10 +905,12 @@ hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
 hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
+	---[[
 	if((ply.EZarmor)and(ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
 		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
 		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
 	end
+	--]]
 end)
 local ANGLE=FindMetaTable("Angle")
 function ANGLE:GetCopy()
@@ -1182,6 +1184,7 @@ if(CLIENT)then
 	end
 	local staggerdir=VectorRand()
 	local function Stagger(uCmd)
+		---[[
 		local ply=LocalPlayer()
 		if not(ply)then return end
 		local Wep=ply:GetActiveWeapon()
@@ -1206,6 +1209,7 @@ if(CLIENT)then
 			end
 		end
 		LastViewAng=uCmd:GetViewAngles()
+		--]]
 	end 
 	hook.Add("CreateMove","JackyFGStagger",Stagger)
 	
@@ -1975,6 +1979,7 @@ local Hints={
 	["friends"]="concommand jmod_friends to specify allies",
 	["grenade remote"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
+	["guidance kit"]="tap against an EZ Bomb or EZ Big Bomb to create a guided bomb",
 	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
 	["headset comms"]="with a headset, only friends and teammates can hear your voip and see your chat",
 	["item crate"]="tap item against to store \n press E to retrieve item",

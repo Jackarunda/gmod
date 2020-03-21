@@ -30,6 +30,9 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
+SWEP.EZaccepts="medsupplies"
+SWEP.EZmaxSupplies=50
+
 SWEP.ShowWorldModel=false
 SWEP.VElements={
 	["syringe"]={ type="Model", model="models/weapons/w_models/w_syringe.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(3, 1.5, 4), angle=Angle(0, 0, 180), size=Vector(.5, .5, .5), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
@@ -67,7 +70,7 @@ function SWEP:Initialize()
 	self:SCKInitialize()
 	self.NextIdle=0
 	self:Deploy()
-	self:SetSupplies(100)
+	self:SetSupplies(self.EZmaxSupplies)
 end
 function SWEP:PreDrawViewModel(vm,wep,ply)
 	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
@@ -98,6 +101,7 @@ function SWEP:UpdateNextIdle()
 end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
+	if(self:GetSupplies()<0)then return end
 	self:Pawnch()
 	self:SetNextPrimaryFire(CurTime()+.65)
 	self:SetNextSecondaryFire(CurTime()+.85)
@@ -115,7 +119,7 @@ function SWEP:PrimaryAttack()
 				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 				Ent.EZhealth=(Ent.EZhealth or 0)
 				local Missing=Max-(Helf+Ent.EZhealth)
-				if override ~= nil then
+				if override == nil then
 					if((Helf<0)or(Helf>=Max))then return end
 					if(Missing<=0)then return end
 				end
@@ -135,7 +139,7 @@ function SWEP:PrimaryAttack()
 				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 				Ent.EZhealth=(Ent.EZhealth or 0)
 				local Missing=Max-(Helf+Ent.EZhealth)
-				if override ~= nil then
+				if override == nil then
 					if((Helf<0)or(Helf>=Max))then return end
 					if(Missing<=0)then return end
 				end
@@ -185,6 +189,7 @@ function SWEP:WhomIlookinAt()
 end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
+	if(self:GetSupplies()<0)then return end
 	if(SERVER)then
 		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			local Kit=ents.Create("ent_jack_gmod_ezmedkit")
@@ -210,7 +215,7 @@ function SWEP:SecondaryAttack()
 			local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 			Ent.EZhealth=(Ent.EZhealth or 0)
 			local Missing=Max-(Helf+Ent.EZhealth)
-			if override ~= nil then
+			if override == nil then
 				if((Helf<0)or(Helf>=Max))then return end
 				if(Missing<=0)then return end
 			end
@@ -229,7 +234,7 @@ function SWEP:HealEffect(Ent)
 	local AimVec=Ent:GetAimVector()
 	local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
 
-	Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+	if(Ent.ViewPunch)then Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2))) end
 
 	sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
 	sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
@@ -250,7 +255,6 @@ function SWEP:HealEffect(Ent)
 		end
 	end
 	Ent:RemoveAllDecals()
-	if(self:GetSupplies()<=0)then self:Remove();return end
 	timer.Simple(.05,function()
 		if(IsValid(self))then
 			for i=1,2 do

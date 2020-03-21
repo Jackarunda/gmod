@@ -142,6 +142,7 @@ if(SERVER)then
 			if((Dist>1000)and(Dist<15000))then
 				timer.Simple(Dist/6000,function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav",55,100)
+					sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",ply:GetPos(),60,70)
 					util.ScreenShake(ply:GetPos(),1000,10,5,100)
 				end)
 			end

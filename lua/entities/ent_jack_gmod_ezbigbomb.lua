@@ -9,6 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(90,0,0)
+ENT.EZguidable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -20,7 +21,7 @@ if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
 		local SpawnPos=tr.HitPos+tr.HitNormal*40
 		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		ent:SetAngles(Angle(180,0,0))
 		ent:SetPos(SpawnPos)
 		JMod_Owner(ent,ply)
 		ent:Spawn()
@@ -125,7 +126,7 @@ if(SERVER)then
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
 		--JMod_Sploom(Att,SelfPos,500)
 		---
-		util.ScreenShake(SelfPos,1000,10,5,8000)
+		util.ScreenShake(SelfPos,1000,3,2,8000)
 		local Eff="cloudmaker_ground"
 		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="cloudmaker_air" end
 		for i=1,10 do
@@ -134,10 +135,11 @@ if(SERVER)then
 		---
 		for k,ply in pairs(player.GetAll())do
 			local Dist=ply:GetPos():Distance(SelfPos)
-			if((Dist>500)and(Dist<10000))then
+			if((Dist>500)and(Dist<8000))then
 				timer.Simple(Dist/6000,function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav",55,110)
-					util.ScreenShake(ply:GetPos(),1000,10,5,100)
+					sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",ply:GetPos(),60,70)
+					util.ScreenShake(ply:GetPos(),1000,3,2,100)
 				end)
 			end
 		end
@@ -163,7 +165,7 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,-self:GetRight(),3)
+		JMod_AeroDrag(self,-self:GetRight(),4)
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

@@ -27,6 +27,20 @@ ENT.PropModels={
 }
 ---
 if(SERVER)then
+	function ENT:AltUse(ply)
+		local Wep=ply:GetActiveWeapon()
+		if((Wep)and(Wep.EZaccepts)and(Wep.EZaccepts==self.EZsupplies))then
+			local ExistingAmt=Wep:GetSupplies()
+			local Missing=Wep.EZmaxSupplies-ExistingAmt
+			if(Missing>0)then
+				local AmtToGive=math.min(Missing,self:GetResource())
+				Wep:SetSupplies(ExistingAmt+AmtToGive)
+				sound.Play("items/ammo_pickup.wav",self:GetPos(),65,math.random(90,110))
+				self:SetResource(self:GetResource()-AmtToGive)
+				if(self:GetResource()<=0)then self:Remove();return end
+			end
+		end
+	end
 	function ENT:FlingProp(mdl)
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())

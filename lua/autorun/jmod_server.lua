@@ -576,10 +576,12 @@ if(SERVER)then
 			end
 		end
 		--]]
+		---[[
 		if(ply.JackaSentryControl)then
 			mvd:SetMaxSpeed(1)
 			mvd:SetMaxClientSpeed(1)
 		end
+		--]]
 	end
 	hook.Add("SetupMove","JackaModifyMove",ModifyMove)
 	local function Disconn(ply)
