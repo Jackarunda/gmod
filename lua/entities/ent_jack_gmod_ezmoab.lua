@@ -47,6 +47,9 @@ if(SERVER)then
 		self.LastUse=0
 		self.DetTime=0
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
 		if(data.DeltaTime>0.2)then

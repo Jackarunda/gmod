@@ -7,7 +7,7 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_blu"
-ENT.Hints = {"grenade", "mininade", "grenade remote", "binding"}
+ENT.Hints = {"grenade", "mininade", "remote det", "binding"}
 ENT.JModRemoteTrigger=true
 
 local BaseClass = baseclass.Get(ENT.Base)

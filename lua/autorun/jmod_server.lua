@@ -2424,6 +2424,15 @@ if(SERVER)then
 		if not(CPPI)then return end
 		if(ent.CPPISetOwner)then ent:CPPISetOwner(newOwner) end
 	end
+	function JMod_ShouldAllowControl(self,ply)
+		if not(IsValid(ply))then return false end
+		if not(IsValid(self.Owner))then return false end
+		if(ply==self.Owner)then return true end
+		local Allies=self.Owner.JModFriends or {}
+		if(table.HasValue(Allies,ply))then return true end
+		if(engine.ActiveGamemode()=="sandbox")then return false end
+		return ply:Team()==self.Owner:Team()
+	end
 	function JMod_ShouldAttack(self,ent)
 		if not(IsValid(ent))then return false end
 		if(ent:IsWorld())then return false end

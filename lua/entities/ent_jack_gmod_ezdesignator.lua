@@ -30,7 +30,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)

@@ -97,7 +97,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"bomb drop")
+		JMod_Hint(activator,"bomb drop","impact det","bomb guidable")
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
@@ -124,7 +124,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
-		--JMod_Sploom(Att,SelfPos,500)
+		JMod_Sploom(Att,SelfPos,500)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,8000)
 		local Eff="cloudmaker_ground"
@@ -164,8 +164,19 @@ if(SERVER)then
 	function ENT:OnRemove()
 		--
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:Think()
-		JMod_AeroDrag(self,-self:GetRight(),4)
+		local Phys=self:GetPhysicsObject()
+		local Spd,UseAeroDrag=Phys:GetVelocity():Length(),true
+		if((Spd>500)and(self:GetGuided())and not(constraint.HasConstraints(Phys)))then
+			local Spotter=nil
+			for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
+				--if((designator:GetLasing())and(designator.Owner)and(designator.Owner==
+			end
+		end
+		if(UseAeroDrag)then JMod_AeroDrag(self,-self:GetRight(),4) end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

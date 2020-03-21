@@ -47,6 +47,9 @@ if(SERVER)then
 		self.LastUse=0
 		self.DetTime=0
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
 		if(data.DeltaTime>0.2)then
@@ -105,7 +108,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"nuke det","detpack det","bomb drop")
+		JMod_Hint(activator,"remote det","bomb drop","impact det")
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then

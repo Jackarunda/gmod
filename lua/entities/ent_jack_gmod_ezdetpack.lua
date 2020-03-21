@@ -77,7 +77,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Owner(self,Dude)
-		JMod_Hint(activator,"arm","detpack det","binding")
+		JMod_Hint(activator,"arm","remote det","binding")
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()

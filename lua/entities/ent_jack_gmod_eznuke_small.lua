@@ -61,6 +61,9 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
+	end
 	function ENT:Break()
 		if(self:GetState()==STATE_BROKEN)then return end
 		self:SetState(STATE_BROKEN)
@@ -102,7 +105,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
 		if(State<0)then return end
-		JMod_Hint(activator,"nuke det","detpack det","bomb drop")
+		JMod_Hint(activator,"remote det","bomb drop","impact det")
 		JMod_Owner(self,activator)
 		if not(Alt)then
 			activator:PickupObject(self)
