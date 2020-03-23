@@ -6,8 +6,8 @@ ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Bomb Guidance Kit"
 ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Spawnable=false -- todo: guidance code
+ENT.AdminSpawnable=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.JModEZstorable=true

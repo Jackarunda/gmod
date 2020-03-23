@@ -97,7 +97,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"bomb drop","impact det","bomb guidable")
+		JMod_Hint(activator,"bomb drop","impact det")
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
@@ -144,8 +144,8 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),2250,300)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4500,300) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),2250,200)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4500,200) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,1000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
@@ -158,6 +158,27 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("GiantScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
+		if(JMOD_CONFIG.FragExplosions)then
+			local FragPos,Att,ZaWarudo=SelfPos-Vector(0,0,80),game.GetWorld()
+			local Att=self.Owner or ZaWarudo
+			for i=1,1000 do
+				timer.Simple(i/500,function()
+					local Dir=VectorRand()
+					Dir.z=Dir.z/3
+					game.GetWorld():FireBullets({
+						Attacker=Att,
+						Damage=200,
+						Force=100,
+						Num=1,
+						Src=FragPos,
+						Tracer=0,
+						Dir=Dir:GetNormalized(),
+						Spread=Vector(0,0,0)
+					})
+				end)
+			end
+		end
+		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
 	end
@@ -168,15 +189,28 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
-		local Phys=self:GetPhysicsObject()
-		local Spd,UseAeroDrag=Phys:GetVelocity():Length(),true
-		if((Spd>500)and(self:GetGuided())and not(constraint.HasConstraints(Phys)))then
-			local Spotter=nil
-			for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
-				--if((designator:GetLasing())and(designator.Owner)and(designator.Owner==
-			end
-		end
-		if(UseAeroDrag)then JMod_AeroDrag(self,-self:GetRight(),4) end
+		local Phys,UseAeroDrag=self:GetPhysicsObject(),true
+		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
+			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
+				--if((designator:GetLasing())and(designator.Owner)and(JMod_ShouldAllowControl(self,designator.Owner)))then
+					--[[
+					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.Owner:GetEyeTrace().HitPos
+					local TargVec=TargPos-SelfPos
+					local Dist,Dir,Vel=TargVec:Length(),TargVec:GetNormalized(),Phys:GetVelocity()
+					local Speed=Vel:Length()
+					if(Speed<=0)then return end
+					local ETA=Dist/Speed
+					jprint(ETA)
+					TargPos=TargPos--Vel*ETA/2
+					JMod_Sploom(self,TargPos,1)
+					JMod_AeroGuide(self,-self:GetRight(),TargPos,1,1,.2,10)
+					--]]
+				--end
+			--end
+		--end
+		JMod_AeroDrag(self,-self:GetRight(),4)
+		self:NextThink(CurTime()+.1)
+		return true
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

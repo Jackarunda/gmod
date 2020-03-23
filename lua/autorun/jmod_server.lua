@@ -1739,12 +1739,29 @@ if(SERVER)then
 		local Phys=ent:GetPhysicsObject()
 		local Vel=Phys:GetVelocity()
 		local Spd=Vel:Length()
-		if(Spd<400)then return end
+		if(Spd<300)then return end
 		mult=mult or 1
-		local Dir,Pos,Mass=Vel:GetNormalized(),Phys:LocalToWorld(Phys:GetMassCenter()),Phys:GetMass()
+		local Pos,Mass=Phys:LocalToWorld(Phys:GetMassCenter()),Phys:GetMass()
 		Phys:ApplyForceOffset(Vel*Mass/6*mult,Pos+forward)
 		Phys:ApplyForceOffset(-Vel*Mass/6*mult,Pos-forward)
 		Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*Mass/1000)
+	end
+	function JMod_AeroGuide(ent,forward,targetPos,turnMult,thrustMult,angleDragMult,spdReq) -- this causes an object to rotate to point and fly to a point you give it
+		--if(constraint.HasConstraints(ent))then return end
+		--if(ent:IsPlayerHolding())then return end
+		local Phys=ent:GetPhysicsObject()
+		local Vel=Phys:GetVelocity()
+		local Spd=Vel:Length()
+		--if(Spd<spdReq)then return end
+		local Pos,Mass=Phys:LocalToWorld(Phys:GetMassCenter()),Phys:GetMass()
+		local TargetVec=targetPos-ent:GetPos()
+		local TargetDir=TargetVec:GetNormalized()
+		---
+		Phys:ApplyForceOffset(TargetDir*Mass*turnMult*5000,Pos+forward)
+		Phys:ApplyForceOffset(-TargetDir*Mass*turnMult*5000,Pos-forward)
+		Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*angleDragMult*3)
+		--- todo: fuck
+		Phys:ApplyForceCenter(forward*20000*thrustMult) -- todo: make this function fucking work ARGH
 	end
 	-- EZ Radio Code --
 	local NotifyAllMsgs={

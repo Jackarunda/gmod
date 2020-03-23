@@ -131,7 +131,7 @@ end
 local Vignet=Material("mats_jack_gmod_sprites/vignette.png")
 function SWEP:DrawHUD()
 	local W,H=ScrW(),ScrH()
-	if(self.Owner:KeyDown(IN_ATTACK2))then
+	if((self.Owner:KeyDown(IN_ATTACK2))and(self:GetReady()))then
 		surface.SetMaterial(Vignet)
 		surface.SetDrawColor(255,255,255,255)
 		surface.DrawTexturedRect(0,0,W,H)
@@ -159,16 +159,17 @@ end
 local CurFoV=70
 function SWEP:TranslateFOV(fov)
 	local FT=FrameTime()
-	if(self.Owner:KeyDown(IN_ATTACK2))then
+	if((self.Owner:KeyDown(IN_ATTACK2))and(self:GetReady()))then
 		local ShootPos,AimVec=self.Owner:GetShootPos(),self.Owner:GetAimVector()
 		local Tr=util.QuickTrace(ShootPos,AimVec*50000,{self.Owner})
 		local Dist=Tr.HitPos:Distance(ShootPos)
 		local Reduction=Dist/1000
 		local DesiredFoV=math.Clamp(fov/Reduction,1,70)
+		local ZoomRate=CurFoV/10*FT
 		if(CurFoV>DesiredFoV+.1)then
-			CurFoV=CurFoV-5*FT
+			CurFoV=CurFoV-ZoomRate
 		elseif(CurFoV<DesiredFoV-.1)then
-			CurFoV=CurFoV+5*FT
+			CurFoV=CurFoV+ZoomRate
 		end
 		return CurFoV
 	end
