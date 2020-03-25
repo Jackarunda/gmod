@@ -1961,6 +1961,7 @@ end
 --
 local Hints={
 	["afh"]="E to enter and get healed",
+	["airburst det"]="detonates in midair automatically",
 	["ammobox"]="ALT+E to refill ammo of any weapon",
 	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
 	["arm"]="ALT+E to arm",
@@ -1977,6 +1978,7 @@ local Hints={
 	["crafting"]="set resources near workbench in order to use them",
 	["crate"]="tap resource against to store \n press E to retrieve resource",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt",
+	["decontaminate"]="can also remove radioactive fallout from a person",
 	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
 	["detpack stick"]="hold E on detpack then release E to stick the detpack",
 	["disarm"]="tap E to disarm",
