@@ -3,7 +3,7 @@ function EFFECT:Init(data)
 	local Emitter=ParticleEmitter(Pos)
 	if(Normal==Vector(0,0,0))then Normal=nil end
 	if(Spread==0)then Spread=nil end
-	for i=0,Scale^.9 do
+	for i=0,1500 do
 		local Dir
 		if((Normal)and(Spread))then
 			Dir=Vector(Normal.x,Normal.y,Normal.z)
@@ -20,7 +20,7 @@ function EFFECT:Init(data)
 		particle:SetStartAlpha(math.Rand(200,255))
 		particle:SetEndAlpha(0)
 		particle:SetStartSize(0)
-		particle:SetEndSize(math.Rand(10,30))
+		particle:SetEndSize(math.Rand(10,30)*Scale/6000)
 		particle:SetRoll(math.Rand(-3,3))
 		particle:SetRollDelta(math.Rand(-3,3))
 		particle:SetLighting(true)

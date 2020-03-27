@@ -75,7 +75,7 @@ if(SERVER)then
 						Dam:SetAttacker(Att)
 						Dam:SetInflictor(Infl)
 						v:TakeDamageInfo(Dam)
-						if(math.random(1,50)==5)then v:Ignite(10) end
+						if(math.random(1,30)==5)then v:Ignite(10) end
 					end
 				end
 			end

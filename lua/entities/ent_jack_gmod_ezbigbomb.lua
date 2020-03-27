@@ -143,8 +143,8 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),2250,200)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4500,200) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),2250,150)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,4500,150) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,1000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
@@ -157,7 +157,7 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("GiantScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		JMod_FragSplosion(self,SelfPos,3000,200,15000,self.Owner or game.GetWorld())
+		JMod_FragSplosion(self,SelfPos,20000,400,8000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)

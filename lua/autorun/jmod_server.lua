@@ -2232,9 +2232,10 @@ if(SERVER)then
 			return
 		end
 		local Spred=Vector(0,0,0)
-		local BulletsFired,MaxBullets=0,500
+		local BulletsFired,MaxBullets,disperseTime=0,500,.5
+		if(fragNum>=12000)then disperseTime=2 elseif(fragNum>=6000)then disperseTime=1 end
 		for i=1,fragNum do
-			timer.Simple(i/(fragNum*2),function()
+			timer.Simple((i/fragNum)*disperseTime,function()
 				local Dir
 				if((direction)and(spread))then
 					Dir=Vector(direction.x,direction.y,direction.z)
@@ -2665,7 +2666,7 @@ if(SERVER)then
 			end)
 		end
 		--]]
-		--[[
+		---[[
 		game.CleanUpMap()
 		for k,v in pairs(player.GetAll())do
 			v:Kill()

@@ -134,8 +134,8 @@ if(SERVER)then
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),500,100)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1000,100) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),500,80)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1000,80) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,200))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
@@ -148,7 +148,7 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		JMod_FragSplosion(self,SelfPos,3000,100,8000,self.Owner or game.GetWorld())
+		JMod_FragSplosion(self,SelfPos,10000,200,8000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)

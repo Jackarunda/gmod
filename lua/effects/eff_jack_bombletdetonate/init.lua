@@ -66,7 +66,7 @@ function EFFECT:Init(data)
 			particle:SetColor(darg-20,darg,darg)
 		end
 		
-		for i=0, 75*Scayul do
+		for i=0, 40*Scayul do
 
 			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
@@ -105,7 +105,7 @@ function EFFECT:Init(data)
 	
 	timer.Simple(0.05,function()
 		local Emitter=ParticleEmitter(vOffset)
-		for i=0,15*Scayul do
+		for i=0,8*Scayul do
 			local sprite
 			local chance=math.random(1,6)
 			if(chance==1)then
@@ -139,21 +139,6 @@ function EFFECT:Init(data)
 		end
 		Emitter:Finish()
 	end)
-	
-	if(math.random(1.2)==2)then
-		local dlight=DynamicLight(self:EntIndex())
-		if(dlight)then
-			dlight.Pos=vOffset
-			dlight.r=255
-			dlight.g=200
-			dlight.b=175
-			dlight.Brightness=4*Scayul^0.5
-			dlight.Size=600*Scayul^0.5
-			dlight.Decay=1000
-			dlight.DieTime=CurTime()+0.1
-			dlight.Style=0
-		end
-	end
 end
 
 /*---------------------------------------------------------
