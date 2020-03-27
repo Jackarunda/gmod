@@ -41,7 +41,17 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,100)
+		---
+		local splad=EffectData()
+		splad:SetOrigin(SelfPos)
+		splad:SetScale(1)
+		util.Effect("eff_jack_bombletdetonate",splad,true,true)
+		---
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,20),150,90)
+		---
+		util.ScreenShake(SelfPos,1000,3,1,500)
+		---
+		self:EmitSound("BaseExplosionEffect.Sound")
 		---
 		local Tr=util.QuickTrace(SelfPos,Vector(0,0,-100),self)
 		if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end

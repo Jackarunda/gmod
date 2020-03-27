@@ -160,7 +160,7 @@ if(SERVER)then
 			Dam:SetInflictor(Inflictor(self))
 			tr.Entity:TakeDamageInfo(Dam)
 			timer.Simple(.01,function()
-				local Haz=ents.Create("ent_jack_gmod_firehazard")
+				local Haz=ents.Create("ent_jack_gmod_ezfirehazard")
 				if(IsValid(Haz))then
 					Haz:SetDTInt(0,1)
 					Haz:SetPos(tr.HitPos+tr.HitNormal*2)

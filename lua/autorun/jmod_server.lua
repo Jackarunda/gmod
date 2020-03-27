@@ -2217,6 +2217,54 @@ if(SERVER)then
 			end)
 		end
 	end
+	function JMod_FragSplosion(shooter,origin,fragNum,fragDmg,fragMaxDist,attacker,direction,spread,zReduction)
+		-- fragmentation/shrapnel simulation
+		local Eff=EffectData()
+		Eff:SetOrigin(origin)
+		Eff:SetScale(fragNum)
+		Eff:SetNormal(direction or Vector(0,0,0))
+		Eff:SetMagnitude(spread or 0)
+		util.Effect("eff_jack_gmod_fragsplosion",Eff,true,true)
+		---
+		shooter=shooter or game.GetWorld()
+		if not(JMOD_CONFIG.FragExplosions)then
+			util.BlastDamage(shooter,attacker,origin,fragDmg*8,fragDmg*3)
+			return
+		end
+		local Spred=Vector(0,0,0)
+		local BulletsFired,MaxBullets=0,500
+		for i=1,fragNum do
+			timer.Simple(i/(fragNum*2),function()
+				local Dir
+				if((direction)and(spread))then
+					Dir=Vector(direction.x,direction.y,direction.z)
+					Dir=Dir+VectorRand()*math.Rand(0,spread)
+					Dir:Normalize()
+				else
+					Dir=VectorRand()
+				end
+				if(zReduction)then
+					Dir.z=Dir.z/zReduction
+					Dir:Normalize()
+				end
+				local Tr=util.QuickTrace(origin,Dir*fragMaxDist,shooter)
+				if((Tr.Hit)and not(Tr.HitSky)and not(Tr.HitWorld)and(BulletsFired<MaxBullets))then
+					local firer=((IsValid(shooter))and shooter) or game.GetWorld()
+					firer:FireBullets({
+						Attacker=attacker,
+						Damage=fragDmg,
+						Force=fragDmg/8,
+						Num=1,
+						Src=origin,
+						Tracer=0,
+						Dir=Dir,
+						Spread=Spred
+					})
+					BulletsFired=BulletsFired+1
+				end
+			end)
+		end
+	end
 	function JMod_PackageObject(ent,pos,ang,ply)
 		if(pos)then
 			ent=ents.Create(ent)
@@ -2285,6 +2333,7 @@ if(SERVER)then
 		end
 	end
 	function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
+		local origPower=power
 		power=power*JMOD_CONFIG.ExplosionPropDestroyPower
 		local maxRange=250*power*(range or 1) -- todo: this still doesn't do what i want for the nuke
 		local maxMassToDestroy=10*power^.8
@@ -2311,7 +2360,7 @@ if(SERVER)then
 						constraint.RemoveAll(prop)
 						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
 					else
-						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*origPower*mass,propPos+VectorRand()*10)
 					end
 				end
 			end
@@ -2587,6 +2636,14 @@ if(SERVER)then
 		--Pof:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,1000))
 		--util.Effect("eff_jack_gmod_ezthermonuke",Pof,true,true)
 		--[[
+		local Eff=EffectData()
+		Eff:SetOrigin(ply:GetEyeTrace().HitPos+Vector(0,0,100))
+		Eff:SetScale(3000)
+		Eff:SetNormal(Vector(0,0,1))
+		Eff:SetMagnitude(0)
+		util.Effect("eff_jack_gmod_fragsplosion",Eff,true,true)
+		--]]
+		--[[
 		for i=0,100 do
 			local zomb=ents.Create("npc_zombine")
 			zomb:SetPos(Vector(i*150,0,0))
@@ -2605,6 +2662,15 @@ if(SERVER)then
 					Gas:Activate()
 					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,1000))
 				end
+			end)
+		end
+		--]]
+		--[[
+		game.CleanUpMap()
+		for k,v in pairs(player.GetAll())do
+			v:Kill()
+			timer.Simple(2.5,function()
+				v:SetPos(Vector(2000+k*50,0,-12200))
 			end)
 		end
 		--]]

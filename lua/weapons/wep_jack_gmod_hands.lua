@@ -48,7 +48,7 @@ SWEP.Purpose		= ""
 SWEP.Instructions	= "you suck"
 
 SWEP.Spawnable		= true
-SWEP.AdminOnly		= true
+SWEP.AdminOnly		= false
 
 SWEP.HoldType="normal"
 

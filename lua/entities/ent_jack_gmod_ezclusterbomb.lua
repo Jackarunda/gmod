@@ -135,7 +135,7 @@ if(SERVER)then
 				Bomblet:SetPos(Pos+VectorRand()*math.Rand(1,50))
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.Rand(1,1000)+Vector(0,0,math.random(1,100)))
+				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.Rand(10,1500)+Vector(0,0,math.random(1,100)))
 			end
 		end)
 		---

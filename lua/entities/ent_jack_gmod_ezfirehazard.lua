@@ -66,7 +66,7 @@ if(SERVER)then
 			if((IsValid(Par))and(Par:IsPlayer())and not(Par:Alive()))then self:Remove() return end
 			for k,v in pairs(ents.FindInSphere(Pos,self.Range))do
 				local Class=v:GetClass()
-				if not(Class=="ent_jack_gmod_firehazard")then
+				if not(Class=="ent_jack_gmod_ezfirehazard")then
 					if((IsValid(v:GetPhysicsObject()))and(self:Visible(v)))then
 						local Dam=DamageInfo()
 						Dam:SetDamage(self.Power*math.Rand(.75,1.25))
@@ -75,6 +75,7 @@ if(SERVER)then
 						Dam:SetAttacker(Att)
 						Dam:SetInflictor(Infl)
 						v:TakeDamageInfo(Dam)
+						if(math.random(1,50)==5)then v:Ignite(10) end
 					end
 				end
 			end

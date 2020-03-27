@@ -124,7 +124,6 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,500)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,8000)
 		local Eff="cloudmaker_ground"
@@ -158,26 +157,7 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("GiantScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		if(JMOD_CONFIG.FragExplosions)then
-			local FragPos,Att,ZaWarudo=SelfPos-Vector(0,0,80),game.GetWorld()
-			local Att=self.Owner or ZaWarudo
-			for i=1,1000 do
-				timer.Simple(i/500,function()
-					local Dir=VectorRand()
-					Dir.z=Dir.z/3
-					game.GetWorld():FireBullets({
-						Attacker=Att,
-						Damage=200,
-						Force=100,
-						Num=1,
-						Src=FragPos,
-						Tracer=0,
-						Dir=Dir:GetNormalized(),
-						Spread=Vector(0,0,0)
-					})
-				end)
-			end
-		end
+		JMod_FragSplosion(self,SelfPos,3000,200,15000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)

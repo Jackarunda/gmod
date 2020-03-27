@@ -156,34 +156,8 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
-		if(JMOD_CONFIG.FragExplosions)then
-			for i=1,1000 do
-				timer.Simple(i/10000+.01,function()
-					if not(IsValid(self))then return end
-					local Dir=VectorRand()
-					Dir.z=Dir.z/5
-					self:FireBullets({
-						Attacker=self.Owner or game.GetWorld(),
-						Damage=30,
-						Force=10,
-						Num=1,
-						Src=SelfPos,
-						Tracer=1,
-						Dir=Dir:GetNormalized(),
-						Spread=Spred
-					})
-					if(i==300)then
-						-- delay the blast damage so that the bang can be heard
-						util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,20)
-					elseif(i==1000)then
-						self:Remove()
-					end
-				end)
-			end
-		else
-			util.BlastDamage(self,self.Owner or game.GetWorld(),SelfPos,700,90)
-			self:Remove()
-		end
+		JMod_FragSplosion(self,SelfPos,3000,20,8000,self.Owner or game.GetWorld(),nil,nil,3)
+		self:Remove()
 	end
 	
 	function ENT:Detonate()
