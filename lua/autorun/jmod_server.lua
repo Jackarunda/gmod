@@ -2232,7 +2232,7 @@ if(SERVER)then
 			return
 		end
 		local Spred=Vector(0,0,0)
-		local BulletsFired,MaxBullets,disperseTime=0,500,.5
+		local BulletsFired,MaxBullets,disperseTime=0,300,.5
 		if(fragNum>=12000)then disperseTime=2 elseif(fragNum>=6000)then disperseTime=1 end
 		for i=1,fragNum do
 			timer.Simple((i/fragNum)*disperseTime,function()
@@ -2250,11 +2250,13 @@ if(SERVER)then
 				end
 				local Tr=util.QuickTrace(origin,Dir*fragMaxDist,shooter)
 				if((Tr.Hit)and not(Tr.HitSky)and not(Tr.HitWorld)and(BulletsFired<MaxBullets))then
+					local DmgMul=1
+					if(BulletsFired>200)then DmgMul=2 end
 					local firer=((IsValid(shooter))and shooter) or game.GetWorld()
 					firer:FireBullets({
 						Attacker=attacker,
-						Damage=fragDmg,
-						Force=fragDmg/8,
+						Damage=fragDmg*DmgMul,
+						Force=fragDmg/8*DmgMul,
 						Num=1,
 						Src=origin,
 						Tracer=0,
@@ -2666,7 +2668,7 @@ if(SERVER)then
 			end)
 		end
 		--]]
-		---[[
+		--[[
 		game.CleanUpMap()
 		for k,v in pairs(player.GetAll())do
 			v:Kill()
