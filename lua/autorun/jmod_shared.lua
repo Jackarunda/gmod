@@ -1967,6 +1967,7 @@ local Hints={
 	["arm"]="ALT+E to arm",
 	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
 	["armor"]="ALT+E to select color and wear armor",
+	["auto anchor"]="bomb will automatially anchor itself below the surface of the water",
 	["binding"]="remember, console commands can be bound to a key",
 	["black powder pile"]="ALT+E to ignite black powder, E to sweep away",
 	["black powder ignite"]="black powder can ignite powder kegs and anything with a pyro fuze, like dynamite",
@@ -1977,6 +1978,7 @@ local Hints={
 	["bury"]="can only be buried in grass, dirt, snow or mud",
 	["crafting"]="set resources near workbench in order to use them",
 	["crate"]="tap resource against to store \n press E to retrieve resource",
+	["contact det"]="when armed, bomb will detonate on contact",
 	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt",
 	["decontaminate"]="can also remove radioactive fallout from a person",
 	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
@@ -2008,7 +2010,9 @@ local Hints={
 	["supplies"]="tap supplies against to refill, tap parts against to repair",
 	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
 	["unpackage"]="double tap ALT+E to unpackage",
-	["upgrade"]="use Build Kit to upgrade"
+	["upgrade"]="use Build Kit to upgrade",
+	["water arm"]="arm bomb and drop in water",
+	["water det"]="bomb must be in water to detonate"
 }
 function JMod_Hint(ply,...)
 	if(CLIENT)then return end

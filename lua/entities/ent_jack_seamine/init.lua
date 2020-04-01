@@ -23,7 +23,7 @@ function ENT:Initialize()
 	self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
 	self.Entity:SetColor(Color(160,170,175))
 	self.Entity:PhysicsInit(SOLID_VPHYSICS)
-	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+	self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 	self.Entity:SetSolid(SOLID_VPHYSICS)
 	self.Entity:DrawShadow(true)
 	self.Exploded=false
