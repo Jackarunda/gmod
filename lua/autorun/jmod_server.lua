@@ -1624,7 +1624,7 @@ if(SERVER)then
 		end
 	end)
 	concommand.Add("jmod_reloadconfig",function(ply)
-		if not((ply)and(ply:IsSuperAdmin()))then return end
+		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
 	local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
@@ -2502,10 +2502,10 @@ if(SERVER)then
 		if(engine.ActiveGamemode()=="sandbox")then return false end
 		return ply:Team()==self.Owner:Team()
 	end
-	function JMod_ShouldAttack(self,ent)
+	function JMod_ShouldAttack(self,ent,vehiclesOnly)
 		if not(IsValid(ent))then return false end
 		if(ent:IsWorld())then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
+		local Gaymode,PlayerToCheck,InVehicle=engine.ActiveGamemode(),nil,false
 		if(ent:IsPlayer())then
 			PlayerToCheck=ent
 		elseif(ent:IsNPC())then
@@ -2513,15 +2513,21 @@ if(SERVER)then
 			if((self.WhitelistedNPCs)and(table.HasValue(self.WhitelistedNPCs,Class)))then return true end
 			if((self.BlacklistedNPCs)and(table.HasValue(self.BlacklistedNPCs,Class)))then return false end
 			if not(IsValid(self.Owner))then return ent:Health()>0 end
-			if((ent.Disposition)and(ent:Disposition(self.Owner)==D_HT))then
-				return ent:Health()>0
+			if((ent.Disposition)and(ent:Disposition(self.Owner)==D_HT)and(ent.GetMaxHealth))then
+				if(vehiclesOnly)then
+					return ent:GetMaxHealth()>100
+				else
+					return ent:GetMaxHealth()>0
+				end
 			else
 				return false
 			end
 		elseif(ent:IsVehicle())then
 			PlayerToCheck=ent:GetDriver()
+			InVehicle=true
 		end
 		if((IsValid(PlayerToCheck))and(PlayerToCheck.Alive))then
+			if((vehiclesOnly)and not(InVehicle))then return false end
 			if(PlayerToCheck.EZkillme)then return true end -- for testing
 			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
 			local Allies=(self.Owner and self.Owner.JModFriends)or {}
@@ -2531,6 +2537,12 @@ if(SERVER)then
 			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
 			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
 			return PlayerToCheck:Alive()
+		end
+		return false
+	end
+	function JMod_EnemiesNearPoint(ent,pos,range,vehiclesOnly)
+		for k,v in pairs(ents.FindInSphere(pos,range))do
+			if(JMod_ShouldAttack(ent,v,vehiclesOnly))then return true end
 		end
 		return false
 	end

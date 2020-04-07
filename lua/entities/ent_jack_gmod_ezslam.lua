@@ -175,14 +175,14 @@ if(SERVER)then
 		local Time=CurTime()
 		local state = self:GetState()
 		if(state==JMOD_EZ_STATE_ARMED)then
-			local pos = self:GetAttachment(1).Pos
-			local trace = util.QuickTrace(pos,self:GetUp()*1000,self)
-			if((math.abs(self.BeamFrac - trace.Fraction) >= 0.001)and(JMod_ShouldAttack(self,trace.Entity)))then
+			local pos=self:GetAttachment(1).Pos
+			local trace=util.QuickTrace(pos,self:GetUp()*1000,self)
+			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod_EnemiesNearPoint(self,trace.HitPos,200)))then
 				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
 					self:Detonate()
 				else
 					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,751)
+						self:Detonate(.1,1000)
 					else
 						self:Detonate(.1)
 					end

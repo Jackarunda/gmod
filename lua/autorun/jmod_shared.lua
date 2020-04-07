@@ -2044,8 +2044,8 @@ function JMod_PlayersCanComm(listener,talker)
 end
 if(SERVER)then
 	concommand.Add("JMOD_SERVER_DEBUG",function(ply,cmd,args)
-		local Pos=ply:GetEyeTrace().HitPos+Vector(0,0,100)
-		ParticleEffect("fatman_main",Pos,Angle(0,0,0))
+		--local Pos=ply:GetEyeTrace().HitPos+Vector(0,0,100)
+		--ParticleEffect("fatman_main",Pos,Angle(0,0,0))
 		--fatman_air
 	end)
 end

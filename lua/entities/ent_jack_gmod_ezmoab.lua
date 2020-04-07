@@ -173,7 +173,7 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,self:GetRight(),7)
+		JMod_AeroDrag(self,self:GetRight(),10)
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

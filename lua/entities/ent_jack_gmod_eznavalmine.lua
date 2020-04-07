@@ -57,9 +57,7 @@ if(SERVER)then
 				self:EmitSound("Canister.ImpactHard")
 			end
 			if((data.Speed>20)and(self:GetState()==STATE_ARMED)and(self:WaterLevel()>0)and(self.NextDet<CurTime()))then
-				timer.Simple(.5,function()
-					if(IsValid(self))then self:Detonate() end
-				end)
+				self:Detonate()
 				return
 			end
 			if(data.Speed>2000)then
@@ -131,29 +129,36 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,150)
-		---
-		local splad=EffectData()
-		splad:SetOrigin(SelfPos)
-		splad:SetScale(3)
-		splad:SetEntity(self)
-		util.Effect("eff_jack_gmod_watersplode",splad,true,true)
-		---
-		util.ScreenShake(SelfPos,1000,3,3,2000)
-		---
-		for i=1,3 do
-			sound.Play("ambient/water/water_splash"..math.random(1,3)..".wav",SelfPos,80,100)
-			sound.Play("ambient/water/water_splash"..math.random(1,3)..".wav",SelfPos,160,50)
-			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos,70,math.random(80,110))
-		end
-		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),500,120)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1000,120) end)
-		---
-		JMod_WreckBuildings(self,SelfPos,8)
-		---
-		self:Remove()
+		sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
+		timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
+			if(IsValid(self))then
+				local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
+				JMod_Sploom(Att,SelfPos,150)
+				---
+				local splad=EffectData()
+				splad:SetOrigin(SelfPos)
+				splad:SetScale(3)
+				splad:SetEntity(self)
+				util.Effect("eff_jack_gmod_watersplode",splad,true,true)
+				---
+				util.ScreenShake(SelfPos,1000,3,3,2000)
+				---
+				for i=1,3 do
+					sound.Play("ambient/water/water_splash"..math.random(1,3)..".wav",SelfPos,80,100)
+					sound.Play("ambient/water/water_splash"..math.random(1,3)..".wav",SelfPos,160,50)
+					sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos,70,math.random(80,110))
+				end
+				---
+				timer.Simple(.1,function()
+					util.BlastDamage(game.GetWorld(),Att,SelfPos,800,200)
+					util.BlastDamage(game.GetWorld(),Att,SelfPos-Vector(0,0,120),800,200)
+				end)
+				---
+				JMod_WreckBuildings(self,SelfPos,8)
+				---
+				self:Remove()
+			end
+		end)
 	end
 	function ENT:OnRemove()
 		--
@@ -164,34 +169,47 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		if((self:GetState()==STATE_ARMED)and(self:WaterLevel()>0)and not(self.Moored))then
-			local SelfPos=self:LocalToWorld(self:OBBCenter())
-			if(self.MoorMode=="midwater")then
-				local Tr=util.QuickTrace(SelfPos,Vector(0,0,-30000),self)
-				if(Tr.Hit)then
-					local Length=Tr.HitPos:Distance(SelfPos)
-					constraint.Rope(self,Tr.Entity,0,0,Vector(0,0,-18),Tr.Entity:WorldToLocal(Tr.HitPos),Length,math.random(-20,20),0,2,"cable/mat_jack_gmod_chain",false)
-				end
-			elseif(self.MoorMode=="subsurface")then
-				local WaterLevel=nil
-				local SurfaceTr=util.TraceLine({
-					start=SelfPos+Vector(0,0,300),
-					endpos=SelfPos-Vector(0,0,600),
-					filter=self,
-					mask=-1
-				})
-				if(SurfaceTr.Hit)then
-					WaterLevel=SurfaceTr.HitPos
-					local GroundTr=util.QuickTrace(SelfPos,Vector(0,0,-30000),self)
-					if(GroundTr.Hit)then
-						local SeaFloorLevel=GroundTr.HitPos
-						local WaterDepth=WaterLevel:Distance(SeaFloorLevel)
-						constraint.Rope(self,GroundTr.Entity,0,0,Vector(0,0,-18),GroundTr.Entity:WorldToLocal(SeaFloorLevel),WaterDepth,math.random(-45,-38),0,2,"cable/mat_jack_gmod_chain",false)
+		if((self:GetState()==STATE_ARMED)and(self:WaterLevel()>0))then
+			if not(self.Moored)then
+				self:GetPhysicsObject():SetDamping(1,1)
+				local SelfPos=self:LocalToWorld(self:OBBCenter())
+				if(self.MoorMode=="midwater")then
+					local Tr=util.QuickTrace(SelfPos,Vector(0,0,-30000),self)
+					if(Tr.Hit)then
+						local Length=Tr.HitPos:Distance(SelfPos)
+						constraint.Rope(self,Tr.Entity,0,0,Vector(0,0,-18),Tr.Entity:WorldToLocal(Tr.HitPos),Length,math.random(-20,20),0,2,"cable/mat_jack_gmod_chain",false)
+					end
+				elseif(self.MoorMode=="subsurface")then
+					local WaterLevel=nil
+					local SurfaceTr=util.TraceLine({
+						start=SelfPos+Vector(0,0,300),
+						endpos=SelfPos-Vector(0,0,600),
+						filter=self,
+						mask=-1
+					})
+					if(SurfaceTr.Hit)then
+						WaterLevel=SurfaceTr.HitPos
+						local GroundTr=util.QuickTrace(SelfPos,Vector(0,0,-30000),self)
+						if(GroundTr.Hit)then
+							local SeaFloorLevel=GroundTr.HitPos
+							local WaterDepth=WaterLevel:Distance(SeaFloorLevel)
+							constraint.Rope(self,GroundTr.Entity,0,0,Vector(0,0,-18),GroundTr.Entity:WorldToLocal(SeaFloorLevel),WaterDepth,math.random(-45,-38),0,2,"cable/mat_jack_gmod_chain",false)
+						end
 					end
 				end
+				self.NextDet=CurTime()+3
+				self.Moored=true
+			else
+				if(self.NextDet<CurTime())then
+					self:GetPhysicsObject():SetBuoyancyRatio(.4)
+					if(JMod_EnemiesNearPoint(self,self:GetPos(),300,true))then
+						self:Detonate()
+						return
+					end
+					self:NextThink(CurTime()+.5)
+					return true
+				end
 			end
-			self.NextDet=CurTime()+3
-			self.Moored=true
 		end
 	end
 elseif(CLIENT)then
