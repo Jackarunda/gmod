@@ -1997,6 +1997,7 @@ local Hints={
 	["jmod hands grab"]="RMB to grab objects",
 	["jmod hands move"]="punches also can move you (jump boost/climbing)",
 	["jmod hands"]="RMB to block, R to put hands down",
+	["launch"]="weld/nail weapon to vehicle, then type *launch* or cmd jmod_ez_launch to launch",
 	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["modify"]="use the build kit to modify",

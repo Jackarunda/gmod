@@ -105,11 +105,17 @@ if(SERVER)then
 			if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="100lb_air" end
 			util.ScreenShake(SelfPos,99999,99999,1,1000)
 			self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-			JMod_Sploom(self.Owner,SelfPos,200)
+			JMod_Sploom(self.Owner,SelfPos,150)
 			local Att=self.Owner or game.GetWorld()
 			for i=1,5 do
 				util.BlastDamage(self,Att,SelfPos+Vector(0,0,20*i),150-i*30,1600-i*40)
 			end
+			timer.Simple(.1,function()
+				local Tr=util.QuickTrace(SelfPos+Vector(0,0,10),Vector(0,0,-100))
+				if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+			end)
+			JMod_WreckBuildings(self,SelfPos,3)
+			JMod_BlastDoors(self,SelfPos,3)
 			ParticleEffect(Eff,SelfPos,Angle(0,0,0))
 			self:Remove()
 		end)
