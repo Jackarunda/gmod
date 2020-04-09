@@ -1895,7 +1895,7 @@ if(SERVER)then
 		if not((IsValid(ply))and(ply:Alive()))then return end
 		local Weps={}
 		for k,ent in pairs(ents.GetAll())do
-			if((ent.EZlaunchableWeaponArmedTime)and(ent.Owner)and(ent.Owner==ply))then
+			if((ent.EZlaunchableWeaponArmedTime)and(ent.Owner)and(ent.Owner==ply)and(ent:GetState()==1))then
 				table.insert(Weps,ent)
 			end
 		end
@@ -1924,7 +1924,7 @@ if(SERVER)then
 		end
 		local FirstBom,Earliest=nil,9e9
 		for k,bom in pairs(Boms)do
-			if((bom.EZdroppableBombArmedTime<Earliest)and(constraint.HasConstraints(bom)))then
+			if((bom.EZdroppableBombArmedTime<Earliest)and((constraint.HasConstraints(bom))or not(bom:GetPhysicsObject():IsMotionEnabled())))then
 				FirstBom=bom
 				Earliest=bom.EZdroppableBombArmedTime
 			end

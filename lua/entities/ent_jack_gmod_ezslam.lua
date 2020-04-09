@@ -182,7 +182,7 @@ if(SERVER)then
 					self:Detonate()
 				else
 					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,1000)
+						self:Detonate(.1,600)
 					else
 						self:Detonate(.1)
 					end

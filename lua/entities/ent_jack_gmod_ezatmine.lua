@@ -99,17 +99,17 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-		timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
+		timer.Simple(math.Rand(.1,.2)*JMOD_CONFIG.MineDelay,function()
 			local SelfPos=self:LocalToWorld(self:OBBCenter())
 			local Eff="100lb_ground"
 			if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="100lb_air" end
 			util.ScreenShake(SelfPos,99999,99999,1,1000)
 			self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-			JMod_Sploom(self.Owner,SelfPos,150)
+			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos,100,130)
+			JMod_Sploom(self.Owner,SelfPos,10)
 			local Att=self.Owner or game.GetWorld()
-			for i=1,5 do
-				util.BlastDamage(self,Att,SelfPos+Vector(0,0,20*i),150-i*30,1600-i*40)
-			end
+			util.BlastDamage(self,Att,SelfPos+Vector(0,0,30),100,5500)
+			util.BlastDamage(self,Att,SelfPos+Vector(0,0,10),300,100)
 			timer.Simple(.1,function()
 				local Tr=util.QuickTrace(SelfPos+Vector(0,0,10),Vector(0,0,-100))
 				if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
@@ -151,7 +151,7 @@ if(SERVER)then
 		if(State==STATE_ARMED)then
 			if(self.NextDet<CurTime())then
 				self:GetPhysicsObject():SetBuoyancyRatio(.4)
-				if(JMod_EnemiesNearPoint(self,self:GetPos(),150,true))then
+				if(JMod_EnemiesNearPoint(self,self:GetPos(),100,true))then
 					self:Detonate()
 					return
 				end

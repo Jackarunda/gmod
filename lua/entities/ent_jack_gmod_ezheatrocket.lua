@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ HE Rocket"
+ENT.PrintName="EZ HEAT Rocket"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -119,18 +119,20 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att,Dir=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld(),-self:GetRight()
-		JMod_Sploom(Att,SelfPos,150)
+		JMod_Sploom(Att,SelfPos,10)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,1500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,50),150,200)
+		for i=1,10 do
+			util.BlastDamage(self,Att,SelfPos+Dir*30*i,100-i*7,3000-i*290)
+		end
 		for k,ent in pairs(ents.FindInSphere(SelfPos,100))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,3)
-		JMod_BlastDoors(self,SelfPos,3)
+		JMod_WreckBuildings(self,SelfPos,2)
+		JMod_BlastDoors(self,SelfPos,2)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos-Dir*100,Dir*300)
@@ -233,5 +235,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezherocket","EZ HE Rocket")
+	language.Add("ent_jack_gmod_ezheatrocket","EZ HEAT Rocket")
 end
