@@ -142,7 +142,11 @@ if(SERVER)then
 		self:Remove()
 		local Ang=self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Forward(),-90)
-		timer.Simple(.1,function() ParticleEffect("50lb_air",SelfPos-Dir*50,Ang) end)
+		timer.Simple(.1,function()
+			ParticleEffect("50lb_air",SelfPos+Dir*130,Ang)
+			ParticleEffect("50lb_air",SelfPos,Ang)
+			ParticleEffect("50lb_air",SelfPos-Dir*50,Ang)
+		end)
 	end
 	function ENT:OnRemove()
 		--
@@ -169,7 +173,7 @@ if(SERVER)then
 		---
 		self.NextDet=CurTime()+.25
 		---
-		timer.Simple(15,function()
+		timer.Simple(30,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end
@@ -178,11 +182,11 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		local Phys=self:GetPhysicsObject()
-		JMod_AeroDrag(self,-self:GetRight(),2)
+		JMod_AeroDrag(self,-self:GetRight(),.75)
 		if(self:GetState()==STATE_LAUNCHED)then
 			if(self.FuelLeft>0)then
-				Phys:ApplyForceCenter(-self:GetRight()*40000)
-				self.FuelLeft=self.FuelLeft-10
+				Phys:ApplyForceCenter(-self:GetRight()*20000)
+				self.FuelLeft=self.FuelLeft-5
 				---
 				local Eff=EffectData()
 				Eff:SetOrigin(self:GetPos())
@@ -191,12 +195,13 @@ if(SERVER)then
 				util.Effect("eff_jack_gmod_rocketthrust",Eff,true,true)
 			end
 		end
-		self:NextThink(CurTime()+.1)
+		self:NextThink(CurTime()+.05)
 		return true
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Mdl=ClientsideModel("models/military2/missile/missile_patriot.mdl")
+		self.Mdl:SetMaterial("models/military2/missile/heat")
 		self.Mdl:SetModelScale(.45,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)

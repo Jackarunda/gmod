@@ -53,7 +53,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>20)then
-				if(self:GetState()==STATE_ARMED)then
+				if((self:GetState()==STATE_ARMED)and(math.random(1,5)==1))then
 					self:Detonate()
 				else
 					self.Entity:EmitSound("Weapon.ImpactHard")
@@ -63,9 +63,9 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=5)then
+		if(dmginfo:GetDamage()>=130)then
 			local Pos,State=self:GetPos(),self:GetState()
-			if((State==STATE_ARMED)and(math.random(1,10)==3))then
+			if((State==STATE_ARMED)and(math.random(1,2)==2))then
 				self:Detonate()
 			elseif((math.random(1,10)==3)and not(State==STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
@@ -131,6 +131,10 @@ if(SERVER)then
 				if(self:GetState()==STATE_ARMING)then
 					self:SetState(STATE_ARMED)
 					self:DrawShadow(false)
+					local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,20),Vector(0,0,-40),self)
+					if(Tr.Hit)then
+						constraint.Weld(Tr.Entity,self,0,0,40000,false,false)
+					end
 				end
 			end
 		end)

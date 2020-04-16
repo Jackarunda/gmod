@@ -186,9 +186,9 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Right(),90)
-		Ang:RotateAroundAxis(Ang:Right(),90)
+		Ang:RotateAroundAxis(Ang:Right(),-90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Right()*17-Ang:Up()*6+Ang:Forward()*6)
+		self.Mdl:SetRenderOrigin(Pos-Ang:Right()*17+Ang:Up()*6-Ang:Forward()*6)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end

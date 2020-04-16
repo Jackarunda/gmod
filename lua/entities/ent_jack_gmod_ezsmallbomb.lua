@@ -166,7 +166,7 @@ if(SERVER)then
 			if((self.FreefallTicks>=10)and not(self:GetSnakeye()))then
 				self:SetSnakeye(true)
 				Phys:EnableDrag(true)
-				Phys:SetDragCoefficient(40)
+				Phys:SetDragCoefficient(20)
 				self:EmitSound("buttons/lever6.wav",70,120)
 			end
 		else

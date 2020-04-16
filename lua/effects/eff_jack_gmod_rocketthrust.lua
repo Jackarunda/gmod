@@ -30,7 +30,7 @@ function EFFECT:Init(data)
 			particle:SetStartAlpha(255)
 			particle:SetEndAlpha(0)
 			local Size=math.random(40,80)*Scl
-			particle:SetStartSize(Size/10)
+			particle:SetStartSize(Size/20)
 			particle:SetEndSize(Size)
 			particle:SetRoll(math.Rand(-2,2))
 			particle:SetRollDelta(math.Rand(-2,2))

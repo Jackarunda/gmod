@@ -216,12 +216,48 @@ elseif(CLIENT)then
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
 	end
+	local Trefoil=Material("png_jack_gmod_radiation.png")
+	local Verses={
+		"And I saw when he opened the sixth seal, and there was a great earthquake; and the sun became black as sackcloth of hair, and the whole moon became as blood;",
+		"and the stars of the heaven fell unto the earth, as a fig tree casteth her unripe figs when she is shaken of a great wind.",
+		"And the heaven was removed as a scroll when it is rolled up; and every mountain and island were moved out of their places.",
+		"And the kings of the earth, and the princes, and the chief captains, and the rich, and the strong, and every bondman and freeman, hid themselves in the caves and in the rocks of the mountains;",
+		"and they say to the mountains and to the rocks, Fall on us, and hide us from the face of him that sitteth on the throne, and from the wrath of the Lamb:",
+		"for the great day of their wrath is come; and who is able to stand?"
+	}
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		--self:DrawModel()
 		self.Mdl:SetRenderOrigin(Pos-Ang:Right()*80-Ang:Up()*13)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
+		---
+		local Ang,Pos=self:GetAngles(),self:GetPos()
+		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
+		local DetailDraw=Closeness<21000
+		if(DetailDraw)then
+			local Up,Right,Forward=Ang:Up(),Ang:Right(),Ang:Forward()
+			Ang:RotateAroundAxis(Ang:Right(),90)
+			Ang:RotateAroundAxis(Ang:Up(),-90)
+			cam.Start3D2D(Pos+Up*17+Right*35-Forward*25,Ang,.05)
+			surface.SetDrawColor(255,255,255,120)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128,160,256,256)
+			for k,v in pairs(Verses)do
+				draw.SimpleText(v,"JMod-Stencil-XS",0,420+k*20,Color(0,0,0),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			end
+			cam.End3D2D()
+			---\
+			Ang:RotateAroundAxis(Ang:Right(),180)
+			cam.Start3D2D(Pos+Up*17+Right*35+Forward*26,Ang,.05)
+			surface.SetDrawColor(255,255,255,120)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128,160,256,256)
+			for k,v in pairs(Verses)do
+				draw.SimpleText(v,"JMod-Stencil-XS",0,420+k*20,Color(0,0,0),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			end
+			cam.End3D2D()
+		end
 	end
 	language.Add("ent_jack_gmod_eznuke_big","EZ Thermonuclear Bomb")
 end

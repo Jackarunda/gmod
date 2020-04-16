@@ -19,7 +19,7 @@ if(SERVER)then
 		self:SetMaterial("models/debug/debugwhite")
 		self:RebuildPhysics()
 		self:DrawShadow(false)
-		self.NextDmg=Time+1
+		self.NextDmg=Time+math.random(1,10)
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -78,7 +78,7 @@ if(SERVER)then
 						---
 						local DmgTaken=Helf-obj:Health()
 						if(DmgTaken>0)then
-							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken
+							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
 						end
 					else
 						obj:TakeDamageInfo(Dmg)

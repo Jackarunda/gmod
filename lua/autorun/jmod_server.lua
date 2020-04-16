@@ -189,6 +189,7 @@ if(SERVER)then
 	end
 	hook.Add("PlayerFootstep","JackyArmorFootstep",StepSound)
 	local function RemoveArmor(ply, txt)
+		if not(IsValid(ply))then return end
 		local loweredText=string.lower(txt) -- Convert to lowercase
 		if string.sub(loweredText, 1, 1)=="*" and string.sub(loweredText, string.len(loweredText), -1)=="*" then -- Begins and ends with asterix
 			local strippedText=string.sub(loweredText, 2, string.len(loweredText)-1) -- Remove leading and ending asterix
@@ -1951,6 +1952,7 @@ if(SERVER)then
 		JMod_EZ_WeaponLaunch(ply)
 	end)
 	hook.Add("PlayerSay","JMod_RADIO_SAY",function(ply,txt)
+		if not(IsValid(ply))then return end
 		if not(ply:Alive())then return end
 		local lowerTxt=string.lower(txt)
 		if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
@@ -2238,7 +2240,7 @@ if(SERVER)then
 			timer.Simple(3,function()
 				if(IsValid(Replacement))then Replacement:SetCollisionGroup(COLLISION_GROUP_WEAPON) end
 			end)
-			timer.Simple(6,function()
+			timer.Simple(30*JMOD_CONFIG.DoorBreachResetTimeMult,function()
 				if(IsValid(ent))then ent:SetNotSolid(false);ent:SetNoDraw(false) end
 				if(IsValid(Replacement))then Replacement:Remove() end
 			end)

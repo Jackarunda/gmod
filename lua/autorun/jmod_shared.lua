@@ -15,6 +15,7 @@ game.AddParticles("particles/pcfs_jack_moab.pcf")
 game.AddParticles("particles/gb5_large_explosion.pcf")
 game.AddParticles("particles/gb5_500lb.pcf")
 game.AddParticles("particles/gb5_100lb.pcf")
+game.AddParticles("particles/gb5_50lb.pcf")
 game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"})
 game.AddDecal("GiantScorch",{"decals/giant_scorch1","decals/giant_scorch2","decals/giant_scorch3"})
 PrecacheParticleSystem("pcf_jack_nuke_ground")
@@ -27,6 +28,8 @@ PrecacheParticleSystem("500lb_air")
 PrecacheParticleSystem("500lb_ground")
 PrecacheParticleSystem("100lb_air")
 PrecacheParticleSystem("100lb_ground")
+PrecacheParticleSystem("50lb_air")
+PrecacheParticleSystem("50lb_ground")
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
 	resource.AddWorkshop("1919703147")
@@ -47,6 +50,7 @@ function JMod_InitGlobalConfig()
 		ToolKitUpgradeMult=1,
 		MineDelay=1,
 		MinePower=1,
+		DoorBreachResetTimeMult=1,
 		FumigatorGasAmount=1,
 		PoisonGasDamage=1,
 		PoisonGasLingerTime=1,

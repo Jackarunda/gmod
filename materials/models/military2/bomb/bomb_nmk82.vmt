@@ -1,13 +1,14 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "jhoenix_storms/plain"
+	"$baseTexture" "models/military2/bomb/bomb_nmk82"
+       	"$bumpmap" "models/military2/bomb/bomb_nmk82_nomal"
 	"$surfaceprop" "metal"
-	"$bumpmap" "jhoenix_storms/normalmap"
 	"$model" 1
 	"$phong" "1"
 	"$phongfresnelranges" "[1 1 1]"
 	"$phongboost" ".2"
 	"$phongexponent" "10"
 }
+
 
 

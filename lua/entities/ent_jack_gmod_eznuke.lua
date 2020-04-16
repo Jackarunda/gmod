@@ -223,6 +223,7 @@ elseif(CLIENT)then
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
 	end
+	local Trefoil=Material("png_jack_gmod_radiation.png")
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Forward(),-90)
@@ -230,6 +231,26 @@ elseif(CLIENT)then
 		self.Mdl:SetRenderOrigin(Pos+Ang:Right()*7)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
+		---
+		local Ang,Pos=self:GetAngles(),self:GetPos()
+		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
+		local DetailDraw=Closeness<21000
+		if(DetailDraw)then
+			local Up,Right,Forward=Ang:Up(),Ang:Right(),Ang:Forward()
+			Ang:RotateAroundAxis(Ang:Forward(),-90)
+			cam.Start3D2D(Pos-Up*23.7-Right*9.6+Forward*0,Ang,.025)
+			surface.SetDrawColor(255,255,255,120)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128,160,256,256)
+			cam.End3D2D()
+			---
+			Ang:RotateAroundAxis(Ang:Forward(),180)
+			cam.Start3D2D(Pos-Up*9.4+Right*9.9+Forward*0,Ang,.025)
+			surface.SetDrawColor(255,255,255,120)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128,160,256,256)
+			cam.End3D2D()
+		end
 	end
 	language.Add("ent_jack_gmod_eznuke","EZ Micro Nuclear Bomb")
 end

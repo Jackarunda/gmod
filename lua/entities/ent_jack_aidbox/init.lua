@@ -139,6 +139,8 @@ function ENT:Think()
 			self:GetPhysicsObject():SetDragCoefficient(1)
 			self:GetPhysicsObject():SetAngleDragCoefficient(1)
 			self:SetDTBool(0,false)
+			self:NextThink(CurTime()+.015)
+			return true
 		end
 	end
 	if not(self.NoFadeIn)then
