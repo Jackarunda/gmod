@@ -151,7 +151,7 @@ if(SERVER)then
 	/*----------------------------------------------------------------------------------
 		This creates the shit for a destroyed hack
 	----------------------------------------------------------------------------------*/
-	function Burst(npc,attacker,inflictor)
+	local function Burst(npc,attacker,inflictor)
 		if(npc.IsAJIRollermine)then
 			local roller=npc
 			local selfpos=roller:GetPos()
@@ -181,7 +181,7 @@ elseif(CLIENT)then
 	--[[------------------------------------------------------------
 		Jackarunda's epic win environment-lighting splodeflashes			-- ahh i remember "epic win" like it was yesterday
 	--------------------------------------------------------------]]
-	function SplodeFlash(data)
+	local function SplodeFlash(data)
 		local vector=data:ReadVector()
 		local entity=data:ReadEntity()
 		local index
