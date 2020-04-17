@@ -228,7 +228,7 @@ if(SERVER)then
 	/*----------------------------------------------------------------------------------
 		This creates epic shrapnel whenever a JI Viscerator is destroyed
 	----------------------------------------------------------------------------------*/
-	function KaBewm(npc,attacker,inflictor)
+	local function KaBewm(npc,attacker,inflictor)
 		if((npc.IsAJIViscerator)and not(npc.IsAJIGunhack))then
 			JMod_Sploom(npc,npc:GetPos()+Vector(0,0,20),50)
 			
@@ -350,7 +350,7 @@ if(SERVER)then
 	end
 	hook.Add("OnNPCKilled","JIVisceratorDeath",KaBewm)
 
-	function ThrustSmoke(position,direction)
+	local function ThrustSmoke(position,direction)
 		local Smoak=EffectData()
 		Smoak:SetOrigin(position)
 		Smoak:SetStart(VectorRand())
@@ -358,21 +358,21 @@ if(SERVER)then
 		util.Effect("eff_jack_gmod_thrustsmoke",Smoak)
 	end
 
-	function AirVwoosh(position,velocity,size)
+	local function AirVwoosh(position,velocity,size)
 		local Vwoosh=EffectData()
 		Vwoosh:SetOrigin(position+velocity*0.2)
 		Vwoosh:SetScale(size)
 		util.Effect("eff_jack_gmod_airdestruction",Vwoosh)
 	end
 
-	function MakeRotorWash(npc)
+	local function MakeRotorWash(npc)
 		npc.RotorWashEntity=ents.Create("env_rotorwash_emitter")
 		npc.RotorWashEntity:SetPos(npc:GetPos())
 		npc.RotorWashEntity:SetParent(npc)
 		npc.RotorWashEntity:Activate()
 	end
 
-	function RemoveRotorWash(npc)
+	local function RemoveRotorWash(npc)
 		npc.RotorWashEntity:Remove()
 		npc.RotorWashEntity=nil
 	end
