@@ -34,7 +34,7 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		local Spred=Vector(0,0,0)
-		JMod_FragSplosion(self,SelfPos+Vector(0,0,20),3000,60,5000,self.Owner or game.GetWorld())
+		JMod_FragSplosion(self,SelfPos+Vector(0,0,20),3000,80,5000,self.Owner or game.GetWorld())
 		self:Remove()
 	end
 elseif(CLIENT)then

@@ -29,7 +29,7 @@ PrecacheParticleSystem("500lb_ground")
 PrecacheParticleSystem("100lb_air")
 PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
-PrecacheParticleSystem("50lb_ground")
+--PrecacheParticleSystem("50lb_ground")
 if(SERVER)then
 	resource.AddWorkshop("1919689921")
 	resource.AddWorkshop("1919703147")
@@ -249,14 +249,25 @@ function JMod_InitGlobalConfig()
 		},
 		Blueprints={
 			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
+			["EZ Big Bomb"]={"ent_jack_gmod_ezbigbomb",{parts=200,explosives=600},1.5},
+			["EZ Bomb"]={"ent_jack_gmod_ezbomb",{parts=150,explosives=300},1},
+			["EZ Cluster Bomb"]={"ent_jack_gmod_ezclusterbomb",{parts=150,explosives=150},1},
 			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
-			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=300,explosives=1000},1},
+			["EZ HE Rocket"]={"ent_jack_gmod_ezherocket",{parts=50,explosives=50,propellant=100},1},
+			["EZ HEAT Rocket"]={"ent_jack_gmod_ezheatrocket",{parts=50,explosives=50,propellant=100},1},
+			["EZ Incendiary Bomb"]={"ent_jack_gmod_ezincendiarybomb",{parts=50,explosives=10,fuel=200,chemicals=20},1},
+			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=400,explosives=1200},1},
 			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
 			["EZ Micro Nuclear Bomb"]={"ent_jack_gmod_eznuke",{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
+			["EZ Mini Naval Mine"]={"ent_jack_gmod_eznavalmine",{parts=150,explosives=200},1},
+			["EZ Nano Nuclear Bomb"]={"ent_jack_gmod_eznuke_small",{parts=100,advparts=20,explosives=150,fissilematerial=5},1},
 			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
-			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20}},
-			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20}},
-			["EZ Thermonuclear Bomb"]={"ent_jack_gmod_eznuke_big",{parts=400,advparts=100,explosives=400,fissilematerial=20},1.5},
+			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20},1},
+			["EZ Small Bomb"]={"ent_jack_gmod_ezsmallbomb",{parts=150,explosives=150},1},
+			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20},1},
+			["EZ Thermobaric Bomb"]={"ent_jack_gmod_ezthermobaricbomb",{parts=100,explosives=20,propellant=300,chemicals=10},1},
+			["EZ Thermonuclear Bomb"]={"ent_jack_gmod_eznuke_big",{parts=400,advparts=100,explosives=600,fissilematerial=20},1.5},
+			["EZ Vehicle Mine"]={"ent_jack_gmod_ezatmine",{parts=40,explosives=100},.75},
 			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
 			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
 		},
@@ -316,7 +327,7 @@ function JMod_InitGlobalConfig()
 			["EZ Sticky Bomb"]={"ent_jack_gmod_ezstickynade",{parts=10,explosives=10,chemicals=10},"Weapons"},
 			["EZ TNT"]={"ent_jack_gmod_eztnt",{parts=20,explosives=60},"Weapons"},
 			["EZ Thermal Goggles"]={"ent_jack_gmod_ezarmor_thermals",{parts=30,advparts=20,power=20},"Apparel"},
-			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=180},"Weapons"}
+			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=150},"Weapons"}
 		}
 	}
 	local FileContents=file.Read("jmod_config.txt")
