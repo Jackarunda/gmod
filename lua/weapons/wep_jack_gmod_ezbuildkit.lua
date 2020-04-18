@@ -51,6 +51,8 @@ SWEP.WElements={
 SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
 
+local PackageBlacklist={"func_"}
+
 function SWEP:Initialize()
 	self:SetHoldType("fist")
 	self:SCKInitialize()
@@ -66,7 +68,7 @@ function SWEP:Initialize()
 			{"(action) Package Object","package",{parts=25},1}
 		}
 		for name,info in pairs(JMOD_CONFIG.Blueprints)do
-			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1})
+			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4]})
 		end
 	end
 end
@@ -216,6 +218,9 @@ function SWEP:GetPackagableObject()
 			if(v.Type~="NoCollide")then Constrained=true;break end
 		end
 		if(Constrained)then self:Msg("object is constrained") return nil end
+		for k,v in pairs(PackageBlacklist)do
+			if(string.find(Ent:GetClass(),v))then self:Msg("can't package this") return nil end
+		end
 		return Ent
 	end
 	return nil
@@ -546,7 +551,7 @@ function SWEP:Think()
 	else
 		self:SetHoldType("fist")
 	end
-	if(self.NextDeWeldProgress<Time)then
+	if(self.NextDeWeldProgress<Time and SERVER)then
 		self.NextDeWeldProgress=Time+.25
 		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity

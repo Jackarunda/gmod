@@ -37,7 +37,7 @@ if(SERVER)then
 	resource.AddWorkshop("1919694756")
 end
 ---
-function JMod_InitGlobalConfig()
+function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
 		Version=23,
@@ -248,28 +248,28 @@ function JMod_InitGlobalConfig()
 			RestrictedPackagesAllowed=true
 		},
 		Blueprints={
-			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2},
-			["EZ Big Bomb"]={"ent_jack_gmod_ezbigbomb",{parts=200,explosives=600},1.5},
-			["EZ Bomb"]={"ent_jack_gmod_ezbomb",{parts=150,explosives=300},1},
-			["EZ Cluster Bomb"]={"ent_jack_gmod_ezclusterbomb",{parts=150,explosives=150},1},
-			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1},
-			["EZ HE Rocket"]={"ent_jack_gmod_ezherocket",{parts=50,explosives=50,propellant=100},1},
-			["EZ HEAT Rocket"]={"ent_jack_gmod_ezheatrocket",{parts=50,explosives=50,propellant=100},1},
-			["EZ Incendiary Bomb"]={"ent_jack_gmod_ezincendiarybomb",{parts=50,explosives=10,fuel=200,chemicals=20},1},
-			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=400,explosives=1200},1},
-			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5},
-			["EZ Micro Nuclear Bomb"]={"ent_jack_gmod_eznuke",{parts=300,advparts=40,explosives=300,fissilematerial=10},1},
-			["EZ Mini Naval Mine"]={"ent_jack_gmod_eznavalmine",{parts=150,explosives=200},1},
-			["EZ Nano Nuclear Bomb"]={"ent_jack_gmod_eznuke_small",{parts=100,advparts=20,explosives=150,fissilematerial=5},1},
-			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5},
-			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20},1},
-			["EZ Small Bomb"]={"ent_jack_gmod_ezsmallbomb",{parts=150,explosives=150},1},
-			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20},1},
-			["EZ Thermobaric Bomb"]={"ent_jack_gmod_ezthermobaricbomb",{parts=100,explosives=20,propellant=300,chemicals=10},1},
-			["EZ Thermonuclear Bomb"]={"ent_jack_gmod_eznuke_big",{parts=400,advparts=100,explosives=600,fissilematerial=20},1.5},
-			["EZ Vehicle Mine"]={"ent_jack_gmod_ezatmine",{parts=40,explosives=100},.75},
-			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5},
-			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2}
+			["EZ Automated Field Hospital"]={"ent_jack_gmod_ezfieldhospital",{parts=400,power=100,advparts=80,medsupplies=50},2,"Machines"},
+			["EZ Big Bomb"]={"ent_jack_gmod_ezbigbomb",{parts=200,explosives=600},1.5,"Explosives"},
+			["EZ Bomb"]={"ent_jack_gmod_ezbomb",{parts=150,explosives=300},1,"Explosives"},
+			["EZ Cluster Bomb"]={"ent_jack_gmod_ezclusterbomb",{parts=150,explosives=150},1,"Explosives"},
+			["EZ General Purpose Crate"]={"ent_jack_gmod_ezcrate_uni",{parts=50},1,"Other"},
+			["EZ HE Rocket"]={"ent_jack_gmod_ezherocket",{parts=50,explosives=50,propellant=100},1,"Explosives"},
+			["EZ HEAT Rocket"]={"ent_jack_gmod_ezheatrocket",{parts=50,explosives=50,propellant=100},1,"Explosives"},
+			["EZ Incendiary Bomb"]={"ent_jack_gmod_ezincendiarybomb",{parts=50,explosives=10,fuel=200,chemicals=20},1,"Explosives"},
+			["EZ Mega Bomb"]={"ent_jack_gmod_ezmoab",{parts=400,explosives=1200},1,"Explosives"},
+			["EZ Micro Black Hole Generator"]={"ent_jack_gmod_ezmbhg",{parts=300,advparts=120,power=600,antimatter=10},1.5,"Machines"},
+			["EZ Micro Nuclear Bomb"]={"ent_jack_gmod_eznuke",{parts=300,advparts=40,explosives=300,fissilematerial=10},1,"Explosives"},
+			["EZ Mini Naval Mine"]={"ent_jack_gmod_eznavalmine",{parts=150,explosives=200},1,"Explosives"},
+			["EZ Nano Nuclear Bomb"]={"ent_jack_gmod_eznuke_small",{parts=100,advparts=20,explosives=150,fissilematerial=5},1,"Explosives"},
+			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5,"Other"},
+			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20},1,"Machines"},
+			["EZ Small Bomb"]={"ent_jack_gmod_ezsmallbomb",{parts=150,explosives=150},1,"Explosives"},
+			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20},1,"Machines"},
+			["EZ Thermobaric Bomb"]={"ent_jack_gmod_ezthermobaricbomb",{parts=100,explosives=20,propellant=300,chemicals=10},1,"Explosives"},
+			["EZ Thermonuclear Bomb"]={"ent_jack_gmod_eznuke_big",{parts=400,advparts=100,explosives=600,fissilematerial=20},1.5,"Explosives"},
+			["EZ Vehicle Mine"]={"ent_jack_gmod_ezatmine",{parts=40,explosives=100},.75,"Explosives"},
+			["EZ Workbench"]={"ent_jack_gmod_ezworkbench",{parts=500,advparts=40,power=100,gas=100},1.5,"Machines"},
+			["HL2 Buggy"]={"FUNC spawnHL2buggy",{parts=500,power=50,advparts=10,fuel=300,ammo=600},2,"Other"}
 		},
 		Recipes={
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5},"Resources"},
@@ -341,7 +341,7 @@ function JMod_InitGlobalConfig()
 			end
 		end
 	end
-	if not(JMOD_CONFIG)then
+	if((not(JMOD_CONFIG))or(forceNew))then
 		JMOD_CONFIG=NewConfig
 		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
 	end
@@ -2049,6 +2049,12 @@ function JMod_Hint(ply,...)
 		end
 	end
 end
+if(SERVER)then
+	concommand.Add("jmod_resethints",function(ply,cmd,args)
+		ply.JModHintsGiven={}
+		print("hints for "..ply:Nick().." reset")
+	end)
+end
 function JMod_PlayersCanComm(listener,talker)
 	if(listener==talker)then return true end
 	if(engine.ActiveGamemode()=="sandbox")then
@@ -2057,13 +2063,6 @@ function JMod_PlayersCanComm(listener,talker)
 		if((talker.JModFriends)and(table.HasValue(talker.JModFriends,listener)))then return true end
 		return listener:Team()==talker:Team()
 	end
-end
-if(SERVER)then
-	concommand.Add("JMOD_SERVER_DEBUG",function(ply,cmd,args)
-		--local Pos=ply:GetEyeTrace().HitPos+Vector(0,0,100)
-		--ParticleEffect("fatman_main",Pos,Angle(0,0,0))
-		--fatman_air
-	end)
 end
 --
 hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)

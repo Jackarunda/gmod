@@ -901,6 +901,48 @@ if(CLIENT)then
 			Frame:Close()
 		end
 	end)
+	local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+		parent:Clear()
+		local W,H=parent:GetWide(),parent:GetTall()
+		local Scroll=vgui.Create("DScrollPanel",parent)
+		Scroll:SetSize(W-15,H-10)
+		Scroll:SetPos(10,10)
+		---
+		local Y=0
+		for k,itemInfo in pairs(recipes)do
+			local Butt=Scroll:Add("DButton")
+			Butt:SetSize(W-35,25)
+			Butt:SetPos(0,Y)
+			Butt:SetText("")
+			local reqs=itemInfo[2]
+			if(type(reqs)=="string")then reqs=itemInfo[3] end
+			local canMake=builder:HaveResourcesToPerformTask(reqs)
+			function Butt:Paint(w,h)
+				surface.SetDrawColor(50,50,50,100)
+				surface.DrawRect(0,0,w,h)
+				local msg=k..": "
+				if(tonumber(k))then msg=itemInfo[1]..": " end
+				for nam,amt in pairs(reqs)do
+					msg=msg..amt.." "..nam..", "
+				end
+				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			end
+			function Butt:DoClick()
+				if(typ=="workbench")then
+					net.Start("JMod_EZworkbench")
+					net.WriteEntity(builder)
+					net.WriteString(k)
+					net.SendToServer()
+				elseif(typ=="buildkit")then
+					net.Start("JMod_EZbuildKit")
+					net.WriteInt(k,8)
+					net.SendToServer()
+				end
+				motherFrame:Close()
+			end
+			Y=Y+30
+		end
+	end
 	net.Receive("JMod_EZbuildKit",function()
 		local Buildables=net.ReadTable()
 		local Kit=net.ReadEntity()
@@ -908,7 +950,7 @@ if(CLIENT)then
 		local resTbl = Kit:CountResourcesInRange()
 		
 		local motherFrame = vgui.Create("DFrame")
-		motherFrame:SetSize(430, 340)
+		motherFrame:SetSize(620, 310)
 		motherFrame:SetVisible(true)
 		motherFrame:SetDraggable(true)
 		motherFrame:ShowCloseButton(true)
@@ -922,50 +964,52 @@ if(CLIENT)then
 			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 		end
 		
-		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),300,300,LocalPlayer()
-		Frame:SetPos(120,30)
-		Frame:SetSize(W,H)
+		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
+		Frame:SetPos(110,30)
+		Frame:SetSize(W,H-30)
 		Frame.OnClose=function()
 			if resFrame then resFrame:Close() end
 			if motherFrame then motherFrame:Close() end
-		end
-		function Frame:OnKeyCodePressed(key)
-			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
 		end
 		function Frame:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
 		end
-		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H-15)
-		Scroll:SetPos(10,10)
-		---
-		local Y=0
-		for k,itemInfo in pairs(Buildables)do
-			PrintTable(itemInfo)
-			local Butt=Scroll:Add("DButton")
-			Butt:SetSize(W-35,25)
-			Butt:SetPos(0,Y)
-			Butt:SetText("")
-			local Wep=LocalPlayer():GetActiveWeapon()
-			local canMake = Wep:HaveResourcesToPerformTask(itemInfo[3])
-			function Butt:Paint(w,h)
-				surface.SetDrawColor(50,50,50,100)
-				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(itemInfo[1],"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			end
-			function Butt:DoClick()
-				net.Start("JMod_EZbuildKit")
-				net.WriteInt(k,8)
-				net.SendToServer()
-				motherFrame:Close()
-			end
-			Y=Y+30
+		local Categories={}
+		for k,v in pairs(Buildables)do
+			local Category=v[5] or "Other"
+			Categories[Category]=Categories[Category] or {}
+			Categories[Category][k]=v
 		end
-		
+		local X,ActiveTab=10,table.GetKeys(Categories)[1]
+		local TabPanel=vgui.Create("DPanel",Frame)
+		TabPanel:SetPos(10,30)
+		TabPanel:SetSize(W-20,H-70)
+		function TabPanel:Paint(w,h)
+			surface.SetDrawColor(0,0,0,100)
+			surface.DrawRect(0,0,w,h)
+		end
+		PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame)
+		for k,cat in pairs(Categories)do
+			local TabBtn=vgui.Create("DButton",Frame)
+			TabBtn:SetPos(X,10)
+			TabBtn:SetSize(70,20)
+			TabBtn:SetText("")
+			TabBtn.Category=k
+			function TabBtn:Paint(x,y)
+				surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
+				surface.DrawRect(0,0,x,y)
+				draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			end
+			function TabBtn:DoClick()
+				ActiveTab=self.Category
+				PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"buildkit")
+			end
+			X=X+75
+		end
 		-- Resource display
 		local resFrame = vgui.Create("DPanel", motherFrame)
-		resFrame:SetSize(105,300)
+		resFrame:SetSize(95, 270)
 		resFrame:SetPos(10,30)
 		function resFrame:Paint(w,h)
 			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
@@ -973,7 +1017,7 @@ if(CLIENT)then
 			surface.DrawRect(0,0,w,h)
 		end
 		local resLayout = vgui.Create("DListLayout", resFrame)
-		resLayout:SetPos(15, 25)
+		resLayout:SetPos(5, 25)
 		resLayout:SetSize(90, 270)
 		
 		for typ, amt in pairs(resTbl) do
@@ -982,41 +1026,7 @@ if(CLIENT)then
 			label:SetContentAlignment(4)
 			resLayout:Add(label)
 		end
-		
 	end)
-	local function PopulateRecipes(parent,recipes,bench,motherFrame)
-		parent:Clear()
-		local W,H=parent:GetWide(),parent:GetTall()
-		local Scroll=vgui.Create("DScrollPanel",parent)
-		Scroll:SetSize(W-15,H-10)
-		Scroll:SetPos(10,10)
-		---
-		local Y=0
-		for k,itemInfo in pairs(recipes)do
-			local Butt=Scroll:Add("DButton")
-			Butt:SetSize(W-35,25)
-			Butt:SetPos(0,Y)
-			Butt:SetText("")
-			local canMake = bench:HaveResourcesToPerformTask(itemInfo[2])
-			function Butt:Paint(w,h)
-				surface.SetDrawColor(50,50,50,100)
-				surface.DrawRect(0,0,w,h)
-				local msg=k..": "
-				for nam,amt in pairs(itemInfo[2])do
-					msg=msg..amt.." "..nam..", "
-				end
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			end
-			function Butt:DoClick()
-				net.Start("JMod_EZworkbench")
-				net.WriteEntity(bench)
-				net.WriteString(k)
-				net.SendToServer()
-				motherFrame:Close()
-			end
-			Y=Y+30
-		end
-	end
 	net.Receive("JMod_EZworkbench",function()
 		local Bench=net.ReadEntity()
 		local Buildables=net.ReadTable()
@@ -1077,7 +1087,7 @@ if(CLIENT)then
 			end
 			function TabBtn:DoClick()
 				ActiveTab=self.Category
-				PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame)
+				PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 			end
 			X=X+75
 		end
@@ -1100,7 +1110,6 @@ if(CLIENT)then
 			label:SetContentAlignment(4)
 			resLayout:Add(label)
 		end
-		
 	end)
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)

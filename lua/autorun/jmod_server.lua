@@ -1628,6 +1628,10 @@ if(SERVER)then
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 		JMod_InitGlobalConfig()
 	end)
+	concommand.Add("jmod_resetconfig",function(ply)
+		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
+		JMod_InitGlobalConfig(true)
+	end)
 	local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
 	hook.Add("Think","JMOD_SERVER_THINK",function()
 		local Time=CurTime()
