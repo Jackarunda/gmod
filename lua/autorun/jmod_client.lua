@@ -1631,6 +1631,7 @@ if(CLIENT)then
 		end
 	end)
 	hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply)
+		if not(IsValid(ply))then return end
 		if not(ply:Alive())then return end
 		if not(LocalPlayer():Alive())then return end
 		if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
