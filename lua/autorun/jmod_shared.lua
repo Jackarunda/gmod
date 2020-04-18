@@ -40,7 +40,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=23,
+		Version=24,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -2147,3 +2147,5 @@ muzzleflash_m79
 -- check armor headgear compat with act3, cull models that are too close to the camera
 -- models/thedoctor/mani/dave_the_dummy_on_stand_phys.mdl damage reading mannequin
 -- the Mk.8Z
+-- nuclear radiation hint
+-- missing bomb nose tex for small bomb
