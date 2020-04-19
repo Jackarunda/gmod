@@ -68,6 +68,7 @@ function JMod_InitGlobalConfig(forceNew)
 		NukeRangeMult=1,
 		NukePowerMult=1,
 		NuclearRadiationMult=1,
+		NuclearRadiationSickness=true,
 		FragExplosions=true,
 		FoodSpecs={
 			DigestSpeed=1,
@@ -2017,6 +2018,7 @@ local Hints={
 	["mininade"]="mininades can be stuck to larger explosives to trigger them",
 	["modify"]="use the build kit to modify",
 	["powder keg"]="ALT+E to open and pour a line of black powder",
+	["radsickness"]="taking damage from radiation sickness, decontaminate in field hospital",
 	["remote det"]="chat *trigger* \n or concommand jmod_ez_trigger",
 	["slam stick"]="hold E on SLAM then release E to stick SLAM",
 	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
@@ -2147,5 +2149,3 @@ muzzleflash_m79
 -- check armor headgear compat with act3, cull models that are too close to the camera
 -- models/thedoctor/mani/dave_the_dummy_on_stand_phys.mdl damage reading mannequin
 -- the Mk.8Z
--- nuclear radiation hint
--- missing bomb nose tex for small bomb

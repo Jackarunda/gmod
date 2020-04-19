@@ -77,7 +77,7 @@ if(SERVER)then
 						end)
 						---
 						local DmgTaken=Helf-obj:Health()
-						if(DmgTaken>0)then
+						if((DmgTaken>0)and(JMOD_CONFIG.NuclearRadiationSickness))then
 							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
 						end
 					else
