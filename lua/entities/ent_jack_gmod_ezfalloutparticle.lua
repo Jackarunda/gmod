@@ -114,9 +114,10 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--self:SetModelScale(10)
+		self.DebugShow=LocalPlayer().EZshowGasParticles or false
+		if(self.DebugShow)then self:SetModelScale(10) end
 	end
 	function ENT:DrawTranslucent()
-		--self:DrawModel()
+		if(self.DebugShow)then self:DrawModel() end
 	end
 end

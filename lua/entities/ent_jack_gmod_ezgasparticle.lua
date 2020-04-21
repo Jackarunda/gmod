@@ -108,9 +108,13 @@ elseif(CLIENT)then
 			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
 		end)
 		self.NextVisCheck=CurTime()+6
+		self.DebugShow=LocalPlayer().EZshowGasParticles
+		if(self.DebugShow)then self:SetModelScale(2) end
 	end
 	function ENT:DrawTranslucent()
-		--self:DrawModel()
+		if(self.DebugShow)then
+			self:DrawModel()
+		end
 		local Time=CurTime()
 		if(self.NextVisCheck<Time)then
 			self.NextVisCheck=Time+1

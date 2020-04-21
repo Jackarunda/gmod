@@ -1645,6 +1645,10 @@ if(CLIENT)then
 			CommNoise()
 		end
 	end)
+	concommand.Add("jmod_showgasparticles",function(ply,cmd,args)
+		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
+		ply.EZshowGasParticles=true
+	end)
 end
 --[[
 ValveBiped.Bip01_Pelvis

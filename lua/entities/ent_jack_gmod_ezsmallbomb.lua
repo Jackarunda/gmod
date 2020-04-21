@@ -86,7 +86,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=100)then
+		if(dmginfo:GetDamage()>=110)then
 			if(math.random(1,20)==1)then
 				self:Break()
 			elseif(dmginfo:IsDamageType(DMG_BLAST))then

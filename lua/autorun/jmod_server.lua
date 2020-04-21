@@ -2546,8 +2546,9 @@ if(SERVER)then
 			local Class=ent:GetClass()
 			if((self.WhitelistedNPCs)and(table.HasValue(self.WhitelistedNPCs,Class)))then return true end
 			if((self.BlacklistedNPCs)and(table.HasValue(self.BlacklistedNPCs,Class)))then return false end
-			if not(IsValid(self.Owner))then return ent:Health()>0 end
+			if not(IsValid(self.Owner))then jprint("B") return ent:Health()>0 end
 			if((ent.Disposition)and(ent:Disposition(self.Owner)==D_HT)and(ent.GetMaxHealth))then
+				jprint("A")
 				if(vehiclesOnly)then
 					return ent:GetMaxHealth()>100
 				else

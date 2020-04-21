@@ -2149,3 +2149,8 @@ muzzleflash_m79
 -- check armor headgear compat with act3, cull models that are too close to the camera
 -- models/thedoctor/mani/dave_the_dummy_on_stand_phys.mdl damage reading mannequin
 -- the Mk.8Z
+-- armor refactor and radsuit
+-- wiremod support
+-- sentries shoot dead things
+-- moab drogue chute
+-- command to make gas and fallout visible
