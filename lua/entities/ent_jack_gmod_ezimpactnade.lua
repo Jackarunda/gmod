@@ -33,7 +33,7 @@ if(SERVER)then
 	end
 	
 	function ENT:PhysicsCollide(data,physobj)
-		if data.DeltaTime>0.2 and data.Speed>200 and self:GetState() == JMOD_EZ_STATE_ARMED then
+		if data.DeltaTime>0.2 and data.Speed>100 and self:GetState() == JMOD_EZ_STATE_ARMED then
 			self:Detonate()
 		else
 			BaseClass.PhysicsCollide(self, data, physobj)

@@ -1,4 +1,4 @@
-local Hints={
+JMod_Hints = {
 	["afh"]="E to enter and get healed",
 	["airburst det"]="detonates in midair automatically",
 	["ammobox"]="ALT+E to refill ammo of any weapon",
@@ -56,30 +56,35 @@ local Hints={
 	["water det"]="bomb must be in water to detonate"
 }
 
--- TODO why is this on shared?
-function JMod_Hint(ply,...)
-	if(CLIENT)then return end
-	if not(JMOD_CONFIG.Hints)then return end
-	local HintKeys={...}
-	ply.NextJModHint=ply.NextJModHint or 0
-	ply.JModHintsGiven=ply.JModHintsGiven or {}
-	local Time=CurTime()
-	if(ply.NextJModHint>Time)then return end
-	for k,key in pairs(HintKeys)do
-		if not(table.HasValue(ply.JModHintsGiven,key))then
-			table.insert(ply.JModHintsGiven,key)
-			ply.NextJModHint=Time+1
-			net.Start("JMod_Hint")
-			net.WriteString(Hints[key])
-			net.Send(ply)
-			break
-		end
-	end
-end
-
-if(SERVER)then
-	concommand.Add("jmod_resethints",function(ply,cmd,args)
-		ply.JModHintsGiven={}
-		print("hints for "..ply:Nick().." reset")
-	end)
-end
+JMod_L4DHints = {
+    -- Generic instructions
+    ["pickup"] = {Type = "key_E", Text = "Use to pick up small items"},
+    ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
+    ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm"},
+    ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate"},
+    ["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket"},
+    ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
+    
+    -- Entity mechanics
+    ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
+    ["gas spread"] = {Type = "skull", Text = "Gas spreads around, and is more lethal in confined spaces"},
+    ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas"},
+    ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
+        
+    -- Entities
+    ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 5},
+    ["ent_jack_gmod_ezdetpack"] = {Type = "info", Text = "Detpacks are remote controlled sticky explosives", Time = 5},    
+    ["ent_jack_gmod_ezdynamite"] = {Type = "info", Text = "Dynamites are throwable explosives with a 7-second fuse", Time = 5},
+    ["ent_jack_gmod_ezflashbang"] = {Type = "info", Text = "Flashbangs blind players after a 2-second timer", Time = 5},
+    ["ent_jack_gmod_ezfougasse"] = {Type = "info", Text = "Fougasse Mines spray napalm when hostiles walk in front of it", Time = 5},
+    ["ent_jack_gmod_ezfragnade"] = {Type = "info", Text = "Frag Grenades explode into shrapnel after a 5-second timer", Time = 5},
+    ["ent_jack_gmod_ezgasnade"] = {Type = "info", Text = "Gas Grenades spread poison gas after a 5-second timer", Time = 5},
+    ["ent_jack_gmod_ezsticknadebundle"] = {Type = "info", Text = "Bundled Stick Grenades, does a lot of damage but can't go very far", Time = 5},
+    ["ent_jack_gmod_ezherocket"] = {Type = "info", Text = "HE Rockets accelerate and explodes in a small radius", Time = 5},
+    ["ent_jack_gmod_ezheatrocket"] = {Type = "info", Text = "HEAT Rockets accelerate and does a lot of damage in a small cone", Time = 5},
+    ["ent_jack_gmod_ezimpactnade"] = {Type = "info", Text = "Impact Grenades cause an explosion on contact", Time = 5},
+    ["ent_jack_gmod_ezincendiarybomb"] = {Type = "info", Text = "Incendiary Bombs spread napalm when landing", Time = 5},
+    ["ent_jack_gmod_ezfirenade"] = {Type = "info", Text = "Incendiary Grenades spread napalm after a 5-second timer", Time = 5},
+    ["ent_jack_gmod_ezlandmine"] = {Type = "info", Text = "Land Mines detonate when hostiles approach them", Time = 5},
+    ["ent_jack_gmod_eznuke"] = {Type = "info", Text = "Micro Nukes explodes in a huge radius and spreads radiation", Time = 5},
+}
