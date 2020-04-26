@@ -74,8 +74,8 @@ if(SERVER)then
 			local Pos=self:GetPos()
 			sound.Play("Wood_Crate.Break", Pos)
 			sound.Play("Wood_Box.Break", Pos)
-			for class, num in pairs(self.Items) do
-				for i=1, num do
+			for class, tbl in pairs(self.Items) do
+				for i=1, tbl[1] do
 					local ent=ents.Create(class)
 					ent:SetPos(self:GetPos()+VectorRand()*10)
 					ent:SetAngles(AngleRand())
