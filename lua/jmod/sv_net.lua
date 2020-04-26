@@ -10,6 +10,8 @@ util.AddNetworkString("JMod_PlayerSpawn")
 util.AddNetworkString("JMod_SignalNade")
 util.AddNetworkString("JMod_ModifyMachine")
 util.AddNetworkString("JMod_NuclearBlast")
+util.AddNetworkString("JMod_ArmorColor")
+util.AddNetworkString("JMod_EZarmorSync")
 
 net.Receive("JMod_Friends",function(length,ply)
     local List,Good=net.ReadTable(),true

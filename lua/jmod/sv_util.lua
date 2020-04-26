@@ -11,6 +11,7 @@ function JMod_AeroDrag(ent,forward,mult) -- this causes an object to rotate to p
     Phys:ApplyForceOffset(-Vel*Mass/6*mult,Pos-forward)
     Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*Mass/1000)
 end
+
 function JMod_AeroGuide(ent,forward,targetPos,turnMult,thrustMult,angleDragMult,spdReq) -- this causes an object to rotate to point and fly to a point you give it
     --if(constraint.HasConstraints(ent))then return end
     --if(ent:IsPlayerHolding())then return end
@@ -28,6 +29,7 @@ function JMod_AeroGuide(ent,forward,targetPos,turnMult,thrustMult,angleDragMult,
     --- todo: fuck
     Phys:ApplyForceCenter(forward*20000*thrustMult) -- todo: make this function fucking work ARGH
 end
+
 function JMod_EZ_Toggle_Mask(ply)
     if not(ply.EZarmor)then return end
     if not(ply.EZarmor.slots["Face"])then return end
@@ -40,6 +42,7 @@ function JMod_EZ_Toggle_Mask(ply)
     end
     JModEZarmorSync(ply)
 end
+
 function JMod_EZ_Toggle_Headset(ply)
     if not(ply.EZarmor)then return end
     if not(ply.EZarmor.slots["Ears"])then return end
@@ -48,6 +51,7 @@ function JMod_EZ_Toggle_Headset(ply)
     ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
     JModEZarmorSync(ply)
 end
+
 function JMod_EZ_WeaponLaunch(ply)
     if not((IsValid(ply))and(ply:Alive()))then return end
     local Weps={}
@@ -71,6 +75,7 @@ function JMod_EZ_WeaponLaunch(ply)
         end)
     end
 end
+
 function JMod_EZ_BombDrop(ply)
     if not((IsValid(ply))and(ply:Alive()))then return end
     local Boms={}
@@ -98,6 +103,7 @@ function JMod_EZ_BombDrop(ply)
         end)
     end
 end
+
 -- copied from Homicide
 function JMod_BlastThatDoor(ent,vel)
     local Moddel,Pozishun,Ayngul,Muteeriul,Skin=ent:GetModel(),ent:GetPos(),ent:GetAngles(),ent:GetMaterial(),ent:GetSkin()
@@ -125,6 +131,7 @@ function JMod_BlastThatDoor(ent,vel)
         end)
     end
 end
+
 function JMod_FragSplosion(shooter,origin,fragNum,fragDmg,fragMaxDist,attacker,direction,spread,zReduction)
     -- fragmentation/shrapnel simulation
     local Eff=EffectData()
@@ -176,6 +183,7 @@ function JMod_FragSplosion(shooter,origin,fragNum,fragDmg,fragMaxDist,attacker,d
         end)
     end
 end
+
 function JMod_PackageObject(ent,pos,ang,ply)
     if(pos)then
         ent=ents.Create(ent)
@@ -197,6 +205,7 @@ function JMod_PackageObject(ent,pos,ang,ply)
     Bocks:Spawn()
     Bocks:Activate()
 end
+
 function JMod_SimpleForceExplosion(pos,power,range,sourceEnt)
     for k,v in pairs(ents.FindInSphere(pos,range))do
         if(not(IsValid(sourceEnt))or(v~=sourceEnt))then
@@ -217,6 +226,7 @@ function JMod_SimpleForceExplosion(pos,power,range,sourceEnt)
         end
     end
 end
+
 function JMod_DecalSplosion(pos,decalName,range,num,sourceEnt)
     for i=1,num do
         local Dir=VectorRand()*math.random(1,range)
@@ -227,6 +237,7 @@ function JMod_DecalSplosion(pos,decalName,range,num,sourceEnt)
         end
     end
 end
+
 function JMod_BlastDamageIgnoreWorld(pos,att,infl,dmg,range)
     for k,v in pairs(ents.FindInSphere(pos,range))do
         local EntPos=v:GetPos()
@@ -243,6 +254,7 @@ function JMod_BlastDamageIgnoreWorld(pos,att,infl,dmg,range)
         v:TakeDamageInfo(Dmg)
     end
 end
+
 function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
     local origPower=power
     power=power*JMOD_CONFIG.ExplosionPropDestroyPower
@@ -277,6 +289,7 @@ function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
         end
     end
 end
+
 function JMod_BlastDoors(blaster,pos,power,range,ignoreVisChecks)
     for k,door in pairs(ents.FindInSphere(pos,40*power*(range or 1)))do
         if(JMod_IsDoor(door))then
@@ -291,6 +304,7 @@ function JMod_BlastDoors(blaster,pos,power,range,ignoreVisChecks)
         end
     end
 end
+
 function JMod_Sploom(attacker,pos,mag)
     local Sploom=ents.Create("env_explosion")
     Sploom:SetPos(pos)
@@ -300,6 +314,7 @@ function JMod_Sploom(attacker,pos,mag)
     Sploom:Activate()
     Sploom:Fire("explode","",0)
 end
+
 local SurfaceHardness={
     [MAT_METAL]=.95,[MAT_COMPUTER]=.95,[MAT_VENT]=.95,[MAT_GRATE]=.95,[MAT_FLESH]=.5,[MAT_ALIENFLESH]=.3,
     [MAT_SAND]=.1,[MAT_DIRT]=.3,[MAT_GRASS]=.2,[74]=.1,[85]=.2,[MAT_WOOD]=.5,[MAT_FOLIAGE]=.5,
@@ -449,12 +464,14 @@ function JMod_ShouldAttack(self,ent,vehiclesOnly)
     end
     return false
 end
+
 function JMod_EnemiesNearPoint(ent,pos,range,vehiclesOnly)
     for k,v in pairs(ents.FindInSphere(pos,range))do
         if(JMod_ShouldAttack(ent,v,vehiclesOnly))then return true end
     end
     return false
 end
+
 function JMod_EMP(pos,range)
     for k,ent in pairs(ents.FindInSphere(pos,range))do
         if((ent.SetState)and(ent.SetElectricity)and(ent.GetState)and(ent:GetState()>0))then
@@ -462,6 +479,7 @@ function JMod_EMP(pos,range)
         end
     end
 end
+
 function JMod_Colorify(ent)
     if(IsValid(ent.Owner))then
         if(engine.ActiveGamemode()=="sandbox")then
@@ -476,6 +494,7 @@ function JMod_Colorify(ent)
         end
     end
 end
+
 local TriggerKeys={IN_ATTACK,IN_USE,IN_ATTACK2}
 function JMod_ThrowablePickup(playa,item,hardstr,softstr)
     playa:PickupObject(item)
