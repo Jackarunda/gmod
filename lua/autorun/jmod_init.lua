@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
---[[
+--[[ -- Old include lines if you want it
 local sv = {
     "jmod_server",
     "jmod_server_armor",
