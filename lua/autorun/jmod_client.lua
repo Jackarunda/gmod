@@ -1,12 +1,15 @@
-AddCSLuaFile()
 include("jmod_shared.lua")
+include("jmod_shared_armor.lua")
+include("jmod_client_armor.lua")
+include("jmod_client_gui.lua")
+include("jmod_client_hud.lua")
 if(CLIENT)then
+	JMOD_NUKEFLASH_ENDTIME=0
+	JMOD_NUKEFLASH_POS=nil
+	JMOD_NUKEFLASH_RANGE=0
+	JMOD_NUKEFLASH_INTENSITY=1
+	JMOD_NUKEFLASH_SMOKE_ENDTIME=0
 	JMOD_WIND=JMOD_WIND or Vector(0,0,0)
-	local NUKEFLASH_ENDTIME=0
-	local NUKEFLASH_POS=nil
-	local NUKEFLASH_RANGE=0
-	local NUKEFLASH_INTENSITY=1
-	local NUKEFLASH_SMOKE_ENDTIME=0
 	hook.Add("Initialize","JMOD_INIT",function()
 		surface.CreateFont("JMod-Display",{
 			font="Arial",
@@ -185,121 +188,6 @@ if(CLIENT)then
 		end
 		--]]
 	end)
-	local MskSndLops={}
-	hook.Add("HUDPaintBackground","JMOD_HUDBG",function()
-		local ply,Play=LocalPlayer(),false
-		if(ply.EZarmor)then
-			local MaskType,Alive,ThirdPerson=ply.EZarmor.slots["Face"] and ply.EZarmor.slots["Face"][1],ply:Alive(),ply:ShouldDrawLocalPlayer()
-			if(MaskType)then
-				local Specs=JMod_ArmorTable["Face"][MaskType]
-				if((Specs.mskmat)and(Alive)and not(ThirdPerson)and(ply.EZarmor.maskOn))then
-					surface.SetMaterial(Specs.mskmat)
-					surface.SetDrawColor(255,255,255,255)
-					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-					surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-				end
-				Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)and(ply.EZarmor.maskOn)
-				if(Play)then
-					if not(MskSndLops[MaskType])then
-						MskSndLops[MaskType]=CreateSound(ply,Specs.sndlop)
-						MskSndLops[MaskType]:Play()
-					elseif(not(MskSndLops[MaskType]:IsPlaying()))then
-						MskSndLops[MaskType]:Play()
-					end
-				end
-			end
-		end
-		if not(Play)then
-			for k,v in pairs(MskSndLops)do
-				v:Stop()
-				MskSndLops[k]=nil
-			end
-		end
-	end)
-	local function CopyArmorTableToPlayer(ply)
-		-- make a copy of the global armor spec table, personalize it, and store it on the player
-		ply.JMod_ArmorTableCopy=table.FullCopy(JMod_ArmorTable)
-		local plyMdl=ply:GetModel()
-		if JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets and JMOD_LUA_CONFIG.ArmorOffsets[plyMdl] then
-			table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
-		end
-	end
-	local EZarmorBoneTable={
-		Torso="ValveBiped.Bip01_Spine2",
-		Head="ValveBiped.Bip01_Head1",
-		Ears="ValveBiped.Bip01_Head1",
-		LeftShoulder="ValveBiped.Bip01_L_UpperArm",
-		RightShoulder="ValveBiped.Bip01_R_UpperArm",
-		LeftForearm="ValveBiped.Bip01_L_Forearm",
-		RightForearm="ValveBiped.Bip01_R_Forearm",
-		LeftThigh="ValveBiped.Bip01_L_Thigh",
-		RightThigh="ValveBiped.Bip01_R_Thigh",
-		LeftCalf="ValveBiped.Bip01_L_Calf",
-		RightCalf="ValveBiped.Bip01_R_Calf",
-		Pelvis="ValveBiped.Bip01_Pelvis",
-		Face="ValveBiped.Bip01_Head1"
-	}
-	local function JMOD_ArmorPlayerDraw(ply)
-		if not(IsValid(ply))then return end
-		if((ply.EZarmor)and(ply.EZarmorModels))then
-			local Time=CurTime()
-			if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
-				CopyArmorTableToPlayer(ply)
-				ply.NextEZarmorTableCopy=Time+1--30
-			end
-			for slot,info in pairs(ply.EZarmor.slots)do
-				local Name,Durability,Colr,Render=info[1],info[2],info[3],true
-				if((slot=="Face")and not(ply.EZarmor.maskOn))then Render=false end
-				if((slot=="Ears")and not(ply.EZarmor.headsetOn))then Render=false end
-				local Specs,plyMdl=ply.JMod_ArmorTableCopy[slot][Name],ply:GetModel()
-				
-				if(Render)then
-					if(ply.EZarmorModels[slot])then
-						local Mdl=ply.EZarmorModels[slot]
-						local MdlName=Mdl:GetModel()
-						if(MdlName==Specs.mdl)then
-							-- render it
-							local Index=ply:LookupBone(EZarmorBoneTable[slot])
-							if(Index)then
-								local Pos,Ang=ply:GetBonePosition(Index)
-								if((Pos)and(Ang))then
-									local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
-									Pos=Pos+Right*Specs.pos.x+Forward*Specs.pos.y+Up*Specs.pos.z
-									Ang:RotateAroundAxis(Right,Specs.ang.p)
-									Ang:RotateAroundAxis(Up,Specs.ang.y)
-									Ang:RotateAroundAxis(Forward,Specs.ang.r)
-									Mdl:SetRenderOrigin(Pos)
-									Mdl:SetRenderAngles(Ang)
-									local Mat=Matrix()
-									Mat:Scale(Specs.siz)
-									Mdl:EnableMatrix("RenderMultiply",Mat)
-									local OldR,OldG,OldB=render.GetColorModulation()
-									render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
-									Mdl:DrawModel()
-									render.SetColorModulation(OldR,OldG,OldB)
-								end
-							end
-						else
-							-- remove it
-							ply.EZarmorModels[slot]:Remove()
-							ply.EZarmorModels[slot]=nil
-						end
-					else
-						-- create it
-						local Mdl=ClientsideModel(Specs.mdl)
-						Mdl:SetModel(Specs.mdl) -- what the FUCK garry
-						Mdl:SetPos(ply:GetPos())
-						Mdl:SetMaterial(Specs.mat or "")
-						Mdl:SetParent(ply)
-						Mdl:SetNoDraw(true)
-						ply.EZarmorModels[slot]=Mdl
-					end
-				end
-			end
-		end
-	end
-	hook.Add("PostPlayerDraw","JMOD_ArmorPlayerDraw",JMOD_ArmorPlayerDraw)
 	--- no u ---
 	local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
 		[ "$basetexture" ]    = "sprites/spotlight",
@@ -336,99 +224,9 @@ if(CLIENT)then
 			end
 		end
 	end)
-	local blurMat,Dynamic,MenuOpen,YesMat,NoMat=Material("pp/blurscreen"),0,false,Material("icon16/accept.png"),Material("icon16/cancel.png")
-	local function BlurBackground(panel)
-		if not((IsValid(panel))and(panel:IsVisible()))then return end
-		local layers,density,alpha=1,1,255
-		local x,y=panel:LocalToScreen(0,0)
-		surface.SetDrawColor(255,255,255,alpha)
-		surface.SetMaterial(blurMat)
-		local FrameRate,Num,Dark=1/FrameTime(),5,150
-		for i=1,Num do
-			blurMat:SetFloat("$blur",(i/layers)*density*Dynamic)
-			blurMat:Recompute()
-			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(-x,-y,ScrW(),ScrH())
-		end
-		surface.SetDrawColor(0,0,0,Dark*Dynamic)
-		surface.DrawRect(0,0,panel:GetWide(),panel:GetTall())
-		Dynamic=math.Clamp(Dynamic+(1/FrameRate)*7,0,1)
-	end
-	local function PopulateList(parent,friendList,myself,W,H)
-		parent:Clear()
-		local Y=0
-		for k,playa in pairs(player.GetAll())do
-			if(playa~=myself)then
-				local Panel=parent:Add("DPanel")
-				Panel:SetSize(W-35,20)
-				Panel:SetPos(0,Y)
-				function Panel:Paint(w,h)
-					surface.SetDrawColor(0,0,0,100)
-					surface.DrawRect(0,0,w,h)
-					draw.SimpleText(playa:Nick(),"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-				end
-				local Buttaloney=vgui.Create("DButton",Panel)
-				Buttaloney:SetPos(Panel:GetWide()-25,0)
-				Buttaloney:SetSize(20,20)
-				Buttaloney:SetText("")
-				local InLikeFlynn=table.HasValue(friendList,playa)
-				function Buttaloney:Paint(w,h)
-					surface.SetDrawColor(255,255,255,255)
-					surface.SetMaterial((InLikeFlynn and YesMat)or NoMat)
-					surface.DrawTexturedRect(2,2,16,16)
-				end
-				function Buttaloney:DoClick()
-					surface.PlaySound("garrysmod/ui_click.wav")
-					if(InLikeFlynn)then
-						table.RemoveByValue(friendList,playa)
-					else
-						table.insert(friendList,playa)
-					end
-					PopulateList(parent,friendList,myself,W,H)
-				end
-				Y=Y+25
-			end
-		end
-	end
 	net.Receive("JMod_LuaConfigSync",function()
 		JMOD_LUA_CONFIG=JMOD_LUA_CONFIG or {}
 		JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
-	end)
-	net.Receive("JMod_Friends",function()
-		local Updating=tobool(net.ReadBit())
-		if(Updating)then
-			local Playa=net.ReadEntity()
-			local FriendList=net.ReadTable()
-			Playa.JModFriends=FriendList
-			return
-		end
-		if(MenuOpen)then return end
-		MenuOpen=true
-		local Frame,W,H,Myself,FriendList=vgui.Create("DFrame"),300,400,LocalPlayer(),net.ReadTable()
-		Frame:SetPos(40,80)
-		Frame:SetSize(W,H)
-		Frame:SetTitle("Select Allies")
-		Frame:SetVisible(true)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:MakePopup()
-		Frame:Center()
-		Frame.OnClose=function()
-			MenuOpen=false
-			net.Start("JMod_Friends")
-			net.WriteTable(FriendList)
-			net.SendToServer()
-		end
-		function Frame:OnKeyCodePressed(key)
-			if((key==KEY_Q)or(key==KEY_ESCAPE))then self:Close() end
-		end
-		function Frame:Paint()
-			BlurBackground(self)
-		end
-		local Scroll=vgui.Create("DScrollPanel",Frame)
-		Scroll:SetSize(W-15,H)
-		Scroll:SetPos(10,30)
-		PopulateList(Scroll,FriendList,Myself,W,H)
 	end)
 	function JMod_MakeModel(self,mdl,mat,scale,col)
 		local Mdl=ClientsideModel(mdl)
@@ -461,433 +259,8 @@ if(CLIENT)then
 		render.SuppressEngineLighting(false)
 		render.SetBlend(1)
 	end
-	net.Receive("JMod_MineColor",function()
-		local Ent,NextColorCheck=net.ReadEntity(),0
-		if not(IsValid(Ent))then return end
-		local Frame=vgui.Create("DFrame")
-		Frame:SetSize(200,200)
-		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:SetTitle("EZ Landmine")
-		Frame:MakePopup()
-		local Picker
-		function Frame:Paint()
-			BlurBackground(self)
-			local Time=CurTime()
-			if(NextColorCheck<Time)then
-				if not(IsValid(Ent))then Frame:Close();return end
-				NextColorCheck=Time+.25
-				local Col=Picker:GetColor()
-				net.Start("JMod_MineColor")
-				net.WriteEntity(Ent)
-				net.WriteColor(Color(Col.r,Col.g,Col.b))
-				net.WriteBit(false)
-				net.SendToServer()
-			end
-		end
-		Picker=vgui.Create("DColorMixer",Frame)
-		Picker:SetPos(5,25)
-		Picker:SetSize(190,115)
-		Picker:SetAlphaBar(false)
-		Picker:SetPalette(false)
-		Picker:SetWangs(false)
-		Picker:SetColor(Ent:GetColor())
-		local Butt=vgui.Create("DButton",Frame)
-		Butt:SetPos(5,145)
-		Butt:SetSize(190,50)
-		Butt:SetText("ARM")
-		function Butt:DoClick()
-			local Col=Picker:GetColor()
-			net.Start("JMod_MineColor")
-			net.WriteEntity(Ent)
-			net.WriteColor(Color(Col.r,Col.g,Col.b))
-			net.WriteBit(true)
-			net.SendToServer()
-			Frame:Close()
-		end
-	end)
-	net.Receive("JMod_ArmorColor",function()
-		local Ent,NextColorCheck=net.ReadEntity(),0
-		if not(IsValid(Ent))then return end
-		local Frame=vgui.Create("DFrame")
-		Frame:SetSize(200,300)
-		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:SetTitle("EZ Armor")
-		Frame:MakePopup()
-		local Picker
-		function Frame:Paint()
-			BlurBackground(self)
-			local Time=CurTime()
-			if(NextColorCheck<Time)then
-				if not(IsValid(Ent))then Frame:Close();return end
-				NextColorCheck=Time+.25
-				local Col=Picker:GetColor()
-				net.Start("JMod_ArmorColor")
-				net.WriteEntity(Ent)
-				net.WriteColor(Color(Col.r,Col.g,Col.b))
-				net.WriteBit(false)
-				net.SendToServer()
-			end
-		end
-		Picker=vgui.Create("DColorMixer",Frame)
-		Picker:SetPos(5,25)
-		Picker:SetSize(190,215)
-		Picker:SetAlphaBar(false)
-		Picker:SetPalette(false)
-		Picker:SetWangs(false)
-		Picker:SetPalette(true)
-		Picker:SetColor(Ent:GetColor())
-		local Butt=vgui.Create("DButton",Frame)
-		Butt:SetPos(5,245)
-		Butt:SetSize(190,50)
-		Butt:SetText("EQUIP")
-		function Butt:DoClick()
-			local Col=Picker:GetColor()
-			net.Start("JMod_ArmorColor")
-			net.WriteEntity(Ent)
-			net.WriteColor(Color(Col.r,Col.g,Col.b))
-			net.WriteBit(true)
-			net.SendToServer()
-			Frame:Close()
-		end
-	end)
-	net.Receive("JMod_SignalNade",function()
-		local Ent,NextColorCheck=net.ReadEntity(),0
-		if not(IsValid(Ent))then return end
-		local Frame=vgui.Create("DFrame")
-		Frame:SetSize(200,300)
-		Frame:SetPos(ScrW()*.4-200,ScrH()*.5)
-		Frame:SetDraggable(true)
-		Frame:ShowCloseButton(true)
-		Frame:SetTitle("EZ Signal Grenade")
-		Frame:MakePopup()
-		local Picker
-		function Frame:Paint()
-			BlurBackground(self)
-			local Time=CurTime()
-			if(NextColorCheck<Time)then
-				if not(IsValid(Ent))then Frame:Close();return end
-				NextColorCheck=Time+.25
-				local Col=Picker:GetColor()
-				net.Start("JMod_SignalNade")
-				net.WriteEntity(Ent)
-				net.WriteColor(Color(Col.r,Col.g,Col.b))
-				net.WriteBit(false)
-				net.SendToServer()
-			end
-		end
-		Picker=vgui.Create("DColorMixer",Frame)
-		Picker:SetPos(5,25)
-		Picker:SetSize(190,215)
-		Picker:SetAlphaBar(false)
-		Picker:SetPalette(false)
-		Picker:SetWangs(false)
-		Picker:SetPalette(true)
-		Picker:SetColor(Ent:GetColor())
-		local Butt=vgui.Create("DButton",Frame)
-		Butt:SetPos(5,245)
-		Butt:SetSize(190,50)
-		Butt:SetText("ARM")
-		function Butt:DoClick()
-			local Col=Picker:GetColor()
-			net.Start("JMod_SignalNade")
-			net.WriteEntity(Ent)
-			net.WriteColor(Color(Col.r,Col.g,Col.b))
-			net.WriteBit(true)
-			net.SendToServer()
-			Frame:Close()
-		end
-	end)
-	local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
-		parent:Clear()
-		local W,H=parent:GetWide(),parent:GetTall()
-		local Scroll=vgui.Create("DScrollPanel",parent)
-		Scroll:SetSize(W-15,H-10)
-		Scroll:SetPos(10,10)
-		---
-		local Y=0
-		for k,itemInfo in pairs(recipes)do
-			local Butt=Scroll:Add("DButton")
-			Butt:SetSize(W-35,25)
-			Butt:SetPos(0,Y)
-			Butt:SetText("")
-			local reqs=itemInfo[2]
-			if(type(reqs)=="string")then reqs=itemInfo[3] end
-			local canMake=builder:HaveResourcesToPerformTask(reqs)
-			function Butt:Paint(w,h)
-				surface.SetDrawColor(50,50,50,100)
-				surface.DrawRect(0,0,w,h)
-				local msg=k..": "
-				if(tonumber(k))then msg=itemInfo[1]..": " end
-				for nam,amt in pairs(reqs)do
-					msg=msg..amt.." "..nam..", "
-				end
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			end
-			function Butt:DoClick()
-				if(typ=="workbench")then
-					net.Start("JMod_EZworkbench")
-					net.WriteEntity(builder)
-					net.WriteString(k)
-					net.SendToServer()
-				elseif(typ=="buildkit")then
-					net.Start("JMod_EZbuildKit")
-					net.WriteInt(k,8)
-					net.SendToServer()
-				end
-				motherFrame:Close()
-			end
-			Y=Y+30
-		end
-	end
-	net.Receive("JMod_EZbuildKit",function()
-		local Buildables=net.ReadTable()
-		local Kit=net.ReadEntity()
-		
-		local resTbl = Kit:CountResourcesInRange()
-		
-		local motherFrame = vgui.Create("DFrame")
-		motherFrame:SetSize(620, 310)
-		motherFrame:SetVisible(true)
-		motherFrame:SetDraggable(true)
-		motherFrame:ShowCloseButton(true)
-		motherFrame:SetTitle("Build Kit")
-		function motherFrame:Paint()
-			BlurBackground(self)
-		end
-		motherFrame:MakePopup()
-		motherFrame:Center()
-		function motherFrame:OnKeyCodePressed(key)
-			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
-		end
-		
-		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
-		Frame:SetPos(110,30)
-		Frame:SetSize(W,H-30)
-		Frame.OnClose=function()
-			if resFrame then resFrame:Close() end
-			if motherFrame then motherFrame:Close() end
-		end
-		function Frame:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		local Categories={}
-		for k,v in pairs(Buildables)do
-			local Category=v[5] or "Other"
-			Categories[Category]=Categories[Category] or {}
-			Categories[Category][k]=v
-		end
-		local X,ActiveTab=10,table.GetKeys(Categories)[1]
-		local TabPanel=vgui.Create("DPanel",Frame)
-		TabPanel:SetPos(10,30)
-		TabPanel:SetSize(W-20,H-70)
-		function TabPanel:Paint(w,h)
-			surface.SetDrawColor(0,0,0,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame)
-		for k,cat in pairs(Categories)do
-			local TabBtn=vgui.Create("DButton",Frame)
-			TabBtn:SetPos(X,10)
-			TabBtn:SetSize(70,20)
-			TabBtn:SetText("")
-			TabBtn.Category=k
-			function TabBtn:Paint(x,y)
-				surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
-				surface.DrawRect(0,0,x,y)
-				draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-			end
-			function TabBtn:DoClick()
-				ActiveTab=self.Category
-				PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"buildkit")
-			end
-			X=X+75
-		end
-		-- Resource display
-		local resFrame = vgui.Create("DPanel", motherFrame)
-		resFrame:SetSize(95, 270)
-		resFrame:SetPos(10,30)
-		function resFrame:Paint(w,h)
-			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		local resLayout = vgui.Create("DListLayout", resFrame)
-		resLayout:SetPos(5, 25)
-		resLayout:SetSize(90, 270)
-		
-		for typ, amt in pairs(resTbl) do
-			local label = vgui.Create("DLabel")
-			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
-			label:SetContentAlignment(4)
-			resLayout:Add(label)
-		end
-	end)
-	net.Receive("JMod_EZworkbench",function()
-		local Bench=net.ReadEntity()
-		local Buildables=net.ReadTable()
-		
-		local resTbl = Bench:CountResourcesInRange()
-		
-		local motherFrame = vgui.Create("DFrame")
-		motherFrame:SetSize(620, 310)
-		motherFrame:SetVisible(true)
-		motherFrame:SetDraggable(true)
-		motherFrame:ShowCloseButton(true)
-		motherFrame:SetTitle("Workbench")
-		function motherFrame:Paint()
-			BlurBackground(self)
-		end
-		motherFrame:MakePopup()
-		motherFrame:Center()
-		function motherFrame:OnKeyCodePressed(key)
-			if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
-		end
-		
-		local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
-		Frame:SetPos(110,30)
-		Frame:SetSize(W,H-30)
-		Frame.OnClose=function()
-			if resFrame then resFrame:Close() end
-			if motherFrame then motherFrame:Close() end
-		end
-		function Frame:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		local Categories={}
-		for k,v in pairs(Buildables)do
-			local Category=v[3] or "Other"
-			Categories[Category]=Categories[Category] or {}
-			Categories[Category][k]=v
-		end
-		local X,ActiveTab=10,table.GetKeys(Categories)[1]
-		local TabPanel=vgui.Create("DPanel",Frame)
-		TabPanel:SetPos(10,30)
-		TabPanel:SetSize(W-20,H-70)
-		function TabPanel:Paint(w,h)
-			surface.SetDrawColor(0,0,0,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame)
-		for k,cat in pairs(Categories)do
-			local TabBtn=vgui.Create("DButton",Frame)
-			TabBtn:SetPos(X,10)
-			TabBtn:SetSize(70,20)
-			TabBtn:SetText("")
-			TabBtn.Category=k
-			function TabBtn:Paint(x,y)
-				surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
-				surface.DrawRect(0,0,x,y)
-				draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-			end
-			function TabBtn:DoClick()
-				ActiveTab=self.Category
-				PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-			end
-			X=X+75
-		end
-		-- Resource display
-		local resFrame = vgui.Create("DPanel", motherFrame)
-		resFrame:SetSize(95, 270)
-		resFrame:SetPos(10,30)
-		function resFrame:Paint(w,h)
-			draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-		end
-		local resLayout = vgui.Create("DListLayout", resFrame)
-		resLayout:SetPos(5, 25)
-		resLayout:SetSize(90, 270)
-		
-		for typ, amt in pairs(resTbl) do
-			local label = vgui.Create("DLabel")
-			label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
-			label:SetContentAlignment(4)
-			resLayout:Add(label)
-		end
-	end)
 	net.Receive("JMod_Hint",function()
 		notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
-	end)
-	net.Receive("JMod_UniCrate",function()
-		local box=net.ReadEntity()
-		local items=net.ReadTable()
-		local frame=vgui.Create("DFrame")
-		frame:SetSize(200, 300)
-		frame:SetTitle("Storage Crate")
-		frame:Center()
-		frame:MakePopup()
-		frame.OnClose=function() frame=nil end
-		frame.Paint=function(self, w, h) BlurBackground(self) end
-		local scrollPanel=vgui.Create("DScrollPanel", frame)
-		scrollPanel:SetSize(190, 270)
-		scrollPanel:SetPos(5, 30)
-		local layout=vgui.Create("DIconLayout", scrollPanel)
-		layout:SetSize(190, 270)
-		layout:SetPos(0, 0)
-		layout:SetSpaceY(5)
-		for class, tbl in pairs(items) do
-			local sent=scripted_ents.Get(class)
-			local button=vgui.Create("DButton", layout)
-			button:SetSize(190, 25)
-			button:SetText("")
-			function button:Paint(w,h)
-				surface.SetDrawColor(50,50,50,100)
-				surface.DrawRect(0,0,w,h)
-				local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
-				draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			end
-			button.DoClick=function()
-				net.Start("JMod_UniCrate")
-					net.WriteEntity(box)
-					net.WriteString(class)
-				net.SendToServer()
-				frame:Close()
-			end
-		end
-	end)
-	net.Receive("JMod_EZtimeBomb",function()
-		local ent=net.ReadEntity()
-		local frame=vgui.Create("DFrame")
-		frame:SetSize(300,120)
-		frame:SetTitle("Time Bomb")
-		frame:SetDraggable(true)
-		frame:Center()
-		frame:MakePopup()
-		function frame:Paint()
-			BlurBackground(self)
-		end
-		local bg=vgui.Create("DPanel",frame)
-		bg:SetPos(90,30)
-		bg:SetSize(200,25)
-		function bg:Paint(w,h)
-			surface.SetDrawColor(Color(255,255,255,100))
-			surface.DrawRect(0,0,w,h)
-		end
-		local tim=vgui.Create("DNumSlider",frame)
-		tim:SetText("Set Time")
-		tim:SetSize(280,20)
-		tim:SetPos(10,30)
-		tim:SetMin(10)
-		tim:SetMax(600)
-		tim:SetValue(10)
-		tim:SetDecimals(0)
-		local apply=vgui.Create("DButton",frame)
-		apply:SetSize(100, 30)
-		apply:SetPos(100, 75)
-		apply:SetText("ARM")
-		apply.DoClick=function()
-			net.Start("JMod_EZtimeBomb")
-			net.WriteEntity(ent)
-			net.WriteInt(tim:GetValue(),16)
-			net.SendToServer()
-			frame:Close()
-		end
 	end)
 	net.Receive("JMod_EZarmorSync",function()
 		local ply=net.ReadEntity()
@@ -908,159 +281,6 @@ if(CLIENT)then
 			FRcount=0
 		end
 	end
-	local function DrawNoise(amt,alpha)
-		local W,H=ScrW(),ScrH()
-		for i=0,amt do
-			local Bright=math.random(0,255)
-			surface.SetDrawColor(Bright,Bright,Bright,alpha)
-			local X,Y=math.random(0,W),math.random(0,H)
-			surface.DrawRect(X,Y,1,1)
-		end
-	end
-	local blurMat2,Dynamic2=Material("pp/blurscreen"),0
-	local function BlurScreen()
-		local layers,density,alpha=1,.4,255
-		surface.SetDrawColor(255,255,255,alpha)
-		surface.SetMaterial(blurMat2)
-		local FrameRate,Num,Dark=1/FrameTime(),3,150
-		for i=1,Num do
-			blurMat2:SetFloat("$blur",(i/layers)*density*Dynamic2)
-			blurMat2:Recompute()
-			render.UpdateScreenEffectTexture()
-			surface.DrawTexturedRect(0,0,ScrW(),ScrH())
-		end
-		Dynamic2=math.Clamp(Dynamic2+(1/FrameRate)*7,0,1)
-	end
-	local GoggleDarkness,GogglesWereOn,OldLightPos=0,false,Vector(0,0,0)
-	local ThermalGlowMat=Material("models/debug/debugwhite")
-	hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
-		local ply,FT,SelfPos,Time=LocalPlayer(),FrameTime(),EyePos(),CurTime()
-		local AimVec=ply:GetAimVector()
-		--CreateClientLag(10000) -- for debugging the effect at low framerates
-		--JMod_MeasureFramerate()
-		if not(ply:ShouldDrawLocalPlayer())then
-			if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects))then
-				if(ply.EZarmor.Effects.nightVision)then
-					if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
-					DrawColorModify({
-						["$pp_colour_addr"]=0,
-						["$pp_colour_addg"]=0,
-						["$pp_colour_addb"]=0,
-						["$pp_colour_brightness"]=.01,
-						["$pp_colour_contrast"]=7,
-						["$pp_colour_colour"]=0,
-						["$pp_colour_mulr"]=0,
-						["$pp_colour_mulg"]=0,
-						["$pp_colour_mulb"]=0
-					})
-					DrawColorModify({
-						["$pp_colour_addr"]=0,
-						["$pp_colour_addg"]=.1,
-						["$pp_colour_addb"]=0,
-						["$pp_colour_brightness"]=0,
-						["$pp_colour_contrast"]=1,
-						["$pp_colour_colour"]=1,
-						["$pp_colour_mulr"]=0,
-						["$pp_colour_mulg"]=0,
-						["$pp_colour_mulb"]=0
-					})
-					if not(ply.EZflashbanged)then DrawMotionBlur(FT*50,.8,.01) end
-					--DrawNoise(1000,255)
-					--[[
-					local Pos=SelfPos-AimVec*20
-					local Tr,TwoLights=util.QuickTrace(SelfPos,AimVec*10000,ply),false
-					if(Tr.Hit)then
-						local Dist=Tr.HitPos:Distance(SelfPos)
-						if(Dist>500)then
-							TwoLights=true
-							Pos=Tr.HitPos+Tr.HitNormal*100
-						end
-					end
-					OldLightPos=LerpVector(FT*20,OldLightPos,Pos)
-					local Light=DynamicLight(ply:EntIndex())
-					if(Light)then
-						Light.Pos=OldLightPos
-						Light.r=1
-						Light.g=1
-						Light.b=1
-						Light.Brightness=.001
-						Light.Size=5000
-						Light.Decay=500
-						Light.DieTime=CurTime()+FT*10
-						Light.Style=0
-					end
-					if(TwoLights)then
-						local Light2=DynamicLight(ply:EntIndex()+1)
-						if(Light2)then
-							Light2.Pos=SelfPos-AimVec*20
-							Light2.r=1
-							Light2.g=1
-							Light2.b=1
-							Light2.Brightness=.001
-							Light2.Size=5000
-							Light2.Decay=500
-							Light2.DieTime=CurTime()+FT*10
-							Light2.Style=0
-						end
-					end
-					--]]
-				elseif(ply.EZarmor.Effects.thermalVision)then
-					if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
-					DrawColorModify({
-						["$pp_colour_addr"]=0,
-						["$pp_colour_addg"]=0,
-						["$pp_colour_addb"]=0,
-						["$pp_colour_brightness"]=0,
-						["$pp_colour_contrast"]=1,
-						["$pp_colour_colour"]=0,
-						["$pp_colour_mulr"]=0,
-						["$pp_colour_mulg"]=0,
-						["$pp_colour_mulb"]=0
-					})
-					if not(ply.EZflashbanged)then BlurScreen() end
-				else
-					if(GogglesWereOn)then GogglesWereOn=false;GoggleDarkness=100 end
-				end
-			else
-				if(GogglesWereOn)then GogglesWereOn=false;GoggleDarkness=100 end
-			end
-			if(GoggleDarkness>0)then
-				local Alpha=255*(GoggleDarkness/100)^.5
-				surface.SetDrawColor(0,0,0,Alpha)
-				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
-				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
-				surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
-				GoggleDarkness=math.Clamp(GoggleDarkness-FT*100,0,100)
-			end
-			if(ply.EZflashbanged)then
-				if(ply:Alive())then
-					DrawMotionBlur(.001,math.Clamp(ply.EZflashbanged/20,0,1),.01)
-					ply.EZflashbanged=ply.EZflashbanged-7*FT
-				else
-					ply.EZflashbanged=0
-				end
-				if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
-			end
-		end
-		if(NUKEFLASH_ENDTIME>Time)then
-			local Dist=EyePos():Distance(NUKEFLASH_POS)
-			if(Dist<NUKEFLASH_RANGE)then
-				local TimeFrac,DistFrac=(NUKEFLASH_ENDTIME-Time)/10,1-Dist/NUKEFLASH_RANGE
-				local Frac=TimeFrac*DistFrac
-				DrawColorModify({
-					["$pp_colour_addr"]=Frac*.5*NUKEFLASH_INTENSITY,
-					["$pp_colour_addg"]=0,
-					["$pp_colour_addb"]=0,
-					["$pp_colour_brightness"]=Frac*.5*NUKEFLASH_INTENSITY,
-					["$pp_colour_contrast"]=1+Frac*.5,
-					["$pp_colour_colour"]=1,
-					["$pp_colour_mulr"]=0,
-					["$pp_colour_mulg"]=0,
-					["$pp_colour_mulb"]=0
-				})
-			end
-		end
-	end)
 	local WHOTents,NextWHOTcheck={},0
 	local function IsWHOT(ent)
 		if(ent:IsWorld())then return false end
@@ -1119,8 +339,8 @@ if(CLIENT)then
 	local SomeKindOfFog=Material("white_square")
 	hook.Add("PostDrawSkyBox","JMOD_POSTSKYBOX",function()
 		local Time=CurTime()
-		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
-			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+		if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
 			local W,H=ScrW(),ScrH()
 			cam.Start3D2D(EyePos()+Vector(0,0,100),Angle(0,0,0),2)
 			surface.SetMaterial(SomeKindOfFog)
@@ -1136,8 +356,8 @@ if(CLIENT)then
 			render.FogMode(0)
 			return true
 		end
-		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
-			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+		if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
 			render.FogMode(1)
 			render.FogColor(100,100,100)
 			render.FogStart(0)
@@ -1153,8 +373,8 @@ if(CLIENT)then
 			render.FogMode(0)
 			return true
 		end
-		if(NUKEFLASH_SMOKE_ENDTIME>Time)then
-			local Frac=((NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+		if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
+			local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
 			render.FogMode(1)
 			render.FogColor(100,100,100)
 			render.FogStart(1*scale)
@@ -1190,136 +410,6 @@ if(CLIENT)then
 		end
 		return Pts
 	end
-	net.Receive("JMod_NuclearBlast",function()
-		local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
-		NUKEFLASH_ENDTIME=CurTime()+10
-		NUKEFLASH_POS=pos
-		NUKEFLASH_RANGE=renj
-		NUKEFLASH_INTENSITY=intens
-		if(intens>1)then NUKEFLASH_SMOKE_ENDTIME=CurTime()+30 end
-		local maxRange=renj
-		local maxImmolateRange=renj*.3
-		for k,ent in pairs(ents.FindInSphere(pos,maxRange))do
-			if((IsValid(ent))and(ent.GetClass))then
-				local Class=ent:GetClass()
-				if((Class=="class C_ClientRagdoll")or(Class=="class C_HL2MPRagdoll"))then
-					local Vec=(ent:GetPos()-pos)
-					local Dir=Vec:GetNormalized()
-					for i=0,100 do
-						local Phys=ent:GetPhysicsObjectNum(i)
-						if(Phys)then
-							Phys:ApplyForceCenter(Dir*1e10)
-						end
-						if(Vec:Length()<maxImmolateRange)then
-							local HeadID=ent:LookupBone("ValveBiped.Bip01_Head1")
-							if(HeadID)then -- if it has a Head ID then it's probably a humanoid ragdoll
-								ent:SetModel("models/Humans/Charple0"..math.random(1,4)..".mdl")
-							else
-								ent:SetColor(Color(20,20,20))
-							end
-						end
-					end
-				end
-			end
-		end
-	end)
-	net.Receive("JMod_ModifyMachine",function()
-		local Ent=net.ReadEntity()
-		local Specs=net.ReadTable()
-		local AmmoTypes,AmmoType,AvailPts=nil,nil,GetAvailPts(Specs)
-		local ErrorTime=0
-		if(tobool(net.ReadBit()))then
-			AmmoTypes=net.ReadTable()
-			AmmoType=net.ReadString()
-		end
-		---
-		local frame=vgui.Create("DFrame")
-		frame:SetSize(600,400)
-		frame:SetTitle("Modify Machine")
-		frame:SetDraggable(true)
-		frame:Center()
-		frame:MakePopup()
-		function frame:Paint()
-			BlurBackground(self)
-		end
-		local bg=vgui.Create("DPanel",frame)
-		bg:SetPos(10,30)
-		bg:SetSize(580,360)
-		function bg:Paint(w,h)
-			surface.SetDrawColor(Color(0,0,0,100))
-			surface.DrawRect(0,0,w,h)
-		end
-		local X,Y=10,10
-		for attrib,value in pairs(Specs)do
-			local Panel=vgui.Create("DPanel",bg)
-			Panel:SetPos(X,Y)
-			Panel:SetSize(275,40)
-			function Panel:Paint(w,h)
-				surface.SetDrawColor(0,0,0,100)
-				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(attrib..": "..Specs[attrib],"DermaDefault",137,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			end
-			local MinButt=vgui.Create("DButton",Panel)
-			MinButt:SetPos(10,10)
-			MinButt:SetSize(20,20)
-			MinButt:SetText("-")
-			function MinButt:DoClick()
-				Specs[attrib]=math.Clamp(Specs[attrib]-1,-10,10)
-				AvailPts=GetAvailPts(Specs)
-			end
-			local MaxButt=vgui.Create("DButton",Panel)
-			MaxButt:SetPos(245,10)
-			MaxButt:SetSize(20,20)
-			MaxButt:SetText("+")
-			function MaxButt:DoClick()
-				if(AvailPts>0)then
-					Specs[attrib]=math.Clamp(Specs[attrib]+1,-10,10)
-					AvailPts=GetAvailPts(Specs)
-				end
-			end
-			Y=Y+50
-			if(Y>=300)then X=X+285;Y=10 end
-		end
-		if(AmmoTypes)then
-			local DComboBox=vgui.Create("DComboBox",bg)
-			DComboBox:SetPos(10,320)
-			DComboBox:SetSize(150,20)
-			DComboBox:SetValue(AmmoType)
-			for k,v in pairs(AmmoTypes)do DComboBox:AddChoice(k) end
-			function DComboBox:OnSelect(index,value)
-				AmmoType=value
-			end
-		end
-		local Display=vgui.Create("DPanel",bg)
-		Display:SetSize(600,40)
-		Display:SetPos(100,315)
-		function Display:Paint()
-			local Col=(ErrorTime>CurTime() and Color(255,0,0,255))or Color(255,255,255,255)
-			draw.SimpleText("Available spec points: "..AvailPts,"DermaDefault",250,0,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			draw.SimpleText("Trade traits to achieve desired performance","DermaDefault",250,20,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		end
-		local Apply=vgui.Create("DButton",bg)
-		Apply:SetSize(100,40)
-		Apply:SetPos(240,310)
-		Apply:SetText("Accept")
-		function Apply:DoClick()
-			if(AvailPts>0)then
-				ErrorTime=CurTime()+1
-				return
-			end
-			net.Start("JMod_ModifyMachine")
-			net.WriteEntity(Ent)
-			net.WriteTable(Specs)
-			if(AmmoTypes)then
-				net.WriteBit(true)
-				net.WriteString(AmmoType)
-			else
-				net.WriteBit(false)
-			end
-			net.SendToServer()
-			frame:Close()
-		end
-	end)
 	local function CommNoise()
 		surface.PlaySound("snds_jack_gmod/radio_static"..math.random(1,3)..".wav")
 	end
@@ -1347,7 +437,41 @@ if(CLIENT)then
 	end)
 	concommand.Add("jmod_showgasparticles",function(ply,cmd,args)
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
-		ply.EZshowGasParticles=true
+		ply.EZshowGasParticles=not (ply.EZshowGasParticles or false)
+		print("gas particle display: "..tostring(ply.EZshowGasParticles))
+	end)
+	net.Receive("JMod_NuclearBlast",function()
+		local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
+		JMOD_NUKEFLASH_ENDTIME=CurTime()+10
+		JMOD_NUKEFLASH_POS=pos
+		JMOD_NUKEFLASH_RANGE=renj
+		JMOD_NUKEFLASH_INTENSITY=intens
+		if(intens>1)then JMOD_NUKEFLASH_SMOKE_ENDTIME=CurTime()+30 end
+		local maxRange=renj
+		local maxImmolateRange=renj*.3
+		for k,ent in pairs(ents.FindInSphere(pos,maxRange))do
+			if((IsValid(ent))and(ent.GetClass))then
+				local Class=ent:GetClass()
+				if((Class=="class C_ClientRagdoll")or(Class=="class C_HL2MPRagdoll"))then
+					local Vec=(ent:GetPos()-pos)
+					local Dir=Vec:GetNormalized()
+					for i=0,100 do
+						local Phys=ent:GetPhysicsObjectNum(i)
+						if(Phys)then
+							Phys:ApplyForceCenter(Dir*1e10)
+						end
+						if(Vec:Length()<maxImmolateRange)then
+							local HeadID=ent:LookupBone("ValveBiped.Bip01_Head1")
+							if(HeadID)then -- if it has a Head ID then it's probably a humanoid ragdoll
+								ent:SetModel("models/Humans/Charple0"..math.random(1,4)..".mdl")
+							else
+								ent:SetColor(Color(20,20,20))
+							end
+						end
+					end
+				end
+			end
+		end
 	end)
 end
 --[[

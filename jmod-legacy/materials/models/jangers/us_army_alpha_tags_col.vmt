@@ -1,7 +1,0 @@
-"VertexLitGeneric"
-{
-	// Original shader: VertexLitTexture
-	"$basetexture" "models/jangers/us_army_alpha_tags_col"		
-$nocull 1
-$alphatest 1
-}

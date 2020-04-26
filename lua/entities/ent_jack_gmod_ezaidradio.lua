@@ -306,7 +306,6 @@ if(SERVER)then
 		if not(self:UserIsAuthorized(ply))then return end
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
-		print(BFFreq)
 		if((NormalReq)or(BFFreq))then
 			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
 			if(BFFreq)then

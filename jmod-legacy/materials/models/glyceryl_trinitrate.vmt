@@ -1,8 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models/glyceryl_trinitrate"
-	"$surfaceprop" "metal"
-	"$envmap" "env_cubemap"
-	"$envmapmask" "models/glyceryl_trinitrate_envmapmask"
-}
-

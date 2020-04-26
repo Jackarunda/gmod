@@ -1,7 +1,0 @@
-"VertexLitGeneric"
-{
-	// Original shader: VertexLitTexture
-	"$basetexture" "models/tex_jack_ammobox_762"
-	"$surfaceprop" "metal"
-	"$bumpmap" "models/tex_jack_ammobox_normal"
-}

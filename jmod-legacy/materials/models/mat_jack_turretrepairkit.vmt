@@ -1,9 +1,0 @@
-"VertexLitGeneric"
-{
-	// Original shader: VertexLitTexture
-	"$basetexture" "models/tex_jack_turretrepairkit"
-	"$envmap" "env_cubemap"
-	"$envmapmask" "models/tex_jack_turretrepairkit_envmapmask"
-	"$halflambert" "1"
-	"$envmaptint" "[.5 .5 .5]"
-}

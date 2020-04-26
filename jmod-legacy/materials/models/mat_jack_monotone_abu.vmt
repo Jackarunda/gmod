@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models/tex_jack_monotone_abu"
-	"$halflambert" "1"
-	"$bumpmap" "models/tex_jack_monabu_normal"
-}

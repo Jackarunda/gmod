@@ -1,9 +1,0 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "models/tex_jack_monotone_acu"
-	"$bumpamp" "models/tex_jack_helmetcover_normal"
-	"$phong" 1
-	"$phongboost" ".05"
-	"$phongexponent" "10"
-	"$phongfresnelranges"	"[1 1 1]"
-}

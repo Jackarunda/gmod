@@ -1,6 +1,0 @@
-"VertexLitGeneric"
-{
-	// Original shader: VertexLitTranslucentTexture
-	"$translucent" 1
-	"$basetexture" "models/janhack/manhackblade001"
-}
