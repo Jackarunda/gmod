@@ -113,8 +113,7 @@ if(SERVER)then
 			if self.SpoonSound then Spewn.Sound = self.SpoonSound end
 			Spewn:SetPos(self:GetPos())
 			Spewn:Spawn()
-			Spewn:Activate()
-			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*750)
+			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*250)
 			self:EmitSound("snd_jack_spoonfling.wav",60,math.random(90,110))
 		end
 	end

@@ -1,35 +1,276 @@
-game.AddParticles("particles/muzzleflashes_test.pcf")
-game.AddParticles("particles/muzzleflashes_test_b.pcf")
-game.AddParticles("particles/pcfs_jack_explosions_large.pcf")
-game.AddParticles("particles/pcfs_jack_explosions_medium.pcf")
-game.AddParticles("particles/pcfs_jack_explosions_small.pcf")
-game.AddParticles("particles/pcfs_jack_nuclear_explosions.pcf")
-game.AddParticles("particles/pcfs_jack_moab.pcf")
-game.AddParticles("particles/gb5_large_explosion.pcf")
-game.AddParticles("particles/gb5_500lb.pcf")
-game.AddParticles("particles/gb5_100lb.pcf")
-game.AddParticles("particles/gb5_50lb.pcf")
-game.AddDecal("BigScorch",{"decals/big_scorch1","decals/big_scorch2","decals/big_scorch3"})
-game.AddDecal("GiantScorch",{"decals/giant_scorch1","decals/giant_scorch2","decals/giant_scorch3"})
-PrecacheParticleSystem("pcf_jack_nuke_ground")
-PrecacheParticleSystem("pcf_jack_nuke_air")
-PrecacheParticleSystem("pcf_jack_moab")
-PrecacheParticleSystem("pcf_jack_moab_air")
-PrecacheParticleSystem("cloudmaker_air")
-PrecacheParticleSystem("cloudmaker_ground")
-PrecacheParticleSystem("500lb_air")
-PrecacheParticleSystem("500lb_ground")
-PrecacheParticleSystem("100lb_air")
-PrecacheParticleSystem("100lb_ground")
-PrecacheParticleSystem("50lb_air")
---PrecacheParticleSystem("50lb_ground")
-if(SERVER)then
-	resource.AddWorkshop("1919689921")
-	resource.AddWorkshop("1919703147")
-	resource.AddWorkshop("1919692947")
-	resource.AddWorkshop("1919694756")
+local function JMod_SetArmorPlayerModelModifications()
+	local CSSCTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
+			}
+		}
+	}
+	local CSSTTable = {
+		Face={
+			["GasMask"]={
+				siz=Vector(1.2,1,1),
+				pos=Vector(0,1.7,0),
+				ang=Angle(100,180,90),
+			},
+			["BallisticMask"]={
+				siz=Vector(1,1,1),
+				pos=Vector(4.5,-68,0),
+				ang=Angle(92,180,90),
+			}
+		},
+		Head={
+			["Light"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1.5,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-2,0),
+				ang=Angle(-90,0,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(1,-3,0),
+				ang=Angle(-90,0,-90),
+			}
+		},
+		Torso={
+			["Light"]={
+				siz=Vector(1.15,1.1,1),
+				pos=Vector(-3,-4.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Light"]={
+				siz=Vector(1.25,1.2,1.2),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium"]={
+				siz=Vector(1.2,1.2,1.05),
+				pos=Vector(-3,-6.5,0),
+				ang=Angle(-90,0,90),
+			},
+			["Medium-Heavy"]={
+				siz=Vector(1.2,1.2,1),
+				pos=Vector(-4.5,-10.5,0),
+				ang=Angle(-85,0,90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-10,-50,0),
+				ang=Angle(-85,0,90),
+			}
+		},
+		Pelvis={
+			["Standard"]={
+				siz=Vector(1.5,1.4,1.8),
+				pos=Vector(71,0,0),
+				ang=Angle(90,-90,0),
+			}
+		},
+		LeftShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-6,60,-31),
+				ang=Angle(90,-20,110),
+			}
+		},
+		RightShoulder={
+			["Light"]={
+				siz=Vector(1.2,1.2,1.2),
+				pos=Vector(0,0,.5),
+				ang=Angle(-90,-90,-90),
+			},
+			["Heavy"]={
+				siz=Vector(1,1,1),
+				pos=Vector(-32,55,25),
+				ang=Angle(90,30,30),
+			}
+		},
+		LeftForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(0,0,-.5),
+				ang=Angle(0,-90,-50),
+			}
+		},
+		RightForearm={
+			["Standard"]={
+				siz=Vector(1.2,1,1.2),
+				pos=Vector(-.5,0,.5),
+				ang=Angle(0,-90,50),
+			}
+		},
+		LeftThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(0.5,0,-1.5),
+				ang=Angle(90,-85,110),
+			}
+		},
+		RightThigh={
+			["Standard"]={
+				siz=Vector(1.1,1,1.15),
+				pos=Vector(.5,0,1),
+				ang=Angle(90,-95,80),
+			}
+		},
+		LeftCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,-.5),
+				ang=Angle(-180,-83,-180),
+			}
+		},
+		RightCalf={
+			["Standard"]={
+				siz=Vector(1.15,1,1.15),
+				pos=Vector(-1.5,-1,.5),
+				ang=Angle(-180,-83,-180),
+			}
+		}
+	}
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"]=CSSTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"]=CSSCTTable
+	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"]=CSSCTTable
 end
----
+
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
@@ -358,260 +599,7 @@ function JMod_InitGlobalConfig(forceNew)
 	JMod_SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
 end
+
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
-hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
-	---[[
-	if((ply.EZarmor)and(ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
-		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
-	end
-	--]]
-end)
-local ANGLE=FindMetaTable("Angle")
-function ANGLE:GetCopy()
-	return Angle(self.p,self.y,self.r)
-end
-function table.FullCopy(tab)
-	if(!tab)then return nil end
-	local res={}
-	for k, v in pairs(tab) do
-		if(type(v)=="table")then
-			res[k]=table.FullCopy(v) -- we need to go derper
-		elseif(type(v)=="Vector")then
-			res[k]=Vector(v.x, v.y, v.z)
-		elseif(type(v)=="Angle")then
-			res[k]=Angle(v.p, v.y, v.r)
-		else
-			res[k]=v
-		end
-	end
-	return res
-end
-function jprint(...)
-	local items,printstr={...},""
-	for k,v in pairs(items)do
-		-- todo: tables
-		printstr=printstr..tostring(v)..", "
-	end
-	print(printstr)
-	if(SERVER)then
-		player.GetAll()[1]:PrintMessage(HUD_PRINTTALK,printstr)
-		player.GetAll()[1]:PrintMessage(HUD_PRINTCENTER,printstr)
-	elseif(CLIENT)then
-		LocalPlayer():ChatPrint(printstr)
-	end
-end
-function JMod_GoodBadColor(frac)
-	-- color tech from bfs2114
-	local r,g,b=math.Clamp(3-frac*4,0,1),math.Clamp(frac*2,0,1),math.Clamp(-3+frac*4,0,1)
-	return r*255,g*255,b*255
-end
-function JMOD_WhomILookinAt(ply,cone,dist)
-	local CreatureTr,ObjTr,OtherTr=nil,nil,nil
-	for i=1,(150*cone) do
-		local Vec=(ply:GetAimVector()+VectorRand()*cone):GetNormalized()
-		local Tr=util.QuickTrace(ply:GetShootPos(),Vec*dist,{ply})
-		if((Tr.Hit)and not(Tr.HitSky)and(Tr.Entity))then
-			local Ent,Class=Tr.Entity,Tr.Entity:GetClass()
-			if((Ent:IsPlayer())or(Ent:IsNPC()))then
-				CreatureTr=Tr
-			elseif((Class=="prop_physics")or(Class=="prop_physics_multiplayer")or(Class=="prop_ragdoll"))then
-				ObjTr=Tr
-			else
-				OtherTr=Tr
-			end
-		end
-	end
-	if(CreatureTr)then return CreatureTr.Entity,CreatureTr.HitPos,CreatureTr.HitNormal end
-	if(ObjTr)then return ObjTr.Entity,ObjTr.HitPos,ObjTr.HitNormal end
-	if(OtherTr)then return OtherTr.Entity,OtherTr.HitPos,OtherTr.HitNormal end
-	return nil,nil,nil
-end
---
-function JMod_IsDoor(ent)
-	local Class=ent:GetClass()
-	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating"))
-end
---
-local Hints={
-	["afh"]="E to enter and get healed",
-	["airburst det"]="detonates in midair automatically",
-	["ammobox"]="ALT+E to refill ammo of any weapon",
-	["antimatter"]="CAUTION EXTREMELY DANGEROUS VERY FRAGILE HANDLE WITH CARE",
-	["arm"]="ALT+E to arm",
-	["armor remove"]="type *armor* or concommand jmod_ez_armor to unequip all armor",
-	["armor"]="ALT+E to select color and wear armor",
-	["auto anchor"]="bomb will automatially anchor itself below the surface of the water",
-	["binding"]="remember, console commands can be bound to a key",
-	["black powder pile"]="ALT+E to ignite black powder, E to sweep away",
-	["black powder ignite"]="black powder can ignite powder kegs and anything with a pyro fuze, like dynamite",
-	["blasting machine"]="ALT+E on the blasting machine to detonate the satchel charge",
-	["bomb drop"]="weld/nail bomb to vehicle, then type *bomb* or cmd jmod_ez_bombdrop to detach",
-	["bomb guidable"]="use a guidance kit to turn into a guided bomb",
-	["building"]="stand near resources in order to use them",
-	["bury"]="can only be buried in grass, dirt, snow or mud",
-	["crafting"]="set resources near workbench in order to use them",
-	["crate"]="tap resource against to store \n press E to retrieve resource",
-	["contact det"]="when armed, bomb will detonate on contact",
-	["customize"]="To customize JMod, or to disable these hints, check out garrysmod/data/jmod_config.txt",
-	["decontaminate"]="can also remove radioactive fallout from a person",
-	["detpack combo"]="detpacks can destroy props \n multiple combine for more power",
-	["detpack stick"]="hold E on detpack then release E to stick the detpack",
-	["disarm"]="tap E to disarm",
-	["eat"]="ALT+E to consume",
-	["fix"]="tap parts box against to repair",
-	["friends"]="concommand jmod_friends to specify allies",
-	["grenade"]="ALT+E to pick up and arm grenade. LMB for hard throw, RMB for soft throw",
-	["guidance kit"]="tap against an EZ Bomb or EZ Big Bomb to create a guided bomb",
-	["headset"]="type *headset* or concommand jmod_ez_headset to toggle ear equipment",
-	["headset comms"]="with a headset, only friends and teammates can hear your voip and see your chat",
-	["item crate"]="tap item against to store \n press E to retrieve item",
-	["impact det"]="when armed, bomb will detonate upon impact",
-	["jmod hands drag"]="move slowly to drag heavier objects (crouch/alt)",
-	["jmod hands grab"]="RMB to grab objects",
-	["jmod hands move"]="punches also can move you (jump boost/climbing)",
-	["jmod hands"]="RMB to block, R to put hands down",
-	["launch"]="weld/nail weapon to vehicle, then type *launch* or cmd jmod_ez_launch to launch",
-	["mask"]="type *mask* or concommand jmod_ez_mask to toggle face equipment",
-	["mininade"]="mininades can be stuck to larger explosives to trigger them",
-	["modify"]="use the build kit to modify",
-	["powder keg"]="ALT+E to open and pour a line of black powder",
-	["radsickness"]="taking damage from radiation sickness, decontaminate in field hospital",
-	["remote det"]="chat *trigger* \n or concommand jmod_ez_trigger",
-	["slam stick"]="hold E on SLAM then release E to stick SLAM",
-	["slam trigger"]="SLAMs can be stuck to larger explosives to trigger them",
-	["radio comm"]="radio needs to see sky",
-	["slam stick"]="hold E on SLAM then release E to stick the SLAM",
-	["splitterring"]="SHIFT+ALT+E to toggle fragmentation sleeve",
-	["supplies"]="tap supplies against to refill, tap parts against to repair",
-	["timebomb stick"]="hold E on timebomb then release E to stick the timebomb",
-	["unpackage"]="double tap ALT+E to unpackage",
-	["upgrade"]="use Build Kit to upgrade",
-	["water arm"]="arm bomb and drop in water",
-	["water det"]="bomb must be in water to detonate"
-}
-function JMod_Hint(ply,...)
-	if(CLIENT)then return end
-	if not(JMOD_CONFIG.Hints)then return end
-	local HintKeys={...}
-	ply.NextJModHint=ply.NextJModHint or 0
-	ply.JModHintsGiven=ply.JModHintsGiven or {}
-	local Time=CurTime()
-	if(ply.NextJModHint>Time)then return end
-	for k,key in pairs(HintKeys)do
-		if not(table.HasValue(ply.JModHintsGiven,key))then
-			table.insert(ply.JModHintsGiven,key)
-			ply.NextJModHint=Time+1
-			net.Start("JMod_Hint")
-			net.WriteString(Hints[key])
-			net.Send(ply)
-			break
-		end
-	end
-end
-if(SERVER)then
-	concommand.Add("jmod_resethints",function(ply,cmd,args)
-		ply.JModHintsGiven={}
-		print("hints for "..ply:Nick().." reset")
-	end)
-end
-function JMod_PlayersCanComm(listener,talker)
-	if(listener==talker)then return true end
-	if(engine.ActiveGamemode()=="sandbox")then
-		return ((talker.JModFriends)and(table.HasValue(talker.JModFriends,listener)))
-	else
-		if((talker.JModFriends)and(table.HasValue(talker.JModFriends,listener)))then return true end
-		return listener:Team()==talker:Team()
-	end
-end
---
-hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
-	if(IsValid(JMOD_BLACK_HOLE))then
-		local BHpos=JMOD_BLACK_HOLE:GetPos()
-		local Bsrc,Bdir=data.Src,data.Dir
-		local Vec=BHpos-Bsrc
-		local Dist=Vec:Length()
-		if(Dist<10000)then
-			local ToBHdir=Vec:GetNormalized()
-			local NewDir=(Bdir+ToBHdir*JMOD_BLACK_HOLE:GetAge()/Dist*20):GetNormalized()
-			data.Dir=NewDir
-			return true
-		end
-	end
-end)
--- EZ radio stations
-EZ_RADIO_STATIONS={}
-EZ_STATION_STATE_READY=1
-EZ_STATION_STATE_DELIVERING=2
-EZ_STATION_STATE_BUSY=3
--- EZ item quality grade (upgrade level) definitions
-EZ_GRADE_BASIC=1
-EZ_GRADE_COPPER=2
-EZ_GRADE_SILVER=3
-EZ_GRADE_GOLD=4
-EZ_GRADE_PLATINUM=5
-EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
-EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
----
-JMod_EZammoBoxSize=300
-JMod_EZfuelCanSize=100
-JMod_EZbatterySize=100
-JMod_EZpartBoxSize=100
-JMod_EZsmallCrateSize=100
-JMod_EZsuperRareResourceSize=10
-JMod_EZexplosivesBoxSize=100
-JMod_EZchemicalsSize=100
-JMod_EZadvPartBoxSize=20
-JMod_EZmedSupplyBoxSize=50
-JMod_EZnutrientBoxSize=100
-JMod_EZcrateSize=15
-JMod_EZpartsCrateSize=15
-JMod_EZnutrientsCrateSize=15
-
-JMOD_EZ_STATE_BROKEN 	= -1
-JMOD_EZ_STATE_OFF 		= 0
-JMOD_EZ_STATE_PRIMED 	= 1
-JMOD_EZ_STATE_ARMING 	= 2
-JMOD_EZ_STATE_ARMED		= 3
-JMOD_EZ_STATE_WARNING	= 4
-
---[[
-muzzleflash_g3
-muzzleflash_m14
-muzzleflash_ak47
-muzzleflash_ak74
-muzzleflash_6
-muzzleflash_pistol_rbull
-muzzleflash_pistol
-muzzleflash_suppressed
-muzzleflash_pistol_deagle
-muzzleflash_OTS
-muzzleflash_M3
-muzzleflash_smg
-muzzleflash_SR25
-muzzleflash_shotgun
-muzzle_center_M82
-muzzleflash_m79
---]]
-
--- TODO
--- yeet a wrench easter egg
--- frickin like ADD npc factions to the whitelist yo, gosh damn
--- add the crate smoke flare
--- santa sleigh aid radio
--- make sentry upgrading part of the mod point system
--- make thermals work with smoke
--- hide hand icon when in seat or vehicle
--- make nuke do flashbang
--- add combustible lemons
--- check armor headgear compat with act3, cull models that are too close to the camera
--- models/thedoctor/mani/dave_the_dummy_on_stand_phys.mdl damage reading mannequin
--- the Mk.8Z
--- armor refactor and radsuit
--- wiremod support
--- sentries shoot dead things
--- moab drogue chute
--- command to make gas and fallout visible
--- bounding mine unbury
