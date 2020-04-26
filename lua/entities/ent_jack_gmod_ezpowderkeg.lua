@@ -72,6 +72,7 @@ if(SERVER)then
 			return
 		end
 		Dude:PickupObject(self)
+        JMod_L4DHint(Dude, "arm powderkeg", self)
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()

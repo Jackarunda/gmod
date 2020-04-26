@@ -63,13 +63,20 @@ JMod_L4DHints = {
     ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm"},
     ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate"},
     ["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket"},
+    ["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb"},
     ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
+    ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade"},
+    ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown very far, right click to soft throw"},
     
     -- Entity mechanics
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around, and is more lethal in confined spaces"},
     ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas"},
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
+    
+    ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
+    ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg"},
+    ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate the charge"},
         
     -- Entities
     ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 5},
@@ -86,5 +93,12 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezincendiarybomb"] = {Type = "info", Text = "Incendiary Bombs spread napalm when landing", Time = 5},
     ["ent_jack_gmod_ezfirenade"] = {Type = "info", Text = "Incendiary Grenades spread napalm after a 5-second timer", Time = 5},
     ["ent_jack_gmod_ezlandmine"] = {Type = "info", Text = "Land Mines detonate when hostiles approach them", Time = 5},
-    ["ent_jack_gmod_eznuke"] = {Type = "info", Text = "Micro Nukes explodes in a huge radius and spreads radiation", Time = 5},
+    ["ent_jack_gmod_eznuke"] = {Type = "info", Text = "Micro Nukes explodes in a extremely large radius and spreads radiation", Time = 5},
+    ["ent_jack_gmod_ezboundingmine"] = {Type = "info", Text = "Bounding Mines bury underground and shoot shrapnel when enemies approach", Time = 5},
+    ["ent_jack_gmod_ezminimore"] = {Type = "info", Text = "Claymores spray shrapnel in a cone when enemies approach its front", Time = 5},
+    ["ent_jack_gmod_eznavalmine"] = {Type = "info", Text = "Naval Mines attach themselves underwater and detonate on contact", Time = 5},
+    ["ent_jack_gmod_eznuke_small"] = {Type = "info", Text = "Nano Nukes explode in a large radius and spreads radiation", Time = 5},
+    ["ent_jack_gmod_ezpowderkeg"] = {Type = "info", Text = "Powder kegs can release and be exploded by black powder lines", Time = 5},
+    ["ent_jack_gmod_ezsatchelcharge"] = {Type = "info", Text = "Satchel Charges detonate using a wired blasting machine", Time = 5},
+    ["ent_jack_gmod_ezsignalnade"] = {Type = "info", Text = "Signal Grenades release a colored smoke signal", Time = 5},
 }

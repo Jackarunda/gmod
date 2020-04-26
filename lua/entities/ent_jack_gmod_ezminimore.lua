@@ -87,6 +87,7 @@ if(SERVER)then
 				self:Arm(activator)
 			else
 				activator:PickupObject(self)
+                JMod_L4DHint(activator, "arm", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -119,6 +120,7 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
 		JMod_Owner(self,armer)
+        JMod_L4DHint(armer, "friends", self)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
