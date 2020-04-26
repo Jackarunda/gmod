@@ -263,7 +263,8 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 end
 
 net.Receive("JMod_Hint",function()
-    notification.AddLegacy(net.ReadString(),NOTIFY_HINT,5)
+    notification.AddLegacy(net.ReadString(), NOTIFY_HINT, 10)
+    surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
 end)
 
 net.Receive("JMod_EZarmorSync",function()
