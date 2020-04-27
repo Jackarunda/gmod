@@ -66,8 +66,12 @@ if(SERVER)then
 			net.Start("JMod_ArmorColor")
 			net.WriteEntity(self)
 			net.Send(activator)
+            if self.ArmorName == "Headset" then
+                JMod_L4DHint(activator, "armor friends", self)
+            end
 		else
 			activator:PickupObject(self)
+            JMod_L4DHint(activator, "armor wear", self)
 		end
 		--activator:EmitSound("snd_jack_clothequip.wav",70,100)
 		--activator:EmitSound("snd_jack_gmod/armorstep1.wav",70,100)--5

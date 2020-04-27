@@ -154,5 +154,14 @@ JMod_L4DHints = {
     ["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
     ["refill"] = {Type = "exclamation", Text = "Refill power and gas to keep the Workbench functional"},
     
+    -- Armor
+    ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor"},
+    ["armor drop"] = {Type = "info", Text = "Type in chat *armor* or use command jmod_ez_armor to unequip all armor"},
+    ["armor mask"] = {Type = "info", Text = "Type in chat *mask* or use command jmod_ez_mask to toggle mask"},
+    ["armor headset"] = {Type = "info", Text = "Type in chat *headset* or use command jmod_ez_headset to toggle headset"},
+    ["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},
+    ["armor friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends to talk privately"},
+    ["armor weight"] = {Type = "exclamation", Text = "Heavy armor will reduce movement speed"},
     
+    ["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 5},
 }
