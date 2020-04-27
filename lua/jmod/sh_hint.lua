@@ -72,6 +72,7 @@ JMod_L4DHints = {
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around physically and is more lethal in confined spaces"},
     ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas; leave area or wear a gas mask"},
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
+    ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
     
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg"},
