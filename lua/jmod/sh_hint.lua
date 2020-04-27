@@ -77,6 +77,8 @@ JMod_L4DHints = {
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg"},
     ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate the charge"},
+    ["frag sleeve"] = {Type = "button", Text = "Hold Sprint while priming to toggle fragmentation sleeve"},
+    ["mininade"] = {Type = "button", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
         
     -- Entities
     ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 5},
@@ -101,4 +103,17 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezpowderkeg"] = {Type = "info", Text = "Powder kegs can release and be exploded by black powder lines", Time = 5},
     ["ent_jack_gmod_ezsatchelcharge"] = {Type = "info", Text = "Satchel Charges detonate using a wired blasting machine", Time = 5},
     ["ent_jack_gmod_ezsignalnade"] = {Type = "info", Text = "Signal Grenades release a colored smoke signal", Time = 5},
+    ["ent_jack_gmod_ezslam"] = {Type = "info", Text = "SLAMs are wall-mounted tripwire explosives", Time = 5},
+    ["ent_jack_gmod_ezsmokenade"] = {Type = "info", Text = "Smoke Grenades release a smokescreen for cover", Time = 5},
+    ["ent_jack_gmod_ezsticknade"] = {Type = "info", Text = "Stick Grenades can be thrown very far, and has an optional frag sleeve", Time = 5},
+    ["ent_jack_gmod_ezstickynade"] = {Type = "info", Text = "Sticky Bombs stick to surfaces and explode after a 5-second timer", Time = 5},
+    ["ent_jack_gmod_ezthermobaricbomb"] = {Type = "info", Text = "Thermobaric Bombs create a large shockwave on detonation", Time = 5},
+    ["ent_jack_gmod_eznuke_big"] = {Type = "exclamationred", Text = "oh boy", Time = 5},
+    ["ent_jack_gmod_eztimebomb"] = {Type = "info", Text = "Time Bombs explode after a pre-set amount of time", Time = 5},
+    ["ent_jack_gmod_eztnt"] = {Type = "info", Text = "TNTs are explosives on a 10-second fuse", Time = 5},
+    ["ent_jack_gmod_ezatmine"] = {Type = "info", Text = "Vehicle Mines are heavy proximity explosives effective against vehicles", Time = 5},
+    ["ent_jack_gmod_eznade_impact"] = {Type = "info", Text = "Impact Mini-Nades explode on impact", Time = 5},
+    ["ent_jack_gmod_eznade_proximity"] = {Type = "info", Text = "Proximity Mini-Nades explode when hostiles are very close", Time = 5},
+    ["ent_jack_gmod_eznade_remote"] = {Type = "info", Text = "Remote Mini-Nades explode on remote detonation", Time = 5},
+    ["ent_jack_gmod_eznade_timed"] = {Type = "info", Text = "Timed Mini-Nades explode 3 seconds after armed", Time = 5},
 }
