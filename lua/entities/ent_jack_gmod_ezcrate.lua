@@ -196,6 +196,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		JMod_Hint(activator,"crate")
+        JMod_L4DHint(activator, "crate", self)
 		local Resource=self:GetResource()
 		if(Resource<=0)then return end
 		local Box,Given=ents.Create(self.ChildEntity),math.min(Resource,self.ChildEntityResourceAmount)

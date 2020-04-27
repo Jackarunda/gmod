@@ -134,4 +134,11 @@ JMod_L4DHints = {
     ["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
     
     ["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 5},
+    ["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devestating black hole after a long wind-up", Time = 5},
+    
+    ["ent_jack_gmod_ezcrate"] = {Type = "info", Text = "Resource Crates can store a large amount of one resource type", Time = 5},
+    ["crate"] = {Type = "info", Text = "Touch crate with resource entity to store it; Use crate to retrieve"},
+    
+    ["ent_jack_gmod_ezcrate_uni"] = {Type = "info", Text = "Storage Crates can store various vanilla and JMod entities", Time = 5},
+    ["crate_uni"] = {Type = "info", Text = "Touch crate with entity to store it; Use crate to open menu"},
 }
