@@ -27,6 +27,7 @@ function JMod_L4DHint(ply, key, loc)
 	ply.JModHintsGiven[key] = true
     
     local tbl = JMod_L4DHints[key]
+    if not tbl then return nil end
     if loc then tbl.Pos = loc tbl.ShouldMove = true end
     if not tbl.Time then tbl.Time = 10 end
     --if not tbl.Identifier then tbl.Identifier = key end

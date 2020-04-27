@@ -57,7 +57,7 @@ JMod_Hints = {
 }
 
 JMod_L4DHints = {
-    -- Generic instructions
+    -- Explosives mechanics
     ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items"},
     ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
     ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm"},
@@ -68,7 +68,6 @@ JMod_L4DHints = {
     ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade"},
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown very far, right click to soft throw"},
     
-    -- Entity mechanics
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around, and is more lethal in confined spaces"},
     ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas"},
@@ -81,7 +80,7 @@ JMod_L4DHints = {
     ["mininade"] = {Type = "button", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
     ["slam stick"] = {Type = "button", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
         
-    -- Entities
+    -- Explosives
     ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 5},
     ["ent_jack_gmod_ezdetpack"] = {Type = "info", Text = "Detpacks are remote controlled sticky explosives", Time = 5},    
     ["ent_jack_gmod_ezdynamite"] = {Type = "info", Text = "Dynamites are throwable explosives with a 7-second fuse", Time = 5},
@@ -89,7 +88,7 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezfougasse"] = {Type = "info", Text = "Fougasse Mines spray napalm when hostiles walk in front of it", Time = 5},
     ["ent_jack_gmod_ezfragnade"] = {Type = "info", Text = "Frag Grenades explode into shrapnel after a 5-second timer", Time = 5},
     ["ent_jack_gmod_ezgasnade"] = {Type = "info", Text = "Gas Grenades spread poison gas after a 5-second timer", Time = 5},
-    ["ent_jack_gmod_ezsticknadebundle"] = {Type = "info", Text = "Bundled Stick Grenades, does a lot of damage but can't go very far", Time = 5},
+    ["ent_jack_gmod_ezsticknadebundle"] = {Type = "info", Text = "Bundled Stick Grenades do a lot of damage but can't go very far", Time = 5},
     ["ent_jack_gmod_ezherocket"] = {Type = "info", Text = "HE Rockets accelerate and explodes in a small radius", Time = 5},
     ["ent_jack_gmod_ezheatrocket"] = {Type = "info", Text = "HEAT Rockets accelerate and does a lot of damage in a small cone", Time = 5},
     ["ent_jack_gmod_ezimpactnade"] = {Type = "info", Text = "Impact Grenades cause an explosion on contact", Time = 5},
@@ -116,5 +115,17 @@ JMod_L4DHints = {
     ["ent_jack_gmod_eznade_impact"] = {Type = "info", Text = "Impact Mini-Nades explode on impact", Time = 5},
     ["ent_jack_gmod_eznade_proximity"] = {Type = "info", Text = "Proximity Mini-Nades explode when hostiles are very close", Time = 5},
     ["ent_jack_gmod_eznade_remote"] = {Type = "info", Text = "Remote Mini-Nades explode on remote detonation", Time = 5},
-    ["ent_jack_gmod_eznade_timed"] = {Type = "info", Text = "Timed Mini-Nades explode 3 seconds after armed", Time = 5},
+    ["ent_jack_gmod_eznade_timed"] = {Type = "info", Text = "Timed Mini-Nades explode 3 seconds after arming, or 10 when mounted", Time = 5},
+    
+    -- Misc. Mechanics
+    ["toggle"] = {Type = "key_E", Text = "Press Use to toggle power on and off"},
+    ["destroyed"] = {Type = "exclamation", Text = "Device was destroyed; touch with a box of parts to repair", Time = 15},
+    ["nopower"] = {Type = "exclamation", Text = "Device ran out of power; touch with a battery to recharge", Time = 15},
+    
+    -- Misc. Entities
+    ["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 5},
+    ["aidhelp"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items"},
+    ["aidsky"] = {Type = "exclamation", Text = "Aid Radio needs to see sky to function"},
+    ["aidpackage"] = {Type = "info", Text = "Type in chaat 'supply radio: <package>' to request item"},
+    ["aidwait"] = {Type = "info", Text = "Package will be airdropped nearby after some time"},
 }
