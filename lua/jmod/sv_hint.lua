@@ -1,4 +1,5 @@
 function JMod_Hint(ply,...)
+    --[[
 	if not JMOD_CONFIG.Hints then return end
     if isfunction(l4dgi_hint) then return end
 	local HintKeys={...}
@@ -16,11 +17,13 @@ function JMod_Hint(ply,...)
 			break
 		end
 	end
+    ]]
+    -- Legacy hints
 end
 
-function JMod_L4DHint(ply, key, loc)
+function JMod_L4DHint(ply, key, loc, forceLegacy)
     if not JMOD_CONFIG.Hints or not ply or not key then return nil end
-    if not isfunction(l4dgi_hint) then return nil end
+   
     
     ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] then return false end
@@ -32,7 +35,14 @@ function JMod_L4DHint(ply, key, loc)
     tbl.ShouldMove = (loc ~= nil)
     if not tbl.Time then tbl.Time = 10 end
     --if not tbl.Identifier then tbl.Identifier = key end
-    l4dgi_hint(tbl, ply)
+    if forceLegacy or not isfunction(l4dgi_hint) then 
+        net.Start("JMod_Hint")
+            net.WriteString(tbl.Text)
+            net.WriteBool(true)
+        net.Send(ply)
+    else
+        l4dgi_hint(tbl, ply)
+    end
     return true
 end
 

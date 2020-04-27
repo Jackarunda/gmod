@@ -264,7 +264,8 @@ end
 
 net.Receive("JMod_Hint",function()
     local key = net.ReadString()
-    notification.AddLegacy(JMod_Hints[key], NOTIFY_HINT, 10)
+    local isStr = net.ReadBool()
+    notification.AddLegacy(isStr and key or JMod_Hints[key], NOTIFY_HINT, 10)
     surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
 end)
 
