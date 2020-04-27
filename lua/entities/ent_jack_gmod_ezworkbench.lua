@@ -142,7 +142,7 @@ if(SERVER)then
 			net.WriteEntity(self)
 			net.WriteTable(JMOD_CONFIG.Recipes)
 			net.Send(activator)
-            JMod_L4DHint(activator, "craft", self)
+            JMod_L4DHint(activator, "craft")
         else
             JMod_L4DHint(activator, "refill", self)
 		end

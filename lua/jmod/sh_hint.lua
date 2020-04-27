@@ -67,12 +67,14 @@ JMod_L4DHints = {
     ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
     ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade"},
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown very far, right click to soft throw"},
+    ["dualdet"] = {Type = "button", Text = "Bomb detonates on impact or from remote detonation"},
     
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around physically and is more lethal in confined spaces"},
     ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas; leave area or wear a gas mask"},
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
     ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
+    ["airburst"] = {Type = "skull", Text = "Bomb will only detonate when in freefall and near ground"},
     
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg"},
@@ -133,6 +135,7 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "Auto. Field Hospital can be used to heal and cure radioactive sickness", Time = 5},
     ["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically"},
     ["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
+    ["afh supply"] = {Type = "exclamation", Text = "Refill medical supplies to keep the AFH functional"},
     
     ["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 5},
     ["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devestating black hole after a long wind-up", Time = 5},
@@ -150,4 +153,6 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezworkbench"] = {Type = "info", Text = "Workbench allows you to craft items from resources", Time = 5},
     ["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
     ["refill"] = {Type = "exclamation", Text = "Refill power and gas to keep the Workbench functional"},
+    
+    
 }

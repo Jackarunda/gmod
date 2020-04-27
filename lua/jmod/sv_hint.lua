@@ -28,7 +28,8 @@ function JMod_L4DHint(ply, key, loc)
     
     local tbl = JMod_L4DHints[key]
     if not tbl then return nil end
-    if loc then tbl.Pos = loc tbl.ShouldMove = true end
+    if loc then tbl.Pos = loc end
+    tbl.ShouldMove = (loc ~= nil)
     if not tbl.Time then tbl.Time = 10 end
     --if not tbl.Identifier then tbl.Identifier = key end
     l4dgi_hint(tbl, ply)
