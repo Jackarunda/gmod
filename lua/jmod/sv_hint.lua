@@ -34,14 +34,18 @@ function JMod_L4DHint(ply, key, loc, forceLegacy)
     if loc then tbl.Pos = loc end
     tbl.ShouldMove = (loc ~= nil)
     if not tbl.Time then tbl.Time = 10 end
-    --if not tbl.Identifier then tbl.Identifier = key end
-    if forceLegacy or not isfunction(l4dgi_hint) then 
+
+    if forceLegacy  then 
         net.Start("JMod_Hint")
             net.WriteBool(false)
             net.WriteString(tbl.Text)
         net.Send(ply)
     else
-        l4dgi_hint(tbl, ply)
+        --l4dgi_hint(tbl, ply)
+        net.Start("JMod_Hint")
+            net.WriteBool(true)
+            net.WriteTable(tbl)
+        net.Send(ply)
     end
     return true
 end

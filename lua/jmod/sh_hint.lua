@@ -66,7 +66,7 @@ JMod_L4DHints = {
     ["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb"},
     ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
     ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade"},
-    ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown very far, right click to soft throw"},
+    ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown long distances, right click to soft throw"},
     ["dualdet"] = {Type = "button", Text = "Bomb detonates on impact or from remote detonation"},
     
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
