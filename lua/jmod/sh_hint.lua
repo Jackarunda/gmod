@@ -58,7 +58,7 @@ JMod_Hints = {
 
 JMod_L4DHints = {
     -- Generic instructions
-    ["pickup"] = {Type = "key_E", Text = "Use to pick up small items"},
+    ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items"},
     ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
     ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm"},
     ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate"},

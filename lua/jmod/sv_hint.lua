@@ -41,10 +41,8 @@ end)
 hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
     if JMod_L4DHints[ent:GetClass()] then 
         JMod_L4DHint(ply, ent:GetClass(), ent)
-        --[[
         if not ply.JModHintsGiven["pickup"] and ent:GetPhysicsObject():GetMass() <= 50 then
-            timer.Simple(11, function() if IsValid(ply) and IsValid(ent) then JMod_L4DHint(ply, "pickup", ent) end end)
+            timer.Simple(5, function() if IsValid(ply) and IsValid(ent) then JMod_L4DHint(ply, "pickup") end end)
         end
-        ]]
     end
 end)
