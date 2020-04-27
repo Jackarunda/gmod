@@ -148,7 +148,7 @@ if(SERVER)then
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-                        JMod_L4DHint(Dude, "arm", self)
+                        if not JMod_L4DHint(Dude, "arm", self) then JMod_L4DHint(Dude, "slam stick", self) end
 					end
 				end
 			end

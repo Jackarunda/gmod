@@ -79,6 +79,7 @@ JMod_L4DHints = {
     ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate the charge"},
     ["frag sleeve"] = {Type = "button", Text = "Hold Sprint while priming to toggle fragmentation sleeve"},
     ["mininade"] = {Type = "button", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
+    ["slam stick"] = {Type = "button", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
         
     -- Entities
     ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 5},

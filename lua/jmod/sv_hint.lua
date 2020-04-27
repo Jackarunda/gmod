@@ -19,11 +19,11 @@ function JMod_Hint(ply,...)
 end
 
 function JMod_L4DHint(ply, key, loc)
-    if not JMOD_CONFIG.Hints then return end
-    if not isfunction(l4dgi_hint) then return end
+    if not JMOD_CONFIG.Hints then return nil end
+    if not isfunction(l4dgi_hint) then return nil end
     
     ply.JModHintsGiven = ply.JModHintsGiven or {}
-	if ply.JModHintsGiven[key] then return end
+	if ply.JModHintsGiven[key] then return false end
 	ply.JModHintsGiven[key] = true
     
     local tbl = JMod_L4DHints[key]
@@ -31,6 +31,7 @@ function JMod_L4DHint(ply, key, loc)
     if not tbl.Time then tbl.Time = 10 end
     --if not tbl.Identifier then tbl.Identifier = key end
     l4dgi_hint(tbl, ply)
+    return true
 end
 
 concommand.Add("jmod_resethints",function(ply,cmd,args)
