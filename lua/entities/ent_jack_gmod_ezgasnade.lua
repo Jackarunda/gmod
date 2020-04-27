@@ -47,6 +47,7 @@ if(SERVER)then
 				Gas:GetPhysicsObject():SetVelocity(SelfVel+VectorRand()*math.random(1,200))
 			end)
 		end
+        if IsValid(self.Owner) then JMod_L4DHint(self.Owner, "gas spread", self:GetPos()) end
 		self:Remove()
 	end
 	

@@ -69,8 +69,8 @@ JMod_L4DHints = {
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown very far, right click to soft throw"},
     
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
-    ["gas spread"] = {Type = "skull", Text = "Gas spreads around, and is more lethal in confined spaces"},
-    ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas"},
+    ["gas spread"] = {Type = "skull", Text = "Gas spreads around physically and is more lethal in confined spaces"},
+    ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas; leave area or wear a gas mask"},
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
     
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
@@ -124,8 +124,14 @@ JMod_L4DHints = {
     
     -- Misc. Entities
     ["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 5},
-    ["aidhelp"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items"},
-    ["aidsky"] = {Type = "exclamation", Text = "Aid Radio needs to see sky to function"},
-    ["aidpackage"] = {Type = "info", Text = "Type in chaat 'supply radio: <package>' to request item"},
-    ["aidwait"] = {Type = "info", Text = "Package will be airdropped nearby after some time"},
+    ["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items"},
+    ["aid sky"] = {Type = "exclamation", Text = "Aid Radio needs to see sky to function"},
+    ["aid package"] = {Type = "info", Text = "Type in chat 'supply radio: <package>' to request item"},
+    ["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time"},
+    
+    ["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "Auto. Field Hospital can be used to heal and cure radioactive sickness", Time = 5},
+    ["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically"},
+    ["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
+    
+    ["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 5},
 }

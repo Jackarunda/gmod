@@ -68,6 +68,7 @@ if(SERVER)then
 						obj:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",60,math.random(90,110))
 						if(obj.ViewPunch)then obj:ViewPunch(Angle(5,0,0)) end
 					end
+                    if obj:IsPlayer() then JMod_L4DHint(obj, "gas damage") end
 				end
 			end
 		end

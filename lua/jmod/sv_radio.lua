@@ -171,7 +171,7 @@ local function StartDelivery(pkg,transceiver,station,bff)
     DeliveryTime = newTime or DeliveryTime
     Pos = newPos or Pos
 
-    JMod_L4DHint(transceiver.Owner, "aidwait", transceiver)
+    JMod_L4DHint(transceiver.Owner, "aid wait", transceiver)
     station.state=EZ_STATION_STATE_DELIVERING
     station.nextDeliveryTime=Time+DeliveryTime
     station.deliveryLocation=Pos

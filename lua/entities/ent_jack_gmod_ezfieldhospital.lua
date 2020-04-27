@@ -205,6 +205,7 @@ if(SERVER)then
 		if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
 		if(State==STATE_OFF)then
 			JMod_Hint(activator,"afh","supplies","upgrade","decontaminate")
+            if not JMod_L4DHint(self.Owner, "afh enter", self) then JMod_L4DHint(self.Owner, "afh upgrade", self) end
 			self:TurnOn()
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then

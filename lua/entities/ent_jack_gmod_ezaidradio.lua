@@ -163,7 +163,7 @@ if(SERVER)then
 				self:TurnOff()
                 JMod_L4DHint(activator, "toggle", self)
 			else
-				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_L4DHint(activator, "aidhelp", self)
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_L4DHint(activator, "aid help", self)
                 else JMod_L4DHint(self.Owner, "nopower", self) end
 			end
 		end
@@ -241,7 +241,7 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.Owner)
 				else
-                    JMod_L4DHint(self.Owner, "aidsky", self)
+                    JMod_L4DHint(self.Owner, "aid sky", self)
 					self.ConnectionAttempts = self.ConnectionAttempts + 1
 					if(self.ConnectionAttempts>5)then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
@@ -335,7 +335,7 @@ if(SERVER)then
                     timer.Simple(Num/10,function()
                         if(IsValid(self))then self:Speak(str) end
                     end)
-                    JMod_L4DHint(self.Owner, "aidpackage", self)
+                    JMod_L4DHint(self.Owner, "aid package", self)
 					return true
 				end
 			elseif(Name=="status")then
