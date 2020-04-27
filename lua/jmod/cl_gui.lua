@@ -529,6 +529,14 @@ net.Receive("JMod_EZtimeBomb",function()
     end
 end)
 
+local function GetAvailPts(specs)
+    local Pts=0
+    for k,v in pairs(specs)do
+        Pts=Pts-v
+    end
+    return Pts
+end
+
 net.Receive("JMod_ModifyMachine",function()
     local Ent=net.ReadEntity()
     local Specs=net.ReadTable()

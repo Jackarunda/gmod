@@ -12,6 +12,7 @@ function JMod_Hint(ply,...)
 			ply.JModHintsGiven[key] = true
 			ply.NextJModHint = CurTime() + 1
 			net.Start("JMod_Hint")
+            net.WriteBool(false)
 			net.WriteString(key)
 			net.Send(ply)
 			break
@@ -24,7 +25,6 @@ end
 function JMod_L4DHint(ply, key, loc, forceLegacy)
     if not JMOD_CONFIG.Hints or not ply or not key then return nil end
    
-    
     ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] then return false end
 	ply.JModHintsGiven[key] = true
@@ -37,8 +37,8 @@ function JMod_L4DHint(ply, key, loc, forceLegacy)
     --if not tbl.Identifier then tbl.Identifier = key end
     if forceLegacy or not isfunction(l4dgi_hint) then 
         net.Start("JMod_Hint")
+            net.WriteBool(false)
             net.WriteString(tbl.Text)
-            net.WriteBool(true)
         net.Send(ply)
     else
         l4dgi_hint(tbl, ply)

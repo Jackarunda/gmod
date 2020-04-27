@@ -262,13 +262,6 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
     render.SetBlend(1)
 end
 
-net.Receive("JMod_Hint",function()
-    local key = net.ReadString()
-    local isStr = net.ReadBool()
-    notification.AddLegacy(isStr and key or JMod_Hints[key], NOTIFY_HINT, 10)
-    surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
-end)
-
 net.Receive("JMod_EZarmorSync",function()
     local ply=net.ReadEntity()
     local tbl=net.ReadTable()
@@ -418,14 +411,6 @@ hook.Add("ShouldSit","JMOD_SITANYWHERE_COMPATIBILITY",function(ply)
         if(v.NoSitAllowed)then return false end
     end
 end)
-
-local function GetAvailPts(specs)
-    local Pts=0
-    for k,v in pairs(specs)do
-        Pts=Pts-v
-    end
-    return Pts
-end
 
 local function CommNoise()
     surface.PlaySound("snds_jack_gmod/radio_static"..math.random(1,3)..".wav")
