@@ -142,6 +142,9 @@ if(SERVER)then
 			net.WriteEntity(self)
 			net.WriteTable(JMOD_CONFIG.Recipes)
 			net.Send(activator)
+            JMod_L4DHint(activator, "craft", self)
+        else
+            JMod_L4DHint(activator, "refill", self)
 		end
 	end
 	function ENT:Think()

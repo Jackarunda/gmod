@@ -146,4 +146,8 @@ JMod_L4DHints = {
     ["ent_jack_gmod_ezsentry"] = {Type = "info", Text = "Sentry will automatically shoot at hostiles", Time = 5},
     ["sentry upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase performance"},
     ["sentry modify"] = {Type = "info", Text = "Modify with Build Kit to tweak stats and projectile type"},
+    
+    ["ent_jack_gmod_ezworkbench"] = {Type = "info", Text = "Workbench allows you to craft items from resources", Time = 5},
+    ["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
+    ["refill"] = {Type = "exclamation", Text = "Refill power and gas to keep the Workbench functional"},
 }
