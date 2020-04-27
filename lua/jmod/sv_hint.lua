@@ -19,7 +19,7 @@ function JMod_Hint(ply,...)
 end
 
 function JMod_L4DHint(ply, key, loc)
-    if not JMOD_CONFIG.Hints then return nil end
+    if not JMOD_CONFIG.Hints or not ply or not key then return nil end
     if not isfunction(l4dgi_hint) then return nil end
     
     ply.JModHintsGiven = ply.JModHintsGiven or {}

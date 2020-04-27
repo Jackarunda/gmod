@@ -142,4 +142,8 @@ JMod_L4DHints = {
     
     ["ent_jack_gmod_ezcrate_uni"] = {Type = "info", Text = "Storage Crates can store various vanilla and JMod entities", Time = 5},
     ["crate_uni"] = {Type = "info", Text = "Touch crate with entity to store it; Use crate to open menu"},
+    
+    ["ent_jack_gmod_ezsentry"] = {Type = "info", Text = "Sentry will automatically shoot at hostiles", Time = 5},
+    ["sentry upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase performance"},
+    ["sentry modify"] = {Type = "info", Text = "Modify with Build Kit to tweak stats and projectile type"},
 }
