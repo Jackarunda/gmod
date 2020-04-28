@@ -390,19 +390,6 @@ hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
     end
 end)
 
-local NeedAltKeyMsg=true
-net.Receive("JMod_PlayerSpawn",function()
-    local Key,DoHints=input.LookupBinding("+walk"),tobool(net.ReadBit())
-    if not(Key)then
-        notification.AddLegacy("Your WALK is not bound; JMod items will be mostly unusable.\nPlease bind WALK to the ALT key in your control settings.",NOTIFY_ERROR,5)
-    elseif(Key~="ALT")then
-        if((NeedAltKeyMsg)and(DoHints))then
-            notification.AddLegacy("Remember to use your real WALK key for JMod items instead of ALT.",NOTIFY_GENERIC,5)
-            NeedAltKeyMsg=false
-        end
-    end
-end)
-
 hook.Add("ShouldSit","JMOD_SITANYWHERE_COMPATIBILITY",function(ply)
     -- let it be known for the record that the SitAnywhere addon author is an idiot
     local Tr=ply:GetEyeTrace()

@@ -50,7 +50,8 @@ net.Receive("JMod_Hint",function()
     end
 
     -- Localization support
-    if language.GetPhrase("jmod_hint_" .. string.Replace(key, " ", "_")) then
+    local str = "jmod_hint_" .. string.Replace(key, " ", "_")
+    if language.GetPhrase(str) ~= str then
         hinttext = language.GetPhrase("jmod_hint_" .. string.Replace(key, " ", "_"))
     end
 
@@ -195,4 +196,17 @@ net.Receive("JMod_Hint",function()
             draw.SimpleTextOutlined(hinttext, "JModHintFont", ScrW() / 2 + string.len(hinttext) * -10, ScrH() / 2 + 230, Color(textcolor.x,textcolor.y,textcolor.z,a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, a))
         end
     end)
+end)
+
+local NeedAltKeyMsg = true
+net.Receive("JMod_PlayerSpawn",function()
+    local DoHints = tobool(net.ReadBit())
+    if not input.LookupBinding("+walk") then
+        chat.AddText(Color(255,0,0), "Your Walk key is not bound; JMod entities will be mostly unusable.")
+        chat.AddText(Color(255,0,0), "Please bind it in Settings or with concommand 'bind alt +walk'.")
+    end
+end)
+
+concommand.Add("jmod_wiki", function()
+    gui.OpenURL("https://github.com/Jackarunda/gmod/wiki")
 end)
