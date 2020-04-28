@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 ENT.Type 			= "anim"
-ENT.PrintName		= "EZ Generator"
+ENT.PrintName		= "EZ Fuel Generator"
 ENT.Author			= "Jackarunda, TheOnly8Z"
 ENT.Category			= "JMod - EZ Misc."
 ENT.Information         = ""
