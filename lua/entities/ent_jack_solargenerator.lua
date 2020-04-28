@@ -172,12 +172,13 @@ if SERVER then
     function ENT:Think()
         
         if self:GetState() == STATE_ON then
-
-            if self:CheckSky() <= 0 or self:WaterLevel() >= 2 then
+            
+            local eff = self:CheckSky()
+            if eff <= 0 or self:WaterLevel() >= 2 then
                 self:ShutOff()
                 return
             elseif self:GetPower() < self.MaxPower then
-                local rate = 0.1
+                local rate = 0.1 * eff
                 self:SetPower(math.min(self:GetPower() + rate, self.MaxPower))
                 if self:GetPower() >= JMod_EZbatterySize then
                     local canplace = self:ProducePower()
