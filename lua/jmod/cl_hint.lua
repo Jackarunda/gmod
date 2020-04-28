@@ -11,10 +11,10 @@ surface.CreateFont("JModHintFont", {
     antialias = true,
 })
 
-local arUp = Material("l4dgi/l4dgi_arup.png", "smooth")
-local arRight = Material("l4dgi/l4dgi_arright.png", "smooth")
-local arDown = Material("l4dgi/l4dgi_ardown.png", "smooth")
-local arLeft = Material("l4dgi/l4dgi_arleft.png", "smooth")
+local arUp = Material("hint/up.png", "smooth")
+local arRight = Material("hint/right.png", "smooth")
+local arDown = Material("hint/down.png", "smooth")
+local arLeft = Material("hint/left.png", "smooth")
 local start = SysTime()
 
 net.Receive("JMod_Hint",function()
@@ -32,7 +32,7 @@ net.Receive("JMod_Hint",function()
     local hinttext = hinttable.Text or "No Text Input"
     local hintPos = hinttable.Pos or Vector(0, 0, 0)
     local hinttime = hinttable.Time or nil
-    local hintsound = hinttable.Sound or "l4dgi/beepclear.wav"
+    local hintsound = hinttable.Sound or "snd_jack_hint.wav"
     local shouldmove = hinttable.ShouldMove or false
     local textcolor = hinttable.Color or Vector(255, 255, 255)
     local hintoffset = hinttable.Offset or Vector(0, 0, 0)
@@ -53,7 +53,7 @@ net.Receive("JMod_Hint",function()
     
 
     if hinttexture == nil then
-        matty = Material("l4dgi/l4dgi_" .. hinttype .. ".png", "smooth")
+        matty = Material("hint/" .. hinttype .. ".png", "smooth")
     else
         matty = Material(hinttexture, "smooth")
     end

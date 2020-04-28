@@ -117,7 +117,7 @@ JMod_Hints = {
     ["ent_jack_gmod_ezsticknade"] = {Type = "info", Text = "Stick Grenades can be thrown very far, and has an optional frag sleeve", Time = 5},
     ["ent_jack_gmod_ezstickynade"] = {Type = "info", Text = "Sticky Bombs stick to surfaces and explode after a 5-second timer", Time = 5},
     ["ent_jack_gmod_ezthermobaricbomb"] = {Type = "info", Text = "Thermobaric Bombs create a large shockwave on detonation", Time = 5},
-    ["ent_jack_gmod_eznuke_big"] = {Type = "exclamationred", Text = "oh boy", Time = 5},
+    ["ent_jack_gmod_eznuke_big"] = {Type = "warn", Text = "oh boy", Time = 5},
     ["ent_jack_gmod_eztimebomb"] = {Type = "info", Text = "Time Bombs explode after a pre-set amount of time", Time = 5},
     ["ent_jack_gmod_eztnt"] = {Type = "info", Text = "TNTs are explosives on a 10-second fuse", Time = 5},
     ["ent_jack_gmod_ezatmine"] = {Type = "info", Text = "Vehicle Mines are heavy proximity explosives effective against vehicles", Time = 5},
@@ -128,20 +128,20 @@ JMod_Hints = {
     
     -- Misc. Mechanics
     ["toggle"] = {Type = "key_E", Text = "Press Use to toggle power on and off"},
-    ["destroyed"] = {Type = "exclamation", Text = "Device was destroyed; touch with a box of parts to repair", Time = 15},
-    ["nopower"] = {Type = "exclamation", Text = "Device ran out of power; touch with a battery to recharge", Time = 15},
+    ["destroyed"] = {Type = "warn", Text = "Device was destroyed; touch with a box of parts to repair", Time = 15},
+    ["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 15},
     
     -- Misc. Entities
     ["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 5},
     ["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items"},
-    ["aid sky"] = {Type = "exclamation", Text = "Aid Radio needs to see sky to function"},
+    ["aid sky"] = {Type = "warn", Text = "Aid Radio needs to see sky to function"},
     ["aid package"] = {Type = "info", Text = "Type in chat 'supply radio: <package>' to request item"},
     ["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time"},
     
     ["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "Auto. Field Hospital can be used to heal and cure radioactive sickness", Time = 5},
     ["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically"},
     ["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
-    ["afh supply"] = {Type = "exclamation", Text = "Refill medical supplies to keep the AFH functional"},
+    ["afh supply"] = {Type = "warn", Text = "Refill medical supplies to keep the AFH functional"},
     
     ["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 5},
     ["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devestating black hole after a long wind-up", Time = 5},
@@ -158,7 +158,7 @@ JMod_Hints = {
     
     ["ent_jack_gmod_ezworkbench"] = {Type = "info", Text = "Workbench allows you to craft items from resources", Time = 5},
     ["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
-    ["refill"] = {Type = "exclamation", Text = "Refill power and gas to keep the Workbench functional"},
+    ["refill"] = {Type = "warn", Text = "Refill power and gas to keep the Workbench functional"},
     
     -- Armor
     ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor"},
@@ -167,7 +167,7 @@ JMod_Hints = {
     ["armor headset"] = {Type = "info", Text = "Type in chat *headset* or use command jmod_ez_headset to toggle headset"},
     ["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},
     ["armor friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends to talk privately"},
-    ["armor weight"] = {Type = "exclamation", Text = "Heavy armor will reduce movement speed"},
+    ["armor weight"] = {Type = "warn", Text = "Heavy armor will reduce movement speed"},
     
     ["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 5},
 }
