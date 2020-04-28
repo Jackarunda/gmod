@@ -1,10 +1,11 @@
+AddCSLuaFile()
+
 ENT.Type 			= "anim"
 ENT.PrintName		= "EZ Generator"
 ENT.Author			= "Jackarunda, TheOnly8Z"
-ENT.Category			= "JMod - EZ"
+ENT.Category			= "JMod - EZ Misc."
 ENT.Information         = ""
 ENT.Spawnable			= true
-ENT.AdminSpawnable		= true
 
 -- TODO Make these configurable (and maybe upgradable?)
 ENT.MaxFuel = 1000
@@ -19,8 +20,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 2, "State")
 end
 
-local STATE_OFF, STATE_STARTING, STATE_ON = 0, -1, 1
-
+local STATE_OFF, STATE_BROKEN, STATE_STARTING, STATE_ON = 0, -1, 1, 2
 
 if SERVER then
 
@@ -87,7 +87,7 @@ if SERVER then
             elseif (!alt) then
                 self:ProducePower(activator)
             end
-            JMod_Hint(activator, "generator")
+            -- JMod_Hint(activator, "generator")
         end
         
     end
@@ -144,7 +144,7 @@ if SERVER then
 
     function ENT:Think()
         
-        if(self:GetState() == STATE_ON)then
+        if self:GetState() == STATE_ON then
 
             if(self:GetFuel() <= 0)then
                 self:ShutOff()
@@ -182,7 +182,9 @@ if SERVER then
         end
         
     end
+    
 elseif CLIENT then
+
     function ENT:Initialize()
         self.RotateAngle=0
         self.RotSpeed=0
@@ -279,7 +281,7 @@ elseif CLIENT then
         local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
         local distsqr = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
         
-        if distsqr < 20000 then
+        if distsqr < 20000 and self:GetState() ~= STATE_BROKEN then
             local DisplayAng=SelfAng:GetCopy()
             DisplayAng:RotateAroundAxis(DisplayAng:Forward(),90)
             --DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
@@ -287,9 +289,9 @@ elseif CLIENT then
             cam.Start3D2D(SelfPos+Up*45-Right*(-20)-Forward*(-20),DisplayAng,.1)
             
                 local stateStr, R, G, B = "OFF", 255, 0, 0
-                if self:GetState() == 1 then 
+                if self:GetState() == STATE_ON then 
                     stateStr, R, G, B = "ON", 0, 255, 0
-                elseif self:GetState() == -1 then 
+                elseif self:GetState() == STATE_STARTING then 
                     stateStr, R, G, B = "STARTING", 150, 150, 0 
                 end
                 draw.SimpleTextOutlined("STATUS","JMod-Display",100,-150,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
@@ -307,4 +309,5 @@ elseif CLIENT then
     end
 
     language.Add("ent_jack_gmod_ezgenerator","EZ Generator")
+    
 end
