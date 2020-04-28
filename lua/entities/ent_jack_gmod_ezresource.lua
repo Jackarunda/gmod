@@ -66,7 +66,7 @@ if(SERVER)then
 					end
 					return
 				end
-            elseif data.HitEntity:GetClass() == self:GetClass() then
+            elseif data.HitEntity:GetClass() == self:GetClass() and self:IsPlayerHolding() and not data.HitEntity:IsPlayerHolding() then
                 if self:GetResource() <= 0 then self:Remove() return end
                 if not data.HitEntity.Loaded and self:GetResource() + data.HitEntity:GetResource() < self.MaxResource then
                     data.HitEntity.Loaded = true
