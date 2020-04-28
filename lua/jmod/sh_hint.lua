@@ -60,8 +60,9 @@ JMod_Hints = {
 
 JMod_Hints = {
     -- General
-    ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use concommand 'cl_jmod_hint_enabled'", Time = 6, Identifier = "important"},
-    ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 6, Identifier = "important"},
+    ["hint"] = {Type = "lightbulb", Text = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'", Time = 4, Identifier = "important", Sound = ""},
+    ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use command 'cl_jmod_hint_enabled'", Time = 4, Identifier = "important", Sound = ""},
+    ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 4, Identifier = "important", Sound = ""},
     ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items", Time = 3, Identifier = "important"},
     ["bind cmd"] = {Type = "lightbulb", Text = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'", Identifier = "important"},
     ["bind walk"] = {Type = "lightbulb", Text = "Ensure you have bound the Walk key, use command 'bind alt +walk'", Identifier = "important"},

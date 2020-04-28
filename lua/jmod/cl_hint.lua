@@ -65,8 +65,10 @@ net.Receive("JMod_Hint",function()
 
     hint_mat = Material("hint/" .. hinttype .. ".png", "smooth")
 
-    EmitSound(Sound(hintsound), LocalPlayer():GetPos(), 1, CHAN_STATIC, 1, 75, 0, 100)
-
+    if hintsound ~= "" then
+        EmitSound(Sound(hintsound), LocalPlayer():GetPos(), 1, CHAN_STATIC, 1, 75, 0, 100)
+    end
+    
     -- Remove old hook and timer if it already exists
     if timer.Exists("JMod_HintTimer_" .. hintid) then
         timer.Remove("JMod_HintTimer_" .. hintid)
