@@ -57,6 +57,10 @@ JMod_Hints = {
 }
 
 JMod_L4DHints = {
+    -- General
+    ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use concommand 'cl_jmod_hint_enabled'", Time = 6, Identifier = "config"},
+    ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 6},
+
     -- Explosives mechanics
     ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items"},
     ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},

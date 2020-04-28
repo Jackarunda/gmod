@@ -1,6 +1,9 @@
 -- Part of the code and inspiration from GIGABABAIT
 -- Original addon: https://steamcommunity.com/sharedfiles/filedetails/?id=2058653864
 
+CreateConVar("cl_jmod_hint_enabled", 1, FCVAR_ARCHIVE + FCVAR_USERINFO, "Whether to show hints on JMod entities.", 0, 1)
+CreateConVar("cl_jmod_hint_legacy", 0, FCVAR_ARCHIVE + FCVAR_USERINFO, "Whether to force legacy/vanilla hints instead of the new fancy ones.", 0, 1)
+
 surface.CreateFont("JModHintFont", {
     font = "BahnSchrift",
     size = 48,
@@ -17,7 +20,9 @@ local start = SysTime()
 net.Receive("JMod_Hint",function()
     local new = net.ReadBool()
     if not new then
-        notification.AddLegacy(net.ReadString(), NOTIFY_HINT, 10)
+        local str = net.ReadString()
+        MsgC(Color(255,255,255), "[JMod] ", str, "\n")
+        notification.AddLegacy(str, NOTIFY_HINT, 10)
         surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
         return
     end
@@ -65,7 +70,7 @@ net.Receive("JMod_Hint",function()
         end)
     end
     
-
+    MsgC(Color(255,255,255), "[JMod] ", Color(textcolor.x, textcolor.y, textcolor.z), hinttext, "\n")
     hook.Add("HUDPaint", "JMod_HintPaint_" .. hintid, function()
         if IsEntity(hintPos) and not IsValid(hintPos) then
             hook.Remove("HUDPaint", "JMod_HintPaint_" .. hintid)

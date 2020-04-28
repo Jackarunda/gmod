@@ -136,16 +136,6 @@ hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)
     end
 end)
 
-local SERVER_JMOD_HINT_GIVEN=false
-hook.Add("PlayerInitialSpawn","JMOD_INITIALSPAWN",function(ply)
-    if((JMOD_CONFIG)and(JMOD_CONFIG.Hints)and not(SERVER_JMOD_HINT_GIVEN))then
-        SERVER_JMOD_HINT_GIVEN=true
-        timer.Simple(10,function()
-            if(ply)then JMod_Hint(ply,"customize") end
-        end)
-    end
-end)
-
 function JMod_EZ_Remote_Trigger(ply)
     if not(IsValid(ply))then return end
     if not(ply:Alive())then return end
