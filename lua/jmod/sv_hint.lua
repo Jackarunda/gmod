@@ -10,7 +10,7 @@ function JMod_Hint(ply, key, loc, forceLegacy)
     if not tbl then return nil end
     if loc then tbl.Pos = loc end
     tbl.ShouldMove = (loc ~= nil)
-    tbl.key = key
+    tbl.Key = key
     if not tbl.Time then tbl.Time = 10 end
 
     if forceLegacy or tonumber(ply:GetInfo("cl_jmod_hint_legacy")) == 1 then 
@@ -48,9 +48,6 @@ end)
 hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
     if JMod_Hints[ent:GetClass()] then 
         JMod_Hint(ply, ent:GetClass(), ent)
-        if not ply.JModHintsGiven["pickup"] and ent:GetPhysicsObject():GetMass() <= 50 then
-            timer.Simple(5, function() if IsValid(ply) and IsValid(ent) then JMod_Hint(ply, "pickup") end end)
-        end
     end
 end)
 

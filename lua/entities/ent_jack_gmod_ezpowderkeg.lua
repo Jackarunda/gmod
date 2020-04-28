@@ -68,7 +68,8 @@ if(SERVER)then
 		
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			self.Pouring=not self.Pouring
-			if(self.Pouring)then Dude:PickupObject(self) end
+			if self.Pouring then Dude:PickupObject(self) end
+            self:EmitSound("items/ammocrate_open.wav", 70, self.Pouring and 130 or 100)
 			return
 		end
 		Dude:PickupObject(self)
@@ -121,6 +122,7 @@ if(SERVER)then
 				Powder:Spawn()
 				Powder:Activate()
 				constraint.Weld(Powder,Tr.Entity,0,0,0,true)
+                JMod_Hint(self.Owner, "powder", Powder)
 			end
 			self.Powder=self.Powder-1
 			if(self.Powder<=0)then self:Remove() return end

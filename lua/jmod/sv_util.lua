@@ -519,6 +519,10 @@ function JMod_ThrowablePickup(playa,item,hardstr,softstr)
                 timer.Simple(0,function()
                     if(IsValid(Phys))then Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass()) end
                 end)
+            elseif key == IN_USE then
+                if item.GetState and item:GetState() == JMOD_EZ_STATE_PRIMED then
+                    JMod_Hint(playa, "grenade drop", item)
+                end
             end
         end
         if(table.HasValue(TriggerKeys,key))then hook.Remove("KeyPress",HookName) end

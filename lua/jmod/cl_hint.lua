@@ -40,11 +40,10 @@ net.Receive("JMod_Hint",function()
     local hintid = hinttable.Identifier or ""
     local hintPosScr
     local start = SysTime()
-    local matty
+    local hint_mat
     local keytext
     local spacebarAdd = 0
     
-    -- Love the hard-coded shit here
     -- Only popup walk bind hint if the player doesn't have walk bound
     if key == "bind walk" and input.LookupBinding("+walk") ~= nil then
         return
@@ -59,11 +58,7 @@ net.Receive("JMod_Hint",function()
     end
     
 
-    if hinttexture == nil then
-        matty = Material("hint/" .. hinttype .. ".png", "smooth")
-    else
-        matty = Material(hinttexture, "smooth")
-    end
+    hint_mat = Material("hint/" .. hinttype .. ".png", "smooth")
 
     EmitSound(Sound(hintsound), LocalPlayer():GetPos(), 1, CHAN_STATIC, 1, 75, 0, 100)
 
@@ -116,7 +111,7 @@ net.Receive("JMod_Hint",function()
         if shouldmove then
             if not offScreen.above and not offScreen.below and not offScreen.right and not offScreen.left then
                 surface.SetDrawColor(255, 255, 255, a)
-                surface.SetMaterial(matty)
+                surface.SetMaterial(hint_mat)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300 - spacebarAdd, hintPosScr.x - spacebarAdd + string.len(hinttext) * -10), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128 + spacebarAdd, 128)
                 
 
@@ -130,7 +125,7 @@ net.Receive("JMod_Hint",function()
                 draw.SimpleTextOutlined(hinttext, "JModHintFont", Lerp(SysTime() - start, ScrW() - 1150, hintPosScr.x + 150 + string.len(hinttext) * -10), Lerp(SysTime() - start, ScrH() - 360, hintPosScr.y + 45), Color(textcolor.x,textcolor.y,textcolor.z,a), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 2, Color(0, 0, 0, a))
             elseif offScreen.above then
                 surface.SetDrawColor(255, 255, 255, a)
-                surface.SetMaterial(matty)
+                surface.SetMaterial(hint_mat)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128 + spacebarAdd, 128)
                 surface.SetMaterial(arUp)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y - 120), 128, 128)
@@ -143,7 +138,7 @@ net.Receive("JMod_Hint",function()
                 end
             elseif offScreen.right then
                 surface.SetDrawColor(255, 255, 255, a)
-                surface.SetMaterial(matty)
+                surface.SetMaterial(hint_mat)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128 + spacebarAdd, 128)
                 surface.SetMaterial(arRight)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x + 120), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128, 128)
@@ -156,7 +151,7 @@ net.Receive("JMod_Hint",function()
                 end
             elseif offScreen.below then
                 surface.SetDrawColor(255, 255, 255, a)
-                surface.SetMaterial(matty)
+                surface.SetMaterial(hint_mat)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128 + spacebarAdd, 128)
                 surface.SetMaterial(arDown)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y + 120), 128, 128)
@@ -169,7 +164,7 @@ net.Receive("JMod_Hint",function()
                 end
             elseif offScreen.left then
                 surface.SetDrawColor(255, 255, 255, a)
-                surface.SetMaterial(matty)
+                surface.SetMaterial(hint_mat)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128 + spacebarAdd, 128)
                 surface.SetMaterial(arLeft)
                 surface.DrawTexturedRect(Lerp(SysTime() - start, ScrW() - 1300, hintPosScr.x - 120), Lerp(SysTime() - start, ScrH() - 400, hintPosScr.y), 128, 128)
@@ -183,7 +178,7 @@ net.Receive("JMod_Hint",function()
             end
         else
             surface.SetDrawColor(255, 255, 255, a)
-            surface.SetMaterial(matty)
+            surface.SetMaterial(hint_mat)
             surface.DrawTexturedRect(ScrW() / 2 - 150 - spacebarAdd + string.len(hinttext) * -10, ScrH() / 2 + 200, 128 + spacebarAdd, 128)
             surface.SetFont("JModHintFont")
 
