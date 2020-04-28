@@ -49,6 +49,10 @@ net.Receive("JMod_Hint",function()
         return
     end
 
+    -- Localization support
+    if language.GetPhrase("jmod_hint_" .. string.Replace(key, " ", "_")) then
+        hinttext = language.GetPhrase("jmod_hint_" .. string.Replace(key, " ", "_"))
+    end
 
     if string.sub(hinttype, 1, 3) == "key" then
         keytext = string.sub(hinttype, 5, string.len(hinttype))
