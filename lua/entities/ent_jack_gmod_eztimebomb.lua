@@ -90,6 +90,7 @@ if(SERVER)then
 						net.Start("JMod_EZtimeBomb")
 						net.WriteEntity(self)
 						net.Send(Dude)
+                        JMod_Hint(Dude, "timebomb", self)
 					end
 				else
 					constraint.RemoveAll(self)
@@ -97,20 +98,22 @@ if(SERVER)then
 					self.StuckTo=nil
 					Dude:PickupObject(self)
 					self.NextStick=Time+.5
+                    JMod_Hint(Dude, "sticky", self)
 				end
 			else
 				if(Alt)then
 					if(self.NextDisarm<Time)then
-						self.NextDisarm=Time+.25
+						self.NextDisarm=Time+.2
 						
 						self.DisarmProgress=self.DisarmProgress+JMOD_CONFIG.BombDisarmSpeed
 						self.NextDisarmFail=Time+1
-						Dude:PrintMessage(HUD_PRINTCENTER,"disarming "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
+						Dude:PrintMessage(HUD_PRINTCENTER,"disarming: "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
 						if(self.DisarmProgress>=self.DisarmNeeded)then
 							self:SetState(STATE_OFF)
 							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
 							self.DisarmProgress=0
 						end
+                        JMod_Hint(Dude, "defuse", self)
 					end
 				else
 					constraint.RemoveAll(self)

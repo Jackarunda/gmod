@@ -83,6 +83,8 @@ JMod_Hints = {
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
     ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
     ["airburst"] = {Type = "skull", Text = "Bomb will only detonate when in freefall and near ground"},
+    ["timebomb"] = {Type = "skull", Text = "The longer you set the time, the longer it takes to defuse the bomb"},
+    ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk"},
     
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Followup = "bind walk"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg", Followup = "bind walk"},

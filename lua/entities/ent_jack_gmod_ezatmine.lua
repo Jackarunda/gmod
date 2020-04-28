@@ -123,6 +123,7 @@ if(SERVER)then
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
+        JMod_Hint(armer, "friends", self)
 		JMod_Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,90)
