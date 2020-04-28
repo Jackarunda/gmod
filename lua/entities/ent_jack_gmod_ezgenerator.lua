@@ -8,8 +8,8 @@ ENT.Information         = ""
 ENT.Spawnable			= true
 
 -- TODO Make these configurable (and maybe upgradable?)
-ENT.MaxFuel = 1000
-ENT.MaxPower = 1000
+ENT.MaxFuel = 100
+ENT.MaxPower = 400
 
 ENT.EZconsumes = {"fuel"}
 ENT.BatteryEnt = "ent_jack_gmod_ezbattery"
@@ -74,41 +74,91 @@ if SERVER then
     function ENT:Use(activator,caller)
 
         if(activator:IsPlayer())then
-        
-            local alt = activator:KeyDown(IN_WALK)
             
-            if (self.NextUse>CurTime()) then return end
-            self.NextUse = CurTime() + 1
+            if self.NextUse > CurTime() then return end
+            self.NextUse = CurTime() + 0.5
             
-            if (self:GetState() == STATE_OFF and alt) then
-                self:Start()
-            elseif (self:GetState() == STATE_ON and alt) then
+            if (self:GetState() == STATE_OFF) then
+                if self:GetPower() >= JMod_EZbatterySize then
+                    local canplace = self:ProducePower()
+                    if not canplace and (self.NextWhine or 0) < CurTime() then
+                        self:EmitSound("items/suitchargeno1.wav",70,100)
+                        self.NextWhine = CurTime() + 5
+                    end
+                else
+                    self:Start()
+                end
+            elseif (self:GetState() == STATE_ON) then
                 self:ShutOff()
-            elseif (!alt) then
-                self:ProducePower(activator)
             end
             -- JMod_Hint(activator, "generator")
         end
         
     end
+    
+    function ENT:SpawnEffect(pos)
+        local effectdata=EffectData()
+        effectdata:SetOrigin(pos)
+        effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
+        effectdata:SetMagnitude(math.Rand(5,10))
+        effectdata:SetScale(math.Rand(.5,1.5))
+        effectdata:SetRadius(math.Rand(2,4))
+        util.Effect("Sparks", effectdata)
+        self:EmitSound("items/suitchargeok1.wav", 80, 120)
+    end
 
-    function ENT:ProducePower(ply)
+    function ENT:ProducePower()
 
         local amt = math.min(self:GetPower(), JMod_EZbatterySize)
         if amt <= 0 then return end
         
+        local pos = self:GetPos() + self:GetForward() * -64 + self:GetUp() * 30
+        
+        for _, ent in pairs(ents.FindInSphere(pos, 100)) do
+            print(ent, ent.GetResourceType and ent:GetResourceType())
+            if ent:GetClass() == "ent_jack_gmod_ezcrate" and (ent:GetResourceType() == "generic"
+                    or (ent:GetResourceType() == "power" and ent:GetResource() + amt <= ent.MaxResource)) then
+                    
+                if ent:GetResourceType() == "generic" then
+                    ent:ApplySupplyType("power")
+                end
+                    
+                ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
+                self:SetPower(self:GetPower() - amt)
+                
+                self:SpawnEffect(pos)
+                
+                return true
+            end
+        end
+        
+        -- Ensure the battery isn't spawning in other stuff
+        local tr = util.TraceHull({
+            start = pos,
+            entpos = pos,
+            filter = self,
+            mins = Vector(-16, -16, -16),
+            maxs = Vector(16, 16, 16)
+        })
+        if tr.Hit then return false end
+        
+        self:SetPower(self:GetPower() - amt)
+        
         local battery = ents.Create(self.BatteryEnt)
-        battery:SetPos(self:GetPos()+self:GetUp()*100)
-        battery:SetAngles(self:GetAngles())
+        battery:SetPos(pos)
+        battery:SetAngles(self:GetAngles() + Angle(0, -90, 90))
         battery:Spawn()
         battery:Activate()
         battery:SetResource(amt)
-        battery.NextLoad=CurTime()+2
+        battery.NextLoad=CurTime()+1
         
-        ply:PickupObject(battery)
-        self:SetPower(self:GetPower() - amt)
-        self:EmitSound("Ammo_Crate.Close")
+        local effectdata=EffectData()
+        effectdata:SetEntity(battery)
+        util.Effect("propspawn",effectdata)
         
+        self:SpawnEffect(pos)
+        
+        return true
     end
 
     function ENT:TryLoadResource(typ,amt)
@@ -146,13 +196,22 @@ if SERVER then
         
         if self:GetState() == STATE_ON then
 
-            if(self:GetFuel() <= 0)then
+            if self:GetFuel() <= 0 or self:WaterLevel() >= 2 then
                 self:ShutOff()
                 return
-            else
+            elseif self:GetPower() < self.MaxPower then
                 local drain = math.min(self:GetFuel(), 1) -- TODO make this configurable?
+                local ratio = 4
                 self:SetFuel(self:GetFuel() - drain)
-                self:SetPower(math.min(self:GetPower() + drain, self.MaxPower))
+                self:SetPower(math.min(self:GetPower() + drain * ratio, self.MaxPower))
+                if self:GetPower() >= JMod_EZbatterySize then
+                    local canplace = self:ProducePower()
+                    if not canplace and (self.NextWhine or 0) < CurTime() then
+                        -- Blocked, let's make some noise to complain
+                        self:EmitSound("items/suitchargeno1.wav",70,100)
+                        self.NextWhine = CurTime() + 5
+                    end
+                end
             end
             
             if(self.NextSound <= CurTime() )then
@@ -170,7 +229,7 @@ if SERVER then
             --Poof:SetScale(1)
             --util.Effect("eff_jack_genrun",Poof,true,true)
             
-            self:NextThink(CurTime()+0.5)
+            self:NextThink(CurTime()+1)
             return true
             
         elseif self:GetState() == STATE_STARTING then
@@ -298,7 +357,7 @@ elseif CLIENT then
                 draw.SimpleTextOutlined(stateStr,"JMod-Display",100,-115,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                 
                 draw.SimpleTextOutlined("POWER","JMod-Display",200,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-                local R,G,B=JMod_GoodBadColor(self:GetPower()/self.MaxPower)
+                local R,G,B=JMod_GoodBadColor(self:GetPower()/JMod_EZbatterySize)
                 draw.SimpleTextOutlined(tostring(self:GetPower()),"JMod-Display",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                 
                 local R,G,B=JMod_GoodBadColor(self:GetFuel()/self.MaxFuel)
