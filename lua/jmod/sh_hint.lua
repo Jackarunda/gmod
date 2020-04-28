@@ -60,18 +60,20 @@ JMod_Hints = {
 
 JMod_Hints = {
     -- General
-    ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use concommand 'cl_jmod_hint_enabled'", Time = 6, Identifier = "config"},
-    ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 6},
-
+    ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use concommand 'cl_jmod_hint_enabled'", Time = 6, Identifier = "important"},
+    ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 6, Identifier = "important"},
+    ["bind cmd"] = {Type = "lightbulb", Text = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'", Identifier = "important"},
+    ["bind walk"] = {Type = "lightbulb", Text = "Ensure you have bound the Walk key, use command 'bind alt +walk'", Identifier = "important"},
+    
     -- Explosives mechanics
     ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items"},
     ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
-    ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm"},
-    ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate"},
-    ["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket"},
-    ["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb"},
+    ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm", Followup = "bind walk"},
+    ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate", Followup = "bind cmd"},
+    ["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket", Followup = "bind cmd"},
+    ["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb", Followup = "bind cmd"},
     ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
-    ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade"},
+    ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade", Followup = "bind walk"},
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown long distances, right click to soft throw"},
     ["dualdet"] = {Type = "button", Text = "Bomb detonates on impact or from remote detonation"},
     
@@ -82,9 +84,9 @@ JMod_Hints = {
     ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
     ["airburst"] = {Type = "skull", Text = "Bomb will only detonate when in freefall and near ground"},
     
-    ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm"},
-    ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg"},
-    ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate the charge"},
+    ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Followup = "bind walk"},
+    ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder from the keg", Followup = "bind walk"},
+    ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate the charge", Followup = "bind walk"},
     ["frag sleeve"] = {Type = "button", Text = "Hold Sprint while priming to toggle fragmentation sleeve"},
     ["mininade"] = {Type = "button", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
     ["slam stick"] = {Type = "button", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
@@ -94,7 +96,7 @@ JMod_Hints = {
     ["ent_jack_gmod_ezdetpack"] = {Type = "info", Text = "Detpacks are remote controlled sticky explosives", Time = 5},    
     ["ent_jack_gmod_ezdynamite"] = {Type = "info", Text = "Dynamites are throwable explosives with a 7-second fuse", Time = 5},
     ["ent_jack_gmod_ezflashbang"] = {Type = "info", Text = "Flashbangs blind players after a 2-second timer", Time = 5},
-    ["ent_jack_gmod_ezfougasse"] = {Type = "info", Text = "Fougasse Mines spray napalm when hostiles walk in front of it", Time = 5},
+    ["ent_jack_gmod_ezfougasse"] = {Type = "info", Text = "Fougasse Mines spray napalm when hostiles are in front of it", Time = 5},
     ["ent_jack_gmod_ezfragnade"] = {Type = "info", Text = "Frag Grenades explode into shrapnel after a 5-second timer", Time = 5},
     ["ent_jack_gmod_ezgasnade"] = {Type = "info", Text = "Gas Grenades spread poison gas after a 5-second timer", Time = 5},
     ["ent_jack_gmod_ezsticknadebundle"] = {Type = "info", Text = "Bundled Stick Grenades do a lot of damage but can't go very far", Time = 5},
@@ -161,13 +163,17 @@ JMod_Hints = {
     ["refill"] = {Type = "warn", Text = "Refill power and gas to keep the Workbench functional"},
     
     -- Armor
-    ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor"},
-    ["armor drop"] = {Type = "info", Text = "Type in chat *armor* or use command jmod_ez_armor to unequip all armor"},
-    ["armor mask"] = {Type = "info", Text = "Type in chat *mask* or use command jmod_ez_mask to toggle mask"},
-    ["armor headset"] = {Type = "info", Text = "Type in chat *headset* or use command jmod_ez_headset to toggle headset"},
+    ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor", Followup = "bind walk"},
+    ["armor drop"] = {Type = "info", Text = "Type in chat *armor* or use command jmod_ez_armor to unequip all armor", Followup = "bind cmd"},
+    ["armor mask"] = {Type = "info", Text = "Type in chat *mask* or use command jmod_ez_mask to toggle mask", Followup = "bind cmd"},
+    ["armor headset"] = {Type = "info", Text = "Type in chat *headset* or use command jmod_ez_headset to toggle headset", Followup = "bind cmd"},
     ["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},
     ["armor friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends to talk privately"},
-    ["armor weight"] = {Type = "warn", Text = "Heavy armor will reduce movement speed"},
+    ["armor weight"] = {Type = "warn", Text = "Wearing more pieces or heavier pieces of armor will slow you down"},
     
+    ["ent_jack_gmod_ezarmor_balmask"] = {Type = "info", Text = "Bal. Mask blocks all damage to the face, but severely obstructs vision", Time = 5},
+    ["ent_jack_gmod_ezarmor_gasmask"] = {Type = "info", Text = "Gas Mask makes you immune to gas damage and resists some radioative damage", Time = 5},
+    ["ent_jack_gmod_ezarmor_nvgs"] = {Type = "info", Text = "NV Goggles makes it easy to see in the dark when worn", Time = 5},
+    ["ent_jack_gmod_ezarmor_thermals"] = {Type = "info", Text = "Thermal Goggles highlights living things when worn", Time = 5},
     ["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 5},
 }

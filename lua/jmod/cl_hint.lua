@@ -28,6 +28,7 @@ net.Receive("JMod_Hint",function()
     end
     
     local hinttable = net.ReadTable()
+    local key = hinttable.Key
     local hinttype = hinttable.Type or "exclamation"
     local hinttext = hinttable.Text or "No Text Input"
     local hintPos = hinttable.Pos or Vector(0, 0, 0)
@@ -42,6 +43,12 @@ net.Receive("JMod_Hint",function()
     local matty
     local keytext
     local spacebarAdd = 0
+    
+    -- Love the hard-coded shit here
+    -- Only popup walk bind hint if the player doesn't have walk bound
+    if key == "bind walk" and input.LookupBinding("+walk") ~= nil then
+        return
+    end
 
 
     if string.sub(hinttype, 1, 3) == "key" then

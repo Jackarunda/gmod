@@ -10,6 +10,7 @@ function JMod_Hint(ply, key, loc, forceLegacy)
     if not tbl then return nil end
     if loc then tbl.Pos = loc end
     tbl.ShouldMove = (loc ~= nil)
+    tbl.key = key
     if not tbl.Time then tbl.Time = 10 end
 
     if forceLegacy or tonumber(ply:GetInfo("cl_jmod_hint_legacy")) == 1 then 
@@ -24,6 +25,15 @@ function JMod_Hint(ply, key, loc, forceLegacy)
             net.WriteTable(tbl)
         net.Send(ply)
     end
+    
+    if tbl.Followup and JMod_Hints[tbl.Followup] then
+        timer.Simple(tbl.Time, function()
+            if IsValid(ply) then
+                JMod_Hint(ply, tbl.Followup)
+            end
+        end)
+    end
+    
     return true
 end
 
@@ -49,13 +59,13 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
     if tonumber(ply:GetInfo("cl_jmod_hint_enabled")) == 0 then return end
 
     if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
-        timer.Simple(10,function()
+        timer.Simple(5,function()
             if IsValid(ply) then
                 JMod_Hint(ply, "hint")
             end
         end)
         if ply:IsAdmin() then
-            timer.Simple(18,function()
+            timer.Simple(12,function()
                 if IsValid(ply) then
                     JMod_Hint(ply, "config")
                 end
