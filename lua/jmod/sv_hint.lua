@@ -56,18 +56,18 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
     if tonumber(ply:GetInfo("cl_jmod_hint_enabled")) == 0 then return end
 
     if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
-        timer.Simple(3,function()
+        timer.Simple(5,function()
             if IsValid(ply) then
                 JMod_Hint(ply, "wiki")
             end
         end)
-        timer.Simple(8,function()
+        timer.Simple(10,function()
             if IsValid(ply) then
                 JMod_Hint(ply, "hint")
             end
         end)
         if ply:IsAdmin() then
-            timer.Simple(12,function()
+            timer.Simple(15,function()
                 if IsValid(ply) then
                     JMod_Hint(ply, "config")
                 end
