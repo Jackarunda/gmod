@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_rm/darkmatter"
+	"$surfaceprop" "metal"
+	"$model" 1
+	"$bumpmap" "models/thedoctor/mat_rm/darkmatter_NRM"     
+	"$normalmapalphaenvmapmask" 1
+	"$envmaptint" "[0.05 0.05 0.05]"
+	"$envmap" "env_cubemap"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".75"
+	"$phongexponent" "15"
+}
+

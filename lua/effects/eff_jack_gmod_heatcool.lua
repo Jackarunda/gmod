@@ -2,13 +2,13 @@ function EFFECT:Init(data)
 	
 	if(self:WaterLevel()>0)then
 	
-		local NumParticles = 1
+		local NumParticles=1
 		
-		local emitter = ParticleEmitter(data:GetOrigin())
+		local emitter=ParticleEmitter(data:GetOrigin())
 		
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 				
 			local colorangle=Angle(255,255,255)
 			local red=colorangle.p
@@ -16,9 +16,9 @@ function EFFECT:Init(data)
 			local blue=colorangle.r
 			local wind=data:GetStart()
 				
-			local rollparticle = emitter:Add("effects/bubble",Pos+VectorRand()*3)
+			local rollparticle=emitter:Add("effects/bubble",Pos+VectorRand()*3)
 
-			if (rollparticle) then
+			if(rollparticle)then
 				rollparticle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10)))
 					
 				rollparticle:SetLifeTime(0)
@@ -51,13 +51,13 @@ function EFFECT:Init(data)
 		return
 	end
 	
-	local NumParticles = 1
+	local NumParticles=1
 	
-	local emitter = ParticleEmitter(data:GetOrigin())
+	local emitter=ParticleEmitter(data:GetOrigin())
 	
-		for i = 0, NumParticles do
+		for i=0, NumParticles do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 			
 			local culur=math.random(200,255)
 			local colorangle=Angle(culur,culur,culur)
@@ -68,9 +68,9 @@ function EFFECT:Init(data)
 			
 			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 		
-			local particle = emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
+			local particle=emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(Vector(math.Rand(-1,1),math.Rand(-1,1),math.Rand(-1,1)))
 				
 				particle:SetLifeTime(0)
@@ -99,9 +99,9 @@ function EFFECT:Init(data)
 				particle:SetLighting(true)
 			end
 			
-			local particle = emitter:Add("sprites/heatwave", Pos) --particles/smokey is a nice volumetric smoke sprite
+			local particle=emitter:Add("sprites/heatwave", Pos) --particles/smokey is a nice volumetric smoke sprite
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(Vector(math.Rand(-10,10),math.Rand(-10,10),math.Rand(-10,10)))
 				
 				particle:SetLifeTime(0)

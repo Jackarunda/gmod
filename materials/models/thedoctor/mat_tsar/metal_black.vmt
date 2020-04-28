@@ -1,0 +1,20 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_tsar/metal_black"
+	"$surfaceprop" "metal"
+	"$model" 1
+	"$phong" 1
+	"$ssbump" 1
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$normalmapalphaenvmapmask" 1
+	"$envmaptint" "[0.01 0.01 0.01]"
+	"$envmap" "env_cubemap"
+
+	"$phong"				"1"
+	"$phongalbedotint"		"1"
+	"$phongboost"			"5"
+	"$phongexponent"		"5"
+	"$phongexponenttexture"	"models\vehicle_exp"
+	"$phongfresnelranges"	"[0 0.1 0]"
+}
+

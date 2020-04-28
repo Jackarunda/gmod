@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Advanced Parts Box"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -28,7 +28,7 @@ if(SERVER)then
 		Prop:Spawn()
 		Prop:Activate()
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self)
+		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
 		Phys:SetVelocity((VectorRand()+Vector(0,0,1)):GetNormalized()*math.Rand(100,300))
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,1000))

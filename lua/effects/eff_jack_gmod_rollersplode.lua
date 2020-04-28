@@ -3,7 +3,7 @@
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	
@@ -22,11 +22,11 @@ function EFFECT:Init(data)
 	Splach:SetScale(Scayul*200)
 	util.Effect("Explosion",Splach,true,true)
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 		
 		for i=0,10 do
-			local particle = emitter:Add("effects/fire_cloud1", vOffset+VectorRand()*math.Rand(0,300))
-			particle:SetVelocity(math.Rand(40,60) * VectorRand()*Scayul)
+			local particle=emitter:Add("effects/fire_cloud1", vOffset+VectorRand()*math.Rand(0,300))
+			particle:SetVelocity(math.Rand(40,60)*VectorRand()*Scayul)
 			particle:SetAirResistance(20)
 			particle:SetDieTime(.05*Scayul)
 			particle:SetStartAlpha(255)
@@ -54,7 +54,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/Smoke3"
 			end
-			local particle = emitter:Add(sprite, vOffset)
+			local particle=emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(300,850)*VectorRand()*Scayul)
 			particle:SetAirResistance(300)
 			particle:SetGravity(Vector(0, 0, math.Rand(25, 100)))
@@ -72,8 +72,8 @@ function EFFECT:Init(data)
 		end
 		
 		for i=0, 5*Scayul^2 do
-			local Debris = emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
-			if (Debris) then
+			local Debris=emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
+			if(Debris)then
 				Debris:SetVelocity(VectorRand()*math.Rand(250,1500)*Scayul^0.5)
 				Debris:SetDieTime(3*math.random(0.6,1))
 				Debris:SetStartAlpha(255)
@@ -90,13 +90,13 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		for i = 0, 75*Scayul do
+		for i=0, 75*Scayul do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
-			local particle = emitter:Add("sprites/spark", Pos)
+			local particle=emitter:Add("sprites/spark", Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(4000, 6000)*Scayul)
 				
 				particle:SetLifeTime(0)
@@ -124,7 +124,7 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		local particle = emitter:Add("sprites/heatwave", vOffset)
+		local particle=emitter:Add("sprites/heatwave", vOffset)
 		particle:SetVelocity(Vector(0,0,0))
 		particle:SetAirResistance(200)
 		particle:SetGravity(VectorRand()*math.Rand(0,200))

@@ -1,6 +1,6 @@
 VertexLitGeneric
 {
-	"$baseTexture" "models\Weapons\w_models\gnd"
+	"$baseTexture" "models/mats_jack_nades/gnd"
 	"$bumpmap"	"models\Weapons\w_models\gnd_bumpmap"
 	"$phong" 			"1"
 	"$phongexponent" 		"100"

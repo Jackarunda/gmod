@@ -4,7 +4,10 @@
 	"$surfaceprop" "metal"
 	"$bumpmap" "jhoenix_storms/normalmap"
 	"$model" 1
-//	"$HalfLambert" 1
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".2"
+	"$phongexponent" "10"
 }
 
 

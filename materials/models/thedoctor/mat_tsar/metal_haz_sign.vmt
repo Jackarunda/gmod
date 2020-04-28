@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_tsar/metal_haz_sign"
+	"$surfaceprop" "metal"
+}
+

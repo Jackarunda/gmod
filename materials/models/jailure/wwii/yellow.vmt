@@ -1,7 +1,0 @@
-"VertexLitGeneric"
-{
-	"$baseTexture" "models\Jailure\WWII\Yellow"
-	"$envmap" 		"env_cubemap"
-	"$blendtintbybasealpha" "0" 
-	"$blendtintcoloroverbase" "0"
-}

@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Micro Black Hole Generator"
 ENT.Spawnable=true
@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -88,7 +88,7 @@ if(SERVER)then
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
 		if(State==STATE_OFF)then
-			self.Owner=activator
+			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_CHARGING)
 				self:EmitSound("ambient/machines/thumper_startup1.wav")
@@ -121,7 +121,7 @@ if(SERVER)then
 		timer.Simple(2,function()
 			local Bam=ents.Create("ent_jack_gmod_ezblackhole")
 			Bam:SetPos(SelfPos)
-			Bam.Owner=Own
+			JMod_Owner(Bam,Own)
 			Bam:Spawn()
 			Bam:Activate()
 		end)

@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Medical Supplies Box"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -27,6 +27,20 @@ ENT.PropModels={
 }
 ---
 if(SERVER)then
+	function ENT:AltUse(ply)
+		local Wep=ply:GetActiveWeapon()
+		if((Wep)and(Wep.EZaccepts)and(Wep.EZaccepts==self.EZsupplies))then
+			local ExistingAmt=Wep:GetSupplies()
+			local Missing=Wep.EZmaxSupplies-ExistingAmt
+			if(Missing>0)then
+				local AmtToGive=math.min(Missing,self:GetResource())
+				Wep:SetSupplies(ExistingAmt+AmtToGive)
+				sound.Play("items/ammo_pickup.wav",self:GetPos(),65,math.random(90,110))
+				self:SetResource(self:GetResource()-AmtToGive)
+				if(self:GetResource()<=0)then self:Remove();return end
+			end
+		end
+	end
 	function ENT:FlingProp(mdl)
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
@@ -36,7 +50,7 @@ if(SERVER)then
 		Prop:Spawn()
 		Prop:Activate()
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self)
+		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
 		Phys:SetVelocity((VectorRand()+Vector(0,0,1)):GetNormalized()*math.Rand(100,300))
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,1000))

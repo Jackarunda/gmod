@@ -1,7 +1,0 @@
-"VertexLitGeneric"
-{
-$basetexture "models\jPFilms\Metropolice\Shared\black"
-$envmap "env_cubemap"
-$basealphaenvmapmask 1
-$envmaptint "[.5 .5 .5]"
-}

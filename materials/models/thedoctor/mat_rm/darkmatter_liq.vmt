@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/thedoctor/mat_rm/darkmatter_liq"
+	"$selfillum" "1"
+

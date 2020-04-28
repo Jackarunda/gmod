@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/chappi/moab/moabskin1"
+                "$bumpmap" "models/chappi/moab/moabskin1_n"
+                "$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongexponent" "20"
+	"$phongboost" ".5"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.04 .04 .04]"
+	"$envmapsaturation" "0"
+}

@@ -1,8 +1,0 @@
-"UnlitGeneric" 
-{ 
-	"$basetexture"		"tex_jack_detgear_hud" 
-	"$ignorez"		1
-	"$vertexcolor" 		1
-	"$vertexalpha" 		1
-	"$nolod" 			1
-} 

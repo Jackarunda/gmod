@@ -2,14 +2,16 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Medkit"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
+ENT.JModEZstorable=true
 ---
 local Props={
 	"models/items/healthkit.mdl",
@@ -27,7 +29,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -80,7 +82,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(activator:KeyDown(IN_WALK))then
+		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			activator:PickupObject(self)
 		elseif not(activator:HasWeapon("wep_jack_gmod_ezmedkit"))then
 			activator:Give("wep_jack_gmod_ezmedkit")
@@ -88,7 +90,7 @@ if(SERVER)then
 			timer.Simple(0,function()
 				local Wep=activator:GetWeapon("wep_jack_gmod_ezmedkit")
 				if(IsValid(Wep))then
-					Wep:SetSupplies(self.Supplies or 100)
+					Wep:SetSupplies(self.Supplies or 50)
 				end
 				self:Remove()
 			end)

@@ -105,15 +105,15 @@ function EFFECT:Init(data)
 		end
 	end
 	
-	local dlightend = DynamicLight(self:EntIndex())
-    dlightend.Pos=SelfPos
-    dlightend.Size=8000*Scayul
-    dlightend.Decay=6000
-    dlightend.R=120
-    dlightend.G=150
-    dlightend.B=255
-    dlightend.Brightness=20*Scayul
-    dlightend.DieTime=CurTime()+.1
+	local dlightend=DynamicLight(self:EntIndex())
+	dlightend.Pos=SelfPos
+	dlightend.Size=8000*Scayul
+	dlightend.Decay=6000
+	dlightend.R=120
+	dlightend.G=150
+	dlightend.B=255
+	dlightend.Brightness=20*Scayul
+	dlightend.DieTime=CurTime()+.1
 	
 	Emitter:Finish()
 end

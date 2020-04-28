@@ -2,14 +2,16 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Build Kit"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
 ENT.DamageThreshold=120
+ENT.JModEZstorable=true
 ---
 local Props={
 	"models/props_c17/tools_wrench01a.mdl",
@@ -30,7 +32,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -83,7 +85,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(activator:KeyDown(IN_WALK))then
+		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			activator:PickupObject(self)
 		elseif not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
 			activator:Give("wep_jack_gmod_ezbuildkit")

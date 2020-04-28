@@ -3,10 +3,11 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Aid Radio"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
+ENT.NoSitAllowed=true
 ENT.EZconsumes={"power","parts"}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
@@ -23,7 +24,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -40,19 +41,13 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		local phys=self.Entity:GetPhysicsObject()
-		if phys:IsValid() then
+		if phys:IsValid()then
 			phys:Wake()
 			phys:SetMass(150)
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				if(Col)then self:SetColor(Col) end
-			end
-		end
+		JMod_Colorify(self)
 		---
 		self.MaxDurability=100
 		self.MaxElectricity=100
@@ -125,7 +120,7 @@ if(SERVER)then
 		Prop:Spawn()
 		Prop:Activate()
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self)
+		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
@@ -203,14 +198,10 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
-		self.Owner=activator
+		JMod_Owner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-				local Tem=self.Owner:Team()
-				if(Tem)then
-					local Col=team.GetColor(Tem)
-					if(Col)then self:SetColor(Col) end
-				end
+				JMod_Colorify(self)
 			end
 		end
 		self:SetState(STATE_CONNECTING)
@@ -315,7 +306,6 @@ if(SERVER)then
 		if not(self:UserIsAuthorized(ply))then return end
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
-		print(BFFreq)
 		if((NormalReq)or(BFFreq))then
 			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
 			if(BFFreq)then

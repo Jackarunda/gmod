@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/chappi/mininuq/nuq_tail"
+                "$bumpmap" "models/tex_jack_flat_normal"
+                "$envmap" "env_cubemap"
+                "$normalmapalphaenvmapmask" 1
+                "$envmapcontrast" 1
+	"$envmaptint" "[.03 .03 .03]"
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" ".5"
+	"$phongfresnelranges" "[1 1 1]"
+                "$model" 1
+}

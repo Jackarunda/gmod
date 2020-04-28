@@ -2,15 +2,14 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Antimatter"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="antimatter"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod_EZsuperRareResourceSize
-ENT.Model="models/Combine_Helicopter/helicopter_bomb01.mdl"
-ENT.Material="models/mat_jack_gmod_antimatterball"
+ENT.Model="models/thedoctor/darkmatter.mdl"
 ENT.ModelScale=1
 -- 10 micrograms
 ENT.Mass=100
@@ -39,31 +38,21 @@ if(SERVER)then
 		--
 	end
 elseif(CLIENT)then
-	local TxtCol=Color(255,240,150,80)
+	local TxtCol=Color(50,50,50,220)
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
 		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
-		--[[
 		if(DetailDraw)then
-			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
+			local Up,Right,Forward,Count=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)
-			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*16-Right*.6-Forward*5.9,Ang,.05)
+			cam.Start3D2D(Pos+Up*8.5-Right*.5-Forward*6.2,Ang,.012)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-			---
-			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*16-Right*.6+Forward*5.9,Ang,.05)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ ANTIMATTER","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Count.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
-		--]]
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end

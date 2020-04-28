@@ -1,7 +1,0 @@
-"UnlitGeneric"
-{
-	"$basetexture" "vgui/entities/ent_jack_fgcartridgebox_energy"
-	"$nolod" 1
-	"$vertexalpha" 1
-	"$vertexcolor" 1
-}

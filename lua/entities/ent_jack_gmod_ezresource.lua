@@ -2,8 +2,9 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Information="glhfggwpezpznore"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
@@ -19,7 +20,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -31,6 +32,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.Model)
 		self.Entity:SetMaterial(self.Material)
 		self:SetModelScale(self.ModelScale,0)
+		if(self.Skin)then self:SetSkin(self.Skin) end
 		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -52,6 +54,7 @@ if(SERVER)then
 		if(self.Loaded)then return end
 		if(data.DeltaTime>0.2)then
 			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<CurTime())and(self:IsPlayerHolding()))then
+				if(self:GetResource()<=0)then self:Remove() return end
 				local Resource=self:GetResource()
 				local Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
 				if(Used>0)then
@@ -89,14 +92,14 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		if(self.Hint)then JMod_Hint(activator,self.Hint) end
-		if((self.AltUse)and(activator:KeyDown(IN_WALK)))then
+		if((self.AltUse)and(activator:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
 			self:AltUse(activator)
 		else
 			activator:PickupObject(self)
 		end
 	end
 	function ENT:Think()
-		--pfahahaha
+		--
 	end
 	function ENT:OnRemove()
 		--aw fuck you

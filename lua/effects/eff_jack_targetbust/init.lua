@@ -3,7 +3,7 @@
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	
@@ -18,10 +18,10 @@ function EFFECT:Init(data)
 		return
 	end
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 	
-		local particle = emitter:Add("effects/fire_cloud1", vOffset)
-		particle:SetVelocity(math.Rand(40,60) * VectorRand()*Scayul)
+		local particle=emitter:Add("effects/fire_cloud1", vOffset)
+		particle:SetVelocity(math.Rand(40,60)*VectorRand()*Scayul)
 		particle:SetAirResistance(20)
 		particle:SetDieTime(0.09*Scayul)
 		particle:SetStartAlpha(150)
@@ -33,8 +33,8 @@ function EFFECT:Init(data)
 		particle:SetColor(255,255,255)
 		
 		for i=0, 50*Scayul^2 do
-			local Debris = emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
-			if (Debris) then
+			local Debris=emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
+			if(Debris)then
 				Debris:SetVelocity(VectorRand()*math.Rand(5,500)*Scayul^0.5)
 				Debris:SetDieTime(3*math.Rand(0.6,1))
 				Debris:SetStartAlpha(255)
@@ -51,13 +51,13 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		for i = 0, 300*Scayul do
+		for i=0, 300*Scayul do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 		
-			local particle = emitter:Add("sprites/mat_jack_irregularcircle",Pos)
+			local particle=emitter:Add("sprites/mat_jack_irregularcircle",Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(3, 400)*Scayul)
 				
 				particle:SetLifeTime(0)
@@ -85,7 +85,7 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		local particle = emitter:Add("sprites/heatwave", vOffset)
+		local particle=emitter:Add("sprites/heatwave", vOffset)
 		particle:SetVelocity(Vector(0,0,0))
 		particle:SetAirResistance(200)
 		particle:SetGravity(VectorRand()*math.Rand(0,200))
@@ -117,7 +117,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/mat_jack_smoke3"
 			end
-			local particle = Emitter:Add(sprite, vOffset)
+			local particle=Emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(200,750)*VectorRand()*Scayul)
 			particle:SetAirResistance(500)
 			particle:SetGravity(Vector(0, 0, math.Rand(25, 100)))

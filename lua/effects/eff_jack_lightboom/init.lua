@@ -6,7 +6,7 @@ local Shit=Material("sprites/mat_jack_ignorezsprite")
 	EFFECT:Init(data)
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	self.Scale=Scayul
@@ -37,14 +37,14 @@ function EFFECT:Init(data)
 		Splach:SetScale(100)
 		util.Effect("WaterSplash",Splach)
 		
-		local emitter = ParticleEmitter(vOffset)
+		local emitter=ParticleEmitter(vOffset)
 		for i=0,400 do
 			local Sprite
 			local Rand=math.random(1,3)
 			if(Rand==1)then Sprite="effects/splash1" elseif(Rand==2)then Sprite="effects/splash2" elseif(Rand==3)then Sprite="effects/splash4" end
 			local Vec=Vector(math.Rand(-80,80),math.Rand(-80,80),0)*Scayul
 			local Dist=Vec:Length()
-			local particle = emitter:Add(Sprite, vOffset+Vec)
+			local particle=emitter:Add(Sprite, vOffset+Vec)
 			particle:SetVelocity(VectorRand()*math.Rand(.5,2)*Dist^.5*Scayul+Vector(0,0,math.Rand(1000,10000))*Scayul/Dist^.5)
 			particle:SetCollide(false)
 			particle:SetLighting(false)
@@ -66,7 +66,7 @@ function EFFECT:Init(data)
 			if(Rand==1)then Sprite="effects/splash1" elseif(Rand==2)then Sprite="effects/splash2" elseif(Rand==3)then Sprite="effects/splash4" end
 			local Vec=Vector(math.Rand(-80,80),math.Rand(-80,80),0)*Scayul
 			local Dist=Vec:Length()
-			local particle = emitter:Add(Sprite, vOffset+Vec)
+			local particle=emitter:Add(Sprite, vOffset+Vec)
 			particle:SetVelocity((VectorRand()*math.Rand(.5,2)*Dist^.5*Scayul+Vector(0,0,math.Rand(1000,10000))*Scayul/Dist^.5)*2)
 			particle:SetCollide(false)
 			particle:SetLighting(false)
@@ -87,10 +87,10 @@ function EFFECT:Init(data)
 		return
 	end
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 	
-		local particle = emitter:Add("effects/fire_cloud1", vOffset)
-		particle:SetVelocity(math.Rand(40,60) * VectorRand()*Scayul)
+		local particle=emitter:Add("effects/fire_cloud1", vOffset)
+		particle:SetVelocity(math.Rand(40,60)*VectorRand()*Scayul)
 		particle:SetAirResistance(20)
 		particle:SetDieTime(0.04*Scayul)
 		particle:SetStartAlpha(255)
@@ -103,7 +103,7 @@ function EFFECT:Init(data)
 		
 		for i=0,2*Scayul do
 			local sprite="sprites/flamelet"..math.random(1,3)
-			local particle = emitter:Add(sprite, vOffset)
+			local particle=emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(30,50)*VectorRand()*Scayul*i^1.2)
 			particle:SetAirResistance(2000)
 			particle:SetGravity(Vector(0, 0, math.Rand(25, 100)))
@@ -121,8 +121,8 @@ function EFFECT:Init(data)
 		end
 		
 		for i=0, 1*Scayul^2 do
-			local Debris = emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
-			if (Debris) then
+			local Debris=emitter:Add( "effects/fleck_cement"..math.random(1,2),vOffset)
+			if(Debris)then
 				Debris:SetVelocity(VectorRand()*math.Rand(250,1500)*Scayul^0.5)
 				Debris:SetDieTime(3*math.random(0.6,1))
 				Debris:SetStartAlpha(255)
@@ -139,13 +139,13 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		for i = 0, 10*Scayul do
+		for i=0, 10*Scayul do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
-			local particle = emitter:Add("sprites/mat_jack_nicespark", Pos)
+			local particle=emitter:Add("sprites/mat_jack_nicespark", Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(1, 2)*Scayul*i^1.2)
 				
 				particle:SetLifeTime(0)
@@ -173,7 +173,7 @@ function EFFECT:Init(data)
 			end
 		end
 		
-		local particle = emitter:Add("sprites/heatwave", vOffset)
+		local particle=emitter:Add("sprites/heatwave", vOffset)
 		particle:SetVelocity(Vector(0,0,0))
 		particle:SetAirResistance(200)
 		particle:SetGravity(VectorRand()*math.Rand(0,200))
@@ -205,7 +205,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/mat_jack_smoke3"
 			end
-			local particle = Emitter:Add(sprite,vOffset)
+			local particle=Emitter:Add(sprite,vOffset)
 			if(particle)then
 				particle:SetVelocity(math.Rand(3,4)*VectorRand()*Scayul*i^1.2)
 				particle:SetAirResistance(1000)

@@ -1,8 +1,0 @@
-"VertexLitGeneric"
-{
-\\$basetexture "models\jPFilms\Metropolice\Shared\black"
-$basetexture "models\jPFilms\Metropolice\metrocop_shared\eye_glow"
-$selfillum "1"
-$selfillumtint "[3 -2 -2]"
-
-}

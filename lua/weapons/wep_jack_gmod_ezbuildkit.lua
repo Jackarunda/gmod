@@ -31,25 +31,27 @@ SWEP.Secondary.Automatic	= false
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.ShowWorldModel=false
-SWEP.VElements = {
-	["wrench"] = { type = "Model", model = "models/props_c17/tools_wrench01a.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(3.5, 1.5, 0), angle = Angle(0, 90, -90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pliers"] = { type = "Model", model = "models/props_c17/tools_pliers01a.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(2.8, 2.4, -2.5), angle = Angle(0, 180, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+SWEP.VElements={
+	["wrench"]={ type="Model", model="models/props_c17/tools_wrench01a.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(3.5, 1.5, 0), angle=Angle(0, 90, -90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["pliers"]={ type="Model", model="models/props_c17/tools_pliers01a.mdl", bone="ValveBiped.Bip01_L_Hand", rel="", pos=Vector(2.8, 2.4, -2.5), angle=Angle(0, 180, 90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} }
 }
-SWEP.WElements = {
-	["saw"] = { type = "Model", model = "models/props_forest/circularsaw01.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-6.753, -0.519, 10.909), angle = Angle(104.026, -12.858, -157.793), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["wrench"] = { type = "Model", model = "models/props_c17/tools_wrench01a.mdl", bone = "ValveBiped.Bip01_R_Hand", rel = "", pos = Vector(2.596, 1, 3.635), angle = Angle(0, -90, -90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pliers"] = { type = "Model", model = "models/props_c17/tools_pliers01a.mdl", bone = "ValveBiped.Bip01_L_Hand", rel = "", pos = Vector(4.675, 0, -1.558), angle = Angle(0, 0, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["torch"] = { type = "Model", model = "models/props_silo/welding_torch.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-1.558, 2.596, -8.832), angle = Angle(180, 26.882, 38.57), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pickaxe"] = { type = "Model", model = "models/props_mining/pickaxe01.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-22.338, 2.596, -1.558), angle = Angle(-92.338, 0, 0), size = Vector(0.75, 0.75, 0.75), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["mask"] = { type = "Model", model = "models/props_silo/welding_helmet.mdl", bone = "ValveBiped.Bip01_Head1", rel = "", pos = Vector(2, 4, 0), angle = Angle(90, -20, 0), size = Vector(1.1, 1.1, 1.1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["axe"] = { type = "Model", model = "models/props_forest/axe.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7.792, 2, 4), angle = Angle(118.052, 87.662, 180), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["toolbox"] = { type = "Model", model = "models/weapons/w_models/w_tooljox.mdl", bone = "ValveBiped.Bip01_Spine4", rel = "", pos = Vector(-7, 6, 0.518), angle = Angle(-180, 85.324, 87.662), size = Vector(0.5, 0.5, 0.5), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pack1"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-4.676, -7.792, 0), angle = Angle(180, 108.7, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} },
-	["pack2"] = { type = "Model", model = "models/weapons/w_defuser.mdl", bone = "ValveBiped.Bip01_Spine", rel = "", pos = Vector(-3.636, 3.635, 0), angle = Angle(3.506, 68.96, 90), size = Vector(1, 1, 1), color = Color(255, 255, 255, 255), surpresslightning = false, material = "", skin = 0, bodygroup = {} }
+SWEP.WElements={
+	["saw"]={ type="Model", model="models/props_forest/circularsaw01.mdl", bone="ValveBiped.Bip01_Spine", rel="", pos=Vector(-6.753, -0.519, 10.909), angle=Angle(104.026, -12.858, -157.793), size=Vector(0.75, 0.75, 0.75), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["wrench"]={ type="Model", model="models/props_c17/tools_wrench01a.mdl", bone="ValveBiped.Bip01_R_Hand", rel="", pos=Vector(2.596, 1, 3.635), angle=Angle(0, -90, -90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["pliers"]={ type="Model", model="models/props_c17/tools_pliers01a.mdl", bone="ValveBiped.Bip01_L_Hand", rel="", pos=Vector(4.675, 0, -1.558), angle=Angle(0, 0, 90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["torch"]={ type="Model", model="models/props_silo/welding_torch.mdl", bone="ValveBiped.Bip01_Spine", rel="", pos=Vector(-1.558, 2.596, -8.832), angle=Angle(180, 26.882, 38.57), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["pickaxe"]={ type="Model", model="models/props_mining/pickaxe01.mdl", bone="ValveBiped.Bip01_Spine4", rel="", pos=Vector(-22.338, 2.596, -1.558), angle=Angle(-92.338, 0, 0), size=Vector(0.75, 0.75, 0.75), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["mask"]={ type="Model", model="models/props_silo/welding_helmet.mdl", bone="ValveBiped.Bip01_Head1", rel="", pos=Vector(2, 4, 0), angle=Angle(90, -20, 0), size=Vector(1.1, 1.1, 1.1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["axe"]={ type="Model", model="models/props_forest/axe.mdl", bone="ValveBiped.Bip01_Spine4", rel="", pos=Vector(-7.792, 2, 4), angle=Angle(118.052, 87.662, 180), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["toolbox"]={ type="Model", model="models/weapons/w_models/w_tooljox.mdl", bone="ValveBiped.Bip01_Spine4", rel="", pos=Vector(-7, 6, 0.518), angle=Angle(-180, 85.324, 87.662), size=Vector(0.5, 0.5, 0.5), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["pack1"]={ type="Model", model="models/weapons/w_defuser.mdl", bone="ValveBiped.Bip01_Spine", rel="", pos=Vector(-4.676, -7.792, 0), angle=Angle(180, 108.7, 90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} },
+	["pack2"]={ type="Model", model="models/weapons/w_defuser.mdl", bone="ValveBiped.Bip01_Spine", rel="", pos=Vector(-3.636, 3.635, 0), angle=Angle(3.506, 68.96, 90), size=Vector(1, 1, 1), color=Color(255, 255, 255, 255), surpresslightning=false, material="", skin=0, bodygroup={} }
 }
 
 SWEP.LastSalvageAttempt=0
 SWEP.NextSwitch=0
+
+local PackageBlacklist={"func_"}
 
 function SWEP:Initialize()
 	self:SetHoldType("fist")
@@ -66,7 +68,7 @@ function SWEP:Initialize()
 			{"(action) Package Object","package",{parts=25},1}
 		}
 		for name,info in pairs(JMOD_CONFIG.Blueprints)do
-			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1})
+			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4]})
 		end
 	end
 end
@@ -216,6 +218,9 @@ function SWEP:GetPackagableObject()
 			if(v.Type~="NoCollide")then Constrained=true;break end
 		end
 		if(Constrained)then self:Msg("object is constrained") return nil end
+		for k,v in pairs(PackageBlacklist)do
+			if(string.find(Ent:GetClass(),v))then self:Msg("can't package this") return nil end
+		end
 		return Ent
 	end
 	return nil
@@ -248,6 +253,11 @@ function SWEP:PrimaryAttack()
 			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
 			if(self:HaveResourcesToPerformTask(Reqs))then
+				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
+				if override == false then
+					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
+					return
+				end
 				self:ConsumeResourcesInRange(Reqs)
 				Built=true
 				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
@@ -277,7 +287,7 @@ function SWEP:PrimaryAttack()
 										local Ent=ents.Create(Class)
 										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-										Ent.Owner=self.Owner
+										JMod_Owner(Ent,self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 									end
@@ -288,6 +298,27 @@ function SWEP:PrimaryAttack()
 				end
 			end
 			if not(Built)then self:Msg("missing supplies for build") end
+		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
+			local State=Ent:GetState()
+			if(State==-1)then
+				self:Msg("device must be repaired before modifying")
+			elseif(State~=0)then
+				self:Msg("device must be turned off to modify")
+			elseif(self:HaveResourcesToPerformTask({parts=20}))then
+				net.Start("JMod_ModifyMachine")
+				net.WriteEntity(Ent)
+				net.WriteTable(Ent.ModPerfSpecs)
+				if(Ent.AmmoTypes)then
+					net.WriteBit(true)
+					net.WriteTable(Ent.AmmoTypes)
+					net.WriteString(Ent:GetAmmoType())
+				else
+					net.WriteBit(false)
+				end
+				net.Send(self.Owner)
+			else
+				self:Msg("needs 20 Parts nearby to perform modification")
+			end
 		elseif((IsValid(Ent))and(Ent.EZupgrades))then
 			local State=Ent:GetState()
 			if(State==-1)then
@@ -297,7 +328,7 @@ function SWEP:PrimaryAttack()
 			else
 				local Grade=Ent:GetGrade()
 				if(Grade<5)then
-					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate
+					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate*JMOD_CONFIG.ToolKitUpgradeMult
 					for resourceType,requiredAmt in pairs(UpgradeInfo)do
 						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
 						if(CurAmt<requiredAmt)then
@@ -322,6 +353,20 @@ function SWEP:PrimaryAttack()
 				self:UpgradeEffect(Pos,nil,not Sound)
 			end
 		end
+	end
+end
+function SWEP:ModifyMachine(ent,tbl,ammoType)
+	local State=ent:GetState()
+	if(State==-1)then
+		self:Msg("device must be repaired before modifying")
+	elseif(State~=0)then
+		self:Msg("device must be turned off to modify")
+	elseif(self:HaveResourcesToPerformTask({parts=20}))then
+		self:ConsumeResourcesInRange({parts=20})
+		ent:SetMods(tbl,ammoType)
+		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
+	else
+		self:Msg("needs 20 Parts nearby to perform modification")
 	end
 end
 function SWEP:Msg(msg)
@@ -358,7 +403,7 @@ end
 local Anims={"fists_right","fists_right","fists_left","fists_left"}--,"fists_uppercut"} -- the uppercut looks so bad
 function SWEP:Pawnch()
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )
-	local vm = self.Owner:GetViewModel()
+	local vm=self.Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence( vm:LookupSequence( table.Random(Anims) ) )
 	self:UpdateNextIdle()
 end
@@ -370,7 +415,7 @@ function SWEP:FlingProp(mdl,force)
 	Prop:Spawn()
 	Prop:Activate()
 	Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-	constraint.NoCollide(Prop,self)
+	constraint.NoCollide(Prop,self,0,0)
 	local Phys=Prop:GetPhysicsObject()
 	Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 	Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
@@ -393,7 +438,7 @@ end
 function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
-		if(self.Owner:KeyDown(IN_WALK))then
+		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			-- do nothing because dewelding is handled in the think function
 		else
 			if(self.NextSwitch<Time)then
@@ -403,7 +448,8 @@ function SWEP:Reload()
 					self:SwitchSelectedBuild(0)
 				else
 					net.Start("JMod_EZbuildKit")
-					net.WriteTable(self.Buildables)
+						net.WriteTable(self.Buildables)
+						net.WriteEntity(self)
 					net.Send(self.Owner)
 				end
 			end
@@ -441,7 +487,7 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
-		if(self.Owner:KeyDown(IN_WALK))then
+		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
 			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
 			Kit:SetAngles(self.Owner:GetAimVector():Angle())
@@ -469,9 +515,9 @@ function SWEP:SecondaryAttack()
 end
 function SWEP:OnRemove()
 	self:SCKHolster()
-	if ( IsValid( self.Owner ) && CLIENT && self.Owner:IsPlayer() ) then
-		local vm = self.Owner:GetViewModel()
-		if ( IsValid( vm ) ) then vm:SetMaterial( "" ) end
+	if( IsValid( self.Owner ) && CLIENT && self.Owner:IsPlayer() )then
+		local vm=self.Owner:GetViewModel()
+		if( IsValid( vm ) )then vm:SetMaterial( "" ) end
 	end
 end
 function SWEP:Holster( wep )
@@ -481,7 +527,7 @@ function SWEP:Holster( wep )
 end
 function SWEP:Deploy()
 	if not(IsValid(self.Owner))then return end
-	local vm = self.Owner:GetViewModel()
+	local vm=self.Owner:GetViewModel()
 	if((IsValid(vm))and(vm.LookupSequence))then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_draw" ) )
 		self:UpdateNextIdle()
@@ -494,9 +540,9 @@ function SWEP:Deploy()
 end
 function SWEP:Think()
 	local Time=CurTime()
-	local vm = self.Owner:GetViewModel()
-	local idletime = self.NextIdle
-	if ( idletime > 0 && Time > idletime ) then
+	local vm=self.Owner:GetViewModel()
+	local idletime=self.NextIdle
+	if( idletime>0 && Time>idletime )then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_idle_0" .. math.random( 1, 2 ) ) )
 		self:UpdateNextIdle()
 	end
@@ -505,9 +551,9 @@ function SWEP:Think()
 	else
 		self:SetHoldType("fist")
 	end
-	if(self.NextDeWeldProgress<Time)then
+	if(self.NextDeWeldProgress<Time and SERVER)then
 		self.NextDeWeldProgress=Time+.25
-		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(IN_WALK))and(SERVER))then
+		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
 			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
 				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*3
@@ -556,9 +602,9 @@ end
 ----------------- shit -------------------
 
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.Owner) then
-		local vm = self.Owner:GetViewModel()
-		if IsValid(vm) then
+	if CLIENT and IsValid(self.Owner)then
+		local vm=self.Owner:GetViewModel()
+		if IsValid(vm)then
 			self:ResetBonePositions(vm)
 		end
 	end
@@ -569,22 +615,22 @@ function SWEP:SCKInitialize()
 	if CLIENT then
 	
 		// Create a new table for every weapon instance
-		self.VElements = table.FullCopy( self.VElements )
-		self.WElements = table.FullCopy( self.WElements )
-		self.ViewModelBoneMods = table.FullCopy( self.ViewModelBoneMods )
+		self.VElements=table.FullCopy( self.VElements )
+		self.WElements=table.FullCopy( self.WElements )
+		self.ViewModelBoneMods=table.FullCopy( self.ViewModelBoneMods )
 
 		self:CreateModels(self.VElements) // create viewmodels
 		self:CreateModels(self.WElements) // create worldmodels
 		
 		// init view model bone build function
-		if IsValid(self.Owner) then
-			local vm = self.Owner:GetViewModel()
-			if IsValid(vm) then
+		if IsValid(self.Owner)then
+			local vm=self.Owner:GetViewModel()
+			if IsValid(vm)then
 				self:ResetBonePositions(vm)
 			end
 			
 			// Init viewmodel visibility
-			if (self.ShowViewModel == nil or self.ShowViewModel) then
+			if(self.ShowViewModel==nil or self.ShowViewModel)then
 				if(IsValid(vm))then
 					vm:SetColor(Color(255,255,255,255))
 				end
@@ -602,24 +648,24 @@ function SWEP:SCKInitialize()
 end
 
 if(CLIENT)then
-	SWEP.vRenderOrder = nil
+	SWEP.vRenderOrder=nil
 	function SWEP:SCKViewModelDrawn()
-		local vm = self.Owner:GetViewModel()
-		if !IsValid(vm) then return end
+		local vm=self.Owner:GetViewModel()
+		if !IsValid(vm)then return end
 		
-		if (!self.VElements) then return end
+		if(!self.VElements)then return end
 		
 		self:UpdateBonePositions(vm)
 
-		if (!self.vRenderOrder) then
+		if(!self.vRenderOrder)then
 			
 			// we build a render order because sprites need to be drawn after models
-			self.vRenderOrder = {}
+			self.vRenderOrder={}
 
 			for k, v in pairs( self.VElements ) do
-				if (v.type == "Model") then
+				if(v.type=="Model")then
 					table.insert(self.vRenderOrder, 1, k)
-				elseif (v.type == "Sprite" or v.type == "Quad") then
+				elseif(v.type=="Sprite" or v.type=="Quad")then
 					table.insert(self.vRenderOrder, k)
 				end
 			end
@@ -628,51 +674,51 @@ if(CLIENT)then
 
 		for k, name in ipairs( self.vRenderOrder ) do
 		
-			local v = self.VElements[name]
-			if (!v) then self.vRenderOrder = nil break end
-			if (v.hide) then continue end
+			local v=self.VElements[name]
+			if(!v)then self.vRenderOrder=nil break end
+			if(v.hide)then continue end
 			
-			local model = v.modelEnt
-			local sprite = v.spriteMaterial
+			local model=v.modelEnt
+			local sprite=v.spriteMaterial
 			
-			if (!v.bone) then continue end
+			if(!v.bone)then continue end
 			
-			local pos, ang = self:GetBoneOrientation( self.VElements, v, vm )
+			local pos, ang=self:GetBoneOrientation( self.VElements, v, vm )
 			
-			if (!pos) then continue end
+			if(!pos)then continue end
 			
-			if (v.type == "Model" and IsValid(model)) then
+			if(v.type=="Model" and IsValid(model))then
 
-				model:SetPos(pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z )
+				model:SetPos(pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z )
 				ang:RotateAroundAxis(ang:Up(), v.angle.y)
 				ang:RotateAroundAxis(ang:Right(), v.angle.p)
 				ang:RotateAroundAxis(ang:Forward(), v.angle.r)
 
 				model:SetAngles(ang)
 				//model:SetModelScale(v.size)
-				local matrix = Matrix()
+				local matrix=Matrix()
 				matrix:Scale(v.size)
 				model:EnableMatrix( "RenderMultiply", matrix )
 				
-				if (v.material == "") then
+				if(v.material=="")then
 					model:SetMaterial("")
-				elseif (model:GetMaterial() != v.material) then
+				elseif(model:GetMaterial() != v.material)then
 					model:SetMaterial( v.material )
 				end
 				
-				if (v.skin and v.skin != model:GetSkin()) then
+				if(v.skin and v.skin != model:GetSkin())then
 					model:SetSkin(v.skin)
 				end
 				
-				if (v.bodygroup) then
+				if(v.bodygroup)then
 					for k, v in pairs( v.bodygroup ) do
-						if (model:GetBodygroup(k) != v) then
+						if(model:GetBodygroup(k) != v)then
 							model:SetBodygroup(k, v)
 						end
 					end
 				end
 				
-				if (v.surpresslightning) then
+				if(v.surpresslightning)then
 					render.SuppressEngineLighting(true)
 				end
 				
@@ -682,19 +728,19 @@ if(CLIENT)then
 				render.SetBlend(1)
 				render.SetColorModulation(1, 1, 1)
 				
-				if (v.surpresslightning) then
+				if(v.surpresslightning)then
 					render.SuppressEngineLighting(false)
 				end
 				
-			elseif (v.type == "Sprite" and sprite) then
+			elseif(v.type=="Sprite" and sprite)then
 				
-				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
+				local drawpos=pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z
 				render.SetMaterial(sprite)
 				render.DrawSprite(drawpos, v.size.x, v.size.y, v.color)
 				
-			elseif (v.type == "Quad" and v.draw_func) then
+			elseif(v.type=="Quad" and v.draw_func)then
 				
-				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
+				local drawpos=pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z
 				ang:RotateAroundAxis(ang:Up(), v.angle.y)
 				ang:RotateAroundAxis(ang:Right(), v.angle.p)
 				ang:RotateAroundAxis(ang:Forward(), v.angle.r)
@@ -709,86 +755,86 @@ if(CLIENT)then
 		
 	end
 
-	SWEP.wRenderOrder = nil
+	SWEP.wRenderOrder=nil
 	function SWEP:SCKDrawWorldModel()
-		if (self.ShowWorldModel == nil or self.ShowWorldModel) then
+		if(self.ShowWorldModel==nil or self.ShowWorldModel)then
 			self:DrawModel()
 		end
 		
-		if (!self.WElements) then return end
+		if(!self.WElements)then return end
 		
-		if (!self.wRenderOrder) then
+		if(!self.wRenderOrder)then
 
-			self.wRenderOrder = {}
+			self.wRenderOrder={}
 
 			for k, v in pairs( self.WElements ) do
-				if (v.type == "Model") then
+				if(v.type=="Model")then
 					table.insert(self.wRenderOrder, 1, k)
-				elseif (v.type == "Sprite" or v.type == "Quad") then
+				elseif(v.type=="Sprite" or v.type=="Quad")then
 					table.insert(self.wRenderOrder, k)
 				end
 			end
 
 		end
 		
-		if (IsValid(self.Owner)) then
-			bone_ent = self.Owner
+		if(IsValid(self.Owner))then
+			bone_ent=self.Owner
 		else
 			// when the weapon is dropped
-			bone_ent = self
+			bone_ent=self
 		end
 		
 		for k, name in pairs( self.wRenderOrder ) do
 		
-			local v = self.WElements[name]
-			if (!v) then self.wRenderOrder = nil break end
-			if (v.hide) then continue end
+			local v=self.WElements[name]
+			if(!v)then self.wRenderOrder=nil break end
+			if(v.hide)then continue end
 			
 			local pos, ang
 			
-			if (v.bone) then
-				pos, ang = self:GetBoneOrientation( self.WElements, v, bone_ent )
+			if(v.bone)then
+				pos, ang=self:GetBoneOrientation( self.WElements, v, bone_ent )
 			else
-				pos, ang = self:GetBoneOrientation( self.WElements, v, bone_ent, "ValveBiped.Bip01_R_Hand" )
+				pos, ang=self:GetBoneOrientation( self.WElements, v, bone_ent, "ValveBiped.Bip01_R_Hand" )
 			end
 			
-			if (!pos) then continue end
+			if(!pos)then continue end
 			
-			local model = v.modelEnt
-			local sprite = v.spriteMaterial
+			local model=v.modelEnt
+			local sprite=v.spriteMaterial
 			
-			if (v.type == "Model" and IsValid(model)) then
+			if(v.type=="Model" and IsValid(model))then
 
-				model:SetPos(pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z )
+				model:SetPos(pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z )
 				ang:RotateAroundAxis(ang:Up(), v.angle.y)
 				ang:RotateAroundAxis(ang:Right(), v.angle.p)
 				ang:RotateAroundAxis(ang:Forward(), v.angle.r)
 
 				model:SetAngles(ang)
 				//model:SetModelScale(v.size)
-				local matrix = Matrix()
+				local matrix=Matrix()
 				matrix:Scale(v.size)
 				model:EnableMatrix( "RenderMultiply", matrix )
 				
-				if (v.material == "") then
+				if(v.material=="")then
 					model:SetMaterial("")
-				elseif (model:GetMaterial() != v.material) then
+				elseif(model:GetMaterial() != v.material)then
 					model:SetMaterial( v.material )
 				end
 				
-				if (v.skin and v.skin != model:GetSkin()) then
+				if(v.skin and v.skin != model:GetSkin())then
 					model:SetSkin(v.skin)
 				end
 				
-				if (v.bodygroup) then
+				if(v.bodygroup)then
 					for k, v in pairs( v.bodygroup ) do
-						if (model:GetBodygroup(k) != v) then
+						if(model:GetBodygroup(k) != v)then
 							model:SetBodygroup(k, v)
 						end
 					end
 				end
 				
-				if (v.surpresslightning) then
+				if(v.surpresslightning)then
 					render.SuppressEngineLighting(true)
 				end
 				
@@ -798,19 +844,19 @@ if(CLIENT)then
 				render.SetBlend(1)
 				render.SetColorModulation(1, 1, 1)
 				
-				if (v.surpresslightning) then
+				if(v.surpresslightning)then
 					render.SuppressEngineLighting(false)
 				end
 				
-			elseif (v.type == "Sprite" and sprite) then
+			elseif(v.type=="Sprite" and sprite)then
 				
-				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
+				local drawpos=pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z
 				render.SetMaterial(sprite)
 				render.DrawSprite(drawpos, v.size.x, v.size.y, v.color)
 				
-			elseif (v.type == "Quad" and v.draw_func) then
+			elseif(v.type=="Quad" and v.draw_func)then
 				
-				local drawpos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
+				local drawpos=pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z
 				ang:RotateAroundAxis(ang:Up(), v.angle.y)
 				ang:RotateAroundAxis(ang:Right(), v.angle.p)
 				ang:RotateAroundAxis(ang:Forward(), v.angle.r)
@@ -828,38 +874,38 @@ if(CLIENT)then
 	function SWEP:GetBoneOrientation( basetab, tab, ent, bone_override )
 		
 		local bone, pos, ang
-		if (tab.rel and tab.rel != "") then
+		if(tab.rel and tab.rel != "")then
 			
-			local v = basetab[tab.rel]
+			local v=basetab[tab.rel]
 			
-			if (!v) then return end
+			if(!v)then return end
 			
 			// Technically, if there exists an element with the same name as a bone
 			// you can get in an infinite loop. Let's just hope nobody's that stupid.
-			pos, ang = self:GetBoneOrientation( basetab, v, ent )
+			pos, ang=self:GetBoneOrientation( basetab, v, ent )
 			
-			if (!pos) then return end
+			if(!pos)then return end
 			
-			pos = pos + ang:Forward() * v.pos.x + ang:Right() * v.pos.y + ang:Up() * v.pos.z
+			pos=pos+ang:Forward()*v.pos.x+ang:Right()*v.pos.y+ang:Up()*v.pos.z
 			ang:RotateAroundAxis(ang:Up(), v.angle.y)
 			ang:RotateAroundAxis(ang:Right(), v.angle.p)
 			ang:RotateAroundAxis(ang:Forward(), v.angle.r)
 				
 		else
 		
-			bone = ent:LookupBone(bone_override or tab.bone)
+			bone=ent:LookupBone(bone_override or tab.bone)
 
-			if (!bone) then return end
+			if(!bone)then return end
 			
-			pos, ang = Vector(0,0,0), Angle(0,0,0)
-			local m = ent:GetBoneMatrix(bone)
-			if (m) then
-				pos, ang = m:GetTranslation(), m:GetAngles()
+			pos, ang=Vector(0,0,0), Angle(0,0,0)
+			local m=ent:GetBoneMatrix(bone)
+			if(m)then
+				pos, ang=m:GetTranslation(), m:GetAngles()
 			end
 			
-			if (IsValid(self.Owner) and self.Owner:IsPlayer() and 
-				ent == self.Owner:GetViewModel() and self.ViewModelFlip) then
-				ang.r = -ang.r // Fixes mirrored models
+			if(IsValid(self.Owner) and self.Owner:IsPlayer() and 
+				ent==self.Owner:GetViewModel() and self.ViewModelFlip)then
+				ang.r=-ang.r // Fixes mirrored models
 			end
 		
 		end
@@ -869,42 +915,42 @@ if(CLIENT)then
 
 	function SWEP:CreateModels( tab )
 
-		if (!tab) then return end
+		if(!tab)then return end
 
 		-- Create the clientside models here because Garry says we can't do it in the render hook
 		for k, v in pairs( tab ) do
-			if (v.type == "Model" and v.model and v.model != "" and (!IsValid(v.modelEnt) or v.createdModel != v.model) and 
-					string.find(v.model, ".mdl") and file.Exists (v.model, "GAME") ) then
+			if(v.type=="Model" and v.model and v.model != "" and (!IsValid(v.modelEnt) or v.createdModel != v.model) and 
+					string.find(v.model, ".mdl") and file.Exists (v.model, "GAME") )then
 				
-				v.modelEnt = ClientsideModel(v.model, RENDER_GROUP_VIEW_MODEL_OPAQUE)
-				if (IsValid(v.modelEnt)) then
+				v.modelEnt=ClientsideModel(v.model, RENDER_GROUP_VIEW_MODEL_OPAQUE)
+				if(IsValid(v.modelEnt))then
 					v.modelEnt:SetPos(self:GetPos())
 					v.modelEnt:SetAngles(self:GetAngles())
 					v.modelEnt:SetParent(self)
 					v.modelEnt:SetNoDraw(true)
-					v.createdModel = v.model
+					v.createdModel=v.model
 				else
-					v.modelEnt = nil
+					v.modelEnt=nil
 				end
 				
-			elseif (v.type == "Sprite" and v.sprite and v.sprite != "" and (!v.spriteMaterial or v.createdSprite != v.sprite) 
-				and file.Exists ("materials/"..v.sprite..".vmt", "GAME")) then
+			elseif(v.type=="Sprite" and v.sprite and v.sprite != "" and (!v.spriteMaterial or v.createdSprite != v.sprite) 
+				and file.Exists ("materials/"..v.sprite..".vmt", "GAME"))then
 				
-				local name = v.sprite.."-"
-				local params = { ["$basetexture"] = v.sprite }
+				local name=v.sprite.."-"
+				local params={ ["$basetexture"]=v.sprite }
 				// make sure we create a unique name based on the selected options
-				local tocheck = { "nocull", "additive", "vertexalpha", "vertexcolor", "ignorez" }
+				local tocheck={ "nocull", "additive", "vertexalpha", "vertexcolor", "ignorez" }
 				for i, j in pairs( tocheck ) do
-					if (v[j]) then
-						params["$"..j] = 1
-						name = name.."1"
+					if(v[j])then
+						params["$"..j]=1
+						name=name.."1"
 					else
-						name = name.."0"
+						name=name.."0"
 					end
 				end
 
-				v.createdSprite = v.sprite
-				v.spriteMaterial = CreateMaterial(name,"UnlitGeneric",params)
+				v.createdSprite=v.sprite
+				v.spriteMaterial=CreateMaterial(name,"UnlitGeneric",params)
 				
 			end
 		end
@@ -912,54 +958,54 @@ if(CLIENT)then
 	end
 	
 	local allbones
-	local hasGarryFixedBoneScalingYet = false
+	local hasGarryFixedBoneScalingYet=false
 
 	function SWEP:UpdateBonePositions(vm)
 		
 		if self.ViewModelBoneMods then
 			
-			if (!vm:GetBoneCount()) then return end
+			if(!vm:GetBoneCount())then return end
 			
 			// !! WORKAROUND !! //
 			// We need to check all model names :/
-			local loopthrough = self.ViewModelBoneMods
-			if (!hasGarryFixedBoneScalingYet) then
-				allbones = {}
+			local loopthrough=self.ViewModelBoneMods
+			if(!hasGarryFixedBoneScalingYet)then
+				allbones={}
 				for i=0, vm:GetBoneCount() do
-					local bonename = vm:GetBoneName(i)
-					if (self.ViewModelBoneMods[bonename]) then 
-						allbones[bonename] = self.ViewModelBoneMods[bonename]
+					local bonename=vm:GetBoneName(i)
+					if(self.ViewModelBoneMods[bonename])then 
+						allbones[bonename]=self.ViewModelBoneMods[bonename]
 					else
-						allbones[bonename] = { 
-							scale = Vector(1,1,1),
-							pos = Vector(0,0,0),
-							angle = Angle(0,0,0)
+						allbones[bonename]={ 
+							scale=Vector(1,1,1),
+							pos=Vector(0,0,0),
+							angle=Angle(0,0,0)
 						}
 					end
 				end
 				
-				loopthrough = allbones
+				loopthrough=allbones
 			end
 			// !! ----------- !! //
 			
 			for k, v in pairs( loopthrough ) do
-				local bone = vm:LookupBone(k)
-				if (!bone) then continue end
+				local bone=vm:LookupBone(k)
+				if(!bone)then continue end
 				
 				// !! WORKAROUND !! //
-				local s = Vector(v.scale.x,v.scale.y,v.scale.z)
-				local p = Vector(v.pos.x,v.pos.y,v.pos.z)
-				local ms = Vector(1,1,1)
-				if (!hasGarryFixedBoneScalingYet) then
-					local cur = vm:GetBoneParent(bone)
-					while(cur >= 0) do
-						local pscale = loopthrough[vm:GetBoneName(cur)].scale
-						ms = ms * pscale
-						cur = vm:GetBoneParent(cur)
+				local s=Vector(v.scale.x,v.scale.y,v.scale.z)
+				local p=Vector(v.pos.x,v.pos.y,v.pos.z)
+				local ms=Vector(1,1,1)
+				if(!hasGarryFixedBoneScalingYet)then
+					local cur=vm:GetBoneParent(bone)
+					while(cur>=0) do
+						local pscale=loopthrough[vm:GetBoneName(cur)].scale
+						ms=ms*pscale
+						cur=vm:GetBoneParent(cur)
 					end
 				end
 				
-				s = s * ms
+				s=s*ms
 				// !! ----------- !! //
 				
 				if vm:GetManipulateBoneScale(bone) != s then
@@ -980,7 +1026,7 @@ if(CLIENT)then
 	 
 	function SWEP:ResetBonePositions(vm)
 		
-		if (!vm:GetBoneCount()) then return end
+		if(!vm:GetBoneCount())then return end
 		for i=0, vm:GetBoneCount() do
 			vm:ManipulateBoneScale( i, Vector(1, 1, 1) )
 			vm:ManipulateBoneAngles( i, Angle(0, 0, 0) )

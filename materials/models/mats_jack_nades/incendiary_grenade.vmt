@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/mats_jack_nades/incendiary_grenade_d"
+	"$bumpmap" "models/mats_jack_nades/incendiary_grenade_n"	
+	
+	"$phong" "1"
+	"$phongexponent"				"50"
+	"$phongboost"					"1"
+
+	"$phongalbedotint" 1
+	"$phongexponenttexture" "models\mat_jack_nades\exponent"
+
+	"$phongfresnelranges"			"[1 1 1]"
+}

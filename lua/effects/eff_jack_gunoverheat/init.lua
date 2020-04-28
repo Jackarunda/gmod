@@ -1,12 +1,12 @@
 function EFFECT:Init(data)
 	local pozishun=data:GetOrigin()
 	local skayul=data:GetScale()
-	local NumParticles = 5*skayul
-	local emitter = ParticleEmitter(data:GetOrigin())
-	for i = 0, NumParticles do
+	local NumParticles=5*skayul
+	local emitter=ParticleEmitter(data:GetOrigin())
+	for i=0, NumParticles do
 		if(math.random(1,2)==2)then
-			local rollparticle = emitter:Add("sprites/heatwave",pozishun+VectorRand()*math.Rand(0,3)*skayul)
-			if (rollparticle) then
+			local rollparticle=emitter:Add("sprites/heatwave",pozishun+VectorRand()*math.Rand(0,3)*skayul)
+			if(rollparticle)then
 				rollparticle:SetVelocity((VectorRand()*math.Rand(0,100))*skayul)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(0.2,0.4)*skayul
@@ -25,8 +25,8 @@ function EFFECT:Init(data)
 				rollparticle:SetLighting(false)
 			end
 		else
-			local rollparticle = emitter:Add("particle/smokestack",pozishun+VectorRand()*math.Rand(0,1)*skayul)
-			if (rollparticle) then
+			local rollparticle=emitter:Add("particle/smokestack",pozishun+VectorRand()*math.Rand(0,1)*skayul)
+			if(rollparticle)then
 				rollparticle:SetVelocity((VectorRand()*math.Rand(0,10))*skayul)
 				rollparticle:SetLifeTime(0)
 				local life=math.Rand(0.125,1)*skayul^0.25

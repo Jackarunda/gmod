@@ -2,12 +2,14 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Fougasse Mine"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(90,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
@@ -23,7 +25,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -78,7 +80,7 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State<0)then return end
 		JMod_Hint(activator,"arm","friends")
-		local Alt=activator:KeyDown(IN_WALK)
+		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
 				self:Arm(activator)
@@ -88,8 +90,11 @@ if(SERVER)then
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
-			self.Owner=activator
+			JMod_Owner(self,activator)
 		end
+	end
+	function ENT:EZdetonateOverride(detonator)
+		self:Detonate()
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
@@ -114,7 +119,7 @@ if(SERVER)then
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(self.Owner or game.GetWorld())
-			Flame.Owner=self.Owner or self
+			JMod_Owner(Flame,self.Owner or self)
 			Flame:Spawn()
 			Flame:Activate()
 		end
@@ -122,7 +127,7 @@ if(SERVER)then
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
-		self.Owner=armer
+		JMod_Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
@@ -144,39 +149,13 @@ if(SERVER)then
 		})
 		return not Tr.Hit
 	end
-	function ENT:ShouldAttack(ent)
-		if not(IsValid(ent))then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
-		if(ent:IsPlayer())then
-			PlayerToCheck=ent
-		elseif(ent:IsNPC())then
-			local Class=ent:GetClass()
-			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
-			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
-			return ent:Health()>0
-		elseif(ent:IsVehicle())then
-			PlayerToCheck=ent:GetDriver()
-		end
-		if(IsValid(PlayerToCheck))then
-			if(PlayerToCheck.EZkillme)then return true end -- for testing
-			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
-			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,PlayerToCheck))then return false end
-			local OurTeam=nil
-			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
-			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
-			return PlayerToCheck:Alive()
-		end
-		return false
-	end
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
 			local SearchPos=self:GetPos()+self:GetUp()*250
 			for k,targ in pairs(ents.FindInSphere(SearchPos,200))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
-					if((self:ShouldAttack(targ))and(self:CanSee(targ)))then
+					if((JMod_ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
 						timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()

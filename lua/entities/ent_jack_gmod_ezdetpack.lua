@@ -2,14 +2,16 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Detpack"
+ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
----
+--- func_breakable
 ENT.JModPreferredCarryAngles=Angle(90,0,180)
 ENT.JModEZdetPack=true
+ENT.JModEZstorable=true
 ENT.JModRemoteTrigger=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
@@ -23,7 +25,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -34,6 +36,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_misc/tobacco_box-1.mdl")
 		self.Entity:SetMaterial("models/entities/mat_jack_c4")
+		self.Entity:SetModelScale(1.25,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -73,13 +76,13 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		self.Owner=Dude
-		JMod_Hint(activator,"arm","detpack det","binding")
+		JMod_Owner(self,Dude)
+		JMod_Hint(activator,"arm","remote det","binding")
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(IN_WALK)
+			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==STATE_OFF)then
 				if(Alt)then
 					self:SetState(STATE_ARMED)
@@ -106,11 +109,15 @@ if(SERVER)then
 						Ang:RotateAroundAxis(Ang:Right(),90)
 						self:SetAngles(Ang)
 						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
-						local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+						if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
+							timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
+						else
+							local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+							self.StuckTo=Tr.Entity
+							self.StuckStick=Weld
+						end
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-						self.StuckTo=Tr.Entity
-						self.StuckStick=Weld
 					end
 				end
 			end
@@ -140,35 +147,6 @@ if(SERVER)then
 		if not(self:GetState()==STATE_ARMED)then return end
 		self:Detonate()
 	end
-	function ENT:WreckBuildings(pos,power)
-		local LoosenThreshold,DestroyThreshold=400*power,100*power
-		for k,prop in pairs(ents.FindInSphere(pos,100*power))do
-			local Phys=prop:GetPhysicsObject()
-			if(not(prop==self)and(IsValid(Phys)))then
-				local PropPos=prop:LocalToWorld(prop:OBBCenter())
-				if(prop:Visible(self))then
-					local Mass=Phys:GetMass()
-					if(Mass<=DestroyThreshold)then
-						SafeRemoveEntity(prop)
-					elseif(Mass<=LoosenThreshold)then
-						Phys:EnableMotion(true)
-						constraint.RemoveAll(prop)
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
-					else
-						Phys:ApplyForceOffset((PropPos-pos):GetNormalized()*300*power*Mass,PropPos+VectorRand()*10)
-					end
-				end
-			end
-		end
-	end
-	function ENT:BlastDoors(pos,power)
-		for k,door in pairs(ents.FindInSphere(pos,50*power))do
-			if((self:Visible(door))and(JMod_IsDoor(door)))then
-				local Vel=(door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000
-				JMod_BlastThatDoor(door,Vel)
-			end
-		end
-	end
 	function ENT:Detonate()
 		if(self.SympatheticDetonated)then return end
 		if(self.Exploded)then return end
@@ -183,6 +161,7 @@ if(SERVER)then
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion",Blam,true,true)
+				JMod_Sploom(self.Owner or self or game.GetWorld(),SelfPos,20)
 				util.ScreenShake(SelfPos,99999,99999,1,750*PowerMult)
 				for i=1,PowerMult do sound.Play("BaseExplosionEffect.Sound",SelfPos,120,math.random(90,110)) end
 				if(PowerMult>1)then
@@ -195,15 +174,14 @@ if(SERVER)then
 						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 					end
 				end)
-				self:WreckBuildings(SelfPos,PowerMult)
-				self:BlastDoors(SelfPos,PowerMult)
+				JMod_WreckBuildings(self,SelfPos,PowerMult)
+				JMod_BlastDoors(self,SelfPos,PowerMult)
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,300*PowerMult)
-					if((IsValid(self.StuckTo))and(IsValid(self.StuckStick)))then
-						util.BlastDamage(Infl,Att,SelfPos,50*PowerMult,600*PowerMult)
-					end
+					util.BlastDamage(Infl,Att,SelfPos,300*PowerMult,200*PowerMult)
+					-- do a lot of damage point blank, mostly for breaching
+					util.BlastDamage(Infl,Att,SelfPos,20*PowerMult,1700*PowerMult)
 					self:Remove()
 				end)
 			end
@@ -219,32 +197,6 @@ if(SERVER)then
 			mask=MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
-	end
-	function ENT:ShouldAttack(ent)
-		if not(IsValid(ent))then return false end
-		local Gaymode,PlayerToCheck=engine.ActiveGamemode(),nil
-		if(ent:IsPlayer())then
-			PlayerToCheck=ent
-		elseif(ent:IsNPC())then
-			local Class=ent:GetClass()
-			if(table.HasValue(self.WhitelistedNPCs,Class))then return true end
-			if(table.HasValue(self.BlacklistedNPCs,Class))then return false end
-			return ent:Health()>0
-		elseif(ent:IsVehicle())then
-			PlayerToCheck=ent:GetDriver()
-		end
-		if(IsValid(PlayerToCheck))then
-			if(PlayerToCheck.EZkillme)then return true end -- for testing
-			if((self.Owner)and(PlayerToCheck==self.Owner))then return false end
-			local Allies=(self.Owner and self.Owner.JModFriends)or {}
-			if(table.HasValue(Allies,PlayerToCheck))then return false end
-			local OurTeam=nil
-			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
-			if(Gaymode=="sandbox")then return PlayerToCheck:Alive() end
-			if(OurTeam)then return PlayerToCheck:Alive() and PlayerToCheck:Team()~=OurTeam end
-			return PlayerToCheck:Alive()
-		end
-		return false
 	end
 	function ENT:Think()
 		--

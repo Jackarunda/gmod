@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Workbench"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		ent.Owner=ply
+		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -38,7 +38,7 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		local phys=self.Entity:GetPhysicsObject()
-		if phys:IsValid() then
+		if phys:IsValid()then
 			phys:Wake()
 			phys:SetMass(500)
 			phys:SetBuoyancyRatio(.3)
@@ -55,7 +55,6 @@ if(SERVER)then
 		self.MaxElectricity=100
 		self.MaxGas=100
 		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Workbench"][2]
-		self.Buildables=JMOD_CONFIG.Recipes
 		---
 		self:SetElectricity(self.MaxElectricity)
 		self:SetGas(self.MaxGas)
@@ -78,7 +77,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>2000)then
+			if((data.Speed>2000)and not((data.HitEntity.IsPlayerHolding)and(data.HitEntity:IsPlayerHolding())))then
 				self:Destroy()
 			end
 		end
@@ -130,7 +129,7 @@ if(SERVER)then
 		Prop:Spawn()
 		Prop:Activate()
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self)
+		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
 		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
@@ -215,35 +214,6 @@ if(SERVER)then
 		end
 		return 0
 	end
-	function ENT:CanSee(ent)
-	 if(ent:GetNoDraw())then return false end
-		return not util.TraceLine({
-			start=self:GetPos(),
-			endpos=ent:GetPos(),
-			filter={self,ent},
-			mask=MASK_SOLID_BRUSHONLY
-		}).Hit
-	end
-	function ENT:CountResourcesInRange()
-		local Results={}
-		for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-			if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
-				local Typ=obj.EZsupplies
-				Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-			end
-		end
-		return Results
-	end
-	function ENT:HaveResourcesToPerformTask(requirements)
-		local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
-		for typ,amt in pairs(requirements)do
-			if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
-				RequirementsMet=false
-				break
-			end
-		end
-		return RequirementsMet
-	end
 	function ENT:ConsumeResourcesInRange(requirements)
 		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
 		while not((AllDone)or(Attempts>1000))do
@@ -256,7 +226,11 @@ if(SERVER)then
 					local AmountWeCanTake=Donor:GetResource()
 					if(AmountWeNeed>=AmountWeCanTake)then
 						Donor:SetResource(0)
-						Donor:Remove()
+						if Donor:GetClass() == "ent_jack_gmod_ezcrate" then
+							Donor:ApplySupplyType("generic")
+						else
+							Donor:Remove()
+						end
 						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
 					else
 						Donor:SetResource(AmountWeCanTake-AmountWeNeed)
@@ -272,19 +246,27 @@ if(SERVER)then
 	end
 	function ENT:FindResourceContainer(typ,amt)
 		for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-			if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:CanSee(obj)))then
+			if ((obj.IsJackyEZresource and obj.EZsupplies==typ) or (obj:GetClass() == "ent_jack_gmod_ezcrate" and obj:GetResourceType() == typ)) 
+					and obj:GetResource()>=amt and self:CanSee(obj)then
 				return obj
 			end
 		end
 	end
 	function ENT:TryBuild(itemName,ply)
-		local Gas,Elec,Built=self:GetGas(),self:GetElectricity(),false
+		local Gas,Elec=self:GetGas(),self:GetElectricity()
 		if((Gas<=0)or(Elec<=0))then return end
-		local ItemInfo=self.Buildables[itemName]
+		local ItemInfo=JMOD_CONFIG.Recipes[itemName]
 		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
+		
 		if(self:HaveResourcesToPerformTask(BuildReqs))then
+		
+			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+			if override == false then
+				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
+				return
+			end
+		
 			self:ConsumeResourcesInRange(BuildReqs)
-			Built=true
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
 			for i=1,BuildSteps do
 				timer.Simple(i/100,function()
@@ -296,7 +278,10 @@ if(SERVER)then
 							if((StringParts[1])and(StringParts[1]=="FUNC"))then
 								local FuncName=StringParts[2]
 								if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-									JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+									local Ent=JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+									if(Ent)then
+										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
+									end
 								else
 									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
 								end
@@ -304,9 +289,10 @@ if(SERVER)then
 								local Ent=ents.Create(ItemClass)
 								Ent:SetPos(Pos)
 								Ent:SetAngles(Ang)
-								Ent.Owner=ply
+								JMod_Owner(Ent,ply)
 								Ent:Spawn()
 								Ent:Activate()
+								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 							end
 							self:SetGas(math.Clamp(Gas-5*math.Rand(0,1)^2,0,self.MaxGas))
 							self:SetElectricity(math.Clamp(Elec-5*math.Rand(0,1)^2,0,self.MaxElectricity))
@@ -315,8 +301,9 @@ if(SERVER)then
 					end
 				end)
 			end
+		else
+			ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build")
 		end
-		if not(Built)then ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build") end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -396,4 +383,41 @@ elseif(CLIENT)then
 		--]]
 	end
 	language.Add("ent_jack_gmod_ezworkbench","EZ Workbench")
+end
+
+-- Shared function also used by the client in UI
+
+function ENT:CountResourcesInRange()
+	local Results={}
+	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
+		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
+			local Typ=obj.EZsupplies
+			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
+		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and self:CanSee(obj) then
+			local Typ = obj:GetResourceType()
+			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
+		end
+	end
+	return Results
+end
+
+function ENT:HaveResourcesToPerformTask(requirements)
+	local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
+	for typ,amt in pairs(requirements)do
+		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
+			RequirementsMet=false
+			break
+		end
+	end
+	return RequirementsMet
+end
+
+function ENT:CanSee(ent)
+ if(ent:GetNoDraw())then return false end
+	return not util.TraceLine({
+		start=self:GetPos(),
+		endpos=ent:GetPos(),
+		filter={self,ent},
+		mask=MASK_SOLID_BRUSHONLY
+	}).Hit
 end

@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Ammo Box"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -11,7 +11,7 @@ ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod_EZammoBoxSize
 ENT.Model="models/Items/BoxJRounds.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"
-ENT.ModelScale=2
+ENT.ModelScale=1.75
 ENT.Mass=50
 ENT.ImpactNoise1="Metal_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
@@ -19,15 +19,17 @@ ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
 ENT.Hint="ammobox"
 ---
-ENT.ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
+local ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
 		for i=1,20 do
-			local Eff=EffectData()
-			Eff:SetOrigin(pos)
-			Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
-			Eff:SetEntity(ent)
-			util.Effect(table.Random(self.ShellEffects),Eff,true,true)
+			timer.Simple(i/200,function()
+				local Eff=EffectData()
+				Eff:SetOrigin(pos)
+				Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
+				Eff:SetEntity(ent)
+				util.Effect(table.Random(ShellEffects),Eff,true,true)
+			end)
 		end
 	end
 	function ENT:AltUse(ply)
@@ -65,14 +67,14 @@ elseif(CLIENT)then
 			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)
 			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*16-Right*.6-Forward*5.9,Ang,.05)
+			cam.Start3D2D(Pos+Up*16-Right*.6-Forward*5.9,Ang,.04)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*16-Right*.6+Forward*5.9,Ang,.05)
+			cam.Start3D2D(Pos+Up*16-Right*.6+Forward*5.9,Ang,.04)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)

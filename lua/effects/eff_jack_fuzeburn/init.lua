@@ -3,7 +3,7 @@
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	local Dir=data:GetNormal()
@@ -17,19 +17,19 @@ function EFFECT:Init(data)
 		return
 	end
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 	if(emitter)then
-		for i = 0, 15*Scayul^0.5 do
+		for i=0, 30*Scayul^0.5 do
 
-			local Pos = (data:GetOrigin())
+			local Pos=(data:GetOrigin())
 		
-			local particle = emitter:Add("sprites/mat_jack_nicespark",Pos)
+			local particle=emitter:Add("sprites/mat_jack_nicespark",Pos)
 
-			if (particle) then
-				particle:SetVelocity(VectorRand()*math.Rand(15, 150)*Scayul+Dir*300*Scayul)
+			if(particle)then
+				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(10,500)*Scayul)
 				
 				particle:SetLifeTime(0)
-				particle:SetDieTime(math.Rand(0.1,0.6))
+				particle:SetDieTime(math.Rand(0.1,1.5))
 				
 				local herpdemutterfickendenderp=math.Rand(200,255)
 				particle:SetColor(255,herpdemutterfickendenderp-10,herpdemutterfickendenderp-20)		
@@ -49,7 +49,7 @@ function EFFECT:Init(data)
 
 				particle:SetLighting(false)
 				particle:SetCollide(true)
-				particle:SetBounce(0.9)
+				particle:SetBounce(0.95)
 
 			end
 		end

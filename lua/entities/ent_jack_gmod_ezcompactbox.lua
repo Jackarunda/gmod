@@ -2,9 +2,9 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Compact Box"
+ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
@@ -137,7 +137,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		JMod_Hint(activator,"unpackage")
 		local Time=CurTime()
-		if(activator:KeyDown(IN_WALK))then
+		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			if(Time-self.LastUsedTime>.3)then
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap to unpackage")
 				self.LastUsedTime=Time

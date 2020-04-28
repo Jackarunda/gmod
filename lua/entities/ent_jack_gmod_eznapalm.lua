@@ -3,6 +3,7 @@ ENT.Type="anim"
 ENT.Base="base_anim"
 ENT.PrintName="Projectile"
 ENT.KillName="Projectile"
+ENT.NoSitAllowed=true
 -- this has been copied over from Slayer and modified, which is why it looks so weird
 -- Halo FTW
 local ThinkRate=22--Hz
@@ -77,7 +78,7 @@ if(SERVER)then
 			Tr=self.InitialTrace
 			self.InitialTrace=nil
 		else
-			local Filter={self}
+			local Filter={self,self.Creator}
 			if not(self.CanHarmOwner)then table.insert(Filter,self:GetOwner()) end
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask,HitWater,HitChainLink=MASK_SHOT,self.TypeInfo[15],self.TypeInfo[16]
@@ -138,14 +139,14 @@ if(SERVER)then
 		local Att,Pos=self:GetOwner(),(tr and tr.HitPos)or self:GetPos()
 		if not(IsValid(Att))then Att=self end
 		if((tr)and(self.TypeInfo[14]))then
-			local bullet = {}
-			bullet.Num = 1
-			bullet.Src = self:GetPos()
-			bullet.Dir = self:GetForward()
-			bullet.Spread = Vector(0,0,0)
-			bullet.Tracer = 0
-			bullet.Force = 1
-			bullet.Damage = 1
+			local bullet={}
+			bullet.Num=1
+			bullet.Src=self:GetPos()
+			bullet.Dir=self:GetForward()
+			bullet.Spread=Vector(0,0,0)
+			bullet.Tracer=0
+			bullet.Force=1
+			bullet.Damage=1
 			bullet.Attacker=Att
 			self:FireBullets(bullet)
 		end
@@ -159,13 +160,14 @@ if(SERVER)then
 			Dam:SetInflictor(Inflictor(self))
 			tr.Entity:TakeDamageInfo(Dam)
 			timer.Simple(.01,function()
-				local Haz=ents.Create("ent_jack_gmod_firehazard")
+				local Haz=ents.Create("ent_jack_gmod_ezfirehazard")
 				if(IsValid(Haz))then
 					Haz:SetDTInt(0,1)
 					Haz:SetPos(tr.HitPos+tr.HitNormal*2)
 					Haz:SetAngles(tr.HitNormal:Angle())
-					Haz.Owner=self.Owner or game.GetWorld()
+					JMod_Owner(Haz,self.Owner)
 					Haz:SetDTEntity(0,self:GetDTEntity(0))
+					Haz.HighVisuals=self.HighVisuals
 					Haz:Spawn()
 					Haz:Activate()
 					if not(tr.Entity:IsWorld())then Haz:SetParent(tr.Entity) end

@@ -8,7 +8,7 @@ local Shit=Material("sprites/mat_jack_ignorezsprite")
 ---------------------------------------------------------*/
 function EFFECT:Init(data)
 	
-	local vOffset = data:GetOrigin()
+	local vOffset=data:GetOrigin()
 	
 	local Scayul=data:GetScale()
 	self.Scale=Scayul
@@ -33,10 +33,10 @@ function EFFECT:Init(data)
 		return
 	end
 
-	local emitter = ParticleEmitter(vOffset)
+	local emitter=ParticleEmitter(vOffset)
 	
-		local particle = emitter:Add("effects/fire_cloud1", vOffset)
-		particle:SetVelocity(math.Rand(40,60) * VectorRand()*Scayul)
+		local particle=emitter:Add("effects/fire_cloud1", vOffset)
+		particle:SetVelocity(math.Rand(40,60)*VectorRand()*Scayul)
 		particle:SetAirResistance(20)
 		particle:SetDieTime(0.04*Scayul)
 		particle:SetStartAlpha(255)
@@ -49,7 +49,7 @@ function EFFECT:Init(data)
 		
 		for i=0,5*Scayul do
 			local sprite="sprites/flamelet"..math.random(1,3)
-			local particle = emitter:Add(sprite, vOffset)
+			local particle=emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(900,1300)*VectorRand()*Scayul)
 			particle:SetAirResistance(2000)
 			particle:SetGravity(Vector(0, 0, math.Rand(25, 100)))
@@ -66,13 +66,13 @@ function EFFECT:Init(data)
 			particle:SetColor(darg-20,darg,darg)
 		end
 		
-		for i = 0, 75*Scayul do
+		for i=0, 40*Scayul do
 
-			local Pos = (data:GetOrigin() + Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
+			local Pos=(data:GetOrigin()+Vector(math.Rand(-1, 1), math.Rand(-1, 1), math.Rand(-1, 1)))
 		
-			local particle = emitter:Add("sprites/mat_jack_nicespark", Pos)
+			local particle=emitter:Add("sprites/mat_jack_nicespark", Pos)
 
-			if (particle) then
+			if(particle)then
 				particle:SetVelocity(VectorRand()*math.Rand(10, 8000)*Scayul)
 				
 				particle:SetLifeTime(0)
@@ -105,7 +105,7 @@ function EFFECT:Init(data)
 	
 	timer.Simple(0.05,function()
 		local Emitter=ParticleEmitter(vOffset)
-		for i=0,15*Scayul do
+		for i=0,8*Scayul do
 			local sprite
 			local chance=math.random(1,6)
 			if(chance==1)then
@@ -121,7 +121,7 @@ function EFFECT:Init(data)
 			elseif(chance==6)then
 				sprite="sprites/mat_jack_smoke3"
 			end
-			local particle = Emitter:Add(sprite, vOffset)
+			local particle=Emitter:Add(sprite, vOffset)
 			particle:SetVelocity(math.Rand(900,1300)*VectorRand()*Scayul)
 			particle:SetAirResistance(1000)
 			particle:SetGravity(VectorRand()*math.Rand(0,2000))
@@ -139,21 +139,6 @@ function EFFECT:Init(data)
 		end
 		Emitter:Finish()
 	end)
-	
-	if(math.random(1.2)==2)then
-		local dlight=DynamicLight(self:EntIndex())
-		if(dlight)then
-			dlight.Pos=vOffset
-			dlight.r=255
-			dlight.g=200
-			dlight.b=175
-			dlight.Brightness=4*Scayul^0.5
-			dlight.Size=600*Scayul^0.5
-			dlight.Decay=1000
-			dlight.DieTime=CurTime()+0.1
-			dlight.Style=0
-		end
-	end
 end
 
 /*---------------------------------------------------------

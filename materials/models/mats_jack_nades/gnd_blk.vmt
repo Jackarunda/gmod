@@ -1,0 +1,9 @@
+VertexLitGeneric
+{
+	"$baseTexture" "models\mats_jack_nades/gnd_blk"
+	"$bumpmap"	"models\Weapons\w_models\gnd_bumpmap"
+	"$phong" 			"1"
+	"$phongexponent" 		"100"
+	"$phongboost" 			"0.1"
+	"$phongfresnelranges"		"[0.4 0.5 .6]"
+}
