@@ -60,7 +60,7 @@ JMod_Hints = {
 
 JMod_Hints = {
     -- General
-    ["hint"] = {Type = "lightbulb", Text = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'", Time = 4, Identifier = "important", Sound = ""},
+    ["wiki"] = {Type = "lightbulb", Text = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'", Time = 4, Identifier = "important", Sound = ""},
     ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use command 'cl_jmod_hint_enabled'", Time = 4, Identifier = "important", Sound = ""},
     ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 4, Identifier = "important", Sound = ""},
     ["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items", Time = 3, Identifier = "important"},
