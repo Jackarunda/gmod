@@ -29,17 +29,17 @@ if SERVER then
     end
 
     function ENT:Initialize()
-        self.Entity:SetModel("models/jmod/solar_generator.mdl")
-        self.Entity:PhysicsInit(SOLID_VPHYSICS)
-        self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
-        self.Entity:SetSolid(SOLID_VPHYSICS)
-        self.Entity:DrawShadow(true)
-        local phys = self.Entity:GetPhysicsObject()
+        self:SetModel("models/jmod/solar_generator.mdl")
+        self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)	
+        self:SetSolid(SOLID_VPHYSICS)
+        self:DrawShadow(true)
+        local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:Wake()
             phys:SetMass(500)
         end
-        self.Entity:SetUseType(SIMPLE_USE)
+        self:SetUseType(SIMPLE_USE)
         
         self:SetPower(0)
     end

@@ -36,18 +36,18 @@ if SERVER then
     end
 
     function ENT:Initialize()
-        self.Entity:SetModel("models/props_outland/generator_static01a.mdl")
-        self.Entity:SetMaterial("models/props_silo/generator_jtatic01.mdl")
-        self.Entity:PhysicsInit(SOLID_VPHYSICS)
-        self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
-        self.Entity:SetSolid(SOLID_VPHYSICS)
-        self.Entity:DrawShadow(true)
-        local phys = self.Entity:GetPhysicsObject()
+        self:SetModel("models/props_outland/generator_static01a.mdl")
+        self:SetMaterial("models/props_silo/generator_jtatic01.mdl")
+        self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)	
+        self:SetSolid(SOLID_VPHYSICS)
+        self:DrawShadow(true)
+        local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:Wake()
             phys:SetMass(750)
         end
-        self.Entity:SetUseType(SIMPLE_USE)
+        self:SetUseType(SIMPLE_USE)
 
         self.NextLoad = 0
         self.NextUse = 0
@@ -57,7 +57,7 @@ if SERVER then
         self:SetState(STATE_OFF)
         self:SetFuel(0)
         self:SetPower(0)
-        --self.Entity:SetColor(Color(150,150,150))
+        --self:SetColor(Color(150,150,150))
     end
 
     function ENT:PhysicsCollide(data,physobj)
