@@ -75,7 +75,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		JMod_Hint(Dude,"arm")
+		
 		JMod_Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then

@@ -80,7 +80,7 @@ if(SERVER)then
 		if(IsValid(self.Owner))then
 			JMod_Colorify(self)
 		end
-		JMod_Hint(activator,"arm","slam stick","slam trigger")
+		
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
@@ -101,7 +101,7 @@ if(SERVER)then
 							end
 						end
 					end)
-                    JMod_L4DHint(Dude, "friends", self)
+                    JMod_Hint(Dude, "friends", self)
 				else
 					if !IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)
@@ -114,7 +114,7 @@ if(SERVER)then
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
-                    JMod_L4DHint(Dude, "sticky", self)
+                    JMod_Hint(Dude, "sticky", self)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -122,7 +122,7 @@ if(SERVER)then
 				self:SetBodygroup(0,0)
 			end
 		else -- player just released the USE key
-			JMod_Hint(Dude,"slam stick")
+			
 			if((self:IsPlayerHolding())and(self.NextStick<Time) and !IsValid(self.AttachedBomb))then
 				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
 				if(Tr.Hit)then
@@ -148,7 +148,7 @@ if(SERVER)then
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-                        if not JMod_L4DHint(Dude, "arm", self) then JMod_L4DHint(Dude, "slam stick", self) end
+                        if not JMod_Hint(Dude, "arm", self) then JMod_Hint(Dude, "slam stick", self) end
 					end
 				end
 			end

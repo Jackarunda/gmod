@@ -1,28 +1,4 @@
-function JMod_Hint(ply,...)
-    --[[
-	if not JMOD_CONFIG.Hints then return end
-    if isfunction(l4dgi_hint) then return end
-	local HintKeys={...}
-	ply.NextJModHint=ply.NextJModHint or 0
-	ply.JModHintsGiven=ply.JModHintsGiven or {}
-	if ply.NextJModHint > CurTime() then return end
-    
-	for k,key in pairs(HintKeys) do
-		if not ply.JModHintsGiven[key] then
-			ply.JModHintsGiven[key] = true
-			ply.NextJModHint = CurTime() + 1
-			net.Start("JMod_Hint")
-            net.WriteBool(false)
-			net.WriteString(key)
-			net.Send(ply)
-			break
-		end
-	end
-    ]]
-    -- Legacy hints
-end
-
-function JMod_L4DHint(ply, key, loc, forceLegacy)
+function JMod_Hint(ply, key, loc, forceLegacy)
     if not JMOD_CONFIG.Hints or not ply or not key then return nil end
     if tonumber(ply:GetInfo("cl_jmod_hint_enabled")) == 0 then return nil end
    
@@ -30,7 +6,7 @@ function JMod_L4DHint(ply, key, loc, forceLegacy)
 	if ply.JModHintsGiven[key] then return false end
 	ply.JModHintsGiven[key] = true
     
-    local tbl = JMod_L4DHints[key]
+    local tbl = JMod_Hints[key]
     if not tbl then return nil end
     if loc then tbl.Pos = loc end
     tbl.ShouldMove = (loc ~= nil)
@@ -60,10 +36,10 @@ concommand.Add("jmod_resethints",function(ply,cmd,args)
 end)
 
 hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
-    if JMod_L4DHints[ent:GetClass()] then 
-        JMod_L4DHint(ply, ent:GetClass(), ent)
+    if JMod_Hints[ent:GetClass()] then 
+        JMod_Hint(ply, ent:GetClass(), ent)
         if not ply.JModHintsGiven["pickup"] and ent:GetPhysicsObject():GetMass() <= 50 then
-            timer.Simple(5, function() if IsValid(ply) and IsValid(ent) then JMod_L4DHint(ply, "pickup") end end)
+            timer.Simple(5, function() if IsValid(ply) and IsValid(ent) then JMod_Hint(ply, "pickup") end end)
         end
     end
 end)
@@ -75,13 +51,13 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
     if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
         timer.Simple(10,function()
             if IsValid(ply) then
-                JMod_L4DHint(ply, "hint")
+                JMod_Hint(ply, "hint")
             end
         end)
         if ply:IsAdmin() then
             timer.Simple(18,function()
                 if IsValid(ply) then
-                    JMod_L4DHint(ply, "config")
+                    JMod_Hint(ply, "config")
                 end
             end)
         end

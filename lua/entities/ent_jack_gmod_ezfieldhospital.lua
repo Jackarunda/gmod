@@ -202,17 +202,17 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
-		if(State==STATE_BROKEN)then JMod_Hint(activator,"fix") JMod_L4DHint(activator, "destroyed", self) return end
+		if(State==STATE_BROKEN)then  return end
 		if(State==STATE_OFF)then
-			JMod_Hint(activator,"afh","supplies","upgrade","decontaminate")
-            if self:GetElectricity() > 0 then self:TurnOn() JMod_L4DHint(activator, "afh enter", self)
-            else JMod_L4DHint(activator, "nopower", self)  end
+			
+            if self:GetElectricity() > 0 then self:TurnOn() JMod_Hint(activator, "afh enter", self)
+            else JMod_Hint(activator, "nopower", self)  end
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
 				if(self.NextEnter<CurTime())then
 					self.Pod.EZvehicleEjectPos=self.Pod:WorldToLocal(activator:GetPos())
 					activator:EnterVehicle(self.Pod)
-                    JMod_L4DHint(activator, "afh upgrade")
+                    JMod_Hint(activator, "afh upgrade")
 				end
 			end
 		end
@@ -226,7 +226,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
-		if(self:GetElectricity()<=0)then JMod_L4DHint(activator, "nopower", self) return end
+		if(self:GetElectricity()<=0)then JMod_Hint(activator, "nopower", self) return end
 		local Time=CurTime()
 		self:SetState(STATE_ON)
 		self:SFX("afh_startup")
@@ -331,7 +331,7 @@ if(SERVER)then
 		self.NextHeal=Time+1/self.HealSpeed^2.75
 		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
 		if(Supplies<=0)then
-            if IsValid(self.Patient) then JMod_L4DHint(self.Patient, "afh supply") end
+            if IsValid(self.Patient) then JMod_Hint(self.Patient, "afh supply") end
 			self:EndOperation(false)
 			return
 		end

@@ -105,7 +105,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
 		if(State<0)then return end
-		JMod_Hint(activator,"remote det","bomb drop","impact det")
+		
 		JMod_Owner(self,activator)
 		if not(Alt)then
 			activator:PickupObject(self)

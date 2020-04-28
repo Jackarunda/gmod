@@ -59,7 +59,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator,"armor","armor remove","mask","headset")
+		
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
@@ -67,11 +67,11 @@ if(SERVER)then
 			net.WriteEntity(self)
 			net.Send(activator)
             if self.ArmorName == "Headset" then
-                JMod_L4DHint(activator, "armor friends", self)
+                JMod_Hint(activator, "armor friends", self)
             end
 		else
 			activator:PickupObject(self)
-            JMod_L4DHint(activator, "armor wear", self)
+            JMod_Hint(activator, "armor wear", self)
 		end
 		--activator:EmitSound("snd_jack_clothequip.wav",70,100)
 		--activator:EmitSound("snd_jack_gmod/armorstep1.wav",70,100)--5

@@ -56,12 +56,12 @@ if(SERVER)then
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:Prime()
 				activator:PickupObject(self.Plunger)
-                JMod_L4DHint(Dude, "arm satchelcharge", self.Plunger)
+                JMod_Hint(Dude, "arm satchelcharge", self.Plunger)
 			else
 				activator:PickupObject(self)
-                JMod_L4DHint(Dude, "arm", self)
+                JMod_Hint(Dude, "arm", self)
 			end
-			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
+			if self.Hints then  end
 		end
 	end
 	

@@ -78,7 +78,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude,Time=activator or activatorAgain,CurTime()
 		JMod_Owner(self,Dude)
-		JMod_Hint(activator,"arm","timebomb stick")
+		
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
@@ -102,7 +102,7 @@ if(SERVER)then
 				if(Alt)then
 					if(self.NextDisarm<Time)then
 						self.NextDisarm=Time+.25
-						JMod_Hint(Dude,"disarm")
+						
 						self.DisarmProgress=self.DisarmProgress+JMOD_CONFIG.BombDisarmSpeed
 						self.NextDisarmFail=Time+1
 						Dude:PrintMessage(HUD_PRINTCENTER,"disarming "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))

@@ -96,7 +96,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		JMod_Hint(activator,"arm","launch")
+		
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
@@ -104,10 +104,10 @@ if(SERVER)then
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",60,120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime=CurTime()
-                JMod_L4DHint(activator, "launch", self)
+                JMod_Hint(activator, "launch", self)
 			else
 				activator:PickupObject(self)
-                JMod_L4DHint(activator, "arm", self)
+                JMod_Hint(activator, "arm", self)
 			end
 		elseif(State==STATE_ARMED)then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav",60,120)
@@ -176,7 +176,7 @@ if(SERVER)then
 		timer.Simple(30,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
-        JMod_L4DHint(self.Owner, "backblast", self:GetPos())
+        JMod_Hint(self.Owner, "backblast", self:GetPos())
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()

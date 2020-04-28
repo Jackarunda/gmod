@@ -102,16 +102,16 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		JMod_Hint(activator,"arm","bury","friends")
+		
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==JMOD_EZ_STATE_OFF)then
 			if(Alt)then
 				JMod_Owner(self,activator)
 				self:Bury(activator)
-                JMod_L4DHint(activator, "friends", self)
+                JMod_Hint(activator, "friends", self)
 			else
 				activator:PickupObject(self)
-                JMod_L4DHint(activator, "arm boundingmine", self)
+                JMod_Hint(activator, "arm boundingmine", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)

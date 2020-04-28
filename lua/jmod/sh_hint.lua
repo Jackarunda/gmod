@@ -1,3 +1,4 @@
+--[[
 JMod_Hints = {
 	["afh"]="E to enter and get healed",
 	["airburst det"]="detonates in midair automatically",
@@ -55,8 +56,9 @@ JMod_Hints = {
 	["water arm"]="arm bomb and drop in water",
 	["water det"]="bomb must be in water to detonate"
 }
+]]
 
-JMod_L4DHints = {
+JMod_Hints = {
     -- General
     ["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use concommand 'cl_jmod_hint_enabled'", Time = 6, Identifier = "config"},
     ["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 6},

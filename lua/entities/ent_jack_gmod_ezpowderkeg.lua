@@ -65,14 +65,14 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Owner(self,Dude)
-		JMod_Hint(Dude,"powder keg")
+		
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			self.Pouring=not self.Pouring
 			if(self.Pouring)then Dude:PickupObject(self) end
 			return
 		end
 		Dude:PickupObject(self)
-        JMod_L4DHint(Dude, "arm powderkeg", self)
+        JMod_Hint(Dude, "arm powderkeg", self)
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()

@@ -108,7 +108,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"remote det","bomb drop","impact det")
+		
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then

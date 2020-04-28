@@ -59,7 +59,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
                 Dmg:SetDamageType(DMG_GENERIC)
                 Dmg:SetDamagePosition(playa:GetShootPos())
                 playa:TakeDamageInfo(Dmg)
-                JMod_Hint(playa,"radsickness")
+                
             end
         end
     end

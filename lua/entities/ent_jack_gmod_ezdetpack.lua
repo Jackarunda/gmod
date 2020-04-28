@@ -74,7 +74,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Owner(self,Dude)
-		JMod_Hint(activator,"arm","remote det","binding")
+		
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
@@ -84,21 +84,21 @@ if(SERVER)then
 				if(Alt)then
 					self:SetState(STATE_ARMED)
 					self:EmitSound("snd_jack_minearm.wav",60,100)
-                    JMod_L4DHint(Dude, "trigger", self)
+                    JMod_Hint(Dude, "trigger", self)
 				else
 					constraint.RemoveAll(self)
 					self.StuckStick=nil
 					self.StuckTo=nil
 					Dude:PickupObject(self)
 					self.NextStick=Time+.5
-                    JMod_L4DHint(Dude, "sticky", self)
+                    JMod_Hint(Dude, "sticky", self)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
 				self:SetState(STATE_OFF)
 			end
 		else
-			JMod_Hint(Dude,"detpack stick","detpack combo")
+			
 			if((self:IsPlayerHolding())and(self.NextStick<Time))then
 				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
 				if(Tr.Hit)then
@@ -117,7 +117,7 @@ if(SERVER)then
 						end
 						self.Entity:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-                        JMod_L4DHint(Dude, "arm", self)
+                        JMod_Hint(Dude, "arm", self)
 					end
 				end
 			end
@@ -145,7 +145,7 @@ if(SERVER)then
 	function ENT:JModEZremoteTriggerFunc(ply)
 		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
 		if not(self:GetState()==STATE_ARMED)then return end
-        JMod_L4DHint(ply, "detpack combo", self:GetPos())
+        JMod_Hint(ply, "detpack combo", self:GetPos())
 		self:Detonate()
 	end
 	function ENT:Detonate()
