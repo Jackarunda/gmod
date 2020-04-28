@@ -588,6 +588,7 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
+    if GetConVar("cl_drawhud"):GetBool() == false then return end
 	local W,H,Msg=ScrW(),ScrH(),self:GetMsg()
 	if((Msg)and(Msg~=""))then
 		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
