@@ -9,7 +9,7 @@ ENT.Spawnable			= true
 
 -- TODO Make these configurable (and maybe upgradable?)
 ENT.MaxFuel = 100
-ENT.MaxPower = 400
+ENT.MaxPower = 100
 
 ENT.EZconsumes = {"fuel"}
 ENT.BatteryEnt = "ent_jack_gmod_ezbattery"
@@ -27,6 +27,7 @@ if SERVER then
     function ENT:SpawnFunction(ply,tr,ClassName)
         local ent=ents.Create(ClassName)
         ent:SetPos(tr.HitPos + tr.HitNormal*16)
+        ent:SetAngles(ply:GetAngles() + Angle(0,-90,0))
         ent:Spawn()
         ent:Activate()
         local effectdata=EffectData()
@@ -218,8 +219,6 @@ if SERVER then
                 self.NextSound = CurTime() + 3.5
                 self:EmitSound("snd_jack_genrun.mp3")
             end
-            
-            if(self:WaterLevel()>0)then self:ShutOff() end
             
             self:GetPhysicsObject():ApplyForceCenter(VectorRand()*1500)
             
