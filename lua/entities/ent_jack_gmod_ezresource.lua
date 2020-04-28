@@ -66,6 +66,14 @@ if(SERVER)then
 					end
 					return
 				end
+            elseif data.HitEntity:GetClass() == self:GetClass() then
+                if self:GetResource() <= 0 then self:Remove() return end
+                if not data.HitEntity.Loaded and self:GetResource() + data.HitEntity:GetResource() < self.MaxResource then
+                    data.HitEntity.Loaded = true
+					self:UseEffect(data.HitPos,data.HitEntity)
+                    self:SetResource(self:GetResource() + data.HitEntity:GetResource())
+                    SafeRemoveEntity(data.HitEntity)
+                end
 			end
 			if((data.Speed>80)and(self)and(self.ImpactNoise1))then
 				self.Entity:EmitSound(self.ImpactNoise1)

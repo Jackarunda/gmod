@@ -98,7 +98,7 @@ if SERVER then
         if amt <= 0 then return end
         
         local battery = ents.Create(self.BatteryEnt)
-        battery:SetPos(self:GetPos()+self:GetUp()*20)
+        battery:SetPos(self:GetPos()+self:GetUp()*100)
         battery:SetAngles(self:GetAngles())
         battery:Spawn()
         battery:Activate()
