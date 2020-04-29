@@ -5,127 +5,125 @@ JMOD_NUKEFLASH_INTENSITY=1
 JMOD_NUKEFLASH_SMOKE_ENDTIME=0
 JMOD_WIND=JMOD_WIND or Vector(0,0,0)
 
-hook.Add("Initialize","JMOD_INIT",function()
-    surface.CreateFont("JMod-Display",{
-        font="Arial",
-        extended=false,
-        size=35,
-        weight=900,
-        blursize=0,
-        scanlines=4,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-NumberLCD",{
-        font="DS-Digital Bold",
-        extended=false,
-        size=35,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Display-S",{
-        font="Arial",
-        extended=false,
-        size=20,
-        weight=900,
-        blursize=0,
-        scanlines=4,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil",{
-        font="Capture it",
-        extended=false,
-        size=60,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil-S",{
-        font="Capture it",
-        extended=false,
-        size=20,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil-XS",{
-        font="Capture it",
-        extended=false,
-        size=10,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-SharpieHandwriting",{
-        font="Handwriting",
-        extended=false,
-        size=40,
-        weight=900,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-end)
+surface.CreateFont("JMod-Display",{
+    font="Arial",
+    extended=false,
+    size=35,
+    weight=900,
+    blursize=0,
+    scanlines=4,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-NumberLCD",{
+    font="DS-Digital Bold",
+    extended=false,
+    size=35,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Display-S",{
+    font="Arial",
+    extended=false,
+    size=20,
+    weight=900,
+    blursize=0,
+    scanlines=4,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil",{
+    font="Capture it",
+    extended=false,
+    size=60,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil-S",{
+    font="Capture it",
+    extended=false,
+    size=20,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil-XS",{
+    font="Capture it",
+    extended=false,
+    size=10,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-SharpieHandwriting",{
+    font="Handwriting",
+    extended=false,
+    size=40,
+    weight=900,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
 
 local function CreateClientLag(amt)
     local W,H=ScrW(),ScrH()
@@ -411,12 +409,22 @@ hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
     end
 end)
 
-hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply)
+hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
     if not(IsValid(ply))then return end
     if not(ply:Alive())then return end
     if not(LocalPlayer():Alive())then return end
     if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
         CommNoise()
+        if not isTeam and not isDead then
+            local tab = {}
+            table.insert( tab, Color( 30, 40, 200 ) )
+            table.insert( tab, "(HEADSET) " )
+            table.insert( tab, ply )
+            table.insert( tab, Color( 255, 255, 255 ) )
+            table.insert( tab, ": ".. text )
+            chat.AddText( unpack(tab) )
+            return true
+        end
     end
 end)
 
