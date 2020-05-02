@@ -91,7 +91,6 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(self.Hint)then  end
 		if((self.AltUse)and(activator:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
 			self:AltUse(activator)
 		else
