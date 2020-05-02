@@ -108,15 +108,17 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"remote det","bomb drop","impact det")
+		
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,80)
 				self.EZdroppableBombArmedTime=CurTime()
+                JMod_Hint(activator, "dualdet", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
+                JMod_Hint(activator, "arm", self)
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then

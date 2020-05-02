@@ -28,9 +28,6 @@ if(SERVER)then
 		JMod_Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
 		return ent
 	end
 	function ENT:Initialize()
@@ -77,16 +74,17 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		JMod_Hint(activator,"arm","friends")
+		
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
 				JMod_Owner(self,activator)
 				net.Start("JMod_MineColor")
-				net.WriteEntity(self)
+                    net.WriteEntity(self)
 				net.Send(activator)
 			else
 				activator:PickupObject(self)
+                JMod_Hint(activator, "arm", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -130,6 +128,7 @@ if(SERVER)then
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
+        JMod_Hint(armer, "friends", self)
 		JMod_Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)

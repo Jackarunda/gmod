@@ -440,7 +440,6 @@ function JMod_ShouldAttack(self,ent,vehiclesOnly)
         if((self.BlacklistedNPCs)and(table.HasValue(self.BlacklistedNPCs,Class)))then return false end
         if not(IsValid(self.Owner))then jprint("B") return ent:Health()>0 end
         if((ent.Disposition)and(ent:Disposition(self.Owner)==D_HT)and(ent.GetMaxHealth))then
-            jprint("A")
             if(vehiclesOnly)then
                 return ent:GetMaxHealth()>100
             else
@@ -523,6 +522,10 @@ function JMod_ThrowablePickup(playa,item,hardstr,softstr)
                 timer.Simple(0,function()
                     if(IsValid(Phys))then Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass()) end
                 end)
+            elseif key == IN_USE then
+                if item.GetState and item:GetState() == JMOD_EZ_STATE_PRIMED then
+                    JMod_Hint(playa, "grenade drop", item)
+                end
             end
         end
         if(table.HasValue(TriggerKeys,key))then hook.Remove("KeyPress",HookName) end

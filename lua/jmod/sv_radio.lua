@@ -167,10 +167,11 @@ local function StartDelivery(pkg,transceiver,station,bff)
     local Time=CurTime()
     local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
     
-    local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, time, pos)
+    local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, time, pos)
     DeliveryTime = newTime or DeliveryTime
     Pos = newPos or Pos
-    
+
+    JMod_Hint(transceiver.Owner, "aid wait", transceiver)
     station.state=EZ_STATION_STATE_DELIVERING
     station.nextDeliveryTime=Time+DeliveryTime
     station.deliveryLocation=Pos

@@ -447,6 +447,7 @@ function SWEP:Reload()
 				if(Build>0)then
 					self:SwitchSelectedBuild(0)
 				else
+                    JMod_Hint(self.Owner, "craft")
 					net.Start("JMod_EZbuildKit")
 						net.WriteTable(self.Buildables)
 						net.WriteEntity(self)
@@ -533,7 +534,7 @@ function SWEP:Deploy()
 		self:UpdateNextIdle()
 		self:EmitSound("snds_jack_gmod/toolbox"..math.random(1,7)..".wav",65,math.random(90,110))
 	end
-	JMod_Hint(self.Owner,"building")
+	if SERVER then JMod_Hint(self.Owner,"building") end
 	self:SetNextPrimaryFire(CurTime()+1)
 	self:SetNextSecondaryFire(CurTime()+1)
 	return true
@@ -551,7 +552,7 @@ function SWEP:Think()
 	else
 		self:SetHoldType("fist")
 	end
-	if(self.NextDeWeldProgress<Time and SERVER)then
+	if SERVER and self.NextDeWeldProgress<Time then
 		self.NextDeWeldProgress=Time+.25
 		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
@@ -587,6 +588,7 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
+    if GetConVar("cl_drawhud"):GetBool() == false then return end
 	local W,H,Msg=ScrW(),ScrH(),self:GetMsg()
 	if((Msg)and(Msg~=""))then
 		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))

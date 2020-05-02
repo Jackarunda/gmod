@@ -17,6 +17,7 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(false)
 		self:SetUseType(SIMPLE_USE)
+        self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(1)
@@ -41,7 +42,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Owner(self,Dude)
-		JMod_Hint(activator,"black powder pile","black powder ignite")
+		
 		local Time=CurTime()
 		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			self:Arm()
@@ -62,7 +63,7 @@ if(SERVER)then
 		end
 		timer.Simple(.075,function()
 			if not(IsValid(self))then return end
-			for k,v in pairs(ents.FindInSphere(self:GetPos(),30))do
+			for k,v in pairs(ents.FindInSphere(self:GetPos(),40))do
 				if(v.EZpowderIgnitable)then
 					JMod_Owner(v,self.Owner)
 					v:Arm()

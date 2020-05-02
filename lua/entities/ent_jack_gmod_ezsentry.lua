@@ -323,12 +323,13 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
-			JMod_Hint(activator,"supplies","friends","upgrade","modify")
+			if(State==STATE_BROKEN)then JMod_Hint(activator, "destroyed", self) return end
+			
 			if(State>0)then
 				self:TurnOff()
 			else
-				if(self:GetElectricity()>0)then self:TurnOn(activator) end
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_Hint(activator, "friends", self)
+                else JMod_Hint(activator, "nopower", self) end
 			end
 		end
 	end
@@ -430,6 +431,7 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav",65,100)
+        JMod_Hint(self.Owner, "sentry upgrade", self)
 	end
 	function ENT:Disengage()
 		local Time=CurTime()
@@ -444,6 +446,7 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_standdown.wav",65,100)
+        JMod_Hint(self.Owner, "sentry modify", self)
 	end
 	function ENT:Think()
 		local Time=CurTime()

@@ -157,12 +157,14 @@ if(SERVER)then
 		self.NextUseTime=Time+.25
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then JMod_Hint(activator,"fix");return end
-			JMod_Hint(activator,"supplies","radio comm")
+			if(State==STATE_BROKEN)then JMod_Hint(self.Owner, "destroyed", self) return end
+			
 			if(State>0)then
 				self:TurnOff()
+                JMod_Hint(activator, "toggle", self)
 			else
-				if(self:GetElectricity()>0)then self:TurnOn(activator) end
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_Hint(activator, "aid help", self)
+                else JMod_Hint(self.Owner, "nopower", self) end
 			end
 		end
 	end
@@ -239,7 +241,8 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.Owner)
 				else
-					self.ConnectionAttempts=self.ConnectionAttempts+1
+                    JMod_Hint(self.Owner, "aid sky", self)
+					self.ConnectionAttempts = self.ConnectionAttempts + 1
 					if(self.ConnectionAttempts>5)then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
 						timer.Simple(1,function()
@@ -315,12 +318,24 @@ if(SERVER)then
 				if(State==2)then
 					local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
 					self:Speak(Msg,ParrotPhrase)
-					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages)do
-						timer.Simple(Num/10,function()
-							if(IsValid(self))then self:Speak(name) end
-						end)
+                    local str = ""
+					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
+                        str = str .. name
+                        if Num > 0 and Num % 10 == 0 then
+                            local newStr = str
+                            timer.Simple(Num/10,function()
+                                if(IsValid(self))then self:Speak(newStr) end
+                            end)
+                            str = ""
+                        else
+                            str = str .. ", "
+                        end
 						Num=Num+1
 					end
+                    timer.Simple(Num/10,function()
+                        if(IsValid(self))then self:Speak(str) end
+                    end)
+                    JMod_Hint(self.Owner, "aid package", self)
 					return true
 				end
 			elseif(Name=="status")then

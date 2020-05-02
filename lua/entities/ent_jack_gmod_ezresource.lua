@@ -91,11 +91,13 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(self.Hint)then JMod_Hint(activator,self.Hint) end
 		if((self.AltUse)and(activator:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
 			self:AltUse(activator)
 		else
 			activator:PickupObject(self)
+            if JMod_Hints[self:GetClass() .. " use"] then
+                JMod_Hint(activator, self:GetClass() .. " use", self)
+            end
 		end
 	end
 	function ENT:Think()

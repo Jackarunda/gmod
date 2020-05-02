@@ -62,7 +62,7 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod_Owner(self,Dude)
-		JMod_Hint(activator,"guidance kit")
+		
 		Dude:PickupObject(self)
 	end
 elseif(CLIENT)then

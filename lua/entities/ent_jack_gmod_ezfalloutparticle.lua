@@ -79,6 +79,7 @@ if(SERVER)then
 						local DmgTaken=Helf-obj:Health()
 						if((DmgTaken>0)and(JMOD_CONFIG.NuclearRadiationSickness))then
 							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
+                            JMod_Hint(obj, "rad damage")
 						end
 					else
 						obj:TakeDamageInfo(Dmg)

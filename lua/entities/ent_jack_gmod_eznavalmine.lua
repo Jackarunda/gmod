@@ -98,7 +98,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
-		JMod_Hint(activator,"water arm","water det","contact det","auto anchor")
+		
 		if(State==STATE_OFF)then
 			JMod_Owner(self,activator)
 			if(Time-self.LastUse<.2)then
@@ -110,8 +110,10 @@ if(SERVER)then
 				else
 					self.MoorMode="subsurface"
 				end
+                JMod_Hint(activator, "navalmine", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
+                JMod_Hint(activator, "arm navalmine", self)
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then

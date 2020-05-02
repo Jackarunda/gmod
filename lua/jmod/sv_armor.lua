@@ -37,6 +37,7 @@ function JMod_DamageArmor(ply,slot,amt)
         ply:PrintMessage(HUD_PRINTCENTER,slot.." armor at 50%")
         JModEZarmorSync(ply)
     end
+    JMod_Hint(ply, "armor durability")
 end
 local function EZgetProtectionFromSlot(ply,slot,amt,typ)
     local ArmorInfo=ply.EZarmor.slots[slot]
@@ -234,6 +235,17 @@ function JMod_EZ_Equip_Armor(ply,ent)
     JMod_RemoveArmorSlot(ply,ent.Slot)
     ply.EZarmor.slots[ent.Slot]={ent.ArmorName,ent.Durability,ent:GetColor()}
     ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
+    
+    if ent.Slot == "Face" then
+        JMod_Hint(ply, "armor mask")
+    elseif ent.ArmorName == "Headset" then
+        JMod_Hint(ply, "armor headset")
+    else
+        if not JMod_Hint(ply, "armor drop") and JMod_ArmorTable[ent.Slot][ent.ArmorName].wgt >= 15 then
+            JMod_Hint(ply, "armor weight")
+        end
+    end
+    
     ent:Remove()
     CalcSpeed(ply)
     JModEZarmorSync(ply)

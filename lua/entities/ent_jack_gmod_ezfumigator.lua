@@ -65,13 +65,14 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local State,Alt=self:GetState(),activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
-		JMod_Hint(activator,"arm")
+		
 		if(State==STATE_SEALED)then
 			if(Alt)then
 				JMod_Owner(self,activator)
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
+                JMod_Hint(activator, "gas spread", self)
 				timer.Simple(5,function()
 					if(IsValid(self))then
 						self:EmitSound("snd_jack_sminepop.wav",70,120)
@@ -80,6 +81,7 @@ if(SERVER)then
 				end)
 			else
 				activator:PickupObject(self)
+                JMod_Hint(activator, "arm", self)
 			end
 		else
 			activator:PickupObject(self)

@@ -135,7 +135,7 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator,"unpackage")
+		JMod_Hint(activator, "unpackage", self)
 		local Time=CurTime()
 		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
 			if(Time-self.LastUsedTime>.3)then

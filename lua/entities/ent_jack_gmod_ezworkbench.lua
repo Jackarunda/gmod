@@ -27,7 +27,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
-		JMod_Hint(ply,"crafting")
+		
 		return ent
 	end
 	function ENT:Initialize()
@@ -142,6 +142,9 @@ if(SERVER)then
 			net.WriteEntity(self)
 			net.WriteTable(JMOD_CONFIG.Recipes)
 			net.Send(activator)
+            JMod_Hint(activator, "craft")
+        else
+            JMod_Hint(activator, "refill", self)
 		end
 	end
 	function ENT:Think()

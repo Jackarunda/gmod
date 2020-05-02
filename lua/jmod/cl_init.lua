@@ -5,127 +5,125 @@ JMOD_NUKEFLASH_INTENSITY=1
 JMOD_NUKEFLASH_SMOKE_ENDTIME=0
 JMOD_WIND=JMOD_WIND or Vector(0,0,0)
 
-hook.Add("Initialize","JMOD_INIT",function()
-    surface.CreateFont("JMod-Display",{
-        font="Arial",
-        extended=false,
-        size=35,
-        weight=900,
-        blursize=0,
-        scanlines=4,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-NumberLCD",{
-        font="DS-Digital Bold",
-        extended=false,
-        size=35,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Display-S",{
-        font="Arial",
-        extended=false,
-        size=20,
-        weight=900,
-        blursize=0,
-        scanlines=4,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil",{
-        font="Capture it",
-        extended=false,
-        size=60,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil-S",{
-        font="Capture it",
-        extended=false,
-        size=20,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-Stencil-XS",{
-        font="Capture it",
-        extended=false,
-        size=10,
-        weight=100,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-    surface.CreateFont("JMod-SharpieHandwriting",{
-        font="Handwriting",
-        extended=false,
-        size=40,
-        weight=900,
-        blursize=0,
-        scanlines=0,
-        antialias=true,
-        underline=false,
-        italic=false,
-        strikeout=false,
-        symbol=false,
-        rotary=false,
-        shadow=false,
-        additive=false,
-        outline=false
-    })
-end)
+surface.CreateFont("JMod-Display",{
+    font="Arial",
+    extended=false,
+    size=35,
+    weight=900,
+    blursize=0,
+    scanlines=4,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-NumberLCD",{
+    font="DS-Digital Bold",
+    extended=false,
+    size=35,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Display-S",{
+    font="Arial",
+    extended=false,
+    size=20,
+    weight=900,
+    blursize=0,
+    scanlines=4,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil",{
+    font="Capture it",
+    extended=false,
+    size=60,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil-S",{
+    font="Capture it",
+    extended=false,
+    size=20,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-Stencil-XS",{
+    font="Capture it",
+    extended=false,
+    size=10,
+    weight=100,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
+surface.CreateFont("JMod-SharpieHandwriting",{
+    font="Handwriting",
+    extended=false,
+    size=40,
+    weight=900,
+    blursize=0,
+    scanlines=0,
+    antialias=true,
+    underline=false,
+    italic=false,
+    strikeout=false,
+    symbol=false,
+    rotary=false,
+    shadow=false,
+    additive=false,
+    outline=false
+})
 
 local function CreateClientLag(amt)
     local W,H=ScrW(),ScrH()
@@ -262,11 +260,6 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
     render.SetBlend(1)
 end
 
-net.Receive("JMod_Hint",function()
-    notification.AddLegacy(net.ReadString(), NOTIFY_HINT, 10)
-    surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" )
-end)
-
 net.Receive("JMod_EZarmorSync",function()
     local ply=net.ReadEntity()
     local tbl=net.ReadTable()
@@ -395,19 +388,6 @@ hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
     end
 end)
 
-local NeedAltKeyMsg=true
-net.Receive("JMod_PlayerSpawn",function()
-    local Key,DoHints=input.LookupBinding("+walk"),tobool(net.ReadBit())
-    if not(Key)then
-        notification.AddLegacy("Your WALK is not bound; JMod items will be mostly unusable.\nPlease bind WALK to the ALT key in your control settings.",NOTIFY_ERROR,5)
-    elseif(Key~="ALT")then
-        if((NeedAltKeyMsg)and(DoHints))then
-            notification.AddLegacy("Remember to use your real WALK key for JMod items instead of ALT.",NOTIFY_GENERIC,5)
-            NeedAltKeyMsg=false
-        end
-    end
-end)
-
 hook.Add("ShouldSit","JMOD_SITANYWHERE_COMPATIBILITY",function(ply)
     -- let it be known for the record that the SitAnywhere addon author is an idiot
     local Tr=ply:GetEyeTrace()
@@ -416,14 +396,6 @@ hook.Add("ShouldSit","JMOD_SITANYWHERE_COMPATIBILITY",function(ply)
         if(v.NoSitAllowed)then return false end
     end
 end)
-
-local function GetAvailPts(specs)
-    local Pts=0
-    for k,v in pairs(specs)do
-        Pts=Pts-v
-    end
-    return Pts
-end
 
 local function CommNoise()
     surface.PlaySound("snds_jack_gmod/radio_static"..math.random(1,3)..".wav")
@@ -437,12 +409,22 @@ hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
     end
 end)
 
-hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply)
+hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
     if not(IsValid(ply))then return end
     if not(ply:Alive())then return end
     if not(LocalPlayer():Alive())then return end
     if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
         CommNoise()
+        if not isTeam and not isDead then
+            local tab = {}
+            table.insert( tab, Color( 30, 40, 200 ) )
+            table.insert( tab, "(HEADSET) " )
+            table.insert( tab, ply )
+            table.insert( tab, Color( 255, 255, 255 ) )
+            table.insert( tab, ": ".. text )
+            chat.AddText( unpack(tab) )
+            return true
+        end
     end
 end)
 

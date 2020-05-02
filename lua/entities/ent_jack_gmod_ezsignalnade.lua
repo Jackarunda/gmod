@@ -26,7 +26,6 @@ if(SERVER)then
 				net.WriteEntity(self)
 				net.Send(Dude)
 			end
-			if self.Hints then JMod_Hint(activator,unpack(self.Hints)) end
 			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end

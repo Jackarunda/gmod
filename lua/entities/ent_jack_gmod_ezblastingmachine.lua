@@ -37,7 +37,7 @@ if(SERVER)then
 			self:GetParent():Use(activator,caller,typ,val)
 			return
 		end
-		JMod_Hint(activator,"blasting machine")
+		
 		self.Owner = activator
 		if activator:KeyDown(JMOD_CONFIG.AltFunctionKey) then
 			self:EmitSound("snds_jack_gmod/plunger.wav")

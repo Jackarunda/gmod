@@ -59,7 +59,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
                 Dmg:SetDamageType(DMG_GENERIC)
                 Dmg:SetDamagePosition(playa:GetShootPos())
                 playa:TakeDamageInfo(Dmg)
-                JMod_Hint(playa,"radsickness")
+                
             end
         end
     end
@@ -133,16 +133,6 @@ hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)
         local WorldPos=veh:LocalToWorld(veh.EZvehicleEjectPos)
         ply:SetPos(WorldPos)
         veh.EZvehicleEjectPos=nil
-    end
-end)
-
-local SERVER_JMOD_HINT_GIVEN=false
-hook.Add("PlayerInitialSpawn","JMOD_INITIALSPAWN",function(ply)
-    if((JMOD_CONFIG)and(JMOD_CONFIG.Hints)and not(SERVER_JMOD_HINT_GIVEN))then
-        SERVER_JMOD_HINT_GIVEN=true
-        timer.Simple(10,function()
-            if(ply)then JMod_Hint(ply,"customize") end
-        end)
     end
 end)
 
