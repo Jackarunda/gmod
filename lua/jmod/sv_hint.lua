@@ -11,7 +11,7 @@ function JMod_Hint(ply, key, loc, forceLegacy)
     if loc then tbl.Pos = loc end
     tbl.ShouldMove = (loc ~= nil)
     tbl.Key = key
-    if not tbl.Time then tbl.Time = 10 end
+    if not tbl.Time then tbl.Time = 8 end
 
     if forceLegacy or tonumber(ply:GetInfo("cl_jmod_hint_legacy")) == 1 then 
         net.Start("JMod_Hint")

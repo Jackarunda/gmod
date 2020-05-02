@@ -81,22 +81,24 @@ JMod_Hints = {
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Time = 5, Followup = "bind walk"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder", Time = 5, Followup = "bind walk"},
     ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate", Time = 5, Followup = "bind walk"},
+    ["arm navalmine"] = {Type = "button", Text = "Drop in water after arming to chain to ground", Time = 5},
     ["frag sleeve"] = {Type = "button", Text = "Hold Sprint while priming to toggle fragmentation sleeve", Time = 5},
     ["mininade"] = {Type = "lightbulb", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
     ["slam stick"] = {Type = "lightbulb", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
     ["fuse"] = {Type = "lightbulb", Text = "Black powder lines can also ignite the fuse", Time = 5},
     ["powder"] = {Type = "button", Text = "Hold Walk and press Use to light black powder; hold Use to sweep away", Time = 5},
+    ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk", Time = 5},
     
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around physically and is more lethal in confined spaces"},
     ["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas; leave area or wear a gas mask"},
     ["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
     ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
-    ["impactdet"] = {Type = "skull", Text = "Bomb detonates on impact from the front", Followup = "bombdrop", Time = 5},
-    ["dualdet"] = {Type = "skull", Text = "Bomb detonates on impact or from remote detonation", Followup = "bombdrop", Time = 5},
-    ["airburst"] = {Type = "skull", Text = "Bomb detonates when in freefall and approaching ground", Followup = "bombdrop", Time = 5},
+    ["impactdet"] = {Type = "skull", Text = "Bomb detonates on impact from the front", Followup = "bombdrop"},
+    ["dualdet"] = {Type = "skull", Text = "Bomb detonates on impact or from remote detonation", Followup = "bombdrop"},
+    ["airburst"] = {Type = "skull", Text = "Bomb detonates when in freefall and approaching ground", Followup = "bombdrop"},
     ["timebomb"] = {Type = "skull", Text = "The longer you set the time, the longer it takes to defuse the bomb"},
-    ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk", Time = 5},
+    ["navalmine"] = {Type = "skull", Text = "Naval Mine will detonate on contact when underwater"},
     
 
     -- Explosives
