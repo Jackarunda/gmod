@@ -61,7 +61,6 @@ if(SERVER)then
 				activator:PickupObject(self)
                 JMod_Hint(Dude, "arm", self)
 			end
-			if self.Hints then  end
 		end
 	end
 	

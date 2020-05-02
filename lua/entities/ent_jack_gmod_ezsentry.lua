@@ -323,7 +323,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then  return end
+			if(State==STATE_BROKEN)then JMod_Hint(activator, "destroyed", self) return end
 			
 			if(State>0)then
 				self:TurnOff()
