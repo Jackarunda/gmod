@@ -78,6 +78,7 @@ JMod_Hints = {
     ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade", Followup = "bind walk", Time = 5},
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown long distances, right click to soft throw", Time = 3},
     ["grenade drop"] = {Type = "warn", Text = "Careful, dropped grenades are still armed!", Time = 3},
+    ["impactdet"] = {Type = "button", Text = "Bomb detonates on impact from the front"},
     ["dualdet"] = {Type = "button", Text = "Bomb detonates on impact or from remote detonation"},
     ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Time = 5, Followup = "bind walk"},
     ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder", Time = 5, Followup = "bind walk"},
@@ -86,7 +87,7 @@ JMod_Hints = {
     ["mininade"] = {Type = "lightbulb", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
     ["slam stick"] = {Type = "lightbulb", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
     ["fuse"] = {Type = "lightbulb", Text = "Black powder lines can also ignite the fuse", Time = 5},
-    ["powder"] = {Type = "button", Text = "Hold Walk and press Use to light black powder; press Use to sweep away", Time = 5},
+    ["powder"] = {Type = "button", Text = "Hold Walk and press Use to light black powder; hold Use to sweep away", Time = 5},
     
     ["detpack combo"] = {Type = "skull", Text = "Multiple detpacks in one place increases blast radius and power"},
     ["gas spread"] = {Type = "skull", Text = "Gas spreads around physically and is more lethal in confined spaces"},

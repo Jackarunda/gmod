@@ -87,6 +87,7 @@ if(SERVER)then
 				net.Send(activator)
 			else
 				activator:PickupObject(self)
+                JMod_Hint(armer, "arm", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
