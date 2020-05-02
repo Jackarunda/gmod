@@ -19,7 +19,6 @@ function JMod_Hint(ply, key, loc, forceLegacy)
             net.WriteString(tbl.Text)
         net.Send(ply)
     else
-        --l4dgi_hint(tbl, ply)
         net.Start("JMod_Hint")
             net.WriteBool(true)
             net.WriteTable(tbl)

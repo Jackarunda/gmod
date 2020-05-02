@@ -447,7 +447,7 @@ function SWEP:Reload()
 				if(Build>0)then
 					self:SwitchSelectedBuild(0)
 				else
-                    JMod_L4DHint(self.Owner, "craft")
+                    JMod_Hint(self.Owner, "craft")
 					net.Start("JMod_EZbuildKit")
 						net.WriteTable(self.Buildables)
 						net.WriteEntity(self)
