@@ -255,6 +255,7 @@ function JMod_BlastDamageIgnoreWorld(pos,att,infl,dmg,range)
     end
 end
 
+local WreckBlacklist={"gmod_lamp","gmod_cameraprop","gmod_light"}
 function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
     local origPower=power
     power=power*JMOD_CONFIG.ExplosionPropDestroyPower
@@ -263,30 +264,32 @@ function JMod_WreckBuildings(blaster,pos,power,range,ignoreVisChecks)
     local masMassToLoosen=30*power
     local allProps = ents.FindInSphere(pos,maxRange)
     for k,prop in pairs(allProps)do
-        local physObj=prop:GetPhysicsObject()
-        local propPos=prop:LocalToWorld(prop:OBBCenter())
-        local DistFrac=(1-propPos:Distance(pos)/maxRange)
-        local myDestroyThreshold=DistFrac*maxMassToDestroy
-        local myLoosenThreshold=DistFrac*masMassToLoosen
-        if(DistFrac>=.85)then myDestroyThreshold=myDestroyThreshold*7;myLoosenThreshold=myLoosenThreshold*7 end
-        if((prop~=blaster)and(physObj:IsValid()))then
-            local mass,proceed=physObj:GetMass(),ignoreVisChecks
-            if not(proceed)then
-                local tr=util.QuickTrace(pos,propPos-pos,blaster)
-                proceed=((IsValid(tr.Entity))and(tr.Entity==prop))
-            end
-            if(proceed)then
-                if(mass<=myDestroyThreshold)then
-                    SafeRemoveEntity(prop)
-                elseif(mass<=myLoosenThreshold)then
-                    physObj:EnableMotion(true)
-                    constraint.RemoveAll(prop)
-                    physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
-                else
-                    physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*origPower*mass,propPos+VectorRand()*10)
-                end
-            end
-        end
+		if not(table.HasValue(WreckBlacklist,prop:GetClass()))then
+			local physObj=prop:GetPhysicsObject()
+			local propPos=prop:LocalToWorld(prop:OBBCenter())
+			local DistFrac=(1-propPos:Distance(pos)/maxRange)
+			local myDestroyThreshold=DistFrac*maxMassToDestroy
+			local myLoosenThreshold=DistFrac*masMassToLoosen
+			if(DistFrac>=.85)then myDestroyThreshold=myDestroyThreshold*7;myLoosenThreshold=myLoosenThreshold*7 end
+			if((prop~=blaster)and(physObj:IsValid()))then
+				local mass,proceed=physObj:GetMass(),ignoreVisChecks
+				if not(proceed)then
+					local tr=util.QuickTrace(pos,propPos-pos,blaster)
+					proceed=((IsValid(tr.Entity))and(tr.Entity==prop))
+				end
+				if(proceed)then
+					if(mass<=myDestroyThreshold)then
+						SafeRemoveEntity(prop)
+					elseif(mass<=myLoosenThreshold)then
+						physObj:EnableMotion(true)
+						constraint.RemoveAll(prop)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass,propPos+VectorRand()*10)
+					else
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*origPower*mass,propPos+VectorRand()*10)
+					end
+				end
+			end
+		end
     end
 end
 

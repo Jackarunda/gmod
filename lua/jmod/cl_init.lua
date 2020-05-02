@@ -454,6 +454,14 @@ hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
     end
 end)
 
+concommand.Add("jacky_supershadows",function(ply,cmd,args)
+	RunConsoleCommand("r_projectedtexture_filter",0)
+	RunConsoleCommand("r_flashlightdepthres",16384)
+	RunConsoleCommand("mat_depthbias_shadowmap",.0000005)
+	RunConsoleCommand("mat_slopescaledepthbias_shadowmap",2)
+	print("super shadows enabled, have fun with the lag")
+end)
+
 concommand.Add("jmod_showgasparticles",function(ply,cmd,args)
     if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
     ply.EZshowGasParticles=not (ply.EZshowGasParticles or false)
