@@ -86,6 +86,7 @@ if(SERVER)then
 				self:Arm(activator)
 			else
 				activator:PickupObject(self)
+                JMod_Hint(activator, "arm", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -137,6 +138,7 @@ if(SERVER)then
 				end
 			end
 		end)
+        JMod_Hint(armer, "friends", self)
 	end
 	function ENT:CanSee(ent)
 		if not(IsValid(ent))then return false end
