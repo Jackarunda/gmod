@@ -153,11 +153,11 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local Time=CurTime()
-		if(self.NextUseTime>Time)then JMod_Hint(self.Owner, "destroyed", self) return end
+		if(self.NextUseTime>Time)then return end
 		self.NextUseTime=Time+.25
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then  return end
+			if(State==STATE_BROKEN)then JMod_Hint(self.Owner, "destroyed", self) return end
 			
 			if(State>0)then
 				self:TurnOff()

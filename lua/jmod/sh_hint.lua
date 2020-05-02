@@ -98,7 +98,6 @@ JMod_Hints = {
     ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk", Time = 5},
     
 
-        
     -- Explosives
     ["ent_jack_gmod_ezclusterbomb"] = {Type = "info", Text = "Cluster Bombs explode into bomblets when landing", Time = 3},
     ["ent_jack_gmod_ezdetpack"] = {Type = "info", Text = "Detpacks are remote controlled sticky explosives", Time = 3},    
