@@ -103,7 +103,6 @@ if(SERVER)then
             else
                 JMod_Hint(Dude, "prime", self)
 			end
-			if self.Hints then  end
 			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end
