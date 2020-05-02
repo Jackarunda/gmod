@@ -69,18 +69,18 @@ JMod_Hints = {
     
     -- Explosives mechanics
     ["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
-    ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm", Followup = "bind walk"},
+    ["arm"] = {Type = "button", Text = "Hold Walk and press Use to arm", Followup = "bind walk", Time = 5},
     ["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate", Followup = "bind cmd"},
     ["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket", Followup = "bind cmd"},
     ["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb", Followup = "bind cmd"},
     ["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
-    ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade", Time = 5, Followup = "bind walk"},
+    ["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade", Time = 5, Followup = "bind walk", Time = 5},
     ["grenade"] = {Type = "lmb", Text = "Grenades can be thrown long distances, right click to soft throw", Time = 3},
     ["grenade drop"] = {Type = "warn", Text = "Careful, dropped grenades are still armed!", Time = 3},
     ["dualdet"] = {Type = "button", Text = "Bomb detonates on impact or from remote detonation"},
-    ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Time = 5, Followup = "bind walk"},
-    ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder", Time = 5, Followup = "bind walk"},
-    ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate", Time = 5, Followup = "bind walk"},
+    ["arm boundingmine"] = {Type = "button", Text = "Hold Walk and press Use when near soft terrain to burrow and arm", Time = 5, Followup = "bind walk", Time = 5},
+    ["arm powderkeg"] = {Type = "button", Text = "Hold Walk and press Use to toggle releasing black powder", Time = 5, Followup = "bind walk", Time = 5},
+    ["arm satchelcharge"] = {Type = "button", Text = "Hold Walk and press Use on the blasting machine to detonate", Time = 5, Followup = "bind walk", Time = 5},
     ["frag sleeve"] = {Type = "button", Text = "Hold Sprint while priming to toggle fragmentation sleeve", Time = 5},
     ["mininade"] = {Type = "lightbulb", Text = "Touch a large explosive with a Mini-Nade to use the nade as detonation method"},
     ["slam stick"] = {Type = "lightbulb", Text = "SLAMs can be stuck to large explosives and act as a detonation method"},
@@ -94,7 +94,7 @@ JMod_Hints = {
     ["rad damage"] = {Type = "skull", Text = "You are experiencing radioactive sickness; cure by using an Auto. Field Hospital"},
     ["airburst"] = {Type = "skull", Text = "This bomb will only detonate when in freefall and near ground"},
     ["timebomb"] = {Type = "skull", Text = "The longer you set the time, the longer it takes to defuse the bomb"},
-    ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk"},
+    ["defuse"] = {Type = "button", Text = "Hold Walk and press Use multiple times to defuse", Followup = "bind walk", Time = 5},
     
 
         
@@ -169,8 +169,11 @@ JMod_Hints = {
     ["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
     ["refill"] = {Type = "warn", Text = "Refill power and gas to keep the Workbench functional"},
     
+    ["ent_jack_gmod_ezbuildkit"] = {Type = "info", Text = "Build Kit can craft, nail, package, upgrade and salvage things", Time = 3},
+    ["ent_jack_gmod_ezmedkit"] = {Type = "info", Text = "Medkit can be used to heal oneself or other players", Time = 3},
+    
     -- Armor
-    ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor", Followup = "bind walk"},
+    ["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor", Followup = "bind walk", Time = 5},
     ["armor drop"] = {Type = "info", Text = "Type in chat *armor* or use command jmod_ez_armor to unequip all armor", Followup = "bind cmd"},
     ["armor mask"] = {Type = "info", Text = "Type in chat *mask* or use command jmod_ez_mask to toggle mask", Followup = "bind cmd"},
     ["armor headset"] = {Type = "info", Text = "Type in chat *headset* or use command jmod_ez_headset to toggle headset", Followup = "bind cmd"},
@@ -183,4 +186,30 @@ JMod_Hints = {
     ["ent_jack_gmod_ezarmor_nvgs"] = {Type = "info", Text = "NV Goggles makes it easy to see in the dark when worn", Time = 3},
     ["ent_jack_gmod_ezarmor_thermals"] = {Type = "info", Text = "Thermal Goggles highlights living things when worn", Time = 3},
     ["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 3},
+    
+    
+    -- Resources
+    ["ent_jack_gmod_ezadvparts"] = {Type = "info", Text = "Adv. Parts are used to craft and upgrade things", Time = 3},
+    ["ent_jack_gmod_ezadvtextiles"] = {Type = "info", Text = "Adv. Parts are used to craft armor and advanced devices", Time = 3},
+    ["ent_jack_gmod_ezammo"] = {Type = "info", Text = "Ammo boxes are consumed by sentries, and can replenish player ammo", Time = 3},
+    ["ent_jack_gmod_ezammo use"] = {Type = "button", Text = "Hold Walk and press Use while holding a weapon to restore ammo", Followup = "bind walk", Time = 5},
+    ["ent_jack_gmod_ezantimatter"] = {Type = "info", Text = "Antimatter is used to craft Black Hole Generators", Time = 3},
+    ["ent_jack_gmod_ezantimatter use"] = {Type = "warn", Text = "Antimatter is EXTREMELY VOLATILE; handle with caution", Time = 5},
+    ["ent_jack_gmod_ezbattery"] = {Type = "info", Text = "Battery is used to power machines", Time = 3},
+    ["ent_jack_gmod_ezbattery use"] = {Type = "pickup", Text = "Bump battery into devices to recharge them", Time = 3},
+    ["ent_jack_gmod_ezchemicals"] = {Type = "info", Text = "Chemicals are used to craft various things", Time = 3},
+    ["ent_jack_gmod_ezexplosives"] = {Type = "info", Text = "Explosives are used to craft things that go boom", Time = 3},
+    ["ent_jack_gmod_ezfissilematerial"] = {Type = "info", Text = "Fissile Materials are used to craft nuclear bombs", Time = 3},
+    ["ent_jack_gmod_ezfuel"] = {Type = "info", Text = "Fuel is used too craft the Jeep (for now)", Time = 3},
+    ["ent_jack_gmod_ezgas"] = {Type = "info", Text = "Gas is used to power the Workbench and to craft things", Time = 3},
+    ["ent_jack_gmod_ezmedsupplies"] = {Type = "info", Text = "Med. Supplies is consumed by Auto. Field Hospitals and Medkits", Time = 3},
+    --["ent_jack_gmod_ezmedsupplies use"] = {Type = "button", Text = "Hold Walk and press Use while holding a medkit to restore supplies", Followup = "bind walk", Time = 5},
+    ["ent_jack_gmod_ezmunitions"] = {Type = "info", Text = "Munition is used by grenade-firing sentries", Time = 3},
+    ["ent_jack_gmod_eznutrients"] = {Type = "info", Text = "Rations can be eaten to restore health", Time = 3},
+    ["ent_jack_gmod_eznutrients use"] = {Type = "button", Text = "Hold Walk and press Use to eat", Followup = "bind walk", Time = 5},
+    ["ent_jack_gmod_ezparts"] = {Type = "info", Text = "Parts are used to repair, craft and upgrade almost everything", Time = 3},
+    ["ent_jack_gmod_ezparts use"] = {Type = "pickup", Text = "Bump parts into broken devices to fix them", Time = 3},
+    ["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
+    
+
 }

@@ -234,7 +234,7 @@ if(SERVER)then
 		local State,Time=self:GetState(),CurTime()
 		if(self.NextRealThink<Time)then
 			local Electricity=self:GetElectricity()
-			self.NextRealThink=Time+2/self.ThinkSpeed
+			self.NextRealThink=Time+4/self.ThinkSpeed
 			if(State==STATE_CONNECTING)then
 				self:ConsumeElectricity()
 				if(self:TryFindSky())then
