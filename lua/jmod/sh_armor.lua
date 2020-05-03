@@ -47,7 +47,19 @@ JMod_ArmorTable={
 			eqsnd="snds_jack_gmod/tinycapcharge.wav",
 			ent="ent_jack_gmod_ezarmor_thermals",
 			eff={"thermalVision"}
-		}
+		},
+        ["Respirator"] = {
+            mdl="models/jmod/respirator.mdl", -- MGSV
+			siz=Vector(1,1,1),
+			pos=Vector(3.25,1,0),
+			ang=Angle(100,180,90),
+			wgt=5,
+			dur=25,
+            mskmat=Material("mats_jack_gmod_sprites/respirator_vignette.png"),
+			spcdef={[DMG_NERVEGAS]=50,[DMG_RADIATION]=100},
+			sndlop="snds_jack_gmod/mask_breathe.wav",
+			ent="ent_jack_gmod_ezarmor_respirator"
+        }
 	},
 	Ears={
 		["Headset"]={
