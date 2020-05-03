@@ -193,7 +193,7 @@ local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
     [ "$vertexalpha" ]    = "1",
 })
 local GlowSprite=Material("sprites/mat_jack_basicglow")
-hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function()
+hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function() -- cache this
     for k,ent in pairs(ents.FindByClass("ent_jack_gmod_ezslam"))do
         local pos=ent:GetAttachment(1).Pos
         if(pos)then
