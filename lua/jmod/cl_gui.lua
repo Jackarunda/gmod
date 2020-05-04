@@ -634,3 +634,89 @@ net.Receive("JMod_ModifyMachine",function()
         frame:Close()
     end
 end)
+
+net.Receive("JMod_EZradio",function()
+    local isMessage = net.ReadBool()
+    
+    if isMessage then
+        local parrot = net.ReadBool()
+        local msg = net.ReadString()
+        local radio = net.ReadEntity()
+        local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
+        if parrot then tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", Color(150,150,150), msg} end
+        MsgC(unpack(tbl))
+        chat.AddText(unpack(tbl))
+        return
+    end
+    
+    local Packages=net.ReadTable()
+    local Radio=net.ReadEntity()
+    local StatusText = net.ReadString()
+    
+    local motherFrame = vgui.Create("DFrame")
+    motherFrame:SetSize(320, 310)
+    motherFrame:SetVisible(true)
+    motherFrame:SetDraggable(true)
+    motherFrame:ShowCloseButton(true)
+    motherFrame:SetTitle("Aid Radio")
+    function motherFrame:Paint()
+        BlurBackground(self)
+    end
+    motherFrame:MakePopup()
+    motherFrame:Center()
+    function motherFrame:OnKeyCodePressed(key)
+        if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+    end
+    
+    local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),200,300,LocalPlayer()
+    Frame:SetPos(110,30)
+    Frame:SetSize(W,H-30)
+    Frame.OnClose=function()
+        if resFrame then resFrame:Close() end
+        if motherFrame then motherFrame:Close() end
+    end
+    function Frame:Paint(w,h)
+        surface.SetDrawColor(50,50,50,100)
+        surface.DrawRect(0,0,w,h)
+    end
+    
+    local StatusButton=vgui.Create("DButton", motherFrame)
+    StatusButton:SetSize(90,30)
+    StatusButton:SetPos(10,40)
+    StatusButton:SetText("")
+    function StatusButton:Paint(w,h)
+        surface.SetDrawColor(50,50,50,100)
+        surface.DrawRect(0,0,w,h)
+        local msg=k
+        draw.SimpleText("Status","DermaDefault",45,15,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+    end
+        function StatusButton:DoClick()
+            LocalPlayer():ConCommand("say supply radio: status")
+            motherFrame:Close()
+        end
+    
+    local Scroll=vgui.Create("DScrollPanel",Frame)
+    Scroll:SetSize(W-15,H-10)
+    Scroll:SetPos(10,10)
+    ---
+    local Y=0
+    for k,itemInfo in SortedPairs(Packages)do
+        local Butt=Scroll:Add("DButton")
+        Butt:SetSize(W-35,25)
+        Butt:SetPos(0,Y)
+        Butt:SetText("")
+
+        function Butt:Paint(w,h)
+            surface.SetDrawColor(50,50,50,100)
+            surface.DrawRect(0,0,w,h)
+            local msg=k
+            draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+        end
+        function Butt:DoClick()
+            LocalPlayer():ConCommand("say supply radio: " .. k .. "")
+            motherFrame:Close()
+        end
+        Y=Y+30
+    end
+    
+end)

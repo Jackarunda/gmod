@@ -158,10 +158,19 @@ if(SERVER)then
 		if(activator:IsPlayer())then
 			local State=self:GetState()
 			if(State==STATE_BROKEN)then JMod_Hint(self.Owner, "destroyed", self) return end
-			
-			if(State>0)then
-				self:TurnOff()
-                JMod_Hint(activator, "toggle", self)
+			local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+			if State > 0 then
+                if Alt then
+                    net.Start("JMod_EZradio")
+                        net.WriteBool(false)
+                        net.WriteTable(JMOD_CONFIG.RadioSpecs.AvailablePackages)
+                        net.WriteEntity(self)
+                        net.WriteString(JMod_EZradioStatus(self,self:GetStationID(),activator,false))
+                    net.Send(activator)
+                else
+                    self:TurnOff()
+                    JMod_Hint(activator, "toggle", self)
+                end
 			else
 				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_Hint(activator, "aid help", self)
                 else JMod_Hint(self.Owner, "nopower", self) end
@@ -178,9 +187,21 @@ if(SERVER)then
 		if(self:GetState()<1)then return end
 		self:ConsumeElectricity()
 		if(parrot)then
+            --[[
 			for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
 				if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,parrot) end
 			end
+            ]]
+            for _, ply in pairs(player.GetAll()) do
+                if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+                    net.Start("JMod_EZradio")
+                        net.WriteBool(true)
+                        net.WriteBool(true)
+                        net.WriteString(parrot)
+                        net.WriteEntity(self)
+                    net.Send(ply)
+                end
+            end
 		end
 		local MsgLength,Path=string.len(msg),"/npc/combine_soldier/vo/"
 		for i=1,math.Round(MsgLength/15) do
@@ -192,9 +213,21 @@ if(SERVER)then
 		end
 		timer.Simple(.5,function()
 			if(IsValid(self))then
+                --[[
 				for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
 					if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,msg) end
 				end
+                ]]
+                for _, ply in pairs(player.GetAll()) do
+                    if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+                        net.Start("JMod_EZradio")
+                            net.WriteBool(true)
+                            net.WriteBool(false)
+                            net.WriteString(msg)
+                            net.WriteEntity(self)
+                        net.Send(ply)
+                    end
+                end
 			end
 		end)
 	end
@@ -310,13 +343,14 @@ if(SERVER)then
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
 		if((NormalReq)or(BFFreq))then
-			local Name,ParrotPhrase=string.sub(txt,15),ply:Nick().." says: "..txt.."\n".."Radio replies:"
+			local Name,ParrotPhrase=string.sub(txt,15),"received message from " .. ply:Nick() .. ": "..txt..""
 			if(BFFreq)then
 				Name=string.sub(txt,7)
 			end
 			if(Name=="help")then
 				if(State==2)then
-					local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
+					--local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
+                    local Msg,Num='stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:',1
 					self:Speak(Msg,ParrotPhrase)
                     local str = ""
 					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
