@@ -160,7 +160,7 @@ if(SERVER)then
 			if(State==STATE_BROKEN)then JMod_Hint(self.Owner, "destroyed", self) return end
 			local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if State > 0 then
-                if Alt then
+                if Alt and State == STATE_READY then
                     net.Start("JMod_EZradio")
                         net.WriteBool(false)
                         net.WriteTable(JMOD_CONFIG.RadioSpecs.AvailablePackages)
@@ -208,11 +208,6 @@ if(SERVER)then
 		end
 		timer.Simple(.5,function()
 			if(IsValid(self))then
-                --[[
-				for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
-					if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,msg) end
-				end
-                ]]
                 for _, ply in pairs(player.GetAll()) do
                     if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
                         net.Start("JMod_EZradio")
