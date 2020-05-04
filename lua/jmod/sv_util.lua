@@ -213,7 +213,7 @@ function JMod_FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 
             local Tr = util.QuickTrace(origin, Dir * fragMaxDist, shooter)
 
-            if ((Tr.Hit) and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets)) then
+            if (Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets)) then
                 local DmgMul = 1
 
                 if (BulletsFired > 200) then
@@ -666,7 +666,7 @@ function JMod_ThrowablePickup(playa, item, hardstr, softstr)
             return
         end
 
-        if not (ply == playa) then return end
+        if ply ~= playa then return end
 
         if ((IsValid(item)) and (ply:Alive())) then
             local Phys = item:GetPhysicsObject()
@@ -684,7 +684,7 @@ function JMod_ThrowablePickup(playa, item, hardstr, softstr)
                 end)
             elseif (key == IN_ATTACK2) then
                 local vec = ply:GetAimVector()
-                vec.z = vec.z + 0.1
+                vec.z = vec.z + 0.3
 
                 timer.Simple(0, function()
                     if (IsValid(Phys)) then
