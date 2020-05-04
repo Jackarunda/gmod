@@ -145,10 +145,11 @@ JMod_Hints = {
     
     -- Misc. Entities
     ["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
-    ["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items"},
+    ["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid menu"},
     ["aid sky"] = {Type = "warn", Text = "Aid Radio needs to see sky to function"},
     ["aid package"] = {Type = "info", Text = "Type in chat 'supply radio: <package>' to request item"},
     ["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time", Time = 5},
+    ["aid menu"] = {Type = "button", Text = "Alternatively, hold Walk and press Use on radio for shortcut menu", Followup = "bind walk"},
     
     ["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "Auto. Field Hospital can be used to heal and cure radioactive sickness", Time = 3},
     ["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically", Time = 5},
