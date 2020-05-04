@@ -187,11 +187,6 @@ if(SERVER)then
 		if(self:GetState()<1)then return end
 		self:ConsumeElectricity()
 		if(parrot)then
-            --[[
-			for k,v in pairs(ents.FindInSphere(self:GetPos(),200))do
-				if(v:IsPlayer())then v:PrintMessage(HUD_PRINTTALK,parrot) end
-			end
-            ]]
             for _, ply in pairs(player.GetAll()) do
                 if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
                     net.Start("JMod_EZradio")
@@ -343,7 +338,7 @@ if(SERVER)then
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
 		if((NormalReq)or(BFFreq))then
-			local Name,ParrotPhrase=string.sub(txt,15),"received message from " .. ply:Nick() .. ": "..txt..""
+			local Name,ParrotPhrase=string.sub(txt,15),txt
 			if(BFFreq)then
 				Name=string.sub(txt,7)
 			end
