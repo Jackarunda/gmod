@@ -644,7 +644,6 @@ net.Receive("JMod_EZradio",function()
         local radio = net.ReadEntity()
         local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
         if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
-        MsgC(unpack(tbl))
         chat.AddText(unpack(tbl))
         return
     end
