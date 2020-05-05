@@ -101,7 +101,7 @@ if (SERVER) then
             end
 
             if vFireInstalled and math.random() <= 0.01 then
-                CreateVFireBall(math.random(30, 40), math.random(10, 20), self:GetPos(), VectorRand() * math.random(300, 500), self:GetOwner())
+                CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), self:GetOwner())
             end
 
             if (math.random(1, 3) == 1) then
