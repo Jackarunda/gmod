@@ -102,6 +102,11 @@ if(SERVER)then
 				JMod_SimpleForceExplosion(SelfPos,400000,600,self)
 			end)
 		end
+		if vFireInstalled  then
+			for i = 1, math.random(6, 9) do
+				CreateVFireBall(math.random(5, 10), math.random(5, 10), self:GetPos(), VectorRand() * math.random(400, 600), self:GetOwner())
+			end
+		end
 		self:Remove()
 	end
 	function ENT:Think()

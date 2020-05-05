@@ -12,17 +12,17 @@ if (SERVER) then
         self.Ptype = 1
         self.TypeInfo = {"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")}, "eff_jack_gmod_heavyfire", 20, 30, 100}
         ----
-        self.Entity:SetMoveType(MOVETYPE_NONE)
-        self.Entity:DrawShadow(false)
-        self.Entity:SetCollisionBounds(Vector(-20, -20, -10), Vector(20, 20, 10))
-        self.Entity:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
-        local phys = self.Entity:GetPhysicsObject()
+        self:SetMoveType(MOVETYPE_NONE)
+        self:DrawShadow(false)
+        self:SetCollisionBounds(Vector(-20, -20, -10), Vector(20, 20, 10))
+        self:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
+        local phys = self:GetPhysicsObject()
 
         if (IsValid(phys)) then
             phys:EnableCollisions(false)
         end
 
-        self.Entity:SetNotSolid(true)
+        self:SetNotSolid(true)
         local Time = CurTime()
         self.NextFizz = 0
         self.DamageMul = (self.DamageMul or 1) * math.Rand(.9, 1.1)
@@ -141,7 +141,7 @@ elseif (CLIENT) then
         render.SetMaterial(GlowSprite)
         render.DrawSprite(Pos + VectorRand() * self.Size * math.Rand(0, .25), self.Size * math.Rand(.75, 1.25), self.Size * math.Rand(.75, 1.25), Color(255, 255, 255, 255))
 
-        if ((self.CastLight) and not (GAMEMODE.Lagging)) then
+        if (self.CastLight and not GAMEMODE.Lagging) then
             local dlight = DynamicLight(self:EntIndex())
 
             if (dlight) then
