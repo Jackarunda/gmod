@@ -92,7 +92,6 @@ if (SERVER) then
                     v:TakeDamageInfo(Dam)
 
                     if vFireInstalled then
-                        print(v)
                         CreateVFireEntFires(v, math.random(1, 3))
                     elseif (math.random() <= 0.15) then
                         v:Ignite(10)
