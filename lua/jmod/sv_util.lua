@@ -396,6 +396,15 @@ function JMod_Sploom(attacker, pos, mag)
     Sploom:Spawn()
     Sploom:Activate()
     Sploom:Fire("explode", "", 0)
+
+    if vFireInstalled then
+        local fires = math.Round(math.random() * (mag / 80))
+        for i = 1, fires do
+            timer.Simple(i * 0.05, function()
+                CreateVFireBall(mag / 10, mag / 10, pos + Vector(0,0,5), VectorRand() * math.random(mag, mag * 2))
+            end)
+        end
+    end
 end
 
 local SurfaceHardness = {
