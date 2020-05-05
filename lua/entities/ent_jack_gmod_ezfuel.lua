@@ -22,8 +22,7 @@ ENT.Hint=nil
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		if vFireInstalled then
-			local str = self:GetResource() / self.MaxResource
-			CreateVFireBall(math.random(10, 20) * str, math.random(10, 20) * str, pos, VectorRand() * math.random(100, 200) * str)
+			CreateVFireBall(math.random(5, 15), math.random(5, 15), pos, VectorRand() * math.random(100, 200))
 		else
 			for i=1,3 do
 				local Eff=EffectData()
@@ -49,6 +48,20 @@ if(SERVER)then
 	end
 	function ENT:AltUse(ply)
 		--
+	end
+	function ENT:OnTakeDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
+		if dmginfo:GetDamage() > self.DamageThreshold then
+			local Pos = self:GetPos()
+			sound.Play(self.BreakNoise,Pos)
+			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			self:Remove()
+		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1 * math.Clamp(dmginfo:GetDamage() / 10, 1, 5) then
+			local Pos = self:GetPos()
+			sound.Play("ambient/fire/gascan_ignite1.wav",Pos,70,90)
+			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			self:Remove()
+		end
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,255,255,80)
