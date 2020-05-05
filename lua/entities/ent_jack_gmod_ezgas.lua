@@ -37,6 +37,9 @@ if(SERVER)then
 				end
 			end
 		end
+		if vFireInstalled and math.random() <= 0.05 then
+			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand() * math.random(300, 500))
+		end
 	end
 	function ENT:AltUse(ply)
 		--
