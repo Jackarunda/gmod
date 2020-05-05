@@ -21,23 +21,28 @@ ENT.Hint=nil
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
-		for i=1,3 do
-			local Eff=EffectData()
-			Eff:SetOrigin(pos+VectorRand()*10)
-			util.Effect("StriderBlood",Eff,true,true)
-			if(destructive)then
-				local Tr=util.QuickTrace(pos,Vector(math.random(-200,200),math.random(-200,200),math.random(0,-200)),{self})
-				if(Tr.Hit)then
-					local Fiah=ents.Create("env_fire")
-					Fiah:SetPos(Tr.HitPos+Tr.HitNormal)
-					Fiah:SetKeyValue("health",30)
-					Fiah:SetKeyValue("fireattack",1)
-					Fiah:SetKeyValue("firesize",math.random(20,200))
-					Fiah:SetOwner(self.Owner or game.GetWorld())
-					Fiah:Spawn()
-					Fiah:Activate()
-					Fiah:Fire("StartFire","",0)
-					Fiah:Fire("kill","",math.random(3,10))
+		if vFireInstalled then
+			local str = self:GetResource() / self.MaxResource
+			CreateVFireBall(math.random(10, 20) * str, math.random(10, 20) * str, pos, VectorRand() * math.random(100, 200) * str)
+		else
+			for i=1,3 do
+				local Eff=EffectData()
+				Eff:SetOrigin(pos+VectorRand()*10)
+				util.Effect("StriderBlood",Eff,true,true)
+				if(destructive)then
+					local Tr=util.QuickTrace(pos,Vector(math.random(-200,200),math.random(-200,200),math.random(0,-200)),{self})
+					if(Tr.Hit)then
+						local Fiah=ents.Create("env_fire")
+						Fiah:SetPos(Tr.HitPos+Tr.HitNormal)
+						Fiah:SetKeyValue("health",30)
+						Fiah:SetKeyValue("fireattack",1)
+						Fiah:SetKeyValue("firesize",math.random(20,200))
+						Fiah:SetOwner(self.Owner or game.GetWorld())
+						Fiah:Spawn()
+						Fiah:Activate()
+						Fiah:Fire("StartFire","",0)
+						Fiah:Fire("kill","",math.random(3,10))
+					end
 				end
 			end
 		end
