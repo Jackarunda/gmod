@@ -24,7 +24,7 @@ if (SERVER) then
     function ENT:SpawnFunction(ply, tr)
         local SpawnPos = tr.HitPos + tr.HitNormal * 8
         local ent = ents.Create(self.ClassName)
-        ent:SetAngles(Angle(0, 0, 0))
+        ent:SetAngles(ply:GetAngles() + Angle(0, -90, 0))
         ent:SetPos(SpawnPos)
         JMod_Owner(ent, ply)
         ent:Spawn()
@@ -99,7 +99,7 @@ if (SERVER) then
         if (self.Exploded) then return end
         self.Exploded = true
         local SelfPos = self:LocalToWorld(self:OBBCenter())
-        local Up = (-self:GetForward() + self:GetUp() * .2):GetNormalized()
+        local Up = (-self:GetRight() + self:GetUp() * .2):GetNormalized()
         local plooie = EffectData()
         plooie:SetOrigin(SelfPos)
         plooie:SetScale(.75)
@@ -150,23 +150,21 @@ if (SERVER) then
     end
 
     function ENT:Think()
-        local State, Time, Dir = self:GetState(), CurTime(), (-self:GetForward() + self:GetUp() * .2):GetNormalized()
+        local State, Time, Dir = self:GetState(), CurTime(), (-self:GetRight() + self:GetUp() * .2):GetNormalized()
 
         if (State == STATE_ARMED) then
             for k, targ in pairs(ents.FindInSphere(self:GetPos() + Dir * 200, 150)) do
-                if (not (targ == self) and ((targ:IsPlayer()) or (targ:IsNPC()) or (targ:IsVehicle()))) then
-                    if ((JMod_ShouldAttack(self, targ)) and (self:CanSee(targ))) then
-                        self:SetState(STATE_WARNING)
-                        sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+                if (not (targ == self) and ((targ:IsPlayer()) or (targ:IsNPC()) or (targ:IsVehicle()))) and (JMod_ShouldAttack(self, targ)) and (self:CanSee(targ)) then
+                    self:SetState(STATE_WARNING)
+                    sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-                        timer.Simple(math.Rand(.15, .4) * JMOD_CONFIG.MineDelay, function()
-                            if (IsValid(self)) then
-                                if (self:GetState() == STATE_WARNING) then
-                                    self:Detonate()
-                                end
+                    timer.Simple(math.Rand(.15, .4) * JMOD_CONFIG.MineDelay, function()
+                        if (IsValid(self)) then
+                            if (self:GetState() == STATE_WARNING) then
+                                self:Detonate()
                             end
-                        end)
-                    end
+                        end
+                    end)
                 end
             end
 
