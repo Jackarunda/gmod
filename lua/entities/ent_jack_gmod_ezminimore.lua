@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModEZstorable = true
-ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 ENT.WhitelistedNPCs = {"npc_rollermine"}
 ---
@@ -202,7 +202,7 @@ elseif (CLIENT) then
         self.Mdl:SetRenderAngles(Ang)
         self.Mdl:DrawModel()
 		]]
-        local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + Vector(0, 0, 4) + self:GetForward() * 2
+        local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + Vector(0, 0, 11) + self:GetRight() * -0.5
 
         if (State == STATE_ARMING) then
             render.SetMaterial(GlowSprite)
