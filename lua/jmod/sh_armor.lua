@@ -112,7 +112,7 @@ JMod_ArmorTable={
 		tgl=true
 	},
 	["BallisticMask"]={
-		mdl="models/arachnit/csgoheavyphoenix/items/mask.mdl", -- csgo misc
+		mdl="models/jmod/ballistic_mask.mdl", -- csgo misc
 		slots={
 			eyes=1,
 			mouthnose=1
@@ -120,7 +120,7 @@ JMod_ArmorTable={
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
 		siz=Vector(1,1,1),
-		pos=Vector(14.5,-68,0),
+		pos=Vector(0,4,0),
 		ang=Angle(100,180,90),
 		wgt=5,
 		dur=150,
@@ -246,6 +246,55 @@ JMod_ArmorTable={
 		dur=200,
 		ent="ent_jack_gmod_ezarmor_hhead"
 	},
+	["Riot-Helmet"]={
+		mdl="models/jmod/helmet_riot.mdl", -- kf2
+		slots={
+			head = 0.8,
+			eyes = 1,
+			mouthnose = 1
+		},
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.1,1,1.1),
+		pos=Vector(0, 1, 0),
+		ang=Angle(-90,0,-90),
+		wgt=15,
+		dur=100,
+		ent="ent_jack_gmod_ezarmor_riot"
+	},
+	["Heavy-Riot-Helmet"]={
+		mdl="models/jmod/helmet_riot_heavy.mdl", -- csgo
+		slots={
+			head = 0.9,
+			eyes = 1,
+			mouthnose = 1
+		},
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1,1,1.1),
+		pos=Vector(1, 3.5, 0),
+		ang=Angle(-70,0,-90),
+		wgt=25,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_rioth"
+	},
+	["Maska-Helmet"]={
+		mdl="models/jmod/helmet_maska.mdl", -- tarkov
+		slots={
+			head = 1,
+			eyes = 1,
+			mouthnose = 1
+		},
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.1,1.1,1.1),
+		pos=Vector(2, -2, 0),
+		ang=Angle(-70,0,-90),
+		wgt=35,
+		dur=200,
+		mskmat="mats_jack_gmod_sprites/slit_vignette.png",
+		ent="ent_jack_gmod_ezarmor_maska"
+	},
 	["Light-Vest"]={
 		mdl="models/player/armor_trooper/trooper.mdl", -- tarkov
 		slots={
@@ -311,7 +360,7 @@ JMod_ArmorTable={
 		gayPhysics=true
 	},
 	["Heavy-Vest"]={
-		mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_vest.mdl", -- csgo hydra
+		mdl="models/jmod/heavy_armor.mdl", -- csgo hydra
 		slots={
 			chest=1,
 			abdomen=.9
@@ -319,27 +368,25 @@ JMod_ArmorTable={
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Spine2",
 		siz=Vector(.9,.9,1),
-		pos=Vector(-10.5,-53.5,0),
+		pos=Vector(-3,4.5,0),
 		ang=Angle(-85,0,90),
 		wgt=80,
 		dur=600,
-		ent="ent_jack_gmod_ezarmor_htorso",
-		gayPhysics=true
+		ent="ent_jack_gmod_ezarmor_htorso"
 	},
 	["Pelvis-Panel"]={
-		mdl="models/arachnit/csgoheavyphoenix/items/pelviscover.mdl", -- csgo misc
+		mdl="models/jmod/pelviscover.mdl", -- csgo misc
 		slots={
 			pelvis=1,
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Pelvis",
 		siz=Vector(1.5,1.4,1.8),
-		pos=Vector(71,0,-2),
+		pos=Vector(6,0,5),
 		ang=Angle(90,-90,0),
 		wgt=10,
 		dur=300,
-		ent="ent_jack_gmod_ezarmor_spelvis",
-		gayPhysics=true
+		ent="ent_jack_gmod_ezarmor_spelvis"
 	},
 	["Light-Left-Shoulder"]={
 		mdl="models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
@@ -356,19 +403,18 @@ JMod_ArmorTable={
 		ent="ent_jack_gmod_ezarmor_llshoulder"
 	},
 	["Heavy-Left-Shoulder"]={
-		mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_left_armor_pad.mdl", -- csgo hydra
+		mdl="models/jmod/heavy_left_armor_pad.mdl", -- csgo hydra
 		slots={
 			leftshoulder=1,
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_UpperArm",
 		siz=Vector(1,1,1),
-		pos=Vector(-6,60,-31),
-		ang=Angle(90,-20,110),
+		pos=Vector(0, 1, 0),
+		ang=Angle(90,-20,90),
 		wgt=15,
 		dur=250,
-		ent="ent_jack_gmod_ezarmor_hlshoulder",
-		gayPhysics=true
+		ent="ent_jack_gmod_ezarmor_hlshoulder"
 	},
 	["Light-Right-Shoulder"]={
 		mdl="models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
@@ -385,19 +431,18 @@ JMod_ArmorTable={
 		ent="ent_jack_gmod_ezarmor_lrshoulder"
 	},
 	["Heavy-Right-Shoulder"]={
-		mdl="models/arachnit/csgo/ctm_heavy/items/ctm_heavy_right_armor_pad.mdl", -- csgo hydra
+		mdl="models/jmod/heavy_right_armor_pad.mdl", -- csgo hydra
 		slots={
 			rightshoulder=1,
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_UpperArm",
 		siz=Vector(1,1,1),
-		pos=Vector(-32,55,25),
-		ang=Angle(90,30,30),
+		pos=Vector(0, 0, 0),
+		ang=Angle(90,20,90),
 		wgt=15,
 		dur=250,
-		ent="ent_jack_gmod_ezarmor_hrshoulder",
-		gayPhysics=true
+		ent="ent_jack_gmod_ezarmor_hrshoulder"
 	},
 	["Left-Forearm"]={
 		mdl="models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis

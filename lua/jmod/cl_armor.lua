@@ -6,13 +6,14 @@ local function CopyArmorTableToPlayer(ply)
         table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
     end
 end
+LocalPlayer().NextEZarmorTableCopy = 0
 local function JMOD_ArmorPlayerDraw(ply)
     if not(IsValid(ply))then return end
     if((ply.EZarmor)and(ply.EZarmorModels))then
         local Time=CurTime()
         if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
             CopyArmorTableToPlayer(ply)
-            ply.NextEZarmorTableCopy=Time+30
+            ply.NextEZarmorTableCopy=Time+3 -- DEBUG, remove when done
         end
         for id,armorData in pairs(ply.EZarmor.items)do
             if not(armorData.disengaged)then
