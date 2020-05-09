@@ -11,6 +11,5 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.Slot="Torso"
-ENT.ArmorName="Medium-Light"
+ENT.ArmorName="Medium-Light-Vest"
 ENT.ModelScale=1.1

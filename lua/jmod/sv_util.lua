@@ -176,7 +176,8 @@ function JMod_FragSplosion(shooter,origin,fragNum,fragDmg,fragMaxDist,attacker,d
                     Src=origin,
                     Tracer=0,
                     Dir=Dir,
-                    Spread=Spred
+                    Spread=Spred,
+					AmmoType="Buckshot" -- for identification as "fragments"
                 })
                 BulletsFired=BulletsFired+1
             end

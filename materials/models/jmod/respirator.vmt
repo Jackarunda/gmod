@@ -3,12 +3,13 @@ VertexLitGeneric
 	$basetexture "models/jmod/respirator_0"
 	$bumpmap "models/jmod/respirator_1"
 
-	$phongexponenttexture "models/jmod/respirator_2"
-	"$phongexponent" "5"
-	"$phongalbedotint" 1
+	"$phongexponent" "10"
 	"$phong" "1"
 	"$phongboost"	".35"
-	"$phongfresnelranges"	"[3 4 7]"
+	"$phongfresnelranges"	"[1 1 1]"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
 	
 	"$nocull" 1
 }

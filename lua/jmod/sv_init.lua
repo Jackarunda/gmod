@@ -3,15 +3,14 @@ resource.AddWorkshop("1919703147")
 resource.AddWorkshop("1919692947")
 resource.AddWorkshop("1919694756")
 
-
 local function JackaSpawnHook(ply)
     ply.JModFriends=ply.JModFriends or {}
     ply.EZarmor={
-        slots={},
-        maskOn=true,
-        headsetOn=true,
+        items={},
         speedFrac=nil,
-        Effects={}
+        effects={},
+		mskmat=nil,
+		sndlop=nil
     }
     JModEZarmorSync(ply)
     ply.EZhealth=nil
@@ -20,7 +19,8 @@ local function JackaSpawnHook(ply)
     net.WriteBit(JMOD_CONFIG.Hints)
     net.Send(ply)
 end
-hook.Add("PlayerSpawn","JackaSpawnHook",JackaSpawnHook)
+hook.Add("PlayerSpawn","JMod_PlayerSpawn",JackaSpawnHook)
+hook.Add("PlayerInitialSpawn","JMod_PlayerInitialSpawn",JackaSpawnHook)
 
 hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
     if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
@@ -94,18 +94,18 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
         NextArmorThink=Time+10
         for k,playa in pairs(player.GetAll())do
             if((playa.EZarmor)and(playa:Alive()))then
-                if(playa.EZarmor.Effects.nightVision)then
-                    for slot,slotInfo in pairs(playa.EZarmor.slots)do
-                        local Info=JMod_ArmorTable[slot][slotInfo[1]]
-                        if((Info.eff)and(table.HasValue(Info.eff,"nightVision")))then
-                            JMod_DamageArmor(playa,slot,.5)
+                if(playa.EZarmor.effects.nightVision)then
+                    for id,armorData in pairs(playa.EZarmor.items)do
+                        local Info=JMod_ArmorTable[armorData.name]
+                        if((Info.eff)and(Info.eff.nightVision))then
+                            armorData.chrg.electricity=math.Clamp(armorData.chrg.electricity-JMOD_CONFIG.ArmorChargeDepletionMult,0,9e9)
                         end
                     end
-                elseif(playa.EZarmor.Effects.thermalVision)then
-                    for slot,slotInfo in pairs(playa.EZarmor.slots)do
-                        local Info=JMod_ArmorTable[slot][slotInfo[1]]
-                        if((Info.eff)and(table.HasValue(Info.eff,"thermalVision")))then
-                            JMod_DamageArmor(playa,slot,.5)
+                elseif(playa.EZarmor.effects.thermalVision)then
+                    for id,armorData in pairs(playa.EZarmor.items)do
+                        local Info=JMod_ArmorTable[armorData.name]
+                        if((Info.eff)and(Info.eff.thermalVision))then
+                            armorData.chrg.electricity=math.Clamp(armorData.chrg.electricity-JMOD_CONFIG.ArmorChargeDepletionMult,0,9e9)
                         end
                     end
                 end
@@ -152,13 +152,13 @@ function JMod_EZ_Remote_Trigger(ply)
 end
 
 hook.Add("PlayerCanSeePlayersChat","JMOD_PLAYERSEECHAT",function(txt,teamOnly,listener,talker)
-    if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+    if((talker.EZarmor)and(talker.EZarmor.effects.teamComms))then
         return JMod_PlayersCanComm(listener,talker)
     end
 end)
 
 hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,talker)
-    if((talker.EZarmor)and(talker.EZarmor.Effects.teamComms))then
+    if((talker.EZarmor)and(talker.EZarmor.effects.teamComms))then
         return JMod_PlayersCanComm(listener,talker)
     end
 end)
