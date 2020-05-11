@@ -491,7 +491,7 @@ JMod_ArmorTable = {
     ["Left-Thigh"] = {
         mdl = "models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
         slots = {
-            leftthigh = .95
+            leftthigh = .8
         },
         def = BasicArmorProtectionProfile,
         bon = "ValveBiped.Bip01_L_Thigh",
@@ -510,9 +510,9 @@ JMod_ArmorTable = {
         },
         def = BasicArmorProtectionProfile,
         bon = "ValveBiped.Bip01_L_Thigh",
-        siz = Vector(.9, 1, 1.05),
-        pos = Vector(-.5, 0, -1.5),
-        ang = Angle(90, -85, 110),
+        siz = Vector(0.9, 1, 1),
+        pos = Vector(2, 10, 0),
+        ang = Angle(-90, 180, 0),
         wgt = 25,
         dur = 300,
         ent = "ent_jack_gmod_ezarmor_hlthigh"
@@ -520,7 +520,7 @@ JMod_ArmorTable = {
     ["Right-Thigh"] = {
         mdl = "models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
         slots = {
-            rightthigh = .95
+            rightthigh = .8
         },
         def = BasicArmorProtectionProfile,
         bon = "ValveBiped.Bip01_R_Thigh",
@@ -532,16 +532,16 @@ JMod_ArmorTable = {
         ent = "ent_jack_gmod_ezarmor_srthigh",
         gayPhysics = true
     },
-    ["Heavy-Left-Thigh"] = {
+    ["Heavy-Right-Thigh"] = {
         mdl = "models/jmod/heavy_right_thigh_armor.mdl", -- csgo hydra
         slots = {
             rightthigh = 1
         },
         def = BasicArmorProtectionProfile,
-        bon = "ValveBiped.Bip01_L_Thigh",
-        siz = Vector(.9, 1, 1.05),
-        pos = Vector(-.5, 0, -1.5),
-        ang = Angle(90, -85, 110),
+        bon = "ValveBiped.Bip01_R_Thigh",
+        siz = Vector(0.9, 1, 1),
+        pos = Vector(2, 10, 0),
+        ang = Angle(-90, 180, 0),
         wgt = 25,
         dur = 300,
         ent = "ent_jack_gmod_ezarmor_hrthigh"
@@ -582,3 +582,6 @@ hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
         mv:SetMaxClientSpeed(origSpeed * ply.EZarmor.speedfrac)
     end
 end)
+
+-- DEBUG, causes armor refresh
+if CLIENT then concommand.Add("jmod_refresharmor", function() LocalPlayer().NextEZarmorTableCopy = 0 end) end
