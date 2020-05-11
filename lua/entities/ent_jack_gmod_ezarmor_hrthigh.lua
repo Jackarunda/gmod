@@ -1,14 +1,13 @@
 -- Jackarunda 2019
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezarmor"
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Armor"
-ENT.PrintName="EZ Thigh (R) H. Armor"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
----
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
----
-ENT.ArmorName="Heavy-Right-Thigh"
-ENT.ModelScale=1.1
+ENT.Base = "ent_jack_gmod_ezarmor"
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Armor"
+ENT.PrintName = "Thigh - Heavy (R)"
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
+--
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+--
+ENT.ArmorName = "Heavy-Right-Thigh"
