@@ -5,11 +5,11 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Armor"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Thigh (L) Armor"
+ENT.PrintName="EZ Thigh (L) L. Armor"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.ArmorName="Left-Thigh"
+ENT.ArmorName="Light-Left-Thigh"
 ENT.ModelScale=1.1

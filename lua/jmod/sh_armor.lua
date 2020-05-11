@@ -488,7 +488,7 @@ JMod_ArmorTable = {
         ent = "ent_jack_gmod_ezarmor_srforearm",
         gayPhysics = true
     },
-    ["Left-Thigh"] = {
+    ["Light-Left-Thigh"] = {
         mdl = "models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
         slots = {
             leftthigh = .8
@@ -517,7 +517,7 @@ JMod_ArmorTable = {
         dur = 300,
         ent = "ent_jack_gmod_ezarmor_hlthigh"
     },
-    ["Right-Thigh"] = {
+    ["Light-Right-Thigh"] = {
         mdl = "models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
         slots = {
             rightthigh = .8
@@ -582,6 +582,3 @@ hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
         mv:SetMaxClientSpeed(origSpeed * ply.EZarmor.speedfrac)
     end
 end)
-
--- DEBUG, causes armor refresh
-if CLIENT then concommand.Add("jmod_refresharmor", function() LocalPlayer().NextEZarmorTableCopy = 0 end) end
