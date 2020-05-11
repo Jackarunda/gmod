@@ -267,15 +267,6 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
     render.SetBlend(1)
 end
 
-net.Receive("JMod_EZarmorSync",function()
-    local ply=net.ReadEntity()
-    local tbl=net.ReadTable()
-    local spd=net.ReadFloat()
-    if not(IsValid(ply))then return end
-    ply.EZarmor=tbl
-    ply.EZarmorModels={}
-end)
-
 local FRavg,FRcount=0,0
 function JMod_MeasureFramerate()
     local FR=1/FrameTime()

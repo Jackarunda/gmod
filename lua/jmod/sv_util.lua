@@ -30,28 +30,6 @@ function JMod_AeroGuide(ent,forward,targetPos,turnMult,thrustMult,angleDragMult,
     Phys:ApplyForceCenter(forward*20000*thrustMult) -- todo: make this function fucking work ARGH
 end
 
-function JMod_EZ_Toggle_Mask(ply)
-    if not(ply.EZarmor)then return end
-    if not(ply.EZarmor.slots["Face"])then return end
-    if not(ply:Alive())then return end
-    ply:EmitSound("snds_jack_gmod/equip1.wav",60,math.random(80,120))
-    ply.EZarmor.maskOn=not ply.EZarmor.maskOn
-    local ExtraEquipSound=JMod_ArmorTable["Face"][ply.EZarmor.slots["Face"][1]].eqsnd
-    if((ply.EZarmor.maskOn)and(ExtraEquipSound))then
-        ply:EmitSound(ExtraEquipSound,50,math.random(80,120))
-    end
-    JModEZarmorSync(ply)
-end
-
-function JMod_EZ_Toggle_Headset(ply)
-    if not(ply.EZarmor)then return end
-    if not(ply.EZarmor.slots["Ears"])then return end
-    if not(ply:Alive())then return end
-    ply:EmitSound("snds_jack_gmod/equip2.wav",60,math.random(80,120))
-    ply.EZarmor.headsetOn=not ply.EZarmor.headsetOn
-    JModEZarmorSync(ply)
-end
-
 function JMod_EZ_WeaponLaunch(ply)
     if not((IsValid(ply))and(ply:Alive()))then return end
     local Weps={}

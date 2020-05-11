@@ -109,7 +109,15 @@ JMod_ArmorTable = {
         mskmat = "mats_jack_gmod_sprites/vignette.png",
         sndlop = "snds_jack_gmod/mask_breathe.wav",
         ent = "ent_jack_gmod_ezarmor_gasmask",
-        tgl = true
+        tgl = true,
+        tglmod = {
+            bon = "ValveBiped.Bip01_Spine2",
+            pos = Vector(-5, 4, 4),
+            ang = Angle(-60, -15, 110),
+            mskmat = "",
+            sndlop = "",
+            def = {}
+        }
     },
     ["BallisticMask"] = {
         mdl = "models/jmod/ballistic_mask.mdl", -- csgo misc
@@ -126,8 +134,15 @@ JMod_ArmorTable = {
         dur = 150,
         mskmat = "mats_jack_gmod_sprites/hard_vignette.png",
         ent = "ent_jack_gmod_ezarmor_balmask",
-        gayPhysics = true,
-        tgl = true
+        tgl = true,
+        tglmod = {
+            bon = "ValveBiped.Bip01_Spine2",
+            pos = Vector(-5, 4, 4),
+            ang = Angle(-90, -5, 110),
+            mskmat = "",
+            sndlop = "",
+            def = {}
+        }
     },
     ["NightVisionGoggles"] = {
         mdl = "models/nvg.mdl", -- scp something
@@ -150,7 +165,15 @@ JMod_ArmorTable = {
         eff = {
             nightVision = true
         },
-        tgl = true
+        tgl = true,
+        tglmod = {
+            pos = Vector(6, 6, 0),
+            ang = Angle(-130, 0, 90),
+            mskmat = "",
+            eff = {
+                nightVision = false
+            }
+        }
     },
     ["ThermalGoggles"] = {
         mdl = "models/nvg.mdl", -- scp something
@@ -173,7 +196,15 @@ JMod_ArmorTable = {
         eff = {
             thermalVision = true
         },
-        tgl = true
+        tgl = true,
+        tglmod = {
+            pos = Vector(6, 6, 0),
+            ang = Angle(-130, 0, 90),
+            mskmat = "",
+            eff = {
+                thermalVision = false
+            }
+        }
     },
     ["Respirator"] = {
         mdl = "models/jmod/respirator.mdl", -- MGSV
@@ -274,7 +305,19 @@ JMod_ArmorTable = {
         ang = Angle(-90, 0, -90),
         wgt = 15,
         dur = 100,
-        ent = "ent_jack_gmod_ezarmor_riot"
+        ent = "ent_jack_gmod_ezarmor_riot",
+        tgl = true,
+        bdg = {
+            [1] = 0
+        },
+        tglmod = {
+            slots = {
+                head = 0.8
+            },
+            bdg = {
+                [1] = 1
+            }
+        }
     },
     ["Heavy-Riot-Helmet"] = {
         mdl = "models/jmod/helmet_riot_heavy.mdl", -- csgo
@@ -290,7 +333,19 @@ JMod_ArmorTable = {
         ang = Angle(-70, 0, -90),
         wgt = 25,
         dur = 150,
-        ent = "ent_jack_gmod_ezarmor_rioth"
+        ent = "ent_jack_gmod_ezarmor_rioth",
+        tgl = true,
+        bdg = {
+            [0] = 0
+        },
+        tglmod = {
+            slots = {
+                head = 0.9
+            },
+            bdg = {
+                [0] = 1
+            }
+        }
     },
     ["Maska-Helmet"] = {
         mdl = "models/jmod/helmet_maska.mdl", -- tarkov
@@ -302,12 +357,25 @@ JMod_ArmorTable = {
         def = BasicArmorProtectionProfile,
         bon = "ValveBiped.Bip01_Head1",
         siz = Vector(1.1, 1.1, 1.1),
-        pos = Vector(2, -2, 0),
-        ang = Angle(-70, 0, -90),
+        pos = Vector(1.5, -2, 0),
+        ang = Angle(-80, 0, -90),
         wgt = 35,
         dur = 200,
         mskmat = "mats_jack_gmod_sprites/slit_vignette.png",
-        ent = "ent_jack_gmod_ezarmor_maska"
+        ent = "ent_jack_gmod_ezarmor_maska",
+        tgl = true,
+        bdg = {
+            [1] = 0
+        },
+        tglmod = {
+            slots = {
+                head = 1
+            },
+            bdg = {
+                [1] = 1
+            },
+            mskmat = ""
+        }
     },
     ["Light-Vest"] = {
         mdl = "models/player/armor_trooper/trooper.mdl", -- tarkov
@@ -577,8 +645,13 @@ JMod_ArmorTable = {
 }
 
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-    if ((ply.EZarmor) and (ply.EZarmor.speedfrac) and not (ply.EZarmor.speedfrac == 1)) then
+    if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
         local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
         mv:SetMaxClientSpeed(origSpeed * ply.EZarmor.speedfrac)
     end
 end)
+
+-- Debug
+for _, ply in pairs(player.GetAll()) do
+    ply.NextEZarmorTableCopy = 0
+end
