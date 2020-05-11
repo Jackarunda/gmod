@@ -76,10 +76,10 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
     local Protection, Busted = 0, false
 
     for id, armorData in pairs(ply.EZarmor.items) do
-        local ArmorInfo = JMod_ArmorTable[armorData.name]
+        local ArmorInfo = table.Copy(JMod_ArmorTable[armorData.name])
 
-        if item.toggled and JMod_ArmorTable[item.name].tglmod then
-            ArmorInfo = table.Merge(ArmorInfo, JMod_ArmorTable[item.name].tglmod)
+        if armorData.disengaged and JMod_ArmorTable[armorData.name].tglmod then
+            ArmorInfo = table.Merge(ArmorInfo, JMod_ArmorTable[armorData.name].tglmod)
         end
 
         if (ArmorInfo) then

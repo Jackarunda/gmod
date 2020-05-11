@@ -566,8 +566,8 @@ JMod_ArmorTable = {
         siz = Vector(.9, 1, 1.05),
         pos = Vector(-.5, 0, -1.5),
         ang = Angle(90, -85, 110),
-        wgt = 15,
-        dur = 200,
+        wgt = 10,
+        dur = 150,
         ent = "ent_jack_gmod_ezarmor_slthigh",
         gayPhysics = true
     },
@@ -582,7 +582,7 @@ JMod_ArmorTable = {
         pos = Vector(2, 10, 0),
         ang = Angle(-90, 180, 0),
         wgt = 25,
-        dur = 300,
+        dur = 200,
         ent = "ent_jack_gmod_ezarmor_hlthigh"
     },
     ["Light-Right-Thigh"] = {
@@ -595,8 +595,8 @@ JMod_ArmorTable = {
         siz = Vector(.9, 1, 1.05),
         pos = Vector(.5, 0, 1),
         ang = Angle(90, -95, 80),
-        wgt = 15,
-        dur = 200,
+        wgt = 10,
+        dur = 150,
         ent = "ent_jack_gmod_ezarmor_srthigh",
         gayPhysics = true
     },
@@ -611,7 +611,7 @@ JMod_ArmorTable = {
         pos = Vector(2, 10, 0),
         ang = Angle(-90, 180, 0),
         wgt = 25,
-        dur = 300,
+        dur = 200,
         ent = "ent_jack_gmod_ezarmor_hrthigh"
     },
     ["Left-Calf"] = {
