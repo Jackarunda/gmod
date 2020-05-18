@@ -21,11 +21,14 @@ ENT.Hint=nil
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
+		if destructive and vFireInstalled then
+			CreateVFireBall(math.random(5, 15), math.random(5, 15), pos, VectorRand() * math.random(100, 200))
+		end
 		for i=1,3 do
 			local Eff=EffectData()
 			Eff:SetOrigin(pos+VectorRand()*10)
 			util.Effect("StriderBlood",Eff,true,true)
-			if(destructive)then
+			if destructive and not vFireInstalled then
 				local Tr=util.QuickTrace(pos,Vector(math.random(-200,200),math.random(-200,200),math.random(0,-200)),{self})
 				if(Tr.Hit)then
 					local Fiah=ents.Create("env_fire")
@@ -44,6 +47,20 @@ if(SERVER)then
 	end
 	function ENT:AltUse(ply)
 		--
+	end
+	function ENT:OnTakeDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
+		if dmginfo:GetDamage() > self.DamageThreshold then
+			local Pos = self:GetPos()
+			sound.Play(self.BreakNoise,Pos)
+			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			self:Remove()
+		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1 * math.Clamp(dmginfo:GetDamage() / 10, 1, 5) then
+			local Pos = self:GetPos()
+			sound.Play("ambient/fire/gascan_ignite1.wav",Pos,70,90)
+			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			self:Remove()
+		end
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,255,255,80)

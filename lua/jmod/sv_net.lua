@@ -12,7 +12,6 @@ util.AddNetworkString("JMod_ModifyMachine")
 util.AddNetworkString("JMod_NuclearBlast")
 util.AddNetworkString("JMod_ArmorColor")
 util.AddNetworkString("JMod_EZarmorSync")
-util.AddNetworkString("JMod_EZradio")
 
 net.Receive("JMod_Friends",function(length,ply)
     local List,Good=net.ReadTable(),true
