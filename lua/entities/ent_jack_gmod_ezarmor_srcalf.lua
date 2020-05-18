@@ -11,6 +11,5 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.Slot="RightCalf"
-ENT.ArmorName="Standard"
+ENT.ArmorName="Right-Calf"
 ENT.ModelScale=1.1

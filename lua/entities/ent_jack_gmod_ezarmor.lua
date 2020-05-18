@@ -26,7 +26,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Specs=JMod_ArmorTable[self.Slot][self.ArmorName]
+		self.Specs=JMod_ArmorTable[self.ArmorName]
 		self.Entity:SetModel(self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
@@ -38,11 +38,14 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(10)
 		self.Durability=self.Durability or self.Specs.dur
+		if(self.Specs.chrg)then self.ArmorCharges=self.ArmorCharges or table.FullCopy(self.Specs.chrg) end
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(10)
 			self:GetPhysicsObject():Wake()
 		end)
+		---
+		self.EZID=self.EZID or JMod_GenerateGUID()
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -59,7 +62,6 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end

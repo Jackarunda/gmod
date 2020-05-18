@@ -223,14 +223,15 @@ function JMod_FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
                 local firer = ((IsValid(shooter)) and shooter) or game.GetWorld()
 
                 firer:FireBullets({
-                    Attacker = attacker,
-                    Damage = fragDmg * DmgMul,
-                    Force = fragDmg / 8 * DmgMul,
-                    Num = 1,
-                    Src = origin,
-                    Tracer = 0,
-                    Dir = Dir,
-                    Spread = Spred
+                    Attacker=attacker,
+                    Damage=fragDmg*DmgMul,
+                    Force=fragDmg/8*DmgMul,
+                    Num=1,
+                    Src=origin,
+                    Tracer=0,
+                    Dir=Dir,
+                    Spread=Spred,
+					          AmmoType="Buckshot" -- for identification as "fragments"
                 })
 
                 BulletsFired = BulletsFired + 1

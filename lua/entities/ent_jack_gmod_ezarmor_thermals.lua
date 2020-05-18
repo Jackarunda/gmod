@@ -11,6 +11,5 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.Slot="Face"
 ENT.ArmorName="ThermalGoggles"
 ENT.ModelScale=1.5

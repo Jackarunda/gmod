@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=24,
+		Version=25,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -296,8 +296,9 @@ function JMod_InitGlobalConfig(forceNew)
 		HandGrabStrength=1,
 		BombDisarmSpeed=1,
 		ExplosionPropDestroyPower=1,
-		ArmorExponentMult=1,
+		ArmorProtectionMult=1,
 		ArmorDegredationMult=1,
+		ArmorChargeDepletionMult=1,
 		ArmorWeightMult=1,
 		NukeRangeMult=1,
 		NukePowerMult=1,

@@ -1,27 +1,29 @@
-local MskSndLops={}
+local MskSndLops,MaskMats={},{}
 hook.Add("HUDPaintBackground","JMOD_HUDBG",function()
     local ply,Play=LocalPlayer(),false
     if(ply.EZarmor)then
-        local MaskType,Alive,ThirdPerson=ply.EZarmor.slots["Face"] and ply.EZarmor.slots["Face"][1],ply:Alive(),ply:ShouldDrawLocalPlayer()
-        if(MaskType)then
-            local Specs=JMod_ArmorTable["Face"][MaskType]
-            if((Specs.mskmat)and(Alive)and not(ThirdPerson)and(ply.EZarmor.maskOn))then
-                surface.SetMaterial(Specs.mskmat)
-                surface.SetDrawColor(255,255,255,255)
-                surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-                surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-                surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
-            end
-            Play=(Alive)and(Specs.sndlop)and not(ThirdPerson)and(ply.EZarmor.maskOn)
-            if(Play)then
-                if not(MskSndLops[MaskType])then
-                    MskSndLops[MaskType]=CreateSound(ply,Specs.sndlop)
-                    MskSndLops[MaskType]:Play()
-                elseif(not(MskSndLops[MaskType]:IsPlaying()))then
-                    MskSndLops[MaskType]:Play()
-                end
-            end
-        end
+        local Alive,ThirdPerson=ply:Alive(),ply:ShouldDrawLocalPlayer()
+		if((ply.EZarmor.mskmat)and(Alive)and not(ThirdPerson))then
+			local Mat=MaskMats[ply.EZarmor.mskmat]
+			if not(Mat)then
+				Mat=Material(ply.EZarmor.mskmat)
+				MaskMats[ply.EZarmor.mskmat]=Mat
+			end
+			surface.SetMaterial(Mat)
+			surface.SetDrawColor(255,255,255,255)
+			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
+			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
+			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
+		end
+		Play=(Alive)and(ply.EZarmor.sndlop)and not(ThirdPerson)
+		if(Play)then
+			if not(MskSndLops[ply.EZarmor.sndlop])then
+				MskSndLops[ply.EZarmor.sndlop]=CreateSound(ply,ply.EZarmor.sndlop)
+				MskSndLops[ply.EZarmor.sndlop]:Play()
+			elseif(not(MskSndLops[ply.EZarmor.sndlop]:IsPlaying()))then
+				MskSndLops[ply.EZarmor.sndlop]:Play()
+			end
+		end
     end
     if not(Play)then
         for k,v in pairs(MskSndLops)do
@@ -64,8 +66,8 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
     --CreateClientLag(10000) -- for debugging the effect at low framerates
     --JMod_MeasureFramerate()
     if not(ply:ShouldDrawLocalPlayer())then
-        if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects))then
-            if(ply.EZarmor.Effects.nightVision)then
+        if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
+            if(ply.EZarmor.effects.nightVision)then
                 if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
                 DrawColorModify({
                     ["$pp_colour_addr"]=0,
@@ -129,7 +131,7 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
                     end
                 end
                 --]]
-            elseif(ply.EZarmor.Effects.thermalVision)then
+            elseif(ply.EZarmor.effects.thermalVision)then
                 if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
                 DrawColorModify({
                     ["$pp_colour_addr"]=0,

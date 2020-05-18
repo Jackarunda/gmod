@@ -10,6 +10,5 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.Slot="Ears"
 ENT.ArmorName="Headset"
 ENT.ModelScale=1.2

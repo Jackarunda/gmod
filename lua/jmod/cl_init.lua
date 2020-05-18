@@ -139,8 +139,8 @@ hook.Add("Think","JMOD_CLIENT_THINK",function()
     local Time=CurTime()
     local ply,DrawNVGlamp=LocalPlayer(),false
     if not(ply:ShouldDrawLocalPlayer())then
-        if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects))then
-            if(ply.EZarmor.Effects.nightVision)then
+        if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
+            if(ply.EZarmor.effects.nightVision)then
                 DrawNVGlamp=true
                 if not(IsValid(ply.EZNVGlamp))then
                     ply.EZNVGlamp=ProjectedTexture()
@@ -192,33 +192,40 @@ local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
     [ "$vertexcolor" ]    = "1",
     [ "$vertexalpha" ]    = "1",
 })
-local GlowSprite=Material("sprites/mat_jack_basicglow")
-hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function() -- cache this
-    for k,ent in pairs(ents.FindByClass("ent_jack_gmod_ezslam"))do
-        local pos=ent:GetAttachment(1).Pos
-        if(pos)then
-            local trace=util.QuickTrace(pos,ent:GetUp()*1000,ent)
-            local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
-            local Forward=-ent:GetUp()
-            pos=pos-Forward*.5
-            if(State==JMOD_EZ_STATE_ARMING)then
-                render.SetMaterial(GlowSprite)
-                render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
-                render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
-                render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
-                render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
-            elseif State==JMOD_EZ_STATE_ARMED then
-                render.SetMaterial(BeamMat)
-                render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
-                if trace.Hit then
-                    render.SetMaterial(GlowSprite)
-                    render.DrawSprite(trace.HitPos,8,8,Color(255,0,0,100))
-                    render.DrawSprite(trace.HitPos,4,4,Color(255,255,255,100))
-                    render.DrawQuadEasy(trace.HitPos,trace.HitNormal,15,15,Color(255,0,0,100),0)
-                    render.DrawQuadEasy(trace.HitPos,trace.HitNormal,7,7,Color(255,255,255,100),0)
-                end
-            end
-        end
+local GlowSprite,KnownSLAMs,NextSlamScan=Material("sprites/mat_jack_basicglow"),{},0
+hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function()
+	local Time=CurTime()
+	if(Time>NextSlamScan)then
+		NextSlamScan=Time+.5
+		KnownSlams=ents.FindByClass("ent_jack_gmod_ezslam")
+	end
+	for k,ent in pairs(KnownSlams)do
+		if(IsValid(ent))then
+			local pos=ent:GetAttachment(1).Pos
+			if(pos)then
+				local trace=util.QuickTrace(pos,ent:GetUp()*1000,ent)
+				local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
+				local Forward=-ent:GetUp()
+				pos=pos-Forward*.5
+				if(State==JMOD_EZ_STATE_ARMING)then
+					render.SetMaterial(GlowSprite)
+					render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
+					render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
+					render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
+					render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
+				elseif State==JMOD_EZ_STATE_ARMED then
+					render.SetMaterial(BeamMat)
+					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
+					if trace.Hit then
+						render.SetMaterial(GlowSprite)
+						render.DrawSprite(trace.HitPos,8,8,Color(255,0,0,100))
+						render.DrawSprite(trace.HitPos,4,4,Color(255,255,255,100))
+						render.DrawQuadEasy(trace.HitPos,trace.HitNormal,15,15,Color(255,0,0,100),0)
+						render.DrawQuadEasy(trace.HitPos,trace.HitNormal,7,7,Color(255,255,255,100),0)
+					end
+				end
+			end
+		end
     end
 end)
 
@@ -266,7 +273,7 @@ net.Receive("JMod_EZarmorSync",function()
     local spd=net.ReadFloat()
     if not(IsValid(ply))then return end
     ply.EZarmor=tbl
-    ply.EZarmorModels=ply.EZarmorModels or {}
+    ply.EZarmorModels={}
 end)
 
 local FRavg,FRcount=0,0
@@ -299,7 +306,7 @@ end
 
 hook.Add("PostDrawOpaqueRenderables","JMOD_POSTOPAQUERENDERABLES",function()
     local ply,Time=LocalPlayer(),CurTime()
-    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects)and(ply.EZarmor.Effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
+    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects)and(ply.EZarmor.effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
         DrawColorModify({
             ["$pp_colour_addr"]=0,
             ["$pp_colour_addg"]=0,
@@ -355,7 +362,7 @@ end)
 hook.Add("SetupWorldFog","JMOD_WORLDFOG",function()
     local Time=CurTime()
     local ply=LocalPlayer()
-    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects)and(ply.EZarmor.Effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
+    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects)and(ply.EZarmor.effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
         render.FogMode(0)
         return true
     end
@@ -373,7 +380,7 @@ end)
 hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
     local Time=CurTime()
     local ply=LocalPlayer()
-    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.Effects)and(ply.EZarmor.Effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
+    if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects)and(ply.EZarmor.effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
         render.FogMode(0)
         return true
     end
@@ -404,7 +411,7 @@ end
 hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
     if not(ply:Alive())then return end
     if not(LocalPlayer():Alive())then return end
-    if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+    if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
         surface.PlaySound("snds_jack_gmod/radio_start.wav")
     end
 end)
@@ -413,7 +420,7 @@ hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
     if not(IsValid(ply))then return end
     if not(ply:Alive())then return end
     if not(LocalPlayer():Alive())then return end
-    if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+    if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
         CommNoise()
         if not isTeam and not isDead then
             local tab = {}
@@ -431,7 +438,7 @@ end)
 hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
     if not(ply:Alive())then return end
     if not(LocalPlayer():Alive())then return end
-    if((ply.EZarmor)and(ply.EZarmor.Effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+    if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
         CommNoise()
     end
 end)

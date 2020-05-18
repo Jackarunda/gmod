@@ -11,6 +11,5 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-ENT.Slot="Face"
 ENT.ArmorName="BallisticMask"
 --ENT.ModelScale=1.1 -- CRASH
