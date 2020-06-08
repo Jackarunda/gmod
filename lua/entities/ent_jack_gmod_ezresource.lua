@@ -95,9 +95,9 @@ if(SERVER)then
 			self:AltUse(activator)
 		else
 			activator:PickupObject(self)
-            if JMod_Hints[self:GetClass() .. " use"] then
-                JMod_Hint(activator, self:GetClass() .. " use", self)
-            end
+			if JMod_Hints[self:GetClass() .. " use"] then
+				JMod_Hint(activator, self:GetClass() .. " use", self)
+			end
 		end
 	end
 	function ENT:Think()

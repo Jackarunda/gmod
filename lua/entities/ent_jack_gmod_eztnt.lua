@@ -84,10 +84,10 @@ if(SERVER)then
 			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:Arm()
-                JMod_Hint(Dude, "fuse", self)
+				JMod_Hint(Dude, "fuse", self)
 			end
 			Dude:PickupObject(self)
-            if not Alt then JMod_Hint(Dude, "arm", self) end
+			if not Alt then JMod_Hint(Dude, "arm", self) end
 		end
 	end
 	function ENT:Detonate()

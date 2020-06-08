@@ -72,7 +72,7 @@ if(SERVER)then
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
-                JMod_Hint(activator, "gas spread", self)
+				JMod_Hint(activator, "gas spread", self)
 				timer.Simple(5,function()
 					if(IsValid(self))then
 						self:EmitSound("snd_jack_sminepop.wav",70,120)
@@ -81,7 +81,7 @@ if(SERVER)then
 				end)
 			else
 				activator:PickupObject(self)
-                JMod_Hint(activator, "arm", self)
+				JMod_Hint(activator, "arm", self)
 			end
 		else
 			activator:PickupObject(self)

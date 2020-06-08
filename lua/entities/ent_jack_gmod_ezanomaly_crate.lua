@@ -1,7 +1,7 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.PrintName="ANOMALOUS CRATE"
+ENT.PrintName="T H E   C R A T E"
 ENT.Author="Jackarunda"
 ENT.NoSitAllowed=true
 ENT.Spawnable=false
@@ -15,6 +15,7 @@ ENT.ChildEntity=""
 ENT.ChildEntityResourceAmount=0
 ENT.MainTitleWord="RESOURCES"
 ENT.ResourceUnit="Units"
+ENT.IsEZanomalousCrate=true
 ---
 function ENT:SetupDataTables()
 	--
@@ -48,7 +49,9 @@ if(SERVER)then
 			if(data.Speed>100)then
 				self.Entity:EmitSound("Wood_Crate.ImpactHard")
 				self.Entity:EmitSound("Wood_Box.ImpactHard")
-				if(data.Speed>500)then
+				local Threshold=750
+				if(data.HitEntity.IsEZanomalousCrate)then Threshold=1950 end
+				if(data.Speed>Threshold)then
 					self.Durability=self.Durability-data.Speed/10
 					if(self.Durability<=0)then self:BreakOpen() end
 				end
@@ -89,6 +92,7 @@ if(SERVER)then
 	end
 	function ENT:OnRemove()
 		--if(true)then return end
+		if(self.SUCCd)then return end
 		local Pos,Ang,Up,Right,Forward,Class,Vel=self:GetPos(),self:GetAngles(),self:GetUp(),self:GetRight(),self:GetForward(),self.ClassName,self:GetVelocity()
 		timer.Simple(0,function()
 			local Box1=ents.Create(Class)
@@ -111,5 +115,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezanomaly_crare","ANOMALOUS CRATE")
+	language.Add("ent_jack_gmod_ezanomaly_crate","T H E   C R A T E")
 end

@@ -307,7 +307,7 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
-    if GetConVar("cl_drawhud"):GetBool() == false then return end
+	if GetConVar("cl_drawhud"):GetBool() == false then return end
 	local W,H,Supplies=ScrW(),ScrH(),self:GetSupplies()
 	draw.SimpleTextOutlined("Supplies: "..Supplies,"Trebuchet24",W*.4,H*.7,Color(255,255,255,200),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("LMB: heal target","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))

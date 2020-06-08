@@ -101,7 +101,7 @@ if(SERVER)then
 							end
 						end
 					end)
-                    JMod_Hint(Dude, "friends", self)
+					JMod_Hint(Dude, "friends", self)
 				else
 					if !IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)
@@ -114,7 +114,7 @@ if(SERVER)then
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
-                    JMod_Hint(Dude, "sticky", self)
+					JMod_Hint(Dude, "sticky", self)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -148,7 +148,7 @@ if(SERVER)then
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-                        if not JMod_Hint(Dude, "arm", self) then JMod_Hint(Dude, "slam stick", self) end
+						if not JMod_Hint(Dude, "arm", self) then JMod_Hint(Dude, "slam stick", self) end
 					end
 				end
 			end

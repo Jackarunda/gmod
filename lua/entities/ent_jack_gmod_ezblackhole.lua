@@ -77,6 +77,7 @@ function ENT:IsBlacklisted(ent)
 	return false
 end
 function ENT:Rape(ent)
+	ent.SUCCd=true
 	if(SERVER)then
 		local Dmg,SelfPos=DamageInfo(),self:GetPos()
 		Dmg:SetDamage(9e9)

@@ -73,5 +73,7 @@ muzzleflash_m79
 -- wiremod support
 -- sentries shoot dead things
 -- moab drogue chute
--- command to make gas and fallout visible
 -- bounding mine unbury
+-- fakken like OnDamagedByExplosion tinnitus
+-- if the json cant be read then print an error
+-- fuggin like let BK and WB draw from resource crates
