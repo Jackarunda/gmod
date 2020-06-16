@@ -349,6 +349,18 @@ function JMod_EZ_Equip_Armor(ply, nameOrEnt)
 	JModEZarmorSync(ply)
 end
 
+net.Receive("JMod_Inventory",function(ln,ply)
+	if not(ply:Alive())then return end
+	local ActionType=net.ReadInt(8)
+	print(ActionType)
+	if(ActionType==1)then
+		local ID=net.ReadString()
+		JMod_RemoveArmorByID(ply,ID)
+	end
+	-- todo: more actions
+	JModEZarmorSync(ply)
+end)
+
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	if not (ply and ply:IsSuperAdmin()) then return end
 	JMod_EZ_Equip_Armor(ply, "BallisticMask")

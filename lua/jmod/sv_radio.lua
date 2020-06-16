@@ -113,13 +113,21 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 	if not(ply:Alive())then return end
 	local lowerTxt=string.lower(txt)
 	if(lowerTxt=="*trigger*")then JMod_EZ_Remote_Trigger(ply);return "" end
-	if(lowerTxt=="*inv*")then JMod_EZ_Open_Inventory(ply);return "" end
 	if(lowerTxt=="*bomb*")then JMod_EZ_BombDrop(ply);return "" end
 	if(lowerTxt=="*launch*")then JMod_EZ_WeaponLaunch(ply);return "" end
 	if((lowerTxt=="*inv*")or(lowerTxt=="*inventory*"))then JMod_EZ_Open_Inventory(ply);return "" end
 	for k,v in pairs(ents.FindInSphere(ply:GetPos(),150))do
 		if(v.EZreceiveSpeech)then
 			if(v:EZreceiveSpeech(ply,txt))then return "" end -- hide the player's radio chatter from the server
+		end
+	end
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms))then
+		for id,data in pairs(ply.EZarmor.items)do
+			local Info=JMod_ArmorTable[data.name]
+			if((Info.eff)and(Info.eff.teamComms))then
+				local SubtractAmt = JMOD_CONFIG.ArmorDegredationMult / 2
+				data.chrg.electricity=math.Clamp(data.chrg.electricity-SubtractAmt,0,9e9)
+			end
 		end
 	end
 end)

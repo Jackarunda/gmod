@@ -15,6 +15,7 @@ if SERVER then
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
+		self.InitialVel=self.InitialVel or Vector(0,0,0)
 		
 		local Phys=self.Entity:GetPhysicsObject()
 		if(IsValid(Phys))then
@@ -93,6 +94,7 @@ if SERVER then
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
+		self.Contents=self.Contents or {{"item_ammo_pistol",40}}
 		for key,item in pairs(self.Contents)do
 			local ClassName,Num=item,1
 			if(type(item)~="string")then ClassName=item[1];Num=item[2] end
@@ -116,6 +118,16 @@ if SERVER then
 				end
 				if(Ent)then
 					JMod_Owner(Ent,activator)
+					-- this arrests overlap-ejection velocity so items don't thwack players
+					timer.Simple(.025,function()
+						if(IsValid(Ent))then Ent:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+					end)
+					timer.Simple(.05,function()
+						if(IsValid(Ent))then Ent:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+					end)
+					timer.Simple(.1,function()
+						if(IsValid(Ent))then Ent:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+					end)
 				end
 			end
 		end

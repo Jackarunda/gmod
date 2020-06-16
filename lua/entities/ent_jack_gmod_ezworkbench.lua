@@ -75,9 +75,10 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		jprint(data.Speed)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if((data.Speed>2000)and not((data.HitEntity.IsPlayerHolding)and(data.HitEntity:IsPlayerHolding())))then
+			if((data.Speed>3000)and not((data.HitEntity.IsPlayerHolding)and(data.HitEntity:IsPlayerHolding())))then
 				self:Destroy()
 			end
 		end

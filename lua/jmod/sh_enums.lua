@@ -77,3 +77,4 @@ muzzleflash_m79
 -- fakken like OnDamagedByExplosion tinnitus
 -- if the json cant be read then print an error
 -- fuggin like let BK and WB draw from resource crates
+-- set sides of crate to low mass

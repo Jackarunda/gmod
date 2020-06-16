@@ -1,0 +1,16 @@
+VertexLitGeneric
+{
+	$baseTexture	"models\jmod\black"
+	$phong	1
+	$phongboost	"0.4"
+	$phongexponent	"8"
+	$phongtint	"[1 1 1]"
+	$phongfresnelranges	"[.2 .5 5]"
+
+	$rimlight	1
+	$rimlightexponent	"10"
+	$rimlightboost	"2"
+
+	$ambientocclusion	0
+	$translucent	0
+}

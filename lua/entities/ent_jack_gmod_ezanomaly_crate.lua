@@ -49,8 +49,8 @@ if(SERVER)then
 			if(data.Speed>100)then
 				self.Entity:EmitSound("Wood_Crate.ImpactHard")
 				self.Entity:EmitSound("Wood_Box.ImpactHard")
-				local Threshold=750
-				if(data.HitEntity.IsEZanomalousCrate)then Threshold=1950 end
+				local Threshold=1000
+				if(IsValid(JMOD_BLACK_HOLE))then Threshold=5000 end
 				if(data.Speed>Threshold)then
 					self.Durability=self.Durability-data.Speed/10
 					if(self.Durability<=0)then self:BreakOpen() end
@@ -60,6 +60,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
+		if(dmginfo:IsDamageType(DMG_RADIATION))then return end
 		self.Durability=self.Durability-dmginfo:GetDamage()
 		self.LastDmgForce=dmginfo:GetDamageForce()
 		if(self.Durability<=0)then self:BreakOpen() end
@@ -72,6 +73,7 @@ if(SERVER)then
 	end
 	local GibNums={1,2,3,4,5,6,7,9}
 	function ENT:BreakOpen()
+		if(self.SUCCd)then return end
 		local Pos,Ang,Mdl,Vel=self:LocalToWorld(self:OBBCenter()),self:GetAngles(),self:GetModel(),self:GetVelocity()
 		self:Remove()
 		local Eff=EffectData()

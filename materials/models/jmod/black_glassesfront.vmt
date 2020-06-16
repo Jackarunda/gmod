@@ -1,0 +1,18 @@
+VertexLitGeneric
+{
+	$basetexture	"models\jmod\glassesfront_walter"
+	$envmapmask	"models\jmod\glassesfrontmask_walter"
+	$envmap	"env_cubemap"
+	$envmapcontrast	1
+	$envmaptint	"[.15 .15 .15]"
+	$phong	1
+	$phongboost	"0.4"
+	$phongexponent	"8"
+	$phongtint	"[1 1 1]"
+	$phongfresnelranges	"[.2 .5 5]"
+
+	$rimlight	1
+	$rimlightexponent	"10"
+	$rimlightboost	"2"
+	$halflambert	1
+}

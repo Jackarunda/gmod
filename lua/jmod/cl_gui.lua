@@ -734,6 +734,63 @@ local function GetItemInSlot(armorTable,slot)
 	end
 	return nil
 end
+local ArmorSlotButtons={
+	{
+		title="Drop",
+		actionFunc=function(slot,itemID,itemData,itemInfo)
+			net.Start("JMod_Inventory")
+			net.WriteInt(1,8) -- drop
+			net.WriteString(itemID)
+			net.SendToServer()
+		end
+	},
+	{
+		title="Toggle",
+		visTestFunc=function(slot,itemID,itemData,itemInfo)
+			return itemInfo.tgl
+		end,
+		actionFunc=function(slot,itemID,itemData,itemInfo)
+			net.Start("JMod_Inventory")
+			net.WriteInt(2,8) -- toggle
+			net.WriteString(itemID)
+			net.SendToServer()
+		end
+	},
+	{
+		title="Repair",
+		visTestFunc=function(slot,itemID,itemData,itemInfo)
+			return itemData.dur<itemInfo.dur
+		end,
+		actionFunc=function(slot,itemID,itemData,itemInfo)
+			net.Start("JMod_Inventory")
+			net.WriteInt(3,8) -- repair
+			net.WriteString(itemID)
+			net.SendToServer()
+		end
+	},
+	{
+		title="Recharge",
+		visTestFunc=function(slot,itemID,itemData,itemInfo)
+			if(itemInfo.chrg)then
+				for resource,maxAmt in pairs(itemInfo.chrg)do
+					if(itemData.chrg[resource]<maxAmt)then return true end
+				end
+			end
+			return false
+		end,
+		actionFunc=function(slot,itemID,itemData,itemInfo)
+			net.Start("JMod_Inventory")
+			net.WriteInt(4,8) -- recharge
+			net.WriteString(itemID)
+			net.SendToServer()
+		end
+	}
+}
+local ArmorResourceNiceNames={
+	biochem="BioChemicals",
+	electricity="Electricity"
+}
+local OpenDropdown=nil
 local function CreateArmorSlotButton(parent,slot,x,y)
 	local Buttalony,Ply=vgui.Create("DButton",parent),LocalPlayer()
 	Buttalony:SetSize(180,40)
@@ -750,6 +807,49 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 			if(ItemData.tgl)then Str="DISENGAGED" end
 			draw.SimpleText(Str,"DermaDefault",Buttalony:GetWide()/2,25,Color(200,200,200,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
+	end
+	if(ItemID)then
+		local str="Durability: "..math.ceil(ItemData.dur).."/"..ItemInfo.dur
+		if(ItemInfo.chrg)then
+			for resource,maxAmt in pairs(ItemInfo.chrg)do
+				str=str.."\n"..ArmorResourceNiceNames[resource]..": "..math.ceil(ItemData.chrg[resource]).."/"..maxAmt
+			end
+		end
+		Buttalony:SetTooltip(str)
+	else
+		Buttalony:SetTooltip("slot is empty")
+	end
+	function Buttalony:DoClick()
+		if(OpenDropdown)then OpenDropdown:Remove() end
+		if not(ItemID)then return end
+		local Options={}
+		for k,option in pairs(ArmorSlotButtons)do
+			if(not(option.visTestFunc)or(option.visTestFunc(slot,ItemID,ItemData,ItemInfo)))then
+				table.insert(Options,option)
+			end
+		end
+		local Dropdown=vgui.Create("DPanel",parent)
+		Dropdown:SetSize(Buttalony:GetWide(),#Options*40)
+		local ecks,why=gui.MousePos()
+		local harp,darp=parent:GetPos()
+		local fack,fock=parent:GetSize()
+		local floop,florp=Dropdown:GetSize()
+		Dropdown:SetPos(math.Clamp(ecks-harp,0,fack-floop),math.Clamp(why-darp,0,fock-florp))
+		function Dropdown:Paint(w,h)
+			surface.SetDrawColor(70,70,70,220)
+			surface.DrawRect(0,0,w,h)
+		end
+		for k,option in pairs(Options)do
+			local Butt=vgui.Create("DButton",Dropdown)
+			Butt:SetPos(5,k*40-35)
+			Butt:SetSize(floop-10,30)
+			Butt:SetText(option.title)
+			function Butt:DoClick()
+				option.actionFunc(slot,ItemID,ItemData,ItemInfo)
+				parent:Close()
+			end
+		end
+		OpenDropdown=Dropdown
 	end
 end
 net.Receive("JMod_Inventory",function()
@@ -768,6 +868,9 @@ net.Receive("JMod_Inventory",function()
 	function motherFrame:OnKeyCodePressed(key)
 		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 	end
+	function motherFrame:OnClose()
+		if(OpenDropdown)then OpenDropdown:Remove() end
+	end
 	local PDispBG=vgui.Create("DPanel",motherFrame)
 	PDispBG:SetPos(200,30)
 	PDispBG:SetSize(200,360)
@@ -784,6 +887,9 @@ net.Receive("JMod_Inventory",function()
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor=Ply.EZarmor
 		JMod_ArmorPlayerModelDraw(ent)
+	end
+	function PlayerDisplay:DoClick()
+		if(OpenDropdown)then OpenDropdown:Remove() end
 	end
 	---
 	CreateArmorSlotButton(motherFrame,"head",10,30)
