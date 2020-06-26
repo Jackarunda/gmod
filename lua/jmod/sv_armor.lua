@@ -23,14 +23,10 @@ function JModEZarmorSync(ply)
 	ply.EZarmor.sndlop = nil
 
 	for id, item in pairs(ply.EZarmor.items) do
-		local ArmorInfo = table.Copy(JMod_ArmorTable[item.name])
+		local ArmorInfo = table.FullCopy(JMod_ArmorTable[item.name])
 
-		if item.tgl then
-			if JMod_ArmorTable[item.name].tglmod then
-				ArmorInfo = table.Merge(ArmorInfo, JMod_ArmorTable[item.name].tglmod)
-			else
-				continue
-			end
+		if((item.tgl)and(ArmorInfo.tgl))then
+			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
 		end
 
 		if ArmorInfo.eff and not (item.chrg and item.chrg.electricity and item.chrg.electricity <= 0) then
@@ -78,8 +74,8 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 	for id, armorData in pairs(ply.EZarmor.items) do
 		local ArmorInfo = table.FullCopy(JMod_ArmorTable[armorData.name])
 
-		if armorData.tgl and JMod_ArmorTable[armorData.name].tglmod then
-			ArmorInfo = table.Merge(ArmorInfo, JMod_ArmorTable[armorData.name].tglmod)
+		if armorData.tgl and ArmorInfo.tgl then
+			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
 		end
 
 		if (ArmorInfo) then
@@ -352,10 +348,14 @@ end
 net.Receive("JMod_Inventory",function(ln,ply)
 	if not(ply:Alive())then return end
 	local ActionType=net.ReadInt(8)
-	print(ActionType)
 	if(ActionType==1)then
 		local ID=net.ReadString()
 		JMod_RemoveArmorByID(ply,ID)
+	elseif(ActionType==2)then
+		local ID=net.ReadString()
+		if(ply.EZarmor.items[ID])then
+			ply.EZarmor.items[ID].tgl=not ply.EZarmor.items[ID].tgl
+		end
 	end
 	-- todo: more actions
 	JModEZarmorSync(ply)

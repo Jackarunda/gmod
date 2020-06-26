@@ -151,9 +151,8 @@ JMod_ArmorTable = {
 		mskmat = "mats_jack_gmod_sprites/hard_vignette.png",
 		ent = "ent_jack_gmod_ezarmor_balmask",
 		tgl = {
-			bon = "ValveBiped.Bip01_Spine2",
-			pos = Vector(-5, 4, 4),
-			ang = Angle(-90, -5, 110),
+			pos = Vector(-2, 4, 0),
+			ang = Angle(170, 180, 90),
 			mskmat = "",
 			sndlop = "",
 			def = NonArmorProtectionProfile
@@ -319,11 +318,10 @@ JMod_ArmorTable = {
 		wgt = 15,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_riot",
-		tgl = true,
 		bdg = {
 			[1] = 0
 		},
-		tglmod = {
+		tgl = {
 			slots = {
 				head = 0.8
 			},
@@ -347,11 +345,10 @@ JMod_ArmorTable = {
 		wgt = 25,
 		dur = 150,
 		ent = "ent_jack_gmod_ezarmor_rioth",
-		tgl = true,
 		bdg = {
 			[0] = 0
 		},
-		tglmod = {
+		tgl = {
 			slots = {
 				head = 0.9
 			},
@@ -376,11 +373,10 @@ JMod_ArmorTable = {
 		dur = 200,
 		mskmat = "mats_jack_gmod_sprites/slit_vignette.png",
 		ent = "ent_jack_gmod_ezarmor_maska",
-		tgl = true,
 		bdg = {
 			[1] = 0
 		},
-		tglmod = {
+		tgl = {
 			slots = {
 				head = 1
 			},
