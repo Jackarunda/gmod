@@ -262,7 +262,7 @@ if(SERVER)then
 		local ItemInfo=JMOD_CONFIG.Recipes[itemName]
 		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
 		
-		if(self:HaveResourcesToPerformTask(BuildReqs))then
+		if(JMod_HaveResourcesToPerformTask(nil,nil,BuildReqs,self))then
 		
 			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
@@ -270,7 +270,7 @@ if(SERVER)then
 				return
 			end
 		
-			self:ConsumeResourcesInRange(BuildReqs)
+			JMod_ConsumeResourcesInRange(BuildReqs,nil,nil,self)
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
 			for i=1,BuildSteps do
 				timer.Simple(i/100,function()
@@ -387,41 +387,4 @@ elseif(CLIENT)then
 		--]]
 	end
 	language.Add("ent_jack_gmod_ezworkbench","EZ Workbench")
-end
-
--- Shared function also used by the client in UI
-
-function ENT:CountResourcesInRange()
-	local Results={}
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
-			local Typ=obj.EZsupplies
-			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and self:CanSee(obj) then
-			local Typ = obj:GetResourceType()
-			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-		end
-	end
-	return Results
-end
-
-function ENT:HaveResourcesToPerformTask(requirements)
-	local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
-	for typ,amt in pairs(requirements)do
-		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
-			RequirementsMet=false
-			break
-		end
-	end
-	return RequirementsMet
-end
-
-function ENT:CanSee(ent)
- if(ent:GetNoDraw())then return false end
-	return not util.TraceLine({
-		start=self:GetPos(),
-		endpos=ent:GetPos(),
-		filter={self,ent},
-		mask=MASK_SOLID_BRUSHONLY
-	}).Hit
 end

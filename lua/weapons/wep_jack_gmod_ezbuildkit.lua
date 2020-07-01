@@ -100,68 +100,6 @@ function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
 	self.NextIdle=CurTime()+vm:SequenceDuration()
 end
-function SWEP:CanSee(ent)
-	if(ent:GetNoDraw())then return end
-	return not util.TraceLine({
-		start=self:GetPos(),
-		endpos=ent:GetPos(),
-		filter={self,self.Owner,ent},
-		mask=MASK_SOLID_BRUSHONLY
-	}).Hit
-end
-function SWEP:CountResourcesInRange()
-	local Results={}
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(self:CanSee(obj)))then
-			local Typ=obj.EZsupplies
-			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-		end
-	end
-	return Results
-end
-function SWEP:HaveResourcesToPerformTask(requirements)
-	local RequirementsMet,ResourcesInRange=true,self:CountResourcesInRange()
-	for typ,amt in pairs(requirements)do
-		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
-			RequirementsMet=false
-			break
-		end
-	end
-	return RequirementsMet
-end
-function SWEP:ConsumeResourcesInRange(requirements)
-	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
-	while not((AllDone)or(Attempts>1000))do
-		local TypesNeeded=table.GetKeys(RequirementsRemaining)
-		if((TypesNeeded)and(#TypesNeeded>0))then
-			local ResourceTypeToLookFor=TypesNeeded[1]
-			local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-			local Donor=self:FindResourceContainer(ResourceTypeToLookFor,1) -- every little bit helps
-			if(Donor)then
-				local AmountWeCanTake=Donor:GetResource()
-				if(AmountWeNeed>=AmountWeCanTake)then
-					Donor:SetResource(0)
-					Donor:Remove()
-					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
-				else
-					Donor:SetResource(AmountWeCanTake-AmountWeNeed)
-					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
-				end
-				if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
-			end
-		else
-			AllDone=true
-		end
-		Attempts=Attempts+1
-	end
-end
-function SWEP:FindResourceContainer(typ,amt)
-	for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(self:CanSee(obj)))then
-			return obj
-		end
-	end
-end
 function SWEP:FindNailPos()
 	local Pos,Vec=self.Owner:GetShootPos(),self.Owner:GetAimVector()
 	local Tr1=util.QuickTrace(Pos,Vec*80,{self.Owner})
@@ -252,13 +190,13 @@ function SWEP:PrimaryAttack()
 			if((self.Buildables[SelectedBuild][2]=="package")and not(self:GetPackagableObject()))then return end
 			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
-			if(self:HaveResourcesToPerformTask(Reqs))then
+			if(JMod_HaveResourcesToPerformTask(nil,nil,Reqs,self))then
 				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
 				if override == false then
 					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 					return
 				end
-				self:ConsumeResourcesInRange(Reqs)
+				JMod_ConsumeResourcesInRange(Reqs,nil,nil,self)
 				Built=true
 				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
 				for i=1,BuildSteps do
@@ -304,7 +242,7 @@ function SWEP:PrimaryAttack()
 				self:Msg("device must be repaired before modifying")
 			elseif(State~=0)then
 				self:Msg("device must be turned off to modify")
-			elseif(self:HaveResourcesToPerformTask({parts=20}))then
+			elseif(JMod_HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
 				net.WriteTable(Ent.ModPerfSpecs)
@@ -361,8 +299,8 @@ function SWEP:ModifyMachine(ent,tbl,ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif(State~=0)then
 		self:Msg("device must be turned off to modify")
-	elseif(self:HaveResourcesToPerformTask({parts=20}))then
-		self:ConsumeResourcesInRange({parts=20})
+	elseif(JMod_HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
+		JMod_ConsumeResourcesInRange({parts=20},nil,nil,self)
 		ent:SetMods(tbl,ammoType)
 		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
 	else

@@ -260,7 +260,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		Butt:SetText("")
 		local reqs=itemInfo[2]
 		if(type(reqs)=="string")then reqs=itemInfo[3] end
-		local canMake=builder:HaveResourcesToPerformTask(reqs)
+		local canMake=JMod_HaveResourcesToPerformTask(nil,nil,reqs,builder)
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
@@ -787,7 +787,7 @@ local ArmorSlotButtons={
 	}
 }
 local ArmorResourceNiceNames={
-	biochem="BioChemicals",
+	chemicals="Chemicals",
 	electricity="Electricity"
 }
 local OpenDropdown=nil

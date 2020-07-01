@@ -116,7 +116,7 @@ JMod_ArmorTable = {
 		}, NonArmorProtectionProfile),
 		dur = 5,
 		chrg = {
-			biochem = 200
+			chemicals = 200
 		},
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
@@ -228,7 +228,7 @@ JMod_ArmorTable = {
 		pos = Vector(3.25, 1, 0),
 		ang = Angle(100, 180, 90),
 		chrg = {
-			biochem = 100
+			chemicals = 100
 		},
 		wgt = 5,
 		dur = 3,

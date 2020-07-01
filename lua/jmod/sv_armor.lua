@@ -99,11 +99,11 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										JMod_RemoveArmorByID(ply, id, true)
 										Busted = true
 									end
-								elseif ((armorData.chrg) and (armorData.chrg.biochem)) then
+								elseif ((armorData.chrg) and (armorData.chrg.chemicals)) then
 									local SubtractAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult / 10
-									armorData.chrg.biochem = math.Clamp(armorData.chrg.biochem - SubtractAmt, 0, 9e9)
+									armorData.chrg.chemicals = math.Clamp(armorData.chrg.chemicals - SubtractAmt, 0, 9e9)
 
-									if (armorData.chrg.biochem <= 0) then
+									if (armorData.chrg.chemicals <= 0) then
 										Protection = 0
 									end
 								end
@@ -356,8 +356,11 @@ net.Receive("JMod_Inventory",function(ln,ply)
 		if(ply.EZarmor.items[ID])then
 			ply.EZarmor.items[ID].tgl=not ply.EZarmor.items[ID].tgl
 		end
+	elseif(ActionType==3)then
+		-- todo
+	elseif(ActionType==4)then
+		-- todo
 	end
-	-- todo: more actions
 	JModEZarmorSync(ply)
 end)
 
