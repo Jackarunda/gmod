@@ -1,0 +1,16 @@
+vertexlitgeneric
+{
+	$additive	0
+	$basetexture	"models\jmod\black_glasslens"
+	$envmap	"env_cubemap"
+	$envmapcontrast	"1.5"
+	$model	1
+	$translucent	1
+	$nocull	1
+	$envmapsaturation	.25
+	$phong	1
+	$phongboost	"1"
+	$phongexponent	"8"
+	$phongtint	"[1 1 1]"
+	$phongfresnelranges	"[.2 .5 5]"
+}

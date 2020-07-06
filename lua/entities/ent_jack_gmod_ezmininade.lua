@@ -42,7 +42,7 @@ if(SERVER)then
 		end
 		
 	end
-    
+	
 	function ENT:Use(activator,activatorAgain,onOff)
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
@@ -57,9 +57,9 @@ if(SERVER)then
 			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
 			if(State==JMOD_EZ_STATE_OFF and Alt)then
 				self:Prime()
-                JMod_Hint(Dude, "grenade", self)
-            else
-                if not JMod_Hint(Dude, "prime", self) then JMod_Hint(Dude, "mininade", self) end
+				JMod_Hint(Dude, "grenade", self)
+			else
+				if not JMod_Hint(Dude, "prime", self) then JMod_Hint(Dude, "mininade", self) end
 			end
 			if self.Hints then  end
 			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)

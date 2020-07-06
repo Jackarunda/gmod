@@ -23,15 +23,6 @@ PrecacheParticleSystem("100lb_air")
 PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
 --PrecacheParticleSystem("50lb_ground")
-
-hook.Add("SetupMove","JMOD_ARMOR_MOVE",function(ply,mv,cmd)
-	---[[
-	if((ply.EZarmor)and(ply.EZarmor.speedfrac)and not(ply.EZarmor.speedfrac==1))then
-		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
-	end
-	--]]
-end)
 --
 local Alphanumerics={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
 function JMod_GenerateGUID()

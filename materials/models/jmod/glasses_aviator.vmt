@@ -1,0 +1,19 @@
+VertexLitGeneric
+{
+	$basetexture	"models\Characters\bastards\shared\glasses_aviator"
+	$bumpmap	"models\Characters\bastards\shared\glasses_aviator_normal"
+
+	$phong	1
+	$phongboost	"0.25"
+	$phongexponent	"8"
+	$phongtint	"[1 1 1]"
+	$phongfresnelranges	"[.2 .5 5]"
+
+	$rimlight	0
+	$rimlightexponent	"10"
+	$rimlightboost	"2"
+
+	$envmap	"env_cubemap"
+	$envmaptint	"[0.025 0.025 0.025]"
+	$halflambert	0
+}

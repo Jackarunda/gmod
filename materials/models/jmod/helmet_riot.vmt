@@ -1,0 +1,21 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/helmet_riot_d"
+	"$bumpmap" "models/jmod/helmet_riot_n"
+
+	$surfaceprop metal
+
+	$diffuseexp 1.5
+
+	"$normalmapalphaphongmask"     "1"
+
+ 	"$phong" "1"
+	"$phongexponent" "26"
+	"$phongboost"	"1"
+	"$phongfresnelranges"        "[1 1 1]"
+
+	$Envmap "env_cubemap" 
+	"$envmaptint" "[0.008 0.008 0.008]"
+	"$Envmapmask" "models/jmod/Briar_Cosmetic01_s"
+
+}

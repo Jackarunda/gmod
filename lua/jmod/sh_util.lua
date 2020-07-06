@@ -63,3 +63,78 @@ function JMod_IsDoor(ent)
 	local Class=ent:GetClass()
 	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating"))
 end
+function JMod_VisCheck(pos,targPos,sourceEnt)
+	local filter={}
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	if(sourceEnt)then table.insert(filter,sourceEnt) end
+	if(targPos and targPos.GetPos)then
+		if(targPos:GetNoDraw())then return false end
+		table.insert(filter,targPos)
+		targPos=targPos:LocalToWorld(targPos:OBBCenter())
+	end
+	return not util.TraceLine({
+		start=pos,
+		endpos=targPos,
+		filter=filter,
+		mask=MASK_SOLID_BRUSHONLY
+	}).Hit
+end
+function JMod_CountResourcesInRange(pos,range,sourceEnt)
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	local Results={}
+	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
+		if((obj.IsJackyEZresource)and(JMod_VisCheck(pos,obj,sourceEnt)))then
+			local Typ=obj.EZsupplies
+			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
+		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod_VisCheck(pos,obj,sourceEnt) then
+			local Typ = obj:GetResourceType()
+			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
+		end
+	end
+	return Results
+end
+function JMod_HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
+	local RequirementsMet,ResourcesInRange=true,JMod_CountResourcesInRange(pos,range,sourceEnt)
+	for typ,amt in pairs(requirements)do
+		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
+			RequirementsMet=false
+			break
+		end
+	end
+	return RequirementsMet
+end
+function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
+	while not((AllDone)or(Attempts>1000))do
+		local TypesNeeded=table.GetKeys(RequirementsRemaining)
+		if((TypesNeeded)and(#TypesNeeded>0))then
+			local ResourceTypeToLookFor=TypesNeeded[1]
+			local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
+			local Donor=JMod_FindResourceContainer(ResourceTypeToLookFor,1,pos,range,sourceEnt) -- every little bit helps
+			if(Donor)then
+				local AmountWeCanTake=Donor:GetResource()
+				if(AmountWeNeed>=AmountWeCanTake)then
+					Donor:SetResource(0)
+					Donor:Remove()
+					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
+				else
+					Donor:SetResource(AmountWeCanTake-AmountWeNeed)
+					RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
+				end
+				if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
+			end
+		else
+			AllDone=true
+		end
+		Attempts=Attempts+1
+	end
+end
+function JMod_FindResourceContainer(typ,amt,pos,range,sourcEnt)
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
+		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(JMod_VisCheck(pos,obj,sourceEnt)))then
+			return obj
+		end
+	end
+end

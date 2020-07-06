@@ -1,0 +1,11 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "Models/props_junk/gnome"
+"$bumpmap" "Models/props_junk/gnome_normal" //normalmap (make sure to include the specular mask in the alpha channel 
+"$phong" "1" //this turns on the phong effect
+"$phongexponent" "20" //change this number to make the specular highlight bigger or smaller (larger numbers give you a smaller highlight)
+"$phongboost" "0.05" //use this to increase/decrease the highlight intensity 
+"$phongfresnelranges" "[2 7 75]" //this are the highlight intensities at different incidence angles from the camera (first value is perpendicular to the camera and the 3rd value is away from the camera)
+}
+

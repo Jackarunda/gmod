@@ -192,14 +192,17 @@ function SWEP:SecondaryAttack()
 	if(self:GetSupplies()<0)then return end
 	if(SERVER)then
 		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
-			local Kit=ents.Create("ent_jack_gmod_ezmedkit")
-			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
-			Kit:SetAngles(self.Owner:GetAimVector():Angle())
-			Kit:Spawn()
-			Kit:Activate()
-			Kit.Supplies=self:GetSupplies()
-			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-			self:Remove()
+			if not(self.Dropped)then
+				self.Dropped=true
+				local Kit=ents.Create("ent_jack_gmod_ezmedkit")
+				Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
+				Kit:SetAngles(self.Owner:GetAimVector():Angle())
+				Kit:Spawn()
+				Kit:Activate()
+				Kit.Supplies=self:GetSupplies()
+				Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
+				self:Remove()
+			end
 			return
 		else
 			self:SetNextPrimaryFire(CurTime()+.65)
@@ -307,7 +310,7 @@ function SWEP:Think()
 	end
 end
 function SWEP:DrawHUD()
-    if GetConVar("cl_drawhud"):GetBool() == false then return end
+	if GetConVar("cl_drawhud"):GetBool() == false then return end
 	local W,H,Supplies=ScrW(),ScrH(),self:GetSupplies()
 	draw.SimpleTextOutlined("Supplies: "..Supplies,"Trebuchet24",W*.4,H*.7,Color(255,255,255,200),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("LMB: heal target","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))

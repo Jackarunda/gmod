@@ -1,0 +1,30 @@
+//Arachnit's super duper cool MLG vmt config, donut steal plz. :(
+// stolen
+
+"VertexLitGeneric"
+{
+//Basic
+	"$BaseTexture" 			    "models/jmod/ballistic_mask_color"
+	"$BumpMap" 				    "models/jmod/ballistic_mask_normal"
+	//"$PhongExponentTexture"     "models/jmod/phong_exp"
+
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "1" 	//< Change as needed
+	"$PhongExponent"            "1" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0.05 0.5 1]"
+	"$PhongTint" 			    "[.85 .85 1]"
+	"$PhongDisableHalflambert"  "0"
+	"$PhongAlbedoTint"          "1"
+	"$PhongAlbedoBoost"         "3"
+//	"$BasemapAlphaPhongMask"    "1"
+//	"$NormalmapAlphaPhongMask"  "1"
+	"$ForcePhong"				"1"
+
+//Other
+	"$Model"                    "1"
+	"$NoDecal" 				    "0"
+	"$NoLod" 				    "0"
+	"$AmbientOcclusion" 	    "1"
+	"$NoCull" 				    "1"
+}

@@ -115,10 +115,10 @@ if(SERVER)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,80)
 				self.EZdroppableBombArmedTime=CurTime()
-                JMod_Hint(activator, "dualdet", self)
+				JMod_Hint(activator, "dualdet", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
-                JMod_Hint(activator, "arm", self)
+				JMod_Hint(activator, "arm", self)
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then

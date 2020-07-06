@@ -1,0 +1,36 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/helmet_riot_d"
+	"$bumpmap" "models/jmod/helmet_riot_n"
+ 
+
+	"$phongexponenttexture" 	"models/jmod/helmet_riot_s"
+	$PhongAlbedoTint 1
+
+	"$PhongWarpTexture" "models/jmod/phongwarp_metal"
+
+$surfaceprop glass
+
+$halflambert 1
+$diffuseexp 1.5
+
+	$translucent "1"
+
+	"$normalmapalphaphongmask"     "1"
+
+ 	"$phong" "1"
+	"$phongexponent" "26"
+	"$phongboost"	"1"
+	"$phongfresnelranges"        "[0.3 9 6]"
+
+
+	"$rimlight" "1" 
+	"$rimlightexponent" "10.5" 
+	"$rimlightboost" "1.5" 
+	"$rimmask" 1
+
+	$Envmap "env_cubemap" 
+	"$envmaptint" "[0.02 0.02 0.02]"
+	"$Envmapmask" "models/splinks/KF2/characters/Briar/Briar_Cosmetic01_s"
+
+}

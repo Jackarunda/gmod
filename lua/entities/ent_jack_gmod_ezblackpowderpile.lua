@@ -17,7 +17,7 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(false)
 		self:SetUseType(SIMPLE_USE)
-        self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(1)

@@ -1,0 +1,30 @@
+//Arachnit's super duper cool MLG vmt config, donut steal plz. :(
+// stolen, sry
+
+"VertexLitGeneric"
+{
+//Basic
+	"$BaseTexture" 			    "models/jmod/heavy_armor_color"
+	"$BumpMap" 				    "models/jmod/heavy_armor_normal"
+	"$PhongExponentTexture"     "models/jmod/heavy_armor_masks1"
+
+
+//Warp
+	"$LightWarpTexture"         "models/jmod/clothes_wrp2"		//< Change as needed
+	"$PhongWarpTexture"         "models/jmod/ctm_specwarp" 		//< Change as needed
+	"$FresnelRangesTexture"     "models/jmod/ctm_fresnelwarp"
+	"$WarpIndex"                "0.11"
+	
+//Phong
+	"$Phong"				    "1"
+	"$PhongBoost"               "1" 	//< Change as needed
+//	"$PhongExponent"            "60" 	//< $PhongExponent overrides $PhongExponentTexture !!!
+	"$PhongFresnelRanges"	    "[0 .1 1]"
+	"$PhongTint" 			    "[.85 .85 1]"
+	"$PhongDisableHalflambert"  "0"
+	"$PhongAlbedoTint"          "1"
+	"$PhongAlbedoBoost"         "3"
+//	"$BasemapAlphaPhongMask"    "1"
+//	"$NormalmapAlphaPhongMask"  "1"
+	"$ForcePhong"				"1"
+}

@@ -205,14 +205,14 @@ if(SERVER)then
 		if(State==STATE_BROKEN)then  return end
 		if(State==STATE_OFF)then
 			
-            if self:GetElectricity() > 0 then self:TurnOn() JMod_Hint(activator, "afh enter", self)
-            else JMod_Hint(activator, "nopower", self)  end
+			if self:GetElectricity() > 0 then self:TurnOn() JMod_Hint(activator, "afh enter", self)
+			else JMod_Hint(activator, "nopower", self)  end
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
 				if(self.NextEnter<CurTime())then
 					self.Pod.EZvehicleEjectPos=self.Pod:WorldToLocal(activator:GetPos())
 					activator:EnterVehicle(self.Pod)
-                    JMod_Hint(activator, "afh upgrade")
+					JMod_Hint(activator, "afh upgrade")
 				end
 			end
 		end
@@ -331,7 +331,7 @@ if(SERVER)then
 		self.NextHeal=Time+1/self.HealSpeed^2.75
 		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
 		if(Supplies<=0)then
-            if IsValid(self.Patient) then JMod_Hint(self.Patient, "afh supply") end
+			if IsValid(self.Patient) then JMod_Hint(self.Patient, "afh supply") end
 			self:EndOperation(false)
 			return
 		end
