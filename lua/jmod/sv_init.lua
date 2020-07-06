@@ -98,17 +98,18 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.nightVision))then
-							armorData.chrg.electricity=math.Clamp(armorData.chrg.electricity-JMOD_CONFIG.ArmorChargeDepletionMult,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/4,0,9e9)
 						end
 					end
 				elseif(playa.EZarmor.effects.thermalVision)then
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.thermalVision))then
-							armorData.chrg.electricity=math.Clamp(armorData.chrg.electricity-JMOD_CONFIG.ArmorChargeDepletionMult,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/4,0,9e9)
 						end
 					end
 				end
+				JMod_CalcSpeed(playa)
 				JModEZarmorSync(playa)
 			end
 		end

@@ -77,7 +77,7 @@ local BasicArmorProtectionProfile = {
 	[DMG_BUCKSHOT] = .99,
 	[DMG_CLUB] = .9,
 	[DMG_SLASH] = .9,
-	[DMG_BULLET] = .85,
+	[DMG_BULLET] = .9,
 	[DMG_BLAST] = .85,
 	[DMG_SNIPER] = .8,
 	[DMG_AIRBOAT] = .8,
@@ -114,9 +114,9 @@ JMod_ArmorTable = {
 			[DMG_NERVEGAS] = 1,
 			[DMG_RADIATION] = .5
 		}, NonArmorProtectionProfile),
-		dur = 5,
+		dur = 2,
 		chrg = {
-			chemicals = 200
+			chemicals = 25
 		},
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
@@ -127,12 +127,15 @@ JMod_ArmorTable = {
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_gasmask",
 		tgl = {
-			bon = "ValveBiped.Bip01_Spine2",
-			pos = Vector(-5, 4, 4),
-			ang = Angle(-60, -15, 110),
+			pos = Vector(3, 3, 0),
+			ang = Angle(190, 180, 90),
 			mskmat = "",
 			sndlop = "",
-			def = NonArmorProtectionProfile
+			def = NonArmorProtectionProfile,
+			slots = {
+				eyes = 0,
+				mouthnose = 0
+			}
 		}
 	},
 	["BallisticMask"] = {
@@ -155,7 +158,10 @@ JMod_ArmorTable = {
 			ang = Angle(170, 180, 90),
 			mskmat = "",
 			sndlop = "",
-			def = NonArmorProtectionProfile
+			slots = {
+				eyes = 0,
+				mouthnose = 0
+			}
 		}
 	},
 	["NightVisionGoggles"] = {
@@ -166,12 +172,12 @@ JMod_ArmorTable = {
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
-		pos = Vector(6.5, 2.75, 0),
+		pos = Vector(6.5, 2, 0),
 		ang = Angle(-100, 0, 90),
 		wgt = 5,
-		dur = 3,
+		dur = 2,
 		chrg = {
-			electricity = 60
+			power = 25
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
 		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
@@ -183,7 +189,10 @@ JMod_ArmorTable = {
 			pos = Vector(6, 6, 0),
 			ang = Angle(-130, 0, 90),
 			mskmat = "",
-			eff = {}
+			eff = {},
+			slots = {
+				eyes = 0
+			}
 		}
 	},
 	["ThermalGoggles"] = {
@@ -194,12 +203,12 @@ JMod_ArmorTable = {
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
-		pos = Vector(6.5, 2.75, 0),
+		pos = Vector(6.5, 2, 0),
 		ang = Angle(-100, 0, 90),
 		wgt = 5,
-		dur = 3,
+		dur = 2,
 		chrg = {
-			electricity = 40
+			power = 25
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
 		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
@@ -211,7 +220,10 @@ JMod_ArmorTable = {
 			pos = Vector(6, 6, 0),
 			ang = Angle(-130, 0, 90),
 			mskmat = "",
-			eff = {}
+			eff = {},
+			slots = {
+				eyes = 0
+			}
 		}
 	},
 	["Respirator"] = {
@@ -228,14 +240,19 @@ JMod_ArmorTable = {
 		pos = Vector(3.25, 1, 0),
 		ang = Angle(100, 180, 90),
 		chrg = {
-			chemicals = 100
+			chemicals = 10
 		},
 		wgt = 5,
-		dur = 3,
+		dur = 2,
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_respirator",
 		tgl = {
-			def = NonArmorProtectionProfile
+			def = NonArmorProtectionProfile,
+			slots = {
+				mouthnose = 0
+			},
+			pos = Vector(3.25, -4, 0),
+			ang = Angle(110, 180, 90)
 		}
 	},
 	["Headset"] = {
@@ -249,16 +266,21 @@ JMod_ArmorTable = {
 		pos = Vector(.5, 3, .1),
 		ang = Angle(130, 0, 90),
 		wgt = 5,
-		dur = 3,
+		dur = 2,
 		chrg = {
-			electricity = 100
+			power = 10
 		},
 		ent = "ent_jack_gmod_ezarmor_headset",
 		eff = {
 			teamComms = true
 		},
 		tgl = {
-			eff = {}
+			eff = {},
+			slots = {
+				ears = 0
+			},
+			pos = Vector(1.5, -2.5, .1),
+			ang = Angle(100, 0, 90)
 		}
 	},
 	["Light-Helmet"] = {
@@ -272,7 +294,7 @@ JMod_ArmorTable = {
 		pos = Vector(1, -2, 0),
 		ang = Angle(-90, 0, -90),
 		wgt = 10,
-		dur = 100,
+		dur = 150,
 		ent = "ent_jack_gmod_ezarmor_lhead"
 	},
 	["Medium-Helmet"] = {
@@ -286,7 +308,7 @@ JMod_ArmorTable = {
 		pos = Vector(1, -2, 0),
 		ang = Angle(-90, 0, -90),
 		wgt = 15,
-		dur = 150,
+		dur = 200,
 		ent = "ent_jack_gmod_ezarmor_mhead"
 	},
 	["Heavy-Helmet"] = {
@@ -300,15 +322,15 @@ JMod_ArmorTable = {
 		pos = Vector(1, -3, 0),
 		ang = Angle(-90, 0, -90),
 		wgt = 20,
-		dur = 200,
+		dur = 250,
 		ent = "ent_jack_gmod_ezarmor_hhead"
 	},
 	["Riot-Helmet"] = {
 		mdl = "models/jmod/helmet_riot.mdl", -- kf2
 		slots = {
 			head = 0.8,
-			eyes = 1,
-			mouthnose = 1
+			eyes = .9,
+			mouthnose = .9
 		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
@@ -316,14 +338,16 @@ JMod_ArmorTable = {
 		pos = Vector(0, 1, 0),
 		ang = Angle(-90, 0, -90),
 		wgt = 15,
-		dur = 100,
+		dur = 150,
 		ent = "ent_jack_gmod_ezarmor_riot",
 		bdg = {
 			[1] = 0
 		},
 		tgl = {
 			slots = {
-				head = 0.8
+				head = 0.8,
+				eyes=0,
+				mouthnose=0
 			},
 			bdg = {
 				[1] = 1
@@ -343,21 +367,23 @@ JMod_ArmorTable = {
 		pos = Vector(1, 3.5, 0),
 		ang = Angle(-70, 0, -90),
 		wgt = 25,
-		dur = 150,
+		dur = 250,
 		ent = "ent_jack_gmod_ezarmor_rioth",
 		bdg = {
 			[0] = 0
 		},
 		tgl = {
 			slots = {
-				head = 0.9
+				head = 0.9,
+				eyes=0,
+				mouthnose=0
 			},
 			bdg = {
 				[0] = 1
 			}
 		}
 	},
-	["Maska-Helmet"] = {
+	["Ultra-Heavy-Helmet"] = {
 		mdl = "models/jmod/helmet_maska.mdl", -- tarkov
 		slots = {
 			head = 1,
@@ -370,7 +396,7 @@ JMod_ArmorTable = {
 		pos = Vector(1.5, -2, 0),
 		ang = Angle(-80, 0, -90),
 		wgt = 35,
-		dur = 200,
+		dur = 350,
 		mskmat = "mats_jack_gmod_sprites/slit_vignette.png",
 		ent = "ent_jack_gmod_ezarmor_maska",
 		bdg = {
@@ -378,7 +404,9 @@ JMod_ArmorTable = {
 		},
 		tgl = {
 			slots = {
-				head = 1
+				head = 1,
+				eyes=0,
+				mouthnose=0
 			},
 			bdg = {
 				[1] = 1
@@ -577,7 +605,7 @@ JMod_ArmorTable = {
 		ang = Angle(90, -85, 110),
 		wgt = 10,
 		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_slthigh",
+		ent = "ent_jack_gmod_ezarmor_llthigh",
 		gayPhysics = true
 	},
 	["Heavy-Left-Thigh"] = {
@@ -606,7 +634,7 @@ JMod_ArmorTable = {
 		ang = Angle(90, -95, 80),
 		wgt = 10,
 		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_srthigh",
+		ent = "ent_jack_gmod_ezarmor_lrthigh",
 		gayPhysics = true
 	},
 	["Heavy-Right-Thigh"] = {

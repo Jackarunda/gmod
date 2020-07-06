@@ -272,7 +272,6 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 		end
 		function Butt:DoClick()
-			print(typ,"a")
 			if(typ=="workbench")then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(builder)
@@ -293,7 +292,7 @@ net.Receive("JMod_EZbuildKit",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
 	
-	local resTbl = Kit:CountResourcesInRange()
+	local resTbl = JMod_CountResourcesInRange(nil,nil,Kit)
 	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
@@ -378,7 +377,7 @@ net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()
 	local Buildables=net.ReadTable()
 	
-	local resTbl = Bench:CountResourcesInRange()
+	local resTbl = JMod_CountResourcesInRange(nil,nil,Bench)
 	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
@@ -725,7 +724,7 @@ net.Receive("JMod_EZradio",function()
 	end
 end)
 local function GetItemInSlot(armorTable,slot)
-	if not(armorTable.items)then return nil end
+	if not(armorTable and armorTable.items)then return nil end
 	for id,armorData in pairs(armorTable.items)do
 		local ArmorInfo=JMod_ArmorTable[armorData.name]
 		if(ArmorInfo.slots[slot])then
@@ -759,7 +758,7 @@ local ArmorSlotButtons={
 	{
 		title="Repair",
 		visTestFunc=function(slot,itemID,itemData,itemInfo)
-			return itemData.dur<itemInfo.dur
+			return itemData.dur<itemInfo.dur*.9
 		end,
 		actionFunc=function(slot,itemID,itemData,itemInfo)
 			net.Start("JMod_Inventory")
@@ -788,7 +787,7 @@ local ArmorSlotButtons={
 }
 local ArmorResourceNiceNames={
 	chemicals="Chemicals",
-	electricity="Electricity"
+	power="Electricity"
 }
 local OpenDropdown=nil
 local function CreateArmorSlotButton(parent,slot,x,y)
@@ -804,15 +803,15 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 		draw.SimpleText(JMod_ArmorSlotNiceNames[slot],"DermaDefault",Buttalony:GetWide()/2,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		if(ItemID)then
 			local Str=ItemData.name..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
-			if(ItemData.tgl)then Str="DISENGAGED" end
+			if(ItemData.tgl and ItemInfo.tgl.slots[slot]==0)then Str="DISENGAGED" end
 			draw.SimpleText(Str,"DermaDefault",Buttalony:GetWide()/2,25,Color(200,200,200,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 	end
 	if(ItemID)then
-		local str="Durability: "..math.ceil(ItemData.dur).."/"..ItemInfo.dur
+		local str="Durability: "..math.Round(ItemData.dur,1).."/"..ItemInfo.dur
 		if(ItemInfo.chrg)then
 			for resource,maxAmt in pairs(ItemInfo.chrg)do
-				str=str.."\n"..ArmorResourceNiceNames[resource]..": "..math.ceil(ItemData.chrg[resource]).."/"..maxAmt
+				str=str.."\n"..ArmorResourceNiceNames[resource]..": "..math.Round(ItemData.chrg[resource],1).."/"..maxAmt
 			end
 		end
 		Buttalony:SetTooltip(str)

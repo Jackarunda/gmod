@@ -192,14 +192,17 @@ function SWEP:SecondaryAttack()
 	if(self:GetSupplies()<0)then return end
 	if(SERVER)then
 		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
-			local Kit=ents.Create("ent_jack_gmod_ezmedkit")
-			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
-			Kit:SetAngles(self.Owner:GetAimVector():Angle())
-			Kit:Spawn()
-			Kit:Activate()
-			Kit.Supplies=self:GetSupplies()
-			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-			self:Remove()
+			if not(self.Dropped)then
+				self.Dropped=true
+				local Kit=ents.Create("ent_jack_gmod_ezmedkit")
+				Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
+				Kit:SetAngles(self.Owner:GetAimVector():Angle())
+				Kit:Spawn()
+				Kit:Activate()
+				Kit.Supplies=self:GetSupplies()
+				Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
+				self:Remove()
+			end
 			return
 		else
 			self:SetNextPrimaryFire(CurTime()+.65)

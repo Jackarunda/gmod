@@ -2,30 +2,17 @@
 {
 	"$basetexture" "models/jmod/helmet_riot_d"
 	"$bumpmap" "models/jmod/helmet_riot_n"
- 
 
-	"$phongexponenttexture" 	"models/jmod/helmet_riot_s"
-	$PhongAlbedoTint 1
+	$surfaceprop metal
 
-	"$PhongWarpTexture" "models/jmod/phongwarp_metal"
-
-$surfaceprop metal
-
-$halflambert 1
-$diffuseexp 1.5
+	$diffuseexp 1.5
 
 	"$normalmapalphaphongmask"     "1"
 
  	"$phong" "1"
 	"$phongexponent" "26"
 	"$phongboost"	"1"
-	"$phongfresnelranges"        "[0.02 6 6]"
-
-
-	"$rimlight" "1" 
-	"$rimlightexponent" "10.5" 
-	"$rimlightboost" "1.5" 
-	"$rimmask" 1
+	"$phongfresnelranges"        "[1 1 1]"
 
 	$Envmap "env_cubemap" 
 	"$envmaptint" "[0.008 0.008 0.008]"

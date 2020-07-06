@@ -15,7 +15,6 @@ local function IsDamageOneOfTypes(dmg, types)
 
 	return false
 end
-
 function JModEZarmorSync(ply)
 	if not ply.EZarmor then return end
 	ply.EZarmor.effects = {}
@@ -27,9 +26,16 @@ function JModEZarmorSync(ply)
 
 		if((item.tgl)and(ArmorInfo.tgl))then
 			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
+			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+				if(type(v)=="table")then
+					if(#table.GetKeys(v)==0)then
+						ArmorInfo[k]={}
+					end
+				end
+			end
 		end
 
-		if ArmorInfo.eff and not (item.chrg and item.chrg.electricity and item.chrg.electricity <= 0) then
+		if ArmorInfo.eff and not (item.chrg and item.chrg.power and item.chrg.power <= 0) then
 			for effName, effMag in pairs(ArmorInfo.eff) do
 				if (type(effMag) == "number") then
 					ply.EZarmor.effects[effName] = (ply.EZarmor.effects or 0) + effMag
@@ -76,6 +82,13 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 		if armorData.tgl and ArmorInfo.tgl then
 			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
+			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+				if(type(v)=="table")then
+					if(#table.GetKeys(v)==0)then
+						ArmorInfo[k]={}
+					end
+				end
+			end
 		end
 
 		if (ArmorInfo) then
@@ -100,7 +113,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										Busted = true
 									end
 								elseif ((armorData.chrg) and (armorData.chrg.chemicals)) then
-									local SubtractAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult / 10
+									local SubtractAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult / 100
 									armorData.chrg.chemicals = math.Clamp(armorData.chrg.chemicals - SubtractAmt, 0, 9e9)
 
 									if (armorData.chrg.chemicals <= 0) then
@@ -118,7 +131,6 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 			end
 		end
 	end
-
 	return Protection, Busted
 end
 
@@ -171,9 +183,11 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 	end
 
 	Mul = (Mul - Protection) / JMOD_CONFIG.ArmorProtectionMult
+	print("scaling damage by",Mul)
 	dmg:ScaleDamage(Mul)
 
 	if (ArmorPieceBroke) then
+		JMod_CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
 end
@@ -196,6 +210,7 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 	dmg:ScaleDamage(Mul)
 
 	if (ArmorPieceBroke) then
+		JMod_CalcSpeed(ply)
 		JModEZarmorSync(ply)
 	end
 end
@@ -219,7 +234,7 @@ hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 	end
 end)
 
-local function CalcSpeed(ply)
+function JMod_CalcSpeed(ply)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
 
 	for k, v in pairs(ply.EZarmor.items) do
@@ -341,7 +356,7 @@ function JMod_EZ_Equip_Armor(ply, nameOrEnt)
 	}
 
 	ply.EZarmor.items[NewArmorID] = NewVirtualArmorItem
-	CalcSpeed(ply)
+	JMod_CalcSpeed(ply)
 	JModEZarmorSync(ply)
 end
 
@@ -357,17 +372,83 @@ net.Receive("JMod_Inventory",function(ln,ply)
 			ply.EZarmor.items[ID].tgl=not ply.EZarmor.items[ID].tgl
 		end
 	elseif(ActionType==3)then
-		-- todo
+		local ID=net.ReadString()
+		local ItemData=ply.EZarmor.items[ID]
+		local ItemInfo=JMod_ArmorTable[ItemData.name]
+		local RepairRecipe,RepairStatus={},0
+		for k,v in pairs(JMOD_CONFIG.Recipes)do
+			if(v[1]==ItemInfo.ent)then
+				if(ItemData.dur<ItemInfo.dur*.9)then
+					local BuildRecipe=v[2]
+					local DamagedFraction=1-(ItemData.dur/ItemInfo.dur)
+					for resourceName,resourceAmt in pairs(BuildRecipe)do
+						local RequiredAmt=math.floor(resourceAmt*DamagedFraction*1.2) -- 20% efficiency penalty for not needing a workbench
+						if(RequiredAmt>0)then RepairRecipe[resourceName]=RequiredAmt end
+					end
+					RepairStatus=1
+					---
+					if(JMod_HaveResourcesToPerformTask(nil,nil,RepairRecipe,ply))then
+						RepairStatus=2
+						JMod_ConsumeResourcesInRange(BuildRecipe,nil,nil,ply)
+						ItemData.dur=ItemInfo.dur
+					end
+				end
+				break
+			end
+		end
+		if(RepairStatus==0)then
+			ply:PrintMessage(HUD_PRINTCENTER,"item can not be repaired")
+		elseif(RepairStatus==1)then
+			local mats=""
+			for k,v in pairs(RepairRecipe)do
+				mats=mats..k..", "
+			end
+			ply:PrintMessage(HUD_PRINTCENTER,"missing resources for repair, need "..mats)
+		elseif(RepairStatus==2)then
+			ply:PrintMessage(HUD_PRINTCENTER,"item repaired")
+			for i=1,10 do
+				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",ply:GetPos(),60,math.random(80,120))
+			end
+		end
 	elseif(ActionType==4)then
-		-- todo
+		local ID=net.ReadString()
+		local ItemData=ply.EZarmor.items[ID]
+		local ItemInfo=JMod_ArmorTable[ItemData.name]
+		local RechargeRecipe,RechargeStatus={},0
+		for resourceName,maxAmt in pairs(ItemInfo.chrg)do
+			local missing=maxAmt-ItemData.chrg[resourceName]
+			if(missing>0)then RechargeRecipe[resourceName]=missing;RechargeStatus=1 end
+		end
+		if(RechargeStatus==1)then
+			if(JMod_HaveResourcesToPerformTask(nil,nil,RechargeRecipe,ply))then
+				RechargeStatus=2
+				JMod_ConsumeResourcesInRange(RechargeRecipe,nil,nil,ply)
+				for resourceName,maxAmt in pairs(ItemInfo.chrg)do
+					ItemData.chrg[resourceName]=maxAmt
+				end
+			end
+		end
+		if(RechargeStatus==0)then
+			ply:PrintMessage(HUD_PRINTCENTER,"item can not be recharged")
+		elseif(RechargeStatus==1)then
+			local mats=""
+			for k,v in pairs(RechargeRecipe)do
+				mats=mats..k..", "
+			end
+			ply:PrintMessage(HUD_PRINTCENTER,"missing resources for recharge, need "..mats)
+		elseif(RechargeStatus==2)then
+			ply:PrintMessage(HUD_PRINTCENTER,"item recharged")
+			sound.Play("items/ammo_pickup.wav",ply:GetPos(),60,math.random(100,140))
+		end
 	end
+	JMod_CalcSpeed(ply)
 	JModEZarmorSync(ply)
 end)
 
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	if not (ply and ply:IsSuperAdmin()) then return end
 	JMod_EZ_Equip_Armor(ply, "BallisticMask")
-	JMod_EZ_Equip_Armor(ply, "Maska-Helmet")
+	JMod_EZ_Equip_Armor(ply, "Ultra-Heavy-Helmet")
 	JMod_EZ_Equip_Armor(ply, "Heavy-Vest")
 	JMod_EZ_Equip_Armor(ply, "Pelvis-Panel")
 	JMod_EZ_Equip_Armor(ply, "Heavy-Left-Shoulder")

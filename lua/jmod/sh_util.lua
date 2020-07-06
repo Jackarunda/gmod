@@ -80,6 +80,7 @@ function JMod_VisCheck(pos,targPos,sourceEnt)
 	}).Hit
 end
 function JMod_CountResourcesInRange(pos,range,sourceEnt)
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
 		if((obj.IsJackyEZresource)and(JMod_VisCheck(pos,obj,sourceEnt)))then
@@ -103,6 +104,7 @@ function JMod_HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
 	return RequirementsMet
 end
 function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
+	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
 	while not((AllDone)or(Attempts>1000))do
 		local TypesNeeded=table.GetKeys(RequirementsRemaining)

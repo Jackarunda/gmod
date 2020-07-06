@@ -18,6 +18,13 @@ function JMod_ArmorPlayerModelDraw(mdl)
 			local ArmorInfo=mdl.JMod_ArmorTableCopy[armorData.name]
 			if((armorData.tgl)and(ArmorInfo.tgl))then
 				ArmorInfo=table.Merge(table.FullCopy(ArmorInfo),ArmorInfo.tgl)
+				for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+					if(type(v)=="table")then
+						if(#table.GetKeys(v)==0)then
+							ArmorInfo[k]={}
+						end
+					end
+				end
 			end
 			if(mdl.EZarmorModels[id])then
 				local Mdl=mdl.EZarmorModels[id]
@@ -41,6 +48,11 @@ function JMod_ArmorPlayerModelDraw(mdl)
 							local OldR,OldG,OldB=render.GetColorModulation()
 							local Colr=armorData.col
 							render.SetColorModulation(Colr.r/255,Colr.g/255,Colr.b/255)
+							if(ArmorInfo.bdg)then
+								for k,v in pairs(ArmorInfo.bdg)do
+									Mdl:SetBodygroup(k,v)
+								end
+							end
 							Mdl:DrawModel()
 							render.SetColorModulation(OldR,OldG,OldB)
 						end
