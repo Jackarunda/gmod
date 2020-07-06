@@ -299,7 +299,7 @@ local function GetArmorBySlot(currentArmorItems, slot)
 	return nil, nil
 end
 
-local function AreSlotsClear(currentArmorItems, newArmorName)
+local function GetAreSlotsClear(currentArmorItems, newArmorName)
 	local NewArmorInfo = JMod_ArmorTable[newArmorName]
 	local RequiredSlots = NewArmorInfo.slots
 
@@ -340,10 +340,10 @@ function JMod_EZ_Equip_Armor(ply, nameOrEnt)
 		end
 	end
 
-	local AreSlotsClear,ConflictingItemID=AreSlotsClear(ply.EZarmor.items,NewArmorName)
+	local AreSlotsClear,ConflictingItemID=GetAreSlotsClear(ply.EZarmor.items,NewArmorName)
 	while not(AreSlotsClear)do
 		JMod_RemoveArmorByID(ply,ConflictingItemID)
-		AreSlotsClear,ConflictingItemID=AreSlotsClear(ply.EZarmor.items,NewArmorName)
+		AreSlotsClear,ConflictingItemID=GetAreSlotsClear(ply.EZarmor.items,NewArmorName)
 	end
 
 	local NewVirtualArmorItem = {
