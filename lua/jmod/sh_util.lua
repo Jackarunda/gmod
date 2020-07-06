@@ -130,7 +130,7 @@ function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
 		Attempts=Attempts+1
 	end
 end
-function JMod_FindResourceContainer(typ,amt,pos,range,sourcEnt)
+function JMod_FindResourceContainer(typ,amt,pos,range,sourceEnt)
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
 		if((obj.IsJackyEZresource)and(obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(JMod_VisCheck(pos,obj,sourceEnt)))then

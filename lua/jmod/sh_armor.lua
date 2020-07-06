@@ -157,7 +157,6 @@ JMod_ArmorTable = {
 			pos = Vector(-2, 4, 0),
 			ang = Angle(170, 180, 90),
 			mskmat = "",
-			sndlop = "",
 			slots = {
 				eyes = 0,
 				mouthnose = 0
@@ -252,7 +251,8 @@ JMod_ArmorTable = {
 				mouthnose = 0
 			},
 			pos = Vector(3.25, -4, 0),
-			ang = Angle(110, 180, 90)
+			ang = Angle(110, 180, 90),
+			sndlop = ""
 		}
 	},
 	["Headset"] = {

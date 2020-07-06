@@ -340,10 +340,10 @@ function JMod_EZ_Equip_Armor(ply, nameOrEnt)
 		end
 	end
 
-	local AreSlotsClear, ConflictingItemID = AreSlotsClear(ply.EZarmor.items, NewArmorName)
-
-	if not (AreSlotsClear) then
-		JMod_RemoveArmorByID(ply, ConflictingItemID)
+	local AreSlotsClear,ConflictingItemID=AreSlotsClear(ply.EZarmor.items,NewArmorName)
+	while not(AreSlotsClear)do
+		JMod_RemoveArmorByID(ply,ConflictingItemID)
+		AreSlotsClear,ConflictingItemID=AreSlotsClear(ply.EZarmor.items,NewArmorName)
 	end
 
 	local NewVirtualArmorItem = {
@@ -417,7 +417,10 @@ net.Receive("JMod_Inventory",function(ln,ply)
 		local RechargeRecipe,RechargeStatus={},0
 		for resourceName,maxAmt in pairs(ItemInfo.chrg)do
 			local missing=maxAmt-ItemData.chrg[resourceName]
-			if(missing>0)then RechargeRecipe[resourceName]=missing;RechargeStatus=1 end
+			if(missing>0)then
+				RechargeRecipe[resourceName]=missing*1.1 -- 10% penalty for doing this in the field
+				RechargeStatus=1
+			end
 		end
 		if(RechargeStatus==1)then
 			if(JMod_HaveResourcesToPerformTask(nil,nil,RechargeRecipe,ply))then

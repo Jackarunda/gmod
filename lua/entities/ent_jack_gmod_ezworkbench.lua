@@ -224,7 +224,7 @@ if(SERVER)then
 			if((TypesNeeded)and(#TypesNeeded>0))then
 				local ResourceTypeToLookFor=TypesNeeded[1]
 				local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-				local Donor=self:FindResourceContainer(ResourceTypeToLookFor,1) -- every little bit helps
+				local Donor=JMod_FindResourceContainer(ResourceTypeToLookFor,1,nil,nil,self) -- every little bit helps
 				if(Donor)then
 					local AmountWeCanTake=Donor:GetResource()
 					if(AmountWeNeed>=AmountWeCanTake)then
@@ -245,14 +245,6 @@ if(SERVER)then
 				AllDone=true
 			end
 			Attempts=Attempts+1
-		end
-	end
-	function ENT:FindResourceContainer(typ,amt)
-		for k,obj in pairs(ents.FindInSphere(self:GetPos(),150))do
-			if ((obj.IsJackyEZresource and obj.EZsupplies==typ) or (obj:GetClass() == "ent_jack_gmod_ezcrate" and obj:GetResourceType() == typ)) 
-					and obj:GetResource()>=amt and self:CanSee(obj)then
-				return obj
-			end
 		end
 	end
 	function ENT:TryBuild(itemName,ply)

@@ -270,7 +270,7 @@ function SWEP:PrimaryAttack()
 					for resourceType,requiredAmt in pairs(UpgradeInfo)do
 						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
 						if(CurAmt<requiredAmt)then
-							local ResourceContainer=self:FindResourceContainer(resourceType,UpgradeRate)
+							local ResourceContainer=JMod_FindResourceContainer(resourceType,UpgradeRate,nil,nil,self.Owner)
 							if(ResourceContainer)then
 								self:UpgradeEntWithResource(Ent,ResourceContainer,UpgradeRate)
 								Upgraded=true
