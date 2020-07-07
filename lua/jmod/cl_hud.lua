@@ -9,8 +9,9 @@ hook.Add("HUDPaintBackground","JMOD_HUDBG",function()
 				Mat=Material(ply.EZarmor.mskmat)
 				MaskMats[ply.EZarmor.mskmat]=Mat
 			end
+			local Col=render.GetLightColor(EyePos())
 			surface.SetMaterial(Mat)
-			surface.SetDrawColor(255,255,255,255)
+			surface.SetDrawColor(Col.r*255,Col.g*255,Col.b*255,255)
 			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
 			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
 			surface.DrawTexturedRect(-1,-1,ScrW()+2,ScrH()+2)
@@ -61,13 +62,18 @@ end
 local GoggleDarkness,GogglesWereOn,OldLightPos=0,false,Vector(0,0,0)
 local ThermalGlowMat=Material("models/debug/debugwhite")
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
-	local ply,FT,SelfPos,Time=LocalPlayer(),FrameTime(),EyePos(),CurTime()
+	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
 	local AimVec=ply:GetAimVector()
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
 	--JMod_MeasureFramerate()
 	if not(ply:ShouldDrawLocalPlayer())then
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
-			if(ply.EZarmor.effects.nightVision)then
+			if(ply.EZarmor.blackvision)then
+				surface.SetDrawColor(0,0,0,255)
+				surface.DrawRect(-1,-1,W+2,H+2)
+				draw.SimpleText("vision device is dead; please recharge","JMod-Display",W/2,H*.8,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+				--GoggleDarkness=100
+			elseif(ply.EZarmor.effects.nightVision)then
 				if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
 				DrawColorModify({
 					["$pp_colour_addr"]=0,
@@ -154,9 +160,9 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		if(GoggleDarkness>0)then
 			local Alpha=255*(GoggleDarkness/100)^.5
 			surface.SetDrawColor(0,0,0,Alpha)
-			surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
-			surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
-			surface.DrawRect(-1,-1,ScrW()+2,ScrH()+2)
+			surface.DrawRect(-1,-1,W+2,H+2)
+			surface.DrawRect(-1,-1,W+2,H+2)
+			surface.DrawRect(-1,-1,W+2,H+2)
 			GoggleDarkness=math.Clamp(GoggleDarkness-FT*100,0,100)
 		end
 		if(ply.EZflashbanged)then

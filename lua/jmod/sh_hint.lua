@@ -127,8 +127,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezarmor_nvgs"] = {Type = "info", Text = "NV Goggles makes it easy to see in the dark when worn", Time = 3},
 	["ent_jack_gmod_ezarmor_thermals"] = {Type = "info", Text = "Thermal Goggles highlights living things when worn", Time = 3},
 	["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 3},
-	
-	
+
 	-- Resources
 	["ent_jack_gmod_ezadvparts"] = {Type = "info", Text = "Adv. Parts are used to craft and upgrade things", Time = 3},
 	["ent_jack_gmod_ezadvtextiles"] = {Type = "info", Text = "Adv. Textiles are used to craft armor and advanced devices", Time = 3},

@@ -20,6 +20,7 @@ function JModEZarmorSync(ply)
 	ply.EZarmor.effects = {}
 	ply.EZarmor.mskmat = nil
 	ply.EZarmor.sndlop = nil
+	ply.EZarmor.blackvision = nil
 
 	for id, item in pairs(ply.EZarmor.items) do
 		local ArmorInfo = table.FullCopy(JMod_ArmorTable[item.name])
@@ -34,8 +35,10 @@ function JModEZarmorSync(ply)
 				end
 			end
 		end
+		
+		local DeadBattery=item.chrg and item.chrg.power and item.chrg.power <= 0
 
-		if ArmorInfo.eff and not (item.chrg and item.chrg.power and item.chrg.power <= 0) then
+		if ArmorInfo.eff and not DeadBattery then
 			for effName, effMag in pairs(ArmorInfo.eff) do
 				if (type(effMag) == "number") then
 					ply.EZarmor.effects[effName] = (ply.EZarmor.effects or 0) + effMag
@@ -43,6 +46,11 @@ function JModEZarmorSync(ply)
 					ply.EZarmor.effects[effName] = effMag
 				end
 			end
+		end
+		
+		if((ArmorInfo.blackvisionwhendead)and(DeadBattery))then
+			ply.EZarmor.blackvision = true
+			JMod_Hint(ply,"vision dead")
 		end
 
 		if ArmorInfo.mskmat and ArmorInfo.mskmat ~= "" then
@@ -450,7 +458,6 @@ end)
 
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	if not (ply and ply:IsSuperAdmin()) then return end
-	JMod_EZ_Equip_Armor(ply, "BallisticMask")
 	JMod_EZ_Equip_Armor(ply, "Ultra-Heavy-Helmet")
 	JMod_EZ_Equip_Armor(ply, "Heavy-Vest")
 	JMod_EZ_Equip_Armor(ply, "Pelvis-Panel")

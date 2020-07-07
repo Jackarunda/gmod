@@ -123,7 +123,7 @@ JMod_ArmorTable = {
 		pos = Vector(0, .1, 0),
 		ang = Angle(100, 180, 90),
 		wgt = 5,
-		mskmat = "mats_jack_gmod_sprites/vignette.png",
+		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_gasmask",
 		tgl = {
@@ -184,7 +184,9 @@ JMod_ArmorTable = {
 		eff = {
 			nightVision = true
 		},
+		blackvisionwhendead=true,
 		tgl = {
+			blackvisionwhendead=false,
 			pos = Vector(6, 6, 0),
 			ang = Angle(-130, 0, 90),
 			mskmat = "",
@@ -215,7 +217,9 @@ JMod_ArmorTable = {
 		eff = {
 			thermalVision = true
 		},
+		blackvisionwhendead=true,
 		tgl = {
+			blackvisionwhendead=false,
 			pos = Vector(6, 6, 0),
 			ang = Angle(-130, 0, 90),
 			mskmat = "",
@@ -326,7 +330,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hhead"
 	},
 	["Riot-Helmet"] = {
-		mdl = "models/jmod/helmet_riot.mdl", -- kf2
+		mdl = "models/jmod/helmet_riot_heavy.mdl", -- csgo
 		slots = {
 			head = 0.8,
 			eyes = .9,
@@ -334,28 +338,30 @@ JMod_ArmorTable = {
 		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.1, 1, 1.1),
-		pos = Vector(0, 1, 0),
-		ang = Angle(-90, 0, -90),
+		siz = Vector(1, 1, 1.1),
+		pos = Vector(1, 3.5, 0),
+		ang = Angle(-70, 0, -90),
+		mskmat = "mats_jack_gmod_sprites/gray_translucent.png",
 		wgt = 15,
 		dur = 150,
 		ent = "ent_jack_gmod_ezarmor_riot",
 		bdg = {
-			[1] = 0
+			[0] = 0
 		},
 		tgl = {
+			mskmat = "",
 			slots = {
 				head = 0.8,
 				eyes=0,
 				mouthnose=0
 			},
 			bdg = {
-				[1] = 1
+				[0] = 1
 			}
 		}
 	},
 	["Heavy-Riot-Helmet"] = {
-		mdl = "models/jmod/helmet_riot_heavy.mdl", -- csgo
+		mdl = "models/jmod/helmet_riot.mdl",
 		slots = {
 			head = 0.9,
 			eyes = 1,
@@ -363,23 +369,25 @@ JMod_ArmorTable = {
 		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1, 1, 1.1),
-		pos = Vector(1, 3.5, 0),
-		ang = Angle(-70, 0, -90),
+		mskmat = "mats_jack_gmod_sprites/gray_translucent.png",
+		siz = Vector(1.1, 1, 1.1),
+		pos = Vector(0, 1, 0),
+		ang = Angle(-90, 0, -90),
 		wgt = 25,
 		dur = 250,
 		ent = "ent_jack_gmod_ezarmor_rioth",
 		bdg = {
-			[0] = 0
+			[1] = 0
 		},
 		tgl = {
+			mskmat = "",
 			slots = {
 				head = 0.9,
 				eyes=0,
 				mouthnose=0
 			},
 			bdg = {
-				[0] = 1
+				[1] = 1
 			}
 		}
 	},
