@@ -133,8 +133,8 @@ end
 function SWEP:SecondaryAttack()
 	if not(IsFirstTimePredicted())then return end
 	if(self:GetFists())then return end
-	JMod_Hint(self.Owner,"jmod hands grab","jmod hands drag")
 	if SERVER then
+		JMod_Hint(self.Owner,"jmod hands grab","jmod hands drag")
 		self:SetCarrying()
 		local tr=self.Owner:GetEyeTraceNoCursor()
 		if((IsValid(tr.Entity))and(self:CanPickup(tr.Entity))and not(tr.Entity:IsPlayer()))then
@@ -261,7 +261,7 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
-	JMod_Hint(self.Owner,"jmod hands","jmod hands move")
+	if(SERVER)then JMod_Hint(self.Owner,"jmod hands","jmod hands move") end
 	local side="fists_left"
 	if(math.random(1,2)==1)then side="fists_right" end
 	self:SetNextDown(CurTime()+7)
