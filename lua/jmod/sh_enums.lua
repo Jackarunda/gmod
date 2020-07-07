@@ -78,3 +78,4 @@ muzzleflash_m79
 -- if the json cant be read then print an error
 -- fuggin like let BK and WB draw from resource crates
 -- func for packages to read more info from ez entities
+-- clasnames to friendlist

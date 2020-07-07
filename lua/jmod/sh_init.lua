@@ -42,6 +42,15 @@ function JMod_PlayersCanComm(listener,talker)
 		return listener:Team()==talker:Team()
 	end
 end
+---
+local OldPrecacheSound=util.PrecacheSound
+util.PrecacheSound=function(snd)
+	if(snd)then OldPrecacheSound(snd) end
+end
+local OldPrecacheModel=util.PrecacheModel
+util.PrecacheModel=function(mdl)
+	if(mdl)then OldPrecacheModel(mdl) end
+end
 --
 hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
 	if(IsValid(JMOD_BLACK_HOLE))then
