@@ -70,6 +70,8 @@ if(SERVER)then
 			net.Send(activator)
 			if self.ArmorName == "Headset" then
 				JMod_Hint(activator, "armor friends", self)
+			else
+				JMod_Hint(activator, "inventory", self)
 			end
 		else
 			activator:PickupObject(self)
