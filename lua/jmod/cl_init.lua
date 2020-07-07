@@ -435,7 +435,7 @@ hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
 end)
 
 concommand.Add("jacky_supershadows",function(ply,cmd,args)
-	RunConsoleCommand("r_projectedtexture_filter",0)
+	RunConsoleCommand("r_projectedtexture_filter",.1)
 	RunConsoleCommand("r_flashlightdepthres",16384)
 	RunConsoleCommand("mat_depthbias_shadowmap",.0000005)
 	RunConsoleCommand("mat_slopescaledepthbias_shadowmap",2)

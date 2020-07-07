@@ -120,6 +120,7 @@ JMod_Hints = {
 	["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor", Followup = "bind walk", Time = 5},
 	["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},
 	["armor friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends to talk privately"},
+	["inventory"] = {Type = "info", Text = "open your jmod inventory menu with the command jmod_ez_inv or *inv* in chat", Time = 4},
 	["armor weight"] = {Type = "warn", Text = "Wearing more pieces or heavier pieces of armor will slow you down"},
 	
 	["ent_jack_gmod_ezarmor_balmask"] = {Type = "info", Text = "Bal. Mask blocks all damage to the face, but severely obstructs vision", Time = 3},
