@@ -125,6 +125,7 @@ end
 function ENT:ApplySupplyType(typ) 
 	if not(self.SupplyTypes[typ])then return end
 	self:SetResourceType(typ)
+	self.EZsupplies=typ
 	self.MaxResource=self.SupplyTypes[typ].MaxResource
 	self.ChildEntity=self.SupplyTypes[typ].ChildEntity
 	self.ChildEntityResourceAmount=self.SupplyTypes[typ].ChildEntityResourceAmount
