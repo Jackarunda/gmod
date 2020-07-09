@@ -1,11 +1,12 @@
 "VertexlitGeneric"
 {
-       "$basetexture" "models/weapons/v_models/CoD4/m4a1/weapon_m4_col"
-        $bumpmap   "models/weapons/v_models/CoD4/m4a1/normal"
+         "$basetexture" "models/weapons/v_models/CoD4/g3/weapon_g3_col"
+        $bumpmap   "models/weapons/v_models/CoD4/g3/normal"
  
         $phong  "1"
         $phongboost  ".2"
         $phongfresnelranges     "[1 1 1]"
         $phongexponent 20
         $nocull  1	
+		
 }

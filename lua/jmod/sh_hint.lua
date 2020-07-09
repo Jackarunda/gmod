@@ -152,5 +152,6 @@ JMod_Hints = {
 	["ent_jack_gmod_ezparts use"] = {Type = "pickup", Text = "Bump parts into broken devices to fix them", Time = 3},
 	["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
 	
-
+	-- Weapons
+	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim"}
 }
