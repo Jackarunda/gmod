@@ -5,24 +5,27 @@ carbine - CW2.0 MWR - G36C
 designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
 bolt action rifle - Robotnik's CoD4 SWEPs - R800
 sniper rifle - Robotnik's CoD4 SWEPs - M40A3
+magnum sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
-pump-action shotgun - Robotnik's CoD4 SWEPs - W1200 
+pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
+break-action shotgun - cod over-under shotty
 pistol - Mac's CoD Black Ops II SWEPs - B23R
 machine pistol - Mac's Black Ops SWEPs - MAC11
 submachine gun - Robotnik's CoD4 SWEPs - MP5
 light machine gun - Robotnik's CoD4 SWEPs - M249
 medium machine gun - Mac's CoD MW2 SWEPs - M240
-revolver - Mac's CoD MW2 SWEPs - .44 Magnum
+magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 rocket launcher - Mac's CoD MW2 SWEPs - AT4
-grenade revolver - Mac's CoD Black Ops II SWEPs - War Machine
+multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
+multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
+revolver - Mac's CoD Black Ops SWEPs - Python
+combat knife - TFA-CoD-IW-Combat-Knife
 lever-action rifle - 
-break-action shotgun - 
-combat knife - 
 ----------------------------
  - changes to arccw base:
  0) 3DHUD permanently enabled
@@ -41,6 +44,9 @@ combat knife -
  11) added left-hand view tracking to make reload animations more immersive (DISABLED, NEED TO FIX ANGLE CALCS)
  12) reduced Lerp speed of viewmodel movements by 20%
  13) fixed a bug in sh_deploy 257
+ 14) added hexed css shells, jhells, with much nicer materials
+ 15) added an IsFirstTimePredicted() call to sh_firing to prevent gun sounds from earraping during slowmo or lag
+ 16) new var, ShellEffect, to specify which lua shell effect a weapon should use
 -------------------------------
 "VertexlitGeneric"
 {
@@ -60,11 +66,32 @@ game.AddAmmoType({
 game.AddAmmoType({
 	name = "Medium Rifle Round"
 })
+for k,v in pairs({
+	"muzzleflash_g3",
+	"muzzleflash_m14",
+	"muzzleflash_ak47",
+	"muzzleflash_ak74",
+	"muzzleflash_6",
+	"muzzleflash_pistol_rbull",
+	"muzzleflash_pistol",
+	"muzzleflash_suppressed",
+	"muzzleflash_pistol_deagle",
+	"muzzleflash_OTS",
+	"muzzleflash_M3",
+	"muzzleflash_smg",
+	"muzzleflash_SR25",
+	"muzzleflash_shotgun",
+	"muzzle_center_M82",
+	"muzzleflash_m79"
+})do
+	PrecacheParticleSystem(v)
+end
 if(CLIENT)then
 	language.Add("Light Rifle Round_ammo","Light Rifle Round")
 	language.Add("Medium Rifle Round_ammo","Medium Rifle Round")
 	concommand.Add("jacky_vm_debug",function(ply,cmd,args)
 		local VM=ply:GetViewModel()
+		print(VM:GetModel())
 		for i=0,100 do
 			local Info=VM:GetSequenceInfo(i)
 			if(Info)then print(i);PrintTable(Info) end
@@ -75,62 +102,91 @@ if(CLIENT)then
 			if(Name)then print(i);print(Name) end
 		end
 	end)
-	local WDir,StabilityStamina,BreathStatus=VectorRand(),100,false
-	local function BreatheIn()
-		if not(BreathStatus)then
-			BreathStatus=true
-			surface.PlaySound("snds_jack_gmod/weapons/focus_inhale.wav")
+	local SlotInfoTable={
+		back={
+			right={
+				bone="ValveBiped.Bip01_Spine4"
+			},
+			left={
+				bone="ValveBiped.Bip01_Spine4"
+			}
+		},
+		thighs={
+			right={
+				bone="ValveBiped.Bip01_R_Thigh"
+			},
+			left={
+				bone="ValveBiped.Bip01_L_Thigh"
+			}
+		}
+	}		
+	local function RenderHolsteredWeapon(ply,slot,side)
+		local Class=ply.EZweapons.slots[slot][side]
+		if((Class)and(ply:HasWeapon(Class))and not(ply:GetActiveWeapon():GetClass()==Class))then
+			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
+			local ID=ply:LookupBone(slotInfo.bone)
+			if(ID)then
+				local Wep=ply:GetWeapon(Class)
+				local WepPos,WepAng=Wep.BodyHolsterPos,Wep.BodyHolsterAng
+				if(side=="left")then WepPos=Wep.BodyHolsterPosL;WepAng=Wep.BodyHolsterAngL end
+				local pos,ang=ply:GetBonePosition(ID)
+				local up,right,forward=ang:Up(),ang:Right(),ang:Forward()
+				pos=pos+right*WepPos.x+forward*WepPos.y+up*WepPos.z
+				ang:RotateAroundAxis(right,WepAng.p)
+				ang:RotateAroundAxis(up,WepAng.y)
+				ang:RotateAroundAxis(forward,WepAng.r)
+				mdl:SetRenderOrigin(pos)
+				mdl:SetRenderAngles(ang)
+				mdl:DrawModel()
+			end
+		else
+			ply.EZweapons.slots[slot][side]=nil
 		end
 	end
-	local function BreatheOut()
-		if(BreathStatus)then
-			BreathStatus=false
-			surface.PlaySound("snds_jack_gmod/weapons/focus_exhale.wav")
-		end
-	end
-	hook.Add("CreateMove","JMod_CreateMove",function(cmd)
-		local ply=LocalPlayer()
+	hook.Add("PostPlayerDraw","JMod_WeaponPlayerDraw",function(ply)
 		if not(ply:Alive())then return end
-		local Wep=ply:GetActiveWeapon()
-		if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(ply:KeyDown(IN_ATTACK2)))then
-			local Amt,Sporadicness,FT=30*Wep.AimSwayFactor,50,FrameTime()
-			if(ply:Crouching())then Amt=Amt*.75 end
-			if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.5 end
-			if((ply:KeyDown(IN_FORWARD))or(ply:KeyDown(IN_BACK))or(ply:KeyDown(IN_MOVELEFT))or(ply:KeyDown(IN_MOVERIGHT)))then
-				Sporadicness=Sporadicness*2
-				Amt=Amt*2
-			else
-				local Key=(JMOD_CONFIG and JMOD_CONFIG.AltFunctionKey) or IN_WALK
-				if(ply:KeyDown(Key))then
-					StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
-					if(StabilityStamina>0)then
-						BreatheIn()
-						Amt=Amt*.5
-					else
-						BreatheOut()
+		if not(ply.EZweapons)then
+			ply.EZweapons={
+				mdls={},
+				slots={
+					back={
+						left=nil,
+						right=nil
+					},
+					thighs={
+						left=nil,
+						right=nil
+					}
+				}
+			}
+		end
+		local ActiveWep=ply:GetActiveWeapon()
+		for k,wep in pairs(ply:GetWeapons())do
+			if(wep.BodyHolsterSlot)then
+				local Class,Slots=wep:GetClass(),ply.EZweapons.slots[wep.BodyHolsterSlot]
+				if(wep~=ActiveWep)then
+					if not(ply.EZweapons.mdls[Class])then
+						local mdl=ClientsideModel(wep.WorldModel)
+						mdl:SetPos(ply:GetPos())
+						mdl:SetParent(ply)
+						mdl:SetModelScale(wep.BodyHolsterScale or 1)
+						mdl:SetNoDraw(true)
+						ply.EZweapons.mdls[Class]=mdl
 					end
-				else
-					StabilityStamina=math.Clamp(StabilityStamina+FT*30,0,100)
-					BreatheOut()
+					
+					if(not(Slots.right)and(Slots.left~=Class))then
+						Slots.right=Class
+					elseif(not(Slots.left)and(Slots.right~=Class))then
+						Slots.left=Class
+					end
 				end
 			end
-			local S,EAng=.05,cmd:GetViewAngles()
-			WDir=(WDir+FT*VectorRand()*Sporadicness):GetNormalized()
-			EAng.pitch=math.NormalizeAngle(EAng.pitch+WDir.z*FT*Amt*S)
-			EAng.yaw=math.NormalizeAngle(EAng.yaw+WDir.x*FT*Amt*S)
-			cmd:SetViewAngles(EAng)
 		end
+		RenderHolsteredWeapon(ply,"back","right")
+		RenderHolsteredWeapon(ply,"back","left")
+		RenderHolsteredWeapon(ply,"thighs","right")
+		RenderHolsteredWeapon(ply,"thighs","left")
 	end)
-	--[[
-	hook.Add("PostDrawHUD","JMod_PostDrawHUD",function()
-		local ply=LocalPlayer()
-		if not(ply:Alive())then return end
-		local Wep=ply:GetActiveWeapon()
-		if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(ply:KeyDown(IN_ATTACK2)))then
-			if not((ply:KeyDown(IN_FORWARD))or(ply:KeyDown(IN_BACK))or(ply:KeyDown(IN_MOVELEFT))or(ply:KeyDown(IN_MOVERIGHT)))then
-				local 
-			end
-		end
-	end)
-	--]]
+elseif(SERVER)then
+	--
 end

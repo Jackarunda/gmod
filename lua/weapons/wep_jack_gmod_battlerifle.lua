@@ -1,38 +1,29 @@
-SWEP.Base = "arccw_base"
+SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.Spawnable = true -- this obviously has to be set to true
-SWEP.Category = "JMod - EZ Weapons" -- edit this if you like
-SWEP.AdminOnly = false
 
 SWEP.PrintName = "Battle Rifle"
 
 SWEP.Slot = 2
 
-SWEP.UseHands = true
-
 SWEP.ViewModel = "models/weapons/v_cod4_g3_new.mdl"
-SWEP.WorldModel = "models/weapons/w_cod4_g3_new.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_g3.mdl"
 SWEP.ViewModelFOV = 70
-
-SWEP.DefaultBodygroups = "000000"
+SWEP.BodyHolsterSlot = "back"
+SWEP.BodyHolsterAng = Angle(185,15,180)
+SWEP.BodyHolsterAngL = Angle(0,195,170)
+SWEP.BodyHolsterPos = Vector(2,-11,-11)
+SWEP.BodyHolsterPosL = Vector(1,-11,11)
+SWEP.BodyHolsterScale = .9
 
 SWEP.Damage = 66
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 300 -- in METERS
 SWEP.Penetration = 85
-SWEP.DamageType = DMG_BULLET
-SWEP.ShootEntity = nil -- entity to fire, if any
-SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
--- IN M/S
 
-SWEP.TracerNum = 1 -- tracer every X
-SWEP.TracerCol = Color(255, 25, 25)
-SWEP.TracerWidth = 3
-
-SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .85
+SWEP.Recoil = .9
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -47,46 +38,26 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.NPCWeaponType = {"weapon_ar2", "weapon_smg1"}
-SWEP.NPCWeight = 150
-
 SWEP.AccuracyMOA = 3.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 SWEP.AimSwayFactor=.9
 
 SWEP.Primary.Ammo = "Medium Rifle Round" -- what ammo type the gun uses
-SWEP.MagID = "stanag" -- the magazine pool this gun draws from
-
-SWEP.ShootVol = 75 -- volume of shoot sound
-SWEP.ShootPitch = 100 -- pitch of shoot sound
 
 SWEP.FirstShootSound = "snds_jack_gmod/weapons/medium_rifle.wav"
 SWEP.ShootSound = "snds_jack_gmod/weapons/medium_rifle.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/weapons/rifle_far.wav"
 SWEP.ShootSoundExtraMult=1
 
-SWEP.MuzzleEffect = "muzzleflash_4"
-SWEP.ShellModel = "models/shells/shell_556.mdl"
+SWEP.MuzzleEffect = "muzzleflash_g3"
+SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
 SWEP.ShellPitch = 80
 SWEP.ShellScale = 2
-
-SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
-SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .6
 SWEP.SightTime = .75
-
-SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
-    -- [0] = "bulletchamber",
-    -- [1] = "bullet1"
-}
-
-SWEP.ProceduralRegularFire = false
-SWEP.ProceduralIronFire = false
-
-SWEP.CaseBones = {}
 
 SWEP.IronSightStruct = {
     Pos = Vector(-2.57, 0, 1),
@@ -95,62 +66,15 @@ SWEP.IronSightStruct = {
     SwitchToSound = "", -- sound that plays when switching to this sight
 }
 
-SWEP.HoldtypeHolstered = "passive"
-SWEP.HoldtypeActive = "ar2"
-SWEP.HoldtypeSights = "rpg"
-
-SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
-
 SWEP.ActivePos = Vector(1, 1, 1)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.HolsterPos = Vector(6, -1, 0)
 SWEP.HolsterAng = Angle(-20, 50, 0)
 
-SWEP.BarrelOffsetSighted = Vector(0, 0, -1)
-SWEP.BarrelOffsetHip = Vector(2, 0, -2)
-
 SWEP.MeleeAttackTime=.35
 
 SWEP.BarrelLength = 42
-
-SWEP.AttachmentElements = {
-	--[[
-    ["noch"] = {
-        VMBodygroups = {{ind = 1, bg = 1}},
-        WMBodygroups = {{ind = 2, bg = 1}},
-    }
-	--]]
-}
-
-SWEP.ExtraSightDist = 5
-
-SWEP.Attachments = {
-	--[[
-    {
-        PrintName = "Optic", -- print name
-        DefaultAttName = "Iron Sights",
-        Slot = "optic", -- what kind of attachments can fit here, can be string or table
-        Bone = "v_weapon.m4_Parent", -- relevant bone any attachments will be mostly referring to
-        Offset = {
-            vpos = Vector(0.75, -5.715, -1.609), -- offset that the attachment will be relative to the bone
-            vang = Angle(-90 - 1.46949, 0, -85 + 3.64274),
-            wang = Angle(-9.738, 0, 180)
-        },
-        SlideAmount = { -- how far this attachment can slide in both directions.
-            -- overrides Offset.
-            vmin = Vector(0.8, -5.715, -4),
-            vmax = Vector(0.8, -5.715, -0.5),
-            wmin = Vector(5.36, 0.739, -5.401),
-            wmax = Vector(5.36, 0.739, -5.401),
-        },
-        InstalledEles = {"noch"},
-        -- CorrectivePos = Vector(-0.017, 0, -0.4),
-        CorrectivePos = Vector(0.02, 0, 0),
-        CorrectiveAng = Angle(-3, 0, 0)
-    }
-	--]]
-}
 
 SWEP.Animations = {
     ["idle"] = {
@@ -196,7 +120,8 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = "snds_jack_gmod/weapons/battle_rifle/mag_out.wav", t = .3, v=65},
 			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = 1, v=65},
-			{s = "snds_jack_gmod/weapons/battle_rifle/mag_in.wav", t = 1.75, v=65}
+			{s = "snds_jack_gmod/weapons/battle_rifle/mag_in.wav", t = 1.7, v=65},
+			{s = "snds_jack_gmod/weapons/battle_rifle/mag_tap.wav", t = 2.1, v=65}
 		}
     },
     ["reload_empty"] = {
@@ -211,9 +136,10 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/weapons/battle_rifle/pull_bolt.wav", t = .1, v=65},
-			{s = "snds_jack_gmod/weapons/battle_rifle/mag_out.wav", t = .8, v=65},
-			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = 1.5, v=65},
-			{s = "snds_jack_gmod/weapons/battle_rifle/mag_in.wav", t = 2.2, v=65},
+			{s = "snds_jack_gmod/weapons/battle_rifle/mag_out.wav", t = .7, v=65},
+			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = 1.4, v=65},
+			{s = "snds_jack_gmod/weapons/battle_rifle/mag_in.wav", t = 2.1, v=65},
+			{s = "snds_jack_gmod/weapons/battle_rifle/mag_tap.wav", t = 2.5, v=65},
 			{s = "snds_jack_gmod/weapons/battle_rifle/bolt_release.wav", t = 3.2, v=65}
 		}
     },

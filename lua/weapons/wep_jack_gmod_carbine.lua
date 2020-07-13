@@ -1,33 +1,33 @@
 SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.Spawnable = true -- this obviously has to be set to true
 
-SWEP.PrintName = "Assault Rifle"
+SWEP.PrintName = "Carbine"
 
 SWEP.Slot = 2
 
-SWEP.ViewModel = "models/weapons/v_cod4_m16a4.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_m16.mdl"
-SWEP.ViewModelFOV = 65
+SWEP.ViewModel = "models/weapons/v_cod4_g36.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_g36.mdl"
+SWEP.ViewModelFOV = 60
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(185,15,180)
-SWEP.BodyHolsterAngL = Angle(0,195,170)
-SWEP.BodyHolsterPos = Vector(2,-11,-11)
-SWEP.BodyHolsterPosL = Vector(1,-11,11)
-SWEP.BodyHolsterScale = .825
+SWEP.BodyHolsterAng = Angle(0,-105,10)
+SWEP.BodyHolsterAngL = Angle(10,-75,180)
+SWEP.BodyHolsterPos = Vector(1,-11,-11)
+SWEP.BodyHolsterPosL = Vector(.5,-11,11)
+SWEP.BodyHolsterScale = .8
 
-SWEP.Damage = 48
+SWEP.Damage = 34
 SWEP.DamageMin = 5 -- damage done at maximum range
 SWEP.DamageRand = .35
-SWEP.Range = 200 -- in METERS
+SWEP.Range = 150 -- in METERS
 SWEP.Penetration = 55
 
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .5
+SWEP.Recoil = .55
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 750 -- 60 / RPM.
+SWEP.Delay = 60 / 800 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -41,10 +41,10 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
-SWEP.AimSwayFactor=1
+SWEP.AccuracyMOA = 5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 250
+SWEP.AimSwayFactor=1.1
 
 SWEP.Primary.Ammo = "Light Rifle Round" -- what ammo type the gun uses
 
@@ -57,27 +57,28 @@ SWEP.MuzzleEffect = "muzzleflash_4"
 SWEP.ShellModel = "models/jhells/shell_556.mdl"
 SWEP.ShellPitch = 95
 SWEP.ShellScale = 1.75
+SWEP.ShellOffsetFix = Vector(0,0,-3)
 
 SWEP.SpeedMult = 1
-SWEP.SightedSpeedMult = .7
-SWEP.SightTime = .5
+SWEP.SightedSpeedMult = .8
+SWEP.SightTime = .4
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-3.035, -1, -.025),
-    Ang = Angle(.75, 0, -5),
+    Pos = Vector(-3.55, 0, .58),
+    Ang = Angle(-1, 0, -5),
     Magnification = 1.1,
     SwitchToSound = "", -- sound that plays when switching to this sight
 }
 
-SWEP.ActivePos = Vector(.7, 0, .5)
+SWEP.ActivePos = Vector(1.5, 0, .5)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
-SWEP.HolsterPos = Vector(6, -4, 0)
+SWEP.HolsterPos = Vector(4, -4, 0)
 SWEP.HolsterAng = Angle(-20, 50, 0)
 
 SWEP.MeleeAttackTime=.35
 
-SWEP.BarrelLength = 38
+SWEP.BarrelLength = 28
 
 SWEP.Animations = {
     ["idle"] = {
@@ -121,11 +122,9 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.05, v=65},
-			{s = "snds_jack_gmod/weapons/tap2.wav", t = 1.4, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_in.wav", t = 1.6, v=65}
+			{s = "snds_jack_gmod/weapons/carbine/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.3, v=65},
+			{s = "snds_jack_gmod/weapons/carbine/mag_in.wav", t = 1.45, v=65}
 		}
     },
     ["reload_empty"] = {
@@ -139,12 +138,11 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/weapons/tap2.wav", t = 1.45, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_in.wav", t = 1.6, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/bolt_release.wav", t = 2.1, v=65}
+			{s = "snds_jack_gmod/weapons/carbine/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.1, v=65},
+			{s = "snds_jack_gmod/weapons/carbine/mag_in.wav", t = 1.25, v=65},
+			{s = "snds_jack_gmod/weapons/carbine/bolt_pull.wav", t = 1.95, v=65},
+			{s = "snds_jack_gmod/weapons/carbine/bolt_release.wav", t = 2.2, v=65}
 		}
     },
 }

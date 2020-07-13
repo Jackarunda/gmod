@@ -1,0 +1,8 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models/jhells/338mag/shell_338mag"
+	"$bumpmap" "models/jhells/338mag/shell_338mag_normal"
+	"$envmap" "env_cubemap"
+	"$envmapcontrast" ".9"
+	"$envmapsaturation" "0"
+}
