@@ -1,5 +1,4 @@
 SWEP.Base = "wep_jack_gmod_gunbase"
-SWEP.Spawnable = true -- this obviously has to be set to true
 
 SWEP.PrintName = "Assault Rifle"
 
@@ -44,13 +43,12 @@ SWEP.Firemodes = {
 SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
-SWEP.AimSwayFactor=1
 
 SWEP.Primary.Ammo = "Light Rifle Round" -- what ammo type the gun uses
 
-SWEP.FirstShootSound = "snds_jack_gmod/weapons/light_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/weapons/light_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
 SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_4"
@@ -87,14 +85,14 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["ready"] = {
-        Source = "draw2",
+        Source = "draw1",
         Time = 1,
         LHIK = true,
         LHIKIn = 0,
@@ -121,11 +119,11 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.05, v=65},
-			{s = "snds_jack_gmod/weapons/tap2.wav", t = 1.4, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_in.wav", t = 1.6, v=65}
+			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .45, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.05, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap2.wav", t = 1.4, v=65},
+			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t = 1.6, v=65}
 		}
     },
     ["reload_empty"] = {
@@ -139,12 +137,12 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/weapons/tap2.wav", t = 1.45, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/mag_in.wav", t = 1.6, v=65},
-			{s = "snds_jack_gmod/weapons/assault_rifle/bolt_release.wav", t = 2.1, v=65}
+			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .45, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap2.wav", t = 1.45, v=65},
+			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t = 1.6, v=65},
+			{s = "snds_jack_gmod/ez_weapons/assault_rifle/bolt_release.wav", t = 2.1, v=65}
 		}
     },
 }

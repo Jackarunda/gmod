@@ -1,9 +1,9 @@
 --[[
-assault rifle - CW2.0 MWR - M16A4
-battle rifle - Robotnik's CoD4 SWEPs - G3
-carbine - CW2.0 MWR - G36C
+	assault rifle - CW2.0 MWR - M16A4
+	battle rifle - Robotnik's CoD4 SWEPs - G3
+	carbine - CW2.0 MWR - G36C
 designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
-bolt action rifle - Robotnik's CoD4 SWEPs - R800
+bolt action rifle - Robotnik's CoD4 SWEPs - R700
 sniper rifle - Robotnik's CoD4 SWEPs - M40A3
 magnum sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
@@ -34,19 +34,14 @@ lever-action rifle -
  3) 3DHUD draws a little down and to the left so as not to cover center of screen
  4) crosshair completely disabled
  5) the 3DHUD no longer draws in 3rd person... not sure why it ever did
- 6) new var, DamageRand, representing by what fraction each shot's damage will randomly vary
- 7) new var, ShootSoundExtraMult, representing how many extra times to play the shoot sound each shot, making it louder
- 8) changed EmitSound in PlaySoundTable to sound.Play so that it actually plays instead of skipping
- 9) added a debugSights bool to the ironsightsstruct so i can easily adjust ironsight positions
- 10) added aim sway, with a new var, AimSwayFactor, allows you to change how much sway there is when aiming the weapon
-	- as well as the ability to reduce sway by holding ALT, with breathing control and SFX
-	- crouching and ArcCW bipod use also reduces sway
- 11) added left-hand view tracking to make reload animations more immersive (DISABLED, NEED TO FIX ANGLE CALCS)
- 12) reduced Lerp speed of viewmodel movements by 20%
- 13) fixed a bug in sh_deploy 257
- 14) added hexed css shells, jhells, with much nicer materials
- 15) added an IsFirstTimePredicted() call to sh_firing to prevent gun sounds from earraping during slowmo or lag
- 16) new var, ShellEffect, to specify which lua shell effect a weapon should use
+ 6) new var, ShootSoundExtraMult, representing how many extra times to play the shoot sound each shot, making it louder
+ 7) changed EmitSound in PlaySoundTable to sound.Play so that it actually plays instead of skipping
+ 8) added a debugSights bool to the ironsightsstruct so i can easily adjust ironsight positions
+ 9) reduced Lerp speed of viewmodel movements by 20%
+ 10) fixed a nullcheck bug in sh_deploy 257 (swep:holster)
+ 11) added an IsFirstTimePredicted() call to sh_firing to prevent gun sounds from earraping during slowmo or lag
+ 12) new var, ShellEffect, to specify which lua shell effect a weapon should use
+ 13) new var, NoFreeAmmo, disables defaultClip ammo giving on weapon pickup properly
 -------------------------------
 "VertexlitGeneric"
 {
@@ -60,6 +55,28 @@ lever-action rifle -
         $nocull  1	
 }
 --]]
+JMod_WeaponTable={
+	["Assault Rifle"]={
+		mdl="models/weapons/w_jmod_m16.mdl",
+		swep="wep_jack_gmod_assaultrifle",
+		ent="ent_jack_gmod_ezweapon_ar"
+	},
+	["Battle Rifle"]={
+		mdl="models/weapons/w_jmod_g3.mdl",
+		swep="wep_jack_gmod_battlerifle",
+		ent="ent_jack_gmod_ezweapon_br"
+	},
+	["Carbine"]={
+		mdl="models/weapons/w_jmod_g36.mdl",
+		swep="wep_jack_gmod_carbine",
+		ent="ent_jack_gmod_ezweapon_car"
+	},
+	["Designated Marksman Rifle"]={
+		mdl="models/weapons/w_jmod_m21.mdl",
+		swep="wep_jack_gmod_dmr",
+		ent="ent_jack_gmod_ezweapon_dmr"
+	}
+}
 game.AddAmmoType({
 	name = "Light Rifle Round"
 })
@@ -92,15 +109,17 @@ if(CLIENT)then
 	concommand.Add("jacky_vm_debug",function(ply,cmd,args)
 		local VM=ply:GetViewModel()
 		print(VM:GetModel())
-		for i=0,100 do
+		for i=0,20 do
 			local Info=VM:GetSequenceInfo(i)
-			if(Info)then print(i);PrintTable(Info) end
+			if(Info)then print("anim",i,Info.label) end
 		end
 		print("---------------------")
 		for i=0,100 do
 			local Name=VM:GetBoneName(i)
-			if(Name)then print(i);print(Name) end
+			if(Name)then print("bone",i,Name) end
 		end
+		print("---------------------")
+		PrintTable(VM:GetBodyGroups())
 	end)
 	local SlotInfoTable={
 		back={

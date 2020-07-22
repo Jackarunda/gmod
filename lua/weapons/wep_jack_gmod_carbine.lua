@@ -1,5 +1,4 @@
 SWEP.Base = "wep_jack_gmod_gunbase"
-SWEP.Spawnable = true -- this obviously has to be set to true
 
 SWEP.PrintName = "Carbine"
 
@@ -11,7 +10,7 @@ SWEP.ViewModelFOV = 60
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,10)
 SWEP.BodyHolsterAngL = Angle(10,-75,180)
-SWEP.BodyHolsterPos = Vector(1,-11,-11)
+SWEP.BodyHolsterPos = Vector(.5,-11,-11)
 SWEP.BodyHolsterPosL = Vector(.5,-11,11)
 SWEP.BodyHolsterScale = .8
 
@@ -44,13 +43,12 @@ SWEP.Firemodes = {
 SWEP.AccuracyMOA = 5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 250
-SWEP.AimSwayFactor=1.1
 
 SWEP.Primary.Ammo = "Light Rifle Round" -- what ammo type the gun uses
 
-SWEP.FirstShootSound = "snds_jack_gmod/weapons/light_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/weapons/light_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
 SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_4"
@@ -88,7 +86,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -122,9 +120,9 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/carbine/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/weapons/carbine/mag_in.wav", t = 1.45, v=65}
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.45, v=65}
 		}
     },
     ["reload_empty"] = {
@@ -138,11 +136,11 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/weapons/carbine/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/weapons/tap1.wav", t = 1.1, v=65},
-			{s = "snds_jack_gmod/weapons/carbine/mag_in.wav", t = 1.25, v=65},
-			{s = "snds_jack_gmod/weapons/carbine/bolt_pull.wav", t = 1.95, v=65},
-			{s = "snds_jack_gmod/weapons/carbine/bolt_release.wav", t = 2.2, v=65}
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_out.wav", t = .3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.25, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/bolt_pull.wav", t = 1.95, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/bolt_release.wav", t = 2.2, v=65}
 		}
     },
 }

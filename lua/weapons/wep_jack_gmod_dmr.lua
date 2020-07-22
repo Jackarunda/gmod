@@ -1,28 +1,30 @@
 SWEP.Base = "wep_jack_gmod_gunbase"
 
-SWEP.PrintName = "Battle Rifle"
+SWEP.PrintName = "Designated Marksman Rifle"
 
-SWEP.Slot = 2
+SWEP.Slot = 3
 
-SWEP.ViewModel = "models/weapons/v_cod4_g3_new.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_g3.mdl"
+SWEP.ViewModel = "models/weapons/c_mw2_m21ebr.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_m21.mdl"
 SWEP.ViewModelFOV = 70
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(185,15,180)
-SWEP.BodyHolsterAngL = Angle(0,195,170)
-SWEP.BodyHolsterPos = Vector(2,-11,-11)
-SWEP.BodyHolsterPosL = Vector(1,-11,11)
-SWEP.BodyHolsterScale = .9
+SWEP.BodyHolsterAng = Angle(0,-105,0)
+SWEP.BodyHolsterAngL = Angle(0,-75,190)
+SWEP.BodyHolsterPos = Vector(3,-10,-9)
+SWEP.BodyHolsterPosL = Vector(4,-10,9)
+SWEP.BodyHolsterScale = .95
 
-SWEP.Damage = 66
+SWEP.DefaultBodygroups = "01000"
+
+SWEP.Damage = 70
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
-SWEP.Range = 300 -- in METERS
-SWEP.Penetration = 85
+SWEP.Range = 350 -- in METERS
+SWEP.Penetration = 95
 
-SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .9
+SWEP.Recoil = 1
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -37,7 +39,7 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 3.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -58,10 +60,10 @@ SWEP.SightedSpeedMult = .6
 SWEP.SightTime = .75
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.57, 0, 1),
+    Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchToSound = "" -- sound that plays when switching to this sight
 }
 
 SWEP.ActivePos = Vector(1, 1, 1)
@@ -72,42 +74,60 @@ SWEP.HolsterAng = Angle(-20, 50, 0)
 
 SWEP.MeleeAttackTime=.35
 
-SWEP.BarrelLength = 42
+SWEP.BarrelLength = 46
 
+SWEP.Attachments = {
+    {
+        PrintName = "Optic",
+        DefaultAttName = "Iron Sights",
+        Slot = {"optic_ez"},
+        Bone = "tag_weapon",
+        Offset = {
+            vang = Angle(0, 0, 0),
+			vpos = Vector(10, 0, 3.8),
+            wpos = Vector(10, .8, -7),
+            wang = Angle(-10.393, 0, 180)
+        },
+		-- remove Slide because it ruins my life
+        Installed = "optic_jack_scope_low"
+    }
+}
+
+-- extra anims: holster, sprint
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
         Time = 1
     },
     ["draw"] = {
-        Source = "draw1",
-        Time = 0.6,
-        SoundTable = {{s = "snds_jack_gmod/weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        Source = "draw",
+        Time = 0.8,
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/dmr/draw.wav", t = 0, v=60}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["ready"] = {
-        Source = "draw2",
+        Source = "draw_first",
         Time = 1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
     },
     ["fire"] = {
-        Source = "shoot1",
+        Source = "fire",
         Time = 0.4,
         ShellEjectAt = 0,
     },
     ["fire_iron"] = {
-        Source = "shoot1",
+        Source = "fire",
         Time = 0.4,
         ShellEjectAt = 0,
     },
     ["reload"] = {
-        Source = "reload_full",
-        Time = 3,
+        Source = "reload_tac",
+        Time = 3.2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
@@ -116,15 +136,15 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t = 1.7, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t = 2.1, v=65}
+			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magstore.wav", t = 1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magdraw.wav", t = 1.5, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65}
 		}
     },
     ["reload_empty"] = {
         Source = "reload_empty",
-        Time = 4,
+        Time = 4.2,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
@@ -133,12 +153,12 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/pull_bolt.wav", t = .1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t = .7, v=65},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 1.4, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t = 2.1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t = 2.5, v=65},
-			{s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t = 3.2, v=65}
+			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magstore.wav", t = 1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magdraw.wav", t = 1.5, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav", t = 3.25, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65}
 		}
     },
 }

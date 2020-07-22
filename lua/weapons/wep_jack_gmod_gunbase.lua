@@ -2,6 +2,7 @@ SWEP.Base = "arccw_base"
 SWEP.Spawnable = false -- this obviously has to be set to true
 SWEP.Category = "JMod - EZ Weapons" -- edit this if you like
 SWEP.AdminOnly = false
+SWEP.EZdroppable = true
 
 SWEP.UseHands = true
 
@@ -15,8 +16,10 @@ SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
+SWEP.AimSwayFactor = 1
 
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
+SWEP.NoFreeAmmo = true
 
 SWEP.NPCWeaponType = {"weapon_ar2", "weapon_smg1"}
 SWEP.NPCWeight = 150
@@ -105,16 +108,45 @@ local function BreatheOut(wep)
 		surface.PlaySound("snds_jack_gmod/weapons/focus_exhale.wav")
 	end
 end
+function SWEP:GetDamage(range)
+    local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
+    local dmult = 1
+
+    if num then
+        dmult = self.Num / dmult
+    end
+	
+	local RandFact=self.DamageRand or 0
+	local Randomness=math.Rand(1-RandFact,1+RandFact)
+	local GlobalMult = (JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1
+
+    local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * dmult * Randomness * GlobalMult
+    local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * dmult * Randomness * GlobalMult
+
+    local delta = 1
+
+    if dmgmax < dmgmin then
+        delta = range / (self.Range / self:GetBuff_Mult("Mult_Range"))
+    else
+        delta = range / (self.Range * self:GetBuff_Mult("Mult_Range"))
+    end
+
+    delta = math.Clamp(delta, 0, 1)
+
+    local amt = Lerp(delta, dmgmax, dmgmin)
+    return amt
+end
 hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 	local ply=LocalPlayer()
 	if not(ply:Alive())then return end
 	local Wep=ply:GetActiveWeapon()
-	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(ply:KeyDown(IN_ATTACK2)))then
-		local Amt,Sporadicness,FT=30*Wep.AimSwayFactor,50,FrameTime()
-		if(ply:Crouching())then Amt=Amt*.75 end
-		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.5 end
+	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
+		local GlobalMult=(JMOD_CONFIG and JMOD_CONFIG.WeaponSwayMult) or 1
+		local Amt,Sporadicness,FT=30*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
+		if(ply:Crouching())then Amt=Amt*.65 end
+		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.4 end
 		if((ply:KeyDown(IN_FORWARD))or(ply:KeyDown(IN_BACK))or(ply:KeyDown(IN_MOVELEFT))or(ply:KeyDown(IN_MOVERIGHT)))then
-			Sporadicness=Sporadicness*2
+			Sporadicness=Sporadicness*1.5
 			Amt=Amt*2
 		else
 			local Key=(JMOD_CONFIG and JMOD_CONFIG.AltFunctionKey) or IN_WALK
@@ -122,7 +154,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 				StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
 				if(StabilityStamina>0)then
 					BreatheIn(Wep)
-					Amt=Amt*.5
+					Amt=Amt*.4
 				else
 					BreatheOut(Wep)
 				end
@@ -137,8 +169,12 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 		EAng.yaw=math.NormalizeAngle(EAng.yaw+WDir.x*FT*Amt*S)
 		cmd:SetViewAngles(EAng)
 	end
+	if(input.WasKeyPressed(KEY_BACKSPACE))then
+		if not((ply:IsTyping())or(gui.IsConsoleVisible()))then
+			RunConsoleCommand("jmod_ez_dropweapon")
+		end
+	end
 end)
-
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
     if !irons then return end
@@ -158,7 +194,39 @@ function SWEP:TranslateFOV(fov)
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
     return self.CurrentFOV
 end
-
 function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
+local ToyTownAmt=0
+hook.Add("RenderScreenspaceEffects","JMod_WeaponScreenEffects",function()
+	local ply,FT=LocalPlayer(),FrameTime()
+	if not(ply:ShouldDrawLocalPlayer())then
+		local Wep=ply:GetActiveWeapon()
+		if((IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
+			ToyTownAmt=Lerp(FT*5,ToyTownAmt,1)
+		else
+			ToyTownAmt=Lerp(FT*7,ToyTownAmt,0)
+		end
+		if(ToyTownAmt>.01)then
+			DrawToyTown(10*ToyTownAmt,ScrH()/2*ToyTownAmt)
+		end
+	end
+end)
+function SWEP:OnDrop()
+	local Specs=JMod_WeaponTable[self.PrintName]
+	if(Specs)then
+		local Ent=ents.Create(Specs.ent)
+		Ent:SetPos(self:GetPos())
+		Ent:SetAngles(self:GetAngles())
+		Ent.MagRounds=self:Clip1()
+		Ent:Spawn()
+		Ent:Activate()
+		Ent:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+		self:Remove()
+	end
+end
+concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
+	if not(ply:Alive())then return end
+	local Wep=ply:GetActiveWeapon()
+	if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
+end)

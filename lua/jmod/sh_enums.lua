@@ -60,3 +60,8 @@ JMOD_EZ_STATE_WARNING	= 4
 -- fuggin like let BK and WB draw from resource crates
 -- func for packages to read more info from ez entities
 -- clasnames to friendlist
+--[[
+hook.Add( "OnDamagedByExplosion", "DisableSound", function()
+    return true
+end )
+--]]

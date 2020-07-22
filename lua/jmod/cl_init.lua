@@ -234,6 +234,7 @@ net.Receive("JMod_LuaConfigSync",function()
 	JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
 	JMOD_CONFIG=JMOD_CONFIG or {}
 	JMOD_CONFIG.AltFunctionKey=net.ReadInt(32)
+	JMOD_CONFIG.WeaponSwayMult=net.ReadFloat()
 end)
 
 function JMod_MakeModel(self,mdl,mat,scale,col)

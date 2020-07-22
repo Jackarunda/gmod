@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/robotnik_mw2/ebr/weapon_m14ebr_scope_col"
+       	 $bumpmap   "models/weapons/v_models/robotnik_mw2/ebr/scope_n"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+       
+	$phong  "1"
+	$phongboost  ".2"
+	$phongfresnelranges     "[1 1 1]"
+	$phongexponent 20
+	$nocull  1	
+		
+}
