@@ -37,25 +37,6 @@ JMOD_EZ_STATE_ARMING 	= 2
 JMOD_EZ_STATE_ARMED		= 3
 JMOD_EZ_STATE_WARNING	= 4
 
---[[
-muzzleflash_g3
-muzzleflash_m14
-muzzleflash_ak47
-muzzleflash_ak74
-muzzleflash_6
-muzzleflash_pistol_rbull
-muzzleflash_pistol
-muzzleflash_suppressed
-muzzleflash_pistol_deagle
-muzzleflash_OTS
-muzzleflash_M3
-muzzleflash_smg
-muzzleflash_SR25
-muzzleflash_shotgun
-muzzle_center_M82
-muzzleflash_m79
---]]
-
 -- TODO
 -- yeet a wrench easter egg
 -- frickin like ADD npc factions to the whitelist yo, gosh damn
@@ -78,3 +59,9 @@ muzzleflash_m79
 -- if the json cant be read then print an error
 -- fuggin like let BK and WB draw from resource crates
 -- func for packages to read more info from ez entities
+-- clasnames to friendlist
+--[[
+hook.Add( "OnDamagedByExplosion", "DisableSound", function()
+    return true
+end )
+--]]

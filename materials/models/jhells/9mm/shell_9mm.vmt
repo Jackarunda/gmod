@@ -1,0 +1,8 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jhells/9mm/shell_9mm"
+	"$bumpmap" "models/jhells/9mm/shell_9mm_normal"
+	"$envmap" "env_cubemap"
+	"$envmapcontrast" ".9"
+	"$envmapsaturation" "0"
+}

@@ -123,6 +123,8 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		NextSync=Time+30
 		net.Start("JMod_LuaConfigSync")
 		net.WriteTable((JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets) or {})
+		net.WriteInt(JMOD_CONFIG.AltFunctionKey,32)
+		net.WriteFloat(JMOD_CONFIG.WeaponSwayMult)
 		net.Broadcast()
 	end
 end)

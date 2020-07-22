@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+       "$basetexture" "models/weapons/v_models/CoD4/g36c/weapon_g36_col"
+        $bumpmap   "models/weapons/v_models/CoD4/g36c/normal"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+		
+}

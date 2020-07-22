@@ -1,0 +1,12 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models/jhells/12gauge/shell_12gauge"
+	"$bumpmap" "models/jhells/12gauge/shell_12gauge_normal"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.3 .2 .1]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongexponent" "10"
+	"$phongboost" "50"
+}

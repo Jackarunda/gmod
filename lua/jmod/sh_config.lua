@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=26,
+		Version=27,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		L4Dhints=false,
@@ -301,6 +301,8 @@ function JMod_InitGlobalConfig(forceNew)
 		ArmorDegredationMult=1,
 		ArmorChargeDepletionMult=1,
 		ArmorWeightMult=1,
+		WeaponDamageMult=1,
+		WeaponSwayMult=1,
 		NukeRangeMult=1,
 		NukePowerMult=1,
 		NuclearRadiationMult=1,

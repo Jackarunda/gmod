@@ -191,7 +191,6 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 	end
 
 	Mul = (Mul - Protection) / JMOD_CONFIG.ArmorProtectionMult
-	print("scaling damage by",Mul)
 	dmg:ScaleDamage(Mul)
 
 	if (ArmorPieceBroke) then
