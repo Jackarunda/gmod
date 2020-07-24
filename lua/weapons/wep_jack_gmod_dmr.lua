@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_m21ebr.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m21.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 68
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -16,7 +16,7 @@ SWEP.BodyHolsterScale = .95
 
 SWEP.DefaultBodygroups = "01000"
 
-SWEP.Damage = 70
+SWEP.Damage = 78
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 350 -- in METERS
@@ -66,7 +66,7 @@ SWEP.IronSightStruct = {
     SwitchToSound = "" -- sound that plays when switching to this sight
 }
 
-SWEP.ActivePos = Vector(1, 1, 1)
+SWEP.ActivePos = Vector(.5, 1, 1)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.HolsterPos = Vector(6, -1, 0)

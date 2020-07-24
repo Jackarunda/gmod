@@ -2,10 +2,10 @@
 	assault rifle - CW2.0 MWR - M16A4
 	battle rifle - Robotnik's CoD4 SWEPs - G3
 	carbine - CW2.0 MWR - G36C
-designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
-bolt action rifle - Robotnik's CoD4 SWEPs - R700
+	designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
+	bolt action rifle - Robotnik's CoD4 SWEPs - R700
 sniper rifle - Robotnik's CoD4 SWEPs - M40A3
-magnum sniper rifle - Mac's CoD MW2 SWEPs - Intervention
+anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
 pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
 break-action shotgun - cod over-under shotty
@@ -25,7 +25,7 @@ crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
 revolver - Mac's CoD Black Ops SWEPs - Python
 combat knife - TFA-CoD-IW-Combat-Knife
-lever-action rifle - 
+lever-action rifle - the dangerman one
 ----------------------------
  - changes to arccw base:
  0) 3DHUD permanently enabled
@@ -42,6 +42,7 @@ lever-action rifle -
  11) added an IsFirstTimePredicted() call to sh_firing to prevent gun sounds from earraping during slowmo or lag
  12) new var, ShellEffect, to specify which lua shell effect a weapon should use
  13) new var, NoFreeAmmo, disables defaultClip ammo giving on weapon pickup properly
+ 14) [MERGED] sh_anim line 144, changed SWEP:PlayAnimation to do magazine-loading reloads properly
 -------------------------------
 "VertexlitGeneric"
 {
@@ -75,6 +76,16 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_m21.mdl",
 		swep="wep_jack_gmod_dmr",
 		ent="ent_jack_gmod_ezweapon_dmr"
+	},
+	["Bolt Action Rifle"]={
+		mdl="models/weapons/w_jmod_r700.mdl",
+		swep="wep_jack_gmod_boltactionrifle",
+		ent="ent_jack_gmod_ezweapon_bar"
+	},
+	["Sniper Rifle"]={
+		mdl="models/weapons/w_jmod_m40a3.mdl",
+		swep="wep_jack_gmod_sniperrifle",
+		ent="ent_jack_gmod_ezweapon_sr"
 	}
 }
 game.AddAmmoType({
@@ -82,6 +93,9 @@ game.AddAmmoType({
 })
 game.AddAmmoType({
 	name = "Medium Rifle Round"
+})
+game.AddAmmoType({
+	name = "Magnum Rifle Round"
 })
 for k,v in pairs({
 	"muzzleflash_g3",

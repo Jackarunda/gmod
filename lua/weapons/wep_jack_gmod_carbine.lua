@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-11,-11)
 SWEP.BodyHolsterPosL = Vector(.5,-11,11)
 SWEP.BodyHolsterScale = .8
 
-SWEP.Damage = 34
+SWEP.Damage = 38
 SWEP.DamageMin = 5 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
@@ -22,7 +22,7 @@ SWEP.Penetration = 55
 
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .55
+SWEP.Recoil = .65
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
