@@ -41,7 +41,7 @@ SWEP.Firemodes = {
 }
 SWEP.ShotgunReload = true
 
-SWEP.AccuracyMOA = 2.5 -- real bolt guns are more accurate than this, but whatever... gmod
+SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
 SWEP.HipDispersion = 500
 SWEP.MoveDispersion = 200
 

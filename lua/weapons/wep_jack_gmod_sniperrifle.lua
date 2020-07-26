@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_m40a3.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m40a3.mdl"
-SWEP.ViewModelFOV = 77
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -41,7 +41,7 @@ SWEP.Firemodes = {
 }
 SWEP.ShotgunReload = true
 
-SWEP.AccuracyMOA = 2.5 -- real bolt guns are more accurate than this, but whatever... gmod
+SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
 SWEP.HipDispersion = 500
 SWEP.MoveDispersion = 200
 
@@ -59,7 +59,7 @@ SWEP.ShellScale = 2
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .55
-SWEP.SightTime = .75
+SWEP.SightTime = .65
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
@@ -92,6 +92,19 @@ SWEP.Attachments = {
         },
 		-- remove Slide because it ruins my life
         Installed = "optic_jack_scope_mediumlow"
+    },
+	{
+        PrintName = "Underbarrel",
+        Slot = {"ez_bipod"},
+        Bone = "tag_weapon",
+        Offset = {
+			vpos = Vector(5, 0, .5),
+            vang = Angle(0, 0, 0),
+			wpos = Vector(1, 0, 0),
+            wang = Angle(1, 0, 0)
+        },
+        -- remove Slide because it ruins my life
+		Installed = "underbarrel_jack_bipod"
     }
 }
 
@@ -126,24 +139,24 @@ SWEP.Animations = {
         Source = "shoot1",
         Time = 1.2,
 		Mult=1.5,
-        ShellEjectAt = .4,
+        ShellEjectAt = .8,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/lift.wav", t = .25, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/pull.wav", t = .4, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .65, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .75, v=60, p=90}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .65, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .75, v=60, p=90}
 		}
     },
     ["fire_iron"] = {
         Source = "shoot1",
         Time = 1.4,
 		Mult=1.5,
-        ShellEjectAt = .5,
+        ShellEjectAt = .9,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/lift.wav", t = .25, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/pull.wav", t = .4, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .75, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .85, v=60, p=90}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .75, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .85, v=60, p=90}
 		}
     },
     ["sgreload_start"] = {
@@ -154,8 +167,8 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/lift.wav", t = .6, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bar/pull.wav", t = 1, v=60}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .35, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = 1, v=60}
 		}
     },
     ["sgreload_insert"] = {
@@ -178,8 +191,8 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0.4,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .3, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .55, v=60}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .3, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .55, v=60}
 		}
     },
     ["sgreload_finish_empty"] = {
@@ -189,8 +202,8 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .3, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .55, v=60}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .3, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .6, v=60}
 		}
     }
 }

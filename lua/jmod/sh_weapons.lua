@@ -26,23 +26,6 @@ multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
 revolver - Mac's CoD Black Ops SWEPs - Python
 combat knife - TFA-CoD-IW-Combat-Knife
 lever-action rifle - the dangerman one
-----------------------------
- - changes to arccw base:
- 0) 3DHUD permanently enabled
- 1) 3DHUD only shows when reloading or holding reload key or mag is empty, not when firing
- 2) ArcCW no longer overrides the health hud
- 3) 3DHUD draws a little down and to the left so as not to cover center of screen
- 4) crosshair completely disabled
- 5) the 3DHUD no longer draws in 3rd person... not sure why it ever did
- 6) new var, ShootSoundExtraMult, representing how many extra times to play the shoot sound each shot, making it louder
- 7) changed EmitSound in PlaySoundTable to sound.Play so that it actually plays instead of skipping
- 8) added a debugSights bool to the ironsightsstruct so i can easily adjust ironsight positions
- 9) reduced Lerp speed of viewmodel movements by 20%
- 10) fixed a nullcheck bug in sh_deploy 257 (swep:holster)
- 11) added an IsFirstTimePredicted() call to sh_firing to prevent gun sounds from earraping during slowmo or lag
- 12) new var, ShellEffect, to specify which lua shell effect a weapon should use
- 13) new var, NoFreeAmmo, disables defaultClip ammo giving on weapon pickup properly
- 14) [MERGED] sh_anim line 144, changed SWEP:PlayAnimation to do magazine-loading reloads properly
 -------------------------------
 "VertexlitGeneric"
 {
@@ -117,9 +100,28 @@ for k,v in pairs({
 })do
 	PrecacheParticleSystem(v)
 end
+concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
+	if not(ply:Alive())then return end
+	local Wep=ply:GetActiveWeapon()
+	if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
+end)
 if(CLIENT)then
+	--[[
+	local Mat=Material("spherical_aberration")
+	hook.Add("PostDrawHUD","AAAAAA",function()
+		DrawMaterialOverlay("spherical_aberration",1)
+	end)
+	--]]
 	language.Add("Light Rifle Round_ammo","Light Rifle Round")
 	language.Add("Medium Rifle Round_ammo","Medium Rifle Round")
+	language.Add("Magnum Rifle Round_ammo","Magnum Rifle Round")
+	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
+		local wpn = LocalPlayer():GetActiveWeapon()
+		if not wpn.ArcCW then return end
+		if wpn.ForceExpensiveScopes then
+			wpn:FormRTScope()
+		end
+	end)
 	concommand.Add("jacky_vm_debug",function(ply,cmd,args)
 		local VM=ply:GetViewModel()
 		print(VM:GetModel())
@@ -134,6 +136,8 @@ if(CLIENT)then
 		end
 		print("---------------------")
 		PrintTable(VM:GetBodyGroups())
+		print("---------------------")
+		PrintTable(VM:GetAttachments())
 	end)
 	local SlotInfoTable={
 		back={

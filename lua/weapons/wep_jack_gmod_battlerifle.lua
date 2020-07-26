@@ -37,7 +37,7 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 3.5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -82,7 +82,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 0.6,
-        SoundTable = {{s = "snds_jack_gmod/weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/battle_rifle/draw.wav", t = 0, v=60}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,

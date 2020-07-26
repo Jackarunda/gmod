@@ -20,7 +20,7 @@ att.AdditionalSights = {
     {
         Pos = Vector(0, 13, -1.489),
         Ang = Angle(0, 0, -1),
-        Magnification = 1.2, -- this is how much your eyes zoom into the scope, not scope magnification
+        Magnification = 1.3, -- this is how much your eyes zoom into the scope, not scope magnification
         ScrollFunc = ArcCW.SCROLL_NONE,
         IgnoreExtra = true
     }
