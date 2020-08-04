@@ -90,7 +90,9 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "draw2",
-        Time = 1,
+        Time = 0.6,
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/battle_rifle/draw.wav", t = 0, v=60}},
+		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
