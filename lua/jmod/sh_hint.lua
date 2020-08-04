@@ -155,6 +155,13 @@ JMod_Hints = {
 	-- Weapons
 	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim"},
 	["weapon drop"]={Type="info",Text="press BACKSPACE to drop weapon"},
-	["Light Rifle Round"]={Type="info",Text="weapon uses Light Rifle Rounds"},
-	["Medium Rifle Round"]={Type="info",Text="weapon uses Medium Rifle Rounds"}
+	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"}
+}
+JMod_SpecificHints={
+	["wep_jack_gmod_assaultrifle"]={Type="info",Text="weapon uses Light Rifle Rounds"},
+	["wep_jack_gmod_battlerifle"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
+	["wep_jack_gmod_carbine"]={Type="info",Text="weapon uses Light Rifle Rounds"},
+	["wep_jack_gmod_dmr"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
+	["wep_jack_gmod_boltactionrifle"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
+	["wep_jack_gmod_sniperrifle"]={Type="info",Text="weapon uses Magnum Rifle Rounds"}
 }

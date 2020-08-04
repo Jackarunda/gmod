@@ -57,7 +57,7 @@ SWEP.ShellScale = 2
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .6
-SWEP.SightTime = .75
+SWEP.SightTime = .6
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),

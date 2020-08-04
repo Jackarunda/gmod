@@ -70,7 +70,8 @@ if(SERVER)then
 				activator:SelectWeapon(self.Specs.swep)
 				JMod_Hint(activator,"weapon drop")
 				JMod_Hint(activator,"weapon steadiness")
-				JMod_Hint(activator,activator:GetWeapon(self.Specs.swep).Primary.Ammo)
+				JMod_Hint(activator,"weapon firemodes")
+				JMod_Hint(activator,self.Specs.swep,nil,true)
 				self:Remove()
 			else
 				activator:PickupObject(self)

@@ -1,11 +1,12 @@
-function JMod_Hint(ply, key, loc)
+function JMod_Hint(ply, key, loc, specific)
 	if not JMOD_CONFIG.Hints or not ply or not key then return nil end
    
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
-	if ply.JModHintsGiven[key] then return false end
+	if ply.JModHintsGiven[key] and not specific then return false end
 	ply.JModHintsGiven[key] = true
 	
 	local tbl = JMod_Hints[key]
+	if(specific)then tbl = JMod_SpecificHints[key] end
 	if not tbl then return nil end
 	if loc then tbl.Pos = loc end
 	tbl.ShouldMove = (loc ~= nil)
@@ -27,7 +28,7 @@ function JMod_Hint(ply, key, loc)
 	if tbl.Followup and JMod_Hints[tbl.Followup] then
 		timer.Simple(tbl.Time, function()
 			if IsValid(ply) then
-				JMod_Hint(ply, tbl.Followup)
+				JMod_Hint(ply, tbl.Followup, loc, specific)
 			end
 		end)
 	end

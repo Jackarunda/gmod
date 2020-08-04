@@ -968,6 +968,7 @@ function SWEP:ToggleCustomizeHUD(ic) -- jmod will have its own customization sys
 	--]]
 end
 if(CLIENT)then
+	--[[
 	-- viewbob during reload and firing shake
 	SWEP.ProceduralViewOffset = Angle(0, 0, 0)
 	local procedural_spdlimit = 5
@@ -1034,6 +1035,7 @@ if(CLIENT)then
 
 		return pos, LerpAngle(0, ang, oldangtmp) + (AngleRand() * self.RecoilAmount * 0.008), fov
 	end
+	--]]
 	-- expensive scopes
 	local rtsize = ScrH()
 	local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)

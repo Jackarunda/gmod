@@ -249,7 +249,7 @@ function JMod_CalcSpeed(ply)
 		TotalWeight = TotalWeight + ArmorInfo.wgt
 	end
 
-	local WeighedFrac = TotalWeight / 250
+	local WeighedFrac = TotalWeight / 300
 	ply.EZarmor.speedfrac = math.Clamp(1 - (.8 * WeighedFrac * JMOD_CONFIG.ArmorWeightMult), .05, 1)
 end
 
