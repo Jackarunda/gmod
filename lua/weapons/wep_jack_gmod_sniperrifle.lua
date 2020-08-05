@@ -100,8 +100,8 @@ SWEP.Attachments = {
         Offset = {
 			vpos = Vector(5, 0, .5),
             vang = Angle(0, 0, 0),
-			wpos = Vector(1, 0, 0),
-            wang = Angle(1, 0, 0)
+			wpos = Vector(27, 0, -7.5),
+            wang = Angle(170, 0, 0)
         },
         -- remove Slide because it ruins my life
 		Installed = "underbarrel_jack_bipod"
@@ -143,10 +143,10 @@ SWEP.Animations = {
 		Mult=1.5,
         ShellEjectAt = .8,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .65, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .75, v=60, p=90}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .65, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .75, v=60}
 		}
     },
     ["fire_iron"] = {
@@ -155,10 +155,10 @@ SWEP.Animations = {
 		Mult=1.5,
         ShellEjectAt = .9,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .75, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .85, v=60, p=90}
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .75, v=60},
+			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .85, v=60}
 		}
     },
     ["sgreload_start"] = {
@@ -183,7 +183,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/insert.wav", t = .15, v=60}
+			{s = "snds_jack_gmod/ez_weapons/bar/insert.wav", t = .15, v=60, p=90}
 		}
     },
     ["sgreload_finish"] = {
