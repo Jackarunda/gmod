@@ -20,17 +20,17 @@ SWEP.Damage = 190
 SWEP.DamageMin = 50 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 600 -- in METERS
-SWEP.Penetration = 135
+SWEP.Penetration = 180
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3.5
+SWEP.Recoil = 3
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
 SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
 
-SWEP.Delay = 60 / 30 -- 60 / RPM.
+SWEP.Delay = 60 / 24 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -58,9 +58,9 @@ SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
 SWEP.ShellPitch = 80
 SWEP.ShellScale = 4
 
-SWEP.SpeedMult = .95
+SWEP.SpeedMult = .9
 SWEP.SightedSpeedMult = .5
-SWEP.SightTime = .7
+SWEP.SightTime = .65
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
@@ -141,63 +141,60 @@ SWEP.Animations = {
     },
     ["fire"] = {
         Source = "fire",
-        Time = 1.2,
-		Mult=1.5,
-        ShellEjectAt = .8,
+        Time = 2.5,
+		Mult = 1,
+        ShellEjectAt = 1.1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/amsr/lift.wav", t = .25, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/pull.wav", t = .4, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/push.wav", t = .65, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/lock.wav", t = .75, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60}
 		}
     },
     ["fire_iron"] = {
         Source = "fire",
-        Time = 1.4,
-		Mult=1.5,
-        ShellEjectAt = .9,
+        Time = 2.5,
+		Mult = 1,
+        ShellEjectAt = 1.1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/amsr/lift.wav", t = .25, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/pull.wav", t = .4, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/push.wav", t = .75, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/lock.wav", t = .85, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60}
 		}
     },
 	["reload"] = {
         Source = "reload_tac",
-        Time = 2.5,
+        Time = 3,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.05, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap2.wav", t = 1.4, v=65},
-			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t = 1.6, v=65}
+			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = .55, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 1.6, v=60}
 		}
     },
     ["reload_empty"] = {
         Source = "reload_empty",
-        Time = 3.1,
+        Time = 6,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .45, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap2.wav", t = 1.45, v=65},
-			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t = 1.6, v=65},
-			{s = "snds_jack_gmod/ez_weapons/assault_rifle/bolt_release.wav", t = 2.1, v=65}
+			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .65, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = 2.5, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 3.9, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 4.8, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 4.9, v=60}
 		}
     }
 }

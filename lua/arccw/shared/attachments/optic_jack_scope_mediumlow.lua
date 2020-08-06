@@ -39,4 +39,4 @@ att.Colorable = true
 att.HolosightMagnification = 3 -- this is the scope magnification
 att.HolosightBlackbox = true
 
-att.Mult_SightTime = 1.7
+att.Mult_SightTime = 1.3

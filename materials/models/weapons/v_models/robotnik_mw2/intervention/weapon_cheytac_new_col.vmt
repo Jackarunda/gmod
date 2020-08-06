@@ -1,19 +1,12 @@
 "VertexlitGeneric"
 {
 	"$basetexture" "models/weapons/v_models/robotnik_mw2/intervention/weapon_cheytac_new_col"
-			//EXP_GUN
-        $bumpmap   "models/weapons/v_models/robotnik_mw2/intervention/normal"
-        $phongexponenttexture  "models/exp_gun"
-        $phongexponent "30"
-       
-        $normalmapalphaenvmapmask   "1"
-        $envmaptint   "[0.1 0.1 0.1]"
-        $envmapfresnel "1" // Advanced envmap reflections
- 
-        $phong  "1"
-        $phongboost  "5"      //tone down to decrease specular reflections
-        $phongfresnelranges     "[0.25 0.75 1.00]"
-        $phongalbedotint  "1"
-        $nocull  1
+        	$bumpmap   "models/weapons/v_models/robotnik_mw2/intervention/normal"
+	
+	$phong  "1"
+	$phongboost  ".2"
+	$phongfresnelranges     "[1 1 1]"
+	$phongexponent 20
+	$nocull  1	
 		
 }

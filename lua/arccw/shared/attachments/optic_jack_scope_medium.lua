@@ -18,7 +18,7 @@ att.Model = "models/weapons/arccw/atts/magnus.mdl"
 
 att.AdditionalSights = {
     {
-        Pos = Vector(0, 15, -1.489),
+        Pos = Vector(0, 17, -1.489),
         Ang = Angle(0, 0, -1),
         Magnification = 1.4, -- this is how much your eyes zoom into the scope, not scope magnification
         ScrollFunc = ArcCW.SCROLL_NONE,
@@ -39,4 +39,4 @@ att.Colorable = true
 att.HolosightMagnification = 4 -- this is the scope magnification
 att.HolosightBlackbox = true
 
-att.Mult_SightTime = 1.7
+att.Mult_SightTime = 1.4

@@ -146,7 +146,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 	local Wep=ply:GetActiveWeapon()
 	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
 		local GlobalMult=(JMOD_CONFIG and JMOD_CONFIG.WeaponSwayMult) or 1
-		local Amt,Sporadicness,FT=30*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
+		local Amt,Sporadicness,FT=20*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
 		if(ply:Crouching())then Amt=Amt*.65 end
 		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.25 end
 		if((ply:KeyDown(IN_FORWARD))or(ply:KeyDown(IN_BACK))or(ply:KeyDown(IN_MOVELEFT))or(ply:KeyDown(IN_MOVERIGHT)))then
