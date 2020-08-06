@@ -4,7 +4,7 @@
 	carbine - CW2.0 MWR - G36C
 	designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
 	bolt action rifle - Robotnik's CoD4 SWEPs - R700
-sniper rifle - Robotnik's CoD4 SWEPs - M40A3
+	sniper rifle - Robotnik's CoD4 SWEPs - M40A3
 anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
 pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
@@ -69,6 +69,11 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_m40a3.mdl",
 		swep="wep_jack_gmod_sniperrifle",
 		ent="ent_jack_gmod_ezweapon_sr"
+	},
+	["Anti-Materiel Sniper Rifle"]={
+		mdl="models/weapons/w_jmod_intervention.mdl",
+		swep="wep_jack_gmod_amsr",
+		ent="ent_jack_gmod_ezweapon_amsr"
 	}
 }
 game.AddAmmoType({
@@ -76,6 +81,9 @@ game.AddAmmoType({
 })
 game.AddAmmoType({
 	name = "Medium Rifle Round"
+})
+game.AddAmmoType({
+	name = "Heavy Rifle Round"
 })
 game.AddAmmoType({
 	name = "Magnum Rifle Round"

@@ -1,4 +1,4 @@
-att.PrintName = "EZ Low-Magnification Scope"
+att.PrintName = "EZ Medium-Magnification Scope"
 att.Icon = Material("entities/acwatt_optic_magnus.png")
 att.Description = "eat shit and die commie"
 
@@ -18,9 +18,9 @@ att.Model = "models/weapons/arccw/atts/magnus.mdl"
 
 att.AdditionalSights = {
     {
-        Pos = Vector(0, 13, -1.489),
+        Pos = Vector(0, 15, -1.489),
         Ang = Angle(0, 0, -1),
-        Magnification = 1.3, -- this is how much your eyes zoom into the scope, not scope magnification
+        Magnification = 1.4, -- this is how much your eyes zoom into the scope, not scope magnification
         ScrollFunc = ArcCW.SCROLL_NONE,
         IgnoreExtra = true
     }
@@ -36,7 +36,7 @@ att.HolosightBone = "holosight"
 att.HolosightPiece = "models/weapons/arccw/atts/magnus_hsp.mdl"
 att.Colorable = true
 
-att.HolosightMagnification = 2 -- this is the scope magnification
+att.HolosightMagnification = 4 -- this is the scope magnification
 att.HolosightBlackbox = true
 
-att.Mult_SightTime = 1.5
+att.Mult_SightTime = 1.7

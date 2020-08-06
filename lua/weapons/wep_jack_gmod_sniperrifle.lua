@@ -55,7 +55,7 @@ SWEP.ShootSoundExtraMult=1
 SWEP.MuzzleEffect = "muzzleflash_SR25"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
 SWEP.ShellPitch = 80
-SWEP.ShellScale = 2
+SWEP.ShellScale = 3
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .55

@@ -148,5 +148,5 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t = 1.6, v=65},
 			{s = "snds_jack_gmod/ez_weapons/assault_rifle/bolt_release.wav", t = 2.1, v=65}
 		}
-    },
+    }
 }

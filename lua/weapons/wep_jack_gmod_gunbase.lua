@@ -122,7 +122,7 @@ function SWEP:GetDamage(range)
 	
 	local RandFact=self.DamageRand or 0
 	local Randomness=math.Rand(1-RandFact,1+RandFact)
-	local GlobalMult = (JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1
+	local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
 
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * dmult * Randomness * GlobalMult
     local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * dmult * Randomness * GlobalMult
