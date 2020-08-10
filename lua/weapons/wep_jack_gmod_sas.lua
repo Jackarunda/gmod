@@ -17,7 +17,7 @@ SWEP.BodyHolsterScale = .85
 SWEP.Damage = 14
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
-SWEP.Range = 60 -- in METERS
+SWEP.Range = 75 -- in METERS
 SWEP.DamageType = DMG_BUCKSHOT
 SWEP.Penetration = 0
 
