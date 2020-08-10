@@ -48,10 +48,10 @@ SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Heavy Rifle Round" -- what ammo type the gun uses
 
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/magnum_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/magnum_rifle.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
-SWEP.ShootSoundExtraMult=1
+SWEP.ShootSoundExtraMult=2
 
 SWEP.MuzzleEffect = "muzzle_center_M82"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -145,10 +145,10 @@ SWEP.Animations = {
 		Mult = 1,
         ShellEjectAt = 1.1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60, p=90}
 		}
     },
     ["fire_iron"] = {

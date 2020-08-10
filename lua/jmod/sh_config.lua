@@ -612,3 +612,5 @@ end
 hook.Add("Initialize","JMOD_Initialize",function()
 	if(SERVER)then JMod_InitGlobalConfig() end
 end)
+
+-- todo: fix riot shield mat

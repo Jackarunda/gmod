@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/robotnik_mw2/m1014/sight"
+	"$translucent" 1
+}

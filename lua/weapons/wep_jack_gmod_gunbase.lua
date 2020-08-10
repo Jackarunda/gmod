@@ -13,7 +13,7 @@ SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
 -- IN M/S
 
-SWEP.TracerNum = 1 -- tracer every X
+SWEP.TracerNum = 0 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
@@ -114,11 +114,14 @@ local function BreatheOut(wep)
 end
 function SWEP:GetDamage(range)
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
-    local dmult = 1
-
+	
+	local dmult = 1
+	
+	--[[ -- yo arctic what the fuck is this?
     if num then
         dmult = self.Num / dmult
     end
+	--]]
 	
 	local RandFact=self.DamageRand or 0
 	local Randomness=math.Rand(1-RandFact,1+RandFact)
@@ -255,17 +258,19 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
 
         if isnumber(v.t) then
             if st < 0 then continue end
+			local snd = v.s
+			if(type(snd)=="table")then snd=table.Random(snd) end
             if self:GetOwner():IsNPC() then
                 timer.Simple(st, function()
                     if !IsValid(self) then return end
                     if !IsValid(self:GetOwner()) then return end
                     --self:EmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
-					if(SERVER)then sound.Play(v.s,self:GetPos(),vol,pitch,1) end
+					if(SERVER)then sound.Play(snd,self:GetPos(),vol,pitch,1) end
                 end)
             else
                 self:SetTimer(st, function()
 					--self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
-					if(SERVER)then sound.Play(v.s,self:GetPos(),vol,pitch,1) end
+					if(SERVER)then sound.Play(snd,self:GetPos(),vol,pitch,1) end
 				end, "soundtable")
             end
         end
@@ -546,7 +551,7 @@ function SWEP:PrimaryAttack()
 				self:EmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
 				if((self.ShootSoundExtraMult)and(self.ShootSoundExtraMult>0))then
 					for i=1,self.ShootSoundExtraMult do
-						sound.Play(ss,SelfPos,svol+i,spitch,1)
+						sound.Play(ss,SelfPos+VectorRand(),svol+i,spitch,1)
 					end
 				end
 			end
@@ -742,8 +747,8 @@ function SWEP:Think()
 
         newang = newang - ra
 
-        self.RecoilAmount = r - (ft * r * 20)
-        self.RecoilAmountSide = rs - (ft * rs * 20)
+        self.RecoilAmount = r - (ft * r * 15)
+        self.RecoilAmountSide = rs - (ft * rs * 15)
 
         self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
         self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
@@ -1601,6 +1606,9 @@ if(CLIENT)then
 
 	function SWEP:GetViewModelPosition(pos, ang)
 		if !self:GetOwner():IsValid() or !self:GetOwner():Alive() then return end
+		
+		local ProceduralRecoilMult = 1
+		
 		local oldpos = Vector()
 		local oldang = Angle()
 
@@ -1700,6 +1708,8 @@ if(CLIENT)then
 
 			target.ang.p = math.Clamp(target.ang.p, -80, 80)
 		elseif sighted then
+			ProceduralRecoilMult = ProceduralRecoilMult * .7
+		
 			local irons = self:GetActiveSights()
 
 			target = {
@@ -1882,7 +1892,7 @@ if(CLIENT)then
 		self.SwayScale = actual.sway
 		self.BobScale = actual.bob
 
-		pos = pos + self.RecoilPunchBack * -oldang:Forward()
+		pos = pos + self.RecoilPunchBack * -oldang:Forward() * ProceduralRecoilMult
 		pos = pos + self.RecoilPunchSide * oldang:Right()
 		pos = pos + self.RecoilPunchUp * -oldang:Up()
 
