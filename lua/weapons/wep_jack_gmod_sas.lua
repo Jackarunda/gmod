@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-11,-9)
 SWEP.BodyHolsterPosL = Vector(.5,-11,10)
 SWEP.BodyHolsterScale = .85
 
-SWEP.Damage = 14
+SWEP.Damage = 14 -- so this eats through armor and it shouldn't, UH
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS

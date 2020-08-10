@@ -155,7 +155,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 		else
 			RelevantSlots.head = 1
 		end
-	elseif (hitgroup == HITGROUP_CHEST) then
+	elseif (hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC) then
 		RelevantSlots.chest = 1
 
 		if (IsHitToBack(ply, dmg)) then

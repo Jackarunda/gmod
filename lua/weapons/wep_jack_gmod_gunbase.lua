@@ -1557,6 +1557,42 @@ if(CLIENT)then
 			end
 
 		end
+		
+		-- health + armor
+
+		if ArcCW:ShouldDrawHUDElement("CHudHealth") then
+
+			local colhp = Color(255, 255, 255, 255)
+
+			if LocalPlayer():Health() <= 30 then
+				colhp = col3
+			end
+
+			local whp = {
+				x = airgap,
+				y = ScrH() - ScreenScale(26) - ScreenScale(16) - airgap,
+				font = "ArcCW_26",
+				text = "HP: " .. tostring(math.Round(vhp)),
+				col = colhp,
+				shadow = true
+			}
+
+			MyDrawText(whp)
+
+			if LocalPlayer():Armor() > 0 then
+				local war = {
+					x = airgap,
+					y = ScrH() - ScreenScale(16) - airgap,
+					font = "ArcCW_16",
+					text = "ARMOR: " .. tostring(math.Round(varmor)),
+					col = col2,
+					shadow = true
+				}
+
+				MyDrawText(war)
+			end
+
+		end
 
 		vhp = math.Approach(vhp, self:GetOwner():Health(), RealFrameTime() * 100)
 		varmor = math.Approach(varmor, self:GetOwner():Armor(), RealFrameTime() * 100)
