@@ -6,7 +6,7 @@
 	bolt action rifle - Robotnik's CoD4 SWEPs - R700
 	sniper rifle - Robotnik's CoD4 SWEPs - M40A3
 	anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
-semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
+	semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
 pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
 break-action shotgun - cod over-under shotty
 pistol - Mac's CoD Black Ops II SWEPs - B23R
@@ -121,11 +121,6 @@ concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
 	local Wep=ply:GetActiveWeapon()
 	if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
 end)
---[[
-hook.Add("EntityTakeDamage","JackaDebugEntityTakeDmg",function(victim,dmginfo)
-	print("uh",dmginfo:GetDamage(),dmginfo:IsDamageType(DMG_BUCKSHOT))
-end)
---]]
 if(CLIENT)then
 	--[[
 	local Mat=Material("spherical_aberration")

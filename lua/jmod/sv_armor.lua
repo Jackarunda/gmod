@@ -143,60 +143,68 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 end
 
 local function LocationalDmgHandling(ply, hitgroup, dmg)
-	if (#table.GetKeys(ply.EZarmor.items) <= 0) then return end
-	local Mul, RelevantSlots, DmgAmt = 1, {}, dmg:GetDamage()
+	local Mul = 1
+	if (#table.GetKeys(ply.EZarmor.items) > 0) then
+		local RelevantSlots, DmgAmt = {}, dmg:GetDamage()
 
-	if (hitgroup == HITGROUP_HEAD) then
-		RelevantSlots.ears = .25
+		if (hitgroup == HITGROUP_HEAD) then
+			RelevantSlots.ears = .25
 
-		if (IsHitToFace(ply, dmg)) then
-			RelevantSlots.eyes = .5
-			RelevantSlots.mouthnose = .5
-		else
-			RelevantSlots.head = 1
+			if (IsHitToFace(ply, dmg)) then
+				RelevantSlots.eyes = .5
+				RelevantSlots.mouthnose = .5
+			else
+				RelevantSlots.head = 1
+			end
+		elseif (hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC) then
+			RelevantSlots.chest = 1
+
+			if (IsHitToBack(ply, dmg)) then
+				RelevantSlots.back = .25
+			end
+		elseif (hitgroup == HITGROUP_STOMACH) then
+			RelevantSlots.abdomen = .5
+			RelevantSlots.pelvis = .5
+		elseif (hitgroup == HITGROUP_RIGHTARM) then
+			RelevantSlots.rightshoulder = .5
+			RelevantSlots.rightforearm = .5
+		elseif (hitgroup == HITGROUP_LEFTARM) then
+			RelevantSlots.leftshoulder = .5
+			RelevantSlots.leftforearm = .5
+		elseif (hitgroup == HITGROUP_RIGHTLEG) then
+			RelevantSlots.rightthigh = .5
+			RelevantSlots.rightcalf = .5
+		elseif (hitgroup == HITGROUP_LEFTLEG) then
+			RelevantSlots.leftthigh = .5
+			RelevantSlots.leftcalf = .5
 		end
-	elseif (hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC) then
-		RelevantSlots.chest = 1
 
-		if (IsHitToBack(ply, dmg)) then
-			RelevantSlots.back = .25
+		local Protection, ArmorPieceBroke = 0, false
+
+		for slot, relevance in pairs(RelevantSlots) do
+			local ProtectionForThisSlot, Busted = GetProtectionFromSlot(ply, slot, dmg, DmgAmt, relevance, true)
+
+			if ((slot ~= "ears") and (slot ~= "back")) then
+				Protection = Protection + ProtectionForThisSlot
+			end
+
+			ArmorPieceBroke = ArmorPieceBroke or Busted
 		end
-	elseif (hitgroup == HITGROUP_STOMACH) then
-		RelevantSlots.abdomen = .5
-		RelevantSlots.pelvis = .5
-	elseif (hitgroup == HITGROUP_RIGHTARM) then
-		RelevantSlots.rightshoulder = .5
-		RelevantSlots.rightforearm = .5
-	elseif (hitgroup == HITGROUP_LEFTARM) then
-		RelevantSlots.leftshoulder = .5
-		RelevantSlots.leftforearm = .5
-	elseif (hitgroup == HITGROUP_RIGHTLEG) then
-		RelevantSlots.rightthigh = .5
-		RelevantSlots.rightcalf = .5
-	elseif (hitgroup == HITGROUP_LEFTLEG) then
-		RelevantSlots.leftthigh = .5
-		RelevantSlots.leftcalf = .5
+
+		Mul = (Mul * (1-Protection)) / JMOD_CONFIG.ArmorProtectionMult
+		
+		if(Protection<=.05 and JMOD_CONFIG.QoL.RealisticLocationalDamage)then -- if there's no armor on the struck bodypart
+			Mul=Mul*JMod_BodyPartDamageMults[hitgroup]
+		end
+
+		if (ArmorPieceBroke) then
+			JMod_CalcSpeed(ply)
+			JModEZarmorSync(ply)
+		end
+	elseif(JMOD_CONFIG.QoL.RealisticLocationalDamage)then
+		Mul=Mul*JMod_BodyPartDamageMults[hitgroup]
 	end
-
-	local Protection, ArmorPieceBroke = 0, false
-
-	for slot, relevance in pairs(RelevantSlots) do
-		local ProtectionForThisSlot, Busted = GetProtectionFromSlot(ply, slot, dmg, DmgAmt, relevance, true)
-
-		if ((slot ~= "ears") and (slot ~= "back")) then
-			Protection = Protection + ProtectionForThisSlot
-		end
-
-		ArmorPieceBroke = ArmorPieceBroke or Busted
-	end
-
-	Mul = (Mul - Protection) / JMOD_CONFIG.ArmorProtectionMult
 	dmg:ScaleDamage(Mul)
-
-	if (ArmorPieceBroke) then
-		JMod_CalcSpeed(ply)
-		JModEZarmorSync(ply)
-	end
 end
 
 local function FullBodyDmgHandling(ply, dmg, biological)
@@ -212,8 +220,8 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 
 		ArmorPieceBroke = ArmorPieceBroke or Busted
 	end
-
-	Mul = (Mul - Protection) / JMOD_CONFIG.ArmorProtectionMult
+	
+	Mul = (Mul * (1-Protection)) / JMOD_CONFIG.ArmorProtectionMult
 	dmg:ScaleDamage(Mul)
 
 	if (ArmorPieceBroke) then
@@ -223,7 +231,7 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 end
 
 hook.Add("ScalePlayerDamage", "JMod_ScalePlayerDamage", function(ply, hitgroup, dmginfo)
-	if (ply.EZarmor) then
+	if(ply.EZarmor)then
 		LocationalDmgHandling(ply, hitgroup, dmginfo)
 	end
 end)

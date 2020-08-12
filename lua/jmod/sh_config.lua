@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=27,
+		Version=28,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		L4Dhints=false,
@@ -308,6 +308,11 @@ function JMod_InitGlobalConfig(forceNew)
 		NuclearRadiationMult=1,
 		NuclearRadiationSickness=true,
 		FragExplosions=true,
+		QoL={
+			RealisticLocationalDamage=false,
+			ExtinguishUnderwater=false,
+			RealisticFallDamage=false
+		},
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,

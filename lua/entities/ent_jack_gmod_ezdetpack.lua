@@ -222,13 +222,18 @@ if (SERVER) then
 
 				JMod_WreckBuildings(self, SelfPos, PowerMult)
 				JMod_BlastDoors(self, SelfPos, PowerMult)
+				
+				local RangeMult=1
+				if((IsValid(self.StuckTo))and(JMod_IsDoor(self.StuckTo)))then
+					RangeMult=.3
+				end
 
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
 					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl, Att, SelfPos, 300 * PowerMult, 200 * PowerMult)
+					util.BlastDamage(Infl, Att, SelfPos, 300 * PowerMult * RangeMult, 200 * PowerMult)
 					-- do a lot of damage point blank, mostly for breaching
-					util.BlastDamage(Infl, Att, SelfPos, 20 * PowerMult, 1700 * PowerMult)
+					util.BlastDamage(Infl, Att, SelfPos, 20 * PowerMult * RangeMult, 1700 * PowerMult)
 					self:Remove()
 				end)
 			end

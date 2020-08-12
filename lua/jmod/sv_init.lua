@@ -30,7 +30,7 @@ hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
 	if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
 end)
 
-local NextMainThink,NextNutritionThink,NextArmorThink,NextSync=0,0,0,0
+local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
 	local Time=CurTime()
 	if(NextMainThink>Time)then return end
@@ -119,6 +119,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		end
 	end
 	---
+	if(NextSlowThink<Time)then
+		NextSlowThink=Time+2
+		if(JMOD_CONFIG.QoL.ExtinguishUnderwater)then
+			for k,v in pairs(ents.GetAll())do
+				if((v.IsOnFire)and(v.WaterLevel))then
+					if((v:IsOnFire())and(v:WaterLevel()>=3))then
+						v:Extinguish()
+					end
+				end
+			end
+		end
+	end
+	---
 	if(NextSync<Time)then
 		NextSync=Time+30
 		net.Start("JMod_LuaConfigSync")
@@ -126,6 +139,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		net.WriteInt(JMOD_CONFIG.AltFunctionKey,32)
 		net.WriteFloat(JMOD_CONFIG.WeaponSwayMult)
 		net.Broadcast()
+	end
+end)
+
+--[[
+concommand.Add("jacky_info_debug",function(ply,cmd,args)
+	local Tr=util.QuickTrace(ply:GetPos(),Vector(0,0,-30000),ply)
+	jprint(Tr.HitPos:Distance(ply:GetPos())/52)
+end)
+--]]
+
+hook.Add("GetFallDamage","JMod_FallDamage",function(ply,spd)
+	if(JMOD_CONFIG.QoL.RealisticFallDamage)then
+		return spd^2/8000
 	end
 end)
 

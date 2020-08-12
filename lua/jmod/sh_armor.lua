@@ -73,6 +73,17 @@ JMod_ArmorSlotNiceNames={
 	leftshoulder="Left Shoulder",
 	leftforearm="Left Forearm"
 }
+JMod_BodyPartDamageMults={ -- only used if JMOD_CONFIG.QoL.RealisticLocationalDamage is true
+	[HITGROUP_HEAD]=10,
+	[HITGROUP_CHEST]=1,
+	[HITGROUP_GENERIC]=1,
+	[HITGROUP_STOMACH]=.5,
+	[HITGROUP_GEAR]=.5,
+	[HITGROUP_LEFTARM]=.2,
+	[HITGROUP_RIGHTARM]=.2,
+	[HITGROUP_LEFTLEG]=.2,
+	[HITGROUP_RIGHTLEG]=.2
+}
 local BasicArmorProtectionProfile = {
 	[DMG_BUCKSHOT] = .999,
 	[DMG_CLUB] = .99,

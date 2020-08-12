@@ -402,7 +402,20 @@ function SWEP:PrimaryAttack()
             Src = src,
             Spread = Vector(spread, spread, spread),
             Callback = function(att, tr, dmg)
-                local dist = (tr.HitPos - src):Length() * ArcCW.HUToM
+				if(SERVER)then
+					if((tr.Entity)and(tr.Entity.GetClass)and(self.DoorBreachPower)and(JMod_IsDoor(tr.Entity)))then
+						local Dist=tr.HitPos:Distance(src)
+						if((Dist<100)and(tr.Entity:GetPhysicsObject():GetVolume()<=15000))then
+							tr.Entity.EZ_DoorBlownAmt=(tr.Entity.EZ_DoorBlownAmt or 0)+self.DoorBreachPower
+							if(tr.Entity.EZ_DoorBlownAmt>=1)then
+								tr.Entity.EZ_DoorBlownAmt=0
+								JMod_BlastThatDoor(tr.Entity,dir:Forward()*100)
+							end
+						end
+					end
+				end
+				
+				local dist = (tr.HitPos - src):Length() * ArcCW.HUToM
 
                 local pen = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
 
@@ -742,8 +755,8 @@ function SWEP:Think()
 
         local ra = Angle(0, 0, 0)
 
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.8)
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.8)
 
         newang = newang - ra
 
@@ -973,74 +986,6 @@ function SWEP:ToggleCustomizeHUD(ic) -- jmod will have its own customization sys
 	--]]
 end
 if(CLIENT)then
-	--[[
-	-- viewbob during reload and firing shake
-	SWEP.ProceduralViewOffset = Angle(0, 0, 0)
-	local procedural_spdlimit = 5
-	local oldangtmp, oldpostmp
-	local mzang_fixed,mzang_fixed_last
-	local mzang_velocity = Angle()
-	local progress = 0
-	local targint,targbool,oldBipodTxt
-	local bipodTxtTime = 0
-	function SWEP:CalcView(ply, pos, ang, fov)
-		if not(self.ProceduralViewBobIntensity)then return end
-		if not ang then return end
-		if ply ~= LocalPlayer() then return end
-		if(ply:ShouldDrawLocalPlayer())then return end
-		local vm = ply:GetViewModel()
-		if not IsValid(vm) then return end
-		if not CLIENT then return end
-		local ftv = math.max(FrameTime(), 0.001)
-		local viewbobintensity = 0.2 * 5
-
-		oldpostmp = pos * 1
-		oldangtmp = ang * 1
-
-		targbool = self:GetNextPrimaryFire() - .1 > CurTime()
-		targint = targbool and 1 or 0
-		targint = math.min(targint, 1-math.pow( vm:GetCycle(), 2 ) )
-		progress = Lerp(ftv * 15, progress, targint)
-		
-		local angpos = vm:GetAttachment(self.ProceduralViewBobAttachment or 1)
-
-		if angpos then
-			mzang_fixed = vm:WorldToLocalAngles(angpos.Ang)
-			mzang_fixed:Normalize()
-		end
-
-		self.ProceduralViewOffset:Normalize()
-
-		if mzang_fixed_last then
-			local delta = mzang_fixed - mzang_fixed_last
-			delta:Normalize()
-			mzang_velocity = mzang_velocity + delta * 2
-			mzang_velocity.p = math.Approach(mzang_velocity.p, -self.ProceduralViewOffset.p * 2, ftv * 20)
-			mzang_velocity.p = math.Clamp(mzang_velocity.p, -procedural_spdlimit, procedural_spdlimit)
-			self.ProceduralViewOffset.p = self.ProceduralViewOffset.p + mzang_velocity.p * ftv
-			self.ProceduralViewOffset.p = math.Clamp(self.ProceduralViewOffset.p, -90, 90)
-			mzang_velocity.y = math.Approach(mzang_velocity.y, -self.ProceduralViewOffset.y * 2, ftv * 20)
-			mzang_velocity.y = math.Clamp(mzang_velocity.y, -procedural_spdlimit, procedural_spdlimit)
-			self.ProceduralViewOffset.y = self.ProceduralViewOffset.y + mzang_velocity.y * ftv
-			self.ProceduralViewOffset.y = math.Clamp(self.ProceduralViewOffset.y, -90, 90)
-			mzang_velocity.r = math.Approach(mzang_velocity.r, -self.ProceduralViewOffset.r * 2, ftv * 20)
-			mzang_velocity.r = math.Clamp(mzang_velocity.r, -procedural_spdlimit, procedural_spdlimit)
-			self.ProceduralViewOffset.r = self.ProceduralViewOffset.r + mzang_velocity.r * ftv
-			self.ProceduralViewOffset.r = math.Clamp(self.ProceduralViewOffset.r, -90, 90)
-		end
-
-		self.ProceduralViewOffset.p = math.Approach(self.ProceduralViewOffset.p, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.p)
-		self.ProceduralViewOffset.y = math.Approach(self.ProceduralViewOffset.y, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.y)
-		self.ProceduralViewOffset.r = math.Approach(self.ProceduralViewOffset.r, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.r)
-		mzang_fixed_last = mzang_fixed
-		local ints = 3 * -self.ProceduralViewBobIntensity
-		ang:RotateAroundAxis(ang:Right(), Lerp(progress, 0, -self.ProceduralViewOffset.p) * ints)
-		ang:RotateAroundAxis(ang:Up(), Lerp(progress, 0, self.ProceduralViewOffset.y / 2) * ints)
-		ang:RotateAroundAxis(ang:Forward(), Lerp(progress, 0, self.ProceduralViewOffset.r / 3) * ints)
-
-		return pos, LerpAngle(0, ang, oldangtmp) + (AngleRand() * self.RecoilAmount * 0.008), fov
-	end
-	--]]
 	-- expensive scopes
 	local rtsize = ScrH()
 	local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
