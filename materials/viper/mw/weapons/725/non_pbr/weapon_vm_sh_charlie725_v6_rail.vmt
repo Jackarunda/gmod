@@ -1,0 +1,28 @@
+"VertexlitGeneric"
+{
+
+//Textures
+	"$basetexture" "viper/MW/weapons/725/rail_c"
+	"$bumpmap" "viper/MW/weapons/725/rail_n"
+	"$phongexponenttexture"	"viper/MW/weapons/725/rail_e"
+
+	$halflambert  	1
+	$nocull                     1
+	
+	$envmap						env_cubemap
+	$envmaptint					"[ 0.003 0.003 0.0035 ]"
+	$basemapalphaenvmapmask		1
+	$envmapfresnel				1
+	
+	$phong						1
+	$phongboost					0.44
+	$phongtint					"[.9 .9 1 ]"
+	$phongfresnelranges			"[1 3 6]"
+	$normalmapalphaphongmask	1
+	
+	$rimlight					1
+	$rimlightexponent			120
+	$rimmask					1
+	$rimlightboost				0.2
+}
+

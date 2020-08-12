@@ -64,17 +64,22 @@ if(SERVER)then
 		if(Alt)then
 			activator:PickupObject(self)
 		else
-			if not(activator:HasWeapon(self.Specs.swep))then
-				activator:Give(self.Specs.swep)
-				activator:GetWeapon(self.Specs.swep):SetClip1(self.MagRounds)
-				activator:SelectWeapon(self.Specs.swep)
-				JMod_Hint(activator,"weapon drop")
-				JMod_Hint(activator,"weapon steadiness")
-				JMod_Hint(activator,"weapon firemodes")
-				JMod_Hint(activator,self.Specs.swep,nil,true)
-				self:Remove()
+			if(ArcCW)then
+				if not(activator:HasWeapon(self.Specs.swep))then
+					activator:Give(self.Specs.swep)
+					activator:GetWeapon(self.Specs.swep):SetClip1(self.MagRounds)
+					activator:SelectWeapon(self.Specs.swep)
+					JMod_Hint(activator,"weapon drop")
+					JMod_Hint(activator,"weapon steadiness")
+					JMod_Hint(activator,"weapon firemodes")
+					JMod_Hint(activator,self.Specs.swep,nil,true)
+					self:Remove()
+				else
+					activator:PickupObject(self)
+				end
 			else
 				activator:PickupObject(self)
+				activator:PrintMessage(HUD_PRINTCENTER,"ArcCW Base is missing!")
 			end
 		end
 	end

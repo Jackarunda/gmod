@@ -1,0 +1,16 @@
+Patch
+{
+include "materials/nmrih/models/weapons/nmrih_wguns_shared.vmt"
+insert
+{
+$baseTexture "nmrih\models\weapons\fa_sv10\w_fa_sv10_d"
+$bumpmap "nmrih\models\weapons\fa_sv10\w_fa_sv10_n"
+
+ 
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+}
+}

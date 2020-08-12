@@ -7,7 +7,7 @@
 	sniper rifle - Robotnik's CoD4 SWEPs - M40A3
 	anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 	semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
-pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
+	pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
 break-action shotgun - cod over-under shotty
 pistol - Mac's CoD Black Ops II SWEPs - B23R
 machine pistol - Mac's Black Ops SWEPs - MAC11
@@ -79,6 +79,16 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_m1014.mdl",
 		swep="wep_jack_gmod_sas",
 		ent="ent_jack_gmod_ezweapon_sas"
+	},
+	["Pump-Action Shotgun"]={
+		mdl="models/weapons/w_jmod_w1200.mdl",
+		swep="wep_jack_gmod_pas",
+		ent="ent_jack_gmod_ezweapon_pas"
+	},
+	["Break-Action Shotgun"]={
+		mdl="models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl",
+		swep="wep_jack_gmod_bas",
+		ent="ent_jack_gmod_ezweapon_bas"
 	}
 }
 game.AddAmmoType({

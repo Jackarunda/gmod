@@ -1,0 +1,41 @@
+
+VertexLitGeneric
+{
+$halflambert "1"
+$selfillum "1"
+$phong "1"
+$phongtint "[.12 .15 .1]"
+$phongboost "5"
+$phongexponent "100"
+$phongfresnelranges "[1 10 8]"
+
+$envmap "env_cubemap"
+$envmaptint "[.12 .15 .1]"
+$normalmapalphaenvmapmask "1"
+
+//$rimlight "1"
+//$rimlightexponent "12"
+//$rimlightboost "1"
+
+$detail "blood_gun"
+$detailblendmode 2
+$detailblendfactor 0.0
+$detailtexturetransform "center .5 .5 scale 1 1 rotate 0 translate 0 0"
+$detailtransformscale 1
+$detailrotation	0
+$detailscale 2.5
+	"Proxies"
+	{
+		"BloodyTexture"
+		{
+			"detailcount"	"3"
+			"source"		"weapon"
+		}
+		"TextureTransform"
+		{
+			"resultVar"	"$detailtexturetransform"
+			"scaleVar"	"$detailtransformscale"
+			"rotateVar"	"$detailrotation"
+		}
+	}
+}
