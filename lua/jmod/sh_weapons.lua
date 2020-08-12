@@ -8,7 +8,7 @@
 	anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
 	semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
 	pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
-break-action shotgun - cod over-under shotty
+	break-action shotgun - cod over-under shotty
 pistol - Mac's CoD Black Ops II SWEPs - B23R
 machine pistol - Mac's Black Ops SWEPs - MAC11
 submachine gun - Robotnik's CoD4 SWEPs - MP5

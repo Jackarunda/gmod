@@ -6,11 +6,11 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/viper/mw/weapons/725_mammaledition.mdl"
 SWEP.WorldModel = "models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl"
-SWEP.ViewModelFOV = 60
+SWEP.ViewModelFOV = 68
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(0,160,0)
+SWEP.BodyHolsterAng = Angle(0,170,0)
 SWEP.BodyHolsterAngL = Angle(0,195,180)
-SWEP.BodyHolsterPos = Vector(1,-11,-9)
+SWEP.BodyHolsterPos = Vector(2,-11,-9)
 SWEP.BodyHolsterPosL = Vector(1,-11,10)
 SWEP.BodyHolsterScale = 1
 
