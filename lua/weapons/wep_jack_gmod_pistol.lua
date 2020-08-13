@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 20
+SWEP.Damage = 25
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 100 -- in METERS
