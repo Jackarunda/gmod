@@ -10,6 +10,8 @@
 	pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
 	break-action shotgun - cod over-under shotty
 pistol - Mac's CoD Black Ops II SWEPs - B23R
+pocket pistol - 
+plinking pistol - 
 machine pistol - Mac's Black Ops SWEPs - MAC11
 submachine gun - Robotnik's CoD4 SWEPs - MP5
 light machine gun - Robotnik's CoD4 SWEPs - M249
@@ -89,6 +91,11 @@ JMod_WeaponTable={
 		mdl="models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl",
 		swep="wep_jack_gmod_bas",
 		ent="ent_jack_gmod_ezweapon_bas"
+	},
+	["Pistol"]={
+		mdl="models/weapons/w_jmod_b23r.mdl",
+		swep="wep_jack_gmod_pistol",
+		ent="ent_jack_gmod_ezweapon_pistol"
 	}
 }
 game.AddAmmoType({
@@ -105,6 +112,9 @@ game.AddAmmoType({
 })
 game.AddAmmoType({
 	name = "Shotgun Round"
+})
+game.AddAmmoType({
+	name = "Pistol Round"
 })
 for k,v in pairs({
 	"muzzleflash_g3",

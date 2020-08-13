@@ -7,7 +7,6 @@ SWEP.Slot = 2
 SWEP.ViewModel = "models/weapons/v_cod4_m16a4.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m16.mdl"
 SWEP.ViewModelFOV = 65
-SWEP.ReloadViewBobBone = "j_wrist_le" -- bone to follow with the camera while reloading
 
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(185,15,180)

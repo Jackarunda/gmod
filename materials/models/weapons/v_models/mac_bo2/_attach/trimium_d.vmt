@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/mac_bo2/_attach/trimium_d"
+	"$translucent" 1
+	"$selfillum" 1
+}
