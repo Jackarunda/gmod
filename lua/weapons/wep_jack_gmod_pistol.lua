@@ -8,12 +8,12 @@ SWEP.ViewModel = "models/weapons/c_bo2_b23r_1.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_b23r.mdl"
 SWEP.ViewModelFOV = 75
 
-SWEP.BodyHolsterSlot = "thigh"
-SWEP.BodyHolsterAng = Angle(0,0,0)
-SWEP.BodyHolsterAngL = Angle(0,0,0)
-SWEP.BodyHolsterPos = Vector(0,0,0)
-SWEP.BodyHolsterPosL = Vector(0,0,0)
-SWEP.BodyHolsterScale = .9
+SWEP.BodyHolsterSlot = "thighs"
+SWEP.BodyHolsterAng = Angle(90,90,-20)
+SWEP.BodyHolsterAngL = Angle(90,90,-20)
+SWEP.BodyHolsterPos = Vector(-5,17,-6)
+SWEP.BodyHolsterPosL = Vector(-7,17,2.25)
+SWEP.BodyHolsterScale = 1.1
 
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
@@ -162,7 +162,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = .3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .7, v=60}
+			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .65, v=60}
 		}
 
     },
@@ -179,7 +179,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = .3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .7, v=60},
+			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .65, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.5, v=60}
 		}
     }

@@ -246,7 +246,7 @@ if(CLIENT)then
 						mdl:SetNoDraw(true)
 						ply.EZweapons.mdls[Class]=mdl
 					end
-					
+					-- lul
 					if(not(Slots.right)and(Slots.left~=Class))then
 						Slots.right=Class
 					elseif(not(Slots.left)and(Slots.right~=Class))then
