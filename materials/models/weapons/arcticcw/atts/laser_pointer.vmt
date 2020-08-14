@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models\weapons\arcticcw\atts\laser_pointer_d"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models\weapons\arcticcw\atts\laser_pointer_s"
+}

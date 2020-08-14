@@ -96,6 +96,16 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_b23r.mdl",
 		swep="wep_jack_gmod_pistol",
 		ent="ent_jack_gmod_ezweapon_pistol"
+	},
+	["Pocket Pistol"]={
+		mdl="models/weapons/w_jmod_usp.mdl",
+		swep="wep_jack_gmod_pocketpistol",
+		ent="ent_jack_gmod_ezweapon_pocketpistol"
+	},
+	["Plinking Pistol"]={
+		mdl="models/weapons/w_jmod_usp.mdl",
+		swep="wep_jack_gmod_plinkingpistol",
+		ent="ent_jack_gmod_ezweapon_plinkingpistol"
 	}
 }
 game.AddAmmoType({
@@ -115,6 +125,9 @@ game.AddAmmoType({
 })
 game.AddAmmoType({
 	name = "Pistol Round"
+})
+game.AddAmmoType({
+	name = "Plinking Round"
 })
 for k,v in pairs({
 	"muzzleflash_g3",
