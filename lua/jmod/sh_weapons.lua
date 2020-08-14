@@ -9,10 +9,10 @@
 	semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
 	pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
 	break-action shotgun - cod over-under shotty
-pistol - Mac's CoD Black Ops II SWEPs - B23R
-pocket pistol - 
-plinking pistol - 
-machine pistol - Mac's Black Ops SWEPs - MAC11
+	pistol - Mac's CoD Black Ops II SWEPs - B23R
+	pocket pistol - cod4 usp
+	plinking pistol - cod4 usp
+machine pistol - Mac's Black Ops SWEPs - MAC11s
 submachine gun - Robotnik's CoD4 SWEPs - MP5
 light machine gun - Robotnik's CoD4 SWEPs - M249
 medium machine gun - Mac's CoD MW2 SWEPs - M240
@@ -90,12 +90,14 @@ JMod_WeaponTable={
 	["Break-Action Shotgun"]={
 		mdl="models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl",
 		swep="wep_jack_gmod_bas",
-		ent="ent_jack_gmod_ezweapon_bas"
+		ent="ent_jack_gmod_ezweapon_bas",
+		size=1.2
 	},
 	["Pistol"]={
 		mdl="models/weapons/w_jmod_b23r.mdl",
 		swep="wep_jack_gmod_pistol",
-		ent="ent_jack_gmod_ezweapon_pistol"
+		ent="ent_jack_gmod_ezweapon_pistol",
+		size=1.2
 	},
 	["Pocket Pistol"]={
 		mdl="models/weapons/w_jmod_usp.mdl",
@@ -105,7 +107,14 @@ JMod_WeaponTable={
 	["Plinking Pistol"]={
 		mdl="models/weapons/w_jmod_usp.mdl",
 		swep="wep_jack_gmod_plinkingpistol",
-		ent="ent_jack_gmod_ezweapon_plinkingpistol"
+		ent="ent_jack_gmod_ezweapon_plinkingpistol",
+		size=1.1
+	},
+	["Machine Pistol"]={
+		mdl="models/weapons/w_jmod_mac11.mdl",
+		swep="wep_jack_gmod_machinepistol",
+		ent="ent_jack_gmod_ezweapon_machinepistol",
+		size=1.1
 	}
 }
 game.AddAmmoType({

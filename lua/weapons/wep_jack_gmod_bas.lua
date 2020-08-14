@@ -140,7 +140,7 @@ SWEP.Animations = {
 		ShellEjectAt = 1,
 		ShellEjectCount=1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bas/open.wav", t = .05, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/open.wav", t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/bas/in.wav", t = 1.2, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 1.4, v=65},

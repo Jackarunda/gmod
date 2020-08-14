@@ -36,6 +36,7 @@ if(SERVER)then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
+		if(self.Specs.size)then self:SetModelScale(self.Specs.size,0) end
 		self:GetPhysicsObject():SetMass(20)
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(20)
