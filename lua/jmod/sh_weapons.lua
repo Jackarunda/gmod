@@ -12,7 +12,7 @@
 	pistol - Mac's CoD Black Ops II SWEPs - B23R
 	pocket pistol - cod4 usp
 	plinking pistol - cod4 usp
-machine pistol - Mac's Black Ops SWEPs - MAC11s
+	machine pistol - Mac's Black Ops SWEPs - MAC11s
 submachine gun - Robotnik's CoD4 SWEPs - MP5
 light machine gun - Robotnik's CoD4 SWEPs - M249
 medium machine gun - Mac's CoD MW2 SWEPs - M240
@@ -115,6 +115,11 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_machinepistol",
 		ent="ent_jack_gmod_ezweapon_machinepistol",
 		size=1.1
+	},
+	["Sub Machine Gun"]={
+		mdl="models/weapons/w_jmod_mp5.mdl",
+		swep="wep_jack_gmod_smg",
+		ent="ent_jack_gmod_ezweapon_smg"
 	}
 }
 game.AddAmmoType({

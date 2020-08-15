@@ -49,7 +49,7 @@ SWEP.Primary.Ammo = "Shotgun Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/auto_shotgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/auto_shotgun.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
 SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_m3"

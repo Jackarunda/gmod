@@ -50,7 +50,7 @@ SWEP.Primary.Ammo = "Pistol Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/pistol.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/pistol.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"
 SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_pistol"
@@ -180,7 +180,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .75, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.55, v=60}
+			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.575, v=60, p=90}
 		}
     }
 }
