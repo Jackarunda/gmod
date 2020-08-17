@@ -63,7 +63,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "" -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(.5, 1, 1)
@@ -102,7 +103,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.8,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/dmr/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -111,7 +112,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw_first",
         Time = 0.8,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/dmr/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -139,9 +140,9 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magstore.wav", t = 1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magdraw.wav", t = 1.5, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65}
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.8, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -156,11 +157,12 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magstore.wav", t = 1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magdraw.wav", t = 1.5, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.75, v=60},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav", t = 3.25, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65}
+			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 3.9, v=60, p=140}
 		}
     },
 }

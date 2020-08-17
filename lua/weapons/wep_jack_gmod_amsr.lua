@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_intervention.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_intervention.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 70
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -55,7 +55,7 @@ SWEP.ShootSoundExtraMult=2
 
 SWEP.MuzzleEffect = "muzzle_center_M82"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
-SWEP.ShellPitch = 80
+SWEP.ShellPitch = 70
 SWEP.ShellScale = 4
 
 SWEP.SpeedMult = .9
@@ -66,7 +66,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "" -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(.5, -.8, 2)
@@ -124,7 +125,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.9,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/amsr/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -133,7 +134,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw",
         Time = 0.9,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/amsr/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -148,7 +149,8 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60, p=90}
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60, p=90},
+			{s = JMod_GunHandlingSounds.grab, t = 2.25, v=55}
 		}
     },
     ["fire_iron"] = {
@@ -160,7 +162,8 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 2.25, v=55}
 		}
     },
 	["reload"] = {
@@ -174,8 +177,11 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = .55, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 1.6, v=60}
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.4, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 2, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 2.7, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -189,12 +195,16 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .65, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .6, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 1.3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = 2.5, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 3.25, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 3.9, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 4.8, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 4.9, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 4.9, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 5.6, v=60}
 		}
     }
 }

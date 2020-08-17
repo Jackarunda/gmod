@@ -65,7 +65,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.01, 3, 1.2),
     Ang = Angle(-.15, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 1, 0)
@@ -98,7 +99,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "Draw",
         Time = 0.6,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/bas/draw.wav", t = 0, v=60, p=120}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -108,6 +109,7 @@ SWEP.Animations = {
         Source = "Draw_First",
         Time = 1,
         SoundTable = {
+			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = .2, v=60}
 		},
@@ -141,6 +143,7 @@ SWEP.Animations = {
 		ShellEjectCount=1,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/bas/open.wav", t = 0, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .6, v=60, p=140},
 			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/bas/in.wav", t = 1.2, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 1.4, v=65},
@@ -161,6 +164,7 @@ SWEP.Animations = {
 		ShellEjectCount=2,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/bas/open_empty.wav", t = .05, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1.3, v=65},
 			{s = "snds_jack_gmod/ez_weapons/bas/in_double.wav", t = 1.8, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 2, v=65},

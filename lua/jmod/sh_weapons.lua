@@ -13,7 +13,7 @@
 	pocket pistol - cod4 usp
 	plinking pistol - cod4 usp
 	machine pistol - Mac's Black Ops SWEPs - MAC11s
-submachine gun - Robotnik's CoD4 SWEPs - MP5
+	submachine gun - Robotnik's CoD4 SWEPs - MP5
 light machine gun - Robotnik's CoD4 SWEPs - M249
 medium machine gun - Mac's CoD MW2 SWEPs - M240
 magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
@@ -120,6 +120,11 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_mp5.mdl",
 		swep="wep_jack_gmod_smg",
 		ent="ent_jack_gmod_ezweapon_smg"
+	},
+	["Light Machine Gun"]={
+		mdl="models/weapons/w_jmod_m249.mdl",
+		swep="wep_jack_gmod_lmg",
+		ent="ent_jack_gmod_ezweapon_lmg"
 	}
 }
 game.AddAmmoType({
@@ -163,6 +168,71 @@ for k,v in pairs({
 })do
 	PrecacheParticleSystem(v)
 end
+JMod_GunHandlingSounds={
+	draw={
+		handgun={
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol1.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol2.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol3.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol4.wav"
+		},
+		longgun={
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun1.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun2.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun3.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun4.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun5.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun6.wav"
+		}
+	},
+	tap={
+		magwell={
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell1.wav",
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell2.wav",
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell3.wav",
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell4.wav",
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell5.wav",
+			"snds_jack_gmod/ez_weapons/handling/tap_magwell6.wav"
+		},
+		metallic={
+			"snds_jack_gmod/ez_weapons/handling/tap_metallic.wav"
+		}
+	},
+	aim={
+		inn={
+			"snds_jack_gmod/ez_weapons/handling/aim1.wav",
+			"snds_jack_gmod/ez_weapons/handling/aim2.wav",
+			"snds_jack_gmod/ez_weapons/handling/aim3.wav",
+			"snds_jack_gmod/ez_weapons/handling/aim4.wav",
+			"snds_jack_gmod/ez_weapons/handling/aim5.wav",
+			"snds_jack_gmod/ez_weapons/handling/aim6.wav"
+		},
+		out={
+			"snds_jack_gmod/ez_weapons/handling/aim_out.wav"
+		},
+		minor={
+			"snds_jack_gmod/ez_weapons/handling/aim_minor.wav"
+		}
+	},
+	cloth={
+		loud={
+			"snds_jack_gmod/ez_weapons/handling/cloth_loud.wav"
+		},
+		quiet={
+			"snds_jack_gmod/ez_weapons/handling/cloth_quiet.wav"
+		},
+		magpull={
+			"snds_jack_gmod/ez_weapons/handling/cloth_magpull1.wav",
+			"snds_jack_gmod/ez_weapons/handling/cloth_magpull2.wav"
+		},
+		move={
+			"snds_jack_gmod/ez_weapons/handling/cloth_move.wav"
+		}
+	},
+	grab={
+		"snds_jack_gmod/ez_weapons/handling/grab1.wav"
+	}
+}
 concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
 	if not(ply:Alive())then return end
 	local Wep=ply:GetActiveWeapon()
@@ -178,6 +248,10 @@ if(CLIENT)then
 	language.Add("Light Rifle Round_ammo","Light Rifle Round")
 	language.Add("Medium Rifle Round_ammo","Medium Rifle Round")
 	language.Add("Magnum Rifle Round_ammo","Magnum Rifle Round")
+	language.Add("Heavy Rifle Round_ammo","Heavy Rifle Round")
+	language.Add("Shotgun Round_ammo","Shotgun Round")
+	language.Add("Pistol Round_ammo","Pistol Round")
+	language.Add("Plinking Round_ammo","Plinking Round")
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
 		local wpn = LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end

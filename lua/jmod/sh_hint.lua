@@ -158,10 +158,20 @@ JMod_Hints = {
 	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"}
 }
 JMod_SpecificHints={
+	["wep_jack_gmod_amsr"]={Type="info",Text="weapon uses Magnum Rifle Rounds"},
 	["wep_jack_gmod_assaultrifle"]={Type="info",Text="weapon uses Light Rifle Rounds"},
 	["wep_jack_gmod_battlerifle"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
 	["wep_jack_gmod_carbine"]={Type="info",Text="weapon uses Light Rifle Rounds"},
 	["wep_jack_gmod_dmr"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
 	["wep_jack_gmod_boltactionrifle"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
-	["wep_jack_gmod_sniperrifle"]={Type="info",Text="weapon uses Magnum Rifle Rounds"}
+	["wep_jack_gmod_sniperrifle"]={Type="info",Text="weapon uses Magnum Rifle Rounds"},
+	["wep_jack_gmod_bas"]={Type="info",Text="weapon uses Shotgun Rounds"},
+	["wep_jack_gmod_lmg"]={Type="info",Text="weapon uses Light Rifle Rounds"},
+	["wep_jack_gmod_machinepistol"]={Type="info",Text="weapon uses Pistol Rounds"},
+	["wep_jack_gmod_pas"]={Type="info",Text="weapon uses Shotgun Rounds"},
+	["wep_jack_gmod_pistol"]={Type="info",Text="weapon uses Pistol Rounds"},
+	["wep_jack_gmod_plinkingpistol"]={Type="info",Text="weapon uses Plinking Rounds"},
+	["wep_jack_gmod_pocketpistol"]={Type="info",Text="weapon uses Pistol Rounds"},
+	["wep_jack_gmod_sas"]={Type="info",Text="weapon uses Shotgun Rounds"},
+	["wep_jack_gmod_smg"]={Type="info",Text="weapon uses Pistol Rounds"}
 }

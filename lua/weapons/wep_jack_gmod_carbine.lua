@@ -65,7 +65,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.55, -1, .4),
     Ang = Angle(-.5, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1.5, 0, .5)
@@ -86,7 +87,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -95,7 +96,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw2",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -123,8 +124,10 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/carbine/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.45, v=65}
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .4, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.45, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.15, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -139,10 +142,12 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/carbine/mag_out.wav", t = .3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.1, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .4, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.25, v=65},
 			{s = "snds_jack_gmod/ez_weapons/carbine/bolt_pull.wav", t = 1.95, v=65},
-			{s = "snds_jack_gmod/ez_weapons/carbine/bolt_release.wav", t = 2.2, v=65}
+			{s = "snds_jack_gmod/ez_weapons/carbine/bolt_release.wav", t = 2.2, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.6, v=60}
 		}
     },
 }

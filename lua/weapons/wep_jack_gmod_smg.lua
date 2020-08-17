@@ -22,7 +22,7 @@ SWEP.Penetration = 35
 
 SWEP.Primary.ClipSize = 35 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .35
+SWEP.Recoil = .4
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -64,7 +64,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.79, 0, 1.6),
     Ang = Angle(.5, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 1)

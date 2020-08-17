@@ -66,7 +66,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.375, 1.5, 1.45),
     Ang = Angle(.2, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 1, 0)

@@ -276,6 +276,73 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
         end
     end
 end
+SWEP.LastEnterSightTime = 0
+SWEP.LastExitSightTime = 0
+function SWEP:EnterSights()
+    local asight = self:GetActiveSights()
+    if !asight then return end
+    if self:GetState() != ArcCW.STATE_IDLE then return end
+    --print("beep beep bo deep")
+    if !self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD)) then return end
+    if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
+
+    self:SetupActiveSights()
+
+    self:SetState(ArcCW.STATE_SIGHTS)
+    self.Sighted = true
+    self.Sprinted = false
+
+    self:SetShouldHoldType()
+
+    -- self.SwayScale = 0.1
+    -- self.BobScale = 0.1
+
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+	if(asight.SwitchToSound)then
+		local snd=asight.SwitchToSound
+		if(type(snd)=="table")then snd=table.Random(asight.SwitchToSound) end
+		self:EmitSound(snd, 75, math.Rand(105, 115), 0.5, CHAN_VOICE2)
+	end
+
+    self.LastEnterSightTime = UnPredictedCurTime()
+
+    if self.Animations.enter_sight then
+        self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
+    end
+end
+function SWEP:ExitSights()
+    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    local asight = self:GetActiveSights()
+    if self:GetState() != ArcCW.STATE_SIGHTS then return end
+
+    self:SetState(ArcCW.STATE_IDLE)
+    self.Sighted = false
+    self.Sprinted = false
+
+    -- self.SwayScale = 1
+    -- self.BobScale = 1.5
+
+    self:SetShouldHoldType()
+
+    if self:InSprint() then
+        self:EnterSprint()
+    end
+
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+	if(asight.SwitchFromSound)then
+		local snd=asight.SwitchFromSound
+		if(type(snd)=="table")then snd=table.Random(asight.SwitchFromSound) end
+		self:EmitSound(snd, 75, math.Rand(85, 95), 0.5, CHAN_VOICE2)
+	end
+
+    self.LastExitSightTime = UnPredictedCurTime()
+
+    if self.Animations.exit_sight then
+        self:PlayAnimation("exit_sight", self:GetSightTime())
+    end
+end
 -- firing
 function SWEP:PrimaryAttack()
     if self:GetOwner():IsNPC() then
@@ -1866,6 +1933,13 @@ if(CLIENT)then
 			sway = 2,
 			bob = 2,
 		}
+		
+		if(self.ReloadActivePos)then
+			if(self:GetNWBool("reloading", false))then
+				target.pos=self.ReloadActivePos
+				target.ang=self.ReloadActiveAng
+			end
+		end
 
 		local vm_right = GetConVar("arccw_vm_right"):GetFloat()
 		local vm_up = GetConVar("arccw_vm_up"):GetFloat()

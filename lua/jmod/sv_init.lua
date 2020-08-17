@@ -19,6 +19,7 @@ local function JackaSpawnHook(ply)
 	JModEZarmorSync(ply)
 	ply.EZhealth=nil
 	ply.EZirradiated=nil
+	ply.EZoxygen=100
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
 	net.Send(ply)
@@ -38,32 +39,51 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	---
 	for k,playa in pairs(player.GetAll())do
 		local Alive=playa:Alive()
-		if((playa.EZhealth)and(Alive))then
-			local Healin=playa.EZhealth
-			if(Healin>0)then
-				local Amt=1
-				if(math.random(1,3)==2)then Amt=2 end
-				playa.EZhealth=Healin-Amt
-				local Helf,Max=playa:Health(),playa:GetMaxHealth()
-				if(Helf<Max)then
-					playa:SetHealth(math.Clamp(Helf+Amt,0,Max))
-					if(playa:Health()==Max)then playa:RemoveAllDecals() end
+		if(Alive)then
+			if(playa.EZhealth)then
+				local Healin=playa.EZhealth
+				if(Healin>0)then
+					local Amt=1
+					if(math.random(1,3)==2)then Amt=2 end
+					playa.EZhealth=Healin-Amt
+					local Helf,Max=playa:Health(),playa:GetMaxHealth()
+					if(Helf<Max)then
+						playa:SetHealth(math.Clamp(Helf+Amt,0,Max))
+						if(playa:Health()==Max)then playa:RemoveAllDecals() end
+					end
 				end
 			end
-		end
-		if((playa.EZirradiated)and(Alive))then
-			local Rads=playa.EZirradiated
-			if((Rads>0)and(math.random(1,3)==1))then
-				playa.EZirradiated=math.Clamp(Rads-.5,0,9e9)
-				local Helf,Max=playa:Health(),playa:GetMaxHealth()
-				local Dmg=DamageInfo()
-				Dmg:SetAttacker(playa)
-				Dmg:SetInflictor(game.GetWorld())
-				Dmg:SetDamage(1)
-				Dmg:SetDamageType(DMG_GENERIC)
-				Dmg:SetDamagePosition(playa:GetShootPos())
-				playa:TakeDamageInfo(Dmg)
-				
+			if(playa.EZirradiated)then
+				local Rads=playa.EZirradiated
+				if((Rads>0)and(math.random(1,3)==1))then
+					playa.EZirradiated=math.Clamp(Rads-.5,0,9e9)
+					local Helf,Max=playa:Health(),playa:GetMaxHealth()
+					local Dmg=DamageInfo()
+					Dmg:SetAttacker(playa)
+					Dmg:SetInflictor(game.GetWorld())
+					Dmg:SetDamage(1)
+					Dmg:SetDamageType(DMG_GENERIC)
+					Dmg:SetDamagePosition(playa:GetShootPos())
+					playa:TakeDamageInfo(Dmg)
+					
+				end
+			end
+			if(JMOD_CONFIG.QoL.Drowning)then
+				if(playa:WaterLevel()>=3)then
+					playa.EZoxygen=math.Clamp(playa.EZoxygen-1.67,0,100) -- 60 seconds before damage
+					if(playa.EZoxygen<=0)then
+						local Dmg=DamageInfo()
+						Dmg:SetDamageType(DMG_DROWN)
+						Dmg:SetDamage(5)
+						Dmg:SetAttacker(playa)
+						Dmg:SetInflictor(game.GetWorld())
+						Dmg:SetDamagePosition(playa:GetPos())
+						Dmg:SetDamageForce(Vector(0,0,0))
+						playa:TakeDamageInfo(Dmg)
+					end
+				elseif(playa.EZoxygen<100)then
+					playa.EZoxygen=math.Clamp(playa.EZoxygen+25,0,100) -- recover in 4 seconds
+				end
 			end
 		end
 	end
