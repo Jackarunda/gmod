@@ -108,7 +108,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.25,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -117,7 +117,7 @@ SWEP.Animations = {
     ["draw_empty"] = {
         Source = "draw_empty",
         Time = 0.25,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -126,7 +126,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw_first",
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60},
+			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/pistol/safety.wav", t = .25, v=60}
 		},
         Time = 0.75,
@@ -161,7 +161,7 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = 0, v=60},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .5, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .2, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .65, v=60}
 		}
@@ -178,7 +178,7 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = 0, v=60},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = .5, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .2, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .75, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.575, v=60, p=90}

@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Pump-Action Shotgun"
 
-SWEP.Slot = 2
+SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_w1200_c.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_w1200.mdl"
@@ -96,7 +96,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.6,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/sas/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -105,7 +105,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw",
         Time = 0.6,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/sas/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
@@ -118,7 +118,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
 		},
-        ShellEjectAt = .4,
+        ShellEjectAt = .45,
     },
     ["fire_iron"] = {
         Source = "shoot1",
@@ -127,7 +127,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
 		},
-        ShellEjectAt = .4,
+        ShellEjectAt = .45,
     },
     ["fire_empty"] = {
         Source = "shoot1",
@@ -136,7 +136,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
 			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
 		},
-		ShellEjectAt = .4,
+		ShellEjectAt = .45,
     },
     ["sgreload_start"] = {
         Source = "reload_start",
@@ -145,7 +145,9 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0,
-		SoundTable = {{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 0, v=50, p=80}},
+		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
+		}
     },
     ["sgreload_start_empty"] = {
         Source = "reload_start",
@@ -154,7 +156,9 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0,
-		SoundTable = {{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 0, v=50, p=80}},
+		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
+		}
     },
     ["sgreload_insert"] = {
         Source = "reload",
@@ -165,10 +169,13 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
-		SoundTable = {{s = {
-			"snds_jack_gmod/ez_weapons/sas/in_1.wav",
-			"snds_jack_gmod/ez_weapons/sas/in_2.wav"
-		}, t = .2, v=60}}
+		SoundTable = {
+			{s = {
+				"snds_jack_gmod/ez_weapons/sas/in_1.wav",
+				"snds_jack_gmod/ez_weapons/sas/in_2.wav"
+			}, t = .2, v=65, p=90},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
+		}
     },
     ["sgreload_finish"] = {
         Source = "reload_end",
@@ -176,8 +183,9 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
+			{s = JMod_GunHandlingSounds.grab, t = 0.1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .3, v=60},
+			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .5, v=60}
 		},
         LHIKOut = 0.4,
     }

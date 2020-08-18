@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Break-Action Shotgun"
 
-SWEP.Slot = 2
+SWEP.Slot = 3
 
 SWEP.ViewModel = "models/viper/mw/weapons/725_mammaledition.mdl"
 SWEP.WorldModel = "models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl"

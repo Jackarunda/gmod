@@ -26,8 +26,9 @@ SWEP.Range = 100 -- in METERS
 SWEP.Penetration = 35
 
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
+SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .65
+SWEP.Recoil = .7
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -106,7 +107,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.35,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -115,7 +116,7 @@ SWEP.Animations = {
     ["draw_empty"] = {
         Source = "draw",
         Time = 0.35,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -124,7 +125,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw",
         Time = 0.35,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/pistol/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -156,7 +157,8 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/mp/out.wav", t = .3, v=60},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 1, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=110},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.65, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/mp/in.wav", t = 1.85, v=60},
 		}
 
@@ -172,7 +174,8 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/mp/out.wav", t = .3, v=60},
-			{s = "snds_jack_gmod/ez_weapons/cloth_pull.wav", t = 1, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=110},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.65, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/mp/in.wav", t = 1.85, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mp/pull.wav", t = 2.45, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mp/release.wav", t = 2.7, v=60},

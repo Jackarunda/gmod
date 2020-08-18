@@ -94,7 +94,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -103,7 +103,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw2",
         Time = 0.45,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/assault_rifle/draw.wav", t = 0, v=60}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -130,9 +130,12 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/smg/out.wav", t = .2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.3, v=50, p=120},
-			{s = "snds_jack_gmod/ez_weapons/smg/in.wav", t = 1.6, v=65}
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .7, v=65, p=110},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.3, v=55, p=120},
+			{s = "snds_jack_gmod/ez_weapons/smg/in.wav", t = 1.6, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.15, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -146,11 +149,14 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/smg/out.wav", t = .1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/tap1.wav", t = 1.45, v=50, p=120},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = .7, v=65, p=110},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.45, v=55, p=120},
 			{s = "snds_jack_gmod/ez_weapons/smg/in.wav", t = 1.7, v=65},
 			{s = "snds_jack_gmod/ez_weapons/smg/pull.wav", t = 2.15, v=65},
-			{s = "snds_jack_gmod/ez_weapons/smg/release.wav", t = 2.35, v=65}
+			{s = "snds_jack_gmod/ez_weapons/smg/release.wav", t = 2.35, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.65, v=60}
 		}
     },
 }
