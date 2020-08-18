@@ -14,7 +14,7 @@
 	plinking pistol - cod4 usp
 	machine pistol - Mac's Black Ops SWEPs - MAC11s
 	submachine gun - Robotnik's CoD4 SWEPs - MP5
-light machine gun - Robotnik's CoD4 SWEPs - M249
+	light machine gun - Robotnik's CoD4 SWEPs - M249
 medium machine gun - Mac's CoD MW2 SWEPs - M240
 magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
@@ -129,8 +129,18 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_m249.mdl",
 		swep="wep_jack_gmod_lmg",
 		ent="ent_jack_gmod_ezweapon_lmg"
+	},
+	["Medium Machine Gun"]={
+		mdl="models/weapons/w_jmod_m240.mdl",
+		swep="wep_jack_gmod_mmg",
+		ent="ent_jack_gmod_ezweapon_mmg"
 	}
 }
+--[[
+concommand.Add("fuck",function(ply,cmd,args)
+	for k,v in pairs(player.GetAll())do v:SetPos(ply:GetPos()+Vector(math.Rand(-300,300),math.Rand(-300,300),0)) end
+end)
+--]]
 game.AddAmmoType({
 	name = "Light Rifle Round"
 })

@@ -143,6 +143,7 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.4, v=65},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t = 2.1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t = 2.5, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t = 3.2, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 3.55, v=65}
 		}

@@ -1,0 +1,14 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/robotnik_mw2/aug/weapon_mg_handle_col"
+			//EXP_GUN
+        $bumpmap   "models/weapons/v_models/robotnik_mw2/aug/handle_n"
+
+
+	$phong  "1"
+	$phongboost  ".2"
+	$phongfresnelranges     "[1 1 1]"
+	$phongexponent 20
+	$nocull  1	
+		
+}
