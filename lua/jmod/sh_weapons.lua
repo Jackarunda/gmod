@@ -40,6 +40,10 @@ lever-action rifle - the dangerman one
         $phongexponent 20
         $nocull  1	
 }
+$attachment "muzzle" "ValveBiped.Bip01_R_Hand" 38 0 -12 rotate 15 0 0
+$attachment "shell" "ValveBiped.Bip01_R_Hand" 9.5 -0.7 -5 rotate 30 90 -90
+
+$definebone "ValveBiped.Bip01_R_Hand" "" -0.678304 13.183071 4.586786 10.000006 -89.999982 -179.999978 0 0 0 0 0 0
 --]]
 JMod_WeaponTable={
 	["Assault Rifle"]={

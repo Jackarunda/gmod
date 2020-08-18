@@ -9,10 +9,10 @@ SWEP.WorldModel = "models/weapons/w_jmod_m249.mdl"
 SWEP.ViewModelFOV = 65
 
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(185,15,180)
-SWEP.BodyHolsterAngL = Angle(0,195,170)
-SWEP.BodyHolsterPos = Vector(2,-11,-11)
-SWEP.BodyHolsterPosL = Vector(1,-11,11)
+SWEP.BodyHolsterAng = Angle(0,-100,10)
+SWEP.BodyHolsterAngL = Angle(180,-100,-10)
+SWEP.BodyHolsterPos = Vector(1,-11,-11)
+SWEP.BodyHolsterPosL = Vector(.5,-11,11)
 SWEP.BodyHolsterScale = .8
 
 SWEP.Damage = 45
@@ -88,7 +88,7 @@ SWEP.Attachments = {
         Offset = {
 			vpos = Vector(15, 0, 0),
             vang = Angle(0, 0, 0),
-			wpos = Vector(27, 0, -7.5),
+			wpos = Vector(25, .6, -7.5),
             wang = Angle(170, 0, 0)
         },
         -- remove Slide because it ruins my life
