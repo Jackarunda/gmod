@@ -29,16 +29,16 @@ SWEP.Damage = 70
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 300 -- in METERS
-SWEP.Penetration = 85
+SWEP.Penetration = 40
 
 SWEP.Primary.ClipSize = 100 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .9
+SWEP.Recoil = .8 -- hevy gun
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 600 -- 60 / RPM.
+SWEP.Delay = 60 / 550 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -50,7 +50,7 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Medium Rifle Round" -- what ammo type the gun uses
@@ -139,12 +139,12 @@ SWEP.Animations = {
     },
     ["fire"] = {
         Source = "fire",
-        Time = 0.4,
+        Time = 0.2,
         ShellEjectAt = 0,
     },
     ["fire_iron"] = {
         Source = "fire",
-        Time = 0.4,
+        Time = 0.2,
         ShellEjectAt = 0,
     },
     ["reload"] = {

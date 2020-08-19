@@ -18,7 +18,7 @@ SWEP.Damage = 120
 SWEP.DamageMin = 25 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 400 -- in METERS
-SWEP.Penetration = 135
+SWEP.Penetration = 80
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
@@ -42,7 +42,7 @@ SWEP.Firemodes = {
 SWEP.ShotgunReload = true
 
 SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
-SWEP.HipDispersion = 500
+SWEP.HipDispersion = 600
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Magnum Rifle Round" -- what ammo type the gun uses

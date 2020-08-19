@@ -21,7 +21,7 @@ att.Model = "models/weapons/arccw/atts/bipod.mdl"
 
 att.Bipod = true
 att.Mult_BipodRecoil = .33
-att.Mult_BipodDispersion = .75
+att.Mult_BipodDispersion = .66
 
 att.Mult_SightTime = 1.1
 att.Mult_HipDispersion = 1

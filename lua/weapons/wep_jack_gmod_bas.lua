@@ -19,7 +19,7 @@ SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
 SWEP.DamageType = DMG_BUCKSHOT
-SWEP.Penetration = 20
+SWEP.Penetration = 10
 SWEP.DoorBreachPower = .2
 
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
@@ -41,7 +41,7 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 30 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Shotgun Round" -- what ammo type the gun uses

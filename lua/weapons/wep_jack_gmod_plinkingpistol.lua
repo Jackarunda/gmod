@@ -25,7 +25,7 @@ SWEP.Damage = 10
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 50 -- in METERS
-SWEP.Penetration = 20
+SWEP.Penetration = 5
 
 SWEP.Primary.ClipSize = 10 -- DefaultClip is automatically set.
 
@@ -45,7 +45,7 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Plinking Round" -- what ammo type the gun uses

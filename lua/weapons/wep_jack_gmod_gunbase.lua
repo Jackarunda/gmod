@@ -821,9 +821,15 @@ function SWEP:Think()
         local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
         local ra = Angle(0, 0, 0)
+		
+		local HipfireRecoilReduction = 1
+		if(self:GetState() ~= ArcCW.STATE_SIGHTS)then
+			-- reduce muzzle climb while hipfiring, since you're not being accurate anyway
+			HipfireRecoilReduction = .5
+		end
 
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.8)
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.8)
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.8 * HipfireRecoilReduction)
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.8 * HipfireRecoilReduction)
 
         newang = newang - ra
 
@@ -1118,10 +1124,16 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
         end
     end
-
+	
+	local Num=1
+	if(anim.ShellEjectDynamic)then
+		Num=self.Primary.ClipSize-self:Clip1()
+	elseif(anim.ShellEjectCount)then
+		Num=anim.ShellEjectCount
+	end
     if isnumber(anim.ShellEjectAt) then
         self:SetTimer(anim.ShellEjectAt, function()
-			for i=1,(anim.ShellEjectCount or 1)do
+			for i=1,Num do
 				self:DoShellEject()
 			end
         end)

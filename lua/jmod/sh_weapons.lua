@@ -15,7 +15,7 @@
 	machine pistol - Mac's Black Ops SWEPs - MAC11s
 	submachine gun - Robotnik's CoD4 SWEPs - MP5
 	light machine gun - Robotnik's CoD4 SWEPs - M249
-medium machine gun - Mac's CoD MW2 SWEPs - M240
+	medium machine gun - Mac's CoD MW2 SWEPs - M240
 magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
@@ -134,6 +134,12 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_m240.mdl",
 		swep="wep_jack_gmod_mmg",
 		ent="ent_jack_gmod_ezweapon_mmg"
+	},
+	["Magnum Revolver"]={
+		mdl="models/weapons/w_jmod_44mag.mdl",
+		swep="wep_jack_gmod_magrevolver",
+		ent="ent_jack_gmod_ezweapon_magrevolver",
+		size=1.1
 	}
 }
 --[[
@@ -161,6 +167,9 @@ game.AddAmmoType({
 })
 game.AddAmmoType({
 	name = "Plinking Round"
+})
+game.AddAmmoType({
+	name = "Magnum Pistol Round"
 })
 for k,v in pairs({
 	"muzzleflash_g3",
@@ -266,6 +275,7 @@ if(CLIENT)then
 	language.Add("Shotgun Round_ammo","Shotgun Round")
 	language.Add("Pistol Round_ammo","Pistol Round")
 	language.Add("Plinking Round_ammo","Plinking Round")
+	language.Add("Magnum Pistol Round_ammo","Magnum Pistol Round")
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
 		local wpn = LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end

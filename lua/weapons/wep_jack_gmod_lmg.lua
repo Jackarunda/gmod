@@ -19,7 +19,7 @@ SWEP.Damage = 45
 SWEP.DamageMin = 5 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 200 -- in METERS
-SWEP.Penetration = 55
+SWEP.Penetration = 20
 
 SWEP.Primary.ClipSize = 200 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
@@ -40,7 +40,7 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Light Rifle Round" -- what ammo type the gun uses
@@ -129,12 +129,12 @@ SWEP.Animations = {
     },
     ["fire"] = {
         Source = "shoot1",
-        Time = 0.4,
+        Time = 0.2,
         ShellEjectAt = 0,
     },
     ["fire_iron"] = {
         Source = "shoot1",
-        Time = 0.4,
+        Time = 0.2,
         ShellEjectAt = 0,
     },
     ["reload"] = {
@@ -143,7 +143,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71}, -- wat the fuck is this
         FrameRate = 37,
-		Mult=1.1,
+		Mult=1.2,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -168,23 +168,23 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71}, -- wat the fuck is this
         FrameRate = 37,
-		Mult=1.1,
+		Mult=1.2,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=65},
-			{s = "snds_jack_gmod/ez_weapons/lmg/back.wav", t = .6, v=65},
-			{s = "snds_jack_gmod/ez_weapons/lmg/forward.wav", t = .95, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 1.5, v=65},
-			{s = "snds_jack_gmod/ez_weapons/lmg/open.wav", t = 2.2, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/lmg/out.wav", t = 3.2, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 4.3, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/lmg/in.wav", t = 5.15, v=65},
-			{s = "snds_jack_gmod/ez_weapons/lmg/chain.wav", t = 5.75, v=65},
-			{s = JMod_GunHandlingSounds.tap.metallic, t = 6.45, v=65},
-			{s = "snds_jack_gmod/ez_weapons/lmg/close.wav", t = 7, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 8.05, v=65}
+			{s = "snds_jack_gmod/ez_weapons/lmg/back.wav", t = .7, v=65},
+			{s = "snds_jack_gmod/ez_weapons/lmg/forward.wav", t = 1.05, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 1.7, v=65},
+			{s = "snds_jack_gmod/ez_weapons/lmg/open.wav", t = 2.5, v=65, p=120},
+			{s = "snds_jack_gmod/ez_weapons/lmg/out.wav", t = 3.6, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 4.9, v=65, p=80},
+			{s = "snds_jack_gmod/ez_weapons/lmg/in.wav", t = 5.8, v=65},
+			{s = "snds_jack_gmod/ez_weapons/lmg/chain.wav", t = 6.6, v=65},
+			{s = JMod_GunHandlingSounds.tap.metallic, t = 7.2, v=65},
+			{s = "snds_jack_gmod/ez_weapons/lmg/close.wav", t = 7.95, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 8.8, v=65}
 		}
     }
 }
