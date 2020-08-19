@@ -16,18 +16,18 @@
 	submachine gun - Robotnik's CoD4 SWEPs - MP5
 	light machine gun - Robotnik's CoD4 SWEPs - M249
 	medium machine gun - Mac's CoD MW2 SWEPs - M240
-magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
+	magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
+revolver - Mac's CoD Black Ops SWEPs - Python
 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
+lever-action rifle - the dangerman one
 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 rocket launcher - Mac's CoD MW2 SWEPs - AT4
 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
-revolver - Mac's CoD Black Ops SWEPs - Python
 combat knife - TFA-CoD-IW-Combat-Knife
-lever-action rifle - the dangerman one
 -------------------------------
 "VertexlitGeneric"
 {
@@ -140,37 +140,27 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_magrevolver",
 		ent="ent_jack_gmod_ezweapon_magrevolver",
 		size=1.1
+	},
+	["Magnum Pistol"]={
+		mdl="models/weapons/w_jmod_deagle.mdl",
+		swep="wep_jack_gmod_magpistol",
+		ent="ent_jack_gmod_ezweapon_magpistol",
+		size=1.4
 	}
 }
---[[
-concommand.Add("fuck",function(ply,cmd,args)
-	for k,v in pairs(player.GetAll())do v:SetPos(ply:GetPos()+Vector(math.Rand(-300,300),math.Rand(-300,300),0)) end
-end)
---]]
-game.AddAmmoType({
-	name = "Light Rifle Round"
-})
-game.AddAmmoType({
-	name = "Medium Rifle Round"
-})
-game.AddAmmoType({
-	name = "Heavy Rifle Round"
-})
-game.AddAmmoType({
-	name = "Magnum Rifle Round"
-})
-game.AddAmmoType({
-	name = "Shotgun Round"
-})
-game.AddAmmoType({
-	name = "Pistol Round"
-})
-game.AddAmmoType({
-	name = "Plinking Round"
-})
-game.AddAmmoType({
-	name = "Magnum Pistol Round"
-})
+for k,v in pairs({
+	"Light Rifle Round",
+	"Medium Rifle Round",
+	"Heavy Rifle Round",
+	"Magnum Rifle Round",
+	"Shotgun Round",
+	"Pistol Round",
+	"Plinking Round",
+	"Magnum Pistol Round"
+})do
+	game.AddAmmoType({name=v})
+	if(CLIENT)then language.Add(v.."_ammo",v) end
+end
 for k,v in pairs({
 	"muzzleflash_g3",
 	"muzzleflash_m14",
@@ -197,7 +187,8 @@ JMod_GunHandlingSounds={
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol1.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol2.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol3.wav",
-			"snds_jack_gmod/ez_weapons/handling/draw_pistol4.wav"
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol4.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol5.wav"
 		},
 		longgun={
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun1.wav",
@@ -246,7 +237,9 @@ JMod_GunHandlingSounds={
 		},
 		magpull={
 			"snds_jack_gmod/ez_weapons/handling/cloth_magpull1.wav",
-			"snds_jack_gmod/ez_weapons/handling/cloth_magpull2.wav"
+			"snds_jack_gmod/ez_weapons/handling/cloth_magpull2.wav",
+			"snds_jack_gmod/ez_weapons/handling/cloth_magpull3.wav",
+			"snds_jack_gmod/ez_weapons/handling/cloth_magpull4.wav"
 		},
 		move={
 			"snds_jack_gmod/ez_weapons/handling/cloth_move.wav"
@@ -268,14 +261,6 @@ if(CLIENT)then
 		DrawMaterialOverlay("spherical_aberration",1)
 	end)
 	--]]
-	language.Add("Light Rifle Round_ammo","Light Rifle Round")
-	language.Add("Medium Rifle Round_ammo","Medium Rifle Round")
-	language.Add("Magnum Rifle Round_ammo","Magnum Rifle Round")
-	language.Add("Heavy Rifle Round_ammo","Heavy Rifle Round")
-	language.Add("Shotgun Round_ammo","Shotgun Round")
-	language.Add("Pistol Round_ammo","Pistol Round")
-	language.Add("Plinking Round_ammo","Plinking Round")
-	language.Add("Magnum Pistol Round_ammo","Magnum Pistol Round")
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
 		local wpn = LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end

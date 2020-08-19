@@ -29,7 +29,7 @@ SWEP.Damage = 70
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 300 -- in METERS
-SWEP.Penetration = 50
+SWEP.Penetration = 55
 
 SWEP.Primary.ClipSize = 100 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol

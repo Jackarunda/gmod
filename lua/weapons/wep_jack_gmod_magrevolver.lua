@@ -23,7 +23,7 @@ SWEP.Damage = 44 -- ahahahahahahaha
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
-SWEP.Penetration = 25
+SWEP.Penetration = 30
 
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
@@ -61,7 +61,7 @@ SWEP.ShellScale = 3.5
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .9
-SWEP.SightTime = .3
+SWEP.SightTime = .35
 
 SWEP.IronSightStruct = {
     Pos = Vector(-1.78, 6, .43),
@@ -100,7 +100,7 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.35,
+        Time = 0.4,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
@@ -109,7 +109,7 @@ SWEP.Animations = {
     },
     ["draw_empty"] = {
         Source = "draw",
-        Time = 0.35,
+        Time = 0.4,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
@@ -170,7 +170,7 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		ShellEjectAt = 1.1,
-		ShellEjectNum=6,
+		ShellEjectCount=6,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav", t = .65, v=60},

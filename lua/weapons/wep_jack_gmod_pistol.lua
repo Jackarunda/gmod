@@ -23,7 +23,7 @@ SWEP.Damage = 25
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 100 -- in METERS
-SWEP.Penetration = 15
+SWEP.Penetration = 20
 
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
@@ -64,7 +64,7 @@ SWEP.SightTime = .25
 
 SWEP.IronSightStruct = {
     Pos = Vector(-2.4, 7, .5),
-    Ang = Angle(-.1, 0, -5),
+    Ang = Angle(-.1, 0, -2),
     Magnification = 1.1,
     SwitchToSound = JMod_GunHandlingSounds.aim.minor,
     SwitchFromSound = JMod_GunHandlingSounds.aim.minor

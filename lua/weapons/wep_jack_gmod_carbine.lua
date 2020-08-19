@@ -18,7 +18,7 @@ SWEP.Damage = 38
 SWEP.DamageMin = 5 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
-SWEP.Penetration = 30
+SWEP.Penetration = 35
 
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 
