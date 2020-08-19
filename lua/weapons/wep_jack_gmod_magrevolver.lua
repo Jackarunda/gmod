@@ -32,7 +32,7 @@ SWEP.Recoil = 1.8
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 300 -- 60 / RPM.
+SWEP.Delay = 60 / 275 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
