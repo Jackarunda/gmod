@@ -18,7 +18,7 @@ SWEP.Damage = 72
 SWEP.DamageMin = 15 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 300 -- in METERS
-SWEP.Penetration = 40
+SWEP.Penetration = 50
 
 SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 
@@ -143,7 +143,7 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.4, v=65},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t = 2.1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t = 2.5, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=60, p=110},
+			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=55, p=130},
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t = 3.2, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 3.55, v=65}
 		}

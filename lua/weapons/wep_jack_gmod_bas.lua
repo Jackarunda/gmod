@@ -19,7 +19,7 @@ SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
 SWEP.DamageType = DMG_BUCKSHOT
-SWEP.Penetration = 10
+SWEP.Penetration = 15
 SWEP.DoorBreachPower = .2
 
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
