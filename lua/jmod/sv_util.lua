@@ -571,11 +571,11 @@ function JMod_ShouldAttack(self, ent, vehiclesOnly)
 			return ent:Health() > 0
 		end
 
-		if (ent.Disposition and (ent:Disposition(self.Owner) == D_HT) and ent.GetMaxHealth) then
+		if (ent.Disposition and (ent:Disposition(self.Owner) == D_HT) and ent.GetMaxHealth and ent.Health) then
 			if (vehiclesOnly) then
-				return ent:GetMaxHealth() > 100
+				return ent:GetMaxHealth() > 100 and ent:Health() > 0
 			else
-				return ent:GetMaxHealth() > 0
+				return ent:GetMaxHealth() > 0 and ent:Health() > 0
 			end
 		else
 			return false
@@ -595,6 +595,9 @@ function JMod_ShouldAttack(self, ent, vehiclesOnly)
 
 		if (IsValid(self.Owner)) then
 			OurTeam = self.Owner:Team()
+			if((Gaymode == "basewars")and(self.Owner.IsAlly))then
+				return not self.Owner:IsAlly(PlayerToCheck)
+			end
 		end
 
 		if (Gaymode == "sandbox") then return PlayerToCheck:Alive() end

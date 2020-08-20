@@ -691,6 +691,37 @@ function SWEP:PrimaryAttack()
 
     math.randomseed(CurTime() + (self:EntIndex() % 31259))
 end
+function SWEP:DoShellEject() -- todo: this doesn't fucking work 2/3rds of the time
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    if !IsValid(self:GetOwner()) then return end
+
+    local vm = self
+
+    if !self:GetOwner():IsNPC() then
+        self:GetOwner():GetViewModel()
+    end
+
+    local posang = vm:GetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+
+    if !posang then return end
+
+    local pos = posang.Pos or self.Owner:GetShootPos()+self.Owner:GetAimVector()*10-Vector(0,0,20)
+    local ang = posang.Ang or Angle(0,0,0)
+
+    local fx = EffectData()
+    fx:SetOrigin(pos)
+    fx:SetAngles(ang)
+    fx:SetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+    fx:SetScale(1)
+    fx:SetEntity(self)
+    fx:SetNormal(ang:Forward())
+    fx:SetMagnitude(100)
+
+	if self:GetBuff_Hook("Hook_PreDoEffects", {eff = "arccw_shelleffect", fx = fx}) == true then return end
+
+    util.Effect(self.ShellEffect or "arccw_shelleffect", fx, true, true)
+end
 -- think
 local lastUBGL = 0
 function SWEP:Think()
@@ -1068,12 +1099,25 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     ignorereload = ignorereload or false
 
     if !self.Animations[key] then return end
+	
+	local anim = self.Animations[key]
+	local Num=1
+	if(anim.ShellEjectDynamic)then
+		Num=self.Primary.ClipSize-self:Clip1()
+	elseif(anim.ShellEjectCount)then
+		Num=anim.ShellEjectCount
+	end
+    if isnumber(anim.ShellEjectAt) then
+        self:SetTimer(anim.ShellEjectAt, function()
+			for i=1,Num do
+				self:DoShellEject()
+			end
+        end)
+    end
 
     if self:GetNWBool("reloading", false) and !ignorereload then return end
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
-    local anim = self.Animations[key]
 
     local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
 
@@ -1123,20 +1167,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 end
             end
         end
-    end
-	
-	local Num=1
-	if(anim.ShellEjectDynamic)then
-		Num=self.Primary.ClipSize-self:Clip1()
-	elseif(anim.ShellEjectCount)then
-		Num=anim.ShellEjectCount
-	end
-    if isnumber(anim.ShellEjectAt) then
-        self:SetTimer(anim.ShellEjectAt, function()
-			for i=1,Num do
-				self:DoShellEject()
-			end
-        end)
     end
 
     local vm = self:GetOwner():GetViewModel()

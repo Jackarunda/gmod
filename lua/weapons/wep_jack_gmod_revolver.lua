@@ -1,37 +1,38 @@
 SWEP.Base = "wep_jack_gmod_gunbase"
 
-SWEP.PrintName = "Pistol"
+SWEP.PrintName = "Revolver"
 
 SWEP.Slot = 1
 
-SWEP.ViewModel = "models/weapons/c_bo2_b23r_1.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_b23r.mdl"
+SWEP.ViewModel = "models/weapons/c_bo1_python.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_revolver.mdl"
 SWEP.ViewModelFOV = 75
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
 SWEP.BodyHolsterAngL = Angle(90,90,-20)
-SWEP.BodyHolsterPos = Vector(-5,17,-6)
+SWEP.BodyHolsterPos = Vector(-5,17,-6.5)
 SWEP.BodyHolsterPosL = Vector(-7,17,1.5)
-SWEP.BodyHolsterScale = 1.1
+SWEP.BodyHolsterScale = 1
 
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 25
+SWEP.Damage = 28
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 100 -- in METERS
 SWEP.Penetration = 20
 
-SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
+SWEP.ChamberSize = 0 -- revolver lol
 
 SWEP.Recoil = .7
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 450 -- 60 / RPM.
+SWEP.Delay = 60 / 325 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -42,7 +43,7 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 9 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 6 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -63,14 +64,14 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .25
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.4, 7, .5),
-    Ang = Angle(-.1, 0, -2),
+    Pos = Vector(-2.21, 6, 1.05),
+    Ang = Angle(-.7, -.15, -2),
     Magnification = 1.1,
     SwitchToSound = JMod_GunHandlingSounds.aim.minor,
     SwitchFromSound = JMod_GunHandlingSounds.aim.minor
 }
 
-SWEP.ActivePos = Vector(1, 0, 0)
+SWEP.ActivePos = Vector(0, 0, 0)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.HolsterPos = Vector(0, 0, 0)
@@ -82,19 +83,12 @@ SWEP.BarrelLength = 20
 
 --[[
 idle
+reload_tac
 draw
 draw_first
-reload_empty
-reload_tac
 fire
 holster
 sprint
-idle_empty
-holster_empty
-draw_empty
-fire_last
-reload_fm_empty
-reload_fm_tac
 --]]
 SWEP.Animations = {
     ["idle"] = {
@@ -102,22 +96,22 @@ SWEP.Animations = {
         Time = 1
     },
     ["idle_empty"] = {
-        Source = "idle_empty",
+        Source = "idle",
         Time = 1
     },
     ["draw"] = {
         Source = "draw",
         Time = 0.25,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["draw_empty"] = {
-        Source = "draw_empty",
+        Source = "draw",
         Time = 0.25,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
+        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -126,10 +120,12 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw_first",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120},
-			{s = "snds_jack_gmod/ez_weapons/pistol/safety.wav", t = .25, v=60}
+			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/open.wav", t = .3, v=55, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/fidget.wav", t = .4, v=55, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/close.wav", t = .6, v=50, p=110}
 		},
-        Time = 0.75,
+        Time = 1,
 		Mult=2,
         LHIK = true,
         LHIKIn = 0,
@@ -137,51 +133,58 @@ SWEP.Animations = {
     },
     ["fire"] = {
         Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
+        Time = 0.25
     },
     ["fire_iron"] = {
         Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
+        Time = 0.25
     },
     ["fire_empty"] = {
-        Source = "fire_last",
-        Time = 0.2,
-        ShellEjectAt = 0,
+        Source = "fire",
+        Time = 0.25
     },
     ["reload"] = {
         Source = "reload_tac",
-        Time = 2,
+        Time = 3.5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
+		ShellEjectAt = 1.7,
+		ShellEjectDynamic=true,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = 0, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .2, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .65, v=60}
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=55, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/open.wav", t = .25, v=60},
+			{s = JMod_GunHandlingSounds.cloth.move, t = 1.1, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/out.wav", t = 1.5, v=55},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.6, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/in.wav", t = 2, v=60},
+			{s = "snds_jack_gmod/ez_weapons/revolver/close.wav", t = 2.7, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 3, v=55, p=110}
 		}
-
     },
     ["reload_empty"] = {
-        Source = "reload_empty",
-        Time = 2.5,
+        Source = "reload_tac",
+        Time = 4,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
+		ShellEjectAt = 2,
+		ShellEjectCount=6,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pistol/out.wav", t = 0, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .2, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = .75, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.575, v=60, p=90}
+			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=55, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/open.wav", t = .4, v=60},
+			{s = JMod_GunHandlingSounds.cloth.move, t = 1.3, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/out.wav", t = 1.7, v=55},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.8, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/revolver/in.wav", t = 2.45, v=60},
+			{s = "snds_jack_gmod/ez_weapons/revolver/close.wav", t = 3.25, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 3.8, v=55, p=110}
 		}
     }
 }

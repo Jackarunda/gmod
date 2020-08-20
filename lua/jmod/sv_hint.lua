@@ -13,17 +13,10 @@ function JMod_Hint(ply, key, loc, specific)
 	tbl.Key = key
 	if not tbl.Time then tbl.Time = 8 end
 
-	if JMOD_CONFIG.L4Dhints then 
-		net.Start("JMod_Hint")
-			net.WriteBool(true)
-			net.WriteTable(tbl)
-		net.Send(ply)
-	else
-		net.Start("JMod_Hint")
-			net.WriteBool(false)
-			net.WriteString(tbl.Text)
-		net.Send(ply)
-	end
+	net.Start("JMod_Hint")
+	net.WriteBool(specific)
+	net.WriteString(tbl.Text)
+	net.Send(ply)
 	
 	if tbl.Followup and JMod_Hints[tbl.Followup] then
 		timer.Simple(tbl.Time, function()

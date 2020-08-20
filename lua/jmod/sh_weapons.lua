@@ -17,8 +17,8 @@
 	light machine gun - Robotnik's CoD4 SWEPs - M249
 	medium machine gun - Mac's CoD MW2 SWEPs - M240
 	magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
-magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
-revolver - Mac's CoD Black Ops SWEPs - Python
+	magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
+	revolver - Mac's CoD Black Ops SWEPs - Python
 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
 lever-action rifle - the dangerman one
 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
@@ -146,6 +146,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_magpistol",
 		ent="ent_jack_gmod_ezweapon_magpistol",
 		size=1.4
+	},
+	["Revolver"]={
+		mdl="models/weapons/w_jmod_revolver.mdl",
+		swep="wep_jack_gmod_revolver",
+		ent="ent_jack_gmod_ezweapon_revolver",
+		size=1.1
 	}
 }
 for k,v in pairs({
@@ -188,7 +194,8 @@ JMod_GunHandlingSounds={
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol2.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol3.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol4.wav",
-			"snds_jack_gmod/ez_weapons/handling/draw_pistol5.wav"
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol5.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_pistol6.wav"
 		},
 		longgun={
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun1.wav",
