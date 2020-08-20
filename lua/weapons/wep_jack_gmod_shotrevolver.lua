@@ -29,7 +29,7 @@ SWEP.Penetration = 15
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2.5
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
