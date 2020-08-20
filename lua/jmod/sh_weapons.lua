@@ -152,6 +152,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_revolver",
 		ent="ent_jack_gmod_ezweapon_revolver",
 		size=1.1
+	},
+	["Shot Revolver"]={
+		mdl="models/weapons/w_jmod_shotrevolver.mdl",
+		swep="wep_jack_gmod_shotrevolver",
+		ent="ent_jack_gmod_ezweapon_shotrevolver",
+		size=1.1
 	}
 }
 for k,v in pairs({
@@ -162,7 +168,8 @@ for k,v in pairs({
 	"Shotgun Round",
 	"Pistol Round",
 	"Plinking Round",
-	"Magnum Pistol Round"
+	"Magnum Pistol Round",
+	"Small Shotgun Round"
 })do
 	game.AddAmmoType({name=v})
 	if(CLIENT)then language.Add(v.."_ammo",v) end

@@ -1,0 +1,13 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/mac_bo2/bo2_exec_shell_d"
+			//EXP_GUN
+        $bumpmap   "models/weapons/v_models/mac_bo2/bo2_exec_shell_n"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+		
+}
