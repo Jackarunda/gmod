@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/weapons/win73/shell"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.1 .1 .1]"
+}

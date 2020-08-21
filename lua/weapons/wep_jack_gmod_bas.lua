@@ -5,7 +5,7 @@ SWEP.PrintName = "Break-Action Shotgun"
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/viper/mw/weapons/725_mammaledition.mdl"
-SWEP.WorldModel = "models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_breakshotty.mdl"
 SWEP.ViewModelFOV = 68
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,170,0)

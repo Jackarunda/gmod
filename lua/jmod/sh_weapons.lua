@@ -19,14 +19,15 @@
 	magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
 	magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
 	revolver - Mac's CoD Black Ops SWEPs - Python
-shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
-lever-action rifle - the dangerman one
+	shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
+	lever-action rifle - the dangerman one
+single shot rifle - matini henry
 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
-rocket launcher - Mac's CoD MW2 SWEPs - AT4
 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
-crossbow - Mac's CoD Black Ops SWEPs - Crossbow
+rocket launcher - Mac's CoD MW2 SWEPs - AT4
 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
+crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 combat knife - TFA-CoD-IW-Combat-Knife
 -------------------------------
 "VertexlitGeneric"
@@ -92,10 +93,10 @@ JMod_WeaponTable={
 		ent="ent_jack_gmod_ezweapon_pas"
 	},
 	["Break-Action Shotgun"]={
-		mdl="models/nmrih/weapons/fa_sv10/w_fa_sv10.mdl",
+		mdl="models/weapons/w_jmod_breakshotty.mdl",
 		swep="wep_jack_gmod_bas",
 		ent="ent_jack_gmod_ezweapon_bas",
-		size=1.2
+		size=1.1
 	},
 	["Pistol"]={
 		mdl="models/weapons/w_jmod_b23r.mdl",
@@ -158,6 +159,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_shotrevolver",
 		ent="ent_jack_gmod_ezweapon_shotrevolver",
 		size=1.1
+	},
+	["Lever-Action Carbine"]={
+		mdl="models/weapons/w_jmod_levergun.mdl",
+		swep="wep_jack_gmod_lac",
+		ent="ent_jack_gmod_ezweapon_lac",
+		--size=1.1 -- CRASH
 	}
 }
 for k,v in pairs({
