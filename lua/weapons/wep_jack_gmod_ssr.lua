@@ -26,7 +26,7 @@ SWEP.Recoil = 1.3
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 550 -- 60 / RPM.
+SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
@@ -102,7 +102,10 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw_e",
         Time = 0.6,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+        SoundTable = {
+			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
+			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = .1, v=60}
+		},
 		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,

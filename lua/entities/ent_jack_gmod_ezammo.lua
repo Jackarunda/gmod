@@ -38,6 +38,13 @@ if(SERVER)then
 			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
 			if((PrimType)and(PrimType~=-1))then
 				if(PrimSize==-1)then PrimSize=-PrimSize end
+				if(PrimSize<2)then
+					PrimSize=PrimSize*4
+				elseif(PrimSize<3)then
+					PrimSize=PrimSize*3
+				elseif(PrimSize<6)then
+					PrimSize=PrimSize*2
+				end
 				if(ply:GetAmmoCount(PrimType)<PrimSize*10)then
 					ply:GiveAmmo(PrimSize,PrimType)
 					self:UseEffect(self:GetPos(),self)
