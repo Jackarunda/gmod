@@ -177,5 +177,8 @@ JMod_SpecificHints={
 	["wep_jack_gmod_mmg"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
 	["wep_jack_gmod_magrevolver"]={Type="info",Text="weapon uses Magnum Pistol Rounds"},
 	["wep_jack_gmod_magpistol"]={Type="info",Text="weapon uses Magnum Pistol Rounds"},
-	["wep_jack_gmod_revolver"]={Type="info",Text="weapon uses Pistol Rounds"}
+	["wep_jack_gmod_revolver"]={Type="info",Text="weapon uses Pistol Rounds"},
+	["wep_jack_gmod_shotrevolver"]={Type="info",Text="weapon uses Small Shotgun Rounds"},
+	["wep_jack_gmod_lac"]={Type="info",Text="weapon uses Magnum Pistol Rounds"},
+	["wep_jack_gmod_ssr"]={Type="info",Text="weapon uses Medium Rifle Rounds"}
 }

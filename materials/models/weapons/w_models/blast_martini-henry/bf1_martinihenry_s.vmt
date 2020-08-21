@@ -1,0 +1,16 @@
+"VertexlitGeneric"
+{        
+	"$basetexture" "models/weapons/v_models/blast_martini-henry/martinihenry_s"
+	"$bumpmap" "models/weapons/v_models/blast_martini-henry/martinihenry_n"
+	"$color2" "[0.25 0.25 0.25]"
+                "$additive" "1"
+
+	"$phong" "1"
+	"$phongexponent" "5"
+	"$phongboost" "1"
+
+	"$phongalbedotint" "1"
+	"$phongexponenttexture" "models\weapons\v_models\blast_martini-henry\exponent"
+
+	"$phongfresnelranges" "[1 1.05 1.25]"
+}

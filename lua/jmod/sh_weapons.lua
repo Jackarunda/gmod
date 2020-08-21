@@ -165,6 +165,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_lac",
 		ent="ent_jack_gmod_ezweapon_lac",
 		--size=1.1 -- CRASH
+	},
+	["Single-Shot Rifle"]={
+		mdl="models/weapons/w_snip_blast_martini-henry_arccw.mdl",
+		swep="wep_jack_gmod_ssr",
+		ent="ent_jack_gmod_ezweapon_ssr",
+		size=1.1
 	}
 }
 for k,v in pairs({
@@ -217,7 +223,8 @@ JMod_GunHandlingSounds={
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun3.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun4.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun5.wav",
-			"snds_jack_gmod/ez_weapons/handling/draw_longgun6.wav"
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun6.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun7.wav"
 		}
 	},
 	tap={
