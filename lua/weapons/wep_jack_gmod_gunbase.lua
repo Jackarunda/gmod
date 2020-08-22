@@ -210,7 +210,7 @@ hook.Add("RenderScreenspaceEffects","JMod_WeaponScreenEffects",function()
 	if not(ply:ShouldDrawLocalPlayer())then
 		local Wep=ply:GetActiveWeapon()
 		if((IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
-			ToyTownAmt=Lerp(FT*5,ToyTownAmt,1)
+			ToyTownAmt=Lerp(FT*5,ToyTownAmt,.99)
 		else
 			ToyTownAmt=Lerp(FT*7,ToyTownAmt,0)
 		end

@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	"$basetexture"	"models\weapons\arcticcw\hsp"
+	"$translucent" "1"
+	"$selfillum" "1"
+}

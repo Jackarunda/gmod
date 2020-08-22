@@ -28,7 +28,7 @@ SWEP.Penetration = 20
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .7
+SWEP.Recoil = .9
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -64,7 +64,7 @@ SWEP.ShellScale = 2
 
 SWEP.SpeedMult = 1
 SWEP.SightedSpeedMult = .9
-SWEP.SightTime = .35
+SWEP.SightTime = .3
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.52, 6, 1.05),
@@ -106,7 +106,7 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.35,
+        Time = 0.3,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
@@ -115,7 +115,7 @@ SWEP.Animations = {
     },
     ["draw_empty"] = {
         Source = "draw",
-        Time = 0.35,
+        Time = 0.3,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
@@ -124,7 +124,7 @@ SWEP.Animations = {
     },
     ["ready"] = {
         Source = "draw",
-        Time = 0.35,
+        Time = 0.3,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
 		Mult=2,
         LHIK = true,
@@ -175,7 +175,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/mp/out.wav", t = .3, v=60},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=110},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.65, v=60, p=120},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.7, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/mp/in.wav", t = 1.85, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mp/pull.wav", t = 2.45, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mp/release.wav", t = 2.7, v=60},

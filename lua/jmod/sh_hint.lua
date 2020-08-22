@@ -158,7 +158,7 @@ JMod_Hints = {
 	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"}
 }
 JMod_SpecificHints={
-	["wep_jack_gmod_amsr"]={Type="info",Text="weapon uses Magnum Rifle Rounds"},
+	["wep_jack_gmod_amsr"]={Type="info",Text="weapon uses Heavy Rifle Rounds"},
 	["wep_jack_gmod_assaultrifle"]={Type="info",Text="weapon uses Light Rifle Rounds"},
 	["wep_jack_gmod_battlerifle"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
 	["wep_jack_gmod_carbine"]={Type="info",Text="weapon uses Light Rifle Rounds"},
@@ -180,5 +180,6 @@ JMod_SpecificHints={
 	["wep_jack_gmod_revolver"]={Type="info",Text="weapon uses Pistol Rounds"},
 	["wep_jack_gmod_shotrevolver"]={Type="info",Text="weapon uses Small Shotgun Rounds"},
 	["wep_jack_gmod_lac"]={Type="info",Text="weapon uses Magnum Pistol Rounds"},
-	["wep_jack_gmod_ssr"]={Type="info",Text="weapon uses Medium Rifle Rounds"}
+	["wep_jack_gmod_ssr"]={Type="info",Text="weapon uses Medium Rifle Rounds"},
+	["wep_jack_gmod_amr"]={Type="info",Text="weapon uses Heavy Rifle Rounds"}
 }

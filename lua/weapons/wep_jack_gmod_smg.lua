@@ -68,7 +68,41 @@ SWEP.IronSightStruct = {
     SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
-SWEP.ActivePos = Vector(0, 0, 1)
+SWEP.Attachments = {
+    {
+        PrintName = "Optic",
+        DefaultAttName = "Iron Sights",
+        Slot = {"optic_ez"},
+        Bone = "tag_weapon",
+        Offset = {
+            vang = Angle(0, 0, 0),
+			vpos = Vector(-5.5, 0, 3.4),
+            wpos = Vector(0, 0, 0),
+            wang = Angle(0, 0, 0)
+        },
+		-- remove Slide because it ruins my life
+        Installed = "optic_jack_reddot",
+		InstalledEles = {"mount"}
+    }
+}
+
+SWEP.AttachmentElements = {
+    ["mount"] = {
+        VMElements = {
+            {
+                Model = "models/weapons/arccw/atts/mount_rail.mdl",
+                Bone = "tag_weapon",
+                Scale = Vector(1, 1, 1),
+                Offset = {
+                    pos = Vector(-5, 0, 3.1),
+                    ang = Angle(0, 0, 0)
+                }
+            }
+        },
+    }
+}
+
+SWEP.ActivePos = Vector(0, 1, 1)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.HolsterPos = Vector(4, -4, 0)

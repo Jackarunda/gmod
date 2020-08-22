@@ -21,7 +21,7 @@
 	revolver - Mac's CoD Black Ops SWEPs - Python
 	shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
 	lever-action rifle - the dangerman one
-single shot rifle - matini henry
+	single shot rifle - matini henry
 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
@@ -170,6 +170,12 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_snip_blast_martini-henry_arccw.mdl",
 		swep="wep_jack_gmod_ssr",
 		ent="ent_jack_gmod_ezweapon_ssr",
+		size=1.1
+	},
+	["Anti-Materiel Rifle"]={
+		mdl="models/weapons/w_jmod_m107.mdl",
+		swep="wep_jack_gmod_amr",
+		ent="ent_jack_gmod_ezweapon_amr",
 		size=1.1
 	}
 }
