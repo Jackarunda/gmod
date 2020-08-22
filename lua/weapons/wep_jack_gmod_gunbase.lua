@@ -720,7 +720,12 @@ function SWEP:DoShellEject() -- todo: this doesn't fucking work 2/3rds of the ti
 
 	if self:GetBuff_Hook("Hook_PreDoEffects", {eff = "arccw_shelleffect", fx = fx}) == true then return end
 
-    util.Effect(self.ShellEffect or "arccw_shelleffect", fx, true, true)
+	-- lags behind
+    --if(SERVER)then util.Effect(self.ShellEffect or "arccw_shelleffect", fx, true, true) end
+	-- ejects twice
+    --util.Effect(self.ShellEffect or "arccw_shelleffect", fx, true, true)
+	-- sigh...
+	util.Effect(self.ShellEffect or "arccw_shelleffect", fx)
 end
 -- think
 local lastUBGL = 0

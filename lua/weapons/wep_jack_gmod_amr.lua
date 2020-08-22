@@ -105,7 +105,7 @@ SWEP.HolsterAng = Angle(-20, 50, 0)
 
 SWEP.MeleeAttackTime=.35
 
-SWEP.BarrelLength = 42
+SWEP.BarrelLength = 50
 
 --[[
 idle
@@ -173,7 +173,7 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amr/magmove.wav", t = 2, v=65},
 			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.65, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.15, v=65},
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 3.8, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 3.75, v=60}
 		}

@@ -147,5 +147,5 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t = 3.2, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 3.55, v=65}
 		}
-    },
+    }
 }
