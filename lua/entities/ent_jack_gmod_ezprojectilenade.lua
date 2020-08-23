@@ -28,6 +28,7 @@ if(SERVER)then
 				self:GetPhysicsObject():SetMass(2)
 			end
 		end)
+		self.Dmg=self.Dmg or 50
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then

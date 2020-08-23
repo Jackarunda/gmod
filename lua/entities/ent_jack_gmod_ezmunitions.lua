@@ -40,6 +40,45 @@ if(SERVER)then
 			end)
 		end
 	end
+	function ENT:AltUse(ply)
+		local Wep=ply:GetActiveWeapon()
+		if(Wep)then
+			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
+			local PrimName=game.GetAmmoName(PrimType)
+			if(PrimName)then
+				if not(table.HasValue(JMod_MunitionAmmoTypes,PrimName))then return end
+			end
+			if((PrimType)and(PrimType~=-1))then
+				if(PrimSize==-1)then PrimSize=-PrimSize end
+				if(PrimSize<2)then
+					PrimSize=PrimSize*4
+				elseif(PrimSize<3)then
+					PrimSize=PrimSize*3
+				elseif(PrimSize<6)then
+					PrimSize=PrimSize*2
+				end
+				if(ply:GetAmmoCount(PrimType)<=PrimSize*10)then
+					ply:GiveAmmo(PrimSize,PrimType)
+					self:UseEffect(self:GetPos(),self)
+					self:SetResource(self:GetResource()-self.MaxResource*.1)
+					if(self:GetResource()<=0)then self:Remove();return end
+				end
+			end
+			local SecName=game.GetAmmoName(SecType)
+			if(SecName)then
+				if not(table.HasValue(JMod_MunitionAmmoTypes,SecName))then return end
+			end
+			if((SecType)and(SecType~=-1))then
+				if(SecSize==-1)then SecSize=-SecSize end
+				if(ply:GetAmmoCount(SecType)<=SecSize*5)then
+					ply:GiveAmmo(math.ceil(SecSize/2),SecType)
+					self:UseEffect(self:GetPos(),self)
+					self:SetResource(self:GetResource()-self.MaxResource*.1)
+					if(self:GetResource()<=0)then self:Remove();return end
+				end
+			end
+		end
+	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,240,150,80)
 	function ENT:Draw()

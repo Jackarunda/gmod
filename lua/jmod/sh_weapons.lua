@@ -184,6 +184,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_fas",
 		ent="ent_jack_gmod_ezweapon_fas",
 		size=1.1
+	},
+	["Grenade Launcher"]={
+		mdl="models/weapons/w_jmod_m79.mdl",
+		swep="wep_jack_gmod_gl",
+		ent="ent_jack_gmod_ezweapon_gl",
+		size=1.1
 	}
 }
 for k,v in pairs({
@@ -195,11 +201,15 @@ for k,v in pairs({
 	"Pistol Round",
 	"Plinking Round",
 	"Magnum Pistol Round",
-	"Small Shotgun Round"
+	"Small Shotgun Round",
+	"40mm Grenade"
 })do
 	game.AddAmmoType({name=v})
 	if(CLIENT)then language.Add(v.."_ammo",v) end
 end
+JMod_MunitionAmmoTypes={
+	"40mm Grenade"
+}
 for k,v in pairs({
 	"muzzleflash_g3",
 	"muzzleflash_m14",
