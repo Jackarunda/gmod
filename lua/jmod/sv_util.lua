@@ -367,11 +367,12 @@ function JMod_BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	end
 end
 
-function JMod_Sploom(attacker, pos, mag)
+function JMod_Sploom(attacker, pos, mag, radius)
 	local Sploom = ents.Create("env_explosion")
 	Sploom:SetPos(pos)
 	Sploom:SetOwner(attacker or game.GetWorld())
 	Sploom:SetKeyValue("iMagnitude", mag)
+	if(radius)then Sploom:SetKeyValue("iRadiusOverride",radius) end
 	Sploom:Spawn()
 	Sploom:Activate()
 	Sploom:Fire("explode", "", 0)

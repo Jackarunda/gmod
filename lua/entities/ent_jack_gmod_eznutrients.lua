@@ -29,6 +29,7 @@ if(SERVER)then
 		Prop:SetModelScale(.75,0)
 		Prop:Spawn()
 		Prop:Activate()
+		Prop.JModNoPickup=true
 		if(math.random(1,2)==1)then Prop:SetHealth(100) end
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 		constraint.NoCollide(Prop,self,0,0)

@@ -32,11 +32,12 @@ if(SERVER)then
 				Prop:SetAngles(AngleRand())
 				Prop:Spawn()
 				Prop:Activate()
+				Prop.JModNoPickup=true
 				Prop:GetPhysicsObject():SetMass(1)
 				Prop:GetPhysicsObject():SetVelocity(VectorRand()*100)
 				Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 				constraint.NoCollide(Prop,self,0,0)
-				SafeRemoveEntityDelayed(Prop,math.Rand(2,6))
+				SafeRemoveEntityDelayed(Prop,math.Rand(2,4))
 			end)
 		end
 	end
@@ -50,12 +51,8 @@ if(SERVER)then
 			end
 			if((PrimType)and(PrimType~=-1))then
 				if(PrimSize==-1)then PrimSize=-PrimSize end
-				if(PrimSize<2)then
-					PrimSize=PrimSize*4
-				elseif(PrimSize<3)then
+				if(PrimSize<6)then
 					PrimSize=PrimSize*3
-				elseif(PrimSize<6)then
-					PrimSize=PrimSize*2
 				end
 				if(ply:GetAmmoCount(PrimType)<=PrimSize*10)then
 					ply:GiveAmmo(PrimSize,PrimType)

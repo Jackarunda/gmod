@@ -24,7 +24,7 @@
 	single shot rifle - matini henry
 	anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
 	fully-automatic shotgun - mw2 aa12
-grenade launcher - Mac's CoD MW2 SWEPs - Thumper
+	grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
 rocket launcher - Mac's CoD MW2 SWEPs - AT4
 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
@@ -190,6 +190,12 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_gl",
 		ent="ent_jack_gmod_ezweapon_gl",
 		size=1.1
+	},
+	["Multiple Grenade Launcher"]={
+		mdl="models/weapons/w_jmod_milkormgl.mdl",
+		swep="wep_jack_gmod_mgl",
+		ent="ent_jack_gmod_ezweapon_mgl",
+		size=1.1
 	}
 }
 for k,v in pairs({
@@ -210,6 +216,7 @@ end
 JMod_MunitionAmmoTypes={
 	"40mm Grenade"
 }
+if(CLIENT)then language.Add("ent_jack_gmod_ezprojectilenade","EZ 40mm Grenade") end
 for k,v in pairs({
 	"muzzleflash_g3",
 	"muzzleflash_m14",
@@ -247,7 +254,8 @@ JMod_GunHandlingSounds={
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun4.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun5.wav",
 			"snds_jack_gmod/ez_weapons/handling/draw_longgun6.wav",
-			"snds_jack_gmod/ez_weapons/handling/draw_longgun7.wav"
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun7.wav",
+			"snds_jack_gmod/ez_weapons/handling/draw_longgun8.wav"
 		}
 	},
 	tap={
@@ -298,6 +306,12 @@ JMod_GunHandlingSounds={
 	},
 	grab={
 		"snds_jack_gmod/ez_weapons/handling/grab1.wav"
+	},
+	shotshell={
+		"snds_jack_gmod/ez_weapons/handling/shotshell_insert1.wav",
+		"snds_jack_gmod/ez_weapons/handling/shotshell_insert2.wav",
+		"snds_jack_gmod/ez_weapons/handling/shotshell_insert3.wav",
+		"snds_jack_gmod/ez_weapons/handling/shotshell_insert4.wav"
 	}
 }
 concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)

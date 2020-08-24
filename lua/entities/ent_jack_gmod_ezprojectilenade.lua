@@ -21,14 +21,14 @@ if(SERVER)then
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
-		self.AutoDetTime=CurTime()+5
+		self.AutoDetTime=CurTime()+10
 		self:GetPhysicsObject():EnableDrag(false)
 		timer.Simple(0,function()
 			if(IsValid(self))then
 				self:GetPhysicsObject():SetMass(2)
 			end
 		end)
-		self.Dmg=self.Dmg or 50
+		self.Dmg=self.Dmg or 150
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -46,7 +46,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		JMod_Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Dmg^.95 or 10)
+		JMod_Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Dmg^.95,self.BlastRadius)
 		self:Remove()
 	end
 elseif(CLIENT)then

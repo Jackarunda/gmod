@@ -14,7 +14,10 @@ SWEP.BodyHolsterPos = Vector(1,-14,-11)
 SWEP.BodyHolsterPosL = Vector(-2.5,-15,11)
 SWEP.BodyHolsterScale = .9
 
-SWEP.ShootEntityDmg = 150
+SWEP.Damage = 220
+SWEP.BlastRadius = 220
+SWEP.DamageRand = .1
+SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezprojectilenade"
 SWEP.MuzzleVelocity = 3000
 
@@ -35,7 +38,7 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 8 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -48,7 +51,7 @@ SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_m79"
 SWEP.ShellModel = "models/jhells/shell_9mm.mdl"
-SWEP.ShellPitch = 70
+SWEP.ShellPitch = 50
 SWEP.ShellScale = 7
 
 SWEP.SpeedMult = 1

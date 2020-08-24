@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_win73.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_levergun.mdl"
-SWEP.ViewModelFOV = 60
+SWEP.ViewModelFOV = 55
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(30,75,-30)
 SWEP.BodyHolsterAngL = Angle(150,75,30)
@@ -117,7 +117,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .45, v=60}
+			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
 		},
         ShellEjectAt = .45,
     },
@@ -127,7 +127,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .45, v=60}
+			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
 		},
         ShellEjectAt = .45,
     },
@@ -137,7 +137,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .45, v=60}
+			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
 		},
 		ShellEjectAt = .45,
     },
@@ -173,10 +173,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = {
-				"snds_jack_gmod/ez_weapons/sas/in_1.wav",
-				"snds_jack_gmod/ez_weapons/sas/in_2.wav"
-			}, t = .2, v=60, p=130},
+			{s = JMod_GunHandlingSounds.shotshell, t = .2, v=60, p=130},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
 		}
     },

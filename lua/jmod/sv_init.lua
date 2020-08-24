@@ -31,6 +31,10 @@ hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
 	if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
 end)
 
+hook.Add("AllowPlayerPickup","JMOD_PLAYERPICKUP",function(ply,ent)
+	if(ent.JModNoPickup)then return false end
+end)
+
 local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
 	local Time=CurTime()
@@ -162,12 +166,16 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 end)
 
---[[
-concommand.Add("jacky_info_debug",function(ply,cmd,args)
-	local Tr=util.QuickTrace(ply:GetPos(),Vector(0,0,-30000),ply)
-	jprint(Tr.HitPos:Distance(ply:GetPos())/52)
+concommand.Add("jacky_player_debug",function(ply,cmd,args)
+	if not(GetConVar("sv_cheats"):GetBool())then return end
+	if not(ply:IsSuperAdmin())then return end
+	for k,v in pairs(player.GetAll())do
+		if(v~=ply)then
+			v:SetPos(ply:GetPos()+Vector(100*k,0,0))
+			v:SetHealth(100)
+		end
+	end
 end)
---]]
 
 hook.Add("GetFallDamage","JMod_FallDamage",function(ply,spd)
 	if(JMOD_CONFIG.QoL.RealisticFallDamage)then

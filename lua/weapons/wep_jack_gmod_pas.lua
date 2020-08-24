@@ -170,10 +170,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = {
-				"snds_jack_gmod/ez_weapons/sas/in_1.wav",
-				"snds_jack_gmod/ez_weapons/sas/in_2.wav"
-			}, t = .2, v=65, p=90},
+			{s = JMod_GunHandlingSounds.shotshell, t = .15, v=60},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
 		}
     },

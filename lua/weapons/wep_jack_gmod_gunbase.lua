@@ -745,7 +745,10 @@ function SWEP:FireRocket(ent, vel, ang)
     if rocket.ArcCW_SetOwner then rocket:SetOwner(self:GetOwner()) end
     rocket.Inflictor = self
 
-	rocket.Dmg=self.ShootEntityDmg
+	local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
+	
+	rocket.Dmg=self.Damage*GlobalMult*math.Rand(1-self.DamageRand,1+self.DamageRand)
+	rocket.BlastRadius=self.BlastRadius*math.Rand(1-self.BlastRadiusRand,1+self.BlastRadiusRand)
 	rocket:SetOwner(self.Owner)
 	rocket.Owner=self.Owner
     rocket:Spawn()

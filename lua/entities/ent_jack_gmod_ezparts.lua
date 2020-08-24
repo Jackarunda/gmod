@@ -27,6 +27,7 @@ if(SERVER)then
 		Prop:SetModelScale(.5,0)
 		Prop:Spawn()
 		Prop:Activate()
+		Prop.JModNoPickup=true
 		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 		constraint.NoCollide(Prop,self,0,0)
 		local Phys=Prop:GetPhysicsObject()
