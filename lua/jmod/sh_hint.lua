@@ -145,7 +145,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezgas"] = {Type = "info", Text = "Gas is used to power the Workbench and to craft things", Time = 3},
 	["ent_jack_gmod_ezmedsupplies"] = {Type = "info", Text = "Med. Supplies is consumed by Auto. Field Hospitals and Medkits", Time = 3},
 	--["ent_jack_gmod_ezmedsupplies use"] = {Type = "button", Text = "Hold Walk and press Use while holding a medkit to restore supplies", Followup = "bind walk", Time = 5},
-	["ent_jack_gmod_ezmunitions"] = {Type = "info", Text = "Munitions supply grenade launchers and grenade sentries", Time = 3},
+	["ent_jack_gmod_ezmunitions"] = {Type = "info", Text = "Munitions supply grenade/rocket launchers and grenade sentries", Time = 3},
 	["ent_jack_gmod_eznutrients"] = {Type = "info", Text = "Rations can be eaten to restore health", Time = 3},
 	["ent_jack_gmod_eznutrients use"] = {Type = "button", Text = "Hold Walk and press Use to eat", Followup = "bind walk", Time = 5},
 	["ent_jack_gmod_ezparts"] = {Type = "info", Text = "Parts are used to repair, craft and upgrade almost everything", Time = 3},
@@ -185,5 +185,6 @@ JMod_SpecificHints={
 	["wep_jack_gmod_far"]={Type="info",Text="weapon uses Shotgun Rounds"},
 	["wep_jack_gmod_gl"]={Type="info",Text="weapon uses 40mm Grenades"},
 	["wep_jack_gmod_fas"]={Type="info",Text="weapon uses Shotgun Rounds"},
-	["wep_jack_gmod_mgl"]={Type="info",Text="weapon uses 40mm Grenades"}
+	["wep_jack_gmod_mgl"]={Type="info",Text="weapon uses 40mm Grenades"},
+	["wep_jack_gmod_rocketlauncher"]={Type="info",Text="weapon uses Mini Rockets"}
 }

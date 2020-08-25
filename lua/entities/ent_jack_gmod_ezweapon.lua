@@ -48,9 +48,11 @@ if(SERVER)then
 		self.MagRounds=self.MagRounds or 0
 	end
 	function ENT:PhysicsCollide(data,physobj)
-		if(data.DeltaTime>0.2)then
+		if(data.DeltaTime>0.1)then
 			if(data.Speed>50)then
-				self.Entity:EmitSound("Weapon.ImpactHard")
+				self.Entity:EmitSound("weapon.ImpactHard")
+			elseif(data.Speed>10)then
+				self.Entity:EmitSound("weapon.ImpactSoft")
 			end
 		end
 	end

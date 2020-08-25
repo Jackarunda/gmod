@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=30,
+		Version=31,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -289,6 +289,7 @@ function JMod_InitGlobalConfig(forceNew)
 		PoisonGasDamage=1,
 		PoisonGasLingerTime=1,
 		DetpackPowerMult=1,
+		AmmoCarryLimitMult=1,
 		MicroBlackHoleGeneratorChargeSpeed=1,
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,

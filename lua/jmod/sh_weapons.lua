@@ -1,35 +1,36 @@
 --[[
-	assault rifle - CW2.0 MWR - M16A4
-	battle rifle - Robotnik's CoD4 SWEPs - G3
-	carbine - CW2.0 MWR - G36C
-	designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
-	bolt action rifle - Robotnik's CoD4 SWEPs - R700
-	sniper rifle - Robotnik's CoD4 SWEPs - M40A3
-	anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
-	semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
-	pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
-	break-action shotgun - cod over-under shotty
-	pistol - Mac's CoD Black Ops II SWEPs - B23R
-	pocket pistol - cod4 usp
-	plinking pistol - cod4 usp
-	machine pistol - Mac's Black Ops SWEPs - MAC11s
-	submachine gun - Robotnik's CoD4 SWEPs - MP5
-	light machine gun - Robotnik's CoD4 SWEPs - M249
-	medium machine gun - Mac's CoD MW2 SWEPs - M240
-	magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
-	magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
-	revolver - Mac's CoD Black Ops SWEPs - Python
-	shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
-	lever-action rifle - the dangerman one
-	single shot rifle - matini henry
-	anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
-	fully-automatic shotgun - mw2 aa12
-	grenade launcher - Mac's CoD MW2 SWEPs - Thumper
-multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
-rocket launcher - Mac's CoD MW2 SWEPs - AT4
-multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
-crossbow - Mac's CoD Black Ops SWEPs - Crossbow
-combat knife - TFA-CoD-IW-Combat-Knife
+	5 assault rifle - CW2.0 MWR - M16A4
+	5 battle rifle - Robotnik's CoD4 SWEPs - G3
+	5 carbine - CW2.0 MWR - G36C
+	5 designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
+	3 bolt action rifle - Robotnik's CoD4 SWEPs - R700
+	4 sniper rifle - Robotnik's CoD4 SWEPs - M40A3
+	5 anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
+	5 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
+	3 pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
+	1 break-action shotgun - cod over-under shotty
+	4 pistol - Mac's CoD Black Ops II SWEPs - B23R
+	4 pocket pistol - cod4 usp
+	4 plinking pistol - cod4 usp
+	5 machine pistol - Mac's Black Ops SWEPs - MAC11s
+	5 submachine gun - Robotnik's CoD4 SWEPs - MP5
+	6 light machine gun - Robotnik's CoD4 SWEPs - M249
+	6 medium machine gun - Mac's CoD MW2 SWEPs - M240
+	3 magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
+	5 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
+	2 revolver - Mac's CoD Black Ops SWEPs - Python
+	3 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
+	3 lever-action rifle - the dangerman one
+	1 single shot rifle - matini henry
+	6 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
+	6 fully-automatic shotgun - mw2 aa12
+	4 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
+	6 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
+5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
+6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
+4 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
+1 combat knife - TFA-CoD-IW-Combat-Knife
+flamethrower?
 -------------------------------
 "VertexlitGeneric"
 {
@@ -196,27 +197,84 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_mgl",
 		ent="ent_jack_gmod_ezweapon_mgl",
 		size=1.1
+	},
+	["Rocket Launcher"]={
+		mdl="models/weapons/w_jmod_at4.mdl",
+		swep="wep_jack_gmod_rocketlauncher",
+		ent="ent_jack_gmod_ezweapon_rocketlauncher",
+		size=1.1
 	}
 }
-for k,v in pairs({
-	"Light Rifle Round",
-	"Medium Rifle Round",
-	"Heavy Rifle Round",
-	"Magnum Rifle Round",
-	"Shotgun Round",
-	"Pistol Round",
-	"Plinking Round",
-	"Magnum Pistol Round",
-	"Small Shotgun Round",
-	"40mm Grenade"
-})do
-	game.AddAmmoType({name=v})
-	if(CLIENT)then language.Add(v.."_ammo",v) end
-end
-JMod_MunitionAmmoTypes={
-	"40mm Grenade"
+JMod_AmmoTable={
+	["Light Rifle Round"]={
+		resourcetype="ammo",
+		sizemult=6,
+		carrylimit=200
+	},
+	["Medium Rifle Round"]={
+		resourcetype="ammo",
+		sizemult=12,
+		carrylimit=100
+	},
+	["Heavy Rifle Round"]={
+		resourcetype="ammo",
+		sizemult=24,
+		carrylimit=25
+	},
+	["Magnum Rifle Round"]={
+		resourcetype="ammo",
+		sizemult=18,
+		carrylimit=50
+	},
+	["Shotgun Round"]={
+		resourcetype="ammo",
+		sizemult=14,
+		carrylimit=70
+	},
+	["Pistol Round"]={
+		resourcetype="ammo",
+		sizemult=3,
+		carrylimit=300
+	},
+	["Plinking Round"]={
+		resourcetype="ammo",
+		sizemult=1,
+		carrylimit=600
+	},
+	["Magnum Pistol Round"]={
+		resourcetype="ammo",
+		sizemult=6,
+		carrylimit=150
+	},
+	["Small Shotgun Round"]={
+		resourcetype="ammo",
+		sizemult=6,
+		carrylimit=150
+	},
+	["40mm Grenade"]={
+		resourcetype="munitions",
+		sizemult=30,
+		carrylimit=20,
+		ent="ent_jack_gmod_ezprojectilenade",
+		nicename="EZ 40mm Grenade"
+	},
+	["Mini Rocket"]={
+		resourcetype="munitions",
+		sizemult=60,
+		carrylimit=6,
+		ent="ent_jack_gmod_ezminirocket",
+		nicename="EZ Mini Rocket"
+	}
 }
-if(CLIENT)then language.Add("ent_jack_gmod_ezprojectilenade","EZ 40mm Grenade") end
+for k,v in pairs(JMod_AmmoTable)do
+	game.AddAmmoType({name=k})
+	if(CLIENT)then
+		language.Add(k.."_ammo",k)
+		if(v.ent)then
+			language.Add(v.ent,v.nicename)
+		end
+	end
+end
 for k,v in pairs({
 	"muzzleflash_g3",
 	"muzzleflash_m14",
@@ -436,5 +494,63 @@ if(CLIENT)then
 		RenderHolsteredWeapon(ply,"thighs","left")
 	end)
 elseif(SERVER)then
-	--
+	function JMod_GiveAmmo(ply,ent)
+		local Wep=ply:GetActiveWeapon()
+		if(Wep)then
+			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
+			--[[ PRIMARY --]]
+			local PrimName=game.GetAmmoName(PrimType)
+			if((PrimName)and(JMod_AmmoTable[PrimName]))then
+				-- use JMOD ammo rules
+				local AmmoInfo,CurrentAmmo=JMod_AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
+				if(ent.EZsupplies==AmmoInfo.resourcetype)then
+					local ResourceLeftInBox=ent:GetResource()
+					local SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox=AmmoInfo.carrylimit-CurrentAmmo,math.ceil(100/AmmoInfo.sizemult),math.ceil(ResourceLeftInBox*6/AmmoInfo.sizemult)
+					local AmtToGive=math.min(SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox)
+					if(AmtToGive>0)then
+						local ResourceToTake=math.ceil(AmtToGive/6*AmmoInfo.sizemult)
+						ply:GiveAmmo(AmtToGive,PrimType)
+						ent:UseEffect(ent:GetPos(),ent)
+						ent:SetResource(ent:GetResource()-ResourceToTake)
+						if(ent:GetResource()<=0)then ent:Remove();return end
+					end
+				end
+			else
+				-- use DEFAULT ammo rules
+				if((PrimType)and(PrimType~=-1))then
+					if(PrimSize==-1)then PrimSize=-PrimSize end
+					if(PrimSize<2)then
+						PrimSize=PrimSize*4
+					elseif(PrimSize<3)then
+						PrimSize=PrimSize*3
+					elseif(PrimSize<6)then
+						PrimSize=PrimSize*2
+					end
+					if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMOD_CONFIG.AmmoCarryLimitMult)then
+						ply:GiveAmmo(PrimSize,PrimType)
+						ent:UseEffect(ent:GetPos(),ent)
+						ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+						if(ent:GetResource()<=0)then ent:Remove();return end
+					end
+				end
+			end
+			--[[ SECONDARY --]]
+			local SecName=game.GetAmmoName(SecType)
+			if((PrimName)and(JMod_AmmoTable[PrimName]))then
+				-- use JMOD ammo rules
+				
+			else
+				-- use DEFAULT ammo rules
+				if((SecType)and(SecType~=-1))then
+					if(SecSize==-1)then SecSize=-SecSize end
+					if(ply:GetAmmoCount(SecType)<=SecSize*5*JMOD_CONFIG.AmmoCarryLimitMult)then
+						ply:GiveAmmo(math.ceil(SecSize/2),SecType)
+						ent:UseEffect(ent:GetPos(),ent)
+						ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+						if(ent:GetResource()<=0)then ent:Remove();return end
+					end
+				end
+			end
+		end
+	end
 end

@@ -127,7 +127,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		---
 		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,50),200,200)
-		for k,ent in pairs(ents.FindInSphere(SelfPos,100))do
+		for k,ent in pairs(ents.FindInSphere(SelfPos,200))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
@@ -170,6 +170,7 @@ if(SERVER)then
 		for i=1,4 do
 			util.BlastDamage(self,self.Owner or self,self:GetPos()+self:GetRight()*i*40,50,50)
 		end
+		util.ScreenShake(self:GetPos(),20,255,.5,300)
 		---
 		self.NextDet=CurTime()+.25
 		---

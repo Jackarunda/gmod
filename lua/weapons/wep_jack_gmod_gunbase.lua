@@ -228,7 +228,10 @@ function SWEP:OnDrop()
 		Ent.MagRounds=self:Clip1()
 		Ent:Spawn()
 		Ent:Activate()
-		Ent:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+		local Phys=Ent:GetPhysicsObject()
+		if(Phys)then
+			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+		end
 		self:Remove()
 	end
 end
@@ -341,6 +344,42 @@ function SWEP:ExitSights()
 
     if self.Animations.exit_sight then
         self:PlayAnimation("exit_sight", self:GetSightTime())
+    end
+end
+function SWEP:BarrelHitWall()
+    local offset = self.BarrelOffsetHip
+
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0 -- Never block barrel in VR
+    end
+
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        offset = self.BarrelOffsetSighted
+    end
+
+    local dir = self:GetOwner():EyeAngles()
+    local src = self:GetOwner():EyePos()
+
+    src = src + dir:Right() * offset[1]
+    src = src + dir:Forward() * offset[2]
+    src = src + dir:Up() * offset[3]
+
+    local mask = MASK_SOLID
+
+    local tr = util.TraceLine({
+        start = src,
+        endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
+        filter = {self:GetOwner()},
+        mask = mask
+    })
+
+    if tr.Hit then
+		if(tr.Entity.JModNoGunHitWall)then return 0 end
+        local l = (tr.HitPos - src):Length()
+        l = l
+        return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
+    else
+        return 0
     end
 end
 -- firing
@@ -624,9 +663,10 @@ function SWEP:PrimaryAttack()
             -- sound.Play(self.DistantShootSound, self:GetPos(), 149, self.ShootPitch * math.Rand(0.95, 1.05), 1)
             self:EmitSound(dss, 149, spitch, 0.5, CHAN_WEAPON + 1)
         end
+		
+		local SelfPos=self:GetPos()
 
         if ss then
-			local SelfPos=self:GetPos()
 			if((SERVER)or(CLIENT and IsFirstTimePredicted()))then
 				self:EmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
 				if((self.ShootSoundExtraMult)and(self.ShootSoundExtraMult>0))then
@@ -636,6 +676,36 @@ function SWEP:PrimaryAttack()
 				end
 			end
         end
+		
+		
+		if(self.BackBlast)then
+			local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
+			local Dist=150
+			local Tr=util.QuickTrace(RPos,-RDir*Dist,function(fuck)
+				if((fuck:IsPlayer())or(fuck:IsNPC()))then return false end
+				local Class=fuck:GetClass()
+				if(Class=="ent_jack_gmod_ezminirocket")then return false end
+				return true
+			end)
+			if(Tr.Hit)then
+				Dist=RPos:Distance(Tr.HitPos)
+			end
+			for i=1,4 do
+				local Inv=5-i
+				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*25-Dist)*self.BackBlast,15*Inv*self.BackBlast,7.5*Inv*self.BackBlast)
+			end
+			if(SERVER)then
+				local FooF=EffectData()
+				FooF:SetOrigin(RPos)
+				FooF:SetScale(self.BackBlast)
+				FooF:SetNormal(-RDir)
+				util.Effect("eff_jack_gmod_smalldustshock",FooF,true,true)
+			end
+		end
+		
+		if(self.ShakeOnShoot)then
+			util.ScreenShake(SelfPos,7*self.ShakeOnShoot,255,.75*self.ShakeOnShoot,200*self.ShakeOnShoot)
+		end
 
         if IsFirstTimePredicted() then
             self.BurstCount = self.BurstCount + 1
@@ -738,8 +808,17 @@ function SWEP:FireRocket(ent, vel, ang)
 
     if !rocket:IsValid() then print("!!! INVALID ROUND " .. ent) return end
 
-    rocket:SetAngles(ang)
-    rocket:SetPos(src)
+	if(self.ShootEntityAngle)then
+		local Angel=Angle(ang.p,ang.y,ang.r)
+		local Up,Right,Forward=Angel:Up(),Angel:Right(),Angel:Forward()
+		Angel:RotateAroundAxis(Right,self.ShootEntityAngle.p)
+		Angel:RotateAroundAxis(Up,self.ShootEntityAngle.y)
+		Angel:RotateAroundAxis(Forward,self.ShootEntityAngle.r)
+		rocket:SetAngles(Angel)
+	else
+		rocket:SetAngles(ang)
+	end
+	rocket:SetPos(src)
 
     rocket.Owner = self:GetOwner()
     if rocket.ArcCW_SetOwner then rocket:SetOwner(self:GetOwner()) end
@@ -757,7 +836,11 @@ function SWEP:FireRocket(ent, vel, ang)
 	vel=self.Owner:GetVelocity()+ang:Forward()*vel
     rocket:GetPhysicsObject():SetVelocity(vel)
     --rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
-
+	
+	if(rocket.Launch)then
+		rocket:SetState(1)
+		rocket:Launch()
+	end
 
     if rocket.ArcCW_Killable == nil then
         rocket.ArcCW_Killable = true

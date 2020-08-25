@@ -54,12 +54,12 @@ SWEP.ShootSoundExtraMult=1
 
 SWEP.MuzzleEffect = "muzzleflash_m79"
 SWEP.ShellModel = "models/jhells/shell_9mm.mdl"
-SWEP.ShellPitch = 70
+SWEP.ShellPitch = 60
 SWEP.ShellScale = 7
 
-SWEP.SpeedMult = 1
-SWEP.SightedSpeedMult = .8
-SWEP.SightTime = .65
+SWEP.SpeedMult = .95
+SWEP.SightedSpeedMult = .7
+SWEP.SightTime = .7
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.15, 0, 1.32),
@@ -114,7 +114,7 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.6,
+        Time = 0.7,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=2.5,
         LHIK = true,
