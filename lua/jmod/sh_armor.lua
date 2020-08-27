@@ -434,7 +434,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Light-Vest"] = {
-		mdl = "models/player/armor_trooper/trooper.mdl", -- tarkov
+		mdl = "models/player/armor_paca/paca.mdl", -- tarkov
 		slots = {
 			chest = .8,
 			abdomen = .5
@@ -450,7 +450,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Medium-Light-Vest"] = {
-		mdl = "models/player/armor_paca/paca.mdl", -- tarkov
+		mdl = "models/player/armor_trooper/trooper.mdl", -- tarkov
 		slots = {
 			chest = .85,
 			abdomen = .6

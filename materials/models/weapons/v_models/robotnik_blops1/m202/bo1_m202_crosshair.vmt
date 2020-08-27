@@ -1,0 +1,5 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/robotnik_blops1/m202/bo1_m202_crosshair"
+	"$translucent" 1
+}

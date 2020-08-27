@@ -26,7 +26,7 @@
 	6 fully-automatic shotgun - mw2 aa12
 	4 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 	6 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
-5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
+	5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
 6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
 4 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 1 combat knife - TFA-CoD-IW-Combat-Knife
@@ -202,6 +202,12 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_at4.mdl",
 		swep="wep_jack_gmod_rocketlauncher",
 		ent="ent_jack_gmod_ezweapon_rocketlauncher",
+		size=1.1
+	},
+	["Multiple Rocket Launcher"]={
+		mdl="models/weapons/w_jmod_m202.mdl",
+		swep="wep_jack_gmod_mrl",
+		ent="ent_jack_gmod_ezweapon_mrl",
 		size=1.1
 	}
 }

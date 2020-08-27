@@ -21,6 +21,7 @@ SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezminirocket"
 SWEP.MuzzleVelocity = 2000
 SWEP.ShootEntityAngle = Angle(0,-90,0)
+SWEP.ShootEntityOffset = Vector(10,0,0)
 SWEP.BackBlast = 1
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.

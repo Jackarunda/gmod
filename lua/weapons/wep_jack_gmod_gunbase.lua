@@ -677,7 +677,6 @@ function SWEP:PrimaryAttack()
 			end
         end
 		
-		
 		if(self.BackBlast)then
 			local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
 			local Dist=150
@@ -818,6 +817,10 @@ function SWEP:FireRocket(ent, vel, ang)
 	else
 		rocket:SetAngles(ang)
 	end
+	if(self.ShootEntityOffset)then
+		local Up,Right,Forward=ang:Up(),ang:Right(),ang:Forward()
+		src=src+Up*self.ShootEntityOffset.z+Right*self.ShootEntityOffset.x+Forward*self.ShootEntityOffset.y
+	end
 	rocket:SetPos(src)
 
     rocket.Owner = self:GetOwner()
@@ -834,6 +837,9 @@ function SWEP:FireRocket(ent, vel, ang)
     rocket:Activate()
 	
 	vel=self.Owner:GetVelocity()+ang:Forward()*vel
+	timer.Simple(0,function()
+		if(IsValid(rocket))then rocket:GetPhysicsObject():SetMass(2) end
+	end)
     rocket:GetPhysicsObject():SetVelocity(vel)
     --rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
 	
