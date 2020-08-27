@@ -688,10 +688,11 @@ function SWEP:PrimaryAttack()
 			end)
 			if(Tr.Hit)then
 				Dist=RPos:Distance(Tr.HitPos)
+				if(SERVER)then JMod_Hint(self.Owner,"backblast") end
 			end
 			for i=1,4 do
 				local Inv=5-i
-				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*25-Dist)*self.BackBlast,15*Inv*self.BackBlast,7.5*Inv*self.BackBlast)
+				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*25-Dist)*self.BackBlast,30*Inv*self.BackBlast,7.5*Inv*self.BackBlast)
 			end
 			if(SERVER)then
 				local FooF=EffectData()
@@ -807,6 +808,9 @@ function SWEP:FireRocket(ent, vel, ang)
 
     if !rocket:IsValid() then print("!!! INVALID ROUND " .. ent) return end
 
+	local Rotato=ang:Right()
+	ang:RotateAroundAxis(Rotato,2)
+	
 	if(self.ShootEntityAngle)then
 		local Angel=Angle(ang.p,ang.y,ang.r)
 		local Up,Right,Forward=Angel:Up(),Angel:Right(),Angel:Forward()

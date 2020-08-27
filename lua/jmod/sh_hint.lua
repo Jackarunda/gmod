@@ -155,7 +155,8 @@ JMod_Hints = {
 	-- Weapons
 	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim"},
 	["weapon drop"]={Type="info",Text="press BACKSPACE to drop weapon"},
-	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"}
+	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"},
+	["backblast"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure you're away from any walls"}
 }
 JMod_SpecificHints={
 	["wep_jack_gmod_amsr"]={Type="info",Text="weapon uses Heavy Rifle Rounds"},
