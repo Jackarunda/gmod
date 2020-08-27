@@ -120,8 +120,8 @@ if(SERVER)then
 			end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,3)
-		JMod_BlastDoors(self,SelfPos,3)
+		JMod_WreckBuildings(self,SelfPos,.4)
+		JMod_BlastDoors(self,SelfPos,2)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos-Dir*100,Dir*300)
