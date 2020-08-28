@@ -679,7 +679,7 @@ function SWEP:PrimaryAttack()
 		
 		if(self.BackBlast)then
 			local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
-			local Dist=150
+			local Dist=230
 			local Tr=util.QuickTrace(RPos,-RDir*Dist,function(fuck)
 				if((fuck:IsPlayer())or(fuck:IsNPC()))then return false end
 				local Class=fuck:GetClass()
@@ -691,8 +691,7 @@ function SWEP:PrimaryAttack()
 				if(SERVER)then JMod_Hint(self.Owner,"backblast") end
 			end
 			for i=1,4 do
-				local Inv=5-i
-				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*25-Dist)*self.BackBlast,30*Inv*self.BackBlast,7.5*Inv*self.BackBlast)
+				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
 			end
 			if(SERVER)then
 				local FooF=EffectData()
@@ -700,6 +699,11 @@ function SWEP:PrimaryAttack()
 				FooF:SetScale(self.BackBlast)
 				FooF:SetNormal(-RDir)
 				util.Effect("eff_jack_gmod_smalldustshock",FooF,true,true)
+				local Ploom=EffectData()
+				Ploom:SetOrigin(RPos)
+				Ploom:SetScale(self.BackBlast)
+				Ploom:SetNormal(-RDir)
+				util.Effect("eff_jack_gmod_ezbackblast",Ploom,true,true)
 			end
 		end
 		
@@ -808,8 +812,10 @@ function SWEP:FireRocket(ent, vel, ang)
 
     if !rocket:IsValid() then print("!!! INVALID ROUND " .. ent) return end
 
-	local Rotato=ang:Right()
-	ang:RotateAroundAxis(Rotato,2)
+	if not(self.ShootEntityNoPhys)then
+		local Rotato=ang:Right()
+		ang:RotateAroundAxis(Rotato,2)
+	end
 	
 	if(self.ShootEntityAngle)then
 		local Angel=Angle(ang.p,ang.y,ang.r)
@@ -837,15 +843,20 @@ function SWEP:FireRocket(ent, vel, ang)
 	rocket.BlastRadius=self.BlastRadius*math.Rand(1-self.BlastRadiusRand,1+self.BlastRadiusRand)
 	rocket:SetOwner(self.Owner)
 	rocket.Owner=self.Owner
+	rocket.Weapon=self
     rocket:Spawn()
     rocket:Activate()
 	
 	vel=self.Owner:GetVelocity()+ang:Forward()*vel
-	timer.Simple(0,function()
-		if(IsValid(rocket))then rocket:GetPhysicsObject():SetMass(2) end
-	end)
-    rocket:GetPhysicsObject():SetVelocity(vel)
-    --rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
+	if not(self.ShootEntityNoPhys)then
+		timer.Simple(0,function()
+			if(IsValid(rocket))then rocket:GetPhysicsObject():SetMass(2) end
+		end)
+		rocket:GetPhysicsObject():SetVelocity(vel)
+		--rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
+	else
+		rocket.CurVel=vel
+	end
 	
 	if(rocket.Launch)then
 		rocket:SetState(1)
