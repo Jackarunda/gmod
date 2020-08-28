@@ -58,7 +58,7 @@ hook.Add("Think","JMod_RADIO_THINK",function()
 				station.nextReadyTime=Time+math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)*3)
 				station.state=EZ_STATION_STATE_BUSY
 				local DropPos=FindDropPosFromSignalOrigin(station.deliveryLocation)
-				if(DropPos)then
+				if(DropPos && !station.tele)then
 					local DropVelocity=VectorRand()
 					DropVelocity.z=0
 					DropVelocity:Normalize()
@@ -83,6 +83,25 @@ hook.Add("Think","JMod_RADIO_THINK",function()
 							if(playa:IsPlayer())then sound.Play("snd_jack_flyby_drop.mp3",playa:GetShootPos(),50,100) end
 						end
 						NotifyAllRadios(stationID,"good drop")
+					end)
+				elseif station.tele then
+					local DeliveryItems=JMOD_CONFIG.RadioSpecs.AvailablePackages[station.deliveryType]
+					timer.Simple(.9,function()
+						local Box=ents.Create("ent_jack_aidbox")
+						Box:SetPos(station.deliveryLocation+Vector(0,0,25))
+						Box.Contents=DeliveryItems
+						Box.NoFadeIn=true
+						Box:SetDTBool(0,"true")
+						Box:Spawn()
+						Box:Initialize()
+						NotifyAllRadios(stationID,"good drop")
+						local eff=EffectData()
+						eff:SetOrigin(station.deliveryLocation+Vector(0,0,25))
+						eff:SetScale(1)
+						util.Effect("eff_jack_gmod_portalclose",eff,true,true)
+						for k,playa in pairs(ents.FindInSphere(station.deliveryLocation,1024))do
+							if(playa:IsPlayer())then sound.Play("ambient/energy/whiteflash.wav",playa:GetShootPos(),50,100) end
+						end
 					end)
 				else
 					NotifyAllRadios(stationID,"drop failed")
@@ -132,7 +151,7 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 	end
 end)
 
-function JMod_EZradioEstablish(transceiver,id)
+function JMod_EZradioEstablish(transceiver,id,tel)
 	local Station=EZ_RADIO_STATIONS[id] or {
 		state=EZ_STATION_STATE_READY,
 		nextDeliveryTime=0,
@@ -144,7 +163,8 @@ function JMod_EZradioEstablish(transceiver,id)
 		notified=false,
 		restrictedPackageStock={},
 		restrictedPackageDelivering=nil,
-		restrictedPackageDeliveryTime=0
+		restrictedPackageDeliveryTime=0,
+		tele=tel
 	}
 	table.insert(Station.transceivers,transceiver)
 	EZ_RADIO_STATIONS[id]=Station
@@ -192,7 +212,7 @@ end
 function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 	local PackageInfo,Station,Time=JMOD_CONFIG.RadioSpecs.AvailablePackages[pkg],EZ_RADIO_STATIONS[id],CurTime()
 	if not(Station)then
-		JMod_EZradioEstablish(transceiver,id)
+		JMod_EZradioEstablish(transceiver,id,tel)
 		Station=EZ_RADIO_STATIONS[id]
 	end
 	transceiver.BFFd=bff
