@@ -679,6 +679,11 @@ function SWEP:PrimaryAttack()
 		
 		if(self.BackBlast)then
 			local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
+			if(self.ShootEntityOffset)then
+				local ang=RDir:Angle()
+				local Up,Right,Forward=ang:Up(),ang:Right(),ang:Forward()
+				RPos=RPos+Up*self.ShootEntityOffset.z+Right*self.ShootEntityOffset.x+Forward*self.ShootEntityOffset.y
+			end
 			local Dist=230
 			local Tr=util.QuickTrace(RPos,-RDir*Dist,function(fuck)
 				if((fuck:IsPlayer())or(fuck:IsNPC()))then return false end

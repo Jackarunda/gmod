@@ -92,15 +92,15 @@ if(SERVER)then
 			self.CurVel=self.CurVel+physenv.GetGravity()/ThinkRate*2
 			---
 			if((self.FuelLeft>0)and(self.NextThrust<Time))then
-				self.NextThrust=Time+.05
-				self.CurVel=self.CurVel+self.CurVel:GetNormalized()*500
+				self.NextThrust=Time+.02
+				self.CurVel=self.CurVel+self.CurVel:GetNormalized()*200
 				self.FuelLeft=self.FuelLeft-5
 				---
 				local Eff=EffectData()
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(-self.CurVel:GetNormalized())
-				Eff:SetScale(1)
-				util.Effect("eff_jack_gmod_rocketthrust",Eff,true,true)
+				Eff:SetScale(.75)
+				util.Effect("eff_jack_gmod_rockettrail",Eff,true,true)
 			end
 		end
 		if(IsValid(self))then

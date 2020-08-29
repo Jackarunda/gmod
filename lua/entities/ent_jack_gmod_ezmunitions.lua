@@ -25,25 +25,11 @@ if(SERVER)then
 		for i=1,num do
 			timer.Simple(i/200,function()
 				if not(IsValid(self))then return end
-				local Prop=ents.Create("prop_physics")
-				Prop:SetModel("models/kali/weapons/mgsv/magazines/ammunition/40mm grenade.mdl")
-				Prop:SetModelScale(2,0)
-				Prop:SetPos(self:GetPos())
-				Prop:SetAngles(AngleRand())
-				Prop:Spawn()
-				Prop:Activate()
-				Prop.JModNoPickup=true
-				Prop:GetPhysicsObject():SetMass(1)
-				Prop:GetPhysicsObject():SetVelocity(VectorRand()*100)
-				Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				constraint.NoCollide(Prop,self,0,0)
-				SafeRemoveEntityDelayed(Prop,math.Rand(2,4))
-				timer.Simple(.01,function()
-					local Tr=util.QuickTrace(self:GetPos(),Vector(0,0,-50),self)
-					if(Tr.Hit)then
-						self:SetVelocity(Tr.Entity:GetVelocity())
-					end
-				end)
+				local Eff=EffectData()
+				Eff:SetOrigin(pos)
+				Eff:SetAngles((VectorRand()+Vector(0,0,1)):GetNormalized():Angle())
+				Eff:SetEntity(ent)
+				util.Effect("eff_jack_gmod_40mmshell",Eff,true,true)
 			end)
 		end
 	end

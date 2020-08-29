@@ -194,7 +194,7 @@ if(SERVER)then
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(self:GetRight())
 				Eff:SetScale(1)
-				util.Effect("eff_jack_gmod_rocketthrust",Eff,true,true)
+				util.Effect("eff_jack_gmod_rockettrail",Eff,true,true)
 			end
 		end
 		self:NextThink(CurTime()+.05)
