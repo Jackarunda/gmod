@@ -44,24 +44,21 @@ hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
 end)
 
 hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
-
-	if tonumber(ply:GetInfo("cl_jmod_hint_enabled")) == 0 then return end
-
 	if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
-		timer.Simple(5,function()
+		timer.Simple(10,function()
 			if IsValid(ply) then
 				JMod_Hint(ply, "wiki",nil,true)
 			end
 		end)
-		timer.Simple(10,function()
-			if IsValid(ply) then
-				JMod_Hint(ply, "hint",nil,true)
-			end
-		end)
-		if ply:IsAdmin() then
-			timer.Simple(15,function()
+		if ply:IsSuperAdmin() then
+			timer.Simple(20,function()
 				if IsValid(ply) then
 					JMod_Hint(ply, "config",nil,true)
+				end
+			end)
+			timer.Simple(25,function()
+				if IsValid(ply) then
+					JMod_Hint(ply, "qol",nil,true)
 				end
 			end)
 		end

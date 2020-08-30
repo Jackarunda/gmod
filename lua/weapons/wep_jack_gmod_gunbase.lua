@@ -457,6 +457,8 @@ function SWEP:PrimaryAttack()
     end
 
     ss = self:GetBuff_Hook("Hook_GetShootSound", ss)
+	
+	if(type(ss)=="table")then ss=table.Random(ss) end
 
     local dss = self.DistantShootSound
 
@@ -657,7 +659,7 @@ function SWEP:PrimaryAttack()
             SuppressHostEvents(self:GetOwner())
         end
 
-        self:DoEffects()
+        if(self.MuzzleEffect and self.MuzzleEffect~="NONE")then self:DoEffects() end
 
         if dss then
             -- sound.Play(self.DistantShootSound, self:GetPos(), 149, self.ShootPitch * math.Rand(0.95, 1.05), 1)
@@ -693,7 +695,7 @@ function SWEP:PrimaryAttack()
 			end)
 			if(Tr.Hit)then
 				Dist=RPos:Distance(Tr.HitPos)
-				if(SERVER)then JMod_Hint(self.Owner,"backblast") end
+				if(SERVER)then JMod_Hint(self.Owner,"backblast wall") end
 			end
 			for i=1,4 do
 				util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
@@ -839,13 +841,14 @@ function SWEP:FireRocket(ent, vel, ang)
 	rocket:SetPos(src)
 
     rocket.Owner = self:GetOwner()
+	rocket.AmmoType=self.Primary.Ammo
     if rocket.ArcCW_SetOwner then rocket:SetOwner(self:GetOwner()) end
     rocket.Inflictor = self
 
 	local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
 	
 	rocket.Dmg=self.Damage*GlobalMult*math.Rand(1-self.DamageRand,1+self.DamageRand)
-	rocket.BlastRadius=self.BlastRadius*math.Rand(1-self.BlastRadiusRand,1+self.BlastRadiusRand)
+	if(self.BlastRadius)then rocket.BlastRadius=self.BlastRadius*math.Rand(1-self.BlastRadiusRand,1+self.BlastRadiusRand) end
 	rocket:SetOwner(self.Owner)
 	rocket.Owner=self.Owner
 	rocket.Weapon=self
@@ -875,6 +878,148 @@ function SWEP:FireRocket(ent, vel, ang)
     rocket.ArcCWProjectile = true
 
     return rocket
+end
+-- reload
+SWEP.LastAmmoCheck=0
+function SWEP:Reload()
+    if self:GetOwner():IsNPC() then
+        return
+    end
+
+    if self:GetNextPrimaryFire() >= CurTime() then return end
+    if self:GetNextSecondaryFire() > CurTime() then return end
+
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    if self.Throwing then return end
+    if self.PrimaryBash then return end
+	
+	if(self.Owner:KeyDown(IN_WALK))then -- allow holding WALK to check your ammo
+		return
+	end
+
+    if self:GetNWBool("ubgl") then
+        self:ReloadUBGL()
+        return
+    end
+
+    -- Don't accidently reload when changing firemode
+    if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
+
+    if self:Ammo1() <= 0 then return end
+
+    self:GetBuff_Hook("Hook_PreReload")
+
+    self.LastClip1 = self:Clip1()
+
+    local reserve = self:Ammo1()
+
+    reserve = reserve + self:Clip1()
+
+    local clip = self:GetCapacity()
+
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+
+    local load = math.Clamp(clip + chamber, 0, reserve)
+
+    if load <= self:Clip1() then return end
+    self.LastLoadClip1 = load - self:Clip1()
+
+    self:SetNWBool("reqend", false)
+    self.BurstCount = 0
+
+    local shouldshotgunreload = self.ShotgunReload
+
+    if self:GetBuff_Override("Override_ShotgunReload") then
+        shouldshotgunreload = true
+    end
+
+    if self:GetBuff_Override("Override_ShotgunReload") == false then
+        shouldshotgunreload = false
+    end
+
+    if self.HybridReload or self:GetBuff_Override("Override_HybridReload") then
+        if self:Clip1() == 0 then
+            shouldshotgunreload = false
+        else
+            shouldshotgunreload = true
+        end
+    end
+
+    local mult = self:GetBuff_Mult("Mult_ReloadTime")
+
+    if shouldshotgunreload then
+        local anim = "sgreload_start"
+        local insertcount = 0
+
+        local empty = (self:Clip1() == 0) or self:GetNWBool("cycle", false)
+
+        if self.Animations.sgreload_start_empty and empty then
+            anim = "sgreload_start_empty"
+            empty = false
+
+            insertcount = (self.Animations.sgreload_start_empty or {}).RestoreAmmo or 1
+        else
+            insertcount = (self.Animations.sgreload_start or {}).RestoreAmmo or 0
+        end
+
+        anim = self:GetBuff_Hook("Hook_SelectReloadAnimation", anim) or anim
+
+        self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
+        self:SetClip1(self:Clip1() + insertcount)
+
+        self:PlayAnimation(anim, mult, true, 0, true)
+
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+        function()
+            self:ReloadInsert(empty)
+        end)
+    else
+        local anim = self:SelectReloadAnimation()
+
+        -- Yes, this will cause an issue in mag-fed manual action weapons where
+        -- despite an empty casing being in the chamber, you can load +1 and 
+        -- cycle an empty shell afterwards.
+        -- No, I am not in the correct mental state to fix this. - 8Z
+        if self:Clip1() == 0 then
+            self:SetNWBool("cycle", false)
+        end
+
+        if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
+
+        self:PlayAnimation(anim, mult, true, 0, true)
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+        function()
+            self:SetNWBool("reloading", false)
+            if self:GetOwner():KeyDown(IN_ATTACK2) then
+                self:EnterSights()
+            end
+        end)
+        self.CheckpointAnimation = anim
+        self.CheckpointTime = 0
+
+        if SERVER then
+            self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
+            self:SetClip1(0)
+            self:TakePrimaryAmmo(load)
+            self:SetClip1(load)
+        end
+
+        if self.RevolverReload then
+            self.LastClip1 = load
+        end
+    end
+
+    self:SetNWBool("reloading", true)
+
+    if !self.ReloadInSights then
+        self:ExitSights()
+        self.Sighted = false
+    end
+
+    self.Primary.Automatic = false
+
+    self:GetBuff_Hook("Hook_PostReload")
 end
 -- think
 local lastUBGL = 0

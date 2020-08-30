@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/c_mw2_m240.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m240.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 65
 
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-100,10)
@@ -89,6 +89,22 @@ SWEP.ReloadActiveAng = Angle(5, 0, 0)
 SWEP.MeleeAttackTime=.35
 
 SWEP.BarrelLength = 38
+
+SWEP.BulletBones = { -- arctic, no
+    [13] = "j_ammo_013",
+    [12] = "j_ammo_012",
+    [11] = "j_ammo_011",
+    [10] = "j_ammo_010",
+    [9] = "j_ammo_09",
+    [8] = "j_ammo_08",
+    [7] = "j_ammo_07",
+    [6] = "j_ammo_06",
+    [5] = "j_ammo_05",
+    [4] = "j_ammo_04",
+    [3] = "j_ammo_03",
+    [2] = "j_ammo_02",
+    [1] = "j_ammo_01"
+}
 
 SWEP.Attachments = {
 	{

@@ -19,7 +19,7 @@ concommand.Add("jmod_debug_killme",function(ply)
 	if not(IsValid(ply))then return end
 	if not(GetConVar("sv_cheats"):GetBool())then return end
 	ply.EZkillme=true
-	ply:PrintMessage(HUD_PRINTCENTER,"good luck")
+	print("good luck")
 end)
 
 concommand.Add("jmod_ez_trigger",function(ply)

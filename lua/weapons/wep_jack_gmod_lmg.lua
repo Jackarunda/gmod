@@ -80,6 +80,24 @@ SWEP.MeleeAttackTime=.35
 
 SWEP.BarrelLength = 38
 
+SWEP.BulletBones = { -- arctic please just stop writing descriptions
+    [15] = "j_chain_bullets14",
+    [14] = "j_chain_bullets13",
+    [13] = "j_chain_bullets12",
+    [12] = "j_chain_bullets11",
+    [11] = "j_chain_bullets10",
+    [10] = "j_chain_bullets9",
+    [9] = "j_chain_bullets8",
+    [8] = "j_chain_bullets7",
+    [7] = "j_chain_bullets6",
+    [6] = "j_chain_bullets5",
+    [5] = "j_chain_bullets4",
+    [4] = "j_chain_bullets3",
+    [3] = "j_chain_bullets2",
+    [2] = "j_chain_bullets1",
+    [1] = "j_chain_bullets0"
+}
+
 SWEP.Attachments = {
 	{
         PrintName = "Underbarrel",

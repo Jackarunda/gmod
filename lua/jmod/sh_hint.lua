@@ -1,8 +1,8 @@
 JMod_Hints = {
 	-- General
 	["wiki"] = {Type = "lightbulb", Text = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'", Time = 4, Identifier = "important", Sound = ""},
-	["hint"] = {Type = "lightbulb", Text = "To disable these JMod hints, use command 'cl_jmod_hint_enabled'", Time = 4, Identifier = "important", Sound = ""},
 	["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 4, Identifier = "important", Sound = ""},
+	["qol"] = {Type = "lightbulb", Text = "consider enabling some of JMod's QoL features in the config for a more realistic gmod experience", Time = 4, Identifier = "important", Sound = ""},
 	["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items", Time = 3, Identifier = "important"},
 	["bind cmd"] = {Type = "lightbulb", Text = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'", Identifier = "important"},
 	["bind walk"] = {Type = "lightbulb", Text = "Ensure you have bound the Walk key, use command 'bind alt +walk'", Identifier = "important"},
@@ -153,10 +153,11 @@ JMod_Hints = {
 	["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
 	
 	-- Weapons
-	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim"},
-	["weapon drop"]={Type="info",Text="press BACKSPACE to drop weapon"},
-	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes"},
-	["backblast"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure you're away from any walls"}
+	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim", Sound = ""},
+	["weapon drop"]={Type="info",Text="press BACKSPACE to drop weapon", Sound = ""},
+	["weapon firemodes"]={Type="info",Text="press ZOOM key to change firemodes", Sound = ""},
+	["backblast"]={Type="info",Text="BACKBLAST AREA NOT CLEAR!"},
+	["backblast wall"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure the area behind you is open"}
 }
 JMod_SpecificHints={
 	["wep_jack_gmod_amsr"]={Type="info",Text="weapon uses Heavy Rifle Rounds"},
@@ -188,5 +189,6 @@ JMod_SpecificHints={
 	["wep_jack_gmod_fas"]={Type="info",Text="weapon uses Shotgun Rounds"},
 	["wep_jack_gmod_mgl"]={Type="info",Text="weapon uses 40mm Grenades. GRENADES HAVE NO DISTANCE SAFETY"},
 	["wep_jack_gmod_rocketlauncher"]={Type="info",Text="weapon uses Mini Rockets. BEWARE BACKBLAST"},
-	["wep_jack_gmod_mrl"]={Type="info",Text="weapon uses Mini Rockets. BEWARE BACKBLAST"}
+	["wep_jack_gmod_mrl"]={Type="info",Text="weapon uses Mini Rockets. BEWARE BACKBLAST"},
+	["wep_jack_gmod_crossbow"]={Type="info",Text="weapon uses Arrows. Has +30% through-armor damage"}
 }

@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/robotnik_blops1/crossbow/bo1_crossbow_d"
+        $bumpmap   "models/weapons/v_models/robotnik_blops1/crossbow/bo1_crossbow_n"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+		
+}

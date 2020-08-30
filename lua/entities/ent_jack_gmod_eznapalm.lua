@@ -92,10 +92,6 @@ if (SERVER) then
 		else
 			local Filter = {self, self.Creator}
 
-			if not (self.CanHarmOwner) then
-				table.insert(Filter, self:GetOwner())
-			end
-
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask, HitWater, HitChainLink = MASK_SHOT, self.TypeInfo[15], self.TypeInfo[16]
 

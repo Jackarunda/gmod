@@ -27,8 +27,8 @@
 	4 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
 	6 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
 	5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
-6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
-4 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
+	6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
+2 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 1 combat knife - TFA-CoD-IW-Combat-Knife
 flamethrower?
 -------------------------------
@@ -209,6 +209,11 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_mrl",
 		ent="ent_jack_gmod_ezweapon_mrl",
 		size=1.1
+	},
+	["Crossbow"]={
+		mdl="models/weapons/w_jmod_crossbow.mdl",
+		swep="wep_jack_gmod_crossbow",
+		ent="ent_jack_gmod_ezweapon_crossbow"
 	}
 }
 JMod_AmmoTable={
@@ -255,7 +260,7 @@ JMod_AmmoTable={
 	["Small Shotgun Round"]={
 		resourcetype="ammo",
 		sizemult=6,
-		carrylimit=150
+		carrylimit=120
 	},
 	["40mm Grenade"]={
 		resourcetype="munitions",
@@ -270,6 +275,13 @@ JMod_AmmoTable={
 		carrylimit=6,
 		ent="ent_jack_gmod_ezminirocket",
 		nicename="EZ Mini Rocket"
+	},
+	["Arrow"]={
+		resourcetype="ammo_arrow",
+		sizemult=24,
+		carrylimit=30,
+		ent="ent_jack_gmod_ezarrow",
+		armorpiercing=.3
 	}
 }
 for k,v in pairs(JMod_AmmoTable)do

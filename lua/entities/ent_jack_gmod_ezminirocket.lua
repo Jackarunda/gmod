@@ -70,7 +70,7 @@ if(SERVER)then
 			self.InitialTrace=nil
 		else
 			local Filter={self}
-			if not(self.CanHarmOwner)then table.insert(Filter,self:GetOwner()) end
+			table.insert(Filter,self.Owner)
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask,HitWater,HitChainLink=MASK_SHOT,false,true
 			if(HitWater)then Mask=Mask+MASK_WATER end

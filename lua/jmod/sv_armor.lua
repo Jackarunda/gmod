@@ -144,6 +144,17 @@ end
 
 local function LocationalDmgHandling(ply, hitgroup, dmg)
 	local Mul = 1
+	local AmmoTypeID,AmmoAPmul,AmmoHPmul=dmg:GetAmmoType(),1,1
+	if(AmmoTypeID)then
+		local AmmoName=game.GetAmmoName(AmmoTypeID)
+		if(AmmoName)then
+			local AmmoInfo=JMod_AmmoTable[AmmoName]
+			if(AmmoInfo)then
+				AmmoAPmul=1-(AmmoInfo.armorpiercing or 0)
+				AmmoHPmul=1+(AmmoInfo.expanding or 0)
+			end
+		end
+	end
 	if (#table.GetKeys(ply.EZarmor.items) > 0) then
 		local RelevantSlots, DmgAmt = {}, dmg:GetDamage()
 
@@ -190,10 +201,21 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 
 			ArmorPieceBroke = ArmorPieceBroke or Busted
 		end
+		
+		local NoProtection=Protection<=.05
+		
+		if(NoProtection)then
+			Mul=Mul*AmmoHPmul
+		else
+			Protection=Protection*AmmoAPmul
+			if(AmmoAPmul < 1 and JMOD_CONFIG.QoL.RealisticLocationalDamage)then
+				Mul=Mul*JMod_BodyPartDamageMults[hitgroup]^(.6+(1-AmmoAPmul))
+			end
+		end
 
 		Mul = (Mul * (1-Protection)) / JMOD_CONFIG.ArmorProtectionMult
 		
-		if(Protection<=.05 and JMOD_CONFIG.QoL.RealisticLocationalDamage)then -- if there's no armor on the struck bodypart
+		if(NoProtection and JMOD_CONFIG.QoL.RealisticLocationalDamage)then -- if there's no armor on the struck bodypart
 			Mul=Mul*JMod_BodyPartDamageMults[hitgroup]
 		end
 
@@ -202,7 +224,9 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			JModEZarmorSync(ply)
 		end
 	elseif(JMOD_CONFIG.QoL.RealisticLocationalDamage)then
-		Mul=Mul*JMod_BodyPartDamageMults[hitgroup]
+		Mul=Mul*JMod_BodyPartDamageMults[hitgroup]*AmmoHPmul
+	else
+		Mul=Mul*AmmoHPmul
 	end
 	dmg:ScaleDamage(Mul)
 end
@@ -220,7 +244,25 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 
 		ArmorPieceBroke = ArmorPieceBroke or Busted
 	end
-	
+
+	local NoProtection,AmmoTypeID,AmmoAPmul,AmmoHPmul=Protection<=.05,dmg:GetAmmoType(),1,1
+	if(AmmoTypeID)then
+		local AmmoName=game.GetAmmoName(AmmoTypeID)
+		if(AmmoName)then
+			local AmmoInfo=JMod_AmmoTable[AmmoName]
+			if(AmmoInfo)then
+				AmmoAPmul=1-(AmmoInfo.armorpiercing or 0)
+				AmmoHPmul=1+(AmmoInfo.expanding or 0)
+			end
+		end
+	end
+
+	if(NoProtection)then
+		Mul=Mul*AmmoHPmul
+	else
+		Protection=Protection*AmmoAPmul
+	end
+
 	Mul = (Mul * (1-Protection)) / JMOD_CONFIG.ArmorProtectionMult
 	dmg:ScaleDamage(Mul)
 
@@ -476,4 +518,19 @@ concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	JMod_EZ_Equip_Armor(ply, "Heavy-Right-Thigh")
 	JMod_EZ_Equip_Armor(ply, "Left-Calf")
 	JMod_EZ_Equip_Armor(ply, "Right-Calf")
+end)
+
+concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
+	if not(ply and ply:IsSuperAdmin())then return end
+	local playa=ply:GetEyeTrace().Entity
+	if(playa and playa:IsPlayer())then
+		if(JMod_ArmorTable[args[1]])then
+			JMod_EZ_Equip_Armor(playa, args[1])
+			print("gave",playa,args[1])
+		else
+			print("invalid armor name")
+		end
+	else
+		print("invalid aim target")
+	end
 end)
