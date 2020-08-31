@@ -206,6 +206,8 @@ function SWEP:Holster()
 end
 local ToyTownAmt=0
 hook.Add("RenderScreenspaceEffects","JMod_WeaponScreenEffects",function()
+	if not(GetConVar("jmod_weapon_blur"):GetBool())then return end
+	if(GetConVar("arccw_blur_toytown"):GetBool())then return end
 	local ply,FT=LocalPlayer(),FrameTime()
 	if not(ply:ShouldDrawLocalPlayer())then
 		local Wep=ply:GetActiveWeapon()

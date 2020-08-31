@@ -28,7 +28,7 @@
 	6 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
 	5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
 	6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
-2 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
+	2 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
 1 combat knife - TFA-CoD-IW-Combat-Knife
 flamethrower?
 -------------------------------
@@ -396,12 +396,7 @@ concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
 	if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
 end)
 if(CLIENT)then
-	--[[
-	local Mat=Material("spherical_aberration")
-	hook.Add("PostDrawHUD","AAAAAA",function()
-		DrawMaterialOverlay("spherical_aberration",1)
-	end)
-	--]]
+	CreateClientConVar("jmod_weapon_blur","1",true,false,"whether or not to show the blurring 'focus' effect when aiming a jmod weapon")
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
 		local wpn = LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end
