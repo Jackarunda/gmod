@@ -24,7 +24,7 @@ SWEP.BodyHolsterScale = .9
 			1	=	c_bo1_crossbow_exptip_bg.smd
 --]]
 
-SWEP.Damage = 35
+SWEP.Damage = 40
 SWEP.DamageRand = .4
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
 SWEP.MuzzleVelocity = 6000

@@ -1,6 +1,5 @@
 function JMod_Hint(ply, key, loc, specific)
 	if not JMOD_CONFIG.Hints or not ply or not key then return nil end
-   
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] and not specific then return false end
 	ply.JModHintsGiven[key] = true
@@ -12,7 +11,6 @@ function JMod_Hint(ply, key, loc, specific)
 	tbl.ShouldMove = (loc ~= nil)
 	tbl.Key = key
 	if not tbl.Time then tbl.Time = 8 end
-
 	net.Start("JMod_Hint")
 	net.WriteBool(specific)
 	net.WriteString(tbl.Text)
@@ -47,20 +45,20 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
 	if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
 		timer.Simple(10,function()
 			if IsValid(ply) then
-				JMod_Hint(ply, "wiki",nil,true)
+				JMod_Hint(ply, "wiki")
+				if ply:IsSuperAdmin() then
+					timer.Simple(5,function()
+						if IsValid(ply) then
+							JMod_Hint(ply, "config")
+						end
+					end)
+					timer.Simple(10,function()
+						if IsValid(ply) then
+							JMod_Hint(ply, "qol")
+						end
+					end)
+				end
 			end
 		end)
-		if ply:IsSuperAdmin() then
-			timer.Simple(20,function()
-				if IsValid(ply) then
-					JMod_Hint(ply, "config",nil,true)
-				end
-			end)
-			timer.Simple(25,function()
-				if IsValid(ply) then
-					JMod_Hint(ply, "qol",nil,true)
-				end
-			end)
-		end
 	end
 end)

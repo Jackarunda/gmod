@@ -30,8 +30,8 @@ if(SERVER)then
 		self.Impacted=true
 		local SelfPos,Att,Dir=(tr and tr.HitPos+tr.HitNormal*5) or self:GetPos()+Vector(0,0,30),self.Owner or self,self.CurVel:GetNormalized()
 		self:FireBullets({
-			Damage=self.Dmg,
-			Force=self.Dmg,
+			Damage=self.Dmg*.66,
+			Force=self.Dmg*.33,
 			Num=1,
 			Tracer=0,
 			Spread=Vector(0,0,0),
@@ -40,6 +40,14 @@ if(SERVER)then
 			Attacker=self.Owner or game.GetWorld(),
 			AmmoType=self.AmmoType
 		})
+		local Slash=DamageInfo()
+		Slash:SetDamagePosition(tr.HitPos)
+		Slash:SetDamageType(DMG_SLASH)
+		Slash:SetAttacker(self.Owner or game.GetWorld())
+		Slash:SetInflictor(self)
+		Slash:SetDamageForce(Dir*self.Dmg*.33)
+		Slash:SetDamage(self.Dmg*.33)
+		tr.Entity:TakeDamageInfo(Slash)
 		if((tr.Entity:IsNPC())or(tr.Entity:IsPlayer()))then
 			self:SetPos(tr.HitPos+Dir*15-self:GetUp()*2)
 			if(((tr.Entity.Alive)and(tr.Entity:Alive()))or((tr.Entity.Health)and(tr.Entity:Health()>0)))then
@@ -108,17 +116,12 @@ if(SERVER)then
 			local Filter={self}
 			table.insert(Filter,self.Owner)
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
-			local Mask,HitWater,HitChainLink=MASK_SHOT,false,false
-			if(HitWater)then Mask=Mask+MASK_WATER end
-			if(HitChainLink)then Mask=nil end
-			Tr=util.TraceHull({
+			local Mask=MASK_SHOT
+			Tr=util.TraceLine({
 				start=Pos,
 				endpos=Pos+self.CurVel/ThinkRate,
 				filter=Filter,
-				mins=Vector(-3,-3,-3),
-				maxs=Vector(3,3,3),
-				mask=Mask,
-				Distance=200
+				mask=Mask
 			})
 		end
 		if(Tr.Hit)then
@@ -140,7 +143,7 @@ if(SERVER)then
 		self:SetParent(nil)
 		self.StuckIn=nil
 		if(Tr.Hit)then
-			self:SetPos(Tr.HitPos+Tr.HitNormal)
+			self:SetPos(Tr.HitPos+Tr.HitNormal*.1)
 			self:SetAngles(Angle(0,math.random(0,360),0))
 		end
 	end
