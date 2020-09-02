@@ -72,10 +72,12 @@ if(SERVER)then
 					activator:Give(self.Specs.swep)
 					activator:GetWeapon(self.Specs.swep):SetClip1(self.MagRounds)
 					activator:SelectWeapon(self.Specs.swep)
-					JMod_Hint(activator,"weapon drop")
-					JMod_Hint(activator,"weapon steadiness")
-					JMod_Hint(activator,"weapon firemodes")
 					JMod_Hint(activator,self.Specs.swep,nil,true)
+					for k,v in pairs({"weapon drop","weapon steadiness","weapon firemodes","weapon ammotypes"})do
+						timer.Simple(k*3,function()
+							JMod_Hint(activator,v)
+						end)
+					end
 					self:Remove()
 				else
 					activator:PickupObject(self)

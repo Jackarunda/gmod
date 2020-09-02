@@ -9,7 +9,7 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.StickMats={MAT_GRASS,MAT_DIRT,MAT_SAND,MAT_FOLIAGE,MAT_FLESH,MAT_ANTLION,MAT_BLOODYFLESH,MAT_ALIENFLESH,MAT_SNOW,MAT_PLASTIC,MAT_SLOSH,MAT_WOOD}
 ENT.BreakMats={MAT_CONCRETE,MAT_EGGSHELL,MAT_GRATE,MAT_CLIP,MAT_METAL,MAT_COMPUTER,MAT_TILE,MAT_VENT,MAT_DEFAULT,MAT_GLASS,MAT_WARPSHIELD}
-ENT.EZsupplies="ammo_arrow"
+ENT.EZammo="Arrow"
 local ThinkRate=22--Hz
 ---
 if(SERVER)then
@@ -73,8 +73,8 @@ if(SERVER)then
 	function ENT:UseEffect()
 		-- stub
 	end
-	function ENT:SetResource(num)
-		if(num<=0)then self:Remove() end
+	function ENT:SetCount(num)
+		-- stub
 	end
 	function ENT:StartTouch(toucher)
 		if((self.Impacted)and(toucher:IsPlayer())and not((self.StuckIn)and(self.StuckIn==toucher)))then
@@ -84,7 +84,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		JMod_GiveAmmo(activator,self)
 	end
-	function ENT:GetResource()
+	function ENT:GetCount()
 		return 1 -- stub
 	end
 	local LastTime=0

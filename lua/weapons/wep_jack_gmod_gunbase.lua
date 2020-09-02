@@ -882,7 +882,7 @@ function SWEP:FireRocket(ent, vel, ang)
     return rocket
 end
 -- reload
-SWEP.LastAmmoCheck=0
+SWEP.NextAmmoSwitch=0
 function SWEP:Reload()
     if self:GetOwner():IsNPC() then
         return
@@ -897,6 +897,15 @@ function SWEP:Reload()
     if self.PrimaryBash then return end
 	
 	if(self.Owner:KeyDown(IN_WALK))then -- allow holding WALK to check your ammo
+		return
+	end
+	
+	if(self.Owner:KeyDown(IN_USE))then
+		local Time=CurTime()
+		if(self.NextAmmoSwitch<Time)then
+			self.NextAmmoSwitch=Time+.5
+			if(SERVER)then self.Owner:ConCommand("jmod_ez_switchammo") end
+		end
 		return
 	end
 
@@ -2161,7 +2170,16 @@ if(CLIENT)then
 						alpha = alpha,
 					}
 					MyDrawText(wmode)
-
+					MyDrawText({
+						x = apan_bg.x + apan_bg.w - airgap,
+						y = wammo.y + wammo.h*1.6,
+						font = "ArcCW_6",
+						text = self.Primary.Ammo,
+						col = col2,
+						align = 1,
+						shadow = true,
+						alpha = alpha,
+					})
 				end
 			end
 

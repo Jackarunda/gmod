@@ -148,14 +148,14 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 	if(AmmoTypeID)then
 		local AmmoName=game.GetAmmoName(AmmoTypeID)
 		if(AmmoName)then
-			local AmmoInfo=JMod_AmmoTable[AmmoName]
+			local AmmoInfo=JMod_GetAmmoSpecs(AmmoName)
 			if(AmmoInfo)then
 				AmmoAPmul=1-(AmmoInfo.armorpiercing or 0)
 				AmmoHPmul=1+(AmmoInfo.expanding or 0)
 			end
 		end
 	end
-	if (#table.GetKeys(ply.EZarmor.items) > 0) then
+	if (ply.EZarmor and #table.GetKeys(ply.EZarmor.items) > 0) then
 		local RelevantSlots, DmgAmt = {}, dmg:GetDamage()
 
 		if (hitgroup == HITGROUP_HEAD) then
@@ -249,7 +249,7 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 	if(AmmoTypeID)then
 		local AmmoName=game.GetAmmoName(AmmoTypeID)
 		if(AmmoName)then
-			local AmmoInfo=JMod_AmmoTable[AmmoName]
+			local AmmoInfo=JMod_GetAmmoSpecs(AmmoName)
 			if(AmmoInfo)then
 				AmmoAPmul=1-(AmmoInfo.armorpiercing or 0)
 				AmmoHPmul=1+(AmmoInfo.expanding or 0)
@@ -276,6 +276,10 @@ hook.Add("ScalePlayerDamage", "JMod_ScalePlayerDamage", function(ply, hitgroup, 
 	if(ply.EZarmor)then
 		LocationalDmgHandling(ply, hitgroup, dmginfo)
 	end
+end)
+
+hook.Add("ScaleNPCDamage", "JMod_ScaleNPCdamage", function(npc, hitgroup, dmginfo)
+	LocationalDmgHandling(npc, hitgroup, dmginfo)
 end)
 
 hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)

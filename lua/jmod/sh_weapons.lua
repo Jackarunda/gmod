@@ -222,6 +222,17 @@ JMod_AmmoTable={
 		sizemult=6,
 		carrylimit=200
 	},
+	["Light Rifle Round - Armor Piercing"]={
+		armorpiercing=.2,
+		penetrationmult=1.5
+	},
+	["Light Rifle Round - Ballistic Tip"]={
+		expanding=.3,
+		penetrationmult=.8
+	},
+	["Light Rifle Round - Tracer"]={
+		tracer=true
+	},
 	["Medium Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=12,
@@ -277,7 +288,6 @@ JMod_AmmoTable={
 		nicename="EZ Mini Rocket"
 	},
 	["Arrow"]={
-		resourcetype="ammo_arrow",
 		sizemult=24,
 		carrylimit=30,
 		ent="ent_jack_gmod_ezarrow",
@@ -292,6 +302,11 @@ for k,v in pairs(JMod_AmmoTable)do
 			language.Add(v.ent,v.nicename)
 		end
 	end
+end
+function JMod_GetAmmoSpecs(typ)
+	if not(JMod_AmmoTable[typ])then return nil end
+	local Result,BaseType=table.FullCopy(JMod_AmmoTable[typ]),string.Split(typ," - ")[1]
+	return table.Inherit(Result,JMod_AmmoTable[BaseType])
 end
 for k,v in pairs({
 	"muzzleflash_g3",
@@ -390,13 +405,18 @@ JMod_GunHandlingSounds={
 		"snds_jack_gmod/ez_weapons/handling/shotshell_insert4.wav"
 	}
 }
-concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
-	if not(ply:Alive())then return end
-	local Wep=ply:GetActiveWeapon()
-	if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
-end)
 if(CLIENT)then
 	CreateClientConVar("jmod_weapon_blur","1",true,false,"whether or not to show the blurring 'focus' effect when aiming a jmod weapon")
+	net.Receive("JMod_EZweaponMod",function()
+		local Type,ply=net.ReadInt(16),LocalPlayer()
+		if(Type==1)then -- ammo type switch
+			local Wep=ply:GetActiveWeapon()
+			if(Wep)then
+				Wep.Primary.Ammo=net.ReadString()
+				surface.PlaySound(table.Random(JMod_GunHandlingSounds.tap.magwell))
+			end
+		end
+	end)
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
 		local wpn = LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end
@@ -507,62 +527,108 @@ if(CLIENT)then
 		RenderHolsteredWeapon(ply,"thighs","left")
 	end)
 elseif(SERVER)then
-	function JMod_GiveAmmo(ply,ent)
+	concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
+		if not(ply:Alive())then return end
 		local Wep=ply:GetActiveWeapon()
-		if(Wep)then
-			local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
-			--[[ PRIMARY --]]
-			local PrimName=game.GetAmmoName(PrimType)
-			if((PrimName)and(JMod_AmmoTable[PrimName]))then
-				-- use JMOD ammo rules
-				local AmmoInfo,CurrentAmmo=JMod_AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
-				if(ent.EZsupplies==AmmoInfo.resourcetype)then
-					local ResourceLeftInBox=ent:GetResource()
-					local SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox=AmmoInfo.carrylimit-CurrentAmmo,math.ceil(100/AmmoInfo.sizemult),math.ceil(ResourceLeftInBox*6/AmmoInfo.sizemult)
-					local AmtToGive=math.min(SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox)
-					if(AmtToGive>0)then
-						local ResourceToTake=math.ceil(AmtToGive/6*AmmoInfo.sizemult)
-						ply:GiveAmmo(AmtToGive,PrimType)
-						ent:UseEffect(ent:GetPos(),ent)
-						ent:SetResource(ent:GetResource()-ResourceToTake)
-						if(ent:GetResource()<=0)then ent:Remove();return end
+		if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
+	end)
+	concommand.Add("jmod_ez_switchammo",function(ply,cmd,args)
+		-- TODO: this is not complete, we need to modify more traits
+		-- TracerNum, Penetration, DamageType, Num, maybe Accuracy and Recoil
+		-- and somehow we have to keep track of the original values during swaps
+		if not(ply:Alive())then return end
+		local Wep=ply:GetActiveWeapon()
+		if not(Wep.Primary.Ammo and JMod_AmmoTable[Wep.Primary.Ammo])then return end
+		local AllTypes,OriginalType={},string.Split(Wep.Primary.Ammo," - ")[1]
+		for name,info in pairs(JMod_AmmoTable)do
+			if((string.find(name,OriginalType))and(ply:GetAmmoCount(name)>0))then
+				table.insert(AllTypes,name)
+			end
+		end
+		local CurrentIndex=table.KeyFromValue(AllTypes,Wep.Primary.Ammo)
+		local NewIndex=CurrentIndex+1
+		if(NewIndex>#AllTypes)then NewIndex=1 end
+		local NewType=AllTypes[NewIndex]
+		if(NewType~=Wep.Primary.Ammo)then
+			Wep:Unload()
+			Wep.Primary.Ammo=NewType
+			net.Start("JMod_EZweaponMod")
+			net.WriteInt(1,16)
+			net.WriteString(NewType)
+			net.Send(ply)
+		else
+			ply:PrintMessage(HUD_PRINTCENTER,"you do not have any alternate ammo for this weapon")
+		end
+	end)
+	function JMod_GiveAmmo(ply,ent)
+		if(ent.EZsupplies)then -- it's a resource box
+			local Wep=ply:GetActiveWeapon()
+			if(Wep)then
+				local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
+				--[[ PRIMARY --]]
+				local PrimName=game.GetAmmoName(PrimType)
+				if((PrimName)and(JMod_AmmoTable[PrimName]))then
+					-- use JMOD ammo rules
+					local AmmoInfo,CurrentAmmo=JMod_AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
+					if(ent.EZsupplies==AmmoInfo.resourcetype)then
+						local ResourceLeftInBox=ent:GetResource()
+						local SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox=AmmoInfo.carrylimit-CurrentAmmo,math.ceil(100/AmmoInfo.sizemult),math.ceil(ResourceLeftInBox*6/AmmoInfo.sizemult)
+						local AmtToGive=math.min(SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox)
+						if(AmtToGive>0)then
+							local ResourceToTake=math.ceil(AmtToGive/6*AmmoInfo.sizemult)
+							ply:GiveAmmo(AmtToGive,PrimType)
+							ent:UseEffect(ent:GetPos(),ent)
+							ent:SetResource(ent:GetResource()-ResourceToTake)
+							if(ent:GetResource()<=0)then ent:Remove();return end
+						end
+					end
+				else
+					-- use DEFAULT ammo rules
+					if((PrimType)and(PrimType~=-1))then
+						if(PrimSize==-1)then PrimSize=-PrimSize end
+						if(PrimSize<2)then
+							PrimSize=PrimSize*4
+						elseif(PrimSize<3)then
+							PrimSize=PrimSize*3
+						elseif(PrimSize<6)then
+							PrimSize=PrimSize*2
+						end
+						if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMOD_CONFIG.AmmoCarryLimitMult)then
+							ply:GiveAmmo(PrimSize,PrimType)
+							ent:UseEffect(ent:GetPos(),ent)
+							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+							if(ent:GetResource()<=0)then ent:Remove();return end
+						end
 					end
 				end
-			else
-				-- use DEFAULT ammo rules
-				if((PrimType)and(PrimType~=-1))then
-					if(PrimSize==-1)then PrimSize=-PrimSize end
-					if(PrimSize<2)then
-						PrimSize=PrimSize*4
-					elseif(PrimSize<3)then
-						PrimSize=PrimSize*3
-					elseif(PrimSize<6)then
-						PrimSize=PrimSize*2
-					end
-					if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMOD_CONFIG.AmmoCarryLimitMult)then
-						ply:GiveAmmo(PrimSize,PrimType)
-						ent:UseEffect(ent:GetPos(),ent)
-						ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
-						if(ent:GetResource()<=0)then ent:Remove();return end
+				--[[ SECONDARY --]]
+				local SecName=game.GetAmmoName(SecType)
+				if((PrimName)and(JMod_AmmoTable[PrimName]))then
+					-- use JMOD ammo rules
+					-- TODO, no jmod weapons use secondary ammo currently
+				else
+					-- use DEFAULT ammo rules
+					if((SecType)and(SecType~=-1))then
+						if(SecSize==-1)then SecSize=-SecSize end
+						if(ply:GetAmmoCount(SecType)<=SecSize*5*JMOD_CONFIG.AmmoCarryLimitMult)then
+							ply:GiveAmmo(math.ceil(SecSize/2),SecType)
+							ent:UseEffect(ent:GetPos(),ent)
+							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+							if(ent:GetResource()<=0)then ent:Remove();return end
+						end
 					end
 				end
 			end
-			--[[ SECONDARY --]]
-			local SecName=game.GetAmmoName(SecType)
-			if((PrimName)and(JMod_AmmoTable[PrimName]))then
-				-- use JMOD ammo rules
-				
-			else
-				-- use DEFAULT ammo rules
-				if((SecType)and(SecType~=-1))then
-					if(SecSize==-1)then SecSize=-SecSize end
-					if(ply:GetAmmoCount(SecType)<=SecSize*5*JMOD_CONFIG.AmmoCarryLimitMult)then
-						ply:GiveAmmo(math.ceil(SecSize/2),SecType)
-						ent:UseEffect(ent:GetPos(),ent)
-						ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
-						if(ent:GetResource()<=0)then ent:Remove();return end
-					end
-				end
+		elseif(ent.EZammo)then -- it's a specific ammo box or ammo entity
+			local Typ,CountInBox=ent.EZammo,ent:GetCount()
+			local AmmoInfo,CurrentAmmo=JMod_GetAmmoSpecs(Typ),ply:GetAmmoCount(Typ)
+			local SpaceLeftInPlayerInv=AmmoInfo.carrylimit-CurrentAmmo
+			local AmtToGive=math.min(SpaceLeftInPlayerInv,CountInBox)
+			if(AmtToGive>0)then
+				ply:GiveAmmo(AmtToGive,Typ)
+				ent:UseEffect(ent:GetPos(),ent)
+				ent:SetCount(CountInBox-AmtToGive)
+				if(ent:GetCount()<=0)then ent:Remove();return end
 			end
 		end
 	end

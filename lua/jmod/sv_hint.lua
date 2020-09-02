@@ -57,6 +57,11 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
 							JMod_Hint(ply, "qol")
 						end
 					end)
+					timer.Simple(15,function()
+						if IsValid(ply) then
+							JMod_Hint(ply, "hint reset")
+						end
+					end)
 				end
 			end
 		end)
