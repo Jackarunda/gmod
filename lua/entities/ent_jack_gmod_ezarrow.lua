@@ -74,7 +74,7 @@ if(SERVER)then
 		-- stub
 	end
 	function ENT:SetCount(num)
-		-- stub
+		if(num<=0)then self:Remove() end
 	end
 	function ENT:StartTouch(toucher)
 		if((self.Impacted)and(toucher:IsPlayer())and not((self.StuckIn)and(self.StuckIn==toucher)))then
