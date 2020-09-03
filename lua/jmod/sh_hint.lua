@@ -167,5 +167,5 @@ JMod_SpecificHints={
 	["wep_jack_gmod_mgl"]={Type="info",Text="GRENADES HAVE NO DISTANCE SAFETY"},
 	["wep_jack_gmod_rocketlauncher"]={Type="info",Text="BEWARE BACKBLAST"},
 	["wep_jack_gmod_mrl"]={Type="info",Text="BEWARE BACKBLAST"},
-	["wep_jack_gmod_crossbow"]={Type="info",Text="weapon has +30% through-armor damage"}
+	["wep_jack_gmod_crossbow"]={Type="info",Text="weapon has +30% through-armor damage. Arrows can be recovered"}
 }

@@ -13,8 +13,18 @@ SWEP.DrawCrosshair=false
 
 SWEP.InstantPickup=true -- Fort Fights compatibility
 
+SWEP.EZdroppable=true
+
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
+
+SWEP.BodyHolsterModel = "models/items/medjit_large.mdl"
+SWEP.BodyHolsterSlot = "hips"
+SWEP.BodyHolsterAng = Angle(-90,-20,110)
+SWEP.BodyHolsterAngL = Angle(-90,20,70)
+SWEP.BodyHolsterPos = Vector(0,-16,10.5)
+SWEP.BodyHolsterPosL = Vector(0,-15,-11)
+SWEP.BodyHolsterScale = .4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
@@ -191,45 +201,43 @@ function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(self:GetSupplies()<0)then return end
 	if(SERVER)then
-		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
-			if not(self.Dropped)then
-				self.Dropped=true
-				local Kit=ents.Create("ent_jack_gmod_ezmedkit")
-				Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
-				Kit:SetAngles(self.Owner:GetAimVector():Angle())
-				Kit:Spawn()
-				Kit:Activate()
-				Kit.Supplies=self:GetSupplies()
-				Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-				self:Remove()
-			end
-			return
-		else
-			self:SetNextPrimaryFire(CurTime()+.65)
-			self:SetNextSecondaryFire(CurTime()+.85)
-			local Ent=self.Owner
-			local AimVec=Ent:GetAimVector()
-			local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
+		self:SetNextPrimaryFire(CurTime()+.65)
+		self:SetNextSecondaryFire(CurTime()+.85)
+		local Ent=self.Owner
+		local AimVec=Ent:GetAimVector()
+		local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
 
-			local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
-			if override == false then return end
-			local healAmt = isnumber(override) and override or 2
+		local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
+		if override == false then return end
+		local healAmt = isnumber(override) and override or 2
 
-			local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
-			Ent.EZhealth=(Ent.EZhealth or 0)
-			local Missing=Max-(Helf+Ent.EZhealth)
-			if override == nil then
-				if((Helf<0)or(Helf>=Max))then return end
-				if(Missing<=0)then return end
-			end
-
-			local AddAmt=math.min(Missing,healAmt)
-			self:SetSupplies(self:GetSupplies()-1)
-			Ent.EZhealth=Ent.EZhealth+AddAmt
-			self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
-			self:HealEffect(Ent)
+		local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
+		Ent.EZhealth=(Ent.EZhealth or 0)
+		local Missing=Max-(Helf+Ent.EZhealth)
+		if override == nil then
+			if((Helf<0)or(Helf>=Max))then return end
+			if(Missing<=0)then return end
 		end
+
+		local AddAmt=math.min(Missing,healAmt)
+		self:SetSupplies(self:GetSupplies()-1)
+		Ent.EZhealth=Ent.EZhealth+AddAmt
+		self.Owner:PrintMessage(HUD_PRINTCENTER,"treatment "..Ent.EZhealth+Helf.."/"..Max)
+		self:HealEffect(Ent)
 	end
+end
+function SWEP:OnDrop()
+	local Kit=ents.Create("ent_jack_gmod_ezmedkit")
+	Kit:SetPos(self:GetPos())
+	Kit:SetAngles(self:GetAngles())
+	Kit:Spawn()
+	Kit:Activate()
+	Kit.Supplies=self:GetSupplies()
+	local Phys=Kit:GetPhysicsObject()
+	if(Phys)then
+		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+	end
+	self:Remove()
 end
 
 function SWEP:HealEffect(Ent)
@@ -315,7 +323,7 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("Supplies: "..Supplies,"Trebuchet24",W*.4,H*.7,Color(255,255,255,200),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("LMB: heal target","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: heal self","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("HOLD ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+E on medsupplies: refill","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 

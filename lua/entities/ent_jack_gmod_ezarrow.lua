@@ -49,7 +49,7 @@ if(SERVER)then
 		Slash:SetDamage(self.Dmg*.33)
 		tr.Entity:TakeDamageInfo(Slash)
 		if((tr.Entity:IsNPC())or(tr.Entity:IsPlayer()))then
-			self:SetPos(tr.HitPos+Dir*15-self:GetUp()*2)
+			self:SetPos(tr.HitPos+Dir*5-self:GetUp()*2)
 			if(((tr.Entity.Alive)and(tr.Entity:Alive()))or((tr.Entity.Health)and(tr.Entity:Health()>0)))then
 				self:SetParent(tr.Entity)
 				self.StuckIn=tr.Entity

@@ -457,6 +457,14 @@ if(CLIENT)then
 			left={
 				bone="ValveBiped.Bip01_L_Thigh"
 			}
+		},
+		hips={
+			right={
+				bone="ValveBiped.Bip01_Spine1"
+			},
+			left={
+				bone="ValveBiped.Bip01_Spine1"
+			}
 		}
 	}		
 	local function RenderHolsteredWeapon(ply,slot,side)
@@ -490,9 +498,14 @@ if(CLIENT)then
 				slots={
 					back={
 						left=nil,
-						right=nil
+						right=nil,
+						center=nil
 					},
 					thighs={
+						left=nil,
+						right=nil
+					},
+					hips={
 						left=nil,
 						right=nil
 					}
@@ -505,7 +518,7 @@ if(CLIENT)then
 				local Class,Slots=wep:GetClass(),ply.EZweapons.slots[wep.BodyHolsterSlot]
 				if(wep~=ActiveWep)then
 					if not(ply.EZweapons.mdls[Class])then
-						local mdl=ClientsideModel(wep.WorldModel)
+						local mdl=ClientsideModel(wep.BodyHolsterModel or wep.WorldModel)
 						mdl:SetPos(ply:GetPos())
 						mdl:SetParent(ply)
 						mdl:SetModelScale(wep.BodyHolsterScale or 1)
@@ -525,6 +538,8 @@ if(CLIENT)then
 		RenderHolsteredWeapon(ply,"back","left")
 		RenderHolsteredWeapon(ply,"thighs","right")
 		RenderHolsteredWeapon(ply,"thighs","left")
+		RenderHolsteredWeapon(ply,"hips","left")
+		RenderHolsteredWeapon(ply,"hips","right")
 	end)
 elseif(SERVER)then
 	concommand.Add("jmod_ez_dropweapon",function(ply,cmd,args)
@@ -545,6 +560,7 @@ elseif(SERVER)then
 				table.insert(AllTypes,name)
 			end
 		end
+		if(#AllTypes<=0)then return end
 		local CurrentIndex=table.KeyFromValue(AllTypes,Wep.Primary.Ammo)
 		local NewIndex=CurrentIndex+1
 		if(NewIndex>#AllTypes)then NewIndex=1 end

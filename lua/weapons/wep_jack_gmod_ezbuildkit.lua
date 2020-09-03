@@ -11,8 +11,18 @@ SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
 SWEP.DrawCrosshair=false
 
+SWEP.EZdroppable=true
+
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
+
+SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
+SWEP.BodyHolsterSlot = "hips"
+SWEP.BodyHolsterAng = Angle(-70,0,200)
+SWEP.BodyHolsterAngL = Angle(-70,-10,-30)
+SWEP.BodyHolsterPos = Vector(0,-15,10)
+SWEP.BodyHolsterPosL = Vector(0,-15,-11)
+SWEP.BodyHolsterScale = .4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
@@ -426,31 +436,32 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
-		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
-			local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
-			Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
-			Kit:SetAngles(self.Owner:GetAimVector():Angle())
-			Kit:Spawn()
-			Kit:Activate()
-			Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
-			self:Remove()
-			return
-		else
-			local Ent,Pos,Norm=self:WhomIlookinAt()
-			if(Ent.EZsalvage)then
-				local Time=CurTime()
-				if(Time-self.LastSalvageAttempt<.15)then -- safeguard so you don't accidentally #shrek your valuable machines
-					Ent:EZsalvage()
-					self:Pawnch()
-					self:SetNextPrimaryFire(CurTime()+1)
-					self:SetNextSecondaryFire(CurTime()+1)
-				else
-					self:Msg("double click to salvage")
-				end
-				self.LastSalvageAttempt=Time
+		local Ent,Pos,Norm=self:WhomIlookinAt()
+		if(Ent.EZsalvage)then
+			local Time=CurTime()
+			if(Time-self.LastSalvageAttempt<.15)then -- safeguard so you don't accidentally #shrek your valuable machines
+				Ent:EZsalvage()
+				self:Pawnch()
+				self:SetNextPrimaryFire(CurTime()+1)
+				self:SetNextSecondaryFire(CurTime()+1)
+			else
+				self:Msg("double click to salvage")
 			end
+			self.LastSalvageAttempt=Time
 		end
 	end
+end
+function SWEP:OnDrop()
+	local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
+	Kit:SetPos(self:GetPos())
+	Kit:SetAngles(self:GetAngles())
+	Kit:Spawn()
+	Kit:Activate()
+	local Phys=Kit:GetPhysicsObject()
+	if(Phys)then
+		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+	end
+	self:Remove()
 end
 function SWEP:OnRemove()
 	self:SCKHolster()
@@ -535,7 +546,7 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+RMB: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+R: remove nails","Trebuchet24",W*.4,H*.7+150,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 

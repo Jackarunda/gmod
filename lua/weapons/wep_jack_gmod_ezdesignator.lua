@@ -11,6 +11,8 @@ SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
 SWEP.DrawCrosshair=false
 
+SWEP.EZdroppable=true
+
 SWEP.ViewModel	= "models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
 SWEP.WorldModel	= "models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl"
 
@@ -153,7 +155,7 @@ function SWEP:DrawHUD()
 	end
 	draw.SimpleTextOutlined("RMB: aim","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("LMB: lase","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+RMB: drop","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("Backspace: drop","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+E: recharge from EZ battery","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 local CurFoV=70
