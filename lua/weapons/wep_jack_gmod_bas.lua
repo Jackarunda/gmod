@@ -132,7 +132,7 @@ SWEP.Animations = {
     },
 	["reload"] = {
         Source = "reload",
-        Time = 3,
+        Time = 4,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
@@ -142,18 +142,18 @@ SWEP.Animations = {
 		ShellEjectAt = 1,
 		ShellEjectCount=1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bas/open.wav", t = 0, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .6, v=60, p=140},
-			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/in.wav", t = 1.2, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 1.4, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = 1.7, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/grab.wav", t = 1.9, v=65}
+			{s = "snds_jack_gmod/ez_weapons/bas/open.wav", t = .03, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=140},
+			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1.35, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/in.wav", t = 1.65, v=65, p=120},
+			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 2.05, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = 2.25, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/grab.wav", t = 2.65, v=65}
 		}
     },
     ["reload_empty"] = {
         Source = "Reload_Empty",
-        Time = 4,
+        Time = 5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
@@ -163,13 +163,13 @@ SWEP.Animations = {
 		ShellEjectAt = 1,
 		ShellEjectCount=2,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bas/open_empty.wav", t = .05, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=60, p=120},
-			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/in_double.wav", t = 1.8, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = 2.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/bas/grab.wav", t = 2.6, v=65}
+			{s = "snds_jack_gmod/ez_weapons/bas/open_empty.wav", t = .12, v=65},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=120},
+			{s = "snds_jack_gmod/ez_weapons/bas/tap.wav", t = 1.7, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/in_double.wav", t = 2.2, v=65, p=120},
+			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 2.4, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = 3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/bas/grab.wav", t = 3.45, v=65}
 		}
     }
 }

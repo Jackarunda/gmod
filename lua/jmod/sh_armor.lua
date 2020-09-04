@@ -700,6 +700,11 @@ JMod_ArmorTable = {
 	}
 }
 
+hook.Add("InitPostEntity","JMod_InitPostEntity",function()
+	-- support third-party additions to the jmod armor table
+	if(JMod_AdditionalArmorTable)then table.Merge(JMod_ArmorTable,JMod_AdditionalArmorTable) end
+end)
+
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
 		local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
