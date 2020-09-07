@@ -56,6 +56,7 @@ Once git and git bash are installed on your machine, start a git bash window (pr
 But obviously the path is unique for you. Note that when git installs they usually add shell extensions so you can right click or shift+right click and open a new git bash window anywhere in your Explorer, which is easier than CDing every time. Now clone this repo into a new folder into your addons folder by using the command:
 
 `git clone https://github.com/Jackarunda/gmod.git jmod`
+`cd jmod` (move the cmd into the folder you just created)
 
 This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly messed up and you need to delete and re-clone. But that should never happen.
 
