@@ -502,6 +502,22 @@ net.Receive("JMod_NuclearBlast",function()
 	end
 end)
 
+activeBlindness = 0
+targetBlindness = 0
+oldBlindness = 0
+differenceBlindness = 0
+
+net.Receive("JMod_GasBlind",function()
+	local blind = net.ReadFloat()
+	oldBlindness = targetBlindness
+	EZblindness = blind
+	targetBlindness = EZblindness
+	differenceBlindness = targetBlindness - oldBlindness
+	if (differenceBlindness == 0) then
+		activeBlindness = targetBlindness
+	end
+end)
+
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine

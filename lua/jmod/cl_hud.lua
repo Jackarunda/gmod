@@ -193,4 +193,42 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			})
 		end
 	end
+	if(activeBlindness)then
+		if(activeBlindness > 0) then
+			DrawColorModify({
+				["$pp_colour_addr"]=0,
+				["$pp_colour_addg"]=0,
+				["$pp_colour_addb"]=0,
+				["$pp_colour_brightness"]=-(activeBlindness/111.11),
+				["$pp_colour_contrast"]=1,
+				["$pp_colour_colour"]=1,
+				["$pp_colour_mulr"]=0,
+				["$pp_colour_mulg"]=0,
+				["$pp_colour_mulb"]=0
+			})
+			local blurMaterial = Material ('pp/bokehblur')
+			render.UpdateScreenEffectTexture()
+			blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+			blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+			
+			blurMaterial:SetFloat("$size", (activeBlindness/10))
+			blurMaterial:SetFloat("$focus", 1)
+			blurMaterial:SetFloat("$focusradius", 2)
+			
+			render.SetMaterial(blurMaterial)
+			render.DrawScreenQuad()
+		end
+	end
+	blindnessChange = differenceBlindness * FrameTime()
+	activeBlindness = activeBlindness + blindnessChange
+	if (differenceBlindness < 0) then
+		if (activeBlindness < targetBlindness) then
+			activeBlindness = targetBlindness
+		end
+	elseif (differenceBlindness > 0) then
+		if (activeBlindness > targetBlindness) then
+			activeBlindness = targetBlindness
+		end
+	end
+	activeBlindness = math.Clamp(activeBlindness,0,100)
 end)
