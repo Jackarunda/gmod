@@ -61,6 +61,7 @@ end
 
 local GoggleDarkness,GogglesWereOn,OldLightPos=0,false,Vector(0,0,0)
 local ThermalGlowMat=Material("models/debug/debugwhite")
+local blurMaterial = Material ('pp/bokehblur')
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
 	local AimVec=ply:GetAimVector()
@@ -193,4 +194,45 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			})
 		end
 	end
+	if(ply.activeBlindness)then
+		if(ply.activeBlindness > 0) then
+			DrawColorModify({
+				["$pp_colour_addr"]=0,
+				["$pp_colour_addg"]=0,
+				["$pp_colour_addb"]=0,
+				["$pp_colour_brightness"]=math.Clamp(-(ply.activeBlindness/111.11),-.9,0),
+				["$pp_colour_contrast"]=1,
+				["$pp_colour_colour"]=1,
+				["$pp_colour_mulr"]=0,
+				["$pp_colour_mulg"]=0,
+				["$pp_colour_mulb"]=0
+			})
+			render.UpdateScreenEffectTexture()
+			blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+			blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+			
+			blurMaterial:SetFloat("$size", math.Clamp(ply.activeBlindness/10,0,10))
+			blurMaterial:SetFloat("$focus", 1)
+			blurMaterial:SetFloat("$focusradius", 2)
+			
+			render.SetMaterial(blurMaterial)
+			render.DrawScreenQuad()
+		end
+	end
+	if not ply.activeBlindness then ply.activeBlindness = 0 end -- Because of run order, the check in cl_init to prevent an annoying error doesn't run when it is needed
+	if not ply.targetBlindness then ply.targetBlindness = 0 end
+	if not ply.oldBlindness then ply.oldBlindness = 0 end
+	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
+	ply.blindnessChange = ply.differenceBlindness * FrameTime()
+	ply.activeBlindness = ply.activeBlindness + ply.blindnessChange
+	if (ply.differenceBlindness < 0) then
+		if (ply.activeBlindness < ply.targetBlindness) then
+			ply.activeBlindness = ply.targetBlindness
+		end
+	elseif (ply.differenceBlindness > 0) then
+		if (ply.activeBlindness > ply.targetBlindness) then
+			ply.activeBlindness = ply.targetBlindness
+		end
+	end
+	ply.activeBlindness = math.Clamp(ply.activeBlindness,0,100)
 end)

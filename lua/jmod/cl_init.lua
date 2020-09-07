@@ -502,6 +502,27 @@ net.Receive("JMod_NuclearBlast",function()
 	end
 end)
 
+--[[ if not LocalPlayer().activeBlindness then LocalPlayer().activeBlindness = 0 end
+if not LocalPlayer().targetBlindness then LocalPlayer().targetBlindness = 0 end
+if not LocalPlayer().oldBlindness then LocalPlayer().oldBlindness = 0 end
+if not LocalPlayer().differenceBlindness then LocalPlayer().differenceBlindness = 0 end ]]
+
+net.Receive("JMod_GasBlind",function()
+	local blind = net.ReadFloat()
+	local ply = LocalPlayer()
+	if not ply.activeBlindness then ply.activeBlindness = 0 end
+	if not ply.targetBlindness then ply.targetBlindness = 0 end
+	if not ply.oldBlindness then ply.oldBlindness = 0 end
+	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
+	ply.oldBlindness = ply.targetBlindness
+	ply.EZblindness = blind
+	ply.targetBlindness = ply.EZblindness
+	ply.differenceBlindness = ply.targetBlindness - ply.oldBlindness
+	if (ply.differenceBlindness == 0) then
+		ply.activeBlindness = ply.targetBlindness
+	end
+end)
+
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine

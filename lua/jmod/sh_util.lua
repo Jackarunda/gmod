@@ -144,3 +144,13 @@ function JMod_FindResourceContainer(typ,amt,pos,range,sourceEnt)
 		end
 	end
 end
+function JMod_TryCough(chara)
+	if not chara.CoughTime then chara.CoughTime = 0 end
+	if CurTime() > chara.CoughTime then
+		chara:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",75,math.random(90,110))
+		if chara:IsPlayer() then
+			if(chara.ViewPunch)then chara:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
+		end
+		chara.CoughTime = CurTime() + math.random (.5, 1)
+	end
+end

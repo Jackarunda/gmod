@@ -20,6 +20,8 @@ local function JackaSpawnHook(ply)
 	ply.EZhealth=nil
 	ply.EZirradiated=nil
 	ply.EZoxygen=100
+	ply.EZblindness=0
+	ply.CoughTime=0
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
 	net.Send(ply)
@@ -89,7 +91,29 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					playa.EZoxygen=math.Clamp(playa.EZoxygen+25,0,100) -- recover in 4 seconds
 				end
 			end
+			if(playa.EZblindness) then
+				local Blind = playa.EZblindness
+				if (Blind>0) then
+					playa.EZblindness = math.Clamp(playa.EZblindness-5,0,100)
+					if (math.random(1,100)<=playa.EZblindness/2.5) then
+						playa:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",45,math.Rand(90,110))
+					end
+					if (math.random(1,100)<=playa.EZblindness/1.25) then
+						JMod_TryCough(playa)
+					end
+				end
+			end
 		end
+		if playa.EZblindness then
+			net.Start("JMod_GasBlind")
+			net.WriteFloat(playa.EZblindness)
+			net.Send(playa)
+		else
+			net.Start("JMod_GasBlind")
+			net.WriteFloat(0)
+			net.Send(playa)
+		end
+		
 	end
 	---
 	if(NextNutritionThink<Time)then
@@ -187,6 +211,7 @@ hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
 	ply.EZnutrition=nil
 	ply.EZhealth=nil
 	ply.EZkillme=nil
+	ply.EZblindness=nil
 end)
 
 hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)
