@@ -219,6 +219,10 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			render.DrawScreenQuad()
 		end
 	end
+	if not ply.activeBlindness then ply.activeBlindness = 0 end -- Because of run order, the check in cl_init to prevent an annoying error doesn't run when it is needed
+	if not ply.targetBlindness then ply.targetBlindness = 0 end
+	if not ply.oldBlindness then ply.oldBlindness = 0 end
+	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
 	ply.blindnessChange = ply.differenceBlindness * FrameTime()
 	ply.activeBlindness = ply.activeBlindness + ply.blindnessChange
 	if (ply.differenceBlindness < 0) then

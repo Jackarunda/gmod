@@ -502,10 +502,10 @@ net.Receive("JMod_NuclearBlast",function()
 	end
 end)
 
-if not LocalPlayer().activeBlindness then LocalPlayer().activeBlindness = 0 end
+--[[ if not LocalPlayer().activeBlindness then LocalPlayer().activeBlindness = 0 end
 if not LocalPlayer().targetBlindness then LocalPlayer().targetBlindness = 0 end
 if not LocalPlayer().oldBlindness then LocalPlayer().oldBlindness = 0 end
-if not LocalPlayer().differenceBlindness then LocalPlayer().differenceBlindness = 0 end
+if not LocalPlayer().differenceBlindness then LocalPlayer().differenceBlindness = 0 end ]]
 
 net.Receive("JMod_GasBlind",function()
 	local blind = net.ReadFloat()
