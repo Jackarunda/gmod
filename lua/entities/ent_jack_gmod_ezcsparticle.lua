@@ -66,8 +66,8 @@ if(SERVER)then
 				if(not obj.EZgasParticle)then
 					if((self:ShouldDamage(obj)) and self.NextDmg<Time)then
 						
-						FaceProtected = false
-						respiratorMultiplier =1
+						local FaceProtected = false
+						local respiratorMultiplier =1
 						
 						if (obj.JackyArmor) then
 							if (obj.JackyArmor.Suit) then

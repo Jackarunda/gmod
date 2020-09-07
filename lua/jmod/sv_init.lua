@@ -104,9 +104,15 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 				end
 			end
 		end
-		net.Start("JMod_GasBlind")
-		if(playa.EZblindness) then net.WriteFloat(playa.EZblindness or 0) --[[ else net.WriteFloat(0) ]] end
-		net.Send(playa)
+		if playa.EZblindness then
+			net.Start("JMod_GasBlind")
+			net.WriteFloat(playa.EZblindness)
+			net.Send(playa)
+		else
+			net.Start("JMod_GasBlind")
+			net.WriteFloat(0)
+			net.Send(playa)
+		end
 		
 	end
 	---

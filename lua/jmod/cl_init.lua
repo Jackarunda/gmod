@@ -502,19 +502,19 @@ net.Receive("JMod_NuclearBlast",function()
 	end
 end)
 
-activeBlindness = 0
-targetBlindness = 0
-oldBlindness = 0
-differenceBlindness = 0
-
 net.Receive("JMod_GasBlind",function()
 	local blind = net.ReadFloat()
-	oldBlindness = targetBlindness
-	EZblindness = blind
-	targetBlindness = EZblindness
-	differenceBlindness = targetBlindness - oldBlindness
-	if (differenceBlindness == 0) then
-		activeBlindness = targetBlindness
+	local ply = LocalPlayer()
+	if not ply.activeBlindness then ply.activeBlindness = 0 end
+	if not ply.targetBlindness then ply.targetBlindness = 0 end
+	if not ply.oldBlindness then ply.oldBlindness = 0 end
+	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
+	ply.oldBlindness = ply.targetBlindness
+	ply.EZblindness = blind
+	ply.targetBlindness = ply.EZblindness
+	ply.differenceBlindness = ply.targetBlindness - ply.oldBlindness
+	if (ply.differenceBlindness == 0) then
+		ply.activeBlindness = ply.targetBlindness
 	end
 end)
 
