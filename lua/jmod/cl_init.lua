@@ -501,7 +501,6 @@ net.Receive("JMod_NuclearBlast",function()
 		end
 	end
 end)
-
 net.Receive("JMod_GasBlind",function()
 	local blind = net.ReadFloat()
 	local ply = LocalPlayer()

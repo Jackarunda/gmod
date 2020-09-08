@@ -57,6 +57,8 @@ But obviously the path is unique for you. Note that when git installs they usual
 
 `git clone https://github.com/Jackarunda/gmod.git jmod`
 
+`cd jmod` (move the cmd into the folder you just created)
+
 This will create the addon in your gmod. It'll take a while to download. Once this is done, you can literally play in gmod with the addon from right there. You can then make any changes you wish in that local folder, renaming things, adding things, editing files, etc. You only need to clone the repo once, ever, unless yours gets really badly messed up and you need to delete and re-clone. But that should never happen.
 
 Before you make any changes, always make sure to do the command: `git pull origin master`, because this will pull down the latest version of the repo into your local folder. You always want to be up-to-date.

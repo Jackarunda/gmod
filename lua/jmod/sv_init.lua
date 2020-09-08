@@ -96,7 +96,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 				if (Blind>0) then
 					playa.EZblindness = math.Clamp(playa.EZblindness-5,0,100)
 					if (math.random(1,100)<=playa.EZblindness/2.5) then
-						playa:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",75,math.Rand(90,110),.60)
+						playa:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",45,math.Rand(90,110))
 					end
 					if (math.random(1,100)<=playa.EZblindness/1.25) then
 						JMod_TryCough(playa)
@@ -138,6 +138,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 				end
 			end
 		end
+		
 	end
 	---
 	if(NextNutritionThink<Time)then
