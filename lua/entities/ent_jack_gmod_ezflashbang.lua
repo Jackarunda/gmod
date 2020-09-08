@@ -46,10 +46,15 @@ if(SERVER)then
 			util.BlastDamage(self,self.Owner or self,SelfPos,1000,2)
 			local Time=CurTime()
 			for k,v in pairs(ents.FindInSphere(SelfPos,500))do
-				if((v:IsNPC())and(self:CanSee(v))and(v.SetNPCState))then
+				if((v:IsNPC())and(self:CanSee(v))and(v.SetNPCState)and not v.Flashbanged)then
 					v:SetNPCState(NPC_STATE_PLAYDEAD)
+					v.Flashbanged = true
 					timer.Simple(math.Rand(3,5),function()
-						if(IsValid(v))then v:SetNPCState(NPC_STATE_ALERT) end
+						if not v.EZblindness then v.EZblindness = 0 end
+						if v.EZblindness <= 25 then
+							if(IsValid(v))then v:SetNPCState(NPC_STATE_ALERT) end
+						end
+						v.Flashbanged = false
 					end)
 				end
 			end

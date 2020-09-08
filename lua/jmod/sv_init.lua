@@ -96,7 +96,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 				if (Blind>0) then
 					playa.EZblindness = math.Clamp(playa.EZblindness-5,0,100)
 					if (math.random(1,100)<=playa.EZblindness/2.5) then
-						playa:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",45,math.Rand(90,110))
+						playa:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",75,math.Rand(90,110),.60)
 					end
 					if (math.random(1,100)<=playa.EZblindness/1.25) then
 						JMod_TryCough(playa)
@@ -114,6 +114,30 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 			net.Send(playa)
 		end
 		
+	end
+	for k,npcs in pairs(ents.FindByClass("npc_*"))do
+		if npcs:IsNPC() then
+			if(npcs.EZblindness) then
+				if (npcs.EZblindness>0) then
+					npcs.EZblindness = math.Clamp(npcs.EZblindness-5,0,100)
+					if (math.random(1,100)<=npcs.EZblindness/2.5) then
+						npcs:EmitSound("vo/npc/male01/moan0"..math.random(1,5)..".wav",75,math.Rand(90,110),.60)
+					end
+					if (math.random(1,100)<=npcs.EZblindness/1.25) then
+						JMod_TryCough(npcs)
+					end
+				end
+				if (npcs.EZblindness > 25) then
+					if (npcs:GetNPCState() != NPC_STATE_PLAYDEAD) then
+						npcs:SetNPCState(NPC_STATE_PLAYDEAD)
+					end
+				else
+					if (npcs:GetNPCState() == NPC_STATE_PLAYDEAD and not npcs.Flashbanged) then
+						npcs:SetNPCState(NPC_STATE_ALERT)
+					end
+				end
+			end
+		end
 	end
 	---
 	if(NextNutritionThink<Time)then
