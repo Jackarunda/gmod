@@ -172,7 +172,11 @@ if SERVER then
     function ENT:Think()
         
         if self:GetState() == STATE_ON then
-            
+            --stormfox support
+            if StormFox ~= nil then 
+                if StormFox.GetWeather() ~= "Clear" or StormFox.IsNight() then self:NextThink(CurTime() + 30) return end
+            end
+
             local eff = self:CheckSky()
             if eff <= 0 or self:WaterLevel() >= 2 then
                 self:ShutOff()
