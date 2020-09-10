@@ -13,7 +13,6 @@ ENT.EZgasParticle=true
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"Siz")
-	self:NetworkVar("Int",1,"Opacity")
 end
 
 if(SERVER)then
@@ -28,7 +27,6 @@ if(SERVER)then
 		self.NextDmg=Time+2.5
 		self:NextThink(Time+.5)
 		self:SetSiz(1)
-		self:SetOpacity(93.75)
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -97,7 +95,9 @@ if(SERVER)then
 							if not obj.EZblindness then obj.EZblindness = 0 end
 							obj.EZblindness = math.Clamp(obj.EZblindness + (10*respiratorMultiplier),0,100)
 							
-							JMod_TryCough(obj)
+							if respiratorMultiplier >= 1 then
+								JMod_TryCough(obj)
+							end
 							
 							if math.random(1,20) == 1 then
 								local Dmg,Helf=DamageInfo(),obj:Health()
@@ -150,9 +150,7 @@ if(SERVER)then
 	function ENT:PhysicsUpdate (Phys)
 		if FrameTime() != 0 then
 			local size = self:GetSiz()
-			local opacity = self:GetOpacity()
 			local SizeTarget = (750)
-			local OpacityTarget = (93.75)
 			
 			if (size < SizeTarget) then
 				size = size+FrameTime()*375
@@ -166,20 +164,8 @@ if(SERVER)then
 					size = SizeTarget
 				end
 			end
-			if (opacity < OpacityTarget) then
-				opacity = opacity+FrameTime()*46.875
-				if (opacity > OpacityTarget) then
-					opacity = OpacityTarget
-				end
-			end
-			if (opacity > OpacityTarget) then
-				opacity = opacity-FrameTime()*46.875
-				if (opacity < OpacityTarget) then
-					opacity = OpacityTarget
-				end
-			end
+
 			self:SetSiz(size)
-			self:SetOpacity(opacity)
 			
 			Phys:ApplyForceCenter (Vector (0,0, 8.8))
 			Phys:SetVelocity ((Phys:GetVelocity() * .993))
@@ -190,7 +176,6 @@ elseif(CLIENT)then
 	local Mat=Material("effects/smoke_b")
 	function ENT:Initialize()
 		self.Col=Color(255,255,255)
-		self.Siz=1
 		self.Visible=true
 		self.Show=true
 		timer.Simple(2,function()
@@ -206,11 +191,10 @@ elseif(CLIENT)then
 		end
 		local Time=CurTime()
 		if(self.Show)then
-			local opacity = self:GetOpacity()
 			local siz = self:GetSiz()
 			local SelfPos=self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,opacity))
+			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,93.75))
 		end
 	end
 end
