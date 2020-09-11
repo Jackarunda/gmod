@@ -4,7 +4,7 @@ SWEP.PrintName = "Shot Revolver"
 
 SWEP.Slot = 1
 
-SWEP.ViewModel = "models/weapons/c_bo2_executioner1.mdl"
+SWEP.ViewModel = "models/weapons/c_jmod_shotrevolver.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_shotrevolver.mdl"
 SWEP.ViewModelFOV = 75
 

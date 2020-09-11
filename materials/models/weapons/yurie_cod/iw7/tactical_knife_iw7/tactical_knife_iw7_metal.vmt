@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/weapons/yurie_cod/iw7/tactical_knife_iw7/tactical_knife_iw7_d"
+	"$bumpmap" "models/weapons/yurie_cod/iw7/tactical_knife_iw7/tactical_knife_iw7_n"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+}

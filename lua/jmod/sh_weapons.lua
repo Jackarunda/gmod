@@ -214,7 +214,13 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_crossbow.mdl",
 		swep="wep_jack_gmod_crossbow",
 		ent="ent_jack_gmod_ezweapon_crossbow"
+	},
+	["Pocket Knife"]={
+		mdl="models/weapons/yurie_cod/iw7/tactical_knife_iw7_wm.mdl",
+		swep="wep_jack_gmod_pocketknife",
+		ent="ent_jack_gmod_pocketknife"
 	}
+	-- keepcorpses caauses floating arrow bug
 }
 JMod_AmmoTable={
 	["Light Rifle Round"]={
@@ -649,3 +655,5 @@ elseif(SERVER)then
 		end
 	end
 end
+
+-- todo: fix judge anims, remove the extra round
