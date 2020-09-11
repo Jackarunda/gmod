@@ -103,16 +103,16 @@ SWEP.Attachments = {
 -- Behavior Modifications by Jackarunda --
 
 local WDir,StabilityStamina,BreathStatus=VectorRand(),100,false
-local function BreatheIn(wep)
+local function FocusIn(wep)
 	if not(BreathStatus)then
 		BreathStatus=true
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_inhale.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_in.wav")
 	end
 end
-local function BreatheOut(wep)
+local function FocusOut(wep)
 	if(BreathStatus)then
 		BreathStatus=false
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_exhale.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_out.wav")
 	end
 end
 function SWEP:GetDamage(range)
@@ -163,14 +163,14 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 			if(ply:KeyDown(Key))then
 				StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
 				if(StabilityStamina>0)then
-					BreatheIn(Wep)
+					FocusIn(Wep)
 					Amt=Amt*.4
 				else
-					BreatheOut(Wep)
+					FocusOut(Wep)
 				end
 			else
 				StabilityStamina=math.Clamp(StabilityStamina+FT*30,0,100)
-				BreatheOut(Wep)
+				FocusOut(Wep)
 			end
 		end
 		local S,EAng=.05,cmd:GetViewAngles()
