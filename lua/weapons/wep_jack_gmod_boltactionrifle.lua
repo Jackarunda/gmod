@@ -182,8 +182,8 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0.4,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .1, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .35, v=60},
+			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .2, v=60},
+			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .45, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 1, v=60}
 		}
     },
@@ -194,8 +194,8 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .1, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .35, v=60},
+			{s = "snds_jack_gmod/ez_weapons/bar/push.wav", t = .2, v=60},
+			{s = "snds_jack_gmod/ez_weapons/bar/lock.wav", t = .45, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 1, v=60}
 		}
     }

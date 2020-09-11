@@ -4,7 +4,7 @@ SWEP.PrintName = "Shot Revolver"
 
 SWEP.Slot = 1
 
-SWEP.ViewModel = "models/weapons/c_jmod_shotrevolver.mdl"
+SWEP.ViewModel = "models/weapons/c_bo2_executioner1.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_shotrevolver.mdl"
 SWEP.ViewModelFOV = 75
 
@@ -155,6 +155,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		ShellEjectAt = 1.2,
 		ShellEjectDynamic=true,
+		RestoreAmmo=1,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav", t = .5, v=60},

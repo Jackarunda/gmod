@@ -156,6 +156,7 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0,
+		RestoreAmmo=0,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
 		}

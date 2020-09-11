@@ -77,6 +77,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 			if(JMOD_CONFIG.QoL.Drowning)then
 				if(playa:WaterLevel()>=3)then
 					playa.EZoxygen=math.Clamp(playa.EZoxygen-1.67,0,100) -- 60 seconds before damage
+					if(playa.EZoxygen<=25)then playa.EZneedGasp=true end
 					if(playa.EZoxygen<=0)then
 						local Dmg=DamageInfo()
 						Dmg:SetDamageType(DMG_DROWN)
@@ -88,6 +89,10 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 						playa:TakeDamageInfo(Dmg)
 					end
 				elseif(playa.EZoxygen<100)then
+					if(playa.EZneedGasp)then
+						sound.Play("snds_jack_gmod/drown_gasp.wav",playa:GetShootPos(),60,math.random(90,110))
+						playa.EZneedGasp=false
+					end
 					playa.EZoxygen=math.Clamp(playa.EZoxygen+25,0,100) -- recover in 4 seconds
 				end
 			end

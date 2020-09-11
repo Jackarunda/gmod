@@ -173,6 +173,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		ShellEjectAt = 1.5,
 		ShellEjectCount=6,
+		RestoreAmmo=0,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/mgl/open.wav", t = .2, v=65},
