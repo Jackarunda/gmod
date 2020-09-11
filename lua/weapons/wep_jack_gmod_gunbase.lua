@@ -103,13 +103,13 @@ local WDir,StabilityStamina,BreathStatus=VectorRand(),100,false
 local function BreatheIn(wep)
 	if not(BreathStatus)then
 		BreathStatus=true
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_inhale.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_exhale.wav")
 	end
 end
 local function BreatheOut(wep)
 	if(BreathStatus)then
 		BreathStatus=false
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_exhale.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_inhale.wav")
 	end
 end
 function SWEP:GetDamage(range)
