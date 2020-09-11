@@ -10,6 +10,11 @@ ENT.AdminSpawnable=false
 ENT.AdminOnly=false
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZgasParticle=true
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"Siz")
+end
+
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
@@ -20,6 +25,7 @@ if(SERVER)then
 		self:RebuildPhysics()
 		self:DrawShadow(false)
 		self.NextDmg=Time+5
+		self:SetSiz(1)
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -93,10 +99,36 @@ if(SERVER)then
 		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal*100)
 	end
 	function ENT:OnTakeDamage( dmginfo )
-		self:TakePhysicsDamage( dmginfo )
+		--self:TakePhysicsDamage( dmginfo )
 	end
 	function ENT:Use( activator, caller )
 		--
+	end
+	function ENT:GravGunPickupAllowed (ply)
+		return false
+	end
+	function ENT:PhysicsUpdate (Phys)
+		if FrameTime() != 0 then
+			local size = self:GetSiz()
+			local SizeTarget = (500)
+			
+			if (size < SizeTarget) then
+				size = size+FrameTime()*250
+				if (size > SizeTarget) then
+					size = SizeTarget
+				end
+			end
+			if (size > SizeTarget) then
+				size = size-FrameTime()*250
+				if (size < SizeTarget) then
+					size = SizeTarget
+				end
+			end
+			
+			self:SetSiz(size)
+			
+			self:Extinguish()
+		end
 	end
 elseif(CLIENT)then
 	local Mat=Material("particle/smokestack")
@@ -123,9 +155,9 @@ elseif(CLIENT)then
 		end
 		if(self.Show)then
 			local SelfPos=self:GetPos()
+			local siz = self:GetSiz()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,self.Siz,self.Siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
-			self.Siz=math.Clamp(self.Siz+FrameTime()*200,0,500)
+			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
 		end
 	end
 end
