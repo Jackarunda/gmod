@@ -18,6 +18,9 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
+SWEP.MeleeDamage = 10
+SWEP.MeleeDamageType = DMG_CLUB
+
 SWEP.ForceExpensiveScopes = true
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...

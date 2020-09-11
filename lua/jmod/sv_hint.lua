@@ -45,7 +45,6 @@ hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
 	if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
 		timer.Simple(10,function()
 			if IsValid(ply) then
-				JMod_Hint(ply, "wiki")
 				if ply:IsSuperAdmin() then
 					timer.Simple(5,function()
 						if IsValid(ply) then
