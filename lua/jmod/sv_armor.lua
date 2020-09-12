@@ -436,25 +436,28 @@ net.Receive("JMod_Inventory",function(ln,ply)
 		local ID=net.ReadString()
 		local ItemData=ply.EZarmor.items[ID]
 		local ItemInfo=JMod_ArmorTable[ItemData.name]
-		local RepairRecipe,RepairStatus={},0
+		local RepairRecipe,RepairStatus,BuildRecipe={},0,nil
 		for k,v in pairs(JMOD_CONFIG.Recipes)do
 			if(v[1]==ItemInfo.ent)then
 				if(ItemData.dur<ItemInfo.dur*.9)then
-					local BuildRecipe=v[2]
-					local DamagedFraction=1-(ItemData.dur/ItemInfo.dur)
-					for resourceName,resourceAmt in pairs(BuildRecipe)do
-						local RequiredAmt=math.floor(resourceAmt*DamagedFraction*1.2) -- 20% efficiency penalty for not needing a workbench
-						if(RequiredAmt>0)then RepairRecipe[resourceName]=RequiredAmt end
-					end
-					RepairStatus=1
-					---
-					if(JMod_HaveResourcesToPerformTask(nil,nil,RepairRecipe,ply))then
-						RepairStatus=2
-						JMod_ConsumeResourcesInRange(BuildRecipe,nil,nil,ply)
-						ItemData.dur=ItemInfo.dur
-					end
+					BuildRecipe=v[2]
 				end
 				break
+			end
+		end
+		if not(BuildRecipe)then BuildRecipe=JMod_BackupArmorRepairRecipes[ItemData.name] end
+		if(BuildRecipe)then
+			local DamagedFraction=1-(ItemData.dur/ItemInfo.dur)
+			for resourceName,resourceAmt in pairs(BuildRecipe)do
+				local RequiredAmt=math.floor(resourceAmt*DamagedFraction*1.2) -- 20% efficiency penalty for not needing a workbench
+				if(RequiredAmt>0)then RepairRecipe[resourceName]=RequiredAmt end
+			end
+			RepairStatus=1
+			---
+			if(JMod_HaveResourcesToPerformTask(nil,nil,RepairRecipe,ply))then
+				RepairStatus=2
+				JMod_ConsumeResourcesInRange(BuildRecipe,nil,nil,ply)
+				ItemData.dur=ItemInfo.dur
 			end
 		end
 		if(RepairStatus==0)then

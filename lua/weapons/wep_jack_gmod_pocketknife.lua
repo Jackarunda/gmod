@@ -1,4 +1,4 @@
-SWEP.Base = "arccw_base_melee"
+SWEP.Base = "wep_jack_gmod_meleebase"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Other" -- edit this if you like
 SWEP.AdminOnly = false
@@ -50,20 +50,33 @@ SWEP.HoldtypeActive = "knife"
 
 SWEP.Primary.ClipSize = -1
 
+--[[
+vm_knifeonly_drop
+vm_knifeonly_idle
+vm_knifeonly_raise
+vm_knifeonly_sprint_in
+vm_knifeonly_sprint_loop
+vm_knifeonly_sprint_out
+vm_knifeonly_swipe
+--]]
 SWEP.Animations = {
     ["draw"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {{s = "weapons/arccw/knife/knife_deploy.wav", t = 0}}
+        Source = "vm_knifeonly_raise",
+        Time = 1,
+        SoundTable = {{s = "snds_jack_gmod/ez_weapons/knives/draw", t = 0}}
     },
     ["ready"] = {
-        Source = "draw",
-        Time = 0.5,
+        Source = "vm_knifeonly_raise",
+        Time = 1,
+    },
+    ["idle"] = {
+        Source = "vm_knifeonly_idle",
+        Time = 10,
     },
     ["bash"] = {
-        Source = {"stab", "midslash1", "midslash2", "stab_miss"},
-        Time = 0.75,
-    },
+        Source = "vm_knifeonly_swipe",
+        Time = 0.7,
+    }
 }
 
 SWEP.IronSightStruct = false

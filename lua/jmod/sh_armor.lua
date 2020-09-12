@@ -26,6 +26,9 @@
 		leftforearm (1/2)
 	
 --]]
+-- support third-party backup armor repair recipes
+JMod_BackupArmorRepairRecipes = JMod_BackupArmorRepairRecipes or {}
+
 JMod_LocationalDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
 JMod_FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_ACID, DMG_PLASMA}
 JMod_BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}

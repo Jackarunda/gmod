@@ -1,4 +1,4 @@
-SWEP.Base = "arccw_base_melee"
+SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.Spawnable = true -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Other" -- edit this if you like
 SWEP.AdminOnly = false
@@ -40,7 +40,7 @@ SWEP.Firemodes = {
     {
         Mode = 1,
         PrintName = "MELEE"
-    },
+    }
 }
 
 SWEP.MeleeTime = 0.5
@@ -76,3 +76,6 @@ SWEP.BashAng = Angle(10, -10, 0)
 
 SWEP.HolsterPos = Vector(0, -1, 2)
 SWEP.HolsterAng = Angle(-15, 0, 0)
+
+-- overrides cause arctic isn't all he's cracked up to be
+-- fuck
