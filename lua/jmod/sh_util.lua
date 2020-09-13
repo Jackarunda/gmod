@@ -146,7 +146,7 @@ function JMod_FindResourceContainer(typ,amt,pos,range,sourceEnt)
 end
 function JMod_TryCough(ent)
 	local Time=CurTime()
-	ent.EZcoughTime=entEZcoughTime or 0
+	ent.EZcoughTime=ent.EZcoughTime or 0
 	if Time > ent.EZcoughTime then
 		ent:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",75,math.random(90,110))
 		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
