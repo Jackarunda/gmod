@@ -149,7 +149,7 @@ function JMod_TryCough(ent)
 	ent.EZcoughTime=entEZcoughTime or 0
 	if Time > ent.EZcoughTime then
 		ent:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",75,math.random(90,110))
-		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5)))
+		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
 		ent.EZcoughTime = CurTime() + math.random (.5, 1)
 	end
 end
