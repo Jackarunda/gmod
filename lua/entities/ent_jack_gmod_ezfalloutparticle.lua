@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.PrintName="EZ Nuclear Fallout"
 ENT.Author="Jackarunda"
 ENT.NoSitAllowed=true
-ENT.Editable=true
+ENT.Editable=false
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.AdminOnly=false
@@ -87,6 +87,7 @@ if(SERVER)then
 				end
 			end
 		end
+		self:Extinguish()
 		local Phys=self:GetPhysicsObject()
 		Phys:SetVelocity(Phys:GetVelocity()*.7)
 		Phys:ApplyForceCenter(Force)

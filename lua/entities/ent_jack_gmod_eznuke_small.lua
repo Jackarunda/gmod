@@ -144,12 +144,17 @@ if(SERVER)then
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,150,math.random(80,110))
 		end
 		---
-		local ThermalRadiation=DamageInfo()
-		ThermalRadiation:SetDamageType(DMG_BURN)
-		ThermalRadiation:SetDamage(100)
-		ThermalRadiation:SetAttacker(Att)
-		ThermalRadiation:SetInflictor(game.GetWorld())
-		util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
+		SendClientNukeEffect(SelfPos,8000)
+		for i=0,10 do
+			timer.Simple(i/4,function()
+				local ThermalRadiation=DamageInfo()
+				ThermalRadiation:SetDamageType(DMG_BURN)
+				ThermalRadiation:SetDamage(10)
+				ThermalRadiation:SetAttacker(Att)
+				ThermalRadiation:SetInflictor(game.GetWorld())
+				util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
+			end)
+		end
 		---
 		for k,ply in pairs(player.GetAll())do
 			local Dist=ply:GetPos():Distance(SelfPos)

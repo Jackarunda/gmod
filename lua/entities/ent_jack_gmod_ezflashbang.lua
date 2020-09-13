@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZ Flashbang"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,140,0)
 ENT.Model = "models/conviction/flashbang.mdl"
@@ -32,7 +32,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos=self:GetPos()+Vector(0,0,10)
+		local SelfPos,Time=self:GetPos()+Vector(0,0,10),CurTime()
 		JMod_Sploom(self.Owner,self:GetPos(),20)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,140)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,140)
@@ -40,26 +40,13 @@ if(SERVER)then
 		plooie:SetOrigin(SelfPos)
 		util.Effect("eff_jack_gmod_flashbang",plooie,true,true)
 		util.ScreenShake(SelfPos,20,20,.2,1000)
+		for k,v in pairs(ents.FindInSphere(SelfPos,200))do
+			if(v:IsNPC())then v.EZNPCincapacitate=Time+math.Rand(3,5) end
+		end
 		self:SetColor(Color(0,0,0))
 		timer.Simple(.1,function()
 			if not(IsValid(self))then return end
 			util.BlastDamage(self,self.Owner or self,SelfPos,1000,2)
-			local Time=CurTime()
-			for k,v in pairs(ents.FindInSphere(SelfPos,500))do
-				if((v:IsNPC())and(self:CanSee(v))and(v.SetNPCState)and not v.Flashbanged)then
-					v:SetNPCState(NPC_STATE_PLAYDEAD)
-					v.Flashbanged = true
-					timer.Simple(math.Rand(3,5),function()
-						if(IsValid(v))then
-							if not v.EZblindness then v.EZblindness = 0 end
-							if v.EZblindness <= 25 then
-								v:SetNPCState(NPC_STATE_ALERT)
-							end
-							v.Flashbanged = false
-						end
-					end)
-				end
-			end
 		end)
 		SafeRemoveEntityDelayed(self,10)
 	end

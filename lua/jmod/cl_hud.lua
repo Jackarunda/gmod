@@ -59,15 +59,15 @@ local function BlurScreen()
 	Dynamic2=math.Clamp(Dynamic2+(1/FrameRate)*7,0,1)
 end
 
-local GoggleDarkness,GogglesWereOn,OldLightPos=0,false,Vector(0,0,0)
+local GoggleDarkness,GogglesWereOn,CurVisionBlur=0,false,0
 local ThermalGlowMat=Material("models/debug/debugwhite")
 local blurMaterial = Material ('pp/bokehblur')
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
-	local AimVec=ply:GetAimVector()
+	local AimVec,FirstPerson=ply:GetAimVector(),not ply:ShouldDrawLocalPlayer()
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
 	--JMod_MeasureFramerate()
-	if not(ply:ShouldDrawLocalPlayer())then
+	if(FirstPerson)then
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
 			if(ply.EZarmor.blackvision)then
 				surface.SetDrawColor(0,0,0,255)
@@ -99,45 +99,6 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 					["$pp_colour_mulb"]=0
 				})
 				if not(ply.EZflashbanged)then DrawMotionBlur(FT*50,.8,.01) end
-				--DrawNoise(1000,255)
-				--[[
-				local Pos=SelfPos-AimVec*20
-				local Tr,TwoLights=util.QuickTrace(SelfPos,AimVec*10000,ply),false
-				if(Tr.Hit)then
-					local Dist=Tr.HitPos:Distance(SelfPos)
-					if(Dist>500)then
-						TwoLights=true
-						Pos=Tr.HitPos+Tr.HitNormal*100
-					end
-				end
-				OldLightPos=LerpVector(FT*20,OldLightPos,Pos)
-				local Light=DynamicLight(ply:EntIndex())
-				if(Light)then
-					Light.Pos=OldLightPos
-					Light.r=1
-					Light.g=1
-					Light.b=1
-					Light.Brightness=.001
-					Light.Size=5000
-					Light.Decay=500
-					Light.DieTime=CurTime()+FT*10
-					Light.Style=0
-				end
-				if(TwoLights)then
-					local Light2=DynamicLight(ply:EntIndex()+1)
-					if(Light2)then
-						Light2.Pos=SelfPos-AimVec*20
-						Light2.r=1
-						Light2.g=1
-						Light2.b=1
-						Light2.Brightness=.001
-						Light2.Size=5000
-						Light2.Decay=500
-						Light2.DieTime=CurTime()+FT*10
-						Light2.Style=0
-					end
-				end
-				--]]
 			elseif(ply.EZarmor.effects.thermalVision)then
 				if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
 				DrawColorModify({
@@ -194,45 +155,20 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			})
 		end
 	end
-	if(ply.activeBlindness)then
-		if(ply.activeBlindness > 0) then
-			DrawColorModify({
-				["$pp_colour_addr"]=0,
-				["$pp_colour_addg"]=0,
-				["$pp_colour_addb"]=0,
-				["$pp_colour_brightness"]=math.Clamp(-(ply.activeBlindness/111.11),-.9,0),
-				["$pp_colour_contrast"]=1,
-				["$pp_colour_colour"]=1,
-				["$pp_colour_mulr"]=0,
-				["$pp_colour_mulg"]=0,
-				["$pp_colour_mulb"]=0
-			})
-			render.UpdateScreenEffectTexture()
-			blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
-			blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
-			
-			blurMaterial:SetFloat("$size", math.Clamp(ply.activeBlindness/10,0,10))
-			blurMaterial:SetFloat("$focus", 1)
-			blurMaterial:SetFloat("$focusradius", 2)
-			
-			render.SetMaterial(blurMaterial)
-			render.DrawScreenQuad()
-		end
+	if(CurVisionBlur>0 and FirstPerson)then
+		render.UpdateScreenEffectTexture()
+		blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
+		blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
+		
+		blurMaterial:SetFloat("$size", (CurVisionBlur*200)^.5)
+		blurMaterial:SetFloat("$focus", 1)
+		blurMaterial:SetFloat("$focusradius", 1)
+		
+		render.SetMaterial(blurMaterial)
+		render.DrawScreenQuad()
 	end
-	if not ply.activeBlindness then ply.activeBlindness = 0 end -- Because of run order, the check in cl_init to prevent an annoying error doesn't run when it is needed
-	if not ply.targetBlindness then ply.targetBlindness = 0 end
-	if not ply.oldBlindness then ply.oldBlindness = 0 end
-	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
-	ply.blindnessChange = ply.differenceBlindness * FrameTime()
-	ply.activeBlindness = ply.activeBlindness + ply.blindnessChange
-	if (ply.differenceBlindness < 0) then
-		if (ply.activeBlindness < ply.targetBlindness) then
-			ply.activeBlindness = ply.targetBlindness
-		end
-	elseif (ply.differenceBlindness > 0) then
-		if (ply.activeBlindness > ply.targetBlindness) then
-			ply.activeBlindness = ply.targetBlindness
-		end
-	end
-	ply.activeBlindness = math.Clamp(ply.activeBlindness,0,100)
+	ply.EZvisionBlur=math.Clamp((ply.EZvisionBlur or 0)-FT,0,75)
+	CurVisionBlur=Lerp(FT*.5,CurVisionBlur,ply.EZvisionBlur)
+	if(CurVisionBlur<.01)then CurVisionBlur=0 end
+	if not(ply:Alive())then ply.EZvisionBlur=0;CurVisionBlur=0 end
 end)

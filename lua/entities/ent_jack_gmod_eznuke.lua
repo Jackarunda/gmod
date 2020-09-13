@@ -147,7 +147,7 @@ if(SERVER)then
 		--JMod_Sploom(Att,SelfPos,500)
 		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,1500*Power,1500*Range) end)
 		---
-		SendClientNukeEffect(SelfPos,2000)
+		SendClientNukeEffect(SelfPos,12000)
 		util.ScreenShake(SelfPos,1000,10,10,2000*Range)
 		local Eff="pcf_jack_nuke_ground"
 		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="pcf_jack_nuke_air" end
@@ -165,7 +165,7 @@ if(SERVER)then
 			end
 		end
 		---
-		for i=1,10 do
+		for i=1,20 do
 			timer.Simple(i/4,function()
 				SelfPos=SelfPos+Vector(0,0,50)
 				---
@@ -190,9 +190,9 @@ if(SERVER)then
 				---
 				SendClientNukeEffect(SelfPos,2000*renj)
 				---
-				if(i==5)then JMod_DecalSplosion(SelfPos,"GiantScorch",1000,20) end
+				if(i==10)then JMod_DecalSplosion(SelfPos,"GiantScorch",1000,20) end
 				---
-				if(i==10)then
+				if(i==20)then
 					for j=1,10 do
 						timer.Simple(j/10,function()
 							for k=1,20*JMOD_CONFIG.NuclearRadiationMult do

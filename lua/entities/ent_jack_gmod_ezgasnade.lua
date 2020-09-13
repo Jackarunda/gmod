@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod - EZ Misc."
 ENT.PrintName="EZ Gas Grenade"
 ENT.Spawnable=true
 

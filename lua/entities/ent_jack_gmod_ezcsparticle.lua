@@ -4,16 +4,12 @@ ENT.Type="anim"
 ENT.PrintName="EZ CS Gas"
 ENT.Author="Jackarunda, Freaking Fission"
 ENT.NoSitAllowed=true
-ENT.Editable=true
+ENT.Editable=false
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.AdminOnly=false
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZgasParticle=true
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"Siz")
-end
 
 if(SERVER)then
 	function ENT:Initialize()
@@ -26,7 +22,6 @@ if(SERVER)then
 		self:DrawShadow(false)
 		self.NextDmg=Time+2.5
 		self:NextThink(Time+.5)
-		self:SetSiz(1)
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -57,15 +52,16 @@ if(SERVER)then
 		if(CLIENT)then return end
 		local Time,SelfPos=CurTime(),self:GetPos()
 		if(self.DieTime<Time)then self:Remove() return end
-		local Force=VectorRand()*10
-		for key,obj in pairs(ents.FindInSphere(SelfPos,300))do
+		local Force=VectorRand()*10-Vector(0,0,100)
+		for key,obj in pairs(ents.FindInSphere(SelfPos,200))do
 			if(not(obj==self)and(self:CanSee(obj)))then
-				local distanceBetween = SelfPos:DistToSqr (obj:GetPos())
+				local distanceBetween = SelfPos:DistToSqr(obj:GetPos())
+				local IsPlaya=obj:IsPlayer()
 				if(not obj.EZgasParticle)then
-					if((self:ShouldDamage(obj)) and self.NextDmg<Time)then
+					if((self.NextDmg<Time)and(self:ShouldDamage(obj)))then
 						
 						local FaceProtected = false
-						local respiratorMultiplier =1
+						local RespiratorMultiplier = 1
 						
 						if (obj.JackyArmor) then
 							if (obj.JackyArmor.Suit) then
@@ -79,45 +75,50 @@ if(SERVER)then
 							for _, v in pairs(obj.EZarmor.items) do
 								if v.name == "GasMask" and v.tgl == false and v.chrg.chemicals > 0 then
 									FaceProtected = true 
-									local SubtractAmt = math.Rand (0.264,1.056) * JMOD_CONFIG.ArmorDegredationMult / 100
+									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / 100
 									v.chrg.chemicals = math.Clamp(v.chrg.chemicals - SubtractAmt, 0, 9e9)
 								end
 								if v.name == "Respirator" and v.tgl == false and v.chrg.chemicals > 0 then 
-									respiratorMultiplier = .5 
-									local SubtractAmt = .5 * math.Rand (0.264,1.056) * JMOD_CONFIG.ArmorDegredationMult / 100
+									RespiratorMultiplier = .5 
+									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / 200
 									v.chrg.chemicals = math.Clamp(v.chrg.chemicals - SubtractAmt, 0, 9e9)
 								end
 							end
 						end
 						
-						if (FaceProtected == false) then
-						
-							if not obj.EZblindness then obj.EZblindness = 0 end
-							obj.EZblindness = math.Clamp(obj.EZblindness + (10*respiratorMultiplier),0,100)
-							
-							if respiratorMultiplier >= 1 then
-								JMod_TryCough(obj)
+						if not(FaceProtected)then
+							if(IsPlaya)then
+								net.Start("JMod_VisionBlur")
+								net.WriteFloat(5*RespiratorMultiplier)
+								net.Send(obj)
+							elseif(obj:IsNPC())then
+								obj.EZNPCincapacitate=Time+math.Rand(2,5)
 							end
 							
+							if RespiratorMultiplier >= 1 then
+								JMod_TryCough(obj)
+							end
+
 							if math.random(1,20) == 1 then
 								local Dmg,Helf=DamageInfo(),obj:Health()
 								Dmg:SetDamageType(DMG_NERVEGAS)
-								Dmg:SetDamage(math.random(1,4)*JMOD_CONFIG.PoisonGasDamage)
+								Dmg:SetDamage(math.random(1,4)*JMOD_CONFIG.PoisonGasDamage*RespiratorMultiplier)
 								Dmg:SetInflictor(self)
 								Dmg:SetAttacker(self.Owner or self)
 								Dmg:SetDamagePosition(obj:GetPos())
 								obj:TakeDamageInfo(Dmg)
 							end
-							
+
 						end
-						if obj:IsPlayer() then JMod_Hint(obj, "tear gas") end
+						if IsPlaya then JMod_Hint(obj, "tear gas") end
 					end
 				elseif (obj.EZgasParticle and (distanceBetween < 250*250))then -- Push Gas
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
-					Force=Force-Vec*32
+					Force=Force-Vec*10
 				end
 			end
 		end
+		self:Extinguish()
 		local Phys=self:GetPhysicsObject()
 		Phys:SetVelocity(Phys:GetVelocity()*.8)
 		Phys:ApplyForceCenter(Force)
@@ -132,11 +133,11 @@ if(SERVER)then
 		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 		local Phys=self:GetPhysicsObject()
 		Phys:SetMass(1)
-		Phys:EnableGravity(true)
+		Phys:EnableGravity(false)
 		Phys:SetMaterial("gmod_silent")
 	end
 	function ENT:PhysicsCollide(data,physobj)
-		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal*100)
+		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal*50)
 	end
 	function ENT:OnTakeDamage( dmginfo )
 		--self:TakePhysicsDamage( dmginfo )
@@ -147,37 +148,12 @@ if(SERVER)then
 	function ENT:GravGunPickupAllowed (ply)
 		return false
 	end
-	function ENT:PhysicsUpdate (Phys)
-		if FrameTime() != 0 then
-			local size = self:GetSiz()
-			local SizeTarget = (750)
-			
-			if (size < SizeTarget) then
-				size = size+FrameTime()*375
-				if (size > SizeTarget) then
-					size = SizeTarget
-				end
-			end
-			if (size > SizeTarget) then
-				size = size-FrameTime()*375
-				if (size < SizeTarget) then
-					size = SizeTarget
-				end
-			end
-
-			self:SetSiz(size)
-			
-			Phys:ApplyForceCenter (Vector (0,0, 8.8))
-			Phys:SetVelocity ((Phys:GetVelocity() * .993))
-			self:Extinguish()
-		end
-	end
 elseif(CLIENT)then
 	local Mat=Material("effects/smoke_b")
 	function ENT:Initialize()
 		self.Col=Color(255,255,255)
 		self.Visible=true
-		self.Show=true
+		self.Show=math.random(1,3)==2
 		timer.Simple(2,function()
 			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
 		end)
@@ -191,10 +167,10 @@ elseif(CLIENT)then
 		end
 		local Time=CurTime()
 		if(self.Show)then
-			local siz = self:GetSiz()
+			local siz = 300
 			local SelfPos=self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,93.75))
+			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,10))
 		end
 	end
 end

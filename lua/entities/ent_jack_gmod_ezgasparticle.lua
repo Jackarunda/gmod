@@ -4,17 +4,12 @@ ENT.Type="anim"
 ENT.PrintName="EZ Poison Gas"
 ENT.Author="Jackarunda"
 ENT.NoSitAllowed=true
-ENT.Editable=true
+ENT.Editable=false
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.AdminOnly=false
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZgasParticle=true
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"Siz")
-end
-
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
@@ -25,7 +20,6 @@ if(SERVER)then
 		self:RebuildPhysics()
 		self:DrawShadow(false)
 		self.NextDmg=Time+5
-		self:SetSiz(1)
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
@@ -78,6 +72,7 @@ if(SERVER)then
 				end
 			end
 		end
+		self:Extinguish()
 		local Phys=self:GetPhysicsObject()
 		Phys:SetVelocity(Phys:GetVelocity()*.8)
 		Phys:ApplyForceCenter(Force)
@@ -107,34 +102,10 @@ if(SERVER)then
 	function ENT:GravGunPickupAllowed (ply)
 		return false
 	end
-	function ENT:PhysicsUpdate (Phys)
-		if FrameTime() != 0 then
-			local size = self:GetSiz()
-			local SizeTarget = (500)
-			
-			if (size < SizeTarget) then
-				size = size+FrameTime()*250
-				if (size > SizeTarget) then
-					size = SizeTarget
-				end
-			end
-			if (size > SizeTarget) then
-				size = size-FrameTime()*250
-				if (size < SizeTarget) then
-					size = SizeTarget
-				end
-			end
-			
-			self:SetSiz(size)
-			
-			self:Extinguish()
-		end
-	end
 elseif(CLIENT)then
 	local Mat=Material("particle/smokestack")
 	function ENT:Initialize()
 		self.Col=Color(math.random(100,120),math.random(100,150),100)
-		self.Siz=1
 		self.Visible=true
 		self.Show=true
 		timer.Simple(2,function()
@@ -155,7 +126,7 @@ elseif(CLIENT)then
 		end
 		if(self.Show)then
 			local SelfPos=self:GetPos()
-			local siz = self:GetSiz()
+			local siz = 150
 			render.SetMaterial(Mat)
 			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
 		end

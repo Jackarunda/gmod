@@ -35,7 +35,7 @@ JMod_Hints = {
 	["gas damage"] = {Type = "skull", Text = "You are taking damage from poisonous gas; leave area or wear a gas mask"},
 	["tear gas"] = {Type = "skull", Text = "You are being blinded by tear gas; leave area or wear a gas mask"},
 	["backblast"] = {Type = "skull", Text = "Beware, back-blast from rockets do damage"},
-	["rad damage"] = {Type = "skull", Text = "You are experiencing radiation sickness; cure by using an Auto. Field Hospital"},
+	["rad damage"] = {Type = "skull", Text = "You are experiencing radiation sickness; cure by using an auto field hospital"},
 	["impactdet"] = {Type = "skull", Text = "Bomb detonates on impact from the front", Followup = "bombdrop"},
 	["dualdet"] = {Type = "skull", Text = "Bomb detonates on impact or from remote detonation", Followup = "bombdrop"},
 	["airburst"] = {Type = "skull", Text = "Bomb detonates when in freefall and approaching ground", Followup = "bombdrop"},
@@ -94,13 +94,13 @@ JMod_Hints = {
 	["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time", Time = 5},
 	["aid menu"] = {Type = "button", Text = "Alternatively, hold Walk and press Use on radio for shortcut menu", Followup = "bind walk"},
 	
-	["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "Auto. Field Hospital can be used to heal and cure radioactive sickness", Time = 3},
+	["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "can be used to heal and cure radiation sickness", Time = 3},
 	["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically", Time = 5},
 	["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
 	["afh supply"] = {Type = "warn", Text = "Refill medical supplies to keep the AFH functional", Time = 15},
 	
 	["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 3},
-	["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devestating black hole after a long wind-up", Time = 3},
+	["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devastating black hole after a long wind-up", Time = 3},
 	
 	["ent_jack_gmod_ezcrate"] = {Type = "info", Text = "Resource Crates can store a large amount of one resource type", Time = 3},
 	["crate"] = {Type = "info", Text = "Touch crate with resource entity to store it; Use crate to retrieve", Time = 5},
@@ -146,7 +146,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezfissilematerial"] = {Type = "info", Text = "Fissile Materials are used to craft nuclear bombs", Time = 3},
 	["ent_jack_gmod_ezfuel"] = {Type = "info", Text = "Fuel is used too craft the Jeep (for now)", Time = 3},
 	["ent_jack_gmod_ezgas"] = {Type = "info", Text = "Gas is used to power the Workbench and to craft things", Time = 3},
-	["ent_jack_gmod_ezmedsupplies"] = {Type = "info", Text = "Med. Supplies is consumed by Auto. Field Hospitals and Medkits", Time = 3},
+	["ent_jack_gmod_ezmedsupplies"] = {Type = "info", Text = "med supplies are consumed by auto field hospitals and medkits", Time = 3},
 	--["ent_jack_gmod_ezmedsupplies use"] = {Type = "button", Text = "Hold Walk and press Use while holding a medkit to restore supplies", Followup = "bind walk", Time = 5},
 	["ent_jack_gmod_ezmunitions"] = {Type = "info", Text = "Munitions supply grenade/rocket launchers and grenade sentries", Time = 3},
 	["ent_jack_gmod_eznutrients"] = {Type = "info", Text = "Rations can be eaten to restore health", Time = 3},

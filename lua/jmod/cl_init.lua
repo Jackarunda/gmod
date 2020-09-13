@@ -470,7 +470,7 @@ end)
 
 net.Receive("JMod_NuclearBlast",function()
 	local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
-	JMOD_NUKEFLASH_ENDTIME=CurTime()+10
+	JMOD_NUKEFLASH_ENDTIME=CurTime()+8
 	JMOD_NUKEFLASH_POS=pos
 	JMOD_NUKEFLASH_RANGE=renj
 	JMOD_NUKEFLASH_INTENSITY=intens
@@ -501,20 +501,10 @@ net.Receive("JMod_NuclearBlast",function()
 		end
 	end
 end)
-net.Receive("JMod_GasBlind",function()
-	local blind = net.ReadFloat()
+net.Receive("JMod_VisionBlur",function()
 	local ply = LocalPlayer()
-	if not ply.activeBlindness then ply.activeBlindness = 0 end
-	if not ply.targetBlindness then ply.targetBlindness = 0 end
-	if not ply.oldBlindness then ply.oldBlindness = 0 end
-	if not ply.differenceBlindness then ply.differenceBlindness = 0 end
-	ply.oldBlindness = ply.targetBlindness
-	ply.EZblindness = blind
-	ply.targetBlindness = ply.EZblindness
-	ply.differenceBlindness = ply.targetBlindness - ply.oldBlindness
-	if (ply.differenceBlindness == 0) then
-		ply.activeBlindness = ply.targetBlindness
-	end
+	print("HI")
+	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0)+net.ReadFloat(),0,75)
 end)
 
 --[[

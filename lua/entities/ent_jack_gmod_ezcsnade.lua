@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z, Freaking Fission"
 ENT.PrintName="EZ Tear Gas Grenade"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
 ENT.Model = "models/grenades/incendiary_grenade.mdl"
@@ -32,15 +32,17 @@ if(SERVER)then
 	end
 	function ENT:CustomThink()
 		if(self.Exploded)then
-			local Gas=ents.Create("ent_jack_gmod_ezcsparticle")
-			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-			JMod_Owner(Gas,self.Owner or self)
-			Gas:Spawn()
-			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*math.random(100,300))
-			self:EmitSound("snd_jack_sss.wav",55,80)
-			self.FuelLeft=self.FuelLeft-1
-			if(self.FuelLeft<=0)then SafeRemoveEntityDelayed(self,1) end
+			if(self.FuelLeft>0)then
+				local Gas=ents.Create("ent_jack_gmod_ezcsparticle")
+				Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
+				JMod_Owner(Gas,self.Owner or self)
+				Gas:Spawn()
+				Gas:Activate()
+				Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*math.random(10,100))
+				self:EmitSound("snd_jack_sss.wav",55,80)
+				self.FuelLeft=self.FuelLeft-1
+				if(self.FuelLeft<=0)then SafeRemoveEntityDelayed(self,1) end
+			end
 		end
 	end
 elseif(CLIENT)then
