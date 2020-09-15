@@ -92,4 +92,4 @@ There's a lot more EZ content to be made. Details are typically found in discuss
 
 # Bugs
 
-If you find a bug, put it in the bugs.txt file here or tell Jackarunda about it in the gmod discord channel.
+If you find a bug, tell Jackarunda about it in the gmod discord channel.
