@@ -160,7 +160,7 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		blurMaterial:SetTexture("$BASETEXTURE", render.GetScreenEffectTexture())
 		blurMaterial:SetTexture("$DEPTHTEXTURE", render.GetResolvedFullFrameDepth())
 		
-		blurMaterial:SetFloat("$size", (CurVisionBlur*200)^.5)
+		blurMaterial:SetFloat("$size", (CurVisionBlur*40)^.5)
 		blurMaterial:SetFloat("$focus", 1)
 		blurMaterial:SetFloat("$focusradius", 1)
 		
