@@ -108,6 +108,7 @@ elseif(CLIENT)then
 		self.Col=Color(math.random(100,120),math.random(100,150),100)
 		self.Visible=true
 		self.Show=true
+		self.siz=1
 		timer.Simple(2,function()
 			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
 		end)
@@ -126,9 +127,9 @@ elseif(CLIENT)then
 		end
 		if(self.Show)then
 			local SelfPos=self:GetPos()
-			local siz = 150
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
+			render.DrawSprite(SelfPos,self.siz,self.siz,Color(self.Col.r,self.Col.g,self.Col.b,30))
+			self.siz=math.Clamp(self.siz+FrameTime()*200,0,500)
 		end
 	end
 end
