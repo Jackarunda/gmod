@@ -75,10 +75,12 @@ SWEP.IronSightStruct = {
 SWEP.ActivePos = Vector(1, 1, 0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
+SWEP.MeleePitch = 1.1
+SWEP.MeleeDamage = 7
+SWEP.MeleeCooldown = .7
+
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)
-
-SWEP.MeleeAttackTime=.35
 
 SWEP.BarrelLength = 20
 

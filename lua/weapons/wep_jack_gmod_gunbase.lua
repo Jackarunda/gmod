@@ -18,9 +18,6 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
-SWEP.MeleeDamage = 10
-SWEP.MeleeDamageType = DMG_CLUB
-
 SWEP.ForceExpensiveScopes = true
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
@@ -57,8 +54,6 @@ SWEP.HoldtypeActive = "ar2"
 SWEP.HoldtypeSights = "ar2"
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
-
-SWEP.MeleeAttackTime=.35
 
 SWEP.AttachmentElements = {
 	--[[
@@ -98,6 +93,22 @@ SWEP.Attachments = {
         CorrectiveAng = Angle(-3, 0, 0)
     }
 	--]]
+}
+
+SWEP.MeleeDamage = 10
+SWEP.MeleeDamageType = DMG_CLUB
+SWEP.MeleeAttackTime = .35
+SWEP.MeleeCooldown = .8
+SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
+SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
+SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.MeleeVolume = 65
+SWEP.MeleePitch = 1
+SWEP.MeleeHitEffect = nil -- "BloodImpact"
+SWEP.MeleeViewMovements = {
+	{t = .05, ang = Angle(-2,-2,0)},
+	{t = .35, ang = Angle(10,10,0)}
 }
 
 -- Behavior Modifications by Jackarunda --
@@ -272,12 +283,10 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                 timer.Simple(st, function()
                     if !IsValid(self) then return end
                     if !IsValid(self:GetOwner()) then return end
-                    --self:EmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
 					if(SERVER)then sound.Play(snd,self:GetPos(),vol,pitch,1) end
                 end)
             else
                 self:SetTimer(st, function()
-					--self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
 					if(SERVER)then sound.Play(snd,self:GetPos(),vol,pitch,1) end
 				end, "soundtable")
             end
@@ -1663,7 +1672,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 end
 -- arctic's bash code is REALLY bad tbh
 function SWEP:Bash(melee2)
-	jprint("niggers")
     melee2 = melee2 or false
     if self:GetState() == ArcCW.STATE_SIGHTS then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
@@ -1702,8 +1710,18 @@ function SWEP:Bash(melee2)
     else
         self:ProceduralBash()
 
-        self:EmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
+		local s=self.MeleeSwingSound
+		if(type(s)=="table")then s=table.Random(s) end
+		if(CLIENT and IsFirstTimePredicted())then sound.Play(s,self:GetPos(),75,100) end
     end
+	
+	for k,v in pairs(self.MeleeViewMovements)do
+		timer.Simple(v.t,function()
+			if(IsValid(self))then
+				self.Owner:ViewPunch(v.ang)
+			end
+		end)
+	end
 
     self:GetBuff_Hook("Hook_PreBash")
 
@@ -1745,9 +1763,10 @@ function SWEP:Bash(melee2)
 
         self:MeleeAttack(melee2)
     end)
+	
+	self:SetNextPrimaryFire(CurTime()+self.MeleeCooldown)
 end
 function SWEP:MeleeAttack(melee2)
-	jprint("AAAAA")
     local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.MeleeRange
     local dmg = self:GetBuff_Override("Override_MeleeDamage") or self.MeleeDamage or 20
 
@@ -1778,23 +1797,30 @@ function SWEP:MeleeAttack(melee2)
         })
     end
 
-    -- We need the second part for single player because SWEP:Think is ran shared in SP
-    if !(game.SinglePlayer() and CLIENT) then
+    if (CLIENT) then
         if tr.Hit then
             if tr.Entity:IsNPC() or tr.Entity:IsNextBot() or tr.Entity:IsPlayer() then
-                self:EmitSound(self.MeleeHitNPCSound, 75, 100, 1, CHAN_USER_BASE + 2)
+				local s=self.MeleeHitNPCSound
+				if(type(s)=="table")then s=table.Random(s) end
+				sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
             else
-                self:EmitSound(self.MeleeHitSound, 75, 100, 1, CHAN_USER_BASE + 2)
+				local s=self.MeleeHitSound
+				if(type(s)=="table")then s=table.Random(s) end
+				sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
             end
 
-            if tr.MatType == MAT_FLESH or tr.MatType == MAT_ALIENFLESH or tr.MatType == MAT_ANTLION or tr.MatType == MAT_BLOODYFLESH then
-                local fx = EffectData()
-                fx:SetOrigin(tr.HitPos)
+			if(self.MeleeHitEffect)then
+				if tr.MatType == MAT_FLESH or tr.MatType == MAT_ALIENFLESH or tr.MatType == MAT_ANTLION or tr.MatType == MAT_BLOODYFLESH then
+					local fx = EffectData()
+					fx:SetOrigin(tr.HitPos)
 
-                util.Effect("BloodImpact", fx)
-            end
+					util.Effect(self.MeleeHitEffect, fx)
+				end
+			end
         else
-            self:EmitSound(self.MeleeMissSound or "weapons/iceaxe/iceaxe_swing1.wav", 75, 100, 1, CHAN_USER_BASE + 3)
+			local s=self.MeleeMissSound
+			if(type(s)=="table")then s=table.Random(s) end
+			sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
         end
     end
 

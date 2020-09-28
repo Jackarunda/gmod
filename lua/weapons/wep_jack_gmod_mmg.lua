@@ -86,8 +86,6 @@ SWEP.HolsterAng = Angle(-20, 50, 0)
 SWEP.ReloadActivePos = Vector(0,-1,0)
 SWEP.ReloadActiveAng = Angle(5, 0, 0)
 
-SWEP.MeleeAttackTime=.35
-
 SWEP.BarrelLength = 38
 
 SWEP.BulletBones = { -- arctic, no

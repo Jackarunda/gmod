@@ -28,19 +28,15 @@ SWEP.MeleeDamage = 15
 SWEP.MeleeRange = 32
 SWEP.MeleeDamageType = DMG_SLASH
 
-SWEP.MeleeSwingSound = "weapons/arccw/knife/knife_slash1.wav"
-SWEP.MeleeHitSound = "weapons/arccw/knife/knife_hitwall3.wav"
-SWEP.MeleeHitNPCSound = "weapons/arccw/knife/knife_hit2.wav"
-
 SWEP.MeleeGesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE
 
 SWEP.NotForNPCs = true
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "MELEE"
-    },
+	{
+		Mode = 1,
+		PrintName = "MELEE"
+	},
 }
 
 SWEP.MeleeTime = 0.5
@@ -60,23 +56,23 @@ vm_knifeonly_sprint_out
 vm_knifeonly_swipe
 --]]
 SWEP.Animations = {
-    ["draw"] = {
-        Source = "vm_knifeonly_raise",
-        Time = 1,
-        SoundTable = {{s = "snds_jack_gmod/ez_weapons/knives/draw", t = 0}}
-    },
-    ["ready"] = {
-        Source = "vm_knifeonly_raise",
-        Time = 1,
-    },
-    ["idle"] = {
-        Source = "vm_knifeonly_idle",
-        Time = 10,
-    },
-    ["bash"] = {
-        Source = "vm_knifeonly_swipe",
-        Time = 0.7,
-    }
+	["draw"] = {
+		Source = "vm_knifeonly_raise",
+		Time = 1,
+		SoundTable = {{s = "snds_jack_gmod/ez_weapons/knives/draw", t = 0}}
+	},
+	["ready"] = {
+		Source = "vm_knifeonly_raise",
+		Time = 1,
+	},
+	["idle"] = {
+		Source = "vm_knifeonly_idle",
+		Time = 10,
+	},
+	["bash"] = {
+		Source = "vm_knifeonly_swipe",
+		Time = 0.7,
+	}
 }
 
 SWEP.IronSightStruct = false

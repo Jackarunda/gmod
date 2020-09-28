@@ -60,6 +60,7 @@ JMOD_EZ_STATE_WARNING	= 4
 -- fuggin like let BK and WB draw from resource crates
 -- func for packages to read more info from ez entities
 -- clasnames to friendlist
+-- craftable keypad entity you can install on anything to lock it with a PIN
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
     return true

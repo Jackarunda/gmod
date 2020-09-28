@@ -29,12 +29,12 @@ SWEP.RecoilRise = 0.6
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 1,
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
@@ -58,11 +58,11 @@ SWEP.SightedSpeedMult = .7
 SWEP.SightTime = .6
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-4.4, 1, 1.35),
-    Ang = Angle(.1, 0, -5),
-    Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+	Pos = Vector(-4.4, 1, 1.35),
+	Ang = Angle(.1, 0, -5),
+	Magnification = 1.1,
+	SwitchToSound = JMod_GunHandlingSounds.aim.inn,
+	SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -71,7 +71,11 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 SWEP.HolsterPos = Vector(6, -1, -4)
 SWEP.HolsterAng = Angle(0, 50, 0)
 
-SWEP.MeleeAttackTime=.35
+SWEP.MeleeAttackTime=.2
+SWEP.MeleeViewMovements = {
+	{t = 0, ang = Angle(2,-2,0)},
+	{t = .15, ang = Angle(-2,2,0)}
+}
 
 SWEP.BarrelLength = 44
 
@@ -86,49 +90,53 @@ reload
 bash
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = 0.6,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["bash"] = {
+		Source = "bash",
+		Time = 1,
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = 0.6,
+		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw_e",
-        Time = 0.6,
-        SoundTable = {
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["ready"] = {
+		Source = "draw_e",
+		Time = 0.6,
+		SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = .1, v=60}
 		},
 		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
-    ["fire"] = {
-        Source = "shoot",
-        Time = 0.5
-    },
-    ["fire_iron"] = {
-        Source = "shoot",
-        Time = 0.5
-    },
-    ["reload_empty"] = {
-        Source = "reload",
-        Time = 3,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71, 89},
-        FrameRate = 37,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.25,
+	},
+	["fire"] = {
+		Source = "shoot",
+		Time = 0.5
+	},
+	["fire_iron"] = {
+		Source = "shoot",
+		Time = 0.5
+	},
+	["reload_empty"] = {
+		Source = "reload",
+		Time = 3,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
 		Mult=1.2,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
 		ShellEjectAt = .8,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=65, p=150},
@@ -139,5 +147,5 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = 2, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 2.6, v=60}
 		}
-    },
+	},
 }

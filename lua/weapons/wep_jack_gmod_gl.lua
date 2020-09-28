@@ -72,8 +72,6 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 SWEP.HolsterPos = Vector(6, -1, -4)
 SWEP.HolsterAng = Angle(0, 50, 0)
 
-SWEP.MeleeAttackTime=.35
-
 SWEP.BarrelLength = 30
 
 --[[
