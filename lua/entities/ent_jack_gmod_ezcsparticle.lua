@@ -153,9 +153,10 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Col=Color(255,255,255)
 		self.Visible=true
-		self.Show=math.random(1,3)==2
+		self.Show=true
+		self.siz=1
 		timer.Simple(2,function()
-			if(IsValid(self))then self.Visible=math.random(1,5)==2 end
+			if(IsValid(self))then self.Visible=math.random(1,2)==2 end
 		end)
 		self.NextVisCheck=CurTime()+6
 		self.DebugShow=LocalPlayer().EZshowGasParticles
@@ -166,11 +167,15 @@ elseif(CLIENT)then
 			self:DrawModel()
 		end
 		local Time=CurTime()
+		if(self.NextVisCheck<Time)then
+			self.NextVisCheck=Time+1
+			self.Show=self.Visible and 1/FrameTime()>50
+		end
 		if(self.Show)then
-			local siz = 300
 			local SelfPos=self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos,siz,siz,Color(self.Col.r,self.Col.g,self.Col.b,10))
+			render.DrawSprite(SelfPos,self.siz,self.siz,Color(self.Col.r,self.Col.g,self.Col.b,10))
+			self.siz=math.Clamp(self.siz+FrameTime()*200,0,500)
 		end
 	end
 end
