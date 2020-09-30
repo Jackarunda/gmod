@@ -97,7 +97,8 @@ SWEP.Attachments = {
 
 SWEP.MeleeDamage = 10
 SWEP.MeleeDamageType = DMG_CLUB
-SWEP.MeleeAttackTime = .35
+SWEP.MeleeForceAng = Angle(-30,30,0)
+SWEP.MeleeAttackTime = .4
 SWEP.MeleeCooldown = .8
 SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
@@ -106,6 +107,8 @@ SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
 SWEP.MeleeVolume = 65
 SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"
+SWEP.MeleeHitBullet = false
+SWEP.BackHitDmgMult = nil
 SWEP.MeleeViewMovements = {
 	{t = .05, ang = Angle(-2,-2,0)},
 	{t = .35, ang = Angle(10,10,0)}
@@ -408,6 +411,7 @@ function SWEP:PrimaryAttack()
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
     if self:GetState() != ArcCW.STATE_SIGHTS and self:GetOwner():KeyDown(IN_USE) or self.PrimaryBash then
+		if(self.Owner:KeyDown(IN_SPEED))then return end
         self:Bash()
         return
     end
@@ -1147,7 +1151,7 @@ function SWEP:Think()
                 end
             end
         elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
-            if (self:GetOwner():KeyPressed(IN_ATTACK2) or self.IronSightStruct.debugSights) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+            if (self:GetOwner():KeyPressed(IN_ATTACK2) or (self.IronSightStruct and self.IronSightStruct.debugSights)) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
                 self:EnterSights()
             elseif self:GetOwner():KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
                 self:ExitSights()
@@ -1711,16 +1715,22 @@ function SWEP:Bash(melee2)
         self:ProceduralBash()
 
 		local s=self.MeleeSwingSound
-		if(type(s)=="table")then s=table.Random(s) end
+		if(type(s)=="table")then
+			s.BaseClass=nil
+			s=table.Random(s)
+		end
 		if(CLIENT and IsFirstTimePredicted())then sound.Play(s,self:GetPos(),75,100) end
     end
 	
+	--self.MeleeViewMovements.BaseClass=nil -- fucking lua...
 	for k,v in pairs(self.MeleeViewMovements)do
-		timer.Simple(v.t,function()
-			if(IsValid(self))then
-				self.Owner:ViewPunch(v.ang)
-			end
-		end)
+		if(k~="BaseClass")then
+			timer.Simple(v.t,function()
+				if(IsValid(self))then
+					self.Owner:ViewPunch(v.ang)
+				end
+			end)
+		end
 	end
 
     self:GetBuff_Hook("Hook_PreBash")
@@ -1796,16 +1806,35 @@ function SWEP:MeleeAttack(melee2)
             mask = MASK_SHOT_HULL
         })
     end
+	
+	if(self.MeleeHitBullet)then
+		self:FireBullets({
+			Src=self.Owner:GetShootPos(),
+			Dir=self.Owner:GetAimVector(),
+			Damage=1,
+			Force=Vector(0,0,0),
+			Attacker=self.Owner,
+			Tracer=0,
+			Distance=reach*2
+		})
+	end
 
     if (CLIENT) then
         if tr.Hit then
             if tr.Entity:IsNPC() or tr.Entity:IsNextBot() or tr.Entity:IsPlayer() then
+				self.MeleeHitNPCSound.BaseClass=nil
 				local s=self.MeleeHitNPCSound
-				if(type(s)=="table")then s=table.Random(s) end
+				if(type(s)=="table")then
+					s.BaseClass=nil
+					s=table.Random(s)
+				end
 				sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
             else
 				local s=self.MeleeHitSound
-				if(type(s)=="table")then s=table.Random(s) end
+				if(type(s)=="table")then
+					s.BaseClass=nil
+					s=table.Random(s)
+				end
 				sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
             end
 
@@ -1819,7 +1848,10 @@ function SWEP:MeleeAttack(melee2)
 			end
         else
 			local s=self.MeleeMissSound
-			if(type(s)=="table")then s=table.Random(s) end
+			if(type(s)=="table")then
+				s.BaseClass=nil
+				s=table.Random(s)
+			end
 			sound.Play(s,self:GetPos(),self.MeleeVolume or 65,math.random(90,110)*(self.MeleePitch or 1))
         end
     end
@@ -1841,7 +1873,13 @@ function SWEP:MeleeAttack(melee2)
         dmginfo:SetDamage(dmg * relspeed)
         dmginfo:SetDamageType(self.MeleeDamageType or DMG_CLUB)
 
-        dmginfo:SetDamageForce(self:GetOwner():GetRight() * -4912 + self:GetOwner():GetForward() * 9989)
+		local ForceVec=self.Owner:EyeAngles()
+		local U,R,F=ForceVec:Up(),ForceVec:Right(),ForceVec:Forward()
+		ForceVec:RotateAroundAxis(R,self.MeleeForceAng.p)
+		ForceVec:RotateAroundAxis(U,self.MeleeForceAng.y)
+		ForceVec:RotateAroundAxis(F,self.MeleeForceAng.r)
+		ForceVec=ForceVec:Forward()
+		dmginfo:SetDamageForce(ForceVec*10000)
 
         SuppressHostEvents(NULL)
         tr.Entity:TakeDamageInfo(dmginfo)
@@ -2285,7 +2323,7 @@ if(CLIENT)then
 					alpha = 255
 				end
 
-				if alpha > 0 then
+				if alpha > 0 and not self.NoInfoDisplay then
 
 					cam.Start3D()
 						local toscreen = angpos.Pos:ToScreen()
