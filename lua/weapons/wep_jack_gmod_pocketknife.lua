@@ -51,6 +51,9 @@ SWEP.Animations = {
 	},
 	["bash"] = {
 		Source = "vm_knifeonly_swipe",
+		SoundTable = {
+			{s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav","snds_jack_gmod/ez_weapons/knives/swing2.wav"}, t = 0}
+		},
 		Time = 0.7,
 	}
 }
