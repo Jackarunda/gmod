@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 44 -- ahahahahahahaha
+SWEP.Damage = 40 -- ahahahahahahaha
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
@@ -28,7 +28,7 @@ SWEP.Penetration = 30
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 1.8
+SWEP.Recoil = 2.5
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -76,7 +76,7 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.MeleePitch = 1.1
 SWEP.MeleeDamage = 7
-SWEP.MeleeCooldown = .7
+SWEP.MeleeTime = .4
 
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)

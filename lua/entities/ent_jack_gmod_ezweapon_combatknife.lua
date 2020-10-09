@@ -1,10 +1,10 @@
 -- Jackarunda 2020
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezweapon"
-ENT.PrintName="EZ Pocket Knife"
+ENT.PrintName="EZ Combat Knife"
 ENT.Spawnable=true
 ENT.Category="JMod - EZ Weapons"
-ENT.WeaponName="Pocket Knife"
+ENT.WeaponName="Combat Knife"
 ---
 if(SERVER)then
 	--

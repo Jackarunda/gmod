@@ -82,7 +82,7 @@ SWEP.HolsterAng = Angle(-45, 0, 0)
 
 SWEP.MeleePitch = 1.1
 SWEP.MeleeDamage = 7
-SWEP.MeleeCooldown = .7
+SWEP.MeleeTime = .4
 
 SWEP.BarrelLength = 20
 

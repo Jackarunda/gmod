@@ -27,7 +27,7 @@ SWEP.BodyHolsterScale = .9
 SWEP.Damage = 40
 SWEP.DamageRand = .4
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
-SWEP.MuzzleVelocity = 6000
+SWEP.MuzzleVelocity = 7000
 SWEP.ShootEntityOffset = Vector(-1,0,-2)
 SWEP.ShootEntityNoPhys = true
 

@@ -503,7 +503,6 @@ net.Receive("JMod_NuclearBlast",function()
 end)
 net.Receive("JMod_VisionBlur",function()
 	local ply = LocalPlayer()
-	print("HI")
 	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0)+net.ReadFloat(),0,75)
 end)
 

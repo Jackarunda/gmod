@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 11
+SWEP.Damage = 12
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 50 -- in METERS
@@ -80,7 +80,7 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.MeleePitch = 1.1
 SWEP.MeleeDamage = 7
-SWEP.MeleeCooldown = .7
+SWEP.MeleeTime = .4
 
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)

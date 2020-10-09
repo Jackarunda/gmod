@@ -1,0 +1,8 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/Krazy/GTAV/Weapons/musket_charge_d"
+	"$bumpmap" "models/Krazy/GTAV/Weapons/musket_charge_b"
+	"$envmap" "env_cubemap"
+	"$envmapcontrast" ".9"
+	"$envmapsaturation" "0"
+}

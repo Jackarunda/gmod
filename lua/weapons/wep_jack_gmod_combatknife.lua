@@ -1,15 +1,18 @@
 SWEP.Base = "wep_jack_gmod_meleebase"
 SWEP.Spawnable = false
 
-SWEP.PrintName = "Pocket Knife"
+SWEP.PrintName = "Combat Knife"
 
 SWEP.Slot = 0
 
 SWEP.ViewModel = "models/weapons/yurie_cod/iw7/tactical_knife_iw7_vm.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_pocketknife.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_combatknife.mdl"
 SWEP.ViewModelFOV = 62
-SWEP.MeleeRange = 1
-SWEP.MeleeDamage = 15
+SWEP.MeleeRange = 5
+SWEP.MeleeDamage = 20
+-- VMBoneMods
+-- VMElement
+-- WMElement
 
 SWEP.Firemodes = {
 	{
@@ -28,32 +31,37 @@ SWEP.HoldtypeActive = "knife"
 SWEP.MeleeSwingSound = {"snds_jack_gmod/ez_weapons/knives/swing1.wav","snds_jack_gmod/ez_weapons/knives/swing1.wav"}
 SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav","snds_jack_gmod/ez_weapons/knives/hit2.wav","snds_jack_gmod/ez_weapons/knives/hit3.wav"}
 SWEP.MeleeHitNPCSound = {"snds_jack_gmod/ez_weapons/knives/slice1.wav","snds_jack_gmod/ez_weapons/knives/slice1.wav","snds_jack_gmod/ez_weapons/knives/slice1.wav","snds_jack_gmod/ez_weapons/knives/slice2.wav","snds_jack_gmod/ez_weapons/knives/slice2.wav","snds_jack_gmod/ez_weapons/knives/slice2.wav"}
+SWEP.MeleeViewMovements = {
+	{t = 0, ang = Angle(0,-5,0)},
+	{t = .02, ang = Angle(0,30,0)}
+}
+SWEP.MeleeForceDir = Angle(0,60,0)
 
 --[[
-vm_knifeonly_drop
-vm_knifeonly_idle
-vm_knifeonly_raise
-vm_knifeonly_sprint_in
-vm_knifeonly_sprint_loop
-vm_knifeonly_sprint_out
-vm_knifeonly_swipe
+idle
+hitcenter1
+hitcenter2
+hitcenter3
+draw
+holster
+sprint
 --]]
 SWEP.Animations = {
 	["draw"] = {
-		Source = "vm_knifeonly_raise",
+		Source = "draw",
 		Time = .8,
 		SoundTable = {{s = "snds_jack_gmod/ez_weapons/knives/draw", t = 0, v = 60}}
 	},
 	["ready"] = {
-		Source = "vm_knifeonly_raise",
+		Source = "draw",
 		Time = 1,
 	},
 	["idle"] = {
-		Source = "vm_knifeonly_idle",
+		Source = "idle",
 		Time = 10,
 	},
 	["bash"] = {
-		Source = "vm_knifeonly_swipe",
+		Source = "hitcenter1",
 		SoundTable = {
 			{s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav","snds_jack_gmod/ez_weapons/knives/swing2.wav"}, t = 0, v = 60}
 		},

@@ -1,47 +1,55 @@
 --[[
-	5 assault rifle - CW2.0 MWR - M16A4
-	5 battle rifle - Robotnik's CoD4 SWEPs - G3
-	5 carbine - CW2.0 MWR - G36C
-	5 designated marksman rifle - Mac's CoD MW2 SWEPs - M21 EBR
-	3 bolt action rifle - Robotnik's CoD4 SWEPs - R700
-	4 sniper rifle - Robotnik's CoD4 SWEPs - M40A3
-	5 anti-materiel sniper rifle - Mac's CoD MW2 SWEPs - Intervention
-	5 semiautomatic shotgun - Mac's CoD MW2 SWEPs - M1014
-	3 pump-action shotgun - Robotnik's CoD4 SWEPs - W1200
-	1 break-action shotgun - cod over-under shotty
-	4 pistol - Mac's CoD Black Ops II SWEPs - B23R
-	4 pocket pistol - cod4 usp
-	4 plinking pistol - cod4 usp
-	5 machine pistol - Mac's Black Ops SWEPs - MAC11s
-	5 submachine gun - Robotnik's CoD4 SWEPs - MP5
-	6 light machine gun - Robotnik's CoD4 SWEPs - M249
-	6 medium machine gun - Mac's CoD MW2 SWEPs - M240
-	3 magnum revolver - Mac's CoD MW2 SWEPs - .44 Magnum
-	5 magnum pistol - Mac's CoD MW2 SWEPs - Desert Eagle
-	2 revolver - Mac's CoD Black Ops SWEPs - Python
-	3 shot revolver - Mac's CoD Black Ops II SWEPs - Executioner
-	3 lever-action rifle - the dangerman one
-	1 single shot rifle - matini henry
-	6 anti-materiel rifle - Mac's CoD MW2 SWEPs - Barret .50 Cal
-	6 fully-automatic shotgun - mw2 aa12
-	4 grenade launcher - Mac's CoD MW2 SWEPs - Thumper
-	6 multiple grenade launcher - Mac's CoD Black Ops II SWEPs - War Machine
-	5 rocket launcher - Mac's CoD MW2 SWEPs - AT4
-	6 multiple rocket launcher - Mac's CoD Black Ops SWEPs - Grim Reaper
-	2 crossbow - Mac's CoD Black Ops SWEPs - Crossbow
-1 combat knife - TFA-CoD-IW-Combat-Knife
-flamethrower?
+1 axe
+1 bat
+1 bow
+1 combat knife
+1 hatchet
+1 pocket knife
+1 sledgehammer
+1 sword
+2 musket
+3 cap and ball revolver
+4 break-action shotgun
+4 single shot rifle
+5 crossbow
+5 revolver
+6 bolt action rifle
+6 lever-action rifle
+6 magnum revolver
+6 pump-action shotgun
+6 shot revolver
+7 grenade launcher
+7 pistol
+7 plinking pistol
+7 pocket pistol
+7 sniper rifle
+8 anti-materiel sniper rifle
+8 assault rifle
+8 battle rifle
+8 carbine
+8 designated marksman rifle
+8 machine pistol
+8 magnum pistol
+8 rocket launcher
+8 semiautomatic shotgun
+8 submachine gun
+9 anti-materiel rifle
+9 fully-automatic shotgun
+9 light machine gun
+9 medium machine gun
+10 multiple grenade launcher
+10 multiple rocket launcher
 -------------------------------
 "VertexlitGeneric"
 {
-       "$basetexture" "models/weapons/v_models/CoD4/m4a1/weapon_m4_col"
-        $bumpmap   "models/weapons/v_models/CoD4/m4a1/normal"
- 
-        $phong  "1"
-        $phongboost  ".2"
-        $phongfresnelranges     "[1 1 1]"
-        $phongexponent 20
-        $nocull  1	
+   "$basetexture" "models/weapons/v_models/CoD4/m4a1/weapon_m4_col"
+	$bumpmap   "models/weapons/v_models/CoD4/m4a1/normal"
+
+	$phong  "1"
+	$phongboost  ".2"
+	$phongfresnelranges     "[1 1 1]"
+	$phongexponent 20
+	$nocull  1
 }
 $attachment "muzzle" "ValveBiped.Bip01_R_Hand" 38 0 -12 rotate 15 0 0
 $attachment "shell" "ValveBiped.Bip01_R_Hand" 9.5 -0.7 -5 rotate 30 90 -90
@@ -215,10 +223,20 @@ JMod_WeaponTable={
 		swep="wep_jack_gmod_crossbow",
 		ent="ent_jack_gmod_ezweapon_crossbow"
 	},
+	["Flintlock Musket"]={
+		mdl="models/weapons/w_jmod_musket.mdl",
+		swep="wep_jack_gmod_flintlockmusket",
+		ent="ent_jack_gmod_ezweapon_flm"
+	},
 	["Pocket Knife"]={
-		mdl="models/weapons/yurie_cod/iw7/tactical_knife_iw7_wm.mdl",
+		mdl="models/weapons/w_jmod_pocketknife.mdl",
 		swep="wep_jack_gmod_pocketknife",
-		ent="ent_jack_gmod_pocketknife"
+		ent="ent_jack_gmod_ezweapon_pocketknife"
+	},
+	["Combat Knife"]={
+		mdl="models/weapons/w_jmod_pocketknife.mdl",
+		swep="wep_jack_gmod_combatknife",
+		ent="ent_jack_gmod_ezweapon_combatknife"
 	}
 	-- keepcorpses caauses floating arrow bug
 }
@@ -298,6 +316,10 @@ JMod_AmmoTable={
 		carrylimit=30,
 		ent="ent_jack_gmod_ezarrow",
 		armorpiercing=.3
+	},
+	["Black Powder Paper Cartridge"]={
+		sizemult=7,
+		carrylimit=150
 	}
 }
 for k,v in pairs(JMod_AmmoTable)do

@@ -16,15 +16,13 @@ SWEP.ViewModelFOV = 60
 
 SWEP.PrimaryBash = true
 SWEP.CanBash = true
-SWEP.MeleeDamage = 50
-SWEP.MeleeRange = 32
+SWEP.MeleeRange = 1
 SWEP.MeleeDamageType = DMG_SLASH
-
 SWEP.MeleeDamage = 15
-SWEP.MeleeDamageType = DMG_CLUB
 SWEP.MeleeForceDir = Angle(0,60,0)
 SWEP.MeleeAttackTime=.1
-SWEP.MeleeCooldown = .7
+SWEP.MeleeTime = .5
+SWEP.MeleeDelay = .3
 SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
 SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
@@ -34,9 +32,10 @@ SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"
 SWEP.MeleeHitBullet = true
 SWEP.BackHitDmgMult = 1.5
+SWEP.MeleeDmgRand = .4
 SWEP.MeleeViewMovements = {
 	{t = 0, ang = Angle(0,-5,0)},
-	{t = .02, ang = Angle(0,20,0)}
+	{t = .02, ang = Angle(0,30,0)}
 }
 
 SWEP.MeleeGesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE
@@ -47,7 +46,11 @@ SWEP.Firemodes = {
     {
         Mode = 1,
         PrintName = "MELEE"
-    }
+    },
+	{
+		Mode = 0,
+		PrintName = "SAFE"
+	}
 }
 
 SWEP.MeleeTime = 0.5

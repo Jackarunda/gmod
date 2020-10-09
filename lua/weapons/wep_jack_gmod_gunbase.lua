@@ -21,7 +21,7 @@ SWEP.AimSwayFactor = 1
 SWEP.ForceExpensiveScopes = true
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
-SWEP.NoFreeAmmo = true
+SWEP.Primary.DefaultClip = 0
 
 SWEP.NPCWeaponType = {"weapon_ar2", "weapon_smg1"}
 SWEP.NPCWeight = 150
@@ -98,8 +98,9 @@ SWEP.Attachments = {
 SWEP.MeleeDamage = 10
 SWEP.MeleeDamageType = DMG_CLUB
 SWEP.MeleeForceAng = Angle(-30,30,0)
-SWEP.MeleeAttackTime = .4
-SWEP.MeleeCooldown = .8
+SWEP.MeleeAttackTime = .35
+SWEP.MeleeTime = .5
+SWEP.MeleeDelay = .3
 SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
 SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
@@ -109,12 +110,78 @@ SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"
 SWEP.MeleeHitBullet = false
 SWEP.BackHitDmgMult = nil
+SWEP.MeleeDmgRand = .1
 SWEP.MeleeViewMovements = {
 	{t = .05, ang = Angle(-2,-2,0)},
 	{t = .35, ang = Angle(10,10,0)}
 }
 
 -- Behavior Modifications by Jackarunda --
+
+-- for some reason, overriding this from arccw makes it work properly
+SWEP.ProceduralViewOffset = Angle(0, 0, 0)
+local procedural_spdlimit = 5
+local oldangtmp
+local mzang_fixed,mzang_fixed_last
+local mzang_velocity = Angle()
+local progress = 0
+local targint,targbool
+function SWEP:CoolView(ply, pos, ang, fov)
+    if !ang then return end
+    if ply != LocalPlayer() then return end
+    if ply:ShouldDrawLocalPlayer() then return end
+    local vm = ply:GetViewModel()
+    if !IsValid(vm) then return end
+    local ftv = math.max(FrameTime(), 0.001)
+    local viewbobintensity = 0.3
+
+    oldpostmp = pos * 1
+    oldangtmp = ang * 1
+
+    targbool = self:GetNextPrimaryFire() - .1 > CurTime()
+    targint = targbool and 1 or 0
+    targint = math.min(targint, 1-math.pow( vm:GetCycle(), 2 ) )
+    progress = Lerp(ftv * 15, progress, targint)
+
+    local angpos = vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
+
+    if angpos then
+        mzang_fixed = vm:WorldToLocalAngles(angpos.Ang)
+        mzang_fixed:Normalize()
+    else return
+    end
+
+    self.ProceduralViewOffset:Normalize()
+
+    if mzang_fixed_last then
+        local delta = mzang_fixed - mzang_fixed_last
+        delta:Normalize()
+        mzang_velocity = mzang_velocity + delta * 2
+        mzang_velocity.p = math.Approach(mzang_velocity.p, -self.ProceduralViewOffset.p * 2, ftv * 20)
+        mzang_velocity.p = math.Clamp(mzang_velocity.p, -procedural_spdlimit, procedural_spdlimit)
+        self.ProceduralViewOffset.p = self.ProceduralViewOffset.p + mzang_velocity.p * ftv
+        self.ProceduralViewOffset.p = math.Clamp(self.ProceduralViewOffset.p, -90, 90)
+        mzang_velocity.y = math.Approach(mzang_velocity.y, -self.ProceduralViewOffset.y * 2, ftv * 20)
+        mzang_velocity.y = math.Clamp(mzang_velocity.y, -procedural_spdlimit, procedural_spdlimit)
+        self.ProceduralViewOffset.y = self.ProceduralViewOffset.y + mzang_velocity.y * ftv
+        self.ProceduralViewOffset.y = math.Clamp(self.ProceduralViewOffset.y, -90, 90)
+        mzang_velocity.r = math.Approach(mzang_velocity.r, -self.ProceduralViewOffset.r * 2, ftv * 20)
+        mzang_velocity.r = math.Clamp(mzang_velocity.r, -procedural_spdlimit, procedural_spdlimit)
+        self.ProceduralViewOffset.r = self.ProceduralViewOffset.r + mzang_velocity.r * ftv
+        self.ProceduralViewOffset.r = math.Clamp(self.ProceduralViewOffset.r, -90, 90)
+    end
+
+    self.ProceduralViewOffset.p = math.Approach(self.ProceduralViewOffset.p, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.p)
+    self.ProceduralViewOffset.y = math.Approach(self.ProceduralViewOffset.y, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.y)
+    self.ProceduralViewOffset.r = math.Approach(self.ProceduralViewOffset.r, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.r)
+    mzang_fixed_last = mzang_fixed
+    local ints = 3 * GetConVar("arccw_vm_coolview_mult"):GetFloat() * -viewbobintensity
+    ang:RotateAroundAxis(ang:Right(), Lerp(progress, 0, -self.ProceduralViewOffset.p) * ints)
+    ang:RotateAroundAxis(ang:Up(), Lerp(progress, 0, self.ProceduralViewOffset.y / 2) * ints)
+    ang:RotateAroundAxis(ang:Forward(), Lerp(progress, 0, self.ProceduralViewOffset.r / 3) * ints)
+
+    ang = LerpAngle(0, ang, oldangtmp)
+end
 
 local WDir,StabilityStamina,BreathStatus=VectorRand(),100,false
 local function FocusIn(wep)
@@ -412,6 +479,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetState() != ArcCW.STATE_SIGHTS and self:GetOwner():KeyDown(IN_USE) or self.PrimaryBash then
 		if(self.Owner:KeyDown(IN_SPEED))then return end
+		if self:GetCurrentFiremode().Mode == 0 then self:ChangeFiremode(false) end
         self:Bash()
         return
     end
@@ -677,7 +745,9 @@ function SWEP:PrimaryAttack()
             SuppressHostEvents(self:GetOwner())
         end
 
-        if(self.MuzzleEffect and self.MuzzleEffect~="NONE")then self:DoEffects() end
+        if(self.MuzzleEffect and self.MuzzleEffect~="NONE")then
+			self:DoEffects()
+		end
 
         if dss then
             -- sound.Play(self.DistantShootSound, self:GetPos(), 149, self.ShootPitch * math.Rand(0.95, 1.05), 1)
@@ -789,6 +859,30 @@ function SWEP:PrimaryAttack()
     -- end
 
     math.randomseed(CurTime() + (self:EntIndex() % 31259))
+end
+function SWEP:DoEffects()
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    local fx = EffectData()
+    fx:SetScale(1)
+    fx:SetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
+    fx:SetEntity(self)
+
+    if self:GetBuff_Hook("Hook_PreDoEffects", {eff = "arccw_muzzleeffect", fx = fx}) == true then return end
+
+    util.Effect("arccw_muzzleeffect", fx)
+	
+	if(self.ExtraMuzzleLua)then
+		local Info=self:GetAttachment(self.MuzzleEffectAttachment or 1)
+		if(CLIENT)then
+			Info=self.Owner:GetViewModel():GetAttachment(self.MuzzleEffectAttachment or 1)
+		end
+		local Eff=EffectData()
+		Eff:SetOrigin(Info.Pos)
+		Eff:SetNormal(self.Owner:GetAimVector())
+		Eff:SetScale(self.ExtraMuzzleLuaScale or 1)
+		util.Effect(self.ExtraMuzzleLua,Eff,true)
+	end
 end
 function SWEP:DoShellEject() -- todo: this doesn't fucking work 2/3rds of the time
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
@@ -1364,15 +1458,8 @@ function SWEP:Initialize()
 
     self.Attachments["BaseClass"] = nil
 
-    if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
-        self.Primary.DefaultClip = self.Primary.ClipSize * 3
-        if self.Primary.ClipSize >= 100 then
-            self.Primary.DefaultClip = self.Primary.ClipSize * 2
-        end
-    else
-        self.Primary.DefaultClip = self.Primary.ClipSize * GetConVar("arccw_mult_defaultclip"):GetInt()
-    end
-	if(self.NoFreeAmmo)then self.Primary.DefaultClip = 0 end
+    -- i got an idea, howabout you eat shit and die
+	-- nothing is free, retard
 
     self:SetHoldType(self.HoldtypeActive)
 
@@ -1479,19 +1566,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         return
     end
 
-    if anim.ViewPunchTable and CLIENT then
-        for k, v in pairs(anim.ViewPunchTable) do
+    if anim.ViewPunchTable and SERVER and self.Owner:IsPlayer() then
+        for k,v in pairs(anim.ViewPunchTable) do
 
-            if !v.t then continue end
-
-            local st = (v.t * mult) - startfrom
-
-            if isnumber(v.t) then
-                if st < 0 then continue end
-                if self:GetOwner():IsPlayer() then
-                    self:SetTimer(st, function() if !game.SinglePlayer() and !IsFirstTimePredicted() then return end self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
-                end
-            end
+			timer.Simple(v.t, function()
+				self.Owner:ViewPunch(v.p)
+			end)
         end
     end
 
@@ -1721,7 +1801,7 @@ function SWEP:Bash(melee2)
 		end
 		if(CLIENT and IsFirstTimePredicted())then sound.Play(s,self:GetPos(),75,100) end
     end
-	
+
 	--self.MeleeViewMovements.BaseClass=nil -- fucking lua...
 	for k,v in pairs(self.MeleeViewMovements)do
 		if(k~="BaseClass")then
@@ -1738,7 +1818,7 @@ function SWEP:Bash(melee2)
     if CLIENT then
         self:OurViewPunch(-self.BashPrepareAng * 0.05)
     end
-    self:SetNextPrimaryFire(CurTime() + mt)
+    self:SetNextPrimaryFire(CurTime() + mt + (self.MeleeDelay or 0))
 
     if melee2 then
         if self.HoldtypeActive == "pistol" or self.HoldtypeActive == "revolver" then
@@ -1773,8 +1853,6 @@ function SWEP:Bash(melee2)
 
         self:MeleeAttack(melee2)
     end)
-	
-	self:SetNextPrimaryFire(CurTime()+self.MeleeCooldown)
 end
 function SWEP:MeleeAttack(melee2)
     local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.MeleeRange
@@ -1869,8 +1947,12 @@ function SWEP:MeleeAttack(melee2)
 
         relspeed = math.Clamp(relspeed, 1, 1.5)
 
+		local RandFact=self.MeleeDmgRand or 0
+		local Randomness=math.Rand(1-RandFact,1+RandFact)
+		local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
+
         dmginfo:SetInflictor(self)
-        dmginfo:SetDamage(dmg * relspeed)
+        dmginfo:SetDamage(dmg * relspeed * Randomness * GlobalMult)
         dmginfo:SetDamageType(self.MeleeDamageType or DMG_CLUB)
 
 		local ForceVec=self.Owner:EyeAngles()
@@ -2288,7 +2370,9 @@ if(CLIENT)then
 
 			if vm and vm:IsValid() then
 				angpos = vm:GetAttachment(muzz)
-				angpos.Pos=angpos.Pos-Vector(0,0,5)-EyeAngles():Right()*4
+				if(angpos)then
+					angpos.Pos=angpos.Pos-Vector(0,0,5)-EyeAngles():Right()*4
+				end
 			end
 
 			if muzz and angpos then

@@ -31,6 +31,7 @@ SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
 	{
 		Mode = 1,
+		PrintName = "SINGLE"
 	},
 	{
 		Mode = 0

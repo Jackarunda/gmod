@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/Krazy/GTAV/Weapons/musket_d"
+	"$bumpmap" "models/Krazy/GTAV/Weapons/musket_b"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+
+}

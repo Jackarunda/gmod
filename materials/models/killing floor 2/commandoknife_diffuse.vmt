@@ -1,0 +1,11 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/killing floor 2/CommandoKnife_diffuse"
+	"$bumpmap" "models/killing floor 2/CommandoKnife_normal"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1	
+}

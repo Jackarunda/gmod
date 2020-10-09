@@ -1,6 +1,6 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/weapons/yurie_cod/iw7/tactical_knife_iw7/tactical_knife_iw7_b"
+	"$basetexture" "models/weapons/yurie_cod/iw7/tactical_knife_iw7/tactical_knife_iw7_d"
 	"$bumpmap" "models/weapons/yurie_cod/iw7/tactical_knife_iw7/tactical_knife_iw7_n"
 
         $phong  "1"

@@ -76,7 +76,7 @@ SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.MeleePitch = 1.1
 SWEP.MeleeDamage = 7
-SWEP.MeleeCooldown = .7
+SWEP.MeleeTime = .4
 
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)
