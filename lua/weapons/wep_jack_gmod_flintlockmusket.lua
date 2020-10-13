@@ -8,17 +8,17 @@ SWEP.ViewModel = "models/weapons/v_jmod_musket.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_musket.mdl"
 SWEP.ViewModelFOV = 70
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(185,15,180)
-SWEP.BodyHolsterAngL = Angle(0,195,170)
-SWEP.BodyHolsterPos = Vector(2,-11,-11)
-SWEP.BodyHolsterPosL = Vector(1,-11,11)
+SWEP.BodyHolsterAng = Angle(0,-15,0)
+SWEP.BodyHolsterAngL = Angle(0,15,180)
+SWEP.BodyHolsterPos = Vector(5.5,-3,-3)
+SWEP.BodyHolsterPosL = Vector(1,-6,3)
 SWEP.BodyHolsterScale = .9
 
 SWEP.Damage = 90
 SWEP.DamageMin = 20 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 200 -- in METERS
-SWEP.Penetration = 20
+SWEP.Penetration = 10
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
@@ -74,7 +74,50 @@ SWEP.HolsterAng = Angle(0, 60, -15)
 SWEP.ReloadActivePos = Vector(0,-2,-9)
 SWEP.ReloadActiveAng = Angle(20,0,0)
 
-SWEP.BarrelLength = 55
+SWEP.BarrelLength = 50
+
+-- ima just leave this here until arctic gets his shit together
+SWEP.CanBash = true
+SWEP.MeleeRange = 60
+SWEP.MeleeDamageType = DMG_SLASH
+SWEP.MeleeDamage = 20
+SWEP.MeleeForceDir = Angle(0,0,0)
+SWEP.MeleeAttackTime=.4
+SWEP.MeleeTime = .5
+SWEP.MeleeDelay = .4
+SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
+SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav","snds_jack_gmod/ez_weapons/knives/hit2.wav","snds_jack_gmod/ez_weapons/knives/hit3.wav"}
+SWEP.MeleeHitNPCSound = {"snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav"}
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.MeleeVolume = 65
+SWEP.MeleePitch = 1
+SWEP.MeleeHitEffect = nil -- "BloodImpact"
+SWEP.MeleeHitBullet = true
+SWEP.MeleeDmgRand = .4
+SWEP.MeleeViewMovements = {
+	{t = 0, ang = Angle(0,-2,0)},
+	{t = .3, ang = Angle(0,2,0)}
+}
+SWEP.BashPrepareAng = Angle(5,0,-20)
+SWEP.BashPreparePos = Vector(0, -10, 0)
+SWEP.BashPos = Vector(-10, 15, 5)
+SWEP.BashAng = Angle(-5, 0, -30)
+
+SWEP.Attachments = {
+	{
+        PrintName = "Muzzle",
+        Slot = {"ez_muzzle"},
+        Bone = "Musket",
+        Offset = {
+			vpos = Vector(-3.5, 21, 1.5),
+            vang = Angle(0, 80, 180),
+			wpos = Vector(-8, 1.5, 1),
+            wang = Angle(-14, -2, -90)
+        },
+        -- remove Slide because it ruins my life
+		Installed = "muzzle_jack_bayonet"
+    }
+}
 
 --[[
 idle
@@ -157,10 +200,11 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/flm/pour.wav", t = 3.1, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 4.8, v=60, p=130},
 			{s = "snds_jack_gmod/ez_weapons/flm/drop.wav", t = 6.1, v=65, p=100},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 7.4, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav", t = 7.6, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 7.9, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 8.2, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 8.5, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 7.8, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 8.4, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 8.75, v=65, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 8.8, v=65, p=100},
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 9, v=60, p=100}
 		},

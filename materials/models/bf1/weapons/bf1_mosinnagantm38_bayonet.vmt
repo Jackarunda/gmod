@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{        
+                 // Original shader: VertexLitTexture
+	"$basetexture" "models\bf1\weapons\mosinnagantm38\mosinnagantm38_bayonet_d"
+	"$bumpmap" "models\bf1\weapons\mosinnagantm38\mosinnagantm38_bayonet_n"
+
+        $phong  "1"
+        $phongboost  ".2"
+        $phongfresnelranges     "[1 1 1]"
+        $phongexponent 20
+        $nocull  1		
+}

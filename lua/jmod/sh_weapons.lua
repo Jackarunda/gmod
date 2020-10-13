@@ -319,7 +319,7 @@ JMod_AmmoTable={
 	},
 	["Black Powder Paper Cartridge"]={
 		sizemult=7,
-		carrylimit=150
+		carrylimit=100
 	}
 }
 for k,v in pairs(JMod_AmmoTable)do

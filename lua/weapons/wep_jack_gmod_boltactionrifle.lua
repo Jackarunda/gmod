@@ -81,7 +81,7 @@ SWEP.Attachments = {
     {
         PrintName = "Optic",
         DefaultAttName = "Iron Sights",
-        Slot = {"optic_ez"},
+        Slot = {"ez_optic"},
         Bone = "tag_weapon",
         Offset = {
             vang = Angle(0, 0, 0),

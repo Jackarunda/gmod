@@ -12,7 +12,7 @@ att.Desc_Cons = {
     "- Visible scope glint",
 }
 att.AutoStats = true
-att.Slot = "optic_ez"
+att.Slot = "ez_optic"
 
 att.Model = "models/weapons/arccw/atts/magnus.mdl"
 

@@ -7,7 +7,7 @@ att.Desc_Cons = {
     "- Visible beam"
 }
 att.AutoStats = true
-att.Slot = { "ez_tac_rail" }
+att.Slot = "ez_tac_rail"
 
 att.Model = "models/weapons/arccw/atts/laser_pointer.mdl"
 

@@ -96,6 +96,8 @@ SWEP.Attachments = {
 }
 
 SWEP.MeleeDamage = 10
+SWEP.MeleeRange = 30
+SWEP.Melee2Range = 30
 SWEP.MeleeDamageType = DMG_CLUB
 SWEP.MeleeForceAng = Angle(-30,30,0)
 SWEP.MeleeAttackTime = .35
@@ -197,6 +199,7 @@ local function FocusOut(wep)
 	end
 end
 function SWEP:GetDamage(range)
+	--if(true)then return 50 end
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
 	
 	local dmult = 1
@@ -1855,11 +1858,11 @@ function SWEP:Bash(melee2)
     end)
 end
 function SWEP:MeleeAttack(melee2)
-    local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.MeleeRange
+    local reach = 10 + self:GetBuff_Add("Add_MeleeRange") + self.MeleeRange
     local dmg = self:GetBuff_Override("Override_MeleeDamage") or self.MeleeDamage or 20
 
     if melee2 then
-        reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.Melee2Range
+        reach = 10 + self:GetBuff_Add("Add_MeleeRange") + self.Melee2Range
         dmg = self:GetBuff_Override("Override_MeleeDamage") or self.Melee2Damage or 20
     end
 
@@ -1893,7 +1896,7 @@ function SWEP:MeleeAttack(melee2)
 			Force=Vector(0,0,0),
 			Attacker=self.Owner,
 			Tracer=0,
-			Distance=reach*2
+			Distance=reach*1.2
 		})
 	end
 

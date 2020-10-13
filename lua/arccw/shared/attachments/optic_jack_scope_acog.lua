@@ -10,7 +10,7 @@ att.Desc_Pros = {
 att.Desc_Cons = {
 }
 att.AutoStats = true
-att.Slot = "optic_ez"
+att.Slot = "ez_optic"
 
 att.Model = "models/weapons/arccw/atts/aimpoint.mdl"
 
