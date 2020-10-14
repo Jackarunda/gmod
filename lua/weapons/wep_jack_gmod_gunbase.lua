@@ -561,7 +561,7 @@ function SWEP:PrimaryAttack()
         local trent = tr.Entity
 
         local dist = (hitpos - src):Length() * ArcCW.HUToM
-        local pen  = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
+        local pen  = self.Penetration * self:GetBuff_Mult("Mult_Penetration") / 2 -- gosh damnit arctic
 
         if SERVER then
             debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
@@ -605,7 +605,14 @@ function SWEP:PrimaryAttack()
             end
         end
 
-        if SERVER then ArcCW.TryBustDoor(trent, dmg) end
+		--if SERVER then ArcCW.TryBustDoor(trent, dmg) end -- fuck you arctic
+		local RealDist=(hitpos - src):Length()
+		if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod_IsDoor(trent)))then
+			trent.JModDoorBreachedness=(trent.JModDoorBreachedness or 0)+self.DoorBreachPower/self.Num
+			if(trent.JModDoorBreachedness>=1)then
+				JMod_BlastThatDoor(trent, (trent:LocalToWorld(trent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+			end
+		end
 
         self:DoPenetration(tr, hit.penleft, { trent })
 
@@ -670,17 +677,6 @@ function SWEP:PrimaryAttack()
                 end
             end
         elseif shootent then
-			--[[ "yeah no" - jackarunda
-            local ang = owner:EyeAngles()
-
-            if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
-                ang = ang + (AngleRand() * spread / 10)
-            end
-
-            projectiledata.ang = ang + extraspread
-
-            self:DoPrimaryFire(true, projectiledata)
-			--]]
 			local spd = AngleRand() * self:GetDispersion() / 360 / 60
 			local ang = self:GetOwner():EyeAngles() + (AngleRand() * spread / 10)
 

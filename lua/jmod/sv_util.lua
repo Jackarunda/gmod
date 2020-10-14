@@ -98,6 +98,7 @@ end
 
 -- copied from Homicide
 function JMod_BlastThatDoor(ent, vel)
+	ent.JModDoorBreachedness=nil
 	local Moddel, Pozishun, Ayngul, Muteeriul, Skin = ent:GetModel(), ent:GetPos(), ent:GetAngles(), ent:GetMaterial(), ent:GetSkin()
 	sound.Play("Wood_Crate.Break", Pozishun, 60, 100)
 	sound.Play("Wood_Furniture.Break", Pozishun, 60, 100)
