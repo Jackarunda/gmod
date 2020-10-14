@@ -119,7 +119,13 @@ SWEP.MeleeViewMovements = {
 }
 
 -- Behavior Modifications by Jackarunda --
-
+function SWEP:GetCurrentFiremode()
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+    if self:GetFireMode() > table.Count(fmt) or self:GetFireMode() == 0 then
+        self:SetFireMode(1)
+    end
+    return fmt[self:GetFireMode()]
+end
 -- for some reason, overriding this from arccw makes it work properly
 SWEP.ProceduralViewOffset = Angle(0, 0, 0)
 local procedural_spdlimit = 5
@@ -294,7 +300,8 @@ end
 local ToyTownAmt=0
 hook.Add("RenderScreenspaceEffects","JMod_WeaponScreenEffects",function()
 	if not(GetConVar("jmod_weapon_blur"):GetBool())then return end
-	if(GetConVar("arccw_blur_toytown"):GetBool())then return end
+	local ArcticsShit=GetConVar("arccw_blur_toytown")
+	if(ArcticsShit and ArcticsShit:GetBool())then return end
 	local ply,FT=LocalPlayer(),FrameTime()
 	if not(ply:ShouldDrawLocalPlayer())then
 		local Wep=ply:GetActiveWeapon()
@@ -470,6 +477,7 @@ function SWEP:BarrelHitWall()
     end
 end
 -- firing
+--[[
 function SWEP:PrimaryAttack()
     if self:GetOwner():IsNPC() then
         self:NPC_Shoot()
@@ -862,6 +870,360 @@ function SWEP:PrimaryAttack()
     -- end
 
     math.randomseed(CurTime() + (self:EntIndex() % 31259))
+end
+--]]
+function SWEP:PrimaryAttack()
+    local owner = self:GetOwner()
+
+    self.Primary.Automatic = true
+
+    if !self:CanPrimaryAttack() then return end
+
+    local clip = self:Clip1()
+    local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
+
+    if self:HasBottomlessClip() then
+        clip = self:Ammo1()
+
+        if self:HasInfiniteAmmo() then
+            clip = 10
+        end
+    end
+
+    if clip < aps then
+        self:SetBurstCount(0)
+        self:DryFire()
+
+        self.Primary.Automatic = false
+
+        return
+    end
+
+
+    local desync = GetConVar("arccw_desync"):GetBool()
+    local desyncnum = (desync and math.random()) or 0
+    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
+
+    self.Primary.Automatic = true
+
+    local dir = owner:EyeAngles()
+    local src = self:GetShootSrc()
+
+    if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
+        self:DryFire()
+
+        return
+    end
+
+    local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+
+    dir = dir + (AngleRand() * self:GetDispersion() / 360 / 60)
+
+    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
+
+    delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
+
+    self:SetNextPrimaryFire(CurTime() + delay)
+
+    local num = self:GetBuff_Override("Override_Num")
+
+    if !num then num = self.Num end
+
+    num = num + self:GetBuff_Add("Add_Num")
+
+    local tracernum = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
+    local lastout = self:GetBuff_Override("Override_TracerFinalMag") or self.TracerFinalMag
+
+    if lastout >= clip then
+        tracernum = 1
+    end
+
+    local bullet      = {}
+    bullet.Attacker   = owner
+    bullet.Dir        = dir:Forward()
+    bullet.Src        = src
+    bullet.Spread     = Vector(spread, spread, spread)
+    bullet.Damage     = 0
+    bullet.Num        = num
+    bullet.Force      = 1 / num
+    bullet.Distance   = 33000
+    bullet.AmmoType   = self.Primary.Ammo
+    bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
+    bullet.Tracer     = tracernum
+    bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
+    bullet.Callback   = function(att, tr, dmg)
+        local hitpos, hitnormal = tr.HitPos, tr.HitNormal
+        local trent = tr.Entity
+
+        local dist = (hitpos - src):Length() * ArcCW.HUToM
+        local pen  = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
+
+        if SERVER then
+            debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
+        else
+            debugoverlay.Cross(hitpos, 5, 5, Color(0, 0, 255), true)
+        end
+
+        local hit   = {}
+        hit.att     = att
+        hit.tr      = tr
+        hit.dmg     = dmg
+        hit.range   = dist
+        hit.damage  = self:GetDamage(dist, true)
+        hit.dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType
+        hit.penleft = pen
+
+        hit = self:GetBuff_Hook("Hook_BulletHit", hit)
+
+        if !hit then return end
+
+        dmg:SetDamageType(hit.dmgtype)
+        dmg:SetDamage(hit.damage)
+
+        local effect = self.ImpactEffect
+        local decal  = self.ImpactDecal
+
+        if dmg:GetDamageType() == DMG_BURN and hit.range <= self.Range then
+            local dmgtype = num == 1 and DMG_BULLET or DMG_BUCKSHOT
+
+            dmg:SetDamageType(dmgtype)
+
+            effect = "arccw_incendiaryround"
+            decal  = "FadingScorch"
+
+            if SERVER then
+                if vFireInstalled then
+                    CreateVFire(trent, hitpos, hitnormal, hit.damage * 0.02)
+                else
+                    trent:Ignite(1, 0)
+                end
+            end
+        end
+
+        if SERVER then ArcCW.TryBustDoor(trent, dmg) end
+
+        self:DoPenetration(tr, hit.penleft, { trent })
+
+        effect = self:GetBuff_Override("Override_ImpactEffect") or effect
+
+        if effect then
+            local ed = EffectData()
+            ed:SetOrigin(hitpos)
+            ed:SetNormal(hitnormal)
+
+            util.Effect(effect, ed)
+        end
+
+        decal = self:GetBuff_Override("Override_ImpactDecal") or decal
+
+        if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
+    end
+
+    local shootent = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
+    local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
+    local shpattov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
+
+    local extraspread = AngleRand() * self:GetDispersion() / 360 / 60
+
+    local projectiledata = {}
+
+    if shpatt or shpattov or shootent then
+        if shootent then
+            projectiledata.ent = shootent
+            projectiledata.vel = (self:GetBuff_Override("Override_MuzzleVelocity") or self.MuzzleVelocity) * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity")
+        end
+
+        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
+
+        if !bullet then return end
+
+        local doent = shootent and num or bullet.Num
+        local minnum = shootent and 1 or 0
+
+        if doent > minnum then
+            for n = 1, bullet.Num do
+                bullet.Num = 1
+
+                local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion
+                local offset  = self:GetShotgunSpreadOffset(n)
+                local calcoff = dispers and (offset * self:GetDispersion() / 60) or (offset + extraspread)
+
+                local ang = owner:EyeAngles() + calcoff
+
+                if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
+                    ang = ang + AngleRand() * spread / 10
+                end
+
+                if shootent then
+                    projectiledata.ang = ang
+
+                    self:DoPrimaryFire(true, projectiledata)
+                else
+                    bullet.Dir = ang:Forward()
+
+                    self:DoPrimaryFire(false, bullet)
+                end
+            end
+        elseif shootent then
+			--[[ "yeah no" - jackarunda
+            local ang = owner:EyeAngles()
+
+            if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
+                ang = ang + (AngleRand() * spread / 10)
+            end
+
+            projectiledata.ang = ang + extraspread
+
+            self:DoPrimaryFire(true, projectiledata)
+			--]]
+			local spd = AngleRand() * self:GetDispersion() / 360 / 60
+			local ang = self:GetOwner():EyeAngles() + (AngleRand() * spread / 10)
+
+			self:FireRocket(shootent, self.MuzzleVelocity * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
+        else
+			-- fuck you
+        end
+    else
+        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
+
+        if !bullet then return end
+
+        for n = 1, bullet.Num do
+            bullet.Num = 1
+            math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
+            if !self:GetBuff_Override("Override_NoRandSpread") then
+                local ang = dir + AngleRand() * spread / 5
+                bullet.Dir = ang:Forward()
+            end
+
+            self:DoPrimaryFire(false, bullet)
+        end
+    end
+
+    self:DoRecoil()
+
+    owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
+
+    local shouldsupp = SERVER and !game.SinglePlayer()
+
+    if shouldsupp then SuppressHostEvents(owner) end
+
+	-- start jack
+	local ss = self.ShootSound
+
+	if self:GetBuff_Override("Silencer") then
+		ss = self.ShootSoundSilenced
+	end
+
+	if self.BurstCount == 0 and self.FirstShootSound then
+		ss = self.FirstShootSound
+
+		if self:GetBuff_Override("Silencer") then
+			if self.FirstShootSoundSilenced then
+				ss = self.FirstShootSoundSilenced
+			else
+				ss = self.ShootSoundSilenced
+			end
+		end
+	end
+	
+	ss = self:GetBuff_Hook("Hook_GetShootSound", ss)
+	
+	if(type(ss)=="table")then ss=table.Random(ss) end
+	
+	if(self.MuzzleEffect and self.MuzzleEffect~="NONE")then
+		self:DoEffects()
+	end
+	
+	local SelfPos=self:GetPos()
+	
+	local svol = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
+	local spitch = self.ShootPitch * math.Rand(0.95, 1.05) * self:GetBuff_Mult("Mult_ShootPitch")
+
+	svol = math.Clamp(svol, 51, 149)
+	spitch = math.Clamp(spitch, 51, 149)
+
+	if ss then
+		if((SERVER)or(CLIENT and IsFirstTimePredicted()))then
+			if((self.ShootSoundExtraMult)and(self.ShootSoundExtraMult>0))then
+				for i=1,self.ShootSoundExtraMult do
+					sound.Play(ss,SelfPos+VectorRand(),svol+i,spitch,1)
+				end
+			end
+		end
+	end
+	
+	if(self.BackBlast)then
+		local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
+		if(self.ShootEntityOffset)then
+			local ang=RDir:Angle()
+			local Up,Right,Forward=ang:Up(),ang:Right(),ang:Forward()
+			RPos=RPos+Up*self.ShootEntityOffset.z+Right*self.ShootEntityOffset.x+Forward*self.ShootEntityOffset.y
+		end
+		local Dist=230
+		local Tr=util.QuickTrace(RPos,-RDir*Dist,function(fuck)
+			if((fuck:IsPlayer())or(fuck:IsNPC()))then return false end
+			local Class=fuck:GetClass()
+			if(Class=="ent_jack_gmod_ezminirocket")then return false end
+			return true
+		end)
+		if(Tr.Hit)then
+			Dist=RPos:Distance(Tr.HitPos)
+			if(SERVER)then JMod_Hint(self.Owner,"backblast wall") end
+		end
+		for i=1,4 do
+			util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
+		end
+		if(SERVER)then
+			local FooF=EffectData()
+			FooF:SetOrigin(RPos)
+			FooF:SetScale(self.BackBlast)
+			FooF:SetNormal(-RDir)
+			util.Effect("eff_jack_gmod_smalldustshock",FooF,true,true)
+			local Ploom=EffectData()
+			Ploom:SetOrigin(RPos)
+			Ploom:SetScale(self.BackBlast)
+			Ploom:SetNormal(-RDir)
+			util.Effect("eff_jack_gmod_ezbackblast",Ploom,true,true)
+		end
+	end
+	
+	if(self.ShakeOnShoot)then
+		util.ScreenShake(SelfPos,7*self.ShakeOnShoot,255,.75*self.ShakeOnShoot,200*self.ShakeOnShoot)
+	end
+	-- end jack
+
+    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) self:SetBurstCount(self:GetBurstCount() + 1) end
+
+    if self:HasBottomlessClip() then
+        if self:Clip1() > 0 then
+            self:Unload()
+        end
+    end
+
+    self:DoShootSound()
+    self:DoPrimaryAnim()
+
+    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
+        local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+        local firedelay = self.Animations[fireanim].MinProgress or 0
+        self:SetNeedCycle(true)
+        self.DelayCycleAnim = CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM")
+    end
+
+    if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
+        local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
+
+        self:SetNextPrimaryFire(CurTime() + postburst)
+    end
+
+    self:ApplyAttachmentShootDamage()
+
+    self:AddHeat()
+
+    self:GetBuff_Hook("Hook_PostFireBullets")
+
+    if shouldsupp then SuppressHostEvents(nil) end
 end
 function SWEP:DoEffects()
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
