@@ -10,9 +10,9 @@
 2 musket
 3 cap and ball revolver
 4 break-action shotgun
+4 revolver
 4 single shot rifle
 5 crossbow
-5 revolver
 6 bolt action rifle
 6 lever-action rifle
 6 magnum revolver
@@ -227,6 +227,11 @@ JMod_WeaponTable={
 		mdl="models/weapons/w_jmod_musket.mdl",
 		swep="wep_jack_gmod_flintlockmusket",
 		ent="ent_jack_gmod_ezweapon_flm"
+	},
+	["Cap and Ball Revolver"]={
+		mdl="models/krazy/gtav/weapons/navyrevolver_w.mdl",
+		swep="wep_jack_gmod_cabr",
+		ent="ent_jack_gmod_ezweapon_cabr"
 	},
 	["Pocket Knife"]={
 		mdl="models/weapons/w_jmod_pocketknife.mdl",
