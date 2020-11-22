@@ -61,6 +61,8 @@ JMOD_EZ_STATE_WARNING	= 4
 -- func for packages to read more info from ez entities
 -- clasnames to friendlist
 -- craftable keypad entity you can install on anything to lock it with a PIN
+-- link sentry power consumption to perf mult
+-- armordegredation mult doesnt work
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
     return true

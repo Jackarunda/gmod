@@ -23,7 +23,7 @@ SWEP.MuzzleVelocity = 9000
 SWEP.ShootEntityAngle = Angle(0,-90,0)
 SWEP.ShootEntityOffset = Vector(10,0,0)
 SWEP.BackBlast = 1
-SWEP.ShootEntityNoPhys = true
+SWEP.ShootEntityAngleCorrection = Angle(0,-90,0)
 
 SWEP.Primary.ClipSize = 4 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- sigh arctic

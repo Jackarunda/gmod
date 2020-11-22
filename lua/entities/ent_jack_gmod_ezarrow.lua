@@ -10,6 +10,7 @@ ENT.AdminSpawnable=false
 ENT.StickMats={MAT_GRASS,MAT_DIRT,MAT_SAND,MAT_FOLIAGE,MAT_FLESH,MAT_ANTLION,MAT_BLOODYFLESH,MAT_ALIENFLESH,MAT_SNOW,MAT_PLASTIC,MAT_SLOSH,MAT_WOOD}
 ENT.BreakMats={MAT_CONCRETE,MAT_EGGSHELL,MAT_GRATE,MAT_CLIP,MAT_METAL,MAT_COMPUTER,MAT_TILE,MAT_VENT,MAT_DEFAULT,MAT_GLASS,MAT_WARPSHIELD}
 ENT.EZammo="Arrow"
+ENT.CollisionGroup=COLLISION_GROUP_NONE
 local ThinkRate=22--Hz
 ---
 if(SERVER)then
@@ -30,8 +31,8 @@ if(SERVER)then
 		self.Impacted=true
 		local SelfPos,Att,Dir=(tr and tr.HitPos+tr.HitNormal*5) or self:GetPos()+Vector(0,0,30),self.Owner or self,self.CurVel:GetNormalized()
 		self:FireBullets({
-			Damage=self.Dmg*.66,
-			Force=self.Dmg*.33,
+			Damage=self.Damage*.66,
+			Force=self.Damage*.33,
 			Num=1,
 			Tracer=0,
 			Spread=Vector(0,0,0),
@@ -45,8 +46,8 @@ if(SERVER)then
 		Slash:SetDamageType(DMG_SLASH)
 		Slash:SetAttacker(self.Owner or game.GetWorld())
 		Slash:SetInflictor(self)
-		Slash:SetDamageForce(Dir*self.Dmg*.33)
-		Slash:SetDamage(self.Dmg*.33)
+		Slash:SetDamageForce(Dir*self.Damage*.33)
+		Slash:SetDamage(self.Damage*.33)
 		tr.Entity:TakeDamageInfo(Slash)
 		if((tr.Entity:IsNPC())or(tr.Entity:IsPlayer()))then
 			self:SetPos(tr.HitPos+Dir*5-self:GetUp()*2)

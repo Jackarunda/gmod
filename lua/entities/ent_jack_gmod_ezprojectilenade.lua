@@ -12,6 +12,7 @@ ENT.Model="models/kali/weapons/mgsv/magazines/ammunition/40mm grenade.mdl"
 ENT.Material=nil
 ENT.ModelScale=nil
 ENT.ImpactSound="Grenade.ImpactHard"
+ENT.CollisionGroup=COLLISION_GROUP_NONE
 if(SERVER)then
 	function ENT:Initialize()
 		self:SetModel(self.Model)
@@ -28,7 +29,7 @@ if(SERVER)then
 				self:GetPhysicsObject():SetMass(2)
 			end
 		end)
-		self.Dmg=self.Dmg or 150
+		self.Damage=self.Damage or 150
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -46,7 +47,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		JMod_Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Dmg^.95,self.BlastRadius)
+		JMod_Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Damage^.95,self.BlastRadius)
 		self:Remove()
 	end
 elseif(CLIENT)then

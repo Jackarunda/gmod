@@ -7,6 +7,8 @@ ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Mini Rocket"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
+ENT.CollisionGroup=COLLISION_GROUP_NONE
+ENT.NoPhys = true
 local ThinkRate=22--Hz
 ---
 if(SERVER)then
@@ -22,6 +24,7 @@ if(SERVER)then
 		self.FuelLeft=100
 		self.DieTime=CurTime()+10
 		self.NextThrust=0
+		self:Think()
 	end
 	function ENT:Detonate(tr)
 		if(self.NextDet>CurTime())then return end
@@ -33,7 +36,7 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,1000,3,2,700)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,50),self.BlastRadius or 100,self.Dmg or 100)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,50),self.BlastRadius or 100,self.Damage or 100)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,200))do
 			if(ent:GetClass()=="npc_helicopter")then
 				if(math.random(1,2)==1)then
@@ -118,7 +121,7 @@ elseif(CLIENT)then
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
 		self.RenderPos=self:GetPos()
-		self.NextRender=CurTime()+.01
+		self.NextRender=CurTime()+.05
 	end
 	function ENT:Think()
 		--
