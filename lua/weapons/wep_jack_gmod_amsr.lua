@@ -60,7 +60,7 @@ SWEP.ShellScale = 4
 
 SWEP.SpeedMult = .9
 SWEP.SightedSpeedMult = .5
-SWEP.SightTime = .65
+SWEP.SightTime = .75
 
 SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
@@ -122,21 +122,11 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.9,
+        Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
-		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.9,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
@@ -144,23 +134,10 @@ SWEP.Animations = {
 		Mult = 1,
         ShellEjectAt = 1.1,
 		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .55, v=60, p=90},
+			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .75, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60, p=90},
-			{s = JMod_GunHandlingSounds.grab, t = 2.25, v=55}
-		}
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 2.5,
-		Mult = 1,
-        ShellEjectAt = 1.1,
-		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .7, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 2.25, v=55}
 		}
     },

@@ -24,7 +24,7 @@ SWEP.Penetration = 165
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2.7
+SWEP.Recoil = 3
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 
@@ -121,27 +121,15 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 1,
+        Time = 2.5,
         SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/amr/bigmove.wav", t = 0, v=60}
+			{s = "snds_jack_gmod/ez_weapons/amr/bigmove.wav", t = .1, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 2, v=60}
 		},
-		Mult=2.5,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 1,
-        SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
-			{s = "snds_jack_gmod/ez_weapons/amr/bigmove.wav", t = 0, v=60}
-		},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
@@ -166,14 +154,14 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amr/move.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amr/magrelease.wav", t = 1.15, v=65},
-			{s = "snds_jack_gmod/ez_weapons/amr/magtoss.wav", t = 1, v=65},
+			{s = "snds_jack_gmod/ez_weapons/amr/magrelease.wav", t = 1.2, v=65},
+			{s = "snds_jack_gmod/ez_weapons/amr/magtoss.wav", t = 1.1, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amr/magmove.wav", t = 2, v=65},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.65, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.15, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.7, v=65, p=80},
+			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.25, v=65},
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 3.8, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 3.75, v=60}
+			{s = JMod_GunHandlingSounds.grab, t = 4, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -192,13 +180,13 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/amr/magrelease.wav", t = 1.3, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amr/magtoss.wav", t = 1.4, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/amr/magmove.wav", t = 2.3, v=65},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 3, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.65, v=65},
+			{s = "snds_jack_gmod/ez_weapons/amr/magmove.wav", t = 2.2, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.9, v=65, p=80},
+			{s = "snds_jack_gmod/ez_weapons/amr/in.wav", t = 3.45, v=65},
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 4, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 4.35, v=60},
-			{s = "snds_jack_gmod/ez_weapons/amr/pull.wav", t = 5.05, v=65},
-			{s = "snds_jack_gmod/ez_weapons/amr/release.wav", t = 5.3, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 4.1, v=60},
+			{s = "snds_jack_gmod/ez_weapons/amr/pull.wav", t = 4.8, v=65},
+			{s = "snds_jack_gmod/ez_weapons/amr/release.wav", t = 5.1, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 5.8, v=60}
 		}
     },

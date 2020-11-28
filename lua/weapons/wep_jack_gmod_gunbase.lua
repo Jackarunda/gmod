@@ -18,7 +18,7 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
-SWEP.ForceExpensiveScopes = true
+SWEP.VisualRecoilMult=100 -- sigh
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
 SWEP.Primary.DefaultClip = 0
@@ -68,7 +68,7 @@ SWEP.AttachmentElements = {
 	--]]
 }
 
-SWEP.ProceduralViewBobIntensity = 1
+SWEP.ProceduralViewBobIntensity = .6
 
 SWEP.ExtraSightDist = 5
 
