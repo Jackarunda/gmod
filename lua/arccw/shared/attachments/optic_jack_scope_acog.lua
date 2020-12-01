@@ -38,7 +38,7 @@ att.HolosightBlackbox = true
 
 att.Mult_SightTime = 1
 --]]
-att.Mult_SightTime = 1
+att.Mult_SightTime = .6
 att.Mult_SightedSpeedMult = 1.1
 
 att.Colorable = true

@@ -14,8 +14,8 @@ SWEP.BodyHolsterPos = Vector(1,-14,-11)
 SWEP.BodyHolsterPosL = Vector(-2.5,-15,11)
 SWEP.BodyHolsterScale = 1.1
 
-SWEP.Damage = 210
-SWEP.BlastRadius = 210
+SWEP.Damage = 150
+SWEP.BlastRadius = 150
 SWEP.DamageRand = .1
 SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezprojectilenade"
@@ -149,7 +149,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/mgl/open.wav", t = .15, v=65},
 			{s = JMod_GunHandlingSounds.cloth.move, t = .6, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/out.wav", t = .95, v=65},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav", t = 1.2, v=60, p=70},
+			{s = "snds_jack_gmod/ez_weapons/mgl/out.wav", t = 1.2, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 2.025, v=55},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.425, v=55, p=100},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.475, v=55, p=110},
@@ -172,7 +172,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/mgl/open.wav", t = .2, v=65},
 			{s = JMod_GunHandlingSounds.cloth.move, t = .8, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/out.wav", t = 1.05, v=65},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav", t = 1.2, v=60, p=70},
+			{s = "snds_jack_gmod/ez_weapons/mgl/out.wav", t = 1.2, v=60},
 			{s = JMod_GunHandlingSounds.grab, t = 2.3, v=55},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.55, v=55, p=100},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.6, v=55, p=110},

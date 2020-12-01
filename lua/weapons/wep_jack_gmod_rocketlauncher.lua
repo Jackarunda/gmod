@@ -14,8 +14,8 @@ SWEP.BodyHolsterPos = Vector(-.5,-22,-13)
 SWEP.BodyHolsterPosL = Vector(-3,-24,11)
 SWEP.BodyHolsterScale = 1.1
 
-SWEP.Damage = 280
-SWEP.BlastRadius = 200
+SWEP.Damage = 210
+SWEP.BlastRadius = 180
 SWEP.DamageRand = .1
 SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezminirocket"

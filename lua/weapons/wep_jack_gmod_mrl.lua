@@ -14,8 +14,8 @@ SWEP.BodyHolsterPos = Vector(5.5,-15,-13)
 SWEP.BodyHolsterPosL = Vector(-2.25,-15,14)
 SWEP.BodyHolsterScale = .8
 
-SWEP.Damage = 260
-SWEP.BlastRadius = 190
+SWEP.Damage = 200
+SWEP.BlastRadius = 170
 SWEP.DamageRand = .1
 SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezminirocket"
@@ -30,7 +30,7 @@ SWEP.ChamberSize = 0 -- sigh arctic
 
 SWEP.Recoil = 1
 
-SWEP.Delay = 60 / 200 -- 60 / RPM.
+SWEP.Delay = 60 / 120 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
