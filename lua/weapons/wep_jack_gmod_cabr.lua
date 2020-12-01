@@ -30,7 +30,8 @@ SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 1.5
+SWEP.Recoil = 2
+SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 60 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -79,6 +80,8 @@ SWEP.MeleeTime = .4
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)
 
+SWEP.ReloadPos = Vector(0,-4,3)
+
 SWEP.BarrelLength = 20
 
 --[[
@@ -115,13 +118,11 @@ SWEP.Animations = {
     },
     ["fire"] = {
         Source = "fire",
-        Time = 1,
-		Mult = 1
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 1,
-		Mult = 1
+        Time = 1.4,
+		Mult = 1,
+		SoundTable = {
+			{s = "snds_jack_gmod/ez_weapons/cabr/cock.wav", t = .7, v=55},
+		}
     },
     ["reload"] = {
         Source = "reload",
@@ -133,16 +134,15 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			--[[
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=55, p=110},
-			{s = "snds_jack_gmod/ez_weapons/revolver/open.wav", t = .25, v=60},
-			{s = JMod_GunHandlingSounds.cloth.move, t = 1.1, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/revolver/out.wav", t = 1.5, v=55},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.6, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/revolver/in.wav", t = 2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/revolver/close.wav", t = 2.7, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 3, v=55, p=110}
-			--]]
+			{s = JMod_GunHandlingSounds.cloth.move, t = .05, v=55, p=110},
+			{s = "snds_jack_gmod/ez_weapons/cabr/pull.wav", t = .6, v=55},
+			{s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav", t = 1.5, v=55},
+			{s = "snds_jack_gmod/ez_weapons/cabr/out.wav", t = 2.8, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 3.5, v=55},
+			{s = "snds_jack_gmod/ez_weapons/cabr/in.wav", t = 4.15, v=60},
+			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 5.4, v=55},
+			{s = "snds_jack_gmod/ez_weapons/cabr/close.wav", t = 5.75, v=55},
+			{s = JMod_GunHandlingSounds.grab, t = 6.55, v=55}
 		}
     }
 }
