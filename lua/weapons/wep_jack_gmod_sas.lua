@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-11,-9)
 SWEP.BodyHolsterPosL = Vector(.5,-11,10)
 SWEP.BodyHolsterScale = .85
 
-SWEP.Damage = 13
+SWEP.Damage = 11
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
@@ -25,8 +25,7 @@ SWEP.DoorBreachPower = .2
 SWEP.Primary.ClipSize = 7 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 1.5
 
 SWEP.ShotgunReload = true
 
@@ -35,13 +34,14 @@ SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
     }
 }
 
-SWEP.AccuracyMOA = 25 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 20 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -95,36 +95,17 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.6,
+        Time = 2,
        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.6,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
         Time = 0.3,
         ShellEjectAt = .05,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.3,
-        ShellEjectAt = .05,
-    },
-    ["fire_empty"] = {
-        Source = "fire",
-        Time = 0.3,
-		ShellEjectAt = .05
     },
     ["sgreload_start"] = {
         Source = "reload_start",
@@ -133,18 +114,6 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0,
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
-		}
-    },
-    ["sgreload_start_empty"] = {
-        Source = "reload_start",
-        Time = .7,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0,
-		RestoreAmmo=0,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
 		}

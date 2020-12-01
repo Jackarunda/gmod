@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 25
+SWEP.Damage = 24
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 100 -- in METERS
@@ -28,14 +28,13 @@ SWEP.Penetration = 20
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
 SWEP.Recoil = .7
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
-SWEP.Delay = 60 / 450 -- 60 / RPM.
+SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -109,18 +108,18 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.25,
+        Time = .4,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["draw_empty"] = {
         Source = "draw_empty",
-        Time = 0.25,
+        Time = .4,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
@@ -131,25 +130,20 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/pistol/safety.wav", t = .25, v=60}
 		},
-        Time = 0.75,
-		Mult=2,
+        Time = 1.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.2,
+        Time = 0.3,
         ShellEjectAt = 0,
     },
     ["fire_empty"] = {
         Source = "fire_last",
-        Time = 0.2,
+        Time = 0.3,
         ShellEjectAt = 0,
     },
     ["reload"] = {

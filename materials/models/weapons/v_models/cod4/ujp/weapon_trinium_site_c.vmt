@@ -1,0 +1,6 @@
+"UnlitGeneric"
+{
+	"$basetexture" "models/weapons/v_models/CoD4/usp/weapon_trinium_site_c"
+	"$translucent" 1
+	$selfillum 1
+	}

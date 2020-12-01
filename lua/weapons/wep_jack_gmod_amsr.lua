@@ -25,16 +25,16 @@ SWEP.Penetration = 165
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 2
+SWEP.BipodRecoil = 1
 
-SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
+SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
 
 SWEP.Delay = 60 / 24 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
-        PrintName = "BOLT",
+        PrintName = "BOLT-ACTION",
         Mode = 1,
     },
     {

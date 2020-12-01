@@ -22,9 +22,7 @@ SWEP.Penetration = 55
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 2
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -101,30 +99,26 @@ SWEP.Animations = {
 	},
 	["draw"] = {
 		Source = "draw",
-		Time = 0.6,
+		Time = 1.5,
 		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
 		LHIKOut = 0.35,
 	},
 	["ready"] = {
 		Source = "draw_e",
-		Time = 0.6,
+		Time = 2.5,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = .1, v=60}
 		},
-		Mult=2.5,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
 		LHIKOut = 0.25,
 	},
 	["fire"] = {
-		Source = "shoot",
-		Time = 0.5
-	},
-	["fire_iron"] = {
 		Source = "shoot",
 		Time = 0.5
 	},
@@ -134,7 +128,7 @@ SWEP.Animations = {
 		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
 		Checkpoints = {24, 42, 59, 71, 89},
 		FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0.5,
 		LHIKOut = 0.5,

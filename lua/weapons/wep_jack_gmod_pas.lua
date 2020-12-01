@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-11,-9)
 SWEP.BodyHolsterPosL = Vector(.5,-11,10)
 SWEP.BodyHolsterScale = .85
 
-SWEP.Damage = 14
+SWEP.Damage = 12
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
@@ -25,8 +25,7 @@ SWEP.DoorBreachPower = .2
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 1.5
 
 SWEP.ShotgunReload = true
 
@@ -35,13 +34,14 @@ SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "PUMP-ACTION"
     },
     {
         Mode = 0
     }
 }
 
-SWEP.AccuracyMOA = 25 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 20 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -93,21 +93,12 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.6,
+        Time = 1.5,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.6,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "shoot1",
@@ -117,24 +108,6 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
 		},
         ShellEjectAt = .45,
-    },
-    ["fire_iron"] = {
-        Source = "shoot1",
-        Time = 1,
-		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
-		},
-        ShellEjectAt = .45,
-    },
-    ["fire_empty"] = {
-        Source = "shoot1",
-        Time = 1,
-		SoundTable = {
-			{s = "snds_jack_gmod/ez_weapons/pas/back.wav", t = .35, v=60},
-			{s = "snds_jack_gmod/ez_weapons/pas/forward.wav", t = .55, v=60}
-		},
-		ShellEjectAt = .45,
     },
     ["sgreload_start"] = {
         Source = "reload_start",

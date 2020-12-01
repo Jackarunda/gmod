@@ -29,14 +29,13 @@ SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
 SWEP.Recoil = 1.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 60 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
-        Mode = 1
+        Mode = 1,
+		PrintName = "SINGLE-ACTION"
     },
     {
         Mode = 0
@@ -109,21 +108,10 @@ SWEP.Animations = {
         Source = "draw",
         Time = 0.5,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}
-		},
-        Time = .3,
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",

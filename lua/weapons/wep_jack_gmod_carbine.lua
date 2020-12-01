@@ -23,17 +23,17 @@ SWEP.Penetration = 35
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 
 SWEP.Recoil = .65
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 800 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 2,
+		PrintName = "FULL-AUTO"
     },
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -84,28 +84,14 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw1",
-        Time = 0.45,
+        Time = 1,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=110}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["ready"] = {
-        Source = "draw2",
-        Time = 0.45,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=110}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
     ["fire"] = {
-        Source = "shoot1",
-        Time = 0.4,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
         Source = "shoot1",
         Time = 0.4,
         ShellEjectAt = 0,
@@ -116,7 +102,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -124,7 +110,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/carbine/mag_out.wav", t = .3, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = .4, v=65},
 			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.3, v=65},
-			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.45, v=65},
+			{s = "snds_jack_gmod/ez_weapons/carbine/mag_in.wav", t = 1.5, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 2.15, v=60}
 		}
     },
@@ -134,7 +120,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

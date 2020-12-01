@@ -24,15 +24,14 @@ SWEP.Penetration = 55
 
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 1.5
 
 SWEP.Delay = 60 / 550 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -100,28 +99,14 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.8,
+        Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["ready"] = {
-        Source = "draw_first",
-        Time = 0.8,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
     ["fire"] = {
-        Source = "fire",
-        Time = 0.4,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
         Source = "fire",
         Time = 0.4,
         ShellEjectAt = 0,
@@ -132,14 +117,14 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 2.8, v=60}
 		}
     },
@@ -149,14 +134,14 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.15, v=65},
+			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.05, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 2.75, v=60},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav", t = 3.25, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65},

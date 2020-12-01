@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-16,-10)
 SWEP.BodyHolsterPosL = Vector(-1,-15,12)
 SWEP.BodyHolsterScale = 1
 
-SWEP.Damage = 12
+SWEP.Damage = 10
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
@@ -26,22 +26,21 @@ SWEP.Primary.ClipSize = 12 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- lol open bolt
 
 SWEP.Recoil = 2.8
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
-
+SWEP.VisualRecoilMult = 1.5
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 2,
+		PrintName = "FULL-AUTO"
     },
     {
         Mode = 0
     }
 }
 
-SWEP.AccuracyMOA = 40 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 35 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -94,36 +93,17 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.6,
+        Time = 1.5,
        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.6,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
         Time = 0.3,
         ShellEjectAt = .05,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.3,
-        ShellEjectAt = .05,
-    },
-    ["fire_empty"] = {
-        Source = "fire",
-        Time = 0.3,
-		ShellEjectAt = .05
     },
     ["reload"] = {
         Source = "reload_tac",
@@ -131,7 +111,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -139,8 +119,8 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/fas/out.wav", t = .6, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.3, v=65},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.95, v=65},
-			{s = "snds_jack_gmod/ez_weapons/fas/in.wav", t = 2.15, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.9, v=65},
+			{s = "snds_jack_gmod/ez_weapons/fas/in.wav", t = 2.1, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = 2.55, v=65}
 		}
     },
@@ -150,7 +130,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -158,8 +138,8 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/fas/out.wav", t = .6, v=65},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.3, v=65},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.95, v=65},
-			{s = "snds_jack_gmod/ez_weapons/fas/in.wav", t = 2.15, v=65},
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.9, v=65},
+			{s = "snds_jack_gmod/ez_weapons/fas/in.wav", t = 2.1, v=65},
 			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.75, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/fas/pull.wav", t = 2.85, v=65},
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 2.8, v=55},

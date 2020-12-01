@@ -4,8 +4,8 @@ SWEP.PrintName = "Plinking Pistol"
 
 SWEP.Slot = 1
 
-SWEP.ViewModel = "models/weapons/v_jmod_usp.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_usp.mdl"
+SWEP.ViewModel = "models/weapons/v_jmod_ujp.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_ujp.mdl"
 SWEP.ViewModelFOV = 75
 
 --[[ -- pocket pistol goes in pocket ^:)
@@ -30,14 +30,13 @@ SWEP.Penetration = 10
 SWEP.Primary.ClipSize = 10 -- DefaultClip is automatically set.
 
 SWEP.Recoil = .1
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 500 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -103,44 +102,21 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw2",
-        Time = 0.15,
+        Time = 0.3,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "draw2",
-        Time = 0.15,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw2",
-        Time = 0.15,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["fire"] = {
         Source = "shoot1",
-        Time = 0.2,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
-        Source = "shoot1",
-        Time = 0.2,
+        Time = 0.5,
         ShellEjectAt = 0,
     },
     ["fire_empty"] = {
         Source = "dry",
-        Time = 0.2,
+        Time = 0.5,
         ShellEjectAt = 0,
     },
     ["reload"] = {
@@ -174,7 +150,7 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = .4, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/pistol/tap.wav", t = .95, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/pistol/in.wav", t = 1, v=60, p=120},
-			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.75, v=60, p=120}
+			{s = "snds_jack_gmod/ez_weapons/pistol/release.wav", t = 1.8, v=60, p=120}
 		}
     }
 }

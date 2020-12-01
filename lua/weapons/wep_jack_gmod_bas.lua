@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(2,-11,-9)
 SWEP.BodyHolsterPosL = Vector(1,-11,10)
 SWEP.BodyHolsterScale = 1
 
-SWEP.Damage = 15
+SWEP.Damage = 13
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
@@ -26,14 +26,14 @@ SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult=1.5
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.
 SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "DOUBLE"
     },
     {
         Mode = 0
@@ -96,35 +96,27 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "Draw",
-        Time = 0.6,
+        Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["ready"] = {
         Source = "Draw_First",
-        Time = 1,
+        Time = 2.5,
         SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120},
-			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = 0, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = .2, v=60}
+			{s = JMod_GunHandlingSounds.draw.longgun, t = .1, v=60, p=120},
+			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = .2, v=60},
+			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = .5, v=60}
 		},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
     },
     ["fire"] = {
-        Source = "fire",
-        Time = 1,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 1,
-    },
-    ["fire_empty"] = {
         Source = "fire",
         Time = 1,
     },
@@ -134,6 +126,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
+		Mult=.9,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -155,6 +148,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
+		Mult=.9,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

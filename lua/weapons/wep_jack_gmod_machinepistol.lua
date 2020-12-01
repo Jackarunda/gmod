@@ -29,17 +29,17 @@ SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
 SWEP.Recoil = .9
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 1300 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 2,
+		PrintName = "FULL-AUTO"
     },
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -108,42 +108,14 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.3,
+        Time = .8,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "draw",
-        Time = 0.3,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.3,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["fire"] = {
-        Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
-    },
-    ["fire_empty"] = {
         Source = "fire",
         Time = 0.2,
         ShellEjectAt = 0,

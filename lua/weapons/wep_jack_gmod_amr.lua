@@ -25,14 +25,14 @@ SWEP.Penetration = 165
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -136,18 +136,13 @@ SWEP.Animations = {
         Time = 0.6,
         ShellEjectAt = .05,
     },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.6,
-        ShellEjectAt = .05,
-    },
     ["reload"] = {
         Source = "reload_tac",
         Time = 5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -170,7 +165,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

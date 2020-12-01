@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(4,1,-5)
 SWEP.BodyHolsterPosL = Vector(5,1,5)
 SWEP.BodyHolsterScale = .85
 
-SWEP.Damage = 50 -- ahahahahahahaha
+SWEP.Damage = 48 -- ahahahahahahaha
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
@@ -22,9 +22,7 @@ SWEP.Penetration = 30
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 1.8
 
 SWEP.ShotgunReload = true
 
@@ -33,6 +31,7 @@ SWEP.Num = 1 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "LEVER-ACTION"
     },
     {
         Mode = 0
@@ -93,21 +92,12 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.5,
+        Time = 1.2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire1",
@@ -118,26 +108,6 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
 		},
         ShellEjectAt = .45,
-    },
-    ["fire_iron"] = {
-        Source = "fire1",
-        Time = 1.1,
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
-		},
-        ShellEjectAt = .45,
-    },
-    ["fire_empty"] = {
-        Source = "fire1",
-        Time = 1.1,
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
-		},
-		ShellEjectAt = .45,
     },
     ["sgreload_start"] = {
         Source = "reload_start",

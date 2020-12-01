@@ -24,14 +24,13 @@ SWEP.MuzzleVelocity = 3000
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SINGLE"
     },
     {
         Mode = 0
@@ -88,27 +87,14 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw1",
-        Time = 0.5,
+        Time = 1,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["ready"] = {
-        Source = "draw1",
-        Time = 0.5,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
     ["fire"] = {
-        Source = "fire",
-        Time = 0.5
-    },
-    ["fire_iron"] = {
         Source = "fire",
         Time = 0.5
     },
@@ -118,7 +104,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=.95,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

@@ -120,7 +120,7 @@ JMod_WeaponTable={
 		ent="ent_jack_gmod_ezweapon_pocketpistol"
 	},
 	["Plinking Pistol"]={
-		mdl="models/weapons/w_jmod_usp.mdl",
+		mdl="models/weapons/w_jmod_ujp.mdl",
 		swep="wep_jack_gmod_plinkingpistol",
 		ent="ent_jack_gmod_ezweapon_plinkingpistol",
 		size=1.1

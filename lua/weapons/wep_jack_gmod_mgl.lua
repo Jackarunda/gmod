@@ -25,16 +25,15 @@ SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- sigh
 
 SWEP.Recoil = 2
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.ShotgunReload = true
 
-SWEP.Delay = 60 / 200 -- 60 / RPM.
+SWEP.Delay = 60 / 180 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "DOUBLE-ACTION"
     },
     {
         Mode = 0
@@ -77,6 +76,8 @@ SWEP.HolsterAng = Angle(-20, 50, 0)
 
 SWEP.BarrelLength = 30
 
+SWEP.RevolverReload=true
+
 SWEP.Attachments = {
     {
         PrintName = "Optic",
@@ -112,31 +113,27 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.7,
+        Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
     ["ready"] = {
         Source = "draw_first",
-        Time = 1,
+        Time = 2,
         SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
-			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = .45, v=60},
-			{s = "snds_jack_gmod/ez_weapons/mgl/close.wav", t = .5, v=60, p=120}
+			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 1, v=60},
+			{s = "snds_jack_gmod/ez_weapons/mgl/close.wav", t = 1.2, v=60, p=120}
 		},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
     },
     ["fire"] = {
-        Source = "fire",
-        Time = 0.4
-    },
-    ["fire_iron"] = {
         Source = "fire",
         Time = 0.4
     },

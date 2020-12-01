@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/v_jmod_usp.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_usp.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 70
 
 --[[ -- pocket pistol goes in pocket ^:)
 SWEP.BodyHolsterSlot = "thighs"
@@ -29,15 +29,14 @@ SWEP.Penetration = 20
 
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .8
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 1.5
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -126,37 +125,14 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["draw_empty"] = {
-        Source = "draw2",
-        Time = 0.15,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw2",
-        Time = 0.15,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
     ["fire"] = {
         Source = "shoot1",
-        Time = 0.3,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
-        Source = "shoot1",
-        Time = 0.3,
+        Time = .8,
         ShellEjectAt = 0,
     },
     ["fire_empty"] = {
         Source = "dry",
-        Time = 0.3,
+        Time = .8,
         ShellEjectAt = 0,
     },
     ["reload"] = {

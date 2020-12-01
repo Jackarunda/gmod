@@ -29,21 +29,20 @@ SWEP.Primary.ClipSize = 4 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- sigh arctic
 
 SWEP.Recoil = 1
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "MULTI-BARREL"
     },
     {
         Mode = 0
     }
 }
 
-SWEP.AccuracyMOA = 20 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 30 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -98,7 +97,7 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 1.1,
+        Time = 3,
         SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = .01, v=60, p=90},
 			{s = JMod_GunHandlingSounds.grab, t = .425, v=60},
@@ -106,41 +105,22 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.quiet, t = .5, v=65},
 			{s = JMod_GunHandlingSounds.grab, t = .95, v=65}
 		},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 1.1,
-        SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = .01, v=60, p=90},
-			{s = JMod_GunHandlingSounds.grab, t = .425, v=60},
-			{s = "snds_jack_gmod/ez_weapons/mrl/extend.wav", t = .525, v=65},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = .5, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .95, v=65}
-		},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
         Time = .5
     },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = .5
-    },
     ["reload"] = {
         Source = "reload_tac",
-        Time = 6,
+        Time = 7,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,
@@ -149,47 +129,18 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.grab, t = .15, v=55},
 			{s = "snds_jack_gmod/ez_weapons/mrl/fold.wav", t = .15, v=65},
 			{s = JMod_GunHandlingSounds.cloth.loud, t = .3, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .85, v=55},
-			{s = "snds_jack_gmod/ez_weapons/mrl/out.wav", t = 1.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/drop.wav", t = 1.9, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2.3, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/mrl/tap.wav", t = 2.9, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/in.wav", t = 3.3, v=65},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 3.3, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 4, v=65},
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 4.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/extend.wav", t = 4.9, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = 5.4, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 5.6, v=60}
-		}
-    },
-    ["reload_empty"] = {
-        Source = "reload_tac",
-        Time = 6,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71, 89},
-        FrameRate = 37,
-		Mult=1.2,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = .01, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = .15, v=55},
-			{s = "snds_jack_gmod/ez_weapons/mrl/fold.wav", t = .15, v=65},
-			{s = JMod_GunHandlingSounds.cloth.loud, t = .3, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .85, v=55},
-			{s = "snds_jack_gmod/ez_weapons/mrl/out.wav", t = 1.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/drop.wav", t = 1.9, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2.3, v=65, p=80},
-			{s = "snds_jack_gmod/ez_weapons/mrl/tap.wav", t = 2.9, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/in.wav", t = 3.3, v=65},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 3.3, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 4, v=65},
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 4.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/mrl/extend.wav", t = 4.9, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = 5.4, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 5.6, v=60}
+			{s = JMod_GunHandlingSounds.grab, t = .9, v=55},
+			{s = "snds_jack_gmod/ez_weapons/mrl/out.wav", t = 1.4, v=65},
+			{s = "snds_jack_gmod/ez_weapons/mrl/drop.wav", t = 2.4, v=60},
+			{s = JMod_GunHandlingSounds.cloth.magpull, t = 2.5, v=65, p=80},
+			{s = "snds_jack_gmod/ez_weapons/mrl/tap.wav", t = 3.3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/mrl/in.wav", t = 3.9, v=65},
+			{s = JMod_GunHandlingSounds.cloth.quiet, t = 3.6, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 4.9, v=65},
+			{s = JMod_GunHandlingSounds.cloth.loud, t = 5.3, v=65},
+			{s = "snds_jack_gmod/ez_weapons/mrl/extend.wav", t = 5.8, v=65},
+			{s = JMod_GunHandlingSounds.cloth.move, t = 6, v=65},
+			{s = JMod_GunHandlingSounds.grab, t = 6.65, v=60}
 		}
     }
 }

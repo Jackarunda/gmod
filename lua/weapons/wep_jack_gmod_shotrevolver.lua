@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 12
+SWEP.Damage = 10
 SWEP.DamageMin = 2 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 50 -- in METERS
@@ -30,23 +30,23 @@ SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
 SWEP.Recoil = 2.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 2
 
 SWEP.ShotgunReload = true
 
-SWEP.Delay = 60 / 250 -- 60 / RPM.
+SWEP.Delay = 60 / 180 -- 60 / RPM.
 SWEP.Num = 5 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "DOUBLE-ACTION"
     },
     {
         Mode = 0
     }
 }
 
-SWEP.AccuracyMOA = 85 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 80 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 200
 
@@ -85,6 +85,8 @@ SWEP.MeleeTime = .4
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)
 
+SWEP.RevolverReload=true
+
 SWEP.BarrelLength = 20
 
 --[[
@@ -103,24 +105,11 @@ SWEP.Animations = {
         Source = "idle",
         Time = 1
     },
-    ["idle_empty"] = {
-        Source = "idle",
-        Time = 1
-    },
     ["draw"] = {
         Source = "draw",
         Time = 0.4,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "draw",
-        Time = 0.4,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
@@ -130,23 +119,15 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.handgun, t = .3, v=60, p=110}
 		},
-        Time = 1,
-		Mult=2,
+        Time = 1.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
-        Time = 0.35
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.35
-    },
-    ["fire_empty"] = {
-        Source = "fire",
-        Time = 0.35
+        Time = 0.4
     },
     ["sgreload_start"] = {
         Source = "reload_start",

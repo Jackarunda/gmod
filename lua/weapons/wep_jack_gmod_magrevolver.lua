@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 40 -- ahahahahahahaha
+SWEP.Damage = 39 -- ahahahahahahaha
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
@@ -29,14 +29,14 @@ SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
 SWEP.Recoil = 2.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.VisualRecoilMult = 2
 
-SWEP.Delay = 60 / 275 -- 60 / RPM.
+SWEP.Delay = 60 / 150 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "DOUBLE-ACTION"
     },
     {
         Mode = 0
@@ -81,6 +81,8 @@ SWEP.MeleeTime = .4
 SWEP.HolsterPos = Vector(0, 0, 0)
 SWEP.HolsterAng = Angle(-45, 0, 0)
 
+SWEP.RevolverReload=true
+
 SWEP.BarrelLength = 20
 
 --[[
@@ -96,73 +98,20 @@ SWEP.Animations = {
         Source = "idle",
         Time = 1
     },
-    ["idle_empty"] = {
-        Source = "idle_empty",
-        Time = 1
-    },
     ["draw"] = {
         Source = "draw",
-        Time = 0.4,
+        Time = 0.7,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "draw",
-        Time = 0.4,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}
-		},
-        Time = 0.35,
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
         Source = "fire",
-        Time = 0.35
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.35
-    },
-    ["fire_empty"] = {
-        Source = "fire",
-        Time = 0.35
+        Time = 0.4
     },
     ["reload"] = {
-        Source = "reload_empty",
-        Time = 3,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71},
-        FrameRate = 37,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-		ShellEjectAt = .9,
-		ShellEjectDynamic=true,
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=55, p=110},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav", t = .45, v=60},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav", t = .6, v=55},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .65, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.wav", t = 1.3, v=60},
-			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.wav", t = 2, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.7, v=55, p=110}
-		}
-    },
-    ["reload_empty"] = {
         Source = "reload_empty",
         Time = 4,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
@@ -172,7 +121,6 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		ShellEjectAt = 1.1,
-		ShellEjectCount=6,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav", t = .65, v=60},

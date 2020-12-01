@@ -29,22 +29,23 @@ SWEP.DamageRand = .4
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
 SWEP.MuzzleVelocity = 7000
 SWEP.ShootEntityOffset = Vector(-1,0,-2)
-SWEP.ShootEntityNoPhys = true
+SWEP.ShootEntityAngle = Angle(0,0,0)
+SWEP.ShootEntityAngleCorrection = Angle(0,0,0)
 
-SWEP.MuzzleEffect="NONE"
+SWEP.MuzzleEffect=nil
+SWEP.NoFlash=true
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
 
 SWEP.Recoil = .8
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SINGLE"
     },
     {
         Mode = 0
@@ -114,29 +115,14 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw",
-        Time = 0.4,
+        Time = 1,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=50}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.4,
-        SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=50}
-		},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
     ["fire"] = {
-        Source = "shoot",
-        Time = .5
-    },
-    ["fire_iron"] = {
         Source = "shoot",
         Time = .5
     },
@@ -146,7 +132,7 @@ SWEP.Animations = {
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=1.2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

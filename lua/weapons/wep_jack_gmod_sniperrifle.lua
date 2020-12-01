@@ -22,9 +22,8 @@ SWEP.Penetration = 85
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2.2
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 3
+SWEP.VisualRecoilMult = 1.5
 
 SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
 
@@ -32,7 +31,7 @@ SWEP.Delay = 60 / 30 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
-        PrintName = "BOLT",
+        PrintName = "BOLT-ACTION",
         Mode = 1,
     },
     {
@@ -120,26 +119,17 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw1",
-        Time = 0.9,
+        Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
     },
-    ["ready"] = {
-        Source = "draw1",
-        Time = 0.9,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
     ["fire"] = {
         Source = "shoot1",
         Time = 1.2,
-		Mult=1.5,
+		Mult=1,
         ShellEjectAt = .8,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60},
@@ -152,7 +142,7 @@ SWEP.Animations = {
     ["fire_iron"] = {
         Source = "shoot1",
         Time = 1.4,
-		Mult=1.5,
+		Mult=1,
         ShellEjectAt = .9,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .25, v=60},

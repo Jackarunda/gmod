@@ -18,7 +18,8 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
-SWEP.VisualRecoilMult=100 -- sigh
+SWEP.VisualRecoilMult = 1
+SWEP.RecoilSide = .5
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
 SWEP.Primary.DefaultClip = 0
@@ -131,9 +132,9 @@ SWEP.Hook_AddShootSound = function(self, fsound, volume, pitch)
 	end
 end
 SWEP.Hook_PostFireBullets = function(self)
+	local SelfPos=self:GetPos()
+	local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
 	if(self.BackBlast)then
-		local SelfPos=self:GetPos()
-		local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
 		if(self.ShootEntityOffset)then
 			local ang=RDir:Angle()
 			local Up,Right,Forward=ang:Up(),ang:Right(),ang:Forward()
@@ -180,6 +181,13 @@ SWEP.Hook_PostFireBullets = function(self)
 			Eff:SetScale(self.ExtraMuzzleLuaScale or 1)
 			util.Effect(self.ExtraMuzzleLua,Eff,true)
 		end
+	end
+	if(self.ExtraMuzzleLua)then
+		local Eff=EffectData()
+		Eff:SetOrigin(RPos)
+		Eff:SetNormal(RDir)
+		Eff:SetScale(self.ExtraMuzzleLuaScale)
+		util.Effect(self.ExtraMuzzleLua,Eff,true,true)
 	end
 end
 

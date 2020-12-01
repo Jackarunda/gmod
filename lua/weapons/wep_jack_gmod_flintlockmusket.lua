@@ -22,9 +22,7 @@ SWEP.Penetration = 10
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 3
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
@@ -71,10 +69,12 @@ SWEP.ActiveAng = Angle(0, 0, 0)
 SWEP.HolsterPos = Vector(11, 1, -6)
 SWEP.HolsterAng = Angle(0, 60, -15)
 
-SWEP.ReloadActivePos = Vector(0,-2,-9)
-SWEP.ReloadActiveAng = Angle(20,0,0)
+SWEP.ReloadPos = Vector(0,-2,-9)
+SWEP.ReloadAng = Angle(20,0,0)
 
 SWEP.BarrelLength = 50
+
+SWEP.ProceduralViewBobIntensity = .3
 
 -- ima just leave this here until arctic gets his shit together
 SWEP.CanBash = true
@@ -148,38 +148,34 @@ SWEP.Animations = {
 	},
 	["draw"] = {
 		Source = "draw",
-		Time = 0.6,
+		Time = 1.2,
 		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
-		LHIKOut = 0.35,
+		LHIKOut = 0.35
 	},
 	["draw_empty"] = {
 		Source = "draw_empty",
-		Time = 0.6,
+		Time = 1.2,
 		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
-		Mult=2.5,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
-		LHIKOut = 0.35,
+		LHIKOut = 0.35
 	},
 	["ready"] = {
 		Source = "draw_empty",
-		Time = 0.6,
+		Time = 1.2,
 		SoundTable = {
 			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}
 		},
-		Mult=2.5,
+		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
-		LHIKOut = 0.25,
+		LHIKOut = 0.25
 	},
 	["fire"] = {
-		Source = "fire_empty",
-		Time = 0.5
-	},
-	["fire_iron"] = {
 		Source = "fire_empty",
 		Time = 0.5
 	},
@@ -202,19 +198,19 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/flm/drop.wav", t = 6.1, v=65, p=100},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 7.4, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav", t = 7.6, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 7.8, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 8.4, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 8.75, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 8.8, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 7.9, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 8.1, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 8.2, v=65, p=100},
+			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 8.3, v=65, p=100},
 			{s = JMod_GunHandlingSounds.cloth.loud, t = 9, v=60, p=100}
 		},
 		ViewPunchTable = {
 			{t = 2, p = Angle(0,5,0)},
+			{t = 7.2, p = Angle(1,0,0)},
 			{t = 7.5, p = Angle(1,0,0)},
 			{t = 7.8, p = Angle(1,0,0)},
 			{t = 8.1, p = Angle(1,0,0)},
-			{t = 8.4, p = Angle(1,0,0)},
-			{t = 8.7, p = Angle(2,0,0)}
+			{t = 8.4, p = Angle(2,0,0)}
 		}
 	},
 }

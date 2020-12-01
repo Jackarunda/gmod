@@ -27,15 +27,15 @@ SWEP.Penetration = 30
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2.5
-SWEP.RecoilSide = 0.5
-SWEP.RecoilRise = 0.6
+SWEP.Recoil = 3
+SWEP.VisualRecoilMult = 2
 
-SWEP.Delay = 60 / 325 -- 60 / RPM.
+SWEP.Delay = 60 / 200 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
+		PrintName = "SEMI-AUTO"
     },
     {
         Mode = 0
@@ -96,50 +96,16 @@ SWEP.Animations = {
         Source = "idle",
         Time = 1
     },
-    ["idle_empty"] = {
-        Source = "idle",
-        Time = 1
-    },
     ["draw"] = {
         Source = "draw",
-        Time = 0.5,
+        Time = .7,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
-    },
-    ["draw_empty"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw",
-		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}
-		},
-        Time = 0.5,
-		Mult=2,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
     },
     ["fire"] = {
-        Source = "fire",
-        Time = 0.4,
-        ShellEjectAt = 0,
-    },
-    ["fire_iron"] = {
-        Source = "fire",
-        Time = 0.4,
-        ShellEjectAt = 0,
-    },
-    ["fire_empty"] = {
         Source = "fire",
         Time = 0.4,
         ShellEjectAt = 0,
@@ -164,7 +130,7 @@ SWEP.Animations = {
     },
     ["reload_empty"] = {
         Source = "reload_empty",
-        Time = 4,
+        Time = 3.5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
@@ -175,10 +141,10 @@ SWEP.Animations = {
 			{s = JMod_GunHandlingSounds.cloth.move, t = .05, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/out.wav", t = .4, v=60},
 			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=110},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 2.1, v=60, p=110},
-			{s = "snds_jack_gmod/ez_weapons/magnumpistol/in.wav", t = 2.4, v=60},
-			{s = "snds_jack_gmod/ez_weapons/magnumpistol/release.wav", t = 2.75, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 3.15, v=55, p=110}
+			{s = JMod_GunHandlingSounds.tap.magwell, t = 2, v=60, p=110},
+			{s = "snds_jack_gmod/ez_weapons/magnumpistol/in.wav", t = 2.1, v=60},
+			{s = "snds_jack_gmod/ez_weapons/magnumpistol/release.wav", t = 2.4, v=60},
+			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=55, p=110}
 		}
     }
 }

@@ -63,6 +63,7 @@ JMOD_EZ_STATE_WARNING	= 4
 -- craftable keypad entity you can install on anything to lock it with a PIN
 -- link sentry power consumption to perf mult
 -- armordegredation mult doesnt work
+-- jmod hands on spawn qol
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
     return true
