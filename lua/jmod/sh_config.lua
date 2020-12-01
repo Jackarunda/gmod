@@ -376,7 +376,8 @@ function JMod_InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezfragnade",10}
 				},
 				["gas grenades"]={
-					{"ent_jack_gmod_ezgasnade",6}
+					{"ent_jack_gmod_ezgasnade",6},
+					{"ent_jack_gmod_ezcsnade",4}
 				},
 				["impact grenades"]={
 					{"ent_jack_gmod_ezimpactnade",10}
@@ -527,6 +528,7 @@ function JMod_InitGlobalConfig(forceNew)
 			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5},"Weapons"},
 			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50},"Weapons"},
 			["EZ Gas Grenade"]={"ent_jack_gmod_ezgasnade",{parts=5,gas=20,chemicals=15},"Weapons"},
+			["EZ Tear Gas Grenade"]={"ent_jack_gmod_ezcsnade",{parts=5,gas=20,chemicals=15},"Weapons"},
 			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,chemicals=10,advtextiles=2},"Apparel"},
 			["EZ Gebalte Ladung"]={"ent_jack_gmod_ezsticknadebundle",{parts=50,explosives=50},"Weapons"},
 			["EZ Headset"]={"ent_jack_gmod_ezarmor_headset",{parts=20,power=10},"Apparel"},
