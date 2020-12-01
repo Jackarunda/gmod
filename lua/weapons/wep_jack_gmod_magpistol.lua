@@ -25,6 +25,8 @@ SWEP.DamageRand = .35
 SWEP.Range = 150 -- in METERS
 SWEP.Penetration = 30
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
@@ -43,8 +45,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 7 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Magnum Pistol Round" -- what ammo type the gun uses
 

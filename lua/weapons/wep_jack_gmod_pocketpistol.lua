@@ -27,6 +27,8 @@ SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
 SWEP.Penetration = 20
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 1.5
@@ -44,8 +46,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Pistol Round" -- what ammo type the gun uses
 
@@ -118,9 +118,9 @@ SWEP.Animations = {
     },
     ["draw"] = {
         Source = "draw2",
-        Time = 0.15,
+        Time = 0.3,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
-		Mult=2,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
@@ -132,7 +132,7 @@ SWEP.Animations = {
     },
     ["fire_empty"] = {
         Source = "dry",
-        Time = .8,
+        Time = 1,
         ShellEjectAt = 0,
     },
     ["reload"] = {

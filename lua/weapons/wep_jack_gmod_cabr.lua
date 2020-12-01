@@ -25,6 +25,8 @@ SWEP.DamageRand = .35
 SWEP.Range = 75 -- in METERS
 SWEP.Penetration = 10
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
@@ -43,8 +45,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Black Powder Paper Cartridge" -- what ammo type the gun uses
 

@@ -25,6 +25,8 @@ SWEP.DamageRand = .35
 SWEP.Range = 100 -- in METERS
 SWEP.Penetration = 20
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
@@ -47,8 +49,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 750 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Pistol Round" -- what ammo type the gun uses
 

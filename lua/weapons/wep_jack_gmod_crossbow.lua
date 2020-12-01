@@ -53,8 +53,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 9 -- accuracy in Minutes of Angle. There are 60 MOA in a degree. No shit, sherlock
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Arrow" -- become an penis
 

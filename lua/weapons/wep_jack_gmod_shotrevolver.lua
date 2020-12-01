@@ -26,6 +26,8 @@ SWEP.Range = 50 -- in METERS
 SWEP.DamageType = DMG_BUCKSHOT
 SWEP.Penetration = 15
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
@@ -47,8 +49,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 80 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Small Shotgun Round" -- what ammo type the gun uses
 

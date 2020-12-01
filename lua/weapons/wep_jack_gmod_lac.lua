@@ -39,8 +39,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 5 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Magnum Pistol Round" -- what ammo type the gun uses
 

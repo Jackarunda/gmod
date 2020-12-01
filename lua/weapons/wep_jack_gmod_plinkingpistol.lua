@@ -27,6 +27,8 @@ SWEP.DamageRand = .35
 SWEP.Range = 50 -- in METERS
 SWEP.Penetration = 10
 
+SWEP.HipDispersion = 1100
+
 SWEP.Primary.ClipSize = 10 -- DefaultClip is automatically set.
 
 SWEP.Recoil = .1
@@ -44,8 +46,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.HipDispersion = 600 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion = 200
 
 SWEP.Primary.Ammo = "Plinking Round" -- what ammo type the gun uses
 
@@ -116,7 +116,7 @@ SWEP.Animations = {
     },
     ["fire_empty"] = {
         Source = "dry",
-        Time = 0.5,
+        Time = 1,
         ShellEjectAt = 0,
     },
     ["reload"] = {

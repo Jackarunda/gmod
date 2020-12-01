@@ -19,7 +19,10 @@ SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
 SWEP.VisualRecoilMult = 1
-SWEP.RecoilSide = .5
+SWEP.RecoilSide = 1
+
+SWEP.HipDispersion = 800 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 300
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
 SWEP.Primary.DefaultClip = 0
