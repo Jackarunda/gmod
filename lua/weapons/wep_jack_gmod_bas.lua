@@ -96,7 +96,7 @@ SWEP.Animations = {
         Source = "Draw",
         Time = 2,
         SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=120}},
-		Mult=1,
+		Mult=.7,
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,

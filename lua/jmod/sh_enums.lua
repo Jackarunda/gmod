@@ -64,6 +64,9 @@ JMOD_EZ_STATE_WARNING	= 4
 -- link sentry power consumption to perf mult
 -- armordegredation mult doesnt work
 -- jmod hands on spawn qol
+-- blur need to use arccw blur
+-- capmmball holster
+-- 
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
     return true
