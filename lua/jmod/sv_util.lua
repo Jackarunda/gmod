@@ -552,9 +552,8 @@ function JMod_ShouldAllowControl(self, ply)
 	if (ply == self.Owner) then return true end
 	local Allies = self.Owner.JModFriends or {}
 	if (table.HasValue(Allies, ply)) then return true end
-	if (engine.ActiveGamemode() == "sandbox") then return false end
 
-	return ply:Team() == self.Owner:Team()
+	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
 function JMod_ShouldAttack(self, ent, vehiclesOnly)
@@ -602,7 +601,7 @@ function JMod_ShouldAttack(self, ent, vehiclesOnly)
 			end
 		end
 
-		if (Gaymode == "sandbox") then return PlayerToCheck:Alive() end
+		if (Gaymode == "sandbox") then return OurTeam ~= TEAM_UNASSIGNED and PlayerToCheck:Team() ~= OurTeam and PlayerToCheck:Alive() end
 		if (OurTeam) then return PlayerToCheck:Alive() and PlayerToCheck:Team() ~= OurTeam end
 
 		return PlayerToCheck:Alive()
@@ -629,7 +628,7 @@ end
 
 function JMod_Colorify(ent)
 	if (IsValid(ent.Owner)) then
-		if (engine.ActiveGamemode() == "sandbox") then
+		if (engine.ActiveGamemode() == "sandbox" and ent.Owner:Team() == TEAM_UNASSIGNED) then
 			local Col = ent.Owner:GetPlayerColor()
 			ent:SetColor(Color(Col.x * 255, Col.y * 255, Col.z * 255))
 		else
