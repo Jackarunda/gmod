@@ -596,12 +596,12 @@ function JMod_ShouldAttack(self, ent, vehiclesOnly)
 
 		if (IsValid(self.Owner)) then
 			OurTeam = self.Owner:Team()
-			if((Gaymode == "basewars")and(self.Owner.IsAlly))then
+			if Gaymode == "basewars" and self.Owner.IsAlly then
 				return not self.Owner:IsAlly(PlayerToCheck)
 			end
 		end
 
-		if (Gaymode == "sandbox") then return OurTeam ~= TEAM_UNASSIGNED and PlayerToCheck:Team() ~= OurTeam and PlayerToCheck:Alive() end
+		if (Gaymode == "sandbox" and OurTeam == TEAM_UNASSIGNED) then return PlayerToCheck:Alive() end
 		if (OurTeam) then return PlayerToCheck:Alive() and PlayerToCheck:Team() ~= OurTeam end
 
 		return PlayerToCheck:Alive()
