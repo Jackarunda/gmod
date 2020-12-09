@@ -376,8 +376,10 @@ function JMod_InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezfragnade",10}
 				},
 				["gas grenades"]={
-					{"ent_jack_gmod_ezgasnade",6},
-					{"ent_jack_gmod_ezcsnade",4}
+					{"ent_jack_gmod_ezgasnade",6}
+				},
+				["tear gas grenades"]={
+					{"ent_jack_gmod_ezcsnade",6}
 				},
 				["impact grenades"]={
 					{"ent_jack_gmod_ezimpactnade",10}
