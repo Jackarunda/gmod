@@ -19,11 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 30
-SWEP.DamageMin = 10 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 75 -- in METERS
-SWEP.Penetration = 10
+JMod_ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",.33)
 
 SWEP.HipDispersion = 1100
 
@@ -34,7 +30,6 @@ SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 60 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
@@ -46,8 +41,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-
-SWEP.Primary.Ammo = "Black Powder Paper Cartridge" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.wav"

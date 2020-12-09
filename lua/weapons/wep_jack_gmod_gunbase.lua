@@ -18,8 +18,12 @@ SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = 1
 
+SWEP.DamageRand = .35
+SWEP.BlastRadiusRand = .1
+SWEP.Num = 1
+
 SWEP.VisualRecoilMult = 1
-SWEP.RecoilSide = 1
+SWEP.RecoilSide = .5
 
 SWEP.HipDispersion = 800 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 300
@@ -282,24 +286,6 @@ end
 function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
-local ToyTownAmt=0
-hook.Add("RenderScreenspaceEffects","JMod_WeaponScreenEffects",function()
-	if not(GetConVar("jmod_weapon_blur"):GetBool())then return end
-	local ArcticsShit=GetConVar("arccw_blur_toytown")
-	if(ArcticsShit and ArcticsShit:GetBool())then return end
-	local ply,FT=LocalPlayer(),FrameTime()
-	if not(ply:ShouldDrawLocalPlayer())then
-		local Wep=ply:GetActiveWeapon()
-		if((IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
-			ToyTownAmt=Lerp(FT*5,ToyTownAmt,.99)
-		else
-			ToyTownAmt=Lerp(FT*7,ToyTownAmt,0)
-		end
-		if(ToyTownAmt>.01)then
-			DrawToyTown(10*ToyTownAmt,ScrH()/2*ToyTownAmt)
-		end
-	end
-end)
 function SWEP:OnDrop()
 	local Specs=JMod_WeaponTable[self.PrintName]
 	if(Specs)then

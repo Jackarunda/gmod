@@ -14,11 +14,7 @@ SWEP.BodyHolsterPos = Vector(2.5,-10,-9)
 SWEP.BodyHolsterPosL = Vector(3.5,-10,9)
 SWEP.BodyHolsterScale = 1
 
-SWEP.Damage = 120
-SWEP.DamageMin = 25 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 400 -- in METERS
-SWEP.Penetration = 85
+JMod_ApplyAmmoSpecs(SWEP,"Magnum Rifle Round")
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
@@ -28,7 +24,6 @@ SWEP.VisualRecoilMult = 1.5
 SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
 
 SWEP.Delay = 60 / 30 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         PrintName = "BOLT-ACTION",

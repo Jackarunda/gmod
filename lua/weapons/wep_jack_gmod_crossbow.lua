@@ -24,8 +24,7 @@ SWEP.BodyHolsterScale = .9
 			1	=	c_bo1_crossbow_exptip_bg.smd
 --]]
 
-SWEP.Damage = 40
-SWEP.DamageRand = .4
+JMod_ApplyAmmoSpecs(SWEP,"Arrow")
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
 SWEP.MuzzleVelocity = 7000
 SWEP.ShootEntityOffset = Vector(-1,0,-2)
@@ -41,7 +40,6 @@ SWEP.ChamberSize = 0
 SWEP.Recoil = .8
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
@@ -53,8 +51,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 9 -- accuracy in Minutes of Angle. There are 60 MOA in a degree. No shit, sherlock
-
-SWEP.Primary.Ammo = "Arrow" -- become an penis
 
 SWEP.FirstShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.wav","snds_jack_gmod/ez_weapons/crossbow/fire2.wav","snds_jack_gmod/ez_weapons/crossbow/fire3.wav"}
 SWEP.ShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.wav","snds_jack_gmod/ez_weapons/crossbow/fire2.wav","snds_jack_gmod/ez_weapons/crossbow/fire3.wav"}

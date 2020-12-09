@@ -14,11 +14,7 @@ SWEP.BodyHolsterPos = Vector(4,1,-5)
 SWEP.BodyHolsterPosL = Vector(5,1,5)
 SWEP.BodyHolsterScale = .85
 
-SWEP.Damage = 48 -- ahahahahahahaha
-SWEP.DamageMin = 10 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 150 -- in METERS
-SWEP.Penetration = 30
+JMod_ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",1.2)
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
@@ -27,7 +23,6 @@ SWEP.Recoil = 1.8
 SWEP.ShotgunReload = true
 
 SWEP.Delay = 60 / 60 -- 60 / RPM.
-SWEP.Num = 1 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,

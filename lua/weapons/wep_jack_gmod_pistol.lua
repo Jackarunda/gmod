@@ -19,11 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 24
-SWEP.DamageMin = 10 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 100 -- in METERS
-SWEP.Penetration = 20
+JMod_ApplyAmmoSpecs(SWEP,"Pistol Round")
 
 SWEP.HipDispersion = 1100
 
@@ -32,7 +28,6 @@ SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 SWEP.Recoil = .7
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,

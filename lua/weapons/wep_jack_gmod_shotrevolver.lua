@@ -19,12 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-SWEP.Damage = 10
-SWEP.DamageMin = 2 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 50 -- in METERS
-SWEP.DamageType = DMG_BUCKSHOT
-SWEP.Penetration = 15
+JMod_ApplyAmmoSpecs(SWEP,"Small Shotgun Round",.8)
 
 SWEP.HipDispersion = 1100
 
@@ -37,7 +32,6 @@ SWEP.VisualRecoilMult = 2
 SWEP.ShotgunReload = true
 
 SWEP.Delay = 60 / 180 -- 60 / RPM.
-SWEP.Num = 5 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,

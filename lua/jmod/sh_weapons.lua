@@ -249,15 +249,19 @@ JMod_AmmoTable={
 	["Light Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=6,
-		carrylimit=200
+		carrylimit=200,
+		basedmg=30,
+		effrange=100,
+		terminaldmg=10,
+		penetration=40
 	},
 	["Light Rifle Round - Armor Piercing"]={
 		armorpiercing=.2,
-		penetrationmult=1.5
+		penetration=70
 	},
 	["Light Rifle Round - Ballistic Tip"]={
-		expanding=.3,
-		penetrationmult=.8
+		expanding=.4,
+		penetration=30
 	},
 	["Light Rifle Round - Tracer"]={
 		tracer=true
@@ -265,66 +269,112 @@ JMod_AmmoTable={
 	["Medium Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=12,
-		carrylimit=100
+		carrylimit=100,
+		basedmg=50,
+		effrange=200,
+		terminaldmg=20,
+		penetration=70
 	},
 	["Heavy Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=24,
-		carrylimit=25
+		carrylimit=25,
+		basedmg=110,
+		effrange=300,
+		terminaldmg=30,
+		penetration=120
 	},
 	["Magnum Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=18,
-		carrylimit=50
+		carrylimit=50,
+		basedmg=80,
+		effrange=400,
+		terminaldmg=20,
+		penetration=90
 	},
 	["Shotgun Round"]={
 		resourcetype="ammo",
 		sizemult=14,
-		carrylimit=70
+		carrylimit=70,
+		basedmg=9,
+		effrange=50,
+		projnum=9,
+		terminaldmg=1,
+		penetration=10,
+		dmgtype=DMG_BUCKSHOT
 	},
 	["Pistol Round"]={
 		resourcetype="ammo",
 		sizemult=3,
-		carrylimit=300
+		carrylimit=300,
+		basedmg=15,
+		effrange=50,
+		terminaldmg=5,
+		penetration=20
 	},
 	["Plinking Round"]={
 		resourcetype="ammo",
 		sizemult=1,
-		carrylimit=600
+		carrylimit=600,
+		basedmg=9,
+		effrange=50,
+		terminaldmg=1,
+		penetration=10
 	},
 	["Magnum Pistol Round"]={
 		resourcetype="ammo",
 		sizemult=6,
-		carrylimit=150
+		carrylimit=150,
+		basedmg=25,
+		effrange=50,
+		terminaldmg=15,
+		penetration=20
 	},
 	["Small Shotgun Round"]={
 		resourcetype="ammo",
 		sizemult=6,
-		carrylimit=120
+		carrylimit=120,
+		basedmg=9,
+		effrange=50,
+		projnum=5,
+		terminaldmg=1,
+		penetration=10,
+		dmgtype=DMG_BUCKSHOT
 	},
 	["40mm Grenade"]={
 		resourcetype="munitions",
 		sizemult=30,
 		carrylimit=20,
 		ent="ent_jack_gmod_ezprojectilenade",
-		nicename="EZ 40mm Grenade"
+		nicename="EZ 40mm Grenade",
+		basedmg=110,
+		blastrad=160
 	},
 	["Mini Rocket"]={
 		resourcetype="munitions",
 		sizemult=60,
 		carrylimit=6,
 		ent="ent_jack_gmod_ezminirocket",
-		nicename="EZ Mini Rocket"
+		nicename="EZ Mini Rocket",
+		basedmg=160,
+		blastrad=200
 	},
 	["Arrow"]={
 		sizemult=24,
 		carrylimit=30,
 		ent="ent_jack_gmod_ezarrow",
-		armorpiercing=.3
+		armorpiercing=.3,
+		basedmg=40
 	},
 	["Black Powder Paper Cartridge"]={
 		sizemult=7,
-		carrylimit=100
+		carrylimit=100,
+		basedmg=70,
+		effrange=50,
+		terminaldmg=30,
+		penetration=30,
+		dmgtype=DMG_BUCKSHOT
 	}
 }
 for k,v in pairs(JMod_AmmoTable)do
@@ -340,6 +390,23 @@ function JMod_GetAmmoSpecs(typ)
 	if not(JMod_AmmoTable[typ])then return nil end
 	local Result,BaseType=table.FullCopy(JMod_AmmoTable[typ]),string.Split(typ," - ")[1]
 	return table.Inherit(Result,JMod_AmmoTable[BaseType])
+end
+function JMod_ApplyAmmoSpecs(wep,typ,mult)
+	mult=mult or 1
+	wep.Primary.Ammo=typ
+	local Specs=JMod_GetAmmoSpecs(typ)
+	wep.Damage=Specs.basedmg*mult
+	wep.Num=Specs.projnum or 1
+	if(Specs.effrange)then wep.Range=Specs.effrange end
+	if(Specs.terminaldmg)then wep.DamageMin=Specs.terminaldmg*mult end
+	if(Specs.penetration)then wep.Penetration=Specs.penetration end
+	if(Specs.blastrad)then wep.BlastRadius=Specs.blastrad end
+	if(Specs.dmgtype)then wep.DamageType=Specs.dmgtype end
+	-- todo: redo the trait reading implementation of this when we add these types
+	if(Specs.expanding)then wep.EZexpangingAmmo=Specs.expanding end
+	if(Specs.armorpiercing)then wep.EZarmorpiercingAmmo=Specs.armorpiercing end
+	-- todo: implement this when we add these types
+	if(Specs.tracer)then wep.Tracer=true else wep.Tracer=false end
 end
 for k,v in pairs({
 	"muzzleflash_g3",

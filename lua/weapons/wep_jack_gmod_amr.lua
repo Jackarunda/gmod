@@ -16,11 +16,7 @@ SWEP.BodyHolsterScale = .9
 
 SWEP.DefaultBodygroups = "01000"
 
-SWEP.Damage = 170
-SWEP.DamageMin = 50 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 600 -- in METERS
-SWEP.Penetration = 165
+JMod_ApplyAmmoSpecs(SWEP,"Heavy Rifle Round")
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
@@ -28,7 +24,6 @@ SWEP.Recoil = 3
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
@@ -40,8 +35,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-
-SWEP.Primary.Ammo = "Heavy Rifle Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/heavy_autoloader.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/heavy_autoloader.wav"

@@ -14,18 +14,13 @@ SWEP.BodyHolsterPos = Vector(5.5,-3,-3)
 SWEP.BodyHolsterPosL = Vector(1,-6,3)
 SWEP.BodyHolsterScale = .9
 
-SWEP.Damage = 90
-SWEP.DamageMin = 20 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 200 -- in METERS
-SWEP.Penetration = 10
+JMod_ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 3
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
 	{
 		Mode = 1,

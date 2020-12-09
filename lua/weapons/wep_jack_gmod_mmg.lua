@@ -25,11 +25,7 @@ SWEP.BodyHolsterScale = .8
 				1	=	
 --]]
 
-SWEP.Damage = 65
-SWEP.DamageMin = 15 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 300 -- in METERS
-SWEP.Penetration = 55
+JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round")
 
 SWEP.Primary.ClipSize = 100 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
@@ -37,7 +33,6 @@ SWEP.ChamberSize = 0 -- open-bolt firearm lol
 SWEP.Recoil = .8 -- hevy gun
 
 SWEP.Delay = 60 / 550 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 2,

@@ -14,12 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-16,-10)
 SWEP.BodyHolsterPosL = Vector(-1,-15,12)
 SWEP.BodyHolsterScale = 1
 
-SWEP.Damage = 10
-SWEP.DamageMin = 2 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 75 -- in METERS
-SWEP.DamageType = DMG_BUCKSHOT
-SWEP.Penetration = 5
+JMod_ApplyAmmoSpecs(SWEP,"Shotgun Round",.8)
 SWEP.DoorBreachPower = .2
 
 SWEP.Primary.ClipSize = 12 -- DefaultClip is automatically set.
@@ -29,7 +24,6 @@ SWEP.Recoil = 2.8
 SWEP.VisualRecoilMult = 1.5
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
-SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 2,

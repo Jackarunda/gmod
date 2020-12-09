@@ -15,19 +15,14 @@ SWEP.BodyHolsterPos = Vector(1,-11,-11)
 SWEP.BodyHolsterPosL = Vector(.5,-11,11)
 SWEP.BodyHolsterScale = .8
 
-SWEP.Damage = 45
-SWEP.DamageMin = 5 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 200 -- in METERS
-SWEP.Penetration = 35
+JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round",.9)
 
-SWEP.Primary.ClipSize = 200 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize = 150 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
 SWEP.Recoil = .45
 
 SWEP.Delay = 60 / 750 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 2,

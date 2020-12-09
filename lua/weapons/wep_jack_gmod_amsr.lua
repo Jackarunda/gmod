@@ -16,11 +16,7 @@ SWEP.BodyHolsterScale = 1
 
 SWEP.DefaultBodygroups = "01000"
 
-SWEP.Damage = 190
-SWEP.DamageMin = 50 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 600 -- in METERS
-SWEP.Penetration = 165
+JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round",1.1)
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 
@@ -31,7 +27,6 @@ SWEP.BipodRecoil = 1
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
 
 SWEP.Delay = 60 / 24 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         PrintName = "BOLT-ACTION",
@@ -43,8 +38,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
-
-SWEP.Primary.Ammo = "Heavy Rifle Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"

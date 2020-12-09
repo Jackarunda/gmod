@@ -16,18 +16,13 @@ SWEP.BodyHolsterScale = .95
 
 SWEP.DefaultBodygroups = "01000"
 
-SWEP.Damage = 78
-SWEP.DamageMin = 15 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 350 -- in METERS
-SWEP.Penetration = 55
+JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round")
 
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
 SWEP.Recoil = 1.5
 
 SWEP.Delay = 60 / 550 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
@@ -39,8 +34,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-
-SWEP.Primary.Ammo = "Medium Rifle Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"

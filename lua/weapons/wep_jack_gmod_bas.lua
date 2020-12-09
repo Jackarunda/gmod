@@ -14,13 +14,7 @@ SWEP.BodyHolsterPos = Vector(2,-11,-9)
 SWEP.BodyHolsterPosL = Vector(1,-11,10)
 SWEP.BodyHolsterScale = 1
 
-SWEP.Damage = 13
-SWEP.DamageMin = 2 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 75 -- in METERS
-SWEP.DamageType = DMG_BUCKSHOT
-SWEP.Penetration = 5
-SWEP.DoorBreachPower = .2
+JMod_ApplyAmmoSpecs(SWEP,"Shotgun Round",1.2)
 
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
@@ -29,7 +23,6 @@ SWEP.Recoil = 3
 SWEP.VisualRecoilMult=1.5
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.
-SWEP.Num = 9 -- number of projectiles per shot
 SWEP.Firemodes = {
     {
         Mode = 1,
@@ -41,8 +34,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 20 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-
-SWEP.Primary.Ammo = "Shotgun Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/shotgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/shotgun.wav"

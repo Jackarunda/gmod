@@ -66,7 +66,18 @@ JMOD_EZ_STATE_WARNING	= 4
 -- jmod hands on spawn qol
 -- blur need to use arccw blur
 -- capmmball holster
--- 
+-- simphys leaves the planet
+-- MG unsprint times
+-- AMSR unsprint time
+-- rebalance damages/penetration/range
+-- config to blacklist weapons for ammo boxes
+--[[
+[JMod] lua/jmod/sv_hint.lua:3: Tried to use a NULL entity!
+1. __newindex - [C]:-1
+2. JMod_Hint - lua/jmod/sv_hint.lua:3
+3. unknown - lua/entities/ent_jack_gmod_ezweapon.lua:78
+Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
+--]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
     return true

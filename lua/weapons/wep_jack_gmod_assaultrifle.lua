@@ -15,18 +15,13 @@ SWEP.BodyHolsterPos = Vector(2,-11,-11)
 SWEP.BodyHolsterPosL = Vector(1,-11,11)
 SWEP.BodyHolsterScale = .825
 
-SWEP.Damage = 48
-SWEP.DamageMin = 5 -- damage done at maximum range
-SWEP.DamageRand = .35
-SWEP.Range = 200 -- in METERS
-SWEP.Penetration = 35
+JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round")
 
 SWEP.Primary.ClipSize = 30 -- DefaultClip is automatically set.
 
 SWEP.Recoil = .5
 
 SWEP.Delay = 60 / 750 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 2,
@@ -42,8 +37,6 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-
-SWEP.Primary.Ammo = "Light Rifle Round" -- what ammo type the gun uses
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/light_rifle.wav"

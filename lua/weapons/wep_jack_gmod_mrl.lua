@@ -14,10 +14,8 @@ SWEP.BodyHolsterPos = Vector(5.5,-15,-13)
 SWEP.BodyHolsterPosL = Vector(-2.25,-15,14)
 SWEP.BodyHolsterScale = .8
 
-SWEP.Damage = 200
-SWEP.BlastRadius = 170
+JMod_ApplyAmmoSpecs(SWEP,"Mini Rocket",.9)
 SWEP.DamageRand = .1
-SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezminirocket"
 SWEP.MuzzleVelocity = 9000
 SWEP.ShootEntityAngle = Angle(0,-90,0)
@@ -31,7 +29,6 @@ SWEP.ChamberSize = 0 -- sigh arctic
 SWEP.Recoil = 1
 
 SWEP.Delay = 60 / 120 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,

@@ -14,10 +14,8 @@ SWEP.BodyHolsterPos = Vector(1,-14,-11)
 SWEP.BodyHolsterPosL = Vector(-2.5,-15,11)
 SWEP.BodyHolsterScale = .9
 
-SWEP.Damage = 160
-SWEP.BlastRadius = 160
+JMod_ApplyAmmoSpecs(SWEP,"40mm Grenade")
 SWEP.DamageRand = .1
-SWEP.BlastRadiusRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezprojectilenade"
 SWEP.MuzzleVelocity = 3000
 
@@ -26,7 +24,6 @@ SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 SWEP.Recoil = 3
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
-SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemodes = {
     {
         Mode = 1,
