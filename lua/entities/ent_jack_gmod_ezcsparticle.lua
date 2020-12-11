@@ -87,6 +87,7 @@ if(SERVER)then
 								net.Start("JMod_VisionBlur")
 								net.WriteFloat(5 * math.Clamp(1 - prot, 0, 1))
 								net.Send(obj)
+								JMod_Hint(obj, "tear gas")
 							elseif obj:IsNPC() then
 								obj.EZNPCincapacitate = Time + math.Rand(2,5)
 							end
@@ -106,7 +107,6 @@ if(SERVER)then
 							end
 
 						end
-						if IsPlaya then JMod_Hint(obj, "tear gas") end
 					end
 				elseif (obj.EZgasParticle and (distanceBetween < 250*250))then -- Push Gas
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
