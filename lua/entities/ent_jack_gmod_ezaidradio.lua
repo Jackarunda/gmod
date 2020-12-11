@@ -192,7 +192,8 @@ if(SERVER)then
 		self:ConsumeElectricity()
 		if(parrot)then
 			for _, ply in pairs(player.GetAll()) do
-				if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+						or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 					net.Start("JMod_EZradio")
 						net.WriteBool(true)
 						net.WriteBool(true)
@@ -213,7 +214,8 @@ if(SERVER)then
 		timer.Simple(.5,function()
 			if(IsValid(self))then
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+							or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 						net.Start("JMod_EZradio")
 							net.WriteBool(true)
 							net.WriteBool(false)
@@ -323,7 +325,7 @@ if(SERVER)then
 		if((self.Owner)and(ply==self.Owner))then return true end
 		local Allies=(self.Owner and self.Owner.JModFriends)or {}
 		if(table.HasValue(Allies,ply))then return true end
-		if(engine.ActiveGamemode()~="sandbox")then
+		if !(engine.ActiveGamemode() == "sandbox" && ply:Team() == TEAM_UNASSIGNED) then
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
 			return (OurTeam and ply:Team()==OurTeam) or false

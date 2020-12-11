@@ -129,6 +129,16 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 				data.chrg.power=math.Clamp(data.chrg.power-SubtractAmt,0,9e9)
 			end
 		end
+		local bestradio = nil
+		for _, v in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
+			if v:UserIsAuthorized(ply) and
+					(!bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
+				bestradio = v
+			end
+		end
+		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then
+			return ""
+		end
 	end
 end)
 
