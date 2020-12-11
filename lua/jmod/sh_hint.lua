@@ -88,7 +88,8 @@ JMod_Hints = {
 	
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
-	["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid menu"},
+	["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid headset"},
+	["aid headset"] = {Type = "info", Text = "You must be nearby to use, unless connecting with a headset", Followup = "aid menu"},
 	["aid sky"] = {Type = "warn", Text = "Aid Radio needs to see sky to function"},
 	["aid package"] = {Type = "info", Text = "Type in chat 'supply radio: <package>' to request item"},
 	["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time", Time = 5},
