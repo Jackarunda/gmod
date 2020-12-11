@@ -163,7 +163,11 @@ if(SERVER)then
 				if Alt and State == STATE_READY then
 					net.Start("JMod_EZradio")
 						net.WriteBool(false)
-						net.WriteTable(JMOD_CONFIG.RadioSpecs.AvailablePackages)
+						--net.WriteTable()
+						net.WriteUInt(table.Count(JMOD_CONFIG.RadioSpecs.AvailablePackages), 8)
+						for k, v in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
+							net.WriteString(k)
+						end
 						net.WriteEntity(self)
 						net.WriteString(JMod_EZradioStatus(self,self:GetStationID(),activator,false))
 					net.Send(activator)
