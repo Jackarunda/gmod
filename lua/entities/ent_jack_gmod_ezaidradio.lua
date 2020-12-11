@@ -203,11 +203,11 @@ if(SERVER)then
 				end
 			end
 		end
-		local MsgLength,Path=string.len(msg),"/npc/combine_soldier/vo/"
+		local MsgLength=string.len(msg)
 		for i=1,math.Round(MsgLength/15) do
 			timer.Simple(i*.75,function()
 				if((IsValid(self))and(self:GetState()>0))then
-					self:EmitSound(Path..self.Voices[math.random(1,#self.Voices)],65,120)
+					self:EmitSound("/npc/combine_soldier/vo/" .. self.Voices[math.random(1,#self.Voices)],65,120)
 				end
 			end)
 		end
@@ -242,7 +242,7 @@ if(SERVER)then
 	function ENT:Connect(ply)
 		-- station key is important because it defines who has access to what and provides rate-limiting on requests
 		local StationKey=math.random(1,999999)
-		if(engine.ActiveGamemode()=="sandbox")then
+		if(engine.ActiveGamemode()=="sandbox" and ply:Team() == TEAM_UNASSIGNED)then
 			local ID=ply:AccountID()
 			if(ID)then StationKey=ID end
 		else
@@ -459,6 +459,8 @@ elseif(CLIENT)then
 		self.LeftHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
+		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+		self.Voices=Files
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)

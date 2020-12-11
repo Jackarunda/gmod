@@ -132,7 +132,7 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 		local bestradio = nil
 		for _, v in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
 			if v:UserIsAuthorized(ply) and
-					(!bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
+					(not bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
 				bestradio = v
 			end
 		end
@@ -180,9 +180,9 @@ local function GetTimeString(seconds)
 	return Result
 end
 
-local function StartDelivery(pkg,transceiver,station,bff)
+local function StartDelivery(pkg,transceiver,station,bff,ply)
 	local Time=CurTime()
-	local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+	local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),ply:GetPos()
 	
 	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, time, pos)
 	DeliveryTime = newTime or DeliveryTime
@@ -196,7 +196,7 @@ local function StartDelivery(pkg,transceiver,station,bff)
 	station.notified=false
 	station.nextNotifyTime=Time+(DeliveryTime-5)
 	if(bff)then return "ayo GOOD COPY homie, we sendin "..GetArticle(pkg).." "..pkg.." box right over to "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z).." in prolly like "..DeliveryTime.." seconds" end
-	return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
+	return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x)..", "..math.Round(Pos.z).."; ETA "..DeliveryTime.." seconds"
 end
 
 function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
@@ -223,7 +223,7 @@ function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 			if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then return "negative on that request, neither we nor regional HQ have any of that at this time" end
 			if(table.HasValue(Station.restrictedPackageStock,pkg))then
 				table.RemoveByValue(Station.restrictedPackageStock,pkg)
-				return StartDelivery(pkg,transceiver,Station,bff)
+				return StartDelivery(pkg,transceiver,Station,bff,ply)
 			else
 				if(Station.restrictedPackageDelivering)then
 					return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
@@ -235,7 +235,7 @@ function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 				end
 			end
 		else
-			return StartDelivery(pkg,transceiver,Station,bff)
+			return StartDelivery(pkg,transceiver,Station,bff,ply)
 		end
 	end
 end

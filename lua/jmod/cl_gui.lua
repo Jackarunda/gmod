@@ -650,6 +650,18 @@ net.Receive("JMod_EZradio",function()
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
 		if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
 		chat.AddText(unpack(tbl))
+
+		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
+			local radiovoices = file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+			for i=1, math.Round(string.len(msg)/15) do
+				timer.Simple(i*.75,function()
+					if((IsValid(radio))and(radio	:GetState()>0))then
+						LocalPlayer():EmitSound("/npc/combine_soldier/vo/" .. radiovoices[math.random(1,#radiovoices)],65,120,0.25)
+					end
+				end)
+			end
+		end
+
 		return
 	end
 
