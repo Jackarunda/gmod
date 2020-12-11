@@ -711,10 +711,11 @@ JMod_ArmorTable = {
 	}
 }
 
-hook.Add("InitPostEntity","JMod_InitPostEntity",function()
 	-- support third-party additions to the jmod armor table
-	if(JMod_AdditionalArmorTable)then table.Merge(JMod_ArmorTable,JMod_AdditionalArmorTable) end
-end)
+local function LoadAdditionalArmor()
+	if JMod_AdditionalArmorTable then table.Merge(JMod_ArmorTable, JMod_AdditionalArmorTable) end
+end
+hook.Add("InitPostEntity","JMod_LoadAdditionalArmor", LoadAdditionalArmor)
 
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
@@ -727,3 +728,4 @@ end)
 for _, ply in pairs(player.GetAll()) do
 	ply.NextEZarmorTableCopy = 0
 end
+LoadAdditionalArmor()

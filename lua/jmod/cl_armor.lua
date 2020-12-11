@@ -53,6 +53,9 @@ function JMod_ArmorPlayerModelDraw(mdl)
 									Mdl:SetBodygroup(k,v)
 								end
 							end
+							if ArmorInfo.skin then
+								Mdl:SetSkin(ArmorInfo.skin)
+							end
 							Mdl:DrawModel()
 							render.SetColorModulation(OldR,OldG,OldB)
 						end
