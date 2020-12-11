@@ -92,9 +92,7 @@ if(SERVER)then
 								obj.EZNPCincapacitate = Time + math.Rand(2,5)
 							end
 
-							if RespiratorMultiplier >= 1 then
-								JMod_TryCough(obj)
-							end
+							JMod_TryCough(obj)
 
 							if math.random(1,20) == 1 then
 								local Dmg,Helf=DamageInfo(),obj:Health()
