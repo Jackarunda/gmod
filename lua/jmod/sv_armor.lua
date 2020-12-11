@@ -35,20 +35,20 @@ function JModEZarmorSync(ply)
 				end
 			end
 		end
-		
-		local DeadBattery=item.chrg and item.chrg.power and item.chrg.power <= 0
 
-		if ArmorInfo.eff and not DeadBattery then
+		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
+
+		if ArmorInfo.eff and not dead then
 			for effName, effMag in pairs(ArmorInfo.eff) do
-				if (type(effMag) == "number") then
-					ply.EZarmor.effects[effName] = (ply.EZarmor.effects or 0) + effMag
+				if (isnumber(effMag)) then
+					ply.EZarmor.effects[effName] = (ply.EZarmor.effects[effName] or 0) + effMag
 				else
 					ply.EZarmor.effects[effName] = effMag
 				end
 			end
 		end
-		
-		if((ArmorInfo.blackvisionwhendead)and(DeadBattery))then
+
+		if ArmorInfo.blackvisionwhendead and dead then
 			ply.EZarmor.blackvision = true
 			JMod_Hint(ply,"vision dead")
 		end

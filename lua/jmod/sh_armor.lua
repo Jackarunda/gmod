@@ -132,6 +132,9 @@ JMod_ArmorTable = {
 		chrg = {
 			chemicals = 25
 		},
+		eff = {
+			csprot = 1
+		},
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
 		pos = Vector(0, .1, 0),
@@ -143,6 +146,7 @@ JMod_ArmorTable = {
 		tgl = {
 			pos = Vector(3, 3, 0),
 			ang = Angle(190, 180, 90),
+			eff = {},
 			mskmat = "",
 			sndlop = "",
 			def = NonArmorProtectionProfile,
@@ -259,12 +263,16 @@ JMod_ArmorTable = {
 		chrg = {
 			chemicals = 10
 		},
+		eff = {
+			csprot = 0.5
+		},
 		wgt = 5,
 		dur = 2,
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_respirator",
 		tgl = {
 			def = NonArmorProtectionProfile,
+			eff = {},
 			slots = {
 				mouthnose = 0
 			},
