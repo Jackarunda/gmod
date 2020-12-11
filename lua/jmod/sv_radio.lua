@@ -220,18 +220,32 @@ function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 		return "negative on that request, the delivery team isn't currently on station"
 	elseif(Station.state==EZ_STATION_STATE_READY)then
 		if(table.HasValue(JMOD_CONFIG.RadioSpecs.RestrictedPackages,pkg))then
-			if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then return "negative on that request, neither we nor regional HQ have any of that at this time" end
+			if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then
+				if bff then
+					return "can't do that fam, HQ is dry and so are we"
+				else
+					return "negative on that request, neither we nor regional HQ have any of that at this time"
+				end
+			end
 			if(table.HasValue(Station.restrictedPackageStock,pkg))then
 				table.RemoveByValue(Station.restrictedPackageStock,pkg)
 				return StartDelivery(pkg,transceiver,Station,bff,ply)
 			else
 				if(Station.restrictedPackageDelivering)then
-					return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
+					if bff then
+						return "bro, HQ is busy with another special shipment, you gotta wait some more"
+					else
+						return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
+					end
 				else
 					Station.restrictedPackageDelivering=pkg
 					local DeliveryTime=JMOD_CONFIG.RadioSpecs.RestrictedPackageShipTime*math.Rand(.8,1.2)
 					Station.restrictedPackageDeliveryTime=Time+DeliveryTime
-					return "roger, we don't have any of that in stock but we've ordered it from regional HQ, it'll be at this outpost in "..GetTimeString(DeliveryTime)
+					if bff then
+						return "homie, we gon get you that special delivery straight from HQ. give us "..GetTimeString(DeliveryTime).." yea?"
+					else
+						return "roger, we don't have any of that in stock but we've ordered it from regional HQ, it'll be at this outpost in "..GetTimeString(DeliveryTime)
+					end
 				end
 			end
 		else
