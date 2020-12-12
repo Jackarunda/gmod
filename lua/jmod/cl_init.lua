@@ -309,14 +309,12 @@ local function IsWHOT(ent)
 		if((ent.Health)and(ent:Health()>0))then return true end
 	elseif(ent:IsRagdoll())then
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
-		return ent.EZWHOTcoldTime>Time
 	elseif(ent:IsVehicle() or (simfphys and simfphys.IsCar(ent)))then
 		-- HL2/Simfphys vehicles
 		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length()>=200 then
 			ent.EZWHOTcoldTime=Time+math.Clamp(ent:GetVelocity():Length()/20,10,40)
 		end
 		if LocalPlayer() == ent:GetDriver() then return false end
-		return (ent.EZWHOTcoldTime or 0)>Time
 	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "lunasflightschool_basescript") then
 		-- LFS planes
 		-- Helicopter rotors will look ugly but eh
@@ -325,15 +323,19 @@ local function IsWHOT(ent)
 		end
 		-- Don't highlight the plane the player is in. Otherwise their view will be pure white
 		if LocalPlayer():lfsGetPlane() == ent then return false end
-		return (ent.EZWHOTcoldTime or 0)>Time
 	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "gred_emp_base") then
 		-- Gredwich Emplacements
 		if ent:GetIsReloading() or ent.NextShot > Time then
 			ent.EZWHOTcoldTime=Time+30
 		end
-		return (ent.EZWHOTcoldTime or 0)>Time
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "dronesrewrite_base") then
+		-- Drones Rewrite
+		if ent:IsDroneEnabled() then
+			ent.EZWHOTcoldTime=Time+30
+		end
+
 	end
-	return false
+	return (ent.EZWHOTcoldTime or 0)>Time
 end
 
 local thermalmodify = {
