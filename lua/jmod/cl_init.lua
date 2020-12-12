@@ -302,17 +302,16 @@ end
 
 local WHOTents,NextWHOTcheck={},0
 local function IsWHOT(ent)
+	local Time=CurTime()
 	if(ent:IsWorld())then return false end
 	if((ent:IsPlayer())or(ent:IsOnFire()))then return true end
 	if(ent:IsNPC())then
 		if((ent.Health)and(ent:Health()>0))then return true end
 	elseif(ent:IsRagdoll())then
-		local Time=CurTime()
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
 		return ent.EZWHOTcoldTime>Time
 	elseif(ent:IsVehicle() or (simfphys and simfphys.IsCar(ent)))then
 		-- HL2/Simfphys vehicles
-		local Time=CurTime()
 		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length()>=200 then
 			ent.EZWHOTcoldTime=Time+math.Clamp(ent:GetVelocity():Length()/20,10,40)
 		end
@@ -321,12 +320,17 @@ local function IsWHOT(ent)
 	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "lunasflightschool_basescript") then
 		-- LFS planes
 		-- Helicopter rotors will look ugly but eh
-		local Time=CurTime()
 		if ent:GetEngineActive() then
 			ent.EZWHOTcoldTime=Time+30
 		end
 		-- Don't highlight the plane the player is in. Otherwise their view will be pure white
 		if LocalPlayer():lfsGetPlane() == ent then return false end
+		return (ent.EZWHOTcoldTime or 0)>Time
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "gred_emp_base") then
+		-- Gredwich Emplacements
+		if ent:GetIsReloading() or ent:GetIsShooting() then
+			ent.EZWHOTcoldTime=Time+30
+		end
 		return (ent.EZWHOTcoldTime or 0)>Time
 	end
 	return false
