@@ -210,6 +210,7 @@ local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
 	[ "$vertexalpha" ]	= "1",
 })
 local GlowSprite,KnownSLAMs,NextSlamScan=Material("sprites/mat_jack_basicglow"),{},0
+local ThermalGlowMat=Material("models/debug/debugwhite")
 hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function()
 	local Time=CurTime()
 	if(Time>NextSlamScan)then
@@ -310,7 +311,11 @@ local function IsWHOT(ent)
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
 		return ent.EZWHOTcoldTime>Time
 	elseif(ent:IsVehicle())then
-		return ent:GetVelocity():Length()>=400
+		local Time=CurTime()
+		if ent:GetVelocity():Length()>=200 then
+			ent.EZWHOTcoldTime=Time+30
+		end
+		return (ent.EZWHOTcoldTime or 0)>Time
 	end
 	return false
 end
