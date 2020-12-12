@@ -97,5 +97,7 @@ end)
 net.Receive("JMod_EZarmorSync",function()
 	local ply=net.ReadEntity()
 	ply.EZarmor=net.ReadTable()
-	ply.EZarmorboneedited = false
+	timer.Simple(1, function()
+		ply.EZarmorboneedited = false
+	end)
 end)
