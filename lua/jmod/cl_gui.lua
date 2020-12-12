@@ -655,7 +655,7 @@ net.Receive("JMod_EZradio",function()
 			local radiovoices = file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
 			for i=1, math.Round(string.len(msg)/15) do
 				timer.Simple(i*.75,function()
-					if((IsValid(radio))and(radio	:GetState()>0))then
+					if((IsValid(radio))and(radio:GetState()>0))then
 						LocalPlayer():EmitSound("/npc/combine_soldier/vo/" .. radiovoices[math.random(1,#radiovoices)],65,120,0.25)
 					end
 				end)
