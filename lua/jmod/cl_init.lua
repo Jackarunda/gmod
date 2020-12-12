@@ -328,7 +328,7 @@ local function IsWHOT(ent)
 		return (ent.EZWHOTcoldTime or 0)>Time
 	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "gred_emp_base") then
 		-- Gredwich Emplacements
-		if ent:GetIsReloading() or ent:GetIsShooting() then
+		if ent:GetIsReloading() or ent.NextShot > Time then
 			ent.EZWHOTcoldTime=Time+30
 		end
 		return (ent.EZWHOTcoldTime or 0)>Time
