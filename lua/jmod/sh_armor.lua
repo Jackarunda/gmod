@@ -119,6 +119,7 @@ local NonArmorProtectionProfile = {
 
 JMod_ArmorTable = {
 	["GasMask"] = {
+		PrintName = "Gas Mask",
 		mdl = "models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
 		slots = {
 			eyes = 1,
@@ -132,6 +133,9 @@ JMod_ArmorTable = {
 		chrg = {
 			chemicals = 25
 		},
+		eff = {
+			csprot = 1
+		},
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
 		pos = Vector(0, .1, 0),
@@ -143,6 +147,7 @@ JMod_ArmorTable = {
 		tgl = {
 			pos = Vector(3, 3, 0),
 			ang = Angle(190, 180, 90),
+			eff = {},
 			mskmat = "",
 			sndlop = "",
 			def = NonArmorProtectionProfile,
@@ -153,6 +158,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["BallisticMask"] = {
+		PrintName = "Ballistic Mask",
 		mdl = "models/jmod/ballistic_mask.mdl", -- csgo misc
 		slots = {
 			eyes = 1,
@@ -178,6 +184,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["NightVisionGoggles"] = {
+		PrintName = "Goggles - Night Vision",
 		mdl = "models/nvg.mdl", -- scp something
 		slots = {
 			eyes = 1
@@ -185,6 +192,7 @@ JMod_ArmorTable = {
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
+		entsiz = 1.5,
 		pos = Vector(6.5, 2, 0),
 		ang = Angle(-100, 0, 90),
 		wgt = 5,
@@ -211,6 +219,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["ThermalGoggles"] = {
+		PrintName = "Goggles - Thermal",
 		mdl = "models/nvg.mdl", -- scp something
 		slots = {
 			eyes = 1
@@ -218,6 +227,7 @@ JMod_ArmorTable = {
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
+		entsiz = 1.5,
 		pos = Vector(6.5, 2, 0),
 		ang = Angle(-100, 0, 90),
 		wgt = 5,
@@ -244,6 +254,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Respirator"] = {
+		PrintName = "Respirator",
 		mdl = "models/jmod/respirator.mdl", -- MGSV
 		slots = {
 			mouthnose = 1
@@ -259,12 +270,16 @@ JMod_ArmorTable = {
 		chrg = {
 			chemicals = 10
 		},
+		eff = {
+			csprot = 0.5
+		},
 		wgt = 5,
 		dur = 2,
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_respirator",
 		tgl = {
 			def = NonArmorProtectionProfile,
+			eff = {},
 			slots = {
 				mouthnose = 0
 			},
@@ -274,6 +289,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Headset"] = {
+		PrintName = "Headset",
 		mdl = "models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
 		slots = {
 			ears = 1
@@ -302,6 +318,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Light-Helmet"] = {
+		PrintName = "Helmet - Light",
 		mdl = "models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
 		slots = {
 			head = .8
@@ -316,6 +333,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_lhead"
 	},
 	["Medium-Helmet"] = {
+		PrintName = "Helmet - Medium",
 		mdl = "models/player/helmet_ulach_black/ulach.mdl", -- tarkov
 		slots = {
 			head = .9
@@ -330,6 +348,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_mhead"
 	},
 	["Heavy-Helmet"] = {
+		PrintName = "Helmet - Heavy",
 		mdl = "models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
 		slots = {
 			head = 1
@@ -344,6 +363,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hhead"
 	},
 	["Riot-Helmet"] = {
+		PrintName = "Helmet - Riot",
 		mdl = "models/jmod/helmet_riot_heavy.mdl", -- csgo
 		slots = {
 			head = 0.8,
@@ -375,6 +395,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Heavy-Riot-Helmet"] = {
+		PrintName = "Helmet - Heavy Riot",
 		mdl = "models/jmod/helmet_riot.mdl",
 		slots = {
 			head = 0.9,
@@ -406,6 +427,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Ultra-Heavy-Helmet"] = {
+		PrintName = "Helmet - UltraHeavy",
 		mdl = "models/jmod/helmet_maska.mdl", -- tarkov
 		slots = {
 			head = 1,
@@ -437,6 +459,7 @@ JMod_ArmorTable = {
 		}
 	},
 	["Light-Vest"] = {
+		PrintName = "Vest - Light",
 		mdl = "models/player/armor_paca/paca.mdl", -- tarkov
 		slots = {
 			chest = .8,
@@ -453,6 +476,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Medium-Light-Vest"] = {
+		PrintName = "Vest - Medium-Light",
 		mdl = "models/player/armor_trooper/trooper.mdl", -- tarkov
 		slots = {
 			chest = .85,
@@ -469,6 +493,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Medium-Vest"] = {
+		PrintName = "Vest - Medium",
 		mdl = "models/player/armor_gjel/gjel.mdl", -- tarkov
 		slots = {
 			chest = .9,
@@ -485,6 +510,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Medium-Heavy-Vest"] = {
+		PrintName = "Vest - Medium-Heavy",
 		mdl = "models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
 		slots = {
 			chest = .95,
@@ -501,6 +527,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Heavy-Vest"] = {
+		PrintName = "Vest - Heavy",
 		mdl = "models/jmod/heavy_armor.mdl", -- csgo hydra
 		slots = {
 			chest = 1,
@@ -516,6 +543,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_htorso"
 	},
 	["Pelvis-Panel"] = {
+		PrintName = "Pelvis Panel",
 		mdl = "models/jmod/pelviscover.mdl", -- csgo misc
 		slots = {
 			pelvis = 1
@@ -530,6 +558,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_spelvis"
 	},
 	["Light-Left-Shoulder"] = {
+		PrintName = "Shoulder - Light (L)",
 		mdl = "models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
 		slots = {
 			leftshoulder = .8
@@ -544,6 +573,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_llshoulder"
 	},
 	["Heavy-Left-Shoulder"] = {
+		PrintName = "Shoulder - Heavy (L)",
 		mdl = "models/jmod/heavy_left_armor_pad.mdl", -- csgo hydra
 		slots = {
 			leftshoulder = 1
@@ -558,6 +588,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hlshoulder"
 	},
 	["Light-Right-Shoulder"] = {
+		PrintName = "Shoulder - Light (R)",
 		mdl = "models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
 		slots = {
 			rightshoulder = .8
@@ -572,6 +603,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_lrshoulder"
 	},
 	["Heavy-Right-Shoulder"] = {
+		PrintName = "Shoulder - Heavy (R)",
 		mdl = "models/jmod/heavy_right_armor_pad.mdl", -- csgo hydra
 		slots = {
 			rightshoulder = 1
@@ -586,6 +618,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hrshoulder"
 	},
 	["Left-Forearm"] = {
+		PrintName = "Forearm (L)",
 		mdl = "models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis
 		slots = {
 			leftforearm = .95
@@ -601,6 +634,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Right-Forearm"] = {
+		PrintName = "Forearm (R)",
 		mdl = "models/snowzgmod/payday2/armour/armourrforearm.mdl", -- aegis
 		slots = {
 			rightforearm = .95
@@ -616,6 +650,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Light-Left-Thigh"] = {
+		PrintName = "Thigh - Light (L)",
 		mdl = "models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
 		slots = {
 			leftthigh = .8
@@ -631,6 +666,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Heavy-Left-Thigh"] = {
+		PrintName = "Thigh - Heavy (L)",
 		mdl = "models/jmod/heavy_left_thigh_armor.mdl", -- csgo hydra
 		slots = {
 			leftthigh = 1
@@ -645,6 +681,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hlthigh"
 	},
 	["Light-Right-Thigh"] = {
+		PrintName = "Thigh - Light (L)",
 		mdl = "models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
 		slots = {
 			rightthigh = .8
@@ -660,6 +697,7 @@ JMod_ArmorTable = {
 		gayPhysics = true
 	},
 	["Heavy-Right-Thigh"] = {
+		PrintName = "Thigh - Heavy (R)",
 		mdl = "models/jmod/heavy_right_thigh_armor.mdl", -- csgo hydra
 		slots = {
 			rightthigh = 1
@@ -674,6 +712,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hrthigh"
 	},
 	["Left-Calf"] = {
+		PrintName = "Calf (L)",
 		mdl = "models/snowzgmod/payday2/armour/armourlcalf.mdl", -- aegis
 		slots = {
 			leftcalf = .95
@@ -688,6 +727,7 @@ JMod_ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_slcalf"
 	},
 	["Right-Calf"] = {
+		PrintName = "Calf (R)",
 		mdl = "models/snowzgmod/payday2/armour/armourrcalf.mdl", -- aegis
 		slots = {
 			rightcalf = .95
@@ -703,10 +743,31 @@ JMod_ArmorTable = {
 	}
 }
 
-hook.Add("InitPostEntity","JMod_InitPostEntity",function()
-	-- support third-party additions to the jmod armor table
-	if(JMod_AdditionalArmorTable)then table.Merge(JMod_ArmorTable,JMod_AdditionalArmorTable) end
-end)
+-- Dynamically generate armor ents
+function JMod_GenerateArmorEntities(tbl)
+	for class, info in pairs(tbl) do
+		if info.noent then continue end
+		local armorent = {}
+		armorent.Base = "ent_jack_gmod_ezarmor"
+		armorent.PrintName = info.PrintName or class
+		armorent.Spawnable = info.Spawnable or true
+		armorent.AdminOnly = info.AdminOnly or false
+		armorent.Category = info.Category or "JMod - EZ Armor"
+		armorent.ArmorName = class
+		armorent.ModelScale = info.gayPhysics and nil or info.entsiz -- or math.max(info.siz.x, info.siz.y, info.siz.z)
+		scripted_ents.Register( armorent, info.ent )
+	end
+end
+JMod_GenerateArmorEntities(JMod_ArmorTable)
+
+-- support third-party additions to the jmod armor table
+local function LoadAdditionalArmor()
+	if JMod_AdditionalArmorTable then
+		table.Merge(JMod_ArmorTable, JMod_AdditionalArmorTable)
+		JMod_GenerateArmorEntities(JMod_AdditionalArmorTable)
+	end
+end
+hook.Add("Initialize","JMod_LoadAdditionalArmor", LoadAdditionalArmor)
 
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
@@ -719,3 +780,4 @@ end)
 for _, ply in pairs(player.GetAll()) do
 	ply.NextEZarmorTableCopy = 0
 end
+LoadAdditionalArmor()

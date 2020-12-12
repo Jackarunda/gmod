@@ -88,7 +88,8 @@ JMod_Hints = {
 	
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
-	["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid menu"},
+	["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid headset"},
+	["aid headset"] = {Type = "info", Text = "You must be nearby to use, unless connecting with a headset", Followup = "aid menu"},
 	["aid sky"] = {Type = "warn", Text = "Aid Radio needs to see sky to function"},
 	["aid package"] = {Type = "info", Text = "Type in chat 'supply radio: <package>' to request item"},
 	["aid wait"] = {Type = "info", Text = "Package will be airdropped nearby after some time", Time = 5},
@@ -130,7 +131,8 @@ JMod_Hints = {
 	["ent_jack_gmod_ezarmor_gasmask"] = {Type = "info", Text = "Gas Mask makes you immune to gas damage and resists some radioative damage", Time = 3},
 	["ent_jack_gmod_ezarmor_nvgs"] = {Type = "info", Text = "NV Goggles makes it easy to see in the dark when worn", Time = 3},
 	["ent_jack_gmod_ezarmor_thermals"] = {Type = "info", Text = "Thermal Goggles highlights living things when worn", Time = 3},
-	["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 3},
+	["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 3, Followup = "headset radio"},
+	["headset radio"] = {Type = "info", Text = "You can also remotely communicate to aid radios", Time = 3},
 
 	-- Resources
 	["ent_jack_gmod_ezadvparts"] = {Type = "info", Text = "Adv. Parts are used to craft and upgrade things", Time = 3},

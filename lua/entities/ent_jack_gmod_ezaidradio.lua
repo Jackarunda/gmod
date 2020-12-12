@@ -163,7 +163,11 @@ if(SERVER)then
 				if Alt and State == STATE_READY then
 					net.Start("JMod_EZradio")
 						net.WriteBool(false)
-						net.WriteTable(JMOD_CONFIG.RadioSpecs.AvailablePackages)
+						--net.WriteTable()
+						net.WriteUInt(table.Count(JMOD_CONFIG.RadioSpecs.AvailablePackages), 8)
+						for k, v in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
+							net.WriteString(k)
+						end
 						net.WriteEntity(self)
 						net.WriteString(JMod_EZradioStatus(self,self:GetStationID(),activator,false))
 					net.Send(activator)
@@ -188,7 +192,8 @@ if(SERVER)then
 		self:ConsumeElectricity()
 		if(parrot)then
 			for _, ply in pairs(player.GetAll()) do
-				if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+						or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 					net.Start("JMod_EZradio")
 						net.WriteBool(true)
 						net.WriteBool(true)
@@ -198,18 +203,19 @@ if(SERVER)then
 				end
 			end
 		end
-		local MsgLength,Path=string.len(msg),"/npc/combine_soldier/vo/"
+		local MsgLength=string.len(msg)
 		for i=1,math.Round(MsgLength/15) do
 			timer.Simple(i*.75,function()
 				if((IsValid(self))and(self:GetState()>0))then
-					self:EmitSound(Path..self.Voices[math.random(1,#self.Voices)],65,120)
+					self:EmitSound("/npc/combine_soldier/vo/" .. self.Voices[math.random(1,#self.Voices)],65,120)
 				end
 			end)
 		end
 		timer.Simple(.5,function()
 			if(IsValid(self))then
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 then
+					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+							or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 						net.Start("JMod_EZradio")
 							net.WriteBool(true)
 							net.WriteBool(false)
@@ -236,7 +242,7 @@ if(SERVER)then
 	function ENT:Connect(ply)
 		-- station key is important because it defines who has access to what and provides rate-limiting on requests
 		local StationKey=math.random(1,999999)
-		if(engine.ActiveGamemode()=="sandbox")then
+		if(engine.ActiveGamemode()=="sandbox" and ply:Team() == TEAM_UNASSIGNED)then
 			local ID=ply:AccountID()
 			if(ID)then StationKey=ID end
 		else
@@ -319,7 +325,7 @@ if(SERVER)then
 		if((self.Owner)and(ply==self.Owner))then return true end
 		local Allies=(self.Owner and self.Owner.JModFriends)or {}
 		if(table.HasValue(Allies,ply))then return true end
-		if(engine.ActiveGamemode()~="sandbox")then
+		if !(engine.ActiveGamemode() == "sandbox" && ply:Team() == TEAM_UNASSIGNED) then
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
 			return (OurTeam and ply:Team()==OurTeam) or false
@@ -453,6 +459,8 @@ elseif(CLIENT)then
 		self.LeftHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
+		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+		self.Voices=Files
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)

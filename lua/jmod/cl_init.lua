@@ -210,6 +210,7 @@ local BeamMat=CreateMaterial("xeno/beamgauss", "UnlitGeneric",{
 	[ "$vertexalpha" ]	= "1",
 })
 local GlowSprite,KnownSLAMs,NextSlamScan=Material("sprites/mat_jack_basicglow"),{},0
+local ThermalGlowMat=Material("models/debug/debugwhite")
 hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",function()
 	local Time=CurTime()
 	if(Time>NextSlamScan)then
@@ -301,34 +302,57 @@ end
 
 local WHOTents,NextWHOTcheck={},0
 local function IsWHOT(ent)
+	local Time=CurTime()
 	if(ent:IsWorld())then return false end
 	if((ent:IsPlayer())or(ent:IsOnFire()))then return true end
 	if(ent:IsNPC())then
 		if((ent.Health)and(ent:Health()>0))then return true end
 	elseif(ent:IsRagdoll())then
-		local Time=CurTime()
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
-		return ent.EZWHOTcoldTime>Time
-	elseif(ent:IsVehicle())then
-		return ent:GetVelocity():Length()>=400
+	elseif(ent:IsVehicle() or (simfphys and simfphys.IsCar(ent)))then
+		-- HL2/Simfphys vehicles
+		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length()>=200 then
+			ent.EZWHOTcoldTime=Time+math.Clamp(ent:GetVelocity():Length()/20,10,40)
+		end
+		if LocalPlayer() == ent:GetDriver() then return false end
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "lunasflightschool_basescript") then
+		-- LFS planes
+		-- Helicopter rotors will look ugly but eh
+		if ent:GetEngineActive() then
+			ent.EZWHOTcoldTime=Time+30
+		end
+		-- Don't highlight the plane the player is in. Otherwise their view will be pure white
+		if LocalPlayer():lfsGetPlane() == ent then return false end
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "gred_emp_base") then
+		-- Gredwich Emplacements
+		if ent:GetIsReloading() or ent.NextShot > Time then
+			ent.EZWHOTcoldTime=Time+30
+		end
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "dronesrewrite_base") then
+		-- Drones Rewrite
+		if ent:IsDroneEnabled() then
+			ent.EZWHOTcoldTime=Time+30
+		end
+
 	end
-	return false
+	return (ent.EZWHOTcoldTime or 0)>Time
 end
 
+local thermalmodify = {
+	["$pp_colour_addr"]=0,
+	["$pp_colour_addg"]=0,
+	["$pp_colour_addb"]=0,
+	["$pp_colour_brightness"]=0,
+	["$pp_colour_contrast"]=.2,
+	["$pp_colour_colour"]=1,
+	["$pp_colour_mulr"]=0,
+	["$pp_colour_mulg"]=0,
+	["$pp_colour_mulb"]=0
+}
 hook.Add("PostDrawOpaqueRenderables","JMOD_POSTOPAQUERENDERABLES",function()
 	local ply,Time=LocalPlayer(),CurTime()
 	if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects)and(ply.EZarmor.effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
-		DrawColorModify({
-			["$pp_colour_addr"]=0,
-			["$pp_colour_addg"]=0,
-			["$pp_colour_addb"]=0,
-			["$pp_colour_brightness"]=0,
-			["$pp_colour_contrast"]=.2,
-			["$pp_colour_colour"]=1,
-			["$pp_colour_mulr"]=0,
-			["$pp_colour_mulg"]=0,
-			["$pp_colour_mulb"]=0
-		})
+		DrawColorModify(thermalmodify)
 		if(NextWHOTcheck<Time)then
 			NextWHOTcheck=Time+.5
 			WHOTents={}
@@ -346,7 +370,34 @@ hook.Add("PostDrawOpaqueRenderables","JMOD_POSTOPAQUERENDERABLES",function()
 					render.ModelMaterialOverride(ThermalGlowMat)
 					render.SuppressEngineLighting(true)
 					render.SetColorModulation(Br,Br,Br)
-					targ:DrawModel()
+					if targ:GetRenderMode() == RENDERMODE_NORMAL then
+						targ:DrawModel()
+					end
+					render.SetColorModulation(1,1,1)
+					render.SuppressEngineLighting(false)
+					render.ModelMaterialOverride(nil)
+				end
+			end
+		end
+	end
+end)
+
+hook.Add("PostDrawTranslucentRenderables","JMOD_POSTTRANSLUCENTRENDERABLES",function()
+	local ply,Time=LocalPlayer(),CurTime()
+	if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects)and(ply.EZarmor.effects.thermalVision)and not(ply:ShouldDrawLocalPlayer()))then
+		for key,targ in pairs(WHOTents)do
+			if(IsValid(targ))then
+				local Br=.9
+				if(targ.EZWHOTcoldTime)then
+					Br=.75*(targ.EZWHOTcoldTime-Time)/30
+				end
+				if(Br>.1)then
+					render.ModelMaterialOverride(ThermalGlowMat)
+					render.SuppressEngineLighting(true)
+					render.SetColorModulation(Br,Br,Br)
+					if targ:GetRenderMode() == RENDERMODE_TRANSALPHA then
+						targ:DrawModel()
+					end
 					render.SetColorModulation(1,1,1)
 					render.SuppressEngineLighting(false)
 					render.ModelMaterialOverride(nil)

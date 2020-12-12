@@ -35,20 +35,20 @@ function JModEZarmorSync(ply)
 				end
 			end
 		end
-		
-		local DeadBattery=item.chrg and item.chrg.power and item.chrg.power <= 0
 
-		if ArmorInfo.eff and not DeadBattery then
+		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
+
+		if ArmorInfo.eff and not dead then
 			for effName, effMag in pairs(ArmorInfo.eff) do
-				if (type(effMag) == "number") then
-					ply.EZarmor.effects[effName] = (ply.EZarmor.effects or 0) + effMag
+				if (isnumber(effMag)) then
+					ply.EZarmor.effects[effName] = (ply.EZarmor.effects[effName] or 0) + effMag
 				else
 					ply.EZarmor.effects[effName] = effMag
 				end
 			end
 		end
-		
-		if((ArmorInfo.blackvisionwhendead)and(DeadBattery))then
+
+		if ArmorInfo.blackvisionwhendead and dead then
 			ply.EZarmor.blackvision = true
 			JMod_Hint(ply,"vision dead")
 		end
@@ -513,18 +513,25 @@ net.Receive("JMod_Inventory",function(ln,ply)
 end)
 
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
-	if not (ply and ply:IsSuperAdmin()) then return end
-	JMod_EZ_Equip_Armor(ply, "Ultra-Heavy-Helmet")
-	JMod_EZ_Equip_Armor(ply, "Heavy-Vest")
-	JMod_EZ_Equip_Armor(ply, "Pelvis-Panel")
-	JMod_EZ_Equip_Armor(ply, "Heavy-Left-Shoulder")
-	JMod_EZ_Equip_Armor(ply, "Heavy-Right-Shoulder")
-	JMod_EZ_Equip_Armor(ply, "Left-Forearm")
-	JMod_EZ_Equip_Armor(ply, "Right-Forearm")
-	JMod_EZ_Equip_Armor(ply, "Heavy-Left-Thigh")
-	JMod_EZ_Equip_Armor(ply, "Heavy-Right-Thigh")
-	JMod_EZ_Equip_Armor(ply, "Left-Calf")
-	JMod_EZ_Equip_Armor(ply, "Right-Calf")
+	if not ply:IsSuperAdmin() then return end
+	local target = ply
+	if args[1] == "looking" then
+		target = ply:GetEyeTrace().Entity
+	elseif tonumber(args[1]) and player.GetByID(tonumber(args[1])) then
+		target = player.GetByID(tonumber(args[1]))
+	end
+	if not IsValid(target) then print("invalid target") return end
+	JMod_EZ_Equip_Armor(target, "Ultra-Heavy-Helmet")
+	JMod_EZ_Equip_Armor(target, "Heavy-Vest")
+	JMod_EZ_Equip_Armor(target, "Pelvis-Panel")
+	JMod_EZ_Equip_Armor(target, "Heavy-Left-Shoulder")
+	JMod_EZ_Equip_Armor(target, "Heavy-Right-Shoulder")
+	JMod_EZ_Equip_Armor(target, "Left-Forearm")
+	JMod_EZ_Equip_Armor(target, "Right-Forearm")
+	JMod_EZ_Equip_Armor(target, "Heavy-Left-Thigh")
+	JMod_EZ_Equip_Armor(target, "Heavy-Right-Thigh")
+	JMod_EZ_Equip_Armor(target, "Left-Calf")
+	JMod_EZ_Equip_Armor(target, "Right-Calf")
 end)
 
 concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)

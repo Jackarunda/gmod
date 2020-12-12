@@ -129,6 +129,16 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 				data.chrg.power=math.Clamp(data.chrg.power-SubtractAmt,0,9e9)
 			end
 		end
+		local bestradio = nil
+		for _, v in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
+			if v:UserIsAuthorized(ply) and
+					(not bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
+				bestradio = v
+			end
+		end
+		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then
+			return ""
+		end
 	end
 end)
 
@@ -170,9 +180,9 @@ local function GetTimeString(seconds)
 	return Result
 end
 
-local function StartDelivery(pkg,transceiver,station,bff)
+local function StartDelivery(pkg,transceiver,station,bff,ply)
 	local Time=CurTime()
-	local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),transceiver:GetPos()
+	local DeliveryTime,Pos=math.ceil(JMOD_CONFIG.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),ply:GetPos()
 	
 	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, time, pos)
 	DeliveryTime = newTime or DeliveryTime
@@ -186,7 +196,7 @@ local function StartDelivery(pkg,transceiver,station,bff)
 	station.notified=false
 	station.nextNotifyTime=Time+(DeliveryTime-5)
 	if(bff)then return "ayo GOOD COPY homie, we sendin "..GetArticle(pkg).." "..pkg.." box right over to "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z).." in prolly like "..DeliveryTime.." seconds" end
-	return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x).." "..math.Round(Pos.y).." "..math.Round(Pos.z)..", ETA "..DeliveryTime.." seconds"
+	return "roger wilco, sending "..GetArticle(pkg).." "..pkg.." package to coordinates "..math.Round(Pos.x)..", "..math.Round(Pos.z).."; ETA "..DeliveryTime.." seconds"
 end
 
 function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
@@ -210,22 +220,36 @@ function JMod_EZradioRequest(transceiver,id,ply,pkg,bff)
 		return "negative on that request, the delivery team isn't currently on station"
 	elseif(Station.state==EZ_STATION_STATE_READY)then
 		if(table.HasValue(JMOD_CONFIG.RadioSpecs.RestrictedPackages,pkg))then
-			if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then return "negative on that request, neither we nor regional HQ have any of that at this time" end
+			if not(JMOD_CONFIG.RadioSpecs.RestrictedPackagesAllowed)then
+				if bff then
+					return "can't do that fam, HQ is dry and so are we"
+				else
+					return "negative on that request, neither we nor regional HQ have any of that at this time"
+				end
+			end
 			if(table.HasValue(Station.restrictedPackageStock,pkg))then
 				table.RemoveByValue(Station.restrictedPackageStock,pkg)
-				return StartDelivery(pkg,transceiver,Station,bff)
+				return StartDelivery(pkg,transceiver,Station,bff,ply)
 			else
 				if(Station.restrictedPackageDelivering)then
-					return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
+					if bff then
+						return "bro, HQ is busy with another special shipment, you gotta wait some more"
+					else
+						return "negative on that request, we don't have any of that in stock and HQ is currently delivering another special shipment"
+					end
 				else
 					Station.restrictedPackageDelivering=pkg
 					local DeliveryTime=JMOD_CONFIG.RadioSpecs.RestrictedPackageShipTime*math.Rand(.8,1.2)
 					Station.restrictedPackageDeliveryTime=Time+DeliveryTime
-					return "roger, we don't have any of that in stock but we've ordered it from regional HQ, it'll be at this outpost in "..GetTimeString(DeliveryTime)
+					if bff then
+						return "homie, we gon get you that special delivery straight from HQ. give us "..GetTimeString(DeliveryTime).." yea?"
+					else
+						return "roger, we don't have any of that in stock but we've ordered it from regional HQ, it'll be at this outpost in "..GetTimeString(DeliveryTime)
+					end
 				end
 			end
 		else
-			return StartDelivery(pkg,transceiver,Station,bff)
+			return StartDelivery(pkg,transceiver,Station,bff,ply)
 		end
 	end
 end

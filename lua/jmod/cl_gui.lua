@@ -650,10 +650,27 @@ net.Receive("JMod_EZradio",function()
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
 		if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
 		chat.AddText(unpack(tbl))
+
+		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
+			local radiovoices = file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+			for i=1, math.Round(string.len(msg)/15) do
+				timer.Simple(i*.75,function()
+					if((IsValid(radio))and(radio:GetState()>0))then
+						LocalPlayer():EmitSound("/npc/combine_soldier/vo/" .. radiovoices[math.random(1,#radiovoices)],65,120,0.25)
+					end
+				end)
+			end
+		end
+
 		return
 	end
-	
-	local Packages=net.ReadTable()
+
+	local Packages={}
+	local count = net.ReadUInt(8)
+	for i = 1, count do
+		table.insert(Packages, net.ReadString())
+	end
+
 	local Radio=net.ReadEntity()
 	local StatusText = net.ReadString()
 	
@@ -691,23 +708,22 @@ net.Receive("JMod_EZradio",function()
 	function StatusButton:Paint(w,h)
 		surface.SetDrawColor(50,50,50,100)
 		surface.DrawRect(0,0,w,h)
-		local msg=k
 		draw.SimpleText("Status","DermaDefault",45,15,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 	end
-		function StatusButton:DoClick()
-			LocalPlayer():ConCommand("say supply radio: status")
-			motherFrame:Close()
-		end
-	
+	function StatusButton:DoClick()
+		LocalPlayer():ConCommand("say supply radio: status")
+		motherFrame:Close()
+	end
+
 	local Scroll=vgui.Create("DScrollPanel",Frame)
 	Scroll:SetSize(W-15,H-10)
 	Scroll:SetPos(10,10)
 	---
-	local Y=0
-	for k,itemInfo in SortedPairs(Packages)do
-		local Butt=Scroll:Add("DButton")
+	for _, k in SortedPairsByValue(Packages) do
+		local Butt = Scroll:Add("DButton")
 		Butt:SetSize(W-35,25)
-		Butt:SetPos(0,Y)
+		Butt:Dock(TOP)
+		Butt:DockMargin( 0, 0, 0, 5 )
 		Butt:SetText("")
 
 		function Butt:Paint(w,h)
@@ -720,8 +736,13 @@ net.Receive("JMod_EZradio",function()
 			LocalPlayer():ConCommand("say supply radio: " .. k .. "")
 			motherFrame:Close()
 		end
-		Y=Y+30
 	end
+	-- The last one always gets cut off so instead of finding the reason let's just slap a filler on
+	local Butt = Scroll:Add("DButton")
+	Butt:SetSize(W-35,25)
+	Butt:Dock(TOP)
+	Butt:DockMargin( 0, 0, 0, 5 )
+	Butt:SetText("")
 end)
 local function GetItemInSlot(armorTable,slot)
 	if not(armorTable and armorTable.items)then return nil end

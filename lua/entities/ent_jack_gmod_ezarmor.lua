@@ -27,7 +27,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Specs=JMod_ArmorTable[self.ArmorName]
-		self.Entity:SetModel(self.Specs.mdl)
+		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end

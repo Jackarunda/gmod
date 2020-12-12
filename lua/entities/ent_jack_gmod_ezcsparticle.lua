@@ -59,10 +59,10 @@ if(SERVER)then
 				local IsPlaya=obj:IsPlayer()
 				if(not obj.EZgasParticle)then
 					if((self.NextDmg<Time)and(self:ShouldDamage(obj)))then
-						
+
 						local FaceProtected = false
 						local RespiratorMultiplier = 1
-						
+
 						if (obj.JackyArmor) then
 							if (obj.JackyArmor.Suit) then
 								if (obj.JackyArmor.Suit.Type == "Hazardous Material") then
@@ -70,34 +70,29 @@ if(SERVER)then
 								end
 							end
 						end
-						
+
+						local prot = 0
 						if (obj.EZarmor) then
+							prot = obj.EZarmor.effects.csprot or 0
 							for _, v in pairs(obj.EZarmor.items) do
-								if v.name == "GasMask" and v.tgl == false and v.chrg.chemicals > 0 then
-									FaceProtected = true 
-									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / 100
-									v.chrg.chemicals = math.Clamp(v.chrg.chemicals - SubtractAmt, 0, 9e9)
-								end
-								if v.name == "Respirator" and v.tgl == false and v.chrg.chemicals > 0 then 
-									RespiratorMultiplier = .5 
-									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / 200
-									v.chrg.chemicals = math.Clamp(v.chrg.chemicals - SubtractAmt, 0, 9e9)
+								if JMod_ArmorTable[v.name].eff.csprot and v.chrg and v.chrg.chemicals > 0 then
+									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / (100 / JMod_ArmorTable[v.name].eff.csprot)
+									v.chrg.chemicals = math.max(v.chrg.chemicals - SubtractAmt, 0)
 								end
 							end
 						end
-						
-						if not(FaceProtected)then
-							if(IsPlaya)then
+
+						if prot < 1 then
+							if IsPlaya then
 								net.Start("JMod_VisionBlur")
-								net.WriteFloat(5*RespiratorMultiplier)
+								net.WriteFloat(5 * math.Clamp(1 - prot, 0, 1))
 								net.Send(obj)
-							elseif(obj:IsNPC())then
-								obj.EZNPCincapacitate=Time+math.Rand(2,5)
+								JMod_Hint(obj, "tear gas")
+							elseif obj:IsNPC() then
+								obj.EZNPCincapacitate = Time + math.Rand(2,5)
 							end
-							
-							if RespiratorMultiplier >= 1 then
-								JMod_TryCough(obj)
-							end
+
+							JMod_TryCough(obj)
 
 							if math.random(1,20) == 1 then
 								local Dmg,Helf=DamageInfo(),obj:Health()
@@ -110,7 +105,6 @@ if(SERVER)then
 							end
 
 						end
-						if IsPlaya then JMod_Hint(obj, "tear gas") end
 					end
 				elseif (obj.EZgasParticle and (distanceBetween < 250*250))then -- Push Gas
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
