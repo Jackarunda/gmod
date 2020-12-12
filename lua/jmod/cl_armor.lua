@@ -6,16 +6,16 @@ local function CopyArmorTableToPlayer(ply)
 		table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
 	end
 end
-function JMod_ArmorPlayerModelDraw(mdl)
-	if(mdl.EZarmor)then
-		if not(mdl.EZarmorModels)then mdl.EZarmorModels={} end
+function JMod_ArmorPlayerModelDraw(ply)
+	if(ply.EZarmor)then
+		if not(ply.EZarmorModels)then ply.EZarmorModels={} end
 		local Time=CurTime()
-		if(not(mdl.JMod_ArmorTableCopy)or(mdl.NextEZarmorTableCopy<Time))then
-			CopyArmorTableToPlayer(mdl)
-			mdl.NextEZarmorTableCopy=Time+30
+		if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
+			CopyArmorTableToPlayer(ply)
+			ply.NextEZarmorTableCopy=Time+30
 		end
-		for id,armorData in pairs(mdl.EZarmor.items)do
-			local ArmorInfo=mdl.JMod_ArmorTableCopy[armorData.name]
+		for id,armorData in pairs(ply.EZarmor.items)do
+			local ArmorInfo=ply.JMod_ArmorTableCopy[armorData.name]
 			if((armorData.tgl)and(ArmorInfo.tgl))then
 				ArmorInfo=table.Merge(table.FullCopy(ArmorInfo),ArmorInfo.tgl)
 				for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
@@ -26,15 +26,15 @@ function JMod_ArmorPlayerModelDraw(mdl)
 					end
 				end
 			end
-			if(mdl.EZarmorModels[id])then
-				local Mdl=mdl.EZarmorModels[id]
+			if(ply.EZarmorModels[id])then
+				local Mdl=ply.EZarmorModels[id]
 				local MdlName=Mdl:GetModel()
 				if(MdlName==ArmorInfo.mdl)then
 					-- render it
-					local Index=mdl:LookupBone(ArmorInfo.bon)
+					local Index=ply:LookupBone(ArmorInfo.bon)
 					if(Index)then
-						local Pos,Ang=mdl:GetBonePosition(Index)
-						if((Pos)and(Ang))then
+						local Pos,Ang=ply:GetBonePosition(Index)
+						if ((Pos)and(Ang)) then
 							local Right,Forward,Up=Ang:Right(),Ang:Forward(),Ang:Up()
 							Pos=Pos+Right*ArmorInfo.pos.x+Forward*ArmorInfo.pos.y+Up*ArmorInfo.pos.z
 							Ang:RotateAroundAxis(Right,ArmorInfo.ang.p)
@@ -62,18 +62,18 @@ function JMod_ArmorPlayerModelDraw(mdl)
 					end
 				else
 					-- remove it
-					mdl.EZarmorModels[id]:Remove()
-					mdl.EZarmorModels[id]=nil
+					ply.EZarmorModels[id]:Remove()
+					ply.EZarmorModels[id]=nil
 				end
 			else
 				-- create it
 				local Mdl=ClientsideModel(ArmorInfo.mdl)
 				Mdl:SetModel(ArmorInfo.mdl) -- what the FUCK garry
-				Mdl:SetPos(mdl:GetPos())
+				Mdl:SetPos(ply:GetPos())
 				Mdl:SetMaterial(ArmorInfo.mat or "")
-				Mdl:SetParent(mdl)
+				Mdl:SetParent(ply)
 				Mdl:SetNoDraw(true)
-				mdl.EZarmorModels[id]=Mdl
+				ply.EZarmorModels[id]=Mdl
 			end
 		end
 	end
