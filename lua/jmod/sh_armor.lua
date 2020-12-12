@@ -345,7 +345,7 @@ JMod_ArmorTable = {
 		ang = Angle(-90, 0, -90),
 		wgt = 15,
 		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_mhead",
+		ent = "ent_jack_gmod_ezarmor_mhead"
 	},
 	["Heavy-Helmet"] = {
 		PrintName = "Helmet - Heavy",
