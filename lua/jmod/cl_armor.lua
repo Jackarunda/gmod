@@ -82,11 +82,16 @@ function JMod_ArmorPlayerModelDraw(ply)
 			end
 		end
 		if ply.EZarmorboneedited then
+			local edited = false
 			for k = 1, ply:GetBoneCount() do
 				if ply:GetManipulateBoneScale(k) ~= (plyboneedit[k] or Vector(1, 1, 1)) then
 					ply:ManipulateBoneScale(k, plyboneedit[k] or Vector(1, 1, 1))
 				end
+				if ply:GetManipulateBoneScale(k) ~= Vector(1, 1, 1) then
+					edited = true
+				end
 			end
+			if not edited then print("not edited") ply.EZarmorboneedited = false end
 		end
 	end
 end
@@ -97,7 +102,4 @@ end)
 net.Receive("JMod_EZarmorSync",function()
 	local ply=net.ReadEntity()
 	ply.EZarmor=net.ReadTable()
-	timer.Simple(1, function()
-		ply.EZarmorboneedited = false
-	end)
 end)
