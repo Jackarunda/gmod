@@ -310,11 +310,23 @@ local function IsWHOT(ent)
 		local Time=CurTime()
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
 		return ent.EZWHOTcoldTime>Time
-	elseif(ent:IsVehicle())then
+	elseif(ent:IsVehicle() or (simfphys and simfphys.IsCar(ent)))then
+		-- HL2/Simfphys vehicles
+		-- Simfphys doesn't work currently, dunno why
 		local Time=CurTime()
 		if ent:GetVelocity():Length()>=200 then
+			ent.EZWHOTcoldTime=Time+math.Clamp(ent:GetVelocity():Length()/20,10,40)
+		end
+		return (ent.EZWHOTcoldTime or 0)>Time
+	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "lunasflightschool_basescript") then
+		-- LFS planes
+		-- Helicopter rotors will look ugly but eh
+		local Time=CurTime()
+		if ent:GetEngineActive() then
 			ent.EZWHOTcoldTime=Time+30
 		end
+		-- Don't highlight the plane the player is in. Otherwise their view will be pure white
+		if LocalPlayer():lfsGetPlane() == ent then return false end
 		return (ent.EZWHOTcoldTime or 0)>Time
 	end
 	return false
