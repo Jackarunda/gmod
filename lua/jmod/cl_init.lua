@@ -316,6 +316,7 @@ local function IsWHOT(ent)
 		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length()>=200 then
 			ent.EZWHOTcoldTime=Time+math.Clamp(ent:GetVelocity():Length()/20,10,40)
 		end
+		if LocalPlayer() == ent:GetDriver() then return false end
 		return (ent.EZWHOTcoldTime or 0)>Time
 	elseif scripted_ents.Get(ent:GetClass()) and scripted_ents.IsBasedOn(ent:GetClass(), "lunasflightschool_basescript") then
 		-- LFS planes
