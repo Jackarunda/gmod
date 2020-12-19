@@ -9,10 +9,10 @@ SWEP.WorldModel = "models/krazy/gtav/weapons/navyrevolver_w.mdl"
 SWEP.ViewModelFOV = 75
 
 SWEP.BodyHolsterSlot = "thighs"
-SWEP.BodyHolsterAng = Angle(90,90,-20)
-SWEP.BodyHolsterAngL = Angle(90,90,-20)
-SWEP.BodyHolsterPos = Vector(-5,17,-6.5)
-SWEP.BodyHolsterPosL = Vector(-7,17,1.5)
+SWEP.BodyHolsterAng = Angle(180,0,-115)
+SWEP.BodyHolsterAngL = Angle(180,0,-90)
+SWEP.BodyHolsterPos = Vector(.5,5,-5)
+SWEP.BodyHolsterPosL = Vector(-2,5,4)
 SWEP.BodyHolsterScale = 1
 
 SWEP.HoldtypeHolstered = "normal"

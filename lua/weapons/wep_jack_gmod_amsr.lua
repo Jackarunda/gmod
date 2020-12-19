@@ -16,7 +16,7 @@ SWEP.BodyHolsterScale = 1
 
 SWEP.DefaultBodygroups = "01000"
 
-JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round",1.1)
+JMod_ApplyAmmoSpecs(SWEP,"Heavy Rifle Round",1.1)
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 

@@ -27,6 +27,12 @@ end
 hook.Add("PlayerSpawn","JMod_PlayerSpawn",JackaSpawnHook)
 hook.Add("PlayerInitialSpawn","JMod_PlayerInitialSpawn",JackaSpawnHook)
 
+hook.Add("PlayerLoadout","JMod_PlayerLoadout",function(ply)
+	if((JMOD_CONFIG)and(JMOD_CONFIG.QoL.GiveHandsOnSpawn))then
+		ply:Give("wep_jack_gmod_hands")
+	end
+end)
+
 hook.Add("GetPreferredCarryAngles","JMOD_PREFCARRYANGS",function(ent)
 	if(ent.JModPreferredCarryAngles)then return ent.JModPreferredCarryAngles end
 end)

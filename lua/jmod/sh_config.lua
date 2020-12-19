@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=31,
+		Version=32,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -312,13 +312,21 @@ function JMod_InitGlobalConfig(forceNew)
 			RealisticLocationalDamage=false,
 			ExtinguishUnderwater=false,
 			RealisticFallDamage=false,
-			Drowning=false
+			Drowning=false,
+			GiveHandsOnSpawn=false
 		},
 		FoodSpecs={
 			DigestSpeed=1,
 			ConversionEfficiency=1,
 			EatSpeed=1,
 			BoostMult=1
+		},
+		WeaponsThatUseMunitions={
+			"weapon_rpg",
+			"weapon_frag"
+		},
+		WeaponAmmoBlacklist={
+			"weapon_crossbow"
 		},
 		RadioSpecs={
 			DeliveryTimeMult=1,

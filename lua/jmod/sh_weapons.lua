@@ -680,7 +680,9 @@ elseif(SERVER)then
 		if(ent.EZsupplies)then -- it's a resource box
 			local Wep=ply:GetActiveWeapon()
 			if(Wep)then
-				local PrimType,SecType,PrimSize,SecSize=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2()
+				local PrimType,SecType,PrimSize,SecSize,WepClass=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2(),Wep:GetClass()
+				if(table.HasValue(JMOD_CONFIG.WeaponAmmoBlacklist,WepClass))then return end
+				local IsMunitionBox=ent.EZsupplies=="munitions"
 				--[[ PRIMARY --]]
 				local PrimName=game.GetAmmoName(PrimType)
 				if((PrimName)and(JMod_AmmoTable[PrimName]))then
@@ -700,6 +702,11 @@ elseif(SERVER)then
 					end
 				else
 					-- use DEFAULT ammo rules
+					if(table.HasValue(JMOD_CONFIG.WeaponsThatUseMunitions,WepClass))then
+						if not(IsMunitionBox)then return end
+					else
+						if(IsMunitionBox)then return end
+					end
 					if((PrimType)and(PrimType~=-1))then
 						if(PrimSize==-1)then PrimSize=-PrimSize end
 						if(PrimSize<2)then
@@ -724,6 +731,11 @@ elseif(SERVER)then
 					-- TODO, no jmod weapons use secondary ammo currently
 				else
 					-- use DEFAULT ammo rules
+					if(table.HasValue(JMOD_CONFIG.WeaponsThatUseMunitions,WepClass))then
+						if not(IsMunitionBox)then return end
+					else
+						if(IsMunitionBox)then return end
+					end
 					if((SecType)and(SecType~=-1))then
 						if(SecSize==-1)then SecSize=-SecSize end
 						if(ply:GetAmmoCount(SecType)<=SecSize*5*JMOD_CONFIG.AmmoCarryLimitMult)then

@@ -22,7 +22,7 @@ if(SERVER)then
 		BaseClass.Initialize(self)
 		
 		local plunger = ents.Create("ent_jack_gmod_ezblastingmachine")
-		plunger:SetPos(self:GetPos()+self:GetForward()*6)
+		plunger:SetPos(self:GetPos()+self:GetForward()*5)
 		plunger:SetAngles(self:GetAngles())
 		plunger:Spawn()
 		plunger.Satchel = self

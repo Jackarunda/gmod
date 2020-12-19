@@ -63,14 +63,15 @@ JMOD_EZ_STATE_WARNING	= 4
 -- craftable keypad entity you can install on anything to lock it with a PIN
 -- link sentry power consumption to perf mult
 -- armordegredation mult doesnt work
--- jmod hands on spawn qol
--- blur need to use arccw blur
--- capmmball holster
--- simphys leaves the planet
--- MG unsprint times
--- AMSR unsprint time
--- rebalance damages/penetration/range
--- config to blacklist weapons for ammo boxes
+-- - jmod hands on spawn qol
+-- - blur need to use arccw blur
+-- - capmmball holster
+-- - simphys leaves the planet
+-- - MG unsprint times
+-- - AMSR unsprint time
+-- - rebalance damages/penetration/range
+-- - config to blacklist weapons for ammo boxes
+-- - look at satchel charge
 --[[
 [JMod] lua/jmod/sv_hint.lua:3: Tried to use a NULL entity!
 1. __newindex - [C]:-1

@@ -343,7 +343,7 @@ function JMod_WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 						constraint.RemoveAll(prop)
 						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 1000 * DistFrac * power * mass, propPos + VectorRand() * 10)
 					else
-						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 1000 * DistFrac * origPower * mass, propPos + VectorRand() * 10)
+						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 200 * DistFrac * origPower * mass, propPos + VectorRand() * 10)
 					end
 				end
 			end
