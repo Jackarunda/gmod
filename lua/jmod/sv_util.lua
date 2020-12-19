@@ -315,7 +315,7 @@ function JMod_WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local allProps = ents.FindInSphere(pos, maxRange)
 
 	for k, prop in pairs(allProps) do
-		if not (table.HasValue(WreckBlacklist, prop:GetClass())) then
+		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignore) == false) then
 			local physObj = prop:GetPhysicsObject()
 			local propPos = prop:LocalToWorld(prop:OBBCenter())
 			local DistFrac = (1 - propPos:Distance(pos) / maxRange)
@@ -353,7 +353,7 @@ end
 
 function JMod_BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	for k, door in pairs(ents.FindInSphere(pos, 40 * power * (range or 1))) do
-		if (JMod_IsDoor(door)) then
+		if (JMod_IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignore) ~= false) then
 			local proceed = ignoreVisChecks
 
 			if not proceed then
