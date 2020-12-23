@@ -139,6 +139,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezadvtextiles"] = {Type = "info", Text = "Adv. Textiles are used to craft armor and advanced devices", Time = 3},
 	["ent_jack_gmod_ezammo"] = {Type = "info", Text = "Ammo boxes are consumed by sentries, and can replenish player ammo", Time = 3},
 	["ent_jack_gmod_ezammo use"] = {Type = "button", Text = "Hold Walk and press Use while holding a weapon to restore ammo", Followup = "bind walk", Time = 5},
+	["ent_jack_gmod_ezcoolant"] = {Type = "button", Text = "Coolant is consumed by high-performance machines, like Sentries", Time = 5},
 	["ent_jack_gmod_ezantimatter"] = {Type = "info", Text = "Antimatter is used to craft Black Hole Generators", Time = 3},
 	["ent_jack_gmod_ezantimatter use"] = {Type = "warn", Text = "Antimatter is EXTREMELY VOLATILE; handle with caution", Time = 5},
 	["ent_jack_gmod_ezbattery"] = {Type = "info", Text = "Battery is used to power machines", Time = 3},
@@ -171,5 +172,5 @@ JMod_SpecificHints={
 	["wep_jack_gmod_mgl"]={Type="info",Text="GRENADES HAVE NO DISTANCE SAFETY"},
 	["wep_jack_gmod_rocketlauncher"]={Type="info",Text="BEWARE BACKBLAST"},
 	["wep_jack_gmod_mrl"]={Type="info",Text="BEWARE BACKBLAST"},
-	["wep_jack_gmod_crossbow"]={Type="info",Text="weapon has +30% through-armor damage. Arrows can be recovered"}
+	["wep_jack_gmod_crossbow"]={Type="info",Text="weapon has +50% through-armor damage. Arrows can be recovered"}
 }

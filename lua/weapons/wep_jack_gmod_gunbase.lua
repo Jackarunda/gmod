@@ -16,7 +16,7 @@ SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
 SWEP.TracerNum = 0 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
-SWEP.AimSwayFactor = 1
+SWEP.AimSwayFactor = .9
 
 SWEP.DamageRand = .35
 SWEP.BlastRadiusRand = .1
@@ -25,7 +25,7 @@ SWEP.Num = 1
 SWEP.VisualRecoilMult = 1
 SWEP.RecoilSide = .5
 
-SWEP.HipDispersion = 800 -- inaccuracy added by hip firing.
+SWEP.HipDispersion = 700 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 300
 
 SWEP.ChamberSize = 1 -- this is so wrong, Arctic...

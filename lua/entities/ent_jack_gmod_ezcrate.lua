@@ -115,6 +115,13 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		ChildEntityResourceAmount=JMod_EZnutrientBoxSize,
 		MainTitleWord="RATIONS",
 		ResourceUnit="Units"
+	},
+	["coolant"]={
+		MaxResource=JMod_EZcoolantDrumSize*JMod_EZcrateSize,
+		ChildEntity="ent_jack_gmod_ezcoolant",
+		ChildEntityResourceAmount=JMod_EZcoolantDrumSize,
+		MainTitleWord="COOLANT",
+		ResourceUnit="Units"
 	}
 }
 ---

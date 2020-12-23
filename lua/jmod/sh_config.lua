@@ -517,7 +517,7 @@ function JMod_InitGlobalConfig(forceNew)
 			["EZ Mini Naval Mine"]={"ent_jack_gmod_eznavalmine",{parts=150,explosives=200},1,"Explosives"},
 			["EZ Nano Nuclear Bomb"]={"ent_jack_gmod_eznuke_small",{parts=100,advparts=20,explosives=150,fissilematerial=5},1,"Explosives"},
 			["EZ Resource Crate"]={"ent_jack_gmod_ezcrate",{parts=100},1.5,"Other"},
-			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20},1,"Machines"},
+			["EZ Sentry"]={"ent_jack_gmod_ezsentry",{parts=200,power=100,ammo=300,advparts=20,coolant=100},1,"Machines"},
 			["EZ Small Bomb"]={"ent_jack_gmod_ezsmallbomb",{parts=150,explosives=150},1,"Explosives"},
 			["EZ Supply Radio"]={"ent_jack_gmod_ezaidradio",{parts=100, power=100,advparts=20},1,"Machines"},
 			["EZ Thermobaric Bomb"]={"ent_jack_gmod_ezthermobaricbomb",{parts=100,explosives=20,propellant=300,chemicals=10},1,"Explosives"},

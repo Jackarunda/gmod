@@ -364,7 +364,7 @@ JMod_AmmoTable={
 		sizemult=24,
 		carrylimit=30,
 		ent="ent_jack_gmod_ezarrow",
-		armorpiercing=.3,
+		armorpiercing=.5,
 		basedmg=40
 	},
 	["Black Powder Paper Cartridge"]={
@@ -402,7 +402,6 @@ function JMod_ApplyAmmoSpecs(wep,typ,mult)
 	if(Specs.penetration)then wep.Penetration=Specs.penetration end
 	if(Specs.blastrad)then wep.BlastRadius=Specs.blastrad end
 	if(Specs.dmgtype)then wep.DamageType=Specs.dmgtype end
-	-- todo: redo the trait reading implementation of this when we add these types
 	if(Specs.expanding)then wep.EZexpangingAmmo=Specs.expanding end
 	if(Specs.armorpiercing)then wep.EZarmorpiercingAmmo=Specs.armorpiercing end
 	-- todo: implement this when we add these types

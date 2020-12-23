@@ -8,7 +8,7 @@ ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
-ENT.EZconsumes={"ammo","power","parts","munitions"}
+ENT.EZconsumes={"ammo","power","parts","munitions","coolant"}
 ENT.EZupgrades={
 	rate=2,
 	grades={
@@ -97,7 +97,7 @@ ENT.ModPerfSpecs = {
 	Damage = 0, 
 	Accuracy = 0, 
 	SearchSpeed = 0,
-	Cooling=0
+	Cooling = 0
 }
 function ENT:SetMods(tbl,ammoType)
 	self.ModPerfSpecs=tbl
@@ -142,6 +142,8 @@ function ENT:InitPerfSpecs(removeAmmo)
 		self:SetAmmo(self.MaxAmmo)
 		self.MaxElectricity=self.MaxAmmo/1.5
 	end
+	
+	self:SetCoolant(100)
 end
 
 function ENT:Upgrade(level)
@@ -162,6 +164,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int",2,"Grade")
 	self:NetworkVar("Float",3,"PerfMult")
 	self:NetworkVar("String",0,"AmmoType")
+	self:NetworkVar("Float",4,"Coolant")
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -247,6 +250,9 @@ if(SERVER)then
 	end
 	function ENT:ConsumeElectricity(amt)
 		amt=(amt or .04)/self.Efficiency
+		if(self:GetAmmoType()=="Pulse Laser")then
+			amt=amt/EZ_GRADE_BUFFS[self:GetGrade()]
+		end
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
@@ -560,7 +566,12 @@ if(SERVER)then
 				Exude:SetStart(self:GetVelocity())
 				util.Effect("eff_jack_heatshimmer",Exude)
 			end
-			self.Heat=math.Clamp(self.Heat-self.Cooling/3,0,100)
+			local CoolinAmt,Kewlant,Severity=self.Cooling/3,self:GetCoolant(),self.Heat/100
+			if((Kewlant>0)and(Severity>.1))then
+				self:SetCoolant(Kewlant-Severity)
+				CoolinAmt=CoolinAmt*(10*Severity)
+			end
+			self.Heat=math.Clamp(self.Heat-CoolinAmt,0,100)
 		end
 		if(self.Firing)then
 			if(self.NextFire<Time)then
@@ -939,6 +950,14 @@ if(SERVER)then
 			self:SetElectricity(Powa+Accepted)
 			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
 			return math.ceil(Accepted)
+		elseif(typ=="coolant")then
+			local Kewl=self:GetCoolant()
+			local Missing=100-Kewl
+			if(Missing<10)then return 0 end
+			local Accepted=math.min(Missing,amt)
+			self:SetCoolant(Kewl+Accepted)
+			self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
+			return math.ceil(Accepted)
 		elseif(typ=="parts")then
 			local Missing=self.MaxDurability-self.Durability
 			if(Missing<=self.MaxDurability*.25)then return 0 end
@@ -1084,17 +1103,21 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*28-Right*7.5-Forward*8,DisplayAng,.075)
-				draw.SimpleTextOutlined("POWER","JMod-Display",200,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod_GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",200,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				if(AmmoType~="Pulse Laser")then
 					local Ammo=self:GetAmmo()
 					local AmmoFrac=Ammo/self.MaxAmmo
 					local R,G,B=JMod_GoodBadColor(AmmoFrac)
-					draw.SimpleTextOutlined("AMMO","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("AMMO","JMod-Display",-50,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",-50,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				end
+				local CoolFrac=self:GetCoolant()/100
+				draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local R,G,B=JMod_GoodBadColor(CoolFrac)
+				draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end

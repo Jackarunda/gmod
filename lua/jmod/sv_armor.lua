@@ -512,6 +512,10 @@ net.Receive("JMod_Inventory",function(ln,ply)
 	JModEZarmorSync(ply)
 end)
 
+hook.Add("OnDamagedByExplosion","JModOnDamagedByExplosion",function(ply,dmg)
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms))then return true end
+end)
+
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	if not ply:IsSuperAdmin() then return end
 	local target = ply

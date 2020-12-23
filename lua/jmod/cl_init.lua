@@ -513,7 +513,7 @@ concommand.Add("jacky_supershadows",function(ply,cmd,args)
 	print("super shadows enabled, have fun with the lag")
 end)
 
-concommand.Add("jmod_showgasparticles",function(ply,cmd,args)
+concommand.Add("jmod_debug_showgasparticles",function(ply,cmd,args)
 	if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 	ply.EZshowGasParticles=not (ply.EZshowGasParticles or false)
 	print("gas particle display: "..tostring(ply.EZshowGasParticles))

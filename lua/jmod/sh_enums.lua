@@ -28,6 +28,7 @@ JMod_EZnutrientBoxSize=100
 JMod_EZcrateSize=15
 JMod_EZpartsCrateSize=15
 JMod_EZnutrientsCrateSize=15
+JMod_EZcoolantDrumSize=100
 
 -- State enums
 JMOD_EZ_STATE_BROKEN 	= -1
@@ -61,17 +62,18 @@ JMOD_EZ_STATE_WARNING	= 4
 -- func for packages to read more info from ez entities
 -- clasnames to friendlist
 -- craftable keypad entity you can install on anything to lock it with a PIN
--- link sentry power consumption to perf mult
--- armordegredation mult doesnt work
+-- - can now use the headset to communicate remotely with your Aid Radio
+-- - sentry coolant
 -- - jmod hands on spawn qol
 -- - blur need to use arccw blur
 -- - capmmball holster
 -- - simphys leaves the planet
 -- - MG unsprint times
 -- - AMSR unsprint time
--- - rebalance damages/penetration/range
+-- - rebalance damages/penetration/range/unsprint times and sway for guns
 -- - config to blacklist weapons for ammo boxes
--- - look at satchel charge
+-- - satchel charge fixed
+-- - gun sway can be changed in the config
 --[[
 [JMod] lua/jmod/sv_hint.lua:3: Tried to use a NULL entity!
 1. __newindex - [C]:-1
