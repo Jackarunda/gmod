@@ -13,10 +13,10 @@ ENT.Model="models/props_borealis/bluebarrel001.mdl"
 ENT.Material=""
 ENT.ModelScale=.7
 ENT.Mass=50
-ENT.ImpactNoise1="Metal_Box.ImpactHard"
+ENT.ImpactNoise1="Plastic_Barrel.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
 ENT.DamageThreshold=120
-ENT.BreakNoise="Metal_Box.Break"
+ENT.BreakNoise="Plastic_Barrel.Break"
 ENT.Hint="coolant"
 ---
 if(SERVER)then
@@ -38,14 +38,14 @@ elseif(CLIENT)then
 			Ang:RotateAroundAxis(Ang:Right(),90)
 			cam.Start3D2D(Pos+Up*1-Right*2-Forward*10.1,Ang,.04)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ COOLANT","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Ammo.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
 			cam.Start3D2D(Pos+Up*1-Right*2+Forward*10.1,Ang,.04)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ LINKED CARTRIDGES","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText("EZ COOLANT","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			draw.SimpleText(Ammo.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end

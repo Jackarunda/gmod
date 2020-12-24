@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=32,
+		Version=33,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -346,6 +346,9 @@ function JMod_InitGlobalConfig(forceNew)
 				},
 				["ammo"]={
 					{"ent_jack_gmod_ezammo",5}
+				},
+				["coolant"]={
+					{"ent_jack_gmod_ezcoolant",6}
 				},
 				["munitions"]={
 					{"ent_jack_gmod_ezmunitions",3}

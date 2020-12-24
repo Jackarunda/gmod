@@ -566,7 +566,7 @@ if(SERVER)then
 				Exude:SetStart(self:GetVelocity())
 				util.Effect("eff_jack_heatshimmer",Exude)
 			end
-			local CoolinAmt,Kewlant,Severity=self.Cooling/3,self:GetCoolant(),self.Heat/100
+			local CoolinAmt,Kewlant,Severity=self.Cooling/3,self:GetCoolant(),self.Heat/300
 			if((Kewlant>0)and(Severity>.1))then
 				self:SetCoolant(Kewlant-Severity)
 				CoolinAmt=CoolinAmt*(10*Severity)
@@ -605,7 +605,7 @@ if(SERVER)then
 		local AimForward=AimAng:Forward()
 		local ShootPos=SelfPos+Up*38+AimForward*self.BarrelLength
 		local AmmoConsume,ElecConsume=1,.02
-		local Heat=self.Damage*self.ShotCount/25
+		local Heat=self.Damage*self.ShotCount/30
 		---
 		if(ProjType=="Bullet")then
 			local ShellAng=AimAng:GetCopy()
