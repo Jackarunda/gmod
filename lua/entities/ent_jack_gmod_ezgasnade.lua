@@ -36,7 +36,7 @@ if(SERVER)then
 		Boom:SetKeyValue("imagnitude","50")
 		Boom:SetOwner(Owner)
 		Boom:Spawn()
-		Boom:Fire("explode",0,"")
+		Boom:Fire("explode",0)
 		for i=1,30 do
 			timer.Simple(i/120,function()
 				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
