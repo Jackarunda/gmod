@@ -39,7 +39,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,7 do
+		for i=1,7*JMOD_CONFIG.SupplyEffectMult do
 			self:FlingProp(table.Random(self.FoodModels))
 		end
 	end

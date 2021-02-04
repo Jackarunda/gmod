@@ -63,7 +63,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,10 do self:DamageSpark() end
 		local Force=(dmginfo and dmginfo:GetDamageForce()) or (VectorRand())
-		for i=1,3 do
+		for i=1,3*JMOD_CONFIG.SupplyEffectMult do
 			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
 			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
 			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)

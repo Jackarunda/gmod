@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=33,
+		Version=34,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -285,6 +285,7 @@ function JMod_InitGlobalConfig(forceNew)
 		MineDelay=1,
 		MinePower=1,
 		DoorBreachResetTimeMult=1,
+		SupplyEffectMult=1,
 		FumigatorGasAmount=1,
 		PoisonGasDamage=1,
 		PoisonGasLingerTime=1,
@@ -313,7 +314,9 @@ function JMod_InitGlobalConfig(forceNew)
 			ExtinguishUnderwater=false,
 			RealisticFallDamage=false,
 			Drowning=false,
-			GiveHandsOnSpawn=false
+			GiveHandsOnSpawn=false,
+			BleedDmgMult=1,
+			BleedSpeedMult=1
 		},
 		FoodSpecs={
 			DigestSpeed=1,

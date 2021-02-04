@@ -20,12 +20,19 @@ local function JackaSpawnHook(ply)
 	ply.EZhealth=nil
 	ply.EZirradiated=nil
 	ply.EZoxygen=100
+	ply.EZbleeding=0
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
 	net.Send(ply)
 end
 hook.Add("PlayerSpawn","JMod_PlayerSpawn",JackaSpawnHook)
 hook.Add("PlayerInitialSpawn","JMod_PlayerInitialSpawn",JackaSpawnHook)
+
+function JMod_SyncBleeding(ply)
+	net.Start("JMod_Bleeding")
+	net.WriteInt(ply.EZbleeding,8)
+	net.Send(ply)
+end
 
 hook.Add("PlayerLoadout","JMod_PlayerLoadout",function(ply)
 	if((JMOD_CONFIG)and(JMOD_CONFIG.QoL.GiveHandsOnSpawn))then
@@ -63,11 +70,29 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					end
 				end
 			end
+			if(playa.EZbleeding)then
+				local Bleed=playa.EZbleeding
+				if(Bleed>0)then
+					local Amt=JMOD_CONFIG.QoL.BleedSpeedMult
+					playa.EZbleeding=math.Clamp(Bleed-Amt,0,9e9)
+					local Dmg=DamageInfo()
+					Dmg:SetAttacker((IsValid(playa.EZbleedAttacker) and playa.EZbleedAttacker) or game.GetWorld())
+					Dmg:SetInflictor(game.GetWorld())
+					Dmg:SetDamage(Amt)
+					Dmg:SetDamageType(DMG_GENERIC)
+					Dmg:SetDamagePosition(playa:GetShootPos())
+					playa:TakeDamageInfo(Dmg)
+					--
+					local Tr=util.QuickTrace(playa:GetShootPos()+VectorRand()*30,Vector(0,0,-150),playa)
+					if(Tr.Hit)then
+						util.Decal("Blood",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal)
+					end
+				end
+			end
 			if(playa.EZirradiated)then
 				local Rads=playa.EZirradiated
 				if((Rads>0)and(math.random(1,3)==1))then
 					playa.EZirradiated=math.Clamp(Rads-.5,0,9e9)
-					local Helf,Max=playa:Health(),playa:GetMaxHealth()
 					local Dmg=DamageInfo()
 					Dmg:SetAttacker(playa)
 					Dmg:SetInflictor(game.GetWorld())
@@ -75,7 +100,6 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					Dmg:SetDamageType(DMG_GENERIC)
 					Dmg:SetDamagePosition(playa:GetShootPos())
 					playa:TakeDamageInfo(Dmg)
-					
 				end
 			end
 			if(JMOD_CONFIG.QoL.Drowning)then

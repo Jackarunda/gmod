@@ -318,7 +318,7 @@ if(SERVER)then
 		for i=1,10 do self:DamageSpark() end
 		local Force=dmginfo:GetDamageForce()
 		self:FlingProp("models/weapons/w_mach_m249para.mdl",Force)
-		for i=1,3 do
+		for i=1,3*JMOD_CONFIG.SupplyEffectMult do
 			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
 			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
 			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
@@ -795,7 +795,11 @@ if(SERVER)then
 				local DmgInfo=DamageInfo()
 				DmgInfo:SetAttacker(self.Owner or self)
 				DmgInfo:SetInflictor(self)
-				DmgInfo:SetDamageType(DMG_BURN)
+				if(Tr.Entity:IsOnFire())then
+					DmgInfo:SetDamageType(DMG_DIRECT)
+				else
+					DmgInfo:SetDamageType(DMG_BURN)
+				end
 				DmgInfo:SetDamagePosition(Tr.HitPos)
 				DmgInfo:SetDamageForce(ShootDir*Dmg)
 				DmgInfo:SetDamage(Dmg)

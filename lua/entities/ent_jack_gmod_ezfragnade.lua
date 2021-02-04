@@ -15,7 +15,7 @@ if(SERVER)then
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(4,function()
+		timer.Simple(self.FuzeTimeOverride or 4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end

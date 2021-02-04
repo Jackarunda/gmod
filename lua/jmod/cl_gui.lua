@@ -599,16 +599,6 @@ net.Receive("JMod_ModifyMachine",function()
 		Y=Y+50
 		if(Y>=300)then X=X+285;Y=10 end
 	end
-	if(AmmoTypes)then
-		local DComboBox=vgui.Create("DComboBox",bg)
-		DComboBox:SetPos(10,320)
-		DComboBox:SetSize(150,20)
-		DComboBox:SetValue(AmmoType)
-		for k,v in pairs(AmmoTypes)do DComboBox:AddChoice(k) end
-		function DComboBox:OnSelect(index,value)
-			AmmoType=value
-		end
-	end
 	local Display=vgui.Create("DPanel",bg)
 	Display:SetSize(600,40)
 	Display:SetPos(100,315)
@@ -637,6 +627,16 @@ net.Receive("JMod_ModifyMachine",function()
 		end
 		net.SendToServer()
 		frame:Close()
+	end
+	if(AmmoTypes)then
+		local DComboBox=vgui.Create("DComboBox",bg)
+		DComboBox:SetPos(10,320)
+		DComboBox:SetSize(150,20)
+		DComboBox:SetValue(AmmoType)
+		for k,v in pairs(AmmoTypes)do DComboBox:AddChoice(k) end
+		function DComboBox:OnSelect(index,value)
+			AmmoType=value
+		end
 	end
 end)
 

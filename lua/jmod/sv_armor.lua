@@ -284,13 +284,24 @@ end)
 
 hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 	if (victim:IsPlayer() and victim.EZarmor) then
+		local Helf,IsPiercingDmg,Att=victim:Health(),IsDamageOneOfTypes(dmginfo, JMod_PiercingDmgTypes),dmginfo:GetAttacker()
 		if (IsDamageOneOfTypes(dmginfo, JMod_LocationalDmgTypes)) then
 			-- scaling handled in scaleplayerdamage
-			return
 		elseif (IsDamageOneOfTypes(dmginfo, JMod_FullBodyDmgTypes)) then
 			FullBodyDmgHandling(victim, dmginfo, false)
 		elseif (IsDamageOneOfTypes(dmginfo, JMod_BiologicalDmgTypes)) then
 			FullBodyDmgHandling(victim, dmginfo, true)
+		end
+		if(JMOD_CONFIG.QoL.BleedDmgMult>0 and IsPiercingDmg)then
+			timer.Simple(0,function()
+				local NewHelf=victim:Health()
+				local HelfLoss=Helf-NewHelf
+				if(NewHelf>0 and HelfLoss>0)then
+					victim.EZbleeding=(victim.EZbleeding or 0)+HelfLoss*JMOD_CONFIG.QoL.BleedDmgMult
+					victim.EZbleedAttacker=Att
+					JMod_SyncBleeding(victim)
+				end
+			end)
 		end
 	end
 end)

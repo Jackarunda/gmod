@@ -557,6 +557,14 @@ net.Receive("JMod_VisionBlur",function()
 	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0)+net.ReadFloat(),0,75)
 end)
 
+net.Receive("JMod_Bleeding",function()
+	LocalPlayer().EZbleeding=net.ReadInt(8)
+end)
+
+net.Receive("JMod_SFX",function()
+	surface.PlaySound(net.ReadString())
+end)
+
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine

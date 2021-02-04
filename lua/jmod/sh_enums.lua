@@ -53,27 +53,32 @@ JMOD_EZ_STATE_WARNING	= 4
 -- the Mk.8Z
 -- armor refactor and radsuit
 -- wiremod support
--- sentries shoot dead things
 -- moab drogue chute
 -- bounding mine unbury
--- fakken like OnDamagedByExplosion tinnitus
 -- if the json cant be read then print an error
 -- fuggin like let BK and WB draw from resource crates
 -- func for packages to read more info from ez entities
 -- clasnames to friendlist
 -- craftable keypad entity you can install on anything to lock it with a PIN
--- - can now use the headset to communicate remotely with your Aid Radio
--- - sentry coolant
--- - jmod hands on spawn qol
--- - blur need to use arccw blur
--- - capmmball holster
--- - simphys leaves the planet
--- - MG unsprint times
--- - AMSR unsprint time
--- - rebalance damages/penetration/range/unsprint times and sway for guns
--- - config to blacklist weapons for ammo boxes
--- - satchel charge fixed
--- - gun sway can be changed in the config
+-- weapon crate
+-- weps spawn with full ammo
+-- - fix dropdown in turret customize menu
+-- make sentries prioritize targets
+-- - make laser sentries do DMG_DIRECT to zombies when they are on fire
+-- - config to change the prop spam use effect
+-- JIT crashes with sentry terminal
+-- headset power consumption
+-- black hole, add blacklist st_*
+-- gas grenade, fire grenade issues
+-- armor crate issues
+-- todo: implement:
+		--	InjurySlowdownMult=0,
+		--	InjuryVisionMult=0,
+		--	BlastConsussionMult=0,
+		--	InjurySwayMult=0,
+		--	ArmShotSwayMult=0,
+		--	ArmShotDisarmChance=0,
+		--	LegShotSlowdownMult=0
 --[[
 [JMod] lua/jmod/sv_hint.lua:3: Tried to use a NULL entity!
 1. __newindex - [C]:-1

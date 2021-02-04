@@ -4,7 +4,7 @@ ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Fissile Material"
 ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminOnly=true
 ---
 ENT.EZsupplies="fissilematerial"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)

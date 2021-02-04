@@ -59,7 +59,7 @@ local function BlurScreen()
 	Dynamic2=math.Clamp(Dynamic2+(1/FrameRate)*7,0,1)
 end
 
-local GoggleDarkness,GogglesWereOn,CurVisionBlur=0,false,0
+local GoggleDarkness,GogglesWereOn,CurVisionBlur,CurEyeClose=0,false,0,0
 local ThermalGlowMat=Material("models/debug/debugwhite")
 local blurMaterial = Material ('pp/bokehblur')
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
@@ -166,6 +166,9 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		
 		render.SetMaterial(blurMaterial)
 		render.DrawScreenQuad()
+		
+		-- also add an eye-closing effect
+		-- todo
 	end
 	ply.EZvisionBlur=math.Clamp((ply.EZvisionBlur or 0)-FT,0,75)
 	CurVisionBlur=Lerp(FT*.5,CurVisionBlur,ply.EZvisionBlur)

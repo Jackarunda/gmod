@@ -54,8 +54,10 @@ if(SERVER)then
 		self:SetUseType(ONOFF_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(self.Mass)
-			self:GetPhysicsObject():Wake()
+			if(IsValid(self))then
+				self:GetPhysicsObject():SetMass(self.Mass)
+				self:GetPhysicsObject():Wake()
+			end
 		end)
 		---
 		self:SetState(JMOD_EZ_STATE_OFF)

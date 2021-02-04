@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Nano Nuclear Bomb"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminOnly=true
 ENT.JModEZstorable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
@@ -39,9 +39,11 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(100)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
+			if(IsValid(self))then
+				self:GetPhysicsObject():SetMass(100)
+				self:GetPhysicsObject():Wake()
+				self:GetPhysicsObject():EnableDrag(false)
+			end
 		end)
 		---
 		self:SetState(STATE_OFF)

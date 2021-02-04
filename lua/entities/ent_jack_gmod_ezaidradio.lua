@@ -143,7 +143,7 @@ if(SERVER)then
 		for i=1,10 do self:DamageSpark() end
 		local Force=dmginfo:GetDamageForce()
 		self:FlingProp("models/props_rooftop/satellitedish02.mdl",Force)
-		for i=1,3 do
+		for i=1,3*JMOD_CONFIG.SupplyEffectMult do
 			self:FlingProp(table.Random(self.PropModels),Force)
 			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
 			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)

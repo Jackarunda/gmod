@@ -58,7 +58,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,4 do self:FlingProp(table.Random(self.PropModels)) end
+		for i=1,4*JMOD_CONFIG.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos+VectorRand())
 		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())

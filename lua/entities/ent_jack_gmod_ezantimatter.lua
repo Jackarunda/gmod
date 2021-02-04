@@ -4,7 +4,7 @@ ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Antimatter"
 ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminOnly=true
 ---
 ENT.EZsupplies="antimatter"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)

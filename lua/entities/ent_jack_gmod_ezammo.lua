@@ -22,7 +22,7 @@ ENT.Hint="ammobox"
 local ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
-		for i=1,10 do
+		for i=1,10*JMOD_CONFIG.SupplyEffectMult do
 			timer.Simple(i/200,function()
 				local Eff=EffectData()
 				Eff:SetOrigin(pos)

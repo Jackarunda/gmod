@@ -37,7 +37,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,4 do self:FlingProp(table.Random(self.PropModels)) end
+		for i=1,4*JMOD_CONFIG.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(20,20,20,230)
