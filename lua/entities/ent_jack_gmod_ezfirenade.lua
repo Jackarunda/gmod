@@ -36,7 +36,7 @@ if(SERVER)then
 		Boom:SetKeyValue("imagnitude","50")
 		Boom:SetOwner(Owner)
 		Boom:Spawn()
-		Boom:Fire("explode",0,"")
+		Boom:Fire("explode",0)
 		for i=1,15 do
 			local FireVec=(self:GetVelocity()/500+VectorRand()*.3+Vector(0,0,.3)):GetNormalized()
 			FireVec.z=FireVec.z/2
