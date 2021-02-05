@@ -18,6 +18,7 @@ util.AddNetworkString("JMod_EZradio")
 util.AddNetworkString("JMod_EZweaponMod")
 util.AddNetworkString("JMod_Bleeding")
 util.AddNetworkString("JMod_SFX")
+util.AddNetworkString("JMod_Ravebreak")
 
 net.Receive("JMod_Friends",function(length,ply)
 	local List,Good=net.ReadTable(),true

@@ -151,7 +151,6 @@ end
 
 local WindChange,NextThink=Vector(0,0,0),0
 local Count,Sum=0,0
-
 hook.Add("Think","JMOD_CLIENT_THINK",function()
 	local Time=CurTime()
 	local ply,DrawNVGlamp=LocalPlayer(),false
@@ -563,6 +562,14 @@ end)
 
 net.Receive("JMod_SFX",function()
 	surface.PlaySound(net.ReadString())
+end)
+
+net.Receive("JMod_Ravebreak",function()
+	-- fucking HELL YES HERE WE GO
+	surface.PlaySound("snds_jack_gmod/ravebreak.mp3")
+	LocalPlayer().JMod_RavebreakStartTime=CurTime()+2.325
+	LocalPlayer().JMod_RavebreakEndTime=CurTime()+25.5
+	-- note that the song's beat is about .35 seconds
 end)
 
 --[[

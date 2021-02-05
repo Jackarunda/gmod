@@ -215,6 +215,18 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 end)
 
+concommand.Add("jacky_ravebreak",function(ply,cmd,args)
+	if not(ply:IsSuperAdmin())then return end
+	net.Start("JMod_Ravebreak")
+	net.Broadcast()
+	for k,v in pairs(player.GetAll())do
+		if(v:IsBot())then
+			v.JMod_RavebreakStartTime=CurTime()+2.325
+			v.JMod_RavebreakEndTime=CurTime()+25.5
+		end
+	end
+end)
+
 concommand.Add("jacky_player_debug",function(ply,cmd,args)
 	if not(GetConVar("sv_cheats"):GetBool())then return end
 	if not(ply:IsSuperAdmin())then return end

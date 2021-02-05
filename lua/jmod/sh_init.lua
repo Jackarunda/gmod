@@ -24,6 +24,7 @@ PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
 --PrecacheParticleSystem("50lb_ground")
 --
+JMod_RavebreakBeatTime=.36
 local Alphanumerics={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
 function JMod_GenerateGUID()
 	local Res=""
@@ -64,5 +65,15 @@ hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
 			data.Dir=NewDir
 			return true
 		end
+	end
+end)
+hook.Add("StartCommand","JMod_StartCommand",function(ply,ucmd)
+	local Time=CurTime()
+	if(ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime>Time and ply.JMod_RavebreakStartTime<Time)then
+		local Btns=ucmd:GetButtons()
+		if(math.random(1,30)==1)then Btns=bit.bor(Btns,IN_JUMP) end
+		if(math.random(1,5)==1)then Btns=bit.bor(Btns,IN_ATTACK) end
+		if(math.random(1,400)==1)then Btns=bit.bor(Btns,IN_RELOAD) end
+		ucmd:SetButtons(Btns)
 	end
 end)

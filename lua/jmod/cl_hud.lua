@@ -62,12 +62,40 @@ end
 local GoggleDarkness,GogglesWereOn,CurVisionBlur,CurEyeClose=0,false,0,0
 local ThermalGlowMat=Material("models/debug/debugwhite")
 local blurMaterial = Material ('pp/bokehblur')
+local RavebreakColors={Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(0,255,255),Color(255,0,255),Color(255,255,0)}
+local NextRavebreakBeat,CurRavebreakColor=0,math.random(1,6)
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
 	local AimVec,FirstPerson=ply:GetAimVector(),not ply:ShouldDrawLocalPlayer()
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
 	--JMod_MeasureFramerate()
 	if(FirstPerson)then
+		--ply.JMod_RavebreakEndTime=Time+1
+		--*ply.JMod_RavebreakStartTime=0
+		if(ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime>Time and ply.JMod_RavebreakStartTime<Time)then
+			if(NextRavebreakBeat<Time)then
+				NextRavebreakBeat=Time+JMod_RavebreakBeatTime
+				CurRavebreakColor=CurRavebreakColor+1
+				if(CurRavebreakColor>6)then CurRavebreakColor=1 end
+			end
+			local Col=RavebreakColors[CurRavebreakColor]
+			DrawColorModify({
+				[ "$pp_colour_addr" ] = Col.r/400,
+				[ "$pp_colour_addg" ] = Col.g/400,
+				[ "$pp_colour_addb" ] = Col.b/400,
+				[ "$pp_colour_brightness" ] = 0,
+				[ "$pp_colour_contrast" ] = 1,
+				[ "$pp_colour_colour" ] = 1,
+				[ "$pp_colour_mulr" ] = 0,
+				[ "$pp_colour_mulg" ] = 0,
+				[ "$pp_colour_mulb" ] = 0
+			})
+			local CurAng=ply:EyeAngles()
+			local PartyinEyeAngles=Angle(0,CurAng.y,0)
+			PartyinEyeAngles.y=PartyinEyeAngles.y-FrameTime()*50
+			PartyinEyeAngles.p=math.sin(Time*2/JMod_RavebreakBeatTime)*40
+			ply:SetEyeAngles(PartyinEyeAngles)
+		end
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
 			if(ply.EZarmor.blackvision)then
 				surface.SetDrawColor(0,0,0,255)

@@ -10,6 +10,7 @@ ENT.Model = "models/weapons/w_fragjade.mdl"
 ENT.Material = "models/shiny"
 ENT.ModelScale = 3
 ENT.SpoonScale = 3
+ENT.Mass = 20
 ENT.DetonationEffects={
 	{ -- b a l l s
 		col=Color(128,255,128),
@@ -24,6 +25,64 @@ ENT.DetonationEffects={
 					Nade:SetBallSize(math.random(20,50))
 					Nade:GetPhysicsObject():SetVelocity(VectorRand()*math.Rand(10,300))
 				end)
+			end
+		end
+	},
+	{ -- CHEESE! FOR EVERYONE!
+		col=Color(255,220,0),
+		func=function(self,pos,owner)
+			JMod_Sploom(owner,pos,10)
+			for k,v in pairs(ents.FindInSphere(pos,1000))do
+				if(v:IsPlayer())then
+					net.Start("JMod_SFX")
+					net.WriteString("snds_jack_gmod/cheeseforeveryone.mp3")
+					net.Send(v)
+				end
+			end
+			for i=1,20 do
+				timer.Simple(i/10+.1,function()
+					for j=1,10 do
+						local Nade=ents.Create("ent_jack_gmod_ezcheese")
+						Nade:SetPos(pos)
+						Nade.Owner=owner
+						Nade:Spawn()
+						timer.Simple(0,function()
+							Nade:GetPhysicsObject():SetVelocity(VectorRand()*math.Rand(10,300)+Vector(0,0,1500))
+						end)
+					end
+				end)
+			end
+		end
+	},
+	{ -- RAVEBREAK!
+		col=Color(0,255,255),
+		func=function(self,pos,owner)
+			self:PoofEffect()
+			net.Start("JMod_Ravebreak")
+			net.Broadcast()
+			for k,v in pairs(player.GetAll())do
+				if(v:IsBot())then
+					v.JMod_RavebreakStartTime=CurTime()+2.325
+					v.JMod_RavebreakEndTime=CurTime()+25.5
+				end
+			end
+			-- dude fucking hell yes i love ravebreak
+		end
+	},
+	{ -- stop fightin damnit
+		col=Color(255,255,255),
+		func=function(self,pos,owner)
+			sound.Play("snds_jack_gmod/nope.wav",pos,100,100)
+			sound.Play("snds_jack_gmod/nope.wav",pos,100,100)
+			self:PoofEffect()
+			for k,v in pairs(ents.FindInSphere(pos,1000))do
+				if(v:IsPlayer())then
+					v:StripWeapons()
+					v:Give("wep_jack_gmod_hands")
+					v:SelectWeapon("wep_jack_gmod_hands")
+					v:ViewPunch(Angle(0,30,0))
+					v:EmitSound("physics/body/body_medium_impact_hard6.wav",50,100)
+				end
 			end
 		end
 	},
@@ -50,6 +109,42 @@ ENT.DetonationEffects={
 			end
 		end
 	},
+	{ -- if you can dodge a grenade you can dodge a dick
+		col=Color(20,40,0),
+		func=function(self,pos,owner)
+			for i=1,20 do
+				timer.Simple(i/2,function()
+					if(IsValid(self))then
+						local SelfPos=self:GetPos()+Vector(0,0,10)
+						local Targets={}
+						for k,v in pairs(ents.FindInSphere(self:GetPos(),2000))do
+							if(v:IsPlayer() or v:IsNPC())then
+								local TargPos=v:GetPos()+Vector(0,0,30)
+								local Tr=util.TraceLine({start=self:GetPos(),endpos=v:GetShootPos(),filter={self,v}})
+								if not(Tr.Hit)then
+									table.insert(Targets,(TargPos-SelfPos):GetNormalized())
+								end
+							end
+						end
+						local Target=table.Random(Targets)
+						if(Target)then
+							self:GetPhysicsObject():SetVelocity(Target*2000)
+						end
+						if(i==20)then
+							timer.Simple(2,function()
+								if(IsValid(self))then
+									sound.Play("snds_jack_gmod/sadfart.wav",SelfPos,100,100)
+									self:PoofEffect()
+									self:Remove()
+								end
+							end)
+						end
+					end
+				end)
+			end
+			return true
+		end
+	},
 	{ -- U P
 		col=Color(128,128,255),
 		func=function(self,pos,owner)
@@ -69,16 +164,71 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- Instant Infestation
-		col=Color(180,128,0),
+	{ -- AND HIS NAME IS JOHN CENA slithering in oh WATCH OUT WATCH OUT WATCH OUT
+		col=Color(239,163,112),
+		func=function(self,pos,owner)
+			self:PoofEffect()
+			local Cena=math.random(1,2)==1 -- otherwise randy orton
+			for k,v in pairs(ents.FindInSphere(pos,1000))do
+				if(v:IsPlayer() or v:IsNPC())then
+					if(v:IsPlayer())then
+						net.Start("JMod_SFX")
+						net.WriteString((Cena and "snds_jack_gmod/johncena.mp3") or "snds_jack_gmod/ohwatchout.mp3")
+						net.Send(v)
+					end
+					timer.Simple((Cena and 1.9) or 4,function()
+						local Dmg=DamageInfo()
+						Dmg:SetDamage(1000)
+						Dmg:SetDamageType(DMG_CLUB)
+						Dmg:SetAttacker(owner)
+						Dmg:SetInflictor(game.GetWorld())
+						Dmg:SetDamageForce((Cena and Vector(0,0,-10000000000000000)) or -v:GetForward()*1000000000000)
+						Dmg:SetDamagePosition(v:GetPos())
+						v:TakeDamageInfo(Dmg)
+					end)
+				end
+			end
+		end
+	},
+	{ -- SPIDERS AAAAAAAAAAAAAAAAAAAAAAAA
+		col=Color(60,60,60),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,0)
-			for i=1,50 do
+			sound.Play("snds_jack_gmod/spiders.wav",pos,100,100)
+			for i=1,100 do
 				local Nade=ents.Create("npc_headcrab_fast")
 				Nade:SetPos(pos+VectorRand()*10+Vector(0,0,10))
 				Nade.Owner=owner
 				Nade:Spawn()
+				Nade:SetModelScale(math.Rand(.3,.5),0)
+				local col=math.random(0,50)
+				Nade:SetColor(Color(col,col,col))
 				timer.Simple(0,function() if(IsValid(Nade))then Nade:SetVelocity(VectorRand()*1000+Vector(0,0,1000)) end end)
+			end
+		end
+	},
+	{ -- Instant Inferno
+		col=Color(255,100,50),
+		func=function(self,pos,owner)
+			JMod_Sploom(owner,pos,0)
+			sound.Play("snds_jack_gmod/soldier_firefirefire.wav",pos,100,100)
+			sound.Play("snds_jack_gmod/soldier_firefirefire.wav",pos,100,100)
+			for k,v in pairs(ents.FindInSphere(pos,1000))do
+				if(v.Ignite)then v:Ignite(math.random(5,30)) end
+			end
+			for i=1,80 do
+				local FireVec=(VectorRand()+Vector(0,0,.5)):GetNormalized()
+				FireVec.z=FireVec.z/2
+				local Flame=ents.Create("ent_jack_gmod_eznapalm")
+				Flame:SetPos(pos+Vector(0,0,10))
+				Flame:SetAngles(FireVec:Angle())
+				Flame:SetOwner(owner)
+				Flame.Owner=owner
+				Flame.SpeedMul=.8
+				Flame.Creator=self
+				Flame.HighVisuals=false
+				Flame:Spawn()
+				Flame:Activate()
 			end
 		end
 	},
@@ -121,29 +271,64 @@ ENT.DetonationEffects={
 		col=Color(50,100,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,1)
-			for i=1,10 do
+			for i=1,15 do
 				local Nade=ents.Create("ent_jack_gmod_ezfragnade")
 				Nade:SetPos(pos)
 				Nade.Owner=owner
 				Nade:Spawn()
 				timer.Simple(0,function()
-					Nade:GetPhysicsObject():SetVelocity(VectorRand()*math.Rand(10,1000))
+					Nade:GetPhysicsObject():SetVelocity(VectorRand()*math.Rand(10,1500))
 					Nade.FuzeTimeOverride=math.Rand(2,6)
 					Nade:Arm()
 				end)
 			end
 		end
 	},
-	{ -- davy crocket
+	{ -- wtf boom
 		col=Color(200,0,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
-			local Whoah=ents.Create("ent_jack_gmod_eznuke_small")
-			Whoah:SetPos(pos)
-			Whoah.Owner=owner
-			Whoah:Spawn()
-			timer.Simple(0,function()
-				Whoah:Detonate()
+			self:PoofEffect()
+			for k,v in pairs(ents.FindInSphere(pos,2000))do
+				if(v:IsPlayer())then
+					net.Start("JMod_SFX")
+					net.WriteString("snds_jack_gmod/wtfboom.mp3")
+					net.Send(v)
+				end
+			end
+			timer.Simple(1.6,function()
+				local Whoah=ents.Create("ent_jack_gmod_eznuke_small")
+				Whoah:SetPos(pos)
+				Whoah.Owner=owner
+				Whoah:Spawn()
+				timer.Simple(0,function()
+					Whoah:Detonate()
+				end)
+			end)
+		end
+	},
+	{ -- YEEEEEEEEEEEEEEEEEEEEEEEEE
+		col=Color(200,255,0),
+		func=function(self,pos,owner)
+			self:PoofEffect()
+			for k,v in pairs(ents.FindInSphere(pos,1000))do
+				if(v:IsPlayer())then
+					net.Start("JMod_SFX")
+					net.WriteString("snds_jack_gmod/engineersplosion.mp3")
+					net.Send(v)
+				end
+			end
+			timer.Simple(4.1,function()
+				for k,v in pairs(ents.FindInSphere(pos,800))do
+					if(not v:IsPlayer() and IsValid(v:GetPhysicsObject()))then
+						for i=1,8 do
+							timer.Simple(i*.1*math.Rand(.9,1.1),function()
+								if(math.random(1,2)==2 and IsValid(v))then
+									JMod_Sploom(owner or game.GetWorld(),v:GetPos()+VectorRand()*30,50)
+								end
+							end)
+						end
+					end
+				end
 			end)
 		end
 	},
@@ -189,6 +374,35 @@ ENT.DetonationEffects={
 				end)
 			end)
 		end
+	},
+	{ -- damnit garry
+		col=Color(255,255,0),
+		func=function(self,pos,owner)
+			self:PoofEffect()
+			net.Start("JMod_SFX")
+			net.WriteString("snds_jack_gmod/windowsfuckup.mp3")
+			net.Broadcast()
+			timer.Simple(3.8,function()
+				for k,v in pairs(ents.GetAll())do
+					local CanModel=v.SetModel and v.GetPhysicsObject and IsValid(v:GetPhysicsObject()) and not v:IsWorld()
+					local CanMaterial=v.SetMaterial and not v:IsWorld()
+					if(string.find(v:GetClass(),"func_"))then CanModel=false end
+					if(math.random(1,2)==2)then
+						if(CanMaterial)then
+							v:SetMaterial("models/missingtexture")
+						elseif(CanModel)then
+							v:SetModel("models/error.mdl")
+						end
+					else
+						if(CanModel)then
+							v:SetModel("models/error.mdl")
+						elseif(CanMaterial)then
+							v:SetMaterial("models/missingtexture")
+						end
+					end
+				end
+			end)
+		end
 	}
 }
 if(SERVER)then
@@ -199,6 +413,7 @@ if(SERVER)then
 		timer.Simple(5,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
+		self.StopIt=true
 	end
 	function ENT:SpoonEffect()
 		if self.SpoonEnt then
@@ -218,19 +433,20 @@ if(SERVER)then
 		if not(self.CurEff)then -- that means we just spawned
 			self.CurEff=math.random(1,#self.DetonationEffects)
 			self:SetColor(self.DetonationEffects[self.CurEff].col)
-			self.NextEffSwitch=tim+1
+			self.NextEffSwitch=tim+.7
 		elseif(self.NextEffSwitch<tim)then
-			self.NextEffSwitch=tim+1
+			if(self.StopIt)then return end
+			self.NextEffSwitch=tim+.7
 			self.CurEff=self.CurEff+1
 			if(self.CurEff>#self.DetonationEffects)then self.CurEff=1 end
 			self:SetColor(self.DetonationEffects[self.CurEff].col)
 		end
 	end
 	function ENT:Detonate()
-		self.CurEff=6 -- DEBUG
+		--self.CurEff=3 -- DEBUG
 		local pos=self:GetPos()+Vector(0,0,10)
-		self.DetonationEffects[self.CurEff].func(self,pos,self.Owner or self:GetOwner() or game.GetWorld())
-		self:Remove()
+		local NoRemove=self.DetonationEffects[self.CurEff].func(self,pos,self.Owner or self:GetOwner() or game.GetWorld())
+		if not(NoRemove)then self:Remove() end
 	end
 	function ENT:PoofEffect(pos,scl)
 		local eff=EffectData()
@@ -242,5 +458,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezanomaly","T H E  G R E N A D E")
+	language.Add("ent_jack_gmod_ezanomaly_grenade","T H E  G R E N A D E")
 end
