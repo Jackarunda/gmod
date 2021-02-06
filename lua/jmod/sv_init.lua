@@ -215,18 +215,6 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 end)
 
-concommand.Add("jacky_ravebreak",function(ply,cmd,args)
-	if not(ply:IsSuperAdmin())then return end
-	net.Start("JMod_Ravebreak")
-	net.Broadcast()
-	for k,v in pairs(player.GetAll())do
-		if(v:IsBot())then
-			v.JMod_RavebreakStartTime=CurTime()+2.325
-			v.JMod_RavebreakEndTime=CurTime()+25.5
-		end
-	end
-end)
-
 concommand.Add("jacky_player_debug",function(ply,cmd,args)
 	if not(GetConVar("sv_cheats"):GetBool())then return end
 	if not(ply:IsSuperAdmin())then return end
@@ -248,6 +236,7 @@ hook.Add("DoPlayerDeath","JMOD_SERVER_PLAYERDEATH",function(ply)
 	ply.EZnutrition=nil
 	ply.EZhealth=nil
 	ply.EZkillme=nil
+	if(ply.JackyMatDeathUnset)then ply.JackyMatDeathUnset=false;ply:SetMaterial("") end
 end)
 
 hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)

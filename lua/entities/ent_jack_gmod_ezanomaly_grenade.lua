@@ -11,8 +11,8 @@ ENT.Material = "models/shiny"
 ENT.ModelScale = 3
 ENT.SpoonScale = 3
 ENT.Mass = 20
-ENT.DetonationEffects={
-	{ -- b a l l s
+local DetonationEffects={
+	balls={ -- b a l l s
 		col=Color(128,255,128),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
@@ -28,7 +28,7 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- CHEESE! FOR EVERYONE!
+	cheese={ -- CHEESE! FOR EVERYONE!
 		col=Color(255,220,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
@@ -54,10 +54,10 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- RAVEBREAK!
+	ravebreak={ -- RAVEBREAK!
 		col=Color(0,255,255),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			net.Start("JMod_Ravebreak")
 			net.Broadcast()
 			for k,v in pairs(player.GetAll())do
@@ -69,12 +69,12 @@ ENT.DetonationEffects={
 			-- dude fucking hell yes i love ravebreak
 		end
 	},
-	{ -- stop fightin damnit
+	nope={ -- stop fightin damnit
 		col=Color(255,255,255),
 		func=function(self,pos,owner)
 			sound.Play("snds_jack_gmod/nope.wav",pos,100,100)
 			sound.Play("snds_jack_gmod/nope.wav",pos,100,100)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			for k,v in pairs(ents.FindInSphere(pos,1000))do
 				if(v:IsPlayer())then
 					v:StripWeapons()
@@ -86,18 +86,18 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- sad fart
+	fart={ -- sad fart
 		col=Color(50,40,0),
 		func=function(self,pos,owner)
 			sound.Play("snds_jack_gmod/sadfart.wav",pos,100,100)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 		end
 	},
-	{ -- chaotic neutral
+	cluster={ -- chaotic neutral
 		col=Color(128,128,128),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
-			for i=1,10 do
+			for i=1,5 do
 				local Nade=ents.Create("ent_jack_gmod_ezanomaly_grenade")
 				Nade:SetPos(pos)
 				Nade.Owner=owner
@@ -109,9 +109,10 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- if you can dodge a grenade you can dodge a dick
+	revenge={ -- if you can dodge a grenade you can dodge a dick
 		col=Color(20,40,0),
 		func=function(self,pos,owner)
+			if not(IsValid(self))then print("doesn't work without a nade") return end
 			for i=1,20 do
 				timer.Simple(i/2,function()
 					if(IsValid(self))then
@@ -145,10 +146,10 @@ ENT.DetonationEffects={
 			return true
 		end
 	},
-	{ -- U P
+	up={ -- U P
 		col=Color(128,128,255),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			for k,v in pairs(ents.FindInSphere(pos,2000))do
 				if(v:IsPlayer())then
 					v:SetMoveType(MOVETYPE_WALK)
@@ -164,10 +165,10 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- AND HIS NAME IS JOHN CENA slithering in oh WATCH OUT WATCH OUT WATCH OUT
+	knockout={ -- AND HIS NAME IS JOHN CENA slithering in oh WATCH OUT WATCH OUT WATCH OUT
 		col=Color(239,163,112),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			local Cena=math.random(1,2)==1 -- otherwise randy orton
 			for k,v in pairs(ents.FindInSphere(pos,1000))do
 				if(v:IsPlayer() or v:IsNPC())then
@@ -190,7 +191,7 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- SPIDERS AAAAAAAAAAAAAAAAAAAAAAAA
+	spiders={ -- SPIDERS AAAAAAAAAAAAAAAAAAAAAAAA
 		col=Color(60,60,60),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,0)
@@ -207,7 +208,7 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- Instant Inferno
+	inferno={ -- Instant Inferno
 		col=Color(255,100,50),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,0)
@@ -225,14 +226,14 @@ ENT.DetonationEffects={
 				Flame:SetOwner(owner)
 				Flame.Owner=owner
 				Flame.SpeedMul=.8
-				Flame.Creator=self
+				Flame.Creator=self or game.GetWorld()
 				Flame.HighVisuals=false
 				Flame:Spawn()
 				Flame:Activate()
 			end
 		end
 	},
-	{ -- g a s
+	gas={ -- g a s
 		col=Color(128,255,128),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
@@ -249,7 +250,7 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- MINES! FOR EVERYONE!
+	mines={ -- MINES! FOR EVERYONE!
 		col=Color(50,100,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,1)
@@ -267,7 +268,7 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- FRAGS! FOR EVERYONE!
+	frags={ -- FRAGS! FOR EVERYONE!
 		col=Color(50,100,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,1)
@@ -284,10 +285,10 @@ ENT.DetonationEffects={
 			end
 		end
 	},
-	{ -- wtf boom
+	wtfboom={ -- wtf boom
 		col=Color(200,0,0),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			for k,v in pairs(ents.FindInSphere(pos,2000))do
 				if(v:IsPlayer())then
 					net.Start("JMod_SFX")
@@ -306,10 +307,11 @@ ENT.DetonationEffects={
 			end)
 		end
 	},
-	{ -- YEEEEEEEEEEEEEEEEEEEEEEEEE
+	yee={ -- YEEEEEEEEEEEEEEEEEEEEEEEEE
+		-- credits for Dr. Lalve
 		col=Color(200,255,0),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			for k,v in pairs(ents.FindInSphere(pos,1000))do
 				if(v:IsPlayer())then
 					net.Start("JMod_SFX")
@@ -329,10 +331,15 @@ ENT.DetonationEffects={
 						end
 					end
 				end
+				for i=1,8 do
+					timer.Simple(i*.1*math.Rand(.9,1.1),function()
+						JMod_Sploom(owner or game.GetWorld(),pos+VectorRand()*500,50)
+					end)
+				end
 			end)
 		end
 	},
-	{ -- SUCC
+	succ={ -- SUCC
 		col=Color(0,0,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
@@ -342,23 +349,23 @@ ENT.DetonationEffects={
 			Whoah:Spawn()
 		end
 	},
-	{ -- tsar bomba
+	tsarbomba={ -- tsar bomba
 		col=Color(150,0,0),
 		func=function(self,pos,owner)
 			JMod_Sploom(owner,pos,10)
 			local Whoah=ents.Create("ent_jack_gmod_eznuke_big")
 			Whoah:SetPos(pos)
-			Whoah.Owner=self.Owner
+			Whoah.Owner=owner
 			Whoah:Spawn()
 			timer.Simple(0,function()
 				Whoah:Detonate()
 			end)
 		end
 	},
-	{ -- T H E   B I G   O O F
+	oof={ -- T H E   B I G   O O F
 		col=Color(10,10,10),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			for k,v in pairs(player.GetAll())do
 				v:KillSilent()
 			end
@@ -375,10 +382,10 @@ ENT.DetonationEffects={
 			end)
 		end
 	},
-	{ -- damnit garry
+	damnitgarry={ -- damnit garry
 		col=Color(255,255,0),
 		func=function(self,pos,owner)
-			self:PoofEffect()
+			if(IsValid(self))then self:PoofEffect() end
 			net.Start("JMod_SFX")
 			net.WriteString("snds_jack_gmod/windowsfuckup.mp3")
 			net.Broadcast()
@@ -389,15 +396,23 @@ ENT.DetonationEffects={
 					if(string.find(v:GetClass(),"func_"))then CanModel=false end
 					if(math.random(1,2)==2)then
 						if(CanMaterial)then
+							v:SetColor(Color(255,255,255))
 							v:SetMaterial("models/missingtexture")
+							v.JackyMatDeathUnset=true
 						elseif(CanModel)then
+							v:SetColor(Color(255,255,255))
+							v:SetMaterial("")
 							v:SetModel("models/error.mdl")
 						end
 					else
 						if(CanModel)then
+							v:SetColor(Color(255,255,255))
+							v:SetMaterial("")
 							v:SetModel("models/error.mdl")
 						elseif(CanMaterial)then
+							v:SetColor(Color(255,255,255))
 							v:SetMaterial("models/missingtexture")
+							v.JackyMatDeathUnset=true
 						end
 					end
 				end
@@ -405,12 +420,14 @@ ENT.DetonationEffects={
 		end
 	}
 }
+ENT.DetonationEffects={}
+for k,v in pairs(DetonationEffects)do table.insert(ENT.DetonationEffects,v) end
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
 		self:SetState(JMOD_EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(5,function()
+		timer.Simple(math.Rand(1,20),function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 		self.StopIt=true
@@ -443,7 +460,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Detonate()
-		--self.CurEff=3 -- DEBUG
+		--self.CurEff=16 -- DEBUG
 		local pos=self:GetPos()+Vector(0,0,10)
 		local NoRemove=self.DetonationEffects[self.CurEff].func(self,pos,self.Owner or self:GetOwner() or game.GetWorld())
 		if not(NoRemove)then self:Remove() end
@@ -454,6 +471,30 @@ if(SERVER)then
 		eff:SetScale(scl or .5)
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 	end
+	-- concommands for convenience
+	concommand.Add("jacky_ravebreak",function(ply,cmd,args)
+		if not(ply:IsSuperAdmin())then return end
+		net.Start("JMod_Ravebreak")
+		net.Broadcast()
+		for k,v in pairs(player.GetAll())do
+			if(v:IsBot())then
+				v.JMod_RavebreakStartTime=CurTime()+2.325
+				v.JMod_RavebreakEndTime=CurTime()+25.5
+			end
+		end
+	end)
+	concommand.Add("jacky_crazy_effect",function(ply,cmd,args)
+		if not(ply:IsSuperAdmin())then return end
+		local effName=args[1]
+		if not(DetonationEffects[effName])then
+			print("not a valid effect")
+			print("the names are:")
+			for k,v in pairs(DetonationEffects)do print(k) end
+			return
+		end
+		local self,pos,owner=nil,ply:GetShootPos()+ply:GetAimVector()*100,ply
+		DetonationEffects[effName].func(self,pos,owner)
+	end)
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
