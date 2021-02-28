@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_snip_blast_martini-henry_arccw.mdl"
 SWEP.WorldModel = "models/weapons/w_snip_blast_martini-henry_arccw.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(185,15,180)
 SWEP.BodyHolsterAngL = Angle(0,195,170)
@@ -18,7 +18,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.2)
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2
+SWEP.Recoil = 1.5
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Firemodes = {

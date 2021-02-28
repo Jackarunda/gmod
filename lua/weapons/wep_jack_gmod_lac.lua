@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_win73.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_levergun.mdl"
-SWEP.ViewModelFOV = 55
+SWEP.ViewModelFOV = 60
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(30,75,-30)
 SWEP.BodyHolsterAngL = Angle(150,75,30)
@@ -18,7 +18,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",1.2)
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.8
+SWEP.Recoil = 1.2
 
 SWEP.ShotgunReload = true
 
@@ -81,7 +81,7 @@ Walk
 SWEP.Animations = {
     ["idle"] = {
         Source = "idle",
-        Time = 1
+        Time = 100
     },
     ["draw"] = {
         Source = "draw",

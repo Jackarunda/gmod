@@ -315,8 +315,8 @@ function JMod_InitGlobalConfig(forceNew)
 			RealisticFallDamage=false,
 			Drowning=false,
 			GiveHandsOnSpawn=false,
-			BleedDmgMult=1,
-			BleedSpeedMult=1
+			BleedDmgMult=0,
+			BleedSpeedMult=0
 		},
 		FoodSpecs={
 			DigestSpeed=1,

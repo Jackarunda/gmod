@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_bo2_executioner1.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_shotrevolver.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
@@ -26,7 +26,7 @@ SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 2.5
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 
 SWEP.ShotgunReload = true

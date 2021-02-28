@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_w1200_c.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_w1200.mdl"
-SWEP.ViewModelFOV = 60
+SWEP.ViewModelFOV = 65
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(40,-110,50)
 SWEP.BodyHolsterAngL = Angle(180,-100,-10)
@@ -19,7 +19,7 @@ SWEP.DoorBreachPower = .2
 
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 1.5
 
 SWEP.ShotgunReload = true

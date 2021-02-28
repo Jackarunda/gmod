@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/c_mw2_m240.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m240.mdl"
-SWEP.ViewModelFOV = 65
+SWEP.ViewModelFOV = 70
 
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-100,10)
@@ -30,7 +30,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round")
 SWEP.Primary.ClipSize = 100 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .8 -- hevy gun
+SWEP.Recoil = .7 -- hevy gun
 
 SWEP.Delay = 60 / 550 -- 60 / RPM.
 SWEP.Firemodes = {

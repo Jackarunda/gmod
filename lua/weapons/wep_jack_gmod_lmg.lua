@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_cod4_m249saw.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m249.mdl"
-SWEP.ViewModelFOV = 65
+SWEP.ViewModelFOV = 70
 
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-100,10)
@@ -20,7 +20,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round",.9)
 SWEP.Primary.ClipSize = 150 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .45
+SWEP.Recoil = .3
 
 SWEP.Delay = 60 / 750 -- 60 / RPM.
 SWEP.Firemodes = {

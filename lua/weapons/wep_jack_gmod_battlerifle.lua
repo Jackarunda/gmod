@@ -6,7 +6,7 @@ SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_cod4_g3_new.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_g3.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(185,15,180)
 SWEP.BodyHolsterAngL = Angle(0,195,170)
@@ -18,7 +18,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round",.9)
 
 SWEP.Primary.ClipSize = 20 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.5
+SWEP.Recoil = 1.2
 
 SWEP.Delay = 60 / 550 -- 60 / RPM.
 SWEP.Firemodes = {

@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_aa12_6.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_fullautoshotty.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0, -105, 0)
 SWEP.BodyHolsterAngL = Angle(0,-75,170)
@@ -20,7 +20,7 @@ SWEP.DoorBreachPower = .2
 SWEP.Primary.ClipSize = 12 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- lol open bolt
 
-SWEP.Recoil = 2.8
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 1.5
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.

@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_mw2_44magnum.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_44mag.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
@@ -26,7 +26,7 @@ SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 2.5
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 150 -- 60 / RPM.

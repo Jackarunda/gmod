@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_bo2_b23r_1.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_b23r.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
@@ -25,7 +25,7 @@ SWEP.HipDispersion = 1100
 
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
-SWEP.Recoil = .7
+SWEP.Recoil = .5
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Firemodes = {

@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_mw2_deagle.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_deagle.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
@@ -25,7 +25,7 @@ SWEP.HipDispersion = 1100
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.

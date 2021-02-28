@@ -6,7 +6,7 @@ SWEP.Slot = 4
 
 SWEP.ViewModel = "models/weapons/v_jmod_m79.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m79.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,160)
@@ -21,7 +21,7 @@ SWEP.MuzzleVelocity = 3000
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Firemodes = {

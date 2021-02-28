@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_bo1_mac11.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_mac11.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(90,90,-20)
@@ -26,7 +26,7 @@ SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
 
-SWEP.Recoil = .9
+SWEP.Recoil = .6
 
 SWEP.Delay = 60 / 1300 -- 60 / RPM.
 SWEP.Firemodes = {

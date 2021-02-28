@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/viper/mw/weapons/725_mammaledition.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_breakshotty.mdl"
-SWEP.ViewModelFOV = 68
+SWEP.ViewModelFOV = 73
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,170,0)
 SWEP.BodyHolsterAngL = Angle(0,195,180)
@@ -19,7 +19,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Shotgun Round",1.2)
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult=1.5
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.

@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/v_jmod_ujp.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_ujp.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 
 --[[ -- pocket pistol goes in pocket ^:)
 SWEP.BodyHolsterSlot = "thighs"

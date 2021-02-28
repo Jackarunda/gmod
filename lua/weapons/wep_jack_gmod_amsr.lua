@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_intervention.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_intervention.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -20,7 +20,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Heavy Rifle Round",1.1)
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 SWEP.BipodRecoil = 1
 

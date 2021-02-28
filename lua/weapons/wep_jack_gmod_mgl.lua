@@ -6,7 +6,7 @@ SWEP.Slot = 4
 
 SWEP.ViewModel = "models/weapons/v_jmod_milkormgl.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_milkormgl.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,160)
@@ -22,7 +22,7 @@ SWEP.MuzzleVelocity = 3000
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- sigh
 
-SWEP.Recoil = 2
+SWEP.Recoil = 1.5
 
 SWEP.ShotgunReload = true
 

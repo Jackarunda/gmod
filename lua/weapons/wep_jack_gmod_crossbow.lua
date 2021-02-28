@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_jmod_crossbow.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_crossbow.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(90,-103,10)
 SWEP.BodyHolsterAngL = Angle(90,-103,-10)
@@ -37,7 +37,7 @@ SWEP.NoFlash=true
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
 
-SWEP.Recoil = .8
+SWEP.Recoil = .6
 
 SWEP.Delay = 60 / 100 -- 60 / RPM.
 SWEP.Firemodes = {

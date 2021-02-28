@@ -6,7 +6,7 @@ SWEP.Slot = 4
 
 SWEP.ViewModel = "models/weapons/v_mw2_at4_new.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_at4.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,160)
@@ -25,7 +25,7 @@ SWEP.ShootEntityAngleCorrection = Angle(0,-90,0)
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1
+SWEP.Recoil = .5
 SWEP.RecoilSide = 0.5
 SWEP.RecoilRise = 0.6
 

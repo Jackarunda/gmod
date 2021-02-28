@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_barrett50cal.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m107.mdl"
-SWEP.ViewModelFOV = 65
+SWEP.ViewModelFOV = 70
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(15,-77,180)
@@ -20,7 +20,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Heavy Rifle Round")
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 200 -- 60 / RPM.

@@ -6,7 +6,7 @@ SWEP.Slot = 4
 
 SWEP.ViewModel = "models/weapons/c_bo1_m202.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m202.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(20,-75,180)
@@ -26,7 +26,7 @@ SWEP.ShootEntityAngleCorrection = Angle(0,-90,0)
 SWEP.Primary.ClipSize = 4 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- sigh arctic
 
-SWEP.Recoil = 1
+SWEP.Recoil = .5
 
 SWEP.Delay = 60 / 120 -- 60 / RPM.
 SWEP.Firemodes = {

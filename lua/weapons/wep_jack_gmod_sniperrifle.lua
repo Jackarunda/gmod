@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_m40a3.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_m40a3.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -18,7 +18,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Magnum Rifle Round")
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 3
+SWEP.Recoil = 2
 SWEP.VisualRecoilMult = 1.5
 
 SWEP.ChamberSize = 0 -- this is so wrong, Arctic...

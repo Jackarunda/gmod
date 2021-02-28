@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/krazy/gtav/weapons/navyrevolver_v.mdl"
 SWEP.WorldModel = "models/krazy/gtav/weapons/navyrevolver_w.mdl"
-SWEP.ViewModelFOV = 75
+SWEP.ViewModelFOV = 80
 
 SWEP.BodyHolsterSlot = "thighs"
 SWEP.BodyHolsterAng = Angle(180,0,-115)
@@ -26,7 +26,7 @@ SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
 
-SWEP.Recoil = 2
+SWEP.Recoil = 1.5
 SWEP.VisualRecoilMult = 2
 
 SWEP.Delay = 60 / 60 -- 60 / RPM.

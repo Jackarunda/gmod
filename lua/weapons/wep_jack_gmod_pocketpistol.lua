@@ -6,7 +6,7 @@ SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/v_jmod_usp.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_usp.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 
 --[[ -- pocket pistol goes in pocket ^:)
 SWEP.BodyHolsterSlot = "thighs"
@@ -27,7 +27,7 @@ SWEP.HipDispersion = 1100
 
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 1.5
+SWEP.Recoil = 1.2
 
 SWEP.Delay = 60 / 400 -- 60 / RPM.
 SWEP.Firemodes = {

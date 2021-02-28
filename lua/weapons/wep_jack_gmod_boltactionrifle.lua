@@ -6,7 +6,7 @@ SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_r700.mdl"
 SWEP.WorldModel = "models/weapons/w_jmod_r700.mdl"
-SWEP.ViewModelFOV = 70
+SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-105,0)
 SWEP.BodyHolsterAngL = Angle(0,-75,190)
@@ -18,7 +18,7 @@ JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.1)
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
-SWEP.Recoil = 2
+SWEP.Recoil = 1.5
 
 SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
 
