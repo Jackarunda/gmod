@@ -823,7 +823,7 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 		surface.DrawRect(0,0,w,h)
 		draw.SimpleText(JMod_ArmorSlotNiceNames[slot],"DermaDefault",Buttalony:GetWide()/2,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		if(ItemID)then
-			local Str=ItemData.name..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
+			local Str=ItemData.name--..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
 			if(ItemData.tgl and ItemInfo.tgl.slots[slot]==0)then Str="DISENGAGED" end
 			draw.SimpleText(Str,"DermaDefault",Buttalony:GetWide()/2,25,Color(200,200,200,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end

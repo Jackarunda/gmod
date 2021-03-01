@@ -27,7 +27,7 @@ function JModEZarmorSync(ply)
 
 		if((item.tgl)and(ArmorInfo.tgl))then
 			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
-			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason, table.Merge doesn't copy empty tables
 				if(type(v)=="table")then
 					if(#table.GetKeys(v)==0)then
 						ArmorInfo[k]={}
@@ -35,7 +35,7 @@ function JModEZarmorSync(ply)
 				end
 			end
 		end
-
+		
 		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
 
 		if ArmorInfo.eff and not dead then

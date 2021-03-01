@@ -67,9 +67,7 @@ JMOD_EZ_STATE_WARNING	= 4
 -- - make laser sentries do DMG_DIRECT to zombies when they are on fire
 -- - config to change the prop spam use effect
 -- JIT crashes with sentry terminal
--- headset power consumption
 -- black hole, add blacklist st_*
--- gas grenade, fire grenade issues
 -- armor crate issues
 -- todo: implement:
 		--	InjurySlowdownMult=0,
@@ -85,6 +83,8 @@ JMOD_EZ_STATE_WARNING	= 4
 2. JMod_Hint - lua/jmod/sv_hint.lua:3
 3. unknown - lua/entities/ent_jack_gmod_ezweapon.lua:78
 Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
+-- make each outpost, when established, have a random position outside the map
+-- so that drop bearings can be predicted
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

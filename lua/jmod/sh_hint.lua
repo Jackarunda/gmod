@@ -142,7 +142,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezcoolant"] = {Type = "button", Text = "Coolant is consumed by high-performance machines, like Sentries", Time = 5},
 	["ent_jack_gmod_ezantimatter"] = {Type = "info", Text = "Antimatter is used to craft Black Hole Generators", Time = 3},
 	["ent_jack_gmod_ezantimatter use"] = {Type = "warn", Text = "Antimatter is EXTREMELY VOLATILE; handle with caution", Time = 5},
-	["ent_jack_gmod_ezbattery"] = {Type = "info", Text = "Battery is used to power machines", Time = 3},
+	["ent_jack_gmod_ezbattery"] = {Type = "info", Text = "Battery is used to power machines and armor gadgets", Time = 3},
 	["ent_jack_gmod_ezbattery use"] = {Type = "pickup", Text = "Bump battery into devices to recharge them", Time = 3},
 	["ent_jack_gmod_ezchemicals"] = {Type = "info", Text = "Chemicals are used to craft various things", Time = 3},
 	["ent_jack_gmod_ezexplosives"] = {Type = "info", Text = "Explosives are used to craft things that go boom", Time = 3},

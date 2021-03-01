@@ -18,12 +18,12 @@ function table.FullCopy(tab)
 	end
 	return res
 end
+function Stringify(tab)
+	
+end
 function jprint(...)
 	local items,printstr={...},""
-	for k,v in pairs(items)do
-		-- todo: tables
-		printstr=printstr..tostring(v)..", "
-	end
+	printstr=util.TableToJSON(items,true)
 	print(printstr)
 	if(SERVER)then
 		player.GetAll()[1]:PrintMessage(HUD_PRINTTALK,printstr)

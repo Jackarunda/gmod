@@ -12,6 +12,7 @@ function EFFECT:Init(data)
 				Particle:SetAirResistance(1000)
 				Particle:SetDieTime(math.random(7,10))
 				Particle:SetStartAlpha(255)
+				Particle.OriginalStartAlpha=255
 				Particle:SetEndAlpha(0)
 				local Size=math.Rand(30,60)
 				Particle:SetStartSize(Size/50)
@@ -26,6 +27,16 @@ function EFFECT:Init(data)
 				Particle:SetColor(darg,darg,darg)
 				Particle:SetCollide(true)
 				Particle:SetBounce(1)
+				---
+				Particle:SetNextThink(CurTime())
+				Particle:SetThinkFunction(function(pa)
+					if(LocalPlayer().EZarmor.effects.thermalVision)then
+						pa:SetStartAlpha(20)
+					else
+						pa:SetStartAlpha(pa.OriginalStartAlpha)
+					end
+					pa:SetNextThink(CurTime()+1)
+				end)
 			end
 		end
 	end

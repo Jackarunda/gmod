@@ -312,31 +312,13 @@ local DetonationEffects={
 		col=Color(200,255,0),
 		func=function(self,pos,owner)
 			if(IsValid(self))then self:PoofEffect() end
-			for k,v in pairs(ents.FindInSphere(pos,1000))do
-				if(v:IsPlayer())then
-					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/engineersplosion.mp3")
-					net.Send(v)
-				end
+			for i=1,30 do
+				local Engie=ents.Create("ent_jack_gmod_tinydeskengineer")
+				Engie:SetPos(pos+Vector(0,0,100)+VectorRand()*100)
+				Engie.Owner=owner
+				Engie:Spawn()
+				Engie:Activate()
 			end
-			timer.Simple(4.1,function()
-				for k,v in pairs(ents.FindInSphere(pos,800))do
-					if(not v:IsPlayer() and IsValid(v:GetPhysicsObject()))then
-						for i=1,8 do
-							timer.Simple(i*.1*math.Rand(.9,1.1),function()
-								if(math.random(1,2)==2 and IsValid(v))then
-									JMod_Sploom(owner or game.GetWorld(),v:GetPos()+VectorRand()*30,50)
-								end
-							end)
-						end
-					end
-				end
-				for i=1,8 do
-					timer.Simple(i*.1*math.Rand(.9,1.1),function()
-						JMod_Sploom(owner or game.GetWorld(),pos+VectorRand()*500,50)
-					end)
-				end
-			end)
 		end
 	},
 	succ={ -- SUCC

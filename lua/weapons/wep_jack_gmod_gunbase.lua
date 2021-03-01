@@ -42,6 +42,8 @@ SWEP.ShootPitch = 100 -- pitch of shoot sound
 SWEP.ShellTime = 100
 SWEP.ShellEffect = "eff_jack_gmod_weaponshell"
 
+SWEP.ForceDefaultAmmo = 0
+
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 
@@ -260,6 +262,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 		end
 	end
 end)
+
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
     if !irons then return end
@@ -269,19 +272,35 @@ function SWEP:TranslateFOV(fov)
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
 
-    if self:GetState() != ArcCW.STATE_SIGHTS then
-        self.ApproachFOV = fov
-    else
+    local div = 1
+    local app_vm = self.ViewModelFOV + 10
+
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        fov = 75
+        app_vm = 45
         if CLIENT and self:ShouldFlatScope() then
-            self.ApproachFOV = fov / (irons.Magnification + irons.ScopeMagnification)
+            div = (irons.Magnification + irons.ScopeMagnification)
         else
-            self.ApproachFOV = fov / irons.Magnification
+            div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
         end
-		if(BreathStatus)then self.ApproachFOV=self.ApproachFOV*.95 end -- JACKARUNDA
     end
 
+    -- something about this doesn't work in multiplayer
+    -- if game.SinglePlayer() then self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta()) end
+    -- it also fucking sucks
+
+    self.ApproachFOV = fov / div
+	if(BreathStatus)then self.ApproachFOV=self.ApproachFOV*.95 end -- JACKARUNDA
+
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
+
+    self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
+
+    self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
+
     return self.CurrentFOV
+
+    -- return 90
 end
 function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
