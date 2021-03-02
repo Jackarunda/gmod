@@ -313,11 +313,13 @@ local DetonationEffects={
 		func=function(self,pos,owner)
 			if(IsValid(self))then self:PoofEffect() end
 			for i=1,30 do
-				local Engie=ents.Create("ent_jack_gmod_tinydeskengineer")
-				Engie:SetPos(pos+Vector(0,0,100)+VectorRand()*100)
-				Engie.Owner=owner
-				Engie:Spawn()
-				Engie:Activate()
+				timer.Simple(math.Rand(0,1),function()
+					local Engie=ents.Create("npc_jack_gmod_tinydeskengineer")
+					Engie:SetPos(pos+VectorRand()*50)
+					Engie.Owner=owner
+					Engie:Spawn()
+					Engie:Activate()
+				end)
 			end
 		end
 	},
@@ -442,7 +444,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Detonate()
-		--self.CurEff=16 -- DEBUG
+		self.CurEff=16 -- DEBUG
 		local pos=self:GetPos()+Vector(0,0,10)
 		local NoRemove=self.DetonationEffects[self.CurEff].func(self,pos,self.Owner or self:GetOwner() or game.GetWorld())
 		if not(NoRemove)then self:Remove() end

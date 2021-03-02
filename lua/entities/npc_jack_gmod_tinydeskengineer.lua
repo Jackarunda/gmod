@@ -6,7 +6,7 @@ ENT.Author="Jackarunda"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 function ENT:Initialize()
-	self:SetModelScale(self.Scale or .2,0)
+	self:SetModelScale(self.Scale or .15,0)
 	self:SetModel("models/player/engineer.mdl")
 	self:Activate()
 	self:SetHealth(self.Helf or 10)
