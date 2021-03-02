@@ -444,7 +444,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Detonate()
-		self.CurEff=16 -- DEBUG
+		--self.CurEff=16 -- DEBUG
 		local pos=self:GetPos()+Vector(0,0,10)
 		local NoRemove=self.DetonationEffects[self.CurEff].func(self,pos,self.Owner or self:GetOwner() or game.GetWorld())
 		if not(NoRemove)then self:Remove() end
