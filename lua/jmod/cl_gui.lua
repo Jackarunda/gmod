@@ -904,6 +904,13 @@ net.Receive("JMod_Inventory",function()
 	PlayerDisplay:SetModel(Ply:GetModel())
 	PlayerDisplay:SetFOV(35)
 	PlayerDisplay:SetCursor("arrow")
+	local Ent=PlayerDisplay:GetEntity()
+	if(Ply.EZarmor.suited and Ply.EZarmor.bodygroups)then
+		PlayerDisplay:SetColor(Ply:GetColor())
+		for k,v in pairs(Ply.EZarmor.bodygroups)do
+			Ent:SetBodygroup(k,v)
+		end
+	end
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor=Ply.EZarmor
 		JMod_ArmorPlayerModelDraw(ent)

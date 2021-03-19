@@ -23,7 +23,7 @@ function JMod_Hint(ply, key, loc, specific)
 			end
 		end)
 	end
-	
+
 	return true
 end
 

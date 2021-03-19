@@ -85,6 +85,15 @@ JMOD_EZ_STATE_WARNING	= 4
 Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- make each outpost, when established, have a random position outside the map
 -- so that drop bearings can be predicted
+-- fuckin, like, or something
+-- add language translation ability for all the JMod Hints
+-- and also suit support, like for fuck's sake
+-- and melee weps
+-- healing kit -1 suplies
+-- nextbot support
+-- add recoil halving back
+-- recoil viewpunch has been reduced what in the fuck
+-- make breath control time a bit longer
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

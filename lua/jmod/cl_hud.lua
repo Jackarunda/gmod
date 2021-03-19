@@ -66,50 +66,48 @@ local RavebreakColors={Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(0,255,
 local NextRavebreakBeat,CurRavebreakColor,CurRavebreakLightPos=0,math.random(1,6),Vector(0,0,0)
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
-	local AimVec,FirstPerson=ply:GetAimVector(),not ply:ShouldDrawLocalPlayer()
+	local AimVec,FirstPerson,Ravebreakin=ply:GetAimVector(),not ply:ShouldDrawLocalPlayer(),ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime>Time and ply.JMod_RavebreakStartTime<Time
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
 	--JMod_MeasureFramerate()
-	if(FirstPerson)then
-		--ply.JMod_RavebreakEndTime=Time+1
-		--*ply.JMod_RavebreakStartTime=0
-		if(ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime>Time and ply.JMod_RavebreakStartTime<Time)then
-			if(NextRavebreakBeat<Time)then
-				NextRavebreakBeat=Time+JMod_RavebreakBeatTime
-				CurRavebreakColor=CurRavebreakColor+1
-				if(CurRavebreakColor>6)then CurRavebreakColor=1 end
-				local Offset=VectorRand()*math.random(100,1000)
-				Offset.z=Offset.z/2
-				CurRaveBreakLightPos=EyePos()+Offset
-			end
-			local Col=RavebreakColors[CurRavebreakColor]
-			DrawColorModify({
-				[ "$pp_colour_addr" ] = Col.r/1000,
-				[ "$pp_colour_addg" ] = Col.g/1000,
-				[ "$pp_colour_addb" ] = Col.b/1000,
-				[ "$pp_colour_brightness" ] = 0,
-				[ "$pp_colour_contrast" ] = 1,
-				[ "$pp_colour_colour" ] = 1,
-				[ "$pp_colour_mulr" ] = Col.r/2000,
-				[ "$pp_colour_mulg" ] = Col.g/2000,
-				[ "$pp_colour_mulb" ] = Col.b/2000
-			})
-			local CurAng=ply:EyeAngles()
-			local PartyinEyeAngles=Angle(0,CurAng.y,0)
-			PartyinEyeAngles.y=PartyinEyeAngles.y-FrameTime()*30
-			PartyinEyeAngles.p=math.sin(Time*8/JMod_RavebreakBeatTime)*10
-			ply:SetEyeAngles(PartyinEyeAngles)
-			local DLight=DynamicLight(ply:EntIndex())
-			if(DLight)then
-				DLight.pos=CurRaveBreakLightPos
-				DLight.r=Col.r
-				DLight.g=Col.g
-				DLight.b=Col.b
-				DLight.brightness=(math.sin(Time*8/JMod_RavebreakBeatTime)/2+.5)*10
-				DLight.Size=1000
-				DLight.Decay=4000
-				DLight.DieTime=Time+1
-			end
+	if(Ravebreakin)then
+		if(NextRavebreakBeat<Time)then
+			NextRavebreakBeat=Time+JMod_RavebreakBeatTime
+			CurRavebreakColor=CurRavebreakColor+1
+			if(CurRavebreakColor>6)then CurRavebreakColor=1 end
+			local Offset=VectorRand()*math.random(100,1000)
+			Offset.z=Offset.z/2
+			CurRaveBreakLightPos=EyePos()+Offset
 		end
+		local Col=RavebreakColors[CurRavebreakColor]
+		DrawColorModify({
+			[ "$pp_colour_addr" ] = Col.r/1000,
+			[ "$pp_colour_addg" ] = Col.g/1000,
+			[ "$pp_colour_addb" ] = Col.b/1000,
+			[ "$pp_colour_brightness" ] = 0,
+			[ "$pp_colour_contrast" ] = 1,
+			[ "$pp_colour_colour" ] = 1,
+			[ "$pp_colour_mulr" ] = Col.r/2000,
+			[ "$pp_colour_mulg" ] = Col.g/2000,
+			[ "$pp_colour_mulb" ] = Col.b/2000
+		})
+		local CurAng=ply:EyeAngles()
+		local PartyinEyeAngles=Angle(0,CurAng.y,0)
+		PartyinEyeAngles.y=PartyinEyeAngles.y-FrameTime()*30
+		PartyinEyeAngles.p=math.sin(Time*8/JMod_RavebreakBeatTime)*10
+		ply:SetEyeAngles(PartyinEyeAngles)
+		local DLight,BrightnessMul=DynamicLight(ply:EntIndex()),(FirstPerson and 10) or 5
+		if(DLight)then
+			DLight.pos=CurRaveBreakLightPos
+			DLight.r=Col.r
+			DLight.g=Col.g
+			DLight.b=Col.b
+			DLight.brightness=(math.sin(Time*8/JMod_RavebreakBeatTime)/2+.5)*BrightnessMul
+			DLight.Size=1000
+			DLight.Decay=4000
+			DLight.DieTime=Time+1
+		end
+	end
+	if(FirstPerson)then
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
 			if(ply.EZarmor.blackvision)then
 				surface.SetDrawColor(0,0,0,255)

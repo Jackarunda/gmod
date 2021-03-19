@@ -9,18 +9,24 @@ end
 
 local function JackaSpawnHook(ply)
 	ply.JModFriends=ply.JModFriends or {}
+	if(ply.EZarmor and ply.EZarmor.suited)then
+		ply:SetColor(Color(255,255,255))
+	end
 	ply.EZarmor={
 		items={},
 		speedFrac=nil,
 		effects={},
 		mskmat=nil,
-		sndlop=nil
+		sndlop=nil,
+		suited=false,
+		bodygroups=nil
 	}
 	JModEZarmorSync(ply)
 	ply.EZhealth=nil
 	ply.EZirradiated=nil
 	ply.EZoxygen=100
 	ply.EZbleeding=0
+	timer.Simple(0,function() ply.EZoriginalPlayerModel=ply:GetModel() end)
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
 	net.Send(ply)
@@ -161,14 +167,16 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.nightVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/4,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
+							if(armorData.chrg.power<=0)then JMod_EZarmorWarning(playa,"armorcharge_electricity") end
 						end
 					end
 				elseif(playa.EZarmor.effects.thermalVision)then
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.thermalVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/4,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
+							if(armorData.chrg.power<=0)then JMod_EZarmorWarning(playa,"armorcharge_electricity") end
 						end
 					end
 				end

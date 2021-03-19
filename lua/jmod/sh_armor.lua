@@ -1,3 +1,6 @@
+player_manager.AddValidModel( "JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_cod.mdl" )
+player_manager.AddValidHands( "JMod_HazMat", "models/bloocobalt/splinter cell/chemsuit_v.mdl", 0, "00000000" )
+
 --[[ ArmorSlots
 
 	-- if damage is locational (bullets):
@@ -35,6 +38,7 @@ JMod_BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}
 JMod_PiercingDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
 
 JMod_BodyPartHealthMults = {
+	--skintight
 	-- HITGROUP_HEAD
 	eyes = .05,
 	mouthnose = .05,
@@ -46,6 +50,7 @@ JMod_BodyPartHealthMults = {
 	-- HITGROUP_STOMACH
 	abdomen = .1,
 	pelvis = .05,
+	waist = 0,
 	-- HITGROUP_LEFTLEG
 	leftthigh = .04,
 	leftcalf = .04,
@@ -68,6 +73,7 @@ JMod_ArmorSlotNiceNames={
 	back="Back",
 	abdomen="Abdomen",
 	pelvis="Pelvis",
+	waist = "Waist",
 	leftthigh="Left Thigh",
 	leftcalf="Left Calf",
 	rightthigh="Right Thigh",
@@ -128,7 +134,7 @@ JMod_ArmorTable = {
 		},
 		def = table.Inherit({
 			[DMG_NERVEGAS] = 1,
-			[DMG_RADIATION] = .5
+			[DMG_RADIATION] = .75
 		}, NonArmorProtectionProfile),
 		dur = 2,
 		chrg = {
@@ -199,7 +205,7 @@ JMod_ArmorTable = {
 		wgt = 5,
 		dur = 2,
 		chrg = {
-			power = 25
+			power = 20
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
 		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
@@ -234,7 +240,7 @@ JMod_ArmorTable = {
 		wgt = 5,
 		dur = 2,
 		chrg = {
-			power = 25
+			power = 20
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
 		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
@@ -262,7 +268,7 @@ JMod_ArmorTable = {
 		},
 		def = table.Inherit({
 			[DMG_NERVEGAS] = .25,
-			[DMG_RADIATION] = .5
+			[DMG_RADIATION] = .75
 		}, NonArmorProtectionProfile),
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
@@ -307,7 +313,8 @@ JMod_ArmorTable = {
 		},
 		ent = "ent_jack_gmod_ezarmor_headset",
 		eff = {
-			teamComms = true
+			teamComms = true,
+			earPro = true
 		},
 		tgl = {
 			eff = {},
@@ -741,6 +748,49 @@ JMod_ArmorTable = {
 		wgt = 15,
 		dur = 250,
 		ent = "ent_jack_gmod_ezarmor_srcalf"
+	},
+	["Hazmat Suit"] = {
+		PrintName = "Hazmat Suit",
+		mdl = "models/props_junk/cardboard_box003a.mdl",
+		mat = "models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
+		slots = {
+			eyes=1,
+			mouthnose=1,
+			head=1,
+			chest=1,
+			abdomen=1,
+			pelvis=1,
+			leftthigh=1,
+			leftcalf=1,
+			rightthigh=1,
+			rightcalf=1,
+			rightshoulder=1,
+			rightforearm=1,
+			leftshoulder=1,
+			leftforearm=1
+		},
+		def = table.Inherit({
+			[DMG_NERVEGAS] = 1,
+			[DMG_RADIATION] = 1,
+			[DMG_ACID] = 1,
+			[DMG_POISON] = .75
+		}, NonArmorProtectionProfile),
+		chrg = {
+			chemicals = 50
+		},
+		eff = {
+			csprot = 1
+		},
+		bdg = {
+			[1] = 2,
+			[2] = 1
+		},
+		plymdl = "models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
+		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
+		sndlop = "snds_jack_gmod/mask_breathe.wav",
+		wgt = 15,
+		dur = 15,
+		ent = "ent_jack_gmod_ezarmor_hazmat"
 	}
 }
 
