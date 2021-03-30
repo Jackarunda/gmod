@@ -94,6 +94,9 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- add recoil halving back
 -- recoil viewpunch has been reduced what in the fuck
 -- make breath control time a bit longer
+-- make defusal faster with kit
+-- make API sentries do more vehicle damage
+-- sentries vs doors
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

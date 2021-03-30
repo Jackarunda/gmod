@@ -1,4 +1,7 @@
+local EquipSounds = {"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
+
 local function IsDamageThisType(dmg, typ)
+	if(type(typ)~="number")then return false end
 	if (typ == DMG_BULLET) then
 		if (dmg:GetAmmoType()) and (game.GetAmmoName(dmg:GetAmmoType()) == "Buckshot") then return false end
 	elseif (typ == DMG_BUCKSHOT) then
@@ -123,7 +126,16 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 									local ArmorDmgAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult
 
 									if (damType == DMG_BUCKSHOT) then
-										ArmorDmgAmt = ArmorDmgAmt / 2
+										ArmorDmgAmt = ArmorDmgAmt / 2.5
+									end
+									
+									if(ArmorInfo.resist)then
+										for dtyp,dres in pairs(ArmorInfo.resist)do
+											if(IsDamageThisType(dmg,dtyp))then
+												ArmorDmgAmt=ArmorDmgAmt*(1-dres)
+												break
+											end
+										end
 									end
 
 									armorData.dur = armorData.dur - ArmorDmgAmt
@@ -264,7 +276,11 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 
 	Mul = (Mul * (1-Protection)) / JMOD_CONFIG.ArmorProtectionMult
 
-	dmg:ScaleDamage(Mul)
+	if(Mul<.001)then
+		dmg:ScaleDamage(0)
+	else
+		dmg:ScaleDamage(Mul)
+	end
 
 	if (ArmorPieceBroke) then
 		JMod_CalcSpeed(ply)
@@ -272,9 +288,9 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 	end
 end
 
-hook.Add("ScalePlayerDamage", "JMod_ScalePlayerDamage", function(ply, hitgroup, dmginfo)
+hook.Add("ScalePlayerDamage","JMod_ScalePlayerDamage",function(ply,hitgroup,dmginfo)
 	if(ply.EZarmor)then
-		LocationalDmgHandling(ply, hitgroup, dmginfo)
+		LocationalDmgHandling(ply,hitgroup,dmginfo)
 	end
 end)
 
@@ -328,8 +344,6 @@ hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, 
 	end
 end)
 
-local EquipSounds = {"snd_jack_clothequip.wav", "snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
-
 function JMod_RemoveArmorByID(ply, ID, broken)
 	local Info = ply.EZarmor.items[ID]
 	if not Info then return end
@@ -338,8 +352,13 @@ function JMod_RemoveArmorByID(ply, ID, broken)
 	timer.Simple(math.Rand(0, .5), function()
 		if (broken) then
 			ply:EmitSound("snds_jack_gmod/armorbreak.wav", 60, math.random(80, 120))
+			ply:PrintMessage(HUD_PRINTTALK,Info.name.." has been destroyed")
 		else
-			ply:EmitSound(table.Random(EquipSounds), 60, math.random(80, 120))
+			if(Specs.snds and Specs.snds.uneq)then
+				ply:EmitSound(Specs.snds.uneq, 60, math.random(80, 120))
+			else
+				ply:EmitSound(table.Random(EquipSounds), 60, math.random(80, 120))
+			end
 		end
 	end)
 
@@ -457,6 +476,12 @@ function JMod_EZ_Equip_Armor(ply, nameOrEnt)
 				ply:SetBodygroup(k,v)
 			end
 		end
+	end
+	
+	if(NewArmorSpecs.snds and NewArmorSpecs.snds.eq)then
+		ply:EmitSound(NewArmorSpecs.snds.eq,60,math.random(80,120))
+	else
+		ply:EmitSound(table.Random(EquipSounds),60,math.random(80,120))
 	end
 
 	JMod_CalcSpeed(ply)

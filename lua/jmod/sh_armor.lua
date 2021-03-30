@@ -33,7 +33,8 @@ player_manager.AddValidHands( "JMod_HazMat", "models/bloocobalt/splinter cell/ch
 JMod_BackupArmorRepairRecipes = JMod_BackupArmorRepairRecipes or {}
 
 JMod_LocationalDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
-JMod_FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_ACID, DMG_PLASMA}
+--JMod_FullBodyScalingDamageTypes = {DMG_ACID, DMG_POISON}
+JMod_FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_PLASMA, DMG_ACID, DMG_POISON}
 JMod_BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}
 JMod_PiercingDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
 
@@ -753,6 +754,7 @@ JMod_ArmorTable = {
 		PrintName = "Hazmat Suit",
 		mdl = "models/props_junk/cardboard_box003a.mdl",
 		mat = "models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
+		lbl = "EZ HAZMAT SUIT",
 		slots = {
 			eyes=1,
 			mouthnose=1,
@@ -773,8 +775,13 @@ JMod_ArmorTable = {
 			[DMG_NERVEGAS] = 1,
 			[DMG_RADIATION] = 1,
 			[DMG_ACID] = 1,
-			[DMG_POISON] = .75
+			[DMG_POISON] = 1,
+			[DMG_SLASH] = .25
 		}, NonArmorProtectionProfile),
+		resist = {
+			[DMG_ACID] = .998,
+			[DMG_POISON] = .99999
+		},
 		chrg = {
 			chemicals = 50
 		},
@@ -785,11 +792,15 @@ JMod_ArmorTable = {
 			[1] = 2,
 			[2] = 1
 		},
+		snds = {
+			eq = "snd_jack_clothequip.wav",
+			uneq = "snd_jack_clothunequip.wav"
+		},
 		plymdl = "models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		wgt = 15,
-		dur = 15,
+		dur = 4,
 		ent = "ent_jack_gmod_ezarmor_hazmat"
 	}
 }

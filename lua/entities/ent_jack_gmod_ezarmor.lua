@@ -29,6 +29,7 @@ if(SERVER)then
 		self.Specs=JMod_ArmorTable[self.ArmorName]
 		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
+		if(self.Specs.lbl)then self:SetDTString(0,self.Specs.lbl) end
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -83,7 +84,19 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Draw()
+		local Ang,Pos=self:GetAngles(),self:GetPos()
+		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
+		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
+		local Label=self:GetDTString(0)
+		if(DetailDraw and Label and Label~="")then
+			local Up,Right,Forward,TxtCol=Ang:Up(),Ang:Right(),Ang:Forward(),Color(0,0,0,220)
+			Ang:RotateAroundAxis(Ang:Up(),90)
+			cam.Start3D2D(Pos+Up*4.3-Right*2+Forward*6,Ang,.03)
+			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Label,"JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			cam.End3D2D()
+		end
 	end
 	language.Add("ent_jack_gmod_ezarmor","EZ Armor")
 end
