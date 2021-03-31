@@ -481,7 +481,7 @@ JMod_ArmorTable = {
 		pos = Vector(-2.5, -4.5, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 5,
-		dur = 50,
+		dur = 250,
 		ent = "ent_jack_gmod_ezarmor_ltorso",
 		gayPhysics = true
 	},
