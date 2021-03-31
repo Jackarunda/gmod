@@ -194,6 +194,7 @@ JMod_ArmorTable = {
 	["NightVisionGoggles"] = {
 		PrintName = "Goggles - Night Vision",
 		mdl = "models/nvg.mdl", -- scp something
+		clr = { r = 15, g = 50, b = 10 },
 		slots = {
 			eyes = 1
 		},
@@ -480,7 +481,7 @@ JMod_ArmorTable = {
 		pos = Vector(-2.5, -4.5, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 5,
-		dur = 350,
+		dur = 50,
 		ent = "ent_jack_gmod_ezarmor_ltorso",
 		gayPhysics = true
 	},
@@ -755,6 +756,8 @@ JMod_ArmorTable = {
 		mdl = "models/props_junk/cardboard_box003a.mdl",
 		mat = "models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
 		lbl = "EZ HAZMAT SUIT",
+		clr = { r = 200, g = 175, b = 0 },
+		--clrForced = true,
 		slots = {
 			eyes=1,
 			mouthnose=1,

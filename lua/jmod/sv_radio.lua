@@ -127,7 +127,7 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 			if((Info.eff)and(Info.eff.teamComms))then
 				local SubtractAmt = JMOD_CONFIG.ArmorDegredationMult / 2
 				data.chrg.power=math.Clamp(data.chrg.power-SubtractAmt,0,9e9)
-				if(data.chrg.power<=0)then JMod_EZarmorWarning(ply,"armorcharge_electricity") end
+				if(data.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(ply,"armor's electrical charge is almost depleted!") end
 			end
 		end
 		local bestradio = nil

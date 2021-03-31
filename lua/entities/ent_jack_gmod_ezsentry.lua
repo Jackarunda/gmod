@@ -568,8 +568,8 @@ if(SERVER)then
 			end
 			local CoolinAmt,Kewlant,Severity=self.Cooling/3,self:GetCoolant(),self.Heat/300
 			if((Kewlant>0)and(Severity>.1))then
-				self:SetCoolant(Kewlant-Severity)
-				CoolinAmt=CoolinAmt*(10*Severity)
+				self:SetCoolant(Kewlant-Severity^2*20)
+				CoolinAmt=CoolinAmt*(200*Severity^2)
 			end
 			self.Heat=math.Clamp(self.Heat-CoolinAmt,0,100)
 		end

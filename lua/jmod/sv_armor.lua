@@ -71,10 +71,11 @@ function JModEZarmorSync(ply)
 	net.Broadcast()
 end
 
-function JMod_EZarmorWarning(ply,typ)
+function JMod_EZarmorWarning(ply,txt)
 	local Time=CurTime()
 	ply.NextEZarmorWarning=ply.NextEZarmorWarning or 0
-	JMod_Hint(ply,typ)
+	if(ply.NextEZarmorWarning>Time)then return end
+	ply:PrintMessage(HUD_PRINTTALK,txt)
 	ply.NextEZarmorWarning=Time+10
 end
 
@@ -139,6 +140,9 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 									end
 
 									armorData.dur = armorData.dur - ArmorDmgAmt
+									if(armorData.dur < ArmorInfo.dur*.25)then
+										JMod_EZarmorWarning(ply,"armor piece is almost destroyed!")
+									end
 
 									if (armorData.dur <= 0) then
 										JMod_RemoveArmorByID(ply, id, true)
@@ -148,9 +152,9 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 									local SubtractAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult / 50
 									armorData.chrg.chemicals = math.Clamp(armorData.chrg.chemicals - SubtractAmt, 0, 9e9)
 
-									if (armorData.chrg.chemicals <= 0) then
+									if (armorData.chrg.chemicals <= ArmorInfo.chrg.chemicals*.25) then
 										Protection = 0
-										JMod_EZarmorWarning(ply,"armorcharge_chemicals")
+										JMod_EZarmorWarning(ply,"armor's chemical charge is almost depleted!")
 									end
 								end
 							end

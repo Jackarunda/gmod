@@ -133,9 +133,10 @@ JMod_Hints = {
 	["ent_jack_gmod_ezarmor_thermals"] = {Type = "info", Text = "Thermal Goggles highlights living things when worn", Time = 3},
 	["ent_jack_gmod_ezarmor_headset"] = {Type = "info", Text = "Headset allows you to privately communicate with your friends", Time = 3, Followup = "headset radio"},
 	["headset radio"] = {Type = "info", Text = "You can also remotely communicate to aid radios", Time = 3},
-	["armorcharge_chemicals"] = {Text="your equipment's chemical charge is depleted! recharge from the inventory menu",Time=3},
-	["armorcharge_electricity"] = {Text="your equipment's electrical charge is depleted! recharge from the inventory menu",Time=3},
-	["armorcharge_gas"] = {Text="your equipment's gas charge is depleted! recharge from the inventory menu",Time=3},
+	["armordurability"] = {Text="one or more of your jmod armor pieces is about to be destroyed! repair from the inventory menu",Time=3},
+	["armorcharge_chemicals"] = {Text="your equipment's chemical charge is depleted or soon to be! recharge from the inventory menu",Time=3},
+	["armorcharge_electricity"] = {Text="your equipment's electrical charge is depleted or soon to be! recharge from the inventory menu",Time=3},
+	["armorcharge_gas"] = {Text="your equipment's gas charge is depleted or soon to be! recharge from the inventory menu",Time=3},
 
 	-- Resources
 	["ent_jack_gmod_ezadvparts"] = {Type = "info", Text = "Adv. Parts are used to craft and upgrade things", Time = 3},

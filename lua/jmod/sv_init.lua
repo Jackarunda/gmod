@@ -168,7 +168,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.nightVision))then
 							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
-							if(armorData.chrg.power<=0)then JMod_EZarmorWarning(playa,"armorcharge_electricity") end
+							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
 				elseif(playa.EZarmor.effects.thermalVision)then
@@ -176,7 +176,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.thermalVision))then
 							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
-							if(armorData.chrg.power<=0)then JMod_EZarmorWarning(playa,"armorcharge_electricity") end
+							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
 				end

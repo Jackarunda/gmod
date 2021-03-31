@@ -30,6 +30,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		if(self.Specs.lbl)then self:SetDTString(0,self.Specs.lbl) end
+		if(self.Specs.clr)then print("A");self:SetColor(Color(self.Specs.clr.r,self.Specs.clr.g,self.Specs.clr.b)) end
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -66,9 +67,13 @@ if(SERVER)then
 		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
-			net.Start("JMod_ArmorColor")
-			net.WriteEntity(self)
-			net.Send(activator)
+			if(self.Specs.clrForced)then
+				JMod_EZ_Equip_Armor(activator,self)
+			else
+				net.Start("JMod_ArmorColor")
+				net.WriteEntity(self)
+				net.Send(activator)
+			end
 			if self.ArmorName == "Headset" then
 				JMod_Hint(activator, "armor friends", self)
 			else
