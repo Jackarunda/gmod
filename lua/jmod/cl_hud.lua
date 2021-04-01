@@ -210,7 +210,7 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		-- also add an eye-closing effect
 		-- todo
 	end
-	ply.EZvisionBlur=math.Clamp((ply.EZvisionBlur or 0)-FT,0,75)
+	ply.EZvisionBlur=math.Clamp((ply.EZvisionBlur or 0)-FT*2,0,75)
 	CurVisionBlur=Lerp(FT*.5,CurVisionBlur,ply.EZvisionBlur)
 	if(CurVisionBlur<.01)then CurVisionBlur=0 end
 	if not(ply:Alive())then ply.EZvisionBlur=0;CurVisionBlur=0 end

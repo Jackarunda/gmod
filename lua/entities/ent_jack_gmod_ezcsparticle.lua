@@ -71,21 +71,15 @@ if(SERVER)then
 							end
 						end
 
-						local prot = 0
-						if (obj.EZarmor) then
-							prot = obj.EZarmor.effects.csprot or 0
-							for _, v in pairs(obj.EZarmor.items) do
-								if JMod_ArmorTable[v.name].eff.csprot and v.chrg and v.chrg.chemicals > 0 then
-									local SubtractAmt = math.Rand (.2,1) * JMOD_CONFIG.ArmorDegredationMult / (100 / JMod_ArmorTable[v.name].eff.csprot)
-									v.chrg.chemicals = math.max(v.chrg.chemicals - SubtractAmt, 0)
-								end
-							end
+						local faceProt,skinProt=JMod_GetArmorBiologicalResistance(obj,DMG_NERVEGAS)
+						if(faceProt>0)then
+							JMod_DepleteArmorChemicalCharge(obj,.01)
 						end
 
-						if prot < 1 then
+						if faceProt < 1 then
 							if IsPlaya then
 								net.Start("JMod_VisionBlur")
-								net.WriteFloat(5 * math.Clamp(1 - prot, 0, 1))
+								net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
 								net.Send(obj)
 								JMod_Hint(obj, "tear gas")
 							elseif obj:IsNPC() then

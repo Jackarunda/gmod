@@ -149,12 +149,9 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										Busted = true
 									end
 								elseif ((armorData.chrg) and (armorData.chrg.chemicals)) then
-									local SubtractAmt = Protection * dmgAmt * JMOD_CONFIG.ArmorDegredationMult / 50
-									armorData.chrg.chemicals = math.Clamp(armorData.chrg.chemicals - SubtractAmt, 0, 9e9)
-
+									JMod_DepleteArmorChemicalCharge(ply,Protection*dmgAmt*.02)
 									if (armorData.chrg.chemicals <= ArmorInfo.chrg.chemicals*.25) then
 										Protection = 0
-										JMod_EZarmorWarning(ply,"armor's chemical charge is almost depleted!")
 									end
 								end
 							end

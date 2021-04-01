@@ -97,6 +97,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- make defusal faster with kit
 -- make API sentries do more vehicle damage
 -- sentries vs doors
+-- BP muzzle effect
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

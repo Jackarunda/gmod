@@ -141,9 +141,6 @@ JMod_ArmorTable = {
 		chrg = {
 			chemicals = 25
 		},
-		eff = {
-			csprot = 1
-		},
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1, 1, 1),
 		pos = Vector(0, .1, 0),
@@ -278,9 +275,6 @@ JMod_ArmorTable = {
 		ang = Angle(100, 180, 90),
 		chrg = {
 			chemicals = 10
-		},
-		eff = {
-			csprot = 0.5
 		},
 		wgt = 5,
 		dur = 2,
@@ -782,14 +776,11 @@ JMod_ArmorTable = {
 			[DMG_SLASH] = .25
 		}, NonArmorProtectionProfile),
 		resist = {
-			[DMG_ACID] = .998,
+			[DMG_ACID] = .995,
 			[DMG_POISON] = .99999
 		},
 		chrg = {
 			chemicals = 50
-		},
-		eff = {
-			csprot = 1
 		},
 		bdg = {
 			[1] = 2,
@@ -803,7 +794,7 @@ JMod_ArmorTable = {
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		wgt = 15,
-		dur = 4,
+		dur = 8,
 		ent = "ent_jack_gmod_ezarmor_hazmat"
 	}
 }
@@ -833,6 +824,38 @@ local function LoadAdditionalArmor()
 	end
 end
 hook.Add("Initialize","JMod_LoadAdditionalArmor", LoadAdditionalArmor)
+
+-- support third-party integration of gas-based weapons
+function JMod_GetArmorBiologicalResistance(ply,typ)
+	local faceResist,skinResist=0,0
+	if(ply.EZarmor)then
+		for k,armorData in pairs(ply.EZarmor.items)do
+			if not(armorData.tgl)then
+				local ArmorInfo=JMod_ArmorTable[armorData.name]
+				if not(ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals<=0)then
+					skinResist=skinResist+(ArmorInfo.def[typ] or 0)*(ArmorInfo.slots.chest or 0)*(ArmorInfo.slots.abdomen or 0)
+					faceResist=faceResist+(ArmorInfo.def[typ] or 0)*(ArmorInfo.slots.eyes or 0)*(ArmorInfo.slots.mouthnose or 0)
+				end
+			end
+		end
+	end
+	return faceResist,skinResist
+end
+function JMod_DepleteArmorChemicalCharge(ply,amt)
+	local SubtractAmt=amt*JMOD_CONFIG.ArmorDegredationMult*math.Rand(.5,1.5)
+	if(ply.EZarmor)then
+		for k,armorData in pairs(ply.EZarmor.items)do
+			local ArmorInfo=JMod_ArmorTable[armorData.name]
+			if(armorData.chrg.chemicals)then
+				armorData.chrg.chemicals=math.max(armorData.chrg.chemicals-SubtractAmt,0)
+				if(armorData.chrg.chemicals<=ArmorInfo.chrg.chemicals*.25)then
+					JMod_EZarmorWarning(ply,"armor's chemical charge is almost depleted!")
+				end
+				break
+			end
+		end
+	end
+end
 
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
