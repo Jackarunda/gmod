@@ -18,12 +18,27 @@ function table.FullCopy(tab)
 	end
 	return res
 end
-function Stringify(tab)
-	
+function Stringify(obj)
+	if not(obj)then return nil end
+	local Str,Typ="",type(obj)
+	if(Typ=="number")then
+		Str=Str..tostring(math.Round(obj,4)).." "	
+	elseif(Typ=="boolean" or Typ=="Player" or Typ=="NPC")then
+		Str=Str..tostring(obj).." "
+	elseif(Typ=="string")then
+		Str=Str..obj.." "
+	else
+		for k,v in pairs(obj)do
+			Str=Str..Stringify(k)..": "..Stringify(v)..", "
+		end
+	end
+	return Str
 end
 function jprint(...)
 	local items,printstr={...},""
-	printstr=util.TableToJSON(items,true)
+	for k,v in pairs(items)do
+		printstr=printstr..Stringify(v)
+	end
 	print(printstr)
 	if(SERVER)then
 		player.GetAll()[1]:PrintMessage(HUD_PRINTTALK,printstr)

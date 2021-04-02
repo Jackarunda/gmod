@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Fumigator"
+ENT.PrintName="EZ Virus Canister"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -33,7 +33,8 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_explosive/explosive_butane_can02.mdl")
-		self.Entity:SetMaterial("models/props_explosive/poison")
+		self.Entity:SetModelScale(.5,0)
+		self.Entity:SetMaterial("models/props_explosive/virus")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -46,7 +47,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_SEALED)
-		self.ContainedGas=100*JMOD_CONFIG.FumigatorGasAmount
+		self.ContainedGas=20
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -69,13 +70,13 @@ if(SERVER)then
 		if(State==STATE_SEALED)then
 			if(Alt)then
 				JMod_Owner(self,activator)
-				self:EmitSound("snd_jack_pinpull.wav",60,100)
-				self:EmitSound("snd_jack_spoonfling.wav",60,100)
+				self:EmitSound("snd_jack_pinpull.wav",55,100)
+				self:EmitSound("snd_jack_spoonfling.wav",55,100)
 				self:SetState(STATE_TICKING)
 				JMod_Hint(activator, "gas spread", self)
-				timer.Simple(5,function()
+				timer.Simple(10,function()
 					if(IsValid(self))then
-						self:EmitSound("snd_jack_sminepop.wav",70,120)
+						self:EmitSound("snd_jack_sminepop.wav",55,120)
 						self:SetState(STATE_VENTING)
 					end
 				end)
@@ -88,7 +89,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:EZdetonateOverride(detonator)
-		self:EmitSound("snd_jack_sminepop.wav",70,120)
+		self:EmitSound("snd_jack_sminepop.wav",55,130)
 		self:SetState(STATE_VENTING)
 	end
 	function ENT:Burst()
@@ -98,7 +99,7 @@ if(SERVER)then
 		JMod_Sploom(Owner,SelfPos,100)
 		for i=1,self.ContainedGas do
 			timer.Simple(i/200,function()
-				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
+				local Gas=ents.Create("ent_jack_gmod_ezvirusparticle")
 				Gas:SetPos(SelfPos)
 				JMod_Owner(Gas,Owner)
 				Gas:Spawn()
@@ -111,11 +112,11 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
-			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:EmitSound("snd_jack_metallicclick.wav",55,100)
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then
-			local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
+			local Gas=ents.Create("ent_jack_gmod_ezvirusparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
 			JMod_Owner(Gas,self.Owner or self)
 			Gas:Spawn()
@@ -123,7 +124,7 @@ if(SERVER)then
 			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*500)
 			self.ContainedGas=self.ContainedGas-1
 			self:NextThink(Time+.2)
-			self:EmitSound("snds_jack_gmod/hiss.wav",65,math.random(90,110))
+			self:EmitSound("snds_jack_gmod/hiss.wav",55,math.random(90,110))
 			if(self.ContainedGas<=0)then self:Remove() end
 			return true
 		end
@@ -135,9 +136,8 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		--
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezfumigator","EZ Fumigator")
+	language.Add("ent_jack_gmod_evirusbomb","EZ Virus Canister")
 end

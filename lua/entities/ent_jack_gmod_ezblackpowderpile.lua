@@ -36,7 +36,7 @@ if(SERVER)then
 		if(dmginfo:IsDamageType(DMG_BLAST))then self:Remove() return end
 		if(dmginfo:IsDamageType(DMG_BURN))then
 			JMod_Owner(self,dmginfo:GetAttacker())
-			self:Ignite()
+			self:Arm()
 		end
 	end
 	function ENT:Use(activator,activatorAgain,onOff)

@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"Models/props_explosive/virus"	
+	"$bumpmap"	      "Models/props_explosive/poison_n"
+
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[.1 .5 1]"
+}

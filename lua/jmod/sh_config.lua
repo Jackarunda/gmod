@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=35,
+		Version=36,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -308,6 +308,7 @@ function JMod_InitGlobalConfig(forceNew)
 		NukePowerMult=1,
 		NuclearRadiationMult=1,
 		NuclearRadiationSickness=true,
+		VirusSpreadMult=1,
 		FragExplosions=true,
 		QoL={
 			RealisticLocationalDamage=false,

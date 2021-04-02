@@ -26,6 +26,7 @@ local function JackaSpawnHook(ply)
 	ply.EZirradiated=nil
 	ply.EZoxygen=100
 	ply.EZbleeding=0
+	ply.EZvirus=nil
 	timer.Simple(0,function() ply.EZoriginalPlayerModel=ply:GetModel() end)
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
@@ -53,6 +54,105 @@ end)
 hook.Add("AllowPlayerPickup","JMOD_PLAYERPICKUP",function(ply,ent)
 	if(ent.JModNoPickup)then return false end
 end)
+
+local function ShouldVirusInfect(ent)
+	if not(IsValid(ent))then return false end
+	if(ent.EZvirus and ent.EZvirus.Immune)then return false end
+	if(ent:IsPlayer())then return ent:Alive() end
+	if(ent:IsNPC())then return string.find(ent:GetClass(),"citizen") end
+	return false
+end
+
+local function VirusHostCanSee(host,ent)
+	local Tr=util.TraceLine({
+		start=host:GetPos(),
+		endpos=ent:GetPos(),
+		filter={host,ent},
+		mask=MASK_SHOT
+	})
+	return not Tr.Hit
+end
+
+local function ViralInfect(ply,att)
+	if(ply.EZvirus)then return end
+	local Severity,Latency=math.random(50,500),math.random(10,100)
+	ply.EZvirus={
+		Severity=Severity,
+		NextCough=CurTime()+Latency,
+		InfectionWarned=false,
+		Immune=false,
+		Attacker=(IsValid(att) and att) or game.GetWorld(),
+		NextFoodImmunityBoost=0,
+		NextAntibioticsImmunityBoost=0
+	}
+end
+
+function JMod_TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
+	local Range,SelfPos=300*JMOD_CONFIG.VirusSpreadMult,host:GetPos()
+	if(hostFaceProt>0 or hostSkinProt>0)then
+		Range=Range*(1-(hostFaceProt+hostSkinProt)/2)
+	end
+	if(Range<=0)then return end
+	for key,obj in pairs(ents.FindInSphere(SelfPos,Range))do
+		if(not(obj==host)and(VirusHostCanSee(host,obj))and(ShouldVirusInfect(obj)))then
+			local DistFrac=1-(obj:GetPos():Distance(SelfPos)/(Range*1.2))
+			local Chance=DistFrac*.2
+			if(obj:WaterLevel()>=3)then Chance=Chance/3 end
+			---
+			local VictimFaceProtection,VictimSkinProtection=JMod_GetArmorBiologicalResistance(obj,DMG_RADIATION)
+			if(VictimFaceProtection>0 or VictimSkinProtection>0)then
+				Chance=Chance*(1-(VictimFaceProtection+VictimSkinProtection)/2)
+			end
+			if(Chance>0)then
+				local AAA=math.Rand(0,1)
+				if(AAA<Chance)then
+					ViralInfect(obj,att)
+				end
+			end
+		end
+	end
+end
+
+local function VirusCough(ply)
+	if(math.random(1,10)==2)then JMod_TryCough(ply) end
+	local Dmg=DamageInfo()
+	Dmg:SetDamageType(DMG_GENERIC) -- why aint this working to hazmat wearers?
+	Dmg:SetAttacker((IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker)or game.GetWorld())
+	Dmg:SetInflictor(ply)
+	Dmg:SetDamagePosition(ply:GetPos())
+	Dmg:SetDamageForce(Vector(0,0,0))
+	Dmg:SetDamage(1)
+	ply:TakeDamageInfo(Dmg)
+	--
+	local HostFaceProtection,HostSkinProtection=JMod_GetArmorBiologicalResistance(ply,DMG_RADIATION)
+	if((HostFaceProtection+HostSkinProtection)>=2)then return end
+	JMod_TryVirusInfectInRange(ply,ply.EZvirus.Attacker,HostFaceProtection,HostSkinProtection)
+	if(math.random(1,10)==10)then
+		local Gas=ents.Create("ent_jack_gmod_ezvirusparticle")
+		Gas:SetPos(ply:GetPos())
+		JMod_Owner(Gas,ply)
+		Gas:Spawn()
+		Gas:Activate()
+		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+	end
+end
+
+local function VirusHostThink(dude)
+	local Time=CurTime()
+	if(dude.EZvirus and not dude.EZvirus.Immune and dude.EZvirus.NextCough<Time)then
+		dude.EZvirus.NextCough=Time+math.Rand(.5,2)
+		if not(dude.EZvirus.InfectionWarned)then
+			dude.EZvirus.InfectionWarned=true
+			if(dude.PrintMessage)then dude:PrintMessage(HUD_PRINTTALK,"You've been infected with the JMod virus. Seek medical attention and avoid contact with others.") end
+		end
+		VirusCough(dude)
+		dude.EZvirus.Severity=math.Clamp(dude.EZvirus.Severity-1,0,9e9)
+		if(dude.EZvirus.Severity<=0)then
+			dude.EZvirus.Immune=true
+			if(dude.PrintMessage)then dude:PrintMessage(HUD_PRINTTALK,"You are now immune to the JMod virus.") end
+		end
+	end
+end
 
 local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
@@ -108,6 +208,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					playa:TakeDamageInfo(Dmg)
 				end
 			end
+			VirusHostThink(playa)
 			if(JMOD_CONFIG.QoL.Drowning)then
 				if(playa:WaterLevel()>=3)then
 					playa.EZoxygen=math.Clamp(playa.EZoxygen-1.67,0,100) -- 60 seconds before damage
@@ -200,6 +301,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 	---
 	for k,v in pairs(ents.FindByClass("npc_*"))do
+		VirusHostThink(v)
 		if(v.EZNPCincapacitate)then
 			if(v.EZNPCincapacitate>Time)then
 				if not(v.EZNPCincapacitated)then

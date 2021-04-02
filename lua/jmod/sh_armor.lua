@@ -751,7 +751,7 @@ JMod_ArmorTable = {
 		mat = "models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
 		lbl = "EZ HAZMAT SUIT",
 		clr = { r = 200, g = 175, b = 0 },
-		--clrForced = true,
+		clrForced = false,
 		slots = {
 			eyes=1,
 			mouthnose=1,
@@ -833,8 +833,8 @@ function JMod_GetArmorBiologicalResistance(ply,typ)
 			if not(armorData.tgl)then
 				local ArmorInfo=JMod_ArmorTable[armorData.name]
 				if not(ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals<=0)then
-					skinResist=skinResist+(ArmorInfo.def[typ] or 0)*(ArmorInfo.slots.chest or 0)*(ArmorInfo.slots.abdomen or 0)
-					faceResist=faceResist+(ArmorInfo.def[typ] or 0)*(ArmorInfo.slots.eyes or 0)*(ArmorInfo.slots.mouthnose or 0)
+					skinResist=skinResist+(ArmorInfo.def[typ] or 0)*((ArmorInfo.slots.chest or 0)+(ArmorInfo.slots.abdomen or 0))/2
+					faceResist=faceResist+(ArmorInfo.def[typ] or 0)*((ArmorInfo.slots.eyes or 0)+(ArmorInfo.slots.mouthnose or 0))/2
 				end
 			end
 		end
