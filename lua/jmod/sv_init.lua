@@ -27,7 +27,11 @@ local function JackaSpawnHook(ply)
 	ply.EZoxygen=100
 	ply.EZbleeding=0
 	ply.EZvirus=nil
-	timer.Simple(0,function() ply.EZoriginalPlayerModel=ply:GetModel() end)
+	timer.Simple(0,function()
+		if(IsValid(ply))then
+			ply.EZoriginalPlayerModel=ply:GetModel()
+		end
+	end)
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMOD_CONFIG.Hints)
 	net.Send(ply)

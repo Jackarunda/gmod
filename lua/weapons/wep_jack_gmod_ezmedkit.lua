@@ -134,6 +134,21 @@ function SWEP:PrimaryAttack()
 					if(Missing<=0)then return end
 				end
 				
+				if(Ent.EZbleeding>0)then
+					Ent:PrintMessage(HUD_PRINTCENTER,"stopping bleeding")
+					Ent.EZbleeding=math.Clamp(Ent.EZbleeding-self.HealEfficiency*JMOD_CONFIG.MedKitHealMult*5,0,9e9)
+					self:SetSupplies(self:GetSupplies()-1)
+					Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+					Hit=true
+					return
+				end
+
+				if(Ent.EZvirus and Ent.Ezvirus.Severity>1)then
+					Ent:PrintMessage(HUD_PRINTCENTER,"boosting immune system")
+					Ent.EZvirus.Severity=math.Clamp(Ent.EZvirus.Severity-JMOD_CONFIG.MedKitHealMult*1,1,9e9)
+					self:SetSupplies(self:GetSupplies()-1)
+				end
+
 				local AddAmt=math.min(Missing,healAmt*JMOD_CONFIG.MedKitHealMult)
 				self:SetSupplies(self:GetSupplies()-1)
 				Ent.EZhealth=Ent.EZhealth+AddAmt
@@ -152,6 +167,11 @@ function SWEP:PrimaryAttack()
 				if override == nil then
 					if((Helf<0)or(Helf>=Max))then return end
 					if(Missing<=0)then return end
+				end
+				
+				if(Ent.EZvirus and Ent.Ezvirus.Severity>1)then
+					Ent.EZvirus.Severity=math.Clamp(Ent.EZvirus.Severity-JMOD_CONFIG.MedKitHealMult*1,1,9e9)
+					self:SetSupplies(self:GetSupplies()-1)
 				end
 				
 				local AddAmt=math.min(Missing,healAmt*JMOD_CONFIG.MedKitHealMult)

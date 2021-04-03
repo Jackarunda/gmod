@@ -265,8 +265,8 @@ if(SERVER)then
 		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
 		if override==false then return end
 		if override~=true then
-			local Helf,Max,Rads=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0
-			if((Helf>=Max)and(Rads<=0))then return end -- you're not hurt lol gtfo
+			local Helf,Max,Rads,Infection,Bleed=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0,(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0
+			if((Helf>=Max)and(Rads<=0)and(Bleed<=0)and(Infection<=0))then return end -- you're not hurt lol gtfo
 			if(self:GetSupplies()<=0)then return end
 		end
 		self:SetState(STATE_WORKING)
@@ -341,10 +341,20 @@ if(SERVER)then
 		---
 		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0
 		if((Injury>0)or(Rads>0))then
-			if(Rads>0)then
+			if(Bleed>0)then
+				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
+				self.Patient:PrintMessage(HUD_PRINTCENTER,"stopping bleeding")
+			elseif(Rads>0)then
 				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
 				self:HealEffect("hl1/ambience/steamburst1.wav",true)
+				self.Patient:PrintMessage(HUD_PRINTCENTER,"decontaminating")
 			else
+				if(Infection>1)then
+					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult,1,9e9)
+					self.Patient:PrintMessage(HUD_PRINTCENTER,"boosting immune system")
+				else
+					self.Patient:PrintMessage(HUD_PRINTCENTER,"repairing damage")
+				end
 				local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMOD_CONFIG.MedBayHealMult))
 				self.Patient:SetHealth(Helf+HealAmt)
 				self:HealEffect()

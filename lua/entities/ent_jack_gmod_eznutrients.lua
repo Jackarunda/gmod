@@ -62,6 +62,10 @@ if(SERVER)then
 				self:UseEffect()
 				ply.EZnutrition.NextEat=Time+100/JMOD_CONFIG.FoodSpecs.EatSpeed
 				ply.EZnutrition.Nutrients=ply.EZnutrition.Nutrients+20*JMOD_CONFIG.FoodSpecs.ConversionEfficiency
+				if(ply.EZvirus and ply.EZvirus.Severity>1)then
+					ply:PrintMessage(HUD_PRINTCENTER,"immune system boosted")
+					ply.EZvirus.Severity=math.Clamp(ply.EZvirus.Severity-10,1,9e9)
+				end
 				self:SetResource(self:GetResource()-10)
 				if((ply.getDarkRPVar)and(ply.setDarkRPVar)and(ply:getDarkRPVar("energy")))then
 					local Old=ply:getDarkRPVar("energy")
