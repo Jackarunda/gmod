@@ -113,7 +113,7 @@ if(SERVER)then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
-		self.NextDing=0
+		self.NextOpStart=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
@@ -265,19 +265,22 @@ if(SERVER)then
 		---
 		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
 		if override==false then return end
+		
 		if override~=true then
 			local Helf,Max,Rads,Infection,Bleed=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0,(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0
 			if((Helf>=Max)and(Rads<=0)and(Bleed<=0)and(Infection<=0))then return end -- you're not hurt lol gtfo
 			if(self:GetSupplies()<=0)then return end
 		end
-		self:SetState(STATE_WORKING)
-		self:SFX("afh_spoolup")
-		self:ConsumeElectricity()
+		if(self.NextOpStart<CurTime())then
+			self:SetState(STATE_WORKING)
+			self:SFX("afh_spoolup")
+			self:ConsumeElectricity()
+			self.NextOpStart=CurTime()+5
+		end
 	end
 	function ENT:EndOperation(success)
 		self:SetState(STATE_OCCUPIED)
-		if(success and self.NextDing<CurTime())then
-			self.NextDing=CurTime()+5
+		if(success)then
 			self:SFX("ding")
 		else
 			self:Whine()
@@ -354,7 +357,7 @@ if(SERVER)then
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"decontaminating")
 			else
 				if(Infection>1)then
-					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*2,1,9e9)
+					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*3,1,9e9)
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"boosting immune system")
 				else
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"repairing damage")
