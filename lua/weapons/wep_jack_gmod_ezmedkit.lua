@@ -41,7 +41,7 @@ SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.EZaccepts="medsupplies"
-SWEP.EZmaxSupplies=50
+SWEP.EZmaxSupplies=100
 
 SWEP.ShowWorldModel=false
 SWEP.VElements={
@@ -111,7 +111,7 @@ function SWEP:UpdateNextIdle()
 end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
-	if(self:GetSupplies()<0)then return end
+	if(self:GetSupplies()<=0)then return end
 	self:Pawnch()
 	self:SetNextPrimaryFire(CurTime()+.65)
 	self:SetNextSecondaryFire(CurTime()+.85)
@@ -219,7 +219,7 @@ function SWEP:WhomIlookinAt()
 end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
-	if(self:GetSupplies()<0)then return end
+	if(self:GetSupplies()<=0)then return end
 	if(SERVER)then
 		self:SetNextPrimaryFire(CurTime()+.65)
 		self:SetNextSecondaryFire(CurTime()+.85)
@@ -285,7 +285,7 @@ function SWEP:HealEffect(Ent)
 
 	sound.Play("snds_jack_gmod/ez_medical/hit.wav",Pos+Vector(0,0,1),60,math.random(90,110))
 	sound.Play("snds_jack_gmod/ez_medical/"..math.random(1,27)..".wav",Pos,60,math.random(90,110))
-	for i=1,2 do
+	if(math.random(1,2)==1)then
 		local EffPos=Pos+VectorRand()*3-AimVec*3
 		local Eff=EffectData()
 		Eff:SetOrigin(EffPos)
@@ -304,7 +304,7 @@ function SWEP:HealEffect(Ent)
 	Ent:RemoveAllDecals()
 	timer.Simple(.05,function()
 		if(IsValid(self))then
-			for i=1,2 do
+			if(math.random(1,2)==1)then
 				self:FlingProp(table.Random(self.Props),Pos+AimVec*5)
 			end
 		end
