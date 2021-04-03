@@ -51,7 +51,7 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
+		local SpawnPos=tr.HitPos+tr.HitNormal*60
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
@@ -113,6 +113,7 @@ if(SERVER)then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
+		self.NextDing=0
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
@@ -275,7 +276,8 @@ if(SERVER)then
 	end
 	function ENT:EndOperation(success)
 		self:SetState(STATE_OCCUPIED)
-		if(success)then
+		if(success and self.NextDing<CurTime())then
+			self.NextDing=CurTime()+5
 			self:SFX("ding")
 		else
 			self:Whine()
@@ -330,6 +332,7 @@ if(SERVER)then
 		if(self.NextHeal>Time)then return end
 		self.NextHeal=Time+1/self.HealSpeed^2.75
 		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
+		local Infection,Bleed=(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0
 		if(Supplies<=0)then
 			if IsValid(self.Patient) then JMod_Hint(self.Patient, "afh supply") end
 			self:EndOperation(false)
@@ -350,7 +353,7 @@ if(SERVER)then
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"decontaminating")
 			else
 				if(Infection>1)then
-					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult,1,9e9)
+					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*2,1,9e9)
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"boosting immune system")
 				else
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"repairing damage")

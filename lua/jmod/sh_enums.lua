@@ -87,7 +87,6 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- so that drop bearings can be predicted
 -- fuckin, like, or something
 -- add language translation ability for all the JMod Hints
--- and also suit support, like for fuck's sake
 -- and melee weps
 -- healing kit -1 suplies
 -- nextbot support
