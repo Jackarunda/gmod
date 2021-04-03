@@ -246,8 +246,8 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 	dmg:ScaleDamage(Mul)
 end
 
-local function FullBodyDmgHandling(ply, dmg, biological)
-	if (#table.GetKeys(ply.EZarmor.items) <= 0) then return end
+local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
+	--if (#table.GetKeys(ply.EZarmor.items) <= 0) then return end
 	local Mul, Protection, DmgAmt, ArmorPieceBroke = 1, 0, dmg:GetDamage(), false
 
 	for slot, healthMult in pairs(JMod_BodyPartHealthMults) do
@@ -281,6 +281,11 @@ local function FullBodyDmgHandling(ply, dmg, biological)
 		dmg:ScaleDamage(0)
 	else
 		dmg:ScaleDamage(Mul)
+		if(isInSewage)then
+			if(math.random(1,10)==2)then
+				JMod_ViralInfect(ply,game.GetWorld())
+			end
+		end
 	end
 
 	if (ArmorPieceBroke) then
@@ -302,12 +307,13 @@ end)
 hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 	if (victim:IsPlayer() and victim.EZarmor) then
 		local Helf,IsPiercingDmg,Att=victim:Health(),IsDamageOneOfTypes(dmginfo, JMod_PiercingDmgTypes),dmginfo:GetAttacker()
+		local IsInSewage=(dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and util.PointContents(victim:GetShootPos())==268435472
 		if (IsDamageOneOfTypes(dmginfo, JMod_LocationalDmgTypes)) then
 			-- scaling handled in scaleplayerdamage
 		elseif (IsDamageOneOfTypes(dmginfo, JMod_FullBodyDmgTypes)) then
-			FullBodyDmgHandling(victim, dmginfo, false)
+			FullBodyDmgHandling(victim, dmginfo, false, IsInSewage)
 		elseif (IsDamageOneOfTypes(dmginfo, JMod_BiologicalDmgTypes)) then
-			FullBodyDmgHandling(victim, dmginfo, true)
+			FullBodyDmgHandling(victim, dmginfo, true, IsInSewage)
 		end
 		if(JMOD_CONFIG.QoL.BleedDmgMult>0 and IsPiercingDmg)then
 			timer.Simple(0,function()

@@ -77,7 +77,7 @@ local function VirusHostCanSee(host,ent)
 	return not Tr.Hit
 end
 
-local function ViralInfect(ply,att)
+function JMod_ViralInfect(ply,att)
 	if(ply.EZvirus)then return end
 	local Severity,Latency=math.random(50,500),math.random(10,100)
 	ply.EZvirus={
@@ -110,7 +110,7 @@ function JMod_TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
 			if(Chance>0)then
 				local AAA=math.Rand(0,1)
 				if(AAA<Chance)then
-					ViralInfect(obj,att)
+					JMod_ViralInfect(obj,att)
 				end
 			end
 		end
