@@ -347,6 +347,7 @@ if(SERVER)then
 			if(Bleed>0)then
 				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"stopping bleeding")
+				self:HealEffect()
 			elseif(Rads>0)then
 				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
 				self:HealEffect("hl1/ambience/steamburst1.wav",true)

@@ -98,6 +98,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- sentries vs doors
 -- BP muzzle effect
 -- dirty bomb
+-- add upgrade level to display
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

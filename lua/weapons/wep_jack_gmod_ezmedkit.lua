@@ -139,6 +139,7 @@ function SWEP:PrimaryAttack()
 					Ent.EZbleeding=math.Clamp(Ent.EZbleeding-JMOD_CONFIG.MedKitHealMult*5,0,9e9)
 					self:SetSupplies(math.Clamp(self:GetSupplies()-1,0,100))
 					Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+					self:HealEffect(Ent)
 					Hit=true
 					return
 				end
@@ -243,6 +244,7 @@ function SWEP:SecondaryAttack()
 			Ent.EZbleeding=math.Clamp(Ent.EZbleeding-JMOD_CONFIG.MedKitHealMult*5,0,9e9)
 			self:SetSupplies(math.Clamp(self:GetSupplies()-1,0,100))
 			Ent:ViewPunch(Angle(math.Rand(-2,2),math.Rand(-2,2),math.Rand(-2,2)))
+			self:HealEffect(Ent)
 			Hit=true
 			return
 		end
