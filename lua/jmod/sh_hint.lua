@@ -83,8 +83,9 @@ JMod_Hints = {
 	
 	-- Misc. Mechanics
 	["toggle"] = {Type = "key_E", Text = "Press Use to toggle power on and off", Time = 3},
-	["destroyed"] = {Type = "warn", Text = "Device was destroyed; touch with a box of parts to repair", Time = 15},
-	["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 15},
+	["destroyed"] = {Type = "warn", Text = "Device was destroyed; touch with a box of parts to repair", Time = 5},
+	["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 5},
+	["bleeding"] = {Type = "warn", Text = "You are bleeding; seek First-Aid ASAP", Time = 5},
 	
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
@@ -98,7 +99,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "can be used to heal and cure radiation sickness", Time = 3},
 	["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically", Time = 5},
 	["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
-	["afh supply"] = {Type = "warn", Text = "Refill medical supplies to keep the AFH functional", Time = 15},
+	["afh supply"] = {Type = "warn", Text = "Refill medical supplies to keep the AFH functional", Time = 5},
 	
 	["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 3},
 	["ent_jack_gmod_ezmbhg"] = {Type = "info", Text = "Black Hole Generator creates a devastating black hole after a long wind-up", Time = 3},

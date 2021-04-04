@@ -99,6 +99,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- BP muzzle effect
 -- dirty bomb
 -- add upgrade level to display
+-- add merge func for resources
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

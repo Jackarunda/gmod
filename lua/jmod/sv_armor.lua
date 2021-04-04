@@ -76,7 +76,7 @@ function JMod_EZarmorWarning(ply,txt)
 	ply.NextEZarmorWarning=ply.NextEZarmorWarning or 0
 	if(ply.NextEZarmorWarning>Time)then return end
 	ply:PrintMessage(HUD_PRINTTALK,txt)
-	ply.NextEZarmorWarning=Time+10
+	ply.NextEZarmorWarning=Time+15
 end
 
 local function IsHitToFace(ply, dmg)
@@ -150,7 +150,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 									end
 								elseif ((armorData.chrg) and (armorData.chrg.chemicals)) then
 									JMod_DepleteArmorChemicalCharge(ply,Protection*dmgAmt*.02)
-									if (armorData.chrg.chemicals <= ArmorInfo.chrg.chemicals*.25) then
+									if (armorData.chrg.chemicals <= 0) then
 										Protection = 0
 									end
 								end

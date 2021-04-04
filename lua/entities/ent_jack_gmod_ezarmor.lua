@@ -30,7 +30,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		if(self.Specs.lbl)then self:SetDTString(0,self.Specs.lbl) end
-		if(self.Specs.clr)then print("A");self:SetColor(Color(self.Specs.clr.r,self.Specs.clr.g,self.Specs.clr.b)) end
+		if(self.Specs.clr)then self:SetColor(Color(self.Specs.clr.r,self.Specs.clr.g,self.Specs.clr.b)) end
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if((self.ModelScale)and not(self.Specs.gayPhysics))then self:SetModelScale(self.ModelScale) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)

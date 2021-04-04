@@ -137,8 +137,8 @@ if(SERVER)then
 		Sploom:SetNormal(Dir)
 		util.Effect("eff_jack_firebomb",Sploom,true,true)
 		---
-		for i=1,60 do
-			local FireAng=(Dir+VectorRand()*.15+Vector(0,0,math.Rand(.01,.7))):Angle()
+		for i=1,100 do
+			local FireAng=(Dir+VectorRand()*.35+Vector(0,0,math.Rand(.01,.7))):Angle()
 			local Flame=ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)

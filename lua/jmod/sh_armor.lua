@@ -846,7 +846,7 @@ function JMod_DepleteArmorChemicalCharge(ply,amt)
 	if(ply.EZarmor)then
 		for k,armorData in pairs(ply.EZarmor.items)do
 			local ArmorInfo=JMod_ArmorTable[armorData.name]
-			if(armorData.chrg.chemicals)then
+			if(armorData.chrg and armorData.chrg.chemicals)then
 				armorData.chrg.chemicals=math.max(armorData.chrg.chemicals-SubtractAmt,0)
 				if(armorData.chrg.chemicals<=ArmorInfo.chrg.chemicals*.25)then
 					JMod_EZarmorWarning(ply,"armor's chemical charge is almost depleted!")

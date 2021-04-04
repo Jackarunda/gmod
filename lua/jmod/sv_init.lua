@@ -8,6 +8,7 @@ if force_workshop:GetBool() then
 end
 
 local function JackaSpawnHook(ply)
+	ply.JModSpawnTime=CurTime()
 	ply.JModFriends=ply.JModFriends or {}
 	if(ply.EZarmor and ply.EZarmor.suited)then
 		ply:SetColor(Color(255,255,255))
@@ -79,6 +80,7 @@ end
 
 function JMod_ViralInfect(ply,att)
 	if(ply.EZvirus)then return end
+	if(((ply.JModSpawnTime or 0)+30)>CurTime())then return end
 	local Severity,Latency=math.random(50,500),math.random(10,100)
 	ply.EZvirus={
 		Severity=Severity,
@@ -147,7 +149,7 @@ local function VirusHostThink(dude)
 		dude.EZvirus.NextCough=Time+math.Rand(.5,2)
 		if not(dude.EZvirus.InfectionWarned)then
 			dude.EZvirus.InfectionWarned=true
-			if(dude.PrintMessage)then dude:PrintMessage(HUD_PRINTTALK,"You've been infected with the JMod virus. Seek medical attention and avoid contact with others.") end
+			if(dude.PrintMessage)then dude:PrintMessage(HUD_PRINTTALK,"You've contracted the JMod virus. Get medical attention, eat food, and avoid contact with others.") end
 		end
 		VirusCough(dude)
 		dude.EZvirus.Severity=math.Clamp(dude.EZvirus.Severity-1,0,9e9)
@@ -192,6 +194,10 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					Dmg:SetDamageType(DMG_GENERIC)
 					Dmg:SetDamagePosition(playa:GetShootPos())
 					playa:TakeDamageInfo(Dmg)
+					net.Start("JMod_SFX")
+					net.WriteString("snds_jack_gmod/quiet_heartbeat.wav")
+					net.Send(playa)
+					JMod_Hint(playa,"bleeding")
 					--
 					local Tr=util.QuickTrace(playa:GetShootPos()+VectorRand()*30,Vector(0,0,-150),playa)
 					if(Tr.Hit)then
@@ -265,14 +271,14 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 	---
 	if(NextArmorThink<Time)then
-		NextArmorThink=Time+10
+		NextArmorThink=Time+2
 		for k,playa in pairs(player.GetAll())do
 			if((playa.EZarmor)and(playa:Alive()))then
 				if(playa.EZarmor.effects.nightVision)then
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.nightVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/10,0,9e9)
 							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
@@ -280,7 +286,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					for id,armorData in pairs(playa.EZarmor.items)do
 						local Info=JMod_ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.thermalVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/2,0,9e9)
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/10,0,9e9)
 							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
