@@ -62,12 +62,11 @@ if(SERVER)then
 		if(dmginfo:GetInflictor()==self)then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
-		if(Dmg>=4)then
-			local Pos,State,DetChance=self:GetPos(),self:GetState(),0
-			if(State==JMOD_EZ_STATE_ARMED)then DetChance=DetChance+.3 end
-			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end
-			if(math.Rand(0,1)<DetChance)then self:Detonate() end
-			if((math.random(1,10)==3)and not(State==JMOD_EZ_STATE_BROKEN))then
+		if(JMod_LinCh(Dmg,20,100))then
+			local Pos,State=self:GetPos(),self:GetState()
+			if(State==JMOD_EZ_STATE_ARMED)then
+				self:Detonate()
+			elseif(not(State==JMOD_EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
 				self:SetState(JMOD_EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)

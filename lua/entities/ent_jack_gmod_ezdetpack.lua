@@ -76,6 +76,7 @@ if (SERVER) then
 
 			if (math.Rand(0, 1) < DetChance) then
 				self:Detonate()
+				return
 			end
 
 			if ((math.random(1, 10) == 3) and not (State == STATE_BROKEN)) then

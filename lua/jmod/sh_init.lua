@@ -34,6 +34,10 @@ function JMod_GenerateGUID()
 	return Res
 end
 --
+function JMod_LinCh(num,low,high)
+	return num>=(low+(high-low)*math.Rand(0,1))
+end
+--
 function JMod_PlayersCanComm(listener,talker)
 	if(listener==talker)then return true end
 	if (engine.ActiveGamemode()=="sandbox") then

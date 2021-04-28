@@ -57,7 +57,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=50)then
+		if(JMod_LinCh(dmginfo:GetDamage(),30,100))then
 			local Att=dmginfo:GetAttacker()
 			if((IsValid(Att))and(Att:IsPlayer()))then JMod_Owner(self,Att) end
 			self:Burst()

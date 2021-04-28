@@ -86,12 +86,12 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=200)then
-			if(math.random(1,20)==1)then
-				self:Break()
-			elseif((dmginfo:IsDamageType(DMG_BLAST))and(self:WaterLevel()>0))then
+		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
+			if(self:WaterLevel()>0)then
 				JMod_Owner(self,dmginfo:GetAttacker())
 				self:Detonate()
+			else
+				self:Break()
 			end
 		end
 	end

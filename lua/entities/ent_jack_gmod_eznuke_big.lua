@@ -96,8 +96,10 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=100)then
-			if(math.random(1,3)==1)then
+		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
+			if(self:GetState()==STATE_ARMED)then
+				self:Detonate()
+			else
 				self:Break()
 			end
 		end

@@ -84,13 +84,9 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=100)then
-			if(math.random(1,20)==1)then
-				self:Break()
-			elseif(dmginfo:IsDamageType(DMG_BLAST))then
-				JMod_Owner(self,dmginfo:GetAttacker())
-				self:Detonate()
-			end
+		if(JMod_LinCh(dmginfo:GetDamage(),70,150))then
+			JMod_Owner(self,dmginfo:GetAttacker())
+			self:Detonate()
 		end
 	end
 	function ENT:Use(activator)

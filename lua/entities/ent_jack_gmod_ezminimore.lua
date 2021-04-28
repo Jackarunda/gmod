@@ -62,14 +62,14 @@ if (SERVER) then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-
-		if dmginfo:GetDamage() >= 5 then
-			if ((self:GetState() == STATE_ARMED) and (math.random(1, 6) == 3)) then
+		if(JMod_LinCh(dmginfo:GetDamage(),20,80))then
+			local Pos,State=self:GetPos(),self:GetState()
+			if(State==STATE_ARMED)then
 				self:Detonate()
-			elseif (math.random() <= 1 / 6 and self:GetState() ~= STATE_BROKEN) then
-				sound.Play("Metal_Box.Break", self:GetPos())
+			elseif(not(State==STATE_BROKEN))then
+				sound.Play("Metal_Box.Break",Pos)
 				self:SetState(STATE_BROKEN)
-				SafeRemoveEntityDelayed(self, 10)
+				SafeRemoveEntityDelayed(self,10)
 			end
 		end
 	end

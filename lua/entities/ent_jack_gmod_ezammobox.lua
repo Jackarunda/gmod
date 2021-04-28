@@ -59,9 +59,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(dmginfo:GetDamage()>=110)then
-			self:Remove()
-		end
+		if(JMod_LinearChance(dmginfo:GetDamage(),30,100))then self:Remove() end
 	end
 	function ENT:UseEffect()
 		-- stub

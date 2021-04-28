@@ -55,7 +55,7 @@ SWEP.IronSightStruct = {
     SwitchFromSound = JMod_GunHandlingSounds.aim.out
 }
 
-SWEP.ActivePos = Vector(1, 1, 1)
+SWEP.ActivePos = Vector(1, 20, 1)
 SWEP.ActiveAng = Angle(1.8, 1.5, -2.5)
 
 SWEP.HolsterPos = Vector(6, -1, 0)
