@@ -39,8 +39,6 @@ SWEP.Firemodes = {
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
-SWEP.Primary.Ammo = "40mm Grenade" -- what ammo type the gun uses
-
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/40mm_grenade_auto.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/40mm_grenade_auto.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"

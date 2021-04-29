@@ -70,11 +70,21 @@ if(SERVER)then
 			if(ArcCW)then
 				if not(activator:HasWeapon(self.Specs.swep))then
 					activator:Give(self.Specs.swep)
-					activator:GetWeapon(self.Specs.swep):SetClip1(self.MagRounds)
+					local GivenWep=activator:GetWeapon(self.Specs.swep)
+					GivenWep:SetClip1(self.MagRounds)
 					activator:SelectWeapon(self.Specs.swep)
 					JMod_Hint(activator,self.Specs.swep,nil,true)
+					if(GivenWep.Primary.Ammo=="Arrow")then
+						JMod_Hint(activator,"weapon arrows")
+					elseif(GivenWep.Primary.Ammo=="Black Powder Paper Cartridge")then
+						JMod_Hint(activator,"weapon black powder paper cartridges")
+					elseif(GivenWep.Primary.Ammo=="40mm Grenade" or GivenWep.Primary.Ammo=="Mini Rocket")then
+						JMod_Hint(activator,"weapon munitions")
+					else
+						JMod_Hint(activator,"weapon ammo")
+					end
 					for k,v in pairs({"weapon drop","weapon steadiness","weapon firemodes","weapon ammotypes"})do
-						timer.Simple(k*3,function()
+						timer.Simple(k*6,function()
 							JMod_Hint(activator,v)
 						end)
 					end

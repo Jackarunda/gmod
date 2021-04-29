@@ -37,8 +37,6 @@ SWEP.ShotgunReload = true
 
 SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
 
-SWEP.Primary.Ammo = "Magnum Rifle Round" -- what ammo type the gun uses
-
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/magnum_rifle.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/magnum_rifle.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"

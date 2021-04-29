@@ -151,7 +151,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezbattery use"] = {Type = "pickup", Text = "Bump battery into devices to recharge them", Time = 3},
 	["ent_jack_gmod_ezchemicals"] = {Type = "info", Text = "Chemicals are used to craft various things", Time = 3},
 	["ent_jack_gmod_ezexplosives"] = {Type = "info", Text = "Explosives are used to craft things that go boom", Time = 3},
-	["ent_jack_gmod_ezfissilematerial"] = {Type = "info", Text = "Fissile Materials are used to craft nuclear bombs", Time = 3},
+	["ent_jack_gmod_ezfissilematerial"] = {Type = "info", Text = "Fissile Materials are used to craft nuclear bombs, or can be blasted apart to irradiate the area", Time = 5},
 	["ent_jack_gmod_ezfuel"] = {Type = "info", Text = "Fuel is used too craft the Jeep (for now)", Time = 3},
 	["ent_jack_gmod_ezgas"] = {Type = "info", Text = "Gas is used to power the Workbench and to craft things", Time = 3},
 	["ent_jack_gmod_ezmedsupplies"] = {Type = "info", Text = "med supplies are consumed by auto field hospitals and medkits", Time = 3},
@@ -162,6 +162,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezparts"] = {Type = "info", Text = "Parts are used to repair, craft and upgrade almost everything", Time = 3},
 	["ent_jack_gmod_ezparts use"] = {Type = "pickup", Text = "Bump parts into broken devices to fix them", Time = 3},
 	["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
+	["resource manage"]={Type="info",Text="ALT+SHIFT+E to split resources, tap together to combine",Time=4},
 	
 	-- Weapons
 	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim", Sound = ""},
@@ -170,7 +171,12 @@ JMod_Hints = {
 	["weapon ammotypes"]={Type="info",Text="press USE and RELOAD at the same time to switch ammo types", Sound = ""},
 	["weapon ammocheck"]={Type="info",Text="press WALK and RELOAD at the same time to check ammo without reloading", Sound = ""},
 	["backblast"]={Type="info",Text="BACKBLAST AREA NOT CLEAR!"},
-	["backblast wall"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure the area behind you is open"}
+	["backblast wall"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure the area behind you is open"},
+	-- Ammo
+	["weapon ammo"]={Type="info",Text="get ammo from the EZ Ammo Box (entities, JMod - EZ Resources)"},
+	["weapon munitions"]={Type="info",Text="get ammo from the EZ Munitions Box (entities, JMod - EZ Resources)"},
+	["weapon black powder paper cartridges"]={Type="info",Text="get ammo from the EZ Black Powder Paper Cartridges (entities, JMod - EZ Special Ammo)"},
+	["weapon arrows"]={Type="info",Text="get ammo from the EZ Arrows (entities, JMod - EZ Special Ammo)"}
 }
 JMod_SpecificHints={
 	["wep_jack_gmod_gl"]={Type="info",Text="GRENADES HAVE NO DISTANCE SAFETY"},

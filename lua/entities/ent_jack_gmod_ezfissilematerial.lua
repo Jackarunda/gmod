@@ -15,21 +15,25 @@ ENT.Skin=2
 ENT.Mass=150
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
-ENT.DamageThreshold=120
+ENT.DamageThreshold=1500
 ENT.BreakNoise="Metal_Box.Break"
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		if((destructive)and not(self.Sploomd))then
 			self.Sploomd=true
-			for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
-				local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
-				Gas:SetPos(self:GetPos())
-				JMod_Owner(Gas,self.Owner or game.GetWorld())
-				Gas:Spawn()
-				Gas:Activate()
-				Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
-			end
+			local Owner,Count=self.Owner,self:GetResource()
+			timer.Simple(.5,function()
+				for k=1,JMOD_CONFIG.NuclearRadiationMult*Count*10 do
+					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+					Gas.Range=1000
+					Gas:SetPos(pos)
+					JMod_Owner(Gas,Owner or game.GetWorld())
+					Gas:Spawn()
+					Gas:Activate()
+					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
+				end
+			end)
 		end
 	end
 	function ENT:AltUse(ply)

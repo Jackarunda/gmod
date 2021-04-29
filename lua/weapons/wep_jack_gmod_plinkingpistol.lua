@@ -42,8 +42,6 @@ SWEP.Firemodes = {
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
-SWEP.Primary.Ammo = "Plinking Round" -- what ammo type the gun uses
-
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/plinker.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/plinker.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"

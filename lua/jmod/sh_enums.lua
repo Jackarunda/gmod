@@ -103,6 +103,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- add white phosphorous weapon
 -- ALT SHIFT E to split resource crates
 -- ez air sensor
+-- ez add abilities to make radio outposts
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

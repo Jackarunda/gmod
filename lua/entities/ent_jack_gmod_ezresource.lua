@@ -44,6 +44,7 @@ if(SERVER)then
 		---
 		self.NextLoad=0
 		self.Loaded=false
+		self.NextCombine=0
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(self.Mass)
@@ -53,7 +54,22 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if(self.Loaded)then return end
 		if(data.DeltaTime>0.2)then
-			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<CurTime())and(self:IsPlayerHolding()))then
+			local Time=CurTime()
+			if(data.HitEntity.ClassName==self.ClassName and self.NextCombine<Time and data.HitEntity.NextCombine<Time)then
+				-- determine a priority, favor the item that has existed longer
+				if(self:EntIndex()<data.HitEntity:EntIndex())then
+					-- don't run twice on every collision
+					-- try to combine
+					local Sum=self:GetResource()+data.HitEntity:GetResource()
+					if(Sum<=self.MaxResource)then
+						self:SetResource(Sum)
+						data.HitEntity:Remove()
+						self:UseEffect(data.HitPos,data.HitEntity)
+						return
+					end
+				end
+			end
+			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<Time)and(self:IsPlayerHolding()))then
 				if(self:GetResource()<=0)then self:Remove() return end
 				local Resource=self:GetResource()
 				local Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
@@ -91,9 +107,27 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if((self.AltUse)and(activator:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
+		local AltPressed,Count=activator:KeyDown(JMOD_CONFIG.AltFunctionKey),self:GetResource()
+		if((AltPressed)and(activator:KeyDown(IN_SPEED)))then
+			-- split resource entity in half
+			if(Count>1)then
+				local NewCountOne,NewCountTwo=math.ceil(Count/2),math.floor(Count/2)
+				local Box=ents.Create(self.ClassName)
+				Box:SetPos(self:GetPos()+self:GetUp()*5)
+				Box:SetAngles(self:GetAngles())
+				Box:Spawn()
+				Box:Activate()
+				Box:SetResource(NewCountOne)
+				activator:PickupObject(Box)
+				Box.NextCombine=CurTime()+2
+				self.NextCombine=CurTime()+2
+				self:SetResource(NewCountTwo)
+				self:UseEffect(self:GetPos(),self)
+			end
+		elseif((self.AltUse)and(AltPressed))then
 			self:AltUse(activator)
 		else
+			JMod_Hint(activator,"resource manage")
 			activator:PickupObject(self)
 			if JMod_Hints[self:GetClass() .. " use"] then
 				JMod_Hint(activator, self:GetClass() .. " use", self)

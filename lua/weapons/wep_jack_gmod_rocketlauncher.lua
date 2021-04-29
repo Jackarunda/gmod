@@ -42,8 +42,6 @@ SWEP.Firemodes = {
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
-SWEP.Primary.Ammo = "Mini Rocket" -- what ammo type the gun uses
-
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"

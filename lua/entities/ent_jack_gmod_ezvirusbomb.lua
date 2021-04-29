@@ -4,10 +4,10 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Virus Canister"
+ENT.PrintName="EZ Bioweapon Canister"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminOnly=true
 ---
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,270,0)

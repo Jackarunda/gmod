@@ -33,8 +33,6 @@ SWEP.Firemodes = {
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
-SWEP.Primary.Ammo = "Black Powder Paper Cartridge" -- what ammo type the gun uses
-
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
