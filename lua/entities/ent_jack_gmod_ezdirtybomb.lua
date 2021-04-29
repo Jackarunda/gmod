@@ -46,7 +46,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_SEALED)
-		self.ContainedGas=50*JMOD_CONFIG.NuclearRadiationMult
+		self.ContainedGas=100*JMOD_CONFIG.NuclearRadiationMult
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -116,11 +116,12 @@ if(SERVER)then
 			return true
 		elseif(State==STATE_VENTING)then
 			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
+			Gas.Range=750
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
 			JMod_Owner(Gas,self.Owner or self)
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*500)
+			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*100)
 			self.ContainedGas=self.ContainedGas-1
 			self:NextThink(Time+.2)
 			self:EmitSound("snds_jack_gmod/hiss.wav",65,math.random(90,110))

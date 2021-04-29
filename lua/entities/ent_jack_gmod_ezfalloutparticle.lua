@@ -51,7 +51,7 @@ if(SERVER)then
 		local Time,SelfPos=CurTime(),self:GetPos()
 		if(self.DieTime<Time)then self:Remove() return end
 		local Force=VectorRand()*10-Vector(0,0,50)
-		for key,obj in pairs(ents.FindInSphere(SelfPos,2500))do
+		for key,obj in pairs(ents.FindInSphere(SelfPos,self.Range or 2500))do
 			if(not(obj==self)and(self:CanSee(obj)))then
 				if(obj.EZfalloutParticle)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
