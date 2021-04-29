@@ -115,7 +115,7 @@ if(SERVER)then
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then
-			local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
+			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
 			JMod_Owner(Gas,self.Owner or self)
 			Gas:Spawn()
