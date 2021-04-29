@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Fumigator"
+ENT.PrintName="EZ Dirty Bomb"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -46,7 +46,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_SEALED)
-		self.ContainedGas=100*JMOD_CONFIG.NuclearRadiationMult
+		self.ContainedGas=50*JMOD_CONFIG.NuclearRadiationMult
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -98,7 +98,7 @@ if(SERVER)then
 		JMod_Sploom(Owner,SelfPos,100)
 		for i=1,self.ContainedGas do
 			timer.Simple(i/200,function()
-				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
+				local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas:SetPos(SelfPos)
 				JMod_Owner(Gas,Owner)
 				Gas:Spawn()
