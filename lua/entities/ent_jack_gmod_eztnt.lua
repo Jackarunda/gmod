@@ -64,9 +64,9 @@ if(SERVER)then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
-			elseif(not(State==STATE_BROKEN))then
+			elseif(not(State==JMOD_EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(STATE_BROKEN)
+				self:SetState(JMOD_EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
