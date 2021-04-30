@@ -141,7 +141,7 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
 		--JMod_Sploom(Att,SelfPos,500)
-		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,600,600) end)
+		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,600,800) end)
 		---
 		util.ScreenShake(SelfPos,1000,10,5,8000)
 		local Eff="pcf_jack_moab"

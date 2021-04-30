@@ -18,11 +18,9 @@ if(SERVER)then
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod_Owner(ent,ply)
+		ent.HasSpawnAmmo=true
 		ent:Spawn()
 		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
 		return ent
 	end
 	function ENT:Initialize()
@@ -71,7 +69,12 @@ if(SERVER)then
 				if not(activator:HasWeapon(self.Specs.swep))then
 					activator:Give(self.Specs.swep)
 					local GivenWep=activator:GetWeapon(self.Specs.swep)
-					GivenWep:SetClip1(self.MagRounds)
+					if(self.HasSpawnAmmo)then
+						GivenWep:SetClip1(GivenWep.Primary.ClipSize)
+						self.HasSpawnAmmo=false
+					else
+						GivenWep:SetClip1(self.MagRounds)
+					end
 					activator:SelectWeapon(self.Specs.swep)
 					JMod_Hint(activator,self.Specs.swep,nil,true)
 					if(GivenWep.Primary.Ammo=="Arrow")then

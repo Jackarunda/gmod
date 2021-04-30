@@ -161,7 +161,7 @@ if(SERVER)then
 		end
 		for i=1,10 do
 			timer.Simple(i,function()
-				if(i>6)then JMod_DecalSplosion(SelfPos+Vector(0,0,i*100),"GiantScorch",20000,20) end
+				if(i>6)then JMod_DecalSplosion(SelfPos+Vector(0,0,i*350),"GiantScorch",40000,20) end
 				SendClientNukeEffect(SelfPos,9e9)
 			end)
 		end

@@ -133,10 +133,12 @@ SWEP.MeleeViewMovements = {
 }
 
 -- arccw hooks to do extra stuff --
-SWEP.Hook_AddShootSound = function(self, fsound, volume, pitch)
+SWEP.Hook_AddShootSound = function(self, data)
 	if(self.ShootSoundWorldCount>0)then
 		for i=1,self.ShootSoundWorldCount do
-			if(SERVER)then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON - 1, true) end
+			if(SERVER)then
+				self:MyEmitSound(data.sound, data.volume, data.pitch, 1, CHAN_WEAPON - 1, true)
+			end
 		end
 	end
 end

@@ -276,14 +276,17 @@ function JMod_SimpleForceExplosion(pos, power, range, sourceEnt)
 end
 
 function JMod_DecalSplosion(pos, decalName, range, num, sourceEnt)
-	for i = 1, num do
-		local Dir = VectorRand() * math.random(1, range)
-		Dir.z = -math.abs(Dir.z) / 6
-		local Tr = util.QuickTrace(pos, Dir, sourceEnt)
-
-		if (Tr.Hit) then
-			util.Decal(decalName, Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-		end
+	for i = 1,num/5 do
+		timer.Simple(i/2,function()
+			for j = 1, num/5 do
+				local Dir = VectorRand() * math.random(1, range)
+				Dir.z = Dir.z / 4
+				local Tr = util.QuickTrace(pos, Dir, sourceEnt)
+				if (Tr.Hit) then
+					util.Decal(decalName, Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+				end
+			end
+		end)
 	end
 end
 

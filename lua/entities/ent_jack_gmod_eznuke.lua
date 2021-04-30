@@ -149,7 +149,7 @@ if(SERVER)then
 		self.Exploded=true
 		local SelfPos,Att,Power,Range=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld(),JMOD_CONFIG.NukePowerMult,JMOD_CONFIG.NukeRangeMult
 		--JMod_Sploom(Att,SelfPos,500)
-		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,1500*Power,1500*Range) end)
+		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,1500*Power,3000*Range) end)
 		---
 		SendClientNukeEffect(SelfPos,12000)
 		util.ScreenShake(SelfPos,1000,10,10,2000*Range)
@@ -194,7 +194,7 @@ if(SERVER)then
 				---
 				SendClientNukeEffect(SelfPos,2000*renj)
 				---
-				if(i==10)then JMod_DecalSplosion(SelfPos,"GiantScorch",1000,20) end
+				if(i==10)then JMod_DecalSplosion(SelfPos+Vector(0,0,500)+Vector(0,0,1000),"GiantScorch",8000,40) end
 				---
 				if(i==20)then
 					for j=1,10 do
