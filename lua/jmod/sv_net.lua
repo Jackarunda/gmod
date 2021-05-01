@@ -38,34 +38,31 @@ net.Receive("JMod_Friends",function(length,ply)
 	end
 end)
 
-net.Receive("JMod_MineColor",function(ln,ply)
-	if not((IsValid(ply))and(ply:Alive()))then return end
-	local Mine=net.ReadEntity()
-	local Col=net.ReadColor()
-	local Arm=tobool(net.ReadBit())
-	if not(IsValid(Mine))then return end
-	Mine:SetColor(Col)
-	if(Arm)then Mine:Arm(ply) end
+net.Receive("JMod_MineColor", function(l, ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local mine = net.ReadEntity()
+	if not (IsValid(mine) and mine.JModIsMine) then return end
+	if ply:GetPos():DistToSqr(mine:GetPos()) > 15000 then return end
+	mine:SetColor(net.ReadColor())
+	if net.ReadBit() == 1 then mine:Arm(ply) end
 end)
 
-net.Receive("JMod_ArmorColor",function(ln,ply)
-	if not((IsValid(ply))and(ply:Alive()))then return end
-	local Armor=net.ReadEntity()
-	local Col=net.ReadColor()
-	local Equip=tobool(net.ReadBit())
-	if not(IsValid(Armor))then return end
-	Armor:SetColor(Col)
-	if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
+net.Receive("JMod_ArmorColor", function(l, ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local armor = net.ReadEntity()
+	if not (IsValid(armor) and scripted_ents.IsBasedOn(armor:GetClass(), "ent_jack_gmod_ezarmor")) then return end
+	if ply:GetPos():DistToSqr(armor:GetPos()) > 15000 then return end
+	armor:SetColor(net.ReadColor())
+	if net.ReadBit() == 1 then JMod_EZ_Equip_Armor(ply, armor) end
 end)
 
-net.Receive("JMod_SignalNade",function(ln,ply)
-	if not((IsValid(ply))and(ply:Alive()))then return end
-	local Nade=net.ReadEntity()
-	local Col=net.ReadColor()
-	local Arm=tobool(net.ReadBit())
-	if not(IsValid(Nade))then return end
-	Nade:SetColor(Col)
-	if(Arm)then Nade:Prime() end
+net.Receive("JMod_SignalNade", function(l, ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local nade = net.ReadEntity()
+	if not (IsValid(nade) and nade:GetClass() == "ent_jack_gmod_ezsignalnade") then return end
+	if ply:GetPos():DistToSqr(nade:GetPos()) > 15000 then return end
+	nade:SetColor(net.ReadColor())
+	if net.ReadBit() == 1 then nade:Prime() end
 end)
 
 net.Receive("JMod_EZbuildKit",function(ln,ply)
@@ -75,12 +72,11 @@ net.Receive("JMod_EZbuildKit",function(ln,ply)
 	end
 end)
 
-net.Receive("JMod_EZworkbench",function(ln,ply)
-	local Bench,Name=net.ReadEntity(),net.ReadString()
-	if((IsValid(Bench))and(ply:Alive()))then
-		if(ply:GetPos():Distance(Bench:GetPos())<200)then
-			Bench:TryBuild(Name,ply)
-		end
+net.Receive("JMod_EZworkbench", function(l, ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local bench,name = net.ReadEntity(),net.ReadString()
+	if (IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos()) < 15000 then
+		bench:TryBuild(name, ply)
 	end
 end)
 
