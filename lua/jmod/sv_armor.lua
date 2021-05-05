@@ -94,7 +94,7 @@ local function IsHitToBack(ply, dmg)
 end
 
 local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shouldDmgArmor, cumulativeCoverage)
-	local Protection, Busted, CumulativeDivisor = 0, false, 0
+	local Protection, Busted = 0, false
 
 	for id, armorData in pairs(ply.EZarmor.items) do
 		local ArmorInfo = table.FullCopy(JMod_ArmorTable[armorData.name])
@@ -111,6 +111,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 		end
 
 		if (ArmorInfo) then
+			local CumulativeDivisor = 0
 			for armorSlot, coverage in pairs(ArmorInfo.slots) do
 				if ((armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist")) then
 					CumulativeDivisor=CumulativeDivisor+1

@@ -60,7 +60,7 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .35
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.23, 6, .1),
+    Pos = Vector(-2.23, 14, .1),
     Ang = Angle(-.7, -.15, -2),
     Magnification = 1.1,
     SwitchToSound = JMod_GunHandlingSounds.aim.minor,

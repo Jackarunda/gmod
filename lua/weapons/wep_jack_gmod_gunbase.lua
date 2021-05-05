@@ -24,6 +24,7 @@ SWEP.Num = 1
 
 SWEP.VisualRecoilMult = 1
 SWEP.RecoilSide = .5
+SWEP.RecoilPunchBackMax = 2
 
 SWEP.HipDispersion = 700 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 300
@@ -264,27 +265,22 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 		end
 	end
 end)
-
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
-    if !irons then return end
-    if !irons.Magnification then return fov end
-    if irons.Magnification == 1 then return fov end
+    --if !irons then return end
+    --if !irons.Magnification then return fov end
+    --if irons.Magnification == 1 then return fov end
 
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
 
     local div = 1
-    local app_vm = self.ViewModelFOV + 10
+    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        fov = 75
-        app_vm = 45
-        if CLIENT and self:ShouldFlatScope() then
-            div = (irons.Magnification + irons.ScopeMagnification)
-        else
-            div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
-        end
+        -- fov = 75
+        app_vm = irons.ViewModelFOV or 45
+        div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
     end
 
     -- something about this doesn't work in multiplayer
@@ -293,7 +289,6 @@ function SWEP:TranslateFOV(fov)
 
     self.ApproachFOV = fov / div
 	if(BreathStatus)then self.ApproachFOV=self.ApproachFOV*.95 end -- JACKARUNDA
-
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
 
     self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
@@ -317,7 +312,7 @@ function SWEP:OnDrop()
 		Ent:Spawn()
 		Ent:Activate()
 		local Phys=Ent:GetPhysicsObject()
-		if(Phys)then
+		if(Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()))then
 			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
 		end
 		self:Remove()

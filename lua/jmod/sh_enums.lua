@@ -104,6 +104,11 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- ALT SHIFT E to split resource crates
 -- ez air sensor
 -- ez add abilities to make radio outposts
+-- make hl2 ammo work for ez guns
+-- make fucking uh the sewage infection be gated in QoL
+-- add revival in QoL
+-- criticality bomb?
+-- EMP generator?
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
