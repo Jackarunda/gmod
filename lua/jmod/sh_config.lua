@@ -274,7 +274,7 @@ end
 function JMod_InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=36,
+		Version=37,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -310,6 +310,13 @@ function JMod_InitGlobalConfig(forceNew)
 		NuclearRadiationSickness=true,
 		VirusSpreadMult=1,
 		FragExplosions=true,
+		ResourceEconomy={
+			OreConcentration=1,
+			OreRichness=1,
+			OilConcentration=1,
+			OilRichness=1,
+			RefinementEfficiency=1
+		},
 		QoL={
 			RealisticLocationalDamage=false,
 			ExtinguishUnderwater=false,
