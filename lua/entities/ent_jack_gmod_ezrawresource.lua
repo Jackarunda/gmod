@@ -9,6 +9,8 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ---
 ENT.IsJackyEZresource=true
+ENT.EZsupplies="argh"
+ENT.MaxResource=1
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -28,6 +30,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.Model)
 		self.Entity:SetMaterial(self.Material)
 		self:SetModelScale(self.ModelScale,0)
+		if(self.Color)then self:SetColor(self.Color) end
 		if(self.Skin)then self:SetSkin(self.Skin) end
 		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -48,20 +51,6 @@ if(SERVER)then
 		if(self.Loaded)then return end
 		if(data.DeltaTime>0.2)then
 			local Time=CurTime()
-			if(data.HitEntity.ClassName==self.ClassName and self.NextCombine<Time and data.HitEntity.NextCombine<Time)then
-				-- determine a priority, favor the item that has existed longer
-				if(self:EntIndex()<data.HitEntity:EntIndex())then
-					-- don't run twice on every collision
-					-- try to combine
-					local Sum=self:GetResource()+data.HitEntity:GetResource()
-					if(Sum<=self.MaxResource)then
-						self:SetResource(Sum)
-						data.HitEntity:Remove()
-						self:UseEffect(data.HitPos,data.HitEntity)
-						return
-					end
-				end
-			end
 			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<Time)and(self:IsPlayerHolding()))then
 				if(self:GetResource()<=0)then self:Remove() return end
 				local Resource=self:GetResource()
@@ -100,32 +89,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local AltPressed,Count=activator:KeyDown(JMOD_CONFIG.AltFunctionKey),self:GetResource()
-		if((AltPressed)and(activator:KeyDown(IN_SPEED)))then
-			-- split resource entity in half
-			if(Count>1)then
-				local NewCountOne,NewCountTwo=math.ceil(Count/2),math.floor(Count/2)
-				local Box=ents.Create(self.ClassName)
-				Box:SetPos(self:GetPos()+self:GetUp()*5)
-				Box:SetAngles(self:GetAngles())
-				Box:Spawn()
-				Box:Activate()
-				Box:SetResource(NewCountOne)
-				activator:PickupObject(Box)
-				Box.NextCombine=CurTime()+2
-				self.NextCombine=CurTime()+2
-				self:SetResource(NewCountTwo)
-				self:UseEffect(self:GetPos(),self)
-			end
-		elseif((self.AltUse)and(AltPressed))then
-			self:AltUse(activator)
-		else
-			JMod_Hint(activator,"resource manage")
-			activator:PickupObject(self)
-			if JMod_Hints[self:GetClass() .. " use"] then
-				JMod_Hint(activator, self:GetClass() .. " use", self)
-			end
-		end
+		activator:PickupObject(self)
 	end
 	function ENT:Think()
 		--

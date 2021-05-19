@@ -109,6 +109,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- add revival in QoL
 -- criticality bomb?
 -- EMP generator?
+-- why the fuck does the dropwep concommand fire when someone's typing chat WTF
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

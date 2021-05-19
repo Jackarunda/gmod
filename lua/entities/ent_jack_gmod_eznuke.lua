@@ -169,20 +169,23 @@ if(SERVER)then
 			end
 		end
 		---
+		for h=1,80 do
+			timer.Simple(h/10,function()
+				local ThermalRadiation=DamageInfo()
+				ThermalRadiation:SetDamageType(DMG_BURN)
+				ThermalRadiation:SetDamage(50/h)
+				ThermalRadiation:SetAttacker(Att)
+				ThermalRadiation:SetInflictor(game.GetWorld())
+				util.BlastDamageInfo(ThermalRadiation,SelfPos,20000*Range)
+			end)
+		end
 		for i=1,20 do
 			timer.Simple(i/4,function()
-				SelfPos=SelfPos+Vector(0,0,50)
+				SelfPos=SelfPos+Vector(0,0,100)
 				---
 				local powa,renj=10+i*2.5*Power,1+i/10*Range
 				---
 				if(i==1)then JMod_EMP(SelfPos,renj*10000) end
-				---
-				local ThermalRadiation=DamageInfo()
-				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage(40/i)
-				ThermalRadiation:SetAttacker(Att)
-				ThermalRadiation:SetInflictor(game.GetWorld())
-				util.BlastDamageInfo(ThermalRadiation,SelfPos,20000*Range)
 				---
 				util.BlastDamage(game.GetWorld(),Att,SelfPos,1600*i,300/i)
 				for k,ent in pairs(ents.FindInSphere(SelfPos,renj))do

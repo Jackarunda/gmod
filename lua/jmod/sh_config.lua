@@ -311,11 +311,11 @@ function JMod_InitGlobalConfig(forceNew)
 		VirusSpreadMult=1,
 		FragExplosions=true,
 		ResourceEconomy={
-			OreConcentration=1,
+			OreFrequency=1,
 			OreRichness=1,
-			OilConcentration=1,
+			OilFrequency=1,
 			OilRichness=1,
-			RefinementEfficiency=1
+			ProductionSpeed=1
 		},
 		QoL={
 			RealisticLocationalDamage=false,

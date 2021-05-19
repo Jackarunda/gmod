@@ -18,8 +18,9 @@ function table.FullCopy(tab)
 	end
 	return res
 end
-function Stringify(obj)
-	if not(obj)then return nil end
+local function Stringify(obj)
+	if(obj==false)then return "false" end
+	if not(obj)then return "" end
 	local Str,Typ="",type(obj)
 	if(Typ=="number")then
 		Str=Str..tostring(math.Round(obj,4)).." "	

@@ -32,6 +32,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.Model)
 		self.Entity:SetMaterial(self.Material)
 		self:SetModelScale(self.ModelScale,0)
+		if(self.Color)then self:SetColor(self.Color) end
 		if(self.Skin)then self:SetSkin(self.Skin) end
 		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)

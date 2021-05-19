@@ -151,11 +151,11 @@ if(SERVER)then
 		end
 		---
 		SendClientNukeEffect(SelfPos,8000)
-		for i=0,10 do
-			timer.Simple(i/4,function()
+		for h=1,40 do
+			timer.Simple(h/10,function()
 				local ThermalRadiation=DamageInfo()
 				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage(10)
+				ThermalRadiation:SetDamage(50/h)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
 				util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
@@ -173,7 +173,11 @@ if(SERVER)then
 			end
 		end
 		---
-		timer.Simple(.5,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,5000,500) end)
+		for i=1,5 do
+			timer.Simple(i/5,function()
+				util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,200*i),6000,300)
+			end)
+		end
 		---
 		for k,ent in pairs(ents.FindInSphere(SelfPos,2000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
