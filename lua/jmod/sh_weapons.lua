@@ -568,7 +568,8 @@ if(CLIENT)then
 	}		
 	local function RenderHolsteredWeapon(ply,slot,side)
 		local Class=ply.EZweapons.slots[slot][side]
-		if((Class)and(ply:HasWeapon(Class))and not(ply:GetActiveWeapon():GetClass()==Class))then
+		local CurWep=ply:GetActiveWeapon()
+		if((Class)and(ply:HasWeapon(Class))and(IsValid(CurWep))and not(CurWep:GetClass()==Class))then
 			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
 			local ID=ply:LookupBone(slotInfo.bone)
 			if(ID)then

@@ -40,7 +40,9 @@ local function FindDropPosFromSignalOrigin(origin)
 		Height=Height+50
 		local TestPos=origin+Vector(0,0,Height)
 		local Contents=util.PointContents(TestPos)
-		if((Contents==CONTENTS_EMPTY)or(Contents==CONTENTS_TESTFOGVOLUME))then
+		local IsEmpty=(bit.band(Contents,CONTENTS_EMPTY)==CONTENTS_EMPTY)
+		local IsTFV=(bit.band(Contents,CONTENTS_TESTFOGVOLUME)==CONTENTS_TESTFOGVOLUME)
+		if((IsEmpty)or(IsTFV))then
 			Pos=TestPos
 		end
 	end

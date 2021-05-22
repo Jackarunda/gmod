@@ -89,8 +89,7 @@ if(SERVER)then
 			local GroundIsSolid=true
 			for i=1,50 do
 				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-				jprint(Contents)
-				if(Contents~=CONTENTS_SOLID)then GroundIsSolid=false break end
+				if(bit.band(util.PointContents(v.pos),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
 			end
 			if(GroundIsSolid)then
 				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)

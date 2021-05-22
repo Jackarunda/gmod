@@ -308,7 +308,8 @@ end)
 hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 	if (victim:IsPlayer() and victim.EZarmor) then
 		local Helf,IsPiercingDmg,Att=victim:Health(),IsDamageOneOfTypes(dmginfo, JMod_PiercingDmgTypes),dmginfo:GetAttacker()
-		local IsInSewage=(dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and util.PointContents(victim:GetShootPos())==268435472
+		local IsShit=bit.band(util.PointContents(victim:GetShootPos()),268435472)==268435472
+		local IsInSewage=(dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and IsShit
 		if (IsDamageOneOfTypes(dmginfo, JMod_LocationalDmgTypes)) then
 			-- scaling handled in scaleplayerdamage
 		elseif (IsDamageOneOfTypes(dmginfo, JMod_FullBodyDmgTypes)) then

@@ -315,6 +315,7 @@ function JMod_InitGlobalConfig(forceNew)
 			OreRichness=1,
 			OilFrequency=1,
 			OilRichness=1,
+			GeothermalPowerMult=1,
 			ProductionSpeed=1
 		},
 		QoL={
