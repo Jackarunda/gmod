@@ -11,7 +11,7 @@ if(SERVER)then
 					if(l~=k)then
 						local Dist,Min=v.pos:Distance(w.pos),v.siz+w.siz
 						if(Dist<Min)then
-							table.Remove(tbl,k)
+							table.remove(tbl,k)
 							Removed=true
 							break
 						end
@@ -22,6 +22,14 @@ if(SERVER)then
 			if not(Removed)then Finished=true end
 			Tries=Tries+1
 			if(Tries>1000)then return end
+		end
+	end
+	local function PumpItUp(tbl,numPumps,minPump,maxPump)
+		if(#tbl<=0)then return end
+		for i=1,numPumps do
+			local Deposit,Decimals=table.Random(tbl),0
+			if(Deposit.amt<1)then Decimals=5 end
+			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
 		end
 	end
 	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster"}
@@ -52,23 +60,22 @@ if(SERVER)then
 						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
 						if(GeoCount<MaxGeo)then
 							local amt=math.Rand(.001,.005)*JMOD_CONFIG.ResourceEconomy.GeothermalPowerMult
-							if(math.random(1,5)==2)then amt=amt*math.Rand(5,10) end
+							if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
 							if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
 							table.insert(JMOD_GEO_THERMALS,{
 								pos=v.pos,
 								amt=math.Round(amt,5),
-								siz=math.random(100,1000)
+								siz=math.random(150,1000)
 							})
 							GeoCount=GeoCount+1
 						elseif(Alternate)then
 							if(OilCount<MaxOil)then
 								local amt=math.random(70,180)*JMOD_CONFIG.ResourceEconomy.OilRichness
-								if(math.random(1,14)==10)then amt=amt*math.Rand(5,10) end
 								if(InWater)then amt=amt*2 end -- fracking time
 								table.insert(JMOD_OIL_RESERVES,{
 									pos=v.pos,
 									amt=math.Round(amt),
-									siz=math.random(100,1000)
+									siz=math.random(150,1000)
 								})
 								OilCount=OilCount+1
 							end
@@ -76,24 +83,27 @@ if(SERVER)then
 						else
 							if(OreCount<MaxOre)then
 								local amt=math.random(70,180)*JMOD_CONFIG.ResourceEconomy.OreRichness
-								if(math.random(1,14)==10)then amt=amt*math.Rand(5,10) end
 								table.insert(JMOD_ORE_DEPOSITS,{
 									pos=v.pos,
 									amt=math.Round(amt),
-									siz=math.random(100,1000)
+									siz=math.random(150,1000)
 								})
 								OreCount=OreCount+1
 							end
 							Alternate=true
 						end
 					end
-					if(((OilCount<2)or(OreCount<2))and not(tryFlat))then
+					if(((OilCount<2)or(OreCount<2)or(GeoCount<2))and not(tryFlat))then
 						-- if we couldn't find anything, it might be an RP map which is really flat
 						JMod_GenerateNaturalResources(true)
 					else
 						RemoveOverlaps(JMOD_OIL_RESERVES)
 						RemoveOverlaps(JMOD_ORE_DEPOSITS)
 						RemoveOverlaps(JMOD_GEO_THERMALS)
+						-- randomly boost a few deposits in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
+						if(math.random(1,2)==1)then PumpItUp(JMOD_GEO_THERMALS,1,2,4) end
+						PumpItUp(JMOD_OIL_RESERVES,math.random(1,3),4,10)
+						PumpItUp(JMOD_ORE_DEPOSITS,math.random(1,3),4,10)
 						print("JMOD: resource generation finished with "..#JMOD_OIL_RESERVES.." oil reserves, "..#JMOD_ORE_DEPOSITS.." ore deposits and "..#JMOD_GEO_THERMALS.." geothermal reservoirs")
 					end
 				end
@@ -133,9 +143,9 @@ elseif(CLIENT)then
 	end)
 	local Circle=Material("sprites/sent_ball")
 	local function RenderPoints(tbl,col)
-		for k,v in pairs(JMOD_OIL_RESERVES)do
+		for k,v in pairs(tbl)do
 			cam.Start3D2D(v.pos+Vector(0,0,50),Angle(0,0,0),10)
-			surface.SetDrawColor(col)
+			surface.SetDrawColor(col.r,col.g,col.b,col.a)
 			surface.SetMaterial(Circle)
 			surface.DrawTexturedRect(-v.siz/10,-v.siz/10,v.siz*2/10,v.siz*2/10)
 			draw.DrawText(v.amt,"DermaLarge",0,0,color_white,TEXT_ALIGN_CENTER)
