@@ -7,6 +7,7 @@ ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.AdminOnly=false
+ENT.JModPreferredCarryAngles=Angle(-90,180,0)
 ENT.EZconsumes={"power","parts"}
 ENT.EZupgrades={
 	rate=2,
@@ -26,8 +27,8 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/props_lab/powerbox01a.mdl")
-		--self:SetModelScale(math.Rand(1.5,3),0)
+		self:SetModel("models/props_c17/substation_transformer01b.mdl")
+		self:SetModelScale(.5,0)
 		--self:SetMaterial("models/debug/debugwhite")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -35,17 +36,16 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		self:SetPos(self:GetPos()+Vector(0,0,100)) -- what the fuck garry
+		self:SetAngles(Angle(-90,0,0))
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(1000)
+			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
-			-- attach us to the ground
-			self:TryPlant()
+			self:SetPos(self:GetPos()+Vector(0,0,20))
 		end)
 		self:SetGrade(1)
 		self:SetProgress(0)
-		self:SetElectricity(200)
+		self:SetElectricity(100)
 		self:SetState(STATE_OFF)
 		self.Durability=100
 	end
@@ -78,26 +78,6 @@ if(SERVER)then
 			return math.ceil(Accepted)
 		end
 		return 0
-	end
-	function ENT:TryPlant()
-		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
-		if((Tr.Hit)and(Tr.HitWorld))then
-			local Yaw=self:GetAngles().y
-			self:SetAngles(Angle(0,Yaw,-90))
-			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
-			--
-			local GroundIsSolid=true
-			for i=1,50 do
-				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-				if(bit.band(util.PointContents(v.pos),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
-			end
-			if(GroundIsSolid)then
-				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)
-				self:SetState(STATE_OFF)
-			else
-				self:SetState(STATE_INOPERABLE)
-			end
-		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
@@ -139,20 +119,25 @@ if(SERVER)then
 		JMod_Hint(activator,"oil derrick")
 		local OldOwner=self.Owner
 		JMod_Owner(self,activator)
-		if(IsValid(self.Owner))then
-			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-				JMod_Colorify(self)
+		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		if(Alt)then
+			if(IsValid(self.Owner))then
+				if(OldOwner~=self.Owner)then -- if owner changed then reset team color
+					JMod_Colorify(self)
+				end
 			end
-		end
-		if(State==STATE_BROKEN)then
-			JMod_Hint(activator,"destroyed",self)
-			return
-		elseif(State==STATE_INOPERABLE)then
-			self:TryPlant()
-		elseif(State==STATE_OFF)then
-			self:TurnOn(activator)
-		elseif(State==STATE_RUNNING)then
-			self:TurnOff()
+			if(State==STATE_BROKEN)then
+				JMod_Hint(activator,"destroyed",self)
+				return
+			elseif(State==STATE_INOPERABLE)then
+				self:TryPlant()
+			elseif(State==STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State==STATE_RUNNING)then
+				self:TurnOff()
+			end
+		else
+			activator:PickupObject(self)
 		end
 	end
 	function ENT:FlingProp(mdl,force)

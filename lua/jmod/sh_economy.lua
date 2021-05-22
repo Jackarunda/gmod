@@ -32,7 +32,18 @@ if(SERVER)then
 			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
 		end
 	end
-	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster"}
+	local function WeightByAltitude(tbl)
+		local AvgAltitude,Count=0,0
+		for k,v in pairs(tbl)do
+			AvgAltitude=AvgAltitude+v.pos.z
+			Count=Count+1
+		end
+		AvgAltitude=AvgAltitude/Count
+		for k,v in pairs(tbl)do
+			if(v.pos.z>AvgAltitude)then v.amt=v.amt*2 end
+		end
+	end
+	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster","rubber"}
 	function JMod_GenerateNaturalResources(tryFlat)
 		JMOD_OIL_RESERVES={}
 		JMOD_ORE_DEPOSITS={}
@@ -104,6 +115,7 @@ if(SERVER)then
 						if(math.random(1,2)==1)then PumpItUp(JMOD_GEO_THERMALS,1,2,4) end
 						PumpItUp(JMOD_OIL_RESERVES,math.random(1,3),4,10)
 						PumpItUp(JMOD_ORE_DEPOSITS,math.random(1,3),4,10)
+						WeightByAltitude(JMOD_ORE_DEPOSITS)
 						print("JMOD: resource generation finished with "..#JMOD_OIL_RESERVES.." oil reserves, "..#JMOD_ORE_DEPOSITS.." ore deposits and "..#JMOD_GEO_THERMALS.." geothermal reservoirs")
 					end
 				end
