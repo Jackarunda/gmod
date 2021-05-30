@@ -18,7 +18,7 @@ ENT.EZupgrades={
 		{parts=100,advparts=160}
 	}
 }
-local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
+local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_ORE_SEARCHING,STATE_OIL_SEARCHING,STATE_GEO_SEARCHING=-1,0,1,2,3,4
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
@@ -29,7 +29,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self:SetModel("models/props_c17/substation_transformer01b.mdl")
 		self:SetModelScale(.5,0)
-		--self:SetMaterial("models/debug/debugwhite")
+		self:SetMaterial("models/mat_jack_gmod_groundscanner")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -217,11 +217,20 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--
+		self.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
+		self.Tank:SetParent(self)
+		self.Tank:SetPos(self:GetPos())
+		self.Tank:SetModelScale(.12,0)
+		self.Tank:SetNoDraw(true)
 	end
+	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
+	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+		local TankAng=SelfAng:GetCopy()
+		TankAng:RotateAroundAxis(Right,-90)
+		JMod_RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
 		self:DrawModel()
 		--
 		local BasePos=SelfPos+Up*32
