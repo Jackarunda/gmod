@@ -1,6 +1,7 @@
 -- Jackarunda 2019
 AddCSLuaFile()
 ENT.Type="anim"
+ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.PrintName="EZ Aid Radio"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Misc."
@@ -10,7 +11,6 @@ ENT.AdminSpawnable=true
 ENT.NoSitAllowed=true
 ENT.EZconsumes={"power","parts"}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
 ----
 local STATE_BROKEN,STATE_OFF,STATE_CONNECTING,STATE_READY=-1,0,1,2
 function ENT:SetupDataTables()
@@ -19,19 +19,6 @@ function ENT:SetupDataTables()
 	self:NetworkVar("String",0,"StationID")
 end
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
-		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-		return ent
-	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_phx/oildrum001_explosive.mdl")
 		self.Entity:SetMaterial("models/mat_jack_gmod_ezradio")
@@ -70,86 +57,6 @@ if(SERVER)then
 		local Path="/npc/combine_soldier/vo/"
 		local Files,Folders=file.Find("sound"..Path.."*.wav","GAME")
 		self.Voices=Files
-	end
-	function ENT:PhysicsCollide(data,physobj)
-		if((data.Speed>80)and(data.DeltaTime>0.2))then
-			self.Entity:EmitSound("Canister.ImpactHard")
-			if(data.Speed>1000)then
-				local Dam,World=DamageInfo(),game.GetWorld()
-				Dam:SetDamage(data.Speed/3)
-				Dam:SetAttacker(data.HitEntity or World)
-				Dam:SetInflictor(data.HitEntity or World)
-				Dam:SetDamageType(DMG_CRUSH)
-				Dam:SetDamagePosition(data.HitPos)
-				Dam:SetDamageForce(data.TheirOldVelocity)
-				self:DamageSpark()
-				self:TakeDamageInfo(Dam)
-			end
-		end
-	end
-	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .1)/self.Efficiency
-		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
-		self:SetElectricity(NewAmt)
-		if(NewAmt<=0)then self:TurnOff() end
-	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*30+VectorRand()*math.random(0,10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-		self:ConsumeElectricity(.2)
-	end
-	function ENT:OnTakeDamage(dmginfo)
-		if(self)then
-			self:TakePhysicsDamage(dmginfo)
-			self.Durability=self.Durability-dmginfo:GetDamage()/3
-			if(self.Durability<=0)then self:Break(dmginfo) end
-			if(self.Durability<=-100)then self:Destroy(dmginfo) end
-		end
-	end
-	function ENT:FlingProp(mdl,force)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
-		if(force)then Phys:ApplyForceCenter(force/7) end
-		SafeRemoveEntityDelayed(Prop,math.random(20,40))
-	end
-	function ENT:Break(dmginfo)
-		if(self:GetState()==STATE_BROKEN)then return end
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,10 do self:DamageSpark() end
-		self.Durability=0
-		self:SetState(STATE_BROKEN)
-		local Force=dmginfo:GetDamageForce()
-		for i=1,4 do
-			self:FlingProp(table.Random(self.PropModels),Force)
-		end
-	end
-	function ENT:Destroy(dmginfo)
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,10 do self:DamageSpark() end
-		local Force=dmginfo:GetDamageForce()
-		self:FlingProp("models/props_rooftop/satellitedish02.mdl",Force)
-		for i=1,3*JMOD_CONFIG.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels),Force)
-			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
-			self:FlingProp(table.Random(self.PropModels),Force)
-		end
-		self:Remove()
 	end
 	function ENT:Use(activator)
 		local Time=CurTime()
@@ -377,79 +284,6 @@ if(SERVER)then
 			end
 		end
 		return false
-	end
-	function ENT:EZsalvage()
-		if not(self.EZbuildCost)then return end
-		if(self.Salvaged)then return end
-		self.Salvaged=true
-		local scale,pos=1,self:GetPos()+self:GetUp()*20
-		---
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos+VectorRand())
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1,2)*scale*4) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)*scale*4) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)*scale*4) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		---
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-		---
-		local eff=EffectData()
-		eff:SetOrigin(pos+VectorRand())
-		eff:SetScale(scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
-		---
-		for i=1,20 do
-			timer.Simple(i/100,function()
-				if(IsValid(self))then
-					if(i<20)then
-						sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-					else
-						local PartsFrac=(self.Durability+self.MaxDurability)/(self.MaxDurability*2)
-						local Box=ents.Create("ent_jack_gmod_ezparts")
-						Box:SetPos(pos+VectorRand()*10)
-						Box:Spawn()
-						Box:Activate()
-						Box:SetResource(PartsFrac*self.EZbuildCost.parts*.75)
-						local Powa=self:GetElectricity()
-						if(Powa>1)then
-							local Batt=ents.Create("ent_jack_gmod_ezbattery")
-							Batt:SetPos(pos+VectorRand()*10)
-							Batt:Spawn()
-							Batt:Activate()
-							Batt:SetResource(math.floor(Powa))
-						end
-						self:Remove()
-					end
-				end
-			end)
-		end
-	end
-	function ENT:TryLoadResource(typ,amt)
-		if(amt<=0)then return 0 end
-		if(typ=="power")then
-			local Powa=self:GetElectricity()
-			local Missing=self.MaxElectricity-Powa
-			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxElectricity*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetElectricity(Powa+Accepted)
-			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-			return math.ceil(Accepted)
-		elseif(typ=="parts")then
-			local Missing=self.MaxDurability-self.Durability
-			if(Missing<=self.MaxDurability*.25)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self.Durability=self.Durability+Accepted
-			if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
-			self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
-			if(self.Durability>0)then
-				if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
-			end
-			return math.ceil(Accepted)
-		end
-		return 0
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

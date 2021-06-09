@@ -10,26 +10,13 @@ ENT.AdminSpawnable=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.EZconsumes={"power","gas"}
+ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Float",0,"Electricity")
 	self:NetworkVar("Float",1,"Gas")
 end
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
-		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-		
-		return ent
-	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/mosi/fallout4/furniture/workstations/weaponworkbench01.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -59,51 +46,6 @@ if(SERVER)then
 		self:SetElectricity(self.MaxElectricity)
 		self:SetGas(self.MaxGas)
 	end
-	function ENT:Destroy(dmginfo)
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,10 do self:DamageSpark() end
-		local Force=(dmginfo and dmginfo:GetDamageForce()) or (VectorRand())
-		for i=1,3*JMOD_CONFIG.SupplyEffectMult do
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-		end
-		self:Remove()
-	end
-	function ENT:PhysicsCollide(data,physobj)
-		if((data.Speed>80)and(data.DeltaTime>0.2))then
-			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if((data.Speed>3000)and not((data.HitEntity.IsPlayerHolding)and(data.HitEntity:IsPlayerHolding())))then
-				self:Destroy()
-			end
-		end
-	end
-	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .2)
-		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
-		self:SetElectricity(NewAmt)
-	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*50+VectorRand()*math.random(0,30))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-		self:ConsumeElectricity(1)
-	end
-	function ENT:OnTakeDamage(dmginfo)
-		if(self)then
-			self:TakePhysicsDamage(dmginfo)
-			if(dmginfo:GetDamage()>120)then self:Destroy() end
-		end
-	end
 	function ENT:BuildEffect(pos)
 		if(CLIENT)then return end
 		local Scale=.5
@@ -121,21 +63,6 @@ if(SERVER)then
 		eff:SetScale(Scale)
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 	end
-	function ENT:FlingProp(mdl,force)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
-		if(force)then Phys:ApplyForceCenter(force/7) end
-		SafeRemoveEntityDelayed(Prop,math.random(20,40))
-	end
 	function ENT:Use(activator)
 		if((self:GetGas()>0)and(self:GetElectricity()>0))then
 			net.Start("JMod_EZworkbench")
@@ -148,74 +75,10 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		local Time=CurTime()
 		--
-		self:NextThink(Time+.1)
-		return true
 	end
 	function ENT:OnRemove()
 		--
-	end
-	function ENT:EZsalvage()
-		if(self.Salvaged)then return end
-		self.Salvaged=true
-		local scale,pos=2,self:GetPos()+self:GetUp()*20
-		---
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos+VectorRand())
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1,2)*scale*4) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)*scale*4) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)*scale*4) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		---
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-		---
-		local eff=EffectData()
-		eff:SetOrigin(pos+VectorRand())
-		eff:SetScale(scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
-		---
-		for i=1,20 do
-			timer.Simple(i/100,function()
-				if(IsValid(self))then
-					if(i<20)then
-						sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-					else
-						local Box=ents.Create("ent_jack_gmod_ezparts")
-						Box:SetPos(pos+VectorRand()*10)
-						Box:Spawn()
-						Box:Activate()
-						Box:SetResource(self.EZbuildCost.parts*.75)
-						self:Remove()
-					end
-				end
-			end)
-		end
-	end
-	function ENT:TryLoadResource(typ,amt)
-		if(amt<=0)then return 0 end
-		if(typ=="power")then
-			local Powa=self:GetElectricity()
-			local Missing=self.MaxElectricity-Powa
-			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxElectricity*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetElectricity(Powa+Accepted)
-			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-			return math.ceil(Accepted)
-		elseif(typ=="gas")then
-			local Fool=self:GetGas()
-			local Missing=self.MaxGas-Fool
-			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxGas*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetGas(Fool+Accepted)
-			self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
-			return math.ceil(Accepted)
-		end
-		return 0
 	end
 	function ENT:ConsumeResourcesInRange(requirements)
 		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)

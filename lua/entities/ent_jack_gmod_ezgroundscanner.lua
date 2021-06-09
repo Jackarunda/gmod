@@ -7,6 +7,7 @@ ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.AdminOnly=false
+ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
 ENT.EZconsumes={"power","parts"}
 ENT.EZupgrades={
@@ -48,61 +49,6 @@ if(SERVER)then
 		self:SetElectricity(100)
 		self:SetState(STATE_OFF)
 		self.Durability=100
-	end
-	function ENT:Upgrade(level)
-		if not(level)then level=self:GetGrade()+1 end
-		if(level>5)then return end
-		self:SetGrade(level)
-		self.UpgradeProgress={}
-	end
-	function ENT:TryLoadResource(typ,amt)
-		if(amt<=0)then return 0 end
-		if(typ=="power")then
-			local Powa=self:GetElectricity()
-			local Missing=200-Powa
-			if(Missing<200*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetElectricity(Powa+Accepted)
-			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-			return math.ceil(Accepted)
-		elseif(typ=="parts")then
-			local Missing=100-self.Durability
-			if(Missing<=100*.25)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self.Durability=self.Durability+Accepted
-			if(self.Durability>=300)then self:RemoveAllDecals() end
-			self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
-			if(self.Durability>0)then
-				if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
-			end
-			return math.ceil(Accepted)
-		end
-		return 0
-	end
-	function ENT:OnTakeDamage(dmginfo)
-		if(self)then
-			self:TakePhysicsDamage(dmginfo)
-			self.Durability=self.Durability-dmginfo:GetDamage()
-			if(self.Durability<=0)then self:Break(dmginfo) end
-			if(self.Durability<=-100)then self:Destroy(dmginfo) end
-		end
-	end
-	function ENT:Destroy(dmginfo)
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,10 do self:DamageSpark() end
-		local Force=dmginfo:GetDamageForce()
-		for i=1,5*JMOD_CONFIG.SupplyEffectMult do
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
-			self:FlingProp("models/gibs/scanner_gib02.mdl",Force)
-		end
-		self:Remove()
-	end
-	function ENT:PhysicsCollide(data,physobj)
-		if(data.DeltaTime>0.2 and data.Speed>100)then
-			self:EmitSound("SolidMetal.ImpactHard")
-		end
 	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then

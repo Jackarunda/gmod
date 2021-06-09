@@ -7,7 +7,7 @@ JMod_Hints = {
 	["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items", Time = 3, Identifier = "important"},
 	["bind cmd"] = {Type = "lightbulb", Text = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'", Identifier = "important"},
 	["bind walk"] = {Type = "lightbulb", Text = "Ensure you have bound the Walk key, use command 'bind alt +walk'", Identifier = "important"},
-	["unpackage"] = {Type = "button", Text = "Hold Walk and double tap Use to unpackage", Time = 5, Followup = "bind walk"},
+	["unpackage"] = {Type = "button", Text = "WALK+USE to unpackage", Time = 5, Followup = "bind walk"},
 	
 	-- Explosives mechanics
 	["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},

@@ -112,6 +112,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- make the EMP also have a chance at deactivating mines and other small items
 -- make mines de-weld themselves on disarm
 -- why the fuck does the dropwep concommand fire when someone's typing chat WTF
+-- add niggers
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()

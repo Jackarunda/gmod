@@ -8,6 +8,96 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ----
+ENT.PropModels={
+	"models/props_lab/reciever01d.mdl",
+	"models/props/cs_office/computer_caseb_p2a.mdl",
+	"models/props/cs_office/computer_caseb_p3a.mdl",
+	"models/props/cs_office/computer_caseb_p4a.mdl",
+	"models/props/cs_office/computer_caseb_p5a.mdl",
+	"models/props/cs_office/computer_caseb_p5b.mdl",
+	"models/props/cs_office/computer_caseb_p6a.mdl",
+	"models/props/cs_office/computer_caseb_p6b.mdl",
+	"models/props/cs_office/computer_caseb_p7a.mdl",
+	"models/props/cs_office/computer_caseb_p8a.mdl",
+	"models/props/cs_office/computer_caseb_p9a.mdl",
+	"models/gibs/helicopter_brokenpiece_02.mdl",
+	"models/gibs/manhack_gib03.mdl",
+	"models/gibs/manhack_gib04.mdl",
+	"models/gibs/manhack_gib05.mdl",
+	"models/gibs/manhack_gib06.mdl",
+	"models/gibs/metal_gib1.mdl",
+	"models/gibs/metal_gib2.mdl",
+	"models/gibs/metal_gib3.mdl",
+	"models/gibs/metal_gib4.mdl",
+	"models/gibs/metal_gib5.mdl",
+	"models/gibs/scanner_gib01.mdl",
+	"models/gibs/scanner_gib02.mdl",
+	"models/props_c17/canisterchunk01d.mdl",
+	"models/props_c17/canisterchunk01b.mdl",
+	"models/props_c17/canisterchunk01l.mdl",
+	"models/props_c17/canisterchunk01m.mdl",
+	"models/props_c17/canisterchunk02b.mdl",
+	"models/props_c17/canisterchunk02c.mdl",
+	"models/props_c17/canisterchunk02d.mdl",
+	"models/props_c17/canisterchunk02e.mdl",
+	"models/props_c17/canisterchunk02f.mdl",
+	"models/props_c17/canisterchunk01a.mdl",
+	"models/props_c17/canisterchunk01h.mdl",
+	"models/props_c17/oildrumchunk01a.mdl",
+	"models/props_c17/oildrumchunk01b.mdl",
+	"models/props_c17/oildrumchunk01c.mdl",
+	"models/props_c17/oildrumchunk01d.mdl",
+	"models/props_c17/oildrumchunk01e.mdl",
+	"models/props_c17/oildrumchunk01a.mdl",
+	"models/props_c17/oildrumchunk01b.mdl",
+	"models/props_c17/oildrumchunk01c.mdl",
+	"models/props_c17/oildrumchunk01d.mdl",
+	"models/props_c17/oildrumchunk01e.mdl",
+	"models/props_canal/boat001a_chunk010.mdl",
+	"models/props_canal/boat001a_chunk06.mdl",
+	"models/props_debris/concrete_chunk04a.mdl",
+	"models/props_debris/concrete_chunk05g.mdl",
+	"models/props_debris/prison_wallchunk001f.mdl",
+	"models/props_debris/wood_chunk04a.mdl",
+	"models/props_debris/wood_chunk06b.mdl",
+	"models/props_junk/glassjug01_chunk01.mdl",
+	"models/props_junk/glassjug01_chunk03.mdl",
+	"models/props_junk/vent001_chunk1.mdl",
+	"models/props_junk/vent001_chunk2.mdl",
+	"models/props_junk/vent001_chunk3.mdl",
+	"models/props_junk/vent001_chunk4.mdl",
+	"models/props_junk/vent001_chunk5.mdl",
+	"models/props_junk/vent001_chunk6.mdl",
+	"models/props_junk/vent001_chunk7.mdl",
+	"models/props_junk/vent001_chunk8.mdl",
+	"models/props_junk/wood_crate001a_chunk03.mdl",
+	"models/props_wasteland/prison_toiletchunk01g.mdl",
+	"models/props_wasteland/prison_toiletchunk01h.mdl",
+	"models/props_wasteland/prison_toiletchunk01i.mdl",
+	"models/props_wasteland/prison_toiletchunk01j.mdl",
+	"models/props_wasteland/prison_toiletchunk01k.mdl",
+	"models/props_wasteland/prison_toiletchunk01l.mdl",
+	"models/props_wasteland/prison_toiletchunk01m.mdl",
+	"models/props_wasteland/prison_toiletchunk01e.mdl",
+	"models/props_wasteland/prison_toiletchunk01c.mdl",
+	"models/props_wasteland/prison_sinkchunk001b.mdl",
+	"models/props_wasteland/prison_sinkchunk001c.mdl",
+	"models/props_wasteland/prison_sinkchunk001d.mdl",
+	"models/props_wasteland/prison_sinkchunk001e.mdl",
+	"models/props_wasteland/prison_sinkchunk001g.mdl",
+	"models/props_wasteland/prison_sinkchunk001h.mdl",
+	"models/Mechanics/gears/gear12x6_small.mdl",
+	"models/Mechanics/gears/gear12x12.mdl",
+	"models/props_phx/gears/bevel12.mdl",
+	"models/props_phx/gears/bevel9.mdl",
+	"models/Mechanics/gears2/gear_12t2.mdl",
+	"models/Mechanics/gears/gear12x6_small.mdl",
+	"models/Mechanics/gears/gear12x12.mdl",
+	"models/props_phx/gears/bevel12.mdl",
+	"models/props_phx/gears/bevel9.mdl",
+	"models/Mechanics/gears2/gear_12t2.mdl"
+}
+local STATE_BROKEN,STATE_OFF=-1,0 -- these are the only states that are common to all machines
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -22,7 +112,7 @@ function ENT:Upgrade(level)
 end
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*60
+		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 60)
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
@@ -51,7 +141,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:ConsumeElectricity(amt)
-		amt=((amt or .2)/self.ElectricalEfficiency^.5)/2
+		amt=((amt or .2)/(self.ElectricalEfficiency or 1)^.5)/2
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
@@ -77,7 +167,8 @@ if(SERVER)then
 	end
 	function ENT:FlingProp(mdl,force)
 		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
+		local Size=(self:OBBMaxs()-self:OBBMins()):Length()
+		Prop:SetPos(self:LocalToWorld(self:OBBCenter())+VectorRand()*math.random(1,Size/2))
 		Prop:SetAngles(VectorRand():Angle())
 		Prop:SetModel(mdl)
 		Prop:Spawn()
@@ -97,26 +188,27 @@ if(SERVER)then
 		self.Durability=0
 		self:SetState(STATE_BROKEN)
 		local Force=dmginfo:GetDamageForce()
-		for i=1,12 do
+		for i=1,JMOD_CONFIG.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
-		if(IsValid(self.Pod:GetDriver()))then
-			self.Pod:GetDriver():ExitVehicle()
+		if(self.Pod)then -- machines with seats
+			if(IsValid(self.Pod:GetDriver()))then
+				self.Pod:GetDriver():ExitVehicle()
+			end
+			self.Pod:Fire("lock","",0)
 		end
-		self.Pod:Fire("lock","",0)
 	end
 	function ENT:Destroy(dmginfo)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		local Force=dmginfo:GetDamageForce()
-		for i=1,20*JMOD_CONFIG.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels),Force)
-			self:FlingProp("models/props_c17/oildrumchunk01d.mdl",Force)
-			self:FlingProp("models/props_c17/oildrumchunk01e.mdl",Force)
+		for i=1,JMOD_CONFIG.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10 do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
-		if(IsValid(self.Pod:GetDriver()))then
-			self.Pod:GetDriver():ExitVehicle()
+		if(self.Pod)then -- machines with seats
+			if(IsValid(self.Pod:GetDriver()))then
+				self.Pod:GetDriver():ExitVehicle()
+			end
 		end
 		self:Remove()
 	end
@@ -138,37 +230,77 @@ if(SERVER)then
 	function ENT:OnRemove()
 		--
 	end
+	function ENT:TryLoadRawResource(ent)
+		--
+	end
 	function ENT:TryLoadResource(typ,amt)
 		if(amt<=0)then return 0 end
-		if(typ=="power")then
-			local Powa=self:GetElectricity()
-			local Missing=self.MaxElectricity-Powa
-			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxElectricity*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetElectricity(Powa+Accepted)
-			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-			return math.ceil(Accepted)
-		elseif(typ=="medsupplies")then
-			local Supps=self:GetSupplies()
-			local Missing=self.MaxSupplies-Supps
-			if(Missing<=0)then return 0 end
-			if(Missing<self.MaxSupplies*.1)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self:SetSupplies(Supps+Accepted)
-			self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110)) -- TODO: new sound here
-			return math.ceil(Accepted)
-		elseif(typ=="parts")then
-			local Missing=self.MaxDurability-self.Durability
-			if(Missing<=self.MaxDurability*.25)then return 0 end
-			local Accepted=math.min(Missing,amt)
-			self.Durability=self.Durability+Accepted
-			if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
-			self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
-			if(self.Durability>0)then
-				if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
+		for k,v in pairs(self.EZconsumes)do
+			if(typ==v)then
+				if(typ=="power")then
+					local Powa=self:GetElectricity()
+					local Missing=self.MaxElectricity-Powa
+					if(Missing<=0)then return 0 end
+					if(Missing<self.MaxElectricity*.1)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetElectricity(Powa+Accepted)
+					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
+					return math.ceil(Accepted)
+				elseif(typ=="medsupplies")then
+					local Supps=self:GetSupplies()
+					local Missing=self.MaxSupplies-Supps
+					if(Missing<=0)then return 0 end
+					if(Missing<self.MaxSupplies*.1)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetSupplies(Supps+Accepted)
+					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110)) -- TODO: new sound here
+					return math.ceil(Accepted)
+				elseif(typ=="parts")then
+					local Missing=self.MaxDurability-self.Durability
+					if(Missing<=self.MaxDurability*.25)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self.Durability=self.Durability+Accepted
+					if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
+					self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
+					if(self.Durability>0)then
+						if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
+					end
+					return math.ceil(Accepted)
+				elseif(typ=="gas")then
+					local Fool=self:GetGas()
+					local Missing=self.MaxGas-Fool
+					if(Missing<=0)then return 0 end
+					if(Missing<self.MaxGas*.1)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetGas(Fool+Accepted)
+					self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
+					return math.ceil(Accepted)
+				elseif(typ=="ammo")then
+					local Ammo=self:GetAmmo()
+					local Missing=self.MaxAmmo-Ammo
+					if(Missing<=1)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetAmmo(Ammo+Accepted)
+					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
+					return Accepted
+				elseif(typ=="munitions")then
+					local Ammo=self:GetAmmo()
+					local Missing=self.MaxAmmo-Ammo
+					if(Missing<=1)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetAmmo(Ammo+Accepted)
+					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
+					return Accepted
+				elseif(typ=="coolant")then
+					local Kewl=self:GetCoolant()
+					local Missing=100-Kewl
+					if(Missing<10)then return 0 end
+					local Accepted=math.min(Missing,amt)
+					self:SetCoolant(Kewl+Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
+					return math.ceil(Accepted)
+				end
 			end
-			return math.ceil(Accepted)
 		end
 		return 0
 	end

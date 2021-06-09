@@ -436,6 +436,7 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
+		--[[ todo
 		local Ent,Pos,Norm=self:WhomIlookinAt()
 		if(Ent.EZsalvage)then
 			local Time=CurTime()
@@ -449,6 +450,7 @@ function SWEP:SecondaryAttack()
 			end
 			self.LastSalvageAttempt=Time
 		end
+		--]]
 	end
 end
 function SWEP:OnDrop()
