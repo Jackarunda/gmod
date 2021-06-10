@@ -113,6 +113,7 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- make mines de-weld themselves on disarm
 -- why the fuck does the dropwep concommand fire when someone's typing chat WTF
 -- add niggers
+-- the fucking levergun is fucked up, move it forward and add a front sight post
 --]]
 --[[
 hook.Add( "OnDamagedByExplosion", "DisableSound", function()
