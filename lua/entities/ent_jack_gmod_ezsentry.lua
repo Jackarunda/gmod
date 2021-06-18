@@ -118,7 +118,7 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*EZ_GRADE_BUFFS[Grade] end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade] end
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10
@@ -184,9 +184,9 @@ if(SERVER)then
 		end
 		---
 		self:SetAmmoType("Bullet")
-		self:SetGrade(EZ_GRADE_BASIC)
-		JMod_Colorify(self)
-		self:SetPerfMult(JMOD_CONFIG.SentryPerformanceMult)
+		self:SetGrade(JMod.EZ_GRADE_BASIC)
+		JMod.Colorify(self)
+		self:SetPerfMult(JMod.Config.SentryPerformanceMult)
 		self:InitPerfSpecs()
 		---
 		self:Point(0,0)
@@ -198,7 +198,7 @@ if(SERVER)then
 		self.NextWhine=0
 		self.Heat=0
 		self.UpgradeProgress={}
-		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Sentry"][2]
+		self.EZbuildCost=JMod.Config.Blueprints["EZ Sentry"][2]
 		---
 		self:ResetMemory()
 	end
@@ -223,7 +223,7 @@ if(SERVER)then
 	function ENT:ConsumeElectricity(amt)
 		amt=(amt or .04)/self.Efficiency
 		if(self:GetAmmoType()=="Pulse Laser")then
-			amt=amt/EZ_GRADE_BUFFS[self:GetGrade()]
+			amt=amt/JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 		end
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
@@ -251,13 +251,13 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then JMod_Hint(activator, "destroyed", self) return end
+			if(State==STATE_BROKEN)then JMod.Hint(activator, "destroyed", self) return end
 			
 			if(State>0)then
 				self:TurnOff()
 			else
-				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_Hint(activator, "friends", self)
-				else JMod_Hint(activator, "nopower", self) end
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "friends", self)
+				else JMod.Hint(activator, "nopower", self) end
 			end
 		end
 	end
@@ -270,10 +270,10 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
-		JMod_Owner(self,activator)
+		JMod.Owner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-				JMod_Colorify(self)
+				JMod.Colorify(self)
 			end
 		end
 		self:SetState(STATE_WATCHING)
@@ -325,7 +325,7 @@ if(SERVER)then
 	end
 	function ENT:CanEngage(ent)
 		if not(IsValid(ent))then return false end
-		return JMod_ShouldAttack(self,ent) and self:CanSee(ent)
+		return JMod.ShouldAttack(self,ent) and self:CanSee(ent)
 	end
 	function ENT:TryFindTarget()
 		local Time=CurTime()
@@ -359,7 +359,7 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav",65,100)
-		JMod_Hint(self.Owner, "sentry upgrade", self)
+		JMod.Hint(self.Owner, "sentry upgrade", self)
 	end
 	function ENT:Disengage()
 		local Time=CurTime()
@@ -374,7 +374,7 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_standdown.wav",65,100)
-		JMod_Hint(self.Owner, "sentry modify", self)
+		JMod.Hint(self.Owner, "sentry modify", self)
 	end
 	function ENT:Think()
 		local Time=CurTime()
@@ -605,7 +605,7 @@ if(SERVER)then
 			ParticleEffect("muzzleflash_pistol_deagle",ShootPos,AimAng,self)
 			sound.Play("snds_jack_gmod/sentry_far.wav",SelfPos+Up,100,math.random(90,110))
 			ShootDir=(ShootDir+VectorRand()*math.Rand(.05,1)*Inacc):GetNormalized()
-			JMod_RicPenBullet(self,ShootPos,ShootDir,Dmg,false,false,1,15,"eff_jack_gmod_smallarmstracer",function(att,tr,dmg)
+			JMod.RicPenBullet(self,ShootPos,ShootDir,Dmg,false,false,1,15,"eff_jack_gmod_smallarmstracer",function(att,tr,dmg)
 				local ent=tr.Entity
 				local Poof=EffectData()
 				Poof:SetOrigin(tr.HitPos)
@@ -667,7 +667,7 @@ if(SERVER)then
 			Gnd:SetPos(ShootPos)
 			ShootAng:RotateAroundAxis(ShootAng:Right(),-90)
 			Gnd:SetAngles(ShootAng)
-			JMod_Owner(Gnd,self.Owner or self)
+			JMod.Owner(Gnd,self.Owner or self)
 			Gnd.Dmg=Dmg
 			Gnd:Spawn()
 			Gnd:Activate()
@@ -781,21 +781,21 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self:InitPerfSpecs()
 		---
-		self.BaseGear=JMod_MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
-		self.VertGear=JMod_MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
-		self.MiniBaseGear=JMod_MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
-		self.MiniVertGear=JMod_MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
-		self.MachineGun=JMod_MakeModel(self,"models/ez/sentrygun.mdl")
-		self.MainPost=JMod_MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
-		self.ElevationMotor=JMod_MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
-		self.TriggerMotor=JMod_MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
-		self.Shield=JMod_MakeModel(self,"models/hunter/tubes/circle2x2b.mdl","phoenix_storms/gear",.3)
-		self.Light=JMod_MakeModel(self,"models/props_wasteland/light_spotlight02_lamp.mdl",nil,.3)
-		self.Lens=JMod_MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
-		self.OmniLens=JMod_MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
-		self.Camera=JMod_MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
-		self.LeftHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
-		self.RightHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.BaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
+		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
+		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
+		self.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
+		self.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
+		self.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
+		self.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
+		self.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
+		self.Shield=JMod.MakeModel(self,"models/hunter/tubes/circle2x2b.mdl","phoenix_storms/gear",.3)
+		self.Light=JMod.MakeModel(self,"models/props_wasteland/light_spotlight02_lamp.mdl",nil,.3)
+		self.Lens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.OmniLens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.Camera=JMod.MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
+		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		---
 		self.CurAimPitch=0
 		self.CurAimYaw=0
@@ -830,46 +830,46 @@ elseif(CLIENT)then
 		---
 		local BaseGearAngle=SelfAng:GetCopy()
 		BaseGearAngle:RotateAroundAxis(Up,self.CurAimYaw)
-		if(DetailDraw)then JMod_RenderModel(self.BaseGear,SelfPos+Up*22,BaseGearAngle,nil,Vector(.7,.7,.7)) end
+		if(DetailDraw)then JMod.RenderModel(self.BaseGear,SelfPos+Up*22,BaseGearAngle,nil,Vector(.7,.7,.7)) end
 		---
 		local PostAngle=BaseGearAngle:GetCopy()
 		PostAngle:RotateAroundAxis(PostAngle:Forward(),90)
-		JMod_RenderModel(self.MainPost,SelfPos+Up*20+PostAngle:Up()*2.1,PostAngle,nil,Vector(.2,.2,.2))
+		JMod.RenderModel(self.MainPost,SelfPos+Up*20+PostAngle:Up()*2.1,PostAngle,nil,Vector(.2,.2,.2))
 		---
 		if(DetailDraw)then
 			local MiniGearAngle=BaseGearAngle:GetCopy()
 			MiniGearAngle:RotateAroundAxis(Up,-self.CurAimYaw*4+15)
-			JMod_RenderModel(self.MiniBaseGear,SelfPos+Up*22-Forward*8.8,MiniGearAngle,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.MiniBaseGear,SelfPos+Up*22-Forward*8.8,MiniGearAngle,nil,Vector(.7,.7,.7))
 			---
 			local LeftHandleAng=SelfAng:GetCopy()
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Up(),90)
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Right(),173)
-			JMod_RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
+			JMod.RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
 			---
 			local RightHandleAng=SelfAng:GetCopy()
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Up(),-90)
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Right(),173)
-			JMod_RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
+			JMod.RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
 		end
 		---
 		local VertGearAngle=SelfAng:GetCopy()
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Up(),self.CurAimYaw)
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Right(),self.CurAimPitch)
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Forward(),90)
-		if(DetailDraw)then JMod_RenderModel(self.VertGear,BasePos,VertGearAngle,nil,Vector(.7,.7,.7)) end
+		if(DetailDraw)then JMod.RenderModel(self.VertGear,BasePos,VertGearAngle,nil,Vector(.7,.7,.7)) end
 		---
 		if(DetailDraw)then
 			local MiniVertGearAngle=SelfAng:GetCopy()
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Up(),self.CurAimYaw)
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Right(),-self.CurAimPitch*3+15)
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Forward(),90)
-			JMod_RenderModel(self.MiniVertGear,SelfPos+Up*26.7,MiniVertGearAngle,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.MiniVertGear,SelfPos+Up*26.7,MiniVertGearAngle,nil,Vector(.7,.7,.7))
 			---
 			local MiniVertMotorAngle=SelfAng:GetCopy()
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Up(),self.CurAimYaw)
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Forward(),90)
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Up(),180)
-			JMod_RenderModel(self.ElevationMotor,SelfPos+Up*26.7+MiniVertMotorAngle:Up()*2-MiniVertMotorAngle:Forward()*.8,MiniVertMotorAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.ElevationMotor,SelfPos+Up*26.7+MiniVertMotorAngle:Up()*2-MiniVertMotorAngle:Forward()*.8,MiniVertMotorAngle,nil,Vector(.5,.5,.5))
 		end
 		-- immobile gun group --
 		local AimAngle=VertGearAngle:GetCopy()
@@ -879,28 +879,28 @@ elseif(CLIENT)then
 			self.LastAmmoType=AmmoType
 			self.MachineGun:SetBodygroup(0,AmmoBGs[AmmoType])
 		end
-		JMod_RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*1-AimRight*.5,AimAngle)
+		JMod.RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*1-AimRight*.5,AimAngle)
 		---
 		local ShieldAngle=AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(),130)
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Up(),45)
-		JMod_RenderModel(self.Shield,BasePos+AimForward*17.5+AimUp*3.3-AimRight*.7,ShieldAngle,nil,Vector(.1,.1,.1))
+		JMod.RenderModel(self.Shield,BasePos+AimForward*17.5+AimUp*3.3-AimRight*.7,ShieldAngle,nil,Vector(.1,.1,.1))
 		---
 		if(DetailDraw)then
 			local CamAngle=AimAngle:GetCopy()
 			CamAngle:RotateAroundAxis(CamAngle:Forward(),-90)
 			CamAngle:RotateAroundAxis(CamAngle:Up(),180)
-			JMod_RenderModel(self.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,GradeColors[Grade],GradeMats[Grade])
+			JMod.RenderModel(self.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,GradeColors[Grade],GradeMats[Grade])
 			---
 			local TriggerAngle=AimAngle:GetCopy()
 			TriggerAngle:RotateAroundAxis(TriggerAngle:Forward(),90)
-			JMod_RenderModel(self.TriggerMotor,BasePos+AimUp*2+AimForward*1-AimRight*3.5,TriggerAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.TriggerMotor,BasePos+AimUp*2+AimForward*1-AimRight*3.5,TriggerAngle,nil,Vector(.5,.5,.5))
 			---
-			JMod_RenderModel(self.Lens,BasePos+AimUp*8.6+AimForward*8.4-AimRight*.65,AimAngle)
+			JMod.RenderModel(self.Lens,BasePos+AimUp*8.6+AimForward*8.4-AimRight*.65,AimAngle)
 			---
-			JMod_RenderModel(self.OmniLens,BasePos+AimUp*8-AimForward*8-AimRight*.65,AimAngle)
+			JMod.RenderModel(self.OmniLens,BasePos+AimUp*8-AimForward*8-AimRight*.65,AimAngle)
 			---
-			JMod_RenderModel(self.Light,BasePos+AimUp*10-AimRight*3.5+AimForward*6.8,AimAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.Light,BasePos+AimUp*10-AimRight*3.5+AimForward*6.8,AimAngle,nil,Vector(.5,.5,.5))
 			---
 			if((Closeness<20000)and(State>0))then
 				local DisplayAng=SelfAng:GetCopy()
@@ -910,18 +910,18 @@ elseif(CLIENT)then
 				cam.Start3D2D(SelfPos+Up*28-Right*7.5-Forward*8,DisplayAng,.075)
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				if(AmmoType~="Pulse Laser")then
 					local Ammo=self:GetAmmo()
 					local AmmoFrac=Ammo/self.MaxAmmo
-					local R,G,B=JMod_GoodBadColor(AmmoFrac)
+					local R,G,B=JMod.GoodBadColor(AmmoFrac)
 					draw.SimpleTextOutlined("AMMO","JMod-Display",-50,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 					draw.SimpleTextOutlined(tostring(Ammo),"JMod-Display",-50,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				end
 				local CoolFrac=self:GetCoolant()/100
 				draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local R,G,B=JMod_GoodBadColor(CoolFrac)
+				local R,G,B=JMod.GoodBadColor(CoolFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end

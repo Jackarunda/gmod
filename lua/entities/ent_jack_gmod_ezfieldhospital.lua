@@ -60,7 +60,7 @@ if(SERVER)then
 			end
 		end
 		---
-		self:SetGrade(EZ_GRADE_BASIC)
+		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
 		self:SetElectricity(self.MaxElectricity)
 		self.Durability=self.MaxDurability
@@ -75,7 +75,7 @@ if(SERVER)then
 		self.NextHeal=0
 		self.NextEnter=0
 		self.UpgradeProgress={}
-		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Automated Field Hospital"][2]
+		self.EZbuildCost=JMod.Config.Blueprints["EZ Automated Field Hospital"][2]
 		--
 		self.Pod=ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
@@ -95,14 +95,14 @@ if(SERVER)then
 		if(State==STATE_BROKEN)then  return end
 		if(State==STATE_OFF)then
 			
-			if self:GetElectricity() > 0 then self:TurnOn() JMod_Hint(activator, "afh enter", self)
-			else JMod_Hint(activator, "nopower", self)  end
+			if self:GetElectricity() > 0 then self:TurnOn() JMod.Hint(activator, "afh enter", self)
+			else JMod.Hint(activator, "nopower", self)  end
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
 				if(self.NextEnter<CurTime())then
 					self.Pod.EZvehicleEjectPos=self.Pod:WorldToLocal(activator:GetPos())
 					activator:EnterVehicle(self.Pod)
-					JMod_Hint(activator, "afh upgrade")
+					JMod.Hint(activator, "afh upgrade")
 				end
 			end
 		end
@@ -116,7 +116,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
-		if(self:GetElectricity()<=0)then JMod_Hint(activator, "nopower", self) return end
+		if(self:GetElectricity()<=0)then JMod.Hint(activator, "nopower", self) return end
 		local Time=CurTime()
 		self:SetState(STATE_ON)
 		self:SFX("afh_startup")
@@ -226,7 +226,7 @@ if(SERVER)then
 		local Helf,Max,Supplies=self.Patient:Health(),self.Patient:GetMaxHealth(),self:GetSupplies()
 		local Infection,Bleed=(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0
 		if(Supplies<=0)then
-			if IsValid(self.Patient) then JMod_Hint(self.Patient, "afh supply") end
+			if IsValid(self.Patient) then JMod.Hint(self.Patient, "afh supply") end
 			self:EndOperation(false)
 			return
 		end
@@ -237,21 +237,21 @@ if(SERVER)then
 		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0
 		if((Injury>0)or(Rads>0))then
 			if(Bleed>0)then
-				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
+				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMod.Config.MedBayHealMult*5,0,9e9)
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"stopping bleeding")
 				self:HealEffect()
 			elseif(Rads>0)then
-				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*5,0,9e9)
+				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMod.Config.MedBayHealMult*5,0,9e9)
 				self:HealEffect("hl1/ambience/steamburst1.wav",true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"decontaminating")
 			else
 				if(Infection>1)then
-					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMOD_CONFIG.MedBayHealMult*3,1,9e9)
+					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMod.Config.MedBayHealMult*3,1,9e9)
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"boosting immune system")
 				else
 					self.Patient:PrintMessage(HUD_PRINTCENTER,"repairing damage")
 				end
-				local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMOD_CONFIG.MedBayHealMult))
+				local HealAmt=isnumber(override) and math.min(Injury,override) or math.min(Injury,math.ceil(3*self.HealEfficiency*JMod.Config.MedBayHealMult))
 				self.Patient:SetHealth(Helf+HealAmt)
 				self:HealEffect()
 			end
@@ -294,9 +294,9 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self:InitPerfSpecs()
 		---
-		self.Camera=JMod_MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.TopCanopy=JMod_MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
-		self.BottomCanopy=JMod_MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
 		self.MaxElectricity=100
 		self.OpenAmt=1
@@ -333,30 +333,30 @@ elseif(CLIENT)then
 			local CamAng=SelfAng:GetCopy()
 			CamAng:RotateAroundAxis(Up,-90)
 			CamAng:RotateAroundAxis(Right,180)
-			JMod_RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
+			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
 			---
 			local Matricks=Matrix()
 			Matricks:Scale(Vector(.4,1.45,.5))
 			self.TopCanopy:EnableMatrix("RenderMultiply",Matricks)
 			local TopCanopyAng=SelfAng:GetCopy()
 			TopCanopyAng:RotateAroundAxis(Forward,-10*self.OpenAmt)
-			JMod_RenderModel(self.TopCanopy,BasePos-Up*(17-10*self.OpenAmt)+Right*2,TopCanopyAng)
+			JMod.RenderModel(self.TopCanopy,BasePos-Up*(17-10*self.OpenAmt)+Right*2,TopCanopyAng)
 			---
 			local Matricks=Matrix()
 			Matricks:Scale(Vector(.4,1.45,.5))
 			self.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
 			local BottomCanopyAng=SelfAng:GetCopy()
 			BottomCanopyAng:RotateAroundAxis(Right,180)
-			JMod_RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
+			JMod.RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
 			---
 			if(State>0)then
 				local Opacity=math.random(50,200)
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				cam.Start3D2D(BasePos+Up*22+Right*22+Forward*21,DisplayAng,.08)
 				draw.SimpleTextOutlined("Jackarunda Industries","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,40,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("SUPPLIES "..self:GetSupplies().."/"..self.MaxSupplies*EZ_GRADE_BUFFS[Grade],"JMod-Display",0,80,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("SUPPLIES "..self:GetSupplies().."/"..self.MaxSupplies*JMod.EZ_GRADE_BUFFS[Grade],"JMod-Display",0,80,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end

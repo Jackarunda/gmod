@@ -21,12 +21,12 @@ local BaseClass = baseclass.Get(ENT.Base)
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		self:SetBodygroup(4,1)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -68,8 +68,8 @@ if(SERVER)then
 						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 					end
 				end)
-				JMod_WreckBuildings(self,SelfPos,PowerMult)
-				JMod_BlastDoors(self,SelfPos,PowerMult)
+				JMod.WreckBuildings(self,SelfPos,PowerMult)
+				JMod.BlastDoors(self,SelfPos,PowerMult)
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo

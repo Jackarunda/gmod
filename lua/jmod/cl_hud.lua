@@ -68,10 +68,10 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 	local ply,FT,SelfPos,Time,W,H=LocalPlayer(),FrameTime(),EyePos(),CurTime(),ScrW(),ScrH()
 	local AimVec,FirstPerson,Ravebreakin=ply:GetAimVector(),not ply:ShouldDrawLocalPlayer(),ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime>Time and ply.JMod_RavebreakStartTime<Time
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
-	--JMod_MeasureFramerate()
+	--JMod.MeasureFramerate()
 	if(Ravebreakin)then
 		if(NextRavebreakBeat<Time)then
-			NextRavebreakBeat=Time+JMod_RavebreakBeatTime
+			NextRavebreakBeat=Time+JMod.RavebreakBeatTime
 			CurRavebreakColor=CurRavebreakColor+1
 			if(CurRavebreakColor>6)then CurRavebreakColor=1 end
 			local Offset=VectorRand()*math.random(100,1000)
@@ -93,7 +93,7 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		local CurAng=ply:EyeAngles()
 		local PartyinEyeAngles=Angle(0,CurAng.y,0)
 		PartyinEyeAngles.y=PartyinEyeAngles.y-FrameTime()*30
-		PartyinEyeAngles.p=math.sin(Time*8/JMod_RavebreakBeatTime)*10
+		PartyinEyeAngles.p=math.sin(Time*8/JMod.RavebreakBeatTime)*10
 		ply:SetEyeAngles(PartyinEyeAngles)
 		local DLight,BrightnessMul=DynamicLight(ply:EntIndex()),(FirstPerson and 10) or 5
 		if(DLight)then
@@ -101,7 +101,7 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			DLight.r=Col.r
 			DLight.g=Col.g
 			DLight.b=Col.b
-			DLight.brightness=(math.sin(Time*8/JMod_RavebreakBeatTime)/2+.5)*BrightnessMul
+			DLight.brightness=(math.sin(Time*8/JMod.RavebreakBeatTime)/2+.5)*BrightnessMul
 			DLight.Size=1000
 			DLight.Decay=4000
 			DLight.DieTime=Time+1

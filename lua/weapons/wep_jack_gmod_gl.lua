@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(1,-14,-11)
 SWEP.BodyHolsterPosL = Vector(-2.5,-15,11)
 SWEP.BodyHolsterScale = .9
 
-JMod_ApplyAmmoSpecs(SWEP,"40mm Grenade")
+JMod.ApplyAmmoSpecs(SWEP,"40mm Grenade")
 SWEP.DamageRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezprojectilenade"
 SWEP.MuzzleVelocity = 3000
@@ -54,8 +54,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.15, 0, 1.32),
     Ang = Angle(2.2, 0, -2),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 0, 0)
@@ -81,7 +81,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 1,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -106,9 +106,9 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/gl/move.wav", t = .3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/gl/open.wav", t = .05, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/out.wav", t = 1, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.7, v=60, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.7, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/gl/in.wav", t = 2.3, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = 2.9, v=60},
 			{s = "snds_jack_gmod/ez_weapons/gl/close.wav", t = 3.25, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/move.wav", t = 3.3, v=60}
 		}

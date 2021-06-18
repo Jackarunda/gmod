@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(5.5,-3,-3)
 SWEP.BodyHolsterPosL = Vector(1,-6,3)
 SWEP.BodyHolsterScale = .9
 
-JMod_ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
+JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
@@ -50,8 +50,8 @@ SWEP.IronSightStruct = {
 	Pos = Vector(-6.2, -1, 3.75),
 	Ang = Angle(-.2, 0, -5),
 	Magnification = 1.1,
-	SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-	SwitchFromSound = JMod_GunHandlingSounds.aim.out
+	SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -76,7 +76,7 @@ SWEP.MeleeForceDir = Angle(0,0,0)
 SWEP.MeleeAttackTime=.4
 SWEP.MeleeTime = .5
 SWEP.MeleeDelay = .4
-SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
+SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav","snds_jack_gmod/ez_weapons/knives/hit2.wav","snds_jack_gmod/ez_weapons/knives/hit3.wav"}
 SWEP.MeleeHitNPCSound = {"snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav","snds_jack_gmod/knifestab.wav"}
 SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
@@ -140,7 +140,7 @@ SWEP.Animations = {
 	["draw"] = {
 		Source = "draw",
 		Time = 1.2,
-		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+		SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
@@ -149,7 +149,7 @@ SWEP.Animations = {
 	["draw_empty"] = {
 		Source = "draw_empty",
 		Time = 1.2,
-		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+		SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
@@ -159,7 +159,7 @@ SWEP.Animations = {
 		Source = "draw_empty",
 		Time = 1.2,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}
+			{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}
 		},
 		Mult=1,
 		LHIK = true,
@@ -181,19 +181,19 @@ SWEP.Animations = {
 		LHIKIn = 0.5,
 		LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.loud, t = .2, v=60, p=100},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=100},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = .2, v=60, p=100},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/rip.wav", t = 2.1, v=65},
 			{s = "snds_jack_gmod/ez_weapons/flm/pour.wav", t = 3.1, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 4.8, v=60, p=130},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 4.8, v=60, p=130},
 			{s = "snds_jack_gmod/ez_weapons/flm/drop.wav", t = 6.1, v=65, p=100},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 7.4, v=60, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 7.4, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav", t = 7.6, v=65, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 7.9, v=65, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 8.1, v=65, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 8.2, v=65, p=100},
 			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 8.3, v=65, p=100},
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 9, v=60, p=100}
+			{s = JMod.GunHandlingSounds.cloth.loud, t = 9, v=60, p=100}
 		},
 		ViewPunchTable = {
 			{t = 2, p = Angle(0,5,0)},

@@ -84,7 +84,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		JMod_GiveAmmo(activator,self)
+		JMod.GiveAmmo(activator,self)
 	end
 	function ENT:GetCount()
 		return 1 -- stub

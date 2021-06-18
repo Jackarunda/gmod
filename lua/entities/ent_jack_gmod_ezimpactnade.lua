@@ -17,23 +17,23 @@ local BaseClass = baseclass.Get(ENT.Base)
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SpoonEffect()
 		self:SetBodygroup(2,1)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_EZ_STATE_ARMING)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMING)
 		timer.Simple(0.2, function()
 			if IsValid(self) then
-				self:SetState(JMOD_EZ_STATE_ARMED)
+				self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 			end
 		end)
 	end
 	
 	function ENT:PhysicsCollide(data,physobj)
-		if data.DeltaTime>0.2 and data.Speed>100 and self:GetState() == JMOD_EZ_STATE_ARMED then
+		if data.DeltaTime>0.2 and data.Speed>100 and self:GetState() == JMOD_JMod.EZ_STATE_ARMED then
 			self:Detonate()
 		else
 			BaseClass.PhysicsCollide(self, data, physobj)
@@ -44,7 +44,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		JMod_Sploom(self.Owner or game.GetWorld(),SelfPos,120)
+		JMod.Sploom(self.Owner or game.GetWorld(),SelfPos,120)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Blam=EffectData()
 		Blam:SetOrigin(SelfPos)

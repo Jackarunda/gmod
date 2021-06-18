@@ -41,7 +41,7 @@ if(SERVER)then
 		---
 		self.MaxElectricity=100
 		self.MaxGas=100
-		self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Workbench"][2]
+		self.EZbuildCost=JMod.Config.Blueprints["EZ Workbench"][2]
 		---
 		self:SetElectricity(self.MaxElectricity)
 		self:SetGas(self.MaxGas)
@@ -67,11 +67,11 @@ if(SERVER)then
 		if((self:GetGas()>0)and(self:GetElectricity()>0))then
 			net.Start("JMod_EZworkbench")
 			net.WriteEntity(self)
-			net.WriteTable(JMOD_CONFIG.Recipes)
+			net.WriteTable(JMod.Config.Recipes)
 			net.Send(activator)
-			JMod_Hint(activator, "craft")
+			JMod.Hint(activator, "craft")
 		else
-			JMod_Hint(activator, "refill", self)
+			JMod.Hint(activator, "refill", self)
 		end
 	end
 	function ENT:Think()
@@ -87,7 +87,7 @@ if(SERVER)then
 			if((TypesNeeded)and(#TypesNeeded>0))then
 				local ResourceTypeToLookFor=TypesNeeded[1]
 				local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-				local Donor=JMod_FindResourceContainer(ResourceTypeToLookFor,1,nil,nil,self) -- every little bit helps
+				local Donor=JMod.FindResourceContainer(ResourceTypeToLookFor,1,nil,nil,self) -- every little bit helps
 				if(Donor)then
 					local AmountWeCanTake=Donor:GetResource()
 					if(AmountWeNeed>=AmountWeCanTake)then
@@ -113,10 +113,10 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local Gas,Elec=self:GetGas(),self:GetElectricity()
 		if((Gas<=0)or(Elec<=0))then return end
-		local ItemInfo=JMOD_CONFIG.Recipes[itemName]
+		local ItemInfo=JMod.Config.Recipes[itemName]
 		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
 		
-		if(JMod_HaveResourcesToPerformTask(nil,nil,BuildReqs,self))then
+		if(JMod.HaveResourcesToPerformTask(nil,nil,BuildReqs,self))then
 		
 			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
@@ -124,7 +124,7 @@ if(SERVER)then
 				return
 			end
 		
-			JMod_ConsumeResourcesInRange(BuildReqs,nil,nil,self)
+			JMod.ConsumeResourcesInRange(BuildReqs,nil,nil,self)
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
 			for i=1,BuildSteps do
 				timer.Simple(i/100,function()
@@ -135,19 +135,19 @@ if(SERVER)then
 							local StringParts=string.Explode(" ",ItemClass)
 							if((StringParts[1])and(StringParts[1]=="FUNC"))then
 								local FuncName=StringParts[2]
-								if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-									local Ent=JMOD_LUA_CONFIG.BuildFuncs[FuncName](ply,Pos,Ang)
+								if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
+									local Ent=JMod.LuaConfig.BuildFuncs[FuncName](ply,Pos,Ang)
 									if(Ent)then
 										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 									end
 								else
-									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 								end
 							else
 								local Ent=ents.Create(ItemClass)
 								Ent:SetPos(Pos)
 								Ent:SetAngles(Ang)
-								JMod_Owner(Ent,ply)
+								JMod.Owner(Ent,ply)
 								Ent:Spawn()
 								Ent:Activate()
 								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
@@ -165,11 +165,11 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--self.Camera=JMod_MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.Glassware1=JMod_MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
-		self.Glassware2=JMod_MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
-		self.Screen=JMod_MakeModel(self,"models/props_lab/monitor01b.mdl")
-		self.Panel=JMod_MakeModel(self,"models/props_lab/reciever01b.mdl")
+		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Screen=JMod.MakeModel(self,"models/props_lab/monitor01b.mdl")
+		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01b.mdl")
 		self.MaxElectricity=100
 		self.MaxGas=100
 	end
@@ -192,15 +192,15 @@ elseif(CLIENT)then
 		---
 		if(DetailDraw)then
 			local GlasswareAng=SelfAng:GetCopy()
-			JMod_RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
-			JMod_RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
+			JMod.RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
+			JMod.RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
 			---
 			local ScreenAng=SelfAng:GetCopy()
-			JMod_RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
+			JMod.RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
 			---
 			local PanelAng=SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Forward,-90)
-			JMod_RenderModel(self.Panel,BasePos-Up*34-Forward*22+Right*28,PanelAng)
+			JMod.RenderModel(self.Panel,BasePos-Up*34-Forward*22+Right*28,PanelAng)
 			---
 			if(self:GetElectricity()>0)then
 				local DisplayAng=SelfAng:GetCopy()
@@ -211,10 +211,10 @@ elseif(CLIENT)then
 				draw.SimpleTextOutlined("Jackarunda","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined("Industries","JMod-Display",0,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local GasFrac=self:GetGas()/self.MaxGas
-				local R,G,B=JMod_GoodBadColor(GasFrac)
+				local R,G,B=JMod.GoodBadColor(GasFrac)
 				draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
@@ -230,14 +230,14 @@ elseif(CLIENT)then
 		local CamAng=SelfAng:GetCopy()
 		--CamAng:RotateAroundAxis(Up,-90)
 		--CamAng:RotateAroundAxis(Right,180)
-		--JMod_RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
+		--JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
 		
 		local Matricks=Matrix()
 		Matricks:Scale(Vector(.4,1.45,.5))
 		self.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
 		local BottomCanopyAng=SelfAng:GetCopy()
 		BottomCanopyAng:RotateAroundAxis(Right,180)
-		JMod_RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
+		JMod.RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
 		--]]
 	end
 	language.Add("ent_jack_gmod_ezworkbench","EZ Workbench")

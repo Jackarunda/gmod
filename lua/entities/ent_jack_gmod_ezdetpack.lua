@@ -27,7 +27,7 @@ if (SERVER) then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent, ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -89,26 +89,26 @@ if (SERVER) then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod_Owner(self, Dude)
+		JMod.Owner(self, Dude)
 		local Time = CurTime()
 
 		if (tobool(onOff)) then
 			local State = self:GetState()
 			if (State < 0) then return end
-			local Alt = Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
+			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
 
 			if (State == STATE_OFF) then
 				if (Alt) then
 					self:SetState(STATE_ARMED)
 					self:EmitSound("snd_jack_minearm.wav", 60, 100)
-					JMod_Hint(Dude, "trigger", self)
+					JMod.Hint(Dude, "trigger", self)
 				else
 					constraint.RemoveAll(self)
 					self.StuckStick = nil
 					self.StuckTo = nil
 					Dude:PickupObject(self)
 					self.NextStick = Time + .5
-					JMod_Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky", self)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav", 60, 70)
@@ -139,7 +139,7 @@ if (SERVER) then
 
 					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 					Dude:DropObject()
-					JMod_Hint(Dude, "arm", self)
+					JMod.Hint(Dude, "arm", self)
 				end
 			end
 		end
@@ -177,7 +177,7 @@ if (SERVER) then
 	function ENT:JModEZremoteTriggerFunc(ply)
 		if not ((IsValid(ply)) and (ply:Alive()) and (ply == self.Owner)) then return end
 		if self:GetState() ~= STATE_ARMED then return end
-		JMod_Hint(ply, "detpack combo", self:GetPos())
+		JMod.Hint(ply, "detpack combo", self:GetPos())
 		self:Detonate()
 	end
 
@@ -190,13 +190,13 @@ if (SERVER) then
 			if (IsValid(self)) then
 				if (self.SympatheticDetonated) then return end
 				local SelfPos, PowerMult = self:IncludeSympatheticDetpacks(self:LocalToWorld(self:OBBCenter()))
-				PowerMult = (PowerMult ^ .75) * JMOD_CONFIG.DetpackPowerMult
+				PowerMult = (PowerMult ^ .75) * JMod.Config.DetpackPowerMult
 				--
 				local Blam = EffectData()
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion", Blam, true, true)
-				JMod_Sploom(self.Owner or self or game.GetWorld(), SelfPos, 20)
+				JMod.Sploom(self.Owner or self or game.GetWorld(), SelfPos, 20)
 				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 				for i = 1, PowerMult do
@@ -221,11 +221,11 @@ if (SERVER) then
 					end
 				end)
 
-				JMod_WreckBuildings(self, SelfPos, PowerMult)
-				JMod_BlastDoors(self, SelfPos, PowerMult)
+				JMod.WreckBuildings(self, SelfPos, PowerMult)
+				JMod.BlastDoors(self, SelfPos, PowerMult)
 				
 				local RangeMult=1
-				if((IsValid(self.StuckTo))and(JMod_IsDoor(self.StuckTo)))then
+				if((IsValid(self.StuckTo))and(JMod.IsDoor(self.StuckTo)))then
 					RangeMult=.3
 				end
 

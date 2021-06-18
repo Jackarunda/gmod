@@ -16,7 +16,7 @@ SWEP.BodyHolsterScale = .95
 
 SWEP.DefaultBodygroups = "01000"
 
-JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round")
+JMod.ApplyAmmoSpecs(SWEP,"Medium Rifle Round")
 
 SWEP.Primary.ClipSize = 15 -- DefaultClip is automatically set.
 
@@ -53,8 +53,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(.5, 1, 1)
@@ -91,7 +91,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -114,9 +114,9 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2.8, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 2.8, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -131,12 +131,12 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.05, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2.75, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = 2.75, v=60},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav", t = 3.25, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 3.9, v=60, p=140}
+			{s = JMod.GunHandlingSounds.grab, t = 3.9, v=60, p=140}
 		}
     },
 }

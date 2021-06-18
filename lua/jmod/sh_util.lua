@@ -48,7 +48,7 @@ function jprint(...)
 		LocalPlayer():ChatPrint(printstr)
 	end
 end
-function JMod_GoodBadColor(frac)
+function JMod.GoodBadColor(frac)
 	-- color tech from bfs2114
 	local r,g,b=math.Clamp(3-frac*4,0,1),math.Clamp(frac*2,0,1),math.Clamp(-3+frac*4,0,1)
 	return r*255,g*255,b*255
@@ -75,11 +75,11 @@ function JMOD_WhomILookinAt(ply,cone,dist)
 	return nil,nil,nil
 end
 --
-function JMod_IsDoor(ent)
+function JMod.IsDoor(ent)
 	local Class=ent:GetClass()
 	return ((Class=="prop_door")or(Class=="prop_door_rotating")or(Class=="func_door")or(Class=="func_door_rotating"))
 end
-function JMod_VisCheck(pos,targPos,sourceEnt)
+function JMod.VisCheck(pos,targPos,sourceEnt)
 	local filter={}
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	if(sourceEnt)then table.insert(filter,sourceEnt) end
@@ -95,22 +95,22 @@ function JMod_VisCheck(pos,targPos,sourceEnt)
 		mask=MASK_SOLID_BRUSHONLY
 	}).Hit
 end
-function JMod_CountResourcesInRange(pos,range,sourceEnt)
+function JMod.CountResourcesInRange(pos,range,sourceEnt)
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
-		if((obj.IsJackyEZresource)and(JMod_VisCheck(pos,obj,sourceEnt)))then
+		if((obj.IsJackyEZresource)and(JMod.VisCheck(pos,obj,sourceEnt)))then
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
-		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod_VisCheck(pos,obj,sourceEnt) then
+		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod.VisCheck(pos,obj,sourceEnt) then
 			local Typ = obj:GetResourceType()
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
 	end
 	return Results
 end
-function JMod_HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
-	local RequirementsMet,ResourcesInRange=true,JMod_CountResourcesInRange(pos,range,sourceEnt)
+function JMod.HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
+	local RequirementsMet,ResourcesInRange=true,JMod.CountResourcesInRange(pos,range,sourceEnt)
 	for typ,amt in pairs(requirements)do
 		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
 			RequirementsMet=false
@@ -119,7 +119,7 @@ function JMod_HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
 	end
 	return RequirementsMet
 end
-function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
+function JMod.ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
 	while not((AllDone)or(Attempts>1000))do
@@ -127,7 +127,7 @@ function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
 		if((TypesNeeded)and(#TypesNeeded>0))then
 			local ResourceTypeToLookFor=TypesNeeded[1]
 			local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-			local Donor=JMod_FindResourceContainer(ResourceTypeToLookFor,1,pos,range,sourceEnt) -- every little bit helps
+			local Donor=JMod.FindResourceContainer(ResourceTypeToLookFor,1,pos,range,sourceEnt) -- every little bit helps
 			if(Donor)then
 				local AmountWeCanTake=Donor:GetResource()
 				if(AmountWeNeed>=AmountWeCanTake)then
@@ -150,17 +150,17 @@ function JMod_ConsumeResourcesInRange(requirements,pos,range,sourceEnt)
 		Attempts=Attempts+1
 	end
 end
-function JMod_FindResourceContainer(typ,amt,pos,range,sourceEnt)
+function JMod.FindResourceContainer(typ,amt,pos,range,sourceEnt)
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
 		if(obj.IsJackyEZresource or obj:GetClass() == "ent_jack_gmod_ezcrate")then
-			if((obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(JMod_VisCheck(pos,obj,sourceEnt)))then
+			if((obj.EZsupplies==typ)and(obj:GetResource()>=amt)and(JMod.VisCheck(pos,obj,sourceEnt)))then
 				return obj
 			end
 		end
 	end
 end
-function JMod_TryCough(ent)
+function JMod.TryCough(ent)
 	local Time=CurTime()
 	ent.EZcoughTime=ent.EZcoughTime or 0
 	if Time > ent.EZcoughTime then

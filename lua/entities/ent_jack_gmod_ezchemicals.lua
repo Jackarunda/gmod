@@ -8,7 +8,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="chemicals"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZpartBoxSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/PlasticCrate01a.mdl"
 ENT.Material=nil
 ENT.RandomSkins={0,1,2,3,4}
@@ -47,14 +47,14 @@ if(SERVER)then
 elseif(CLIENT)then
 	local TxtCol=Color(10,10,10,250)
 	function ENT:Initialize()
-		self.Jug1=JMod_MakeModel(self,"models/props_junk/garbage_plasticbottle001a.mdl","models/debug/debugwhite")
-		self.Jug2=JMod_MakeModel(self,"models/props_junk/garbage_plasticbottle002a.mdl","models/debug/debugwhite")
-		self.Jug3=JMod_MakeModel(self,"models/props_junk/garbage_milkcarton001a.mdl","models/debug/debugwhite")
-		self.Jug4=JMod_MakeModel(self,"models/props_junk/garbage_plasticbottle003a.mdl","models/debug/debugwhite")
-		self.Jug5=JMod_MakeModel(self,"models/props_junk/garbage_plasticbottle003a.mdl","models/debug/debugwhite")
-		self.Jug6=JMod_MakeModel(self,"models/props_junk/metal_paintcan001a.mdl","phoenix_storms/gear_top")
-		self.Jug7=JMod_MakeModel(self,"models/props_junk/garbage_glassbottle001a.mdl","models/props_combine/health_charger_glass")
-		self.Jug8=JMod_MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass",1.5)
+		self.Jug1=JMod.MakeModel(self,"models/props_junk/garbage_plasticbottle001a.mdl","models/debug/debugwhite")
+		self.Jug2=JMod.MakeModel(self,"models/props_junk/garbage_plasticbottle002a.mdl","models/debug/debugwhite")
+		self.Jug3=JMod.MakeModel(self,"models/props_junk/garbage_milkcarton001a.mdl","models/debug/debugwhite")
+		self.Jug4=JMod.MakeModel(self,"models/props_junk/garbage_plasticbottle003a.mdl","models/debug/debugwhite")
+		self.Jug5=JMod.MakeModel(self,"models/props_junk/garbage_plasticbottle003a.mdl","models/debug/debugwhite")
+		self.Jug6=JMod.MakeModel(self,"models/props_junk/metal_paintcan001a.mdl","phoenix_storms/gear_top")
+		self.Jug7=JMod.MakeModel(self,"models/props_junk/garbage_glassbottle001a.mdl","models/props_combine/health_charger_glass")
+		self.Jug8=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass",1.5)
 	end
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
@@ -64,14 +64,14 @@ elseif(CLIENT)then
 		self:DrawModel()
 		local BasePos=Pos+Up*2
 		local JugAng=Ang:GetCopy()
-		JMod_RenderModel(self.Jug1,BasePos+Forward*5.5+Right*10,Ang)
-		JMod_RenderModel(self.Jug2,BasePos+Forward*7,Ang)
-		JMod_RenderModel(self.Jug3,BasePos-Forward*4-Up*2-Right*9,Ang)
-		JMod_RenderModel(self.Jug4,BasePos-Forward*6,Ang)
-		JMod_RenderModel(self.Jug5,BasePos+Forward*1+Right*1,Ang)
-		JMod_RenderModel(self.Jug6,BasePos-Forward*4.5+Right*9-Up*3,Ang)
-		JMod_RenderModel(self.Jug7,BasePos+Forward*3-Right*4-Up*2,Ang)
-		JMod_RenderModel(self.Jug8,BasePos+Forward*6-Right*10-Up*10,Ang)
+		JMod.RenderModel(self.Jug1,BasePos+Forward*5.5+Right*10,Ang)
+		JMod.RenderModel(self.Jug2,BasePos+Forward*7,Ang)
+		JMod.RenderModel(self.Jug3,BasePos-Forward*4-Up*2-Right*9,Ang)
+		JMod.RenderModel(self.Jug4,BasePos-Forward*6,Ang)
+		JMod.RenderModel(self.Jug5,BasePos+Forward*1+Right*1,Ang)
+		JMod.RenderModel(self.Jug6,BasePos-Forward*4.5+Right*9-Up*3,Ang)
+		JMod.RenderModel(self.Jug7,BasePos+Forward*3-Right*4-Up*2,Ang)
+		JMod.RenderModel(self.Jug8,BasePos+Forward*6-Right*10-Up*10,Ang)
 		if(DetailDraw)then
 			local Chems=tostring(self:GetResource())
 			Ang:RotateAroundAxis(Ang:Right(),90)

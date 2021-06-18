@@ -1,12 +1,12 @@
 local function CopyArmorTableToPlayer(ply)
 	-- make a copy of the global armor spec table, personalize it, and store it on the player
-	ply.JMod_ArmorTableCopy=table.FullCopy(JMod_ArmorTable)
+	ply.JMod_ArmorTableCopy=table.FullCopy(JMod.ArmorTable)
 	local plyMdl=ply:GetModel()
-	if JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets and JMOD_LUA_CONFIG.ArmorOffsets[plyMdl] then
-		table.Merge(ply.JMod_ArmorTableCopy,JMOD_LUA_CONFIG.ArmorOffsets[plyMdl])
+	if JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets and JMod.LuaConfig.ArmorOffsets[plyMdl] then
+		table.Merge(ply.JMod_ArmorTableCopy,JMod.LuaConfig.ArmorOffsets[plyMdl])
 	end
 end
-function JMod_ArmorPlayerModelDraw(ply)
+function JMod.ArmorPlayerModelDraw(ply)
 	if(ply.EZarmor)then
 		if not(ply.EZarmorModels)then ply.EZarmorModels={} end
 		local Time=CurTime()
@@ -97,7 +97,7 @@ function JMod_ArmorPlayerModelDraw(ply)
 end
 hook.Add("PostPlayerDraw","JMOD_ArmorPlayerDraw",function(ply)
 	if not(IsValid(ply))then return end
-	JMod_ArmorPlayerModelDraw(ply)
+	JMod.ArmorPlayerModelDraw(ply)
 end)
 net.Receive("JMod_EZarmorSync",function()
 	local ply=net.ReadEntity()

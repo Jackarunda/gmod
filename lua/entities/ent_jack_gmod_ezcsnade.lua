@@ -12,13 +12,13 @@ ENT.ModelScale = 1.5
 ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SetBodygroup(3,1)
 	end
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(2,function()
 			if(IsValid(self))then self:Detonate() end
@@ -35,7 +35,7 @@ if(SERVER)then
 			if(self.FuelLeft>0)then
 				local Gas=ents.Create("ent_jack_gmod_ezcsparticle")
 				Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-				JMod_Owner(Gas,self.Owner or self)
+				JMod.Owner(Gas,self.Owner or self)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*math.random(10,100))

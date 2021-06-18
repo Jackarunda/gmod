@@ -8,7 +8,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="power"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZbatterySize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_phx/facepunch_barrel.mdl"
 ENT.Material="models/mat_jack_gmod_ezbattery"
 ENT.ModelScale=.6

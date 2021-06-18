@@ -33,7 +33,7 @@ if(SERVER)then
 			self.Entity:TakePhysicsDamage(dmginfo)
 		end
 		if(dmginfo:GetDamage()>=80)then
-			JMod_Owner(self,dmginfo:GetAttacker())
+			JMod.Owner(self,dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end

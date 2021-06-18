@@ -1,11 +1,11 @@
-function JMod_Hint(ply, key, loc, specific)
-	if not JMOD_CONFIG.Hints or not ply or not key then return nil end
+function JMod.Hint(ply, key, loc, specific)
+	if not JMod.Config.Hints or not ply or not key then return nil end
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] and not specific then return false end
 	ply.JModHintsGiven[key] = true
 	
-	local tbl = JMod_Hints[key]
-	if(specific)then tbl = JMod_SpecificHints[key] end
+	local tbl = JMod.Hints[key]
+	if(specific)then tbl = JMod.SpecificHints[key] end
 	if not tbl then return nil end
 	if loc then tbl.Pos = loc end
 	tbl.ShouldMove = (loc ~= nil)
@@ -16,10 +16,10 @@ function JMod_Hint(ply, key, loc, specific)
 	net.WriteString(tbl.Text)
 	net.Send(ply)
 	
-	if tbl.Followup and JMod_Hints[tbl.Followup] then
+	if tbl.Followup and JMod.Hints[tbl.Followup] then
 		timer.Simple(tbl.Time, function()
 			if IsValid(ply) then
-				JMod_Hint(ply, tbl.Followup, loc, specific)
+				JMod.Hint(ply, tbl.Followup, loc, specific)
 			end
 		end)
 	end
@@ -36,29 +36,29 @@ concommand.Add("jmod_resethints",function(ply,cmd,args)
 end)
 
 hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
-	if JMod_Hints[ent:GetClass()] then 
-		JMod_Hint(ply, ent:GetClass(), ent)
+	if JMod.Hints[ent:GetClass()] then 
+		JMod.Hint(ply, ent:GetClass(), ent)
 	end
 end)
 
 hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
-	if (JMOD_CONFIG) and (JMOD_CONFIG.Hints) then
+	if (JMod.Config) and (JMod.Config.Hints) then
 		timer.Simple(10,function()
 			if IsValid(ply) then
 				if ply:IsSuperAdmin() then
 					timer.Simple(5,function()
 						if IsValid(ply) then
-							JMod_Hint(ply, "config")
+							JMod.Hint(ply, "config")
 						end
 					end)
 					timer.Simple(10,function()
 						if IsValid(ply) then
-							JMod_Hint(ply, "qol")
+							JMod.Hint(ply, "qol")
 						end
 					end)
 					timer.Simple(15,function()
 						if IsValid(ply) then
-							JMod_Hint(ply, "hint reset")
+							JMod.Hint(ply, "hint reset")
 						end
 					end)
 				end

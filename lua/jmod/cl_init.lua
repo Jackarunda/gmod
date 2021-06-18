@@ -224,13 +224,13 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 				local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
 				local Forward=-ent:GetUp()
 				pos=pos-Forward*.5
-				if(State==JMOD_EZ_STATE_ARMING)then
+				if(State==JMOD_JMod.EZ_STATE_ARMING)then
 					render.SetMaterial(GlowSprite)
 					render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
 					render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
 					render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
 					render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
-				elseif State==JMOD_EZ_STATE_ARMED then
+				elseif State==JMOD_JMod.EZ_STATE_ARMED then
 					render.SetMaterial(BeamMat)
 					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
 					if trace.Hit then
@@ -247,14 +247,14 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 end)
 
 net.Receive("JMod_LuaConfigSync",function()
-	JMOD_LUA_CONFIG=JMOD_LUA_CONFIG or {}
-	JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
-	JMOD_CONFIG=JMOD_CONFIG or {}
-	JMOD_CONFIG.AltFunctionKey=net.ReadInt(32)
-	JMOD_CONFIG.WeaponSwayMult=net.ReadFloat()
+	JMod.LuaConfig=JMod.LuaConfig or {}
+	JMod.LuaConfig.ArmorOffsets=net.ReadTable()
+	JMod.Config=JMod.Config or {}
+	JMod.Config.AltFunctionKey=net.ReadInt(32)
+	JMod.Config.WeaponSwayMult=net.ReadFloat()
 end)
 
-function JMod_MakeModel(self,mdl,mat,scale,col)
+function JMod.MakeModel(self,mdl,mat,scale,col)
 	local Mdl=ClientsideModel(mdl)
 	if(mat)then Mdl:SetMaterial(mat) end
 	if(scale)then Mdl:SetModelScale(scale,0) end
@@ -265,7 +265,7 @@ function JMod_MakeModel(self,mdl,mat,scale,col)
 	return Mdl
 end
 
-function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
+function JMod.RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 	if(pos)then mdl:SetRenderOrigin(pos) end
 	if(ang)then mdl:SetRenderAngles(ang) end
 	if(scale)then
@@ -288,7 +288,7 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 end
 
 local FRavg,FRcount=0,0
-function JMod_MeasureFramerate()
+function JMod.MeasureFramerate()
 	local FR=1/FrameTime()
 	FRavg=FRavg+FR
 	FRcount=FRcount+1
@@ -472,7 +472,7 @@ end
 hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		surface.PlaySound("snds_jack_gmod/radio_start.wav")
 	end
 end)
@@ -481,7 +481,7 @@ hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
 	if not(IsValid(ply))then return end
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		CommNoise()
 		if not isTeam and not isDead then
 			local tab = {}
@@ -499,7 +499,7 @@ end)
 hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		CommNoise()
 	end
 end)

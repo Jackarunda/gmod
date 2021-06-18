@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -84,11 +84,11 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),60,120))then
+		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
 			if(math.random(1,3)==1)then
 				self:Break()
 			else
-				JMod_Owner(self,dmginfo:GetAttacker())
+				JMod.Owner(self,dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
@@ -97,22 +97,22 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State<0)then return end
 		
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
-				JMod_Owner(self,activator)
+				JMod.Owner(self,activator)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",60,120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime=CurTime()
-				JMod_Hint(activator, "launch", self)
+				JMod.Hint(activator, "launch", self)
 			else
 				activator:PickupObject(self)
-				JMod_Hint(activator, "arm", self)
+				JMod.Hint(activator, "arm", self)
 			end
 		elseif(State==STATE_ARMED)then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav",60,120)
 			self:SetState(STATE_OFF)
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			self.EZlaunchableWeaponArmedTime=nil
 		end
 	end
@@ -121,7 +121,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att,Dir=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld(),-self:GetRight()
-		JMod_Sploom(Att,SelfPos,10)
+		JMod.Sploom(Att,SelfPos,10)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,1500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
@@ -133,8 +133,8 @@ if(SERVER)then
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,2)
-		JMod_BlastDoors(self,SelfPos,2)
+		JMod.WreckBuildings(self,SelfPos,2)
+		JMod.BlastDoors(self,SelfPos,2)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos-Dir*100,Dir*300)
@@ -179,14 +179,14 @@ if(SERVER)then
 		timer.Simple(30,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
-		JMod_Hint(self.Owner, "backblast", self:GetPos())
+		JMod.Hint(self.Owner, "backblast", self:GetPos())
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()
 	end
 	function ENT:Think()
 		local Phys=self:GetPhysicsObject()
-		JMod_AeroDrag(self,-self:GetRight(),.75)
+		JMod.AeroDrag(self,-self:GetRight(),.75)
 		if(self:GetState()==STATE_LAUNCHED)then
 			if(self.FuelLeft>0)then
 				Phys:ApplyForceCenter(-self:GetRight()*20000)

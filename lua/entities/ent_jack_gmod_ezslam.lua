@@ -23,7 +23,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -46,11 +46,11 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self:SetState(JMOD_EZ_STATE_OFF)
+		self:SetState(JMOD_JMod.EZ_STATE_OFF)
 		self.NextStick=0
 		self.Damage=500
 		---
-		JMod_Colorify(self)
+		JMod.Colorify(self)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>25)then
@@ -62,45 +62,45 @@ if(SERVER)then
 		if(dmginfo:GetInflictor()==self)then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
-		if(JMod_LinCh(Dmg,20,100))then
+		if(JMod.LinCh(Dmg,20,100))then
 			local Pos,State=self:GetPos(),self:GetState()
-			if(State==JMOD_EZ_STATE_ARMED)then
+			if(State==JMOD_JMod.EZ_STATE_ARMED)then
 				self:Detonate()
-			elseif(not(State==JMOD_EZ_STATE_BROKEN))then
+			elseif(not(State==JMOD_JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(JMOD_EZ_STATE_BROKEN)
+				self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		if(IsValid(self.Owner))then
-			JMod_Colorify(self)
+			JMod.Colorify(self)
 		end
 		
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
-			if(State==JMOD_EZ_STATE_OFF)then
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
+			if(State==JMOD_JMod.EZ_STATE_OFF)then
 				if(Alt)then
-					self:SetState(JMOD_EZ_STATE_ARMING)
+					self:SetState(JMOD_JMod.EZ_STATE_ARMING)
 					self:SetBodygroup(0,1)
 					self:EmitSound("snd_jack_minearm.wav",60,100)
 					timer.Simple(3,function()
 						if(IsValid(self))then
-							if(self:GetState()==JMOD_EZ_STATE_ARMING)then
+							if(self:GetState()==JMOD_JMod.EZ_STATE_ARMING)then
 								local pos = self:GetAttachment(1).Pos
 								local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
 								self.BeamFrac = trace.Fraction
-								self:SetState(JMOD_EZ_STATE_ARMED)
+								self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 							end
 						end
 					end)
-					JMod_Hint(Dude, "friends", self)
+					JMod.Hint(Dude, "friends", self)
 				else
 					if !IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)
@@ -113,11 +113,11 @@ if(SERVER)then
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
-					JMod_Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky", self)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
-				self:SetState(JMOD_EZ_STATE_OFF)
+				self:SetState(JMOD_JMod.EZ_STATE_OFF)
 				self:SetBodygroup(0,0)
 			end
 		else -- player just released the USE key
@@ -147,7 +147,7 @@ if(SERVER)then
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-						if not JMod_Hint(Dude, "arm", self) then JMod_Hint(Dude, "slam stick", self) end
+						if not JMod.Hint(Dude, "arm", self) then JMod.Hint(Dude, "slam stick", self) end
 					end
 				end
 			end
@@ -161,14 +161,14 @@ if(SERVER)then
 				local SelfPos=self:GetPos()-self:GetUp()
 				if(IsValid(self.AttachedBomb))then
 					self.AttachedBomb:EZdetonateOverride(self)
-					JMod_Sploom(self.Owner,SelfPos,3)
+					JMod.Sploom(self.Owner,SelfPos,3)
 					self:Remove()
 					return
 				end
-				JMod_Sploom(self.Owner,SelfPos,math.random(50,80))
+				JMod.Sploom(self.Owner,SelfPos,math.random(50,80))
 				util.ScreenShake(SelfPos,99999,99999,.3,500)
 				local Dir=(self:GetUp()+VectorRand()*.01):GetNormalized()
-				JMod_RicPenBullet(self,SelfPos,Dir,(dmg or 500)*JMOD_CONFIG.MinePower,true,true)
+				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 500)*JMod.Config.MinePower,true,true)
 				self:Remove()
 			end
 		end)
@@ -176,10 +176,10 @@ if(SERVER)then
 	function ENT:Think()
 		local Time=CurTime()
 		local state = self:GetState()
-		if(state==JMOD_EZ_STATE_ARMED)then
+		if(state==JMOD_JMod.EZ_STATE_ARMED)then
 			local pos=self:GetAttachment(1).Pos
 			local trace=util.QuickTrace(pos,self:GetUp()*1000,self)
-			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod_EnemiesNearPoint(self,trace.HitPos,200)))then
+			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then
 				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
 					self:Detonate()
 				else

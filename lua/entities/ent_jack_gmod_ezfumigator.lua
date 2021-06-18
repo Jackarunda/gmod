@@ -23,7 +23,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -46,7 +46,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_SEALED)
-		self.ContainedGas=100*JMOD_CONFIG.FumigatorGasAmount
+		self.ContainedGas=100*JMod.Config.FumigatorGasAmount
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -57,22 +57,22 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),30,100))then
+		if(JMod.LinCh(dmginfo:GetDamage(),30,100))then
 			local Att=dmginfo:GetAttacker()
-			if((IsValid(Att))and(Att:IsPlayer()))then JMod_Owner(self,Att) end
+			if((IsValid(Att))and(Att:IsPlayer()))then JMod.Owner(self,Att) end
 			self:Burst()
 		end
 	end
 	function ENT:Use(activator)
-		local State,Alt=self:GetState(),activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local State,Alt=self:GetState(),activator:KeyDown(JMod.Config.AltFunctionKey)
 		
 		if(State==STATE_SEALED)then
 			if(Alt)then
-				JMod_Owner(self,activator)
+				JMod.Owner(self,activator)
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
-				JMod_Hint(activator, "gas spread", self)
+				JMod.Hint(activator, "gas spread", self)
 				timer.Simple(5,function()
 					if(IsValid(self))then
 						self:EmitSound("snd_jack_sminepop.wav",70,120)
@@ -81,7 +81,7 @@ if(SERVER)then
 				end)
 			else
 				activator:PickupObject(self)
-				JMod_Hint(activator, "arm", self)
+				JMod.Hint(activator, "arm", self)
 			end
 		else
 			activator:PickupObject(self)
@@ -95,12 +95,12 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Owner,SelfVel=self:LocalToWorld(self:OBBCenter()),self.Owner or self,self:GetPhysicsObject():GetVelocity()
-		JMod_Sploom(Owner,SelfPos,100)
+		JMod.Sploom(Owner,SelfPos,100)
 		for i=1,self.ContainedGas do
 			timer.Simple(i/200,function()
 				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
 				Gas:SetPos(SelfPos)
-				JMod_Owner(Gas,Owner)
+				JMod.Owner(Gas,Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel+VectorRand()*math.random(1,500))
@@ -117,7 +117,7 @@ if(SERVER)then
 		elseif(State==STATE_VENTING)then
 			local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-			JMod_Owner(Gas,self.Owner or self)
+			JMod.Owner(Gas,self.Owner or self)
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*500)

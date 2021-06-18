@@ -18,7 +18,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -61,7 +61,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		
 		Dude:PickupObject(self)
 	end

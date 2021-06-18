@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -30,7 +30,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Specs=JMod_GetAmmoSpecs(self.EZammo)
+		self.Specs=JMod.GetAmmoSpecs(self.EZammo)
 		self.Entity:SetModel("models/props_junk/cardboard_box004a.mdl")
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
@@ -48,7 +48,7 @@ if(SERVER)then
 		end)
 		self.Entity:SetColor(Color(50,50,50))
 		---
-		self.EZID=self.EZID or JMod_GenerateGUID()
+		self.EZID=self.EZID or JMod.GenerateGUID()
 		---
 		self:SetCount(self.Specs.carrylimit) -- default to full
 	end
@@ -59,17 +59,17 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinearChance(dmginfo:GetDamage(),30,100))then self:Remove() end
+		if(JMod.LinearChance(dmginfo:GetDamage(),30,100))then self:Remove() end
 	end
 	function ENT:UseEffect()
 		-- stub
 	end
 	function ENT:Use(activator)
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(Alt)then
 			activator:PickupObject(self)
 		else
-			JMod_GiveAmmo(activator,self)
+			JMod.GiveAmmo(activator,self)
 		end
 	end
 elseif(CLIENT)then

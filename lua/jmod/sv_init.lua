@@ -34,20 +34,20 @@ local function JackaSpawnHook(ply)
 		end
 	end)
 	net.Start("JMod_PlayerSpawn")
-	net.WriteBit(JMOD_CONFIG.Hints)
+	net.WriteBit(JMod.Config.Hints)
 	net.Send(ply)
 end
 hook.Add("PlayerSpawn","JMod_PlayerSpawn",JackaSpawnHook)
 hook.Add("PlayerInitialSpawn","JMod_PlayerInitialSpawn",JackaSpawnHook)
 
-function JMod_SyncBleeding(ply)
+function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
 	net.WriteInt(ply.EZbleeding,8)
 	net.Send(ply)
 end
 
 hook.Add("PlayerLoadout","JMod_PlayerLoadout",function(ply)
-	if((JMOD_CONFIG)and(JMOD_CONFIG.QoL.GiveHandsOnSpawn))then
+	if((JMod.Config)and(JMod.Config.QoL.GiveHandsOnSpawn))then
 		ply:Give("wep_jack_gmod_hands")
 	end
 end)
@@ -78,7 +78,7 @@ local function VirusHostCanSee(host,ent)
 	return not Tr.Hit
 end
 
-function JMod_ViralInfect(ply,att)
+function JMod.ViralInfect(ply,att)
 	if(ply.EZvirus)then return end
 	if(((ply.JModSpawnTime or 0)+30)>CurTime())then return end
 	local Severity,Latency=math.random(50,500),math.random(10,100)
@@ -93,8 +93,8 @@ function JMod_ViralInfect(ply,att)
 	}
 end
 
-function JMod_TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
-	local Range,SelfPos=300*JMOD_CONFIG.VirusSpreadMult,host:GetPos()
+function JMod.TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
+	local Range,SelfPos=300*JMod.Config.VirusSpreadMult,host:GetPos()
 	if(hostFaceProt>0 or hostSkinProt>0)then
 		Range=Range*(1-(hostFaceProt+hostSkinProt)/2)
 	end
@@ -105,14 +105,14 @@ function JMod_TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
 			local Chance=DistFrac*.2
 			if(obj:WaterLevel()>=3)then Chance=Chance/3 end
 			---
-			local VictimFaceProtection,VictimSkinProtection=JMod_GetArmorBiologicalResistance(obj,DMG_RADIATION)
+			local VictimFaceProtection,VictimSkinProtection=JMod.GetArmorBiologicalResistance(obj,DMG_RADIATION)
 			if(VictimFaceProtection>0 or VictimSkinProtection>0)then
 				Chance=Chance*(1-(VictimFaceProtection+VictimSkinProtection)/2)
 			end
 			if(Chance>0)then
 				local AAA=math.Rand(0,1)
 				if(AAA<Chance)then
-					JMod_ViralInfect(obj,att)
+					JMod.ViralInfect(obj,att)
 				end
 			end
 		end
@@ -120,7 +120,7 @@ function JMod_TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
 end
 
 local function VirusCough(ply)
-	if(math.random(1,10)==2)then JMod_TryCough(ply) end
+	if(math.random(1,10)==2)then JMod.TryCough(ply) end
 	local Dmg=DamageInfo()
 	Dmg:SetDamageType(DMG_GENERIC) -- why aint this working to hazmat wearers?
 	Dmg:SetAttacker((IsValid(ply.EZvirus.Attacker) and ply.EZvirus.Attacker)or game.GetWorld())
@@ -130,13 +130,13 @@ local function VirusCough(ply)
 	Dmg:SetDamage(1)
 	ply:TakeDamageInfo(Dmg)
 	--
-	local HostFaceProtection,HostSkinProtection=JMod_GetArmorBiologicalResistance(ply,DMG_RADIATION)
+	local HostFaceProtection,HostSkinProtection=JMod.GetArmorBiologicalResistance(ply,DMG_RADIATION)
 	if((HostFaceProtection+HostSkinProtection)>=2)then return end
-	JMod_TryVirusInfectInRange(ply,ply.EZvirus.Attacker,HostFaceProtection,HostSkinProtection)
+	JMod.TryVirusInfectInRange(ply,ply.EZvirus.Attacker,HostFaceProtection,HostSkinProtection)
 	if(math.random(1,10)==10)then
 		local Gas=ents.Create("ent_jack_gmod_ezvirusparticle")
 		Gas:SetPos(ply:GetPos())
-		JMod_Owner(Gas,ply)
+		JMod.Owner(Gas,ply)
 		Gas:Spawn()
 		Gas:Activate()
 		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
@@ -185,7 +185,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 			if(playa.EZbleeding)then
 				local Bleed=playa.EZbleeding
 				if(Bleed>0)then
-					local Amt=JMOD_CONFIG.QoL.BleedSpeedMult
+					local Amt=JMod.Config.QoL.BleedSpeedMult
 					playa.EZbleeding=math.Clamp(Bleed-Amt,0,9e9)
 					local Dmg=DamageInfo()
 					Dmg:SetAttacker((IsValid(playa.EZbleedAttacker) and playa.EZbleedAttacker) or game.GetWorld())
@@ -197,7 +197,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					net.Start("JMod_SFX")
 					net.WriteString("snds_jack_gmod/quiet_heartbeat.wav")
 					net.Send(playa)
-					JMod_Hint(playa,"bleeding")
+					JMod.Hint(playa,"bleeding")
 					--
 					local Tr=util.QuickTrace(playa:GetShootPos()+VectorRand()*30,Vector(0,0,-150),playa)
 					if(Tr.Hit)then
@@ -219,7 +219,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 				end
 			end
 			VirusHostThink(playa)
-			if(JMOD_CONFIG.QoL.Drowning)then
+			if(JMod.Config.QoL.Drowning)then
 				if(playa:WaterLevel()>=3)then
 					playa.EZoxygen=math.Clamp(playa.EZoxygen-1.67,0,100) -- 60 seconds before damage
 					if(playa.EZoxygen<=25)then playa.EZneedGasp=true end
@@ -245,7 +245,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 	---
 	if(NextNutritionThink<Time)then
-		NextNutritionThink=Time+10/JMOD_CONFIG.FoodSpecs.DigestSpeed
+		NextNutritionThink=Time+10/JMod.Config.FoodSpecs.DigestSpeed
 		for k,playa in pairs(player.GetAll())do
 			if(playa.EZnutrition)then
 				if(playa:Alive())then
@@ -257,7 +257,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 							playa:SetHealth(Helf+1)
 							if(playa:Health()==Max)then playa:RemoveAllDecals() end
 						elseif(math.Rand(0,1)<.75)then
-							local BoostMult=JMOD_CONFIG.FoodSpecs.BoostMult
+							local BoostMult=JMod.Config.FoodSpecs.BoostMult
 							local BoostedFrac=(Helf-Max)/Max
 							if(math.Rand(0,1)>BoostedFrac)then
 								playa:SetHealth(Helf+BoostMult)
@@ -276,22 +276,22 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 			if((playa.EZarmor)and(playa:Alive()))then
 				if(playa.EZarmor.effects.nightVision)then
 					for id,armorData in pairs(playa.EZarmor.items)do
-						local Info=JMod_ArmorTable[armorData.name]
+						local Info=JMod.ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.nightVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/10,0,9e9)
-							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMod.Config.ArmorChargeDepletionMult/10,0,9e9)
+							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod.EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
 				elseif(playa.EZarmor.effects.thermalVision)then
 					for id,armorData in pairs(playa.EZarmor.items)do
-						local Info=JMod_ArmorTable[armorData.name]
+						local Info=JMod.ArmorTable[armorData.name]
 						if((Info.eff)and(Info.eff.thermalVision))then
-							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMOD_CONFIG.ArmorChargeDepletionMult/10,0,9e9)
-							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod_EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
+							armorData.chrg.power=math.Clamp(armorData.chrg.power-JMod.Config.ArmorChargeDepletionMult/10,0,9e9)
+							if(armorData.chrg.power<=Info.chrg.power*.25)then JMod.EZarmorWarning(playa,"armor's electricity soon to be depleted!") end
 						end
 					end
 				end
-				JMod_CalcSpeed(playa)
+				JMod.CalcSpeed(playa)
 				JModEZarmorSync(playa)
 			end
 		end
@@ -299,7 +299,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	---
 	if(NextSlowThink<Time)then
 		NextSlowThink=Time+2
-		if(JMOD_CONFIG.QoL.ExtinguishUnderwater)then
+		if(JMod.Config.QoL.ExtinguishUnderwater)then
 			for k,v in pairs(ents.GetAll())do
 				if((v.IsOnFire)and(v.WaterLevel))then
 					if((v:IsOnFire())and(v:WaterLevel()>=3))then
@@ -328,9 +328,9 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	if(NextSync<Time)then
 		NextSync=Time+30
 		net.Start("JMod_LuaConfigSync")
-		net.WriteTable((JMOD_LUA_CONFIG and JMOD_LUA_CONFIG.ArmorOffsets) or {})
-		net.WriteInt(JMOD_CONFIG.AltFunctionKey,32)
-		net.WriteFloat(JMOD_CONFIG.WeaponSwayMult)
+		net.WriteTable((JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {})
+		net.WriteInt(JMod.Config.AltFunctionKey,32)
+		net.WriteFloat(JMod.Config.WeaponSwayMult)
 		net.Broadcast()
 	end
 end)
@@ -347,7 +347,7 @@ concommand.Add("jacky_player_debug",function(ply,cmd,args)
 end)
 
 hook.Add("GetFallDamage","JMod_FallDamage",function(ply,spd)
-	if(JMOD_CONFIG.QoL.RealisticFallDamage)then
+	if(JMod.Config.QoL.RealisticFallDamage)then
 		return spd^2/8000
 	end
 end)
@@ -367,7 +367,7 @@ hook.Add("PlayerLeaveVehicle","JMOD_LEAVEVEHICLE",function(ply,veh)
 	end
 end)
 
-function JMod_EZ_Remote_Trigger(ply)
+function JMod.EZ_Remote_Trigger(ply)
 	if not(IsValid(ply))then return end
 	if not(ply:Alive())then return end
 	sound.Play("snd_jack_detonator.wav",ply:GetShootPos(),55,math.random(90,110))
@@ -384,13 +384,13 @@ end
 
 hook.Add("PlayerCanSeePlayersChat","JMOD_PLAYERSEECHAT",function(txt,teamOnly,listener,talker)
 	if((talker.EZarmor)and(talker.EZarmor.effects.teamComms))then
-		return JMod_PlayersCanComm(listener,talker)
+		return JMod.PlayersCanComm(listener,talker)
 	end
 end)
 
 hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,talker)
 	if((talker.EZarmor)and(talker.EZarmor.effects.teamComms))then
-		return JMod_PlayersCanComm(listener,talker)
+		return JMod.PlayersCanComm(listener,talker)
 	end
 end)
 

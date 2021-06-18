@@ -13,14 +13,14 @@ ENT.ModelScale = 1.5
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SetBodygroup(3,1)
 	end
 
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
@@ -41,13 +41,13 @@ if(SERVER)then
 			timer.Simple(i/120,function()
 				local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
 				Gas:SetPos(SelfPos)
-				JMod_Owner(Gas,Owner)
+				JMod.Owner(Gas,Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel+VectorRand()*math.random(1,200))
 			end)
 		end
-		if IsValid(self.Owner) then JMod_Hint(self.Owner, "gas spread", self:GetPos()) end
+		if IsValid(self.Owner) then JMod.Hint(self.Owner, "gas spread", self:GetPos()) end
 		self:Remove()
 	end
 	

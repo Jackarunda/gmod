@@ -56,7 +56,7 @@ net.Receive("JMod_ArmorColor",function(ln,ply)
 	local Equip=tobool(net.ReadBit())
 	if not(IsValid(Armor))then return end
 	Armor:SetColor(Col)
-	if(Equip)then JMod_EZ_Equip_Armor(ply,Armor) end
+	if(Equip)then JMod.EZ_Equip_Armor(ply,Armor) end
 end)
 
 net.Receive("JMod_SignalNade",function(ln,ply)

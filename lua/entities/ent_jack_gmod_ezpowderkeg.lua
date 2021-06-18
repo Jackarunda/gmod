@@ -20,7 +20,7 @@ if (SERVER) then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent, ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -79,9 +79,9 @@ if (SERVER) then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod_Owner(self, Dude)
+		JMod.Owner(self, Dude)
 
-		if (Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)) then
+		if (Dude:KeyDown(JMod.Config.AltFunctionKey)) then
 			self.Pouring = not self.Pouring
 
 			if self.Pouring then
@@ -94,7 +94,7 @@ if (SERVER) then
 		end
 
 		Dude:PickupObject(self)
-		JMod_Hint(Dude, "arm powderkeg", self)
+		JMod.Hint(Dude, "arm powderkeg", self)
 	end
 
 	function ENT:EZdetonateOverride(detonator)
@@ -113,7 +113,7 @@ if (SERVER) then
 		util.Effect("eff_jack_powdersplode", Blam, true, true)
 		util.ScreenShake(SelfPos, 20, 20, 1, 700)
 		-- black powder is not HE and its explosion lacks brisance, more of a push than a shock
-		JMod_Sploom(self.Owner or game.GetWorld(), SelfPos, 150)
+		JMod.Sploom(self.Owner or game.GetWorld(), SelfPos, 150)
 		local Dmg = DamageInfo()
 		Dmg:SetDamage(70)
 		Dmg:SetAttacker(self.Owner or self)
@@ -123,7 +123,7 @@ if (SERVER) then
 
 		for i = 1, 5 do
 			timer.Simple(i / 10, function()
-				JMod_SimpleForceExplosion(SelfPos, 400000, 600, self)
+				JMod.SimpleForceExplosion(SelfPos, 400000, 600, self)
 			end)
 		end
 
@@ -157,11 +157,11 @@ if (SERVER) then
 			if (Tr.Hit) then
 				local Powder = ents.Create("ent_jack_gmod_ezblackpowderpile")
 				Powder:SetPos(Tr.HitPos + Tr.HitNormal * .1)
-				JMod_Owner(Powder, self.Owner)
+				JMod.Owner(Powder, self.Owner)
 				Powder:Spawn()
 				Powder:Activate()
 				constraint.Weld(Powder, Tr.Entity, 0, 0, 0, true)
-				JMod_Hint(self.Owner, "powder", Powder)
+				JMod.Hint(self.Owner, "powder", Powder)
 			end
 
 			self.Powder = self.Powder - 1

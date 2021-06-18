@@ -24,9 +24,9 @@ PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
 --PrecacheParticleSystem("50lb_ground")
 --
-JMod_RavebreakBeatTime=.4
+JMod.RavebreakBeatTime=.4
 local Alphanumerics={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
-function JMod_GenerateGUID()
+function JMod.GenerateGUID()
 	local Res=""
 	for i=1,8 do
 		Res=Res..table.Random(Alphanumerics)
@@ -34,11 +34,11 @@ function JMod_GenerateGUID()
 	return Res
 end
 --
-function JMod_LinCh(num,low,high)
+function JMod.LinCh(num,low,high)
 	return num>=(low+(high-low)*math.Rand(0,1))
 end
 --
-function JMod_PlayersCanComm(listener,talker)
+function JMod.PlayersCanComm(listener,talker)
 	if(listener==talker)then return true end
 	if (engine.ActiveGamemode()=="sandbox") then
 		return ((talker.JModFriends) and (table.HasValue(talker.JModFriends,listener)))

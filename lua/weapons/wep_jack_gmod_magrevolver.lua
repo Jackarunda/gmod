@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod_ApplyAmmoSpecs(SWEP,"Magnum Pistol Round")
+JMod.ApplyAmmoSpecs(SWEP,"Magnum Pistol Round")
 
 SWEP.HipDispersion = 1100
 
@@ -60,8 +60,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-1.78, 12, .43),
     Ang = Angle(-.25, 0, -2),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.minor
+    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 0, .5)
@@ -94,7 +94,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.7,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -115,13 +115,13 @@ SWEP.Animations = {
         LHIKOut = 0.5,
 		ShellEjectAt = 1.1,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav", t = .65, v=60},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav", t = .75, v=55},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .8, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.wav", t = 1.9, v=60},
 			{s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.wav", t = 2.8, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 3.7, v=55, p=110}
+			{s = JMod.GunHandlingSounds.grab, t = 3.7, v=55, p=110}
 		}
     }
 }

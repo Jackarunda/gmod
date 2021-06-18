@@ -33,7 +33,7 @@ if(SERVER)then
 
 	function ENT:Prime()
 		self:EmitSound("weapons/c4/c4_plant.wav",60,80)
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
 		constraint.NoCollide(self,self.Plunger,0,0)
 		constraint.Rope(self,self.Plunger,0,0,Vector(0,0,0),Vector(0,0,0),2000,0,0,.5,"cable/cable",false)
@@ -42,24 +42,24 @@ if(SERVER)then
 
 	function ENT:Arm()
 		--self:EmitSound("buttons/button5.wav",60,150)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 	end
 		
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
-			if(State==JMOD_EZ_STATE_OFF and Alt)then
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
+			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
 				self:Prime()
 				activator:PickupObject(self.Plunger)
-				JMod_Hint(Dude, "arm satchelcharge", self.Plunger)
+				JMod.Hint(Dude, "arm satchelcharge", self.Plunger)
 			else
 				activator:PickupObject(self)
-				JMod_Hint(Dude, "arm", self)
+				JMod.Hint(Dude, "arm", self)
 			end
 		end
 	end
@@ -67,7 +67,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		if(IsValid(self.Plunger))then JMod_Owner(self,self.Plunger.Owner) end
+		if(IsValid(self.Plunger))then JMod.Owner(self,self.Plunger.Owner) end
 		timer.Simple(0,function()
 			if(IsValid(self))then
 				local SelfPos,PowerMult=self:GetPos(),5
@@ -86,8 +86,8 @@ if(SERVER)then
 						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 					end
 				end)
-				JMod_WreckBuildings(self,SelfPos,PowerMult)
-				JMod_BlastDoors(self,SelfPos,PowerMult)
+				JMod.WreckBuildings(self,SelfPos,PowerMult)
+				JMod.BlastDoors(self,SelfPos,PowerMult)
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
@@ -111,11 +111,11 @@ elseif(CLIENT)then
 		self:DrawModel()
 		local State=self:GetState()
 		local pos = self:GetPos() + self:GetUp() * 2.8 + self:GetRight() * (-2.6) + self:GetForward() * (-3)
-		if(State==JMOD_EZ_STATE_ARMING)then
+		if(State==JMOD_JMod.EZ_STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,10,10,Color(255,0,0))
 			render.DrawSprite(pos,5,5,Color(255,255,255))
-		elseif State == JMOD_EZ_STATE_ARMED then
+		elseif State == JMOD_JMod.EZ_STATE_ARMED then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,5,5,Color(255,100,0))
 			render.DrawSprite(pos,2,2,Color(255,255,255))

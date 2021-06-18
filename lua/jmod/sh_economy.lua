@@ -44,7 +44,7 @@ if(SERVER)then
 		end
 	end
 	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster","rubber"}
-	function JMod_GenerateNaturalResources(tryFlat)
+	function JMod.GenerateNaturalResources(tryFlat)
 		JMOD_OIL_RESERVES={}
 		JMOD_ORE_DEPOSITS={}
 		JMOD_GEO_THERMALS={}
@@ -66,11 +66,11 @@ if(SERVER)then
 					end
 				end
 				if(i==MaxTries)then
-					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate=0,50*JMOD_CONFIG.ResourceEconomy.OilFrequency,0,50*JMOD_CONFIG.ResourceEconomy.OreFrequency,0,3,true
+					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,3,true
 					for k,v in pairs(GroundVectors)do
 						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
 						if(GeoCount<MaxGeo)then
-							local amt=math.Rand(.001,.005)*JMOD_CONFIG.ResourceEconomy.GeothermalPowerMult
+							local amt=math.Rand(.001,.005)*JMod.Config.ResourceEconomy.GeothermalPowerMult
 							if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
 							if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
 							table.insert(JMOD_GEO_THERMALS,{
@@ -81,7 +81,7 @@ if(SERVER)then
 							GeoCount=GeoCount+1
 						elseif(Alternate)then
 							if(OilCount<MaxOil)then
-								local amt=math.random(70,180)*JMOD_CONFIG.ResourceEconomy.OilRichness
+								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OilRichness
 								if(InWater)then amt=amt*2 end -- fracking time
 								table.insert(JMOD_OIL_RESERVES,{
 									pos=v.pos,
@@ -93,7 +93,7 @@ if(SERVER)then
 							Alternate=false
 						else
 							if(OreCount<MaxOre)then
-								local amt=math.random(70,180)*JMOD_CONFIG.ResourceEconomy.OreRichness
+								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OreRichness
 								table.insert(JMOD_ORE_DEPOSITS,{
 									pos=v.pos,
 									amt=math.Round(amt),
@@ -106,7 +106,7 @@ if(SERVER)then
 					end
 					if(((OilCount<2)or(OreCount<2)or(GeoCount<2))and not(tryFlat))then
 						-- if we couldn't find anything, it might be an RP map which is really flat
-						JMod_GenerateNaturalResources(true)
+						JMod.GenerateNaturalResources(true)
 					else
 						RemoveOverlaps(JMOD_OIL_RESERVES)
 						RemoveOverlaps(JMOD_ORE_DEPOSITS)
@@ -123,7 +123,7 @@ if(SERVER)then
 		end
 	end
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
-		JMod_GenerateNaturalResources()
+		JMod.GenerateNaturalResources()
 	end)
 	concommand.Add("jacky_trace_debug",function(ply)
 		local Tr=ply:GetEyeTrace()

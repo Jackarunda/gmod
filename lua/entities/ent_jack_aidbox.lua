@@ -34,7 +34,7 @@ if SERVER then
 		self:SetDTFloat(0,self.Opacity)
 		self.Parachuted=self:GetDTBool(0)
 		if(self.Parachuted)then
-			self:GetPhysicsObject():SetDragCoefficient(40*JMOD_CONFIG.RadioSpecs.ParachuteDragMult)
+			self:GetPhysicsObject():SetDragCoefficient(40*JMod.Config.RadioSpecs.ParachuteDragMult)
 			self:GetPhysicsObject():SetAngleDragCoefficient(40)
 		end
 	end
@@ -103,10 +103,10 @@ if SERVER then
 				local Ent=nil
 				if((StringParts[1])and(StringParts[1]=="FUNC"))then
 					local FuncName=StringParts[2]
-					if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-						Ent=JMOD_LUA_CONFIG.BuildFuncs[FuncName](activator,Pos+VectorRand()*math.Rand(0,30),VectorRand():Angle())
+					if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
+						Ent=JMod.LuaConfig.BuildFuncs[FuncName](activator,Pos+VectorRand()*math.Rand(0,30),VectorRand():Angle())
 					else
-						activator:PrintMessage(HUD_PRINTTALK,"JMOD RADIO BOX ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+						activator:PrintMessage(HUD_PRINTTALK,"JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 					end
 				else
 					local Yay=ents.Create(ClassName)
@@ -117,7 +117,7 @@ if SERVER then
 					Ent=Yay
 				end
 				if(Ent)then
-					JMod_Owner(Ent,activator)
+					JMod.Owner(Ent,activator)
 					-- this arrests overlap-ejection velocity so items don't thwack players
 					timer.Simple(.025,function()
 						if(IsValid(Ent))then Ent:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end

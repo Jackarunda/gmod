@@ -92,7 +92,7 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(CLIENT)then return end
-	if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
+	if(self.Owner:KeyDown(JMod.Config.AltFunctionKey))then
 		local Kit=ents.Create("ent_jack_gmod_ezdesignator")
 		Kit:SetPos(self.Owner:GetShootPos()+self.Owner:GetAimVector()*20)
 		Kit:SetAngles(self.Owner:GetAimVector():Angle())

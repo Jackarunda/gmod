@@ -31,7 +31,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att,Dir=(tr and tr.HitPos+tr.HitNormal*5) or self:GetPos()+Vector(0,0,30),self.Owner or self,-self:GetRight()
-		JMod_Sploom(Att,SelfPos,150)
+		JMod.Sploom(Att,SelfPos,150)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,700)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
@@ -45,8 +45,8 @@ if(SERVER)then
 			end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,.4)
-		JMod_BlastDoors(self,SelfPos,2)
+		JMod.WreckBuildings(self,SelfPos,.4)
+		JMod.BlastDoors(self,SelfPos,2)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos-Dir*100,Dir*300)

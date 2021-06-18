@@ -15,13 +15,13 @@ ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
 		self:SetBodygroup(2,1)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -32,7 +32,7 @@ if(SERVER)then
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			self:EmitSound("Grenade.ImpactHard")
 		end
-		if self:GetState() == JMOD_EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
+		if self:GetState() == JMOD_JMod.EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
 			self.GotParented=true
 			self.Weld = nil
@@ -57,15 +57,15 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		JMod_Sploom(self.Owner or game.GetWorld(),SelfPos,160)
+		JMod.Sploom(self.Owner or game.GetWorld(),SelfPos,160)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Blam=EffectData()
 		Blam:SetOrigin(SelfPos)
 		Blam:SetScale(0.5)
 		util.Effect("eff_jack_plastisplosion",Blam,true,true)
 		util.ScreenShake(SelfPos,20,20,1,1000)
-		JMod_WreckBuildings(self,SelfPos,0.5)
-		JMod_BlastDoors(self,SelfPos,0.5)
+		JMod.WreckBuildings(self,SelfPos,0.5)
+		JMod.BlastDoors(self,SelfPos,0.5)
 		
 		if IsValid(self.StickObj) and !self.StickObj:IsWorld() then
 			local dmginfo = DamageInfo()

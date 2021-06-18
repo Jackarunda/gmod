@@ -101,7 +101,7 @@ local STATE_BROKEN,STATE_OFF=-1,0 -- these are the only states that are common t
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=math.ceil(value*EZ_GRADE_BUFFS[Grade]) end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=math.ceil(value*JMod.EZ_GRADE_BUFFS[Grade]) end
 end
 function ENT:Upgrade(level)
 	if not(level)then level=self:GetGrade()+1 end
@@ -116,7 +116,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -188,7 +188,7 @@ if(SERVER)then
 		self.Durability=0
 		self:SetState(STATE_BROKEN)
 		local Force=dmginfo:GetDamageForce()
-		for i=1,JMOD_CONFIG.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
+		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats
@@ -202,7 +202,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		local Force=dmginfo:GetDamageForce()
-		for i=1,JMOD_CONFIG.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10 do
+		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10 do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats

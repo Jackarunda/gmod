@@ -15,7 +15,7 @@ local DetonationEffects={
 	balls={ -- b a l l s
 		col=Color(128,255,128),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			for i=1,100 do
 				local Nade=ents.Create("sent_ball")
 				Nade:SetPos(pos)
@@ -31,7 +31,7 @@ local DetonationEffects={
 	cheese={ -- CHEESE! FOR EVERYONE!
 		col=Color(255,220,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			for k,v in pairs(ents.FindInSphere(pos,1000))do
 				if(v:IsPlayer())then
 					net.Start("JMod_SFX")
@@ -96,7 +96,7 @@ local DetonationEffects={
 	cluster={ -- chaotic neutral
 		col=Color(128,128,128),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			for i=1,5 do
 				local Nade=ents.Create("ent_jack_gmod_ezanomaly_grenade")
 				Nade:SetPos(pos)
@@ -194,7 +194,7 @@ local DetonationEffects={
 	spiders={ -- SPIDERS AAAAAAAAAAAAAAAAAAAAAAAA
 		col=Color(60,60,60),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,0)
+			JMod.Sploom(owner,pos,0)
 			sound.Play("snds_jack_gmod/spiders.wav",pos,100,100)
 			for i=1,100 do
 				local Nade=ents.Create("npc_headcrab_fast")
@@ -211,7 +211,7 @@ local DetonationEffects={
 	inferno={ -- Instant Inferno
 		col=Color(255,100,50),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,0)
+			JMod.Sploom(owner,pos,0)
 			sound.Play("snds_jack_gmod/soldier_firefirefire.wav",pos,100,100)
 			sound.Play("snds_jack_gmod/soldier_firefirefire.wav",pos,100,100)
 			for k,v in pairs(ents.FindInSphere(pos,1000))do
@@ -236,7 +236,7 @@ local DetonationEffects={
 	gas={ -- g a s
 		col=Color(128,255,128),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			for i=1,200 do
 				timer.Simple(math.Rand(0,1),function()
 					local Nade=ents.Create("ent_jack_gmod_ezgasparticle")
@@ -253,7 +253,7 @@ local DetonationEffects={
 	mines={ -- MINES! FOR EVERYONE!
 		col=Color(50,100,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,1)
+			JMod.Sploom(owner,pos,1)
 			for i=1,30 do
 				local Nade=ents.Create("ent_jack_gmod_ezlandmine")
 				Nade:SetPos(pos)
@@ -271,7 +271,7 @@ local DetonationEffects={
 	frags={ -- FRAGS! FOR EVERYONE!
 		col=Color(50,100,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,1)
+			JMod.Sploom(owner,pos,1)
 			for i=1,15 do
 				local Nade=ents.Create("ent_jack_gmod_ezfragnade")
 				Nade:SetPos(pos)
@@ -326,7 +326,7 @@ local DetonationEffects={
 	succ={ -- SUCC
 		col=Color(0,0,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			local Whoah=ents.Create("ent_jack_gmod_ezblackhole")
 			Whoah:SetPos(pos)
 			Whoah.Owner=owner
@@ -336,7 +336,7 @@ local DetonationEffects={
 	tsarbomba={ -- tsar bomba
 		col=Color(150,0,0),
 		func=function(self,pos,owner)
-			JMod_Sploom(owner,pos,10)
+			JMod.Sploom(owner,pos,10)
 			local Whoah=ents.Create("ent_jack_gmod_eznuke_big")
 			Whoah:SetPos(pos)
 			Whoah.Owner=owner
@@ -409,7 +409,7 @@ for k,v in pairs(DetonationEffects)do table.insert(ENT.DetonationEffects,v) end
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(math.Rand(1,20),function()
 			if(IsValid(self))then self:Detonate() end

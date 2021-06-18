@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(2.5,-10,-9)
 SWEP.BodyHolsterPosL = Vector(3.5,-10,9)
 SWEP.BodyHolsterScale = 1
 
-JMod_ApplyAmmoSpecs(SWEP,"Magnum Rifle Round")
+JMod.ApplyAmmoSpecs(SWEP,"Magnum Rifle Round")
 
 SWEP.Primary.ClipSize = 5 -- DefaultClip is automatically set.
 
@@ -55,8 +55,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(-.8, -.8, 2)
@@ -111,7 +111,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -127,7 +127,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .65, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .75, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 1, v=60}
 		}
     },
     ["fire_iron"] = {
@@ -140,7 +140,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = .4, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .75, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .85, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 1, v=60}
 		}
     },
     ["sgreload_start"] = {
@@ -151,7 +151,7 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav", t = .35, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/pull.wav", t = 1, v=60}
 		}
@@ -166,7 +166,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=60, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .8, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bar/insert.wav", t = .15, v=60, p=90}
 		}
     },
@@ -179,7 +179,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .55, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1.25, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 1.25, v=60}
 		}
     },
     ["sgreload_finish_empty"] = {
@@ -191,7 +191,7 @@ SWEP.Animations = {
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/push.wav", t = .3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/sniper_rifle/lock.wav", t = .6, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1.25, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 1.25, v=60}
 		}
     }
 }

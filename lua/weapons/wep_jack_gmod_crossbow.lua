@@ -24,7 +24,7 @@ SWEP.BodyHolsterScale = .9
 			1	=	c_bo1_crossbow_exptip_bg.smd
 --]]
 
-JMod_ApplyAmmoSpecs(SWEP,"Arrow")
+JMod.ApplyAmmoSpecs(SWEP,"Arrow")
 SWEP.ShootEntity = "ent_jack_gmod_ezarrow"
 SWEP.MuzzleVelocity = 7000
 SWEP.ShootEntityOffset = Vector(-1,0,-2)
@@ -77,8 +77,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-2.22, 4, .6),
     Ang = Angle(-.15, 0, -2),
     Magnification = 1.2,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -110,7 +110,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 1,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=50}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=50}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -131,13 +131,13 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=60},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = .5, v=60},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = 0, v=60},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/crossbow/pull.wav", t = .7, v=55},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.4, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.4, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/crossbow/in.wav", t = 2.2, v=55, p=120},
 			{s = "snds_jack_gmod/ez_weapons/crossbow/clack.wav", t = 3, v=55},
-			{s = JMod_GunHandlingSounds.grab, t = 3.7, v=55}
+			{s = JMod.GunHandlingSounds.grab, t = 3.7, v=55}
 		}
     },
 }

@@ -136,8 +136,8 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local Time=CurTime()
-		JMod_Hint(activator, "unpackage", self)
-		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
+		JMod.Hint(activator, "unpackage", self)
+		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
 			self:Unpackage()
 		else
 			if(self:GetSizeScale()<=2)then activator:PickupObject(self) end

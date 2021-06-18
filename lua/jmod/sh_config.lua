@@ -1,4 +1,4 @@
-local function JMod_SetArmorPlayerModelModifications()
+local function SetArmorPlayerModelModifications()
 	local CSSCTTable = {
 		Face={
 			["GasMask"]={
@@ -261,17 +261,17 @@ local function JMod_SetArmorPlayerModelModifications()
 			}
 		}
 	}
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/phoenix.mdl"]=CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/guerilla.mdl"]=CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/leet.mdl"]=CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/arctic.mdl"]=CSSTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/swat.mdl"]=CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/urban.mdl"]=CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/gasmask.mdl"]=CSSCTTable
-	JMOD_LUA_CONFIG.ArmorOffsets["models/player/riot.mdl"]=CSSCTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/phoenix.mdl"]=CSSTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/guerilla.mdl"]=CSSTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/leet.mdl"]=CSSTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/arctic.mdl"]=CSSTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/swat.mdl"]=CSSCTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/urban.mdl"]=CSSCTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/gasmask.mdl"]=CSSCTTable
+	JMod.LuaConfig.ArmorOffsets["models/player/riot.mdl"]=CSSCTTable
 end
 
-function JMod_InitGlobalConfig(forceNew)
+function JMod.InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
 		Version=37,
@@ -607,43 +607,43 @@ function JMod_InitGlobalConfig(forceNew)
 			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=150},"Weapons"}
 		}
 	}
-	local FileContents=file.Read("jmod_config.txt")
+	local FileContents=file.Read("JMod.Config.txt")
 	if(FileContents)then
 		local Existing=util.JSONToTable(FileContents)
 		if((Existing)and(Existing.Version))then
 			if(Existing.Version==NewConfig.Version)then
-				JMOD_CONFIG=util.JSONToTable(FileContents)
+				JMod.Config=util.JSONToTable(FileContents)
 			else
-				file.Write("jmod_config_OLD.txt",FileContents)
+				file.Write("JMod.Config_OLD.txt",FileContents)
 			end
 		end
 	end
-	if((not(JMOD_CONFIG))or(forceNew))then
-		JMOD_CONFIG=NewConfig
-		file.Write("jmod_config.txt",util.TableToJSON(JMOD_CONFIG,true))
+	if((not(JMod.Config))or(forceNew))then
+		JMod.Config=NewConfig
+		file.Write("JMod.Config.txt",util.TableToJSON(JMod.Config,true))
 	end
 	print("JMOD: config file loaded")
 	-- jmod lua config --
-	if not(JMOD_LUA_CONFIG)then JMOD_LUA_CONFIG={BuildFuncs={},ArmorOffsets={}} end
-	JMOD_LUA_CONFIG.BuildFuncs=JMOD_LUA_CONFIG.BuildFuncs or {}
-	JMOD_LUA_CONFIG.ArmorOffsets=JMOD_LUA_CONFIG.ArmorOffsets or {}
+	if not(JMod.LuaConfig)then JMod.LuaConfig={BuildFuncs={},ArmorOffsets={}} end
+	JMod.LuaConfig.BuildFuncs=JMod.LuaConfig.BuildFuncs or {}
+	JMod.LuaConfig.ArmorOffsets=JMod.LuaConfig.ArmorOffsets or {}
 	
-	JMOD_LUA_CONFIG.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
+	JMod.LuaConfig.BuildFuncs.spawnHL2buggy=function(playa, position, angles)
 		local Ent=ents.Create("prop_vehicle_jeep_old")
 		Ent:SetModel("models/buggy.mdl")
 		Ent:SetKeyValue("vehiclescript","scripts/vehicles/jeep_test.txt")
 		Ent:SetPos(position)
 		Ent:SetAngles(angles)
-		JMod_Owner(Ent,playa)
+		JMod.Owner(Ent,playa)
 		Ent:Spawn()
 		Ent:Activate()
 	end
-	JMod_SetArmorPlayerModelModifications()
+	SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
 end
 
 hook.Add("Initialize","JMOD_Initialize",function()
-	if(SERVER)then JMod_InitGlobalConfig() end
+	if(SERVER)then JMod.InitGlobalConfig() end
 end)
 
 -- todo: fix riot shield mat

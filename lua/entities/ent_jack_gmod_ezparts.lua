@@ -8,7 +8,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="parts"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZpartBoxSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/Items/item_item_crate.mdl"
 ENT.Material="models/mat_jack_gmod_ezparts"
 ENT.ModelScale=.8
@@ -36,7 +36,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,2*JMOD_CONFIG.SupplyEffectMult do self:FlingProp("models/mechanics/gears/gear12x6_small.mdl") end
+		for i=1,2*JMod.Config.SupplyEffectMult do self:FlingProp("models/mechanics/gears/gear12x6_small.mdl") end
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos+VectorRand())
 		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())

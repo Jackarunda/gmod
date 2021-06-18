@@ -24,7 +24,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -49,7 +49,7 @@ if(SERVER)then
 		end)
 		---
 		self.Fuze=100
-		self:SetState(JMOD_EZ_STATE_OFF)
+		self:SetState(JMOD_JMod.EZ_STATE_OFF)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>25)then
@@ -68,34 +68,34 @@ if(SERVER)then
 		end
 	end
 	function ENT:Arm()
-		if(self:GetState()==JMOD_EZ_STATE_ARMED)then return end
+		if(self:GetState()==JMOD_JMod.EZ_STATE_ARMED)then return end
 		self:EmitSound("snds_jack_gmod/ignite.wav",60,100)
 		timer.Simple(.5,function()
-			if(IsValid(self))then self:SetState(JMOD_EZ_STATE_ARMED) end
+			if(IsValid(self))then self:SetState(JMOD_JMod.EZ_STATE_ARMED) end
 		end)
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
-			if(State==JMOD_EZ_STATE_OFF and Alt)then
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
+			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
 				self:Arm()
-				JMod_Hint(Dude, "fuse", self)
+				JMod.Hint(Dude, "fuse", self)
 			end
-			JMod_ThrowablePickup(Dude,self,500,250)
-			if not Alt then JMod_Hint(Dude, "arm", self) end
+			JMod.ThrowablePickup(Dude,self,500,250)
+			if not Alt then JMod.Hint(Dude, "arm", self) end
 		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		JMod_Sploom(self.Owner or game.GetWorld(),SelfPos,115)
+		JMod.Sploom(self.Owner or game.GetWorld(),SelfPos,115)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Blam=EffectData()
 		Blam:SetOrigin(SelfPos)
@@ -107,7 +107,7 @@ if(SERVER)then
 	function ENT:Think()
 		local Time=CurTime()
 		local state = self:GetState()
-		if(state==JMOD_EZ_STATE_ARMED)then
+		if(state==JMOD_JMod.EZ_STATE_ARMED)then
 			local Fsh=EffectData()
 			Fsh:SetOrigin(self:GetPos()+self:GetForward()*6)
 			Fsh:SetScale(1)

@@ -23,7 +23,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -63,7 +63,7 @@ if(SERVER)then
 		if(dmginfo:GetInflictor()==self)then return end
 		self.Entity:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
-		if(JMod_LinCh(Dmg,60,120))then
+		if(JMod.LinCh(Dmg,60,120))then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
@@ -76,20 +76,20 @@ if(SERVER)then
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude,Time=activator or activatorAgain,CurTime()
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
 			if(State==STATE_OFF)then
 				if(Alt)then
 					if(self.NextDisarmFail<Time)then
 						net.Start("JMod_EZtimeBomb")
 						net.WriteEntity(self)
 						net.Send(Dude)
-						JMod_Hint(Dude, "timebomb", self)
+						JMod.Hint(Dude, "timebomb", self)
 					end
 				else
 					constraint.RemoveAll(self)
@@ -97,14 +97,14 @@ if(SERVER)then
 					self.StuckTo=nil
 					Dude:PickupObject(self)
 					self.NextStick=Time+.5
-					JMod_Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky", self)
 				end
 			else
 				if(Alt)then
 					if(self.NextDisarm<Time)then
 						self.NextDisarm=Time+.2
 						
-						self.DisarmProgress=self.DisarmProgress+JMOD_CONFIG.BombDisarmSpeed
+						self.DisarmProgress=self.DisarmProgress+JMod.Config.BombDisarmSpeed
 						self.NextDisarmFail=Time+1
 						Dude:PrintMessage(HUD_PRINTCENTER,"disarming: "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
 						if(self.DisarmProgress>=self.DisarmNeeded)then
@@ -112,7 +112,7 @@ if(SERVER)then
 							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
 							self.DisarmProgress=0
 						end
-						JMod_Hint(Dude, "defuse", self)
+						JMod.Hint(Dude, "defuse", self)
 					end
 				else
 					constraint.RemoveAll(self)
@@ -169,8 +169,8 @@ if(SERVER)then
 						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 					end
 				end)
-				JMod_WreckBuildings(self,SelfPos,PowerMult)
-				JMod_BlastDoors(self,SelfPos,PowerMult)
+				JMod.WreckBuildings(self,SelfPos,PowerMult)
+				JMod.BlastDoors(self,SelfPos,PowerMult)
 				timer.Simple(0,function()
 					local ZaWarudo=game.GetWorld()
 					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo

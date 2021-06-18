@@ -15,7 +15,7 @@ SWEP.BodyHolsterPos = Vector(1,-11,-11)
 SWEP.BodyHolsterPosL = Vector(.5,-11,11)
 SWEP.BodyHolsterScale = .8
 
-JMod_ApplyAmmoSpecs(SWEP,"Light Rifle Round",.9)
+JMod.ApplyAmmoSpecs(SWEP,"Light Rifle Round",.9)
 
 SWEP.Primary.ClipSize = 150 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- open-bolt firearm lol
@@ -53,8 +53,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.47, 1, 2.38),
     Ang = Angle(.5, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, -1, 2)
@@ -118,7 +118,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw1",
         Time = 2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60, p=90}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -140,18 +140,18 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/lmg/back.wav", t = .6, v=65},
 			{s = "snds_jack_gmod/ez_weapons/lmg/forward.wav", t = 1, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 1.5, v=65},
+			{s = JMod.GunHandlingSounds.grab, t = 1.5, v=65},
 			{s = "snds_jack_gmod/ez_weapons/lmg/open.wav", t = 2.2, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/lmg/out.wav", t = 3.3, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 4.4, v=65, p=80},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 4.4, v=65, p=80},
 			{s = "snds_jack_gmod/ez_weapons/lmg/in.wav", t = 5.4, v=65},
 			{s = "snds_jack_gmod/ez_weapons/lmg/chain.wav", t = 6.1, v=65},
-			{s = JMod_GunHandlingSounds.tap.metallic, t = 6.7, v=65},
+			{s = JMod.GunHandlingSounds.tap.metallic, t = 6.7, v=65},
 			{s = "snds_jack_gmod/ez_weapons/lmg/close.wav", t = 7.45, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 8.5, v=65}
+			{s = JMod.GunHandlingSounds.grab, t = 8.5, v=65}
 		}
     }
 }

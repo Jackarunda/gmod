@@ -118,7 +118,7 @@ SWEP.MeleeForceAng = Angle(-30,30,0)
 SWEP.MeleeAttackTime = .35
 SWEP.MeleeTime = .5
 SWEP.MeleeDelay = .3
-SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
+SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
 SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
 SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
@@ -161,7 +161,7 @@ SWEP.Hook_PostFireBullets = function(self)
 		end)
 		if(Tr.Hit)then
 			Dist=RPos:Distance(Tr.HitPos)
-			if(SERVER)then JMod_Hint(self.Owner,"backblast wall") end
+			if(SERVER)then JMod.Hint(self.Owner,"backblast wall") end
 		end
 		for i=1,4 do
 			util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
@@ -206,10 +206,10 @@ end
 -- Behavior Modifications by Jackarunda --
 function SWEP:TryBustDoor(ent,dmg)
 	local RealDist=(ent:GetPos() - self:GetPos()):Length()
-	if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod_IsDoor(ent)))then
+	if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod.IsDoor(ent)))then
 		ent.JModDoorBreachedness=(ent.JModDoorBreachedness or 0)+self.DoorBreachPower/self.Num
 		if(ent.JModDoorBreachedness>=1)then
-			JMod_BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+			JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
 		end
 	end
 end
@@ -231,7 +231,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 	if not(ply:Alive())then return end
 	local Wep=ply:GetActiveWeapon()
 	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
-		local GlobalMult=(JMOD_CONFIG and JMOD_CONFIG.WeaponSwayMult) or 1
+		local GlobalMult=(JMod.Config and JMod.Config.WeaponSwayMult) or 1
 		local Amt,Sporadicness,FT=20*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
 		if(ply:Crouching())then Amt=Amt*.65 end
 		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.25 end
@@ -239,7 +239,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 			Sporadicness=Sporadicness*1.5
 			Amt=Amt*2
 		else
-			local Key=(JMOD_CONFIG and JMOD_CONFIG.AltFunctionKey) or IN_WALK
+			local Key=(JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
 			if(ply:KeyDown(Key))then
 				StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
 				if(StabilityStamina>0)then
@@ -303,7 +303,7 @@ function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
 function SWEP:OnDrop()
-	local Specs=JMod_WeaponTable[self.PrintName]
+	local Specs=JMod.WeaponTable[self.PrintName]
 	if(Specs)then
 		local Ent=ents.Create(Specs.ent)
 		Ent:SetPos(self:GetPos())
@@ -518,7 +518,7 @@ function SWEP:MeleeAttack(melee2)
 
 		local RandFact=self.MeleeDmgRand or 0
 		local Randomness=math.Rand(1-RandFact,1+RandFact)
-		local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
+		local GlobalMult = ((JMod.Config and JMod.Config.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
 
         dmginfo:SetInflictor(self)
         dmginfo:SetDamage(dmg * relspeed * Randomness * GlobalMult)

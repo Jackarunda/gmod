@@ -8,7 +8,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="nutrients"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZnutrientBoxSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/cardboard_box003a.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"
 ENT.ModelScale=1
@@ -39,7 +39,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,7*JMOD_CONFIG.SupplyEffectMult do
+		for i=1,7*JMod.Config.SupplyEffectMult do
 			self:FlingProp(table.Random(self.FoodModels))
 		end
 	end
@@ -60,12 +60,12 @@ if(SERVER)then
 					end)
 				end
 				self:UseEffect()
-				ply.EZnutrition.NextEat=Time+100/JMOD_CONFIG.FoodSpecs.EatSpeed
-				ply.EZnutrition.Nutrients=ply.EZnutrition.Nutrients+20*JMOD_CONFIG.FoodSpecs.ConversionEfficiency
+				ply.EZnutrition.NextEat=Time+100/JMod.Config.FoodSpecs.EatSpeed
+				ply.EZnutrition.Nutrients=ply.EZnutrition.Nutrients+20*JMod.Config.FoodSpecs.ConversionEfficiency
 				self:SetResource(self:GetResource()-10)
 				if((ply.getDarkRPVar)and(ply.setDarkRPVar)and(ply:getDarkRPVar("energy")))then
 					local Old=ply:getDarkRPVar("energy")
-					ply:setDarkRPVar("energy",math.Clamp(Old+20*JMOD_CONFIG.FoodSpecs.ConversionEfficiency,0,100))
+					ply:setDarkRPVar("energy",math.Clamp(Old+20*JMod.Config.FoodSpecs.ConversionEfficiency,0,100))
 				end
 				if(self:GetResource()<=0)then self:Remove() end
 				ply:PrintMessage(HUD_PRINTCENTER,"nutrition: "..ply.EZnutrition.Nutrients.."/100")

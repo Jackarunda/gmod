@@ -34,7 +34,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		JMod_Colorify(self)
+		JMod.Colorify(self)
 		---
 		self.MaxDurability=100
 		self.MaxElectricity=100
@@ -50,8 +50,8 @@ if(SERVER)then
 		self.HaveCheckedForSky=false
 		self.ConnectionAttempts=0
 		self.ConnectionlessThinks=0
-		if(JMOD_CONFIG.Blueprints["EZ Supply Radio"])then
-			self.EZbuildCost=JMOD_CONFIG.Blueprints["EZ Supply Radio"][2]
+		if(JMod.Config.Blueprints["EZ Supply Radio"])then
+			self.EZbuildCost=JMod.Config.Blueprints["EZ Supply Radio"][2]
 		end
 		---
 		local Path="/npc/combine_soldier/vo/"
@@ -64,27 +64,27 @@ if(SERVER)then
 		self.NextUseTime=Time+.25
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then JMod_Hint(self.Owner, "destroyed", self) return end
-			local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+			if(State==STATE_BROKEN)then JMod.Hint(self.Owner, "destroyed", self) return end
+			local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 			if State > 0 then
 				if Alt and State == STATE_READY then
 					net.Start("JMod_EZradio")
 						net.WriteBool(false)
 						--net.WriteTable()
-						net.WriteUInt(table.Count(JMOD_CONFIG.RadioSpecs.AvailablePackages), 8)
-						for k, v in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
+						net.WriteUInt(table.Count(JMod.Config.RadioSpecs.AvailablePackages), 8)
+						for k, v in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
 							net.WriteString(k)
 						end
 						net.WriteEntity(self)
-						net.WriteString(JMod_EZradioStatus(self,self:GetStationID(),activator,false))
+						net.WriteString(JMod.EZradioStatus(self,self:GetStationID(),activator,false))
 					net.Send(activator)
 				else
 					self:TurnOff()
-					JMod_Hint(activator, "toggle", self)
+					JMod.Hint(activator, "toggle", self)
 				end
 			else
-				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod_Hint(activator, "aid help", self)
-				else JMod_Hint(self.Owner, "nopower", self) end
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "aid help", self)
+				else JMod.Hint(self.Owner, "nopower", self) end
 			end
 		end
 	end
@@ -136,10 +136,10 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
-		JMod_Owner(self,activator)
+		JMod.Owner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-				JMod_Colorify(self)
+				JMod.Colorify(self)
 			end
 		end
 		self:SetState(STATE_CONNECTING)
@@ -158,7 +158,7 @@ if(SERVER)then
 		end
 		StationKey="J.I. Aid Outpost #"..tostring(StationKey)
 		self:SetStationID(StationKey)
-		JMod_EZradioEstablish(self,StationKey)
+		JMod.EZradioEstablish(self,StationKey)
 		self:SetState(STATE_READY)
 		timer.Simple(1,function()
 			if(IsValid(self))then
@@ -177,7 +177,7 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.Owner)
 				else
-					JMod_Hint(self.Owner, "aid sky", self)
+					JMod.Hint(self.Owner, "aid sky", self)
 					self.ConnectionAttempts = self.ConnectionAttempts + 1
 					if(self.ConnectionAttempts>5)then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
@@ -256,7 +256,7 @@ if(SERVER)then
 					local Msg,Num='stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:',1
 					self:Speak(Msg,ParrotPhrase)
 					local str = ""
-					for name,items in pairs(JMOD_CONFIG.RadioSpecs.AvailablePackages) do
+					for name,items in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
 						str = str .. name
 						if Num > 0 and Num % 10 == 0 then
 							local newStr = str
@@ -272,14 +272,14 @@ if(SERVER)then
 					timer.Simple(Num/10,function()
 						if(IsValid(self))then self:Speak(str) end
 					end)
-					JMod_Hint(self.Owner, "aid package", self)
+					JMod.Hint(self.Owner, "aid package", self)
 					return true
 				end
 			elseif(Name=="status")then
-				self:Speak(JMod_EZradioStatus(self,self:GetStationID(),ply,BFFreq),ParrotPhrase)
+				self:Speak(JMod.EZradioStatus(self,self:GetStationID(),ply,BFFreq),ParrotPhrase)
 				return true
-			elseif(JMOD_CONFIG.RadioSpecs.AvailablePackages[Name])then
-				self:Speak(JMod_EZradioRequest(self,self:GetStationID(),ply,Name,BFFreq),ParrotPhrase)
+			elseif(JMod.Config.RadioSpecs.AvailablePackages[Name])then
+				self:Speak(JMod.EZradioRequest(self,self:GetStationID(),ply,Name,BFFreq),ParrotPhrase)
 				return true
 			end
 		end
@@ -287,11 +287,11 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Dish=JMod_MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
-		self.Panel=JMod_MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
-		self.Headset=JMod_MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
-		self.LeftHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
-		self.RightHandle=JMod_MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
+		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
+		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
+		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
 		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
 		self.Voices=Files
@@ -319,26 +319,26 @@ elseif(CLIENT)then
 		---
 		local DishAng=SelfAng:GetCopy()
 		DishAng:RotateAroundAxis(Right,20)
-		JMod_RenderModel(self.Dish,BasePos+Up*8+Forward*8,DishAng,nil,Vector(.7,.7,.7))
+		JMod.RenderModel(self.Dish,BasePos+Up*8+Forward*8,DishAng,nil,Vector(.7,.7,.7))
 		---
 		if(DetailDraw)then
 			local PanelAng=SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Right,90)
-			JMod_RenderModel(self.Panel,BasePos-Up*15-Forward*6,PanelAng,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.Panel,BasePos-Up*15-Forward*6,PanelAng,nil,Vector(.7,.7,.7))
 			---
 			local HeadsetAng=SelfAng:GetCopy()
 			HeadsetAng:RotateAroundAxis(Right,-110)
-			JMod_RenderModel(self.Headset,BasePos-Up*4,HeadsetAng,nil,ColorToVector(self:GetColor()))
+			JMod.RenderModel(self.Headset,BasePos-Up*4,HeadsetAng,nil,ColorToVector(self:GetColor()))
 			---
 			local LeftHandleAng=SelfAng:GetCopy()
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Up(),90)
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Right(),173)
-			JMod_RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
+			JMod.RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
 			---
 			local RightHandleAng=SelfAng:GetCopy()
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Up(),-90)
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Right(),173)
-			JMod_RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
+			JMod.RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
 			if((Closeness<20000)and(State>0))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),80)
@@ -350,7 +350,7 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined(self:GetStationID(),"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				end
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("Power: "..math.Round(ElecFrac*100).."%","JMod-Display",0,70,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined(StateMsgs[State],"JMod-Display",0,100,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				if(State==STATE_READY)then

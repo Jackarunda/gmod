@@ -12,7 +12,7 @@ ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(2,function()
 			if(IsValid(self))then self:Detonate() end
@@ -33,7 +33,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Time=self:GetPos()+Vector(0,0,10),CurTime()
-		JMod_Sploom(self.Owner,self:GetPos(),20)
+		JMod.Sploom(self.Owner,self:GetPos(),20)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,140)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,140)
 		local plooie=EffectData()

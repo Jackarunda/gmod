@@ -20,7 +20,7 @@ if(SERVER)then
 		local SpawnPos=tr.HitPos+tr.HitNormal*40
 		local ent=ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -85,8 +85,8 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),60,120))then
-			JMod_Owner(self,dmginfo:GetAttacker())
+		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
+			JMod.Owner(self,dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end
@@ -95,18 +95,18 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,120)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod_Hint(activator, "airburst", self)
+				JMod.Hint(activator, "airburst", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,120)
@@ -121,7 +121,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,100)
+		JMod.Sploom(Att,SelfPos,100)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,1000)
 		---
@@ -139,7 +139,7 @@ if(SERVER)then
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod_Owner(Flame,self.Owner or self)
+			JMod.Owner(Flame,self.Owner or self)
 			Flame:Spawn()
 			Flame:Activate()
 		end
@@ -163,7 +163,7 @@ if(SERVER)then
 		else
 			self.FreefallTicks=0
 		end
-		JMod_AeroDrag(self,self:GetForward())
+		JMod.AeroDrag(self,self:GetForward())
 		self:NextThink(CurTime()+.1)
 		return true
 	end

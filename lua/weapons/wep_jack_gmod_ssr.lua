@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(2,-11,-11)
 SWEP.BodyHolsterPosL = Vector(1,-11,11)
 SWEP.BodyHolsterScale = .9
 
-JMod_ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.2)
+JMod.ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.2)
 
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 
@@ -51,8 +51,8 @@ SWEP.IronSightStruct = {
 	Pos = Vector(-4.4, 1, 1.35),
 	Ang = Angle(.1, 0, -5),
 	Magnification = 1.1,
-	SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-	SwitchFromSound = JMod_GunHandlingSounds.aim.out
+	SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -91,7 +91,7 @@ SWEP.Animations = {
 	["draw"] = {
 		Source = "draw",
 		Time = 1.5,
-		SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+		SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
 		LHIK = true,
 		LHIKIn = 0,
@@ -101,7 +101,7 @@ SWEP.Animations = {
 		Source = "draw_e",
 		Time = 2.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
+			{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = .1, v=60}
 		},
 		Mult=1,
@@ -125,13 +125,13 @@ SWEP.Animations = {
 		LHIKOut = 0.5,
 		ShellEjectAt = .8,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 0, v=65, p=150},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = 0, v=65, p=150},
 			{s = "snds_jack_gmod/ez_weapons/ssr/open.wav", t = .4, v=65},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .75, v=60, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .75, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/ssr/align.wav", t = 1.15, v=60},
 			{s = "snds_jack_gmod/ez_weapons/ssr/in.wav", t = 1.4, v=65},
 			{s = "snds_jack_gmod/ez_weapons/ssr/close.wav", t = 2, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2.6, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 2.6, v=60}
 		}
 	},
 }

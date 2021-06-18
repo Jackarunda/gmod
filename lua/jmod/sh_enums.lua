@@ -1,42 +1,36 @@
 -- EZ radio stations
-EZ_RADIO_STATIONS={}
-EZ_STATION_STATE_READY=1
-EZ_STATION_STATE_DELIVERING=2
-EZ_STATION_STATE_BUSY=3
+JMod.EZ_RADIO_STATIONS={}
+JMod.EZ_STATION_STATE_READY=1
+JMod.EZ_STATION_STATE_DELIVERING=2
+JMod.EZ_STATION_STATE_BUSY=3
 
 -- EZ item quality grade (upgrade level) definitions
-EZ_GRADE_BASIC=1
-EZ_GRADE_COPPER=2
-EZ_GRADE_SILVER=3
-EZ_GRADE_GOLD=4
-EZ_GRADE_PLATINUM=5
-EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
-EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
+JMod.EZ_GRADE_BASIC=1
+JMod.EZ_GRADE_COPPER=2
+JMod.EZ_GRADE_SILVER=3
+JMod.EZ_GRADE_GOLD=4
+JMod.EZ_GRADE_PLATINUM=5
+JMod.EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
+JMod.EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
 
 -- Resource enums
-JMod_EZammoBoxSize=300
-JMod_EZfuelCanSize=100
-JMod_EZbatterySize=100
-JMod_EZpartBoxSize=100
-JMod_EZsmallCrateSize=100
-JMod_EZsuperRareResourceSize=10
-JMod_EZexplosivesBoxSize=100
-JMod_EZchemicalsSize=100
-JMod_EZadvPartBoxSize=20
-JMod_EZmedSupplyBoxSize=50
-JMod_EZnutrientBoxSize=100
-JMod_EZcrateSize=15
-JMod_EZpartsCrateSize=15
-JMod_EZnutrientsCrateSize=15
-JMod_EZcoolantDrumSize=100
+JMod.EZammoBoxSize=300
+JMod.EZbasicResourceBoxSize=100
+JMod.EZsmallCrateSize=100
+JMod.EZsuperRareResourceSize=10
+JMod.EZadvPartBoxSize=20
+JMod.EZmedSupplyBoxSize=50
+JMod.EZcrateSize=15
+JMod.EZpartsCrateSize=15
+JMod.EZnutrientsCrateSize=15
 
 -- State enums
-JMOD_EZ_STATE_BROKEN 	= -1
-JMOD_EZ_STATE_OFF 		= 0
-JMOD_EZ_STATE_PRIMED 	= 1
-JMOD_EZ_STATE_ARMING 	= 2
-JMOD_EZ_STATE_ARMED		= 3
-JMOD_EZ_STATE_WARNING	= 4
+JMod.EZ_STATE_BROKEN 	= -1
+JMod.EZ_STATE_OFF 		= 0
+JMod.EZ_STATE_PRIMED 	= 1
+JMod.EZ_STATE_ARMING 	= 2
+JMod.EZ_STATE_ARMED		= 3
+JMod.EZ_STATE_WARNING	= 4
 
 -- TODO
 -- yeet a wrench easter egg
@@ -80,7 +74,7 @@ JMOD_EZ_STATE_WARNING	= 4
 --[[
 [JMod] lua/jmod/sv_hint.lua:3: Tried to use a NULL entity!
 1. __newindex - [C]:-1
-2. JMod_Hint - lua/jmod/sv_hint.lua:3
+2. JMod.Hint - lua/jmod/sv_hint.lua:3
 3. unknown - lua/entities/ent_jack_gmod_ezweapon.lua:78
 Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- make each outpost, when established, have a random position outside the map

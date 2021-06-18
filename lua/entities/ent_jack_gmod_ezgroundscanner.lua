@@ -54,7 +54,7 @@ if(SERVER)then
 		if(self:GetElectricity()>0)then
 			self:SetState(STATE_RUNNING)
 		else
-			JMod_Hint(activator,"nopower")
+			JMod.Hint(activator,"nopower")
 		end
 	end
 	function ENT:TurnOff()
@@ -62,18 +62,18 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
-		JMod_Hint(activator,"oil derrick")
+		JMod.Hint(activator,"oil derrick")
 		local OldOwner=self.Owner
-		JMod_Owner(self,activator)
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		JMod.Owner(self,activator)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(Alt)then
 			if(IsValid(self.Owner))then
 				if(OldOwner~=self.Owner)then -- if owner changed then reset team color
-					JMod_Colorify(self)
+					JMod.Colorify(self)
 				end
 			end
 			if(State==STATE_BROKEN)then
-				JMod_Hint(activator,"destroyed",self)
+				JMod.Hint(activator,"destroyed",self)
 				return
 			elseif(State==STATE_INOPERABLE)then
 				self:TryPlant()
@@ -137,7 +137,7 @@ if(SERVER)then
 			return
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			self:SetProgress(self:GetProgress()+EZ_GRADE_BUFFS[self:GetGrade()])
+			self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
 			self:ConsumeElectricity()
 			if(self:GetProgress()>=100)then
 				self:SpawnOil()
@@ -152,7 +152,7 @@ if(SERVER)then
 		local Oil=ents.Create("ent_jack_gmod_ezrawresource_oil")
 		Oil:SetPos(SelfPos+Forward*115-Right*90)
 		Oil:Spawn()
-		JMod_Owner(self.Owner)
+		JMod.Owner(self.Owner)
 		Oil:Activate()
 	end
 	function ENT:ConsumeElectricity(amt)
@@ -176,7 +176,7 @@ elseif(CLIENT)then
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		local TankAng=SelfAng:GetCopy()
 		TankAng:RotateAroundAxis(Right,-90)
-		JMod_RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
+		JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
 		self:DrawModel()
 		--
 		local BasePos=SelfPos+Up*32
@@ -196,11 +196,11 @@ elseif(CLIENT)then
 				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/200
-				local R,G,B=JMod_GoodBadColor(ElecFrac)
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local CoolFrac=self:GetCoolant()/100
 				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				--local R,G,B=JMod_GoodBadColor(CoolFrac)
+				--local R,G,B=JMod.GoodBadColor(CoolFrac)
 				--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end

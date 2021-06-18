@@ -8,7 +8,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies="munitions"
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZammoBoxSize
+ENT.MaxResource=JMod.EZammoBoxSize
 ENT.Model="models/Items/BoxJRounds.mdl"
 ENT.Material="models/mat_jack_gmod_ezmunitionbox"
 ENT.ModelScale=2.5
@@ -34,7 +34,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:AltUse(ply)
-		JMod_GiveAmmo(ply,self)
+		JMod.GiveAmmo(ply,self)
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,240,150,80)

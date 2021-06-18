@@ -42,7 +42,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 				self:Rape(obj)
 			else
 				-- inverse square law bitchins
-				local PullStrength=((1-Dist/MaxRange)^2)*((JMOD_CONFIG and JMOD_CONFIG.MicroBlackHoleGravityStrength) or 1)
+				local PullStrength=((1-Dist/MaxRange)^2)*((JMod.Config and JMod.Config.MicroBlackHoleGravityStrength) or 1)
 				local Mass=ObjPhys:GetMass()
 				local ApplyForce,Mul=true,1
 				if(obj:IsPlayer())then
@@ -132,7 +132,7 @@ if(SERVER)then
 	function ENT:Think()
 		local Time,Phys,Age,Pos=CurTime(),self:GetPhysicsObject(),self:GetAge(),self:LocalToWorld(self:OBBCenter())
 		Phys:EnableMotion(false)
-		self:SetAge(Age+.05*JMOD_CONFIG.MicroBlackHoleEvaporateSpeed)
+		self:SetAge(Age+.05*JMod.Config.MicroBlackHoleEvaporateSpeed)
 		local MaxRange=Age*150
 		self:SUCC(Time,Phys,Age,Pos,MaxRange)
 		if(Age>90)then self:EmitHawkingRadiation(Age-90) end
