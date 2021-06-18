@@ -13,7 +13,7 @@ local BaseClass = baseclass.Get(ENT.Base)
 
 if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
-		if data.DeltaTime>0.2 and data.Speed>200 and self:GetState() == JMOD_JMod.EZ_STATE_ARMED then
+		if data.DeltaTime>0.2 and data.Speed>200 and self:GetState() == JMod.EZ_STATE_ARMED then
 			self:Detonate()
 		else
 			BaseClass.PhysicsCollide(self, data, physobj)
@@ -21,17 +21,17 @@ if(SERVER)then
 	end
 	
 	function ENT:Arm()
-		self:SetState(JMOD_JMod.EZ_STATE_ARMING)
+		self:SetState(JMod.EZ_STATE_ARMING)
 		timer.Simple(.3, function()
 			if IsValid(self) then
-				self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+				self:SetState(JMod.EZ_STATE_ARMED)
 			end
 		end)
 		self:SpoonEffect()
 	end
 	
 	function ENT:CustomThink(state,tim)
-		if(state==JMOD_JMod.EZ_STATE_ARMED)then
+		if(state==JMod.EZ_STATE_ARMED)then
 			if(IsValid(self.AttachedBomb))then
 				if(self.AttachedBomb:IsPlayerHolding())then self.NextDet=tim+.5 end
 				local CurVel=self.AttachedBomb:GetPhysicsObject():GetVelocity()

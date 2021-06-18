@@ -15,13 +15,13 @@ ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:SetBodygroup(2,1)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -32,7 +32,7 @@ if(SERVER)then
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			self:EmitSound("Grenade.ImpactHard")
 		end
-		if self:GetState() == JMOD_JMod.EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
+		if self:GetState() == JMod.EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
 			self.GotParented=true
 			self.Weld = nil

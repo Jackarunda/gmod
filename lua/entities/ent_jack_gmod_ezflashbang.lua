@@ -12,7 +12,7 @@ ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(2,function()
 			if(IsValid(self))then self:Detonate() end

@@ -60,7 +60,7 @@ if(SERVER)then
 			end
 		end)
 		---
-		self:SetState(JMOD_JMod.EZ_STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
 		self.NextDet=0
 	end
 	
@@ -79,9 +79,9 @@ if(SERVER)then
 			local Pos,State,DetChance=self:GetPos(),self:GetState(),0
 			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end
 			if(math.Rand(0,1)<DetChance)then self:Detonate() end
-			if((math.random(1,10)==3)and not(State==JMOD_JMod.EZ_STATE_BROKEN))then
+			if((math.random(1,10)==3)and not(State==JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
+				self:SetState(JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
@@ -99,7 +99,7 @@ if(SERVER)then
 			local State=self:GetState()
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
+			if(State==JMod.EZ_STATE_OFF and Alt)then
 				self:Prime()
 				JMod.Hint(Dude, "grenade", self)
 			else
@@ -127,21 +127,21 @@ if(SERVER)then
 		if(self.CustomThink)then self:CustomThink(State,Time) end
 		if(self.Exploded)then return end
 		if(IsValid(self))then
-			if(State==JMOD_JMod.EZ_STATE_PRIMED and not self:IsPlayerHolding())then
+			if(State==JMod.EZ_STATE_PRIMED and not self:IsPlayerHolding())then
 				self:Arm()
 			end
 		end
 	end
 	
 	function ENT:Prime()
-		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SetBodygroup(1,1)
 	end
 	
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 	end
 	

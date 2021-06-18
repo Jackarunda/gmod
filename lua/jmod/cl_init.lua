@@ -224,13 +224,13 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 				local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
 				local Forward=-ent:GetUp()
 				pos=pos-Forward*.5
-				if(State==JMOD_JMod.EZ_STATE_ARMING)then
+				if(State==JMod.EZ_STATE_ARMING)then
 					render.SetMaterial(GlowSprite)
 					render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
 					render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
 					render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
 					render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
-				elseif State==JMOD_JMod.EZ_STATE_ARMED then
+				elseif State==JMod.EZ_STATE_ARMED then
 					render.SetMaterial(BeamMat)
 					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
 					if trace.Hit then

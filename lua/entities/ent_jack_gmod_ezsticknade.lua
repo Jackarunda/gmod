@@ -24,12 +24,12 @@ local BaseClass = baseclass.Get(ENT.Base)
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SetBodygroup(4,1)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end

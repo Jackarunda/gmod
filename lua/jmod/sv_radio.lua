@@ -35,15 +35,31 @@ local function NotifyAllRadios(stationID,msgID,direct)
 end
 
 local function FindDropPosFromSignalOrigin(origin)
-	local Height,Attempts,Pos=0,0,nil
+	local Height,Attempts,Pos,AcceptTFVonly=0,0,origin+Vector(0,0,200),false
 	while((Attempts<1000)and not(Height>5000))do
-		Height=Height+50
+		Height=Height+100
 		local TestPos=origin+Vector(0,0,Height)
 		local Contents=util.PointContents(TestPos)
 		local IsEmpty=(bit.band(Contents,CONTENTS_EMPTY)==CONTENTS_EMPTY)
 		local IsTFV=(bit.band(Contents,CONTENTS_TESTFOGVOLUME)==CONTENTS_TESTFOGVOLUME)
-		if((IsEmpty)or(IsTFV))then
-			Pos=TestPos
+		if(IsTFV)then
+			-- if we ever detect testfogvolume, assume the mapmaker used it properly
+			-- and from that point on, accept only tfv as an indication of empty space
+			AcceptTFVonly=true
+			-- otherwise, accept both tfv and contents_empty
+		end
+		if(AcceptTFVonly)then
+			if(IsTFV)then
+				Pos=TestPos
+			else
+				return Pos
+			end
+		else
+			if((IsEmpty)or(IsTFV))then
+				Pos=TestPos
+			else
+				return Pos
+			end
 		end
 	end
 	return Pos

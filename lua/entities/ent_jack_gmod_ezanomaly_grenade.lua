@@ -409,7 +409,7 @@ for k,v in pairs(DetonationEffects)do table.insert(ENT.DetonationEffects,v) end
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(math.Rand(1,20),function()
 			if(IsValid(self))then self:Detonate() end

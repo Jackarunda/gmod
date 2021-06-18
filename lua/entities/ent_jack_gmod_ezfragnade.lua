@@ -13,7 +13,7 @@ ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(self.FuzeTimeOverride or 4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -44,7 +44,7 @@ elseif(CLIENT)then
 		-- sprites for calibrating the lethality/casualty radius
 		--[[
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==JMOD_JMod.EZ_STATE_ARMED)then
+		if(State==JMod.EZ_STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*52*2,15*52*2,Color(255,0,0,128))
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),5*52*2,5*52*2,Color(255,255,255,128))

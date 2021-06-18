@@ -688,7 +688,7 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 					end
 				end)
 			elseif key == IN_USE then
-				if item.GetState and item:GetState() == JMOD_JMod.EZ_STATE_PRIMED then
+				if item.GetState and item:GetState() == JMod.EZ_STATE_PRIMED then
 					JMod.Hint(playa, "grenade drop", item)
 				end
 			end

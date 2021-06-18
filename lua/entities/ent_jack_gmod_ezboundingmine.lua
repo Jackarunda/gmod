@@ -47,7 +47,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self:SetState(JMOD_JMod.EZ_STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
 	end
 	
 	function ENT:Bury(activator)
@@ -76,7 +76,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>25)then
-				if((self:GetState()==JMOD_JMod.EZ_STATE_ARMED)and(math.random(1,5)==3))then
+				if((self:GetState()==JMod.EZ_STATE_ARMED)and(math.random(1,5)==3))then
 					self:Detonate()
 				else
 					self:EmitSound("Weapon.ImpactHard")
@@ -89,11 +89,11 @@ if(SERVER)then
 		self:TakePhysicsDamage(dmginfo)
 		local Pos,State=self:GetPos(),self:GetState()
 		if(JMod.LinCh(dmginfo:GetDamage(),30,100))then
-			if(State==JMOD_JMod.EZ_STATE_ARMED)then
+			if(State==JMod.EZ_STATE_ARMED)then
 				self:Detonate()
-			elseif(not(State==JMOD_JMod.EZ_STATE_BROKEN))then
+			elseif(not(State==JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
+				self:SetState(JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
@@ -104,7 +104,7 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
-		if(State==JMOD_JMod.EZ_STATE_OFF)then
+		if(State==JMod.EZ_STATE_OFF)then
 			if(Alt)then
 				JMod.Owner(self,activator)
 				self:Bury(activator)
@@ -115,7 +115,7 @@ if(SERVER)then
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
-			self:SetState(JMOD_JMod.EZ_STATE_OFF)
+			self:SetState(JMod.EZ_STATE_OFF)
 			JMod.Owner(self,activator)
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
@@ -212,15 +212,15 @@ if(SERVER)then
 	
 	function ENT:Arm(armer)
 		local State=self:GetState()
-		if(State~=JMOD_JMod.EZ_STATE_OFF)then return end
+		if(State~=JMod.EZ_STATE_OFF)then return end
 		JMod.Owner(self,armer)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMING)
+		self:SetState(JMod.EZ_STATE_ARMING)
 		self:SetBodygroup(2,1)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
 			if(IsValid(self))then
-				if(self:GetState()==JMOD_JMod.EZ_STATE_ARMING)then
-					self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+				if(self:GetState()==JMod.EZ_STATE_ARMING)then
+					self:SetState(JMod.EZ_STATE_ARMED)
 					self:DrawShadow(false)
 				end
 			end
@@ -239,15 +239,15 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
-		if(State==JMOD_JMod.EZ_STATE_ARMED)then
+		if(State==JMod.EZ_STATE_ARMED)then
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),100))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
 					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
-						self:SetState(JMOD_JMod.EZ_STATE_WARNING)
+						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
 						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 							if(IsValid(self))then
-								if(self:GetState()==JMOD_JMod.EZ_STATE_WARNING)then self:Detonate() end
+								if(self:GetState()==JMod.EZ_STATE_WARNING)then self:Detonate() end
 							end
 						end)
 					end
@@ -269,11 +269,11 @@ elseif(CLIENT)then
 		self:DrawModel()
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		local pos = self:GetPos()+self:GetUp()*11+self:GetRight()*1.5
-		if(State==JMOD_JMod.EZ_STATE_ARMING)then
+		if(State==JMod.EZ_STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,20,20,Color(255,0,0))
 			render.DrawSprite(pos,10,10,Color(255,255,255))
-		elseif(State==JMOD_JMod.EZ_STATE_WARNING)then
+		elseif(State==JMod.EZ_STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,30*Vary,30*Vary,Color(255,0,0))
 			render.DrawSprite(pos,15*Vary,15*Vary,Color(255,255,255))

@@ -46,7 +46,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self:SetState(JMOD_JMod.EZ_STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
 		self.NextStick=0
 		self.Damage=500
 		---
@@ -64,11 +64,11 @@ if(SERVER)then
 		local Dmg=dmginfo:GetDamage()
 		if(JMod.LinCh(Dmg,20,100))then
 			local Pos,State=self:GetPos(),self:GetState()
-			if(State==JMOD_JMod.EZ_STATE_ARMED)then
+			if(State==JMod.EZ_STATE_ARMED)then
 				self:Detonate()
-			elseif(not(State==JMOD_JMod.EZ_STATE_BROKEN))then
+			elseif(not(State==JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
+				self:SetState(JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
@@ -85,18 +85,18 @@ if(SERVER)then
 			local State=self:GetState()
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==JMOD_JMod.EZ_STATE_OFF)then
+			if(State==JMod.EZ_STATE_OFF)then
 				if(Alt)then
-					self:SetState(JMOD_JMod.EZ_STATE_ARMING)
+					self:SetState(JMod.EZ_STATE_ARMING)
 					self:SetBodygroup(0,1)
 					self:EmitSound("snd_jack_minearm.wav",60,100)
 					timer.Simple(3,function()
 						if(IsValid(self))then
-							if(self:GetState()==JMOD_JMod.EZ_STATE_ARMING)then
+							if(self:GetState()==JMod.EZ_STATE_ARMING)then
 								local pos = self:GetAttachment(1).Pos
 								local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
 								self.BeamFrac = trace.Fraction
-								self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+								self:SetState(JMod.EZ_STATE_ARMED)
 							end
 						end
 					end)
@@ -117,7 +117,7 @@ if(SERVER)then
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
-				self:SetState(JMOD_JMod.EZ_STATE_OFF)
+				self:SetState(JMod.EZ_STATE_OFF)
 				self:SetBodygroup(0,0)
 			end
 		else -- player just released the USE key
@@ -176,7 +176,7 @@ if(SERVER)then
 	function ENT:Think()
 		local Time=CurTime()
 		local state = self:GetState()
-		if(state==JMOD_JMod.EZ_STATE_ARMED)then
+		if(state==JMod.EZ_STATE_ARMED)then
 			local pos=self:GetAttachment(1).Pos
 			local trace=util.QuickTrace(pos,self:GetUp()*1000,self)
 			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then

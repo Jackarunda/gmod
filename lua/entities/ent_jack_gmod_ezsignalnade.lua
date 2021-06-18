@@ -21,7 +21,7 @@ if(SERVER)then
 			local State=self:GetState()
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
+			if(State==JMod.EZ_STATE_OFF and Alt)then
 				net.Start("JMod_SignalNade")
 				net.WriteEntity(self)
 				net.Send(Dude)
@@ -30,13 +30,13 @@ if(SERVER)then
 		end
 	end
 	function ENT:Prime()
-		self:SetState(JMOD_JMod.EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SetBodygroup(3,1)
 	end
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_JMod.EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(2,function()
 			if(IsValid(self))then self:Detonate() end

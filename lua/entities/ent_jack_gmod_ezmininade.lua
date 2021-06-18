@@ -29,9 +29,9 @@ if(SERVER)then
 	
 		self.Entity:TakePhysicsDamage(dmginfo)
 		
-		if dmginfo:GetInflictor() != self and dmginfo:GetDamage() >= 5 and !self.Exploded and self:GetState() != JMOD_JMod.EZ_STATE_BROKEN then
+		if dmginfo:GetInflictor() != self and dmginfo:GetDamage() >= 5 and !self.Exploded and self:GetState() != JMod.EZ_STATE_BROKEN then
 			self:EmitSound("physics/metal/metal_box_impact_bullet2.wav", 75, 200)
-			self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
+			self:SetState(JMod.EZ_STATE_BROKEN)
 			local eff = EffectData()
 			eff:SetOrigin(self:GetPos())
 			eff:SetScale(1) -- how far
@@ -55,7 +55,7 @@ if(SERVER)then
 			local State=self:GetState()
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
+			if(State==JMod.EZ_STATE_OFF and Alt)then
 				self:Prime()
 				JMod.Hint(Dude, "grenade", self)
 			else

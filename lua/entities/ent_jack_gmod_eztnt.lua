@@ -48,7 +48,7 @@ if(SERVER)then
 		end)
 		---
 		self.Fuze=100
-		self:SetState(JMOD_JMod.EZ_STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>25)then
@@ -64,18 +64,18 @@ if(SERVER)then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
-			elseif(not(State==JMOD_JMod.EZ_STATE_BROKEN))then
+			elseif(not(State==JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break",Pos)
-				self:SetState(JMOD_JMod.EZ_STATE_BROKEN)
+				self:SetState(JMod.EZ_STATE_BROKEN)
 				SafeRemoveEntityDelayed(self,10)
 			end
 		end
 	end
 	function ENT:Arm()
-		if(self:GetState()==JMOD_JMod.EZ_STATE_ARMED)then return end
+		if(self:GetState()==JMod.EZ_STATE_ARMED)then return end
 		self:EmitSound("snds_jack_gmod/ignite.wav",60,100)
 		timer.Simple(.5,function()
-			if(IsValid(self))then self:SetState(JMOD_JMod.EZ_STATE_ARMED) end
+			if(IsValid(self))then self:SetState(JMod.EZ_STATE_ARMED) end
 		end)
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
@@ -87,7 +87,7 @@ if(SERVER)then
 			local State=self:GetState()
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==JMOD_JMod.EZ_STATE_OFF and Alt)then
+			if(State==JMod.EZ_STATE_OFF and Alt)then
 				self:Arm()
 				JMod.Hint(Dude, "fuse", self)
 			end
@@ -130,7 +130,7 @@ if(SERVER)then
 	function ENT:Think()
 		local Time=CurTime()
 		local state = self:GetState()
-		if(state==JMOD_JMod.EZ_STATE_ARMED)then
+		if(state==JMod.EZ_STATE_ARMED)then
 			local Fsh=EffectData()
 			Fsh:SetOrigin(self:GetPos()+self:GetForward()*18-self:GetRight()*5)
 			Fsh:SetScale(1)
