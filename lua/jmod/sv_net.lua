@@ -53,7 +53,7 @@ net.Receive("JMod_ArmorColor", function(l, ply)
 	if not (IsValid(armor) and scripted_ents.IsBasedOn(armor:GetClass(), "ent_jack_gmod_ezarmor")) then return end
 	if ply:GetPos():DistToSqr(armor:GetPos()) > 15000 then return end
 	armor:SetColor(net.ReadColor())
-	if net.ReadBit() == 1 then JMod_EZ_Equip_Armor(ply, armor) end
+	if net.ReadBit() == 1 then JMod.EZ_Equip_Armor(ply, armor) end
 end)
 
 net.Receive("JMod_SignalNade", function(l, ply)
