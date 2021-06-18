@@ -1,6 +1,7 @@
-JMOD_OIL_RESERVES=JMOD_OIL_RESERVES or {}
-JMOD_ORE_DEPOSITS=JMOD_ORE_DEPOSITS or {}
-JMOD_GEO_THERMALS=JMOD_GEO_THERMALS or {}
+JMod.OilReserves=JMod.OilReserves or {}
+JMod.OreDeposits=JMod.OreDeposits or {}
+JMod.GeoThermalReservoirs=JMod.GeoThermalReservoirs or {}
+JMod.WaterReservoirs=JMod.WaterReservoirs or {}
 if(SERVER)then
 	local function RemoveOverlaps(tbl)
 		local Finished,Tries=false,0
@@ -45,9 +46,9 @@ if(SERVER)then
 	end
 	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster","rubber"}
 	function JMod.GenerateNaturalResources(tryFlat)
-		JMOD_OIL_RESERVES={}
-		JMOD_ORE_DEPOSITS={}
-		JMOD_GEO_THERMALS={}
+		JMod.OilReserves={}
+		JMod.OreDeposits={}
+		JMod.GeoThermalReservoirs={}
 		-- first, we have to find the ground
 		local GroundVectors={}
 		print("JMOD: generating natural resources...")
@@ -73,7 +74,7 @@ if(SERVER)then
 							local amt=math.Rand(.001,.005)*JMod.Config.ResourceEconomy.GeothermalPowerMult
 							if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
 							if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
-							table.insert(JMOD_GEO_THERMALS,{
+							table.insert(JMod.GeoThermalReservoirs,{
 								pos=v.pos,
 								amt=math.Round(amt,5),
 								siz=math.random(150,1000)
@@ -83,7 +84,7 @@ if(SERVER)then
 							if(OilCount<MaxOil)then
 								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OilRichness
 								if(InWater)then amt=amt*2 end -- fracking time
-								table.insert(JMOD_OIL_RESERVES,{
+								table.insert(JMod.OilReserves,{
 									pos=v.pos,
 									amt=math.Round(amt),
 									siz=math.random(150,1000)
@@ -94,7 +95,7 @@ if(SERVER)then
 						else
 							if(OreCount<MaxOre)then
 								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OreRichness
-								table.insert(JMOD_ORE_DEPOSITS,{
+								table.insert(JMod.OreDeposits,{
 									pos=v.pos,
 									amt=math.Round(amt),
 									siz=math.random(150,1000)
@@ -108,15 +109,15 @@ if(SERVER)then
 						-- if we couldn't find anything, it might be an RP map which is really flat
 						JMod.GenerateNaturalResources(true)
 					else
-						RemoveOverlaps(JMOD_OIL_RESERVES)
-						RemoveOverlaps(JMOD_ORE_DEPOSITS)
-						RemoveOverlaps(JMOD_GEO_THERMALS)
+						RemoveOverlaps(JMod.OilReserves)
+						RemoveOverlaps(JMod.OreDeposits)
+						RemoveOverlaps(JMod.GeoThermalReservoirs)
 						-- randomly boost a few deposits in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
-						if(math.random(1,2)==1)then PumpItUp(JMOD_GEO_THERMALS,1,2,4) end
-						PumpItUp(JMOD_OIL_RESERVES,math.random(1,3),4,10)
-						PumpItUp(JMOD_ORE_DEPOSITS,math.random(1,3),4,10)
-						WeightByAltitude(JMOD_ORE_DEPOSITS)
-						print("JMOD: resource generation finished with "..#JMOD_OIL_RESERVES.." oil reserves, "..#JMOD_ORE_DEPOSITS.." ore deposits and "..#JMOD_GEO_THERMALS.." geothermal reservoirs")
+						if(math.random(1,2)==1)then PumpItUp(JMod.GeoThermalReservoirs,1,2,4) end
+						PumpItUp(JMod.OilReserves,math.random(1,3),4,10)
+						PumpItUp(JMod.OreDeposits,math.random(1,3),4,10)
+						WeightByAltitude(JMod.OreDeposits)
+						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
 					end
 				end
 			end)
@@ -139,9 +140,9 @@ if(SERVER)then
 	concommand.Add("jmod_debug_shownaturalresources",function(ply,cmd,args)
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 		net.Start("JMod_NaturalResources")
-		net.WriteTable(JMOD_OIL_RESERVES)
-		net.WriteTable(JMOD_ORE_DEPOSITS)
-		net.WriteTable(JMOD_GEO_THERMALS)
+		net.WriteTable(JMod.OilReserves)
+		net.WriteTable(JMod.OreDeposits)
+		net.WriteTable(JMod.GeoThermalReservoirs)
 		net.Send(ply)
 	end)
 elseif(CLIENT)then
@@ -149,9 +150,9 @@ elseif(CLIENT)then
 	net.Receive("JMod_NaturalResources",function()
 		ShowNaturalResources=not ShowNaturalResources
 		print("natural resource display: "..tostring(ShowNaturalResources))
-		JMOD_OIL_RESERVES=net.ReadTable()
-		JMOD_ORE_DEPOSITS=net.ReadTable()
-		JMOD_GEO_THERMALS=net.ReadTable()
+		JMod.OilReserves=net.ReadTable()
+		JMod.OreDeposits=net.ReadTable()
+		JMod.GeoThermalReservoirs=net.ReadTable()
 	end)
 	local Circle=Material("sprites/sent_ball")
 	local function RenderPoints(tbl,col)
@@ -166,9 +167,9 @@ elseif(CLIENT)then
 	end
 	hook.Add("PostDrawTranslucentRenderables","JMod_EconTransRend",function()
 		if(ShowNaturalResources)then
-			RenderPoints(JMOD_OIL_RESERVES,Color(20,20,20,200))
-			RenderPoints(JMOD_ORE_DEPOSITS,Color(120,120,120,200))
-			RenderPoints(JMOD_GEO_THERMALS,Color(120,60,20,200))
+			RenderPoints(JMod.OilReserves,Color(20,20,20,200))
+			RenderPoints(JMod.OreDeposits,Color(120,120,120,200))
+			RenderPoints(JMod.GeoThermalReservoirs,Color(120,60,20,200))
 		end
 	end)
 end

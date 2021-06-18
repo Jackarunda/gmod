@@ -1,9 +1,9 @@
-JMOD_NUKEFLASH_ENDTIME=0
-JMOD_NUKEFLASH_POS=nil
-JMOD_NUKEFLASH_RANGE=0
-JMOD_NUKEFLASH_INTENSITY=1
-JMOD_NUKEFLASH_SMOKE_ENDTIME=0
-JMOD_WIND=JMOD_WIND or Vector(0,0,0)
+JMod.NukeFlashEndTime=0
+JMod.NukeFlashPos=nil
+JMod.NukeFlashRange=0
+JMod.NukeFlashIntensity=1
+JMod.NukeFlashSmokeEndTime=0
+JMod.Wind=JMod.Wind or Vector(0,0,0)
 
 surface.CreateFont("JMod-Display",{
 	font="Arial",
@@ -183,9 +183,9 @@ hook.Add("Think","JMOD_CLIENT_THINK",function()
 	end
 	if(NextThink>Time)then return end
 	NextThink=Time+5
-	JMOD_WIND=JMOD_WIND+WindChange/10
-	if(JMOD_WIND:Length()>1)then
-		JMOD_WIND:Normalize()
+	JMod.Wind=JMod.Wind+WindChange/10
+	if(JMod.Wind:Length()>1)then
+		JMod.Wind:Normalize()
 		WindChange=-WindChange
 	end
 	WindChange=WindChange+Vector(math.Rand(-.5,.5),math.Rand(-.5,.5),0)
@@ -409,8 +409,8 @@ end)
 local SomeKindOfFog=Material("white_square")
 hook.Add("PostDrawSkyBox","JMOD_POSTSKYBOX",function()
 	local Time=CurTime()
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		local W,H=ScrW(),ScrH()
 		cam.Start3D2D(EyePos()+Vector(0,0,100),Angle(0,0,0),2)
 		surface.SetMaterial(SomeKindOfFog)
@@ -427,8 +427,8 @@ hook.Add("SetupWorldFog","JMOD_WORLDFOG",function()
 		render.FogMode(0)
 		return true
 	end
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		render.FogMode(1)
 		render.FogColor(100,100,100)
 		render.FogStart(0)
@@ -445,8 +445,8 @@ hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
 		render.FogMode(0)
 		return true
 	end
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		render.FogMode(1)
 		render.FogColor(100,100,100)
 		render.FogStart(1*scale)
@@ -520,11 +520,11 @@ end)
 
 net.Receive("JMod_NuclearBlast",function()
 	local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
-	JMOD_NUKEFLASH_ENDTIME=CurTime()+8
-	JMOD_NUKEFLASH_POS=pos
-	JMOD_NUKEFLASH_RANGE=renj
-	JMOD_NUKEFLASH_INTENSITY=intens
-	if(intens>1)then JMOD_NUKEFLASH_SMOKE_ENDTIME=CurTime()+30 end
+	JMod.NukeFlashEndTime=CurTime()+8
+	JMod.NukeFlashPos=pos
+	JMod.NukeFlashRange=renj
+	JMod.NukeFlashIntensity=intens
+	if(intens>1)then JMod.NukeFlashSmokeEndTime=CurTime()+30 end
 	local maxRange=renj
 	local maxImmolateRange=renj*.3
 	for k,ent in pairs(ents.FindInSphere(pos,maxRange))do

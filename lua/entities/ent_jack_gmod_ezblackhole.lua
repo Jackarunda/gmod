@@ -124,7 +124,7 @@ if(SERVER)then
 		self.SoundLoop2:PlayEx(1,100)
 		self.SoundLoop2:SetSoundLevel(150)
 		---
-		JMOD_BLACK_HOLE=self -- global var for ease of comps for bullet hook
+		JMod.BlackHole=self -- global var for ease of comps for bullet hook
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		self:Rape(data.HitEntity)
@@ -161,7 +161,7 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 		if(self.SoundLoop2)then self.SoundLoop2:Stop() end
-		if((JMOD_BLACK_HOLE)and(JMOD_BLACK_HOLE==self))then JMOD_BLACK_HOLE=nil end
+		if((JMod.BlackHole)and(JMod.BlackHole==self))then JMod.BlackHole=nil end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -171,7 +171,7 @@ elseif(CLIENT)then
 		self.EventHorizon:SetPos(self:GetPos())
 		self.EventHorizon:SetParent(self)
 		self.EventHorizon:SetNoDraw(true)
-		JMOD_BLACK_HOLE=self
+		JMod.BlackHole=self
 	end
 	function ENT:Think()
 		local Time,Phys,Age,Pos=CurTime(),self:GetPhysicsObject(),self:GetAge(),self:LocalToWorld(self:OBBCenter())

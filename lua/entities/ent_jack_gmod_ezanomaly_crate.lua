@@ -50,7 +50,7 @@ if(SERVER)then
 				self.Entity:EmitSound("Wood_Crate.ImpactHard")
 				self.Entity:EmitSound("Wood_Box.ImpactHard")
 				local Threshold=1000
-				if(IsValid(JMOD_BLACK_HOLE))then Threshold=5000 end
+				if(IsValid(JMod.BlackHole))then Threshold=5000 end
 				if(data.Speed>Threshold)then
 					self.Durability=self.Durability-data.Speed/10
 					if(self.Durability<=0)then self:BreakOpen() end

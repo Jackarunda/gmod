@@ -58,14 +58,14 @@ util.PrecacheModel=function(mdl)
 end
 --
 hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
-	if(IsValid(JMOD_BLACK_HOLE))then
-		local BHpos=JMOD_BLACK_HOLE:GetPos()
+	if(IsValid(JMod.BlackHole))then
+		local BHpos=JMod.BlackHole:GetPos()
 		local Bsrc,Bdir=data.Src,data.Dir
 		local Vec=BHpos-Bsrc
 		local Dist=Vec:Length()
 		if(Dist<10000)then
 			local ToBHdir=Vec:GetNormalized()
-			local NewDir=(Bdir+ToBHdir*JMOD_BLACK_HOLE:GetAge()/Dist*20):GetNormalized()
+			local NewDir=(Bdir+ToBHdir*JMod.BlackHole:GetAge()/Dist*20):GetNormalized()
 			data.Dir=NewDir
 			return true
 		end

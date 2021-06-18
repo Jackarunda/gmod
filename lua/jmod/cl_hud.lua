@@ -177,16 +177,16 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 			if(ply.EZflashbanged<=0)then ply.EZflashbanged=nil end
 		end
 	end
-	if(JMOD_NUKEFLASH_ENDTIME>Time)then
-		local Dist=EyePos():Distance(JMOD_NUKEFLASH_POS)
-		if(Dist<JMOD_NUKEFLASH_RANGE)then
-			local TimeFrac,DistFrac=(JMOD_NUKEFLASH_ENDTIME-Time)/10,1-Dist/JMOD_NUKEFLASH_RANGE
+	if(JMod.NukeFlashEndTime>Time)then
+		local Dist=EyePos():Distance(JMod.NukeFlashPos)
+		if(Dist<JMod.NukeFlashRange)then
+			local TimeFrac,DistFrac=(JMod.NukeFlashEndTime-Time)/10,1-Dist/JMod.NukeFlashRange
 			local Frac=TimeFrac*DistFrac
 			DrawColorModify({
-				["$pp_colour_addr"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
+				["$pp_colour_addr"]=Frac*.5*JMod.NukeFlashIntensity,
 				["$pp_colour_addg"]=0,
 				["$pp_colour_addb"]=0,
-				["$pp_colour_brightness"]=Frac*.5*JMOD_NUKEFLASH_INTENSITY,
+				["$pp_colour_brightness"]=Frac*.5*JMod.NukeFlashIntensity,
 				["$pp_colour_contrast"]=1+Frac*.5,
 				["$pp_colour_colour"]=1,
 				["$pp_colour_mulr"]=0,

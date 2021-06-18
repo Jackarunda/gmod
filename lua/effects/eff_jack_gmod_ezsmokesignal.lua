@@ -18,7 +18,7 @@ function EFFECT:Init(data)
 			RollParticle:SetEndSize(Size*4)
 			RollParticle:SetRoll(math.Rand(-3,3))
 			RollParticle:SetRollDelta(math.Rand(-2,2))
-			local Vec=VectorRand()*10+Vector(0,0,200)+JMOD_WIND*150
+			local Vec=VectorRand()*10+Vector(0,0,200)+JMod.Wind*150
 			RollParticle:SetGravity(Vec)
 			RollParticle:SetLighting(false)
 			local Brightness=math.Rand(.5,1)
