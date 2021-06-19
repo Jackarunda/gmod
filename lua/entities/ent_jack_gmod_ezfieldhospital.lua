@@ -18,7 +18,7 @@ ENT.EZupgrades={
 		{parts=80,advparts=320}
 	}
 }
--- config --
+-- Config --
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
 	MaxDurability=100
@@ -152,12 +152,12 @@ if(SERVER)then
 	function ENT:TryStartOperation()
 		if not(IsValid(self.Patient))then return end
 		---
-		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
+		local override = hook.Run("JMod.CanFieldHospitalStart",self,self.Patient)
 		if override==false then return end
 		
 		if override~=true then
-			local Helf,Max,Rads,Infection,Bleed=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0,(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0
-			if((Helf>=Max)and(Rads<=0)and(Bleed<=0)and(Infection<=0))then return end -- you're not hurt lol gtfo
+			local Helf,Max,Rads,Infection,Bleed,Gassed,Contaminated=self.Patient:Health(),self.Patient:GetMaxHealth(),self.Patient.EZirradiated or 0,(self.Patient.EZvirus and self.Patient.EZvirus.Severity) or 0,self.Patient.EZbleeding or 0, getMaxExposure and getMaxExposure(self.Patient) or false, getContamination and getContamination(self.Patient) or false
+			if((Helf>=Max)and(Rads<=0)and(Bleed<=0)and(Infection<=0)and not Gassed and not Contaminated)then return end -- you're not hurt lol gtfo
 			if(self:GetSupplies()<=0)then return end
 		end
 		if(self.NextOpStart<CurTime())then
@@ -231,19 +231,35 @@ if(SERVER)then
 			return
 		end
 		---
-		local override = hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
+		local override = hook.Run("JMod.FieldHospitalHeal", self, self.Patient)
 		if override == false then return end
 		---
 		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0
-		if((Injury>0)or(Rads>0))then
+		local gassed, contaminated = getMaxExposure and getMaxExposure(self.Patient) or false, getContamination and getContamination(self.Patient) or false
+		if((Injury>0)or(Rads>0) or gassed or contaminated)then
 			if(Bleed>0)then
 				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMod.Config.MedBayHealMult*5,0,9e9)
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"stopping bleeding")
 				self:HealEffect()
-			elseif(Rads>0)then
+			elseif(Rads>0 or contaminated)then
 				self.Patient.EZirradiated=math.Clamp(Rads-self.HealEfficiency*JMod.Config.MedBayHealMult*5,0,9e9)
+				if RemoveContamination then
+					RemoveContamination (self.Patient, 140*self.HealEfficiency*JMod.Config.MedBayHealMult)
+				end
 				self:HealEffect("hl1/ambience/steamburst1.wav",true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER,"decontaminating")
+			elseif(gassed)then
+				removeDelayedExposure (self.Patient, 3*self.HealEfficiency*JMod.Config.MedBayHealMult,"Mustard")
+				removeDelayedExposure (self.Patient, 140*self.HealEfficiency*JMod.Config.MedBayHealMult,"MustardSkin")
+				removeDelayedExposure (self.Patient, 8.58*self.HealEfficiency*JMod.Config.MedBayHealMult,"Cyanide")
+				removeDelayedExposure (self.Patient, 390*self.HealEfficiency*JMod.Config.MedBayHealMult,"TearGas")
+				removeDelayedExposure (self.Patient, 57*self.HealEfficiency*JMod.Config.MedBayHealMult,"Chlorine")
+				removeDelayedExposure (self.Patient, 57*self.HealEfficiency*JMod.Config.MedBayHealMult,"PhosgeneImmediate")
+				removeDelayedExposure (self.Patient, 4.5*self.HealEfficiency*JMod.Config.MedBayHealMult,"Phosgene")
+				removeDelayedExposure (self.Patient, .105*self.HealEfficiency*JMod.Config.MedBayHealMult,"Sarin")
+				removeDelayedExposure (self.Patient, .045*self.HealEfficiency*JMod.Config.MedBayHealMult,"VX")
+				self:HealEffect("hl1/ambience/steamburst1.wav",true)
+				self.Patient:PrintMessage(HUD_PRINTCENTER,"curing poisoning")
 			else
 				if(Infection>1)then
 					self.Patient.EZvirus.Severity=math.Clamp(Infection-self.HealEfficiency*JMod.Config.MedBayHealMult*3,1,9e9)
