@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="propellant"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.PROPELLANT}
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_lab/jar01b.mdl"

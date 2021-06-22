@@ -10,7 +10,12 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.SpawnHeight=20
-ENT.EZconsumes={"ammo","power","parts","coolant"}
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.AMMO,
+    JMod.EZ_RESOURCE_TYPES.POWER,
+    JMod.EZ_RESOURCE_TYPES.PARTS,
+    JMod.EZ_RESOURCE_TYPES.COOLANT
+}
 ENT.EZupgrades={
 	rate=2,
 	grades={
