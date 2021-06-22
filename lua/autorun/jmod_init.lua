@@ -15,6 +15,7 @@ JMod.EZ_RESOURCE_TYPES={
 	ORE="ore",
 	OIL="oil",
 	GAS="gas",
+	POWER="power",
 	--
 	METAL="metal",
 	FUEL="fuel",
