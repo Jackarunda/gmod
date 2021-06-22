@@ -164,6 +164,7 @@ JMod.Hints = {
 	["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
 	["resource manage"]={Type="info",Text="ALT+SHIFT+E to split resources, tap together to combine",Time=4},
 	["oil derrick"]={Type="info",Text="oil derrick must be built on solid ground, above an oil reserve",Time=4},
+	["ground scanner"]={Type="info",Text="scanner can detect natural resources and metal objects, but must be on the ground and stationary",Time=5},
 	
 	-- Weapons
 	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim", Sound = ""},

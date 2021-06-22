@@ -13,6 +13,7 @@ ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.EZupgradeRate=1
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
+	Durability=100
 }
 ENT.DynamicPerfSpecs={
 	ScanSpeed=5,
@@ -46,7 +47,6 @@ if(SERVER)then
 		self:SetProgress(0)
 		self:SetElectricity(100)
 		self:SetState(JMod.EZ_STATE_OFF)
-		self.Durability=100
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
@@ -74,7 +74,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
-		-- JMod.Hint(activator,"ground scanner")
+		JMod.Hint(activator,"ground scanner")
 		local OldOwner=self.Owner
 		JMod.Owner(self,activator)
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
@@ -104,6 +104,7 @@ if(SERVER)then
 			end
 			return
 		elseif(State==JMod.EZ_STATE_ON)then
+			if(self:GetElectricity()<=0)then self:TurnOff() return end4
 			self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed))
 			if(self:GetProgress()>=100)then
 				self:FinishScan()
@@ -114,7 +115,9 @@ if(SERVER)then
 		return true
 	end
 	function ENT:FinishScan()
-	
+		net.Start("JMod_ResourceScanner")
+		net.WriteEntity(self)
+		net.Broadcast()
 	end
 	function ENT:OnRemove()
 		self.Snd1:Stop()

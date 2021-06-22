@@ -545,7 +545,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
 				},
 				1,
-				"Explosives"		
+				"Explosives"
 			},	
 			["EZ Cluster Bomb"]={			
 				"ent_jack_gmod_ezclusterbomb",		
@@ -554,7 +554,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
-				"Explosives"		
+				"Explosives"
 			},
 			["EZ General Purpose Crate"]={			
 				"ent_jack_gmod_ezcrate_uni",		
