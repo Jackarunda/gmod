@@ -156,7 +156,7 @@ if(SERVER)then
 	function ENT:TryStartOperation()
 		if not(IsValid(self.Patient))then return end
 		---
-		local override = hook.Run("JMod.CanFieldHospitalStart",self,self.Patient)
+		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
 		if override==false then return end
 		
 		if override~=true then
@@ -235,7 +235,7 @@ if(SERVER)then
 			return
 		end
 		---
-		local override = hook.Run("JMod.FieldHospitalHeal", self, self.Patient)
+		local override = hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
 		if override == false then return end
 		---
 		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0

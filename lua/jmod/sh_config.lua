@@ -518,227 +518,227 @@ function JMod.InitGlobalConfig(forceNew)
 			RestrictedPackagesAllowed=true
 		},
 		Blueprints={
-["EZ Automated Field Hospital"]={
-    "ent_jack_gmod_ezfieldhospital",
-    {
-        JMod.EZ_RESOURCE_TYPES.PARTS=400,
-        JMod.EZ_RESOURCE_TYPES.POWER=100,
-        JMod.EZ_RESOURCE_TYPES.ADVPARTS=80,
-        JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES=50
-    },
-    2,
-    "Machines"
-},
-["EZ Big Bomb"]={
-	"ent_jack_gmod_ezbigbomb",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=200,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600
-	},
-	1.5,
-	"Explosives"		
-},	
-["EZ Bomb"]={			
-	"ent_jack_gmod_ezbomb",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=150,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Cluster Bomb"]={			
-	"ent_jack_gmod_ezclusterbomb",		
-	{
-		JMod.EZ_RESOURCE_TYPES.PARTS=150,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
-	},
-	1,
-	"Explosives"		
-},
-["EZ General Purpose Crate"]={			
-	"ent_jack_gmod_ezcrate_uni",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=50	
-	},
-	1,
-	"Other"
-},	
-["EZ HE Rocket"]={			
-	"ent_jack_gmod_ezherocket",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=50,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
-		JMod.EZ_RESOURCE_TYPES.PROPELLANT=100
-	},
-	1,
-	"Explosives"		
-},
-["EZ HEAT Rocket"]={			
-	"ent_jack_gmod_ezheatrocket",		
-	{
-		JMod.EZ_RESOURCE_TYPES.PARTS=50,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
-		JMod.EZ_RESOURCE_TYPES.PROPELLANT=100	
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Incendiary Bomb"]={			
-	"ent_jack_gmod_ezincendiarybomb",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=50,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=10,
-		JMod.EZ_RESOURCE_TYPES.FUEL=200,
-		JMod.EZ_RESOURCE_TYPES.CHEMICALS=20
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Mega Bomb"]={			
-	"ent_jack_gmod_ezmoab",		
-	{
-		JMod.EZ_RESOURCE_TYPES.PARTS=400,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=1200
-	},
-	1,
-	"Explosives"		
-},
-["EZ Micro Black Hole Generator"]={			
-	"ent_jack_gmod_ezmbhg",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=300,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=120,
-		JMod.EZ_RESOURCE_TYPES.POWER=600,
-		JMod.EZ_RESOURCE_TYPES.ANTIMATTER=10
-	},
-	1.5,
-	"Machines"		
-},	
-["EZ Micro Nuclear Bomb"]={			
-	"ent_jack_gmod_eznuke",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=300,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300,
-		JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=10
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Mini Naval Mine"]={			
-	"ent_jack_gmod_eznavalmine",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=150,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=200	
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Nano Nuclear Bomb"]={			
-	"ent_jack_gmod_eznuke_small",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=100,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150,
-		JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=5
-	},
-	1,
-	"Explosives"
-},	
-["EZ Resource Crate"]={			
-	"ent_jack_gmod_ezcrate",		
-	{
-		JMod.EZ_RESOURCE_TYPES.PARTS=100	
-	},
-	1.5,
-	"Other"		
-},	
-["EZ Sentry"]={			
-	"ent_jack_gmod_ezsentry",		
-	{
-		JMod.EZ_RESOURCE_TYPES.PARTS=200,
-		JMod.EZ_RESOURCE_TYPES.POWER=100,
-		JMod.EZ_RESOURCE_TYPES.AMMO=300,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
-		JMod.EZ_RESOURCE_TYPES.COOLANT=100
-	},
-	1,
-	"Machines"		
-},	
-["EZ Small Bomb"]={			
-	"ent_jack_gmod_ezsmallbomb",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=150,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
-	},
-	1,
-	"Explosives"		
-},
-["EZ Supply Radio"]={			
-	"ent_jack_gmod_ezaidradio",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=100,
-		JMod.EZ_RESOURCE_TYPES.POWER=100,	
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=20	
-	},
-	1,
-	"Machines"		
-},	
-["EZ Thermobaric Bomb"]={			
-	"ent_jack_gmod_ezthermobaricbomb",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=100,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=20,
-		JMod.EZ_RESOURCE_TYPES.PROPELLANT=300,
-		JMod.EZ_RESOURCE_TYPES.CHEMICALS=10
-	},
-	1,
-	"Explosives"		
-},	
-["EZ Thermonuclear Bomb"]={			
-	"ent_jack_gmod_eznuke_big",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=400,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=100,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600,
-		JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=20
-	},
-	1.5,
-	"Explosives"		
-},	
-["EZ Vehicle Mine"]={			
-	"ent_jack_gmod_ezatmine",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=40,
-		JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=100
-	},
-	.75,
-	"Explosives"		
-},	
-["EZ Workbench"]={			
-	"ent_jack_gmod_ezworkbench",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=500,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
-		JMod.EZ_RESOURCE_TYPES.POWER=100,
-		JMod.EZ_RESOURCE_TYPES.GAS=100
-	},
-	1.5,
-	"Machines"		
-},	
-["HL2 Buggy"]={			
-	"FUNC spawnHL2buggy",		
-	{	
-		JMod.EZ_RESOURCE_TYPES.PARTS=500,
-		JMod.EZ_RESOURCE_TYPES.POWER=50,
-		JMod.EZ_RESOURCE_TYPES.ADVPARTS=10,
-		JMod.EZ_RESOURCE_TYPES.FUEL=300,
-		JMod.EZ_RESOURCE_TYPES.AMMO-600
-    },
-    2,
-	"Other"	
-},					
+			["EZ Automated Field Hospital"]={
+				"ent_jack_gmod_ezfieldhospital",
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=400,
+					JMod.EZ_RESOURCE_TYPES.POWER=100,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=80,
+					JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES=50
+				},
+				2,
+				"Machines"
+			},
+			["EZ Big Bomb"]={
+				"ent_jack_gmod_ezbigbomb",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=200,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600
+				},
+				1.5,
+				"Explosives"		
+			},	
+			["EZ Bomb"]={			
+				"ent_jack_gmod_ezbomb",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=150,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Cluster Bomb"]={			
+				"ent_jack_gmod_ezclusterbomb",		
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=150,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
+				},
+				1,
+				"Explosives"		
+			},
+			["EZ General Purpose Crate"]={			
+				"ent_jack_gmod_ezcrate_uni",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=50	
+				},
+				1,
+				"Other"
+			},	
+			["EZ HE Rocket"]={			
+				"ent_jack_gmod_ezherocket",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=50,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
+					JMod.EZ_RESOURCE_TYPES.PROPELLANT=100
+				},
+				1,
+				"Explosives"		
+			},
+			["EZ HEAT Rocket"]={			
+				"ent_jack_gmod_ezheatrocket",		
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=50,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
+					JMod.EZ_RESOURCE_TYPES.PROPELLANT=100	
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Incendiary Bomb"]={			
+				"ent_jack_gmod_ezincendiarybomb",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=50,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=10,
+					JMod.EZ_RESOURCE_TYPES.FUEL=200,
+					JMod.EZ_RESOURCE_TYPES.CHEMICALS=20
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Mega Bomb"]={			
+				"ent_jack_gmod_ezmoab",		
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=400,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=1200
+				},
+				1,
+				"Explosives"		
+			},
+			["EZ Micro Black Hole Generator"]={			
+				"ent_jack_gmod_ezmbhg",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=300,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=120,
+					JMod.EZ_RESOURCE_TYPES.POWER=600,
+					JMod.EZ_RESOURCE_TYPES.ANTIMATTER=10
+				},
+				1.5,
+				"Machines"		
+			},	
+			["EZ Micro Nuclear Bomb"]={			
+				"ent_jack_gmod_eznuke",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=300,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300,
+					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=10
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Mini Naval Mine"]={			
+				"ent_jack_gmod_eznavalmine",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=150,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=200	
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Nano Nuclear Bomb"]={			
+				"ent_jack_gmod_eznuke_small",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=100,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150,
+					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=5
+				},
+				1,
+				"Explosives"
+			},	
+			["EZ Resource Crate"]={			
+				"ent_jack_gmod_ezcrate",		
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=100	
+				},
+				1.5,
+				"Other"		
+			},	
+			["EZ Sentry"]={			
+				"ent_jack_gmod_ezsentry",		
+				{
+					JMod.EZ_RESOURCE_TYPES.PARTS=200,
+					JMod.EZ_RESOURCE_TYPES.POWER=100,
+					JMod.EZ_RESOURCE_TYPES.AMMO=300,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
+					JMod.EZ_RESOURCE_TYPES.COOLANT=100
+				},
+				1,
+				"Machines"		
+			},	
+			["EZ Small Bomb"]={			
+				"ent_jack_gmod_ezsmallbomb",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=150,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
+				},
+				1,
+				"Explosives"		
+			},
+			["EZ Supply Radio"]={			
+				"ent_jack_gmod_ezaidradio",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=100,
+					JMod.EZ_RESOURCE_TYPES.POWER=100,	
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20	
+				},
+				1,
+				"Machines"		
+			},	
+			["EZ Thermobaric Bomb"]={			
+				"ent_jack_gmod_ezthermobaricbomb",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=100,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=20,
+					JMod.EZ_RESOURCE_TYPES.PROPELLANT=300,
+					JMod.EZ_RESOURCE_TYPES.CHEMICALS=10
+				},
+				1,
+				"Explosives"		
+			},	
+			["EZ Thermonuclear Bomb"]={			
+				"ent_jack_gmod_eznuke_big",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=400,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=100,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600,
+					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=20
+				},
+				1.5,
+				"Explosives"		
+			},	
+			["EZ Vehicle Mine"]={			
+				"ent_jack_gmod_ezatmine",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=40,
+					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=100
+				},
+				.75,
+				"Explosives"		
+			},	
+			["EZ Workbench"]={			
+				"ent_jack_gmod_ezworkbench",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=500,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
+					JMod.EZ_RESOURCE_TYPES.POWER=100,
+					JMod.EZ_RESOURCE_TYPES.GAS=100
+				},
+				1.5,
+				"Machines"		
+			},	
+			["HL2 Buggy"]={			
+				"FUNC spawnHL2buggy",		
+				{	
+					JMod.EZ_RESOURCE_TYPES.PARTS=500,
+					JMod.EZ_RESOURCE_TYPES.POWER=50,
+					JMod.EZ_RESOURCE_TYPES.ADVPARTS=10,
+					JMod.EZ_RESOURCE_TYPES.FUEL=300,
+					JMod.EZ_RESOURCE_TYPES.AMMO-600
+				},
+				2,
+				"Other"	
+			},					
 		},
 		Recipes={
 			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5},"Resources"},
