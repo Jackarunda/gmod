@@ -164,6 +164,12 @@ if(SERVER)then
 		net.WriteTable(JMod.WaterReservoirs)
 		net.Send(ply)
 	end)
+	net.Receive("JMod_ResourceScanner",function()
+		local Ent=net.ReadEntity()
+		if not(IsValid(Ent))then return end
+		local Pos=Ent:GetPos()
+		
+	end)
 elseif(CLIENT)then
 	local ShowNaturalResources=false
 	net.Receive("JMod_NaturalResources",function()
