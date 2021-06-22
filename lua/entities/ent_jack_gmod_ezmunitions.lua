@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="munitions"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.MUNITIONS}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod.EZammoBoxSize
 ENT.Model="models/Items/BoxJRounds.mdl"

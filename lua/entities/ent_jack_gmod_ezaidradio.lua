@@ -9,7 +9,10 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.NoSitAllowed=true
-ENT.EZconsumes={"power","parts"}
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.POWER,
+    JMod.EZ_RESOURCE_TYPES.PARTS
+}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ----

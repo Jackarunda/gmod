@@ -8,7 +8,11 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
-ENT.EZconsumes={"power","parts","medsupplies"}
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.POWER,
+    JMod.EZ_RESOURCE_TYPES.PARTS,
+	JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES
+}
 ENT.EZupgrades={
 	rate=2,
 	grades={
