@@ -10,7 +10,7 @@ ENT.AdminSpawnable=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
-    JMod.EZ_RESOURCE_TYPES.PARTS,
+    JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES
 }
 ENT.EZupgrades={

@@ -9,20 +9,19 @@ ENT.Spawnable=true
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
-ENT.EZconsumes={"power","parts"}
-ENT.EZupgrades={
-	rate=2,
-	grades={
-		{parts=40,advparts=20},
-		{parts=60,advparts=40},
-		{parts=80,advparts=80},
-		{parts=100,advparts=160}
-	}
+ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
+ENT.EZupgradeRate=1
+ENT.StaticPerfSpecs={
+	MaxElectricity=100,
+}
+ENT.DynamicPerfSpecs={
+	ScanSpeed=5,
+	ScanRange=20
 }
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
-	self:NetworkVar("Float",0,"Progress")
+	self:NetworkVar("Int",2,"Progress")
 	self:NetworkVar("Float",1,"Electricity")
 end
 if(SERVER)then
@@ -51,22 +50,24 @@ if(SERVER)then
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
-		self.Snd1:SetSoundLevel(150) -- behold, true terror
+		self.Snd1:SetSoundLevel(150)
 		self.Snd2:SetSoundLevel(150)
 		self.Snd3:SetSoundLevel(150)
 	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
-			self.Snd1:PlayEx(1,60)
-			self.Snd2:PlayEx(1,60)
-			self.Snd3:PlayEx(1,60)
+			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self.Snd1:PlayEx(1,80)
+			self.Snd2:PlayEx(1,80)
+			self.Snd3:PlayEx(1,80)
 		else
 			JMod.Hint(activator,"nopower")
 		end
 	end
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
+		self:EmitSound("snd_jack_metallicclick.wav",60,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
 		self.Snd3:Stop()
@@ -95,44 +96,6 @@ if(SERVER)then
 			activator:PickupObject(self)
 		end
 	end
-	function ENT:FlingProp(mdl,force)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos()+self:GetUp()*25+VectorRand()*math.Rand(1,25))
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
-		if(force)then Phys:ApplyForceCenter(force/7) end
-		SafeRemoveEntityDelayed(Prop,math.random(10,20))
-	end
-	function ENT:Break(dmginfo)
-		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(60,100))
-		for i=1,10 do self:DamageSpark() end
-		self.Durability=0
-		self:SetState(JMod.EZ_STATE_BROKEN)
-		local Force=(dmginfo and dmginfo:GetDamageForce()) or Vector(0,0,0)
-		for i=1,4 do
-			self:FlingProp("models/mechanics/gears/gear12x6_small.mdl",Force)
-		end
-		self.Snd:Stop()
-	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()-self:GetRight()*30-self:GetForward()*30+VectorRand()*math.random(0,10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-		self:ConsumeElectricity(.2)
-	end
 	function ENT:Think()
 		local State=self:GetState()
 		if(State==JMod.EZ_STATE_BROKEN)then
@@ -141,24 +104,17 @@ if(SERVER)then
 			end
 			return
 		elseif(State==JMod.EZ_STATE_ON)then
-			--
+			self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed))
+			if(self:GetProgress()>=100)then
+				self:FinishScan()
+				self:SetProgress(0)
+			end
 		end
-		self:NextThink(CurTime()+1)
+		self:NextThink(CurTime()+.5)
 		return true
 	end
-	function ENT:SpawnOil()
-		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local Oil=ents.Create("ent_jack_gmod_ezrawresource_oil")
-		Oil:SetPos(SelfPos+Forward*115-Right*90)
-		Oil:Spawn()
-		JMod.Owner(self.Owner)
-		Oil:Activate()
-	end
-	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .1)
-		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,200)
-		self:SetElectricity(NewAmt)
-		if(NewAmt<=0)then self:TurnOff() end
+	function ENT:FinishScan()
+	
 	end
 	function ENT:OnRemove()
 		self.Snd1:Stop()
