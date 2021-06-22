@@ -607,20 +607,20 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=150},"Weapons"}
 		}
 	}
-	local FileContents=file.Read("JMod.Config.txt")
+	local FileContents=file.Read("JMod_Config.txt")
 	if(FileContents)then
 		local Existing=util.JSONToTable(FileContents)
 		if((Existing)and(Existing.Version))then
 			if(Existing.Version==NewConfig.Version)then
 				JMod.Config=util.JSONToTable(FileContents)
 			else
-				file.Write("JMod.Config_OLD.txt",FileContents)
+				file.Write("JMod_Config_OLD.txt",FileContents)
 			end
 		end
 	end
 	if((not(JMod.Config))or(forceNew))then
 		JMod.Config=NewConfig
-		file.Write("JMod.Config.txt",util.TableToJSON(JMod.Config,true))
+		file.Write("JMod_Config.txt",util.TableToJSON(JMod.Config,true))
 	end
 	print("JMOD: config file loaded")
 	-- jmod lua config --
