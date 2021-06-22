@@ -29,7 +29,7 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		MaxResource=JMod.EZadvPartBoxSize*JMod.EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezadvparts",
 		ChildEntityResourceAmount=JMod.EZadvPartBoxSize,
-		MainTitleWord="ADV.PARTS",
+		MainTitleWord="ADV.BASICPARTS",
 		ResourceUnit="Units"
 	},
 	["advtextiles"]={
