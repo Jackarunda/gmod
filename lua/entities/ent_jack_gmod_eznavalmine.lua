@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -86,9 +86,9 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
+		if(JMod.LinCh(dmginfo:GetDamage(),100,200))then
 			if(self:WaterLevel()>0)then
-				JMod_Owner(self,dmginfo:GetAttacker())
+				JMod.Owner(self,dmginfo:GetAttacker())
 				self:Detonate()
 			else
 				self:Break()
@@ -100,7 +100,7 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,110)
@@ -110,14 +110,14 @@ if(SERVER)then
 				else
 					self.MoorMode="subsurface"
 				end
-				JMod_Hint(activator, "navalmine", self)
+				JMod.Hint(activator, "navalmine", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
-				JMod_Hint(activator, "arm navalmine", self)
+				JMod.Hint(activator, "arm navalmine", self)
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,110)
@@ -132,10 +132,10 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-		timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
+		timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 			if(IsValid(self))then
 				local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
-				JMod_Sploom(Att,SelfPos,150)
+				JMod.Sploom(Att,SelfPos,150)
 				---
 				local splad=EffectData()
 				splad:SetOrigin(SelfPos)
@@ -156,7 +156,7 @@ if(SERVER)then
 					util.BlastDamage(game.GetWorld(),Att,SelfPos-Vector(0,0,120),800,200)
 				end)
 				---
-				JMod_WreckBuildings(self,SelfPos,8)
+				JMod.WreckBuildings(self,SelfPos,8)
 				---
 				self:Remove()
 			end
@@ -204,7 +204,7 @@ if(SERVER)then
 			else
 				if(self.NextDet<CurTime())then
 					self:GetPhysicsObject():SetBuoyancyRatio(.4)
-					if(JMod_EnemiesNearPoint(self,self:GetPos(),300,true))then
+					if(JMod.EnemiesNearPoint(self,self:GetPos(),300,true))then
 						self:Detonate()
 						return
 					end

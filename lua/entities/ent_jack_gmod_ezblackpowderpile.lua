@@ -35,16 +35,16 @@ if(SERVER)then
 		if(self.Ignited)then return end
 		if(dmginfo:IsDamageType(DMG_BLAST))then self:Remove() return end
 		if(dmginfo:IsDamageType(DMG_BURN))then
-			JMod_Owner(self,dmginfo:GetAttacker())
+			JMod.Owner(self,dmginfo:GetAttacker())
 			self:Arm()
 		end
 	end
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		
 		local Time=CurTime()
-		if(Dude:KeyDown(JMOD_CONFIG.AltFunctionKey))then
+		if(Dude:KeyDown(JMod.Config.AltFunctionKey))then
 			self:Arm()
 		else
 			if(math.random(1,2)==2)then self:Remove() end
@@ -65,10 +65,10 @@ if(SERVER)then
 			if not(IsValid(self))then return end
 			for k,v in pairs(ents.FindInSphere(self:GetPos(),40))do
 				if(v.EZpowderIgnitable)then
-					JMod_Owner(v,self.Owner)
+					JMod.Owner(v,self.Owner)
 					v:Arm()
 				elseif(v.EZpowderDetonatable)then
-					JMod_Owner(v,self.Owner)
+					JMod.Owner(v,self.Owner)
 					v:Detonate()
 				end
 			end

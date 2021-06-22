@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(-.5,-22,-13)
 SWEP.BodyHolsterPosL = Vector(-3,-24,11)
 SWEP.BodyHolsterScale = 1.1
 
-JMod_ApplyAmmoSpecs(SWEP,"Mini Rocket")
+JMod.ApplyAmmoSpecs(SWEP,"Mini Rocket")
 SWEP.DamageRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezminirocket"
 SWEP.MuzzleVelocity = 11000 -- 9000
@@ -64,8 +64,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-1.7, -3, -.6),
     Ang = Angle(13.4, -10.1, -10),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, -2, 0)
@@ -92,12 +92,12 @@ SWEP.Animations = {
         Source = "draw1",
         Time = 1,
         SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = .05, v=65, p=90},
+			{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = .05, v=65, p=90},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav", t = .15, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .4, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = .4, v=60},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav", t = .55, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = .8, v=60}
+			{s = JMod.GunHandlingSounds.cloth.move, t = .8, v=60}
 		},
 		Mult=2.5,
         LHIK = true,
@@ -108,12 +108,12 @@ SWEP.Animations = {
         Source = "draw1",
         Time = 1,
         SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = .05, v=65, p=90},
+			{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60, p=90},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = .05, v=65, p=90},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav", t = .15, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .4, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = .4, v=60},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav", t = .55, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = .8, v=60}
+			{s = JMod.GunHandlingSounds.cloth.move, t = .8, v=60}
 		},
 		Mult=2.5,
         LHIK = true,
@@ -139,15 +139,15 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.loud, t = .05, v=60},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = .05, v=60},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/move1.wav", t = .05, v=65},
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 1, v=60},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/move2.wav", t = 1, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = 2, v=65},
-			{s = JMod_GunHandlingSounds.cloth.loud, t = 2.5, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = 2, v=65},
+			{s = JMod.GunHandlingSounds.cloth.loud, t = 2.5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav", t = 2.6, v=65},
 			{s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav", t = 3, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = 3.7, v=60},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 3.7, v=60},
 		}
     },
 }

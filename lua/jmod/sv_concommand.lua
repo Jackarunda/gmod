@@ -7,12 +7,12 @@ end)
 
 concommand.Add("jmod_reloadconfig",function(ply)
 	if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
-	JMod_InitGlobalConfig()
+	JMod.InitGlobalConfig()
 end)
 
 concommand.Add("jmod_resetconfig",function(ply)
 	if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
-	JMod_InitGlobalConfig(true)
+	JMod.InitGlobalConfig(true)
 end)
 
 concommand.Add("jmod_debug_killme",function(ply)
@@ -23,7 +23,7 @@ concommand.Add("jmod_debug_killme",function(ply)
 end)
 
 concommand.Add("jmod_ez_trigger",function(ply)
-	JMod_EZ_Remote_Trigger(ply)
+	JMod.EZ_Remote_Trigger(ply)
 end)
 
 concommand.Add("jmod_insta_upgrade",function(ply)
@@ -37,13 +37,13 @@ end)
 
 concommand.Add("jmod_ez_inv",function(ply,cmd,args)
 	if not((IsValid(ply))and(ply:Alive()))then return end
-	JMod_EZ_Open_Inventory(ply)
+	JMod.EZ_Open_Inventory(ply)
 end)
 
 concommand.Add("jmod_ez_bombdrop",function(ply,cmd,args)
-	JMod_EZ_BombDrop(ply)
+	JMod.EZ_BombDrop(ply)
 end)
 
 concommand.Add("jmod_ez_launch",function(ply,cmd,args)
-	JMod_EZ_WeaponLaunch(ply)
+	JMod.EZ_WeaponLaunch(ply)
 end)

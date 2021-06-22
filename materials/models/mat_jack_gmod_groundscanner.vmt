@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_gmod_groundscanner"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.002 .0021 .002]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".5"
+	"$phongexponent" "30"
+}

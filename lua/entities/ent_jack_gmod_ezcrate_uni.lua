@@ -11,7 +11,7 @@ ENT.AdminSpawnable=true
 
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ENT.DamageThreshold=120
-ENT.MaxItems=JMod_EZsmallCrateSize or 100
+ENT.MaxItems=JMod.EZsmallCrateSize or 100
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"ItemCount")
@@ -23,7 +23,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		return ent
@@ -88,7 +88,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		
-		JMod_Hint(activator, "crate_uni", self)
+		JMod.Hint(activator, "crate_uni", self)
 		if(self:GetItemCount()<=0)then return end
 		net.Start("JMod_UniCrate")
 			net.WriteEntity(self)

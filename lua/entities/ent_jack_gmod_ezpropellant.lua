@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="propellant"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.PROPELLANT}
 ENT.JModPreferredCarryAngles=Angle(0,90,0)
-ENT.MaxResource=JMod_EZfuelCanSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_lab/jar01b.mdl"
 ENT.Material="models/entities/mat_jack_powderbottle"
 ENT.ModelScale=2
@@ -23,7 +23,7 @@ if(SERVER)then
 		if(destructive)then
 			if(math.random(1,20)==2)then
 				if(math.random(1,2)==1)then
-					JMod_Sploom(self.Owner,self:GetPos(),math.random(50,130))
+					JMod.Sploom(self.Owner,self:GetPos(),math.random(50,130))
 				end
 				local Tr=util.QuickTrace(pos,Vector(math.random(-200,200),math.random(-200,200),math.random(0,-200)),{self})
 				if(Tr.Hit)then

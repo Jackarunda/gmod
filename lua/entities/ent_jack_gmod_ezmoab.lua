@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -86,8 +86,8 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
-			JMod_Owner(self,dmginfo:GetAttacker())
+		if(JMod.LinCh(dmginfo:GetDamage(),100,200))then
+			JMod.Owner(self,dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end
@@ -101,18 +101,18 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,100)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod_Hint(activator, "impactdet", self)
+				JMod.Hint(activator, "impactdet", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,100)
@@ -127,8 +127,8 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
-		--JMod_Sploom(Att,SelfPos,500)
-		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,600,600) end)
+		--JMod.Sploom(Att,SelfPos,500)
+		timer.Simple(.1,function() JMod.BlastDamageIgnoreWorld(SelfPos,Att,nil,600,600) end)
 		---
 		util.ScreenShake(SelfPos,1000,10,5,8000)
 		local Eff="pcf_jack_moab"
@@ -155,8 +155,8 @@ if(SERVER)then
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,20)
-		JMod_BlastDoors(self,SelfPos,20)
+		JMod.WreckBuildings(self,SelfPos,20)
+		JMod.BlastDoors(self,SelfPos,20)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
@@ -170,7 +170,7 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,self:GetRight(),10)
+		JMod.AeroDrag(self,self:GetRight(),10)
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

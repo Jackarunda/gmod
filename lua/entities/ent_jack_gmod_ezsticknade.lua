@@ -24,12 +24,12 @@ local BaseClass = baseclass.Get(ENT.Base)
 if(SERVER)then
 
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 	end
 
 	function ENT:Arm()
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SetBodygroup(4,1)
 		timer.Simple(4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -62,10 +62,10 @@ if(SERVER)then
 			plooie:SetNormal(vector_up)
 			util.Effect("eff_jack_minesplode",plooie,true,true)
 			util.ScreenShake(SelfPos,20,20,1,1000)
-			JMod_FragSplosion(self,SelfPos+Vector(0,0,20),3000,70,5000,self.Owner or game.GetWorld())
+			JMod.FragSplosion(self,SelfPos+Vector(0,0,20),3000,70,5000,self.Owner or game.GetWorld())
 			self:Remove()
 		else
-			JMod_Sploom(self.Owner or game.GetWorld(),SelfPos,150)
+			JMod.Sploom(self.Owner or game.GetWorld(),SelfPos,150)
 			local Blam=EffectData()
 			Blam:SetOrigin(SelfPos)
 			Blam:SetScale(.8)

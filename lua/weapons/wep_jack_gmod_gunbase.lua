@@ -24,6 +24,7 @@ SWEP.Num = 1
 
 SWEP.VisualRecoilMult = 1
 SWEP.RecoilSide = .5
+SWEP.RecoilPunchBackMax = 2
 
 SWEP.HipDispersion = 700 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 300
@@ -117,7 +118,7 @@ SWEP.MeleeForceAng = Angle(-30,30,0)
 SWEP.MeleeAttackTime = .35
 SWEP.MeleeTime = .5
 SWEP.MeleeDelay = .3
-SWEP.MeleeSwingSound = JMod_GunHandlingSounds.cloth.loud
+SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
 SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
 SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
@@ -160,7 +161,7 @@ SWEP.Hook_PostFireBullets = function(self)
 		end)
 		if(Tr.Hit)then
 			Dist=RPos:Distance(Tr.HitPos)
-			if(SERVER)then JMod_Hint(self.Owner,"backblast wall") end
+			if(SERVER)then JMod.Hint(self.Owner,"backblast wall") end
 		end
 		for i=1,4 do
 			util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
@@ -205,10 +206,10 @@ end
 -- Behavior Modifications by Jackarunda --
 function SWEP:TryBustDoor(ent,dmg)
 	local RealDist=(ent:GetPos() - self:GetPos()):Length()
-	if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod_IsDoor(ent)))then
+	if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod.IsDoor(ent)))then
 		ent.JModDoorBreachedness=(ent.JModDoorBreachedness or 0)+self.DoorBreachPower/self.Num
 		if(ent.JModDoorBreachedness>=1)then
-			JMod_BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+			JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
 		end
 	end
 end
@@ -230,7 +231,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 	if not(ply:Alive())then return end
 	local Wep=ply:GetActiveWeapon()
 	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
-		local GlobalMult=(JMOD_CONFIG and JMOD_CONFIG.WeaponSwayMult) or 1
+		local GlobalMult=(JMod.Config and JMod.Config.WeaponSwayMult) or 1
 		local Amt,Sporadicness,FT=20*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
 		if(ply:Crouching())then Amt=Amt*.65 end
 		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.25 end
@@ -238,7 +239,7 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 			Sporadicness=Sporadicness*1.5
 			Amt=Amt*2
 		else
-			local Key=(JMOD_CONFIG and JMOD_CONFIG.AltFunctionKey) or IN_WALK
+			local Key=(JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
 			if(ply:KeyDown(Key))then
 				StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
 				if(StabilityStamina>0)then
@@ -264,27 +265,22 @@ hook.Add("CreateMove","JMod_CreateMove",function(cmd)
 		end
 	end
 end)
-
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
-    if !irons then return end
-    if !irons.Magnification then return fov end
-    if irons.Magnification == 1 then return fov end
+    --if !irons then return end
+    --if !irons.Magnification then return fov end
+    --if irons.Magnification == 1 then return fov end
 
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
 
     local div = 1
-    local app_vm = self.ViewModelFOV + 10
+    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        fov = 75
-        app_vm = 45
-        if CLIENT and self:ShouldFlatScope() then
-            div = (irons.Magnification + irons.ScopeMagnification)
-        else
-            div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
-        end
+        -- fov = 75
+        app_vm = irons.ViewModelFOV or 45
+        div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
     end
 
     -- something about this doesn't work in multiplayer
@@ -293,7 +289,6 @@ function SWEP:TranslateFOV(fov)
 
     self.ApproachFOV = fov / div
 	if(BreathStatus)then self.ApproachFOV=self.ApproachFOV*.95 end -- JACKARUNDA
-
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
 
     self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
@@ -308,7 +303,7 @@ function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
 function SWEP:OnDrop()
-	local Specs=JMod_WeaponTable[self.PrintName]
+	local Specs=JMod.WeaponTable[self.PrintName]
 	if(Specs)then
 		local Ent=ents.Create(Specs.ent)
 		Ent:SetPos(self:GetPos())
@@ -317,7 +312,7 @@ function SWEP:OnDrop()
 		Ent:Spawn()
 		Ent:Activate()
 		local Phys=Ent:GetPhysicsObject()
-		if(Phys)then
+		if(Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()))then
 			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
 		end
 		self:Remove()
@@ -523,7 +518,7 @@ function SWEP:MeleeAttack(melee2)
 
 		local RandFact=self.MeleeDmgRand or 0
 		local Randomness=math.Rand(1-RandFact,1+RandFact)
-		local GlobalMult = ((JMOD_CONFIG and JMOD_CONFIG.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
+		local GlobalMult = ((JMod.Config and JMod.Config.WeaponDamageMult) or 1) * .8 -- gmod kiddie factor
 
         dmginfo:SetInflictor(self)
         dmginfo:SetDamage(dmg * relspeed * Randomness * GlobalMult)

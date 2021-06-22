@@ -39,7 +39,7 @@ if(SERVER)then
 		end
 		
 		self.Owner = activator
-		if activator:KeyDown(JMOD_CONFIG.AltFunctionKey) then
+		if activator:KeyDown(JMod.Config.AltFunctionKey) then
 			self:EmitSound("snds_jack_gmod/plunger.wav")
 			self:SetFired(true)
 			timer.Simple(.5, function()

@@ -77,7 +77,7 @@ function SWEP:Initialize()
 			{"Nail (constraints object)","ez nail",{parts=10},.2},
 			{"(action) Package Object","package",{parts=25},1}
 		}
-		for name,info in pairs(JMOD_CONFIG.Blueprints)do
+		for name,info in pairs(JMod.Config.Blueprints)do
 			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4]})
 		end
 	end
@@ -176,7 +176,7 @@ end
 function SWEP:Package()
 	local Ent=self:GetPackagableObject()
 	if(Ent)then
-		JMod_PackageObject(Ent)
+		JMod.PackageObject(Ent)
 		sound.Play("snds_jack_gmod/packagify.wav",self:GetPos(),60,math.random(90,110))
 		for i=1,3 do
 			timer.Simple(i/3,function()
@@ -200,13 +200,13 @@ function SWEP:PrimaryAttack()
 			if((self.Buildables[SelectedBuild][2]=="package")and not(self:GetPackagableObject()))then return end
 			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
 			local Reqs=self.Buildables[SelectedBuild][3]
-			if(JMod_HaveResourcesToPerformTask(nil,nil,Reqs,self))then
+			if(JMod.HaveResourcesToPerformTask(nil,nil,Reqs,self))then
 				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
 				if override == false then
 					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 					return
 				end
-				JMod_ConsumeResourcesInRange(Reqs,nil,nil,self)
+				JMod.ConsumeResourcesInRange(Reqs,nil,nil,self)
 				Built=true
 				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
 				for i=1,BuildSteps do
@@ -226,16 +226,16 @@ function SWEP:PrimaryAttack()
 									local StringParts=string.Explode(" ",Class)
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
 										local FuncName=StringParts[2]
-										if((JMOD_LUA_CONFIG)and(JMOD_LUA_CONFIG.BuildFuncs)and(JMOD_LUA_CONFIG.BuildFuncs[FuncName]))then
-											JMOD_LUA_CONFIG.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
+										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
+											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
 										else
-											print("JMOD BUILDKIT ERROR: garrysmod/lua/autorun/jmod_lua_config.lua is missing, corrupt, or doesn't have an entry for that build function")
+											print("JMOD BUILDKIT ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent=ents.Create(Class)
 										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
-										JMod_Owner(Ent,self.Owner)
+										JMod.Owner(Ent,self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 									end
@@ -246,13 +246,13 @@ function SWEP:PrimaryAttack()
 				end
 			end
 			if not(Built)then self:Msg("missing supplies for build") end
-		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey)))then
+		elseif((IsValid(Ent))and(Ent.ModPerfSpecs)and(self.Owner:KeyDown(JMod.Config.AltFunctionKey)))then
 			local State=Ent:GetState()
 			if(State==-1)then
 				self:Msg("device must be repaired before modifying")
 			elseif(State~=0)then
 				self:Msg("device must be turned off to modify")
-			elseif(JMod_HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
+			elseif(JMod.HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
 				net.WriteTable(Ent.ModPerfSpecs)
@@ -276,11 +276,11 @@ function SWEP:PrimaryAttack()
 			else
 				local Grade=Ent:GetGrade()
 				if(Grade<5)then
-					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate*JMOD_CONFIG.ToolKitUpgradeMult
+					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate*JMod.Config.ToolKitUpgradeMult
 					for resourceType,requiredAmt in pairs(UpgradeInfo)do
 						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
 						if(CurAmt<requiredAmt)then
-							local ResourceContainer=JMod_FindResourceContainer(resourceType,UpgradeRate,nil,nil,self.Owner)
+							local ResourceContainer=JMod.FindResourceContainer(resourceType,UpgradeRate,nil,nil,self.Owner)
 							if(ResourceContainer)then
 								self:UpgradeEntWithResource(Ent,ResourceContainer,UpgradeRate)
 								Upgraded=true
@@ -309,8 +309,8 @@ function SWEP:ModifyMachine(ent,tbl,ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif(State~=0)then
 		self:Msg("device must be turned off to modify")
-	elseif(JMod_HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
-		JMod_ConsumeResourcesInRange({parts=20},nil,nil,self)
+	elseif(JMod.HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
+		JMod.ConsumeResourcesInRange({parts=20},nil,nil,self)
 		ent:SetMods(tbl,ammoType)
 		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
 	else
@@ -386,7 +386,7 @@ end
 function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
-		if(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))then
+		if(self.Owner:KeyDown(JMod.Config.AltFunctionKey))then
 			-- do nothing because dewelding is handled in the think function
 		else
 			if(self.NextSwitch<Time)then
@@ -395,7 +395,7 @@ function SWEP:Reload()
 				if(Build>0)then
 					self:SwitchSelectedBuild(0)
 				else
-					JMod_Hint(self.Owner, "craft")
+					JMod.Hint(self.Owner, "craft")
 					net.Start("JMod_EZbuildKit")
 						net.WriteTable(self.Buildables)
 						net.WriteEntity(self)
@@ -436,6 +436,7 @@ end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	if(SERVER)then
+		--[[ todo
 		local Ent,Pos,Norm=self:WhomIlookinAt()
 		if(Ent.EZsalvage)then
 			local Time=CurTime()
@@ -449,6 +450,7 @@ function SWEP:SecondaryAttack()
 			end
 			self.LastSalvageAttempt=Time
 		end
+		--]]
 	end
 end
 function SWEP:OnDrop()
@@ -483,7 +485,7 @@ function SWEP:Deploy()
 		self:UpdateNextIdle()
 		self:EmitSound("snds_jack_gmod/toolbox"..math.random(1,7)..".wav",65,math.random(90,110))
 	end
-	if SERVER then JMod_Hint(self.Owner,"building") end
+	if SERVER then JMod.Hint(self.Owner,"building") end
 	self:SetNextPrimaryFire(CurTime()+1)
 	self:SetNextSecondaryFire(CurTime()+1)
 	return true
@@ -503,10 +505,10 @@ function SWEP:Think()
 	end
 	if SERVER and self.NextDeWeldProgress<Time then
 		self.NextDeWeldProgress=Time+.25
-		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMOD_CONFIG.AltFunctionKey))and(SERVER))then
+		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMod.Config.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
 			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
-				self.DeWeldProgress=self.DeWeldProgress+JMOD_CONFIG.BuildKitDeWeldSpeed*3
+				self.DeWeldProgress=self.DeWeldProgress+JMod.Config.BuildKitDeWeldSpeed*3
 				self:Msg("loosening: "..self.DeWeldProgress.."/100")
 				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),65,math.random(80,120))
 				self:Pawnch()

@@ -47,7 +47,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		JMod_Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Damage^.95,self.BlastRadius)
+		JMod.Sploom(self.Owner or self,self:GetPos()+Vector(0,0,10),self.Damage^.95,self.BlastRadius)
 		self:Remove()
 	end
 elseif(CLIENT)then

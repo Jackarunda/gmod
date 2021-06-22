@@ -26,7 +26,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		return ent
@@ -61,7 +61,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),10,50))then
+		if(JMod.LinCh(dmginfo:GetDamage(),10,50))then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
@@ -76,21 +76,21 @@ if(SERVER)then
 		local State=self:GetState()
 		if(State<0)then return end
 		
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
-				JMod_Owner(self,activator)
+				JMod.Owner(self,activator)
 				net.Start("JMod_MineColor")
 					net.WriteEntity(self)
 				net.Send(activator)
 			else
 				activator:PickupObject(self)
-				JMod_Hint(activator, "arm", self)
+				JMod.Hint(activator, "arm", self)
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			self:DrawShadow(true)
 		end
 	end
@@ -122,15 +122,15 @@ if(SERVER)then
 		util.Effect("eff_jack_minesplode",plooie,true,true)
 		util.ScreenShake(SelfPos,99999,99999,1,500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-		JMod_Sploom(self.Owner,SelfPos,math.random(10,20))
-		JMod_FragSplosion(self,SelfPos,1000,20*JMOD_CONFIG.MinePower,3000,self.Owner,Up,1.2,3)
+		JMod.Sploom(self.Owner,SelfPos,math.random(10,20))
+		JMod.FragSplosion(self,SelfPos,1000,20*JMod.Config.MinePower,3000,self.Owner,Up,1.2,3)
 		self:Remove()
 	end
 	function ENT:Arm(armer)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
-		JMod_Hint(armer, "friends", self)
-		JMod_Owner(self,armer)
+		JMod.Hint(armer, "friends", self)
+		JMod.Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
 		timer.Simple(3,function()
@@ -162,10 +162,10 @@ if(SERVER)then
 		if(State==STATE_ARMED)then
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),100))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
-					if((JMod_ShouldAttack(self,targ))and(self:CanSee(targ)))then
+					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
+						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 							if(IsValid(self))then
 								if(self:GetState()==STATE_WARNING)then self:Detonate() end
 							end

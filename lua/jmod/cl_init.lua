@@ -1,9 +1,9 @@
-JMOD_NUKEFLASH_ENDTIME=0
-JMOD_NUKEFLASH_POS=nil
-JMOD_NUKEFLASH_RANGE=0
-JMOD_NUKEFLASH_INTENSITY=1
-JMOD_NUKEFLASH_SMOKE_ENDTIME=0
-JMOD_WIND=JMOD_WIND or Vector(0,0,0)
+JMod.NukeFlashEndTime=0
+JMod.NukeFlashPos=nil
+JMod.NukeFlashRange=0
+JMod.NukeFlashIntensity=1
+JMod.NukeFlashSmokeEndTime=0
+JMod.Wind=JMod.Wind or Vector(0,0,0)
 
 surface.CreateFont("JMod-Display",{
 	font="Arial",
@@ -183,9 +183,9 @@ hook.Add("Think","JMOD_CLIENT_THINK",function()
 	end
 	if(NextThink>Time)then return end
 	NextThink=Time+5
-	JMOD_WIND=JMOD_WIND+WindChange/10
-	if(JMOD_WIND:Length()>1)then
-		JMOD_WIND:Normalize()
+	JMod.Wind=JMod.Wind+WindChange/10
+	if(JMod.Wind:Length()>1)then
+		JMod.Wind:Normalize()
 		WindChange=-WindChange
 	end
 	WindChange=WindChange+Vector(math.Rand(-.5,.5),math.Rand(-.5,.5),0)
@@ -224,13 +224,13 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 				local State,Vary=ent:GetState(),math.sin(CurTime()*50)/2+.5
 				local Forward=-ent:GetUp()
 				pos=pos-Forward*.5
-				if(State==JMOD_EZ_STATE_ARMING)then
+				if(State==JMod.EZ_STATE_ARMING)then
 					render.SetMaterial(GlowSprite)
 					render.DrawSprite(pos,15,15,Color(255,0,0,100*Vary))
 					render.DrawSprite(pos,7,7,Color(255,255,255,100*Vary))
 					render.DrawQuadEasy(pos,Forward,15,15,Color(255,0,0,100*Vary),0)
 					render.DrawQuadEasy(pos,Forward,7,7,Color(255,255,255,100*Vary),0)
-				elseif State==JMOD_EZ_STATE_ARMED then
+				elseif State==JMod.EZ_STATE_ARMED then
 					render.SetMaterial(BeamMat)
 					render.DrawBeam(pos, trace.HitPos, 0.2, 0, 255, Color(255,0,0, 30))
 					if trace.Hit then
@@ -247,14 +247,14 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 end)
 
 net.Receive("JMod_LuaConfigSync",function()
-	JMOD_LUA_CONFIG=JMOD_LUA_CONFIG or {}
-	JMOD_LUA_CONFIG.ArmorOffsets=net.ReadTable()
-	JMOD_CONFIG=JMOD_CONFIG or {}
-	JMOD_CONFIG.AltFunctionKey=net.ReadInt(32)
-	JMOD_CONFIG.WeaponSwayMult=net.ReadFloat()
+	JMod.LuaConfig=JMod.LuaConfig or {}
+	JMod.LuaConfig.ArmorOffsets=net.ReadTable()
+	JMod.Config=JMod.Config or {}
+	JMod.Config.AltFunctionKey=net.ReadInt(32)
+	JMod.Config.WeaponSwayMult=net.ReadFloat()
 end)
 
-function JMod_MakeModel(self,mdl,mat,scale,col)
+function JMod.MakeModel(self,mdl,mat,scale,col)
 	local Mdl=ClientsideModel(mdl)
 	if(mat)then Mdl:SetMaterial(mat) end
 	if(scale)then Mdl:SetModelScale(scale,0) end
@@ -265,7 +265,7 @@ function JMod_MakeModel(self,mdl,mat,scale,col)
 	return Mdl
 end
 
-function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
+function JMod.RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 	if(pos)then mdl:SetRenderOrigin(pos) end
 	if(ang)then mdl:SetRenderAngles(ang) end
 	if(scale)then
@@ -288,7 +288,7 @@ function JMod_RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 end
 
 local FRavg,FRcount=0,0
-function JMod_MeasureFramerate()
+function JMod.MeasureFramerate()
 	local FR=1/FrameTime()
 	FRavg=FRavg+FR
 	FRcount=FRcount+1
@@ -409,8 +409,8 @@ end)
 local SomeKindOfFog=Material("white_square")
 hook.Add("PostDrawSkyBox","JMOD_POSTSKYBOX",function()
 	local Time=CurTime()
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		local W,H=ScrW(),ScrH()
 		cam.Start3D2D(EyePos()+Vector(0,0,100),Angle(0,0,0),2)
 		surface.SetMaterial(SomeKindOfFog)
@@ -427,8 +427,8 @@ hook.Add("SetupWorldFog","JMOD_WORLDFOG",function()
 		render.FogMode(0)
 		return true
 	end
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		render.FogMode(1)
 		render.FogColor(100,100,100)
 		render.FogStart(0)
@@ -445,8 +445,8 @@ hook.Add("SetupSkyboxFog","JMOD_SKYFOG",function(scale)
 		render.FogMode(0)
 		return true
 	end
-	if(JMOD_NUKEFLASH_SMOKE_ENDTIME>Time)then
-		local Frac=((JMOD_NUKEFLASH_SMOKE_ENDTIME-Time)/30)^.15
+	if(JMod.NukeFlashSmokeEndTime>Time)then
+		local Frac=((JMod.NukeFlashSmokeEndTime-Time)/30)^.15
 		render.FogMode(1)
 		render.FogColor(100,100,100)
 		render.FogStart(1*scale)
@@ -472,7 +472,7 @@ end
 hook.Add("PlayerStartVoice","JMOD_PLAYERSTARTVOICE",function(ply)
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		surface.PlaySound("snds_jack_gmod/radio_start.wav")
 	end
 end)
@@ -481,7 +481,7 @@ hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
 	if not(IsValid(ply))then return end
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		CommNoise()
 		if not isTeam and not isDead then
 			local tab = {}
@@ -499,7 +499,7 @@ end)
 hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
 	if not(ply:Alive())then return end
 	if not(LocalPlayer():Alive())then return end
-	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod_PlayersCanComm(LocalPlayer(),ply)))then
+	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		CommNoise()
 	end
 end)
@@ -520,11 +520,11 @@ end)
 
 net.Receive("JMod_NuclearBlast",function()
 	local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()
-	JMOD_NUKEFLASH_ENDTIME=CurTime()+8
-	JMOD_NUKEFLASH_POS=pos
-	JMOD_NUKEFLASH_RANGE=renj
-	JMOD_NUKEFLASH_INTENSITY=intens
-	if(intens>1)then JMOD_NUKEFLASH_SMOKE_ENDTIME=CurTime()+30 end
+	JMod.NukeFlashEndTime=CurTime()+8
+	JMod.NukeFlashPos=pos
+	JMod.NukeFlashRange=renj
+	JMod.NukeFlashIntensity=intens
+	if(intens>1)then JMod.NukeFlashSmokeEndTime=CurTime()+30 end
 	local maxRange=renj
 	local maxImmolateRange=renj*.3
 	for k,ent in pairs(ents.FindInSphere(pos,maxRange))do

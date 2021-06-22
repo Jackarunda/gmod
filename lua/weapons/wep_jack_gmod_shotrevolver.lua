@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod_ApplyAmmoSpecs(SWEP,"Small Shotgun Round",.8)
+JMod.ApplyAmmoSpecs(SWEP,"Small Shotgun Round",.8)
 
 SWEP.HipDispersion = 1100
 
@@ -60,11 +60,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .35
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.23, 6, .1),
+    Pos = Vector(-2.23, 14, .1),
     Ang = Angle(-.7, -.15, -2),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.minor
+    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 1, -1)
@@ -100,7 +100,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 0.4,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.handgun, t = 0, v=60, p=110}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -109,7 +109,7 @@ SWEP.Animations = {
     ["ready"] = {
         Source = "draw_first",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.handgun, t = .3, v=60, p=110}
+			{s = JMod.GunHandlingSounds.draw.handgun, t = .3, v=60, p=110}
 		},
         Time = 1.5,
 		Mult=1,
@@ -132,11 +132,11 @@ SWEP.Animations = {
 		ShellEjectDynamic=true,
 		RestoreAmmo=1,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav", t = 1.1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav", t = 1.4, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.9, v=65, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.9, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav", t = 2.3, v=60}
 		}
     },
@@ -150,11 +150,11 @@ SWEP.Animations = {
 		ShellEjectAt = 1.2,
 		ShellEjectCount=5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav", t = 1.1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav", t = 1.4, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.9, v=65, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.9, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav", t = 2.3, v=60}
 		}
     },
@@ -168,7 +168,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .3, v=65, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .3, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav", t = .8, v=60}
 		}
     },
@@ -179,7 +179,7 @@ SWEP.Animations = {
         LHIKIn = 0,
 		SoundTable = {
 			{s = "snds_jack_gmod/ez_weapons/shotrevolver/close.wav", t = .4, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1, v=55}
+			{s = JMod.GunHandlingSounds.grab, t = 1, v=55}
 		},
         LHIKOut = 0.4,
     }

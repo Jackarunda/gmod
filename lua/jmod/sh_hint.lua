@@ -1,13 +1,13 @@
-JMod_Hints = {
+JMod.Hints = {
 	-- General
 	["wiki"] = {Type = "lightbulb", Text = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'", Time = 4, Identifier = "important", Sound = ""},
-	["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'", Time = 4, Identifier = "important", Sound = ""},
+	["config"] = {Type = "lightbulb", Text = "Configure JMod with the config file located at 'garrysmod/data/JMod.Config.txt'", Time = 4, Identifier = "important", Sound = ""},
 	["hint reset"] = {Type = "lightbulb", Text = "use the command jmod_resethints to see hints again if you missed them", Time = 6, Identifier = "important", Sound = ""},
 	["qol"] = {Type = "lightbulb", Text = "consider enabling some of JMod's QoL features in the config for a more realistic gmod experience", Time = 4, Identifier = "important", Sound = ""},
 	["pickup"] = {Type = "key_E", Text = "Press Use to pick up small items", Time = 3, Identifier = "important"},
 	["bind cmd"] = {Type = "lightbulb", Text = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'", Identifier = "important"},
 	["bind walk"] = {Type = "lightbulb", Text = "Ensure you have bound the Walk key, use command 'bind alt +walk'", Identifier = "important"},
-	["unpackage"] = {Type = "button", Text = "Hold Walk and double tap Use to unpackage", Time = 5, Followup = "bind walk"},
+	["unpackage"] = {Type = "button", Text = "WALK+USE to unpackage", Time = 5, Followup = "bind walk"},
 	
 	-- Explosives mechanics
 	["sticky"] = {Type = "key_E", Text = "Hold Use, put near wall and release to stick object"},
@@ -163,6 +163,7 @@ JMod_Hints = {
 	["ent_jack_gmod_ezparts use"] = {Type = "pickup", Text = "Bump parts into broken devices to fix them", Time = 3},
 	["ent_jack_gmod_ezpropellant"] = {Type = "info", Text = "Propellant is used to craft various munitions", Time = 3},
 	["resource manage"]={Type="info",Text="ALT+SHIFT+E to split resources, tap together to combine",Time=4},
+	["oil derrick"]={Type="info",Text="oil derrick must be built on solid ground, above an oil reserve",Time=4},
 	
 	-- Weapons
 	["weapon steadiness"]={Type="info",Text="hold ALT while aiming to focus and steady your aim", Sound = ""},
@@ -178,7 +179,7 @@ JMod_Hints = {
 	["weapon black powder paper cartridges"]={Type="info",Text="get ammo from the EZ Black Powder Paper Cartridges (entities, JMod - EZ Special Ammo)"},
 	["weapon arrows"]={Type="info",Text="get ammo from the EZ Arrows (entities, JMod - EZ Special Ammo)"}
 }
-JMod_SpecificHints={
+JMod.SpecificHints={
 	["wep_jack_gmod_gl"]={Type="info",Text="GRENADES HAVE NO DISTANCE SAFETY"},
 	["wep_jack_gmod_mgl"]={Type="info",Text="GRENADES HAVE NO DISTANCE SAFETY"},
 	["wep_jack_gmod_rocketlauncher"]={Type="info",Text="BEWARE BACKBLAST"},

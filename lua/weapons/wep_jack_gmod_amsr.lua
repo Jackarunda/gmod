@@ -16,7 +16,7 @@ SWEP.BodyHolsterScale = 1
 
 SWEP.DefaultBodygroups = "01000"
 
-JMod_ApplyAmmoSpecs(SWEP,"Heavy Rifle Round",1.1)
+JMod.ApplyAmmoSpecs(SWEP,"Heavy Rifle Round",1.1)
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 
@@ -57,8 +57,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.75, 0, .5),
     Ang = Angle(-.1, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(.5, -.8, 2)
@@ -114,7 +114,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60, p=80}},
         LHIK = true,
         LHIKIn = 0,
         LHIKOut = 0.35,
@@ -129,7 +129,7 @@ SWEP.Animations = {
 			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .75, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 1.5, v=60, p=90},
 			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 1.6, v=60, p=90},
-			{s = JMod_GunHandlingSounds.grab, t = 2.25, v=55}
+			{s = JMod.GunHandlingSounds.grab, t = 2.25, v=55}
 		}
     },
 	["reload"] = {
@@ -143,11 +143,11 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = .55, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.4, v=60},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.4, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 2, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.7, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 2.7, v=60}
 		}
     },
     ["reload_empty"] = {
@@ -161,16 +161,16 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/amsr/up.wav", t = .5, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/back.wav", t = .6, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 1.3, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = 1.3, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/out.wav", t = 2.5, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 3.25, v=60},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 3.25, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/in.wav", t = 3.9, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/forward.wav", t = 4.8, v=60},
 			{s = "snds_jack_gmod/ez_weapons/amsr/down.wav", t = 4.9, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 5.6, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 5.6, v=60}
 		}
     }
 }

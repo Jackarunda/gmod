@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(1,-14,-11)
 SWEP.BodyHolsterPosL = Vector(-2.5,-15,11)
 SWEP.BodyHolsterScale = 1.1
 
-JMod_ApplyAmmoSpecs(SWEP,"40mm Grenade",.9)
+JMod.ApplyAmmoSpecs(SWEP,"40mm Grenade",.9)
 SWEP.DamageRand = .1
 SWEP.ShootEntity = "ent_jack_gmod_ezprojectilenade"
 SWEP.MuzzleVelocity = 3000
@@ -57,8 +57,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.15, 0, 1.32),
     Ang = Angle(2.2, 0, -2),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 0, 0)
@@ -107,7 +107,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -117,7 +117,7 @@ SWEP.Animations = {
         Source = "draw_first",
         Time = 2,
         SoundTable = {
-			{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60},
+			{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mgl/close.wav", t = 1.2, v=60, p=120}
 		},
@@ -140,12 +140,12 @@ SWEP.Animations = {
 		ShellEjectAt = 1.5,
 		ShellEjectDynamic=true,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/mgl/open.wav", t = .15, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = .6, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = .6, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/out.wav", t = .95, v=65},
 			{s = "snds_jack_gmod/ez_weapons/mgl/out.wav", t = 1.2, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.025, v=55},
+			{s = JMod.GunHandlingSounds.grab, t = 2.025, v=55},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.425, v=55, p=100},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.475, v=55, p=110},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.525, v=55, p=120},
@@ -163,12 +163,12 @@ SWEP.Animations = {
 		ShellEjectCount=6,
 		RestoreAmmo=0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65},
 			{s = "snds_jack_gmod/ez_weapons/mgl/open.wav", t = .2, v=65},
-			{s = JMod_GunHandlingSounds.cloth.move, t = .8, v=65},
+			{s = JMod.GunHandlingSounds.cloth.move, t = .8, v=65},
 			{s = "snds_jack_gmod/ez_weapons/gl/out.wav", t = 1.05, v=65},
 			{s = "snds_jack_gmod/ez_weapons/mgl/out.wav", t = 1.2, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.3, v=55},
+			{s = JMod.GunHandlingSounds.grab, t = 2.3, v=55},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.55, v=55, p=100},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.6, v=55, p=110},
 			{s = "snds_jack_gmod/ez_weapons/mgl/click.wav", t = 2.65, v=55, p=120},
@@ -185,7 +185,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .01, v=65, p=120},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .01, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/mgl/in.wav", t = .325, v=65}
 		}
     },
@@ -196,8 +196,8 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0.4,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65},
-			{s = JMod_GunHandlingSounds.grab, t = .1, v=60},
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65},
+			{s = JMod.GunHandlingSounds.grab, t = .1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/mgl/close.wav", t = .225, v=65}
 		}
     }

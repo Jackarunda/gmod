@@ -22,7 +22,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -86,7 +86,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),60,120))then
+		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
@@ -102,18 +102,18 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,120)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod_Hint(activator, "impactdet", self)
+				JMod.Hint(activator, "impactdet", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,120)
@@ -128,7 +128,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,100)
+		JMod.Sploom(Att,SelfPos,100)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,2000)
 		local Eff="100lb_ground"
@@ -143,15 +143,15 @@ if(SERVER)then
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,4)
-		JMod_BlastDoors(self,SelfPos,4)
+		JMod.WreckBuildings(self,SelfPos,4)
+		JMod.BlastDoors(self,SelfPos,4)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		JMod_FragSplosion(self,SelfPos,10000,200,8000,self.Owner or game.GetWorld())
+		JMod.FragSplosion(self,SelfPos,10000,200,8000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
@@ -177,7 +177,7 @@ if(SERVER)then
 		end
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
-				--if((designator:GetLasing())and(designator.Owner)and(JMod_ShouldAllowControl(self,designator.Owner)))then
+				--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then
 					--[[
 					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.Owner:GetEyeTrace().HitPos
 					local TargVec=TargPos-SelfPos
@@ -187,15 +187,15 @@ if(SERVER)then
 					local ETA=Dist/Speed
 					jprint(ETA)
 					TargPos=TargPos--Vel*ETA/2
-					JMod_Sploom(self,TargPos,1)
-					JMod_AeroGuide(self,-self:GetRight(),TargPos,1,1,.2,10)
+					JMod.Sploom(self,TargPos,1)
+					JMod.AeroGuide(self,-self:GetRight(),TargPos,1,1,.2,10)
 					--]]
 				--end
 			--end
 		--end
 		local AeroDragMult=.5
 		if(self:GetSnakeye())then AeroDragMult=4 end
-		JMod_AeroDrag(self,-self:GetRight(),AeroDragMult)
+		JMod.AeroDrag(self,-self:GetRight(),AeroDragMult)
 		self:NextThink(CurTime()+.1)
 		return true
 	end

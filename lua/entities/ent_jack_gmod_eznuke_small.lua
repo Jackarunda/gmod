@@ -22,7 +22,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -73,13 +73,13 @@ if(SERVER)then
 		for i=1,20 do
 			self:DamageSpark()
 		end
-		for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
+		for k=1,10*JMod.Config.NuclearRadiationMult do
 			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod_Owner(Gas,self.Owner or game.GetWorld())
+			JMod.Owner(Gas,self.Owner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
+			Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,50)+Vector(0,0,10*JMod.Config.NuclearRadiationMult))
 		end
 		SafeRemoveEntityDelayed(self,10)
 	end
@@ -95,7 +95,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
+		if(JMod.LinCh(dmginfo:GetDamage(),100,200))then
 			if(self:GetState()==STATE_ARMED)then
 				self:Detonate()
 			else
@@ -112,16 +112,16 @@ if(SERVER)then
 		local State,Alt=self:GetState(),activator:KeyDown(IN_WALK)
 		if(State<0)then return end
 		
-		JMod_Owner(self,activator)
+		JMod.Owner(self,activator)
 		if not(Alt)then
 			activator:PickupObject(self)
-			JMod_Hint(activator, "arm", self)
+			JMod.Hint(activator, "arm", self)
 		else
 			if(State==STATE_OFF)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,140)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod_Hint(activator, "dualdet", self)
+				JMod.Hint(activator, "dualdet", self)
 			elseif(State==STATE_ARMED)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,100)
@@ -140,8 +140,8 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
-		--JMod_Sploom(Att,SelfPos,500)
-		timer.Simple(.1,function() JMod_BlastDamageIgnoreWorld(SelfPos,Att,nil,600,800) end)
+		--JMod.Sploom(Att,SelfPos,500)
+		timer.Simple(.1,function() JMod.BlastDamageIgnoreWorld(SelfPos,Att,nil,600,800) end)
 		---
 		util.ScreenShake(SelfPos,1000,10,5,8000)
 		local Eff="pcf_jack_moab"
@@ -151,11 +151,11 @@ if(SERVER)then
 		end
 		---
 		SendClientNukeEffect(SelfPos,8000)
-		for i=0,10 do
-			timer.Simple(i/4,function()
+		for h=1,40 do
+			timer.Simple(h/10,function()
 				local ThermalRadiation=DamageInfo()
 				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage(10)
+				ThermalRadiation:SetDamage(50/h)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
 				util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
@@ -173,14 +173,18 @@ if(SERVER)then
 			end
 		end
 		---
-		timer.Simple(.5,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,5000,500) end)
+		for i=1,5 do
+			timer.Simple(i/5,function()
+				util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,200*i),6000,300)
+			end)
+		end
 		---
 		for k,ent in pairs(ents.FindInSphere(SelfPos,2000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod_WreckBuildings(self,SelfPos,15)
-		JMod_BlastDoors(self,SelfPos,15)
+		JMod.WreckBuildings(self,SelfPos,15)
+		JMod.BlastDoors(self,SelfPos,15)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
@@ -198,13 +202,13 @@ if(SERVER)then
 		timer.Simple(5,function()
 			for j=1,10 do
 				timer.Simple(j/10,function()
-					for k=1,10*JMOD_CONFIG.NuclearRadiationMult do
+					for k=1,10*JMod.Config.NuclearRadiationMult do
 						local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 						Gas:SetPos(SelfPos)
-						JMod_Owner(Gas,Att)
+						JMod.Owner(Gas,Att)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,250)+Vector(0,0,500*JMOD_CONFIG.NuclearRadiationMult))
+						Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,250)+Vector(0,0,500*JMod.Config.NuclearRadiationMult))
 					end
 				end)
 			end
@@ -214,7 +218,7 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,self:GetRight(),.5)
+		JMod.AeroDrag(self,self:GetRight(),.5)
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

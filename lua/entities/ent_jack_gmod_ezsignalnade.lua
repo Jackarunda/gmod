@@ -15,28 +15,28 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
-		JMod_Owner(self,Dude)
+		JMod.Owner(self,Dude)
 		local Time=CurTime()
 		if(tobool(onOff))then
 			local State=self:GetState()
 			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMOD_CONFIG.AltFunctionKey)
-			if(State==JMOD_EZ_STATE_OFF and Alt)then
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
+			if(State==JMod.EZ_STATE_OFF and Alt)then
 				net.Start("JMod_SignalNade")
 				net.WriteEntity(self)
 				net.Send(Dude)
 			end
-			JMod_ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
+			JMod.ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end
 	function ENT:Prime()
-		self:SetState(JMOD_EZ_STATE_PRIMED)
+		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav",60,100)
 		self:SetBodygroup(3,1)
 	end
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(2,function()
 			if(IsValid(self))then self:Detonate() end

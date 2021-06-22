@@ -32,7 +32,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -85,7 +85,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
+		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
 			activator:PickupObject(self)
 		elseif not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
 			activator:Give("wep_jack_gmod_ezbuildkit")

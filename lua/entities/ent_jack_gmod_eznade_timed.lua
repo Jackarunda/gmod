@@ -13,7 +13,7 @@ local BaseClass = baseclass.Get(ENT.Base)
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		timer.Simple((IsValid(self.AttachedBomb) and 10 or 3),function()
 			if(IsValid(self))then self:Detonate() end
 		end)

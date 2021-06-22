@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="explosives"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.EXPLOSIVES}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZpartBoxSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/Items/item_item_crate.mdl"
 ENT.Material="models/mat_jack_gmod_ezexplosives"
 ENT.ModelScale=.8
@@ -21,7 +21,7 @@ ENT.BreakNoise="Wood_Box.Break"
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,bad)
 		if((bad)and(math.random(1,3)==2))then
-			JMod_Sploom(self.Owner,self:GetPos()+VectorRand()*math.random(0,300),math.random(50,130))
+			JMod.Sploom(self.Owner,self:GetPos()+VectorRand()*math.random(0,300),math.random(50,130))
 		end
 	end
 elseif(CLIENT)then

@@ -14,7 +14,7 @@ ENT.EZgasParticle=true
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
-		self.LifeTime=math.random(50,100)*JMOD_CONFIG.PoisonGasLingerTime
+		self.LifeTime=math.random(50,100)*JMod.Config.PoisonGasLingerTime
 		self.DieTime=Time+self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
@@ -71,9 +71,9 @@ if(SERVER)then
 							end
 						end
 
-						local faceProt,skinProt=JMod_GetArmorBiologicalResistance(obj,DMG_NERVEGAS)
+						local faceProt,skinProt=JMod.GetArmorBiologicalResistance(obj,DMG_NERVEGAS)
 						if(faceProt>0)then
-							JMod_DepleteArmorChemicalCharge(obj,.01)
+							JMod.DepleteArmorChemicalCharge(obj,.01)
 						end
 
 						if faceProt < 1 then
@@ -81,17 +81,17 @@ if(SERVER)then
 								net.Start("JMod_VisionBlur")
 								net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
 								net.Send(obj)
-								JMod_Hint(obj, "tear gas")
+								JMod.Hint(obj, "tear gas")
 							elseif obj:IsNPC() then
 								obj.EZNPCincapacitate = Time + math.Rand(2,5)
 							end
 
-							JMod_TryCough(obj)
+							JMod.TryCough(obj)
 
 							if math.random(1,20) == 1 then
 								local Dmg,Helf=DamageInfo(),obj:Health()
 								Dmg:SetDamageType(DMG_NERVEGAS)
-								Dmg:SetDamage(math.random(1,4)*JMOD_CONFIG.PoisonGasDamage*RespiratorMultiplier)
+								Dmg:SetDamage(math.random(1,4)*JMod.Config.PoisonGasDamage*RespiratorMultiplier)
 								Dmg:SetInflictor(self)
 								Dmg:SetAttacker(self.Owner or self)
 								Dmg:SetDamagePosition(obj:GetPos())

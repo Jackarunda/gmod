@@ -260,7 +260,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		Butt:SetText("")
 		local reqs=itemInfo[2]
 		if(type(reqs)=="string")then reqs=itemInfo[3] end
-		local canMake=JMod_HaveResourcesToPerformTask(nil,nil,reqs,builder)
+		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
@@ -292,7 +292,7 @@ net.Receive("JMod_EZbuildKit",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
 	
-	local resTbl = JMod_CountResourcesInRange(nil,nil,Kit)
+	local resTbl = JMod.CountResourcesInRange(nil,nil,Kit)
 	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
@@ -377,7 +377,7 @@ net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()
 	local Buildables=net.ReadTable()
 	
-	local resTbl = JMod_CountResourcesInRange(nil,nil,Bench)
+	local resTbl = JMod.CountResourcesInRange(nil,nil,Bench)
 	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
@@ -747,7 +747,7 @@ end)
 local function GetItemInSlot(armorTable,slot)
 	if not(armorTable and armorTable.items)then return nil end
 	for id,armorData in pairs(armorTable.items)do
-		local ArmorInfo=JMod_ArmorTable[armorData.name]
+		local ArmorInfo=JMod.ArmorTable[armorData.name]
 		if(ArmorInfo.slots[slot])then
 			return id,armorData,ArmorInfo
 		end
@@ -821,7 +821,7 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 	function Buttalony:Paint(w,h)
 		surface.SetDrawColor(50,50,50,100)
 		surface.DrawRect(0,0,w,h)
-		draw.SimpleText(JMod_ArmorSlotNiceNames[slot],"DermaDefault",Buttalony:GetWide()/2,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+		draw.SimpleText(JMod.ArmorSlotNiceNames[slot],"DermaDefault",Buttalony:GetWide()/2,10,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		if(ItemID)then
 			local Str=ItemData.name--..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
 			if(ItemData.tgl and ItemInfo.tgl.slots[slot]==0)then Str="DISENGAGED" end
@@ -913,7 +913,7 @@ net.Receive("JMod_Inventory",function()
 	end
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor=Ply.EZarmor
-		JMod_ArmorPlayerModelDraw(ent)
+		JMod.ArmorPlayerModelDraw(ent)
 	end
 	function PlayerDisplay:DoClick()
 		if(OpenDropdown)then OpenDropdown:Remove() end

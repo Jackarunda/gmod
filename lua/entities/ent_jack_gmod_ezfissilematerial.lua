@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminOnly=true
 ---
-ENT.EZsupplies="fissilematerial"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZsuperRareResourceSize
+ENT.MaxResource=JMod.EZsuperRareResourceSize
 ENT.Model="models/kali/props/cases/hard case c.mdl"
 ENT.ModelScale=1
 ENT.Skin=2
@@ -24,14 +24,14 @@ if(SERVER)then
 			self.Sploomd=true
 			local Owner,Count=self.Owner,self:GetResource()
 			timer.Simple(.5,function()
-				for k=1,JMOD_CONFIG.NuclearRadiationMult*Count*10 do
+				for k=1,JMod.Config.NuclearRadiationMult*Count*10 do
 					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range=1000
 					Gas:SetPos(pos)
-					JMod_Owner(Gas,Owner or game.GetWorld())
+					JMod.Owner(Gas,Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
-					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,10*JMOD_CONFIG.NuclearRadiationMult))
+					Gas:GetPhysicsObject():SetVelocity(VectorRand()*math.random(1,500)+Vector(0,0,10*JMod.Config.NuclearRadiationMult))
 				end
 			end)
 		end

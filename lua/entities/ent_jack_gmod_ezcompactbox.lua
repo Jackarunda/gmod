@@ -135,15 +135,10 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator, "unpackage", self)
 		local Time=CurTime()
-		if(activator:KeyDown(JMOD_CONFIG.AltFunctionKey))then
-			if(Time-self.LastUsedTime>.3)then
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap to unpackage")
-				self.LastUsedTime=Time
-			else
-				self:Unpackage()
-			end
+		JMod.Hint(activator, "unpackage", self)
+		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
+			self:Unpackage()
 		else
 			if(self:GetSizeScale()<=2)then activator:PickupObject(self) end
 		end

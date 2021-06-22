@@ -17,14 +17,14 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent.HasSpawnAmmo=true
 		ent:Spawn()
 		ent:Activate()
 		return ent
 	end
 	function ENT:Initialize()
-		self.Specs=JMod_WeaponTable[self.WeaponName]
+		self.Specs=JMod.WeaponTable[self.WeaponName]
 		self.Entity:SetModel(self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
@@ -41,7 +41,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.EZID=self.EZID or JMod_GenerateGUID()
+		self.EZID=self.EZID or JMod.GenerateGUID()
 		---
 		self.MagRounds=self.MagRounds or 0
 	end
@@ -61,7 +61,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(Alt)then
 			activator:PickupObject(self)
 		else
@@ -76,19 +76,19 @@ if(SERVER)then
 						GivenWep:SetClip1(self.MagRounds)
 					end
 					activator:SelectWeapon(self.Specs.swep)
-					JMod_Hint(activator,self.Specs.swep,nil,true)
+					JMod.Hint(activator,self.Specs.swep,nil,true)
 					if(GivenWep.Primary.Ammo=="Arrow")then
-						JMod_Hint(activator,"weapon arrows")
+						JMod.Hint(activator,"weapon arrows")
 					elseif(GivenWep.Primary.Ammo=="Black Powder Paper Cartridge")then
-						JMod_Hint(activator,"weapon black powder paper cartridges")
+						JMod.Hint(activator,"weapon black powder paper cartridges")
 					elseif(GivenWep.Primary.Ammo=="40mm Grenade" or GivenWep.Primary.Ammo=="Mini Rocket")then
-						JMod_Hint(activator,"weapon munitions")
+						JMod.Hint(activator,"weapon munitions")
 					else
-						JMod_Hint(activator,"weapon ammo")
+						JMod.Hint(activator,"weapon ammo")
 					end
 					for k,v in pairs({"weapon drop","weapon steadiness","weapon firemodes","weapon ammotypes"})do
 						timer.Simple(k*6,function()
-							JMod_Hint(activator,v)
+							JMod.Hint(activator,v)
 						end)
 					end
 					self:Remove()

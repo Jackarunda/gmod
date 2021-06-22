@@ -134,7 +134,7 @@ function SWEP:SecondaryAttack()
 	if not(IsFirstTimePredicted())then return end
 	if(self:GetFists())then return end
 	if SERVER then
-		JMod_Hint(self.Owner,"jmod hands grab","jmod hands drag")
+		JMod.Hint(self.Owner,"jmod hands grab","jmod hands drag")
 		self:SetCarrying()
 		local tr=self.Owner:GetEyeTraceNoCursor()
 		if((IsValid(tr.Entity))and(self:CanPickup(tr.Entity))and not(tr.Entity:IsPlayer()))then
@@ -174,7 +174,7 @@ function SWEP:ApplyForce()
 		local avec,velo=vec*len,phys:GetVelocity()-self.Owner:GetVelocity()
 		local Force=(avec-velo/2)*mul
 		local ForceMagnitude=Force:Length()
-		if(ForceMagnitude>4000*JMOD_CONFIG.HandGrabStrength)then
+		if(ForceMagnitude>4000*JMod.Config.HandGrabStrength)then
 			self:SetCarrying()
 			return
 		end
@@ -261,7 +261,7 @@ function SWEP:Think()
 end
 
 function SWEP:PrimaryAttack()
-	if(SERVER)then JMod_Hint(self.Owner,"jmod hands","jmod hands move") end
+	if(SERVER)then JMod.Hint(self.Owner,"jmod hands","jmod hands move") end
 	local side="fists_left"
 	if(math.random(1,2)==1)then side="fists_right" end
 	self:SetNextDown(CurTime()+7)

@@ -6,13 +6,14 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="gas"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.GAS}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZfuelCanSize
-ENT.Model="models/props_junk/propane_tank001a.mdl"
-ENT.Material=nil
-ENT.ModelScale=1.5
-ENT.Mass=40
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
+ENT.Model="models/props_c17/canister01a.mdl"
+ENT.Material="models/shiny"
+ENT.Color=Color(100,100,200)
+ENT.ModelScale=1
+ENT.Mass=30
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.DamageThreshold=80
 ENT.BreakNoise="Metal_Box.Break"
@@ -23,7 +24,7 @@ if(SERVER)then
 		if(destructive)then
 			if(math.random(1,20)==2)then
 				if(math.random(1,2)==1)then
-					JMod_Sploom(self.Owner,self:GetPos(),math.random(50,130))
+					JMod.Sploom(self.Owner,self:GetPos(),math.random(50,130))
 				end
 				for k,ent in pairs(ents.FindInSphere(pos,600))do
 					local Vec=(ent:GetPos()-pos):GetNormalized()

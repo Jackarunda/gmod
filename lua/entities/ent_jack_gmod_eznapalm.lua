@@ -211,7 +211,7 @@ if (SERVER) then
 					Haz:SetDTInt(0, 1)
 					Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
 					Haz:SetAngles(tr.HitNormal:Angle())
-					JMod_Owner(Haz, self.Owner)
+					JMod.Owner(Haz, self.Owner)
 					Haz:SetDTEntity(0, self:GetDTEntity(0))
 					Haz.HighVisuals = self.HighVisuals
 					Haz:Spawn()

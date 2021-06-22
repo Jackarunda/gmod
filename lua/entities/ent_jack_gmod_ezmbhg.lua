@@ -21,7 +21,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -78,7 +78,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),100,200))then
+		if(JMod.LinCh(dmginfo:GetDamage(),100,200))then
 			self:Break()
 		end
 	end
@@ -86,7 +86,7 @@ if(SERVER)then
 		local State,Time=self:GetState(),CurTime()
 		if(State<0)then return end
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_CHARGING)
 				self:EmitSound("ambient/machines/thumper_startup1.wav")
@@ -119,7 +119,7 @@ if(SERVER)then
 		timer.Simple(2,function()
 			local Bam=ents.Create("ent_jack_gmod_ezblackhole")
 			Bam:SetPos(SelfPos)
-			JMod_Owner(Bam,Own)
+			JMod.Owner(Bam,Own)
 			Bam:Spawn()
 			Bam:Activate()
 		end)
@@ -131,7 +131,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_CHARGING)then
-			self.Charge=self.Charge+.1*JMOD_CONFIG.MicroBlackHoleGeneratorChargeSpeed
+			self.Charge=self.Charge+.1*JMod.Config.MicroBlackHoleGeneratorChargeSpeed
 			if(self.Hum)then
 				self.Hum:ChangePitch(1+self.Charge*2.53)
 			end

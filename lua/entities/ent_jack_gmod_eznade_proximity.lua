@@ -28,12 +28,12 @@ if(SERVER)then
 		return not Tr.Hit
 	end
 	function ENT:Arm()
-		self:SetState(JMOD_EZ_STATE_ARMING)
+		self:SetState(JMod.EZ_STATE_ARMING)
 		self:SetBodygroup(2,1)
 		timer.Simple(1, function()
 			if IsValid(self) then
 				self:EmitSound("snd_jack_minearm.wav",60,110)
-				self:SetState(JMOD_EZ_STATE_ARMED)
+				self:SetState(JMod.EZ_STATE_ARMED)
 			end
 		end)
 		self:SpoonEffect()
@@ -42,17 +42,17 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		
-		if State==JMOD_EZ_STATE_ARMED then
+		if State==JMod.EZ_STATE_ARMED then
 			local Range=80
 			if(IsValid(self.AttachedBomb))then Range=120 end
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),Range))do
 				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
-					if((JMod_ShouldAttack(self,targ))and(self:CanSee(targ)))then
-						self:SetState(JMOD_EZ_STATE_WARNING)
+					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
+						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.15,.4)*JMOD_CONFIG.MineDelay,function()
+						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 							if(IsValid(self))then
-								if(self:GetState()==JMOD_EZ_STATE_WARNING)then self:Detonate() end
+								if(self:GetState()==JMod.EZ_STATE_WARNING)then self:Detonate() end
 							end
 						end)
 					end
@@ -71,11 +71,11 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==JMOD_EZ_STATE_ARMING)then
+		if(State==JMod.EZ_STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(self:GetPos()+self:GetUp()*2,10,10,Color(255,0,0))
 			render.DrawSprite(self:GetPos()+self:GetUp()*2,5,5,Color(255,255,255))
-		elseif(State==JMOD_EZ_STATE_WARNING)then
+		elseif(State==JMod.EZ_STATE_WARNING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(self:GetPos()+self:GetUp()*2,15*Vary,15*Vary,Color(255,0,0))
 			render.DrawSprite(self:GetPos()+self:GetUp()*2,7*Vary,7*Vary,Color(255,255,255))

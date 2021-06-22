@@ -56,7 +56,7 @@ $attachment "shell" "ValveBiped.Bip01_R_Hand" 9.5 -0.7 -5 rotate 30 90 -90
 
 $definebone "ValveBiped.Bip01_R_Hand" "" -0.678304 13.183071 4.586786 10.000006 -89.999982 -179.999978 0 0 0 0 0 0
 --]]
-JMod_WeaponTable={
+JMod.WeaponTable={
 	["Assault Rifle"]={
 		mdl="models/weapons/w_jmod_m16.mdl",
 		swep="wep_jack_gmod_assaultrifle",
@@ -245,7 +245,7 @@ JMod_WeaponTable={
 	}
 	-- keepcorpses caauses floating arrow bug
 }
-JMod_AmmoTable={
+JMod.AmmoTable={
 	["Light Rifle Round"]={
 		resourcetype="ammo",
 		sizemult=6,
@@ -377,7 +377,7 @@ JMod_AmmoTable={
 		dmgtype=DMG_BUCKSHOT
 	}
 }
-for k,v in pairs(JMod_AmmoTable)do
+for k,v in pairs(JMod.AmmoTable)do
 	game.AddAmmoType({name=k})
 	if(CLIENT)then
 		language.Add(k.."_ammo",k)
@@ -386,15 +386,15 @@ for k,v in pairs(JMod_AmmoTable)do
 		end
 	end
 end
-function JMod_GetAmmoSpecs(typ)
-	if not(JMod_AmmoTable[typ])then return nil end
-	local Result,BaseType=table.FullCopy(JMod_AmmoTable[typ]),string.Split(typ," - ")[1]
-	return table.Inherit(Result,JMod_AmmoTable[BaseType])
+function JMod.GetAmmoSpecs(typ)
+	if not(JMod.AmmoTable[typ])then return nil end
+	local Result,BaseType=table.FullCopy(JMod.AmmoTable[typ]),string.Split(typ," - ")[1]
+	return table.Inherit(Result,JMod.AmmoTable[BaseType])
 end
-function JMod_ApplyAmmoSpecs(wep,typ,mult)
+function JMod.ApplyAmmoSpecs(wep,typ,mult)
 	mult=mult or 1
 	wep.Primary.Ammo=typ
-	local Specs=JMod_GetAmmoSpecs(typ)
+	local Specs=JMod.GetAmmoSpecs(typ)
 	wep.Damage=Specs.basedmg*mult
 	wep.Num=Specs.projnum or 1
 	if(Specs.effrange)then wep.Range=Specs.effrange end
@@ -427,7 +427,7 @@ for k,v in pairs({
 })do
 	PrecacheParticleSystem(v)
 end
-JMod_GunHandlingSounds={
+JMod.GunHandlingSounds={
 	draw={
 		handgun={
 			"snds_jack_gmod/ez_weapons/handling/draw_pistol1.wav",
@@ -512,7 +512,7 @@ if(CLIENT)then
 			local Wep=ply:GetActiveWeapon()
 			if(Wep)then
 				Wep.Primary.Ammo=net.ReadString()
-				surface.PlaySound(table.Random(JMod_GunHandlingSounds.tap.magwell))
+				surface.PlaySound(table.Random(JMod.GunHandlingSounds.tap.magwell))
 			end
 		end
 	end)
@@ -568,7 +568,8 @@ if(CLIENT)then
 	}		
 	local function RenderHolsteredWeapon(ply,slot,side)
 		local Class=ply.EZweapons.slots[slot][side]
-		if((Class)and(ply:HasWeapon(Class))and not(ply:GetActiveWeapon():GetClass()==Class))then
+		local CurWep=ply:GetActiveWeapon()
+		if((Class)and(ply:HasWeapon(Class))and(IsValid(CurWep))and not(CurWep:GetClass()==Class))then
 			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
 			local ID=ply:LookupBone(slotInfo.bone)
 			if(ID)then
@@ -652,9 +653,9 @@ elseif(SERVER)then
 		-- and somehow we have to keep track of the original values during swaps
 		if not(ply:Alive())then return end
 		local Wep=ply:GetActiveWeapon()
-		if not(Wep.Primary.Ammo and JMod_AmmoTable[Wep.Primary.Ammo])then return end
+		if not(Wep.Primary.Ammo and JMod.AmmoTable[Wep.Primary.Ammo])then return end
 		local AllTypes,OriginalType={},string.Split(Wep.Primary.Ammo," - ")[1]
-		for name,info in pairs(JMod_AmmoTable)do
+		for name,info in pairs(JMod.AmmoTable)do
 			if((string.find(name,OriginalType))and(ply:GetAmmoCount(name)>0))then
 				table.insert(AllTypes,name)
 			end
@@ -675,18 +676,18 @@ elseif(SERVER)then
 			ply:PrintMessage(HUD_PRINTCENTER,"you do not have any alternate ammo for this weapon")
 		end
 	end)
-	function JMod_GiveAmmo(ply,ent)
+	function JMod.GiveAmmo(ply,ent)
 		if(ent.EZsupplies)then -- it's a resource box
 			local Wep=ply:GetActiveWeapon()
 			if(Wep)then
 				local PrimType,SecType,PrimSize,SecSize,WepClass=Wep:GetPrimaryAmmoType(),Wep:GetSecondaryAmmoType(),Wep:GetMaxClip1(),Wep:GetMaxClip2(),Wep:GetClass()
-				if(table.HasValue(JMOD_CONFIG.WeaponAmmoBlacklist,WepClass))then return end
+				if(table.HasValue(JMod.Config.WeaponAmmoBlacklist,WepClass))then return end
 				local IsMunitionBox=ent.EZsupplies=="munitions"
 				--[[ PRIMARY --]]
 				local PrimName=game.GetAmmoName(PrimType)
-				if((PrimName)and(JMod_AmmoTable[PrimName]))then
+				if((PrimName)and(JMod.AmmoTable[PrimName]))then
 					-- use JMOD ammo rules
-					local AmmoInfo,CurrentAmmo=JMod_AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
+					local AmmoInfo,CurrentAmmo=JMod.AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
 					if(ent.EZsupplies==AmmoInfo.resourcetype)then
 						local ResourceLeftInBox=ent:GetResource()
 						local SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox=AmmoInfo.carrylimit-CurrentAmmo,math.ceil(100/AmmoInfo.sizemult),math.ceil(ResourceLeftInBox*6/AmmoInfo.sizemult)
@@ -701,7 +702,7 @@ elseif(SERVER)then
 					end
 				else
 					-- use DEFAULT ammo rules
-					if(table.HasValue(JMOD_CONFIG.WeaponsThatUseMunitions,WepClass))then
+					if(table.HasValue(JMod.Config.WeaponsThatUseMunitions,WepClass))then
 						if not(IsMunitionBox)then return end
 					else
 						if(IsMunitionBox)then return end
@@ -715,7 +716,7 @@ elseif(SERVER)then
 						elseif(PrimSize<6)then
 							PrimSize=PrimSize*2
 						end
-						if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMOD_CONFIG.AmmoCarryLimitMult)then
+						if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMod.Config.AmmoCarryLimitMult)then
 							ply:GiveAmmo(PrimSize,PrimType)
 							ent:UseEffect(ent:GetPos(),ent)
 							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
@@ -725,19 +726,19 @@ elseif(SERVER)then
 				end
 				--[[ SECONDARY --]]
 				local SecName=game.GetAmmoName(SecType)
-				if((PrimName)and(JMod_AmmoTable[PrimName]))then
+				if((PrimName)and(JMod.AmmoTable[PrimName]))then
 					-- use JMOD ammo rules
 					-- TODO, no jmod weapons use secondary ammo currently
 				else
 					-- use DEFAULT ammo rules
-					if(table.HasValue(JMOD_CONFIG.WeaponsThatUseMunitions,WepClass))then
+					if(table.HasValue(JMod.Config.WeaponsThatUseMunitions,WepClass))then
 						if not(IsMunitionBox)then return end
 					else
 						if(IsMunitionBox)then return end
 					end
 					if((SecType)and(SecType~=-1))then
 						if(SecSize==-1)then SecSize=-SecSize end
-						if(ply:GetAmmoCount(SecType)<=SecSize*5*JMOD_CONFIG.AmmoCarryLimitMult)then
+						if(ply:GetAmmoCount(SecType)<=SecSize*5*JMod.Config.AmmoCarryLimitMult)then
 							ply:GiveAmmo(math.ceil(SecSize/2),SecType)
 							ent:UseEffect(ent:GetPos(),ent)
 							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
@@ -748,7 +749,7 @@ elseif(SERVER)then
 			end
 		elseif(ent.EZammo)then -- it's a specific ammo box or ammo entity
 			local Typ,CountInBox=ent.EZammo,ent:GetCount()
-			local AmmoInfo,CurrentAmmo=JMod_GetAmmoSpecs(Typ),ply:GetAmmoCount(Typ)
+			local AmmoInfo,CurrentAmmo=JMod.GetAmmoSpecs(Typ),ply:GetAmmoCount(Typ)
 			local SpaceLeftInPlayerInv=AmmoInfo.carrylimit-CurrentAmmo
 			local AmtToGive=math.min(SpaceLeftInPlayerInv,CountInBox)
 			if(AmtToGive>0)then

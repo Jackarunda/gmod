@@ -20,7 +20,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -32,6 +32,7 @@ if(SERVER)then
 		self.Entity:SetModel(self.Model)
 		self.Entity:SetMaterial(self.Material)
 		self:SetModelScale(self.ModelScale,0)
+		if(self.Color)then self:SetColor(self.Color) end
 		if(self.Skin)then self:SetSkin(self.Skin) end
 		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -107,7 +108,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local AltPressed,Count=activator:KeyDown(JMOD_CONFIG.AltFunctionKey),self:GetResource()
+		local AltPressed,Count=activator:KeyDown(JMod.Config.AltFunctionKey),self:GetResource()
 		if((AltPressed)and(activator:KeyDown(IN_SPEED)))then
 			-- split resource entity in half
 			if(Count>1)then
@@ -127,10 +128,10 @@ if(SERVER)then
 		elseif((self.AltUse)and(AltPressed))then
 			self:AltUse(activator)
 		else
-			JMod_Hint(activator,"resource manage")
+			JMod.Hint(activator,"resource manage")
 			activator:PickupObject(self)
-			if JMod_Hints[self:GetClass() .. " use"] then
-				JMod_Hint(activator, self:GetClass() .. " use", self)
+			if JMod.Hints[self:GetClass() .. " use"] then
+				JMod.Hint(activator, self:GetClass() .. " use", self)
 			end
 		end
 	end

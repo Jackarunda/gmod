@@ -17,7 +17,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -26,7 +26,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Specs=JMod_ArmorTable[self.ArmorName]
+		self.Specs=JMod.ArmorTable[self.ArmorName]
 		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
 		self.Entity:SetMaterial(self.Specs.mat or "")
 		if(self.Specs.lbl)then self:SetDTString(0,self.Specs.lbl) end
@@ -47,7 +47,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.EZID=self.EZID or JMod_GenerateGUID()
+		self.EZID=self.EZID or JMod.GenerateGUID()
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -64,24 +64,24 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local Alt=activator:KeyDown(JMOD_CONFIG.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(Alt)then
 			if((activator.JackyArmor)and(#table.GetKeys(activator.JackyArmor)>0))then return end
 			if(self.Specs.clrForced)then
-				JMod_EZ_Equip_Armor(activator,self)
+				JMod.EZ_Equip_Armor(activator,self)
 			else
 				net.Start("JMod_ArmorColor")
 				net.WriteEntity(self)
 				net.Send(activator)
 			end
 			if self.ArmorName == "Headset" then
-				JMod_Hint(activator, "armor friends", self)
+				JMod.Hint(activator, "armor friends", self)
 			else
-				JMod_Hint(activator, "inventory", self)
+				JMod.Hint(activator, "inventory", self)
 			end
 		else
 			activator:PickupObject(self)
-			JMod_Hint(activator, "armor wear", self)
+			JMod.Hint(activator, "armor wear", self)
 		end
 		--activator:EmitSound("snd_jack_clothequip.wav",70,100)
 		--activator:EmitSound("snd_jack_gmod/armorstep1.wav",70,100)--5

@@ -20,7 +20,7 @@ if(SERVER)then
 		local SpawnPos=tr.HitPos+tr.HitNormal*40
 		local ent=ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -85,7 +85,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod_LinCh(dmginfo:GetDamage(),60,120))then
+		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
 			local Pos,State=self:GetPos(),self:GetState()
 			if(State==STATE_ARMED)then
 				self:Detonate()
@@ -99,18 +99,18 @@ if(SERVER)then
 		if(State<0)then return end
 		
 		if(State==STATE_OFF)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,120)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod_Hint(activator, "impactdet", self)
+				JMod.Hint(activator, "impactdet", self)
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
-			JMod_Owner(self,activator)
+			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,120)
@@ -125,7 +125,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
-		JMod_Sploom(Att,SelfPos,100)
+		JMod.Sploom(Att,SelfPos,100)
 		---
 		if(self:WaterLevel()>=3)then self:Remove();return end
 		---
@@ -148,16 +148,16 @@ if(SERVER)then
 				sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 			end
 			---
-			JMod_WreckBuildings(self,SelfPos,10*Oof)
-			JMod_BlastDoors(self,SelfPos,10*Oof)
+			JMod.WreckBuildings(self,SelfPos,10*Oof)
+			JMod.BlastDoors(self,SelfPos,10*Oof)
 			---
 			timer.Simple(.2,function()
-				JMod_WreckBuildings(self,SelfPos,10*Oof)
-				JMod_BlastDoors(self,SelfPos,10*Oof)
+				JMod.WreckBuildings(self,SelfPos,10*Oof)
+				JMod.BlastDoors(self,SelfPos,10*Oof)
 			end)
 			timer.Simple(.4,function()
-				JMod_WreckBuildings(self,SelfPos,10*Oof)
-				JMod_BlastDoors(self,SelfPos,10*Oof)
+				JMod.WreckBuildings(self,SelfPos,10*Oof)
+				JMod.BlastDoors(self,SelfPos,10*Oof)
 			end)
 			---
 			timer.Simple(.1,function()
@@ -179,7 +179,7 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
-		JMod_AeroDrag(self,self:GetForward())
+		JMod.AeroDrag(self,self:GetForward())
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="ammo"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.AMMO}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZammoBoxSize
+ENT.MaxResource=JMod.EZammoBoxSize
 ENT.Model="models/Items/BoxJRounds.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"
 ENT.ModelScale=1.75
@@ -22,7 +22,7 @@ ENT.Hint="ammobox"
 local ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
-		for i=1,10*JMOD_CONFIG.SupplyEffectMult do
+		for i=1,10*JMod.Config.SupplyEffectMult do
 			timer.Simple(i/200,function()
 				local Eff=EffectData()
 				Eff:SetOrigin(pos)
@@ -33,7 +33,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:AltUse(ply)
-		JMod_GiveAmmo(ply,self)
+		JMod.GiveAmmo(ply,self)
 	end
 elseif(CLIENT)then
 	local TxtCol=Color(255,240,150,80)

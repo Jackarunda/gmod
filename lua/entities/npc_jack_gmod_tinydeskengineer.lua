@@ -46,7 +46,7 @@ function ENT:Explode()
 		timer.Simple(i*.1*math.Rand(.9,1.1),function()
 			local Offset=VectorRand()*math.random(50,1000)
 			Offset.z=Offset.z/4
-			JMod_Sploom(owner,pos+Offset,100)
+			JMod.Sploom(owner,pos+Offset,100)
 		end)
 	end
 	self:Remove()

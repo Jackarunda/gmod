@@ -13,7 +13,7 @@ ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)
-		self:SetState(JMOD_EZ_STATE_ARMED)
+		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
 		timer.Simple(self.FuzeTimeOverride or 4,function()
 			if(IsValid(self))then self:Detonate() end
@@ -23,7 +23,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local SelfPos=self:GetPos()
-		JMod_Sploom(self.Owner,self:GetPos(),math.random(10,20))
+		JMod.Sploom(self.Owner,self:GetPos(),math.random(10,20))
 		self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local plooie=EffectData()
 		plooie:SetOrigin(SelfPos)
@@ -34,7 +34,7 @@ if(SERVER)then
 		util.ScreenShake(SelfPos,20,20,1,1000)
 		local OnGround=util.QuickTrace(SelfPos+Vector(0,0,5),Vector(0,0,-15),{self}).Hit
 		local Spred=Vector(0,0,0)
-		JMod_FragSplosion(self,SelfPos+Vector(0,0,20),3000,80,5000,self.Owner or game.GetWorld())
+		JMod.FragSplosion(self,SelfPos+Vector(0,0,20),3000,80,5000,self.Owner or game.GetWorld())
 		self:Remove()
 	end
 elseif(CLIENT)then
@@ -44,7 +44,7 @@ elseif(CLIENT)then
 		-- sprites for calibrating the lethality/casualty radius
 		--[[
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		if(State==JMOD_EZ_STATE_ARMED)then
+		if(State==JMod.EZ_STATE_ARMED)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),15*52*2,15*52*2,Color(255,0,0,128))
 			render.DrawSprite(self:GetPos()+Vector(0,0,4),5*52*2,5*52*2,Color(255,255,255,128))

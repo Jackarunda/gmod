@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(4,1,-5)
 SWEP.BodyHolsterPosL = Vector(5,1,5)
 SWEP.BodyHolsterScale = .85
 
-JMod_ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",1.2)
+JMod.ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",1.2)
 
 SWEP.Primary.ClipSize = 9 -- DefaultClip is automatically set.
 
@@ -53,8 +53,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.138, .5, 1.3),
     Ang = Angle(.5, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 0, 0)
@@ -84,7 +84,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 1.2,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -94,7 +94,7 @@ SWEP.Animations = {
         Source = "fire1",
         Time = 1.1,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
+			{s = JMod.GunHandlingSounds.cloth.move, t = 0, v=65, p=120},
 			{s = "snds_jack_gmod/ez_weapons/lac/back.wav", t = .2, v=60},
 			{s = "snds_jack_gmod/ez_weapons/lac/forward.wav", t = .5, v=60}
 		},
@@ -108,7 +108,7 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65}
 		}
     },
     ["sgreload_start_empty"] = {
@@ -120,7 +120,7 @@ SWEP.Animations = {
         LHIKOut = 0,
 		RestoreAmmo=0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65}
 		}
     },
     ["sgreload_insert"] = {
@@ -133,8 +133,8 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.shotshell, t = .2, v=60, p=130},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
+			{s = JMod.GunHandlingSounds.shotshell, t = .2, v=60, p=130},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
 		}
     },
     ["sgreload_finish"] = {
@@ -143,7 +143,7 @@ SWEP.Animations = {
         LHIK = true,
         LHIKIn = 0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.grab, t = 0.3, v=65}
+			{s = JMod.GunHandlingSounds.grab, t = 0.3, v=65}
 		},
         LHIKOut = 0.4,
     }

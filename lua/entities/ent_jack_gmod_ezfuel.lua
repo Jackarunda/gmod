@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="fuel"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.FUEL}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod_EZfuelCanSize
+ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/gascan001a.mdl"
 ENT.Material=nil
 ENT.ModelScale=1.25

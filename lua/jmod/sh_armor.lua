@@ -30,15 +30,15 @@ player_manager.AddValidHands( "JMod_HazMat", "models/bloocobalt/splinter cell/ch
 	
 --]]
 -- support third-party backup armor repair recipes
-JMod_BackupArmorRepairRecipes = JMod_BackupArmorRepairRecipes or {}
+JMod.BackupArmorRepairRecipes = JMod.BackupArmorRepairRecipes or {}
 
-JMod_LocationalDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
---JMod_FullBodyScalingDamageTypes = {DMG_ACID, DMG_POISON}
-JMod_FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_PLASMA, DMG_ACID, DMG_POISON}
-JMod_BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}
-JMod_PiercingDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
+JMod.LocationalDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
+--JMod.FullBodyScalingDamageTypes = {DMG_ACID, DMG_POISON}
+JMod.FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_PLASMA, DMG_ACID, DMG_POISON}
+JMod.BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}
+JMod.PiercingDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
 
-JMod_BodyPartHealthMults = {
+JMod.BodyPartHealthMults = {
 	--skintight
 	-- HITGROUP_HEAD
 	eyes = .05,
@@ -65,7 +65,7 @@ JMod_BodyPartHealthMults = {
 	leftshoulder = .04,
 	leftforearm = .04
 }
-JMod_ArmorSlotNiceNames={
+JMod.ArmorSlotNiceNames={
 	eyes="Eyes",
 	mouthnose="Mouth & Nose",
 	ears="Ears",
@@ -84,7 +84,7 @@ JMod_ArmorSlotNiceNames={
 	leftshoulder="Left Shoulder",
 	leftforearm="Left Forearm"
 }
-JMod_BodyPartDamageMults={ -- only used if JMOD_CONFIG.QoL.RealisticLocationalDamage is true
+JMod.BodyPartDamageMults={ -- only used if JMod.Config.QoL.RealisticLocationalDamage is true
 	[HITGROUP_HEAD]=10,
 	[HITGROUP_CHEST]=1,
 	[HITGROUP_GENERIC]=1,
@@ -125,7 +125,7 @@ local NonArmorProtectionProfile = {
 	[DMG_ACID] = .05
 }
 
-JMod_ArmorTable = {
+JMod.ArmorTable = {
 	["GasMask"] = {
 		PrintName = "Gas Mask",
 		mdl = "models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
@@ -800,7 +800,7 @@ JMod_ArmorTable = {
 }
 
 -- Dynamically generate armor ents
-function JMod_GenerateArmorEntities(tbl)
+function JMod.GenerateArmorEntities(tbl)
 	for class, info in pairs(tbl) do
 		if info.noent then continue end
 		local armorent = {}
@@ -814,24 +814,24 @@ function JMod_GenerateArmorEntities(tbl)
 		scripted_ents.Register( armorent, info.ent )
 	end
 end
-JMod_GenerateArmorEntities(JMod_ArmorTable)
+JMod.GenerateArmorEntities(JMod.ArmorTable)
 
 -- support third-party additions to the jmod armor table
 local function LoadAdditionalArmor()
-	if JMod_AdditionalArmorTable then
-		table.Merge(JMod_ArmorTable, JMod_AdditionalArmorTable)
-		JMod_GenerateArmorEntities(JMod_AdditionalArmorTable)
+	if JMod.AdditionalArmorTable then
+		table.Merge(JMod.ArmorTable, JMod.AdditionalArmorTable)
+		JMod.GenerateArmorEntities(JMod.AdditionalArmorTable)
 	end
 end
 hook.Add("Initialize","JMod_LoadAdditionalArmor", LoadAdditionalArmor)
 
 -- support third-party integration of gas-based weapons
-function JMod_GetArmorBiologicalResistance(ply,typ)
+function JMod.GetArmorBiologicalResistance(ply,typ)
 	local faceResist,skinResist=0,0
 	if(ply.EZarmor)then
 		for k,armorData in pairs(ply.EZarmor.items)do
 			if not(armorData.tgl)then
-				local ArmorInfo=JMod_ArmorTable[armorData.name]
+				local ArmorInfo=JMod.ArmorTable[armorData.name]
 				if not(ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals<=0)then
 					skinResist=skinResist+(ArmorInfo.def[typ] or 0)*((ArmorInfo.slots.chest or 0)+(ArmorInfo.slots.abdomen or 0))/2
 					faceResist=faceResist+(ArmorInfo.def[typ] or 0)*((ArmorInfo.slots.eyes or 0)+(ArmorInfo.slots.mouthnose or 0))/2
@@ -841,15 +841,15 @@ function JMod_GetArmorBiologicalResistance(ply,typ)
 	end
 	return faceResist,skinResist
 end
-function JMod_DepleteArmorChemicalCharge(ply,amt)
-	local SubtractAmt=amt*JMOD_CONFIG.ArmorDegredationMult*math.Rand(.5,1.5)
+function JMod.DepleteArmorChemicalCharge(ply,amt)
+	local SubtractAmt=amt*JMod.Config.ArmorDegredationMult*math.Rand(.5,1.5)
 	if(ply.EZarmor)then
 		for k,armorData in pairs(ply.EZarmor.items)do
-			local ArmorInfo=JMod_ArmorTable[armorData.name]
+			local ArmorInfo=JMod.ArmorTable[armorData.name]
 			if(armorData.chrg and armorData.chrg.chemicals)then
 				armorData.chrg.chemicals=math.max(armorData.chrg.chemicals-SubtractAmt,0)
 				if(armorData.chrg.chemicals<=ArmorInfo.chrg.chemicals*.25)then
-					JMod_EZarmorWarning(ply,"armor's chemical charge is almost depleted!")
+					JMod.EZarmorWarning(ply,"armor's chemical charge is almost depleted!")
 				end
 				break
 			end

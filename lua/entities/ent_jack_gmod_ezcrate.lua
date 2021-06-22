@@ -26,100 +26,100 @@ ENT.SupplyTypes={ -- A list of all possible resources, excl. mines and detpacks
 		ResourceUnit="Units",
 	},
 	["advparts"]={
-		MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize,
+		MaxResource=JMod.EZadvPartBoxSize*JMod.EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezadvparts",
-		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
+		ChildEntityResourceAmount=JMod.EZadvPartBoxSize,
 		MainTitleWord="ADV.PARTS",
 		ResourceUnit="Units"
 	},
 	["advtextiles"]={
-		MaxResource=JMod_EZadvPartBoxSize*JMod_EZpartsCrateSize,
+		MaxResource=JMod.EZadvPartBoxSize*JMod.EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezadvtextiles",
-		ChildEntityResourceAmount=JMod_EZadvPartBoxSize,
+		ChildEntityResourceAmount=JMod.EZadvPartBoxSize,
 		MainTitleWord="ADV.TEXTILES",
 		ResourceUnit="Units"
 	},
 	["ammo"]={
-		MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZammoBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezammo",
-		ChildEntityResourceAmount=JMod_EZammoBoxSize,
+		ChildEntityResourceAmount=JMod.EZammoBoxSize,
 		MainTitleWord="AMMO",
 		ResourceUnit="Count"
 	},
 	["munitions"]={
-		MaxResource=JMod_EZammoBoxSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZammoBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezmunitions",
-		ChildEntityResourceAmount=JMod_EZammoBoxSize,
+		ChildEntityResourceAmount=JMod.EZammoBoxSize,
 		MainTitleWord="MUNITIONS",
 		ResourceUnit="Count"
 	},
 	["chemicals"]={
-		MaxResource=JMod_EZchemicalsSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezchemicals",
-		ChildEntityResourceAmount=JMod_EZchemicalsSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="CHEMICALS",
 		ResourceUnit="Units"
 	},
 	["explosives"]={
-		MaxResource=JMod_EZexplosivesBoxSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezexplosives",
-		ChildEntityResourceAmount=JMod_EZexplosivesBoxSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="EXPLOSIVES",
 		ResourceUnit="Units"
 	},
 	["fuel"]={
-		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezfuel",
-		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="FUEL",
 		ResourceUnit="Units"
 	},
 	["propellant"]={
-		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezpropellant",
-		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="PROPELLANT",
 		ResourceUnit="Units"
 	},
 	["gas"]={
-		MaxResource=JMod_EZfuelCanSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezgas",
-		ChildEntityResourceAmount=JMod_EZfuelCanSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="GAS",
 		ResourceUnit="Units"
 	},
 	["medsupplies"]={
-		MaxResource=JMod_EZmedSupplyBoxSize*JMod_EZpartsCrateSize,
+		MaxResource=JMod.EZmedSupplyBoxSize*JMod.EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezmedsupplies",
-		ChildEntityResourceAmount=JMod_EZmedSupplyBoxSize,
+		ChildEntityResourceAmount=JMod.EZmedSupplyBoxSize,
 		MainTitleWord="MED.SUPPLIES",
 		ResourceUnit="Units"
 	},
 	["parts"]={ 
-		MaxResource=JMod_EZpartBoxSize*JMod_EZpartsCrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZpartsCrateSize,
 		ChildEntity="ent_jack_gmod_ezparts",
-		ChildEntityResourceAmount=JMod_EZpartBoxSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="PARTS",
 		ResourceUnit="Units"
 	},
 	["power"]={
-		MaxResource=JMod_EZbatterySize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezbattery",
-		ChildEntityResourceAmount=JMod_EZbatterySize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="BATTERIES",
 		ResourceUnit="Charge"
 	},
 	["nutrients"]={
-		MaxResource=JMod_EZnutrientBoxSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_eznutrients",
-		ChildEntityResourceAmount=JMod_EZnutrientBoxSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="RATIONS",
 		ResourceUnit="Units"
 	},
 	["coolant"]={
-		MaxResource=JMod_EZcoolantDrumSize*JMod_EZcrateSize,
+		MaxResource=JMod.EZbasicResourceBoxSize*JMod.EZcrateSize,
 		ChildEntity="ent_jack_gmod_ezcoolant",
-		ChildEntityResourceAmount=JMod_EZcoolantDrumSize,
+		ChildEntityResourceAmount=JMod.EZbasicResourceBoxSize,
 		MainTitleWord="COOLANT",
 		ResourceUnit="Units"
 	}
@@ -146,7 +146,7 @@ if(SERVER)then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod_Owner(ent,ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -203,7 +203,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		JMod_Hint(activator, "crate", self)
+		JMod.Hint(activator, "crate", self)
 		local Resource=self:GetResource()
 		if(Resource<=0)then return end
 		local Box,Given=ents.Create(self.ChildEntity),math.min(Resource,self.ChildEntityResourceAmount)

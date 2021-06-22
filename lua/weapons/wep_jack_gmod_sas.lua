@@ -14,7 +14,7 @@ SWEP.BodyHolsterPos = Vector(.5,-11,-9)
 SWEP.BodyHolsterPosL = Vector(.5,-11,10)
 SWEP.BodyHolsterScale = .85
 
-JMod_ApplyAmmoSpecs(SWEP,"Shotgun Round",.9)
+JMod.ApplyAmmoSpecs(SWEP,"Shotgun Round",.9)
 SWEP.DoorBreachPower = .2
 
 SWEP.Primary.ClipSize = 7 -- DefaultClip is automatically set.
@@ -56,8 +56,8 @@ SWEP.IronSightStruct = {
     Pos = Vector(-3.1, 1.5, 1.45),
     Ang = Angle(.2, 0, -5),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.out
+    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(1, 1, 1)
@@ -86,7 +86,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = 2,
-       SoundTable = {{s = JMod_GunHandlingSounds.draw.longgun, t = 0, v=60}},
+       SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -105,7 +105,7 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.quiet, t = 0, v=65}
+			{s = JMod.GunHandlingSounds.cloth.quiet, t = 0, v=65}
 		}
     },
     ["sgreload_insert"] = {
@@ -118,8 +118,8 @@ SWEP.Animations = {
         LHIKOut = 0,
 		HardResetAnim = "reload_end",
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.shotshell, t = .175, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
+			{s = JMod.GunHandlingSounds.shotshell, t = .175, v=60},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = .8, v=65, p=120}
 		}
     },
     ["sgreload_finish"] = {
@@ -129,7 +129,7 @@ SWEP.Animations = {
         LHIKIn = 0,
         LHIKOut = 0.4,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.grab, t = 0.5, v=60}
+			{s = JMod.GunHandlingSounds.grab, t = 0.5, v=60}
 		}
     }
 }

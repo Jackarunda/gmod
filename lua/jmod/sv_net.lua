@@ -19,6 +19,8 @@ util.AddNetworkString("JMod_EZweaponMod")
 util.AddNetworkString("JMod_Bleeding")
 util.AddNetworkString("JMod_SFX")
 util.AddNetworkString("JMod_Ravebreak")
+util.AddNetworkString("JMod_NaturalResources")
+util.AddNetworkString("JMod_ResourceScanner")
 
 net.Receive("JMod_Friends",function(length,ply)
 	local List,Good=net.ReadTable(),true
@@ -47,13 +49,14 @@ net.Receive("JMod_MineColor", function(l, ply)
 	if net.ReadBit() == 1 then mine:Arm(ply) end
 end)
 
-net.Receive("JMod_ArmorColor", function(l, ply)
-	if not (IsValid(ply) and ply:Alive()) then return end
-	local armor = net.ReadEntity()
-	if not (IsValid(armor) and scripted_ents.IsBasedOn(armor:GetClass(), "ent_jack_gmod_ezarmor")) then return end
-	if ply:GetPos():DistToSqr(armor:GetPos()) > 15000 then return end
-	armor:SetColor(net.ReadColor())
-	if net.ReadBit() == 1 then JMod.EZ_Equip_Armor(ply, armor) end
+net.Receive("JMod_ArmorColor",function(ln,ply)
+	if not((IsValid(ply))and(ply:Alive()))then return end
+	local Armor=net.ReadEntity()
+	local Col=net.ReadColor()
+	local Equip=tobool(net.ReadBit())
+	if not(IsValid(Armor))then return end
+	Armor:SetColor(Col)
+	if(Equip)then JMod.EZ_Equip_Armor(ply,Armor) end
 end)
 
 net.Receive("JMod_SignalNade", function(l, ply)

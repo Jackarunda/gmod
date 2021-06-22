@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod_ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",.9)
+JMod.ApplyAmmoSpecs(SWEP,"Magnum Pistol Round",.9)
 
 SWEP.HipDispersion = 1100
 
@@ -56,11 +56,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .5
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-1.71, 5, .94),
+    Pos = Vector(-1.71, 15, .94),
     Ang = Angle(-.1, 0, -2),
     Magnification = 1.1,
-    SwitchToSound = JMod_GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod_GunHandlingSounds.aim.minor
+    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -92,7 +92,7 @@ SWEP.Animations = {
     ["draw"] = {
         Source = "draw",
         Time = .7,
-        SoundTable = {{s = JMod_GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
+        SoundTable = {{s = JMod.GunHandlingSounds.draw.handgun, t = 0, v=60, p=120}},
 		Mult=1,
         LHIK = true,
         LHIKIn = 0,
@@ -113,12 +113,12 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = .05, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.move, t = .05, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/out.wav", t = .3, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1, v=60, p=110},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 1.6, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1, v=60, p=110},
+			{s = JMod.GunHandlingSounds.tap.magwell, t = 1.6, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/in.wav", t = 1.85, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.3, v=55, p=110}
+			{s = JMod.GunHandlingSounds.grab, t = 2.3, v=55, p=110}
 		}
     },
     ["reload_empty"] = {
@@ -131,13 +131,13 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
-			{s = JMod_GunHandlingSounds.cloth.move, t = .05, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.move, t = .05, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/out.wav", t = .4, v=60},
-			{s = JMod_GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=110},
-			{s = JMod_GunHandlingSounds.tap.magwell, t = 2, v=60, p=110},
+			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=110},
+			{s = JMod.GunHandlingSounds.tap.magwell, t = 2, v=60, p=110},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/in.wav", t = 2.1, v=60},
 			{s = "snds_jack_gmod/ez_weapons/magnumpistol/release.wav", t = 2.4, v=60},
-			{s = JMod_GunHandlingSounds.grab, t = 2.9, v=55, p=110}
+			{s = JMod.GunHandlingSounds.grab, t = 2.9, v=55, p=110}
 		}
     }
 }

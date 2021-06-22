@@ -6,9 +6,9 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies="medsupplies"
+ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES}
 ENT.JModPreferredCarryAngles=Angle(0,180,180)
-ENT.MaxResource=JMod_EZmedSupplyBoxSize
+ENT.MaxResource=JMod.EZmedSupplyBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
 ENT.Material="models/kali/props/cases/hardcase/jardcase_b"
 ENT.ModelScale=.5
@@ -58,7 +58,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,4*JMOD_CONFIG.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
+		for i=1,4*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos+VectorRand())
 		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())

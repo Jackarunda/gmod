@@ -1,5 +1,5 @@
 -- this causes an object to rotate to point forward while moving, like a dart
-function JMod_AeroDrag(ent, forward, mult)
+function JMod.AeroDrag(ent, forward, mult)
 	if (constraint.HasConstraints(ent)) then return end
 	if (ent:IsPlayerHolding()) then return end
 	local Phys = ent:GetPhysicsObject()
@@ -14,7 +14,7 @@ function JMod_AeroDrag(ent, forward, mult)
 end
 
 -- this causes an object to rotate to point and fly to a point you give it
-function JMod_AeroGuide(ent, forward, targetPos, turnMult, thrustMult, angleDragMult, spdReq)
+function JMod.AeroGuide(ent, forward, targetPos, turnMult, thrustMult, angleDragMult, spdReq)
 	--if(constraint.HasConstraints(ent))then return end
 	--if(ent:IsPlayerHolding())then return end
 	local Phys = ent:GetPhysicsObject()
@@ -32,7 +32,7 @@ function JMod_AeroGuide(ent, forward, targetPos, turnMult, thrustMult, angleDrag
 	Phys:ApplyForceCenter(forward * 20000 * thrustMult) -- todo: make this function fucking work ARGH
 end
 
-function JMod_EZ_WeaponLaunch(ply)
+function JMod.EZ_WeaponLaunch(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
 	local Weps = {}
 
@@ -63,7 +63,7 @@ function JMod_EZ_WeaponLaunch(ply)
 	end
 end
 
-function JMod_EZ_BombDrop(ply)
+function JMod.EZ_BombDrop(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
 	local Boms = {}
 
@@ -97,11 +97,12 @@ function JMod_EZ_BombDrop(ply)
 end
 
 -- copied from Homicide
-function JMod_BlastThatDoor(ent, vel)
+function JMod.BlastThatDoor(ent, vel)
 	ent.JModDoorBreachedness=nil
 	local Moddel, Pozishun, Ayngul, Muteeriul, Skin = ent:GetModel(), ent:GetPos(), ent:GetAngles(), ent:GetMaterial(), ent:GetSkin()
 	sound.Play("Wood_Crate.Break", Pozishun, 60, 100)
 	sound.Play("Wood_Furniture.Break", Pozishun, 60, 100)
+	ent:Fire("unlock", "", 0)
 	ent:Fire("open", "", 0)
 	ent:SetNoDraw(true)
 	ent:SetNotSolid(true)
@@ -134,7 +135,7 @@ function JMod_BlastThatDoor(ent, vel)
 			end
 		end)
 
-		timer.Simple(30 * JMOD_CONFIG.DoorBreachResetTimeMult, function()
+		timer.Simple(30 * JMod.Config.DoorBreachResetTimeMult, function()
 			if (IsValid(ent)) then
 				ent:SetNotSolid(false)
 				ent:SetNoDraw(false)
@@ -147,7 +148,7 @@ function JMod_BlastThatDoor(ent, vel)
 	end
 end
 
-function JMod_FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction)
+function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction)
 	-- fragmentation/shrapnel simulation
 	local Eff = EffectData()
 	Eff:SetOrigin(origin)
@@ -158,7 +159,7 @@ function JMod_FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	---
 	shooter = shooter or game.GetWorld()
 
-	if not JMOD_CONFIG.FragExplosions then
+	if not JMod.Config.FragExplosions then
 		util.BlastDamage(shooter, attacker, origin, fragDmg * 8, fragDmg * 3)
 
 		return
@@ -219,14 +220,14 @@ function JMod_FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	end
 end
 
-function JMod_PackageObject(ent, pos, ang, ply)
+function JMod.PackageObject(ent, pos, ang, ply)
 	if (pos) then
 		ent = ents.Create(ent)
 		ent:SetPos(pos)
 		ent:SetAngles(ang)
 
 		if (ply) then
-			JMod_Owner(ent, ply)
+			JMod.Owner(ent, ply)
 		end
 
 		ent:Spawn()
@@ -239,14 +240,14 @@ function JMod_PackageObject(ent, pos, ang, ply)
 	Bocks:SetContents(ent)
 
 	if (ply) then
-		JMod_Owner(Bocks, ply)
+		JMod.Owner(Bocks, ply)
 	end
 
 	Bocks:Spawn()
 	Bocks:Activate()
 end
 
-function JMod_SimpleForceExplosion(pos, power, range, sourceEnt)
+function JMod.SimpleForceExplosion(pos, power, range, sourceEnt)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
 		if (not (IsValid(sourceEnt)) or (v ~= sourceEnt)) then
 			local Phys = v:GetPhysicsObject()
@@ -275,7 +276,7 @@ function JMod_SimpleForceExplosion(pos, power, range, sourceEnt)
 	end
 end
 
-function JMod_DecalSplosion(pos, decalName, range, num, sourceEnt)
+function JMod.DecalSplosion(pos, decalName, range, num, sourceEnt)
 	for i = 1,num/5 do
 		timer.Simple(i/2,function()
 			for j = 1, num/5 do
@@ -290,7 +291,7 @@ function JMod_DecalSplosion(pos, decalName, range, num, sourceEnt)
 	end
 end
 
-function JMod_BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
+function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
 		local EntPos = v:GetPos()
 		local Vec = EntPos - pos
@@ -309,9 +310,9 @@ end
 
 local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light"}
 
-function JMod_WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
+function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local origPower = power
-	power = power * JMOD_CONFIG.ExplosionPropDestroyPower
+	power = power * JMod.Config.ExplosionPropDestroyPower
 	local maxRange = 250 * power * (range or 1) -- todo: this still doesn't do what i want for the nuke
 	local maxMassToDestroy = 10 * power ^ .8
 	local masMassToLoosen = 30 * power
@@ -354,9 +355,9 @@ function JMod_WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	end
 end
 
-function JMod_BlastDoors(blaster, pos, power, range, ignoreVisChecks)
+function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	for k, door in pairs(ents.FindInSphere(pos, 40 * power * (range or 1))) do
-		if (JMod_IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignore) ~= false) then
+		if (JMod.IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignore) ~= false) then
 			local proceed = ignoreVisChecks
 
 			if not proceed then
@@ -365,13 +366,13 @@ function JMod_BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 			end
 
 			if proceed then
-				JMod_BlastThatDoor(door, (door:LocalToWorld(door:OBBCenter()) - pos):GetNormalized() * 1000)
+				JMod.BlastThatDoor(door, (door:LocalToWorld(door:OBBCenter()) - pos):GetNormalized() * 1000)
 			end
 		end
 	end
 end
 
-function JMod_Sploom(attacker, pos, mag, radius)
+function JMod.Sploom(attacker, pos, mag, radius)
 	local Sploom = ents.Create("env_explosion")
 	Sploom:SetPos(pos)
 	Sploom:SetOwner(attacker or game.GetWorld())
@@ -415,7 +416,7 @@ local SurfaceHardness = {
 }
 
 -- Slayer Ricocheting/Penetrating Bullets FTW
-function JMod_RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
+function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
 	if not (IsValid(ent)) then return end
 	if (num and num > 10) then return end
 	local Attacker = ent.Owner or ent or game.GetWorld()
@@ -518,7 +519,7 @@ function JMod_RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 			end
 
 			local ThroughFrac = 1 - SearchDist / MaxDist
-			JMod_RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+			JMod.RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
 		end
 	elseif (ApproachAngle < (MaxRicAngle * .95)) then
 		-- ping whiiiizzzz
@@ -529,11 +530,11 @@ function JMod_RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 		local NewVec = AVec:Angle()
 		NewVec:RotateAroundAxis(TNorm, 180)
 		NewVec = NewVec:Forward()
-		JMod_RicPenBullet(ent, IPos + TNorm, -NewVec, dmg * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+		JMod.RicPenBullet(ent, IPos + TNorm, -NewVec, dmg * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
 	end
 end
 
-function JMod_Owner(ent, newOwner)
+function JMod.Owner(ent, newOwner)
 	if not (IsValid(ent)) then return end
 
 	if not (IsValid(newOwner)) then
@@ -549,7 +550,7 @@ function JMod_Owner(ent, newOwner)
 	end
 end
 
-function JMod_ShouldAllowControl(self, ply)
+function JMod.ShouldAllowControl(self, ply)
 	if not (IsValid(ply)) then return false end
 	if not (IsValid(self.Owner)) then return false end
 	if (ply == self.Owner) then return true end
@@ -559,7 +560,7 @@ function JMod_ShouldAllowControl(self, ply)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
-function JMod_ShouldAttack(self, ent, vehiclesOnly)
+function JMod.ShouldAttack(self, ent, vehiclesOnly)
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
 	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
@@ -613,15 +614,15 @@ function JMod_ShouldAttack(self, ent, vehiclesOnly)
 	return false
 end
 
-function JMod_EnemiesNearPoint(ent, pos, range, vehiclesOnly)
+function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
-		if (JMod_ShouldAttack(ent, v, vehiclesOnly)) then return true end
+		if (JMod.ShouldAttack(ent, v, vehiclesOnly)) then return true end
 	end
 
 	return false
 end
 
-function JMod_EMP(pos, range)
+function JMod.EMP(pos, range)
 	for k, ent in pairs(ents.FindInSphere(pos, range)) do
 		if (ent.SetState and ent.SetElectricity and ent.GetState and ent:GetState() > 0) then
 			ent:SetState(0)
@@ -629,7 +630,7 @@ function JMod_EMP(pos, range)
 	end
 end
 
-function JMod_Colorify(ent)
+function JMod.Colorify(ent)
 	if (IsValid(ent.Owner)) then
 		if (engine.ActiveGamemode() == "sandbox" and ent.Owner:Team() == TEAM_UNASSIGNED) then
 			local Col = ent.Owner:GetPlayerColor()
@@ -650,7 +651,7 @@ end
 
 local TriggerKeys = {IN_ATTACK, IN_USE, IN_ATTACK2}
 
-function JMod_ThrowablePickup(playa, item, hardstr, softstr)
+function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 	playa:PickupObject(item)
 	local HookName = "EZthrowable_" .. item:EntIndex()
 
@@ -687,8 +688,8 @@ function JMod_ThrowablePickup(playa, item, hardstr, softstr)
 					end
 				end)
 			elseif key == IN_USE then
-				if item.GetState and item:GetState() == JMOD_EZ_STATE_PRIMED then
-					JMod_Hint(playa, "grenade drop", item)
+				if item.GetState and item:GetState() == JMod.EZ_STATE_PRIMED then
+					JMod.Hint(playa, "grenade drop", item)
 				end
 			end
 		end
