@@ -465,7 +465,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"ent_jack_gmod_ezantimatter"
 				},
 				["fissile material"]={
-					"ent_jack_gmod_ezfissilematerial"
+					"ent_jack_gmod_ezFISSILEMATERIAL]"
 				},
 				["dynamite"]={
 					{"ent_jack_gmod_ezdynamite",12}
@@ -521,10 +521,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Automated Field Hospital"]={
 				"ent_jack_gmod_ezfieldhospital",
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=400,
-					JMod.EZ_RESOURCE_TYPES.POWER=100,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=80,
-					JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES=50
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=400,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=80,
+					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
 				},
 				2,
 				"Machines"
@@ -532,8 +532,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Big Bomb"]={
 				"ent_jack_gmod_ezbigbomb",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=200,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600
 				},
 				1.5,
 				"Explosives"		
@@ -541,8 +541,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Bomb"]={			
 				"ent_jack_gmod_ezbomb",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=150,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
 				},
 				1,
 				"Explosives"		
@@ -550,8 +550,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Cluster Bomb"]={			
 				"ent_jack_gmod_ezclusterbomb",		
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=150,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
 				"Explosives"		
@@ -559,7 +559,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ General Purpose Crate"]={			
 				"ent_jack_gmod_ezcrate_uni",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=50	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=50	
 				},
 				1,
 				"Other"
@@ -567,9 +567,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ HE Rocket"]={			
 				"ent_jack_gmod_ezherocket",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=50,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
-					JMod.EZ_RESOURCE_TYPES.PROPELLANT=100
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100
 				},
 				1,
 				"Explosives"		
@@ -577,9 +577,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ HEAT Rocket"]={			
 				"ent_jack_gmod_ezheatrocket",		
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=50,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=50,
-					JMod.EZ_RESOURCE_TYPES.PROPELLANT=100	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100	
 				},
 				1,
 				"Explosives"		
@@ -587,10 +587,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Incendiary Bomb"]={			
 				"ent_jack_gmod_ezincendiarybomb",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=50,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=10,
-					JMod.EZ_RESOURCE_TYPES.FUEL=200,
-					JMod.EZ_RESOURCE_TYPES.CHEMICALS=20
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
+					[JMod.EZ_RESOURCE_TYPES.FUEL]=200,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=20
 				},
 				1,
 				"Explosives"		
@@ -598,8 +598,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Mega Bomb"]={			
 				"ent_jack_gmod_ezmoab",		
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=400,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=1200
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=400,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1200
 				},
 				1,
 				"Explosives"		
@@ -607,10 +607,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Micro Black Hole Generator"]={			
 				"ent_jack_gmod_ezmbhg",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=300,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=120,
-					JMod.EZ_RESOURCE_TYPES.POWER=600,
-					JMod.EZ_RESOURCE_TYPES.ANTIMATTER=10
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=300,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=120,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=600,
+					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]=10
 				},
 				1.5,
 				"Machines"		
@@ -618,10 +618,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Micro Nuclear Bomb"]={			
 				"ent_jack_gmod_eznuke",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=300,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=300,
-					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=10
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=300,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=10
 				},
 				1,
 				"Explosives"		
@@ -629,8 +629,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Mini Naval Mine"]={			
 				"ent_jack_gmod_eznavalmine",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=150,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=200	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=200	
 				},
 				1,
 				"Explosives"		
@@ -638,10 +638,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Nano Nuclear Bomb"]={			
 				"ent_jack_gmod_eznuke_small",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=100,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150,
-					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=5
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=5
 				},
 				1,
 				"Explosives"
@@ -649,7 +649,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Resource Crate"]={			
 				"ent_jack_gmod_ezcrate",		
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=100	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=100	
 				},
 				1.5,
 				"Other"		
@@ -657,11 +657,11 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Sentry"]={			
 				"ent_jack_gmod_ezsentry",		
 				{
-					JMod.EZ_RESOURCE_TYPES.PARTS=200,
-					JMod.EZ_RESOURCE_TYPES.POWER=100,
-					JMod.EZ_RESOURCE_TYPES.AMMO=300,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20,
-					JMod.EZ_RESOURCE_TYPES.COOLANT=100
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
+					[JMod.EZ_RESOURCE_TYPES.AMMO]=300,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.COOLANT]=100
 				},
 				1,
 				"Machines"		
@@ -669,8 +669,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Small Bomb"]={			
 				"ent_jack_gmod_ezsmallbomb",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=150,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=150
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
 				"Explosives"		
@@ -678,9 +678,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Supply Radio"]={			
 				"ent_jack_gmod_ezaidradio",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=100,
-					JMod.EZ_RESOURCE_TYPES.POWER=100,	
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=20	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100,	
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20	
 				},
 				1,
 				"Machines"		
@@ -688,10 +688,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Thermobaric Bomb"]={			
 				"ent_jack_gmod_ezthermobaricbomb",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=100,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=20,
-					JMod.EZ_RESOURCE_TYPES.PROPELLANT=300,
-					JMod.EZ_RESOURCE_TYPES.CHEMICALS=10
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=300,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
 				1,
 				"Explosives"		
@@ -699,10 +699,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Thermonuclear Bomb"]={			
 				"ent_jack_gmod_eznuke_big",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=400,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=100,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=600,
-					JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL=20
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=400,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=20
 				},
 				1.5,
 				"Explosives"		
@@ -710,8 +710,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Vehicle Mine"]={			
 				"ent_jack_gmod_ezatmine",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=40,
-					JMod.EZ_RESOURCE_TYPES.EXPLOSIVES=100
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
 				.75,
 				"Explosives"		
@@ -719,10 +719,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Workbench"]={			
 				"ent_jack_gmod_ezworkbench",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=500,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=40,
-					JMod.EZ_RESOURCE_TYPES.POWER=100,
-					JMod.EZ_RESOURCE_TYPES.GAS=100
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=500,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
+					[JMod.EZ_RESOURCE_TYPES.GAS]=100
 				},
 				1.5,
 				"Machines"		
@@ -730,80 +730,541 @@ function JMod.InitGlobalConfig(forceNew)
 			["HL2 Buggy"]={			
 				"FUNC spawnHL2buggy",		
 				{	
-					JMod.EZ_RESOURCE_TYPES.PARTS=500,
-					JMod.EZ_RESOURCE_TYPES.POWER=50,
-					JMod.EZ_RESOURCE_TYPES.ADVPARTS=10,
-					JMod.EZ_RESOURCE_TYPES.FUEL=300,
-					JMod.EZ_RESOURCE_TYPES.AMMO-600
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=500,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=50,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.FUEL]=300,
+					[JMod.EZ_RESOURCE_TYPES.AMMO]-600
 				},
 				2,
 				"Other"	
 			},					
 		},
 		Recipes={
-			["EZ Ammo"]={"ent_jack_gmod_ezammo",{parts=30,propellant=40,explosives=5},"Resources"},
-			["EZ Ballistic Mask"]={"ent_jack_gmod_ezarmor_balmask",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Build Kit"]={"ent_jack_gmod_ezbuildkit",{parts=100,advparts=20,gas=50,power=50},"Tools"},
-			["EZ Detpack"]={"ent_jack_gmod_ezdetpack",{parts=5,explosives=20},"Weapons"},
-			["EZ Dynamite"]={"ent_jack_gmod_ezdynamite",{parts=5,explosives=5},"Weapons"},
-			["EZ Explosives"]={"ent_jack_gmod_ezexplosives",{parts=5,chemicals=150},"Resources"},
-			["EZ Flashbang"]={"ent_jack_gmod_ezflashbang",{parts=10,explosives=2,chemicals=2},"Weapons"},
-			["EZ Fougasse Mine"]={"ent_jack_gmod_ezfougasse",{parts=20,fuel=100,explosives=5},"Weapons"},
-			["EZ Fragmentation Grenade"]={"ent_jack_gmod_ezfragnade",{parts=10,explosives=5},"Weapons"},
-			["EZ Fumigator"]={"ent_jack_gmod_ezfumigator",{parts=30,gas=100,chemicals=50},"Weapons"},
-			["EZ Gas Grenade"]={"ent_jack_gmod_ezgasnade",{parts=5,gas=20,chemicals=15},"Weapons"},
-			["EZ Tear Gas Grenade"]={"ent_jack_gmod_ezcsnade",{parts=5,gas=20,chemicals=15},"Weapons"},
-			["EZ Gas Mask"]={"ent_jack_gmod_ezarmor_gasmask",{parts=10,chemicals=10,advtextiles=2},"Apparel"},
-			["EZ Gebalte Ladung"]={"ent_jack_gmod_ezsticknadebundle",{parts=50,explosives=50},"Weapons"},
-			["EZ Headset"]={"ent_jack_gmod_ezarmor_headset",{parts=20,power=10},"Apparel"},
-			["EZ Heavy Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_hlshoulder",{parts=15,advtextiles=10},"Apparel"},
-			["EZ Heavy Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_hrshoulder",{parts=15,advtextiles=10},"Apparel"},
-			["EZ Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_htorso",{parts=20,advtextiles=30},"Apparel"},
-			["EZ Impact Grenade"]={"ent_jack_gmod_ezimpactnade",{parts=5,explosives=10},"Weapons"},
-			["EZ Incendiary Grenade"]={"ent_jack_gmod_ezfirenade",{parts=5,explosives=5,fuel=30},"Weapons"},
-			["EZ Landmine"]={"ent_jack_gmod_ezlandmine",{parts=10,explosives=5},"Weapons"},
-			["EZ Light Helmet"]={"ent_jack_gmod_ezarmor_lhead",{parts=15,advtextiles=5},"Apparel"},
-			["EZ Respirator"]={"ent_jack_gmod_ezarmor_respirator",{parts=10,chemicals=5},"Apparel"},
-			["EZ Riot Helmet"]={"ent_jack_gmod_ezarmor_riot",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Heavy Riot Helmet"]={"ent_jack_gmod_ezarmor_rioth",{parts=20,advtextiles=10},"Apparel"},
-			["EZ Ultra Heavy Helmet"]={"ent_jack_gmod_ezarmor_maska",{parts=40,advtextiles=20},"Apparel"},
-			["EZ Light Left Shoulder Armor"]={"ent_jack_gmod_ezarmor_llshoulder",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Light Right Shoulder Armor"]={"ent_jack_gmod_ezarmor_lrshoulder",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Light Torso Armor"]={"ent_jack_gmod_ezarmor_ltorso",{parts=15,advtextiles=10},"Apparel"},
-			["EZ Medical Supplies"]={"ent_jack_gmod_ezmedsupplies",{parts=20,chemicals=50,advparts=10,advtextiles=10},"Resources"},
-			["EZ Medium Helmet"]={"ent_jack_gmod_ezarmor_mhead",{parts=20,advtextiles=10},"Apparel"},
-			["EZ Medium Torso Armor"]={"ent_jack_gmod_ezarmor_mtorso",{parts=15,advtextiles=20},"Apparel"},
-			["EZ Medium-Heavy Torso Armor"]={"ent_jack_gmod_ezarmor_mhtorso",{parts=15,advtextiles=25},"Apparel"},
-			["EZ Medium-Light Torso Armor"]={"ent_jack_gmod_ezarmor_mltorso",{parts=15,advtextiles=15},"Apparel"},
-			["EZ Medkit"]={"ent_jack_gmod_ezmedkit",{parts=20,medsupplies=50},"Tools"},
-			["EZ Mini Bounding Mine"]={"ent_jack_gmod_ezboundingmine",{parts=20,explosives=5,propellant=5},"Weapons"},
-			["EZ Mini Claymore"]={"ent_jack_gmod_ezminimore",{parts=20,explosives=5},"Weapons"},
-			["EZ Mini Impact Grenade"]={"ent_jack_gmod_eznade_impact",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Proximity Grenade"]={"ent_jack_gmod_eznade_proximity",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Remote Grenade"]={"ent_jack_gmod_eznade_remote",{parts=5,explosives=3},"Weapons"},
-			["EZ Mini Timed Grenade"]={"ent_jack_gmod_eznade_timed",{parts=5,explosives=3},"Weapons"},
-			["EZ Munitions"]={"ent_jack_gmod_ezmunitions",{parts=100,propellant=100,explosives=100},"Resources"},
-			["EZ Night Vision Goggles"]={"ent_jack_gmod_ezarmor_nvgs",{parts=30,advparts=10,power=20},"Apparel"},
-			["EZ Powder Keg"]={"ent_jack_gmod_ezpowderkeg",{parts=10,propellant=400},"Weapons"},
-			["EZ Propellant"]={"ent_jack_gmod_ezpropellant",{parts=2,chemicals=80},"Resources"},
-			["EZ SLAM"]={"ent_jack_gmod_ezslam",{parts=20,explosives=15},"Weapons"},
-			["EZ Satchel Charge"]={"ent_jack_gmod_ezsatchelcharge",{parts=10,explosives=80},"Weapons"},
-			["EZ Signal Grenade"]={"ent_jack_gmod_ezsignalnade",{parts=10,explosives=1,chemicals=10},"Weapons"},
-			["EZ Smoke Grenade"]={"ent_jack_gmod_ezsmokenade",{parts=10,explosives=1,chemicals=10},"Weapons"},
-			["EZ Left Calf Armor"]={"ent_jack_gmod_ezarmor_slcalf",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Left Forearm Armor"]={"ent_jack_gmod_ezarmor_slforearm",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Light Left Thigh Armor"]={"ent_jack_gmod_ezarmor_llthigh",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Heavy Left Thigh Armor"]={"ent_jack_gmod_ezarmor_hlthigh",{parts=20,advtextiles=10},"Apparel"},
-			["EZ Pelvis Armor"]={"ent_jack_gmod_ezarmor_spelvis",{parts=10,advtextiles=10},"Apparel"},
-			["EZ Right Calf Armor"]={"ent_jack_gmod_ezarmor_srcalf",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Right Forearm Armor"]={"ent_jack_gmod_ezarmor_srforearm",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Light Right Thigh Armor"]={"ent_jack_gmod_ezarmor_lrthigh",{parts=10,advtextiles=5},"Apparel"},
-			["EZ Heavy Right Thigh Armor"]={"ent_jack_gmod_ezarmor_hrthigh",{parts=20,advtextiles=10},"Apparel"},
-			["EZ Stick Grenade"]={"ent_jack_gmod_ezsticknade",{parts=10,explosives=10},"Weapons"},
-			["EZ Sticky Bomb"]={"ent_jack_gmod_ezstickynade",{parts=10,explosives=10,chemicals=10},"Weapons"},
-			["EZ TNT"]={"ent_jack_gmod_eztnt",{parts=20,explosives=60},"Weapons"},
-			["EZ Thermal Goggles"]={"ent_jack_gmod_ezarmor_thermals",{parts=30,advparts=20,power=20},"Apparel"},
-			["EZ Time Bomb"]={"ent_jack_gmod_eztimebomb",{parts=30,explosives=150},"Weapons"}
+		    ["EZ Ammo"]={			
+				"ent_jack_gmod_ezammo",		
+				{	
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=30,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=40,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Resources"
+			},
+		    ["EZ Ballistic Mask"]={
+		        "ent_jack_gmod_ezarmor_balmask",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+		    ["EZ Build Kit"]={
+		        "ent_jack_gmod_ezbuildkit",
+		        {
+			        [JMod.EZ_RESOURCE_TYPES.PARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.GAS]=50,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=50
+				},
+				"Tools"
+			},
+			["EZ Detpack"]={
+				"ent_jack_gmod_ezdetpack",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20
+				},
+				"Weapons"
+			},
+			["EZ Dynamite"]={
+				"ent_jack_gmod_ezdynamite",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Weapons"
+			},
+			["EZ Explosives"]={
+				"ent_jack_gmod_ezexplosives",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=150
+				},
+				"Resources"
+			},
+			["EZ Flashbang"]={
+				"ent_jack_gmod_ezflashbang",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=2,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=2
+				},
+				"Weapons"
+			},
+			["EZ Fougasse Mine"]={
+				"ent_jack_gmod_ezfougasse",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.FUEL]=100,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Weapons"
+			},
+			["EZ Fragmentation Grenade"]={
+				"ent_jack_gmod_ezfragnade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Weapons"
+			},
+			["EZ Fumigator"]={
+				"ent_jack_gmod_ezfumigator",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=30,
+					[JMod.EZ_RESOURCE_TYPES.GAS]=100,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
+				},
+				"Weapons"
+			},
+			["EZ Gas Grenade"]={
+				"ent_jack_gmod_ezgasnade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
+				},
+				"Weapons"
+			},
+			["EZ Tear Gas Grenade"]={
+				"ent_jack_gmod_ezcsnade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
+				},
+				"Weapons"
+			},
+			["EZ Gas Mask"]={
+				"ent_jack_gmod_ezarmor_gasmask",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=2
+				},
+				"Apparel"
+			},
+			["EZ Gebalte Ladung"]={
+				"ent_jack_gmod_ezsticknadebundle",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50
+				},
+				"Weapons"
+			},
+			["EZ Headset"]={
+				"ent_jack_gmod_ezarmor_headset",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=10
+				},
+				"Apparel"
+			},
+			["EZ Heavy Left Shoulder Armor"]={
+				"ent_jack_gmod_ezarmor_hlshoulder",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Apparel"
+			},
+			["EZ Heavy Right Shoulder Armor"]={
+				"ent_jack_gmod_ezarmor_hrshoulder",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Apparel"
+			},
+			["EZ Heavy Torso Armor"]={
+				"ent_jack_gmod_ezarmor_htorso",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=30
+				},
+				"Apparel"
+			},
+			["EZ Impact Grenade"]={
+				"ent_jack_gmod_ezimpactnade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
+				},
+				"Weapons"
+			},
+			["EZ Incendiary Grenade"]={
+				"ent_jack_gmod_ezfirenade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
+					[JMod.EZ_RESOURCE_TYPES.FUEL]=30
+				},
+				"Weapons"
+			},
+			["EZ Landmine"]={
+				"ent_jack_gmod_ezlandmine",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Weapons"
+			},
+			["EZ Light Helmet"]={
+				"ent_jack_gmod_ezarmor_lhead",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+				},
+				"Apparel"
+			},
+			["EZ Respirator"]={
+				"ent_jack_gmod_ezarmor_respirator",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=5
+				},
+				"Apparel"
+			},
+			["EZ Riot Helmet"]={
+				"ent_jack_gmod_ezarmor_riot",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+				},
+				"Apparel"
+			},
+			["EZ Heavy Riot Helmet"]={
+				"ent_jack_gmod_ezarmor_rioth",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Apparel"
+			},
+			["EZ Ultra Heavy Helmet"]={
+				"ent_jack_gmod_ezarmor_maska",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
+				},
+				"Apparel"
+			},
+			["EZ Light Left Shoulder Armor"]={
+				"ent_jack_gmod_ezarmor_llshoulder",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+				},
+				"Apparel"
+			},
+			["EZ Light Right Shoulder Armor"]={
+				"ent_jack_gmod_ezarmor_lrshoulder",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+				},
+				"Apparel"
+			},
+			["EZ Light Torso Armor"]={
+				"ent_jack_gmod_ezarmor_ltorso",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Apparel"
+			},
+			["EZ Medical Supplies"]={
+				"ent_jack_gmod_ezmedsupplies",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Resources"
+			},
+			["EZ Medium Helmet"]={
+				"ent_jack_gmod_ezarmor_mhead",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+				},
+				"Apparel"
+			},
+			["EZ Medium Torso Armor"]={
+				"ent_jack_gmod_ezarmor_mtorso",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
+				},
+				"Apparel"
+			},
+			["EZ Medium-Heavy Torso Armor"]={
+				"ent_jack_gmod_ezarmor_mhtorso",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=25
+				},
+				"Apparel"
+			},
+			["EZ Medium-Light Torso Armor"]={
+				"ent_jack_gmod_ezarmor_mltorso",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=15
+				},
+				"Apparel"
+			},
+			["EZ Medkit"]={
+				"ent_jack_gmod_ezmedkit",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
+				},
+				"Tools"
+			},
+			["EZ Mini Bounding Mine"]={
+				"ent_jack_gmod_ezboundingmine",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=15,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
+				},
+				"Weapons"
+			},
+			["EZ Mini Claymore"]={
+				"ent_jack_gmod_ezminimore",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
+				},
+				"Weapons"
+			},
+			["EZ Mini Impact Grenade"]={
+				"ent_jack_gmod_eznade_impact",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+				},
+				"Weapons"
+			},
+			["EZ Mini Proximity Grenade"]={
+				"ent_jack_gmod_eznade_proximity",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+				},
+				"Weapons"
+			},
+			["EZ Mini Remote Grenade"]={
+				"ent_jack_gmod_eznade_remote",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+				},
+				"Weapons"
+			},
+		   	["EZ Mini Timed Grenade"]={
+				"ent_jack_gmod_eznade_remote",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+				},
+				"Weapons"
+			},
+			["EZ Munitions"]={
+				"ent_jack_gmod_ezmunitions",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
+				},
+				"Resources"
+			},
+			["EZ Night Vision Goggles"]={
+				"ent_jack_gmod_ezarmor_nvgs",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=30,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=20
+				},
+				"Apparel"
+			},
+			["EZ Powder Keg"]={
+				"ent_jack_gmod_ezpowderkeg",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=400
+				},
+				"Weapons"
+			},
+			["EZ Propellant"]={
+				"ent_jack_gmod_ezpropellant",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=2,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=80
+				},
+				"Resources"
+			},
+			["EZ SLAM"]={	
+				"ent_jack_gmod_ezslam",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
+				},
+				"Weapons"
+			},
+			["EZ Satchel Charge"]={
+				"ent_jack_gmod_ezsatchelcharge",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=80
+				},
+				"Weapons"
+			},
+			["EZ Signal Grenade"]={
+				"ent_jack_gmod_ezsignalnade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
+				},
+				"Weapons"
+			},
+			["EZ Smoke Grenade"]={
+				"ent_jack_gmod_ezsmokenade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
+				},
+				"Weapons"
+			},
+			["EZ Left Calf Armor"]={
+		        "ent_jack_gmod_ezarmor_slcalf",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Left Forearm Armor"]={
+		        "ent_jack_gmod_ezarmor_slforearm",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Light Left Thigh Armor"]={
+		        "ent_jack_gmod_ezarmor_llthigh",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Heavy Left Thigh Armor"]={
+		        "ent_jack_gmod_ezarmor_hlthigh",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+		        },
+		        "Apparel"
+		    },
+			["EZ Pelvis Armor"]={
+		        "ent_jack_gmod_ezarmor_spelvis",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+		        },
+		        "Apparel"
+		    },
+			["EZ Right Calf Armor"]={
+		        "ent_jack_gmod_ezarmor_srcalf",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Right Forearm Armor"]={
+		        "ent_jack_gmod_ezarmor_srforearm",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Light Right Thigh Armor"]={
+		        "ent_jack_gmod_ezarmor_lrthigh",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+		        },
+		        "Apparel"
+		    },
+			["EZ Heavy Right Thigh Armor"]={
+		        "ent_jack_gmod_ezarmor_hrthigh",
+		        {   
+		            [JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+		        },
+		        "Apparel"
+		    },
+			["EZ Stick Grenade"]={
+				"ent_jack_gmod_ezsticknade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
+				},
+				"Weapons"
+			},
+			["EZ Sticky Bomb"]={
+				"ent_jack_gmod_ezstickynade",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
+				},
+				"Weapons"
+			},
+			["EZ TNT"]={
+				"ent_jack_gmod_eztnt",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=20,
+                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=60
+				},
+				"Weapons"
+			},
+			["EZ Thermal Goggles"]={
+				"ent_jack_gmod_ezarmor_thermals",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=30,
+					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=20
+				},
+				"Apparel"
+			},
+			["EZ Time Bomb"]={
+				"ent_jack_gmod_eztimebomb",
+				{
+					[JMod.EZ_RESOURCE_TYPES.PARTS]=30,
+                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
+				},
+				"Weapons"
+			}
+			
 		}
 	}
 	local FileContents=file.Read("JMod_Config.txt")
