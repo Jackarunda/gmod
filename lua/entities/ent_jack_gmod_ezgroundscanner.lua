@@ -19,7 +19,6 @@ ENT.EZupgrades={
 		{parts=100,advparts=160}
 	}
 }
-local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_ORE_SEARCHING,STATE_OIL_SEARCHING,STATE_GEO_SEARCHING=-1,0,1,2,3,4
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
@@ -47,22 +46,34 @@ if(SERVER)then
 		self:SetGrade(1)
 		self:SetProgress(0)
 		self:SetElectricity(100)
-		self:SetState(STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
 		self.Durability=100
+		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
+		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
+		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
+		self.Snd1:SetSoundLevel(150) -- behold, true terror
+		self.Snd2:SetSoundLevel(150)
+		self.Snd3:SetSoundLevel(150)
 	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
-			self:SetState(STATE_RUNNING)
+			self:SetState(JMod.EZ_STATE_ON)
+			self.Snd1:PlayEx(1,60)
+			self.Snd2:PlayEx(1,60)
+			self.Snd3:PlayEx(1,60)
 		else
 			JMod.Hint(activator,"nopower")
 		end
 	end
 	function ENT:TurnOff()
-		self:SetState(STATE_OFF)
+		self:SetState(JMod.EZ_STATE_OFF)
+		self.Snd1:Stop()
+		self.Snd2:Stop()
+		self.Snd3:Stop()
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
-		JMod.Hint(activator,"oil derrick")
+		-- JMod.Hint(activator,"ground scanner")
 		local OldOwner=self.Owner
 		JMod.Owner(self,activator)
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
@@ -72,14 +83,12 @@ if(SERVER)then
 					JMod.Colorify(self)
 				end
 			end
-			if(State==STATE_BROKEN)then
+			if(State==JMod.EZ_STATE_BROKEN)then
 				JMod.Hint(activator,"destroyed",self)
 				return
-			elseif(State==STATE_INOPERABLE)then
-				self:TryPlant()
-			elseif(State==STATE_OFF)then
+			elseif(State==JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
-			elseif(State==STATE_RUNNING)then
+			elseif(State==JMod.EZ_STATE_ON)then
 				self:TurnOff()
 			end
 		else
@@ -102,15 +111,16 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.random(10,20))
 	end
 	function ENT:Break(dmginfo)
-		if(self:GetState()==STATE_BROKEN)then return end
+		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(60,100))
 		for i=1,10 do self:DamageSpark() end
 		self.Durability=0
-		self:SetState(STATE_BROKEN)
+		self:SetState(JMod.EZ_STATE_BROKEN)
 		local Force=(dmginfo and dmginfo:GetDamageForce()) or Vector(0,0,0)
 		for i=1,4 do
 			self:FlingProp("models/mechanics/gears/gear12x6_small.mdl",Force)
 		end
+		self.Snd:Stop()
 	end
 	function ENT:DamageSpark()
 		local effectdata=EffectData()
@@ -124,25 +134,14 @@ if(SERVER)then
 		self:ConsumeElectricity(.2)
 	end
 	function ENT:Think()
-		if not(IsValid(self.Weld))then
-			if(self:GetState()>0)then self:SetState(STATE_INOPERABLE) end
-		end
 		local State=self:GetState()
-		if(State==STATE_BROKEN)then
+		if(State==JMod.EZ_STATE_BROKEN)then
 			if(self:GetElectricity()>0)then
 				if(math.random(1,4)==2)then self:DamageSpark() end
 			end
 			return
-		elseif(State==STATE_INOPERABLE)then
-			return
-		elseif(State==STATE_RUNNING)then
-			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
-			self:ConsumeElectricity()
-			if(self:GetProgress()>=100)then
-				self:SpawnOil()
-				self:SetProgress(0)
-			end
+		elseif(State==JMod.EZ_STATE_ON)then
+			--
 		end
 		self:NextThink(CurTime()+1)
 		return true
@@ -160,6 +159,11 @@ if(SERVER)then
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,200)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
+	end
+	function ENT:OnRemove()
+		self.Snd1:Stop()
+		self.Snd2:Stop()
+		self.Snd3:Stop()
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -185,9 +189,9 @@ elseif(CLIENT)then
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if(State==JMod.EZ_STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		if(DetailDraw)then
-			if((Closeness<20000)and(State==STATE_INOPERABLE or State==STATE_RUNNING))then
+			if((Closeness<20000)and(State==JMod.EZ_STATE_ON))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),180)

@@ -332,6 +332,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	end
 end)
 
+concommand.Add("jacky_trace_debug",function(ply)
+	if not(GetConVar("sv_cheats"):GetBool())then return end
+	local Tr=ply:GetEyeTrace()
+	print("--------- trace results ----------")
+	PrintTable(Tr)
+	local Props=util.GetSurfaceData(Tr.SurfaceProps)
+	if(Props)then
+		print("----------- surface properties ----------")
+		PrintTable(Props)
+	end
+	print("---------- end trace debug -----------")
+end)
+
 concommand.Add("jacky_player_debug",function(ply,cmd,args)
 	if not(GetConVar("sv_cheats"):GetBool())then return end
 	if not(ply:IsSuperAdmin())then return end
