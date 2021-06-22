@@ -527,7 +527,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
 				},
 				2,
-				"Machines"
+				"Machines",
+				"Heals players so you don't have to get more blood on you."
 			},
 			["EZ Big Bomb"]={
 				"ent_jack_gmod_ezbigbomb",		
@@ -536,7 +537,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600
 				},
 				1.5,
-				"Explosives"		
+				"Explosives",
+				"Bigger than the EZ bomb, but smaller than the Mega."
 			},	
 			["EZ Bomb"]={			
 				"ent_jack_gmod_ezbomb",		
@@ -545,7 +547,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Ol' reliable, a good way to send the enemy running for the bunkers."	
 			},	
 			["EZ Cluster Bomb"]={			
 				"ent_jack_gmod_ezclusterbomb",		
@@ -554,7 +557,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"For when you need to send hundreds of tiny bombs rather than a big one."
 			},
 			["EZ General Purpose Crate"]={			
 				"ent_jack_gmod_ezcrate_uni",		
@@ -562,7 +566,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50	
 				},
 				1,
-				"Other"
+				"Other",
+				"It's a box, tap it with whatever you want to store. Only works with JMod items."
 			},	
 			["EZ HE Rocket"]={			
 				"ent_jack_gmod_ezherocket",		
@@ -572,7 +577,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Pointy end goes forward towards soon to be explosion. Stay away from rear unless you want 3rd degree burns."
 			},
 			["EZ HEAT Rocket"]={			
 				"ent_jack_gmod_ezheatrocket",		
@@ -582,7 +588,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100	
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"EZ HE Rocket, except it's a lot more effective against armored vehicles with less boom."
 			},	
 			["EZ Incendiary Bomb"]={			
 				"ent_jack_gmod_ezincendiarybomb",		
@@ -593,7 +600,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=20
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Fire bomb. Detonates in the air to ensure max spread of napalm."
 			},	
 			["EZ Mega Bomb"]={			
 				"ent_jack_gmod_ezmoab",		
@@ -602,7 +610,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1200
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Anything on the surface of the enemy bunker is gonna be gone, and they'll need to cleanup the bunker."		
 			},
 			["EZ Micro Black Hole Generator"]={			
 				"ent_jack_gmod_ezmbhg",		
@@ -613,7 +622,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]=10
 				},
 				1.5,
-				"Machines"		
+				"Machines",
+				"Takes a couple minutes to spin up, and then creates an impossibly weak black hole."
 			},	
 			["EZ Micro Nuclear Bomb"]={			
 				"ent_jack_gmod_eznuke",		
@@ -624,7 +634,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=10
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Half the map is gonna be gone along with the bunker."
 			},	
 			["EZ Mini Naval Mine"]={			
 				"ent_jack_gmod_eznavalmine",		
@@ -633,7 +644,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=200	
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Ships beware! This mine is ready to send em to davy jones' locker!"
 			},	
 			["EZ Nano Nuclear Bomb"]={			
 				"ent_jack_gmod_eznuke_small",		
@@ -644,7 +656,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=5
 				},
 				1,
-				"Explosives"
+				"Explosives",
+				"Uranium is powerful, making this tiny bomb as strong as the Mega bomb, while also having radiation as a bonus."
 			},	
 			["EZ Resource Crate"]={			
 				"ent_jack_gmod_ezcrate",		
@@ -652,7 +665,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100	
 				},
 				1.5,
-				"Other"		
+				"Other",
+				"Store your resources here, so you don't have to stack em so much in the warehouse."
 			},	
 			["EZ Sentry"]={			
 				"ent_jack_gmod_ezsentry",		
@@ -664,7 +678,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.COOLANT]=100
 				},
 				1,
-				"Machines"		
+				"Machines",
+				"Shoots enemies so you don't have to! Just remember to refill the ammo and power."
 			},	
 			["EZ Small Bomb"]={			
 				"ent_jack_gmod_ezsmallbomb",		
@@ -673,7 +688,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"A small alternative to the EZ Bomb, it has airbrakes for low altitude bombing."
 			},
 			["EZ Supply Radio"]={			
 				"ent_jack_gmod_ezaidradio",		
@@ -683,7 +699,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20	
 				},
 				1,
-				"Machines"		
+				"Machines",
+				"Order more supplies for free. Just place it outside and watch for the package."
 			},	
 			["EZ Thermobaric Bomb"]={			
 				"ent_jack_gmod_ezthermobaricbomb",		
@@ -694,7 +711,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
 				1,
-				"Explosives"		
+				"Explosives",
+				"Bunker buster, will cause more damage if you place it indoors."
 			},	
 			["EZ Thermonuclear Bomb"]={			
 				"ent_jack_gmod_eznuke_big",		
@@ -705,7 +723,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=20
 				},
 				1.5,
-				"Explosives"		
+				"Explosives",
+				"Now we are all sons of bitches."
 			},	
 			["EZ Vehicle Mine"]={			
 				"ent_jack_gmod_ezatmine",		
@@ -714,7 +733,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
 				.75,
-				"Explosives"		
+				"Explosives",
+				"A good way of stopping enemy tanks from passing through."
 			},	
 			["EZ Workbench"]={			
 				"ent_jack_gmod_ezworkbench",		
@@ -725,7 +745,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100
 				},
 				1.5,
-				"Machines"		
+				"Machines",
+				"Craft all your smaller items here."
 			},	
 			["HL2 Buggy"]={			
 				"FUNC spawnHL2buggy",		
@@ -737,7 +758,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.AMMO]=600
 				},
 				2,
-				"Other"	
+				"Other",
+				"Gordon, remember to bring back the scout car."
 			},					
 		},
 		Recipes={
@@ -748,7 +770,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=40,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Resources"
+				"Resources",
+				"General purpose bullets. Don't ask how we got so many types of ammo in one box."
 			},
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
@@ -756,7 +779,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"Face protection for the narcissists."
 		    },
 		    ["EZ Build Kit"]={
 		        "ent_jack_gmod_ezbuildkit",
@@ -766,7 +790,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50
 				},
-				"Tools"
+				"Tools",
+				"Build, Upgrade, Salvage. All you need to build the big machines."
 			},
 			["EZ Detpack"]={
 				"ent_jack_gmod_ezdetpack",
@@ -774,7 +799,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20
 				},
-				"Weapons"
+				"Weapons",
+				"A Versatile breaching tool."
 			},
 			["EZ Dynamite"]={
 				"ent_jack_gmod_ezdynamite",
@@ -782,7 +808,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Good for blastmining and blasting idiots."
 			},
 			["EZ Explosives"]={
 				"ent_jack_gmod_ezexplosives",
@@ -790,7 +817,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=150
 				},
-				"Resources"
+				"Resources",
+				"No bomb is complete without explosives!"
 			},
 			["EZ Flashbang"]={
 				"ent_jack_gmod_ezflashbang",
@@ -799,7 +827,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=2,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=2
 				},
-				"Weapons"
+				"Weapons",
+				"Look away unless you want to be blinded."
 			},
 			["EZ Fougasse Mine"]={
 				"ent_jack_gmod_ezfougasse",
@@ -808,7 +837,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Focus fire on the flammable targets."
 			},
 			["EZ Fragmentation Grenade"]={
 				"ent_jack_gmod_ezfragnade",
@@ -816,7 +846,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Frag nade, for sending hundreds of fragments into your enemy."
 			},
 			["EZ Fumigator"]={
 				"ent_jack_gmod_ezfumigator",
@@ -825,7 +856,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
 				},
-				"Weapons"
+				"Weapons",
+				"Go ahead, tell your hitler jokes. we'll wait."
 			},
 			["EZ Gas Grenade"]={
 				"ent_jack_gmod_ezgasnade",
@@ -834,7 +866,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
 				},
-				"Weapons"
+				"Weapons",
+				"Portable way of gassing j- enemies."
 			},
 			["EZ Tear Gas Grenade"]={
 				"ent_jack_gmod_ezcsnade",
@@ -843,7 +876,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
 				},
-				"Weapons"
+				"Weapons",
+				"Effective area denial for those without gasmasks. Might be a warcrime."
 			},
 			["EZ Gas Mask"]={
 				"ent_jack_gmod_ezarmor_gasmask",
@@ -852,7 +886,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=2
 				},
-				"Apparel"
+				"Apparel",
+				"Protect yourself against the enemies' warcrimes."
 			},
 			["EZ Gebalte Ladung"]={
 				"ent_jack_gmod_ezsticknadebundle",
@@ -860,7 +895,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50
 				},
-				"Weapons"
+				"Weapons",
+				"A very heavy and very explosive stick grenade."
 			},
 			["EZ Headset"]={
 				"ent_jack_gmod_ezarmor_headset",
@@ -868,7 +904,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=10
 				},
-				"Apparel"
+				"Apparel",
+				"A great way of communicating with your team. No one else can hear you."
 			},
 			["EZ Heavy Left Shoulder Armor"]={
 				"ent_jack_gmod_ezarmor_hlshoulder",
@@ -876,7 +913,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Apparel"
+				"Apparel",
+				"You must care about your shoulders if you wear this."
 			},
 			["EZ Heavy Right Shoulder Armor"]={
 				"ent_jack_gmod_ezarmor_hrshoulder",
@@ -884,7 +922,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Apparel"
+				"Apparel",
+				"You must care about your shoulders if you wear this."
 			},
 			["EZ Heavy Torso Armor"]={
 				"ent_jack_gmod_ezarmor_htorso",
@@ -892,7 +931,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=30
 				},
-				"Apparel"
+				"Apparel",
+				"Turtle shell. Heavy defense."
 			},
 			["EZ Impact Grenade"]={
 				"ent_jack_gmod_ezimpactnade",
@@ -900,7 +940,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons"
+				"Weapons",
+				"For the aggressive type. Explodes on impact."
 			},
 			["EZ Incendiary Grenade"]={
 				"ent_jack_gmod_ezfirenade",
@@ -909,7 +950,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=30
 				},
-				"Weapons"
+				"Weapons",
+				"Portable fire bomb, try cooking it before throwing to spread it more."
 			},
 			["EZ Landmine"]={
 				"ent_jack_gmod_ezlandmine",
@@ -917,7 +959,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Anti-personnel land mine. Try your best to match the color with the ground."
 			},
 			["EZ Light Helmet"]={
 				"ent_jack_gmod_ezarmor_lhead",
@@ -925,7 +968,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 				},
-				"Apparel"
+				"Apparel",
+				"Not so bad on your neck, but has low defense."
 			},
 			["EZ Respirator"]={
 				"ent_jack_gmod_ezarmor_respirator",
@@ -933,7 +977,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=5
 				},
-				"Apparel"
+				"Apparel",
+				"You can wear goggles while protecting your lungs, but you'll have to retreat."
 			},
 			["EZ Riot Helmet"]={
 				"ent_jack_gmod_ezarmor_riot",
@@ -941,7 +986,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 				},
-				"Apparel"
+				"Apparel",
+				"Protect your entire head with one piece. No goggles though."
 			},
 			["EZ Heavy Riot Helmet"]={
 				"ent_jack_gmod_ezarmor_rioth",
@@ -949,7 +995,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Apparel"
+				"Apparel",
+				"Heavier version of the riot helmet."
 			},
 			["EZ Ultra Heavy Helmet"]={
 				"ent_jack_gmod_ezarmor_maska",
@@ -957,7 +1004,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=40,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
 				},
-				"Apparel"
+				"Apparel",
+				"Turtle head. Heaviest helmet, and restricts your vision alot."
 			},
 			["EZ Light Left Shoulder Armor"]={
 				"ent_jack_gmod_ezarmor_llshoulder",
@@ -965,7 +1013,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 				},
-				"Apparel"
+				"Apparel",
+				"Some protection for your shoulders."
 			},
 			["EZ Light Right Shoulder Armor"]={
 				"ent_jack_gmod_ezarmor_lrshoulder",
@@ -973,7 +1022,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 				},
-				"Apparel"
+				"Apparel",
+				"Some protection for your shoulders."
 			},
 			["EZ Light Torso Armor"]={
 				"ent_jack_gmod_ezarmor_ltorso",
@@ -981,7 +1031,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Apparel"
+				"Apparel",
+				"Might help against buckshot and 22LR, but not much else."
 			},
 			["EZ Medical Supplies"]={
 				"ent_jack_gmod_ezmedsupplies",
@@ -991,7 +1042,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Resources"
+				"Resources",
+				"Necessities to heal anyone."
 			},
 			["EZ Medium Helmet"]={
 				"ent_jack_gmod_ezarmor_mhead",
@@ -999,7 +1051,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
-				"Apparel"
+				"Apparel",
+				"Better than the light helmet, but worse than the heavy. Neck might hurt if you wear it too long."
 			},
 			["EZ Medium Torso Armor"]={
 				"ent_jack_gmod_ezarmor_mtorso",
@@ -1007,7 +1060,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
 				},
-				"Apparel"
+				"Apparel",
+				"Medium protection for your chest."
 			},
 			["EZ Medium-Heavy Torso Armor"]={
 				"ent_jack_gmod_ezarmor_mhtorso",
@@ -1015,7 +1069,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=25
 				},
-				"Apparel"
+				"Apparel",
+				"Slightly less heavy, slightly less protection than heavy."
 			},
 			["EZ Medium-Light Torso Armor"]={
 				"ent_jack_gmod_ezarmor_mltorso",
@@ -1023,7 +1078,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=15
 				},
-				"Apparel"
+				"Apparel",
+				"it'll help a little more, and is slightly heavier."
 			},
 			["EZ Medkit"]={
 				"ent_jack_gmod_ezmedkit",
@@ -1031,7 +1087,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
 				},
-				"Tools"
+				"Tools",
+				"Go help em doc. Watch your head, you're gonna be a target."
 			},
 			["EZ Mini Bounding Mine"]={
 				"ent_jack_gmod_ezboundingmine",
@@ -1040,7 +1097,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Bury this in the soil around your base, and you got a very hidden defense option."
 			},
 			["EZ Mini Claymore"]={
 				"ent_jack_gmod_ezminimore",
@@ -1048,7 +1106,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons"
+				"Weapons",
+				"Simple way to trap corners and the like."
 			},
 			["EZ Mini Impact Grenade"]={
 				"ent_jack_gmod_eznade_impact",
@@ -1056,7 +1115,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
 				},
-				"Weapons"
+				"Weapons",
+				"You could throw it, but it's much better for making sure that bumping a bomb is a death sentence."
 			},
 			["EZ Mini Proximity Grenade"]={
 				"ent_jack_gmod_eznade_proximity",
@@ -1064,7 +1124,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
 				},
-				"Weapons"
+				"Weapons",
+				"Useful for turning big bombs into traps. Very weak on its own however."
 			},
 			["EZ Mini Remote Grenade"]={
 				"ent_jack_gmod_eznade_remote",
@@ -1072,7 +1133,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
 				},
-				"Weapons"
+				"Weapons",
+				"Set it on a bomb, and trigger it from afar. Good if you want to ensure you're out of blast range."
 			},
 		   	["EZ Mini Timed Grenade"]={
 				"ent_jack_gmod_eznade_remote",
@@ -1080,7 +1142,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
 				},
-				"Weapons"
+				"Weapons",
+				"Arm it on a bomb, and run like hell. those ten seconds pass very quick."
 			},
 			["EZ Munitions"]={
 				"ent_jack_gmod_ezmunitions",
@@ -1089,7 +1152,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
-				"Resources"
+				"Resources",
+				"Ammo for your explosive toys."
 			},
 			["EZ Night Vision Goggles"]={
 				"ent_jack_gmod_ezarmor_nvgs",
@@ -1098,7 +1162,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=20
 				},
-				"Apparel"
+				"Apparel",
+				"See at night, be blinded by bright light."
 			},
 			["EZ Powder Keg"]={
 				"ent_jack_gmod_ezpowderkeg",
@@ -1106,7 +1171,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=400
 				},
-				"Weapons"
+				"Weapons",
+				"Don't light a match. You're gonna blow up if it lands on this keg."
 			},
 			["EZ Propellant"]={
 				"ent_jack_gmod_ezpropellant",
@@ -1114,7 +1180,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=2,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=80
 				},
-				"Resources"
+				"Resources",
+				"Propellant for guns and other things."
 			},
 			["EZ SLAM"]={	
 				"ent_jack_gmod_ezslam",
@@ -1122,7 +1189,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons"
+				"Weapons",
+				"If anything other than your team touches that beam, it better be well armored."
 			},
 			["EZ Satchel Charge"]={
 				"ent_jack_gmod_ezsatchelcharge",
@@ -1130,7 +1198,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=80
 				},
-				"Weapons"
+				"Weapons",
+				"FIRE IN THE HOLE! Be sure you're at a safe distance before pushing that detonator!"
 			},
 			["EZ Signal Grenade"]={
 				"ent_jack_gmod_ezsignalnade",
@@ -1139,7 +1208,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons"
+				"Weapons",
+				"Send smoke signals to your team, and probably be ignored or brutally murdered by the enemy."
 			},
 			["EZ Smoke Grenade"]={
 				"ent_jack_gmod_ezsmokenade",
@@ -1148,7 +1218,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons"
+				"Weapons",
+				"Smokescreen so nobody knows who they're shooting."
 			},
 			["EZ Left Calf Armor"]={
 		        "ent_jack_gmod_ezarmor_slcalf",
@@ -1156,7 +1227,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"For your legs."
 		    },
 			["EZ Left Forearm Armor"]={
 		        "ent_jack_gmod_ezarmor_slforearm",
@@ -1164,7 +1236,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"For your arm."
 		    },
 			["EZ Light Left Thigh Armor"]={
 		        "ent_jack_gmod_ezarmor_llthigh",
@@ -1172,7 +1245,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"Keep your thigh."
 		    },
 			["EZ Heavy Left Thigh Armor"]={
 		        "ent_jack_gmod_ezarmor_hlthigh",
@@ -1180,7 +1254,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 		        },
-		        "Apparel"
+		        "Apparel",
+				"i'm not making that joke."
 		    },
 			["EZ Pelvis Armor"]={
 		        "ent_jack_gmod_ezarmor_spelvis",
@@ -1188,7 +1263,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 		        },
-		        "Apparel"
+		        "Apparel",
+				"Keep your kiwis safe!"
 		    },
 			["EZ Right Calf Armor"]={
 		        "ent_jack_gmod_ezarmor_srcalf",
@@ -1196,7 +1272,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"For your legs."
 		    },
 			["EZ Right Forearm Armor"]={
 		        "ent_jack_gmod_ezarmor_srforearm",
@@ -1204,7 +1281,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"For your arm."
 		    },
 			["EZ Light Right Thigh Armor"]={
 		        "ent_jack_gmod_ezarmor_lrthigh",
@@ -1212,7 +1290,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
 		        },
-		        "Apparel"
+		        "Apparel",
+				"Keep your thigh."
 		    },
 			["EZ Heavy Right Thigh Armor"]={
 		        "ent_jack_gmod_ezarmor_hrthigh",
@@ -1220,7 +1299,8 @@ function JMod.InitGlobalConfig(forceNew)
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 		        },
-		        "Apparel"
+		        "Apparel",
+				"I'm not making that joke."
 		    },
 			["EZ Stick Grenade"]={
 				"ent_jack_gmod_ezsticknade",
@@ -1228,7 +1308,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons"
+				"Weapons",
+				"Use your good throwing arm for this. Goes very far. Can have a frag sleeve on it."
 			},
 			["EZ Sticky Bomb"]={
 				"ent_jack_gmod_ezstickynade",
@@ -1237,7 +1318,8 @@ function JMod.InitGlobalConfig(forceNew)
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons"
+				"Weapons",
+				"Don't get yourself stuck on it! Very good for sticking to vehicles and stationary objects."
 			},
 			["EZ TNT"]={
 				"ent_jack_gmod_eztnt",
@@ -1245,7 +1327,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=60
 				},
-				"Weapons"
+				"Weapons",
+				"Simple breaching device. Reacts to powder from the powder keg."
 			},
 			["EZ Thermal Goggles"]={
 				"ent_jack_gmod_ezarmor_thermals",
@@ -1254,7 +1337,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=20
 				},
-				"Apparel"
+				"Apparel",
+				"Good for seeing things you couldn't see before."
 			},
 			["EZ Time Bomb"]={
 				"ent_jack_gmod_eztimebomb",
@@ -1262,7 +1346,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
-				"Weapons"
+				"Weapons",
+				"The longer you set the time, the harder it is to defuse. Big risk to take however."
 			}
 			
 		}
