@@ -27,13 +27,14 @@ if(SERVER)then
 	end
 	local function PumpItUp(tbl,numPumps,minPump,maxPump)
 		if(#tbl<=0)then return end
+		if(numPumps<=0)then return end
 		for i=1,numPumps do
 			local Deposit,Decimals=table.Random(tbl),0
 			if(Deposit.amt<1)then Decimals=5 end
 			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
 		end
 	end
-	local function WeightByAltitude(tbl)
+	local function WeightByAltitude(tbl,low)
 		local AvgAltitude,Count=0,0
 		for k,v in pairs(tbl)do
 			AvgAltitude=AvgAltitude+v.pos.z
@@ -41,7 +42,11 @@ if(SERVER)then
 		end
 		AvgAltitude=AvgAltitude/Count
 		for k,v in pairs(tbl)do
-			if(v.pos.z>AvgAltitude)then v.amt=v.amt*2 end
+			if(low)then
+				if(v.pos.z<AvgAltitude)then v.amt=v.amt*2 end
+			else
+				if(v.pos.z>AvgAltitude)then v.amt=v.amt*2 end
+			end
 		end
 	end
 	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster","rubber"}
@@ -49,6 +54,7 @@ if(SERVER)then
 		JMod.OilReserves={}
 		JMod.OreDeposits={}
 		JMod.GeoThermalReservoirs={}
+		JMod.WaterReservoirs={}
 		-- first, we have to find the ground
 		local GroundVectors={}
 		print("JMOD: generating natural resources...")
@@ -67,7 +73,7 @@ if(SERVER)then
 					end
 				end
 				if(i==MaxTries)then
-					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,3,true
+					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,3,true,0,20
 					for k,v in pairs(GroundVectors)do
 						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
 						if(GeoCount<MaxGeo)then
@@ -80,6 +86,18 @@ if(SERVER)then
 								siz=math.random(150,1000)
 							})
 							GeoCount=GeoCount+1
+						elseif(WaterCount<MaxWater)then
+							if not(InWater)then
+								local amt=math.random(70,180)
+								if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
+								if(v.mat==MAT_SAND)then amt=amt*2 end -- need more water in arid places
+								table.insert(JMod.WaterReservoirs,{
+									pos=v.pos,
+									amt=math.Round(amt),
+									siz=math.random(150,1000)
+								})
+								WaterCount=WaterCount+1
+							end
 						elseif(Alternate)then
 							if(OilCount<MaxOil)then
 								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OilRichness
@@ -112,12 +130,15 @@ if(SERVER)then
 						RemoveOverlaps(JMod.OilReserves)
 						RemoveOverlaps(JMod.OreDeposits)
 						RemoveOverlaps(JMod.GeoThermalReservoirs)
+						RemoveOverlaps(JMod.WaterReservoirs)
 						-- randomly boost a few deposits in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
 						if(math.random(1,2)==1)then PumpItUp(JMod.GeoThermalReservoirs,1,2,4) end
+						PumpItUp(JMod.WaterReservoirs,math.random(0,2),4,10)
 						PumpItUp(JMod.OilReserves,math.random(1,3),4,10)
 						PumpItUp(JMod.OreDeposits,math.random(1,3),4,10)
 						WeightByAltitude(JMod.OreDeposits)
-						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
+						WeightByAltitude(JMod.WaterReservoirs,true)
+						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits, "..#JMod.WaterReservoirs.." water reservoirs and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
 					end
 				end
 			end)
@@ -143,6 +164,7 @@ if(SERVER)then
 		net.WriteTable(JMod.OilReserves)
 		net.WriteTable(JMod.OreDeposits)
 		net.WriteTable(JMod.GeoThermalReservoirs)
+		net.WriteTable(JMod.WaterReservoirs)
 		net.Send(ply)
 	end)
 elseif(CLIENT)then
@@ -153,6 +175,7 @@ elseif(CLIENT)then
 		JMod.OilReserves=net.ReadTable()
 		JMod.OreDeposits=net.ReadTable()
 		JMod.GeoThermalReservoirs=net.ReadTable()
+		JMod.WaterReservoirs=net.ReadTable()
 	end)
 	local Circle=Material("sprites/sent_ball")
 	local function RenderPoints(tbl,col)
@@ -170,6 +193,7 @@ elseif(CLIENT)then
 			RenderPoints(JMod.OilReserves,Color(20,20,20,200))
 			RenderPoints(JMod.OreDeposits,Color(120,120,120,200))
 			RenderPoints(JMod.GeoThermalReservoirs,Color(120,60,20,200))
+			RenderPoints(JMod.WaterReservoirs,Color(50,100,150,200))
 		end
 	end)
 end

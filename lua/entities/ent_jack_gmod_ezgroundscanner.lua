@@ -33,7 +33,7 @@ if(SERVER)then
 		self:SetMaterial("models/mat_jack_gmod_groundscanner")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)	
+		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)

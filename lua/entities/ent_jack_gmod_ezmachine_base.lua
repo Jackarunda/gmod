@@ -97,7 +97,21 @@ ENT.PropModels={
 	"models/props_phx/gears/bevel9.mdl",
 	"models/Mechanics/gears2/gear_12t2.mdl"
 }
-local STATE_BROKEN,STATE_OFF=-1,0 -- these are the only states that are common to all machines
+--[[
+ENT.EZconsumes={"ammo","power","parts","coolant"}
+ENT.StaticPerfSpecs={
+	MaxElectricity=100,
+	SearchTime=7,
+	SpecialTargetingHeights={["npc_rollermine"]=15},
+	ShotCount=1,
+	BarrelLength=29
+}
+ENT.DynamicPerfSpecs={
+	MaxAmmo=300,
+	SearchSpeed=.5,
+	Cooling=1
+}
+--]]
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -182,11 +196,11 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.random(10,20))
 	end
 	function ENT:Break(dmginfo)
-		if(self:GetState()==STATE_BROKEN)then return end
+		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		self.Durability=0
-		self:SetState(STATE_BROKEN)
+		self:SetState(JMod.EZ_STATE_BROKEN)
 		local Force=dmginfo:GetDamageForce()
 		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
 			self:FlingProp(table.Random(self.PropModels),Force)
@@ -263,7 +277,7 @@ if(SERVER)then
 					if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
 					if(self.Durability>0)then
-						if(self:GetState()==STATE_BROKEN)then self:SetState(STATE_OFF) end
+						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
 					return math.ceil(Accepted)
 				elseif(typ=="gas")then
