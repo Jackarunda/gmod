@@ -47,16 +47,19 @@ if(SERVER)then
 		self:SetProgress(0)
 		self:SetElectricity(100)
 		self:SetState(JMod.EZ_STATE_OFF)
+		print("settin to off 3")
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
 		self.Snd1:SetSoundLevel(150)
 		self.Snd2:SetSoundLevel(150)
 		self.Snd3:SetSoundLevel(150)
+		self:InitPerfSpecs()
 	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
+			print("settin to on")
 			self:EmitSound("snd_jack_metallicclick.wav",60,100)
 			self.Snd1:PlayEx(1,80)
 			self.Snd2:PlayEx(1,80)
@@ -67,6 +70,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
+		print("settin to off 2")
 		self:EmitSound("snd_jack_metallicclick.wav",60,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
@@ -90,11 +94,28 @@ if(SERVER)then
 			elseif(State==JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
 			elseif(State==JMod.EZ_STATE_ON)then
+				jprint("wat")
 				self:TurnOff()
 			end
 		else
 			activator:PickupObject(self)
 		end
+	end
+	local function FindNaturalResourcesInRange(pos,rng,tbl,typ)
+		rng=rng*52 -- meters to source units
+		local Res={}
+		for k,v in pairs(tbl)do
+			if((v.pos:Distance(pos)-v.siz)<rng)then
+				table.insert(Res,{
+					pos=v.pos,
+					amt=v.amt,
+					siz=v.siz,
+					typ=typ
+				})
+			end
+		end
+		jprint(#Res)
+		return Res
 	end
 	function ENT:Think()
 		local State=self:GetState()
@@ -104,19 +125,27 @@ if(SERVER)then
 			end
 			return
 		elseif(State==JMod.EZ_STATE_ON)then
-			if(self:GetElectricity()<=0)then self:TurnOff() return end4
-			self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed))
+			if(self:GetElectricity()<=0)then self:TurnOff() return end
+			self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed,0,100))
 			if(self:GetProgress()>=100)then
 				self:FinishScan()
 				self:SetProgress(0)
 			end
 		end
 		self:NextThink(CurTime()+.5)
+		--PrintTable(FindNaturalResourcesInRange(self:GetPos(),self.ScanRange,JMod.OilReserves,"oil"))
 		return true
 	end
 	function ENT:FinishScan()
+		local Pos,Results=self:GetPos(),{}
+		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.OilReserves,"oil"))
+		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.OreDeposits,"ore"))
+		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.GeoThermalReservoirs,"geo"))
+		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.WaterReservoirs,"water"))
+		PrintTable(Results)
 		net.Start("JMod_ResourceScanner")
 		net.WriteEntity(self)
+		net.WriteTable(Results)
 		net.Broadcast()
 	end
 	function ENT:OnRemove()
@@ -125,15 +154,23 @@ if(SERVER)then
 		self.Snd3:Stop()
 	end
 elseif(CLIENT)then
+	net.Receive("JMod_ResourceScanner",function()
+		local Ent=net.ReadEntity()
+		if(IsValid(Ent))then Ent.ScanResults=net.ReadTable() end
+		print("A")
+		PrintTable(Ent.ScanResults)
+	end)
 	function ENT:Initialize()
 		self.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
 		self.Tank:SetParent(self)
 		self.Tank:SetPos(self:GetPos())
 		self.Tank:SetModelScale(.12,0)
 		self.Tank:SetNoDraw(true)
+		self.ScanResults={}
 	end
 	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
+	local WorldToDisplayFactor=41.6
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -152,15 +189,14 @@ elseif(CLIENT)then
 		if(DetailDraw)then
 			if((Closeness<20000)and(State==JMod.EZ_STATE_ON))then
 				local DisplayAng=SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(),180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-30)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
 				local Opacity=math.random(50,150)
-				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
-				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.Start3D2D(SelfPos+Up*50,DisplayAng,.024)
+				draw.SimpleTextOutlined("POWER","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/200
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",0,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local CoolFrac=self:GetCoolant()/100
 				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local R,G,B=JMod.GoodBadColor(CoolFrac)

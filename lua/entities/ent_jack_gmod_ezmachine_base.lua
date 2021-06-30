@@ -158,7 +158,7 @@ if(SERVER)then
 		amt=((amt or .2)/(self.ElectricalEfficiency or 1)^.5)/2
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
-		if(NewAmt<=0)then self:TurnOff() end
+		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end
 	function ENT:DamageSpark()
 		local effectdata=EffectData()
@@ -196,11 +196,14 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.random(10,20))
 	end
 	function ENT:Break(dmginfo)
+		print("tryna break")
 		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
+		self:SetState(JMod.EZ_STATE_BROKEN)
+		print("settin to borked")
+		jprint(self:GetState())
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		self.Durability=0
-		self:SetState(JMod.EZ_STATE_BROKEN)
 		local Force=dmginfo:GetDamageForce()
 		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
 			self:FlingProp(table.Random(self.PropModels),Force)
@@ -213,6 +216,9 @@ if(SERVER)then
 		end
 	end
 	function ENT:Destroy(dmginfo)
+		print("tryna destroy")
+		if(self.Destroyed)then return end
+		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		local Force=dmginfo:GetDamageForce()
@@ -277,7 +283,7 @@ if(SERVER)then
 					if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
 					if(self.Durability>0)then
-						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
+						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF);print("settin to off 1") end
 					end
 					return math.ceil(Accepted)
 				elseif(typ=="gas")then
