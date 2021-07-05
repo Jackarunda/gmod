@@ -254,7 +254,7 @@ if(SERVER)then
 		if(amt<=0)then return 0 end
 		for k,v in pairs(self.EZconsumes)do
 			if(typ==v)then
-				if(typ=="power")then
+				if(typ==JMod.EZ_RESOURCE_TYPES.POWER)then
 					local Powa=self:GetElectricity()
 					local Missing=self.MaxElectricity-Powa
 					if(Missing<=0)then return 0 end
@@ -263,7 +263,7 @@ if(SERVER)then
 					self:SetElectricity(Powa+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
 					return math.ceil(Accepted)
-				elseif(typ=="medsupplies")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES)then
 					local Supps=self:GetSupplies()
 					local Missing=self.MaxSupplies-Supps
 					if(Missing<=0)then return 0 end
@@ -272,7 +272,7 @@ if(SERVER)then
 					self:SetSupplies(Supps+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110)) -- TODO: new sound here
 					return math.ceil(Accepted)
-				elseif(typ=="parts")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing=self.MaxDurability-self.Durability
 					if(Missing<=self.MaxDurability*.25)then return 0 end
 					local Accepted=math.min(Missing,amt)
@@ -283,7 +283,7 @@ if(SERVER)then
 						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
 					return math.ceil(Accepted)
-				elseif(typ=="gas")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.GAS)then
 					local Fool=self:GetGas()
 					local Missing=self.MaxGas-Fool
 					if(Missing<=0)then return 0 end
@@ -292,7 +292,7 @@ if(SERVER)then
 					self:SetGas(Fool+Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
 					return math.ceil(Accepted)
-				elseif(typ=="ammo")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.AMMO)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
@@ -300,7 +300,7 @@ if(SERVER)then
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 					return Accepted
-				elseif(typ=="munitions")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
@@ -308,7 +308,7 @@ if(SERVER)then
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 					return Accepted
-				elseif(typ=="coolant")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.COOLANT)then
 					local Kewl=self:GetCoolant()
 					local Missing=100-Kewl
 					if(Missing<10)then return 0 end

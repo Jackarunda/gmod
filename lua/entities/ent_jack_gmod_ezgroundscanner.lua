@@ -13,7 +13,7 @@ ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.EZupgradeRate=1
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
-	Durability=100
+	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
 	ScanSpeed=5,
@@ -47,6 +47,7 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		self:SetProgress(0)
 		self:SetElectricity(self.MaxElectricity)
+		self.Durability=self.MaxDurability
 		self:SetState(JMod.EZ_STATE_OFF)
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
@@ -232,7 +233,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-45)
 				local Opacity=math.random(75,150)
 				cam.Start3D2D(SelfPos-Up*35-Forward*5,DisplayAng,.08)
-				surface.SetDrawColor(30,30,30,200)
+				surface.SetDrawColor(50,50,50,200)
 				surface.SetMaterial(Circol)
 				surface.DrawTexturedRect(-40*MetersToPixels,-85*MetersToPixels,80*MetersToPixels,80*MetersToPixels)
 				local CenterY=-45*MetersToPixels
