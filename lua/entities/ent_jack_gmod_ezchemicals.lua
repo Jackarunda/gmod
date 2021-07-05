@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.CHEMICALS}
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.CHEMICALS
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/PlasticCrate01a.mdl"

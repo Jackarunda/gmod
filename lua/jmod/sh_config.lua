@@ -498,19 +498,6 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["headsets"]={
 					{"ent_jack_gmod_ezarmor_headset",8}
-				},
-				["armor"]={
-					"ent_jack_gmod_ezarmor_balmask","ent_jack_gmod_ezarmor_gasmask",
-					"ent_jack_gmod_ezarmor_hlshoulder","ent_jack_gmod_ezarmor_llshoulder",
-					"ent_jack_gmod_ezarmor_llshoulder","ent_jack_gmod_ezarmor_lrshoulder",
-					"ent_jack_gmod_ezarmor_ltorso","ent_jack_gmod_ezarmor_mhead",
-					"ent_jack_gmod_ezarmor_mhtorso","ent_jack_gmod_ezarmor_mtorso",
-					"ent_jack_gmod_ezarmor_mtorso","ent_jack_gmod_ezarmor_slcalf",
-					"ent_jack_gmod_ezarmor_slforearm","ent_jack_gmod_ezarmor_slthigh",
-					"ent_jack_gmod_ezarmor_spelvis","ent_jack_gmod_ezarmor_lrcalf",
-					"ent_jack_gmod_ezarmor_srforearm","ent_jack_gmod_ezarmor_lrthigh",
-					"ent_jack_gmod_ezarmor_nvgs","ent_jack_gmod_ezarmor_thermals",
-					"ent_jack_gmod_ezarmor_headset"
 				}
 			},
 			RestrictedPackages={"antimatter","fissile material"},

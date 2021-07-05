@@ -45,9 +45,8 @@ if(SERVER)then
 		end)
 		self:SetGrade(1)
 		self:SetProgress(0)
-		self:SetElectricity(100)
+		self:SetElectricity(self.MaxElectricity)
 		self:SetState(JMod.EZ_STATE_OFF)
-		print("settin to off 3")
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
@@ -59,7 +58,6 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
-			print("settin to on")
 			self:EmitSound("snd_jack_metallicclick.wav",60,100)
 			self.Snd1:PlayEx(1,80)
 			self.Snd2:PlayEx(1,80)
@@ -70,7 +68,6 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
-		print("settin to off 2")
 		self:EmitSound("snd_jack_metallicclick.wav",60,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
@@ -94,7 +91,6 @@ if(SERVER)then
 			elseif(State==JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
 			elseif(State==JMod.EZ_STATE_ON)then
-				jprint("wat")
 				self:TurnOff()
 			end
 		else
@@ -133,7 +129,6 @@ if(SERVER)then
 			end
 		end
 		self:NextThink(CurTime()+.5)
-		--PrintTable(FindNaturalResourcesInRange(self:GetPos(),self.ScanRange,JMod.OilReserves,"oil"))
 		return true
 	end
 	function ENT:FinishScan()
@@ -157,7 +152,6 @@ elseif(CLIENT)then
 	net.Receive("JMod_ResourceScanner",function()
 		local Ent=net.ReadEntity()
 		if(IsValid(Ent))then Ent.ScanResults=net.ReadTable() end
-		print("A")
 		PrintTable(Ent.ScanResults)
 	end)
 	function ENT:Initialize()

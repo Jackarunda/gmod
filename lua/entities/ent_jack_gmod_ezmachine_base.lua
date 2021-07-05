@@ -141,7 +141,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>1000)then
+			if(data.Speed>800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()))then
 				local Dam,World=DamageInfo(),game.GetWorld()
 				Dam:SetDamage(data.Speed/3)
 				Dam:SetAttacker(data.HitEntity or World)
@@ -196,16 +196,13 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.random(10,20))
 	end
 	function ENT:Break(dmginfo)
-		print("tryna break")
 		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
 		self:SetState(JMod.EZ_STATE_BROKEN)
-		print("settin to borked")
-		jprint(self:GetState())
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		self.Durability=0
-		local Force=dmginfo:GetDamageForce()
-		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
+		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20,50)
+		for i=1,GibNum do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats
@@ -216,13 +213,12 @@ if(SERVER)then
 		end
 	end
 	function ENT:Destroy(dmginfo)
-		print("tryna destroy")
 		if(self.Destroyed)then return end
 		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
-		local Force=dmginfo:GetDamageForce()
-		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10 do
+		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10,100)
+		for j=1,GibNum do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats
@@ -283,7 +279,7 @@ if(SERVER)then
 					if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
 					if(self.Durability>0)then
-						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF);print("settin to off 1") end
+						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
 					return math.ceil(Accepted)
 				elseif(typ=="gas")then
