@@ -187,7 +187,7 @@ elseif(CLIENT)then
 	end
 	hook.Add("PostDrawTranslucentRenderables","JMod_EconTransRend",function()
 		if(ShowNaturalResources)then
-			RenderPoints(JMod.OilReserves,Color(20,20,20,200))
+			RenderPoints(JMod.OilReserves,Color(10,10,10,200))
 			RenderPoints(JMod.OreDeposits,Color(120,120,120,200))
 			RenderPoints(JMod.GeoThermalReservoirs,Color(150,20,10,200))
 			RenderPoints(JMod.WaterReservoirs,Color(20,70,150,200))

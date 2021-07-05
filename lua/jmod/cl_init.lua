@@ -56,6 +56,23 @@ surface.CreateFont("JMod-Display-S",{
 	additive=false,
 	outline=false
 })
+surface.CreateFont("JMod-Display-XS",{
+	font="Arial",
+	extended=false,
+	size=15,
+	weight=900,
+	blursize=0,
+	scanlines=4,
+	antialias=true,
+	underline=false,
+	italic=false,
+	strikeout=false,
+	symbol=false,
+	rotary=false,
+	shadow=false,
+	additive=false,
+	outline=false
+})
 surface.CreateFont("JMod-Stencil",{
 	font="Capture it",
 	extended=false,
