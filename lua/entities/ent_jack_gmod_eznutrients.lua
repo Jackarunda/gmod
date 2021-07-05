@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.NUTRIENTS}
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.NUTRIENTS
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/cardboard_box003a.mdl"

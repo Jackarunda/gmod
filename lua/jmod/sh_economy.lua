@@ -34,7 +34,7 @@ if(SERVER)then
 			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
 		end
 	end
-	local function WeightByAltitude(tbl,low)
+	local function WeightByAltitude(tbl,low,deweightOthers)
 		local AvgAltitude,Count=0,0
 		for k,v in pairs(tbl)do
 			AvgAltitude=AvgAltitude+v.pos.z
@@ -46,6 +46,13 @@ if(SERVER)then
 				if(v.pos.z<AvgAltitude)then v.amt=v.amt*2 end
 			else
 				if(v.pos.z>AvgAltitude)then v.amt=v.amt*2 end
+			end
+			if(deweightOthers)then
+				if(low)then
+					if(v.pos.z>AvgAltitude)then v.amt=v.amt/2 end
+				else
+					if(v.pos.z<AvgAltitude)then v.amt=v.amt/2 end
+				end
 			end
 		end
 	end
@@ -73,7 +80,7 @@ if(SERVER)then
 					end
 				end
 				if(i==MaxTries)then
-					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,3,true,0,20
+					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,5,true,0,20
 					for k,v in pairs(GroundVectors)do
 						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
 						if(GeoCount<MaxGeo)then
@@ -137,7 +144,7 @@ if(SERVER)then
 						PumpItUp(JMod.OilReserves,math.random(1,3),4,10)
 						PumpItUp(JMod.OreDeposits,math.random(1,3),4,10)
 						WeightByAltitude(JMod.OreDeposits)
-						WeightByAltitude(JMod.WaterReservoirs,true)
+						WeightByAltitude(JMod.WaterReservoirs,true,true)
 						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits, "..#JMod.WaterReservoirs.." water reservoirs and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
 					end
 				end
@@ -147,18 +154,8 @@ if(SERVER)then
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
 		JMod.GenerateNaturalResources()
 	end)
-	concommand.Add("jacky_trace_debug",function(ply)
-		local Tr=ply:GetEyeTrace()
-		print("--------- trace results ----------")
-		PrintTable(Tr)
-		local Props=util.GetSurfaceData(Tr.SurfaceProps)
-		if(Props)then
-			print("----------- surface properties ----------")
-			PrintTable(Props)
-		end
-		print("---------- end trace debug -----------")
-	end)
 	concommand.Add("jmod_debug_shownaturalresources",function(ply,cmd,args)
+		if not(GetConVar("sv_cheats"):GetBool())then return end
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 		net.Start("JMod_NaturalResources")
 		net.WriteTable(JMod.OilReserves)
@@ -190,10 +187,10 @@ elseif(CLIENT)then
 	end
 	hook.Add("PostDrawTranslucentRenderables","JMod_EconTransRend",function()
 		if(ShowNaturalResources)then
-			RenderPoints(JMod.OilReserves,Color(20,20,20,200))
+			RenderPoints(JMod.OilReserves,Color(10,10,10,200))
 			RenderPoints(JMod.OreDeposits,Color(120,120,120,200))
-			RenderPoints(JMod.GeoThermalReservoirs,Color(120,60,20,200))
-			RenderPoints(JMod.WaterReservoirs,Color(50,100,150,200))
+			RenderPoints(JMod.GeoThermalReservoirs,Color(150,20,10,200))
+			RenderPoints(JMod.WaterReservoirs,Color(20,70,150,200))
 		end
 	end)
 end

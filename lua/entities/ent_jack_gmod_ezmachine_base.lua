@@ -112,6 +112,7 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 --]]
+ENT.EZupgrades=true -- todo
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -141,7 +142,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self.Entity:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>1000)then
+			if(data.Speed>800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()))then
 				local Dam,World=DamageInfo(),game.GetWorld()
 				Dam:SetDamage(data.Speed/3)
 				Dam:SetAttacker(data.HitEntity or World)
@@ -158,7 +159,7 @@ if(SERVER)then
 		amt=((amt or .2)/(self.ElectricalEfficiency or 1)^.5)/2
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
-		if(NewAmt<=0)then self:TurnOff() end
+		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end
 	function ENT:DamageSpark()
 		local effectdata=EffectData()
@@ -197,12 +198,12 @@ if(SERVER)then
 	end
 	function ENT:Break(dmginfo)
 		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
+		self:SetState(JMod.EZ_STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
 		self.Durability=0
-		self:SetState(JMod.EZ_STATE_BROKEN)
-		local Force=dmginfo:GetDamageForce()
-		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20 do
+		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20,50)
+		for i=1,GibNum do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats
@@ -213,10 +214,12 @@ if(SERVER)then
 		end
 	end
 	function ENT:Destroy(dmginfo)
+		if(self.Destroyed)then return end
+		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do self:DamageSpark() end
-		local Force=dmginfo:GetDamageForce()
-		for i=1,JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10 do
+		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10,100)
+		for j=1,GibNum do
 			self:FlingProp(table.Random(self.PropModels),Force)
 		end
 		if(self.Pod)then -- machines with seats
@@ -251,7 +254,7 @@ if(SERVER)then
 		if(amt<=0)then return 0 end
 		for k,v in pairs(self.EZconsumes)do
 			if(typ==v)then
-				if(typ=="power")then
+				if(typ==JMod.EZ_RESOURCE_TYPES.POWER)then
 					local Powa=self:GetElectricity()
 					local Missing=self.MaxElectricity-Powa
 					if(Missing<=0)then return 0 end
@@ -260,7 +263,7 @@ if(SERVER)then
 					self:SetElectricity(Powa+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
 					return math.ceil(Accepted)
-				elseif(typ=="medsupplies")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES)then
 					local Supps=self:GetSupplies()
 					local Missing=self.MaxSupplies-Supps
 					if(Missing<=0)then return 0 end
@@ -269,7 +272,7 @@ if(SERVER)then
 					self:SetSupplies(Supps+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110)) -- TODO: new sound here
 					return math.ceil(Accepted)
-				elseif(typ=="parts")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing=self.MaxDurability-self.Durability
 					if(Missing<=self.MaxDurability*.25)then return 0 end
 					local Accepted=math.min(Missing,amt)
@@ -280,7 +283,7 @@ if(SERVER)then
 						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
 					return math.ceil(Accepted)
-				elseif(typ=="gas")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.GAS)then
 					local Fool=self:GetGas()
 					local Missing=self.MaxGas-Fool
 					if(Missing<=0)then return 0 end
@@ -289,7 +292,7 @@ if(SERVER)then
 					self:SetGas(Fool+Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
 					return math.ceil(Accepted)
-				elseif(typ=="ammo")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.AMMO)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
@@ -297,7 +300,7 @@ if(SERVER)then
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 					return Accepted
-				elseif(typ=="munitions")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
@@ -305,7 +308,7 @@ if(SERVER)then
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 					return Accepted
-				elseif(typ=="coolant")then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.COOLANT)then
 					local Kewl=self:GetCoolant()
 					local Missing=100-Kewl
 					if(Missing<10)then return 0 end

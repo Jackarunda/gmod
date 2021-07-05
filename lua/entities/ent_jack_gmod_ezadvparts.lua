@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies={JMod.EZ_RESOURCE_TYPES.ADVPARTS}
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVPARTS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.MaxResource=JMod.EZadvPartBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
