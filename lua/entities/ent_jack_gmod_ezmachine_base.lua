@@ -112,11 +112,18 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 --]]
-ENT.EZupgrades=true -- todo
+ENT.EZupgrades={} -- todo
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=math.ceil(value*JMod.EZ_GRADE_BUFFS[Grade]) end
+	for specName,value in pairs(self.DynamicPerfSpecs)do
+		local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
+		if(NewValue>2)then
+			self[specName]=math.ceil(NewValue)
+		else
+			self[specName]=NewValue
+		end
+	end
 end
 function ENT:Upgrade(level)
 	if not(level)then level=self:GetGrade()+1 end

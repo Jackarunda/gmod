@@ -10,7 +10,21 @@ ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
-ENT.EZupgradeRate=1
+ENT.PhysMatDetectionWhitelist={
+	"metal",
+	"metalvehicle",
+	"metalpanel",
+	"floating_metal_barrel",
+	"grenade",
+	"canister",
+	"weapon",
+	"slipperymetal",
+	"jalopy",
+	"roller",
+	"metalvent",
+	"computer",
+	"solidmetal"
+}
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
 	MaxDurability=100
@@ -52,9 +66,9 @@ if(SERVER)then
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
-		self.Snd1:SetSoundLevel(150)
-		self.Snd2:SetSoundLevel(150)
-		self.Snd3:SetSoundLevel(150)
+		self.Snd1:SetSoundLevel(100)
+		self.Snd2:SetSoundLevel(100)
+		self.Snd3:SetSoundLevel(100)
 		self:InitPerfSpecs()
 	end
 	function ENT:TurnOn(activator)
@@ -104,7 +118,7 @@ if(SERVER)then
 		rng=rng*52 -- meters to source units
 		local Res={}
 		for k,v in pairs(tbl)do
-			if((v.pos:Distance(pos)-v.siz)<rng)then
+			if((v.pos:Distance(pos))<rng)then
 				table.insert(Res,{
 					pos=v.pos,
 					amt=v.amt,
@@ -137,7 +151,7 @@ if(SERVER)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
 			self:ConsumeElectricity()
 			if(self:CanScan())then
-				self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed,0,100))
+				self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed^1.5/3,0,100))
 				if(self:GetProgress()>=100)then
 					self:FinishScan()
 					self:SetProgress(0)
@@ -168,6 +182,28 @@ if(SERVER)then
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.OreDeposits,Color(120,120,120)))
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.GeoThermalReservoirs,Color(150,20,10)))
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.WaterReservoirs,Color(20,70,150)))
+		for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
+			if(v.GetPhysicsObject)then
+				local AnomalyPos=v:LocalToWorld(v:OBBCenter())
+				if((Pos.z-AnomalyPos.z)>200)then
+					local Phys=v:GetPhysicsObject()
+					if(IsValid(Phys))then
+						local Mat=Phys:GetMaterial()
+						if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=50)then
+							local Class=v:GetClass()
+							if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
+								table.insert(Results,{
+									pos=AnomalyPos,
+									amt="?",
+									siz=180,
+									col=Color(50,60,70)
+								})
+							end
+						end
+					end
+				end
+			end
+		end
 		if(#Results>0)then
 			self:SFX("snds_jack_gmod/tone_good.wav")
 			-- need to convert all the positions to local coordinates
@@ -178,6 +214,9 @@ if(SERVER)then
 				local NewPos,NewAng=WorldToLocal(v.pos,Angle(0,0,0),Pos,Ang)
 				v.pos=NewPos
 			end
+			table.sort(Results,function(a,b)
+				return a.siz>b.siz
+			end)
 		else
 			self:SFX("snds_jack_gmod/tone_meh.wav")
 		end
@@ -233,9 +272,9 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-45)
 				local Opacity=math.random(75,150)
 				cam.Start3D2D(SelfPos-Up*35-Forward*5,DisplayAng,.08)
-				surface.SetDrawColor(50,50,50,200)
+				surface.SetDrawColor(255,255,255,20)
 				surface.SetMaterial(Circol)
-				surface.DrawTexturedRect(-40*MetersToPixels,-85*MetersToPixels,80*MetersToPixels,80*MetersToPixels)
+				surface.DrawTexturedRect(-50*MetersToPixels,-95*MetersToPixels,100*MetersToPixels,100*MetersToPixels)
 				local CenterY=-45*MetersToPixels
 				surface.DrawCircle(0,CenterY,40*MetersToPixels,255,255,255,Opacity)
 				draw.SimpleText("40m","JMod-Display-XS",40*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
@@ -246,15 +285,20 @@ elseif(CLIENT)then
 				surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
 				draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
+				draw.SimpleText("gray = ore","JMod-Display-XS",0,-15*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("black = oil","JMod-Display-XS",0,-15*MetersToPixels+14,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("blue = water","JMod-Display-XS",0,-15*MetersToPixels+28,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("red = geothermal","JMod-Display-XS",0,-15*MetersToPixels+42,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("? = metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
 				surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
 				--
 				for k,v in pairs(self.ScanResults)do
-					surface.SetDrawColor(v.col.r,v.col.g,v.col.b,(Opacity+100*Vary))
+					surface.SetDrawColor(v.col.r,v.col.g,v.col.b,(Opacity+100))
 					surface.SetMaterial(Circol)
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
 					surface.DrawTexturedRect(X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,Radius*2)
-					draw.SimpleText(v.amt,"JMod-Display",X,-Y-45*MetersToPixels-10,Color(255,255,255,(Opacity+100*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+					draw.SimpleText(v.amt,"JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+100*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				end
 				--
 				draw.SimpleTextOutlined("POWER","JMod-Display",-250,-40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))

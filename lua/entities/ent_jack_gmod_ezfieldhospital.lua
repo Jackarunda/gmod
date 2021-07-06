@@ -13,15 +13,6 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES
 }
-ENT.EZupgrades={
-	rate=2,
-	grades={
-		{parts=20,advparts=40},
-		{parts=40,advparts=80},
-		{parts=60,advparts=160},
-		{parts=80,advparts=320}
-	}
-}
 -- Config --
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,

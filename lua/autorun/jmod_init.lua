@@ -153,9 +153,10 @@ Timer Failed! [Simple][@lua/entities/ent_jack_gmod_ezweapon.lua (line 77)]
 -- the fucking levergun is fucked up, move it forward and add a front sight post
 --]]
 --[[
-hook.Add( "OnDamagedByExplosion", "DisableSound", function()
-    return true
-end )
+hook.Add("Think","penis",function()
+	local ply=player.GetAll()[1]
+	if(ply)then jprint(ply:GetPos().z) end
+end)
 --]]
 
 for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do

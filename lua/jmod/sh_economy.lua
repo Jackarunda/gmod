@@ -30,7 +30,7 @@ if(SERVER)then
 		if(numPumps<=0)then return end
 		for i=1,numPumps do
 			local Deposit,Decimals=table.Random(tbl),0
-			if(Deposit.amt<1)then Decimals=5 end
+			if(Deposit.amt<1)then Decimals=3 end
 			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
 		end
 	end
@@ -56,7 +56,13 @@ if(SERVER)then
 			end
 		end
 	end
-	local NatureMats,MaxTries,SurfacePropBlacklist={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},5000,{"paper","plaster","rubber"}
+	local NatureMats,MaxTries,SurfacePropBlacklist,RockNames={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},10000,{"paper","plaster","rubber","carpet"},{"rock","boulder"}
+	local function TabContainsSubString(tbl,str)
+		for k,v in pairs(tbl)do
+			if(string.find(v,str))then return true end
+		end
+		return false
+	end
 	function JMod.GenerateNaturalResources(tryFlat)
 		JMod.OilReserves={}
 		JMod.OreDeposits={}
@@ -67,40 +73,46 @@ if(SERVER)then
 		print("JMOD: generating natural resources...")
 		for i=1,MaxTries do
 			timer.Simple(i/1000,function()
-				local CheckPos=Vector(math.random(-20000,20000),math.random(-20000,20000),math.random(-8000,8000))
-				if(tryFlat)then CheckPos.z=math.random(-100,100) end
+				local CheckPos=Vector(math.random(-20000,20000),math.random(-20000,20000),math.random(-20000,5000))
+				if(tryFlat)then CheckPos.z=math.random(-500,500) end
 				if(util.IsInWorld(CheckPos))then
 					-- we're in the world... start the worldhit trace
-					local Tr=util.QuickTrace(CheckPos,Vector(0,0,-9e9))
+					local Tr=util.QuickTrace(CheckPos,Vector(0,0,-1000))
 					local Props=util.GetSurfaceData(Tr.SurfaceProps)
-					local MatName=(Props and Props.name) or ""
-					if(Tr.Hit and Tr.HitWorld and not Tr.StartSolid and not Tr.HitSky and table.HasValue(NatureMats,Tr.MatType) and not table.HasValue(SurfacePropBlacklist,MatName))then
+					local MatName=string.lower((Props and Props.name) or "")
+					local HitTexture=string.lower(Tr.HitTexture)
+					if(Tr.Hit and Tr.HitWorld and not Tr.StartSolid and not Tr.HitSky and table.HasValue(NatureMats,Tr.MatType) and not TabContainsSubString(SurfacePropBlacklist,MatName) and not TabContainsSubString(SurfacePropBlacklist,HitTexture))then
 						-- alright... we've found a good world surface
-						table.insert(GroundVectors,{pos=Tr.HitPos,mat=Tr.MatType})
+						table.insert(GroundVectors,{
+							pos=Tr.HitPos,
+							mat=Tr.MatType,
+							rock=TabContainsSubString(RockNames,MatName)
+						})
 					end
 				end
 				if(i==MaxTries)then
-					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,5,true,0,20
+					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,5,true,0,10
 					for k,v in pairs(GroundVectors)do
 						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
 						if(GeoCount<MaxGeo)then
-							local amt=math.Rand(.001,.005)*JMod.Config.ResourceEconomy.GeothermalPowerMult
-							if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
-							if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
-							table.insert(JMod.GeoThermalReservoirs,{
-								pos=v.pos,
-								amt=math.Round(amt,5),
-								siz=math.random(150,1000)
-							})
-							GeoCount=GeoCount+1
+							if not(InWater)then
+								local amt=math.Rand(.001,.005)*JMod.Config.ResourceEconomy.GeothermalPowerMult
+								if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
+								if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
+								table.insert(JMod.GeoThermalReservoirs,{
+									pos=v.pos,
+									amt=math.Round(amt,3),
+									siz=math.random(150,1000)
+								})
+								GeoCount=GeoCount+1
+							end
 						elseif(WaterCount<MaxWater)then
 							if not(InWater)then
-								local amt=math.random(70,180)
-								if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
+								local amt=math.Rand(.001,.005)
 								if(v.mat==MAT_SAND)then amt=amt*2 end -- need more water in arid places
 								table.insert(JMod.WaterReservoirs,{
 									pos=v.pos,
-									amt=math.Round(amt),
+									amt=math.Round(amt,3),
 									siz=math.random(150,1000)
 								})
 								WaterCount=WaterCount+1
@@ -118,14 +130,17 @@ if(SERVER)then
 							end
 							Alternate=false
 						else
-							if(OreCount<MaxOre)then
-								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OreRichness
-								table.insert(JMod.OreDeposits,{
-									pos=v.pos,
-									amt=math.Round(amt),
-									siz=math.random(150,1000)
-								})
-								OreCount=OreCount+1
+							if not(InWater)then
+								if(OreCount<MaxOre)then
+									local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OreRichness
+									if(v.rock)then amt=amt*2 end
+									table.insert(JMod.OreDeposits,{
+										pos=v.pos,
+										amt=math.Round(amt),
+										siz=math.random(150,1000)
+									})
+									OreCount=OreCount+1
+								end
 							end
 							Alternate=true
 						end
@@ -147,6 +162,8 @@ if(SERVER)then
 						WeightByAltitude(JMod.WaterReservoirs,true,true)
 						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits, "..#JMod.WaterReservoirs.." water reservoirs and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
 					end
+				elseif(i%1000==0)then
+					print(math.Round(i/MaxTries*100).."%")
 				end
 			end)
 		end
