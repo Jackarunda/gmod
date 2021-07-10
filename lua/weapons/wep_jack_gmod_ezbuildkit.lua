@@ -267,7 +267,7 @@ function SWEP:PrimaryAttack()
 			else
 				self:Msg("needs 20 Parts nearby to perform modification")
 			end
-		elseif((IsValid(Ent))and(Ent.EZupgrades))then
+		elseif((IsValid(Ent))and(Ent.EZupgradable))then
 			local State=Ent:GetState()
 			if(State==-1)then
 				self:Msg("device must be repaired before upgrading")

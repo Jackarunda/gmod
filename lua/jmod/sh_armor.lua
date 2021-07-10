@@ -866,7 +866,9 @@ hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 end)
 
 -- Debug
+--[[
 for _, ply in pairs(player.GetAll()) do
 	ply.NextEZarmorTableCopy = 0
 end
+--]]
 LoadAdditionalArmor()

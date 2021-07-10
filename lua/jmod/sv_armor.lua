@@ -18,7 +18,7 @@ local function IsDamageOneOfTypes(dmg, types)
 
 	return false
 end
-function JModEZarmorSync(ply)
+function JMod.EZarmorSync(ply)
 	if not ply.EZarmor then return end
 	ply.EZarmor.effects = {}
 	ply.EZarmor.mskmat = nil
@@ -237,7 +237,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 
 		if (ArmorPieceBroke) then
 			JMod.CalcSpeed(ply)
-			JModEZarmorSync(ply)
+			JMod.EZarmorSync(ply)
 		end
 	elseif(JMod.Config.QoL.RealisticLocationalDamage)then
 		Mul=Mul*JMod.BodyPartDamageMults[hitgroup]*AmmoHPmul
@@ -291,7 +291,7 @@ local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 
 	if (ArmorPieceBroke) then
 		JMod.CalcSpeed(ply)
-		JModEZarmorSync(ply)
+		JMod.EZarmorSync(ply)
 	end
 end
 
@@ -494,7 +494,7 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 	end
 
 	JMod.CalcSpeed(ply)
-	JModEZarmorSync(ply)
+	JMod.EZarmorSync(ply)
 end
 
 net.Receive("JMod_Inventory",function(ln,ply)
@@ -585,7 +585,7 @@ net.Receive("JMod_Inventory",function(ln,ply)
 		end
 	end
 	JMod.CalcSpeed(ply)
-	JModEZarmorSync(ply)
+	JMod.EZarmorSync(ply)
 end)
 
 hook.Add("OnDamagedByExplosion","JModOnDamagedByExplosion",function(ply,dmg)

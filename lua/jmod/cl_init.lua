@@ -269,6 +269,11 @@ net.Receive("JMod_LuaConfigSync",function()
 	JMod.Config=JMod.Config or {}
 	JMod.Config.AltFunctionKey=net.ReadInt(32)
 	JMod.Config.WeaponSwayMult=net.ReadFloat()
+	if(tobool(net.ReadBit()))then
+		for k,v in pairs(player.GetAll())do
+			JMod.CopyArmorTableToPlayer(v)
+		end
+	end
 end)
 
 function JMod.MakeModel(self,mdl,mat,scale,col)

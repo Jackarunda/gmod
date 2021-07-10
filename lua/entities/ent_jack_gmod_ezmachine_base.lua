@@ -112,7 +112,7 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 --]]
-ENT.EZupgrades={} -- todo
+ENT.EZupgradable=true
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end

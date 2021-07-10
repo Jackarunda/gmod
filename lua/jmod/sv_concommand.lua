@@ -30,7 +30,7 @@ concommand.Add("jmod_insta_upgrade",function(ply)
 	if not(IsValid(ply))then return end
 	if not(ply:IsSuperAdmin())then return end
 	local Ent=ply:GetEyeTrace().Entity
-	if((IsValid(Ent))and(Ent.EZupgrades)and(Ent.Upgrade))then
+	if((IsValid(Ent))and(Ent.EZupgradable))then
 		Ent:Upgrade()
 	end
 end)

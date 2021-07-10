@@ -16,15 +16,6 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
-ENT.EZupgrades={
-	rate=2,
-	grades={
-		{parts=40,advparts=20},
-		{parts=60,advparts=40},
-		{parts=80,advparts=80},
-		{parts=100,advparts=160}
-	}
-}
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
 

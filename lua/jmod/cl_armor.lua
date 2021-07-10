@@ -1,4 +1,4 @@
-local function CopyArmorTableToPlayer(ply)
+function JMod.CopyArmorTableToPlayer(ply)
 	-- make a copy of the global armor spec table, personalize it, and store it on the player
 	ply.JMod_ArmorTableCopy=table.FullCopy(JMod.ArmorTable)
 	local plyMdl=ply:GetModel()
@@ -10,8 +10,8 @@ function JMod.ArmorPlayerModelDraw(ply)
 	if(ply.EZarmor)then
 		if not(ply.EZarmorModels)then ply.EZarmorModels={} end
 		local Time=CurTime()
-		if(not(ply.JMod_ArmorTableCopy)or(ply.NextEZarmorTableCopy<Time))then
-			CopyArmorTableToPlayer(ply)
+		if(not(ply.JMod_ArmorTableCopy)or((ply.NextEZarmorTableCopy or 0)<Time))then
+			JMod.CopyArmorTableToPlayer(ply)
 			ply.NextEZarmorTableCopy=Time+30
 		end
 		local plyboneedit = {}

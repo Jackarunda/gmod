@@ -9,15 +9,6 @@ ENT.Spawnable=true
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={"power","parts"}
-ENT.EZupgrades={
-	rate=2,
-	grades={
-		{parts=40,advparts=20},
-		{parts=60,advparts=40},
-		{parts=80,advparts=80},
-		{parts=100,advparts=160}
-	}
-}
 local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")

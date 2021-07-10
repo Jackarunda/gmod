@@ -13,6 +13,7 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
     JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
+ENT.EZupgradable=false -- no upgrades for the radio right now... maybe eventually
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ----

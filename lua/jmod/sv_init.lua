@@ -19,7 +19,7 @@ local function JackaSpawnHook(ply)
 		suited=false,
 		bodygroups=nil
 	}
-	JModEZarmorSync(ply)
+	JMod.EZarmorSync(ply)
 	ply.EZhealth=nil
 	ply.EZirradiated=nil
 	ply.EZoxygen=100
@@ -289,7 +289,7 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 					end
 				end
 				JMod.CalcSpeed(playa)
-				JModEZarmorSync(playa)
+				JMod.EZarmorSync(playa)
 			end
 		end
 	end
@@ -328,8 +328,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		net.WriteTable((JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {})
 		net.WriteInt(JMod.Config.AltFunctionKey,32)
 		net.WriteFloat(JMod.Config.WeaponSwayMult)
+		net.WriteBit(false)
 		net.Broadcast()
 	end
+end)
+
+concommand.Add("jmod_force_lua_config_sync",function(ply,cmd,args)
+	if(ply and not ply:IsSuperAdmin())then return end
+	net.Start("JMod_LuaConfigSync")
+	net.WriteTable((JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {})
+	net.WriteInt(JMod.Config.AltFunctionKey,32)
+	net.WriteFloat(JMod.Config.WeaponSwayMult)
+	net.WriteBit(true)
+	net.Broadcast()
 end)
 
 concommand.Add("jacky_trace_debug",function(ply)
