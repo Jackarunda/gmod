@@ -59,8 +59,6 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Up,Right,Forward=Ang:Up(),Ang:Right(),Ang:Forward()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
 		local BasePos=Pos+Up*2
 		local JugAng=Ang:GetCopy()
@@ -72,23 +70,9 @@ elseif(CLIENT)then
 		JMod.RenderModel(self.Jug6,BasePos-Forward*4.5+Right*9-Up*3,Ang)
 		JMod.RenderModel(self.Jug7,BasePos+Forward*3-Right*4-Up*2,Ang)
 		JMod.RenderModel(self.Jug8,BasePos+Forward*6-Right*10-Up*10,Ang)
-		if(DetailDraw)then
-			local Chems=tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*6-Right*.6-Forward*11,Ang,.03)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ CHEMICALS","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Chems.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-			---
-			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*6-Right*.6+Forward*11,Ang,.03)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ CHEMICALS","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Chems.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(-1,11,0),Angle(-90,0,90),.04,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.CHEMICALS,self:GetResource(),nil,0,0,200,false)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end

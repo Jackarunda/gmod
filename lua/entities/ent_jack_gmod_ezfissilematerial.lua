@@ -40,24 +40,11 @@ if(SERVER)then
 		--
 	end
 elseif(CLIENT)then
-	local TxtCol,Trefoil=Color(255,255,255,80),Material("png_jack_gmod_radiation.png")
 	function ENT:Draw()
-		local Ang,Pos=self:GetAngles(),self:GetPos()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
-		if(DetailDraw)then
-			local Up,Right,Forward,Count=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*21.8-Right*.6+Forward*10,Ang,.05)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ FISSILE MATERIAL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Count.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			surface.SetDrawColor(255,255,255,80)
-			surface.SetMaterial(Trefoil)
-			surface.DrawTexturedRect(-128,160,256,256)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(0,0,21.75),Angle(0,90,0),.06,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL,self:GetResource(),nil,0,0,200,true)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end
