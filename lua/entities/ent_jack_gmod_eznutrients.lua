@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.NUTRIENTS
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/cardboard_box003a.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"
@@ -94,8 +94,6 @@ elseif(CLIENT)then
 	end
 	function ENT:Draw()
 		local Ang,Pos,Up,Right,Forward=self:GetAngles(),self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self.FoodBox:SetRenderOrigin(Pos-Right*9-Up*9+Forward*5)
 		self.WaterBox:SetRenderOrigin(Pos+Right*4-Up*9+Forward*5)
 		local BoxAng=Ang:GetCopy()
@@ -104,23 +102,9 @@ elseif(CLIENT)then
 		self.WaterBox:SetRenderAngles(BoxAng)
 		self.FoodBox:DrawModel()
 		self.WaterBox:DrawModel()
-		if(DetailDraw)then
-			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*1-Right*2.5-Forward*7.5,Ang,.04)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ NUTRIENTS","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-			---
-			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*1-Right*2.6+Forward*17.5,Ang,.04)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ NUTRIENTS","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." COUNT","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(-3,18,-2.8),Angle(-90,0,90),.033,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.NUTRIENTS,self:GetResource(),nil,0,0,200,false)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end

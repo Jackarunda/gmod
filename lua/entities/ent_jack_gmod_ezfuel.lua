@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.FUEL
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/gascan001a.mdl"
 ENT.Material=nil
@@ -63,29 +63,11 @@ if(SERVER)then
 		end
 	end
 elseif(CLIENT)then
-	local TxtCol=Color(255,255,255,80)
 	function ENT:Draw()
-		local Ang,Pos=self:GetAngles(),self:GetPos()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
-		if(DetailDraw)then
-			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			Ang:RotateAroundAxis(Ang:Up(),-90)
-			cam.Start3D2D(Pos+Up*8-Right*.6-Forward*4.85,Ang,.03)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ FUEL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-			---
-			Ang:RotateAroundAxis(Ang:Right(),180)
-			cam.Start3D2D(Pos+Up*8-Right*.6+Forward*4.85,Ang,.03)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ FUEL","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(0,5,-1),Angle(-90,0,90),.05,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.FUEL,self:GetResource(),nil,0,0,200,true)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end

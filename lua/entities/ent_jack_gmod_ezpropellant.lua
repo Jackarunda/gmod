@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.PROPELLANT
-ENT.JModPreferredCarryAngles=Angle(0,90,0)
+ENT.JModPreferredCarryAngles=Angle(0,-90,0)
 ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_lab/jar01b.mdl"
 ENT.Material="models/entities/mat_jack_powderbottle"
@@ -55,23 +55,11 @@ if(SERVER)then
 		--
 	end
 elseif(CLIENT)then
-	local TxtCol=Color(255,255,255,80)
 	function ENT:Draw()
-		local Ang,Pos=self:GetAngles(),self:GetPos()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
-		if(DetailDraw)then
-			local Up,Right,Forward,Ammo=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			Ang:RotateAroundAxis(Ang:Up(),-180)
-			Ang:RotateAroundAxis(Ang:Forward(),90)
-			cam.Start3D2D(Pos-Right*6.7-Forward*1-Up,Ang,.02)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ PROPELLANT","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Ammo.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(6.8,0,-1),Angle(0,0,90),.035,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PROPELLANT,self:GetResource(),nil,0,0,200,true)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end
