@@ -59,6 +59,42 @@ local function PopulateList(parent,friendList,myself,W,H)
 	end
 end
 
+local Icons={}
+for k,v in pairs(JMod.EZ_RESOURCE_TYPES)do
+	Icons[v]=Material("ez_resource_icons/"..v..".png")
+end
+
+function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity)
+	font=font or "JMod-Stencil"
+	opacity=opacity or 150
+	local Col=Color(200,200,200,opacity)
+	surface.SetDrawColor(255,255,255,opacity)
+	surface.SetMaterial(Icons[typ])
+	surface.DrawTexturedRect(x-siz/2,y-siz/2,siz,siz)
+	if(vertical)then
+		draw.SimpleText(typ,font,x,y-siz/2-10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_BOTTOM)
+		draw.SimpleText(tostring(amt).." UNITS",font,x,y+siz/2+10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+	else
+		draw.SimpleText(typ,font,x-siz/2-10,y,Col,TEXT_ALIGN_RIGHT,TEXT_ALIGN_CENTER)
+		draw.SimpleText(tostring(amt).." UNITS",font,x+siz/2+10,y,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_CENTER)
+	end
+end
+
+function JMod.HoloGraphicDisplay(ent,relPos,relAng,scale,renderDist,renderFunc)
+	if not(IsValid(ent) and ent.GetAngles)then return end
+	local Ang,Pos=ent:GetAngles(),ent:GetPos()
+	local Right,Up,Forward=Ang:Right(),Ang:Up(),Ang:Forward()
+	if(EyePos():Distance(Pos)<renderDist)then
+		Ang:RotateAroundAxis(Right,relAng.p)
+		Ang:RotateAroundAxis(Up,relAng.y)
+		Ang:RotateAroundAxis(Forward,relAng.r)
+		local RenderPos=Pos+relPos.x*Right+relPos.y*Forward+relPos.z*Up
+		cam.Start3D2D(RenderPos,Ang,scale)
+		renderFunc()
+		cam.End3D2D()
+	end
+end
+
 net.Receive("JMod_Friends",function()
 	local Updating=tobool(net.ReadBit())
 	if(Updating)then
