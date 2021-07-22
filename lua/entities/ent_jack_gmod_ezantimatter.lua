@@ -38,21 +38,11 @@ if(SERVER)then
 		--
 	end
 elseif(CLIENT)then
-	local TxtCol=Color(50,50,50,220)
 	function ENT:Draw()
-		local Ang,Pos=self:GetAngles(),self:GetPos()
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
-		local DetailDraw=Closeness<18000 -- cutoff point is 200 units when the fov is 90 degrees
 		self:DrawModel()
-		if(DetailDraw)then
-			local Up,Right,Forward,Count=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
-			Ang:RotateAroundAxis(Ang:Right(),90)
-			cam.Start3D2D(Pos+Up*8.5-Right*.5-Forward*6.2,Ang,.012)
-			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText("EZ ANTIMATTER","JMod-Stencil",0,50,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Count.." UNITS","JMod-Stencil",0,100,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(1,-6.2,8),Angle(90,0,90),.02,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ANTIMATTER,self:GetResource(),nil,0,0,200,true)
+		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
 end
