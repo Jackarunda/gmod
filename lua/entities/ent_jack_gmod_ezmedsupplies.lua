@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 ENT.JModPreferredCarryAngles=Angle(0,180,180)
 ENT.MaxResource=JMod.EZmedSupplyBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
@@ -71,7 +71,7 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		JMod.HoloGraphicDisplay(self,Vector(0,3.4,9.5),Angle(-90,0,-90),.045,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES,self:GetResource(),nil,0,0,200,true)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)

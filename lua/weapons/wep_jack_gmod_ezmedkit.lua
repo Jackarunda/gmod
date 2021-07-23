@@ -40,7 +40,7 @@ SWEP.Secondary.DefaultClip	= -1
 SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
-SWEP.EZaccepts="medsupplies"
+SWEP.EZaccepts="medical supplies"
 SWEP.EZmaxSupplies=100
 
 SWEP.ShowWorldModel=false
@@ -360,7 +360,7 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("LMB: heal target","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: heal self","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+E on medsupplies: refill","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+E on medical supplies: refill","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 
 ----------------- shit -------------------

@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Advanced Parts Box"
 ENT.Category="JMod - EZ Resources"
-ENT.IconOverride="materials/ez_resource_icons/advparts.png"
+ENT.IconOverride="materials/ez_resource_icons/advanced parts.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

@@ -123,7 +123,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_eznutrients",5}
 				},
 				["medical supplies"]={
-					{"ent_jack_gmod_ezmedsupplies",2}
+					{"ent_jack_gmod_ezmedical supplies",2}
 				},
 				["resource crate"]={
 					"ent_jack_gmod_ezcrate"
@@ -247,7 +247,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=80,
-					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
 				},
 				2,
 				"Machines",
@@ -758,7 +758,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"Might help against buckshot and 22LR, but not much else."
 			},
 			["EZ Medical Supplies"]={
-				"ent_jack_gmod_ezmedsupplies",
+				"ent_jack_gmod_ezmedical supplies",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50,
@@ -808,7 +808,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezmedkit",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES]=50
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
 				},
 				"Tools",
 				"Go help em doc. Watch your head, you're gonna be a target."

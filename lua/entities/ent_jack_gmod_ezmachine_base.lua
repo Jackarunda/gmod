@@ -270,7 +270,7 @@ if(SERVER)then
 					self:SetElectricity(Powa+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
 					return math.ceil(Accepted)
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES)then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES)then
 					local Supps=self:GetSupplies()
 					local Missing=self.MaxSupplies-Supps
 					if(Missing<=0)then return 0 end

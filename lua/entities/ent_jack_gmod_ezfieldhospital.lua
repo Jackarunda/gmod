@@ -11,7 +11,7 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.MEDSUPPLIES
+	JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 }
 -- Config --
 ENT.StaticPerfSpecs={

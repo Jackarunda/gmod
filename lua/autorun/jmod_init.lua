@@ -12,12 +12,10 @@ JMod.EZ_RESOURCE_TYPES={
 	WATER="water",
 	WOOD="wood",
 	ORGANICS="organics",
-	ORE="ore",
 	OIL="oil",
 	GAS="gas",
 	POWER="power",
 	--
-	METAL="metal",
 	FUEL="fuel",
 	PLASTIC="plastic",
 	RUBBER="rubber",
@@ -30,17 +28,17 @@ JMod.EZ_RESOURCE_TYPES={
 	MUNITIONS="munitions",
 	PROPELLANT="propellant",
 	EXPLOSIVES="explosives",
-	MEDSUPPLIES="medsupplies",
+	MEDICALSUPPLIES="medical supplies",
 	CHEMICALS="chemicals",
 	NUTRIENTS="nutrients",
 	COOLANT="coolant",
 	--
-	BASICPARTS="basicparts",
-	PRECISIONPARTS="precisionparts",
-	ADVTEXTILES="advtextiles",
+	BASICPARTS="basic parts",
+	PRECISIONPARTS="precision parts",
+	ADVANCEDTEXTILES="advanced textiles",
+	ADVANCEDPARTS="advanced parts",
+	FISSILEMATERIAL="fissile material",
 	--
-	ADVPARTS="advparts",
-	FISSILEMATERIAL="fissilematerial",
 	ANTIMATTER="antimatter"
 }
 
@@ -55,17 +53,6 @@ JMod.EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
 JMod.EZ_GRADE_UPGRADE_COSTS={.5,1,1.5,2}
 JMod.EZ_UPGRADE_RESOURCE_BLACKLIST={}
 
--- Resource enums
-JMod.EZammoBoxSize=300
-JMod.EZbasicResourceBoxSize=100
-JMod.EZsmallCrateSize=100
-JMod.EZsuperRareResourceSize=10
-JMod.EZadvPartBoxSize=20
-JMod.EZmedSupplyBoxSize=50
-JMod.EZcrateSize=15
-JMod.EZpartsCrateSize=15
-JMod.EZnutrientsCrateSize=15
-
 -- State enums
 JMod.EZ_STATE_BROKEN 	= -1
 JMod.EZ_STATE_OFF 		= 0
@@ -74,6 +61,23 @@ JMod.EZ_STATE_PRIMED 	= 2
 JMod.EZ_STATE_ARMING 	= 3
 JMod.EZ_STATE_ARMED		= 4
 JMod.EZ_STATE_WARNING	= 5
+
+for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
+	if string.Left(f, 3) == "sv_" then
+		if SERVER then include("jmod/" .. f) end
+	elseif string.Left(f, 3) == "cl_" then
+		if CLIENT then
+			include("jmod/" .. f)
+		else
+			AddCSLuaFile("jmod/" .. f)
+		end
+	elseif string.Left(f, 3) == "sh_" then
+		AddCSLuaFile("jmod/" .. f)
+		include("jmod/" .. f)
+	else
+		print("JMod detected unaccounted for lua file '" .. f .. "' - check prefixes!")
+	end
+end
 
 -- TODO
 -- yeet a wrench easter egg
@@ -158,20 +162,3 @@ hook.Add("Think","penis",function()
 	if(ply)then jprint(ply:GetPos().z) end
 end)
 --]]
-
-for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
-	if string.Left(f, 3) == "sv_" then
-		if SERVER then include("jmod/" .. f) end
-	elseif string.Left(f, 3) == "cl_" then
-		if CLIENT then
-			include("jmod/" .. f)
-		else
-			AddCSLuaFile("jmod/" .. f)
-		end
-	elseif string.Left(f, 3) == "sh_" then
-		AddCSLuaFile("jmod/" .. f)
-		include("jmod/" .. f)
-	else
-		print("JMod detected unaccounted for lua file '" .. f .. "' - check prefixes!")
-	end
-end
