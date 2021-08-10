@@ -246,7 +246,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=80,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=80,
 					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
 				},
 				2,
@@ -340,7 +340,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezmbhg",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=120,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=120,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=600,
 					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]=10
 				},
@@ -352,7 +352,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=40,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=10
 				},
@@ -374,7 +374,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke_small",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=5
 				},
@@ -397,7 +397,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.AMMO]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.COOLANT]=100
 				},
 				1,
@@ -419,7 +419,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,	
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20	
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20	
 				},
 				1,
 				"Machines",
@@ -441,7 +441,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke_big",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=20
 				},
@@ -463,7 +463,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezworkbench",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=40,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100
 				},
@@ -476,7 +476,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=300,
 					[JMod.EZ_RESOURCE_TYPES.AMMO]=600
 				},
@@ -509,7 +509,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezbuildkit",
 		        {
 			        [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50
 				},
@@ -762,7 +762,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
 				},
 				"Resources",
@@ -882,7 +882,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_nvgs",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=20
 				},
 				"Apparel",
@@ -1057,7 +1057,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_thermals",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
-					[JMod.EZ_RESOURCE_TYPES.ADVPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=20
 				},
 				"Apparel",
