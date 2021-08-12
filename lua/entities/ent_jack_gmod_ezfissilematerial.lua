@@ -8,7 +8,6 @@ ENT.AdminOnly=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod.EZsuperRareResourceSize
 ENT.Model="models/kali/props/cases/hard case c.mdl"
 ENT.ModelScale=1
 ENT.Skin=2
@@ -22,7 +21,7 @@ if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		if((destructive)and not(self.Sploomd))then
 			self.Sploomd=true
-			local Owner,Count=self.Owner,self:GetResource()
+			local Owner,Count=self.Owner,self:GetResource()/10
 			timer.Simple(.5,function()
 				for k=1,JMod.Config.NuclearRadiationMult*Count*10 do
 					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")

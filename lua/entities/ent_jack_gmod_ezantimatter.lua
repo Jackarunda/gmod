@@ -8,7 +8,6 @@ ENT.AdminOnly=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ANTIMATTER
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod.EZsuperRareResourceSize
 ENT.Model="models/thedoctor/darkmatter.mdl"
 ENT.ModelScale=1
 -- 10 micrograms

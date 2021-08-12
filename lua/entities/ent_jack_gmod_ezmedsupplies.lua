@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 ENT.JModPreferredCarryAngles=Angle(0,180,180)
-ENT.MaxResource=JMod.EZmedSupplyBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
 ENT.Material="models/kali/props/cases/hardcase/jardcase_b"
 ENT.ModelScale=.5

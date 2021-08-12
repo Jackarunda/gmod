@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.BASICPARTS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/Items/item_item_crate.mdl"
 ENT.Material="models/mat_jack_gmod_ezparts"
 ENT.ModelScale=.8

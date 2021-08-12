@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.AMMO
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.MaxResource=JMod.EZammoBoxSize
 ENT.Model="models/Items/BoxJRounds.mdl"
 ENT.Material="models/mat_jack_gmod_ezammobox"
 ENT.ModelScale=1.75
@@ -22,7 +21,7 @@ ENT.Hint="ammobox"
 local ShellEffects={"RifleShellEject","PistolShellEject","ShotgunShellEject"}
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
-		for i=1,10*JMod.Config.SupplyEffectMult do
+		for i=1,30*JMod.Config.SupplyEffectMult do
 			timer.Simple(i/200,function()
 				local Eff=EffectData()
 				Eff:SetOrigin(pos)

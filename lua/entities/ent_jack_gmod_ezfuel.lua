@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.FUEL
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/gascan001a.mdl"
 ENT.Material=nil
 ENT.ModelScale=1.25

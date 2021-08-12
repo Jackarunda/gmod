@@ -41,7 +41,7 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
-		self:SetResource(self.MaxResource)
+		self:SetResource(100)
 		---
 		self.NextLoad=0
 		self.Loaded=false
@@ -62,7 +62,7 @@ if(SERVER)then
 					-- don't run twice on every collision
 					-- try to combine
 					local Sum=self:GetResource()+data.HitEntity:GetResource()
-					if(Sum<=self.MaxResource)then
+					if(Sum<=100)then
 						self:SetResource(Sum)
 						data.HitEntity:Remove()
 						self:UseEffect(data.HitPos,data.HitEntity)

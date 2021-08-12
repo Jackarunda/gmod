@@ -7,9 +7,8 @@ ENT.IconOverride="materials/ez_resource_icons/advanced parts.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVPARTS
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.MaxResource=JMod.EZadvPartBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
 ENT.Material=nil
 ENT.ModelScale=.5
@@ -37,7 +36,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,4*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
+		for i=1,1*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos+VectorRand())
 		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
@@ -50,7 +49,7 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		JMod.HoloGraphicDisplay(self,Vector(0,3.5,10),Angle(-90,0,90),.04,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVPARTS,self:GetResource(),nil,0,0,200,true)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)

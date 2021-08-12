@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.PROPELLANT
 ENT.JModPreferredCarryAngles=Angle(0,-90,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_lab/jar01b.mdl"
 ENT.Material="models/entities/mat_jack_powderbottle"
 ENT.ModelScale=2

@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.GAS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_c17/canister01a.mdl"
 ENT.Material="models/shiny"
 ENT.Color=Color(100,100,200)

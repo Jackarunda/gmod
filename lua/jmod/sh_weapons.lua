@@ -689,11 +689,11 @@ elseif(SERVER)then
 					-- use JMOD ammo rules
 					local AmmoInfo,CurrentAmmo=JMod.AmmoTable[PrimName],ply:GetAmmoCount(PrimName)
 					if(ent.EZsupplies==AmmoInfo.resourcetype)then
-						local ResourceLeftInBox=ent:GetResource()
+						local ResourceLeftInBox=ent:GetResource()*3
 						local SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox=AmmoInfo.carrylimit-CurrentAmmo,math.ceil(100/AmmoInfo.sizemult),math.ceil(ResourceLeftInBox*6/AmmoInfo.sizemult)
 						local AmtToGive=math.min(SpaceLeftInPlayerInv,MaxAmtToGive,AmtLeftInBox)
 						if(AmtToGive>0)then
-							local ResourceToTake=math.ceil(AmtToGive/6*AmmoInfo.sizemult)
+							local ResourceToTake=math.ceil(AmtToGive/18*AmmoInfo.sizemult)
 							ply:GiveAmmo(AmtToGive,PrimType)
 							ent:UseEffect(ent:GetPos(),ent)
 							ent:SetResource(ent:GetResource()-ResourceToTake)
@@ -719,7 +719,7 @@ elseif(SERVER)then
 						if(ply:GetAmmoCount(PrimType)<=PrimSize*10*JMod.Config.AmmoCarryLimitMult)then
 							ply:GiveAmmo(PrimSize,PrimType)
 							ent:UseEffect(ent:GetPos(),ent)
-							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+							ent:SetResource(ent:GetResource()-100*.1)
 							if(ent:GetResource()<=0)then ent:Remove();return end
 						end
 					end
@@ -741,7 +741,7 @@ elseif(SERVER)then
 						if(ply:GetAmmoCount(SecType)<=SecSize*5*JMod.Config.AmmoCarryLimitMult)then
 							ply:GiveAmmo(math.ceil(SecSize/2),SecType)
 							ent:UseEffect(ent:GetPos(),ent)
-							ent:SetResource(ent:GetResource()-ent.MaxResource*.1)
+							ent:SetResource(ent:GetResource()-100*.1)
 							if(ent:GetResource()<=0)then ent:Remove();return end
 						end
 					end

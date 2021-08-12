@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.EXPLOSIVES
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/Items/item_item_crate.mdl"
 ENT.Material="models/mat_jack_gmod_ezexplosives"
 ENT.ModelScale=.8

@@ -500,7 +500,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_balmask",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"Face protection for the narcissists."
@@ -607,7 +607,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=2
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=2
 				},
 				"Apparel",
 				"Protect yourself against the enemies' warcrimes."
@@ -634,7 +634,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_hlshoulder",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Apparel",
 				"You must care about your shoulders if you wear this."
@@ -643,7 +643,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_hrshoulder",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Apparel",
 				"You must care about your shoulders if you wear this."
@@ -652,7 +652,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_htorso",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=30
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=30
 				},
 				"Apparel",
 				"Turtle shell. Heavy defense."
@@ -689,7 +689,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_lhead",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 				},
 				"Apparel",
 				"Not so bad on your neck, but has low defense."
@@ -707,7 +707,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_riot",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 				},
 				"Apparel",
 				"Protect your entire head with one piece. No goggles though."
@@ -716,7 +716,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_rioth",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Apparel",
 				"Heavier version of the riot helmet."
@@ -725,7 +725,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_maska",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=40,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20
 				},
 				"Apparel",
 				"Turtle head. Heaviest helmet, and restricts your vision alot."
@@ -734,7 +734,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_llshoulder",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 				},
 				"Apparel",
 				"Some protection for your shoulders."
@@ -743,7 +743,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_lrshoulder",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 				},
 				"Apparel",
 				"Some protection for your shoulders."
@@ -752,7 +752,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_ltorso",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Apparel",
 				"Might help against buckshot and 22LR, but not much else."
@@ -763,7 +763,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Resources",
 				"Necessities to heal anyone."
@@ -772,7 +772,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_mhead",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
 				"Apparel",
 				"Better than the light helmet, but worse than the heavy. Neck might hurt if you wear it too long."
@@ -781,7 +781,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_mtorso",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=20
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20
 				},
 				"Apparel",
 				"Medium protection for your chest."
@@ -790,7 +790,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_mhtorso",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=25
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=25
 				},
 				"Apparel",
 				"Slightly less heavy, slightly less protection than heavy."
@@ -799,7 +799,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_mltorso",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=15
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=15
 				},
 				"Apparel",
 				"it'll help a little more, and is slightly heavier."
@@ -948,7 +948,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_slcalf",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"For your legs."
@@ -957,7 +957,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_slforearm",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"For your arm."
@@ -966,7 +966,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_llthigh",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"Keep your thigh."
@@ -975,7 +975,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_hlthigh",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 		        },
 		        "Apparel",
 				"i'm not making that joke."
@@ -984,7 +984,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_spelvis",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 		        },
 		        "Apparel",
 				"Keep your kiwis safe!"
@@ -993,7 +993,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_srcalf",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"For your legs."
@@ -1002,7 +1002,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_srforearm",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"For your arm."
@@ -1011,7 +1011,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_lrthigh",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=5
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
 		        "Apparel",
 				"Keep your thigh."
@@ -1020,7 +1020,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezarmor_hrthigh",
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
-                    [JMod.EZ_RESOURCE_TYPES.ADVTEXTILES]=10
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 		        },
 		        "Apparel",
 				"I'm not making that joke."

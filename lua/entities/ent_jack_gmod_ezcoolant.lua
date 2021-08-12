@@ -8,7 +8,6 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.COOLANT
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.MaxResource=JMod.EZbasicResourceBoxSize
 ENT.Model="models/props_junk/garbage_plasticbottle002a.mdl"
 ENT.Material="models/shiny"
 ENT.Color=Color(50,120,180)

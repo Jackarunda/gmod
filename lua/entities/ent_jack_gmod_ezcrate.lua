@@ -11,7 +11,6 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
 ---
-ENT.MaxResource=1
 ENT.ChildEntity=""
 ENT.ChildEntityResourceAmount=0
 ENT.MainTitleWord="RESOURCES"
@@ -25,7 +24,7 @@ function ENT:ApplySupplyType(typ)
 	if not(self.SupplyTypes[typ])then return end
 	self:SetResourceType(typ)
 	self.EZsupplies=typ
-	self.MaxResource=self.SupplyTypes[typ].MaxResource
+	self.MaxResource=100*20 -- standard size
 	self.ChildEntity=self.SupplyTypes[typ].ChildEntity
 	self.ChildEntityResourceAmount=self.SupplyTypes[typ].ChildEntityResourceAmount
 	self.MainTitleWord=self.SupplyTypes[typ].MainTitleWord

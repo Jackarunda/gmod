@@ -10,7 +10,6 @@ ENT.AdminSpawnable=false
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
 ---
-ENT.MaxResource=1
 ENT.ChildEntity=""
 ENT.ChildEntityResourceAmount=0
 ENT.MainTitleWord="RESOURCES"

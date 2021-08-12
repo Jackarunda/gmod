@@ -6,9 +6,8 @@ ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVTEXTILES
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES
 ENT.JModPreferredCarryAngles=Angle(0,180,180)
-ENT.MaxResource=JMod.EZadvPartBoxSize
 ENT.Model="models/kali/props/cases/hard case b.mdl"
 ENT.Material="models/kali/props/cases/hardcase/jardjase_b"
 ENT.ModelScale=.5
@@ -37,13 +36,13 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
 	end
 	function ENT:UseEffect(pos,ent)
-		for i=1,4*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
+		for i=1,1*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 	end
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		JMod.HoloGraphicDisplay(self,Vector(0,3.5,10),Angle(-90,0,-90),.04,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVTEXTILES,self:GetResource(),nil,0,0,200,true)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
