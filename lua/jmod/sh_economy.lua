@@ -1,7 +1,4 @@
-JMod.OilReserves=JMod.OilReserves or {}
-JMod.OreDeposits=JMod.OreDeposits or {}
-JMod.GeoThermalReservoirs=JMod.GeoThermalReservoirs or {}
-JMod.WaterReservoirs=JMod.WaterReservoirs or {}
+JMod.NaturalResourceTable=JMod.NaturalResourceTable or {}
 if(SERVER)then
 	local function RemoveOverlaps(tbl)
 		local Finished,Tries=false,0
@@ -64,10 +61,7 @@ if(SERVER)then
 		return false
 	end
 	function JMod.GenerateNaturalResources(tryFlat)
-		JMod.OilReserves={}
-		JMod.OreDeposits={}
-		JMod.GeoThermalReservoirs={}
-		JMod.WaterReservoirs={}
+		JMod.NaturalResourceTable={}
 		-- first, we have to find the ground
 		local GroundVectors={}
 		print("JMOD: generating natural resources...")
@@ -86,8 +80,9 @@ if(SERVER)then
 						table.insert(GroundVectors,{
 							pos=Tr.HitPos,
 							mat=Tr.MatType,
-							rock=TabContainsSubString(RockNames,MatName)
-						})
+							rock=TabContainsSubString(RockNames,MatName),
+							water=bit.band(util.PointContents(Tr.HitPos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
+						}) -- todo: leave-off point, let's hego
 					end
 				end
 				if(i==MaxTries)then

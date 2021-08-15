@@ -15,6 +15,7 @@ ENT.Mass=50
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.DamageThreshold=120
 ENT.BreakNoise="Metal_Box.Break"
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent)
@@ -29,7 +30,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(0,8.31,13),Angle(-90,0,90),.03,300,function()
+		JMod.HoloGraphicDisplay(self,Vector(0,8.31,12),Angle(-90,0,90),.03,300,function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.POWER,self:GetResource(),nil,0,0,200,true)
 		end)
 	end

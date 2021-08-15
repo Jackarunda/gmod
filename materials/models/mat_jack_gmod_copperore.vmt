@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_gmod_ore"
+	"$bumpmap" "models/tex_jack_gmod_ore_normal"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[1 .5 .4]"
+	"$normalmapalphaenvmapmask" "1"
+}
+

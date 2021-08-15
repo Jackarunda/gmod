@@ -18,22 +18,6 @@ ENT.DamageThreshold=120
 ENT.BreakNoise="Wood_Box.Break"
 ---
 if(SERVER)then
-	function ENT:FlingProp(mdl)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos())
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:SetModelScale(.5,0)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop.JModNoPickup=true
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity((VectorRand()+Vector(0,0,1)):GetNormalized()*math.Rand(100,300))
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
-		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
-	end
 	function ENT:UseEffect(pos,ent)
 		for i=1,2*JMod.Config.SupplyEffectMult do self:FlingProp("models/mechanics/gears/gear12x6_small.mdl") end
 		local effectdata=EffectData()

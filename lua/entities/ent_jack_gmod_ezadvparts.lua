@@ -20,21 +20,6 @@ ENT.BreakNoise="Metal_Box.Break"
 ENT.PropModels={"models/props_lab/reciever01d.mdl","models/props/cs_office/computer_caseb_p2a.mdl","models/props/cs_office/computer_caseb_p3a.mdl","models/props/cs_office/computer_caseb_p4a.mdl","models/props/cs_office/computer_caseb_p5a.mdl","models/props/cs_office/computer_caseb_p5b.mdl","models/props/cs_office/computer_caseb_p6a.mdl","models/props/cs_office/computer_caseb_p6b.mdl","models/props/cs_office/computer_caseb_p7a.mdl","models/props/cs_office/computer_caseb_p8a.mdl","models/props/cs_office/computer_caseb_p9a.mdl"}
 ---
 if(SERVER)then
-	function ENT:FlingProp(mdl)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos())
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop.JModNoPickup=true
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity((VectorRand()+Vector(0,0,1)):GetNormalized()*math.Rand(100,300))
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,1000))
-		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
-	end
 	function ENT:UseEffect(pos,ent)
 		for i=1,1*JMod.Config.SupplyEffectMult do self:FlingProp(table.Random(self.PropModels)) end
 		local effectdata=EffectData()
@@ -48,7 +33,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(0,3.5,10),Angle(-90,0,90),.04,300,function()
+		JMod.HoloGraphicDisplay(self,Vector(0,3.5,10),Angle(-90,0,90),.035,300,function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS,self:GetResource(),nil,0,0,200,true)
 		end)
 	end

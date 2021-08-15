@@ -20,23 +20,6 @@ ENT.Hint="eat"
 ---
 ENT.FoodModels={"models/props_junk/garbage_glassbottle001a.mdl","models/props_junk/garbage_glassbottle002a.mdl","models/props_junk/garbage_glassbottle003a.mdl","models/props_junk/garbage_metalcan001a.mdl","models/props_junk/garbage_milkcarton001a.mdl","models/props_junk/garbage_milkcarton002a.mdl","models/props_junk/garbage_plasticbottle003a.mdl","models/props_junk/garbage_takeoutcarton001a.mdl","models/props_junk/GlassBottle01a.mdl","models/props_junk/glassjug01.mdl","models/props_junk/PopCan01a.mdl","models/props_junk/PopCan01a.mdl","models/props/cs_office/trash_can_p8.mdl","models/props/cs_office/Water_bottle.mdl","models/props/cs_office/Water_bottle.mdl","models/noesis/donut.mdl","models/food/burger.mdl","models/food/burger.mdl","models/food/hotdog.mdl","models/food/hotdog.mdl","models/props_junk/watermelon01_chunk01a.mdl","models/props_junk/watermelon01_chunk01b.mdl","models/props_junk/watermelon01_chunk01c.mdl","models/props_junk/watermelon01_chunk02a.mdl","models/props_junk/watermelon01_chunk02c.mdl"}
 if(SERVER)then
-	function ENT:FlingProp(mdl)
-		local Prop=ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos())
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:SetModelScale(.75,0)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop.JModNoPickup=true
-		if(math.random(1,2)==1)then Prop:SetHealth(100) end
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity((VectorRand()+Vector(0,0,1)):GetNormalized()*math.Rand(10,300))
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,1000))
-		SafeRemoveEntityDelayed(Prop,math.Rand(5,10))
-	end
 	function ENT:UseEffect(pos,ent)
 		for i=1,7*JMod.Config.SupplyEffectMult do
 			self:FlingProp(table.Random(self.FoodModels))
