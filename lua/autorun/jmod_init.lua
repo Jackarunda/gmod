@@ -16,6 +16,7 @@ JMod.EZ_RESOURCE_TYPES={
 	GAS="gas",
 	POWER="power",
 	DIAMOND="diamond",
+	COAL="coal",
 	--
 	IRONORE="iron ore",
 	LEADORE="lead ore",

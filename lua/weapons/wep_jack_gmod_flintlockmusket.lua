@@ -31,7 +31,7 @@ SWEP.Firemodes = {
 	}
 }
 
-SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"

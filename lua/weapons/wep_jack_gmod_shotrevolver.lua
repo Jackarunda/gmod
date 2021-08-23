@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod.ApplyAmmoSpecs(SWEP,"Small Shotgun Round",.8)
+JMod.ApplyAmmoSpecs(SWEP,"Small Shotgun Round")
 
 SWEP.HipDispersion = 1100
 
@@ -42,7 +42,7 @@ SWEP.Firemodes = {
     }
 }
 
-SWEP.AccuracyMOA = 80 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 50 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.wav"

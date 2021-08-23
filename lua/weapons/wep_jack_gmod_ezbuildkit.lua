@@ -309,12 +309,12 @@ function SWEP:ModifyMachine(ent,tbl,ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif(State~=0)then
 		self:Msg("device must be turned off to modify")
-	elseif(JMod.HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
-		JMod.ConsumeResourcesInRange({parts=20},nil,nil,self)
+	elseif(JMod.HaveResourcesToPerformTask(nil,nil,{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20},self))then
+		JMod.ConsumeResourcesInRange({[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20}, nil,nil,self)
 		ent:SetMods(tbl,ammoType)
 		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
 	else
-		self:Msg("needs 20 Parts nearby to perform modification")
+		self:Msg("needs 20 Basic Parts nearby to perform modification")
 	end
 end
 function SWEP:Msg(msg)

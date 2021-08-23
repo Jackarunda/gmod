@@ -6,7 +6,7 @@ if(SERVER)then
 			local Removed=false
 			for k,v in pairs(tbl)do
 				for l,w in pairs(tbl)do
-					if(l~=k)then
+					if(l~=k and v.typ==w.typ)then
 						local Dist,Min=v.pos:Distance(w.pos),v.siz+w.siz
 						if(Dist<Min)then
 							table.remove(tbl,k)
@@ -22,15 +22,7 @@ if(SERVER)then
 			if(Tries>1000)then return end
 		end
 	end
-	local function PumpItUp(tbl,numPumps,minPump,maxPump)
-		if(#tbl<=0)then return end
-		if(numPumps<=0)then return end
-		for i=1,numPumps do
-			local Deposit,Decimals=table.Random(tbl),0
-			if(Deposit.amt<1)then Decimals=3 end
-			Deposit.amt=math.Round(Deposit.amt*math.Rand(minPump,maxPump),Decimals)
-		end
-	end
+	--[[
 	local function WeightByAltitude(tbl,low,deweightOthers)
 		local AvgAltitude,Count=0,0
 		for k,v in pairs(tbl)do
@@ -53,6 +45,7 @@ if(SERVER)then
 			end
 		end
 	end
+	--]]
 	local NatureMats,MaxTries,SurfacePropBlacklist,RockNames={MAT_SNOW,MAT_SAND,MAT_FOLIAGE,MAT_SLOSH,MAT_GRASS,MAT_DIRT},10000,{"paper","plaster","rubber","carpet"},{"rock","boulder"}
 	local function TabContainsSubString(tbl,str)
 		for k,v in pairs(tbl)do
@@ -82,80 +75,175 @@ if(SERVER)then
 							mat=Tr.MatType,
 							rock=TabContainsSubString(RockNames,MatName),
 							water=bit.band(util.PointContents(Tr.HitPos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
-						}) -- todo: leave-off point, let's hego
+						})
 					end
 				end
 				if(i==MaxTries)then
-					local OilCount,MaxOil,OreCount,MaxOre,GeoCount,MaxGeo,Alternate,WaterCount,MaxWater=0,50*JMod.Config.ResourceEconomy.OilFrequency,0,50*JMod.Config.ResourceEconomy.OreFrequency,0,5,true,0,10
-					for k,v in pairs(GroundVectors)do
-						local InWater=bit.band(util.PointContents(v.pos+Vector(0,0,1)),CONTENTS_WATER)==CONTENTS_WATER
-						if(GeoCount<MaxGeo)then
-							if not(InWater)then
-								local amt=math.Rand(.001,.005)*JMod.Config.ResourceEconomy.GeothermalPowerMult
-								if(math.random(1,4)==2)then amt=amt*math.Rand(2,4) end
-								if(v.mat==MAT_SNOW)then amt=amt*2 end -- better geothermal in cold places
-								table.insert(JMod.GeoThermalReservoirs,{
-									pos=v.pos,
-									amt=math.Round(amt,3),
-									siz=math.random(150,1000)
+					local ResourceInfo={
+						[JMod.EZ_RESOURCE_TYPES.WATER]={
+							frequency=15,
+							avgrate=1,
+							avgsize=400,
+							limits={nowater=true},
+							boosts={sand=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.OIL]={
+							frequency=10,
+							avgamt=1000,
+							avgsize=300,
+							boosts={water=2},
+							limits={}
+						},
+						[JMod.EZ_RESOURCE_TYPES.COAL]={
+							frequency=10,
+							avgamt=1000,
+							avgsize=200,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.IRONORE]={
+							frequency=10,
+							avgamt=1000,
+							avgsize=200,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.LEADORE]={
+							frequency=10,
+							avgamt=1000,
+							avgsize=200,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE]={
+							frequency=12,
+							avgamt=1000,
+							avgsize=200,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.COPPERORE]={
+							frequency=7,
+							avgamt=1000,
+							avgsize=200,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE]={
+							frequency=5,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.TITANIUMORE]={
+							frequency=5,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.SILVERORE]={
+							frequency=3,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.GOLDORE]={
+							frequency=2,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.URANIUMORE]={
+							frequency=3,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.PLATINUMORE]={
+							frequency=1,
+							avgamt=1000,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={rock=2}
+						},
+						[JMod.EZ_RESOURCE_TYPES.DIAMOND]={
+							dependency=JMod.EZ_RESOURCE_TYPES.COAL,
+							frequency=.1,
+							avgamt=300,
+							avgsize=100,
+							limits={}, -- covered by the limits of coal already
+							boosts={}
+						},
+						["geothermal"]={
+							frequency=3,
+							avgrate=1,
+							avgsize=100,
+							limits={nowater=true},
+							boosts={snow=2}
+						}
+					}
+					local Frequencies={}
+					for k,v in pairs(ResourceInfo)do
+						for i=1,v.frequency do table.insert(Frequencies,k) end
+					end
+					local Resources={}
+					for k,PosInfo in pairs(GroundVectors)do
+						local ChosenType=table.Random(Frequencies)
+						local ChosenInfo=ResourceInfo[ChosenType]
+						if not(ChosenInfo.dependency)then -- we'll handle these afterward
+							if not(PosInfo.water and ChosenInfo.limits.nowater)then
+								local Amt,Decimals=(ChosenInfo.avgrate or ChosenInfo.avgamt)*math.Rand(.5,1.5),1
+								if(ChosenInfo.avgrate)then Decimals=3 end
+								if(PosInfo.water and ChosenInfo.boosts.water)then Amt=Amt*math.Rand(2,4) end
+								if(PosInfo.rock and ChosenInfo.boosts.rock)then Amt=Amt*math.Rand(2,4) end
+								if(PosInfo.sand and PosInfo.mat==MAT_SAND)then Amt=Amt*math.Rand(2,4) end
+								if(PosInfo.snow and PosInfo.mat==MAT_SNOW)then Amt=Amt*math.Rand(2,4) end
+								-- randomly boost the amt in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
+								if(math.random(1,5)==4)then Amt=Amt*math.Rand(1,5) end
+								Amt=math.Round(Amt,Decimals)
+								table.insert(Resources,{
+									typ=ChosenType,
+									pos=PosInfo.pos,
+									siz=math.Round(ChosenInfo.avgsize*math.Rand(.5,1.5)),
+									amt=Amt
 								})
-								GeoCount=GeoCount+1
 							end
-						elseif(WaterCount<MaxWater)then
-							if not(InWater)then
-								local amt=math.Rand(.001,.005)
-								if(v.mat==MAT_SAND)then amt=amt*2 end -- need more water in arid places
-								table.insert(JMod.WaterReservoirs,{
-									pos=v.pos,
-									amt=math.Round(amt,3),
-									siz=math.random(150,1000)
-								})
-								WaterCount=WaterCount+1
-							end
-						elseif(Alternate)then
-							if(OilCount<MaxOil)then
-								local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OilRichness
-								if(InWater)then amt=amt*2 end -- fracking time
-								table.insert(JMod.OilReserves,{
-									pos=v.pos,
-									amt=math.Round(amt),
-									siz=math.random(150,1000)
-								})
-								OilCount=OilCount+1
-							end
-							Alternate=false
-						else
-							if not(InWater)then
-								if(OreCount<MaxOre)then
-									local amt=math.random(70,180)*JMod.Config.ResourceEconomy.OreRichness
-									if(v.rock)then amt=amt*2 end
-									table.insert(JMod.OreDeposits,{
-										pos=v.pos,
-										amt=math.Round(amt),
-										siz=math.random(150,1000)
-									})
-									OreCount=OreCount+1
-								end
-							end
-							Alternate=true
 						end
 					end
-					if(((OilCount<2)or(OreCount<2)or(GeoCount<2))and not(tryFlat))then
+					-- now let's handle dependent resources
+					local ResourcesToAdd={}
+					for name,info in pairs(ResourceInfo)do
+						if(info.dependency)then
+							for k,resourceData in pairs(Resources)do
+								if(resourceData.typ==info.dependency)then
+									if(math.Rand(0,1)<info.frequency)then
+										local Amt=info.avgamt*math.Rand(.5,1.5)
+										if(math.random(1,5)==4)then Amt=Amt*math.Rand(1,5) end
+										Amt=math.Round(Amt)
+										table.insert(ResourcesToAdd,{
+											typ=name,
+											pos=resourceData.pos,
+											siz=math.Round(info.avgsize*math.Rand(.5,1.5)),
+											Amt=Amt
+										})
+									end
+								end
+							end
+						end
+					end
+					if((#Resources<=2)and not(tryFlat))then
 						-- if we couldn't find anything, it might be an RP map which is really flat
 						JMod.GenerateNaturalResources(true)
 					else
-						RemoveOverlaps(JMod.OilReserves)
-						RemoveOverlaps(JMod.OreDeposits)
-						RemoveOverlaps(JMod.GeoThermalReservoirs)
-						RemoveOverlaps(JMod.WaterReservoirs)
-						-- randomly boost a few deposits in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
-						if(math.random(1,2)==1)then PumpItUp(JMod.GeoThermalReservoirs,1,2,4) end
-						PumpItUp(JMod.WaterReservoirs,math.random(0,2),4,10)
-						PumpItUp(JMod.OilReserves,math.random(1,3),4,10)
-						PumpItUp(JMod.OreDeposits,math.random(1,3),4,10)
-						WeightByAltitude(JMod.OreDeposits)
-						WeightByAltitude(JMod.WaterReservoirs,true,true)
-						print("JMOD: resource generation finished with "..#JMod.OilReserves.." oil reserves, "..#JMod.OreDeposits.." ore deposits, "..#JMod.WaterReservoirs.." water reservoirs and "..#JMod.GeoThermalReservoirs.." geothermal reservoirs")
+						RemoveOverlaps(Resources)
+						JMod.NaturalResourceTable=Resources
+						print("JMOD: resource generation finished with "..#Resources.." resource deposits")
+						
 					end
 				elseif(i%1000==0)then
 					print(math.Round(i/MaxTries*100).."%")
