@@ -65,6 +65,10 @@ JMod.EZ_RESOURCE_TYPES={
 	--
 	ANTIMATTER="antimatter"
 }
+JMod.EZ_RESOURCE_TYPE_ICONS={}
+for k,v in pairs(JMod.EZ_RESOURCE_TYPES)do
+	JMod.EZ_RESOURCE_TYPE_ICONS[v]=Material("ez_resource_icons/"..v..".png")
+end
 
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC=1

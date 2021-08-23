@@ -197,8 +197,8 @@ if(SERVER)then
 						local ChosenInfo=ResourceInfo[ChosenType]
 						if not(ChosenInfo.dependency)then -- we'll handle these afterward
 							if not(PosInfo.water and ChosenInfo.limits.nowater)then
-								local Amt,Decimals=(ChosenInfo.avgrate or ChosenInfo.avgamt)*math.Rand(.5,1.5),1
-								if(ChosenInfo.avgrate)then Decimals=3 end
+								local Amt,Decimals=(ChosenInfo.avgrate or ChosenInfo.avgamt)*math.Rand(.5,1.5),0
+								if(ChosenInfo.avgrate)then Decimals=2 end
 								if(PosInfo.water and ChosenInfo.boosts.water)then Amt=Amt*math.Rand(2,4) end
 								if(PosInfo.rock and ChosenInfo.boosts.rock)then Amt=Amt*math.Rand(2,4) end
 								if(PosInfo.sand and PosInfo.mat==MAT_SAND)then Amt=Amt*math.Rand(2,4) end
@@ -258,10 +258,7 @@ if(SERVER)then
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 		net.Start("JMod_NaturalResources")
-		net.WriteTable(JMod.OilReserves)
-		net.WriteTable(JMod.OreDeposits)
-		net.WriteTable(JMod.GeoThermalReservoirs)
-		net.WriteTable(JMod.WaterReservoirs)
+		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end)
 elseif(CLIENT)then
@@ -269,28 +266,15 @@ elseif(CLIENT)then
 	net.Receive("JMod_NaturalResources",function()
 		ShowNaturalResources=not ShowNaturalResources
 		print("natural resource display: "..tostring(ShowNaturalResources))
-		JMod.OilReserves=net.ReadTable()
-		JMod.OreDeposits=net.ReadTable()
-		JMod.GeoThermalReservoirs=net.ReadTable()
-		JMod.WaterReservoirs=net.ReadTable()
+		JMod.NaturalResourceTable=net.ReadTable()
 	end)
-	local Circle=Material("sprites/sent_ball")
-	local function RenderPoints(tbl,col)
-		for k,v in pairs(tbl)do
-			cam.Start3D2D(v.pos+Vector(0,0,50),Angle(0,0,0),10)
-			surface.SetDrawColor(col.r,col.g,col.b,col.a)
-			surface.SetMaterial(Circle)
-			surface.DrawTexturedRect(-v.siz/10,-v.siz/10,v.siz*2/10,v.siz*2/10)
-			draw.DrawText(v.amt,"DermaLarge",0,0,color_white,TEXT_ALIGN_CENTER)
-			cam.End3D2D()
-		end
-	end
 	hook.Add("PostDrawTranslucentRenderables","JMod_EconTransRend",function()
 		if(ShowNaturalResources)then
-			RenderPoints(JMod.OilReserves,Color(10,10,10,200))
-			RenderPoints(JMod.OreDeposits,Color(120,120,120,200))
-			RenderPoints(JMod.GeoThermalReservoirs,Color(150,20,10,200))
-			RenderPoints(JMod.WaterReservoirs,Color(20,70,150,200))
+			for k,v in pairs(JMod.NaturalResourceTable)do
+				JMod.HoloGraphicDisplay(nil,v.pos,Angle(0,0,0),1,10000,function()
+					JMod.StandardResourceDisplay(v.typ,v.amt,nil,0,0,v.siz*2,true)
+				end)
+			end
 		end
 	end)
 end
