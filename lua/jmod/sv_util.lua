@@ -699,3 +699,18 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 		end
 	end)
 end
+
+function JMod.BlockPhysgunPickup(ent, isblock)
+	if isblock == false then isblock = nil end
+	ent.block_pickup = isblock
+
+end
+
+hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
+	if ent.block_pickup then 
+		JMod.Hint(ply, "blockphysgun")
+		return false 
+	end
+end)
+
+
