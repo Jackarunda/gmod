@@ -92,6 +92,8 @@ if (SERVER) then
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_OFF)
 			self:DrawShadow(true)
+
+			JMod.BlockPhysgunPickup(self, false)
 		end
 	end
 
@@ -122,10 +124,31 @@ if (SERVER) then
 	function ENT:Arm(armer)
 		local State = self:GetState()
 		if (State ~= STATE_OFF) then return end
+
+		local tr = util.TraceLine({
+			start = self:GetPos(),
+			endpos = self:GetPos() - self:GetUp() * 100,
+		})
+
+		if not tr.Hit or tr.HitNormal.z <= 0.6 then
+			JMod.Hint(armer, "horizontal surface")
+			self:EmitSound("buttons/button18.wav", 60, 110)
+			return 
+		end
+
 		JMod.Owner(self, armer)
 		JMod.Hint(armer, "friends", self)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)
+
+		local ang = tr.HitNormal:Angle()
+		ang:RotateAroundAxis(ang:Right(), -90)
+		ang:RotateAroundAxis(ang:Up(), self:GetAngles().yaw - ang.yaw)
+
+		self:SetPos(tr.HitPos)
+		self:SetAngles(ang)
+
+		JMod.BlockPhysgunPickup(self, true)
 
 		timer.Simple(3, function()
 			if (IsValid(self) and self:GetState() == STATE_ARMING) then
@@ -200,7 +223,7 @@ elseif (CLIENT) then
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 		]]
-		local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + Vector(0, 0, 11) + self:GetRight() * -0.5
+		local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + self:GetUp() * 12
 
 		if (State == STATE_ARMING) then
 			render.SetMaterial(GlowSprite)
