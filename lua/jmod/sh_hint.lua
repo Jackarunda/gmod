@@ -88,7 +88,7 @@ JMod.Hints = {
 	["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 5},
 	["bleeding"] = {Type = "warn", Text = "You are bleeding; seek First-Aid ASAP", Time = 5},
 	["blockphysgun"] = {Type = "warn", Text = "This object can not be physgunned right now", Time = 5},
-	["horizontal surface"] = {Type = "warn", Text = "This mine can only be placed on horizontal surfaces!", Time = 5},
+	["horizontal surface"] = {Type = "warn", Text = "This object can only be placed on horizontal surfaces!", Time = 5},
 	
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
