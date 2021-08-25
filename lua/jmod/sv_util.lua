@@ -703,7 +703,6 @@ end
 function JMod.BlockPhysgunPickup(ent, isblock)
 	if isblock == false then isblock = nil end
 	ent.block_pickup = isblock
-
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

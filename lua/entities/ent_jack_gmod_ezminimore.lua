@@ -128,12 +128,9 @@ if (SERVER) then
 		local tr = util.TraceLine({
 			start = self:GetPos(),
 			endpos = self:GetPos() - self:GetUp() * 100,
-			--filter = function(ent) if ent == self then return true end end
 		})
 
 		if not tr.Hit or tr.HitNormal.z <= 0.6 then
-			--self:EmitSound("buttons/button10.wav", 60, 110)
-			--self:EmitSound("buttons/button11.wav", 60, 110)
 			JMod.Hint(armer, "horizontal surface")
 			self:EmitSound("buttons/button18.wav", 60, 110)
 			return 
@@ -226,7 +223,6 @@ elseif (CLIENT) then
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 		]]
-		--local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + Vector(0, 0, 11) + self:GetRight() * -0.5
 		local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + self:GetUp() * 12
 
 		if (State == STATE_ARMING) then

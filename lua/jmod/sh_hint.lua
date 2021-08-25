@@ -87,7 +87,7 @@ JMod.Hints = {
 	["destroyed"] = {Type = "warn", Text = "Device was destroyed; touch with a box of parts to repair", Time = 5},
 	["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 5},
 	["bleeding"] = {Type = "warn", Text = "You are bleeding; seek First-Aid ASAP", Time = 5},
-	["blockphysgun"] = {Type = "warn", Text = "This mine cannot be physgunned while armed! Disarm it first.", Time = 5},
+	["blockphysgun"] = {Type = "warn", Text = "This object can not be physgunned right now", Time = 5},
 	["horizontal surface"] = {Type = "warn", Text = "This mine can only be placed on horizontal surfaces!", Time = 5},
 	
 	-- Misc. Entities
