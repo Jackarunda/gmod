@@ -95,6 +95,7 @@ hook.Add("Think","JMod_RADIO_THINK",function()
 						Box:SetDTBool(0,"true")
 						Box:Spawn()
 						Box:Initialize()
+						Box:SetPackageName(station.deliveryType)
 						---
 						sound.Play("snd_jack_flyby_drop.mp3",DropPos,150,100)
 						for k,playa in pairs(ents.FindInSphere(DropPos,6000))do
