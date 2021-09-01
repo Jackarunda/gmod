@@ -59,7 +59,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod.LinearChance(dmginfo:GetDamage(),30,100))then self:Remove() end
+		if(JMod.LinCh(dmginfo:GetDamage(),30,100))then self:Remove() end
 	end
 	function ENT:UseEffect()
 		-- stub

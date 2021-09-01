@@ -35,6 +35,7 @@ function JMod.GenerateGUID()
 end
 --
 function JMod.LinCh(num,low,high)
+	-- Linear Chance
 	return num>=(low+(high-low)*math.Rand(0,1))
 end
 --

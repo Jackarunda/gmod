@@ -159,6 +159,15 @@ end
 
 local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
+	--[[
+	local Pos=ents.FindByClass("sky_camera")[1]:GetPos()
+	local AAA=util.TraceLine({
+		start=Pos+Vector(0,0,1000),
+		endpos=player.GetAll()[1]:GetShootPos()+Vector(0,0,100),
+		filter=player.GetAll()[1]
+	})
+	if(AAA.Hit)then jprint("VALID") else jprint("INVALID") end
+	--]]
 	local Time=CurTime()
 	if(NextMainThink>Time)then return end
 	NextMainThink=Time+1
