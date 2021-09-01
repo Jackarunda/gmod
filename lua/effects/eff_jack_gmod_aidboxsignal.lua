@@ -1,22 +1,21 @@
--- Jackarunda 2019
-local Sprites={"particle/smokestack"}--,"particles/smokey","particle/particle_smokegrenade","sprites/mat_jack_smoke1","sprites/mat_jack_smoke2","sprites/mat_jack_smoke3"}
+local Sprite = "particle/smokestack"
+
 function EFFECT:Init(data)
-	local Pos, Norm, Vel, Life, ColAng = data:GetOrigin(), data:GetNormal(), data:GetStart(), data:GetScale(), data:GetAngles()
-	local R, G, B=ColAng.p, ColAng.y, ColAng.r
+	local Pos, Norm, Vel, Clr = data:GetOrigin(), data:GetNormal(), data:GetStart(), data:GetAngles()
+	local R, G, B = Clr.pitch, Clr.yaw, Clr.roll
 	local Emitter = ParticleEmitter(Pos)
-	local Sprite = Sprites[math.random(1, #Sprites)]
 	for i = 1, 2 do
-		local RollParticle=Emitter:Add(Sprite,Pos)
+		local RollParticle = Emitter:Add(Sprite, Pos)
 		if RollParticle then
 			RollParticle:SetVelocity(Vel + Norm * math.random(50, 100) + VectorRand() * 10)
 			RollParticle:SetAirResistance(100)
-			RollParticle:SetDieTime(math.Rand(5, 15))
+			RollParticle:SetDieTime(4)
 			RollParticle:SetStartAlpha(255)
 			RollParticle:SetEndAlpha(0)
 
 			local Size = math.Rand(30, 60)
-			RollParticle:SetStartSize(Size / 20)
-			RollParticle:SetEndSize(Size * 4)
+			RollParticle:SetStartSize(Size / 8)
+			RollParticle:SetEndSize(Size * 2)
 			RollParticle:SetRoll(math.Rand(-3, 3))
 			RollParticle:SetRollDelta(math.Rand(-2, 2))
 

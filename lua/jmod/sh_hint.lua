@@ -62,6 +62,7 @@ JMod.Hints = {
 	["ent_jack_gmod_eznuke"] = {Type = "info", Text = "Micro Nukes explode in an extremely large radius and spreads radiation", Time = 3},
 	["ent_jack_gmod_ezboundingmine"] = {Type = "info", Text = "Bounding Mines bury underground and shoot shrapnel when enemies approach", Time = 3},
 	["ent_jack_gmod_ezminimore"] = {Type = "info", Text = "Claymores spray shrapnel in a cone when enemies approach its front", Time = 3},
+	
 	["ent_jack_gmod_eznavalmine"] = {Type = "info", Text = "Naval Mines attach themselves underwater and detonate on contact", Time = 3},
 	["ent_jack_gmod_eznuke_small"] = {Type = "info", Text = "Nano Nukes explode in a large radius and spreads radiation", Time = 3},
 	["ent_jack_gmod_ezpowderkeg"] = {Type = "info", Text = "Powder kegs can release and be exploded by black powder lines", Time = 3},
@@ -86,6 +87,8 @@ JMod.Hints = {
 	["destroyed"] = {Type = "warn", Text = "Device was destroyed; touch with a box of parts to repair", Time = 5},
 	["nopower"] = {Type = "warn", Text = "Device ran out of power; touch with a battery to recharge", Time = 5},
 	["bleeding"] = {Type = "warn", Text = "You are bleeding; seek First-Aid ASAP", Time = 5},
+	["blockphysgun"] = {Type = "warn", Text = "This object can not be physgunned right now", Time = 5},
+	["horizontal surface"] = {Type = "warn", Text = "This object can only be placed on horizontal surfaces!", Time = 5},
 	
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
