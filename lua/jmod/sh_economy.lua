@@ -93,7 +93,7 @@ local ResourceInfo={
 	},
 	[JMod.EZ_RESOURCE_TYPES.DIAMOND]={
 		dependency=JMod.EZ_RESOURCE_TYPES.COAL,
-		frequency=.333,
+		frequency=.2,
 		avgamt=150,
 		avgsize=100,
 		limits={}, -- covered by the limits of coal already
@@ -248,32 +248,34 @@ if(SERVER)then
 						for k,v in pairs(ResourceInfo)do
 							for i=1,v.frequency do table.insert(Frequencies,k) end
 						end
-						local Resources={}
+						local Resources,MaxResourceDepositCount={},300
 						for k,PosInfo in pairs(GroundVectors)do
-							local ChosenType=table.Random(Frequencies)
-							local ChosenInfo=ResourceInfo[ChosenType]
-							if not(ChosenInfo.dependency)then -- we'll handle these afterward
-								if not(PosInfo.water and ChosenInfo.limits.nowater)then
-									local Amt,Decimals=(ChosenInfo.avgrate or ChosenInfo.avgamt)*math.Rand(.5,1.5)*JMod.Config.ResourceEconomy.ResourceRichness,0
-									if(ChosenInfo.avgrate)then Decimals=2 end
-									if(PosInfo.water and ChosenInfo.boosts.water)then Amt=Amt*math.Rand(2,4) end
-									if(PosInfo.rock and ChosenInfo.boosts.rock)then Amt=Amt*math.Rand(2,4) end
-									if(PosInfo.sand and PosInfo.mat==MAT_SAND)then Amt=Amt*math.Rand(2,4) end
-									if(PosInfo.snow and PosInfo.mat==MAT_SNOW)then Amt=Amt*math.Rand(2,4) end
-									-- randomly boost the amt in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
-									if(math.random(1,5)==4)then Amt=Amt*math.Rand(1,5) end
-									Amt=math.Round(Amt,Decimals)
-									local Resource={
-										typ=ChosenType,
-										pos=PosInfo.pos,
-										siz=math.Round(ChosenInfo.avgsize*math.Rand(.5,1.5))
-									}
-									if(ChosenInfo.avgrate)then
-										Resource.rate=Amt
-									elseif(ChosenInfo.avgamt)then
-										Resource.amt=Amt
+							if(#Resources<MaxResourceDepositCount)then
+								local ChosenType=table.Random(Frequencies)
+								local ChosenInfo=ResourceInfo[ChosenType]
+								if not(ChosenInfo.dependency)then -- we'll handle these afterward
+									if not(PosInfo.water and ChosenInfo.limits.nowater)then
+										local Amt,Decimals=(ChosenInfo.avgrate or ChosenInfo.avgamt)*math.Rand(.5,1.5)*JMod.Config.ResourceEconomy.ResourceRichness,0
+										if(ChosenInfo.avgrate)then Decimals=2 end
+										if(PosInfo.water and ChosenInfo.boosts.water)then Amt=Amt*math.Rand(2,4) end
+										if(PosInfo.rock and ChosenInfo.boosts.rock)then Amt=Amt*math.Rand(2,4) end
+										if(PosInfo.sand and PosInfo.mat==MAT_SAND)then Amt=Amt*math.Rand(2,4) end
+										if(PosInfo.snow and PosInfo.mat==MAT_SNOW)then Amt=Amt*math.Rand(2,4) end
+										-- randomly boost the amt in order to create the potential for conflict ( ͡° ͜ʖ ͡°)
+										if(math.random(1,5)==4)then Amt=Amt*math.Rand(1,5) end
+										Amt=math.Round(Amt,Decimals)
+										local Resource={
+											typ=ChosenType,
+											pos=PosInfo.pos,
+											siz=math.Round(ChosenInfo.avgsize*math.Rand(.5,1.5))
+										}
+										if(ChosenInfo.avgrate)then
+											Resource.rate=Amt
+										elseif(ChosenInfo.avgamt)then
+											Resource.amt=Amt
+										end
+										table.insert(Resources,Resource)
 									end
-									table.insert(Resources,Resource)
 								end
 							end
 						end
