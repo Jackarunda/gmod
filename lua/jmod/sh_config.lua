@@ -47,12 +47,8 @@ function JMod.InitGlobalConfig(forceNew)
 		VirusSpreadMult=1,
 		FragExplosions=true,
 		ResourceEconomy={
-			OreFrequency=1,
-			OreRichness=1,
-			OilFrequency=1,
-			OilRichness=1,
-			GeothermalPowerMult=1,
-			ProductionSpeed=1
+			ResourceRichness=1,
+			ExtractionSpeed=1
 		},
 		QoL={
 			RealisticLocationalDamage=false,
