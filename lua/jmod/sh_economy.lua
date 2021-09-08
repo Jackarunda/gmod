@@ -230,7 +230,7 @@ if(SERVER)then
 				timer.Simple(i/1000,function()
 					local CheckPos=Vector(math.random(xMin,xMax),math.random(yMin,yMax),math.random(zMin,zMax))
 					-- we're in the world... start the worldhit trace
-					local Tr=util.QuickTrace(CheckPos,Vector(0,0,-5000))
+					local Tr=util.QuickTrace(CheckPos,Vector(0,0,-4000))
 					local Props=util.GetSurfaceData(Tr.SurfaceProps)
 					local MatName=string.lower((Props and Props.name) or "")
 					local HitTexture=string.lower(Tr.HitTexture)

@@ -56,8 +56,8 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(6.8,0,-1),Angle(0,0,90),.035,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PROPELLANT,self:GetResource(),nil,0,0,200,true)
+		JMod.HoloGraphicDisplay(self,Vector(.5,0,10.4),Angle(0,0,0),.035,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PROPELLANT,self:GetResource(),nil,0,0,150,true,"JMod-Stencil-MS")
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)

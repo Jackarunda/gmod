@@ -114,16 +114,17 @@ if(SERVER)then
 			activator:PickupObject(self)
 		end
 	end
-	local function FindNaturalResourcesInRange(pos,rng,tbl,col)
+	local function FindNaturalResourcesInRange(pos,rng,tbl)
 		rng=rng*52 -- meters to source units
 		local Res={}
 		for k,v in pairs(tbl)do
 			if((v.pos:Distance(pos))<rng)then
 				table.insert(Res,{
+					typ=v.typ,
 					pos=v.pos,
-					amt=v.amt,
 					siz=v.siz,
-					col=col
+					rate=v.rate,
+					amt=v.amt
 				})
 			end
 		end
@@ -149,7 +150,7 @@ if(SERVER)then
 			return
 		elseif(State==JMod.EZ_STATE_ON)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			self:ConsumeElectricity()
+			self:ConsumeElectricity(.3)
 			if(self:CanScan())then
 				self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed^1.5/3,0,100))
 				if(self:GetProgress()>=100)then
@@ -178,10 +179,7 @@ if(SERVER)then
 	end
 	function ENT:FinishScan()
 		local Pos,Results=self:GetPos(),{}
-		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.OilReserves,Color(10,10,10)))
-		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.OreDeposits,Color(120,120,120)))
-		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.GeoThermalReservoirs,Color(150,20,10)))
-		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.WaterReservoirs,Color(20,70,150)))
+		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.NaturalResourceTable))
 		for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
 			if(v.GetPhysicsObject)then
 				local AnomalyPos=v:LocalToWorld(v:OBBCenter())
@@ -193,10 +191,9 @@ if(SERVER)then
 							local Class=v:GetClass()
 							if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
 								table.insert(Results,{
+									typ="ANOMALY",
 									pos=AnomalyPos,
-									amt="?",
-									siz=180,
-									col=Color(50,60,70)
+									siz=180
 								})
 							end
 						end
@@ -272,7 +269,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-45)
 				local Opacity=math.random(75,150)
 				cam.Start3D2D(SelfPos-Up*35-Forward*5,DisplayAng,.08)
-				surface.SetDrawColor(255,255,255,20)
+				surface.SetDrawColor(50,100,50,50)
 				surface.SetMaterial(Circol)
 				surface.DrawTexturedRect(-50*MetersToPixels,-95*MetersToPixels,100*MetersToPixels,100*MetersToPixels)
 				local CenterY=-45*MetersToPixels
@@ -285,20 +282,17 @@ elseif(CLIENT)then
 				surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
 				draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
-				draw.SimpleText("gray = ore","JMod-Display-XS",0,-15*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				draw.SimpleText("black = oil","JMod-Display-XS",0,-15*MetersToPixels+14,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				draw.SimpleText("blue = water","JMod-Display-XS",0,-15*MetersToPixels+28,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				draw.SimpleText("red = geothermal","JMod-Display-XS",0,-15*MetersToPixels+42,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				draw.SimpleText("? = metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
 				surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
 				--
 				for k,v in pairs(self.ScanResults)do
-					surface.SetDrawColor(v.col.r,v.col.g,v.col.b,(Opacity+100))
-					surface.SetMaterial(Circol)
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
-					surface.DrawTexturedRect(X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,Radius*2)
-					draw.SimpleText(v.amt,"JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+100*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+					if(v.typ=="ANOMALY")then
+						draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+					else
+						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
+					end
 				end
 				--
 				draw.SimpleTextOutlined("POWER","JMod-Display",-250,-40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))

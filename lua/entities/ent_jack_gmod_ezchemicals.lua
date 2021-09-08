@@ -7,7 +7,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.CHEMICALS
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.Model="models/props_junk/PlasticCrate01a.mdl"
 ENT.Material=nil
 ENT.RandomSkins={0,1,2,3,4}
@@ -70,7 +70,7 @@ elseif(CLIENT)then
 		JMod.RenderModel(self.Jug7,BasePos+Forward*3-Right*4-Up*2,Ang)
 		JMod.RenderModel(self.Jug8,BasePos+Forward*6-Right*10-Up*10,Ang)
 		JMod.HoloGraphicDisplay(self,Vector(-1,11,0),Angle(-90,0,90),.04,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.CHEMICALS,self:GetResource(),nil,0,0,200,false)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.CHEMICALS,self:GetResource(),nil,0,0,200,false,nil,220)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
