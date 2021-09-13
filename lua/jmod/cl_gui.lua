@@ -3,7 +3,6 @@ local Dynamic = 0
 local MenuOpen = false
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
-
 local function BlurBackground(panel)
 	if not((IsValid(panel))and(panel:IsVisible()))then return end
 	local layers,density,alpha=1,1,255
@@ -45,6 +44,7 @@ local function PopulateList(parent,friendList,myself,W,H)
 				surface.SetMaterial((InLikeFlynn and YesMat)or NoMat)
 				surface.DrawTexturedRect(2,2,16,16)
 			end
+			
 			function Buttaloney:DoClick()
 				surface.PlaySound("garrysmod/ui_click.wav")
 				if(InLikeFlynn)then
@@ -714,7 +714,7 @@ net.Receive("JMod_EZradio",function()
 	local Packages={}
 	local count = net.ReadUInt(8)
 	for i = 1, count do
-		table.insert(Packages, net.ReadString())
+		table.insert(Packages, {net.ReadString(),net.ReadString()})
 	end
 
 	local Radio=net.ReadEntity()
@@ -765,7 +765,7 @@ net.Receive("JMod_EZradio",function()
 	Scroll:SetSize(W-15,H-10)
 	Scroll:SetPos(10,10)
 	---
-	for _, k in SortedPairsByValue(Packages) do
+	for _, k in pairs(Packages) do
 		local Butt = Scroll:Add("DButton")
 		Butt:SetSize(W-35,25)
 		Butt:Dock(TOP)
@@ -775,11 +775,13 @@ net.Receive("JMod_EZradio",function()
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=k
+			local msg=k[1]
+			local desc=k[2]
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			Butt:SetToolTip(desc)
 		end
 		function Butt:DoClick()
-			LocalPlayer():ConCommand("say supply radio: " .. k .. "")
+			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
 			motherFrame:Close()
 		end
 	end
