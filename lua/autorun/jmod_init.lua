@@ -70,6 +70,58 @@ for k,v in pairs(JMod.EZ_RESOURCE_TYPES)do
 	JMod.EZ_RESOURCE_TYPE_ICONS[v]=Material("ez_resource_icons/"..v..".png")
 end
 
+JMod.EZ_RESOURCE_ENTITIES={
+	[JMod.EZ_RESOURCE_TYPES.WATER]="ent_jack_gmod_ezwater",
+	[JMod.EZ_RESOURCE_TYPES.WOOD]="ent_jack_gmod_ezwood",
+	[JMod.EZ_RESOURCE_TYPES.ORGANICS]="ent_jack_gmod_ezorganics",
+	[JMod.EZ_RESOURCE_TYPES.OIL]="ent_jack_gmod_ezoil",
+	[JMod.EZ_RESOURCE_TYPES.GAS]="ent_jack_gmod_ezgas",
+	[JMod.EZ_RESOURCE_TYPES.POWER]="ent_jack_gmod_ezbattery",
+	[JMod.EZ_RESOURCE_TYPES.DIAMOND]="ent_jack_gmod_ezdiamond",
+	[JMod.EZ_RESOURCE_TYPES.COAL]="ent_jack_gmod_ezcoal",
+	[JMod.EZ_RESOURCE_TYPES.IRONORE]="ent_jack_gmod_ezironore",
+	[JMod.EZ_RESOURCE_TYPES.LEADORE]="ent_jack_gmod_ezleadore",
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE]="ent_jack_gmod_ezaluminumore",
+	[JMod.EZ_RESOURCE_TYPES.COPPERORE]="ent_jack_gmod_ezcopperore",
+	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE]="ent_jack_gmod_eztungstenore",
+	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE]="tent_jack_gmod_eztitaniumore",
+	[JMod.EZ_RESOURCE_TYPES.SILVERORE]="ent_jack_gmod_ezsilverore",
+	[JMod.EZ_RESOURCE_TYPES.GOLDORE]="ent_jack_gmod_ezgoldore",
+	[JMod.EZ_RESOURCE_TYPES.URANIUMORE]="ent_jack_gmod_ezuraniumore",
+	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE]="ent_jack_gmod_ezplatinumore",
+	[JMod.EZ_RESOURCE_TYPES.STEEL]="ent_jack_gmod_ezsteel",
+	[JMod.EZ_RESOURCE_TYPES.LEAD]="ent_jack_gmod_ezlead",
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUM]="ent_jack_gmod_ezaluminum",
+	[JMod.EZ_RESOURCE_TYPES.COPPER]="ent_jack_gmod_ezcopper",
+	[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]="ent_jack_gmod_eztungsten",
+	[JMod.EZ_RESOURCE_TYPES.TITANIUM]="ent_jack_gmod_eztitanium",
+	[JMod.EZ_RESOURCE_TYPES.SILVER]="ent_jack_gmod_ezsilver",
+	[JMod.EZ_RESOURCE_TYPES.GOLD]="ent_jack_gmod_ezgold",
+	[JMod.EZ_RESOURCE_TYPES.URANIUM]="ent_jack_gmod_ezuranium",
+	[JMod.EZ_RESOURCE_TYPES.PLATINUM]="ent_jack_gmod_ezplatinum",
+	[JMod.EZ_RESOURCE_TYPES.FUEL]="ent_jack_gmod_ezfuel",
+	[JMod.EZ_RESOURCE_TYPES.PLASTIC]="ent_jack_gmod_ezplastic",
+	[JMod.EZ_RESOURCE_TYPES.RUBBER]="ent_jack_gmod_ezrubber",
+	[JMod.EZ_RESOURCE_TYPES.GLASS]="ent_jack_gmod_ezglass",
+	[JMod.EZ_RESOURCE_TYPES.CLOTH]="ent_jack_gmod_ezcloth",
+	[JMod.EZ_RESOURCE_TYPES.CERAMIC]="ent_jack_gmod_ezceramic",
+	[JMod.EZ_RESOURCE_TYPES.PAPER]="ent_jack_gmod_ezpaper",
+	[JMod.EZ_RESOURCE_TYPES.AMMO]="ent_jack_gmod_ezammo",
+	[JMod.EZ_RESOURCE_TYPES.MUNITIONS]="ent_jack_gmod_ezmunitions",
+	[JMod.EZ_RESOURCE_TYPES.PROPELLANT]="ent_jack_gmod_ezpropellant",
+	[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]="ent_jack_gmod_ezexplosives",
+	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]="ent_jack_gmod_ezmedsupplies",
+	[JMod.EZ_RESOURCE_TYPES.CHEMICALS]="ent_jack_gmod_ezchemicals",
+	[JMod.EZ_RESOURCE_TYPES.NUTRIENTS]="ent_jack_gmod_eznutrients",
+	[JMod.EZ_RESOURCE_TYPES.COOLANT]="ent_jack_gmod_ezcoolant",
+	[JMod.EZ_RESOURCE_TYPES.BASICPARTS]="ent_jack_gmod_ezbasicparts",
+	[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]="ent_jack_gmod_ezprecparts",
+	[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]="ent_jack_gmod_ezadvtextiles",
+	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]="ent_jack_gmod_ezadvparts",
+	[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]="ent_jack_gmod_ezfissilematerial",
+	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]="ent_jack_gmod_ezantimatter"
+}
+
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC=1
 JMod.EZ_GRADE_COPPER=2
