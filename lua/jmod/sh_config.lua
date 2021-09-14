@@ -199,7 +199,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"ent_jack_gmod_ezsentry", 1
 				},
 				["supply radio"]={
-					"An aid communicator for ordering packages and communicating with other radios.",
+					"Order more supplies for free. Just place it outside and watch for the package.",
 					"ent_jack_gmod_ezaidradio", 1
 				},
 				["medkits"]={
@@ -231,7 +231,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezslam",5}
 				},
 				["antimatter"]={
-					"5 SLAMs that can be planted on walls.",
+					"An experimental canister used for crafting experimental items.",
 					"ent_jack_gmod_ezantimatter", 1
 				},
 				["fissile material"]={
@@ -251,7 +251,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezpowderkeg",4}
 				},
 				["smoke grenades"]={	
-					"4 smoke grenades to signal smokes and 4 signal grenades which emits a colourable smoke to help signal positions.",
+					"4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
 					{"ent_jack_gmod_ezsmokenade",4},
 					{"ent_jack_gmod_ezsignalnade",4}
 				},
