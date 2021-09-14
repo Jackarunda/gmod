@@ -1,7 +1,7 @@
 -- Jackarunda 2020
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
-ENT.PrintName="EZ Coolant Drum"
+ENT.PrintName="EZ Coolant Bottle"
 ENT.Category="JMod - EZ Resources"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
