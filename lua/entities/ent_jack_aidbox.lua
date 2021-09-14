@@ -104,46 +104,46 @@ if SERVER then
 
 		for key, item in pairs(self.Contents)do
 			if (key>1) then	
-			local ClassName, Num = item, 1
-			if type(item) ~="string" then 
-				ClassName = item[1]
-				Num = item[2]
-				
-			end
+				local ClassName, Num = item, 1
+				if type(item) ~="string" then 
+					ClassName = item[1]
+					Num = item[2]
+					
+				end
 
-			local StringParts = string.Explode(" ", ClassName)
-			for i = 1, Num do
-				local Ent = nil
-				if StringParts[1] and StringParts[1] == "FUNC" then
-					local FuncName = StringParts[2]
-					if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-						Ent = JMod.LuaConfig.BuildFuncs[FuncName](activator, Pos + VectorRand() * math.Rand(0, 30), VectorRand():Angle())
+				local StringParts = string.Explode(" ", ClassName)
+				for i = 1, Num do
+					local Ent = nil
+					if StringParts[1] and StringParts[1] == "FUNC" then
+						local FuncName = StringParts[2]
+						if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
+							Ent = JMod.LuaConfig.BuildFuncs[FuncName](activator, Pos + VectorRand() * math.Rand(0, 30), VectorRand():Angle())
+						else
+							activator:PrintMessage(HUD_PRINTTALK, "JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+						end
 					else
-						activator:PrintMessage(HUD_PRINTTALK, "JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+						local Yay = ents.Create(ClassName)
+						Yay:SetPos(Pos + VectorRand() * math.Rand(0, 30))
+						Yay:SetAngles(VectorRand():Angle())
+						Yay:Spawn()
+						Yay:Activate()
+						Ent = Yay
 					end
-				else
-					local Yay = ents.Create(ClassName)
-					Yay:SetPos(Pos + VectorRand() * math.Rand(0, 30))
-					Yay:SetAngles(VectorRand():Angle())
-					Yay:Spawn()
-					Yay:Activate()
-					Ent = Yay
-				end
-				if Ent then
-					JMod.Owner(Ent, activator)
-					-- this arrests overlap-ejection velocity so items don't thwack players
-					timer.Simple(.025, function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
-					timer.Simple(.05,function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
-					timer.Simple(.1,function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
+					if Ent then
+						JMod.Owner(Ent, activator)
+						-- this arrests overlap-ejection velocity so items don't thwack players
+						timer.Simple(.025, function()
+							if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
+						end)
+						timer.Simple(.05,function()
+							if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
+						end)
+						timer.Simple(.1,function()
+							if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
+						end)
+					end
 				end
 			end
-		end
 		end
 		--JackaGenericUseEffect(activator)
 		if activator:IsPlayer() then
