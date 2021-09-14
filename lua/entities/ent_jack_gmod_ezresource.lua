@@ -16,7 +16,7 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20*self.ModelScale
+		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 20)*self.ModelScale
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
