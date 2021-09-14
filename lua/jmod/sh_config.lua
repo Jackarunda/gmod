@@ -199,7 +199,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"ent_jack_gmod_ezsentry", 1
 				},
 				["supply radio"]={
-					"Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
+					"An aid communicator for ordering packages and communicating with other radios.",
 					"ent_jack_gmod_ezaidradio", 1
 				},
 				["medkits"]={
@@ -235,7 +235,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"ent_jack_gmod_ezantimatter", 1
 				},
 				["fissile material"]={
-					"A box filled with fissile material used to craft nuclear devices..",
+					"A box filled with fissile material used to craft nuclear devices.",
 					"ent_jack_gmod_ezfissilematerial", 1
 				},
 				["dynamite"]={
