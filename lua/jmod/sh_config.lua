@@ -77,158 +77,208 @@ function JMod.InitGlobalConfig(forceNew)
 			ParachuteDragMult=1,
 			AvailablePackages={
 				["parts"]={
+					"5 boxes of 100 parts each used for crafting and repairs.",
 					{"ent_jack_gmod_ezparts",5}
 				},
 				["advanced parts"]={
+					"2 boxes of 20 advparts each used for crafting and upgrading.",
 					{"ent_jack_gmod_ezadvparts",2}
 				},
 				["advanced textiles"]={
+					"2 boxes of 20 advparts each used for crafting and upgrading.",
 					{"ent_jack_gmod_ezadvtextiles",2}
 				},
 				["batteries"]={
+					"4 battery cells used for crafting and recharging electronics.",
 					{"ent_jack_gmod_ezbattery",4}
 				},
 				["ammo"]={
+					"5 boxes of 300 rounds each for crafting and resupplying weapons and entities.",
 					{"ent_jack_gmod_ezammo",5}
 				},
 				["coolant"]={
+					"6 barrels of coolant for prevent sentries from overheating.",
 					{"ent_jack_gmod_ezcoolant",6}
 				},
 				["munitions"]={
+					"3 boxes of 300 munitions rounds used for crafting items and reloading weapons and HE grenade sentries.",
 					{"ent_jack_gmod_ezmunitions",3}
 				},
 				["explosives"]={
+					"3 boxes of 100 explosives each used for crafting explosives.",
 					{"ent_jack_gmod_ezexplosives",3}
 				},
 				["chemicals"]={
+					"3 boxes of 100 chemicals used for crafting items and reloading HAZMAT suits.",
 					{"ent_jack_gmod_ezchemicals",3}
 				},
 				["fuel"]={
+					"4 cans of 100 fuel used for crafting items.",
 					{"ent_jack_gmod_ezfuel",4}
 				},
 				["propellant"]={
+					"4 cans of 100 propellant used for crafting items.",
 					{"ent_jack_gmod_ezpropellant",4}
 				},
 				["gas"]={
+					"3 canisters of gas used for crafting items and powering the EZ Workbench",
 					{"ent_jack_gmod_ezgas",3}
 				},
 				["build kits"]={
+					"Two build kits for crafting, nailing, salvaging and packaging items. ",
 					{"ent_jack_gmod_ezbuildkit",2}
 				},
 				["rations"]={
+					 "5 boxes of nutrients to be eaten by players. Can overcharge health.",
 					{"ent_jack_gmod_eznutrients",5}
 				},
 				["medical supplies"]={
+					 "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
 					{"ent_jack_gmod_ezmedical supplies",2}
 				},
 				["resource crate"]={
+					"A box used for storing exclusively Jmod items. Holds up to 100 kg of Jmod items.",
 					"ent_jack_gmod_ezcrate"
 				},
 				["storage crate"]={
+					"A box used for exclusively storing EZ Resources.",
 					"ent_jack_gmod_ezcrate_uni"
 				},
 				["frag grenades"]={
+					"10 frag grenades used for explosions.",
 					{"ent_jack_gmod_ezfragnade",10}
 				},
 				["gas grenades"]={
+					"6 gas grenades that can suffocate their victims.",
 					{"ent_jack_gmod_ezgasnade",6}
 				},
 				["tear gas grenades"]={
+					"Tear gas used to disperse riots.",
 					{"ent_jack_gmod_ezcsnade",6}
 				},
 				["impact grenades"]={
+					"10 grenades that explode upon impact.",
 					{"ent_jack_gmod_ezimpactnade",10}
 				},
 				["incendiary grenades"]={
+					"6 grenades that produce fire upon explosion.",
 					{"ent_jack_gmod_ezfirenade",6}
 				},
 				["satchel charges"]={
+					"4 explosives with comical detonator plungers used for making things go boom.",
 					{"ent_jack_gmod_ezsatchelcharge",4}
 				},
 				["sticky bomb"]={
+					"6 grenades that stick to things on contact.",
 					{"ent_jack_gmod_ezstickynade",6}
 				},
 				["mini grenades"]={
+					"5 impact, proximity, remote, and timed grenades. These can be attached to larger explosives to override their primary functions.",
 					{"ent_jack_gmod_eznade_impact",5},
 					{"ent_jack_gmod_eznade_proximity",5},
 					{"ent_jack_gmod_eznade_remote",5},
 					{"ent_jack_gmod_eznade_timed",5}
+					
 				},
 				["timebombs"]={
+					"Timed explosives with configurable timers. Can be defused with parts and Build Kit.",
 					{"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
+					"An assortment of ammunition for keeping your men going during battle.",
 					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
-					"item_ammo_ar2_altfire","item_ammo_ar2_altfire","item_ammo_ar2_altfire",
+					{"item_ammo_ar2_altfire",3},
 					"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
-					"item_rpg_round","item_rpg_round","item_rpg_round",
+					{"item_rpg_round",3},
 					"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
-					"item_ammo_smg1_grenade","item_ammo_smg1_grenade","item_ammo_smg1_grenade",
-					"weapon_frag","weapon_frag","weapon_frag"
+					{"item_ammo_smg1_grenade",3},
+					{"weapon_frag",3}
 				},
 				["sentry"]={
-					"ent_jack_gmod_ezsentry"
+					"Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
+					"ent_jack_gmod_ezsentry", 1
 				},
 				["supply radio"]={
-					"ent_jack_gmod_ezaidradio"
+					"Order more supplies for free. Just place it outside and watch for the package.",
+					"ent_jack_gmod_ezaidradio", 1
 				},
 				["medkits"]={
+					"3 medical kits that use medical supplies to heal players.",
 					{"ent_jack_gmod_ezmedkit",3}
 				},
 				["landmines"]={
+					"10 landmines that trigger when an enemy steps on them.",
 					{"ent_jack_gmod_ezlandmine",10}
 				},
 				["mini bounding mines"]={
+					"8 landmines that can only be planted in soft surfaces.",
 					{"ent_jack_gmod_ezboundingmine",8}
 				},
 				["fumigators"]={
+					"2 fumigators that emit poison gas.",
 					{"ent_jack_gmod_ezfumigator",2}
 				},
 				["fougasse mines"]={
+					"2 fumigators that emit poison gas.",
 					{"ent_jack_gmod_ezfougasse",4}
 				},
 				["detpacks"]={
+					"8 detpacks used for breaching doors and general explosive damage.",
 					{"ent_jack_gmod_ezdetpack",8}
 				},
 				["slams"]={
+					"5 SLAMs that can be planted on walls.",
 					{"ent_jack_gmod_ezslam",5}
 				},
 				["antimatter"]={
-					"ent_jack_gmod_ezantimatter"
+					"An experimental canister used for crafting experimental items.",
+					"ent_jack_gmod_ezantimatter", 1
 				},
 				["fissile material"]={
-					"ent_jack_gmod_ezFISSILEMATERIAL]"
+					"A box filled with fissile material used to craft nuclear devices.",
+					"ent_jack_gmod_ezfissilematerial", 1
 				},
 				["dynamite"]={
+					"12 dynamite sticks for comical explosions.",
 					{"ent_jack_gmod_ezdynamite",12}
 				},
 				["flashbangs"]={
+					"8 flashbangs that stun targets.",
 					{"ent_jack_gmod_ezflashbang",8}
 				},
 				["powder kegs"]={
+					"4 powder kegs for funny explosions.",
 					{"ent_jack_gmod_ezpowderkeg",4}
 				},
-				["smoke grenades"]={
+				["smoke grenades"]={	
+					"4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
 					{"ent_jack_gmod_ezsmokenade",4},
 					{"ent_jack_gmod_ezsignalnade",4}
 				},
 				["stick grenades"]={
+					"4 German stick grenades and one big bundle of sticks to make a fabulous explosion.",
 					{"ent_jack_gmod_ezsticknade",4},
 					"ent_jack_gmod_ezsticknadebundle"
+
 				},
 				["mini claymores"]={
+					"4 small AP mines.",
 					{"ent_jack_gmod_ezminimore",4}
 				},
 				["tnt"]={
-					{"ent_jack_gmod_eztnt",3}
+					"WW2-era explosives with fuse.",
+					{"ent_jack_gmod_eztnt", 3}
 				},
 				["thermal goggles"]={
+					"2 thermal goggles that highlight heat-sources for the user. Consumes battery.",
 					{"ent_jack_gmod_ezarmor_thermals",2}
 				},
 				["night vision goggles"]={
+					"4 night-vision goggles to help players see in the dark. Consumes battery.",
 					{"ent_jack_gmod_ezarmor_nvgs",4}
 				},
 				["headsets"]={
+					"8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
 					{"ent_jack_gmod_ezarmor_headset",8}
 				}
 			},

@@ -114,7 +114,7 @@ if(SERVER)then
 		local Gas,Elec=self:GetGas(),self:GetElectricity()
 		if((Gas<=0)or(Elec<=0))then return end
 		local ItemInfo=JMod.Config.Recipes[itemName]
-		local ItemClass,BuildReqs=ItemInfo[1],ItemInfo[2]
+		local ItemClass,BuildReqs, ItemCategory, ItemDesc=ItemInfo[1],ItemInfo[2], ItemInfo[3], ItemInfo[4]
 		
 		if(JMod.HaveResourcesToPerformTask(nil,nil,BuildReqs,self))then
 		

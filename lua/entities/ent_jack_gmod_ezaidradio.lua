@@ -79,6 +79,7 @@ if(SERVER)then
 						net.WriteUInt(table.Count(JMod.Config.RadioSpecs.AvailablePackages), 8)
 						for k, v in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
 							net.WriteString(k)
+							net.WriteString(v[1])
 						end
 						net.WriteEntity(self)
 						net.WriteString(JMod.EZradioStatus(self,self:GetStationID(),activator,false))
