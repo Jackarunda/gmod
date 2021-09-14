@@ -29,7 +29,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 			end
 			if(ply.EZarmorModels[id])then
 				local Mdl=ply.EZarmorModels[id]
-				local MdlName=Mdl:GetModel()
+				local MdlName=string.lower(Mdl:GetModel())
 				if(MdlName==ArmorInfo.mdl and ArmorInfo.bon)then
 					-- render it
 					local Index=ply:LookupBone(ArmorInfo.bon)
