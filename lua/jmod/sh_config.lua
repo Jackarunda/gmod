@@ -75,6 +75,7 @@ function JMod.InitGlobalConfig(forceNew)
 		RadioSpecs={
 			DeliveryTimeMult=1,
 			ParachuteDragMult=1,
+			StartingOutpostCount=1,
 			AvailablePackages={
 				["parts"]={
 					"5 boxes of 100 parts each used for crafting and repairs.",

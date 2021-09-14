@@ -311,9 +311,9 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 			surface.DrawRect(0,0,w,h)
 			local msg=k..": "
 			local desc = ""
-			if (typ == "workbench") then
+			if typ == "workbench" then
 			desc = itemInfo[4] 
-			elseif (typ=="buildkit") then 
+			elseif typ == "buildkit" then 
 			desc = itemInfo[6]
 			end
 			if(tonumber(k))then msg=itemInfo[1]..": " end
