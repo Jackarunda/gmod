@@ -141,10 +141,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"A box used for storing exclusively Jmod items. Holds up to 100 kg of Jmod items.",
 					"ent_jack_gmod_ezcrate"
 				},
-				["storage crate"]={
-					"A box used for exclusively storing EZ Resources.",
-					"ent_jack_gmod_ezcrate_uni"
-				},
+				
 				["frag grenades"]={
 					"10 frag grenades used for explosions.",
 					{"ent_jack_gmod_ezfragnade",10}
@@ -197,11 +194,15 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["sentry"]={
 					"Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
-					"ent_jack_gmod_ezsentry", 1
+					"ent_jack_gmod_ezsentry"
 				},
 				["supply radio"]={
 					"Order more supplies for free. Just place it outside and watch for the package.",
-					"ent_jack_gmod_ezaidradio", 1
+					"ent_jack_gmod_ezaidradio"
+				},
+				["storage crate"]={
+					"A box used for exclusively storing EZ Resources.",
+					"ent_jack_gmod_ezcrate_uni"
 				},
 				["medkits"]={
 					"3 medical kits that use medical supplies to heal players.",
@@ -233,11 +234,11 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["antimatter"]={
 					"An experimental canister used for crafting experimental items.",
-					"ent_jack_gmod_ezantimatter", 1
+					"ent_jack_gmod_ezantimatter"
 				},
 				["fissile material"]={
 					"A box filled with fissile material used to craft nuclear devices.",
-					"ent_jack_gmod_ezfissilematerial", 1
+					"ent_jack_gmod_ezfissilematerial"
 				},
 				["dynamite"]={
 					"12 dynamite sticks for comical explosions.",
