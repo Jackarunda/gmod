@@ -103,12 +103,11 @@ if SERVER then
 		self.Contents = self.Contents or {{"item_ammo_pistol",40}}
 
 		for key, item in pairs(self.Contents)do
-			if (key>1) then	
+			if (key>1) then
 				local ClassName, Num = item, 1
-				if type(item) ~="string" then 
-					ClassName = item[2]
-					Num = item[3]
-					
+				if type(item) ~= "string" then 
+					ClassName = item[1]
+					Num = item[2]
 				end
 
 				local StringParts = string.Explode(" ", ClassName)
