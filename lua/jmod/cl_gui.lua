@@ -306,7 +306,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		local reqs=itemInfo[2]
 		if(type(reqs)=="string")then reqs=itemInfo[3] end
 		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
-		local desc = itemInfo[5] or ""
+		local desc = ""
 			if typ == "workbench" then
 				desc = itemInfo[4] 
 			elseif typ == "buildkit" then 
