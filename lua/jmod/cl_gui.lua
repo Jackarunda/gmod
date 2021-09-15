@@ -311,7 +311,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 			desc = itemInfo[4] 
 			elseif typ == "buildkit" then 
 			desc = itemInfo[6]
-		Butt:SetToolTip(desc)
+		Butt:SetToolTip(desc) --pooooshhh
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
