@@ -180,6 +180,21 @@ function JMod.EZradioEstablish(transceiver,id)
 	JMod.EZ_RADIO_STATIONS[id]=Station
 end
 
+function JMod.Add_Radio_Outpost(ply, teamIndex, amt)
+	JMod_EZradioEstablish(transceiver:GetOwner():Team(),id)
+	local startcount, captured, total = JMod.Config.StartingOutpostCount,0,0
+	captured = amt + startcount
+	total = captured + amt + startcount 
+	if total < startcount then return "Cannot go below starting outpost count!" end
+	print("Team "..teamIndex.."has gained "..amt.." outpost!")
+end
+
+concommand.Add("jmod_debug_addoutpost", function( ply, cmd, amt )
+	if !ply:IsUserGroup("superadmin") then return end
+    JMod_Add_Radio_Outpost(ply:Team(), amt)
+    print("Added "..amt.." outpost(s) to Team #"..ply:Team()..".")
+end)
+
 local function GetArticle(word)
 	local FirstLetter=string.sub(word,1,1)
 	if(table.HasValue({"a","e","i","o","u"},FirstLetter))then
