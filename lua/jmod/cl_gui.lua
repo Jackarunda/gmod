@@ -308,9 +308,10 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
 		local desc = itemInfo[5] or ""
 			if typ == "workbench" then
-			desc = itemInfo[4] 
+				desc = itemInfo[4] 
 			elseif typ == "buildkit" then 
-			desc = itemInfo[6]
+				desc = itemInfo[6]
+			end
 		Butt:SetToolTip(desc) --pooooshhh
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
