@@ -306,22 +306,23 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		local reqs=itemInfo[2]
 		if(type(reqs)=="string")then reqs=itemInfo[3] end
 		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
-		function Butt:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-			local msg=k..": " 
-			local desc = itemInfo[5] or ""
+		local desc = itemInfo[5] or ""
 			if typ == "workbench" then
 			desc = itemInfo[4] 
 			elseif typ == "buildkit" then 
 			desc = itemInfo[6]
+		Butt:SetToolTip(desc)
+		function Butt:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+			local msg=k..": " 			
 			end
 			if(tonumber(k))then msg=itemInfo[1]..": " end
 			for nam,amt in pairs(reqs)do
 				msg=msg..amt.." "..nam..", "
 			end
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			Butt:SetToolTip(desc)
+			
 		end
 		function Butt:DoClick()
 			if(typ=="workbench")then
@@ -771,14 +772,13 @@ net.Receive("JMod_EZradio",function()
 		Butt:Dock(TOP)
 		Butt:DockMargin( 0, 0, 0, 5 )
 		Butt:SetText("")
-
+		Butt:SetToolTip(desc)
+		local desc=k[2] or "N/A"
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=k[1]
-			local desc=k[2] or "N/A"
+			local msg=k[1]		
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			Butt:SetToolTip(desc)
 		end
 		function Butt:DoClick()
 			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
