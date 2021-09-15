@@ -290,7 +290,6 @@ net.Receive("JMod_SignalNade",function()
 		Frame:Close()
 	end
 end)
-
 local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 	parent:Clear()
 	local W,H=parent:GetWide(),parent:GetTall()
@@ -307,15 +306,23 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		local reqs=itemInfo[2]
 		if(type(reqs)=="string")then reqs=itemInfo[3] end
 		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
+		local desc = itemInfo[5] or ""
+			if typ == "workbench" then
+				desc = itemInfo[4] 
+			elseif typ == "buildkit" then 
+				desc = itemInfo[6]
+			end
+		Butt:SetToolTip(desc) --pooooshhh
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=k..": "
+			local msg=k..": " 			
 			if(tonumber(k))then msg=itemInfo[1]..": " end
 			for nam,amt in pairs(reqs)do
 				msg=msg..amt.." "..nam..", "
 			end
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			
 		end
 		function Butt:DoClick()
 			if(typ=="workbench")then
@@ -333,7 +340,6 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		Y=Y+30
 	end
 end
-
 net.Receive("JMod_EZbuildKit",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
@@ -406,6 +412,7 @@ net.Receive("JMod_EZbuildKit",function()
 		draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 		surface.SetDrawColor(50,50,50,100)
 		surface.DrawRect(0,0,w,h)
+		
 	end
 	local resLayout = vgui.Create("DListLayout", resFrame)
 	resLayout:SetPos(5, 25)
@@ -418,13 +425,10 @@ net.Receive("JMod_EZbuildKit",function()
 		resLayout:Add(label)
 	end
 end)
-
 net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()
 	local Buildables=net.ReadTable()
-	
 	local resTbl = JMod.CountResourcesInRange(nil,nil,Bench)
-	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
 	motherFrame:SetVisible(true)
@@ -457,6 +461,7 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
+	
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -466,7 +471,7 @@ net.Receive("JMod_EZworkbench",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-	for k,cat in pairs(Categories)do
+	for k, cat in pairs (Categories) do
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
 		TabBtn:SetSize(70,20)
@@ -474,7 +479,7 @@ net.Receive("JMod_EZworkbench",function()
 		TabBtn.Category=k
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
-			surface.DrawRect(0,0,x,y)
+			surface.DrawRect(0,0,x,y)			
 			draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
@@ -483,6 +488,7 @@ net.Receive("JMod_EZworkbench",function()
 		end
 		X=X+75
 	end
+	
 	-- Resource display
 	local resFrame = vgui.Create("DPanel", motherFrame)
 	resFrame:SetSize(95, 270)
@@ -540,7 +546,6 @@ net.Receive("JMod_UniCrate",function()
 		end
 	end
 end)
-
 net.Receive("JMod_EZtimeBomb",function()
 	local ent=net.ReadEntity()
 	local frame=vgui.Create("DFrame")
@@ -579,7 +584,6 @@ net.Receive("JMod_EZtimeBomb",function()
 		frame:Close()
 	end
 end)
-
 local function GetAvailPts(specs)
 	local Pts=0
 	for k,v in pairs(specs)do
@@ -587,7 +591,6 @@ local function GetAvailPts(specs)
 	end
 	return Pts
 end
-
 net.Receive("JMod_ModifyMachine",function()
 	local Ent=net.ReadEntity()
 	local Specs=net.ReadTable()
@@ -685,10 +688,8 @@ net.Receive("JMod_ModifyMachine",function()
 		end
 	end
 end)
-
 net.Receive("JMod_EZradio",function()
-	local isMessage = net.ReadBool()
-	
+	local isMessage = net.ReadBool()	
 	if isMessage then
 		local parrot = net.ReadBool()
 		local msg = net.ReadString()
@@ -767,18 +768,17 @@ net.Receive("JMod_EZradio",function()
 	---
 	for _, k in pairs(Packages) do
 		local Butt = Scroll:Add("DButton")
+		local desc=k[2] or "N/A"
 		Butt:SetSize(W-35,25)
 		Butt:Dock(TOP)
 		Butt:DockMargin( 0, 0, 0, 5 )
 		Butt:SetText("")
-
+		Butt:SetToolTip(desc)	
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=k[1]
-			local desc=k[2]
+			local msg=k[1]		
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			Butt:SetToolTip(desc)
 		end
 		function Butt:DoClick()
 			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")

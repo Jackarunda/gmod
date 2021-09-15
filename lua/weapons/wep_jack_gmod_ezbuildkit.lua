@@ -78,7 +78,7 @@ function SWEP:Initialize()
 			{"(action) Package Object","package",{parts=25},1}
 		}
 		for name,info in pairs(JMod.Config.Blueprints)do
-			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4]})
+			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4],info[5],info[6]})
 		end
 	end
 end
