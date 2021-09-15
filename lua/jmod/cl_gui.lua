@@ -768,12 +768,12 @@ net.Receive("JMod_EZradio",function()
 	---
 	for _, k in pairs(Packages) do
 		local Butt = Scroll:Add("DButton")
+		local desc=k[2] or "N/A"
 		Butt:SetSize(W-35,25)
 		Butt:Dock(TOP)
 		Butt:DockMargin( 0, 0, 0, 5 )
 		Butt:SetText("")
-		Butt:SetToolTip(desc)
-		local desc=k[2] or "N/A"
+		Butt:SetToolTip(desc)	
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
