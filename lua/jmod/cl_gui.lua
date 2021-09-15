@@ -317,7 +317,6 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
 			local msg=k..": " 			
-			end
 			if(tonumber(k))then msg=itemInfo[1]..": " end
 			for nam,amt in pairs(reqs)do
 				msg=msg..amt.." "..nam..", "
