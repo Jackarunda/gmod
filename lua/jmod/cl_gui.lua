@@ -310,7 +310,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
 			local msg=k..": "
-			local desc = ""
+			local desc = itemInfo[5] or ""
 			if typ == "workbench" then
 			desc = itemInfo[4] 
 			elseif typ == "buildkit" then 
