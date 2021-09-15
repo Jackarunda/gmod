@@ -309,7 +309,7 @@ local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
 		function Butt:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=k..": "
+			local msg=k..": " 
 			local desc = itemInfo[5] or ""
 			if typ == "workbench" then
 			desc = itemInfo[4] 
