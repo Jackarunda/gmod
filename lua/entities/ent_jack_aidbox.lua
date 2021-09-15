@@ -106,8 +106,8 @@ if SERVER then
 			if (key>1) then	
 				local ClassName, Num = item, 1
 				if type(item) ~="string" then 
-					ClassName = item[1]
-					Num = item[2]
+					ClassName = item[2]
+					Num = item[3]
 					
 				end
 
