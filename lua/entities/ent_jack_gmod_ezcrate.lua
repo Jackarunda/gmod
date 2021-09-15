@@ -12,23 +12,18 @@ ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.DamageThreshold=120
 ---
 ENT.ChildEntity=""
-ENT.ChildEntityResourceAmount=0
 ENT.MainTitleWord="RESOURCES"
-ENT.ResourceUnit="Units"
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"Resource")
 	self:NetworkVar("String",0,"ResourceType")
 end
-function ENT:ApplySupplyType(typ) 
-	if not(self.SupplyTypes[typ])then return end
+function ENT:ApplySupplyType(typ)
 	self:SetResourceType(typ)
 	self.EZsupplies=typ
 	self.MaxResource=100*20 -- standard size
-	self.ChildEntity=self.SupplyTypes[typ].ChildEntity
-	self.ChildEntityResourceAmount=self.SupplyTypes[typ].ChildEntityResourceAmount
-	self.MainTitleWord=self.SupplyTypes[typ].MainTitleWord
-	self.ResourceUnit=self.SupplyTypes[typ].ResourceUnit
+	self.ChildEntity=JMod.EZ_RESOURCE_ENTITIES[typ]
+	self.MainTitleWord=string.upper(typ)
 end
 ---
 if(SERVER)then
@@ -57,7 +52,7 @@ if(SERVER)then
 		self:SetResource(0)
 		self:ApplySupplyType("generic")
 		self.EZconsumes={}
-		for k,v in pairs(self.SupplyTypes) do table.insert(self.EZconsumes,k) end
+		for k,v in pairs(JMod.EZ_RESOURCE_TYPES) do table.insert(self.EZconsumes,v) end
 		self.NextLoad=0
 		---
 		timer.Simple(.01,function() self:CalcWeight() end)
@@ -82,7 +77,7 @@ if(SERVER)then
 			sound.Play("Wood_Crate.Break",Pos)
 			sound.Play("Wood_Box.Break",Pos)
 			if(self.ChildEntity != "" and self:GetResource()>0)then 
-				for i=1,math.floor(self:GetResource()/self.ChildEntityResourceAmount) do
+				for i=1,math.floor(self:GetResource()/100) do
 					local Box=ents.Create(self.ChildEntity)
 					Box:SetPos(Pos+self:GetUp()*20)
 					Box:SetAngles(self:GetAngles())
@@ -97,7 +92,7 @@ if(SERVER)then
 		JMod.Hint(activator, "crate", self)
 		local Resource=self:GetResource()
 		if(Resource<=0)then return end
-		local Box,Given=ents.Create(self.ChildEntity),math.min(Resource,self.ChildEntityResourceAmount)
+		local Box,Given=ents.Create(self.ChildEntity),100
 		Box:SetPos(self:GetPos()+self:GetUp()*5)
 		Box:SetAngles(self:GetAngles())
 		Box:Spawn()
@@ -121,7 +116,7 @@ if(SERVER)then
 		if(self.NextLoad>Time)then return 0 end
 		if(amt<=0)then return 0 end
 		-- If unloaded, we set our type to the item type
-		if(self:GetResource()<=0 and self:GetResourceType()=="generic" and self.SupplyTypes[typ])then 
+		if(self:GetResource()<=0 and self:GetResourceType()=="generic")then 
 			self:ApplySupplyType(typ)
 		end
 		-- Consider the loaded type
@@ -143,7 +138,7 @@ elseif(CLIENT)then
 		local Ang,Pos=self:GetAngles(),self:GetPos()
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(Pos))
 		local DetailDraw=Closeness<45000 -- cutoff point is 500 units when the fov is 90 degrees
-		local i=self:GetResourceType()
+		local i=string.upper(self:GetResourceType())
 		self:DrawModel()
 		if(DetailDraw)then
 			local Up,Right,Forward,Resource=Ang:Up(),Ang:Right(),Ang:Forward(),tostring(self:GetResource())
@@ -151,15 +146,15 @@ elseif(CLIENT)then
 			Ang:RotateAroundAxis(Ang:Up(),-90)
 			cam.Start3D2D(Pos+Up*10-Forward*20+Right,Ang,.15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(i,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Resource.." UNITS","JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(),180)
 			cam.Start3D2D(Pos+Up*10+Forward*20-Right,Ang,.15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES","JMod-Stencil-S",0,0,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(self.SupplyTypes[i].MainTitleWord,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-			draw.SimpleText(Resource.." "..self.SupplyTypes[i].ResourceUnit,"JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(i,"JMod-Stencil",0,15,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+			draw.SimpleText(Resource.." UNITS","JMod-Stencil-S",0,70,TxtCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
 	end
