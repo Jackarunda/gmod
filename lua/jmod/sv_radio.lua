@@ -162,20 +162,41 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 	end
 end)
 
-function JMod.EZradioEstablish(transceiver,id)
+function JMod.EZradioEstablish(transceiver, teamIndex)
+		local alliedstations = {}
+		local chosenstation = nil
+		for k,v in pairs(JMod.EZ_RADIO_STATIONS) do
+			if v.teamID == teamIndex then 
+				table.insert(alliedstations,k)
+			end
+		end
+		for k,v in pairs(alliedstations) do
+			local station = JMod.EZ_RADIO_STATIONS[v]
+			if station.state == JMod.EZ_STATION_STATE_READY then
+				chosenstation = v
+				break 
+			end
+		end
+		if not chosenstation then 
+			chosenstation = table.Random(alliedstations)
+		end
+		transceiver
+end
+
+function JMod.CreateRadioStation(teamID)
 	local Station=JMod.EZ_RADIO_STATIONS[id] or {
 		state=JMod.EZ_STATION_STATE_READY,
 		nextDeliveryTime=0,
 		nextReadyTime=0,
 		deliveryLocation=nil,
 		deliveryType=nil,
-		transceivers={},
+		teamID=teamID,
 		nextNotifyTime=0,
 		notified=false,
 		restrictedPackageStock={},
 		restrictedPackageDelivering=nil,
 		restrictedPackageDeliveryTime=0
-	}
+	}	
 	table.insert(Station.transceivers,transceiver)
 	JMod.EZ_RADIO_STATIONS[id]=Station
 end
