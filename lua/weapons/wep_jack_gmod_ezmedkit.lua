@@ -313,7 +313,7 @@ end
 
 function SWEP:OnRemove()
 	self:SCKHolster()
-	if( IsValid( self.Owner ) && CLIENT && self.Owner:IsPlayer() )then
+	if( IsValid( self.Owner ) and CLIENT and self.Owner:IsPlayer() )then
 		local vm=self.Owner:GetViewModel()
 		if( IsValid( vm ) )then vm:SetMaterial( "" ) end
 	end
@@ -339,7 +339,7 @@ function SWEP:Think()
 	local Time=CurTime()
 	local vm=self.Owner:GetViewModel()
 	local idletime=self.NextIdle
-	if( idletime>0 && Time>idletime )then
+	if( idletime>0 and Time>idletime )then
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_idle_0" .. math.random( 1, 2 ) ) )
 		self:UpdateNextIdle()
 	end

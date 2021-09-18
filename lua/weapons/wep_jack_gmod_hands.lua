@@ -190,7 +190,7 @@ function SWEP:ApplyForce()
 end
 
 function SWEP:OnRemove()
-	if(IsValid(self.Owner) && CLIENT && self.Owner:IsPlayer())then
+	if(IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer())then
 		local vm=self.Owner:GetViewModel()
 		if(IsValid(vm))then vm:SetMaterial("") end
 	end
