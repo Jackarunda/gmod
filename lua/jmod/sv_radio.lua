@@ -189,7 +189,7 @@ function JMod.EZradioEstablish(transceiver,teamID)
 	if(#AlliedStations<=0)then
 		table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
 		table.insert(AlliedStations,#JMod.EZ_RADIO_STATIONS)
-	end
+	end	
 	local ChosenStation = nil
 	for k,id in pairs(AlliedStations)do
 		local Taken=false
@@ -214,8 +214,22 @@ function JMod.EZradioEstablish(transceiver,teamID)
 	transceiver:SetOutpostID(ChosenStation)
 end
 
-function JMod.AddNewRadioStation(teamID) -- this is on the global table for third-party use
+function JMod.AddNewRadioOutpost(teamID) -- this is on the global table for third-party use
 	table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
+end
+
+function JMod.RemoveRadioOutPost(teamID) -- this is also on the global table for third-party use
+    for k, v in pairs(JMod.EZ_RADIO_STATIONS) do
+        if v.teamID == teamID then
+            table.remove(JMod.EZ_RADIO_STATIONS, k)
+            break
+        end
+    end
+
+    for _, radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
+        radio:TurnOff()
+        break
+    end
 end
 
 local function GetArticle(word)
