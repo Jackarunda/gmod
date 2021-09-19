@@ -17,11 +17,11 @@ ENT.EZupgradable=false -- no upgrades for the radio right now... maybe eventuall
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ----
-local STATE_BROKEN,STATE_OFF,STATE_CONNECTING,STATE_READY=-1,0,1,2
+local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Float",0,"Electricity")
-	self:NetworkVar("String",0,"StationID")
+	self:NetworkVar("Int",1,"OutpostID")
 end
 if(SERVER)then
 	function ENT:Initialize()
@@ -51,7 +51,7 @@ if(SERVER)then
 		self.NextWhine=0
 		self.NextRealThink=0
 		self.NextUseTime=0
-		self:SetStationID("")
+		self:SetOutpostID(0)
 		self.HaveCheckedForSky=false
 		self.ConnectionAttempts=0
 		self.ConnectionlessThinks=0
@@ -72,7 +72,7 @@ if(SERVER)then
 			if(State==STATE_BROKEN)then JMod.Hint(self.Owner, "destroyed", self) return end
 			local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 			if State > 0 then
-				if Alt and State == STATE_READY then
+				if Alt and State == JMod.EZ_STATION_STATE_READY then
 					net.Start("JMod_EZradio")
 						net.WriteBool(false)
 						--net.WriteTable()
@@ -82,7 +82,7 @@ if(SERVER)then
 							net.WriteString(v[1])
 						end
 						net.WriteEntity(self)
-						net.WriteString(JMod.EZradioStatus(self,self:GetStationID(),activator,false))
+						net.WriteString(JMod.EZradioStatus(self,self:GetOutpostID(),activator,false))
 					net.Send(activator)
 				else
 					self:TurnOff()
@@ -153,22 +153,20 @@ if(SERVER)then
 		self.ConnectionAttempts=0
 	end
 	function ENT:Connect(ply)
-		-- station key is important because it defines who has access to what and provides rate-limiting on requests
-		local StationKey=math.random(1,999999)
-		if(engine.ActiveGamemode()=="sandbox" and ply:Team() == TEAM_UNASSIGNED)then
-			local ID=ply:AccountID()
-			if(ID)then StationKey=ID end
+		if not(ply)then return end
+		local Team=0
+		if (engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
+			Team=ply:AccountID()
 		else
-			local Teem=ply:Team()
-			if(Teem)then StationKey=Teem end
+			Team=ply:Team()
 		end
-		StationKey="J.I. Aid Outpost #"..tostring(StationKey)
-		self:SetStationID(StationKey)
-		JMod.EZradioEstablish(self,StationKey)
-		self:SetState(STATE_READY)
+		JMod.EZradioEstablish(self,tostring(Team)) -- we store team indices as strings because they might be huge (if it's a player's acct id)
+		local OutpostID=self:GetOutpostID()
+		local Station=JMod.EZ_RADIO_STATIONS[OutpostID]
+		self:SetState(Station.state)
 		timer.Simple(1,function()
 			if(IsValid(self))then
-				self:Speak("Comm line established with "..StationKey..". This unit's ID is "..tostring(self:EntIndex()))
+				self:Speak("Comm line established with J.I. Radio Outpost "..OutpostID)
 			end
 		end)
 	end
@@ -238,7 +236,7 @@ if(SERVER)then
 		if((self.Owner)and(ply==self.Owner))then return true end
 		local Allies=(self.Owner and self.Owner.JModFriends)or {}
 		if(table.HasValue(Allies,ply))then return true end
-		if !(engine.ActiveGamemode() == "sandbox" && ply:Team() == TEAM_UNASSIGNED) then
+		if !(engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
 			local OurTeam=nil
 			if(IsValid(self.Owner))then OurTeam=self.Owner:Team() end
 			return (OurTeam and ply:Team()==OurTeam) or false
@@ -282,10 +280,10 @@ if(SERVER)then
 					return true
 				end
 			elseif(Name=="status")then
-				self:Speak(JMod.EZradioStatus(self,self:GetStationID(),ply,BFFreq),ParrotPhrase)
+				self:Speak(JMod.EZradioStatus(self,self:GetOutpostID(),ply,BFFreq),ParrotPhrase)
 				return true
 			elseif(JMod.Config.RadioSpecs.AvailablePackages[Name])then
-				self:Speak(JMod.EZradioRequest(self,self:GetStationID(),ply,Name,BFFreq),ParrotPhrase)
+				self:Speak(JMod.EZradioRequest(self,self:GetOutpostID(),ply,Name,BFFreq),ParrotPhrase)
 				return true
 			end
 		end
@@ -305,7 +303,12 @@ elseif(CLIENT)then
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
 	end
-	local GlowSprite,StateMsgs=Material("sprites/mat_jack_basicglow"),{[STATE_CONNECTING]="Connecting...",[STATE_READY]="Ready"}
+	local GlowSprite,StateMsgs=Material("sprites/mat_jack_basicglow"),{
+		[STATE_CONNECTING]="Connecting...",
+		[JMod.EZ_STATION_STATE_READY]="Ready",
+		[JMod.EZ_STATION_STATE_DELIVERING]="Delivering",
+		[JMod.EZ_STATION_STATE_BUSY]="Busy"
+	}
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -353,13 +356,13 @@ elseif(CLIENT)then
 				cam.Start3D2D(SelfPos+Up*38-Forward*5,DisplayAng,.075)
 				if(State>1)then
 					draw.SimpleTextOutlined("Connected to:","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
-					draw.SimpleTextOutlined(self:GetStationID(),"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("J.I. Radio Outpost "..self:GetOutpostID(),"JMod-Display",0,40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				end
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("Power: "..math.Round(ElecFrac*100).."%","JMod-Display",0,70,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined(StateMsgs[State],"JMod-Display",0,100,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
-				if(State==STATE_READY)then
+				if(State==JMod.EZ_STATION_STATE_READY)then
 					draw.SimpleTextOutlined('say "supply radio: help"',"JMod-Display-S",0,140,Color(255,255,255,Opacity/2),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,1,Color(0,0,0,Opacity/2))
 				end
 				cam.End3D2D()
