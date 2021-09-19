@@ -216,6 +216,11 @@ end
 
 function JMod.AddNewRadioOutpost(teamID) -- this is on the global table for third-party use
 	table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
+	for k,ply in pairs(player.GetAll())do
+		if((tostring(ply:Team())==teamID)or(tostring(ply:AccountID()==teamID)))then
+			ply:PrintMessage(HUD_PRINTTALK,"Your team has gained a radio outpost.")
+		end
+	end
 end
 
 function JMod.RemoveRadioOutPost(teamID) -- this is also on the global table for third-party use
@@ -225,11 +230,14 @@ function JMod.RemoveRadioOutPost(teamID) -- this is also on the global table for
             break
         end
     end
-
     for _, radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
         radio:TurnOff()
-        break
     end
+	for k,ply in pairs(player.GetAll())do
+		if((tostring(ply:Team())==teamID)or(tostring(ply:AccountID()==teamID)))then
+			ply:PrintMessage(HUD_PRINTTALK,"Your team has lost a radio outpost.")
+		end
+	end
 end
 
 function JMod.Add_Radio_Outpost(ply, teamIndex, amt)

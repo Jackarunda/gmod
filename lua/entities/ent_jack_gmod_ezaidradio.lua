@@ -72,7 +72,7 @@ if(SERVER)then
 			if(State==STATE_BROKEN)then JMod.Hint(self.Owner, "destroyed", self) return end
 			local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 			if State > 0 then
-				if Alt and State == STATE_READY then
+				if Alt and State == JMod.EZ_STATION_STATE_READY then
 					net.Start("JMod_EZradio")
 						net.WriteBool(false)
 						--net.WriteTable()
@@ -362,7 +362,7 @@ elseif(CLIENT)then
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("Power: "..math.Round(ElecFrac*100).."%","JMod-Display",0,70,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined(StateMsgs[State],"JMod-Display",0,100,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,2,Color(0,0,0,Opacity))
-				if(State==STATE_READY)then
+				if(State==JMod.EZ_STATION_STATE_READY)then
 					draw.SimpleTextOutlined('say "supply radio: help"',"JMod-Display-S",0,140,Color(255,255,255,Opacity/2),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,1,Color(0,0,0,Opacity/2))
 				end
 				cam.End3D2D()
