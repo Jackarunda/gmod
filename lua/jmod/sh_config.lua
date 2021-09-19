@@ -86,7 +86,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezadvparts",2}
 				},
 				["advanced textiles"]={
-					"2 boxes of 20 advparts each used for crafting and upgrading.",
+					"2 boxes of 100 advtextiles each used for crafting and upgrading.",
 					{"ent_jack_gmod_ezadvtextiles",2}
 				},
 				["batteries"]={

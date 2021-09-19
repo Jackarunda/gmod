@@ -109,7 +109,20 @@ local BasicArmorProtectionProfile = {
 	[DMG_PLASMA] = .65,
 	[DMG_ACID] = .55
 }
-
+local PoorArmorProtectionProfile = {
+	[DMG_BUCKSHOT] = .6,
+	[DMG_CLUB] = .6,
+	[DMG_SLASH] = .6,
+	[DMG_BULLET] = .2,
+	[DMG_BLAST] = .2,
+	[DMG_SNIPER] = .1,
+	[DMG_AIRBOAT] = .2,
+	[DMG_CRUSH] = .3,
+	[DMG_VEHICLE] = .2,
+	[DMG_BURN] = .2,
+	[DMG_PLASMA] = .1,
+	[DMG_ACID] = .1
+}
 local NonArmorProtectionProfile = {
 	[DMG_BUCKSHOT] = .05,
 	[DMG_BLAST] = .05,
@@ -125,6 +138,7 @@ local NonArmorProtectionProfile = {
 	[DMG_ACID] = .05
 }
 
+-- keep in mind that all armor model names must be all lower-case
 JMod.ArmorTable = {
 	["GasMask"] = {
 		PrintName = "Gas Mask",
@@ -461,6 +475,77 @@ JMod.ArmorTable = {
 			},
 			mskmat = ""
 		}
+	},
+	["Metal Bucket"] = {
+		PrintName = "BUCKET",
+		mdl = "models/props_junk/metalbucket01a.mdl", -- hl2
+		slots = {
+			head = 1,
+			eyes = .75
+		},
+		def = PoorArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(.75, .75, .75),
+		pos = Vector(1, 5, 0),
+		ang = Angle(90, 10, 0),
+		wgt = 10,
+		dur = 100,
+		mskmat = "mats_jack_gmod_sprites/three-quarter-from-top-blocked.png",
+		ent = "ent_jack_gmod_ezarmor_metalbucket"
+	},
+	["Metal Pot"] = {
+		PrintName = "COOKIN POT",
+		mdl = "models/props_interiors/pot02a.mdl", -- hl2
+		clr = { r = 255, g = 255, b = 255 },
+		clrForced = true,
+		slots = {
+			head = .6
+		},
+		def = BasicArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(1.15, 1.15, 1.15),
+		pos = Vector(5.2, 7.2, -3),
+		ang = Angle(80, 20, 30),
+		wgt = 20,
+		dur = 150,
+		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent = "ent_jack_gmod_ezarmor_metalpot"
+	},
+	["Ceramic Pot"] = {
+		PrintName = "CERAMIC POT",
+		mdl = "models/props_junk/terracotta01.mdl", -- hl2
+		clr = { r = 255, g = 255, b = 255 },
+		clrForced = true,
+		slots = {
+			head = .9,
+		},
+		def = BasicArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(.61, .61, .61),
+		pos = Vector(-2, 11, .5),
+		ang = Angle(90, 20, 0),
+		wgt = 15,
+		dur = 10,
+		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent = "ent_jack_gmod_ezarmor_ceramicpot"
+	},
+	["Traffic Cone"] = {
+		PrintName = "CONE",
+		mdl = "models/props_junk/trafficcone001a.mdl", -- hl2
+		mat = "models/mat_jack_gmod_trafficcone",
+		clr = { r = 240, g = 120, b = 0 },
+		slots = {
+			head = .7,
+		},
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(.85, .85, .85),
+		pos = Vector(-3.5, 15.5, 0),
+		ang = Angle(-90, 18, 0),
+		wgt = 4,
+		dur = 10,
+		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent = "ent_jack_gmod_ezarmor_trafficcone"
 	},
 	["Light-Vest"] = {
 		PrintName = "Vest - Light",
