@@ -175,13 +175,30 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		local Time=CurTime()
 		if not self.DoneDropping then
 			if self:GetVelocity():Length() < 200 then
 				self.DoneDropping = true
 				self:GetPhysicsObject():SetDragCoefficient(1)
 				self:GetPhysicsObject():SetAngleDragCoefficient(1)
 				self:SetDTBool(0, false)
-				self:NextThink(CurTime() + .015)
+				self:NextThink(Time + .015)
+				return true
+			end
+		else
+			self.SignalStopTime=self.SignalStopTime or Time+60
+			if(Time < self.SignalStopTime)then
+				if not self.last_sound or self.last_sound <= Time then
+					self.last_sound = Time + 2
+					self:EmitSound("snds_jack_gmod/ezsentry_disengage.wav", 75, 70, 0.5)
+				end
+				local Foof = EffectData()
+				Foof:SetOrigin(self:GetPos())
+				Foof:SetNormal(self:GetUp())
+				Foof:SetAngles(Angle(255,0,0))
+				Foof:SetStart(self:GetVelocity())
+				util.Effect("eff_jack_gmod_aidboxsignal", Foof, true, true)
+				self:NextThink(Time+.1)
 				return true
 			end
 		end
@@ -189,7 +206,7 @@ if SERVER then
 			self.Opacity = (self.Opacity or 0) + .01
 			if self.Opacity > 1 then self.Opacity = 1 end
 			self:SetDTFloat(0, self.Opacity)
-			self:NextThink(CurTime() + .01)
+			self:NextThink(Time + .01)
 			return true
 		end
 	end
@@ -244,27 +261,6 @@ if CLIENT then
 				draw.SimpleText(Name, "JMod-Stencil", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
-	end
-
-	function ENT:Think()
-		if CurTime() > self.InitTime + 90 then
-			self.Think = nil
-		end
-
-		if not self.last_sound or self.last_sound <= CurTime() then
-			self.last_sound = CurTime() + 2
-			self:EmitSound("snds_jack_gmod/ezsentry_disengage.wav", 75, 70, 0.5)
-		end
-
-		if self.last_think and self.last_think > CurTime() then return end
-		self.last_think = CurTime() + 0.2
-
-		local Foof = EffectData()
-		Foof:SetOrigin(self:GetPos())
-		Foof:SetNormal(self:GetUp())
-		local Col = Color(255, 0, 0)
-		Foof:SetAngles(Angle(Col.r, Col.g, Col.b))
-		util.Effect("eff_jack_gmod_aidboxsignal", Foof, true, true)
 	end
 
 	language.Add("ent_jack_aidbox","Aid Package")

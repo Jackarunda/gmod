@@ -75,6 +75,7 @@ function JMod.InitGlobalConfig(forceNew)
 		RadioSpecs={
 			DeliveryTimeMult=1,
 			ParachuteDragMult=1,
+			StartingOutpostCount=1,
 			AvailablePackages={
 				["parts"]={
 					"5 boxes of parts used for crafting and repairs.",
@@ -251,7 +252,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezpowderkeg",4}
 				},
 				["smoke grenades"]={	
-					"4 smoke grenades to signal smokes and 4 signal grenades which emits a colourable smoke to help signal positions.",
+					"4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
 					{"ent_jack_gmod_ezsmokenade",4},
 					{"ent_jack_gmod_ezsignalnade",4}
 				},
