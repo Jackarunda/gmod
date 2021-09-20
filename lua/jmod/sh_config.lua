@@ -78,15 +78,15 @@ function JMod.InitGlobalConfig(forceNew)
 			StartingOutpostCount=1,
 			AvailablePackages={
 				["parts"]={
-					"5 boxes of 100 parts each used for crafting and repairs.",
+					"5 boxes of parts used for crafting and repairs.",
 					{"ent_jack_gmod_ezparts",5}
 				},
 				["advanced parts"]={
-					"2 boxes of 20 advparts each used for crafting and upgrading.",
+					"2 boxes of advparts used for crafting and upgrading.",
 					{"ent_jack_gmod_ezadvparts",2}
 				},
 				["advanced textiles"]={
-					"2 boxes of 100 advtextiles each used for crafting and upgrading.",
+					"2 boxes of advtextiles used for crafting.",
 					{"ent_jack_gmod_ezadvtextiles",2}
 				},
 				["batteries"]={
@@ -94,31 +94,31 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezbattery",4}
 				},
 				["ammo"]={
-					"5 boxes of 300 rounds each for crafting and resupplying weapons and entities.",
+					"5 boxes of ammo for crafting and resupplying weapons and entities.",
 					{"ent_jack_gmod_ezammo",5}
 				},
 				["coolant"]={
-					"6 barrels of coolant for prevent sentries from overheating.",
+					"6 barrels of coolant for preventing machines from overheating.",
 					{"ent_jack_gmod_ezcoolant",6}
 				},
 				["munitions"]={
-					"3 boxes of 300 munitions rounds used for crafting items and reloading weapons and HE grenade sentries.",
+					"3 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
 					{"ent_jack_gmod_ezmunitions",3}
 				},
 				["explosives"]={
-					"3 boxes of 100 explosives each used for crafting explosives.",
+					"3 boxes of explosives used for crafting explosives.",
 					{"ent_jack_gmod_ezexplosives",3}
 				},
 				["chemicals"]={
-					"3 boxes of 100 chemicals used for crafting items and reloading HAZMAT suits.",
+					"3 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
 					{"ent_jack_gmod_ezchemicals",3}
 				},
 				["fuel"]={
-					"4 cans of 100 fuel used for crafting items.",
+					"4 cans of fuel used for crafting items and running generators.",
 					{"ent_jack_gmod_ezfuel",4}
 				},
 				["propellant"]={
-					"4 cans of 100 propellant used for crafting items.",
+					"4 cans of propellant used for crafting items.",
 					{"ent_jack_gmod_ezpropellant",4}
 				},
 				["gas"]={
@@ -138,11 +138,11 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezmedical supplies",2}
 				},
 				["resource crate"]={
-					"A box used for storing exclusively Jmod items. Holds up to 100 kg of Jmod items.",
+					"A box used for exclusively storing EZ Resources.",
 					"ent_jack_gmod_ezcrate"
 				},
 				["storage crate"]={
-					"A box used for exclusively storing EZ Resources.",
+					"A box used exclusively for storing Jmod items. Can hold a volume of up to 100 units.",
 					"ent_jack_gmod_ezcrate_uni"
 				},
 				["frag grenades"]={
@@ -200,7 +200,7 @@ function JMod.InitGlobalConfig(forceNew)
 					"ent_jack_gmod_ezsentry", 1
 				},
 				["supply radio"]={
-					"Order more supplies for free. Just place it outside and watch for the package.",
+					"You're looking at one. No shame in having a backup radio.",
 					"ent_jack_gmod_ezaidradio", 1
 				},
 				["medkits"]={
@@ -208,7 +208,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezmedkit",3}
 				},
 				["landmines"]={
-					"10 landmines that trigger when an enemy steps on them.",
+					"10 landmines that trigger when an enemy steps near them.",
 					{"ent_jack_gmod_ezlandmine",10}
 				},
 				["mini bounding mines"]={
@@ -220,7 +220,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezfumigator",2}
 				},
 				["fougasse mines"]={
-					"2 fumigators that emit poison gas.",
+					"4 fougasse mines. Blasts napalm at whoever triggers it.",
 					{"ent_jack_gmod_ezfougasse",4}
 				},
 				["detpacks"]={
@@ -232,7 +232,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezslam",5}
 				},
 				["antimatter"]={
-					"An experimental canister used for crafting experimental items.",
+					"A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
 					"ent_jack_gmod_ezantimatter", 1
 				},
 				["fissile material"]={
@@ -840,7 +840,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=25
 				},
 				"Apparel",
-				"Slightly less heavy, slightly less protection than heavy."
+				"Slightly less heavy, slightly less protection than heavy armor."
 			},
 			["EZ Medium-Light Torso Armor"]={
 				"ent_jack_gmod_ezarmor_mltorso",
@@ -849,7 +849,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=15
 				},
 				"Apparel",
-				"it'll help a little more, and is slightly heavier."
+				"it'll help a little more than light armor, and is slightly heavier."
 			},
 			["EZ Medkit"]={
 				"ent_jack_gmod_ezmedkit",
