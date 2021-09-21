@@ -345,7 +345,7 @@ net.Receive("JMod_EZbuildKit",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Build Kit")
+	motherFrame:SetTitle("Build Kit | Right-click a blueprint to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -428,7 +428,7 @@ net.Receive("JMod_EZworkbench",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Workbench")
+	motherFrame:SetTitle("Workbench | Right click a recipe to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -455,6 +455,7 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
+	--todo: fav ting
 	
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
@@ -687,6 +688,7 @@ net.Receive("JMod_EZradio",function()
 	if isMessage then
 		local parrot = net.ReadBool()
 		local msg = net.ReadString()
+		local favmsg = net.ReadString()
 		local radio = net.ReadEntity()
 		print(parrot, msg, radio)
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
@@ -706,18 +708,20 @@ net.Receive("JMod_EZradio",function()
 		return
 	end
 	local Packages={}
+	local Favs = {}
 	local count = net.ReadUInt(8)
 	for i = 1, count do
-		table.insert(Packages, {net.ReadString(),net.ReadString()})
+		table.insert(Packages, {net.ReadString(),net.ReadString()})	
 	end
 	local Radio=net.ReadEntity()
 	local StatusText = net.ReadString()
 	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(320, 310)
+	motherFrame:SetSize(500, 350)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Aid Radio")
+	motherFrame:SetTitle("Aid Radio | Right-click a package to favourite it.")
+	
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -758,6 +762,25 @@ net.Receive("JMod_EZradio",function()
 	Scroll:SetPos(10,10)
 	---
 	for _, k in pairs(Packages) do
+		local Butt = Scroll:Add("DButton")
+		local desc=k[2] or "N/A"
+		Butt:SetSize(W-35,25)
+		Butt:Dock(TOP)
+		Butt:DockMargin( 0, 0, 0, 5 )
+		Butt:SetText("")
+		Butt:SetToolTip(desc)	
+		function Butt:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+			local msg=k[1]		
+			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+		end
+		function Butt:DoClick()
+			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
+			motherFrame:Close()
+		end
+	end
+	for _, k in pairs(Favs) do
 		local Butt = Scroll:Add("DButton")
 		local desc=k[2] or "N/A"
 		Butt:SetSize(W-35,25)
