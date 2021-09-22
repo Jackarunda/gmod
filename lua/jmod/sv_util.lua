@@ -593,6 +593,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 	if ((IsValid(PlayerToCheck)) and PlayerToCheck.Alive) then
 		if (vehiclesOnly and not InVehicle) then return false end
 		if (PlayerToCheck.EZkillme) then return true end -- for testing
+		if (PlayerToCheck:GetObserverMode() ~= 0) then return false end
 		if (self.Owner and (PlayerToCheck == self.Owner)) then return false end
 		local Allies = (self.Owner and self.Owner.JModFriends) or {}
 		if (table.HasValue(Allies, PlayerToCheck)) then return false end
