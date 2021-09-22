@@ -22,6 +22,7 @@ if(SERVER)then
 	
 	function ENT:Arm()
 		self:SetState(JMod.EZ_STATE_ARMING)
+		self:SetBodygroup(2,1)
 		timer.Simple(.3, function()
 			if IsValid(self) then
 				self:SetState(JMod.EZ_STATE_ARMED)
