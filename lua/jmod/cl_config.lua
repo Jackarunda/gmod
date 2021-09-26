@@ -1,9 +1,9 @@
 JMod.ClientConfig = JMod.ClientConfig or {}
 local function InsertEmptyFileConfig(IP)
 	JMod.ClientConfig[IP] = {
-		WorkbenchFavs = {},
-		BuildKitFavs = {},
-		AidRadioFavs = {}
+		WorkbenchFavs = {""},
+		BuildKitFavs = {""},
+		AidRadioFavs = {""}
 	}
 end
 local function PlayerConnectClient()
@@ -18,13 +18,14 @@ local function PlayerConnectClient()
     else
 		JMod.ClientConfig={}
 		InsertEmptyFileConfig(IP)
-		file.Write(filename, util.TableToJSON(JMod.ClientConfig))
+		file.Write(filename, util.TableToJSON(JMod.ClientConfig, true))
 	end
 	if not JMod.ClientConfig[IP] then 
 		InsertEmptyFileConfig(IP)
-		file.Write(filename, util.TableToJSON(JMod.ClientConfig))
+		file.Write(filename, util.TableToJSON(JMod.ClientConfig, true))
 	end
 	print("JMOD: client config file loaded")
+	PrintTable(JMod.ClientConfig)
 end
 -- That way you are overriding the default hook.
 -- You can use hook.Add to make more functions get called when this event occurs.

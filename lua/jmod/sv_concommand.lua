@@ -1,8 +1,10 @@
+
+
 concommand.Add("jmod_friends",function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
 	net.WriteTable(ply.JModFriends or {})
-	net.Send(ply)
+	net.Send(ply)	
 end)
 
 concommand.Add("jmod_reloadconfig",function(ply)
@@ -22,9 +24,11 @@ concommand.Add("jmod_debug_killme",function(ply)
 	print("good luck")
 end)
 
-concommand.Add("jmod_ez_trigger",function(ply)
+concommand.Add("jmod_ez_trigger",function(ply, help)
 	JMod.EZ_Remote_Trigger(ply)
-end)
+end,
+help = "Detonates any remote explosives you have armed(e.g. EZ remote mini-nades, detpacks, nukes, etc.)")
+
 
 concommand.Add("jmod_insta_upgrade",function(ply)
 	if not(IsValid(ply))then return end

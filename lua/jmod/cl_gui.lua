@@ -3,6 +3,7 @@ local Dynamic = 0
 local MenuOpen = false
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
+local FavMat = Material("icon16/star.png")
 local function BlurBackground(panel)
 	if not((IsValid(panel))and(panel:IsVisible()))then return end
 	local layers,density,alpha=1,1,255
@@ -284,68 +285,77 @@ net.Receive("JMod_SignalNade",function()
 		Frame:Close()
 	end
 end)
-local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
-	parent:Clear()
-	local W,H=parent:GetWide(),parent:GetTall()
-	local Scroll=vgui.Create("DScrollPanel",parent)
-	Scroll:SetSize(W-15,H-10)
-	Scroll:SetPos(10,10)
-	---
-	local Y=0
-	for k,itemInfo in pairs(recipes)do
-		local Butt=Scroll:Add("DButton")
-		Butt:SetSize(W-35,25)
-		Butt:SetPos(0,Y)
-		Butt:SetText("")
-		local reqs=itemInfo[2]
-		if(type(reqs)=="string")then reqs=itemInfo[3] end
-		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
-		local desc = itemInfo[5] or ""
-		if typ == "workbench" then
-			desc = itemInfo[4] 
-		elseif typ == "buildkit" then 
-			desc = itemInfo[6]
-		end
-		Butt:SetToolTip(desc)
-		function Butt:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-			local msg=k..": " 			
-			if(tonumber(k))then msg=itemInfo[1]..": " end
-			for nam,amt in pairs(reqs)do
-				msg=msg..amt.." "..nam..", "
-			end
-			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			
-		end
-		function Butt:DoClick()
-			if(typ=="workbench")then
-				net.Start("JMod_EZworkbench")
-				net.WriteEntity(builder)
-				net.WriteString(k)
-				net.SendToServer()
-			elseif(typ=="buildkit")then
-				net.Start("JMod_EZbuildKit")
-				net.WriteInt(k,8)
-				net.SendToServer()
-			end
-			motherFrame:Close()
-		end
-		Y=Y+30
-	end
+local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
+    parent:Clear()
+    local W, H = parent:GetWide(), parent:GetTall()
+    local Scroll = vgui.Create("DScrollPanel", parent)
+    Scroll:SetSize(W - 15, H - 10)
+    Scroll:SetPos(10, 10)
+    ---
+    local Y = 0
+    for k, itemInfo in pairs(recipes) do
+        local Butt = Scroll:Add("DButton")
+        Butt:SetSize(W - 35, 25)
+        Butt:SetPos(0, Y)
+        Butt:SetText("")
+        local name = itemInfo[1]
+        local reqs = itemInfo[2]
+        if (type(reqs) == "string") then
+            reqs = itemInfo[3]
+        end
+        local canMake = JMod.HaveResourcesToPerformTask(nil, nil, reqs, builder)
+        local desc = itemInfo[5] or ""
+        if typ == "workbench" then
+            desc = itemInfo[4]
+        elseif typ == "buildkit" then
+            desc = itemInfo[6]
+        end
+        Butt:SetTooltip(desc)
+        function Butt:Paint(w, h)
+            surface.SetDrawColor(50, 50, 50, 100)
+            surface.DrawRect(0, 0, w, h)
+            local msg = k .. ": "
+            if (tonumber(k)) then
+                msg = name .. ": "
+            end
+            for nam, amt in pairs(reqs) do
+                msg = msg .. amt .. " " .. nam .. ", "
+            end
+            draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, (canMake and 255) or 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+        end
+        function Butt:DoClick()
+            if (typ == "workbench") then
+                net.Start("JMod_EZworkbench")
+                net.WriteEntity(builder)
+                net.WriteString(k)
+                net.SendToServer()
+            elseif (typ == "buildkit") then
+                net.Start("JMod_EZbuildKit")
+                net.WriteInt(k, 8)
+                net.SendToServer()
+            end
+
+            function Butt:DoRightClick()
+                if (typ == "workbench") then
+                    table.insert(JMod.ClientConfig.WorkbenchFavs)
+                end
+            end
+            motherFrame:Close()
+        end
+
+        Y = Y + 30
+    end
 end
 net.Receive("JMod_EZbuildKit",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
-	
 	local resTbl = JMod.CountResourcesInRange(nil,nil,Kit)
-	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Build Kit | Right-click a blueprint to favourite it.")
+	motherFrame:SetTitle("Build Kit | Right click a blueprint to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -371,6 +381,13 @@ net.Receive("JMod_EZbuildKit",function()
 		local Category=v[5] or "Other"
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
+	end
+	if #JMod.ClientConfig.BuildKitFavs > 0 then 
+		local Tab = {}
+		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
+			table.insert(Tab,v)
+		end
+		Categories["Favourites"]=Tab
 	end
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
@@ -455,7 +472,13 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
-	--todo: fav ting
+	if #JMod.ClientConfig.WorkbenchFavs > 0 then 
+		local Tab = {}
+		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
+			table.insert(Tab,v)
+		end
+		Categories["Favourites"]=Tab
+	end
 	
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
