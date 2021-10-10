@@ -299,7 +299,7 @@ function JMod.RenderModel(mdl,pos,ang,scale,color,mat,fullbright,translucency)
 	local RenderCol=color or Vector(1,1,1)
 	render.SetColorModulation(RenderCol.x,RenderCol.y,RenderCol.z)
 	if(mat)then render.ModelMaterialOverride(mat) end
-	if(fullbright)then render.SuppressEngingLighting(true) end
+	if(fullbright)then render.SuppressEngineLighting(true) end
 	if(translucenty)then render.SetBlend(translucency) end
 	--mdl:SetLOD(8)
 	mdl:DrawModel()
