@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$decal" 1
+	"$basetexture" "Decals/Inks/InkOrange"
+	"$decalscale" 0.25
+	"$translucent" 1
+}
+
+

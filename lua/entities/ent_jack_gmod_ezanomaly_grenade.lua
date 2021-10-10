@@ -250,6 +250,22 @@ local DetonationEffects={
 			end
 		end
 	},
+	mess={ -- Look at this mess!
+		col=Color(128,255,128),
+		func=function(self,pos,owner)
+			JMod.Sploom(owner,pos,10)
+			timer.Simple(.1,function()
+				local rainbow = {"InkBlue","InkOrange","InkGreen","InkCyan","InkPink","InkPurple"}
+				for i=1,5000 do
+					local direction = VectorRand()
+					direction.z = math.abs(direction.z) - 0.1
+					direction:Normalize()
+					local Tr=util.QuickTrace(pos,direction*20000)
+					if(Tr.Hit)then util.Decal(table.Random(rainbow),Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+				end
+			end)
+		end
+	},
 	mines={ -- MINES! FOR EVERYONE!
 		col=Color(50,100,0),
 		func=function(self,pos,owner)

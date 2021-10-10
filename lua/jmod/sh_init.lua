@@ -23,6 +23,12 @@ PrecacheParticleSystem("100lb_air")
 PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
 --PrecacheParticleSystem("50lb_ground")
+game.AddDecal( "InkOrange", "decals/InkOrange" )
+game.AddDecal( "InkBlue", "decals/InkBlue" )
+game.AddDecal( "InkGreen", "decals/InkGreen" )
+game.AddDecal( "InkCyan", "decals/InkCyan" )
+game.AddDecal( "InkPink", "decals/InkPink" )
+game.AddDecal( "InkPurple", "decals/InkPurple" )
 --
 JMod.RavebreakBeatTime=.4
 local Alphanumerics={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}

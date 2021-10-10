@@ -1,0 +1,12 @@
+"LightmappedGeneric"
+{
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+	"$decal" 1
+	"$basetexture" "Decals/InkGreen"
+	"$decalscale" 10
+	"$translucent" 1
+	"$modelmaterial" "Decals/Inks/InkGreen"
+}
+
+
