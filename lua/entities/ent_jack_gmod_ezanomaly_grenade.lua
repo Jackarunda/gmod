@@ -256,12 +256,17 @@ local DetonationEffects={
 			JMod.Sploom(owner,pos,10)
 			timer.Simple(.1,function()
 				local rainbow = {"InkBlue","InkOrange","InkGreen","InkCyan","InkPink","InkPurple"}
-				for i=1,5000 do
-					local direction = VectorRand()
-					direction.z = direction.z + 0.3
-					direction:Normalize()
-					local Tr=util.QuickTrace(pos,direction*20000)
-					if(Tr.Hit)then util.Decal(table.Random(rainbow),Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+				for i=0,10 do
+					timer.Simple(i*.05,function()
+						local StartPos=pos+Vector(0,0,i*100)
+						for i=1,1000 do
+							local direction=VectorRand()
+							direction.z=direction.z/2
+							direction:Normalize()
+							local Tr=util.QuickTrace(StartPos,direction*20000)
+							if(Tr.Hit)then util.Decal(table.Random(rainbow),Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+						end
+					end)
 				end
 			end)
 		end
