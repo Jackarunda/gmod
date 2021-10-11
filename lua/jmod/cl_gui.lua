@@ -285,6 +285,7 @@ net.Receive("JMod_SignalNade",function()
 		Frame:Close()
 	end
 end)
+local FavIcon=Material("white_star_64.png")
 local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
     parent:Clear()
     local W, H = parent:GetWide(), parent:GetTall()
@@ -322,6 +323,9 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
                 msg = msg .. amt .. " " .. nam .. ", "
             end
             draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, (canMake and 255) or 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			surface.SetDrawColor(255,255,255,255)
+			surface.SetMaterial(FavIcon)
+			surface.DrawTexturedRect(Butt:GetWide()-16-4,4,16,16)
         end
         function Butt:DoClick()
             if (typ == "workbench") then
@@ -334,15 +338,21 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
                 net.WriteInt(k, 8)
                 net.SendToServer()
             end
-
-            function Butt:DoRightClick()
-                if (typ == "workbench") then
-                    table.insert(JMod.ClientConfig.WorkbenchFavs)
-                end
-            end
             motherFrame:Close()
         end
-
+		if(typ=="workbench")then -- only workbench supports favoriting for now
+			function Butt:DoRightClick()
+				if(table.HasValue(JMod.ClientConfig.WorkbenchFavs,k))then
+					table.RemoveByValue(JMod.ClientConfig.WorkbenchFavs,k)
+					JMod.SaveClientConfig()
+					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+				else
+					table.insert(JMod.ClientConfig.WorkbenchFavs,k)
+					JMod.SaveClientConfig()
+					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+				end
+			end
+		end
         Y = Y + 30
     end
 end
@@ -454,7 +464,6 @@ net.Receive("JMod_EZworkbench",function()
 	function motherFrame:OnKeyCodePressed(key)
 		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 	end
-	
 	local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
 	Frame:SetPos(110,30)
 	Frame:SetSize(W,H-30)
@@ -477,9 +486,9 @@ net.Receive("JMod_EZworkbench",function()
 		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
 			table.insert(Tab,v)
 		end
+		PrintTable(Tab)
 		Categories["Favourites"]=Tab
 	end
-	
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
