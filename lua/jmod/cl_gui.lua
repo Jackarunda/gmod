@@ -285,7 +285,7 @@ net.Receive("JMod_SignalNade",function()
 		Frame:Close()
 	end
 end)
-local FavIcon=Material("white_star_64.png")
+-- local FavIcon=Material("white_star_64.png")
 local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
     parent:Clear()
     local W, H = parent:GetWide(), parent:GetTall()
@@ -323,9 +323,9 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
                 msg = msg .. amt .. " " .. nam .. ", "
             end
             draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, (canMake and 255) or 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			surface.SetDrawColor(255,255,255,255)
-			surface.SetMaterial(FavIcon)
-			surface.DrawTexturedRect(Butt:GetWide()-16-4,4,16,16)
+			-- surface.SetDrawColor(255,255,255,255)
+			-- surface.SetMaterial(FavIcon)
+			-- surface.DrawTexturedRect(Butt:GetWide()-16-4,4,16,16)
         end
         function Butt:DoClick()
             if (typ == "workbench") then
@@ -340,6 +340,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
             end
             motherFrame:Close()
         end
+		--[[
 		if(typ=="workbench")then -- only workbench supports favoriting for now
 			function Butt:DoRightClick()
 				if(table.HasValue(JMod.ClientConfig.WorkbenchFavs,k))then
@@ -353,6 +354,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
 				end
 			end
 		end
+		--]]
         Y = Y + 30
     end
 end
@@ -365,7 +367,7 @@ net.Receive("JMod_EZbuildKit",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Build Kit | Right click a blueprint to favourite it.")
+	motherFrame:SetTitle("Build Kit")-- | Right click a blueprint to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -392,6 +394,7 @@ net.Receive("JMod_EZbuildKit",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
+	--[[
 	if #JMod.ClientConfig.BuildKitFavs > 0 then 
 		local Tab = {}
 		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
@@ -399,6 +402,7 @@ net.Receive("JMod_EZbuildKit",function()
 		end
 		Categories["Favourites"]=Tab
 	end
+	--]]
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -455,7 +459,7 @@ net.Receive("JMod_EZworkbench",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Workbench | Right click a recipe to favourite it.")
+	motherFrame:SetTitle("Workbench")-- | Right click a recipe to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -481,6 +485,7 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
+	--[[
 	if #JMod.ClientConfig.WorkbenchFavs > 0 then 
 		local Tab = {}
 		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
@@ -489,6 +494,7 @@ net.Receive("JMod_EZworkbench",function()
 		PrintTable(Tab)
 		Categories["Favourites"]=Tab
 	end
+	--]]
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -722,9 +728,7 @@ net.Receive("JMod_EZradio",function()
 		local msg = net.ReadString()
 		local favmsg = net.ReadString()
 		local radio = net.ReadEntity()
-		print(parrot, msg, radio)
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
-		PrintTable(tbl)
 		if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
 		chat.AddText(unpack(tbl))
 		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
@@ -752,7 +756,7 @@ net.Receive("JMod_EZradio",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Aid Radio | Right-click a package to favourite it.")
+	motherFrame:SetTitle("Aid Radio")-- | Right-click a package to favourite it.")
 	
 	function motherFrame:Paint()
 		BlurBackground(self)
@@ -812,6 +816,7 @@ net.Receive("JMod_EZradio",function()
 			motherFrame:Close()
 		end
 	end
+	--[[ -- what the fuck even is this, keksquad?
 	for _, k in pairs(Favs) do
 		local Butt = Scroll:Add("DButton")
 		local desc=k[2] or "N/A"
@@ -831,6 +836,7 @@ net.Receive("JMod_EZradio",function()
 			motherFrame:Close()
 		end
 	end
+	--]]
 	-- The last one always gets cut off so instead of finding the reason let's just slap a filler on
 	local Butt = Scroll:Add("DButton")
 	Butt:SetSize(W-35,25)
