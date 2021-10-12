@@ -3,16 +3,17 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Gas Tank"
 ENT.Category="JMod - EZ Resources"
+ENT.IconOverride="materials/ez_resource_icons/gas.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.GAS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.Model="models/props_c17/canister01a.mdl"
+ENT.Model="models/props_explosive/explosive_butane_can.mdl"
 ENT.Material="models/shiny"
-ENT.Color=Color(100,100,200)
+ENT.Color=Color(100,100,100)
 ENT.ModelScale=1
-ENT.Mass=30
+ENT.Mass=20
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.DamageThreshold=80
 ENT.BreakNoise="Metal_Box.Break"
@@ -47,8 +48,8 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(0,4.7,-2),Angle(-90,0,0),.04,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GAS,self:GetResource(),nil,0,0,200,false)
+		JMod.HoloGraphicDisplay(self,Vector(0,8.15,15),Angle(-90,0,90),.03,300,function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GAS,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)

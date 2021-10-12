@@ -3,6 +3,7 @@ local Dynamic = 0
 local MenuOpen = false
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
+local FavMat = Material("icon16/star.png")
 local function BlurBackground(panel)
 	if not((IsValid(panel))and(panel:IsVisible()))then return end
 	local layers,density,alpha=1,1,255
@@ -284,68 +285,89 @@ net.Receive("JMod_SignalNade",function()
 		Frame:Close()
 	end
 end)
-local function PopulateRecipes(parent,recipes,builder,motherFrame,typ)
-	parent:Clear()
-	local W,H=parent:GetWide(),parent:GetTall()
-	local Scroll=vgui.Create("DScrollPanel",parent)
-	Scroll:SetSize(W-15,H-10)
-	Scroll:SetPos(10,10)
-	---
-	local Y=0
-	for k,itemInfo in pairs(recipes)do
-		local Butt=Scroll:Add("DButton")
-		Butt:SetSize(W-35,25)
-		Butt:SetPos(0,Y)
-		Butt:SetText("")
-		local reqs=itemInfo[2]
-		if(type(reqs)=="string")then reqs=itemInfo[3] end
-		local canMake=JMod.HaveResourcesToPerformTask(nil,nil,reqs,builder)
-		local desc = itemInfo[5] or ""
-		if typ == "workbench" then
-			desc = itemInfo[4] 
-		elseif typ == "buildkit" then 
-			desc = itemInfo[6]
-		end
-		Butt:SetToolTip(desc)
-		function Butt:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-			local msg=k..": " 			
-			if(tonumber(k))then msg=itemInfo[1]..": " end
-			for nam,amt in pairs(reqs)do
-				msg=msg..amt.." "..nam..", "
+-- local FavIcon=Material("white_star_64.png")
+local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
+    parent:Clear()
+    local W, H = parent:GetWide(), parent:GetTall()
+    local Scroll = vgui.Create("DScrollPanel", parent)
+    Scroll:SetSize(W - 15, H - 10)
+    Scroll:SetPos(10, 10)
+    ---
+    local Y = 0
+    for k, itemInfo in pairs(recipes) do
+        local Butt = Scroll:Add("DButton")
+        Butt:SetSize(W - 35, 25)
+        Butt:SetPos(0, Y)
+        Butt:SetText("")
+        local name = itemInfo[1]
+        local reqs = itemInfo[2]
+        if (type(reqs) == "string") then
+            reqs = itemInfo[3]
+        end
+        local canMake = JMod.HaveResourcesToPerformTask(nil, nil, reqs, builder)
+        local desc = itemInfo[5] or ""
+        if typ == "workbench" then
+            desc = itemInfo[4]
+        elseif typ == "buildkit" then
+            desc = itemInfo[6]
+        end
+        Butt:SetTooltip(desc)
+        function Butt:Paint(w, h)
+            surface.SetDrawColor(50, 50, 50, 100)
+            surface.DrawRect(0, 0, w, h)
+            local msg = k .. ": "
+            if (tonumber(k)) then
+                msg = name .. ": "
+            end
+            for nam, amt in pairs(reqs) do
+                msg = msg .. amt .. " " .. nam .. ", "
+            end
+            draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, (canMake and 255) or 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+			-- surface.SetDrawColor(255,255,255,255)
+			-- surface.SetMaterial(FavIcon)
+			-- surface.DrawTexturedRect(Butt:GetWide()-16-4,4,16,16)
+        end
+        function Butt:DoClick()
+            if (typ == "workbench") then
+                net.Start("JMod_EZworkbench")
+                net.WriteEntity(builder)
+                net.WriteString(k)
+                net.SendToServer()
+            elseif (typ == "buildkit") then
+                net.Start("JMod_EZbuildKit")
+                net.WriteInt(k, 8)
+                net.SendToServer()
+            end
+            motherFrame:Close()
+        end
+		--[[
+		if(typ=="workbench")then -- only workbench supports favoriting for now
+			function Butt:DoRightClick()
+				if(table.HasValue(JMod.ClientConfig.WorkbenchFavs,k))then
+					table.RemoveByValue(JMod.ClientConfig.WorkbenchFavs,k)
+					JMod.SaveClientConfig()
+					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+				else
+					table.insert(JMod.ClientConfig.WorkbenchFavs,k)
+					JMod.SaveClientConfig()
+					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+				end
 			end
-			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,(canMake and 255)or 100),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-			
 		end
-		function Butt:DoClick()
-			if(typ=="workbench")then
-				net.Start("JMod_EZworkbench")
-				net.WriteEntity(builder)
-				net.WriteString(k)
-				net.SendToServer()
-			elseif(typ=="buildkit")then
-				net.Start("JMod_EZbuildKit")
-				net.WriteInt(k,8)
-				net.SendToServer()
-			end
-			motherFrame:Close()
-		end
-		Y=Y+30
-	end
+		--]]
+        Y = Y + 30
+    end
 end
 net.Receive("JMod_EZbuildKit",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
-	
 	local resTbl = JMod.CountResourcesInRange(nil,nil,Kit)
-	
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Build Kit")
+	motherFrame:SetTitle("Build Kit")-- | Right click a blueprint to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -372,6 +394,15 @@ net.Receive("JMod_EZbuildKit",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
+	--[[
+	if #JMod.ClientConfig.BuildKitFavs > 0 then 
+		local Tab = {}
+		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
+			table.insert(Tab,v)
+		end
+		Categories["Favourites"]=Tab
+	end
+	--]]
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -428,7 +459,7 @@ net.Receive("JMod_EZworkbench",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Workbench")
+	motherFrame:SetTitle("Workbench")-- | Right click a recipe to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -437,7 +468,6 @@ net.Receive("JMod_EZworkbench",function()
 	function motherFrame:OnKeyCodePressed(key)
 		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
 	end
-	
 	local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
 	Frame:SetPos(110,30)
 	Frame:SetSize(W,H-30)
@@ -455,7 +485,16 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
-	
+	--[[
+	if #JMod.ClientConfig.WorkbenchFavs > 0 then 
+		local Tab = {}
+		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
+			table.insert(Tab,v)
+		end
+		PrintTable(Tab)
+		Categories["Favourites"]=Tab
+	end
+	--]]
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -687,10 +726,9 @@ net.Receive("JMod_EZradio",function()
 	if isMessage then
 		local parrot = net.ReadBool()
 		local msg = net.ReadString()
+		local favmsg = net.ReadString()
 		local radio = net.ReadEntity()
-		print(parrot, msg, radio)
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
-		PrintTable(tbl)
 		if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
 		chat.AddText(unpack(tbl))
 		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
@@ -706,18 +744,20 @@ net.Receive("JMod_EZradio",function()
 		return
 	end
 	local Packages={}
+	local Favs = {}
 	local count = net.ReadUInt(8)
 	for i = 1, count do
-		table.insert(Packages, {net.ReadString(),net.ReadString()})
+		table.insert(Packages, {net.ReadString(),net.ReadString()})	
 	end
 	local Radio=net.ReadEntity()
 	local StatusText = net.ReadString()
 	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(320, 310)
+	motherFrame:SetSize(500, 350)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Aid Radio")
+	motherFrame:SetTitle("Aid Radio")-- | Right-click a package to favourite it.")
+	
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -776,6 +816,27 @@ net.Receive("JMod_EZradio",function()
 			motherFrame:Close()
 		end
 	end
+	--[[ -- what the fuck even is this, keksquad?
+	for _, k in pairs(Favs) do
+		local Butt = Scroll:Add("DButton")
+		local desc=k[2] or "N/A"
+		Butt:SetSize(W-35,25)
+		Butt:Dock(TOP)
+		Butt:DockMargin( 0, 0, 0, 5 )
+		Butt:SetText("")
+		Butt:SetToolTip(desc)	
+		function Butt:Paint(w,h)
+			surface.SetDrawColor(50,50,50,100)
+			surface.DrawRect(0,0,w,h)
+			local msg=k[1]		
+			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+		end
+		function Butt:DoClick()
+			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
+			motherFrame:Close()
+		end
+	end
+	--]]
 	-- The last one always gets cut off so instead of finding the reason let's just slap a filler on
 	local Butt = Scroll:Add("DButton")
 	Butt:SetSize(W-35,25)

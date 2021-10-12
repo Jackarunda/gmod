@@ -1,3 +1,5 @@
 *.cmd
 *.bat
 *.psd
+lua/jmod/sv_concommand.lua
+lua/jmod/sh_hint.lua

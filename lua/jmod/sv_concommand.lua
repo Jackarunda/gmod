@@ -1,8 +1,10 @@
+
+
 concommand.Add("jmod_friends",function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
 	net.WriteTable(ply.JModFriends or {})
-	net.Send(ply)
+	net.Send(ply)	
 end)
 
 concommand.Add("jmod_reloadconfig",function(ply)
@@ -22,7 +24,7 @@ concommand.Add("jmod_debug_killme",function(ply)
 	print("good luck")
 end)
 
-concommand.Add("jmod_ez_trigger",function(ply)
+concommand.Add("jmod_ez_trigger",function(ply, help)
 	JMod.EZ_Remote_Trigger(ply)
 end)
 
