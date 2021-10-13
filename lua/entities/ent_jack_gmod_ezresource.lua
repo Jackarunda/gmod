@@ -159,7 +159,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		--
+		if(self.CustomThink)then return self:CustomThink() end
 	end
 	function ENT:OnRemove()
 		--aw fuck you

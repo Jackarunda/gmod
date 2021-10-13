@@ -3,6 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Nutrient Box"
 ENT.Category="JMod - EZ Resources"
+ENT.IconOverride="materials/ez_resource_icons/nutrients.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

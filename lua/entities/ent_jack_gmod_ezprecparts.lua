@@ -1,17 +1,16 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
-ENT.PrintName="EZ Advanced Parts Box"
+ENT.PrintName="EZ Precision Parts Box"
 ENT.Category="JMod - EZ Resources"
-ENT.IconOverride="materials/ez_resource_icons/advanced parts.png"
+ENT.IconOverride="materials/ez_resource_icons/precision parts.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.Model="models/kali/props/cases/hard case b.mdl"
 ENT.Material=nil
-ENT.Color=Color(100,100,100)
 ENT.ModelScale=.5
 ENT.Mass=30
 ENT.ImpactNoise1="drywall.ImpactHard"
@@ -31,16 +30,11 @@ if(SERVER)then
 		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
 		util.Effect("Sparks",effectdata,true,true)
 	end
-	function ENT:CustomThink()
-		self:GetPhysicsObject():ApplyForceCenter(VectorRand()*math.random(1,1000))
-		self:NextThink(CurTime()+math.Rand(2,4))
-		return true
-	end
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		JMod.HoloGraphicDisplay(self,Vector(0,3.5,10),Angle(-90,0,90),.035,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS,self:GetResource(),nil,0,0,200,true)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)

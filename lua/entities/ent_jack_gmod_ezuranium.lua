@@ -22,6 +22,22 @@ if(SERVER)then
 	function ENT:UseEffect(pos,ent)
 		-- it's metal
 	end
+	function ENT:CustomThink()
+		if(math.random(1,3)==1)then
+			local Ent=ents.Create("ent_jack_gmod_ezfalloutparticle")
+			Ent:SetPos(self:GetPos()+Vector(0,0,10))
+			Ent.Owner=self.Owner
+			Ent.LifeTime=15
+			Ent.DmgAmt=1
+			Ent.Range=500
+			Ent.DragMult=.3
+			Ent:Spawn()
+			Ent:Activate()
+			Ent:SetVelocity(self:GetVelocity())
+		end
+		self:NextThink(CurTime()+math.Rand(10,20))
+		return true
+	end
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()

@@ -1,0 +1,11 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_gmod_paperroll"
+	"$model" 1
+	//"$phong" "1"
+	//"$phongexponent" "40"
+	//"$phongboost" "3"
+	//"$phongfresnelranges" "[.05 .5 1]"
+	//"$halflambert" "1"
+}

@@ -13,7 +13,7 @@ ENT.EZfalloutParticle=true
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
-		self.LifeTime=math.random(100,200)*JMod.Config.NuclearRadiationMult
+		self.LifeTime=self.LifeTime or math.random(100,200)*JMod.Config.NuclearRadiationMult
 		self.DieTime=Time+self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
@@ -57,7 +57,7 @@ if(SERVER)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*7
 				elseif((self:ShouldDamage(obj))and(math.random(1,5)==1)and(self.NextDmg<Time))then
-					local DmgAmt=math.random(4,20)*JMod.Config.NuclearRadiationMult
+					local DmgAmt=self.DmgAmt or math.random(4,20)*JMod.Config.NuclearRadiationMult
 					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
 					---
 					local Dmg,Helf=DamageInfo(),obj:Health()
@@ -89,7 +89,7 @@ if(SERVER)then
 		end
 		self:Extinguish()
 		local Phys=self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity()*.7)
+		Phys:SetVelocity(Phys:GetVelocity()*(self.DragMult or .7))
 		Phys:ApplyForceCenter(Force)
 		self:NextThink(Time+math.Rand(4,8))
 		return true

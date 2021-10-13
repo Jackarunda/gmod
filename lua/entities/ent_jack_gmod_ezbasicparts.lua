@@ -1,8 +1,9 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
-ENT.PrintName="EZ Parts Box"
+ENT.PrintName="EZ Basic Parts Box"
 ENT.Category="JMod - EZ Resources"
+ENT.IconOverride="materials/ez_resource_icons/basic parts.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---

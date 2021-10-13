@@ -24,7 +24,7 @@ if(SERVER)then
 		if destructive and vFireInstalled then
 			CreateVFireBall(math.random(5, 15), math.random(5, 15), pos, VectorRand() * math.random(100, 200))
 		end
-		for i=1,3 do
+		for i=1,1 do
 			local Eff=EffectData()
 			Eff:SetOrigin(pos+VectorRand()*10)
 			util.Effect("StriderBlood",Eff,true,true)
