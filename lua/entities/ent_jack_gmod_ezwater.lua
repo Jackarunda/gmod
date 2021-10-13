@@ -1,4 +1,4 @@
--- Jackarunda 2020
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Water Drum"

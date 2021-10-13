@@ -1,0 +1,15 @@
+"VertexlitGeneric"
+{
+	"$baseTexture" "models\props_mining/ingot_jack"
+	"$bumpmap" "models\props_mining/ingot_jack_normal"
+	"$surfaceprop"	"metal"
+	"$normalmapalphaenvmapmask" 1
+
+	"$phong" "1"
+	"$phongexponent" "30"
+	"$phongboost" ".5"
+	"$phongfresnelranges"	"[1 1 1]"
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.8 .7 .75]"
+}

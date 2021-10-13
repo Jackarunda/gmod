@@ -1,4 +1,4 @@
--- Jackarunda 2019
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Gas Tank"

@@ -1,4 +1,4 @@
--- Jackarunda 2019
+-- Jackarunda 2021
 local Sprites={"particle/smokestack"}
 function EFFECT:Init(data)
 	local Pos,Scale=data:GetOrigin(),1

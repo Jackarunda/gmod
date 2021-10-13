@@ -1,4 +1,4 @@
--- Jackarunda 2020
+-- Jackarunda 2021
 function EFFECT:Init(data)
 	local Pos,Scale=data:GetOrigin(),data:GetScale()
 	local Emitter=ParticleEmitter(Pos)

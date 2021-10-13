@@ -1,4 +1,4 @@
--- Jackarunda 2019
+-- Jackarunda 2021
 AddCSLuaFile()
 
 SWEP.PrintName	= "EZ Target Designator"

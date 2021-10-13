@@ -1,8 +1,9 @@
--- Jackarunda 2019
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Fuel Can"
 ENT.Category="JMod - EZ Resources"
+ENT.IconOverride="materials/ez_resource_icons/fuel.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -10,7 +11,7 @@ ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.FUEL
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.Model="models/props_junk/gascan001a.mdl"
 ENT.Material=nil
-ENT.ModelScale=1.25
+ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Weapon.ImpactSoft"
 ENT.ImpactNoise2="Metal_Box.ImpactHard"
@@ -39,7 +40,7 @@ if(SERVER)then
 					Fiah:Spawn()
 					Fiah:Activate()
 					Fiah:Fire("StartFire","",0)
-					Fiah:Fire("kill","",math.random(3,10))
+					Fiah:Fire("kill","",math.random(1,5))
 				end
 			end
 		end
@@ -64,7 +65,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(0,5,-1),Angle(-90,0,90),.05,300,function()
+		JMod.HoloGraphicDisplay(self,Vector(0,3.9,-1.5),Angle(-90,0,90),.05,300,function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.FUEL,self:GetResource(),nil,0,0,200,true)
 		end)
 	end
