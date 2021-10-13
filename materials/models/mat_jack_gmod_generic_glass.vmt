@@ -7,7 +7,7 @@
 	"$reflectentities" 1
 	"$reflecttexture" "_rt_WaterReflection" 
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[ .6 .9 1 ]"
+	"$envmaptint" "[ .8 .8 .8 ]"
 	"$model" 1
 	//"$halflambert" 1
 }
