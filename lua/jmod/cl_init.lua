@@ -594,6 +594,14 @@ net.Receive("JMod_Ravebreak",function()
 	-- note that the song's beat is about .35 seconds
 end)
 
+hook.Add("RenderScene","JMod_RenderScene",function(origin,angs,fov)
+	render.SetAmbientLight(1,1,1)
+	render.SetLightingOrigin(Vector(-3400,5300,400))
+end)
+--hook.Add("PostRender","JMod_PostRender",function()
+--	engine.LightStyle(0,"m")
+--end)
+
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine

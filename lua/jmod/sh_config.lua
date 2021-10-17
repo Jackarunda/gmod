@@ -534,7 +534,7 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 		Recipes={
 		    ["EZ Ammo"]={			
-				"ent_jack_gmod_ezammo",		
+				"ent_jack_gmod_ezammo",
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=40,

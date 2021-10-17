@@ -127,6 +127,9 @@ function JMod.BlastThatDoor(ent, vel)
 
 		if (vel) then
 			Replacement:GetPhysicsObject():SetVelocity(vel)
+			timer.Simple(0,function()
+				if(IsValid(Replacement))then Replacement:GetPhysicsObject():ApplyForceCenter(vel*100) end
+			end)
 		end
 
 		timer.Simple(3, function()

@@ -423,4 +423,3 @@ hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,ta
 		return JMod.PlayersCanComm(listener,talker)
 	end
 end)
-
