@@ -289,13 +289,13 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 		Blueprints={
 			["EZ Automated Field Hospital"]={
-				"ent_jack_gmod_ezfieldhospital",
-				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
-					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=80,
-					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
-				},
+                "ent_jack_gmod_ezfieldhospital",
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
+                    [JMod.EZ_RESOURCE_TYPES.POWER]=100,
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=200
+                },
 				2,
 				"Machines",
 				"Heals players so you don't have to get more blood on you."
@@ -387,9 +387,10 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezmbhg",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=120,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=600,
-					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]=10
+					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER]=25
 				},
 				1.5,
 				"Machines",
@@ -399,9 +400,9 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=10
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=50
 				},
 				1,
 				"Explosives",
@@ -421,9 +422,9 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke_small",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=5
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=25
 				},
 				1,
 				"Explosives",
@@ -443,8 +444,8 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
-					[JMod.EZ_RESOURCE_TYPES.AMMO]=300,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.AMMO]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.COOLANT]=100
 				},
 				1,
@@ -465,8 +466,8 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezaidradio",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-					[JMod.EZ_RESOURCE_TYPES.POWER]=100,	
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20	
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25	
 				},
 				1,
 				"Machines",
@@ -488,9 +489,9 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznuke_big",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=20
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=150
 				},
 				1.5,
 				"Explosives",
@@ -510,7 +511,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezworkbench",		
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=40,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100
 				},
@@ -523,9 +524,9 @@ function JMod.InitGlobalConfig(forceNew)
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=300,
-					[JMod.EZ_RESOURCE_TYPES.AMMO]=600
+					[JMod.EZ_RESOURCE_TYPES.AMMO]=200
 				},
 				2,
 				"Other",
@@ -538,6 +539,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=40,
+					[JMod.EZ_RESOURCE_TYPES.LEAD]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
 				"Resources",
@@ -556,7 +558,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        "ent_jack_gmod_ezbuildkit",
 		        {
 			        [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50
 				},
@@ -584,8 +586,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Explosives"]={
 				"ent_jack_gmod_ezexplosives",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=150
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=100
 				},
 				"Resources",
 				"No bomb is complete without explosives!"
@@ -593,9 +595,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Flashbang"]={
 				"ent_jack_gmod_ezflashbang",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=2,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=2
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
 				"Weapons",
 				"Look away unless you want to be blinded."
@@ -771,8 +773,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Ultra Heavy Helmet"]={
 				"ent_jack_gmod_ezarmor_maska",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=40,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=25
 				},
 				"Apparel",
 				"Turtle head. Heaviest helmet, and restricts your vision alot."
@@ -807,10 +809,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Medical Supplies"]={
 				"ent_jack_gmod_ezmedical supplies",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=50
 				},
 				"Resources",
 				"Necessities to heal anyone."
@@ -854,8 +856,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Medkit"]={
 				"ent_jack_gmod_ezmedkit",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=100
 				},
 				"Tools",
 				"Go help em doc. Watch your head, you're gonna be a target."
@@ -892,7 +894,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznade_proximity",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
 				"Weapons",
 				"Useful for turning big bombs into traps. Very weak on its own however."
@@ -901,7 +903,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznade_remote",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
 				"Weapons",
 				"Set it on a bomb, and trigger it from afar. Good if you want to ensure you're out of blast range."
@@ -910,7 +912,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_eznade_remote",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=3
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
 				"Weapons",
 				"Arm it on a bomb, and run like hell. those ten seconds pass very quick."
@@ -928,9 +930,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Night Vision Goggles"]={
 				"ent_jack_gmod_ezarmor_nvgs",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.POWER]=20
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=25
 				},
 				"Apparel",
 				"See at night, be blinded by bright light."
@@ -947,7 +949,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Propellant"]={
 				"ent_jack_gmod_ezpropellant",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=2,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=80
 				},
 				"Resources",
@@ -974,9 +976,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Signal Grenade"]={
 				"ent_jack_gmod_ezsignalnade",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
 				"Weapons",
 				"Send smoke signals to your team, and probably be ignored or brutally murdered by the enemy."
@@ -984,9 +985,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Smoke Grenade"]={
 				"ent_jack_gmod_ezsmokenade",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
 				"Weapons",
 				"Smokescreen so nobody knows who they're shooting."
@@ -1103,9 +1103,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Thermal Goggles"]={
 				"ent_jack_gmod_ezarmor_thermals",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=20,
-					[JMod.EZ_RESOURCE_TYPES.POWER]=20
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=25
 				},
 				"Apparel",
 				"Good for seeing things you couldn't see before."
