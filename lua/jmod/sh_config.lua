@@ -609,10 +609,89 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Bolt-Action Rifle"]={
                 JMod.WeaponTable["Bolt-Action Rifle"].ent,
                 {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+					[JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A bolt action rifle. First practical high-power repeating rifle."
+            },
+			["EZ Lever-Action Carbine"]={
+                JMod.WeaponTable["Lever-Action Carbine"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A Lever action carbine, less power than bolt action rifle, but more ammo."
+            },
+			["EZ Magnum Revolver"]={
+                JMod.WeaponTable["Magnum Revolver"].ent,
+                {
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
                 },
                 "Weapons",
-                "A crossbow. Can be very efficient if you hit all your shots."
+                "Revolver, but with a more powerful round."
+            },
+			["EZ Pump-action Shotgun"]={
+                JMod.WeaponTable["Pump-Action Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+                },
+                "Weapons",
+                "Pump action shotgun, More shotgun shells."
+            },
+			["EZ Shot Revolver"]={
+                JMod.WeaponTable["Shot Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                },
+                "Weapons",
+                "Small shotgun, ready to tear faces off at very close range."
+            },
+			["EZ Grenade Launcher"]={
+                JMod.WeaponTable["Grenade Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "First grenade launcher. A single grenade to turn shit into scrap."
+            },
+			["EZ Pistol"]={
+                JMod.WeaponTable["Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A pistol. Great sidearm to have."
+            },
+			["EZ Plinking Pistol"]={
+                JMod.WeaponTable["Plinking Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
+                },
+                "Weapons",
+                "A plinking pistol. Great if you want to deal with that bird that's annoying you."
+            },
+			["EZ Sniper Rifle"]={
+                JMod.WeaponTable["Sniper Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A sniper rifle. Pick off targets at long range."
+            },
+			["EZ Sniper Rifle"]={
+                JMod.WeaponTable["Sniper Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A sniper rifle. Pick off targets at long range."
             },
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
