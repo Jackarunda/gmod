@@ -542,6 +542,78 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"General purpose bullets. Don't ask how we got so many types of ammo in one box."
 			},
+			["EZ Flintlock Musket"]={
+                JMod.WeaponTable["Flintlock Musket"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                "Weapons",
+                "Ol' fashioned musket, great for hunting"
+            },
+			["EZ Cap and Ball Revolver"]={
+                JMod.WeaponTable["Cap and Ball Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=5
+                },
+                "Weapons",
+                "A very inaccurate revolver. Fires 6 shots."
+            },
+			["EZ Break-Action Shotgun"]={
+                JMod.WeaponTable["Break-Action Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A double barrel O/U shotgun."
+            },
+			["EZ Revolver"]={
+                JMod.WeaponTable["Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=5
+                },
+                "Weapons",
+                "A simple revolver. Fires 6 shots"
+            },
+			["EZ Single-Shot Rifle"]={
+                JMod.WeaponTable["Single-Shot Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A simple rifle. Fires one bullet at a time."
+            },
+			["EZ Single-Shot Rifle"]={
+                JMod.WeaponTable["Single-Shot Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A simple rifle. Fires one bullet at a time."
+            },
+			["EZ Crossbow"]={
+                JMod.WeaponTable["Crossbow"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                },
+                "Weapons",
+                "A crossbow. Can be very efficient if you hit all your shots."
+            },
+			["EZ Bolt-Action Rifle"]={
+                JMod.WeaponTable["Bolt-Action Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                },
+                "Weapons",
+                "A crossbow. Can be very efficient if you hit all your shots."
+            },
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
 		        {   
