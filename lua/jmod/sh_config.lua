@@ -612,7 +612,7 @@ function JMod.InitGlobalConfig(forceNew)
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
                 },
                 "Weapons",
-                "A crossbow. Can be very efficient if you hit all your shots."
+                "A simple bolt-action rifle, powerful enough for hunting average game."
             },
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
