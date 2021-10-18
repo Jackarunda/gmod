@@ -77,7 +77,7 @@ JMod.WeaponTable={
 		swep="wep_jack_gmod_dmr",
 		ent="ent_jack_gmod_ezweapon_dmr"
 	},
-	["Bolt Action Rifle"]={
+	["Bolt-Action Rifle"]={
 		mdl="models/weapons/w_jmod_r700.mdl",
 		swep="wep_jack_gmod_boltactionrifle",
 		ent="ent_jack_gmod_ezweapon_bar"
