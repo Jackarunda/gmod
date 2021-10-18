@@ -684,14 +684,165 @@ function JMod.InitGlobalConfig(forceNew)
                 "Weapons",
                 "A sniper rifle. Pick off targets at long range."
             },
-			["EZ Sniper Rifle"]={
-                JMod.WeaponTable["Sniper Rifle"].ent,
+			["EZ Pocket Pistol"]={
+                JMod.WeaponTable["Pocket Pistol"].ent,
                 {
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=65,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=20
+                },
+                "Weapons",
+                "A pocket pistol. It's concealable, allowing you to seem unarmed to others."
+            },
+			["EZ Anti-Materiel Sniper Rifle"]={
+                JMod.WeaponTable["Anti-Materiel Sniper Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=175,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=40
+                },
+                "Weapons",
+                "An Anti-material sniper rifle. Use to obliterate your enemies and their property at long range."
+            },                  
+            ["EZ Assault Rifle"]={
+                JMod.WeaponTable["Assault Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=130,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=30
+                },
+                "Weapons",
+                "An assault rifle. Reliable automatic rifle to dispatch assailants at medium range."
+            },
+            ["EZ Battle Rifle"]={
+                JMod.WeaponTable["Battle Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=130,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
                 },
                 "Weapons",
-                "A sniper rifle. Pick off targets at long range."
+                "A battle rifle. Powerful semi-auto rifle to dispatch assailants at medium range."
+            },
+            ["EZ Carbine"]={
+                JMod.WeaponTable["Carbine"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=120,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=30
+                },
+                "Weapons",
+                "A carbine. Like the assault rifle, but with a shorter barrel."
+            },
+            ["EZ Designated Marksman Rifle"]={
+                JMod.WeaponTable["Designated Marksman Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=35
+                },
+                "Weapons",
+                "A designated marksman rifle. Strong semi-auto rifle equipped with a scope for long range target removal."
+            },
+            ["EZ Machine Pistol"]={
+                JMod.WeaponTable["Machine Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=30
+                },
+                "Weapons",
+                "A machine pistol. Extremely fast automatic pistol for short range encounters."
+            },
+            ["EZ Magnum Pistol"]={
+                JMod.WeaponTable["Magnum Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=35
+                },
+                "Weapons",
+                "A magnum pistol. Strong semi-auto pistol."
+            },
+            ["EZ Submachine Gun"]={
+                JMod.WeaponTable["Sub Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=115,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=30
+                },
+                "Weapons",
+                "A submachine gun. Fast automatic SMG for short-medium range engagements."
+            },
+            ["EZ Semiautomatic Shotgun"]={
+                JMod.WeaponTable["Semi-Automatic Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=130,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=35
+                },
+                "Weapons",
+                "A semi-automatic shotgun. Fast firing tube-fed shotgun for close range battle."
+            },
+            ["EZ Rocket Launcher"]={
+                JMod.WeaponTable["Rocket Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=175,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A rocket launcher. Launches rockets. What else did you think it did?"
+            },
+            ["EZ Fully-Automatic Shotgun"]={
+                JMod.WeaponTable["Fully-Automatic Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=140,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=45,
+                    [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=20
+                },
+                "Weapons",
+                "A fully-automatic shotgun. Fast firing magazine-fed automatic shotgun for close range deletion."
+            },
+            ["EZ Light Machine Gun"]={
+                JMod.WeaponTable["Light Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=175,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=65,
+                    [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=30
+                },
+                "Weapons",
+                "A light machine gun. Fast firing LMG capable of laying down suppressive fire at medium range."
+            },
+            ["EZ Medium Machine Gun"]={
+                JMod.WeaponTable["Medium Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=175,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=60,
+                    [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=20,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=10
+                },
+                "Weapons",
+                "A medium machine gun. Powerful machine gun with decent fire rate for dealing serious damage."
+            },
+            ["EZ Anti-Material Rifle"]={
+                JMod.WeaponTable["Anti-Materiel Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=160,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=60,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=30
+                },
+                "Weapons",
+                "An Anti-material rifle. Use to obliterate your enemies and their property in quick succession."
+            }, 
+            ["EZ Multiple Grenade Launcher"]={
+                JMod.WeaponTable["Multiple Grenade Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=140,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=50
+                },
+                "Weapons",
+                "A Multiple Grenade Launcher. Use wisely to wreak havoc at close-medium range."
+            },
+            ["EZ Multiple Rocket Launcher"]={
+                JMod.WeaponTable["Multiple Rocket Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=80,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=60
+                },
+                "Weapons",
+                "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
             },
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
