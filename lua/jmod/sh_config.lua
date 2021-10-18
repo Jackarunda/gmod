@@ -542,6 +542,316 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"General purpose bullets. Don't ask how we got so many types of ammo in one box."
 			},
+		    ["EZ Black Powder Paper Cartridges"]={			
+				"ent_jack_gmod_ezammobox_bppc",
+				{	
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=25,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=50,
+					[JMod.EZ_RESOURCE_TYPES.LEAD]=25
+				},
+				"Resources",
+				"for ye olde black powder weapons so you can dispatch scoundrels rightly"
+			},
+		    ["EZ Arrows"]={			
+				"ent_jack_gmod_ezammobox_a",
+				{	
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=25
+				},
+				"Resources",
+				"modern broadhead hunting arrows for maximum yeeting"
+			},
+			["EZ Flintlock Musket"]={
+                JMod.WeaponTable["Flintlock Musket"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                "Weapons",
+                "Ol' fashioned musket, kinda inaccurate"
+            },
+			["EZ Cap and Ball Revolver"]={
+                JMod.WeaponTable["Cap and Ball Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL]=10,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=5
+                },
+                "Weapons",
+                "A very inaccurate revolver. Fires 6 shots."
+            },
+			["EZ Break-Action Shotgun"]={
+                JMod.WeaponTable["Break-Action Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                "Weapons",
+                "A double barrel O/U shotgun."
+            },
+			["EZ Revolver"]={
+                JMod.WeaponTable["Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=5
+                },
+                "Weapons",
+                "A simple revolver. Fires 6 shots"
+            },
+			["EZ Single-Shot Rifle"]={
+                JMod.WeaponTable["Single-Shot Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                "Weapons",
+                "A simple rifle. Fires one bullet at a time."
+            },
+			["EZ Crossbow"]={
+                JMod.WeaponTable["Crossbow"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                },
+                "Weapons",
+                "A crossbow. Can be very efficient if you hit all your shots."
+            },
+			["EZ Bolt-Action Rifle"]={
+                JMod.WeaponTable["Bolt-Action Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125
+                },
+                "Weapons",
+                "A bolt action rifle. First practical high-power repeating rifle."
+            },
+			["EZ Lever-Action Carbine"]={
+                JMod.WeaponTable["Lever-Action Carbine"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.WOOD]=20
+                },
+                "Weapons",
+                "A Lever action carbine, less power than bolt action rifle, but more ammo."
+            },
+			["EZ Magnum Revolver"]={
+                JMod.WeaponTable["Magnum Revolver"].ent,
+                {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
+                },
+                "Weapons",
+                "Revolver, but with a more powerful round."
+            },
+			["EZ Pump-action Shotgun"]={
+                JMod.WeaponTable["Pump-Action Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+                },
+                "Weapons",
+                "Pump action shotgun, More shotgun shells."
+            },
+			["EZ Shot Revolver"]={
+                JMod.WeaponTable["Shot Revolver"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                },
+                "Weapons",
+                "Small shotgun, ready to tear faces off at very close range."
+            },
+			["EZ Grenade Launcher"]={
+                JMod.WeaponTable["Grenade Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
+                },
+                "Weapons",
+                "First grenade launcher. A single grenade to turn shit into scrap."
+            },
+			["EZ Pistol"]={
+                JMod.WeaponTable["Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A pistol. Great sidearm to have."
+            },
+			["EZ Plinking Pistol"]={
+                JMod.WeaponTable["Plinking Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
+                },
+                "Weapons",
+                "A plinking pistol. Great if you want to deal with that bird that's annoying you."
+            },
+			["EZ Sniper Rifle"]={
+                JMod.WeaponTable["Sniper Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A sniper rifle. Pick off targets at long range."
+            },
+			["EZ Pocket Pistol"]={
+                JMod.WeaponTable["Pocket Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+                },
+                "Weapons",
+                "A pocket pistol. It's concealable, allowing you to seem unarmed to others."
+            },
+			["EZ Anti-Materiel Sniper Rifle"]={
+                JMod.WeaponTable["Anti-Materiel Sniper Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100
+                },
+                "Weapons",
+                "An Anti-materiel sniper rifle. Use to obliterate your enemies and their property at long range."
+            },                  
+            ["EZ Assault Rifle"]={
+                JMod.WeaponTable["Assault Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "An assault rifle. Reliable automatic rifle to dispatch assailants at medium range."
+            },
+            ["EZ Battle Rifle"]={
+                JMod.WeaponTable["Battle Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A battle rifle. Powerful semi-auto rifle to dispatch assailants at medium range."
+            },
+            ["EZ Carbine"]={
+                JMod.WeaponTable["Carbine"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A carbine. Like the assault rifle, but with a shorter barrel."
+            },
+            ["EZ Designated Marksman Rifle"]={
+                JMod.WeaponTable["Designated Marksman Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=35
+                },
+                "Weapons",
+                "A designated marksman rifle. Strong semi-auto rifle equipped with a scope for long range target removal."
+            },
+            ["EZ Machine Pistol"]={
+                JMod.WeaponTable["Machine Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A machine pistol. Extremely fast automatic pistol for short range encounters."
+            },
+            ["EZ Magnum Pistol"]={
+                JMod.WeaponTable["Magnum Pistol"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A magnum pistol. Strong semi-auto pistol."
+            },
+            ["EZ Submachine Gun"]={
+                JMod.WeaponTable["Sub Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A submachine gun. Fast automatic SMG for short-medium range engagements."
+            },
+            ["EZ Semiautomatic Shotgun"]={
+                JMod.WeaponTable["Semi-Automatic Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A semi-automatic shotgun. Fast firing tube-fed shotgun for close range battle."
+            },
+            ["EZ Rocket Launcher"]={
+                JMod.WeaponTable["Rocket Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
+                },
+                "Weapons",
+                "A rocket launcher. Launches rockets. What else did you think it did?"
+            },
+            ["EZ Fully-Automatic Shotgun"]={
+                JMod.WeaponTable["Fully-Automatic Shotgun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=75
+                },
+                "Weapons",
+                "A fully-automatic shotgun. Fast firing magazine-fed automatic shotgun for close range deletion."
+            },
+            ["EZ Light Machine Gun"]={
+                JMod.WeaponTable["Light Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=25
+                },
+                "Weapons",
+                "A light machine gun. Fast firing LMG capable of laying down suppressive fire at medium range."
+            },
+            ["EZ Medium Machine Gun"]={
+                JMod.WeaponTable["Medium Machine Gun"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=125,
+                    [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=25
+                },
+                "Weapons",
+                "A medium machine gun. Powerful machine gun with decent fire rate for dealing serious damage."
+            },
+            ["EZ Anti-Materiel Rifle"]={
+                JMod.WeaponTable["Anti-Materiel Rifle"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=250,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=150,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=50
+                },
+                "Weapons",
+                "An Anti-materiel rifle. Use to obliterate your enemies and their property in quick succession."
+            }, 
+            ["EZ Multiple Grenade Launcher"]={
+                JMod.WeaponTable["Multiple Grenade Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
+                    [JMod.EZ_RESOURCE_TYPES.TITANIUM]=50
+                },
+                "Weapons",
+                "A Multiple Grenade Launcher. Use wisely to wreak havoc at close-medium range."
+            },
+            ["EZ Multiple Rocket Launcher"]={
+                JMod.WeaponTable["Multiple Rocket Launcher"].ent,
+                {
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=250,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
+                    [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=50
+                },
+                "Weapons",
+                "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
+            },
 		    ["EZ Ballistic Mask"]={
 		        "ent_jack_gmod_ezarmor_balmask",
 		        {   
@@ -733,6 +1043,39 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				"Weapons",
 				"Anti-personnel land mine. Try your best to match the color with the ground."
+			},
+			["BUCKET"]={
+				JMod.ArmorTable["Metal Bucket"].ent,
+				{
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=20
+				},
+				"Apparel",
+				"im am smart put buket on head for protecton"
+			},
+			["CONE"]={
+				JMod.ArmorTable["Traffic Cone"].ent,
+				{
+					[JMod.EZ_RESOURCE_TYPES.RUBBER]=10,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=10
+				},
+				"Apparel",
+				"yo you ever played Garry's Mod?"
+			},
+			["CERAMIC POT"]={
+				JMod.ArmorTable["Ceramic Pot"].ent,
+				{
+					[JMod.EZ_RESOURCE_TYPES.GLASS]=30,
+				},
+				"Apparel",
+				"will stop a bullet once"
+			},
+			["COOKIN POT"]={
+				JMod.ArmorTable["Metal Pot"].ent,
+				{
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=30
+				},
+				"Apparel",
+				"congrats you are now 5"
 			},
 			["EZ Light Helmet"]={
 				"ent_jack_gmod_ezarmor_lhead",
