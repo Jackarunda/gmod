@@ -63,7 +63,7 @@ if(SERVER)then
 		end
 		timer.Simple(.075,function()
 			if not(IsValid(self))then return end
-			for k,v in pairs(ents.FindInSphere(self:GetPos(),40))do
+			for k,v in pairs(ents.FindInSphere(self:GetPos(),80))do
 				if(v.EZpowderIgnitable)then
 					JMod.Owner(v,self.Owner)
 					v:Arm()
