@@ -619,7 +619,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Bolt-Action Rifle"]={
                 JMod.WeaponTable["Bolt-Action Rifle"].ent,
                 {
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
                 },
                 "Weapons",
                 "A bolt action rifle. First practical high-power repeating rifle."
@@ -878,7 +878,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=25
 				},
-				"Weapons",
+				"Munitions",
 				"A Versatile breaching tool."
 			},
 			["EZ Dynamite"]={
@@ -887,7 +887,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Good for blastmining and blasting idiots."
 			},
 			["EZ Explosives"]={
@@ -906,7 +906,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Look away unless you want to be blinded."
 			},
 			["EZ Fougasse Mine"]={
@@ -916,7 +916,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Focus fire on the flammable targets."
 			},
 			["EZ Fragmentation Grenade"]={
@@ -925,7 +925,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Frag nade, for sending hundreds of fragments into your enemy."
 			},
 			["EZ Fumigator"]={
@@ -935,7 +935,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
 				},
-				"Weapons",
+				"Munitions",
 				"Go ahead, tell your hitler jokes. We'll wait."
 			},
 			["EZ Gas Grenade"]={
@@ -945,7 +945,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Portable way of gassing j- enemies."
 			},
 			["EZ Tear Gas Grenade"]={
@@ -955,7 +955,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Effective area denial for those without gasmasks. Might be a warcrime."
 			},
 			["EZ Gas Mask"]={
@@ -974,7 +974,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50
 				},
-				"Weapons",
+				"Munitions",
 				"A very heavy and very explosive stick grenade."
 			},
 			["EZ Headset"]={
@@ -1022,7 +1022,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"For the aggressive type. Explodes on impact."
 			},
 			["EZ Incendiary Grenade"]={
@@ -1032,7 +1032,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=30
 				},
-				"Weapons",
+				"Munitions",
 				"Portable fire bomb, try cooking it before throwing to spread it more."
 			},
 			["EZ Landmine"]={
@@ -1041,7 +1041,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Anti-personnel land mine. Try your best to match the color with the ground."
 			},
 			["BUCKET"]={
@@ -1221,7 +1221,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Bury this in the soil around your base, and you got a very hidden defense option."
 			},
 			["EZ Mini Claymore"]={
@@ -1230,7 +1230,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Simple way to trap corners and the like."
 			},
 			["EZ Mini Impact Grenade"]={
@@ -1239,7 +1239,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"You could throw it, but it's much better for making sure that bumping a bomb is a death sentence."
 			},
 			["EZ Mini Proximity Grenade"]={
@@ -1248,7 +1248,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Useful for turning big bombs into traps. Very weak on its own however."
 			},
 			["EZ Mini Remote Grenade"]={
@@ -1257,7 +1257,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Set it on a bomb, and trigger it from afar. Good if you want to ensure you're out of blast range."
 			},
 		   	["EZ Mini Timed Grenade"]={
@@ -1266,7 +1266,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Arm it on a bomb, and run like hell."
 			},
 			["EZ Munitions"]={
@@ -1296,7 +1296,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=400
 				},
-				"Weapons",
+				"Munitions",
 				"Become bugs bunny and kill yosemite sam with a black-powder line"
 			},
 			["EZ Propellant"]={
@@ -1309,13 +1309,45 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"Propellant for guns and other things."
 			},
+			["EZ Coolant"]={
+				"ent_jack_gmod_ezcoolant",
+				{
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
+					[JMod.EZ_RESOURCE_TYPES.WATER]=90,
+				},
+				"Resources",
+				"For cooling down machines. Do not drink."
+			},
+			["EZ Nutrients"]={
+				"ent_jack_gmod_eznutrients",
+				{
+					[JMod.EZ_RESOURCE_TYPES.ORGANICS]=25,
+					[JMod.EZ_RESOURCE_TYPES.WATER]=25,
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=50,
+				},
+				"Resources",
+				"Tasty food! 99% Plastic Free!"
+			},
+			["EZ Basic Parts"]={
+				"ent_jack_gmod_ezbasicparts",
+				{
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=20,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=20,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=20,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER]=10,
+					[JMod.EZ_RESOURCE_TYPES.GLASS]=10,
+				},
+				"Resources",
+				"For all the basic stuff you'll need."
+			},
 			["EZ SLAM"]={	
 				"ent_jack_gmod_ezslam",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam."
 			},
 			["EZ Satchel Charge"]={
@@ -1324,7 +1356,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
-				"Weapons",
+				"Munitions",
 				"we wile e coyote now, meep meep"
 			},
 			["EZ Signal Grenade"]={
@@ -1333,7 +1365,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
-				"Weapons",
+				"Munitions",
 				"Send smoke signals to your team, and probably be ignored or brutally murdered by the enemy."
 			},
 			["EZ Smoke Grenade"]={
@@ -1342,7 +1374,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
-				"Weapons",
+				"Munitions",
 				"Smokescreen so nobody knows who they're shooting."
 			},
 			["EZ Left Calf Armor"]={
@@ -1441,7 +1473,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Use your good throwing arm for this. Goes very far. Can have a frag sleeve on it."
 			},
 			["EZ Sticky Bomb"]={
@@ -1451,7 +1483,7 @@ function JMod.InitGlobalConfig(forceNew)
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Don't get yourself stuck on it! Very good for sticking to vehicles and stationary objects."
 			},
 			["EZ TNT"]={
@@ -1460,7 +1492,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=30
 				},
-				"Weapons",
+				"Munitions",
 				"Simple breaching device. Reacts to powder from the powder keg."
 			},
 			["EZ Thermal Goggles"]={
@@ -1479,7 +1511,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
-				"Weapons",
+				"Munitions",
 				"The longer you set the time, the harder it is to defuse."
 			}
 			
