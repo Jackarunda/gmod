@@ -16,7 +16,7 @@ SWEP.BodyHolsterScale = 1
 
 JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
 SWEP.Damage=SWEP.Damage/25
-SWEP.Num=40
+SWEP.Num=30
 SWEP.Range=10
 SWEP.Penetration=20
 SWEP.AmmoPerShot=3
@@ -37,7 +37,7 @@ SWEP.Firemodes = {
 	}
 }
 
-SWEP.AccuracyMOA = 100 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 120 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
