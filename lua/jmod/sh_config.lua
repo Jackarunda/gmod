@@ -1328,19 +1328,6 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"Tasty food! 99% Plastic Free!"
 			},
-			["EZ Basic Parts"]={
-				"ent_jack_gmod_ezbasicparts",
-				{
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=20,
-					[JMod.EZ_RESOURCE_TYPES.COPPER]=20,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=20,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=20,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER]=10,
-					[JMod.EZ_RESOURCE_TYPES.GLASS]=10,
-				},
-				"Resources",
-				"For all the basic stuff you'll need."
-			},
 			["EZ SLAM"]={	
 				"ent_jack_gmod_ezslam",
 				{
