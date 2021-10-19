@@ -545,9 +545,9 @@ function JMod.InitGlobalConfig(forceNew)
 		    ["EZ Black Powder Paper Cartridges"]={			
 				"ent_jack_gmod_ezammobox_bppc",
 				{	
-					[JMod.EZ_RESOURCE_TYPES.PAPER]=25,
-					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=50,
-					[JMod.EZ_RESOURCE_TYPES.LEAD]=25
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=20,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=25,
+					[JMod.EZ_RESOURCE_TYPES.LEAD]=15
 				},
 				"Resources",
 				"for ye olde black powder weapons so you can dispatch scoundrels rightly"
@@ -555,8 +555,8 @@ function JMod.InitGlobalConfig(forceNew)
 		    ["EZ Arrows"]={			
 				"ent_jack_gmod_ezammobox_a",
 				{	
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=25
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=15,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=15
 				},
 				"Resources",
 				"modern broadhead hunting arrows for maximum yeeting"
