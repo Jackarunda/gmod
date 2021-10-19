@@ -50,7 +50,7 @@ if(SERVER)then
 		---
 		self.EZID=self.EZID or JMod.GenerateGUID()
 		---
-		self:SetCount(self.Specs.carrylimit) -- default to full
+		self:SetCount(self.Specs.carrylimit/2)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.1)then

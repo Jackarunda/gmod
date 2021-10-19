@@ -7,6 +7,7 @@
 1 pocket knife
 1 sledgehammer
 1 sword
+2 blunderbuss
 2 musket
 3 cap and ball revolver
 4 break-action shotgun
@@ -227,6 +228,11 @@ JMod.WeaponTable={
 		mdl="models/weapons/w_jmod_musket.mdl",
 		swep="wep_jack_gmod_flintlockmusket",
 		ent="ent_jack_gmod_ezweapon_flm"
+	},
+	["Flintlock Blunderbuss"]={
+		mdl="models/weapons/blunder/blunder.mdl",
+		swep="wep_jack_gmod_blunderbuss",
+		ent="ent_jack_gmod_ezweapon_flb"
 	},
 	["Cap and Ball Revolver"]={
 		mdl="models/krazy/gtav/weapons/navyrevolver_w.mdl",
@@ -523,9 +529,10 @@ if(CLIENT)then
 			wpn:FormRTScope()
 		end
 	end)
-	concommand.Add("jacky_vm_debug",function(ply,cmd,args)
+	concommand.Add("jacky_wep_debug",function(ply,cmd,args)
 		local VM=ply:GetViewModel()
 		print(VM:GetModel())
+		print(ply:GetActiveWeapon().WorldModel)
 		for i=0,20 do
 			local Info=VM:GetSequenceInfo(i)
 			if(Info)then print("anim",i,Info.label) end
