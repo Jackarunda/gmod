@@ -10,8 +10,8 @@ SWEP.ViewModelFOV = 75
 SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(0,-15,0)
 SWEP.BodyHolsterAngL = Angle(0,15,180)
-SWEP.BodyHolsterPos = Vector(5.5,-3,-3)
-SWEP.BodyHolsterPosL = Vector(1,-6,3)
+SWEP.BodyHolsterPos = Vector(-.5,-18,-4)
+SWEP.BodyHolsterPosL = Vector(1,-17,6)
 SWEP.BodyHolsterScale = 1
 
 JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")

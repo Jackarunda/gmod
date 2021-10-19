@@ -1,8 +1,13 @@
 "VertexLitGeneric"
 {
-	"$model"				1
-	"$baseTexture"			"env/obj/weapon/blunderbuss"
-	"$basealphaenvmapmask" "1"
+	"$model" "1"
+	"$baseTexture" "env/obj/weapon/blunderbuss"
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[1 .7 .4]"
+	"$bumpmap" "env/obj/weapon/blunderbuss_normal"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.8 .4 .05]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongexponent" "20"
+	"$phongboost" "2"
 }
