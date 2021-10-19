@@ -74,8 +74,8 @@ function SWEP:Initialize()
 	self.NextDeWeldProgress=0
 	if(SERVER)then
 		self.Buildables={
-			{"Nail (constraints object)","ez nail",{parts=10},.2},
-			{"(action) Package Object","package",{parts=25},1}
+			{"Nail (constraints object)","ez nail",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10},.2},
+			{"(action) Package Object","package",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25},1}
 		}
 		for name,info in pairs(JMod.Config.Blueprints)do
 			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4],info[5],info[6]})
@@ -252,7 +252,7 @@ function SWEP:PrimaryAttack()
 				self:Msg("device must be repaired before modifying")
 			elseif(State~=0)then
 				self:Msg("device must be turned off to modify")
-			elseif(JMod.HaveResourcesToPerformTask(nil,nil,{parts=20},self))then
+			elseif(JMod.HaveResourcesToPerformTask(nil,nil,{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20},self))then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
 				net.WriteTable(Ent.ModPerfSpecs)

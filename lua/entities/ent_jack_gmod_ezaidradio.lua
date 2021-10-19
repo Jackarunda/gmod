@@ -46,6 +46,7 @@ if(SERVER)then
 		self.ThinkSpeed=1
 		self.Efficiency=1
 		---
+		self:SetState(STATE_OFF)
 		self:SetElectricity(self.MaxElectricity)
 		self.Durability=self.MaxDurability
 		self.NextWhine=0

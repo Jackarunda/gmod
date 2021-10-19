@@ -9,10 +9,17 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.EZconsumes={"power","gas"}
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.GAS
+}
 ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.EZupgradable=false
 ---
+local STATE_BROKEN,STATE_OFF=-1,0
 function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Float",0,"Electricity")
 	self:NetworkVar("Float",1,"Gas")
 end
@@ -42,9 +49,12 @@ if(SERVER)then
 		self.MaxElectricity=100
 		self.MaxGas=100
 		self.EZbuildCost=JMod.Config.Blueprints["EZ Workbench"][2]
+		self.MaxDurability=100
 		---
+		self:SetState(STATE_OFF)
 		self:SetElectricity(self.MaxElectricity)
 		self:SetGas(self.MaxGas)
+		self.Durability=self.MaxDurability
 	end
 	function ENT:BuildEffect(pos)
 		if(CLIENT)then return end
@@ -64,7 +74,7 @@ if(SERVER)then
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 	end
 	function ENT:Use(activator)
-		if((self:GetGas()>0)and(self:GetElectricity()>0))then
+		if((self:GetGas()>0)and(self:GetElectricity()>0)and(self:GetState()>-1))then
 			net.Start("JMod_EZworkbench")
 			net.WriteEntity(self)
 			net.WriteTable(JMod.Config.Recipes)
@@ -187,6 +197,7 @@ elseif(CLIENT)then
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
+		if(self:GetState()<0)then DetailDraw=false end
 		---
 		self:DrawModel()
 		---
