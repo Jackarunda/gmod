@@ -722,7 +722,7 @@ net.Receive("JMod_ModifyMachine",function()
 	end
 end)
 net.Receive("JMod_EZradio",function()
-	local isMessage = net.ReadBool()	
+	local isMessage = net.ReadBool()
 	if isMessage then
 		local parrot = net.ReadBool()
 		local msg = net.ReadString()
