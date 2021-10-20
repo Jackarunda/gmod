@@ -2,7 +2,7 @@ JMod.ClientConfig = JMod.ClientConfig or {}
 local function InsertEmptyConfig(Tab,IP)
 	Tab[IP] = {
 		WorkbenchFavs = {},
-		BuildKitFavs = {},
+		ToolboxFavs = {},
 		AidRadioFavs = {}
 	}
 end

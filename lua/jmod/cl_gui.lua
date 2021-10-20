@@ -308,7 +308,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
         local desc = itemInfo[5] or ""
         if typ == "workbench" then
             desc = itemInfo[4]
-        elseif typ == "buildkit" then
+        elseif typ == "toolbox" then
             desc = itemInfo[6]
         end
         Butt:SetTooltip(desc)
@@ -333,8 +333,8 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
                 net.WriteEntity(builder)
                 net.WriteString(k)
                 net.SendToServer()
-            elseif (typ == "buildkit") then
-                net.Start("JMod_EZbuildKit")
+            elseif (typ == "toolbox") then
+                net.Start("JMod_EZtoolbox")
                 net.WriteInt(k, 8)
                 net.SendToServer()
             end
@@ -358,7 +358,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
         Y = Y + 30
     end
 end
-net.Receive("JMod_EZbuildKit",function()
+net.Receive("JMod_EZtoolbox",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
 	local resTbl = JMod.CountResourcesInRange(nil,nil,Kit)
@@ -367,7 +367,7 @@ net.Receive("JMod_EZbuildKit",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Build Kit")-- | Right click a blueprint to favourite it.")
+	motherFrame:SetTitle("Toolbox")-- | Right click a blueprint to favourite it.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
@@ -411,7 +411,7 @@ net.Receive("JMod_EZbuildKit",function()
 		surface.SetDrawColor(0,0,0,100)
 		surface.DrawRect(0,0,w,h)
 	end
-	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"buildkit")
+	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 	for k,cat in pairs(Categories)do
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
@@ -425,7 +425,7 @@ net.Receive("JMod_EZbuildKit",function()
 		end
 		function TabBtn:DoClick()
 			ActiveTab=self.Category
-			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"buildkit")
+			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 		end
 		X=X+75
 	end

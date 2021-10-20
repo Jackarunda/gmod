@@ -1,7 +1,7 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 
-SWEP.PrintName	= "EZ Build Kit"
+SWEP.PrintName	= "EZ Toolbox"
 
 SWEP.Author		= "Jackarunda"
 SWEP.Purpose	= ""
@@ -229,7 +229,7 @@ function SWEP:PrimaryAttack()
 										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
 											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
 										else
-											print("JMOD BUILDKIT ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+											print("JMOD TOOLBOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent=ents.Create(Class)
@@ -396,7 +396,7 @@ function SWEP:Reload()
 					self:SwitchSelectedBuild(0)
 				else
 					JMod.Hint(self.Owner, "craft")
-					net.Start("JMod_EZbuildKit")
+					net.Start("JMod_EZtoolbox")
 						net.WriteTable(self.Buildables)
 						net.WriteEntity(self)
 					net.Send(self.Owner)
@@ -454,7 +454,7 @@ function SWEP:SecondaryAttack()
 	end
 end
 function SWEP:OnDrop()
-	local Kit=ents.Create("ent_jack_gmod_ezbuildkit")
+	local Kit=ents.Create("ent_jack_gmod_eztoolbox")
 	Kit:SetPos(self:GetPos())
 	Kit:SetAngles(self:GetAngles())
 	Kit:Spawn()
@@ -508,7 +508,7 @@ function SWEP:Think()
 		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMod.Config.AltFunctionKey))and(SERVER))then
 			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
 			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
-				self.DeWeldProgress=self.DeWeldProgress+JMod.Config.BuildKitDeWeldSpeed*3
+				self.DeWeldProgress=self.DeWeldProgress+JMod.Config.ToolboxDeWeldSpeed*3
 				self:Msg("loosening: "..self.DeWeldProgress.."/100")
 				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),65,math.random(80,120))
 				self:Pawnch()

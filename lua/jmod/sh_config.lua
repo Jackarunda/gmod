@@ -30,7 +30,7 @@ function JMod.InitGlobalConfig(forceNew)
 		MicroBlackHoleGeneratorChargeSpeed=1,
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
-		BuildKitDeWeldSpeed=1,
+		ToolboxDeWeldSpeed=1,
 		HandGrabStrength=1,
 		BombDisarmSpeed=1,
 		ExplosionPropDestroyPower=1,
@@ -160,45 +160,45 @@ function JMod.InitGlobalConfig(forceNew)
 						6
 					}
 				},
-				["parts"]={
-					"5 boxes of parts used for crafting and repairs.",
-					{"ent_jack_gmod_ezparts",5}
+				["basic parts"]={
+					"3 boxes of parts used for crafting and repairs.",
+					{"ent_jack_gmod_ezparts",3}
 				},
 				["advanced parts"]={
-					"2 boxes of advparts used for crafting and upgrading.",
-					{"ent_jack_gmod_ezadvparts",2}
+					"1 box of advparts used for crafting and upgrading.",
+					{"ent_jack_gmod_ezadvparts",1,20}
 				},
                 ["precision parts"]={
-					"2 boxes of precision parts used for advanced parts, advanced textiles, and weapons.",
-					{"ent_jack_gmod_ezprecisionparts",2}
+					"1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
+					{"ent_jack_gmod_ezprecisionparts",1}
 				},
 				["advanced textiles"]={
-					"2 boxes of advtextiles used for armor.",
-					{"ent_jack_gmod_ezadvtextiles",2}
+					"1 box of advtextiles used for armor.",
+					{"ent_jack_gmod_ezadvtextiles",1}
 				},
 				["batteries"]={
 					"4 battery cells used for crafting and recharging electronics.",
 					{"ent_jack_gmod_ezbattery",4}
 				},
 				["ammo"]={
-					"5 boxes of ammo for crafting and resupplying weapons and entities.",
-					{"ent_jack_gmod_ezammo",5}
+					"3 boxes of ammo for crafting and resupplying weapons and entities.",
+					{"ent_jack_gmod_ezammo",3}
 				},
 				["coolant"]={
-					"6 barrels of coolant for preventing machines from overheating.",
-					{"ent_jack_gmod_ezcoolant",6}
+					"5 bottles of coolant for preventing machines from overheating.",
+					{"ent_jack_gmod_ezcoolant",5}
 				},
 				["munitions"]={
-					"3 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
-					{"ent_jack_gmod_ezmunitions",3}
+					"2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
+					{"ent_jack_gmod_ezmunitions",2}
 				},
 				["explosives"]={
-					"3 boxes of explosives used for crafting explosives.",
-					{"ent_jack_gmod_ezexplosives",3}
+					"2 boxes of explosives used for crafting explosives.",
+					{"ent_jack_gmod_ezexplosives",2}
 				},
 				["chemicals"]={
-					"3 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
-					{"ent_jack_gmod_ezchemicals",3}
+					"2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
+					{"ent_jack_gmod_ezchemicals",2}
 				},
 				["fuel"]={
 					"4 cans of fuel used for crafting items and running generators.",
@@ -212,9 +212,9 @@ function JMod.InitGlobalConfig(forceNew)
 					"3 canisters of gas used for crafting items and powering the EZ Workbench",
 					{"ent_jack_gmod_ezgas",3}
 				},
-				["build kits"]={
-					"Two build kits for crafting, nailing, salvaging and packaging items. ",
-					{"ent_jack_gmod_ezbuildkit",2}
+				["toolboxes"]={
+					"Two toolboxes for crafting, nailing, salvaging and packaging items. ",
+					{"ent_jack_gmod_eztoolbox",2}
 				},
 				["rations"]={
 					 "5 boxes of nutrients to be eaten by players. Can overcharge health.",
@@ -269,7 +269,7 @@ function JMod.InitGlobalConfig(forceNew)
 					
 				},
 				["timebombs"]={
-					"Timed explosives with configurable timers. Can be defused with parts and Build Kit.",
+					"Timed explosives with configurable timers. Can be defused with parts and Toolbox.",
 					{"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
@@ -374,8 +374,8 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezsteel",2}
 				},
                 ["copper"]={
-					"Copper in a quantity of 200, used in basic parts.",
-					{"ent_jack_gmod_ezcopper",2}
+					"Copper in a quantity of 100, used in basic parts.",
+					{"ent_jack_gmod_ezcopper",1}
 				},
                 ["aluminum"]={
 					"Aluminum in a quantity of 200, used in basic parts.",
@@ -386,32 +386,32 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezlead",2}
 				},
                 ["silver"]={
-					"Silver in a quantity of 100, used for nothing currently.",
-					{"ent_jack_gmod_ezsilver",1}
+					"Silver in a quantity of 50, used for high tier stuff.",
+					{"ent_jack_gmod_ezsilver",1,50}
 				},
                 ["gold"]={
-					"Gold in a quantity of 100, used in advanced parts.",
-					{"ent_jack_gmod_ezgold",1}
+					"Gold in a quantity of 20, used in advanced parts.",
+					{"ent_jack_gmod_ezgold",1,20}
 				},
                 ["titanium"]={
-					"Titanium in a quantity of 75, used in high-tier weaponry.",
-					{"ent_jack_gmod_eztitanium",1,75}
+					"Titanium in a quantity of 50, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztitanium",1,50}
 				},
                 ["tungsten"]={
-					"Tungsten in a quantity of 75, used in high-tier weaponry.",
-					{"ent_jack_gmod_eztungsten",1,75}
+					"Tungsten in a quantity of 50, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztungsten",1,50}
 				},
                 ["platinum"]={
-					"Platinum in a quantity of 75, used in advanced parts.",
-					{"ent_jack_gmod_ezplatinum",1,75}
+					"Platinum in a quantity of 10, used in advanced parts.",
+					{"ent_jack_gmod_ezplatinum",1,10}
 				},
                 ["uranium"]={
-					"Uranium in a quantity of 50, used in fissile material enrichment.",
-					{"ent_jack_gmod_ezuranium",1,50}
+					"Uranium in a quantity of 20, used in fissile material enrichment.",
+					{"ent_jack_gmod_ezuranium",1,20}
 				},
                 ["diamond"]={
-					"diamond in a quantity of 50, used in advanced parts.",
-					{"ent_jack_gmod_ezuranium",1,50}
+					"diamond in a quantity of 10, used in advanced parts.",
+					{"ent_jack_gmod_ezuranium",1,10}
 				},
                 ["water"]={
 					"Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
@@ -422,24 +422,24 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezwood",2}
 				},
                 ["paper"]={
-					"Paper in a quantity of 150, used in nutrients.",
-					{"ent_jack_gmod_ezpaper",2,75}
+					"Paper in a quantity of 200, used in nutrients.",
+					{"ent_jack_gmod_ezpaper",2}
 				},
                 ["plastic"]={
 					"Plastic in a quantity of 200, used in basic parts.",
 					{"ent_jack_gmod_ezplastic",2}
 				},
                 ["organics"]={
-					"Organics in a quantity of 150, used in nutrients.",
-					{"ent_jack_gmod_ezorganics",2,75}
+					"Organics in a quantity of 200, used in nutrients.",
+					{"ent_jack_gmod_ezorganics",2,100}
 				},
                 ["oil"]={
 					"Oil in a quantity of 100, used in plastic, fuel, and rubber.",
 					{"ent_jack_gmod_ezoil",1}
 				},             
                 ["cloth"]={
-					"Cloth in a quantity of 150, used in advanced textiles.",
-					{"ent_jack_gmod_ezcloth",2,75}
+					"Cloth in a quantity of 200, used in advanced textiles.",
+					{"ent_jack_gmod_ezcloth",2}
 				},
                 ["rubber"]={
 					"Rubber in a quantity of 200, used in basic parts.",
@@ -1029,8 +1029,8 @@ function JMod.InitGlobalConfig(forceNew)
 		        "Apparel",
 				"Face protection for the narcissists."
 		    },
-		    ["EZ Build Kit"]={
-		        "ent_jack_gmod_ezbuildkit",
+		    ["EZ Toolbox"]={
+		        "ent_jack_gmod_eztoolbox",
 		        {
 			        [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
