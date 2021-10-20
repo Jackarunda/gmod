@@ -162,7 +162,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["basic parts"]={
 					"3 boxes of parts used for crafting and repairs.",
-					{"ent_jack_gmod_ezparts",3}
+					{"ent_jack_gmod_ezbasicparts",3}
 				},
 				["advanced parts"]={
 					"1 box of advparts used for crafting and upgrading.",
