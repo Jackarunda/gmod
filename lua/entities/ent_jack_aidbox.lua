@@ -17,7 +17,6 @@ if SERVER then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.InitialVel = self.InitialVel or Vector(0, 0, 0)
-		
 		local Phys = self.Entity:GetPhysicsObject()
 		if IsValid(Phys) then
 			Phys:Wake()
@@ -25,7 +24,6 @@ if SERVER then
 			Phys:EnableDrag(false)
 			Phys:SetMaterial("metal")
 		end
-
 		timer.Simple(.1,function()
 			if(IsValid(self))then
 				self:GetPhysicsObject():SetVelocity(self.InitialVel + VectorRand() * math.Rand(0, 200))
@@ -61,7 +59,6 @@ if SERVER then
 		elseif data.Speed > 80 and data.DeltaTime > .2 then
 			self.Entity:EmitSound("Canister.ImpactHard")
 		end
-
 		if data.DeltaTime > .1 then
 			local Phys = self:GetPhysicsObject()
 			Phys:SetVelocity(Phys:GetVelocity() / 1.5)
@@ -90,12 +87,10 @@ if SERVER then
 		self:MakeSide(Pos - Right * 15, AngLat, -Right)
 		self:MakeSide(Pos + Forward * 15, AngLin, Forward)
 		self:MakeSide(Pos - Forward * 15, AngLin, -Forward)
-
 		local Poof = EffectData()
 		Poof:SetOrigin(Pos)
 		Poof:SetScale(2)
 		util.Effect("eff_jack_aidopen",Poof,true,true)
-
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
@@ -105,12 +100,15 @@ if SERVER then
 		for key, item in pairs(self.Contents)do
 			if (key>1) then	
 			local ClassName, Num = item, 1
-			if type(item) ~="string" then 
-				ClassName = item[1]
-				Num = item[2]
-				
+			if type(item) ~="string" then
+				if(item[1]=="RAND")then
+					ClassName=item[math.random(2,#item-1)]
+					Num=item[#item]
+				else
+					ClassName = item[1]
+					Num = item[2]
+				end
 			end
-
 			local StringParts = string.Explode(" ", ClassName)
 			for i = 1, Num do
 				local Ent = nil

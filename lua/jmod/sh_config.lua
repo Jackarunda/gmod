@@ -77,6 +77,19 @@ function JMod.InitGlobalConfig(forceNew)
 			ParachuteDragMult=1,
 			StartingOutpostCount=1,
 			AvailablePackages={
+				["arms"]={
+					"buncha random guns CHANGE THIS TO INCLUDE ALL OF THEM, just loop from the weapon table",
+					{
+						"RAND",
+						"ent_jack_gmod_ezweapon_pistol",
+						"ent_jack_gmod_ezweapon_ar",
+						"ent_jack_gmod_ezweapon_bar",
+						"ent_jack_gmod_ezweapon_br",
+						3
+					},
+					{"ent_jack_gmod_ezammo",2},
+					"ent_jack_gmod_ezmunitions"
+				},
 				["parts"]={
 					"5 boxes of parts used for crafting and repairs.",
 					{"ent_jack_gmod_ezparts",5}
@@ -545,16 +558,16 @@ function JMod.InitGlobalConfig(forceNew)
 		    ["EZ Black Powder Paper Cartridges"]={			
 				"ent_jack_gmod_ezammobox_bppc",
 				{	
-					[JMod.EZ_RESOURCE_TYPES.PAPER]=25,
-					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=50,
-					[JMod.EZ_RESOURCE_TYPES.LEAD]=25
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=20,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=25,
+					[JMod.EZ_RESOURCE_TYPES.LEAD]=20
 				},
 				"Resources",
 				"for ye olde black powder weapons so you can dispatch scoundrels rightly"
 			},
-		    ["EZ Arrows"]={			
+		    ["EZ Arrows"]={
 				"ent_jack_gmod_ezammobox_a",
-				{	
+				{
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=25
 				},
