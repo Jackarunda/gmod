@@ -329,7 +329,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["tungsten"]={
 					"Tungsten in a quantity of 75, used in high-tier weaponry.",
-					{"ent_jack_gmod_eztungsten",1,50}
+					{"ent_jack_gmod_eztungsten",1,75}
 				},
                 ["platinum"]={
 					"Platinum in a quantity of 75, used in advanced parts.",
