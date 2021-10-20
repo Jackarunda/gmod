@@ -72,7 +72,7 @@ if SERVER then
 
 	function ENT:Use(activator,caller)
 		--if true then return end
-		local Pos = self:LocalToWorld(self:OBBCenter())
+		local Pos = self:LocalToWorld(self:OBBCenter()+Vector(0,0,10))
 		local Up = self:GetUp()
 		local Right = self:GetRight()
 		local Forward = self:GetForward()
