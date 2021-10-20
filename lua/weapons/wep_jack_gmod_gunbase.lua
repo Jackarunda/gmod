@@ -201,6 +201,17 @@ SWEP.Hook_PostFireBullets = function(self)
 		Eff:SetScale(self.ExtraMuzzleLuaScale)
 		util.Effect(self.ExtraMuzzleLua,Eff,true,true)
 	end
+	if(self.RecoilDamage and SERVER)then
+		local Dmg=DamageInfo()
+		Dmg:SetDamagePosition(self.Owner:GetShootPos())
+		Dmg:SetDamage(self.RecoilDamage)
+		Dmg:SetDamageType(DMG_CLUB)
+		Dmg:SetAttacker(self.Owner)
+		Dmg:SetInflictor(self)
+		Dmg:SetDamageForce(-self.Owner:GetAimVector()*self.RecoilDamage*200)
+		self.Owner:SetVelocity(-self.Owner:GetAimVector()*self.RecoilDamage*200)
+		self.Owner:TakeDamageInfo(Dmg)
+	end
 end
 
 -- Behavior Modifications by Jackarunda --
@@ -299,9 +310,11 @@ function SWEP:TranslateFOV(fov)
 
     -- return 90
 end
+--[[
 function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
+--]]
 function SWEP:OnDrop()
 	local Specs=JMod.WeaponTable[self.PrintName]
 	if(Specs)then

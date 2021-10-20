@@ -90,6 +90,10 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezammo",2},
 					"ent_jack_gmod_ezmunitions"
 				},
+				["half a fucking gold bar"]={
+					"THIS IS JUST AN EXPERIMENT",
+					{"ent_jack_gmod_ezgold",1,50}
+				},
 				["parts"]={
 					"5 boxes of parts used for crafting and repairs.",
 					{"ent_jack_gmod_ezparts",5}
@@ -565,11 +569,11 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"for ye olde black powder weapons so you can dispatch scoundrels rightly"
 			},
-		    ["EZ Arrows"]={
+		    ["EZ Arrows"]={			
 				"ent_jack_gmod_ezammobox_a",
-				{
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=25
+				{	
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=15,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=15
 				},
 				"Resources",
 				"modern broadhead hunting arrows for maximum yeeting"
@@ -632,7 +636,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Bolt-Action Rifle"]={
                 JMod.WeaponTable["Bolt-Action Rifle"].ent,
                 {
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125
                 },
                 "Weapons",
                 "A bolt action rifle. First practical high-power repeating rifle."

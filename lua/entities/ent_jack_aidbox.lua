@@ -99,20 +99,24 @@ if SERVER then
 
 		for key, item in pairs(self.Contents)do
 			if (key>1) then	
-			local ClassName, Num = item, 1
+			local ClassName,Num,ClassNames,ResourceCount = item,1,nil,nil
 			if type(item) ~="string" then
 				if(item[1]=="RAND")then
-					ClassName=item[math.random(2,#item-1)]
+					ClassNames={}
+					for k,v in pairs(item)do
+						if(k>1 and k<#item)then table.insert(ClassNames,v) end
+					end
 					Num=item[#item]
 				else
 					ClassName = item[1]
 					Num = item[2]
+					if(item[3])then ResourceCount=item[3] end
 				end
 			end
-			local StringParts = string.Explode(" ", ClassName)
+			local StringParts = type(ClassName)=="string" and string.Explode(" ", ClassName)
 			for i = 1, Num do
 				local Ent = nil
-				if StringParts[1] and StringParts[1] == "FUNC" then
+				if StringParts and StringParts[1] and StringParts[1] == "FUNC" then
 					local FuncName = StringParts[2]
 					if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
 						Ent = JMod.LuaConfig.BuildFuncs[FuncName](activator, Pos + VectorRand() * math.Rand(0, 30), VectorRand():Angle())
@@ -120,11 +124,13 @@ if SERVER then
 						activator:PrintMessage(HUD_PRINTTALK, "JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 					end
 				else
+					if(ClassNames)then ClassName=table.Random(ClassNames) end
 					local Yay = ents.Create(ClassName)
 					Yay:SetPos(Pos + VectorRand() * math.Rand(0, 30))
 					Yay:SetAngles(VectorRand():Angle())
 					Yay:Spawn()
 					Yay:Activate()
+					if(ResourceCount)then Yay:SetResource(ResourceCount) end
 					Ent = Yay
 				end
 				if Ent then
