@@ -119,10 +119,6 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezammo",2},
 					"ent_jack_gmod_ezmunitions"
 				},
-				["half a fucking gold bar"]={
-					"THIS IS JUST AN EXPERIMENT",
-					{"ent_jack_gmod_ezgold",1,50}
-				},
 				["parts"]={
 					"5 boxes of parts used for crafting and repairs.",
 					{"ent_jack_gmod_ezparts",5}
@@ -131,8 +127,12 @@ function JMod.InitGlobalConfig(forceNew)
 					"2 boxes of advparts used for crafting and upgrading.",
 					{"ent_jack_gmod_ezadvparts",2}
 				},
+                ["precision parts"]={
+					"2 boxes of precision parts used for advanced parts, advanced textiles, and weapons.",
+					{"ent_jack_gmod_ezprecisionparts",2}
+				},
 				["advanced textiles"]={
-					"2 boxes of advtextiles used for crafting.",
+					"2 boxes of advtextiles used for armor.",
 					{"ent_jack_gmod_ezadvtextiles",2}
 				},
 				["batteries"]={
@@ -327,7 +327,88 @@ function JMod.InitGlobalConfig(forceNew)
 				["headsets"]={
 					"8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
 					{"ent_jack_gmod_ezarmor_headset",8}
-				}
+				},
+                ["steel"]={
+					"Steel in a quantity of 200, used in basic parts and some weapons.",
+					{"ent_jack_gmod_ezsteel",2}
+				},
+                ["copper"]={
+					"Copper in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezcopper",2}
+				},
+                ["aluminum"]={
+					"Aluminum in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezaluminum",2}
+				},
+                ["lead"]={
+					"Lead in a quantity of 200, very useful in ammo production for fending off other players.",
+					{"ent_jack_gmod_ezlead",2}
+				},
+                ["silver"]={
+					"Silver in a quantity of 100, used for nothing currently.",
+					{"ent_jack_gmod_ezsilver",1}
+				},
+                ["gold"]={
+					"Gold in a quantity of 100, used in advanced parts.",
+					{"ent_jack_gmod_ezgold",1}
+				},
+                ["titanium"]={
+					"Titanium in a quantity of 75, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztitanium",1,75}
+				},
+                ["tungsten"]={
+					"Tungsten in a quantity of 75, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztungsten",1,50}
+				},
+                ["platinum"]={
+					"Platinum in a quantity of 75, used in advanced parts.",
+					{"ent_jack_gmod_ezplatinum",1,75}
+				},
+                ["uranium"]={
+					"Uranium in a quantity of 50, used in fissile material enrichment.",
+					{"ent_jack_gmod_ezuranium",1,50}
+				},
+                ["diamond"]={
+					"diamond in a quantity of 50, used in advanced parts.",
+					{"ent_jack_gmod_ezuranium",1,50}
+				},
+                ["water"]={
+					"Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
+					{"ent_jack_gmod_ezwater",3}
+				},
+                ["wood"]={
+					"Wood in a quantity of 200, used in paper and electricity production.",
+					{"ent_jack_gmod_ezwood",2}
+				},
+                ["paper"]={
+					"Paper in a quantity of 150, used in nutrients.",
+					{"ent_jack_gmod_ezpaper",2,75}
+				},
+                ["plastic"]={
+					"Plastic in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezplastic",2}
+				},
+                ["organics"]={
+					"Organics in a quantity of 150, used in nutrients.",
+					{"ent_jack_gmod_ezorganics",2,75}
+				},
+                ["oil"]={
+					"Oil in a quantity of 100, used in plastic, fuel, and rubber.",
+					{"ent_jack_gmod_ezoil",1}
+				},             
+                ["cloth"]={
+					"Cloth in a quantity of 150, used in advanced textiles.",
+					{"ent_jack_gmod_ezcloth",2,75}
+				},
+                ["rubber"]={
+					"Rubber in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezrubber",2}
+				},
+                ["glass"]={
+					"Glass in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezglass",2}
+				},
+                
 			},
 			RestrictedPackages={"antimatter","fissile material"},
 			RestrictedPackageShipTime=600,
