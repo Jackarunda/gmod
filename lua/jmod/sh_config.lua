@@ -419,7 +419,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["diamond"]={
 					"diamond in a quantity of 10, used in advanced parts.",
-					{"ent_jack_gmod_ezuranium",1,10}
+					{"ent_jack_gmod_ezdiamond",1,10}
 				},
                 ["water"]={
 					"Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
