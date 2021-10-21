@@ -109,8 +109,7 @@ function JMod.InitGlobalConfig(forceNew)
 						"ent_jack_gmod_ezweapon_gl",
 						"ent_jack_gmod_ezweapon_mgl",
 						"ent_jack_gmod_ezweapon_rocketlauncher",
-						"ent_jack_gmod_ezweapon_mrl",
-						"ent_jack_gmod_ezweapon_flb",					
+						"ent_jack_gmod_ezweapon_mrl",					
 						3
 					},
 					{"ent_jack_gmod_ezammo",2},
