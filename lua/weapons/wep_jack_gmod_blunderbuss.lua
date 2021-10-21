@@ -22,6 +22,7 @@ SWEP.Penetration=20
 SWEP.AmmoPerShot=3
 
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
+SWEP.ChamberSize=0
 
 SWEP.Recoil = 6
 SWEP.RecoilDamage = 1
@@ -69,7 +70,7 @@ SWEP.HolsterAng = Angle(0, 60, -15)
 SWEP.ReloadPos = Vector(0,0,-10)
 SWEP.ReloadAng = Angle(0,0,0)
 
-SWEP.BarrelLength = 50
+SWEP.BarrelLength = 30
 
 SWEP.ProceduralViewBobIntensity = .3
 
@@ -161,7 +162,7 @@ SWEP.Animations = {
 		Source = "misscenter1",
 		Time = .75
 	},
-	["reload_empty"] = {
+	["reload"] = {
 		Source = "reload",
 		Time = 9,
 		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,

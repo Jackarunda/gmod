@@ -133,6 +133,19 @@ SWEP.MeleeViewMovements = {
 	{t = .35, ang = Angle(10,10,0)}
 }
 
+-- teehee --
+hook.Add("InitPostEntity","JMod_ArcCW_InitPostEntity",function()
+	if not(ArcCW)then return end
+	-- the default arccw ricochet sounds are fucking deafening
+	ArcCW.RicochetSounds = {
+		"weapons/arccw/ricochet01_quiet.wav",
+		"weapons/arccw/ricochet02_quiet.wav",
+		"weapons/arccw/ricochet03_quiet.wav",
+		"weapons/arccw/ricochet04_quiet.wav",
+		"weapons/arccw/ricochet05_quiet.wav"
+	}
+end)
+
 -- arccw hooks to do extra stuff --
 SWEP.Hook_AddShootSound = function(self, data)
 	if(self.ShootSoundWorldCount>0)then
