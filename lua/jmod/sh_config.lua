@@ -178,7 +178,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["precision parts"]={
 					"1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
-					{"ent_jack_gmod_ezprecisionparts",1}
+					{"ent_jack_gmod_ezprecparts",1}
 				},
 				["advanced textiles"]={
 					"1 box of advtextiles used for armor.",
