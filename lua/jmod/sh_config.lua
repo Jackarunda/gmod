@@ -110,10 +110,7 @@ function JMod.InitGlobalConfig(forceNew)
 						"ent_jack_gmod_ezweapon_mgl",
 						"ent_jack_gmod_ezweapon_rocketlauncher",
 						"ent_jack_gmod_ezweapon_mrl",
-						"ent_jack_gmod_ezweapon_crossbow",
-						"ent_jack_gmod_ezweapon_flm",
-						"ent_jack_gmod_ezweapon_flb",
-						"ent_jack_gmod_ezweapon_cabr",
+						"ent_jack_gmod_ezweapon_flb",					
 						3
 					},
 					{"ent_jack_gmod_ezammo",2},
@@ -160,7 +157,19 @@ function JMod.InitGlobalConfig(forceNew)
 						6
 					}
 				},
-				["basic parts"]={
+				["crossbow"]={
+					"A crossbow and 2 boxes of arrows, enjoy.",
+					{"ent_jack_gmod_ezammobox_a",2},
+                    "ent_jack_gmod_ezweapon_crossbow"
+				},
+                ["black powder weaponry"]={
+					"Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
+					{"ent_jack_gmod_ezammobox_bppc",3},
+                    "ent_jack_gmod_ezweapon_flm",
+                    "ent_jack_gmod_ezweapon_cabr",
+                    "ent_jack_gmod_ezweapon_flb"
+				},
+                ["basic parts"]={
 					"3 boxes of parts used for crafting and repairs.",
 					{"ent_jack_gmod_ezbasicparts",3}
 				},
