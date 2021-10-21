@@ -230,7 +230,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["medical supplies"]={
 					 "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
-					{"ent_jack_gmod_ezmedical supplies",2}
+					{"ent_jack_gmod_ezmedsupplies",2}
 				},
 				["resource crate"]={
 					"A box used for exclusively storing EZ Resources.",
