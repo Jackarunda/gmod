@@ -1324,7 +1324,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"Might help against buckshot and 22LR, but not much else."
 			},
 			["EZ Medical Supplies"]={
-				"ent_jack_gmod_ezmedical supplies",
+				"ent_jack_gmod_ezmedsupplies",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25,
