@@ -30,7 +30,7 @@ function JMod.InitGlobalConfig(forceNew)
 		MicroBlackHoleGeneratorChargeSpeed=1,
 		MicroBlackHoleEvaporateSpeed=1,
 		MicroBlackHoleGravityStrength=1,
-		BuildKitDeWeldSpeed=1,
+		ToolboxDeWeldSpeed=1,
 		HandGrabStrength=1,
 		BombDisarmSpeed=1,
 		ExplosionPropDestroyPower=1,
@@ -77,41 +77,136 @@ function JMod.InitGlobalConfig(forceNew)
 			ParachuteDragMult=1,
 			StartingOutpostCount=1,
 			AvailablePackages={
-				["parts"]={
-					"5 boxes of parts used for crafting and repairs.",
-					{"ent_jack_gmod_ezparts",5}
+				["arms"]={
+					"buncha random guns, good luck getting what you want.",
+					{
+						"RAND",
+						"ent_jack_gmod_ezweapon_pistol",
+						"ent_jack_gmod_ezweapon_ar",
+						"ent_jack_gmod_ezweapon_bar",
+						"ent_jack_gmod_ezweapon_br",
+						"ent_jack_gmod_ezweapon_car",
+						"ent_jack_gmod_ezweapon_dmr",
+						"ent_jack_gmod_ezweapon_sr",
+						"ent_jack_gmod_ezweapon_amsr",
+						"ent_jack_gmod_ezweapon_sas",
+						"ent_jack_gmod_ezweapon_pas",
+						"ent_jack_gmod_ezweapon_bas",
+						"ent_jack_gmod_ezweapon_pocketpistol",
+						"ent_jack_gmod_ezweapon_plinkingpistol",
+						"ent_jack_gmod_ezweapon_machinepistol",
+						"ent_jack_gmod_ezweapon_smg",
+						"ent_jack_gmod_ezweapon_lmg",
+						"ent_jack_gmod_ezweapon_mmg",
+						"ent_jack_gmod_ezweapon_magrevolver",
+						"ent_jack_gmod_ezweapon_magpistol",
+						"ent_jack_gmod_ezweapon_revolver",
+						"ent_jack_gmod_ezweapon_shotrevolver",
+						"ent_jack_gmod_ezweapon_lac",
+						"ent_jack_gmod_ezweapon_ssr",
+						"ent_jack_gmod_ezweapon_amr",
+						"ent_jack_gmod_ezweapon_fas",
+						"ent_jack_gmod_ezweapon_gl",
+						"ent_jack_gmod_ezweapon_mgl",
+						"ent_jack_gmod_ezweapon_rocketlauncher",
+						"ent_jack_gmod_ezweapon_mrl",					
+						3
+					},
+					{"ent_jack_gmod_ezammo",2},
+					"ent_jack_gmod_ezmunitions"
+				},
+				["armor"]={
+					"A random collection of armor*. *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
+					{
+						"RAND",
+						JMod.ArmorTable["GasMask"].ent,
+						JMod.ArmorTable["BallisticMask"].ent,
+						JMod.ArmorTable["NightVisionGoggles"].ent,
+						JMod.ArmorTable["ThermalGoggles"].ent,
+						JMod.ArmorTable["Respirator"].ent,
+						JMod.ArmorTable["Light-Helmet"].ent,
+						JMod.ArmorTable["Medium-Helmet"].ent,
+						JMod.ArmorTable["Heavy-Helmet"].ent,
+						JMod.ArmorTable["Riot-Helmet"].ent,
+						JMod.ArmorTable["Heavy-Riot-Helmet"].ent,
+						JMod.ArmorTable["Ultra-Heavy-Helmet"].ent,
+						JMod.ArmorTable["Metal Bucket"].ent,
+						JMod.ArmorTable["Metal Pot"].ent,
+						JMod.ArmorTable["Ceramic Pot"].ent,
+						JMod.ArmorTable["Traffic Cone"].ent,
+						JMod.ArmorTable["Light-Vest"].ent,
+						JMod.ArmorTable["Medium-Light-Vest"].ent,
+						JMod.ArmorTable["Medium-Vest"].ent,
+						JMod.ArmorTable["Medium-Heavy-Vest"].ent,
+						JMod.ArmorTable["Heavy-Vest"].ent,
+						JMod.ArmorTable["Pelvis-Panel"].ent,
+						JMod.ArmorTable["Light-Left-Shoulder"].ent,
+						JMod.ArmorTable["Heavy-Left-Shoulder"].ent,
+						JMod.ArmorTable["Light-Right-Shoulder"].ent,
+						JMod.ArmorTable["Heavy-Right-Shoulder"].ent,
+						JMod.ArmorTable["Left-Forearm"].ent,
+						JMod.ArmorTable["Right-Forearm"].ent,
+						JMod.ArmorTable["Light-Left-Thigh"].ent,
+						JMod.ArmorTable["Heavy-Left-Thigh"].ent,
+						JMod.ArmorTable["Light-Right-Thigh"].ent,
+						JMod.ArmorTable["Heavy-Right-Thigh"].ent,
+						JMod.ArmorTable["Left-Calf"].ent,
+						JMod.ArmorTable["Right-Calf"].ent,
+						JMod.ArmorTable["Hazmat Suit"].ent,
+						6
+					}
+				},
+				["crossbow"]={
+					"A crossbow and 2 boxes of arrows, enjoy.",
+					{"ent_jack_gmod_ezammobox_a",2},
+                    "ent_jack_gmod_ezweapon_crossbow"
+				},
+                ["black powder weaponry"]={
+					"Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
+					{"ent_jack_gmod_ezammobox_bppc",3},
+                    "ent_jack_gmod_ezweapon_flm",
+                    "ent_jack_gmod_ezweapon_cabr",
+                    "ent_jack_gmod_ezweapon_flb"
+				},
+                ["basic parts"]={
+					"3 boxes of parts used for crafting and repairs.",
+					{"ent_jack_gmod_ezbasicparts",3}
 				},
 				["advanced parts"]={
-					"2 boxes of advparts used for crafting and upgrading.",
-					{"ent_jack_gmod_ezadvparts",2}
+					"1 box of advparts used for crafting and upgrading.",
+					{"ent_jack_gmod_ezadvparts",1,20}
+				},
+                ["precision parts"]={
+					"1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
+					{"ent_jack_gmod_ezprecparts",1}
 				},
 				["advanced textiles"]={
-					"2 boxes of advtextiles used for crafting.",
-					{"ent_jack_gmod_ezadvtextiles",2}
+					"1 box of advtextiles used for armor.",
+					{"ent_jack_gmod_ezadvtextiles",1}
 				},
 				["batteries"]={
 					"4 battery cells used for crafting and recharging electronics.",
 					{"ent_jack_gmod_ezbattery",4}
 				},
 				["ammo"]={
-					"5 boxes of ammo for crafting and resupplying weapons and entities.",
-					{"ent_jack_gmod_ezammo",5}
+					"3 boxes of ammo for crafting and resupplying weapons and entities.",
+					{"ent_jack_gmod_ezammo",3}
 				},
 				["coolant"]={
-					"6 barrels of coolant for preventing machines from overheating.",
-					{"ent_jack_gmod_ezcoolant",6}
+					"5 bottles of coolant for preventing machines from overheating.",
+					{"ent_jack_gmod_ezcoolant",5}
 				},
 				["munitions"]={
-					"3 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
-					{"ent_jack_gmod_ezmunitions",3}
+					"2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
+					{"ent_jack_gmod_ezmunitions",2}
 				},
 				["explosives"]={
-					"3 boxes of explosives used for crafting explosives.",
-					{"ent_jack_gmod_ezexplosives",3}
+					"2 boxes of explosives used for crafting explosives.",
+					{"ent_jack_gmod_ezexplosives",2}
 				},
 				["chemicals"]={
-					"3 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
-					{"ent_jack_gmod_ezchemicals",3}
+					"2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
+					{"ent_jack_gmod_ezchemicals",2}
 				},
 				["fuel"]={
 					"4 cans of fuel used for crafting items and running generators.",
@@ -125,9 +220,9 @@ function JMod.InitGlobalConfig(forceNew)
 					"3 canisters of gas used for crafting items and powering the EZ Workbench",
 					{"ent_jack_gmod_ezgas",3}
 				},
-				["build kits"]={
-					"Two build kits for crafting, nailing, salvaging and packaging items. ",
-					{"ent_jack_gmod_ezbuildkit",2}
+				["toolboxes"]={
+					"Two toolboxes for crafting, nailing, salvaging and packaging items. ",
+					{"ent_jack_gmod_eztoolbox",2}
 				},
 				["rations"]={
 					 "5 boxes of nutrients to be eaten by players. Can overcharge health.",
@@ -135,7 +230,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["medical supplies"]={
 					 "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
-					{"ent_jack_gmod_ezmedical supplies",2}
+					{"ent_jack_gmod_ezmedsupplies",2}
 				},
 				["resource crate"]={
 					"A box used for exclusively storing EZ Resources.",
@@ -182,7 +277,7 @@ function JMod.InitGlobalConfig(forceNew)
 					
 				},
 				["timebombs"]={
-					"Timed explosives with configurable timers. Can be defused with parts and Build Kit.",
+					"Timed explosives with configurable timers. Can be defused with parts and Toolbox.",
 					{"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
@@ -281,7 +376,88 @@ function JMod.InitGlobalConfig(forceNew)
 				["headsets"]={
 					"8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
 					{"ent_jack_gmod_ezarmor_headset",8}
-				}
+				},
+                ["steel"]={
+					"Steel in a quantity of 200, used in basic parts and some weapons.",
+					{"ent_jack_gmod_ezsteel",2}
+				},
+                ["copper"]={
+					"Copper in a quantity of 100, used in basic parts.",
+					{"ent_jack_gmod_ezcopper",1}
+				},
+                ["aluminum"]={
+					"Aluminum in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezaluminum",2}
+				},
+                ["lead"]={
+					"Lead in a quantity of 200, very useful in ammo production for fending off other players.",
+					{"ent_jack_gmod_ezlead",2}
+				},
+                ["silver"]={
+					"Silver in a quantity of 50, used for high tier stuff.",
+					{"ent_jack_gmod_ezsilver",1,50}
+				},
+                ["gold"]={
+					"Gold in a quantity of 20, used in advanced parts.",
+					{"ent_jack_gmod_ezgold",1,20}
+				},
+                ["titanium"]={
+					"Titanium in a quantity of 50, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztitanium",1,50}
+				},
+                ["tungsten"]={
+					"Tungsten in a quantity of 50, used in high-tier weaponry.",
+					{"ent_jack_gmod_eztungsten",1,50}
+				},
+                ["platinum"]={
+					"Platinum in a quantity of 10, used in advanced parts.",
+					{"ent_jack_gmod_ezplatinum",1,10}
+				},
+                ["uranium"]={
+					"Uranium in a quantity of 20, used in fissile material enrichment.",
+					{"ent_jack_gmod_ezuranium",1,20}
+				},
+                ["diamond"]={
+					"diamond in a quantity of 10, used in advanced parts.",
+					{"ent_jack_gmod_ezdiamond",1,10}
+				},
+                ["water"]={
+					"Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
+					{"ent_jack_gmod_ezwater",3}
+				},
+                ["wood"]={
+					"Wood in a quantity of 200, used in paper and electricity production.",
+					{"ent_jack_gmod_ezwood",2}
+				},
+                ["paper"]={
+					"Paper in a quantity of 200, used in nutrients.",
+					{"ent_jack_gmod_ezpaper",2}
+				},
+                ["plastic"]={
+					"Plastic in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezplastic",2}
+				},
+                ["organics"]={
+					"Organics in a quantity of 200, used in nutrients.",
+					{"ent_jack_gmod_ezorganics",2,100}
+				},
+                ["oil"]={
+					"Oil in a quantity of 100, used in plastic, fuel, and rubber.",
+					{"ent_jack_gmod_ezoil",1}
+				},             
+                ["cloth"]={
+					"Cloth in a quantity of 200, used in advanced textiles.",
+					{"ent_jack_gmod_ezcloth",2}
+				},
+                ["rubber"]={
+					"Rubber in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezrubber",2}
+				},
+                ["glass"]={
+					"Glass in a quantity of 200, used in basic parts.",
+					{"ent_jack_gmod_ezglass",2}
+				},
+                
 			},
 			RestrictedPackages={"antimatter","fissile material"},
 			RestrictedPackageShipTime=600,
@@ -547,7 +723,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{	
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=20,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=25,
-					[JMod.EZ_RESOURCE_TYPES.LEAD]=15
+					[JMod.EZ_RESOURCE_TYPES.LEAD]=20
 				},
 				"Resources",
 				"for ye olde black powder weapons so you can dispatch scoundrels rightly"
@@ -861,8 +1037,8 @@ function JMod.InitGlobalConfig(forceNew)
 		        "Apparel",
 				"Face protection for the narcissists."
 		    },
-		    ["EZ Build Kit"]={
-		        "ent_jack_gmod_ezbuildkit",
+		    ["EZ Toolbox"]={
+		        "ent_jack_gmod_eztoolbox",
 		        {
 			        [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
@@ -878,7 +1054,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=25
 				},
-				"Weapons",
+				"Munitions",
 				"A Versatile breaching tool."
 			},
 			["EZ Dynamite"]={
@@ -887,7 +1063,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Good for blastmining and blasting idiots."
 			},
 			["EZ Explosives"]={
@@ -906,7 +1082,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Look away unless you want to be blinded."
 			},
 			["EZ Fougasse Mine"]={
@@ -916,7 +1092,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Focus fire on the flammable targets."
 			},
 			["EZ Fragmentation Grenade"]={
@@ -925,7 +1101,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Frag nade, for sending hundreds of fragments into your enemy."
 			},
 			["EZ Fumigator"]={
@@ -935,7 +1111,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
 				},
-				"Weapons",
+				"Munitions",
 				"Go ahead, tell your hitler jokes. We'll wait."
 			},
 			["EZ Gas Grenade"]={
@@ -945,7 +1121,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Portable way of gassing j- enemies."
 			},
 			["EZ Tear Gas Grenade"]={
@@ -955,7 +1131,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Effective area denial for those without gasmasks. Might be a warcrime."
 			},
 			["EZ Gas Mask"]={
@@ -974,7 +1150,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50
 				},
-				"Weapons",
+				"Munitions",
 				"A very heavy and very explosive stick grenade."
 			},
 			["EZ Headset"]={
@@ -1022,7 +1198,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"For the aggressive type. Explodes on impact."
 			},
 			["EZ Incendiary Grenade"]={
@@ -1032,7 +1208,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=30
 				},
-				"Weapons",
+				"Munitions",
 				"Portable fire bomb, try cooking it before throwing to spread it more."
 			},
 			["EZ Landmine"]={
@@ -1041,7 +1217,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Anti-personnel land mine. Try your best to match the color with the ground."
 			},
 			["BUCKET"]={
@@ -1156,7 +1332,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"Might help against buckshot and 22LR, but not much else."
 			},
 			["EZ Medical Supplies"]={
-				"ent_jack_gmod_ezmedical supplies",
+				"ent_jack_gmod_ezmedsupplies",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25,
@@ -1221,7 +1397,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Bury this in the soil around your base, and you got a very hidden defense option."
 			},
 			["EZ Mini Claymore"]={
@@ -1230,7 +1406,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Simple way to trap corners and the like."
 			},
 			["EZ Mini Impact Grenade"]={
@@ -1239,7 +1415,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"You could throw it, but it's much better for making sure that bumping a bomb is a death sentence."
 			},
 			["EZ Mini Proximity Grenade"]={
@@ -1248,7 +1424,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Useful for turning big bombs into traps. Very weak on its own however."
 			},
 			["EZ Mini Remote Grenade"]={
@@ -1257,7 +1433,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Set it on a bomb, and trigger it from afar. Good if you want to ensure you're out of blast range."
 			},
 		   	["EZ Mini Timed Grenade"]={
@@ -1266,7 +1442,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
-				"Weapons",
+				"Munitions",
 				"Arm it on a bomb, and run like hell."
 			},
 			["EZ Munitions"]={
@@ -1296,7 +1472,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=400
 				},
-				"Weapons",
+				"Munitions",
 				"Become bugs bunny and kill yosemite sam with a black-powder line"
 			},
 			["EZ Propellant"]={
@@ -1309,13 +1485,32 @@ function JMod.InitGlobalConfig(forceNew)
 				"Resources",
 				"Propellant for guns and other things."
 			},
+			["EZ Coolant"]={
+				"ent_jack_gmod_ezcoolant",
+				{
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
+					[JMod.EZ_RESOURCE_TYPES.WATER]=90,
+				},
+				"Resources",
+				"For cooling down machines. Do not drink."
+			},
+			["EZ Nutrients"]={
+				"ent_jack_gmod_eznutrients",
+				{
+					[JMod.EZ_RESOURCE_TYPES.ORGANICS]=25,
+					[JMod.EZ_RESOURCE_TYPES.WATER]=25,
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=50,
+				},
+				"Resources",
+				"Tasty food! 99% Plastic Free!"
+			},
 			["EZ SLAM"]={	
 				"ent_jack_gmod_ezslam",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam."
 			},
 			["EZ Satchel Charge"]={
@@ -1324,7 +1519,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
-				"Weapons",
+				"Munitions",
 				"we wile e coyote now, meep meep"
 			},
 			["EZ Signal Grenade"]={
@@ -1333,7 +1528,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
-				"Weapons",
+				"Munitions",
 				"Send smoke signals to your team, and probably be ignored or brutally murdered by the enemy."
 			},
 			["EZ Smoke Grenade"]={
@@ -1342,7 +1537,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
-				"Weapons",
+				"Munitions",
 				"Smokescreen so nobody knows who they're shooting."
 			},
 			["EZ Left Calf Armor"]={
@@ -1441,7 +1636,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
-				"Weapons",
+				"Munitions",
 				"Use your good throwing arm for this. Goes very far. Can have a frag sleeve on it."
 			},
 			["EZ Sticky Bomb"]={
@@ -1451,7 +1646,7 @@ function JMod.InitGlobalConfig(forceNew)
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
 				},
-				"Weapons",
+				"Munitions",
 				"Don't get yourself stuck on it! Very good for sticking to vehicles and stationary objects."
 			},
 			["EZ TNT"]={
@@ -1460,7 +1655,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=30
 				},
-				"Weapons",
+				"Munitions",
 				"Simple breaching device. Reacts to powder from the powder keg."
 			},
 			["EZ Thermal Goggles"]={
@@ -1479,7 +1674,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
-				"Weapons",
+				"Munitions",
 				"The longer you set the time, the harder it is to defuse."
 			}
 			

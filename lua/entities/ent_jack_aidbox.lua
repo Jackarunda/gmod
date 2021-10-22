@@ -17,7 +17,6 @@ if SERVER then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.InitialVel = self.InitialVel or Vector(0, 0, 0)
-		
 		local Phys = self.Entity:GetPhysicsObject()
 		if IsValid(Phys) then
 			Phys:Wake()
@@ -25,7 +24,6 @@ if SERVER then
 			Phys:EnableDrag(false)
 			Phys:SetMaterial("metal")
 		end
-
 		timer.Simple(.1,function()
 			if(IsValid(self))then
 				self:GetPhysicsObject():SetVelocity(self.InitialVel + VectorRand() * math.Rand(0, 200))
@@ -61,7 +59,6 @@ if SERVER then
 		elseif data.Speed > 80 and data.DeltaTime > .2 then
 			self.Entity:EmitSound("Canister.ImpactHard")
 		end
-
 		if data.DeltaTime > .1 then
 			local Phys = self:GetPhysicsObject()
 			Phys:SetVelocity(Phys:GetVelocity() / 1.5)
@@ -75,7 +72,7 @@ if SERVER then
 
 	function ENT:Use(activator,caller)
 		--if true then return end
-		local Pos = self:LocalToWorld(self:OBBCenter())
+		local Pos = self:LocalToWorld(self:OBBCenter()+Vector(0,0,10))
 		local Up = self:GetUp()
 		local Right = self:GetRight()
 		local Forward = self:GetForward()
@@ -90,12 +87,10 @@ if SERVER then
 		self:MakeSide(Pos - Right * 15, AngLat, -Right)
 		self:MakeSide(Pos + Forward * 15, AngLin, Forward)
 		self:MakeSide(Pos - Forward * 15, AngLin, -Forward)
-
 		local Poof = EffectData()
 		Poof:SetOrigin(Pos)
 		Poof:SetScale(2)
 		util.Effect("eff_jack_aidopen",Poof,true,true)
-
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
@@ -104,17 +99,24 @@ if SERVER then
 
 		for key, item in pairs(self.Contents)do
 			if (key>1) then	
-			local ClassName, Num = item, 1
-			if type(item) ~="string" then 
-				ClassName = item[1]
-				Num = item[2]
-				
+			local ClassName,Num,ClassNames,ResourceCount = item,1,nil,nil
+			if type(item) ~="string" then
+				if(item[1]=="RAND")then
+					ClassNames={}
+					for k,v in pairs(item)do
+						if(k>1 and k<#item)then table.insert(ClassNames,v) end
+					end
+					Num=item[#item]
+				else
+					ClassName = item[1]
+					Num = item[2]
+					if(item[3])then ResourceCount=item[3] end
+				end
 			end
-
-			local StringParts = string.Explode(" ", ClassName)
+			local StringParts = type(ClassName)=="string" and string.Explode(" ", ClassName)
 			for i = 1, Num do
 				local Ent = nil
-				if StringParts[1] and StringParts[1] == "FUNC" then
+				if StringParts and StringParts[1] and StringParts[1] == "FUNC" then
 					local FuncName = StringParts[2]
 					if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
 						Ent = JMod.LuaConfig.BuildFuncs[FuncName](activator, Pos + VectorRand() * math.Rand(0, 30), VectorRand():Angle())
@@ -122,11 +124,13 @@ if SERVER then
 						activator:PrintMessage(HUD_PRINTTALK, "JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 					end
 				else
+					if(ClassNames)then ClassName=table.Random(ClassNames) end
 					local Yay = ents.Create(ClassName)
 					Yay:SetPos(Pos + VectorRand() * math.Rand(0, 30))
 					Yay:SetAngles(VectorRand():Angle())
 					Yay:Spawn()
 					Yay:Activate()
+					if(ResourceCount)then Yay:SetResource(ResourceCount) end
 					Ent = Yay
 				end
 				if Ent then

@@ -1,6 +1,6 @@
 util.AddNetworkString("JMod_Friends") -- ^:3
 util.AddNetworkString("JMod_MineColor")
-util.AddNetworkString("JMod_EZbuildKit")
+util.AddNetworkString("JMod_EZtoolbox")
 util.AddNetworkString("JMod_EZworkbench")
 util.AddNetworkString("JMod_Hint")
 util.AddNetworkString("JMod_EZtimeBomb")
@@ -72,8 +72,8 @@ net.Receive("JMod_SignalNade", function(l, ply)
 	if net.ReadBit() == 1 then nade:Prime() end
 end)
 
-net.Receive("JMod_EZbuildKit",function(ln,ply)
-	local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_ezbuildkit")
+net.Receive("JMod_EZtoolbox",function(ln,ply)
+	local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_eztoolbox")
 	if(IsValid(Wep))then
 		Wep:SwitchSelectedBuild(Num)
 	end
