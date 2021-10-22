@@ -19,7 +19,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",.33)
+JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",.4)
 
 SWEP.HipDispersion = 1100
 
@@ -57,7 +57,7 @@ SWEP.SightTime = .25
 
 SWEP.IronSightStruct = {
     Pos = Vector(-4.2, 10, 2),
-    Ang = Angle(-.2, -.0, -2),
+    Ang = Angle(-.2, -.2, -2),
     Magnification = 1.1,
     SwitchToSound = JMod.GunHandlingSounds.aim.minor,
     SwitchFromSound = JMod.GunHandlingSounds.aim.minor
