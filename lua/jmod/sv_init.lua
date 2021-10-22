@@ -362,6 +362,13 @@ concommand.Add("jacky_trace_debug",function(ply)
 		print("----------- surface properties ----------")
 		PrintTable(Props)
 	end
+	if(Tr.Entity)then
+		print("----------- entity properties -----------")
+		local Ent=Tr.Entity
+		print(Ent)
+		print("physmat",Ent:GetPhysicsObject():GetMaterial())
+		print("mass",Ent:GetPhysicsObject():GetMass())
+	end
 	print("---------- end trace debug -----------")
 end)
 
