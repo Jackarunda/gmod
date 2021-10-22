@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Build Kit"
+ENT.PrintName="EZ Toolbox"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -87,9 +87,9 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
 			activator:PickupObject(self)
-		elseif not(activator:HasWeapon("wep_jack_gmod_ezbuildkit"))then
-			activator:Give("wep_jack_gmod_ezbuildkit")
-			activator:SelectWeapon("wep_jack_gmod_ezbuildkit")
+		elseif not(activator:HasWeapon("wep_jack_gmod_eztoolbox"))then
+			activator:Give("wep_jack_gmod_eztoolbox")
+			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
 			self:Remove()
 		else
 			activator:PickupObject(self)
@@ -105,5 +105,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezbuildkit","EZ Build Kit")
+	language.Add("ent_jack_gmod_eztoolbox","EZ Toolbox")
 end

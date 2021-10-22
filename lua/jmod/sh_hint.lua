@@ -101,7 +101,7 @@ JMod.Hints = {
 	
 	["ent_jack_gmod_ezfieldhospital"] = {Type = "info", Text = "can be used to heal and cure radiation sickness", Time = 3},
 	["afh enter"] = {Type = "key_E", Text = "Press Use to start machine and again to enter; this device shuts off automatically", Time = 5},
-	["afh upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase healing rate"},
+	["afh upgrade"] = {Type = "info", Text = "Upgrade with Toolbox to increase healing rate"},
 	["afh supply"] = {Type = "warn", Text = "Refill medical supplies to keep the AFH functional", Time = 5},
 	
 	["ent_jack_gmod_ezfumigator"] = {Type = "info", Text = "Fumigator emits poisonous gas when triggered", Time = 3},
@@ -114,14 +114,14 @@ JMod.Hints = {
 	["crate_uni"] = {Type = "info", Text = "Touch crate with entity to store it; Use crate to open menu", Time = 5},
 	
 	["ent_jack_gmod_ezsentry"] = {Type = "info", Text = "Sentry will automatically shoot at hostiles", Time = 3},
-	["sentry upgrade"] = {Type = "info", Text = "Upgrade with Build Kit to increase performance"},
-	["sentry modify"] = {Type = "info", Text = "Modify with Build Kit to tweak stats and projectile type"},
+	["sentry upgrade"] = {Type = "info", Text = "Upgrade with Toolbox to increase performance"},
+	["sentry modify"] = {Type = "info", Text = "Modify with Toolbox to tweak stats and projectile type"},
 	
 	["ent_jack_gmod_ezworkbench"] = {Type = "info", Text = "Workbench allows you to craft items from resources", Time = 3},
 	["craft"] = {Type = "info", Text = "Resources nearby will automatically be detected and consumed"},
 	["refill"] = {Type = "warn", Text = "Refill power and gas to keep the Workbench functional"},
 	
-	["ent_jack_gmod_ezbuildkit"] = {Type = "info", Text = "Build Kit can craft, nail, package, upgrade and salvage things", Time = 3},
+	["ent_jack_gmod_eztoolbox"] = {Type = "info", Text = "Toolbox can craft, nail, package, upgrade and salvage things", Time = 3},
 	["ent_jack_gmod_ezmedkit"] = {Type = "info", Text = "Medkit can be used to heal oneself or other players", Time = 3},
 	
 	-- Armor

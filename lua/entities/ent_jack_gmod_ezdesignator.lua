@@ -77,5 +77,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezbuildkit","EZ Build Kit")
+	language.Add("ent_jack_gmod_eztoolbox","EZ Toolboxt")
 end
