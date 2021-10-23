@@ -178,11 +178,11 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["precision parts"]={
 					"1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
-					{"ent_jack_gmod_ezprecparts",1}
+					"ent_jack_gmod_ezprecparts"
 				},
 				["advanced textiles"]={
 					"1 box of advtextiles used for armor.",
-					{"ent_jack_gmod_ezadvtextiles",1}
+					"ent_jack_gmod_ezadvtextiles"
 				},
 				["batteries"]={
 					"4 battery cells used for crafting and recharging electronics.",
@@ -292,11 +292,11 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["sentry"]={
 					"Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
-					"ent_jack_gmod_ezsentry", 1
+					"ent_jack_gmod_ezsentry"
 				},
 				["supply radio"]={
 					"You're looking at one. No shame in having a backup radio.",
-					"ent_jack_gmod_ezaidradio", 1
+					"ent_jack_gmod_ezaidradio"
 				},
 				["medkits"]={
 					"3 medical kits that use medical supplies to heal players.",
@@ -328,11 +328,11 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				["antimatter"]={
 					"A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
-					"ent_jack_gmod_ezantimatter", 1
+					"ent_jack_gmod_ezantimatter"
 				},
 				["fissile material"]={
 					"A box filled with fissile material used to craft nuclear devices.",
-					"ent_jack_gmod_ezfissilematerial", 1
+					"ent_jack_gmod_ezfissilematerial"
 				},
 				["dynamite"]={
 					"12 dynamite sticks for comical explosions.",
@@ -383,7 +383,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["copper"]={
 					"Copper in a quantity of 100, used in basic parts.",
-					{"ent_jack_gmod_ezcopper",1}
+					"ent_jack_gmod_ezcopper"
 				},
                 ["aluminum"]={
 					"Aluminum in a quantity of 200, used in basic parts.",
@@ -443,7 +443,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
                 ["oil"]={
 					"Oil in a quantity of 100, used in plastic, fuel, and rubber.",
-					{"ent_jack_gmod_ezoil",1}
+					"ent_jack_gmod_ezoil"
 				},             
                 ["cloth"]={
 					"Cloth in a quantity of 200, used in advanced textiles.",

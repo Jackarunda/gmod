@@ -254,11 +254,10 @@ if(SERVER)then
 	function ENT:OnRemove()
 		--
 	end
-	function ENT:TryLoadRawResource(ent)
-		--
-	end
 	function ENT:TryLoadResource(typ,amt)
+		print("hi")
 		if(amt<=0)then return 0 end
+		print("a")
 		for k,v in pairs(self.EZconsumes)do
 			if(typ==v)then
 				if(typ==JMod.EZ_RESOURCE_TYPES.POWER)then
@@ -308,8 +307,10 @@ if(SERVER)then
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
 					return Accepted
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
+					print("UH")
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
+					print(Missing)
 					if(Missing<=1)then return 0 end
 					local Accepted=math.min(Missing,amt)
 					self:SetAmmo(Ammo+Accepted)
