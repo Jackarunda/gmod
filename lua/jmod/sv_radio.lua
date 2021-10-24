@@ -58,7 +58,7 @@ local function FindDropPosFromSignalOrigin(origin)
 		Height=Height+100
 		local TestPos=origin+Vector(0,0,Height)
 		local Contents=util.PointContents(TestPos)
-		local IsEmpty=(bit.band(Contents,CONTENTS_EMPTY)==CONTENTS_EMPTY)
+		local IsEmpty=(Contents==CONTENTS_EMPTY) -- fuck bitwise ops for 0
 		local IsTFV=(bit.band(Contents,CONTENTS_TESTFOGVOLUME)==CONTENTS_TESTFOGVOLUME)
 		if(IsTFV)then
 			-- if we ever detect testfogvolume, assume the mapmaker used it properly
