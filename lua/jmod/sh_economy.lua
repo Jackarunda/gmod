@@ -178,18 +178,18 @@ local SalvagingTable={
 	},
 	concrete={
 		random={
-			[JMod.EZ_RESOURCE_TYPES.IRONORE]=.3,
-			[JMod.EZ_RESOURCE_TYPES.LEADORE]=.2,
-			[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE]=.2,
-			[JMod.EZ_RESOURCE_TYPES.COPPERORE]=.1,
-			[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.TITANIUMORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.SILVERORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.GOLDORE]=.025,
+			[JMod.EZ_RESOURCE_TYPES.IRONORE]=.5,
+			[JMod.EZ_RESOURCE_TYPES.LEADORE]=.4,
+			[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE]=.4,
+			[JMod.EZ_RESOURCE_TYPES.COPPERORE]=.2,
+			[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE]=.1,
+			[JMod.EZ_RESOURCE_TYPES.TITANIUMORE]=.1,
+			[JMod.EZ_RESOURCE_TYPES.SILVERORE]=.1,
+			[JMod.EZ_RESOURCE_TYPES.GOLDORE]=.05,
 			[JMod.EZ_RESOURCE_TYPES.URANIUMORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.PLATINUMORE]=.01,
-			[JMod.EZ_RESOURCE_TYPES.DIAMOND]=.01,
-			[JMod.EZ_RESOURCE_TYPES.COAL]=.3
+			[JMod.EZ_RESOURCE_TYPES.PLATINUMORE]=.02,
+			[JMod.EZ_RESOURCE_TYPES.DIAMOND]=.02,
+			[JMod.EZ_RESOURCE_TYPES.COAL]=.5
 		}
 	},
 	paper={
@@ -199,7 +199,7 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PAPER]=.6
 	},
 	rubber={
-		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.6
+		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.5
 	},
 	carpet={
 		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.4,
@@ -252,14 +252,48 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.2
 	},
 	rubbertire={
-		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.5,
-		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1
+		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.3,
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2
 	},
 	hay={
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.3
 	}
 }
+function JMod.GetSalvageYield(ent)
+	if(not(IsValid(ent)))then return {},"" end
+	local Class=ent:GetClass()
+	if(ent:IsWorld())then return {},"can't salvage the world" end
+	local Phys=ent:GetPhysicsObject()
+	if(not(IsValid(Phys)))then return {},"cannot salvage: invalid physics" end
+	local Mat,Mass=Phys:GetMaterial(),Phys:GetMass()
+	if not((Mat)and(Mass)and(Mass>0))then return {},"cannot salvage: corrupt physics" end
+	if(Mass>10000)then return {},"cannot salvage: too large" end
+	Mat=string.lower(Mat)
+	local Info=SalvagingTable[Mat]
+	if not(Info)then return {},"cannot salvage: unknown physics material "..Mat end
+	if(Info.random)then
+		local Types=table.GetKeys(Info.random)
+		local ChosenType=table.Random(Types)
+		Info={
+			[ChosenType]=Info.random[ChosenType]
+		}
+	end
+	local Results={}
+	for k,v in pairs(Info)do
+		Results[k]=math.ceil(v*Mass)
+	end
+	return Results,"salvaging yield for "..Class.." ("..Mat..")"
+end
 if(SERVER)then
+	concommand.Add("jmod_debug_checksalvage",function(ply,cmd,args)
+		if not(IsValid(ply) and ply:IsSuperAdmin())then return end
+		local Ent=ply:GetEyeTrace().Entity
+		if(Ent)then
+			local Yield,Msg=JMod.GetSalvageYield(Ent)
+			print(Msg)
+			PrintTable(Yield)
+		end
+	end)
 	local function RemoveOverlaps(tbl)
 		local Finished,Tries,RemovedCount=false,0,0
 		while not(Finished)do
