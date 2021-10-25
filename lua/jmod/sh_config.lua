@@ -538,7 +538,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"EZ HE Rocket, except it's a lot more effective against armored vehicles with less boom."
 			},	
 			["EZ Incendiary Bomb"]={			
-				"ent_jack_gmod_ezincendiarybomb",		
+				"ent_jack_gmod_ezincendiarybomb",
 				{	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,

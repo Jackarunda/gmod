@@ -241,7 +241,18 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PAPER]=.1
 	},
 	flesh={
-		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.8
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=3
+	},
+	zombieflesh={
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=2
+	},
+	alienflesh={
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=1.5,
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=.5
+	},
+	antlion={
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.5,
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=1.5
 	},
 	weapon={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1,
