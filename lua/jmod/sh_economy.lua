@@ -118,9 +118,9 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
 	},
 	wood_furniture={
-		[JMod.EZ_RESOURCE_TYPES.WOOD]=.3,
-		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.2,
-		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.4,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1,
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.05
 	},
 	metal={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
@@ -133,9 +133,9 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.4
 	},
 	floating_metal_barrel={
-		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
-		[JMod.EZ_RESOURCE_TYPES.FUEL]=.2,
-		[JMod.EZ_RESOURCE_TYPES.OIL]=.2
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
+		[JMod.EZ_RESOURCE_TYPES.FUEL]=.3,
+		[JMod.EZ_RESOURCE_TYPES.OIL]=.3
 	},
 	metalpanel={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.5
@@ -257,16 +257,33 @@ local SalvagingTable={
 	},
 	hay={
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.3
+	},
+	brick={
+		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
+	},
+	solidmetal={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.4,
+		[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=.1,
+		[JMod.EZ_RESOURCE_TYPES.TITANIUM]=.1
+	},
+	grenade={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.7
+	},
+	crowbar={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.8,
 	}
 }
 function JMod.GetSalvageYield(ent)
 	if(not(IsValid(ent)))then return {},"" end
-	local Class=ent:GetClass()
+	local Class=string.lower(ent:GetClass())
 	if(ent:IsWorld())then return {},"can't salvage the world" end
 	local Phys=ent:GetPhysicsObject()
 	if(not(IsValid(Phys)))then return {},"cannot salvage: invalid physics" end
 	local Mat,Mass=Phys:GetMaterial(),Phys:GetMass()
 	if not((Mat)and(Mass)and(Mass>0))then return {},"cannot salvage: corrupt physics" end
+	Mass=math.ceil(Mass^.9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	if(Class=="func_physbox")then Mass=Mass/2 end -- again, more corrections
 	if(Mass>10000)then return {},"cannot salvage: too large" end
 	Mat=string.lower(Mat)
 	local Info=SalvagingTable[Mat]
