@@ -770,7 +770,7 @@ JMod.ArmorTable = {
 		ent = "ent_jack_gmod_ezarmor_hlthigh"
 	},
 	["Light-Right-Thigh"] = {
-		PrintName = "Thigh - Light (L)",
+		PrintName = "Thigh - Light (R)",
 		mdl = "models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
 		slots = {
 			rightthigh = .8
