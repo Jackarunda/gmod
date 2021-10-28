@@ -67,7 +67,6 @@ function EFFECT:Init(data)
 			local blue=colorangle.r
 			local wind=Vector(0,0,0)
 			
-			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 			if(emitter)then
 				local rollparticle=emitter:Add("sprites/mat_jack_smokeparticle",Pos+VectorRand())
 

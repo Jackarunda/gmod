@@ -52,8 +52,6 @@ function EFFECT:Init(data)
 			local blue=colorangle.r
 			local wind=VectorRand()
 				
-			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
-				
 			local rollparticle=emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
 
 			if(rollparticle)then
@@ -214,8 +212,6 @@ function EFFECT:Init(data)
 				local green=colorangle.y
 				local blue=colorangle.r
 				local wind=VectorRand()
-					
-				//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
 					
 				local rollparticle=emitter:Add("particles/flamelet"..math.random(1,5),Pos+VectorRand())
 

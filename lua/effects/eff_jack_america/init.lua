@@ -14,9 +14,6 @@ end
 
 local Shit=Material("sprites/mat_jack_ignorezsprite")
 
-/*-----------------------------------------------------------
-	Mine eyes have seen the glory of the coming of the Lord
-------------------------------------------------------------*/
 function EFFECT:Init(data)
 	
 	local vOffset=data:GetOrigin()
@@ -127,9 +124,7 @@ function EFFECT:Init(data)
 
 end
 
-/*---------------------------------------------------------
-	EFFECT:Think()
----------------------------------------------------------*/
+
 function EFFECT:Think()
 	if(self.TimeToDie>CurTime())then
 		return true
@@ -138,9 +133,7 @@ function EFFECT:Think()
 	end
 end
 
-/*---------------------------------------------------------
-	EFFECT:Render()
----------------------------------------------------------*/
+
 function EFFECT:Render()
 	local TimeLeft=self.TimeToDie-CurTime()
 	local TimeFraction=TimeLeft/(0.1*self.Scale)

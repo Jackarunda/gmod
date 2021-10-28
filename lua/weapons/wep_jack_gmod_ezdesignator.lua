@@ -197,32 +197,25 @@ end
 function SWEP:SCKInitialize()
 
 	if CLIENT then
-	
-		// Create a new table for every weapon instance
 		self.VElements=table.FullCopy( self.VElements )
 		self.WElements=table.FullCopy( self.WElements )
 		self.ViewModelBoneMods=table.FullCopy( self.ViewModelBoneMods )
 
-		self:CreateModels(self.VElements) // create viewmodels
-		self:CreateModels(self.WElements) // create worldmodels
-		
-		// init view model bone build function
+		self:CreateModels(self.VElements)
+		self:CreateModels(self.WElements)
+
 		if IsValid(self.Owner)then
 			local vm=self.Owner:GetViewModel()
 			if IsValid(vm)then
 				self:ResetBonePositions(vm)
 			end
-			
-			// Init viewmodel visibility
+
 			if(self.ShowViewModel==nil or self.ShowViewModel)then
 				if(IsValid(vm))then
 					vm:SetColor(Color(255,255,255,255))
 				end
 			else
-				// we set the alpha to 1 instead of 0 because else ViewModelDrawn stops being called
 				vm:SetColor(Color(255,255,255,1))
-				// ^ stopped working in GMod 13 because you have to do Entity:SetRenderMode(1) for translucency to kick in
-				// however for some reason the view model resets to render mode 0 every frame so we just apply a debug material to prevent it from drawing
 				vm:SetMaterial("Debug/hsv")
 			end
 		end
@@ -242,8 +235,6 @@ if(CLIENT)then
 		self:UpdateBonePositions(vm)
 
 		if(!self.vRenderOrder)then
-			
-			// we build a render order because sprites need to be drawn after models
 			self.vRenderOrder={}
 
 			for k, v in pairs( self.VElements ) do
@@ -364,7 +355,7 @@ if(CLIENT)then
 		if(IsValid(self.Owner))then
 			bone_ent=self.Owner
 		else
-			// when the weapon is dropped
+			-- when the weapon is dropped
 			bone_ent=self
 		end
 		
@@ -464,8 +455,8 @@ if(CLIENT)then
 			
 			if(!v)then return end
 			
-			// Technically, if there exists an element with the same name as a bone
-			// you can get in an infinite loop. Let's just hope nobody's that stupid.
+			-- Technically, if there exists an element with the same name as a bone
+			-- you can get in an infinite loop. Let's just hope nobody's that stupid.
 			pos, ang=self:GetBoneOrientation( basetab, v, ent )
 			
 			if(!pos)then return end
@@ -489,7 +480,7 @@ if(CLIENT)then
 			
 			if(IsValid(self.Owner) and self.Owner:IsPlayer() and 
 				ent==self.Owner:GetViewModel() and self.ViewModelFlip)then
-				ang.r=-ang.r // Fixes mirrored models
+				ang.r=-ang.r -- Fixes mirrored models
 			end
 		
 		end
@@ -522,7 +513,7 @@ if(CLIENT)then
 				
 				local name=v.sprite.."-"
 				local params={ ["$basetexture"]=v.sprite }
-				// make sure we create a unique name based on the selected options
+				-- make sure we create a unique name based on the selected options
 				local tocheck={ "nocull", "additive", "vertexalpha", "vertexcolor", "ignorez" }
 				for i, j in pairs( tocheck ) do
 					if(v[j])then
@@ -550,8 +541,8 @@ if(CLIENT)then
 			
 			if(!vm:GetBoneCount())then return end
 			
-			// !! WORKAROUND !! //
-			// We need to check all model names :/
+			-- !! WORKAROUND !! //
+			-- We need to check all model names :/
 			local loopthrough=self.ViewModelBoneMods
 			if(!hasGarryFixedBoneScalingYet)then
 				allbones={}
@@ -570,13 +561,13 @@ if(CLIENT)then
 				
 				loopthrough=allbones
 			end
-			// !! ----------- !! //
+			-- !! ----------- !! //
 			
 			for k, v in pairs( loopthrough ) do
 				local bone=vm:LookupBone(k)
 				if(!bone)then continue end
 				
-				// !! WORKAROUND !! //
+				-- !! WORKAROUND !! //
 				local s=Vector(v.scale.x,v.scale.y,v.scale.z)
 				local p=Vector(v.pos.x,v.pos.y,v.pos.z)
 				local ms=Vector(1,1,1)
@@ -590,7 +581,7 @@ if(CLIENT)then
 				end
 				
 				s=s*ms
-				// !! ----------- !! //
+				-- !! ----------- !! //
 				
 				if vm:GetManipulateBoneScale(bone) != s then
 					vm:ManipulateBoneScale( bone, s )

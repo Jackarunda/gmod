@@ -1,6 +1,4 @@
-/*---------------------------------------------------------
-	EFFECT:Init(data)
----------------------------------------------------------*/
+
 function EFFECT:Init(data)
 	local vOffset=data:GetOrigin()
 	
@@ -63,15 +61,11 @@ function EFFECT:Init(data)
 		util.Effect("Explosion",Spl,true,true)
 	end
 end
-/*---------------------------------------------------------
-	EFFECT:Think()
----------------------------------------------------------*/
+
 function EFFECT:Think()
 	return false
 end
-/*---------------------------------------------------------
-	EFFECT:Render()
----------------------------------------------------------*/
+
 function EFFECT:Render()
 	--wat
 end

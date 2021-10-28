@@ -1,6 +1,4 @@
-/*---------------------------------------------------------
-	EFFECT:Init(data)
----------------------------------------------------------*/
+
 function EFFECT:Init(data)
 	local vOffset=data:GetOrigin()
 	self.Position=vOffset
@@ -40,15 +38,11 @@ function EFFECT:Init(data)
 		dlight.Style=0
 	end
 end
-/*---------------------------------------------------------
-	EFFECT:Think()
----------------------------------------------------------*/
+
 function EFFECT:Think()
 	return false
 end
-/*---------------------------------------------------------
-	EFFECT:Render()
----------------------------------------------------------*/
+
 function EFFECT:Render()
 	--damn
 end

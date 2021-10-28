@@ -28,16 +28,21 @@ ENT.AmmoTypes={
 		Damage=.35,
 		ShotCount=8,
 		Accuracy=.7,
-		BarrelLength=.75
+		BarrelLength=.75,
+		MaxAmmo=.75,
+		TargetingRadius=.75,
+		-- make it faster
+		SearchSpeed=1.5,
+		TargetLockTime=.5,
+		TurnSpeed=1.5
 	},
 	["API Bullet"]={ -- Armor Piercing Incendiary, pierces through things and lights fires
 		FireRate=.75,
-		TargetLockTime=1,
 		Damage=.3
 	},
 	["HE Grenade"]={ -- explosive projectile
-		MaxAmmo=.334,
-		FireRate=.4,
+		MaxAmmo=.25,
+		FireRate=.3,
 		Damage=3,
 		Accuracy=.8,
 		BarrelLength=.75

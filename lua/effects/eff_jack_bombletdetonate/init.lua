@@ -3,9 +3,7 @@ local Refract=Material("sprites/mat_jack_shockwave")
 
 local Shit=Material("sprites/mat_jack_ignorezsprite")
 
-/*---------------------------------------------------------
-	EFFECT:Init(data)
----------------------------------------------------------*/
+
 function EFFECT:Init(data)
 	
 	local vOffset=data:GetOrigin()
@@ -141,9 +139,7 @@ function EFFECT:Init(data)
 	end)
 end
 
-/*---------------------------------------------------------
-	EFFECT:Think()
----------------------------------------------------------*/
+
 function EFFECT:Think()
 	if(self.DieTime>CurTime())then
 		self.Siyuz=self.Siyuz+500
@@ -154,9 +150,7 @@ function EFFECT:Think()
 	end
 end
 
-/*---------------------------------------------------------
-	EFFECT:Render()
----------------------------------------------------------*/
+
 function EFFECT:Render()
 	if(self.WillDrawShockwave)then
 		local TimeLeftFraction=(self.DieTime-CurTime())/.25

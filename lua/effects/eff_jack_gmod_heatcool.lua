@@ -65,9 +65,7 @@ function EFFECT:Init(data)
 			local green=colorangle.y
 			local blue=colorangle.r
 			local wind=data:GetStart()
-			
-			//these first two particles (rollparticles) are just so it looks like there's thick smoke rolling off of the grenade, instead of smoke particles appearing next to the grenade
-		
+
 			local particle=emitter:Add("particle/smokestack", Pos) --particles/smokey is a nice volumetric smoke sprite
 
 			if(particle)then

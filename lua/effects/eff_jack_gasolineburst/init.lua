@@ -2,9 +2,7 @@ local ShockWave=Material("sprites/mat_jack_shockwave_white")
 local Refract=Material("sprites/mat_jack_shockwave")
 local Wake=Material("effects/splashwake1")
 local Shit=Material("sprites/mat_jack_ignorezsprite")
-/*---------------------------------------------------------
-	EFFECT:Init(data)
----------------------------------------------------------*/
+
 function EFFECT:Init(data)
 	local vOffset=data:GetOrigin()
 	
@@ -145,16 +143,12 @@ function EFFECT:Init(data)
 
 end
 
-/*---------------------------------------------------------
-	EFFECT:Think()
----------------------------------------------------------*/
+
 function EFFECT:Think()
 	return false
 end
 
-/*---------------------------------------------------------
-	EFFECT:Render()
----------------------------------------------------------*/
+
 function EFFECT:Render()
 	--fuck you kid you're a dick
 end

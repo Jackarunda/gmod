@@ -1,4 +1,3 @@
-//i know this effect is very poorly organized and disjointed looking. This is because the original person who wrote it did it like shit, and i was too lazy to blank and rewrite everything
 
 local matRefraction	= Material( "refract_ring" )
 
@@ -17,9 +16,6 @@ for _,mat in pairs(tMats) do
 
 end
 
-/*---------------------------------------------------------
-   Init( data table )
----------------------------------------------------------*/
 function EFFECT:Init( data )
 
 	self.Position=data:GetOrigin()
@@ -121,21 +117,16 @@ function EFFECT:Init( data )
 			particle:SetGravity(Vector(math.Rand(-1000, 1000), math.Rand(-1000, 1000), math.Rand(0, -1500)))
 			particle:SetCollide(true)
 			particle:SetBounce(0.1)
-			//particle:SetLighting(1)					  --i want them to be pretty, even though i know that no lighting is unrealistic. With lightin, theyre just so dim -_-
 		end
 	end
 end
 
-/*---------------------------------------------------------
-   THINK
----------------------------------------------------------*/
+
 function EFFECT:Think( )
 
 end
 
-/*---------------------------------------------------------
-   Draw the effect
----------------------------------------------------------*/
+
 function EFFECT:Render( )
 
 

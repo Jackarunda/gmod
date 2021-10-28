@@ -1,5 +1,3 @@
-//i know this effect is very poorly organized and disjointed looking. This is because the original person who wrote it did it like shit, and i was too lazy to blank and rewrite everything
-
 local matRefraction	= Material( "refract_ring" )
 
 local tMats={}
@@ -16,10 +14,6 @@ for _,mat in pairs(tMats) do
 	mat:SetInt("$illumfactor",8)
 
 end
-
-/*---------------------------------------------------------
-   Init( data table )
----------------------------------------------------------*/
 function EFFECT:Init( data )
 
 	self.Position=data:GetOrigin()
@@ -119,16 +113,12 @@ function EFFECT:Init( data )
 	end
 end
 
-/*---------------------------------------------------------
-   THINK
----------------------------------------------------------*/
+
 function EFFECT:Think( )
 
 end
 
-/*---------------------------------------------------------
-   Draw the effect
----------------------------------------------------------*/
+
 function EFFECT:Render( )
 
 
