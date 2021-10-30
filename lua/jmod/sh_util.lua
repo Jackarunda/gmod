@@ -48,6 +48,18 @@ function jprint(...)
 		LocalPlayer():ChatPrint(printstr)
 	end
 end
+function JMod.SetWepSelectIcon(wep,path)
+	local Mat=Material(path..".png")
+	function wep:DrawWeaponSelection(x,y,w,h,a)
+		surface.SetDrawColor(255,255,255,a)
+		surface.SetMaterial(Mat)
+		y=y+10
+		x=x+20
+		w=w-20
+		surface.DrawTexturedRect(x,y*.9,w*.8,h*.8)
+		--self:PrintWeaponInfo(x+w+20,y+h*.95,a)
+	end
+end
 function JMod.GoodBadColor(frac)
 	-- color tech from bfs2114
 	local r,g,b=math.Clamp(3-frac*4,0,1),math.Clamp(frac*2,0,1),math.Clamp(-3+frac*4,0,1)

@@ -6,6 +6,8 @@ SWEP.PrintName	= "EZ Toolbox"
 SWEP.Author		= "Jackarunda"
 SWEP.Purpose	= ""
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_eztoolbox")
+
 SWEP.Spawnable	= false
 SWEP.UseHands	= true
 SWEP.DrawAmmo	= false
@@ -37,7 +39,7 @@ SWEP.Primary.Ammo			= "none"
 
 SWEP.Secondary.ClipSize		= -1
 SWEP.Secondary.DefaultClip	= -1
-SWEP.Secondary.Automatic	= false
+SWEP.Secondary.Automatic	= true
 SWEP.Secondary.Ammo			= "none"
 
 SWEP.ShowWorldModel=false
@@ -69,6 +71,7 @@ function SWEP:Initialize()
 	self.NextIdle=0
 	self:Deploy()
 	self:SetSelectedBuild(0)
+	self:SetTaskProgress(0)
 	self.DeWeldEnt=nil
 	self.DeWeldProgress=0
 	self.NextDeWeldProgress=0
@@ -105,6 +108,7 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("Int",0,"SelectedBuild")
 	self:NetworkVar("String",0,"Msg")
+	self:NetworkVar("Int",1,"TaskProgress")
 end
 function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
@@ -190,7 +194,7 @@ end
 function SWEP:PrimaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
 	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime()+1)
+	self:SetNextPrimaryFire(CurTime()+.6)
 	self:SetNextSecondaryFire(CurTime()+1)
 	if(SERVER)then
 		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
@@ -387,7 +391,7 @@ function SWEP:Reload()
 	if(SERVER)then
 		local Time=CurTime()
 		if(self.Owner:KeyDown(JMod.Config.AltFunctionKey))then
-			-- do nothing because dewelding is handled in the think function
+			-- do nothing
 		else
 			if(self.NextSwitch<Time)then
 				self.NextSwitch=Time+.5
@@ -435,22 +439,17 @@ function SWEP:WhomIlookinAt()
 end
 function SWEP:SecondaryAttack()
 	if(self.Owner:KeyDown(IN_SPEED))then return end
+	self:Pawnch()
+	self:SetNextPrimaryFire(CurTime()+1)
+	self:SetNextSecondaryFire(CurTime()+.6)
 	if(SERVER)then
-		--[[ todo
-		local Ent,Pos,Norm=self:WhomIlookinAt()
-		if(Ent.EZsalvage)then
-			local Time=CurTime()
-			if(Time-self.LastSalvageAttempt<.15)then -- safeguard so you don't accidentally #shrek your valuable machines
-				Ent:EZsalvage()
-				self:Pawnch()
-				self:SetNextPrimaryFire(CurTime()+1)
-				self:SetNextSecondaryFire(CurTime()+1)
-			else
-				self:Msg("double click to salvage")
-			end
-			self.LastSalvageAttempt=Time
+		if(self.Owner:KeyDown(JMod.Config.AltFunctionKey))then
+			-- unbind time bois
+
+		else
+			-- salvage time bois
+
 		end
-		--]]
 	end
 end
 function SWEP:OnDrop()
@@ -540,6 +539,7 @@ function SWEP:Think()
 end
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
+	if(self.Owner:ShouldDrawLocalPlayer())then return end
 	local W,H,Msg=ScrW(),ScrH(),self:GetMsg()
 	if((Msg)and(Msg~=""))then
 		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
@@ -548,8 +548,8 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+R: remove nails","Trebuchet24",W*.4,H*.7+150,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+RMB: remove constraints","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+150,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 end
 
 ----------------- shit -------------------

@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Designated Marksman Rifle"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_dmr")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_m21ebr.mdl"
