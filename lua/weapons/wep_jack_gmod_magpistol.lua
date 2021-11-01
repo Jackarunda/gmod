@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Magnum Pistol"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_magpistol")
+
 SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_mw2_deagle.mdl"

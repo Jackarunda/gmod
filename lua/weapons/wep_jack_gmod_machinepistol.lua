@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Machine Pistol"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_machinepistol")
+
 SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/c_bo1_mac11.mdl"

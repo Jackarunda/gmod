@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Sub Machine Gun"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_smg")
+
 SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_cod4_mp5_c.mdl"

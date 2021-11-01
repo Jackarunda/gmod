@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Pocket Pistol"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_pocketpistol")
+
 SWEP.Slot = 1
 
 SWEP.ViewModel = "models/weapons/v_jmod_usp.mdl"

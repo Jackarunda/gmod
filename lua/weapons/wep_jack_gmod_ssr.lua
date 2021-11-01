@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Single-Shot Rifle"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_ssr")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_snip_blast_martini-henry_arccw.mdl"

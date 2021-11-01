@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Anti-Materiel Rifle"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amr")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_barrett50cal.mdl"

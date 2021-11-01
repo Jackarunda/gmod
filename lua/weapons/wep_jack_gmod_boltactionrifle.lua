@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Bolt-Action Rifle"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_bar")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_r700.mdl"
