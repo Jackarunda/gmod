@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Assault Rifle"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_ar")
+
 SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_cod4_m16a4.mdl"

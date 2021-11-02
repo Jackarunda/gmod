@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Lever-Action Carbine"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_lac")
+
 SWEP.Slot = 2
 
 SWEP.ViewModel = "models/weapons/v_win73.mdl"

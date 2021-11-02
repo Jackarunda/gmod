@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Multiple Rocket Launcher"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_mrl")
+
 SWEP.Slot = 4
 
 SWEP.ViewModel = "models/weapons/c_bo1_m202.mdl"

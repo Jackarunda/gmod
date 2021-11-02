@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Cap and Ball Revolver"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_cabr")
+
 SWEP.Slot = 1
 
 SWEP.ViewModel = "models/krazy/gtav/weapons/navyrevolver_v.mdl"

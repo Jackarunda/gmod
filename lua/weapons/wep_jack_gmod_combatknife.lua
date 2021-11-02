@@ -3,6 +3,8 @@ SWEP.Spawnable = false
 
 SWEP.PrintName = "Combat Knife"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_combatknife")
+
 SWEP.Slot = 0
 
 SWEP.ViewModel = "models/weapons/yurie_cod/iw7/tactical_knife_iw7_vm.mdl"

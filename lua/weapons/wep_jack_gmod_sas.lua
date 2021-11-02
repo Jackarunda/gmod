@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Semi-Automatic Shotgun"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_sas")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/c_mw2_m1014.mdl"

@@ -2,6 +2,8 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Pump-Action Shotgun"
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_pas")
+
 SWEP.Slot = 3
 
 SWEP.ViewModel = "models/weapons/v_cod4_w1200_c.mdl"
