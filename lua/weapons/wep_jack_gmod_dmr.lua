@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Designated Marksman Rifle"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_dmr")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_dmr",true)
 
 SWEP.Slot = 3
 

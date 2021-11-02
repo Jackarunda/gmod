@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Magnum Revolver"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_magrevolver")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_magrevolver",true)
 
 SWEP.Slot = 1
 

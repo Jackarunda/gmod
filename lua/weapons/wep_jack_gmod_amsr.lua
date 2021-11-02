@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Anti-Materiel Sniper Rifle"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amsr")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amsr",true)
 
 SWEP.Slot = 3
 

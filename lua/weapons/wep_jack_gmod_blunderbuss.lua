@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Flintlock Blunderbuss"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_flb")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_flb",true)
 
 SWEP.Slot = 3
 

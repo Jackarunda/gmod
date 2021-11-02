@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Crossbow"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_crossbow")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_crossbow",true)
 
 SWEP.Slot = 3
 
