@@ -72,9 +72,9 @@ function SWEP:Initialize()
 	self:Deploy()
 	self:SetSelectedBuild(0)
 	self:SetTaskProgress(0)
-	self.DeWeldEnt=nil
-	self.DeWeldProgress=0
-	self.NextDeWeldProgress=0
+	self.TaskEntity=nil
+	self.NextTaskProgress=0
+	self.CurTask=nil
 	if(SERVER)then
 		self.Buildables={
 			{"Nail (constraints object)","ez nail",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10},.2},
@@ -108,7 +108,7 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("Int",0,"SelectedBuild")
 	self:NetworkVar("String",0,"Msg")
-	self:NetworkVar("Int",1,"TaskProgress")
+	self:NetworkVar("Float",1,"TaskProgress")
 end
 function SWEP:UpdateNextIdle()
 	local vm=self.Owner:GetViewModel()
@@ -438,19 +438,7 @@ function SWEP:WhomIlookinAt()
 	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()
-	if(self.Owner:KeyDown(IN_SPEED))then return end
-	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime()+1)
-	self:SetNextSecondaryFire(CurTime()+.6)
-	if(SERVER)then
-		if(self.Owner:KeyDown(JMod.Config.AltFunctionKey))then
-			-- unbind time bois
-
-		else
-			-- salvage time bois
-
-		end
-	end
+	--
 end
 function SWEP:OnDrop()
 	local Kit=ents.Create("ent_jack_gmod_eztoolbox")
@@ -497,46 +485,59 @@ function SWEP:Think()
 		vm:SendViewModelMatchingSequence( vm:LookupSequence( "fists_idle_0" .. math.random( 1, 2 ) ) )
 		self:UpdateNextIdle()
 	end
+	local Prog,SetAmt=self:GetTaskProgress(),nil
 	if(self.Owner:KeyDown(IN_SPEED))then
 		self:SetHoldType("normal")
 	else
 		self:SetHoldType("fist")
-	end
-	if SERVER and self.NextDeWeldProgress<Time then
-		self.NextDeWeldProgress=Time+.25
-		if((self.Owner:KeyDown(IN_RELOAD))and(self.Owner:KeyDown(JMod.Config.AltFunctionKey))and(SERVER))then
-			local Ent=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*70,{self.Owner}).Entity
-			if((IsValid(Ent))and(Ent==self.DeWeldEnt))then
-				self.DeWeldProgress=self.DeWeldProgress+JMod.Config.ToolboxDeWeldSpeed*3
-				self:Msg("loosening: "..self.DeWeldProgress.."/100")
-				sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",self:GetPos(),65,math.random(80,120))
-				self:Pawnch()
-				if(self.DeWeldProgress>=100)then
-					if((Ent.EZnails)and(#Ent.EZnails>0))then
-						for k,v in pairs(Ent.EZnails)do
-							if(IsValid(v))then v:Remove() end
+		if(self.Owner:KeyDown(IN_ATTACK2))then
+			if(self.NextTaskProgress<Time)then
+				self.NextTaskProgress=Time+.6
+				SetAmt=0
+				local Alt=self.Owner:KeyDown(JMod.Config.AltFunctionKey)
+				local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+				local Ent,Pos=Tr.Entity,Tr.HitPos
+				if(IsValid(Ent))then
+					local Phys=Ent:GetPhysicsObject()
+					local Task=(Alt and "loosen") or "salvage"
+					if(Ent~=self.TaskEntity or Task~=self.CurTask)then
+						self:SetTaskProgress(0)
+						self.TaskEntity=Ent
+						self.CurTask=Task
+					elseif(IsValid(Phys))then
+						if(Alt)then
+							-- loosen
+							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
+								local AddAmt=100/Phys:GetMass()
+								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
+								jprint(WorkSpreadMult)
+								SetAmt=math.Clamp(Prog+AddAmt,0,100)
+								self:Pawnch()
+								timer.Simple(.1,function()
+									if(IsValid(self))then self:UpgradeEffect(Pos) end
+								end)
+								if(Prog>=100)then
+									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
+									constraint.RemoveAll(Ent)
+									Phys:EnableMotion(true)
+									SetAmt=0
+								end
+							else
+								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is already unconstrained")
+							end
+						else
+							-- salvage
 						end
-						Ent.EZnails={}
 					end
-					constraint.RemoveConstraints(Ent,"Weld")
-					Ent:GetPhysicsObject():EnableMotion(true)
-					Ent:GetPhysicsObject():Wake()
-					sound.Play("snds_jack_gmod/ez_tools/hit.wav",Ent:GetPos(),60,math.random(80,120))
-					sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Ent:GetPos(),60,math.random(80,120))
-					self.DeWeldProgress=0
-					self.NextDeWeldProgress=Time+2
 				end
-			else
-				self.DeWeldProgress=0
-				self.DeWeldEnt=nil
 			end
-			if(IsValid(Ent))then self.DeWeldEnt=Ent end
 		else
-			self.DeWeldProgress=0
-			self.DeWeldEnt=nil
+			SetAmt=0
 		end
 	end
+	if(SERVER and SetAmt~=nil)then self:SetTaskProgress(SetAmt) end
 end
+local LastProg=0
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
 	if(self.Owner:ShouldDrawLocalPlayer())then return end
@@ -548,8 +549,15 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("ALT+RMB: remove constraints","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("ALT+RMB: loosen","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("Backspace: drop kit","Trebuchet24",W*.4,H*.7+150,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	local Prog=self:GetTaskProgress()
+	if(Prog>0)then
+		draw.SimpleTextOutlined((self.Owner:KeyDown(JMod.Config.AltFunctionKey) and "Loosening...") or "Salvaging...","Trebuchet24",W*.5,H*.45,Color(255,255,255,100),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+		draw.RoundedBox(10,W*.3,H*.5,W*.4,H*.05,Color(0,0,0,100))
+		draw.RoundedBox(10,W*.3+5,H*.5+5,W*.4*LastProg/100-10,H*.05-10,Color(255,255,255,100))
+	end
+	LastProg=Lerp(FrameTime()*5,LastProg,Prog)
 end
 
 ----------------- shit -------------------
