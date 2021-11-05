@@ -6,6 +6,8 @@ SWEP.PrintName	= "EZ Medkit"
 SWEP.Author		= "Jackarunda"
 SWEP.Purpose	= ""
 
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezmedkit")
+
 SWEP.Spawnable	= false
 SWEP.UseHands	= true
 SWEP.DrawAmmo	= false

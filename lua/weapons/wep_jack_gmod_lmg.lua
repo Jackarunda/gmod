@@ -2,7 +2,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 
 SWEP.PrintName = "Light Machine Gun"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_lmg")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_lmg",true)
 
 SWEP.Slot = 2
 

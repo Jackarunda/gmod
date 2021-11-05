@@ -13,7 +13,7 @@ else
 	SWEP.DrawCrosshair		= false
 
 	SWEP.ViewModelFOV		= 45
-	--SWEP.WepSelectIcon=surface.GetTextureID("vgui/wep_jack_gmod_hands")
+	JMod.SetWepSelectIcon(SWEP,"entities/wep_jack_gmod_hands")
 	SWEP.BounceWeaponIcon=false
 
 	local HandTex,ClosedTex=surface.GetTextureID("vgui/hud/gmod_hand"),surface.GetTextureID("vgui/hud/gmod_closedhand")

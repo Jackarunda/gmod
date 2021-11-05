@@ -3,7 +3,7 @@ SWEP.Spawnable = false
 
 SWEP.PrintName = "Pocket Knife"
 
-JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_pocketknife")
+JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_pocketknife",true)
 
 SWEP.Slot = 0
 

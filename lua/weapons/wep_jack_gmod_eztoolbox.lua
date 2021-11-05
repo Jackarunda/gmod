@@ -508,9 +508,9 @@ function SWEP:Think()
 						if(Alt)then
 							-- loosen
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
-								local AddAmt=100/Phys:GetMass()
+								local AddAmt=2000/Phys:GetMass()
 								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-								jprint(WorkSpreadMult)
+								-- jprint(WorkSpreadMult)
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
 								self:Pawnch()
 								timer.Simple(.1,function()

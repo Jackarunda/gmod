@@ -29,8 +29,12 @@ local function Stringify(obj)
 	elseif(Typ=="string")then
 		Str=Str..obj.." "
 	else
-		for k,v in pairs(obj)do
-			Str=Str..Stringify(k)..": "..Stringify(v)..", "
+		if(Typ~="table")then
+			Str=Str..tostring(obj)
+		else
+			for k,v in pairs(obj)do
+				Str=Str..Stringify(k)..": "..Stringify(v)..", "
+			end
 		end
 	end
 	return Str
@@ -48,17 +52,37 @@ function jprint(...)
 		LocalPlayer():ChatPrint(printstr)
 	end
 end
-function JMod.SetWepSelectIcon(wep,path)
+function JMod.SetWepSelectIcon(wep,path,shouldRotate)
 	local Mat=Material(path..".png")
 	function wep:DrawWeaponSelection(x,y,w,h,a)
 		surface.SetDrawColor(255,255,255,a)
 		surface.SetMaterial(Mat)
-		y=y+10
-		x=x+20
-		w=w-20
-		surface.DrawTexturedRect(x,y*.9,w*.8,h*.8)
-		--self:PrintWeaponInfo(x+w+20,y+h*.95,a)
+		local Diff=w-h
+		if(shouldRotate)then
+			surface.DrawTexturedRectRotated(x+w/2,y+h/2,w*.8,w*.8,-35)
+		else
+			surface.DrawTexturedRect(x+Diff/2,y-h*.1,h,h)
+		end
 	end
+end
+function JMod.CalcWorkSpreadMult(ent,newPos)
+	ent.EZworkSpread=ent.EZworkSpread or {
+		locations={},
+		lastHit=0
+	}
+	local Time=CurTime()
+	if(Time-ent.EZworkSpread.lastHit>3)then --reset everything
+		ent.EZworkSpread.locations={}
+	end
+	local Size,Mult,LocalPos=(ent:OBBMaxs()-ent:OBBMins()):Length(),1,ent:WorldToLocal(newPos)
+	table.insert(ent.EZworkSpread.locations,1,LocalPos)
+	if(#ent.EZworkSpread.locations>4)then table.remove(ent.EZworkSpread.locations) end
+	local Barycenter=Vector(0,0,0)
+	for k,v in pairs(ent.EZworkSpread.locations)do Barycenter=Barycenter+v end
+	Barycenter=Barycenter/#ent.EZworkSpread.locations
+	jprint(Barycenter)
+	ent.EZworkSpread.lastHit=Time
+	return Mult
 end
 function JMod.GoodBadColor(frac)
 	-- color tech from bfs2114
