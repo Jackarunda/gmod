@@ -108,6 +108,10 @@ local ResourceInfo={
 	}
 }
 local SalvagingTable={
+	metalgrate={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1,
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.1,
+	},
 	default={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2
 	},
