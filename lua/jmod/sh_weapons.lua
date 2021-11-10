@@ -234,10 +234,20 @@ JMod.WeaponTable={
 		swep="wep_jack_gmod_blunderbuss",
 		ent="ent_jack_gmod_ezweapon_flb"
 	},
+	["Flintlock Pistol"]={
+		mdl="models/weapons/w_jmod_musket.mdl",
+		swep="wep_jack_gmod_flintlockmusket",
+		ent="ent_jack_gmod_ezweapon_flp"
+	},
 	["Cap and Ball Revolver"]={
 		mdl="models/krazy/gtav/weapons/navyrevolver_w.mdl",
 		swep="wep_jack_gmod_cabr",
 		ent="ent_jack_gmod_ezweapon_cabr"
+	},
+	["Magnum Trapdoor Revolver"]={
+		mdl="models/krazy/gtav/weapons/navyrevolver_w.mdl",
+		swep="wep_jack_gmod_bigiron",
+		ent="ent_jack_gmod_ezweapon_bigiron"
 	},
 	["Pocket Knife"]={
 		mdl="models/weapons/w_jmod_pocketknife.mdl",
@@ -285,7 +295,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=24,
 		carrylimit=25,
-		basedmg=110,
+		basedmg=120,
 		effrange=300,
 		terminaldmg=30,
 		penetration=120
@@ -294,7 +304,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=18,
 		carrylimit=50,
-		basedmg=80,
+		basedmg=90,
 		effrange=400,
 		terminaldmg=20,
 		penetration=90
@@ -342,7 +352,7 @@ JMod.AmmoTable={
 		sizemult=6,
 		carrylimit=120,
 		basedmg=9,
-		effrange=50,
+		effrange=30,
 		projnum=5,
 		terminaldmg=1,
 		penetration=10,
@@ -381,6 +391,14 @@ JMod.AmmoTable={
 		terminaldmg=30,
 		penetration=30,
 		dmgtype=DMG_BUCKSHOT
+	},
+	["Black Powder Metallic Cartridge"]={
+		sizemult=6,
+		carrylimit=100,
+		basedmg=80,
+		effrange=100,
+		terminaldmg=30,
+		penetration=40
 	}
 }
 for k,v in pairs(JMod.AmmoTable)do

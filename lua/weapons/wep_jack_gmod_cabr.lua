@@ -21,7 +21,7 @@ SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
 
-JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",.4)
+JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",.3)
 
 SWEP.HipDispersion = 1100
 

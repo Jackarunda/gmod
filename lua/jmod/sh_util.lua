@@ -80,7 +80,9 @@ function JMod.CalcWorkSpreadMult(ent,newPos)
 	local Barycenter=Vector(0,0,0)
 	for k,v in pairs(ent.EZworkSpread.locations)do Barycenter=Barycenter+v end
 	Barycenter=Barycenter/#ent.EZworkSpread.locations
-	jprint(Barycenter)
+	local Distance=LocalPos:Distance(Barycenter)
+	local DistanceFraction=Distance/Size
+	Mult=Mult+(5*DistanceFraction)
 	ent.EZworkSpread.lastHit=Time
 	return Mult
 end

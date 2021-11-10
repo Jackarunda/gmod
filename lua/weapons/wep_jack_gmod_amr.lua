@@ -3,6 +3,7 @@ SWEP.Base = "wep_jack_gmod_gunbase"
 SWEP.PrintName = "Anti-Materiel Rifle"
 
 JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amr",true)
+if(CLIENT)then killicon.Add("wep_jack_gmod_amr","entities/ent_jack_gmod_ezweapon_amr",Color(255,0,0)) end
 
 SWEP.Slot = 3
 

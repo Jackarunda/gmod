@@ -59,7 +59,7 @@ SWEP.IronSightStruct = {
 SWEP.ActivePos = Vector(0, 0, 0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
-SWEP.HolsterPos = Vector(11, 1, -6)
+SWEP.HolsterPos = Vector(11, -10, -6)
 SWEP.HolsterAng = Angle(0, 60, -15)
 
 SWEP.ReloadPos = Vector(0,-2,-9)

@@ -134,7 +134,7 @@ function EFFECT:Init(data)
 
 					particle:SetCollide(true)
 
-					particle:SetLighting(true)
+					particle:SetLighting(false)
 					
 					particle:SetCollideCallback(function(pertical,hitpos,hitnorm)
 						pertical:SetLifeTime(CurTime()+0.1)

@@ -59,7 +59,7 @@ if(SERVER)then
 			Fsh:SetOrigin(self:GetPos())
 			Fsh:SetScale(1)
 			Fsh:SetNormal(VectorRand())
-			util.Effect("eff_jack_fuzeburn",Fsh,true,true)
+			util.Effect("eff_jack_fuzeburn_smoky",Fsh,true,true)
 		end
 		timer.Simple(.075,function()
 			if not(IsValid(self))then return end

@@ -508,11 +508,11 @@ function SWEP:Think()
 						if(Alt)then
 							-- loosen
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
-								local AddAmt=2000/Phys:GetMass()
 								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-								-- jprint(WorkSpreadMult)
+								--jprint(WorkSpreadMult)
+								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
-								self:Pawnch()
+								self:Pawnch()s
 								timer.Simple(.1,function()
 									if(IsValid(self))then self:UpgradeEffect(Pos) end
 								end)
@@ -520,13 +520,32 @@ function SWEP:Think()
 									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
 									constraint.RemoveAll(Ent)
 									Phys:EnableMotion(true)
+									Phys:Wake()
 									SetAmt=0
 								end
 							else
 								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is already unconstrained")
 							end
 						else
-							-- salvage
+							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
+								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is constrained")
+							else
+								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
+								--jprint(WorkSpreadMult)
+								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
+								SetAmt=math.Clamp(Prog+AddAmt,0,100)
+								self:Pawnch()s
+								timer.Simple(.1,function()
+									if(IsValid(self))then self:UpgradeEffect(Pos) end
+								end)
+								if(Prog>=100)then
+									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
+									constraint.RemoveAll(Ent)
+									Phys:EnableMotion(true)
+									Phys:Wake()
+									SetAmt=0
+								end
+							end
 						end
 					end
 				end
