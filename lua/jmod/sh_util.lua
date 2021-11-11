@@ -74,12 +74,13 @@ function JMod.CalcWorkSpreadMult(ent,newPos)
 	if(Time-ent.EZworkSpread.lastHit>3)then --reset everything
 		ent.EZworkSpread.locations={}
 	end
-	local Size,Mult,LocalPos=(ent:OBBMaxs()-ent:OBBMins()):Length(),1,ent:WorldToLocal(newPos)
+	local Size,Mult,LocalPos,Barycenter=(ent:OBBMaxs()-ent:OBBMins()):Length(),1,ent:WorldToLocal(newPos),Vector(0,0,0)
+	if(#ent.EZworkSpread.locations>0)then
+		for k,v in pairs(ent.EZworkSpread.locations)do Barycenter=Barycenter+v end
+		Barycenter=Barycenter/#ent.EZworkSpread.locations
+	end
 	table.insert(ent.EZworkSpread.locations,1,LocalPos)
 	if(#ent.EZworkSpread.locations>4)then table.remove(ent.EZworkSpread.locations) end
-	local Barycenter=Vector(0,0,0)
-	for k,v in pairs(ent.EZworkSpread.locations)do Barycenter=Barycenter+v end
-	Barycenter=Barycenter/#ent.EZworkSpread.locations
 	local Distance=LocalPos:Distance(Barycenter)
 	local DistanceFraction=Distance/Size
 	Mult=Mult+(5*DistanceFraction)

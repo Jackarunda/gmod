@@ -512,7 +512,7 @@ function SWEP:Think()
 								--jprint(WorkSpreadMult)
 								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
-								self:Pawnch()s
+								self:Pawnch()
 								timer.Simple(.1,function()
 									if(IsValid(self))then self:UpgradeEffect(Pos) end
 								end)
@@ -534,7 +534,7 @@ function SWEP:Think()
 								--jprint(WorkSpreadMult)
 								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
-								self:Pawnch()s
+								self:Pawnch()
 								timer.Simple(.1,function()
 									if(IsValid(self))then self:UpgradeEffect(Pos) end
 								end)
