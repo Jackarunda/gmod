@@ -23,7 +23,7 @@ if(SERVER)then
 		-- it's metal
 	end
 	function ENT:CustomThink()
-		if(math.random(1,3)==1)then
+		if(math.random(1,200)<=self:GetResource())then
 			local Ent=ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Ent:SetPos(self:GetPos()+Vector(0,0,10))
 			Ent.Owner=self.Owner
