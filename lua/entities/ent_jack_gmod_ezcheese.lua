@@ -1,14 +1,17 @@
 -- Jackarunda 2021
+-- totally not deleted by titanicjames
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Cheese"
+ENT.PrintName="EZ Edible Chess piece"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/props_c17/playgroundTick-tack-toe_block01a.mdl")
+		self.Piece = math.random(1,6)
+		local pieces = {"models/props_phx/games/chess/black_pawn.mdl", "models/props_phx/games/chess/black_rook.mdl", "models/props_phx/games/chess/black_bishop.mdl", "models/props_phx/games/chess/black_knight.mdl", "models/props_phx/games/chess/black_queen.mdl","models/props_phx/games/chess/black_king.mdl"}
+		self:SetModel(pieces[self.Piece])
 		self:SetModelScale(math.Rand(1.5,3),0)
 		self:SetMaterial("models/debug/debugwhite")
 		self:SetColor(Color(math.random(190,210),math.random(140,160),0))
@@ -19,7 +22,7 @@ if(SERVER)then
 		self:SetUseType(CONTINUOUS_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(10)
+			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 		end)
 	end
@@ -30,7 +33,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		sound.Play("snds_jack_gmod/nom"..math.random(1,5)..".wav",self:GetPos(),60,math.random(90,110))
-		activator:SetHealth(activator:Health()+5)
+		activator:SetHealth(activator:Health()+15*self.Piece)
 		self:Remove()
 	end
 elseif(CLIENT)then
@@ -40,5 +43,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezcheese","EZ Cheese")
+	language.Add("ent_jack_gmod_ezcheese","EZ Edible Chess piece")
 end
