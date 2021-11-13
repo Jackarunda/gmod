@@ -509,7 +509,6 @@ function SWEP:Think()
 							-- loosen
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
 								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-								--jprint(WorkSpreadMult)
 								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
 								self:Pawnch()
@@ -527,6 +526,7 @@ function SWEP:Think()
 								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is already unconstrained")
 							end
 						else
+							-- TODO: salvage
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
 								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is constrained")
 							else

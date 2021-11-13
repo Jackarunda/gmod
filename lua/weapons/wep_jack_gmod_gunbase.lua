@@ -228,12 +228,33 @@ SWEP.Hook_PostFireBullets = function(self)
 end
 
 -- Behavior Modifications by Jackarunda --
-function SWEP:TryBustDoor(ent,dmg)
-	local RealDist=(ent:GetPos() - self:GetPos()):Length()
-	if((SERVER)and(self.DoorBreachPower)and(self.DoorBreachPower>0)and(RealDist<100)and(JMod.IsDoor(ent)))then
-		ent.JModDoorBreachedness=(ent.JModDoorBreachedness or 0)+self.DoorBreachPower/self.Num
-		if(ent.JModDoorBreachedness>=1)then
-			JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+SWEP.NextDoorShot=0
+function SWEP:TryBustDoor(ent,dmginfo)
+	if not(self.DoorBreachPower)then return end
+	if(self.NextDoorShot>CurTime())then return end
+	if GetConVar("arccw_doorbust"):GetInt() == 0 or not(IsValid(ent)) or not(JMod.IsDoor(ent)) then return end
+	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
+	if(ent:GetPos():Distance(self:GetPos())>150)then return end -- ugh, arctic, lol
+	self.NextDoorShot=CurTime()+.05 -- we only want this to run once per shot
+
+    -- Magic number: 119.506 is the size of door01_left
+    -- The bigger the door is, the harder it is to bust
+    local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+
+	local WorkSpread=JMod.CalcWorkSpreadMult(ent,dmginfo:GetDamagePosition())^1.1
+	local Amt=dmginfo:GetDamage() * self.DoorBreachPower * WorkSpread
+	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
+
+	if(ent.ArcCW_BustDamage>threshold)then
+		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+		ent.ArcCW_BustDamage=nil
+		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
+		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
+			if ent != otherDoor and otherDoor:GetClass() == ent:GetClass() and !otherDoor:GetNoDraw() then
+				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+				otherDoor.ArcCW_BustDamage=nil
+				break
+			end
 		end
 	end
 end

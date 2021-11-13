@@ -23,6 +23,8 @@ SWEP.Range=10
 SWEP.Penetration=20
 SWEP.AmmoPerShot=3
 
+SWEP.DoorBreachPower = 7
+
 SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
 SWEP.ChamberSize=0
 

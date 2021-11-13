@@ -17,6 +17,7 @@ SWEP.BodyHolsterPosL = Vector(1,-11,10)
 SWEP.BodyHolsterScale = 1
 
 JMod.ApplyAmmoSpecs(SWEP,"Shotgun Round",1.2)
+SWEP.DoorBreachPower = 1
 
 SWEP.Primary.ClipSize = 2 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0
@@ -100,7 +101,8 @@ SWEP.Animations = {
         SoundTable = {
 			{s = JMod.GunHandlingSounds.draw.longgun, t = .1, v=60, p=120},
 			{s = "snds_jack_gmod/ez_weapons/bas/swing.wav", t = .2, v=60},
-			{s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = .5, v=60}
+            {s = "snds_jack_gmod/ez_weapons/bas/shut.wav", t = .5, v=60},
+            {s = "snds_jack_gmod/ez_weapons/bas/grab.wav", t = 1.1, v=65}
 		},
 		Mult=1,
         LHIK = true,
@@ -113,7 +115,7 @@ SWEP.Animations = {
     },
 	["reload"] = {
         Source = "reload",
-        Time = 5.5,
+        Time = 4.5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71},
         FrameRate = 37,
@@ -135,11 +137,11 @@ SWEP.Animations = {
     },
     ["reload_empty"] = {
         Source = "Reload_Empty",
-        Time = 6,
+        Time = 5,
         TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         Checkpoints = {24, 42, 59, 71, 89},
         FrameRate = 37,
-		Mult=.9,
+		Mult=1,
         LHIK = true,
         LHIKIn = 0.5,
         LHIKOut = 0.5,

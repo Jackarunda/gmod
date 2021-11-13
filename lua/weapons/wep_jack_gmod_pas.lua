@@ -17,7 +17,7 @@ SWEP.BodyHolsterPosL = Vector(.5,-11,10)
 SWEP.BodyHolsterScale = .85
 
 JMod.ApplyAmmoSpecs(SWEP,"Shotgun Round")
-SWEP.DoorBreachPower = .2
+SWEP.DoorBreachPower = 1
 
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 
