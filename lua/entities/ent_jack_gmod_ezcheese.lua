@@ -24,7 +24,7 @@ if(SERVER)then
 		for i=1,10 do -- some bits and pieces cobbled together from the gnome, should work as a band aid since im flippin stupid.
 			local SelfPos=self:GetPos()
 			local Dir=VectorRand()
-			local NewPos=SelfPos+Dir*50+Vector(0,0,20) -- generate random spot within ~50 units, check to make sure it is not within map geometry.
+			local NewPos=SelfPos+Dir*50+Vector(0,0,50) -- generate random spot within ~50 units, check to make sure it is not within map geometry.
 			local Tr=util.QuickTrace(NewPos+Vector(0,0,0),Vector(0,0,-300),{self})
 			if((Tr.Hit)and not(Tr.StartSolid))then self:SetPos(NewPos) break end
 		end -- if the loop ever ends without doing anything, that must mean this piece spawned deep in the map. shit.
