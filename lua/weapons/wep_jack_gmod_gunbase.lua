@@ -236,15 +236,13 @@ function SWEP:TryBustDoor(ent,dmginfo)
 	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
 	if(ent:GetPos():Distance(self:GetPos())>150)then return end -- ugh, arctic, lol
 	self.NextDoorShot=CurTime()+.05 -- we only want this to run once per shot
-
     -- Magic number: 119.506 is the size of door01_left
     -- The bigger the door is, the harder it is to bust
     local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
-
+	JMod.Hint(self.Owner,"shotgun breach")
 	local WorkSpread=JMod.CalcWorkSpreadMult(ent,dmginfo:GetDamagePosition())^1.1
 	local Amt=dmginfo:GetDamage() * self.DoorBreachPower * WorkSpread
 	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
-
 	if(ent.ArcCW_BustDamage>threshold)then
 		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
 		ent.ArcCW_BustDamage=nil

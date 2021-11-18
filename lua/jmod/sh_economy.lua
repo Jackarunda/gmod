@@ -300,6 +300,7 @@ function JMod.GetSalvageYield(ent)
 	Mass=math.ceil(Mass^.9) -- exponent to keep yield from stupidheavy objects from ruining the game
 	if(Class=="func_physbox")then Mass=Mass/2 end -- again, more corrections
 	if(Mass>10000)then return {},"cannot salvage: too large" end
+	if(ent.EZsupplies)then return {},"no" end
 	Mat=string.lower(Mat)
 	local Info=SalvagingTable[Mat]
 	if not(Info)then return {},"cannot salvage: unknown physics material "..Mat end

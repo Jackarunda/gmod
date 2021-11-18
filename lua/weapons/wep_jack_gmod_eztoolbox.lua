@@ -477,6 +477,15 @@ function SWEP:Deploy()
 	self:SetNextSecondaryFire(CurTime()+1)
 	return true
 end
+function SWEP:CreateResourceEntity(pos,typ,amt)
+	local Ent=ents.Create(JMod.EZ_RESOURCE_ENTITIES[typ])
+	Ent:SetPos(pos)
+	Ent:SetAngles(AngleRand())
+	Ent:Spawn()
+	Ent:Activate()
+	Ent:SetResource(amt or 100)
+	JMod.Owner(Ent)
+end
 function SWEP:Think()
 	local Time=CurTime()
 	local vm=self.Owner:GetViewModel()
@@ -508,8 +517,10 @@ function SWEP:Think()
 						if(Alt)then
 							-- loosen
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
+								JMod.Hint(self.Owner,"work spread")
 								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
+								local Mass=Phys:GetMass()^.8
+								local AddAmt=350/Mass*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
 								self:Pawnch()
 								timer.Simple(.1,function()
@@ -526,24 +537,36 @@ function SWEP:Think()
 								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is already unconstrained")
 							end
 						else
-							-- TODO: salvage
+							-- salvage
 							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
 								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is constrained")
 							else
-								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-								--jprint(WorkSpreadMult)
-								local AddAmt=250/Phys:GetMass()*WorkSpreadMult
-								SetAmt=math.Clamp(Prog+AddAmt,0,100)
-								self:Pawnch()
-								timer.Simple(.1,function()
-									if(IsValid(self))then self:UpgradeEffect(Pos) end
-								end)
-								if(Prog>=100)then
-									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
-									constraint.RemoveAll(Ent)
-									Phys:EnableMotion(true)
-									Phys:Wake()
-									SetAmt=0
+								local Mass=Phys:GetMass()^.8
+								local Yield,Msg=JMod.GetSalvageYield(Ent)
+								if(#table.GetKeys(Yield)<=0)then
+									self.Owner:PrintMessage(HUD_PRINTCENTER,Msg)
+								else
+									JMod.Hint(self.Owner,"work spread")
+									local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
+									local AddAmt=300/Mass*WorkSpreadMult
+									SetAmt=math.Clamp(Prog+AddAmt,0,100)
+									self:Pawnch()
+									timer.Simple(.1,function()
+										if(IsValid(self))then self:UpgradeEffect(Pos,2) end
+									end)
+									if(Prog>=100)then
+										sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
+										for k,v in pairs(Yield)do
+											local AmtLeft=v
+											while AmtLeft>0 do
+												local Remove=math.min(AmtLeft,100)
+												self:CreateResourceEntity(Pos+VectorRand()*20+Vector(0,0,20),k,Remove)
+												AmtLeft=AmtLeft-Remove
+											end
+										end
+										SafeRemoveEntity(Ent)
+										SetAmt=0
+									end
 								end
 							end
 						end

@@ -89,7 +89,8 @@ JMod.Hints = {
 	["bleeding"] = {Type = "warn", Text = "You are bleeding; seek First-Aid ASAP", Time = 5},
 	["blockphysgun"] = {Type = "warn", Text = "This object can not be physgunned right now", Time = 5},
 	["horizontal surface"] = {Type = "warn", Text = "This object can only be placed on horizontal surfaces!", Time = 5},
-	
+	["work spread"] = {Type = "info", Text = "strike different locations on the object in order to complete the task faster", Time = 6},
+
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {Type = "info", Text = "Aid Radio can be used to call in supply drops", Time = 3},
 	["aid help"] = {Type = "info", Text = "Type in chat 'supply radio: help' to see list of items", Followup = "aid headset"},
@@ -177,6 +178,7 @@ JMod.Hints = {
 	["weapon ammocheck"]={Type="info",Text="press WALK and RELOAD at the same time to check ammo without reloading", Sound = ""},
 	["backblast"]={Type="info",Text="BACKBLAST AREA NOT CLEAR!"},
 	["backblast wall"]={Type="info",Text="BACKBLAST AREA NOT CLEAR! make sure the area behind you is open"},
+	["shotgun breach"]={Type="info",Text="shoot different points on the door to breach faster"},
 	-- Ammo
 	["weapon ammo"]={Type="info",Text="get ammo from the EZ Ammo Box (entities, JMod - EZ Resources)"},
 	["weapon munitions"]={Type="info",Text="get ammo from the EZ Munitions Box (entities, JMod - EZ Resources)"},
