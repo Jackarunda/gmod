@@ -166,6 +166,11 @@ local SalvagingTable={
 	plastic={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.5
 	},
+	paintcan={
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=.4,
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1
+	},
 	plastic_barrel={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
