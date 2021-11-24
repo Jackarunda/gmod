@@ -523,10 +523,10 @@ function SWEP:Think()
 								local AddAmt=350/Mass*WorkSpreadMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
 								self:Pawnch()
-								sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(80,120))
-								if(math.Rand(0,1)<.8)then sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(80,120)) end
+								sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
+								sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(90,110))
 								timer.Simple(.1,function()
-									if(IsValid(self))then self:UpgradeEffect(Pos) end
+									if(IsValid(self))then self:UpgradeEffect(Pos,1,true) end
 								end)
 								if(Prog>=100)then
 									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
@@ -553,10 +553,10 @@ function SWEP:Think()
 									local AddAmt=300/Mass*WorkSpreadMult
 									SetAmt=math.Clamp(Prog+AddAmt,0,100)
 									self:Pawnch()
-									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(80,120))
-									if(math.Rand(0,1)<.8)then sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(80,120)) end
+									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
+									sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(90,110))
 									timer.Simple(.1,function()
-										if(IsValid(self))then self:UpgradeEffect(Pos,2) end
+										if(IsValid(self))then self:UpgradeEffect(Pos,2,true) end
 									end)
 									if(Prog>=100)then
 										sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
