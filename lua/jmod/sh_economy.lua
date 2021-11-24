@@ -213,7 +213,7 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.8
 	},
 	porcelain={
-		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.4
 	},
 	item={
 		[JMod.EZ_RESOURCE_TYPES.POWER]=.3,
@@ -230,13 +230,13 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.8
 	},
 	pottery={
-		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.4
 	},
 	wood_plank={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
 	},
 	ceiling_tile={
-		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.2 -- yo idfk
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.4
 	},
 	metalvent={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1,
@@ -274,7 +274,7 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.3
 	},
 	brick={
-		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.4
 	},
 	solidmetal={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.4,
@@ -286,12 +286,33 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.7
 	},
 	crowbar={
-		[JMod.EZ_RESOURCE_TYPES.STEEL]=.8,
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.8
+	},
+	wood_panel={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.2,
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.05,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.05
+	},
+	tile={
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.5,
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.1
+	}
+}
+local SpecializedSalvagingTable={ -- todo: implement this
+	classname={},
+	modelname={
+		{
+			substrings={"crate_fruit","fruit_crate"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.WOOD]=.2,
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.2
+			}
+		}
 	}
 }
 function JMod.GetSalvageYield(ent)
 	if(not(IsValid(ent)))then return {},"" end
-	local Class=string.lower(ent:GetClass())
+	local Class,Mdl=string.lower(ent:GetClass()),ent:GetModel()
 	if(ent:IsWorld())then return {},"can't salvage the world" end
 	local Phys=ent:GetPhysicsObject()
 	if(not(IsValid(Phys)))then return {},"cannot salvage: invalid physics" end
@@ -301,6 +322,7 @@ function JMod.GetSalvageYield(ent)
 	if(Class=="func_physbox")then Mass=Mass/2 end -- again, more corrections
 	if(Mass>10000)then return {},"cannot salvage: too large" end
 	if(ent.EZsupplies)then return {},"no" end
+	local Specialized=false
 	Mat=string.lower(Mat)
 	local Info=SalvagingTable[Mat]
 	if not(Info)then return {},"cannot salvage: unknown physics material "..Mat end
@@ -315,7 +337,7 @@ function JMod.GetSalvageYield(ent)
 	for k,v in pairs(Info)do
 		Results[k]=math.ceil(v*Mass)
 	end
-	return Results,"salvaging yield for "..Class.." ("..Mat..")"
+	return Results,"salvaging results for "..tostring(ent)..":\nphysmat: "..Mat.."\nmodel: "..Mdl.."\nspecialized: "..tostring(Specialized)
 end
 if(SERVER)then
 	concommand.Add("jmod_debug_checksalvage",function(ply,cmd,args)

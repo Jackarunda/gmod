@@ -368,6 +368,7 @@ concommand.Add("jacky_trace_debug",function(ply)
 		print(Ent)
 		print("physmat",Ent:GetPhysicsObject():GetMaterial())
 		print("mass",Ent:GetPhysicsObject():GetMass())
+		print("model",Ent:GetModel())
 	end
 	print("---------- end trace debug -----------")
 end)
