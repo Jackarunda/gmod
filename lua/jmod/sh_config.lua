@@ -479,7 +479,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Big Bomb"]={
 				"ent_jack_gmod_ezbigbomb",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=190,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600
 				},
 				1.5,
@@ -489,7 +490,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Bomb"]={			
 				"ent_jack_gmod_ezbomb",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
 				},
 				1,
@@ -552,7 +554,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Mega Bomb"]={			
 				"ent_jack_gmod_ezmoab",		
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=380,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1200
 				},
 				1,
@@ -630,7 +633,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Small Bomb"]={			
 				"ent_jack_gmod_ezsmallbomb",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				1,
@@ -696,7 +700,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["HL2 Buggy"]={			
 				"FUNC spawnHL2buggy",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=300,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=300,

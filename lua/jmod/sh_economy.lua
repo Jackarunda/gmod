@@ -118,6 +118,12 @@ local SalvagingTable={
 	wood={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.7
 	},
+	wood_panel={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
+	},
+	tile={
+		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
+	},
 	wood_crate={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
 	},
@@ -159,6 +165,11 @@ local SalvagingTable={
 	},
 	plastic={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.5
+	},
+	paintcan={
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=.4,
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.1
 	},
 	plastic_barrel={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
@@ -280,6 +291,26 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.4,
 		[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=.1,
 		[JMod.EZ_RESOURCE_TYPES.TITANIUM]=.1
+	},
+	combine_metal={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.4,
+		[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=.1,
+		[JMod.EZ_RESOURCE_TYPES.TITANIUM]=.1
+	},
+	gm_torpedo={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.4,
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2
+	},
+	phx_ww2bomb={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.4,
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2
+	},
+	phx_explosiveball={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+		[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.4,
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2
 	},
 	grenade={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
