@@ -327,35 +327,186 @@ local SalvagingTable={
 	tile={
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.5,
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.1
+	},
+	strider={
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.1,
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.1,
+		[JMod.EZ_RESOURCE_TYPES.TITANIUM]=.1,
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1
+	},
+	slipperymetal={
+		[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.3
 	}
 }
-local SpecializedSalvagingTable={ -- todo: implement this
-	classname={},
+local SpecializedSalvagingTable={
+	classname={}, -- todo: implement
 	modelname={
 		{
 			substrings={"crate_fruit","fruit_crate"},
 			yield={
 				[JMod.EZ_RESOURCE_TYPES.WOOD]=.2,
-				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.2
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.4
+			}
+		},
+		{
+			substrings={"explosive"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=.4
+			}
+		},
+		{
+			substrings={"oildrum"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.OIL]=.4
+			}
+		},
+		{
+			substrings={"vendingmachine"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
+				[JMod.EZ_RESOURCE_TYPES.WATER]=.3,
+				[JMod.EZ_RESOURCE_TYPES.NUTRIENTS]=.3
+			}
+		},
+		{
+			substrings={"machine","laundry_washer","engine","laundry_dryer"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.4,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1
+			}
+		},
+		{
+			substrings={"propane","coolingtank"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.GAS]=.6
+			}
+		},
+		{
+			substrings={"gaspump","gascan"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.FUEL]=.6
+			}
+		},
+		{
+			substrings={"spotlight"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.1,
+				[JMod.EZ_RESOURCE_TYPES.GLASS]=.5
+			}
+		},
+		{
+			substrings={"radio","receiver","monitor","consolebox"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.2,
+				[JMod.EZ_RESOURCE_TYPES.GOLD]=.05,
+				[JMod.EZ_RESOURCE_TYPES.SILVER]=.1,
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1
+			}
+		},
+		{
+			substrings={"combine_soldier","combine_super_soldier"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=.3,
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.3
+			}
+		},
+		{
+			substrings={"helicopter"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.TITANIUM]=.1,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.2,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.2,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.1
+			}
+		},
+		{
+			substrings={"train0"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.3
+			}
+		},
+		{
+			substrings={"battery"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.POWER]=.7
+			}
+		},
+		{
+			substrings={"ammocrate"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.1,
+				[JMod.EZ_RESOURCE_TYPES.AMMO]=.7
+			}
+		},
+		{
+			substrings={"garbage_plasticbottle"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=.8
+			}
+		},
+		{
+			substrings={"/blu/tanks/","_apc"}, -- simphys tanks and HL2 APCs
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.05,
+				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=.1,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.RUBBER]=.05
 			}
 		}
 	}
 }
 function JMod.GetSalvageYield(ent)
 	if(not(IsValid(ent)))then return {},"" end
-	local Class,Mdl=string.lower(ent:GetClass()),ent:GetModel()
+	local Class,Mdl=string.lower(ent:GetClass()),string.lower(ent:GetModel())
 	if(ent:IsWorld())then return {},"can't salvage the world" end
 	local Phys=ent:GetPhysicsObject()
 	if(not(IsValid(Phys)))then return {},"cannot salvage: invalid physics" end
-	local Mat,Mass=Phys:GetMaterial(),Phys:GetMass()
+	local Mat,Mass=string.lower(Phys:GetMaterial()),Phys:GetMass()
 	if not((Mat)and(Mass)and(Mass>0))then return {},"cannot salvage: corrupt physics" end
 	Mass=math.ceil(Mass^.9) -- exponent to keep yield from stupidheavy objects from ruining the game
 	if(Class=="func_physbox")then Mass=Mass/2 end -- again, more corrections
 	if(Mass>10000)then return {},"cannot salvage: too large" end
-	if(ent.EZsupplies)then return {},"no" end
-	local Specialized=false
-	Mat=string.lower(Mat)
-	local Info=SalvagingTable[Mat]
+	if((ent:IsNPC())or(ent:IsPlayer()))then return {},"" end
+	if(ent.EZsupplies or ent.EZammo)then return {},"no" end
+	if(Class=="ent_jack_gmod_eztoolbox")then return {},"STOP YOU MORON" end
+	local Specialized,Info=false,SalvagingTable[Mat]
+	for _,typeInfo in pairs(SpecializedSalvagingTable.modelname)do
+		for k,v in pairs(typeInfo.substrings)do
+			if(string.find(Mdl,v))then
+				Info=typeInfo.yield
+				Specialized=true
+				break
+			end
+		end
+		if(Specialized)then break end
+	end
+	local ScaleByMass=true
+	for name,blueprintInfo in pairs(JMod.Config.Blueprints)do
+		if(blueprintInfo[1]==Class)then
+			Info=blueprintInfo[2]
+			ScaleByMass=false
+		end
+	end
+	for name,recipeInfo in pairs(JMod.Config.Recipes)do
+		if(recipeInfo[1]==Class)then
+			Info=recipeInfo[2]
+			ScaleByMass=false
+		end
+	end
 	if not(Info)then return {},"cannot salvage: unknown physics material "..Mat end
 	if(Info.random)then
 		local Types=table.GetKeys(Info.random)
@@ -366,7 +517,11 @@ function JMod.GetSalvageYield(ent)
 	end
 	local Results={}
 	for k,v in pairs(Info)do
-		Results[k]=math.ceil(v*Mass)
+		if(ScaleByMass)then
+			Results[k]=math.ceil(v*Mass)
+		else
+			Results[k]=math.ceil(v*.6)
+		end
 	end
 	return Results,"salvaging results for "..tostring(ent)..":\nphysmat: "..Mat.."\nmodel: "..Mdl.."\nspecialized: "..tostring(Specialized)
 end

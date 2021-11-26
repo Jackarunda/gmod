@@ -15,6 +15,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Hints=true,
 		AltFunctionKey=IN_WALK,
 		SentryPerformanceMult=1,
+		ToolboxDeconstructSpeedMult=1,
 		MedBayHealMult=1,
 		MedKitHealMult=1,
 		ToolKitUpgradeMult=1,
@@ -469,7 +470,8 @@ function JMod.InitGlobalConfig(forceNew)
                 {
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
                     [JMod.EZ_RESOURCE_TYPES.POWER]=100,
-                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=50,
+                    [JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
                     [JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=200
                 },
 				2,
