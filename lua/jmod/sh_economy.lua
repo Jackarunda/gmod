@@ -378,6 +378,15 @@ local SpecializedSalvagingTable={
 			}
 		},
 		{
+			substrings={"generator0"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.3
+			}
+		},
+		{
 			substrings={"propane","coolingtank"},
 			yield={
 				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
