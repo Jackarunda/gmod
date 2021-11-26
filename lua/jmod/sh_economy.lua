@@ -121,9 +121,6 @@ local SalvagingTable={
 	wood_panel={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
 	},
-	tile={
-		[JMod.EZ_RESOURCE_TYPES.GLASS]=.3
-	},
 	wood_crate={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.5
 	},
