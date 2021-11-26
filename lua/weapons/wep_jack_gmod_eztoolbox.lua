@@ -520,7 +520,7 @@ function SWEP:Think()
 								JMod.Hint(self.Owner,"work spread")
 								local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
 								local Mass=Phys:GetMass()^.8
-								local AddAmt=350/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
+								local AddAmt=300/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
 								SetAmt=math.Clamp(Prog+AddAmt,0,100)
 								self:Pawnch()
 								sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
@@ -550,7 +550,7 @@ function SWEP:Think()
 								else
 									JMod.Hint(self.Owner,"work spread")
 									local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-									local AddAmt=300/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
+									local AddAmt=250/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
 									SetAmt=math.Clamp(Prog+AddAmt,0,100)
 									self:Pawnch()
 									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
