@@ -61,22 +61,23 @@ end
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png")
 }
-function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay)
-	font=font or "JMod-Stencil"
-	opacity=opacity or 150
-	local Col=Color(200,200,200,opacity)
-	surface.SetDrawColor(255,255,255,opacity)
-	surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS[typ] or SpecialIcons[typ])
-	surface.DrawTexturedRect(x-siz/2,y-siz/2,siz,siz)
-	local UnitText=tostring(amt).." UNITS"
-	if(rateDisplay)then UnitText=tostring(amt).." PER SECOND" end
-	if(vertical)then
-		draw.SimpleText(typ,font,x,y-siz/2-10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_BOTTOM)
-		draw.SimpleText(UnitText,font,x,y+siz/2+10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-	else
-		draw.SimpleText(typ,font,x-siz/2-10,y,Col,TEXT_ALIGN_RIGHT,TEXT_ALIGN_CENTER)
-		draw.SimpleText(UnitText,font,x+siz/2+10,y,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_CENTER)
-	end
+function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay,brite)
+    font=font or "JMod-Stencil"
+    opacity=opacity or 150
+    brite=brite or 200
+    surface.SetDrawColor(255,255,255,opacity)
+    surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS[typ] or SpecialIcons[typ])
+    surface.DrawTexturedRect(x-siz/2,y-siz/2,siz,siz)
+    local Col=Color(brite,brite,brite,opacity)
+    local UnitText=tostring(amt).." UNITS"
+    if(rateDisplay)then UnitText=tostring(amt).." PER SECOND" end
+    if(vertical)then
+        draw.SimpleText(typ,font,x,y-siz/2-10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_BOTTOM)
+        draw.SimpleText(UnitText,font,x,y+siz/2+10,Col,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+    else
+        draw.SimpleText(typ,font,x-siz/2-10,y,Col,TEXT_ALIGN_RIGHT,TEXT_ALIGN_CENTER)
+        draw.SimpleText(UnitText,font,x+siz/2+10,y,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_CENTER)
+    end
 end
 function JMod.HoloGraphicDisplay(ent,relPos,relAng,scale,renderDist,renderFunc)
 	local Ang,Pos=Angle(0,0,0),Vector(0,0,0)
