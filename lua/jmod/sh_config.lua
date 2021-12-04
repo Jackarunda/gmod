@@ -1174,7 +1174,8 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
 				},
 				"Apparel",
 				"You must care about your shoulders if you wear this."
@@ -1184,6 +1185,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=20,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
 				},
 				"Apparel",
@@ -1194,7 +1196,8 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=50,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=50
 				},
 				"Apparel",
 				"Turtle shell. Heavy defense."
@@ -1263,8 +1266,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Light Helmet"]={
 				"ent_jack_gmod_ezarmor_lhead",
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
 				},
 				"Apparel",
 				"Not so bad on your neck, but has low defense."
@@ -1293,7 +1297,7 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=10
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=15
 				},
 				"Apparel",
 				"Heavier version of the riot helmet."
@@ -1303,7 +1307,8 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=20
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=20,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=10
 				},
 				"Apparel",
 				"Turtle head. Heaviest helmet, and restricts your vision alot."
@@ -1353,7 +1358,8 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezarmor_mhead",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=15
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
 				},
 				"Apparel",
 				"Better than the light helmet, but worse than the heavy. Neck might hurt if you wear it too long."
@@ -1373,7 +1379,8 @@ function JMod.InitGlobalConfig(forceNew)
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=25,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH]=25
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=25,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=25
 				},
 				"Apparel",
 				"Slightly less heavy, slightly less protection than heavy armor."
@@ -1582,7 +1589,8 @@ function JMod.InitGlobalConfig(forceNew)
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
 		        },
 		        "Apparel",
 				"i'm not making that joke."
@@ -1632,7 +1640,8 @@ function JMod.InitGlobalConfig(forceNew)
 		        {   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
+					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
 		        },
 		        "Apparel",
 				"I'm not making that joke."

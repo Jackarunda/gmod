@@ -269,9 +269,10 @@ function SWEP:PrimaryAttack()
 				end
 				net.Send(self.Owner)
 			else
-				self:Msg("needs 20 Parts nearby to perform modification")
+				self:Msg("needs 50 Parts nearby to perform modification")
 			end
-		elseif((IsValid(Ent))and(Ent.EZupgradable))then
+		elseif((IsValid(Ent))and(Ent.EZupgrades))then
+			if(true)then self:Msg("upgrading machines is currently disabled. Stay tuned for a JMod update") return end
 			local State=Ent:GetState()
 			if(State==-1)then
 				self:Msg("device must be repaired before upgrading")
@@ -280,7 +281,8 @@ function SWEP:PrimaryAttack()
 			else
 				local Grade=Ent:GetGrade()
 				if(Grade<5)then
-					local UpgradeInfo,UpgradeRate=Ent.EZupgrades.grades[Grade],Ent.EZupgrades.rate*JMod.Config.ToolKitUpgradeMult
+					local UpgradeRate=JMod.Config.ToolKitUpgradeMult*2
+					local RequiredMats={}
 					for resourceType,requiredAmt in pairs(UpgradeInfo)do
 						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
 						if(CurAmt<requiredAmt)then
@@ -313,12 +315,12 @@ function SWEP:ModifyMachine(ent,tbl,ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif(State~=0)then
 		self:Msg("device must be turned off to modify")
-	elseif(JMod.HaveResourcesToPerformTask(nil,nil,{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20},self))then
-		JMod.ConsumeResourcesInRange({[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20}, nil,nil,self)
+	elseif(JMod.HaveResourcesToPerformTask(nil,nil,{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50},self))then
+		JMod.ConsumeResourcesInRange({[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50}, nil,nil,self)
 		ent:SetMods(tbl,ammoType)
 		self:UpgradeEffect(ent:GetPos()+Vector(0,0,30),2)
 	else
-		self:Msg("needs 20 Basic Parts nearby to perform modification")
+		self:Msg("needs 50 Basic Parts nearby to perform modification")
 	end
 end
 function SWEP:Msg(msg)
@@ -592,7 +594,7 @@ function SWEP:DrawHUD()
 		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
 	end
 	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
-	draw.SimpleTextOutlined("LMB: build/upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
+	draw.SimpleTextOutlined("LMB: build (upgrade coming soon)","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+LMB: modify","Trebuchet24",W*.4,H*.7+60,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("RMB: salvage","Trebuchet24",W*.4,H*.7+90,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("ALT+RMB: loosen","Trebuchet24",W*.4,H*.7+120,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))

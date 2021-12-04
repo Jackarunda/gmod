@@ -61,13 +61,14 @@ end
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png")
 }
-function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay)
+function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay,brite)
 	font=font or "JMod-Stencil"
 	opacity=opacity or 150
-	local Col=Color(200,200,200,opacity)
+	brite=brite or 200
 	surface.SetDrawColor(255,255,255,opacity)
 	surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS[typ] or SpecialIcons[typ])
 	surface.DrawTexturedRect(x-siz/2,y-siz/2,siz,siz)
+	local Col=Color(brite,brite,brite,opacity)
 	local UnitText=tostring(amt).." UNITS"
 	if(rateDisplay)then UnitText=tostring(amt).." PER SECOND" end
 	if(vertical)then
