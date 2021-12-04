@@ -240,13 +240,12 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			JMod.EZarmorSync(ply)
 		end
 	elseif(JMod.Config.QoL.RealisticLocationalDamage)then
-		Mul=Mul*JMod.BodyPartDamageMults[hitgroup]*AmmoHPmul
-	else
-		Mul=Mul*AmmoHPmul
-	end
+        Mul=Mul*(JMod.BodyPartDamageMults[hitgroup] or 1)*AmmoHPmul
+    else
+        Mul=Mul*AmmoHPmul
+    end
 	dmg:ScaleDamage(Mul)
 end
-
 local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 	--if (#table.GetKeys(ply.EZarmor.items) <= 0) then return end
 	local Mul, Protection, DmgAmt, ArmorPieceBroke = 1, 0, dmg:GetDamage(), false

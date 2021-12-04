@@ -26,7 +26,7 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		JMod.HoloGraphicDisplay(self,Vector(0,-3,4.9),Angle(0,0,0),.025,300,function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PLATINUM,self:GetResource(),nil,0,0,200,false)
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PLATINUM,self:GetResource(),nil,0,0,200,false,nil,nil,nil,0)
 		end)
 	end
 	language.Add(ENT.ClassName,ENT.PrintName)
