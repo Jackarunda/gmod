@@ -749,6 +749,7 @@ net.Receive("JMod_EZradio",function()
 	for i = 1, count do
 		table.insert(Packages, {net.ReadString(),net.ReadString()})	
 	end
+	table.sort(Packages,function(a,b) return a[1]<b[1] end)
 	local Radio=net.ReadEntity()
 	local StatusText = net.ReadString()
 	local motherFrame = vgui.Create("DFrame")
