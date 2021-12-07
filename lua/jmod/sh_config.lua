@@ -10,7 +10,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=37,
+		Version=38,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -21,6 +21,7 @@ function JMod.InitGlobalConfig(forceNew)
 		ToolKitUpgradeMult=1,
 		MineDelay=1,
 		MinePower=1,
+		SalvagingBlacklist={"func_"},
 		DoorBreachResetTimeMult=1,
 		SupplyEffectMult=1,
 		FumigatorGasAmount=1,

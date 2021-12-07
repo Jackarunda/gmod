@@ -489,6 +489,11 @@ function JMod.GetSalvageYield(ent)
 	if((ent:IsNPC())or(ent:IsPlayer()))then return {},"" end
 	if(ent.EZsupplies or ent.EZammo)then return {},"no" end
 	if(Class=="ent_jack_gmod_eztoolbox")then return {},"STOP YOU MORON" end
+	if(SERVER)then
+		for k,v in pairs(JMod.Config.SalvagingBlacklist)do
+			if(string.find(Class,v))then return {},"object may not be salvaged" end
+		end
+	end
 	local Specialized,Info=false,SalvagingTable[Mat]
 	for _,typeInfo in pairs(SpecializedSalvagingTable.modelname)do
 		for k,v in pairs(typeInfo.substrings)do

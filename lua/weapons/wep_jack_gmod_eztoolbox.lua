@@ -542,36 +542,38 @@ function SWEP:Think()
 							end
 						else
 							-- salvage
-							if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
-								self.Owner:PrintMessage(HUD_PRINTCENTER,"object is constrained")
-							else
-								local Mass=Phys:GetMass()^.8
-								local Yield,Msg=JMod.GetSalvageYield(Ent)
-								if(#table.GetKeys(Yield)<=0)then
-									self.Owner:PrintMessage(HUD_PRINTCENTER,Msg)
+							if(SERVER)then
+								if(constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled())then
+									self.Owner:PrintMessage(HUD_PRINTCENTER,"object is constrained")
 								else
-									JMod.Hint(self.Owner,"work spread")
-									local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
-									local AddAmt=250/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
-									SetAmt=math.Clamp(Prog+AddAmt,0,100)
-									self:Pawnch()
-									sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
-									sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(90,110))
-									timer.Simple(.1,function()
-										if(IsValid(self))then self:UpgradeEffect(Pos,2,true) end
-									end)
-									if(Prog>=100)then
-										sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
-										for k,v in pairs(Yield)do
-											local AmtLeft=v
-											while AmtLeft>0 do
-												local Remove=math.min(AmtLeft,100)
-												self:CreateResourceEntity(Pos+VectorRand()*20+Vector(0,0,20),k,Remove)
-												AmtLeft=AmtLeft-Remove
+									local Mass=Phys:GetMass()^.8
+									local Yield,Msg=JMod.GetSalvageYield(Ent)
+									if(#table.GetKeys(Yield)<=0)then
+										self.Owner:PrintMessage(HUD_PRINTCENTER,Msg)
+									else
+										JMod.Hint(self.Owner,"work spread")
+										local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
+										local AddAmt=250/Mass*WorkSpreadMult*JMod.Config.ToolboxDeconstructSpeedMult
+										SetAmt=math.Clamp(Prog+AddAmt,0,100)
+										self:Pawnch()
+										sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),60,math.random(50,70))
+										sound.Play("snds_jack_gmod/ez_dismantling/"..math.random(1,10)..".wav",Pos,65,math.random(90,110))
+										timer.Simple(.1,function()
+											if(IsValid(self))then self:UpgradeEffect(Pos,2,true) end
+										end)
+										if(Prog>=100)then
+											sound.Play("snds_jack_gmod/ez_tools/hit.wav",Pos+VectorRand(),70,math.random(50,60))
+											for k,v in pairs(Yield)do
+												local AmtLeft=v
+												while AmtLeft>0 do
+													local Remove=math.min(AmtLeft,100)
+													self:CreateResourceEntity(Pos+VectorRand()*20+Vector(0,0,20),k,Remove)
+													AmtLeft=AmtLeft-Remove
+												end
 											end
+											SafeRemoveEntity(Ent)
+											SetAmt=0
 										end
-										SafeRemoveEntity(Ent)
-										SetAmt=0
 									end
 								end
 							end

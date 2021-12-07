@@ -92,7 +92,7 @@ if(SERVER)then
 		JMod.Hint(activator, "crate", self)
 		local Resource=self:GetResource()
 		if(Resource<=0)then return end
-		local Box,Given=ents.Create(self.ChildEntity),100
+		local Box,Given=ents.Create(self.ChildEntity),math.min(Resource,100)
 		Box:SetPos(self:GetPos()+self:GetUp()*5)
 		Box:SetAngles(self:GetAngles())
 		Box:Spawn()
