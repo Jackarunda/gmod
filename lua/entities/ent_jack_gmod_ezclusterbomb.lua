@@ -47,6 +47,15 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		self.FreefallTicks=0
+		self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if armed and value > 0, this will detonate", "Arms bomb when > 0"})
+		self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value ~= 0) then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
@@ -149,6 +158,7 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
+		WireLib.TriggerOutput(self, "State", self:GetState())
 		local Phys=self:GetPhysicsObject()
 		if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 			self.FreefallTicks=self.FreefallTicks+1
