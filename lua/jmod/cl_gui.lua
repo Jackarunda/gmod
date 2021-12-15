@@ -413,22 +413,27 @@ net.Receive("JMod_EZtoolbox",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
+
+	local text_space = 16
 	for k,cat in pairs(Categories)do
+		surface.SetFont("DermaDefault")
+		local text_x = surface.GetTextSize(k)
+
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(70,20)
+		TabBtn:SetSize(text_x + text_space,20)
 		TabBtn:SetText("")
 		TabBtn.Category=k
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)
-			draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 		end
-		X=X+75
+		X = X + text_x + text_space + 5
 	end
 	-- Resource display
 	local resFrame = vgui.Create("DPanel", motherFrame)
