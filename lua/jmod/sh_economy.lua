@@ -760,6 +760,48 @@ if(SERVER)then
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
 		JMod.GenerateNaturalResources()
 	end)
+	function JMod.SpawnScavengeItems(pos)
+		--
+	end
+	local function CanPlayerScavenge(ply)
+		if not(IsValid(ply) and ply:Alive())then return false end
+		if((ply:KeyDown(IN_SPEED))or(ply:InVehicle()))then return false end
+		local MT=ply:GetMoveType()
+		print(MT)
+		if not((MT)and(MT==MOVETYPE_WALK))then return false end -- no weird shit
+		return true
+	end
+	concommand.Add("jmod_scavenge",function(ply,cmd,args)
+		if not(CanPlayerScavenge(ply))then return end
+		local Time=CurTime()
+		ply.EZscavengeFinish=ply.EZscavengeFinish or 0
+		if(ply.EZscavengeFinish>Time)then return end
+		ply.EZscavengeFinish=Time+10
+	end)
+	local NextThink=0
+	hook.Add("Think","JMod_EconomyThink",function()
+		local Time=CurTime()
+		if(NextThink>Time)then return end
+		NextThink=Time+1
+		for k,ply in pairs(player.GetAll())do
+			if(ply.EZscavengeFinish)then
+				if(CanPlayerScavenge(ply))then
+					if(ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_JUMP) or ply:KeyDown(IN_ATTACK) or ply:KeyDown(IN_ATTACK2))then
+						ply:PrintMessage(HUD_PRINTCENTER,"scavenging cancelled")
+						ply.EZscavengeFinish=nil
+					elseif(ply.EZscavengeFinish<Time)then
+						ply:PrintMessage(HUD_PRINTCENTER,"scavenging completed")
+						ply.EZscavengeFinish=nil
+						JMod.SpawnScavengeItems(ply:GetShootPos()+Vector(0,0,20))
+					else
+						ply:PrintMessage(HUD_PRINTCENTER,"scavenging...")
+					end
+				else
+					ply.EZscavengeFinish=nil
+				end
+			end
+		end
+	end)
 	concommand.Add("jmod_debug_shownaturalresources",function(ply,cmd,args)
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end

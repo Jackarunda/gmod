@@ -590,7 +590,7 @@ if(CLIENT)then
 				bone="ValveBiped.Bip01_Spine1"
 			}
 		}
-	}		
+	}
 	local function RenderHolsteredWeapon(ply,slot,side)
 		local Class=ply.EZweapons.slots[slot][side]
 		local CurWep=ply:GetActiveWeapon()
