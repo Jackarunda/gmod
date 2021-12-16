@@ -760,8 +760,43 @@ if(SERVER)then
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
 		JMod.GenerateNaturalResources()
 	end)
+	function JMod.AnalyzeRegion(pos)
+		local Results={}
+		local SkyboxCheck=util.QuickTrace(pos,Vector(0,0,9e9))
+		Results.UnderSky=SkyboxCheck.HitSky
+		local TreeHits,NonTreeHits,Misses,Normals=0,0,0,{}
+		for i=1,200 do
+			local StartPos=pos+Vector(math.random(-500,500),math.random(-500,500),0)
+			local Tr=util.TraceLine({
+				start=StartPos,
+				endpos=StartPos+Vector(math.random(-500,500),math.random(-500,500),0)
+			})
+			if(Tr.Hit and not Tr.StartSolid)then
+				local RoundedNormal=Vector(math.Round(Tr.HitNormal.x,2),math.Round(Tr.HitNormal.y,2),math.Round(Tr.HitNormal.z,2))
+				local GoodHit=true
+				for k,v in pairs(Normals)do
+					if(v==RoundedNormal)then GoodHit=false break end
+				end
+				if(GoodHit)then
+					table.insert(Normals,RoundedNormal)
+					TreeHits=TreeHits+1
+				else
+					NonTreeHits=NonTreeHits+1
+				end
+			else
+				Misses=Misses+1
+			end
+		end
+		--print(TreeHits,NonTreeHits,Misses)
+		Results.Forest=TreeHits/Misses
+		return Results
+	end
+	concommand.Add("jmod_debug_analyzeregion",function(ply,cmd,args)
+		PrintTable(JMod.AnalyzeRegion(ply:GetShootPos()+Vector(0,0,20)))
+	end)
 	function JMod.SpawnScavengeItems(pos)
-		--
+		local RegionAnalysis=JMod.AnalyzeRegion(pos+Vector(0,0,20))
+		-- TODO
 	end
 	local function CanPlayerScavenge(ply)
 		if not(IsValid(ply) and ply:Alive())then return false end
@@ -792,7 +827,7 @@ if(SERVER)then
 					elseif(ply.EZscavengeFinish<Time)then
 						ply:PrintMessage(HUD_PRINTCENTER,"scavenging completed")
 						ply.EZscavengeFinish=nil
-						JMod.SpawnScavengeItems(ply:GetShootPos()+Vector(0,0,20))
+						JMod.SpawnScavengeItems(ply:GetShootPos())
 					else
 						ply:PrintMessage(HUD_PRINTCENTER,"scavenging...")
 					end
