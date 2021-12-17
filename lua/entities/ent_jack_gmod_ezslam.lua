@@ -100,7 +100,7 @@ if(SERVER)then
 							end
 						end
 					end)
-					JMod.Hint(Dude, "friends", self)
+					JMod.Hint(Dude, "mine friends", self)
 				else
 					if !IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)

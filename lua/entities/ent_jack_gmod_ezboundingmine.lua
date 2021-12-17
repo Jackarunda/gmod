@@ -108,7 +108,7 @@ if(SERVER)then
 			if(Alt)then
 				JMod.Owner(self,activator)
 				self:Bury(activator)
-				JMod.Hint(activator, "friends", self)
+				JMod.Hint(activator, "mine friends", self)
 			else
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm boundingmine", self)

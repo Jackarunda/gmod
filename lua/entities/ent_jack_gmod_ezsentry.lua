@@ -295,7 +295,7 @@ if(SERVER)then
 			if(State>0)then
 				self:TurnOff()
 			else
-				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "friends", self)
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "sentry friends", self)
 				else JMod.Hint(activator, "nopower", self) end
 			end
 		end

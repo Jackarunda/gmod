@@ -15,7 +15,7 @@ JMod.Hints = {
 	["trigger"] = {Type = "button", Text = "Type *trigger* in chat or command jmod_ez_trigger to detonate", Followup = "bind cmd"},
 	["launch"] = {Type = "button", Text = "Type *launch* in chat or command jmod_ez_launch to fire one rocket", Followup = "bind cmd"},
 	["bombdrop"] = {Type = "button", Text = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb", Followup = "bind cmd"},
-	["friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your entities"},
+	["mine friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; friends won't trigger your smart mines"},
 	["prime"] = {Type = "button", Text = "Hold Walk and press Use to pick up and prime grenade", Followup = "bind walk", Time = 5},
 	["grenade"] = {Type = "lmb", Text = "Grenades can be thrown long distances, right click to soft throw", Time = 3},
 	["grenade drop"] = {Type = "warn", Text = "Careful, dropped grenades are still armed!", Time = 3},
@@ -125,6 +125,7 @@ JMod.Hints = {
 	["ent_jack_gmod_eztoolbox"] = {Type = "info", Text = "Toolbox can craft, nail, package, upgrade and salvage things", Time = 3},
 	["ent_jack_gmod_ezmedkit"] = {Type = "info", Text = "Medkit can be used to heal oneself or other players", Time = 3},
 	
+	["sentry friends"] = {Type = "partner", Text = "Set your friends with command jmod_friends; your sentries won't shoot at them"},
 	-- Armor
 	["armor wear"] = {Type = "pickup", Text = "Hold Walk and press Use to set color and equip armor", Followup = "bind walk", Time = 5},
 	["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},

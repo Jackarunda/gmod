@@ -7,7 +7,7 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
 ENT.Material = "models/mats_jack_nades/gnd_red"
-ENT.Hints = {"grenade", "mininade", "friends"}
+ENT.Hints = {"grenade", "mininade", "mine friends"}
 
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}

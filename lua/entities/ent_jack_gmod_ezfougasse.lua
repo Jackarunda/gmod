@@ -138,7 +138,7 @@ if(SERVER)then
 				end
 			end
 		end)
-		JMod.Hint(armer, "friends", self)
+		JMod.Hint(armer, "mine friends", self)
 	end
 	function ENT:CanSee(ent)
 		if not(IsValid(ent))then return false end

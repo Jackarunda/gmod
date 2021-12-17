@@ -137,7 +137,7 @@ if (SERVER) then
 		end
 
 		JMod.Owner(self, armer)
-		JMod.Hint(armer, "friends", self)
+		JMod.Hint(armer, "mine friends", self)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)
 
