@@ -33,7 +33,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self:SetModel("models/weapons/w_jlam.mdl")
-		self:SetModelScale(1.25,0)
+		--self:SetModelScale(1.25,0)
 		self:SetBodygroup(0,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -51,6 +51,15 @@ if(SERVER)then
 		self.Damage=500
 		---
 		JMod.Colorify(self)
+		self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if armed and value > 0, this will detonate", "Arms bomb when > 0"})
+		self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value ~= 0) then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>25)then
@@ -174,6 +183,7 @@ if(SERVER)then
 		end)
 	end
 	function ENT:Think()
+		WireLib.TriggerOutput(self, "State", self:GetState())
 		local Time=CurTime()
 		local state = self:GetState()
 		if(state==JMod.EZ_STATE_ARMED)then

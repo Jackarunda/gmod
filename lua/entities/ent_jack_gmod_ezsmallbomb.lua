@@ -47,8 +47,10 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		self.FreefallTicks=0
-		self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if armed and value > 0, this will detonate", "Arms bomb when > 0"})
-		self.Outputs = WireLib.CreateOutputs(self, {"State", "Snakeye"}, {"1 is armed \n 0 is not \n -1 is broken", "1 is Snakeye inabled"})
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Snakeye"}, {"1 is armed \n 0 is not \n -1 is broken", "Outputs 1 when fins are deployed"})
+		end
 	end
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value ~= 0) then
@@ -184,8 +186,10 @@ if(SERVER)then
 		else
 			self.FreefallTicks=0
 		end
-		WireLib.TriggerOutput(self, "State", self:GetState())
-		WireLib.TriggerOutput(self, "Snakeye", self:GetSnakeye())
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Snakeye", self:GetSnakeye())
+		end
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
 				--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then

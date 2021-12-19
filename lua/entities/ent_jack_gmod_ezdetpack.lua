@@ -50,6 +50,17 @@ if (SERVER) then
 		---
 		self:SetState(STATE_OFF)
 		self.NextStick = 0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+		end
+	end
+	
+	function ENT:TriggerInput(iname, value)
+		if iname == "Detonate" and value > 0 then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -256,7 +267,9 @@ if (SERVER) then
 	end
 
 	function ENT:Think()
-		--
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 	end
 
 	function ENT:OnRemove()

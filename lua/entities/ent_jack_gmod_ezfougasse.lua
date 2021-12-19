@@ -51,6 +51,17 @@ if(SERVER)then
 		---
 		self:SetState(STATE_OFF)
 		self.NextArmTime=0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif (iname == "Arm" and value > 0) then
+			self:SetState(STATE_ARMING)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -152,6 +163,9 @@ if(SERVER)then
 		return not Tr.Hit
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_ARMED)then
 			local SearchPos=self:GetPos()+self:GetUp()*250
