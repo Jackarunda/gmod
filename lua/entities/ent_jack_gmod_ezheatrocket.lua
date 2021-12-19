@@ -60,6 +60,7 @@ if(SERVER)then
 			self:SetState(STATE_OFF)
 		elseif (iname == "Launch" and value > 0) then
 			self:SetState(STATE_LAUNCHED)
+			self:ConstraintsRemove()
 		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
