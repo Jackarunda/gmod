@@ -6,7 +6,7 @@ ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Manufacturing Machine"
 --ENT.NoSitAllowed=true
-ENT.Spawnable=false
+ENT.Spawnable=true
 ENT.AdminOnly=false
 ---
 ENT.JModEZstorable=true

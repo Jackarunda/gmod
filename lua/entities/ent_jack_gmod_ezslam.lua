@@ -51,14 +51,30 @@ if(SERVER)then
 		self.Damage=500
 		---
 		JMod.Colorify(self)
-		self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if armed and value > 0, this will detonate", "Arms bomb when > 0"})
-		self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if value > 0, this will detonate", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+		end
 	end
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value ~= 0) then
+		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
+			if self:GetState() == JMod.EZ_STATE_OFF then
+				self:SetState(JMod.EZ_STATE_ARMING)
+				self:SetBodygroup(0,1)
+				self:EmitSound("snd_jack_minearm.wav",60,100)
+				timer.Simple(3,function()
+					if(IsValid(self))then
+						if(self:GetState()==JMod.EZ_STATE_ARMING)then
+							local pos = self:GetAttachment(1).Pos
+							local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
+							self.BeamFrac = trace.Fraction
+							self:SetState(JMod.EZ_STATE_ARMED)
+						end
+					end
+				end)
+			end
 		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
@@ -183,7 +199,9 @@ if(SERVER)then
 		end)
 	end
 	function ENT:Think()
-		WireLib.TriggerOutput(self, "State", self:GetState())
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local Time=CurTime()
 		local state = self:GetState()
 		if(state==JMod.EZ_STATE_ARMED)then
@@ -200,7 +218,7 @@ if(SERVER)then
 					end
 				end
 			end
-			self:NextThink(Time+.1)
+			self:NextThink(Time+.1) 
 			return true
 		end
 	end

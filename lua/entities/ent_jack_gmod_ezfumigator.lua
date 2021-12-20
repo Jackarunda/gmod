@@ -53,7 +53,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate" and value > 0) then
+		if(iname == "Activate" and value > 0) then
 			self:SetState(STATE_TICKING)
 		end
 	end
@@ -118,6 +118,9 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
 			self:EmitSound("snd_jack_metallicclick.wav",60,100)

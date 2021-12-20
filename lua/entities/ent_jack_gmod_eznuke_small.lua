@@ -47,6 +47,17 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"1 is armed \n 0 is not \n -1 is broken", "True when guided"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
@@ -218,6 +229,10 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+		end
 		JMod.AeroDrag(self,self:GetRight(),.5)
 	end
 elseif(CLIENT)then

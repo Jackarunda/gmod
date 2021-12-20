@@ -48,6 +48,17 @@ if (SERVER) then
 
 		self:SetState(STATE_OFF)
 		JMod.Colorify(self)
+	if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 arming \n 2 armed \n 3 warning"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif (iname == "Arm" and value > 0) then
+			self:SetState(STATE_ARMING)
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -173,6 +184,9 @@ if (SERVER) then
 	end
 
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local State, Time, Dir = self:GetState(), CurTime(), (-self:GetRight() + self:GetUp() * .2):GetNormalized()
 
 		if (State == STATE_ARMED) then

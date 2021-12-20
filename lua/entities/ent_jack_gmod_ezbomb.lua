@@ -48,12 +48,12 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided[ANY]"}, {"1 is armed \n 0 is not \n -1 is broken", "guided = 1 or true"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"1 is armed \n 0 is not \n -1 is broken", "True when guided"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
+		if(iname == "Detonate" and value > 0) then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
 			self:SetState(STATE_ARMED)

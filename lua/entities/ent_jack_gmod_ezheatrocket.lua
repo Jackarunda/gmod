@@ -47,8 +47,8 @@ if(SERVER)then
 		self.NextDet=0
 		self.FuelLeft=100
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates the bomb", "Arms the rocket", "Launches rocket"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 is broken \n 0 is off \n 1 is armed \n 2 is launched", "Fuel left in the tank"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -59,8 +59,8 @@ if(SERVER)then
 		elseif (iname == "Arm" and value == 0) then
 			self:SetState(STATE_OFF)
 		elseif (iname == "Launch" and value > 0) then
-			self:SetState(STATE_LAUNCHED)
-			self:ConstraintsRemove()
+			self:SetState(STATE_ARMED)
+			self:Launch()
 		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
