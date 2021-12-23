@@ -716,4 +716,40 @@ hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
 	end
 end)
 
-
+concommand.Add("jacky_sandbox",function(ply,cmd,args)
+	if not(IsValid(ply) and ply:IsSuperAdmin())then return end
+	--ply:ConCommand("sv_cheats 1")
+	for k,v in pairs({
+		{"impulse 101",10},
+		"sbox_maxballoons 9e9",
+		"sbox_maxbuttons 9e9",
+		"sbox_maxdynamite 9e9",
+		"sbox_maxeffects 9e9",
+		"sbox_maxemitters 9e9",
+		"sbox_maxhoverballs 9e9",
+		"sbox_maxlamps 9e9",
+		"sbox_maxlights 9e9",
+		"sbox_maxnpcs 9e9",
+		"sbox_maxprops 9e9",
+		"sbox_maxragdolls 9e9",
+		"sbox_maxsents 9e9",
+		"sbox_maxthrusters 9e9",
+		"sbox_maxturrets 9e9",
+		"sbox_maxvehicles 9e9",
+		"sbox_maxwheels 9e9",
+		"sbox_noclip 1",
+		"sbox_weapons 1"
+	})do
+		if(type(v)=="string")then
+			ply:ConCommand(v)
+		else
+			for i=1,v[2] do
+				ply:ConCommand(v[1])
+			end
+		end
+	end
+	for k,v in pairs(JMod.AmmoTable)do
+		ply:GiveAmmo(150,k)
+	end
+	ply:SetHealth(1000)
+end)
