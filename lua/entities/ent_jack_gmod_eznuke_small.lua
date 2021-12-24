@@ -49,7 +49,7 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"1 is armed \n 0 is not \n -1 is broken", "True when guided"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -231,7 +231,7 @@ if(SERVER)then
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
 		JMod.AeroDrag(self,self:GetRight(),.5)
 	end

@@ -29,6 +29,17 @@ if(SERVER)then
 		plunger.Owner = self.Owner
 		self.Plunger = plunger
 		timer.Simple(0, function() plunger:SetParent(self) end)
+	if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Prime"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Off \n Primed \n Armed"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif (iname == "Prime" and value > 0) then
+			self:SetState(JMod.EZ_STATE_PRIMED)
+		end
 	end
 
 	function ENT:Prime()

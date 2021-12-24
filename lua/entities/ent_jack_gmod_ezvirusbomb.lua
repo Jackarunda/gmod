@@ -48,6 +48,17 @@ if(SERVER)then
 		---
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=20
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 sealed \n 1 ticking \n 2 venting"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:SetState(STATE_VENTING)
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_TICKING)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then

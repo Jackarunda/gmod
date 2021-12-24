@@ -58,7 +58,7 @@ if(SERVER)then
 		if(iname == "Detonate") and (value ~= 0) then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
+			self:SetState(JMod.EZ_STATE_ARMED)
 		end
 	end
 	function ENT:PhysicsCollide(data,physobj)

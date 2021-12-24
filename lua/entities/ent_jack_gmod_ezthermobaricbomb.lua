@@ -192,7 +192,7 @@ if(SERVER)then
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
 		JMod.AeroDrag(self,self:GetForward())
 	end
