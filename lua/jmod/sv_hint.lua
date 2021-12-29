@@ -13,7 +13,13 @@ function JMod.Hint(ply, key, loc, specific)
 	if not tbl.Time then tbl.Time = 8 end
 	net.Start("JMod_Hint")
 	net.WriteBool(specific)
-	net.WriteString(tbl.Text)
+	if(tbl.LangKey)then
+		net.WriteBool(true)
+		net.WriteString(tbl.LangKey)
+	else
+		net.WriteBool(false)
+		net.WriteString(tbl.Text)
+	end
 	net.Send(ply)
 	
 	if tbl.Followup and JMod.Hints[tbl.Followup] then

@@ -1,22 +1,8 @@
--- Part of the code and inspiration from GIGABABAIT
--- Original addon: https://steamcommunity.com/sharedfiles/filedetails/?id=2058653864
-
-surface.CreateFont("JModHintFont", {
-	font = "BahnSchrift",
-	size = 48,
-	weight = 500,
-	antialias = true,
-})
-
-local arUp = Material("hint/up.png", "smooth")
-local arRight = Material("hint/right.png", "smooth")
-local arDown = Material("hint/down.png", "smooth")
-local arLeft = Material("hint/left.png", "smooth")
-local start = SysTime()
-
 net.Receive("JMod_Hint",function()
 	local specific = tobool(net.ReadBit())
+	local isLangKey = net.ReadBool()
 	local str = net.ReadString()
+	if(isLangKey)then str=JMod.Lang(str) end
 	MsgC(Color(255,255,255), "[JMod] ", str, "\n")
 	notification.AddLegacy(str, NOTIFY_HINT, 10)
 	if not(specific)then surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" ) end
