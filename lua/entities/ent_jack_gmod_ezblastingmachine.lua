@@ -30,15 +30,15 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Fire"}, {"Plunges the plunger"})
+			--self.Inputs = WireLib.CreateInputs(self, {"Fire"}, {"Plunges the plunger"})
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Fired or not"})
 		end
 	end
 	
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Fire" and value > 0) then
-			self:SetFired(true)
-		end
+		--if(iname == "Fire" and value > 0) then
+		--	self:SetFired(true)
+		--end
 	end
 	
 	function ENT:Use(activator,caller,typ,val)

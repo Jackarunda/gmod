@@ -30,7 +30,7 @@ if(SERVER)then
 		self.Plunger = plunger
 		timer.Simple(0, function() plunger:SetParent(self) end)
 	if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Prime"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Off \n Primed \n Armed"})
 		end
 	end
