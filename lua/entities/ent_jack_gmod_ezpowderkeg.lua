@@ -32,7 +32,7 @@ if (SERVER) then
 
 	function ENT:Initialize()
 		self:SetModel("models/props_trainyard/distillery_barrel001.mdl")
-		self:SetModelScale(.25, 0)
+		--self:SetModelScale(.25, 0)
 		self:SetMaterial("models/entities/mat_jack_powderkeg")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -50,6 +50,15 @@ if (SERVER) then
 		---
 		self.Powder = 200
 		self.Pouring = false
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State[BOOL]", "Powder"}, {"Weather it's pouring or not", "The amount of powder left"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate") and (value > 0 or true) then
+			self:Detonate()
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -138,7 +147,11 @@ if (SERVER) then
 
 	function ENT:Think()
 		local Time = CurTime()
-
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self.Pouring)
+			WireLib.TriggerOutput(self, "Powder", self.Powder)
+		end
+		
 		if (self:IsOnFire()) then
 			if (math.random(1, 50) == 2) then
 				self:Detonate()
