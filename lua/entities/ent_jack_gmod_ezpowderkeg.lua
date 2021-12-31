@@ -32,7 +32,7 @@ if (SERVER) then
 
 	function ENT:Initialize()
 		self:SetModel("models/props_trainyard/distillery_barrel001.mdl")
-		--self:SetModelScale(.25, 0)
+		self:SetModelScale(.25, 0)
 		self:SetMaterial("models/entities/mat_jack_powderkeg")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
