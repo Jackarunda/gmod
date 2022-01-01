@@ -51,8 +51,8 @@ if(SERVER)then
 		self.Fuze=100
 		self:SetState(JMod.EZ_STATE_OFF)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuse"}, {"1 is armed \n 0 is not \n -1 is broken", "How much time is left"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuse"}, {"-1 broken \n 0 off \n 1 armed", "How much time is left"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
