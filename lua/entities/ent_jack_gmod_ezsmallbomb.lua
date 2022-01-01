@@ -49,7 +49,7 @@ if(SERVER)then
 		self.FreefallTicks=0
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Snakeye"}, {"1 is armed \n 0 is not \n -1 is broken", "Outputs 1 when fins are deployed"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Snakeye"}, {"-1 broken \n 0 off \n 1 armed", "Outputs 1 when fins are deployed"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
