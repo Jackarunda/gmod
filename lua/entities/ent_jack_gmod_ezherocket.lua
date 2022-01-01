@@ -199,6 +199,10 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
+		end
 		local Phys=self:GetPhysicsObject()
 		JMod.AeroDrag(self,-self:GetRight(),.75)
 		if(self:GetState()==STATE_LAUNCHED)then
