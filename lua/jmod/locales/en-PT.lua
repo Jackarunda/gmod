@@ -1,8 +1,8 @@
-JMod.Locales["en"]={
-    ["hint wiki"] = "Thanks for using JMod! Check out the wiki - use command 'jmod_wiki'",
-    ["hint config"] = "Configure JMod with the config file located at 'garrysmod/data/jmod_config.txt'",
-    ["hint hint reset"] = "use the command jmod_resethints to see hints again if you missed them",
-    ["hint qol"] = "consider enabling some of JMod's QoL features in the config for a more realistic gmod experience",
+JMod.Locales["en-PT"]={
+    ["hint wiki"] = "thank ya for usin jmod. Find some info with the command 'jmod_wiki'",
+    ["hint config"] = "arr. ye oughta configure jmod using this file: 'garrysmod/data/jmod_config.txt'",
+    ["hint hint reset"] = "if ye be a slow lubber, use jmod_resethints to see hints again if ye missed em",
+    ["hint qol"] = "you best be enablin' JMod's QoL features in the config, me hearty",
     ["hint pickup"] = "Press Use to pick up small items",
     ["hint bind cmd"] = "Remember, you can bind any command to a key, like 'bind kp_ins jmod_ez_trigger'",
     ["hint bind walk"] = "Ensure you have bound the Walk key, use command 'bind alt +walk'",

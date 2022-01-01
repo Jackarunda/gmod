@@ -94,13 +94,13 @@ if(SERVER)then
 						if(IsValid(self))then
 							if(self:GetState()==JMod.EZ_STATE_ARMING)then
 								local pos = self:GetAttachment(1).Pos
-								local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
+								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
 								self.BeamFrac = trace.Fraction
 								self:SetState(JMod.EZ_STATE_ARMED)
 							end
 						end
 					end)
-					JMod.Hint(Dude, "mine friends", self)
+					JMod.Hint(Dude, "mine friends", selfg)
 				else
 					if !IsValid(self.AttachedBomb) then
 						constraint.RemoveAll(self)
@@ -113,7 +113,7 @@ if(SERVER)then
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
-					JMod.Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky", selfg)
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav",60,70)
@@ -147,7 +147,7 @@ if(SERVER)then
 						
 						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 						Dude:DropObject()
-						if not JMod.Hint(Dude, "arm", self) then JMod.Hint(Dude, "slam stick", self) end
+						if not JMod.Hint(Dude, "arm") then JMod.Hint(Dude, "slam stick") end
 					end
 				end
 			end

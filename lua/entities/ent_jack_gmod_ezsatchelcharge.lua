@@ -59,7 +59,7 @@ if(SERVER)then
 				JMod.Hint(Dude, "arm satchelcharge", self.Plunger)
 			else
 				activator:PickupObject(self)
-				JMod.Hint(Dude, "arm", self)
+				JMod.Hint(Dude, "arm")
 			end
 		end
 	end

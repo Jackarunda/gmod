@@ -101,14 +101,14 @@ if (SERVER) then
 				if (Alt) then
 					self:SetState(STATE_ARMED)
 					self:EmitSound("snd_jack_minearm.wav", 60, 100)
-					JMod.Hint(Dude, "trigger", self)
+					JMod.Hint(Dude, "trigger")
 				else
 					constraint.RemoveAll(self)
 					self.StuckStick = nil
 					self.StuckTo = nil
 					Dude:PickupObject(self)
 					self.NextStick = Time + .5
-					JMod.Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky")
 				end
 			else
 				self:EmitSound("snd_jack_minearm.wav", 60, 70)
@@ -139,7 +139,7 @@ if (SERVER) then
 
 					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 					Dude:DropObject()
-					JMod.Hint(Dude, "arm", self)
+					JMod.Hint(Dude, "arm")
 				end
 			end
 		end

@@ -101,9 +101,9 @@ if(SERVER)then
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
 			if(State==JMod.EZ_STATE_OFF and Alt)then
 				self:Prime()
-				JMod.Hint(Dude, "grenade", self)
+				JMod.Hint(Dude, "grenade")
 			else
-				JMod.Hint(Dude, "prime", self)
+				JMod.Hint(Dude, "prime")
 			end
 			JMod.ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end

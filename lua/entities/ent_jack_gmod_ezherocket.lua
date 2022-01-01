@@ -104,10 +104,10 @@ if(SERVER)then
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav",60,120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime=CurTime()
-				JMod.Hint(activator, "launch", self)
+				JMod.Hint(activator, "launch")
 			else
 				activator:PickupObject(self)
-				JMod.Hint(activator, "arm", self)
+				JMod.Hint(activator, "arm")
 			end
 		elseif(State==STATE_ARMED)then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav",60,120)

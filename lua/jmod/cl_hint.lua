@@ -2,10 +2,12 @@ net.Receive("JMod_Hint",function()
 	local specific = tobool(net.ReadBit())
 	local isLangKey = net.ReadBool()
 	local str = net.ReadString()
+	local iconType=net.ReadInt(8)
+	local tiem=net.ReadInt(8)
 	if(isLangKey)then str=JMod.Lang(str) end
 	MsgC(Color(255,255,255), "[JMod] ", str, "\n")
-	notification.AddLegacy(str, NOTIFY_HINT, 10)
-	if not(specific)then surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" ) end
+	notification.AddLegacy(str, iconType, tiem)
+	--if not(specific)then surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" ) end
 end)
 
 net.Receive("JMod_PlayerSpawn",function()

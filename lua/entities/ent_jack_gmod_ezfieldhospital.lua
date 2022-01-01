@@ -90,8 +90,8 @@ if(SERVER)then
 		if(State==STATE_BROKEN)then  return end
 		if(State==STATE_OFF)then
 			
-			if self:GetElectricity() > 0 then self:TurnOn() JMod.Hint(activator, "afh enter", self)
-			else JMod.Hint(activator, "nopower", self)  end
+			if self:GetElectricity() > 0 then self:TurnOn() JMod.Hint(activator, "afh enter")
+			else JMod.Hint(activator, "nopower")  end
 		elseif(State==STATE_ON)then
 			if not(IsValid(self.Pod:GetDriver()))then
 				if(self.NextEnter<CurTime())then
@@ -111,7 +111,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
-		if(self:GetElectricity()<=0)then JMod.Hint(activator, "nopower", self) return end
+		if(self:GetElectricity()<=0)then JMod.Hint(activator, "nopower") return end
 		local Time=CurTime()
 		self:SetState(STATE_ON)
 		self:SFX("afh_startup")

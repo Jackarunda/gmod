@@ -154,7 +154,7 @@ if(SERVER)then
 			JMod.Hint(activator,"resource manage")
 			activator:PickupObject(self)
 			if JMod.Hints[self:GetClass() .. " use"] then
-				JMod.Hint(activator, self:GetClass() .. " use", self)
+				JMod.Hint(activator, self:GetClass() .. " use")
 			end
 		end
 	end

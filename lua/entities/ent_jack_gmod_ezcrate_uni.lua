@@ -88,7 +88,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		
-		JMod.Hint(activator, "crate_uni", self)
+		JMod.Hint(activator, "crate_uni")
 		if(self:GetItemCount()<=0)then return end
 		net.Start("JMod_UniCrate")
 			net.WriteEntity(self)

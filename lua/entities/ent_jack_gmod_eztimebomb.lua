@@ -89,7 +89,7 @@ if(SERVER)then
 						net.Start("JMod_EZtimeBomb")
 						net.WriteEntity(self)
 						net.Send(Dude)
-						JMod.Hint(Dude, "timebomb", self)
+						JMod.Hint(Dude, "timebomb")
 					end
 				else
 					constraint.RemoveAll(self)
@@ -97,7 +97,7 @@ if(SERVER)then
 					self.StuckTo=nil
 					Dude:PickupObject(self)
 					self.NextStick=Time+.5
-					JMod.Hint(Dude, "sticky", self)
+					JMod.Hint(Dude, "sticky")
 				end
 			else
 				if(Alt)then
@@ -112,7 +112,7 @@ if(SERVER)then
 							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
 							self.DisarmProgress=0
 						end
-						JMod.Hint(Dude, "defuse", self)
+						JMod.Hint(Dude, "defuse")
 					end
 				else
 					constraint.RemoveAll(self)

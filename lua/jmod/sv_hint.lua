@@ -1,14 +1,12 @@
-function JMod.Hint(ply, key, loc, specific)
+function JMod.Hint(ply, key, specific)
 	if not JMod.Config.Hints or not ply or not key then return nil end
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] and not specific then return false end
 	ply.JModHintsGiven[key] = true
-	
+	print(key)
 	local tbl = JMod.Hints[key]
 	if(specific)then tbl = JMod.SpecificHints[key] end
 	if not tbl then return nil end
-	if loc then tbl.Pos = loc end
-	tbl.ShouldMove = (loc ~= nil)
 	tbl.Key = key
 	if not tbl.Time then tbl.Time = 8 end
 	net.Start("JMod_Hint")
@@ -16,16 +14,19 @@ function JMod.Hint(ply, key, loc, specific)
 	if(tbl.LangKey)then
 		net.WriteBool(true)
 		net.WriteString(tbl.LangKey)
+		print(tbl.LangKey)
 	else
 		net.WriteBool(false)
 		net.WriteString(tbl.Text)
 	end
+	net.WriteInt(tbl.IconType or 3,8)
+	net.WriteInt(tbl.Time or 8,8)
 	net.Send(ply)
 	
 	if tbl.Followup and JMod.Hints[tbl.Followup] then
 		timer.Simple(tbl.Time, function()
 			if IsValid(ply) then
-				JMod.Hint(ply, tbl.Followup, loc, specific)
+				JMod.Hint(ply, tbl.Followup, specific)
 			end
 		end)
 	end

@@ -94,7 +94,7 @@ if (SERVER) then
 		end
 
 		Dude:PickupObject(self)
-		JMod.Hint(Dude, "arm powderkeg", self)
+		JMod.Hint(Dude, "arm powderkeg")
 	end
 
 	function ENT:EZdetonateOverride(detonator)
@@ -123,7 +123,7 @@ if (SERVER) then
 
 		for i = 1, 5 do
 			timer.Simple(i / 10, function()
-				JMod.SimpleForceExplosion(SelfPos, 400000, 600, self)
+				JMod.SimpleForceExplosion(SelfPos, 400000, 600, selfg)
 			end)
 		end
 

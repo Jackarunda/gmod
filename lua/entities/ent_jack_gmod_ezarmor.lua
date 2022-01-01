@@ -75,13 +75,13 @@ if(SERVER)then
 				net.Send(activator)
 			end
 			if self.ArmorName == "Headset" then
-				JMod.Hint(activator, "armor friends", self)
+				JMod.Hint(activator, "armor friends")
 			else
-				JMod.Hint(activator, "inventory", self)
+				JMod.Hint(activator, "inventory")
 			end
 		else
 			activator:PickupObject(self)
-			JMod.Hint(activator, "armor wear", self)
+			JMod.Hint(activator, "armor wear")
 		end
 		--activator:EmitSound("snd_jack_clothequip.wav",70,100)
 		--activator:EmitSound("snd_jack_gmod/armorstep1.wav",70,100)--5

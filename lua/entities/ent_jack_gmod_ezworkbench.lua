@@ -81,7 +81,7 @@ if(SERVER)then
 			net.Send(activator)
 			JMod.Hint(activator, "craft")
 		else
-			JMod.Hint(activator, "refill", self)
+			JMod.Hint(activator, "refill")
 		end
 	end
 	function ENT:Think()

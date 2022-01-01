@@ -110,10 +110,10 @@ if(SERVER)then
 				else
 					self.MoorMode="subsurface"
 				end
-				JMod.Hint(activator, "navalmine", self)
+				JMod.Hint(activator, "navalmine")
 			else
 				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
-				JMod.Hint(activator, "arm navalmine", self)
+				JMod.Hint(activator, "arm navalmine")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then

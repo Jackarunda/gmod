@@ -136,7 +136,7 @@ if(SERVER)then
 	end
 	function ENT:Use(activator)
 		local Time=CurTime()
-		JMod.Hint(activator, "unpackage", self)
+		JMod.Hint(activator, "unpackage")
 		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
 			self:Unpackage()
 		else

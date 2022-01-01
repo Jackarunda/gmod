@@ -86,7 +86,7 @@ if (SERVER) then
 				self:Arm(activator)
 			else
 				activator:PickupObject(self)
-				JMod.Hint(activator, "arm", self)
+				JMod.Hint(activator, "arm")
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
@@ -137,7 +137,7 @@ if (SERVER) then
 		end
 
 		JMod.Owner(self, armer)
-		JMod.Hint(armer, "mine friends", self)
+		JMod.Hint(armer, "mine friends")
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)
 

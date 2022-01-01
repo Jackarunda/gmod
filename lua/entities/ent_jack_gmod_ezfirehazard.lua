@@ -82,7 +82,7 @@ if (SERVER) then
 					["ent_jack_gmod_eznapalm"] = true
 				}
 
-				if not blacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), self).Entity == v then
+				if not blacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
 					local Dam = DamageInfo()
 					Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
 					Dam:SetDamageType(DMG_BURN)

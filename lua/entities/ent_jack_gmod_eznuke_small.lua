@@ -115,13 +115,13 @@ if(SERVER)then
 		JMod.Owner(self,activator)
 		if not(Alt)then
 			activator:PickupObject(self)
-			JMod.Hint(activator, "arm", self)
+			JMod.Hint(activator, "arm")
 		else
 			if(State==STATE_OFF)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/nuke_arm.wav",70,140)
 				self.EZdroppableBombArmedTime=CurTime()
-				JMod.Hint(activator, "dualdet", self)
+				JMod.Hint(activator, "dualdet")
 			elseif(State==STATE_ARMED)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,100)

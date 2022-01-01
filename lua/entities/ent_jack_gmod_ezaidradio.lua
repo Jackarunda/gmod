@@ -69,7 +69,7 @@ if(SERVER)then
 		self.NextUseTime=Time+.25
 		if(activator:IsPlayer())then
 			local State=self:GetState()
-			if(State==STATE_BROKEN)then JMod.Hint(self.Owner, "destroyed", self) return end
+			if(State==STATE_BROKEN)then JMod.Hint(self.Owner, "destroyed") return end
 			local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 			if State > 0 then
 				if Alt and State == JMod.EZ_STATION_STATE_READY then
@@ -86,11 +86,11 @@ if(SERVER)then
 					net.Send(activator)
 				else
 					self:TurnOff()
-					JMod.Hint(activator, "toggle", self)
+					JMod.Hint(activator, "toggle")
 				end
 			else
-				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "aid help", self)
-				else JMod.Hint(self.Owner, "nopower", self) end
+				if (self:GetElectricity()>0) then self:TurnOn(activator) JMod.Hint(activator, "aid help")
+				else JMod.Hint(self.Owner, "nopower") end
 			end
 		end
 	end
@@ -183,7 +183,7 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.Owner)
 				else
-					JMod.Hint(self.Owner, "aid sky", self)
+					JMod.Hint(self.Owner, "aid sky")
 					self.ConnectionAttempts = self.ConnectionAttempts + 1
 					if(self.ConnectionAttempts>5)then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
@@ -278,7 +278,7 @@ if(SERVER)then
 					timer.Simple(Num/10,function()
 						if(IsValid(self))then self:Speak(str) end
 					end)
-					JMod.Hint(self.Owner, "aid package", self)
+					JMod.Hint(self.Owner, "aid package")
 					return true
 				end
 			elseif(Name=="status")then

@@ -108,10 +108,10 @@ if(SERVER)then
 			if(Alt)then
 				JMod.Owner(self,activator)
 				self:Bury(activator)
-				JMod.Hint(activator, "mine friends", self)
+				JMod.Hint(activator, "mine friends")
 			else
 				activator:PickupObject(self)
-				JMod.Hint(activator, "arm boundingmine", self)
+				JMod.Hint(activator, "arm boundingmine")
 			end
 		else
 			self:EmitSound("snd_jack_minearm.wav",60,70)
