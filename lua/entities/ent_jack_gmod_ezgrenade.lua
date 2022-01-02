@@ -62,8 +62,18 @@ if(SERVER)then
 		---
 		self:SetState(JMod.EZ_STATE_OFF)
 		self.NextDet=0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+		end
 	end
-	
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate") and (value ~= 0) then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
+	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2 and data.Speed>30)then
 			self:EmitSound(self.ImpactSound)
@@ -123,6 +133,9 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local State,Time=self:GetState(),CurTime()
 		if(self.CustomThink)then self:CustomThink(State,Time) end
 		if(self.Exploded)then return end

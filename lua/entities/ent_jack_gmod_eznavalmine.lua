@@ -49,6 +49,17 @@ if(SERVER)then
 		self.MoorMode="subsurface"
 		self.Moored=false
 		self.NextDet=0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Moored"}, {"-1 broken \n 0 off \n 1 armed", "True when moored"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif (iname == "Arm" and value > 0) then
+			self:SetState(STATE_ARMED)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
@@ -171,6 +182,10 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Moored", self.Moored)
+		end
 		if((self:GetState()==STATE_ARMED)and(self:WaterLevel()>0))then
 			if not(self.Moored)then
 				self:GetPhysicsObject():SetDamping(1,1)

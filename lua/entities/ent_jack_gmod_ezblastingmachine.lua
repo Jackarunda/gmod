@@ -29,6 +29,16 @@ if(SERVER)then
 			self:GetPhysicsObject():SetMass(10)
 			self:GetPhysicsObject():Wake()
 		end
+		if istable(WireLib) then
+			--self.Inputs = WireLib.CreateInputs(self, {"Fire"}, {"Plunges the plunger"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Fired or not"})
+		end
+	end
+	
+	function ENT:TriggerInput(iname, value)
+		--if(iname == "Fire" and value > 0) then
+		--	self:SetFired(true)
+		--end
 	end
 	
 	function ENT:Use(activator,caller,typ,val)
@@ -54,6 +64,9 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetFired())
+		end
 		if !IsValid(self.Satchel) and self.DieTime == nil then
 			self:Remove()
 		elseif self.DieTime != nil and self.DieTime < CurTime() then

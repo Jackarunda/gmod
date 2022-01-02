@@ -47,6 +47,15 @@ if(SERVER)then
 		---
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=100*JMod.Config.FumigatorGasAmount
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 is sealed \n 1 is ticking \n 2 is venting"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Activate" and value > 0) then
+			self:SetState(STATE_TICKING)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -109,6 +118,9 @@ if(SERVER)then
 		self:Remove()
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+		end
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
 			self:EmitSound("snd_jack_metallicclick.wav",60,100)

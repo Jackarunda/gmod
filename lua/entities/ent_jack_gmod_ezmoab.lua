@@ -46,6 +46,17 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		self.DetTime=0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		end
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()
@@ -170,6 +181,10 @@ if(SERVER)then
 		--
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+		end
 		JMod.AeroDrag(self,self:GetRight(),10)
 	end
 elseif(CLIENT)then
