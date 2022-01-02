@@ -48,8 +48,16 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(JMod.EZ_STATE_OFF)
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
+		end
 	end
-	
+	if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
+			self:Detonate()
+		elseif (iname == "Arm" and value > 0) then
+			self:SetState(STATE_ARMING)
+	end
 	function ENT:Bury(activator)
 		local Tr=util.QuickTrace(activator:GetShootPos(),activator:GetAimVector()*100,{activator,self})
 		if((Tr.Hit)and(table.HasValue(self.UsableMats,Tr.MatType))and(IsValid(Tr.Entity:GetPhysicsObject())))then

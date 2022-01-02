@@ -46,6 +46,22 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self.NextDet=0
 		self.FuelLeft=100
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Detonate" and value > 0) then
+			self:Detonate()
+		elseif (iname == "Arm" and value > 0) then
+			self:SetState(STATE_ARMED)
+		elseif (iname == "Arm" and value == 0) then
+			self:SetState(STATE_OFF)
+		elseif (iname == "Launch" and value > 0) then
+			self:SetState(STATE_ARMED)
+			self:Launch()
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
@@ -183,6 +199,10 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
+		end
 		local Phys=self:GetPhysicsObject()
 		JMod.AeroDrag(self,-self:GetRight(),.75)
 		if(self:GetState()==STATE_LAUNCHED)then

@@ -51,6 +51,19 @@ if(SERVER)then
 		self.DisarmNeeded=20
 		self.NextDisarmFail=0
 		self.NextDisarm=0
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Time"}, {"Directly detonates the bomb", "Value > 0 arms bomb", "Set this BEFORE arming."})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "TimeLeft", "DisarmProgress"}, {"-1 broken \n 0 off \n 1 armed", "Time left on \n the bomb", "How far the disarmament has got."})
+		end
+	end
+	function ENT:TriggerInput(iname, value)
+		if iname == "Detonate" and value > 0 then
+			self:Detonate()
+		elseif iname == "Arm" and value > 0 then
+			self:SetState(STATE_ARMED)
+		elseif iname == "Time" and value >= 10 and self:GetState() == STATE_OFF then
+			self:SetTimer(value)
+		end
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if(data.DeltaTime>0.2)then
@@ -183,6 +196,11 @@ if(SERVER)then
 		end)
 	end
 	function ENT:Think()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "TimeLeft", self:GetTimer())
+			WireLib.TriggerOutput(self, "DisarmProgress", self.DisarmProgress)
+		end
 		if(self.NextDisarmFail<CurTime())then self.DisarmProgress=0 end
 		if(self:GetState()==STATE_ARMED)then
 			self:EmitSound("weapons/c4/c4_beep1.wav",50,100)
