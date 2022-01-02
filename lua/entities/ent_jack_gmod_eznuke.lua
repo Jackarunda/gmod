@@ -173,7 +173,7 @@ if(SERVER)then
 			timer.Simple(h/10,function()
 				local ThermalRadiation=DamageInfo()
 				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage(50/h)
+				ThermalRadiation:SetDamage((50/h)*Power)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
 				util.BlastDamageInfo(ThermalRadiation,SelfPos,20000*Range)
@@ -187,7 +187,7 @@ if(SERVER)then
 				---
 				if(i==1)then JMod.EMP(SelfPos,renj*10000) end
 				---
-				util.BlastDamage(game.GetWorld(),Att,SelfPos,1600*i,300/i)
+				util.BlastDamage(game.GetWorld(),Att,SelfPos,1600*i*Range,300/i*Power)
 				for k,ent in pairs(ents.FindInSphere(SelfPos,renj))do
 					if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 				end

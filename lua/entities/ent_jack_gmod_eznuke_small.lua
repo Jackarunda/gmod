@@ -139,7 +139,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
+		local SelfPos,Att,Power,Range=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld(),JMod.Config.NukePowerMult,JMod.Config.NukeRangeMult
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1,function() JMod.BlastDamageIgnoreWorld(SelfPos,Att,nil,600,800) end)
 		---
@@ -155,7 +155,7 @@ if(SERVER)then
 			timer.Simple(h/10,function()
 				local ThermalRadiation=DamageInfo()
 				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage(50/h)
+				ThermalRadiation:SetDamage((50/h)*Power)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
 				util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
@@ -175,7 +175,7 @@ if(SERVER)then
 		---
 		for i=1,5 do
 			timer.Simple(i/5,function()
-				util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,200*i),6000,300)
+				util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,200*i),6000*Range,300*Power)
 			end)
 		end
 		---
