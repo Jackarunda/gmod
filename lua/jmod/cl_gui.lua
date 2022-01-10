@@ -295,7 +295,10 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
     Scroll:SetPos(10, 10)
     ---
     local Y = 0
-    for k, itemInfo in pairs(recipes) do
+	local sortedRecipes={}
+	for k,v in pairs(recipes)do table.insert(sortedRecipes,v) end
+	table.sort(sortedRecipes,function(a,b) return a[1]<b[1] end)
+    for k, itemInfo in pairs(sortedRecipes) do
         local Butt = Scroll:Add("DButton")
         Butt:SetSize(W - 35, 25)
         Butt:SetPos(0, Y)
@@ -394,11 +397,9 @@ net.Receive("JMod_EZtoolbox",function()
 		local Category=v[5] or "Other"
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
-		table.sort(Buildables,function(a,b) return a[1]<b[1] end)
 	end
-		PrintTable(Buildables)
 	--[[
-	if #JMod.ClientConfig.BuildKitFavs > 0 then 
+	if #JMod.ClientConfig.BuildKitFavs > 0 then
 		local Tab = {}
 		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
 			table.insert(Tab,v)
@@ -494,7 +495,6 @@ net.Receive("JMod_EZworkbench",function()
 		Categories[Category][k]=v
 		table.sort(Buildables,function(a,b) return k[1]<k[1] end)
 	end
-	PrintTable(Buildables)
 	--[[
 	if #JMod.ClientConfig.WorkbenchFavs > 0 then
 		local Tab = {}
@@ -808,7 +808,6 @@ net.Receive("JMod_EZradio",function()
 	local Scroll=vgui.Create("DScrollPanel",Frame)
 	Scroll:SetSize(W-15,H-10)
 	Scroll:SetPos(10,10)
-	PrintTable(Packages)
 	
 	for _, k in pairs(Packages) do
 		local Butt = Scroll:Add("DButton")
