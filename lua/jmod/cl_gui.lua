@@ -416,7 +416,7 @@ net.Receive("JMod_EZtoolbox",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
-	local text_space = 16
+	local text_space = 2
 	for k,cat in pairs(Categories)do
 		surface.SetFont("DermaDefault")
 		local text_x = surface.GetTextSize(k)
@@ -435,7 +435,7 @@ net.Receive("JMod_EZtoolbox",function()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 		end
-		X = X + text_x + text_space + 5
+		X = X + text_x + text_space + 2
 	end
 	-- Resource display
 	local resFrame = vgui.Create("DPanel", motherFrame)
@@ -514,7 +514,7 @@ net.Receive("JMod_EZworkbench",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-	local text_space = 16
+	local text_space = 1
 	for k, cat in pairs (Categories) do
 		local TabBtn=vgui.Create("DButton",Frame)
 		local text_x = surface.GetTextSize(k)
@@ -531,7 +531,7 @@ net.Receive("JMod_EZworkbench",function()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 		end
-		X = X + text_x + text_space + 5
+		X = X + text_x + text_space + 1
 	end
 	
 	-- Resource display
