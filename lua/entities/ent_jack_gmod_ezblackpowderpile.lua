@@ -42,8 +42,6 @@ if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		local Dude=activator or activatorAgain
 		JMod.Owner(self,Dude)
-		
-		local Time=CurTime()
 		if(Dude:KeyDown(JMod.Config.AltFunctionKey))then
 			self:Arm()
 		else

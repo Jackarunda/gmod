@@ -43,7 +43,7 @@ JMod.Hints = {
 	["navalmine"] = {LangKey = "hint navalmine",},
 
 	-- Explosives
-	["ent_jack_gmod_ezclusterbomb"] = {Text = "Cluster Bombs explode into bomblets when landing"},
+	["ent_jack_gmod_ezclusterbomb"] = {LangKey = "ent_jack_gmod_ezclusterbomb"},
 	["ent_jack_gmod_ezdetpack"] = {Text = "Detpacks are remote controlled sticky explosives"},	
 	["ent_jack_gmod_ezdynamite"] = {Text = "Dynamites are throwable explosives with a 7-second fuse"},
 	["ent_jack_gmod_ezflashbang"] = {Text = "Flashbangs blind players after a 2-second timer"},

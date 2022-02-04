@@ -529,7 +529,6 @@ JMod.GunHandlingSounds={
 	}
 }
 if(CLIENT)then
-	CreateClientConVar("jmod_weapon_blur","1",true,false,"whether or not to show the blurring 'focus' effect when aiming a jmod weapon")
 	net.Receive("JMod_EZweaponMod",function()
 		local Type,ply=net.ReadInt(16),LocalPlayer()
 		if(Type==1)then -- ammo type switch

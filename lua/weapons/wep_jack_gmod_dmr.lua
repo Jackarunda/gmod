@@ -132,13 +132,14 @@ SWEP.Animations = {
         LHIKIn = 0.5,
         LHIKOut = 0.5,
 		SoundTable = {
+            {s = JMod.GunHandlingSounds.cloth.quiet, t = .01, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/magout.wav", t = .65, v=65},
 			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.2, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/magin.wav", t = 2.05, v=65},
-			{s = JMod.GunHandlingSounds.grab, t = 2.75, v=60},
+			{s = JMod.GunHandlingSounds.grab, t = 2.75, v=50},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav", t = 3.25, v=65},
 			{s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav", t = 3.5, v=65},
-			{s = JMod.GunHandlingSounds.grab, t = 3.9, v=60, p=140}
+			{s = JMod.GunHandlingSounds.grab, t = 3.95, v=50, p=120}
 		}
     },
 }

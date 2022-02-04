@@ -169,6 +169,19 @@ end
 local WindChange,NextThink=Vector(0,0,0),0
 local Count,Sum=0,0
 hook.Add("Think","JMOD_CLIENT_THINK",function()
+	--[[
+	local dlight = DynamicLight( LocalPlayer():EntIndex() )
+	if ( dlight ) then
+		dlight.pos = LocalPlayer():GetShootPos()
+		dlight.r = 255
+		dlight.g = 255
+		dlight.b = 255
+		dlight.brightness = 5
+		dlight.Decay = 1000
+		dlight.Size = 25600
+		dlight.DieTime = CurTime() + 1
+	end
+	--]]
 	local Time=CurTime()
 	local ply,DrawNVGlamp=LocalPlayer(),false
 	if not(ply:ShouldDrawLocalPlayer())then
@@ -538,7 +551,7 @@ concommand.Add("jmod_debug_showgasparticles",function(ply,cmd,args)
 	if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
 	ply.EZshowGasParticles=not (ply.EZshowGasParticles or false)
 	print("gas particle display: "..tostring(ply.EZshowGasParticles))
-end)
+end,nil,JMod.Lang("command jmod_debug_showgasparticles"))
 
 net.Receive("JMod_NuclearBlast",function()
 	local pos,renj,intens=net.ReadVector(),net.ReadFloat(),net.ReadFloat()

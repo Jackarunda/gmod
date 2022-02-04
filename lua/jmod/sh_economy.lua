@@ -545,7 +545,7 @@ if(SERVER)then
 			print(Msg)
 			PrintTable(Yield)
 		end
-	end)
+	end, nil, "prints out the potential resource yield from the object you're looking at")
 	local function RemoveOverlaps(tbl)
 		local Finished,Tries,RemovedCount=false,0,0
 		while not(Finished)do
