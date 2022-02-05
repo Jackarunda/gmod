@@ -25,7 +25,7 @@ concommand.Add("jmod_debug_checksalvage",function(ply,cmd,args)
             print(Msg)
             PrintTable(Yield)
         end
-    end, nil, "Prints out the potential resource yield from the object you're looking at.")
+    end, nil, tostring(JMod.Lang("command jmod_debug_salvage")))	
 
 concommand.Add("jmod_debug_killme",function(ply)
 	if not(IsValid(ply))then return end
