@@ -163,6 +163,8 @@ JMod.Locales["en"]={
     ["hint wep_jack_gmod_mrl"] = "BEWARE BACKBLAST",
     ["hint wep_jack_gmod_crossbow"] = "weapon has +50% through-armor damage. Arrows can be recovered",
     ["hint idiot"] = "you're an idiot",
+	--commands
     ["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
-    ["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls"
+    ["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",
+	["command jmod_debug_checksalvage"] = "Prints the potential resource yield from the object you're looking at."
 }

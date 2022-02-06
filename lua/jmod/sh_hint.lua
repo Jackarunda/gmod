@@ -184,6 +184,10 @@ JMod.Hints = {
 	["weapon munitions"]={Text="get ammo from the EZ Munitions Box (entities, JMod - EZ Resources)"},
 	["weapon black powder paper cartridges"]={Text="get ammo from the EZ Black Powder Paper Cartridges (entities, JMod - EZ Special Ammo)"},
 	["weapon arrows"]={Text="get ammo from the EZ Arrows (entities, JMod - EZ Special Ammo)"},
+	
+	--commands
+
+	--["command jmod_debug_salvage"] = {Text="Prints out the potential resource yield from the object you're looking at."},
 
 	-- i like eggs
 	["idiot"]={LangKey="hint idiot",IconType=1,Time=3}
