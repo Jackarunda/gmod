@@ -296,14 +296,18 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
     ---
     local Y = 0
 	local sortedRecipes={}
-	for k,v in pairs(recipes)do table.insert(sortedRecipes,v) end
-	table.sort(sortedRecipes,function(a,b) return a[1]<b[1] end)
+	for k,v in pairs(recipes)do
+		local info = table.FullCopy(v)
+		table.insert(info,k)
+		table.insert(sortedRecipes,info)
+	end
+	table.sort(sortedRecipes,function(a,b) return a[#a]<b[#b] end)
     for k, itemInfo in pairs(sortedRecipes) do
         local Butt = Scroll:Add("DButton")
         Butt:SetSize(W - 35, 25)
         Butt:SetPos(0, Y)
         Butt:SetText("")
-        local name = itemInfo[1]
+        local name = itemInfo[#itemInfo]
         local reqs = itemInfo[2]
         if (type(reqs) == "string") then
             reqs = itemInfo[3]
@@ -419,11 +423,11 @@ net.Receive("JMod_EZtoolbox",function()
 	local text_space = 2
 	for k,cat in pairs(Categories)do
 		surface.SetFont("DermaDefault")
-		local text_x = surface.GetTextSize(k)
+		local text_xtb = surface.GetTextSize(k)
 
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_x + text_space,20)
+		TabBtn:SetSize(text_xtb + text_space,20)
 		TabBtn:SetText("")
 		TabBtn.Category=k
 		function TabBtn:Paint(x,y)
@@ -435,7 +439,7 @@ net.Receive("JMod_EZtoolbox",function()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 		end
-		X = X + text_x + text_space + 2
+		X = X + text_xtb + text_space + 2
 	end
 	-- Resource display
 	local resFrame = vgui.Create("DPanel", motherFrame)
@@ -515,13 +519,21 @@ net.Receive("JMod_EZworkbench",function()
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 	local text_space = 1
-	for k, cat in pairs (Categories) do
+	local sortedCategories={}
+	for k,v in pairs(Categories)do
+		local info = table.FullCopy(v)
+		table.insert(info,k)
+		table.insert(sortedCategories,info)
+	end
+	table.sort(sortedCategories,function(a,b) return a[#a]<b[#b] end)
+	for k, cat in pairs (sortedCategories) do
 		local TabBtn=vgui.Create("DButton",Frame)
-		local text_x = surface.GetTextSize(k)
+		local text_xwb = surface.GetTextSize(#cat)
 		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_x + text_space,20)
+		TabBtn:SetSize(text_xwb + text_space,20)
 		TabBtn:SetText("")
-		TabBtn.Category=k
+		TabBtn.Category=#cat
+		print(k)
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)			
@@ -531,7 +543,7 @@ net.Receive("JMod_EZworkbench",function()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 		end
-		X = X + text_x + text_space + 1
+		X = X + text_xwb + text_space + 1
 	end
 	
 	-- Resource display
