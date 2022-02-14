@@ -1401,7 +1401,7 @@ function JMod.InitGlobalConfig(forceNew)
 				"ent_jack_gmod_ezmedkit",
 				{
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
-					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=100
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
 				},
 				"Tools",
 				"Go help em doc. Watch your head, you're gonna be a target."
