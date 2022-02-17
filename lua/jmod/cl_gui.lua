@@ -307,7 +307,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
         Butt:SetSize(W - 35, 25)
         Butt:SetPos(0, Y)
         Butt:SetText("")
-        local name = itemInfo[#itemInfo]
+        local name = itemInfo[(typ=="workbench" && #itemInfo) or 1]
         local reqs = itemInfo[2]
         if (type(reqs) == "string") then
             reqs = itemInfo[3]
@@ -343,7 +343,7 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
                 net.SendToServer()
             elseif (typ == "toolbox") then
                 net.Start("JMod_EZtoolbox")
-                net.WriteInt(k, 8)	
+                net.WriteInt(k, 8)
                 net.SendToServer()
             end
             motherFrame:Close()
@@ -420,16 +420,20 @@ net.Receive("JMod_EZtoolbox",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
-	local text_space = 2
-	for k,cat in pairs(Categories)do
+	local text_space = 10
+
+	local AlphabetizedCategoryNames=table.GetKeys(Categories)
+	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
+
+	for k,cat in pairs(AlphabetizedCategoryNames)do
 		surface.SetFont("DermaDefault")
-		local text_xtb = surface.GetTextSize(k)
+		local text_xtb = surface.GetTextSize(cat)
 
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
 		TabBtn:SetSize(text_xtb + text_space,20)
 		TabBtn:SetText("")
-		TabBtn.Category=k
+		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)
@@ -497,7 +501,6 @@ net.Receive("JMod_EZworkbench",function()
 		local Category=v[3] or "Other"
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
-		table.sort(Buildables,function(a,b) return k[1]<k[1] end)
 	end
 	--[[
 	if #JMod.ClientConfig.WorkbenchFavs > 0 then
@@ -519,21 +522,17 @@ net.Receive("JMod_EZworkbench",function()
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 	local text_space = 1
-	local sortedCategories={}
-	for k,v in pairs(Categories)do
-		local info = table.FullCopy(v)
-		table.insert(info,k)
-		table.insert(sortedCategories,info)
-	end
-	table.sort(sortedCategories,function(a,b) return a[#a]<b[#b] end)
-	for k, cat in pairs (sortedCategories) do
+
+	local AlphabetizedCategoryNames=table.GetKeys(Categories)
+	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
+
+	for k,cat in pairs(AlphabetizedCategoryNames) do
 		local TabBtn=vgui.Create("DButton",Frame)
-		local text_xwb = surface.GetTextSize(#cat)
+		local text_xwb = surface.GetTextSize(cat)
 		TabBtn:SetPos(X,10)
 		TabBtn:SetSize(text_xwb + text_space,20)
 		TabBtn:SetText("")
-		TabBtn.Category=#cat
-		print(k)
+		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)			
