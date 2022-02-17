@@ -48,4 +48,4 @@ concommand.Add("jmod_cl_reloadconfig",function(ply)
 	if CLIENT then
 		PlayerConnectClient()
 	end
-end)
+end,nil,JMod.Lang("command jmod_cl_reloadconfig"))

@@ -6,7 +6,6 @@ end
 if(CLIENT)then
     function JMod.Lang(key)
         local langCode=GetConVar("gmod_language"):GetString() or "en"
-        print(langCode)
         local langTable=JMod.Locales[langCode] or JMod.Locales["en"]
         local stringLiteral=langTable[key] or JMod.Locales["en"][key]
         return stringLiteral or "LANG ENTRY MISSING: "..key

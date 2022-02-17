@@ -142,6 +142,11 @@ JMod.EZ_STATE_ARMING 	= 3
 JMod.EZ_STATE_ARMED		= 4
 JMod.EZ_STATE_WARNING	= 5
 
+-- we have to load locales before any other files
+-- because files that add concommands have help text
+-- and we want the help text to be localized
+include("jmod/sh_locales.lua")
+AddCSLuaFile("jmod/sh_locales.lua")
 for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	if string.Left(f, 3) == "sv_" then
 		if SERVER then include("jmod/" .. f) end

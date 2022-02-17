@@ -311,7 +311,7 @@ function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	end
 end
 
-local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light"}
+local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash"}
 
 function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local origPower = power

@@ -162,5 +162,6 @@ JMod.Locales["ru"]={
     ["hint wep_jack_gmod_rocketlauncher"] = "ОСТЕРЕГАЙТЕСЬ РЕАКТИВНОЙ СТРУИ",
     ["hint wep_jack_gmod_mrl"] = "ОСТЕРЕГАЙТЕСЬ РЕАКТИВНОЙ СТРУИ",
     ["hint wep_jack_gmod_crossbow"] = "Данное оружие имеет +50% бронепробиваемости, стрелы можно вернуть",
-    ["hint idiot"] = "Ну ты даешь"
+    ["hint idiot"] = "Ну ты даешь",
+	["command jmod_debug_checksalvage"] = "Печатает потенциальное доходность ресурсов от объекта на которое вы смотрите."
 }
