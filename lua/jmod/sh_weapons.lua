@@ -563,7 +563,7 @@ if(CLIENT)then
 		PrintTable(VM:GetBodyGroups())
 		print("---------------------")
 		PrintTable(VM:GetAttachments())
-	end)
+	end, nil, "Helps with EZ weapon debugging.")
 	local SlotInfoTable={
 		back={
 			right={
@@ -670,7 +670,7 @@ elseif(SERVER)then
 		if not(ply:Alive())then return end
 		local Wep=ply:GetActiveWeapon()
 		if((IsValid(Wep))and(Wep.EZdroppable))then ply:DropWeapon(Wep) end
-	end)
+	end, nil, "Drops your current EZ weapon.")
 	concommand.Add("jmod_ez_switchammo",function(ply,cmd,args)
 		-- TODO: this is not complete, we need to modify more traits
 		-- TracerNum, Penetration, DamageType, Num, maybe Accuracy and Recoil
@@ -699,7 +699,7 @@ elseif(SERVER)then
 		else
 			ply:PrintMessage(HUD_PRINTCENTER,"you do not have any alternate ammo for this weapon")
 		end
-	end)
+	end, nil, "Switches your current ammo type for your EZ weapon.")
 	function JMod.GiveAmmo(ply,ent)
 		if(ent.EZsupplies)then -- it's a resource box
 			local Wep=ply:GetActiveWeapon()

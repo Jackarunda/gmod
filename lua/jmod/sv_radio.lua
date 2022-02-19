@@ -244,6 +244,7 @@ end
 
 concommand.Add("jmod_debug_addoutpost", function( ply, cmd, args )
 	if !ply:IsUserGroup("superadmin") then return end
+<<<<<<< HEAD
 	local Team=0
 	if (engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
 		Team=ply:AccountID()
@@ -263,6 +264,11 @@ concommand.Add("jmod_debug_removeoutpost", function( ply, cmd, args )
 	end
     JMod.RemoveRadioOutPost(tostring(Team))
 end, nil, "Removes a radio outpost for your team.")
+=======
+    JMod_Add_Radio_Outpost(ply:Team(), amt)
+    print("Added "..amt.." outpost(s) to Team #"..ply:Team()..".")
+end, nil, "Adds a radio outpost to a team for simultaneous radio usage.")
+>>>>>>> 548f3967d95f7c7252c0af0be9c3308529feee64
 
 local function GetArticle(word)
 	local FirstLetter=string.sub(word,1,1)

@@ -766,7 +766,7 @@ if(SERVER)then
 		net.Start("JMod_NaturalResources")
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
-	end)
+	end, nil, "Shows locations for natural resource extraction.")
 elseif(CLIENT)then
 	local ShowNaturalResources=false
 	net.Receive("JMod_NaturalResources",function()
