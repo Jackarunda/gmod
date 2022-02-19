@@ -111,7 +111,6 @@ if(SERVER)then
 						net.WriteBool(true)
 						net.WriteBool(true)
 						net.WriteString(parrot)
-						print("1",self)
 						net.WriteEntity(self)
 					net.Send(ply)
 				end
@@ -134,7 +133,6 @@ if(SERVER)then
 							net.WriteBool(true)
 							net.WriteBool(false)
 							net.WriteString(msg)
-							print("2",self)
 							net.WriteEntity(self)
 						net.Send(ply)
 					end

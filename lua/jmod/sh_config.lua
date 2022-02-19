@@ -7,7 +7,6 @@ local function SetArmorPlayerModelModifications()
 		}
 	}
 end
-print("HELLO COMPILE TIME",CurTime())
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
@@ -1713,7 +1712,6 @@ function JMod.InitGlobalConfig(forceNew)
 		JMod.Config=NewConfig
 		file.Write("JMod_Config.txt",util.TableToJSON(JMod.Config,true))
 	end
-	print("JMOD: config file loaded")
 	-- jmod lua config --
 	if not(JMod.LuaConfig)then JMod.LuaConfig={BuildFuncs={},ArmorOffsets={}} end
 	JMod.LuaConfig.BuildFuncs=JMod.LuaConfig.BuildFuncs or {}
