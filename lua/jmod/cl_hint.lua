@@ -20,4 +20,4 @@ end)
 
 concommand.Add("jmod_wiki", function()
 	gui.OpenURL("https://github.com/Jackarunda/gmod/wiki")
-end)
+end, nil, "Opens the Jmod Wiki page.")

@@ -254,7 +254,7 @@ concommand.Add("jmod_debug_addoutpost", function( ply, cmd, amt )
 	if !ply:IsUserGroup("superadmin") then return end
     JMod_Add_Radio_Outpost(ply:Team(), amt)
     print("Added "..amt.." outpost(s) to Team #"..ply:Team()..".")
-end)
+end, nil, "Adds a radio outpost to a team for simultaneous radio usage.")
 
 local function GetArticle(word)
 	local FirstLetter=string.sub(word,1,1)
