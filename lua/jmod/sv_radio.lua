@@ -190,7 +190,7 @@ function JMod.EZradioEstablish(transceiver,teamID)
 	if(#AlliedStations<=0)then
 		table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
 		table.insert(AlliedStations,#JMod.EZ_RADIO_STATIONS)
-	end	
+	end
 	local ChosenStation = nil
 	for k,id in pairs(AlliedStations)do
 		local Taken=false
@@ -251,7 +251,18 @@ concommand.Add("jmod_debug_addoutpost", function( ply, cmd, args )
 		Team=ply:Team()
 	end
     JMod.AddNewRadioOutpost(tostring(Team))
-end)
+end, nil, "Adds another radio outpost for your team.")
+
+concommand.Add("jmod_debug_removeoutpost", function( ply, cmd, args )
+	if !ply:IsUserGroup("superadmin") then return end
+	local Team=0
+	if (engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
+		Team=ply:AccountID()
+	else
+		Team=ply:Team()
+	end
+    JMod.RemoveRadioOutPost(tostring(Team))
+end, nil, "Removes a radio outpost for your team.")
 
 local function GetArticle(word)
 	local FirstLetter=string.sub(word,1,1)
