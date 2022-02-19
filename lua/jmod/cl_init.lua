@@ -545,7 +545,7 @@ concommand.Add("jacky_supershadows",function(ply,cmd,args)
 	RunConsoleCommand("mat_depthbias_shadowmap",.0000005)
 	RunConsoleCommand("mat_slopescaledepthbias_shadowmap",2)
 	print("super shadows enabled, have fun with the lag")
-end, "Enables higher detailed shadows; great for photography.")
+end, nil, "Enables higher detailed shadows; great for photography.")
 
 concommand.Add("jmod_debug_showgasparticles",function(ply,cmd,args)
 	if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
