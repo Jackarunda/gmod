@@ -18,14 +18,14 @@ concommand.Add("jmod_resetconfig",function(ply)
 end, nil, "Refreshes your server config file located in garrysmod/data/jmod_config.txt")
 
 concommand.Add("jmod_debug_checksalvage",function(ply,cmd,args)
-        if not(IsValid(ply) and ply:IsSuperAdmin())then return end
-        local Ent=ply:GetEyeTrace().Entity
-        if(Ent)then
-            local Yield,Msg=JMod.GetSalvageYield(Ent)
-            print(Msg)
-            PrintTable(Yield)
-        end
-    end, nil, tostring(JMod.Lang("command jmod_debug_salvage")))	
+	if not(IsValid(ply) and ply:IsSuperAdmin())then return end
+	local Ent=ply:GetEyeTrace().Entity
+	if(Ent)then
+		local Yield,Msg=JMod.GetSalvageYield(Ent)
+		print(Msg)
+		PrintTable(Yield)
+	end
+end, nil, "Shows the potential salvaging yield from whatever you're looking at.")
 
 concommand.Add("jmod_debug_killme",function(ply)
 	if not(IsValid(ply))then return end

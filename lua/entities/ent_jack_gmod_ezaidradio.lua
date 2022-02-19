@@ -162,6 +162,7 @@ if(SERVER)then
 		else
 			Team=ply:Team()
 		end
+		print("establish",Team)
 		JMod.EZradioEstablish(self,tostring(Team)) -- we store team indices as strings because they might be huge (if it's a player's acct id)
 		local OutpostID=self:GetOutpostID()
 		local Station=JMod.EZ_RADIO_STATIONS[OutpostID]
