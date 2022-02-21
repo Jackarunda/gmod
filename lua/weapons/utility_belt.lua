@@ -446,18 +446,18 @@
 			primable = false,
 			color = Color(255,255,255),
 			scale = Vector(0.6,0.6,0.6),
-			pos = Vector(7,0,-7),
+			pos = Vector(4,0,-3),
 			ang = Angle(-90,5,-45)
 		},
 		["ent_jack_gmod_ezvirusbomb"] = {
 			bone = "ValveBiped.Bip01_Spine1",
 			model = "models/props_explosive/explosive_butane_can02.mdl",
-			mat = "models/props_explosive/virus",
+			mat = "models/props_explosive/poison",
 			primable = false,
 			color = Color(255,255,255),
 			scale = Vector(0.5,0.5,0.5),
-			pos = Vector(7,0,-7),
-			ang = Angle(-90,5,-45)
+			pos = Vector(4,0,3),
+			ang = Angle(-90,0,-45)
 		},
 		-- On second thought, let's not allow players to lug four nuclear bombs around
 		["ent_jack_gmod_eznuke_small"] = {
