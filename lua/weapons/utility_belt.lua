@@ -226,6 +226,16 @@
 			pos = Vector(-1,-5,0),
 			ang = Angle(-90,0,90)
 		},
+		["ent_jack_gmod_ezcsnade"] = {
+			bone = "ValveBiped.Bip01_Spine",
+			model = "models/grenades/incendiary_grenade.mdl",
+			mat = "models/mats_jack_nades/tear_gas_grenade",
+			primable = true,
+			color = Color(255,255,255),
+			scale = Vector(1,1,1),
+			pos = Vector(-1,-6,0),
+			ang = Angle(-90,0,90)
+		},
 		["ent_jack_gmod_ezgasnade"] = {
 			bone = "ValveBiped.Bip01_Spine",
 			model = "models/grenades/gas_grenade.mdl",
