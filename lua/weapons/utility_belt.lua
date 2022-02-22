@@ -806,13 +806,12 @@
     else
         draw.SimpleTextOutlined("N/A", font, x + 64 * scale, y + 64 * scale, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(50, 50, 50))
     end
-
     surface.SetMaterial(matOverlay_Normal)
     surface.DrawTexturedRect(x, y, 128 * scale, 128 * scale)
     draw.SimpleTextOutlined("ACTIVE QUICKBELT", font, x + 64 * scale, y + 2, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(50, 50, 50))
     draw.SimpleTextOutlined(table.Count(LocalPlayer().BeltSlots) .. " / 4 ITEMS", font, x + 64 * scale, y + (128 - 16) * scale, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(50, 50, 50))
     local x2 = x + 128 * scale
-    local y2 = y + 64 * scale
+    local y2 = y + 62 * scale
 
     if wep.NextSlot ~= 0 and LocalPlayer().BeltSlots[wep.NextSlot] ~= nil then
         local path = "entities/" .. LocalPlayer().BeltSlots[wep.NextSlot].class
