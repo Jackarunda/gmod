@@ -21,7 +21,7 @@ if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
 		local SpawnPos=tr.HitPos+tr.HitNormal*5
 		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
 		ent:Spawn()
@@ -32,8 +32,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_explosive/explosive_butane_can02.mdl")
-		self.Entity:SetModelScale(.5,0)
+		self.Entity:SetModel("models/jmodels/explosives/props_explosive/explosive_butane_can02.mdl")
+		--self.Entity:SetModelScale(.5,0)
 		self.Entity:SetMaterial("models/props_explosive/virus")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
