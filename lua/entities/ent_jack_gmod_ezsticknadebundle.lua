@@ -1,20 +1,20 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Gebalte Ladung"
-ENT.Spawnable=true
+ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Gebalte Ladung"
+ENT.Spawnable = true
 
-ENT.Model = "models/grenades/bundle_grenade.mdl"
-ENT.Material="models/mats_jack_nades/stick_grenade"
-ENT.ModelScale = 1.25
+ENT.Model = "models/jmodels/explosives/grenades/bundlenade/bundle_grenade.mdl"
+ENT.Material = "models/mats_jack_nades/stick_grenade"
+--ENT.ModelScale = 1.25
 ENT.SpoonModel = "models/grenades/stick_grenade_cap.mdl"
 ENT.HardThrowStr = 200
 ENT.SoftThrowStr = 100
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.EZspinThrow=true
---ENT.EZstorageVolumeOverride=2
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZspinThrow = true
+--ENT.EZstorageVolumeOverride = 2
 
 local BaseClass = baseclass.Get(ENT.Base)
 
@@ -27,23 +27,23 @@ if(SERVER)then
 
 	function ENT:Arm()
 		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SetBodygroup(4,1)
-		timer.Simple(4,function()
+		self:SetBodygroup(4, 1)
+		timer.Simple(4, function()
 			if(IsValid(self))then self:Detonate() end
 		end)
-		self:SetBodygroup(3,1)
+		self:SetBodygroup(3, 1)
 		self:SpoonEffect()
 	end
 	
-	function ENT:ShiftAltUse(activator,onOff)
+	function ENT:ShiftAltUse(activator, onOff)
 		if not(onOff)then return end
-		self.Splitterring=not self.Splitterring
+		self.Splitterring = not self.Splitterring
 		if(self.Splitterring)then
 			self:SetMaterial("models/mats_jack_nades/stick_grenade_frag")
-			self:EmitSound("snds_jack_gmod/metal_shf.wav",60,120)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 120)
 		else
 			self:SetMaterial("models/mats_jack_nades/stick_grenade")
-			self:EmitSound("snds_jack_gmod/metal_shf.wav",60,80)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 80)
 		end
 	end
 	
