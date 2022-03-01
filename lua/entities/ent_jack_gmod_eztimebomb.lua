@@ -1,29 +1,29 @@
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Time Bomb"
-ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Type = "anim"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Time Bomb"
+ENT.NoSitAllowed = true
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles=Angle(-90,0,0)
-ENT.JModEZstorable=true
+ENT.JModPreferredCarryAngles=Angle(-90, 0, 0)
+ENT.JModEZstorable = true
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int",1,"Timer")
+	self:NetworkVar("Int", 0, "State")
+	self:NetworkVar("Int", 1, "Timer")
 end
 ---
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+	function ENT:SpawnFunction(ply, tr)
+		local SpawnPos = tr.HitPos + tr.HitNormal * 20
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()

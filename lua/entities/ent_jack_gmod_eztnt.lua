@@ -1,28 +1,28 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ TNT"
-ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ TNT"
+ENT.NoSitAllowed = true
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles=Angle(-90,0,0)
-ENT.JModEZstorable=true
-ENT.EZpowderIgnitable=true
+ENT.JModPreferredCarryAngles = Angle(-90, 0, 0)
+ENT.JModEZstorable = true
+ENT.EZpowderIgnitable = true
 ---
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int", 0, "State")
 end
 ---
 
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*15
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+	function ENT:SpawnFunction(ply, tr)
+		local SpawnPos = tr.HitPos + tr.HitNormal*15
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
 		ent:Spawn()
@@ -34,8 +34,8 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self:SetModel("models/weapons/w_jnt.mdl")
-		self:SetModelScale(1.5,0)
-		self:SetBodygroup(0,0)
+		self:SetModelScale(1.5, 0)
+		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
 		self:SetSolid(SOLID_VPHYSICS)

@@ -1,15 +1,14 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.PrintName="EZ Signal Grenade"
-ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0,140,0)
-ENT.Model = "models/grenades/incendiary_grenade.mdl"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.PrintName = "EZ Signal Grenade"
+ENT.Category = "JMod - EZ Misc."
+ENT.Spawnable = true
+ENT.JModPreferredCarryAngles = Angle(0, 140, 0)
+ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_jack_nades/smokesignal"
-ENT.Color=Color(128,128,128)
-ENT.ModelScale = 1.5
+ENT.Color=Color(128, 128, 128)
 ENT.SpoonScale = 2
 if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
