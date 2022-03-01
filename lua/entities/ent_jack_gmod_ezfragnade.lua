@@ -1,11 +1,11 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.PrintName="EZ Frag Grenade"
-ENT.Category="JMod - EZ Explosives"
-ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0,-140,0)
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.PrintName = "EZ Frag Grenade"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Spawnable = true
+ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
 ENT.Model = "models/weapons/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
 ENT.ModelScale = 2
