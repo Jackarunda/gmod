@@ -1,8 +1,8 @@
 // Created by Crowbar 0.71
 
-$ModelName "weapons\w_fragjade.mdl"
+$ModelName "weapons\w_minifragjade.mdl"
 
-$scale 2
+$scale 1.25
 $BodyGroup "studio"
 {
 	studio "p_m67_1.smd"

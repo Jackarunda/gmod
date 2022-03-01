@@ -33,8 +33,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self:SetModel("models/weapons/w_jnt.mdl")
-		self:SetModelScale(1.5, 0)
+		self:SetModel("models/jmodels/explosives/grenades/tnt/w_jnt.mdl")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
