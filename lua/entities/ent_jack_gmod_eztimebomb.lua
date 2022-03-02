@@ -33,7 +33,6 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/jmodels/explosives/bombs/c4/w_c4_planted.mdl")
-		--self.Entity:SetModelScale(1.5)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -60,6 +59,9 @@ if(SERVER)then
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
+			if self:GetTimer() < 10 then
+				self:SetTimer(10)
+			end
 			self:SetState(STATE_ARMED)
 		elseif iname == "Time" and value >= 10 and self:GetState() == STATE_OFF then
 			self:SetTimer(value)
@@ -91,14 +93,14 @@ if(SERVER)then
 		local Dude,Time=activator or activatorAgain,CurTime()
 		JMod.Owner(self,Dude)
 		
-		local Time=CurTime()
+		local Time = CurTime()
 		if(tobool(onOff))then
-			local State=self:GetState()
-			if(State<0)then return end
-			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-			if(State==STATE_OFF)then
+			local State = self:GetState()
+			if(State < 0)then return end
+			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+			if(State == STATE_OFF)then
 				if(Alt)then
-					if(self.NextDisarmFail<Time)then
+					if(self.NextDisarmFail < Time)then
 						net.Start("JMod_EZtimeBomb")
 						net.WriteEntity(self)
 						net.Send(Dude)
@@ -106,21 +108,21 @@ if(SERVER)then
 					end
 				else
 					constraint.RemoveAll(self)
-					self.StuckStick=nil
-					self.StuckTo=nil
+					self.StuckStick = nil
+					self.StuckTo = nil
 					Dude:PickupObject(self)
-					self.NextStick=Time+.5
+					self.NextStick = Time+.5
 					JMod.Hint(Dude, "sticky")
 				end
 			else
 				if(Alt)then
-					if(self.NextDisarm<Time)then
-						self.NextDisarm=Time+.2
+					if(self.NextDisarm < Time)then
+						self.NextDisarm = Time + .2
 						
-						self.DisarmProgress=self.DisarmProgress+JMod.Config.BombDisarmSpeed
-						self.NextDisarmFail=Time+1
+						self.DisarmProgress = self.DisarmProgress + JMod.Config.BombDisarmSpeed
+						self.NextDisarmFail = Time+1
 						Dude:PrintMessage(HUD_PRINTCENTER,"disarming: "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
-						if(self.DisarmProgress>=self.DisarmNeeded)then
+						if(self.DisarmProgress >= self.DisarmNeeded)then
 							self:SetState(STATE_OFF)
 							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
 							self.DisarmProgress=0
@@ -129,18 +131,18 @@ if(SERVER)then
 					end
 				else
 					constraint.RemoveAll(self)
-					self.StuckStick=nil
-					self.StuckTo=nil
+					self.StuckStick = nil
+					self.StuckTo = nil
 					Dude:PickupObject(self)
-					self.NextStick=Time+.5
+					self.NextStick = Time+.5
 				end
 			end
 		else -- player just released the USE key
-			if((self:IsPlayerHolding())and(self.NextStick<Time))then
-				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
+			if((self:IsPlayerHolding())and(self.NextStick < Time))then
+				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector()*80,{self,Dude})
 				if(Tr.Hit)then
 					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
-						self.NextStick=Time+.5
+						self.NextStick = Time+.5
 						local Ang=Tr.HitNormal:Angle()
 						Ang:RotateAroundAxis(Ang:Right(),-90)
 						Ang:RotateAroundAxis(Ang:Up(),180)
