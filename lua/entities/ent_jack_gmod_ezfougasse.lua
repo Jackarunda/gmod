@@ -34,9 +34,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_c17/oildrum001.mdl")
+		self.Entity:SetModel("models/jmodels/explosives/mines/firebarrel/firebarrel.mdl")
 		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
-		self:SetModelScale(.6,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -46,7 +45,7 @@ if(SERVER)then
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():SetDamping(.01,3)
+			self:GetPhysicsObject():SetDamping(.01, 3)
 		end)
 		---
 		self:SetState(STATE_OFF)

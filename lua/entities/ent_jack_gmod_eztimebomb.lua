@@ -32,8 +32,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/weapons/w_c4_planted.mdl")
-		self.Entity:SetModelScale(1.5)
+		self.Entity:SetModel("models/jmodels/explosives/c4/w_c4_planted.mdl")
+		--self.Entity:SetModelScale(1.5)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -46,11 +46,11 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.NextStick=0
-		self.DisarmProgress=0
-		self.DisarmNeeded=20
-		self.NextDisarmFail=0
-		self.NextDisarm=0
+		self.NextStick = 0
+		self.DisarmProgress = 0
+		self.DisarmNeeded = 20
+		self.NextDisarmFail = 0
+		self.NextDisarm = 0
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Time"}, {"Directly detonates the bomb", "Value > 0 arms bomb", "Set this BEFORE arming."})
 			self.Outputs = WireLib.CreateOutputs(self, {"State", "TimeLeft", "DisarmProgress"}, {"-1 broken \n 0 off \n 1 armed", "Time left on \n the bomb", "How far the disarmament has got."})
