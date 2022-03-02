@@ -32,7 +32,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/c4/w_c4_planted.mdl")
+		self.Entity:SetModel("models/jmodels/explosives/bombs/c4/w_c4_planted.mdl")
 		--self.Entity:SetModelScale(1.5)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
