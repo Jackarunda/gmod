@@ -7,7 +7,7 @@ ENT.PrintName = "EZ Gas Grenade"
 ENT.Spawnable = true
 
 ENT.Model = "models/jmodels/explosives/grenades/gasnade/gas_grenade.mdl"
-ENT.SpoonModel = "models/grenades/gas_grenade_spoon.mdl"
+ENT.SpoonModel = "models/jmodels/explosives/grenades/gasnade/gas_grenade_spoon.mdl"
 --ENT.ModelScale = 1.5
 
 if(SERVER)then

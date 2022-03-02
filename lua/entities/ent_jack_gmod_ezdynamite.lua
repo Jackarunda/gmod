@@ -33,8 +33,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self:SetModel("models/mechanics/robotics/a2.mdl")
-		self:SetModelScale(.25, 0)
+		self:SetModel("models/jmodels/explosives/grenades/dynamite/dynamite.mdl")
+		--self:SetModelScale(.25, 0)
 		self:SetMaterial("models/entities/mat_jack_dynamite")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
