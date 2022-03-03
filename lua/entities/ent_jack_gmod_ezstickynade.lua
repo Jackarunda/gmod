@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.Model = "models/jmodels/explosives/grenades/stickynade/sticky_grenade.mdl"
 --ENT.ModelScale = 2.25
 
-ENT.SpoonModel = "models/grenades/sticky_grenade_pin.mdl"
+ENT.SpoonModel = "models/jmodels/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 if(SERVER)then
