@@ -1,19 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Mininade Base"
-ENT.Spawnable=false
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Mininade Base"
+ENT.Spawnable = false
 
-ENT.JModPreferredCarryAngles=Angle(0,-140,0)
-ENT.Model = "models/weapons/w_fragjade.mdl"
+ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
+ENT.Model = "models/jmodels/explosives/grenades/minifragnade/w_minifragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
-ENT.ModelScale = 1.25
 ENT.Hints = {"grenade", "mininade"}
 
-ENT.MiniNadeDamage=100
-ENT.Mass=7
+ENT.MiniNadeDamage = 100
+ENT.Mass = 7
 
 local BaseClass = baseclass.Get(ENT.Base)
 

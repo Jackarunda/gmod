@@ -4,11 +4,12 @@ ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZ Flashbang"
 ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0,140,0)
-ENT.Model = "models/conviction/flashbang.mdl"
-ENT.ModelScale = 1.5
+ENT.Spawnable = true
+ENT.JModPreferredCarryAngles=Angle(0, 140, 0)
+ENT.Model = "models/jmodels/explosives/grenades/flashbang/flashbang.mdl"
+--ENT.ModelScale = 1.5
 ENT.SpoonScale = 2
+
 if(SERVER)then
 	function ENT:Arm()
 		self:SetBodygroup(2,1)

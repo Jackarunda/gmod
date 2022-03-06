@@ -1,18 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Satchel Charge"
-ENT.Spawnable=true
+ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Satchel Charge"
+ENT.Spawnable = true
 
-ENT.Model = "models/grenades/satchel_charge.mdl"
+ENT.Model = "models/jmodels/explosives/grenades/satchelcharge/satchel_charge.mdl"
 ENT.SpoonEnt = nil
-ENT.ModelScale = 2.5
+--ENT.ModelScale = 2.5
 ENT.Mass = 20
 ENT.HardThrowStr = 250
 ENT.SoftThrowStr = 125
-ENT.Hints={"arm"}
+ENT.Hints = {"arm"}
 
 DEFINE_BASECLASS(ENT.Base)
 
@@ -43,7 +43,7 @@ if(SERVER)then
 	end
 
 	function ENT:Prime()
-		self:EmitSound("weapons/c4/c4_plant.wav",60,80)
+		self:EmitSound("weapons/c4/c4_plant.wav", 60, 80)
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
 		constraint.NoCollide(self,self.Plunger,0,0)

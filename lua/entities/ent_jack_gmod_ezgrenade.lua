@@ -1,12 +1,12 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Grenade Base"
-ENT.NoSitAllowed=true
-ENT.Spawnable=false
+ENT.Type = "anim"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Grenade Base"
+ENT.NoSitAllowed = true
+ENT.Spawnable = false
 
 ENT.Model = "models/weapons/w_grenade.mdl"
 ENT.Material = nil
@@ -22,21 +22,21 @@ ENT.SpoonModel = nil
 ENT.SpoonScale = nil
 ENT.SpoonSound = nil
 
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.JModEZstorable=true
+ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
+ENT.JModEZstorable = true
 
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int" , 0, "State")
 end
 
 if(SERVER)then
 
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		local SpawnPos = tr.HitPos + tr.HitNormal * 20
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		return ent
@@ -45,7 +45,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self:SetModel(self.Model)
 		if self.Material then self:SetMaterial(self.Material) end
-		if self.ModelScale then self:SetModelScale(self.ModelScale,0) end
+		if self.ModelScale then self:SetModelScale(self.ModelScale, 0) end
 		if(self.Color)then self:SetColor(self.Color) end
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -53,7 +53,7 @@ if(SERVER)then
 		self:DrawShadow(true)
 		self:SetUseType(ONOFF_USE)
 		---
-		timer.Simple(.01,function()
+		timer.Simple(.01, function()
 			if(IsValid(self))then
 				self:GetPhysicsObject():SetMass(self.Mass)
 				self:GetPhysicsObject():Wake()
@@ -61,7 +61,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(JMod.EZ_STATE_OFF)
-		self.NextDet=0
+		self.NextDet = 0
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
@@ -74,8 +74,8 @@ if(SERVER)then
 			self:SetState(STATE_ARMED)
 		end
 	end
-	function ENT:PhysicsCollide(data,physobj)
-		if(data.DeltaTime>0.2 and data.Speed>30)then
+	function ENT:PhysicsCollide(data, physobj)
+		if(data.DeltaTime>0.2 and data.Speed > 30)then
 			self:EmitSound(self.ImpactSound)
 		end
 	end

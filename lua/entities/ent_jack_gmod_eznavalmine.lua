@@ -1,27 +1,27 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Mini Naval Mine"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Mini Naval Mine"
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles=Angle(0,-90,0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*40
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180,0,0))
+		local SpawnPos = tr.HitPos + tr.HitNormal * 40
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -30,9 +30,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/magnet/submine/submine.mdl")
+		self.Entity:SetModel("models/jmodels/explosives/mines/submine/submine.mdl")
 		self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
-		self.Entity:SetModelScale(.75,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

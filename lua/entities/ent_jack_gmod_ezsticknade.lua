@@ -1,21 +1,21 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Stick Grenade"
-ENT.Spawnable=true
+ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Stick Grenade"
+ENT.Spawnable = true
 
-ENT.Model = "models/grenades/stick_grenade.mdl" -- "models/mechanics/robotics/a2.mdl"
-ENT.Material="models/mats_jack_nades/stick_grenade"
-ENT.ModelScale = 1.25
+ENT.Model = "models/jmodels/explosives/grenades/sticknade/stick_grenade.mdl" -- "models/mechanics/robotics/a2.mdl"
+ENT.Material = "models/mats_jack_nades/stick_grenade"
+--ENT.ModelScale = 1.25
 ENT.SpoonModel = "models/grenades/stick_grenade_cap.mdl"
 ENT.HardThrowStr = 800
 ENT.SoftThrowStr = 400
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.EZspinThrow=true
-ENT.Hints={"grenade","splitterring"}
-ENT.EZstorageVolumeOverride=2
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZspinThrow = true
+ENT.Hints={"grenade", "splitterring"}
+ENT.EZstorageVolumeOverride = 2
 
 ENT.Splitterring=false
 

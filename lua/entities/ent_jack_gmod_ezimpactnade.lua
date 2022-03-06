@@ -1,13 +1,13 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Impact Grenade"
-ENT.Spawnable=true
+ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Impact Grenade"
+ENT.Spawnable = true
 
-ENT.Model = "models/grenades/impact_grenade.mdl"
-ENT.ModelScale = 1.5
+ENT.Model = "models/jmodels/explosives/grenades/impactnade/impact_grenade.mdl"
+--ENT.ModelScale = 1.5
 
 ENT.SpoonModel = "models/grenades/impact_grenade_cap.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
@@ -18,9 +18,9 @@ if(SERVER)then
 
 	function ENT:Prime()
 		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav",60,100)
+		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		self:SpoonEffect()
-		self:SetBodygroup(2,1)
+		self:SetBodygroup(2, 1)
 	end
 
 	function ENT:Arm()
@@ -33,7 +33,7 @@ if(SERVER)then
 	end
 	
 	function ENT:PhysicsCollide(data,physobj)
-		if data.DeltaTime>0.2 and data.Speed>100 and self:GetState() == JMod.EZ_STATE_ARMED then
+		if data.DeltaTime > 0.2 and data.Speed > 100 and self:GetState() == JMod.EZ_STATE_ARMED then
 			self:Detonate()
 		else
 			BaseClass.PhysicsCollide(self, data, physobj)
