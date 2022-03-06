@@ -7,7 +7,6 @@ local function SetArmorPlayerModelModifications()
 		}
 	}
 end
-print("HELLO COMPILE TIME",CurTime())
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
