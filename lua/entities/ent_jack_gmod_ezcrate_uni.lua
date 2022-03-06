@@ -26,6 +26,7 @@ if(SERVER)then
 		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
+		JMod.Hint(ply, self.ClassName)
 		return ent
 	end
 	function ENT:Initialize()
@@ -87,8 +88,6 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		
-		JMod.Hint(activator, "crate_uni")
 		if(self:GetItemCount()<=0)then return end
 		net.Start("JMod_UniCrate")
 			net.WriteEntity(self)

@@ -9,6 +9,8 @@ ENT.Spawnable=true
 ENT.Material = "models/mats_jack_nades/gnd_blk"
 ENT.MiniNadeDamage=100
 
+ENT.Hints = {"mininade"}
+
 local BaseClass = baseclass.Get(ENT.Base)
 
 if(SERVER)then

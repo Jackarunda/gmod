@@ -9,7 +9,6 @@ ENT.Spawnable = false
 ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
 ENT.Model = "models/jmodels/explosives/grenades/minifragnade/w_minifragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
-ENT.Hints = {"grenade", "mininade"}
 
 ENT.MiniNadeDamage = 100
 ENT.Mass = 7
@@ -46,6 +45,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
 		JMod.Owner(self,Dude)
+		JMod.Hint(Dude,self.ClassName)
 		local Time=CurTime()
 		if((self.ShiftAltUse)and(Dude:KeyDown(JMod.Config.AltFunctionKey))and(Dude:KeyDown(IN_SPEED)))then
 			return self:ShiftAltUse(Dude,tobool(onOff))
@@ -58,9 +58,15 @@ if(SERVER)then
 				self:Prime()
 				JMod.Hint(Dude, "grenade")
 			else
-				if not JMod.Hint(Dude, "prime") then JMod.Hint(Dude, "mininade") end
+				JMod.Hint(Dude, "prime")
 			end
-			if self.Hints then  end
+			if(self.Hints)then
+				for k,v in pairs(self.Hints)do
+					timer.Simple(k,function()
+						if(IsValid(Dude))then JMod.Hint(Dude, v) end
+					end)
+				end
+			end
 			JMod.ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end
 	end
