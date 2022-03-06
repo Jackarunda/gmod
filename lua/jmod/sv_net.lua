@@ -60,7 +60,10 @@ net.Receive("JMod_ArmorColor",function(ln,ply)
 	Armor:SetColor(Col)
 
 	local Equip = tobool(net.ReadBit())
-	if Equip then JMod.EZ_Equip_Armor(ply, Armor) end
+	if Equip then
+		JMod.Hint(ply, "armor weight")
+		JMod.EZ_Equip_Armor(ply, Armor)
+	end
 end)
 
 net.Receive("JMod_SignalNade", function(l, ply)

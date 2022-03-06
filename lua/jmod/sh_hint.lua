@@ -130,7 +130,7 @@ JMod.Hints = {
 	["armor durability"] = {Type = "shield", Text = "Armor blocks damage to a body part, and will break when durability reaches zero"},
 	["armor friends"] = {Text = "Set your friends with command jmod_friends to talk privately"},
 	["inventory"] = {Text = "open your jmod inventory menu with the command jmod_ez_inv or *inv* in chat"},
-	["armor weight"] = {Text = "Wearing more pieces or heavier pieces of armor will slow you down"},
+	["armor weight"] = {Text = "wearing more or heavier armor will slow you down more"},
 	
 	["ent_jack_gmod_ezarmor_balmask"] = {Text = "Bal. Mask blocks all damage to the face, but severely obstructs vision"},
 	["ent_jack_gmod_ezarmor_gasmask"] = {Text = "Gas Mask makes you immune to gas damage and resists some radioative damage"},
