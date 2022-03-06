@@ -1,21 +1,22 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.PrintName="EZ Frag Grenade"
-ENT.Category="JMod - EZ Explosives"
-ENT.Spawnable=true
-ENT.JModPreferredCarryAngles=Angle(0,-140,0)
-ENT.Model = "models/weapons/w_fragjade.mdl"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.PrintName = "EZ Frag Grenade"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Spawnable = true
+ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
+ENT.Model = "models/jmodels/explosives/grenades/fragnade/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
-ENT.ModelScale = 2
 ENT.SpoonScale = 2
+
+
 if(SERVER)then
 	function ENT:Arm()
-		self:SetBodygroup(2,1)
+		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(self.FuzeTimeOverride or 4,function()
+		timer.Simple(self.FuzeTimeOverride or 4, function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end

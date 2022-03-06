@@ -7,17 +7,17 @@ ENT.IconOverride="materials/ez_resource_icons/gas.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.GAS
-ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.Model="models/props_explosive/explosive_butane_can.mdl"
-ENT.Material="models/shiny"
-ENT.Color=Color(100,100,100)
-ENT.ModelScale=1
-ENT.Mass=20
-ENT.ImpactNoise1="Canister.ImpactHard"
-ENT.DamageThreshold=80
-ENT.BreakNoise="Metal_Box.Break"
-ENT.Hint=nil
+ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.GAS
+ENT.JModPreferredCarryAngles = Angle(0,180,0)
+ENT.Model = "models/jmodels/explosives/props_explosive/explosive_butane_can.mdl"
+ENT.Material = "models/shiny"
+ENT.Color = Color(100,100,100)
+ENT.ModelScale = 1
+ENT.Mass = 20
+ENT.ImpactNoise1 = "Canister.ImpactHard"
+ENT.DamageThreshold = 80
+ENT.BreakNoise = "Metal_Box.Break"
+ENT.Hint = nil
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)

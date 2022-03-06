@@ -1,40 +1,40 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base="ent_jack_gmod_ezgrenade"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Sticky Bomb"
-ENT.Spawnable=true
+ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Sticky Bomb"
+ENT.Spawnable = true
 
-ENT.Model = "models/grenades/sticky_grenade.mdl"
-ENT.ModelScale = 2.25
+ENT.Model = "models/jmodels/explosives/grenades/stickynade/sticky_grenade.mdl"
+--ENT.ModelScale = 2.25
 
-ENT.SpoonModel = "models/grenades/sticky_grenade_pin.mdl"
+ENT.SpoonModel = "models/jmodels/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 
 if(SERVER)then
 
 	function ENT:Prime()
 		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:SetBodygroup(2,1)
-		self:EmitSound("weapons/pinpull.wav",60,100)
+		self:SetBodygroup(2, 1)
+		self:EmitSound("weapons/pinpull.wav", 60, 100)
 	end
 
 	function ENT:Arm()
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
-		timer.Simple(4,function()
+		timer.Simple(4, function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end
 
 	function ENT:PhysicsCollide(data,physobj)
-		if(data.DeltaTime>0.2 and data.Speed>30)then
+		if(data.DeltaTime > 0.2 and data.Speed > 30)then
 			self:EmitSound("Grenade.ImpactHard")
 		end
 		if self:GetState() == JMod.EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
 			self.StickObj = data.HitEntity
-			self.GotParented=true
+			self.GotParented = true
 			self.Weld = nil
 			if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then self.StickObj = data.HitEntity:GetBaseEnt() end
 			if self.StickObj:IsPlayer() or self.StickObj:IsNPC() then
