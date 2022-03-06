@@ -1,31 +1,31 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Fougasse Mine"
-ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Explosives"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Fougasse Mine"
+ENT.NoSitAllowed = true
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 ---
-ENT.JModEZstorable=true
-ENT.JModPreferredCarryAngles=Angle(90,0,0)
-ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
-ENT.WhitelistedNPCs={"npc_rollermine"}
+ENT.JModEZstorable = true
+ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
+ENT.WhitelistedNPCs = {"npc_rollermine"}
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMING,STATE_ARMED,STATE_WARNING=-1,0,1,2,3
+local STATE_BROKEN,STATE_OFF,STATE_ARMING,STATE_ARMED,STATE_WARNING = -1,0,1,2,3
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*40
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		local SpawnPos = tr.HitPos + tr.HitNormal*40
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -34,9 +34,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_c17/oildrum001.mdl")
+		self.Entity:SetModel("models/jmodels/explosives/mines/firebarrel/firebarrel.mdl")
 		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
-		self:SetModelScale(.6,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -46,7 +45,7 @@ if(SERVER)then
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():SetDamping(.01,3)
+			self:GetPhysicsObject():SetDamping(.01, 3)
 		end)
 		---
 		self:SetState(STATE_OFF)

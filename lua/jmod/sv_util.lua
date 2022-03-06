@@ -752,4 +752,4 @@ concommand.Add("jacky_sandbox",function(ply,cmd,args)
 		ply:GiveAmmo(150,k)
 	end
 	ply:SetHealth(1000)
-end)
+end, nil, "Sets us to Sandbox god mode thing.")

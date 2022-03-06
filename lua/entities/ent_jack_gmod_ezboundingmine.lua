@@ -1,30 +1,30 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod - EZ Explosives"
-ENT.PrintName="EZ Mini Bounding Mine"
-ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Type = "anim"
+ENT.Author = "Jackarunda, TheOnly8Z"
+ENT.Category = "JMod - EZ Explosives"
+ENT.PrintName = "EZ Mini Bounding Mine"
+ENT.NoSitAllowed = true
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
 ---
-ENT.JModEZstorable=true
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.UsableMats={MAT_DIRT,MAT_FOLIAGE,MAT_SAND,MAT_SLOSH,MAT_GRASS,MAT_SNOW}
-ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
+ENT.JModEZstorable = true
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.UsableMats={MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+ENT.BlacklistedNPCs={"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
 function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*20
+	function ENT:SpawnFunction(ply, tr)
+		local SpawnPos=tr.HitPos + tr.HitNormal*20
 		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -33,8 +33,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self:SetModel("models/grenades/bounding_mine.mdl")
-		self:SetModelScale(1.5)
+		self:SetModel("models/jmodels/explosives/mines/boundingmine/bounding_mine.mdl")
+		--self:SetModelScale(1.5)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)	
 		self:SetSolid(SOLID_VPHYSICS)

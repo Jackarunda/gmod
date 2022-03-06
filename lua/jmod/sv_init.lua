@@ -350,7 +350,7 @@ concommand.Add("jmod_force_lua_config_sync",function(ply,cmd,args)
 	net.WriteFloat(JMod.Config.WeaponSwayMult)
 	net.WriteBit(true)
 	net.Broadcast()
-end)
+end, nil, "Manually forces the Lua Config for Jmod to sync.")
 
 concommand.Add("jacky_trace_debug",function(ply)
 	if not(GetConVar("sv_cheats"):GetBool())then return end
@@ -371,7 +371,7 @@ concommand.Add("jacky_trace_debug",function(ply)
 		print("model",Ent:GetModel())
 	end
 	print("---------- end trace debug -----------")
-end)
+end, nil, "Prints information about what the player's crosshair is looking at.")
 
 concommand.Add("jacky_player_debug",function(ply,cmd,args)
 	if not(GetConVar("sv_cheats"):GetBool())then return end
@@ -382,7 +382,7 @@ concommand.Add("jacky_player_debug",function(ply,cmd,args)
 			v:SetHealth(100)
 		end
 	end
-end)
+end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage","JMod_FallDamage",function(ply,spd)
 	if(JMod.Config.QoL.RealisticFallDamage)then

@@ -295,12 +295,19 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
     Scroll:SetPos(10, 10)
     ---
     local Y = 0
-    for k, itemInfo in pairs(recipes) do
+	local sortedRecipes={}
+	for k,v in pairs(recipes)do
+		local info = table.FullCopy(v)
+		table.insert(info,k)
+		table.insert(sortedRecipes,info)
+	end
+	table.sort(sortedRecipes,function(a,b) return a[#a]<b[#b] end)
+    for k, itemInfo in pairs(sortedRecipes) do
         local Butt = Scroll:Add("DButton")
         Butt:SetSize(W - 35, 25)
         Butt:SetPos(0, Y)
         Butt:SetText("")
-        local name = itemInfo[1]
+        local name = itemInfo[(typ=="workbench" && #itemInfo) or 1]
         local reqs = itemInfo[2]
         if (type(reqs) == "string") then
             reqs = itemInfo[3]
@@ -396,7 +403,7 @@ net.Receive("JMod_EZtoolbox",function()
 		Categories[Category][k]=v
 	end
 	--[[
-	if #JMod.ClientConfig.BuildKitFavs > 0 then 
+	if #JMod.ClientConfig.BuildKitFavs > 0 then
 		local Tab = {}
 		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
 			table.insert(Tab,v)
@@ -413,17 +420,20 @@ net.Receive("JMod_EZtoolbox",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
+	local text_space = 10
 
-	local text_space = 16
-	for k,cat in pairs(Categories)do
+	local AlphabetizedCategoryNames=table.GetKeys(Categories)
+	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
+
+	for k,cat in pairs(AlphabetizedCategoryNames)do
 		surface.SetFont("DermaDefault")
-		local text_x = surface.GetTextSize(k)
+		local text_xtb = surface.GetTextSize(cat)
 
 		local TabBtn=vgui.Create("DButton",Frame)
 		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_x + text_space,20)
+		TabBtn:SetSize(text_xtb + text_space,20)
 		TabBtn:SetText("")
-		TabBtn.Category=k
+		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)
@@ -433,7 +443,7 @@ net.Receive("JMod_EZtoolbox",function()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
 		end
-		X = X + text_x + text_space + 5
+		X = X + text_xtb + text_space + 2
 	end
 	-- Resource display
 	local resFrame = vgui.Create("DPanel", motherFrame)
@@ -459,7 +469,7 @@ end)
 net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()
 	local Buildables=net.ReadTable()
-	local resTbl = JMod.CountResourcesInRange(nil,nil,Bench)
+	local resTbl = JMod.CountResourcesInRange(nil,nil,Bench) 
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
 	motherFrame:SetVisible(true)
@@ -486,13 +496,14 @@ net.Receive("JMod_EZworkbench",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	local Categories={}
+	
 	for k,v in pairs(Buildables)do
 		local Category=v[3] or "Other"
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
 	--[[
-	if #JMod.ClientConfig.WorkbenchFavs > 0 then 
+	if #JMod.ClientConfig.WorkbenchFavs > 0 then
 		local Tab = {}
 		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
 			table.insert(Tab,v)
@@ -510,22 +521,28 @@ net.Receive("JMod_EZworkbench",function()
 		surface.DrawRect(0,0,w,h)
 	end
 	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-	for k, cat in pairs (Categories) do
+	local text_space = 1
+
+	local AlphabetizedCategoryNames=table.GetKeys(Categories)
+	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
+
+	for k,cat in pairs(AlphabetizedCategoryNames) do
 		local TabBtn=vgui.Create("DButton",Frame)
+		local text_xwb = surface.GetTextSize(cat)
 		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(70,20)
+		TabBtn:SetSize(text_xwb + text_space,20)
 		TabBtn:SetText("")
-		TabBtn.Category=k
+		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
 			surface.DrawRect(0,0,x,y)			
-			draw.SimpleText(self.Category,"DermaDefault",35,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
 			ActiveTab=self.Category
 			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
 		end
-		X=X+75
+		X = X + text_xwb + text_space + 1
 	end
 	
 	-- Resource display
@@ -802,7 +819,7 @@ net.Receive("JMod_EZradio",function()
 	local Scroll=vgui.Create("DScrollPanel",Frame)
 	Scroll:SetSize(W-15,H-10)
 	Scroll:SetPos(10,10)
-	---
+	
 	for _, k in pairs(Packages) do
 		local Butt = Scroll:Add("DButton")
 		local desc=k[2] or "N/A"

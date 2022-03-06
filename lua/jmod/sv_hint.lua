@@ -40,7 +40,7 @@ concommand.Add("jmod_resethints",function(ply,cmd,args)
 	
 	ply.JModHintsGiven={}
 	print("hints for "..ply:Nick().." reset")
-end)
+end, nil, "Resets your Jmod hints.")
 
 hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
 	if JMod.Hints[ent:GetClass()] then 

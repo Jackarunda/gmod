@@ -611,7 +611,7 @@ concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	JMod.EZ_Equip_Armor(target, "Heavy-Right-Thigh")
 	JMod.EZ_Equip_Armor(target, "Left-Calf")
 	JMod.EZ_Equip_Armor(target, "Right-Calf")
-end)
+end, nil, "Adds full armour onto yourself.")
 
 concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
 	if not(ply and ply:IsSuperAdmin())then return end
@@ -626,4 +626,4 @@ concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
 	else
 		print("invalid aim target")
 	end
-end)
+end, nil, "Adds full armour to your target.")

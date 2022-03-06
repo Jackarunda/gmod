@@ -190,13 +190,14 @@ function JMod.EZradioEstablish(transceiver,teamID)
 	if(#AlliedStations<=0)then
 		table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
 		table.insert(AlliedStations,#JMod.EZ_RADIO_STATIONS)
-	end	
+	end
 	local ChosenStation = nil
 	for k,id in pairs(AlliedStations)do
 		local Taken=false
 		for key,radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio"))do
 			if(radio~=transceiver and radio:GetState()>0 and radio:GetOutpostID()==id)then Taken=true break end
 		end
+		print(Taken)
 		if not(Taken)then
 			ChosenStation=id
 			break
@@ -241,20 +242,27 @@ function JMod.RemoveRadioOutPost(teamID) -- this is also on the global table for
 	end
 end
 
-function JMod.Add_Radio_Outpost(ply, teamIndex, amt)
-	JMod_EZradioEstablish(transceiver:GetOwner():Team(),id)
-	local startcount, captured, total = JMod.Config.StartingOutpostCount,0,0
-	captured = amt + startcount
-	total = captured + amt + startcount 
-	if total < startcount then return "Cannot go below starting outpost count!" end
-	print("Team "..teamIndex.."has gained "..amt.." outpost!")
-end
-
-concommand.Add("jmod_debug_addoutpost", function( ply, cmd, amt )
+concommand.Add("jmod_debug_addoutpost", function( ply, cmd, args )
 	if !ply:IsUserGroup("superadmin") then return end
-    JMod_Add_Radio_Outpost(ply:Team(), amt)
-    print("Added "..amt.." outpost(s) to Team #"..ply:Team()..".")
-end)
+	local Team=0
+	if (engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
+		Team=ply:AccountID()
+	else
+		Team=ply:Team()
+	end
+    JMod.AddNewRadioOutpost(tostring(Team))
+end, nil, "Adds another radio outpost for your team.")
+
+concommand.Add("jmod_debug_removeoutpost", function( ply, cmd, args )
+	if !ply:IsUserGroup("superadmin") then return end
+	local Team=0
+	if (engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED) then
+		Team=ply:AccountID()
+	else
+		Team=ply:Team()
+	end
+    JMod.RemoveRadioOutPost(tostring(Team))
+end, nil, "Removes a radio outpost for your team.")
 
 local function GetArticle(word)
 	local FirstLetter=string.sub(word,1,1)
