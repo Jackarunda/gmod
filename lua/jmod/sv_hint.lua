@@ -1,5 +1,4 @@
 function JMod.Hint(ply, key, specific)
-	print("ayo",ply,key,specific)
 	if not JMod.Config.Hints or not ply or not key then return nil end
 	ply.JModHintsGiven = ply.JModHintsGiven or {}
 	if ply.JModHintsGiven[key] and not specific then return false end
@@ -12,7 +11,6 @@ function JMod.Hint(ply, key, specific)
 	net.Start("JMod_Hint")
 	net.WriteBool(specific)
 	if(tbl.LangKey)then
-		print("WHEEE")
 		net.WriteBool(true)
 		net.WriteString(tbl.LangKey)
 	else
