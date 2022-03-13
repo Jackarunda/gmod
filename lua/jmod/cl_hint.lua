@@ -1,5 +1,4 @@
 net.Receive("JMod_Hint",function()
-	local specific = tobool(net.ReadBit())
 	local isLangKey = net.ReadBool()
 	local str = net.ReadString()
 	local iconType=net.ReadInt(8)

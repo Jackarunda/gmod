@@ -170,7 +170,7 @@ if(SERVER)then
 				end)
 			end
 		else
-			ply:PrintMessage(HUD_PRINTCENTER,"missing supplies for build")
+			JMod.Hint(ply,"missing supplies")
 		end
 	end
 elseif(CLIENT)then

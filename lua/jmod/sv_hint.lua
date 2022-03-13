@@ -1,15 +1,13 @@
-function JMod.Hint(ply, key, specific)
-	if not JMod.Config.Hints or not ply or not key then return nil end
-	ply.JModHintsGiven = ply.JModHintsGiven or {}
-	if ply.JModHintsGiven[key] and not specific then return false end
-	ply.JModHintsGiven[key] = true
+function JMod.Hint(ply, key)
+	if not(JMod.Config.Hints and ply and key) then return nil end
 	local tbl = JMod.Hints[key]
-	if(specific)then tbl = JMod.SpecificHints[key] end
 	if not tbl then return nil end
-	tbl.Key = key
-	if not tbl.Time then tbl.Time = 8 end
+	ply.JModHintsGiven = ply.JModHintsGiven or {}
+	local Limit = tbl.RepeatCount or 0
+	if (ply.JModHintsGiven[key] or 0) > Limit then return false end
+	ply.JModHintsGiven[key] = (ply.JModHintsGiven[key] or 0) + 1
+
 	net.Start("JMod_Hint")
-	net.WriteBool(specific)
 	if(tbl.LangKey)then
 		net.WriteBool(true)
 		net.WriteString(tbl.LangKey)
@@ -22,9 +20,9 @@ function JMod.Hint(ply, key, specific)
 	net.Send(ply)
 	
 	if tbl.Followup and JMod.Hints[tbl.Followup] then
-		timer.Simple(tbl.Time, function()
+		timer.Simple(tbl.Time or 8, function()
 			if IsValid(ply) then
-				JMod.Hint(ply, tbl.Followup, specific)
+				JMod.Hint(ply, tbl.Followup)
 			end
 		end)
 	end
@@ -39,12 +37,6 @@ concommand.Add("jmod_resethints",function(ply,cmd,args)
 	ply.JModHintsGiven={}
 	print("hints for "..ply:Nick().." reset")
 end, nil, "Resets your Jmod hints.")
-
-hook.Add("PlayerSpawnedSENT", "JMOD_HINT", function(ply, ent)
-	if JMod.Hints[ent:GetClass()] then 
-		JMod.Hint(ply, ent:GetClass(), ent)
-	end
-end)
 
 hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
 	if (JMod.Config) and (JMod.Config.Hints) then

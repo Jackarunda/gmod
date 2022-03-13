@@ -94,7 +94,7 @@ if(SERVER)then
 				self.Hum:Play()
 				self.Hum:SetSoundLevel(100)
 			else
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
+				JMod.Hint(activator,"double tap to arm")
 			end
 			self.LastUse=Time
 		end

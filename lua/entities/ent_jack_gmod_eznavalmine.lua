@@ -122,7 +122,7 @@ if(SERVER)then
 				end
 				JMod.Hint(activator, "navalmine")
 			else
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
+				JMod.Hint(activator,"double tap to arm")
 				JMod.Hint(activator, "arm navalmine")
 			end
 			self.LastUse=Time
@@ -133,7 +133,7 @@ if(SERVER)then
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,110)
 				self.Moored=false
 			else
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to disarm")
+				JMod.Hint(activator,"double tap to disarm")
 			end
 			self.LastUse=Time
 		end
