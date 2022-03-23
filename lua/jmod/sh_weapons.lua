@@ -697,7 +697,7 @@ elseif(SERVER)then
 			net.WriteString(NewType)
 			net.Send(ply)
 		else
-			ply:PrintMessage(HUD_PRINTCENTER,"you do not have any alternate ammo for this weapon")
+			JMod.Hint(ply,"no alternate ammo")
 		end
 	end, nil, "Switches your current ammo type for your EZ weapon.")
 	function JMod.GiveAmmo(ply,ent)

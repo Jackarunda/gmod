@@ -14,7 +14,7 @@ ENT.HardThrowStr = 800
 ENT.SoftThrowStr = 400
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZspinThrow = true
-ENT.Hints={"grenade", "splitterring"}
+ENT.Hints={"frag sleeve"}
 ENT.EZstorageVolumeOverride = 2
 
 ENT.Splitterring=false

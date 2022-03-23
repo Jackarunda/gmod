@@ -144,6 +144,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
+		JMod.Hint(ply, self.ClassName)
 		return ent
 	end
 	function ENT:PhysicsCollide(data,physobj)

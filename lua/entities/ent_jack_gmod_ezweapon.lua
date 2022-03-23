@@ -76,7 +76,7 @@ if(SERVER)then
 						GivenWep:SetClip1(self.MagRounds)
 					end
 					activator:SelectWeapon(self.Specs.swep)
-					JMod.Hint(activator,self.Specs.swep,true)
+					JMod.Hint(activator,self.Specs.swep)
 					if(GivenWep.Primary.Ammo=="Arrow")then
 						JMod.Hint(activator,"weapon arrows")
 					elseif(GivenWep.Primary.Ammo=="Black Powder Paper Cartridge")then

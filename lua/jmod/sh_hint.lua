@@ -1,3 +1,6 @@
+-- supported traits:
+-- Text, LangKey, IconType, Time, Followup, RepeatCount
+
 JMod.Hints = {
 	-- General
 	["wiki"] = {LangKey = "hint wiki"},
@@ -8,10 +11,11 @@ JMod.Hints = {
 	["bind cmd"] = {LangKey = "hint bind cmd"},
 	["bind walk"] = {LangKey = "hint bind walk"},
 	["unpackage"] = {LangKey = "hint unpackage", Followup = "bind walk"},
+	["double tap E"] = {LangKey = "double tap USE to activate", RepeatCount = 5},
 	
 	-- Explosives mechanics
 	["sticky"] = {LangKey = "hint sticky"},
-	["arm"] = {Text = "Hold Walk and press Use to arm", Followup = "bind walk"},
+	["arm"] = {LangKey = "hint arm", Followup = "bind walk"},
 	["trigger"] = {LangKey = "hint trigger", Followup = "bind cmd"},
 	["launch"] = {LangKey = "hint launch", Followup = "bind cmd"},
 	["bombdrop"] = {LangKey = "hint bombdrop", Followup = "bind cmd"},
@@ -80,7 +84,7 @@ JMod.Hints = {
 	["ent_jack_gmod_eznade_proximity"] = {LangKey = "hint ent_jack_gmod_eznade_proximity"},
 	["ent_jack_gmod_eznade_remote"] = {LangKey = "hint ent_jack_gmod_eznade_remote"},
 	["ent_jack_gmod_eznade_timed"] = {LangKey = "hint ent_jack_gmod_eznade_timed"},
-	
+
 	-- Misc. Mechanics
 	["toggle"] = {LangKey = "hint toggle"},
 	["destroyed"] = {LangKey = "hint destroyed"},
@@ -89,6 +93,12 @@ JMod.Hints = {
 	["blockphysgun"] = {LangKey = "hint blockphysgun"},
 	["horizontal surface"] = {LangKey = "hint horizontal surface"},
 	["work spread"] = {LangKey = "hint work spread"},
+	["double tap to arm"] = {LangKey = "hint double tap to arm", RepeatCount = 10, Time = 2},
+	["double tap to disarm"] = {LangKey = "hint double tap to disarm", RepeatCount = 10, Time = 2},
+	["nutrition filled"] = {LangKey = "hint nutrition filled", RepeatCount = 5},
+	["can not eat"] = {LangKey = "hint can not eat", RepeatCount = 5},
+	["missing supplies"] = {LangKey = "hint missing supplies", RepeatCount = 5},
+	["no alternate ammo"] = {LangKey = "hint no alternate ammo", RepeatCount = 5},
 
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {LangKey = "hint ent_jack_gmod_ezaidradio"},
@@ -98,40 +108,40 @@ JMod.Hints = {
 	["aid package"] = {LangKey = "hint aid package"},
 	["aid wait"] = {LangKey = "hint aid wait"},
 	["aid menu"] = {LangKey = "hint aid menu", Followup = "bind walk"},
-	
+
 	["ent_jack_gmod_ezfieldhospital"] = {LangKey = "hint ent_jack_gmod_ezfieldhospital"},
 	["afh enter"] = {LangKey = "hint afh enter"},
 	["afh upgrade"] = {LangKey = "hint afh upgrade"},
 	["afh supply"] = {LangKey = "hint afh supply"},
-	
+
 	["ent_jack_gmod_ezfumigator"] = {LangKey = "hint ent_jack_gmod_ezfumigator"},
 	["ent_jack_gmod_ezmbhg"] = {LangKey = "hint ent_jack_gmod_ezmbhg"},
-	
+
 	["ent_jack_gmod_ezcrate"] = {LangKey = "hint ent_jack_gmod_ezcrate"},
 	["crate"] = {LangKey = "hint crate"},
-	
+
 	["ent_jack_gmod_ezcrate_uni"] = {LangKey = "hint ent_jack_gmod_ezcrate_uni"},
 	["crate_uni"] = {LangKey = "hint crate_uni"},
-	
+
 	["ent_jack_gmod_ezsentry"] = {LangKey = "hint ent_jack_gmod_ezsentry"},
 	["sentry upgrade"] = {LangKey = "hint sentry upgrade"},
 	["sentry modify"] = {LangKey = "hint sentry modify"},
-	
+
 	["ent_jack_gmod_ezworkbench"] = {LangKey = "hint ent_jack_gmod_ezworkbench"},
 	["craft"] = {LangKey = "hint craft"},
 	["refill"] = {LangKey = "hint refill"},
-	
+
 	["ent_jack_gmod_eztoolbox"] = {LangKey = "hint ent_jack_gmod_eztoolbox"},
 	["ent_jack_gmod_ezmedkit"] = {LangKey = "hint ent_jack_gmod_ezmedkit"},
-	
+
 	["sentry friends"] = {LangKey = "hint sentry friends"},
 	-- Armor
-	["armor wear"] = {Type = "pickup", LangKey = "hint armor wear", Followup = "bind walk"},
-	["armor durability"] = {Type = "shield", LangKey = "hint armor durability"},
+	["armor wear"] = {LangKey = "hint armor wear", Followup = "bind walk"},
+	["armor durability"] = {LangKey = "hint armor durability"},
 	["armor friends"] = {LangKey = "hint armor friends"},
 	["inventory"] = {LangKey = "hint inventory"},
 	["armor weight"] = {LangKey = "hint armor weight"},
-	
+
 	["ent_jack_gmod_ezarmor_balmask"] = {LangKey = "hint ent_jack_gmod_ezbalmask"},
 	["ent_jack_gmod_ezarmor_gasmask"] = {LangKey = "hint ent_jack_gmod_ezarmor_gasmask"},
 	["ent_jack_gmod_ezarmor_nvgs"] = {LangKey = "hint ent_jack_gmod_ezarmor_nvgs"},
@@ -152,7 +162,7 @@ JMod.Hints = {
 	["ent_jack_gmod_ezantimatter"] = {LangKey = "hint ent_jack_gmod_ezantimatter"},
 	["ent_jack_gmod_ezantimatter use"] = {LangKey = "hint ent_jack_gmod_ezantimatter use"},
 	["ent_jack_gmod_ezbattery"] = {LangKey = "hint ent_jack_gmod_ezbattery"},
-	["ent_jack_gmod_ezbattery use"] = {Type = "pickup", LangKey = "hint ent_jack_gmod_ezbattery use"},
+	["ent_jack_gmod_ezbattery use"] = {LangKey = "hint ent_jack_gmod_ezbattery use"},
 	["ent_jack_gmod_ezchemicals"] = {LangKey = "hint ent_jack_gmod_ezchemicals"},
 	["ent_jack_gmod_ezexplosives"] = {LangKey = "hint ent_jack_gmod_ezexplosives"},
 	["ent_jack_gmod_ezfissilematerial"] = {LangKey = "hint ent_jack_gmod_ezfissilematerial"},
@@ -164,12 +174,12 @@ JMod.Hints = {
 	["ent_jack_gmod_eznutrients"] = {LangKey = "hint ent_jack_gmod_eznutrients"},
 	["ent_jack_gmod_eznutrients use"] = {LangKey = "hint ent_jack_gmod_eznutrients use", Followup = "bind walk"},
 	["ent_jack_gmod_ezparts"] = {LangKey = "hint ent_jack_gmod_ezparts"},
-	["ent_jack_gmod_ezparts use"] = {Type = "pickup", LangKey = "hint ent_jack_gmod_ezparts use"},
+	["ent_jack_gmod_ezparts use"] = {LangKey = "hint ent_jack_gmod_ezparts use"},
 	["ent_jack_gmod_ezpropellant"] = {LangKey = "hint ent_jack_gmod_ezpropellant"},
 	["resource manage"] = {LangKey = "hint resource manage"},
 	["oil derrick"] = {LangKey = "hint oil derrick"},
 	["ground scanner"] = {LangKey = "hint ground scanner", Time=5},
-	
+
 	-- Weapons
 	["weapon steadiness"] = {LangKey = "hint weapon steadiness"},
 	["weapon drop"] = {LangKey = "hint weapon drop"},
@@ -184,17 +194,14 @@ JMod.Hints = {
 	["weapon munitions"] = {LangKey = "hint weapon munitions"},
 	["weapon black powder paper cartridges"] = {LangKey = "hint weapon black powder paper cartridges"},
 	["weapon arrows"] = {LangKey = "hint weapon arrows"},
-	
-	--commands
-	["command jmod_debug_salvage"] = {Text="Prints out the potential resource yield from the object you're looking at."},
 
 	-- i like eggs
-	["idiot"] = {LangKey = "hint idiot", IconType=1, Time=3}
-}
-JMod.SpecificHints={
-	["wep_jack_gmod_gl"] = {LangKey = "hint wep_jack_gmod_gl"},
-	["wep_jack_gmod_mgl"] = {LangKey = "hint wep_jack_gmod_mgl"},
-	["wep_jack_gmod_rocketlauncher"] = {LangKey = "hint wep_jack_gmod_rocketlauncher"},
-	["wep_jack_gmod_mrl"] = {LangKey = "hint wep_jack_gmod_mrl"},
-	["wep_jack_gmod_crossbow"] = {LangKey = "hint wep_jack_gmod_crossbow"},
+	["idiot"] = {LangKey = "hint idiot", IconType=1, Time=2},
+
+	-- specific wepins
+	["wep_jack_gmod_gl"] = {LangKey = "hint wep_jack_gmod_gl", RepeatCount = 5},
+	["wep_jack_gmod_mgl"] = {LangKey = "hint wep_jack_gmod_mgl", RepeatCount = 5},
+	["wep_jack_gmod_rocketlauncher"] = {LangKey = "hint wep_jack_gmod_rocketlauncher", RepeatCount = 5},
+	["wep_jack_gmod_mrl"] = {LangKey = "hint wep_jack_gmod_mrl", RepeatCount = 5},
+	["wep_jack_gmod_crossbow"] = {LangKey = "hint wep_jack_gmod_crossbow", RepeatCount = 5}
 }

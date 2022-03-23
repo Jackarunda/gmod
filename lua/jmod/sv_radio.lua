@@ -293,7 +293,7 @@ local function StartDelivery(pkg,transceiver,id,bff,ply)
 	DeliveryTime = newTime or DeliveryTime
 	Pos = newPos or Pos
 
-	JMod.Hint(transceiver.Owner, "aid wait", transceiver)
+	JMod.Hint(transceiver.Owner, "aid wait")
 	Station.state=JMod.EZ_STATION_STATE_DELIVERING
 	Station.nextDeliveryTime=Time+DeliveryTime
 	Station.deliveryLocation=Pos

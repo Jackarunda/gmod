@@ -57,10 +57,10 @@ if(SERVER)then
 					ply.EZvirus.Severity=math.Clamp(ply.EZvirus.Severity-10,1,9e9)
 				end
 			else
-				ply:PrintMessage(HUD_PRINTCENTER,"too full already")
+				JMod.Hint(activator,"nutrition filled")
 			end
 		else
-			ply:PrintMessage(HUD_PRINTCENTER,"can't eat more right now")
+			JMod.Hint(activator,"can not eat")
 		end
 	end
 elseif(CLIENT)then

@@ -113,7 +113,7 @@ if(SERVER)then
 				self.EZdroppableBombArmedTime=CurTime()
 				JMod.Hint(activator, "airburst")
 			else
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to arm")
+				JMod.Hint(activator,"double tap to arm")
 			end
 			self.LastUse=Time
 		elseif(State==STATE_ARMED)then
@@ -123,7 +123,7 @@ if(SERVER)then
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,120)
 				self.EZdroppableBombArmedTime=nil
 			else
-				activator:PrintMessage(HUD_PRINTCENTER,"double tap E to disarm")
+				JMod.Hint(activator,"double tap to disarm")
 			end
 			self.LastUse=Time
 		end

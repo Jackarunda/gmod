@@ -17,46 +17,7 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.EZupgrades={
-	fixedCost={
-		[JMod.EZ_RESOURCE_TYPES.POWER]=100,
-		[JMod.EZ_RESOURCE_TYPES.AMMO]=100
-	},
-	grades={
-		[2]={
-			craftingMatMult=.25, -- mult of mats required from object's crafting recipe
-			addedMats={
-				[JMod.EZ_RESOURCE_TYPES.COPPER]=40
-			}
-		},
-		[3]={
-			craftingMatMult=.5,
-			addedMats={
-				[JMod.EZ_RESOURCE_TYPES.COPPER]=40,
-				[JMod.EZ_RESOURCE_TYPES.TITANIUM]=40
-			}
-		},
-		[4]={
-			craftingMatMult=.75,
-			addedMats={
-				[JMod.EZ_RESOURCE_TYPES.COPPER]=80,
-				[JMod.EZ_RESOURCE_TYPES.TITANIUM]=40,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100
-			}
-		},
-		[5]={
-			craftingMatMult=1,
-			addedMats={
-				[JMod.EZ_RESOURCE_TYPES.COPPER]=100,
-				[JMod.EZ_RESOURCE_TYPES.TITANIUM]=50,
-				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=150,
-				[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=5
-			}
-		}
-	}
-}
 -- config --
-
 ENT.AmmoTypes={
 	["Bullet"]={ -- Simple pew pew
 		-- default stats --
@@ -237,7 +198,8 @@ if(SERVER)then
 		self.NextWhine=0
 		self.Heat=0
 		self.UpgradeProgress={}
-		self.EZbuildCost=JMod.Config.Blueprints["EZ Sentry"][2]
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
+		PrintTable(self.UpgradeCosts)
 		---
 		self:ResetMemory()
 	end

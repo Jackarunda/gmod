@@ -11,7 +11,6 @@ ENT.Spawnable = false
 ENT.Model = "models/weapons/w_grenade.mdl"
 ENT.Material = nil
 ENT.ModelScale = nil
-ENT.Hints = {"grenade"}
 
 ENT.HardThrowStr = 500
 ENT.SoftThrowStr = 250
@@ -101,6 +100,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		local Dude=activator or activatorAgain
 		JMod.Owner(self,Dude)
+		JMod.Hint(Dude,self.ClassName)
 		local Time=CurTime()
 		if((self.ShiftAltUse)and(Dude:KeyDown(JMod.Config.AltFunctionKey))and(Dude:KeyDown(IN_SPEED)))then
 			return self:ShiftAltUse(Dude,tobool(onOff))
@@ -114,6 +114,13 @@ if(SERVER)then
 				JMod.Hint(Dude, "grenade")
 			else
 				JMod.Hint(Dude, "prime")
+			end
+			if(self.Hints)then
+				for k,v in pairs(self.Hints)do
+					timer.Simple(k,function()
+						if(IsValid(Dude))then JMod.Hint(Dude, v) end
+					end)
+				end
 			end
 			JMod.ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end

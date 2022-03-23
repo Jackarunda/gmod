@@ -536,6 +536,30 @@ function JMod.GetSalvageYield(ent)
 	end
 	return Results,"salvaging results for "..tostring(ent)..":\nphysmat: "..Mat.."\nmodel: "..Mdl.."\nspecialized: "..tostring(Specialized)
 end
+function JMod.CalculateUpgradeCosts(buildRequirements)
+	if not(buildRequirements) then return nil end
+	local Results,OrigBasic,OrigPrec,OrigAdv={},buildRequirements[JMod.EZ_RESOURCE_TYPES.BASICPARTS] or 0,buildRequirements[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] or 0,buildRequirements[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] or 0
+	Results[1]=table.FullCopy(buildRequirements)
+	Results[2]={
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=OrigBasic*.3,
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.5,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.1
+	}
+	Results[3]={
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=OrigBasic*.1,
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.7+OrigBasic*.2,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.2
+	}
+	Results[4]={
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.5+OrigBasic*.3,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.1+OrigBasic*.05
+	}
+	Results[5]={
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.3+OrigBasic*.3,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.3+OrigBasic*.1+OrigPrec*.2
+	}
+	return Results
+end
 if(SERVER)then
 	concommand.Add("jmod_debug_checksalvage",function(ply,cmd,args)
 		if not(IsValid(ply) and ply:IsSuperAdmin())then return end

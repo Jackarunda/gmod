@@ -718,7 +718,7 @@ end)
 
 concommand.Add("jacky_sandbox",function(ply,cmd,args)
 	if not(IsValid(ply) and ply:IsSuperAdmin())then return end
-	--ply:ConCommand("sv_cheats 1")
+	if not(GetConVar("sv_cheats"):GetBool())then return end
 	for k,v in pairs({
 		{"impulse 101",10},
 		"sbox_maxballoons 9e9",
@@ -751,5 +751,10 @@ concommand.Add("jacky_sandbox",function(ply,cmd,args)
 	for k,v in pairs(JMod.AmmoTable)do
 		ply:GiveAmmo(150,k)
 	end
-	ply:SetHealth(1000)
+	local Helf=ply:Health()
+	if(Helf<999)then
+		ply:SetHealth(999)
+	else
+		ply:SetHealth(Helf+1000)
+	end
 end, nil, "Sets us to Sandbox god mode thing.")

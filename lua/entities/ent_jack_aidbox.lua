@@ -6,7 +6,7 @@ ENT.Author			= "Jackarunda"
 
 ENT.Spawnable			= false
 ENT.AdminSpawnable		= false
-ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.JModPreferredCarryAngles = Angle(-90, 90, 0)
 
 if SERVER then
 	function ENT:Initialize()
@@ -250,21 +250,14 @@ if CLIENT then
 
 		self:DrawModel()
 
-		local Ang = self:GetAngles()
-		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(Pos)
-		local DetailDraw = Closeness < 18000 -- cutoff point is 200 units when the fov is 90 degrees
+		local Name=self:GetPackageName()
 
-		if DetailDraw then
-			local min, max = self:GetModelBounds()
-			local Up, Right, Forward, Name = Ang:Up(), Ang:Right(), Ang:Forward(), self:GetPackageName()
-			Ang:RotateAroundAxis(Ang:Up(), 180)
-			Ang:RotateAroundAxis(Ang:Forward(), 90)
-			Ang:RotateAroundAxis(Ang:Right(), 90)
-
-			cam.Start3D2D(Pos + Up * 18.5 + Forward * 20.6, Ang, 0.04)
-				draw.SimpleText(Name, "JMod-Stencil", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			cam.End3D2D()
-		end
+		JMod.HoloGraphicDisplay(self,Vector(20,-2,0),Angle(90,90,0),.05,300,function()
+			draw.SimpleText(Name, "JMod-Stencil", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		end)
+		JMod.HoloGraphicDisplay(self,Vector(-20,2,0),Angle(0,-90,-90),.05,300,function()
+			draw.SimpleText(Name, "JMod-Stencil", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+		end)
 	end
 
 	language.Add("ent_jack_aidbox","Aid Package")
