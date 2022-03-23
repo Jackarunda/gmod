@@ -624,7 +624,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Sentry"]={			
 				"ent_jack_gmod_ezsentry",		
 				{
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.AMMO]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50

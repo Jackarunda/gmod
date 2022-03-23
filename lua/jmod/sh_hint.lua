@@ -84,7 +84,7 @@ JMod.Hints = {
 	["ent_jack_gmod_eznade_proximity"] = {LangKey = "hint ent_jack_gmod_eznade_proximity"},
 	["ent_jack_gmod_eznade_remote"] = {LangKey = "hint ent_jack_gmod_eznade_remote"},
 	["ent_jack_gmod_eznade_timed"] = {LangKey = "hint ent_jack_gmod_eznade_timed"},
-	
+
 	-- Misc. Mechanics
 	["toggle"] = {LangKey = "hint toggle"},
 	["destroyed"] = {LangKey = "hint destroyed"},
@@ -108,32 +108,32 @@ JMod.Hints = {
 	["aid package"] = {LangKey = "hint aid package"},
 	["aid wait"] = {LangKey = "hint aid wait"},
 	["aid menu"] = {LangKey = "hint aid menu", Followup = "bind walk"},
-	
+
 	["ent_jack_gmod_ezfieldhospital"] = {LangKey = "hint ent_jack_gmod_ezfieldhospital"},
 	["afh enter"] = {LangKey = "hint afh enter"},
 	["afh upgrade"] = {LangKey = "hint afh upgrade"},
 	["afh supply"] = {LangKey = "hint afh supply"},
-	
+
 	["ent_jack_gmod_ezfumigator"] = {LangKey = "hint ent_jack_gmod_ezfumigator"},
 	["ent_jack_gmod_ezmbhg"] = {LangKey = "hint ent_jack_gmod_ezmbhg"},
-	
+
 	["ent_jack_gmod_ezcrate"] = {LangKey = "hint ent_jack_gmod_ezcrate"},
 	["crate"] = {LangKey = "hint crate"},
-	
+
 	["ent_jack_gmod_ezcrate_uni"] = {LangKey = "hint ent_jack_gmod_ezcrate_uni"},
 	["crate_uni"] = {LangKey = "hint crate_uni"},
-	
+
 	["ent_jack_gmod_ezsentry"] = {LangKey = "hint ent_jack_gmod_ezsentry"},
 	["sentry upgrade"] = {LangKey = "hint sentry upgrade"},
 	["sentry modify"] = {LangKey = "hint sentry modify"},
-	
+
 	["ent_jack_gmod_ezworkbench"] = {LangKey = "hint ent_jack_gmod_ezworkbench"},
 	["craft"] = {LangKey = "hint craft"},
 	["refill"] = {LangKey = "hint refill"},
-	
+
 	["ent_jack_gmod_eztoolbox"] = {LangKey = "hint ent_jack_gmod_eztoolbox"},
 	["ent_jack_gmod_ezmedkit"] = {LangKey = "hint ent_jack_gmod_ezmedkit"},
-	
+
 	["sentry friends"] = {LangKey = "hint sentry friends"},
 	-- Armor
 	["armor wear"] = {LangKey = "hint armor wear", Followup = "bind walk"},
@@ -141,7 +141,7 @@ JMod.Hints = {
 	["armor friends"] = {LangKey = "hint armor friends"},
 	["inventory"] = {LangKey = "hint inventory"},
 	["armor weight"] = {LangKey = "hint armor weight"},
-	
+
 	["ent_jack_gmod_ezarmor_balmask"] = {LangKey = "hint ent_jack_gmod_ezbalmask"},
 	["ent_jack_gmod_ezarmor_gasmask"] = {LangKey = "hint ent_jack_gmod_ezarmor_gasmask"},
 	["ent_jack_gmod_ezarmor_nvgs"] = {LangKey = "hint ent_jack_gmod_ezarmor_nvgs"},
@@ -179,7 +179,7 @@ JMod.Hints = {
 	["resource manage"] = {LangKey = "hint resource manage"},
 	["oil derrick"] = {LangKey = "hint oil derrick"},
 	["ground scanner"] = {LangKey = "hint ground scanner", Time=5},
-	
+
 	-- Weapons
 	["weapon steadiness"] = {LangKey = "hint weapon steadiness"},
 	["weapon drop"] = {LangKey = "hint weapon drop"},
