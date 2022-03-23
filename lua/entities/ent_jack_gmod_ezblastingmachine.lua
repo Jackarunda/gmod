@@ -83,7 +83,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Initialize()
 		--self:SetBodygroup(2,1)
-		self.Mdl=ClientsideModel("models/grenades/satchel_charge_plunger.mdl")
+		self.Mdl=ClientsideModel("models/jmodels/explosives/grenades/satchelcharge/satchel_charge_plunger.mdl")
 		self.Mdl:SetModelScale(3,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
