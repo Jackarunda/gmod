@@ -63,6 +63,7 @@ if(SERVER)then
 		self:SetElectricity(self.MaxElectricity)
 		self.Durability=self.MaxDurability
 		self:SetState(JMod.EZ_STATE_OFF)
+		-- TODO: make upgradable
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")

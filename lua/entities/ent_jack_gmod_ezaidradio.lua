@@ -55,9 +55,6 @@ if(SERVER)then
 		self.HaveCheckedForSky=false
 		self.ConnectionAttempts=0
 		self.ConnectionlessThinks=0
-		if(JMod.Config.Blueprints["EZ Supply Radio"])then
-			self.EZbuildCost=JMod.Config.Blueprints["EZ Supply Radio"][2]
-		end
 		---
 		local Path="/npc/combine_soldier/vo/"
 		local Files,Folders=file.Find("sound"..Path.."*.wav","GAME")

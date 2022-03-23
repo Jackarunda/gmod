@@ -558,6 +558,11 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.3+OrigBasic*.3,
 		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.3+OrigBasic*.1+OrigPrec*.2
 	}
+	for grade,mats in pairs(Results)do
+		for mat,amt in pairs(mats)do
+			if(amt<=0)then mats[mat]=nil end
+		end
+	end
 	return Results
 end
 if(SERVER)then

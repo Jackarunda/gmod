@@ -40,6 +40,7 @@ if(SERVER)then
 		self:SetElectricity(200)
 		self:SetState(STATE_OFF)
 		self.Durability=300
+		-- TODO: make upgradable
 	end
 	function ENT:TryPlant()
 		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)

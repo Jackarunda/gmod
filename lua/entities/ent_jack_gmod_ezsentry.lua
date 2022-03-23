@@ -197,9 +197,10 @@ if(SERVER)then
 		self.Durability=self.MaxDurability
 		self.NextWhine=0
 		self.Heat=0
+		---
+		self.EZupgradable=true
 		self.UpgradeProgress={}
 		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
-		PrintTable(self.UpgradeCosts)
 		---
 		self:ResetMemory()
 	end
