@@ -284,12 +284,19 @@ local function GetTimeString(seconds)
 	return Result
 end
 
+--[[
+hook.Add("JMod_RadioDelivery","jackatest",function(owner,radio,package,tiem,pos)
+	return 4,pos
+end)
+--]]
+
 local function StartDelivery(pkg,transceiver,id,bff,ply)
 	local Station=JMod.EZ_RADIO_STATIONS[id]
 	local Time=CurTime()
 	local DeliveryTime,Pos=math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),ply:GetPos()
 	
-	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, time, pos)
+	print("bepis",transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
+	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
 	DeliveryTime = newTime or DeliveryTime
 	Pos = newPos or Pos
 

@@ -199,7 +199,7 @@ if SERVER then
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos())
 				Foof:SetNormal(self:GetUp())
-				Foof:SetAngles(Angle(255,0,0))
+				Foof:SetAngles(Angle(100,255,100))
 				Foof:SetStart(self:GetVelocity())
 				util.Effect("eff_jack_gmod_aidboxsignal", Foof, true, true)
 				self:NextThink(Time+.1)
