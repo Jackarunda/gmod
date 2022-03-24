@@ -8,7 +8,7 @@ ENT.Spawnable = true
 
 ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
 --ENT.ModelScale = 1.5
-ENT.SpoonModel = "models/grenades/incendiary_grenade_spoon.mdl"
+ENT.SpoonModel = "models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 if(SERVER)then
 
