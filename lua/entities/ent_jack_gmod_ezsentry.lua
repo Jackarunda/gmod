@@ -9,7 +9,7 @@ ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
-ENT.SpawnHeight=20
+ENT.SpawnHeight=35
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.AMMO,
     JMod.EZ_RESOURCE_TYPES.POWER,
@@ -203,6 +203,7 @@ if(SERVER)then
 		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
 		---
 		self:ResetMemory()
+		self:CreateNPCTarget()
 	end
 	function ENT:ResetMemory()
 		self.NextFire=0
@@ -221,6 +222,24 @@ if(SERVER)then
 			NextSearchChange=0, -- time to move on to the next phase of searching
 			State=0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
 		}
+	end
+	function ENT:CreateNPCTarget()
+		if not(IsValid(self.NPCTarget))then
+			self.NPCTarget=ents.Create("npc_bullseye")
+			self.NPCTarget:SetPos(self:GetPos()+self:GetUp()*50)
+			self.NPCTarget:SetParent(self)
+			self.NPCTarget:Spawn()
+			self.NPCTarget:Activate()
+		end
+	end
+	function ENT:RemoveNPCTarget()
+		if(IsValid(self.NPCTarget))then self.NPCTarget:Remove() end
+	end
+	function ENT:MakeHostileToMe(npc)
+		if not(IsValid(self.NPCTarget))then self:CreateNPCTarget() end
+		if(npc.AddEntityRelationship)then
+			npc:AddEntityRelationship(self.NPCTarget,D_HT,90)
+		end
 	end
 	function ENT:AddVisualRecoil(amt)
 		net.Start("JMod_VisualGunRecoil")
@@ -246,15 +265,57 @@ if(SERVER)then
 		end
 		return self.Armor
 	end
-	function ENT:OnTakeDamage(dmginfo) -- todo: less damage from front
+	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
 			self:TakePhysicsDamage(dmginfo)
 			local Armor=self:DetermineDmgResistance(dmginfo)
 			if(Armor>=1000)then return end
-			self.Durability=self.Durability-dmginfo:GetDamage()/Armor
+			local Damage=dmginfo:GetDamage()/Armor
+			---
+			local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
+			local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
+			local AimAng=self:GetAngles()
+			AimAng:RotateAroundAxis(Right,self:GetAimPitch())
+			AimAng:RotateAroundAxis(Up,self:GetAimYaw())
+			local AimVec=AimAng:Forward()
+			local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
+			if(AttackAngle>=60)then
+				Damage=Damage*.15
+				if(math.random(1,2)==1)then
+					local SelfPos=self:GetPos()
+					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",SelfPos+VectorRand(),70,math.random(80,120))
+					local effectdata=EffectData()
+					effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
+					effectdata:SetNormal(VectorRand())
+					effectdata:SetMagnitude(2) --amount and shoot hardness
+					effectdata:SetScale(1) --length of strands
+					effectdata:SetRadius(2) --thickness of strands
+					util.Effect("Sparks",effectdata,true,true)
+					if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+						local RicDir=VectorRand()
+						RicDir.z=RicDir.z/2
+						RicDir:Normalize()
+						self:FireBullets({
+							Src=SelfPos,
+							Dir=RicDir,
+							Tracer=1,
+							Num=1,
+							Spread=Vector(0,0,0),
+							Damage=10,
+							Force=50,
+							Attacker=dmginfo:GetAttacker() or self
+						})
+					end
+				end
+			end
+			---
+			self.Durability=self.Durability-Damage
 			if(self.Durability<=0)then self:Break(dmginfo) end
 			if(self.Durability<=-100)then self:Destroy(dmginfo) end
 		end
+	end
+	function ENT:OnBreak()
+		self:RemoveNPCTarget()
 	end
 	function ENT:Use(activator)
 		if(activator:IsPlayer())then
@@ -275,6 +336,10 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav",65,100)
 		self:ResetMemory()
+		self:RemoveNPCTarget()
+	end
+	function ENT:OnRemove()
+		self:RemoveNPCTarget()
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
@@ -287,6 +352,7 @@ if(SERVER)then
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav",65,100)
 		self:ResetMemory()
+		self:CreateNPCTarget()
 	end
 	function ENT:DetermineTargetAimPoint(ent)
 		if not(IsValid(ent))then return nil end
@@ -326,13 +392,14 @@ if(SERVER)then
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
-			filter={self,ent},
+			filter={self,ent,self.NPCTarget},
 			mask=MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
 	end
 	function ENT:CanEngage(ent)
 		if not(IsValid(ent))then return false end
+		if(ent==self.NPCTarget)then return false end
 		return JMod.ShouldAttack(self,ent) and self:CanSee(ent)
 	end
 	function ENT:TryFindTarget()
@@ -367,6 +434,7 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav",65,100)
+		self:MakeHostileToMe(target)
 		JMod.Hint(self.Owner, "sentry upgrade")
 	end
 	function ENT:Disengage()
@@ -894,7 +962,6 @@ elseif(CLIENT)then
 		end
 		JMod.RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*(1+self.VisualRecoil)-AimRight*.5,AimAngle)
 		self.VisualRecoil=math.Clamp(self.VisualRecoil-FT*4,0,5)
-		print(self.VisualRecoil)
 		---
 		local ShieldAngle=AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(),130)
