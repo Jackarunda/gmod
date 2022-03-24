@@ -213,12 +213,14 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/mk82_gbu.mdl")
-		self.Mdl:SetModelScale(.9, 0)
-		self.Mdl:SetPos(self:GetPos())
-		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
-		self.Guided = false
+		if (self.ClientMdl) then
+			self.Mdl = ClientsideModel(self.ClientMdl)
+			self.Mdl:SetModelScale(.9, 0)
+			self.Mdl:SetPos(self:GetPos())
+			self.Mdl:SetParent(self)
+			self.Mdl:SetNoDraw(true)
+			self.Guided = false
+		end
 	end
 	function ENT:Think()
 		if((not(self.Guided))and(self:GetGuided()))then
