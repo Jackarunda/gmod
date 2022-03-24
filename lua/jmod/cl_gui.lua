@@ -61,6 +61,13 @@ end
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png")
 }
+local RankIcons={
+	Material("ez_rank_icons/grade_1.png"),
+	Material("ez_rank_icons/grade_2.png"),
+	Material("ez_rank_icons/grade_3.png"),
+	Material("ez_rank_icons/grade_4.png"),
+	Material("ez_rank_icons/grade_5.png")
+}
 function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay,brite)
     font=font or "JMod-Stencil"
     opacity=opacity or 150
@@ -79,7 +86,22 @@ function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opac
         draw.SimpleText(UnitText,font,x+siz/2+10,y,Col,TEXT_ALIGN_LEFT,TEXT_ALIGN_CENTER)
     end
 end
-function JMod.HoloGraphicDisplay(ent,relPos,relAng,scale,renderDist,renderFunc)
+function JMod.StandardRankDisplay(rank,x,y,siz,opacity)
+    font=font or "JMod-Stencil"
+    opacity=opacity or 150
+    surface.SetDrawColor(255,255,255,opacity)
+    surface.SetMaterial(RankIcons[rank])
+    surface.DrawTexturedRect(x-siz/2,y-siz/2,siz,siz)
+end
+function JMod.HoloGraphicDisplay(ent,relPos,relAng,scale,renderDist,renderFunc,absolutePositions)
+	if(absolutePositions)then
+		if(EyePos():Distance(relPos)<renderDist)then
+			cam.Start3D2D(relPos,relAng,scale)
+			renderFunc()
+			cam.End3D2D()
+		end
+		return
+	end
 	local Ang,Pos=Angle(0,0,0),Vector(0,0,0)
 	if(IsValid(ent) and ent.GetAngles)then
 		Ang=ent:GetAngles()

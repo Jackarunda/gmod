@@ -21,6 +21,7 @@ util.AddNetworkString("JMod_SFX")
 util.AddNetworkString("JMod_Ravebreak")
 util.AddNetworkString("JMod_NaturalResources")
 util.AddNetworkString("JMod_ResourceScanner")
+util.AddNetworkString("JMod_VisualGunRecoil")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
 
 net.Receive("JMod_Friends",function(length,ply)
