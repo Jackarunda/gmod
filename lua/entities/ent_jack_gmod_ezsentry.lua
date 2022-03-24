@@ -421,6 +421,7 @@ if(SERVER)then
 				local DistA,DistB=a:GetPos():Distance(SelfPos),b:GetPos():Distance(SelfPos)
 				return DistA<DistB
 			end)
+			for k,v in pairs(PotentialTargets)do self:MakeHostileToMe(v) end
 			return PotentialTargets[1]
 		end
 		return nil
@@ -434,7 +435,6 @@ if(SERVER)then
 		self.SearchData.State=0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav",65,100)
-		self:MakeHostileToMe(target)
 		JMod.Hint(self.Owner, "sentry upgrade")
 	end
 	function ENT:Disengage()
