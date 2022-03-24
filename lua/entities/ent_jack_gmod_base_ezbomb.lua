@@ -3,8 +3,8 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Bomb"
+ENT.Information = "The base for all of the other ez bombs"
+ENT.PrintName = "EZ Base Bomb"
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ---
@@ -13,7 +13,7 @@ ENT.Material = nil
 ENT.ModelScale = 0.9
 ENT.Mass = 10
 ---
-ENT.ClientMdl = ""
+ENT.ClientMdl = nil
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
