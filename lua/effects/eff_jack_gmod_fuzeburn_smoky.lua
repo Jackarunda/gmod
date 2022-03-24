@@ -54,7 +54,7 @@ function EFFECT:Init(data)
 			end
 		end
 		for i=1,2*Scl do
-			local ParticlePos=Pos+Dir
+			local ParticlePos=Pos+Dir+VectorRand()*3
 			local particle=emitter:Add("particle/smokestack",ParticlePos)
 			particle:SetVelocity(Vector(0,0,math.random(1,200))+VectorRand()*30)
 			particle:SetAirResistance(150)
