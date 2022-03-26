@@ -650,7 +650,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Supply Radio"]={			
 				"ent_jack_gmod_ezaidradio",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25	
 				},
