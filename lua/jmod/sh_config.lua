@@ -470,8 +470,8 @@ function JMod.InitGlobalConfig(forceNew)
                 "ent_jack_gmod_ezfieldhospital",
                 {
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
-					--[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
-					--[JMod.EZ_RESOURCE_TYPES.PLASTIC]=100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=100,
                     [JMod.EZ_RESOURCE_TYPES.POWER]=100,
                     [JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
@@ -694,7 +694,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Workbench"]={			
 				"ent_jack_gmod_ezworkbench",		
 				{	
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=500,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=200,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100
