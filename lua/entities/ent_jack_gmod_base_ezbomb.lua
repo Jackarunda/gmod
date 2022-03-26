@@ -197,9 +197,9 @@ if(SERVER)then
 		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
 		if (DetType == "airburst") then
 			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-				self.FreefallTicks=self.FreefallTicks+1
-				if(self.FreefallTicks>=10)then
-					local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*1500,self)
+				self.FreefallTicks = self.FreefallTicks + 1
+				if(self.FreefallTicks >= 10)then
+					local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*1500, self)
 					if(Tr.Hit)then self:Detonate() end
 				end
 			else
