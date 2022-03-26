@@ -469,7 +469,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Automated Field Hospital"]={
                 "ent_jack_gmod_ezfieldhospital",
                 {
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
+					--[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
+					--[JMod.EZ_RESOURCE_TYPES.PLASTIC]=100,
                     [JMod.EZ_RESOURCE_TYPES.POWER]=100,
                     [JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
