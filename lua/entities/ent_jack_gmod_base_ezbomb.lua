@@ -17,6 +17,8 @@ ENT.ClientMdl = nil
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
+ENT.Airburst = false
+ENT.AirburstHeight = 0
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -62,8 +64,10 @@ if(SERVER)then
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Detonate" and value > 0) then
 			self:Detonate()
-		elseif iname == "Arm" and value > 0 then
+		elseif (iname == "Arm" and value > 0) then
 			self:SetState(STATE_ARMED)
+		elseif (iname == "Arm" and value = 0) then
+			self:SetState(STATE_OFF)
 		end
 	end
 	function ENT:PhysicsCollide(data, physobj)
@@ -184,11 +188,24 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
-		if istable(WireLib) then
+		if (istable(WireLib)) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+			if (self.EZguidable) then
+				WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+			end
 		end
 		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
+		if (Airburst == true) then
+			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>AirburstHeight)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
+				self.FreefallTicks=self.FreefallTicks+1
+				if(self.FreefallTicks>=10)then
+					local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*1500,self)
+					if(Tr.Hit)then self:Detonate() end
+				end
+			else
+				self.FreefallTicks=0
+			end
+		end
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
 				--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then

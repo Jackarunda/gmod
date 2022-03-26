@@ -189,5 +189,5 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezclusterbomb","EZ Cluster Bomb")
+	language.Add("ent_jack_gmod_ezblubomb","EZ BLU 108")
 end
