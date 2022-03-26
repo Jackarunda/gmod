@@ -17,8 +17,8 @@ ENT.ClientMdl = nil
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
-ENT.Airburst = false
-ENT.AirburstHeight = 0
+ENT.DetType = "impact"
+ENT.DetDistance = 0
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -195,8 +195,8 @@ if(SERVER)then
 			end
 		end
 		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
-		if (Airburst == true) then
-			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>AirburstHeight)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
+		if (DetType == "airburst") then
+			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 				self.FreefallTicks=self.FreefallTicks+1
 				if(self.FreefallTicks>=10)then
 					local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*1500,self)
