@@ -119,7 +119,7 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^1.2 end
-	self.MaxAmmo = math.Round(self.MaxAmmo,-2) + 1 -- why must i have to add one to get it even?! -titanicjames
+	self.MaxAmmo = math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack? - titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10

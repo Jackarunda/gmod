@@ -280,7 +280,8 @@ function SWEP:PrimaryAttack()
 			else
 				local Grade=Ent:GetGrade()
 				if(Grade<5)then
-					local UpgradeRate=JMod.Config.ToolKitUpgradeMult*1
+					local WorkSpreadMult=JMod.CalcWorkSpreadMult(Ent,Pos)
+					local UpgradeRate=JMod.Config.ToolKitUpgradeMult*1*math.Round(WorkSpreadMult)
 					local RequiredMats=Ent.UpgradeCosts[Grade+1]
 					for resourceType,requiredAmt in pairs(RequiredMats)do
 						local CurAmt=Ent.UpgradeProgress[resourceType] or 0
