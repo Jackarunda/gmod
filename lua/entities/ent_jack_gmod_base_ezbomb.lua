@@ -17,7 +17,7 @@ ENT.ClientMdl = "models/jmod/mk82_gbu.mdl"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
-ENT.DetType = "impact"
+ENT.DetType = "airburst"
 ENT.DetDistance = 0
 ENT.ExplosionPower = 150
 ---
@@ -44,7 +44,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x2x025.mdl")
+		self.Entity:SetModel(self.Model)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -198,7 +198,7 @@ if(SERVER)then
 			end
 		end
 		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
-		if (DetType == "airburst") then
+		if (self.DetType == "airburst") then
 			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>self.DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 				self.FreefallTicks = self.FreefallTicks + 1
 				if(self.FreefallTicks >= 10)then
@@ -235,7 +235,7 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		if (self.ClientMdl) then
 			self.Mdl = ClientsideModel(self.ClientMdl)
-			self.Mdl:SetModelScale(.9, 0)
+			self.Mdl:SetModelScale(self.ModelScale, 0)
 			self.Mdl:SetPos(self:GetPos())
 			self.Mdl:SetParent(self)
 			self.Mdl:SetNoDraw(true)
@@ -243,9 +243,11 @@ elseif(CLIENT)then
 		end
 	end
 	function ENT:Think()
-		if((not(self.Guided))and(self:GetGuided()))then
-			self.Guided = true
-			self.ClientMdl:SetBodygroup(0, 1)
+		if (self.EZguidable) then
+			if((not(self.Guided))and(self:GetGuided()))then
+				self.Guided = true
+				self.ClientMdl:SetBodygroup(0, 1)
+			end
 		end
 	end
 	function ENT:Draw()
