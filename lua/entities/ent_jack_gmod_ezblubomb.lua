@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Cluster Bomb"
+ENT.PrintName="EZ AVSD"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -141,14 +141,14 @@ if(SERVER)then
 		local Vel,Pos=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter())
 		---
 		timer.Simple(0,function()
-			for i=1,50 do
+			for i=1,32 do
 				local Bomblet=ents.Create("ent_jack_gmod_ezslam")
 				JMod.Owner(Bomblet, Att)
 				Bomblet:SetPos(Pos+VectorRand()*math.Rand(1,50))
 				Bomblet:Spawn()
 				Bomblet:Activate()
 				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.Rand(10,1500)+Vector(0,0,math.random(1,100)))
-				Bomblet:SetState(1)
+				timer.Simple(1, function() if(Bomblet) then Bomblet:Detonate() end end)
 			end
 		end)
 		---
@@ -169,7 +169,7 @@ if(SERVER)then
 		if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 			self.FreefallTicks=self.FreefallTicks+1
 			if(self.FreefallTicks>=10)then
-				local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*1500,self)
+				local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*3000,self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else

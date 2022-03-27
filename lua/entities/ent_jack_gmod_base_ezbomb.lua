@@ -5,25 +5,28 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "The base for all of the other ez bombs"
 ENT.PrintName = "EZ Base Bomb"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.Model = "models/hunter/blocks/cube025x2x025.mdl"
 ENT.Material = nil
 ENT.ModelScale = 0.9
-ENT.Mass = 10
+ENT.Mass = 150
 ---
-ENT.ClientMdl = nil
+ENT.ClientMdl = "models/jmod/mk82_gbu.mdl"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
 ENT.DetType = "impact"
 ENT.DetDistance = 0
+ENT.SplodePwr = 150
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Bool", 0, "Guided")
+	if (self.EZguidable) then
+		self:NetworkVar("Bool", 0, "Guided")
+	end
 end
 ---
 if(SERVER)then
@@ -49,7 +52,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
+			self:GetPhysicsObject():SetMass(self.Mass)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -66,7 +69,7 @@ if(SERVER)then
 			self:Detonate()
 		elseif (iname == "Arm" and value > 0) then
 			self:SetState(STATE_ARMED)
-		elseif (iname == "Arm" and value = 0) then
+		elseif (iname == "Arm" and value == 0) then
 			self:SetState(STATE_OFF)
 		end
 	end
@@ -141,8 +144,8 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld()
-		JMod.Sploom(Att, SelfPos, 150)
+		local SelfPos, Att, Mag = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld(), self.SplodePwr
+		JMod.Sploom(Att, SelfPos, Mag)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
 		local Eff = "500lb_ground"
@@ -242,16 +245,18 @@ elseif(CLIENT)then
 	function ENT:Think()
 		if((not(self.Guided))and(self:GetGuided()))then
 			self.Guided = true
-			self.Mdl:SetBodygroup(0, 1)
+			self.ClientMdl:SetBodygroup(0, 1)
 		end
 	end
 	function ENT:Draw()
-		local Pos, Ang = self:GetPos(), self:GetAngles()
-		Ang:RotateAroundAxis(Ang:Up(), 90)
-		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Up() * 3-Ang:Right() * 6)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		if (self.ClientMdl) then
+			local Pos, Ang = self:GetPos(), self:GetAngles()
+			Ang:RotateAroundAxis(Ang:Up(), 90)
+			--self:DrawModel()
+			self.Mdl:SetRenderOrigin(Pos-Ang:Up() * 3-Ang:Right() * 6)
+			self.Mdl:SetRenderAngles(Ang)
+			self.Mdl:DrawModel()
+		else return end
 	end
 	language.Add("ent_jack_gmod_base_ezbomb","EZ Bomb Base")
 end
