@@ -20,6 +20,7 @@ ENT.EZguidable = true
 ENT.DetType = "airburst"
 ENT.DetDistance = 0
 ENT.ExplosionPower = 150
+ENT.DragMultiplier = 4
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -126,8 +127,8 @@ if(SERVER)then
 				self.EZdroppableBombArmedTime = CurTime()
 				if (self.DetType == "impact") then
 					JMod.Hint(activator, "impactdet")
-				elseif (self.DetType == "airburst")
-					Jmod.Hint(activator, "airburst")
+				--elseif (self.DetType == "airburst") then
+					--Jmod.Hint(activator, "airburst")
 				end
 			else
 				JMod.Hint(activator,"double tap to arm")
@@ -231,8 +232,9 @@ if(SERVER)then
 				--end
 			--end
 		--end
-		JMod.AeroDrag(self, -self:GetRight(), 4)
+		JMod.AeroDrag(self, -self:GetRight(), self.DragMultiplier)
 		self:NextThink(CurTime() + .1)
+		if (self:CustomThink()) then self:CustomThink() end
 		return true
 	end
 elseif(CLIENT)then
