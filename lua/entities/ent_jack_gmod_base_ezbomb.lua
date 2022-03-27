@@ -19,7 +19,7 @@ ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
 ENT.DetType = "impact"
 ENT.DetDistance = 0
-ENT.SplodePwr = 150
+ENT.ExplosionPower = 150
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -144,7 +144,7 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded = true
-		local SelfPos, Att, Mag = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld(), self.SplodePwr
+		local SelfPos, Att, Mag = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld(), self.ExplosionPower
 		JMod.Sploom(Att, SelfPos, Mag)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
@@ -199,7 +199,7 @@ if(SERVER)then
 		end
 		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
 		if (DetType == "airburst") then
-			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
+			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>self.DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 				self.FreefallTicks = self.FreefallTicks + 1
 				if(self.FreefallTicks >= 10)then
 					local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*1500, self)
