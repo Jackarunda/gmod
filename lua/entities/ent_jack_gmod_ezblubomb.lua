@@ -138,16 +138,16 @@ if(SERVER)then
 		local SelfPos,Att=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld()
 		JMod.Sploom(Att,SelfPos,100)
 		---
-		local Vel,Pos=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter())
+		local Vel, Pos = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter())
 		---
 		timer.Simple(0,function()
-			for i=1,32 do
-				local Bomblet=ents.Create("ent_jack_gmod_ezslam")
+			for i = 1, 4 do
+				local Bomblet = ents.Create("ent_jack_gmod_blusub")
 				JMod.Owner(Bomblet, Att)
-				Bomblet:SetPos(Pos+VectorRand()*math.Rand(1,50))
+				Bomblet:SetPos(Pos + VectorRand()*math.Rand(1, 50))
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.Rand(10,1500)+Vector(0,0,math.random(1,100)))
+				Bomblet:GetPhysicsObject():SetVelocity(Vel + VectorRand()*math.Rand(10, 1500)+Vector(0, 0, math.random(1, 100)))
 				timer.Simple(1, function() if(Bomblet) then Bomblet:Detonate() end end)
 			end
 		end)
