@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "The base for all of the other ez bombs"
 ENT.PrintName = "EZ Base Bomb"
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.AdminSpawnable = true
 ---
 ENT.Model = "models/hunter/blocks/cube025x2x025.mdl"
@@ -121,9 +121,9 @@ if(SERVER)then
 		
 		if(State == STATE_OFF)then
 			JMod.Owner(self, activator)
-			if(Time - self.LastUse<.2)then
+			if(Time - self.LastUse < 0.2)then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,110)
+				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 110)
 				self.EZdroppableBombArmedTime = CurTime()
 				if (self.DetType == "impact") then
 					JMod.Hint(activator, "impactdet")
@@ -138,7 +138,7 @@ if(SERVER)then
 			JMod.Owner(self,activator)
 			if(Time - self.LastUse < .2)then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,110)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 110)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
@@ -187,7 +187,7 @@ if(SERVER)then
 		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
 		---
 		self:Remove()
-		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
+		timer.Simple(.1,function() ParticleEffect(Eff, SelfPos, Angle(0,0,0)) end)
 	end
 	function ENT:OnRemove()
 		--
@@ -234,7 +234,10 @@ if(SERVER)then
 		--end
 		JMod.AeroDrag(self, -self:GetRight(), self.DragMultiplier)
 		self:NextThink(CurTime() + .1)
-		if (self:CustomThink()) then self:CustomThink() end
+		if (self:CustomThink() == true) then self:CustomThink() end
+		return true
+	end
+	function ENT:CustomThink() 
 		return true
 	end
 elseif(CLIENT)then
