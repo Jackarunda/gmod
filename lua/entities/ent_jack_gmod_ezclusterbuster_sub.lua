@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "The smart skeet submunition for the BLU 108"
-ENT.PrintName = "BLU 108/B submunition"
+ENT.PrintName = "Cluster Buster submunition"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -88,7 +88,7 @@ if(SERVER)then
 					timer.Simple(3,function()
 						if(IsValid(self))then
 							if(self:GetState() == JMod.EZ_STATE_ARMING)then
-								local pos = self:GetPos() + Vector(0, 0, 100)
+								local pos = self:GetPos() + Vector(0, 0, 20)
 								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
 								self.BeamFrac = trace.Fraction
 								self:SetState(JMod.EZ_STATE_ARMED)
@@ -139,12 +139,6 @@ if(SERVER)then
 		timer.Simple(delay or 0,function()
 			if(IsValid(self))then
 				local SelfPos = self:GetPos()-self:GetUp()
-				if(IsValid(self.AttachedBomb))then
-					self.AttachedBomb:EZdetonateOverride(self)
-					JMod.Sploom(self.Owner, SelfPos,3)
-					self:Remove()
-					return
-				end
 				JMod.Sploom(self.Owner, SelfPos, math.random(50,80))
 				util.ScreenShake(SelfPos, 99999, 99999,.3, 500)
 				local Dir=(self:GetUp()+VectorRand()*.01):GetNormalized()
@@ -157,9 +151,9 @@ if(SERVER)then
 		local Time = CurTime()
 		local state = self:GetState()
 		if(state == JMod.EZ_STATE_ARMED)then
-			local pos = self:GetPos() + Vector(0, 0, 100)
+			local pos = self:GetPos() + Vector(0, 0, 20)
 			local trace = util.QuickTrace(pos, self:GetUp()*1000, self)
-			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then
+			if((math.abs(self.BeamFrac - trace.Fraction) >= .001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then
 				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
 					self:Detonate()
 				else
@@ -179,10 +173,25 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--
+		self.Scanner = JMod.MakeModel("models/maxofs2d/lamp_flashlight.mdl")
 	end
 	function ENT:Draw()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+
+		local BasePos = SelfPos + Up * 60
+		local Obscured = util.TraceLine({start = EyePos(),endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
+		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
+		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		if(Obscured)then DetailDraw = false end -- if obscured, at least disable details
+		if(self:GetState() < 0)then DetailDraw = false end
+		--
 		self:DrawModel()
+		--
+		if(DetailDraw)then
+			local ScannerAng = SelfAng:GetCopy()
+			JMod.RenderModel(self.Scanner, BasePos, ScannerAng)
+		end
 	end
-	language.Add("ent_jack_gmod_blusub","EZ Tank Buster")
+	language.Add("ent_jack_gmod_blusub","EZ Cluster Buster")
 end
