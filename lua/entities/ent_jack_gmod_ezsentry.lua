@@ -9,7 +9,7 @@ ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
-ENT.SpawnHeight=20
+ENT.SpawnHeight=35
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.AMMO,
     JMod.EZ_RESOURCE_TYPES.POWER,
@@ -118,7 +118,8 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade] end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^1.2 end
+	self.MaxAmmo = math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack? - titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10
@@ -203,6 +204,7 @@ if(SERVER)then
 		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
 		---
 		self:ResetMemory()
+		self:CreateNPCTarget()
 	end
 	function ENT:ResetMemory()
 		self.NextFire=0
@@ -222,6 +224,30 @@ if(SERVER)then
 			State=0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
 		}
 	end
+	function ENT:CreateNPCTarget()
+		if not(IsValid(self.NPCTarget))then
+			self.NPCTarget=ents.Create("npc_bullseye")
+			self.NPCTarget:SetPos(self:GetPos()+self:GetUp()*50)
+			self.NPCTarget:SetParent(self)
+			self.NPCTarget:Spawn()
+			self.NPCTarget:Activate()
+		end
+	end
+	function ENT:RemoveNPCTarget()
+		if(IsValid(self.NPCTarget))then self.NPCTarget:Remove() end
+	end
+	function ENT:MakeHostileToMe(npc)
+		if not(IsValid(self.NPCTarget))then self:CreateNPCTarget() end
+		if(npc.AddEntityRelationship)then
+			npc:AddEntityRelationship(self.NPCTarget,D_HT,90)
+		end
+	end
+	function ENT:AddVisualRecoil(amt)
+		net.Start("JMod_VisualGunRecoil")
+		net.WriteEntity(self)
+		net.WriteFloat(amt)
+		net.Broadcast()
+	end
 	function ENT:ConsumeElectricity(amt)
 		amt=(amt or .04)/self.Efficiency
 		if(self:GetAmmoType()=="Pulse Laser")then
@@ -240,15 +266,57 @@ if(SERVER)then
 		end
 		return self.Armor
 	end
-	function ENT:OnTakeDamage(dmginfo) -- todo: less damage from front
+	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
 			self:TakePhysicsDamage(dmginfo)
 			local Armor=self:DetermineDmgResistance(dmginfo)
 			if(Armor>=1000)then return end
-			self.Durability=self.Durability-dmginfo:GetDamage()/Armor
+			local Damage=dmginfo:GetDamage()/Armor
+			---
+			local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
+			local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
+			local AimAng=self:GetAngles()
+			AimAng:RotateAroundAxis(Right,self:GetAimPitch())
+			AimAng:RotateAroundAxis(Up,self:GetAimYaw())
+			local AimVec=AimAng:Forward()
+			local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
+			if(AttackAngle>=60)then
+				Damage=Damage*.15
+				if(math.random(1,2)==1)then
+					local SelfPos=self:GetPos()
+					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",SelfPos+VectorRand(),70,math.random(80,120))
+					local effectdata=EffectData()
+					effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
+					effectdata:SetNormal(VectorRand())
+					effectdata:SetMagnitude(2) --amount and shoot hardness
+					effectdata:SetScale(1) --length of strands
+					effectdata:SetRadius(2) --thickness of strands
+					util.Effect("Sparks",effectdata,true,true)
+					if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+						local RicDir=VectorRand()
+						RicDir.z=RicDir.z/2
+						RicDir:Normalize()
+						self:FireBullets({
+							Src=SelfPos,
+							Dir=RicDir,
+							Tracer=1,
+							Num=1,
+							Spread=Vector(0,0,0),
+							Damage=10,
+							Force=50,
+							Attacker=dmginfo:GetAttacker() or self
+						})
+					end
+				end
+			end
+			---
+			self.Durability=self.Durability-Damage
 			if(self.Durability<=0)then self:Break(dmginfo) end
 			if(self.Durability<=-100)then self:Destroy(dmginfo) end
 		end
+	end
+	function ENT:OnBreak()
+		self:RemoveNPCTarget()
 	end
 	function ENT:Use(activator)
 		if(activator:IsPlayer())then
@@ -269,6 +337,10 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav",65,100)
 		self:ResetMemory()
+		self:RemoveNPCTarget()
+	end
+	function ENT:OnRemove()
+		self:RemoveNPCTarget()
 	end
 	function ENT:TurnOn(activator)
 		local OldOwner=self.Owner
@@ -281,6 +353,7 @@ if(SERVER)then
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav",65,100)
 		self:ResetMemory()
+		self:CreateNPCTarget()
 	end
 	function ENT:DetermineTargetAimPoint(ent)
 		if not(IsValid(ent))then return nil end
@@ -320,13 +393,14 @@ if(SERVER)then
 		local Tr=util.TraceLine({
 			start=SelfPos,
 			endpos=TargPos,
-			filter={self,ent},
+			filter={self,ent,self.NPCTarget},
 			mask=MASK_SHOT+MASK_WATER
 		})
 		return not Tr.Hit
 	end
 	function ENT:CanEngage(ent)
 		if not(IsValid(ent))then return false end
+		if(ent==self.NPCTarget)then return false end
 		return JMod.ShouldAttack(self,ent) and self:CanSee(ent)
 	end
 	function ENT:TryFindTarget()
@@ -348,6 +422,7 @@ if(SERVER)then
 				local DistA,DistB=a:GetPos():Distance(SelfPos),b:GetPos():Distance(SelfPos)
 				return DistA<DistB
 			end)
+			for k,v in pairs(PotentialTargets)do self:MakeHostileToMe(v) end
 			return PotentialTargets[1]
 		end
 		return nil
@@ -518,6 +593,7 @@ if(SERVER)then
 		local ShootPos=SelfPos+Up*38+AimForward*self.BarrelLength
 		local AmmoConsume,ElecConsume=1,.02
 		local Heat=self.Damage*self.ShotCount/30
+		self:AddVisualRecoil(Heat*2)
 		---
 		if(ProjType=="Bullet")then
 			local ShellAng=AimAng:GetCopy()
@@ -801,8 +877,12 @@ elseif(CLIENT)then
 		---
 		self.CurAimPitch=0
 		self.CurAimYaw=0
+		self.VisualRecoil=0
 		---
 		self.LastAmmoType=""
+	end
+	function ENT:AddVisualRecoil(amt)
+		self.VisualRecoil=math.Clamp(self.VisualRecoil+amt,0,5)
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
@@ -881,12 +961,22 @@ elseif(CLIENT)then
 			self.LastAmmoType=AmmoType
 			self.MachineGun:SetBodygroup(0,AmmoBGs[AmmoType])
 		end
-		JMod.RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*1-AimRight*.5,AimAngle)
+		JMod.RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*(1+self.VisualRecoil)-AimRight*.5,AimAngle)
+		self.VisualRecoil=math.Clamp(self.VisualRecoil-FT*4,0,5)
 		---
 		local ShieldAngle=AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(),130)
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Up(),45)
 		JMod.RenderModel(self.Shield,BasePos+AimForward*17.5+AimUp*3.3-AimRight*.7,ShieldAngle,nil,Vector(.1,.1,.1))
+		--[[
+		local GradePos=BasePos+Up*32+AimForward*22.2-AimUp*33.5-AimRight*.825
+		local GradeAng=ShieldAngle:GetCopy()
+		GradeAng:RotateAroundAxis(GradeAng:Right(),180)
+		GradeAng:RotateAroundAxis(GradeAng:Up(),135)
+		JMod.HoloGraphicDisplay(self,GradePos,GradeAng,.05,500,function()
+			JMod.StandardRankDisplay(Grade,0,0,256,200)
+		end,true)
+		--]]
 		---
 		if(DetailDraw)then
 			local CamAngle=AimAngle:GetCopy()
@@ -910,6 +1000,9 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*28-Right*7.5-Forward*8,DisplayAng,.075)
+				surface.SetDrawColor(10,10,10,Opacity+20)
+				surface.DrawRect(-100,-140,128,128)
+				JMod.StandardRankDisplay(Grade,-35,-75,118,Opacity+20)
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod.GoodBadColor(ElecFrac)

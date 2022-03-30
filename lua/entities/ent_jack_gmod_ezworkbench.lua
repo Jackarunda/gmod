@@ -123,6 +123,7 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local Gas,Elec=self:GetGas(),self:GetElectricity()
 		if((Gas<=0)or(Elec<=0))then return end
+		print(itemName)
 		local ItemInfo=JMod.Config.Recipes[itemName]
 		local ItemClass,BuildReqs, ItemCategory, ItemDesc=ItemInfo[1],ItemInfo[2], ItemInfo[3], ItemInfo[4]
 		
