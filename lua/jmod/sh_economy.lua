@@ -542,21 +542,21 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 	Results[1]=table.FullCopy(buildRequirements)
 	Results[2]={
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=OrigBasic*.3,
-		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.5,
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.9,
 		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.1
 	}
 	Results[3]={
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=OrigBasic*.1,
-		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.7+OrigBasic*.2,
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.7+OrigBasic*.3,
 		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.2
 	}
 	Results[4]={
-		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.5+OrigBasic*.3,
-		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.1+OrigBasic*.05
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.7+OrigBasic*.5,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.2+OrigBasic*.1
 	}
 	Results[5]={
-		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.3+OrigBasic*.3,
-		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.3+OrigBasic*.1+OrigPrec*.2
+		[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=OrigPrec*.5+OrigBasic*.5,
+		[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=OrigAdv*.5+OrigBasic*.4+OrigPrec*.4
 	}
 	for grade,mats in pairs(Results)do
 		for mat,amt in pairs(mats)do

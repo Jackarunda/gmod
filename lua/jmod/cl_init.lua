@@ -599,6 +599,14 @@ net.Receive("JMod_SFX",function()
 	surface.PlaySound(net.ReadString())
 end)
 
+net.Receive("JMod_VisualGunRecoil",function()
+	local Ent=net.ReadEntity()
+	local Amt=net.ReadFloat()
+	if((IsValid(Ent))and(Ent.AddVisualRecoil))then
+		Ent:AddVisualRecoil(Amt)
+	end
+end)
+
 net.Receive("JMod_Ravebreak",function()
 	-- fucking HELL YES HERE WE GO
 	surface.PlaySound("snds_jack_gmod/ravebreak.mp3")

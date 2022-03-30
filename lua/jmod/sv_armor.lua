@@ -330,6 +330,13 @@ hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 	end
 end)
 
+function JMod.RemoveAllArmor(ply)
+	for k,v in pairs(ply.EZarmor.items)do
+		JMod.RemoveArmorByID(ply,k,false)
+	end
+	JMod.EZarmorSync(ply)
+end
+
 function JMod.CalcSpeed(ply)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
 

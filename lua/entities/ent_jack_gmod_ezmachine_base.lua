@@ -220,6 +220,7 @@ if(SERVER)then
 			end
 			self.Pod:Fire("lock","",0)
 		end
+		if(self.OnBreak)then self:OnBreak() end
 	end
 	function ENT:Destroy(dmginfo)
 		if(self.Destroyed)then return end
