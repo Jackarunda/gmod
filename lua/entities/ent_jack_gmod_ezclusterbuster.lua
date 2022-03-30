@@ -10,6 +10,8 @@ ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ---
+ENT.EZclusterBusterMunition=true
+---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -136,28 +138,23 @@ if(SERVER)then
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		self.Exploded = true
-		local SelfPos, Att = self:GetPos()+Vector(0,0,30), self.Owner or game.GetWorld()
-		JMod.Sploom(Att, SelfPos, 100)
-		---
-		local Vel, Pos, Ang = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
-		--local Up = self:GetAngles():GetUp() --This was throwing an error when I tried to use it.
-		---
+		self.Exploded=true
+		local Att=self.Owner or game.GetWorld()
+		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
+		local Up,Right,Forward,CylinderAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
+		self:Remove()
+		JMod.Sploom(Att,Pos,50)
 		timer.Simple(0,function()
-			for i = 1, 4 do
-				local RotatedVec = Vector(0, 0, i*15):Rotate(Ang)
+			for i=1,4 do
 				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
-				JMod.Owner(Bomblet, Att)
-				Bomblet:SetPos(Pos + RotatedVec)
-				Bomblet:SetAngles(Ang + Angle(0, 0, 90))
+				JMod.Owner(Bomblet,Att)
+				Bomblet:SetPos(Pos+VectorRand()*math.random(1,100))
+				Bomblet:SetAngles(CylinderAng)
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				Bomblet:GetPhysicsObject():EnableMotion(false)
-				--timer.Simple(1, function() if(Bomblet) then Bomblet:Detonate() end end)
+				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.random(1,200))
 			end
 		end)
-		---
-		self:Remove()
 	end
 	function ENT:OnRemove()
 		--
@@ -174,7 +171,7 @@ if(SERVER)then
 		if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 			self.FreefallTicks=self.FreefallTicks+1
 			if(self.FreefallTicks>=10)then
-				local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*3000,self)
+				local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*5000,self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else
