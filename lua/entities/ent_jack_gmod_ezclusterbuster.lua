@@ -138,20 +138,6 @@ if(SERVER)then
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-<<<<<<< HEAD
-		self.Exploded = true
-		local SelfPos, Att = self:GetPos()+Vector(0,0,30), self.Owner or game.GetWorld()
-		JMod.Sploom(Att, SelfPos, 100)
-		---
-		local Vel, Pos = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter())
-		---
-		timer.Simple(0,function()
-			for i = 1, 4 do
-				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
-				JMod.Owner(Bomblet, Att)
-				Bomblet:SetPos(Pos + Vector(0, 0, i*14))
-				Bomblet:SetAngles(Angle(90, 0, 0))
-=======
 		self.Exploded=true
 		local Att=self.Owner or game.GetWorld()
 		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
@@ -164,7 +150,6 @@ if(SERVER)then
 				JMod.Owner(Bomblet,Att)
 				Bomblet:SetPos(Pos+VectorRand()*math.random(1,100))
 				Bomblet:SetAngles(CylinderAng)
->>>>>>> cbf0a629781a966a63401151f5d53960697a7af0
 				Bomblet:Spawn()
 				Bomblet:Activate()
 				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.random(1,200))
