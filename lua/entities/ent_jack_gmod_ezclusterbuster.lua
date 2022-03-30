@@ -140,16 +140,14 @@ if(SERVER)then
 		local SelfPos, Att = self:GetPos()+Vector(0,0,30), self.Owner or game.GetWorld()
 		JMod.Sploom(Att, SelfPos, 100)
 		---
-		local Vel, Pos, Ang = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
-		--local Up = self:GetAngles():GetUp() --This was throwing an error when I tried to use it.
+		local Vel, Pos = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter())
 		---
 		timer.Simple(0,function()
 			for i = 1, 4 do
-				local RotatedVec = Vector(0, 0, i*15):Rotate(Ang)
 				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet, Att)
-				Bomblet:SetPos(Pos + RotatedVec)
-				Bomblet:SetAngles(Ang + Angle(0, 0, 90))
+				Bomblet:SetPos(Pos + Vector(0, 0, i*14))
+				Bomblet:SetAngles(Angle(90, 0, 0))
 				Bomblet:Spawn()
 				Bomblet:Activate()
 				Bomblet:GetPhysicsObject():EnableMotion(false)
