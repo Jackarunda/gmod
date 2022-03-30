@@ -57,7 +57,7 @@ if(SERVER)then
 			self:Detonate()
 		elseif (iname == "Arm" and value) > 0 then
 			self:SetState(STATE_ARMED)
-		elseif (iname == "Arm" and value) = 0 then
+		elseif (iname == "Arm" and value == 0) then
 			self:SetState(STATE_OFF)
 		end
 	end
@@ -136,21 +136,24 @@ if(SERVER)then
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,30),self.Owner or game.GetWorld()
-		JMod.Sploom(Att,SelfPos,100)
+		self.Exploded = true
+		local SelfPos, Att = self:GetPos()+Vector(0,0,30), self.Owner or game.GetWorld()
+		JMod.Sploom(Att, SelfPos, 100)
 		---
-		local Vel, Pos = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter())
+		local Vel, Pos, Ang = self:GetPhysicsObject():GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
+		--local Up = self:GetAngles():GetUp() --This was throwing an error when I tried to use it.
 		---
 		timer.Simple(0,function()
 			for i = 1, 4 do
-				local Bomblet = ents.Create("ent_jack_gmod_blusub")
+				local RotatedVec = Vector(0, 0, i*15):Rotate(Ang)
+				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet, Att)
-				Bomblet:SetPos(Pos + VectorRand()*math.Rand(1, 50))
+				Bomblet:SetPos(Pos + RotatedVec)
+				Bomblet:SetAngles(Ang + Angle(0, 0, 90))
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				Bomblet:GetPhysicsObject():SetVelocity(Vel + VectorRand()*math.Rand(10, 1500)+Vector(0, 0, math.random(1, 100)))
-				timer.Simple(1, function() if(Bomblet) then Bomblet:Detonate() end end)
+				Bomblet:GetPhysicsObject():EnableMotion(false)
+				--timer.Simple(1, function() if(Bomblet) then Bomblet:Detonate() end end)
 			end
 		end)
 		---

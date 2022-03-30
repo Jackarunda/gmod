@@ -83,66 +83,31 @@ if(SERVER)then
 			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
 			if(State == JMod.EZ_STATE_OFF)then
 				if(Alt)then
-					self:SetState(JMod.EZ_STATE_ARMING)
-					self:EmitSound("snd_jack_minearm.wav",60,100)
-					timer.Simple(3,function()
-						if(IsValid(self))then
-							if(self:GetState() == JMod.EZ_STATE_ARMING)then
-								local pos = self:GetPos() + Vector(0, 0, 20)
-								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
-								self.BeamFrac = trace.Fraction
-								self:SetState(JMod.EZ_STATE_ARMED)
-							end
-						end
-					end)
-				end
-			else
-				self:EmitSound("snd_jack_minearm.wav",60,70)
-				self:SetState(JMod.EZ_STATE_OFF)
-			end
-		else -- player just released the USE key
-			
-			if((self:IsPlayerHolding())and(self.NextStick<Time) and !IsValid(self.AttachedBomb))then
-				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
-				if(Tr.Hit)then
-					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
-						self.NextStick=Time+.5
-						local Ang=Tr.HitNormal:Angle()
-						Ang:RotateAroundAxis(Ang:Right(),-90)
-						self:SetAngles(Ang)
-						self:SetPos(Tr.HitPos+Tr.HitNormal*2.35)
-						
-						if Tr.Entity.EZdetonateOverride then
-							self.AttachedBomb=Tr.Entity
-							timer.Simple(0,function() self:SetParent(Tr.Entity) end)
-						else
-							if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
-								timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
-							else
-								local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
-								self.StuckTo=Tr.Entity
-								self.StuckStick=Weld
-							end
-						end
-						
-						self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
-						Dude:DropObject()
-						if not JMod.Hint(Dude, "arm") then JMod.Hint(Dude, "slam stick") end
+					self:SetState(JMod.EZ_STATE_ARMED)
+					self:EmitSound("snd_jack_minearm.wav", 60, 100)
+					if(IsValid(self))then
+						local pos = self:GetPos() + Vector(0, 0, 20)
+						local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
+						self.BeamFrac = trace.Fraction
 					end
 				end
+			else
+				self:EmitSound("snd_jack_minearm.wav", 60, 70)
+				self:SetState(JMod.EZ_STATE_OFF)
 			end
 		end
 	end
-	function ENT:Detonate(delay,dmg)
+	function ENT:Detonate(delay, dmg)
 		if(self.Exploded)then return end
 		self.Exploded = true
+
 		timer.Simple(delay or 0,function()
 			if(IsValid(self))then
-				local SelfPos = self:GetPos()-self:GetUp()
+				local SelfPos = self:GetPos() - self:GetUp()
 				JMod.Sploom(self.Owner, SelfPos, math.random(50,80))
 				util.ScreenShake(SelfPos, 99999, 99999,.3, 500)
-				local Dir=(self:GetUp()+VectorRand()*.01):GetNormalized()
-				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 600)*JMod.Config.MinePower, true, true)
+				local Dir = (self:GetUp() + VectorRand()*.01):GetNormalized()
+				JMod.RicPenBullet(self, SelfPos, Dir,(dmg or 600)*JMod.Config.MinePower, true, true)
 				self:Remove()
 			end
 		end)
@@ -150,48 +115,33 @@ if(SERVER)then
 	function ENT:Think()
 		local Time = CurTime()
 		local state = self:GetState()
-		if(state == JMod.EZ_STATE_ARMED)then
-			local pos = self:GetPos() + Vector(0, 0, 20)
-			local trace = util.QuickTrace(pos, self:GetUp()*1000, self)
-			if((math.abs(self.BeamFrac - trace.Fraction) >= .001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then
-				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
-					self:Detonate()
-				else
-					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,600)
-					else
-						self:Detonate(.1)
-					end
-				end
-			end
-			self:NextThink(Time+.1) 
-			return true
-		end
 	end
 	function ENT:OnRemove()
-		--aw fuck you
+		
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Scanner = JMod.MakeModel("models/maxofs2d/lamp_flashlight.mdl")
+		self.Scanner = JMod.MakeModel(self, "models/maxofs2d/lamp_flashlight.mdl", nil, 0.90, Color(200, 200, 200))
 	end
-	function ENT:Draw()
+	function ENT:DrawTranslucent()
+		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+		---
+		local BasePos = SelfPos
+		local Obscured = util.TraceLine({start=EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
+		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
+		if ((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		if (Obscured) then DetailDraw = false end -- if obscured, at least disable details
+		if (self:GetState() < 0)then DetailDraw = false end
 
-		local BasePos = SelfPos + Up * 60
-		local Obscured = util.TraceLine({start = EyePos(),endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
-		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
-		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
-		if(Obscured)then DetailDraw = false end -- if obscured, at least disable details
-		if(self:GetState() < 0)then DetailDraw = false end
-		--
-		self:DrawModel()
-		--
-		if(DetailDraw)then
-			local ScannerAng = SelfAng:GetCopy()
+		if (DetailDraw) then
+			ScannerAng = SelfAng:GetCopy()
 			JMod.RenderModel(self.Scanner, BasePos, ScannerAng)
 		end
+	end
+	function ENT:Draw()
+		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_blusub","EZ Cluster Buster")
 end
