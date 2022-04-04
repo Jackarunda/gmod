@@ -20,30 +20,7 @@ if(SERVER)then
 		ent:Activate()
 		return ent
 	end
-	--[[
-	concommand.Add("SHIT",function(ply,cmd,args)
-		local Drop=function(targetPos,flyVector,caller)
-			local BombVel=flyVector*1000
-			for i=-4,4 do
-				timer.Simple(i/2+5,function()
-				local DropPos=targetPos+flyVector*i*400-flyVector*3000
-				local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
-				JMod.Owner(Bom,caller)
-				Bom:SetPos(DropPos)
-				Bom:Spawn()
-				Bom:Activate()
-				Bom:SetState(1)
-				Bom:GetPhysicsObject():SetVelocity(BombVel)
-				end)
-			end
-		end
-		---- haaaaaaaaaaaaaaaaaaaaaaaaa -----
-		local FlyVec=VectorRand()
-		FlyVec.z=0
-		FlyVec:Normalize()
-		Drop(ply:GetPos()+Vector(0,0,3000),FlyVec,ply)
-	end)
-	--]]
+	
 	function ENT:Initialize()
 		self:SetModel("models/xqm/cylinderx2.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")

@@ -59,3 +59,29 @@ end, nil, "Drops any bombs you have armed and welded.")
 concommand.Add("jmod_ez_launch",function(ply,cmd,args)
 	JMod.EZ_WeaponLaunch(ply)
 end, nil, "Fires any active missiles you own.")
+
+concommand.Add("jbomb_nam_style",function(ply,cmd,args)
+		local Drop=function(targetPos,flyVector,caller)
+			local BombVel=flyVector*1000
+			for i=-4,4 do
+				timer.Simple(i/2+5,function()
+					local Time = CurTime()
+					local DropPos=targetPos+flyVector*i*400-flyVector*3000
+					local Bom=ents.Create("ent_aboot_airburst_cloudmaker")
+					--local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
+					JMod.Owner(Bom,caller)
+					Bom.DroppableImmuneTime = Time + 100
+					Bom:SetPos(DropPos)
+					Bom:Spawn()
+					Bom:Activate()
+					Bom:SetState(1)
+					Bom:GetPhysicsObject():SetVelocity(BombVel)
+				end)
+			end
+		end
+		---- haaaaaaaaaaaaaaaaaaaaaaaaa -----
+		local FlyVec=VectorRand()
+		FlyVec.z=0
+		FlyVec:Normalize()
+		Drop(ply:GetPos()+Vector(0,0,3000),FlyVec,ply)
+	end)

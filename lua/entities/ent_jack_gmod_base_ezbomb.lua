@@ -21,6 +21,7 @@ ENT.DetType = "airburst"
 ENT.DetDistance = 0
 ENT.ExplosionPower = 150
 ENT.DragMultiplier = 4
+ENT.DroppableImmuneTime = 0
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -80,7 +81,7 @@ if(SERVER)then
 			if(data.Speed > 50)then
 				self:EmitSound("Canister.ImpactHard")
 			end
-			if((data.Speed > 700)and(self:GetState() == STATE_ARMED))then
+			if((self.DetType == "impact") and (data.Speed > 700) and (self:GetState() == STATE_ARMED))then
 				self:Detonate()
 				return
 			end
@@ -100,7 +101,7 @@ if(SERVER)then
 	end
 	function ENT:DamageSpark()
 		local effectdata = EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0,10))
+		effectdata:SetOrigin(self:GetPos() + self:GetUp()*10 + VectorRand()*math.random(0, 10))
 		effectdata:SetNormal(VectorRand())
 		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
 		effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
@@ -109,10 +110,17 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod.LinCh(dmginfo:GetDamage(),70,150))then
-			JMod.Owner(self,dmginfo:GetAttacker())
-			self:Detonate()
+		if ((self.DroppableImmuneTime > CurTime()) and (dmginfo:GetAttacker() == self.Owner)) then
+			--print("You tried to hurt me!")
+			--dmginfo:SetDamageForce(Vector(0, 0, 0))
+			return
+		else
+			self.Entity:TakePhysicsDamage(dmginfo)
+			print("You hurt me!")
+			if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
+				JMod.Owner(self, dmginfo:GetAttacker())
+				self:Detonate()
+			end
 		end
 	end
 	function ENT:Use(activator)
@@ -127,8 +135,8 @@ if(SERVER)then
 				self.EZdroppableBombArmedTime = CurTime()
 				if (self.DetType == "impact") then
 					JMod.Hint(activator, "impactdet")
-				--elseif (self.DetType == "airburst") then
-					--Jmod.Hint(activator, "airburst")
+				elseif (self.DetType == "airburst") then
+					JMod.Hint(activator, "airburst")
 				end
 			else
 				JMod.Hint(activator,"double tap to arm")
