@@ -26,14 +26,9 @@ ENT.DroppableImmuneTime = 0
 ENT.ExplProof = false
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
-	--print("We damaged:"..target)
-	if (tobool(target.DroppableImmuneTime) == true) then
-		if (IsValid(target) and (target.DroppableImmuneTime > CurTime())) then
-			--print("You tried to hurt me!")
-			--dmginfo:SetDamage(0)
-			--dmginfo:SetDamageForce(Vector(0, 0, 0))
-			return true
-		end
+	if (IsValid(target) and target.ExplProof == true and dmginfo:GetAttacker() == target.Owner) then
+		dmginfo:SetDamage(0)
+		dmginfo:SetDamageForce(Vector(0, 0, 0))
 	end
 end)
 concommand.Add("jbomb_nam_style",function(ply, cmd, args)
