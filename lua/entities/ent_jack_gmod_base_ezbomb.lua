@@ -26,12 +26,14 @@ ENT.DroppableImmuneTime = 0
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	--print("We damaged:"..target)
-	if ((target.DroppableImmuneTime > CurTime())) then
-		print("You tried to hurt me!")
-		dmginfo:SetDamage(0)
-		dmginfo:SetDamageForce(Vector(0, 0, 0))
-	else
-		print("You hurt me!")
+	if (tobool(target.DroppableImmuneTime) == true) then
+		if (IsValid(target) and (target.DroppableImmuneTime > CurTime())) then
+			--print("You tried to hurt me!")
+			dmginfo:SetDamage(0)
+			dmginfo:SetDamageForce(Vector(0, 0, 0))
+		else
+			print("You hurt me!")
+		end
 	end
 end)
 concommand.Add("jbomb_nam_style",function(ply, cmd, args)
@@ -216,8 +218,8 @@ if(SERVER)then
 			end
 		end
 		---
-		--util.BlastDamage(game.GetWorld(), Att, SelfPos+Vector(0,0,300), 1125, 120)
-		--timer.Simple(.25,function() util.BlastDamage(game.GetWorld(), Att, SelfPos, 2250, 120) end)
+		util.BlastDamage(game.GetWorld(), Att, SelfPos+Vector(0,0,300), 1125, 120)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(), Att, SelfPos, 2250, 120) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos, 500))do
 			if(ent:GetClass() == "npc_helicopter")then ent:Fire("selfdestruct", "", math.Rand(0,2)) end
 		end
@@ -230,7 +232,7 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal) end
 		end)
 		---
-		--JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
+		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff, SelfPos, Angle(0,0,0)) end)
