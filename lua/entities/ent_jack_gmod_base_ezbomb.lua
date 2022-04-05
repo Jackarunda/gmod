@@ -25,6 +25,7 @@ ENT.DragMultiplier = 4
 ENT.DroppableImmuneTime = 0
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
+	--print("We damaged:"..target)
 	if ((target.DroppableImmuneTime > CurTime())) then
 		print("You tried to hurt me!")
 		dmginfo:SetDamage(0)
@@ -33,6 +34,31 @@ hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 		print("You hurt me!")
 	end
 end)
+concommand.Add("jbomb_nam_style",function(ply, cmd, args)
+		local Drop = function(targetPos, flyVector, caller)
+			local BombVel = flyVector*1000
+			for i=-4,4 do
+				timer.Simple(i/2 + 5, function()
+					local Time = CurTime()
+					local DropPos = targetPos + flyVector*i*400 - flyVector*3000
+					local Bom = ents.Create("ent_jack_gmod_base_ezbomb")
+					--local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
+					JMod.Owner(Bom, caller)
+					Bom.DroppableImmuneTime = Time + 1000
+					Bom:SetPos(DropPos)
+					Bom:Spawn()
+					Bom:Activate()
+					Bom:SetState(1)
+					Bom:GetPhysicsObject():SetVelocity(BombVel)
+				end)
+			end
+		end
+		---- haaaaaaaaaaaaaaaaaaaaaaaaa -----
+		local FlyVec=VectorRand()
+		FlyVec.z=0
+		FlyVec:Normalize()
+		Drop(ply:GetPos()+Vector(0,0,3000),FlyVec, ply)
+	end)
 
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -125,8 +151,10 @@ if(SERVER)then
 			--print("You tried to hurt me!")
 			--return
 		--else
-			self.Entity:TakePhysicsDamage(dmginfo)
-			--print("You hurt me!")
+			--self.Entity:TakePhysicsDamage(dmginfo)
+			if (dmginfo:GetDamageForce():IsZero()) then
+				print("Get damage force is zero")
+			end
 			if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
 				JMod.Owner(self, dmginfo:GetAttacker())
 				self:Detonate()
@@ -188,8 +216,8 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos+Vector(0,0,300), 1125, 120)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(), Att, SelfPos, 2250, 120) end)
+		--util.BlastDamage(game.GetWorld(), Att, SelfPos+Vector(0,0,300), 1125, 120)
+		--timer.Simple(.25,function() util.BlastDamage(game.GetWorld(), Att, SelfPos, 2250, 120) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos, 500))do
 			if(ent:GetClass() == "npc_helicopter")then ent:Fire("selfdestruct", "", math.Rand(0,2)) end
 		end
