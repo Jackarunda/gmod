@@ -196,7 +196,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded = true
 		local SelfPos, Att, Mag = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld(), self.ExplosionPower
-		JMod.Sploom(Att, SelfPos, Mag)
+		--JMod.Sploom(Att, SelfPos, Mag)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
 		local Eff = "500lb_ground"
@@ -222,15 +222,15 @@ if(SERVER)then
 			if(ent:GetClass() == "npc_helicopter")then ent:Fire("selfdestruct", "", math.Rand(0,2)) end
 		end
 		---
-		JMod.WreckBuildings(self,SelfPos,7)
-		JMod.BlastDoors(self,SelfPos,7)
+		--JMod.WreckBuildings(self,SelfPos,7)
+		--JMod.BlastDoors(self,SelfPos,7)
 		---
 		timer.Simple(.2,function()
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
 			if(Tr.Hit)then util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal) end
 		end)
 		---
-		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
+		--JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff, SelfPos, Angle(0,0,0)) end)
