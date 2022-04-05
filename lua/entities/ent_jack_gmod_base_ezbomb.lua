@@ -17,8 +17,9 @@ ENT.ClientMdl = "models/jmod/mk82_gbu.mdl"
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZguidable = true
-ENT.DetType = "airburst"
+ENT.DetType = "impact"
 ENT.DetDistance = 0
+ENT.FreefallTicks = 0
 ENT.ExplosionPower = 150
 ENT.DragMultiplier = 4
 ENT.DroppableImmuneTime = 0
