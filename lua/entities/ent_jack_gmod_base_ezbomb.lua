@@ -23,6 +23,16 @@ ENT.ExplosionPower = 150
 ENT.DragMultiplier = 4
 ENT.DroppableImmuneTime = 0
 ---
+hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
+	if ((target.DroppableImmuneTime > CurTime())) then
+		print("You tried to hurt me!")
+		dmginfo:SetDamage(0)
+		dmginfo:SetDamageForce(Vector(0, 0, 0))
+	else
+		print("You hurt me!")
+	end
+end)
+
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -110,18 +120,17 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		if ((self.DroppableImmuneTime > CurTime()) and (dmginfo:GetAttacker() == self.Owner)) then
+		--if ((self.DroppableImmuneTime > CurTime()) and (dmginfo:GetAttacker() == self.Owner)) then
 			--print("You tried to hurt me!")
-			--dmginfo:SetDamageForce(Vector(0, 0, 0))
-			return
-		else
+			--return
+		--else
 			self.Entity:TakePhysicsDamage(dmginfo)
-			print("You hurt me!")
+			--print("You hurt me!")
 			if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
 				JMod.Owner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
-		end
+		--end
 	end
 	function ENT:Use(activator)
 		local State, Time = self:GetState(), CurTime()
