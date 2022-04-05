@@ -23,16 +23,16 @@ ENT.FreefallTicks = 0
 ENT.ExplosionPower = 150
 ENT.DragMultiplier = 4
 ENT.DroppableImmuneTime = 0
+ENT.ExplProof = false
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	--print("We damaged:"..target)
 	if (tobool(target.DroppableImmuneTime) == true) then
 		if (IsValid(target) and (target.DroppableImmuneTime > CurTime())) then
 			--print("You tried to hurt me!")
-			dmginfo:SetDamage(0)
-			dmginfo:SetDamageForce(Vector(0, 0, 0))
-		else
-			print("You hurt me!")
+			--dmginfo:SetDamage(0)
+			--dmginfo:SetDamageForce(Vector(0, 0, 0))
+			return true
 		end
 	end
 end)
@@ -149,19 +149,11 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		--if ((self.DroppableImmuneTime > CurTime()) and (dmginfo:GetAttacker() == self.Owner)) then
-			--print("You tried to hurt me!")
-			--return
-		--else
-			--self.Entity:TakePhysicsDamage(dmginfo)
-			if (dmginfo:GetDamageForce():IsZero()) then
-				print("Get damage force is zero")
-			end
-			if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
-				JMod.Owner(self, dmginfo:GetAttacker())
-				self:Detonate()
-			end
-		--end
+		self.Entity:TakePhysicsDamage(dmginfo)
+		if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
+			JMod.Owner(self, dmginfo:GetAttacker())
+			self:Detonate()
+		end
 	end
 	function ENT:Use(activator)
 		local State, Time = self:GetState(), CurTime()
@@ -224,8 +216,8 @@ if(SERVER)then
 			if(ent:GetClass() == "npc_helicopter")then ent:Fire("selfdestruct", "", math.Rand(0,2)) end
 		end
 		---
-		--JMod.WreckBuildings(self,SelfPos,7)
-		--JMod.BlastDoors(self,SelfPos,7)
+		JMod.WreckBuildings(self, SelfPos, 7)
+		JMod.BlastDoors(self, SelfPos, 7)
 		---
 		timer.Simple(.2,function()
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
@@ -244,6 +236,11 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
+		if (self.DroppableImmuneTime > CurTime()) then
+			self.ExplProof = true
+		else
+			self.ExplProof = false
+		end
 		if (istable(WireLib)) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			if (self.EZguidable) then
