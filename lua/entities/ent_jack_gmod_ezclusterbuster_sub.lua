@@ -7,7 +7,14 @@ ENT.Information = "The deployment submunition for the EZ Cluster Buster"
 ENT.PrintName = "Cluster Buster submunition deployer"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
-ENT.EZclusterBusterMunition=true
+ENT.EZclusterBusterMunition = true
+---
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
+---
+local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
+function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"State")
+end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -31,22 +38,22 @@ if(SERVER)then
 		self:DrawShadow(true)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(15)
+			self:GetPhysicsObject():SetMass(30)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.Owner=self.Owner or game.GetWorld()
+		self.Owner = self.Owner or game.GetWorld()
 		---
-		self:SetDTInt(0,0) -- 0 = dormant, 1 = parachuting, 2 = rocketing
-		timer.Simple(1,function()
+		self:SetDTInt(0, 0) -- 0 = dormant, 1 = parachuting, 2 = rocketing
+		timer.Simple(1, function()
 			if(IsValid(self))then
-				self:SetDTInt(0,1)
-				self:GetPhysicsObject():SetDragCoefficient(40)
+				self:SetDTInt(0, 1)
+				self:GetPhysicsObject():SetDragCoefficient(60)
 			end
 		end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
-		if(data.HitEntity.EZclusterBusterMunition)then return end
+		--if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2 and data.Speed>25)then
 			self:Detonate()
 		end
@@ -85,9 +92,12 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		local Time=CurTime()
-		local State=self:GetDTInt(0)
-		--
+		local Time = CurTime()
+		local State = self:GetDTInt(0)
+
+		if (State == 1) then
+		JMod.AeroDrag(self, self:GetForward(), 10)
+		end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -100,17 +110,17 @@ elseif(CLIENT)then
 			if(self.Parachute)then
 				local Vel=self:GetVelocity()
 				if Vel:Length()>0 then
-					local Dir=Vel:GetNormalized()
-					Dir=Dir+Vector(.01,0,0) -- stop the turn spasming
-					local Ang=Dir:Angle()
-					Ang:RotateAroundAxis(Ang:Right(),90)
+					local Dir = Vel:GetNormalized()
+					Dir = Dir + Vector(.01, 0, 0) -- stop the turn spasming
+					local Ang = Dir:Angle()
+					Ang:RotateAroundAxis(Ang:Right(), 90)
 					self.Parachute:SetRenderOrigin(Pos+Dir*50)
 					self.Parachute:SetRenderAngles(Ang)
 					self.Parachute:DrawModel()
 				end
 			else
 				self.Parachute=ClientsideModel("models/jessev92/rnl/items/parachute_deployed.mdl")
-				self.Parachute:SetModelScale(.25,0)
+				self.Parachute:SetModelScale(.05,0)
 				self.Parachute:SetNoDraw(true)
 				self.Parachute:SetParent(self)
 			end

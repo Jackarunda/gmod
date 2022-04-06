@@ -32,30 +32,30 @@ hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	end
 end)
 concommand.Add("jbomb_nam_style",function(ply, cmd, args)
-		local Drop = function(targetPos, flyVector, caller)
-			local BombVel = flyVector*1000
-			for i=-4,4 do
-				timer.Simple(i/2 + 5, function()
-					local Time = CurTime()
-					local DropPos = targetPos + flyVector*i*400 - flyVector*3000
-					local Bom = ents.Create("ent_jack_gmod_base_ezbomb")
-					--local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
-					JMod.Owner(Bom, caller)
-					Bom.DroppableImmuneTime = Time + 1000
-					Bom:SetPos(DropPos)
-					Bom:Spawn()
-					Bom:Activate()
-					Bom:SetState(1)
-					Bom:GetPhysicsObject():SetVelocity(BombVel)
-				end)
-			end
+	local Drop = function(targetPos, flyVector, caller)
+		local BombVel = flyVector*1000
+		for i=-4,4 do
+			timer.Simple(i/2 + 5, function()
+				local Time = CurTime()
+				local DropPos = targetPos + flyVector*i*400 - flyVector*3000
+				local Bom = ents.Create("ent_jack_gmod_base_ezbomb")
+				--local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
+				JMod.Owner(Bom, caller)
+				Bom.DroppableImmuneTime = Time + 1000
+				Bom:SetPos(DropPos)
+				Bom:Spawn()
+				Bom:Activate()
+				Bom:SetState(1)
+				Bom:GetPhysicsObject():SetVelocity(BombVel)
+			end)
 		end
-		---- haaaaaaaaaaaaaaaaaaaaaaaaa -----
-		local FlyVec=VectorRand()
-		FlyVec.z=0
-		FlyVec:Normalize()
-		Drop(ply:GetPos()+Vector(0,0,3000),FlyVec, ply)
-	end)
+	end
+	---- haaaaaaaaaaaaaaaaaaaaaaaaa -----
+	local FlyVec=VectorRand()
+	FlyVec.z=0
+	FlyVec:Normalize()
+	Drop(ply:GetPos()+Vector(0,0,3000),FlyVec, ply)
+end)
 
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 function ENT:SetupDataTables()
@@ -144,6 +144,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
+		if (self.Exploded) then return end
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(), 70, 150))then
 			JMod.Owner(self, dmginfo:GetAttacker())
