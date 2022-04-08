@@ -42,6 +42,7 @@ if(SERVER)then
 		end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
+		if not(IsValid(self))then return end
 		--if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2 and data.Speed>25)then
 			self:Detonate()

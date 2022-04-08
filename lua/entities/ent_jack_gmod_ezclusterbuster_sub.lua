@@ -38,7 +38,7 @@ if(SERVER)then
 		self:DrawShadow(true)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(30)
+			self:GetPhysicsObject():SetMass(25)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
@@ -48,14 +48,21 @@ if(SERVER)then
 		timer.Simple(1, function()
 			if(IsValid(self))then
 				self:SetDTInt(0, 1)
-				self:GetPhysicsObject():SetDragCoefficient(60)
+				self:GetPhysicsObject():SetDragCoefficient(40)
 			end
 		end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
-		--if(data.HitEntity.EZclusterBusterMunition)then return end
-		if(data.DeltaTime>0.2 and data.Speed>25)then
+		if not(IsValid(self))then return end
+		if(data.HitEntity.EZclusterBusterMunition)then return end
+		if(data.DeltaTime>0.2) then 
+			--[[if (data.Speed>25)then
 			self:Detonate()
+			end]]--
+			if (data.Speed > 2000)then
+				self:SetState(STATE_BROKEN)
+				self:SafeRemoveEntityDelayed(5)
+			end
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -66,7 +73,7 @@ if(SERVER)then
 		if(JMod.LinCh(Dmg, 20, 100))then
 			local Pos, State = self:GetPos(), self:GetState()
 			if(State == JMod.EZ_STATE_ARMED)then
-				self:Detonate()
+				--self:Detonate()
 			elseif(not(State == JMod.EZ_STATE_BROKEN))then
 				sound.Play("Metal_Box.Break", Pos)
 				self:SetState(JMod.EZ_STATE_BROKEN)
@@ -95,9 +102,37 @@ if(SERVER)then
 		local Time = CurTime()
 		local State = self:GetDTInt(0)
 
-		if (State == 1) then
-		JMod.AeroDrag(self, self:GetForward(), 10)
+		local Phys = self:GetPhysicsObject()
+		if((State == 1) and (Phys:GetVelocity():Length() > 100)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
+			self.FreefallTicks = self.FreefallTicks + 1
+			if(self.FreefallTicks >= 10)then
+				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*500, self)
+				if (Tr.Hit) then 
+					self:SetDTInt(0, 2) 
+				end
+			end
+		else
+			self.FreefallTicks = 0
 		end
+		
+		if (State == 1) then
+			JMod.AeroDrag(self, self:GetUp()*-1, 4)
+			Phys:SetDragCoefficient(80)
+		end
+		if (State == 2) then
+			Spin = Phys:GetAngleVelocity():Normalize()
+			
+			Phys:ApplyForceCenter(Vector(0, 0, 2500))
+			Phys:SetDragCoefficient(40)
+			timer.Simple(1, function() 
+				if (self:IsValid()) then
+					self:Detonate()
+				end
+			end)
+		end
+
+		self:NextThink(CurTime() + .1)
+		return true
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
@@ -106,24 +141,26 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		local State,Pos,Up,Right,Forward=self:GetDTInt(0),self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
-		if(State==1)then
+		if (State == 1) then
 			if(self.Parachute)then
-				local Vel=self:GetVelocity()
-				if Vel:Length()>0 then
+				local Vel = self:GetVelocity()
+				if (Vel:Length() > 0) then
 					local Dir = Vel:GetNormalized()
 					Dir = Dir + Vector(.01, 0, 0) -- stop the turn spasming
 					local Ang = Dir:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), 90)
-					self.Parachute:SetRenderOrigin(Pos+Dir*50)
+					self.Parachute:SetRenderOrigin(Pos + Dir*50*self.Parachute:GetModelScale())
 					self.Parachute:SetRenderAngles(Ang)
 					self.Parachute:DrawModel()
 				end
 			else
 				self.Parachute=ClientsideModel("models/jessev92/rnl/items/parachute_deployed.mdl")
-				self.Parachute:SetModelScale(.05,0)
+				self.Parachute:SetModelScale(0.25, 0)
 				self.Parachute:SetNoDraw(true)
 				self.Parachute:SetParent(self)
 			end
+		elseif (State == 2) then
+			self.Parachute:SetNoDraw(true)
 		end
 	end
 	language.Add("ent_jack_gmod_ezclusterbuster_sub","EZ Cluster Buster Submunition")

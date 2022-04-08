@@ -167,18 +167,18 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
-		local Phys=self:GetPhysicsObject()
-		if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-			self.FreefallTicks=self.FreefallTicks+1
-			if(self.FreefallTicks>=10)then
-				local Tr=util.QuickTrace(self:GetPos(),Phys:GetVelocity():GetNormalized()*5000,self)
+		local Phys = self:GetPhysicsObject()
+		if((self:GetState() == STATE_ARMED)and(Phys:GetVelocity():Length() > 400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
+			self.FreefallTicks = self.FreefallTicks + 1
+			if(self.FreefallTicks >= 10)then
+				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*5000, self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else
-			self.FreefallTicks=0
+			self.FreefallTicks = 0
 		end
-		JMod.AeroDrag(self,self:GetForward())
-		self:NextThink(CurTime()+.1)
+		JMod.AeroDrag(self, self:GetForward())
+		self:NextThink(CurTime() + .1)
 		return true
 	end
 elseif(CLIENT)then
