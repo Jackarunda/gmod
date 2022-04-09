@@ -11,23 +11,12 @@ ENT.EZclusterBusterMunition = true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
+local STATE_OFF,STATE_PARACHUTING,STATE_ROCKETING=-1,0,1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 end
 ---
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos+tr.HitNormal*15
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
-		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
-		ent:Spawn()
-		ent:Activate()
-		return ent
-	end
-	
 	function ENT:Initialize()
 		self:SetModel("models/xqm/cylinderx2.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")
@@ -42,27 +31,39 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.Owner = self.Owner or game.GetWorld()
+		self.Owner=self.Owner or game.GetWorld()
 		---
-		self:SetDTInt(0, 0) -- 0 = dormant, 1 = parachuting, 2 = rocketing
-		timer.Simple(1, function()
+		self:GetPhysicsObject():EnableGravity(false) -- DEBUG
+		self:SetState(STATE_OFF)
+		timer.Simple(math.Rand(.5,1),function()
 			if(IsValid(self))then
-				self:SetDTInt(0, 1)
-				self:GetPhysicsObject():SetDragCoefficient(40)
+				self:StartParachuting()
+				timer.Simple(math.Rand(1,2),function()
+					if(IsValid(self))then
+						self:StartRocketing()
+						timer.Simple(math.Rand(.5,1),function()
+							if(IsValid(self))then self:Detonate() end
+						end)
+					end
+				end)
 			end
 		end)
+	end
+	function ENT:StartParachuting()
+		self:SetState(STATE_PARACHUTING)
+		self:GetPhysicsObject():SetDragCoefficient(40)
+		self:GetPhysicsObject():SetAngleDragCoefficient(10)
+	end
+	function ENT:StartRocketing()
+		self:SetState(STATE_ROCKETING)
+		self:GetPhysicsObject():SetDragCoefficient(1)
+		self:GetPhysicsObject():SetAngleDragCoefficient(1)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
 		if(data.HitEntity.EZclusterBusterMunition)then return end
-		if(data.DeltaTime>0.2) then 
-			--[[if (data.Speed>25)then
+		if(data.DeltaTime>0.2) then
 			self:Detonate()
-			end]]--
-			if (data.Speed > 2000)then
-				self:SetState(STATE_BROKEN)
-				self:SafeRemoveEntityDelayed(5)
-			end
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -99,38 +100,16 @@ if(SERVER)then
 		end
 	end
 	function ENT:Think()
-		local Time = CurTime()
-		local State = self:GetDTInt(0)
-
-		local Phys = self:GetPhysicsObject()
-		if((State == 1) and (Phys:GetVelocity():Length() > 100)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-			self.FreefallTicks = self.FreefallTicks + 1
-			if(self.FreefallTicks >= 10)then
-				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*500, self)
-				if (Tr.Hit) then 
-					self:SetDTInt(0, 2) 
-				end
-			end
-		else
-			self.FreefallTicks = 0
+		local Time=CurTime()
+		local State=self:GetDTInt(0)
+		local Phys=self:GetPhysicsObject()
+		if(State==STATE_PARACHUTING)then
+			-- these 4 lines are SUPPOSED to make the thing point straight up and down, not sure why it doesn't work
+			local Top=self:LocalToWorld(Vector(0,100,0))
+			Phys:ApplyForceOffset(Vector(0,0,1000),Top)
+			local Bottom=self:LocalToWorld(Vector(0,-100,0))
+			Phys:ApplyForceOffset(Vector(0,0,-1000),Bottom)
 		end
-		
-		if (State == 1) then
-			JMod.AeroDrag(self, self:GetUp()*-1, 4)
-			Phys:SetDragCoefficient(80)
-		end
-		if (State == 2) then
-			Spin = Phys:GetAngleVelocity():Normalize()
-			
-			Phys:ApplyForceCenter(Vector(0, 0, 2500))
-			Phys:SetDragCoefficient(40)
-			timer.Simple(1, function() 
-				if (self:IsValid()) then
-					self:Detonate()
-				end
-			end)
-		end
-
 		self:NextThink(CurTime() + .1)
 		return true
 	end
@@ -141,13 +120,13 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		local State,Pos,Up,Right,Forward=self:GetDTInt(0),self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
-		if (State == 1) then
+		if (State==STATE_PARACHUTING)then
 			if(self.Parachute)then
 				local Vel = self:GetVelocity()
-				if (Vel:Length() > 0) then
-					local Dir = Vel:GetNormalized()
-					Dir = Dir + Vector(.01, 0, 0) -- stop the turn spasming
-					local Ang = Dir:Angle()
+				if(Vel:Length()>0)then
+					local Dir=Vel:GetNormalized()
+					Dir=Dir+Vector(.01, 0, 0) -- stop the turn spasming
+					local Ang=Dir:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), 90)
 					self.Parachute:SetRenderOrigin(Pos + Dir*50*self.Parachute:GetModelScale())
 					self.Parachute:SetRenderAngles(Ang)
@@ -159,8 +138,9 @@ elseif(CLIENT)then
 				self.Parachute:SetNoDraw(true)
 				self.Parachute:SetParent(self)
 			end
-		elseif (State == 2) then
-			self.Parachute:SetNoDraw(true)
+		elseif(State==STATE_ROCKETING)then
+			if(self.Parachute)then self.Parachute:Remove();self.Parachute=nil end
+			-- todo: draw rocket thrust
 		end
 	end
 	language.Add("ent_jack_gmod_ezclusterbuster_sub","EZ Cluster Buster Submunition")
