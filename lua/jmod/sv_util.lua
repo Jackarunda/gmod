@@ -1,11 +1,12 @@
 -- this causes an object to rotate to point forward while moving, like a dart
-function JMod.AeroDrag(ent, forward, mult)
+function JMod.AeroDrag(ent, forward, mult, spdReq)
 	if (constraint.HasConstraints(ent)) then return end
 	if (ent:IsPlayerHolding()) then return end
 	local Phys = ent:GetPhysicsObject()
 	local Vel = Phys:GetVelocity()
 	local Spd = Vel:Length()
-	if (Spd < 300) then return end
+	if (not spdReq) then spdReq = 300 end
+	if (Spd < spdReq) then return end
 	mult = mult or 1
 	local Pos, Mass = Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
 	Phys:ApplyForceOffset(Vel * Mass / 6 * mult, Pos + forward)

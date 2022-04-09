@@ -29,7 +29,8 @@ if(SERVER)then
 	end
 	
 	function ENT:Initialize()
-		self:SetModel("models/xqm/cylinderx2.mdl")
+		--self:SetModel("models/xqm/cylinderx2.mdl")
+		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")
 		--self:SetModelScale(1.25,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -45,7 +46,7 @@ if(SERVER)then
 		self.Owner = self.Owner or game.GetWorld()
 		---
 		self:SetDTInt(0, 0) -- 0 = dormant, 1 = parachuting, 2 = rocketing
-		timer.Simple(1, function()
+		timer.Simple(0.25, function()
 			if(IsValid(self))then
 				self:SetDTInt(0, 1)
 				self:GetPhysicsObject():SetDragCoefficient(40)
@@ -104,26 +105,26 @@ if(SERVER)then
 
 		local Phys = self:GetPhysicsObject()
 		if((State == 1) and (Phys:GetVelocity():Length() > 100)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-			self.FreefallTicks = self.FreefallTicks + 1
-			if(self.FreefallTicks >= 10)then
+			--self.FreefallTicks = self.FreefallTicks + 1
+			--if(self.FreefallTicks >= 10)then
 				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*500, self)
 				if (Tr.Hit) then 
 					self:SetDTInt(0, 2) 
 				end
-			end
+			--end
 		else
 			self.FreefallTicks = 0
 		end
 		
 		if (State == 1) then
-			JMod.AeroDrag(self, self:GetUp()*-1, 4)
-			Phys:SetDragCoefficient(80)
+			JMod.AeroDrag(self, -self:GetRight(), 1, 10)
+			Phys:SetDragCoefficient(40)
 		end
 		if (State == 2) then
 			Spin = Phys:GetAngleVelocity():Normalize()
-			
+			Phys:AddAngleVelocity(self:GetRight())
+			Phys:SetDragCoefficient(1)
 			Phys:ApplyForceCenter(Vector(0, 0, 2500))
-			Phys:SetDragCoefficient(40)
 			timer.Simple(1, function() 
 				if (self:IsValid()) then
 					self:Detonate()
@@ -149,13 +150,13 @@ elseif(CLIENT)then
 					Dir = Dir + Vector(.01, 0, 0) -- stop the turn spasming
 					local Ang = Dir:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), 90)
-					self.Parachute:SetRenderOrigin(Pos + Dir*50*self.Parachute:GetModelScale())
+					self.Parachute:SetRenderOrigin(Pos + Up*6 + -Forward*6 + Right*5 + Dir*50*self.Parachute:GetModelScale())
 					self.Parachute:SetRenderAngles(Ang)
 					self.Parachute:DrawModel()
 				end
 			else
 				self.Parachute=ClientsideModel("models/jessev92/rnl/items/parachute_deployed.mdl")
-				self.Parachute:SetModelScale(0.25, 0)
+				self.Parachute:SetModelScale(0.3, 0)
 				self.Parachute:SetNoDraw(true)
 				self.Parachute:SetParent(self)
 			end
