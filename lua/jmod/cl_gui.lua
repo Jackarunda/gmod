@@ -388,10 +388,105 @@ local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
         Y = Y + 30
     end
 end
+local function StandardSelectionMenu(id,data,enableFunc,clickFunc,sidePanelFunc)
+	local MotherFrame=vgui.Create("DFrame")
+	MotherFrame:SetSize(ScrW()*.7,ScrH()*.7)
+	MotherFrame:SetVisible(true)
+	MotherFrame:SetDraggable(true)
+	MotherFrame:ShowCloseButton(true)
+	MotherFrame:SetTitle("Workbench")-- | Right click a recipe to favourite it.")
+	function motherFrame:Paint()
+		BlurBackground(self)
+	end
+	MotherFrame:MakePopup()
+	MotherFrame:Center()
+	function motherFrame:OnKeyCodePressed(key)
+		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+	end
+	local SelectionPanel,W,H,Myself=vgui.Create("DPanel",MotherFrame),MotherFrame:GetWide(),MotherFrame:GetTall(),LocalPlayer()
+	SelectionPanel:SetPos(W*.5+5,35)
+	SelectionPanel:SetSize(W*.5-10,H-30)
+	function SelectionPanel:Paint(w,h)
+		surface.SetDrawColor(50,50,50,100)
+		surface.DrawRect(0,0,w,h)
+	end
+	--[[
+	local Categories={}
+	
+	for k,v in pairs(Buildables)do
+		local Category=v[3] or "Other"
+		Categories[Category]=Categories[Category] or {}
+		Categories[Category][k]=v
+	end
+	local X,ActiveTab=10,table.GetKeys(Categories)[1]
+	local TabPanel=vgui.Create("DPanel",Frame)
+	TabPanel:SetPos(10,30)
+	TabPanel:SetSize(W-20,H-70)
+	function TabPanel:Paint(w,h)
+		surface.SetDrawColor(0,0,0,100)
+		surface.DrawRect(0,0,w,h)
+	end
+	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
+	local text_space = 1
+
+	local AlphabetizedCategoryNames=table.GetKeys(Categories)
+	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
+
+	for k,cat in pairs(AlphabetizedCategoryNames) do
+		local TabBtn=vgui.Create("DButton",Frame)
+		local text_xwb = surface.GetTextSize(cat)
+		TabBtn:SetPos(X,10)
+		TabBtn:SetSize(text_xwb + text_space,20)
+		TabBtn:SetText("")
+		TabBtn.Category=cat
+		function TabBtn:Paint(x,y)
+			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
+			surface.DrawRect(0,0,x,y)			
+			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+		end
+		function TabBtn:DoClick()
+			ActiveTab=self.Category
+			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
+		end
+		X = X + text_xwb + text_space + 1
+	end
+	
+	-- Resource display
+	local resFrame = vgui.Create("DPanel", motherFrame)
+	resFrame:SetSize(95, 270)
+	resFrame:SetPos(10,30)
+	function resFrame:Paint(w,h)
+		draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+		surface.SetDrawColor(50,50,50,100)
+		surface.DrawRect(0,0,w,h)
+	end
+	local resLayout = vgui.Create("DListLayout", resFrame)
+	resLayout:SetPos(5, 25)
+	resLayout:SetSize(90, 270)
+	
+	for typ, amt in pairs(resTbl) do
+		local label = vgui.Create("DLabel")
+		label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
+		label:SetContentAlignment(4)
+		resLayout:Add(label)
+	end
+	--]]
+end
+--[[
+if #JMod.ClientConfig.BuildKitFavs > 0 then
+	local Tab = {}
+	for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
+		table.insert(Tab,v)
+	end
+	Categories["Favourites"]=Tab
+end
+--]]
 net.Receive("JMod_EZtoolbox",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
-	local resTbl = JMod.CountResourcesInRange(nil,nil,Kit)
+	local resTbl=JMod.CountResourcesInRange(nil,nil,Kit)
+	StandardSelectionMenu('eztoolbox',Buildables,enableFunc,clickFunc,sidePanelFunc)
+	--[[
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(620, 310)
 	motherFrame:SetVisible(true)
@@ -424,15 +519,6 @@ net.Receive("JMod_EZtoolbox",function()
 		Categories[Category]=Categories[Category] or {}
 		Categories[Category][k]=v
 	end
-	--[[
-	if #JMod.ClientConfig.BuildKitFavs > 0 then
-		local Tab = {}
-		for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
-			table.insert(Tab,v)
-		end
-		Categories["Favourites"]=Tab
-	end
-	--]]
 	local X,ActiveTab=10,table.GetKeys(Categories)[1]
 	local TabPanel=vgui.Create("DPanel",Frame)
 	TabPanel:SetPos(10,30)
@@ -487,6 +573,7 @@ net.Receive("JMod_EZtoolbox",function()
 		label:SetContentAlignment(4)
 		resLayout:Add(label)
 	end
+	--]]
 end)
 net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()

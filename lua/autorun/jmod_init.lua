@@ -7,6 +7,10 @@ JMod.EZ_STATION_STATE_READY=2
 JMod.EZ_STATION_STATE_DELIVERING=3
 JMod.EZ_STATION_STATE_BUSY=4
 
+-- crafting type
+JMod.EZ_CRAFTING_TYPE_WORKBENCH = "workbench"
+JMod.EZ_CRAFTING_TYPE_TOOLBOX = "toolbox"
+
 -- resource definitions --
 JMod.EZ_RESOURCE_TYPES={
 	WATER="water",

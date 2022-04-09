@@ -77,7 +77,7 @@ function SWEP:Initialize()
 	self.CurTask=nil
 	if(SERVER)then
 		self.Buildables={
-			{"Nail (constraints object)","ez nail",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10},.2},
+			{"Nail (constrains object)","ez nail",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10},.2},
 			{"(action) Package Object","package",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25},1}
 		}
 		for name,info in pairs(JMod.Config.Blueprints)do
