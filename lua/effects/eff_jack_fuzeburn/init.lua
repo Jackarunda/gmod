@@ -6,6 +6,7 @@ function EFFECT:Init(data)
 	local Scayul=data:GetScale()
 	local Dir=data:GetNormal()
 	
+	--[[
 	if(self:WaterLevel()==3)then
 		local Splach=EffectData()
 		Splach:SetOrigin(vOffset)
@@ -14,6 +15,7 @@ function EFFECT:Init(data)
 		util.Effect("WaterSplash",Splach)
 		return
 	end
+	--]]
 
 	local emitter=ParticleEmitter(vOffset)
 	if(emitter)then
