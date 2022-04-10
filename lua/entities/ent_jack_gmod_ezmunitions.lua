@@ -22,7 +22,7 @@ if(SERVER)then
 	function ENT:UseEffect(pos,ent,destroyed)
 		local num=10
 		if(destroyed)then num=1 end
-		for i=1,num do
+		for i=1,num*JMod.Config.SupplyEffectMult do
 			timer.Simple(i/200,function()
 				if not(IsValid(self))then return end
 				local Eff=EffectData()
