@@ -177,7 +177,7 @@ if(SERVER)then
 		else
 			self.FreefallTicks = 0
 		end
-		JMod.AeroDrag(self, self:GetForward())
+		JMod.AeroDrag(self, self:GetForward(), 4)
 		self:NextThink(CurTime() + .1)
 		return true
 	end

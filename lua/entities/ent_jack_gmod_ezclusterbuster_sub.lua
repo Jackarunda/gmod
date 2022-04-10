@@ -18,7 +18,8 @@ end
 ---
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/xqm/cylinderx2.mdl")
+		--self:SetModel("models/xqm/cylinderx2.mdl")
+		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")
 		--self:SetModelScale(1.25,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -128,13 +129,13 @@ elseif(CLIENT)then
 					Dir=Dir+Vector(.01, 0, 0) -- stop the turn spasming
 					local Ang=Dir:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), 90)
-					self.Parachute:SetRenderOrigin(Pos + Dir*50*self.Parachute:GetModelScale())
+					self.Parachute:SetRenderOrigin(Pos + Up*6 + -Forward*6 + Right*5 + Dir*50*self.Parachute:GetModelScale())
 					self.Parachute:SetRenderAngles(Ang)
 					self.Parachute:DrawModel()
 				end
 			else
 				self.Parachute=ClientsideModel("models/jessev92/rnl/items/parachute_deployed.mdl")
-				self.Parachute:SetModelScale(0.25, 0)
+				self.Parachute:SetModelScale(0.3, 0)
 				self.Parachute:SetNoDraw(true)
 				self.Parachute:SetParent(self)
 			end
