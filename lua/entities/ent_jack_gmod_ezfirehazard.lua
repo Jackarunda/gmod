@@ -31,6 +31,7 @@ if (SERVER) then
 		self.NextEffect = 0
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
+		if(self.HighVisuals)then self:SetDTBool(0,true) end
 	end
 
 	local function Inflictor(ent)
@@ -126,9 +127,10 @@ if (SERVER) then
 	end
 elseif (CLIENT) then
 	function ENT:Initialize()
+		local HighVisuals=self:GetDTBool(0)
 		self.Ptype = 1
 		self.TypeInfo = {"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")}, "eff_jack_gmod_heavyfire", 15, 14, 100}
-		self.CastLight = math.random(1, 10) == 1
+		self.CastLight = (self.HighVisuals and math.random(1, 2) == 1) or (math.random(1, 10) == 1)
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 	end

@@ -1,5 +1,5 @@
 util.AddNetworkString("JMod_Friends") -- ^:3
-util.AddNetworkString("JMod_MineColor")
+util.AddNetworkString("JMod_ColorAndArm")
 util.AddNetworkString("JMod_EZtoolbox")
 util.AddNetworkString("JMod_EZworkbench")
 util.AddNetworkString("JMod_Hint")
@@ -42,10 +42,10 @@ net.Receive("JMod_Friends",function(length,ply)
 	end
 end)
 
-net.Receive("JMod_MineColor", function(l, ply)
+net.Receive("JMod_ColorAndArm", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local mine = net.ReadEntity()
-	if not (IsValid(mine) and mine.JModIsMine) then return end
+	if not (IsValid(mine) and mine.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(mine:GetPos()) > 15000 then return end
 	mine:SetColor(net.ReadColor())
 	if net.ReadBit() == 1 then mine:Arm(ply) end

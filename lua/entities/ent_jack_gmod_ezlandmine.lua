@@ -9,7 +9,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModIsMine = true
+ENT.JModGUIcolorable = true
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
@@ -91,7 +91,7 @@ if(SERVER)then
 		if(State==STATE_OFF)then
 			if(Alt)then
 				JMod.Owner(self,activator)
-				net.Start("JMod_MineColor")
+				net.Start("JMod_ColorAndArm")
 					net.WriteEntity(self)
 				net.Send(activator)
 			else

@@ -11,8 +11,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.JModEZstorable = true
-ENT.EZpowderDetonatable = true
-
+ENT.JModHighlyFlammableFunc="Detonate"
 ---
 if (SERVER) then
 	function ENT:SpawnFunction(ply, tr)
