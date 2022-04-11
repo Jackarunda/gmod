@@ -246,6 +246,10 @@ function JMod.InitGlobalConfig(forceNew)
 					"10 frag grenades used for explosions.",
 					{"ent_jack_gmod_ezfragnade",10}
 				},
+				["flares"]={
+					"15 road flares used for signalling and illumination.",
+					{"ent_jack_gmod_ezroadflare",15}
+				},
 				["gas grenades"]={
 					"6 gas grenades that can suffocate their victims.",
 					{"ent_jack_gmod_ezgasnade",6}
@@ -1116,6 +1120,16 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				"Munitions",
 				"Frag nade, for sending hundreds of fragments into your enemy."
+			},
+			["EZ Road Flare"]={
+				"ent_jack_gmod_ezroadflare",
+				{
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
+					[JMod.EZ_RESOURCE_TYPES.PAPER]=5,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
+				},
+				"Munitions",
+				"Colorable road flare, for signalling and illumination."
 			},
 			["EZ Fumigator"]={
 				"ent_jack_gmod_ezfumigator",

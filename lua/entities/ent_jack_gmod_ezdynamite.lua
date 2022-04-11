@@ -9,9 +9,9 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.EZpowderIgnitable = true
 ENT.JModPreferredCarryAngles = Angle(-90, 90, 0)
 ENT.JModEZstorable = true
+ENT.JModHighlyFlammableFunc="Arm"
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -72,6 +72,7 @@ if(SERVER)then
 		if(dmginfo:GetInflictor()==self)then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
+		if(dmginfo:IsDamageType(DMG_BURN))then self:Arm() end
 		if(Dmg>=4)then
 			local Pos,State,DetChance=self:GetPos(),self:GetState(),0
 			if(dmginfo:IsDamageType(DMG_BLAST))then DetChance=DetChance+Dmg/150 end

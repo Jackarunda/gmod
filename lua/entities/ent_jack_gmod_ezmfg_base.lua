@@ -83,7 +83,7 @@ if(SERVER)then
 		if(State==STATE_OFF)then
 			if(Alt)then
 				JMod.Owner(self,activator)
-				net.Start("JMod_MineColor")
+				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
 			else

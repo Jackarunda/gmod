@@ -37,7 +37,7 @@ if(SERVER)then
 		Boom:SetOwner(Owner)
 		Boom:Spawn()
 		Boom:Fire("explode", 0)
-		for i = 1, 15 do
+		for i = 1, 25 do
 			local FireVec = (self:GetVelocity()/500+VectorRand()*.3+Vector(0,0,.3)):GetNormalized()
 			FireVec.z = FireVec.z/2
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
@@ -45,7 +45,7 @@ if(SERVER)then
 			Flame:SetAngles(FireVec:Angle())
 			Flame:SetOwner(self.Owner or game.GetWorld())
 			JMod.Owner(Flame, self.Owner or self)
-			Flame.SpeedMul = self:GetVelocity():Length()/1000+.3
+			Flame.SpeedMul = self:GetVelocity():Length()/1000+.5
 			Flame.Creator = self
 			Flame.HighVisuals = true
 			Flame:Spawn()
