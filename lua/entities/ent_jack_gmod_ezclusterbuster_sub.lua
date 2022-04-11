@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "The deployment submunition for the EZ Cluster Buster"
 ENT.PrintName = "Cluster Buster submunition deployer"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ENT.EZclusterBusterMunition = true
 ---
@@ -17,6 +17,16 @@ function ENT:SetupDataTables()
 end
 ---
 if(SERVER)then
+	function ENT:SpawnFunction(ply,tr)
+		local SpawnPos = tr.HitPos + tr.HitNormal*15
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
+		ent:SetPos(SpawnPos)
+		JMod.Owner(ent, ply)
+		ent:Spawn()
+		ent:Activate()
+		return ent
+	end
 	function ENT:Initialize()
 		--self:SetModel("models/xqm/cylinderx2.mdl")
 		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
@@ -34,19 +44,11 @@ if(SERVER)then
 		---
 		self.Owner=self.Owner or game.GetWorld()
 		---
-		self:GetPhysicsObject():EnableGravity(false) -- DEBUG
+		--self:GetPhysicsObject():EnableGravity(false) -- DEBUG
 		self:SetState(STATE_OFF)
 		timer.Simple(math.Rand(.5,1),function()
 			if(IsValid(self))then
 				self:StartParachuting()
-				timer.Simple(math.Rand(1,2),function()
-					if(IsValid(self))then
-						self:StartRocketing()
-						timer.Simple(math.Rand(.5,1),function()
-							if(IsValid(self))then self:Detonate() end
-						end)
-					end
-				end)
 			end
 		end)
 	end
@@ -54,22 +56,39 @@ if(SERVER)then
 		self:SetState(STATE_PARACHUTING)
 		self:GetPhysicsObject():SetDragCoefficient(40)
 		self:GetPhysicsObject():SetAngleDragCoefficient(10)
+		--[[timer.Simple(0.5, function () 
+			if (self:IsValid()) then
+				local Phys = self:GetPhysicsObject()
+				Phys:SetAngles(Angle(0, 0, 90)) 
+				Phys:SetVelocity(Vector(0, 0, 0))
+				--print("I'm turned the right way")
+			end
+		end)]]--
 	end
 	function ENT:StartRocketing()
 		self:SetState(STATE_ROCKETING)
-		self:GetPhysicsObject():SetDragCoefficient(1)
-		self:GetPhysicsObject():SetAngleDragCoefficient(1)
+		local Phys = self:GetPhysicsObject()
+		Phys:SetDragCoefficient(1)
+		Phys:SetAngleDragCoefficient(1)
+		Phys:SetAngles(Angle(0, 0, 90)) 
+		Phys:SetVelocity(Vector(0, 0, 0))
+		Phys:AddAngleVelocity(Vector(0, 2500, 0))
+		timer.Simple(1, function()
+			if(self:IsValid()) then
+				self:Detonate()
+			end
+		end)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
 		if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2) then
-			self:Detonate()
+			--self:Detonate()
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self.Exploded)then return end
-		if(dmginfo:GetInflictor() == self)then return end
+		if(dmginfo:GetInflictor() == self or dmginfo:GetInflictor().EZclusterBusterMunition == true)then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg = dmginfo:GetDamage()
 		if(JMod.LinCh(Dmg, 20, 100))then
@@ -86,30 +105,57 @@ if(SERVER)then
 	function ENT:Detonate(delay, dmg)
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local Att=self.Owner or game.GetWorld()
-		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
-		local Up,Right,Forward,SkeetAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
-		self:Remove()
-		JMod.Sploom(Att,Pos,50)
-		for i=1,4 do
-			local Skeet=ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
-			JMod.Owner(Skeet,Att)
-			Skeet:SetPos(Pos+VectorRand()*math.random(1,20))
-			Skeet:SetVelocity(Vel+Vector(math.random(-1000,1000),math.random(-1000,1000),0))
-			Skeet:Spawn()
-			Skeet:Activate()
+		local Att = self.Owner or game.GetWorld()
+		local Vel,Pos,Ang = self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
+		local Up,Right,Forward,SkeetAng = Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
+		for i = 1, 4 do
+			timer.Simple(i*0.25, function() 
+				if (self:IsValid()) then
+					local Pos = self:LocalToWorld(self:OBBCenter())
+					local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
+					JMod.Owner(Skeet, Att)
+					Skeet:SetPos(Pos + self:GetForward()*50)
+					Skeet:SetAngles(SkeetAng)
+					Skeet:Spawn()
+					Skeet:Activate()
+					--Skeet:SetVelocity(Vel + self:LocalToWorld(Skeet:GetPos())*5000)
+					--[[timer.Simple(0.5, function()
+						if (Skeet:IsValid()) then 
+							Skeet:GetPhysicsObject():EnableMotion(false)
+						end
+					end)]]--
+				end
+			end)
 		end
+		timer.Simple(2, function()
+			if (self:IsValid()) then
+				local Pos = self:LocalToWorld(self:OBBCenter())
+				self:Remove()
+				JMod.Sploom(Att, Pos, 10)
+			end
+		end)
 	end
 	function ENT:Think()
-		local Time=CurTime()
-		local State=self:GetDTInt(0)
-		local Phys=self:GetPhysicsObject()
-		if(State==STATE_PARACHUTING)then
+		local Time = CurTime()
+		local State = self:GetDTInt(0)
+		local Phys = self:GetPhysicsObject()
+		local Vel,Pos,Ang = Phys:GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
+		local Up,Forward,Right = self:GetUp(), self:GetForward(), self:GetRight()
+		local Att=self.Owner or game.GetWorld()
+		if (State == STATE_PARACHUTING) then
 			-- these 4 lines are SUPPOSED to make the thing point straight up and down, not sure why it doesn't work
-			local Top=self:LocalToWorld(Vector(0,100,0))
-			Phys:ApplyForceOffset(Vector(0,0,1000),Top)
-			local Bottom=self:LocalToWorld(Vector(0,-100,0))
-			Phys:ApplyForceOffset(Vector(0,0,-1000),Bottom)
+			--[[local Up = Angle(0, 100, 0)
+			local Top = self:LocalToWorld(Vector(0, 100, 0))
+			Phys:ApplyForceOffset(Vector(0, 0, 1000), Top)
+			local Bottom = self:LocalToWorld(Vector(0, -100, 0))
+			Phys:ApplyForceOffset(Vector(0, 0, -1000), Bottom)--]]
+			local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*600, self)
+			if (Tr.Hit) then
+				self:StartRocketing()
+			end
+		end
+		if (State == STATE_ROCKETING) then
+			Phys:ApplyForceCenter(Vector(0, 0, 2000))
 		end
 		self:NextThink(CurTime() + .1)
 		return true

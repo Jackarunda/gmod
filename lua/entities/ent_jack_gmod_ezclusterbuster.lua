@@ -142,10 +142,9 @@ if(SERVER)then
 		local Att=self.Owner or game.GetWorld()
 		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		local Up,Right,Forward,CylinderAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
-		self:Remove()
-		JMod.Sploom(Att,Pos,50)
-		timer.Simple(0,function()
-			for i=1,4 do
+		for i = 1, 4 do
+			timer.Simple(i*0.25, function()
+				local Pos = self:LocalToWorld(self:OBBCenter())
 				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet,Att)
 				Bomblet:SetPos(Pos+VectorRand()*math.random(1,100))
@@ -153,6 +152,12 @@ if(SERVER)then
 				Bomblet:Spawn()
 				Bomblet:Activate()
 				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.random(1,200))
+			end)
+		end
+		timer.Simple(1.5, function()
+			if (self:IsValid()) then
+				self:Remove()
+				JMod.Sploom(Att, self:LocalToWorld(self:OBBCenter()), 50)
 			end
 		end)
 	end
@@ -171,13 +176,13 @@ if(SERVER)then
 		if((self:GetState() == STATE_ARMED)and(Phys:GetVelocity():Length() > 400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 			self.FreefallTicks = self.FreefallTicks + 1
 			if(self.FreefallTicks >= 10)then
-				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*5000, self)
+				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*7000, self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else
 			self.FreefallTicks = 0
 		end
-		JMod.AeroDrag(self, self:GetForward(), 4)
+		JMod.AeroDrag(self, self:GetForward(), 5)
 		self:NextThink(CurTime() + .1)
 		return true
 	end

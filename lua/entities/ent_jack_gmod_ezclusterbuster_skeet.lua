@@ -7,7 +7,12 @@ ENT.Information = "The smart skeet submunition for the EZ Cluster Buster"
 ENT.PrintName = "Cluster Buster submunition"
 ENT.Spawnable = false
 ENT.AdminSpawnable = false
-ENT.EZclusterBusterMunition=true
+ENT.EZclusterBusterMunition = true
+---
+local STATE_BROKEN, STATE_OFF, STATE_SEEKING = -1, 0, 1
+function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"State")
+end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
@@ -34,16 +39,34 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.Owner=self.Owner or game.GetWorld()
+		self.Owner = self.Owner or game.GetWorld()
 		---
-		self.Active=false
-		timer.Simple(math.Rand(.5,1.5),function()
-			if(IsValid(self))then self.Active=true end
+		self:SetState(STATE_OFF)
+		timer.Simple(0.25 ,function()
+			if(IsValid(self))then self:StartSeeking() end
 		end)
+	end
+	function ENT:StartSeeking()
+		self:SetState(STATE_SEEKING)
+		self:SetVelocity(self:GetPhysicsObject():GetForward()*1000)
+		timer.Simple(4, function ()
+			if(self:IsValid()) then
+				--local WarcrimeChance = math.Round(math.Rand(0, 1))
+				--if(WarcrimeChance == 1) then
+				--	self:Break()
+				--else
+					self:Detonate()
+				--end
+			end
+		end)
+	end
+	function ENT:Break()
+		self:SetState(STATE_BROKEN)
+		SafeRemoveEntityDelayed(self, 10)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
-		--if(data.HitEntity.EZclusterBusterMunition)then return end
+		if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2 and data.Speed>25)then
 			self:Detonate()
 		end
@@ -54,22 +77,27 @@ if(SERVER)then
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg = dmginfo:GetDamage()
 		if(JMod.LinCh(Dmg, 20, 100))then
-			self:Detonate()
+			--self:Detonate()
 		end
 	end
 	function ENT:Detonate(delay, dmg)
 		if(self.Exploded)then return end
-		self.Exploded=true
-		local Att=self.Owner or game.GetWorld()
+		self.Exploded = true
+		local Att = self.Owner or game.GetWorld()
 		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		JMod.Sploom(Att,Pos,50)
 		--JMod.RicPenBullet(self, SelfPos, Dir,(dmg or 600)*JMod.Config.MinePower, true, true)
 		self:Remove()
 	end
+	local VelCurve = 1
 	function ENT:Think()
-		local Time=CurTime()
-		if(self.Active)then
-
+		local Time = CurTime()
+		local Phys = self:GetPhysicsObject()
+		local Up,Forward,Right = self:GetUp(), self:GetForward(), self:GetRight()
+		if(self:GetState() == STATE_SEEKING)then
+			--Phys:ApplyForceCenter(Vector(0, 0, 1200*VelCurve))
+			--Phys:ApplyForceCenter(Forward*2000)
+			VelCurve = VelCurve - 0.0005
 		end
 		self:NextThink(Time+.1)
 		return true
