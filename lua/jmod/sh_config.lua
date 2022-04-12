@@ -80,7 +80,9 @@ function JMod.InitGlobalConfig(forceNew)
 			StartingOutpostCount=1,
 			AvailablePackages={
 				["arms"]={
-					"buncha random guns, good luck getting what you want.",
+					description= "buncha random guns, good luck getting what you want.",
+					category="Weapons",
+					results = {
 					{
 						"RAND",
 						"ent_jack_gmod_ezweapon_pistol",
@@ -116,10 +118,12 @@ function JMod.InitGlobalConfig(forceNew)
 					},
 					{"ent_jack_gmod_ezammo",2},
 					"ent_jack_gmod_ezmunitions"
+					}
 				},
 				["armor"]={
-					"A random collection of armor*. *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
-					{
+					description="A random collection of armor*. *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
+					category="Apparel",
+					results={
 						"RAND",
 						JMod.ArmorTable["GasMask"].ent,
 						JMod.ArmorTable["BallisticMask"].ent,
@@ -159,309 +163,384 @@ function JMod.InitGlobalConfig(forceNew)
 					}
 				},
 				["crossbow"]={
-					"A crossbow and 2 boxes of arrows, enjoy.",
-					{"ent_jack_gmod_ezammobox_a",2},
+					description="A crossbow and 2 boxes of arrows, enjoy.",
+					category="Weapons",
+					results={{"ent_jack_gmod_ezammobox_a",2},
                     "ent_jack_gmod_ezweapon_crossbow"
+					}
 				},
                 ["black powder weaponry"]={
-					"Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
-					{"ent_jack_gmod_ezammobox_bppc",3},
+					description="Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
+					category="Weapons",
+					
+					results={{"ent_jack_gmod_ezammobox_bppc",3},
                     "ent_jack_gmod_ezweapon_flm",
                     "ent_jack_gmod_ezweapon_cabr",
                     "ent_jack_gmod_ezweapon_flb"
+					}
 				},
                 ["basic parts"]={
-					"3 boxes of parts used for crafting and repairs.",
-					{"ent_jack_gmod_ezbasicparts",3}
+					description="3 boxes of parts used for crafting and repairs.",
+					category="Resources",	
+					results={"ent_jack_gmod_ezbasicparts",3}
 				},
 				["advanced parts"]={
-					"1 box of advparts used for crafting and upgrading.",
-					{"ent_jack_gmod_ezadvparts",1,20}
+					description="1 box of advparts used for crafting and upgrading.",
+					category="Resources",
+					results={"ent_jack_gmod_ezadvparts",1,20}
 				},
                 ["precision parts"]={
-					"1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
-					"ent_jack_gmod_ezprecparts"
+					description="1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
+					category="Resources",
+					results={"ent_jack_gmod_ezprecparts"}
 				},
 				["advanced textiles"]={
-					"1 box of advtextiles used for armor.",
-					"ent_jack_gmod_ezadvtextiles"
+					description="1 box of advtextiles used for armor.",
+					category="Resources",
+					results="ent_jack_gmod_ezadvtextiles"
 				},
 				["batteries"]={
-					"4 battery cells used for crafting and recharging electronics.",
-					{"ent_jack_gmod_ezbattery",4}
+					description="4 battery cells used for crafting and recharging electronics.",
+					category="Resources",
+					results={"ent_jack_gmod_ezbattery",4}
 				},
 				["ammo"]={
-					"3 boxes of ammo for crafting and resupplying weapons and entities.",
-					{"ent_jack_gmod_ezammo",3}
+					description="3 boxes of ammo for crafting and resupplying weapons and entities.",
+					category="Resources",
+					results={"ent_jack_gmod_ezammo",3}
 				},
 				["coolant"]={
-					"5 bottles of coolant for preventing machines from overheating.",
-					{"ent_jack_gmod_ezcoolant",5}
+					description="5 bottles of coolant for preventing machines from overheating.",
+					category="Resources",
+					results={"ent_jack_gmod_ezcoolant",5}
 				},
 				["munitions"]={
-					"2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
-					{"ent_jack_gmod_ezmunitions",2}
+					description="2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
+					category="Resources",
+					results={"ent_jack_gmod_ezmunitions",2}
 				},
 				["explosives"]={
-					"2 boxes of explosives used for crafting explosives.",
-					{"ent_jack_gmod_ezexplosives",2}
+					description="2 boxes of explosives used for crafting explosives.",
+					category="Resources",
+					results={"ent_jack_gmod_ezexplosives",2}
 				},
 				["chemicals"]={
-					"2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
-					{"ent_jack_gmod_ezchemicals",2}
+					description="2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
+					category="Resources",
+					results={"ent_jack_gmod_ezchemicals",2}
 				},
 				["fuel"]={
-					"4 cans of fuel used for crafting items and running generators.",
-					{"ent_jack_gmod_ezfuel",4}
+					description="4 cans of fuel used for crafting items and running generators.",
+					category="Resources",
+					results={"ent_jack_gmod_ezfuel",4}
 				},
 				["propellant"]={
-					"4 cans of propellant used for crafting items.",
-					{"ent_jack_gmod_ezpropellant",4}
+					description="4 cans of propellant used for crafting items.",
+					category="Resources",
+					results={"ent_jack_gmod_ezpropellant",4}
 				},
 				["gas"]={
-					"3 canisters of gas used for crafting items and powering the EZ Workbench",
-					{"ent_jack_gmod_ezgas",3}
+					description="3 canisters of gas used for crafting items and powering the EZ Workbench",
+					category="Resources",
+					results={"ent_jack_gmod_ezgas",3}
 				},
 				["toolboxes"]={
-					"Two toolboxes for crafting, nailing, salvaging and packaging items. ",
-					{"ent_jack_gmod_eztoolbox",2}
+					description="Two toolboxes for crafting, nailing, salvaging and packaging items. ",
+					category="Weapons",
+					results={"ent_jack_gmod_eztoolbox",2}
 				},
 				["rations"]={
-					 "5 boxes of nutrients to be eaten by players. Can overcharge health.",
+					 description="5 boxes of nutrients to be eaten by players. Can overcharge health.",
+					 category="Resources",
 					{"ent_jack_gmod_eznutrients",5}
 				},
 				["medical supplies"]={
-					 "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
-					{"ent_jack_gmod_ezmedsupplies",2}
+					description="Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
+					category="Resources",
+					results={"ent_jack_gmod_ezmedsupplies",2}
 				},
 				["resource crate"]={
-					"A box used for exclusively storing EZ Resources.",
-					"ent_jack_gmod_ezcrate"
+					description="A box used for exclusively storing EZ Resources.",
+					category="Entities",
+					result="ent_jack_gmod_ezcrate"
 				},
 				["storage crate"]={
-					"A box used exclusively for storing Jmod items. Can hold a volume of up to 100 units.",
-					"ent_jack_gmod_ezcrate_uni"
+					description="A box used exclusively for storing Jmod items. Can hold a volume of up to 100 units.",
+					category="Entities",
+					results="ent_jack_gmod_ezcrate_uni"
 				},
 				["frag grenades"]={
-					"10 frag grenades used for explosions.",
-					{"ent_jack_gmod_ezfragnade",10}
+					description="10 frag grenades used for explosions.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezfragnade",10}
 				},
 				["flares"]={
-					"15 road flares used for signalling and illumination.",
-					{"ent_jack_gmod_ezroadflare",15}
+					description="15 road flares used for signalling and illumination.",
+					category="Tactical",
+					results={"ent_jack_gmod_ezroadflare",15}
 				},
 				["gas grenades"]={
-					"6 gas grenades that can suffocate their victims.",
-					{"ent_jack_gmod_ezgasnade",6}
+					description="6 gas grenades that can suffocate their victims.",
+					category="Explosives",
+					result={"ent_jack_gmod_ezgasnade",6}
 				},
 				["tear gas grenades"]={
-					"Tear gas used to disperse riots.",
-					{"ent_jack_gmod_ezcsnade",6}
+					description="Tear gas used to disperse riots.",
+					category="Tactical",
+					result={"ent_jack_gmod_ezcsnade",6}
 				},
 				["impact grenades"]={
-					"10 grenades that explode upon impact.",
+					description="10 grenades that explode upon impact.",
+					category="Explosives",
 					{"ent_jack_gmod_ezimpactnade",10}
 				},
 				["incendiary grenades"]={
-					"6 grenades that produce fire upon explosion.",
-					{"ent_jack_gmod_ezfirenade",6}
+					description="6 grenades that produce fire upon explosion.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezfirenade",6}
 				},
 				["satchel charges"]={
-					"4 explosives with comical detonator plungers used for making things go boom.",
-					{"ent_jack_gmod_ezsatchelcharge",4}
+					description="4 explosives with comical detonator plungers used for making things go boom.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezsatchelcharge",4}
 				},
 				["sticky bomb"]={
-					"6 grenades that stick to things on contact.",
-					{"ent_jack_gmod_ezstickynade",6}
+					description="6 grenades that stick to things on contact.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezstickynade",6}
 				},
 				["mini grenades"]={
-					"5 impact, proximity, remote, and timed grenades. These can be attached to larger explosives to override their primary functions.",
-					{"ent_jack_gmod_eznade_impact",5},
+					description="5 impact, proximity, remote, and timed grenades. These can be attached to larger explosives to override their primary functions.",
+					category="Explosives",
+					results={{"ent_jack_gmod_eznade_impact",5},
 					{"ent_jack_gmod_eznade_proximity",5},
 					{"ent_jack_gmod_eznade_remote",5},
 					{"ent_jack_gmod_eznade_timed",5}
-					
+					}
 				},
 				["timebombs"]={
-					"Timed explosives with configurable timers. Can be defused with parts and Toolbox.",
-					{"ent_jack_gmod_eztimebomb",3}
+					description="Timed explosives with configurable timers. Can be defused with parts and Toolbox.",
+					category="Explosives",
+					result={"ent_jack_gmod_eztimebomb",3}
 				},
 				["hl2 ammo"]={
-					"An assortment of ammunition for keeping your men going during battle.",
-					"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
+					description="An assortment of ammunition for keeping your men going during battle.",
+					category="Misc",
+					results={"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
 					{"item_ammo_ar2_altfire",3},
 					"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
 					{"item_rpg_round",3},
 					"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
 					{"item_ammo_smg1_grenade",3},
-					{"weapon_frag",3}
+					{"weapon_frag",3}}
 				},
 				["sentry"]={
-					"Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
-					"ent_jack_gmod_ezsentry"
+					description="Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
+					category="Machines",
+					results="ent_jack_gmod_ezsentry"
 				},
 				["supply radio"]={
-					"You're looking at one. No shame in having a backup radio.",
-					"ent_jack_gmod_ezaidradio"
+					description="You're looking at one. No shame in having a backup radio.",
+					category="Machines",
+					results="ent_jack_gmod_ezaidradio"
 				},
 				["medkits"]={
-					"3 medical kits that use medical supplies to heal players.",
+					description="3 medical kits that use medical supplies to heal players.",
+					category="Tools",
 					{"ent_jack_gmod_ezmedkit",3}
 				},
 				["landmines"]={
-					"10 landmines that trigger when an enemy steps near them.",
-					{"ent_jack_gmod_ezlandmine",10}
+					description="10 landmines that trigger when an enemy steps near them.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezlandmine",10}
 				},
 				["mini bounding mines"]={
-					"8 landmines that can only be planted in soft surfaces.",
-					{"ent_jack_gmod_ezboundingmine",8}
+					description="8 landmines that can only be planted in soft surfaces.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezboundingmine",8}
 				},
 				["fumigators"]={
-					"2 fumigators that emit poison gas.",
-					{"ent_jack_gmod_ezfumigator",2}
+					description="2 fumigators that emit poison gas.",
+					category="Lethal",
+					results={"ent_jack_gmod_ezfumigator",2}
 				},
 				["fougasse mines"]={
-					"4 fougasse mines. Blasts napalm at whoever triggers it.",
-					{"ent_jack_gmod_ezfougasse",4}
+					description="4 fougasse mines. Blasts napalm at whoever triggers it.",
+					category="Lethal",
+					results={"ent_jack_gmod_ezfougasse",4}
 				},
 				["detpacks"]={
-					"8 detpacks used for breaching doors and general explosive damage.",
-					{"ent_jack_gmod_ezdetpack",8}
+					description="8 detpacks used for breaching doors and general explosive damage.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezdetpack",8}
 				},
 				["slams"]={
-					"5 SLAMs that can be planted on walls.",
-					{"ent_jack_gmod_ezslam",5}
+					description="5 SLAMs that can be planted on walls.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezslam",5}
 				},
 				["antimatter"]={
-					"A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
-					"ent_jack_gmod_ezantimatter"
+					description="A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
+					category="Resources",
+					results="ent_jack_gmod_ezantimatter"
 				},
 				["fissile material"]={
-					"A box filled with fissile material used to craft nuclear devices.",
-					"ent_jack_gmod_ezfissilematerial"
+					description="A box filled with fissile material used to craft nuclear devices.",
+					category="Resources",
+					results="ent_jack_gmod_ezfissilematerial"
 				},
 				["dynamite"]={
-					"12 dynamite sticks for comical explosions.",
-					{"ent_jack_gmod_ezdynamite",12}
+					description="12 dynamite sticks for comical explosions.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezdynamite",12}
 				},
 				["flashbangs"]={
-					"8 flashbangs that stun targets.",
+					description="8 flashbangs that stun targets.",
+					category="Tactical",
 					{"ent_jack_gmod_ezflashbang",8}
 				},
 				["powder kegs"]={
-					"4 powder kegs for funny explosions.",
-					{"ent_jack_gmod_ezpowderkeg",4}
+					description="4 powder kegs for funny explosions.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezpowderkeg",4}
 				},
 				["smoke grenades"]={	
-					"4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
-					{"ent_jack_gmod_ezsmokenade",4},
-					{"ent_jack_gmod_ezsignalnade",4}
+					description="4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
+					category="Tactical",
+					results={{"ent_jack_gmod_ezsmokenade",4},
+					{"ent_jack_gmod_ezsignalnade",4}}
 				},
 				["stick grenades"]={
-					"4 German stick grenades and one big bundle of sticks to make a fabulous explosion.",
-					{"ent_jack_gmod_ezsticknade",4},
-					"ent_jack_gmod_ezsticknadebundle"
+					description="4 German stick grenades and one big bundle of sticks to make a fabulous explosion.",
+					category="Explosives",
+					results={{"ent_jack_gmod_ezsticknade",4},
+					"ent_jack_gmod_ezsticknadebundle"}
 
 				},
 				["mini claymores"]={
-					"4 small AP mines.",
-					{"ent_jack_gmod_ezminimore",4}
+					description="4 small AP mines.",
+					category="Explosives",
+					results={"ent_jack_gmod_ezminimore",4}
 				},
 				["tnt"]={
-					"WW2-era explosives with fuse.",
-					{"ent_jack_gmod_eztnt", 3}
+					description="WW2-era explosives with fuse.",
+					category="Explosives",
+					results={"ent_jack_gmod_eztnt", 3}
 				},
 				["thermal goggles"]={
-					"2 thermal goggles that highlight heat-sources for the user. Consumes battery.",
-					{"ent_jack_gmod_ezarmor_thermals",2}
+					description="2 thermal goggles that highlight heat-sources for the user. Consumes battery.",
+					category="Apparel",
+					results={"ent_jack_gmod_ezarmor_thermals",2}
 				},
 				["night vision goggles"]={
-					"4 night-vision goggles to help players see in the dark. Consumes battery.",
-					{"ent_jack_gmod_ezarmor_nvgs",4}
+					description="4 night-vision goggles to help players see in the dark. Consumes battery.",
+					category="Apparel",
+					results={"ent_jack_gmod_ezarmor_nvgs",4}
 				},
 				["headsets"]={
-					"8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
-					{"ent_jack_gmod_ezarmor_headset",8}
+					description="8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
+					category="Apparel",
+					results={"ent_jack_gmod_ezarmor_headset",8}
 				},
                 ["steel"]={
-					"Steel in a quantity of 200, used in basic parts and some weapons.",
-					{"ent_jack_gmod_ezsteel",2}
+					description="Steel in a quantity of 200, used in basic parts and some weapons.",
+					category="Resources",
+					results={"ent_jack_gmod_ezsteel",2}
 				},
                 ["copper"]={
-					"Copper in a quantity of 100, used in basic parts.",
-					"ent_jack_gmod_ezcopper"
+					description="Copper in a quantity of 100, used in basic parts.",
+					category="Resources",
+					results="ent_jack_gmod_ezcopper"
 				},
                 ["aluminum"]={
-					"Aluminum in a quantity of 200, used in basic parts.",
-					{"ent_jack_gmod_ezaluminum",2}
+					description="Aluminum in a quantity of 200, used in basic parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezaluminum",2}
 				},
                 ["lead"]={
-					"Lead in a quantity of 200, very useful in ammo production for fending off other players.",
-					{"ent_jack_gmod_ezlead",2}
+					description="Lead in a quantity of 200, very useful in ammo production for fending off other players.",
+					category="Resources",
+					results={"ent_jack_gmod_ezlead",2}
 				},
                 ["silver"]={
-					"Silver in a quantity of 50, used for high tier stuff.",
-					{"ent_jack_gmod_ezsilver",1,50}
+					description="Silver in a quantity of 50, used for high tier stuff.",
+					category="Resources",
+					results={"ent_jack_gmod_ezsilver",1,50}
 				},
                 ["gold"]={
-					"Gold in a quantity of 20, used in advanced parts.",
-					{"ent_jack_gmod_ezgold",1,20}
+					description="Gold in a quantity of 20, used in advanced parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezgold",1,20}
 				},
                 ["titanium"]={
-					"Titanium in a quantity of 50, used in high-tier weaponry.",
-					{"ent_jack_gmod_eztitanium",1,50}
+					description="Titanium in a quantity of 50, used in high-tier weaponry.",
+					category="Resources",
+					results={"ent_jack_gmod_eztitanium",1,50}
 				},
                 ["tungsten"]={
-					"Tungsten in a quantity of 50, used in high-tier weaponry.",
-					{"ent_jack_gmod_eztungsten",1,50}
+					description="Tungsten in a quantity of 50, used in high-tier weaponry.",
+					category="Resources",
+					results={"ent_jack_gmod_eztungsten",1,50}
 				},
                 ["platinum"]={
-					"Platinum in a quantity of 10, used in advanced parts.",
-					{"ent_jack_gmod_ezplatinum",1,10}
+					description="Platinum in a quantity of 10, used in advanced parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezplatinum",1,10}
 				},
                 ["uranium"]={
-					"Uranium in a quantity of 20, used in fissile material enrichment.",
-					{"ent_jack_gmod_ezuranium",1,20}
+					description="Uranium in a quantity of 20, used in fissile material enrichment.",
+					category="Resources",
+					results={"ent_jack_gmod_ezuranium",1,20}
 				},
                 ["diamond"]={
-					"diamond in a quantity of 10, used in advanced parts.",
-					{"ent_jack_gmod_ezdiamond",1,10}
+					description="diamond in a quantity of 10, used in advanced parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezdiamond",1,10}
 				},
                 ["water"]={
-					"Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
-					{"ent_jack_gmod_ezwater",3}
+					description="Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
+					category="Resources",
+					results={"ent_jack_gmod_ezwater",3}
 				},
                 ["wood"]={
-					"Wood in a quantity of 200, used in paper and electricity production.",
-					{"ent_jack_gmod_ezwood",2}
+					description="Wood in a quantity of 200, used in paper and electricity production.",
+					category="Resources",
+					results={"ent_jack_gmod_ezwood",2}
 				},
                 ["paper"]={
-					"Paper in a quantity of 200, used in nutrients.",
-					{"ent_jack_gmod_ezpaper",2}
+					description="Paper in a quantity of 200, used in nutrients.",
+					category="Resources",
+					results={"ent_jack_gmod_ezpaper",2}
 				},
                 ["plastic"]={
-					"Plastic in a quantity of 200, used in basic parts.",
-					{"ent_jack_gmod_ezplastic",2}
+					description="Plastic in a quantity of 200, used in basic parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezplastic",2}
 				},
                 ["organics"]={
-					"Organics in a quantity of 200, used in nutrients.",
-					{"ent_jack_gmod_ezorganics",2,100}
+					description="Organics in a quantity of 200, used in nutrients.",
+					category="Resources",
+					results={"ent_jack_gmod_ezorganics",2,100}
 				},
                 ["oil"]={
-					"Oil in a quantity of 100, used in plastic, fuel, and rubber.",
-					"ent_jack_gmod_ezoil"
+					description="Oil in a quantity of 100, used in plastic, fuel, and rubber.",
+					category="Resources",
+					results="ent_jack_gmod_ezoil"
 				},             
                 ["cloth"]={
-					"Cloth in a quantity of 200, used in advanced textiles.",
-					{"ent_jack_gmod_ezcloth",2}
+					description="Cloth in a quantity of 200, used in advanced textiles.",
+					category="Resources",
+					results={"ent_jack_gmod_ezcloth",2}
 				},
                 ["rubber"]={
-					"Rubber in a quantity of 200, used in basic parts.",
-					{"ent_jack_gmod_ezrubber",2}
+					description="Rubber in a quantity of 200, used in basic parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezrubber",2}
 				},
                 ["glass"]={
-					"Glass in a quantity of 200, used in basic parts.",
-					{"ent_jack_gmod_ezglass",2}
+					description="Glass in a quantity of 200, used in basic parts.",
+					category="Resources",
+					results={"ent_jack_gmod_ezglass",2}
 				},
                 
 			},
