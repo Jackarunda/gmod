@@ -693,13 +693,13 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=200
 				},
 				sizeScale=1,
-				category"Explosives",
+				category="Explosives",
 				craftingType="toolbox",
 				description="Ships beware! This mine is ready to send em to davy jones' locker!"
 			},
 			["EZ Nano Nuclear Bomb"]={
 				results="ent_jack_gmod_eznuke_small",
-				reqs{	
+				reqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
@@ -767,7 +767,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=300
 				},
 				sizeScale=1,
-				category"Explosives",
+				category="Explosives",
 				craftingType="toolbox",
 				description="Bunker buster, will cause more damage if you place it indoors."
 			},	
@@ -837,7 +837,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 		    ["EZ Black Powder Paper Cartridges"]={			
 				results="ent_jack_gmod_ezammobox_bppc",
-				reqs{	
+				reqs={	
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=20,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=25,
 					[JMod.EZ_RESOURCE_TYPES.LEAD]=20
@@ -919,7 +919,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Bolt-Action Rifle"]={
                 results=JMod.WeaponTable["Bolt-Action Rifle"].ent,
-                reqs{
+                reqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125
                 },
                 category="Weapons",
