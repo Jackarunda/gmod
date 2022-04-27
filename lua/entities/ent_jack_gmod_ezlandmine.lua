@@ -151,7 +151,7 @@ if(SERVER)then
 					self:DrawShadow(false)
 					local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,20),Vector(0,0,-40),self)
 					if(Tr.Hit)then
-						constraint.Weld(Tr.Entity,self,0,0,20000,false,false)
+						constraint.Weld(Tr.Entity,self,0,0,5000,false,false)
 					end
 				end
 			end

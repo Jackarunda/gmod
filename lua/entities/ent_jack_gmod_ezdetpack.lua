@@ -144,7 +144,7 @@ if (SERVER) then
 							self:GetPhysicsObject():Sleep()
 						end)
 					else
-						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 10000, false, false)
+						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
 						self.StuckTo = Tr.Entity
 						self.StuckStick = Weld
 					end

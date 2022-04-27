@@ -99,7 +99,8 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		if not(IsValid(self))then return end
+		self:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
 			if(math.random(1,3)==1)then
 				self:Break()

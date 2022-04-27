@@ -66,7 +66,7 @@ if(SERVER)then
 			local Pos=Tr.HitPos-Tr.HitNormal*10
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
-			constraint.Weld(self,Tr.Entity,0,0,100000,true)
+			constraint.Weld(self,Tr.Entity,0,0,50000,true)
 			local Fff=EffectData()
 			Fff:SetOrigin(Tr.HitPos)
 			Fff:SetNormal(Tr.HitNormal)

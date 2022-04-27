@@ -35,11 +35,11 @@ if(SERVER)then
 		self.Entity:SetMaterial("models/props/army/jlowstick_off")
 		self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
-		self.Entity:SetColor(Color(150,40,40))
+		self:SetUseType(ONOFF_USE)
+		self.Entity:SetColor(Color(130,200,120))
 		self:GetPhysicsObject():SetMass(6)
 		---
 		timer.Simple(.01,function()
@@ -47,6 +47,8 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
+		self.NextStick = 0
+		self.LastUse=0
 		self:SetState(STATE_OFF)
 		self:SetFuel(math.random(540,660))
 		if istable(WireLib) then
@@ -77,22 +79,65 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:Use(activator)
+	function ENT:Use(activator,activatorAgain,onOff)
 		local State=self:GetState()
 		if(State==STATE_BURNT)then return end
-		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Dude=activator or activatorAgain
+		local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
+		JMod.Owner(self, Dude)
+		local Time=CurTime()
 		if(State==STATE_OFF)then
-			if(Alt)then
-				JMod.Owner(self,activator)
-				net.Start("JMod_ColorAndArm")
-				net.WriteEntity(self)
-				net.Send(activator)
-			else
-				activator:PickupObject(self)
-				JMod.Hint(activator, "arm")
+			if(tobool(onOff))then
+				if(Alt)then
+					JMod.Owner(self,activator)
+					net.Start("JMod_ColorAndArm")
+					net.WriteEntity(self)
+					net.Send(activator)
+				else
+					activator:PickupObject(self)
+					JMod.Hint(activator, "arm")
+				end
 			end
 		elseif(State==STATE_BURNIN)then
-			activator:PickupObject(self)
+			if((Alt)&&(Dude:KeyDown(IN_SPEED))&&(tobool(onOff)))then
+				self:SetPos(Dude:GetShootPos()+Dude:GetAimVector()*20)
+				self:SetParent(Dude)
+			else
+				if(tobool(onOff))then
+					constraint.RemoveAll(self)
+					self.StuckStick = nil
+					self.StuckTo = nil
+					Dude:PickupObject(self)
+					self.NextStick = Time + .5
+					JMod.Hint(Dude, "sticky")
+				elseif((Time-self.LastUse)>.1)then
+					if((self:IsPlayerHolding())and(self.NextStick<Time))then
+						local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
+						if Tr.Hit and (IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer())then
+							self.NextStick=Time+.5
+							local Ang = Tr.HitNormal:Angle()
+							--Ang:RotateAroundAxis(Ang:Right(), -90)
+							--Ang:RotateAroundAxis(Ang:Up(), 90)
+							self:SetAngles(Ang)
+							self:SetPos(Tr.HitPos+Tr.HitNormal*.5)
+							-- crash prevention
+							if(Tr.Entity:GetClass()=="func_breakable")then
+								timer.Simple(0,function()
+									self:GetPhysicsObject():Sleep()
+								end)
+							else
+								local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,5000,false,false)
+								self.StuckTo=Tr.Entity
+								self.StuckStick=Weld
+							end
+							self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
+							Dude:DropObject()
+							JMod.Hint(Dude,"arm")
+						end
+					end
+				end
+				self.LastUse=Time
+			end
 		end
 	end
 	function ENT:Light()
@@ -100,6 +145,7 @@ if(SERVER)then
 		self:SetState(STATE_BURNIN)
 		self:SetMaterial("models/props/army/jlowstick_on")
 		self:DrawShadow(false)
+		self:EmitSound("snds_jack_gmod/glowstick_start.wav",60,math.random(90,110))
 	end
 	ENT.Arm=ENT.Light -- for compatibility with the ColorAndArm feature
 	function ENT:Burnout()
