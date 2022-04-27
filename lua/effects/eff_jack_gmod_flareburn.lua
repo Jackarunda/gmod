@@ -5,6 +5,7 @@ function EFFECT:Init(data)
 	
 	local Scayul=data:GetScale()
 	local Dir=data:GetNormal()
+	local Vel=data:GetStart()
 	local Scl=Scayul
 	local Pos=vOffset
 	
@@ -22,7 +23,7 @@ function EFFECT:Init(data)
 			local particle=emitter:Add("sprites/mat_jack_nicespark",Pos)
 
 			if(particle)then
-				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(10,500)*Scayul)
+				particle:SetVelocity((Dir+VectorRand()*.2)*math.random(10,500)*Scayul+Vel)
 				
 				particle:SetLifeTime(0)
 				particle:SetDieTime(math.Rand(0.1,1.5))
@@ -52,7 +53,7 @@ function EFFECT:Init(data)
 		for i=1,4*Scl do
 			local ParticlePos=Pos+Dir
 			local particle=emitter:Add("particle/smokestack",ParticlePos)
-			particle:SetVelocity(Dir*math.random(50,100)+VectorRand()*10)
+			particle:SetVelocity(Dir*math.random(50,100)+VectorRand()*10+Vel)
 			particle:SetAirResistance(100)
 			particle:SetGravity(Vector(0,0,100))
 			particle:SetDieTime(math.Rand(.1,1))

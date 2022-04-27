@@ -31,8 +31,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/flare.mdl")
-		self.Entity:SetMaterial("models/jflare")
+		self.Entity:SetModel("models/props/army/glowstick.mdl")
+		self.Entity:SetMaterial("models/props/army/jlowstick_off")
 		self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
@@ -40,23 +40,21 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		self.Entity:SetColor(Color(150,40,40))
-		self:GetPhysicsObject():SetMass(8)
+		self:GetPhysicsObject():SetMass(6)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(8)
+			self:GetPhysicsObject():SetMass(6)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.BurnMatApplied=false
-		---
 		self:SetState(STATE_OFF)
-		self:SetFuel(math.random(1500,2000))
+		self:SetFuel(math.random(540,660))
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Ignite"}, {"Ignites flare"})
+			self.Inputs = WireLib.CreateInputs(self, {"Light"}, {"Lights glowstick"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Ignite" and value > 0) then
+		if(iname == "Light" and value > 0) then
 			self:Light()
 		end
 	end
@@ -64,16 +62,6 @@ if(SERVER)then
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>25)then
 				self.Entity:EmitSound("Drywall.ImpactHard")
-				if(self:GetDTBool(0))then
-					local Dmg=DamageInfo()
-					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.Owner or self)
-					Dmg:SetInflictor(self)
-					Dmg:SetDamage(5)
-					Dmg:SetDamagePosition(self:GetPos())
-					Dmg:SetDamageForce(Vector(0,0,100))
-					if(data.HitEntity.TakeDamageInfo)then data.HitEntity:TakeDamageInfo(Dmg) end
-				end
 			end
 		end
 	end
@@ -81,7 +69,7 @@ if(SERVER)then
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(),1,50))then
 			local Pos,State=self:GetPos(),self:GetState()
-			if(dmginfo:IsDamageType(DMG_BURN))then
+			if(math.random(1,2)==1)then
 				self:Light()
 			else
 				sound.Play("Metal_Box.Break",Pos)
@@ -110,97 +98,57 @@ if(SERVER)then
 	function ENT:Light()
 		if(self:GetState()==STATE_BURNT)then return end
 		self:SetState(STATE_BURNIN)
-		self.BurnSound=CreateSound(self,"snds_jack_gmod/flareburn.wav")
-		self.BurnSound:Play()
-		---
-		local Spewn=ents.Create("ent_jack_spoon")
-		Spewn.Model="models/jmodels/explosives/grenades/sticknade/stick_grenade_cap.mdl"
-		Spewn:SetPos(self:GetPos())
-		Spewn:Spawn()
-		Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*250)
+		self:SetMaterial("models/props/army/jlowstick_on")
+		self:DrawShadow(false)
 	end
 	ENT.Arm=ENT.Light -- for compatibility with the ColorAndArm feature
 	function ENT:Burnout()
 		if(self:GetState()==STATE_BURNT)then return end
 		self:SetState(STATE_BURNT)
-		self.BurnSound:Stop()
-		self:SetMaterial("models/jflare_burnt")
+		self:SetMaterial("models/props/army/jlowstick_off")
 		SafeRemoveEntityDelayed(self,20)
+		self:DrawShadow(true)
 	end
 	function ENT:Think()
 		if(self:GetState()==STATE_BURNT)then return end
 		local State,Fuel,Time,Pos=self:GetState(),self:GetFuel(),CurTime(),self:GetPos()
 		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
 		if(State==STATE_BURNIN)then
-			if(not(self.BurnMatApplied)and(Fuel<1000))then
-				self.BurnMatApplied=true
-				self:SetMaterial("models/jflare_burnt")
-			end
-			local Num=(Fuel>150 and 3) or 1
-			for i=1,Num do
-				local Fsh=EffectData()
-				Fsh:SetOrigin(Pos+Up*10)
-				Fsh:SetScale((Fuel>150 and .75) or .25)
-				Fsh:SetNormal(Up)
-				if(self:WaterLevel()>0)then
-					util.Effect("eff_jack_fuzeburn",Fsh,true,true)
-				else
-					util.Effect("eff_jack_gmod_fuzeburn_smoky",Fsh,true,true)
-				end
-			end
-			for k,v in pairs(ents.FindInSphere(Pos,30))do
-				if(v.JModHighlyFlammableFunc)then
-					JMod.Owner(v,self.Owner)
-					local Func=v[v.JModHighlyFlammableFunc]
-					Func(v)
-				end
-			end
 			if(Fuel<=0)then self:Burnout() return end
 			self:SetFuel(Fuel-1)
-			self:NextThink(Time+.1)
+			self:NextThink(Time+1)
 			return true
 		end
 	end
 	function ENT:OnRemove()
-		if(self.BurnSound)then self.BurnSound:Stop() end
+		--
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Cap=JMod.MakeModel(self,"models/jmodels/explosives/grenades/sticknade/stick_grenade_cap.mdl",nil,2)
+		--
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	function ENT:Draw()
-		self:DrawModel()
+	function ENT:Think()
 		local State,Fuel,Pos,Ang=self:GetState(),self:GetFuel(),self:GetPos(),self:GetAngles()
-		local Up,Right,Forward,Mult,Col=Ang:Up(),Ang:Right(),Ang:Forward(),(Fuel>150 and 1) or .5,self:GetColor()
-		local R,G,B=math.Clamp(Col.r+20,0,255),math.Clamp(Col.g+20,0,255),math.Clamp(Col.b+20,0,255)
 		if(State==STATE_BURNIN)then
-			render.SetMaterial(GlowSprite)
-			local EyeVec=EyePos()-Pos
-			local EyeDir,Dist=EyeVec:GetNormalized(),EyeVec:Length()
-			local DistFrac=math.Clamp(Dist,0,500)/500
-			render.DrawSprite(Pos+Up*8+EyeDir*10,200*Mult,200*Mult,Color(R,G,B,200*DistFrac))
-			for i=1,10 do
-				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),20*Mult-i,20*Mult-i,Color(R,G,B,math.random(150,255)*DistFrac))
-				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),10*Mult-i,10*Mult-i,Color(255,255,255,math.random(150,255)*DistFrac))
-			end
+			local Up,Right,Forward,Mult,Col=Ang:Up(),Ang:Right(),Ang:Forward(),(Fuel>30 and 1) or .5,self:GetColor()
+			local R,G,B=math.Clamp(Col.r+20,0,255),math.Clamp(Col.g+20,0,255),math.Clamp(Col.b+20,0,255)
 			local DLight=DynamicLight(self:EntIndex())
 			if(DLight)then
-				DLight.Pos=Pos+Up*10+Vector(0,0,20)
+				DLight.Pos=Pos+Up*10+Vector(0,0,10)
 				DLight.r=R
 				DLight.g=G
 				DLight.b=B
-				DLight.Brightness=math.Rand(.5,1)*Mult^2
-				DLight.Size=math.random(1300,1500)*Mult^2
+				DLight.Brightness=Mult^2
+				DLight.Size=200*Mult^2
 				DLight.Decay=15000
 				DLight.DieTime=CurTime()+.3
 				DLight.Style=0
 			end
-		elseif(State==STATE_OFF)then
-			local CapAng=Ang:GetCopy()
-			CapAng:RotateAroundAxis(Right,180)
-			JMod.RenderModel(self.Cap,Pos-Up*1,CapAng,nil,Vector(.85,1,.8),nil,true)
 		end
 	end
-	language.Add("ent_jack_gmod_ezroadflare","EZ Road Flare")
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	function ENT:Draw()
+		self:DrawModel()
+	end
+	language.Add("ent_jack_gmod_ezglowstick","EZ Glow Stick")
 end

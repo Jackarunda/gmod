@@ -165,18 +165,20 @@ function JMod.InitGlobalConfig(forceNew)
 				["crossbow"]={
 					description="A crossbow and 2 boxes of arrows, enjoy.",
 					category="Weapons",
-					results={{"ent_jack_gmod_ezammobox_a",2},
-                    "ent_jack_gmod_ezweapon_crossbow"
+					results={
+						{"ent_jack_gmod_ezammobox_a",2},
+                    	"ent_jack_gmod_ezweapon_crossbow"
 					}
 				},
                 ["black powder weaponry"]={
 					description="Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
 					category="Weapons",
 					
-					results={{"ent_jack_gmod_ezammobox_bppc",3},
-                    "ent_jack_gmod_ezweapon_flm",
-                    "ent_jack_gmod_ezweapon_cabr",
-                    "ent_jack_gmod_ezweapon_flb"
+					results={
+						{"ent_jack_gmod_ezammobox_bppc",3},
+                    	"ent_jack_gmod_ezweapon_flm",
+                    	"ent_jack_gmod_ezweapon_cabr",
+                    	"ent_jack_gmod_ezweapon_flb"
 					}
 				},
                 ["basic parts"]={
@@ -312,10 +314,11 @@ function JMod.InitGlobalConfig(forceNew)
 				["mini grenades"]={
 					description="5 impact, proximity, remote, and timed grenades. These can be attached to larger explosives to override their primary functions.",
 					category="Explosives",
-					results={{"ent_jack_gmod_eznade_impact",5},
-					{"ent_jack_gmod_eznade_proximity",5},
-					{"ent_jack_gmod_eznade_remote",5},
-					{"ent_jack_gmod_eznade_timed",5}
+					results={
+						{"ent_jack_gmod_eznade_impact",5},
+						{"ent_jack_gmod_eznade_proximity",5},
+						{"ent_jack_gmod_eznade_remote",5},
+						{"ent_jack_gmod_eznade_timed",5}
 					}
 				},
 				["timebombs"]={
@@ -397,7 +400,7 @@ function JMod.InitGlobalConfig(forceNew)
 				["flashbangs"]={
 					description="8 flashbangs that stun targets.",
 					category="Tactical",
-					{"ent_jack_gmod_ezflashbang",8}
+					results={"ent_jack_gmod_ezflashbang",8}
 				},
 				["powder kegs"]={
 					description="4 powder kegs for funny explosions.",
@@ -407,15 +410,18 @@ function JMod.InitGlobalConfig(forceNew)
 				["smoke grenades"]={	
 					description="4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
 					category="Tactical",
-					results={{"ent_jack_gmod_ezsmokenade",4},
-					{"ent_jack_gmod_ezsignalnade",4}}
+					results={
+						{"ent_jack_gmod_ezsmokenade",4},
+						{"ent_jack_gmod_ezsignalnade",4}
+					}
 				},
 				["stick grenades"]={
 					description="4 German stick grenades and one big bundle of sticks to make a fabulous explosion.",
 					category="Explosives",
-					results={{"ent_jack_gmod_ezsticknade",4},
-					"ent_jack_gmod_ezsticknadebundle"}
-
+					results={
+						{"ent_jack_gmod_ezsticknade",4},
+						"ent_jack_gmod_ezsticknadebundle"
+					}
 				},
 				["mini claymores"]={
 					description="4 small AP mines.",
@@ -915,7 +921,7 @@ function JMod.InitGlobalConfig(forceNew)
                 },
                 category="Weapons",
 				craftingType="workbench",
-                description"A crossbow. Can be very efficient if you hit all your shots."
+                description="A crossbow. Can be very efficient if you hit all your shots."
             },
 			["EZ Bolt-Action Rifle"]={
                 results=JMod.WeaponTable["Bolt-Action Rifle"].ent,

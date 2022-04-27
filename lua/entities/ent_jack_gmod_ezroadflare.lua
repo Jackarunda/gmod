@@ -142,7 +142,10 @@ if(SERVER)then
 				Fsh:SetOrigin(Pos+Up*10)
 				Fsh:SetScale((Fuel>150 and .75) or .25)
 				Fsh:SetNormal(Up)
+				Fsh:SetStart(self:GetVelocity())
 				util.Effect("eff_jack_gmod_flareburn",Fsh,true,true)
+				-- this requires an attachment to be spec'd on the entity, and i can't be assed
+				--ParticleEffect("gf2_fountain_02_regulus_b_main",Pos,self:GetAngles(),self)
 			end
 			for k,v in pairs(ents.FindInSphere(Pos,30))do
 				if(v.JModHighlyFlammableFunc)then
@@ -193,8 +196,8 @@ elseif(CLIENT)then
 			render.SetMaterial(GlowSprite)
 			local EyeVec=EyePos()-Pos
 			local EyeDir,Dist=EyeVec:GetNormalized(),EyeVec:Length()
-			local DistFrac=math.Clamp(Dist,0,500)/500
-			render.DrawSprite(Pos+Up*8+EyeDir*10,200*Mult,200*Mult,Color(R,G,B,200*DistFrac))
+			local DistFrac=math.Clamp(Dist,0,400)/400
+			render.DrawSprite(Pos+Up*8+EyeDir*10,200*Mult,200*Mult,Color(R,G,B,255*DistFrac))
 			for i=1,10 do
 				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),20*Mult-i,20*Mult-i,Color(R,G,B,math.random(100,200)))
 				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),10*Mult-i,10*Mult-i,Color(255,255,255,math.random(100,200)))
