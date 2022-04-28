@@ -281,6 +281,11 @@ function JMod.InitGlobalConfig(forceNew)
 					category="Tactical",
 					results={"ent_jack_gmod_ezroadflare",15}
 				},
+				["glowsticks"]={
+					description="20 glowsticks for identification, low-power illumination, and raves.",
+					category="Tactical",
+					results={"ent_jack_gmod_ezglowstick",20}
+				},
 				["gas grenades"]={
 					description="6 gas grenades that can suffocate their victims.",
 					category="Explosives",
@@ -1278,6 +1283,16 @@ function JMod.InitGlobalConfig(forceNew)
 				category="Munitions",
 				craftingType="workbench",
 				description="Colorable road flare, for signalling and illumination."
+			},
+			["EZ Glow Stick"]={
+				results="ent_jack_gmod_ezglowstick",
+				reqs={
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=5,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=5
+				},
+				category="Munitions",
+				craftingType="workbench",
+				description="Colorable glowstick, for identification, low-power illumination, and raves."
 			},
 			["EZ Fumigator"]={
 				results="ent_jack_gmod_ezfumigator",

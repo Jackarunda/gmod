@@ -100,8 +100,12 @@ if(SERVER)then
 			end
 		elseif(State==STATE_BURNIN)then
 			if((Alt)&&(Dude:KeyDown(IN_SPEED))&&(tobool(onOff)))then
-				self:SetPos(Dude:GetShootPos()+Dude:GetAimVector()*20)
-				self:SetParent(Dude)
+				if(Dude.EZequippables && Dude.EZequippables["glowsticks"])then -- double sticks, it's rave time
+					JMod.SetEquippable(Dude,"glowsticks","rave_glowsticks",self:GetColor(),Time+self:GetFuel())
+				else
+					JMod.SetEquippable(Dude,"glowsticks","one_glowstick",self:GetColor(),Time+self:GetFuel())
+				end
+				self:Remove()
 			else
 				if(tobool(onOff))then
 					constraint.RemoveAll(self)
@@ -132,7 +136,7 @@ if(SERVER)then
 							end
 							self:EmitSound("snd_jack_claythunk.wav",65,math.random(80,120))
 							Dude:DropObject()
-							JMod.Hint(Dude,"arm")
+							JMod.Hint(Dude, "stick to self")
 						end
 					end
 				end
@@ -184,8 +188,8 @@ elseif(CLIENT)then
 				DLight.r=R
 				DLight.g=G
 				DLight.b=B
-				DLight.Brightness=Mult^2
-				DLight.Size=200*Mult^2
+				DLight.Brightness=.8*Mult^2
+				DLight.Size=180*Mult^2
 				DLight.Decay=15000
 				DLight.DieTime=CurTime()+.3
 				DLight.Style=0

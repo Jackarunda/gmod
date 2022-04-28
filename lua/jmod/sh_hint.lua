@@ -99,6 +99,7 @@ JMod.Hints = {
 	["can not eat"] = {LangKey = "hint can not eat", RepeatCount = 5},
 	["missing supplies"] = {LangKey = "hint missing supplies", RepeatCount = 5},
 	["no alternate ammo"] = {LangKey = "hint no alternate ammo", RepeatCount = 5},
+	["stick to self"] = {LangKey = "hint stick to self"},
 
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {LangKey = "hint ent_jack_gmod_ezaidradio"},

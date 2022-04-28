@@ -169,6 +169,7 @@ JMod.Locales["en"]={
     ["hint can not eat"] = "can't eat more right now",
     ["hint missing supplies"] = "missing supplies for build",
     ["hint no alternate ammo"] = "you don't have any alternate ammo for this weapon",
+    ["hint stick to self"] = "press ALT + SHIFT + E to stick this item to yourself",
 	--commands
     ["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
     ["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",
