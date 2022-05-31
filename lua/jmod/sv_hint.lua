@@ -30,12 +30,27 @@ function JMod.Hint(ply, key)
 	return true
 end
 
-concommand.Add("jmod_resethints",function(ply,cmd,args)
-	if not ply then ply = Player(args[1]) end
-	if not ply then return end
+concommand.Add("jmod_resethints",function(ply, _, args)
+	if not IsValid(ply) then
+		-- used from console
+		local id = tonumber(args[1])
+		if not id then
+			Msg("[JMOD] Using: jmod_resethints <userid>\n")
+			return
+		end
+		ply = Player(id)
+		if not IsValid(ply) then
+			Msg(Format("[JMOD] Player with id %i not found\n", id))
+			return
+		end
+	else
+		-- used by player
+		if (ply.NextJmodHintReset or 0) > CurTime() then return end
+		ply.NextJmodHintReset = CurTime() + 15
+	end
 	
 	ply.JModHintsGiven={}
-	print("hints for "..ply:Nick().." reset")
+	Msg("[JMOD] Hints for " .. ply:Nick() .. " reseted\n")
 end, nil, "Resets your Jmod hints.")
 
 hook.Add("PlayerInitialSpawn","JMOD_HINT",function(ply)
