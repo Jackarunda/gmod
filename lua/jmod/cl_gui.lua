@@ -337,7 +337,17 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 		end
 		Butt:SetTooltip(desc)
 		Butt.enabled=enableFunc(itemName,itemInfo,LocalPlayer(),entity)
+		Butt:SetMouseInputEnabled(true)
+		Butt.hovered=false
 		function Butt:Paint(w,h)
+			if(self:IsHovered())then
+				if not(self.hovered)then
+					self.hovered=true
+					--surface.PlaySound("snds_jack_gmod/ez_gui/hover_low.wav")
+				end
+			else
+				self.hovered=false
+			end
 			if(self.enabled)then
 				surface.SetDrawColor(50,50,50,60)
 			else

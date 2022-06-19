@@ -207,8 +207,8 @@ function SWEP:PrimaryAttack()
 			local buildInfo=self.Craftables[SelectedBuild]
 			if not(buildInfo)then return end
 			if((buildInfo.results=="ez nail")and not(self:FindNailPos()))then return end
-			if((buildInfo.results=="package")and not(self:GetPackagableObject()))then return end
-			local Sound=buildInfo.results~="ez nail" and buildInfo.results~="package"
+			if((buildInfo.results=="ez box")and not(self:GetPackagableObject()))then return end
+			local Sound=buildInfo.results~="ez nail" and buildInfo.results~="ez box"
 			local Reqs=buildInfo.craftingReqs
 			if(JMod.HaveResourcesToPerformTask(nil,nil,Reqs,self))then
 				local override,msg=hook.Run("JMod_CanKitBuild",self.Owner,self,buildInfo)
@@ -230,7 +230,7 @@ function SWEP:PrimaryAttack()
 								local Class=buildInfo.results
 								if(Class=="ez nail")then
 									self:Nail()
-								elseif(Class=="package")then
+								elseif(Class=="ez box")then
 									self:Package()
 								else
 									local StringParts=string.Explode(" ",Class)
@@ -433,7 +433,9 @@ function SWEP:UpgradeEffect(pos,scale,suppressSound)
 	end
 end
 function SWEP:WhomIlookinAt()
-	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+	local Filter={self.Owner}
+	for k,v in pairs(ents.FindByClass("npc_bullseye"))do table.insert(Filter,v) end
+	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,Filter)
 	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()

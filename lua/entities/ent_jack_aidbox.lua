@@ -97,18 +97,23 @@ if SERVER then
 		if(typ=="string")then SpawnItem(contents,pos,owner) return end
 		if(typ=="table")then
 			for k,v in pairs(contents)do
-				if(v[1]=="RAND")then -- special case, this is a randomized table
-					local Amt=v[#v]
-					local Items={}
-					for i=2,(#v-1) do
-						table.insert(Items,v[i])
-					end
-					for i=1,Amt do
-						SpawnItem(table.Random(Items),pos,owner)
-					end
-				else -- the only other supported table contains a count as [2] and potentially a resourceAmt as [3]
-					for i=1,v[2] do
-						SpawnItem(v[1],pos,owner,v[3] or nil)
+				typ=type(v)
+				if(typ=="string")then
+					SpawnItem(v,pos,owner)
+				elseif(typ=="table")then
+					if(v[1]=="RAND")then -- special case, this is a randomized table
+						local Amt=v[#v]
+						local Items={}
+						for i=2,(#v-1) do
+							table.insert(Items,v[i])
+						end
+						for i=1,Amt do
+							SpawnItem(table.Random(Items),pos,owner)
+						end
+					else -- the only other supported table contains a count as [2] and potentially a resourceAmt as [3]
+						for i=1,v[2] do
+							SpawnItem(v[1],pos,owner,v[3] or nil)
+						end
 					end
 				end
 			end
