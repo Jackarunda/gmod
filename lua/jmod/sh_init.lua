@@ -24,6 +24,7 @@ PrecacheParticleSystem("100lb_ground")
 PrecacheParticleSystem("50lb_air")
 --PrecacheParticleSystem("50lb_ground")
 --
+CreateConVar("jmod_installed", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Used as a placeholder convar for being listed on GameTracker as a server with Jmod. Set 1 to be listed, 0 to be unlisted.")
 JMod.RavebreakBeatTime=.4
 local Alphanumerics={"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
 function JMod.GenerateGUID()
