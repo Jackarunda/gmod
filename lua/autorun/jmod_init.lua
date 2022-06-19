@@ -7,10 +7,6 @@ JMod.EZ_STATION_STATE_READY=2
 JMod.EZ_STATION_STATE_DELIVERING=3
 JMod.EZ_STATION_STATE_BUSY=4
 
--- crafting type
-JMod.EZ_CRAFTING_TYPE_WORKBENCH = "workbench"
-JMod.EZ_CRAFTING_TYPE_TOOLBOX = "toolbox"
-
 -- resource definitions --
 JMod.EZ_RESOURCE_TYPES={
 	WATER="water",
@@ -70,8 +66,10 @@ JMod.EZ_RESOURCE_TYPES={
 	ANTIMATTER="antimatter"
 }
 JMod.EZ_RESOURCE_TYPE_ICONS={}
+JMod.EZ_RESOURCE_TYPE_ICONS_SMOL={}
 for k,v in pairs(JMod.EZ_RESOURCE_TYPES)do
 	JMod.EZ_RESOURCE_TYPE_ICONS[v]=Material("ez_resource_icons/"..v..".png")
+	JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[v]=Material("ez_resource_icons/"..v.." smol.png")
 end
 
 JMod.EZ_RESOURCE_ENTITIES={

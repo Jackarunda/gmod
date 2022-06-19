@@ -78,17 +78,15 @@ net.Receive("JMod_SignalNade", function(l, ply)
 end)
 
 net.Receive("JMod_EZtoolbox",function(ln,ply)
-	local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_eztoolbox")
-	if(IsValid(Wep))then
-		Wep:SwitchSelectedBuild(Num)
-	end
+	local Wep,Name=net.ReadEntity(),net.ReadString()
+	if(IsValid(Wep))then Wep:SwitchSelectedBuild(Name) end
 end)
 
-net.Receive("JMod_EZworkbench", function(l, ply)
+net.Receive("JMod_EZworkbench",function(l,ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local bench,name = net.ReadEntity(),net.ReadString()
-	if (IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos()) < 15000 then
-		bench:TryBuild(name, ply)
+	local bench,name=net.ReadEntity(),net.ReadString()
+	if(IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos())<15000 then
+		bench:TryBuild(name,ply)
 	end
 end)
 

@@ -198,6 +198,7 @@ JMod.Hints = {
 
 	-- i like eggs
 	["idiot"] = {LangKey = "hint idiot", IconType=1, Time=2},
+	["admin cleanup"] = {LangKey = "hint admin cleanup", IconType=4, Time=2, RepeatCount=9e9},
 
 	-- specific wepins
 	["wep_jack_gmod_gl"] = {LangKey = "hint wep_jack_gmod_gl", RepeatCount = 5},

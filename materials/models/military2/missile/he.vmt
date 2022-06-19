@@ -1,10 +1,10 @@
 "VertexLitGeneric"
 {
 	"$baseTexture" "models/military2/missile/he"
-        	"$bumpmap" "models/tex_jack_flat_normal"
+    "$bumpmap" "models/tex_jack_flat_normal"
 	"$envmap" "env_cubemap"
 	"$envmaptint" "[.1 .1 .1]"
-	"$envmapconstrast" "5"
+	"$envmapconstrast" "1"
 	"$envmapsaturation" "0"
 	"$phong" "1"
 	"$phongfresnelranges" "[1 1 1]"

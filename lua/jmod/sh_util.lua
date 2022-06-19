@@ -134,7 +134,8 @@ function JMod.VisCheck(pos,targPos,sourceEnt)
 		mask=MASK_SOLID_BRUSHONLY
 	}).Hit
 end
-function JMod.CountResourcesInRange(pos,range,sourceEnt)
+function JMod.CountResourcesInRange(pos,range,sourceEnt,cache)
+	if(cache)then return cache end
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
@@ -148,8 +149,8 @@ function JMod.CountResourcesInRange(pos,range,sourceEnt)
 	end
 	return Results
 end
-function JMod.HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
-	local RequirementsMet,ResourcesInRange=true,JMod.CountResourcesInRange(pos,range,sourceEnt)
+function JMod.HaveResourcesToPerformTask(pos,range,requirements,sourceEnt,cache)
+	local RequirementsMet,ResourcesInRange=true,cache or JMod.CountResourcesInRange(pos,range,sourceEnt,cache)
 	for typ,amt in pairs(requirements)do
 		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
 			RequirementsMet=false

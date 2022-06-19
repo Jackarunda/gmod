@@ -4,6 +4,19 @@ local MenuOpen = false
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
 local FavMat = Material("icon16/star.png")
+local SpecialIcons={
+	["geothermal"]=Material("ez_resource_icons/geothermal.png")
+}
+local RankIcons={
+	Material("ez_rank_icons/grade_1.png"),
+	Material("ez_rank_icons/grade_2.png"),
+	Material("ez_rank_icons/grade_3.png"),
+	Material("ez_rank_icons/grade_4.png"),
+	Material("ez_rank_icons/grade_5.png")
+}
+local SelectionMenuIcons={}
+local LocallyAvailableResources=nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
+local QuestionMarkIcon=Material("question_mark.png")
 local function BlurBackground(panel)
 	if not((IsValid(panel))and(panel:IsVisible()))then return end
 	local layers,density,alpha=1,1,255
@@ -58,16 +71,6 @@ local function PopulateList(parent,friendList,myself,W,H)
 		end
 	end
 end
-local SpecialIcons={
-	["geothermal"]=Material("ez_resource_icons/geothermal.png")
-}
-local RankIcons={
-	Material("ez_rank_icons/grade_1.png"),
-	Material("ez_rank_icons/grade_2.png"),
-	Material("ez_rank_icons/grade_3.png"),
-	Material("ez_rank_icons/grade_4.png"),
-	Material("ez_rank_icons/grade_5.png")
-}
 function JMod.StandardResourceDisplay(typ,amt,maximum,x,y,siz,vertical,font,opacity,rateDisplay,brite)
     font=font or "JMod-Stencil"
     opacity=opacity or 150
@@ -309,168 +312,163 @@ net.Receive("JMod_SignalNade",function()
 	end
 end)
 -- local FavIcon=Material("white_star_64.png")
-local function PopulateRecipes(parent, recipes, builder, motherFrame, typ)
+local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clickFunc)
     parent:Clear()
-    local W, H = parent:GetWide(), parent:GetTall()
-    local Scroll = vgui.Create("DScrollPanel", parent)
-    Scroll:SetSize(W - 15, H - 10)
-    Scroll:SetPos(10, 10)
+    local W,H=parent:GetWide(),parent:GetTall()
+    local Scroll=vgui.Create("DScrollPanel",parent)
+    Scroll:SetSize(W-20,H-20)
+    Scroll:SetPos(10,10)
     ---
-    local Y = 0
-	local sortedRecipes={}
-	for k,v in pairs(recipes)do
-		local info = table.FullCopy(v)
-		table.insert(info,k)
-		table.insert(sortedRecipes,info)
-	end
-	table.sort(sortedRecipes,function(a,b) return a[#a]<b[#b] end)
-    for k, itemInfo in pairs(sortedRecipes) do
-        local Butt = Scroll:Add("DButton")
-        Butt:SetSize(W - 35, 25)
-        Butt:SetPos(0, Y)
+	local Pos,Range=entity:GetPos(),150
+    local Y,AlphabetizedItemNames=0,table.GetKeys(items)
+	table.sort(AlphabetizedItemNames,function(a,b) return a<b end)
+    for k,itemName in pairs(AlphabetizedItemNames)do
+        local Butt=Scroll:Add("DButton")
+        Butt:SetSize(W-40,42)
+        Butt:SetPos(0,Y)
         Butt:SetText("")
-        local name = itemInfo[(typ=="workbench" && #itemInfo) or 1]
-        local reqs = itemInfo[2]
-        if (type(reqs) == "string") then
-            reqs = itemInfo[3]
-        end
-        local canMake = JMod.HaveResourcesToPerformTask(nil, nil, reqs, builder)
-        local desc = itemInfo[5] or ""
-        if typ == "workbench" then
-            desc = itemInfo[4]
-        elseif typ == "toolbox" then
-            desc = itemInfo[6]
-        end
-        Butt:SetTooltip(desc)
-        function Butt:Paint(w, h)
-            surface.SetDrawColor(50, 50, 50, 100)
-            surface.DrawRect(0, 0, w, h)
-            local msg = k .. ": "
-            if (tonumber(k)) then
-                msg = name .. ": "
-            end
-            for nam, amt in pairs(reqs) do
-                msg = msg .. amt .. " " .. nam .. ", "
-            end
-            draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, (canMake and 255) or 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-			-- surface.SetDrawColor(255,255,255,255)
-			-- surface.SetMaterial(FavIcon)
-			-- surface.DrawTexturedRect(Butt:GetWide()-16-4,4,16,16)
-        end
-        function Butt:DoClick()
-            if (typ == "workbench") then
-                net.Start("JMod_EZworkbench")
-                net.WriteEntity(builder)
-                net.WriteString(k)
-                net.SendToServer()
-            elseif (typ == "toolbox") then
-                net.Start("JMod_EZtoolbox")
-                net.WriteInt(k, 8)
-                net.SendToServer()
-            end
-            motherFrame:Close()
-        end
-		--[[
-		if(typ=="workbench")then -- only workbench supports favoriting for now
-			function Butt:DoRightClick()
-				if(table.HasValue(JMod.ClientConfig.WorkbenchFavs,k))then
-					table.RemoveByValue(JMod.ClientConfig.WorkbenchFavs,k)
-					JMod.SaveClientConfig()
-					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
-				else
-					table.insert(JMod.ClientConfig.WorkbenchFavs,k)
-					JMod.SaveClientConfig()
-					PopulateRecipes(parent,recipes,builder,motherFrame,typ)
+		local itemInfo=items[itemName]
+		local desc=itemInfo.description or ""
+		if(typ=="crafting")then
+			desc=desc.."\n "
+			for resourceName,resourceAmt in pairs(itemInfo.craftingReqs)do
+				desc=desc..resourceName.." x"..tostring(resourceAmt)..", "
+			end
+		end
+		Butt:SetTooltip(desc)
+		Butt.enabled=enableFunc(itemName,itemInfo,LocalPlayer(),entity)
+		function Butt:Paint(w,h)
+			if(self.enabled)then
+				surface.SetDrawColor(50,50,50,60)
+			else
+				surface.SetDrawColor(0,0,0,30)
+			end
+			surface.DrawRect(0,0,w,h)
+			local ItemIcon=SelectionMenuIcons[itemName]
+			if(ItemIcon)then
+				--surface.SetDrawColor(100,100,100,(self.enabled and 255)or 40)
+				--surface.DrawRect(5,5,32,32)
+				surface.SetMaterial(ItemIcon)
+				surface.SetDrawColor(255,255,255,(self.enabled and 255)or 40)
+				surface.DrawTexturedRect(5,5,32,32)
+			end
+			draw.SimpleText(itemName,"DermaDefault",(ItemIcon and 47)or 5,15,Color(255,255,255,(self.enabled and 255)or 40),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+			if(typ=="crafting")then
+				local X=w-30 -- let's draw the resources right to left
+				for resourceName,resourceAmt in pairs(itemInfo.craftingReqs)do
+					local Have=((LocallyAvailableResources[resourceName])and(LocallyAvailableResources[resourceName]>=resourceAmt))
+					local Txt="x"..tostring(resourceAmt)
+					surface.SetFont("DermaDefault")
+					local TxtSize=surface.GetTextSize(Txt)
+					draw.SimpleText(Txt,"DermaDefault",X-(TxtSize),15,Color(255,255,255,(Have and 255)or 40),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+					X=X-(TxtSize+3)
+					surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[resourceName])
+					surface.SetDrawColor(255,255,255,(Have and 255)or 30)
+					surface.DrawTexturedRect(X-32,5,32,32)
+					X=X-(32+6)
 				end
 			end
 		end
-		--]]
-        Y = Y + 30
+		function Butt:DoClick()
+			if(self.enabled)then
+				clickFunc(itemName,itemInfo,LocalPlayer(),entity)
+				motherFrame:Close()
+			end
+		end
+        Y=Y+47
     end
 end
-local function StandardSelectionMenu(id,data,enableFunc,clickFunc,sidePanelFunc)
+local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,clickFunc,sidePanelFunc)
+	-- first, populate icons
+	if not(SelectionMenuIcons[name])then
+		for name,info in pairs(data)do
+			if(file.Exists("materials/jmod_selection_menu_icons/"..tostring(name)..".png","GAME"))then
+				SelectionMenuIcons[name]=Material("jmod_selection_menu_icons/"..tostring(name)..".png")
+			elseif((info.results)and(file.Exists("materials/entities/"..tostring(info.results)..".png","GAME")))then
+				SelectionMenuIcons[name]=Material("entities/"..tostring(info.results)..".png")
+			else
+				-- special logic for random tables and resources and such
+				local itemClass=info.results
+				if(type(itemClass)=="table")then itemClass=itemClass[1] end
+				if(type(itemClass)=="table")then itemClass=itemClass[1] end
+				if(itemClass=="RAND")then
+					SelectionMenuIcons[name]=QuestionMarkIcon
+				elseif(type(itemClass)=="string")then
+					local IsResource=false
+					for k,v in pairs(JMod.EZ_RESOURCE_ENTITIES)do
+						if(v==itemClass)then
+							IsResource=true
+							SelectionMenuIcons[name]=JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
+						end
+					end
+					if not(IsResource)then SelectionMenuIcons[name]=Material("entities/"..itemClass..".png") end
+				end
+			end
+		end
+	end
+	-- then, populate info with nearby available resources
+	LocallyAvailableResources=JMod.CountResourcesInRange(entity:GetPos(),150,entity)
+	-- then, proceed with making the rest of the menu
 	local MotherFrame=vgui.Create("DFrame")
-	MotherFrame:SetSize(ScrW()*.7,ScrH()*.7)
+	MotherFrame:SetSize(900,500)
 	MotherFrame:SetVisible(true)
 	MotherFrame:SetDraggable(true)
 	MotherFrame:ShowCloseButton(true)
-	MotherFrame:SetTitle("Workbench")-- | Right click a recipe to favourite it.")
-	function motherFrame:Paint()
+	MotherFrame:SetTitle(displayString)
+	function MotherFrame:Paint()
 		BlurBackground(self)
 	end
 	MotherFrame:MakePopup()
 	MotherFrame:Center()
-	function motherFrame:OnKeyCodePressed(key)
-		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
+	function MotherFrame:OnKeyCodePressed(key)
+		if key==KEY_Q or key==KEY_ESCAPE or key==KEY_E then self:Close() end
 	end
-	local SelectionPanel,W,H,Myself=vgui.Create("DPanel",MotherFrame),MotherFrame:GetWide(),MotherFrame:GetTall(),LocalPlayer()
-	SelectionPanel:SetPos(W*.5+5,35)
-	SelectionPanel:SetSize(W*.5-10,H-30)
-	function SelectionPanel:Paint(w,h)
-		surface.SetDrawColor(50,50,50,100)
+	local W,H,Myself=MotherFrame:GetWide(),MotherFrame:GetTall(),LocalPlayer()
+	local Categories={}
+	for itemName,itemInfo in pairs(data)do
+		local Category=itemInfo.category or "Other"
+		Categories[Category]=Categories[Category] or {}
+		Categories[Category][itemName]=itemInfo
+	end
+	local TabPanel=vgui.Create("DPanel",MotherFrame)
+	local TabPanelX,TabPanelW=10,W-20
+	if(sidePanelFunc) then TabPanelX=W*.25+10;TabPanelW=W*.75-20 end
+	TabPanel:SetPos(TabPanelX,30)
+	TabPanel:SetSize(TabPanelW,H-40)
+	function TabPanel:Paint(w,h)
+		surface.SetDrawColor(0,0,0,50)
 		surface.DrawRect(0,0,w,h)
 	end
-	--[[
-	local Categories={}
-	
-	for k,v in pairs(Buildables)do
-		local Category=v[3] or "Other"
-		Categories[Category]=Categories[Category] or {}
-		Categories[Category][k]=v
-	end
-	local X,ActiveTab=10,table.GetKeys(Categories)[1]
-	local TabPanel=vgui.Create("DPanel",Frame)
-	TabPanel:SetPos(10,30)
-	TabPanel:SetSize(W-20,H-70)
-	function TabPanel:Paint(w,h)
+	local tabX=10
+	local ActiveTabPanel=vgui.Create("DPanel",TabPanel)
+	ActiveTabPanel:SetPos(10,30)
+	ActiveTabPanel:SetSize(TabPanelW-20,420)
+	function ActiveTabPanel:Paint(w,h)
 		surface.SetDrawColor(0,0,0,100)
 		surface.DrawRect(0,0,w,h)
 	end
-	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-	local text_space = 1
-
 	local AlphabetizedCategoryNames=table.GetKeys(Categories)
 	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
-
+	local ActiveTab=AlphabetizedCategoryNames[1]
 	for k,cat in pairs(AlphabetizedCategoryNames) do
-		local TabBtn=vgui.Create("DButton",Frame)
-		local text_xwb = surface.GetTextSize(cat)
-		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_xwb + text_space,20)
+		surface.SetFont("DermaDefault")
+		local TabBtn,TextWidth=vgui.Create("DButton",TabPanel),surface.GetTextSize(cat)
+		TabBtn:SetPos(tabX,10)
+		TabBtn:SetSize(TextWidth+10,20)
 		TabBtn:SetText("")
 		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
-			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
+			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 40)
 			surface.DrawRect(0,0,x,y)			
-			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 40),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
 			ActiveTab=self.Category
-			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
+			PopulateItems(ActiveTabPanel,Categories[ActiveTab],typ,MotherFrame,entity,enableFunc,clickFunc)
 		end
-		X = X + text_xwb + text_space + 1
+		tabX=tabX+TextWidth+15
 	end
-	
-	-- Resource display
-	local resFrame = vgui.Create("DPanel", motherFrame)
-	resFrame:SetSize(95, 270)
-	resFrame:SetPos(10,30)
-	function resFrame:Paint(w,h)
-		draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	local resLayout = vgui.Create("DListLayout", resFrame)
-	resLayout:SetPos(5, 25)
-	resLayout:SetSize(90, 270)
-	
-	for typ, amt in pairs(resTbl) do
-		local label = vgui.Create("DLabel")
-		label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
-		label:SetContentAlignment(4)
-		resLayout:Add(label)
-	end
-	--]]
+	PopulateItems(ActiveTabPanel,Categories[ActiveTab],typ,MotherFrame,entity,enableFunc,clickFunc)
 end
 --[[
 if #JMod.ClientConfig.BuildKitFavs > 0 then
@@ -484,197 +482,32 @@ end
 net.Receive("JMod_EZtoolbox",function()
 	local Buildables=net.ReadTable()
 	local Kit=net.ReadEntity()
-	local resTbl=JMod.CountResourcesInRange(nil,nil,Kit)
-	StandardSelectionMenu('eztoolbox',Buildables,enableFunc,clickFunc,sidePanelFunc)
-	--[[
-	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(620, 310)
-	motherFrame:SetVisible(true)
-	motherFrame:SetDraggable(true)
-	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Toolbox")-- | Right click a blueprint to favourite it.")
-	function motherFrame:Paint()
-		BlurBackground(self)
-	end
-	motherFrame:MakePopup()
-	motherFrame:Center()
-	function motherFrame:OnKeyCodePressed(key)
-		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
-	end
-	
-	local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
-	Frame:SetPos(110,30)
-	Frame:SetSize(W,H-30)
-	Frame.OnClose=function()
-		if resFrame then resFrame:Close() end
-		if motherFrame then motherFrame:Close() end
-	end
-	function Frame:Paint(w,h)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	local Categories={}
-	for k,v in pairs(Buildables)do
-		local Category=v[5] or "Other"
-		Categories[Category]=Categories[Category] or {}
-		Categories[Category][k]=v
-	end
-	local X,ActiveTab=10,table.GetKeys(Categories)[1]
-	local TabPanel=vgui.Create("DPanel",Frame)
-	TabPanel:SetPos(10,30)
-	TabPanel:SetSize(W-20,H-70)
-	function TabPanel:Paint(w,h)
-		surface.SetDrawColor(0,0,0,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
-	local text_space = 10
-
-	local AlphabetizedCategoryNames=table.GetKeys(Categories)
-	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
-
-	for k,cat in pairs(AlphabetizedCategoryNames)do
-		surface.SetFont("DermaDefault")
-		local text_xtb = surface.GetTextSize(cat)
-
-		local TabBtn=vgui.Create("DButton",Frame)
-		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_xtb + text_space,20)
-		TabBtn:SetText("")
-		TabBtn.Category=cat
-		function TabBtn:Paint(x,y)
-			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
-			surface.DrawRect(0,0,x,y)
-			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-		end
-		function TabBtn:DoClick()
-			ActiveTab=self.Category
-			PopulateRecipes(TabPanel,Categories[ActiveTab],Kit,motherFrame,"toolbox")
-		end
-		X = X + text_xtb + text_space + 2
-	end
-	-- Resource display
-	local resFrame = vgui.Create("DPanel", motherFrame)
-	resFrame:SetSize(95, 270)
-	resFrame:SetPos(10,30)
-	function resFrame:Paint(w,h)
-		draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-		
-	end
-	local resLayout = vgui.Create("DListLayout", resFrame)
-	resLayout:SetPos(5, 25)
-	resLayout:SetSize(90, 270)
-	
-	for typ, amt in pairs(resTbl) do
-		local label = vgui.Create("DLabel")
-		label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
-		label:SetContentAlignment(4)
-		resLayout:Add(label)
-	end
-	--]]
+	StandardSelectionMenu('crafting',"EZ Tool Box",Buildables,Kit,function(name,info,ply,ent)
+		-- enable func
+		return JMod.HaveResourcesToPerformTask(ent:GetPos(),150,info.craftingReqs,ent,LocallyAvailableResources)
+	end,function(name,info,ply,ent)
+		-- click func
+		net.Start("JMod_EZtoolbox")
+		net.WriteEntity(ent)
+		net.WriteString(name)
+		net.SendToServer()
+	end,nil) -- no side display for now
 end)
 net.Receive("JMod_EZworkbench",function()
 	local Bench=net.ReadEntity()
 	local Buildables=net.ReadTable()
-	local resTbl = JMod.CountResourcesInRange(nil,nil,Bench) 
-	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(620, 310)
-	motherFrame:SetVisible(true)
-	motherFrame:SetDraggable(true)
-	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Workbench")-- | Right click a recipe to favourite it.")
-	function motherFrame:Paint()
-		BlurBackground(self)
-	end
-	motherFrame:MakePopup()
-	motherFrame:Center()
-	function motherFrame:OnKeyCodePressed(key)
-		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
-	end
-	local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),500,300,LocalPlayer()
-	Frame:SetPos(110,30)
-	Frame:SetSize(W,H-30)
-	Frame.OnClose=function()
-		if resFrame then resFrame:Close() end
-		if motherFrame then motherFrame:Close() end
-	end
-	function Frame:Paint(w,h)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	local Categories={}
-	
-	for k,v in pairs(Buildables)do
-		local Category=v[3] or "Other"
-		Categories[Category]=Categories[Category] or {}
-		Categories[Category][k]=v
-	end
-	--[[
-	if #JMod.ClientConfig.WorkbenchFavs > 0 then
-		local Tab = {}
-		for k,v in pairs(JMod.ClientConfig.WorkbenchFavs)do
-			table.insert(Tab,v)
-		end
-		PrintTable(Tab)
-		Categories["Favourites"]=Tab
-	end
-	--]]
-	local X,ActiveTab=10,table.GetKeys(Categories)[1]
-	local TabPanel=vgui.Create("DPanel",Frame)
-	TabPanel:SetPos(10,30)
-	TabPanel:SetSize(W-20,H-70)
-	function TabPanel:Paint(w,h)
-		surface.SetDrawColor(0,0,0,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-	local text_space = 1
-
-	local AlphabetizedCategoryNames=table.GetKeys(Categories)
-	table.sort(AlphabetizedCategoryNames,function(a,b) return a<b end)
-
-	for k,cat in pairs(AlphabetizedCategoryNames) do
-		local TabBtn=vgui.Create("DButton",Frame)
-		local text_xwb = surface.GetTextSize(cat)
-		TabBtn:SetPos(X,10)
-		TabBtn:SetSize(text_xwb + text_space,20)
-		TabBtn:SetText("")
-		TabBtn.Category=cat
-		function TabBtn:Paint(x,y)
-			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 50)
-			surface.DrawRect(0,0,x,y)			
-			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 50),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-		end
-		function TabBtn:DoClick()
-			ActiveTab=self.Category
-			PopulateRecipes(TabPanel,Categories[ActiveTab],Bench,motherFrame,"workbench")
-		end
-		X = X + text_xwb + text_space + 1
-	end
-	
-	-- Resource display
-	local resFrame = vgui.Create("DPanel", motherFrame)
-	resFrame:SetSize(95, 270)
-	resFrame:SetPos(10,30)
-	function resFrame:Paint(w,h)
-		draw.SimpleText("Resources:","DermaDefault",7,7,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	local resLayout = vgui.Create("DListLayout", resFrame)
-	resLayout:SetPos(5, 25)
-	resLayout:SetSize(90, 270)
-	
-	for typ, amt in pairs(resTbl) do
-		local label = vgui.Create("DLabel")
-		label:SetText( string.upper(string.Left(typ, 1)) .. string.lower(string.sub(typ, 2)) .. ": " .. amt)
-		label:SetContentAlignment(4)
-		resLayout:Add(label)
-	end
+	StandardSelectionMenu('crafting',"EZ Work Bench",Buildables,Bench,function(name,info,ply,ent)
+		-- enable func
+		return JMod.HaveResourcesToPerformTask(ent:GetPos(),200,info.craftingReqs,ent,LocallyAvailableResources)
+	end,function(name,info,ply,ent)
+		-- click func
+		net.Start("JMod_EZworkbench")
+		net.WriteEntity(ent)
+		net.WriteString(name)
+		net.SendToServer()
+	end,nil) -- no side display for now
 end)
-net.Receive("JMod_UniCrate",function()
+net.Receive("JMod_UniCrate",function() -- todo: this menu will be deprecated when we get the inventory system
 	local box=net.ReadEntity()
 	local items=net.ReadTable()
 	local frame=vgui.Create("DFrame")
@@ -854,127 +687,37 @@ net.Receive("JMod_ModifyMachine",function()
 	end
 end)
 net.Receive("JMod_EZradio",function()
-	local isMessage = net.ReadBool()
+	local isMessage=net.ReadBool()
 	if isMessage then
-		local parrot = net.ReadBool()
-		local msg = net.ReadString()
-		local radio = net.ReadEntity()
-		local tbl = {radio:GetColor(), "Aid Radio", Color(255,255,255), ": ", msg}
-		if parrot then tbl = {Color(200,200,200), "(HIDDEN) ", LocalPlayer(), Color(255,255,255), ": ", Color(200,200,200), msg} end
+		local parrot=net.ReadBool()
+		local msg=net.ReadString()
+		local radio=net.ReadEntity()
+		local tbl={radio:GetColor(),"Aid Radio",Color(255,255,255),": ",msg}
+		if parrot then tbl={Color(200,200,200),"(HIDDEN) ",LocalPlayer(),Color(255,255,255),": ",Color(200,200,200),msg} end
 		chat.AddText(unpack(tbl))
-		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
-			local radiovoices = file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
-			for i=1, math.Round(string.len(msg)/15) do
+		if LocalPlayer():GetPos():DistToSqr(radio:GetPos())>200*200 then
+			local radiovoices=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+			for i=1,math.Round(string.len(msg)/15)do
 				timer.Simple(i*.75,function()
 					if((IsValid(radio))and(radio:GetState()>0))then
-						LocalPlayer():EmitSound("/npc/combine_soldier/vo/" .. radiovoices[math.random(1,#radiovoices)],65,120,0.25)
+						LocalPlayer():EmitSound("/npc/combine_soldier/vo/"..radiovoices[math.random(1,#radiovoices)],65,120,0.25)
 					end
 				end)
 			end
 		end
 		return
 	end
-	local Packages={}
-	local Favs = {}
-	local count = net.ReadUInt(8)
-	for i = 1, count do
-		table.insert(Packages, {net.ReadString(),net.ReadString()})	
-	end
-	table.sort(Packages,function(a,b) return a[1]<b[1] end)
 	local Radio=net.ReadEntity()
-	local StatusText = net.ReadString()
-	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(500, 350)
-	motherFrame:SetVisible(true)
-	motherFrame:SetDraggable(true)
-	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Aid Radio")-- | Right-click a package to favourite it.")
-	
-	function motherFrame:Paint()
-		BlurBackground(self)
-	end
-	motherFrame:MakePopup()
-	motherFrame:Center()
-	function motherFrame:OnKeyCodePressed(key)
-		if key==KEY_Q or key==KEY_ESCAPE or key == KEY_E then self:Close() end
-	end
-	
-	local Frame,W,H,Myself=vgui.Create("DPanel", motherFrame),200,300,LocalPlayer()
-	Frame:SetPos(110,30)
-	Frame:SetSize(W,H-30)
-	Frame.OnClose=function()
-		if resFrame then resFrame:Close() end
-		if motherFrame then motherFrame:Close() end
-	end
-	function Frame:Paint(w,h)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-	end
-	
-	local StatusButton=vgui.Create("DButton", motherFrame)
-	StatusButton:SetSize(90,30)
-	StatusButton:SetPos(10,40)
-	StatusButton:SetText("")
-	function StatusButton:Paint(w,h)
-		surface.SetDrawColor(50,50,50,100)
-		surface.DrawRect(0,0,w,h)
-		draw.SimpleText("Status","DermaDefault",45,15,Color(255,255,255,255),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
-	end
-	function StatusButton:DoClick()
-		LocalPlayer():ConCommand("say supply radio: status")
-		motherFrame:Close()
-	end
-
-	local Scroll=vgui.Create("DScrollPanel",Frame)
-	Scroll:SetSize(W-15,H-10)
-	Scroll:SetPos(10,10)
-	
-	for _, k in pairs(Packages) do
-		local Butt = Scroll:Add("DButton")
-		local desc=k[2] or "N/A"
-		Butt:SetSize(W-35,25)
-		Butt:Dock(TOP)
-		Butt:DockMargin( 0, 0, 0, 5 )
-		Butt:SetText("")
-		Butt:SetToolTip(desc)	
-		function Butt:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-			local msg=k[1]		
-			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		end
-		function Butt:DoClick()
-			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
-			motherFrame:Close()
-		end
-	end
-	--[[ -- what the fuck even is this, keksquad?
-	for _, k in pairs(Favs) do
-		local Butt = Scroll:Add("DButton")
-		local desc=k[2] or "N/A"
-		Butt:SetSize(W-35,25)
-		Butt:Dock(TOP)
-		Butt:DockMargin( 0, 0, 0, 5 )
-		Butt:SetText("")
-		Butt:SetToolTip(desc)	
-		function Butt:Paint(w,h)
-			surface.SetDrawColor(50,50,50,100)
-			surface.DrawRect(0,0,w,h)
-			local msg=k[1]		
-			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
-		end
-		function Butt:DoClick()
-			LocalPlayer():ConCommand("say supply radio: " .. k[1] .. "")
-			motherFrame:Close()
-		end
-	end
-	--]]
-	-- The last one always gets cut off so instead of finding the reason let's just slap a filler on
-	local Butt = Scroll:Add("DButton")
-	Butt:SetSize(W-35,25)
-	Butt:Dock(TOP)
-	Butt:DockMargin( 0, 0, 0, 5 )
-	Butt:SetText("")
+	local Orderables=net.ReadTable()
+	StandardSelectionMenu('selecting',"EZ Radio",Orderables,Radio,function(name,info,ply,ent)
+		-- enable func
+		local override,msg=hook.Run("JMod_CanRadioRequest",ply,ent,name)
+		if(override==false) then return false end
+		return true
+	end,function(name,info,ply,ent)
+		-- click func
+		ply:ConCommand("say supply radio: "..name)
+	end,nil) -- no side display for now
 end)
 local function GetItemInSlot(armorTable,slot)
 	if not(armorTable and armorTable.items)then return nil end

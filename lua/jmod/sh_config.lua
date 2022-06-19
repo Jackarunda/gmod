@@ -10,7 +10,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig={
 		Author="Jackarunda",
-		Version=38,
+		Version=40,
 		Note="radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints=true,
 		AltFunctionKey=IN_WALK,
@@ -83,83 +83,85 @@ function JMod.InitGlobalConfig(forceNew)
 					description= "buncha random guns, good luck getting what you want.",
 					category="Weapons",
 					results = {
-					{
-						"RAND",
-						"ent_jack_gmod_ezweapon_pistol",
-						"ent_jack_gmod_ezweapon_ar",
-						"ent_jack_gmod_ezweapon_bar",
-						"ent_jack_gmod_ezweapon_br",
-						"ent_jack_gmod_ezweapon_car",
-						"ent_jack_gmod_ezweapon_dmr",
-						"ent_jack_gmod_ezweapon_sr",
-						"ent_jack_gmod_ezweapon_amsr",
-						"ent_jack_gmod_ezweapon_sas",
-						"ent_jack_gmod_ezweapon_pas",
-						"ent_jack_gmod_ezweapon_bas",
-						"ent_jack_gmod_ezweapon_pocketpistol",
-						"ent_jack_gmod_ezweapon_plinkingpistol",
-						"ent_jack_gmod_ezweapon_machinepistol",
-						"ent_jack_gmod_ezweapon_smg",
-						"ent_jack_gmod_ezweapon_lmg",
-						"ent_jack_gmod_ezweapon_mmg",
-						"ent_jack_gmod_ezweapon_magrevolver",
-						"ent_jack_gmod_ezweapon_magpistol",
-						"ent_jack_gmod_ezweapon_revolver",
-						"ent_jack_gmod_ezweapon_shotrevolver",
-						"ent_jack_gmod_ezweapon_lac",
-						"ent_jack_gmod_ezweapon_ssr",
-						"ent_jack_gmod_ezweapon_amr",
-						"ent_jack_gmod_ezweapon_fas",
-						"ent_jack_gmod_ezweapon_gl",
-						"ent_jack_gmod_ezweapon_mgl",
-						"ent_jack_gmod_ezweapon_rocketlauncher",
-						"ent_jack_gmod_ezweapon_mrl",					
-						3
-					},
-					{"ent_jack_gmod_ezammo",2},
-					"ent_jack_gmod_ezmunitions"
+						{
+							"RAND",
+							"ent_jack_gmod_ezweapon_pistol",
+							"ent_jack_gmod_ezweapon_ar",
+							"ent_jack_gmod_ezweapon_bar",
+							"ent_jack_gmod_ezweapon_br",
+							"ent_jack_gmod_ezweapon_car",
+							"ent_jack_gmod_ezweapon_dmr",
+							"ent_jack_gmod_ezweapon_sr",
+							"ent_jack_gmod_ezweapon_amsr",
+							"ent_jack_gmod_ezweapon_sas",
+							"ent_jack_gmod_ezweapon_pas",
+							"ent_jack_gmod_ezweapon_bas",
+							"ent_jack_gmod_ezweapon_pocketpistol",
+							"ent_jack_gmod_ezweapon_plinkingpistol",
+							"ent_jack_gmod_ezweapon_machinepistol",
+							"ent_jack_gmod_ezweapon_smg",
+							"ent_jack_gmod_ezweapon_lmg",
+							"ent_jack_gmod_ezweapon_mmg",
+							"ent_jack_gmod_ezweapon_magrevolver",
+							"ent_jack_gmod_ezweapon_magpistol",
+							"ent_jack_gmod_ezweapon_revolver",
+							"ent_jack_gmod_ezweapon_shotrevolver",
+							"ent_jack_gmod_ezweapon_lac",
+							"ent_jack_gmod_ezweapon_ssr",
+							"ent_jack_gmod_ezweapon_amr",
+							"ent_jack_gmod_ezweapon_fas",
+							"ent_jack_gmod_ezweapon_gl",
+							"ent_jack_gmod_ezweapon_mgl",
+							"ent_jack_gmod_ezweapon_rocketlauncher",
+							"ent_jack_gmod_ezweapon_mrl",					
+							3
+						},
+						{"ent_jack_gmod_ezammo",2},
+						"ent_jack_gmod_ezmunitions"
 					}
 				},
 				["armor"]={
 					description="A random collection of armor*. *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
 					category="Apparel",
 					results={
-						"RAND",
-						JMod.ArmorTable["GasMask"].ent,
-						JMod.ArmorTable["BallisticMask"].ent,
-						JMod.ArmorTable["NightVisionGoggles"].ent,
-						JMod.ArmorTable["ThermalGoggles"].ent,
-						JMod.ArmorTable["Respirator"].ent,
-						JMod.ArmorTable["Light-Helmet"].ent,
-						JMod.ArmorTable["Medium-Helmet"].ent,
-						JMod.ArmorTable["Heavy-Helmet"].ent,
-						JMod.ArmorTable["Riot-Helmet"].ent,
-						JMod.ArmorTable["Heavy-Riot-Helmet"].ent,
-						JMod.ArmorTable["Ultra-Heavy-Helmet"].ent,
-						JMod.ArmorTable["Metal Bucket"].ent,
-						JMod.ArmorTable["Metal Pot"].ent,
-						JMod.ArmorTable["Ceramic Pot"].ent,
-						JMod.ArmorTable["Traffic Cone"].ent,
-						JMod.ArmorTable["Light-Vest"].ent,
-						JMod.ArmorTable["Medium-Light-Vest"].ent,
-						JMod.ArmorTable["Medium-Vest"].ent,
-						JMod.ArmorTable["Medium-Heavy-Vest"].ent,
-						JMod.ArmorTable["Heavy-Vest"].ent,
-						JMod.ArmorTable["Pelvis-Panel"].ent,
-						JMod.ArmorTable["Light-Left-Shoulder"].ent,
-						JMod.ArmorTable["Heavy-Left-Shoulder"].ent,
-						JMod.ArmorTable["Light-Right-Shoulder"].ent,
-						JMod.ArmorTable["Heavy-Right-Shoulder"].ent,
-						JMod.ArmorTable["Left-Forearm"].ent,
-						JMod.ArmorTable["Right-Forearm"].ent,
-						JMod.ArmorTable["Light-Left-Thigh"].ent,
-						JMod.ArmorTable["Heavy-Left-Thigh"].ent,
-						JMod.ArmorTable["Light-Right-Thigh"].ent,
-						JMod.ArmorTable["Heavy-Right-Thigh"].ent,
-						JMod.ArmorTable["Left-Calf"].ent,
-						JMod.ArmorTable["Right-Calf"].ent,
-						JMod.ArmorTable["Hazmat Suit"].ent,
-						6
+						{
+							"RAND",
+							JMod.ArmorTable["GasMask"].ent,
+							JMod.ArmorTable["BallisticMask"].ent,
+							JMod.ArmorTable["NightVisionGoggles"].ent,
+							JMod.ArmorTable["ThermalGoggles"].ent,
+							JMod.ArmorTable["Respirator"].ent,
+							JMod.ArmorTable["Light-Helmet"].ent,
+							JMod.ArmorTable["Medium-Helmet"].ent,
+							JMod.ArmorTable["Heavy-Helmet"].ent,
+							JMod.ArmorTable["Riot-Helmet"].ent,
+							JMod.ArmorTable["Heavy-Riot-Helmet"].ent,
+							JMod.ArmorTable["Ultra-Heavy-Helmet"].ent,
+							JMod.ArmorTable["Metal Bucket"].ent,
+							JMod.ArmorTable["Metal Pot"].ent,
+							JMod.ArmorTable["Ceramic Pot"].ent,
+							JMod.ArmorTable["Traffic Cone"].ent,
+							JMod.ArmorTable["Light-Vest"].ent,
+							JMod.ArmorTable["Medium-Light-Vest"].ent,
+							JMod.ArmorTable["Medium-Vest"].ent,
+							JMod.ArmorTable["Medium-Heavy-Vest"].ent,
+							JMod.ArmorTable["Heavy-Vest"].ent,
+							JMod.ArmorTable["Pelvis-Panel"].ent,
+							JMod.ArmorTable["Light-Left-Shoulder"].ent,
+							JMod.ArmorTable["Heavy-Left-Shoulder"].ent,
+							JMod.ArmorTable["Light-Right-Shoulder"].ent,
+							JMod.ArmorTable["Heavy-Right-Shoulder"].ent,
+							JMod.ArmorTable["Left-Forearm"].ent,
+							JMod.ArmorTable["Right-Forearm"].ent,
+							JMod.ArmorTable["Light-Left-Thigh"].ent,
+							JMod.ArmorTable["Heavy-Left-Thigh"].ent,
+							JMod.ArmorTable["Light-Right-Thigh"].ent,
+							JMod.ArmorTable["Heavy-Right-Thigh"].ent,
+							JMod.ArmorTable["Left-Calf"].ent,
+							JMod.ArmorTable["Right-Calf"].ent,
+							JMod.ArmorTable["Hazmat Suit"].ent,
+							6
+						}
 					}
 				},
 				["crossbow"]={
@@ -173,7 +175,6 @@ function JMod.InitGlobalConfig(forceNew)
                 ["black powder weaponry"]={
 					description="Beginner weaponry, the mucket, cap 'n ball revolver and blunderbuss, with some boxes of ammo.",
 					category="Weapons",
-					
 					results={
 						{"ent_jack_gmod_ezammobox_bppc",3},
                     	"ent_jack_gmod_ezweapon_flm",
@@ -184,17 +185,23 @@ function JMod.InitGlobalConfig(forceNew)
                 ["basic parts"]={
 					description="3 boxes of parts used for crafting and repairs.",
 					category="Resources",	
-					results={"ent_jack_gmod_ezbasicparts",3}
+					results={
+						{"ent_jack_gmod_ezbasicparts",3}
+					}
 				},
 				["advanced parts"]={
 					description="1 box of advparts used for crafting and upgrading.",
 					category="Resources",
-					results={"ent_jack_gmod_ezadvparts",1,20}
+					results={
+						{"ent_jack_gmod_ezadvparts",1,20}
+					}
 				},
                 ["precision parts"]={
 					description="1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
 					category="Resources",
-					results={"ent_jack_gmod_ezprecparts"}
+					results={
+						{"ent_jack_gmod_ezprecparts"}
+					}
 				},
 				["advanced textiles"]={
 					description="1 box of advtextiles used for armor.",
@@ -204,117 +211,159 @@ function JMod.InitGlobalConfig(forceNew)
 				["batteries"]={
 					description="4 battery cells used for crafting and recharging electronics.",
 					category="Resources",
-					results={"ent_jack_gmod_ezbattery",4}
+					results={
+						{"ent_jack_gmod_ezbattery",4}
+					}
 				},
 				["ammo"]={
 					description="3 boxes of ammo for crafting and resupplying weapons and entities.",
 					category="Resources",
-					results={"ent_jack_gmod_ezammo",3}
+					results={
+						{"ent_jack_gmod_ezammo",3}
+					}
 				},
 				["coolant"]={
 					description="5 bottles of coolant for preventing machines from overheating.",
 					category="Resources",
-					results={"ent_jack_gmod_ezcoolant",5}
+					results={
+						{"ent_jack_gmod_ezcoolant",5}
+					}
 				},
 				["munitions"]={
 					description="2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
 					category="Resources",
-					results={"ent_jack_gmod_ezmunitions",2}
+					results={
+						{"ent_jack_gmod_ezmunitions",2}
+					}
 				},
 				["explosives"]={
 					description="2 boxes of explosives used for crafting explosives.",
 					category="Resources",
-					results={"ent_jack_gmod_ezexplosives",2}
+					results={
+						{"ent_jack_gmod_ezexplosives",2}
+					}
 				},
 				["chemicals"]={
 					description="2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
 					category="Resources",
-					results={"ent_jack_gmod_ezchemicals",2}
+					results={
+						{"ent_jack_gmod_ezchemicals",2}
+					}
 				},
 				["fuel"]={
 					description="4 cans of fuel used for crafting items and running generators.",
 					category="Resources",
-					results={"ent_jack_gmod_ezfuel",4}
+					results={
+						{"ent_jack_gmod_ezfuel",4}
+					}
 				},
 				["propellant"]={
 					description="4 cans of propellant used for crafting items.",
 					category="Resources",
-					results={"ent_jack_gmod_ezpropellant",4}
+					results={
+						{"ent_jack_gmod_ezpropellant",4}
+					}
 				},
 				["gas"]={
 					description="3 canisters of gas used for crafting items and powering the EZ Workbench",
 					category="Resources",
-					results={"ent_jack_gmod_ezgas",3}
+					results={
+						{"ent_jack_gmod_ezgas",3}
+					}
 				},
 				["toolboxes"]={
 					description="Two toolboxes for crafting, nailing, salvaging and packaging items. ",
-					category="Weapons",
-					results={"ent_jack_gmod_eztoolbox",2}
+					category="Tools",
+					results={
+						{"ent_jack_gmod_eztoolbox",2}
+					}
 				},
 				["rations"]={
-					 description="5 boxes of nutrients to be eaten by players. Can overcharge health.",
-					 category="Resources",
-					{"ent_jack_gmod_eznutrients",5}
+					description="5 boxes of nutrients to be eaten by players. Can overcharge health.",
+					category="Resources",
+					results={
+						{"ent_jack_gmod_eznutrients",5}
+					}
 				},
 				["medical supplies"]={
 					description="Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
 					category="Resources",
-					results={"ent_jack_gmod_ezmedsupplies",2}
+					results={
+						{"ent_jack_gmod_ezmedsupplies",2}
+					}
 				},
 				["resource crate"]={
 					description="A box used for exclusively storing EZ Resources.",
-					category="Entities",
+					category="Other",
 					results="ent_jack_gmod_ezcrate"
 				},
 				["storage crate"]={
 					description="A box used exclusively for storing Jmod items. Can hold a volume of up to 100 units.",
-					category="Entities",
+					category="Other",
 					results="ent_jack_gmod_ezcrate_uni"
 				},
 				["frag grenades"]={
 					description="10 frag grenades used for explosions.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezfragnade",10}
+					results={
+						{"ent_jack_gmod_ezfragnade",10}
+					}
 				},
 				["flares"]={
 					description="15 road flares used for signalling and illumination.",
-					category="Tactical",
-					results={"ent_jack_gmod_ezroadflare",15}
+					category="Other",
+					results={
+						{"ent_jack_gmod_ezroadflare",15}
+					}
 				},
 				["glowsticks"]={
 					description="20 glowsticks for identification, low-power illumination, and raves.",
-					category="Tactical",
-					results={"ent_jack_gmod_ezglowstick",20}
+					category="Other",
+					results={
+						{"ent_jack_gmod_ezglowstick",20}
+					}
 				},
 				["gas grenades"]={
 					description="6 gas grenades that can suffocate their victims.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezgasnade",6}
+					results={
+						{"ent_jack_gmod_ezgasnade",6}
+					}
 				},
 				["tear gas grenades"]={
 					description="Tear gas used to disperse riots.",
-					category="Tactical",
-					results={"ent_jack_gmod_ezcsnade",6}
+					category="Other",
+					results={
+						{"ent_jack_gmod_ezcsnade",6}
+					}
 				},
 				["impact grenades"]={
 					description="10 grenades that explode upon impact.",
 					category="Explosives",
-					{"ent_jack_gmod_ezimpactnade",10}
+					results={
+						{"ent_jack_gmod_ezimpactnade",10}
+					}
 				},
 				["incendiary grenades"]={
 					description="6 grenades that produce fire upon explosion.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezfirenade",6}
+					results={
+						{"ent_jack_gmod_ezfirenade",6}
+					}
 				},
 				["satchel charges"]={
 					description="4 explosives with comical detonator plungers used for making things go boom.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezsatchelcharge",4}
+					results={
+						{"ent_jack_gmod_ezsatchelcharge",4}
+					}
 				},
 				["sticky bomb"]={
 					description="6 grenades that stick to things on contact.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezstickynade",6}
+					results={
+						{"ent_jack_gmod_ezstickynade",6}
+					}
 				},
 				["mini grenades"]={
 					description="5 impact, proximity, remote, and timed grenades. These can be attached to larger explosives to override their primary functions.",
@@ -329,18 +378,29 @@ function JMod.InitGlobalConfig(forceNew)
 				["timebombs"]={
 					description="Timed explosives with configurable timers. Can be defused with parts and Toolbox.",
 					category="Explosives",
-					results={"ent_jack_gmod_eztimebomb",3}
+					results={
+						{"ent_jack_gmod_eztimebomb",3}
+					}
 				},
 				["hl2 ammo"]={
 					description="An assortment of ammunition for keeping your men going during battle.",
-					category="Misc",
-					results={"item_ammo_357","item_ammo_357_large","item_ammo_ar2","item_ammo_ar2_large",
-					{"item_ammo_ar2_altfire",3},
-					"item_ammo_crossbow","item_ammo_pistol","item_ammo_pistol_large",
-					{"item_rpg_round",3},
-					"item_box_buckshot","item_ammo_smg1","item_ammo_smg1_large",
-					{"item_ammo_smg1_grenade",3},
-					{"weapon_frag",3}}
+					category="Other",
+					results={
+						"item_ammo_357",
+						"item_ammo_357_large",
+						"item_ammo_ar2",
+						"item_ammo_ar2_large",
+						{"item_ammo_ar2_altfire",3},
+						"item_ammo_crossbow",
+						"item_ammo_pistol",
+						"item_ammo_pistol_large",
+						{"item_rpg_round",3},
+						"item_box_buckshot",
+						"item_ammo_smg1",
+						"item_ammo_smg1_large",
+						{"item_ammo_smg1_grenade",3},
+						{"weapon_frag",3}
+					}
 				},
 				["sentry"]={
 					description="Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
@@ -355,37 +415,51 @@ function JMod.InitGlobalConfig(forceNew)
 				["medkits"]={
 					description="3 medical kits that use medical supplies to heal players.",
 					category="Tools",
-					{"ent_jack_gmod_ezmedkit",3}
+					results={
+						{"ent_jack_gmod_ezmedkit",3}
+					}
 				},
 				["landmines"]={
 					description="10 landmines that trigger when an enemy steps near them.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezlandmine",10}
+					results={
+						{"ent_jack_gmod_ezlandmine",10}
+					}
 				},
 				["mini bounding mines"]={
 					description="8 landmines that can only be planted in soft surfaces.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezboundingmine",8}
+					results={
+						{"ent_jack_gmod_ezboundingmine",8}
+					}
 				},
 				["fumigators"]={
 					description="2 fumigators that emit poison gas.",
-					category="Lethal",
-					results={"ent_jack_gmod_ezfumigator",2}
+					category="Other",
+					results={
+						{"ent_jack_gmod_ezfumigator",2}
+					}
 				},
 				["fougasse mines"]={
 					description="4 fougasse mines. Blasts napalm at whoever triggers it.",
-					category="Lethal",
-					results={"ent_jack_gmod_ezfougasse",4}
+					category="Explosives",
+					results={
+						{"ent_jack_gmod_ezfougasse",4}
+					}
 				},
 				["detpacks"]={
 					description="8 detpacks used for breaching doors and general explosive damage.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezdetpack",8}
+					results={
+						{"ent_jack_gmod_ezdetpack",8}
+					}
 				},
 				["slams"]={
 					description="5 SLAMs that can be planted on walls.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezslam",5}
+					results={
+						{"ent_jack_gmod_ezslam",5}
+					}
 				},
 				["antimatter"]={
 					description="A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
@@ -400,21 +474,27 @@ function JMod.InitGlobalConfig(forceNew)
 				["dynamite"]={
 					description="12 dynamite sticks for comical explosions.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezdynamite",12}
+					results={
+						{"ent_jack_gmod_ezdynamite",12}
+					}
 				},
 				["flashbangs"]={
 					description="8 flashbangs that stun targets.",
-					category="Tactical",
-					results={"ent_jack_gmod_ezflashbang",8}
+					category="Other",
+					results={
+						{"ent_jack_gmod_ezflashbang",8}
+					}
 				},
 				["powder kegs"]={
 					description="4 powder kegs for funny explosions.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezpowderkeg",4}
+					results={
+						{"ent_jack_gmod_ezpowderkeg",4}
+					}
 				},
 				["smoke grenades"]={	
 					description="4 smoke grenades to signal smokes and 4 signal grenades which emit a colourable smoke to help signal positions.",
-					category="Tactical",
+					category="Other",
 					results={
 						{"ent_jack_gmod_ezsmokenade",4},
 						{"ent_jack_gmod_ezsignalnade",4}
@@ -431,32 +511,44 @@ function JMod.InitGlobalConfig(forceNew)
 				["mini claymores"]={
 					description="4 small AP mines.",
 					category="Explosives",
-					results={"ent_jack_gmod_ezminimore",4}
+					results={
+						{"ent_jack_gmod_ezminimore",4}
+					}
 				},
 				["tnt"]={
 					description="WW2-era explosives with fuse.",
 					category="Explosives",
-					results={"ent_jack_gmod_eztnt", 3}
+					results={
+						{"ent_jack_gmod_eztnt", 3}
+					}
 				},
 				["thermal goggles"]={
 					description="2 thermal goggles that highlight heat-sources for the user. Consumes battery.",
 					category="Apparel",
-					results={"ent_jack_gmod_ezarmor_thermals",2}
+					results={
+						{"ent_jack_gmod_ezarmor_thermals",2}
+					}
 				},
 				["night vision goggles"]={
 					description="4 night-vision goggles to help players see in the dark. Consumes battery.",
 					category="Apparel",
-					results={"ent_jack_gmod_ezarmor_nvgs",4}
+					results={
+						{"ent_jack_gmod_ezarmor_nvgs",4}
+					}
 				},
 				["headsets"]={
 					description="8 headsets for players to communicate and make orders from linked radios. Consumes battery.",
 					category="Apparel",
-					results={"ent_jack_gmod_ezarmor_headset",8}
+					results={
+						{"ent_jack_gmod_ezarmor_headset",8}
+					}
 				},
                 ["steel"]={
 					description="Steel in a quantity of 200, used in basic parts and some weapons.",
 					category="Resources",
-					results={"ent_jack_gmod_ezsteel",2}
+					results={
+						{"ent_jack_gmod_ezsteel",2}
+					}
 				},
                 ["copper"]={
 					description="Copper in a quantity of 100, used in basic parts.",
@@ -466,72 +558,100 @@ function JMod.InitGlobalConfig(forceNew)
                 ["aluminum"]={
 					description="Aluminum in a quantity of 200, used in basic parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezaluminum",2}
+					results={
+						{"ent_jack_gmod_ezaluminum",2}
+					}
 				},
                 ["lead"]={
 					description="Lead in a quantity of 200, very useful in ammo production for fending off other players.",
 					category="Resources",
-					results={"ent_jack_gmod_ezlead",2}
+					results={
+						{"ent_jack_gmod_ezlead",2}
+					}
 				},
                 ["silver"]={
 					description="Silver in a quantity of 50, used for high tier stuff.",
 					category="Resources",
-					results={"ent_jack_gmod_ezsilver",1,50}
+					results={
+						{"ent_jack_gmod_ezsilver",1,50}
+					}
 				},
                 ["gold"]={
 					description="Gold in a quantity of 20, used in advanced parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezgold",1,20}
+					results={
+						{"ent_jack_gmod_ezgold",1,20}
+					}
 				},
                 ["titanium"]={
 					description="Titanium in a quantity of 50, used in high-tier weaponry.",
 					category="Resources",
-					results={"ent_jack_gmod_eztitanium",1,50}
+					results={
+						{"ent_jack_gmod_eztitanium",1,50}
+					}
 				},
                 ["tungsten"]={
 					description="Tungsten in a quantity of 50, used in high-tier weaponry.",
 					category="Resources",
-					results={"ent_jack_gmod_eztungsten",1,50}
+					results={
+						{"ent_jack_gmod_eztungsten",1,50}
+					}
 				},
                 ["platinum"]={
 					description="Platinum in a quantity of 10, used in advanced parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezplatinum",1,10}
+					results={
+						{"ent_jack_gmod_ezplatinum",1,10}
+					}
 				},
                 ["uranium"]={
 					description="Uranium in a quantity of 20, used in fissile material enrichment.",
 					category="Resources",
-					results={"ent_jack_gmod_ezuranium",1,20}
+					results={
+						{"ent_jack_gmod_ezuranium",1,20}
+					}
 				},
                 ["diamond"]={
 					description="diamond in a quantity of 10, used in advanced parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezdiamond",1,10}
+					results={
+						{"ent_jack_gmod_ezdiamond",1,10}
+					}
 				},
                 ["water"]={
 					description="Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
 					category="Resources",
-					results={"ent_jack_gmod_ezwater",3}
+					results={
+						{"ent_jack_gmod_ezwater",3}
+					}
 				},
                 ["wood"]={
 					description="Wood in a quantity of 200, used in paper and electricity production.",
 					category="Resources",
-					results={"ent_jack_gmod_ezwood",2}
+					results={
+						{"ent_jack_gmod_ezwood",2}
+					}
 				},
                 ["paper"]={
 					description="Paper in a quantity of 200, used in nutrients.",
 					category="Resources",
-					results={"ent_jack_gmod_ezpaper",2}
+					results={
+						{"ent_jack_gmod_ezpaper",2}
+					}
 				},
                 ["plastic"]={
 					description="Plastic in a quantity of 200, used in basic parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezplastic",2}
+					results={
+						{"ent_jack_gmod_ezplastic",2}
+					}
 				},
                 ["organics"]={
 					description="Organics in a quantity of 200, used in nutrients.",
 					category="Resources",
-					results={"ent_jack_gmod_ezorganics",2,100}
+					results={
+						{"ent_jack_gmod_ezorganics",2,100}
+					}
 				},
                 ["oil"]={
 					description="Oil in a quantity of 100, used in plastic, fuel, and rubber.",
@@ -541,17 +661,23 @@ function JMod.InitGlobalConfig(forceNew)
                 ["cloth"]={
 					description="Cloth in a quantity of 200, used in advanced textiles.",
 					category="Resources",
-					results={"ent_jack_gmod_ezcloth",2}
+					results={
+						{"ent_jack_gmod_ezcloth",2}
+					}
 				},
                 ["rubber"]={
 					description="Rubber in a quantity of 200, used in basic parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezrubber",2}
+					results={
+						{"ent_jack_gmod_ezrubber",2}
+					}
 				},
                 ["glass"]={
 					description="Glass in a quantity of 200, used in basic parts.",
 					category="Resources",
-					results={"ent_jack_gmod_ezglass",2}
+					results={
+						{"ent_jack_gmod_ezglass",2}
+					}
 				},
                 
 			},
@@ -560,9 +686,29 @@ function JMod.InitGlobalConfig(forceNew)
 			RestrictedPackagesAllowed=true
 		},
 		Craftables={
+			["EZ Nail"]={
+				results="ez nail",
+				craftingReqs={
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5
+				},
+				sizeScale=.2,
+				category="Other",
+				craftingType="toolbox",
+				description="binds the object you're looking at to the object behind it"
+			},
+			["EZ Box"]={
+				results="ez box",
+				craftingReqs={
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15
+				},
+				sizeScale=1,
+				category="Other",
+				craftingType="toolbox",
+				description="stores the object you're looking at in a box for transportation or storage"
+			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=100,
@@ -578,7 +724,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Big Bomb"]={
 				results="ent_jack_gmod_ezbigbomb",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=190,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600
@@ -590,7 +736,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Bomb"]={			
 				results="ent_jack_gmod_ezbomb",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
@@ -602,18 +748,18 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Cluster Bomb"]={			
 				results="ent_jack_gmod_ezclusterbomb",		
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
 				},
 				sizeScale=1,
 				category="Explosives",
 				craftingType="toolbox",
-				"For when you need to send hundreds of tiny bombs rather than a big one."
+				description="For when you need to send hundreds of tiny bombs rather than a big one."
 			},
 			["EZ General Purpose Crate"]={			
 				results="ent_jack_gmod_ezcrate_uni",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.WOOD]=50	
 				},
 				sizeScale=1,
@@ -623,7 +769,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ HE Rocket"]={			
 				results="ent_jack_gmod_ezherocket",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100
@@ -635,7 +781,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ HEAT Rocket"]={			
 				results="ent_jack_gmod_ezheatrocket",		
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100	
@@ -647,7 +793,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Incendiary Bomb"]={			
 				results="ent_jack_gmod_ezincendiarybomb",
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=300,
@@ -660,7 +806,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Mega Bomb"]={			
 				results="ent_jack_gmod_ezmoab",		
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=380,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=1200
@@ -672,7 +818,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Micro Black Hole Generator"]={			
 				results="ent_jack_gmod_ezmbhg",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
@@ -686,7 +832,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Micro Nuclear Bomb"]={			
 				results="ent_jack_gmod_eznuke",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300,
@@ -699,7 +845,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Mini Naval Mine"]={			
 				results="ent_jack_gmod_eznavalmine",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=200
 				},
@@ -710,7 +856,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Nano Nuclear Bomb"]={
 				results="ent_jack_gmod_eznuke_small",
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
@@ -723,7 +869,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Resource Crate"]={
 				results="ent_jack_gmod_ezcrate",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.WOOD]=100	
 				},
 				sizeScale=1.5,
@@ -733,7 +879,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Sentry"]={			
 				results="ent_jack_gmod_ezsentry",		
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
@@ -747,7 +893,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Small Bomb"]={			
 				results="ent_jack_gmod_ezsmallbomb",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
@@ -759,7 +905,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Supply Radio"]={			
 				results="ent_jack_gmod_ezaidradio",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=100,
@@ -772,7 +918,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Thermobaric Bomb"]={			
 				results="ent_jack_gmod_ezthermobaricbomb",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=300
@@ -784,7 +930,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Thermonuclear Bomb"]={			
 				results="ent_jack_gmod_eznuke_big",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=400,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600,
@@ -797,7 +943,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Vehicle Mine"]={			
 				results="ent_jack_gmod_ezatmine",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=40,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
@@ -808,7 +954,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["EZ Workbench"]={			
 				results="ent_jack_gmod_ezworkbench",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=200,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
@@ -822,7 +968,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},	
 			["HL2 Buggy"]={			
 				results="FUNC spawnHL2buggy",		
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=300,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50,
@@ -835,9 +981,9 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Gordon, remember to bring back the scout car."
 			},					
-		    ["EZ Ammo"]={			
+		    ["EZ Ammo"]={
 				results="ent_jack_gmod_ezammo",
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=50,
 					[JMod.EZ_RESOURCE_TYPES.LEAD]=25
@@ -846,9 +992,9 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="workbench",
 				description="General purpose bullets. Don't ask how we got so many types of ammo in one box."
 			},
-		    ["EZ Black Powder Paper Cartridges"]={			
+		    ["EZ Black Powder Paper Cartridges"]={
 				results="ent_jack_gmod_ezammobox_bppc",
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=20,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=25,
 					[JMod.EZ_RESOURCE_TYPES.LEAD]=20
@@ -857,9 +1003,9 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="workbench",
 				description="for ye olde black powder weapons so you can dispatch scoundrels rightly"
 			},
-		    ["EZ Arrows"]={			
+		    ["EZ Arrows"]={
 				results="ent_jack_gmod_ezammobox_a",
-				reqs={	
+				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=15,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=15
 				},
@@ -869,7 +1015,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Flintlock Musket"]={
                 results=JMod.WeaponTable["Flintlock Musket"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
@@ -880,7 +1026,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Cap and Ball Revolver"]={
                 results=JMod.WeaponTable["Cap and Ball Revolver"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
                     [JMod.EZ_RESOURCE_TYPES.STEEL]=10,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=5
@@ -891,7 +1037,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Break-Action Shotgun"]={
                 results=JMod.WeaponTable["Break-Action Shotgun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
                 },
@@ -901,7 +1047,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Revolver"]={
                 results=JMod.WeaponTable["Revolver"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=5
                 },
@@ -911,7 +1057,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Single-Shot Rifle"]={
                 results=JMod.WeaponTable["Single-Shot Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
                 },
@@ -921,7 +1067,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Crossbow"]={
                 results=JMod.WeaponTable["Crossbow"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
                 },
                 category="Weapons",
@@ -930,7 +1076,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Bolt-Action Rifle"]={
                 results=JMod.WeaponTable["Bolt-Action Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125
                 },
                 category="Weapons",
@@ -939,7 +1085,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Lever-Action Carbine"]={
                 results=JMod.WeaponTable["Lever-Action Carbine"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.WOOD]=20
                 },
@@ -949,7 +1095,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Magnum Revolver"]={
                 results=JMod.WeaponTable["Magnum Revolver"].ent,
-                reqs={
+                craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
                 },
@@ -959,7 +1105,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Pump-action Shotgun"]={
                 results=JMod.WeaponTable["Pump-Action Shotgun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
                 },
                 category="Weapons",
@@ -968,7 +1114,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Shot Revolver"]={
                 results=JMod.WeaponTable["Shot Revolver"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
                 },
                 category="Weapons",
@@ -977,7 +1123,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Grenade Launcher"]={
                 results=JMod.WeaponTable["Grenade Launcher"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
                 },
@@ -987,7 +1133,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Pistol"]={
                 results=JMod.WeaponTable["Pistol"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
                 },
@@ -997,7 +1143,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Plinking Pistol"]={
                 results=JMod.WeaponTable["Plinking Pistol"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10
                 },
@@ -1007,7 +1153,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Sniper Rifle"]={
 				results=JMod.WeaponTable["Sniper Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1017,7 +1163,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Pocket Pistol"]={
                 results=JMod.WeaponTable["Pocket Pistol"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
                 },
@@ -1027,7 +1173,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 			["EZ Anti-Materiel Sniper Rifle"]={
                 results=JMod.WeaponTable["Anti-Materiel Sniper Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100
                 },
@@ -1036,7 +1182,7 @@ function JMod.InitGlobalConfig(forceNew)
             },                  
             ["EZ Assault Rifle"]={
                 results=JMod.WeaponTable["Assault Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1046,7 +1192,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Battle Rifle"]={
                 results=JMod.WeaponTable["Battle Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1056,7 +1202,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Carbine"]={
                 results=JMod.WeaponTable["Carbine"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1066,7 +1212,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Designated Marksman Rifle"]={
                 results=JMod.WeaponTable["Designated Marksman Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=35
                 },
@@ -1076,7 +1222,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Machine Pistol"]={
                 results=JMod.WeaponTable["Machine Pistol"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1086,7 +1232,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Magnum Pistol"]={
                 results=JMod.WeaponTable["Magnum Pistol"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=75,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1096,7 +1242,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Submachine Gun"]={
                 results=JMod.WeaponTable["Sub Machine Gun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1106,7 +1252,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Semiautomatic Shotgun"]={
                 results=JMod.WeaponTable["Semi-Automatic Shotgun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1116,7 +1262,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Rocket Launcher"]={
                 results=JMod.WeaponTable["Rocket Launcher"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50
                 },
@@ -1126,7 +1272,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Fully-Automatic Shotgun"]={
                 results=JMod.WeaponTable["Fully-Automatic Shotgun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=125,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=75
                 },
@@ -1136,7 +1282,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Light Machine Gun"]={
                 results=JMod.WeaponTable["Light Machine Gun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
                     [JMod.EZ_RESOURCE_TYPES.TITANIUM]=25
@@ -1147,7 +1293,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Medium Machine Gun"]={
                 results=JMod.WeaponTable["Medium Machine Gun"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=125,
                     [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=25
@@ -1158,7 +1304,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Anti-Materiel Rifle"]={
                 results=JMod.WeaponTable["Anti-Materiel Rifle"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=250,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=150,
                     [JMod.EZ_RESOURCE_TYPES.TITANIUM]=50
@@ -1169,7 +1315,7 @@ function JMod.InitGlobalConfig(forceNew)
             }, 
             ["EZ Multiple Grenade Launcher"]={
                 results=JMod.WeaponTable["Multiple Grenade Launcher"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
                     [JMod.EZ_RESOURCE_TYPES.TITANIUM]=50
@@ -1180,7 +1326,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
             ["EZ Multiple Rocket Launcher"]={
                 results=JMod.WeaponTable["Multiple Rocket Launcher"].ent,
-                reqs={
+                craftingReqs={
                     [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=250,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
                     [JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=50
@@ -1191,7 +1337,7 @@ function JMod.InitGlobalConfig(forceNew)
             },
 		    ["EZ Ballistic Mask"]={
 		        results="ent_jack_gmod_ezarmor_balmask",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
                     [JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5
 		        },
@@ -1201,7 +1347,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 		    ["EZ Toolbox"]={
 		        results="ent_jack_gmod_eztoolbox",
-		        reqs={
+		        craftingReqs={
 			        [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=50,
@@ -1213,7 +1359,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Detpack"]={
 				results="ent_jack_gmod_ezdetpack",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=25
 				},
@@ -1223,7 +1369,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Dynamite"]={
 				results="ent_jack_gmod_ezdynamite",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
@@ -1233,7 +1379,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Explosives"]={
 				results="ent_jack_gmod_ezexplosives",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=100
 				},
@@ -1243,7 +1389,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Flashbang"]={
 				results="ent_jack_gmod_ezflashbang",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
@@ -1254,7 +1400,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Fougasse Mine"]={
 				results="ent_jack_gmod_ezfougasse",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
@@ -1265,7 +1411,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Fragmentation Grenade"]={
 				results="ent_jack_gmod_ezfragnade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
@@ -1275,7 +1421,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Road Flare"]={
 				results="ent_jack_gmod_ezroadflare",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
@@ -1286,7 +1432,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Glow Stick"]={
 				results="ent_jack_gmod_ezglowstick",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=5
 				},
@@ -1296,7 +1442,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Fumigator"]={
 				results="ent_jack_gmod_ezfumigator",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=100,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
@@ -1307,7 +1453,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Gas Grenade"]={
 				results="ent_jack_gmod_ezgasnade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=15
@@ -1318,7 +1464,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Tear Gas Grenade"]={
 				results="ent_jack_gmod_ezcsnade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.GAS]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
@@ -1329,7 +1475,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Gas Mask"]={
 				results="ent_jack_gmod_ezarmor_gasmask",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
@@ -1340,7 +1486,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Gebalte Ladung"]={
 				results="ent_jack_gmod_ezsticknadebundle",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50
 				},
@@ -1350,7 +1496,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Headset"]={
 				results="ent_jack_gmod_ezarmor_headset",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=20
 				},
@@ -1360,7 +1506,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Heavy Left Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_hlshoulder",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
@@ -1372,7 +1518,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Heavy Right Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_hrshoulder",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=20,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=20,
@@ -1384,7 +1530,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Heavy Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_htorso",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=50,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
@@ -1396,7 +1542,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Impact Grenade"]={
 				results="ent_jack_gmod_ezimpactnade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
@@ -1406,7 +1552,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Incendiary Grenade"]={
 				results="ent_jack_gmod_ezfirenade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL]=30
@@ -1417,7 +1563,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Landmine"]={
 				results="ent_jack_gmod_ezlandmine",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
@@ -1427,7 +1573,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["BUCKET"]={
 				results=JMod.ArmorTable["Metal Bucket"].ent,
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=20
 				},
 				category="Apparel",
@@ -1436,7 +1582,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["CONE"]={
 				results=JMod.ArmorTable["Traffic Cone"].ent,
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.RUBBER]=10,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC]=10
 				},
@@ -1446,7 +1592,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["CERAMIC POT"]={
 				results=JMod.ArmorTable["Ceramic Pot"].ent,
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.GLASS]=30,
 				},
 				category="Apparel",
@@ -1455,7 +1601,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["COOKIN POT"]={
 				results=JMod.ArmorTable["Metal Pot"].ent,
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=30
 				},
 				category="Apparel",
@@ -1464,7 +1610,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Light Helmet"]={
 				results="ent_jack_gmod_ezarmor_lhead",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
@@ -1475,7 +1621,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Respirator"]={
 				results="ent_jack_gmod_ezarmor_respirator",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1486,7 +1632,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Riot Helmet"]={
 				results="ent_jack_gmod_ezarmor_riot",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10
 				},
@@ -1496,7 +1642,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Heavy Riot Helmet"]={
 				results="ent_jack_gmod_ezarmor_rioth",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=15
@@ -1507,7 +1653,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Ultra Heavy Helmet"]={
 				results="ent_jack_gmod_ezarmor_maska",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=20,
@@ -1519,7 +1665,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Light Left Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_llshoulder",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1530,7 +1676,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Light Right Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_lrshoulder",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1541,7 +1687,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Light Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_ltorso",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
@@ -1552,7 +1698,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medical Supplies"]={
 				results="ent_jack_gmod_ezmedsupplies",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=5,
@@ -1564,7 +1710,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medium Helmet"]={
 				results="ent_jack_gmod_ezarmor_mhead",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=10
@@ -1575,7 +1721,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medium Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mtorso",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=25,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=25
@@ -1586,7 +1732,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medium-Heavy Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mhtorso",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=25,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=25,
@@ -1598,7 +1744,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medium-Light Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mltorso",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=15,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20
@@ -1609,7 +1755,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Medkit"]={
 				results="ent_jack_gmod_ezmedkit",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES]=50
 				},
@@ -1619,7 +1765,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Mini Bounding Mine"]={
 				results="ent_jack_gmod_ezboundingmine",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=5
@@ -1630,7 +1776,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Mini Claymore"]={
 				results="ent_jack_gmod_ezminimore",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=10
 				},
@@ -1640,7 +1786,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Mini Impact Grenade"]={
 				results="ent_jack_gmod_eznade_impact",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
@@ -1650,7 +1796,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Mini Proximity Grenade"]={
 				results="ent_jack_gmod_eznade_proximity",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
@@ -1660,7 +1806,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Mini Remote Grenade"]={
 				results="ent_jack_gmod_eznade_remote",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
@@ -1670,7 +1816,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 		   	["EZ Mini Timed Grenade"]={
 				results="ent_jack_gmod_eznade_remote",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5
 				},
@@ -1680,7 +1826,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Munitions"]={
 				results="ent_jack_gmod_ezmunitions",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=50,
@@ -1692,7 +1838,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Night Vision Goggles"]={
 				results="ent_jack_gmod_ezarmor_nvgs",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=25
@@ -1703,7 +1849,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Powder Keg"]={
 				results="ent_jack_gmod_ezpowderkeg",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT]=400
 				},
@@ -1713,7 +1859,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Propellant"]={
 				results="ent_jack_gmod_ezpropellant",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=50
@@ -1724,7 +1870,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Coolant"]={
 				results="ent_jack_gmod_ezcoolant",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10,
 					[JMod.EZ_RESOURCE_TYPES.WATER]=90,
 				},
@@ -1734,7 +1880,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Nutrients"]={
 				results="ent_jack_gmod_eznutrients",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.ORGANICS]=25,
 					[JMod.EZ_RESOURCE_TYPES.WATER]=25,
 					[JMod.EZ_RESOURCE_TYPES.PAPER]=50,
@@ -1745,7 +1891,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ SLAM"]={	
 				results="ent_jack_gmod_ezslam",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
@@ -1754,7 +1900,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Satchel Charge"]={
 				results="ent_jack_gmod_ezsatchelcharge",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
@@ -1764,7 +1910,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Signal Grenade"]={
 				results="ent_jack_gmod_ezsignalnade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
@@ -1774,7 +1920,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Smoke Grenade"]={
 				results="ent_jack_gmod_ezsmokenade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=25
 				},
@@ -1784,7 +1930,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Left Calf Armor"]={
 		        results="ent_jack_gmod_ezarmor_slcalf",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1795,7 +1941,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Left Forearm Armor"]={
 		        results="ent_jack_gmod_ezarmor_slforearm",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1806,7 +1952,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Light Left Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_llthigh",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1817,7 +1963,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Heavy Left Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_hlthigh",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
@@ -1829,7 +1975,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Pelvis Armor"]={
 		        results="ent_jack_gmod_ezarmor_spelvis",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1840,7 +1986,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Right Calf Armor"]={
 		        results="ent_jack_gmod_ezarmor_srcalf",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1851,7 +1997,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Right Forearm Armor"]={
 		        results="ent_jack_gmod_ezarmor_srforearm",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1862,7 +2008,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Light Right Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_lrthigh",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=10
@@ -1873,7 +2019,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Heavy Right Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_hrthigh",
-		        reqs={   
+		        craftingReqs={   
 		            [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES]=10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH]=20,
@@ -1885,7 +2031,7 @@ function JMod.InitGlobalConfig(forceNew)
 		    },
 			["EZ Stick Grenade"]={
 				results="ent_jack_gmod_ezsticknade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=15,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=15
 				},
@@ -1895,7 +2041,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Sticky Bomb"]={
 				results="ent_jack_gmod_ezstickynade",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=20,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS]=10
@@ -1906,7 +2052,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ TNT"]={
 				results="ent_jack_gmod_eztnt",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=30
 				},
@@ -1916,7 +2062,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Thermal Goggles"]={
 				results="ent_jack_gmod_ezarmor_thermals",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=25
@@ -1927,7 +2073,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			["EZ Time Bomb"]={
 				results="ent_jack_gmod_eztimebomb",
-				reqs={
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20,
                     [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
@@ -1935,7 +2081,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="workbench",
 				description="The longer you set the time, the harder it is to defuse."
 			}
-			
 		}
 	}
 	local FileContents=file.Read("JMod_Config.txt")

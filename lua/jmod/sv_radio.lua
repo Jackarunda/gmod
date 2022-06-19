@@ -103,7 +103,7 @@ hook.Add("Think","JMod_RADIO_THINK",function()
 					Eff:SetOrigin(DropPos)
 					Eff:SetStart(DropVelocity)
 					util.Effect("eff_jack_gmod_jetflyby",Eff,true,true)
-					local DeliveryItems=JMod.Config.RadioSpecs.AvailablePackages[station.deliveryType]
+					local DeliveryItems=JMod.Config.RadioSpecs.AvailablePackages[station.deliveryType].results
 					timer.Simple(.9,function()
 						local Box=ents.Create("ent_jack_aidbox")
 						Box:SetPos(DropPos)
@@ -294,8 +294,7 @@ local function StartDelivery(pkg,transceiver,id,bff,ply)
 	local Station=JMod.EZ_RADIO_STATIONS[id]
 	local Time=CurTime()
 	local DeliveryTime,Pos=math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),ply:GetPos()
-	
-	print("bepis",transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
+
 	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
 	DeliveryTime = newTime or DeliveryTime
 	Pos = newPos or Pos

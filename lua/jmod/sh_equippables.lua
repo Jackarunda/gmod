@@ -17,7 +17,7 @@ JMod.Equippables={
         },
         thinkFunc=function(ply,col,timeLeft)
             if(CLIENT)then
-                local Mult,Col=(timeLeft>30 and 1) or .5
+                local Mult=(timeLeft>30 and 1) or .5
                 local R,G,B=math.Clamp(col.r+20,0,255),math.Clamp(col.g+20,0,255),math.Clamp(col.b+20,0,255)
                 local DLight=DynamicLight(ply:EntIndex())
                 if(DLight)then
@@ -38,40 +38,43 @@ JMod.Equippables={
         slot="glowsticks",
         mdls={
             {
-                mdl="models/xqm/coastertrack/special_full_loop_4.mdl",
-                mat="models/props/army/jlowstick_on",
-                scl=.015,
+                mdl="models/holograms/hq_torus_thin.mdl",
+                mat="models/debug/debugwhite",
+                fb=true,
+                scl=1,
                 bon="ValveBiped.Bip01_Spine4",
                 col=Color(200,50,50),
-                pos=Vector(-4,4,0),
-                ang=Angle(0,100,0)
+                pos=Vector(-4,4,1),
+                ang=Angle(90,20,0)
             },
             {
-                mdl="models/xqm/coastertrack/special_full_loop_4.mdl",
-                mat="models/props/army/jlowstick_on",
-                scl=.0075,
+                mdl="models/holograms/hq_torus_thin.mdl",
+                mat="models/debug/debugwhite",
+                fb=true,
+                scl=.6,
                 bon="ValveBiped.Bip01_R_Hand",
                 col=Color(50,200,50),
                 pos=Vector(0,0,0),
-                ang=Angle(0,120,0)
+                ang=Angle(60,0,0)
             },
             {
-                mdl="models/xqm/coastertrack/special_full_loop_4.mdl",
-                mat="models/props/army/jlowstick_on",
-                scl=.0075,
+                mdl="models/holograms/hq_torus_thin.mdl",
+                mat="models/debug/debugwhite",
+                fb=true,
+                scl=.6,
                 bon="ValveBiped.Bip01_L_Hand",
                 col=Color(50,50,200),
                 pos=Vector(0,0,0),
-                ang=Angle(0,120,0)
+                ang=Angle(130,0,0)
             }
         },
         thinkFunc=function(ply,col,timeLeft)
-            if(CLIENT)then
-                local Mult,Col=(timeLeft>30 and 1) or .5
+            if(CLIENT and ply==LocalPlayer() and not ply:ShouldDrawLocalPlayer())then
+                local Mult=(timeLeft>30 and 1) or .5
                 local R,G,B=math.Clamp(col.r+20,0,255),math.Clamp(col.g+20,0,255),math.Clamp(col.b+20,0,255)
                 local DLight=DynamicLight(ply:EntIndex())
                 if(DLight)then
-                    DLight.Pos=ply:GetShootPos()+ply:GetAimVector()*20-ply:GetUp()*20
+                    DLight.Pos=ply:GetShootPos()+ply:GetAimVector()*10-ply:GetUp()*20
                     DLight.r=R
                     DLight.g=G
                     DLight.b=B
@@ -81,6 +84,38 @@ JMod.Equippables={
                     DLight.DieTime=CurTime()+.3
                     DLight.Style=0
                 end
+            end
+        end,
+        drawFunc=function(ply,col,timeLeft)
+            local Mult=(timeLeft>30 and 1) or .5
+            local function LightUp(pos,col,index)
+                local DLight=DynamicLight(index)
+                if(DLight)then
+                    DLight.Pos=pos
+                    DLight.r=col.r
+                    DLight.g=col.g
+                    DLight.b=col.b
+                    DLight.Brightness=4*Mult^2
+                    DLight.Size=40*Mult^2
+                    DLight.Decay=1500
+                    DLight.DieTime=CurTime()+.3
+                    DLight.Style=0
+                end
+            end
+            local Index=ply:LookupBone("ValveBiped.Bip01_Head1")
+            if(Index)then
+                local Pos,Ang=ply:GetBonePosition(Index)
+                if(Pos)then LightUp(Pos,Color(200,50,50),ply:EntIndex()) end
+            end
+            Index=ply:LookupBone("ValveBiped.Bip01_R_Hand")
+            if(Index)then
+                local Pos,Ang=ply:GetBonePosition(Index)
+                if(Pos)then LightUp(Pos,Color(50,200,50),ply:EntIndex()+1) end
+            end
+            Index=ply:LookupBone("ValveBiped.Bip01_L_Hand")
+            if(Index)then
+                local Pos,Ang=ply:GetBonePosition(Index)
+                if(Pos)then LightUp(Pos,Color(50,50,200),ply:EntIndex()+2) end
             end
         end
     }
@@ -132,6 +167,7 @@ if(CLIENT)then
                         ply.EZequippableModels[MdlKey]=JMod.MakeModel(ply,mdlInfo.mdl,mdlInfo.mat,mdlInfo.scl)
                     end
                 end
+                if(EquippableSpecs.drawFunc)then EquippableSpecs.drawFunc(ply,info.col,info.tim-CurTime()) end
             end
         end
     end)
@@ -153,13 +189,14 @@ elseif(SERVER)then
         ply.EZequippables=ply.EZequippables or {}
         if(name)then
             ply.EZequippables[slot]={
-                nam=name,
+                nam=name, 
                 col=color,
                 tim=endTime
             }
         else
             ply.EZequippables[slot]=nil
         end
+        ply:EmitSound("snds_jack_gmod/equip"..math.random(1,5)..".wav",60,math.random(90,110))
         SyncEquippables(ply)
     end
     hook.Add("DoPlayerDeath","JModEquippablesDeath",function(ply)

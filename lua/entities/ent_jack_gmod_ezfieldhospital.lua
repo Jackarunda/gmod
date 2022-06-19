@@ -72,7 +72,7 @@ if(SERVER)then
 		---
 		self.EZupgradable=true
 		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Automated Field Hospital"][2])
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Automated Field Hospital"] and JMod.Config.Craftables["EZ Automated Field Hospital"].craftingReqs)
 		--
 		self.Pod=ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")

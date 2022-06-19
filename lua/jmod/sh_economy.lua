@@ -506,15 +506,9 @@ function JMod.GetSalvageYield(ent)
 		if(Specialized)then break end
 	end
 	local ScaleByMass=true
-	for name,blueprintInfo in pairs(JMod.Config.Blueprints)do
-		if(blueprintInfo[1]==Class)then
-			Info=blueprintInfo[2]
-			ScaleByMass=false
-		end
-	end
-	for name,recipeInfo in pairs(JMod.Config.Recipes)do
-		if(recipeInfo[1]==Class)then
-			Info=recipeInfo[2]
+	for name,info in pairs(JMod.Config.Craftables)do
+		if(info.results==Class)then
+			Info=info.results
 			ScaleByMass=false
 		end
 	end

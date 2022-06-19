@@ -201,7 +201,7 @@ if(SERVER)then
 		---
 		self.EZupgradable=true
 		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Sentry"] and JMod.Config.Craftables["EZ Sentry"].craftingReqa)
 		---
 		self:ResetMemory()
 		self:CreateNPCTarget()

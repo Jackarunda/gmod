@@ -70,24 +70,69 @@ if SERVER then
 		self.Entity:TakePhysicsDamage(dmginfo)
 	end
 
+	local function SpawnItem(itemClass,pos,owner,resourceAmt)
+		local Yay=ents.Create(itemClass)
+		Yay:SetPos(pos+VectorRand()*math.Rand(0,30))
+		Yay:SetAngles(VectorRand():Angle())
+		Yay:Spawn()
+		Yay:Activate()
+		if(resourceAmt)then Yay:SetResource(resourceAmt) end
+		if(IsValid(Yay))then
+			JMod.Owner(Yay,owner)
+			-- this arrests overlap-ejection velocity so items don't thwack players
+			timer.Simple(.025, function()
+				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+			end)
+			timer.Simple(.05,function()
+				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+			end)
+			timer.Simple(.1,function()
+				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+			end)
+		end
+	end
+
+	local function SpawnContents(contents,pos,owner)
+		local typ=type(contents)
+		if(typ=="string")then SpawnItem(contents,pos,owner) return end
+		if(typ=="table")then
+			for k,v in pairs(contents)do
+				if(v[1]=="RAND")then -- special case, this is a randomized table
+					local Amt=v[#v]
+					local Items={}
+					for i=2,(#v-1) do
+						table.insert(Items,v[i])
+					end
+					for i=1,Amt do
+						SpawnItem(table.Random(Items),pos,owner)
+					end
+				else -- the only other supported table contains a count as [2] and potentially a resourceAmt as [3]
+					for i=1,v[2] do
+						SpawnItem(v[1],pos,owner,v[3] or nil)
+					end
+				end
+			end
+		end
+	end
+
 	function ENT:Use(activator,caller)
 		--if true then return end
-		local Pos = self:LocalToWorld(self:OBBCenter()+Vector(0,0,10))
-		local Up = self:GetUp()
-		local Right = self:GetRight()
-		local Forward = self:GetForward()
-		local Ang = self:GetAngles()
-		local AngLat = self:GetAngles()
-		AngLat:RotateAroundAxis(AngLat:Forward(), 90)
-		local AngLin = self:GetAngles()
-		AngLin:RotateAroundAxis(AngLin:Right(), 90)
-		self:MakeSide(Pos + Up * 15, Ang, Up)
-		self:MakeSide(Pos - Up * 15, Ang, -Up)
-		self:MakeSide(Pos + Right * 15, AngLat, Right)
-		self:MakeSide(Pos - Right * 15, AngLat, -Right)
-		self:MakeSide(Pos + Forward * 15, AngLin, Forward)
-		self:MakeSide(Pos - Forward * 15, AngLin, -Forward)
-		local Poof = EffectData()
+		local Pos=self:LocalToWorld(self:OBBCenter()+Vector(0,0,10))
+		local Up=self:GetUp()
+		local Right=self:GetRight()
+		local Forward=self:GetForward()
+		local Ang=self:GetAngles()
+		local AngLat=self:GetAngles()
+		AngLat:RotateAroundAxis(AngLat:Forward(),90)
+		local AngLin=self:GetAngles()
+		AngLin:RotateAroundAxis(AngLin:Right(),90)
+		self:MakeSide(Pos+Up*15,Ang,Up)
+		self:MakeSide(Pos-Up*15,Ang,-Up)
+		self:MakeSide(Pos+Right*15,AngLat,Right)
+		self:MakeSide(Pos-Right*15,AngLat,-Right)
+		self:MakeSide(Pos+Forward*15,AngLin,Forward)
+		self:MakeSide(Pos-Forward*15,AngLin,-Forward)
+		local Poof=EffectData()
 		Poof:SetOrigin(Pos)
 		Poof:SetScale(2)
 		util.Effect("eff_jack_aidopen",Poof,true,true)
@@ -95,60 +140,7 @@ if SERVER then
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
 		self:EmitSound("snd_jack_aidboxopen.wav",75,100)
-		self.Contents = self.Contents or {{"item_ammo_pistol",40}}
-
-		for key, item in pairs(self.Contents)do
-			if (key>1) then	
-			local ClassName,Num,ClassNames,ResourceCount = item,1,nil,nil
-			if type(item) ~="string" then
-				if(item[1]=="RAND")then
-					ClassNames={}
-					for k,v in pairs(item)do
-						if(k>1 and k<#item)then table.insert(ClassNames,v) end
-					end
-					Num=item[#item]
-				else
-					ClassName = item[1]
-					Num = item[2]
-					if(item[3])then ResourceCount=item[3] end
-				end
-			end
-			local StringParts = type(ClassName)=="string" and string.Explode(" ", ClassName)
-			for i = 1, Num do
-				local Ent = nil
-				if StringParts and StringParts[1] and StringParts[1] == "FUNC" then
-					local FuncName = StringParts[2]
-					if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-						Ent = JMod.LuaConfig.BuildFuncs[FuncName](activator, Pos + VectorRand() * math.Rand(0, 30), VectorRand():Angle())
-					else
-						activator:PrintMessage(HUD_PRINTTALK, "JMOD RADIO BOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
-					end
-				else
-					if(ClassNames)then ClassName=table.Random(ClassNames) end
-					local Yay = ents.Create(ClassName)
-					Yay:SetPos(Pos + VectorRand() * math.Rand(0, 30))
-					Yay:SetAngles(VectorRand():Angle())
-					Yay:Spawn()
-					Yay:Activate()
-					if(ResourceCount)then Yay:SetResource(ResourceCount) end
-					Ent = Yay
-				end
-				if Ent then
-					JMod.Owner(Ent, activator)
-					-- this arrests overlap-ejection velocity so items don't thwack players
-					timer.Simple(.025, function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
-					timer.Simple(.05,function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
-					timer.Simple(.1,function()
-						if IsValid(Ent) then Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) end
-					end)
-				end
-			end
-		end
-		end
+		SpawnContents(self.Contents or {{"item_ammo_pistol",40}},Pos,activator)
 		--JackaGenericUseEffect(activator)
 		if activator:IsPlayer() then
 			local Wep = activator:GetActiveWeapon()

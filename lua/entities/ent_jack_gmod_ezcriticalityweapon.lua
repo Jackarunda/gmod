@@ -5,8 +5,8 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Criticality Weapon"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Spawnable = false
+ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles=Angle(-90,0,0)
 ENT.JModEZstorable=true
@@ -14,8 +14,8 @@ ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED,STATE_IRRADIATING=-1,0,1,2
 function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Int", 1, "Timer")
+	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int",1,"Timer")
 	self:NetworkVar("Int",2,"Power")
 end
 ---
@@ -47,6 +47,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
+		self.LastUse=0
 		self:SetState(STATE_OFF)
 		if istable(WireLib) then
 			--self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Time"}, {"Directly detonates the bomb", "Value > 0 arms bomb", "Set this BEFORE arming."})
@@ -97,8 +98,42 @@ if(SERVER)then
 			self:Remove()
 		end
 	end
-	function ENT:Use(activator,activatorAgain,onOff)
-		-- todo: copy this from something else
+	function ENT:Use(activator)
+		local Dude,Time=activator,CurTime()
+		JMod.Owner(self,Dude)
+		local Time = CurTime()
+		local State = self:GetState()
+		if(State < 0)then return end
+		local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+		if(State == STATE_OFF)then
+			if(Alt)then
+				if(self.NextDisarmFail < Time)then
+					net.Start("JMod_EZtimeBomb")
+					net.WriteEntity(self)
+					net.Send(Dude)
+					JMod.Hint(Dude,"timebomb")
+				end
+			else
+				Dude:PickupObject(self)
+			end
+		else
+			if(Alt)then
+				if(self.NextDisarm<Time)then
+					self.NextDisarm=Time+.2
+					self.DisarmProgress=self.DisarmProgress+JMod.Config.BombDisarmSpeed
+					self.NextDisarmFail=Time+1
+					Dude:PrintMessage(HUD_PRINTCENTER,"disarming: "..self.DisarmProgress.."/"..math.ceil(self.DisarmNeeded))
+					if(self.DisarmProgress>=self.DisarmNeeded)then
+						self:SetState(STATE_OFF)
+						self:EmitSound("weapons/c4/c4_disarm.wav",60,120)
+						self.DisarmProgress=0
+					end
+					JMod.Hint(Dude,"defuse")
+				end
+			else
+				Dude:PickupObject(self)
+			end
+		end
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()
