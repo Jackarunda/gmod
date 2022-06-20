@@ -347,6 +347,12 @@ local SpecializedSalvagingTable={
 			}
 		},
 		{
+			substrings={"food"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.9
+			}
+		},
+		{
 			substrings={"explosive"},
 			yield={
 				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
@@ -384,6 +390,18 @@ local SpecializedSalvagingTable={
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
 				[JMod.EZ_RESOURCE_TYPES.COPPER]=.3
+			}
+		},
+		{
+			substrings={"forklift"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.05,
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.RUBBER]=.1,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.05
 			}
 		},
 		{
