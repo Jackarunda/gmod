@@ -1,14 +1,14 @@
 -- Based off of JMOD Smoke Grenade, created by Freaking Fission
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z, Freaking Fission"
-ENT.PrintName = "EZ Tear Gas Grenade"
-ENT.Category = "JMod - EZ Misc."
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z, Freaking Fission"
+ENT.PrintName="EZ Tear Gas Grenade"
+ENT.Category="JMod-EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,100,0)
-ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
-ENT.Material = "models/mats_jack_nades/tear_gas_grenade"
-ENT.SpoonScale = 2
+ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Material="models/mats_jack_nades/tear_gas_grenade"
+ENT.SpoonScale=2
 if(SERVER)then
 	function ENT:Prime()
 		self:SetState(JMod.EZ_STATE_PRIMED)
@@ -25,8 +25,8 @@ if(SERVER)then
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		self.Exploded = true
-		self.FuelLeft = 30
+		self.Exploded=true
+		self.FuelLeft=30
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 70, 150)
 	end
 	function ENT:CustomThink()

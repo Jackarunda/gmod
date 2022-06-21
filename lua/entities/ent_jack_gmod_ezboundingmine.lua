@@ -1,15 +1,15 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Mini Bounding Mine"
-ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod-EZ Explosives"
+ENT.PrintName="EZ Mini Bounding Mine"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
-ENT.JModEZstorable = true
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModEZstorable=true
+ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ENT.UsableMats={MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 ENT.BlacklistedNPCs={"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
@@ -20,7 +20,7 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos=tr.HitPos + tr.HitNormal*20
+		local SpawnPos=tr.HitPos+tr.HitNormal*20
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
@@ -49,8 +49,8 @@ if(SERVER)then
 		---
 		self:SetState(JMod.EZ_STATE_OFF)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
 	end
 	if(iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
@@ -276,7 +276,7 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
-		local pos = self:GetPos()+self:GetUp()*11+self:GetRight()*1.5
+		local pos=self:GetPos()+self:GetUp()*11+self:GetRight()*1.5
 		if(State==JMod.EZ_STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,20,20,Color(255,0,0))

@@ -1,12 +1,12 @@
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Misc."
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Criticality Weapon"
-ENT.NoSitAllowed = true
-ENT.Spawnable = false
-ENT.AdminSpawnable = false
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod-EZ Misc."
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Criticality Weapon"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminOnly=false
 ---
 ENT.JModPreferredCarryAngles=Angle(-90,0,0)
 ENT.JModEZstorable=true
@@ -20,12 +20,12 @@ function ENT:SetupDataTables()
 end
 ---
 if(SERVER)then
-	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 20
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
+	function ENT:SpawnFunction(ply,tr)
+		local SpawnPos=tr.HitPos+tr.HitNormal*20
+		local ent=ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -37,21 +37,21 @@ if(SERVER)then
 		self.Entity:SetModel("models/hunter/blocks/cube025x025x025.mdl")
 		self.Entity:SetMaterial("phoenix_storms/glass")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(50)
+			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
 		self.LastUse=0
 		self:SetState(STATE_OFF)
 		if istable(WireLib) then
-			--self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Time"}, {"Directly detonates the bomb", "Value > 0 arms bomb", "Set this BEFORE arming."})
-			--self.Outputs = WireLib.CreateOutputs(self, {"State", "TimeLeft", "DisarmProgress"}, {"-1 broken \n 0 off \n 1 armed", "Time left on \n the bomb", "How far the disarmament has got."})
+			--self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm", "Time"}, {"Directly detonates the bomb", "Value > 0 arms bomb", "Set this BEFORE arming."})
+			--self.Outputs=WireLib.CreateOutputs(self, {"State", "TimeLeft", "DisarmProgress"}, {"-1 broken \n 0 off \n 1 armed", "Time left on \n the bomb", "How far the disarmament has got."})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -101,10 +101,10 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local Dude,Time=activator,CurTime()
 		JMod.Owner(self,Dude)
-		local Time = CurTime()
-		local State = self:GetState()
+		local Time=CurTime()
+		local State=self:GetState()
 		if(State < 0)then return end
-		local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
 		if(State == STATE_OFF)then
 			if(Alt)then
 				if(self.NextDisarmFail < Time)then

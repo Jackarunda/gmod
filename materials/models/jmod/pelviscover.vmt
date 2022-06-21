@@ -36,7 +36,7 @@
 	"$FakeRimTint"              "[0.5 0.7 1]"
 	"$FakeRimBoost"             "9"
 
-//Environment map / Reflection
+//Environment map/Reflection
 //	"$Envmap"                   "env_cubemap"
 //	"$EnvmapMask"               "models/arachnit/player/tm_separatist/tm_separatist_wrp"
 //	"$EnvmapFresnel" 		    "1"

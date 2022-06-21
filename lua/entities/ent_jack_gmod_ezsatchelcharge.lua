@@ -1,18 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Satchel Charge"
-ENT.Spawnable = true
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod-EZ Explosives"
+ENT.PrintName="EZ Satchel Charge"
+ENT.Spawnable=true
 
-ENT.Model = "models/jmodels/explosives/grenades/satchelcharge/satchel_charge.mdl"
-ENT.SpoonEnt = nil
---ENT.ModelScale = 2.5
-ENT.Mass = 20
-ENT.HardThrowStr = 250
-ENT.SoftThrowStr = 125
-ENT.Hints = {"arm"}
+ENT.Model="models/jmodels/explosives/grenades/satchelcharge/satchel_charge.mdl"
+ENT.SpoonEnt=nil
+--ENT.ModelScale=2.5
+ENT.Mass=20
+ENT.HardThrowStr=250
+ENT.SoftThrowStr=125
+ENT.Hints={"arm"}
 
 DEFINE_BASECLASS(ENT.Base)
 
@@ -21,17 +21,17 @@ if(SERVER)then
 	function ENT:Initialize()
 		BaseClass.Initialize(self)
 		
-		local plunger = ents.Create("ent_jack_gmod_ezblastingmachine")
+		local plunger=ents.Create("ent_jack_gmod_ezblastingmachine")
 		plunger:SetPos(self:GetPos()+self:GetForward()*5)
 		plunger:SetAngles(self:GetAngles())
 		plunger:Spawn()
-		plunger.Satchel = self
-		plunger.Owner = self.Owner
-		self.Plunger = plunger
+		plunger.Satchel=self
+		plunger.Owner=self.Owner
+		self.Plunger=plunger
 		timer.Simple(0, function() plunger:SetParent(self) end)
 	if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Off \n Primed \n Armed"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"Off \n Primed \n Armed"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -121,7 +121,7 @@ elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 		local State=self:GetState()
-		local pos = self:GetPos() + self:GetUp() * 2.8 + self:GetRight() * (-2.6) + self:GetForward() * (-3)
+		local pos=self:GetPos()+self:GetUp()*2.8+self:GetRight()*(-2.6)+self:GetForward()*(-3)
 		if(State==JMod.EZ_STATE_ARMING)then
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(pos,10,10,Color(255,0,0))

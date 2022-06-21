@@ -138,7 +138,7 @@ JMod.EZ_UPGRADE_RESOURCE_BLACKLIST={}
 -- State enums
 JMod.EZ_STATE_BROKEN 	= -1
 JMod.EZ_STATE_OFF 		= 0
-JMod.EZ_STATE_ON        = 1
+JMod.EZ_STATE_ON       =1
 JMod.EZ_STATE_PRIMED 	= 2
 JMod.EZ_STATE_ARMING 	= 3
 JMod.EZ_STATE_ARMED		= 4
@@ -162,7 +162,7 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 		AddCSLuaFile("jmod/" .. f)
 		include("jmod/" .. f)
 	else
-		print("JMod detected unaccounted-for lua file '" .. f .. "' - check prefixes!")
+		print("JMod detected unaccounted-for lua file '" .. f .. "'-check prefixes!")
 	end
 end
 

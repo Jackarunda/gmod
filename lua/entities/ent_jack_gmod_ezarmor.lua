@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ"
+ENT.Category="JMod-EZ"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Armor"
 ENT.NoSitAllowed=true

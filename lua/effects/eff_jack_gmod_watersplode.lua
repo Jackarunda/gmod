@@ -21,6 +21,7 @@ function EFFECT:Init(data)
 	util.Effect("WaterSplash",Splach)
 	---
 	local emitter=ParticleEmitter(self.Pos)
+	--[[
 	for i=0,200 do
 		local Sprite
 		local Rand=math.random(1,3)
@@ -87,7 +88,31 @@ function EFFECT:Init(data)
 		particle:SetRollDelta(math.Rand(-1, 1)*6)
 		particle:SetColor(255,255,255)
 	end
+	--]]
 	emitter:Finish()
+	local Pos,Scale=self.Pos,self.Scale
+	timer.Simple(.1,function()
+		local emitter=ParticleEmitter(Pos)
+		for i=0,500 do
+			local Sprite=table.Random({"effects/splash1","effects/splash2","effects/splash4"})
+			local particle=emitter:Add(Sprite,Pos)
+			particle:SetVelocity((VectorRand()*math.Rand(0,200)*Scale+Vector(0,0,math.Rand(200,1000)*Scale)))
+			particle:SetCollide(false)
+			particle:SetLighting(false)
+			particle:SetBounce(.01)
+			particle:SetGravity(Vector(0,0,-600))
+			particle:SetAirResistance(10)
+			particle:SetDieTime(math.Rand(1,3)*Scale)
+			particle:SetStartAlpha(255)
+			particle:SetEndAlpha(255)
+			particle:SetStartSize(10)
+			particle:SetEndSize(10)
+			particle:SetRoll(math.Rand(180, 480))
+			particle:SetRollDelta(math.Rand(-1, 1)*6)
+			particle:SetColor(255,255,255)
+		end
+		emitter:Finish()
+	end)
 end
 function EFFECT:Think()
 	if(self.DieTime>CurTime())then

@@ -172,6 +172,10 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
 	},
+	plastic_barrel_buoyant={
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
+		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
+	},
 	plastic_box={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.GLASS]=.2,

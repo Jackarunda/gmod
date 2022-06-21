@@ -1,20 +1,20 @@
-SWEP.Base = "wep_jack_gmod_gunbase"
+SWEP.Base="wep_jack_gmod_gunbase"
 
-SWEP.PrintName = "Flintlock Blunderbuss"
+SWEP.PrintName="Flintlock Blunderbuss"
 
 JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_flb",true)
 
-SWEP.Slot = 3
+SWEP.Slot=3
 
-SWEP.ViewModel = "models/weapons/blunder/c_blunder.mdl"
-SWEP.WorldModel = "models/weapons/blunder/blunder.mdl"
-SWEP.ViewModelFOV = 75
-SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(0,-15,0)
-SWEP.BodyHolsterAngL = Angle(0,15,180)
-SWEP.BodyHolsterPos = Vector(-.5,-18,-4)
-SWEP.BodyHolsterPosL = Vector(1,-17,6)
-SWEP.BodyHolsterScale = 1
+SWEP.ViewModel="models/weapons/blunder/c_blunder.mdl"
+SWEP.WorldModel="models/weapons/blunder/blunder.mdl"
+SWEP.ViewModelFOV=75
+SWEP.BodyHolsterSlot="back"
+SWEP.BodyHolsterAng=Angle(0,-15,0)
+SWEP.BodyHolsterAngL=Angle(0,15,180)
+SWEP.BodyHolsterPos=Vector(-.5,-18,-4)
+SWEP.BodyHolsterPosL=Vector(1,-17,6)
+SWEP.BodyHolsterScale=1
 
 JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
 SWEP.Damage=SWEP.Damage/25
@@ -23,60 +23,60 @@ SWEP.Range=10
 SWEP.Penetration=20
 SWEP.AmmoPerShot=3
 
-SWEP.DoorBreachPower = 7
+SWEP.DoorBreachPower=7
 
-SWEP.Primary.ClipSize = 3 -- DefaultClip is automatically set.
+SWEP.Primary.ClipSize=3 -- DefaultClip is automatically set.
 SWEP.ChamberSize=0
 
-SWEP.Recoil = 6
-SWEP.RecoilDamage = 1
+SWEP.Recoil=6
+SWEP.RecoilDamage=1
 
-SWEP.Delay = 60 / 100 -- 60 / RPM.
-SWEP.Firemodes = {
+SWEP.Delay=60/100 -- 60/RPM.
+SWEP.Firemodes={
 	{
-		Mode = 1,
-		PrintName = "SINGLE"
+		Mode=1,
+		PrintName="SINGLE"
 	},
 	{
-		Mode = 0
+		Mode=0
 	}
 }
 
-SWEP.AccuracyMOA = 120 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA=120 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
+SWEP.FirstShootSound="snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
+SWEP.ShootSound="snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
+SWEP.DistantShootSound="snds_jack_gmod/ez_weapons/shotgun_far.wav"
 SWEP.ShootSoundExtraMult=1
 
-SWEP.MuzzleEffect = "muzzleflash_M3"
-SWEP.ExtraMuzzleLua = "eff_jack_gmod_bphmuzzle"
-SWEP.ExtraMuzzleLuaScale = 1
+SWEP.MuzzleEffect="muzzleflash_M3"
+SWEP.ExtraMuzzleLua="eff_jack_gmod_bphmuzzle"
+SWEP.ExtraMuzzleLuaScale=1
 
-SWEP.SpeedMult = 1
-SWEP.SightedSpeedMult = .7
-SWEP.SightTime = .6
+SWEP.SpeedMult=1
+SWEP.SightedSpeedMult=.7
+SWEP.SightTime=.6
 
-SWEP.IronSightStruct = {
-	Pos = Vector(-8, 5, 4),
-	Ang = Angle(-3, -8, 0),
-	Magnification = 1.1,
-	SwitchToSound = JMod.GunHandlingSounds.aim.inn,
-	SwitchFromSound = JMod.GunHandlingSounds.aim.out
+SWEP.IronSightStruct={
+	Pos=Vector(-8, 5, 4),
+	Ang=Angle(-3, -8, 0),
+	Magnification=1.1,
+	SwitchToSound=JMod.GunHandlingSounds.aim.inn,
+	SwitchFromSound=JMod.GunHandlingSounds.aim.out
 }
 
-SWEP.ActivePos = Vector(-3, 5, 4)
-SWEP.ActiveAng = Angle(-10, -10, 0)
+SWEP.ActivePos=Vector(-3, 5, 4)
+SWEP.ActiveAng=Angle(-10, -10, 0)
 
-SWEP.HolsterPos = Vector(8, 1, -6)
-SWEP.HolsterAng = Angle(0, 60, -15)
+SWEP.HolsterPos=Vector(8, 1, -6)
+SWEP.HolsterAng=Angle(0, 60, -15)
 
-SWEP.ReloadPos = Vector(0,0,-10)
-SWEP.ReloadAng = Angle(0,0,0)
+SWEP.ReloadPos=Vector(0,0,-10)
+SWEP.ReloadAng=Angle(0,0,0)
 
-SWEP.BarrelLength = 30
+SWEP.BarrelLength=30
 
-SWEP.ProceduralViewBobIntensity = .3
+SWEP.ProceduralViewBobIntensity=.3
 
 --[[
 models/weapons/blunder/c_blunder.mdl
@@ -148,60 +148,60 @@ bone	43	dummy
 		name	=	breach
 
 --]]
-SWEP.Animations = {
-	["idle"] = {
-		Source = "idle01",
-		Time = 1
+SWEP.Animations={
+	["idle"]={
+		Source="idle01",
+		Time=1
 	},
-	["draw"] = {
-		Source = "draw",
-		Time = 1.2,
-		SoundTable = {{s = JMod.GunHandlingSounds.draw.longgun, t = 0, v=60}},
+	["draw"]={
+		Source="draw",
+		Time=1.2,
+		SoundTable={{s=JMod.GunHandlingSounds.draw.longgun, t=0, v=60}},
 		Mult=1,
-		LHIK = true,
-		LHIKIn = 0,
-		LHIKOut = 0.35
+		LHIK=true,
+		LHIKIn=0,
+		LHIKOut=0.35
 	},
-	["fire"] = {
-		Source = "misscenter1",
-		Time = .75
+	["fire"]={
+		Source="misscenter1",
+		Time=.75
 	},
-	["reload"] = {
-		Source = "reload",
-		Time = 9,
-		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-		Checkpoints = {24, 42, 59, 71, 89},
-		FrameRate = 20,
+	["reload"]={
+		Source="reload",
+		Time=9,
+		TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints={24, 42, 59, 71, 89},
+		FrameRate=20,
 		Mult=1,
-		LHIK = true,
-		LHIKIn = 0.5,
-		LHIKOut = 0.5,
-		SoundTable = {
-			{s = JMod.GunHandlingSounds.cloth.loud, t = .2, v=60, p=100},
-			{s = JMod.GunHandlingSounds.cloth.magpull, t = 1.1, v=60, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/rip.wav", t = 1.2, v=65},
-			{s = "snds_jack_gmod/ez_weapons/flm/pour.wav", t = 1.6, v=65},
-			{s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav", t = 3.6, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t = 3.9, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/primepan.wav", t = 4.1, v=65, p=120},
-			{s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t = 4.2, v=65, p=100},
-			{s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav", t = 4.3, v=65, p=100},
-			{s = JMod.GunHandlingSounds.cloth.magpull, t = 5.8, v=60, p=130},
-			{s = "snds_jack_gmod/ez_weapons/flb/shot_pour.wav", t = 6.5, v=65, p=100},
-			{s = JMod.GunHandlingSounds.cloth.magpull, t = 7.5, v=60, p=120},
-			{s = "snds_jack_gmod/ez_weapons/flm/drop.wav", t = 8, v=65, p=70},
-			{s = JMod.GunHandlingSounds.cloth.loud, t = 8.5, v=60, p=100}
+		LHIK=true,
+		LHIKIn=0.5,
+		LHIKOut=0.5,
+		SoundTable={
+			{s=JMod.GunHandlingSounds.cloth.loud, t=.2, v=60, p=100},
+			{s=JMod.GunHandlingSounds.cloth.magpull, t=1.1, v=60, p=100},
+			{s="snds_jack_gmod/ez_weapons/flm/rip.wav", t=1.2, v=65},
+			{s="snds_jack_gmod/ez_weapons/flm/pour.wav", t=1.6, v=65},
+			{s="snds_jack_gmod/ez_weapons/flm/halfcock.wav", t=3.6, v=65, p=100},
+			{s="snds_jack_gmod/ez_weapons/flm/openfrizzen.wav", t=3.9, v=65, p=100},
+			{s="snds_jack_gmod/ez_weapons/flm/primepan.wav", t=4.1, v=65, p=120},
+			{s="snds_jack_gmod/ez_weapons/flm/closefrizzen.wav", t=4.2, v=65, p=100},
+			{s="snds_jack_gmod/ez_weapons/flm/fullcock.wav", t=4.3, v=65, p=100},
+			{s=JMod.GunHandlingSounds.cloth.magpull, t=5.8, v=60, p=130},
+			{s="snds_jack_gmod/ez_weapons/flb/shot_pour.wav", t=6.5, v=65, p=100},
+			{s=JMod.GunHandlingSounds.cloth.magpull, t=7.5, v=60, p=120},
+			{s="snds_jack_gmod/ez_weapons/flm/drop.wav", t=8, v=65, p=70},
+			{s=JMod.GunHandlingSounds.cloth.loud, t=8.5, v=60, p=100}
 		},
-		ViewPunchTable = {
-			{t = 1.2, p = Angle(0,5,0)},
-			{t = 3.6, p = Angle(1,0,0)},
-			{t = 3.9, p = Angle(1,0,0)},
-			{t = 4.2, p = Angle(1,0,0)},
-			{t = 4.3, p = Angle(1,0,0)},
-			{t = 4.8, p = Angle(-1,0,0)},
-			{t = 6.1, p = Angle(2,0,0)},
-			{t = 7.2, p = Angle(1,0,0)},
-			{t = 8, p = Angle(2,0,0)}
+		ViewPunchTable={
+			{t=1.2, p=Angle(0,5,0)},
+			{t=3.6, p=Angle(1,0,0)},
+			{t=3.9, p=Angle(1,0,0)},
+			{t=4.2, p=Angle(1,0,0)},
+			{t=4.3, p=Angle(1,0,0)},
+			{t=4.8, p=Angle(-1,0,0)},
+			{t=6.1, p=Angle(2,0,0)},
+			{t=7.2, p=Angle(1,0,0)},
+			{t=8, p=Angle(2,0,0)}
 		}
 	},
 }

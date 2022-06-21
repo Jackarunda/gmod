@@ -1,7 +1,7 @@
 -- copied from Slayer
 function EFFECT:Init( data )
 	local Pos=data:GetOrigin()
-	self.Emitter = ParticleEmitter( Pos )
+	self.Emitter=ParticleEmitter( Pos )
 	local Scayul=data:GetScale()
 	self.Scayul=Scayul
 	local Norm=data:GetNormal()

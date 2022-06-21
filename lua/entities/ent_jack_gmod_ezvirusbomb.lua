@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod-EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Bioweapon Canister"
 ENT.NoSitAllowed=true
@@ -49,8 +49,8 @@ if(SERVER)then
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=20
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 sealed \n 1 ticking \n 2 venting"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"0 sealed \n 1 ticking \n 2 venting"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)

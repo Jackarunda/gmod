@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod-EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Micro Nuclear Bomb"
 ENT.Spawnable=true
@@ -49,8 +49,8 @@ if(SERVER)then
 		self.LastUse=0
 		self.DetTime=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)

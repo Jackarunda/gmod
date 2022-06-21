@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.PrintName="EZ Aid Radio"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod-EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -96,7 +96,7 @@ if(SERVER)then
 		self:ConsumeElectricity()
 		if(parrot)then
 			for _, ply in pairs(player.GetAll()) do
-				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200*200
 						or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 					net.Start("JMod_EZradio")
 						net.WriteBool(true)
@@ -118,7 +118,7 @@ if(SERVER)then
 		timer.Simple(.5,function()
 			if(IsValid(self))then
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200
+					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200*200
 							or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
 						net.Start("JMod_EZradio")
 							net.WriteBool(true)
@@ -173,7 +173,7 @@ if(SERVER)then
 					self:Connect(self.Owner)
 				else
 					JMod.Hint(self.Owner, "aid sky")
-					self.ConnectionAttempts = self.ConnectionAttempts + 1
+					self.ConnectionAttempts=self.ConnectionAttempts+1
 					if(self.ConnectionAttempts>5)then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
 						timer.Simple(1,function()
@@ -250,17 +250,17 @@ if(SERVER)then
 					--local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
 					local Msg,Num='stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:',1
 					self:Speak(Msg,ParrotPhrase)
-					local str = ""
+					local str=""
 					for name,items in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
-						str = str .. name
-						if Num > 0 and Num % 10 == 0 then
-							local newStr = str
+						str=str .. name
+						if Num > 0 and Num%10 == 0 then
+							local newStr=str
 							timer.Simple(Num/10,function()
 								if(IsValid(self))then self:Speak(newStr) end
 							end)
-							str = ""
+							str=""
 						else
-							str = str .. ", "
+							str=str .. ", "
 						end
 						Num=Num+1
 					end

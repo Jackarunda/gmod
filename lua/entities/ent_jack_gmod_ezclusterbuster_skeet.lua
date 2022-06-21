@@ -1,18 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "The smart skeet submunition for the EZ Cluster Buster"
-ENT.PrintName = "Cluster Buster submunition"
-ENT.Spawnable = false
-ENT.AdminSpawnable = false
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod-EZ Explosives"
+ENT.Information="The smart skeet submunition for the EZ Cluster Buster"
+ENT.PrintName="Cluster Buster submunition"
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
 ENT.EZclusterBusterMunition=true
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos+tr.HitNormal*15
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*15
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -52,7 +52,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		if(dmginfo:GetInflictor() == self)then return end
 		self:TakePhysicsDamage(dmginfo)
-		local Dmg = dmginfo:GetDamage()
+		local Dmg=dmginfo:GetDamage()
 		if(JMod.LinCh(Dmg, 20, 100))then
 			self:Detonate()
 		end

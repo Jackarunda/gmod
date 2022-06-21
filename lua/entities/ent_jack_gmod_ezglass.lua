@@ -2,14 +2,14 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Glass Block"
-ENT.Category="JMod - EZ Resources"
+ENT.Category="JMod-EZ Resources"
 ENT.IconOverride="materials/ez_resource_icons/glass.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.GLASS
 ENT.JModPreferredCarryAngles=Angle(-90,0,0)
-ENT.Model="models/hunter/blocks/cube05x1x025.mdl"
+ENT.Model="models/hunter/blocks/cube05x05x025.mdl"
 ENT.Material="models/mat_jack_gmod_generic_glass"
 ENT.Color=Color(200,200,200)
 ENT.ModelScale=1
@@ -33,7 +33,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
-		JMod.HoloGraphicDisplay(self,Vector(0,0,6),Angle(0,-90,0),.05,300,function()
+		JMod.HoloGraphicDisplay(self,Vector(-1,0,6),Angle(0,-90,0),.035,300,function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GLASS,self:GetResource(),nil,0,0,200,false)
 		end)
 	end

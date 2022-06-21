@@ -1,17 +1,17 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezmininade"
+ENT.Base="ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZminiNade-Impact"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod-EZ Explosives"
 ENT.Spawnable=true
 
-ENT.Material = "models/mats_jack_nades/gnd_blk"
+ENT.Material="models/mats_jack_nades/gnd_blk"
 ENT.MiniNadeDamage=100
 
-ENT.Hints = {"mininade"}
+ENT.Hints={"mininade"}
 
-local BaseClass = baseclass.Get(ENT.Base)
+local BaseClass=baseclass.Get(ENT.Base)
 
 if(SERVER)then
 	function ENT:PhysicsCollide(data,physobj)

@@ -1,14 +1,14 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Misc."
-ENT.PrintName = "EZ Gas Grenade"
-ENT.Spawnable = true
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod-EZ Misc."
+ENT.PrintName="EZ Gas Grenade"
+ENT.Spawnable=true
 
-ENT.Model = "models/jmodels/explosives/grenades/gasnade/gas_grenade.mdl"
-ENT.SpoonModel = "models/jmodels/explosives/grenades/gasnade/gas_grenade_spoon.mdl"
---ENT.ModelScale = 1.5
+ENT.Model="models/jmodels/explosives/grenades/gasnade/gas_grenade.mdl"
+ENT.SpoonModel="models/jmodels/explosives/grenades/gasnade/gas_grenade_spoon.mdl"
+--ENT.ModelScale=1.5
 
 if(SERVER)then
 
@@ -29,8 +29,8 @@ if(SERVER)then
 	
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		self.Exploded = true
-		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.Owner or self,self:GetPhysicsObject():GetVelocity()
+		self.Exploded=true
+		local SelfPos, Owner, SelfVel=self:LocalToWorld(self:OBBCenter()), self.Owner or self,self:GetPhysicsObject():GetVelocity()
 		local Boom=ents.Create("env_explosion")
 		Boom:SetPos(SelfPos)
 		Boom:SetKeyValue("imagnitude","50")

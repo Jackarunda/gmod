@@ -1,4 +1,4 @@
-local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod + its content? (requires a restart upon change)")
+local force_workshop=CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
 
 if force_workshop:GetBool() then
     resource.AddWorkshop("1919689921")
@@ -167,6 +167,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		filter=player.GetAll()[1]
 	})
 	if(AAA.Hit)then jprint("VALID") else jprint("INVALID") end
+	--]]
+	--[[
+	local ply=player.GetAll()[1]
+	local pos=ply:GetPos()
+	for k,v in pairs(ents.FindInSphere(pos,600))do
+		if(v.GetPhysicsObject)then
+			local Phys=v:GetPhysicsObject()
+			if(IsValid(Phys))then
+				local vec=(v:GetPos()-pos):GetNormalized()
+				Phys:ApplyForceCenter(-vec*400)
+			end
+		end
+	end
 	--]]
 	local Time=CurTime()
 	if(NextMainThink>Time)then return end

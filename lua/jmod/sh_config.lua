@@ -82,7 +82,7 @@ function JMod.InitGlobalConfig(forceNew)
 				["arms"]={
 					description= "buncha random guns, good luck getting what you want.",
 					category="Weapons",
-					results = {
+					results={
 						{
 							"RAND",
 							"ent_jack_gmod_ezweapon_pistol",
@@ -200,7 +200,7 @@ function JMod.InitGlobalConfig(forceNew)
 					description="1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
 					category="Resources",
 					results={
-						{"ent_jack_gmod_ezprecparts"}
+						"ent_jack_gmod_ezprecparts"
 					}
 				},
 				["advanced textiles"]={
@@ -1815,7 +1815,7 @@ function JMod.InitGlobalConfig(forceNew)
 				description="Set it on a bomb, and trigger it from afar. Good if you want to ensure you're out of blast range."
 			},
 		   	["EZ Mini Timed Grenade"]={
-				results="ent_jack_gmod_eznade_remote",
+				results="ent_jack_gmod_eznade_timed",
 				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=5

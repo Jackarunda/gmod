@@ -30,40 +30,40 @@ player_manager.AddValidHands( "JMod_HazMat", "models/bloocobalt/splinter cell/ch
 	
 --]]
 -- support third-party backup armor repair recipes
-JMod.BackupArmorRepairRecipes = JMod.BackupArmorRepairRecipes or {}
+JMod.BackupArmorRepairRecipes=JMod.BackupArmorRepairRecipes or {}
 
-JMod.LocationalDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
---JMod.FullBodyScalingDamageTypes = {DMG_ACID, DMG_POISON}
-JMod.FullBodyDmgTypes = {DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_PLASMA, DMG_ACID, DMG_POISON}
-JMod.BiologicalDmgTypes = {DMG_NERVEGAS, DMG_RADIATION}
-JMod.PiercingDmgTypes = {DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
+JMod.LocationalDmgTypes={DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER}
+--JMod.FullBodyScalingDamageTypes={DMG_ACID, DMG_POISON}
+JMod.FullBodyDmgTypes={DMG_CRUSH, DMG_SLASH, DMG_BURN, DMG_VEHICLE, DMG_BLAST, DMG_CLUB, DMG_PLASMA, DMG_ACID, DMG_POISON}
+JMod.BiologicalDmgTypes={DMG_NERVEGAS, DMG_RADIATION}
+JMod.PiercingDmgTypes={DMG_BULLET, DMG_BUCKSHOT, DMG_AIRBOAT, DMG_SNIPER, DMG_SLASH}
 
-JMod.BodyPartHealthMults = {
+JMod.BodyPartHealthMults={
 	--skintight
 	-- HITGROUP_HEAD
-	eyes = .05,
-	mouthnose = .05,
-	ears = 0,
-	head = .18,
+	eyes=.05,
+	mouthnose=.05,
+	ears=0,
+	head=.18,
 	-- HITGROUP_CHEST
-	chest = .25,
-	back = 0,
+	chest=.25,
+	back=0,
 	-- HITGROUP_STOMACH
-	abdomen = .1,
-	pelvis = .05,
-	waist = 0,
+	abdomen=.1,
+	pelvis=.05,
+	waist=0,
 	-- HITGROUP_LEFTLEG
-	leftthigh = .04,
-	leftcalf = .04,
+	leftthigh=.04,
+	leftcalf=.04,
 	-- HITGROUP_RIGHTLEG
-	rightthigh = .04,
-	rightcalf = .04,
+	rightthigh=.04,
+	rightcalf=.04,
 	-- HITGROUP_RIGHTARM
-	rightshoulder = .04,
-	rightforearm = .04,
+	rightshoulder=.04,
+	rightforearm=.04,
 	-- HITGROUP_LEFTARM
-	leftshoulder = .04,
-	leftforearm = .04
+	leftshoulder=.04,
+	leftforearm=.04
 }
 JMod.ArmorSlotNiceNames={
 	eyes="Eyes",
@@ -74,7 +74,7 @@ JMod.ArmorSlotNiceNames={
 	back="Back",
 	abdomen="Abdomen",
 	pelvis="Pelvis",
-	waist = "Waist",
+	waist="Waist",
 	leftthigh="Left Thigh",
 	leftcalf="Left Calf",
 	rightthigh="Right Thigh",
@@ -95,749 +95,749 @@ JMod.BodyPartDamageMults={ -- only used if JMod.Config.QoL.RealisticLocationalDa
 	[HITGROUP_LEFTLEG]=.2,
 	[HITGROUP_RIGHTLEG]=.2
 }
-local BasicArmorProtectionProfile = {
-	[DMG_BUCKSHOT] = .999,
-	[DMG_CLUB] = .99,
-	[DMG_SLASH] = .99,
-	[DMG_BULLET] = .98,
-	[DMG_BLAST] = .95,
-	[DMG_SNIPER] = .9,
-	[DMG_AIRBOAT] = .85,
-	[DMG_CRUSH] = .75,
-	[DMG_VEHICLE] = .65,
-	[DMG_BURN] = .65,
-	[DMG_PLASMA] = .65,
-	[DMG_ACID] = .55
+local BasicArmorProtectionProfile={
+	[DMG_BUCKSHOT]=.999,
+	[DMG_CLUB]=.99,
+	[DMG_SLASH]=.99,
+	[DMG_BULLET]=.98,
+	[DMG_BLAST]=.95,
+	[DMG_SNIPER]=.9,
+	[DMG_AIRBOAT]=.85,
+	[DMG_CRUSH]=.75,
+	[DMG_VEHICLE]=.65,
+	[DMG_BURN]=.65,
+	[DMG_PLASMA]=.65,
+	[DMG_ACID]=.55
 }
-local PoorArmorProtectionProfile = {
-	[DMG_BUCKSHOT] = .6,
-	[DMG_CLUB] = .6,
-	[DMG_SLASH] = .6,
-	[DMG_BULLET] = .2,
-	[DMG_BLAST] = .2,
-	[DMG_SNIPER] = .1,
-	[DMG_AIRBOAT] = .2,
-	[DMG_CRUSH] = .3,
-	[DMG_VEHICLE] = .2,
-	[DMG_BURN] = .2,
-	[DMG_PLASMA] = .1,
-	[DMG_ACID] = .1
+local PoorArmorProtectionProfile={
+	[DMG_BUCKSHOT]=.6,
+	[DMG_CLUB]=.6,
+	[DMG_SLASH]=.6,
+	[DMG_BULLET]=.2,
+	[DMG_BLAST]=.2,
+	[DMG_SNIPER]=.1,
+	[DMG_AIRBOAT]=.2,
+	[DMG_CRUSH]=.3,
+	[DMG_VEHICLE]=.2,
+	[DMG_BURN]=.2,
+	[DMG_PLASMA]=.1,
+	[DMG_ACID]=.1
 }
-local NonArmorProtectionProfile = {
-	[DMG_BUCKSHOT] = .05,
-	[DMG_BLAST] = .05,
-	[DMG_BULLET] = .05,
-	[DMG_SNIPER] = .05,
-	[DMG_AIRBOAT] = .05,
-	[DMG_CLUB] = .05,
-	[DMG_SLASH] = .05,
-	[DMG_CRUSH] = .05,
-	[DMG_VEHICLE] = .05,
-	[DMG_BURN] = .05,
-	[DMG_PLASMA] = .05,
-	[DMG_ACID] = .05
+local NonArmorProtectionProfile={
+	[DMG_BUCKSHOT]=.05,
+	[DMG_BLAST]=.05,
+	[DMG_BULLET]=.05,
+	[DMG_SNIPER]=.05,
+	[DMG_AIRBOAT]=.05,
+	[DMG_CLUB]=.05,
+	[DMG_SLASH]=.05,
+	[DMG_CRUSH]=.05,
+	[DMG_VEHICLE]=.05,
+	[DMG_BURN]=.05,
+	[DMG_PLASMA]=.05,
+	[DMG_ACID]=.05
 }
 
 -- keep in mind that all armor model names must be all lower-case
-JMod.ArmorTable = {
-	["GasMask"] = {
-		PrintName = "Gas Mask",
-		mdl = "models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
-		slots = {
-			eyes = 1,
-			mouthnose = 1
+JMod.ArmorTable={
+	["GasMask"]={
+		PrintName="Gas Mask",
+		mdl="models/splinks/kf2/cosmetics/gas_mask.mdl", -- kf2
+		slots={
+			eyes=1,
+			mouthnose=1
 		},
-		def = table.Inherit({
-			[DMG_NERVEGAS] = 1,
-			[DMG_RADIATION] = .75
+		def=table.Inherit({
+			[DMG_NERVEGAS]=1,
+			[DMG_RADIATION]=.75
 		}, NonArmorProtectionProfile),
-		dur = 2,
-		chrg = {
-			chemicals = 25
+		dur=2,
+		chrg={
+			chemicals=25
 		},
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, .1, 0),
-		ang = Angle(100, 180, 90),
-		wgt = 5,
-		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
-		sndlop = "snds_jack_gmod/mask_breathe.wav",
-		ent = "ent_jack_gmod_ezarmor_gasmask",
-		tgl = {
-			pos = Vector(3, 3, 0),
-			ang = Angle(190, 180, 90),
-			eff = {},
-			mskmat = "",
-			sndlop = "",
-			def = NonArmorProtectionProfile,
-			slots = {
-				eyes = 0,
-				mouthnose = 0
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, .1, 0),
+		ang=Angle(100, 180, 90),
+		wgt=5,
+		mskmat="mats_jack_gmod_sprites/vignette_gray.png",
+		sndlop="snds_jack_gmod/mask_breathe.wav",
+		ent="ent_jack_gmod_ezarmor_gasmask",
+		tgl={
+			pos=Vector(3, 3, 0),
+			ang=Angle(190, 180, 90),
+			eff={},
+			mskmat="",
+			sndlop="",
+			def=NonArmorProtectionProfile,
+			slots={
+				eyes=0,
+				mouthnose=0
 			}
 		}
 	},
-	["BallisticMask"] = {
-		PrintName = "Ballistic Mask",
-		mdl = "models/jmod/ballistic_mask.mdl", -- csgo misc
-		slots = {
-			eyes = 1,
-			mouthnose = 1
+	["BallisticMask"]={
+		PrintName="Ballistic Mask",
+		mdl="models/jmod/ballistic_mask.mdl", -- csgo misc
+		slots={
+			eyes=1,
+			mouthnose=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, 4, 0),
-		ang = Angle(100, 180, 90),
-		wgt = 5,
-		dur = 200,
-		mskmat = "mats_jack_gmod_sprites/hard_vignette.png",
-		ent = "ent_jack_gmod_ezarmor_balmask",
-		tgl = {
-			pos = Vector(-2, 4, 0),
-			ang = Angle(170, 180, 90),
-			mskmat = "",
-			slots = {
-				eyes = 0,
-				mouthnose = 0
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, 4, 0),
+		ang=Angle(100, 180, 90),
+		wgt=5,
+		dur=200,
+		mskmat="mats_jack_gmod_sprites/hard_vignette.png",
+		ent="ent_jack_gmod_ezarmor_balmask",
+		tgl={
+			pos=Vector(-2, 4, 0),
+			ang=Angle(170, 180, 90),
+			mskmat="",
+			slots={
+				eyes=0,
+				mouthnose=0
 			}
 		}
 	},
-	["NightVisionGoggles"] = {
-		PrintName = "Goggles - Night Vision",
-		mdl = "models/nvg.mdl", -- scp something
-		clr = { r = 15, g = 50, b = 10 },
-		slots = {
-			eyes = 1
+	["NightVisionGoggles"]={
+		PrintName="Goggles-Night Vision",
+		mdl="models/nvg.mdl", -- scp something
+		clr={ r=15, g=50, b=10 },
+		slots={
+			eyes=1
 		},
-		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.05, 1.05, 1.05),
-		entsiz = 1.5,
-		pos = Vector(6.5, 2, 0),
-		ang = Angle(-100, 0, 90),
-		wgt = 5,
-		dur = 2,
-		chrg = {
-			power = 20
+		def=NonArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.05, 1.05, 1.05),
+		entsiz=1.5,
+		pos=Vector(6.5, 2, 0),
+		ang=Angle(-100, 0, 90),
+		wgt=5,
+		dur=2,
+		chrg={
+			power=20
 		},
-		mskmat = "mats_jack_gmod_sprites/vignette.png",
-		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
-		ent = "ent_jack_gmod_ezarmor_nvgs",
-		eff = {
-			nightVision = true
+		mskmat="mats_jack_gmod_sprites/vignette.png",
+		eqsnd="snds_jack_gmod/tinycapcharge.wav",
+		ent="ent_jack_gmod_ezarmor_nvgs",
+		eff={
+			nightVision=true
 		},
 		blackvisionwhendead=true,
-		tgl = {
+		tgl={
 			blackvisionwhendead=false,
-			pos = Vector(6, 6, 0),
-			ang = Angle(-130, 0, 90),
-			mskmat = "",
-			eff = {},
-			slots = {
-				eyes = 0
+			pos=Vector(6, 6, 0),
+			ang=Angle(-130, 0, 90),
+			mskmat="",
+			eff={},
+			slots={
+				eyes=0
 			}
 		}
 	},
-	["ThermalGoggles"] = {
-		PrintName = "Goggles - Thermal",
-		mdl = "models/nvg.mdl", -- scp something
-		slots = {
-			eyes = 1
+	["ThermalGoggles"]={
+		PrintName="Goggles-Thermal",
+		mdl="models/nvg.mdl", -- scp something
+		slots={
+			eyes=1
 		},
-		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.05, 1.05, 1.05),
-		entsiz = 1.5,
-		pos = Vector(6.5, 2, 0),
-		ang = Angle(-100, 0, 90),
-		wgt = 5,
-		dur = 2,
-		chrg = {
-			power = 20
+		def=NonArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.05, 1.05, 1.05),
+		entsiz=1.5,
+		pos=Vector(6.5, 2, 0),
+		ang=Angle(-100, 0, 90),
+		wgt=5,
+		dur=2,
+		chrg={
+			power=20
 		},
-		mskmat = "mats_jack_gmod_sprites/vignette.png",
-		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
-		ent = "ent_jack_gmod_ezarmor_thermals",
-		eff = {
-			thermalVision = true
+		mskmat="mats_jack_gmod_sprites/vignette.png",
+		eqsnd="snds_jack_gmod/tinycapcharge.wav",
+		ent="ent_jack_gmod_ezarmor_thermals",
+		eff={
+			thermalVision=true
 		},
 		blackvisionwhendead=true,
-		tgl = {
+		tgl={
 			blackvisionwhendead=false,
-			pos = Vector(6, 6, 0),
-			ang = Angle(-130, 0, 90),
-			mskmat = "",
-			eff = {},
-			slots = {
-				eyes = 0
+			pos=Vector(6, 6, 0),
+			ang=Angle(-130, 0, 90),
+			mskmat="",
+			eff={},
+			slots={
+				eyes=0
 			}
 		}
 	},
-	["Respirator"] = {
-		PrintName = "Respirator",
-		mdl = "models/jmod/respirator.mdl", -- MGSV
-		slots = {
-			mouthnose = 1
+	["Respirator"]={
+		PrintName="Respirator",
+		mdl="models/jmod/respirator.mdl", -- MGSV
+		slots={
+			mouthnose=1
 		},
-		def = table.Inherit({
-			[DMG_NERVEGAS] = .25,
-			[DMG_RADIATION] = .75
+		def=table.Inherit({
+			[DMG_NERVEGAS]=.25,
+			[DMG_RADIATION]=.75
 		}, NonArmorProtectionProfile),
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1, 1, 1),
-		pos = Vector(3.25, 1, 0),
-		ang = Angle(100, 180, 90),
-		chrg = {
-			chemicals = 10
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1, 1, 1),
+		pos=Vector(3.25, 1, 0),
+		ang=Angle(100, 180, 90),
+		chrg={
+			chemicals=10
 		},
-		wgt = 5,
-		dur = 2,
-		sndlop = "snds_jack_gmod/mask_breathe.wav",
-		ent = "ent_jack_gmod_ezarmor_respirator",
-		tgl = {
-			def = NonArmorProtectionProfile,
-			eff = {},
-			slots = {
-				mouthnose = 0
+		wgt=5,
+		dur=2,
+		sndlop="snds_jack_gmod/mask_breathe.wav",
+		ent="ent_jack_gmod_ezarmor_respirator",
+		tgl={
+			def=NonArmorProtectionProfile,
+			eff={},
+			slots={
+				mouthnose=0
 			},
-			pos = Vector(3.25, -4, 0),
-			ang = Angle(110, 180, 90),
-			sndlop = ""
+			pos=Vector(3.25, -4, 0),
+			ang=Angle(110, 180, 90),
+			sndlop=""
 		}
 	},
-	["Headset"] = {
-		PrintName = "Headset",
-		mdl = "models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
-		slots = {
-			ears = 1
+	["Headset"]={
+		PrintName="Headset",
+		mdl="models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
+		slots={
+			ears=1
 		},
-		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.2, 1.05, 1.1),
-		pos = Vector(.5, 3, .1),
-		ang = Angle(130, 0, 90),
-		wgt = 5,
-		dur = 2,
-		chrg = {
-			power = 10
+		def=NonArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.2, 1.05, 1.1),
+		pos=Vector(.5, 3, .1),
+		ang=Angle(130, 0, 90),
+		wgt=5,
+		dur=2,
+		chrg={
+			power=10
 		},
-		ent = "ent_jack_gmod_ezarmor_headset",
-		eff = {
-			teamComms = true,
-			earPro = true
+		ent="ent_jack_gmod_ezarmor_headset",
+		eff={
+			teamComms=true,
+			earPro=true
 		},
-		tgl = {
-			eff = {},
-			slots = {
-				ears = 0
+		tgl={
+			eff={},
+			slots={
+				ears=0
 			},
-			pos = Vector(1.5, -2.5, .1),
-			ang = Angle(100, 0, 90)
+			pos=Vector(1.5, -2.5, .1),
+			ang=Angle(100, 0, 90)
 		}
 	},
-	["Light-Helmet"] = {
-		PrintName = "Helmet - Light",
-		mdl = "models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
-		slots = {
-			head = .8
+	["Light-Helmet"]={
+		PrintName="Helmet-Light",
+		mdl="models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
+		slots={
+			head=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.07, 1, 1.1),
-		pos = Vector(1, -2, 0),
-		ang = Angle(-90, 0, -90),
-		wgt = 10,
-		dur = 200,
-		ent = "ent_jack_gmod_ezarmor_lhead"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.07, 1, 1.1),
+		pos=Vector(1, -2, 0),
+		ang=Angle(-90, 0, -90),
+		wgt=10,
+		dur=200,
+		ent="ent_jack_gmod_ezarmor_lhead"
 	},
-	["Medium-Helmet"] = {
-		PrintName = "Helmet - Medium",
-		mdl = "models/player/helmet_ulach_black/ulach.mdl", -- tarkov
-		slots = {
-			head = .9
+	["Medium-Helmet"]={
+		PrintName="Helmet-Medium",
+		mdl="models/player/helmet_ulach_black/ulach.mdl", -- tarkov
+		slots={
+			head=.9
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.05, 1, 1.05),
-		pos = Vector(1, -2, 0),
-		ang = Angle(-90, 0, -90),
-		wgt = 15,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_mhead"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.05, 1, 1.05),
+		pos=Vector(1, -2, 0),
+		ang=Angle(-90, 0, -90),
+		wgt=15,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_mhead"
 	},
-	["Heavy-Helmet"] = {
-		PrintName = "Helmet - Heavy",
-		mdl = "models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
-		slots = {
-			head = 1
+	["Heavy-Helmet"]={
+		PrintName="Helmet-Heavy",
+		mdl="models/player/helmet_psh97_jeta/jeta.mdl", -- tarkov
+		slots={
+			head=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.1, 1, 1.1),
-		pos = Vector(1, -3, 0),
-		ang = Angle(-90, 0, -90),
-		wgt = 20,
-		dur = 300,
-		ent = "ent_jack_gmod_ezarmor_hhead"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.1, 1, 1.1),
+		pos=Vector(1, -3, 0),
+		ang=Angle(-90, 0, -90),
+		wgt=20,
+		dur=300,
+		ent="ent_jack_gmod_ezarmor_hhead"
 	},
-	["Riot-Helmet"] = {
-		PrintName = "Helmet - Riot",
-		mdl = "models/jmod/helmet_riot_heavy.mdl", -- csgo
-		slots = {
-			head = 0.8,
-			eyes = .9,
-			mouthnose = .9
+	["Riot-Helmet"]={
+		PrintName="Helmet-Riot",
+		mdl="models/jmod/helmet_riot_heavy.mdl", -- csgo
+		slots={
+			head=0.8,
+			eyes=.9,
+			mouthnose=.9
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1, 1, 1.1),
-		pos = Vector(1, 3.5, 0),
-		ang = Angle(-70, 0, -90),
-		mskmat = "mats_jack_gmod_sprites/gray_translucent.png",
-		wgt = 15,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_riot",
-		bdg = {
-			[0] = 0
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1, 1, 1.1),
+		pos=Vector(1, 3.5, 0),
+		ang=Angle(-70, 0, -90),
+		mskmat="mats_jack_gmod_sprites/gray_translucent.png",
+		wgt=15,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_riot",
+		bdg={
+			[0]=0
 		},
-		tgl = {
-			mskmat = "",
-			slots = {
-				head = 0.8,
+		tgl={
+			mskmat="",
+			slots={
+				head=0.8,
 				eyes=0,
 				mouthnose=0
 			},
-			bdg = {
-				[0] = 1
+			bdg={
+				[0]=1
 			}
 		}
 	},
-	["Heavy-Riot-Helmet"] = {
-		PrintName = "Helmet - Heavy Riot",
-		mdl = "models/jmod/helmet_riot.mdl",
-		slots = {
-			head = 0.9,
-			eyes = 1,
-			mouthnose = 1
+	["Heavy-Riot-Helmet"]={
+		PrintName="Helmet-Heavy Riot",
+		mdl="models/jmod/helmet_riot.mdl",
+		slots={
+			head=0.9,
+			eyes=1,
+			mouthnose=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		mskmat = "mats_jack_gmod_sprites/gray_translucent.png",
-		siz = Vector(1.1, 1, 1.1),
-		pos = Vector(0, 1, 0),
-		ang = Angle(-90, 0, -90),
-		wgt = 25,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_rioth",
-		bdg = {
-			[1] = 0
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		mskmat="mats_jack_gmod_sprites/gray_translucent.png",
+		siz=Vector(1.1, 1, 1.1),
+		pos=Vector(0, 1, 0),
+		ang=Angle(-90, 0, -90),
+		wgt=25,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_rioth",
+		bdg={
+			[1]=0
 		},
-		tgl = {
-			mskmat = "",
-			slots = {
-				head = 0.9,
+		tgl={
+			mskmat="",
+			slots={
+				head=0.9,
 				eyes=0,
 				mouthnose=0
 			},
-			bdg = {
-				[1] = 1
+			bdg={
+				[1]=1
 			}
 		}
 	},
-	["Ultra-Heavy-Helmet"] = {
-		PrintName = "Helmet - UltraHeavy",
-		mdl = "models/jmod/helmet_maska.mdl", -- tarkov
-		slots = {
-			head = 1,
-			eyes = 1,
-			mouthnose = 1
+	["Ultra-Heavy-Helmet"]={
+		PrintName="Helmet-UltraHeavy",
+		mdl="models/jmod/helmet_maska.mdl", -- tarkov
+		slots={
+			head=1,
+			eyes=1,
+			mouthnose=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.05, 1.05, 1.05),
-		pos = Vector(1.5, -2, 0),
-		ang = Angle(-80, 0, -90),
-		wgt = 35,
-		dur = 400,
-		mskmat = "mats_jack_gmod_sprites/slit_vignette.png",
-		ent = "ent_jack_gmod_ezarmor_maska",
-		bdg = {
-			[1] = 0
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.05, 1.05, 1.05),
+		pos=Vector(1.5, -2, 0),
+		ang=Angle(-80, 0, -90),
+		wgt=35,
+		dur=400,
+		mskmat="mats_jack_gmod_sprites/slit_vignette.png",
+		ent="ent_jack_gmod_ezarmor_maska",
+		bdg={
+			[1]=0
 		},
-		tgl = {
-			slots = {
-				head = 1,
+		tgl={
+			slots={
+				head=1,
 				eyes=0,
 				mouthnose=0
 			},
-			bdg = {
-				[1] = 1
+			bdg={
+				[1]=1
 			},
-			mskmat = ""
+			mskmat=""
 		}
 	},
-	["Metal Bucket"] = {
-		PrintName = "BUCKET",
-		mdl = "models/props_junk/metalbucket01a.mdl", -- hl2
-		slots = {
-			head = 1,
-			eyes = .75
+	["Metal Bucket"]={
+		PrintName="BUCKET",
+		mdl="models/props_junk/metalbucket01a.mdl", -- hl2
+		slots={
+			head=1,
+			eyes=.75
 		},
-		def = PoorArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(.75, .75, .75),
-		pos = Vector(1, 5, 0),
-		ang = Angle(90, 10, 0),
-		wgt = 10,
-		dur = 100,
-		mskmat = "mats_jack_gmod_sprites/three-quarter-from-top-blocked.png",
-		ent = "ent_jack_gmod_ezarmor_metalbucket"
+		def=PoorArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(.75, .75, .75),
+		pos=Vector(1, 5, 0),
+		ang=Angle(90, 10, 0),
+		wgt=10,
+		dur=100,
+		mskmat="mats_jack_gmod_sprites/three-quarter-from-top-blocked.png",
+		ent="ent_jack_gmod_ezarmor_metalbucket"
 	},
-	["Metal Pot"] = {
-		PrintName = "COOKIN POT",
-		mdl = "models/props_interiors/pot02a.mdl", -- hl2
-		clr = { r = 255, g = 255, b = 255 },
-		clrForced = true,
-		slots = {
-			head = .6
+	["Metal Pot"]={
+		PrintName="COOKIN POT",
+		mdl="models/props_interiors/pot02a.mdl", -- hl2
+		clr={ r=255, g=255, b=255 },
+		clrForced=true,
+		slots={
+			head=.6
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(1.15, 1.15, 1.15),
-		pos = Vector(5.2, 7.2, -3),
-		ang = Angle(80, 20, 30),
-		wgt = 20,
-		dur = 150,
-		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
-		ent = "ent_jack_gmod_ezarmor_metalpot"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(1.15, 1.15, 1.15),
+		pos=Vector(5.2, 7.2, -3),
+		ang=Angle(80, 20, 30),
+		wgt=20,
+		dur=150,
+		mskmat="mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent="ent_jack_gmod_ezarmor_metalpot"
 	},
-	["Ceramic Pot"] = {
-		PrintName = "CERAMIC POT",
-		mdl = "models/props_junk/terracotta01.mdl", -- hl2
-		clr = { r = 255, g = 255, b = 255 },
-		clrForced = true,
-		slots = {
-			head = .9,
+	["Ceramic Pot"]={
+		PrintName="CERAMIC POT",
+		mdl="models/props_junk/terracotta01.mdl", -- hl2
+		clr={ r=255, g=255, b=255 },
+		clrForced=true,
+		slots={
+			head=.9,
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(.61, .61, .61),
-		pos = Vector(-2, 11, .5),
-		ang = Angle(90, 20, 0),
-		wgt = 15,
-		dur = 10,
-		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
-		ent = "ent_jack_gmod_ezarmor_ceramicpot"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(.61, .61, .61),
+		pos=Vector(-2, 11, .5),
+		ang=Angle(90, 20, 0),
+		wgt=15,
+		dur=10,
+		mskmat="mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent="ent_jack_gmod_ezarmor_ceramicpot"
 	},
-	["Traffic Cone"] = {
-		PrintName = "CONE",
-		mdl = "models/props_junk/trafficcone001a.mdl", -- hl2
-		mat = "models/mat_jack_gmod_trafficcone",
-		clr = { r = 240, g = 120, b = 0 },
-		slots = {
-			head = .7,
+	["Traffic Cone"]={
+		PrintName="CONE",
+		mdl="models/props_junk/trafficcone001a.mdl", -- hl2
+		mat="models/mat_jack_gmod_trafficcone",
+		clr={ r=240, g=120, b=0 },
+		slots={
+			head=.7,
 		},
-		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Head1",
-		siz = Vector(.85, .85, .85),
-		pos = Vector(-3.5, 15.5, 0),
-		ang = Angle(-90, 18, 0),
-		wgt = 4,
-		dur = 10,
-		mskmat = "mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
-		ent = "ent_jack_gmod_ezarmor_trafficcone"
+		def=NonArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Head1",
+		siz=Vector(.85, .85, .85),
+		pos=Vector(-3.5, 15.5, 0),
+		ang=Angle(-90, 18, 0),
+		wgt=4,
+		dur=10,
+		mskmat="mats_jack_gmod_sprites/one-quarter-from-top-blocked.png",
+		ent="ent_jack_gmod_ezarmor_trafficcone"
 	},
-	["Light-Vest"] = {
-		PrintName = "Vest - Light",
-		mdl = "models/player/armor_paca/paca.mdl", -- tarkov
-		slots = {
-			chest = .8,
-			abdomen = .5
+	["Light-Vest"]={
+		PrintName="Vest-Light",
+		mdl="models/player/armor_paca/paca.mdl", -- tarkov
+		slots={
+			chest=.8,
+			abdomen=.5
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(1, 1.05, .9),
-		pos = Vector(-2.5, -4.5, 0),
-		ang = Angle(-90, 0, 90),
-		wgt = 5,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_ltorso",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Spine2",
+		siz=Vector(1, 1.05, .9),
+		pos=Vector(-2.5, -4.5, 0),
+		ang=Angle(-90, 0, 90),
+		wgt=5,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_ltorso",
+		gayPhysics=true
 	},
-	["Medium-Light-Vest"] = {
-		PrintName = "Vest - Medium-Light",
-		mdl = "models/player/armor_trooper/trooper.mdl", -- tarkov
-		slots = {
-			chest = .85,
-			abdomen = .6
+	["Medium-Light-Vest"]={
+		PrintName="Vest-Medium-Light",
+		mdl="models/player/armor_trooper/trooper.mdl", -- tarkov
+		slots={
+			chest=.85,
+			abdomen=.6
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(1.05, 1.05, .95),
-		pos = Vector(-3, -4.5, 0),
-		ang = Angle(-90, 0, 90),
-		wgt = 10,
-		dur = 450,
-		ent = "ent_jack_gmod_ezarmor_mltorso",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Spine2",
+		siz=Vector(1.05, 1.05, .95),
+		pos=Vector(-3, -4.5, 0),
+		ang=Angle(-90, 0, 90),
+		wgt=10,
+		dur=450,
+		ent="ent_jack_gmod_ezarmor_mltorso",
+		gayPhysics=true
 	},
-	["Medium-Vest"] = {
-		PrintName = "Vest - Medium",
-		mdl = "models/player/armor_gjel/gjel.mdl", -- tarkov
-		slots = {
-			chest = .9,
-			abdomen = .7
+	["Medium-Vest"]={
+		PrintName="Vest-Medium",
+		mdl="models/player/armor_gjel/gjel.mdl", -- tarkov
+		slots={
+			chest=.9,
+			abdomen=.7
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(1.05, 1.05, 1),
-		pos = Vector(-2.5, -7, 0),
-		ang = Angle(-90, 0, 90),
-		wgt = 20,
-		dur = 575,
-		ent = "ent_jack_gmod_ezarmor_mtorso",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Spine2",
+		siz=Vector(1.05, 1.05, 1),
+		pos=Vector(-2.5, -7, 0),
+		ang=Angle(-90, 0, 90),
+		wgt=20,
+		dur=575,
+		ent="ent_jack_gmod_ezarmor_mtorso",
+		gayPhysics=true
 	},
-	["Medium-Heavy-Vest"] = {
-		PrintName = "Vest - Medium-Heavy",
-		mdl = "models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
-		slots = {
-			chest = .95,
-			abdomen = .8
+	["Medium-Heavy-Vest"]={
+		PrintName="Vest-Medium-Heavy",
+		mdl="models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
+		slots={
+			chest=.95,
+			abdomen=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(1.05, 1.05, 1),
-		pos = Vector(-4.5, -12, 0),
-		ang = Angle(-85, 0, 90),
-		wgt = 40,
-		dur = 650,
-		ent = "ent_jack_gmod_ezarmor_mhtorso",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Spine2",
+		siz=Vector(1.05, 1.05, 1),
+		pos=Vector(-4.5, -12, 0),
+		ang=Angle(-85, 0, 90),
+		wgt=40,
+		dur=650,
+		ent="ent_jack_gmod_ezarmor_mhtorso",
+		gayPhysics=true
 	},
-	["Heavy-Vest"] = {
-		PrintName = "Vest - Heavy",
-		mdl = "models/jmod/heavy_armor.mdl", -- csgo hydra
-		slots = {
-			chest = 1,
-			abdomen = .9
+	["Heavy-Vest"]={
+		PrintName="Vest-Heavy",
+		mdl="models/jmod/heavy_armor.mdl", -- csgo hydra
+		slots={
+			chest=1,
+			abdomen=.9
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(.9, .9, 1),
-		pos = Vector(-3, 2.5, 0),
-		ang = Angle(-85, 0, 90),
-		wgt = 80,
-		dur = 700,
-		ent = "ent_jack_gmod_ezarmor_htorso"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Spine2",
+		siz=Vector(.9, .9, 1),
+		pos=Vector(-3, 2.5, 0),
+		ang=Angle(-85, 0, 90),
+		wgt=80,
+		dur=700,
+		ent="ent_jack_gmod_ezarmor_htorso"
 	},
-	["Pelvis-Panel"] = {
-		PrintName = "Pelvis Panel",
-		mdl = "models/jmod/pelviscover.mdl", -- csgo misc
-		slots = {
-			pelvis = 1
+	["Pelvis-Panel"]={
+		PrintName="Pelvis Panel",
+		mdl="models/jmod/pelviscover.mdl", -- csgo misc
+		slots={
+			pelvis=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Pelvis",
-		siz = Vector(1.5, 1.4, 1.8),
-		pos = Vector(6, 0, 5),
-		ang = Angle(90, -90, 0),
-		wgt = 10,
-		dur = 350,
-		ent = "ent_jack_gmod_ezarmor_spelvis"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_Pelvis",
+		siz=Vector(1.5, 1.4, 1.8),
+		pos=Vector(6, 0, 5),
+		ang=Angle(90, -90, 0),
+		wgt=10,
+		dur=350,
+		ent="ent_jack_gmod_ezarmor_spelvis"
 	},
-	["Light-Left-Shoulder"] = {
-		PrintName = "Shoulder - Light (L)",
-		mdl = "models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
-		slots = {
-			leftshoulder = .8
+	["Light-Left-Shoulder"]={
+		PrintName="Shoulder-Light (L)",
+		mdl="models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
+		slots={
+			leftshoulder=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_UpperArm",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, 0, -.5),
-		ang = Angle(-90, -90, -90),
-		wgt = 5,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_llshoulder"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_UpperArm",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, 0, -.5),
+		ang=Angle(-90, -90, -90),
+		wgt=5,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_llshoulder"
 	},
-	["Heavy-Left-Shoulder"] = {
-		PrintName = "Shoulder - Heavy (L)",
-		mdl = "models/jmod/heavy_left_armor_pad.mdl", -- csgo hydra
-		slots = {
-			leftshoulder = 1
+	["Heavy-Left-Shoulder"]={
+		PrintName="Shoulder-Heavy (L)",
+		mdl="models/jmod/heavy_left_armor_pad.mdl", -- csgo hydra
+		slots={
+			leftshoulder=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_UpperArm",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, 4, 0),
-		ang = Angle(90, -20, 90),
-		wgt = 15,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_hlshoulder"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_UpperArm",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, 4, 0),
+		ang=Angle(90, -20, 90),
+		wgt=15,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_hlshoulder"
 	},
-	["Light-Right-Shoulder"] = {
-		PrintName = "Shoulder - Light (R)",
-		mdl = "models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
-		slots = {
-			rightshoulder = .8
+	["Light-Right-Shoulder"]={
+		PrintName="Shoulder-Light (R)",
+		mdl="models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
+		slots={
+			rightshoulder=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_UpperArm",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, 0, .5),
-		ang = Angle(-90, -90, -90),
-		wgt = 5,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_lrshoulder"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_UpperArm",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, 0, .5),
+		ang=Angle(-90, -90, -90),
+		wgt=5,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_lrshoulder"
 	},
-	["Heavy-Right-Shoulder"] = {
-		PrintName = "Shoulder - Heavy (R)",
-		mdl = "models/jmod/heavy_right_armor_pad.mdl", -- csgo hydra
-		slots = {
-			rightshoulder = 1
+	["Heavy-Right-Shoulder"]={
+		PrintName="Shoulder-Heavy (R)",
+		mdl="models/jmod/heavy_right_armor_pad.mdl", -- csgo hydra
+		slots={
+			rightshoulder=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_UpperArm",
-		siz = Vector(1, 1, 1),
-		pos = Vector(0, 4, 0),
-		ang = Angle(90, 20, 90),
-		wgt = 15,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_hrshoulder"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_UpperArm",
+		siz=Vector(1, 1, 1),
+		pos=Vector(0, 4, 0),
+		ang=Angle(90, 20, 90),
+		wgt=15,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_hrshoulder"
 	},
-	["Left-Forearm"] = {
-		PrintName = "Forearm (L)",
-		mdl = "models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis
-		slots = {
-			leftforearm = .95
+	["Left-Forearm"]={
+		PrintName="Forearm (L)",
+		mdl="models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis
+		slots={
+			leftforearm=.95
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_Forearm",
-		siz = Vector(1.1, 1, 1),
-		pos = Vector(0, 0, -.5),
-		ang = Angle(0, -90, -50),
-		wgt = 10,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_slforearm",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_Forearm",
+		siz=Vector(1.1, 1, 1),
+		pos=Vector(0, 0, -.5),
+		ang=Angle(0, -90, -50),
+		wgt=10,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_slforearm",
+		gayPhysics=true
 	},
-	["Right-Forearm"] = {
-		PrintName = "Forearm (R)",
-		mdl = "models/snowzgmod/payday2/armour/armourrforearm.mdl", -- aegis
-		slots = {
-			rightforearm = .95
+	["Right-Forearm"]={
+		PrintName="Forearm (R)",
+		mdl="models/snowzgmod/payday2/armour/armourrforearm.mdl", -- aegis
+		slots={
+			rightforearm=.95
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_Forearm",
-		siz = Vector(1.1, 1, 1),
-		pos = Vector(-.5, 0, .5),
-		ang = Angle(0, -90, 50),
-		wgt = 10,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_srforearm",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_Forearm",
+		siz=Vector(1.1, 1, 1),
+		pos=Vector(-.5, 0, .5),
+		ang=Angle(0, -90, 50),
+		wgt=10,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_srforearm",
+		gayPhysics=true
 	},
-	["Light-Left-Thigh"] = {
-		PrintName = "Thigh - Light (L)",
-		mdl = "models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
-		slots = {
-			leftthigh = .8
+	["Light-Left-Thigh"]={
+		PrintName="Thigh-Light (L)",
+		mdl="models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
+		slots={
+			leftthigh=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_Thigh",
-		siz = Vector(.9, 1, 1.05),
-		pos = Vector(-.5, 0, -1.5),
-		ang = Angle(90, -85, 110),
-		wgt = 10,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_llthigh",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_Thigh",
+		siz=Vector(.9, 1, 1.05),
+		pos=Vector(-.5, 0, -1.5),
+		ang=Angle(90, -85, 110),
+		wgt=10,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_llthigh",
+		gayPhysics=true
 	},
-	["Heavy-Left-Thigh"] = {
-		PrintName = "Thigh - Heavy (L)",
-		mdl = "models/jmod/heavy_left_thigh_armor.mdl", -- csgo hydra
-		slots = {
-			leftthigh = 1
+	["Heavy-Left-Thigh"]={
+		PrintName="Thigh-Heavy (L)",
+		mdl="models/jmod/heavy_left_thigh_armor.mdl", -- csgo hydra
+		slots={
+			leftthigh=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_Thigh",
-		siz = Vector(0.9, 1, 1),
-		pos = Vector(2, 10, 0),
-		ang = Angle(-90, 180, 0),
-		wgt = 25,
-		dur = 200,
-		ent = "ent_jack_gmod_ezarmor_hlthigh"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_Thigh",
+		siz=Vector(0.9, 1, 1),
+		pos=Vector(2, 10, 0),
+		ang=Angle(-90, 180, 0),
+		wgt=25,
+		dur=200,
+		ent="ent_jack_gmod_ezarmor_hlthigh"
 	},
-	["Light-Right-Thigh"] = {
-		PrintName = "Thigh - Light (R)",
-		mdl = "models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
-		slots = {
-			rightthigh = .8
+	["Light-Right-Thigh"]={
+		PrintName="Thigh-Light (R)",
+		mdl="models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
+		slots={
+			rightthigh=.8
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_Thigh",
-		siz = Vector(.9, 1, 1.05),
-		pos = Vector(.5, 0, 1),
-		ang = Angle(90, -95, 80),
-		wgt = 10,
-		dur = 150,
-		ent = "ent_jack_gmod_ezarmor_lrthigh",
-		gayPhysics = true
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_Thigh",
+		siz=Vector(.9, 1, 1.05),
+		pos=Vector(.5, 0, 1),
+		ang=Angle(90, -95, 80),
+		wgt=10,
+		dur=150,
+		ent="ent_jack_gmod_ezarmor_lrthigh",
+		gayPhysics=true
 	},
-	["Heavy-Right-Thigh"] = {
-		PrintName = "Thigh - Heavy (R)",
-		mdl = "models/jmod/heavy_right_thigh_armor.mdl", -- csgo hydra
-		slots = {
-			rightthigh = 1
+	["Heavy-Right-Thigh"]={
+		PrintName="Thigh-Heavy (R)",
+		mdl="models/jmod/heavy_right_thigh_armor.mdl", -- csgo hydra
+		slots={
+			rightthigh=1
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_Thigh",
-		siz = Vector(0.9, 1, 1),
-		pos = Vector(2, 10, 0),
-		ang = Angle(-90, 180, 0),
-		wgt = 25,
-		dur = 200,
-		ent = "ent_jack_gmod_ezarmor_hrthigh"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_Thigh",
+		siz=Vector(0.9, 1, 1),
+		pos=Vector(2, 10, 0),
+		ang=Angle(-90, 180, 0),
+		wgt=25,
+		dur=200,
+		ent="ent_jack_gmod_ezarmor_hrthigh"
 	},
-	["Left-Calf"] = {
-		PrintName = "Calf (L)",
-		mdl = "models/snowzgmod/payday2/armour/armourlcalf.mdl", -- aegis
-		slots = {
-			leftcalf = .95
+	["Left-Calf"]={
+		PrintName="Calf (L)",
+		mdl="models/snowzgmod/payday2/armour/armourlcalf.mdl", -- aegis
+		slots={
+			leftcalf=.95
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_L_Calf",
-		siz = Vector(1, 1, 1),
-		pos = Vector(-1.5, -1, -.5),
-		ang = Angle(-180, -83, -180),
-		wgt = 15,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_slcalf"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_L_Calf",
+		siz=Vector(1, 1, 1),
+		pos=Vector(-1.5, -1, -.5),
+		ang=Angle(-180, -83, -180),
+		wgt=15,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_slcalf"
 	},
-	["Right-Calf"] = {
-		PrintName = "Calf (R)",
-		mdl = "models/snowzgmod/payday2/armour/armourrcalf.mdl", -- aegis
-		slots = {
-			rightcalf = .95
+	["Right-Calf"]={
+		PrintName="Calf (R)",
+		mdl="models/snowzgmod/payday2/armour/armourrcalf.mdl", -- aegis
+		slots={
+			rightcalf=.95
 		},
-		def = BasicArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_R_Calf",
-		siz = Vector(1, 1, 1),
-		pos = Vector(-1.5, -1, .5),
-		ang = Angle(-180, -83, -180),
-		wgt = 15,
-		dur = 250,
-		ent = "ent_jack_gmod_ezarmor_srcalf"
+		def=BasicArmorProtectionProfile,
+		bon="ValveBiped.Bip01_R_Calf",
+		siz=Vector(1, 1, 1),
+		pos=Vector(-1.5, -1, .5),
+		ang=Angle(-180, -83, -180),
+		wgt=15,
+		dur=250,
+		ent="ent_jack_gmod_ezarmor_srcalf"
 	},
-	["Hazmat Suit"] = {
-		PrintName = "Hazmat Suit",
-		mdl = "models/props_junk/cardboard_box003a.mdl",
-		mat = "models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
-		lbl = "EZ HAZMAT SUIT",
-		clr = { r = 200, g = 175, b = 0 },
-		clrForced = false,
-		slots = {
+	["Hazmat Suit"]={
+		PrintName="Hazmat Suit",
+		mdl="models/props_junk/cardboard_box003a.mdl",
+		mat="models/bloocobalt/splinter cell/chemsuit/chemsuit_bm",
+		lbl="EZ HAZMAT SUIT",
+		clr={ r=200, g=175, b=0 },
+		clrForced=false,
+		slots={
 			eyes=1,
 			mouthnose=1,
 			head=1,
@@ -853,34 +853,34 @@ JMod.ArmorTable = {
 			leftshoulder=1,
 			leftforearm=1
 		},
-		def = table.Inherit({
-			[DMG_NERVEGAS] = 1,
-			[DMG_RADIATION] = 1,
-			[DMG_ACID] = 1,
-			[DMG_POISON] = 1,
-			[DMG_SLASH] = .25
+		def=table.Inherit({
+			[DMG_NERVEGAS]=1,
+			[DMG_RADIATION]=1,
+			[DMG_ACID]=1,
+			[DMG_POISON]=1,
+			[DMG_SLASH]=.25
 		}, NonArmorProtectionProfile),
-		resist = {
-			[DMG_ACID] = .995,
-			[DMG_POISON] = .99999
+		resist={
+			[DMG_ACID]=.995,
+			[DMG_POISON]=.99999
 		},
-		chrg = {
-			chemicals = 50
+		chrg={
+			chemicals=50
 		},
-		bdg = {
-			[1] = 2,
-			[2] = 1
+		bdg={
+			[1]=2,
+			[2]=1
 		},
-		snds = {
-			eq = "snd_jack_clothequip.wav",
-			uneq = "snd_jack_clothunequip.wav"
+		snds={
+			eq="snd_jack_clothequip.wav",
+			uneq="snd_jack_clothunequip.wav"
 		},
-		plymdl = "models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
-		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
-		sndlop = "snds_jack_gmod/mask_breathe.wav",
-		wgt = 15,
-		dur = 8,
-		ent = "ent_jack_gmod_ezarmor_hazmat"
+		plymdl="models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
+		mskmat="mats_jack_gmod_sprites/vignette_gray.png",
+		sndlop="snds_jack_gmod/mask_breathe.wav",
+		wgt=15,
+		dur=8,
+		ent="ent_jack_gmod_ezarmor_hazmat"
 	}
 }
 
@@ -888,14 +888,14 @@ JMod.ArmorTable = {
 function JMod.GenerateArmorEntities(tbl)
 	for class, info in pairs(tbl) do
 		if info.noent then continue end
-		local armorent = {}
-		armorent.Base = "ent_jack_gmod_ezarmor"
-		armorent.PrintName = info.PrintName or class
-		armorent.Spawnable = info.Spawnable or true
-		armorent.AdminOnly = info.AdminOnly or false
-		armorent.Category = info.Category or "JMod - EZ Armor"
-		armorent.ArmorName = class
-		armorent.ModelScale = info.gayPhysics and nil or info.entsiz -- or math.max(info.siz.x, info.siz.y, info.siz.z)
+		local armorent={}
+		armorent.Base="ent_jack_gmod_ezarmor"
+		armorent.PrintName=info.PrintName or class
+		armorent.Spawnable=info.Spawnable or true
+		armorent.AdminOnly=info.AdminOnly or false
+		armorent.Category=info.Category or "JMod-EZ Armor"
+		armorent.ArmorName=class
+		armorent.ModelScale=info.gayPhysics and nil or info.entsiz -- or math.max(info.siz.x, info.siz.y, info.siz.z)
 		scripted_ents.Register( armorent, info.ent )
 	end
 end
@@ -945,15 +945,15 @@ end
 hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if(ply.IsProne and ply:IsProne())then return end
 	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
-		local origSpeed = (cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed * ply.EZarmor.speedfrac)
+		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
+		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
 	end
 end)
 
 -- Debug
 --[[
 for _, ply in pairs(player.GetAll()) do
-	ply.NextEZarmorTableCopy = 0
+	ply.NextEZarmorTableCopy=0
 end
 --]]
 LoadAdditionalArmor()

@@ -1,24 +1,24 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Mini Naval Mine"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod-EZ Explosives"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Mini Naval Mine"
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -49,8 +49,8 @@ if(SERVER)then
 		self.Moored=false
 		self.NextDet=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Moored"}, {"-1 broken \n 0 off \n 1 armed", "True when moored"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State", "Moored"}, {"-1 broken \n 0 off \n 1 armed", "True when moored"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -152,6 +152,26 @@ if(SERVER)then
 				splad:SetScale(3)
 				splad:SetEntity(self)
 				util.Effect("eff_jack_gmod_watersplode",splad,true,true)
+				for i=1,500 do
+					local StartPos=SelfPos+Vector(math.random(-500,500),math.random(-500,500),1000)
+					timer.Simple(i/100+1,function()
+						JMod.Sploom(nil,StartPos,1,100)
+						local Tr=util.TraceLine({
+							start=StartPos,
+							endpos=StartPos-Vector(0,0,-2000),
+							mask=-1
+						})
+						print("---------------------")
+						PrintTable(Tr)
+						if(Tr.Hit)then
+							local Splach=EffectData()
+							Splach:SetOrigin(Tr.HitPos)
+							Splach:SetNormal(Vector(0,0,1))
+							Splach:SetScale(100)
+							util.Effect("WaterSplash",Splach)
+						end
+					end)
+				end
 				---
 				util.ScreenShake(SelfPos,1000,3,3,2000)
 				---

@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Ground Scanner"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod-EZ Misc."
 ENT.Spawnable=false -- temporary, until Phase 2 of the econ update
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
@@ -283,7 +283,7 @@ elseif(CLIENT)then
 				surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
 				draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
-				draw.SimpleText("? = metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("?=metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
 				surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
 				--

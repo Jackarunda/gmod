@@ -2,13 +2,13 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod-EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Mini Rocket"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.CollisionGroup=COLLISION_GROUP_NONE
-ENT.NoPhys = true
+ENT.NoPhys=true
 local ThinkRate=22--Hz
 ---
 if(SERVER)then

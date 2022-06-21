@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod-EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Fumigator"
 ENT.NoSitAllowed=true
@@ -49,8 +49,8 @@ if(SERVER)then
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=100*JMod.Config.FumigatorGasAmount
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 is sealed \n 1 is ticking \n 2 is venting"})
+			self.Inputs=WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"0 is sealed \n 1 is ticking \n 2 is venting"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)

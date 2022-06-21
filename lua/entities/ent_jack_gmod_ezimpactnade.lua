@@ -1,18 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Impact Grenade"
-ENT.Spawnable = true
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod-EZ Explosives"
+ENT.PrintName="EZ Impact Grenade"
+ENT.Spawnable=true
 
-ENT.Model = "models/jmodels/explosives/grenades/impactnade/impact_grenade.mdl"
---ENT.ModelScale = 1.5
+ENT.Model="models/jmodels/explosives/grenades/impactnade/impact_grenade.mdl"
+--ENT.ModelScale=1.5
 
-ENT.SpoonModel = "models/jmodels/explosives/grenades/impactnade/impact_grenade_cap.mdl"
-ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
+ENT.SpoonModel="models/jmodels/explosives/grenades/impactnade/impact_grenade_cap.mdl"
+ENT.SpoonSound="physics/cardboard/cardboard_box_impact_soft2.wav"
 
-local BaseClass = baseclass.Get(ENT.Base)
+local BaseClass=baseclass.Get(ENT.Base)
 
 if(SERVER)then
 

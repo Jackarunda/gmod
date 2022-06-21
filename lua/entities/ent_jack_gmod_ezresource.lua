@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Resources"
+ENT.Category="JMod-EZ Resources"
 ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=false
@@ -52,8 +52,10 @@ if(SERVER)then
 		self.NextCombine=0
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(self.Mass)
-			self:GetPhysicsObject():Wake()
+			if(IsValid(self))then
+				self:GetPhysicsObject():SetMass(self.Mass)
+				self:GetPhysicsObject():Wake()
+			end
 		end)
 	end
 	function ENT:FlingProp(mdl)

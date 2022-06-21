@@ -18,13 +18,13 @@ SWEP.EZdroppable=true
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
 
-SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
-SWEP.BodyHolsterSlot = "hips"
-SWEP.BodyHolsterAng = Angle(-70,0,200)
-SWEP.BodyHolsterAngL = Angle(-70,-10,-30)
-SWEP.BodyHolsterPos = Vector(0,-15,10)
-SWEP.BodyHolsterPosL = Vector(0,-15,-11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterModel="models/weapons/w_models/w_tooljox.mdl"
+SWEP.BodyHolsterSlot="hips"
+SWEP.BodyHolsterAng=Angle(-70,0,200)
+SWEP.BodyHolsterAngL=Angle(-70,-10,-30)
+SWEP.BodyHolsterPos=Vector(0,-15,10)
+SWEP.BodyHolsterPosL=Vector(0,-15,-11)
+SWEP.BodyHolsterScale=.4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0

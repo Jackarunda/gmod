@@ -1,9 +1,9 @@
-local blurMat = Material("pp/blurscreen")
-local Dynamic = 0
-local MenuOpen = false
-local YesMat = Material("icon16/accept.png")
-local NoMat = Material("icon16/cancel.png")
-local FavMat = Material("icon16/star.png")
+local blurMat=Material("pp/blurscreen")
+local Dynamic=0
+local MenuOpen=false
+local YesMat=Material("icon16/accept.png")
+local NoMat=Material("icon16/cancel.png")
+local FavMat=Material("icon16/star.png")
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png")
 }
@@ -394,7 +394,7 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 				motherFrame.positiveClosed=true
 				motherFrame:Close()
 			else
-				surface.PlaySound("snds_jack_gmod/ez_gui/hover_low.wav")
+				surface.PlaySound("snds_jack_gmod/ez_gui/miss.wav")
 			end
 		end
         Y=Y+47
@@ -490,7 +490,7 @@ local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,cl
 			local Col=(Hovr and 80) or 20
 			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or Col)
 			surface.DrawRect(0,0,x,y)	
-			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 40),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			draw.SimpleText(self.Category,"DermaDefault",x*0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 40),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
 			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
@@ -503,7 +503,7 @@ local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,cl
 end
 --[[
 if #JMod.ClientConfig.BuildKitFavs > 0 then
-	local Tab = {}
+	local Tab={}
 	for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
 		table.insert(Tab,v)
 	end
@@ -563,7 +563,7 @@ net.Receive("JMod_UniCrate",function() -- todo: this menu will be deprecated whe
 		function button:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
+			local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2]*tbl[1]) .. " volume)"
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 		end
 		button.DoClick=function()

@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Workbench"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod-EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -132,7 +132,7 @@ if(SERVER)then
 		
 		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self))then
 		
-			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return

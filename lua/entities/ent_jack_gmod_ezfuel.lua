@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Fuel Can"
-ENT.Category="JMod - EZ Resources"
+ENT.Category="JMod-EZ Resources"
 ENT.IconOverride="materials/ez_resource_icons/fuel.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
@@ -22,7 +22,7 @@ ENT.Hint=nil
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
 		if destructive and vFireInstalled then
-			CreateVFireBall(math.random(5, 15), math.random(5, 15), pos, VectorRand() * math.random(100, 200))
+			CreateVFireBall(math.random(5, 15), math.random(5, 15), pos, VectorRand()*math.random(100, 200))
 		end
 		for i=1,1 do
 			local Eff=EffectData()
@@ -51,14 +51,14 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		if dmginfo:GetDamage() > self.DamageThreshold then
-			local Pos = self:GetPos()
+			local Pos=self:GetPos()
 			sound.Play(self.BreakNoise,Pos)
-			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			for i=1, self:GetResource()/2 do self:UseEffect(Pos,game.GetWorld(),true) end
 			self:Remove()
-		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1 * math.Clamp(dmginfo:GetDamage() / 10, 1, 5) then
-			local Pos = self:GetPos()
+		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1*math.Clamp(dmginfo:GetDamage()/10, 1, 5) then
+			local Pos=self:GetPos()
 			sound.Play("ambient/fire/gascan_ignite1.wav",Pos,70,90)
-			for i = 1, self:GetResource() / 2 do self:UseEffect(Pos,game.GetWorld(),true) end
+			for i=1, self:GetResource()/2 do self:UseEffect(Pos,game.GetWorld(),true) end
 			self:Remove()
 		end
 	end
