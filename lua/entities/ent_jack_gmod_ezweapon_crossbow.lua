@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezweapon"
 ENT.PrintName="EZ Crossbow"
 ENT.Spawnable=true
-ENT.Category="JMod-EZ Weapons"
+ENT.Category="JMod - EZ Weapons"
 ENT.WeaponName="Crossbow"
 ---
 if(SERVER)then

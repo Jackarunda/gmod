@@ -461,6 +461,13 @@ function JMod.InitGlobalConfig(forceNew)
 						{"ent_jack_gmod_ezslam",5}
 					}
 				},
+				["fuckin bepis"]={
+					description="fuckin bepis",
+					category="fuckin bepis",
+					results={
+						"FUNC spawnNigger"
+					}
+				},
 				["antimatter"]={
 					description="A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
 					category="Resources",
@@ -966,9 +973,9 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Craft all your smaller items here."
 			},	
-			["HL2 Buggy"]={			
-				results="FUNC spawnHL2buggy",		
-				craftingReqs={	
+			["HL2 Buggy"]={
+				results="FUNC spawnHL2buggy",
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=300,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=200,
 					[JMod.EZ_RESOURCE_TYPES.POWER]=50,

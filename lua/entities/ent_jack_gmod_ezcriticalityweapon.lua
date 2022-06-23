@@ -1,18 +1,18 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Misc."
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Criticality Weapon"
 ENT.NoSitAllowed=true
-ENT.Spawnable=true
+ENT.Spawnable=false
 ENT.AdminOnly=false
 ---
 ENT.JModPreferredCarryAngles=Angle(-90,0,0)
 ENT.JModEZstorable=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ---
-local STATE_BROKEN,STATE_OFF,STATE_ARMED,STATE_IRRADIATING=-1,0,1,2
+local STATE_BROKEN,STATE_OFF,STATE_TICKING,STATE_IRRADIATING=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Timer")
@@ -85,7 +85,7 @@ if(SERVER)then
 			self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 			local Owner,Count=self.Owner,50
 			timer.Simple(.5,function()
-				for k=1,JMod.Config.NuclearRadiationMult*Count*10 do
+				for k=1,JMod.Config.NuclearRadiationMult*Count*20 do
 					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range=500
 					Gas:SetPos(Pos)
@@ -103,11 +103,11 @@ if(SERVER)then
 		JMod.Owner(self,Dude)
 		local Time=CurTime()
 		local State=self:GetState()
-		if(State < 0)then return end
+		if(State<0)then return end
 		local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
-		if(State == STATE_OFF)then
+		if(State==STATE_OFF)then
 			if(Alt)then
-				if(self.NextDisarmFail < Time)then
+				if(self.NextDisarmFail<Time)then
 					net.Start("JMod_EZtimeBomb")
 					net.WriteEntity(self)
 					net.Send(Dude)
@@ -139,55 +139,34 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Detonate()
-		--[[
-		if(self.Exploded)then return end
-		self.Exploded=true
-		timer.Simple(math.Rand(0,.1),function()
-			if(IsValid(self))then
-				if(self.SympatheticDetonated)then return end
-				local SelfPos,PowerMult=self:LocalToWorld(self:OBBCenter()),6
-				--
-				ParticleEffect("pcf_jack_groundsplode_large",SelfPos,vector_up:Angle())
-				util.ScreenShake(SelfPos,99999,99999,1,3000)
-				sound.Play("BaseExplosionEffect.Sound",SelfPos,120,math.random(90,110))
-				for i=1,4 do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,140,math.random(80,110)) end
-				self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
-				timer.Simple(.1,function()
-					for i=1,5 do
-						local Tr=util.QuickTrace(SelfPos,VectorRand()*20)
-						if(Tr.Hit)then util.Decal("Scorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
-					end
-				end)
-				JMod.WreckBuildings(self,SelfPos,PowerMult)
-				JMod.BlastDoors(self,SelfPos,PowerMult)
-				timer.Simple(0,function()
-					local ZaWarudo=game.GetWorld()
-					local Infl,Att=(IsValid(self) and self) or ZaWarudo,(IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl,Att,SelfPos,120*PowerMult,120*PowerMult)
-					-- do a lot of damage point blank, mostly for breaching
-					util.BlastDamage(Infl,Att,SelfPos,20*PowerMult,1000*PowerMult)
-					self:Remove()
-				end)
-			end
-		end)
-		--]]
+		local State=self:GetState()
+		if((State~=STATE_BROKEN)and(State!=STATE_IRRADIATING))then
+			-- todo: play clamping sound
+			self:SetState(STATE_IRRADIATING)
+		end
 	end
 	function ENT:Think()
-		--[[
 		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "TimeLeft", self:GetTimer())
-			WireLib.TriggerOutput(self, "DisarmProgress", self.DisarmProgress)
+			WireLib.TriggerOutput(self,"State",self:GetState())
 		end
-		if(self.NextDisarmFail<CurTime())then self.DisarmProgress=0 end
-		if(self:GetState()==STATE_ARMED)then
-			self:EmitSound("weapons/c4/c4_beep1.wav",50,100)
-			self:SetTimer(self:GetTimer()-1)
-			if(self:GetTimer()<=0)then self:Detonate() return end
-			self:NextThink(CurTime()+1)
+		local State,Time=self:GetState(),CurTime()
+		if(State==STATE_TICKING)then
+			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:NextThink(Time+1)
+			return true
+		elseif(State==STATE_VENTING)then
+			local Gas=ents.Create("ent_jack_gmod_ezgasparticle")
+			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
+			JMod.Owner(Gas,self.Owner or self)
+			Gas:Spawn()
+			Gas:Activate()
+			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+self:GetUp()*500)
+			self.ContainedGas=self.ContainedGas-1
+			self:EmitSound("snds_jack_gmod/hiss.wav",65,math.random(90,110))
+			self:NextThink(Time+.2)
+			if(self.ContainedGas<=0)then self:Remove() end
 			return true
 		end
-		--]]
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()

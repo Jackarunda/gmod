@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.PrintName="EZ Mini Claymore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true

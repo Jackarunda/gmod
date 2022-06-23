@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Uranium Ingot"
-ENT.Category="JMod-EZ Resources"
+ENT.Category="JMod - EZ Resources"
 ENT.IconOverride="materials/ez_resource_icons/uranium.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true

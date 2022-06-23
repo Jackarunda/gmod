@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Fissile Material"
-ENT.Category="JMod-EZ Resources"
+ENT.Category="JMod - EZ Resources"
 ENT.IconOverride="materials/ez_resource_icons/fissile material.png"
 ENT.Spawnable=true
 ENT.AdminOnly=true

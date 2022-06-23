@@ -1,6 +1,6 @@
 SWEP.Base="arccw_base"
 SWEP.Spawnable=false -- this obviously has to be set to true
-SWEP.Category="JMod-EZ Weapons" -- edit this if you like
+SWEP.Category="JMod - EZ Weapons" -- edit this if you like
 SWEP.AdminOnly=false
 SWEP.EZdroppable=true
 

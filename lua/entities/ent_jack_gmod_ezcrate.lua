@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Resource Crate"
 ENT.Author="Jackarunda, TheOnly8Z"
-ENT.Category="JMod-EZ Misc."
+ENT.Category="JMod - EZ Misc."
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true

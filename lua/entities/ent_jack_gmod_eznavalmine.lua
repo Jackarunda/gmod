@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Mini Naval Mine"
 ENT.Spawnable=true
@@ -145,33 +145,12 @@ if(SERVER)then
 		timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 			if(IsValid(self))then
 				local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
-				JMod.Sploom(Att,SelfPos,150)
 				---
 				local splad=EffectData()
 				splad:SetOrigin(SelfPos)
 				splad:SetScale(3)
 				splad:SetEntity(self)
 				util.Effect("eff_jack_gmod_watersplode",splad,true,true)
-				for i=1,500 do
-					local StartPos=SelfPos+Vector(math.random(-500,500),math.random(-500,500),1000)
-					timer.Simple(i/100+1,function()
-						JMod.Sploom(nil,StartPos,1,100)
-						local Tr=util.TraceLine({
-							start=StartPos,
-							endpos=StartPos-Vector(0,0,-2000),
-							mask=-1
-						})
-						print("---------------------")
-						PrintTable(Tr)
-						if(Tr.Hit)then
-							local Splach=EffectData()
-							Splach:SetOrigin(Tr.HitPos)
-							Splach:SetNormal(Vector(0,0,1))
-							Splach:SetScale(100)
-							util.Effect("WaterSplash",Splach)
-						end
-					end)
-				end
 				---
 				util.ScreenShake(SelfPos,1000,3,3,2000)
 				---

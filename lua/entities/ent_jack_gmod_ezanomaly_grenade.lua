@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda"
 ENT.PrintName="T H E  G R E N A D E"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=false
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
 ENT.Model="models/weapons/w_fragjade.mdl"

@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZ Smoke Grenade"
-ENT.Category="JMod-EZ Misc."
+ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0, 140, 0)
 ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"

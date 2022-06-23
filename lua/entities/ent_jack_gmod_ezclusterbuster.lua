@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="A bomb that deploys seeking anti-tank skeets"
 ENT.PrintName="EZ Cluster Buster"
 ENT.Spawnable=false

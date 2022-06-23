@@ -71,24 +71,31 @@ if SERVER then
 	end
 
 	local function SpawnItem(itemClass,pos,owner,resourceAmt)
-		local Yay=ents.Create(itemClass)
-		Yay:SetPos(pos+VectorRand()*math.Rand(0,30))
-		Yay:SetAngles(VectorRand():Angle())
-		Yay:Spawn()
-		Yay:Activate()
-		if(resourceAmt)then Yay:SetResource(resourceAmt) end
-		if(IsValid(Yay))then
-			JMod.Owner(Yay,owner)
-			-- this arrests overlap-ejection velocity so items don't thwack players
-			timer.Simple(.025, function()
-				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
-			end)
-			timer.Simple(.05,function()
-				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
-			end)
-			timer.Simple(.1,function()
-				if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
-			end)
+		local ItemNameParts=string.Explode(" ",itemClass)
+		if(ItemNameParts and ItemNameParts[1]=="FUNC")then
+			if((ItemNameParts[2])and(JMod.LuaConfig.BuildFuncs[ItemNameParts[2]]))then
+				JMod.LuaConfig.BuildFuncs[ItemNameParts[2]](owner,pos+Vector(0,0,5),Angle(0,0,0))
+			end
+		else
+			local Yay=ents.Create(itemClass)
+			Yay:SetPos(pos+VectorRand()*math.Rand(0,30))
+			Yay:SetAngles(VectorRand():Angle())
+			Yay:Spawn()
+			Yay:Activate()
+			if(resourceAmt)then Yay:SetResource(resourceAmt) end
+			if(IsValid(Yay))then
+				JMod.Owner(Yay,owner)
+				-- this arrests overlap-ejection velocity so items don't thwack players
+				timer.Simple(.025, function()
+					if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+				end)
+				timer.Simple(.05,function()
+					if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+				end)
+				timer.Simple(.1,function()
+					if IsValid(Yay)then Yay:GetPhysicsObject():SetVelocity(Vector(0,0,0)) end
+				end)
+			end
 		end
 	end
 

@@ -40,6 +40,7 @@ concommand.Add("jmod_admin_cleanup",function(ply,cmd,args) -- WHY ISN'T THIS A T
 end, nil, "Does a server-wide admin cleanup of everything.")
 
 concommand.Add("jmod_debug",function(ply,cmd,args)
+	--[[
 	local Tr=util.TraceLine({
 		start=ply:GetShootPos(),
 		endpos=ply:GetShootPos()+ply:GetAimVector()*10000,
@@ -51,6 +52,7 @@ concommand.Add("jmod_debug",function(ply,cmd,args)
 	splad:SetScale(3)
 	splad:SetEntity(self)
 	util.Effect("eff_jack_gmod_watersplode",splad,true,true)
+	--]]
 end)
 
 concommand.Add("jmod_debug_killme",function(ply)

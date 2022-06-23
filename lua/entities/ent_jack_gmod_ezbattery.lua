@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezresource"
 ENT.PrintName="EZ Battery"
-ENT.Category="JMod-EZ Resources"
+ENT.Category="JMod - EZ Resources"
 ENT.IconOverride="materials/ez_resource_icons/power.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true

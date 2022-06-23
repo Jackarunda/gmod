@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda, AdventureBoots"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="The base for all of the other ez bombs"
 ENT.PrintName="EZ Base Bomb"
 ENT.Spawnable=false

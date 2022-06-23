@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Explosives"
+ENT.Category="JMod - EZ Explosives"
 ENT.Information="The smart skeet submunition for the EZ Cluster Buster"
 ENT.PrintName="Cluster Buster submunition"
 ENT.Spawnable=false

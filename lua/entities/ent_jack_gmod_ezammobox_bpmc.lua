@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base="ent_jack_gmod_ezammobox"
 ENT.PrintName="EZ Black Powder Metallic Cartridge"
 ENT.Spawnable=false -- disabled until econ 2
-ENT.Category="JMod-EZ Special Ammo"
+ENT.Category="JMod - EZ Special Ammo"
 ENT.EZammo="Black Powder Metallic Cartridge"
 ---
 if(SERVER)then

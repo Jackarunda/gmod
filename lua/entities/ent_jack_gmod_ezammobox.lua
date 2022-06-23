@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod-EZ Special Ammo"
+ENT.Category="JMod - EZ Special Ammo"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Ammo Box"
 ENT.NoSitAllowed=true

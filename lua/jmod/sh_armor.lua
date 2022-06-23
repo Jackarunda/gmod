@@ -893,7 +893,7 @@ function JMod.GenerateArmorEntities(tbl)
 		armorent.PrintName=info.PrintName or class
 		armorent.Spawnable=info.Spawnable or true
 		armorent.AdminOnly=info.AdminOnly or false
-		armorent.Category=info.Category or "JMod-EZ Armor"
+		armorent.Category=info.Category or "JMod - EZ Armor"
 		armorent.ArmorName=class
 		armorent.ModelScale=info.gayPhysics and nil or info.entsiz -- or math.max(info.siz.x, info.siz.y, info.siz.z)
 		scripted_ents.Register( armorent, info.ent )
