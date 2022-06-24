@@ -124,7 +124,7 @@ if(SERVER)then
 		end
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
-			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then

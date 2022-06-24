@@ -75,7 +75,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
-			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self.Snd1:PlayEx(1,80)
 			self.Snd2:PlayEx(1,80)
 			self.Snd3:PlayEx(1,80)
@@ -85,7 +85,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
-		self:EmitSound("snd_jack_metallicclick.wav",60,100)
+		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
 		self.Snd3:Stop()

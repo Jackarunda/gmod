@@ -123,7 +123,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
-			self:EmitSound("snd_jack_metallicclick.wav",55,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then
