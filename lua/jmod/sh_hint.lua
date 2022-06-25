@@ -40,6 +40,7 @@ JMod.Hints = {
 	["tear gas"] = {LangKey = "hint tear gas",},
 	["backblast"] = {LangKey = "hint backblast",},
 	["rad damage"] = {LangKey = "hint rad damage",},
+	["neutron radiation"] = {LangKey = "hint neutron radiation",},
 	["impactdet"] = {LangKey = "hint impactdet", Followup = "bombdrop"},
 	["dualdet"] = {LangKey = "hint dualdet", Followup = "bombdrop"},
 	["airburst"] = {LangKey = "hint airburst", Followup = "bombdrop"},

@@ -32,6 +32,7 @@ JMod.Locales["en"]={
     ["hint tear gas"]="You are being blinded by tear gas; leave area or wear a gas mask",
     ["hint backblast"]="Beware, back-blast from rockets do damage",
     ["hint rad damage"]="You are experiencing radiation sickness; cure by using an auto field hospital",
+    ["hint neutron radiation"]="you are being irradiated by a neutron source, leave the area or get behind shielding",
     ["hint impactdet"]="Bomb detonates on impact from the front",
     ["hint dualdet"]="Bomb detonates on impact or from remote detonation",
     ["hint airburst"]="Bomb detonates when in freefall and approaching ground",

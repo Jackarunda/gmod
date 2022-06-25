@@ -461,13 +461,6 @@ function JMod.InitGlobalConfig(forceNew)
 						{"ent_jack_gmod_ezslam",5}
 					}
 				},
-				["fuckin bepis"]={
-					description="fuckin bepis",
-					category="fuckin bepis",
-					results={
-						"FUNC spawnNigger"
-					}
-				},
 				["antimatter"]={
 					description="A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
 					category="Resources",
