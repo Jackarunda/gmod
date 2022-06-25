@@ -10,6 +10,7 @@ ENT.AdminSpawnable=false
 ENT.AdminOnly=false
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ENT.EZfalloutParticle=true
+ENT.JModDontIrradiate=true
 if(SERVER)then
 	function ENT:Initialize()
 		local Time=CurTime()
@@ -23,6 +24,7 @@ if(SERVER)then
 	end
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
+		if(ent.JModDontIrradiate)then return end
 		if(ent:IsPlayer())then return ent:Alive() end
 		if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
 			local Phys=ent:GetPhysicsObject()
@@ -71,15 +73,18 @@ if(SERVER)then
 						Dmg:SetDamage(DmgAmt)
 						obj:TakeDamageInfo(Dmg)
 						---
-						obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110))
-						timer.Simple(math.Rand(.1,1),function()
-							if(IsValid(obj))then obj:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110)) end
+						JMod.GeigerCounterSound(obj,math.Rand(.1,.5))
+						JMod.Hint(v,"radioactive fallout")
+						timer.Simple(math.Rand(.1,2),function()
+							if(IsValid(obj))then JMod.GeigerCounterSound(obj,math.Rand(.1,.5)) end
 						end)
 						---
 						local DmgTaken=Helf-obj:Health()
 						if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
 							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
-							JMod.Hint(obj, "rad damage")
+							timer.Simple(10,function()
+								if(IsValid(obj) and obj:Alive())then JMod.Hint(obj,"radiation sickness") end
+							end)
 						end
 					else
 						obj:TakeDamageInfo(Dmg)

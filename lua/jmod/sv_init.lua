@@ -90,6 +90,12 @@ function JMod.ViralInfect(ply,att)
 	}
 end
 
+function JMod.GeigerCounterSound(ply,intensity)
+	if(intensity<=.1 and math.random(1,2)==1)then return end
+	local Num=math.Clamp(math.Round(math.Rand(0,intensity)*15),1,10)
+	ply:EmitSound("snds_jack_gmod/geiger"..Num..".wav",55,math.random(95,105))
+end
+
 function JMod.TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
 	local Range,SelfPos=300*JMod.Config.VirusSpreadMult,host:GetPos()
 	if(hostFaceProt>0 or hostSkinProt>0)then

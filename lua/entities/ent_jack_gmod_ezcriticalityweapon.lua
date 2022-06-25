@@ -5,11 +5,12 @@ ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Criticality Weapon"
 ENT.NoSitAllowed=true
-ENT.Spawnable=false
+ENT.Spawnable=true
 ENT.AdminOnly=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.JModEZstorable=true
+ENT.JModDontIrradiate=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 ---
 local STATE_BROKEN,STATE_OFF,STATE_TICKING,STATE_IRRADIATING,STATE_MELTED=-1,0,1,2,3
@@ -39,7 +40,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(100)
+			self:GetPhysicsObject():SetMass(150)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
@@ -65,13 +66,13 @@ if(SERVER)then
 		if(dmginfo:GetInflictor()==self)then return end
 		self.Entity:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
-		if(JMod.LinCh(Dmg,20,90))then
+		if(JMod.LinCh(Dmg,50,120))then
 			JMod.Owner(self,dmginfo:GetAttacker() or self.Owner)
 			local Pos=self:GetPos()
 			self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 			local Owner,Count=self.Owner,50
 			timer.Simple(.5,function()
-				for k=1,JMod.Config.NuclearRadiationMult*Count*20 do
+				for k=1,JMod.Config.NuclearRadiationMult*Count do
 					local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range=500
 					Gas:SetPos(Pos)
@@ -125,6 +126,9 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
+	local function DetermineShieldingFactor(startPos,endPos,source,victim)
+		return 0 -- TODO
+	end
 	function ENT:Think()
 		local State,Time,SelfPos=self:GetState(),CurTime(),self:GetPos()+Vector(0,0,15)
 		if(State==STATE_TICKING)then
@@ -132,50 +136,60 @@ if(SERVER)then
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_IRRADIATING)then
-			local Range,SelfPos=1500,self:GetPos()+Vector(0,0,10)
+			local Range,SelfPos,SelfInWater=2000,self:GetPos()+Vector(0,0,10),self:WaterLevel()>=3
 			for k,v in pairs(ents.FindInSphere(SelfPos,Range))do
-				local TargPos,Playa,NPC=v:LocalToWorld(v:OBBCenter()),v:IsPlayer(),v:IsNPC()
-				local Vec=TargPos-SelfPos
-				local Dist,Dir=Vec:GetNormalized(),Vec:Length()
-				local DistFrac=Range/2
-				local DmgAmt=math.Rand(.1,1)*JMod.Config.NuclearRadiationMult
-				if((Playa)or(NPC))then
-					if(v:WaterLevel()>=3)then DmgAmt=DmgAmt/4 end
-					---
-					local Dmg,Helf=DamageInfo(),v:Health()
-					Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
-					Dmg:SetDamage(DmgAmt/2)
-					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.Owner or self)
-					Dmg:SetDamagePosition(TargPos)
-					v:TakeDamageInfo(Dmg)
-					---
-					local Dmg2=DamageInfo()
-					Dmg2:SetDamageType(DMG_RADIATION)
-					Dmg2:SetDamage(DmgAmt/2)
-					Dmg2:SetInflictor(self)
-					Dmg2:SetAttacker(self.Owner or self)
-					Dmg2:SetDamagePosition(TargPos)
-					v:TakeDamageInfo(Dmg2)
-					---
-					if(Playa)then
-						v:EmitSound("player/geiger"..math.random(1,3)..".wav",55,math.random(90,110))
+				if not(v.JModDontIrradiate)then
+					local TargPos,Playa,NPC=v:LocalToWorld(v:OBBCenter()),v:IsPlayer(),v:IsNPC()
+					local Vec=TargPos-SelfPos
+					local Dir,Dist=Vec:GetNormalized(),math.Clamp(Vec:Length(),0,Range)
+					local DistFrac=1-(Dist/Range)
+					local DmgAmt=math.Rand(.1,1)*JMod.Config.NuclearRadiationMult*DistFrac^2
+					if((Playa)or(NPC))then
+						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
 						---
-						local DmgTaken=Helf-v:Health()
-						if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
-							v.EZirradiated=(v.EZirradiated or 0)+DmgTaken*4
-							JMod.Hint(v,"rad damage")
+						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v) -- shielding calcs are spensive, only run them for players/NPCs
+						DmgAmt=DmgAmt/(1+Shielding*9)
+						---
+						if(DmgAmt<.1)then return end
+						---
+						local Dmg,Helf=DamageInfo(),v:Health()
+						Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
+						Dmg:SetDamage(DmgAmt/3)
+						Dmg:SetInflictor(self)
+						Dmg:SetAttacker(self.Owner or self)
+						Dmg:SetDamagePosition(TargPos)
+						v:TakeDamageInfo(Dmg)
+						---
+						local Dmg2=DamageInfo()
+						Dmg2:SetDamageType(DMG_RADIATION)
+						Dmg2:SetDamage(DmgAmt/4)
+						Dmg2:SetInflictor(self)
+						Dmg2:SetAttacker(self.Owner or self)
+						Dmg2:SetDamagePosition(TargPos)
+						v:TakeDamageInfo(Dmg2)
+						---
+						if(Playa)then
+							JMod.GeigerCounterSound(v,DmgAmt)
+							JMod.Hint(v,"neutron radiation")
+							---
+							local DmgTaken=Helf-v:Health()
+							if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
+								v.EZirradiated=(v.EZirradiated or 0)+DmgTaken*5 -- fuckin ouch
+								timer.Simple(10,function()
+									if(IsValid(v) and v:Alive())then JMod.Hint(v,"radiation sickness") end
+								end)
+							end
 						end
+					else
+						local Dmg2=DamageInfo()
+						Dmg2:SetDamageType(DMG_RADIATION)
+						Dmg2:SetDamage(DmgAmt/3)
+						Dmg2:SetInflictor(self)
+						Dmg2:SetAttacker(self.Owner or self)
+						Dmg2:SetDamagePosition(TargPos)
+						v:TakeDamageInfo(Dmg2)
+						-- todo: neutron activation
 					end
-				else
-					local Dmg2=DamageInfo()
-					Dmg2:SetDamageType(DMG_RADIATION)
-					Dmg2:SetDamage(DmgAmt/3)
-					Dmg2:SetInflictor(self)
-					Dmg2:SetAttacker(self.Owner or self)
-					Dmg2:SetDamagePosition(TargPos)
-					v:TakeDamageInfo(Dmg2)
-					-- todo: neutron activation
 				end
 			end
 			self:NextThink(Time+.1)
@@ -217,7 +231,7 @@ elseif(CLIENT)then
 		if(Irradiatin)then
 			local Vec=(EyePos()-Pos):GetNormalized()
 			local SpritePos=Pos+Vec*10
-			local QuadPos=Pos-Vector(0,0,6)
+			local QuadPos=Pos-Vector(0,0,5.5)
 			render.SetMaterial(GlowSprite)
 			render.DrawSprite(SpritePos,500,500,Color(0,20,255,30))
 			render.DrawQuadEasy(QuadPos,Vector(0,0,1),500,500,Color(0,20,255,50))

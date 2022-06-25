@@ -218,7 +218,7 @@ function SWEP:PrimaryAttack()
 				end
 				JMod.ConsumeResourcesInRange(Reqs,nil,nil,self)
 				Built=true
-				local BuildSteps=math.ceil(20*buildInfo.sizeScale)
+				local BuildSteps=math.ceil(20*(buildInfo.sizeScale or 1))
 				for i=1,BuildSteps do
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
@@ -237,13 +237,13 @@ function SWEP:PrimaryAttack()
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
 										local FuncName=StringParts[2]
 										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*buildInfo[4],Angle(0,self.Owner:EyeAngles().y,0))
+											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*(buildInfo.sizeScale or 1),Angle(0,self.Owner:EyeAngles().y,0))
 										else
 											print("JMOD TOOLBOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent=ents.Create(Class)
-										Ent:SetPos(Pos+Norm*10*buildInfo.sizeScale)
+										Ent:SetPos(Pos+Norm*10*(buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
 										JMod.Owner(Ent,self.Owner)
 										Ent:Spawn()
@@ -410,7 +410,7 @@ function SWEP:Reload()
 end
 function SWEP:BuildEffect(pos,buildType,suppressSound)
 	if(CLIENT)then return end
-	local Scale=self.Craftables[buildType].sizeScale^.6
+	local Scale=(self.Craftables[buildType].sizeScale or 1)^.6
 	self:UpgradeEffect(pos,Scale*4,suppressSound)
 	local eff=EffectData()
 	eff:SetOrigin(pos+VectorRand())
