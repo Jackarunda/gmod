@@ -46,7 +46,7 @@ if(SERVER)then
 		---
 		--self:GetPhysicsObject():EnableGravity(false) -- DEBUG
 		self:SetState(STATE_OFF)
-		timer.Simple(math.Rand(.5,2),function()
+		timer.Simple(0.5, function()
 			if(IsValid(self))then
 				self:StartParachuting()
 			end
@@ -54,7 +54,7 @@ if(SERVER)then
 	end
 	function ENT:StartParachuting()
 		self:SetState(STATE_PARACHUTING)
-		self:GetPhysicsObject():SetDragCoefficient(40)
+		self:GetPhysicsObject():SetDragCoefficient(50)
 		self:GetPhysicsObject():SetAngleDragCoefficient(10)
 		--[[timer.Simple(0.5, function () 
 			if (self:IsValid()) then
@@ -169,7 +169,9 @@ if(SERVER)then
 		end
 		if (State == STATE_ROCKETING) then
 			Phys:ApplyForceCenter(Vector(0, 0, 4500*VelCurve))
-			VelCurve = VelCurve - 0.005
+			if (VelCurve > 0) then
+				VelCurve = VelCurve - 0.005
+			end
 		end
 		self:NextThink(CurTime() + .1)
 		return true

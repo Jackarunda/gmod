@@ -72,6 +72,7 @@ if(SERVER)then
 		if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2 and data.Speed>25)then
 			self:Detonate()
+			--self:Break()
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
@@ -92,6 +93,7 @@ if(SERVER)then
 		--JMod.RicPenBullet(self, SelfPos, Dir,(dmg or 600)*JMod.Config.MinePower, true, true)
 		self:Remove()
 	end
+
 	local VelCurve = 1
 	function ENT:Think()
 		local Time = CurTime()
@@ -101,6 +103,7 @@ if(SERVER)then
 			--Phys:ApplyForceCenter(Vector(0, 0, 1200*VelCurve))
 			--Phys:ApplyForceCenter(Forward*2000)
 			VelCurve = VelCurve - 0.0005
+			
 		end
 		self:NextThink(Time+.1)
 		return true
