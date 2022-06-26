@@ -33,6 +33,7 @@ JMod.Locales["fr"]={
     ["hint backblast"]="attention au backblast des roquettes, qui vous font des dégats",
     ["hint radiation sickness"]="vous etes exposés a des radiations, soignez vous avec un hopital de campagne",
     ["hint neutron radiation"]="Vous êtes irradiés par un neutron, quittez la zone ou mettez vous à couvert",
+    ["hint radioactive fallout"]="Vous êtes exposés à des retombées radioactives, mettez une combinaison, mettez vous à l'abri, ou fuyez",
     ["hint impactdet"]="la bombe explose par un impact a l'avant",
     ["hint dualdet"]="la bombe explose a l'impact ou par la détonation manuelle",
     ["hint airburst"]="la bombe explose quand elle est en chute libre et qu'elle approche le sol",

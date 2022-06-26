@@ -22,23 +22,6 @@ if(SERVER)then
 		self:DrawShadow(false)
 		self.NextDmg=Time+math.random(1,10)
 	end
-	function ENT:ShouldDamage(ent)
-		if not(IsValid(ent))then return end
-		if(ent.JModDontIrradiate)then return end
-		if(ent:IsPlayer())then return ent:Alive() end
-		if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
-			local Phys=ent:GetPhysicsObject()
-			if(IsValid(Phys))then
-				local Mat=Phys:GetMaterial()
-				if(Mat)then
-					if(Mat=="metal")then return false end
-					if(Mat=="default")then return false end
-				end
-			end
-			return ent:Health()>0
-		end
-		return false
-	end
 	function ENT:CanSee(ent)
 		local Tr=util.TraceLine({
 			start=self:GetPos(),
@@ -58,7 +41,7 @@ if(SERVER)then
 				if(obj.EZfalloutParticle)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*7
-				elseif((self:ShouldDamage(obj))and(math.random(1,5)==1)and(self.NextDmg<Time))then
+				elseif((JMod.ShouldDamageBiologically(obj))and(math.random(1,5)==1)and(self.NextDmg<Time))then
 					local DmgAmt=self.DmgAmt or math.random(4,20)*JMod.Config.NuclearRadiationMult
 					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
 					---

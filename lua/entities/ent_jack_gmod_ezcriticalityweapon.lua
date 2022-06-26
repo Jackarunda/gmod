@@ -93,7 +93,6 @@ if(SERVER)then
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
-				JMod.Hint(activator, "neutron radiation")
 				timer.Simple(3,function() -- todo: 30 seconds
 					if(IsValid(self))then self:Detonate() end
 				end)
@@ -126,8 +125,63 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
+	local function CanSee(ent1,ent2)
+		local Tr=util.TraceLine({
+			start=ent1:GetPos(),
+			endpos=ent2:GetPos(),
+			filter={ent1,ent2},
+			mask=MASK_SHOT
+		})
+		return not Tr.Hit
+	end
+	local function ReEmitRadiation(ent)
+		local self=ent -- copied from the fallout particle
+		for key,obj in pairs(ents.FindInSphere(self:LocalToWorld(self:OBBCenter()),200))do
+			if(not(obj==self)and(CanSee(self,obj)))then
+				if(JMod.ShouldDamageBiologically(obj))then
+					local DmgAmt=self.DmgAmt or math.random(2,10)*JMod.Config.NuclearRadiationMult
+					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
+					---
+					local Dmg,Helf=DamageInfo(),obj:Health()
+					Dmg:SetDamageType(DMG_RADIATION)
+					Dmg:SetDamage(DmgAmt)
+					Dmg:SetInflictor(self)
+					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetDamagePosition(obj:GetPos())
+					if(obj:IsPlayer())then
+						DmgAmt=DmgAmt/4
+						Dmg:SetDamage(DmgAmt)
+						obj:TakeDamageInfo(Dmg)
+						---
+						JMod.GeigerCounterSound(obj,math.Rand(.1,.5))
+						JMod.Hint(v,"radioactive fallout")
+						timer.Simple(math.Rand(.1,2),function()
+							if(IsValid(obj))then JMod.GeigerCounterSound(obj,math.Rand(.1,.5)) end
+						end)
+						---
+						local DmgTaken=Helf-obj:Health()
+						if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
+							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
+							timer.Simple(10,function()
+								if(IsValid(obj) and obj:Alive())then JMod.Hint(obj,"radiation sickness") end
+							end)
+						end
+					else
+						obj:TakeDamageInfo(Dmg)
+					end
+				end
+			end
+		end
+	end
 	local function DetermineShieldingFactor(startPos,endPos,source,victim)
-		return 0 -- TODO
+		local FirstTrace=util.TraceLine({
+			start=startPos,
+			endpos=endPos,
+			filter={source,victim},
+			mask=MASK_SHOT
+		})
+		if not(FirstTrace.Hit)then return 0 end
+		return 1
 	end
 	function ENT:Think()
 		local State,Time,SelfPos=self:GetState(),CurTime(),self:GetPos()+Vector(0,0,15)
@@ -144,7 +198,7 @@ if(SERVER)then
 					local Dir,Dist=Vec:GetNormalized(),math.Clamp(Vec:Length(),0,Range)
 					local DistFrac=1-(Dist/Range)
 					local DmgAmt=math.Rand(.1,1)*JMod.Config.NuclearRadiationMult*DistFrac^2
-					if((Playa)or(NPC))then
+					if((Playa and v:Alive())or(NPC))then
 						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
 						---
 						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v) -- shielding calcs are spensive, only run them for players/NPCs
@@ -188,7 +242,13 @@ if(SERVER)then
 						Dmg2:SetAttacker(self.Owner or self)
 						Dmg2:SetDamagePosition(TargPos)
 						v:TakeDamageInfo(Dmg2)
-						-- todo: neutron activation
+						-- neutron activation
+						local Phys=v:GetPhysicsObject()
+						if(IsValid(Phys) and Phys:GetMass()>=10)then
+							if(math.Rand(0,3)<DmgAmt)then
+								-- todo
+							end
+						end
 					end
 				end
 			end

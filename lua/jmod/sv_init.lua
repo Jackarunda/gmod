@@ -57,6 +57,24 @@ hook.Add("AllowPlayerPickup","JMOD_PLAYERPICKUP",function(ply,ent)
 	if(ent.JModNoPickup)then return false end
 end)
 
+function JMod.ShouldDamageBiologically(ent)
+	if not(IsValid(ent))then return end
+	if(ent.JModDontIrradiate)then return end
+	if(ent:IsPlayer())then return ent:Alive() end
+	if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+		local Phys=ent:GetPhysicsObject()
+		if(IsValid(Phys))then
+			local Mat=Phys:GetMaterial()
+			if(Mat)then
+				if(Mat=="metal")then return false end
+				if(Mat=="default")then return false end
+			end
+		end
+		return ent:Health()>0
+	end
+	return false
+end
+
 local function ShouldVirusInfect(ent)
 	if not(IsValid(ent))then return false end
 	if(ent.EZvirus and ent.EZvirus.Immune)then return false end
