@@ -35,20 +35,23 @@ if(SERVER)then
 		self:DrawShadow(true)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(15)
+			self:GetPhysicsObject():SetMass(50)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
 		self.Owner = self.Owner or game.GetWorld()
 		---
 		self:SetState(STATE_OFF)
-		timer.Simple(0.25 ,function()
+		timer.Simple(0.25, function()
 			if(IsValid(self))then self:StartSeeking() end
 		end)
 	end
 	function ENT:StartSeeking()
 		self:SetState(STATE_SEEKING)
-		self:SetVelocity(self:GetPhysicsObject():GetForward()*1000)
+		--self:SetVelocity(self:GetForward()*1000)
+		Phys = self:GetPhysicsObject()
+		Forward = self:GetForward()
+		Phys:ApplyForceCenter(Forward*2000)
 		timer.Simple(4, function ()
 			if(self:IsValid()) then
 				--local WarcrimeChance = math.Round(math.Rand(0, 1))

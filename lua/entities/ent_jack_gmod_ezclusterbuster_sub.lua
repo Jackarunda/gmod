@@ -46,7 +46,7 @@ if(SERVER)then
 		---
 		--self:GetPhysicsObject():EnableGravity(false) -- DEBUG
 		self:SetState(STATE_OFF)
-		timer.Simple(math.Rand(.5,1),function()
+		timer.Simple(math.Rand(.5,2),function()
 			if(IsValid(self))then
 				self:StartParachuting()
 			end
@@ -72,8 +72,8 @@ if(SERVER)then
 		Phys:SetAngleDragCoefficient(1)
 		Phys:SetAngles(Angle(0, 0, 90)) 
 		Phys:SetVelocity(Vector(0, 0, 0))
-		Phys:AddAngleVelocity(Vector(0, 2500, 0))
-		timer.Simple(1, function()
+		Phys:AddAngleVelocity(Vector(0, 7500, 0))
+		timer.Simple(0.2, function()
 			if(self:IsValid()) then
 				self:Detonate()
 			end
@@ -104,18 +104,19 @@ if(SERVER)then
 	end
 	function ENT:Detonate(delay, dmg)
 		if(self.Exploded)then return end
-		self.Exploded=true
+		self.Exploded = true
 		local Att = self.Owner or game.GetWorld()
 		local Vel,Pos,Ang = self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		local Up,Right,Forward,SkeetAng = Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
 		for i = 1, 4 do
-			timer.Simple(i*0.25, function() 
+			timer.Simple(i*0.075, function() 
 				if (self:IsValid()) then
 					local Pos = self:LocalToWorld(self:OBBCenter())
 					local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
 					JMod.Owner(Skeet, Att)
 					Skeet:SetPos(Pos + self:GetForward()*50)
-					Skeet:SetAngles(SkeetAng)
+					Skeet:SetAngles(SkeetAng*i*90)
+					Skeet:SetVelocity(Skeet:GetForward()*10000)
 					Skeet:Spawn()
 					Skeet:Activate()
 					--Skeet:SetVelocity(Vel + self:LocalToWorld(Skeet:GetPos())*5000)
@@ -127,7 +128,7 @@ if(SERVER)then
 				end
 			end)
 		end
-		timer.Simple(2, function()
+		timer.Simple(1, function()
 			if (self:IsValid()) then
 				local Pos = self:LocalToWorld(self:OBBCenter())
 				self:Remove()
@@ -135,6 +136,7 @@ if(SERVER)then
 			end
 		end)
 	end
+	local VelCurve = 1
 	function ENT:Think()
 		local Time = CurTime()
 		local State = self:GetDTInt(0)
@@ -149,13 +151,14 @@ if(SERVER)then
 			Phys:ApplyForceOffset(Vector(0, 0, 1000), Top)
 			local Bottom = self:LocalToWorld(Vector(0, -100, 0))
 			Phys:ApplyForceOffset(Vector(0, 0, -1000), Bottom)--]]
-			local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*600, self)
+			local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*500, self)
 			if (Tr.Hit) then
 				self:StartRocketing()
 			end
 		end
 		if (State == STATE_ROCKETING) then
-			Phys:ApplyForceCenter(Vector(0, 0, 2000))
+			Phys:ApplyForceCenter(Vector(0, 0, 5000*VelCurve))
+			VelCurve = VelCurve - 0.005
 		end
 		self:NextThink(CurTime() + .1)
 		return true
