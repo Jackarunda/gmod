@@ -69,11 +69,11 @@ if(SERVER)then
 		self:SetState(STATE_ROCKETING)
 		local Phys = self:GetPhysicsObject()
 		Phys:SetDragCoefficient(1)
-		Phys:SetAngleDragCoefficient(1)
-		Phys:SetAngles(Angle(0, 0, 90)) 
+		Phys:SetAngleDragCoefficient(0)
+		self:SetAngles(Angle(0, 0, 90)) 
 		Phys:SetVelocity(Vector(0, 0, 0))
-		Phys:AddAngleVelocity(Vector(0, 7500, 0))
-		timer.Simple(0.2, function()
+		Phys:AddAngleVelocity(Vector(0, 2500, 0))
+		timer.Simple(0.5, function()
 			if(self:IsValid()) then
 				self:Detonate()
 			end
@@ -109,24 +109,35 @@ if(SERVER)then
 		local Vel,Pos,Ang = self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		local Up,Right,Forward,SkeetAng = Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
 		for i = 1, 4 do
-			timer.Simple(i*0.075, function() 
+			local Pos = self:LocalToWorld(self:OBBCenter())
+			local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
+			JMod.Owner(Skeet, Att)
+			--Skeet:SetPos(Pos + Vector(math.random(-500, 500), math.random(-500, 500), 0)) -- To cheap
+			Skeet:SetPos(Pos + Vector(50, 0, 0))
+			print("Here is the rotated vector", Vector(50, 0, 0))
+			Skeet:SetAngles(SkeetAng*i*90)
+			Skeet:Spawn()
+			Skeet:Activate()
+			Skeet:GetPhysicsObject():SetVelocity(Vel + Skeet:GetForward()*5000)
+
+			--[[timer.Simple(i*0.25, function() -- Older more, complicated, approach (Or less complicated, IDK)
 				if (self:IsValid()) then
 					local Pos = self:LocalToWorld(self:OBBCenter())
 					local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
 					JMod.Owner(Skeet, Att)
-					Skeet:SetPos(Pos + self:GetForward()*50)
+					Skeet:SetPos(Pos + self:GetRight()*50)
 					Skeet:SetAngles(SkeetAng*i*90)
-					Skeet:SetVelocity(Skeet:GetForward()*10000)
 					Skeet:Spawn()
 					Skeet:Activate()
+					Skeet:GetPhysicsObject():SetVelocity(Vel + Skeet:GetForward()*5000)
 					--Skeet:SetVelocity(Vel + self:LocalToWorld(Skeet:GetPos())*5000)
-					--[[timer.Simple(0.5, function()
+					--[[timer.Simple(0.5, function() --DEBUG
 						if (Skeet:IsValid()) then 
 							Skeet:GetPhysicsObject():EnableMotion(false)
 						end
 					end)]]--
-				end
-			end)
+				--end
+			--end)]]--
 		end
 		timer.Simple(1, function()
 			if (self:IsValid()) then
@@ -151,13 +162,13 @@ if(SERVER)then
 			Phys:ApplyForceOffset(Vector(0, 0, 1000), Top)
 			local Bottom = self:LocalToWorld(Vector(0, -100, 0))
 			Phys:ApplyForceOffset(Vector(0, 0, -1000), Bottom)--]]
-			local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*500, self)
+			local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*600, self)
 			if (Tr.Hit) then
 				self:StartRocketing()
 			end
 		end
 		if (State == STATE_ROCKETING) then
-			Phys:ApplyForceCenter(Vector(0, 0, 5000*VelCurve))
+			Phys:ApplyForceCenter(Vector(0, 0, 4500*VelCurve))
 			VelCurve = VelCurve - 0.005
 		end
 		self:NextThink(CurTime() + .1)
