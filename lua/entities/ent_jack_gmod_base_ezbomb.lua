@@ -1,29 +1,29 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda, AdventureBoots"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "The base for all of the other ez bombs"
-ENT.PrintName = "EZ Base Bomb"
-ENT.Spawnable = false
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda, AdventureBoots"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="The base for all of the other ez bombs"
+ENT.PrintName="EZ Base Bomb"
+ENT.Spawnable=false
+ENT.AdminSpawnable=true
 ---
-ENT.Model = "models/hunter/blocks/cube025x2x025.mdl"
-ENT.Material = nil
-ENT.ModelScale = 0.9
-ENT.Mass = 150
+ENT.Model="models/hunter/blocks/cube025x2x025.mdl"
+ENT.Material=nil
+ENT.ModelScale=0.9
+ENT.Mass=150
 ---
-ENT.ClientMdl = "models/jmod/mk82_gbu.mdl"
+ENT.ClientMdl="models/jmod/mk82_gbu.mdl"
 ---
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZguidable = true
-ENT.DetType = "impact"
-ENT.DetDistance = 0
-ENT.FreefallTicks = 0
-ENT.ExplosionPower = 150
-ENT.DragMultiplier = 4
-ENT.DroppableImmuneTime = 0
-ENT.ExplProof = false
+ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
+ENT.EZguidable=true
+ENT.DetType="impact"
+ENT.DetDistance=0
+ENT.FreefallTicks=0
+ENT.ExplosionPower=150
+ENT.DragMultiplier=4
+ENT.DroppableImmuneTime=0
+ENT.ExplProof=false
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	if (IsValid(target) and target.ExplProof == true and dmginfo:GetAttacker() == target.Owner) then
@@ -32,16 +32,16 @@ hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	end
 end)
 concommand.Add("jbomb_nam_style",function(ply, cmd, args)
-	local Drop = function(targetPos, flyVector, caller)
-		local BombVel = flyVector*1000
+	local Drop=function(targetPos, flyVector, caller)
+		local BombVel=flyVector*1000
 		for i=-4,4 do
-			timer.Simple(i/2 + 5, function()
-				local Time = CurTime()
-				local DropPos = targetPos + flyVector*i*400 - flyVector*3000
-				local Bom = ents.Create("ent_jack_gmod_base_ezbomb")
+			timer.Simple(i/2+5, function()
+				local Time=CurTime()
+				local DropPos=targetPos+flyVector*i*400-flyVector*3000
+				local Bom=ents.Create("ent_jack_gmod_base_ezbomb")
 				--local Bom=ents.Create("ent_jack_gmod_ezsmallbomb")
 				JMod.Owner(Bom, caller)
-				Bom.DroppableImmuneTime = Time + 1000
+				Bom.DroppableImmuneTime=Time+1000
 				Bom:SetPos(DropPos)
 				Bom:Spawn()
 				Bom:Activate()
@@ -57,7 +57,7 @@ concommand.Add("jbomb_nam_style",function(ply, cmd, args)
 	Drop(ply:GetPos()+Vector(0,0,3000),FlyVec, ply)
 end)
 
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 	if (self.EZguidable) then
@@ -67,8 +67,8 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal*40
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -94,10 +94,10 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.LastUse = 0
+		self.LastUse=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -134,8 +134,8 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(self, 10)
 	end
 	function ENT:DamageSpark()
-		local effectdata = EffectData()
-		effectdata:SetOrigin(self:GetPos() + self:GetUp()*10 + VectorRand()*math.random(0, 10))
+		local effectdata=EffectData()
+		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0, 10))
 		effectdata:SetNormal(VectorRand())
 		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
 		effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
@@ -152,15 +152,15 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local State, Time = self:GetState(), CurTime()
+		local State, Time=self:GetState(), CurTime()
 		if(State < 0)then return end
 		
 		if(State == STATE_OFF)then
 			JMod.Owner(self, activator)
-			if(Time - self.LastUse < 0.2)then
+			if(Time-self.LastUse < 0.2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 110)
-				self.EZdroppableBombArmedTime = CurTime()
+				self.EZdroppableBombArmedTime=CurTime()
 				if (self.DetType == "impact") then
 					JMod.Hint(activator, "impactdet")
 				elseif (self.DetType == "airburst") then
@@ -172,25 +172,25 @@ if(SERVER)then
 			self.LastUse=Time
 		elseif(State == STATE_ARMED)then
 			JMod.Owner(self,activator)
-			if(Time - self.LastUse < .2)then
+			if(Time-self.LastUse < .2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 110)
-				self.EZdroppableBombArmedTime = nil
+				self.EZdroppableBombArmedTime=nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
 			end
-			self.LastUse = Time
+			self.LastUse=Time
 		end
 	end
 	function ENT:Detonate()
 		if(self.Exploded)then return end
-		self.Exploded = true
-		local SelfPos, Att, Mag = self:GetPos() + Vector(0,0,60),self.Owner or game.GetWorld(), self.ExplosionPower
+		self.Exploded=true
+		local SelfPos, Att, Mag=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld(), self.ExplosionPower
 		--JMod.Sploom(Att, SelfPos, Mag)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
-		local Eff = "500lb_ground"
-		if not(util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld)then Eff = "500lb_air" end
+		local Eff="500lb_ground"
+		if not(util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld)then Eff="500lb_air" end
 		for i=1,3 do
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 		end
@@ -216,8 +216,8 @@ if(SERVER)then
 		JMod.BlastDoors(self, SelfPos, 7)
 		---
 		timer.Simple(.2,function()
-			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
-			if(Tr.Hit)then util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal) end
+			local Tr=util.QuickTrace(SelfPos+Vector(0, 0, 100), Vector(0, 0, -400))
+			if(Tr.Hit)then util.Decal("BigScorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
 		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.Owner or game.GetWorld())
@@ -233,9 +233,9 @@ if(SERVER)then
 	end
 	function ENT:Think()
 		if (self.DroppableImmuneTime > CurTime()) then
-			self.ExplProof = true
+			self.ExplProof=true
 		else
-			self.ExplProof = false
+			self.ExplProof=false
 		end
 		if (istable(WireLib)) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
@@ -243,12 +243,12 @@ if(SERVER)then
 				WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 			end
 		end
-		local Phys,UseAeroDrag = self:GetPhysicsObject(),true
+		local Phys,UseAeroDrag=self:GetPhysicsObject(),true
 		if (self.DetType == "airburst") then
 			if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>self.DetDistance)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-				self.FreefallTicks = self.FreefallTicks + 1
+				self.FreefallTicks=self.FreefallTicks+1
 				if(self.FreefallTicks >= 10)then
-					local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*1500, self)
+					local Tr=util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*1500, self)
 					if(Tr.Hit)then self:Detonate() end
 				end
 			else
@@ -274,7 +274,7 @@ if(SERVER)then
 			--end
 		--end
 		JMod.AeroDrag(self, -self:GetRight(), self.DragMultiplier)
-		self:NextThink(CurTime() + .1)
+		self:NextThink(CurTime()+.1)
 		if (self:CustomThink() == true) then self:CustomThink() end
 		return true
 	end
@@ -284,28 +284,28 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Initialize()
 		if (self.ClientMdl) then
-			self.Mdl = ClientsideModel(self.ClientMdl)
+			self.Mdl=ClientsideModel(self.ClientMdl)
 			self.Mdl:SetModelScale(self.ModelScale, 0)
 			self.Mdl:SetPos(self:GetPos())
 			self.Mdl:SetParent(self)
 			self.Mdl:SetNoDraw(true)
-			self.Guided = false
+			self.Guided=false
 		end
 	end
 	function ENT:Think()
 		if (self.EZguidable) then
 			if((not(self.Guided))and(self:GetGuided()))then
-				self.Guided = true
+				self.Guided=true
 				self.ClientMdl:SetBodygroup(0, 1)
 			end
 		end
 	end
 	function ENT:Draw()
 		if (self.ClientMdl) then
-			local Pos, Ang = self:GetPos(), self:GetAngles()
+			local Pos, Ang=self:GetPos(), self:GetAngles()
 			Ang:RotateAroundAxis(Ang:Up(), 90)
 			--self:DrawModel()
-			self.Mdl:SetRenderOrigin(Pos-Ang:Up() * 3-Ang:Right() * 6)
+			self.Mdl:SetRenderOrigin(Pos-Ang:Up()*3-Ang:Right()*6)
 			self.Mdl:SetRenderAngles(Ang)
 			self.Mdl:DrawModel()
 		else return end

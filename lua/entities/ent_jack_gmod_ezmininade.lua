@@ -1,19 +1,19 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Mininade Base"
-ENT.Spawnable = false
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Mininade Base"
+ENT.Spawnable=false
 
 ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
-ENT.Model = "models/jmodels/explosives/grenades/minifragnade/w_minifragjade.mdl"
-ENT.Material = "models/mats_jack_nades/gnd"
+ENT.Model="models/jmodels/explosives/grenades/minifragnade/w_minifragjade.mdl"
+ENT.Material="models/mats_jack_nades/gnd"
 
-ENT.MiniNadeDamage = 100
-ENT.Mass = 7
+ENT.MiniNadeDamage=100
+ENT.Mass=7
 
-local BaseClass = baseclass.Get(ENT.Base)
+local BaseClass=baseclass.Get(ENT.Base)
 
 if(SERVER)then
 
@@ -30,7 +30,7 @@ if(SERVER)then
 		if dmginfo:GetInflictor() != self and dmginfo:GetDamage() >= 5 and !self.Exploded and self:GetState() != JMod.EZ_STATE_BROKEN then
 			self:EmitSound("physics/metal/metal_box_impact_bullet2.wav", 75, 200)
 			self:SetState(JMod.EZ_STATE_BROKEN)
-			local eff = EffectData()
+			local eff=EffectData()
 			eff:SetOrigin(self:GetPos())
 			eff:SetScale(1) -- how far
 			eff:SetRadius(8) -- how thick

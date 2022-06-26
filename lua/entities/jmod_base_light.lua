@@ -29,7 +29,7 @@ end
 
 function ENT:ColorIntensityToString( rgb, i )
 
-	local i_int = math.Round( i )
+	local i_int=math.Round( i )
 
 	if ( i_int < 1 ) then return "0 0 0 0" end
 
@@ -65,14 +65,14 @@ if ( SERVER ) then
 		self:SetRenderMode( RENDERMODE_TRANSALPHA )
 		self:DrawShadow( false )
 
-		local min, max = Vector( -2, -2, -2 ), Vector( 2, 2, 2 )
+		local min, max=Vector( -2, -2, -2 ), Vector( 2, 2, 2 )
 
 		self:PhysicsInitBox( min, max )
 		self:SetMoveType( MOVETYPE_VPHYSICS )
 		self:SetCollisionGroup( COLLISION_GROUP_WORLD )
 		self:SetCollisionBounds( min, max )
 
-		local physobj = self:GetPhysicsObject()
+		local physobj=self:GetPhysicsObject()
 
 		if ( IsValid( physobj ) ) then
 
@@ -87,39 +87,39 @@ if ( SERVER ) then
 
 		if ( not IsValid( ply ) ) then return end
 
-		local wep = ply:GetActiveWeapon()
+		local wep=ply:GetActiveWeapon()
 
 		if ( ( not IsValid( wep ) ) or ( wep:GetClass() ~= "gmod_tool" ) or ( wep.Mode ~= "material" ) ) then return end
 
-		local toolobj = wep.Tool[ "material" ]
+		local toolobj=wep.Tool[ "material" ]
 
 		if ( not toolobj ) then return end
 
 		if ( ply:KeyPressed( IN_ATTACK ) ) then
 
-			local texname = "effects/flashlight001"
+			local texname="effects/flashlight001"
 
-			local matname = toolobj:GetClientInfo( "override" )
+			local matname=toolobj:GetClientInfo( "override" )
 
 			if ( isstring( matname ) ) then
 
-				local mat = Material( matname )
+				local mat=Material( matname )
 
 				if ( ( mat ) and ( not mat:IsError() ) ) then
 
-					local shader = mat:GetShader()
+					local shader=mat:GetShader()
 
 					if ( isstring( shader ) and ( string.lower( string.sub( shader, 1, 7 ) ) == "refract" ) ) then
 
-						texname = mat:GetString( "$refracttinttexture" )
+						texname=mat:GetString( "$refracttinttexture" )
 
 					else
 
-						texname = mat:GetString( "$basetexture" )
+						texname=mat:GetString( "$basetexture" )
 
 					end
 
-					if ( not isstring( texname ) ) then texname = "effects/flashlight001" end
+					if ( not isstring( texname ) ) then texname="effects/flashlight001" end
 
 				end
 
@@ -143,29 +143,29 @@ if ( SERVER ) then
 
 		if ( not IsValid( ply ) ) then return end
 
-		local wep = ply:GetActiveWeapon()
+		local wep=ply:GetActiveWeapon()
 
 		if ( ( not IsValid( wep ) ) or ( wep:GetClass() ~= "gmod_tool" ) or ( wep.Mode ~= "lamp" ) ) then return end
 
-		local toolobj = wep.Tool[ "lamp" ]
+		local toolobj=wep.Tool[ "lamp" ]
 
 		if ( not toolobj ) then return end
 
 		if ( ply:KeyPressed( IN_ATTACK ) ) then
 
-			local texname = "effects/flashlight001"
+			local texname="effects/flashlight001"
 
-			local matname = toolobj:GetClientInfo( "texture" )
+			local matname=toolobj:GetClientInfo( "texture" )
 
 			if ( isstring( matname ) ) then
 
-				local mat = Material( matname )
+				local mat=Material( matname )
 
 				if ( ( mat ) and ( not mat:IsError() ) ) then
 
-					texname = mat:GetString( "$basetexture" )
+					texname=mat:GetString( "$basetexture" )
 
-					if ( not isstring( texname ) ) then texname = "effects/flashlight001" end
+					if ( not isstring( texname ) ) then texname="effects/flashlight001" end
 
 				end
 
@@ -183,11 +183,11 @@ if ( SERVER ) then
 
 		if ( not IsValid( ply ) ) then return end
 
-		local wep = ply:GetActiveWeapon()
+		local wep=ply:GetActiveWeapon()
 
 		if ( ( not IsValid( wep ) ) or ( wep:GetClass() ~= "gmod_tool" ) or ( wep.Mode ~= "colour" ) ) then return end
 
-		local toolobj = wep.Tool[ "colour" ]
+		local toolobj=wep.Tool[ "colour" ]
 
 		if ( not toolobj ) then return end
 
@@ -211,11 +211,11 @@ if ( SERVER ) then
 
 		if ( not IsValid( ply ) ) then return end
 
-		local wep = ply:GetActiveWeapon()
+		local wep=ply:GetActiveWeapon()
 
 		if ( ( not IsValid( wep ) ) or ( wep:GetClass() ~= "gmod_tool" ) or ( wep.Mode ~= "light" ) ) then return end
 
-		local toolobj = wep.Tool[ "light" ]
+		local toolobj=wep.Tool[ "light" ]
 
 		if ( not toolobj ) then return end
 
@@ -233,18 +233,18 @@ end
 
 if ( CLIENT ) then
 
-	ENT.c_r = Color( 255, 0, 0, 255 )
-	ENT.c_c = Color( 0, 255, 255, 255 )
+	ENT.c_r=Color( 255, 0, 0, 255 )
+	ENT.c_c=Color( 0, 255, 255, 255 )
 
-	ENT.c_g = Color( 0, 255, 0, 255 )
-	ENT.c_m = Color( 255, 0, 255, 255 )
+	ENT.c_g=Color( 0, 255, 0, 255 )
+	ENT.c_m=Color( 255, 0, 255, 255 )
 
-	ENT.c_b = Color( 0, 0, 255, 255 )
-	ENT.c_y = Color( 255, 255, 0, 255 )
+	ENT.c_b=Color( 0, 0, 255, 255 )
+	ENT.c_y=Color( 255, 255, 0, 255 )
 
 	function ENT:Camera()
 
-		local wep = LocalPlayer():GetActiveWeapon()
+		local wep=LocalPlayer():GetActiveWeapon()
 
 		return IsValid( wep ) and ( wep:GetClass() == "gmod_camera" )
 

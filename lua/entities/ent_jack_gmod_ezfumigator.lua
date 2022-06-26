@@ -49,8 +49,8 @@ if(SERVER)then
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=100*JMod.Config.FumigatorGasAmount
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 is sealed \n 1 is ticking \n 2 is venting"})
+			self.Inputs=WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"0 is sealed \n 1 is ticking \n 2 is venting"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -124,7 +124,7 @@ if(SERVER)then
 		end
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
-			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then

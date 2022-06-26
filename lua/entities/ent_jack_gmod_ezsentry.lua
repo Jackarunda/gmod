@@ -52,7 +52,7 @@ ENT.AmmoTypes={
 		MaxElectricity=2,
 		BarrelLength=.75
 	}--[[
-	["bolt"] = { -- crossbow projectile
+	["bolt"]={ -- crossbow projectile
 		MaxAmmo=.75,
 		FireRate=.75
 	},
@@ -90,16 +90,16 @@ ENT.DynamicPerfSpecs={
 }
 -- All moddable attributes
 -- Each mod selected for it is +1, against it is -1
-ENT.ModPerfSpecs = {
-	MaxAmmo = 0, 
-	TurnSpeed = 0, 
-	TargetingRadius = 0, 
-	Armor = 0, 
-	FireRate = 0, 
-	Damage = 0, 
-	Accuracy = 0, 
-	SearchSpeed = 0,
-	Cooling = 0
+ENT.ModPerfSpecs={
+	MaxAmmo=0, 
+	TurnSpeed=0, 
+	TargetingRadius=0, 
+	Armor=0, 
+	FireRate=0, 
+	Damage=0, 
+	Accuracy=0, 
+	SearchSpeed=0,
+	Cooling=0
 }
 function ENT:SetMods(tbl,ammoType)
 	self.ModPerfSpecs=tbl
@@ -119,7 +119,7 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^1.2 end
-	self.MaxAmmo = math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack? - titanicjames
+	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10
@@ -201,7 +201,7 @@ if(SERVER)then
 		---
 		self.EZupgradable=true
 		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Blueprints["EZ Sentry"][2])
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Sentry"] and JMod.Config.Craftables["EZ Sentry"].craftingReqs)
 		---
 		self:ResetMemory()
 		self:CreateNPCTarget()
@@ -231,6 +231,9 @@ if(SERVER)then
 			self.NPCTarget:SetParent(self)
 			self.NPCTarget:Spawn()
 			self.NPCTarget:Activate()
+			self.NPCTarget:SetNotSolid(true)
+			--self.NPCTarget.NoCollideAll=true
+			--self.NPCTarget:SetCustomCollisionCheck(true)
 		end
 	end
 	function ENT:RemoveNPCTarget()
@@ -262,7 +265,7 @@ if(SERVER)then
 			if(dmg:IsDamageType(typ))then return 1000 end
 		end
 		for k,typ in pairs(self.ResistantDamageTypes)do
-			if(dmg:IsDamageType(typ))then return self.Armor * 2 end
+			if(dmg:IsDamageType(typ))then return self.Armor*2 end
 		end
 		return self.Armor
 	end
@@ -574,7 +577,7 @@ if(SERVER)then
 		end
 		if(self.Firing)then
 			if(self.NextFire<Time)then
-				self.NextFire=Time + 1/self.FireRate --  (1/self.FireRate^1.2 + 0.05) 
+				self.NextFire=Time+1/self.FireRate --  (1/self.FireRate^1.2+0.05) 
 				self:FireAtPoint(self.SearchData.LastKnownPos,self.SearchData.LastKnownVel or Vector(0,0,0))
 			end
 		end
@@ -647,7 +650,7 @@ if(SERVER)then
 			Eff:SetEntity(self)
 			---
 			local Dmg,Inacc=self.Damage,.06/self.Accuracy
-			local Force = Dmg/5
+			local Force=Dmg/5
 			local ShootDir=(point-ShootPos):GetNormalized()
 			util.Effect("ShotgunShellEject",Eff,true,true)
 			sound.Play("snds_jack_gmod/sentry_shotgun.wav",SelfPos,70,math.random(90,110))

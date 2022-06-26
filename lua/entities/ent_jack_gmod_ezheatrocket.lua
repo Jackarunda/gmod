@@ -47,8 +47,8 @@ if(SERVER)then
 		self.NextDet=0
 		self.FuelLeft=100
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -99,7 +99,8 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		if not(IsValid(self))then return end
+		self:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
 			if(math.random(1,3)==1)then
 				self:Break()

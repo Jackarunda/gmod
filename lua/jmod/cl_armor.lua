@@ -14,7 +14,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 			JMod.CopyArmorTableToPlayer(ply)
 			ply.NextEZarmorTableCopy=Time+30
 		end
-		local plyboneedit = {}
+		local plyboneedit={}
 		for id,armorData in pairs(ply.EZarmor.items)do
 			local ArmorInfo=ply.JMod_ArmorTableCopy[armorData.name]
 			if((armorData.tgl)and(ArmorInfo.tgl))then
@@ -61,8 +61,8 @@ function JMod.ArmorPlayerModelDraw(ply)
 							render.SetColorModulation(OldR,OldG,OldB)
 						end
 						if ArmorInfo.bonsiz then
-							ply.EZarmorboneedited = true
-							plyboneedit[Index] = ArmorInfo.bonsiz
+							ply.EZarmorboneedited=true
+							plyboneedit[Index]=ArmorInfo.bonsiz
 						end
 					end
 				else
@@ -82,16 +82,16 @@ function JMod.ArmorPlayerModelDraw(ply)
 			end
 		end
 		if ply.EZarmorboneedited then
-			local edited = false
-			for k = 1, ply:GetBoneCount() do
+			local edited=false
+			for k=1, ply:GetBoneCount() do
 				if ply:GetManipulateBoneScale(k) ~= (plyboneedit[k] or Vector(1, 1, 1)) then
 					ply:ManipulateBoneScale(k, plyboneedit[k] or Vector(1, 1, 1))
 				end
 				if ply:GetManipulateBoneScale(k) ~= Vector(1, 1, 1) then
-					edited = true
+					edited=true
 				end
 			end
-			if not edited then print("not edited") ply.EZarmorboneedited = false end
+			if not edited then print("not edited") ply.EZarmorboneedited=false end
 		end
 	end
 end

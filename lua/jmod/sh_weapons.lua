@@ -271,15 +271,15 @@ JMod.AmmoTable={
 		terminaldmg=10,
 		penetration=40
 	},
-	["Light Rifle Round - Armor Piercing"]={
+	["Light Rifle Round-Armor Piercing"]={
 		armorpiercing=.2,
 		penetration=70
 	},
-	["Light Rifle Round - Ballistic Tip"]={
+	["Light Rifle Round-Ballistic Tip"]={
 		expanding=.4,
 		penetration=30
 	},
-	["Light Rifle Round - Tracer"]={
+	["Light Rifle Round-Tracer"]={
 		tracer=true
 	},
 	["Medium Rifle Round"]={
@@ -412,7 +412,7 @@ for k,v in pairs(JMod.AmmoTable)do
 end
 function JMod.GetAmmoSpecs(typ)
 	if not(JMod.AmmoTable[typ])then return nil end
-	local Result,BaseType=table.FullCopy(JMod.AmmoTable[typ]),string.Split(typ," - ")[1]
+	local Result,BaseType=table.FullCopy(JMod.AmmoTable[typ]),string.Split(typ,"-")[1]
 	return table.Inherit(Result,JMod.AmmoTable[BaseType])
 end
 function JMod.ApplyAmmoSpecs(wep,typ,mult)
@@ -540,7 +540,7 @@ if(CLIENT)then
 		end
 	end)
 	hook.Add("RenderScene", "JMod_ArcCW_RenderScene", function()
-		local wpn = LocalPlayer():GetActiveWeapon()
+		local wpn=LocalPlayer():GetActiveWeapon()
 		if not wpn.ArcCW then return end
 		if wpn.ForceExpensiveScopes then
 			wpn:FormRTScope()
@@ -678,7 +678,7 @@ elseif(SERVER)then
 		if not(ply:Alive())then return end
 		local Wep=ply:GetActiveWeapon()
 		if not(Wep.Primary.Ammo and JMod.AmmoTable[Wep.Primary.Ammo])then return end
-		local AllTypes,OriginalType={},string.Split(Wep.Primary.Ammo," - ")[1]
+		local AllTypes,OriginalType={},string.Split(Wep.Primary.Ammo,"-")[1]
 		for name,info in pairs(JMod.AmmoTable)do
 			if((string.find(name,OriginalType))and(ply:GetAmmoCount(name)>0))then
 				table.insert(AllTypes,name)

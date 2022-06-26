@@ -18,13 +18,13 @@ SWEP.EZdroppable=true
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
 
-SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
-SWEP.BodyHolsterSlot = "hips"
-SWEP.BodyHolsterAng = Angle(-70,0,200)
-SWEP.BodyHolsterAngL = Angle(-70,-10,-30)
-SWEP.BodyHolsterPos = Vector(0,-15,10)
-SWEP.BodyHolsterPosL = Vector(0,-15,-11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterModel="models/weapons/w_models/w_tooljox.mdl"
+SWEP.BodyHolsterSlot="hips"
+SWEP.BodyHolsterAng=Angle(-70,0,200)
+SWEP.BodyHolsterAngL=Angle(-70,-10,-30)
+SWEP.BodyHolsterPos=Vector(0,-15,10)
+SWEP.BodyHolsterPosL=Vector(0,-15,-11)
+SWEP.BodyHolsterScale=.4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
@@ -76,14 +76,19 @@ function SWEP:Initialize()
 	self.NextTaskProgress=0
 	self.CurTask=nil
 	if(SERVER)then
-		self.Buildables={
-			{"Nail (constraints object)","ez nail",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10},.2},
-			{"(action) Package Object","package",{[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25},1}
-		}
-		for name,info in pairs(JMod.Config.Blueprints)do
-			table.insert(self.Buildables,{name,info[1],info[2],info[3] or 1,info[4],info[5],info[6]})
+		self.Craftables={}
+		for name,info in pairs(JMod.Config.Craftables)do
+			if(info.craftingType=="toolbox")then
+				-- we store this here for client transmission later
+				-- because we can't rely on the client having the config
+				local infoCopy=table.FullCopy(info)
+				infoCopy.name=name
+				self.Craftables[name]=info
+			end
 		end
 	end
+	self:SetTaskProgress(0)
+	self:SetSelectedBuild("")
 end
 function SWEP:PreDrawViewModel(vm,wep,ply)
 	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
@@ -106,8 +111,7 @@ function SWEP:GetViewModelPosition(pos,ang)
 	return pos,ang
 end
 function SWEP:SetupDataTables()
-	self:NetworkVar("Int",0,"SelectedBuild")
-	self:NetworkVar("String",0,"Msg")
+	self:NetworkVar("String",0,"SelectedBuild")
 	self:NetworkVar("Float",1,"TaskProgress")
 end
 function SWEP:UpdateNextIdle()
@@ -199,20 +203,22 @@ function SWEP:PrimaryAttack()
 	if(SERVER)then
 		local Built,Upgraded,SelectedBuild=false,false,self:GetSelectedBuild()
 		local Ent,Pos,Norm=self:WhomIlookinAt()
-		if(SelectedBuild>0)then
-			if((self.Buildables[SelectedBuild][2]=="ez nail")and not(self:FindNailPos()))then return end
-			if((self.Buildables[SelectedBuild][2]=="package")and not(self:GetPackagableObject()))then return end
-			local Sound=self.Buildables[SelectedBuild][2]~="ez nail" and self.Buildables[SelectedBuild][2]~="package"
-			local Reqs=self.Buildables[SelectedBuild][3]
+		if((SelectedBuild and SelectedBuild~=""))then
+			local buildInfo=self.Craftables[SelectedBuild]
+			if not(buildInfo)then return end
+			if((buildInfo.results=="ez nail")and not(self:FindNailPos()))then return end
+			if((buildInfo.results=="ez box")and not(self:GetPackagableObject()))then return end
+			local Sound=buildInfo.results~="ez nail" and buildInfo.results~="ez box"
+			local Reqs=buildInfo.craftingReqs
 			if(JMod.HaveResourcesToPerformTask(nil,nil,Reqs,self))then
-				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, self.Buildables[SelectedBuild])
-				if override == false then
+				local override,msg=hook.Run("JMod_CanKitBuild",self.Owner,self,buildInfo)
+				if override==false then
 					self.Owner:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 					return
 				end
 				JMod.ConsumeResourcesInRange(Reqs,nil,nil,self)
 				Built=true
-				local BuildSteps=math.ceil(20*self.Buildables[SelectedBuild][4])
+				local BuildSteps=math.ceil(20*(buildInfo.sizeScale or 1))
 				for i=1,BuildSteps do
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
@@ -221,23 +227,23 @@ function SWEP:PrimaryAttack()
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								end
 							else
-								local Class=self.Buildables[SelectedBuild][2]
+								local Class=buildInfo.results
 								if(Class=="ez nail")then
 									self:Nail()
-								elseif(Class=="package")then
+								elseif(Class=="ez box")then
 									self:Package()
 								else
 									local StringParts=string.Explode(" ",Class)
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
 										local FuncName=StringParts[2]
 										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*self.Buildables[SelectedBuild][4],Angle(0,self.Owner:EyeAngles().y,0))
+											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*(buildInfo.sizeScale or 1),Angle(0,self.Owner:EyeAngles().y,0))
 										else
 											print("JMOD TOOLBOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent=ents.Create(Class)
-										Ent:SetPos(Pos+Norm*10*self.Buildables[SelectedBuild][4])
+										Ent:SetPos(Pos+Norm*10*(buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
 										JMod.Owner(Ent,self.Owner)
 										Ent:Spawn()
@@ -269,7 +275,7 @@ function SWEP:PrimaryAttack()
 				end
 				net.Send(self.Owner)
 			else
-				self:Msg("needs 50 Parts nearby to perform modification")
+				self:Msg("needs 20 Parts nearby to perform modification")
 			end
 		elseif((IsValid(Ent))and(Ent.EZupgradable))then
 			local State=Ent:GetState()
@@ -382,18 +388,8 @@ function SWEP:FlingProp(mdl,force)
 	if(force)then Phys:ApplyForceCenter(force/7) end
 	SafeRemoveEntityDelayed(Prop,math.random(5,10))
 end
-function SWEP:SwitchSelectedBuild(num)
-	if(num>#self.Buildables)then num=0 end
-	self:SetSelectedBuild(num)
-	if(num>0)then
-		local Msg="SELECTED: "..self.Buildables[num][1].." - "
-		for typ,amt in pairs(self.Buildables[num][3])do
-			Msg=Msg..tostring(amt).." "..typ.." "
-		end
-		self:SetMsg(Msg)
-	else
-		self:SetMsg("")
-	end
+function SWEP:SwitchSelectedBuild(name)
+	self:SetSelectedBuild(name)
 end
 function SWEP:Reload()
 	if(SERVER)then
@@ -403,23 +399,18 @@ function SWEP:Reload()
 		else
 			if(self.NextSwitch<Time)then
 				self.NextSwitch=Time+.5
-				local Build=self:GetSelectedBuild()
-				if(Build>0)then
-					self:SwitchSelectedBuild(0)
-				else
-					JMod.Hint(self.Owner, "craft")
-					net.Start("JMod_EZtoolbox")
-						net.WriteTable(self.Buildables)
-						net.WriteEntity(self)
-					net.Send(self.Owner)
-				end
+				JMod.Hint(self.Owner, "craft")
+				net.Start("JMod_EZtoolbox")
+				net.WriteTable(self.Craftables)
+				net.WriteEntity(self)
+				net.Send(self.Owner)
 			end
 		end
 	end
 end
 function SWEP:BuildEffect(pos,buildType,suppressSound)
 	if(CLIENT)then return end
-	local Scale=self.Buildables[buildType][4]^.6
+	local Scale=(self.Craftables[buildType].sizeScale or 1)^.6
 	self:UpgradeEffect(pos,Scale*4,suppressSound)
 	local eff=EffectData()
 	eff:SetOrigin(pos+VectorRand())
@@ -442,7 +433,9 @@ function SWEP:UpgradeEffect(pos,scale,suppressSound)
 	end
 end
 function SWEP:WhomIlookinAt()
-	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+	local Filter={self.Owner}
+	for k,v in pairs(ents.FindByClass("npc_bullseye"))do table.insert(Filter,v) end
+	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,Filter)
 	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()
@@ -597,9 +590,10 @@ local LastProg=0
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
 	if(self.Owner:ShouldDrawLocalPlayer())then return end
-	local W,H,Msg=ScrW(),ScrH(),self:GetMsg()
-	if((Msg)and(Msg~=""))then
-		draw.SimpleTextOutlined(Msg,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
+	local W,H,Build=ScrW(),ScrH(),self:GetSelectedBuild()
+	local W,H,Msg=ScrW(),ScrH()
+	if((Build)and(Build~=""))then
+		draw.SimpleTextOutlined(Build,"Trebuchet24",W*.5,H*.7-50,Color(255,255,255,150),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,150))
 	end
 	draw.SimpleTextOutlined("R: select build item","Trebuchet24",W*.4,H*.7,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))
 	draw.SimpleTextOutlined("LMB: build or upgrade","Trebuchet24",W*.4,H*.7+30,Color(255,255,255,50),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP,3,Color(0,0,0,50))

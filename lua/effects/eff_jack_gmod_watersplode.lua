@@ -7,8 +7,8 @@ function EFFECT:Init(data)
 	self.Size=150
 	self.Normal=Vector(0,0,1)
 	local Tr=util.TraceLine({
-		start=self.Pos+Vector(0,0,200),
-		endpos=self.Pos-Vector(0,0,200),
+		start=self.Pos+Vector(0,0,500),
+		endpos=self.Pos-Vector(0,0,-1000),
 		filter={self.Mine},
 		mask=-1 -- hit water
 	})
@@ -19,6 +19,9 @@ function EFFECT:Init(data)
 	Splach:SetNormal(Vector(0,0,1))
 	Splach:SetScale(100)
 	util.Effect("WaterSplash",Splach)
+	---
+	sound.Play("snds_jack_gmod/watersplode_with_rain.wav",self.Pos+Vector(0,0,100),80,math.random(95,105),1)
+	sound.Play("snds_jack_gmod/watersplode_with_rain.wav",self.Pos+Vector(0,0,110),80,math.random(95,105),1)
 	---
 	local emitter=ParticleEmitter(self.Pos)
 	for i=0,200 do
@@ -88,6 +91,46 @@ function EFFECT:Init(data)
 		particle:SetColor(255,255,255)
 	end
 	emitter:Finish()
+	local Pos,Scale=self.Pos,self.Scale
+	timer.Simple(.1,function()
+		local emitter=ParticleEmitter(Pos)
+		for i=0,500 do
+			local Sprite=table.Random({"effects/splash1","effects/splash2","effects/splash4"})
+			local particle=emitter:Add(Sprite,Pos)
+			particle:SetVelocity((VectorRand()*math.Rand(0,200)*Scale+Vector(0,0,math.Rand(200,1000)*Scale)))
+			particle:SetCollide(false)
+			particle:SetLighting(false)
+			particle:SetBounce(.01)
+			particle:SetGravity(Vector(0,0,-600))
+			particle:SetAirResistance(10)
+			particle:SetDieTime(math.Rand(1,3)*Scale)
+			particle:SetStartAlpha(255)
+			particle:SetEndAlpha(255)
+			particle:SetStartSize(5)
+			particle:SetEndSize(5)
+			particle:SetRoll(math.Rand(180, 480))
+			particle:SetRollDelta(math.Rand(-1, 1)*6)
+			particle:SetColor(255,255,255)
+		end
+		emitter:Finish()
+	end)
+	for i=1,1000 do
+		local StartPos=Pos+Vector(math.random(-1000,1000),math.random(-1000,1000),1000)
+		timer.Simple(i/200+1.5,function()
+			local Tr=util.TraceLine({
+				start=StartPos,
+				endpos=StartPos+Vector(0,0,-2000),
+				mask=-1
+			})
+			if(Tr.Hit)then
+				local Splach=EffectData()
+				Splach:SetOrigin(Tr.HitPos)
+				Splach:SetNormal(Vector(0,0,1))
+				Splach:SetScale(1)
+				util.Effect("eff_jack_gmod_tinysplash",Splach)
+			end
+		end)
+	end
 end
 function EFFECT:Think()
 	if(self.DieTime>CurTime())then

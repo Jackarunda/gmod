@@ -1,16 +1,16 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezmininade"
+ENT.Base="ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZminiNade-Remote"
 ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
-ENT.Material = "models/mats_jack_nades/gnd_blu"
-ENT.Hints = {"mininade", "remote det", "binding"}
+ENT.Material="models/mats_jack_nades/gnd_blu"
+ENT.Hints={"mininade", "remote det", "binding"}
 ENT.JModRemoteTrigger=true
 
-local BaseClass = baseclass.Get(ENT.Base)
+local BaseClass=baseclass.Get(ENT.Base)
 
 if(SERVER)then
 

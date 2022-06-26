@@ -1,26 +1,26 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "A bomb that deploys seeking anti-tank skeets"
-ENT.PrintName = "EZ Cluster Buster"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="A bomb that deploys seeking anti-tank skeets"
+ENT.PrintName="EZ Cluster Buster"
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ---
 ENT.EZclusterBusterMunition=true
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal*40
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
 		ent:Spawn()
@@ -47,11 +47,11 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		self.LastUse = 0
-		self.FreefallTicks = 0
+		self.LastUse=0
+		self.FreefallTicks=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -89,7 +89,7 @@ if(SERVER)then
 		SafeRemoveEntityDelayed(self, 10)
 	end
 	function ENT:DamageSpark()
-		local effectdata = EffectData()
+		local effectdata=EffectData()
 		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0,10))
 		effectdata:SetNormal(VectorRand())
 		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
@@ -110,23 +110,23 @@ if(SERVER)then
 		end
 	end
 	function ENT:Use(activator)
-		local State, Time = self:GetState(), CurTime()
+		local State, Time=self:GetState(), CurTime()
 		if(State < 0)then return end
 		
 		if(State == STATE_OFF)then
 			JMod.Owner(self, activator)
-			if(Time - self.LastUse < .2)then
+			if(Time-self.LastUse < .2)then
 				self:SetState(STATE_ARMED)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 120)
-				self.EZdroppableBombArmedTime = CurTime()
+				self.EZdroppableBombArmedTime=CurTime()
 				JMod.Hint(activator, "airburst")
 			else
 				JMod.Hint(activator,"double tap to arm")
 			end
-			self.LastUse = Time
+			self.LastUse=Time
 		elseif(State == STATE_ARMED)then
 			JMod.Owner(self, activator)
-			if(Time - self.LastUse<.2)then
+			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,120)
 				self.EZdroppableBombArmedTime=nil
@@ -142,10 +142,11 @@ if(SERVER)then
 		local Att=self.Owner or game.GetWorld()
 		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		local Up,Right,Forward,CylinderAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
-		for i = 1, 4 do
-			timer.Simple(i*0.25, function()
-				local Pos = self:LocalToWorld(self:OBBCenter())
-				local Bomblet = ents.Create("ent_jack_gmod_ezclusterbuster_sub")
+		self:Remove()
+		JMod.Sploom(Att,Pos,50)
+		timer.Simple(0,function()
+			for i=1,4 do
+				local Bomblet=ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet,Att)
 				Bomblet:SetPos(Pos+VectorRand()*math.random(1,100))
 				Bomblet:SetAngles(CylinderAng)
@@ -172,18 +173,18 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
-		local Phys = self:GetPhysicsObject()
+		local Phys=self:GetPhysicsObject()
 		if((self:GetState() == STATE_ARMED)and(Phys:GetVelocity():Length() > 400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
-			self.FreefallTicks = self.FreefallTicks + 1
+			self.FreefallTicks=self.FreefallTicks+1
 			if(self.FreefallTicks >= 10)then
-				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*5000, self)
+				local Tr=util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*5000, self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else
-			self.FreefallTicks = 0
+			self.FreefallTicks=0
 		end
-		JMod.AeroDrag(self, self:GetForward(), 5)
-		self:NextThink(CurTime() + .1)
+		JMod.AeroDrag(self, self:GetForward(), 4)
+		self:NextThink(CurTime()+.1)
 		return true
 	end
 elseif(CLIENT)then

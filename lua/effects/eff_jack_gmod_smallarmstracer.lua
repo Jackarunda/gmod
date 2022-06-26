@@ -64,7 +64,7 @@ function EFFECT:Init( data )
 	
 	self.Entity:SetRenderBoundsWS( self.StartPos, self.EndPos );
 
-	local diff=( self.EndPos - self.StartPos );
+	local diff=( self.EndPos-self.StartPos );
 	
 	self.Normal=diff:GetNormal();
 	self.StartTime=0;
@@ -74,7 +74,7 @@ end
 
 
 function EFFECT:Think()
-	self.LifeTime=self.LifeTime - FrameTime();
+	self.LifeTime=self.LifeTime-FrameTime();
 	self.StartTime=self.StartTime+FrameTime(); 
 
 	return self.LifeTime>0;
@@ -85,7 +85,7 @@ end
 function EFFECT:Render()
 
 	local endDistance=self.Speed*self.StartTime;
-	local startDistance=endDistance - self.Length;
+	local startDistance=endDistance-self.Length;
 	
 	startDistance=math.max( 0, startDistance );
 	endDistance=math.max( 0, endDistance );

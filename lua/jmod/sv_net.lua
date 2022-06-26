@@ -22,6 +22,7 @@ util.AddNetworkString("JMod_Ravebreak")
 util.AddNetworkString("JMod_NaturalResources")
 util.AddNetworkString("JMod_ResourceScanner")
 util.AddNetworkString("JMod_VisualGunRecoil")
+util.AddNetworkString("JMod_EquippableSync")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
 
 net.Receive("JMod_Friends",function(length,ply)
@@ -44,7 +45,7 @@ end)
 
 net.Receive("JMod_ColorAndArm", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local mine = net.ReadEntity()
+	local mine=net.ReadEntity()
 	if not (IsValid(mine) and mine.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(mine:GetPos()) > 15000 then return end
 	mine:SetColor(net.ReadColor())
@@ -54,13 +55,13 @@ end)
 net.Receive("JMod_ArmorColor",function(ln,ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	
-	local Armor = net.ReadEntity()
+	local Armor=net.ReadEntity()
 	if not IsValid(Armor) or not Armor.ArmorName then return end
 
-	local Col = net.ReadColor()
+	local Col=net.ReadColor()
 	Armor:SetColor(Col)
 
-	local Equip = tobool(net.ReadBit())
+	local Equip=tobool(net.ReadBit())
 	if Equip then
 		JMod.Hint(ply, "armor weight")
 		JMod.EZ_Equip_Armor(ply, Armor)
@@ -69,7 +70,7 @@ end)
 
 net.Receive("JMod_SignalNade", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local nade = net.ReadEntity()
+	local nade=net.ReadEntity()
 	if not (IsValid(nade) and nade:GetClass() == "ent_jack_gmod_ezsignalnade") then return end
 	if ply:GetPos():DistToSqr(nade:GetPos()) > 15000 then return end
 	nade:SetColor(net.ReadColor())
@@ -77,17 +78,15 @@ net.Receive("JMod_SignalNade", function(l, ply)
 end)
 
 net.Receive("JMod_EZtoolbox",function(ln,ply)
-	local Num,Wep=net.ReadInt(8),ply:GetWeapon("wep_jack_gmod_eztoolbox")
-	if(IsValid(Wep))then
-		Wep:SwitchSelectedBuild(Num)
-	end
+	local Wep,Name=net.ReadEntity(),net.ReadString()
+	if(IsValid(Wep))then Wep:SwitchSelectedBuild(Name) end
 end)
 
-net.Receive("JMod_EZworkbench", function(l, ply)
+net.Receive("JMod_EZworkbench",function(l,ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local bench,name = net.ReadEntity(),net.ReadString()
-	if (IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos()) < 15000 then
-		bench:TryBuild(name, ply)
+	local bench,name=net.ReadEntity(),net.ReadString()
+	if(IsValid(bench) and bench.TryBuild) and ply:GetPos():DistToSqr(bench:GetPos())<15000 then
+		bench:TryBuild(name,ply)
 	end
 end)
 
@@ -107,16 +106,16 @@ end)
 net.Receive("JMod_UniCrate",function(ln,ply)
 	local box=net.ReadEntity()
 	local class=net.ReadString()
-	if !IsValid(box) or (box:GetPos() - ply:GetPos()):Length()>100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
+	if !IsValid(box) or (box:GetPos()-ply:GetPos()):Length()>100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
 	local ent=ents.Create(class)
 	ent:SetPos(box:GetPos())
 	ent:SetAngles(box:GetAngles())
 	ent:Spawn()
 	ent:Activate()
 	timer.Simple(0.01, function() ply:PickupObject(ent) end)
-	box:SetItemCount(box:GetItemCount() - box.Items[class][2])
-	box.Items[class] = box.Items[class][1] > 1 and {(box.Items[class][1] - 1), box.Items[class][2]} or nil
-	box.NextLoad = CurTime() + 2
+	box:SetItemCount(box:GetItemCount()-box.Items[class][2])
+	box.Items[class]=box.Items[class][1] > 1 and {(box.Items[class][1]-1), box.Items[class][2]} or nil
+	box.NextLoad=CurTime()+2
 	box:EmitSound("Ammo_Crate.Close")
 	box:CalcWeight()
 end)

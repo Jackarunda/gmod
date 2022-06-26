@@ -1,13 +1,13 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "The deployment submunition for the EZ Cluster Buster"
-ENT.PrintName = "Cluster Buster submunition deployer"
-ENT.Spawnable = true
-ENT.AdminSpawnable = false
-ENT.EZclusterBusterMunition = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="The deployment submunition for the EZ Cluster Buster"
+ENT.PrintName="Cluster Buster submunition deployer"
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
+ENT.EZclusterBusterMunition=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ---
@@ -90,9 +90,9 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		if(dmginfo:GetInflictor() == self or dmginfo:GetInflictor().EZclusterBusterMunition == true)then return end
 		self:TakePhysicsDamage(dmginfo)
-		local Dmg = dmginfo:GetDamage()
+		local Dmg=dmginfo:GetDamage()
 		if(JMod.LinCh(Dmg, 20, 100))then
-			local Pos, State = self:GetPos(), self:GetState()
+			local Pos, State=self:GetPos(), self:GetState()
 			if(State == JMod.EZ_STATE_ARMED)then
 				--self:Detonate()
 			elseif(not(State == JMod.EZ_STATE_BROKEN))then
@@ -173,7 +173,7 @@ if(SERVER)then
 				VelCurve = VelCurve - 0.005
 			end
 		end
-		self:NextThink(CurTime() + .1)
+		self:NextThink(CurTime()+.1)
 		return true
 	end
 elseif(CLIENT)then
@@ -185,13 +185,13 @@ elseif(CLIENT)then
 		local State,Pos,Up,Right,Forward=self:GetDTInt(0),self:GetPos(),self:GetUp(),self:GetRight(),self:GetForward()
 		if (State==STATE_PARACHUTING)then
 			if(self.Parachute)then
-				local Vel = self:GetVelocity()
+				local Vel=self:GetVelocity()
 				if(Vel:Length()>0)then
 					local Dir=Vel:GetNormalized()
 					Dir=Dir+Vector(.01, 0, 0) -- stop the turn spasming
 					local Ang=Dir:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), 90)
-					self.Parachute:SetRenderOrigin(Pos + Up*6 + -Forward*6 + Right*5 + Dir*50*self.Parachute:GetModelScale())
+					self.Parachute:SetRenderOrigin(Pos+Up*6+-Forward*6+Right*5+Dir*50*self.Parachute:GetModelScale())
 					self.Parachute:SetRenderAngles(Ang)
 					self.Parachute:DrawModel()
 				end

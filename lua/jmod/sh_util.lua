@@ -134,7 +134,8 @@ function JMod.VisCheck(pos,targPos,sourceEnt)
 		mask=MASK_SOLID_BRUSHONLY
 	}).Hit
 end
-function JMod.CountResourcesInRange(pos,range,sourceEnt)
+function JMod.CountResourcesInRange(pos,range,sourceEnt,cache)
+	if(cache)then return cache end
 	pos=(sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local Results={}
 	for k,obj in pairs(ents.FindInSphere(pos,range or 150))do
@@ -142,14 +143,14 @@ function JMod.CountResourcesInRange(pos,range,sourceEnt)
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod.VisCheck(pos,obj,sourceEnt) then
-			local Typ = obj:GetResourceType()
+			local Typ=obj:GetResourceType()
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
 	end
 	return Results
 end
-function JMod.HaveResourcesToPerformTask(pos,range,requirements,sourceEnt)
-	local RequirementsMet,ResourcesInRange=true,JMod.CountResourcesInRange(pos,range,sourceEnt)
+function JMod.HaveResourcesToPerformTask(pos,range,requirements,sourceEnt,cache)
+	local RequirementsMet,ResourcesInRange=true,cache or JMod.CountResourcesInRange(pos,range,sourceEnt,cache)
 	for typ,amt in pairs(requirements)do
 		if(not((ResourcesInRange[typ])and(ResourcesInRange[typ]>=amt)))then
 			RequirementsMet=false
@@ -205,6 +206,6 @@ function JMod.TryCough(ent)
 	if Time > ent.EZcoughTime then
 		ent:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",75,math.random(90,110))
 		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
-		ent.EZcoughTime = CurTime() + math.random (.5, 1)
+		ent.EZcoughTime=CurTime()+math.random (.5, 1)
 	end
 end

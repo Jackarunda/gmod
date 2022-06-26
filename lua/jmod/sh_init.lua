@@ -39,6 +39,13 @@ function JMod.LinCh(num,low,high)
 	return num>=(low+(high-low)*math.Rand(0,1))
 end
 --
+function JMod.GetBlackBodyColor(fraction)
+	local R=fraction
+	local G=fraction^2
+	local B=fraction^3
+	return Color(R*255,G*255,B*255)
+end
+--
 function JMod.PlayersCanComm(listener,talker)
 	if(listener==talker)then return true end
 	if (engine.ActiveGamemode()=="sandbox") then

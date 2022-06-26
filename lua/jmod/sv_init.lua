@@ -1,4 +1,4 @@
-local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod + its content? (requires a restart upon change)")
+local force_workshop=CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
 
 if force_workshop:GetBool() then
     resource.AddWorkshop("1919689921")
@@ -57,6 +57,24 @@ hook.Add("AllowPlayerPickup","JMOD_PLAYERPICKUP",function(ply,ent)
 	if(ent.JModNoPickup)then return false end
 end)
 
+function JMod.ShouldDamageBiologically(ent)
+	if not(IsValid(ent))then return end
+	if(ent.JModDontIrradiate)then return end
+	if(ent:IsPlayer())then return ent:Alive() end
+	if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+		local Phys=ent:GetPhysicsObject()
+		if(IsValid(Phys))then
+			local Mat=Phys:GetMaterial()
+			if(Mat)then
+				if(Mat=="metal")then return false end
+				if(Mat=="default")then return false end
+			end
+		end
+		return ent:Health()>0
+	end
+	return false
+end
+
 local function ShouldVirusInfect(ent)
 	if not(IsValid(ent))then return false end
 	if(ent.EZvirus and ent.EZvirus.Immune)then return false end
@@ -88,6 +106,12 @@ function JMod.ViralInfect(ply,att)
 		NextFoodImmunityBoost=0,
 		NextAntibioticsImmunityBoost=0
 	}
+end
+
+function JMod.GeigerCounterSound(ply,intensity)
+	if(intensity<=.1 and math.random(1,2)==1)then return end
+	local Num=math.Clamp(math.Round(math.Rand(0,intensity)*15),1,10)
+	ply:EmitSound("snds_jack_gmod/geiger"..Num..".wav",55,math.random(95,105))
 end
 
 function JMod.TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
@@ -167,6 +191,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		filter=player.GetAll()[1]
 	})
 	if(AAA.Hit)then jprint("VALID") else jprint("INVALID") end
+	--]]
+	--[[
+	local ply=player.GetAll()[1]
+	local pos=ply:GetPos()
+	for k,v in pairs(ents.FindInSphere(pos,600))do
+		if(v.GetPhysicsObject)then
+			local Phys=v:GetPhysicsObject()
+			if(IsValid(Phys))then
+				local vec=(v:GetPos()-pos):GetNormalized()
+				Phys:ApplyForceCenter(-vec*400)
+			end
+		end
+	end
 	--]]
 	local Time=CurTime()
 	if(NextMainThink>Time)then return end
@@ -351,43 +388,6 @@ concommand.Add("jmod_force_lua_config_sync",function(ply,cmd,args)
 	net.WriteBit(true)
 	net.Broadcast()
 end, nil, "Manually forces the Lua Config for Jmod to sync.")
-
-hook.Add("JMod_CanWorkbenchBuild", "WBRestrictions", function(ply, workbench, itemName)
-    local kit = player_manager.GetPlayerClass(ply)
-    local pm = ply:GetModel()
-	print(pm)
-    local assaultpms = {"models/player/group03/male_01.mdl", "models/player/group03/male_02.mdl", "models/player/group03/male_03.mdl", "models/player/group03/male_04.mdl", "models/player/group03/male_05.mdl", "models/player/group03/male_06.mdl", "models/player/group03/female_01.mdl", "models/player/group03/female_02.mdl", "models/player/group03/female_03.mdl", "models/player/group03/female_04.mdl", "models/player/group03/female_05.mdl", "models/player/group03/female_06.mdl", "models/player/combine_soldier.mdl"}
-    local infantry = (table.HasValue(assaultpms, pm))
-    local elites = {
-		"models/player/camouflage_rebels/army_02.mdl", "models/player/camouflage_rebels/army_03.mdl", 
-		"models/player/camouflage_rebels/army_04.mdl", "models/player/camouflage_rebels/army_06.mdl",
-		"models/player/camouflage_rebels/army_09.mdl", "models/player/combine_super_soldier.mdl"
-	}
-	local elite = (table.HasValue(elites, pm))
-    local scoutpms = {"models/konnie/asapgaming/modernwarfare/grinchghillie.mdl", "models/combine_sniper.mdl"}
-    local ghillie = (table.HasValue(scoutpms, pm))
-    local strike = kit == "Officer" or kit == "Assault" or kit == "Breacher" or kit == "AntiTank"
-    local noatrforyou = (kit ~= "AntiTank") or elite
-    local cmbofficer = kit ~= "Officer" and ply:Team() == 2
-        
-    print(itemName, elite, kit)
-    if itemName == "Anti-Tank Rounds" and noatrforyou then return false, "This recipe is not craftable by Elites or those without Anti-Tank kits! Order munitions instead." end 
-    if itemName == "Gauss Clip" and kit ~= "Officer" and #ents.FindByClass("rock") == 0 then return false, "You are either not an officer or this map does not have minable rocks!" end
-    if itemName == "Signal Resupply" and not cmbofficer and ply:HasWeapon("weapon_grenade_flare") then return false, "Failed to craft Flares; please read description!" end
-    if itemName == "Kit Essentials Resupply" and kit == nil then return false, "Failed to craft Kit Essentials; please read description!" end
-    if itemName == "Strike Team Resupply" and not strike and not (infantry or elite) or (ply:HasWeapon("weapon_grenade_incendiary") or ply:HasWeapon("weapon_grenade_stun")) then return false, "Failed to craft Strike Team Resupply; please read description!" end
-    if itemName == "Timed Bomb Resupply" and kit ~= "Breacher" then return false, "Failed to craft Time Bomb; please read description!" end
-    if itemName == "Basilisk Auto Mortar Resupply" and not (ply:Team() == 1 and kit == "Officer") or (ply:HasWeapon("arccw_eq_mortar")) then return false, "Failed to craft BAM Resupply, please read description!" end
-    if itemName == "Mine Resupply" and kit ~= "Sniper" and kit ~= "Marksman" and not ghillie or (ply:HasWeapon("weapon_grenade_mine") or ply:HasWeapon("weapon_slam")) then return false, "Failed to craft mines; please read description!" end
-    if itemName == "Drone Radar" and ply:HasWeapon("weapon_drr_radar") then return false, "You already have a Drone Radar!" end
-    if itemName == "Grappling Knife(CSS)" and ply:HasWeapon("weapon_rope_knife") then return false, "You already have a Grappling Knife!" end
-    if itemName == "Drone Diesel Can" and ply:HasWeapon("weapon_drr_fuelcan") then return false, "You already have a Drone Diesel Can!" end
-    if itemName == "Arsonist Gas Can" and ply:HasWeapon("weapon_gascan_limited") then return false, "You already have a Arsonist Gas Can!" end
-   	if itemName == "Gatekeeper" and ply:HasWeapon("arccw_eq_mapaps") then return false, "You already have a Gatekeeper!" end
-    if itemName == "Biological Grenade" and ply:HasWeapon("weapon_grenade_radiation") then return false, "You already have a Bio-Nade!" end
-    if itemName == "Sticky Grenade" and ply:HasWeapon("weapon_grenade_sticky") then return false, "You already have a Sticky Nade!" end
-    if ents.GetCount() >= 4096 and itemName ~= "Gauss Clip" then return false, "Too many entities on the map(4096)! To fix this problem, manage friendly entities appropriately and destroy enemy entities wherever possible. Say !ff to monitor progress." end
-end)
 
 concommand.Add("jacky_trace_debug",function(ply)
 	if not(GetConVar("sv_cheats"):GetBool())then return end

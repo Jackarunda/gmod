@@ -1,14 +1,14 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.PrintName = "EZ Frag Grenade"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Spawnable = true
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.PrintName="EZ Frag Grenade"
+ENT.Category="JMod - EZ Explosives"
+ENT.Spawnable=true
 ENT.JModPreferredCarryAngles=Angle(0, -140, 0)
-ENT.Model = "models/jmodels/explosives/grenades/fragnade/w_fragjade.mdl"
-ENT.Material = "models/mats_jack_nades/gnd"
-ENT.SpoonScale = 2
+ENT.Model="models/jmodels/explosives/grenades/fragnade/w_fragjade.mdl"
+ENT.Material="models/mats_jack_nades/gnd"
+ENT.SpoonScale=2
 
 
 if(SERVER)then
@@ -39,7 +39,7 @@ if(SERVER)then
 		self:Remove()
 	end
 elseif(CLIENT)then
-	local GlowSprite = Material("sprites/mat_jack_circle")
+	local GlowSprite=Material("sprites/mat_jack_circle")
 	function ENT:Draw()
 		self:DrawModel()
 		-- sprites for calibrating the lethality/casualty radius

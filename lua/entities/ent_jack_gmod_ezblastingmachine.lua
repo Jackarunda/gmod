@@ -23,15 +23,15 @@ if(SERVER)then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		
-		self.DieTime = nil
+		self.DieTime=nil
 		self:SetFired(false)
 		if self:GetPhysicsObject():IsValid() then
 			self:GetPhysicsObject():SetMass(10)
 			self:GetPhysicsObject():Wake()
 		end
 		if istable(WireLib) then
-			--self.Inputs = WireLib.CreateInputs(self, {"Fire"}, {"Plunges the plunger"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"Fired or not"})
+			--self.Inputs=WireLib.CreateInputs(self, {"Fire"}, {"Plunges the plunger"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"Fired or not"})
 		end
 	end
 	
@@ -48,7 +48,7 @@ if(SERVER)then
 			return
 		end
 		
-		self.Owner = activator
+		self.Owner=activator
 		if activator:KeyDown(JMod.Config.AltFunctionKey) then
 			self:EmitSound("snds_jack_gmod/plunger.wav")
 			self:SetFired(true)
@@ -57,7 +57,7 @@ if(SERVER)then
 					self.Satchel:Detonate()
 				end
 			end)
-			self.DieTime = CurTime() + 10
+			self.DieTime=CurTime()+10
 		else
 			activator:PickupObject(self)
 		end

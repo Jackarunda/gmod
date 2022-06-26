@@ -52,7 +52,7 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self:SetFuel(math.random(1500,2000))
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Ignite"}, {"Ignites flare"})
+			self.Inputs=WireLib.CreateInputs(self, {"Ignite"}, {"Ignites flare"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -64,7 +64,7 @@ if(SERVER)then
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>25)then
 				self.Entity:EmitSound("Drywall.ImpactHard")
-				if(self:GetDTBool(0))then
+				if(self:GetState()==STATE_BURNIN)then
 					local Dmg=DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
 					Dmg:SetAttacker(self.Owner or self)
@@ -142,11 +142,10 @@ if(SERVER)then
 				Fsh:SetOrigin(Pos+Up*10)
 				Fsh:SetScale((Fuel>150 and .75) or .25)
 				Fsh:SetNormal(Up)
-				if(self:WaterLevel()>0)then
-					util.Effect("eff_jack_fuzeburn",Fsh,true,true)
-				else
-					util.Effect("eff_jack_gmod_fuzeburn_smoky",Fsh,true,true)
-				end
+				Fsh:SetStart(self:GetVelocity())
+				util.Effect("eff_jack_gmod_flareburn",Fsh,true,true)
+				-- this requires an attachment to be spec'd on the entity, and i can't be assed
+				--ParticleEffect("gf2_fountain_02_regulus_b_main",Pos,self:GetAngles(),self)
 			end
 			for k,v in pairs(ents.FindInSphere(Pos,30))do
 				if(v.JModHighlyFlammableFunc)then
@@ -168,22 +167,11 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Cap=JMod.MakeModel(self,"models/jmodels/explosives/grenades/sticknade/stick_grenade_cap.mdl",nil,2)
 	end
-	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	function ENT:Draw()
-		self:DrawModel()
+	function ENT:Think()
 		local State,Fuel,Pos,Ang=self:GetState(),self:GetFuel(),self:GetPos(),self:GetAngles()
-		local Up,Right,Forward,Mult,Col=Ang:Up(),Ang:Right(),Ang:Forward(),(Fuel>150 and 1) or .5,self:GetColor()
-		local R,G,B=math.Clamp(Col.r+20,0,255),math.Clamp(Col.g+20,0,255),math.Clamp(Col.b+20,0,255)
 		if(State==STATE_BURNIN)then
-			render.SetMaterial(GlowSprite)
-			local EyeVec=EyePos()-Pos
-			local EyeDir,Dist=EyeVec:GetNormalized(),EyeVec:Length()
-			local DistFrac=math.Clamp(Dist,0,500)/500
-			render.DrawSprite(Pos+Up*8+EyeDir*10,200*Mult,200*Mult,Color(R,G,B,200*DistFrac))
-			for i=1,10 do
-				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),20*Mult-i,20*Mult-i,Color(R,G,B,math.random(150,255)*DistFrac))
-				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),10*Mult-i,10*Mult-i,Color(255,255,255,math.random(150,255)*DistFrac))
-			end
+			local Up,Right,Forward,Mult,Col=Ang:Up(),Ang:Right(),Ang:Forward(),(Fuel>150 and 1) or .5,self:GetColor()
+			local R,G,B=math.Clamp(Col.r+20,0,255),math.Clamp(Col.g+20,0,255),math.Clamp(Col.b+20,0,255)
 			local DLight=DynamicLight(self:EntIndex())
 			if(DLight)then
 				DLight.Pos=Pos+Up*10+Vector(0,0,20)
@@ -195,6 +183,24 @@ elseif(CLIENT)then
 				DLight.Decay=15000
 				DLight.DieTime=CurTime()+.3
 				DLight.Style=0
+			end
+		end
+	end
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	function ENT:Draw()
+		self:DrawModel()
+		local State,Fuel,Pos,Ang=self:GetState(),self:GetFuel(),self:GetPos(),self:GetAngles()
+		local Up,Right,Forward,Mult,Col=Ang:Up(),Ang:Right(),Ang:Forward(),(Fuel>150 and 1) or .5,self:GetColor()
+		local R,G,B=math.Clamp(Col.r+20,0,255),math.Clamp(Col.g+20,0,255),math.Clamp(Col.b+20,0,255)
+		if(State==STATE_BURNIN)then
+			render.SetMaterial(GlowSprite)
+			local EyeVec=EyePos()-Pos
+			local EyeDir,Dist=EyeVec:GetNormalized(),EyeVec:Length()
+			local DistFrac=math.Clamp(Dist,0,400)/400
+			render.DrawSprite(Pos+Up*8+EyeDir*10,200*Mult,200*Mult,Color(R,G,B,255*DistFrac))
+			for i=1,10 do
+				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),20*Mult-i,20*Mult-i,Color(R,G,B,math.random(100,200)))
+				render.DrawSprite(Pos+Up*(8+i)*Mult+VectorRand(),10*Mult-i,10*Mult-i,Color(255,255,255,math.random(100,200)))
 			end
 		elseif(State==STATE_OFF)then
 			local CapAng=Ang:GetCopy()

@@ -103,7 +103,7 @@ hook.Add("Think","JMod_RADIO_THINK",function()
 					Eff:SetOrigin(DropPos)
 					Eff:SetStart(DropVelocity)
 					util.Effect("eff_jack_gmod_jetflyby",Eff,true,true)
-					local DeliveryItems=JMod.Config.RadioSpecs.AvailablePackages[station.deliveryType]
+					local DeliveryItems=JMod.Config.RadioSpecs.AvailablePackages[station.deliveryType].results
 					timer.Simple(.9,function()
 						local Box=ents.Create("ent_jack_aidbox")
 						Box:SetPos(DropPos)
@@ -163,15 +163,15 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 		for id,data in pairs(ply.EZarmor.items)do
 			local Info=JMod.ArmorTable[data.name]
 			if((Info.eff)and(Info.eff.teamComms))then
-				local SubtractAmt = JMod.Config.ArmorDegredationMult / 2
+				local SubtractAmt=JMod.Config.ArmorDegredationMult/2
 				data.chrg.power=math.Clamp(data.chrg.power-SubtractAmt,0,9e9)
 				if(data.chrg.power<=Info.chrg.power*.25)then JMod.EZarmorWarning(ply,"armor's electrical charge is almost depleted!") end
 			end
 		end
-		local bestradio = nil
+		local bestradio=nil
 		for _, v in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
 			if v:UserIsAuthorized(ply) and (not bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
-				bestradio = v
+				bestradio=v
 			end
 		end
 		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then
@@ -181,7 +181,7 @@ hook.Add("PlayerSay","JMod_PLAYERSAY",function(ply,txt)
 end)
 
 function JMod.EZradioEstablish(transceiver,teamID)
-	local AlliedStations = {}
+	local AlliedStations={}
 	for k,v in pairs(JMod.EZ_RADIO_STATIONS) do
 		if v.teamID == teamID then 
 			table.insert(AlliedStations,k)
@@ -191,7 +191,7 @@ function JMod.EZradioEstablish(transceiver,teamID)
 		table.insert(JMod.EZ_RADIO_STATIONS,CreateRadioStation(teamID))
 		table.insert(AlliedStations,#JMod.EZ_RADIO_STATIONS)
 	end
-	local ChosenStation = nil
+	local ChosenStation=nil
 	for k,id in pairs(AlliedStations)do
 		local Taken=false
 		for key,radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio"))do
@@ -205,9 +205,9 @@ function JMod.EZradioEstablish(transceiver,teamID)
 	end
 	if not(ChosenStation)then
 		for k,v in pairs(AlliedStations) do
-			local station = JMod.EZ_RADIO_STATIONS[v]
+			local station=JMod.EZ_RADIO_STATIONS[v]
 			if station.state == JMod.EZ_STATION_STATE_READY then
-				ChosenStation = v
+				ChosenStation=v
 				break
 			end
 		end
@@ -294,11 +294,10 @@ local function StartDelivery(pkg,transceiver,id,bff,ply)
 	local Station=JMod.EZ_RADIO_STATIONS[id]
 	local Time=CurTime()
 	local DeliveryTime,Pos=math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult*math.Rand(30,60)),ply:GetPos()
-	
-	print("bepis",transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
-	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
-	DeliveryTime = newTime or DeliveryTime
-	Pos = newPos or Pos
+
+	local newTime, newPos=hook.Run("JMod_RadioDelivery", transceiver.Owner, transceiver, pkg, DeliveryTime, Pos)
+	DeliveryTime=newTime or DeliveryTime
+	Pos=newPos or Pos
 
 	JMod.Hint(transceiver.Owner, "aid wait")
 	Station.state=JMod.EZ_STATION_STATE_DELIVERING
@@ -318,7 +317,7 @@ function JMod.EZradioRequest(transceiver,id,ply,pkg,bff)
 	NotifyAllRadios(id) -- do a notify to update all radio states
 	transceiver.BFFd=bff
 	
-	local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
+	local override, msg=hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
 	if override == false then
 		return msg or "negative on that request."
 	end
