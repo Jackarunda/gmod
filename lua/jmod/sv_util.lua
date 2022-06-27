@@ -427,7 +427,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 
 	ent:FireBullets({
 		Attacker=Attacker,
-		Damage=dmg,
+		Damage=dmg*2,
 		Force=dmg,
 		Num=1,
 		Tracer=1,

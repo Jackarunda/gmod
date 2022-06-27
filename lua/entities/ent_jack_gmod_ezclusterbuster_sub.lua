@@ -33,7 +33,7 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_OFF)
-		timer.Simple(1,function()
+		timer.Simple(math.Rand(.5,1.2),function()
 			if(IsValid(self))then self:StartParachuting() end
 		end)
 	end
@@ -58,7 +58,7 @@ if(SERVER)then
 		Eff:SetNormal(self:GetRight())
 		Eff:SetScale(2)
 		util.Effect("eff_jack_gmod_rocketthrust",Eff,true,true)
-		timer.Simple(1,function()
+		timer.Simple(1.2,function()
 			if(IsValid(self))then self:Detonate() end
 		end)
 	end

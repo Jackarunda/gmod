@@ -25,7 +25,7 @@ if(SERVER)then
 		end)
 		---
 		self.Owner=self.Owner or game.GetWorld()
-		self.NextSeek=CurTime()+math.Rand(.05,.5)
+		self.NextSeek=CurTime()+math.Rand(1,3)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
@@ -52,7 +52,7 @@ if(SERVER)then
 		util.ScreenShake(Pos,99999,99999,.1,1000)
 		if(dir)then
 			-- todo: EFP visual effect
-			JMod.RicPenBullet(self,Pos,dir,(dmg or 1000),true,true)
+			JMod.RicPenBullet(self,Pos,dir,(dmg or 1400),true,true)
 		end
 		self:Remove()
 	end
