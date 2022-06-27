@@ -184,6 +184,13 @@ end
 local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
 	--[[
+	if(A<CurTime())then
+		A=CurTime()+1
+		JMod.Sploom(game.GetWorld(),Vector(0,0,0),10)
+		JMod.FragSplosion(game.GetWorld(),Vector(0,0,0),3000,80,5000,game.GetWorld())
+	end
+	--]]
+	--[[
 	local Pos=ents.FindByClass("sky_camera")[1]:GetPos()
 	local AAA=util.TraceLine({
 		start=Pos+Vector(0,0,1000),

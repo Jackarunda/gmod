@@ -1,12 +1,12 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.Author="Jackarunda"
+ENT.Author="AdventureBoots, Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="A bomb that deploys seeking anti-tank skeets"
-ENT.PrintName="EZ Cluster Buster"
-ENT.Spawnable=false
-ENT.AdminSpawnable=false
+ENT.PrintName="EZ Cluster Buster" -- this is effectively a miniature CBU-97
+ENT.Spawnable=true
+ENT.AdminOnly=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ---
@@ -54,36 +54,32 @@ if(SERVER)then
 			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
 		end
 	end
-	function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate" and value ~= 0) then
+	function ENT:TriggerInput(iname,value)
+		if(iname=="Detonate" and value~=0) then
 			self:Detonate()
-		elseif (iname == "Arm" and value) > 0 then
-			self:SetState(STATE_ARMED)
-		elseif (iname == "Arm" and value == 0) then
-			self:SetState(STATE_OFF)
 		end
 	end
-	function ENT:PhysicsCollide(data, physobj)
+	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
-		if(data.DeltaTime > 0.2)then
-			if(data.Speed > 50)then
+		if(data.DeltaTime>.2)then
+			if(data.Speed>50)then
 				self:EmitSound("Canister.ImpactHard")
 			end
 			local DetSpd=500
-			if((data.Speed>DetSpd)and(self:GetState() == STATE_ARMED))then
+			if((data.Speed>DetSpd)and(self:GetState()==STATE_ARMED))then
 				self:Detonate()
 				return
 			end
-			if(data.Speed > 2000)then
+			if(data.Speed>1500)then
 				self:Break()
 			end
 		end
 	end
 	function ENT:Break()
-		if(self:GetState() == STATE_BROKEN)then return end
+		if(self:GetState()==STATE_BROKEN)then return end
 		self:SetState(STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav", 70,math.random(80, 120))
-		for i=1, 20 do
+		for i=1,20 do
 			self:DamageSpark()
 		end
 		SafeRemoveEntityDelayed(self, 10)
@@ -140,7 +136,7 @@ if(SERVER)then
 		if(self.Exploded)then return end
 		self.Exploded=true
 		local Att=self.Owner or game.GetWorld()
-		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
+		local Vel,Pos,Ang=self:GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
 		local Up,Right,Forward,CylinderAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
 		self:Remove()
 		JMod.Sploom(Att,Pos,50)
@@ -148,17 +144,12 @@ if(SERVER)then
 			for i=1,4 do
 				local Bomblet=ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet,Att)
-				Bomblet:SetPos(Pos+VectorRand()*math.random(1,100))
+				Bomblet:SetPos(Pos+VectorRand()*10)
 				Bomblet:SetAngles(CylinderAng)
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				Bomblet:GetPhysicsObject():SetVelocity(Vel+VectorRand()*math.random(1,200))
-			end)
-		end
-		timer.Simple(1.5, function()
-			if (self:IsValid()) then
-				self:Remove()
-				JMod.Sploom(Att, self:LocalToWorld(self:OBBCenter()), 50)
+				local RandVec=Vector(math.random(-1500,1500),math.random(-1500,1500),500)
+				Bomblet:GetPhysicsObject():SetVelocity(Vel+RandVec)
 			end
 		end)
 	end
@@ -183,7 +174,7 @@ if(SERVER)then
 		else
 			self.FreefallTicks=0
 		end
-		JMod.AeroDrag(self, self:GetForward(), 4)
+		JMod.AeroDrag(self, self:GetForward())
 		self:NextThink(CurTime()+.1)
 		return true
 	end

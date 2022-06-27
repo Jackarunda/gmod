@@ -564,7 +564,7 @@ function JMod.ShouldAllowControl(self, ply)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
-function JMod.ShouldAttack(self, ent, vehiclesOnly)
+function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
 	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
@@ -587,7 +587,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 				return ent:GetMaxHealth() > 0 and ent:Health() > 0
 			end
 		else
-			return false
+			return peaceWasNeverAnOption or false
 		end
 	elseif (ent:IsVehicle()) then
 		PlayerToCheck=ent:GetDriver()
@@ -616,7 +616,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 		return PlayerToCheck:Alive()
 	end
 
-	return false
+	return peaceWasNeverAnOption or false
 end
 
 function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)

@@ -1,25 +1,15 @@
 -- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
-ENT.Author="Jackarunda"
+ENT.Author="AdventureBoots, Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="The smart skeet submunition for the EZ Cluster Buster"
-ENT.PrintName="Cluster Buster submunition"
+ENT.PrintName="buster skeet"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.EZclusterBusterMunition=true
 ---
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*15
-		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
-		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
-		ent:Spawn()
-		ent:Activate()
-		return ent
-	end
 	function ENT:Initialize()
 		self:SetModel("models/xqm/cylinderx1.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")
@@ -30,75 +20,82 @@ if(SERVER)then
 		self:DrawShadow(true)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(50)
+			self:GetPhysicsObject():SetMass(40)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.Owner = self.Owner or game.GetWorld()
-		---
-		self:SetState(STATE_OFF)
-		timer.Simple(0.25, function()
-			if(IsValid(self))then self:StartSeeking() end
-		end)
-	end
-	function ENT:StartSeeking()
-		self:SetState(STATE_SEEKING)
-		--self:SetVelocity(self:GetForward()*1000)
-		Phys = self:GetPhysicsObject()
-		Forward = self:GetForward()
-		Phys:ApplyForceCenter(Forward*2000)
-		timer.Simple(4, function ()
-			if(self:IsValid()) then
-				--local WarcrimeChance = math.Round(math.Rand(0, 1))
-				--if(WarcrimeChance == 1) then
-				--	self:Break()
-				--else
-					self:Detonate()
-				--end
-			end
-		end)
-	end
-	function ENT:Break()
-		self:SetState(STATE_BROKEN)
-		SafeRemoveEntityDelayed(self, 10)
+		self.Owner=self.Owner or game.GetWorld()
+		self.NextSeek=CurTime()+math.Rand(.05,.5)
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if not(IsValid(self))then return end
 		if(data.HitEntity.EZclusterBusterMunition)then return end
 		if(data.DeltaTime>0.2 and data.Speed>25)then
 			self:Detonate()
-			--self:Break()
 		end
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self.Exploded)then return end
-		if(dmginfo:GetInflictor() == self)then return end
+		if(dmginfo:GetInflictor()==self)then return end
 		self:TakePhysicsDamage(dmginfo)
 		local Dmg=dmginfo:GetDamage()
-		if(JMod.LinCh(Dmg, 20, 100))then
-			--self:Detonate()
+		if(JMod.LinCh(Dmg,10,50))then
+			self:Detonate()
 		end
 	end
-	function ENT:Detonate(delay, dmg)
+	function ENT:Detonate(dir)
 		if(self.Exploded)then return end
-		self.Exploded = true
-		local Att = self.Owner or game.GetWorld()
-		local Vel,Pos,Ang=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
-		JMod.Sploom(Att,Pos,50)
-		--JMod.RicPenBullet(self, SelfPos, Dir,(dmg or 600)*JMod.Config.MinePower, true, true)
+		self.Exploded=true
+		local Att=self.Owner or game.GetWorld()
+		local Pos=self:GetPos()
+		JMod.Sploom(Att,Pos,100)
+		util.ScreenShake(Pos,99999,99999,.1,1000)
+		if(dir)then
+			-- todo: EFP visual effect
+			JMod.RicPenBullet(self,Pos,dir,(dmg or 1000),true,true)
+		end
 		self:Remove()
 	end
-
-	local VelCurve = 1
+	local BlackList={"prop_","func_"}
+	local function IsBlackListed(className)
+		for k,v in pairs(BlackList)do
+			if(string.find(className,v))then return true end
+		end
+		return false
+	end
+	function ENT:CanSee(ent)
+		if not(IsValid(ent))then return false end
+		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())+vector_up
+		local Tr=util.TraceLine({
+			start=SelfPos,
+			endpos=TargPos,
+			filter={self,ent},
+			mask=MASK_SHOT+MASK_WATER
+		})
+		return not Tr.Hit
+	end
 	function ENT:Think()
-		local Time = CurTime()
-		local Phys = self:GetPhysicsObject()
-		local Up,Forward,Right = self:GetUp(), self:GetForward(), self:GetRight()
-		if(self:GetState() == STATE_SEEKING)then
-			--Phys:ApplyForceCenter(Vector(0, 0, 1200*VelCurve))
-			--Phys:ApplyForceCenter(Forward*2000)
-			VelCurve = VelCurve - 0.0005
-			
+		local Time=CurTime()
+		if(self.NextSeek<Time)then
+			local Pos,Targets=self:GetPos(),{}
+			for k,v in pairs(ents.FindInCone(Pos,Vector(0,0,-1),2000,math.cos(math.rad(45))))do
+				local Phys,Class=v:GetPhysicsObject(),v:GetClass()
+				if((IsValid(Phys))and not(v==self)and not(Class==self.ClassName)and not(IsBlackListed(Class)))then
+					if((v:IsPlayer())or(v:IsNPC())or(v:IsVehicle()))then
+						if(self:CanSee(v) and JMod.ShouldAttack(self,v,nil,true))then
+							table.insert(Targets,v)
+						end
+					end
+				end
+			end
+			if(#Targets>0)then
+				local Target=table.Random(Targets)
+				local SelfPos,Pos=self:GetPos(),Target:LocalToWorld(Target:OBBCenter())
+				local Vec=Pos-SelfPos
+				local Dir,Dist=Vec:GetNormalized(),Vec:Length()
+				Dir=(Dir+VectorRand()*.002):GetNormalized() -- inaccuracy
+				self:Detonate(Dir)
+			end
 		end
 		self:NextThink(Time+.1)
 		return true
