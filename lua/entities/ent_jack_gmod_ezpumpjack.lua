@@ -3,12 +3,13 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Oil Derrick"
+ENT.PrintName="EZ Pumpjack"
 ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true -- temporary, until Phase 2 of the econ update
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={"power","parts"}
+ENT.WhitelistedResources = {"water", "oil"}
 local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -42,6 +43,32 @@ if(SERVER)then
 		self.Durability=300
 		-- TODO: make upgradable
 	end
+	function ENT:GetClosestDeposit()
+		local SelfPos=self:GetPos()
+		-- first, figure out which deposits we are inside of, if any
+		local DepositsInRange={}
+		for k,v in pairs(JMod.NaturalResourceTable)do
+			-- Make sure the resource is on the whitelist
+			local Dist=SelfPos:Distance(v.pos)
+				-- store they desposit's key if we're inside of it
+			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ))then 
+				table.insert(DepositsInRange,k) 
+			end
+		end
+		-- now, among all the deposits we are inside of, let's find the closest one
+		local ClosestDeposit,ClosestRange=nil,9e9
+		if(#DepositsInRange>0)then
+			for k,v in pairs(DepositsInRange)do
+				local DepositInfo=JMod.NaturalResourceTable[v]
+				local Dist=SelfPos:Distance(DepositInfo.pos)
+				if(Dist<ClosestRange)then
+					ClosestDeposit=v
+					ClosestRange=Dist
+				end
+			end
+		end
+		return ClosestDeposit
+	end
 	function ENT:TryPlant()
 		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
 		if((Tr.Hit)and(Tr.HitWorld))then
@@ -52,9 +79,10 @@ if(SERVER)then
 			local GroundIsSolid=true
 			for i=1,50 do
 				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-				if(bit.band(util.PointContents(v.pos),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
+				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
 			end
-			if(GroundIsSolid)then
+			local depotKey = self:GetClosestDeposit()
+			if(GroundIsSolid) and(depotKey)then
 				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)
 				self:SetState(STATE_OFF)
 			else
@@ -93,6 +121,7 @@ if(SERVER)then
 			self:TurnOff()
 		end
 	end
+
 	function ENT:Think()
 		if not(IsValid(self.Weld))then
 			if(self:GetState()>0)then self:SetState(STATE_INOPERABLE) end
@@ -108,23 +137,27 @@ if(SERVER)then
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
 			self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
-			self:ConsumeElectricity()
+			--self:ConsumeElectricity()
 			if(self:GetProgress()>=100)then
-				self:SpawnOil()
+				self:SpawnLiquid()
 				self:SetProgress(0)
 			end
 		end
 		self:NextThink(CurTime()+1)
 		return true
 	end
-	function ENT:SpawnOil()
+	function ENT:SpawnLiquid()
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local Oil=ents.Create("ent_jack_gmod_ezrawresource_oil")
-		Oil:SetPos(SelfPos+Forward*115-Right*90)
-		Oil:Spawn()
-		JMod.Owner(self.Owner)
-		Oil:Activate()
+		local depotKey = self:GetClosestDeposit()
+		if (depotKey) then
+			local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[depotKey].typ])
+			Liquid:SetPos(SelfPos+Forward*115-Right*90)
+			Liquid:Spawn()
+			JMod.Owner(self.Owner)
+			Liquid:Activate()
+		end
 	end
+
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
