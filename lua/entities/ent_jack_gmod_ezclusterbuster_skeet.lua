@@ -11,7 +11,7 @@ ENT.EZclusterBusterMunition=true
 ---
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/xqm/cylinderx1.mdl")
+		self:SetModel("models/props_phx/wheels/magnetic_small_base.mdl")
 		self:SetMaterial("phoenix_storms/Future_vents")
 		--self:SetModelScale(1.25,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -19,7 +19,7 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		---
-		timer.Simple(.01,function()
+		timer.Simple(0,function()
 			self:GetPhysicsObject():SetMass(40)
 			self:GetPhysicsObject():Wake()
 		end)
@@ -51,8 +51,12 @@ if(SERVER)then
 		JMod.Sploom(Att,Pos,100)
 		util.ScreenShake(Pos,99999,99999,.1,1000)
 		if(dir)then
-			-- todo: EFP visual effect
-			JMod.RicPenBullet(self,Pos,dir,(dmg or 1400),true,true)
+			local Eff=EffectData()
+			Eff:SetOrigin(Pos)
+			Eff:SetScale(1)
+			Eff:SetNormal(dir)
+			util.Effect("eff_jack_gmod_efpburst",Eff,true,true)
+			JMod.RicPenBullet(self,Pos,dir,1000,true,true)
 		end
 		self:Remove()
 	end
@@ -93,7 +97,7 @@ if(SERVER)then
 				local SelfPos,Pos=self:GetPos(),Target:LocalToWorld(Target:OBBCenter())
 				local Vec=Pos-SelfPos
 				local Dir,Dist=Vec:GetNormalized(),Vec:Length()
-				Dir=(Dir+VectorRand()*.002):GetNormalized() -- inaccuracy
+				Dir=(Dir+VectorRand()*.03):GetNormalized() -- inaccuracy
 				self:Detonate(Dir)
 			end
 		end

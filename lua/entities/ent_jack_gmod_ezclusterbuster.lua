@@ -137,19 +137,19 @@ if(SERVER)then
 		self.Exploded=true
 		local Att=self.Owner or game.GetWorld()
 		local Vel,Pos,Ang=self:GetVelocity(),self:LocalToWorld(self:OBBCenter()),self:GetAngles()
-		local Up,Right,Forward,CylinderAng=Ang:Up(),Ang:Right(),Ang:Forward(),Ang:GetCopy()
+		local Up,Right,Forward=Ang:Up(),Ang:Right(),Ang:Forward()
 		self:Remove()
 		JMod.Sploom(Att,Pos,50)
 		timer.Simple(0,function()
+			local SpawnDirs={Vector(-1,0,0),Vector(1,0,0),Vector(0,-1,0),Vector(0,1,0)}
 			for i=1,4 do
 				local Bomblet=ents.Create("ent_jack_gmod_ezclusterbuster_sub")
 				JMod.Owner(Bomblet,Att)
-				Bomblet:SetPos(Pos+VectorRand()*10)
-				Bomblet:SetAngles(CylinderAng)
+				Bomblet:SetPos(Pos+SpawnDirs[i]*30)
+				Bomblet:SetAngles(VectorRand():Angle())
 				Bomblet:Spawn()
 				Bomblet:Activate()
-				local RandVec=Vector(math.random(-1500,1500),math.random(-1500,1500),500)
-				Bomblet:GetPhysicsObject():SetVelocity(Vel+RandVec)
+				Bomblet:GetPhysicsObject():SetVelocity(Vel+SpawnDirs[i]*700+Vector(0,0,math.random(100,200)))
 			end
 		end)
 	end
@@ -167,8 +167,8 @@ if(SERVER)then
 		local Phys=self:GetPhysicsObject()
 		if((self:GetState() == STATE_ARMED)and(Phys:GetVelocity():Length() > 400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
 			self.FreefallTicks=self.FreefallTicks+1
-			if(self.FreefallTicks >= 10)then
-				local Tr=util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*5000, self)
+			if(self.FreefallTicks >= 5)then
+				local Tr=util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized()*4000, self)
 				if(Tr.Hit)then self:Detonate() end
 			end
 		else

@@ -448,7 +448,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	local AVec, IPos, TNorm, SMul=initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
 
 	if (doBlasts) then
-		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/3, dmg/4)
+		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/6, dmg/4)
 
 		timer.Simple(0, function()
 			local Tr=util.QuickTrace(IPos+TNorm, -TNorm*20)
@@ -511,7 +511,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 			})
 
 			if (doBlasts) then
-				util.BlastDamage(ent, Attacker, SearchPos+AVec*2, dmg/2, dmg/4)
+				util.BlastDamage(ent, Attacker, SearchPos+AVec*2, dmg/4, dmg/4)
 
 				timer.Simple(0, function()
 					local Tr=util.QuickTrace(SearchPos+AVec, -AVec*20)
