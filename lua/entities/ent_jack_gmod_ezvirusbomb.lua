@@ -49,8 +49,8 @@ if(SERVER)then
 		self:SetState(STATE_SEALED)
 		self.ContainedGas=20
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"0 sealed \n 1 ticking \n 2 venting"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"0 sealed \n 1 ticking \n 2 venting"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -123,7 +123,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State,Time=self:GetState(),CurTime()
 		if(State==STATE_TICKING)then
-			self:EmitSound("snd_jack_metallicclick.wav",55,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_VENTING)then

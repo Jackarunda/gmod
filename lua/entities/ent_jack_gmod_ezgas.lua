@@ -7,17 +7,17 @@ ENT.IconOverride="materials/ez_resource_icons/gas.png"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.GAS
-ENT.JModPreferredCarryAngles = Angle(0,180,0)
-ENT.Model = "models/jmodels/explosives/props_explosive/explosive_butane_can.mdl"
-ENT.Material = "models/shiny"
-ENT.Color = Color(100,100,100)
-ENT.ModelScale = 1
-ENT.Mass = 20
-ENT.ImpactNoise1 = "Canister.ImpactHard"
-ENT.DamageThreshold = 80
-ENT.BreakNoise = "Metal_Box.Break"
-ENT.Hint = nil
+ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.GAS
+ENT.JModPreferredCarryAngles=Angle(0,180,0)
+ENT.Model="models/jmodels/explosives/props_explosive/explosive_butane_can.mdl"
+ENT.Material="models/shiny"
+ENT.Color=Color(100,100,100)
+ENT.ModelScale=1
+ENT.Mass=20
+ENT.ImpactNoise1="Canister.ImpactHard"
+ENT.DamageThreshold=80
+ENT.BreakNoise="Metal_Box.Break"
+ENT.Hint=nil
 ---
 if(SERVER)then
 	function ENT:UseEffect(pos,ent,destructive)
@@ -39,7 +39,7 @@ if(SERVER)then
 			end
 		end
 		if vFireInstalled and math.random() <= 0.05 then
-			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand() * math.random(300, 500))
+			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand()*math.random(300, 500))
 		end
 	end
 	function ENT:AltUse(ply)

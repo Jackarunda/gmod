@@ -164,6 +164,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:ConsumeElectricity(amt)
+		if not(self.GetElectricity)then return end
 		amt=((amt or .2)/(self.ElectricalEfficiency or 1)^.5)/2
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)

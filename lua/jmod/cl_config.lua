@@ -1,20 +1,20 @@
-JMod.ClientConfig = JMod.ClientConfig or {}
+JMod.ClientConfig=JMod.ClientConfig or {}
 local function InsertEmptyConfig(Tab,IP)
-	Tab[IP] = {
-		WorkbenchFavs = {},
-		ToolboxFavs = {},
-		AidRadioFavs = {}
+	Tab[IP]={
+		WorkbenchFavs={},
+		ToolboxFavs={},
+		AidRadioFavs={}
 	}
 end
 local function PlayerConnectClient()
-	local SinglePlayer = game.SinglePlayer()
-	local IP = game.GetIPAddress()
-	if SinglePlayer then IP = "SinglePlayer" end
-	local filename = "jmod_cl_config.txt"
-	local Here = file.Exists(filename,"DATA")
+	local SinglePlayer=game.SinglePlayer()
+	local IP=game.GetIPAddress()
+	if SinglePlayer then IP="SinglePlayer" end
+	local filename="jmod_cl_config.txt"
+	local Here=file.Exists(filename,"DATA")
 	local AllConfigs={}
 	if Here then
-		local Contents = file.Read(filename)
+		local Contents=file.Read(filename)
         AllConfigs=util.JSONToTable(Contents)
     else
 		InsertEmptyConfig(AllConfigs,IP)
@@ -28,14 +28,14 @@ local function PlayerConnectClient()
 	print("JMOD: client config file loaded")
 end
 function JMod.SaveClientConfig()
-	local SinglePlayer = game.SinglePlayer()
-	local IP = game.GetIPAddress()
-	if SinglePlayer then IP = "SinglePlayer" end
-	local filename = "jmod_cl_config.txt"
-	local Here = file.Exists(filename,"DATA")
+	local SinglePlayer=game.SinglePlayer()
+	local IP=game.GetIPAddress()
+	if SinglePlayer then IP="SinglePlayer" end
+	local filename="jmod_cl_config.txt"
+	local Here=file.Exists(filename,"DATA")
 	local AllConfigs={}
 	if Here then
-		local Contents = file.Read(filename)
+		local Contents=file.Read(filename)
         AllConfigs=util.JSONToTable(Contents)
     end
 	AllConfigs[IP]=JMod.ClientConfig

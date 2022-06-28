@@ -52,8 +52,8 @@ if(SERVER)then
 		---
 		JMod.Colorify(self)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if value > 0, this will detonate", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if value > 0, this will detonate", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -67,9 +67,9 @@ if(SERVER)then
 				timer.Simple(3,function()
 					if(IsValid(self))then
 						if(self:GetState()==JMod.EZ_STATE_ARMING)then
-							local pos = self:GetAttachment(1).Pos
-							local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
-							self.BeamFrac = trace.Fraction
+							local pos=self:GetAttachment(1).Pos
+							local trace=util.QuickTrace(pos, self:GetUp()*1000, self)
+							self.BeamFrac=trace.Fraction
 							self:SetState(JMod.EZ_STATE_ARMED)
 						end
 					end
@@ -118,9 +118,9 @@ if(SERVER)then
 					timer.Simple(3,function()
 						if(IsValid(self))then
 							if(self:GetState()==JMod.EZ_STATE_ARMING)then
-								local pos = self:GetAttachment(1).Pos
-								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
-								self.BeamFrac = trace.Fraction
+								local pos=self:GetAttachment(1).Pos
+								local trace=util.QuickTrace(pos, self:GetUp()*1000, selfg)
+								self.BeamFrac=trace.Fraction
 								self:SetState(JMod.EZ_STATE_ARMED)
 							end
 						end
@@ -134,7 +134,7 @@ if(SERVER)then
 						Dude:PickupObject(self)
 						self.NextStick=Time+.5
 					else
-						self.AttachedBomb = nil
+						self.AttachedBomb=nil
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
@@ -164,7 +164,7 @@ if(SERVER)then
 							if(Tr.Entity:GetClass()=="func_breakable")then -- crash prevention
 								timer.Simple(0,function() self:GetPhysicsObject():Sleep() end)
 							else
-								local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,10000,false,false)
+								local Weld=constraint.Weld(self,Tr.Entity,0,Tr.PhysicsBone,3000,false,false)
 								self.StuckTo=Tr.Entity
 								self.StuckStick=Weld
 							end
@@ -203,7 +203,7 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end
 		local Time=CurTime()
-		local state = self:GetState()
+		local state=self:GetState()
 		if(state==JMod.EZ_STATE_ARMED)then
 			local pos=self:GetAttachment(1).Pos
 			local trace=util.QuickTrace(pos,self:GetUp()*1000,self)

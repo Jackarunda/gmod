@@ -1,0 +1,12 @@
+ VertexlitGeneric
+{
+	$baseTexture models\props\army\jlowstick_off
+	"$bumpmap" "models/tex_jack_flat_normal"
+	$model 1
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" ".5"
+	"$phongfresnelranges" "[1 1 1]"
+
+	"$selfillum" "1"
+}

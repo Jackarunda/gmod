@@ -1,24 +1,24 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Mini Naval Mine"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Mini Naval Mine"
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -49,8 +49,8 @@ if(SERVER)then
 		self.Moored=false
 		self.NextDet=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Moored"}, {"-1 broken \n 0 off \n 1 armed", "True when moored"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State", "Moored"}, {"-1 broken \n 0 off \n 1 armed", "True when moored"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -145,7 +145,6 @@ if(SERVER)then
 		timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
 			if(IsValid(self))then
 				local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
-				JMod.Sploom(Att,SelfPos,150)
 				---
 				local splad=EffectData()
 				splad:SetOrigin(SelfPos)

@@ -8,7 +8,7 @@ ENT.PrintName="EZ Black Powder Pile"
 ENT.NoSitAllowed=true
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
-ENT.EZpowderIgnitable=true
+ENT.JModHighlyFlammableFunc="Arm"
 if(SERVER)then
 	function ENT:Initialize()
 		self:SetModel("models/cheeze/pcb2/pcb2.mdl")
@@ -62,12 +62,10 @@ if(SERVER)then
 		timer.Simple(.075,function()
 			if not(IsValid(self))then return end
 			for k,v in pairs(ents.FindInSphere(self:GetPos(),80))do
-				if(v.EZpowderIgnitable)then
+				if(v.JModHighlyFlammableFunc)then
 					JMod.Owner(v,self.Owner)
-					v:Arm()
-				elseif(v.EZpowderDetonatable)then
-					JMod.Owner(v,self.Owner)
-					v:Detonate()
+					local Func=v[v.JModHighlyFlammableFunc]
+					Func(v)
 				end
 			end
 			self:Remove()

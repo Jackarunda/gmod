@@ -9,7 +9,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModIsMine = true
+ENT.JModGUIcolorable=true
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
@@ -48,8 +48,8 @@ if(SERVER)then
 		---
 		self:SetState(STATE_OFF)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -91,7 +91,7 @@ if(SERVER)then
 		if(State==STATE_OFF)then
 			if(Alt)then
 				JMod.Owner(self,activator)
-				net.Start("JMod_MineColor")
+				net.Start("JMod_ColorAndArm")
 					net.WriteEntity(self)
 				net.Send(activator)
 			else
@@ -151,7 +151,7 @@ if(SERVER)then
 					self:DrawShadow(false)
 					local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,20),Vector(0,0,-40),self)
 					if(Tr.Hit)then
-						constraint.Weld(Tr.Entity,self,0,0,20000,false,false)
+						constraint.Weld(Tr.Entity,self,0,0,5000,false,false)
 					end
 				end
 			end

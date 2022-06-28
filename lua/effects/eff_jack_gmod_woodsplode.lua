@@ -8,7 +8,7 @@ function EFFECT:Init( data )
 		Vel,Epos,Eang=Ent:GetVelocity(),Ent:GetPos(),Ent:GetAngles()
 		Mins,Maxs=Ent:GetModelBounds()
 	end
-	self.Emitter = ParticleEmitter(Epos)
+	self.Emitter=ParticleEmitter(Epos)
 	-- sparks --
 	for i=1,50 do
 		local AddVec=Vector(math.Rand(Mins.x,Maxs.x),math.Rand(Mins.y,Maxs.y),math.Rand(Mins.z,Maxs.z))

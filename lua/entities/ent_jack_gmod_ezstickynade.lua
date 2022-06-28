@@ -1,16 +1,16 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Sticky Bomb"
-ENT.Spawnable = true
+ENT.Base="ent_jack_gmod_ezgrenade"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod - EZ Explosives"
+ENT.PrintName="EZ Sticky Bomb"
+ENT.Spawnable=true
 
-ENT.Model = "models/jmodels/explosives/grenades/stickynade/sticky_grenade.mdl"
---ENT.ModelScale = 2.25
+ENT.Model="models/jmodels/explosives/grenades/stickynade/sticky_grenade.mdl"
+--ENT.ModelScale=2.25
 
-ENT.SpoonModel = "models/jmodels/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
-ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
+ENT.SpoonModel="models/jmodels/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
+ENT.SpoonSound="physics/cardboard/cardboard_box_impact_soft2.wav"
 
 if(SERVER)then
 
@@ -33,15 +33,15 @@ if(SERVER)then
 			self:EmitSound("Grenade.ImpactHard")
 		end
 		if self:GetState() == JMod.EZ_STATE_ARMED and !self.StickObj and data.HitEntity:GetClass() != "ent_jack_spoon" then
-			self.StickObj = data.HitEntity
-			self.GotParented = true
-			self.Weld = nil
-			if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then self.StickObj = data.HitEntity:GetBaseEnt() end
+			self.StickObj=data.HitEntity
+			self.GotParented=true
+			self.Weld=nil
+			if data.HitEntity:GetClass() == "gmod_sent_vehicle_fphysics_wheel" then self.StickObj=data.HitEntity:GetBaseEnt() end
 			if self.StickObj:IsPlayer() or self.StickObj:IsNPC() then
 				self:SetParent(self.StickObj)
 			else
-				timer.Simple(0, function() self.Weld = constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
-				timer.Simple(0.1, function() if !IsValid(self.Weld) then self.StickObj = nil end end)
+				timer.Simple(0, function() self.Weld=constraint.Weld(self, data.HitEntity, 0, data.HitEntity:TranslateBoneToPhysBone(0)) end)
+				timer.Simple(0.1, function() if !IsValid(self.Weld) then self.StickObj=nil end end)
 			end
 		end
 	end
@@ -68,7 +68,7 @@ if(SERVER)then
 		JMod.BlastDoors(self,SelfPos,0.5)
 		
 		if IsValid(self.StickObj) and !self.StickObj:IsWorld() then
-			local dmginfo = DamageInfo()
+			local dmginfo=DamageInfo()
 			local Helf=(self.StickObj.GetMaxHealth and self.StickObj:GetMaxHealth()) or 100
 			dmginfo:SetDamage((Helf>2000 and 1500) or 200)
 			dmginfo:SetDamageType((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and DMG_GENERIC) or DMG_BLAST)

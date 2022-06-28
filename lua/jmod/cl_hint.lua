@@ -1,6 +1,6 @@
 net.Receive("JMod_Hint",function()
-	local isLangKey = net.ReadBool()
-	local str = net.ReadString()
+	local isLangKey=net.ReadBool()
+	local str=net.ReadString()
 	local iconType=net.ReadInt(8)
 	local tiem=net.ReadInt(8)
 	if(isLangKey)then str=JMod.Lang(str) end
@@ -10,7 +10,7 @@ net.Receive("JMod_Hint",function()
 end)
 
 net.Receive("JMod_PlayerSpawn",function()
-	local DoHints = tobool(net.ReadBit())
+	local DoHints=tobool(net.ReadBit())
 	if not input.LookupBinding("+walk") then
 		chat.AddText(Color(255,0,0), "Your Walk key is not bound; JMod entities will be mostly unusable.")
 		chat.AddText(Color(255,0,0), "Please bind it in Settings or with concommand 'bind alt +walk'.")

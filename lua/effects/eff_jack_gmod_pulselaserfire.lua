@@ -1,14 +1,14 @@
 -- copied from Slayer
-EFFECT.Mat = Material( "mat_jack_gmod_shinesprite" )
+EFFECT.Mat=Material( "mat_jack_gmod_shinesprite" )
 function EFFECT:Init( data )
 	self.StartPos 	= data:GetOrigin()	
 	self.Dir 	= data:GetNormal()
 	self.Vel=data:GetStart()
-	self.TracerTime = .05
-	self.DieTime = CurTime() + self.TracerTime
+	self.TracerTime=.05
+	self.DieTime=CurTime()+self.TracerTime
 	local Scayul=1
 
-	self.Emitter = ParticleEmitter( self.StartPos )
+	self.Emitter=ParticleEmitter( self.StartPos )
 	for i=1,30*Scayul do
 		local particle=self.Emitter:Add("mat_jack_gmod_glowsprite",self.StartPos+self.Dir)
 		particle:SetVelocity(self.Vel+self.Dir*math.Rand(0,1000)*Scayul+VectorRand()*math.Rand(0,250)*Scayul)
@@ -52,8 +52,8 @@ function EFFECT:Think()
 	return true
 end
 function EFFECT:Render()
-	local fDelta = (self.DieTime - CurTime()) / self.TracerTime
-	fDelta = math.Clamp( fDelta, 0, 1 )
+	local fDelta=(self.DieTime-CurTime())/self.TracerTime
+	fDelta=math.Clamp( fDelta, 0, 1 )
 	render.SetMaterial( self.Mat )
 	render.DrawSprite(self.StartPos,60-fDelta*60,60-fDelta*60,Color(255,0,0,255*fDelta^.5))
 	render.DrawSprite(self.StartPos,28-fDelta*28,28-fDelta*28,Color(255,0,0,255*fDelta^.5))

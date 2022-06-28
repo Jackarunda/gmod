@@ -34,12 +34,14 @@ JMod.Hints = {
 	["powder"] = {LangKey = "hint powder"},
 	["defuse"] = {LangKey = "hint defuse", Followup = "bind walk"},
 	
-	["detpack combo"] = {LangKey = "hint detpack combo",},
-	["gas spread"] = {LangKey = "hint gas spread",},
-	["gas damage"] = {LangKey = "hint gas damage",},
-	["tear gas"] = {LangKey = "hint tear gas",},
-	["backblast"] = {LangKey = "hint backblast",},
-	["rad damage"] = {LangKey = "hint rad damage",},
+	["detpack combo"] = {LangKey = "hint detpack combo"},
+	["gas spread"] = {LangKey = "hint gas spread"},
+	["gas damage"] = {LangKey = "hint gas damage"},
+	["tear gas"] = {LangKey = "hint tear gas"},
+	["backblast"] = {LangKey = "hint backblast"},
+	["radiation sickness"] = {LangKey = "hint radiation sickness"},
+	["neutron radiation"] = {LangKey = "hint neutron radiation"},
+	["radioactive fallout"] = {LangKey = "hint radioactive fallout"},
 	["impactdet"] = {LangKey = "hint impactdet", Followup = "bombdrop"},
 	["dualdet"] = {LangKey = "hint dualdet", Followup = "bombdrop"},
 	["airburst"] = {LangKey = "hint airburst", Followup = "bombdrop"},
@@ -99,6 +101,7 @@ JMod.Hints = {
 	["can not eat"] = {LangKey = "hint can not eat", RepeatCount = 5},
 	["missing supplies"] = {LangKey = "hint missing supplies", RepeatCount = 5},
 	["no alternate ammo"] = {LangKey = "hint no alternate ammo", RepeatCount = 5},
+	["stick to self"] = {LangKey = "hint stick to self"},
 
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {LangKey = "hint ent_jack_gmod_ezaidradio"},
@@ -197,6 +200,7 @@ JMod.Hints = {
 
 	-- i like eggs
 	["idiot"] = {LangKey = "hint idiot", IconType=1, Time=2},
+	["admin cleanup"] = {LangKey = "hint admin cleanup", IconType=4, Time=2, RepeatCount=9e9},
 
 	-- specific wepins
 	["wep_jack_gmod_gl"] = {LangKey = "hint wep_jack_gmod_gl", RepeatCount = 5},

@@ -61,7 +61,7 @@ end
 
 local GoggleDarkness,GogglesWereOn,CurVisionBlur,CurEyeClose=0,false,0,0
 local ThermalGlowMat=Material("models/debug/debugwhite")
-local blurMaterial = Material ('pp/bokehblur')
+local blurMaterial=Material ('pp/bokehblur')
 local RavebreakColors={Color(255,0,0),Color(0,255,0),Color(0,0,255),Color(0,255,255),Color(255,0,255),Color(255,255,0)}
 local NextRavebreakBeat,CurRavebreakColor,CurRavebreakLightPos=0,math.random(1,6),Vector(0,0,0)
 hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
@@ -80,15 +80,15 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 		end
 		local Col=RavebreakColors[CurRavebreakColor]
 		DrawColorModify({
-			[ "$pp_colour_addr" ] = Col.r/1000,
-			[ "$pp_colour_addg" ] = Col.g/1000,
-			[ "$pp_colour_addb" ] = Col.b/1000,
-			[ "$pp_colour_brightness" ] = 0,
-			[ "$pp_colour_contrast" ] = 1,
-			[ "$pp_colour_colour" ] = 1,
-			[ "$pp_colour_mulr" ] = Col.r/2000,
-			[ "$pp_colour_mulg" ] = Col.g/2000,
-			[ "$pp_colour_mulb" ] = Col.b/2000
+			[ "$pp_colour_addr" ]=Col.r/1000,
+			[ "$pp_colour_addg" ]=Col.g/1000,
+			[ "$pp_colour_addb" ]=Col.b/1000,
+			[ "$pp_colour_brightness" ]=0,
+			[ "$pp_colour_contrast" ]=1,
+			[ "$pp_colour_colour" ]=1,
+			[ "$pp_colour_mulr" ]=Col.r/2000,
+			[ "$pp_colour_mulg" ]=Col.g/2000,
+			[ "$pp_colour_mulb" ]=Col.b/2000
 		})
 		local CurAng=ply:EyeAngles()
 		local PartyinEyeAngles=Angle(0,CurAng.y,0)

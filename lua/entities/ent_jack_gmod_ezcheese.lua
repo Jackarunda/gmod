@@ -9,8 +9,8 @@ ENT.Spawnable=false
 ENT.AdminSpawnable=false
 if(SERVER)then
 	function ENT:Initialize()
-		self.Piece = math.random(1,6)
-		local pieces = {"models/props_phx/games/chess/black_pawn.mdl", "models/props_phx/games/chess/black_rook.mdl", "models/props_phx/games/chess/black_bishop.mdl", "models/props_phx/games/chess/black_knight.mdl", "models/props_phx/games/chess/black_queen.mdl","models/props_phx/games/chess/black_king.mdl"}
+		self.Piece=math.random(1,6)
+		local pieces={"models/props_phx/games/chess/black_pawn.mdl", "models/props_phx/games/chess/black_rook.mdl", "models/props_phx/games/chess/black_bishop.mdl", "models/props_phx/games/chess/black_knight.mdl", "models/props_phx/games/chess/black_queen.mdl","models/props_phx/games/chess/black_king.mdl"}
 		self:SetModel(pieces[self.Piece])
 		self:SetModelScale(math.Rand(1.5,3),0)
 		self:SetMaterial("models/debug/debugwhite")
