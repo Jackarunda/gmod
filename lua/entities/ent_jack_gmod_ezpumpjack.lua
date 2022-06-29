@@ -10,6 +10,7 @@ ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={"power","parts"}
 ENT.WhitelistedResources = {"water", "oil"}
+ENT.DepositKey = 0
 local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -28,7 +29,7 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		self:SetPos(self:GetPos()+Vector(0,0,100)) -- what the fuck garry
+		self:SetPos(self:GetPos()+Vector(0,0,100)) -- Don't ask why
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(1000)
@@ -43,7 +44,7 @@ if(SERVER)then
 		self.Durability=300
 		-- TODO: make upgradable
 	end
-	function ENT:GetClosestDeposit()
+	function ENT:UpdateDepositKey()
 		local SelfPos=self:GetPos()
 		-- first, figure out which deposits we are inside of, if any
 		local DepositsInRange={}
@@ -67,7 +68,8 @@ if(SERVER)then
 				end
 			end
 		end
-		return ClosestDeposit
+		if(ClosestDeposit)then self.DepositKey = ClosestDeposit else self.DepositKey = 0 end
+		--return ClosestDeposit
 	end
 	function ENT:TryPlant()
 		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
@@ -81,8 +83,8 @@ if(SERVER)then
 				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
 				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
 			end
-			local depotKey = self:GetClosestDeposit()
-			if(GroundIsSolid) and(depotKey)then
+			self:UpdateDepositKey()
+			if(GroundIsSolid) and (self.DepositKey > 0)then
 				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)
 				self:SetState(STATE_OFF)
 			else
@@ -136,26 +138,38 @@ if(SERVER)then
 			return
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
-			--self:ConsumeElectricity()
-			if(self:GetProgress()>=100)then
-				self:SpawnLiquid()
-				self:SetProgress(0)
+			--Here's where we do the rescource deduction, and barrel production
+			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+			amtLeft = amtLeft - self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+			if(amtLeft >= 100)then
+				self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
+				--self:ConsumeElectricity()
+				
+				if(self:GetProgress()>=100)then
+					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey)
+					self:SpawnLiquid(100, self.DepositKey)
+					self:SetProgress(0)
+				end
+			else
+				if(self:GetProgress()<=amtLeft)then
+					print(amtLeft)
+					self:SpawnLiquid(self:GetProgress(), self.DepositKey)
+					self:SetProgress(0)
+				end
 			end
 		end
 		self:NextThink(CurTime()+1)
 		return true
 	end
-	function ENT:SpawnLiquid()
+	function ENT:SpawnLiquid(amt, deposit)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local depotKey = self:GetClosestDeposit()
-		if (depotKey) then
-			local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[depotKey].typ])
-			Liquid:SetPos(SelfPos+Forward*115-Right*90)
-			Liquid:Spawn()
-			JMod.Owner(self.Owner)
-			Liquid:Activate()
-		end
+		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
+		Liquid:SetPos(SelfPos+Forward*115-Right*90)
+		Liquid:Spawn()
+		JMod.Owner(self.Owner)
+		Liquid:SetResource(amt)
+		Liquid:Activate()
+		
 	end
 
 elseif(CLIENT)then
@@ -224,5 +238,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezoilpump","EZ Oil Derrick")
+	language.Add("ent_jack_gmod_ezoilpump","EZ Pumpjack")
 end
