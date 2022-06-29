@@ -138,30 +138,38 @@ if(SERVER)then
 			return
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			--Here's where we do the rescource deduction, and barrel production
+			-- Here's where we do the rescource deduction, and barrel production
+			-- This is supposed to refrence the specific deposit's amount of resources left
 			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+			-- Here's where we subtract from the table
 			amtLeft = amtLeft - self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+			-- While we still have more than 100 in the well...
 			if(amtLeft >= 100)then
+				-- do normal things
 				self:SetProgress(self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()])
-				--self:ConsumeElectricity()
+				--self:ConsumeElectricity() -- This is broken ATM
 				
 				if(self:GetProgress()>=100)then
-					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey)
-					self:SpawnLiquid(100, self.DepositKey)
+					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
+					-- This is a little differnet though first one is how much to put in the barrel
+					-- second one is the deposit key so you can find what type of resource to spawn
+					self:SpawnBarrel(100, self.DepositKey)
 					self:SetProgress(0)
 				end
 			else
 				if(self:GetProgress()<=amtLeft)then
-					print(amtLeft)
-					self:SpawnLiquid(self:GetProgress(), self.DepositKey)
+					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
+					self:SpawnBarrel(self:GetProgress(), self.DepositKey)
 					self:SetProgress(0)
+					-- Turn us off because we aren't doing anything now
+					self:SetState(STATE_OFF)
 				end
 			end
 		end
 		self:NextThink(CurTime()+1)
 		return true
 	end
-	function ENT:SpawnLiquid(amt, deposit)
+	function ENT:SpawnBarrel(amt, deposit)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
 		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
 		Liquid:SetPos(SelfPos+Forward*115-Right*90)
