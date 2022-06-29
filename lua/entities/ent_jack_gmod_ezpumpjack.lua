@@ -141,14 +141,14 @@ if(SERVER)then
 			-- Here's where we do the rescource deduction, and barrel production
 			-- This is supposed to refrence the specific deposit's amount of resources left
 			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-			-- While we still have more than 100 in the well...
-			if(amtLeft >= 0)then
-				local amtDrilled = self:GetProgress()+JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+			-- While we still have oil in the well
+			if(amtLeft > 0)then
+				local amtToDrill = math.min(JMod.EZ_GRADE_BUFFS[self:GetGrade()], amtLeft)
 				-- do normal things
-				self:SetProgress(amtDrilled)
+				self:SetProgress(self:GetProgress() + amtToDrill)
 				--self:ConsumeElectricity() -- This is broken ATM
 				-- Here's where we subtract from the table
-				amtLeft = amtLeft - amtDrilled
+				amtLeft = amtLeft - amtToDrill
 
 				if(self:GetProgress()>=100)then
 					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
@@ -159,13 +159,14 @@ if(SERVER)then
 					self:SetProgress(newProgress)
 				end
 			else
-				--if(self:GetProgress()<=amtLeft)then
-					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
-					self:SpawnBarrel(self:GetProgress(), self.DepositKey)
-					self:SetProgress(0)
-					-- Turn us off because we aren't doing anything now
-					self:SetState(STATE_OFF)
-				--end
+				print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
+				self:SpawnBarrel(self:GetProgress(), self.DepositKey)
+				self:SetProgress(0)
+				-- Turn us off because we aren't doing anything now
+				self:SetState(STATE_OFF)
+			end
+			if(JMod.NaturalResourceTable[self.DepositKey].typ != "water")then
+				JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft
 			end
 		end
 		self:NextThink(CurTime()+1)
