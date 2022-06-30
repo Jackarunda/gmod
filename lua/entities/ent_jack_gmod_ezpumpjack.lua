@@ -32,7 +32,7 @@ if(SERVER)then
 		self:SetPos(self:GetPos()+Vector(0,0,100)) -- Don't ask why
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(1000)
+			self:GetPhysicsObject():SetMass(3000)
 			self:GetPhysicsObject():Wake()
 			-- attach us to the ground
 			self:TryPlant()
@@ -52,7 +52,8 @@ if(SERVER)then
 			-- Make sure the resource is on the whitelist
 			local Dist=SelfPos:Distance(v.pos)
 				-- store they desposit's key if we're inside of it
-			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ)) and (v.amt>0)then 
+			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ))then 
+				if not(v.rate) and (v.amt < 0)then break end
 				table.insert(DepositsInRange,k)
 			end
 		end
@@ -68,7 +69,13 @@ if(SERVER)then
 				end
 			end
 		end
-		if(ClosestDeposit)then self.DepositKey = ClosestDeposit else self.DepositKey = 0 end
+		if(ClosestDeposit)then 
+			self.DepositKey = ClosestDeposit 
+			print("Our deposit is "..self.DepositKey) 
+		else 
+			self.DepositKey = 0 
+			print("No valid deposit") 
+		end
 		--return ClosestDeposit
 	end
 	function ENT:TryPlant()
@@ -87,6 +94,7 @@ if(SERVER)then
 			if(GroundIsSolid) and (self.DepositKey > 0)then
 				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)
 				self:SetState(STATE_OFF)
+				self:SetProgress(0)
 			else
 				self:SetState(STATE_INOPERABLE)
 			end
@@ -138,35 +146,39 @@ if(SERVER)then
 			return
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
+			-- This is just the rate at which we pump
+			local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 			-- Here's where we do the rescource deduction, and barrel production
-			-- This is supposed to refrence the specific deposit's amount of resources left
-			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-			-- While we still have oil in the well
-			if(amtLeft > 0)then
-				local amtToDrill = math.min(JMod.EZ_GRADE_BUFFS[self:GetGrade()], amtLeft)
-				-- do normal things
-				self:SetProgress(self:GetProgress() + amtToDrill)
-				--self:ConsumeElectricity() -- This is broken ATM
-				-- Here's where we subtract from the table
-				amtLeft = amtLeft - amtToDrill
-
-				if(self:GetProgress()>=100)then
-					print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
-					-- This is a little differnet though first one is how much to put in the barrel
-					-- second one is the deposit key so you can find what type of resource to spawn
+			-- If it's a flow (i.e. water)
+			if(JMod.NaturalResourceTable[self.DepositKey].rate)then
+				-- We get the rate
+				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				-- and set the progress to what it was last tick + our ability * the flowrate
+				self:SetProgress(self:GetProgress() + pumpRate*flowRate)
+				-- If the progress exceeds 100
+				if(self:GetProgress() >= 100)then
+					-- Spawn barrel
 					self:SpawnBarrel(100, self.DepositKey)
-					local newProgress = self:GetProgress() - 100
-					self:SetProgress(newProgress)
+					-- And subtract 100 from the progress (so as to not lose any overflow)
+					self:SetProgress(self:GetProgress() - 100)
 				end
-			else
-				print("Amount left: "..amtLeft.." Deposit key: "..self.DepositKey) --DEBUG
-				self:SpawnBarrel(self:GetProgress(), self.DepositKey)
-				self:SetProgress(0)
-				-- Turn us off because we aren't doing anything now
-				self:SetState(STATE_INOPERABLE)
-			end
-			if(JMod.NaturalResourceTable[self.DepositKey].typ != "water")then
-				JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft
+			else 
+				-- Get the amount of resouces left in the ground
+				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+				--print("Amount left: "..amtLeft) --DEBUG
+				-- If there's nothing left, we can't do anything
+				if(amtLeft < 0)then self:SetState(STATE_INOPERABLE) return end
+				-- While progress is less than 100
+				if(self:GetProgress() < 100)then
+					self:SetProgress(self:GetProgress() + pumpRate)
+					amtLeft = amtLeft - pumpRate
+					if(self:GetProgress() >= 100)then
+						local amtToPump = math.min(amtLeft, 100)
+						self:SpawnBarrel(amtToPump, self.DepositKey)
+						self:SetProgress(self:GetProgress() - 100)
+						JMod.NaturalResourceTable[self.DepositKey].amt = amtToPump
+					end
+				end
 			end
 		end
 		self:NextThink(CurTime()+1)
@@ -174,8 +186,9 @@ if(SERVER)then
 	end
 	function ENT:SpawnBarrel(amt, deposit)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
+		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 100)
 		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
-		Liquid:SetPos(SelfPos+Forward*115-Right*90)
+		Liquid:SetPos(SelfPos+Forward*115-Right*90+RandomArea)
 		Liquid:Spawn()
 		JMod.Owner(self.Owner)
 		Liquid:SetResource(amt)
@@ -234,13 +247,16 @@ elseif(CLIENT)then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-30)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-50)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/200
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ProgressFrac=self:GetProgress()/100
+				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local CoolFrac=self:GetCoolant()/100
 				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local R,G,B=JMod.GoodBadColor(CoolFrac)
