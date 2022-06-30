@@ -812,6 +812,14 @@ if(SERVER)then
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
+	--[[concommand.Add("jmod_debug_remove_naturalresource",function(ply,cmd,args)
+		if not(GetConVar("sv_cheats"):GetBool())then return end
+		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
+		for i in #args do
+			local depositToRemove = table.remove(JMod.NaturalResourceTable, args[i])
+			print("Removed deposit #: " .. args[i])
+		end
+	end, nil, "Removes one or more natural resource deposits")]]--
 elseif(CLIENT)then
 	local ShowNaturalResources=false
 	net.Receive("JMod_NaturalResources",function()

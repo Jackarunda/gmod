@@ -52,8 +52,8 @@ if(SERVER)then
 			-- Make sure the resource is on the whitelist
 			local Dist=SelfPos:Distance(v.pos)
 				-- store they desposit's key if we're inside of it
-			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ))then 
-				table.insert(DepositsInRange,k) 
+			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ)) and (v.amt>0)then 
+				table.insert(DepositsInRange,k)
 			end
 		end
 		-- now, among all the deposits we are inside of, let's find the closest one
@@ -163,7 +163,7 @@ if(SERVER)then
 				self:SpawnBarrel(self:GetProgress(), self.DepositKey)
 				self:SetProgress(0)
 				-- Turn us off because we aren't doing anything now
-				self:SetState(STATE_OFF)
+				self:SetState(STATE_INOPERABLE)
 			end
 			if(JMod.NaturalResourceTable[self.DepositKey].typ != "water")then
 				JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft
