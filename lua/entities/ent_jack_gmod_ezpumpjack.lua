@@ -165,18 +165,16 @@ if(SERVER)then
 				-- Get the amount of resouces left in the ground
 				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
 				--print("Amount left: "..amtLeft) --DEBUG
-				-- If there's nothing left, we can't do anything
+				-- If there's nothing left, we shouldn't do anything
 				if(amtLeft < 0)then self:SetState(STATE_INOPERABLE) return end
 				-- While progress is less than 100
-				if(self:GetProgress() < 100)then
-					self:SetProgress(self:GetProgress() + pumpRate)
-					amtLeft = amtLeft - pumpRate
-					if(self:GetProgress() >= 100)then
-						local amtToPump = math.min(amtLeft, 100)
-						self:SpawnBarrel(amtToPump, self.DepositKey)
-						self:SetProgress(self:GetProgress() - 100)
-						JMod.NaturalResourceTable[self.DepositKey].amt = amtToPump
-					end
+				self:SetProgress(self:GetProgress() + pumpRate)
+				amtLeft = amtLeft - pumpRate
+				if(self:GetProgress() >= 100)then
+					local amtToPump = math.min(amtLeft, 100)
+					self:SpawnBarrel(amtToPump, self.DepositKey)
+					self:SetProgress(self:GetProgress() - 100)
+					JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft - amtToPump
 				end
 			end
 		end
@@ -185,7 +183,7 @@ if(SERVER)then
 	end
 	function ENT:SpawnBarrel(amt, deposit)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 100)
+		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 10)
 		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
 		Liquid:SetPos(SelfPos+Forward*115-Right*90+RandomArea)
 		Liquid:Spawn()
