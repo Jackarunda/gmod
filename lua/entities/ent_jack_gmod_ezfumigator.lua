@@ -33,7 +33,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_explosive/explosive_butane_can02.mdl")
+		self.Entity:SetModel("models/jmodels/explosives/props_explosive/explosive_butane_can02.mdl")
 		self.Entity:SetMaterial("models/props_explosive/poison")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
