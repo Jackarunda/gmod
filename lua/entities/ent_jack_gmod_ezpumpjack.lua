@@ -71,12 +71,11 @@ if(SERVER)then
 		end
 		if(ClosestDeposit)then 
 			self.DepositKey = ClosestDeposit 
-			print("Our deposit is "..self.DepositKey) 
+			--print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
 			self.DepositKey = 0 
-			print("No valid deposit") 
+			--print("No valid deposit") --DEBUG
 		end
-		--return ClosestDeposit
 	end
 	function ENT:TryPlant()
 		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
