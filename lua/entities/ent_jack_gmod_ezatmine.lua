@@ -24,7 +24,7 @@ if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
 		local SpawnPos=tr.HitPos+tr.HitNormal*40
 		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0,0,0))
+		ent:SetAngles(Angle(90,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
 		ent:Spawn()
@@ -35,7 +35,8 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/mechanics/wheels/wheel_smooth_24.mdl")
+		--self.Entity:SetModel("models/mechanics/wheels/wheel_smooth_24.mdl")
+		self.Entity:SetModel("models/props_pipes/pipe03_connector01.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -130,6 +131,32 @@ if(SERVER)then
 			JMod.WreckBuildings(self,SelfPos,3)
 			JMod.BlastDoors(self,SelfPos,3)
 			ParticleEffect(Eff,SelfPos,Angle(0,0,0))
+			-- debris --
+			local Up=Vector(0,0,1)
+			local EffectType=1
+			local Traec=util.QuickTrace(self:GetPos()+Up,Vector(0,0,-10),self)
+			if(Traec.Hit)then
+				if((Traec.MatType==MAT_DIRT)or(Traec.MatType==MAT_SAND))then
+					EffectType=1
+				elseif((Traec.MatType==MAT_CONCRETE)or(Traec.MatType==MAT_TILE))then
+					EffectType=2
+				elseif((Traec.MatType==MAT_METAL)or(Traec.MatType==MAT_GRATE))then
+					EffectType=3
+				elseif(Traec.MatType==MAT_WOOD)then
+					EffectType=4
+				end
+			else
+				EffectType=5
+			end
+			timer.Simple(0,function()
+				local plooie=EffectData()
+				plooie:SetOrigin(SelfPos)
+				plooie:SetScale(1.2)
+				plooie:SetRadius(EffectType)
+				plooie:SetNormal(Up)
+				util.Effect("eff_jack_minesplode",plooie,true,true)
+				sound.Play("snd_jack_debris"..math.random(1,2)..".mp3",SelfPos,80,math.random(90,110))
+			end)
 			self:Remove()
 		end)
 	end
@@ -186,20 +213,16 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/thedoctor/mines/clustermine_1.mdl")
-		self.Mdl:SetMaterial("models/jacky_camouflage/digi2")
-		self.Mdl:SetModelScale(1.5,0)
-		self.Mdl:SetPos(self:GetPos())
-		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
+		self.Mdl=JMod.MakeModel(self,"models/thedoctor/mines/clustermine_1.mdl","models/jacky_camouflage/digi2")
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Up()*4.5)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		Ang:RotateAroundAxis(Ang:Right(),90)
+		local Col=self:GetColor()
+		Col=Vector(Col.r/255,Col.g/255,Col.b/255)
+		JMod.RenderModel(self.Mdl,Pos-Ang:Up()*2,Ang,Vector(1.7,1.7,1),Col)
 		local State,Vary=self:GetState(),math.sin(CurTime()*50)/2+.5
 		if(State==STATE_ARMING)then
 			render.SetMaterial(GlowSprite)

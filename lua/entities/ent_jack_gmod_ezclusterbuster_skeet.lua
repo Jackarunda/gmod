@@ -56,7 +56,7 @@ if(SERVER)then
 			Eff:SetScale(1)
 			Eff:SetNormal(dir)
 			util.Effect("eff_jack_gmod_efpburst",Eff,true,true)
-			JMod.RicPenBullet(self,Pos,dir,1000,true,true)
+			JMod.RicPenBullet(self,Pos,dir,1100,true,true)
 		end
 		self:Remove()
 	end
@@ -82,7 +82,7 @@ if(SERVER)then
 		local Time=CurTime()
 		if(self.NextSeek<Time)then
 			local Pos,Targets=self:GetPos(),{}
-			for k,v in pairs(ents.FindInCone(Pos,Vector(0,0,-1),2000,math.cos(math.rad(45))))do
+			for k,v in pairs(ents.FindInCone(Pos,Vector(0,0,-1),1500,math.cos(math.rad(45))))do
 				local Phys,Class=v:GetPhysicsObject(),v:GetClass()
 				if((IsValid(Phys))and not(v==self)and not(Class==self.ClassName)and not(IsBlackListed(Class)))then
 					if((v:IsPlayer())or(v:IsNPC())or(v:IsVehicle()))then
@@ -97,7 +97,7 @@ if(SERVER)then
 				local SelfPos,Pos=self:GetPos(),Target:LocalToWorld(Target:OBBCenter())
 				local Vec=Pos-SelfPos
 				local Dir,Dist=Vec:GetNormalized(),Vec:Length()
-				Dir=(Dir+VectorRand()*.03):GetNormalized() -- inaccuracy
+				Dir=(Dir+VectorRand()*.05):GetNormalized() -- inaccuracy
 				self:Detonate(Dir)
 			end
 		end

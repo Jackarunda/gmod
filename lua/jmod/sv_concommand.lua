@@ -43,7 +43,7 @@ concommand.Add("jmod_debug",function(ply,cmd,args)
 	--[[
 	local splad=EffectData()
 	splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*1000)
-	splad:SetScale(1)
+	splad:SetScale(.5)
 	splad:SetNormal(Vector(0,0,-1))
 	util.Effect("eff_jack_gmod_efpburst",splad,true,true)
 	--]]

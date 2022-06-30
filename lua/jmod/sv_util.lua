@@ -447,6 +447,12 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	if not initialTrace.Hit then return end
 	local AVec, IPos, TNorm, SMul=initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
 
+	local Eff=EffectData()
+	Eff:SetOrigin(IPos)
+	Eff:SetScale(.5)
+	Eff:SetNormal(TNorm)
+	util.Effect("eff_jack_gmod_efpburst",Eff,true,true)
+	
 	if (doBlasts) then
 		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/6, dmg/4)
 
