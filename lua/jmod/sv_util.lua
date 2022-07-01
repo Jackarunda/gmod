@@ -427,7 +427,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 
 	ent:FireBullets({
 		Attacker=Attacker,
-		Damage=dmg,
+		Damage=dmg*2,
 		Force=dmg,
 		Num=1,
 		Tracer=1,
@@ -447,8 +447,14 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	if not initialTrace.Hit then return end
 	local AVec, IPos, TNorm, SMul=initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
 
+	local Eff=EffectData()
+	Eff:SetOrigin(IPos)
+	Eff:SetScale(.5)
+	Eff:SetNormal(TNorm)
+	util.Effect("eff_jack_gmod_efpburst",Eff,true,true)
+	
 	if (doBlasts) then
-		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/3, dmg/4)
+		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/6, dmg/4)
 
 		timer.Simple(0, function()
 			local Tr=util.QuickTrace(IPos+TNorm, -TNorm*20)
@@ -511,7 +517,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 			})
 
 			if (doBlasts) then
-				util.BlastDamage(ent, Attacker, SearchPos+AVec*2, dmg/2, dmg/4)
+				util.BlastDamage(ent, Attacker, SearchPos+AVec*2, dmg/4, dmg/4)
 
 				timer.Simple(0, function()
 					local Tr=util.QuickTrace(SearchPos+AVec, -AVec*20)
@@ -564,7 +570,7 @@ function JMod.ShouldAllowControl(self, ply)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
-function JMod.ShouldAttack(self, ent, vehiclesOnly)
+function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
 	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
@@ -587,7 +593,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 				return ent:GetMaxHealth() > 0 and ent:Health() > 0
 			end
 		else
-			return false
+			return peaceWasNeverAnOption or false
 		end
 	elseif (ent:IsVehicle()) then
 		PlayerToCheck=ent:GetDriver()
@@ -616,7 +622,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 		return PlayerToCheck:Alive()
 	end
 
-	return false
+	return peaceWasNeverAnOption or false
 end
 
 function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
