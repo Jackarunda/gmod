@@ -757,6 +757,18 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="For when you need to send hundreds of tiny bombs rather than a big one."
 			},
+			["EZ Cluster Buster"]={			
+				results="ent_jack_gmod_ezclusterbuster",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=300
+				},
+				sizeScale=1,
+				category="Explosives",
+				craftingType="toolbox",
+				description="Cluster bomb that can pierce multiple hard targets from the air."
+			},
 			["EZ General Purpose Crate"]={			
 				results="ent_jack_gmod_ezcrate_uni",		
 				craftingReqs={	

@@ -31,8 +31,9 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/ww2bomb.mdl")
-		self.Entity:SetMaterial("models/entities/mat_jack_clusterbomb")
+		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
+		self.Entity:SetMaterial("models/military2/bomb/cluster_buster")
+		self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -40,18 +41,17 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(100)
+			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
-			self:GetPhysicsObject():SetDamping(0, 0)
+			self:GetPhysicsObject():SetDamping(0,0)
 		end)
 		---
 		self:SetState(STATE_OFF)
 		self.LastUse=0
 		self.FreefallTicks=0
 		if istable(WireLib) then
-			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate"}, {"This will directly detonate the bomb"})
 		end
 	end
 	function ENT:TriggerInput(iname,value)

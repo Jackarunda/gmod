@@ -20,6 +20,7 @@ if(SERVER)then
 		self:DrawShadow(true)
 		---
 		timer.Simple(0,function()
+			if not(IsValid(self))then return end
 			self:GetPhysicsObject():SetMass(40)
 			self:GetPhysicsObject():Wake()
 		end)
