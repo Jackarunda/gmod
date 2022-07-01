@@ -166,7 +166,7 @@ if(SERVER)then
 				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
 				--print("Amount left: "..amtLeft) --DEBUG
 				-- If there's nothing left, we shouldn't do anything
-				if(amtLeft < 0)then self:SetState(STATE_INOPERABLE) return end
+				if(amtLeft <= 0)then self:SetState(STATE_INOPERABLE) return end
 				-- While progress is less than 100
 				self:SetProgress(self:GetProgress() + pumpRate)
 				amtLeft = amtLeft - pumpRate
