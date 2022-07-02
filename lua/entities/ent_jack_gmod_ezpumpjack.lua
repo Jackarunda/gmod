@@ -102,6 +102,13 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(STATE_RUNNING)
+			timer.Simple(.5,function()
+				if(IsValid(self))then
+					self.SoundLoop=CreateSound(self,"snd_jack_pumpjack.wav")
+					self.SoundLoop:Play()
+					self.SoundLoop:SetSoundLevel(60)
+				end
+			end)
 		else
 			JMod.Hint(activator,"nopower")
 		end
@@ -130,7 +137,9 @@ if(SERVER)then
 			self:TurnOff()
 		end
 	end
-
+	function ENT:OnRemove()
+		if(self.SoundLoop)then self.SoundLoop:Stop() end
+	end
 	function ENT:Think()
 		if not(IsValid(self.Weld))then
 			if(self:GetState()>0)then self:SetState(STATE_INOPERABLE) end
@@ -183,9 +192,9 @@ if(SERVER)then
 	end
 	function ENT:SpawnBarrel(amt, deposit)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 10)
+		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 15)
 		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
-		Liquid:SetPos(SelfPos+Forward*115-Right*90+RandomArea)
+		Liquid:SetPos(SelfPos+Forward*120-Right*90+RandomArea)
 		Liquid:Spawn()
 		JMod.Owner(self.Owner)
 		Liquid:SetResource(amt)
@@ -214,9 +223,9 @@ elseif(CLIENT)then
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		if(State==STATE_RUNNING)then
-			self.DriveMomentum=math.Clamp(self.DriveMomentum+FT/3,0,1)
+			self.DriveMomentum=math.Clamp(self.DriveMomentum+FT/3,0,0.4)
 		else
-			self.DriveMomentum=math.Clamp(self.DriveMomentum-FT/3,0,1)
+			self.DriveMomentum=math.Clamp(self.DriveMomentum-FT/3,0,0.4)
 		end
 		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
