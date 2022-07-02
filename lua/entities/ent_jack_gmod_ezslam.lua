@@ -193,7 +193,7 @@ if(SERVER)then
 				JMod.Sploom(self.Owner,SelfPos,math.random(50,80))
 				util.ScreenShake(SelfPos,99999,99999,.3,500)
 				local Dir=(self:GetUp()+VectorRand()*.01):GetNormalized()
-				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 500)*JMod.Config.MinePower,true,true)
+				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 800)*JMod.Config.MinePower,true,true)
 				self:Remove()
 			end
 		end)
@@ -212,7 +212,7 @@ if(SERVER)then
 					self:Detonate()
 				else
 					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,600)
+						self:Detonate(.1,1200)
 					else
 						self:Detonate(.1)
 					end

@@ -41,17 +41,11 @@ end, nil, "Does a server-wide admin cleanup of everything.")
 
 concommand.Add("jmod_debug",function(ply,cmd,args)
 	--[[
-	local Tr=util.TraceLine({
-		start=ply:GetShootPos(),
-		endpos=ply:GetShootPos()+ply:GetAimVector()*10000,
-		filter={ply},
-		mask=-1
-	})
 	local splad=EffectData()
-	splad:SetOrigin(Tr.HitPos)
-	splad:SetScale(3)
-	splad:SetEntity(self)
-	util.Effect("eff_jack_gmod_watersplode",splad,true,true)
+	splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*1000)
+	splad:SetScale(.5)
+	splad:SetNormal(Vector(0,0,-1))
+	util.Effect("eff_jack_gmod_efpburst",splad,true,true)
 	--]]
 end)
 
