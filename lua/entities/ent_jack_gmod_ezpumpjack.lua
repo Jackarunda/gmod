@@ -11,6 +11,7 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={"power","parts"}
 ENT.WhitelistedResources = {"water", "oil"}
 ENT.DepositKey = 0
+ENT.MaxElectricity = 200
 local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -115,7 +116,6 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
@@ -147,14 +147,17 @@ if(SERVER)then
 		end
 		local State=self:GetState()
 		if(State==STATE_BROKEN)then
+			if(self.SoundLoop)then self.SoundLoop:Stop() end
 			if(self:GetElectricity()>0)then
 				if(math.random(1,4)==2)then self:DamageSpark() end
 			end
 			return
 		elseif(State==STATE_INOPERABLE)then
+			if(self.SoundLoop)then self.SoundLoop:Stop() end
 			return
 		elseif(State==STATE_RUNNING)then
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
+			self:ConsumeElectricity()
 			-- This is just the rate at which we pump
 			local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 			-- Here's where we do the rescource deduction, and barrel production
