@@ -115,6 +115,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
+		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
