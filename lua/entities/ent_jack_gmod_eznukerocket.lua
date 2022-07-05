@@ -278,7 +278,7 @@ if(SERVER)then
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_rockettrail",Eff,true,true)
 			else
-				timer.Simple(1, function()
+				timer.Simple(0.75, function()
 					if(IsValid(self)) then
 						self:Detonate()
 					end
@@ -309,7 +309,7 @@ elseif(CLIENT)then
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 		if(self:GetState()==STATE_LAUNCHED)then
-			self.BurnoutTime=self.BurnoutTime or CurTime()+2
+			self.BurnoutTime=self.BurnoutTime or CurTime()+1
 			if(self.BurnoutTime>CurTime())then
 				render.SetMaterial(GlowSprite)
 				for i=1,10 do
