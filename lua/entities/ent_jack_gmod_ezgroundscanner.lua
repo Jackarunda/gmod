@@ -41,8 +41,8 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/props_c17/substation_transformer01b.mdl")
-		self:SetModelScale(.5,0)
+		self:SetModel("models/jmod/machines/groundscanner.mdl")
+		--self:SetModelScale(0.5, 0)
 		self:SetMaterial("models/mat_jack_gmod_groundscanner")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
