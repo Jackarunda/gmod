@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
 	"$baseTexture" "models/military2/bomb/bomb_nukekab"
-        "$bumpmap" "models/military2/bomb/bomb_nukekab_nomal"
+        "$bumpmap" "models/military2/bomb/bomb_nukekab_normal"
 	"$phong" "1"
 	"$phongexponent" "40"
 	"$phongboost" "2"

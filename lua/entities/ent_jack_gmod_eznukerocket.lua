@@ -45,7 +45,7 @@ if(SERVER)then
 		---
 		self:SetState(STATE_OFF)
 		self.NextDet=0
-		self.FuelLeft=150
+		self.FuelLeft=200
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
 			self.Outputs=WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
@@ -118,6 +118,11 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:JModEZremoteTriggerFunc(ply)
+		if not((IsValid(ply))and(ply:Alive())and(ply==self.Owner))then return end
+		if not((self:GetState()==STATE_ARMED)or(self:GetState()==STATE_LAUNCHED))then return end
+		self:Detonate()
+	end
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
@@ -131,7 +136,7 @@ if(SERVER)then
 				self.EZlaunchableWeaponArmedTime=CurTime()
 				JMod.Hint(activator, "launch")
 			else
-				activator:PickupObject(self)
+				--activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
 		elseif(State==STATE_ARMED)then
@@ -162,7 +167,7 @@ if(SERVER)then
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,150,math.random(80,110))
 		end
 		---
-		SendClientNukeEffect(SelfPos,5000)
+		SendClientNukeEffect(SelfPos,9000)
 		for h=1,40 do
 			timer.Simple(h/10,function()
 				local ThermalRadiation=DamageInfo()
@@ -170,7 +175,7 @@ if(SERVER)then
 				ThermalRadiation:SetDamage((50/h)*Power)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
-				util.BlastDamageInfo(ThermalRadiation,SelfPos,12000)
+				util.BlastDamageInfo(ThermalRadiation,SelfPos,8500)
 			end)
 		end
 		---
@@ -191,7 +196,7 @@ if(SERVER)then
 			end)
 		end
 		---
-		for k,ent in pairs(ents.FindInSphere(SelfPos,2000))do
+		for k,ent in pairs(ents.FindInSphere(SelfPos,3000))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
@@ -238,11 +243,11 @@ if(SERVER)then
 		Phys:Wake()
 		Phys:ApplyForceCenter(-self:GetRight()*20000)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.wav",80,math.random(95,105))
+		self:EmitSound("snds_jack_gmod/rocket_launch.wav",80,math.random(80,100))
 		local Eff=EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(4)
+		Eff:SetScale(5)
 		util.Effect("eff_jack_gmod_rocketthrust",Eff,true,true)
 		---
 		for i=1,4 do
@@ -275,7 +280,7 @@ if(SERVER)then
 				local Eff=EffectData()
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(self:GetRight())
-				Eff:SetScale(1)
+				Eff:SetScale(5)
 				util.Effect("eff_jack_gmod_rockettrail",Eff,true,true)
 			else
 				timer.Simple(0.75, function()
@@ -291,7 +296,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Mdl=ClientsideModel("models/military2/bomb/bomb_kab.mdl")
-		--self.Mdl:SetMaterial("models/military2/missile/he")
+		self.Mdl:SetMaterial("models/military2/bomb/bomb_nukekab")
 		self.Mdl:SetModelScale(2,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
