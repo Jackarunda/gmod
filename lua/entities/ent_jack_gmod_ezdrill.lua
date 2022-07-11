@@ -31,7 +31,7 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		self:SetPos(self:GetPos()+Vector(0,0,100)) -- Don't ask why
+		--self:SetPos(self:GetPos()+Vector(0,0,100)) -- Don't ask why
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(3000)
@@ -106,7 +106,8 @@ if(SERVER)then
 			self:SetState(STATE_RUNNING)
 			timer.Simple(.5,function()
 				if(IsValid(self))then
-					self.SoundLoop=CreateSound(self,"snd_jack_pumpjack.wav")
+					self.SetSequence(1)
+					self.SoundLoop=CreateSound(self,"snd_jack_gear1.wav")
 					self.SoundLoop:Play()
 					self.SoundLoop:SetSoundLevel(60)
 				end
@@ -208,10 +209,12 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	function ENT:Initialize()
+	--[[function ENT:Initialize()
 	--
-	end
+	end]]--
 	function ENT:Draw()
+		local Up,Right,Forward = self:GetUp(),self:GetRight(),self:GetForward()
+		local SelfPos = self:GetPos()
 		--
 		local BasePos=SelfPos+Up*32
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
