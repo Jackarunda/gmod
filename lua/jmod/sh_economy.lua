@@ -192,6 +192,14 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
 		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
 	},
+	sand={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
+	sandbags={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
 	concrete={
 		random={
 			[JMod.EZ_RESOURCE_TYPES.IRONORE]=.5,
@@ -530,7 +538,7 @@ function JMod.GetSalvageYield(ent)
 	local ScaleByMass=true
 	for name,info in pairs(JMod.Config.Craftables)do
 		if(info.results==Class)then
-			Info=info.results
+			Info=info.craftingReqs
 			ScaleByMass=false
 		end
 	end
