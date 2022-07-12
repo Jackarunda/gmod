@@ -10,7 +10,7 @@ ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes={"power","parts"}
 --ENT.WhitelistedResources = {}
-ENT.BlacklistedResources = {"water", "oil"}
+ENT.BlacklistedResources = {"water", "oil", "geothermal", "geo"}
 ENT.DepositKey = 0
 ENT.MaxElectricity = 200
 local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
@@ -73,18 +73,18 @@ if(SERVER)then
 		end
 		if(ClosestDeposit)then 
 			self.DepositKey = ClosestDeposit 
-			--print("Our deposit is "..self.DepositKey) --DEBUG
+			print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
 			self.DepositKey = 0 
-			--print("No valid deposit") --DEBUG
+			print("No valid deposit") --DEBUG
 		end
 	end
 	function ENT:TryPlant()
 		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
 		if((Tr.Hit)and(Tr.HitWorld))then
 			local Yaw=self:GetAngles().y
-			self:SetAngles(Angle(0,Yaw,-90))
-			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
+			self:SetAngles(Angle(0,Yaw,0))
+			self:SetPos(Tr.HitPos+Tr.HitNormal*0.1)
 			--
 			local GroundIsSolid=true
 			for i=1,50 do
@@ -106,10 +106,10 @@ if(SERVER)then
 			self:SetState(STATE_RUNNING)
 			timer.Simple(.5,function()
 				if(IsValid(self))then
-					self.SetSequence(1)
-					self.SoundLoop=CreateSound(self,"snd_jack_gear1.wav")
+					self:SetSequence("active")
+					self.SoundLoop=CreateSound(self,"snd_jack_betterdrill1.wav")
 					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(60)
+					self.SoundLoop:SetSoundLevel(0)
 				end
 			end)
 		else
@@ -117,6 +117,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:TurnOff()
+		self:SetSequence("idle")
 		self:SetState(STATE_OFF)
 	end
 	function ENT:Use(activator)
@@ -162,7 +163,7 @@ if(SERVER)then
 			self:ConsumeElectricity()
 			-- This is just the rate at which we drill
 			local drillRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
-			-- Here's where we do the rescource deduction, and barrel production
+			-- Here's where we do the rescource deduction, and ore production
 			-- If it's a flow (i.e. water)
 			if(JMod.NaturalResourceTable[self.DepositKey].rate)then
 				-- We get the rate
@@ -171,8 +172,8 @@ if(SERVER)then
 				self:SetProgress(self:GetProgress() + drillRate*flowRate)
 				-- If the progress exceeds 100
 				if(self:GetProgress() >= 100)then
-					-- Spawn barrel
-					self:SpawnBarrel(100, self.DepositKey)
+					-- Spawn ore
+					self:SpawnOre(100, self.DepositKey)
 					-- And subtract 100 from the progress (so as to not lose any overflow)
 					self:SetProgress(self:GetProgress() - 100)
 				end
@@ -187,7 +188,7 @@ if(SERVER)then
 				amtLeft = amtLeft - drillRate
 				if(self:GetProgress() >= 100)then
 					local amtToDrill = math.min(amtLeft, 100)
-					self:SpawnBarrel(amtToDrill, self.DepositKey)
+					self:SpawnOre(amtToDrill, self.DepositKey)
 					self:SetProgress(self:GetProgress() - 100)
 					JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft - amtToDrill
 				end
@@ -200,7 +201,7 @@ if(SERVER)then
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
 		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 15)
 		local Ore=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
-		Ore:SetPos(SelfPos+Forward*120-Right*90+RandomArea)
+		Ore:SetPos(SelfPos+Forward*100 + RandomArea)
 		Ore:Spawn()
 		JMod.Owner(self.Owner)
 		Ore:SetResource(amt)
@@ -209,10 +210,11 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	--[[function ENT:Initialize()
+	function ENT:Initialize()
 	--
-	end]]--
+	end
 	function ENT:Draw()
+		self:DrawModel()
 		local Up,Right,Forward = self:GetUp(),self:GetRight(),self:GetForward()
 		local SelfPos = self:GetPos()
 		--
