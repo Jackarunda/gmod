@@ -163,7 +163,7 @@ function SWEP:ApplyForce()
 	if IsValid(phys)then
 		local TargetPos=phys:GetPos()
 		if(self.CarryPos)then TargetPos=self.CarryEnt:LocalToWorld(self.CarryPos) end
-		local vec=target - TargetPos
+		local vec=target-TargetPos
 		local len,mul=vec:Length(),self.CarryEnt:GetPhysicsObject():GetMass()
 		if(len>self.ReachDistance)then
 			self:SetCarrying()

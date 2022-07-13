@@ -1,4 +1,4 @@
-local EquipSounds = {"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
+local EquipSounds={"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
 
 local function IsDamageThisType(dmg, typ)
 	if(type(typ)~="number")then return false end
@@ -20,16 +20,16 @@ local function IsDamageOneOfTypes(dmg, types)
 end
 function JMod.EZarmorSync(ply)
 	if not ply.EZarmor then return end
-	ply.EZarmor.effects = {}
-	ply.EZarmor.mskmat = nil
-	ply.EZarmor.sndlop = nil
-	ply.EZarmor.blackvision = nil
+	ply.EZarmor.effects={}
+	ply.EZarmor.mskmat=nil
+	ply.EZarmor.sndlop=nil
+	ply.EZarmor.blackvision=nil
 
 	for id, item in pairs(ply.EZarmor.items) do
-		local ArmorInfo = table.FullCopy(JMod.ArmorTable[item.name])
+		local ArmorInfo=table.FullCopy(JMod.ArmorTable[item.name])
 
 		if((item.tgl)and(ArmorInfo.tgl))then
-			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
+			ArmorInfo=table.Merge(ArmorInfo, ArmorInfo.tgl)
 			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason, table.Merge doesn't copy empty tables
 				if(type(v)=="table")then
 					if(#table.GetKeys(v)==0)then
@@ -39,29 +39,29 @@ function JMod.EZarmorSync(ply)
 			end
 		end
 		
-		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
+		local dead=item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
 
 		if ArmorInfo.eff and not dead then
 			for effName, effMag in pairs(ArmorInfo.eff) do
 				if (isnumber(effMag)) then
-					ply.EZarmor.effects[effName] = (ply.EZarmor.effects[effName] or 0) + effMag
+					ply.EZarmor.effects[effName]=(ply.EZarmor.effects[effName] or 0)+effMag
 				else
-					ply.EZarmor.effects[effName] = effMag
+					ply.EZarmor.effects[effName]=effMag
 				end
 			end
 		end
 
 		if ArmorInfo.blackvisionwhendead and dead then
-			ply.EZarmor.blackvision = true
+			ply.EZarmor.blackvision=true
 			JMod.Hint(ply,"vision dead")
 		end
 
 		if ArmorInfo.mskmat and ArmorInfo.mskmat ~= "" then
-			ply.EZarmor.mskmat = ArmorInfo.mskmat
+			ply.EZarmor.mskmat=ArmorInfo.mskmat
 		end
 
 		if ArmorInfo.sndlop and ArmorInfo.sndlop ~= "" then
-			ply.EZarmor.sndlop = ArmorInfo.sndlop
+			ply.EZarmor.sndlop=ArmorInfo.sndlop
 		end
 	end
 
@@ -80,27 +80,27 @@ function JMod.EZarmorWarning(ply,txt)
 end
 
 local function IsHitToFace(ply, dmg)
-	local FacingDir, DmgDir = ply:GetAimVector(), dmg:GetDamageForce():GetNormalized()
-	local ApproachAngle = -math.deg(math.asin(DmgDir:Dot(FacingDir)))
+	local FacingDir, DmgDir=ply:GetAimVector(), dmg:GetDamageForce():GetNormalized()
+	local ApproachAngle=-math.deg(math.asin(DmgDir:Dot(FacingDir)))
 
 	return ApproachAngle > 45
 end
 
 local function IsHitToBack(ply, dmg)
-	local FacingDir, DmgDir = ply:GetAimVector(), dmg:GetDamageForce():GetNormalized()
-	local ApproachAngle = -math.deg(math.asin(DmgDir:Dot(FacingDir)))
+	local FacingDir, DmgDir=ply:GetAimVector(), dmg:GetDamageForce():GetNormalized()
+	local ApproachAngle=-math.deg(math.asin(DmgDir:Dot(FacingDir)))
 
 	return ApproachAngle < -45
 end
 
 local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shouldDmgArmor, cumulativeCoverage)
-	local Protection, Busted = 0, false
+	local Protection, Busted=0, false
 
 	for id, armorData in pairs(ply.EZarmor.items) do
-		local ArmorInfo = table.FullCopy(JMod.ArmorTable[armorData.name])
+		local ArmorInfo=table.FullCopy(JMod.ArmorTable[armorData.name])
 
 		if armorData.tgl and ArmorInfo.tgl then
-			ArmorInfo = table.Merge(ArmorInfo, ArmorInfo.tgl)
+			ArmorInfo=table.Merge(ArmorInfo, ArmorInfo.tgl)
 			for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
 				if(type(v)=="table")then
 					if(#table.GetKeys(v)==0)then
@@ -111,7 +111,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 		end
 
 		if (ArmorInfo) then
-			local CumulativeDivisor = 0
+			local CumulativeDivisor=0
 			for armorSlot, coverage in pairs(ArmorInfo.slots) do
 				if ((armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist")) then
 					CumulativeDivisor=CumulativeDivisor+1
@@ -121,14 +121,14 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 				if ((armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist") and (armorSlot == slot)) then
 					for damType, damProtection in pairs(ArmorInfo.def) do
 						if (IsDamageThisType(dmg, damType)) then
-							Protection = Protection + damProtection * coverage * protectionMul
+							Protection=Protection+damProtection*coverage*protectionMul
 							if(cumulativeCoverage)then Protection=Protection/(CumulativeDivisor or 1) end
 							if (shouldDmgArmor) then
 								if not (IsDamageOneOfTypes(dmg, JMod.BiologicalDmgTypes)) then
-									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.ArmorDegredationMult
+									local ArmorDmgAmt=Protection*dmgAmt*JMod.Config.ArmorDegredationMult
 
 									if (damType == DMG_BUCKSHOT) then
-										ArmorDmgAmt = ArmorDmgAmt / 2.5
+										ArmorDmgAmt=ArmorDmgAmt/2.5
 									end
 									
 									if(ArmorInfo.resist)then
@@ -140,19 +140,19 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 										end
 									end
 
-									armorData.dur = armorData.dur - ArmorDmgAmt
+									armorData.dur=armorData.dur-ArmorDmgAmt
 									if(armorData.dur < ArmorInfo.dur*.25)then
 										JMod.EZarmorWarning(ply,"armor piece is almost destroyed!")
 									end
 
 									if (armorData.dur <= 0) then
 										JMod.RemoveArmorByID(ply, id, true)
-										Busted = true
+										Busted=true
 									end
 								elseif ((armorData.chrg) and (armorData.chrg.chemicals)) then
 									JMod.DepleteArmorChemicalCharge(ply,Protection*dmgAmt*.02)
 									if (armorData.chrg.chemicals <= 0) then
-										Protection = 0
+										Protection=0
 									end
 								end
 							end
@@ -168,7 +168,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 end
 
 local function LocationalDmgHandling(ply, hitgroup, dmg)
-	local Mul = 1
+	local Mul=1
 	local AmmoTypeID,AmmoAPmul,AmmoHPmul=dmg:GetAmmoType(),1,1
 	if(AmmoTypeID)then
 		local AmmoName=game.GetAmmoName(AmmoTypeID)
@@ -181,41 +181,41 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 		end
 	end
 	if (ply.EZarmor and #table.GetKeys(ply.EZarmor.items) > 0) then
-		local RelevantSlots, DmgAmt = {}, dmg:GetDamage()
+		local RelevantSlots, DmgAmt={}, dmg:GetDamage()
 
 		if (hitgroup == HITGROUP_HEAD) then
 			if (IsHitToFace(ply, dmg)) then
-				RelevantSlots.eyes = .5
-				RelevantSlots.mouthnose = .5
+				RelevantSlots.eyes=.5
+				RelevantSlots.mouthnose=.5
 			else
-				RelevantSlots.head = 1
+				RelevantSlots.head=1
 			end
 		elseif (hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC) then
-			RelevantSlots.chest = 1
+			RelevantSlots.chest=1
 		elseif (hitgroup == HITGROUP_STOMACH) then
-			RelevantSlots.abdomen = .5
-			RelevantSlots.pelvis = .5
+			RelevantSlots.abdomen=.5
+			RelevantSlots.pelvis=.5
 		elseif (hitgroup == HITGROUP_RIGHTARM) then
-			RelevantSlots.rightshoulder = .5
-			RelevantSlots.rightforearm = .5
+			RelevantSlots.rightshoulder=.5
+			RelevantSlots.rightforearm=.5
 		elseif (hitgroup == HITGROUP_LEFTARM) then
-			RelevantSlots.leftshoulder = .5
-			RelevantSlots.leftforearm = .5
+			RelevantSlots.leftshoulder=.5
+			RelevantSlots.leftforearm=.5
 		elseif (hitgroup == HITGROUP_RIGHTLEG) then
-			RelevantSlots.rightthigh = .5
-			RelevantSlots.rightcalf = .5
+			RelevantSlots.rightthigh=.5
+			RelevantSlots.rightcalf=.5
 		elseif (hitgroup == HITGROUP_LEFTLEG) then
-			RelevantSlots.leftthigh = .5
-			RelevantSlots.leftcalf = .5
+			RelevantSlots.leftthigh=.5
+			RelevantSlots.leftcalf=.5
 		end
 
-		local Protection, ArmorPieceBroke = 0, false
+		local Protection, ArmorPieceBroke=0, false
 
 		for slot, relevance in pairs(RelevantSlots) do
-			local ProtectionForThisSlot, Busted = GetProtectionFromSlot(ply, slot, dmg, DmgAmt, relevance, true, false)
-			Protection = Protection + ProtectionForThisSlot
+			local ProtectionForThisSlot, Busted=GetProtectionFromSlot(ply, slot, dmg, DmgAmt, relevance, true, false)
+			Protection=Protection+ProtectionForThisSlot
 
-			ArmorPieceBroke = ArmorPieceBroke or Busted
+			ArmorPieceBroke=ArmorPieceBroke or Busted
 		end
 		
 		local NoProtection=Protection<=.05
@@ -229,7 +229,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			end
 		end
 
-		Mul = (Mul * (1-Protection)) / JMod.Config.ArmorProtectionMult
+		Mul=(Mul*(1-Protection))/JMod.Config.ArmorProtectionMult
 		
 		if(NoProtection and JMod.Config.QoL.RealisticLocationalDamage)then -- if there's no armor on the struck bodypart
 			Mul=Mul*JMod.BodyPartDamageMults[hitgroup]
@@ -248,13 +248,13 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 end
 local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 	--if (#table.GetKeys(ply.EZarmor.items) <= 0) then return end
-	local Mul, Protection, DmgAmt, ArmorPieceBroke = 1, 0, dmg:GetDamage(), false
+	local Mul, Protection, DmgAmt, ArmorPieceBroke=1, 0, dmg:GetDamage(), false
 
 	for slot, healthMult in pairs(JMod.BodyPartHealthMults) do
-		local ProtectionForThisSlot, Busted = GetProtectionFromSlot(ply, slot, dmg, DmgAmt, (biological and 1) or healthMult, true, biological)
-		Protection = Protection + ProtectionForThisSlot
+		local ProtectionForThisSlot, Busted=GetProtectionFromSlot(ply, slot, dmg, DmgAmt, (biological and 1) or healthMult, true, biological)
+		Protection=Protection+ProtectionForThisSlot
 
-		ArmorPieceBroke = ArmorPieceBroke or Busted
+		ArmorPieceBroke=ArmorPieceBroke or Busted
 	end
 
 	local NoProtection,AmmoTypeID,AmmoAPmul,AmmoHPmul=Protection<=.05,dmg:GetAmmoType(),1,1
@@ -275,7 +275,7 @@ local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 		Protection=Protection*AmmoAPmul
 	end
 
-	Mul = (Mul * (1-Protection)) / JMod.Config.ArmorProtectionMult
+	Mul=(Mul*(1-Protection))/JMod.Config.ArmorProtectionMult
 
 	if(Mul<.001)then
 		dmg:ScaleDamage(0)
@@ -338,20 +338,20 @@ function JMod.RemoveAllArmor(ply)
 end
 
 function JMod.CalcSpeed(ply)
-	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
+	local Walk, Run, TotalWeight=ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
 
 	for k, v in pairs(ply.EZarmor.items) do
-		local ArmorInfo = JMod.ArmorTable[v.name]
-		TotalWeight = TotalWeight + ArmorInfo.wgt
+		local ArmorInfo=JMod.ArmorTable[v.name]
+		TotalWeight=TotalWeight+ArmorInfo.wgt
 	end
 
-	local WeighedFrac = TotalWeight / 250
-	ply.EZarmor.speedfrac = math.Clamp(1 - (.8 * WeighedFrac * JMod.Config.ArmorWeightMult), .05, 1)
+	local WeighedFrac=TotalWeight/250
+	ply.EZarmor.speedfrac=math.Clamp(1-(.8*WeighedFrac*JMod.Config.ArmorWeightMult), .05, 1)
 end
 
 hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, vol, filter)
 	if (ply.EZarmor) then
-		local Num = #table.GetKeys(ply.EZarmor.items)
+		local Num=#table.GetKeys(ply.EZarmor.items)
 
 		if (Num >= 6) then
 			ply:EmitSound("snd_jack_gear" .. tostring(math.random(1, 6)) .. ".wav", 58, math.random(70, 130))
@@ -360,9 +360,9 @@ hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, 
 end)
 
 function JMod.RemoveArmorByID(ply, ID, broken)
-	local Info = ply.EZarmor.items[ID]
+	local Info=ply.EZarmor.items[ID]
 	if not Info then return end
-	local Specs = JMod.ArmorTable[Info.name]
+	local Specs=JMod.ArmorTable[Info.name]
 
 	timer.Simple(math.Rand(0, .5), function()
 		if (broken) then
@@ -378,16 +378,16 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	end)
 
 	if not broken then
-		local Ent = ents.Create(Specs.ent)
-		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
+		local Ent=ents.Create(Specs.ent)
+		Ent:SetPos(ply:GetShootPos()+ply:GetAimVector()*30+VectorRand()*math.random(1, 20))
 		Ent:SetAngles(AngleRand())
-		Ent.ArmorDurability = Info.dur
+		Ent.ArmorDurability=Info.dur
 
 		if (Info.chrg) then
-			Ent.ArmorCharges = table.FullCopy(Info.chrg)
+			Ent.ArmorCharges=table.FullCopy(Info.chrg)
 		end
 
-		Ent.EZID = ID
+		Ent.EZID=ID
 		Ent:SetColor(Info.col)
 		Ent:Spawn()
 		Ent:Activate()
@@ -402,7 +402,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 		ply.EZarmor.bodygroups=nil
 	end
 
-	ply.EZarmor.items[ID] = nil
+	ply.EZarmor.items[ID]=nil
 end
 
 local function GetArmorBySlot(currentArmorItems, slot)
@@ -414,11 +414,11 @@ local function GetArmorBySlot(currentArmorItems, slot)
 end
 
 local function GetAreSlotsClear(currentArmorItems, newArmorName)
-	local NewArmorInfo = JMod.ArmorTable[newArmorName]
-	local RequiredSlots = NewArmorInfo.slots
+	local NewArmorInfo=JMod.ArmorTable[newArmorName]
+	local RequiredSlots=NewArmorInfo.slots
 
 	for id, currentArmorData in pairs(currentArmorItems) do
-		local CurrentArmorInfo = JMod.ArmorTable[currentArmorData.name]
+		local CurrentArmorInfo=JMod.ArmorTable[currentArmorData.name]
 
 		for newSlotName, newCoverage in pairs(RequiredSlots) do
 			for oldSlotName, oldCoverage in pairs(CurrentArmorInfo.slots) do
@@ -439,26 +439,26 @@ function JMod.SetPlayerModel(ply,mod)
 end
 
 function JMod.EZ_Equip_Armor(ply, nameOrEnt)
-	local NewArmorName = nameOrEnt
+	local NewArmorName=nameOrEnt
 	local NewArmorID, NewArmorDurability, NewArmorColor, NewArmorSpecs, NewArmorCharges
 
 	if (type(nameOrEnt) ~= "string") then
 		if not (IsValid(nameOrEnt)) then return end
-		NewArmorName = nameOrEnt.ArmorName
-		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
-		NewArmorID = nameOrEnt.EZID
-		NewArmorDurability = nameOrEnt.ArmorDurability or NewArmorSpecs.dur
-		NewArmorColor = nameOrEnt:GetColor()
-		NewArmorCharges = nameOrEnt.ArmorCharges
+		NewArmorName=nameOrEnt.ArmorName
+		NewArmorSpecs=JMod.ArmorTable[NewArmorName]
+		NewArmorID=nameOrEnt.EZID
+		NewArmorDurability=nameOrEnt.ArmorDurability or NewArmorSpecs.dur
+		NewArmorColor=nameOrEnt:GetColor()
+		NewArmorCharges=nameOrEnt.ArmorCharges
 		nameOrEnt:Remove()
 	else
-		NewArmorSpecs = JMod.ArmorTable[NewArmorName]
-		NewArmorID = JMod.GenerateGUID()
-		NewArmorColor = Color(128, 128, 128)
-		NewArmorDurability = NewArmorSpecs.dur
+		NewArmorSpecs=JMod.ArmorTable[NewArmorName]
+		NewArmorID=JMod.GenerateGUID()
+		NewArmorColor=Color(128, 128, 128)
+		NewArmorDurability=NewArmorSpecs.dur
 
 		if (NewArmorSpecs.chrg) then
-			NewArmorCharges = table.FullCopy(NewArmorSpecs.chrg)
+			NewArmorCharges=table.FullCopy(NewArmorSpecs.chrg)
 		end
 	end
 
@@ -468,16 +468,16 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		AreSlotsClear,ConflictingItemID=GetAreSlotsClear(ply.EZarmor.items,NewArmorName)
 	end
 
-	local NewVirtualArmorItem = {
-		name = NewArmorName,
-		dur = NewArmorDurability,
-		col = NewArmorColor,
-		chrg = NewArmorCharges,
-		id = NewArmorID,
-		tgl = false
+	local NewVirtualArmorItem={
+		name=NewArmorName,
+		dur=NewArmorDurability,
+		col=NewArmorColor,
+		chrg=NewArmorCharges,
+		id=NewArmorID,
+		tgl=false
 	}
 
-	ply.EZarmor.items[NewArmorID] = NewVirtualArmorItem
+	ply.EZarmor.items[NewArmorID]=NewVirtualArmorItem
 	
 	if(NewArmorSpecs.plymdl)then
 		-- if this is a suit, we need to set the player's model and color accordingly
@@ -600,11 +600,11 @@ end)
 
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)
 	if not ply:IsSuperAdmin() then return end
-	local target = ply
+	local target=ply
 	if args[1] == "looking" then
-		target = ply:GetEyeTrace().Entity
+		target=ply:GetEyeTrace().Entity
 	elseif tonumber(args[1]) and player.GetByID(tonumber(args[1])) then
-		target = player.GetByID(tonumber(args[1]))
+		target=player.GetByID(tonumber(args[1]))
 	end
 	if not IsValid(target) then print("invalid target") return end
 	JMod.EZ_Equip_Armor(target, "Ultra-Heavy-Helmet")

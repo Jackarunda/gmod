@@ -1,9 +1,9 @@
-local blurMat = Material("pp/blurscreen")
-local Dynamic = 0
-local MenuOpen = false
-local YesMat = Material("icon16/accept.png")
-local NoMat = Material("icon16/cancel.png")
-local FavMat = Material("icon16/star.png")
+local blurMat=Material("pp/blurscreen")
+local Dynamic=0
+local MenuOpen=false
+local YesMat=Material("icon16/accept.png")
+local NoMat=Material("icon16/cancel.png")
+local FavMat=Material("icon16/star.png")
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png")
 }
@@ -337,11 +337,25 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 		end
 		Butt:SetTooltip(desc)
 		Butt.enabled=enableFunc(itemName,itemInfo,LocalPlayer(),entity)
+		Butt:SetMouseInputEnabled(true)
+		Butt.hovered=false
 		function Butt:Paint(w,h)
-			if(self.enabled)then
-				surface.SetDrawColor(50,50,50,60)
+			local Hovr=self:IsHovered()
+			if(Hovr)then
+				if not(self.hovered)then
+					self.hovered=true
+					if(self.enabled)then
+						surface.PlaySound("snds_jack_gmod/ez_gui/hover_ready.wav")
+					end
+				end
 			else
-				surface.SetDrawColor(0,0,0,30)
+				self.hovered=false
+			end
+			local Brite=(Hovr and 50) or 30
+			if(self.enabled)then
+				surface.SetDrawColor(Brite,Brite,Brite,60)
+			else
+				surface.SetDrawColor(0,0,0,(Hovr and 50) or 20)
 			end
 			surface.DrawRect(0,0,w,h)
 			local ItemIcon=SelectionMenuIcons[itemName]
@@ -371,8 +385,16 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 		end
 		function Butt:DoClick()
 			if(self.enabled)then
-				clickFunc(itemName,itemInfo,LocalPlayer(),entity)
+				timer.Simple(.5,function()
+					if(IsValid(entity))then
+						clickFunc(itemName,itemInfo,LocalPlayer(),entity)
+					end
+				end)
+				surface.PlaySound("snds_jack_gmod/ez_gui/click_big.wav")
+				motherFrame.positiveClosed=true
 				motherFrame:Close()
+			else
+				surface.PlaySound("snds_jack_gmod/ez_gui/miss.wav")
 			end
 		end
         Y=Y+47
@@ -410,18 +432,24 @@ local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,cl
 	LocallyAvailableResources=JMod.CountResourcesInRange(entity:GetPos(),150,entity)
 	-- then, proceed with making the rest of the menu
 	local MotherFrame=vgui.Create("DFrame")
+	MotherFrame.positiveClosed=false
+	MotherFrame.storted=false
 	MotherFrame:SetSize(900,500)
 	MotherFrame:SetVisible(true)
 	MotherFrame:SetDraggable(true)
 	MotherFrame:ShowCloseButton(true)
 	MotherFrame:SetTitle(displayString)
 	function MotherFrame:Paint()
+		if not(self.storted)then self.storted=true;surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.wav") end
 		BlurBackground(self)
 	end
 	MotherFrame:MakePopup()
 	MotherFrame:Center()
 	function MotherFrame:OnKeyCodePressed(key)
 		if key==KEY_Q or key==KEY_ESCAPE or key==KEY_E then self:Close() end
+	end
+	function MotherFrame:OnClose()
+		if not(self.positiveClosed)then surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav") end
 	end
 	local W,H,Myself=MotherFrame:GetWide(),MotherFrame:GetTall(),LocalPlayer()
 	local Categories={}
@@ -458,11 +486,14 @@ local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,cl
 		TabBtn:SetText("")
 		TabBtn.Category=cat
 		function TabBtn:Paint(x,y)
-			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or 40)
-			surface.DrawRect(0,0,x,y)			
-			draw.SimpleText(self.Category,"DermaDefault",x * 0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 40),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
+			local Hovr=self:IsHovered()
+			local Col=(Hovr and 80) or 20
+			surface.SetDrawColor(0,0,0,(ActiveTab==self.Category and 100)or Col)
+			surface.DrawRect(0,0,x,y)	
+			draw.SimpleText(self.Category,"DermaDefault",x*0.5,10,Color(255,255,255,(ActiveTab==self.Category and 255)or 40),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
 		end
 		function TabBtn:DoClick()
+			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
 			ActiveTab=self.Category
 			PopulateItems(ActiveTabPanel,Categories[ActiveTab],typ,MotherFrame,entity,enableFunc,clickFunc)
 		end
@@ -472,7 +503,7 @@ local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,cl
 end
 --[[
 if #JMod.ClientConfig.BuildKitFavs > 0 then
-	local Tab = {}
+	local Tab={}
 	for k,v in pairs(JMod.ClientConfig.BuildKitFavs)do
 		table.insert(Tab,v)
 	end
@@ -532,7 +563,7 @@ net.Receive("JMod_UniCrate",function() -- todo: this menu will be deprecated whe
 		function button:Paint(w,h)
 			surface.SetDrawColor(50,50,50,100)
 			surface.DrawRect(0,0,w,h)
-			local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
+			local msg=sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2]*tbl[1]) .. " volume)"
 			draw.SimpleText(msg,"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 		end
 		button.DoClick=function()

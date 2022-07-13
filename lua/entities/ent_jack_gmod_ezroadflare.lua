@@ -52,7 +52,7 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self:SetFuel(math.random(1500,2000))
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Ignite"}, {"Ignites flare"})
+			self.Inputs=WireLib.CreateInputs(self, {"Ignite"}, {"Ignites flare"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)

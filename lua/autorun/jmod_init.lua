@@ -136,13 +136,23 @@ JMod.EZ_GRADE_UPGRADE_COSTS={.5,1,1.5,2}
 JMod.EZ_UPGRADE_RESOURCE_BLACKLIST={}
 
 -- State enums
-JMod.EZ_STATE_BROKEN 	= -1
-JMod.EZ_STATE_OFF 		= 0
-JMod.EZ_STATE_ON        = 1
-JMod.EZ_STATE_PRIMED 	= 2
-JMod.EZ_STATE_ARMING 	= 3
-JMod.EZ_STATE_ARMED		= 4
-JMod.EZ_STATE_WARNING	= 5
+JMod.EZ_STATE_BROKEN=-1
+JMod.EZ_STATE_OFF=0
+JMod.EZ_STATE_ON=1
+JMod.EZ_STATE_PRIMED=2
+JMod.EZ_STATE_ARMING=3
+JMod.EZ_STATE_ARMED=4
+JMod.EZ_STATE_WARNING=5
+
+JMod.RadiationShieldingValues={
+	[MAT_METAL]=.2,
+	[MAT_CONCRETE]=.1,
+	[MAT_DIRT]=.05,
+	[MAT_SAND]=.05,
+	[MAT_SNOW]=.05,
+	[MAT_WOOD]=.02,
+	[MAT_GLASS]=.02
+}
 
 -- we have to load locales before any other files
 -- because files that add concommands have help text
@@ -162,7 +172,7 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 		AddCSLuaFile("jmod/" .. f)
 		include("jmod/" .. f)
 	else
-		print("JMod detected unaccounted-for lua file '" .. f .. "' - check prefixes!")
+		print("JMod detected unaccounted-for lua file '" .. f .. "'-check prefixes!")
 	end
 end
 

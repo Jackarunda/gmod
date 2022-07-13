@@ -36,7 +36,7 @@ function EFFECT:Init( data )
 	self.lastThink=0
 	self.MinSplodeTime=CurTime()+self.CloudHeight/self.BlastSpeed
 	self.MaxSplodeTime=CurTime()+6
-	self.GroundPos=self.Position - Vector(0,0,self.CloudHeight)
+	self.GroundPos=self.Position-Vector(0,0,self.CloudHeight)
 	
 	local Pos=self.Position
 	local Velo=data:GetStart()

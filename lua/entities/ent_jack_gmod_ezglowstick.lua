@@ -47,12 +47,12 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		---
-		self.NextStick = 0
+		self.NextStick=0
 		self.LastUse=0
 		self:SetState(STATE_OFF)
 		self:SetFuel(math.random(540,660))
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Light"}, {"Lights glowstick"})
+			self.Inputs=WireLib.CreateInputs(self, {"Light"}, {"Lights glowstick"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -109,17 +109,17 @@ if(SERVER)then
 			else
 				if(tobool(onOff))then
 					constraint.RemoveAll(self)
-					self.StuckStick = nil
-					self.StuckTo = nil
+					self.StuckStick=nil
+					self.StuckTo=nil
 					Dude:PickupObject(self)
-					self.NextStick = Time + .5
+					self.NextStick=Time+.5
 					JMod.Hint(Dude, "sticky")
 				elseif((Time-self.LastUse)>.1)then
 					if((self:IsPlayerHolding())and(self.NextStick<Time))then
 						local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
 						if Tr.Hit and (IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer())then
 							self.NextStick=Time+.5
-							local Ang = Tr.HitNormal:Angle()
+							local Ang=Tr.HitNormal:Angle()
 							--Ang:RotateAroundAxis(Ang:Right(), -90)
 							--Ang:RotateAroundAxis(Ang:Up(), 90)
 							self:SetAngles(Ang)

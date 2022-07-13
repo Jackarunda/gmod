@@ -12,14 +12,14 @@ ENT.Category =	"Render"
 
 function ENT:SetupDataTables()
 
-	self:NetworkVar( "Bool",	0,	"ActiveState",	{ KeyName = "activestate",	Edit = { type = "Boolean",					title = "Enable",	order = 1,	category = "Main" } } )
-	self:NetworkVar( "Bool",	1,	"DrawHelper",	{ KeyName = "drawhelper",	Edit = { type = "Boolean",					title = "Draw Helper",	order = 8,	category = "Render" } } )
-	self:NetworkVar( "Bool",	2,	"DrawSprite",	{ KeyName = "drawsprite",	Edit = { type = "Boolean",					title = "Draw Sprite",	order = 7,	category = "Render" } } )
-	self:NetworkVar( "Bool",	3,	"Shadows",	{ KeyName = "shadows",		Edit = { type = "Boolean",					title = "Shadows",	order = 6,	category = "Effect" } } )
-	self:NetworkVar( "Float",	0,	"Brightness",	{ KeyName = "brightness",	Edit = { type = "Float",	min = 0.01,	max = 15,	title = "Brightness",	order = 3,	category = "Light" } } )
-	self:NetworkVar( "Float",	1,	"FarZ",		{ KeyName = "farz",		Edit = { type = "Float",	min = 32,	max = 2048,	title = "Size",		order = 5,	category = "Light" } } )
-	self:NetworkVar( "Float",	2,	"NearZ",	{ KeyName = "nearz",		Edit = { type = "Float",	min = 2,	max = 16,	title = "Near Z",	order = 4,	category = "Light" } } )
-	self:NetworkVar( "Vector",	0,	"LightColor",	{ KeyName = "lightcolor",	Edit = { type = "RGBColor",					title = "Color",	order = 2,	category = "Light" } } )
+	self:NetworkVar( "Bool",	0,	"ActiveState",	{ KeyName="activestate",	Edit={ type="Boolean",					title="Enable",	order=1,	category="Main" } } )
+	self:NetworkVar( "Bool",	1,	"DrawHelper",	{ KeyName="drawhelper",	Edit={ type="Boolean",					title="Draw Helper",	order=8,	category="Render" } } )
+	self:NetworkVar( "Bool",	2,	"DrawSprite",	{ KeyName="drawsprite",	Edit={ type="Boolean",					title="Draw Sprite",	order=7,	category="Render" } } )
+	self:NetworkVar( "Bool",	3,	"Shadows",	{ KeyName="shadows",		Edit={ type="Boolean",					title="Shadows",	order=6,	category="Effect" } } )
+	self:NetworkVar( "Float",	0,	"Brightness",	{ KeyName="brightness",	Edit={ type="Float",	min=0.01,	max=15,	title="Brightness",	order=3,	category="Light" } } )
+	self:NetworkVar( "Float",	1,	"FarZ",		{ KeyName="farz",		Edit={ type="Float",	min=32,	max=2048,	title="Size",		order=5,	category="Light" } } )
+	self:NetworkVar( "Float",	2,	"NearZ",	{ KeyName="nearz",		Edit={ type="Float",	min=2,	max=16,	title="Near Z",	order=4,	category="Light" } } )
+	self:NetworkVar( "Vector",	0,	"LightColor",	{ KeyName="lightcolor",	Edit={ type="RGBColor",					title="Color",	order=2,	category="Light" } } )
 
 	if ( SERVER ) then
 
@@ -60,8 +60,8 @@ if ( SERVER ) then
 
 		if ( not tr.Hit ) then return end
 
-		local ent = ents.Create( ClassName )
-		ent:SetPos( tr.HitPos + ( tr.HitNormal * 32 ) )
+		local ent=ents.Create( ClassName )
+		ent:SetPos( tr.HitPos+( tr.HitNormal*32 ) )
 		ent:Spawn()
 		ent:Activate()
 
@@ -73,7 +73,7 @@ if ( SERVER ) then
 
 	duplicator.RegisterEntityClass( "expensive_light_new", function( ply, data )
 
-		local ent = duplicator.GenericDuplicatorFunction( ply, data )
+		local ent=duplicator.GenericDuplicatorFunction( ply, data )
 
 		if ( not IsValid( ent ) ) then return end
 
@@ -107,8 +107,8 @@ end
 
 if ( CLIENT ) then
 
-	local fov = math.deg( math.atan( 512 / 511 ) ) * 2
-	local lx = "effects/lx"
+	local fov=math.deg( math.atan( 512/511 ) )*2
+	local lx="effects/lx"
 
 	function ENT:UpdateProjectedTexture( L, pos, ang, Shadows, FarZ, NearZ, LightColor, Brightness )
 
@@ -127,39 +127,39 @@ if ( CLIENT ) then
 
 	end
 
-	local EMPTY_ANG = Angle( 0, 0, 0 )
+	local EMPTY_ANG=Angle( 0, 0, 0 )
 
 	function ENT:CreateAllProjectedTextures()
 
-		local Shadows = self:BoolToString( self:GetShadows() )
-		local FarZ = self:GetFarZ()
-		local NearZ = self:GetNearZ()
-		local LightColor = self:VectorToColor( self:GetLightColor() )
-		local Brightness = self:GetBrightness()
+		local Shadows=self:BoolToString( self:GetShadows() )
+		local FarZ=self:GetFarZ()
+		local NearZ=self:GetNearZ()
+		local LightColor=self:VectorToColor( self:GetLightColor() )
+		local Brightness=self:GetBrightness()
 
-		local pos = self:GetPos()
-		local ang = self:GetAngles()
+		local pos=self:GetPos()
+		local ang=self:GetAngles()
 
-		local L = ProjectedTexture()
+		local L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.FR = L
+			self.FR=L
 
 			self:UpdateProjectedTexture( L, pos, ang, Shadows, FarZ, NearZ, LightColor, Brightness )
 
 		end
 
-		local up = ang:Up()
+		local up=ang:Up()
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 180 )
 
-		L = ProjectedTexture()
+		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.BK = L
+			self.BK=L
 
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
@@ -168,11 +168,11 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 90 )
 
-		L = ProjectedTexture()
+		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.RI = L
+			self.RI=L
 
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
@@ -181,26 +181,26 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 270 )
 
-		L = ProjectedTexture()
+		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.LF = L
+			self.LF=L
 
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
 		end
 
-		local ri = ang:Right()
+		local ri=ang:Right()
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 90 )
 
-		L = ProjectedTexture()
+		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.UP = L
+			self.UP=L
 
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
@@ -209,11 +209,11 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 270 )
 
-		L = ProjectedTexture()
+		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
 
-			self.DN = L
+			self.DN=L
 
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
@@ -223,17 +223,17 @@ if ( CLIENT ) then
 
 	function ENT:UpdateAllProjectedTextures()
 
-		local Shadows = self:GetShadows()
-		local FarZ = self:GetFarZ()
-		local NearZ = self:GetNearZ()
-		-- local LightColor = 
+		local Shadows=self:GetShadows()
+		local FarZ=self:GetFarZ()
+		local NearZ=self:GetNearZ()
+		-- local LightColor=
 		--self:VectorToColor( self:GetLightColor() )
-		local Brightness = self:GetBrightness()
+		local Brightness=self:GetBrightness()
 
-		local pos = self:GetPos()
-		local ang = self:GetAngles()
+		local pos=self:GetPos()
+		local ang=self:GetAngles()
 
-		local L = self.FR
+		local L=self.FR
 
 		if ( IsValid( L ) ) then
 
@@ -241,12 +241,12 @@ if ( CLIENT ) then
 
 		end
 
-		local up = ang:Up()
+		local up=ang:Up()
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 180 )
 
-		L = self.BK
+		L=self.BK
 
 		if ( IsValid( L ) ) then
 
@@ -257,7 +257,7 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 90 )
 
-		L = self.RI
+		L=self.RI
 
 		if ( IsValid( L ) ) then
 
@@ -268,7 +268,7 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( up, 270 )
 
-		L = self.LF
+		L=self.LF
 
 		if ( IsValid( L ) ) then
 
@@ -276,12 +276,12 @@ if ( CLIENT ) then
 
 		end
 
-		local ri = ang:Right()
+		local ri=ang:Right()
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 90 )
 
-		L = self.UP
+		L=self.UP
 
 		if ( IsValid( L ) ) then
 
@@ -292,7 +292,7 @@ if ( CLIENT ) then
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 270 )
 
-		L = self.DN
+		L=self.DN
 
 		if ( IsValid( L ) ) then
 
@@ -304,63 +304,63 @@ if ( CLIENT ) then
 
 	function ENT:RemoveAllProjectedTextures()
 
-		local L = self.FR
+		local L=self.FR
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.FR = NULL
+			self.FR=NULL
 
 		end
 
-		L = self.BK
+		L=self.BK
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.BK = NULL
+			self.BK=NULL
 
 		end
 
-		L = self.RI
+		L=self.RI
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.RI = NULL
+			self.RI=NULL
 
 		end
 
-		L = self.LF
+		L=self.LF
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.LF = NULL
+			self.LF=NULL
 
 		end
 
-		L = self.UP
+		L=self.UP
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.UP = NULL
+			self.UP=NULL
 
 		end
 
-		L = self.DN
+		L=self.DN
 
 		if ( IsValid( L ) ) then
 
 			L:Remove()
 
-			self.DN = NULL
+			self.DN=NULL
 
 		end
 
@@ -368,17 +368,17 @@ if ( CLIENT ) then
 
 	function ENT:Initialize()
 
-		self.PixVis = util.GetPixelVisibleHandle()
+		self.PixVis=util.GetPixelVisibleHandle()
 
 		if ( self:GetActiveState() ) then
 
-			self.WasActive = true
+			self.WasActive=true
 
 			self:CreateAllProjectedTextures()
 
 		else
 
-			self.WasActive = false
+			self.WasActive=false
 
 		end
 
@@ -393,7 +393,7 @@ if ( CLIENT ) then
 
 			else
 
-				self.WasActive = true
+				self.WasActive=true
 
 				self:CreateAllProjectedTextures()
 
@@ -401,7 +401,7 @@ if ( CLIENT ) then
 
 		elseif ( self.WasActive ) then
 
-			self.WasActive = false
+			self.WasActive=false
 
 			self:RemoveAllProjectedTextures()
 
@@ -414,27 +414,27 @@ if ( CLIENT ) then
 
 	end
 
-	local spritemat = Material( "sprites/light_ignorez" )
-	local helpermat = Material( "sprites/helper_tri" )
+	local spritemat=Material( "sprites/light_ignorez" )
+	local helpermat=Material( "sprites/helper_tri" )
 
 	function ENT:Draw()
 
 		if ( ( halo.RenderedEntity() ~= self ) and self:GetActiveState() and self:GetDrawSprite() ) then
 
-			local pos = self:GetPos()
+			local pos=self:GetPos()
 
-			local Visible = util.PixelVisible( pos, 4, self.PixVis )
+			local Visible=util.PixelVisible( pos, 4, self.PixVis )
 
 			if ( ( Visible ) and ( Visible > 0.1 ) ) then
 
-				local c = self:GetLightColor()
-				local i = self:GetBrightness()
+				local c=self:GetLightColor()
+				local i=self:GetBrightness()
 
-				local s = ( i / 0.25 ) ^ 0.5 * 32
-				s = s * Visible
+				local s=( i/0.25 ) ^ 0.5*32
+				s=s*Visible
 
 				render.SetMaterial( spritemat )
-				render.DrawSprite( pos, s, s, Color( self:ColorC( c.x ), self:ColorC( c.y ), self:ColorC( c.z ), math.Round( Visible * 255 ) ) )
+				render.DrawSprite( pos, s, s, Color( self:ColorC( c.x ), self:ColorC( c.y ), self:ColorC( c.z ), math.Round( Visible*255 ) ) )
 
 			end
 
@@ -442,20 +442,20 @@ if ( CLIENT ) then
 
 		if ( ( not self:Camera() ) and self:GetDrawHelper() ) then
 
-			local pos = self:GetPos()
-			local ang = self:GetAngles()
+			local pos=self:GetPos()
+			local ang=self:GetAngles()
 
-			local fw = ang:Forward()
-			local ri = ang:Right()
-			local up = ang:Up()
+			local fw=ang:Forward()
+			local ri=ang:Right()
+			local up=ang:Up()
 
 			render.SetMaterial( helpermat )
-			render.DrawBeam( pos + ( fw * 2 ), pos + ( fw * 4 ), 0.5, 1, 0, self.c_r )
-			render.DrawBeam( pos + ( fw * -2 ), pos + ( fw * -4 ), 0.5, 1, 0, self.c_c )
-			render.DrawBeam( pos + ( ri * 2 ), pos + ( ri * 4 ), 0.5, 1, 0, self.c_g )
-			render.DrawBeam( pos + ( ri * -2 ), pos + ( ri * -4 ), 0.5, 1, 0, self.c_m )
-			render.DrawBeam( pos + ( up * 2 ), pos + ( up * 4 ), 0.5, 1, 0, self.c_b )
-			render.DrawBeam( pos + ( up * -2 ), pos + ( up * -4 ), 0.5, 1, 0, self.c_y )
+			render.DrawBeam( pos+( fw*2 ), pos+( fw*4 ), 0.5, 1, 0, self.c_r )
+			render.DrawBeam( pos+( fw*-2 ), pos+( fw*-4 ), 0.5, 1, 0, self.c_c )
+			render.DrawBeam( pos+( ri*2 ), pos+( ri*4 ), 0.5, 1, 0, self.c_g )
+			render.DrawBeam( pos+( ri*-2 ), pos+( ri*-4 ), 0.5, 1, 0, self.c_m )
+			render.DrawBeam( pos+( up*2 ), pos+( up*4 ), 0.5, 1, 0, self.c_b )
+			render.DrawBeam( pos+( up*-2 ), pos+( up*-4 ), 0.5, 1, 0, self.c_y )
 
 		end
 

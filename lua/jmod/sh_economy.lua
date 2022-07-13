@@ -172,6 +172,10 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
 	},
+	plastic_barrel_buoyant={
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
+		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
+	},
 	plastic_box={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.GLASS]=.2,
@@ -185,6 +189,14 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1
 	},
 	dirt={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
+	sand={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
+	sandbags={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
 		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
 	},
@@ -347,6 +359,12 @@ local SpecializedSalvagingTable={
 			}
 		},
 		{
+			substrings={"food"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.9
+			}
+		},
+		{
 			substrings={"explosive"},
 			yield={
 				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
@@ -384,6 +402,18 @@ local SpecializedSalvagingTable={
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
 				[JMod.EZ_RESOURCE_TYPES.COPPER]=.3
+			}
+		},
+		{
+			substrings={"forklift"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.05,
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.RUBBER]=.1,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.05
 			}
 		},
 		{
@@ -508,7 +538,7 @@ function JMod.GetSalvageYield(ent)
 	local ScaleByMass=true
 	for name,info in pairs(JMod.Config.Craftables)do
 		if(info.results==Class)then
-			Info=info.results
+			Info=info.craftingReqs
 			ScaleByMass=false
 		end
 	end

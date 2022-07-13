@@ -8,7 +8,7 @@ ENT.PrintName="EZ Mini Rocket"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ENT.CollisionGroup=COLLISION_GROUP_NONE
-ENT.NoPhys = true
+ENT.NoPhys=true
 local ThinkRate=22--Hz
 ---
 if(SERVER)then

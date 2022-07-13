@@ -41,8 +41,8 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/props_c17/substation_transformer01b.mdl")
-		self:SetModelScale(.5,0)
+		self:SetModel("models/jmod/machines/groundscanner.mdl")
+		--self:SetModelScale(0.5, 0)
 		self:SetMaterial("models/mat_jack_gmod_groundscanner")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -75,7 +75,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
-			self:EmitSound("snd_jack_metallicclick.wav",60,100)
+			self:EmitSound("snd_jack_metallicclick.wav",50,100)
 			self.Snd1:PlayEx(1,80)
 			self.Snd2:PlayEx(1,80)
 			self.Snd3:PlayEx(1,80)
@@ -85,7 +85,7 @@ if(SERVER)then
 	end
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
-		self:EmitSound("snd_jack_metallicclick.wav",60,100)
+		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
 		self.Snd3:Stop()
@@ -283,7 +283,7 @@ elseif(CLIENT)then
 				surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
 				draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
-				draw.SimpleText("? = metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				draw.SimpleText("?=metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
 				local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
 				surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
 				--

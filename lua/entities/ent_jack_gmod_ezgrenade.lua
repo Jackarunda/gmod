@@ -1,28 +1,28 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda, TheOnly8Z"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Grenade Base"
-ENT.NoSitAllowed = true
-ENT.Spawnable = false
+ENT.Type="anim"
+ENT.Author="Jackarunda, TheOnly8Z"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Grenade Base"
+ENT.NoSitAllowed=true
+ENT.Spawnable=false
 
-ENT.Model = "models/weapons/w_grenade.mdl"
-ENT.Material = nil
-ENT.ModelScale = nil
+ENT.Model="models/weapons/w_grenade.mdl"
+ENT.Material=nil
+ENT.ModelScale=nil
 
-ENT.HardThrowStr = 500
-ENT.SoftThrowStr = 250
-ENT.Mass = 10
-ENT.ImpactSound = "Grenade.ImpactHard"
-ENT.SpoonEnt = "ent_jack_spoon"
-ENT.SpoonModel = nil
-ENT.SpoonScale = nil
-ENT.SpoonSound = nil
+ENT.HardThrowStr=500
+ENT.SoftThrowStr=250
+ENT.Mass=10
+ENT.ImpactSound="Grenade.ImpactHard"
+ENT.SpoonEnt="ent_jack_spoon"
+ENT.SpoonModel=nil
+ENT.SpoonScale=nil
+ENT.SpoonSound=nil
 
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
-ENT.JModEZstorable = true
+ENT.JModEZstorable=true
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int" , 0, "State")
@@ -31,8 +31,8 @@ end
 if(SERVER)then
 
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 20
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*20
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -60,10 +60,10 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(JMod.EZ_STATE_OFF)
-		self.NextDet = 0
+		self.NextDet=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -129,9 +129,9 @@ if(SERVER)then
 	function ENT:SpoonEffect()
 		if self.SpoonEnt then
 			local Spewn=ents.Create(self.SpoonEnt)
-			if self.SpoonModel then Spewn.Model = self.SpoonModel end
-			if self.SpoonScale then Spewn.ModelScale = self.SpoonScale end
-			if self.SpoonSound then Spewn.Sound = self.SpoonSound end
+			if self.SpoonModel then Spewn.Model=self.SpoonModel end
+			if self.SpoonScale then Spewn.ModelScale=self.SpoonScale end
+			if self.SpoonSound then Spewn.Sound=self.SpoonSound end
 			Spewn:SetPos(self:GetPos())
 			Spewn:Spawn()
 			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*250)

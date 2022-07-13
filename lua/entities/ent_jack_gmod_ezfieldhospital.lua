@@ -149,7 +149,7 @@ if(SERVER)then
 	function ENT:TryStartOperation()
 		if not(IsValid(self.Patient))then return end
 		---
-		local override = hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
+		local override=hook.Run("JMod_CanFieldHospitalStart",self,self.Patient)
 		if override==false then return end
 		
 		if override~=true then
@@ -228,11 +228,11 @@ if(SERVER)then
 			return
 		end
 		---
-		local override = hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
+		local override=hook.Run("JMod_FieldHospitalHeal", self, self.Patient)
 		if override == false then return end
 		---
 		local Injury,Rads=Max-Helf,self.Patient.EZirradiated or 0
-		local gassed, contaminated = getMaxExposure and getMaxExposure(self.Patient) or false, getContamination and getContamination(self.Patient) or false
+		local gassed, contaminated=getMaxExposure and getMaxExposure(self.Patient) or false, getContamination and getContamination(self.Patient) or false
 		if((Injury>0)or(Rads>0) or gassed or contaminated)then
 			if(Bleed>0)then
 				self.Patient.EZbleeding=math.Clamp(Bleed-self.HealEfficiency*JMod.Config.MedBayHealMult*5,0,9e9)

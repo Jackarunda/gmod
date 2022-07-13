@@ -52,8 +52,10 @@ if(SERVER)then
 		self.NextCombine=0
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(self.Mass)
-			self:GetPhysicsObject():Wake()
+			if(IsValid(self))then
+				self:GetPhysicsObject():SetMass(self.Mass)
+				self:GetPhysicsObject():Wake()
+			end
 		end)
 	end
 	function ENT:FlingProp(mdl)

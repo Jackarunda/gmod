@@ -39,6 +39,16 @@ concommand.Add("jmod_admin_cleanup",function(ply,cmd,args) -- WHY ISN'T THIS A T
 	end
 end, nil, "Does a server-wide admin cleanup of everything.")
 
+concommand.Add("jmod_debug",function(ply,cmd,args)
+	--[[
+	local splad=EffectData()
+	splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*1000)
+	splad:SetScale(.5)
+	splad:SetNormal(Vector(0,0,-1))
+	util.Effect("eff_jack_gmod_efpburst",splad,true,true)
+	--]]
+end)
+
 concommand.Add("jmod_debug_killme",function(ply)
 	if not(IsValid(ply))then return end
 	if not(GetConVar("sv_cheats"):GetBool())then return end

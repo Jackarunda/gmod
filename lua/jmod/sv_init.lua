@@ -1,4 +1,4 @@
-local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod + its content? (requires a restart upon change)")
+local force_workshop=CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
 
 if force_workshop:GetBool() then
     resource.AddWorkshop("1919689921")
@@ -57,6 +57,24 @@ hook.Add("AllowPlayerPickup","JMOD_PLAYERPICKUP",function(ply,ent)
 	if(ent.JModNoPickup)then return false end
 end)
 
+function JMod.ShouldDamageBiologically(ent)
+	if not(IsValid(ent))then return end
+	if(ent.JModDontIrradiate)then return end
+	if(ent:IsPlayer())then return ent:Alive() end
+	if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+		local Phys=ent:GetPhysicsObject()
+		if(IsValid(Phys))then
+			local Mat=Phys:GetMaterial()
+			if(Mat)then
+				if(Mat=="metal")then return false end
+				if(Mat=="default")then return false end
+			end
+		end
+		return ent:Health()>0
+	end
+	return false
+end
+
 local function ShouldVirusInfect(ent)
 	if not(IsValid(ent))then return false end
 	if(ent.EZvirus and ent.EZvirus.Immune)then return false end
@@ -88,6 +106,12 @@ function JMod.ViralInfect(ply,att)
 		NextFoodImmunityBoost=0,
 		NextAntibioticsImmunityBoost=0
 	}
+end
+
+function JMod.GeigerCounterSound(ply,intensity)
+	if(intensity<=.1 and math.random(1,2)==1)then return end
+	local Num=math.Clamp(math.Round(math.Rand(0,intensity)*15),1,10)
+	ply:EmitSound("snds_jack_gmod/geiger"..Num..".wav",55,math.random(95,105))
 end
 
 function JMod.TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
@@ -160,6 +184,13 @@ end
 local NextMainThink,NextNutritionThink,NextArmorThink,NextSlowThink,NextSync=0,0,0,0,0
 hook.Add("Think","JMOD_SERVER_THINK",function()
 	--[[
+	if(A<CurTime())then
+		A=CurTime()+1
+		JMod.Sploom(game.GetWorld(),Vector(0,0,0),10)
+		JMod.FragSplosion(game.GetWorld(),Vector(0,0,0),3000,80,5000,game.GetWorld())
+	end
+	--]]
+	--[[
 	local Pos=ents.FindByClass("sky_camera")[1]:GetPos()
 	local AAA=util.TraceLine({
 		start=Pos+Vector(0,0,1000),
@@ -167,6 +198,19 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 		filter=player.GetAll()[1]
 	})
 	if(AAA.Hit)then jprint("VALID") else jprint("INVALID") end
+	--]]
+	--[[
+	local ply=player.GetAll()[1]
+	local pos=ply:GetPos()
+	for k,v in pairs(ents.FindInSphere(pos,600))do
+		if(v.GetPhysicsObject)then
+			local Phys=v:GetPhysicsObject()
+			if(IsValid(Phys))then
+				local vec=(v:GetPos()-pos):GetNormalized()
+				Phys:ApplyForceCenter(-vec*400)
+			end
+		end
+	end
 	--]]
 	local Time=CurTime()
 	if(NextMainThink>Time)then return end

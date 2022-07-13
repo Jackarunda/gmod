@@ -1,16 +1,16 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ TNT"
-ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ TNT"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles = Angle(-90, 0, 0)
-ENT.JModEZstorable = true
+ENT.JModPreferredCarryAngles=Angle(-90, 0, 0)
+ENT.JModEZstorable=true
 ENT.JModHighlyFlammableFunc="Arm"
 ---
 function ENT:SetupDataTables()
@@ -20,8 +20,8 @@ end
 
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal*15
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*15
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
@@ -49,8 +49,8 @@ if(SERVER)then
 		self.Fuze=100
 		self:SetState(JMod.EZ_STATE_OFF)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -143,7 +143,7 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end
 		local Time=CurTime()
-		local state = self:GetState()
+		local state=self:GetState()
 		if(state==JMod.EZ_STATE_ARMED)then
 			local Fsh=EffectData()
 			Fsh:SetOrigin(self:GetPos()+self:GetForward()*18-self:GetRight()*5)

@@ -8,9 +8,9 @@ ENT.Author			= "Jackarunda"
 ENT.Spawnable		= false
 ENT.AdminSpawnable	= false
 
-ENT.Model = "models/shells/shell_gndspoon.mdl"
-ENT.ModelScale = 1.5
-ENT.Sound = "snd_jack_spoonbounce.wav"
+ENT.Model="models/shells/shell_gndspoon.mdl"
+ENT.ModelScale=1.5
+ENT.Sound="snd_jack_spoonbounce.wav"
 
 if SERVER then
 	function ENT:Initialize()
@@ -24,7 +24,7 @@ if SERVER then
 		
 		if SERVER then self:SetUseType(SIMPLE_USE) end
 		
-		local phys = self:GetPhysicsObject()
+		local phys=self:GetPhysicsObject()
 		if(phys:IsValid())then
 			phys:Wake()
 			phys:SetMass(1)
@@ -45,7 +45,7 @@ if SERVER then
 		end
 		
 		-- bounce
-		local impulse = -data.Speed*data.HitNormal*0.3+(data.OurOldVelocity*-0.3)
+		local impulse=-data.Speed*data.HitNormal*0.3+(data.OurOldVelocity*-0.3)
 		self:GetPhysicsObject():ApplyForceCenter(impulse)
 	end
 

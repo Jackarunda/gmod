@@ -57,8 +57,8 @@ if(SERVER)then
 		if(self.NextLoad>CurTime())then return end
 		local ent=data.HitEntity
 		if(IsValid(ent:GetPhysicsObject())and(ent:GetPhysicsObject().GetVolume)and(ent:GetPhysicsObject():GetVolume()))then
-			local Class = ent:GetClass()
-			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume()/500)
+			local Class=ent:GetClass()
+			local Vol=(self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume()/500)
 			if(ent.EZstorageVolumeOverride)then Vol=ent.EZstorageVolumeOverride end
 			if ent.JModEZstorable and ent:IsPlayerHolding() and (!ent.GetState or ent:GetState()==0) and self:GetItemCount()+Vol<=self.MaxItems then
 				self.NextLoad=CurTime()+0.5
@@ -111,14 +111,14 @@ elseif(CLIENT)then
 			local Up, Right, Forward, Resource=Ang:Up(), Ang:Right(), Ang:Forward(), tostring(self:GetItemCount())
 			Ang:RotateAroundAxis(Ang:Right(), 90)
 			Ang:RotateAroundAxis(Ang:Up(), -90)
-			cam.Start3D2D(Pos+Up*10 - Forward*19.8+Right, Ang, .15)
+			cam.Start3D2D(Pos+Up*10-Forward*19.8+Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("STORAGE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(), 180)
-			cam.Start3D2D(Pos+Up*10+Forward*20.1 - Right, Ang, .15)
+			cam.Start3D2D(Pos+Up*10+Forward*20.1-Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("STORAGE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)

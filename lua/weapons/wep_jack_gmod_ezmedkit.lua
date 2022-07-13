@@ -20,13 +20,13 @@ SWEP.EZdroppable=true
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
 
-SWEP.BodyHolsterModel = "models/items/medjit_large.mdl"
-SWEP.BodyHolsterSlot = "hips"
-SWEP.BodyHolsterAng = Angle(-90,-20,110)
-SWEP.BodyHolsterAngL = Angle(-90,20,70)
-SWEP.BodyHolsterPos = Vector(0,-16,10.5)
-SWEP.BodyHolsterPosL = Vector(0,-15,-11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterModel="models/items/medjit_large.mdl"
+SWEP.BodyHolsterSlot="hips"
+SWEP.BodyHolsterAng=Angle(-90,-20,110)
+SWEP.BodyHolsterAngL=Angle(-90,20,70)
+SWEP.BodyHolsterPos=Vector(0,-16,10.5)
+SWEP.BodyHolsterPosL=Vector(0,-15,-11)
+SWEP.BodyHolsterScale=.4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
@@ -124,9 +124,9 @@ function SWEP:PrimaryAttack()
 			local Hit=false
 			if(Ent:IsPlayer())then
 
-				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+				local override=hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 				if override == false then return end
-				local healAmt = isnumber(override) and override or 3
+				local healAmt=isnumber(override) and override or 3
 
 				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 				Ent.EZhealth=(Ent.EZhealth or 0)
@@ -159,9 +159,9 @@ function SWEP:PrimaryAttack()
 				end
 			elseif((Ent:IsNPC())and(Ent.Health)and(Ent:Health())and(tonumber(Ent:Health())))then
 
-				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+				local override=hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 				if override == false then return end
-				local healAmt = isnumber(override) and override or 3
+				local healAmt=isnumber(override) and override or 3
 
 				local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 				Ent.EZhealth=(Ent.EZhealth or 0)
@@ -229,9 +229,9 @@ function SWEP:SecondaryAttack()
 		local AimVec=Ent:GetAimVector()
 		local Pos=Ent:GetShootPos()-Vector(0,0,10)+AimVec*5
 
-		local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+		local override=hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 		if override == false then return end
-		local healAmt = isnumber(override) and override or 2
+		local healAmt=isnumber(override) and override or 2
 
 		local Helf,Max=Ent:Health(),Ent:GetMaxHealth()
 		Ent.EZhealth=(Ent.EZhealth or 0)
