@@ -172,6 +172,10 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
 	},
+	plastic_barrel_buoyant={
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
+		[JMod.EZ_RESOURCE_TYPES.WATER]=.3
+	},
 	plastic_box={
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.2,
 		[JMod.EZ_RESOURCE_TYPES.GLASS]=.2,
@@ -185,6 +189,14 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1
 	},
 	dirt={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
+	sand={
+		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
+		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
+	},
+	sandbags={
 		[JMod.EZ_RESOURCE_TYPES.WOOD]=.1,
 		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
 	},
@@ -347,6 +359,12 @@ local SpecializedSalvagingTable={
 			}
 		},
 		{
+			substrings={"food"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.9
+			}
+		},
+		{
 			substrings={"explosive"},
 			yield={
 				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
@@ -384,6 +402,18 @@ local SpecializedSalvagingTable={
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.2,
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
 				[JMod.EZ_RESOURCE_TYPES.COPPER]=.3
+			}
+		},
+		{
+			substrings={"forklift"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.STEEL]=.2,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.1,
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=.1,
+				[JMod.EZ_RESOURCE_TYPES.COPPER]=.05,
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.1,
+				[JMod.EZ_RESOURCE_TYPES.RUBBER]=.1,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.05
 			}
 		},
 		{
@@ -486,7 +516,7 @@ function JMod.GetSalvageYield(ent)
 	Mass=math.ceil(Mass^.9) -- exponent to keep yield from stupidheavy objects from ruining the game
 	if(Class=="func_physbox")then Mass=Mass/2 end -- again, more corrections
 	if(Mass>10000)then return {},"cannot salvage: too large" end
-	if((ent:IsNPC())or(ent:IsPlayer()))then return {},"" end
+	if( (ent:IsNPC()) or (ent:IsPlayer()) or ent.IsDrGNextbot)then return {},"" end
 	if(ent.EZsupplies or ent.EZammo)then return {},"no" end
 	if(Class=="ent_jack_gmod_eztoolbox")then return {},"STOP YOU MORON" end
 	if(SERVER)then
@@ -508,7 +538,7 @@ function JMod.GetSalvageYield(ent)
 	local ScaleByMass=true
 	for name,info in pairs(JMod.Config.Craftables)do
 		if(info.results==Class)then
-			Info=info.results
+			Info=info.craftingReqs
 			ScaleByMass=false
 		end
 	end

@@ -1,19 +1,19 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Mini Claymore"
-ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.PrintName="EZ Mini Claymore"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 ---
-ENT.JModEZstorable = true
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
-ENT.WhitelistedNPCs = {"npc_rollermine"}
+ENT.JModEZstorable=true
+ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
+ENT.BlacklistedNPCs={"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
+ENT.WhitelistedNPCs={"npc_rollermine"}
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMING, STATE_ARMED, STATE_WARNING = -1, 0, 1, 2, 3
+local STATE_BROKEN, STATE_OFF, STATE_ARMING, STATE_ARMED, STATE_WARNING=-1, 0, 1, 2, 3
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -22,9 +22,9 @@ end
 ---
 if (SERVER) then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 8
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(ply:GetAngles() + Angle(0, -90, 0))
+		local SpawnPos=tr.HitPos+tr.HitNormal*8
+		local ent=ents.Create(self.ClassName)
+		ent:SetAngles(ply:GetAngles()+Angle(0, -90, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
 		ent:Spawn()
@@ -49,8 +49,8 @@ if (SERVER) then
 		self:SetState(STATE_OFF)
 		JMod.Colorify(self)
 	if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 arming \n 2 armed \n 3 warning"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 arming \n 2 armed \n 3 warning"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -86,9 +86,9 @@ if (SERVER) then
 	end
 
 	function ENT:Use(activator)
-		local State = self:GetState()
+		local State=self:GetState()
 		if (State < 0) then return end
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.Owner(self, activator)
 		JMod.Colorify(self)
 
@@ -110,10 +110,10 @@ if (SERVER) then
 
 	function ENT:Detonate()
 		if (self.Exploded) then return end
-		self.Exploded = true
-		local SelfPos = self:LocalToWorld(self:OBBCenter())
-		local Up = (-self:GetRight() + self:GetUp() * .2):GetNormalized()
-		local plooie = EffectData()
+		self.Exploded=true
+		local SelfPos=self:LocalToWorld(self:OBBCenter())
+		local Up=(-self:GetRight()+self:GetUp()*.2):GetNormalized()
+		local plooie=EffectData()
 		plooie:SetOrigin(SelfPos)
 		plooie:SetScale(.75)
 		plooie:SetRadius(2)
@@ -126,19 +126,19 @@ if (SERVER) then
 		if (JMod.Config.FragExplosions) then
 			JMod.FragSplosion(self, SelfPos, 1000, 10, 8000, self.Owner or game.GetWorld(), Up, .9)
 		else
-			util.BlastDamage(self, self.Owner or game.GetWorld(), SelfPos + Up * 350, 350, 110)
+			util.BlastDamage(self, self.Owner or game.GetWorld(), SelfPos+Up*350, 350, 110)
 		end
 
 		self:Remove()
 	end
 
 	function ENT:Arm(armer)
-		local State = self:GetState()
+		local State=self:GetState()
 		if (State ~= STATE_OFF) then return end
 
-		local tr = util.TraceLine({
-			start = self:GetPos(),
-			endpos = self:GetPos() - self:GetUp() * 100,
+		local tr=util.TraceLine({
+			start=self:GetPos(),
+			endpos=self:GetPos()-self:GetUp()*100,
 		})
 
 		if not tr.Hit or tr.HitNormal.z <= 0.6 then
@@ -152,9 +152,9 @@ if (SERVER) then
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)
 
-		local ang = tr.HitNormal:Angle()
+		local ang=tr.HitNormal:Angle()
 		ang:RotateAroundAxis(ang:Right(), -90)
-		ang:RotateAroundAxis(ang:Up(), self:GetAngles().yaw - ang.yaw)
+		ang:RotateAroundAxis(ang:Up(), self:GetAngles().yaw-ang.yaw)
 
 		self:SetPos(tr.HitPos)
 		self:SetAngles(ang)
@@ -171,13 +171,13 @@ if (SERVER) then
 
 	function ENT:CanSee(ent)
 		if not (IsValid(ent)) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter()) + vector_up
+		local TargPos, SelfPos=ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter())+vector_up
 
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
+		local Tr=util.TraceLine({
+			start=SelfPos,
+			endpos=TargPos,
+			filter={self, ent},
+			mask=MASK_SHOT+MASK_WATER
 		})
 
 		return not Tr.Hit
@@ -187,15 +187,15 @@ if (SERVER) then
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end
-		local State, Time, Dir = self:GetState(), CurTime(), (-self:GetRight() + self:GetUp() * .2):GetNormalized()
+		local State, Time, Dir=self:GetState(), CurTime(), (-self:GetRight()+self:GetUp()*.2):GetNormalized()
 
 		if (State == STATE_ARMED) then
-			for k, targ in pairs(ents.FindInSphere(self:GetPos() + Dir * 200, 150)) do
-				if (not (targ == self) and ((targ:IsPlayer()) or (targ:IsNPC()) or (targ:IsVehicle()))) and (JMod.ShouldAttack(self, targ)) and (self:CanSee(targ)) then
+			for k, targ in pairs(ents.FindInSphere(self:GetPos()+Dir*200, 150)) do
+				if (not (targ == self) and ((targ:IsPlayer()) or (targ:IsNPC() or targ.IsDrGNextbot) or (targ:IsVehicle()))) and (JMod.ShouldAttack(self, targ)) and (self:CanSee(targ)) then
 					self:SetState(STATE_WARNING)
-					sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+					sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos()+Vector(0, 0, 30), 60, 100)
 
-					timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
+					timer.Simple(math.Rand(.15, .4)*JMod.Config.MineDelay, function()
 						if (IsValid(self)) then
 							if (self:GetState() == STATE_WARNING) then
 								self:Detonate()
@@ -205,7 +205,7 @@ if (SERVER) then
 				end
 			end
 
-			self:NextThink(Time + .3)
+			self:NextThink(Time+.3)
 
 			return true
 		end
@@ -226,18 +226,18 @@ elseif (CLIENT) then
 		]]
 	end
 
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
 
 	function ENT:Draw()
 		self:DrawModel()
 		--[[
-		local Pos, Up, Right, Forward, Ang = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward(), self:GetAngles()
-		self.Mdl:SetRenderOrigin(Pos - Up * 5)
+		local Pos, Up, Right, Forward, Ang=self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward(), self:GetAngles()
+		self.Mdl:SetRenderOrigin(Pos-Up*5)
 		Ang:RotateAroundAxis(Right, -15)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 		]]
-		local State, Vary, Pos = self:GetState(), math.sin(CurTime() * 50) / 2 + .5, self:GetPos() + self:GetUp() * 12
+		local State, Vary, Pos=self:GetState(), math.sin(CurTime()*50)/2+.5, self:GetPos()+self:GetUp()*12
 
 		if (State == STATE_ARMING) then
 			render.SetMaterial(GlowSprite)
@@ -245,8 +245,8 @@ elseif (CLIENT) then
 			render.DrawSprite(Pos, 10, 10, Color(255, 255, 255))
 		elseif (State == STATE_WARNING) then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(Pos, 30 * Vary, 30 * Vary, Color(255, 0, 0))
-			render.DrawSprite(Pos, 15 * Vary, 15 * Vary, Color(255, 255, 255))
+			render.DrawSprite(Pos, 30*Vary, 30*Vary, Color(255, 0, 0))
+			render.DrawSprite(Pos, 15*Vary, 15*Vary, Color(255, 255, 255))
 		end
 	end
 

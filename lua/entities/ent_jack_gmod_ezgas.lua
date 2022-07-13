@@ -29,7 +29,7 @@ if(SERVER)then
 				for k,ent in pairs(ents.FindInSphere(pos,600))do
 					local Vec=(ent:GetPos()-pos):GetNormalized()
 					if(self:Visible(ent))then
-						if((ent:IsPlayer())or(ent:IsNPC()))then
+						if( (ent:IsPlayer()) or (ent:IsNPC()) or (ent.IsDrGNextbot))then
 							ent:SetVelocity(Vec*1000)
 						elseif(IsValid(ent:GetPhysicsObject()))then
 							ent:GetPhysicsObject():ApplyForceCenter(Vec*50000)

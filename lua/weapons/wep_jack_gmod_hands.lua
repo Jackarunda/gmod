@@ -121,6 +121,7 @@ local pickupWhiteList={
 }
 function SWEP:CanPickup(ent)
 	if ent:IsNPC()then return false end
+	if ent.IsDrGNextbot then return false end
 	if ent:IsPlayer()then return false end
 	if(ent:IsWorld())then return false end
 	local class=ent:GetClass()
@@ -163,7 +164,7 @@ function SWEP:ApplyForce()
 	if IsValid(phys)then
 		local TargetPos=phys:GetPos()
 		if(self.CarryPos)then TargetPos=self.CarryEnt:LocalToWorld(self.CarryPos) end
-		local vec=target - TargetPos
+		local vec=target-TargetPos
 		local len,mul=vec:Length(),self.CarryEnt:GetPhysicsObject():GetMass()
 		if(len>self.ReachDistance)then
 			self:SetCarrying()
@@ -357,7 +358,7 @@ function SWEP:UpdateNextIdle()
 end
 
 function SWEP:IsEntSoft(ent)
-	return ((ent:IsNPC())or(ent:IsPlayer()))
+	return ( (ent:IsNPC()) or (ent:IsPlayer()) or ent.IsDrGNextbot)
 end
 
 if(CLIENT)then

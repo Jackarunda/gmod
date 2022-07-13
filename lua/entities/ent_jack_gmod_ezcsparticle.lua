@@ -26,7 +26,7 @@ if(SERVER)then
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
 		if(ent:IsPlayer())then return ent:Alive() end
-		if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+		if((ent:IsNPC() or ent.IsDrGNextbot )and(ent.Health)and(ent:Health()))then
 			local Phys=ent:GetPhysicsObject()
 			if(IsValid(Phys))then
 				local Mat=Phys:GetMaterial()
@@ -55,18 +55,18 @@ if(SERVER)then
 		local Force=VectorRand()*10-Vector(0,0,100)
 		for key,obj in pairs(ents.FindInSphere(SelfPos,200))do
 			if(not(obj==self)and(self:CanSee(obj)))then
-				local distanceBetween = SelfPos:DistToSqr(obj:GetPos())
+				local distanceBetween=SelfPos:DistToSqr(obj:GetPos())
 				local IsPlaya=obj:IsPlayer()
 				if(not obj.EZgasParticle)then
 					if((self.NextDmg<Time)and(self:ShouldDamage(obj)))then
 
-						local FaceProtected = false
-						local RespiratorMultiplier = 1
+						local FaceProtected=false
+						local RespiratorMultiplier=1
 
 						if (obj.JackyArmor) then
 							if (obj.JackyArmor.Suit) then
 								if (obj.JackyArmor.Suit.Type == "Hazardous Material") then
-									FaceProtected = true
+									FaceProtected=true
 								end
 							end
 						end
@@ -79,11 +79,11 @@ if(SERVER)then
 						if faceProt < 1 then
 							if IsPlaya then
 								net.Start("JMod_VisionBlur")
-								net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
+								net.WriteFloat(5*math.Clamp(1-faceProt, 0, 1))
 								net.Send(obj)
 								JMod.Hint(obj, "tear gas")
-							elseif obj:IsNPC() then
-								obj.EZNPCincapacitate = Time + math.Rand(2,5)
+							elseif obj:IsNPC() or obj.IsDrGNextbot then
+								obj.EZNPCincapacitate=Time+math.Rand(2,5)
 							end
 
 							JMod.TryCough(obj)

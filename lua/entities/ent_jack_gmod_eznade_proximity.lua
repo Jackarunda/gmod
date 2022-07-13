@@ -1,18 +1,18 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezmininade"
+ENT.Base="ent_jack_gmod_ezmininade"
 ENT.Author="Jackarunda, TheOnly8Z"
 ENT.PrintName="EZminiNade-Proximity"
 ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=true
 
-ENT.Material = "models/mats_jack_nades/gnd_red"
-ENT.Hints = {"mininade", "mine friends"}
+ENT.Material="models/mats_jack_nades/gnd_red"
+ENT.Hints={"mininade", "mine friends"}
 
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
 
-local BaseClass = baseclass.Get(ENT.Base)
+local BaseClass=baseclass.Get(ENT.Base)
 
 if(SERVER)then
 
@@ -46,7 +46,7 @@ if(SERVER)then
 			local Range=80
 			if(IsValid(self.AttachedBomb))then Range=120 end
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),Range))do
-				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
+				if(not(targ==self)and ((targ:IsPlayer()) or (targ:IsNPC()) or (targ:IsVehicle()) or targ.IsDrGNextbot))then
 					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)

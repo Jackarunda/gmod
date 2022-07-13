@@ -2,40 +2,40 @@
 function JMod.AeroDrag(ent, forward, mult, spdReq)
 	if (constraint.HasConstraints(ent)) then return end
 	if (ent:IsPlayerHolding()) then return end
-	local Phys = ent:GetPhysicsObject()
-	local Vel = Phys:GetVelocity()
-	local Spd = Vel:Length()
-	if (not spdReq) then spdReq = 300 end
+	local Phys=ent:GetPhysicsObject()
+	local Vel=Phys:GetVelocity()
+	local Spd=Vel:Length()
+	if (not spdReq) then spdReq=300 end
 	if (Spd < spdReq) then return end
-	mult = mult or 1
-	local Pos, Mass = Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
-	Phys:ApplyForceOffset(Vel * Mass / 6 * mult, Pos + forward)
-	Phys:ApplyForceOffset(-Vel * Mass / 6 * mult, Pos - forward)
-	Phys:AddAngleVelocity(-Phys:GetAngleVelocity() * Mass / 1000)
+	mult=mult or 1
+	local Pos, Mass=Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
+	Phys:ApplyForceOffset(Vel*Mass/6*mult, Pos+forward)
+	Phys:ApplyForceOffset(-Vel*Mass/6*mult, Pos-forward)
+	Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*Mass/1000)
 end
 
 -- this causes an object to rotate to point and fly to a point you give it
 function JMod.AeroGuide(ent, forward, targetPos, turnMult, thrustMult, angleDragMult, spdReq)
 	--if(constraint.HasConstraints(ent))then return end
 	--if(ent:IsPlayerHolding())then return end
-	local Phys = ent:GetPhysicsObject()
-	local Vel = Phys:GetVelocity()
-	local Spd = Vel:Length()
+	local Phys=ent:GetPhysicsObject()
+	local Vel=Phys:GetVelocity()
+	local Spd=Vel:Length()
 	--if(Spd<spdReq)then return end
-	local Pos, Mass = Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
-	local TargetVec = targetPos - ent:GetPos()
-	local TargetDir = TargetVec:GetNormalized()
+	local Pos, Mass=Phys:LocalToWorld(Phys:GetMassCenter()), Phys:GetMass()
+	local TargetVec=targetPos-ent:GetPos()
+	local TargetDir=TargetVec:GetNormalized()
 	---
-	Phys:ApplyForceOffset(TargetDir * Mass * turnMult * 5000, Pos + forward)
-	Phys:ApplyForceOffset(-TargetDir * Mass * turnMult * 5000, Pos - forward)
-	Phys:AddAngleVelocity(-Phys:GetAngleVelocity() * angleDragMult * 3)
+	Phys:ApplyForceOffset(TargetDir*Mass*turnMult*5000, Pos+forward)
+	Phys:ApplyForceOffset(-TargetDir*Mass*turnMult*5000, Pos-forward)
+	Phys:AddAngleVelocity(-Phys:GetAngleVelocity()*angleDragMult*3)
 	--- todo: fuck
-	Phys:ApplyForceCenter(forward * 20000 * thrustMult) -- todo: make this function fucking work ARGH
+	Phys:ApplyForceCenter(forward*20000*thrustMult) -- todo: make this function fucking work ARGH
 end
 
 function JMod.EZ_WeaponLaunch(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
-	local Weps = {}
+	local Weps={}
 
 	for k, ent in pairs(ents.GetAll()) do
 		if ent.EZlaunchableWeaponArmedTime and IsValid(ent.Owner) and ent.Owner == ply and ent:GetState() == 1 then
@@ -43,12 +43,12 @@ function JMod.EZ_WeaponLaunch(ply)
 		end
 	end
 
-	local FirstWep, Earliest = nil, 9e9
+	local FirstWep, Earliest=nil, 9e9
 
 	for k, wep in pairs(Weps) do
 		if (wep.EZlaunchableWeaponArmedTime < Earliest) then
-			FirstWep = wep
-			Earliest = wep.EZlaunchableWeaponArmedTime
+			FirstWep=wep
+			Earliest=wep.EZlaunchableWeaponArmedTime
 		end
 	end
 
@@ -66,7 +66,7 @@ end
 
 function JMod.EZ_BombDrop(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
-	local Boms = {}
+	local Boms={}
 
 	for k, ent in pairs(ents.GetAll()) do
 		if ent.EZdroppableBombArmedTime and IsValid(ent.Owner) and ent.Owner == ply then
@@ -74,12 +74,12 @@ function JMod.EZ_BombDrop(ply)
 		end
 	end
 
-	local FirstBom, Earliest = nil, 9e9
+	local FirstBom, Earliest=nil, 9e9
 
 	for k, bom in pairs(Boms) do
 		if ((bom.EZdroppableBombArmedTime < Earliest) and ((constraint.HasConstraints(bom)) or not (bom:GetPhysicsObject():IsMotionEnabled()))) then
-			FirstBom = bom
-			Earliest = bom.EZdroppableBombArmedTime
+			FirstBom=bom
+			Earliest=bom.EZdroppableBombArmedTime
 		end
 	end
 
@@ -100,7 +100,7 @@ end
 -- copied from Homicide
 function JMod.BlastThatDoor(ent, vel)
 	ent.JModDoorBreachedness=nil
-	local Moddel, Pozishun, Ayngul, Muteeriul, Skin = ent:GetModel(), ent:GetPos(), ent:GetAngles(), ent:GetMaterial(), ent:GetSkin()
+	local Moddel, Pozishun, Ayngul, Muteeriul, Skin=ent:GetModel(), ent:GetPos(), ent:GetAngles(), ent:GetMaterial(), ent:GetSkin()
 	sound.Play("Wood_Crate.Break", Pozishun, 60, 100)
 	sound.Play("Wood_Furniture.Break", Pozishun, 60, 100)
 	ent:Fire("unlock", "", 0)
@@ -109,9 +109,9 @@ function JMod.BlastThatDoor(ent, vel)
 	ent:SetNotSolid(true)
 
 	if Moddel and Pozishun and Ayngul then
-		local Replacement = ents.Create("prop_physics")
+		local Replacement=ents.Create("prop_physics")
 		Replacement:SetModel(Moddel)
-		Replacement:SetPos(Pozishun + Vector(0, 0, 1))
+		Replacement:SetPos(Pozishun+Vector(0, 0, 1))
 		Replacement:SetAngles(Ayngul)
 
 		if (Muteeriul) then
@@ -139,7 +139,7 @@ function JMod.BlastThatDoor(ent, vel)
 			end
 		end)
 
-		timer.Simple(30 * JMod.Config.DoorBreachResetTimeMult, function()
+		timer.Simple(30*JMod.Config.DoorBreachResetTimeMult, function()
 			if (IsValid(ent)) then
 				ent:SetNotSolid(false)
 				ent:SetNoDraw(false)
@@ -154,57 +154,57 @@ end
 
 function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction)
 	-- fragmentation/shrapnel simulation
-	local Eff = EffectData()
+	local Eff=EffectData()
 	Eff:SetOrigin(origin)
 	Eff:SetScale(fragNum)
 	Eff:SetNormal(direction or Vector(0, 0, 0))
 	Eff:SetMagnitude(spread or 0)
 	util.Effect("eff_jack_gmod_fragsplosion", Eff, true, true)
 	---
-	shooter = shooter or game.GetWorld()
+	shooter=shooter or game.GetWorld()
 
 	if not JMod.Config.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragDmg * 8, fragDmg * 3)
+		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg*3)
 
 		return
 	end
 
-	local Spred = Vector(0, 0, 0)
-	local BulletsFired, MaxBullets, disperseTime = 0, 300, .5
+	local Spred=Vector(0, 0, 0)
+	local BulletsFired, MaxBullets, disperseTime=0, 300, .5
 
 	if (fragNum >= 12000) then
-		disperseTime = 2
+		disperseTime=2
 	elseif (fragNum >= 6000) then
-		disperseTime = 1
+		disperseTime=1
 	end
 
-	for i = 1, fragNum do
-		timer.Simple((i / fragNum) * disperseTime, function()
+	for i=1, fragNum do
+		timer.Simple((i/fragNum)*disperseTime, function()
 			local Dir
 
 			if direction and spread then
-				Dir = Vector(direction.x, direction.y, direction.z)
-				Dir = Dir + VectorRand() * math.Rand(0, spread)
+				Dir=Vector(direction.x, direction.y, direction.z)
+				Dir=Dir+VectorRand()*math.Rand(0, spread)
 				Dir:Normalize()
 			else
-				Dir = VectorRand()
+				Dir=VectorRand()
 			end
 
 			if (zReduction) then
-				Dir.z = Dir.z / zReduction
+				Dir.z=Dir.z/zReduction
 				Dir:Normalize()
 			end
 
-			local Tr = util.QuickTrace(origin, Dir * fragMaxDist, shooter)
+			local Tr=util.QuickTrace(origin, Dir*fragMaxDist, shooter)
 
 			if (Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets)) then
-				local DmgMul = 1
+				local DmgMul=1
 
 				if (BulletsFired > 200) then
-					DmgMul = 2
+					DmgMul=2
 				end
 
-				local firer = ((IsValid(shooter)) and shooter) or game.GetWorld()
+				local firer=((IsValid(shooter)) and shooter) or game.GetWorld()
 
 				firer:FireBullets({
 					Attacker=attacker,
@@ -218,7 +218,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 							  AmmoType="Buckshot" -- for identification as "fragments"
 				})
 
-				BulletsFired = BulletsFired + 1
+				BulletsFired=BulletsFired+1
 			end
 		end)
 	end
@@ -226,7 +226,7 @@ end
 
 function JMod.PackageObject(ent, pos, ang, ply)
 	if (pos) then
-		ent = ents.Create(ent)
+		ent=ents.Create(ent)
 		ent:SetPos(pos)
 		ent:SetAngles(ang)
 
@@ -238,8 +238,8 @@ function JMod.PackageObject(ent, pos, ang, ply)
 		ent:Activate()
 	end
 
-	local Bocks = ents.Create("ent_jack_gmod_ezcompactbox")
-	Bocks:SetPos(ent:LocalToWorld(ent:OBBCenter()) + Vector(0, 0, 20))
+	local Bocks=ents.Create("ent_jack_gmod_ezcompactbox")
+	Bocks:SetPos(ent:LocalToWorld(ent:OBBCenter())+Vector(0, 0, 20))
 	Bocks:SetAngles(ent:GetAngles())
 	Bocks:SetContents(ent)
 
@@ -254,25 +254,25 @@ end
 function JMod.SimpleForceExplosion(pos, power, range, sourceEnt)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
 		if (not (IsValid(sourceEnt)) or (v ~= sourceEnt)) then
-			local Phys = v:GetPhysicsObject()
+			local Phys=v:GetPhysicsObject()
 
 			if (IsValid(Phys)) then
-				local EntPos = v:LocalToWorld(v:OBBCenter())
+				local EntPos=v:LocalToWorld(v:OBBCenter())
 
-				local Tr = util.TraceLine({
-					start = pos,
-					endpos = EntPos,
-					filter = {sourceEnt, v}
+				local Tr=util.TraceLine({
+					start=pos,
+					endpos=EntPos,
+					filter={sourceEnt, v}
 				})
 
 				if not Tr.Hit then
-					local DistFrac = (1 - (EntPos:Distance(pos) / range)) ^ 2
-					local Force = power * DistFrac
+					local DistFrac=(1-(EntPos:Distance(pos)/range)) ^ 2
+					local Force=power*DistFrac
 
-					if ((v:IsNPC()) or (v:IsPlayer())) then
-						v:SetVelocity((EntPos - pos):GetNormalized() * Force / 500)
+					if ((v:IsNPC()) or (v:IsPlayer() or v.IsDrGNextbot)) then
+						v:SetVelocity((EntPos-pos):GetNormalized()*Force/500)
 					else
-						Phys:ApplyForceCenter((EntPos - pos):GetNormalized() * Force * Phys:GetMass() ^ .25 / 2)
+						Phys:ApplyForceCenter((EntPos-pos):GetNormalized()*Force*Phys:GetMass() ^ .25/2)
 					end
 				end
 			end
@@ -281,14 +281,14 @@ function JMod.SimpleForceExplosion(pos, power, range, sourceEnt)
 end
 
 function JMod.DecalSplosion(pos, decalName, range, num, sourceEnt)
-	for i = 1,num/5 do
+	for i=1,num/5 do
 		timer.Simple(i/2,function()
-			for j = 1, num/5 do
-				local Dir = VectorRand() * math.random(1, range)
-				Dir.z = Dir.z / 4
-				local Tr = util.QuickTrace(pos, Dir, sourceEnt)
+			for j=1, num/5 do
+				local Dir=VectorRand()*math.random(1, range)
+				Dir.z=Dir.z/4
+				local Tr=util.QuickTrace(pos, Dir, sourceEnt)
 				if (Tr.Hit) then
-					util.Decal(decalName, Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+					util.Decal(decalName, Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
 				end
 			end
 		end)
@@ -297,13 +297,13 @@ end
 
 function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
-		local EntPos = v:GetPos()
-		local Vec = EntPos - pos
-		local Dir = Vec:GetNormalized()
-		local DistFrac = 1 - (Vec:Length() / range)
-		local Dmg = DamageInfo()
-		Dmg:SetDamage(dmg * DistFrac)
-		Dmg:SetDamageForce(Dir * 1e5 * DistFrac)
+		local EntPos=v:GetPos()
+		local Vec=EntPos-pos
+		local Dir=Vec:GetNormalized()
+		local DistFrac=1-(Vec:Length()/range)
+		local Dmg=DamageInfo()
+		Dmg:SetDamage(dmg*DistFrac)
+		Dmg:SetDamageForce(Dir*1e5*DistFrac)
 		Dmg:SetDamagePosition(EntPos)
 		Dmg:SetAttacker(att or game.GetWorld())
 		Dmg:SetInflictor(infl or att or game.GetWorld())
@@ -312,35 +312,35 @@ function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	end
 end
 
-local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash"}
+local WreckBlacklist={"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash"}
 
 function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
-	local origPower = power
-	power = power * JMod.Config.ExplosionPropDestroyPower
-	local maxRange = 250 * power * (range or 1) -- todo: this still doesn't do what i want for the nuke
-	local maxMassToDestroy = 10 * power ^ .8
-	local masMassToLoosen = 30 * power
-	local allProps = ents.FindInSphere(pos, maxRange)
+	local origPower=power
+	power=power*JMod.Config.ExplosionPropDestroyPower
+	local maxRange=250*power*(range or 1) -- todo: this still doesn't do what i want for the nuke
+	local maxMassToDestroy=10*power ^ .8
+	local masMassToLoosen=30*power
+	local allProps=ents.FindInSphere(pos, maxRange)
 
 	for k, prop in pairs(allProps) do
 		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignore) == false or prop.ExplProof == true) then
-			local physObj = prop:GetPhysicsObject()
-			local propPos = prop:LocalToWorld(prop:OBBCenter())
-			local DistFrac = (1 - propPos:Distance(pos) / maxRange)
-			local myDestroyThreshold = DistFrac * maxMassToDestroy
-			local myLoosenThreshold = DistFrac * masMassToLoosen
+			local physObj=prop:GetPhysicsObject()
+			local propPos=prop:LocalToWorld(prop:OBBCenter())
+			local DistFrac=(1-propPos:Distance(pos)/maxRange)
+			local myDestroyThreshold=DistFrac*maxMassToDestroy
+			local myLoosenThreshold=DistFrac*masMassToLoosen
 
 			if (DistFrac >= .85) then
-				myDestroyThreshold = myDestroyThreshold * 7
-				myLoosenThreshold = myLoosenThreshold * 7
+				myDestroyThreshold=myDestroyThreshold*7
+				myLoosenThreshold=myLoosenThreshold*7
 			end
 
 			if ((prop ~= blaster) and (physObj:IsValid())) then
-				local mass, proceed = physObj:GetMass(), ignoreVisChecks
+				local mass, proceed=physObj:GetMass(), ignoreVisChecks
 
 				if not proceed then
-					local tr = util.QuickTrace(pos, propPos - pos, blaster)
-					proceed = ((IsValid(tr.Entity)) and (tr.Entity == prop))
+					local tr=util.QuickTrace(pos, propPos-pos, blaster)
+					proceed=((IsValid(tr.Entity)) and (tr.Entity == prop))
 				end
 
 				if proceed then
@@ -349,9 +349,9 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 					elseif (mass <= myLoosenThreshold) then
 						physObj:EnableMotion(true)
 						constraint.RemoveAll(prop)
-						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 1000 * DistFrac * power * mass, propPos + VectorRand() * 10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*1000*DistFrac*power*mass, propPos+VectorRand()*10)
 					else
-						physObj:ApplyForceOffset((propPos - pos):GetNormalized() * 200 * DistFrac * origPower * mass, propPos + VectorRand() * 10)
+						physObj:ApplyForceOffset((propPos-pos):GetNormalized()*200*DistFrac*origPower*mass, propPos+VectorRand()*10)
 					end
 				end
 			end
@@ -360,24 +360,24 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 end
 
 function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
-	for k, door in pairs(ents.FindInSphere(pos, 40 * power * (range or 1))) do
+	for k, door in pairs(ents.FindInSphere(pos, 40*power*(range or 1))) do
 		if (JMod.IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignore) ~= false) then
-			local proceed = ignoreVisChecks
+			local proceed=ignoreVisChecks
 
 			if not proceed then
-				local tr = util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter()) - pos, blaster)
-				proceed = ((IsValid(tr.Entity)) and (tr.Entity == door))
+				local tr=util.QuickTrace(pos, door:LocalToWorld(door:OBBCenter())-pos, blaster)
+				proceed=((IsValid(tr.Entity)) and (tr.Entity == door))
 			end
 
 			if proceed then
-				JMod.BlastThatDoor(door, (door:LocalToWorld(door:OBBCenter()) - pos):GetNormalized() * 1000)
+				JMod.BlastThatDoor(door, (door:LocalToWorld(door:OBBCenter())-pos):GetNormalized()*1000)
 			end
 		end
 	end
 end
 
 function JMod.Sploom(attacker, pos, mag, radius)
-	local Sploom = ents.Create("env_explosion")
+	local Sploom=ents.Create("env_explosion")
 	Sploom:SetPos(pos)
 	Sploom:SetOwner(attacker or game.GetWorld())
 	Sploom:SetKeyValue("iMagnitude", mag)
@@ -388,153 +388,159 @@ function JMod.Sploom(attacker, pos, mag, radius)
 
 	--[[ -- HE doesn't make fires
 	if vFireInstalled then
-		local fires = math.Round(math.random() * (mag / 80))
-		for i = 1, fires do
-			timer.Simple(i * 0.05, function()
-				CreateVFireBall(mag / 10, mag / 10, pos + Vector(0,0,5), VectorRand() * math.random(mag, mag * 2))
+		local fires=math.Round(math.random()*(mag/80))
+		for i=1, fires do
+			timer.Simple(i*0.05, function()
+				CreateVFireBall(mag/10, mag/10, pos+Vector(0,0,5), VectorRand()*math.random(mag, mag*2))
 			end)
 		end
 	end
 	]]
 end
 
-local SurfaceHardness = {
-	[MAT_METAL] = .95,
-	[MAT_COMPUTER] = .95,
-	[MAT_VENT] = .95,
-	[MAT_GRATE] = .95,
-	[MAT_FLESH] = .5,
-	[MAT_ALIENFLESH] = .3,
-	[MAT_SAND] = .1,
-	[MAT_DIRT] = .3,
-	[MAT_GRASS] = .2,
-	[74] = .1,
-	[85] = .2,
-	[MAT_WOOD] = .5,
-	[MAT_FOLIAGE] = .5,
-	[MAT_CONCRETE] = .9,
-	[MAT_TILE] = .8,
-	[MAT_SLOSH] = .05,
-	[MAT_PLASTIC] = .3,
-	[MAT_GLASS] = .6
+local SurfaceHardness={
+	[MAT_METAL]=.95,
+	[MAT_COMPUTER]=.95,
+	[MAT_VENT]=.95,
+	[MAT_GRATE]=.95,
+	[MAT_FLESH]=.5,
+	[MAT_ALIENFLESH]=.3,
+	[MAT_SAND]=.1,
+	[MAT_DIRT]=.3,
+	[MAT_GRASS]=.2,
+	[74]=.1,
+	[85]=.2,
+	[MAT_WOOD]=.5,
+	[MAT_FOLIAGE]=.5,
+	[MAT_CONCRETE]=.9,
+	[MAT_TILE]=.8,
+	[MAT_SLOSH]=.05,
+	[MAT_PLASTIC]=.3,
+	[MAT_GLASS]=.6
 }
 
 -- Slayer Ricocheting/Penetrating Bullets FTW
 function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
 	if not (IsValid(ent)) then return end
 	if (num and num > 10) then return end
-	local Attacker = ent.Owner or ent or game.GetWorld()
+	local Attacker=ent.Owner or ent or game.GetWorld()
 
 	ent:FireBullets({
-		Attacker = Attacker,
-		Damage = dmg,
-		Force = dmg,
-		Num = 1,
-		Tracer = 1,
-		TracerName = tracerName or "",
-		Dir = dir,
-		Spread = Vector(0, 0, 0),
-		Src = pos,
-		Callback = callback or nil
+		Attacker=Attacker,
+		Damage=dmg*2,
+		Force=dmg,
+		Num=1,
+		Tracer=1,
+		TracerName=tracerName or "",
+		Dir=dir,
+		Spread=Vector(0, 0, 0),
+		Src=pos,
+		Callback=callback or nil
 	})
 
-	local initialTrace = util.TraceLine({
-		start = pos,
-		endpos = pos + dir * 50000,
-		filter = {ent}
+	local initialTrace=util.TraceLine({
+		start=pos,
+		endpos=pos+dir*50000,
+		filter={ent}
 	})
 
 	if not initialTrace.Hit then return end
-	local AVec, IPos, TNorm, SMul = initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
+	local AVec, IPos, TNorm, SMul=initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
 
+	local Eff=EffectData()
+	Eff:SetOrigin(IPos)
+	Eff:SetScale(.5)
+	Eff:SetNormal(TNorm)
+	util.Effect("eff_jack_gmod_efpburst",Eff,true,true)
+	
 	if (doBlasts) then
-		util.BlastDamage(ent, Attacker, IPos + TNorm * 2, dmg / 3, dmg / 4)
+		util.BlastDamage(ent, Attacker, IPos+TNorm*2, dmg/6, dmg/4)
 
 		timer.Simple(0, function()
-			local Tr = util.QuickTrace(IPos + TNorm, -TNorm * 20)
+			local Tr=util.QuickTrace(IPos+TNorm, -TNorm*20)
 
 			if (Tr.Hit) then
-				util.Decal("FadingScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+				util.Decal("FadingScorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
 			end
 		end)
 	end
 
 	if wreckShit and not initialTrace.HitWorld then
-		local Phys = initialTrace.Entity:GetPhysicsObject()
+		local Phys=initialTrace.Entity:GetPhysicsObject()
 
 		if IsValid(Phys) then
-			local Mass, Thresh = Phys:GetMass(), dmg / 2
+			local Mass, Thresh=Phys:GetMass(), dmg/2
 
 			if (Mass <= Thresh) then
 				constraint.RemoveAll(initialTrace.Entity)
 				Phys:EnableMotion(true)
 				Phys:Wake()
-				Phys:ApplyForceOffset(-AVec * dmg * 2, IPos)
+				Phys:ApplyForceOffset(-AVec*dmg*2, IPos)
 			end
 		end
 	end
 
 	---
 	if not SMul then
-		SMul = .5
+		SMul=.5
 	end
 
-	local ApproachAngle = -math.deg(math.asin(TNorm:Dot(AVec)))
-	local MaxRicAngle = 60 * SMul
+	local ApproachAngle=-math.deg(math.asin(TNorm:Dot(AVec)))
+	local MaxRicAngle=60*SMul
 
 	-- all the way through (hot)
-	if (ApproachAngle > (MaxRicAngle * 1.05)) then
-		local MaxDist, SearchPos, SearchDist, Penetrated = (dmg / SMul) * .15 * (penMul or 1), IPos, 5, false
+	if (ApproachAngle > (MaxRicAngle*1.05)) then
+		local MaxDist, SearchPos, SearchDist, Penetrated=(dmg/SMul)*.15*(penMul or 1), IPos, 5, false
 
 		while ((not Penetrated) and (SearchDist < MaxDist)) do
-			SearchPos = IPos + AVec * SearchDist
-			local PeneTrace = util.QuickTrace(SearchPos, -AVec * SearchDist)
+			SearchPos=IPos+AVec*SearchDist
+			local PeneTrace=util.QuickTrace(SearchPos, -AVec*SearchDist)
 
 			if ((not PeneTrace.StartSolid) and PeneTrace.Hit) then
-				Penetrated = true
+				Penetrated=true
 			else
-				SearchDist = SearchDist + 5
+				SearchDist=SearchDist+5
 			end
 		end
 
 		if (Penetrated) then
 			ent:FireBullets({
-				Attacker = Attacker,
-				Damage = 1,
-				Force = 1,
-				Num = 1,
-				Tracer = 0,
-				TracerName = "",
-				Dir = -AVec,
-				Spread = Vector(0, 0, 0),
-				Src = SearchPos + AVec
+				Attacker=Attacker,
+				Damage=1,
+				Force=1,
+				Num=1,
+				Tracer=0,
+				TracerName="",
+				Dir=-AVec,
+				Spread=Vector(0, 0, 0),
+				Src=SearchPos+AVec
 			})
 
 			if (doBlasts) then
-				util.BlastDamage(ent, Attacker, SearchPos + AVec * 2, dmg / 2, dmg / 4)
+				util.BlastDamage(ent, Attacker, SearchPos+AVec*2, dmg/4, dmg/4)
 
 				timer.Simple(0, function()
-					local Tr = util.QuickTrace(SearchPos + AVec, -AVec * 20)
+					local Tr=util.QuickTrace(SearchPos+AVec, -AVec*20)
 
 					if (Tr.Hit) then
-						util.Decal("FadingScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+						util.Decal("FadingScorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
 					end
 				end)
 			end
 
-			local ThroughFrac = 1 - SearchDist / MaxDist
-			JMod.RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+			local ThroughFrac=1-SearchDist/MaxDist
+			JMod.RicPenBullet(ent, SearchPos+AVec, AVec, dmg*ThroughFrac*.7, doBlasts, wreckShit, (num or 0)+1, penMul, tracerName, callback)
 		end
-	elseif (ApproachAngle < (MaxRicAngle * .95)) then
+	elseif (ApproachAngle < (MaxRicAngle*.95)) then
 		-- ping whiiiizzzz
 		if (SERVER) then
 			sound.Play("snds_jack_gmod/ricochet_" .. math.random(1, 2) .. ".wav", IPos, 60, math.random(90, 100))
 		end
 
-		local NewVec = AVec:Angle()
+		local NewVec=AVec:Angle()
 		NewVec:RotateAroundAxis(TNorm, 180)
-		NewVec = NewVec:Forward()
-		JMod.RicPenBullet(ent, IPos + TNorm, -NewVec, dmg * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+		NewVec=NewVec:Forward()
+		JMod.RicPenBullet(ent, IPos+TNorm, -NewVec, dmg*.7, doBlasts, wreckShit, (num or 0)+1, penMul, tracerName, callback)
 	end
 end
 
@@ -542,12 +548,12 @@ function JMod.Owner(ent, newOwner)
 	if not (IsValid(ent)) then return end
 
 	if not (IsValid(newOwner)) then
-		newOwner = game.GetWorld()
+		newOwner=game.GetWorld()
 	end
 
-	local OldOwner = ent.Owner
+	local OldOwner=ent.Owner
 	if (OldOwner and (OldOwner == newOwner)) then return end
-	ent.Owner = newOwner
+	ent.Owner=newOwner
 
 	if (CPPI and isfunction(ent.CPPISetOwner)) then
 		ent:CPPISetOwner(newOwner)
@@ -558,21 +564,21 @@ function JMod.ShouldAllowControl(self, ply)
 	if not (IsValid(ply)) then return false end
 	if not (IsValid(self.Owner)) then return false end
 	if (ply == self.Owner) then return true end
-	local Allies = self.Owner.JModFriends or {}
+	local Allies=self.Owner.JModFriends or {}
 	if (table.HasValue(Allies, ply)) then return true end
 
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
-function JMod.ShouldAttack(self, ent, vehiclesOnly)
+function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
-	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
+	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
 
 	if (ent:IsPlayer()) then
-		PlayerToCheck = ent
+		PlayerToCheck=ent
 	elseif (ent:IsNPC()) then
-		local Class = ent:GetClass()
+		local Class=ent:GetClass()
 		if (self.WhitelistedNPCs and (table.HasValue(self.WhitelistedNPCs, Class))) then return true end
 		if (self.BlacklistedNPCs and (table.HasValue(self.BlacklistedNPCs, Class))) then return false end
 
@@ -587,11 +593,11 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 				return ent:GetMaxHealth() > 0 and ent:Health() > 0
 			end
 		else
-			return false
+			return peaceWasNeverAnOption or false
 		end
 	elseif (ent:IsVehicle()) then
-		PlayerToCheck = ent:GetDriver()
-		InVehicle = true
+		PlayerToCheck=ent:GetDriver()
+		InVehicle=true
 	end
 
 	if ((IsValid(PlayerToCheck)) and PlayerToCheck.Alive) then
@@ -599,12 +605,12 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 		if (PlayerToCheck.EZkillme) then return true end -- for testing
 		if (PlayerToCheck:GetObserverMode() ~= 0) then return false end
 		if (self.Owner and (PlayerToCheck == self.Owner)) then return false end
-		local Allies = (self.Owner and self.Owner.JModFriends) or {}
+		local Allies=(self.Owner and self.Owner.JModFriends) or {}
 		if (table.HasValue(Allies, PlayerToCheck)) then return false end
-		local OurTeam = nil
+		local OurTeam=nil
 
 		if (IsValid(self.Owner)) then
-			OurTeam = self.Owner:Team()
+			OurTeam=self.Owner:Team()
 			if Gaymode == "basewars" and self.Owner.IsAlly then
 				return not self.Owner:IsAlly(PlayerToCheck)
 			end
@@ -616,7 +622,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly)
 		return PlayerToCheck:Alive()
 	end
 
-	return false
+	return peaceWasNeverAnOption or false
 end
 
 function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
@@ -638,13 +644,13 @@ end
 function JMod.Colorify(ent)
 	if (IsValid(ent.Owner)) then
 		if (engine.ActiveGamemode() == "sandbox" and ent.Owner:Team() == TEAM_UNASSIGNED) then
-			local Col = ent.Owner:GetPlayerColor()
-			ent:SetColor(Color(Col.x * 255, Col.y * 255, Col.z * 255))
+			local Col=ent.Owner:GetPlayerColor()
+			ent:SetColor(Color(Col.x*255, Col.y*255, Col.z*255))
 		else
-			local Tem = ent.Owner:Team()
+			local Tem=ent.Owner:Team()
 
 			if (Tem) then
-				local Col = team.GetColor(Tem)
+				local Col=team.GetColor(Tem)
 
 				if (Col) then
 					ent:SetColor(Col)
@@ -654,11 +660,11 @@ function JMod.Colorify(ent)
 	end
 end
 
-local TriggerKeys = {IN_ATTACK, IN_USE, IN_ATTACK2}
+local TriggerKeys={IN_ATTACK, IN_USE, IN_ATTACK2}
 
 function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 	playa:PickupObject(item)
-	local HookName = "EZthrowable_" .. item:EntIndex()
+	local HookName="EZthrowable_" .. item:EntIndex()
 
 	hook.Add("KeyPress", HookName, function(ply, key)
 		if not (IsValid(playa)) then
@@ -670,26 +676,26 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 		if ply ~= playa then return end
 
 		if ((IsValid(item)) and (ply:Alive())) then
-			local Phys = item:GetPhysicsObject()
+			local Phys=item:GetPhysicsObject()
 
 			if (key == IN_ATTACK) then
 				timer.Simple(0, function()
 					if (IsValid(Phys)) then
-						Phys:ApplyForceCenter(ply:GetAimVector() * (hardstr or 600) * Phys:GetMass())
+						Phys:ApplyForceCenter(ply:GetAimVector()*(hardstr or 600)*Phys:GetMass())
 
 						if (item.EZspinThrow) then
-							Phys:ApplyForceOffset(ply:GetAimVector() * Phys:GetMass() * 50, Phys:GetMassCenter() + Vector(0, 0, 10))
-							Phys:ApplyForceOffset(-ply:GetAimVector() * Phys:GetMass() * 50, Phys:GetMassCenter() - Vector(0, 0, 10))
+							Phys:ApplyForceOffset(ply:GetAimVector()*Phys:GetMass()*50, Phys:GetMassCenter()+Vector(0, 0, 10))
+							Phys:ApplyForceOffset(-ply:GetAimVector()*Phys:GetMass()*50, Phys:GetMassCenter()-Vector(0, 0, 10))
 						end
 					end
 				end)
 			elseif (key == IN_ATTACK2) then
-				local vec = ply:GetAimVector()
-				vec.z = vec.z + 0.3
+				local vec=ply:GetAimVector()
+				vec.z=vec.z+0.3
 
 				timer.Simple(0, function()
 					if (IsValid(Phys)) then
-						Phys:ApplyForceCenter(vec * (softstr or 400) * Phys:GetMass())
+						Phys:ApplyForceCenter(vec*(softstr or 400)*Phys:GetMass())
 					end
 				end)
 			elseif key == IN_USE then
@@ -706,8 +712,8 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 end
 
 function JMod.BlockPhysgunPickup(ent, isblock)
-	if isblock == false then isblock = nil end
-	ent.block_pickup = isblock
+	if isblock == false then isblock=nil end
+	ent.block_pickup=isblock
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

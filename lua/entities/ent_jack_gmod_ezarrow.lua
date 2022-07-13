@@ -50,7 +50,7 @@ if(SERVER)then
 		Slash:SetDamageForce(Dir*self.Damage*.33)
 		Slash:SetDamage(self.Damage*.33)
 		tr.Entity:TakeDamageInfo(Slash)
-		if((tr.Entity:IsNPC())or(tr.Entity:IsPlayer()))then
+		if((tr.Entity:IsNPC() or tr.Entity.IsDrGNextbot)or(tr.Entity:IsPlayer()))then
 			self:SetPos(tr.HitPos+Dir*5-self:GetUp()*2)
 			if(((tr.Entity.Alive)and(tr.Entity:Alive()))or((tr.Entity.Health)and(tr.Entity:Health()>0)))then
 				self:SetParent(tr.Entity)
@@ -97,7 +97,7 @@ if(SERVER)then
 				if(IsValid(self.StuckIn))then
 					if(self.StuckIn:IsPlayer() and not self.StuckIn:Alive())then
 						StaySticked=false
-					elseif(self.StuckIn:IsNPC() and self.StuckIn.Health and self.StuckIn:Health()<=0)then
+					elseif((self.StuckIn:IsNPC() or self.StuckIn.IsDrGNextbot) and self.StuckIn.Health and self.StuckIn:Health()<=0)then
 						StaySticked=false
 					end
 				end

@@ -1,16 +1,16 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Base = "ent_jack_gmod_ezgrenade"
+ENT.Base="ent_jack_gmod_ezgrenade"
 ENT.Author="Jackarunda"
 ENT.PrintName="T H E  G R E N A D E"
 ENT.Category="JMod - EZ Explosives"
 ENT.Spawnable=false
 ENT.JModPreferredCarryAngles=Angle(0,-140,0)
-ENT.Model = "models/weapons/w_fragjade.mdl"
-ENT.Material = "models/shiny"
-ENT.ModelScale = 3
-ENT.SpoonScale = 3
-ENT.Mass = 20
+ENT.Model="models/weapons/w_fragjade.mdl"
+ENT.Material="models/shiny"
+ENT.ModelScale=3
+ENT.SpoonScale=3
+ENT.Mass=20
 local DetonationEffects={
 	balls={ -- b a l l s
 		col=Color(128,255,128),
@@ -119,7 +119,7 @@ local DetonationEffects={
 						local SelfPos=self:GetPos()+Vector(0,0,10)
 						local Targets={}
 						for k,v in pairs(ents.FindInSphere(self:GetPos(),2000))do
-							if(v:IsPlayer() or v:IsNPC())then
+							if(v:IsPlayer() or v:IsNPC() or v.IsDrGNextbot)then
 								local TargPos=v:GetPos()+Vector(0,0,30)
 								local Tr=util.TraceLine({start=self:GetPos(),endpos=v:GetShootPos(),filter={self,v}})
 								if not(Tr.Hit)then
@@ -419,9 +419,9 @@ if(SERVER)then
 	function ENT:SpoonEffect()
 		if self.SpoonEnt then
 			local Spewn=ents.Create(self.SpoonEnt)
-			if self.SpoonModel then Spewn.Model = self.SpoonModel end
-			if self.SpoonScale then Spewn.ModelScale = self.SpoonScale end
-			if self.SpoonSound then Spewn.Sound = self.SpoonSound end
+			if self.SpoonModel then Spewn.Model=self.SpoonModel end
+			if self.SpoonScale then Spewn.ModelScale=self.SpoonScale end
+			if self.SpoonSound then Spewn.Sound=self.SpoonSound end
 			Spewn:SetPos(self:GetPos())
 			Spewn:Spawn()
 			Spewn:SetMaterial(self.Material)

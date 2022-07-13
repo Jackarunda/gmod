@@ -24,7 +24,7 @@ if(SERVER)then
 	function ENT:ShouldDamage(ent)
 		if not(IsValid(ent))then return end
 		if(ent:IsPlayer())then return ent:Alive() end
-		if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+		if((ent:IsNPC() or ent.IsDrGNextbot)and(ent.Health)and(ent:Health()))then
 			local Phys=ent:GetPhysicsObject()
 			if(IsValid(Phys))then
 				local Mat=Phys:GetMaterial()

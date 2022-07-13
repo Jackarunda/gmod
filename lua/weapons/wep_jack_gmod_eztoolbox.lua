@@ -18,13 +18,13 @@ SWEP.EZdroppable=true
 SWEP.ViewModel	= "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel	= "models/props_c17/tools_wrench01a.mdl"
 
-SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
-SWEP.BodyHolsterSlot = "hips"
-SWEP.BodyHolsterAng = Angle(-70,0,200)
-SWEP.BodyHolsterAngL = Angle(-70,-10,-30)
-SWEP.BodyHolsterPos = Vector(0,-15,10)
-SWEP.BodyHolsterPosL = Vector(0,-15,-11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterModel="models/weapons/w_models/w_tooljox.mdl"
+SWEP.BodyHolsterSlot="hips"
+SWEP.BodyHolsterAng=Angle(-70,0,200)
+SWEP.BodyHolsterAngL=Angle(-70,-10,-30)
+SWEP.BodyHolsterPos=Vector(0,-15,10)
+SWEP.BodyHolsterPosL=Vector(0,-15,-11)
+SWEP.BodyHolsterScale=.4
 
 SWEP.ViewModelFOV	= 52
 SWEP.Slot			= 0
@@ -123,12 +123,12 @@ function SWEP:FindNailPos()
 	local Tr1=util.QuickTrace(Pos,Vec*80,{self.Owner})
 	if(Tr1.Hit)then
 		local Ent1=Tr1.Entity
-		if((Tr1.HitSky)or(Ent1:IsWorld())or(Ent1:IsPlayer())or(Ent1:IsNPC()))then return nil end
+		if((Tr1.HitSky)or(Ent1:IsWorld())or(Ent1:IsPlayer())or(Ent1:IsNPC() or Ent1.IsDrGNextbot))then return nil end
 		if not(IsValid(Ent1:GetPhysicsObject()))then return nil end
 		local Tr2=util.QuickTrace(Pos,Vec*120,{self.Owner,Ent1})
 		if(Tr2.Hit)then
 			local Ent2=Tr2.Entity
-			if((Ent1==Ent2)or(Tr2.HitSky)or(Ent2:IsPlayer())or(Ent2:IsNPC()))then return nil end
+			if((Ent1==Ent2)or(Tr2.HitSky)or(Ent2:IsPlayer())or(Ent2:IsNPC() or Ent2.IsDrGNextbot))then return nil end
 			if(not(Ent2:IsWorld())and not(IsValid(Ent2:GetPhysicsObject())))then return nil end
 			local Dist=Tr1.HitPos:Distance(Tr2.HitPos)
 			if(Dist>30)then return nil end
@@ -207,8 +207,8 @@ function SWEP:PrimaryAttack()
 			local buildInfo=self.Craftables[SelectedBuild]
 			if not(buildInfo)then return end
 			if((buildInfo.results=="ez nail")and not(self:FindNailPos()))then return end
-			if((buildInfo.results=="package")and not(self:GetPackagableObject()))then return end
-			local Sound=buildInfo.results~="ez nail" and buildInfo.results~="package"
+			if((buildInfo.results=="ez box")and not(self:GetPackagableObject()))then return end
+			local Sound=buildInfo.results~="ez nail" and buildInfo.results~="ez box"
 			local Reqs=buildInfo.craftingReqs
 			if(JMod.HaveResourcesToPerformTask(nil,nil,Reqs,self))then
 				local override,msg=hook.Run("JMod_CanKitBuild",self.Owner,self,buildInfo)
@@ -218,7 +218,7 @@ function SWEP:PrimaryAttack()
 				end
 				JMod.ConsumeResourcesInRange(Reqs,nil,nil,self)
 				Built=true
-				local BuildSteps=math.ceil(20*buildInfo.sizeScale)
+				local BuildSteps=math.ceil(20*(buildInfo.sizeScale or 1))
 				for i=1,BuildSteps do
 					timer.Simple(i/100,function()
 						if(IsValid(self))then
@@ -230,20 +230,20 @@ function SWEP:PrimaryAttack()
 								local Class=buildInfo.results
 								if(Class=="ez nail")then
 									self:Nail()
-								elseif(Class=="package")then
+								elseif(Class=="ez box")then
 									self:Package()
 								else
 									local StringParts=string.Explode(" ",Class)
 									if((StringParts[1])and(StringParts[1]=="FUNC"))then
 										local FuncName=StringParts[2]
 										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*buildInfo[4],Angle(0,self.Owner:EyeAngles().y,0))
+											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner,Pos+Norm*10*(buildInfo.sizeScale or 1),Angle(0,self.Owner:EyeAngles().y,0))
 										else
 											print("JMOD TOOLBOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent=ents.Create(Class)
-										Ent:SetPos(Pos+Norm*10*buildInfo.sizeScale)
+										Ent:SetPos(Pos+Norm*10*(buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0,self.Owner:EyeAngles().y,0))
 										JMod.Owner(Ent,self.Owner)
 										Ent:Spawn()
@@ -410,7 +410,7 @@ function SWEP:Reload()
 end
 function SWEP:BuildEffect(pos,buildType,suppressSound)
 	if(CLIENT)then return end
-	local Scale=self.Craftables[buildType].sizeScale^.6
+	local Scale=(self.Craftables[buildType].sizeScale or 1)^.6
 	self:UpgradeEffect(pos,Scale*4,suppressSound)
 	local eff=EffectData()
 	eff:SetOrigin(pos+VectorRand())
@@ -433,7 +433,9 @@ function SWEP:UpgradeEffect(pos,scale,suppressSound)
 	end
 end
 function SWEP:WhomIlookinAt()
-	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,{self.Owner})
+	local Filter={self.Owner}
+	for k,v in pairs(ents.FindByClass("npc_bullseye"))do table.insert(Filter,v) end
+	local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*80,Filter)
 	return Tr.Entity,Tr.HitPos,Tr.HitNormal
 end
 function SWEP:SecondaryAttack()

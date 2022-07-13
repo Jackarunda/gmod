@@ -99,7 +99,7 @@ function JMOD_WhomILookinAt(ply,cone,dist)
 		local Tr=util.QuickTrace(ply:GetShootPos(),Vec*dist,{ply})
 		if((Tr.Hit)and not(Tr.HitSky)and(Tr.Entity))then
 			local Ent,Class=Tr.Entity,Tr.Entity:GetClass()
-			if((Ent:IsPlayer())or(Ent:IsNPC()))then
+			if( (Ent:IsPlayer()) or (Ent:IsNPC()) or (Ent.IsDrGNextbot)) then
 				CreatureTr=Tr
 			elseif((Class=="prop_physics")or(Class=="prop_physics_multiplayer")or(Class=="prop_ragdoll"))then
 				ObjTr=Tr
@@ -143,7 +143,7 @@ function JMod.CountResourcesInRange(pos,range,sourceEnt,cache)
 			local Typ=obj.EZsupplies
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod.VisCheck(pos,obj,sourceEnt) then
-			local Typ = obj:GetResourceType()
+			local Typ=obj:GetResourceType()
 			Results[Typ]=(Results[Typ] or 0)+obj:GetResource()
 		end
 	end
@@ -206,6 +206,6 @@ function JMod.TryCough(ent)
 	if Time > ent.EZcoughTime then
 		ent:EmitSound("ambient/voices/cough"..math.random(1,4)..".wav",75,math.random(90,110))
 		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
-		ent.EZcoughTime = CurTime() + math.random (.5, 1)
+		ent.EZcoughTime=CurTime()+math.random (.5, 1)
 	end
 end

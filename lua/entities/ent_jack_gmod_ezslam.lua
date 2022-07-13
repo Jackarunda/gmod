@@ -52,8 +52,8 @@ if(SERVER)then
 		---
 		JMod.Colorify(self)
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if value > 0, this will detonate", "Arms bomb when > 0"})
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"if value > 0, this will detonate", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -67,9 +67,9 @@ if(SERVER)then
 				timer.Simple(3,function()
 					if(IsValid(self))then
 						if(self:GetState()==JMod.EZ_STATE_ARMING)then
-							local pos = self:GetAttachment(1).Pos
-							local trace = util.QuickTrace(pos, self:GetUp() * 1000, self)
-							self.BeamFrac = trace.Fraction
+							local pos=self:GetAttachment(1).Pos
+							local trace=util.QuickTrace(pos, self:GetUp()*1000, self)
+							self.BeamFrac=trace.Fraction
 							self:SetState(JMod.EZ_STATE_ARMED)
 						end
 					end
@@ -118,9 +118,9 @@ if(SERVER)then
 					timer.Simple(3,function()
 						if(IsValid(self))then
 							if(self:GetState()==JMod.EZ_STATE_ARMING)then
-								local pos = self:GetAttachment(1).Pos
-								local trace = util.QuickTrace(pos, self:GetUp() * 1000, selfg)
-								self.BeamFrac = trace.Fraction
+								local pos=self:GetAttachment(1).Pos
+								local trace=util.QuickTrace(pos, self:GetUp()*1000, selfg)
+								self.BeamFrac=trace.Fraction
 								self:SetState(JMod.EZ_STATE_ARMED)
 							end
 						end
@@ -134,7 +134,7 @@ if(SERVER)then
 						Dude:PickupObject(self)
 						self.NextStick=Time+.5
 					else
-						self.AttachedBomb = nil
+						self.AttachedBomb=nil
 						timer.Simple(0, function() self:SetParent(nil);Dude:PickupObject(self) end)
 						self.NextStick=Time+.5
 					end
@@ -150,7 +150,7 @@ if(SERVER)then
 			if((self:IsPlayerHolding())and(self.NextStick<Time) and !IsValid(self.AttachedBomb))then
 				local Tr=util.QuickTrace(Dude:GetShootPos(),Dude:GetAimVector()*80,{self,Dude})
 				if(Tr.Hit)then
-					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC())and not(Tr.Entity:IsPlayer()))then
+					if((IsValid(Tr.Entity:GetPhysicsObject()))and not(Tr.Entity:IsNPC()) and not (Tr.Entity.IsDrGNextbot)and not(Tr.Entity:IsPlayer()))then
 						self.NextStick=Time+.5
 						local Ang=Tr.HitNormal:Angle()
 						Ang:RotateAroundAxis(Ang:Right(),-90)
@@ -193,7 +193,7 @@ if(SERVER)then
 				JMod.Sploom(self.Owner,SelfPos,math.random(50,80))
 				util.ScreenShake(SelfPos,99999,99999,.3,500)
 				local Dir=(self:GetUp()+VectorRand()*.01):GetNormalized()
-				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 500)*JMod.Config.MinePower,true,true)
+				JMod.RicPenBullet(self,SelfPos,Dir,(dmg or 800)*JMod.Config.MinePower,true,true)
 				self:Remove()
 			end
 		end)
@@ -203,16 +203,16 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end
 		local Time=CurTime()
-		local state = self:GetState()
+		local state=self:GetState()
 		if(state==JMod.EZ_STATE_ARMED)then
 			local pos=self:GetAttachment(1).Pos
 			local trace=util.QuickTrace(pos,self:GetUp()*1000,self)
 			if((math.abs(self.BeamFrac-trace.Fraction)>=.001)and(JMod.EnemiesNearPoint(self,trace.HitPos,200)))then
-				if((trace.Entity:IsPlayer())or(trace.Entity:IsNPC()))then
+				if( (trace.Entity:IsPlayer()) or (trace.Entity:IsNPC()) or (trace.Entity.IsDrGNextbot)) then
 					self:Detonate()
 				else
 					if((trace.Entity.GetMaxHealth)and(tonumber(trace.Entity:GetMaxHealth()))and(trace.Entity:GetMaxHealth()>=2000))then
-						self:Detonate(.1,600)
+						self:Detonate(.1,1200)
 					else
 						self:Detonate(.1)
 					end

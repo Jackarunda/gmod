@@ -170,16 +170,16 @@ local WindChange,NextThink=Vector(0,0,0),0
 local Count,Sum=0,0
 hook.Add("Think","JMOD_CLIENT_THINK",function()
 	--[[
-	local dlight = DynamicLight( LocalPlayer():EntIndex() )
+	local dlight=DynamicLight( LocalPlayer():EntIndex() )
 	if ( dlight ) then
-		dlight.pos = LocalPlayer():GetShootPos()
-		dlight.r = 255
-		dlight.g = 255
-		dlight.b = 255
-		dlight.brightness = 5
-		dlight.Decay = 1000
-		dlight.Size = 25600
-		dlight.DieTime = CurTime() + 1
+		dlight.pos=LocalPlayer():GetShootPos()
+		dlight.r=255
+		dlight.g=255
+		dlight.b=255
+		dlight.brightness=5
+		dlight.Decay=1000
+		dlight.Size=25600
+		dlight.DieTime=CurTime()+1
 	end
 	--]]
 	local Time=CurTime()
@@ -339,7 +339,7 @@ local function IsWHOT(ent)
 	local Time=CurTime()
 	if(ent:IsWorld())then return false end
 	if((ent:IsPlayer())or(ent:IsOnFire()))then return true end
-	if(ent:IsNPC())then
+	if(ent:IsNPC() or ent.IsDrGNextbot)then
 		if((ent.Health)and(ent:Health()>0))then return true end
 	elseif(ent:IsRagdoll())then
 		if not(ent.EZWHOTcoldTime)then ent.EZWHOTcoldTime=Time+30 end
@@ -372,7 +372,7 @@ local function IsWHOT(ent)
 	return (ent.EZWHOTcoldTime or 0)>Time
 end
 
-local thermalmodify = {
+local thermalmodify={
 	["$pp_colour_addr"]=0,
 	["$pp_colour_addg"]=0,
 	["$pp_colour_addb"]=0,
@@ -519,7 +519,7 @@ hook.Add("OnPlayerChat","JMOD_ONPLAYERCHAT",function(ply, text, isTeam, isDead)
 	if((ply.EZarmor)and(ply.EZarmor.effects.teamComms)and(JMod.PlayersCanComm(LocalPlayer(),ply)))then
 		CommNoise()
 		if not isTeam and not isDead then
-			local tab = {}
+			local tab={}
 			table.insert( tab, Color( 30, 40, 200 ) )
 			table.insert( tab, "(HEADSET) " )
 			table.insert( tab, ply )
@@ -587,8 +587,8 @@ net.Receive("JMod_NuclearBlast",function()
 	end
 end)
 net.Receive("JMod_VisionBlur",function()
-	local ply = LocalPlayer()
-	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0)+net.ReadFloat(),0,75)
+	local ply=LocalPlayer()
+	ply.EZvisionBlur=math.Clamp((ply.EZvisionBlur or 0)+net.ReadFloat(),0,75)
 end)
 
 net.Receive("JMod_Bleeding",function()

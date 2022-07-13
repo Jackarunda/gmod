@@ -158,7 +158,7 @@ if(SERVER)then
 		util.Effect("eff_jack_minesplode",plooie,true,true)
 		for key,playa in pairs(ents.FindInSphere(SelfPos,50))do
 			local Clayus=playa:GetClass()
-			if((playa:IsPlayer())or(playa:IsNPC())or(Clayuss=="prop_vehicle_jeep")or(Clayuss=="prop_vehicle_jeep")or(Clayus=="prop_vehicle_airboat"))then
+			if((playa:IsPlayer())or(playa:IsNPC()or playa.IsDrGNextbot)or(Clayuss=="prop_vehicle_jeep")or(Clayuss=="prop_vehicle_jeep")or(Clayus=="prop_vehicle_airboat"))then
 				playa:SetVelocity(playa:GetVelocity()+Up*200)
 			end
 		end
@@ -200,7 +200,7 @@ if(SERVER)then
 		
 		Tr=util.QuickTrace(self:GetPos()+self:GetUp()*20,self:GetUp()*30,{self})
 		if(Tr.Hit)then
-			if(Tr.Entity:IsPlayer() or Tr.Entity:IsNPC())then
+			if(Tr.Entity:IsPlayer() or Tr.Entity:IsNPC() or Tr.Entity.IsDrGNextbot)then
 				timer.Simple(.5,function()
 					if((IsValid(Tr.Entity))and(IsValid(self)))then
 						local Bam=DamageInfo()
@@ -249,7 +249,7 @@ if(SERVER)then
 		local State,Time=self:GetState(),CurTime()
 		if(State==JMod.EZ_STATE_ARMED)then
 			for k,targ in pairs(ents.FindInSphere(self:GetPos(),100))do
-				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
+				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ.IsDrGNextbot)or(targ:IsVehicle())))then
 					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)

@@ -42,7 +42,7 @@ if(SERVER)then
 		util.Effect("eff_jack_gmod_flashbang",plooie,true,true)
 		util.ScreenShake(SelfPos,20,20,.2,1000)
 		for k,v in pairs(ents.FindInSphere(SelfPos,200))do
-			if(v:IsNPC())then v.EZNPCincapacitate=Time+math.Rand(3,5) end
+			if(v:IsNPC() or v.IsDrGNextbot)then v.EZNPCincapacitate=Time+math.Rand(3,5) end
 		end
 		self:SetColor(Color(0,0,0))
 		timer.Simple(.1,function()

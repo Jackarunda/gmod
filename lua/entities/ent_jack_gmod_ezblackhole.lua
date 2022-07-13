@@ -48,7 +48,7 @@ function ENT:SUCC(Time,Phys,Age,Pos,MaxRange)
 				if(obj:IsPlayer())then
 					ApplyForce=false
 					Mul=Age^2/5000
-				elseif(obj:IsNPC())then
+				elseif(obj:IsNPC() or obj.IsDrGNextbot)then
 					if not(table.HasValue(self.PhysNPCs,Class))then ApplyForce=false end
 				end
 				if(ApplyForce)then
