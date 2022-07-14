@@ -573,6 +573,7 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
+	if ent.IsDrGNextbot and ent:Disposition(self.Owner) == D_HT then return true end
 	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
 
 	if (ent:IsPlayer()) then
