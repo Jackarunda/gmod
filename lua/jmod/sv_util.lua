@@ -570,15 +570,19 @@ function JMod.ShouldAllowControl(self, ply)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
+ 
+
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
+    local snpcs = ent.CPTBase_NPC or ent.IsDrGNextbot or ent.IsVJBaseSNPC == true
+    local lfs = IsValid(self.Owner:Team()) and ent.LFS and ent:GetAITEAM() == self.Owner:Team()
+    local drr = IsValid(self.Owner:Team()) and ent.DRR and ent.Owner:Team() == self.Owner:Team()
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
-	if ent.IsDrGNextbot and ent:Disposition(self.Owner) == D_HT then return true end
+    if not (lfs or drr) then return false end
 	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
-
 	if (ent:IsPlayer()) then
 		PlayerToCheck=ent
-	elseif (ent:IsNPC()) then
+	elseif (ent:IsNPC()) or snpcs then
 		local Class=ent:GetClass()
 		if (self.WhitelistedNPCs and (table.HasValue(self.WhitelistedNPCs, Class))) then return true end
 		if (self.BlacklistedNPCs and (table.HasValue(self.BlacklistedNPCs, Class))) then return false end
@@ -625,7 +629,6 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
 	return peaceWasNeverAnOption or false
 end
-
 function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
 	for k, v in pairs(ents.FindInSphere(pos, range)) do
 		if (JMod.ShouldAttack(ent, v, vehiclesOnly)) then return true end
