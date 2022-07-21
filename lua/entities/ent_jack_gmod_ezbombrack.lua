@@ -72,27 +72,20 @@ if(SERVER)then
 			--[[if(data.Speed > 2000)then
 				self:Break()
 			end]]--
-            if(ent:IsValid())then
-                if not(IsValid(self.Bomb) and IsValid(self.Weld))then 
-                    local success = self:AttatchBomb(ent)
-                    if(success)then 
-                        print("Attaching: "..tostring(ent)) 
-                    else
-                        print("Failed to Attach: "..tostring(ent))
-                    end
+            if(IsValid(ent))then
+                if(ent.EZRackOffset)then
+                    self:AttachBomb()
                 else
-                    print("We still have a bomb on-board: "..tostring(self.Bomb))
+                    print("Ent does not contain EZRackOffset")
                 end
             end
 		end
 	end
-    function ENT:AttatchBomb(ent)
+    function ENT:AttachBomb(ent)
         local Forward, Right, Up = self:GetForward(), self:GetRight(), self:GetUp()
-        local AttachPos, AttachAng = self:GetPos() + (Up*6) + (Forward*6) + (Right*-10), self:GetAngles()
-        if not(ent.EZRackPos)then print("Does not have a rack pos: "..tostring(ent.ClassName)) return false end
         timer.Simple(0.1, function() 
-            ent:SetPos(AttachPos)
-            ent:SetAngles(AttachAng)
+            ent:SetPos(ent.EZRackOffset)
+            ent:SetAngles(ent.EZRackAngles)
             local stick = constraint.Weld(self, ent, 0, 0, 50000, true, false)
             if(stick)then 
                 self.Weld = stick 

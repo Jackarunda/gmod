@@ -9,8 +9,8 @@ ENT.Spawnable=true
 ENT.AdminOnly=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
-ENT.EZRackPos = Vector(0, 0, 10)
-ENT.EZRackAng = Angle(0, 0, 90)
+ENT.EZRackOffset = Vector(0, 0, 10)
+ENT.EZRackAngles = Angle(0, 0, 90)
 ---
 ENT.EZclusterBusterMunition=true
 ---
