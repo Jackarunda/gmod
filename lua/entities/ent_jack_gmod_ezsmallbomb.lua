@@ -9,6 +9,8 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-90,0)
+ENT.EZRackPos = Vector(0, 0, 10)
+ENT.EZRackAng = Angle(0, -90, 0)
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
