@@ -34,7 +34,7 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/hunter/blocks/cube1x3x1.mdl")
-		--self.Entity:SetMaterial("")
+		self.Entity:SetMaterial("phoenix_storms/metal")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -42,7 +42,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(30)
+			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
