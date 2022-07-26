@@ -11,6 +11,7 @@ ENT.AdminOnly=false
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ENT.EZRackOffset = Vector(0, 0, 10)
 ENT.EZRackAngles = Angle(0, 0, 90)
+ENT.EZbombBaySize = 8
 ---
 ENT.EZclusterBusterMunition=true
 ---

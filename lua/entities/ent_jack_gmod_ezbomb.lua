@@ -11,6 +11,7 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,-90,0)
 ENT.EZRackOffset = Vector(0, 0, 20)
 ENT.EZRackAngles = Angle(0, -90, 0)
+ENT.EZbombBaySize = 25
 ENT.EZguidable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1

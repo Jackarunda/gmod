@@ -11,6 +11,7 @@ ENT.AdminSpawnable=true
 ENT.JModPreferredCarryAngles=Angle(0,-90,0)
 ENT.EZRackOffset = Vector(0, 0, 10)
 ENT.EZRackAngles = Angle(0, -90, 0)
+ENT.EZbombBaySize = 8
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -190,7 +191,7 @@ if(SERVER)then
 		end
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Snakeye", self:GetSnakeye())
+			WireLib.TriggerOutput(self, "Snakeye", tonumber(self:GetSnakeye(), 10))
 		end
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do

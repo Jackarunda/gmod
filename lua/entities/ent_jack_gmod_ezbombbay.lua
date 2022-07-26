@@ -4,14 +4,13 @@ ENT.Type="anim"
 ENT.Author="Jackarunda, AdventureBoots"
 ENT.Category="JMod - EZ Misc."
 ENT.Information="EZ method for loading bombs"
-ENT.PrintName="EZ Bomb Rack"
+ENT.PrintName="EZ Bomb Bay"
 ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.AdminSpawnable=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
-ENT.Bomb = nil
-ENT.Weld = nil
+ENT.Bombs = {}
 ---
 
 local STATE_BROKEN,STATE_EMPTY,STATE_HOLDING=-1, 0, 1
@@ -34,7 +33,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/gears/rack9.mdl")
+		self.Entity:SetModel("models/hunter/blocks/cube1x3x1.mdl")
 		--self.Entity:SetMaterial("")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
@@ -74,35 +73,44 @@ if(SERVER)then
 				self:Break()
 			end]]--
             if(IsValid(ent))then
-                if(ent.EZRackOffset)then
-                    self:AttachBomb(ent)
-                else
-                    print("Ent does not contain EZRackOffset "..tostring(ent))
+                if(ent.EZbombBaySize)then
+                    self:LoadBomb(ent)
                 end
             end
 		end
 	end
-    function ENT:AttachBomb(bomb)
-        local Forward, Right, Up = self:GetForward(), self:GetRight(), self:GetUp()
-        local AttachPos, AttachAngles = self:LocalToWorld(bomb.EZRackOffset), self:LocalToWorldAngles(bomb.EZRackAngles)
-		if(IsValid(self.Bomb or self.Weld))then return false end
-		--DropEntityIfHeld(bomb)
-        timer.Simple(0.1, function() 
-            bomb:SetPos(AttachPos)
-            bomb:SetAngles(AttachAngles)
-            local stick = constraint.Weld(self, ent, 0, 0, 25000, true, false)
-            if(stick)then 
-                self.Weld = stick 
-                self.Bomb = bomb
-                print("Stuck")
-                return true 
-            else
-                print("Failed to stick")
-                return false
-            end
-
-        end)
+    function ENT:LoadBomb(bomb)
+		local RoomLeft = 100
+		for k, bombInfo in pairs(self.Bombs) do
+			RoomLeft = RoomLeft - bombInfo[2]
+		end
+		if (RoomLeft >= bomb.EZbombBaySize)then
+			table.insert(self.Bombs, {bomb:GetClass(), bomb.EZbombBaySize})
+			timer.Simple(0.1, function()
+				SafeRemoveEntity(bomb)
+			end)
+		end
     end
+	function ENT:BombRelease(slotNum, arm, ply)
+		slotNum = slotNum or #self.Bombs
+		arm = arm or true
+		ply = ply or self.Owner
+		if (#self.Bombs == 0)then return end
+		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
+		local Pos, Ang = self:GetPos(), self:GetAngles()
+		--print(tostring(self.Bombs[slotNum][1]))
+		local droppedBomb = ents.Create(self.Bombs[slotNum][1])
+		droppedBomb:SetPos(Pos + Up * -50)
+		droppedBomb:SetAngles(Ang)
+		droppedBomb:SetVelocity(self:GetVelocity())
+		JMod.Owner(droppedBomb, ply)
+		droppedBomb:Spawn()
+		droppedBomb:Activate()
+		if(arm == true)then
+			droppedBomb:SetState(1)
+		end
+		table.remove(self.Bombs, slotNum)
+	end
 	function ENT:Break()
 		if(self:GetState() == STATE_BROKEN)then return end
 		self:SetState(STATE_BROKEN)
@@ -116,7 +124,12 @@ if(SERVER)then
 		--
 	end
 	function ENT:Use(activator)
-        activator:PickupObject(self)
+		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		if(Alt)then
+			self:BombRelease(#self.Bombs, false)
+		else
+			self:BombRelease(#self.Bombs, true)
+		end
 	end
 	function ENT:OnRemove()
 		--
