@@ -713,6 +713,18 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="stores the object you're looking at in a box for transportation or storage"
 			},
+            ["EZ Criticality Weapon"]={			
+				results="ent_jack_gmod_ezcriticalityweapon",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=50
+				},
+				sizeScale=1,
+				category="Munitions",
+				craftingType="workbench",
+				description="They say Slotin was often in his trademark blue jeans and cowboy boots..."
+			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
                 craftingReqs={
