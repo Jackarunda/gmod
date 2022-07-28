@@ -86,7 +86,7 @@ if(SERVER)then
         local Forward, Right, Up = self:GetForward(), self:GetRight(), self:GetUp()
         local AttachPos, AttachAngles = self:LocalToWorld(bomb.EZRackOffset), self:LocalToWorldAngles(bomb.EZRackAngles)
 		if(IsValid(self.Bomb or self.Weld))then return false end
-		--DropEntityIfHeld(bomb)
+		DropEntityIfHeld(bomb)
         timer.Simple(0.1, function() 
             bomb:SetPos(AttachPos)
             bomb:SetAngles(AttachAngles)
