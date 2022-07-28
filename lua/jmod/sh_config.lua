@@ -679,6 +679,13 @@ function JMod.InitGlobalConfig(forceNew)
 						{"ent_jack_gmod_ezglass",2}
 					}
 				},
+                ["ceramic"]={
+					description="Ceramic in a quantity of 200, used in armor.",
+					category="Resources",
+					results={
+						{"ent_jack_gmod_ezceramic",2}
+					}
+				},
                 
 			},
 			RestrictedPackages={"antimatter","fissile material"},
@@ -1605,7 +1612,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["CERAMIC POT"]={
 				results=JMod.ArmorTable["Ceramic Pot"].ent,
 				craftingReqs={
-					[JMod.EZ_RESOURCE_TYPES.GLASS]=30,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=30,
 				},
 				category="Apparel",
 				craftingType="workbench",
