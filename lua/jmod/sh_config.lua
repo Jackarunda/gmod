@@ -1055,6 +1055,17 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="workbench",
                 description="Ol' fashioned musket, kinda inaccurate"
             },
+			["EZ Flintlock Blunderbuss"]={
+                results=JMod.WeaponTable["Flintlock Blunderbuss"].ent,
+                craftingReqs={
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL]=50,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                category="Weapons",
+				craftingType="workbench",
+                description="Get yer ol' fashioned face removal here!"
+            },
 			["EZ Cap and Ball Revolver"]={
                 results=JMod.WeaponTable["Cap and Ball Revolver"].ent,
                 craftingReqs={
