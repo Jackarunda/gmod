@@ -539,6 +539,12 @@ hook.Add("PlayerEndVoice","JMOD_PLAYERENDVOICE",function(ply)
 	end
 end)
 
+--[[
+hook.Add("ScalePlayerDamage","JMOD_SCALEPLAYERDAMGE_CLIENT",function(ply, hitgroup, dmg)
+	return true
+end)
+--]]
+
 concommand.Add("jacky_supershadows",function(ply,cmd,args)
 	RunConsoleCommand("r_projectedtexture_filter",.1)
 	RunConsoleCommand("r_flashlightdepthres",16384)

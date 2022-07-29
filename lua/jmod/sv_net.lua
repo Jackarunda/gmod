@@ -7,7 +7,6 @@ util.AddNetworkString("JMod_EZtimeBomb")
 util.AddNetworkString("JMod_UniCrate")
 util.AddNetworkString("JMod_LuaConfigSync")
 util.AddNetworkString("JMod_PlayerSpawn")
-util.AddNetworkString("JMod_SignalNade")
 util.AddNetworkString("JMod_ModifyMachine")
 util.AddNetworkString("JMod_NuclearBlast")
 util.AddNetworkString("JMod_VisionBlur")
@@ -45,11 +44,17 @@ end)
 
 net.Receive("JMod_ColorAndArm", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
-	local mine=net.ReadEntity()
-	if not (IsValid(mine) and mine.JModGUIcolorable) then return end
-	if ply:GetPos():DistToSqr(mine:GetPos()) > 15000 then return end
-	mine:SetColor(net.ReadColor())
-	if net.ReadBit() == 1 then mine:Arm(ply) end
+	local ent=net.ReadEntity()
+	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
+	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
+	ent:SetColor(net.ReadColor())
+	if net.ReadBit() == 1 then
+		if(ent.Prime)then
+			ent:Prime(ply)
+		elseif(ent.Arm)then
+			ent:Arm(ply)
+		end
+	end
 end)
 
 net.Receive("JMod_ArmorColor",function(ln,ply)
@@ -66,15 +71,6 @@ net.Receive("JMod_ArmorColor",function(ln,ply)
 		JMod.Hint(ply, "armor weight")
 		JMod.EZ_Equip_Armor(ply, Armor)
 	end
-end)
-
-net.Receive("JMod_SignalNade", function(l, ply)
-	if not (IsValid(ply) and ply:Alive()) then return end
-	local nade=net.ReadEntity()
-	if not (IsValid(nade) and nade:GetClass() == "ent_jack_gmod_ezsignalnade") then return end
-	if ply:GetPos():DistToSqr(nade:GetPos()) > 15000 then return end
-	nade:SetColor(net.ReadColor())
-	if net.ReadBit() == 1 then nade:Prime() end
 end)
 
 net.Receive("JMod_EZtoolbox",function(ln,ply)
