@@ -716,9 +716,10 @@ function JMod.InitGlobalConfig(forceNew)
             ["EZ Criticality Weapon"]={			
 				results="ent_jack_gmod_ezcriticalityweapon",		
 				craftingReqs={
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
-                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=25,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=100
 				},
 				sizeScale=1,
 				category="Munitions",
@@ -890,7 +891,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=25
 				},
 				sizeScale=1,
@@ -1047,7 +1048,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Flintlock Musket"]={
                 results=JMod.WeaponTable["Flintlock Musket"].ent,
                 craftingReqs={
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
                     [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
                 },
@@ -1058,8 +1059,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Flintlock Blunderbuss"]={
                 results=JMod.WeaponTable["Flintlock Blunderbuss"].ent,
                 craftingReqs={
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-                    [JMod.EZ_RESOURCE_TYPES.STEEL]=50,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
+                    [JMod.EZ_RESOURCE_TYPES.COPPER]=25,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
                 },
                 category="Weapons",
