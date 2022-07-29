@@ -1220,6 +1220,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100
                 },
                 category="Weapons",
+				craftingType="workbench",
                 description="An Anti-materiel sniper rifle. Use to obliterate your enemies and their property at long range."
             },                  
             ["EZ Assault Rifle"]={
