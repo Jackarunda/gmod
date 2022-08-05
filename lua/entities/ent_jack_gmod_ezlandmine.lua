@@ -51,6 +51,8 @@ if(SERVER)then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
 			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
+		---
+		self.StillTicks=0
 	end
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Detonate" and value > 0) then
@@ -86,7 +88,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		
+		self.AutoArm=false
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
@@ -137,13 +139,23 @@ if(SERVER)then
 		JMod.FragSplosion(self,SelfPos,1000,20*JMod.Config.MinePower,3000,self.Owner,Up,1.2,3)
 		self:Remove()
 	end
-	function ENT:Arm(armer)
+	function ENT:Arm(armer,autoColor)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
 		JMod.Hint(armer, "mine friends")
 		JMod.Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
+		if(autoColor)then
+			local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,10),Vector(0,0,-50),self)
+			if(Tr.Hit)then
+				local Info=JMod.HitMatColors[Tr.MatType]
+				if(Info)then
+					self:SetColor(Info[1])
+					if(Info[2])then self:SetMaterial(Info[2]) end
+				end
+			end
+		end
 		timer.Simple(3,function()
 			if(IsValid(self))then
 				if(self:GetState()==STATE_ARMING)then
@@ -188,6 +200,14 @@ if(SERVER)then
 				end
 			end
 			self:NextThink(Time+.3)
+			return true
+		elseif(self.AutoArm)then
+			local Vel=self:GetPhysicsObject():GetVelocity()
+			if(Vel:Length()<1)then self.StillTicks=self.StillTicks+1 else self.StillTicks=0 end
+			if(self.StillTicks>4)then
+				self:Arm(self.Owner or game.GetWorld(),true)
+			end
+			self:NextThink(Time+.5)
 			return true
 		end
 	end
