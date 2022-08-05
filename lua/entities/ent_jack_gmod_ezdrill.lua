@@ -22,7 +22,7 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/trilogynetworks_drill/drill.mdl")
+		self:SetModel("models/trilogynetworks_jackdrill/drill.mdl")
 		--self:SetModelScale(math.Rand(1.5,3),0)
 		--self:SetMaterial("models/debug/debugwhite")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
