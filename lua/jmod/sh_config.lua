@@ -40,7 +40,6 @@ function JMod.InitGlobalConfig(forceNew)
 		ArmorDegredationMult=1,
 		ArmorChargeDepletionMult=1,
 		ArmorWeightMult=1,
-		ArmorChonkThreshold = 150,
 		WeaponDamageMult=1,
 		WeaponSwayMult=1,
 		NukeRangeMult=1,
