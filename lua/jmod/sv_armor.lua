@@ -344,16 +344,15 @@ function JMod.CalcSpeed(ply)
 		local ArmorInfo=JMod.ArmorTable[v.name]
 		TotalWeight=TotalWeight+ArmorInfo.wgt
 	end
-
+	ply.EZarmor.totalWeight=TotalWeight
 	local WeighedFrac=TotalWeight/250
 	ply.EZarmor.speedfrac=math.Clamp(1-(.8*WeighedFrac*JMod.Config.ArmorWeightMult), .05, 1)
 end
 
 hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, vol, filter)
 	if (ply.EZarmor) then
-		local Num=#table.GetKeys(ply.EZarmor.items)
-
-		if (Num >= 6) then
+		--local Num=#table.GetKeys(ply.EZarmor.items)
+		if ((ply.EZarmor.totalWeight) >= 150) then
 			ply:EmitSound("snd_jack_gear" .. tostring(math.random(1, 6)) .. ".wav", 58, math.random(70, 130))
 		end
 	end
@@ -440,7 +439,7 @@ end
 
 function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 	local NewArmorName=nameOrEnt
-	local NewArmorID, NewArmorDurability, NewArmorColor, NewArmorSpecs, NewArmorCharges
+	local NewArmorID, NewArmorDurability, NewArmorColor, NewArmorSpecs, NewArmorCharges, NewArmorWeight
 
 	if (type(nameOrEnt) ~= "string") then
 		if not (IsValid(nameOrEnt)) then return end
@@ -450,6 +449,7 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		NewArmorDurability=nameOrEnt.ArmorDurability or NewArmorSpecs.dur
 		NewArmorColor=nameOrEnt:GetColor()
 		NewArmorCharges=nameOrEnt.ArmorCharges
+		NewArmorWeight = NewArmorSpecs.wgt
 		nameOrEnt:Remove()
 	else
 		NewArmorSpecs=JMod.ArmorTable[NewArmorName]
@@ -460,6 +460,7 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		if (NewArmorSpecs.chrg) then
 			NewArmorCharges=table.FullCopy(NewArmorSpecs.chrg)
 		end
+		ply.EZarmor.totalWeight = ply.EZarmor.totalWeight + NewArmorWeight
 	end
 
 	local AreSlotsClear,ConflictingItemID=GetAreSlotsClear(ply.EZarmor.items,NewArmorName)
