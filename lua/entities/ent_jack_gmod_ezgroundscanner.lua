@@ -5,7 +5,7 @@ ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true -- temporary, until Phase 2 of the econ update
+ENT.Spawnable=true
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
@@ -52,6 +52,10 @@ if(SERVER)then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		self:SetAngles(Angle(-90,0,0))
+		---
+		self.EZupgradable=true
+		self.UpgradeProgress={}
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Ground Scanner"] and JMod.Config.Craftables["EZ Ground Scanner"].craftingReqs)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(200)
@@ -146,6 +150,9 @@ if(SERVER)then
 	function ENT:Think()
 		local State=self:GetState()
 		if(State==JMod.EZ_STATE_BROKEN)then
+			self.Snd1:Stop()
+			self.Snd2:Stop()
+			self.Snd3:Stop()
 			if(self:GetElectricity()>0)then
 				if(math.random(1,4)==2)then self:DamageSpark() end
 			end
