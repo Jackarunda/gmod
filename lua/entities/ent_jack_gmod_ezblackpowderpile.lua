@@ -24,6 +24,7 @@ if(SERVER)then
 			self:GetPhysicsObject():Wake()
 		end)
 		self.Ignited=false
+		if(self:WaterLevel()>0)then self:Remove() end
 		SafeRemoveEntityDelayed(self,300)
 	end
 	function ENT:PhysicsCollide(data,physobj)
