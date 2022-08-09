@@ -9,6 +9,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.EZScannerDanger=true
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0,270,0)
 ---
