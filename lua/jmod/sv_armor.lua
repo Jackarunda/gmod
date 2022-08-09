@@ -460,7 +460,6 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		if (NewArmorSpecs.chrg) then
 			NewArmorCharges=table.FullCopy(NewArmorSpecs.chrg)
 		end
-		ply.EZarmor.totalWeight = ply.EZarmor.totalWeight + NewArmorWeight
 	end
 
 	local AreSlotsClear,ConflictingItemID=GetAreSlotsClear(ply.EZarmor.items,NewArmorName)
