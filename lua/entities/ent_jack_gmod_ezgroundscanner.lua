@@ -14,6 +14,7 @@ ENT.PhysMatDetectionWhitelist={
 	"metal",
 	"metalvehicle",
 	"metalpanel",
+	"metal_barrel",
 	"floating_metal_barrel",
 	"grenade",
 	"canister",
@@ -185,7 +186,7 @@ if(SERVER)then
 			if not(v==self)then
 				if(v.GetPhysicsObject)then
 					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
-					if((Pos.z+3)>=AnomalyPos.z)then
+					if((Pos.z+10)>=AnomalyPos.z)then
 						local Phys=v:GetPhysicsObject()
 						if(v.EZScannerDanger)then
 							table.insert(Results,{
@@ -198,11 +199,19 @@ if(SERVER)then
 							if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=20)then
 								local Class=v:GetClass()
 								if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
-									table.insert(Results,{
-										typ="ANOMALY",
-										pos=AnomalyPos,
-										siz=180
-									})
+									if(math.Round((math.random(1, 3000)))>=3000)then
+										table.insert(Results,{
+											typ="SMILEY",
+											pos=AnomalyPos,
+											siz=50
+										})
+									else
+										table.insert(Results,{
+											typ="ANOMALY",
+											pos=AnomalyPos,
+											siz=180
+										})
+									end
 								end
 							end
 						end
@@ -256,6 +265,7 @@ elseif(CLIENT)then
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
 	local WarningIcon=Material("ez_misc_icons/warning.png")
+	local SmileyIcon=Material("ez_misc_icons/smiley.png")
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -303,6 +313,10 @@ elseif(CLIENT)then
 					elseif(v.typ=="DANGER")then
 						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
     						surface.SetMaterial(WarningIcon)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
+					elseif(v.typ=="SMILEY")then
+							surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(SmileyIcon)
 							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
 					else
 						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
