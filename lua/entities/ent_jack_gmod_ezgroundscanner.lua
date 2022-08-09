@@ -186,7 +186,7 @@ if(SERVER)then
 			if not(v==self)then
 				if(v.GetPhysicsObject)then
 					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
-					if((Pos.z+10)>=AnomalyPos.z)then
+					if((Pos.z+5)>=AnomalyPos.z)then
 						local Phys=v:GetPhysicsObject()
 						if(v.EZScannerDanger)then
 							table.insert(Results,{
@@ -203,7 +203,7 @@ if(SERVER)then
 										table.insert(Results,{
 											typ="SMILEY",
 											pos=AnomalyPos,
-											siz=50
+											siz=30
 										})
 									else
 										table.insert(Results,{
