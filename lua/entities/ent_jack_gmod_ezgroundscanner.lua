@@ -188,7 +188,7 @@ if(SERVER)then
 					local Phys=v:GetPhysicsObject()
 					if(IsValid(Phys))then
 						local Mat=Phys:GetMaterial()
-						if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=50)then
+						--if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=50)then
 							local Class=v:GetClass()
 							if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
 								table.insert(Results,{
@@ -197,7 +197,7 @@ if(SERVER)then
 									siz=180
 								})
 							end
-						end
+						--end
 					end
 				end
 			end
@@ -291,6 +291,7 @@ elseif(CLIENT)then
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
 					if(v.typ=="ANOMALY")then
 						draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+						print("Metallic Object nearby")
 					else
 						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
 					end
