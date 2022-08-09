@@ -173,6 +173,7 @@ JMod.Locales["en"]={
     ["hint no alternate ammo"]="you don't have any alternate ammo for this weapon",
     ["hint stick to self"]="press ALT+SHIFT+E to stick this item to yourself",
     ["hint admin cleanup"]="Cleaned up everything!",
+	["hint chonky boi"] = "You've hit 150kg in armour. You'll be making quite a bit of noise!",
 	--commands
     ["command jmod_cl_reloadconfig"]="re-reads the lua client config from harddrive to ingame memory",
     ["command jmod_debug_showgasparticles"]="causes gas and fallout particles to render as white balls",

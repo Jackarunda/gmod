@@ -838,7 +838,7 @@ net.Receive("JMod_Inventory",function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Inventory | Current Armour Weight: "..weight.."kg. Louder movement at 150kg, and super slow at 250kg.")
+	motherFrame:SetTitle("Inventory | Current Armour Weight: "..weight.."kg.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
