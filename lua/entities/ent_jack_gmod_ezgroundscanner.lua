@@ -5,7 +5,7 @@ ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=false -- temporary, until Phase 2 of the econ update
+ENT.Spawnable=true -- temporary, until Phase 2 of the econ update
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
@@ -55,7 +55,7 @@ if(SERVER)then
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
-			self:SetPos(self:GetPos()+Vector(0,0,20))
+			self:SetPos(self:GetPos())
 		end)
 		self:SetGrade(1)
 		self:InitPerfSpecs()
@@ -303,7 +303,7 @@ elseif(CLIENT)then
 					elseif(v.typ=="DANGER")then
 						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
     						surface.SetMaterial(WarningIcon)
-							surface.DrawTexturedRect(X-v.siz/2,Y-v.siz/2-45*MetersToPixels,v.siz,v.siz)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
 					else
 						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
 					end
