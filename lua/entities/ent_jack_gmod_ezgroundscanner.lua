@@ -182,22 +182,30 @@ if(SERVER)then
 		local Pos,Results=self:GetPos(),{}
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.NaturalResourceTable))
 		for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
-			if(v.GetPhysicsObject)then
-				local AnomalyPos=v:LocalToWorld(v:OBBCenter())
-				if((Pos.z-AnomalyPos.z)>200)then
-					local Phys=v:GetPhysicsObject()
-					if(IsValid(Phys))then
-						local Mat=Phys:GetMaterial()
-						--if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=50)then
-							local Class=v:GetClass()
-							if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
-								table.insert(Results,{
-									typ="ANOMALY",
-									pos=AnomalyPos,
-									siz=180
-								})
+			if not(v==self)then
+				if(v.GetPhysicsObject)then
+					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
+					if((Pos.z+3)>=AnomalyPos.z)then
+						local Phys=v:GetPhysicsObject()
+						if(v.EZScannerDanger)then
+							table.insert(Results,{
+								typ="DANGER",
+								pos=AnomalyPos,
+								siz=20
+							})
+						elseif(IsValid(Phys))then
+							local Mat=Phys:GetMaterial()
+							if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=20)then
+								local Class=v:GetClass()
+								if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
+									table.insert(Results,{
+										typ="ANOMALY",
+										pos=AnomalyPos,
+										siz=180
+									})
+								end
 							end
-						--end
+						end
 					end
 				end
 			end
@@ -247,6 +255,7 @@ elseif(CLIENT)then
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
+	local WarningIcon=Material("ez_misc_icons/warning.png")
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -291,7 +300,10 @@ elseif(CLIENT)then
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
 					if(v.typ=="ANOMALY")then
 						draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-						print("Metallic Object nearby")
+					elseif(v.typ=="DANGER")then
+						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(WarningIcon)
+							surface.DrawTexturedRect(X-v.siz/2,Y-v.siz/2-45*MetersToPixels,v.siz,v.siz)
 					else
 						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
 					end
