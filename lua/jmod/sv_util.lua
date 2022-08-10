@@ -577,6 +577,13 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
 	if (ent:IsPlayer()) then
 		PlayerToCheck=ent
+	elseif(ent:IsNextBot())then
+		-- our hands are really tied with nextbots, they lack all the NPC methods
+		-- so just attack all of them
+		if((ent.Health)and(type(ent.Health)=="function"))then
+			local Helf=ent:Health()
+			if((type(Helf)=="number")and(Helf>0))then return true end		
+		end
 	elseif (ent:IsNPC()) then
 		local Class=ent:GetClass()
 		if (self.WhitelistedNPCs and (table.HasValue(self.WhitelistedNPCs, Class))) then return true end
