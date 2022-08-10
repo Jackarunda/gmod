@@ -679,6 +679,13 @@ function JMod.InitGlobalConfig(forceNew)
 						{"ent_jack_gmod_ezglass",2}
 					}
 				},
+                ["ceramic"]={
+					description="Ceramic in a quantity of 200, used in armor.",
+					category="Resources",
+					results={
+						{"ent_jack_gmod_ezceramic",2}
+					}
+				},
                 
 			},
 			RestrictedPackages={"antimatter","fissile material"},
@@ -705,6 +712,33 @@ function JMod.InitGlobalConfig(forceNew)
 				category="Other",
 				craftingType="toolbox",
 				description="stores the object you're looking at in a box for transportation or storage"
+			},
+            ["EZ Criticality Weapon"]={			
+				results="ent_jack_gmod_ezcriticalityweapon",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=25,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN]=100
+				},
+				sizeScale=1,
+				category="Munitions",
+				craftingType="workbench",
+				description="They say Slotin was often in his trademark blue jeans and cowboy boots..."
+			},
+			["EZ Ground Scanner"]={
+				results="ent_jack_gmod_ezgroundscanner",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=50,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=50,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100
+				},
+				sizeScale=1,
+				category="Machines",
+				craftingType="toolbox",
+				description="Scans the ground for resource deposits"
 			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
@@ -871,7 +905,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs={	
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=50,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]=25
 				},
 				sizeScale=1,
@@ -1028,13 +1062,24 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Flintlock Musket"]={
                 results=JMod.WeaponTable["Flintlock Musket"].ent,
                 craftingReqs={
-                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
                     [JMod.EZ_RESOURCE_TYPES.STEEL]=25,
                     [JMod.EZ_RESOURCE_TYPES.WOOD]=25
                 },
                 category="Weapons",
 				craftingType="workbench",
                 description="Ol' fashioned musket, kinda inaccurate"
+            },
+			["EZ Flintlock Blunderbuss"]={
+                results=JMod.WeaponTable["Flintlock Blunderbuss"].ent,
+                craftingReqs={
+                    [JMod.EZ_RESOURCE_TYPES.BASICPARTS]=5,
+                    [JMod.EZ_RESOURCE_TYPES.COPPER]=25,
+                    [JMod.EZ_RESOURCE_TYPES.WOOD]=25
+                },
+                category="Weapons",
+				craftingType="workbench",
+                description="Get yer ol' fashioned face removal here!"
             },
 			["EZ Cap and Ball Revolver"]={
                 results=JMod.WeaponTable["Cap and Ball Revolver"].ent,
@@ -1190,6 +1235,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100
                 },
                 category="Weapons",
+				craftingType="workbench",
                 description="An Anti-materiel sniper rifle. Use to obliterate your enemies and their property at long range."
             },                  
             ["EZ Assault Rifle"]={
@@ -1605,7 +1651,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["CERAMIC POT"]={
 				results=JMod.ArmorTable["Ceramic Pot"].ent,
 				craftingReqs={
-					[JMod.EZ_RESOURCE_TYPES.GLASS]=30,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC]=30,
 				},
 				category="Apparel",
 				craftingType="workbench",

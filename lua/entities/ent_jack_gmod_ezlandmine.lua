@@ -11,6 +11,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModGUIcolorable=true
 ENT.JModEZstorable=true
+ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.BlacklistedNPCs={"bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground"}
 ENT.WhitelistedNPCs={"npc_rollermine"}
@@ -39,10 +40,10 @@ if(SERVER)then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
-		self:GetPhysicsObject():SetMass(10)
+		self:GetPhysicsObject():SetMass(20)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(10)
+			self:GetPhysicsObject():SetMass(20)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
@@ -51,6 +52,9 @@ if(SERVER)then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
 			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken \n 2 is arming"})
 		end
+		---
+		self.StillTicks=0
+		if(self.AutoArm)then self:NextThink(CurTime()+math.Rand(.1,1)) end
 	end
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Detonate" and value > 0) then
@@ -86,7 +90,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		if(State<0)then return end
-		
+		self.AutoArm=false
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(State==STATE_OFF)then
 			if(Alt)then
@@ -98,7 +102,7 @@ if(SERVER)then
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
-		else
+		elseif not((activator.KeyDown)and(activator:KeyDown(IN_SPEED)))then
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
 			JMod.Owner(self,activator)
@@ -137,13 +141,23 @@ if(SERVER)then
 		JMod.FragSplosion(self,SelfPos,1000,20*JMod.Config.MinePower,3000,self.Owner,Up,1.2,3)
 		self:Remove()
 	end
-	function ENT:Arm(armer)
+	function ENT:Arm(armer,autoColor)
 		local State=self:GetState()
 		if(State~=STATE_OFF)then return end
 		JMod.Hint(armer, "mine friends")
 		JMod.Owner(self,armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav",60,110)
+		if(autoColor)then
+			local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,10),Vector(0,0,-50),self)
+			if(Tr.Hit)then
+				local Info=JMod.HitMatColors[Tr.MatType]
+				if(Info)then
+					self:SetColor(Info[1])
+					if(Info[2])then self:SetMaterial(Info[2]) end
+				end
+			end
+		end
 		timer.Simple(3,function()
 			if(IsValid(self))then
 				if(self:GetState()==STATE_ARMING)then
@@ -179,7 +193,7 @@ if(SERVER)then
 					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
+						timer.Simple(math.Rand(.05,.3)*JMod.Config.MineDelay,function()
 							if(IsValid(self))then
 								if(self:GetState()==STATE_WARNING)then self:Detonate() end
 							end
@@ -188,6 +202,14 @@ if(SERVER)then
 				end
 			end
 			self:NextThink(Time+.3)
+			return true
+		elseif(self.AutoArm)then
+			local Vel=self:GetPhysicsObject():GetVelocity()
+			if(Vel:Length()<1)then self.StillTicks=self.StillTicks+1 else self.StillTicks=0 end
+			if(self.StillTicks>4)then
+				self:Arm(self.Owner or game.GetWorld(),true)
+			end
+			self:NextThink(Time+.5)
 			return true
 		end
 	end
