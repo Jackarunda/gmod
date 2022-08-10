@@ -5,7 +5,8 @@ local YesMat=Material("icon16/accept.png")
 local NoMat=Material("icon16/cancel.png")
 local FavMat=Material("icon16/star.png")
 local SpecialIcons={
-	["geothermal"]=Material("ez_resource_icons/geothermal.png")
+	["geothermal"]=Material("ez_resource_icons/geothermal.png"),
+	["warning"]=Material("ez_misc_icons/warning.png")
 }
 local RankIcons={
 	Material("ez_rank_icons/grade_1.png"),

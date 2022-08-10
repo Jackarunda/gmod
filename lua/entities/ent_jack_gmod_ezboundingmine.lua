@@ -8,6 +8,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.EZScannerDanger=true
 ENT.JModEZstorable=true
 ENT.JModPreferredCarryAngles=Angle(0, 0, 0)
 ENT.UsableMats={MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
