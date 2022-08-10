@@ -345,7 +345,7 @@ function JMod.CalcSpeed(ply)
 		TotalWeight=TotalWeight+ArmorInfo.wgt
 	end
 	ply.EZarmor.totalWeight=TotalWeight
-	if ply.EZarmor.totalWeight >= 150 then JMod.Hint(ply, "hint chonky boi") end
+	if ply.EZarmor.totalWeight >= 150 then JMod.Hint(ply, "chonky boi") end
 	local WeighedFrac=TotalWeight/250
 	ply.EZarmor.speedfrac=math.Clamp(1-(.8*WeighedFrac*JMod.Config.ArmorWeightMult), .05, 1)
 end
