@@ -9,6 +9,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+
 ENT.EZscannerDanger=true
 ENT.JModGUIcolorable=true
 ENT.JModEZstorable=true

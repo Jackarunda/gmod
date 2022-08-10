@@ -142,7 +142,7 @@ if(SERVER)then
 		---
 		timer.Simple(0,function()
 			for i=1,50 do
-				local Vel=Vector(math.random(-1000,1000),math.random(-1000,1000),0)
+				local Vel=Vector(math.random(-800,800),math.random(-800,800),0)
 				local Mine=ents.Create("ent_jack_gmod_ezlandmine")
 				JMod.Owner(Mine,Att)
 				Mine:SetPos(Pos+VectorRand()*math.Rand(1,50))

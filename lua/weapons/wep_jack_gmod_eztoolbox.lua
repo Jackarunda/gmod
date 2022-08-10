@@ -354,7 +354,12 @@ function SWEP:UpgradeEntWithResource(recipient,donor,amt)
 	self:Msg(Msg)
 	---
 	if((DonorCurAmt-Given)<=0)then
-		donor:Remove()
+		if donor:GetClass() == "ent_jack_gmod_ezcrate" then
+			donor:SetResource(0)
+			donor:ApplySupplyType("generic")
+		else
+			donor:Remove()
+		end
 	else
 		donor:SetResource(DonorCurAmt-Given)
 	end

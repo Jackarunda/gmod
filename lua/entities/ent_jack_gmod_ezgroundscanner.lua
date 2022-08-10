@@ -7,6 +7,7 @@ ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
 ENT.Spawnable=true
 ENT.AdminOnly=false
+ENT.NoSitAllowed=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}

@@ -54,6 +54,7 @@ if(SERVER)then
 		end
 		---
 		self.StillTicks=0
+		if(self.AutoArm)then self:NextThink(CurTime()+math.Rand(.1,1)) end
 	end
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Detonate" and value > 0) then
@@ -101,7 +102,7 @@ if(SERVER)then
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
-		else
+		elseif not((activator.KeyDown)and(activator:KeyDown(IN_SPEED)))then
 			self:EmitSound("snd_jack_minearm.wav",60,70)
 			self:SetState(STATE_OFF)
 			JMod.Owner(self,activator)
@@ -192,7 +193,7 @@ if(SERVER)then
 					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
+						timer.Simple(math.Rand(.05,.3)*JMod.Config.MineDelay,function()
 							if(IsValid(self))then
 								if(self:GetState()==STATE_WARNING)then self:Detonate() end
 							end

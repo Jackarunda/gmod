@@ -173,14 +173,31 @@ if(SERVER)then
 			end
 		end
 	end
-	local function DetermineShieldingFactor(startPos,endPos,source,victim)
-		local FirstTrace=util.TraceLine({
+	local function DetermineShieldingFactor(startPos,endPos,source,victim,vec,dist)
+		-- you may ask why we pass vec and dist into this function when we already have the positions
+		-- and the answer is f*** you
+		-- just kidding, the answer is efficiency
+		-- vector math and roots are expensive ops; we wanna reuse the results as much as we can
+		local TraceOne=util.TraceLine({
 			start=startPos,
 			endpos=endPos,
 			filter={source,victim},
 			mask=MASK_SHOT
 		})
-		if not(FirstTrace.Hit)then return 0 end
+		if not(TraceOne.Hit)then return 0 end
+		local TraceTwo=util.TraceLine({
+			start=endPos,
+			endpos=startPos,
+			filter={source,victim},
+			mask=MASK_SHOT
+		})
+		if not(TraceTwo.Hit)then return 0 end
+		local StartCheckDist=TraceOne.HitPos:Distance(startPos)
+		local EndCheckDist=TraceTwo.HitPos:Distance(endPos)
+		local CheckResults={}
+		for i=StartCheckDist,EndCheckDist do
+			-- whee
+		end
 		return 1
 	end
 	function ENT:Think()
@@ -201,8 +218,8 @@ if(SERVER)then
 					if((Playa and v:Alive())or(NPC))then
 						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
 						---
-						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v) -- shielding calcs are spensive, only run them for players/NPCs
-						DmgAmt=DmgAmt/(1+Shielding*9)
+						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v,Vec,Dist) -- shielding calcs are spensive, only run them for players/NPCs
+						DmgAmt=DmgAmt*(1-Shielding)
 						---
 						if(DmgAmt<.1)then return end
 						---
