@@ -19,6 +19,7 @@ else
 	local HandTex,ClosedTex=surface.GetTextureID("vgui/hud/gmod_hand"),surface.GetTextureID("vgui/hud/gmod_closedhand")
 	function SWEP:DrawHUD()
 		if not(GetViewEntity()==LocalPlayer())then return end
+		if LocalPlayer():InVehicle() then return end
 		if not(self:GetFists())then
 			local Tr=util.QuickTrace(self.Owner:GetShootPos(),self.Owner:GetAimVector()*self.ReachDistance,{self.Owner})
 			if(Tr.Hit)then
