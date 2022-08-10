@@ -570,11 +570,10 @@ function JMod.ShouldAllowControl(self, ply)
 	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
 end
 
-function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
-	if not (IsValid(ent)) then return false end
-	if (ent:IsWorld()) then return false end
-	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
-
+function JMod.ShouldAttack(self,ent,vehiclesOnly,peaceWasNeverAnOption)
+	if not(IsValid(ent))then return false end
+	if(ent:IsWorld())then return false end
+	local Gaymode,PlayerToCheck,InVehicle,TeamToCheck=engine.ActiveGamemode(),nil,false,nil
 	if (ent:IsPlayer()) then
 		PlayerToCheck=ent
 	elseif(ent:IsNextBot())then
@@ -584,29 +583,38 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 			local Helf=ent:Health()
 			if((type(Helf)=="number")and(Helf>0))then return true end		
 		end
-	elseif (ent:IsNPC()) then
+	elseif(ent:IsNPC())then
 		local Class=ent:GetClass()
-		if (self.WhitelistedNPCs and (table.HasValue(self.WhitelistedNPCs, Class))) then return true end
-		if (self.BlacklistedNPCs and (table.HasValue(self.BlacklistedNPCs, Class))) then return false end
-
-		if not (IsValid(self.Owner)) then
-			return ent:Health() > 0
+		if(self.WhitelistedNPCs and (table.HasValue(self.WhitelistedNPCs, Class)))then return true end
+		if(self.BlacklistedNPCs and (table.HasValue(self.BlacklistedNPCs, Class)))then return false end
+		if not(IsValid(self.Owner))then
+			return ent:Health()>0
 		end
-
 		if (ent.Disposition and (ent:Disposition(self.Owner) == D_HT) and ent.GetMaxHealth and ent.Health) then
 			if (vehiclesOnly) then
-				return ent:GetMaxHealth() > 100 and ent:Health() > 0
+				return ent:GetMaxHealth()>100 and ent:Health()>0
 			else
-				return ent:GetMaxHealth() > 0 and ent:Health() > 0
+				return ent:GetMaxHealth()>0 and ent:Health()>0
 			end
 		else
 			return peaceWasNeverAnOption or false
 		end
-	elseif (ent:IsVehicle()) then
+	elseif(ent:IsVehicle())then
 		PlayerToCheck=ent:GetDriver()
 		InVehicle=true
+	elseif(ent.LFS and ent.GetEngineActive)then -- LunasFlightSchool compatibility
+		if(ent:GetEngineActive() and ent.GetDriver)then
+			local Pilot=ent:GetDriver()
+			if(IsValid(Pilot))then
+				PlayerToCheck=ent:GetDriver()
+				InVehicle=true
+			else
+				return true
+			end
+		end
+	elseif(ent.IS_DRONE and IsValid(ent.Owner))then -- Drones Rewrite compatibility
+		if(ent.GetHealth and ent:GetHealth()>0)then PlayerToCheck=ent.Owner end
 	end
-
 	if ((IsValid(PlayerToCheck)) and PlayerToCheck.Alive) then
 		if (vehiclesOnly and not InVehicle) then return false end
 		if (PlayerToCheck.EZkillme) then return true end -- for testing
@@ -615,20 +623,16 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		local Allies=(self.Owner and self.Owner.JModFriends) or {}
 		if (table.HasValue(Allies, PlayerToCheck)) then return false end
 		local OurTeam=nil
-
 		if (IsValid(self.Owner)) then
 			OurTeam=self.Owner:Team()
 			if Gaymode == "basewars" and self.Owner.IsAlly then
 				return not self.Owner:IsAlly(PlayerToCheck)
 			end
 		end
-
 		if (Gaymode == "sandbox" and OurTeam == TEAM_UNASSIGNED) then return PlayerToCheck:Alive() end
 		if (OurTeam) then return PlayerToCheck:Alive() and PlayerToCheck:Team() ~= OurTeam end
-
 		return PlayerToCheck:Alive()
 	end
-
 	return peaceWasNeverAnOption or false
 end
 
