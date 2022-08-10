@@ -187,7 +187,7 @@ if(SERVER)then
 		if not(TraceOne.Hit)then return 0 end
 		local TraceTwo=util.TraceLine({
 			start=endPos,
-			endpos=startPos
+			endpos=startPos,
 			filter={source,victim},
 			mask=MASK_SHOT
 		})
