@@ -9,7 +9,7 @@ ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
-ENT.SpawnHeight=35
+ENT.SpawnHeight=15
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.AMMO,
     JMod.EZ_RESOURCE_TYPES.POWER,
