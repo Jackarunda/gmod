@@ -173,6 +173,7 @@ JMod.Locales["pl"]={
     ["hint no alternate ammo"]="Nie posiadasz amunicji alternatywnej",
     ["hint stick to self"]="Kliknij klawisz Chodzenia, Biegania i Użycia byś przykleił ten przedmiot do siebie",
     ["hint admin cleanup"]="Wszystko wyczyszczono!",
+	["hint chonky boi"] = "Nosisz pancerz o wadze 150kg. Będziesz chodzić bardzo głośno",
 	--commands
     ["command jmod_cl_reloadconfig"]="re-reads the lua client config from harddrive to ingame memory",
     ["command jmod_debug_showgasparticles"]="causes gas and fallout particles to render as white balls",

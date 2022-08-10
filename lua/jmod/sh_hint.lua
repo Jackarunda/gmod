@@ -144,6 +144,7 @@ JMod.Hints = {
 	["armor friends"] = {LangKey = "hint armor friends"},
 	["inventory"] = {LangKey = "hint inventory"},
 	["armor weight"] = {LangKey = "hint armor weight"},
+	["chonky boi"] = {LangKey = "hint chonky boi"},
 
 	["ent_jack_gmod_ezarmor_balmask"] = {LangKey = "hint ent_jack_gmod_ezbalmask"},
 	["ent_jack_gmod_ezarmor_gasmask"] = {LangKey = "hint ent_jack_gmod_ezarmor_gasmask"},

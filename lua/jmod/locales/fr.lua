@@ -173,6 +173,7 @@ JMod.Locales["fr"]={
     ["hint no alternate ammo"]="vous n'avez aucune munition alternative pour cette arme",
     ["hint stick to self"]="appuyez sur ALT+SHIFT+E pour attacher cet objet a vous-mème",
     ["hint admin cleanup"]="tout est nettoyé!",
+	["hint chonky boi"] = "Vous avez atteint 150 kg en armure. Vous allez faire beaucoup de bruit!",
 	--commands
     ["command jmod_cl_reloadconfig"]="re-lis le lua client depuis le hardrive a la mémoire ingame",
     ["command jmod_debug_showgasparticles"]="vous permet de voir les particules de gaz et les particules de radioactivités en tant que boules blanches",

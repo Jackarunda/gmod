@@ -726,6 +726,20 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="workbench",
 				description="They say Slotin was often in his trademark blue jeans and cowboy boots..."
 			},
+			["EZ Ground Scanner"]={
+				results="ent_jack_gmod_ezgroundscanner",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=50,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=50,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100
+				},
+				sizeScale=1,
+				category="Machines",
+				craftingType="toolbox",
+				description="Scans the ground for resource deposits"
+			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
                 craftingReqs={

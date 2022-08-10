@@ -164,5 +164,6 @@ JMod.Locales["en-PT"]={
     ["hint wep_jack_gmod_rocketlauncher"]="BEWARE BACKBLAST, ME HEARTY!",
     ["hint wep_jack_gmod_mrl"]="BEWARE BACKBLAST, ME HEARTY!",
     ["hint wep_jack_gmod_crossbow"]="weapon has  +50% through-armor damage. Arrows can be recovered",
-    ["hint idiot"]="ye're a bilge-drinkin', scurvy-ridden bilge rat!"
+    ["hint idiot"]="ye're a bilge-drinkin', scurvy-ridden bilge rat!",
+	["hint chonky boi"] = "Yarrr you're at 150 kilos! You'll be makin' quite a bit of ruckus!"
 }
