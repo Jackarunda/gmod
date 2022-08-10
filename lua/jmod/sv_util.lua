@@ -575,9 +575,9 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
    	local Gaymode, PlayerToCheck, InVehicle=engine.ActiveGamemode(), nil, false
 	local ownerTeam = self.Owner:Team()
-    local snpcs = ent.CPTBase_NPC or ent.IsDrGNextbot or ent.IsVJBaseSNPC
-    local lfs = ownerTeam and ent.LFS and ent.GetAITEAM and ent:GetAITEAM() == ownerTeam
-    local drr = GayMode ~= "sandbox" and ownerTeam and ent.DRR and ent.Owner:Team() == ownerTeam
+    local snpcs = ent.CPTBase_NPC == true or ent.IsDrGNextbot or ent.IsVJBaseSNPC == true
+    local lfs = ownerTeam and ent.LFS and ent:GetAITEAM() == ownerTeam
+    local drr = GayMode ~= "sandbox" and ownerTeam and ent.DRR and ent.Owner and ent.Owner:Team() == ownerTeam
 	if not (IsValid(ent)) then return false end
 	if (ent:IsWorld()) then return false end
     if lfs or drr then return false end
