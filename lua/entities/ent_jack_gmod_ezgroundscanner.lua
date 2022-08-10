@@ -196,7 +196,7 @@ if(SERVER)then
 					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
 					if((Pos.z+5)>=AnomalyPos.z)then
 						local Phys=v:GetPhysicsObject()
-						if(v.EZScannerDanger)then
+						if(v.EZscannerDanger)then
 							table.insert(Results,{
 								typ="DANGER",
 								pos=AnomalyPos,
