@@ -17,7 +17,8 @@ local function JackaSpawnHook(ply)
 		mskmat=nil,
 		sndlop=nil,
 		suited=false,
-		bodygroups=nil
+		bodygroups=nil,
+		totalWeight = 0
 	}
 	JMod.EZarmorSync(ply)
 	ply.EZhealth=nil

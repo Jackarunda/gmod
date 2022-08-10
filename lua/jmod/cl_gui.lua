@@ -832,12 +832,13 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 end
 net.Receive("JMod_Inventory",function()
 	local Ply=LocalPlayer()
+	local weight = Ply.EZarmor.totalWeight
 	local motherFrame=vgui.Create("DFrame")
 	motherFrame:SetSize(600,400)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Inventory")
+	motherFrame:SetTitle("Inventory | Current Armour Weight: "..weight.."kg.")
 	function motherFrame:Paint()
 		BlurBackground(self)
 	end
