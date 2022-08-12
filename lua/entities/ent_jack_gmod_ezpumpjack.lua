@@ -216,9 +216,9 @@ if(SERVER)then
 				oilFire:Activate()
 			end)
 		end
-		if(dmginfo:IsExplosionDamage())then
+		--if(dmginfo:IsExplosionDamage())then
 			createOilFire()
-		end
+		--end
 	end
 
 elseif(CLIENT)then

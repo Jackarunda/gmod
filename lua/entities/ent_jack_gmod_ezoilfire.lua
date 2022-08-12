@@ -6,15 +6,16 @@ ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Oil Fire"
 ENT.NoSitAllowed=true
-ENT.Spawnable=false
+ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZscannerDanger=true
+ENT.Ignited=false
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local SpawnPos=tr.HitPos-tr.HitNormal*2
 		local ent=ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
+		ent:SetAngles(Angle(180, 0, 90))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
 		ent:Spawn()
@@ -25,28 +26,21 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/mines/firebarrel/firebarrel.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
+		self.Entity:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
+		---self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)	
+		self.Entity:SetMoveType(MOVETYPE_NONE)	
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():SetDamping(.01, 3)
+			self:GetPhysicsObject():EnableMotion(false)
 		end)
 		---
 	end
-	function ENT:PhysicsCollide(data,physobj)
-		---
-	end
 	function ENT:OnTakeDamage(dmginfo)
-		---
-	end
-	function ENT:Use(activator)
 		---
 	end
 	function ENT:Detonate()
@@ -75,76 +69,22 @@ if(SERVER)then
 			Flame:Activate()
 		end
 	end
-	function ENT:Arm(armer)
-		local State=self:GetState()
-		if(State~=STATE_OFF)then return end
-		JMod.Owner(self,armer)
-		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.wav",60,110)
-		timer.Simple(3,function()
-			if(IsValid(self))then
-				if(self:GetState()==STATE_ARMING)then
-					self:SetState(STATE_ARMED)
-				end
-			end
-		end)
-		JMod.Hint(armer, "mine friends")
-	end
-	function ENT:CanSee(ent)
-		if not(IsValid(ent))then return false end
-		local TargPos,SelfPos=ent:LocalToWorld(ent:OBBCenter()),self:LocalToWorld(self:OBBCenter())
-		local Tr=util.TraceLine({
-			start=SelfPos,
-			endpos=TargPos,
-			filter={self,ent},
-			mask=MASK_SHOT+MASK_WATER
-		})
-		return not Tr.Hit
-	end
 	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-		end
-		local State,Time=self:GetState(),CurTime()
-		if(State==STATE_ARMED)then
-			local SearchPos=self:GetPos()+self:GetUp()*250
-			for k,targ in pairs(ents.FindInSphere(SearchPos,200))do
-				if(not(targ==self)and((targ:IsPlayer())or(targ:IsNPC())or(targ:IsVehicle())))then
-					if((JMod.ShouldAttack(self,targ))and(self:CanSee(targ)))then
-						self:SetState(STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.wav",self:GetPos()+Vector(0,0,30),60,100)
-						timer.Simple(math.Rand(.15,.4)*JMod.Config.MineDelay,function()
-							if(IsValid(self))then
-								if(self:GetState()==STATE_WARNING)then self:Detonate() end
-							end
-						end)
-					end
-				end
-			end
-			self:NextThink(Time+.3)
-			return true
-		end
+		local Time=CurTime()
+		
+		self:NextThink(Time+.3)
+		return true
 	end
 	function ENT:OnRemove()
-		--aw fuck you
+		---
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--
+		---
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		self:DrawModel()
-		local State,Vary,Pos=self:GetState(),math.sin(CurTime()*50)/2+.5,self:GetPos()+self:GetUp()*28
-		if(State==STATE_ARMING)then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(Pos,20,20,Color(255,0,0))
-			render.DrawSprite(Pos,10,10,Color(255,255,255))
-		elseif(State==STATE_WARNING)then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(Pos,30*Vary,30*Vary,Color(255,0,0))
-			render.DrawSprite(Pos,15*Vary,15*Vary,Color(255,255,255))
-		end
 	end
 	language.Add("ent_jack_gmod_ezfougasse","EZ Fougasse Mine")
 end
