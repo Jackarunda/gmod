@@ -205,6 +205,21 @@ if(SERVER)then
 		Liquid:Activate()
 		
 	end
+	function ENT:OnDestroy(dmginfo)
+		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
+		local createOilFire = function()
+			timer.Simple(0.1, function()
+				local oilFire = ents.Create("ent_jack_gmod_ezoilfire")
+				oilFire:SetPos(SelfPos+Forward*120-Right*90)
+				oilFire:Spawn()
+				JMod.Owner(self.Owner)
+				oilFire:Activate()
+			end)
+		end
+		if(dmginfo:IsExplosionDamage())then
+			createOilFire()
+		end
+	end
 
 elseif(CLIENT)then
 	function ENT:Initialize()
