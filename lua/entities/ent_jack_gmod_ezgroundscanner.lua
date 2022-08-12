@@ -5,8 +5,9 @@ ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Ground Scanner"
 ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=false -- temporary, until Phase 2 of the econ update
+ENT.Spawnable=true
 ENT.AdminOnly=false
+ENT.NoSitAllowed=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
@@ -14,6 +15,7 @@ ENT.PhysMatDetectionWhitelist={
 	"metal",
 	"metalvehicle",
 	"metalpanel",
+	"metal_barrel",
 	"floating_metal_barrel",
 	"grenade",
 	"canister",
@@ -41,8 +43,8 @@ function ENT:SetupDataTables()
 end
 if(SERVER)then
 	function ENT:Initialize()
-		self:SetModel("models/props_c17/substation_transformer01b.mdl")
-		self:SetModelScale(.5,0)
+		self:SetModel("models/jmod/machines/groundscanner.mdl")
+		--self:SetModelScale(0.5, 0)
 		self:SetMaterial("models/mat_jack_gmod_groundscanner")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -52,10 +54,14 @@ if(SERVER)then
 		self:SetUseType(SIMPLE_USE)
 		self:SetAngles(Angle(-90,0,0))
 		---
+		self.EZupgradable=true
+		self.UpgradeProgress={}
+		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Ground Scanner"] and JMod.Config.Craftables["EZ Ground Scanner"].craftingReqs)
+		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
-			self:SetPos(self:GetPos()+Vector(0,0,20))
+			self:SetPos(self:GetPos())
 		end)
 		self:SetGrade(1)
 		self:InitPerfSpecs()
@@ -145,6 +151,9 @@ if(SERVER)then
 	function ENT:Think()
 		local State=self:GetState()
 		if(State==JMod.EZ_STATE_BROKEN)then
+			self.Snd1:Stop()
+			self.Snd2:Stop()
+			self.Snd3:Stop()
 			if(self:GetElectricity()>0)then
 				if(math.random(1,4)==2)then self:DamageSpark() end
 			end
@@ -182,20 +191,36 @@ if(SERVER)then
 		local Pos,Results=self:GetPos(),{}
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.NaturalResourceTable))
 		for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
-			if(v.GetPhysicsObject)then
-				local AnomalyPos=v:LocalToWorld(v:OBBCenter())
-				if((Pos.z-AnomalyPos.z)>200)then
-					local Phys=v:GetPhysicsObject()
-					if(IsValid(Phys))then
-						local Mat=Phys:GetMaterial()
-						if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=50)then
-							local Class=v:GetClass()
-							if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
-								table.insert(Results,{
-									typ="ANOMALY",
-									pos=AnomalyPos,
-									siz=180
-								})
+			if not(v==self)then
+				if(v.GetPhysicsObject)then
+					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
+					if((Pos.z+5)>=AnomalyPos.z)then
+						local Phys=v:GetPhysicsObject()
+						if(v.EZscannerDanger)then
+							table.insert(Results,{
+								typ="DANGER",
+								pos=AnomalyPos,
+								siz=20
+							})
+						elseif(IsValid(Phys))then
+							local Mat=Phys:GetMaterial()
+							if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=20)then
+								local Class=v:GetClass()
+								if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
+									if(math.Round((math.random(1, 3000)))>=3000)then
+										table.insert(Results,{
+											typ="SMILEY",
+											pos=AnomalyPos,
+											siz=30
+										})
+									else
+										table.insert(Results,{
+											typ="ANOMALY",
+											pos=AnomalyPos,
+											siz=180
+										})
+									end
+								end
 							end
 						end
 					end
@@ -247,6 +272,8 @@ elseif(CLIENT)then
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
+	local WarningIcon=Material("ez_misc_icons/warning.png")
+	local SmileyIcon=Material("ez_misc_icons/smiley.png")
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -291,6 +318,14 @@ elseif(CLIENT)then
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
 					if(v.typ=="ANOMALY")then
 						draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+					elseif(v.typ=="DANGER")then
+						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(WarningIcon)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
+					elseif(v.typ=="SMILEY")then
+							surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(SmileyIcon)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
 					else
 						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
 					end
