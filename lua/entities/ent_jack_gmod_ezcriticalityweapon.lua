@@ -192,11 +192,13 @@ if(SERVER)then
 			mask=MASK_SHOT
 		})
 		if not(TraceTwo.Hit)then return 0 end
-		local StartCheckDist=TraceOne.HitPos:Distance(startPos)
-		local EndCheckDist=TraceTwo.HitPos:Distance(endPos)
+		local Dir=vec:GetNormalized()
+		-- remember, the Dir goes TOWARD the victim
 		local CheckResults={}
-		for i=StartCheckDist,EndCheckDist do
-			-- whee
+		local CheckDistance=TraceOne.HitPos:Distance(TraceTwo.HitPos)
+		for i=0,CheckDistance do
+			local CheckPos=TraceOne.HitPos+Dir*i
+			-- ayoooo
 		end
 		return 1
 	end
@@ -219,7 +221,7 @@ if(SERVER)then
 						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
 						---
 						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v,Vec,Dist) -- shielding calcs are spensive, only run them for players/NPCs
-						DmgAmt=DmgAmt*(1-Shielding)
+						DmgAmt=0--DmgAmt*(1-Shielding) -- debug
 						---
 						if(DmgAmt<.1)then return end
 						---

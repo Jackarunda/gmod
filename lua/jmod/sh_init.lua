@@ -65,7 +65,28 @@ local OldPrecacheModel=util.PrecacheModel
 util.PrecacheModel=function(mdl)
 	if(mdl)then OldPrecacheModel(mdl) end
 end
---
+-- copied from https://wiki.facepunch.com/gmod/GM:EntityEmitSound
+-- timescale sound pitch scaling should be a part of gmod by default
+local cheats = GetConVar( "sv_cheats" )
+local timeScale = GetConVar( "host_timescale" )
+hook.Add( "EntityEmitSound", "JMOD_EntityEmitSound", function( t )
+	local p = t.Pitch
+	if ( game.GetTimeScale() ~= 1 ) then
+		p = p * game.GetTimeScale()
+	end
+	if ( timeScale:GetFloat() ~= 1 and cheats:GetInt() >= 1 ) then
+		p = p * timeScale:GetFloat()
+	end
+	if ( p ~= t.Pitch ) then
+		t.Pitch = math.Clamp( p, 0, 255 )
+		return true
+	end
+	if ( CLIENT and engine.GetDemoPlaybackTimeScale() ~= 1 ) then
+		t.Pitch = math.Clamp( t.Pitch * engine.GetDemoPlaybackTimeScale(), 0, 255 )
+		return true
+	end
+end )
+---
 hook.Add("EntityFireBullets","JMOD_ENTFIREBULLETS",function(ent,data)
 	if(IsValid(JMod.BlackHole))then
 		local BHpos=JMod.BlackHole:GetPos()
