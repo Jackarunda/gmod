@@ -47,6 +47,12 @@ concommand.Add("jmod_debug",function(ply,cmd,args)
 	splad:SetNormal(Vector(0,0,-1))
 	util.Effect("eff_jack_gmod_efpburst",splad,true,true)
 	--]]
+	local Eff=EffectData()
+	Tr=util.QuickTrace(ply:GetShootPos()+ply:GetAimVector()*1000,Vector(0,0,-3000))
+	Eff:SetOrigin(Tr.HitPos)
+	Eff:SetNormal(vector_up)
+	Eff:SetScale(10)
+	util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true,true)
 end)
 
 concommand.Add("jmod_debug_killme",function(ply)
