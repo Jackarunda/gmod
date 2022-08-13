@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Explosives"
+ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Oil Fire"
 ENT.NoSitAllowed=true
@@ -61,13 +61,13 @@ if(SERVER)then
 		local Time = CurTime()
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
-		local MaxDistance = 254
+		local MaxDistance = 250
 
 		local Eff=EffectData()
 		Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
 		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(5)
-		util.Effect("eff_jack_gmod_rocketthrust",Eff,true)
+		Eff:SetScale(10)
+		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
 		if(self.Ignited)then
 			for i,ent in ipairs(ents.FindInSphere(SelfPos + Forward * 5, MaxDistance))do
