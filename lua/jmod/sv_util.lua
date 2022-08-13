@@ -778,12 +778,13 @@ concommand.Add("jacky_sandbox",function(ply,cmd,args)
 end, nil, "Sets us to Sandbox god mode thing.")
 
 concommand.Add("jmod_debug_destroy", function(ply,cmd,args)
-	--if not(GetConVar("sv_cheats"):GetBool())then return end
+	if not(GetConVar("sv_cheats"):GetBool())then return end
+	if not(ply:IsSuperAdmin())then return end
 	local Tr=ply:GetEyeTrace()
-	if not(Tr.Entity)then print("No Entity") return end
+	if not(Tr.Entity)then print("No Entity to destroy") return end
 	local ent = Tr.Entity
 	if(ent.Destroy)then 
 		print("Destroying ent: "..tostring(ent)) 
 		ent:Destroy(DamageInfo()) 
-		end
+	else print("Entity does not have a destroy function") end
 end, nil, "Destroys the current JMod thing you are looking at")
