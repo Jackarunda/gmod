@@ -1011,6 +1011,19 @@ function JMod.InitGlobalConfig(forceNew)
 				category="Machines",
 				craftingType="toolbox",
 				description="Craft all your smaller items here."
+			},
+			["EZ Pumpjack"]={			
+				results="ent_jack_gmod_ezpumpjack",		
+				craftingReqs={	
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.POWER]=100
+				},
+				sizeScale=1.5,
+				category="Machines",
+				craftingType="toolbox",
+				description="A pump for extracting liquids from the ground."
 			},	
 			["HL2 Buggy"]={
 				results="FUNC spawnHL2buggy",
