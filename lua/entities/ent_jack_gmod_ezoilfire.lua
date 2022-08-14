@@ -31,25 +31,22 @@ if(SERVER)then
 		self.Entity:SetMoveType(MOVETYPE_NONE)	
 		self.Entity:SetSolid(SOLID_NONE)
 		self.Entity:DrawShadow(true)
-		---
-		timer.Simple(.01,function()
-			if (IsValid(self))then
-				self.Ignited = true
-				self.SoundLoop=CreateSound(self,"snd_jack_roaringfire.wav")
-				self.SoundLoop:Play()
-				self.SoundLoop:SetSoundLevel(1)
-			end
-		end)
 		--
+		self:StartFire()
 		timer.Simple(0.2,function()
 			local Tr=util.QuickTrace(self:GetPos()+Vector(2,0,10),Vector(0,0,-40))
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		--SafeRemoveEntityDelayed(self, 300)
+		SafeRemoveEntityDelayed(self, 300)
 	end
-	function ENT:OnTakeDamage(dmginfo)
-		---
+	function ENT:StartFire()
+		timer.Simple(0.01, function()
+			self.SoundLoop=CreateSound(self,"snd_jack_betterdrill1.wav")
+			self.SoundLoop:Play()
+			self.SoundLoop:SetSoundLevel(90)
+		end)
+		self.Ignited = true
 	end
 	function ENT:CanSee(ent)
         if not(IsValid(ent))then return false end
@@ -62,34 +59,40 @@ if(SERVER)then
         })
         return not Tr.Hit
     end
+	function ENT:BurnStuff(MaxDistance)
+		local SelfPos = self:LocalToWorld(self:OBBCenter())
+		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
+
+		for i,ent in ipairs(ents.FindInSphere(SelfPos + Forward * 5, MaxDistance))do
+			if not(IsValid(ent))then return end
+			local DDistance = SelfPos:Distance(ent:GetPos())
+			local DistanceFactor = (1 - DDistance / MaxDistance) ^ 2
+			if(self:CanSee(ent))then
+				local Dmg=DamageInfo()
+				Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
+				Dmg:SetDamageType(DMG_BURN)
+				Dmg:SetDamageForce(Vector(0 ,0, 100000) * DistanceFactor) -- some random upward force
+				Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
+				Dmg:SetInflictor(game.GetWorld())
+				Dmg:SetDamagePosition(ent:GetPos())
+				if(ent.TakeDamageInfo)then ent:TakeDamageInfo(Dmg) end
+			end
+		end
+	end
 	function ENT:Think()
 		local Time = CurTime()
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local MaxDistance = 250
 
-		local Eff=EffectData()
-		Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
-		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(1)
-		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
-
 		if(self.Ignited)then
-			for i,ent in ipairs(ents.FindInSphere(SelfPos + Forward * 5, MaxDistance))do
-				if not(IsValid(ent))then return end
-				local DDistance = SelfPos:Distance(ent:GetPos())
-				local DistanceFactor = (1 - DDistance / MaxDistance) ^ 2
-				if(self:CanSee(ent))then
-					local Dmg=DamageInfo()
-					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
-					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetDamageForce(Vector(0 ,0, 100000) * DistanceFactor) -- some random upward force
-					Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
-					Dmg:SetInflictor(game.GetWorld())
-					Dmg:SetDamagePosition(ent:GetPos())
-					if(ent.TakeDamageInfo)then ent:TakeDamageInfo(Dmg) end
-				end
-			end
+			local Eff=EffectData()
+			Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
+			Eff:SetNormal(self:GetRight())
+			Eff:SetScale(1)
+			util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
+
+			self:BurnStuff(MaxDistance)
 			self:NextThink(Time + .1)
 		end
 		return true
