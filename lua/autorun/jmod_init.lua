@@ -145,13 +145,15 @@ JMod.EZ_STATE_ARMED=4
 JMod.EZ_STATE_WARNING=5
 
 JMod.RadiationShieldingValues={
-	[MAT_METAL]=.2,
+	[MAT_METAL]=.15,
 	[MAT_CONCRETE]=.1,
 	[MAT_DIRT]=.05,
 	[MAT_SAND]=.05,
 	[MAT_SNOW]=.05,
+	[MAT_TILE]=.04,
 	[MAT_WOOD]=.02,
-	[MAT_GLASS]=.02
+	[MAT_GLASS]=.02,
+	[MAT_PLASTIC]=.02
 }
 
 -- this table is just a bunch of assumptions

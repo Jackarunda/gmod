@@ -173,34 +173,43 @@ if(SERVER)then
 			end
 		end
 	end
-	local function DetermineShieldingFactor(startPos,endPos,source,victim,vec,dist)
+	local function DetermineShieldingFactor(startPos,targetPos,source,victim,vec,dist)
 		-- you may ask why we pass vec and dist into this function when we already have the positions
 		-- and the answer is f*** you
 		-- just kidding, the answer is efficiency
 		-- vector math and roots are expensive ops; we wanna reuse the results as much as we can
 		local TraceOne=util.TraceLine({
 			start=startPos,
-			endpos=endPos,
+			endpos=targetPos,
 			filter={source,victim},
-			mask=MASK_SHOT
+			mask=MASK_SHOT+MASK_WATER
 		})
 		if not(TraceOne.Hit)then return 0 end
-		local TraceTwo=util.TraceLine({
-			start=endPos,
-			endpos=startPos,
-			filter={source,victim},
-			mask=MASK_SHOT
-		})
-		if not(TraceTwo.Hit)then return 0 end
 		local Dir=vec:GetNormalized()
 		-- remember, the Dir goes TOWARD the victim
-		local CheckResults={}
-		local CheckDistance=TraceOne.HitPos:Distance(TraceTwo.HitPos)
-		for i=0,CheckDistance do
-			local CheckPos=TraceOne.HitPos+Dir*i
-			-- ayoooo
+		local CheckPos,Shieldin=TraceOne.HitPos+Dir,0
+		local Failsafe=0 -- for development purposes, because crashing the game is annoying
+		while(Failsafe<1000)do
+			Failsafe=Failsafe+1
+			---
+			if(CheckPos:Distance(targetPos)<=4)then break end
+			local Tr=util.TraceLine({
+				start=CheckPos,
+				endpos=targetPos,
+				filter={source,victim},
+				mask=MASK_SHOT+MASK_WATER
+			})
+			print(Tr.Hit,Tr.MatType,Shieldin)
+			if not(Tr.Hit)then break end
+			local MatShieldFactor=JMod.RadiationShieldingValues[Tr.MatType] or 0
+			Shieldin=Shieldin+MatShieldFactor*.05
+			--if(util.PointContents(CheckPos)==CONTENTS_WATER)then Shieldin=Shieldin+.005 end
+			if(Shieldin>=1)then break end
+			CheckPos=CheckPos+Dir*2
+			--if(math.random(1,10)==10)then JMod.Sploom(nil,CheckPos+Dir*10,1) end
 		end
-		return 1
+		print("AAAAAAAAAAAAAAAAAAAA---------------------")
+		return math.min(Shieldin,1)
 	end
 	function ENT:Think()
 		local State,Time,SelfPos=self:GetState(),CurTime(),self:GetPos()+Vector(0,0,15)
@@ -209,7 +218,7 @@ if(SERVER)then
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_IRRADIATING)then
-			local Range,SelfPos,SelfInWater=2000,self:GetPos()+Vector(0,0,10),self:WaterLevel()>=3
+			local Range,SelfPos=2000,self:GetPos()+Vector(0,0,10)
 			for k,v in pairs(ents.FindInSphere(SelfPos,Range))do
 				if not(v.JModDontIrradiate)then
 					local TargPos,Playa,NPC=v:LocalToWorld(v:OBBCenter()),v:IsPlayer(),v:IsNPC()
@@ -218,9 +227,8 @@ if(SERVER)then
 					local DistFrac=1-(Dist/Range)
 					local DmgAmt=math.Rand(.1,1)*JMod.Config.NuclearRadiationMult*DistFrac^2
 					if((Playa and v:Alive())or(NPC))then
-						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
-						---
 						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v,Vec,Dist) -- shielding calcs are spensive, only run them for players/NPCs
+						--jprint(v,Shielding)
 						DmgAmt=0--DmgAmt*(1-Shielding) -- debug
 						---
 						if(DmgAmt<.1)then return end
