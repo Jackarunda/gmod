@@ -41,7 +41,7 @@ if(SERVER)then
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
 		---
-		SafeRemoveEntityDelayed(self, 300)
+		--SafeRemoveEntityDelayed(self, 300)
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		---
@@ -66,7 +66,7 @@ if(SERVER)then
 		local Eff=EffectData()
 		Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
 		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(10)
+		Eff:SetScale(1)
 		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
 		if(self.Ignited)then
