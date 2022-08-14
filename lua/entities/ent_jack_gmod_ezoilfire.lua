@@ -33,7 +33,12 @@ if(SERVER)then
 		self.Entity:DrawShadow(true)
 		---
 		timer.Simple(.01,function()
-			self.Ignited = true
+			if (IsValid(self))then
+				self.Ignited = true
+				self.SoundLoop=CreateSound(self,"snd_jack_roaringfire.wav")
+				self.SoundLoop:Play()
+				self.SoundLoop:SetSoundLevel(1)
+			end
 		end)
 		--
 		timer.Simple(0.2,function()
@@ -90,7 +95,7 @@ if(SERVER)then
 		return true
 	end
 	function ENT:OnRemove()
-		---
+		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
