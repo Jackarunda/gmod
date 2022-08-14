@@ -42,36 +42,7 @@ if(SERVER)then
 					local Vec=(obj:GetPos()-SelfPos):GetNormalized()
 					Force=Force-Vec*7
 				elseif((JMod.ShouldDamageBiologically(obj))and(math.random(1,5)==1)and(self.NextDmg<Time))then
-					local DmgAmt=self.DmgAmt or math.random(4,20)*JMod.Config.NuclearRadiationMult
-					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
-					---
-					local Dmg,Helf=DamageInfo(),obj:Health()
-					Dmg:SetDamageType(DMG_RADIATION)
-					Dmg:SetDamage(DmgAmt)
-					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.Owner or self)
-					Dmg:SetDamagePosition(obj:GetPos())
-					if(obj:IsPlayer())then
-						DmgAmt=DmgAmt/4
-						Dmg:SetDamage(DmgAmt)
-						obj:TakeDamageInfo(Dmg)
-						---
-						JMod.GeigerCounterSound(obj,math.Rand(.1,.5))
-						JMod.Hint(v,"radioactive fallout")
-						timer.Simple(math.Rand(.1,2),function()
-							if(IsValid(obj))then JMod.GeigerCounterSound(obj,math.Rand(.1,.5)) end
-						end)
-						---
-						local DmgTaken=Helf-obj:Health()
-						if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
-							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
-							timer.Simple(10,function()
-								if(IsValid(obj) and obj:Alive())then JMod.Hint(obj,"radiation sickness") end
-							end)
-						end
-					else
-						obj:TakeDamageInfo(Dmg)
-					end
+					JMod.FalloutIrradiate(self,obj)
 				end
 			end
 		end
