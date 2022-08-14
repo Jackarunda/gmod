@@ -42,7 +42,7 @@ if(SERVER)then
 	end
 	function ENT:StartFire()
 		timer.Simple(0.01, function()
-			self.SoundLoop=CreateSound(self,"snd_jack_betterdrill1.wav")
+			self.SoundLoop=CreateSound(self,"snds_jack_gmod/intense_fire_loop.wav")
 			self.SoundLoop:Play()
 			self.SoundLoop:SetSoundLevel(90)
 		end)
