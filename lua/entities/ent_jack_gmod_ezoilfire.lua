@@ -31,20 +31,18 @@ if(SERVER)then
 		self.Entity:SetMoveType(MOVETYPE_NONE)	
 		self.Entity:SetSolid(SOLID_NONE)
 		self.Entity:DrawShadow(true)
-		--
+		---
 		self:StartFire()
-		timer.Simple(0.2,function()
-			local Tr=util.QuickTrace(self:GetPos()+Vector(2,0,10),Vector(0,0,-40))
-			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
-		end)
 		---
 		SafeRemoveEntityDelayed(self, 300)
 	end
 	function ENT:StartFire()
-		timer.Simple(0.01, function()
+		timer.Simple(0.1, function()
+			local Tr=util.QuickTrace(self:GetPos()+Vector(2,0,10),Vector(0,0,-40))
+			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 			self.SoundLoop=CreateSound(self,"snds_jack_gmod/intense_fire_loop.wav")
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(90)
+			--self.SoundLoop:SetSoundLevel(90)
 		end)
 		self.Ignited = true
 	end
@@ -89,6 +87,7 @@ if(SERVER)then
 			local Eff=EffectData()
 			Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
 			Eff:SetNormal(self:GetRight())
+			Eff:SetStart(Vector(0, 0, 5))
 			Eff:SetScale(1)
 			util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
