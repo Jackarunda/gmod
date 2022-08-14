@@ -43,10 +43,11 @@ concommand.Add("jmod_admin_sanitizemap",function(ply,cmd,args)
 	if(((IsValid(ply))and(ply:IsSuperAdmin()))or not(IsValid(ply)))then
 		for k,v in pairs(ents.GetAll())do
 			if(v.EZfalloutParticle)then v:Remove() end
+			if(v.EZirradiated)then v.EZirradiated=nil end
 		end
 		print("JMod: decontaminated map by admin command")
 	end
-end)
+end, nil, "Removes JMod radiation from map and players")
 
 concommand.Add("jmod_debug",function(ply,cmd,args)
 	--[[

@@ -41,10 +41,11 @@ function JMod.LinCh(num,low,high)
 end
 --
 function JMod.GetBlackBodyColor(fraction)
-	local R=fraction
-	local G=fraction^2
-	local B=fraction^3
-	return Color(R*255,G*255,B*255)
+	-- copied from funguns
+	local Red=math.Clamp(fraction*463-69,0,255)
+	local Green=math.Clamp(fraction*1275-1020,0,255)
+	local Blue=math.Clamp(fraction*2550-2295,0,255)
+	return Color(Red,Green,Blue)
 end
 --
 function JMod.PlayersCanComm(listener,talker)

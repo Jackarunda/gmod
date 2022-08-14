@@ -62,7 +62,7 @@ function JMod.ShouldDamageBiologically(ent)
 	if not(IsValid(ent))then return end
 	if(ent.JModDontIrradiate)then return end
 	if(ent:IsPlayer())then return ent:Alive() end
-	if((ent:IsNPC())and(ent.Health)and(ent:Health()))then
+	if((ent:IsNPC() or ent:IsNextBot())and(ent.Health)and(ent:Health()))then
 		local Phys=ent:GetPhysicsObject()
 		if(IsValid(Phys))then
 			local Mat=Phys:GetMaterial()
@@ -113,6 +113,39 @@ function JMod.GeigerCounterSound(ply,intensity)
 	if(intensity<=.1 and math.random(1,2)==1)then return end
 	local Num=math.Clamp(math.Round(math.Rand(0,intensity)*15),1,10)
 	ply:EmitSound("snds_jack_gmod/geiger"..Num..".wav",55,math.random(95,105))
+end
+
+function JMod.FalloutIrradiate(self,obj)
+	local DmgAmt=self.DmgAmt or math.random(4,20)*JMod.Config.NuclearRadiationMult
+	if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
+	---
+	local Dmg,Helf,Att=DamageInfo(),obj:Health(),(IsValid(self.Owner) and self.Owner) or self
+	Dmg:SetDamageType(DMG_RADIATION)
+	Dmg:SetDamage(DmgAmt)
+	Dmg:SetInflictor(self)
+	Dmg:SetAttacker(Att)
+	Dmg:SetDamagePosition(obj:GetPos())
+	if(obj:IsPlayer())then
+		DmgAmt=DmgAmt/4
+		Dmg:SetDamage(DmgAmt)
+		obj:TakeDamageInfo(Dmg)
+		---
+		JMod.GeigerCounterSound(obj,math.Rand(.1,.5))
+		JMod.Hint(v,"radioactive fallout")
+		timer.Simple(math.Rand(.1,2),function()
+			if(IsValid(obj))then JMod.GeigerCounterSound(obj,math.Rand(.1,.5)) end
+		end)
+		---
+		local DmgTaken=Helf-obj:Health()
+		if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
+			obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
+			timer.Simple(10,function()
+				if(IsValid(obj) and obj:Alive())then JMod.Hint(obj,"radiation sickness") end
+			end)
+		end
+	else
+		obj:TakeDamageInfo(Dmg)
+	end
 end
 
 function JMod.TryVirusInfectInRange(host,att,hostFaceProt,hostSkinProt)
