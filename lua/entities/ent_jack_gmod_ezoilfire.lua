@@ -10,9 +10,8 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZscannerDanger=true
-ENT.Ignited=false
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
+	function ENT:SpawnFunction(ply,tr) -- todo: remove this when we're done
 		local SpawnPos=tr.HitPos-tr.HitNormal*2
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 90))
@@ -28,23 +27,20 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
 		self.Entity:PhysicsInit(SOLID_NONE)
-		self.Entity:SetMoveType(MOVETYPE_NONE)	
+		self.Entity:SetMoveType(MOVETYPE_NONE)
 		self.Entity:SetSolid(SOLID_NONE)
 		self.Entity:DrawShadow(true)
 		---
-		self:StartFire()
-		---
-		SafeRemoveEntityDelayed(self, 300)
-	end
-	function ENT:StartFire()
 		timer.Simple(0.1, function()
 			local Tr=util.QuickTrace(self:GetPos()+Vector(2,0,10),Vector(0,0,-40))
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 			self.SoundLoop=CreateSound(self,"snds_jack_gmod/intense_fire_loop.wav")
+			self.SoundLoop:SetSoundLevel(80)
 			self.SoundLoop:Play()
-			--self.SoundLoop:SetSoundLevel(90)
+			self.SoundLoop:SetSoundLevel(80)
 		end)
-		self.Ignited = true
+		---
+		SafeRemoveEntityDelayed(self,300)
 	end
 	function ENT:CanSee(ent)
         if not(IsValid(ent))then return false end
@@ -57,23 +53,23 @@ if(SERVER)then
         })
         return not Tr.Hit
     end
-	function ENT:BurnStuff(MaxDistance)
-		local SelfPos = self:LocalToWorld(self:OBBCenter())
-		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
-
-		for i,ent in ipairs(ents.FindInSphere(SelfPos + Forward * 5, MaxDistance))do
-			if not(IsValid(ent))then return end
-			local DDistance = SelfPos:Distance(ent:GetPos())
-			local DistanceFactor = (1 - DDistance / MaxDistance) ^ 2
-			if(self:CanSee(ent))then
-				local Dmg=DamageInfo()
-				Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
-				Dmg:SetDamageType(DMG_BURN)
-				Dmg:SetDamageForce(Vector(0 ,0, 100000) * DistanceFactor) -- some random upward force
-				Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
-				Dmg:SetInflictor(game.GetWorld())
-				Dmg:SetDamagePosition(ent:GetPos())
-				if(ent.TakeDamageInfo)then ent:TakeDamageInfo(Dmg) end
+	function ENT:BurnStuff()
+		local Up, Forward, Right, Range = self:GetUp(), self:GetForward(), self:GetRight(), 300
+		local Pos=self:GetPos()+Right*200
+		for i,ent in pairs(ents.FindInSphere(Pos+Right*150,Range))do
+			if(ent~=self)then
+				local DDistance = Pos:Distance(ent:GetPos())
+				local DistanceFactor = (1 - DDistance / Range) ^ 2
+				if(self:CanSee(ent))then
+					local Dmg=DamageInfo()
+					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
+					Dmg:SetDamageType(DMG_BURN)
+					Dmg:SetDamageForce(Vector(0 ,0, 50000) * DistanceFactor) -- some random upward force
+					Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
+					Dmg:SetInflictor(game.GetWorld())
+					Dmg:SetDamagePosition(ent:GetPos())
+					if(ent.TakeDamageInfo)then ent:TakeDamageInfo(Dmg) end
+				end
 			end
 		end
 	end
@@ -81,33 +77,42 @@ if(SERVER)then
 		local Time = CurTime()
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
-		local MaxDistance = 250
 
-		if(self.Ignited)then
-			local Eff=EffectData()
-			Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
-			Eff:SetNormal(self:GetRight())
-			Eff:SetStart(Vector(0, 0, 5))
-			Eff:SetScale(1)
-			util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
+		local Eff=EffectData()
+		Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
+		Eff:SetNormal(self:GetRight())
+		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
-			self:BurnStuff(MaxDistance)
-			self:NextThink(Time + .1)
-		end
+		self:BurnStuff()
+		self:NextThink(Time + .1)
 		return true
 	end
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 elseif(CLIENT)then
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Initialize()
 		---
 	end
 	function ENT:Draw()
 		self:DrawModel()
-			if(self.Ignited)then
-				---
-			end
+		local Pos,Dir=self:GetPos(),self:GetRight()
+		render.SetMaterial(GlowSprite)
+		for i=1,10 do
+			render.DrawSprite(Pos+Dir*(i*math.random(30,60)),150,150,Color(255,255-i*10,255-i*20,255))
+		end
+		local dlight=DynamicLight(self:EntIndex())
+		if(dlight)then
+			dlight.pos=Pos+Dir*200
+			dlight.r=255
+			dlight.g=60
+			dlight.b=10
+			dlight.brightness=8
+			dlight.Decay=200
+			dlight.Size=1000
+			dlight.DieTime=CurTime()+.5
+		end
 	end
 	language.Add("ent_jack_gmod_ezoilfire","EZ Oil Fire")
 end
