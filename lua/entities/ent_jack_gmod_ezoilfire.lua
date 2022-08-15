@@ -6,13 +6,13 @@ ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Oil Fire"
 ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
+ENT.Spawnable=false
+ENT.AdminSpawnable=false
 ---
 ENT.EZscannerDanger=true
 ENT.DepositKey=0
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr) -- todo: remove this when we're done
+	--[[function ENT:SpawnFunction(ply,tr) -- todo: remove this when we're done
 		local SpawnPos=tr.HitPos-tr.HitNormal*2
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 90))
@@ -24,7 +24,7 @@ if(SERVER)then
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
 		return ent
-	end
+	end]]-- (I don't know if you want to get rid of it RN)
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
 		self.Entity:PhysicsInit(SOLID_NONE)
@@ -109,6 +109,7 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
+	local HeatWaveMat=Material("sprites/heatwave")
 	function ENT:Initialize()
 		---
 	end
@@ -118,6 +119,10 @@ elseif(CLIENT)then
 		render.SetMaterial(GlowSprite)
 		for i=1,10 do
 			render.DrawSprite(Pos+Dir*(i*math.random(30,60)),150,150,Color(255,255-i*10,255-i*20,255))
+		end
+		render.SetMaterial(HeatWaveMat)
+		for i=1,3 do
+			render.DrawSprite(Pos+Dir*(i*math.random(50,80)),250,200,Color(255,255-i*10,255-i*20,255))
 		end
 		local dlight=DynamicLight(self:EntIndex())
 		if(dlight)then
