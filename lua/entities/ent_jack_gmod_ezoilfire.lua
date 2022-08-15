@@ -10,6 +10,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.EZscannerDanger=true
+ENT.DepositKey=0
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr) -- todo: remove this when we're done
 		local SpawnPos=tr.HitPos-tr.HitNormal*2
@@ -37,7 +38,7 @@ if(SERVER)then
 			self.SoundLoop=CreateSound(self,"snds_jack_gmod/intense_fire_loop.wav")
 			self.SoundLoop:SetSoundLevel(80)
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(80)
+			--self.SoundLoop:SetSoundLevel(80)
 		end)
 		---
 		SafeRemoveEntityDelayed(self,300)
@@ -55,7 +56,7 @@ if(SERVER)then
     end
 	function ENT:BurnStuff()
 		local Up, Forward, Right, Range = self:GetUp(), self:GetForward(), self:GetRight(), 300
-		local Pos=self:GetPos()+Right*200
+		local Pos=self:GetPos()+Right*150
 		for i,ent in pairs(ents.FindInSphere(Pos+Right*150,Range))do
 			if(ent~=self)then
 				local DDistance = Pos:Distance(ent:GetPos())
@@ -64,7 +65,7 @@ if(SERVER)then
 					local Dmg=DamageInfo()
 					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetDamageForce(Vector(0 ,0, 50000) * DistanceFactor) -- some random upward force
+					Dmg:SetDamageForce(Vector(0 ,0, 500000) * DistanceFactor) -- some random upward force
 					Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
 					Dmg:SetInflictor(game.GetWorld())
 					Dmg:SetDamagePosition(ent:GetPos())
@@ -73,6 +74,7 @@ if(SERVER)then
 			end
 		end
 	end
+	local AmountToBurn = 0
 	function ENT:Think()
 		local Time = CurTime()
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
@@ -83,6 +85,21 @@ if(SERVER)then
 		Eff:SetNormal(self:GetRight())
 		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
+		AmountToBurn = AmountToBurn + 0.02
+		if(AmountToBurn >= 1)then
+			if(self.DepositKey > 0)then
+				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+				if(amtLeft > 0)then 
+					JMod.NaturalResourceTable[self.DepositKey].amt = math.Round(amtLeft - AmountToBurn) 
+				else
+					SafeRemoveEntity(self)
+				end
+			else
+				SafeRemoveEntity(self)
+			end
+			AmountToBurn = AmountToBurn - 1
+		end
+		
 		self:BurnStuff()
 		self:NextThink(Time + .1)
 		return true

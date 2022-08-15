@@ -212,14 +212,22 @@ if(SERVER)then
 				local oilFire = ents.Create("ent_jack_gmod_ezoilfire")
 				oilFire:SetPos(SelfPos+Forward*120-Right*95)
 				oilFire:SetAngles(Angle(180, 0, 90))
+				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()
 				JMod.Owner(self.Owner)
 				oilFire:Activate()
 			end)
 		end
-		--if(dmginfo:IsExplosionDamage())then
-			createOilFire()
-		--end
+		if not(self.DepositKey > 0)then return end
+		if(JMod.NaturalResourceTable[self.DepositKey].typ == "oil")then
+			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
+				createOilFire()
+			elseif(dmginfo:IsDamageType(DMG_BLAST+DMG_BLAST_SURFACE+DMG_PLASMA+DMG_ENERGYBEAM)and(math.random(0, 100)>50))then
+				createOilFire()
+			elseif(dmginfo:IsDamageType(DMG_DIRECT+DMG_BUCKSHOT)and(math.random(0, 100)>75))then
+				createOilFire()
+			end
+		end
 	end
 
 elseif(CLIENT)then
