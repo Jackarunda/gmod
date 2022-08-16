@@ -101,6 +101,16 @@ if(SERVER)then
 			if(State==JMod.EZ_STATE_OFF and Alt)then
 				self:Arm()
 				JMod.Hint(Dude, "fuse")
+				if ((self:IsPlayerHolding()) and (self.NextStick < Time)) then
+				local Tr=util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector()*80, {self, Dude})
+
+				if Tr.Hit and (IsValid(Tr.Entity:GetPhysicsObject())) and not (Tr.Entity:IsNPC()) and not (Tr.Entity:IsPlayer()) then
+					self.NextStick=Time+.5
+					local Ang=Tr.HitNormal:Angle()
+					Ang:RotateAroundAxis(Ang:Right(), -90)
+					Ang:RotateAroundAxis(Ang:Up(), 90)
+					self:SetAngles(Ang)
+					self:SetPos(Tr.HitPos)
 			end
 			Dude:PickupObject(self)
 			if not Alt then JMod.Hint(Dude, "arm") end
