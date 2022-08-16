@@ -76,8 +76,8 @@ if(SERVER)then
             if(IsValid(ent))then
                 if(ent.EZRackOffset)then
                     self:AttachBomb(ent)
-                else
-                    print("Ent does not contain EZRackOffset "..tostring(ent))
+                --else
+                    --print("Ent does not contain EZRackOffset "..tostring(ent))
                 end
             end
 		end
@@ -85,20 +85,19 @@ if(SERVER)then
     function ENT:AttachBomb(bomb)
         local Forward, Right, Up = self:GetForward(), self:GetRight(), self:GetUp()
         local AttachPos, AttachAngles = self:LocalToWorld(bomb.EZRackOffset), self:LocalToWorldAngles(bomb.EZRackAngles)
-		if(IsValid(self.Bomb or self.Weld))then return false end
+		if(IsValid(self.Bomb))then return end
 		DropEntityIfHeld(bomb)
         timer.Simple(0.1, function() 
-            bomb:SetPos(AttachPos)
+            bomb:SetPos(AttachPos+Up*5)
             bomb:SetAngles(AttachAngles)
-            local stick = constraint.Weld(self, ent, 0, 0, 25000, true, false)
+			bomb:SetVelocity(self:GetVelocity())
+            local stick = constraint.Weld(self, ent, 0, 0, 50000, true, false)
             if(stick)then 
                 self.Weld = stick 
                 self.Bomb = bomb
                 print("Stuck")
-                return true 
             else
                 print("Failed to stick")
-                return false
             end
 
         end)
@@ -112,17 +111,18 @@ if(SERVER)then
 		end
 		SafeRemoveEntityDelayed(self, 10)
 	end
-	function ENT:OnTakeDamage(dmginfo)
-		--
+	function ENT:DamageSpark()
+		local effectdata=EffectData()
+		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0, 10))
+		effectdata:SetNormal(VectorRand())
+		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
+		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
+		util.Effect("Sparks", effectdata, true, true)
+		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:Use(activator)
         activator:PickupObject(self)
-	end
-	function ENT:OnRemove()
-		--
-	end
-	function ENT:EZdetonateOverride(detonator)
-		self:Detonate()
 	end
 	function ENT:Think()
         self:NextThink(0.1)

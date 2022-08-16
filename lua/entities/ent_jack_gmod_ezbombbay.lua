@@ -48,20 +48,38 @@ if(SERVER)then
 		end)
 		---
 		self:SetState(STATE_EMPTY)
-		--[[if istable(WireLib) then
-			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-			self.Outputs=WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
-		end]]--
-	end
-	--[[function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate" and value > 0) then
-			self:Detonate()
-		elseif (iname == "Arm" and value > 0) then
-			self:SetState(STATE_ARMED)
-		elseif (iname == "Arm" and value == 0) then
-			self:SetState(STATE_OFF)
+		if istable(WireLib) then
+			self.Inputs=WireLib.CreateInputs(self, {"Drop","DropDud"}, {"Drops the specified bomb, input 0 to drop them all","Drops bomb unarmed"})
+			self.Outputs=WireLib.CreateOutputs(self, {"Bombs","LastBomb","RoomLeft"}, {"Table of bombs contained","The last loaded bomb","How much room there is left inside"})
 		end
-	end]]--
+	end
+	function ENT:TriggerInput(iname, value)
+		if(iname == "Drop" and value > 0) then
+			self:BombRelease(value, true)
+		elseif(iname == "Drop" and value == 0) then
+			if(#self.Bombs > 0)then
+				for i = 1, #self.Bombs do
+					timer.Simple(1*i, function()
+						if(IsValid(self))then
+							self:BombRelease(i, true)
+						end
+					end)
+				end
+			end
+		elseif(iname == "DropDud" and value > 0) then
+			self:BombRelease(value, false)
+		elseif(iname == "DropDud" and value == 0) then
+			if(#self.Bombs > 0)then
+				for i = 1, #self.Bombs do
+					timer.Simple(1*i, function()
+						if(IsValid(self))then
+							self:BombRelease(i, false)
+						end
+					end)
+				end
+			end
+		end
+	end
 	function ENT:PhysicsCollide(data, physobj)
 		if not(IsValid(self))then return end
         local ent = data.HitEntity
@@ -69,9 +87,10 @@ if(SERVER)then
 			if(data.Speed > 50)then
 				self:EmitSound("Metal_Box.ImpactHard")
 			end
-			--[[if(data.Speed > 2000)then
+			if(data.Speed > 2000)then
 				self:Break()
-			end]]--
+			end
+			if(self:GetState() == STATE_BROKEN)then return end
             if(IsValid(ent))then
                 if(ent.EZbombBaySize)then
                     self:LoadBomb(ent)
@@ -84,17 +103,22 @@ if(SERVER)then
 		for k, bombInfo in pairs(self.Bombs) do
 			RoomLeft = RoomLeft - bombInfo[2]
 		end
+		local BombClass = bomb:GetClass()
 		if (RoomLeft >= bomb.EZbombBaySize)then
-			table.insert(self.Bombs, {bomb:GetClass(), bomb.EZbombBaySize})
+			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
 			end)
+		end
+		if (istable(WireLib)) then
+			WireLib.TriggerOutput(self, "RoomLeft", RoomLeft)
+			WireLib.TriggerOutput(self, "LastBomb", BombClass)
 		end
     end
 	function ENT:BombRelease(slotNum, arm, ply)
 		slotNum = slotNum or #self.Bombs
 		arm = arm or true
-		ply = ply or self.Owner
+		ply = ply or self.Owner or game.GetWorld()
 		if (#self.Bombs == 0)then return end
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local Pos, Ang = self:GetPos(), self:GetAngles()
@@ -106,8 +130,10 @@ if(SERVER)then
 		JMod.Owner(droppedBomb, ply)
 		droppedBomb:Spawn()
 		droppedBomb:Activate()
-		if(arm == true)then
+		if(arm)then
 			droppedBomb:SetState(1)
+		else
+			droppedBomb:SetState(0)
 		end
 		table.remove(self.Bombs, slotNum)
 	end
@@ -118,10 +144,26 @@ if(SERVER)then
 		for i= 1, 20 do
 			self:DamageSpark()
 		end
+		if(#self.Bombs > 0)then
+			for i = 1, #self.Bombs do
+				timer.Simple(0.1*i, function()
+					if(IsValid(self))then
+						self:BombRelease(i, false)
+					end
+				end)
+			end
+		end
 		SafeRemoveEntityDelayed(self, 10)
 	end
-	function ENT:OnTakeDamage(dmginfo)
-		--
+	function ENT:DamageSpark()
+		local effectdata=EffectData()
+		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0, 10))
+		effectdata:SetNormal(VectorRand())
+		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
+		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
+		util.Effect("Sparks", effectdata, true, true)
+		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 	function ENT:Use(activator)
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
