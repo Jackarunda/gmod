@@ -181,3 +181,4 @@ elseif(CLIENT)then
 	end
 	language.Add("ent_jack_gmod_ezdynamite","EZ Dynamite")
 end
+end
