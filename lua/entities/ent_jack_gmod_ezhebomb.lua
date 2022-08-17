@@ -4,14 +4,11 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Big Bomb"
+ENT.PrintName="EZ Thin-Skinned Bomb"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
-ENT.JModPreferredCarryAngles=Angle(90,0,0)
-ENT.EZRackOffset = Vector(0, 0, 30)
-ENT.EZRackAngles = Angle(0, 0, 90)
-ENT.EZbombBaySize = 50
+ENT.JModPreferredCarryAngles=Angle(0,-90,0)
 ENT.EZguidable=true
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
@@ -35,7 +32,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube05x4x05.mdl")
+		self.Entity:SetModel("models/hunter/blocks/cube025x2x025.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -43,21 +40,20 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(300)
+			self:GetPhysicsObject():SetMass(150)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
 		---
 		self:SetState(STATE_OFF)
 		self.LastUse=0
-		self.DetTime=0
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
 			self.Outputs=WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
-		if(iname == "Detonate") and (value > 0) then
+		if(iname == "Detonate" and value > 0) then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
 			self:SetState(STATE_ARMED)
@@ -69,7 +65,7 @@ if(SERVER)then
 			if(data.Speed>50)then
 				self:EmitSound("Canister.ImpactHard")
 			end
-			if((data.Speed>1000)and(self:GetState()==STATE_ARMED))then
+			if((data.Speed>700)and(self:GetState()==STATE_ARMED))then
 				self:Detonate()
 				return
 			end
@@ -99,7 +95,7 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod.LinCh(dmginfo:GetDamage(),80,200))then
+		if(JMod.LinCh(dmginfo:GetDamage(),70,150))then
 			JMod.Owner(self,dmginfo:GetAttacker())
 			self:Detonate()
 		end
@@ -112,7 +108,7 @@ if(SERVER)then
 			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,100)
+				self:EmitSound("snds_jack_gmod/bomb_arm.wav",70,110)
 				self.EZdroppableBombArmedTime=CurTime()
 				JMod.Hint(activator, "impactdet")
 			else
@@ -123,7 +119,7 @@ if(SERVER)then
 			JMod.Owner(self,activator)
 			if(Time-self.LastUse<.2)then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,100)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.wav",70,110)
 				self.EZdroppableBombArmedTime=nil
 			else
 				JMod.Hint(activator,"double tap to disarm")
@@ -134,41 +130,40 @@ if(SERVER)then
 	function ENT:Detonate()
 		if(self.Exploded)then return end
 		self.Exploded=true
-		local SelfPos,Att=self:GetPos()+Vector(0,0,100),self.Owner or game.GetWorld()
+		local SelfPos,Att=self:GetPos()+Vector(0,0,60),self.Owner or game.GetWorld()
+		JMod.Sploom(Att,SelfPos,150)
 		---
-		util.ScreenShake(SelfPos,1000,3,2,8000)
-		local Eff="cloudmaker_ground"
-		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="cloudmaker_air" end
-		for i=1,10 do
+		util.ScreenShake(SelfPos,1000,3,2,4000)
+		local Eff="500lb_ground"
+		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="500lb_air" end
+		for i=1,3 do
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 		end
 		---
 		for k,ply in pairs(player.GetAll())do
 			local Dist=ply:GetPos():Distance(SelfPos)
-			if((Dist>500)and(Dist<8000))then
+			if((Dist>250)and(Dist<4000))then
 				timer.Simple(Dist/6000,function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav",55,110)
 					sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",ply:GetPos(),60,70)
-					util.ScreenShake(ply:GetPos(),1000,3,2,100)
+					util.ScreenShake(ply:GetPos(),1000,3,1,100)
 				end)
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),1600,150)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,3200,150) end)
-		for k,ent in pairs(ents.FindInSphere(SelfPos,1000))do
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),800,120)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1800,120) end)
+		for k,ent in pairs(ents.FindInSphere(SelfPos,500))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
 		---
-		JMod.WreckBuildings(self,SelfPos,10)
-		JMod.BlastDoors(self,SelfPos,10)
+		JMod.WreckBuildings(self,SelfPos,7)
+		JMod.BlastDoors(self,SelfPos,7)
 		---
 		timer.Simple(.2,function()
 			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
-			if(Tr.Hit)then util.Decal("GiantScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
+			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
-		---
-		JMod.FragSplosion(self,SelfPos,20000,400,8000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
@@ -180,11 +175,11 @@ if(SERVER)then
 		self:Detonate()
 	end
 	function ENT:Think()
-		local Phys,UseAeroDrag=self:GetPhysicsObject(),true
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
+		local Phys,UseAeroDrag=self:GetPhysicsObject(),true
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 			--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
 				--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then
@@ -209,8 +204,8 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/jmod/mk82_gbu.mdl")
-		self.Mdl:SetModelScale(1.5,0)
+		self.Mdl=ClientsideModel("models/gbombs/250lbgp.mdl")
+		self.Mdl:SetModelScale(.9,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
@@ -226,9 +221,9 @@ elseif(CLIENT)then
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Up(),90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Up()*15)
+		self.Mdl:SetRenderOrigin(Pos-Ang:Up()*3-Ang:Right()*6)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezbigbomb","EZ Big Bomb")
+	language.Add("ent_jack_gmod_ezhebomb","EZ Thin-Skinned Bomb")
 end

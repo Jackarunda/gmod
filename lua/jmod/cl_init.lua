@@ -186,7 +186,7 @@ hook.Add("Think","JMOD_CLIENT_THINK",function()
 	local ply,DrawNVGlamp=LocalPlayer(),false
 	if not(ply:ShouldDrawLocalPlayer())then
 		if((ply:Alive())and(ply.EZarmor)and(ply.EZarmor.effects))then
-			if(ply.EZarmor.effects.nightVision)then
+			if(ply.EZarmor.effects.nightVision or ply.EZarmor.effects.nightVisionWP)then
 				DrawNVGlamp=true
 				if not(IsValid(ply.EZNVGlamp))then
 					ply.EZNVGlamp=ProjectedTexture()

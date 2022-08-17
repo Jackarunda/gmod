@@ -327,11 +327,11 @@ elseif(CLIENT)then
 				local SpritePos=Pos+Vec*10
 				local QuadPos=Pos-Vector(0,0,5.5)
 				render.SetMaterial(GlowSprite)
-				render.DrawSprite(SpritePos,500,500,Color(Col.r,Col.g,Col.b,20*Frac))
-				render.DrawQuadEasy(QuadPos,Vector(0,0,1),500,500,Color(Col.r,Col.g,Col.b,40*Frac))
+				render.DrawSprite(SpritePos,500,500,Color(Col.r,Col.g,Col.b,20*Frac^1.5))
+				render.DrawQuadEasy(QuadPos,Vector(0,0,1),500,500,Color(Col.r,Col.g,Col.b,40*Frac^1.5))
 				DLight=DynamicLight(self:EntIndex())
 				if(DLight)then
-					DLight.Brightness=Frac
+					DLight.Brightness=Frac^1.5
 					DLight.Decay=7500
 					DLight.DieTime=CurTime()+.1
 					DLight.Pos=self:GetPos()+Vector(1,1,-20)
