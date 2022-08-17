@@ -102,7 +102,7 @@ if(SERVER)then
 				self:Detonate(Dir)
 			end
 		end
-		self:NextThink(Time+.1)
+		self:NextThink(Time+.01)
 		return true
 	end
 elseif(CLIENT)then

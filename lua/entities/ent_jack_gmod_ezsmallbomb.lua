@@ -151,8 +151,8 @@ if(SERVER)then
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),500,80)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1000,80) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),400,80)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,800,80) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,200))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
