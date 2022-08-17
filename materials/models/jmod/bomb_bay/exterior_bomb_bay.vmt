@@ -1,4 +1,12 @@
-"LightmappedGeneric"
+"VertexLitGeneric"
 {
 	"$basetexture" "models/jmod/bomb_bay/exterior_bomb_bay"
+	"$surfaceprop" "metal"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	//"$envmap" "env_cubemap"
+	"$envmaptint" "[.9 .9 .9]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "1"
+	"$phongexponent" "10"
 }

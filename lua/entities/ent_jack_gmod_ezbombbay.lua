@@ -33,8 +33,9 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube1x3x1.mdl")
-		self.Entity:SetMaterial("phoenix_storms/metal")
+		self.Entity:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
+		-- if we're makin a custom model, we should bake the mat in so we don't have to set it
+		self.Entity:SetMaterial("models/jmod/bomb_bay/exterior_bomb_bay")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
