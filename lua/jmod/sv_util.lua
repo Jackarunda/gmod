@@ -162,10 +162,10 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	util.Effect("eff_jack_gmod_fragsplosion", Eff, true, true)
 	---
 	shooter=shooter or game.GetWorld()
+	zReduction=zReduction or 2
 
 	if not JMod.Config.FragExplosions then
 		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg*3)
-
 		return
 	end
 
