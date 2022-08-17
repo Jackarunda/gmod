@@ -42,6 +42,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
+			self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
 			--self:SetModelScale(2, 0.1)
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
@@ -125,8 +126,8 @@ if(SERVER)then
 		local Pos, Ang = self:GetPos(), self:GetAngles()
 		--print(tostring(self.Bombs[slotNum][1]))
 		local droppedBomb = ents.Create(self.Bombs[slotNum][1])
-		droppedBomb:SetPos(Pos + Up * -50)
-		droppedBomb:SetAngles(Ang)
+		droppedBomb:SetPos(Pos + Up*-50 + Forward*-6 + Right*6)
+		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
 		droppedBomb:SetVelocity(self:GetVelocity())
 		JMod.Owner(droppedBomb, ply)
 		droppedBomb:Spawn()
