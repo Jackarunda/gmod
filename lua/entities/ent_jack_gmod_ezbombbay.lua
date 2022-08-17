@@ -42,8 +42,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
-			--self:SetModelScale(2, 0.1)
+			--self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
@@ -147,7 +146,7 @@ if(SERVER)then
 			self:DamageSpark()
 		end
 		if(#self.Bombs > 0)then
-			for i = 1, #self.Bombs do
+			for i = 0, #self.Bombs do
 				timer.Simple(0.1*i, function()
 					if(IsValid(self))then
 						self:BombRelease(i, false)
