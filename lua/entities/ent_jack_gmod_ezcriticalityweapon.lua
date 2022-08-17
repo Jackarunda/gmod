@@ -16,8 +16,7 @@ ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
 local STATE_BROKEN,STATE_OFF,STATE_TICKING,STATE_IRRADIATING,STATE_MELTED=-1,0,1,2,3
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int",1,"Timer")
-	self:NetworkVar("Int",2,"Power")
+	self:NetworkVar("Int",1,"Heat")
 end
 ---
 if(SERVER)then
@@ -46,6 +45,7 @@ if(SERVER)then
 		---
 		self.LastUse=0
 		self:SetState(STATE_OFF)
+		self:SetHeat(0)
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate"}, {"Directly activates the weapon"})
 		end
@@ -59,6 +59,16 @@ if(SERVER)then
 		if(data.DeltaTime>0.2)then
 			if(data.Speed>25)then
 				self.Entity:EmitSound("Canister.ImpactHard",60,math.random(80,120))
+				if(self:GetState()==STATE_MELTED)then
+					local Dmg=DamageInfo()
+					Dmg:SetDamageType(DMG_BURN)
+					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetInflictor(self)
+					Dmg:SetDamage(5)
+					Dmg:SetDamagePosition(self:GetPos())
+					Dmg:SetDamageForce(Vector(0,0,100))
+					if(data.HitEntity.TakeDamageInfo)then data.HitEntity:TakeDamageInfo(Dmg) end
+				end
 			end
 		end
 	end
@@ -93,13 +103,22 @@ if(SERVER)then
 				self:EmitSound("snd_jack_pinpull.wav",60,100)
 				self:EmitSound("snd_jack_spoonfling.wav",60,100)
 				self:SetState(STATE_TICKING)
-				timer.Simple(3,function() -- todo: 30 seconds
+				timer.Simple(20,function()
 					if(IsValid(self))then self:Detonate() end
 				end)
 			else
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
+		elseif(State==STATE_MELTED)then
+			local Dmg=DamageInfo()
+			Dmg:SetDamageType(DMG_BURN)
+			Dmg:SetAttacker(self.Owner or self)
+			Dmg:SetInflictor(self)
+			Dmg:SetDamage(5)
+			Dmg:SetDamagePosition(self:GetPos())
+			Dmg:SetDamageForce(Vector(0,0,100))
+			activator:TakeDamageInfo(Dmg)
 		else
 			activator:PickupObject(self)
 		end
@@ -125,6 +144,10 @@ if(SERVER)then
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
+	function ENT:Melt()
+		if(self.SoundLoop)then self.SoundLoop:Stop() end
+		self:SetState(STATE_MELTED)
+	end
 	local function CanSee(ent1,ent2)
 		local Tr=util.TraceLine({
 			start=ent1:GetPos(),
@@ -138,51 +161,54 @@ if(SERVER)then
 		local self=ent -- copied from the fallout particle
 		for key,obj in pairs(ents.FindInSphere(self:LocalToWorld(self:OBBCenter()),200))do
 			if(not(obj==self)and(CanSee(self,obj)))then
-				if(JMod.ShouldDamageBiologically(obj))then
-					local DmgAmt=self.DmgAmt or math.random(2,10)*JMod.Config.NuclearRadiationMult
-					if(obj:WaterLevel()>=3)then DmgAmt=DmgAmt/3 end
-					---
-					local Dmg,Helf=DamageInfo(),obj:Health()
-					Dmg:SetDamageType(DMG_RADIATION)
-					Dmg:SetDamage(DmgAmt)
-					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.Owner or self)
-					Dmg:SetDamagePosition(obj:GetPos())
-					if(obj:IsPlayer())then
-						DmgAmt=DmgAmt/4
-						Dmg:SetDamage(DmgAmt)
-						obj:TakeDamageInfo(Dmg)
-						---
-						JMod.GeigerCounterSound(obj,math.Rand(.1,.5))
-						JMod.Hint(v,"radioactive fallout")
-						timer.Simple(math.Rand(.1,2),function()
-							if(IsValid(obj))then JMod.GeigerCounterSound(obj,math.Rand(.1,.5)) end
-						end)
-						---
-						local DmgTaken=Helf-obj:Health()
-						if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
-							obj.EZirradiated=(obj.EZirradiated or 0)+DmgTaken*3
-							timer.Simple(10,function()
-								if(IsValid(obj) and obj:Alive())then JMod.Hint(obj,"radiation sickness") end
-							end)
-						end
-					else
-						obj:TakeDamageInfo(Dmg)
-					end
+				if((JMod.ShouldDamageBiologically(obj))and(math.random(1,5)==1))then
+					JMod.FalloutIrradiate(self,obj)
 				end
 			end
 		end
 	end
-	local function DetermineShieldingFactor(startPos,endPos,source,victim)
-		local FirstTrace=util.TraceLine({
+	local function DetermineShieldingFactor(startPos,targetPos,source,victim,vec,dist)
+		-- you may ask why we pass vec and dist into this function when we already have the positions
+		-- and the answer is f*** you
+		-- just kidding, the answer is efficiency
+		-- vector math and roots are expensive ops; we wanna reuse the results as much as we can
+		local TraceOne=util.TraceLine({
 			start=startPos,
-			endpos=endPos,
+			endpos=targetPos,
 			filter={source,victim},
-			mask=MASK_SHOT
+			mask=MASK_SHOT+MASK_WATER
 		})
-		if not(FirstTrace.Hit)then return 0 end
-		return 1
+		if not(TraceOne.Hit)then return 0 end
+		local Dir=vec:GetNormalized()
+		-- remember, the Dir goes TOWARD the victim
+		local CheckPos,Shieldin,OverallShieldinFactor=TraceOne.HitPos+Dir,0,.05
+		local Failsafe=0 -- for development purposes, because crashing the game is annoying
+		while(Failsafe<1000)do
+			Failsafe=Failsafe+1
+			---
+			if(CheckPos:Distance(targetPos)<=4)then break end
+			if(bit.band(util.PointContents(CheckPos),CONTENTS_SOLID)==CONTENTS_SOLID)then
+				-- apparently, we need to deal with map obstacles separately
+				local MatShieldFactor=JMod.RadiationShieldingValues[MAT_DIRT]
+				Shieldin=Shieldin+MatShieldFactor*OverallShieldinFactor
+			else
+				local Tr=util.TraceLine({
+					start=CheckPos,
+					endpos=targetPos,
+					filter={source,victim},
+					mask=MASK_SHOT+MASK_WATER
+				})
+				if not(Tr.Hit)then break end
+				local MatShieldFactor=JMod.RadiationShieldingValues[Tr.MatType] or 0
+				Shieldin=Shieldin+MatShieldFactor*OverallShieldinFactor
+				CheckPos=Tr.HitPos
+			end
+			if(Shieldin>=1)then break end
+			CheckPos=CheckPos+Dir*2
+		end
+		return math.min(Shieldin,1)
 	end
+	local Frac=0
 	function ENT:Think()
 		local State,Time,SelfPos=self:GetState(),CurTime(),self:GetPos()+Vector(0,0,15)
 		if(State==STATE_TICKING)then
@@ -190,7 +216,7 @@ if(SERVER)then
 			self:NextThink(Time+1)
 			return true
 		elseif(State==STATE_IRRADIATING)then
-			local Range,SelfPos,SelfInWater=2000,self:GetPos()+Vector(0,0,10),self:WaterLevel()>=3
+			local Range,SelfPos=2500,self:GetPos()+Vector(0,0,10)
 			for k,v in pairs(ents.FindInSphere(SelfPos,Range))do
 				if not(v.JModDontIrradiate)then
 					local TargPos,Playa,NPC=v:LocalToWorld(v:OBBCenter()),v:IsPlayer(),v:IsNPC()
@@ -199,39 +225,37 @@ if(SERVER)then
 					local DistFrac=1-(Dist/Range)
 					local DmgAmt=math.Rand(.1,1)*JMod.Config.NuclearRadiationMult*DistFrac^2
 					if((Playa and v:Alive())or(NPC))then
-						if(v:WaterLevel()>=3 or SelfInWater)then DmgAmt=DmgAmt/4 end
+						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v,Vec,Dist) -- shielding calcs are spensive, only run them for players/NPCs
+						DmgAmt=DmgAmt*(1-Shielding)
 						---
-						local Shielding=DetermineShieldingFactor(SelfPos,TargPos,self,v) -- shielding calcs are spensive, only run them for players/NPCs
-						DmgAmt=DmgAmt/(1+Shielding*9)
-						---
-						if(DmgAmt<.1)then return end
-						---
-						local Dmg,Helf=DamageInfo(),v:Health()
-						Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
-						Dmg:SetDamage(DmgAmt/3)
-						Dmg:SetInflictor(self)
-						Dmg:SetAttacker(self.Owner or self)
-						Dmg:SetDamagePosition(TargPos)
-						v:TakeDamageInfo(Dmg)
-						---
-						local Dmg2=DamageInfo()
-						Dmg2:SetDamageType(DMG_RADIATION)
-						Dmg2:SetDamage(DmgAmt/4)
-						Dmg2:SetInflictor(self)
-						Dmg2:SetAttacker(self.Owner or self)
-						Dmg2:SetDamagePosition(TargPos)
-						v:TakeDamageInfo(Dmg2)
-						---
-						if(Playa)then
-							JMod.GeigerCounterSound(v,DmgAmt)
-							JMod.Hint(v,"neutron radiation")
+						if(DmgAmt>=.1)then
+							local Dmg,Helf=DamageInfo(),v:Health()
+							Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
+							Dmg:SetDamage(DmgAmt/3)
+							Dmg:SetInflictor(self)
+							Dmg:SetAttacker(self.Owner or self)
+							Dmg:SetDamagePosition(TargPos)
+							v:TakeDamageInfo(Dmg)
 							---
-							local DmgTaken=Helf-v:Health()
-							if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
-								v.EZirradiated=(v.EZirradiated or 0)+DmgTaken*5 -- fuckin ouch
-								timer.Simple(10,function()
-									if(IsValid(v) and v:Alive())then JMod.Hint(v,"radiation sickness") end
-								end)
+							local Dmg2=DamageInfo()
+							Dmg2:SetDamageType(DMG_RADIATION)
+							Dmg2:SetDamage(DmgAmt/4)
+							Dmg2:SetInflictor(self)
+							Dmg2:SetAttacker(self.Owner or self)
+							Dmg2:SetDamagePosition(TargPos)
+							v:TakeDamageInfo(Dmg2)
+							---
+							if(Playa)then
+								JMod.GeigerCounterSound(v,DmgAmt)
+								JMod.Hint(v,"neutron radiation")
+								---
+								local DmgTaken=Helf-v:Health()
+								if((DmgTaken>0)and(JMod.Config.NuclearRadiationSickness))then
+									v.EZirradiated=(v.EZirradiated or 0)+DmgTaken*5 -- fuckin ouch
+									timer.Simple(10,function()
+										if(IsValid(v) and v:Alive())then JMod.Hint(v,"radiation sickness") end
+									end)
+								end
 							end
 						end
 					else
@@ -246,13 +270,27 @@ if(SERVER)then
 						local Phys=v:GetPhysicsObject()
 						if(IsValid(Phys) and Phys:GetMass()>=10)then
 							if(math.Rand(0,3)<DmgAmt)then
-								-- todo
+								timer.Simple(math.random(30,300),function()
+									if(IsValid(v))then ReEmitRadiation(v) end
+								end)
 							end
 						end
 					end
 				end
 			end
+			local Ht=self:GetHeat()
+			if(Ht>=300)then
+				self:Melt()
+				return
+			end
+			self:SetHeat(Ht+1)
 			self:NextThink(Time+.1)
+			return true
+		elseif(State==STATE_MELTED)then
+			if(math.random(1,2)==1)then ReEmitRadiation(self) end
+			self:SetHeat(self:GetHeat()-1)
+			if(self:GetHeat()<=0)then self:Remove() return end
+			self:NextThink(Time+.2)
 			return true
 		end
 	end
@@ -265,6 +303,7 @@ elseif(CLIENT)then
 		self.Cap1=JMod.MakeModel(self,"models/props_phx/construct/metal_dome360.mdl","phoenix_storms/fender_chrome",.09,nil)
 		self.Cap2=JMod.MakeModel(self,"models/props_phx/construct/metal_dome360.mdl","phoenix_storms/fender_chrome",.09,nil)
 		self.Glass=JMod.MakeModel(self,"models/hunter/blocks/cube025x025x025.mdl","phoenix_storms/glass",1,nil)
+		self.Slag=JMod.MakeModel(self,"models/props_debris/concrete_spawnchunk001d.mdl","models/shiny")
 	end
 	local function GetTimeString(seconds)
 		local Minutes,Seconds=math.floor(seconds/60),math.floor(seconds%60)
@@ -274,11 +313,36 @@ elseif(CLIENT)then
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:DrawTranslucent()
-		local Irradiatin=self:GetState()==STATE_IRRADIATING
-		--self:DrawModel()
+		local State=self:GetState()
+		local Irradiatin=State==STATE_IRRADIATING
 		local Pos,Ang=self:GetPos(),self:GetAngles()
 		local Up,Right,Forward=self:GetUp(),self:GetForward(),self:GetRight()
-		--(mdl,pos,ang,scale,color,mat,fullbright,translucency)
+		if(State==STATE_MELTED)then
+			local Frac=self:GetHeat()/300
+			local Col=JMod.GetBlackBodyColor(Frac)
+			--(mdl,pos,ang,scale,color,mat,fullbright,translucency)
+			JMod.RenderModel(self.Slag,Pos+Forward*30-Right*30-Up*4,Ang,Vector(1,1,1),Vector(Col.r/255,Col.g/255,Col.b/255),"models/shiny",Frac>.2)
+			if(Frac>.2)then
+				local Vec=(EyePos()-Pos):GetNormalized()
+				local SpritePos=Pos+Vec*10
+				local QuadPos=Pos-Vector(0,0,5.5)
+				render.SetMaterial(GlowSprite)
+				render.DrawSprite(SpritePos,500,500,Color(Col.r,Col.g,Col.b,20*Frac))
+				render.DrawQuadEasy(QuadPos,Vector(0,0,1),500,500,Color(Col.r,Col.g,Col.b,40*Frac))
+				DLight=DynamicLight(self:EntIndex())
+				if(DLight)then
+					DLight.Brightness=Frac
+					DLight.Decay=7500
+					DLight.DieTime=CurTime()+.1
+					DLight.Pos=self:GetPos()+Vector(1,1,-20)
+					DLight.Size=300
+					DLight.r=Col.r
+					DLight.g=Col.g
+					DLight.b=Col.b
+				end
+			end
+			return
+		end
 		local UpAmt=(Irradiatin and -.5) or 1.5
 		JMod.RenderModel(self.Frame,Pos+Right*7,Ang,nil,Vector(.5,.5,.5))
 		JMod.RenderModel(self.Base,Pos+Right*1-Up*6,Ang)

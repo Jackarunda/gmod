@@ -146,12 +146,43 @@ JMod.EZ_STATE_WARNING=5
 
 JMod.RadiationShieldingValues={
 	[MAT_METAL]=.2,
-	[MAT_CONCRETE]=.1,
-	[MAT_DIRT]=.05,
-	[MAT_SAND]=.05,
-	[MAT_SNOW]=.05,
-	[MAT_WOOD]=.02,
-	[MAT_GLASS]=.02
+	[MAT_CONCRETE]=.15,
+	[MAT_DIRT]=.1,
+	[MAT_GRASS]=.1,
+	[MAT_SAND]=.07,
+	[MAT_SNOW]=.07,
+	[MAT_TILE]=.06,
+	[MAT_WOOD]=.05,
+	[MAT_GLASS]=.05,
+	[MAT_PLASTIC]=.04
+}
+
+-- this table is just a bunch of assumptions
+-- so that we have something to fall back on for camoflauge
+-- obviously hand-picked colors will be better, but hey
+JMod.HitMatColors={
+	[MAT_ANTLION]={Color(194,193,109)},
+	[MAT_BLOODYFLESH]={Color(116,57,50)},
+	[MAT_CONCRETE]={Color(202,202,202)},
+	[MAT_DIRT]={Color(142,132,122)},
+	[MAT_EGGSHELL]={Color(255,255,230)},
+	[MAT_FLESH]={Color(136,64,64)},
+	[MAT_GRATE]={Color(148,132,122)},
+	[MAT_ALIENFLESH]={Color(220,31,31)},
+	[MAT_SNOW]={Color(242,242,242),"models/debug/debugwhite"},
+	[MAT_PLASTIC]={Color(242,242,242)},
+	[MAT_METAL]={Color(144,124,110)},
+	[MAT_SAND]={Color(244,222,197)},
+	[MAT_FOLIAGE]={Color(67,72,40)},
+	[MAT_COMPUTER]={Color(242,242,242)},
+	[MAT_SLOSH]={Color(108,85,58)},
+	[MAT_TILE]={Color(255,255,230)},
+	[MAT_GRASS]={Color(134,158,93)},
+	[MAT_VENT]={Color(144,124,110)},
+	[MAT_WOOD]={Color(190,171,141)},
+	[MAT_DEFAULT]={Color(128,128,128)},
+	[MAT_GLASS]={Color(200,200,255)},
+	[MAT_WARPSHIELD]={Color(255,255,255)}
 }
 
 -- we have to load locales before any other files

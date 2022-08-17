@@ -8,6 +8,7 @@ ENT.PrintName="EZ Mini Naval Mine"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
+ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1

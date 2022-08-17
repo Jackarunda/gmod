@@ -10,6 +10,7 @@ ENT.Model="models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material="models/mats_jack_nades/smokesignal"
 ENT.Color=Color(128, 128, 128)
 ENT.SpoonScale=2
+ENT.JModGUIcolorable=true
 if(SERVER)then
 	function ENT:Use(activator,activatorAgain,onOff)
 		if(self.Exploded)then return end
@@ -21,9 +22,10 @@ if(SERVER)then
 			if(State<0)then return end
 			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
 			if(State==JMod.EZ_STATE_OFF and Alt)then
-				net.Start("JMod_SignalNade")
+				JMod.Owner(self,activator)
+				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
-				net.Send(Dude)
+				net.Send(activator)
 			end
 			JMod.ThrowablePickup(Dude,self,self.HardThrowStr,self.SoftThrowStr)
 		end

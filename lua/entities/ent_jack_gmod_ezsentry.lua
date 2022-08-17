@@ -9,13 +9,14 @@ ENT.Information="glhfggwpezpznore"
 ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
-ENT.SpawnHeight=35
+ENT.SpawnHeight=15
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.AMMO,
     JMod.EZ_RESOURCE_TYPES.POWER,
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
+ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 -- config --
 ENT.AmmoTypes={
