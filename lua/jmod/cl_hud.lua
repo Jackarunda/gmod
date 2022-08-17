@@ -139,6 +139,31 @@ hook.Add("RenderScreenspaceEffects","JMOD_SCREENSPACE",function()
 					["$pp_colour_mulb"]=0
 				})
 				if not(ply.EZflashbanged)then DrawMotionBlur(FT*50,.8,.01) end
+			elseif(ply.EZarmor.effects.nightVisionWP)then
+				if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
+				DrawColorModify({
+					["$pp_colour_addr"]=0,
+					["$pp_colour_addg"]=0,
+					["$pp_colour_addb"]=0,
+					["$pp_colour_brightness"]=.01,
+					["$pp_colour_contrast"]=7,
+					["$pp_colour_colour"]=0,
+					["$pp_colour_mulr"]=0,
+					["$pp_colour_mulg"]=0,
+					["$pp_colour_mulb"]=0
+				})
+				DrawColorModify({
+					["$pp_colour_addr"]=0,
+					["$pp_colour_addg"]=.2,
+					["$pp_colour_addb"]=.3,
+					["$pp_colour_brightness"]=-.1,
+					["$pp_colour_contrast"]=.8,
+					["$pp_colour_colour"]=1,
+					["$pp_colour_mulr"]=0,
+					["$pp_colour_mulg"]=0,
+					["$pp_colour_mulb"]=0
+				})
+				if not(ply.EZflashbanged)then DrawMotionBlur(FT*50,.8,.01) end
 			elseif(ply.EZarmor.effects.thermalVision)then
 				if not(GogglesWereOn)then GogglesWereOn=true;GoggleDarkness=100 end
 				DrawColorModify({
