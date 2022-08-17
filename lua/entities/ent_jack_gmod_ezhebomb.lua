@@ -4,7 +4,7 @@ ENT.Type="anim"
 ENT.Author="Jackarunda"
 ENT.Category="JMod - EZ Explosives"
 ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Bomb"
+ENT.PrintName="EZ Thin-Skinned Bomb"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
@@ -151,8 +151,8 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),700,120)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1600,120) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),800,120)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1800,120) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,500))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
@@ -164,8 +164,6 @@ if(SERVER)then
 			local Tr=util.QuickTrace(SelfPos+Vector(0,0,100),Vector(0,0,-400))
 			if(Tr.Hit)then util.Decal("BigScorch",Tr.HitPos+Tr.HitNormal,Tr.HitPos-Tr.HitNormal) end
 		end)
-		---
-		JMod.FragSplosion(self,SelfPos,15000,300,8000,self.Owner or game.GetWorld())
 		---
 		self:Remove()
 		timer.Simple(.1,function() ParticleEffect(Eff,SelfPos,Angle(0,0,0)) end)
@@ -206,7 +204,7 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/jmod/mk82_gbu.mdl")
+		self.Mdl=ClientsideModel("models/gbombs/250lbgp.mdl")
 		self.Mdl:SetModelScale(.9,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
@@ -227,5 +225,5 @@ elseif(CLIENT)then
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezbomb","EZ Bomb")
+	language.Add("ent_jack_gmod_ezhebomb","EZ Thin-Skinned Bomb")
 end

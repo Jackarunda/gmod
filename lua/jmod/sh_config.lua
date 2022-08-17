@@ -759,27 +759,38 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Big Bomb"]={
 				results="ent_jack_gmod_ezbigbomb",		
 				craftingReqs={	
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=190,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=400,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=600
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=400
 				},
 				sizescale=1.5,
 				category="Explosives",
 				craftingType="toolbox",
 				description="Bigger than the EZ bomb, but smaller than the Mega."
 			},	
-			["EZ Bomb"]={			
-				results="ent_jack_gmod_ezbomb",		
-				craftingReqs={	
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
+			["EZ Bomb"]={
+				results="ent_jack_gmod_ezbomb",
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=250,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=300
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=250
 				},
 				sizescale=1,
 				category="Explosives",
 				craftingType="toolbox",
-				description="Ol' reliable, a good way to send the enemy running for the bunkers."	
-			},	
+				description="Ol' reliable, a good way to send the enemy running for the bunkers."
+			},
+			["EZ Thin-Skinned Bomb"]={
+				results="ent_jack_gmod_ezhebomb",
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=250
+				},
+				sizescale=1,
+				category="Explosives",
+				craftingType="toolbox",
+				description="Standard HE bomb with a very thin shell that produces no significant fragmentation."
+			},
 			["EZ Cluster Bomb"]={			
 				results="ent_jack_gmod_ezclusterbomb",		
 				craftingReqs={
@@ -862,9 +873,9 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Anything on the surface of the enemy bunker is gonna be gone, and they'll need to cleanup the bunker."		
 			},
-			["EZ Micro Black Hole Generator"]={			
-				results="ent_jack_gmod_ezmbhg",		
-				craftingReqs={	
+			["EZ Micro Black Hole Generator"]={
+				results="ent_jack_gmod_ezmbhg",
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=300,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS]=25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=100,
@@ -937,12 +948,12 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Shoots enemies so you don't have to! Just remember to refill the ammo and power."
 			},	
-			["EZ Small Bomb"]={			
+			["EZ Small Bomb"]={
 				results="ent_jack_gmod_ezsmallbomb",		
-				craftingReqs={	
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=140,
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=100,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=10,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=150
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES]=100
 				},
 				sizeScale=1,
 				category="Explosives",
