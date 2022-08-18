@@ -276,12 +276,14 @@ hook.Add("PostDrawTranslucentRenderables","JMOD_POSTDRAWTRANSLUCENTRENDERABLES",
 	end
 end)
 
-net.Receive("JMod_LuaConfigSync",function()
+net.Receive("JMod_LuaConfigSync",function(dataLength)
+	local Payload=net.ReadData(dataLength)
+	Payload=util.JSONToTable(util.Decompress(Payload))
 	JMod.LuaConfig=JMod.LuaConfig or {}
-	JMod.LuaConfig.ArmorOffsets=net.ReadTable()
+	JMod.LuaConfig.ArmorOffsets=Payload.ArmorOffsets
 	JMod.Config=JMod.Config or {}
-	JMod.Config.AltFunctionKey=net.ReadInt(32)
-	JMod.Config.WeaponSwayMult=net.ReadFloat()
+	JMod.Config.AltFunctionKey=Payload.AltFunctionKey
+	JMod.Config.WeaponSwayMult=Payload.WeaponSwayMult
 	if(tobool(net.ReadBit()))then
 		for k,v in pairs(player.GetAll())do
 			JMod.CopyArmorTableToPlayer(v)

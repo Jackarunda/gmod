@@ -411,23 +411,24 @@ hook.Add("Think","JMOD_SERVER_THINK",function()
 	---
 	if(NextSync<Time)then
 		NextSync=Time+30
-		net.Start("JMod_LuaConfigSync")
-		net.WriteTable((JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {})
-		net.WriteInt(JMod.Config.AltFunctionKey,32)
-		net.WriteFloat(JMod.Config.WeaponSwayMult)
-		net.WriteBit(false)
-		net.Broadcast()
+		JMod.LuaConfigSync(false)
 	end
 end)
 
+function JMod.LuaConfigSync(copyArmorOffsets)
+	local ToSend={}
+	ToSend.ArmorOffsets=(JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {}
+	ToSend.AltFunctionKey=JMod.Config.AltFunctionKey
+	ToSend.WeaponSwayMult=JMod.Config.WeaponSwayMult
+	ToSend.CopyArmorOffsets=copyArmorOffsets or false
+	net.Start("JMod_LuaConfigSync")
+	net.WriteData(util.Compress(util.TableToJSON(ToSend)))
+	net.Broadcast()
+end
+
 concommand.Add("jmod_force_lua_config_sync",function(ply,cmd,args)
 	if(ply and not ply:IsSuperAdmin())then return end
-	net.Start("JMod_LuaConfigSync")
-	net.WriteTable((JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {})
-	net.WriteInt(JMod.Config.AltFunctionKey,32)
-	net.WriteFloat(JMod.Config.WeaponSwayMult)
-	net.WriteBit(true)
-	net.Broadcast()
+	JMod.LuaConfigSync(true)
 end, nil, "Manually forces the Lua Config for Jmod to sync.")
 
 concommand.Add("jacky_trace_debug",function(ply)
