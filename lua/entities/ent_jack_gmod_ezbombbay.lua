@@ -34,7 +34,6 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
-		--self.Entity:SetMaterial("models/jmod/bomb_bay/exterior_bomb_bay.vmt")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -44,7 +43,7 @@ if(SERVER)then
 		timer.Simple(.01, function()
 			self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
 			--self:SetModelScale(2, 0.1)
-			self:GetPhysicsObject():SetMass(100)
+			self:GetPhysicsObject():SetMass(300)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
