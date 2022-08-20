@@ -150,7 +150,7 @@ if(SERVER)then
 			droppedBomb:SetState(0)
 		end
 		table.remove(self.Bombs, slotNum)
-		if(#self.Bombs <= 0)then self:SetState(STATE_EMPTY) end
+		if(#self.Bombs <= 0)then self:SetState(STATE_EMPTY) self.EZdroppableBombLoadTime=nil end
 		self:UpdateWireOutputs()
 	end
 	function ENT:Break()

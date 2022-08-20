@@ -9,6 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.EZbombBaySize = 25
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()

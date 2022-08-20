@@ -24,6 +24,7 @@ ENT.ExplosionPower=150
 ENT.DragMultiplier=4
 ENT.DroppableImmuneTime=0
 ENT.ExplProof=false
+ENT.EZbombBaySize = 50
 ---
 hook.Add("EntityTakeDamage", "DroppedBombImunnity", function(target, dmginfo)
 	if (IsValid(target) and target.ExplProof == true and dmginfo:GetAttacker() == target.Owner) then
