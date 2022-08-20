@@ -41,8 +41,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
-			self:GetPhysicsObject():SetMass(100)
+			self:GetPhysicsObject():SetMass(300)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
