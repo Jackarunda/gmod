@@ -11,6 +11,7 @@ ENT.AdminSpawnable=false
 ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
 ENT.Bombs = {}
+ENT.RoomLeft = 100
 ---
 
 local STATE_BROKEN,STATE_EMPTY,STATE_HOLDING=-1, 0, 1
@@ -52,11 +53,9 @@ if(SERVER)then
 			self.Outputs=WireLib.CreateOutputs(self, {"State [NORMAL]","LastBomb [STRING]","RoomLeft [NORMAL]"}, {"-1 is broken \n 0 is empty \n 1 is loaded","The last loaded bomb","How much room there is left inside"})
 		end
 	end
-	function ENT:UpdateWireOutputs(roomLeft)
+	function ENT:UpdateWireOutputs()
 		if (istable(WireLib))then
-			if(roomLeft)then
-				WireLib.TriggerOutput(self, "RoomLeft", roomLeft)
-			end
+				WireLib.TriggerOutput(self, "RoomLeft", self.RoomLeft)
 			if(#self.Bombs > 0)then
 				WireLib.TriggerOutput(self, "LastBomb", tostring(self.Bombs[#self.Bombs][1]))
 			else
@@ -111,19 +110,22 @@ if(SERVER)then
 		end
 	end
     function ENT:LoadBomb(bomb)
-		local RoomLeft = 100
+		self.RoomLeft = 100
+		local LRoomLeft = self.RoomLeft
 		for k, bombInfo in pairs(self.Bombs) do
-			RoomLeft = RoomLeft - bombInfo[2]
+			LRoomLeft = LRoomLeft - bombInfo[2]
 		end
 		local BombClass = bomb:GetClass()
-		if (RoomLeft >= bomb.EZbombBaySize)then
+		if (LRoomLeft >= bomb.EZbombBaySize)then
 			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
 			end)
-			self:UpdateWireOutputs(RoomLeft)
+			self:UpdateWireOutputs()
 		end
+		self.RoomLeft = LRoomLeft
 		self:SetState(STATE_HOLDING)
+		self.EZdroppableBombLoadTime=CurTime()
     end
 	function ENT:BombRelease(slotNum, arm, ply)
 		local NumOBombs = #self.Bombs

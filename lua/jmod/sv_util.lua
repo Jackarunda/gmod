@@ -67,15 +67,24 @@ end
 function JMod.EZ_BombDrop(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
 	local Boms={}
+	local Bays={}
 
 	for k, ent in pairs(ents.GetAll()) do
 		if ent.EZdroppableBombArmedTime and IsValid(ent.Owner) and ent.Owner == ply then
 			table.insert(Boms, ent)
+		elseif ent.EZdroppableBombLoadTime and IsValid(ent.Owner) and ent.Owner == ply then
+			table.insert(Bays, ent)
 		end
 	end
 
 	local FirstBom, Earliest=nil, 9e9
 
+	for k, bay in pairs(Bays) do
+		if ((bay.EZdroppableBombLoadTime < Earliest) and (#bay.Bombs > 0)) then
+			FirstBom=bay
+			Earliest=bay.EZdroppableBombLoadTime
+		end
+	end
 	for k, bom in pairs(Boms) do
 		if ((bom.EZdroppableBombArmedTime < Earliest) and ((constraint.HasConstraints(bom)) or not (bom:GetPhysicsObject():IsMotionEnabled()))) then
 			FirstBom=bom
@@ -86,12 +95,15 @@ function JMod.EZ_BombDrop(ply)
 	if (IsValid(FirstBom)) then
 		-- knock knock it's pizza time
 		FirstBom:EmitSound("buttons/button6.wav", 75, 80)
-
 		timer.Simple(.25, function()
 			if (IsValid(FirstBom)) then
-				constraint.RemoveAll(FirstBom)
-				FirstBom:GetPhysicsObject():EnableMotion(true)
-				FirstBom:GetPhysicsObject():Wake()
+				if(FirstBom.EZdroppableBombArmedTime)then
+					constraint.RemoveAll(FirstBom)
+					FirstBom:GetPhysicsObject():EnableMotion(true)
+					FirstBom:GetPhysicsObject():Wake()
+				elseif(FirstBom.EZdroppableBombLoadTime)then
+					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
+				end
 			end
 		end)
 	end
