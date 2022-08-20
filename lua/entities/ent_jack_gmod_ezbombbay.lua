@@ -34,7 +34,6 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
-		--self.Entity:SetMaterial("models/jmod/bomb_bay/exterior_bomb_bay.vmt")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -42,7 +41,7 @@ if(SERVER)then
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
 		timer.Simple(.01, function()
-			--self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
+			self:GetPhysicsObject():SetMaterial("floating_metal_barrel")
 			self:GetPhysicsObject():SetMass(100)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
@@ -50,8 +49,21 @@ if(SERVER)then
 		---
 		self:SetState(STATE_EMPTY)
 		if istable(WireLib) then
-			self.Inputs=WireLib.CreateInputs(self, {"Drop","DropDud"}, {"Drops the specified bomb, input 0 to drop them all","Drops bomb unarmed"})
-			self.Outputs=WireLib.CreateOutputs(self, {"Bombs","LastBomb","RoomLeft"}, {"Table of bombs contained","The last loaded bomb","How much room there is left inside"})
+			self.Inputs=WireLib.CreateInputs(self, {"Drop [NORMAL]","DropDud [NORMAL]"}, {"Drops the specified bomb, input 0 to drop them all","Drops bomb unarmed"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State [NORMAL]","LastBomb [STRING]","RoomLeft [NORMAL]"}, {"-1 is broken \n 0 is empty \n 1 is loaded","The last loaded bomb","How much room there is left inside"})
+		end
+	end
+	function ENT:UpdateWireOutputs(roomLeft)
+		if (istable(WireLib))then
+			if(roomLeft)then
+				WireLib.TriggerOutput(self, "RoomLeft", roomLeft)
+			end
+			if(#self.Bombs > 0)then
+				WireLib.TriggerOutput(self, "LastBomb", tostring(self.Bombs[#self.Bombs][1]))
+			else
+				WireLib.TriggerOutput(self, "LastBomb", "")
+			end
+				WireLib.TriggerOutput(self, "State", self:GetState())
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -88,10 +100,10 @@ if(SERVER)then
 			if(data.Speed > 50)then
 				self:EmitSound("Metal_Box.ImpactHard")
 			end
+			if(self:GetState() == STATE_BROKEN)then return end
 			if(data.Speed > 2000)then
 				self:Break()
 			end
-			if(self:GetState() == STATE_BROKEN)then return end
             if(IsValid(ent))then
                 if(ent.EZbombBaySize)then
                     self:LoadBomb(ent)
@@ -110,20 +122,20 @@ if(SERVER)then
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
 			end)
+			self:UpdateWireOutputs(RoomLeft)
 		end
-		if (istable(WireLib)) then
-			WireLib.TriggerOutput(self, "RoomLeft", RoomLeft)
-			WireLib.TriggerOutput(self, "LastBomb", BombClass)
-		end
+		self:SetState(STATE_HOLDING)
     end
 	function ENT:BombRelease(slotNum, arm, ply)
-		slotNum = slotNum or #self.Bombs
-		arm = arm or true
+		local NumOBombs = #self.Bombs
+		slotNum = slotNum or NumOBombs
 		ply = ply or self.Owner or game.GetWorld()
-		if (#self.Bombs == 0)then return end
+
+		if (NumOBombs <= 0)then return end
+		if (slotNum == 0 or slotNum > NumOBombs)then return end
+
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local Pos, Ang = self:GetPos(), self:GetAngles()
-		--print(tostring(self.Bombs[slotNum][1]))
 		local droppedBomb = ents.Create(self.Bombs[slotNum][1])
 		droppedBomb:SetPos(Pos + Up*-50 + Forward*-6 + Right*6)
 		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
@@ -137,6 +149,8 @@ if(SERVER)then
 			droppedBomb:SetState(0)
 		end
 		table.remove(self.Bombs, slotNum)
+		if(#self.Bombs <= 0)then self:SetState(STATE_EMPTY) end
+		self:UpdateWireOutputs()
 	end
 	function ENT:Break()
 		if(self:GetState() == STATE_BROKEN)then return end
