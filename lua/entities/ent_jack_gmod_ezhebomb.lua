@@ -134,8 +134,8 @@ if(SERVER)then
 		JMod.Sploom(Att,SelfPos,150)
 		---
 		util.ScreenShake(SelfPos,1000,3,2,4000)
-		local Eff="500lb_ground"
-		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="500lb_air" end
+		local Eff="100lb_ground"
+		if not(util.QuickTrace(SelfPos,Vector(0,0,-300),{self}).HitWorld)then Eff="100lb_air" end
 		for i=1,3 do
 			sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",SelfPos+VectorRand()*1000,160,math.random(80,110))
 		end
