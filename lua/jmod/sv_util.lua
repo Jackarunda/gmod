@@ -87,7 +87,7 @@ function JMod.EZ_BombDrop(ply)
 		-- knock knock it's pizza time
 		FirstBom:EmitSound("buttons/button6.wav", 75, 80)
 
-		timer.Simple(.5, function()
+		timer.Simple(.01, function()
 			if (IsValid(FirstBom)) then
 				constraint.RemoveAll(FirstBom)
 				FirstBom:GetPhysicsObject():EnableMotion(true)
