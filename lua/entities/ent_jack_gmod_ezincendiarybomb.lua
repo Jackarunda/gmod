@@ -52,7 +52,7 @@ if(SERVER)then
 		self.FreefallTicks=0
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
-			self.Outputs=WireLib.CreateOutputs(self, {"State", "Guided[ANY]"}, {"1 is armed \n 0 is not \n -1 is broken", "guided=1 or true"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
 	end
 	function ENT:TriggerInput(iname, value)
@@ -169,7 +169,6 @@ if(SERVER)then
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
 		local Phys=self:GetPhysicsObject()
 		if((self:GetState()==STATE_ARMED)and(Phys:GetVelocity():Length()>400)and not(self:IsPlayerHolding())and not(constraint.HasConstraints(self)))then
