@@ -244,7 +244,7 @@ elseif(CLIENT)then
 	2	CounterWeight
 	--]]
 	function ENT:Draw()
-		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
+		local Time,SelfPos,SelfAng,State,Grade,Typ=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade(),self:GetResourceType()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		if(State==STATE_RUNNING)then
 			self.DriveMomentum=math.Clamp(self.DriveMomentum+FT/3,0,0.4)
@@ -280,6 +280,8 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-50)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
+				draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined(Typ or "N/A","JMod-Display",250,-30,Color(100,255,100,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/200
 				local R,G,B=JMod.GoodBadColor(ElecFrac)

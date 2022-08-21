@@ -86,6 +86,20 @@ if(SERVER)then
 		Eff:SetNormal(self:GetRight())
 		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
+		if(math.random(1,4)==2)then
+			local FireVec=VectorRand()+Vector(0,0,2)
+			local Flame=ents.Create("ent_jack_gmod_eznapalm")
+			Flame:SetPos(SelfPos+Vector(0, 0, 10))
+			Flame:SetAngles(FireVec:Angle())
+			Flame:SetOwner(self.Owner or game.GetWorld())
+			JMod.Owner(Flame, self.Owner or self)
+			Flame.SpeedMul=1
+			Flame.Creator=self
+			Flame.HighVisuals=true
+			Flame:Spawn()
+			Flame:Activate()
+		end
+
 		if(self.DepositKey and JMod.NaturalResourceTable[self.DepositKey])then
 			if(JMod.DepleteNaturalResource(self.DepositKey,.1))then self:Remove() end
 		else
