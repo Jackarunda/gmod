@@ -190,6 +190,9 @@ if(SERVER)then
 		end
 	end
 	function ENT:FlingProp(mdl,force)
+		if not(util.IsValidModel(mdl))then
+			return
+		end
 		local Prop=ents.Create("prop_physics")
 		local Size=(self:OBBMaxs()-self:OBBMins()):Length()
 		Prop:SetPos(self:LocalToWorld(self:OBBCenter())+VectorRand()*math.random(1,Size/2))
@@ -237,7 +240,8 @@ if(SERVER)then
 				self.Pod:GetDriver():ExitVehicle()
 			end
 		end
-		self:Remove()
+		if(self.OnDestroy)then self:OnDestroy(dmginfo) end
+		SafeRemoveEntityDelayed(self, 0.1)
 	end
 	function ENT:SFX(str,absPath)
 		if(absPath)then

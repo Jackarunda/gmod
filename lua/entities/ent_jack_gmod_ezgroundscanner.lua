@@ -207,7 +207,7 @@ if(SERVER)then
 							if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=20)then
 								local Class=v:GetClass()
 								if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
-									if(math.Round((math.random(1, 3000)))>=3000)then
+									if(math.Round((math.random(1,3000)))>=3000)then
 										table.insert(Results,{
 											typ="SMILEY",
 											pos=AnomalyPos,
@@ -327,7 +327,7 @@ elseif(CLIENT)then
     						surface.SetMaterial(SmileyIcon)
 							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
 					else
-						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X-Radius,-Y-45*MetersToPixels-Radius,Radius*2,true,"JMod-Display-S",200,v.rate)
+						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X,-Y-45*MetersToPixels,Radius*2,true,"JMod-Display-S",200,v.rate)
 					end
 				end
 				--
