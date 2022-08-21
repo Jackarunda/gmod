@@ -65,7 +65,7 @@ if(SERVER)then
 					local Dmg=DamageInfo()
 					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetDamageForce(Vector(0 ,0, 500000) * DistanceFactor) -- some random upward force
+					Dmg:SetDamageForce(Vector(0 ,0, 50000) * DistanceFactor) -- some random upward force
 					Dmg:SetAttacker(game.GetWorld()) -- the earth is mad at you
 					Dmg:SetInflictor(game.GetWorld())
 					Dmg:SetDamagePosition(ent:GetPos())
@@ -74,30 +74,22 @@ if(SERVER)then
 			end
 		end
 	end
-	local AmountToBurn = 0
 	function ENT:Think()
 		local Time = CurTime()
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
+
+		if(self:WaterLevel()>=3)then self:Remove() return end
 
 		local Eff=EffectData()
 		Eff:SetOrigin(self:GetPos()+self:GetRight()*10)
 		Eff:SetNormal(self:GetRight())
 		util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true)
 
-		AmountToBurn = AmountToBurn + 0.02
-		if(AmountToBurn >= 1)then
-			if(self.DepositKey > 0)then
-				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-				if(amtLeft > 0)then 
-					JMod.NaturalResourceTable[self.DepositKey].amt = math.Round(amtLeft - AmountToBurn) 
-				else
-					SafeRemoveEntity(self)
-				end
-			else
-				SafeRemoveEntity(self)
-			end
-			AmountToBurn = AmountToBurn - 1
+		if(self.DepositKey and JMod.NaturalResourceTable[self.DepositKey])then
+			if(JMod.DepleteNaturalResource(self.DepositKey,.1))then self:Remove() end
+		else
+			self:Remove()
 		end
 		
 		self:BurnStuff()

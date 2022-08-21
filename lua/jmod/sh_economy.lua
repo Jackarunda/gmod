@@ -810,6 +810,24 @@ if(SERVER)then
 			end
 		end)
 	end
+	function JMod.DepleteNaturalResource(key,amt)
+		-- return true if the deposit was eliminated
+		local Tab=JMod.NaturalResourceTable[key]
+		if not(Tab)then return true end
+		if(Tab.rate)then return false end
+		Tab.amt = math.Round(Tab.amt - amt,4)
+		if(Tab.amt<=0)then
+			table.remove(JMod.NaturalResourceTable,key)
+			-- if a resource deposit has been depleted, we need to shut off all machines on it
+			for k,v in pairs(ents.GetAll())do
+				if(v.DepositKey and v.GetState and v.TurnOff)then
+					if(v.DepositKey==key and v:GetState()>0) then v:TurnOff() end
+				end
+			end
+			return true
+		end
+		return false
+	end
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
 		JMod.GenerateNaturalResources()
 	end)

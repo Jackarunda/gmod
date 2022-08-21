@@ -12,12 +12,14 @@ ENT.EZconsumes={"power","parts"}
 ENT.WhitelistedResources = {"water", "oil"}
 ENT.DepositKey = 0
 ENT.MaxElectricity = 200
-local STATE_BROKEN,STATE_OFF,STATE_INOPERABLE,STATE_RUNNING=-1,0,1,2
+ENT.SpawnHeight=100
+local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
 	self:NetworkVar("Float",0,"Progress")
 	self:NetworkVar("Float",1,"Electricity")
+	self:NetworkVar("String",0,"ResourceType")
 end
 if(SERVER)then
 	function ENT:Initialize()
@@ -26,23 +28,22 @@ if(SERVER)then
 		--self:SetMaterial("models/debug/debugwhite")
 		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)	
+		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		self:SetPos(self:GetPos()+Vector(0,0,100)) -- Don't ask why
+		self:SetAngles(Angle(0,0,-90))
 		---
 		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(3000)
 			self:GetPhysicsObject():Wake()
-			-- attach us to the ground
-			self:TryPlant()
 		end)
 		self:SetGrade(1)
 		self:SetProgress(0)
 		self:SetElectricity(200)
 		self:SetState(STATE_OFF)
 		self.Durability=300
+		self.NextCalcThink=0
 		-- TODO: make upgradable
 	end
 	function ENT:UpdateDepositKey()
@@ -71,57 +72,38 @@ if(SERVER)then
 			end
 		end
 		if(ClosestDeposit)then 
-			self.DepositKey = ClosestDeposit 
+			self.DepositKey = ClosestDeposit
+			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
 			--print("Our deposit is "..self.DepositKey) --DEBUG
-		else 
-			self.DepositKey = 0 
+		else
+			self.DepositKey = nil
 			--print("No valid deposit") --DEBUG
-		end
-	end
-	function ENT:TryPlant()
-		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
-		if((Tr.Hit)and(Tr.HitWorld))then
-			local Yaw=self:GetAngles().y
-			self:SetAngles(Angle(0,Yaw,-90))
-			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
-			--
-			local GroundIsSolid=true
-			for i=1,50 do
-				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
-			end
-			self:UpdateDepositKey()
-			if(GroundIsSolid) and (self.DepositKey > 0)then
-				self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false)
-				self:SetState(STATE_OFF)
-				self:SetProgress(0)
-			else
-				self:SetState(STATE_INOPERABLE)
-			end
 		end
 	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(STATE_RUNNING)
-			timer.Simple(.5,function()
-				if(IsValid(self))then
-					self.SoundLoop=CreateSound(self,"snd_jack_pumpjack.wav")
-					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(60)
-				end
-			end)
+			self.SoundLoop=CreateSound(self,"snds_jack_gmod/pumpjack_start_loop.wav")
+			self.SoundLoop:SetSoundLevel(65)
+			self.SoundLoop:Play()
+			self.SoundLoop:SetSoundLevel(65)
+			self:SetProgress(0)
 		else
 			JMod.Hint(activator,"nopower")
 		end
 	end
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
+		if(self.SoundLoop)then
+			self.SoundLoop:Stop()
+		end
+		self:EmitSound("snds_jack_gmod/pumpjack_stop.wav")
 	end
 	function ENT:Use(activator)
 		local State=self:GetState()
-		JMod.Hint(activator,"oil derrick")
 		local OldOwner=self.Owner
 		JMod.Owner(self,activator)
+		JMod.Colorify(self)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -130,10 +112,30 @@ if(SERVER)then
 		if(State==STATE_BROKEN)then
 			JMod.Hint(activator,"destroyed",self)
 			return
-		elseif(State==STATE_INOPERABLE)then
-			self:TryPlant()
 		elseif(State==STATE_OFF)then
-			self:TurnOn(activator)
+			local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
+			if((Tr.Hit)and(Tr.HitWorld))then
+				local Yaw=self:GetAngles().y
+				self:SetAngles(Angle(0,Yaw,-90))
+				self:SetPos(Tr.HitPos+Tr.HitNormal*95)
+				--
+				local GroundIsSolid=true
+				for i=1,50 do
+					local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
+					if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
+				end
+				self:UpdateDepositKey()
+				if(GroundIsSolid and self.DepositKey)then
+					if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false) end
+					if(IsValid(self.Weld))then
+						self:TurnOn(activator)
+					else
+						JMod.Hint(activator,"machine mounting problem")
+					end
+				else
+					JMod.Hint(activator,"oil derrick")
+				end
+			end
 		elseif(State==STATE_RUNNING)then
 			self:TurnOff()
 		end
@@ -142,62 +144,56 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 	function ENT:Think()
-		if not(IsValid(self.Weld))then
-			if(self:GetState()>0)then self:SetState(STATE_INOPERABLE) end
+		local State,Time=self:GetState(),CurTime()
+		if(self.NextCalcThink<Time)then
+			self.NextCalcThink=Time+1
+			if(State==STATE_BROKEN)then
+				if(self.SoundLoop)then self.SoundLoop:Stop() end
+				if(self:GetElectricity()>0)then
+					if(math.random(1,4)==2)then self:DamageSpark() end
+				end
+				return
+			elseif(State==STATE_RUNNING)then
+				if(self:GetElectricity()<=0)then self:TurnOff() return end
+				if not(self.DepositKey and JMod.NaturalResourceTable[self.DepositKey])then self:TurnOff() return end
+				if not(IsValid(self.Weld))then self.Weld=nil;self:TurnOff() return end
+				self:ConsumeElectricity(.5)
+				-- This is just the rate at which we pump
+				local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]^2
+				-- Here's where we do the rescource deduction, and barrel production
+				-- If it's a flow (i.e. water)
+				if(JMod.NaturalResourceTable[self.DepositKey].rate)then
+					-- We get the rate
+					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					-- and set the progress to what it was last tick + our ability * the flowrate
+					self:SetProgress(self:GetProgress() + pumpRate*flowRate)
+					-- If the progress exceeds 100
+					if(self:GetProgress() >= 100)then
+						-- Spawn barrel
+						self:SpawnBarrel(100, self.DepositKey)
+						self:SetProgress(0)
+					end
+				else
+					self:SetProgress(self:GetProgress() + pumpRate)
+					if(self:GetProgress() >= 100)then
+						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+						self:SpawnBarrel(amtToPump)
+						self:SetProgress(0)
+						JMod.DepleteNaturalResource(self.DepositKey,amtToPump)
+					end
+				end
+			end
 		end
-		local State=self:GetState()
-		if(State==STATE_BROKEN)then
-			if(self.SoundLoop)then self.SoundLoop:Stop() end
-			if(self:GetElectricity()>0)then
-				if(math.random(1,4)==2)then self:DamageSpark() end
-			end
-			return
-		elseif(State==STATE_INOPERABLE)then
-			if(self.SoundLoop)then self.SoundLoop:Stop() end
-			return
-		elseif(State==STATE_RUNNING)then
-			if(self:GetElectricity()<=0)then self:TurnOff() return end
-			self:ConsumeElectricity()
-			-- This is just the rate at which we pump
-			local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
-			-- Here's where we do the rescource deduction, and barrel production
-			-- If it's a flow (i.e. water)
-			if(JMod.NaturalResourceTable[self.DepositKey].rate)then
-				-- We get the rate
-				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				-- and set the progress to what it was last tick + our ability * the flowrate
-				self:SetProgress(self:GetProgress() + pumpRate*flowRate)
-				-- If the progress exceeds 100
-				if(self:GetProgress() >= 100)then
-					-- Spawn barrel
-					self:SpawnBarrel(100, self.DepositKey)
-					-- And subtract 100 from the progress (so as to not lose any overflow)
-					self:SetProgress(self:GetProgress() - 100)
-				end
-			else 
-				-- Get the amount of resouces left in the ground
-				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-				--print("Amount left: "..amtLeft) --DEBUG
-				-- If there's nothing left, we shouldn't do anything
-				if(amtLeft <= 0)then self:SetState(STATE_INOPERABLE) return end
-				-- While progress is less than 100
-				self:SetProgress(self:GetProgress() + pumpRate)
-				amtLeft = amtLeft - pumpRate
-				if(self:GetProgress() >= 100)then
-					local amtToPump = math.min(amtLeft, 100)
-					self:SpawnBarrel(amtToPump, self.DepositKey)
-					self:SetProgress(self:GetProgress() - 100)
-					JMod.NaturalResourceTable[self.DepositKey].amt = amtLeft - amtToPump
-				end
-			end
+		if(State==STATE_RUNNING)then
+
 		end
 		self:NextThink(CurTime()+1)
 		return true
 	end
-	function ENT:SpawnBarrel(amt, deposit)
+	function ENT:SpawnBarrel(amt)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
 		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 15)
-		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.NaturalResourceTable[deposit].typ])
+		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[self:GetResourceType()])
 		Liquid:SetPos(SelfPos+Forward*120-Right*90+RandomArea)
 		Liquid:Spawn()
 		JMod.Owner(self.Owner)
@@ -219,7 +215,7 @@ if(SERVER)then
 			end)
 		end
 		if not(self.DepositKey > 0)then return end
-		if(JMod.NaturalResourceTable[self.DepositKey].typ == "oil")then
+		if(self:GetResourceType() == "oil")then
 			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
 				createOilFire()
 			elseif(dmginfo:IsDamageType(DMG_BLAST+DMG_BLAST_SURFACE+DMG_PLASMA+DMG_ENERGYBEAM)and(math.random(0, 100)>50))then
@@ -277,7 +273,7 @@ elseif(CLIENT)then
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		if(DetailDraw)then
-			if((Closeness<20000)and(State==STATE_INOPERABLE or State==STATE_RUNNING))then
+			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),180)

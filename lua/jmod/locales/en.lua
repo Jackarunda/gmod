@@ -145,7 +145,7 @@ JMod.Locales["en"]={
     ["hint ent_jack_gmod_ezparts use"]="Bump parts into broken devices to fix them",
     ["hint ent_jack_gmod_ezpropellant"]="Propellant is used to craft various munitions",
     ["hint resource manage"]="ALT+SHIFT+E to split resources, tap together to combine",
-    ["hint oil derrick"]="oil derrick must be built on solid ground, above an oil reserve",
+    ["hint oil derrick"]="ground pump must be on solid ground above a liquid resource reserve",
     ["hint ground scanner"]="scanner can detect natural resources and metal objects, but must be on the ground and stationary",
     ["hint weapon steadiness"]="hold ALT while aiming to focus and steady your aim",
     ["hint weapon drop"]="press BACKSPACE to drop weapon",
@@ -174,6 +174,7 @@ JMod.Locales["en"]={
     ["hint stick to self"]="press ALT+SHIFT+E to stick this item to yourself",
     ["hint admin cleanup"]="Cleaned up everything!",
 	["hint chonky boi"] = "You've hit 150kg in armour. You'll be making quite a bit of noise!",
+    ["hint machine mounting problem"] = "there was a problem affixing the machine to the ground, please move it and try again",
 	--commands
     ["command jmod_cl_reloadconfig"]="re-reads the lua client config from harddrive to ingame memory",
     ["command jmod_debug_showgasparticles"]="causes gas and fallout particles to render as white balls",
