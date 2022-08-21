@@ -182,6 +182,7 @@ if(SERVER)then
 						JMod.DepleteNaturalResource(self.DepositKey,amtToPump)
 					end
 				end
+				JMod.EmitAIsound(self:GetPos(),300,.5,256)
 			end
 		end
 		if(State==STATE_RUNNING)then

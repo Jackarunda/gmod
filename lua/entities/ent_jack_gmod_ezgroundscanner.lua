@@ -163,6 +163,7 @@ if(SERVER)then
 			self:ConsumeElectricity(.3)
 			if(self:CanScan())then
 				self:SetProgress(math.Clamp(self:GetProgress()+self.ScanSpeed^1.5/3,0,100))
+				JMod.EmitAIsound(self:GetPos(),300,.5,256)
 				if(self:GetProgress()>=100)then
 					self:FinishScan()
 					self:SetProgress(0)

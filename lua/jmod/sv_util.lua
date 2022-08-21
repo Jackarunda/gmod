@@ -152,6 +152,19 @@ function JMod.BlastThatDoor(ent, vel)
 	end
 end
 
+-- https://developer.valvesoftware.com/wiki/Ai_sound
+function JMod.EmitAIsound(pos,vol,dur,typ)
+	local snd=ents.Create("ai_sound")
+	snd:SetPos(pos)
+	snd:SetKeyValue("volume",tostring(vol))
+	snd:SetKeyValue("duration",tostring(dur))
+	snd:SetKeyValue("soundtype",tostring(typ))
+	snd:Spawn()
+	snd:Activate()
+	snd:Fire("EmitAISound")
+	SafeRemoveEntityDelayed(snd,dur+.5)
+end
+
 function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction)
 	-- fragmentation/shrapnel simulation
 	local Eff=EffectData()

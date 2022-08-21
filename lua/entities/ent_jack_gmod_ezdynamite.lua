@@ -130,6 +130,7 @@ if(SERVER)then
 			Fsh:SetNormal(self:GetForward())
 			util.Effect("eff_jack_fuzeburn",Fsh,true,true)
 			self.Entity:EmitSound("snd_jack_sss.wav",65,math.Rand(90,110))
+			JMod.EmitAIsound(self:GetPos(),500,.5,8)
 			self.Fuze=self.Fuze-.7
 			if(self.Fuze<=0)then self:Detonate();return end
 			self:NextThink(Time+.05)

@@ -60,6 +60,7 @@ if (SERVER) then
 		if (self.NextSound < Time) then
 			self.NextSound=Time+1
 			self:EmitSound(table.Random(self.TypeInfo[2]), 65, math.random(90, 110))
+			JMod.EmitAIsound(self:GetPos(),300,.5,8)
 		end
 
 		if (self.NextEffect < Time) then
