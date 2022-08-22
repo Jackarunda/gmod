@@ -810,6 +810,16 @@ if(SERVER)then
 			end
 		end)
 	end
+	function JMod.DepleteNaturalResource(key,amt)
+		local Tab=JMod.NaturalResourceTable[key]
+		if not(Tab)then return end
+		if(Tab.rate)then return end
+		Tab.amt = math.Round(Tab.amt - amt,4)
+		if(Tab.amt<=0)then
+			-- we don't use table.remove because the index shifting causes too many other problems
+			JMod.NaturalResourceTable[key]=nil
+		end
+	end
 	hook.Add("InitPostEntity","JMod_InitPostEntityServer",function()
 		JMod.GenerateNaturalResources()
 	end)
@@ -820,6 +830,14 @@ if(SERVER)then
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
+	--[[concommand.Add("jmod_debug_remove_naturalresource",function(ply,cmd,args)
+		if not(GetConVar("sv_cheats"):GetBool())then return end
+		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
+		for i in #args do
+			local depositToRemove = table.remove(JMod.NaturalResourceTable, args[i])
+			print("Removed deposit #: " .. args[i])
+		end
+	end, nil, "Removes one or more natural resource deposits")]]--
 elseif(CLIENT)then
 	local ShowNaturalResources=false
 	net.Receive("JMod_NaturalResources",function()

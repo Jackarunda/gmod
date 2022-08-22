@@ -207,6 +207,7 @@ if(SERVER)then
 		if(self.NextDisarmFail<CurTime())then self.DisarmProgress=0 end
 		if(self:GetState()==STATE_ARMED)then
 			self:EmitSound("weapons/c4/c4_beep1.wav",50,100)
+			JMod.EmitAIsound(self:GetPos(),200,1,8)
 			self:SetTimer(self:GetTimer()-1)
 			if(self:GetTimer()<=0)then self:Detonate() return end
 			self:NextThink(CurTime()+1)

@@ -181,8 +181,9 @@ JMod.Hints = {
 	["ent_jack_gmod_ezparts use"] = {LangKey = "hint ent_jack_gmod_ezparts use"},
 	["ent_jack_gmod_ezpropellant"] = {LangKey = "hint ent_jack_gmod_ezpropellant"},
 	["resource manage"] = {LangKey = "hint resource manage"},
-	["oil derrick"] = {LangKey = "hint oil derrick"},
+	["oil derrick"] = {LangKey = "hint oil derrick", RepeatCount = 50},
 	["ground scanner"] = {LangKey = "hint ground scanner", Time=5},
+	["machine mounting problem"] = {LangKey = "hint machine mounting problem", RepeatCount = 20},
 
 	-- Weapons
 	["weapon steadiness"] = {LangKey = "hint weapon steadiness"},

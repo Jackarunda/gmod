@@ -95,6 +95,7 @@ function JMod.EZ_BombDrop(ply)
 	if (IsValid(FirstBom)) then
 		-- knock knock it's pizza time
 		FirstBom:EmitSound("buttons/button6.wav", 75, 80)
+
 		timer.Simple(.25, function()
 			if (IsValid(FirstBom)) then
 				if(FirstBom.EZdroppableBombArmedTime)then
@@ -162,6 +163,19 @@ function JMod.BlastThatDoor(ent, vel)
 			end
 		end)
 	end
+end
+
+-- https://developer.valvesoftware.com/wiki/Ai_sound
+function JMod.EmitAIsound(pos,vol,dur,typ)
+	local snd=ents.Create("ai_sound")
+	snd:SetPos(pos)
+	snd:SetKeyValue("volume",tostring(vol))
+	snd:SetKeyValue("duration",tostring(dur))
+	snd:SetKeyValue("soundtype",tostring(typ))
+	snd:Spawn()
+	snd:Activate()
+	snd:Fire("EmitAISound")
+	SafeRemoveEntityDelayed(snd,dur+.5)
 end
 
 function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction)
@@ -788,3 +802,15 @@ concommand.Add("jacky_sandbox",function(ply,cmd,args)
 		ply:SetHealth(Helf+1000)
 	end
 end, nil, "Sets us to Sandbox god mode thing.")
+
+concommand.Add("jmod_debug_destroy", function(ply,cmd,args)
+	if not(GetConVar("sv_cheats"):GetBool())then return end
+	if not(ply:IsSuperAdmin())then return end
+	local Tr=ply:GetEyeTrace()
+	if not(Tr.Entity)then print("No Entity to destroy") return end
+	local ent = Tr.Entity
+	if(ent.Destroy)then 
+		print("Destroying ent: "..tostring(ent)) 
+		ent:Destroy(DamageInfo()) 
+	else print("Entity does not have a destroy function") end
+end, nil, "Destroys the current JMod thing you are looking at")
