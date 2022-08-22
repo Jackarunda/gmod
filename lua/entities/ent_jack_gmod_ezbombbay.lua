@@ -12,12 +12,6 @@ ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
 ENT.Bombs = {}
 ENT.RoomLeft = 100
----
-
-local STATE_BROKEN,STATE_EMPTY,STATE_HOLDING=-1, 0, 1
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-end
 
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
@@ -33,6 +27,7 @@ if(SERVER)then
 		--util.Effect("propspawn",effectdata)
 		return ent
 	end
+
 	function ENT:Initialize()
 		self.Entity:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -47,12 +42,12 @@ if(SERVER)then
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
 		---
-		self:SetState(STATE_EMPTY)
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Drop [NORMAL]","DropDud [NORMAL]"}, {"Drops the specified bomb, input 0 to drop them all","Drops bomb unarmed"})
-			self.Outputs=WireLib.CreateOutputs(self, {"State [NORMAL]","LastBomb [STRING]","RoomLeft [NORMAL]"}, {"-1 is broken \n 0 is empty \n 1 is loaded","The last loaded bomb","How much room there is left inside"})
+			self.Outputs=WireLib.CreateOutputs(self, {"LastBomb [STRING]","RoomLeft [NORMAL]"}, {"The last loaded bomb","How much room there is left inside"})
 		end
 	end
+
 	function ENT:UpdateWireOutputs()
 		if (istable(WireLib))then
 				WireLib.TriggerOutput(self, "RoomLeft", self.RoomLeft)
@@ -61,9 +56,9 @@ if(SERVER)then
 			else
 				WireLib.TriggerOutput(self, "LastBomb", "")
 			end
-				WireLib.TriggerOutput(self, "State", self:GetState())
 		end
 	end
+
 	function ENT:TriggerInput(iname, value)
 		if(iname == "Drop" and value > 0) then
 			self:BombRelease(value, true)
@@ -91,6 +86,7 @@ if(SERVER)then
 			end
 		end
 	end
+
 	function ENT:PhysicsCollide(data, physobj)
 		if not(IsValid(self))then return end
         local ent = data.HitEntity
@@ -98,9 +94,9 @@ if(SERVER)then
 			if(data.Speed > 50)then
 				self:EmitSound("Metal_Box.ImpactHard")
 			end
-			if(self:GetState() == STATE_BROKEN)then return end
+			if(self.Destroyed)then return end
 			if(data.Speed > 2000)then
-				self:Break()
+				self:Destroy()
 			end
             if(IsValid(ent))then
                 if(ent.EZbombBaySize)then
@@ -109,24 +105,23 @@ if(SERVER)then
             end
 		end
 	end
+
     function ENT:LoadBomb(bomb)
 		self.RoomLeft = 100
-		local LRoomLeft = self.RoomLeft
 		for k, bombInfo in pairs(self.Bombs) do
-			LRoomLeft = LRoomLeft - bombInfo[2]
+			self.RoomLeft = self.RoomLeft - bombInfo[2]
 		end
 		local BombClass = bomb:GetClass()
-		if (LRoomLeft >= bomb.EZbombBaySize)then
+		if (self.RoomLeft >= bomb.EZbombBaySize)then
 			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
 			end)
-			self:UpdateWireOutputs()
 		end
-		self.RoomLeft = LRoomLeft
-		self:SetState(STATE_HOLDING)
 		self.EZdroppableBombLoadTime=CurTime()
+		self:UpdateWireOutputs()
     end
+
 	function ENT:BombRelease(slotNum, arm, ply)
 		local NumOBombs = #self.Bombs
 		slotNum = slotNum or NumOBombs
@@ -150,27 +145,27 @@ if(SERVER)then
 			droppedBomb:SetState(0)
 		end
 		table.remove(self.Bombs, slotNum)
-		if(#self.Bombs <= 0)then self:SetState(STATE_EMPTY) self.EZdroppableBombLoadTime=nil end
+		if(#self.Bombs <= 0)then self.EZdroppableBombLoadTime=nil end
 		self:UpdateWireOutputs()
 	end
-	function ENT:Break()
-		if(self:GetState() == STATE_BROKEN)then return end
-		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
-		for i= 1, 20 do
-			self:DamageSpark()
+
+	function ENT:Destroy(dmginfo)
+		if(self.Destroyed)then return end
+		self.Destroyed=true
+		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
+		for i=1,20 do self:DamageSpark() end
+		for i = 1, #self.Bombs do
+			timer.Simple(0.2, function()
+				if(IsValid(self))then
+					self:BombRelease(i, false, self.Owner)
+				end
+			end)
 		end
-		if(#self.Bombs > 0)then
-			for i = 0, #self.Bombs do
-				timer.Simple(0.1*i, function()
-					if(IsValid(self))then
-						self:BombRelease(i, false)
-					end
-				end)
-			end
-		end
-		SafeRemoveEntityDelayed(self, 10)
+		timer.Simple(2, function()
+			SafeRemoveEntity(self)
+		end)
 	end
+
 	function ENT:DamageSpark()
 		local effectdata=EffectData()
 		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0, 10))
@@ -181,23 +176,11 @@ if(SERVER)then
 		util.Effect("Sparks", effectdata, true, true)
 		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
+
 	function ENT:Use(activator)
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		if(Alt)then
-			self:BombRelease(#self.Bombs, false)
-		else
-			self:BombRelease(#self.Bombs, true)
-		end
+		self:BombRelease(#self.Bombs, false)
 	end
-	function ENT:OnRemove()
-		--
-	end
-	function ENT:EZdetonateOverride(detonator)
-		self:Detonate()
-	end
-	function ENT:Think()
-        self:NextThink(0.1)
-	end
+
 elseif(CLIENT)then
  --
 end
