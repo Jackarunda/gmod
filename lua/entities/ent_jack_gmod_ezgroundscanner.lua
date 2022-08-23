@@ -155,7 +155,7 @@ if(SERVER)then
 			self.Snd2:Stop()
 			self.Snd3:Stop()
 			if(self:GetElectricity()>0)then
-				if(math.random(1,4)==2)then self:DamageSpark() end
+				if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 			end
 			return
 		elseif(State==JMod.EZ_STATE_ON)then

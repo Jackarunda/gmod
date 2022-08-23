@@ -545,7 +545,7 @@ if(SERVER)then
 				end
 			elseif(State==STATE_BROKEN)then
 				if(Electricity>0)then
-					if(math.random(1,4)==2)then self:DamageSpark() end
+					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 				end
 			elseif(State==STATE_WHINING)then
 				self:Whine(true)
