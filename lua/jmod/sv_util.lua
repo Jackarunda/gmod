@@ -58,6 +58,7 @@ function JMod.EZ_WeaponLaunch(ply)
 
 		timer.Simple(.2, function()
 			if (IsValid(FirstWep)) then
+				FirstWep.DropOwner=ply
 				FirstWep:Launch()
 			end
 		end)
@@ -102,12 +103,24 @@ function JMod.EZ_BombDrop(ply)
 					constraint.RemoveAll(FirstBom)
 					FirstBom:GetPhysicsObject():EnableMotion(true)
 					FirstBom:GetPhysicsObject():Wake()
+					FirstBom.DropOwner=ply
 				elseif(FirstBom.EZdroppableBombLoadTime)then
 					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
 				end
 			end
 		end)
 	end
+end
+
+function JMod.DamageSpark(ent)
+	local effectdata=EffectData()
+	effectdata:SetOrigin(ent:GetPos()+ent:GetUp()*10+VectorRand()*math.random(0,10))
+	effectdata:SetNormal(VectorRand())
+	effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
+	effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
+	effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
+	util.Effect("Sparks",effectdata,true,true)
+	ent:EmitSound("snd_jack_turretfizzle.wav",70,100)
 end
 
 -- copied from Homicide

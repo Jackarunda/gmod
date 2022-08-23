@@ -158,7 +158,7 @@ if(SERVER)then
 				Dam:SetDamageType(DMG_CRUSH)
 				Dam:SetDamagePosition(data.HitPos)
 				Dam:SetDamageForce(data.TheirOldVelocity)
-				self:DamageSpark()
+				JMod.DamageSpark(self)
 				self:TakeDamageInfo(Dam)
 			end
 		end
@@ -169,17 +169,6 @@ if(SERVER)then
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
-	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*50+VectorRand()*math.random(0,30))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-		self:ConsumeElectricity(1)
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
@@ -212,7 +201,7 @@ if(SERVER)then
 		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
 		self:SetState(JMod.EZ_STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,20 do self:DamageSpark() end
+		for i=1,20 do JMod.DamageSpark(self) end
 		self.Durability=0
 		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20,50)
 		for i=1,GibNum do
@@ -230,7 +219,7 @@ if(SERVER)then
 		if(self.Destroyed)then return end
 		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,20 do self:DamageSpark() end
+		for i=1,20 do JMod.DamageSpark(self) end
 		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10,100)
 		for j=1,GibNum do
 			self:FlingProp(table.Random(self.PropModels),Force)

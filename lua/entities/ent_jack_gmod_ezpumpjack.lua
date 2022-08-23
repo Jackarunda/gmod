@@ -150,7 +150,7 @@ if(SERVER)then
 			if(State==STATE_BROKEN)then
 				if(self.SoundLoop)then self.SoundLoop:Stop() end
 				if(self:GetElectricity()>0)then
-					if(math.random(1,4)==2)then self:DamageSpark() end
+					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 				end
 				return
 			elseif(State==STATE_RUNNING)then

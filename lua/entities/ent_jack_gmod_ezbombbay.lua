@@ -107,6 +107,7 @@ if(SERVER)then
 	end
 
     function ENT:LoadBomb(bomb)
+		if not((IsValid(bomb))and(bomb:IsPlayerHolding()))then return end
 		self.RoomLeft = 100
 		for k, bombInfo in pairs(self.Bombs) do
 			self.RoomLeft = self.RoomLeft - bombInfo[2]
@@ -114,6 +115,7 @@ if(SERVER)then
 		local BombClass = bomb:GetClass()
 		if (self.RoomLeft >= bomb.EZbombBaySize)then
 			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
+			self:EmitSound("snd_jack_metallicload.wav",65,90)
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
 			end)
@@ -137,6 +139,7 @@ if(SERVER)then
 		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
 		droppedBomb:SetVelocity(self:GetVelocity())
 		JMod.Owner(droppedBomb, ply)
+		droppedBomb.DropOwner=ply
 		droppedBomb:Spawn()
 		droppedBomb:Activate()
 		if(arm)then
@@ -149,11 +152,18 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 	end
 
+	function ENT:OnTakeDamage(dmginfo)
+		self.Entity:TakePhysicsDamage(dmginfo)
+		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
+			self:Destroy(dmginfo)
+		end
+	end
+
 	function ENT:Destroy(dmginfo)
 		if(self.Destroyed)then return end
 		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,20 do self:DamageSpark() end
+		for i=1,20 do JMod.DamageSpark(self) end
 		for i = 1, #self.Bombs do
 			timer.Simple(0.2, function()
 				if(IsValid(self))then
@@ -164,17 +174,6 @@ if(SERVER)then
 		timer.Simple(2, function()
 			SafeRemoveEntity(self)
 		end)
-	end
-
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0, 10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
-		util.Effect("Sparks", effectdata, true, true)
-		self:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
 	end
 
 	function ENT:Use(activator)
