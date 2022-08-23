@@ -151,8 +151,8 @@ if(SERVER)then
 			end
 		end
 		---
-		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),800,120)
-		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1800,120) end)
+		util.BlastDamage(game.GetWorld(),Att,SelfPos+Vector(0,0,300),700,120)
+		timer.Simple(.25,function() util.BlastDamage(game.GetWorld(),Att,SelfPos,1600,120) end)
 		for k,ent in pairs(ents.FindInSphere(SelfPos,500))do
 			if(ent:GetClass()=="npc_helicopter")then ent:Fire("selfdestruct","",math.Rand(0,2)) end
 		end
