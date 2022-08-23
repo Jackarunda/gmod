@@ -94,7 +94,7 @@ function JMod.EZ_BombDrop(ply)
 
 	if (IsValid(FirstBom)) then
 		-- knock knock it's pizza time
-		FirstBom:EmitSound("buttons/button6.wav", 75, 80)
+		FirstBom:EmitSound("buttons/button6.wav", 75, 120)
 
 		timer.Simple(.25, function()
 			if (IsValid(FirstBom)) then
