@@ -33,7 +33,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x2x025.mdl")
+		self.Entity:SetModel("models/hunter/blocks/cube025x075x025.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -193,30 +193,31 @@ if(SERVER)then
 				--end
 			--end
 		--end
-		JMod.AeroDrag(self,-self:GetRight(),4)
+		JMod.AeroDrag(self,-self:GetRight(),5)
 		self:NextThink(CurTime()+.1)
 		return true
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/gbombs/250lbgp.mdl")
-		self.Mdl:SetModelScale(.9,0)
+		self.Mdl=ClientsideModel("models/jailure/wwii/wwii.mdl")
+		self.Mdl:SetMaterial("models/jmod/jailure/wwii/mainbase.vmt")
+		self.Mdl:SetModelScale(.8,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
-		self.Guided=false
+		--self.Guided=false
 	end
-	function ENT:Think()
+	--[[function ENT:Think()
 		if((not(self.Guided))and(self:GetGuided()))then
 			self.Guided=true
 			self.Mdl:SetBodygroup(0,1)
 		end
-	end
+	end]]--
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
-		Ang:RotateAroundAxis(Ang:Up(),90)
+		Ang:RotateAroundAxis(Ang:Up(),-90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Up()*3-Ang:Right()*6)
+		self.Mdl:SetRenderOrigin(Pos+Ang:Right()*6+Ang:Forward()*15)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end

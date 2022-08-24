@@ -30,7 +30,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/ww2bomb.mdl")
+		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
 		self.Entity:SetMaterial("models/entities/mat_jack_clusterbomb")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
@@ -133,7 +133,7 @@ if(SERVER)then
 		---
 		timer.Simple(0,function()
 			for i=1,50 do
-				local Vel=Vector(math.random(-800,800),math.random(-800,800),0)
+				local Vel=Vector(math.random(-800,800),math.random(-800,800),math.random(-100,100))
 				local Mine=ents.Create("ent_jack_gmod_ezlandmine")
 				JMod.Owner(Mine,Att)
 				Mine:SetPos(Pos+VectorRand()*math.Rand(1,50))
