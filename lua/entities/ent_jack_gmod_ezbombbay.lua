@@ -11,7 +11,6 @@ ENT.AdminSpawnable=false
 ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
 ---
 ENT.Bombs = {}
-ENT.RoomLeft = 100
 
 if(SERVER)then
 	function ENT:SpawnFunction(ply, tr)
@@ -44,13 +43,13 @@ if(SERVER)then
 		---
 		if istable(WireLib) then
 			self.Inputs=WireLib.CreateInputs(self, {"Drop [NORMAL]","DropDud [NORMAL]"}, {"Drops the specified bomb, input 0 to drop them all","Drops bomb unarmed"})
-			self.Outputs=WireLib.CreateOutputs(self, {"LastBomb [STRING]","RoomLeft [NORMAL]"}, {"The last loaded bomb","How much room there is left inside"})
+			self.Outputs=WireLib.CreateOutputs(self, {"LastBomb [STRING]","Amount [NORMAL]"}, {"The last loaded bomb","How many bombs are contained in the bay"})
 		end
 	end
 
 	function ENT:UpdateWireOutputs()
 		if (istable(WireLib))then
-				WireLib.TriggerOutput(self, "RoomLeft", self.RoomLeft)
+				WireLib.TriggerOutput(self, "Amount", #self.Bombs)
 			if(#self.Bombs > 0)then
 				WireLib.TriggerOutput(self, "LastBomb", tostring(self.Bombs[#self.Bombs][1]))
 			else
@@ -98,22 +97,20 @@ if(SERVER)then
 			if(data.Speed > 2000)then
 				self:Destroy()
 			end
-            if(IsValid(ent))then
-                if(ent.EZbombBaySize)then
-                    self:LoadBomb(ent)
-                end
+            if(ent.EZbombBaySize)then
+                self:LoadBomb(ent)
             end
 		end
 	end
 
     function ENT:LoadBomb(bomb)
 		if not((IsValid(bomb))and(bomb:IsPlayerHolding()))then return end
-		self.RoomLeft = 100
+		local RoomLeft = 100
 		for k, bombInfo in pairs(self.Bombs) do
-			self.RoomLeft = self.RoomLeft - bombInfo[2]
+			RoomLeft = RoomLeft - bombInfo[2]
 		end
 		local BombClass = bomb:GetClass()
-		if (self.RoomLeft >= bomb.EZbombBaySize)then
+		if (RoomLeft >= bomb.EZbombBaySize)then
 			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
 			self:EmitSound("snd_jack_metallicload.wav",65,90)
 			timer.Simple(0.1, function()
