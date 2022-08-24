@@ -102,7 +102,8 @@ if(SERVER)then
                 self:LoadBomb(ent)
             end
 		end
-
+	end
+	
     function ENT:LoadBomb(bomb)
 		if not((IsValid(bomb))and(bomb:IsPlayerHolding()))then return end
 		local RoomLeft = 100

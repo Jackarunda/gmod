@@ -587,15 +587,21 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 end
 
 function JMod.Owner(ent, newOwner)
+	--[[
+		1) am i valid? if not, return world
+		2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
+		3) is there .Owner? is it valid? if so, return it
+		4 otherwise return world
+	]]--
 	if not (IsValid(ent)) then return end
 
 	if not (IsValid(newOwner)) then
-		newOwner=game.GetWorld()
+		newOwner = game.GetWorld()
 	end
 
 	local OldOwner=ent.Owner
 	if (OldOwner and (OldOwner == newOwner)) then return end
-	ent.Owner=newOwner
+	ent.Owner = newOwner
 
 	if (CPPI and isfunction(ent.CPPISetOwner)) then
 		ent:CPPISetOwner(newOwner)
