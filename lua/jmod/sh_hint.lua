@@ -138,6 +138,7 @@ JMod.Hints = {
 	["ent_jack_gmod_ezmedkit"] = {LangKey = "hint ent_jack_gmod_ezmedkit"},
 
 	["sentry friends"] = {LangKey = "hint sentry friends"},
+	["bomb bay"] = {LangKey = "hint bomb bay"},
 	-- Armor
 	["armor wear"] = {LangKey = "hint armor wear", Followup = "bind walk"},
 	["armor durability"] = {LangKey = "hint armor durability"},
