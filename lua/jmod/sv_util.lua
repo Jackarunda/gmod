@@ -204,7 +204,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	zReduction=zReduction or 2
 
 	if not JMod.Config.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg*3)
+		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg)
 		return
 	end
 
@@ -237,27 +237,30 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 			local Tr=util.QuickTrace(origin, Dir*fragMaxDist, shooter)
 
 			if (Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets)) then
-				local DmgMul=1
+				local LowFrag=(Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.EZlowFragPlease
+				if((not LowFrag)or(LowFrag and math.random(1,4)==2))then
+					local DmgMul=1
 
-				if (BulletsFired > 200) then
-					DmgMul=2
+					if (BulletsFired > 200) then
+						DmgMul=2
+					end
+
+					local firer=((IsValid(shooter)) and shooter) or game.GetWorld()
+
+					firer:FireBullets({
+						Attacker=attacker,
+						Damage=fragDmg*DmgMul,
+						Force=fragDmg/8*DmgMul,
+						Num=1,
+						Src=origin,
+						Tracer=0,
+						Dir=Dir,
+						Spread=Spred,
+						AmmoType="Buckshot" -- for identification as "fragments"
+					})
+
+					BulletsFired=BulletsFired+1
 				end
-
-				local firer=((IsValid(shooter)) and shooter) or game.GetWorld()
-
-				firer:FireBullets({
-					Attacker=attacker,
-					Damage=fragDmg*DmgMul,
-					Force=fragDmg/8*DmgMul,
-					Num=1,
-					Src=origin,
-					Tracer=0,
-					Dir=Dir,
-					Spread=Spred,
-							  AmmoType="Buckshot" -- for identification as "fragments"
-				})
-
-				BulletsFired=BulletsFired+1
 			end
 		end)
 	end

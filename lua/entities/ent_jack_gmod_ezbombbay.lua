@@ -9,6 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=false
 ---
 ENT.JModPreferredCarryAngles=Angle(0, -90, 0)
+ENT.EZlowFragPlease=true
 ---
 ENT.Bombs = {}
 ENT.RoomLeft = 100
@@ -95,7 +96,7 @@ if(SERVER)then
 				self:EmitSound("Metal_Box.ImpactHard")
 			end
 			if(self.Destroyed)then return end
-			if(data.Speed > 2000)then
+			if(data.Speed > 1500)then
 				self:Destroy()
 			end
             if(IsValid(ent))then
@@ -107,7 +108,7 @@ if(SERVER)then
 	end
 
     function ENT:LoadBomb(bomb)
-		if not((IsValid(bomb))and(bomb:IsPlayerHolding()))then return end
+		if not((IsValid(bomb)and(bomb:IsPlayerHolding()))or(self:IsPlayerHolding()))then return end
 		self.RoomLeft = 100
 		for k, bombInfo in pairs(self.Bombs) do
 			self.RoomLeft = self.RoomLeft - bombInfo[2]
@@ -139,7 +140,7 @@ if(SERVER)then
 		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
 		droppedBomb:SetVelocity(self:GetVelocity())
 		JMod.Owner(droppedBomb, ply)
-		droppedBomb.DropOwner=ply
+		if(arm)then droppedBomb.DropOwner=ply end
 		droppedBomb:Spawn()
 		droppedBomb:Activate()
 		if(arm)then
@@ -154,7 +155,7 @@ if(SERVER)then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if(JMod.LinCh(dmginfo:GetDamage(),60,120))then
+		if(JMod.LinCh(dmginfo:GetDamage(),80,160))then
 			self:Destroy(dmginfo)
 		end
 	end
@@ -177,6 +178,7 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
+		JMod.Hint(activator,"bomb bay")
 		self:BombRelease(#self.Bombs, false)
 	end
 
