@@ -10,6 +10,7 @@ ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,-90,0)
 ENT.EZguidable=true
+ENT.EZbombBaySize = 12
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -32,7 +33,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x2x025.mdl")
+		self.Entity:SetModel("models/hunter/blocks/cube025x075x025.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
@@ -79,21 +80,15 @@ if(SERVER)then
 		self:SetState(STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do
-			self:DamageSpark()
+			JMod.DamageSpark(self)
 		end
 		SafeRemoveEntityDelayed(self,10)
 	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0,10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-	end
 	function ENT:OnTakeDamage(dmginfo)
+		if(IsValid(self.DropOwner))then
+			local Att=dmginfo:GetAttacker()
+			if((IsValid(Att))and(self.DropOwner==Att))then return end
+		end
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(),70,150))then
 			JMod.Owner(self,dmginfo:GetAttacker())
@@ -198,30 +193,31 @@ if(SERVER)then
 				--end
 			--end
 		--end
-		JMod.AeroDrag(self,-self:GetRight(),4)
+		JMod.AeroDrag(self,-self:GetRight(),5)
 		self:NextThink(CurTime()+.1)
 		return true
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.Mdl=ClientsideModel("models/gbombs/250lbgp.mdl")
-		self.Mdl:SetModelScale(.9,0)
+		self.Mdl=ClientsideModel("models/jailure/wwii/wwii.mdl")
+		self.Mdl:SetMaterial("models/jmod/jailure/wwii/mainbase.vmt")
+		self.Mdl:SetModelScale(.8,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
-		self.Guided=false
+		--self.Guided=false
 	end
-	function ENT:Think()
+	--[[function ENT:Think()
 		if((not(self.Guided))and(self:GetGuided()))then
 			self.Guided=true
 			self.Mdl:SetBodygroup(0,1)
 		end
-	end
+	end]]--
 	function ENT:Draw()
 		local Pos,Ang=self:GetPos(),self:GetAngles()
-		Ang:RotateAroundAxis(Ang:Up(),90)
+		Ang:RotateAroundAxis(Ang:Up(),-90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos-Ang:Up()*3-Ang:Right()*6)
+		self.Mdl:SetRenderOrigin(Pos+Ang:Right()*6+Ang:Forward()*15)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end

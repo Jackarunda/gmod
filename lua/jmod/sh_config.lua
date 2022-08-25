@@ -756,6 +756,17 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Heals players so you don't have to get more blood on you."
 			},
+			["EZ Bomb Bay"]={
+				results="ent_jack_gmod_ezbombay",		
+				craftingReqs={	
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=400,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20
+				},
+				sizescale=1.5,
+				category="Other",
+				craftingType="toolbox",
+				description="A bay for safely holding large amounts of bombs."
+			},	
 			["EZ Big Bomb"]={
 				results="ent_jack_gmod_ezbigbomb",		
 				craftingReqs={	

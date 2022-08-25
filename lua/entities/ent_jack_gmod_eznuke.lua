@@ -9,6 +9,9 @@ ENT.Spawnable=true
 ENT.AdminOnly=true
 ---
 ENT.JModPreferredCarryAngles=Angle(90,0,0)
+ENT.EZRackOffset = Vector(0, 0, 10)
+ENT.EZRackAngles = Angle(0, 0, 90)
+ENT.EZbombBaySize = 50
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -83,7 +86,7 @@ if(SERVER)then
 		self:SetState(STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do
-			self:DamageSpark()
+			JMod.DamageSpark(self)
 		end
 		for k=1,10*JMod.Config.NuclearRadiationMult do
 			local Gas=ents.Create("ent_jack_gmod_ezfalloutparticle")
@@ -95,17 +98,11 @@ if(SERVER)then
 		end
 		SafeRemoveEntityDelayed(self,10)
 	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0,10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
-	end
 	function ENT:OnTakeDamage(dmginfo)
+		if(IsValid(self.DropOwner))then
+			local Att=dmginfo:GetAttacker()
+			if((IsValid(Att))and(self.DropOwner==Att))then return end
+		end
 		self.Entity:TakePhysicsDamage(dmginfo)
 		if(JMod.LinCh(dmginfo:GetDamage(),100,200))then
 			if(self:GetState()==STATE_ARMED)then

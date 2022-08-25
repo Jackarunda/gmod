@@ -58,6 +58,7 @@ function JMod.EZ_WeaponLaunch(ply)
 
 		timer.Simple(.2, function()
 			if (IsValid(FirstWep)) then
+				FirstWep.DropOwner=ply
 				FirstWep:Launch()
 			end
 		end)
@@ -67,15 +68,24 @@ end
 function JMod.EZ_BombDrop(ply)
 	if not ((IsValid(ply)) and (ply:Alive())) then return end
 	local Boms={}
+	local Bays={}
 
 	for k, ent in pairs(ents.GetAll()) do
 		if ent.EZdroppableBombArmedTime and IsValid(ent.Owner) and ent.Owner == ply then
 			table.insert(Boms, ent)
+		elseif ent.EZdroppableBombLoadTime and IsValid(ent.Owner) and ent.Owner == ply then
+			table.insert(Bays, ent)
 		end
 	end
 
 	local FirstBom, Earliest=nil, 9e9
 
+	for k, bay in pairs(Bays) do
+		if ((bay.EZdroppableBombLoadTime < Earliest) and (#bay.Bombs > 0)) then
+			FirstBom=bay
+			Earliest=bay.EZdroppableBombLoadTime
+		end
+	end
 	for k, bom in pairs(Boms) do
 		if ((bom.EZdroppableBombArmedTime < Earliest) and ((constraint.HasConstraints(bom)) or not (bom:GetPhysicsObject():IsMotionEnabled()))) then
 			FirstBom=bom
@@ -89,12 +99,28 @@ function JMod.EZ_BombDrop(ply)
 
 		timer.Simple(.25, function()
 			if (IsValid(FirstBom)) then
-				constraint.RemoveAll(FirstBom)
-				FirstBom:GetPhysicsObject():EnableMotion(true)
-				FirstBom:GetPhysicsObject():Wake()
+				if(FirstBom.EZdroppableBombArmedTime)then
+					constraint.RemoveAll(FirstBom)
+					FirstBom:GetPhysicsObject():EnableMotion(true)
+					FirstBom:GetPhysicsObject():Wake()
+					FirstBom.DropOwner=ply
+				elseif(FirstBom.EZdroppableBombLoadTime)then
+					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
+				end
 			end
 		end)
 	end
+end
+
+function JMod.DamageSpark(ent)
+	local effectdata=EffectData()
+	effectdata:SetOrigin(ent:GetPos()+ent:GetUp()*10+VectorRand()*math.random(0,10))
+	effectdata:SetNormal(VectorRand())
+	effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
+	effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
+	effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
+	util.Effect("Sparks",effectdata,true,true)
+	ent:EmitSound("snd_jack_turretfizzle.wav",70,100)
 end
 
 -- copied from Homicide
@@ -178,7 +204,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	zReduction=zReduction or 2
 
 	if not JMod.Config.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg*3)
+		util.BlastDamage(shooter, attacker, origin, fragDmg*8, fragDmg)
 		return
 	end
 
@@ -211,27 +237,30 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 			local Tr=util.QuickTrace(origin, Dir*fragMaxDist, shooter)
 
 			if (Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets)) then
-				local DmgMul=1
+				local LowFrag=(Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.EZlowFragPlease
+				if((not LowFrag)or(LowFrag and math.random(1,4)==2))then
+					local DmgMul=1
 
-				if (BulletsFired > 200) then
-					DmgMul=2
+					if (BulletsFired > 200) then
+						DmgMul=2
+					end
+
+					local firer=((IsValid(shooter)) and shooter) or game.GetWorld()
+
+					firer:FireBullets({
+						Attacker=attacker,
+						Damage=fragDmg*DmgMul,
+						Force=fragDmg/8*DmgMul,
+						Num=1,
+						Src=origin,
+						Tracer=0,
+						Dir=Dir,
+						Spread=Spred,
+						AmmoType="Buckshot" -- for identification as "fragments"
+					})
+
+					BulletsFired=BulletsFired+1
 				end
-
-				local firer=((IsValid(shooter)) and shooter) or game.GetWorld()
-
-				firer:FireBullets({
-					Attacker=attacker,
-					Damage=fragDmg*DmgMul,
-					Force=fragDmg/8*DmgMul,
-					Num=1,
-					Src=origin,
-					Tracer=0,
-					Dir=Dir,
-					Spread=Spred,
-							  AmmoType="Buckshot" -- for identification as "fragments"
-				})
-
-				BulletsFired=BulletsFired+1
 			end
 		end)
 	end
@@ -558,15 +587,21 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 end
 
 function JMod.Owner(ent, newOwner)
+	--[[
+		1) am i valid? if not, return world
+		2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
+		3) is there .Owner? is it valid? if so, return it
+		4 otherwise return world
+	]]--
 	if not (IsValid(ent)) then return end
 
 	if not (IsValid(newOwner)) then
-		newOwner=game.GetWorld()
+		newOwner = game.GetWorld()
 	end
 
 	local OldOwner=ent.Owner
 	if (OldOwner and (OldOwner == newOwner)) then return end
-	ent.Owner=newOwner
+	ent.Owner = newOwner
 
 	if (CPPI and isfunction(ent.CPPISetOwner)) then
 		ent:CPPISetOwner(newOwner)

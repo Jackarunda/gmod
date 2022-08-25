@@ -9,6 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ---
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.EZbombBaySize = 25
 ---
 local STATE_BROKEN,STATE_OFF,STATE_ARMED=-1,0,1
 function ENT:SetupDataTables()
@@ -29,7 +30,7 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/ww2bomb.mdl")
+		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
 		self.Entity:SetMaterial("models/entities/mat_jack_clusterbomb")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
@@ -80,19 +81,9 @@ if(SERVER)then
 		self:SetState(STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do
-			self:DamageSpark()
+			JMod.DamageSpark(self)
 		end
 		SafeRemoveEntityDelayed(self,10)
-	end
-	function ENT:DamageSpark()
-		local effectdata=EffectData()
-		effectdata:SetOrigin(self:GetPos()+self:GetUp()*10+VectorRand()*math.random(0,10))
-		effectdata:SetNormal(VectorRand())
-		effectdata:SetMagnitude(math.Rand(2,4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		self:EmitSound("snd_jack_turretfizzle.wav",70,100)
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
@@ -142,7 +133,7 @@ if(SERVER)then
 		---
 		timer.Simple(0,function()
 			for i=1,50 do
-				local Vel=Vector(math.random(-800,800),math.random(-800,800),0)
+				local Vel=Vector(math.random(-800,800),math.random(-800,800),math.random(-100,100))
 				local Mine=ents.Create("ent_jack_gmod_ezlandmine")
 				JMod.Owner(Mine,Att)
 				Mine:SetPos(Pos+VectorRand()*math.Rand(1,50))

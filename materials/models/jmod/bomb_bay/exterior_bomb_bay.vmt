@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/bomb_bay/diff"
+	"$surfaceprop" "metal"
+	"$bumpmap" "models/jmod/bomb_bay/norm"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.05 .05 .05]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "1"
+	"$phongexponent" "10"
+}
