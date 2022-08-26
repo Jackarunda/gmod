@@ -200,7 +200,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.Mdl=ClientsideModel("models/jailure/wwii/wwii.mdl")
-		self.Mdl:SetMaterial("models/jmod/jailure/wwii/mainbase.vmt")
+		self.Mdl:SetMaterial("models/jmod/jailure/wwii/mainbase")
 		self.Mdl:SetModelScale(.8,0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
