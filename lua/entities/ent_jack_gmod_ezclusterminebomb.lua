@@ -132,15 +132,21 @@ if(SERVER)then
 		local Vel,Pos=self:GetPhysicsObject():GetVelocity(),self:LocalToWorld(self:OBBCenter())
 		---
 		timer.Simple(0,function()
-			for i=1,50 do
-				local Vel=Vector(math.random(-800,800),math.random(-800,800),math.random(-100,100))
-				local Mine=ents.Create("ent_jack_gmod_ezlandmine")
-				JMod.Owner(Mine,Att)
-				Mine:SetPos(Pos+VectorRand()*math.Rand(1,50))
-				Mine.AutoArm=true
-				Mine:Spawn()
-				Mine:Activate()
-				Mine:GetPhysicsObject():SetVelocity(Vel)
+			for i=1,6 do
+				local NumberOfMinesForThisRing,RingThrowDistance,Dir=4+i,6*i,Angle(0,0,0)
+				Dir:RotateAroundAxis(vector_up,i*20)
+				local AngleRotationPerThrow=360/NumberOfMinesForThisRing
+				for j=1,NumberOfMinesForThisRing do
+					local Mine=ents.Create("ent_jack_gmod_ezlandmine")
+					JMod.Owner(Mine,Att)
+					Mine:SetPos(Pos+Dir:Forward()*RingThrowDistance+Vector(0,0,math.random(-10,10)))
+					Mine:SetAngles(Angle(90,0,0))
+					Mine.AutoArm=true
+					Mine:Spawn()
+					Mine:Activate()
+					Mine:GetPhysicsObject():SetVelocity(Dir:Forward()*RingThrowDistance*12)
+					Dir:RotateAroundAxis(vector_up,AngleRotationPerThrow)
+				end
 			end
 		end)
 		---
