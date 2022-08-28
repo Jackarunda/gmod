@@ -1,8 +1,0 @@
-"VertexLitGeneric"
-{
-	"$baseTexture" "models\jmod\jailure\wwii\mainbase.vtf"
-	"$envmap" 		"env_cubemap"
-	"$envmaptint" "[.1 .1 .1]"
-	"$blendtintbybasealpha" "0" 
-	"$blendtintcoloroverbase" "0"
-}

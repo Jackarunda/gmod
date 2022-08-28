@@ -31,8 +31,8 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
-		self.Entity:SetMaterial("models/jmod/jailure/wwii/cluster_minelayer")
-		self.Entity:SetModelScale(1.5,0)
+		self.Entity:SetMaterial("models/military2/bomb/cluster_minelayer")
+		--self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

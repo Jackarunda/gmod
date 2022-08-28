@@ -36,7 +36,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
 		self.Entity:SetMaterial("models/military2/bomb/cluster_buster")
-		self.Entity:SetModelScale(1.5,0)
+		--self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
