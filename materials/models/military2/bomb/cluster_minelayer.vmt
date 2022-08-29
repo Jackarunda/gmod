@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/military2/bomb/cluster_minelayer"
+       	 "$bumpmap" "models/military2/bomb/cluster_buster_normal"
+	"$phong" "1"
+	"$phongexponent" "40"
+	"$phongboost" ".5"
+	"$phongfresnelranges" "[1 1 1]"
+	"$model" 1
+
+}
