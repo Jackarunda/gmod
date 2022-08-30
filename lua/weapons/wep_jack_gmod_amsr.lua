@@ -127,10 +127,10 @@ SWEP.Animations={
 		Mult=1,
         ShellEjectAt=1.1,
 		SoundTable={
-			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.55, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=.75, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=1.5, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=1.6, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.75, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=1, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=1.7, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=1.9, v=60, p=90},
 			{s=JMod.GunHandlingSounds.grab, t=2.25, v=55}
 		}
     },
