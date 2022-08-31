@@ -180,8 +180,8 @@ JMod.ArmorTable={
 		PrintName="Ballistic Mask",
 		mdl="models/jmod/ballistic_mask.mdl", -- csgo misc
 		slots={
-			eyes=1,
-			mouthnose=1
+			eyes=.8,
+			mouthnose=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
@@ -339,7 +339,7 @@ JMod.ArmorTable={
 		PrintName="Helmet-Light",
 		mdl="models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
 		slots={
-			head=.8
+			head=.6
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
@@ -354,7 +354,7 @@ JMod.ArmorTable={
 		PrintName="Helmet-Medium",
 		mdl="models/player/helmet_ulach_black/ulach.mdl", -- tarkov
 		slots={
-			head=.9
+			head=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
@@ -384,9 +384,9 @@ JMod.ArmorTable={
 		PrintName="Helmet-Riot",
 		mdl="models/jmod/helmet_riot_heavy.mdl", -- csgo
 		slots={
-			head=0.8,
-			eyes=.9,
-			mouthnose=.9
+			head=0.6,
+			eyes=.4,
+			mouthnose=.4
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
@@ -403,7 +403,7 @@ JMod.ArmorTable={
 		tgl={
 			mskmat="",
 			slots={
-				head=0.8,
+				head=0.6,
 				eyes=0,
 				mouthnose=0
 			},
@@ -416,9 +416,9 @@ JMod.ArmorTable={
 		PrintName="Helmet-Heavy Riot",
 		mdl="models/jmod/helmet_riot.mdl",
 		slots={
-			head=0.9,
-			eyes=1,
-			mouthnose=1
+			head=0.8,
+			eyes=.6,
+			mouthnose=.6
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Head1",
@@ -435,7 +435,7 @@ JMod.ArmorTable={
 		tgl={
 			mskmat="",
 			slots={
-				head=0.9,
+				head=0.8,
 				eyes=0,
 				mouthnose=0
 			},
@@ -458,7 +458,7 @@ JMod.ArmorTable={
 		pos=Vector(1.5, -2, 0),
 		ang=Angle(-80, 0, -90),
 		wgt=35,
-		dur=400,
+		dur=450,
 		mskmat="mats_jack_gmod_sprites/slit_vignette.png",
 		ent="ent_jack_gmod_ezarmor_maska",
 		bdg={
@@ -551,8 +551,8 @@ JMod.ArmorTable={
 		PrintName="Vest-Light",
 		mdl="models/player/armor_paca/paca.mdl", -- tarkov
 		slots={
-			chest=.8,
-			abdomen=.5
+			chest=.4,
+			abdomen=.3
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Spine2",
@@ -568,8 +568,8 @@ JMod.ArmorTable={
 		PrintName="Vest-Medium-Light",
 		mdl="models/player/armor_trooper/trooper.mdl", -- tarkov
 		slots={
-			chest=.85,
-			abdomen=.6
+			chest=.6,
+			abdomen=.4
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Spine2",
@@ -585,7 +585,7 @@ JMod.ArmorTable={
 		PrintName="Vest-Medium",
 		mdl="models/player/armor_gjel/gjel.mdl", -- tarkov
 		slots={
-			chest=.9,
+			chest=.7,
 			abdomen=.7
 		},
 		def=BasicArmorProtectionProfile,
@@ -602,7 +602,7 @@ JMod.ArmorTable={
 		PrintName="Vest-Medium-Heavy",
 		mdl="models/player/armor_6b13_killa/6b13_killa.mdl", -- tarkov
 		slots={
-			chest=.95,
+			chest=.8,
 			abdomen=.8
 		},
 		def=BasicArmorProtectionProfile,
@@ -628,14 +628,14 @@ JMod.ArmorTable={
 		pos=Vector(-3, 2.5, 0),
 		ang=Angle(-85, 0, 90),
 		wgt=80,
-		dur=700,
+		dur=750,
 		ent="ent_jack_gmod_ezarmor_htorso"
 	},
 	["Pelvis-Panel"]={
 		PrintName="Pelvis Panel",
 		mdl="models/jmod/pelviscover.mdl", -- csgo misc
 		slots={
-			pelvis=1
+			pelvis=.7
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_Pelvis",
@@ -650,7 +650,7 @@ JMod.ArmorTable={
 		PrintName="Shoulder-Light (L)",
 		mdl="models/snowzgmod/payday2/armour/armourlbicep.mdl", -- aegis
 		slots={
-			leftshoulder=.8
+			leftshoulder=.5
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_UpperArm",
@@ -665,7 +665,7 @@ JMod.ArmorTable={
 		PrintName="Shoulder-Heavy (L)",
 		mdl="models/jmod/heavy_left_armor_pad.mdl", -- csgo hydra
 		slots={
-			leftshoulder=1
+			leftshoulder=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_UpperArm",
@@ -680,7 +680,7 @@ JMod.ArmorTable={
 		PrintName="Shoulder-Light (R)",
 		mdl="models/snowzgmod/payday2/armour/armourrbicep.mdl", -- aegis
 		slots={
-			rightshoulder=.8
+			rightshoulder=.5
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_UpperArm",
@@ -695,7 +695,7 @@ JMod.ArmorTable={
 		PrintName="Shoulder-Heavy (R)",
 		mdl="models/jmod/heavy_right_armor_pad.mdl", -- csgo hydra
 		slots={
-			rightshoulder=1
+			rightshoulder=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_UpperArm",
@@ -710,7 +710,7 @@ JMod.ArmorTable={
 		PrintName="Forearm (L)",
 		mdl="models/snowzgmod/payday2/armour/armourlforearm.mdl", -- aegis
 		slots={
-			leftforearm=.95
+			leftforearm=.7
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_Forearm",
@@ -718,7 +718,7 @@ JMod.ArmorTable={
 		pos=Vector(0, 0, -.5),
 		ang=Angle(0, -90, -50),
 		wgt=10,
-		dur=150,
+		dur=200,
 		ent="ent_jack_gmod_ezarmor_slforearm",
 		gayPhysics=true
 	},
@@ -726,7 +726,7 @@ JMod.ArmorTable={
 		PrintName="Forearm (R)",
 		mdl="models/snowzgmod/payday2/armour/armourrforearm.mdl", -- aegis
 		slots={
-			rightforearm=.95
+			rightforearm=.7
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_Forearm",
@@ -734,7 +734,7 @@ JMod.ArmorTable={
 		pos=Vector(-.5, 0, .5),
 		ang=Angle(0, -90, 50),
 		wgt=10,
-		dur=150,
+		dur=200,
 		ent="ent_jack_gmod_ezarmor_srforearm",
 		gayPhysics=true
 	},
@@ -742,7 +742,7 @@ JMod.ArmorTable={
 		PrintName="Thigh-Light (L)",
 		mdl="models/snowzgmod/payday2/armour/armourlthigh.mdl", -- aegis
 		slots={
-			leftthigh=.8
+			leftthigh=.5
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_Thigh",
@@ -758,7 +758,7 @@ JMod.ArmorTable={
 		PrintName="Thigh-Heavy (L)",
 		mdl="models/jmod/heavy_left_thigh_armor.mdl", -- csgo hydra
 		slots={
-			leftthigh=1
+			leftthigh=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_Thigh",
@@ -773,7 +773,7 @@ JMod.ArmorTable={
 		PrintName="Thigh-Light (R)",
 		mdl="models/snowzgmod/payday2/armour/armourrthigh.mdl", -- aegis
 		slots={
-			rightthigh=.8
+			rightthigh=.5
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_Thigh",
@@ -789,7 +789,7 @@ JMod.ArmorTable={
 		PrintName="Thigh-Heavy (R)",
 		mdl="models/jmod/heavy_right_thigh_armor.mdl", -- csgo hydra
 		slots={
-			rightthigh=1
+			rightthigh=.8
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_Thigh",
@@ -804,7 +804,7 @@ JMod.ArmorTable={
 		PrintName="Calf (L)",
 		mdl="models/snowzgmod/payday2/armour/armourlcalf.mdl", -- aegis
 		slots={
-			leftcalf=.95
+			leftcalf=.7
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_L_Calf",
@@ -819,7 +819,7 @@ JMod.ArmorTable={
 		PrintName="Calf (R)",
 		mdl="models/snowzgmod/payday2/armour/armourrcalf.mdl", -- aegis
 		slots={
-			rightcalf=.95
+			rightcalf=.7
 		},
 		def=BasicArmorProtectionProfile,
 		bon="ValveBiped.Bip01_R_Calf",

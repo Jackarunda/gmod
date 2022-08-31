@@ -18,7 +18,7 @@ SWEP.TracerCol=Color(255, 25, 25)
 SWEP.TracerWidth=3
 SWEP.AimSwayFactor=.9
 
-SWEP.DamageRand=.35
+SWEP.DamageRand=.10
 SWEP.BlastRadiusRand=.1
 SWEP.Num=1
 
