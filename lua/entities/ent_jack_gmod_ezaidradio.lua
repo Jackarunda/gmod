@@ -237,6 +237,14 @@ if(SERVER)then
 	function ENT:EZreceiveSpeech(ply,txt)
 		local State=self:GetState()
 		if(State<2)then return end
+		if not(self:TryFindSky())then 
+			JMod.Hint(self.Owner, "aid sky")
+			self:Speak("Can not establish connection to any outpost. Shutting down.")
+			timer.Simple(1,function()
+				if(IsValid(self))then self:TurnOff() end
+			end)
+			return
+		end
 		if not(self:UserIsAuthorized(ply))then return end
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "
