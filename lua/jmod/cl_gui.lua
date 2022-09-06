@@ -896,3 +896,23 @@ net.Receive("JMod_Inventory",function()
 	CreateArmorSlotButton(motherFrame,"rightthigh",410,255)
 	CreateArmorSlotButton(motherFrame,"rightcalf",410,300)
 end)
+
+concommand.Add("jmod_ez__togglegoggles",function()
+    local ply=LocalPlayer()
+    if not((IsValid(ply))and(ply:Alive()))then return end
+    local RegularItemID,RegularItemData,RegularItemInfo=GetItemInSlot(ply.EZarmor,"eyes")
+    local EFTItemID,EFTItemData,EFTItemInfo=GetItemInSlot(ply.EZarmor,"acc_eyes")
+    if not(RegularItemID or EFTItemID)then return end
+    if (RegularItemID) then
+        net.Start("JMod_Inventory")
+        net.WriteInt(2,8) -- toggle
+        net.WriteString(RegularItemID)
+        net.SendToServer()
+    end    
+    if (EFTItemID) then
+        net.Start("JMod_Inventory")
+        net.WriteInt(2,8) -- toggle
+        net.WriteString(EFTItemID)
+        net.SendToServer()
+    end
+end)
