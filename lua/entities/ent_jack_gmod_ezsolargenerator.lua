@@ -169,7 +169,7 @@ if(SERVER)then
                 end
             end
             --print("Progress: "..self:GetProgress())
-            self:NextThink(CurTime() + 1)
+            self:NextThink(CurTime() + 10)
             return true
             
         end
