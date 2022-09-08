@@ -8,14 +8,15 @@ ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 --
-ENT.Durability = 30
+ENT.Durability = 50
+ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
-ENT.SkyModifiers = {"clouds_", "_clouds", "cloudy_", "_cloudy", "night_", "_night", "stormy_", "storm_", "_storm"}
+ENT.SkyModifiers = {"clouds_", "_clouds", "cloudy_", "_cloudy", "stormy_", "storm_", "_storm"}
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
-	self:NetworkVar("Float",0,"Power")
+	self:NetworkVar("Float",0,"Progress")
 end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
@@ -35,7 +36,7 @@ if(SERVER)then
     end
 
     function ENT:Initialize()
-        self:SetModel("models/props_rooftop/scaffolding01a.mdl")
+        self:SetModel("models/jmodels/props/Scaffolding_smol.mdl")
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)	
         self:SetSolid(SOLID_VPHYSICS)
@@ -43,12 +44,11 @@ if(SERVER)then
         local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:Wake()
-            phys:SetMass(500)
-            self:SetModelScale(0.5, 0)
+            phys:SetMass(200)
         end
         self:SetUseType(SIMPLE_USE)
         
-        self:SetPower(0)
+        self:SetProgress(0)
         self:SetState(STATE_OFF)
         self.NextUse = 0
         local mapName = game.GetMap()
@@ -66,14 +66,13 @@ if(SERVER)then
 				JMod.Colorify(self)
 			end
 		end
-        local canPlace = self:ProducePower()
-        if(canPlace)then return end
 		if(State==STATE_BROKEN)then
 			JMod.Hint(activator,"destroyed",self)
 			return
 		elseif(State==STATE_OFF)then
 			self:TurnOn()
 		elseif(State==STATE_ON)then
+            self:ProducePower()
 			self:TurnOff()
 		end
 	end
@@ -91,11 +90,11 @@ if(SERVER)then
     
     function ENT:ProducePower()
         local SelfPos,Up,Forward,Right = self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-        local amt = math.min(math.floor(self:GetPower()), 100)
+        local amt = math.min(math.floor(self:GetProgress()), self.MaxPower)
 
-        if amt <= 99 then return false end
+        if amt <= 0 then return end
         
-        local pos = SelfPos - Forward*15 - Up*50
+        local pos = SelfPos + Forward*15 - Up*25 - Right*2
         for _, ent in pairs(ents.FindInSphere(pos, 100)) do
             --print(ent, ent.GetResourceType and ent:GetResourceType())
             if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
@@ -106,38 +105,14 @@ if(SERVER)then
                 end
                     
                 ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-                self:SetPower(self:GetPower() - amt)
+                self:SetProgress(self:GetProgress() - amt)
                 self:SpawnEffect(pos)
-                return true
+                return
             end
         end
-        
-        -- Ensure the battery isn't spawning in other stuff
-        local tr = util.TraceHull({
-            start = pos,
-            entpos = pos,
-            filter = self,
-            mins = Vector(-16, -16, -16),
-            maxs = Vector(16, 16, 16)
-        })
-        if tr.Hit then return false end
-        
-        self:SetPower(self:GetPower() - amt)
-        
-        local battery = ents.Create("ent_jack_gmod_ezbattery")
-        battery:SetPos(pos)
-        battery:SetAngles(self:GetAngles() + Angle(90, -90, 0))
-        battery:Spawn()
-        battery:Activate()
-        battery:SetResource(amt)
-        
-        local effectdata=EffectData()
-        effectdata:SetEntity(battery)
-        util.Effect("propspawn",effectdata)
-        
+        JMod.MachineSpawnResource(self, "power", amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300)
+        self:SetProgress(self:GetProgress() - amt)
         self:SpawnEffect(pos)
-        
-        return true
     end
 
     function ENT:CheckSky()
@@ -145,16 +120,14 @@ if(SERVER)then
         for i = 1, 10 do
             for j = 1, 10 do
                 local StartPos = self:LocalToWorld(Vector(-5 + j*1, -100 + i*25, 10 + j*7.5))
-                local Dir = self:LocalToWorldAngles(Angle(260 - j*8, 0, 0)):Forward()
+                local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
                 local HitSky = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID}).HitSky
                 if (HitSky) then HitAmount = HitAmount + 1 end
-                --if(i > 0)then
-                    --JMod.Sploom(game.GetWorld(), StartPos + Dir * 1000, 0.5)
-                --end
+                --JMod.Sploom(game.GetWorld(), StartPos + Dir * 1000, 0.5)
             end
         end
-        print(HitAmount)
-        return HitAmount
+        --print(HitAmount)
+        return HitAmount*0.01
     end
     
     function ENT:TurnOn()
@@ -170,7 +143,7 @@ if(SERVER)then
     function ENT:TurnOff()
         self:EmitSound("buttons/button18.wav", 60, 80)
         self:SetState(STATE_OFF)
-        self:SetPower(0)
+        self:SetProgress(0)
         self.NextUse = CurTime() + 1
     end
     
@@ -184,22 +157,18 @@ if(SERVER)then
             if(self.NightMap)then return end
 
             local visibility = self:CheckSky()
+            local grade = self:GetGrade() + 1
             if visibility <= 0 or self:WaterLevel() >= 2 then
                 self:TurnOff()
                 return
-            elseif self:GetPower() < self.MaxPower then
-                local rate = 0.1 * visibility
-                self:SetPower(math.min(self:GetPower() + rate, self.MaxPower))
-                if self:GetPower() >= 100 then
-                    local canplace = self:ProducePower()
-                    if (not(canplace) and (self.NextWhine or 0 < CurTime())) then
-                        -- Blocked, let's make some noise to complain
-                        self:EmitSound("items/suitchargeno1.wav",70,100)
-                        self.NextWhine = CurTime() + 10
-                    end
+            elseif self:GetProgress() < self.MaxPower then
+                local rate = math.Round(((3.34 * grade) * visibility), 2)
+                self:SetProgress(self:GetProgress() + rate)
+                if self:GetProgress() >= 100 then
+                    self:ProducePower()
                 end
             end
-
+            --print("Progress: "..self:GetProgress())
             self:NextThink(CurTime() + 1)
             return true
             
@@ -209,6 +178,8 @@ if(SERVER)then
 elseif(CLIENT)then
     function ENT:Initialize()
 		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_combine/combine_monitorbay_disp",.5)
+        self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
+        self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil,.5)
 	end
     function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
@@ -217,7 +188,7 @@ elseif(CLIENT)then
 		local BasePos=SelfPos
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DetailDraw=Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
         local PanelDraw = true
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false PanelDraw=false end -- if obscured, at least disable details
@@ -227,11 +198,20 @@ elseif(CLIENT)then
 		--Matricks:Scale(Vector(1,1,.5))
 		--self:EnableMatrix("RenderMultiply",Matricks)
 		self:DrawModel()
+        --self:DrawShadow(true)
 		---
+        local PanelAng=SelfAng:GetCopy()
+        PanelAng:RotateAroundAxis(Right, 60)
         if(PanelDraw)then
-            local PanelAng=SelfAng:GetCopy()
-            PanelAng:RotateAroundAxis(Right, 60)
-            JMod.RenderModel(self.SolarCellModel,BasePos-Forward,PanelAng,nil,Vector(1,1,1))
+            JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng,nil,Vector(1,1,1))
         end
+        if(DetailDraw)then
+            local BoxAng=SelfAng:GetCopy()
+            JMod.RenderModel(self.PanelBackModel,BasePos-Forward*0.6+Right*.5,PanelAng,Vector(1.01,1.01,1))
+            BoxAng:RotateAroundAxis(Right, 90)
+            BoxAng:RotateAroundAxis(Forward, 180)
+            JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2),Vector(1,1,1))
+        end
+        
     end
 end
