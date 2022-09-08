@@ -42,7 +42,8 @@ local function PopulateList(parent,friendList,myself,W,H)
 	local Y=0
 	for k,playa in pairs(player.GetAll())do
 		if(playa~=myself)then
-			local IsFriendBool = table.HasValue(friendList, myself)
+			playa.JModFriends = playa.JModFriends or {}
+			local IsFriendBool = table.HasValue(playa.JModFriends, myself)
 
 			local Panel=parent:Add("DPanel")
 			Panel:SetSize(W-35,20)
