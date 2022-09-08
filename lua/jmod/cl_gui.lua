@@ -50,7 +50,7 @@ local function PopulateList(parent,friendList,myself,W,H)
 			function Panel:Paint(w,h)
 				surface.SetDrawColor(0,0,0,100)
 				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(playa:Nick(),"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText((playa:IsValid() and playa:Nick()) or "DISCONNECTED","DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			local Buttaloney=vgui.Create("DButton",Panel)
 			Buttaloney:SetPos(Panel:GetWide()-25,0)
