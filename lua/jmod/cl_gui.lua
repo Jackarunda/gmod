@@ -898,21 +898,14 @@ net.Receive("JMod_Inventory",function()
 end)
 
 concommand.Add("jmod_ez_togglegoggles",function()
-    local ply=LocalPlayer()
-    if not((IsValid(ply))and(ply:Alive()))then return end
-    local RegularItemID,RegularItemData,RegularItemInfo=GetItemInSlot(ply.EZarmor,"eyes")
-    local EFTItemID,EFTItemData,EFTItemInfo=GetItemInSlot(ply.EZarmor,"acc_eyes")
-    if not(RegularItemID or EFTItemID)then return end
-    if (RegularItemID) then
-        net.Start("JMod_Inventory")
-        net.WriteInt(2,8) -- toggle
-        net.WriteString(RegularItemID)
-        net.SendToServer()
-    end    
-    if (EFTItemID) then
-        net.Start("JMod_Inventory")
-        net.WriteInt(2,8) -- toggle
-        net.WriteString(EFTItemID)
-        net.SendToServer()
-    end
+	local ply=LocalPlayer()
+	if not((IsValid(ply))and(ply:Alive()))then return end
+	local ItemID,ItemData,ItemInfo=GetItemInSlot(ply.EZarmor,"eyes")
+	if not(ItemID)then return end
+	if (ItemID) then
+		net.Start("JMod_Inventory")
+		net.WriteInt(2,8) -- toggle
+		net.WriteString(ItemID)
+		net.SendToServer()
+	end
 end)
