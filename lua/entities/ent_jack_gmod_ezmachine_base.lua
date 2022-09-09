@@ -97,6 +97,7 @@ ENT.PropModels={
 	"models/props_phx/gears/bevel9.mdl",
 	"models/Mechanics/gears2/gear_12t2.mdl"
 }
+ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 --[[
 ENT.EZconsumes={"ammo","power","parts","coolant"}
 ENT.StaticPerfSpecs={

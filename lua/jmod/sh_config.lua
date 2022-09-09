@@ -740,6 +740,19 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Scans the ground for resource deposits"
 			},
+			["EZ Solar Panel"]={
+				results="ent_jack_gmod_ezsolargenerator",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
+					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=50,
+                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+				},
+				sizeScale=1,
+				category="Machines",
+				craftingType="toolbox",
+				description="Generates power via the sun"
+			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
                 craftingReqs={
