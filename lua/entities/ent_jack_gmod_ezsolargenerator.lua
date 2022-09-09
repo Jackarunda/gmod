@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.PrintName = "EZ Solar Generator"
-ENT.Author = "Jackarunda, TheOnly8Z, AdventureBoots"
+ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
@@ -177,7 +177,7 @@ if(SERVER)then
     end
 elseif(CLIENT)then
     function ENT:Initialize()
-		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_combine/combine_monitorbay_disp",.5)
+		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
         self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
         self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil,.5)
 	end
