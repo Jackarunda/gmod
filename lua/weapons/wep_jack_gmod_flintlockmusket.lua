@@ -16,7 +16,7 @@ SWEP.BodyHolsterPos=Vector(5.5,-3,-3)
 SWEP.BodyHolsterPosL=Vector(1,-6,3)
 SWEP.BodyHolsterScale=.9
 
-JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge",1.1)
+JMod.ApplyAmmoSpecs(SWEP,"Black Powder Paper Cartridge")
 
 SWEP.Primary.ClipSize=1 -- DefaultClip is automatically set.
 
