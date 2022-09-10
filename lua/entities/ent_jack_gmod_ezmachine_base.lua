@@ -113,7 +113,6 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 --]]
-ENT.EZupgradable=true
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -147,6 +146,20 @@ if(SERVER)then
 		--util.Effect("propspawn",effectdata)
 		JMod.Hint(ply, self.ClassName)
 		return ent
+	end
+	function ENT:Initialize()
+	if(self:CustomInit())then
+		self:CustomInit()
+	end
+	if(self:GetGrade())then
+		self:SetGrade(1)
+	end
+    self.Durability=self.MaxDurability
+	--
+    self.EZupgradable=true
+    self.UpgradeProgress={}
+    self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+    --
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then

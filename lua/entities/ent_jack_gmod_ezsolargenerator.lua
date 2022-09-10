@@ -1,14 +1,14 @@
 AddCSLuaFile()
 
 ENT.Type = "anim"
-ENT.PrintName = "EZ Solar Generator"
+ENT.PrintName = "EZ Solar Panel"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 --
-ENT.Durability = 50
+ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
 ENT.SkyModifiers = {"clouds_", "_clouds", "cloudy_", "_cloudy", "stormy_", "storm_", "_storm"}
@@ -23,6 +23,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
 	self:NetworkVar("Float",0,"Progress")
+    self:NetworkVar("Float",1,"Visibility")
 end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
@@ -41,25 +42,20 @@ if(SERVER)then
         return ent
     end
 
-    function ENT:Initialize()
+    function ENT:CustomInit()
         self:SetModel("models/jmodels/props/Scaffolding_smol.mdl")
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)	
         self:SetSolid(SOLID_VPHYSICS)
         self:DrawShadow(true)
+        self:SetUseType(SIMPLE_USE)
         local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:Wake()
             phys:SetMass(200)
         end
-        self:SetUseType(SIMPLE_USE)
-        
-        self.EZupgradable=true
-        self.UpgradeProgress={}
-        self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Solar Panel"] and JMod.Config.Craftables["EZ Solar Panel"].craftingReqs)
-
-        self:SetProgress(0)
         self:SetState(STATE_OFF)
+        self:SetProgress(0)
         self.NextUse = 0
         local mapName = game.GetMap()
         if(string.find(mapName, "_night") or string.find(mapName, "night_"))then self.NightMap=true end
@@ -137,7 +133,7 @@ if(SERVER)then
             end
         end
         --print(HitAmount)
-        return HitAmount*0.01
+        return HitAmount
     end
     
     function ENT:TurnOn()
@@ -166,13 +162,16 @@ if(SERVER)then
             end
             if(self.NightMap)then return end
 
-            local visibility = self:CheckSky()
-            local grade = self:GetGrade()
-            if visibility <= 0 or self:WaterLevel() >= 2 then
+            self:SetVisibility(self:CheckSky())
+            local vis = self:GetVisibility()*0.01
+            local Grade = self:GetGrade()
+            if (vis <= 0 or self:WaterLevel() >= 2) then
+                self:ProducePower()
                 self:TurnOff()
                 return
-            elseif self:GetProgress() < self.MaxPower then
-                local rate = math.Round((3.34 * (grade+1) * visibility), 2)
+            elseif self:GetProgress() < self.MaxPower then 
+                local rate = math.Round((3.34 * Grade * vis), 2)
+                --print(tostring(rate))
                 self:SetProgress(self:GetProgress() + rate)
                 if self:GetProgress() >= 100 then
                     self:ProducePower()
@@ -189,13 +188,14 @@ elseif(CLIENT)then
     function ENT:Initialize()
 		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
         self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
-        self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl")
+        self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil, .5)
 	end
     local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
     function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
+        local Grade = self:GetGrade()
 		---
 		local BasePos=SelfPos
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
@@ -222,20 +222,26 @@ elseif(CLIENT)then
             JMod.RenderModel(self.PanelBackModel,BasePos-Forward*0.6+Right*.5,PanelAng,Vector(1.01,1.01,1))
             BoxAng:RotateAroundAxis(Right, 90)
             BoxAng:RotateAroundAxis(Forward, 180)
-            JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.3,1.3,0.7),GradeColors[Grade],GradeMats[Grade])
+            JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2),GradeColors[Grade],GradeMats[Grade])
             if(Closeness<20000 and State==STATE_ON)then
                 local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),0)
                 DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
                 DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
 				local Opacity=math.random(50,150)
-				cam.Start3D2D(SelfPos-Up*35-Forward*20-Right*30,DisplayAng,.1)
                 local ElecFrac=self:GetProgress()/100
+                local VisFrac=self:GetVisibility()/100
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
-                draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-		        draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                local VR,VG,VB=JMod.GoodBadColor(VisFrac)
+				cam.Start3D2D(SelfPos-Up*35-Forward*20-Right*30,DisplayAng,.1)
+                draw.SimpleTextOutlined("PROGRESS","JMod-Display",150,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",150,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		        draw.SimpleTextOutlined("EFFICIENCY","JMod-Display",350,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                draw.SimpleTextOutlined(tostring(math.Round(VisFrac*100)).."%","JMod-Display",350,60,Color(VR,VG,VB,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                
                 cam.End3D2D()
             end
         end
     end
+    language.Add("ent_jack_gmod_solargenerator", "EZ Solar Panel")
 end
