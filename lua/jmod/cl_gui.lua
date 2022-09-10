@@ -902,7 +902,8 @@ concommand.Add("jmod_ez_togglegoggles",function()
 	if not((IsValid(ply))and(ply:Alive()))then return end
 	local ItemID,ItemData,ItemInfo=GetItemInSlot(ply.EZarmor,"eyes")
 	if not(ItemID)then return end
-	if (ItemID) then
+	if not(ItemID)then ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing anything that covers your eyes!")
+    	elseif (ItemID) then
 		net.Start("JMod_Inventory")
 		net.WriteInt(2,8) -- toggle
 		net.WriteString(ItemID)
