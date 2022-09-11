@@ -8,6 +8,8 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ----
+ENT.Model = "models/props_lab/reciever01d.mdl"
+----
 ENT.PropModels={
 	"models/props_lab/reciever01d.mdl",
 	"models/props/cs_office/computer_caseb_p2a.mdl",
@@ -148,17 +150,29 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
-	if(self:CustomInit())then
-		self:CustomInit()
-	end
-	if(self:GetGrade())then
-		self:SetGrade(1)
-	end
-    self.Durability=self.MaxDurability
-	--
-    self.EZupgradable=true
-    self.UpgradeProgress={}
-    self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+		self:SetModel(self.Model)
+		self:PhysicsInit(SOLID_VPHYSICS)
+        self:SetMoveType(MOVETYPE_VPHYSICS)	
+        self:SetSolid(SOLID_VPHYSICS)
+        self:DrawShadow(true)
+        self:SetUseType(SIMPLE_USE)
+        local phys = self:GetPhysicsObject()
+        if phys:IsValid() then
+            phys:Wake()
+            phys:SetMass(200)
+        end
+		if(self.CustomInit())then
+			self:CustomInit()
+		end
+		if(self.SetGrade())then
+			self:SetGrade(1)
+		end
+		self.Durability = self.MaxDurability
+		--
+		if(self.EZupgradable)then
+			self.UpgradeProgress={}
+			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+		end
     --
 	end
 	function ENT:PhysicsCollide(data,physobj)

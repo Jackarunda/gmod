@@ -7,6 +7,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
+ENT.Model = "models/jmodels/props/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
@@ -36,24 +37,14 @@ if(SERVER)then
         JMod.Owner(ent,ply)
         ent:Spawn()
         ent:Activate()
-        local effectdata=EffectData()
-        effectdata:SetEntity(ent)
-        util.Effect("propspawn",effectdata)
+        --local effectdata=EffectData()
+        --effectdata:SetEntity(ent)
+        --util.Effect("propspawn",effectdata)
         return ent
     end
 
     function ENT:CustomInit()
-        self:SetModel("models/jmodels/props/Scaffolding_smol.mdl")
-        self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_VPHYSICS)	
-        self:SetSolid(SOLID_VPHYSICS)
-        self:DrawShadow(true)
-        self:SetUseType(SIMPLE_USE)
-        local phys = self:GetPhysicsObject()
-        if phys:IsValid() then
-            phys:Wake()
-            phys:SetMass(200)
-        end
+        self.EZupgradable = true
         self:SetState(STATE_OFF)
         self:SetProgress(0)
         self.NextUse = 0
@@ -101,7 +92,7 @@ if(SERVER)then
         if amt <= 0 then return end
         
         local pos = SelfPos + Forward*15 - Up*25 - Right*2
-        for _, ent in pairs(ents.FindInSphere(pos, 100)) do
+        --[[for _, ent in pairs(ents.FindInSphere(pos, 100)) do -- We will review this at a later date. -AdventureBoots
             --print(ent, ent.GetResourceType and ent:GetResourceType())
             if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
             or ent:GetResourceType() == "power") and (ent:GetResource() + amt <= ent.MaxResource)) then
@@ -109,31 +100,38 @@ if(SERVER)then
                 if ent:GetResourceType() == "generic" then
                     ent:ApplySupplyType("power")
                 end
-                    
+
                 ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
                 self:SetProgress(self:GetProgress() - amt)
                 self:SpawnEffect(pos)
                 return
             end
-        end
+        end--]]
         JMod.MachineSpawnResource(self, "power", amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300)
         self:SetProgress(self:GetProgress() - amt)
         self:SpawnEffect(pos)
     end
 
     function ENT:CheckSky()
+        --stormfox support
+        local weatherMult = 1
+        if(self.NightMap and not(StormFox))then return 0 end
+        if(StormFox)then 
+            if (StormFox.IsNight())then return 0 end
+            if (StormFox.GetWeather() == "Foggy")then weatherMult = 0.5 end
+        end
         local HitAmount = 0
         for i = 1, 10 do
             for j = 1, 10 do
                 local StartPos = self:LocalToWorld(Vector(-5 + j*1, -100 + i*25, 10 + j*7.5))
                 local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
                 local HitSky = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID}).HitSky
-                if (HitSky) then HitAmount = HitAmount + 1 end
+                if (HitSky) then HitAmount = HitAmount + 0.01 end
                 --JMod.Sploom(game.GetWorld(), StartPos + Dir * 1000, 0.5)
             end
         end
         --print(HitAmount)
-        return HitAmount
+        return HitAmount*weatherMult
     end
     
     function ENT:TurnOn()
@@ -156,11 +154,6 @@ if(SERVER)then
     function ENT:Think()
         local State = self:GetState()
         if(State == STATE_ON)then
-            --stormfox support
-            if(StormFox)then 
-                if StormFox.GetWeather() ~= "Clear" or StormFox.IsNight() then self:NextThink(CurTime() + 30) return end
-            end
-            if(self.NightMap)then return end
 
             self:SetVisibility(self:CheckSky())
             local vis = self:GetVisibility()*0.01
@@ -170,7 +163,7 @@ if(SERVER)then
                 self:TurnOff()
                 return
             elseif self:GetProgress() < self.MaxPower then 
-                local rate = math.Round((3.34 * Grade * vis), 2)
+                local rate = math.Round((1.8 * Grade * vis), 2)
                 --print(tostring(rate))
                 self:SetProgress(self:GetProgress() + rate)
                 if self:GetProgress() >= 100 then
@@ -178,7 +171,7 @@ if(SERVER)then
                 end
             end
             --print("Progress: "..self:GetProgress())
-            self:NextThink(CurTime() + 10)
+            self:NextThink(CurTime() + 5)
             return true
             
         end
@@ -212,17 +205,17 @@ elseif(CLIENT)then
 		self:DrawModel()
         self:DrawShadow(true)
 		---
+        local BoxAng=SelfAng:GetCopy()
+        BoxAng:RotateAroundAxis(Right, 90)
+        BoxAng:RotateAroundAxis(Forward, 180)
+        JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2),GradeColors[Grade],GradeMats[Grade])
         local PanelAng=SelfAng:GetCopy()
         PanelAng:RotateAroundAxis(Right, 60)
         if(PanelDraw)then
             JMod.RenderModel(self.SolarCellModel,BasePos-Forward+Right*.5,PanelAng)
         end
         if(DetailDraw)then
-            local BoxAng=SelfAng:GetCopy()
             JMod.RenderModel(self.PanelBackModel,BasePos-Forward*0.6+Right*.5,PanelAng,Vector(1.01,1.01,1))
-            BoxAng:RotateAroundAxis(Right, 90)
-            BoxAng:RotateAroundAxis(Forward, 180)
-            JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2),GradeColors[Grade],GradeMats[Grade])
             if(Closeness<20000 and State==STATE_ON)then
                 local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),0)
@@ -238,7 +231,6 @@ elseif(CLIENT)then
                 draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",150,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 		        draw.SimpleTextOutlined("EFFICIENCY","JMod-Display",350,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                 draw.SimpleTextOutlined(tostring(math.Round(VisFrac*100)).."%","JMod-Display",350,60,Color(VR,VG,VB,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-                
                 cam.End3D2D()
             end
         end
