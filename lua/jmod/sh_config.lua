@@ -743,10 +743,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Solar Panel"]={
 				results="ent_jack_gmod_ezsolargenerator",		
 				craftingReqs={
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=25,
-					[JMod.EZ_RESOURCE_TYPES.STEEL]=25,
-					[JMod.EZ_RESOURCE_TYPES.COPPER]=50,
-                    [JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=25
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=30,
+					[JMod.EZ_RESOURCE_TYPES.GLASS]=30,
+					[JMod.EZ_RESOURCE_TYPES.SILVER]=10,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=20
 				},
 				sizeScale=1,
 				category="Machines",
