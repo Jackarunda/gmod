@@ -16,7 +16,7 @@ SWEP.BodyHolsterPos=Vector(2.5,-10,-9)
 SWEP.BodyHolsterPosL=Vector(3.5,-10,9)
 SWEP.BodyHolsterScale=.95
 
-JMod.ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.1)
+JMod.ApplyAmmoSpecs(SWEP,"Medium Rifle Round",1.2)
 
 SWEP.Primary.ClipSize=5 -- DefaultClip is automatically set.
 
