@@ -164,6 +164,7 @@ function ENT:Think()
 		--print(vis)
 		local grade = self:GetGrade()
 		if(vis <= 0 or self:WaterLevel() >= 2)then 
+			JMod.Hint(self.Owner, "solar panel no sun")
 			return false
 		elseif(self:GetProgress() < self.MaxPower)then
 			local rate = math.Round(1.8 * grade * vis, 2)
