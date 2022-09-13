@@ -29,15 +29,17 @@ end, nil, "Shows the potential salvaging yield from whatever you're looking at."
 
 concommand.Add("jmod_admin_cleanup",function(ply,cmd,args) -- WHY ISN'T THIS A THING ALREADY??
 	if(((IsValid(ply))and(ply:IsSuperAdmin()))or not(IsValid(ply)))then
+		for k,v in pairs(player.GetAll())do
+			if(v~=ply)then v:KillSilent() end
+		end
 		game.CleanUpMap()
-		print("JMod: cleaned up map by admin command")
 		timer.Simple(.1,function()
 			for k,v in pairs(player.GetAll())do
 				JMod.Hint(v,"admin cleanup")
 			end
 		end)
 	end
-end, nil, "Does a server-wide admin cleanup of everything.")
+end, nil, "Does a server-wide admin cleanup of everything, including players.")
 
 concommand.Add("jmod_admin_sanitizemap",function(ply,cmd,args)
 	if(((IsValid(ply))and(ply:IsSuperAdmin()))or not(IsValid(ply)))then

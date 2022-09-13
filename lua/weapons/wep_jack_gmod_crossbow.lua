@@ -135,10 +135,10 @@ SWEP.Animations={
 		SoundTable={
 			{s=JMod.GunHandlingSounds.cloth.loud, t=0, v=60},
 			{s=JMod.GunHandlingSounds.cloth.quiet, t=.5, v=60},
-			{s="snds_jack_gmod/ez_weapons/crossbow/pull.wav", t=.7, v=55},
+			{s="snds_jack_gmod/ez_weapons/crossbow/pull.wav", t=0.9, v=55},
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=1.4, v=60, p=110},
-			{s="snds_jack_gmod/ez_weapons/crossbow/in.wav", t=2.2, v=55, p=120},
-			{s="snds_jack_gmod/ez_weapons/crossbow/clack.wav", t=3, v=55},
+			{s="snds_jack_gmod/ez_weapons/crossbow/in.wav", t=2.4, v=55, p=120},
+			{s="snds_jack_gmod/ez_weapons/crossbow/clack.wav", t=3.3, v=55},
 			{s=JMod.GunHandlingSounds.grab, t=3.7, v=55}
 		}
     },

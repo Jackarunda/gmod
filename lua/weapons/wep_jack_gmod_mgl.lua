@@ -166,15 +166,15 @@ SWEP.Animations={
 		RestoreAmmo=0,
 		SoundTable={
 			{s=JMod.GunHandlingSounds.cloth.quiet, t=0, v=65},
-			{s="snds_jack_gmod/ez_weapons/mgl/open.wav", t=.2, v=65},
-			{s=JMod.GunHandlingSounds.cloth.move, t=.8, v=65},
-			{s="snds_jack_gmod/ez_weapons/gl/out.wav", t=1.05, v=65},
+			{s="snds_jack_gmod/ez_weapons/mgl/open.wav", t=.15, v=65},
+			{s=JMod.GunHandlingSounds.cloth.move, t=.6, v=65},
+			{s="snds_jack_gmod/ez_weapons/gl/out.wav", t=.95, v=65},
 			{s="snds_jack_gmod/ez_weapons/mgl/out.wav", t=1.2, v=60},
-			{s=JMod.GunHandlingSounds.grab, t=2.3, v=55},
-			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=2.55, v=55, p=100},
-			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=2.6, v=55, p=110},
-			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=2.65, v=55, p=120},
-			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=2.7, v=55, p=130}
+			{s=JMod.GunHandlingSounds.grab, t=2.025, v=55},
+			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=3, v=55, p=100},
+			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=3.05, v=55, p=110},
+			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=3.1, v=55, p=120},
+			{s="snds_jack_gmod/ez_weapons/mgl/click.wav", t=3.15, v=55, p=130}
 		}
     },
     ["sgreload_insert"]={
