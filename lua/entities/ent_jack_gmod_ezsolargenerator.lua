@@ -120,9 +120,10 @@ function ENT:CheckSky()
 		for j = 1, 10 do
 			local StartPos = self:LocalToWorld(Vector(-5 + j*1, -100 + i*25, 10 + j*7.5))
 			local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
-			local HitSky = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID}).HitSky
-			if (HitSky) then HitAmount = HitAmount + 0.01 end
-			--JMod.Sploom(game.GetWorld(), StartPos + Dir * 1000, 0.5)
+			local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
+			if (Tr.HitSky) then 
+				HitAmount = HitAmount + 0.01 
+			end
 		end
 	end
 	return HitAmount
@@ -151,21 +152,21 @@ function ENT:Think()
 	if(State == STATE_ON)then
 		local weatherMult = 1
 		if(StormFox)then 
-			if (StormFox.IsNight())then return 0 end
-			local weather = StormFox.GetWeather()
-			if (weather == "Fog") or (weather == "Cloudy")then weatherMult = 0.3 
-			elseif (weather == "Rainin'") or (weather =="Sleet") or (weather =="Snowin'") or (weather =="Sandstorm")then weatherMult = 0.1 
-			elseif (weather == "Lava Eruption") or (weather =="Radioactive")then return 0 
-			else weatherMult = 1 end
-			--print(weather)
+			if (StormFox.IsNight())then 
+				weatherMult = 0 
+			else
+				local weather = StormFox.GetWeather()
+				if (weather == "Fog") or (weather == "Cloudy")then weatherMult = 0.3 
+				elseif (weather == "Rainin'") or (weather =="Sleet") or (weather =="Snowin'") or (weather =="Sandstorm")then weatherMult = 0.1 
+				elseif (weather == "Lava Eruption") or (weather =="Radioactive")then weatherMult = 0 
+				else weatherMult = 1 end
+			end
 		end
 		self:SetVisibility(self:CheckSky()*weatherMult)
 		local vis = self:GetVisibility()
-		--print(vis)
 		local grade = self:GetGrade()
 		if(vis <= 0 or self:WaterLevel() >= 2)then 
 			JMod.Hint(self.Owner, "solar panel no sun")
-			return false
 		elseif(self:GetProgress() < self.MaxPower)then
 			local rate = math.Round(1.8 * grade * vis, 2)
 			self:SetProgress(self:GetProgress() + rate)

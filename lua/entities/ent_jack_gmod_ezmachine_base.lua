@@ -168,7 +168,6 @@ if(SERVER)then
             phys:Wake()
             phys:SetMass(200)
         end
-		print(IsValid(self))
 		if(self.CustomInit)then
 			self:CustomInit()
 		end
