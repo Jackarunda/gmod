@@ -1095,7 +1095,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Resources",
 				craftingType="workbench",
-				description="for ye olde black powder weapons so you can dispatch scoundrels rightly"
+				description="Ancient black powder ammo for the similarly ancient guns."
 			},
 		    ["EZ Arrows"]={
 				results="ent_jack_gmod_ezammobox_a",
@@ -1105,7 +1105,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Resources",
 				craftingType="workbench",
-				description="modern broadhead hunting arrows for maximum yeeting"
+				description="Modern broadhead hunting arrows for cheap armor-piercing capability."
 			},
 			["EZ Flintlock Musket"]={
                 results=JMod.WeaponTable["Flintlock Musket"].ent,
@@ -1116,7 +1116,7 @@ function JMod.InitGlobalConfig(forceNew)
                 },
                 category="Weapons",
 				craftingType="workbench",
-                description="Ol' fashioned musket, kinda inaccurate"
+                description="Cumbersome musket that comes with a bayonet."
             },
 			["EZ Flintlock Blunderbuss"]={
                 results=JMod.WeaponTable["Flintlock Blunderbuss"].ent,
@@ -1127,7 +1127,7 @@ function JMod.InitGlobalConfig(forceNew)
                 },
                 category="Weapons",
 				craftingType="workbench",
-                description="Get yer ol' fashioned face removal here!"
+                description="Prehistoric shotgun that you can delete enemies with! (unless they have armor)"
             },
 			["EZ Cap and Ball Revolver"]={
                 results=JMod.WeaponTable["Cap and Ball Revolver"].ent,
@@ -1138,7 +1138,7 @@ function JMod.InitGlobalConfig(forceNew)
                 },
                 category="Weapons",
 				craftingType="workbench",
-                description="A very inaccurate revolver. Fires 6 shots."
+                description="A very inaccurate, outdated revolver. Fires 6 shots."
             },
 			["EZ Break-Action Shotgun"]={
                 results=JMod.WeaponTable["Break-Action Shotgun"].ent,
@@ -1608,7 +1608,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="A great way of communicating with your team. No one else can hear you."
+				description="Headset that allows you to remotely communicate with radios and your friends."
 			},
 			["EZ Heavy Left Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_hlshoulder",
@@ -1723,7 +1723,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Not so bad on your neck, but has low defense."
+				description="Simple lightweight helmet that doesn't block much damage."
 			},
 			["EZ Respirator"]={
 				results="ent_jack_gmod_ezarmor_respirator",
@@ -1744,7 +1744,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				"Protect your entire head with one piece. No goggles though."
+				"The light helmet, but with cheap glass attached to the front. Light face defense."
 			},
 			["EZ Heavy Riot Helmet"]={
 				results="ent_jack_gmod_ezarmor_rioth",
@@ -1755,7 +1755,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Heavier version of the riot helmet."
+				description="Heavy riot helmet with proper ballistic protection."
 			},
 			["EZ Ultra Heavy Helmet"]={
 				results="ent_jack_gmod_ezarmor_maska",
@@ -1767,7 +1767,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Turtle head. Heaviest helmet, and restricts your vision alot."
+				description="Strongest helmet avaliable, at the cost of weight and vision."
 			},
 			["EZ Light Left Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_llshoulder",
@@ -1778,7 +1778,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Some protection for your shoulders."
+				description="Decent protection for your shoulders."
 			},
 			["EZ Light Right Shoulder Armor"]={
 				results="ent_jack_gmod_ezarmor_lrshoulder",
@@ -1789,7 +1789,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Some protection for your shoulders."
+				description="Decent protection for your shoulders."
 			},
 			["EZ Light Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_ltorso",
@@ -1800,7 +1800,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Might help against buckshot and 22LR, but not much else."
+				description="Will provide light damage protection at little cost to mobility."
 			},
 			["EZ Medical Supplies"]={
 				results="ent_jack_gmod_ezmedsupplies",
@@ -1823,7 +1823,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Better than the light helmet, but worse than the heavy. Neck might hurt if you wear it too long."
+				description="Well-rounded helmet with balanced protection and weight."
 			},
 			["EZ Medium Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mtorso",
@@ -1834,7 +1834,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Medium protection for your chest."
+				description="A vest, that while somewhat heavy, will provide appreciable over-all protection to your torso."
 			},
 			["EZ Medium-Heavy Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mhtorso",
@@ -1846,7 +1846,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Slightly less heavy, slightly less protection than heavy armor."
+				description="It's in the name, for when you need a bit more protection than the medium provides."
 			},
 			["EZ Medium-Light Torso Armor"]={
 				results="ent_jack_gmod_ezarmor_mltorso",
@@ -1857,7 +1857,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="it'll help a little more than light armor, and is slightly heavier."
+				description="A lightweight balance between the Light and Medium vests."
 			},
 			["EZ Medkit"]={
 				results="ent_jack_gmod_ezmedkit",
@@ -1961,7 +1961,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Munitions",
 				craftingType="workbench",
-				description="Become bugs bunny and kill yosemite sam with a black-powder line"
+				description="Become bugs bunny and kill yosemite sam with a black-powder line!"
 			},
 			["EZ Propellant"]={
 				results="ent_jack_gmod_ezpropellant",
@@ -2054,7 +2054,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        },
 		        category="Apparel",
 				craftingType="workbench",
-				description="For your arm."
+				description="Convenient armor for the limbs hanging in front of your chest."
 		    },
 			["EZ Light Left Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_llthigh",
@@ -2088,7 +2088,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        },
 		        category="Apparel",
 				craftingType="workbench",
-				description="Keep your kiwis safe!"
+				description="Prevent annihilation of your family jewels."
 		    },
 			["EZ Right Calf Armor"]={
 		        results="ent_jack_gmod_ezarmor_srcalf",
@@ -2110,7 +2110,7 @@ function JMod.InitGlobalConfig(forceNew)
 		        },
 		        category="Apparel",
 				craftingType="workbench",
-				description="For your arm."
+				description="Convenient armor for the limbs hanging in front of your chest."
 		    },
 			["EZ Light Right Thigh Armor"]={
 		        results="ent_jack_gmod_ezarmor_lrthigh",
@@ -2143,7 +2143,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Munitions",
 				craftingType="workbench",
-				description="Use your good throwing arm for this. Goes very far. Can have a frag sleeve on it."
+				description="An old-fashioned Stielhandgranate with a toggleable frag sleeve."
 			},
 			["EZ Sticky Bomb"]={
 				results="ent_jack_gmod_ezstickynade",
@@ -2175,7 +2175,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category="Apparel",
 				craftingType="workbench",
-				description="Good for seeing things you couldn't see before."
+				description="Allows you to visualize most heat signatures."
 			},
 			["EZ Time Bomb"]={
 				results="ent_jack_gmod_eztimebomb",
