@@ -20,9 +20,7 @@ ENT.StaticPerfSpecs={
 ENT.DynamicPerfSpecs={
 	ChargeSpeed=1
 }
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int",1,"Grade")
+function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float",0,"Progress")
 	self:NetworkVar("Float",1,"Visibility")
 end
@@ -45,7 +43,7 @@ end
 
 function ENT:CustomInit()
 	self.EZupgradable = true
-	self:SetState(STATE_OFF)
+	self:SetState(STATE_ON)
 	self:SetProgress(0)
 	self.NextUse = 0
 	local mapName = game.GetMap()
@@ -56,6 +54,7 @@ end
 function ENT:Use(activator)
 	local State=self:GetState()
 	local OldOwner=self.Owner
+	local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 	JMod.Owner(self,activator)
 	JMod.Colorify(self)
 	if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
@@ -67,7 +66,10 @@ function ENT:Use(activator)
 	elseif(State==STATE_OFF)then
 		self:TurnOn()
 	elseif(State==STATE_ON)then
-		self:ProducePower()
+		if(alt)then
+			self:ProducePower()
+			return
+		end
 		self:TurnOff()
 	end
 end
@@ -112,12 +114,7 @@ end
 
 function ENT:CheckSky()
 	--stormfox support
-	local weatherMult = 1
 	if(self.NightMap and not(StormFox))then return 0 end
-	if(StormFox)then 
-		if (StormFox.IsNight())then return 0 end
-		if (StormFox.GetWeather() == "Foggy")then weatherMult = 0.5 end
-	end
 	local HitAmount = 0
 	for i = 1, 10 do
 		for j = 1, 10 do
@@ -128,8 +125,7 @@ function ENT:CheckSky()
 			--JMod.Sploom(game.GetWorld(), StartPos + Dir * 1000, 0.5)
 		end
 	end
-	--print(HitAmount)
-	return HitAmount*weatherMult
+	return HitAmount
 end
 
 function ENT:TurnOn()
@@ -144,6 +140,7 @@ end
 
 function ENT:TurnOff()
 	self:EmitSound("buttons/button18.wav", 60, 80)
+	self:ProducePower()
 	self:SetState(STATE_OFF)
 	self:SetProgress(0)
 	self.NextUse = CurTime() + 1
@@ -152,27 +149,34 @@ end
 function ENT:Think()
 	local State = self:GetState()
 	if(State == STATE_ON)then
-		self:SetVisibility(self:CheckSky())
-		local vis = self:GetVisibility()*0.01
-		local Grade = self:GetGrade()
-		if (vis <= 0 or self:WaterLevel() >= 2) then
-			self:ProducePower()
-			self:TurnOff()
-		return
-		elseif (self:GetProgress() < self.MaxPower) then 
-			local rate = math.Round((1.8 * Grade * vis), 2)
-		--print(tostring(rate))
-		self:SetProgress(self:GetProgress() + rate)
-		if (self:GetProgress() >= 100) then
+		local weatherMult = 1
+		if(StormFox)then 
+			if (StormFox.IsNight())then return 0 end
+			local weather = StormFox.GetWeather()
+			if (weather == "Fog") or (weather == "Cloudy")then weatherMult = 0.3 
+			elseif (weather == "Rainin'") or (weather =="Sleet") or (weather =="Snowin'") or (weather =="Sandstorm")then weatherMult = 0.1 
+			elseif (weather == "Lava Eruption") or (weather =="Radioactive")then return 0 
+			else weatherMult = 1 end
+			--print(weather)
+		end
+		self:SetVisibility(self:CheckSky()*weatherMult)
+		local vis = self:GetVisibility()
+		--print(vis)
+		local grade = self:GetGrade()
+		if(vis <= 0 or self:WaterLevel() >= 2)then 
+			return false
+		elseif(self:GetProgress() < self.MaxPower)then
+			local rate = math.Round(1.8 * grade * vis, 2)
+			self:SetProgress(self:GetProgress() + rate)
+		end
+		if (self:GetProgress() >= self.MaxPower)then
 			self:ProducePower()
 		end
+		self:NextThink(CurTime() + 5)
+		return true
 	end
-	--print("Progress: "..self:GetProgress())
-	self:NextThink(CurTime() + 5)
-	return true
 end
 
-end
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
@@ -220,7 +224,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
 				local Opacity=math.random(50,150)
 				local ElecFrac=self:GetProgress()/100
-				local VisFrac=self:GetVisibility()/100
+				local VisFrac=self:GetVisibility()
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				local VR,VG,VB=JMod.GoodBadColor(VisFrac)
 				cam.Start3D2D(SelfPos-Up*35-Forward*20-Right*30,DisplayAng,.1)

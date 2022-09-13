@@ -115,6 +115,13 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 --]]
+function ENT:SetupDataTables()
+	self:NetworkVar("Int",0,"State")
+	self:NetworkVar("Int",1,"Grade")
+	if(self.CustomSetupDataTables)then
+		self:CustomSetupDataTables()
+	end
+end
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -161,19 +168,17 @@ if(SERVER)then
             phys:Wake()
             phys:SetMass(200)
         end
-		if(self.CustomInit())then
+		print(IsValid(self))
+		if(self.CustomInit)then
 			self:CustomInit()
-		end
-		if(self.SetGrade())then
-			self:SetGrade(1)
 		end
 		self.Durability = self.MaxDurability
 		--
 		if(self.EZupgradable)then
+			self:SetGrade(1)
 			self.UpgradeProgress={}
 			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
 		end
-    --
 	end
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
