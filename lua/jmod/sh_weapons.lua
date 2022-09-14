@@ -552,7 +552,13 @@ if(CLIENT)then
 		print(ply:GetActiveWeapon().WorldModel)
 		for i=0,20 do
 			local Info=VM:GetSequenceInfo(i)
-			if(Info)then print("anim",i,Info.label) end
+			if(Info)then
+				print("seq",i,Info.label)
+				for k,v in pairs(Info.anims)do
+					local Anim=VM:GetAnimInfo(v)
+					if(Anim)then print("anim",Anim.label,Anim.fps.."fps",Anim.numframes.." total frames") end
+				end
+			end
 		end
 		print("---------------------")
 		for i=0,100 do

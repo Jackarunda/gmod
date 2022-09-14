@@ -9,7 +9,7 @@ SWEP.Slot=3
 
 SWEP.ViewModel="models/weapons/c_mw2_barrett50cal.mdl"
 SWEP.WorldModel="models/weapons/w_jmod_m107.mdl"
-SWEP.ViewModelFOV=70
+SWEP.ViewModelFOV=60
 SWEP.BodyHolsterSlot="back"
 SWEP.BodyHolsterAng=Angle(0,-105,0)
 SWEP.BodyHolsterAngL=Angle(15,-77,180)
@@ -118,7 +118,7 @@ SWEP.Animations={
         Time=2.5,
         SoundTable={
 			{s=JMod.GunHandlingSounds.draw.longgun, t=0, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amr/bigmove.wav", t=.1, v=60},
+			{s="snds_jack_gmod/ez_weapons/amr/bigmove.wav", t=.2, v=60},
 			{s=JMod.GunHandlingSounds.grab, t=2, v=60}
 		},
         LHIK=true,
@@ -134,7 +134,7 @@ SWEP.Animations={
         Source="reload_tac",
         Time=5,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71},
+        -- Checkpoints={128}, -- checkpoints don't work in ArcCW so don't even bother
         FrameRate=37,
 		Mult=1,
         LHIK=true,
@@ -148,7 +148,7 @@ SWEP.Animations={
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=2, v=65},
 			{s="snds_jack_gmod/ez_weapons/amr/magmove.wav", t=2, v=65},
 			{s=JMod.GunHandlingSounds.tap.magwell, t=2.7, v=65, p=80},
-			{s="snds_jack_gmod/ez_weapons/amr/in.wav", t=3.25, v=65},
+			{s="snds_jack_gmod/ez_weapons/amr/in.wav", t=3.35, v=65},
 			{s=JMod.GunHandlingSounds.cloth.quiet, t=3.8, v=60},
 			{s=JMod.GunHandlingSounds.grab, t=4, v=60}
 		}
