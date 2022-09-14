@@ -102,9 +102,9 @@ SWEP.Animations={
 		SoundTable={
 			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t=.3, v=65},
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=.45, v=65},
-			{s=JMod.GunHandlingSounds.tap.magwell, t=1.05, v=60},
-			{s=JMod.GunHandlingSounds.tap.magwell, t=1.4, v=60},
-			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t=1.6, v=65},
+			{s=JMod.GunHandlingSounds.tap.magwell, t=1.1, v=60},
+			{s=JMod.GunHandlingSounds.tap.magwell, t=1.45, v=60},
+			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t=1.7, v=65},
 			{s=JMod.GunHandlingSounds.grab, t=2, v=60},
 		}
     },
@@ -121,8 +121,8 @@ SWEP.Animations={
 		SoundTable={
 			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_out.wav", t=.3, v=65},
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=.45, v=65},
-			{s=JMod.GunHandlingSounds.tap.magwell, t=1.3, v=65},
-			{s=JMod.GunHandlingSounds.tap.magwell, t=1.45, v=65},
+			{s=JMod.GunHandlingSounds.tap.magwell, t=1.35, v=65},
+			{s=JMod.GunHandlingSounds.tap.magwell, t=1.5, v=65},
 			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t=1.6, v=65},
 			{s="snds_jack_gmod/ez_weapons/assault_rifle/bolt_release.wav", t=2.1, v=65},
 			{s=JMod.GunHandlingSounds.grab, t=2.7, v=60}
