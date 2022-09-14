@@ -634,16 +634,3 @@ concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
 		print("invalid aim target")
 	end
 end, nil, "Adds full armour to your target.")
-
-hook.Remove("PlayerSay", "DEBUG_CLIENTSIDE_POLUX")
-hook.Add("PlayerSay", "DEBUG_CLIENTSIDE_POLUX", function(ply, text, teamchat)
-    text = string.lower(text)
-    if (string.sub(text, 1, 10) == "!csremove") then
-        ply:SendLua("PoluxRemoveClientSide()")
-        return ""
-    end
-    if (string.sub(text, 1, 9) == "!csdebug") then
-        ply:SendLua("PoluxDebugClientSide()")
-        return ""
-    end
-end)

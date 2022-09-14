@@ -648,7 +648,7 @@ if(CLIENT)then
 			if(wep.BodyHolsterSlot)then
 				local Class,Slots=wep:GetClass(),ply.EZweapons.slots[wep.BodyHolsterSlot]
 				if(wep~=ActiveWep)then
-					if not(ply.EZweapons.mdls[Class])then
+					if not(ply.EZweapons.mdls[Class]) or not(IsValid(ply.EZweapons.mdls[Class])) then
 						local mdl=ClientsideModel(wep.BodyHolsterModel or wep.WorldModel)
 						mdl:SetPos(ply:GetPos())
 						mdl:SetParent(ply)

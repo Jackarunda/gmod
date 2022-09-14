@@ -19,7 +19,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 			local ArmorInfo=ply.JMod_ArmorTableCopy[armorData.name]
 			if((armorData.tgl)and(ArmorInfo.tgl))then
 				ArmorInfo=table.Merge(table.FullCopy(ArmorInfo),ArmorInfo.tgl)
-				for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+				for k,v in pairs(ArmorInfo.tgl)do -- for some reason table.Merge doesn't copy empty tables
 					if(type(v)=="table")then
 						if(#table.GetKeys(v)==0)then
 							ArmorInfo[k]={}
@@ -73,7 +73,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 			else
 				-- create it
 				local Mdl=ClientsideModel(ArmorInfo.mdl)
-				Mdl:SetModel(ArmorInfo.mdl) -- what the FUCK garry
+				Mdl:SetModel(ArmorInfo.mdl) -- Garrry!
 				Mdl:SetPos(ply:GetPos())
 				Mdl:SetMaterial(ArmorInfo.mat or "")
 				Mdl:SetParent(ply)
@@ -109,8 +109,9 @@ net.Receive("JMod_EZarmorSync",function()
 	end
 	ply.EZarmor=net.ReadTable()
 end)
-function PoluxDebugClientSide()
-    print("Entity count : ")
+
+concommand.Add("cs_model_debug", function()
+	print("Entity count : ")
     local entite = {}
     local i = 0
     for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
@@ -125,19 +126,19 @@ function PoluxDebugClientSide()
     end
     print(i)
     print("-")
-    print("- CLIENTSIDE SHIT START :")
+    print("- CLIENTSIDE STUFF START :")
     print("-")
     for k, v in pairs(entite) do
         print(v.." : "..k)
     end
     print("-")
-    print("- CLIENTSIDE SHIT END ...")
+    print("- CLIENTSIDE STUFF END ...")
     print("-")
-end
+end, nil, "Poluxtobee's CS model debug")
 
-function PoluxRemoveClientSide()
-    print("YOU WILL DIE, AND BUG LIKE HELL BUT HMMM FPS GOOD")
+concommand.Add("cs_model_remove", function()
+	print("YOU WILL DIE, AND BUG LIKE HELL BUT HMMM FPS GOOD")
     for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
         v:Remove()
     end
-end
+end, nil, "Poluxtobee's CS model remover")

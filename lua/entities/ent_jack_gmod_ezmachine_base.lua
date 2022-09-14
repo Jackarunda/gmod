@@ -322,5 +322,11 @@ if(SERVER)then
 		return 0
 	end
 elseif(CLIENT)then
-	--
+	function ENT:OnRemove()
+		if(self.CSModels)then
+			for k, v in pairs(self.CSModels)do
+				v:Remove()
+			end
+		end
+	end
 end
