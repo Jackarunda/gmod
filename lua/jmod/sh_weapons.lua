@@ -595,6 +595,7 @@ if(CLIENT)then
 		local CurWep=ply:GetActiveWeapon()
 		if((Class)and(ply:HasWeapon(Class))and(IsValid(CurWep))and not(CurWep:GetClass()==Class))then
 			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
+			if not(IsValid(mdl))then return end
 			local ID=ply:LookupBone(slotInfo.bone)
 			if(ID)then
 				local Wep=ply:GetWeapon(Class)
