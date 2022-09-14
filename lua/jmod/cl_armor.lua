@@ -27,7 +27,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 					end
 				end
 			end
-			if(ply.EZarmorModels[id])then
+			if(IsValid(ply.EZarmorModels[id]))then
 				local Mdl=ply.EZarmorModels[id]
 				local MdlName=string.lower(Mdl:GetModel())
 				if(MdlName==ArmorInfo.mdl and ArmorInfo.bon)then
@@ -101,5 +101,43 @@ hook.Add("PostPlayerDraw","JMOD_ArmorPlayerDraw",function(ply)
 end)
 net.Receive("JMod_EZarmorSync",function()
 	local ply=net.ReadEntity()
+	if ply.EZarmorModels then
+		for k,v in pairs(ply.EZarmorModels) do
+			v:Remove()
+			v = nil
+		end
+	end
 	ply.EZarmor=net.ReadTable()
 end)
+function PoluxDebugClientSide()
+    print("Entity count : ")
+    local entite = {}
+    local i = 0
+    for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
+        if v:GetModel() == nil then
+            continue
+        end
+        if entite[v:GetModel()] == nil then
+            entite[v:GetModel()] = 0
+        end
+        entite[v:GetModel()] = entite[v:GetModel()] + 1
+        i = i + 1
+    end
+    print(i)
+    print("-")
+    print("- CLIENTSIDE SHIT START :")
+    print("-")
+    for k, v in pairs(entite) do
+        print(v.." : "..k)
+    end
+    print("-")
+    print("- CLIENTSIDE SHIT END ...")
+    print("-")
+end
+
+function PoluxRemoveClientSide()
+    print("YOU WILL DIE, AND BUG LIKE HELL BUT HMMM FPS GOOD")
+    for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
+        v:Remove()
+    end
+end
