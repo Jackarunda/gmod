@@ -863,21 +863,22 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self:InitPerfSpecs()
 		---
-		self.BaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
-		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
-		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
-		self.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
-		self.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
-		self.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
-		self.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
-		self.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
-		self.Shield=JMod.MakeModel(self,"models/hunter/tubes/circle2x2b.mdl","phoenix_storms/gear",.3)
-		self.Light=JMod.MakeModel(self,"models/props_wasteland/light_spotlight02_lamp.mdl",nil,.3)
-		self.Lens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
-		self.OmniLens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
-		self.Camera=JMod.MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
-		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
-		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.CSModels={}
+		self.CSModels.BaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
+		self.CSModels.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
+		self.CSModels.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
+		self.CSModels.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
+		self.CSModels.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
+		self.CSModels.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
+		self.CSModels.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
+		self.CSModels.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
+		self.CSModels.Shield=JMod.MakeModel(self,"models/hunter/tubes/circle2x2b.mdl","phoenix_storms/gear",.3)
+		self.CSModels.Light=JMod.MakeModel(self,"models/props_wasteland/light_spotlight02_lamp.mdl",nil,.3)
+		self.CSModels.Lens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.CSModels.OmniLens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.CSModels.Camera=JMod.MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
+		self.CSModels.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.CSModels.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		---
 		self.CurAimPitch=0
 		self.CurAimYaw=0
@@ -916,46 +917,46 @@ elseif(CLIENT)then
 		---
 		local BaseGearAngle=SelfAng:GetCopy()
 		BaseGearAngle:RotateAroundAxis(Up,self.CurAimYaw)
-		if(DetailDraw)then JMod.RenderModel(self.BaseGear,SelfPos+Up*22,BaseGearAngle,nil,Vector(.7,.7,.7)) end
+		if(DetailDraw)then JMod.RenderModel(self.CSModels.BaseGear,SelfPos+Up*22,BaseGearAngle,nil,Vector(.7,.7,.7)) end
 		---
 		local PostAngle=BaseGearAngle:GetCopy()
 		PostAngle:RotateAroundAxis(PostAngle:Forward(),90)
-		JMod.RenderModel(self.MainPost,SelfPos+Up*20+PostAngle:Up()*2.1,PostAngle,nil,Vector(.2,.2,.2))
+		JMod.RenderModel(self.CSModels.MainPost,SelfPos+Up*20+PostAngle:Up()*2.1,PostAngle,nil,Vector(.2,.2,.2))
 		---
 		if(DetailDraw)then
 			local MiniGearAngle=BaseGearAngle:GetCopy()
 			MiniGearAngle:RotateAroundAxis(Up,-self.CurAimYaw*4+15)
-			JMod.RenderModel(self.MiniBaseGear,SelfPos+Up*22-Forward*8.8,MiniGearAngle,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.CSModels.MiniBaseGear,SelfPos+Up*22-Forward*8.8,MiniGearAngle,nil,Vector(.7,.7,.7))
 			---
 			local LeftHandleAng=SelfAng:GetCopy()
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Up(),90)
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Right(),173)
-			JMod.RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
+			JMod.RenderModel(self.CSModels.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
 			---
 			local RightHandleAng=SelfAng:GetCopy()
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Up(),-90)
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Right(),173)
-			JMod.RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
+			JMod.RenderModel(self.CSModels.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
 		end
 		---
 		local VertGearAngle=SelfAng:GetCopy()
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Up(),self.CurAimYaw)
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Right(),self.CurAimPitch)
 		VertGearAngle:RotateAroundAxis(VertGearAngle:Forward(),90)
-		if(DetailDraw)then JMod.RenderModel(self.VertGear,BasePos,VertGearAngle,nil,Vector(.7,.7,.7)) end
+		if(DetailDraw)then JMod.RenderModel(self.CSModels.VertGear,BasePos,VertGearAngle,nil,Vector(.7,.7,.7)) end
 		---
 		if(DetailDraw)then
 			local MiniVertGearAngle=SelfAng:GetCopy()
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Up(),self.CurAimYaw)
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Right(),-self.CurAimPitch*3+15)
 			MiniVertGearAngle:RotateAroundAxis(MiniVertGearAngle:Forward(),90)
-			JMod.RenderModel(self.MiniVertGear,SelfPos+Up*26.7,MiniVertGearAngle,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.CSModels.MiniVertGear,SelfPos+Up*26.7,MiniVertGearAngle,nil,Vector(.7,.7,.7))
 			---
 			local MiniVertMotorAngle=SelfAng:GetCopy()
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Up(),self.CurAimYaw)
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Forward(),90)
 			MiniVertMotorAngle:RotateAroundAxis(MiniVertMotorAngle:Up(),180)
-			JMod.RenderModel(self.ElevationMotor,SelfPos+Up*26.7+MiniVertMotorAngle:Up()*2-MiniVertMotorAngle:Forward()*.8,MiniVertMotorAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.CSModels.ElevationMotor,SelfPos+Up*26.7+MiniVertMotorAngle:Up()*2-MiniVertMotorAngle:Forward()*.8,MiniVertMotorAngle,nil,Vector(.5,.5,.5))
 		end
 		-- immobile gun group --
 		local AimAngle=VertGearAngle:GetCopy()
@@ -963,15 +964,15 @@ elseif(CLIENT)then
 		local AimUp,AimRight,AimForward=AimAngle:Up(),AimAngle:Right(),AimAngle:Forward()
 		if(AmmoType~=self.LastAmmoType)then
 			self.LastAmmoType=AmmoType
-			self.MachineGun:SetBodygroup(0,AmmoBGs[AmmoType])
+			self.CSModels.MachineGun:SetBodygroup(0,AmmoBGs[AmmoType])
 		end
-		JMod.RenderModel(self.MachineGun,BasePos+AimUp*.5-AimForward*(1+self.VisualRecoil)-AimRight*.5,AimAngle)
+		JMod.RenderModel(self.CSModels.MachineGun,BasePos+AimUp*.5-AimForward*(1+self.VisualRecoil)-AimRight*.5,AimAngle)
 		self.VisualRecoil=math.Clamp(self.VisualRecoil-FT*4,0,5)
 		---
 		local ShieldAngle=AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(),130)
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Up(),45)
-		JMod.RenderModel(self.Shield,BasePos+AimForward*17.5+AimUp*3.3-AimRight*.7,ShieldAngle,nil,Vector(.1,.1,.1))
+		JMod.RenderModel(self.CSModels.Shield,BasePos+AimForward*17.5+AimUp*3.3-AimRight*.7,ShieldAngle,nil,Vector(.1,.1,.1))
 		--[[
 		local GradePos=BasePos+Up*32+AimForward*22.2-AimUp*33.5-AimRight*.825
 		local GradeAng=ShieldAngle:GetCopy()
@@ -986,17 +987,17 @@ elseif(CLIENT)then
 			local CamAngle=AimAngle:GetCopy()
 			CamAngle:RotateAroundAxis(CamAngle:Forward(),-90)
 			CamAngle:RotateAroundAxis(CamAngle:Up(),180)
-			JMod.RenderModel(self.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,GradeColors[Grade],GradeMats[Grade])
+			JMod.RenderModel(self.CSModels.Camera,BasePos+AimUp*8.5-AimForward-AimRight*.65,CamAngle,nil,GradeColors[Grade],GradeMats[Grade])
 			---
 			local TriggerAngle=AimAngle:GetCopy()
 			TriggerAngle:RotateAroundAxis(TriggerAngle:Forward(),90)
-			JMod.RenderModel(self.TriggerMotor,BasePos+AimUp*2+AimForward*1-AimRight*3.5,TriggerAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.CSModels.TriggerMotor,BasePos+AimUp*2+AimForward*1-AimRight*3.5,TriggerAngle,nil,Vector(.5,.5,.5))
 			---
-			JMod.RenderModel(self.Lens,BasePos+AimUp*8.6+AimForward*8.4-AimRight*.65,AimAngle)
+			JMod.RenderModel(self.CSModels.Lens,BasePos+AimUp*8.6+AimForward*8.4-AimRight*.65,AimAngle)
 			---
-			JMod.RenderModel(self.OmniLens,BasePos+AimUp*8-AimForward*8-AimRight*.65,AimAngle)
+			JMod.RenderModel(self.CSModels.OmniLens,BasePos+AimUp*8-AimForward*8-AimRight*.65,AimAngle)
 			---
-			JMod.RenderModel(self.Light,BasePos+AimUp*10-AimRight*3.5+AimForward*6.8,AimAngle,nil,Vector(.5,.5,.5))
+			JMod.RenderModel(self.CSModels.Light,BasePos+AimUp*10-AimRight*3.5+AimForward*6.8,AimAngle,nil,Vector(.5,.5,.5))
 			---
 			if((Closeness<20000)and(State>0))then
 				local DisplayAng=SelfAng:GetCopy()

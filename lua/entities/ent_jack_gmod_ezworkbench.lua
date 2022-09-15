@@ -177,9 +177,10 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
-		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.CSModels={}
+		--self.CSModels.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.CSModels.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.CSModels.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
@@ -201,8 +202,8 @@ elseif(CLIENT)then
 		---
 		if(DetailDraw)then
 			local GlasswareAng=SelfAng:GetCopy()
-			JMod.RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
-			JMod.RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
+			JMod.RenderModel(self.CSModels.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
+			JMod.RenderModel(self.CSModels.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
 		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)

@@ -325,8 +325,12 @@ elseif(CLIENT)then
 	function ENT:OnRemove()
 		if(self.CSModels)then
 			for k, v in pairs(self.CSModels)do
-				v:Remove()
+				if(IsValid(v))then
+					v:Remove()
+				end
 			end
+		elseif(self.Mdl)then
+			self.Mdl:Remove()
 		end
 	end
 end

@@ -307,9 +307,10 @@ elseif(CLIENT)then
 	function ENT:Initialize()
 		self:InitPerfSpecs()
 		---
-		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
-		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.CSModels={}
+		self.CSModels.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.CSModels.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.CSModels.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
 		self.MaxElectricity=100
 		self.OpenAmt=1
@@ -346,21 +347,21 @@ elseif(CLIENT)then
 			local CamAng=SelfAng:GetCopy()
 			CamAng:RotateAroundAxis(Up,-90)
 			CamAng:RotateAroundAxis(Right,180)
-			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
+			JMod.RenderModel(self.CSModels.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
 			---
 			local Matricks=Matrix()
 			Matricks:Scale(Vector(.4,1.45,.5))
-			self.TopCanopy:EnableMatrix("RenderMultiply",Matricks)
+			self.CSModels.TopCanopy:EnableMatrix("RenderMultiply",Matricks)
 			local TopCanopyAng=SelfAng:GetCopy()
 			TopCanopyAng:RotateAroundAxis(Forward,-10*self.OpenAmt)
-			JMod.RenderModel(self.TopCanopy,BasePos-Up*(17-10*self.OpenAmt)+Right*2,TopCanopyAng)
+			JMod.RenderModel(self.CSModels.TopCanopy,BasePos-Up*(17-10*self.OpenAmt)+Right*2,TopCanopyAng)
 			---
 			local Matricks=Matrix()
 			Matricks:Scale(Vector(.4,1.45,.5))
-			self.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
+			self.CSModels.BottomCanopy:EnableMatrix("RenderMultiply",Matricks)
 			local BottomCanopyAng=SelfAng:GetCopy()
 			BottomCanopyAng:RotateAroundAxis(Right,180)
-			JMod.RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
+			JMod.RenderModel(self.CSModels.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
 			---
 			if(State>0)then
 				local Opacity=math.random(50,200)
