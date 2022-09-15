@@ -148,6 +148,7 @@ end)
 
 -- arccw hooks to do extra stuff --
 SWEP.Hook_AddShootSound=function(self, data)
+	--[[
 	if(self.ShootSoundWorldCount>0)then
 		for i=1,self.ShootSoundWorldCount do
 			if(SERVER)then
@@ -155,6 +156,7 @@ SWEP.Hook_AddShootSound=function(self, data)
 			end
 		end
 	end
+	--]]
 end
 SWEP.Hook_PostFireBullets=function(self)
 	local SelfPos=self:GetPos()
