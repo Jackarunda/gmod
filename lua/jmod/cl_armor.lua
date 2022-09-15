@@ -78,6 +78,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 				Mdl:SetMaterial(ArmorInfo.mat or "")
 				Mdl:SetParent(ply)
 				Mdl:SetNoDraw(true)
+				Mdl.JModCSModel = true -- doesn't seem to be working though
 				ply.EZarmorModels[id]=Mdl
 			end
 		end
