@@ -262,12 +262,11 @@ elseif(CLIENT)then
 		end
 	end)
 	function ENT:Initialize()
-		self.CSModels={}
-		self.CSModels.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
-		self.CSModels.Tank:SetParent(self)
-		self.CSModels.Tank:SetPos(self:GetPos())
-		self.CSModels.Tank:SetModelScale(.12,0)
-		self.CSModels.Tank:SetNoDraw(true)
+		self.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
+		self.Tank:SetParent(self)
+		self.Tank:SetPos(self:GetPos())
+		self.Tank:SetModelScale(.12,0)
+		self.Tank:SetNoDraw(true)
 		self.ScanResults={}
 	end
 	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
@@ -281,7 +280,7 @@ elseif(CLIENT)then
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		local TankAng=SelfAng:GetCopy()
 		TankAng:RotateAroundAxis(Right,-90)
-		JMod.RenderModel(self.CSModels.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
+		JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
 		self:DrawModel()
 		--
 		local BasePos=SelfPos+Up*32

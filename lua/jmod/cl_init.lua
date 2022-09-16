@@ -299,6 +299,9 @@ function JMod.MakeModel(self,mdl,mat,scale,col)
 	Mdl:SetPos(self:GetPos())
 	Mdl:SetParent(self)
 	Mdl:SetNoDraw(true)
+	-- store this on a table for cleanup later
+	self.CSmodels=self.CSmodels or {}
+	table.insert(self.CSmodels,Mdl)
 	return Mdl
 end
 

@@ -323,8 +323,8 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:OnRemove()
-		if(self.CSModels)then
-			for k, v in pairs(self.CSModels)do
+		if(self.CSmodels)then
+			for k,v in pairs(self.CSmodels)do
 				if(IsValid(v))then
 					v:Remove()
 				end

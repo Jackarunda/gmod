@@ -290,12 +290,11 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.CSModels={}
-		self.CSModels.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
-		self.CSModels.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
-		self.CSModels.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
-		self.CSModels.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
-		self.CSModels.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
+		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
+		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
+		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
 		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
 		self.Voices=Files
@@ -328,26 +327,26 @@ elseif(CLIENT)then
 		---
 		local DishAng=SelfAng:GetCopy()
 		DishAng:RotateAroundAxis(Right,20)
-		JMod.RenderModel(self.CSModels.Dish,BasePos+Up*8+Forward*8,DishAng,nil,Vector(.7,.7,.7))
+		JMod.RenderModel(self.Dish,BasePos+Up*8+Forward*8,DishAng,nil,Vector(.7,.7,.7))
 		---
 		if(DetailDraw)then
 			local PanelAng=SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Right,90)
-			JMod.RenderModel(self.CSModels.Panel,BasePos-Up*15-Forward*6,PanelAng,nil,Vector(.7,.7,.7))
+			JMod.RenderModel(self.Panel,BasePos-Up*15-Forward*6,PanelAng,nil,Vector(.7,.7,.7))
 			---
 			local HeadsetAng=SelfAng:GetCopy()
 			HeadsetAng:RotateAroundAxis(Right,-110)
-			JMod.RenderModel(self.CSModels.Headset,BasePos-Up*4,HeadsetAng,nil,ColorToVector(self:GetColor()))
+			JMod.RenderModel(self.Headset,BasePos-Up*4,HeadsetAng,nil,ColorToVector(self:GetColor()))
 			---
 			local LeftHandleAng=SelfAng:GetCopy()
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Up(),90)
 			LeftHandleAng:RotateAroundAxis(LeftHandleAng:Right(),173)
-			JMod.RenderModel(self.CSModels.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
+			JMod.RenderModel(self.LeftHandle,SelfPos+Up*20+Right*13.7,LeftHandleAng)
 			---
 			local RightHandleAng=SelfAng:GetCopy()
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Up(),-90)
 			RightHandleAng:RotateAroundAxis(RightHandleAng:Right(),173)
-			JMod.RenderModel(self.CSModels.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
+			JMod.RenderModel(self.RightHandle,SelfPos+Up*20-Right*13.7,RightHandleAng)
 			if((Closeness<20000)and(State>0))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),80)
