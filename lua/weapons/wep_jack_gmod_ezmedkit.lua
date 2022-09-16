@@ -312,18 +312,38 @@ function SWEP:HealEffect(Ent)
 		end
 	end)
 end
-
 function SWEP:OnRemove()
 	self:SCKHolster()
-	if( IsValid( self.Owner ) and CLIENT and self.Owner:IsPlayer() )then
-		local vm=self.Owner:GetViewModel()
-		if( IsValid( vm ) )then vm:SetMaterial( "" ) end
-	end
+    if( IsValid( self.Owner ) and CLIENT and self.Owner:IsPlayer() )then
+        local vm=self.Owner:GetViewModel()
+        if( IsValid( vm ) )then vm:SetMaterial( "" ) end
+    end
+    -- ADDED :
+    if CLIENT then
+        -- Removes V Models
+        for k, v in pairs( self.VElements ) do
+            local model=v.modelEnt
+            if(v.type=="Model" and IsValid(model))then
+                model:Remove()
+            end
+        end
+        -- Removes W Models
+        for k, v in pairs( self.WElements ) do
+            local model=v.modelEnt
+            if(v.type=="Model" and IsValid(model))then
+                model:Remove()
+            end
+        end
+    end
 end
 function SWEP:Holster( wep )
-	self:SCKHolster()
-	self:OnRemove()
-	return true
+	-- Not calling OnRemove to keep the models
+    self:SCKHolster()
+    if( IsValid( self.Owner ) and CLIENT and self.Owner:IsPlayer() )then
+        local vm=self.Owner:GetViewModel()
+        if( IsValid( vm ) )then vm:SetMaterial( "" ) end
+    end
+    return true
 end
 function SWEP:Deploy()
 	if not(IsValid(self.Owner))then return end

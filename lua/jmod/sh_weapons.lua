@@ -601,6 +601,7 @@ if(CLIENT)then
 		local CurWep=ply:GetActiveWeapon()
 		if((Class)and(ply:HasWeapon(Class))and(IsValid(CurWep))and not(CurWep:GetClass()==Class))then
 			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
+			if not(IsValid(mdl))then return end
 			local ID=ply:LookupBone(slotInfo.bone)
 			if(ID)then
 				local Wep=ply:GetWeapon(Class)
@@ -647,7 +648,7 @@ if(CLIENT)then
 			if(wep.BodyHolsterSlot)then
 				local Class,Slots=wep:GetClass(),ply.EZweapons.slots[wep.BodyHolsterSlot]
 				if(wep~=ActiveWep)then
-					if not(ply.EZweapons.mdls[Class])then
+					if not(ply.EZweapons.mdls[Class]) or not(IsValid(ply.EZweapons.mdls[Class])) then
 						local mdl=ClientsideModel(wep.BodyHolsterModel or wep.WorldModel)
 						mdl:SetPos(ply:GetPos())
 						mdl:SetParent(ply)
