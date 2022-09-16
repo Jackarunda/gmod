@@ -111,7 +111,7 @@ net.Receive("JMod_EZarmorSync",function()
 	ply.EZarmor=net.ReadTable()
 end)
 
-concommand.Add("cs_model_debug", function()
+concommand.Add("jmod_debug_countclientsidemodels", function()
 	print("Entity count : ")
     local entite = {}
     local i = 0
@@ -136,10 +136,3 @@ concommand.Add("cs_model_debug", function()
     print("- CLIENTSIDE STUFF END ...")
     print("-")
 end, nil, "Poluxtobee's CS model debug")
-
-concommand.Add("cs_model_remove", function()
-	print("YOU WILL DIE, AND BUG LIKE HELL BUT HMMM FPS GOOD")
-    for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
-        v:Remove()
-    end
-end, nil, "Poluxtobee's CS model remover")
