@@ -318,16 +318,16 @@ function SWEP:OnRemove()
         local vm=self.Owner:GetViewModel()
         if( IsValid( vm ) )then vm:SetMaterial( "" ) end
     end
-    // ADDED :
+    -- ADDED :
     if CLIENT then
-        // Removes V Models
+        -- Removes V Models
         for k, v in pairs( self.VElements ) do
             local model=v.modelEnt
             if(v.type=="Model" and IsValid(model))then
                 model:Remove()
             end
         end
-        // Removes W Models
+        -- Removes W Models
         for k, v in pairs( self.WElements ) do
             local model=v.modelEnt
             if(v.type=="Model" and IsValid(model))then
@@ -337,7 +337,7 @@ function SWEP:OnRemove()
     end
 end
 function SWEP:Holster( wep )
-	// Not calling OnRemove to keep the models
+	-- Not calling OnRemove to keep the models
     self:SCKHolster()
     if( IsValid( self.Owner ) and CLIENT and self.Owner:IsPlayer() )then
         local vm=self.Owner:GetViewModel()

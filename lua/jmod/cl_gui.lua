@@ -879,11 +879,11 @@ net.Receive("JMod_Inventory",function()
 		if(OpenDropdown)then OpenDropdown:Remove() end
 	end
 	function motherFrame:OnRemove()
-        ent = PlayerDisplay:GetEntity()
+		ent = PlayerDisplay:GetEntity()
 		if not(ent.EZarmor)then return end
-        for id,v in pairs(ent.EZarmor.items) do
-            ent.EZarmorModels[id]:Remove()
-        end
+		for id,v in pairs(ent.EZarmor.items) do
+			ent.EZarmorModels[id]:Remove()
+		end
     end
 	---
 	CreateArmorSlotButton(motherFrame,"head",10,30)

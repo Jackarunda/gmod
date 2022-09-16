@@ -123,7 +123,7 @@ concommand.Add("jmod_debug_countclientsidemodels", function()
             entite[v:GetModel()] = 0
         end
         entite[v:GetModel()] = entite[v:GetModel()] + 1
-        i = i + 1
+		i = i + 1
     end
     print(i)
     print("-")
