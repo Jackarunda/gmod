@@ -12,7 +12,6 @@ ENT.Model = "models/jmodels/props/Scaffolding_smol.mdl"
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
-ENT.SkyModifiers = {"clouds_", "_clouds", "cloudy_", "_cloudy", "stormy_", "storm_", "_storm"}
 --
 ENT.StaticPerfSpecs={
 	MaxDurability=50
@@ -47,9 +46,7 @@ function ENT:CustomInit()
 	self:SetProgress(0)
 	self.NextUse = 0
 	local mapName = game.GetMap()
-	if(string.find(mapName, "_night") or string.find(mapName, "night_"))then self.NightMap=true end
 end
-
 
 function ENT:Use(activator)
 	local State=self:GetState()
@@ -113,8 +110,14 @@ function ENT:ProducePower()
 end
 
 function ENT:CheckSky()
+	local SkyMod,MapName=1,string.lower(game.GetMap())
+	for k,mods in pairs(JMod.MapSolarPowerModifiers)do
+		local keywords,mult=mods[1],mods[2]
+		for _,word in pairs(keywords)do
+			if(string.find(MapName,word))then SkyMod=mult break end
+		end
+	end
 	--stormfox support
-	if(self.NightMap and not(StormFox))then return 0 end
 	local HitAmount = 0
 	for i = 1, 10 do
 		for j = 1, 10 do
@@ -126,7 +129,7 @@ function ENT:CheckSky()
 			end
 		end
 	end
-	return HitAmount
+	return HitAmount*SkyMod
 end
 
 function ENT:TurnOn()
@@ -147,6 +150,35 @@ function ENT:TurnOff()
 	self.NextUse = CurTime() + 1
 end
 
+function ENT:GetLightAlignment()
+	local LightEnt=ents.FindByClass("light_environment")[1]
+	local SunEnt=ents.FindByClass("env_sun")[1]
+	if(IsValid(LightEnt))then
+		-- we can only get yaw, sadly, because Gaben
+		local SunVec=-(LightEnt:GetAngles()):Forward()
+		local OurFacingVec=self:GetUp()
+		local AngleDifference=-math.deg(math.asin(SunVec:Dot(OurFacingVec)))
+		-- negative 90 means we're facing directly into the sun
+		-- positive 90 means we're facing directly away from it
+		return 1-(AngleDifference+90)/180
+	elseif(IsValid(SunEnt))then
+		local SkyCameraEnt=ents.FindByClass("sky_camera")[1]
+		if(IsValid(SkyCameraEnt))then
+			local Vec=(SkyCameraEnt:GetPos()-SunEnt:GetPos())
+			local Dir=Vec:GetNormalized()
+			local Ang=Dir:Angle()
+			Ang.p=0
+			Ang.r=0
+			local SunVec=(Ang):Forward()
+			local OurFacingVec=self:GetUp()
+			local AngleDifference=-math.deg(math.asin(SunVec:Dot(OurFacingVec)))
+			return 1-(AngleDifference+90)/180
+		end
+	end
+	-- if the map has no light and no sun, then uh... uhhhhhhhh
+	return .8
+end
+
 function ENT:Think()
 	local State = self:GetState()
 	if(State == STATE_ON)then
@@ -162,13 +194,14 @@ function ENT:Think()
 				else weatherMult = 1 end
 			end
 		end
-		self:SetVisibility(self:CheckSky()*weatherMult)
+		local AlignmentFactor=self:GetLightAlignment()
+		self:SetVisibility(self:CheckSky()*weatherMult*AlignmentFactor)
 		local vis = self:GetVisibility()
 		local grade = self:GetGrade()
 		if(vis <= 0 or self:WaterLevel() >= 2)then 
 			JMod.Hint(self.Owner, "solar panel no sun")
 		elseif(self:GetProgress() < self.MaxPower)then
-			local rate = math.Round(1.8 * grade * vis, 2)
+			local rate = math.Round(2.5*JMod.EZ_GRADE_BUFFS[grade]^2 * vis, 2)
 			self:SetProgress(self:GetProgress() + rate)
 		end
 		if (self:GetProgress() >= self.MaxPower)then

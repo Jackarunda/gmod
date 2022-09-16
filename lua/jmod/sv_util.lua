@@ -422,7 +422,7 @@ function JMod.Sploom(attacker, pos, mag, radius)
 	local Sploom=ents.Create("env_explosion")
 	Sploom:SetPos(pos)
 	Sploom:SetOwner(attacker or game.GetWorld())
-	Sploom:SetKeyValue("iMagnitude", mag)
+	Sploom:SetKeyValue("iMagnitude", mag or "1")
 	if(radius)then Sploom:SetKeyValue("iRadiusOverride",radius) end
 	Sploom:Spawn()
 	Sploom:Activate()
