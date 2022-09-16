@@ -232,12 +232,9 @@ elseif(CLIENT)then
 		local PanelDraw = true
 		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
-		if(Obscured)then DetailDraw=false PanelDraw=false end -- if obscured, at least disable details
+		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
-		--local Matricks=Matrix()
-		--Matricks:Scale(Vector(1,1,.5))
-		--self:EnableMatrix("RenderMultiply",Matricks)
 		self:DrawModel()
 		self:DrawShadow(true)
 		---
