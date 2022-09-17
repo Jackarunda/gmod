@@ -19,7 +19,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 			local ArmorInfo=ply.JMod_ArmorTableCopy[armorData.name]
 			if((armorData.tgl)and(ArmorInfo.tgl))then
 				ArmorInfo=table.Merge(table.FullCopy(ArmorInfo),ArmorInfo.tgl)
-				for k,v in pairs(ArmorInfo.tgl)do -- for some fucking reason table.Merge doesn't copy empty tables
+				for k,v in pairs(ArmorInfo.tgl)do -- for some reason table.Merge doesn't copy empty tables
 					if(type(v)=="table")then
 						if(#table.GetKeys(v)==0)then
 							ArmorInfo[k]={}
@@ -27,7 +27,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 					end
 				end
 			end
-			if(ply.EZarmorModels[id])then
+			if(IsValid(ply.EZarmorModels[id]))then
 				local Mdl=ply.EZarmorModels[id]
 				local MdlName=string.lower(Mdl:GetModel())
 				if(MdlName==ArmorInfo.mdl and ArmorInfo.bon)then
@@ -73,11 +73,12 @@ function JMod.ArmorPlayerModelDraw(ply)
 			else
 				-- create it
 				local Mdl=ClientsideModel(ArmorInfo.mdl)
-				Mdl:SetModel(ArmorInfo.mdl) -- what the FUCK garry
+				Mdl:SetModel(ArmorInfo.mdl) -- Garrry!
 				Mdl:SetPos(ply:GetPos())
 				Mdl:SetMaterial(ArmorInfo.mat or "")
 				Mdl:SetParent(ply)
 				Mdl:SetNoDraw(true)
+				Mdl.JModCSModel = true -- doesn't seem to be working though
 				ply.EZarmorModels[id]=Mdl
 			end
 		end
@@ -101,5 +102,37 @@ hook.Add("PostPlayerDraw","JMOD_ArmorPlayerDraw",function(ply)
 end)
 net.Receive("JMod_EZarmorSync",function()
 	local ply=net.ReadEntity()
+	if ply.EZarmorModels then
+		for k,v in pairs(ply.EZarmorModels) do
+			v:Remove()
+			v = nil
+		end
+	end
 	ply.EZarmor=net.ReadTable()
 end)
+
+concommand.Add("jmod_debug_countclientsidemodels", function()
+	print("Entity count : ")
+    local entite = {}
+    local i = 0
+    for k, v in pairs(ents.FindByClass("*C_BaseFlex")) do
+        if v:GetModel() == nil then
+            continue
+        end
+        if entite[v:GetModel()] == nil then
+            entite[v:GetModel()] = 0
+        end
+        entite[v:GetModel()] = entite[v:GetModel()] + 1
+		i = i + 1
+    end
+    print(i)
+    print("-")
+    print("- CLIENTSIDE STUFF START :")
+    print("-")
+    for k, v in pairs(entite) do
+        print(v.." : "..k)
+    end
+    print("-")
+    print("- CLIENTSIDE STUFF END ...")
+    print("-")
+end, nil, "Poluxtobee's CS model debug")
