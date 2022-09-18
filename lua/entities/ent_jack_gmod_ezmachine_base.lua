@@ -101,6 +101,7 @@ ENT.PropModels={
 }
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.MaxDurability=100
+ENT.MaxElectricity=100
 --[[
 ENT.EZconsumes={"ammo","power","parts","coolant"}
 ENT.StaticPerfSpecs={
@@ -119,6 +120,7 @@ ENT.DynamicPerfSpecs={
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
+	self:NetworkVar("Float",0,"Electricity")
 	if(self.CustomSetupDataTables)then
 		self:CustomSetupDataTables()
 	end
@@ -198,8 +200,8 @@ if(SERVER)then
 	end
 	function ENT:ConsumeElectricity(amt)
 		if not(self.GetElectricity)then return end
-		amt=((amt or .2)/(self.ElectricalEfficiency or 1)^.5)/2
-		local NewAmt=math.Clamp(self:GetElectricity()-amt,0,self.MaxElectricity)
+		amt = amt or 1
+		local NewAmt=math.Clamp(self:GetElectricity()-amt,0.0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end

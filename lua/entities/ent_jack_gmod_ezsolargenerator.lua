@@ -67,7 +67,7 @@ function ENT:Use(activator)
 			self:ProducePower()
 			return
 		end
-		self:TurnOff()
+		--self:TurnOff() --No turning it off
 	end
 end
 
