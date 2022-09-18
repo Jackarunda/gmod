@@ -100,6 +100,7 @@ ENT.PropModels={
 	"models/Mechanics/gears2/gear_12t2.mdl"
 }
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
+ENT.MaxDurability=100
 --[[
 ENT.EZconsumes={"ammo","power","parts","coolant"}
 ENT.StaticPerfSpecs={
