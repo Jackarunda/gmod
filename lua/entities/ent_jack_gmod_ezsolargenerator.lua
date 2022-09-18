@@ -217,6 +217,7 @@ elseif(CLIENT)then
 		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
 		self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
 		self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil, .5)
+		self:DrawShadow(true)
 	end
 	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
 	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
@@ -236,7 +237,8 @@ elseif(CLIENT)then
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
-		self:DrawShadow(true)
+		--- animation test
+		JMod.RenderModel(self.Bepis,BasePos+Up*100,SelfAng)
 		---
 		local BoxAng=SelfAng:GetCopy()
 		BoxAng:RotateAroundAxis(Right, 90)

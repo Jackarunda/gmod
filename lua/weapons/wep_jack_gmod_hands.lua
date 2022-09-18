@@ -300,7 +300,7 @@ end
 function SWEP:AttackFront()
 	if(CLIENT)then return end
 	self.Owner:LagCompensation(true)
-	local Ent,HitPos=JMOD_WhomILookinAt(self.Owner,.3,55)
+	local Ent,HitPos=JMod.WhomILookinAt(self.Owner,.3,55)
 	local AimVec=self.Owner:GetAimVector()
 	if((IsValid(Ent))or((Ent)and(Ent.IsWorld)and(Ent:IsWorld())))then
 		local SelfForce,Mul=125,1
