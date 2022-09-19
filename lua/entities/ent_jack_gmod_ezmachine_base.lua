@@ -8,7 +8,8 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
 ----
-ENT.Model = "models/props_lab/reciever01d.mdl"
+ENT.Model="models/props_lab/reciever01d.mdl"
+ENT.Mass=150
 ----
 ENT.PropModels={
 	"models/props_lab/reciever01d.mdl",
@@ -99,19 +100,22 @@ ENT.PropModels={
 	"models/props_phx/gears/bevel9.mdl",
 	"models/Mechanics/gears2/gear_12t2.mdl"
 }
-ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
+ENT.EZconsumes={
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
+	JMod.EZ_RESOURCE_TYPES.POWER
+}
 ENT.MaxDurability=100
 ENT.MaxElectricity=100
 --[[
 ENT.EZconsumes={"ammo","power","parts","coolant"}
-ENT.StaticPerfSpecs={
+ENT.StaticPerfSpecs={ --- These stats do not change when the machine is upgraded
 	MaxElectricity=100,
 	SearchTime=7,
 	SpecialTargetingHeights={["npc_rollermine"]=15},
 	ShotCount=1,
 	BarrelLength=29
 }
-ENT.DynamicPerfSpecs={
+ENT.DynamicPerfSpecs={ --- These stats change when the machine is upgraded
 	MaxAmmo=300,
 	SearchSpeed=.5,
 	Cooling=1
@@ -127,13 +131,17 @@ function ENT:SetupDataTables()
 end
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do
-		local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
-		if(NewValue>2)then
-			self[specName]=math.ceil(NewValue)
-		else
-			self[specName]=NewValue
+	if(self.StaticPerfSpecs)then
+		for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	end
+	if(self.DynamicPerfSpecs)then
+		for specName,value in pairs(self.DynamicPerfSpecs)do
+			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
+			if(NewValue>2)then
+				self[specName]=math.ceil(NewValue)
+			else
+				self[specName]=NewValue
+			end
 		end
 	end
 end
@@ -161,6 +169,9 @@ if(SERVER)then
 	end
 	function ENT:Initialize()
 		self:SetModel(self.Model)
+		if(self.Mat)then
+			self:SetMaterial(self.Mat)
+		end
 		self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(MOVETYPE_VPHYSICS)	
         self:SetSolid(SOLID_VPHYSICS)
@@ -169,15 +180,21 @@ if(SERVER)then
         local phys = self:GetPhysicsObject()
         if phys:IsValid() then
             phys:Wake()
-            phys:SetMass(200)
+            phys:SetMass(self.Mass)
         end
+		self.Durability = self.MaxDurability
+		self:SetElectricity(self.MaxElectricity)
+		if(self.DynamicPerfSpecs or self.StaticPerfSpecs)then
+			self:InitPerfSpecs()
+		end
+		self:SetState(JMod.EZ_STATE_OFF)
+		--
 		if(self.CustomInit)then
 			self:CustomInit()
 		end
-		self.Durability = self.MaxDurability
 		--
 		if(self.EZupgradable)then
-			self:SetGrade(1)
+			self:SetGrade(JMod.EZ_GRADE_BASIC)
 			self.UpgradeProgress={}
 			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
 		end
@@ -200,7 +217,7 @@ if(SERVER)then
 	end
 	function ENT:ConsumeElectricity(amt)
 		if not(self.GetElectricity)then return end
-		amt = amt or 1
+		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
 		local NewAmt=math.Clamp(self:GetElectricity()-amt,0.0,self.MaxElectricity)
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end

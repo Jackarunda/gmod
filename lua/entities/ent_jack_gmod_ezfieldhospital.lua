@@ -8,6 +8,9 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
+---
+ENT.Model="models/mri-scanner/mri-scanner.mdl"
+ENT.Mass=750
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -26,53 +29,31 @@ ENT.DynamicPerfSpecs={
 }
 ----
 local STATE_BROKEN,STATE_OFF,STATE_ON,STATE_OCCUPIED,STATE_WORKING=-1,0,1,2,3
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Float",0,"Electricity")
-	self:NetworkVar("Int",1,"Supplies")
-	self:NetworkVar("Int",2,"Grade")
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Int",2,"Supplies")
 end
 if(SERVER)then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/mri-scanner/mri-scanner.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-		local phys=self.Entity:GetPhysicsObject()
+	function ENT:CustomInit()
+		local phys=self:GetPhysicsObject()
 		if phys:IsValid()then
-			phys:Wake()
-			phys:SetMass(750)
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
 		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				--if(Col)then self:SetColor(Col) end
-			end
+			JMod.Colorify(self)
 		end
 		---
-		self:SetGrade(JMod.EZ_GRADE_BASIC)
-		self:InitPerfSpecs()
-		self:SetElectricity(self.MaxElectricity)
-		self.Durability=self.MaxDurability
+		--self:InitPerfSpecs()
 		self.NextWhine=0
 		self.NextRealThink=0
 		self.NextUseTime=0
 		self.IdleShutOffTime=0
 		self.NextHumTime=0
-		self:SetState(STATE_OFF)
-		self:SetElectricity(self.MaxElectricity)
 		self:SetSupplies(self.MaxSupplies)
 		self.NextHeal=0
 		self.NextEnter=0
 		---
 		self.EZupgradable=true
-		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Automated Field Hospital"] and JMod.Config.Craftables["EZ Automated Field Hospital"].craftingReqs)
 		--
 		self.Pod=ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
