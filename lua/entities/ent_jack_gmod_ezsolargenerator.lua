@@ -13,15 +13,17 @@ ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
 --
+ENT.EZupgradable = true
+ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.StaticPerfSpecs={
-	MaxDurability=50
+	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
 	ChargeSpeed=1
 }
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float",0,"Progress")
-	self:NetworkVar("Float",1,"Visibility")
+	self:NetworkVar("Float",1,"Progress")
+	self:NetworkVar("Float",2,"Visibility")
 end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
@@ -170,6 +172,12 @@ function ENT:GetLightAlignment()
 		local AngleDifference=-math.deg(math.asin(SunVec:Dot(OurFacingVec)))
 		return (AngleDifference+90)/180
 	end
+	if(StormFox)then
+		Minutes = StormFox.GetTime()
+		local Frac = Minutes / 1440
+		Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
+		return math.Clamp(Frac, 0, 1)
+	end
 	-- if the map has no light and no sun, then uh... uhhhhhhhh
 	return .5
 end
@@ -196,7 +204,7 @@ function ENT:Think()
 		if(vis <= 0 or self:WaterLevel() >= 2)then 
 			JMod.Hint(self.Owner, "solar panel no sun")
 		elseif(self:GetProgress() < self.MaxPower)then
-			local rate = math.Round(2.5*JMod.EZ_GRADE_BUFFS[grade]^2 * vis, 2)
+			local rate = math.Round(2.5*self.ChargeSpeed^2 * vis, 2)
 			self:SetProgress(self:GetProgress() + rate)
 		end
 		if (self:GetProgress() >= self.MaxPower)then
