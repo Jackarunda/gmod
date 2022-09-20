@@ -1,0 +1,14 @@
+"vertexlitgeneric"
+{
+	"$baseTexture" "models/tex_jack_gmod_solarcells" 
+	"$bumpmap" "models/tex_jack_gmod_solarcells_norm" 
+
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.1 .15 .2]"
+
+	"$phong" "1" 
+	"$phongfresnelranges" "[1 .7 .3]" 
+	"$phongboost" ".5" 
+	"$phongexponent" "1" 
+	"$phongwarptexture" "models/tex_jack_gmod_solarcells_phongwarp" 
+}

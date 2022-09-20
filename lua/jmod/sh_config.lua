@@ -740,6 +740,19 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType="toolbox",
 				description="Scans the ground for resource deposits"
 			},
+			["EZ Solar Panel"]={
+				results="ent_jack_gmod_ezsolargenerator",		
+				craftingReqs={
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=50,
+					[JMod.EZ_RESOURCE_TYPES.GLASS]=100,
+					[JMod.EZ_RESOURCE_TYPES.SILVER]=10,
+					[JMod.EZ_RESOURCE_TYPES.COPPER]=50
+				},
+				sizeScale=4,
+				category="Machines",
+				craftingType="toolbox",
+				description="Generates power via the sun"
+			},
 			["EZ Automated Field Hospital"]={
                 results="ent_jack_gmod_ezfieldhospital",
                 craftingReqs={
@@ -757,8 +770,8 @@ function JMod.InitGlobalConfig(forceNew)
 				description="Heals players so you don't have to get more blood on you."
 			},
 			["EZ Bomb Bay"]={
-				results="ent_jack_gmod_ezbombay",		
-				craftingReqs={	
+				results="ent_jack_gmod_ezbombbay",
+				craftingReqs={
 					[JMod.EZ_RESOURCE_TYPES.STEEL]=400,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS]=20
 				},
@@ -766,7 +779,7 @@ function JMod.InitGlobalConfig(forceNew)
 				category="Other",
 				craftingType="toolbox",
 				description="A bay for safely holding large amounts of bombs."
-			},	
+			},
 			["EZ Big Bomb"]={
 				results="ent_jack_gmod_ezbigbomb",		
 				craftingReqs={	

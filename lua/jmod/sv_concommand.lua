@@ -67,6 +67,13 @@ concommand.Add("jmod_debug",function(ply,cmd,args)
 	Eff:SetScale(10)
 	util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true,true)
 	--]]
+	local SunEnt=ents.FindByClass("env_sun")[1]
+	local SkyCameraEnt=ents.FindByClass("sky_camera")[1]
+	local Vec=-(SkyCameraEnt:GetPos()-SunEnt:GetPos())
+	local Dir=Vec:GetNormalized()
+	local Ang=Dir:Angle()
+	player.GetAll()[1]:SetPos(SkyCameraEnt:GetPos())
+	player.GetAll()[1]:SetEyeAngles(Ang)
 end)
 
 concommand.Add("jmod_debug_killme",function(ply)
