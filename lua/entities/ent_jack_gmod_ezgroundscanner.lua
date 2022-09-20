@@ -9,8 +9,12 @@ ENT.Spawnable=true
 ENT.AdminOnly=false
 ENT.NoSitAllowed=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
+---
+ENT.Model="models/jmod/machines/groundscanner.mdl"
+ENT.Mat="models/mat_jack_gmod_groundscanner"
+ENT.Mass=200
+---
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
-ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.PhysMatDetectionWhitelist={
 	"metal",
 	"metalvehicle",
@@ -35,41 +39,16 @@ ENT.DynamicPerfSpecs={
 	ScanSpeed=5,
 	ScanRange=20
 }
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int",1,"Grade")
+function ENT:CustomSetupDataTables()
 	self:NetworkVar("Int",2,"Progress")
-	self:NetworkVar("Float",1,"Electricity")
 end
 if(SERVER)then
-	function ENT:Initialize()
-		self:SetModel("models/jmod/machines/groundscanner.mdl")
-		--self:SetModelScale(0.5, 0)
-		self:SetMaterial("models/mat_jack_gmod_groundscanner")
-		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+	function ENT:CustomInit()
 		self:SetAngles(Angle(-90,0,0))
 		---
 		self.EZupgradable=true
-		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Ground Scanner"] and JMod.Config.Craftables["EZ Ground Scanner"].craftingReqs)
 		---
-		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(200)
-			self:GetPhysicsObject():Wake()
-			self:SetPos(self:GetPos())
-		end)
-		self:SetGrade(1)
-		self:InitPerfSpecs()
 		self:SetProgress(0)
-		self:SetElectricity(self.MaxElectricity)
-		self.Durability=self.MaxDurability
-		self:SetState(JMod.EZ_STATE_OFF)
-		-- TODO: make upgradable
 		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
 		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
 		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
@@ -262,6 +241,8 @@ elseif(CLIENT)then
 		end
 	end)
 	function ENT:Initialize()
+		self:InitPerfSpecs()
+		---
 		self.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
 		self.Tank:SetParent(self)
 		self.Tank:SetPos(self:GetPos())
@@ -269,8 +250,6 @@ elseif(CLIENT)then
 		self.Tank:SetNoDraw(true)
 		self.ScanResults={}
 	end
-	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
 	local WarningIcon=Material("ez_misc_icons/warning.png")
@@ -280,7 +259,7 @@ elseif(CLIENT)then
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		local TankAng=SelfAng:GetCopy()
 		TankAng:RotateAroundAxis(Right,-90)
-		JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,GradeColors[Grade],GradeMats[Grade])
+		JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 		self:DrawModel()
 		--
 		local BasePos=SelfPos+Up*32

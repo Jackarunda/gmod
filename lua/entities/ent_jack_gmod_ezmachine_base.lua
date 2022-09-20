@@ -104,8 +104,8 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
-ENT.MaxDurability=100
-ENT.MaxElectricity=100
+--ENT.MaxDurability=100
+--ENT.MaxElectricity=100
 --[[
 ENT.EZconsumes={"ammo","power","parts","coolant"}
 ENT.StaticPerfSpecs={ --- These stats do not change when the machine is upgraded
@@ -121,6 +121,10 @@ ENT.DynamicPerfSpecs={ --- These stats change when the machine is upgraded
 	Cooling=1
 }
 --]]
+ENT.StaticPerfSpecs={
+	MaxDurability=100,
+	MaxElectricity=100
+}
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
@@ -131,9 +135,7 @@ function ENT:SetupDataTables()
 end
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
-	if(self.StaticPerfSpecs)then
-		for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	end
+	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	if(self.DynamicPerfSpecs)then
 		for specName,value in pairs(self.DynamicPerfSpecs)do
 			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
@@ -182,19 +184,18 @@ if(SERVER)then
             phys:Wake()
             phys:SetMass(self.Mass)
         end
-		self.Durability = self.MaxDurability
-		self:SetElectricity(self.MaxElectricity)
-		if(self.DynamicPerfSpecs or self.StaticPerfSpecs)then
-			self:InitPerfSpecs()
-		end
 		self:SetState(JMod.EZ_STATE_OFF)
-		--
+		self:SetGrade(JMod.EZ_GRADE_BASIC)
+		self:InitPerfSpecs()
 		if(self.CustomInit)then
 			self:CustomInit()
 		end
-		--
+		self.Durability = self.MaxDurability
+		self:SetElectricity(self.MaxElectricity)
+		---
+		if(self.Owner)then JMod.Colorify(self) end
+		---
 		if(self.EZupgradable)then
-			self:SetGrade(JMod.EZ_GRADE_BASIC)
 			self.UpgradeProgress={}
 			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
 		end

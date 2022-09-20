@@ -8,6 +8,8 @@ ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
+ENT.Model="models/mosi/fallout4/furniture/workstations/weaponworkbench01.mdl"
+ENT.Mass=500
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
@@ -18,37 +20,12 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZupgradable=false
 ---
 local STATE_BROKEN,STATE_OFF=-1,0
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-end
 if(SERVER)then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/mosi/fallout4/furniture/workstations/weaponworkbench01.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+	function ENT:CustomInit()
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
-			phys:Wake()
-			phys:SetMass(500)
 			phys:SetBuoyancyRatio(.3)
 		end
-		---
-		if(IsValid(self.Owner))then
-			local Tem=self.Owner:Team()
-			if(Tem)then
-				local Col=team.GetColor(Tem)
-				--if(Col)then self:SetColor(Col) end
-			end
-		end
-		---
-		self.EZbuildCost=JMod.Config.Craftables["EZ Workbench"] and JMod.Config.Craftables["EZ Workbench"].craftingReqs
-		self.MaxDurability=100
-		---
-		self:SetState(STATE_OFF)
-		self.Durability=self.MaxDurability
 		---
 		if(SERVER)then
 			self.Craftables={}

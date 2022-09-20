@@ -5,46 +5,40 @@ ENT.Author="Jackarunda"
 ENT.Information="glhfggwpezpznore"
 ENT.PrintName="EZ Pumpjack"
 ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true -- temporary, until Phase 2 of the econ update
+ENT.Spawnable=true
 ENT.AdminOnly=false
 ENT.Base="ent_jack_gmod_ezmachine_base"
-ENT.EZconsumes={"power","parts"}
+---
+ENT.Model="models/hunter/blocks/cube4x4x1.mdl"
+ENT.Mass=3000
+ENT.SpawnHeight = 100
+---
 ENT.WhitelistedResources = {"water", "oil"}
-ENT.DepositKey = 0
-ENT.MaxElectricity = 200
-ENT.SpawnHeight=100
+---
+ENT.EZupgradable=true
+ENT.StaticPerfSpecs={
+	MaxElectricity = 200,
+	MaxDurability = 100
+}
+ENT.DynamicPerfSpecs={
+	PumpRate = 1
+}
+---
 local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
-function ENT:SetupDataTables()
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Int",1,"Grade")
-	self:NetworkVar("Float",0,"Progress")
-	self:NetworkVar("Float",1,"Electricity")
+---
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Float",1,"Progress")
 	self:NetworkVar("String",0,"ResourceType")
 end
 if(SERVER)then
-	function ENT:Initialize()
-		self:SetModel("models/hunter/blocks/cube4x4x1.mdl")
-		--self:SetModelScale(math.Rand(1.5,3),0)
-		--self:SetMaterial("models/debug/debugwhite")
-		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+	function ENT:CustomInit()
 		self:SetAngles(Angle(0,0,-90))
-		---
-		timer.Simple(.01,function()
-			self:GetPhysicsObject():SetMass(3000)
-			self:GetPhysicsObject():Wake()
-		end)
-		self:SetGrade(1)
 		self:SetProgress(0)
-		self:SetElectricity(200)
 		self:SetState(STATE_OFF)
 		self.Durability=300
 		self.NextCalcThink=0
-		-- TODO: make upgradable
+		self.MaxElectricity=200
+		self.DepositKey=0
 	end
 	function ENT:UpdateDepositKey()
 		local SelfPos=self:GetPos()
@@ -159,7 +153,7 @@ if(SERVER)then
 				if not(IsValid(self.Weld))then self.Weld=nil;self:TurnOff() return end
 				self:ConsumeElectricity(.5)
 				-- This is just the rate at which we pump
-				local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()]^2
+				local pumpRate = self.PumpRate^2
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
 				if(JMod.NaturalResourceTable[self.DepositKey].rate)then
@@ -185,22 +179,15 @@ if(SERVER)then
 				JMod.EmitAIsound(self:GetPos(),300,.5,256)
 			end
 		end
-		if(State==STATE_RUNNING)then
-
-		end
 		self:NextThink(CurTime()+1)
 		return true
 	end
 	function ENT:SpawnBarrel(amt)
-		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 15)
-		local Liquid=ents.Create(JMod.EZ_RESOURCE_ENTITIES[self:GetResourceType()])
-		Liquid:SetPos(SelfPos+Forward*120-Right*90+RandomArea)
-		Liquid:Spawn()
-		JMod.Owner(self.Owner)
-		Liquid:SetResource(amt)
-		Liquid:Activate()
-		
+		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
+		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100))
+		local spawnAng = Angle(0,0,-90)
+		local ejectVec = Vector(500, 0, 0)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
 	end
 	function ENT:OnDestroy(dmginfo)
 		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
@@ -229,6 +216,8 @@ if(SERVER)then
 
 elseif(CLIENT)then
 	function ENT:Initialize()
+		self:InitPerfSpecs()
+		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
 		self.Mdl:SetPos(self:GetPos()-self:GetRight()*100)
 		local Ang=self:GetAngles()
@@ -252,7 +241,7 @@ elseif(CLIENT)then
 		else
 			self.DriveMomentum=math.Clamp(self.DriveMomentum-FT/3,0,0.4)
 		end
-		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150
+		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150*Grade
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
 		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
 		self.Mdl:ManipulateBoneAngles(1,Angle(0,0,WalkingBeamDrive))
@@ -273,6 +262,10 @@ elseif(CLIENT)then
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		local LadderAng=SelfAng:GetCopy()
+		LadderAng:RotateAroundAxis(Up,90)
+		LadderAng:RotateAroundAxis(Forward,80)
+		JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 		if(DetailDraw)then
 			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()
@@ -282,7 +275,10 @@ elseif(CLIENT)then
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
 				draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,Color(100,255,100,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ExtractCol=Color(100,255,100,Opacity)
+				if(Typ=="water")then ExtractCol=Color(0,200,200,Opacity)
+				elseif(Typ=="oil")then ExtractCol=Color(120,80,0,Opacity) end
+				draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/200
 				local R,G,B=JMod.GoodBadColor(ElecFrac)

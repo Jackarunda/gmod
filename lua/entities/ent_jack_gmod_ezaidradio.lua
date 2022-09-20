@@ -29,8 +29,6 @@ if(SERVER)then
 		---
 		self:SetUseType(SIMPLE_USE)
 		---
-		JMod.Colorify(self)
-		---
 		self.ThinkSpeed=1
 		self.ElectricalEfficiency=2
 		---

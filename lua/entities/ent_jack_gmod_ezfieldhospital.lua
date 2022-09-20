@@ -39,11 +39,6 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if(IsValid(self.Owner))then
-			JMod.Colorify(self)
-		end
-		---
-		--self:InitPerfSpecs()
 		self.NextWhine=0
 		self.NextRealThink=0
 		self.NextUseTime=0
@@ -292,15 +287,12 @@ elseif(CLIENT)then
 		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
-		self.MaxElectricity=100
 		self.OpenAmt=1
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
 	end
 	local GlowSprite=Material("sprites/mat_jack_basicglow")
-	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
 	function ENT:Draw()
 		local SelfPos,SelfAng,State,FT,Grade=self:GetPos(),self:GetAngles(),self:GetState(),FrameTime(),self:GetGrade()
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
@@ -327,7 +319,7 @@ elseif(CLIENT)then
 			local CamAng=SelfAng:GetCopy()
 			CamAng:RotateAroundAxis(Up,-90)
 			CamAng:RotateAroundAxis(Right,180)
-			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,GradeColors[Grade],GradeMats[Grade])
+			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 			---
 			local Matricks=Matrix()
 			Matricks:Scale(Vector(.4,1.45,.5))

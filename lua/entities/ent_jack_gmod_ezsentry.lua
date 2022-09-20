@@ -18,6 +18,10 @@ ENT.EZconsumes={
 }
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.EZupgradable=true
+ENT.Model="models/props_phx/oildrum001_explosive.mdl"
+ENT.Mat="models/mat_jack_gmod_ezsentry"
+ENT.Mass=300
 -- config --
 ENT.AmmoTypes={
 	["Bullet"]={ -- Simple pew pew
@@ -158,35 +162,22 @@ function ENT:InitPerfSpecs(removeAmmo)
 end
 ----
 local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING,STATE_OVERHEATED=-1,0,1,2,3,4,5
-function ENT:SetupDataTables()
-	self:NetworkVar("Float",0,"AimPitch")
-	self:NetworkVar("Float",1,"AimYaw")
-	self:NetworkVar("Int",0,"State")
-	self:NetworkVar("Float",2,"Electricity")
-	self:NetworkVar("Int",1,"Ammo")
-	self:NetworkVar("Int",2,"Grade")
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Int",2,"Ammo")
+	self:NetworkVar("Float",1,"AimPitch")
+	self:NetworkVar("Float",2,"AimYaw")
 	self:NetworkVar("Float",3,"PerfMult")
-	self:NetworkVar("String",0,"AmmoType")
 	self:NetworkVar("Float",4,"Coolant")
+	self:NetworkVar("String",0,"AmmoType")
 end
 if(SERVER)then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/oildrum001_explosive.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezsentry")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+	function ENT:CustomInit()
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
-			phys:Wake()
-			phys:SetMass(200)
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
 		self:SetAmmoType("Bullet")
-		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		JMod.Colorify(self)
 		self:SetPerfMult(JMod.Config.SentryPerformanceMult)
 		self:InitPerfSpecs()
@@ -194,16 +185,8 @@ if(SERVER)then
 		self:Point(0,0)
 		self.SearchStageTime=self.SearchTime/2
 		self:SetAmmo(self.MaxAmmo)
-		self:SetElectricity(self.MaxElectricity)
-		self:SetState(STATE_OFF)
-		self.Durability=self.MaxDurability
 		self.NextWhine=0
 		self.Heat=0
-		---
-		self.EZupgradable=true
-		self.UpgradeProgress={}
-		self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Sentry"] and JMod.Config.Craftables["EZ Sentry"].craftingReqs)
-		---
 		self:ResetMemory()
 		self:CreateNPCTarget()
 	end

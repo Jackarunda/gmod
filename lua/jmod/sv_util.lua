@@ -775,6 +775,23 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 	ent.block_pickup=isblock
 end
 
+function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector)
+	local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
+	Resource:SetPos(machine:LocalToWorld(relativeSpawnPos))
+	Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
+	Resource:Spawn()
+	JMod.Owner(machine.Owner)
+	Resource:SetResource(math.Round(amount))
+	Resource:Activate()
+	local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
+	Resource:GetPhysicsObject():SetVelocity(ejectionVector)
+	timer.Simple(1, function()
+		if(IsValid(Resource))then
+			constraint.RemoveConstraints(Resource, "NoCollide")
+		end
+	end)
+end
+
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
 	if ent.block_pickup then 
 		JMod.Hint(ply, "blockphysgun")
