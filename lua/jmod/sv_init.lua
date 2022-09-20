@@ -464,6 +464,13 @@ concommand.Add("jacky_trace_debug",function(ply)
 				PrintTable(Tab)
 			end
 		end
+		print("----------- entity bone data -----------")
+		for i=0,100 do
+			local Boner=Ent:GetBoneName(i)
+			if(Boner and not(string.find(Boner,"INVALID")))then
+				print("bone",i,Boner)
+			end
+		end
 	end
 	print("---------- end trace debug -----------")
 end, nil, "Prints information about what the player's crosshair is looking at.")
