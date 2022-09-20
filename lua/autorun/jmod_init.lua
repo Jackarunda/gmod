@@ -165,6 +165,12 @@ JMod.RadiationShieldingValues={
 	[MAT_PLASTIC]=.04
 }
 
+JMod.MapSolarPowerModifiers={
+	{{"clouds_","_clouds","cloudy_","_cloudy"},.5},
+	{{"stormy_","storm_","_storm","_shady","shady_","_marsh","marsh_"},.2},
+	{{"_night","night_"},0}
+}
+
 -- this table is just a bunch of assumptions
 -- so that we have something to fall back on for camoflauge
 -- obviously hand-picked colors will be better, but hey

@@ -355,8 +355,8 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 end
 local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,clickFunc,sidePanelFunc)
 	-- first, populate icons
-	if not(SelectionMenuIcons[name])then
-		for name,info in pairs(data)do
+	for name,info in pairs(data)do
+		if not(SelectionMenuIcons[name])then
 			if(file.Exists("materials/jmod_selection_menu_icons/"..tostring(name)..".png","GAME"))then
 				SelectionMenuIcons[name]=Material("jmod_selection_menu_icons/"..tostring(name)..".png")
 			elseif((info.results)and(file.Exists("materials/entities/"..tostring(info.results)..".png","GAME")))then

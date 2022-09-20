@@ -448,6 +448,29 @@ concommand.Add("jacky_trace_debug",function(ply)
 		print("physmat",Ent:GetPhysicsObject():GetMaterial())
 		print("mass",Ent:GetPhysicsObject():GetMass())
 		print("model",Ent:GetModel())
+		---
+		print("----------- entity animation data -----------")
+		for k,v in pairs(Ent:GetSequenceList())do
+			print("---",k,v,"---")
+			PrintTable(Ent:GetSequenceInfo(k))
+		end
+		print("num pose params",Ent:GetNumPoseParameters())
+		local Boobies=Ent:GetAnimCount()
+		print("anim count",Boobies)
+		for i=0,Boobies do
+			print("--- anim ---")
+			local Tab=Ent:GetAnimInfo(i)
+			if(Tab)then
+				PrintTable(Tab)
+			end
+		end
+		print("----------- entity bone data -----------")
+		for i=0,100 do
+			local Boner=Ent:GetBoneName(i)
+			if(Boner and not(string.find(Boner,"INVALID")))then
+				print("bone",i,Boner)
+			end
+		end
 	end
 	print("---------- end trace debug -----------")
 end, nil, "Prints information about what the player's crosshair is looking at.")

@@ -92,7 +92,7 @@ function JMod.GoodBadColor(frac)
 	local r,g,b=math.Clamp(3-frac*4,0,1),math.Clamp(frac*2,0,1),math.Clamp(-3+frac*4,0,1)
 	return r*255,g*255,b*255
 end
-function JMOD_WhomILookinAt(ply,cone,dist)
+function JMod.WhomILookinAt(ply,cone,dist)
 	local CreatureTr,ObjTr,OtherTr=nil,nil,nil
 	for i=1,(150*cone) do
 		local Vec=(ply:GetAimVector()+VectorRand()*cone):GetNormalized()
@@ -208,4 +208,14 @@ function JMod.TryCough(ent)
 		if(ent.ViewPunch)then ent:ViewPunch(Angle(math.random(-5,5),math.random(-5,5),math.random(-5,5))) end
 		ent.EZcoughTime=CurTime()+math.random (.5, 1)
 	end
+end
+function JMod.DebugPos(pos,siz,label)
+	siz=siz or 1
+	label=label or math.Round(CurTime(),2)
+	
+end
+function JMod.DebugRay(pos,siz,label)
+	siz=siz or 1
+	label=label or math.Round(CurTime(),2)
+	-- ayo
 end
