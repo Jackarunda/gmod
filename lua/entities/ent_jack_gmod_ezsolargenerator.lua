@@ -162,21 +162,16 @@ function ENT:GetLightAlignment()
 		-- positive 90 means we're facing directly away from it
 		return 1-(AngleDifference+90)/180
 	elseif(IsValid(SunEnt))then
-		local SkyCameraEnt=ents.FindByClass("sky_camera")[1]
-		if(IsValid(SkyCameraEnt))then
-			local Vec=(SkyCameraEnt:GetPos()-SunEnt:GetPos())
-			local Dir=Vec:GetNormalized()
-			local Ang=Dir:Angle()
-			Ang.p=0
-			Ang.r=0
-			local SunVec=(Ang):Forward()
-			local OurFacingVec=self:GetUp()
-			local AngleDifference=-math.deg(math.asin(SunVec:Dot(OurFacingVec)))
-			return 1-(AngleDifference+90)/180
-		end
+		local Ang=SunEnt:GetAngles()
+		Ang.p=0
+		Ang.r=0
+		local SunVec=(Ang):Forward()
+		local OurFacingVec=self:GetUp()
+		local AngleDifference=-math.deg(math.asin(SunVec:Dot(OurFacingVec)))
+		return (AngleDifference+90)/180
 	end
 	-- if the map has no light and no sun, then uh... uhhhhhhhh
-	return .8
+	return .5
 end
 
 function ENT:Think()
@@ -237,8 +232,6 @@ elseif(CLIENT)then
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
-		--- animation test
-		JMod.RenderModel(self.Bepis,BasePos+Up*100,SelfAng)
 		---
 		local BoxAng=SelfAng:GetCopy()
 		BoxAng:RotateAroundAxis(Right, 90)
