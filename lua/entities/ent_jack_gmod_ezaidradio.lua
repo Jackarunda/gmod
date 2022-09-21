@@ -27,12 +27,9 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		self:SetUseType(SIMPLE_USE)
-		---
 		self.ThinkSpeed=1
 		self.ElectricalEfficiency=2
 		---
-		self:SetState(STATE_OFF)
 		self.NextWhine=0
 		self.NextRealThink=0
 		self.NextUseTime=0
