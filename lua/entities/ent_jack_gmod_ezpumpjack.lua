@@ -18,7 +18,7 @@ ENT.WhitelistedResources = {"water", "oil"}
 ENT.EZupgradable=true
 ENT.StaticPerfSpecs={
 	MaxElectricity = 200,
-	MaxDurability = 100
+	MaxDurability = 120
 }
 ENT.DynamicPerfSpecs={
 	PumpRate = 1

@@ -19,6 +19,9 @@ ENT.EZconsumes={
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZupgradable=false
 ---
+ENT.StaticPerfSpecs={
+	MaxDurability=100
+}
 local STATE_BROKEN,STATE_OFF=-1,0
 if(SERVER)then
 	function ENT:CustomInit()

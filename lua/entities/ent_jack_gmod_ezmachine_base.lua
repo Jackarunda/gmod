@@ -225,10 +225,15 @@ if(SERVER)then
 	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
+			--print("Durability before: "..self.Durability)
 			self:TakePhysicsDamage(dmginfo)
-			self.Durability=self.Durability-dmginfo:GetDamage()/2
+			local DmgMult = 1
+			if(dmginfo:IsDamageType(DMG_BULLET+DMG_BUCKSHOT))then DmgMult=.2 end
+			if(dmginfo:IsDamageType(DMG_POISON+DMG_NERVEGAS+DMG_DROWN+DMG_PARALYZE))then DmgMult=0 end
+			self.Durability=self.Durability-(dmginfo:GetDamage()*DmgMult)/3
+			--print("Durability after:"..self.Durability)
 			if(self.Durability<=0)then self:Break(dmginfo) end
-			if(self.Durability<=-100)then self:Destroy(dmginfo) end
+			if(self.Durability<=-200)then self:Destroy(dmginfo) end
 		end
 	end
 	function ENT:FlingProp(mdl,force)
