@@ -123,7 +123,6 @@ ENT.DynamicPerfSpecs={ --- These stats change when the machine is upgraded
 --]]
 ENT.StaticPerfSpecs={
 	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
-	ResistantDamageTypes={[DMG_BULLET]=10,[DMG_BUCKSHOT]=10,[DMG_BLAST]=1.1,[DMG_BLAST_SURFACE]=1.1},
 	MaxDurability=100,
 	MaxElectricity=100
 }
@@ -140,9 +139,16 @@ function ENT:SetupDataTables()
 end
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	for specName,value in pairs(self.StaticPerfSpecs)do
+		if(istable(value))then 
+			self[specName]=table.Copy(value)
+		else
+			self[specName]=value
+		end 
+	end
 	if(self.DynamicPerfSpecs)then
 		for specName,value in pairs(self.DynamicPerfSpecs)do
+			if(istable(value))then PrintTable(value) continue end
 			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
 			if(NewValue>2)then
 				self[specName]=math.ceil(NewValue)
@@ -231,13 +237,15 @@ if(SERVER)then
 	function ENT:DetermineDmgResistance(dmg)
 		if(self.ImmuneDamageTypes)then
 			for k,typ in pairs(self.ImmuneDamageTypes)do
-				print(typ)
+				if (istable(typ))then --[[PrintTable(typ)]] continue end --- I need this to deal with a mysterious table
+				if not(isnumber(typ))then continue end ----- Something's wrong here....
 				if(dmg:IsDamageType(typ))then return 1000 end
 			end
 		end
 		if(self.ResistantDamageTypes)then
 			for typ,resistance in pairs(self.ResistantDamageTypes)do
-				if(dmg:IsDamageType(typ[1]))then return self.Armor*resistance end
+				if not(isnumber(typ))then continue end ----- Something's wrong here....
+				if(dmg:IsDamageType(typ))then return self.Armor*resistance end
 			end
 		end
 		return self.Armor
