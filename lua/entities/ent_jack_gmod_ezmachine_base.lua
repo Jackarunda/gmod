@@ -122,8 +122,13 @@ ENT.DynamicPerfSpecs={ --- These stats change when the machine is upgraded
 }
 --]]
 ENT.StaticPerfSpecs={
+	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
+	ResistantDamageTypes={[DMG_BULLET]=10,[DMG_BUCKSHOT]=10,[DMG_BLAST]=1.1,[DMG_BLAST_SURFACE]=1.1},
 	MaxDurability=100,
 	MaxElectricity=100
+}
+ENT.DynamicPerfSpecs={
+	Armor=2
 }
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -223,15 +228,27 @@ if(SERVER)then
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end
+	function ENT:DetermineDmgResistance(dmg)
+		if(self.ImmuneDamageTypes)then
+			for k,typ in pairs(self.ImmuneDamageTypes)do
+				print(typ)
+				if(dmg:IsDamageType(typ))then return 1000 end
+			end
+		end
+		if(self.ResistantDamageTypes)then
+			for typ,resistance in pairs(self.ResistantDamageTypes)do
+				if(dmg:IsDamageType(typ[1]))then return self.Armor*resistance end
+			end
+		end
+		return self.Armor
+	end
 	function ENT:OnTakeDamage(dmginfo)
 		if(self)then
-			--print("Durability before: "..self.Durability)
 			self:TakePhysicsDamage(dmginfo)
-			local DmgMult = 1
-			if(dmginfo:IsDamageType(DMG_BULLET+DMG_BUCKSHOT))then DmgMult=.2 end
-			if(dmginfo:IsDamageType(DMG_POISON+DMG_NERVEGAS+DMG_DROWN+DMG_PARALYZE))then DmgMult=0 end
-			self.Durability=self.Durability-(dmginfo:GetDamage()*DmgMult)/3
-			--print("Durability after:"..self.Durability)
+			local Armor=self:DetermineDmgResistance(dmginfo)
+			if(Armor>=1000)then return end
+			local Damage=dmginfo:GetDamage()/Armor
+			self.Durability=self.Durability-Damage
 			if(self.Durability<=0)then self:Break(dmginfo) end
 			if(self.Durability<=-200)then self:Destroy(dmginfo) end
 		end

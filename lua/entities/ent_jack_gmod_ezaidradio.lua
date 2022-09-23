@@ -200,9 +200,6 @@ if(SERVER)then
 			self:ConsumeElectricity(.02)
 		end
 	end
-	function ENT:OnRemove()
-		--
-	end
 	function ENT:UserIsAuthorized(ply)
 		if not(ply)then return false end
 		if not(ply:IsPlayer())then return false end

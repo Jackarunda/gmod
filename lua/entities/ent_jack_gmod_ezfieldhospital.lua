@@ -80,13 +80,7 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:SFX(str,absPath)
-		if(absPath)then
-			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
-		else
-			sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
-		end
-	end
+	
 	function ENT:TurnOn()
 		if(self:GetState()==STATE_ON)then return end
 		if(self:GetElectricity()<=0)then JMod.Hint(activator, "nopower") return end

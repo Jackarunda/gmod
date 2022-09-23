@@ -18,6 +18,8 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZupgradable=false
 ---
 ENT.StaticPerfSpecs={
+	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
+	ResistantDamageTypes={[DMG_BULLET]=10,[DMG_BUCKSHOT]=10,[DMG_BLAST]=1.1,[DMG_BLAST_SURFACE]=1.1},
 	MaxDurability=100
 }
 local STATE_BROKEN,STATE_OFF=-1,0
