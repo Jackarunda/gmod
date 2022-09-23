@@ -2204,6 +2204,11 @@ function JMod.InitGlobalConfig(forceNew)
 		JMod.Config=NewConfig
 		file.Write("JMod_Config.txt",util.TableToJSON(JMod.Config,true))
 	end
+	for k,v in pairs(ents.FindByClass("ent_jack_gmod_ezworkbench"))do
+		if(IsValid(v))then
+			v:UpdateConfig()
+		end
+	end
 	print("JMOD: config file loaded")
 	-- jmod lua config --
 	if not(JMod.LuaConfig)then JMod.LuaConfig={BuildFuncs={},ArmorOffsets={}} end

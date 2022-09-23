@@ -12,9 +12,7 @@ ENT.Model="models/mosi/fallout4/furniture/workstations/weaponworkbench01.mdl"
 ENT.Mass=500
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.EZconsumes={
-    JMod.EZ_RESOURCE_TYPES.POWER,
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.GAS
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ENT.EZupgradable=false
@@ -30,17 +28,18 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255))
-		if(SERVER)then
-			self.Craftables={}
-			for name,info in pairs(JMod.Config.Craftables)do
-				if(info.craftingType=="workbench")then
-					-- we store this here for client transmission later
-					-- because we can't rely on the client having the config
-					local infoCopy=table.FullCopy(info)
-					infoCopy.name=name
-					self.Craftables[name]=info
-				end
+		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
+		self:UpdateConfig()
+	end
+	function ENT:UpdateConfig()
+		self.Craftables={}
+		for name,info in pairs(JMod.Config.Craftables)do
+			if(info.craftingType=="workbench")then
+				-- we store this here for client transmission later
+				-- because we can't rely on the client having the config
+				local infoCopy=table.FullCopy(info)
+				infoCopy.name=name
+				self.Craftables[name]=info
 			end
 		end
 	end
@@ -71,12 +70,6 @@ if(SERVER)then
 		else
 			JMod.Hint(activator, "refill")
 		end
-	end
-	function ENT:Think()
-		--
-	end
-	function ENT:OnRemove()
-		--
 	end
 	function ENT:ConsumeResourcesInRange(requirements)
 		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
