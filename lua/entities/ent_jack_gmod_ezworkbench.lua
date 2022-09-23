@@ -30,6 +30,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
+		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255))
 		if(SERVER)then
 			self.Craftables={}
 			for name,info in pairs(JMod.Config.Craftables)do
