@@ -104,31 +104,31 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
---ENT.MaxDurability=100
---ENT.MaxElectricity=100
+ENT.ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER}
+ENT.MaxDurability=100
+ENT.MaxElectricity=100
+ENT.Armor=1
+---- VVV This is how you make custom Preformance Specifications for your machines VVV
 --[[
+--- This is what the machine is able to store for use.
 ENT.EZconsumes={"ammo","power","parts","coolant"}
-ENT.StaticPerfSpecs={ --- These stats do not change when the machine is upgraded
+
+--- These stats do not change when the machine is upgraded
+ENT.StaticPerfSpecs={ 
 	MaxElectricity=100,
 	SearchTime=7,
 	SpecialTargetingHeights={["npc_rollermine"]=15},
 	ShotCount=1,
 	BarrelLength=29
 }
-ENT.DynamicPerfSpecs={ --- These stats change when the machine is upgraded
+--- These stats change when the machine is upgraded
+ENT.DynamicPerfSpecs={ 
 	MaxAmmo=300,
 	SearchSpeed=.5,
 	Cooling=1
 }
 --]]
-ENT.StaticPerfSpecs={
-	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
-	MaxDurability=100,
-	MaxElectricity=100
-}
-ENT.DynamicPerfSpecs={
-	Armor=2
-}
+---- Shared Functions ----
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
 	self:NetworkVar("Int",1,"Grade")
@@ -139,16 +139,12 @@ function ENT:SetupDataTables()
 end
 function ENT:InitPerfSpecs()
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do
-		if(istable(value))then 
-			self[specName]=table.Copy(value)
-		else
-			self[specName]=value
-		end 
+	if(self.StaticPerfSpecs)then
+		for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
 	end
 	if(self.DynamicPerfSpecs)then
 		for specName,value in pairs(self.DynamicPerfSpecs)do
-			if(istable(value))then PrintTable(value) continue end
+			if(istable(value))then PrintTable(value) continue end ---Debuging reasons
 			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
 			if(NewValue>2)then
 				self[specName]=math.ceil(NewValue)
@@ -235,16 +231,12 @@ if(SERVER)then
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end
 	function ENT:DetermineDmgResistance(dmg)
-		if(self.ImmuneDamageTypes)then
-			for k,typ in pairs(self.ImmuneDamageTypes)do
-				if (istable(typ))then --[[PrintTable(typ)]] continue end --- I need this to deal with a mysterious table
-				if not(isnumber(typ))then continue end ----- Something's wrong here....
-				if(dmg:IsDamageType(typ))then return 1000 end
-			end
+		for k,typ in pairs(self.ImmuneDamageTypes)do
+			if(dmg:IsDamageType(typ))then return 1000 end
 		end
-		if(self.ResistantDamageTypes)then
-			for typ,resistance in pairs(self.ResistantDamageTypes)do
-				if not(isnumber(typ))then continue end ----- Something's wrong here....
+		if(self.DamageModifierTypes)then
+			for typ,resistance in pairs(self.DamageModifierTypes)do
+				---if not(isnumber(typ))then print(typ) if(istable(typ))then PrintTable(table) end continue end
 				if(dmg:IsDamageType(typ))then return self.Armor*resistance end
 			end
 		end
@@ -255,7 +247,10 @@ if(SERVER)then
 			self:TakePhysicsDamage(dmginfo)
 			local Armor=self:DetermineDmgResistance(dmginfo)
 			if(Armor>=1000)then return end
+			--print("Armor: "..Armor)
+			--print("Damage before: "..dmginfo:GetDamage())
 			local Damage=dmginfo:GetDamage()/Armor
+			--print("Modded Damage: "..Damage)
 			self.Durability=self.Durability-Damage
 			if(self.Durability<=0)then self:Break(dmginfo) end
 			if(self.Durability<=-200)then self:Destroy(dmginfo) end

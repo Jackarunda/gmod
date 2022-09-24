@@ -250,7 +250,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					firer:FireBullets({
 						Attacker=attacker,
 						Damage=fragDmg*DmgMul,
-						Force=fragDmg/8*DmgMul,
+						Force=fragDmg/100*DmgMul,
 						Num=1,
 						Src=origin,
 						Tracer=0,

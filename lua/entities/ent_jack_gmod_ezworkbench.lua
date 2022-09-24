@@ -15,11 +15,11 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
 ENT.Base="ent_jack_gmod_ezmachine_base"
-ENT.EZupgradable=false
 ---
 ENT.StaticPerfSpecs={
-	ResistantDamageTypes={DMG_BULLET=10,DMG_BUCKSHOT=10,DMG_BLAST=1.1,DMG_BLAST_SURFACE=1.1},
-	MaxDurability=100
+	DamageModifierTypes={[DMG_BULLET]=5,[DMG_BUCKSHOT]=5,[DMG_BLAST]=4,[DMG_BLAST_SURFACE]=4,[DMG_GENERIC]=3},
+	MaxDurability=100,
+	Armor=5
 }
 local STATE_BROKEN,STATE_OFF=-1,0
 if(SERVER)then
