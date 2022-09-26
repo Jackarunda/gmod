@@ -32,10 +32,11 @@ ENT.PhysMatDetectionWhitelist={
 	"solidmetal"
 }
 ENT.StaticPerfSpecs={
-	MaxElectricity=100,
+	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=3,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2,[DMG_GENERIC]=4},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
+	Armor=2,
 	ScanSpeed=5,
 	ScanRange=20
 }

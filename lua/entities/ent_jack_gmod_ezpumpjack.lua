@@ -17,10 +17,12 @@ ENT.WhitelistedResources = {"water", "oil"}
 ---
 ENT.EZupgradable=true
 ENT.StaticPerfSpecs={
-	MaxElectricity = 200,
-	MaxDurability = 120
+	DamageModifierTypes={[DMG_BULLET]=6,[DMG_BUCKSHOT]=6,[DMG_BLAST]=4,[DMG_BLAST_SURFACE]=4,[DMG_GENERIC]=5},
+	MaxDurability=100,
+	MaxElectricity=200,
 }
 ENT.DynamicPerfSpecs={
+	Armor=3,
 	PumpRate = 1
 }
 ---
@@ -39,6 +41,7 @@ if(SERVER)then
 		self.NextCalcThink=0
 		self.MaxElectricity=200
 		self.DepositKey=0
+		self:TryPlace()
 	end
 	function ENT:UpdateDepositKey()
 		local SelfPos=self:GetPos()
@@ -74,6 +77,31 @@ if(SERVER)then
 			--print("No valid deposit") --DEBUG
 		end
 	end
+	function ENT:TryPlace()
+		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
+		if((Tr.Hit)and(Tr.HitWorld))then
+			local Yaw=self:GetAngles().y
+			self:SetAngles(Angle(0,Yaw,-90))
+			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
+			--
+			local GroundIsSolid=true
+			for i=1,50 do
+				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
+				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
+			end
+			self:UpdateDepositKey()
+			if(GroundIsSolid)then
+				if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
+				if(IsValid(self.Weld) and self.DepositKey)then
+					self:TurnOn(activator)
+				else
+					JMod.Hint(activator,"machine mounting problem")
+				end
+			elseif not(self.DepositKey)then
+				JMod.Hint(activator,"oil derrick")
+			end
+		end
+	end
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(STATE_RUNNING)
@@ -107,29 +135,7 @@ if(SERVER)then
 			JMod.Hint(activator,"destroyed",self)
 			return
 		elseif(State==STATE_OFF)then
-			local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
-			if((Tr.Hit)and(Tr.HitWorld))then
-				local Yaw=self:GetAngles().y
-				self:SetAngles(Angle(0,Yaw,-90))
-				self:SetPos(Tr.HitPos+Tr.HitNormal*95)
-				--
-				local GroundIsSolid=true
-				for i=1,50 do
-					local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-					if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
-				end
-				self:UpdateDepositKey()
-				if(GroundIsSolid and self.DepositKey)then
-					if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,10000,false,false) end
-					if(IsValid(self.Weld))then
-						self:TurnOn(activator)
-					else
-						JMod.Hint(activator,"machine mounting problem")
-					end
-				else
-					JMod.Hint(activator,"oil derrick")
-				end
-			end
+			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
 			self:TurnOff()
 		end
@@ -179,7 +185,11 @@ if(SERVER)then
 				JMod.EmitAIsound(self:GetPos(),300,.5,256)
 			end
 		end
-		self:NextThink(CurTime()+1)
+		if not(IsValid(self.Weld))then
+			self:SetProgress(0)
+			self.DepositKey = nil
+			self:TurnOff()
+		end
 		return true
 	end
 	function ENT:SpawnBarrel(amt)
@@ -202,7 +212,7 @@ if(SERVER)then
 				oilFire:Activate()
 			end)
 		end
-		if not(self.DepositKey > 0)then return end
+		if not(self.DepositKey)then return end
 		if(self:GetResourceType() == "oil")then
 			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
 				createOilFire()

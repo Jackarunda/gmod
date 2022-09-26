@@ -16,11 +16,11 @@ ENT.MaxPower = 100
 ENT.EZupgradable = true
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=2},
+	DamageModifierTypes={[DMG_BULLET]=2,[DMG_BUCKSHOT]=2},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
-	Armor=0.75,
+	Armor=1,
 	ChargeSpeed=1
 }
 function ENT:CustomSetupDataTables()

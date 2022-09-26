@@ -7,6 +7,7 @@ ENT.Category="JMod - EZ Misc."
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
+ENT.NoSitAllowed=true
 ----
 ENT.Model="models/props_lab/reciever01d.mdl"
 ENT.Mass=150

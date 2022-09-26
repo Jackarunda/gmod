@@ -16,6 +16,12 @@ ENT.Mass=150
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ----
+ENT.StaticPerfSpecs={
+	DamageModifierTypes={[DMG_BULLET]=4,[DMG_BUCKSHOT]=4,[DMG_BLAST]=3,[DMG_BLAST_SURFACE]=3,[DMG_GENERIC]=3},
+	MaxDurability=100,
+	Armor=3
+}
+----
 local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Int",2,"OutpostID")
