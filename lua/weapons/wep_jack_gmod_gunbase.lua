@@ -145,6 +145,15 @@ hook.Add("InitPostEntity","JMod_ArcCW_InitPostEntity",function()
 		"weapons/arccw/ricochet05_quiet.wav"
 	}
 end)
+hook.Add("EntityTakeDamage","JMod_Explosive_Bullets",function(target, dmg)
+	local attacker = dmg:GetAttacker()
+	if not(IsValid(attacker))then return end
+	local weapon = attacker:GetActiveWeapon()
+	if(weapon.ExplosiveBullet)then
+		JMod.Sploom(attacker, dmg:GetDamagePosition(), dmg:GetDamage()/30, 1)
+		if(target:IsVehicle())then dmg:SetDamage(dmg:GetDamage()*1.5) end
+	end
+end)
 
 -- arccw hooks to do extra stuff --
 SWEP.Hook_AddShootSound=function(self, data)

@@ -4,6 +4,8 @@ SWEP.PrintName="Anti-Materiel Sniper Rifle"
 
 JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amsr",true)
 
+SWEP.ExplosiveBullet=true
+
 SWEP.Slot=3
 
 SWEP.ViewModel="models/weapons/c_mw2_intervention.mdl"

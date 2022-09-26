@@ -5,6 +5,8 @@ SWEP.PrintName="Anti-Materiel Rifle"
 JMod.SetWepSelectIcon(SWEP,"entities/ent_jack_gmod_ezweapon_amr",true)
 if(CLIENT)then killicon.Add("wep_jack_gmod_amr","entities/ent_jack_gmod_ezweapon_amr",Color(255,0,0)) end
 
+SWEP.ExplosiveBullet=true
+
 SWEP.Slot=3
 
 SWEP.ViewModel="models/weapons/c_mw2_barrett50cal.mdl"
