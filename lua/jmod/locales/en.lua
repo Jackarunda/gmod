@@ -178,6 +178,7 @@ JMod.Locales["en"]={
 	["hint chonky boi"] = "You've hit 150kg in armour. You'll be making quite a bit of noise!",
     ["hint machine mounting problem"] = "there was a problem affixing the machine to the ground, please move it and try again",
     ["hint bomb bay"] = "tap bombs against the bay to load them in, then use the drop command to drop them",
+	["hint arccw"] = "ArcCW Base is missing!",
 	--commands
     ["command jmod_cl_reloadconfig"]="re-reads the lua client config from harddrive to ingame memory",
     ["command jmod_debug_showgasparticles"]="causes gas and fallout particles to render as white balls",

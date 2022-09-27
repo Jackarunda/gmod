@@ -198,6 +198,7 @@ JMod.Hints = {
 	["backblast"] = {LangKey = "hint backblast"},
 	["backblast wall"] = {LangKey = "hint backblast wall"},
 	["shotgun breach"] = {LangKey = "hint shotgun breach"},
+	["arccw"] = {LangKey = "hint arccw"},
 	-- Ammo
 	["weapon ammo"] = {LangKey = "hint weapon ammo"},
 	["weapon munitions"] = {LangKey = "hint weapon munitions"},

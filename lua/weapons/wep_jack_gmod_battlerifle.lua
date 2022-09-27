@@ -8,7 +8,7 @@ SWEP.Slot=2
 
 SWEP.ViewModel="models/weapons/v_cod4_g3_new.mdl"
 SWEP.WorldModel="models/weapons/w_jmod_g3.mdl"
-SWEP.ViewModelFOV=75
+SWEP.ViewModelFOV=65
 SWEP.BodyHolsterSlot="back"
 SWEP.BodyHolsterAng=Angle(185,15,180)
 SWEP.BodyHolsterAngL=Angle(0,195,170)
@@ -20,7 +20,9 @@ JMod.ApplyAmmoSpecs(SWEP,"Medium Rifle Round",.9)
 
 SWEP.Primary.ClipSize=20 -- DefaultClip is automatically set.
 
-SWEP.Recoil=1.2
+SWEP.Recoil=1.5
+SWEP.RecoilPunchBackMax=3
+SWEP.RecoilPunchBackMaxSights=2
 
 SWEP.Delay=60/550 -- 60/RPM.
 SWEP.Firemodes={
@@ -72,9 +74,8 @@ SWEP.Animations={
     },
     ["draw"]={
         Source="draw1",
-        Time=1.5,
+        Time=1.3,
         SoundTable={{s=JMod.GunHandlingSounds.draw.longgun, t=0, v=60}},
-		Mult=1,
         LHIK=true,
         LHIKIn=0,
         LHIKOut=0.35,
@@ -86,42 +87,36 @@ SWEP.Animations={
     },
     ["reload"]={
         Source="reload_full",
-        Time=3,
+        Time=3.5,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71},
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,
 		SoundTable={
 			{s=JMod.GunHandlingSounds.cloth.loud, t=0, v=60, p=120},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t=.3, v=65},
-			{s=JMod.GunHandlingSounds.cloth.magpull, t=1, v=65},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t=1.7, v=65},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t=2.1, v=65},
-			{s=JMod.GunHandlingSounds.grab, t=2.6, v=65}
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t=.35, v=65},
+			{s=JMod.GunHandlingSounds.cloth.magpull, t=1.1, v=65},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t=2.05, v=65},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t=2.55, v=65},
+			{s=JMod.GunHandlingSounds.grab, t=3, v=65}
 		}
     },
     ["reload_empty"]={
         Source="reload_empty",
-        Time=4,
+        Time=5.5,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71, 89},
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,
 		SoundTable={
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/pull_bolt.wav", t=.1, v=65},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t=.7, v=65},
-			{s=JMod.GunHandlingSounds.cloth.magpull, t=1.4, v=65},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t=2.1, v=65},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t=2.5, v=65},
-			{s=JMod.GunHandlingSounds.grab, t=2.9, v=55, p=130},
-			{s="snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t=3.2, v=65},
-			{s=JMod.GunHandlingSounds.grab, t=3.55, v=65}
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/pull_bolt.wav", t=.15, v=65},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav", t=1.1, v=65},
+			{s=JMod.GunHandlingSounds.cloth.magpull, t=2.1, v=65},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav", t=3.2, v=50},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav", t=3.8, v=65},
+			{s=JMod.GunHandlingSounds.grab, t=4.5, v=55, p=130},
+			{s="snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav", t=4.8, v=65},
+			{s=JMod.GunHandlingSounds.grab, t=5.4, v=65}
 		}
     }
 }

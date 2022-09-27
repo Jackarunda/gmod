@@ -97,7 +97,7 @@ if(SERVER)then
 				end
 			else
 				activator:PickupObject(self)
-				activator:PrintMessage(HUD_PRINTCENTER,"ArcCW Base is missing!")
+				JMod.Hint(activator,"arccw")
 			end
 		end
 	end

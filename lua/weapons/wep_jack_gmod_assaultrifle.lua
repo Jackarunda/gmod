@@ -8,7 +8,7 @@ SWEP.Slot=2
 
 SWEP.ViewModel="models/weapons/v_cod4_m16a4.mdl"
 SWEP.WorldModel="models/weapons/w_jmod_m16.mdl"
-SWEP.ViewModelFOV=70
+SWEP.ViewModelFOV=60
 
 SWEP.BodyHolsterSlot="back"
 SWEP.BodyHolsterAng=Angle(185,15,180)
@@ -21,7 +21,9 @@ JMod.ApplyAmmoSpecs(SWEP,"Light Rifle Round")
 
 SWEP.Primary.ClipSize=30 -- DefaultClip is automatically set.
 
-SWEP.Recoil=.3
+SWEP.Recoil=.75
+SWEP.RecoilPunchBackMax=3
+SWEP.RecoilPunchBackMaxSights=2
 
 SWEP.Delay=60/750 -- 60/RPM.
 SWEP.Firemodes={
@@ -77,9 +79,8 @@ SWEP.Animations={
     },
     ["draw"]={
         Source="draw1",
-        Time=0.45,
+        Time=0.8,
         SoundTable={{s=JMod.GunHandlingSounds.draw.longgun, t=0, v=60}},
-		Mult=2,
         LHIK=true,
         LHIKIn=0,
         LHIKOut=0.35,
@@ -93,9 +94,6 @@ SWEP.Animations={
         Source="reload_full",
         Time=2.5,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71},
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,
@@ -105,16 +103,13 @@ SWEP.Animations={
 			{s=JMod.GunHandlingSounds.tap.magwell, t=1.1, v=60},
 			{s=JMod.GunHandlingSounds.tap.magwell, t=1.45, v=60},
 			{s="snds_jack_gmod/ez_weapons/assault_rifle/mag_in.wav", t=1.7, v=65},
-			{s=JMod.GunHandlingSounds.grab, t=2, v=60},
+			{s=JMod.GunHandlingSounds.grab, t=2.2, v=60},
 		}
     },
     ["reload_empty"]={
         Source="reload_empty",
         Time=3.1,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71, 89},
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,

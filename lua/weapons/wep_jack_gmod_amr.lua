@@ -23,8 +23,9 @@ JMod.ApplyAmmoSpecs(SWEP,"Heavy Rifle Round")
 
 SWEP.Primary.ClipSize=5 -- DefaultClip is automatically set.
 
-SWEP.Recoil=2
-SWEP.VisualRecoilMult=2
+SWEP.Recoil=3
+SWEP.RecoilPunchBackMax=5
+SWEP.RecoilPunchBackMaxSights=3
 
 SWEP.Delay=60/200 -- 60/RPM.
 SWEP.Firemodes={
@@ -134,9 +135,6 @@ SWEP.Animations={
         Source="reload_tac",
         Time=5,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        -- Checkpoints={128}, -- checkpoints don't work in ArcCW so don't even bother
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,
@@ -157,9 +155,6 @@ SWEP.Animations={
         Source="reload_empty",
         Time=6,
         TPAnim=ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints={24, 42, 59, 71, 89},
-        FrameRate=37,
-		Mult=1,
         LHIK=true,
         LHIKIn=0.5,
         LHIKOut=0.5,
@@ -171,11 +166,11 @@ SWEP.Animations={
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=2.3, v=65},
 			{s="snds_jack_gmod/ez_weapons/amr/magmove.wav", t=2.2, v=65},
 			{s=JMod.GunHandlingSounds.tap.magwell, t=3.1, v=65, p=80},
-			{s="snds_jack_gmod/ez_weapons/amr/in.wav", t=3.7, v=65},
+			{s="snds_jack_gmod/ez_weapons/amr/in.wav", t=3.75, v=65},
 			{s=JMod.GunHandlingSounds.cloth.quiet, t=4, v=60},
-			{s=JMod.GunHandlingSounds.grab, t=4.1, v=60},
-			{s="snds_jack_gmod/ez_weapons/amr/pull.wav", t=5, v=65},
-			{s="snds_jack_gmod/ez_weapons/amr/release.wav", t=5.3, v=65},
+			{s=JMod.GunHandlingSounds.grab, t=4.5, v=60},
+			{s="snds_jack_gmod/ez_weapons/amr/pull.wav", t=5.2, v=65},
+			{s="snds_jack_gmod/ez_weapons/amr/release.wav", t=5.5, v=65},
 			{s=JMod.GunHandlingSounds.grab, t=5.8, v=60}
 		}
     },

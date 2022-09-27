@@ -8,7 +8,7 @@ SWEP.Slot=3
 
 SWEP.ViewModel="models/weapons/c_mw2_intervention.mdl"
 SWEP.WorldModel="models/weapons/w_jmod_intervention.mdl"
-SWEP.ViewModelFOV=75
+SWEP.ViewModelFOV=65
 SWEP.BodyHolsterSlot="back"
 SWEP.BodyHolsterAng=Angle(0,-105,0)
 SWEP.BodyHolsterAngL=Angle(0,-75,190)
@@ -22,9 +22,10 @@ JMod.ApplyAmmoSpecs(SWEP,"Heavy Rifle Round",1.1)
 
 SWEP.Primary.ClipSize=3 -- DefaultClip is automatically set.
 
-SWEP.Recoil=2
-SWEP.VisualRecoilMult=2
-SWEP.BipodRecoil=1
+SWEP.Recoil=3.5
+SWEP.RecoilPunchBackMax=5
+SWEP.RecoilPunchBackMaxSights=3
+SWEP.BipodRecoil=2
 
 SWEP.ChamberSize=1 -- this is so wrong, Arctic...
 
@@ -127,11 +128,11 @@ SWEP.Animations={
 		Mult=1,
         ShellEjectAt=1.1,
 		SoundTable={
-			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.75, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.7, v=60, p=90},
 			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=0.8, v=60, p=90},
 			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=1.6, v=60, p=90},
 			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=1.8, v=60, p=90},
-			{s=JMod.GunHandlingSounds.grab, t=2.25, v=55}
+			{s=JMod.GunHandlingSounds.grab, t=2.25, v=45}
 		}
     },
 	["reload"]={
