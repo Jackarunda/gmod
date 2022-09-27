@@ -4,6 +4,8 @@ local MenuOpen=false
 local YesMat=Material("icon16/accept.png")
 local NoMat=Material("icon16/cancel.png")
 local FavMat=Material("icon16/star.png")
+local FriendMat=Material("icon16/user_green.png")
+local NotFriendMat=Material("icon16/user_red.png")
 local SpecialIcons={
 	["geothermal"]=Material("ez_resource_icons/geothermal.png"),
 	["warning"]=Material("ez_misc_icons/warning.png")
@@ -40,13 +42,16 @@ local function PopulateList(parent,friendList,myself,W,H)
 	local Y=0
 	for k,playa in pairs(player.GetAll())do
 		if(playa~=myself)then
+			playa.JModFriends = playa.JModFriends or {}
+			local IsFriendBool = table.HasValue(playa.JModFriends, myself)
+
 			local Panel=parent:Add("DPanel")
 			Panel:SetSize(W-35,20)
 			Panel:SetPos(0,Y)
 			function Panel:Paint(w,h)
 				surface.SetDrawColor(0,0,0,100)
 				surface.DrawRect(0,0,w,h)
-				draw.SimpleText(playa:Nick(),"DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
+				draw.SimpleText((playa:IsValid() and playa:Nick()) or "DISCONNECTED","DermaDefault",5,3,Color(255,255,255,255),TEXT_ALIGN_LEFT,TEXT_ALIGN_TOP)
 			end
 			local Buttaloney=vgui.Create("DButton",Panel)
 			Buttaloney:SetPos(Panel:GetWide()-25,0)
@@ -68,6 +73,17 @@ local function PopulateList(parent,friendList,myself,W,H)
 				end
 				PopulateList(parent,friendList,myself,W,H)
 			end
+
+			local IsFriendIcon=vgui.Create("DSprite",Panel)
+			IsFriendIcon:SetPos(Panel:GetWide()-50,0)
+			IsFriendIcon:SetSize(20,20)
+			IsFriendIcon:SetText("")
+			function IsFriendIcon:Paint(w,h)
+				surface.SetDrawColor(255,255,255,255)
+				surface.SetMaterial((IsFriendBool and FriendMat)or NotFriendMat)
+				surface.DrawTexturedRect(2,2,16,16)
+			end
+
 			Y=Y+25
 		end
 	end
