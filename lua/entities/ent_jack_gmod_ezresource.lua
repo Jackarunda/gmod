@@ -61,6 +61,9 @@ if(SERVER)then
 		end)
 	end
 	function ENT:FlingProp(mdl)
+		if not(util.IsValidModel(mdl))then
+			return
+		end
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
 		Prop:SetAngles(VectorRand():Angle())
