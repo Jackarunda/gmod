@@ -23,22 +23,22 @@ ENT.BreakNoise = "Plastic_Barrel.Break"
 --ENT.Hint="coolant"
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        local FX = EffectData()
-        FX:SetOrigin(pos)
-        FX:SetScale(1)
-        util.Effect("WaterSplash", FX, true, true)
-    end
+	function ENT:UseEffect(pos, ent)
+		local FX = EffectData()
+		FX:SetOrigin(pos)
+		FX:SetScale(1)
+		util.Effect("WaterSplash", FX, true, true)
+	end
 elseif CLIENT then
-    local TxtCol = Color(255, 255, 255, 80)
+	local TxtCol = Color(255, 255, 255, 80)
 
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -10.8, 0), Angle(90, 0, 90), .04, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.WATER, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -10.8, 0), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.WATER, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

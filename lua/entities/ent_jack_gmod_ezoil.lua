@@ -23,40 +23,40 @@ ENT.BreakNoise = "Metal_Barrel.Break"
 --ENT.Hint="coolant"
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent, destructive)
-        for i = 1, 2 do
-            local Eff = EffectData()
-            Eff:SetOrigin(pos + VectorRand() * 10)
-            util.Effect("StriderBlood", Eff, true, true)
-        end
+	function ENT:UseEffect(pos, ent, destructive)
+		for i = 1, 2 do
+			local Eff = EffectData()
+			Eff:SetOrigin(pos + VectorRand() * 10)
+			util.Effect("StriderBlood", Eff, true, true)
+		end
 
-        if destructive then
-            local Tr = util.QuickTrace(pos, Vector(math.random(-200, 200), math.random(-200, 200), math.random(0, -200)), {self})
+		if destructive then
+			local Tr = util.QuickTrace(pos, Vector(math.random(-200, 200), math.random(-200, 200), math.random(0, -200)), {self})
 
-            if Tr.Hit then
-                local Fiah = ents.Create("env_fire")
-                Fiah:SetPos(Tr.HitPos + Tr.HitNormal)
-                Fiah:SetKeyValue("health", 30)
-                Fiah:SetKeyValue("fireattack", 1)
-                Fiah:SetKeyValue("firesize", math.random(20, 200))
-                Fiah:SetOwner(self.Owner or game.GetWorld())
-                Fiah:Spawn()
-                Fiah:Activate()
-                Fiah:Fire("StartFire", "", 0)
-                Fiah:Fire("kill", "", math.random(3, 10))
-            end
-        end
-    end
+			if Tr.Hit then
+				local Fiah = ents.Create("env_fire")
+				Fiah:SetPos(Tr.HitPos + Tr.HitNormal)
+				Fiah:SetKeyValue("health", 30)
+				Fiah:SetKeyValue("fireattack", 1)
+				Fiah:SetKeyValue("firesize", math.random(20, 200))
+				Fiah:SetOwner(self.Owner or game.GetWorld())
+				Fiah:Spawn()
+				Fiah:Activate()
+				Fiah:Fire("StartFire", "", 0)
+				Fiah:Fire("kill", "", math.random(3, 10))
+			end
+		end
+	end
 elseif CLIENT then
-    local TxtCol = Color(255, 255, 255, 80)
+	local TxtCol = Color(255, 255, 255, 80)
 
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -10.6, 17), Angle(90, 0, 90), .04, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.OIL, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -10.6, 17), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.OIL, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

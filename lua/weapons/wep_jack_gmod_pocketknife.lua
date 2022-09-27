@@ -10,14 +10,14 @@ SWEP.MeleeRange = 1
 SWEP.MeleeDamage = 15
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "MELEE"
-    },
-    {
-        Mode = 0,
-        PrintName = "SAFE"
-    }
+	{
+		Mode = 1,
+		PrintName = "MELEE"
+	},
+	{
+		Mode = 0,
+		PrintName = "SAFE"
+	}
 }
 
 SWEP.HoldtypeHolstered = "normal"
@@ -39,36 +39,36 @@ vm_knifeonly_sprint_out
 vm_knifeonly_swipe
 --]]
 SWEP.Animations = {
-    ["draw"] = {
-        Source = "vm_knifeonly_raise",
-        Time = .8,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/knives/draw",
-                t = 0,
-                v = 60
-            }
-        }
-    },
-    ["ready"] = {
-        Source = "vm_knifeonly_raise",
-        Time = 1,
-    },
-    ["idle"] = {
-        Source = "vm_knifeonly_idle",
-        Time = 10,
-    },
-    ["bash"] = {
-        Source = "vm_knifeonly_swipe",
-        SoundTable = {
-            {
-                s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
-                t = 0,
-                v = 60
-            }
-        },
-        Time = 0.7
-    }
+	["draw"] = {
+		Source = "vm_knifeonly_raise",
+		Time = .8,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/knives/draw",
+				t = 0,
+				v = 60
+			}
+		}
+	},
+	["ready"] = {
+		Source = "vm_knifeonly_raise",
+		Time = 1,
+	},
+	["idle"] = {
+		Source = "vm_knifeonly_idle",
+		Time = 10,
+	},
+	["bash"] = {
+		Source = "vm_knifeonly_swipe",
+		SoundTable = {
+			{
+				s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
+				t = 0,
+				v = 60
+			}
+		},
+		Time = 0.7
+	}
 }
 
 SWEP.IronSightStruct = false

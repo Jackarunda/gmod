@@ -34,333 +34,333 @@ ENT.DynamicPerfSpecs={
 }
 --]]
 function ENT:SetupDataTables()
-    self:NetworkVar("Int", 0, "State")
-    self:NetworkVar("Int", 1, "Grade")
-    self:NetworkVar("Float", 0, "Electricity")
+	self:NetworkVar("Int", 0, "State")
+	self:NetworkVar("Int", 1, "Grade")
+	self:NetworkVar("Float", 0, "Electricity")
 
-    if self.CustomSetupDataTables then
-        self:CustomSetupDataTables()
-    end
+	if self.CustomSetupDataTables then
+		self:CustomSetupDataTables()
+	end
 end
 
 function ENT:InitPerfSpecs()
-    local Grade = self:GetGrade()
+	local Grade = self:GetGrade()
 
-    for specName, value in pairs(self.StaticPerfSpecs) do
-        self[specName] = value
-    end
+	for specName, value in pairs(self.StaticPerfSpecs) do
+		self[specName] = value
+	end
 
-    for specName, value in pairs(self.DynamicPerfSpecs) do
-        local NewValue = value * JMod.EZ_GRADE_BUFFS[Grade]
+	for specName, value in pairs(self.DynamicPerfSpecs) do
+		local NewValue = value * JMod.EZ_GRADE_BUFFS[Grade]
 
-        if NewValue > 2 then
-            self[specName] = math.ceil(NewValue)
-        else
-            self[specName] = NewValue
-        end
-    end
+		if NewValue > 2 then
+			self[specName] = math.ceil(NewValue)
+		else
+			self[specName] = NewValue
+		end
+	end
 end
 
 function ENT:Upgrade(level)
-    if not level then
-        level = self:GetGrade() + 1
-    end
+	if not level then
+		level = self:GetGrade() + 1
+	end
 
-    if level > 5 then return end
-    self:SetGrade(level)
-    self:InitPerfSpecs()
-    self.UpgradeProgress = {}
+	if level > 5 then return end
+	self:SetGrade(level)
+	self:InitPerfSpecs()
+	self.UpgradeProgress = {}
 end
 
 if SERVER then
-    function ENT:SpawnFunction(ply, tr)
-        local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 60)
-        local ent = ents.Create(self.ClassName)
-        ent:SetAngles(Angle(0, 0, 0))
-        ent:SetPos(SpawnPos)
-        JMod.Owner(ent, ply)
-        ent:Spawn()
-        ent:Activate()
-        --local effectdata=EffectData()
-        --effectdata:SetEntity(ent)
-        --util.Effect("propspawn",effectdata)
-        JMod.Hint(ply, self.ClassName)
+	function ENT:SpawnFunction(ply, tr)
+		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 60)
+		local ent = ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0, 0, 0))
+		ent:SetPos(SpawnPos)
+		JMod.Owner(ent, ply)
+		ent:Spawn()
+		ent:Activate()
+		--local effectdata=EffectData()
+		--effectdata:SetEntity(ent)
+		--util.Effect("propspawn",effectdata)
+		JMod.Hint(ply, self.ClassName)
 
-        return ent
-    end
+		return ent
+	end
 
-    function ENT:Initialize()
-        self:SetModel(self.Model)
-        self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_VPHYSICS)
-        self:SetSolid(SOLID_VPHYSICS)
-        self:DrawShadow(true)
-        self:SetUseType(SIMPLE_USE)
-        local phys = self:GetPhysicsObject()
+	function ENT:Initialize()
+		self:SetModel(self.Model)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
+		local phys = self:GetPhysicsObject()
 
-        if phys:IsValid() then
-            phys:Wake()
-            phys:SetMass(200)
-        end
+		if phys:IsValid() then
+			phys:Wake()
+			phys:SetMass(200)
+		end
 
-        if self.CustomInit then
-            self:CustomInit()
-        end
+		if self.CustomInit then
+			self:CustomInit()
+		end
 
-        self.Durability = self.MaxDurability
+		self.Durability = self.MaxDurability
 
-        --
-        if self.EZupgradable then
-            self:SetGrade(1)
-            self.UpgradeProgress = {}
-            self.UpgradeCosts = JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
-        end
-    end
+		--
+		if self.EZupgradable then
+			self:SetGrade(1)
+			self.UpgradeProgress = {}
+			self.UpgradeCosts = JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+		end
+	end
 
-    function ENT:PhysicsCollide(data, physobj)
-        if (data.Speed > 80) and (data.DeltaTime > 0.2) then
-            self.Entity:EmitSound("Metal_Box.ImpactHard")
+	function ENT:PhysicsCollide(data, physobj)
+		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
+			self.Entity:EmitSound("Metal_Box.ImpactHard")
 
-            if data.Speed > 800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()) then
-                local Dam, World = DamageInfo(), game.GetWorld()
-                Dam:SetDamage(data.Speed / 3)
-                Dam:SetAttacker(data.HitEntity or World)
-                Dam:SetInflictor(data.HitEntity or World)
-                Dam:SetDamageType(DMG_CRUSH)
-                Dam:SetDamagePosition(data.HitPos)
-                Dam:SetDamageForce(data.TheirOldVelocity)
-                JMod.DamageSpark(self)
-                self:TakeDamageInfo(Dam)
-            end
-        end
-    end
+			if data.Speed > 800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()) then
+				local Dam, World = DamageInfo(), game.GetWorld()
+				Dam:SetDamage(data.Speed / 3)
+				Dam:SetAttacker(data.HitEntity or World)
+				Dam:SetInflictor(data.HitEntity or World)
+				Dam:SetDamageType(DMG_CRUSH)
+				Dam:SetDamagePosition(data.HitPos)
+				Dam:SetDamageForce(data.TheirOldVelocity)
+				JMod.DamageSpark(self)
+				self:TakeDamageInfo(Dam)
+			end
+		end
+	end
 
-    function ENT:ConsumeElectricity(amt)
-        if not self.GetElectricity then return end
-        amt = amt or 1
-        local NewAmt = math.Clamp(self:GetElectricity() - amt, 0.0, self.MaxElectricity)
-        self:SetElectricity(NewAmt)
+	function ENT:ConsumeElectricity(amt)
+		if not self.GetElectricity then return end
+		amt = amt or 1
+		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0.0, self.MaxElectricity)
+		self:SetElectricity(NewAmt)
 
-        if NewAmt <= 0 and self:GetState() > 0 then
-            self:TurnOff()
-        end
-    end
+		if NewAmt <= 0 and self:GetState() > 0 then
+			self:TurnOff()
+		end
+	end
 
-    function ENT:OnTakeDamage(dmginfo)
-        if self then
-            self:TakePhysicsDamage(dmginfo)
-            self.Durability = self.Durability - dmginfo:GetDamage() / 2
+	function ENT:OnTakeDamage(dmginfo)
+		if self then
+			self:TakePhysicsDamage(dmginfo)
+			self.Durability = self.Durability - dmginfo:GetDamage() / 2
 
-            if self.Durability <= 0 then
-                self:Break(dmginfo)
-            end
+			if self.Durability <= 0 then
+				self:Break(dmginfo)
+			end
 
-            if self.Durability <= -100 then
-                self:Destroy(dmginfo)
-            end
-        end
-    end
+			if self.Durability <= -100 then
+				self:Destroy(dmginfo)
+			end
+		end
+	end
 
-    function ENT:FlingProp(mdl, force)
-        if not util.IsValidModel(mdl) then return end
-        local Prop = ents.Create("prop_physics")
-        local Size = (self:OBBMaxs() - self:OBBMins()):Length()
-        Prop:SetPos(self:LocalToWorld(self:OBBCenter()) + VectorRand() * math.random(1, Size / 2))
-        Prop:SetAngles(VectorRand():Angle())
-        Prop:SetModel(mdl)
-        Prop:Spawn()
-        Prop:Activate()
-        Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-        constraint.NoCollide(Prop, self, 0, 0)
-        local Phys = Prop:GetPhysicsObject()
-        Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() + VectorRand() * math.Rand(1, 300) + self:GetUp() * 100)
-        Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
+	function ENT:FlingProp(mdl, force)
+		if not util.IsValidModel(mdl) then return end
+		local Prop = ents.Create("prop_physics")
+		local Size = (self:OBBMaxs() - self:OBBMins()):Length()
+		Prop:SetPos(self:LocalToWorld(self:OBBCenter()) + VectorRand() * math.random(1, Size / 2))
+		Prop:SetAngles(VectorRand():Angle())
+		Prop:SetModel(mdl)
+		Prop:Spawn()
+		Prop:Activate()
+		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+		constraint.NoCollide(Prop, self, 0, 0)
+		local Phys = Prop:GetPhysicsObject()
+		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() + VectorRand() * math.Rand(1, 300) + self:GetUp() * 100)
+		Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
 
-        if force then
-            Phys:ApplyForceCenter(force / 7)
-        end
+		if force then
+			Phys:ApplyForceCenter(force / 7)
+		end
 
-        SafeRemoveEntityDelayed(Prop, math.random(10, 20))
-    end
+		SafeRemoveEntityDelayed(Prop, math.random(10, 20))
+	end
 
-    function ENT:Break(dmginfo)
-        if self:GetState() == JMod.EZ_STATE_BROKEN then return end
-        self:SetState(JMod.EZ_STATE_BROKEN)
-        self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+	function ENT:Break(dmginfo)
+		if self:GetState() == JMod.EZ_STATE_BROKEN then return end
+		self:SetState(JMod.EZ_STATE_BROKEN)
+		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 
-        for i = 1, 20 do
-            JMod.DamageSpark(self)
-        end
+		for i = 1, 20 do
+			JMod.DamageSpark(self)
+		end
 
-        self.Durability = 0
-        local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass() / 20, 50)
+		self.Durability = 0
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass() / 20, 50)
 
-        for i = 1, GibNum do
-            self:FlingProp(table.Random(self.PropModels), Force)
-        end
+		for i = 1, GibNum do
+			self:FlingProp(table.Random(self.PropModels), Force)
+		end
 
-        -- machines with seats
-        if self.Pod then
-            if IsValid(self.Pod:GetDriver()) then
-                self.Pod:GetDriver():ExitVehicle()
-            end
+		-- machines with seats
+		if self.Pod then
+			if IsValid(self.Pod:GetDriver()) then
+				self.Pod:GetDriver():ExitVehicle()
+			end
 
-            self.Pod:Fire("lock", "", 0)
-        end
+			self.Pod:Fire("lock", "", 0)
+		end
 
-        if self.OnBreak then
-            self:OnBreak()
-        end
-    end
+		if self.OnBreak then
+			self:OnBreak()
+		end
+	end
 
-    function ENT:Destroy(dmginfo)
-        if self.Destroyed then return end
-        self.Destroyed = true
-        self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+	function ENT:Destroy(dmginfo)
+		if self.Destroyed then return end
+		self.Destroyed = true
+		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 
-        for i = 1, 20 do
-            JMod.DamageSpark(self)
-        end
+		for i = 1, 20 do
+			JMod.DamageSpark(self)
+		end
 
-        local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass() / 10, 100)
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass() / 10, 100)
 
-        for j = 1, GibNum do
-            self:FlingProp(table.Random(self.PropModels), Force)
-        end
+		for j = 1, GibNum do
+			self:FlingProp(table.Random(self.PropModels), Force)
+		end
 
-        -- machines with seats
-        if self.Pod then
-            if IsValid(self.Pod:GetDriver()) then
-                self.Pod:GetDriver():ExitVehicle()
-            end
-        end
+		-- machines with seats
+		if self.Pod then
+			if IsValid(self.Pod:GetDriver()) then
+				self.Pod:GetDriver():ExitVehicle()
+			end
+		end
 
-        if self.OnDestroy then
-            self:OnDestroy(dmginfo)
-        end
+		if self.OnDestroy then
+			self:OnDestroy(dmginfo)
+		end
 
-        SafeRemoveEntityDelayed(self, 0.1)
-    end
+		SafeRemoveEntityDelayed(self, 0.1)
+	end
 
-    function ENT:SFX(str, absPath)
-        if absPath then
-            sound.Play(str, self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, math.random(90, 110))
-        else
-            sound.Play("snds_jack_gmod/" .. str .. ".wav", self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, 100)
-        end
-    end
+	function ENT:SFX(str, absPath)
+		if absPath then
+			sound.Play(str, self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, math.random(90, 110))
+		else
+			sound.Play("snds_jack_gmod/" .. str .. ".wav", self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, 100)
+		end
+	end
 
-    function ENT:Whine(serious)
-        local Time = CurTime()
+	function ENT:Whine(serious)
+		local Time = CurTime()
 
-        if self.NextWhine < Time then
-            self.NextWhine = Time + 4
-            self:EmitSound("snds_jack_gmod/ezsentry_whine.wav", 70, 100)
-            self:ConsumeElectricity(.05)
-        end
-    end
+		if self.NextWhine < Time then
+			self.NextWhine = Time + 4
+			self:EmitSound("snds_jack_gmod/ezsentry_whine.wav", 70, 100)
+			self:ConsumeElectricity(.05)
+		end
+	end
 
-    function ENT:OnRemove()
-    end
+	function ENT:OnRemove()
+	end
 
-    --
-    function ENT:TryLoadResource(typ, amt)
-        if amt <= 0 then return 0 end
+	--
+	function ENT:TryLoadResource(typ, amt)
+		if amt <= 0 then return 0 end
 
-        for k, v in pairs(self.EZconsumes) do
-            if typ == v then
-                if typ == JMod.EZ_RESOURCE_TYPES.POWER then
-                    local Powa = self:GetElectricity()
-                    local Missing = self.MaxElectricity - Powa
-                    if Missing <= 0 then return 0 end
-                    if Missing < self.MaxElectricity * .1 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetElectricity(Powa + Accepted)
-                    self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110))
+		for k, v in pairs(self.EZconsumes) do
+			if typ == v then
+				if typ == JMod.EZ_RESOURCE_TYPES.POWER then
+					local Powa = self:GetElectricity()
+					local Missing = self.MaxElectricity - Powa
+					if Missing <= 0 then return 0 end
+					if Missing < self.MaxElectricity * .1 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetElectricity(Powa + Accepted)
+					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110))
 
-                    return math.ceil(Accepted)
-                elseif typ == JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES then
-                    local Supps = self:GetSupplies()
-                    local Missing = self.MaxSupplies - Supps
-                    if Missing <= 0 then return 0 end
-                    if Missing < self.MaxSupplies * .1 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetSupplies(Supps + Accepted)
-                    self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110)) -- TODO: new sound here
+					return math.ceil(Accepted)
+				elseif typ == JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES then
+					local Supps = self:GetSupplies()
+					local Missing = self.MaxSupplies - Supps
+					if Missing <= 0 then return 0 end
+					if Missing < self.MaxSupplies * .1 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetSupplies(Supps + Accepted)
+					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110)) -- TODO: new sound here
 
-                    return math.ceil(Accepted)
-                elseif typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
-                    local Missing = self.MaxDurability - self.Durability
-                    if Missing <= self.MaxDurability * .25 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self.Durability = self.Durability + Accepted
+					return math.ceil(Accepted)
+				elseif typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+					local Missing = self.MaxDurability - self.Durability
+					if Missing <= self.MaxDurability * .25 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self.Durability = self.Durability + Accepted
 
-                    if self.Durability >= self.MaxDurability then
-                        self:RemoveAllDecals()
-                    end
+					if self.Durability >= self.MaxDurability then
+						self:RemoveAllDecals()
+					end
 
-                    self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
 
-                    if self.Durability > 0 then
-                        if self:GetState() == JMod.EZ_STATE_BROKEN then
-                            self:SetState(JMod.EZ_STATE_OFF)
-                        end
-                    end
+					if self.Durability > 0 then
+						if self:GetState() == JMod.EZ_STATE_BROKEN then
+							self:SetState(JMod.EZ_STATE_OFF)
+						end
+					end
 
-                    return math.ceil(Accepted)
-                elseif typ == JMod.EZ_RESOURCE_TYPES.GAS then
-                    local Fool = self:GetGas()
-                    local Missing = self.MaxGas - Fool
-                    if Missing <= 0 then return 0 end
-                    if Missing < self.MaxGas * .1 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetGas(Fool + Accepted)
-                    self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
+					return math.ceil(Accepted)
+				elseif typ == JMod.EZ_RESOURCE_TYPES.GAS then
+					local Fool = self:GetGas()
+					local Missing = self.MaxGas - Fool
+					if Missing <= 0 then return 0 end
+					if Missing < self.MaxGas * .1 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetGas(Fool + Accepted)
+					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
 
-                    return math.ceil(Accepted)
-                elseif typ == JMod.EZ_RESOURCE_TYPES.AMMO then
-                    local Ammo = self:GetAmmo()
-                    local Missing = self.MaxAmmo - Ammo
-                    if Missing <= 1 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetAmmo(Ammo + Accepted)
-                    self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
+					return math.ceil(Accepted)
+				elseif typ == JMod.EZ_RESOURCE_TYPES.AMMO then
+					local Ammo = self:GetAmmo()
+					local Missing = self.MaxAmmo - Ammo
+					if Missing <= 1 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetAmmo(Ammo + Accepted)
+					self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
 
-                    return Accepted
-                elseif typ == JMod.EZ_RESOURCE_TYPES.MUNITIONS then
-                    local Ammo = self:GetAmmo()
-                    local Missing = self.MaxAmmo - Ammo
-                    if Missing <= 1 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetAmmo(Ammo + Accepted)
-                    self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
+					return Accepted
+				elseif typ == JMod.EZ_RESOURCE_TYPES.MUNITIONS then
+					local Ammo = self:GetAmmo()
+					local Missing = self.MaxAmmo - Ammo
+					if Missing <= 1 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetAmmo(Ammo + Accepted)
+					self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
 
-                    return Accepted
-                elseif typ == JMod.EZ_RESOURCE_TYPES.COOLANT then
-                    local Kewl = self:GetCoolant()
-                    local Missing = 100 - Kewl
-                    if Missing < 10 then return 0 end
-                    local Accepted = math.min(Missing, amt)
-                    self:SetCoolant(Kewl + Accepted)
-                    self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					return Accepted
+				elseif typ == JMod.EZ_RESOURCE_TYPES.COOLANT then
+					local Kewl = self:GetCoolant()
+					local Missing = 100 - Kewl
+					if Missing < 10 then return 0 end
+					local Accepted = math.min(Missing, amt)
+					self:SetCoolant(Kewl + Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
 
-                    return math.ceil(Accepted)
-                end
-            end
-        end
+					return math.ceil(Accepted)
+				end
+			end
+		end
 
-        return 0
-    end
+		return 0
+	end
 elseif CLIENT then
-    function ENT:OnRemove()
-        if self.CSmodels then
-            for k, v in pairs(self.CSmodels) do
-                if IsValid(v) then
-                    v:Remove()
-                end
-            end
-        elseif self.Mdl then
-            self.Mdl:Remove()
-        end
-    end
+	function ENT:OnRemove()
+		if self.CSmodels then
+			for k, v in pairs(self.CSmodels) do
+				if IsValid(v) then
+					v:Remove()
+				end
+			end
+		elseif self.Mdl then
+			self.Mdl:Remove()
+		end
+	end
 end

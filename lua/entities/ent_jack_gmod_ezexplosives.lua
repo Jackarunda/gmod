@@ -20,19 +20,19 @@ ENT.BreakNoise = "Wood_Box.Break"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent, bad)
-        if bad and (math.random(1, 3) == 2) then
-            JMod.Sploom(self.Owner, self:GetPos() + VectorRand() * math.random(0, 300), math.random(50, 130))
-        end
-    end
+	function ENT:UseEffect(pos, ent, bad)
+		if bad and (math.random(1, 3) == 2) then
+			JMod.Sploom(self.Owner, self:GetPos() + VectorRand() * math.random(0, 300), math.random(50, 130))
+		end
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(1, -11.3, 10), Angle(90, 0, 90), .04, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.EXPLOSIVES, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(1, -11.3, 10), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.EXPLOSIVES, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

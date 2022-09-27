@@ -12,18 +12,18 @@ ENT.Hints = {"mininade"}
 local BaseClass = baseclass.Get(ENT.Base)
 
 if SERVER then
-    function ENT:Arm()
-        self:SetBodygroup(2, 1)
-        self:SetState(JMod.EZ_STATE_ARMED)
+	function ENT:Arm()
+		self:SetBodygroup(2, 1)
+		self:SetState(JMod.EZ_STATE_ARMED)
 
-        timer.Simple(IsValid(self.AttachedBomb) and 10 or 3, function()
-            if IsValid(self) then
-                self:Detonate()
-            end
-        end)
+		timer.Simple(IsValid(self.AttachedBomb) and 10 or 3, function()
+			if IsValid(self) then
+				self:Detonate()
+			end
+		end)
 
-        self:SpoonEffect()
-    end
+		self:SpoonEffect()
+	end
 elseif CLIENT then
-    language.Add("ent_jack_gmod_eznade_timed", "EZminiNade-Timed")
+	language.Add("ent_jack_gmod_eznade_timed", "EZminiNade-Timed")
 end

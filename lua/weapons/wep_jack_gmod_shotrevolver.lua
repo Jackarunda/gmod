@@ -24,13 +24,13 @@ SWEP.ShotgunReload = true
 SWEP.Delay = 60 / 180 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "DOUBLE-ACTION"
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 1,
+		PrintName = "DOUBLE-ACTION"
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 50 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
@@ -42,7 +42,7 @@ SWEP.MuzzleEffect = "muzzleflash_pistol_rbull"
 SWEP.ShellModel = "models/jhells/shell_12gauge.mdl"
 
 if ArcCW then
-    SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
+	SWEP.ShellSounds = ArcCW.ShotgunShellSoundsTable
 end
 
 SWEP.ShellPitch = 130
@@ -52,11 +52,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .35
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.23, 14, .1),
-    Ang = Angle(-.7, -.15, -2),
-    Magnification = 1.1,
-    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
+	Pos = Vector(-2.23, 14, .1),
+	Ang = Angle(-.7, -.15, -2),
+	Magnification = 1.1,
+	SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 1, -1)
@@ -81,173 +81,173 @@ reload_loop
 reload_end
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.handgun,
-                t = 0,
-                v = 60,
-                p = 110
-            }
-        },
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["ready"] = {
-        Source = "draw_first",
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.handgun,
-                t = .3,
-                v = 60,
-                p = 110
-            }
-        },
-        Time = 1.5,
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.25,
-    },
-    ["fire"] = {
-        Source = "fire",
-        Time = 0.4
-    },
-    ["sgreload_start"] = {
-        Source = "reload_start",
-        Time = 2.5,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0,
-        ShellEjectAt = 1.2,
-        ShellEjectDynamic = true,
-        RestoreAmmo = 1,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.move,
-                t = 0,
-                v = 65
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
-                t = .5,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
-                t = 1.1,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
-                t = 1.4,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 1.9,
-                v = 65,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
-                t = 2.3,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_start_empty"] = {
-        Source = "reload_start",
-        Time = 2.5,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0,
-        ShellEjectAt = 1.2,
-        ShellEjectCount = 5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.move,
-                t = 0,
-                v = 65
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
-                t = .5,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
-                t = 1.1,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
-                t = 1.4,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 1.9,
-                v = 65,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
-                t = 2.3,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_insert"] = {
-        Source = "reload_loop",
-        Time = 1.1,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        TPAnimStartTime = 0.3,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0,
-        HardResetAnim = "reload_end",
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = .3,
-                v = 65,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
-                t = .8,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_finish"] = {
-        Source = "reload_end",
-        Time = 1.2,
-        LHIK = true,
-        LHIKIn = 0,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/shotrevolver/close.wav",
-                t = .4,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 1,
-                v = 55
-            }
-        },
-        LHIKOut = 0.4,
-    }
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.handgun,
+				t = 0,
+				v = 60,
+				p = 110
+			}
+		},
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["ready"] = {
+		Source = "draw_first",
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.handgun,
+				t = .3,
+				v = 60,
+				p = 110
+			}
+		},
+		Time = 1.5,
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.25,
+	},
+	["fire"] = {
+		Source = "fire",
+		Time = 0.4
+	},
+	["sgreload_start"] = {
+		Source = "reload_start",
+		Time = 2.5,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0,
+		ShellEjectAt = 1.2,
+		ShellEjectDynamic = true,
+		RestoreAmmo = 1,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 0,
+				v = 65
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
+				t = .5,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
+				t = 1.1,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
+				t = 1.4,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 1.9,
+				v = 65,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				t = 2.3,
+				v = 60
+			}
+		}
+	},
+	["sgreload_start_empty"] = {
+		Source = "reload_start",
+		Time = 2.5,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0,
+		ShellEjectAt = 1.2,
+		ShellEjectCount = 5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 0,
+				v = 65
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
+				t = .5,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
+				t = 1.1,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
+				t = 1.4,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 1.9,
+				v = 65,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				t = 2.3,
+				v = 60
+			}
+		}
+	},
+	["sgreload_insert"] = {
+		Source = "reload_loop",
+		Time = 1.1,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
+		TPAnimStartTime = 0.3,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0,
+		HardResetAnim = "reload_end",
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = .3,
+				v = 65,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				t = .8,
+				v = 60
+			}
+		}
+	},
+	["sgreload_finish"] = {
+		Source = "reload_end",
+		Time = 1.2,
+		LHIK = true,
+		LHIKIn = 0,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/close.wav",
+				t = .4,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 1,
+				v = 55
+			}
+		},
+		LHIKOut = 0.4,
+	}
 }

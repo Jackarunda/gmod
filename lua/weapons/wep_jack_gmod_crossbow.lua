@@ -34,13 +34,13 @@ SWEP.Recoil = .6
 SWEP.Delay = 60 / 100 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "SINGLE"
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 1,
+		PrintName = "SINGLE"
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 9 -- accuracy in Minutes of Angle. There are 60 MOA in a degree. No shit, sherlock
@@ -64,15 +64,15 @@ SWEP.SightTime = .5
 
 -- arctic, don't ever write descriptions again
 SWEP.BulletBones = {
-    [1] = "tag_clip"
+	[1] = "tag_clip"
 }
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-2.22, 4, .6),
-    Ang = Angle(-.15, 0, -2),
-    Magnification = 1.2,
-    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.out
+	Pos = Vector(-2.22, 4, .6),
+	Ang = Angle(-.15, 0, -2),
+	Magnification = 1.2,
+	SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -91,81 +91,81 @@ holster
 sprint
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["idle_empty"] = {
-        Source = "idle_empty",
-        Time = 10
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = 1,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.longgun,
-                t = 0,
-                v = 50
-            }
-        },
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["fire"] = {
-        Source = "shoot",
-        Time = .5
-    },
-    ["reload_empty"] = {
-        Source = "reload",
-        Time = 4,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71, 89},
-        FrameRate = 37,
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.loud,
-                t = 0,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.quiet,
-                t = .5,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/crossbow/pull.wav",
-                t = 0.9,
-                v = 55
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 1.4,
-                v = 60,
-                p = 110
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/crossbow/in.wav",
-                t = 2.4,
-                v = 55,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/crossbow/clack.wav",
-                t = 3.3,
-                v = 55
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 3.7,
-                v = 55
-            }
-        }
-    },
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["idle_empty"] = {
+		Source = "idle_empty",
+		Time = 10
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = 1,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.longgun,
+				t = 0,
+				v = 50
+			}
+		},
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["fire"] = {
+		Source = "shoot",
+		Time = .5
+	},
+	["reload_empty"] = {
+		Source = "reload",
+		Time = 4,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.loud,
+				t = 0,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.quiet,
+				t = .5,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/crossbow/pull.wav",
+				t = 0.9,
+				v = 55
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 1.4,
+				v = 60,
+				p = 110
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/crossbow/in.wav",
+				t = 2.4,
+				v = 55,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/crossbow/clack.wav",
+				t = 3.3,
+				v = 55
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 3.7,
+				v = 55
+			}
+		}
+	},
 }

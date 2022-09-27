@@ -20,23 +20,23 @@ ENT.BreakNoise = "Wood.Break"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        for i = 1, 1 * JMod.Config.SupplyEffectMult do
-            local Eff = EffectData()
-            Eff:SetOrigin(pos)
-            Eff:SetEntity(ent)
-            Eff:SetStart(Vector(0, 0, 0))
-            util.Effect("eff_jack_gmod_woodsplode", Eff, true, true)
-        end
-    end
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 1 * JMod.Config.SupplyEffectMult do
+			local Eff = EffectData()
+			Eff:SetOrigin(pos)
+			Eff:SetEntity(ent)
+			Eff:SetStart(Vector(0, 0, 0))
+			util.Effect("eff_jack_gmod_woodsplode", Eff, true, true)
+		end
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .05, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.WOOD, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .05, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.WOOD, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

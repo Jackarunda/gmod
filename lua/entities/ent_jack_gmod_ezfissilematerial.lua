@@ -20,36 +20,36 @@ ENT.BreakNoise = "Metal_Box.Break"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent, destructive)
-        if destructive and not self.Sploomd then
-            self.Sploomd = true
-            local Owner, Count = self.Owner, self:GetResource() / 10
+	function ENT:UseEffect(pos, ent, destructive)
+		if destructive and not self.Sploomd then
+			self.Sploomd = true
+			local Owner, Count = self.Owner, self:GetResource() / 10
 
-            timer.Simple(.5, function()
-                for k = 1, JMod.Config.NuclearRadiationMult * Count * 10 do
-                    local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-                    Gas.Range = 1000
-                    Gas:SetPos(pos)
-                    JMod.Owner(Gas, Owner or game.GetWorld())
-                    Gas:Spawn()
-                    Gas:Activate()
-                    Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
-                end
-            end)
-        end
-    end
+			timer.Simple(.5, function()
+				for k = 1, JMod.Config.NuclearRadiationMult * Count * 10 do
+					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
+					Gas.Range = 1000
+					Gas:SetPos(pos)
+					JMod.Owner(Gas, Owner or game.GetWorld())
+					Gas:Spawn()
+					Gas:Activate()
+					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
+				end
+			end)
+		end
+	end
 
-    function ENT:AltUse(ply)
-    end
-    --
+	function ENT:AltUse(ply)
+	end
+	--
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, 0, 21.75), Angle(0, 90, 0), .06, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, 0, 21.75), Angle(0, 90, 0), .06, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

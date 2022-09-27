@@ -23,13 +23,13 @@ SWEP.VisualRecoilMult = 2
 SWEP.Delay = 60 / 150 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "DOUBLE-ACTION"
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 1,
+		PrintName = "DOUBLE-ACTION"
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 6 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
@@ -46,11 +46,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .35
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-1.78, 12, .43),
-    Ang = Angle(-.25, 0, -2),
-    Magnification = 1.1,
-    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
+	Pos = Vector(-1.78, 12, .43),
+	Ang = Angle(-.25, 0, -2),
+	Magnification = 1.1,
+	SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 0, .5)
@@ -72,79 +72,79 @@ holster
 sprint
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = 0.7,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.handgun,
-                t = 0,
-                v = 60,
-                p = 110
-            }
-        },
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["fire"] = {
-        Source = "fire",
-        Time = 0.4
-    },
-    ["reload"] = {
-        Source = "reload_empty",
-        Time = 4,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71, 89},
-        FrameRate = 37,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-        ShellEjectAt = 1.1,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.move,
-                t = 0,
-                v = 60,
-                p = 110
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav",
-                t = .65,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav",
-                t = .75,
-                v = 55
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = .8,
-                v = 60,
-                p = 110
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.wav",
-                t = 1.9,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.wav",
-                t = 2.8,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 3.7,
-                v = 55,
-                p = 110
-            }
-        }
-    }
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = 0.7,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.handgun,
+				t = 0,
+				v = 60,
+				p = 110
+			}
+		},
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["fire"] = {
+		Source = "fire",
+		Time = 0.4
+	},
+	["reload"] = {
+		Source = "reload_empty",
+		Time = 4,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		ShellEjectAt = 1.1,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 0,
+				v = 60,
+				p = 110
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav",
+				t = .65,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav",
+				t = .75,
+				v = 55
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = .8,
+				v = 60,
+				p = 110
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.wav",
+				t = 1.9,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.wav",
+				t = 2.8,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 3.7,
+				v = 55,
+				p = 110
+			}
+		}
+	}
 }

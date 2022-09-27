@@ -21,19 +21,19 @@ ENT.PropModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/pro
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        for i = 1, 1 * JMod.Config.SupplyEffectMult do
-            self:FlingProp(table.Random(self.PropModels))
-        end
-    end
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 1 * JMod.Config.SupplyEffectMult do
+			self:FlingProp(table.Random(self.PropModels))
+		end
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .04, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.TUNGSTENORE, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.TUNGSTENORE, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

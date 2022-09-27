@@ -31,28 +31,28 @@ SWEP.BackHitDmgMult = 1.5
 SWEP.MeleeDmgRand = .4
 
 SWEP.MeleeViewMovements = {
-    {
-        t = 0,
-        ang = Angle(0, -5, 0)
-    },
-    {
-        t = .02,
-        ang = Angle(0, 30, 0)
-    }
+	{
+		t = 0,
+		ang = Angle(0, -5, 0)
+	},
+	{
+		t = .02,
+		ang = Angle(0, 30, 0)
+	}
 }
 
 SWEP.MeleeGesture = ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE
 SWEP.NotForNPCs = true
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "MELEE"
-    },
-    {
-        Mode = 0,
-        PrintName = "SAFE"
-    }
+	{
+		Mode = 1,
+		PrintName = "MELEE"
+	},
+	{
+		Mode = 0,
+		PrintName = "SAFE"
+	}
 }
 
 SWEP.MeleeTime = 0.5
@@ -61,24 +61,24 @@ SWEP.HoldtypeActive = "knife"
 SWEP.Primary.ClipSize = -1
 
 SWEP.Animations = {
-    ["draw"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {
-            {
-                s = "weapons/arccw/knife/knife_deploy.wav",
-                t = 0
-            }
-        }
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 0.5,
-    },
-    ["bash"] = {
-        Source = {"stab", "midslash1", "midslash2", "stab_miss"},
-        Time = 0.75,
-    },
+	["draw"] = {
+		Source = "draw",
+		Time = 0.5,
+		SoundTable = {
+			{
+				s = "weapons/arccw/knife/knife_deploy.wav",
+				t = 0
+			}
+		}
+	},
+	["ready"] = {
+		Source = "draw",
+		Time = 0.5,
+	},
+	["bash"] = {
+		Source = {"stab", "midslash1", "midslash2", "stab_miss"},
+		Time = 0.75,
+	},
 }
 
 SWEP.IronSightStruct = false

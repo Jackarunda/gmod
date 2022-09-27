@@ -20,15 +20,15 @@ att.Mult_HipDispersion = 1
 att.Mult_SpeedMult = 0.9
 
 att.Hook_LHIK_TranslateAnimation = function(wep, anim)
-    if anim == "idle" or anim == "in" or anim == "out" then
-        if wep:InBipod() then
-            return "idle_bipod"
-        else
-            return "idle"
-        end
-    end
+	if anim == "idle" or anim == "in" or anim == "out" then
+		if wep:InBipod() then
+			return "idle_bipod"
+		else
+			return "idle"
+		end
+	end
 end
 
 att.Hook_Compatible = function(wep)
-    if wep.Bipod_Integral then return false end
+	if wep.Bipod_Integral then return false end
 end

@@ -23,34 +23,34 @@ ENT.PropModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/co
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        for i = 1, 1 * JMod.Config.SupplyEffectMult do
-            self:FlingProp(table.Random(self.PropModels))
-        end
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 1 * JMod.Config.SupplyEffectMult do
+			self:FlingProp(table.Random(self.PropModels))
+		end
 
-        local effectdata = EffectData()
-        effectdata:SetOrigin(pos + VectorRand())
-        effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-        effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
-        effectdata:SetScale(math.Rand(1, 2)) --length of strands
-        effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
-        util.Effect("Sparks", effectdata, true, true)
-    end
+		local effectdata = EffectData()
+		effectdata:SetOrigin(pos + VectorRand())
+		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
+		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(1, 2)) --length of strands
+		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
+		util.Effect("Sparks", effectdata, true, true)
+	end
 
-    function ENT:CustomThink()
-        self:GetPhysicsObject():ApplyForceCenter(VectorRand() * math.random(1, 1000))
-        self:NextThink(CurTime() + math.Rand(2, 4))
+	function ENT:CustomThink()
+		self:GetPhysicsObject():ApplyForceCenter(VectorRand() * math.random(1, 1000))
+		self:NextThink(CurTime() + math.Rand(2, 4))
 
-        return true
-    end
+		return true
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, 3.5, 10), Angle(-90, 0, 90), .035, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS, self:GetResource(), nil, 0, 0, 200, true)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, 3.5, 10), Angle(-90, 0, 90), .035, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS, self:GetResource(), nil, 0, 0, 200, true)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

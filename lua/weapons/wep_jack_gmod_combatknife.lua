@@ -13,14 +13,14 @@ SWEP.MeleeDamage = 20
 -- VMElement
 -- WMElement
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "MELEE"
-    },
-    {
-        Mode = 0,
-        PrintName = "SAFE"
-    }
+	{
+		Mode = 1,
+		PrintName = "MELEE"
+	},
+	{
+		Mode = 0,
+		PrintName = "SAFE"
+	}
 }
 
 SWEP.HoldtypeHolstered = "normal"
@@ -33,14 +33,14 @@ SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav", "snds_jack_gm
 SWEP.MeleeHitNPCSound = {"snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav"}
 
 SWEP.MeleeViewMovements = {
-    {
-        t = 0,
-        ang = Angle(0, -5, 0)
-    },
-    {
-        t = .02,
-        ang = Angle(0, 30, 0)
-    }
+	{
+		t = 0,
+		ang = Angle(0, -5, 0)
+	},
+	{
+		t = .02,
+		ang = Angle(0, 30, 0)
+	}
 }
 
 SWEP.MeleeForceDir = Angle(0, 60, 0)
@@ -55,36 +55,36 @@ holster
 sprint
 --]]
 SWEP.Animations = {
-    ["draw"] = {
-        Source = "draw",
-        Time = .8,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/knives/draw",
-                t = 0,
-                v = 60
-            }
-        }
-    },
-    ["ready"] = {
-        Source = "draw",
-        Time = 1,
-    },
-    ["idle"] = {
-        Source = "idle",
-        Time = 10,
-    },
-    ["bash"] = {
-        Source = "hitcenter1",
-        SoundTable = {
-            {
-                s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
-                t = 0,
-                v = 60
-            }
-        },
-        Time = 0.7
-    }
+	["draw"] = {
+		Source = "draw",
+		Time = .8,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/knives/draw",
+				t = 0,
+				v = 60
+			}
+		}
+	},
+	["ready"] = {
+		Source = "draw",
+		Time = 1,
+	},
+	["idle"] = {
+		Source = "idle",
+		Time = 10,
+	},
+	["bash"] = {
+		Source = "hitcenter1",
+		SoundTable = {
+			{
+				s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
+				t = 0,
+				v = 60
+			}
+		},
+		Time = 0.7
+	}
 }
 
 SWEP.IronSightStruct = false

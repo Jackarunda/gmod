@@ -20,17 +20,17 @@ ENT.BreakNoise = "Rubber_Tire.ImpactHard"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-    end
-    -- it's rubber
+	function ENT:UseEffect(pos, ent)
+	end
+	-- it's rubber
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -9.5, 0), Angle(90, 0, 90), .05, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.RUBBER, self:GetResource(), nil, 0, 0, 200, false)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -9.5, 0), Angle(90, 0, 90), .05, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.RUBBER, self:GetResource(), nil, 0, 0, 200, false)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

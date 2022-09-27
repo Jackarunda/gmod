@@ -11,14 +11,14 @@ att.Slot = "ez_optic"
 att.Model = "models/weapons/arccw/atts/aimpoint.mdl"
 
 att.AdditionalSights = {
-    {
-        Pos = Vector(0, 7, -1.43107 * 0.75),
-        Ang = Angle(0, 0, 0),
-        Magnification = 1.3,
-        ScrollFunc = ArcCW.SCROLL_NONE,
-        SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
-        SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
-    }
+	{
+		Pos = Vector(0, 7, -1.43107 * 0.75),
+		Ang = Angle(0, 0, 0),
+		Magnification = 1.3,
+		ScrollFunc = ArcCW.SCROLL_NONE,
+		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
+		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
+	}
 }
 
 att.ScopeGlint = false -- lmao

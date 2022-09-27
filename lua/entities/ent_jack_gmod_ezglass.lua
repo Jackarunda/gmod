@@ -20,25 +20,25 @@ ENT.BreakNoise = "Glass.ImpactHard"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        for i = 1, 10 do
-            local Eff = EffectData()
-            Eff:SetOrigin(pos)
-            Eff:SetEntity(ent)
-            Eff:SetMagnitude(1)
-            Eff:SetScale(1)
-            Eff:SetNormal(VectorRand())
-            util.Effect("GlassImpact", Eff, true, true)
-        end
-    end
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 10 do
+			local Eff = EffectData()
+			Eff:SetOrigin(pos)
+			Eff:SetEntity(ent)
+			Eff:SetMagnitude(1)
+			Eff:SetScale(1)
+			Eff:SetNormal(VectorRand())
+			util.Effect("GlassImpact", Eff, true, true)
+		end
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(-1, 0, 6), Angle(0, -90, 0), .035, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GLASS, self:GetResource(), nil, 0, 0, 200, false)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(-1, 0, 6), Angle(0, -90, 0), .035, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GLASS, self:GetResource(), nil, 0, 0, 200, false)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

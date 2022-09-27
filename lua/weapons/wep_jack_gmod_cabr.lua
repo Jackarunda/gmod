@@ -23,13 +23,13 @@ SWEP.VisualRecoilMult = 2
 SWEP.Delay = 60 / 60 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        Mode = 1,
-        PrintName = "SINGLE-ACTION"
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 1,
+		PrintName = "SINGLE-ACTION"
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
@@ -45,11 +45,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .25
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-4.2, 10, 2),
-    Ang = Angle(-.2, -.2, -2),
-    Magnification = 1.1,
-    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
+	Pos = Vector(-4.2, 10, 2),
+	Ang = Angle(-.2, -.2, -2),
+	Magnification = 1.1,
+	SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -81,94 +81,94 @@ sprint
 sprint_empty
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = 0.5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.handgun,
-                t = 0,
-                v = 60,
-                p = 110
-            }
-        },
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["fire"] = {
-        Source = "fire",
-        Time = 1.4,
-        Mult = 1,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/cabr/cock.wav",
-                t = .7,
-                v = 55
-            },
-        }
-    },
-    ["reload"] = {
-        Source = "reload",
-        Time = 7,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71},
-        FrameRate = 37,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.move,
-                t = .05,
-                v = 55,
-                p = 110
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/cabr/pull.wav",
-                t = .6,
-                v = 55
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav",
-                t = 1.5,
-                v = 55
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/cabr/out.wav",
-                t = 2.8,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 3.5,
-                v = 55
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/cabr/in.wav",
-                t = 4.15,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav",
-                t = 5.4,
-                v = 55
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/cabr/close.wav",
-                t = 5.75,
-                v = 55
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 6.55,
-                v = 55
-            }
-        }
-    }
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.handgun,
+				t = 0,
+				v = 60,
+				p = 110
+			}
+		},
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["fire"] = {
+		Source = "fire",
+		Time = 1.4,
+		Mult = 1,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/cabr/cock.wav",
+				t = .7,
+				v = 55
+			},
+		}
+	},
+	["reload"] = {
+		Source = "reload",
+		Time = 7,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71},
+		FrameRate = 37,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = .05,
+				v = 55,
+				p = 110
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/cabr/pull.wav",
+				t = .6,
+				v = 55
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav",
+				t = 1.5,
+				v = 55
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/cabr/out.wav",
+				t = 2.8,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 3.5,
+				v = 55
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/cabr/in.wav",
+				t = 4.15,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav",
+				t = 5.4,
+				v = 55
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/cabr/close.wav",
+				t = 5.75,
+				v = 55
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 6.55,
+				v = 55
+			}
+		}
+	}
 }

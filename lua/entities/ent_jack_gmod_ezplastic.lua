@@ -20,17 +20,17 @@ ENT.BreakNoise = "Plastic_Box.ImpactHard"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-    end
-    -- it's plastic
+	function ENT:UseEffect(pos, ent)
+	end
+	-- it's plastic
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -11.9, 5), Angle(90, 0, 90), .033, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PLASTIC, self:GetResource(), nil, 0, 0, 200, false)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -11.9, 5), Angle(90, 0, 90), .033, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PLASTIC, self:GetResource(), nil, 0, 0, 200, false)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

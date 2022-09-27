@@ -18,13 +18,13 @@ SWEP.ChamberSize = 0 -- this is so wrong, Arctic...
 SWEP.Delay = 60 / 50 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        PrintName = "BOLT-ACTION",
-        Mode = 1,
-    },
-    {
-        Mode = 0
-    }
+	{
+		PrintName = "BOLT-ACTION",
+		Mode = 1,
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.ShotgunReload = true
@@ -42,11 +42,11 @@ SWEP.SightedSpeedMult = .65
 SWEP.SightTime = .6
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-3.75, 0, .5),
-    Ang = Angle(-.1, 0, -5),
-    Magnification = 1.1,
-    SwitchToSound = JMod.GunHandlingSounds.aim.inn,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.out
+	Pos = Vector(-3.75, 0, .5),
+	Ang = Angle(-.1, 0, -5),
+	Magnification = 1.1,
+	SwitchToSound = JMod.GunHandlingSounds.aim.inn,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.out
 }
 
 SWEP.ActivePos = Vector(0, 1, 1)
@@ -56,20 +56,20 @@ SWEP.HolsterAng = Angle(-20, 50, 0)
 SWEP.BarrelLength = 48
 
 SWEP.Attachments = {
-    {
-        PrintName = "Optic",
-        DefaultAttName = "Iron Sights",
-        Slot = {"ez_optic"},
-        Bone = "tag_weapon",
-        Offset = {
-            vang = Angle(0, 0, 0),
-            vpos = Vector(-3, 0, 2.6),
-            wpos = Vector(10, .8, -6),
-            wang = Angle(-10.393, 0, 180)
-        },
-        -- remove Slide because it ruins my life
-        Installed = "optic_jack_scope_mediumlow"
-    }
+	{
+		PrintName = "Optic",
+		DefaultAttName = "Iron Sights",
+		Slot = {"ez_optic"},
+		Bone = "tag_weapon",
+		Offset = {
+			vang = Angle(0, 0, 0),
+			vpos = Vector(-3, 0, 2.6),
+			wpos = Vector(10, .8, -6),
+			wang = Angle(-10.393, 0, 180)
+		},
+		-- remove Slide because it ruins my life
+		Installed = "optic_jack_scope_mediumlow"
+	}
 }
 
 -- idle
@@ -79,166 +79,166 @@ SWEP.Attachments = {
 -- draw1
 -- shoot1
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw1",
-        Time = 1.5,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.longgun,
-                t = 0,
-                v = 60
-            }
-        },
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["fire"] = {
-        Source = "shoot1",
-        Time = 1.1,
-        ShellEjectAt = .4,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
-                t = .2,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
-                t = .3,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/push.wav",
-                t = .5,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
-                t = .6,
-                v = 60
-            }
-        }
-    },
-    ["fire_iron"] = {
-        Source = "shoot1",
-        Time = 1.4,
-        ShellEjectAt = .5,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
-                t = .15,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
-                t = .4,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/push.wav",
-                t = .7,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
-                t = .8,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_start"] = {
-        Source = "reload_start",
-        Time = 1.1,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.cloth.move,
-                t = 0,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
-                t = .2,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
-                t = .55,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_insert"] = {
-        Source = "reload_full",
-        Time = .9,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        TPAnimStartTime = 0.3,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0,
-        HardResetAnim = "reload_end",
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/insert.wav",
-                t = .1,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_finish"] = {
-        Source = "reload_end",
-        Time = 1.3,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.4,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/push.wav",
-                t = .2,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
-                t = .45,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 1,
-                v = 60
-            }
-        }
-    },
-    ["sgreload_finish_empty"] = {
-        Source = "reload_end",
-        Time = 1.3,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 1,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/push.wav",
-                t = .2,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
-                t = .45,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.grab,
-                t = 1,
-                v = 60
-            }
-        }
-    }
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["draw"] = {
+		Source = "draw1",
+		Time = 1.5,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.longgun,
+				t = 0,
+				v = 60
+			}
+		},
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["fire"] = {
+		Source = "shoot1",
+		Time = 1.1,
+		ShellEjectAt = .4,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				t = .2,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
+				t = .3,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/push.wav",
+				t = .5,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
+				t = .6,
+				v = 60
+			}
+		}
+	},
+	["fire_iron"] = {
+		Source = "shoot1",
+		Time = 1.4,
+		ShellEjectAt = .5,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				t = .15,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
+				t = .4,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/push.wav",
+				t = .7,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
+				t = .8,
+				v = 60
+			}
+		}
+	},
+	["sgreload_start"] = {
+		Source = "reload_start",
+		Time = 1.1,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.cloth.move,
+				t = 0,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
+				t = .2,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/pull.wav",
+				t = .55,
+				v = 60
+			}
+		}
+	},
+	["sgreload_insert"] = {
+		Source = "reload_full",
+		Time = .9,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
+		TPAnimStartTime = 0.3,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0,
+		HardResetAnim = "reload_end",
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/insert.wav",
+				t = .1,
+				v = 60
+			}
+		}
+	},
+	["sgreload_finish"] = {
+		Source = "reload_end",
+		Time = 1.3,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.4,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/push.wav",
+				t = .2,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
+				t = .45,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 1,
+				v = 60
+			}
+		}
+	},
+	["sgreload_finish_empty"] = {
+		Source = "reload_end",
+		Time = 1.3,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 1,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/push.wav",
+				t = .2,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/bar/lock.wav",
+				t = .45,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.grab,
+				t = 1,
+				v = 60
+			}
+		}
+	}
 }

@@ -23,29 +23,29 @@ ENT.Hint = "ammobox"
 local ShellEffects = {"RifleShellEject", "PistolShellEject", "ShotgunShellEject"}
 
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-        for i = 1, 30 * JMod.Config.SupplyEffectMult do
-            timer.Simple(i / 200, function()
-                local Eff = EffectData()
-                Eff:SetOrigin(pos)
-                Eff:SetAngles((VectorRand() + Vector(0, 0, 1)):GetNormalized():Angle())
-                Eff:SetEntity(ent)
-                util.Effect(table.Random(ShellEffects), Eff, true, true)
-            end)
-        end
-    end
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 30 * JMod.Config.SupplyEffectMult do
+			timer.Simple(i / 200, function()
+				local Eff = EffectData()
+				Eff:SetOrigin(pos)
+				Eff:SetAngles((VectorRand() + Vector(0, 0, 1)):GetNormalized():Angle())
+				Eff:SetEntity(ent)
+				util.Effect(table.Random(ShellEffects), Eff, true, true)
+			end)
+		end
+	end
 
-    function ENT:AltUse(ply)
-        JMod.GiveAmmo(ply, self)
-    end
+	function ENT:AltUse(ply)
+		JMod.GiveAmmo(ply, self)
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(1, 5, 9), Angle(-90, 0, 90), .04, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.AMMO, self:GetResource(), nil, 0, 0, 200, false)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(1, 5, 9), Angle(-90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.AMMO, self:GetResource(), nil, 0, 0, 200, false)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end

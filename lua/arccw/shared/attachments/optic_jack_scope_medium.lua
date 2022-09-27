@@ -12,15 +12,15 @@ att.Slot = "ez_optic"
 att.Model = "models/weapons/arccw/atts/magnus.mdl"
 
 att.AdditionalSights = {
-    {
-        Pos = Vector(0, 17, -1.489),
-        Ang = Angle(0, 0, -1),
-        Magnification = 1.4, -- this is how much your eyes zoom into the scope, not scope magnification
-        ScrollFunc = ArcCW.SCROLL_NONE,
-        IgnoreExtra = true,
-        SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
-        SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
-    }
+	{
+		Pos = Vector(0, 17, -1.489),
+		Ang = Angle(0, 0, -1),
+		Magnification = 1.4, -- this is how much your eyes zoom into the scope, not scope magnification
+		ScrollFunc = ArcCW.SCROLL_NONE,
+		IgnoreExtra = true,
+		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
+		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
+	}
 }
 
 att.ScopeGlint = false -- lmao

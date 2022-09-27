@@ -22,17 +22,17 @@ SWEP.Recoil = .6
 SWEP.Delay = 60 / 1300 -- 60/RPM.
 
 SWEP.Firemodes = {
-    {
-        Mode = 2,
-        PrintName = "FULL-AUTO"
-    },
-    {
-        Mode = 1,
-        PrintName = "SEMI-AUTO"
-    },
-    {
-        Mode = 0
-    }
+	{
+		Mode = 2,
+		PrintName = "FULL-AUTO"
+	},
+	{
+		Mode = 1,
+		PrintName = "SEMI-AUTO"
+	},
+	{
+		Mode = 0
+	}
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
@@ -49,11 +49,11 @@ SWEP.SightedSpeedMult = .9
 SWEP.SightTime = .3
 
 SWEP.IronSightStruct = {
-    Pos = Vector(-3.52, 12, 1.05),
-    Ang = Angle(-.1, 0, -2),
-    Magnification = 1.1,
-    SwitchToSound = JMod.GunHandlingSounds.aim.minor,
-    SwitchFromSound = JMod.GunHandlingSounds.aim.minor
+	Pos = Vector(-3.52, 12, 1.05),
+	Ang = Angle(-.1, 0, -2),
+	Magnification = 1.1,
+	SwitchToSound = JMod.GunHandlingSounds.aim.minor,
+	SwitchFromSound = JMod.GunHandlingSounds.aim.minor
 }
 
 SWEP.ActivePos = Vector(0, 0, 0)
@@ -77,110 +77,110 @@ bigammo_reload_tac
 bigammo_reload_empty
 --]]
 SWEP.Animations = {
-    ["idle"] = {
-        Source = "idle",
-        Time = 1
-    },
-    ["idle_empty"] = {
-        Source = "idle_empty",
-        Time = 1
-    },
-    ["draw"] = {
-        Source = "draw",
-        Time = .8,
-        SoundTable = {
-            {
-                s = JMod.GunHandlingSounds.draw.handgun,
-                t = 0,
-                v = 60
-            }
-        },
-        Mult = 1,
-        LHIK = true,
-        LHIKIn = 0,
-        LHIKOut = 0.35,
-    },
-    ["fire"] = {
-        Source = "fire",
-        Time = 0.2,
-        ShellEjectAt = 0,
-    },
-    ["reload"] = {
-        Source = "reload_tac",
-        Time = 2.5,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71},
-        FrameRate = 37,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/out.wav",
-                t = .3,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 1,
-                v = 60,
-                p = 110
-            },
-            {
-                s = JMod.GunHandlingSounds.tap.magwell,
-                t = 1.65,
-                v = 60,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/in.wav",
-                t = 1.85,
-                v = 60
-            },
-        }
-    },
-    ["reload_empty"] = {
-        Source = "reload_empty",
-        Time = 3.5,
-        TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        Checkpoints = {24, 42, 59, 71, 89},
-        FrameRate = 37,
-        LHIK = true,
-        LHIKIn = 0.5,
-        LHIKOut = 0.5,
-        SoundTable = {
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/out.wav",
-                t = .3,
-                v = 60
-            },
-            {
-                s = JMod.GunHandlingSounds.cloth.magpull,
-                t = 1,
-                v = 60,
-                p = 110
-            },
-            {
-                s = JMod.GunHandlingSounds.tap.magwell,
-                t = 1.7,
-                v = 60,
-                p = 120
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/in.wav",
-                t = 1.85,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/pull.wav",
-                t = 2.45,
-                v = 60
-            },
-            {
-                s = "snds_jack_gmod/ez_weapons/mp/release.wav",
-                t = 2.7,
-                v = 60
-            },
-        }
-    }
+	["idle"] = {
+		Source = "idle",
+		Time = 1
+	},
+	["idle_empty"] = {
+		Source = "idle_empty",
+		Time = 1
+	},
+	["draw"] = {
+		Source = "draw",
+		Time = .8,
+		SoundTable = {
+			{
+				s = JMod.GunHandlingSounds.draw.handgun,
+				t = 0,
+				v = 60
+			}
+		},
+		Mult = 1,
+		LHIK = true,
+		LHIKIn = 0,
+		LHIKOut = 0.35,
+	},
+	["fire"] = {
+		Source = "fire",
+		Time = 0.2,
+		ShellEjectAt = 0,
+	},
+	["reload"] = {
+		Source = "reload_tac",
+		Time = 2.5,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71},
+		FrameRate = 37,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/out.wav",
+				t = .3,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 1,
+				v = 60,
+				p = 110
+			},
+			{
+				s = JMod.GunHandlingSounds.tap.magwell,
+				t = 1.65,
+				v = 60,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/in.wav",
+				t = 1.85,
+				v = 60
+			},
+		}
+	},
+	["reload_empty"] = {
+		Source = "reload_empty",
+		Time = 3.5,
+		TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+		Checkpoints = {24, 42, 59, 71, 89},
+		FrameRate = 37,
+		LHIK = true,
+		LHIKIn = 0.5,
+		LHIKOut = 0.5,
+		SoundTable = {
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/out.wav",
+				t = .3,
+				v = 60
+			},
+			{
+				s = JMod.GunHandlingSounds.cloth.magpull,
+				t = 1,
+				v = 60,
+				p = 110
+			},
+			{
+				s = JMod.GunHandlingSounds.tap.magwell,
+				t = 1.7,
+				v = 60,
+				p = 120
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/in.wav",
+				t = 1.85,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/pull.wav",
+				t = 2.45,
+				v = 60
+			},
+			{
+				s = "snds_jack_gmod/ez_weapons/mp/release.wav",
+				t = 2.7,
+				v = 60
+			},
+		}
+	}
 }

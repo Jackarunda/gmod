@@ -20,36 +20,36 @@ ENT.BreakNoise = "SolidMetal.ImpactHard"
 
 ---
 if SERVER then
-    function ENT:UseEffect(pos, ent)
-    end
+	function ENT:UseEffect(pos, ent)
+	end
 
-    -- it's metal
-    function ENT:CustomThink()
-        if math.random(1, 200) <= self:GetResource() then
-            local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
-            Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
-            Ent.Owner = self.Owner
-            Ent.LifeTime = 15
-            Ent.DmgAmt = 1
-            Ent.Range = 500
-            Ent.DragMult = .3
-            Ent:Spawn()
-            Ent:Activate()
-            Ent:SetVelocity(self:GetVelocity())
-        end
+	-- it's metal
+	function ENT:CustomThink()
+		if math.random(1, 200) <= self:GetResource() then
+			local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
+			Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
+			Ent.Owner = self.Owner
+			Ent.LifeTime = 15
+			Ent.DmgAmt = 1
+			Ent.Range = 500
+			Ent.DragMult = .3
+			Ent:Spawn()
+			Ent:Activate()
+			Ent:SetVelocity(self:GetVelocity())
+		end
 
-        self:NextThink(CurTime() + math.Rand(10, 20))
+		self:NextThink(CurTime() + math.Rand(10, 20))
 
-        return true
-    end
+		return true
+	end
 elseif CLIENT then
-    function ENT:Draw()
-        self:DrawModel()
+	function ENT:Draw()
+		self:DrawModel()
 
-        JMod.HoloGraphicDisplay(self, Vector(0, -3, 4.9), Angle(0, 0, 0), .025, 300, function()
-            JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.URANIUM, self:GetResource(), nil, 0, 0, 200, false)
-        end)
-    end
+		JMod.HoloGraphicDisplay(self, Vector(0, -3, 4.9), Angle(0, 0, 0), .025, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.URANIUM, self:GetResource(), nil, 0, 0, 200, false)
+		end)
+	end
 
-    language.Add(ENT.ClassName, ENT.PrintName)
+	language.Add(ENT.ClassName, ENT.PrintName)
 end
