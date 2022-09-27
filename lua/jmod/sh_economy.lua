@@ -290,6 +290,10 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.3,
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.2
 	},
+	jeeptire={
+		[JMod.EZ_RESOURCE_TYPES.RUBBER]=.3,
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.2
+	},
 	hay={
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS]=.3
 	},
