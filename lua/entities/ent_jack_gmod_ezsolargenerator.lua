@@ -16,7 +16,7 @@ ENT.MaxPower = 100
 ENT.EZupgradable = true
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=2,[DMG_BUCKSHOT]=2},
+	DamageModifierTypes={[DMG_BULLET]=2,[DMG_BUCKSHOT]=2,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={

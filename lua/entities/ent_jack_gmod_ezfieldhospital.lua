@@ -18,11 +18,11 @@ ENT.EZconsumes={
 }
 -- Config --
 ENT.StaticPerfSpecs={
-	Armor=2,
-	DamageModifierTypes={[DMG_BULLET]=3.5,[DMG_BUCKSHOT]=2.5,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2},
+	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=2,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
+	Armor=2,
 	MaxSupplies=50,
 	ElectricalEfficiency=1,
 	HealEfficiency=1,

@@ -17,12 +17,12 @@ ENT.WhitelistedResources = {"water", "oil"}
 ---
 ENT.EZupgradable=true
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=6,[DMG_BUCKSHOT]=6,[DMG_BLAST]=4,[DMG_BLAST_SURFACE]=4,[DMG_GENERIC]=5},
+	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=3,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2,[DMG_GENERIC]=3},
 	MaxDurability=100,
 	MaxElectricity=200,
 }
 ENT.DynamicPerfSpecs={
-	Armor=3,
+	Armor=5,
 	PumpRate = 1
 }
 ---
