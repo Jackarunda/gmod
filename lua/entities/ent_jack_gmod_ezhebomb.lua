@@ -193,7 +193,7 @@ if(SERVER)then
 				--end
 			--end
 		--end
-		JMod.AeroDrag(self,-self:GetRight(),5)
+		JMod.AeroDrag(self,-self:GetRight(),6)
 		self:NextThink(CurTime()+.1)
 		return true
 	end

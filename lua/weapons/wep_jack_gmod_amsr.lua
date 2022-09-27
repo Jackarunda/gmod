@@ -127,10 +127,10 @@ SWEP.Animations={
 		Mult=1,
         ShellEjectAt=1.1,
 		SoundTable={
-			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.55, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=.75, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=1.5, v=60, p=90},
-			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=1.6, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.75, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=0.8, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=1.6, v=60, p=90},
+			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=1.8, v=60, p=90},
 			{s=JMod.GunHandlingSounds.grab, t=2.25, v=55}
 		}
     },
@@ -164,14 +164,14 @@ SWEP.Animations={
         LHIKOut=0.5,
 		SoundTable={
 			{s=JMod.GunHandlingSounds.cloth.move, t=0, v=65},
-			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.5, v=60},
-			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=.6, v=60},
-			{s=JMod.GunHandlingSounds.grab, t=1.3, v=60},
-			{s="snds_jack_gmod/ez_weapons/amsr/out.wav", t=2.5, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/up.wav", t=.7, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/back.wav", t=.8, v=60},
+			{s=JMod.GunHandlingSounds.grab, t=1.5, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/out.wav", t=2.9, v=60},
 			{s=JMod.GunHandlingSounds.cloth.magpull, t=3.25, v=60},
-			{s="snds_jack_gmod/ez_weapons/amsr/in.wav", t=3.9, v=60},
-			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=4.8, v=60},
-			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=4.9, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/in.wav", t=4.45, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/forward.wav", t=5.3, v=60},
+			{s="snds_jack_gmod/ez_weapons/amsr/down.wav", t=5.4, v=60},
 			{s=JMod.GunHandlingSounds.grab, t=5.6, v=60}
 		}
     }

@@ -422,7 +422,7 @@ function JMod.Sploom(attacker, pos, mag, radius)
 	local Sploom=ents.Create("env_explosion")
 	Sploom:SetPos(pos)
 	Sploom:SetOwner(attacker or game.GetWorld())
-	Sploom:SetKeyValue("iMagnitude", mag)
+	Sploom:SetKeyValue("iMagnitude", mag or "1")
 	if(radius)then Sploom:SetKeyValue("iRadiusOverride",radius) end
 	Sploom:Spawn()
 	Sploom:Activate()
@@ -773,6 +773,23 @@ end
 function JMod.BlockPhysgunPickup(ent, isblock)
 	if isblock == false then isblock=nil end
 	ent.block_pickup=isblock
+end
+
+function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector)
+	local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
+	Resource:SetPos(machine:LocalToWorld(relativeSpawnPos))
+	Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
+	Resource:Spawn()
+	JMod.Owner(machine.Owner)
+	Resource:SetResource(math.Round(amount))
+	Resource:Activate()
+	local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
+	Resource:GetPhysicsObject():SetVelocity(ejectionVector)
+	timer.Simple(1, function()
+		if(IsValid(Resource))then
+			constraint.RemoveConstraints(Resource, "NoCollide")
+		end
+	end)
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

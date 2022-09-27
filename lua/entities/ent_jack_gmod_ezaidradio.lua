@@ -202,14 +202,14 @@ if(SERVER)then
 		return true
 	end
 	function ENT:TryFindSky()
-		local SelfPos,Up=self:GetPos(),self:GetUp()
-		for i=1,50 do
-			local CheckDir=VectorRand()+Up
-			local Tr=util.TraceLine({start=SelfPos,endpos=SelfPos+CheckDir*20000,filter={self},mask=MASK_OPAQUE})
-			if(Tr.HitSky)then return true end
-		end
-		return false
-	end
+                local SelfPos = self:LocalToWorld(Vector(10, 0, 45))
+                for i = 1, 3 do
+                        local Dir = self:LocalToWorldAngles(Angle(-50 + i * 5, 0, 0)):Forward()
+                        local HitSky = util.TraceLine({start = SelfPos, endpos = SelfPos + Dir * 9e9, filter = {self}, mask = MASK_OPAQUE}).HitSky
+                        if HitSky then return true end
+                end
+                return false
+        end
 	function ENT:Whine(serious)
 		local Time=CurTime()
 		if(self.NextWhine<Time)then
@@ -237,6 +237,14 @@ if(SERVER)then
 	function ENT:EZreceiveSpeech(ply,txt)
 		local State=self:GetState()
 		if(State<2)then return end
+		if not(self:TryFindSky())then 
+			JMod.Hint(self.Owner, "aid sky")
+			self:Speak("Can not establish connection to any outpost. Shutting down.")
+			timer.Simple(1,function()
+				if(IsValid(self))then self:TurnOff() end
+			end)
+			return
+		end
 		if not(self:UserIsAuthorized(ply))then return end
 		txt=string.lower(txt)
 		local NormalReq,BFFreq=string.sub(txt,1,14)=="supply radio: ",string.sub(txt,1,6)=="heyo: "

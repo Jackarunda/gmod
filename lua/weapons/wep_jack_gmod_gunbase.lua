@@ -18,7 +18,7 @@ SWEP.TracerCol=Color(255, 25, 25)
 SWEP.TracerWidth=3
 SWEP.AimSwayFactor=.9
 
-SWEP.DamageRand=.35
+SWEP.DamageRand=.20
 SWEP.BlastRadiusRand=.1
 SWEP.Num=1
 
@@ -148,6 +148,7 @@ end)
 
 -- arccw hooks to do extra stuff --
 SWEP.Hook_AddShootSound=function(self, data)
+	--[[
 	if(self.ShootSoundWorldCount>0)then
 		for i=1,self.ShootSoundWorldCount do
 			if(SERVER)then
@@ -155,6 +156,7 @@ SWEP.Hook_AddShootSound=function(self, data)
 			end
 		end
 	end
+	--]]
 end
 SWEP.Hook_PostFireBullets=function(self)
 	local SelfPos=self:GetPos()

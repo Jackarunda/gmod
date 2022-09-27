@@ -355,8 +355,8 @@ local function PopulateItems(parent,items,typ,motherFrame,entity,enableFunc,clic
 end
 local function StandardSelectionMenu(typ,displayString,data,entity,enableFunc,clickFunc,sidePanelFunc)
 	-- first, populate icons
-	if not(SelectionMenuIcons[name])then
-		for name,info in pairs(data)do
+	for name,info in pairs(data)do
+		if not(SelectionMenuIcons[name])then
 			if(file.Exists("materials/jmod_selection_menu_icons/"..tostring(name)..".png","GAME"))then
 				SelectionMenuIcons[name]=Material("jmod_selection_menu_icons/"..tostring(name)..".png")
 			elseif((info.results)and(file.Exists("materials/entities/"..tostring(info.results)..".png","GAME")))then
@@ -878,6 +878,13 @@ net.Receive("JMod_Inventory",function()
 	function PlayerDisplay:DoClick()
 		if(OpenDropdown)then OpenDropdown:Remove() end
 	end
+	function motherFrame:OnRemove()
+		ent = PlayerDisplay:GetEntity()
+		if not(ent.EZarmor)then return end
+		for id,v in pairs(ent.EZarmor.items) do
+			ent.EZarmorModels[id]:Remove()
+		end
+    end
 	---
 	CreateArmorSlotButton(motherFrame,"head",10,30)
 	CreateArmorSlotButton(motherFrame,"eyes",10,75)
