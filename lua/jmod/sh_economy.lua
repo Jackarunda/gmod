@@ -201,20 +201,7 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.CLOTH]=.1
 	},
 	concrete={
-		random={
-			[JMod.EZ_RESOURCE_TYPES.IRONORE]=.5,
-			[JMod.EZ_RESOURCE_TYPES.LEADORE]=.4,
-			[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE]=.4,
-			[JMod.EZ_RESOURCE_TYPES.COPPERORE]=.2,
-			[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE]=.1,
-			[JMod.EZ_RESOURCE_TYPES.TITANIUMORE]=.1,
-			[JMod.EZ_RESOURCE_TYPES.SILVERORE]=.1,
-			[JMod.EZ_RESOURCE_TYPES.GOLDORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.URANIUMORE]=.05,
-			[JMod.EZ_RESOURCE_TYPES.PLATINUMORE]=.02,
-			[JMod.EZ_RESOURCE_TYPES.DIAMOND]=.02,
-			[JMod.EZ_RESOURCE_TYPES.COAL]=.5
-		}
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC]=.4
 	},
 	paper={
 		[JMod.EZ_RESOURCE_TYPES.PAPER]=.5
@@ -350,7 +337,10 @@ local SalvagingTable={
 	slipperymetal={
 		[JMod.EZ_RESOURCE_TYPES.STEEL]=.3,
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.3
-	}
+	},
+    chainlink={
+        [JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.7
+    }
 }
 local SpecializedSalvagingTable={
 	classname={}, -- todo: implement
