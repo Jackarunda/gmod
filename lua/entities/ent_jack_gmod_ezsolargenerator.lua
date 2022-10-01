@@ -71,7 +71,7 @@ function ENT:Use(activator)
 			self:ProducePower()
 			return
 		end
-		--self:TurnOff() --No turning it off
+		self:TurnOff() --No turning it off
 	end
 end
 
@@ -205,6 +205,7 @@ function ENT:Think()
 		local grade = self:GetGrade()
 		if(vis <= 0 or self:WaterLevel() >= 2)then 
 			JMod.Hint(self.Owner, "solar panel no sun")
+			self:TurnOff()
 		elseif(self:GetProgress() < self.MaxPower)then
 			local rate = math.Round(2.5*self.ChargeSpeed^2 * vis, 2)
 			self:SetProgress(self:GetProgress() + rate)
@@ -265,10 +266,13 @@ elseif(CLIENT)then
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				local VR,VG,VB=JMod.GoodBadColor(VisFrac)
 				cam.Start3D2D(SelfPos-Up*35-Forward*20-Right*30,DisplayAng,.1)
-				draw.SimpleTextOutlined("PROGRESS","JMod-Display",150,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",150,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("EFFICIENCY","JMod-Display",350,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(VisFrac*100)).."%","JMod-Display",350,60,Color(VR,VG,VB,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					surface.SetDrawColor(10,10,10,Opacity+50)
+					surface.DrawRect(390,80,128,128)
+					JMod.StandardRankDisplay(Grade,452,148,118,Opacity+50)
+					draw.SimpleTextOutlined("PROGRESS","JMod-Display",150,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",150,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("EFFICIENCY","JMod-Display",350,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(VisFrac*100)).."%","JMod-Display",350,60,Color(VR,VG,VB,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end
