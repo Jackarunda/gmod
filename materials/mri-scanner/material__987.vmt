@@ -6,16 +6,12 @@
 // BEGIN Textures
 	$basetexture "mri-scanner/mrimonitors"
 	$selfillum 1
+	$bumpmap "models/tex_jack_flat_normal"
+	$envmap "env_cubemap"
+	$envmaptint "[.5 .5 .5]"
+
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
-	Proxies
-	{
-		Color
-		{
-			resultVar    $color2 // pass the player color value to Gmod
-			default        0.23 0.35 0.41 // unused for now.
-		}
-	}
 
 // END Textures
 

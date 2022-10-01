@@ -8,10 +8,10 @@
 	$bumpmap "mri-scanner/mribacknormal"
 	"$model" 1
 	"$phong" "1"
-	"$phongexponent" "50"
-	"$phongboost" "1"	
-	"$phongfresnelranges"	"[.05 .5 5]"
-	"$halflambert" "1"
+	"$phongexponent" "10"
+	"$phongboost" "1"
+	"$phongfresnelranges"	"[1 1 1]"
+
 	"$blendtintbybasealpha" "1"
 	"$blendtintcoloroverbase" "0"
 	Proxies

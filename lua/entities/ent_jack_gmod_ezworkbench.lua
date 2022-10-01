@@ -17,9 +17,8 @@ ENT.EZconsumes={
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=5,[DMG_BUCKSHOT]=5,[DMG_BLAST]=4,[DMG_BLAST_SURFACE]=4,[DMG_GENERIC]=3},
 	MaxDurability=100,
-	Armor=5
+	Armor=.8
 }
 local STATE_BROKEN,STATE_OFF=-1,0
 if(SERVER)then
@@ -151,7 +150,7 @@ if(SERVER)then
 		end
 	end
 elseif(CLIENT)then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
 		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")

@@ -18,11 +18,10 @@ ENT.EZconsumes={
 }
 -- Config --
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=2,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
-	Armor=2,
+	Armor=.7,
 	MaxSupplies=50,
 	ElectricalEfficiency=1,
 	HealEfficiency=1,
@@ -275,9 +274,7 @@ if(SERVER)then
 		end
 	end
 elseif(CLIENT)then
-	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
+	function ENT:CustomInit()
 		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")

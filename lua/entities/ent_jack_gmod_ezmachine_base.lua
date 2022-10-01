@@ -105,30 +105,47 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
-ENT.ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER}
-ENT.MaxDurability=100
-ENT.MaxElectricity=100
-ENT.Armor=1
----- VVV This is how you make custom Preformance Specifications for your machines VVV
---[[
---- This is what the machine is able to store for use.
-ENT.EZconsumes={"ammo","power","parts","coolant"}
-
+ENT.DamageTypeTable={
+	[DMG_BUCKSHOT]=.2,
+	[DMG_SNIPER]=.7,
+	[DMG_CRUSH]=1,
+	[DMG_BULLET]=.5,
+	[DMG_SLASH]=.2,
+	[DMG_BLAST]=.8,
+	[DMG_CLUB]=.9,
+	[DMG_SHOCK]=1,
+	[DMG_BURN]=.3,
+	[DMG_ACID]=.4,
+	[DMG_PLASMA]=.4,
+	[DMG_VEHICLE]=1,
+	[DMG_DROWN]=0,
+	[DMG_PARALYZE]=0,
+	[DMG_NERVEGAS]=0,
+	[DMG_POISON]=0,
+	[DMG_RADIATION]=0,
+	[DMG_FALL]=1,
+	[DMG_SONIC]=.6,
+	[DMG_ENERGYBEAM]=.8,
+	[DMG_SLOWBURN]=.3,
+	[DMG_PHYSGUN]=1,
+	[DMG_AIRBOAT]=.5,
+	[DMG_DISSOLVE]=.6,
+	[DMG_BLAST_SURFACE]=.8,
+	[DMG_DIRECT]=.3,
+	[DMG_GENERIC]=1,
+	[DMG_MISSILEDEFENSE]=1
+}
 --- These stats do not change when the machine is upgraded
 ENT.StaticPerfSpecs={ 
 	MaxElectricity=100,
-	SearchTime=7,
-	SpecialTargetingHeights={["npc_rollermine"]=15},
-	ShotCount=1,
-	BarrelLength=29
+	MaxDurability=100,
+	Armor=1
 }
 --- These stats change when the machine is upgraded
 ENT.DynamicPerfSpecs={ 
-	MaxAmmo=300,
-	SearchSpeed=.5,
-	Cooling=1
+	--
 }
---]]
+ENT.DynamicPerfSpecExp=1
 ---- Shared Functions ----
 function ENT:SetupDataTables()
 	self:NetworkVar("Int",0,"State")
@@ -145,8 +162,7 @@ function ENT:InitPerfSpecs()
 	end
 	if(self.DynamicPerfSpecs)then
 		for specName,value in pairs(self.DynamicPerfSpecs)do
-			if(istable(value))then PrintTable(value) continue end ---Debuging reasons
-			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]
+			local NewValue=value*JMod.EZ_GRADE_BUFFS[Grade]^(self.DynamicPerfSpecExp)
 			if(NewValue>2)then
 				self[specName]=math.ceil(NewValue)
 			else
@@ -178,6 +194,9 @@ if(SERVER)then
 		return ent
 	end
 	function ENT:Initialize()
+		self.StaticPerfSpecs.BaseClass=nil
+		self.DynamicPerfSpecs.BaseClass=nil
+		--
 		self:SetModel(self.Model)
 		if(self.Mat)then
 			self:SetMaterial(self.Mat)
@@ -195,9 +214,7 @@ if(SERVER)then
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
-		if(self.CustomInit)then
-			self:CustomInit()
-		end
+		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
 		self:SetElectricity(self.MaxElectricity)
 		---
@@ -231,31 +248,24 @@ if(SERVER)then
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
 	end
-	function ENT:DetermineDmgResistance(dmg)
-		for k,typ in pairs(self.ImmuneDamageTypes)do
-			if(dmg:IsDamageType(typ))then return 1000 end
+	function ENT:DetermineDamageMultiplier(dmg)
+		local Mult=.15/(self.Armor or 1)
+		for typ,mul in pairs(self.DamageTypeTable)do
+			if(dmg:IsDamageType(typ))then Mult=Mult*mul break end
 		end
-		if(self.DamageModifierTypes)then
-			for typ,resistance in pairs(self.DamageModifierTypes)do
-				---if not(isnumber(typ))then print(typ) if(istable(typ))then PrintTable(table) end continue end
-				if(dmg:IsDamageType(typ))then return self.Armor*resistance end
-			end
-		end
-		return self.Armor
+		if(self.CustomDetermineDmgMult)then Mult=Mult*self:CustomDetermineDmgMult(dmg) end
+		return Mult
 	end
 	function ENT:OnTakeDamage(dmginfo)
-		if(self)then
-			self:TakePhysicsDamage(dmginfo)
-			local Armor=self:DetermineDmgResistance(dmginfo)
-			if(Armor>=1000)then return end
-			--print("Armor: "..Armor)
-			--print("Damage before: "..dmginfo:GetDamage())
-			local Damage=dmginfo:GetDamage()/Armor
-			--print("Modded Damage: "..Damage)
-			self.Durability=self.Durability-Damage
-			if(self.Durability<=0)then self:Break(dmginfo) end
-			if(self.Durability<=-200)then self:Destroy(dmginfo) end
-		end
+		if not(IsValid(self))then return end
+		self:TakePhysicsDamage(dmginfo)
+		--
+		local DmgMult=self:DetermineDamageMultiplier(dmginfo)
+		if(DmgMult<=.001)then return end
+		local Damage=dmginfo:GetDamage()*DmgMult
+		self.Durability=self.Durability-Damage
+		if(self.Durability<=0)then self:Break(dmginfo) end
+		if(self.Durability<=-200)then self:Destroy(dmginfo) end
 	end
 	function ENT:FlingProp(mdl,force)
 		if not(util.IsValidModel(mdl))then
@@ -401,6 +411,12 @@ if(SERVER)then
 		return 0
 	end
 elseif(CLIENT)then
+	function ENT:Initialize()
+		self.StaticPerfSpecs.BaseClass=nil
+		self.DynamicPerfSpecs.BaseClass=nil
+		self:InitPerfSpecs()
+		if(self.CustomInit)then self:CustomInit() end
+	end
 	function ENT:OnRemove()
 		if(self.CSmodels)then
 			for k,v in pairs(self.CSmodels)do

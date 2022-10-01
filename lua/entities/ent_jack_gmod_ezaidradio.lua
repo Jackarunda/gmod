@@ -17,9 +17,8 @@ ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ----
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=4,[DMG_BUCKSHOT]=4,[DMG_BLAST]=3,[DMG_BLAST_SURFACE]=3,[DMG_GENERIC]=3},
 	MaxDurability=100,
-	Armor=3
+	Armor=.8
 }
 ----
 local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1
@@ -274,7 +273,7 @@ if(SERVER)then
 		return false
 	end
 elseif(CLIENT)then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
 		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
 		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")

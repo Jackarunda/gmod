@@ -16,6 +16,7 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
+print(ENT.BaseClass)
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.EZupgradable=true
@@ -67,17 +68,15 @@ ENT.AmmoTypes={
 	}--]]
 }
 
+ENT.BlacklistedNPCs={"npc_enemyfinder","bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_bullseye"}
+ENT.WhitelistedNPCs={"npc_rollermine"}
+ENT.SpecialTargetingHeights={["npc_rollermine"]=15}
+
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
 	SearchTime=7,
-	ImmuneDamageTypes={DMG_POISON,DMG_NERVEGAS,DMG_RADIATION,DMG_DROWN,DMG_DROWNRECOVER},
-	ResistantDamageTypes={DMG_BURN,DMG_SLASH,DMG_SONIC,DMG_ACID,DMG_SLOWBURN,DMG_PLASMA,DMG_DIRECT},
-	BlacklistedNPCs={"npc_enemyfinder","bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_bullseye"},
-	WhitelistedNPCs={"npc_rollermine"},
-	SpecialTargetingHeights={["npc_rollermine"]=15},
 	MaxDurability=100,
 	ThinkSpeed=1,
-	Efficiency=.8,
 	ShotCount=1,
 	BarrelLength=29
 }
@@ -85,7 +84,7 @@ ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
 	TurnSpeed=60,
 	TargetingRadius=15,
-	Armor=8,
+	Armor=1,
 	FireRate=6,
 	Damage=15,
 	Accuracy=1,
@@ -93,6 +92,7 @@ ENT.DynamicPerfSpecs={
 	TargetLockTime=5,
 	Cooling=1
 }
+ENT.DynamicPerfSpecExp=1.2
 -- All moddable attributes
 -- Each mod selected for it is +1, against it is -1
 ENT.ModPerfSpecs={
@@ -112,18 +112,18 @@ function ENT:SetMods(tbl,ammoType)
 	self:SetAmmoType(ammoType)
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
-		self.EZconsumes={"power","parts","coolant"}
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	elseif(ammoType=="HE Grenade")then
-		self.EZconsumes={"munitions","power","parts","coolant"}
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.MUNITIONS,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	else
-		self.EZconsumes={"ammo","power","parts","coolant"}
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	end
 end
 function ENT:InitPerfSpecs(removeAmmo)
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^1.2 end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp end
 	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
@@ -236,7 +236,7 @@ if(SERVER)then
 		net.Broadcast()
 	end
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .04)/self.Efficiency
+		amt=(amt or .04)
 		if(self:GetAmmoType()=="Pulse Laser")then
 			amt=amt/JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 		end
@@ -244,63 +244,45 @@ if(SERVER)then
 		self:SetElectricity(NewAmt)
 		if(NewAmt<=0)then self:TurnOff() end
 	end
-	function ENT:DetermineDmgResistance(dmg)
-		for k,typ in pairs(self.ImmuneDamageTypes)do
-			if(dmg:IsDamageType(typ))then return 1000 end
-		end
-		for k,typ in pairs(self.ResistantDamageTypes)do
-			if(dmg:IsDamageType(typ))then return self.Armor*2 end
-		end
-		return self.Armor
-	end
-	function ENT:OnTakeDamage(dmginfo)
-		if(self)then
-			self:TakePhysicsDamage(dmginfo)
-			local Armor=self:DetermineDmgResistance(dmginfo)
-			if(Armor>=1000)then return end
-			local Damage=dmginfo:GetDamage()/Armor
-			---
-			local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
-			local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
-			local AimAng=self:GetAngles()
-			AimAng:RotateAroundAxis(Right,self:GetAimPitch())
-			AimAng:RotateAroundAxis(Up,self:GetAimYaw())
-			local AimVec=AimAng:Forward()
-			local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
-			if(AttackAngle>=60)then
-				Damage=Damage*.15
-				if(math.random(1,2)==1)then
-					local SelfPos=self:GetPos()
-					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",SelfPos+VectorRand(),70,math.random(80,120))
-					local effectdata=EffectData()
-					effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
-					effectdata:SetNormal(VectorRand())
-					effectdata:SetMagnitude(2) --amount and shoot hardness
-					effectdata:SetScale(1) --length of strands
-					effectdata:SetRadius(2) --thickness of strands
-					util.Effect("Sparks",effectdata,true,true)
-					if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
-						local RicDir=VectorRand()
-						RicDir.z=RicDir.z/2
-						RicDir:Normalize()
-						self:FireBullets({
-							Src=SelfPos,
-							Dir=RicDir,
-							Tracer=1,
-							Num=1,
-							Spread=Vector(0,0,0),
-							Damage=10,
-							Force=50,
-							Attacker=dmginfo:GetAttacker() or self
-						})
-					end
+	function ENT:CustomDetermineDmgMult(dmginfo)
+		local Mult=1
+		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
+		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
+		local AimAng=self:GetAngles()
+		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
+		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
+		local AimVec=AimAng:Forward()
+		local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
+		if(AttackAngle>=60)then
+			Mult=Mult*.2
+			if(math.random(1,2)==1)then
+				local SelfPos=self:GetPos()
+				sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",SelfPos+VectorRand(),70,math.random(80,120))
+				local effectdata=EffectData()
+				effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
+				effectdata:SetNormal(VectorRand())
+				effectdata:SetMagnitude(2) --amount and shoot hardness
+				effectdata:SetScale(1) --length of strands
+				effectdata:SetRadius(2) --thickness of strands
+				util.Effect("Sparks",effectdata,true,true)
+				if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+					local RicDir=VectorRand()
+					RicDir.z=RicDir.z/2
+					RicDir:Normalize()
+					self:FireBullets({
+						Src=SelfPos,
+						Dir=RicDir,
+						Tracer=1,
+						Num=1,
+						Spread=Vector(0,0,0),
+						Damage=10,
+						Force=50,
+						Attacker=dmginfo:GetAttacker() or self
+					})
 				end
 			end
-			---
-			self.Durability=self.Durability-Damage
-			if(self.Durability<=0)then self:Break(dmginfo) end
-			if(self.Durability<=-100)then self:Destroy(dmginfo) end
 		end
+		return Mult
 	end
 	function ENT:OnBreak()
 		self:RemoveNPCTarget()
@@ -843,9 +825,7 @@ if(SERVER)then
 		end
 	end
 elseif(CLIENT)then
-	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
+	function ENT:CustomInit()
 		self.BaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
 		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
 		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
