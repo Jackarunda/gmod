@@ -13,11 +13,10 @@ ENT.Model="models/hunter/blocks/cube4x4x1.mdl"
 ENT.Mass=3000
 ENT.SpawnHeight = 100
 ---
-ENT.WhitelistedResources = {"water", "oil"}
+ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---
 ENT.EZupgradable=true
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=3,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2,[DMG_GENERIC]=3},
 	MaxDurability=100,
 	MaxElectricity=200,
 }
@@ -90,15 +89,15 @@ if(SERVER)then
 				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
 			end
 			self:UpdateDepositKey()
-			if(GroundIsSolid)then
+			if not(self.DepositKey)then
+				JMod.Hint(self.Owner,"oil derrick")
+			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
-					self:TurnOn(activator)
+					self:TurnOn(self.Owner)
 				else
-					JMod.Hint(activator,"machine mounting problem")
+					JMod.Hint(self.Owner,"machine mounting problem")
 				end
-			elseif not(self.DepositKey)then
-				JMod.Hint(activator,"oil derrick")
 			end
 		end
 	end
@@ -125,7 +124,6 @@ if(SERVER)then
 		local State=self:GetState()
 		local OldOwner=self.Owner
 		JMod.Owner(self,activator)
-		JMod.Colorify(self)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -225,8 +223,7 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	function ENT:Initialize()
-		self:InitPerfSpecs()
+	function ENT:CustomInit()
 		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
 		self.Mdl:SetPos(self:GetPos()-self:GetRight()*100)

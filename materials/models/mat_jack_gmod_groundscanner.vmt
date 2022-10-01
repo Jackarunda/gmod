@@ -8,4 +8,6 @@
 	"$phongfresnelranges" "[1 1 1]"
 	"$phongboost" ".5"
 	"$phongexponent" "30"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
 }

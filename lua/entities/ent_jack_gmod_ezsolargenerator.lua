@@ -16,11 +16,10 @@ ENT.MaxPower = 100
 ENT.EZupgradable = true
 ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=2,[DMG_BUCKSHOT]=2,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
-	Armor=1,
+	Armor=.5,
 	ChargeSpeed=1
 }
 function ENT:CustomSetupDataTables()
@@ -218,7 +217,7 @@ function ENT:Think()
 end
 
 elseif(CLIENT)then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
 		self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
 		self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil, .5)

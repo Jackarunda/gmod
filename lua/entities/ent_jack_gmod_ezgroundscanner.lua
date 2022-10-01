@@ -32,11 +32,10 @@ ENT.PhysMatDetectionWhitelist={
 	"solidmetal"
 }
 ENT.StaticPerfSpecs={
-	DamageModifierTypes={[DMG_BULLET]=3,[DMG_BUCKSHOT]=3,[DMG_BLAST]=2,[DMG_BLAST_SURFACE]=2,[DMG_GENERIC]=4},
 	MaxDurability=100
 }
 ENT.DynamicPerfSpecs={
-	Armor=2,
+	Armor=.8,
 	ScanSpeed=5,
 	ScanRange=20
 }
@@ -241,9 +240,7 @@ elseif(CLIENT)then
 			Ent.ScanResults=net.ReadTable()
 		end
 	end)
-	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
+	function ENT:CustomInit()
 		self.Tank=ClientsideModel("models/props_wasteland/horizontalcoolingtank04.mdl")
 		self.Tank:SetParent(self)
 		self.Tank:SetPos(self:GetPos())
