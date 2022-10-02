@@ -9,9 +9,9 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.POWER
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.Model="models/props_phx/facepunch_barrel.mdl"
+ENT.Model="models/jmodels/resources/battery_barrel.mdl"
 ENT.Material="models/mat_jack_gmod_ezbattery"
-ENT.ModelScale=.6
+ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Canister.ImpactHard"
 ENT.DamageThreshold=120

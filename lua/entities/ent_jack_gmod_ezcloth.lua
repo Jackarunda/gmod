@@ -9,10 +9,10 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.CLOTH
 ENT.JModPreferredCarryAngles=Angle(0,-90,100)
-ENT.Model="models/XQM/cylinderx1.mdl"
+ENT.Model="models/jmodels/resources/cylinderx15.mdl"
 ENT.Material="models/mat_jack_gmod_clothroll"
 ENT.Color=Color(200,200,200)
-ENT.ModelScale=1.5
+ENT.ModelScale=1
 ENT.Mass=30
 ENT.ImpactNoise1="Flesh.ImpactSoft"
 ENT.DamageThreshold=120
