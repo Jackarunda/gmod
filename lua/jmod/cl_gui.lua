@@ -898,7 +898,9 @@ net.Receive("JMod_Inventory",function()
 		ent = PlayerDisplay:GetEntity()
 		if not(ent.EZarmor) and not(ent.EZarmor.items)then return end
 		for id,v in pairs(ent.EZarmor.items) do
-			ent.EZarmorModels[id]:Remove()
+			if(ent.EZarmorModels[id])then
+				ent.EZarmorModels[id]:Remove()
+			end
 		end
     end
 	---
