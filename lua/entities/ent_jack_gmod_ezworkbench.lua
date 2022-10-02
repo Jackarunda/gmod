@@ -18,9 +18,14 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
 	MaxDurability=100,
-	Armor=.8
+	Armor=.8,
+	MaxGas=100,
+	MaxElectricity=100
 }
-local STATE_BROKEN,STATE_OFF=-1,0
+local STATE_BROKEN,STATE_FINE=-1,0
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Float",1,"Gas")
+end
 if(SERVER)then
 	function ENT:CustomInit()
 		local phys=self.Entity:GetPhysicsObject()
@@ -28,6 +33,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
+		self:SetGas(self.MaxGas)
 		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end
@@ -61,14 +67,18 @@ if(SERVER)then
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 	end
 	function ENT:Use(activator)
-		if(self:GetState()>-1)then
-			net.Start("JMod_EZworkbench")
-			net.WriteEntity(self)
-			net.WriteTable(self.Craftables)
-			net.Send(activator)
-			JMod.Hint(activator, "craft")
+		if(self:GetState()==STATE_FINE)then
+			if(self:GetElectricity()>0 and self:GetGas()>0)then
+				net.Start("JMod_EZworkbench")
+				net.WriteEntity(self)
+				net.WriteTable(self.Craftables)
+				net.Send(activator)
+				JMod.Hint(activator, "craft")
+			else
+				JMod.Hint(activator, "refill")
+			end
 		else
-			JMod.Hint(activator, "refill")
+			JMod.Hint(activator, "destroyed")
 		end
 	end
 	function ENT:ConsumeResourcesInRange(requirements)
@@ -141,6 +151,8 @@ if(SERVER)then
 								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 							end
 							self:BuildEffect(Pos)
+							self:ConsumeElectricity(.5)
+							self:SetGas(math.Clamp(self:GetGas()-1,0,self.MaxGas))
 						end
 					end
 				end)
@@ -154,6 +166,7 @@ elseif(CLIENT)then
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
 		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Screen=JMod.MakeModel(self,"models/props_lab/monitor01b.mdl")
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
@@ -169,7 +182,7 @@ elseif(CLIENT)then
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(self:GetState()<0)then DetailDraw=false end
+		if(self:GetState()<=STATE_BROKEN)then DetailDraw=false end
 		---
 		self:DrawModel()
 		---
@@ -177,6 +190,24 @@ elseif(CLIENT)then
 			local GlasswareAng=SelfAng:GetCopy()
 			JMod.RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
 			JMod.RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
+			local ScreenAng=SelfAng:GetCopy()
+			JMod.RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
+			if(self:GetElectricity()>0)then
+				local DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Forward,90)
+				DisplayAng:RotateAroundAxis(Up,90)
+				local Opacity=math.random(50,200)
+				cam.Start3D2D(BasePos-Right*24-Forward*53.5-Up,DisplayAng,.04)
+				draw.SimpleTextOutlined("Jackarunda","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("Industries","JMod-Display",0,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/self.MaxElectricity
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local GasFrac=self:GetGas()/self.MaxGas
+				local R,G,B=JMod.GoodBadColor(GasFrac)
+				draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.End3D2D()
+			end
 		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)

@@ -179,9 +179,9 @@ function ENT:Upgrade(level)
 	self.UpgradeProgress={}
 end
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr)
+	function ENT:SpawnFunction(ply,tr,classname)
 		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 60)
-		local ent=ents.Create(self.ClassName)
+		local ent=ents.Create(classname)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
@@ -190,7 +190,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
-		JMod.Hint(ply, self.ClassName)
+		JMod.Hint(ply, classname)
 		return ent
 	end
 	function ENT:Initialize()
