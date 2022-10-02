@@ -719,16 +719,6 @@ net.Receive("JMod_EZradio",function()
 		ply:ConCommand("say supply radio: "..name)
 	end,nil) -- no side display for now
 end)
-local function GetItemInSlot(armorTable,slot)
-	if not(armorTable and armorTable.items)then return nil end
-	for id,armorData in pairs(armorTable.items)do
-		local ArmorInfo=JMod.ArmorTable[armorData.name]
-		if(ArmorInfo.slots[slot])then
-			return id,armorData,ArmorInfo
-		end
-	end
-	return nil
-end
 local ArmorSlotButtons={
 	{
 		title="Drop",
@@ -792,7 +782,7 @@ local function CreateArmorSlotButton(parent,slot,x,y)
 	Buttalony:SetPos(x,y)
 	Buttalony:SetText("")
 	Buttalony:SetCursor("hand")
-	local ItemID,ItemData,ItemInfo=GetItemInSlot(Ply.EZarmor,slot)
+	local ItemID,ItemData,ItemInfo=JMod.GetItemInSlot(Ply.EZarmor,slot)
 	function Buttalony:Paint(w,h)
 		surface.SetDrawColor(50,50,50,100)
 		surface.DrawRect(0,0,w,h)
@@ -918,18 +908,4 @@ net.Receive("JMod_Inventory",function()
 	CreateArmorSlotButton(motherFrame,"pelvis",410,210)
 	CreateArmorSlotButton(motherFrame,"rightthigh",410,255)
 	CreateArmorSlotButton(motherFrame,"rightcalf",410,300)
-end)
-
-concommand.Add("jmod_ez_togglegoggles",function()
-	local ply=LocalPlayer()
-	if not((IsValid(ply))and(ply:Alive()))then return end
-	local ItemID,ItemData,ItemInfo=GetItemInSlot(ply.EZarmor,"eyes")
-	if not(ItemID)then return end
-	if not(ItemID)then ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing anything that covers your eyes!")
-    	elseif (ItemID) then
-		net.Start("JMod_Inventory")
-		net.WriteInt(2,8) -- toggle
-		net.WriteString(ItemID)
-		net.SendToServer()
-	end
 end)
