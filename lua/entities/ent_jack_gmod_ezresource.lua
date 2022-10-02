@@ -16,7 +16,7 @@ end
 ---
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 20)*self.ModelScale
+		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 20)*(self.ModelScale or 1)
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
@@ -35,7 +35,9 @@ if(SERVER)then
 			self.Entity:SetModel(self.Model)
 		end
 		self.Entity:SetMaterial(self.Material)
-		self:SetModelScale(self.ModelScale,0)
+		if(self.ModelScale)then
+			self:SetModelScale(self.ModelScale,0)
+		end
 		if(self.Color)then self:SetColor(self.Color) end
 		if(self.Skin)then self:SetSkin(self.Skin) end
 		if(self.RandomSkins)then self:SetSkin(table.Random(self.RandomSkins)) end
@@ -59,6 +61,9 @@ if(SERVER)then
 		end)
 	end
 	function ENT:FlingProp(mdl)
+		if not(util.IsValidModel(mdl))then
+			return
+		end
 		local Prop=ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
 		Prop:SetAngles(VectorRand():Angle())

@@ -266,7 +266,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=6,
 		carrylimit=200,
-		basedmg=30,
+		basedmg=40,
 		effrange=100,
 		terminaldmg=10,
 		penetration=40
@@ -286,7 +286,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=12,
 		carrylimit=100,
-		basedmg=50,
+		basedmg=60,
 		effrange=200,
 		terminaldmg=20,
 		penetration=70
@@ -295,7 +295,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=24,
 		carrylimit=25,
-		basedmg=120,
+		basedmg=200,
 		effrange=300,
 		terminaldmg=30,
 		penetration=120
@@ -304,7 +304,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=18,
 		carrylimit=50,
-		basedmg=90,
+		basedmg=110,
 		effrange=400,
 		terminaldmg=20,
 		penetration=90
@@ -313,7 +313,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=14,
 		carrylimit=70,
-		basedmg=9,
+		basedmg=11,
 		effrange=50,
 		projnum=9,
 		terminaldmg=1,
@@ -324,7 +324,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=3,
 		carrylimit=300,
-		basedmg=15,
+		basedmg=20,
 		effrange=50,
 		terminaldmg=5,
 		penetration=20
@@ -333,7 +333,7 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=1,
 		carrylimit=600,
-		basedmg=9,
+		basedmg=11,
 		effrange=50,
 		terminaldmg=1,
 		penetration=10
@@ -342,16 +342,16 @@ JMod.AmmoTable={
 		resourcetype="ammo",
 		sizemult=6,
 		carrylimit=150,
-		basedmg=25,
+		basedmg=35,
 		effrange=50,
 		terminaldmg=15,
-		penetration=20
+		penetration=25
 	},
 	["Small Shotgun Round"]={
 		resourcetype="ammo",
 		sizemult=6,
 		carrylimit=120,
-		basedmg=9,
+		basedmg=12,
 		effrange=30,
 		projnum=5,
 		terminaldmg=1,
@@ -364,8 +364,8 @@ JMod.AmmoTable={
 		carrylimit=20,
 		ent="ent_jack_gmod_ezprojectilenade",
 		nicename="EZ 40mm Grenade",
-		basedmg=110,
-		blastrad=160
+		basedmg=220,
+		blastrad=150
 	},
 	["Mini Rocket"]={
 		resourcetype="munitions",
@@ -373,20 +373,20 @@ JMod.AmmoTable={
 		carrylimit=6,
 		ent="ent_jack_gmod_ezminirocket",
 		nicename="EZ Mini Rocket",
-		basedmg=160,
+		basedmg=350,
 		blastrad=200
 	},
 	["Arrow"]={
 		sizemult=24,
 		carrylimit=30,
 		ent="ent_jack_gmod_ezarrow",
-		armorpiercing=.5,
-		basedmg=40
+		armorpiercing=.6,
+		basedmg=70
 	},
 	["Black Powder Paper Cartridge"]={
 		sizemult=7,
 		carrylimit=100,
-		basedmg=80,
+		basedmg=95,
 		effrange=50,
 		terminaldmg=30,
 		penetration=30,
@@ -395,7 +395,7 @@ JMod.AmmoTable={
 	["Black Powder Metallic Cartridge"]={
 		sizemult=6,
 		carrylimit=100,
-		basedmg=80,
+		basedmg=90,
 		effrange=100,
 		terminaldmg=30,
 		penetration=40
@@ -552,7 +552,13 @@ if(CLIENT)then
 		print(ply:GetActiveWeapon().WorldModel)
 		for i=0,20 do
 			local Info=VM:GetSequenceInfo(i)
-			if(Info)then print("anim",i,Info.label) end
+			if(Info)then
+				print("seq",i,Info.label)
+				for k,v in pairs(Info.anims)do
+					local Anim=VM:GetAnimInfo(v)
+					if(Anim)then print("anim",Anim.label,Anim.fps.."fps",Anim.numframes.." total frames") end
+				end
+			end
 		end
 		print("---------------------")
 		for i=0,100 do
@@ -595,6 +601,7 @@ if(CLIENT)then
 		local CurWep=ply:GetActiveWeapon()
 		if((Class)and(ply:HasWeapon(Class))and(IsValid(CurWep))and not(CurWep:GetClass()==Class))then
 			local mdl,slotInfo=ply.EZweapons.mdls[Class],SlotInfoTable[slot][side]
+			if not(IsValid(mdl))then return end
 			local ID=ply:LookupBone(slotInfo.bone)
 			if(ID)then
 				local Wep=ply:GetWeapon(Class)
@@ -641,7 +648,7 @@ if(CLIENT)then
 			if(wep.BodyHolsterSlot)then
 				local Class,Slots=wep:GetClass(),ply.EZweapons.slots[wep.BodyHolsterSlot]
 				if(wep~=ActiveWep)then
-					if not(ply.EZweapons.mdls[Class])then
+					if not(ply.EZweapons.mdls[Class]) or not(IsValid(ply.EZweapons.mdls[Class])) then
 						local mdl=ClientsideModel(wep.BodyHolsterModel or wep.WorldModel)
 						mdl:SetPos(ply:GetPos())
 						mdl:SetParent(ply)

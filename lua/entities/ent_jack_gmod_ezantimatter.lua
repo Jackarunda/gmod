@@ -31,7 +31,13 @@ if(SERVER)then
 			util.ScreenShake(pos,99999,99999,1,750*5)
 			for i=1,2 do sound.Play("BaseExplosionEffect.Sound",pos,120,math.random(90,110)) end
 			for i=1,2 do sound.Play("ambient/explosions/explode_"..math.random(1,9)..".wav",pos+VectorRand()*1000,140,math.random(90,110)) end
-			timer.Simple(.1,function() util.BlastDamage(game.GetWorld(),game.GetWorld(),pos,1000,500) end)
+			timer.Simple(.1,function()
+				local MeltBlast = DamageInfo()
+				MeltBlast:SetInflictor(game.GetWorld())
+				MeltBlast:SetDamage(500)
+				MeltBlast:SetDamageType(DMG_DISSOLVE)
+				util.BlastDamageInfo(MeltBlast, pos, 1000)
+			end)
 		end
 	end
 	function ENT:AltUse(ply)

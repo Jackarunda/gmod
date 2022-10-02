@@ -33,7 +33,7 @@ if(SERVER)then
 	function ENT:Initialize()
 		self.Entity:SetModel("models/props/army/glowstick.mdl")
 		self.Entity:SetMaterial("models/props/army/jlowstick_off")
-		self.Entity:SetModelScale(1.5,0)
+		--self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

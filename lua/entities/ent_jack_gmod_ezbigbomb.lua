@@ -224,5 +224,8 @@ elseif(CLIENT)then
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
 	end
+	function ENT:OnRemove()
+		if(self.Mdl)then self.Mdl:Remove() end
+	end
 	language.Add("ent_jack_gmod_ezbigbomb","EZ Big Bomb")
 end

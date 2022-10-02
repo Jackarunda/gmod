@@ -9,10 +9,10 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.COOLANT
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.Model="models/props_junk/garbage_plasticbottle002a.mdl"
+ENT.Model="models/jmodels/resources/coolant_bottle.mdl"
 ENT.Material="models/shiny"
 ENT.Color=Color(50,120,180)
-ENT.ModelScale=2
+ENT.ModelScale=1
 ENT.Mass=40
 ENT.ImpactNoise1="Plastic_Barrel.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"

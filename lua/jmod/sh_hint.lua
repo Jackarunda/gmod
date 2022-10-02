@@ -139,6 +139,9 @@ JMod.Hints = {
 
 	["sentry friends"] = {LangKey = "hint sentry friends"},
 	["bomb bay"] = {LangKey = "hint bomb bay"},
+
+	["ent_jack_gmod_ezsolargenerator"] = {LangKey = "hint ent_jack_gmod_ezsolargenerator"},
+	["solar panel no sun"] = {LangKey = "hint solar panel no sun", RepeatCount = 3},
 	-- Armor
 	["armor wear"] = {LangKey = "hint armor wear", Followup = "bind walk"},
 	["armor durability"] = {LangKey = "hint armor durability"},

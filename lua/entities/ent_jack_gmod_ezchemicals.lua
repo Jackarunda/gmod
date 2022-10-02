@@ -9,10 +9,10 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.CHEMICALS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.Model="models/props_junk/PlasticCrate01a.mdl"
+ENT.Model="models/jmodels/resources/plastic_crate25a.mdl"
 ENT.Material=nil
 ENT.RandomSkins={0,1,2,3,4}
-ENT.ModelScale=1.25
+ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Plastic_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"
