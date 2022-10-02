@@ -506,6 +506,12 @@ local SpecializedSalvagingTable={
 				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS]=.1,
 				[JMod.EZ_RESOURCE_TYPES.RUBBER]=.05
 			}
+		},
+		{
+			substrings={"/hunter/"},
+			yield={
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC]=.7,
+			}
 		}
 	}
 }
