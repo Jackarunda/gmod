@@ -533,11 +533,3 @@ hook.Add("PlayerCanHearPlayersVoice","JMOD_PLAYERHEARVOICE",function(listener,ta
 		return JMod.PlayersCanComm(listener,talker)
 	end
 end)
-
-hook.Add("simfphysOnSpawn","JMOD_SIMFPHYS_REFUEL_SUPPORT",function(car)
-if ConVarExists( "sv_simfphys_fuel" ) and GetConVar( "sv_simfphys_fuel" ):GetInt() == 1 then
-    if car:GetFuelType() == 1 or car:GetFuelType() == 2 then car.EZconsumes = {JMod.EZ_RESOURCE_TYPES.FUEL}
-    elseif car:GetFuelType() == 3 then car.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER}
-    else return end
-end
-end)

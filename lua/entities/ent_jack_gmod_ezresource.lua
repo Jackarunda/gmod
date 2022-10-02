@@ -101,45 +101,9 @@ if(SERVER)then
 				end
 			end
 			if((data.HitEntity.EZconsumes)and(table.HasValue(data.HitEntity.EZconsumes,self.EZsupplies))and(self.NextLoad<Time)and(self:IsPlayerHolding()))then
-			local Used
 				if(self:GetResource()<=0)then self:Remove() return end
 				local Resource=self:GetResource()
-				if not ConVarExists( "sv_simfphys_fuel" )  then
-				Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
-				elseif GetConVar( "sv_simfphys_fuel" ):GetInt() == 1 and data.HitEntity:IsSimfphyscar() then
-				--cus simfphys does not have it's own TryLoadResource function we are going to do shit here and now
-				local typ = self.EZsupplies
-				local amt = Resource
-				Used=0
-					for k,v in pairs(data.HitEntity.EZconsumes) do
-							if typ==v then
-						if typ==JMod.EZ_RESOURCE_TYPES.POWER then
-							local Powa = data.HitEntity:GetFuel()
-							local Missing = data.HitEntity:GetMaxFuel()-Powa
-							if Missing<=0 then Used= 0 end
-							if Missing<data.HitEntity:GetMaxFuel()*.1 then Used= 0 end
-							local Accepted = math.min(Missing,amt)
-							data.HitEntity:SetFuel(Powa+Accepted)
-							self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-							Used= math.ceil(Accepted)
-						elseif typ==JMod.EZ_RESOURCE_TYPES.FUEL then
-							local Fule = data.HitEntity:GetFuel()
-							local Missing = data.HitEntity:GetMaxFuel()-Fule
-							if Missing<=0 then Used= 0 end
-							if Missing<data.HitEntity:GetMaxFuel()*.1 then Used= 0 end
-							local Accepted = math.min(Missing,amt)
-							data.HitEntity:SetFuel(Fule+Accepted)
-							self:EmitSound("fuel_load.wav",65,math.random(90,110))
-							Used= math.ceil(Accepted)
-						end
-					end
-				end
-
-				elseif GetConVar( "sv_simfphys_fuel" ):GetInt() == 0 and data.HitEntity:IsSimfphyscar() then
-				Used=0
-				elseif not data.HitEntity:IsSimfphyscar() then
-				Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
-				end
+				local Used=data.HitEntity:TryLoadResource(self.EZsupplies,Resource)
 				if(Used>0)then
 					self:SetResource(Resource-Used)
 					self:UseEffect(data.HitPos,data.HitEntity)
