@@ -9,11 +9,11 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.WATER
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.Model="models/props_borealis/bluebarrel001.mdl"
+ENT.Model="models/jmodels/resources/water_barrel.mdl"
 --ENT.Material="models/shiny"
 --ENT.Color=Color(50,120,180)
 ENT.SpawnHeight=30
-ENT.ModelScale=.75
+ENT.ModelScale=1
 ENT.Mass=40
 ENT.ImpactNoise1="Plastic_Barrel.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"

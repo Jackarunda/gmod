@@ -9,11 +9,11 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.OIL
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.Model="models/props_c17/oildrum001.mdl"
+ENT.Model="models/jmodels/resources/oildrum075.mdl"
 ENT.Material="phoenix_storms/black_chrome"
 --ENT.Color=Color(100,100,100)
 ENT.SpawnHeight=30
-ENT.ModelScale=.75
+ENT.ModelScale=1
 ENT.Mass=50
 ENT.ImpactNoise1="Metal_Barrel.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"

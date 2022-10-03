@@ -9,9 +9,9 @@ ENT.AdminSpawnable=true
 ---
 ENT.EZsupplies=JMod.EZ_RESOURCE_TYPES.MUNITIONS
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
-ENT.Model="models/Items/BoxJRounds.mdl"
+ENT.Model="models/Items/BoxJMunitions.mdl"
 ENT.Material="models/mat_jack_gmod_ezmunitionbox"
-ENT.ModelScale=2.5
+--ENT.ModelScale=1.25
 ENT.Mass=70
 ENT.ImpactNoise1="Metal_Box.ImpactHard"
 ENT.ImpactNoise2="Weapon.ImpactSoft"

@@ -953,6 +953,32 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
     end
 end)
 
+if(CLIENT)then
+	function JMod.GetItemInSlot(armorTable,slot)
+		if not(armorTable and armorTable.items)then return nil end
+		for id,armorData in pairs(armorTable.items)do
+			local ArmorInfo=JMod.ArmorTable[armorData.name]
+			if(ArmorInfo.slots[slot])then
+				return id,armorData,ArmorInfo
+			end
+		end
+		return nil
+	end
+	concommand.Add("jmod_ez_toggleeyes",function()
+		local ply=LocalPlayer()
+		if not((IsValid(ply))and(ply:Alive()))then return end
+		local ItemID,ItemData,ItemInfo=JMod.GetItemInSlot(ply.EZarmor,"eyes")
+		if not(ItemID)then
+			ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing anything that covers your eyes!")
+		else
+			net.Start("JMod_Inventory")
+			net.WriteInt(2,8) -- toggle
+			net.WriteString(ItemID)
+			net.SendToServer()
+		end
+	end)
+end
+
 -- Debug
 --[[
 for _, ply in pairs(player.GetAll()) do
