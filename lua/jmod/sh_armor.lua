@@ -945,7 +945,7 @@ end
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
     if ply.IsProne and ply:IsProne() then return end
 
-    if ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 and (ply:OnGround() or ply:WaterLevel() >= 1) then
+    if ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
         local origSpeed = mv:GetMaxSpeed()
         local origClientSpeed = mv:GetMaxClientSpeed()
         mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
