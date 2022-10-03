@@ -339,7 +339,7 @@ local SalvagingTable={
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.3
 	},
     chainlink={
-        [JMod.EZ_RESOURCE_TYPES.ALUMINUM]=.7
+        [JMod.EZ_RESOURCE_TYPES.STEEL]=.5
     }
 }
 local SpecializedSalvagingTable={
