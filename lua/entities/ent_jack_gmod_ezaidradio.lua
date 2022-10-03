@@ -182,7 +182,7 @@ if(SERVER)then
 					end
 				end
 			elseif(State>0)then
-				self:ConsumeElectricity()
+				self:ConsumeElectricity(0.3)
 				if not(self:TryFindSky())then
 					self.ConnectionlessThinks=self.ConnectionlessThinks+1
 					if(self.ConnectionlessThinks>5)then
