@@ -942,12 +942,15 @@ function JMod.DepleteArmorChemicalCharge(ply,amt)
 	end
 end
 
-hook.Add("SetupMove", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-	if(ply.IsProne and ply:IsProne())then return end
-	if (ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1) then
-		local origSpeed=(cmd:KeyDown(IN_SPEED) and ply:GetRunSpeed()) or ply:GetWalkSpeed()
-		mv:SetMaxClientSpeed(origSpeed*ply.EZarmor.speedfrac)
-	end
+hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
+    if ply.IsProne and ply:IsProne() then return end
+
+    if ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
+        local origSpeed = mv:GetMaxSpeed()
+        local origClientSpeed = mv:GetMaxClientSpeed()
+        mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
+        mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
+    end
 end)
 
 if(CLIENT)then
