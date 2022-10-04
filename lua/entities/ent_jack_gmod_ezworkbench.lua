@@ -1,4 +1,4 @@
--- Jackarunda 2021
+﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Workbench"
@@ -18,16 +18,23 @@ ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
 	MaxDurability=100,
-	Armor=.8
+	Armor=.8,
+	MaxGas=100,
+	MaxElectricity=100
 }
-local STATE_BROKEN,STATE_OFF=-1,0
+local STATE_BROKEN,STATE_FINE=-1,0
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Float",1,"Gas")
+end
 if(SERVER)then
 	function ENT:CustomInit()
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
+
 		---
+		self:SetGas(self.MaxGas)
 		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end
@@ -43,110 +50,140 @@ if(SERVER)then
 			end
 		end
 	end
+
 	function ENT:BuildEffect(pos)
-		if(CLIENT)then return end
-		local Scale=.5
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos+VectorRand())
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1,2)*Scale) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)*Scale) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)*Scale) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-		local eff=EffectData()
-		eff:SetOrigin(pos+VectorRand())
+		if CLIENT then return end
+		local Scale = .5
+		local effectdata = EffectData()
+		effectdata:SetOrigin(pos + VectorRand())
+		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
+		effectdata:SetMagnitude(math.Rand(1, 2) * Scale) --amount and shoot hardness
+		effectdata:SetScale(math.Rand(.5, 1.5) * Scale) --length of strands
+		effectdata:SetRadius(math.Rand(2, 4) * Scale) --thickness of strands
+		util.Effect("Sparks", effectdata, true, true)
+		sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
+		sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", pos, 60, math.random(80, 120))
+		local eff = EffectData()
+		eff:SetOrigin(pos + VectorRand())
 		eff:SetScale(Scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
+		util.Effect("eff_jack_gmod_ezbuildsmoke", eff, true, true)
 	end
+
 	function ENT:Use(activator)
-		if(self:GetState()>-1)then
-			net.Start("JMod_EZworkbench")
-			net.WriteEntity(self)
-			net.WriteTable(self.Craftables)
-			net.Send(activator)
-			JMod.Hint(activator, "craft")
+		if(self:GetState()==STATE_FINE)then
+			if(self:GetElectricity()>0 and self:GetGas()>0)then
+				net.Start("JMod_EZworkbench")
+				net.WriteEntity(self)
+				net.WriteTable(self.Craftables)
+				net.Send(activator)
+				JMod.Hint(activator, "craft")
+			else
+				JMod.Hint(activator, "refill")
+			end
 		else
-			JMod.Hint(activator, "refill")
+			JMod.Hint(activator, "destroyed")
 		end
 	end
 	function ENT:ConsumeResourcesInRange(requirements)
-		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
-		while not((AllDone)or(Attempts>1000))do
-			local TypesNeeded=table.GetKeys(RequirementsRemaining)
-			if((TypesNeeded)and(#TypesNeeded>0))then
-				local ResourceTypeToLookFor=TypesNeeded[1]
-				local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-				local Donor=JMod.FindResourceContainer(ResourceTypeToLookFor,1,nil,nil,self) -- every little bit helps
-				if(Donor)then
-					local AmountWeCanTake=Donor:GetResource()
-					if(AmountWeNeed>=AmountWeCanTake)then
+		local AllDone, Attempts, RequirementsRemaining = false, 0, table.FullCopy(requirements)
+
+		while not (AllDone or (Attempts > 1000)) do
+			local TypesNeeded = table.GetKeys(RequirementsRemaining)
+
+			if TypesNeeded and (#TypesNeeded > 0) then
+				local ResourceTypeToLookFor = TypesNeeded[1]
+				local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor]
+				local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, nil, nil, self) -- every little bit helps
+
+				if Donor then
+					local AmountWeCanTake = Donor:GetResource()
+
+					if AmountWeNeed >= AmountWeCanTake then
 						Donor:SetResource(0)
+
 						if Donor:GetClass() == "ent_jack_gmod_ezcrate" then
 							Donor:ApplySupplyType("generic")
 						else
 							Donor:Remove()
 						end
-						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
+
+						RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeCanTake
 					else
-						Donor:SetResource(AmountWeCanTake-AmountWeNeed)
-						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
+						Donor:SetResource(AmountWeCanTake - AmountWeNeed)
+						RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeNeed
 					end
-					if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
+
+					if RequirementsRemaining[ResourceTypeToLookFor] <= 0 then
+						RequirementsRemaining[ResourceTypeToLookFor] = nil
+					end
 				end
 			else
-				AllDone=true
+				AllDone = true
 			end
-			Attempts=Attempts+1
+
+			Attempts = Attempts + 1
 		end
 	end
-	function ENT:TryBuild(itemName,ply)
-		local ItemInfo=self.Craftables[itemName]
-		
-		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self))then
-		
-			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+
+	function ENT:TryBuild(itemName, ply)
+		local ItemInfo = self.Craftables[itemName]
+
+		if JMod.HaveResourcesToPerformTask(nil, nil, ItemInfo.craftingReqs, self) then
+			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
+
 			if override == false then
-				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
+				ply:PrintMessage(HUD_PRINTCENTER, msg or "cannot build")
+
 				return
 			end
-		
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,nil,nil,self)
-			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
-			for i=1,BuildSteps do
-				timer.Simple(i/100,function()
-					if(IsValid(self))then
-						if(i<BuildSteps)then
-							sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs, nil, nil, self)
+			local Pos, Ang, BuildSteps = self:GetPos() + self:GetUp() * 55 - self:GetForward() * 30 - self:GetRight() * 5, self:GetAngles(), 10
+
+			for i = 1, BuildSteps do
+				timer.Simple(i / 100, function()
+					if IsValid(self) then
+						if i < BuildSteps then
+							sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
 						else
-							local StringParts=string.Explode(" ",ItemInfo.results)
-							if((StringParts[1])and(StringParts[1]=="FUNC"))then
-								local FuncName=StringParts[2]
-								if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-									local Ent=JMod.LuaConfig.BuildFuncs[FuncName](ply,Pos,Ang)
-									if(Ent)then
-										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
+							local StringParts = string.Explode(" ", ItemInfo.results)
+
+							if StringParts[1] and (StringParts[1] == "FUNC") then
+								local FuncName = StringParts[2]
+
+								if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
+									local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
+
+									if Ent then
+										if Ent:GetPhysicsObject():GetMass() <= 15 then
+											ply:PickupObject(Ent)
+										end
 									end
 								else
 									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 								end
 							else
-								local Ent=ents.Create(ItemInfo.results)
+								local Ent = ents.Create(ItemInfo.results)
 								Ent:SetPos(Pos)
 								Ent:SetAngles(Ang)
-								JMod.Owner(Ent,ply)
+								JMod.Owner(Ent, ply)
 								Ent:Spawn()
 								Ent:Activate()
-								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
+
+								if Ent:GetPhysicsObject():GetMass() <= 15 then
+									ply:PickupObject(Ent)
+								end
 							end
+
 							self:BuildEffect(Pos)
+							self:ConsumeElectricity(.5)
+							self:SetGas(math.Clamp(self:GetGas()-1,0,self.MaxGas))
 						end
 					end
 				end)
 			end
 		else
-			JMod.Hint(ply,"missing supplies")
+			JMod.Hint(ply, "missing supplies")
 		end
 	end
 elseif(CLIENT)then
@@ -154,29 +191,67 @@ elseif(CLIENT)then
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
 		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
+		self.Screen=JMod.MakeModel(self,"models/props_lab/monitor01b.mdl")
 	end
+
 	local function ColorToVector(col)
-		return Vector(col.r/255,col.g/255,col.b/255)
+		return Vector(col.r / 255, col.g / 255, col.b / 255)
 	end
-	local DarkSprite=Material("white_square")
+
+	local DarkSprite = Material("white_square")
+
 	function ENT:DrawTranslucent()
-		local SelfPos,SelfAng,FT=self:GetPos(),self:GetAngles(),FrameTime()
-		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
+		local SelfPos, SelfAng, FT = self:GetPos(), self:GetAngles(), FrameTime()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		---
-		local BasePos=SelfPos+Up*60
-		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
-		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
-		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(self:GetState()<0)then DetailDraw=false end
+		local BasePos = SelfPos + Up * 60
+
+		local Obscured = util.TraceLine({
+			start = EyePos(),
+			endpos = BasePos,
+			filter = {LocalPlayer(), self},
+			mask = MASK_OPAQUE
+		}).Hit
+
+		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(SelfPos)
+		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
+		if (not DetailDraw) and Obscured then return end -- if player is far and sentry is obscured, draw nothing
+
+		-- if obscured, at least disable details
+		if Obscured then
+			DetailDraw = false
+		end
+
+		if self:GetState() < 0 then
+			DetailDraw = false
+		end
+
 		---
 		self:DrawModel()
+
 		---
 		if(DetailDraw)then
 			local GlasswareAng=SelfAng:GetCopy()
 			JMod.RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
 			JMod.RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
+			local ScreenAng=SelfAng:GetCopy()
+			JMod.RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
+			if(self:GetElectricity()>0)then
+				local DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Forward,90)
+				DisplayAng:RotateAroundAxis(Up,90)
+				local Opacity=math.random(50,200)
+				cam.Start3D2D(BasePos-Right*24-Forward*53.5-Up,DisplayAng,.04)
+				draw.SimpleTextOutlined("Jackarunda","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("Industries","JMod-Display",0,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/self.MaxElectricity
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local GasFrac=self:GetGas()/self.MaxGas
+				local R,G,B=JMod.GoodBadColor(GasFrac)
+				draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.End3D2D()
+			end
 		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)
@@ -199,5 +274,6 @@ elseif(CLIENT)then
 		JMod.RenderModel(self.BottomCanopy,BasePos-Up*17+Right*2,BottomCanopyAng)
 		--]]
 	end
-	language.Add("ent_jack_gmod_ezworkbench","EZ Workbench")
+
+	language.Add("ent_jack_gmod_ezworkbench", "EZ Workbench")
 end
