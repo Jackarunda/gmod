@@ -272,12 +272,13 @@ if(SERVER)then
 		self.Snd2:Stop()
 		self.Snd3:Stop()
 	end
-elseif CLIENT then
-	net.Receive("JMod_ResourceScanner", function()
-		local Ent = net.ReadEntity()
-
-		if IsValid(Ent) then
-			Ent.ScanResults = net.ReadTable()
+elseif(CLIENT)then
+	ENT.DSU=0 -- Display Start Up, a float that increases over time to allow UI elements to appear in sequence
+	ENT.LastState=0
+	net.Receive("JMod_ResourceScanner",function()
+		local Ent=net.ReadEntity()
+		if(IsValid(Ent))then
+			Ent.ScanResults=net.ReadTable()
 		end
 	end)
 	function ENT:CustomInit()
@@ -294,89 +295,94 @@ elseif CLIENT then
 	local SmileyIcon=Material("ez_misc_icons/smiley.png")
 	function ENT:Draw()
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
+		if((State==JMod.EZ_STATE_ON)and(self.LastState~=State))then self.DSU=0 end
+		self.LastState=State
 		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
 		local TankAng=SelfAng:GetCopy()
 		TankAng:RotateAroundAxis(Right,-90)
 		JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 		self:DrawModel()
 		--
-		local BasePos = SelfPos + Up * 32
-
-		local Obscured = util.TraceLine({
-			start = EyePos(),
-			endpos = BasePos,
-			filter = {LocalPlayer(), self},
-			mask = MASK_OPAQUE
-		}).Hit
-
-		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(SelfPos)
-		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
-		if (not DetailDraw) and Obscured then return end -- if player is far and sentry is obscured, draw nothing
-
-		-- if obscured, at least disable details
-		if Obscured then
-			DetailDraw = false
-		end
-
-		-- look incomplete to indicate damage, save on gpu comp too
-		if State == JMod.EZ_STATE_BROKEN then
-			DetailDraw = false
-		end
-
-		if DetailDraw then
-			if (Closeness < 30000) and (State == JMod.EZ_STATE_ON) then
-				local DisplayAng, Vary = SelfAng:GetCopy(), (math.sin(CurTime() * 5) / 2 + .5) ^ .25
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), -45)
-				local Opacity = math.random(75, 150)
-				cam.Start3D2D(SelfPos - Up * 35 - Forward * 5, DisplayAng, .08)
-				surface.SetDrawColor(50, 100, 50, 50)
+		local BasePos=SelfPos+Up*32
+		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
+		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
+		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
+		if(State==JMod.EZ_STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if(DetailDraw)then
+			if((Closeness<30000)and(State==JMod.EZ_STATE_ON))then
+				local DisplayAng,Vary=SelfAng:GetCopy(),(math.sin(CurTime()*5)/2+.5)^.25
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-45)
+				local Opacity=math.random(75,150)
+				cam.Start3D2D(SelfPos-Up*35-Forward*5,DisplayAng,.08)
+				surface.SetDrawColor(20,50,20,180)
 				surface.SetMaterial(Circol)
-				surface.DrawTexturedRect(-50 * MetersToPixels, -95 * MetersToPixels, 100 * MetersToPixels, 100 * MetersToPixels)
-				local CenterY = -45 * MetersToPixels
-				surface.DrawCircle(0, CenterY, 40 * MetersToPixels, 255, 255, 255, Opacity)
-				draw.SimpleText("40m", "JMod-Display-XS", 40 * MetersToPixels - 20, -45 * MetersToPixels, Color(200, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				surface.DrawCircle(0, CenterY, 30 * MetersToPixels, 255, 255, 255, Opacity)
-				draw.SimpleText("30m", "JMod-Display-XS", 30 * MetersToPixels - 20, -45 * MetersToPixels, Color(200, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				surface.DrawCircle(0, CenterY, 20 * MetersToPixels, 255, 255, 255, Opacity)
-				draw.SimpleText("20m", "JMod-Display-XS", 20 * MetersToPixels - 20, -45 * MetersToPixels, Color(200, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				surface.DrawCircle(0, CenterY, 10 * MetersToPixels, 255, 255, 255, Opacity)
-				draw.SimpleText("10m", "JMod-Display-XS", 10 * MetersToPixels - 20, -45 * MetersToPixels, Color(200, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				surface.DrawLine(0, CenterY, 0, -85 * MetersToPixels)
-				draw.SimpleText("?=metallic object", "JMod-Display-XS", 0, -15 * MetersToPixels + 56, Color(200, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				local Renj = JMod.EZ_GRADE_BUFFS[Grade] * 20 * MetersToPixels
-				surface.DrawCircle(0, CenterY, Renj + 2, 255, 0, 0, Opacity)
-
+				surface.DrawTexturedRect(-50*MetersToPixels,-95*MetersToPixels,100*MetersToPixels,100*MetersToPixels)
+				local CenterY=-45*MetersToPixels
+				if(self.DSU>.6)then 
+					surface.DrawCircle(0,CenterY,40*MetersToPixels,255,255,255,Opacity)
+					draw.SimpleText("40m","JMod-Display-XS",40*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				end
+				if(self.DSU>.5)then 
+					surface.DrawCircle(0,CenterY,30*MetersToPixels,255,255,255,Opacity)
+					draw.SimpleText("30m","JMod-Display-XS",30*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				end
+				if(self.DSU>.4)then 
+					surface.DrawCircle(0,CenterY,20*MetersToPixels,255,255,255,Opacity)
+					draw.SimpleText("20m","JMod-Display-XS",20*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				end
+				if(self.DSU>.3)then 
+					surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
+					draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+				end
+				if(self.DSU>.2)then 
+					surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
+					draw.SimpleText("?=metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
+					local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
+					surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
+				end
 				--
-				for k, v in pairs(self.ScanResults) do
-					local X, Y, Radius = v.pos.x * SourceUnitsToPixels, v.pos.y * SourceUnitsToPixels, v.siz * SourceUnitsToPixels
-
-					if v.typ == "ANOMALY" then
-						draw.SimpleText("?", "JMod-Display", X, -Y - 45 * MetersToPixels - 18, Color(255, 255, 255, Opacity + 150 * Vary), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-					elseif v.typ == "DANGER" then
-						surface.SetDrawColor(255, 255, 255, Opacity + 150 * Vary)
-						surface.SetMaterial(WarningIcon)
-						surface.DrawTexturedRect(X - v.siz / 2, (-Y - v.siz / 2) - 45 * MetersToPixels - 18, v.siz, v.siz)
-					elseif v.typ == "SMILEY" then
-						surface.SetDrawColor(255, 255, 255, Opacity + 150 * Vary)
-						surface.SetMaterial(SmileyIcon)
-						surface.DrawTexturedRect(X - v.siz / 2, (-Y - v.siz / 2) - 45 * MetersToPixels - 18, v.siz, v.siz)
+				for k,v in pairs(self.ScanResults)do
+					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
+					if(v.typ=="ANOMALY")then
+						if(self.DSU>.9)then draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP) end
+					elseif(v.typ=="DANGER")then
+						if(self.DSU>.9)then 
+						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(WarningIcon)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
+						end
+					elseif(v.typ=="SMILEY")then
+						if(self.DSU>.8)then 
+							surface.SetDrawColor(255,255,255,Opacity+150*Vary)
+    						surface.SetMaterial(SmileyIcon)
+							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
+						end
 					else
-						JMod.StandardResourceDisplay(v.typ, v.amt or v.rate, nil, X, -Y - 45 * MetersToPixels, Radius * 2, true, "JMod-Display-S", 200, v.rate)
+						if(self.DSU>.7)then JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X,-Y-45*MetersToPixels,Radius*2,true,"JMod-Display-S",200,v.rate) end
 					end
 				end
 
 				--
-				draw.SimpleTextOutlined("POWER","JMod-Display",-250,-40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",-250,-10,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("SCANNING:","JMod-Display",250,-40,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ProgFrac=self:GetProgress()/100
-				local R,G,B=JMod.GoodBadColor(ProgFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac*100)).."%","JMod-Display",250,-10,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				if(self.DSU>.1)then 
+					draw.SimpleTextOutlined("POWER","JMod-Display",-200,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ElecFrac=self:GetElectricity()/self.MaxElectricity
+					local R,G,B=JMod.GoodBadColor(ElecFrac)
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",-200,-30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				end
+				if(self.DSU>.8)then 
+					draw.SimpleTextOutlined("SCANNING:","JMod-Display",200,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ProgFrac=self:GetProgress()/100
+					local R,G,B=JMod.GoodBadColor(ProgFrac)
+					draw.SimpleTextOutlined(tostring(math.Round(ProgFrac*100)).."%","JMod-Display",200,-30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				end
 				cam.End3D2D()
+				--
+				jprint(self.DSU)
+				self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
 			end
 		end
 	end

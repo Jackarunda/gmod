@@ -13,19 +13,17 @@ ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
 
 --
-ENT.EZupgradable = true
-ENT.EZconsumes={JMod.EZ_RESOURCE_TYPES.BASICPARTS}
-ENT.StaticPerfSpecs={
-	MaxDurability=100
+ENT.StaticPerfSpecs = {
+	MaxDurability = 50
 }
-ENT.DynamicPerfSpecs={
-	Armor=.5,
-	ChargeSpeed=1
+
+ENT.DynamicPerfSpecs = {
+	ChargeSpeed = 1
 }
 
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float",1,"Progress")
-	self:NetworkVar("Float",2,"Visibility")
+	self:NetworkVar("Float", 0, "Progress")
+	self:NetworkVar("Float", 1, "Visibility")
 end
 
 local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
@@ -232,31 +230,33 @@ end
 					end
 				end
 			end
-		end
-		local AlignmentFactor=self:GetLightAlignment()
-		self:SetVisibility(self:CheckSky()*weatherMult*AlignmentFactor)
-		local vis = self:GetVisibility()
-		local grade = self:GetGrade()
-		if(vis <= 0 or self:WaterLevel() >= 2)then 
-			JMod.Hint(self.Owner, "solar panel no sun")
-			self:TurnOff()
-		elseif(self:GetProgress() < self.MaxPower)then
-			local rate = math.Round(2.5*self.ChargeSpeed^2 * vis, 2)
-			self:SetProgress(self:GetProgress() + rate)
-		end
-		if (self:GetProgress() >= self.MaxPower)then
-			self:ProducePower()
-		end
-		self:NextThink(CurTime() + 5)
-		return true
-	end
-end
 
-elseif(CLIENT)then
-	function ENT:CustomInit()
-		self.SolarCellModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/mat_jack_gmod_solarcells",.5)
-		self.PanelBackModel = JMod.MakeModel(self,"models/hunter/plates/plate3x5.mdl","models/props_pipes/pipeset_metal02",.5)
-		self.ChargerModel = JMod.MakeModel(self,"models/props_lab/powerbox01a.mdl", nil, .5)
+			local AlignmentFactor = self:GetLightAlignment()
+			self:SetVisibility(self:CheckSky() * weatherMult * AlignmentFactor)
+			local vis = self:GetVisibility()
+			local grade = self:GetGrade()
+
+			if vis <= 0 or self:WaterLevel() >= 2 then
+				JMod.Hint(self.Owner, "solar panel no sun")
+			elseif self:GetProgress() < self.MaxPower then
+				local rate = math.Round(2.5 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
+				self:SetProgress(self:GetProgress() + rate)
+			end
+
+			if self:GetProgress() >= self.MaxPower then
+				self:ProducePower()
+			end
+
+			self:NextThink(CurTime() + 5)
+
+			return true
+		end
+	end
+elseif CLIENT then
+	function ENT:Initialize()
+		self.SolarCellModel = JMod.MakeModel(self, "models/hunter/plates/plate3x5.mdl", "models/mat_jack_gmod_solarcells", .5)
+		self.PanelBackModel = JMod.MakeModel(self, "models/hunter/plates/plate3x5.mdl", "models/props_pipes/pipeset_metal02", .5)
+		self.ChargerModel = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl", nil, .5)
 		self:DrawShadow(true)
 	end
 
@@ -308,26 +308,25 @@ elseif(CLIENT)then
 		if PanelDraw then
 			JMod.RenderModel(self.SolarCellModel, BasePos - Forward + Right * .5, PanelAng)
 		end
-		if(DetailDraw)then
-		JMod.RenderModel(self.PanelBackModel,BasePos-Forward*0.6+Right*.5,PanelAng,Vector(1.01,1.01,1))
-			if(Closeness<20000 and State==STATE_ON)then
-				local DisplayAng=SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(),0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(),-90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
-				local Opacity=math.random(50,150)
-				local ElecFrac=self:GetProgress()/100
-				local VisFrac=self:GetVisibility()
-				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				local VR,VG,VB=JMod.GoodBadColor(VisFrac)
-				cam.Start3D2D(SelfPos-Up*35-Forward*20-Right*30,DisplayAng,.1)
-					surface.SetDrawColor(10,10,10,Opacity+50)
-					surface.DrawRect(390,80,128,128)
-					JMod.StandardRankDisplay(Grade,452,148,118,Opacity+50)
-					draw.SimpleTextOutlined("PROGRESS","JMod-Display",150,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",150,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					draw.SimpleTextOutlined("EFFICIENCY","JMod-Display",350,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(VisFrac*100)).."%","JMod-Display",350,60,Color(VR,VG,VB,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+
+		if DetailDraw then
+			JMod.RenderModel(self.PanelBackModel, BasePos - Forward * 0.6 + Right * .5, PanelAng, Vector(1.01, 1.01, 1))
+
+			if Closeness < 20000 and State == STATE_ON then
+				local DisplayAng = SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 180)
+				local Opacity = math.random(50, 150)
+				local ElecFrac = self:GetProgress() / 100
+				local VisFrac = self:GetVisibility()
+				local R, G, B = JMod.GoodBadColor(ElecFrac)
+				local VR, VG, VB = JMod.GoodBadColor(VisFrac)
+				cam.Start3D2D(SelfPos - Up * 35 - Forward * 20 - Right * 30, DisplayAng, .1)
+				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("EFFICIENCY", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(VisFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(VR, VG, VB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
