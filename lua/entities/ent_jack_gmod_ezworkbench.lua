@@ -67,7 +67,6 @@ if(SERVER)then
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
 	end
 	function ENT:Use(activator)
-<<<<<<< HEAD
 		if(self:GetState()==STATE_FINE)then
 			if(self:GetElectricity()>0 and self:GetGas()>0)then
 				net.Start("JMod_EZworkbench")
@@ -78,14 +77,6 @@ if(SERVER)then
 			else
 				JMod.Hint(activator, "refill")
 			end
-=======
-		if(self:GetState()>-1)then
-			net.Start("JMod_EZworkbench")
-			net.WriteEntity(self)
-			net.WriteTable(self.Craftables)
-			net.Send(activator)
-			JMod.Hint(activator, "craft")
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 		else
 			JMod.Hint(activator, "destroyed")
 		end
@@ -175,10 +166,7 @@ elseif(CLIENT)then
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.Glassware1=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
 		self.Glassware2=JMod.MakeModel(self,"models/props_junk/glassjug01.mdl","models/props_combine/health_charger_glass")
-<<<<<<< HEAD
 		self.Screen=JMod.MakeModel(self,"models/props_lab/monitor01b.mdl")
-=======
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 	end
 	local function ColorToVector(col)
 		return Vector(col.r/255,col.g/255,col.b/255)
@@ -202,7 +190,6 @@ elseif(CLIENT)then
 			local GlasswareAng=SelfAng:GetCopy()
 			JMod.RenderModel(self.Glassware1,BasePos-Up*12.5-Forward*47,GlasswareAng)
 			JMod.RenderModel(self.Glassware2,BasePos-Up*12.5-Forward*47-Right*9,GlasswareAng)
-<<<<<<< HEAD
 			local ScreenAng=SelfAng:GetCopy()
 			JMod.RenderModel(self.Screen,BasePos-Up*5-Forward*60-Right*25,ScreenAng)
 			if(self:GetElectricity()>0)then
@@ -221,8 +208,6 @@ elseif(CLIENT)then
 				draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
-=======
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 		end
 		--[[ -- todo: use this in the prop conversion machines
 		local Col=Color(0,0,0,50)

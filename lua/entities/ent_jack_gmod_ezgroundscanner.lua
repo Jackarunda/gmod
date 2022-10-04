@@ -234,11 +234,8 @@ if(SERVER)then
 		self.Snd3:Stop()
 	end
 elseif(CLIENT)then
-<<<<<<< HEAD
 	ENT.DSU=0 -- Display Start Up, a float that increases over time to allow UI elements to appear in sequence
 	ENT.LastState=0
-=======
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 	net.Receive("JMod_ResourceScanner",function()
 		local Ent=net.ReadEntity()
 		if(IsValid(Ent))then
@@ -282,7 +279,6 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-45)
 				local Opacity=math.random(75,150)
 				cam.Start3D2D(SelfPos-Up*35-Forward*5,DisplayAng,.08)
-<<<<<<< HEAD
 				surface.SetDrawColor(20,50,20,180)
 				surface.SetMaterial(Circol)
 				surface.DrawTexturedRect(-50*MetersToPixels,-95*MetersToPixels,100*MetersToPixels,100*MetersToPixels)
@@ -309,29 +305,10 @@ elseif(CLIENT)then
 					local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
 					surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
 				end
-=======
-				surface.SetDrawColor(50,100,50,50)
-				surface.SetMaterial(Circol)
-				surface.DrawTexturedRect(-50*MetersToPixels,-95*MetersToPixels,100*MetersToPixels,100*MetersToPixels)
-				local CenterY=-45*MetersToPixels
-				surface.DrawCircle(0,CenterY,40*MetersToPixels,255,255,255,Opacity)
-				draw.SimpleText("40m","JMod-Display-XS",40*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				surface.DrawCircle(0,CenterY,30*MetersToPixels,255,255,255,Opacity)
-				draw.SimpleText("30m","JMod-Display-XS",30*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				surface.DrawCircle(0,CenterY,20*MetersToPixels,255,255,255,Opacity)
-				draw.SimpleText("20m","JMod-Display-XS",20*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				surface.DrawCircle(0,CenterY,10*MetersToPixels,255,255,255,Opacity)
-				draw.SimpleText("10m","JMod-Display-XS",10*MetersToPixels-20,-45*MetersToPixels,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				surface.DrawLine(0,CenterY,0,-85*MetersToPixels)
-				draw.SimpleText("?=metallic object","JMod-Display-XS",0,-15*MetersToPixels+56,Color(200,200,200,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-				local Renj=JMod.EZ_GRADE_BUFFS[Grade]*20*MetersToPixels
-				surface.DrawCircle(0,CenterY,Renj+2,255,0,0,Opacity)
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 				--
 				for k,v in pairs(self.ScanResults)do
 					local X,Y,Radius=v.pos.x*SourceUnitsToPixels,v.pos.y*SourceUnitsToPixels,v.siz*SourceUnitsToPixels
 					if(v.typ=="ANOMALY")then
-<<<<<<< HEAD
 						if(self.DSU>.9)then draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP) end
 					elseif(v.typ=="DANGER")then
 						if(self.DSU>.9)then 
@@ -347,19 +324,6 @@ elseif(CLIENT)then
 						end
 					else
 						if(self.DSU>.7)then JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X,-Y-45*MetersToPixels,Radius*2,true,"JMod-Display-S",200,v.rate) end
-=======
-						draw.SimpleText("?","JMod-Display",X,-Y-45*MetersToPixels-18,Color(255,255,255,(Opacity+150*Vary)),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP)
-					elseif(v.typ=="DANGER")then
-						    surface.SetDrawColor(255,255,255,Opacity+150*Vary)
-    						surface.SetMaterial(WarningIcon)
-							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
-					elseif(v.typ=="SMILEY")then
-							surface.SetDrawColor(255,255,255,Opacity+150*Vary)
-    						surface.SetMaterial(SmileyIcon)
-							surface.DrawTexturedRect(X-v.siz/2,(-Y-v.siz/2)-45*MetersToPixels-18,v.siz,v.siz)
-					else
-						JMod.StandardResourceDisplay(v.typ,(v.amt or v.rate),nil,X,-Y-45*MetersToPixels,Radius*2,true,"JMod-Display-S",200,v.rate)
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 					end
 				end
 				--

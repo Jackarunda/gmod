@@ -1,4 +1,4 @@
--- Jackarunda 2021
+﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Machine"
@@ -179,15 +179,9 @@ function ENT:Upgrade(level)
 	self.UpgradeProgress={}
 end
 if(SERVER)then
-<<<<<<< HEAD
 	function ENT:SpawnFunction(ply,tr,classname)
 		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 60)
 		local ent=ents.Create(classname)
-=======
-	function ENT:SpawnFunction(ply,tr)
-		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 60)
-		local ent=ents.Create(self.ClassName)
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent,ply)
@@ -196,11 +190,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
-<<<<<<< HEAD
 		JMod.Hint(ply, classname)
-=======
-		JMod.Hint(ply, self.ClassName)
->>>>>>> parent of decbe1ae (Merge branch 'master' of https://github.com/Jackarunda/gmod into boots_ezmachine_update)
 		return ent
 	end
 	function ENT:Initialize()
