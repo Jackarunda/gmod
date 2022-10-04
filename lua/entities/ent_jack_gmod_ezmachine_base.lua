@@ -1,4 +1,4 @@
-﻿﻿-- Jackarunda 2021
+﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Machine"
