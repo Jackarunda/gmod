@@ -1,90 +1,61 @@
-SWEP.Base="arccw_base"
-SWEP.Spawnable=false -- this obviously has to be set to true
-SWEP.Category="JMod - EZ Weapons" -- edit this if you like
-SWEP.AdminOnly=false
-SWEP.EZdroppable=true
-
-SWEP.UseHands=true
-
-SWEP.DefaultBodygroups="000000"
-
-SWEP.DamageType=DMG_BULLET
-SWEP.ShootEntity=nil -- entity to fire, if any
-SWEP.MuzzleVelocity=900 -- projectile or phys bullet muzzle velocity
+﻿SWEP.Base = "arccw_base"
+SWEP.Spawnable = false -- this obviously has to be set to true
+SWEP.Category = "JMod - EZ Weapons" -- edit this if you like
+SWEP.AdminOnly = false
+SWEP.EZdroppable = true
+SWEP.UseHands = true
+SWEP.DefaultBodygroups = "000000"
+SWEP.DamageType = DMG_BULLET
+SWEP.ShootEntity = nil -- entity to fire, if any
+SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
 -- IN M/S
+SWEP.TracerNum = 0 -- tracer every X
+SWEP.TracerCol = Color(255, 25, 25)
+SWEP.TracerWidth = 3
+SWEP.AimSwayFactor = .9
+SWEP.DamageRand = .20
+SWEP.BlastRadiusRand = .1
+SWEP.Num = 1
+SWEP.VisualRecoilMult = 1
+SWEP.RecoilSide = .5
+SWEP.RecoilPunchBackMax = 2
+SWEP.HipDispersion = 700 -- inaccuracy added by hip firing.
+SWEP.MoveDispersion = 300
+SWEP.ChamberSize = 1 -- this is so wrong, Arctic...
+SWEP.Primary.DefaultClip = 0
 
-SWEP.TracerNum=0 -- tracer every X
-SWEP.TracerCol=Color(255, 25, 25)
-SWEP.TracerWidth=3
-SWEP.AimSwayFactor=.9
+SWEP.NPCWeaponType = {"weapon_ar2", "weapon_smg1"}
 
-SWEP.DamageRand=.20
-SWEP.BlastRadiusRand=.1
-SWEP.Num=1
-
-SWEP.VisualRecoilMult=1
-SWEP.RecoilSide=.5
-SWEP.RecoilPunchBackMax=2
-
-SWEP.HipDispersion=700 -- inaccuracy added by hip firing.
-SWEP.MoveDispersion=300
-
-SWEP.ChamberSize=1 -- this is so wrong, Arctic...
-SWEP.Primary.DefaultClip=0
-
-SWEP.NPCWeaponType={"weapon_ar2", "weapon_smg1"}
-SWEP.NPCWeight=150
-
-SWEP.MagID="stanag" -- the magazine pool this gun draws from
-
-SWEP.ShootVol=75 -- volume of shoot sound
-SWEP.ShootPitch=100 -- pitch of shoot sound
-
-SWEP.ShellTime=100
-SWEP.ShellEffect="eff_jack_gmod_weaponshell"
-
-SWEP.ForceDefaultAmmo=0
-
-SWEP.MuzzleEffectAttachment=1 -- which attachment to put the muzzle on
-SWEP.CaseEffectAttachment=2 -- which attachment to put the case effect on
-
-SWEP.BulletBones={ -- the bone that represents bullets in gun/mag
-    -- [0]="bulletchamber",
-    -- [1]="bullet1"
-}
-
-SWEP.ShootSoundWorldCount=1
+SWEP.NPCWeight = 150
+SWEP.MagID = "stanag" -- the magazine pool this gun draws from
+SWEP.ShootVol = 75 -- volume of shoot sound
+SWEP.ShootPitch = 100 -- pitch of shoot sound
+SWEP.ShellTime = 100
+SWEP.ShellEffect = "eff_jack_gmod_weaponshell"
+SWEP.ForceDefaultAmmo = 0
+SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
+SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
+SWEP.BulletBones = {} -- the bone that represents bullets in gun/mag -- [0]="bulletchamber", -- [1]="bullet1"
+SWEP.ShootSoundWorldCount = 1
 --SWEP.Hook_PostFireBullets -- todo
-
-SWEP.ProceduralRegularFire=false
-SWEP.ProceduralIronFire=false
-
-SWEP.AlwaysPhysBullet=false
-SWEP.NeverPhysBullet=true
-
-SWEP.CaseBones={}
-
-SWEP.HoldtypeHolstered="passive"
-SWEP.HoldtypeActive="ar2"
-SWEP.HoldtypeSights="ar2"
-
-SWEP.AnimShoot=ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
-
-SWEP.AttachmentElements={
-	--[[
+SWEP.ProceduralRegularFire = false
+SWEP.ProceduralIronFire = false
+SWEP.AlwaysPhysBullet = false
+SWEP.NeverPhysBullet = true
+SWEP.CaseBones = {}
+SWEP.HoldtypeHolstered = "passive"
+SWEP.HoldtypeActive = "ar2"
+SWEP.HoldtypeSights = "ar2"
+SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
+SWEP.AttachmentElements = {} --[[
     ["noch"]={
         VMBodygroups={{ind=1, bg=1}},
         WMBodygroups={{ind=2, bg=1}},
     }
 	--]]
-}
-
-SWEP.ProceduralViewBobIntensity=.6
-
-SWEP.ExtraSightDist=5
-
-SWEP.Attachments={
-	--[[
+SWEP.ProceduralViewBobIntensity = .6
+SWEP.ExtraSightDist = 5
+SWEP.Attachments = {} --[[
     {
         PrintName="Optic", -- print name
         DefaultAttName="Iron Sights",
@@ -108,47 +79,49 @@ SWEP.Attachments={
         CorrectiveAng=Angle(-3, 0, 0)
     }
 	--]]
-}
+SWEP.MeleeDamage = 10
+SWEP.MeleeRange = 30
+SWEP.Melee2Range = 30
+SWEP.MeleeDamageType = DMG_CLUB
+SWEP.MeleeForceAng = Angle(-30, 30, 0)
+SWEP.MeleeAttackTime = .35
+SWEP.MeleeTime = .5
+SWEP.MeleeDelay = .3
+SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 
-SWEP.MeleeDamage=10
-SWEP.MeleeRange=30
-SWEP.Melee2Range=30
-SWEP.MeleeDamageType=DMG_CLUB
-SWEP.MeleeForceAng=Angle(-30,30,0)
-SWEP.MeleeAttackTime=.35
-SWEP.MeleeTime=.5
-SWEP.MeleeDelay=.3
-SWEP.MeleeSwingSound=JMod.GunHandlingSounds.cloth.loud
-SWEP.MeleeHitSound={"physics/metal/weapon_impact_hard1.wav","physics/metal/weapon_impact_hard2.wav","physics/metal/weapon_impact_hard3.wav"}
-SWEP.MeleeHitNPCSound={"physics/body/body_medium_impact_hard2.wav","physics/body/body_medium_impact_hard3.wav","physics/body/body_medium_impact_hard4.wav","physics/body/body_medium_impact_hard5.wav","physics/body/body_medium_impact_hard6.wav"}
-SWEP.MeleeMissSound="weapons/iceaxe/iceaxe_swing1.wav"
-SWEP.MeleeVolume=65
-SWEP.MeleePitch=1
-SWEP.MeleeHitEffect=nil -- "BloodImpact"
-SWEP.MeleeHitBullet=false
-SWEP.BackHitDmgMult=nil
-SWEP.MeleeDmgRand=.1
-SWEP.MeleeViewMovements={
-	{t=.05, ang=Angle(-2,-2,0)},
-	{t=.35, ang=Angle(10,10,0)}
+SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav", "physics/metal/weapon_impact_hard2.wav", "physics/metal/weapon_impact_hard3.wav"}
+
+SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav", "physics/body/body_medium_impact_hard3.wav", "physics/body/body_medium_impact_hard4.wav", "physics/body/body_medium_impact_hard5.wav", "physics/body/body_medium_impact_hard6.wav"}
+
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.MeleeVolume = 65
+SWEP.MeleePitch = 1
+SWEP.MeleeHitEffect = nil -- "BloodImpact"
+SWEP.MeleeHitBullet = false
+SWEP.BackHitDmgMult = nil
+SWEP.MeleeDmgRand = .1
+
+SWEP.MeleeViewMovements = {
+	{
+		t = .05,
+		ang = Angle(-2, -2, 0)
+	},
+	{
+		t = .35,
+		ang = Angle(10, 10, 0)
+	}
 }
 
 -- teehee --
-hook.Add("InitPostEntity","JMod_ArcCW_InitPostEntity",function()
-	if not(ArcCW)then return end
+hook.Add("InitPostEntity", "JMod_ArcCW_InitPostEntity", function()
+	if not ArcCW then return end
+
 	-- the default arccw ricochet sounds are fucking deafening
-	ArcCW.RicochetSounds={
-		"weapons/arccw/ricochet01_quiet.wav",
-		"weapons/arccw/ricochet02_quiet.wav",
-		"weapons/arccw/ricochet03_quiet.wav",
-		"weapons/arccw/ricochet04_quiet.wav",
-		"weapons/arccw/ricochet05_quiet.wav"
-	}
+	ArcCW.RicochetSounds = {"weapons/arccw/ricochet01_quiet.wav", "weapons/arccw/ricochet02_quiet.wav", "weapons/arccw/ricochet03_quiet.wav", "weapons/arccw/ricochet04_quiet.wav", "weapons/arccw/ricochet05_quiet.wav"}
 end)
 
 -- arccw hooks to do extra stuff --
-SWEP.Hook_AddShootSound=function(self, data)
-	--[[
+SWEP.Hook_AddShootSound = function(self, data) end --[[
 	if(self.ShootSoundWorldCount>0)then
 		for i=1,self.ShootSoundWorldCount do
 			if(SERVER)then
@@ -157,218 +130,258 @@ SWEP.Hook_AddShootSound=function(self, data)
 		end
 	end
 	--]]
-end
-SWEP.Hook_PostFireBullets=function(self)
-	local SelfPos=self:GetPos()
-	local RPos,RDir=self.Owner:GetShootPos(),self.Owner:GetAimVector()
-	if(self.BackBlast)then
-		if(self.ShootEntityOffset)then
-			local ang=RDir:Angle()
-			local Up,Right,Forward=ang:Up(),ang:Right(),ang:Forward()
-			RPos=RPos+Up*self.ShootEntityOffset.z+Right*self.ShootEntityOffset.x+Forward*self.ShootEntityOffset.y
+
+SWEP.Hook_PostFireBullets = function(self)
+	local SelfPos = self:GetPos()
+	local RPos, RDir = self.Owner:GetShootPos(), self.Owner:GetAimVector()
+
+	if self.BackBlast then
+		if self.ShootEntityOffset then
+			local ang = RDir:Angle()
+			local Up, Right, Forward = ang:Up(), ang:Right(), ang:Forward()
+			RPos = RPos + Up * self.ShootEntityOffset.z + Right * self.ShootEntityOffset.x + Forward * self.ShootEntityOffset.y
 		end
-		local Dist=230
-		local Tr=util.QuickTrace(RPos,-RDir*Dist,function(fuck)
-			if((fuck:IsPlayer())or(fuck:IsNPC()))then return false end
-			local Class=fuck:GetClass()
-			if(Class=="ent_jack_gmod_ezminirocket")then return false end
+
+		local Dist = 230
+
+		local Tr = util.QuickTrace(RPos, -RDir * Dist, function(fuck)
+			if fuck:IsPlayer() or fuck:IsNPC() then return false end
+			local Class = fuck:GetClass()
+			if Class == "ent_jack_gmod_ezminirocket" then return false end
+
 			return true
 		end)
-		if(Tr.Hit)then
-			Dist=RPos:Distance(Tr.HitPos)
-			if(SERVER)then JMod.Hint(self.Owner,"backblast wall") end
+
+		if Tr.Hit then
+			Dist = RPos:Distance(Tr.HitPos)
+
+			if SERVER then
+				JMod.Hint(self.Owner, "backblast wall")
+			end
 		end
-		for i=1,4 do
-			util.BlastDamage(self,self.Owner or self,RPos+RDir*(i*40-Dist)*self.BackBlast,70*self.BackBlast,30*self.BackBlast)
+
+		for i = 1, 4 do
+			util.BlastDamage(self, self.Owner or self, RPos + RDir * (i * 40 - Dist) * self.BackBlast, 70 * self.BackBlast, 30 * self.BackBlast)
 		end
-		if(SERVER)then
-			local FooF=EffectData()
+
+		if SERVER then
+			local FooF = EffectData()
 			FooF:SetOrigin(RPos)
 			FooF:SetScale(self.BackBlast)
 			FooF:SetNormal(-RDir)
-			util.Effect("eff_jack_gmod_smalldustshock",FooF,true,true)
-			local Ploom=EffectData()
+			util.Effect("eff_jack_gmod_smalldustshock", FooF, true, true)
+			local Ploom = EffectData()
 			Ploom:SetOrigin(RPos)
 			Ploom:SetScale(self.BackBlast)
 			Ploom:SetNormal(-RDir)
-			util.Effect("eff_jack_gmod_ezbackblast",Ploom,true,true)
+			util.Effect("eff_jack_gmod_ezbackblast", Ploom, true, true)
 		end
-		if(self.ShakeOnShoot)then
-			util.ScreenShake(SelfPos,7*self.ShakeOnShoot,255,.75*self.ShakeOnShoot,200*self.ShakeOnShoot)
+
+		if self.ShakeOnShoot then
+			util.ScreenShake(SelfPos, 7 * self.ShakeOnShoot, 255, .75 * self.ShakeOnShoot, 200 * self.ShakeOnShoot)
 		end
-		
-		local Info=self:GetAttachment(self.MuzzleEffectAttachment or 1)
-		if(CLIENT)then
-			Info=self.Owner:GetViewModel():GetAttachment(self.MuzzleEffectAttachment or 1)
+
+		local Info = self:GetAttachment(self.MuzzleEffectAttachment or 1)
+
+		if CLIENT then
+			Info = self.Owner:GetViewModel():GetAttachment(self.MuzzleEffectAttachment or 1)
 		end
-		if(self.ExtraMuzzleLua)then
-			local Eff=EffectData()
+
+		if self.ExtraMuzzleLua then
+			local Eff = EffectData()
 			Eff:SetOrigin(Info.Pos)
 			Eff:SetNormal(self.Owner:GetAimVector())
 			Eff:SetScale(self.ExtraMuzzleLuaScale or 1)
-			util.Effect(self.ExtraMuzzleLua,Eff,true)
+			util.Effect(self.ExtraMuzzleLua, Eff, true)
 		end
 	end
-	if(self.ExtraMuzzleLua)then
-		local Eff=EffectData()
+
+	if self.ExtraMuzzleLua then
+		local Eff = EffectData()
 		Eff:SetOrigin(RPos)
 		Eff:SetNormal(RDir)
 		Eff:SetScale(self.ExtraMuzzleLuaScale)
-		util.Effect(self.ExtraMuzzleLua,Eff,true,true)
+		util.Effect(self.ExtraMuzzleLua, Eff, true, true)
 	end
-	if(self.RecoilDamage and SERVER)then
-		local Dmg=DamageInfo()
+
+	if self.RecoilDamage and SERVER then
+		local Dmg = DamageInfo()
 		Dmg:SetDamagePosition(self.Owner:GetShootPos())
 		Dmg:SetDamage(self.RecoilDamage)
 		Dmg:SetDamageType(DMG_CLUB)
 		Dmg:SetAttacker(self.Owner)
 		Dmg:SetInflictor(self)
-		Dmg:SetDamageForce(-self.Owner:GetAimVector()*self.RecoilDamage*200)
-		self.Owner:SetVelocity(-self.Owner:GetAimVector()*self.RecoilDamage*200)
+		Dmg:SetDamageForce(-self.Owner:GetAimVector() * self.RecoilDamage * 200)
+		self.Owner:SetVelocity(-self.Owner:GetAimVector() * self.RecoilDamage * 200)
 		self.Owner:TakeDamageInfo(Dmg)
 	end
 end
 
 -- Behavior Modifications by Jackarunda --
-SWEP.NextDoorShot=0
-function SWEP:TryBustDoor(ent,dmginfo)
-	if not(self.DoorBreachPower)then return end
-	if(self.NextDoorShot>CurTime())then return end
-	if GetConVar("arccw_doorbust"):GetInt() == 0 or not(IsValid(ent)) or not(JMod.IsDoor(ent)) then return end
+SWEP.NextDoorShot = 0
+
+function SWEP:TryBustDoor(ent, dmginfo)
+	if not self.DoorBreachPower then return end
+	if self.NextDoorShot > CurTime() then return end
+	if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not JMod.IsDoor(ent) then return end
 	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
-	if(ent:GetPos():Distance(self:GetPos())>150)then return end -- ugh, arctic, lol
-	self.NextDoorShot=CurTime()+.05 -- we only want this to run once per shot
-    -- Magic number: 119.506 is the size of door01_left
-    -- The bigger the door is, the harder it is to bust
-    local threshold=GetConVar("arccw_doorbust_threshold"):GetInt()*math.pow((ent:OBBMaxs()-ent:OBBMins()):Length()/119.506, 2)
-	JMod.Hint(self.Owner,"shotgun breach")
-	local WorkSpread=JMod.CalcWorkSpreadMult(ent,dmginfo:GetDamagePosition())^1.1
-	local Amt=dmginfo:GetDamage()*self.DoorBreachPower*WorkSpread
-	ent.ArcCW_BustDamage=(ent.ArcCW_BustDamage or 0)+Amt
-	if(ent.ArcCW_BustDamage>threshold)then
-		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter())-self:GetPos()):GetNormalized()*100)
-		ent.ArcCW_BustDamage=nil
+	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
+	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
+	-- Magic number: 119.506 is the size of door01_left
+	-- The bigger the door is, the harder it is to bust
+	local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+	JMod.Hint(self.Owner, "shotgun breach")
+	local WorkSpread = JMod.CalcWorkSpreadMult(ent, dmginfo:GetDamagePosition()) ^ 1.1
+	local Amt = dmginfo:GetDamage() * self.DoorBreachPower * WorkSpread
+	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
+
+	if ent.ArcCW_BustDamage > threshold then
+		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+		ent.ArcCW_BustDamage = nil
+
 		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
 		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-			if ent != otherDoor and otherDoor:GetClass() == ent:GetClass() and !otherDoor:GetNoDraw() then
-				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter())-self:GetPos()):GetNormalized()*100)
-				otherDoor.ArcCW_BustDamage=nil
+			if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
+				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+				otherDoor.ArcCW_BustDamage = nil
 				break
 			end
 		end
 	end
 end
-local WDir,StabilityStamina,BreathStatus=VectorRand(),100,false
+
+local WDir, StabilityStamina, BreathStatus = VectorRand(), 100, false
+
 local function FocusIn(wep)
-	if not(BreathStatus)then
-		BreathStatus=true
+	if not BreathStatus then
+		BreathStatus = true
 		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_in.wav")
 	end
 end
+
 local function FocusOut(wep)
-	if(BreathStatus)then
-		BreathStatus=false
+	if BreathStatus then
+		BreathStatus = false
 		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_out.wav")
 	end
 end
-hook.Add("CreateMove","JMod_CreateMove",function(cmd)
-	local ply=LocalPlayer()
-	if not(ply:Alive())then return end
-	local Wep=ply:GetActiveWeapon()
-	if((Wep)and(IsValid(Wep))and(Wep.AimSwayFactor)and(Wep.GetState)and(Wep:GetState() == ArcCW.STATE_SIGHTS))then
-		local GlobalMult=(JMod.Config and JMod.Config.WeaponSwayMult) or 1
-		local Amt,Sporadicness,FT=20*Wep.AimSwayFactor*GlobalMult,20,FrameTime()
-		if(ply:Crouching())then Amt=Amt*.65 end
-		if((Wep.InBipod)and(Wep:InBipod()))then Amt=Amt*.25 end
-		if((ply:KeyDown(IN_FORWARD))or(ply:KeyDown(IN_BACK))or(ply:KeyDown(IN_MOVELEFT))or(ply:KeyDown(IN_MOVERIGHT)))then
-			Sporadicness=Sporadicness*1.5
-			Amt=Amt*2
+
+hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
+	local ply = LocalPlayer()
+	if not ply:Alive() then return end
+	local Wep = ply:GetActiveWeapon()
+
+	if Wep and IsValid(Wep) and Wep.AimSwayFactor and Wep.GetState and (Wep:GetState() == ArcCW.STATE_SIGHTS) then
+		local GlobalMult = (JMod.Config and JMod.Config.WeaponSwayMult) or 1
+		local Amt, Sporadicness, FT = 20 * Wep.AimSwayFactor * GlobalMult, 20, FrameTime()
+
+		if ply:Crouching() then
+			Amt = Amt * .65
+		end
+
+		if Wep.InBipod and Wep:InBipod() then
+			Amt = Amt * .25
+		end
+
+		if ply:KeyDown(IN_FORWARD) or ply:KeyDown(IN_BACK) or ply:KeyDown(IN_MOVELEFT) or ply:KeyDown(IN_MOVERIGHT) then
+			Sporadicness = Sporadicness * 1.5
+			Amt = Amt * 2
 		else
-			local Key=(JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
-			if(ply:KeyDown(Key))then
-				StabilityStamina=math.Clamp(StabilityStamina-FT*40,0,100)
-				if(StabilityStamina>0)then
+			local Key = (JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
+
+			if ply:KeyDown(Key) then
+				StabilityStamina = math.Clamp(StabilityStamina - FT * 40, 0, 100)
+
+				if StabilityStamina > 0 then
 					FocusIn(Wep)
-					Amt=Amt*.4
+					Amt = Amt * .4
 				else
 					FocusOut(Wep)
 				end
 			else
-				StabilityStamina=math.Clamp(StabilityStamina+FT*30,0,100)
+				StabilityStamina = math.Clamp(StabilityStamina + FT * 30, 0, 100)
 				FocusOut(Wep)
 			end
 		end
-		local S,EAng=.05,cmd:GetViewAngles()
-		WDir=(WDir+FT*VectorRand()*Sporadicness):GetNormalized()
-		EAng.pitch=math.NormalizeAngle(EAng.pitch+WDir.z*FT*Amt*S)
-		EAng.yaw=math.NormalizeAngle(EAng.yaw+WDir.x*FT*Amt*S)
+
+		local S, EAng = .05, cmd:GetViewAngles()
+		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
+		EAng.pitch = math.NormalizeAngle(EAng.pitch + WDir.z * FT * Amt * S)
+		EAng.yaw = math.NormalizeAngle(EAng.yaw + WDir.x * FT * Amt * S)
 		cmd:SetViewAngles(EAng)
 	end
-	if(input.WasKeyPressed(KEY_BACKSPACE))then
-		if not((ply:IsTyping())or(gui.IsConsoleVisible()))then
+
+	if input.WasKeyPressed(KEY_BACKSPACE) then
+		if not (ply:IsTyping() or gui.IsConsoleVisible()) then
 			RunConsoleCommand("jmod_ez_dropweapon")
 		end
 	end
 end)
+
 function SWEP:TranslateFOV(fov)
-    local irons=self:GetActiveSights()
-    --if !irons then return end
-    --if !irons.Magnification then return fov end
-    --if irons.Magnification == 1 then return fov end
+	local irons = self:GetActiveSights()
+	--if !irons then return end
+	--if !irons.Magnification then return fov end
+	--if irons.Magnification == 1 then return fov end
+	self.ApproachFOV = self.ApproachFOV or fov
+	self.CurrentFOV = self.CurrentFOV or fov
+	local div = 1
+	local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
-    self.ApproachFOV=self.ApproachFOV or fov
-    self.CurrentFOV=self.CurrentFOV or fov
+	if self:GetState() == ArcCW.STATE_SIGHTS then
+		-- fov=75
+		app_vm = irons.ViewModelFOV or 45
+		div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
+	end
 
-    local div=1
-    local app_vm=self.ViewModelFOV+self:GetOwner():GetInfoNum("arccw_vm_fov", 0)+10
+	-- something about this doesn't work in multiplayer
+	-- if game.SinglePlayer() then self.CurrentFOV=self.CurrentFOV+(self.RecoilAmount*-0.1*self:GetSightDelta()) end
+	-- it also fucking sucks
+	self.ApproachFOV = fov / div
 
-    if self:GetState() == ArcCW.STATE_SIGHTS then
-        -- fov=75
-        app_vm=irons.ViewModelFOV or 45
-        div=math.max(irons.Magnification*(self:GetReloadingREAL()-self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
-    end
+	-- JACKARUNDA
+	if BreathStatus then
+		self.ApproachFOV = self.ApproachFOV * .95
+	end
 
-    -- something about this doesn't work in multiplayer
-    -- if game.SinglePlayer() then self.CurrentFOV=self.CurrentFOV+(self.RecoilAmount*-0.1*self:GetSightDelta()) end
-    -- it also fucking sucks
+	self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
+	self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
+	self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
+	-- return 90
 
-    self.ApproachFOV=fov/div
-	if(BreathStatus)then self.ApproachFOV=self.ApproachFOV*.95 end -- JACKARUNDA
-    self.CurrentFOV=math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime()*(self.CurrentFOV-self.ApproachFOV))
-
-    self.CurrentViewModelFOV=self.CurrentViewModelFOV or self.ViewModelFOV
-
-    self.CurrentViewModelFOV=math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime()*(self.CurrentViewModelFOV-app_vm))
-
-    return self.CurrentFOV
-
-    -- return 90
+	return self.CurrentFOV
 end
+
 --[[
 function SWEP:Holster()
 	return true -- delayed holstering is disabled until Arctic fixes it in ArcCW
 end
 --]]
 function SWEP:OnDrop()
-	local Specs=JMod.WeaponTable[self.PrintName]
-	if(Specs)then
-		local Ent=ents.Create(Specs.ent)
+	local Specs = JMod.WeaponTable[self.PrintName]
+
+	if Specs then
+		local Ent = ents.Create(Specs.ent)
 		Ent:SetPos(self:GetPos())
 		Ent:SetAngles(self:GetAngles())
-		Ent.MagRounds=self:Clip1()
+		Ent.MagRounds = self:Clip1()
 		Ent:Spawn()
 		Ent:Activate()
-		local Phys=Ent:GetPhysicsObject()
-		if(Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()))then
-			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()/2)
+		local Phys = Ent:GetPhysicsObject()
+
+		if Phys and self and IsValid(Phys) and IsValid(self) and IsValid(self:GetPhysicsObject()) then
+			Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
 		end
+
 		self:Remove()
 	end
 end
+
 -- customization
 function SWEP:ToggleCustomizeHUD(ic)
-	-- jmod will have its own customization system
 end
+
+-- jmod will have its own customization system
 -- arctic's bash code is REALLY bad tbh
 --[[ -- TODO: do this when we introduce melee weps
 function SWEP:Bash(melee2)
@@ -601,13 +614,9 @@ function SWEP:MeleeAttack(melee2)
     self:GetOwner():LagCompensation(false)
 end
 --]]
-if(CLIENT)then
-	-- TODO: override Arctic's expensive-as-shit thermal code once we implement thermal scopes
-	-- HUD time baby
-	--[[
+if CLIENT then end -- TODO: override Arctic's expensive-as-shit thermal code once we implement thermal scopes -- HUD time baby
+--[[
 	function SWEP:ShouldDrawCrosshair()
 		return false
 	end
-	--]]
-	-- viewmodel positioning and Lerp
-end
+	--]] -- viewmodel positioning and Lerp

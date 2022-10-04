@@ -1,4 +1,4 @@
--- Jackarunda 2021
+﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
@@ -42,32 +42,39 @@ if(SERVER)then
 		self.DepositKey=0
 		self:TryPlace()
 	end
+
 	function ENT:UpdateDepositKey()
-		local SelfPos=self:GetPos()
+		local SelfPos = self:GetPos()
 		-- first, figure out which deposits we are inside of, if any
-		local DepositsInRange={}
-		for k,v in pairs(JMod.NaturalResourceTable)do
+		local DepositsInRange = {}
+
+		for k, v in pairs(JMod.NaturalResourceTable) do
 			-- Make sure the resource is on the whitelist
-			local Dist=SelfPos:Distance(v.pos)
-				-- store they desposit's key if we're inside of it
-			if(Dist<=v.siz) and (table.HasValue(self.WhitelistedResources, v.typ))then 
-				if not(v.rate) and (v.amt < 0)then break end
-				table.insert(DepositsInRange,k)
+			local Dist = SelfPos:Distance(v.pos)
+
+			-- store they desposit's key if we're inside of it
+			if (Dist <= v.siz) and table.HasValue(self.WhitelistedResources, v.typ) then
+				if not v.rate and (v.amt < 0) then break end
+				table.insert(DepositsInRange, k)
 			end
 		end
+
 		-- now, among all the deposits we are inside of, let's find the closest one
-		local ClosestDeposit,ClosestRange=nil,9e9
-		if(#DepositsInRange>0)then
-			for k,v in pairs(DepositsInRange)do
-				local DepositInfo=JMod.NaturalResourceTable[v]
-				local Dist=SelfPos:Distance(DepositInfo.pos)
-				if(Dist<ClosestRange)then
-					ClosestDeposit=v
-					ClosestRange=Dist
+		local ClosestDeposit, ClosestRange = nil, 9e9
+
+		if #DepositsInRange > 0 then
+			for k, v in pairs(DepositsInRange) do
+				local DepositInfo = JMod.NaturalResourceTable[v]
+				local Dist = SelfPos:Distance(DepositInfo.pos)
+
+				if Dist < ClosestRange then
+					ClosestDeposit = v
+					ClosestRange = Dist
 				end
 			end
 		end
-		if(ClosestDeposit)then 
+
+		if ClosestDeposit then
 			self.DepositKey = ClosestDeposit
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
 			--print("Our deposit is "..self.DepositKey) --DEBUG
@@ -102,24 +109,28 @@ if(SERVER)then
 		end
 	end
 	function ENT:TurnOn(activator)
-		if(self:GetElectricity()>0)then
+		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)
-			self.SoundLoop=CreateSound(self,"snds_jack_gmod/pumpjack_start_loop.wav")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 			self.SoundLoop:SetSoundLevel(65)
 			self.SoundLoop:Play()
 			self.SoundLoop:SetSoundLevel(65)
 			self:SetProgress(0)
 		else
-			JMod.Hint(activator,"nopower")
+			JMod.Hint(activator, "nopower")
 		end
 	end
+
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		if(self.SoundLoop)then
+
+		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
+
 		self:EmitSound("snds_jack_gmod/pumpjack_stop.wav")
 	end
+
 	function ENT:Use(activator)
 		local State=self:GetState()
 		local OldOwner=self.Owner
@@ -129,8 +140,10 @@ if(SERVER)then
 				JMod.Colorify(self)
 			end
 		end
-		if(State==STATE_BROKEN)then
-			JMod.Hint(activator,"destroyed",self)
+
+		if State == STATE_BROKEN then
+			JMod.Hint(activator, "destroyed", self)
+
 			return
 		elseif(State==STATE_OFF)then
 			self:TryPlace()
@@ -150,37 +163,43 @@ if(SERVER)then
 				if(self:GetElectricity()>0)then
 					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 				end
-				return
-			elseif(State==STATE_RUNNING)then
-				if(self:GetElectricity()<=0)then self:TurnOff() return end
-				if not(self.DepositKey and JMod.NaturalResourceTable[self.DepositKey])then self:TurnOff() return end
-				if not(IsValid(self.Weld))then self.Weld=nil;self:TurnOff() return end
+
+				if not IsValid(self.Weld) then
+					self.Weld = nil
+					self:TurnOff()
+
+					return
+				end
+
 				self:ConsumeElectricity(.5)
 				-- This is just the rate at which we pump
 				local pumpRate = self.PumpRate^2
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
-				if(JMod.NaturalResourceTable[self.DepositKey].rate)then
+				if JMod.NaturalResourceTable[self.DepositKey].rate then
 					-- We get the rate
 					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
 					-- and set the progress to what it was last tick + our ability * the flowrate
-					self:SetProgress(self:GetProgress() + pumpRate*flowRate)
+					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
+
 					-- If the progress exceeds 100
-					if(self:GetProgress() >= 100)then
+					if self:GetProgress() >= 100 then
 						-- Spawn barrel
 						self:SpawnBarrel(100, self.DepositKey)
 						self:SetProgress(0)
 					end
 				else
 					self:SetProgress(self:GetProgress() + pumpRate)
-					if(self:GetProgress() >= 100)then
+
+					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 						self:SpawnBarrel(amtToPump)
 						self:SetProgress(0)
-						JMod.DepleteNaturalResource(self.DepositKey,amtToPump)
+						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
 				end
-				JMod.EmitAIsound(self:GetPos(),300,.5,256)
+
+				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
 		if not(IsValid(self.Weld))then
@@ -190,6 +209,7 @@ if(SERVER)then
 		end
 		return true
 	end
+
 	function ENT:SpawnBarrel(amt)
 		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100))
@@ -197,12 +217,14 @@ if(SERVER)then
 		local ejectVec = Vector(500, 0, 0)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
 	end
+
 	function ENT:OnDestroy(dmginfo)
-		local SelfPos,Up,Forward,Right=self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
+		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
+
 		local createOilFire = function()
 			timer.Simple(0.1, function()
 				local oilFire = ents.Create("ent_jack_gmod_ezoilfire")
-				oilFire:SetPos(SelfPos+Forward*120-Right*95)
+				oilFire:SetPos(SelfPos + Forward * 120 - Right * 95)
 				oilFire:SetAngles(Angle(180, 0, 90))
 				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()
@@ -214,9 +236,9 @@ if(SERVER)then
 		if(self:GetResourceType() == "oil")then
 			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
 				createOilFire()
-			elseif(dmginfo:IsDamageType(DMG_BLAST+DMG_BLAST_SURFACE+DMG_PLASMA+DMG_ENERGYBEAM)and(math.random(0, 100)>50))then
+			elseif dmginfo:IsDamageType(DMG_BLAST + DMG_BLAST_SURFACE + DMG_PLASMA + DMG_ENERGYBEAM) and (math.random(0, 100) > 50) then
 				createOilFire()
-			elseif(dmginfo:IsDamageType(DMG_DIRECT+DMG_BUCKSHOT)and(math.random(0, 100)>75))then
+			elseif dmginfo:IsDamageType(DMG_DIRECT + DMG_BUCKSHOT) and (math.random(0, 100) > 75) then
 				createOilFire()
 			end
 		end
@@ -232,21 +254,23 @@ elseif(CLIENT)then
 		self.Mdl:SetAngles(Ang)
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
-		self.DriveCycle=0
-		self.DriveMomentum=0
+		self.DriveCycle = 0
+		self.DriveMomentum = 0
 	end
+
 	--[[
 	0	Base
 	1	WalkingBeam
 	2	CounterWeight
 	--]]
 	function ENT:Draw()
-		local Time,SelfPos,SelfAng,State,Grade,Typ=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade(),self:GetResourceType()
-		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
-		if(State==STATE_RUNNING)then
-			self.DriveMomentum=math.Clamp(self.DriveMomentum+FT/3,0,0.4)
+		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
+		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+
+		if State == STATE_RUNNING then
+			self.DriveMomentum = math.Clamp(self.DriveMomentum + FT / 3, 0, 0.4)
 		else
-			self.DriveMomentum=math.Clamp(self.DriveMomentum-FT/3,0,0.4)
+			self.DriveMomentum = math.Clamp(self.DriveMomentum - FT / 3, 0, 0.4)
 		end
 		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150*Grade
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
@@ -256,9 +280,9 @@ elseif(CLIENT)then
 		--render.SetBlend(.5)
 		--self:DrawModel()
 		--render.SetBlend(1)
-		self.Mdl:SetRenderOrigin(SelfPos-Right*100)
-		local MdlAng=SelfAng:GetCopy()
-		MdlAng:RotateAroundAxis(Forward,90)
+		self.Mdl:SetRenderOrigin(SelfPos - Right * 100)
+		local MdlAng = SelfAng:GetCopy()
+		MdlAng:RotateAroundAxis(Forward, 90)
 		self.Mdl:SetRenderAngles(MdlAng)
 		self.Mdl:DrawModel()
 		--
@@ -301,5 +325,6 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezoilpump","EZ Pumpjack")
+
+	language.Add("ent_jack_gmod_ezoilpump", "EZ Pumpjack")
 end
