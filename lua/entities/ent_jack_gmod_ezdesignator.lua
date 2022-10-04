@@ -1,35 +1,32 @@
-﻿-- Jackarunda 2021
+-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Misc."
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Target Designator"
-ENT.NoSitAllowed = true
-ENT.Spawnable = false -- todo: make spawnable when i figure out the proportional guidance code
-ENT.AdminSpawnable = false
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Misc."
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Target Designator"
+ENT.NoSitAllowed=true
+ENT.Spawnable=false -- todo: make spawnable when i figure out the proportional guidance code
+ENT.AdminSpawnable=false
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
-ENT.DamageThreshold = 60
-ENT.JModEZstorable = true
-
+ENT.JModPreferredCarryAngles=Angle(0,90,0)
+ENT.DamageThreshold=60
+ENT.JModEZstorable=true
 ---
-if SERVER then
-	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
+if(SERVER)then
+	function ENT:SpawnFunction(ply,tr)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
+		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
-
 		return ent
 	end
-
 	function ENT:Initialize()
 		self.Entity:SetModel("models/saraphines/binoculars/binoculars_sniper/binoculars_sniper.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
@@ -37,36 +34,31 @@ if SERVER then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
-
 		---
-		timer.Simple(.01, function()
+		timer.Simple(.01,function()
 			self:GetPhysicsObject():SetMass(10)
 			self:GetPhysicsObject():Wake()
 		end)
 	end
-
-	function ENT:PhysicsCollide(data, physobj)
-		if data.DeltaTime > 0.2 then
-			if data.Speed > 100 then
+	function ENT:PhysicsCollide(data,physobj)
+		if(data.DeltaTime>0.2)then
+			if(data.Speed>100)then
 				self.Entity:EmitSound("Drywall.ImpactHard")
 			end
 		end
 	end
-
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-
-		if dmginfo:GetDamage() > self.DamageThreshold then
-			local Pos = self:GetPos()
-			sound.Play("Metal_Box.Break", Pos)
+		if(dmginfo:GetDamage()>self.DamageThreshold)then
+			local Pos=self:GetPos()
+			sound.Play("Metal_Box.Break",Pos)
 			self:Remove()
 		end
 	end
-
 	function ENT:Use(activator)
-		if activator:KeyDown(JMod.Config.AltFunctionKey) then
+		if(activator:KeyDown(JMod.Config.AltFunctionKey))then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezdesignator") then
+		elseif not(activator:HasWeapon("wep_jack_gmod_ezdesignator"))then
 			activator:Give("wep_jack_gmod_ezdesignator")
 			activator:SelectWeapon("wep_jack_gmod_ezdesignator")
 			activator:GetWeapon("wep_jack_gmod_ezdesignator"):SetElectricity(self.Electricity or 10)
@@ -75,18 +67,15 @@ if SERVER then
 			activator:PickupObject(self)
 		end
 	end
-
 	function ENT:Think()
+		--
 	end
-
-	--
 	function ENT:OnRemove()
+		--aw fuck you
 	end
-	--aw fuck you
-elseif CLIENT then
+elseif(CLIENT)then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-
-	language.Add("ent_jack_gmod_eztoolbox", "EZ Toolboxt")
+	language.Add("ent_jack_gmod_eztoolbox","EZ Toolboxt")
 end

@@ -1,11 +1,17 @@
-﻿att.PrintName = "Bayonet"
-att.Icon = Material("entities/acwatt_muzz_breacher.png")
-att.Description = "doesnt really do anything useful until arctic gets his shit together"
-att.Desc_Pros = {} --
-att.Desc_Cons = {} --
-att.AutoStats = true
-att.Slot = "ez_muzzle"
-att.Model = "models/jmod_oldbayonet.mdl"
+att.PrintName="Bayonet"
+att.Icon=Material("entities/acwatt_muzz_breacher.png")
+att.Description="doesnt really do anything useful until arctic gets his shit together"
+att.Desc_Pros={
+	--
+}
+att.Desc_Cons={
+	--
+}
+att.AutoStats=true
+att.Slot="ez_muzzle"
+
+att.Model="models/jmod_oldbayonet.mdl"
+
 --[[ -- nah
 att.Mult_MeleeDamage=1.5
 

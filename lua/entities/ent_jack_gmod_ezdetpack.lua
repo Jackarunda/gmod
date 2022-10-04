@@ -1,30 +1,30 @@
-﻿-- Jackarunda 2021
+-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Detpack"
-ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Explosives"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Detpack"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
 --- func_breakable
-ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
-ENT.JModEZdetPack = true
-ENT.JModEZstorable = true
-ENT.JModRemoteTrigger = true
+ENT.JModPreferredCarryAngles=Angle(0, -90, 90)
+ENT.JModEZdetPack=true
+ENT.JModEZstorable=true
+ENT.JModRemoteTrigger=true
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ARMED=-1, 0, 1
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 end
 
 ---
-if SERVER then
+if (SERVER) then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
+		local SpawnPos=tr.HitPos+tr.HitNormal*40
+		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.Owner(ent, ply)
@@ -49,15 +49,13 @@ if SERVER then
 
 		---
 		self:SetState(STATE_OFF)
-		self.NextStick = 0
-
+		self.NextStick=0
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
+			self.Inputs=WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Outputs=WireLib.CreateOutputs(self, {"State"}, {"-1 broken \n 0 off \n 1 armed"})
 		end
 	end
-
+	
 	function ENT:TriggerInput(iname, value)
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
@@ -73,28 +71,27 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		if dmginfo:GetInflictor() == self then return end
+		if (dmginfo:GetInflictor() == self) then return end
 		self:TakePhysicsDamage(dmginfo)
-		local Dmg = dmginfo:GetDamage()
+		local Dmg=dmginfo:GetDamage()
 
-		if Dmg >= 4 then
-			local Pos, State, DetChance = self:GetPos(), self:GetState(), 0
+		if (Dmg >= 4) then
+			local Pos, State, DetChance=self:GetPos(), self:GetState(), 0
 
-			if State == STATE_ARMED then
-				DetChance = DetChance + .3
+			if (State == STATE_ARMED) then
+				DetChance=DetChance+.3
 			end
 
-			if dmginfo:IsDamageType(DMG_BLAST) then
-				DetChance = DetChance + Dmg / 150
+			if (dmginfo:IsDamageType(DMG_BLAST)) then
+				DetChance=DetChance+Dmg/150
 			end
 
-			if math.Rand(0, 1) < DetChance then
+			if (math.Rand(0, 1) < DetChance) then
 				self:Detonate()
-
 				return
 			end
 
-			if (math.random(1, 10) == 3) and not (State == STATE_BROKEN) then
+			if ((math.random(1, 10) == 3) and not (State == STATE_BROKEN)) then
 				sound.Play("Metal_Box.Break", Pos)
 				self:SetState(STATE_BROKEN)
 				SafeRemoveEntityDelayed(self, 10)
@@ -103,26 +100,26 @@ if SERVER then
 	end
 
 	function ENT:Use(activator, activatorAgain, onOff)
-		local Dude = activator or activatorAgain
+		local Dude=activator or activatorAgain
 		JMod.Owner(self, Dude)
-		local Time = CurTime()
+		local Time=CurTime()
 
-		if tobool(onOff) then
-			local State = self:GetState()
-			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+		if (tobool(onOff)) then
+			local State=self:GetState()
+			if (State < 0) then return end
+			local Alt=Dude:KeyDown(JMod.Config.AltFunctionKey)
 
-			if State == STATE_OFF then
-				if Alt then
+			if (State == STATE_OFF) then
+				if (Alt) then
 					self:SetState(STATE_ARMED)
 					self:EmitSound("snd_jack_minearm.wav", 60, 100)
 					JMod.Hint(Dude, "trigger")
 				else
 					constraint.RemoveAll(self)
-					self.StuckStick = nil
-					self.StuckTo = nil
+					self.StuckStick=nil
+					self.StuckTo=nil
 					Dude:PickupObject(self)
-					self.NextStick = Time + .5
+					self.NextStick=Time+.5
 					JMod.Hint(Dude, "sticky")
 				end
 			else
@@ -130,26 +127,26 @@ if SERVER then
 				self:SetState(STATE_OFF)
 			end
 		else
-			if self:IsPlayerHolding() and (self.NextStick < Time) then
-				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
+			if ((self:IsPlayerHolding()) and (self.NextStick < Time)) then
+				local Tr=util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector()*80, {self, Dude})
 
-				if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
-					self.NextStick = Time + .5
-					local Ang = Tr.HitNormal:Angle()
+				if Tr.Hit and (IsValid(Tr.Entity:GetPhysicsObject())) and not (Tr.Entity:IsNPC()) and not (Tr.Entity:IsPlayer()) then
+					self.NextStick=Time+.5
+					local Ang=Tr.HitNormal:Angle()
 					Ang:RotateAroundAxis(Ang:Right(), -90)
 					Ang:RotateAroundAxis(Ang:Up(), 90)
 					self:SetAngles(Ang)
 					self:SetPos(Tr.HitPos)
 
 					-- crash prevention
-					if Tr.Entity:GetClass() == "func_breakable" then
+					if (Tr.Entity:GetClass() == "func_breakable") then
 						timer.Simple(0, function()
 							self:GetPhysicsObject():Sleep()
 						end)
 					else
-						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
-						self.StuckTo = Tr.Entity
-						self.StuckStick = Weld
+						local Weld=constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+						self.StuckTo=Tr.Entity
+						self.StuckStick=Weld
 					end
 
 					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
@@ -161,95 +158,95 @@ if SERVER then
 	end
 
 	function ENT:IncludeSympatheticDetpacks(origin)
-		local Powa, FilterEnts, Points = 1, ents.FindByClass("ent_jack_gmod_ezdetpack"), {origin}
+		local Powa, FilterEnts, Points=1, ents.FindByClass("ent_jack_gmod_ezdetpack"), {origin}
 
 		for k, pack in pairs(ents.FindInSphere(origin, 100)) do
-			if (pack ~= self) and pack.JModEZdetPack then
-				local PackPos = pack:LocalToWorld(pack:OBBCenter())
+			if ((pack ~= self) and pack.JModEZdetPack) then
+				local PackPos=pack:LocalToWorld(pack:OBBCenter())
 
-				if not util.TraceLine({
-					start = origin,
-					endpos = PackPos,
-					filter = FilterEnts
-				}).Hit then
-					Powa = Powa + 1
+				if not (util.TraceLine({
+					start=origin,
+					endpos=PackPos,
+					filter=FilterEnts
+				}).Hit) then
+					Powa=Powa+1
 					table.insert(Points, PackPos)
-					pack.SympatheticDetonated = true
+					pack.SympatheticDetonated=true
 					pack:Remove()
 				end
 			end
 		end
 
-		local Cumulative = Vector(0, 0, 0)
+		local Cumulative=Vector(0, 0, 0)
 
 		for k, point in pairs(Points) do
-			Cumulative = Cumulative + point
+			Cumulative=Cumulative+point
 		end
 
-		return Cumulative / Powa, Powa
+		return Cumulative/Powa, Powa
 	end
 
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if not (IsValid(ply) and ply:Alive() and (ply == self.Owner)) then return end
+		if not ((IsValid(ply)) and (ply:Alive()) and (ply == self.Owner)) then return end
 		if self:GetState() ~= STATE_ARMED then return end
 		JMod.Hint(ply, "detpack combo", self:GetPos())
 		self:Detonate()
 	end
 
 	function ENT:Detonate()
-		if self.SympatheticDetonated then return end
-		if self.Exploded then return end
-		self.Exploded = true
+		if (self.SympatheticDetonated) then return end
+		if (self.Exploded) then return end
+		self.Exploded=true
 
 		timer.Simple(math.Rand(0, .1), function()
-			if IsValid(self) then
-				if self.SympatheticDetonated then return end
-				local SelfPos, PowerMult = self:IncludeSympatheticDetpacks(self:LocalToWorld(self:OBBCenter()))
-				PowerMult = (PowerMult ^ .75) * JMod.Config.DetpackPowerMult
+			if (IsValid(self)) then
+				if (self.SympatheticDetonated) then return end
+				local SelfPos, PowerMult=self:IncludeSympatheticDetpacks(self:LocalToWorld(self:OBBCenter()))
+				PowerMult=(PowerMult ^ .75)*JMod.Config.DetpackPowerMult
 				--
-				local Blam = EffectData()
+				local Blam=EffectData()
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion", Blam, true, true)
 				JMod.Sploom(self.Owner or self or game.GetWorld(), SelfPos, 20)
-				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
+				util.ScreenShake(SelfPos, 99999, 99999, 1, 750*PowerMult)
 
-				for i = 1, PowerMult do
+				for i=1, PowerMult do
 					sound.Play("BaseExplosionEffect.Sound", SelfPos, 120, math.random(90, 110))
 				end
 
-				if PowerMult > 1 then
-					for i = 1, PowerMult do
-						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
+				if (PowerMult > 1) then
+					for i=1, PowerMult do
+						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos+VectorRand()*1000, 140, math.random(90, 110))
 					end
 				end
 
 				self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 
 				timer.Simple(.1, function()
-					for i = 1, 5 do
-						local Tr = util.QuickTrace(SelfPos, VectorRand() * 20)
+					for i=1, 5 do
+						local Tr=util.QuickTrace(SelfPos, VectorRand()*20)
 
-						if Tr.Hit then
-							util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+						if (Tr.Hit) then
+							util.Decal("Scorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
 						end
 					end
 				end)
 
 				JMod.WreckBuildings(self, SelfPos, PowerMult)
 				JMod.BlastDoors(self, SelfPos, PowerMult)
-				local RangeMult = 1
-
-				if IsValid(self.StuckTo) and JMod.IsDoor(self.StuckTo) then
-					RangeMult = .3
+				
+				local RangeMult=1
+				if((IsValid(self.StuckTo))and(JMod.IsDoor(self.StuckTo)))then
+					RangeMult=.3
 				end
 
 				timer.Simple(0, function()
-					local ZaWarudo = game.GetWorld()
-					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
-					util.BlastDamage(Infl, Att, SelfPos, 300 * PowerMult * RangeMult, 200 * PowerMult)
+					local ZaWarudo=game.GetWorld()
+					local Infl, Att=(IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					util.BlastDamage(Infl, Att, SelfPos, 300*PowerMult*RangeMult, 200*PowerMult)
 					-- do a lot of damage point blank, mostly for breaching
-					util.BlastDamage(Infl, Att, SelfPos, 20 * PowerMult * RangeMult, 1700 * PowerMult)
+					util.BlastDamage(Infl, Att, SelfPos, 20*PowerMult*RangeMult, 1700*PowerMult)
 					self:Remove()
 				end)
 			end
@@ -257,14 +254,14 @@ if SERVER then
 	end
 
 	function ENT:CanSee(ent)
-		if not IsValid(ent) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter())
+		if not (IsValid(ent)) then return false end
+		local TargPos, SelfPos=ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter())
 
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
+		local Tr=util.TraceLine({
+			start=SelfPos,
+			endpos=TargPos,
+			filter={self, ent},
+			mask=MASK_SHOT+MASK_WATER
 		})
 
 		return not Tr.Hit
@@ -277,27 +274,27 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
+		--aw fuck you
 	end
-	--aw fuck you
-elseif CLIENT then
+elseif (CLIENT) then
 	function ENT:Initialize()
+		--
 	end
 
-	--
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
 
 	function ENT:Draw()
 		self:DrawModel()
-		local State, Vary = self:GetState(), math.sin(CurTime() * 50) / 2 + .5
+		local State, Vary=self:GetState(), math.sin(CurTime()*50)/2+.5
 
-		if State == STATE_ARMING then
+		if (State == STATE_ARMING) then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 20, 20, Color(255, 0, 0))
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 10, 10, Color(255, 255, 255))
-		elseif State == STATE_WARNING then
+			render.DrawSprite(self:GetPos()+Vector(0, 0, 4), 20, 20, Color(255, 0, 0))
+			render.DrawSprite(self:GetPos()+Vector(0, 0, 4), 10, 10, Color(255, 255, 255))
+		elseif (State == STATE_WARNING) then
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 30 * Vary, 30 * Vary, Color(255, 0, 0))
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 15 * Vary, 15 * Vary, Color(255, 255, 255))
+			render.DrawSprite(self:GetPos()+Vector(0, 0, 4), 30*Vary, 30*Vary, Color(255, 0, 0))
+			render.DrawSprite(self:GetPos()+Vector(0, 0, 4), 15*Vary, 15*Vary, Color(255, 255, 255))
 		end
 	end
 
