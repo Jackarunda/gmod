@@ -1,21 +1,28 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.PrintName = "EZ Sentry"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Misc."
-ENT.Information = "glhfggwpezpznore"
-ENT.NoSitAllowed = true
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
-ENT.SpawnHeight = 15
-
-ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.AMMO, JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.COOLANT}
-
-ENT.EZscannerDanger = true
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-
+ENT.Type="anim"
+ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.PrintName="EZ Sentry"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Misc."
+ENT.Information="glhfggwpezpznore"
+ENT.NoSitAllowed=true
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
+ENT.SpawnHeight=15
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.AMMO,
+    JMod.EZ_RESOURCE_TYPES.POWER,
+    JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+    JMod.EZ_RESOURCE_TYPES.COOLANT
+}
+print(ENT.BaseClass)
+ENT.EZscannerDanger=true
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.EZupgradable=true
+ENT.Model="models/props_phx/oildrum001_explosive.mdl"
+ENT.Mat="models/mat_jack_gmod_ezsentry"
+ENT.Mass=300
 -- config --
 ENT.AmmoTypes = {
 	["Bullet"] = {}, -- Simple pew pew
@@ -79,19 +86,31 @@ ENT.StaticPerfSpecs = {
 	BarrelLength = 29
 }
 
-ENT.DynamicPerfSpecs = {
-	MaxAmmo = 300,
-	TurnSpeed = 60,
-	TargetingRadius = 15,
-	Armor = 8,
-	FireRate = 6,
-	Damage = 15,
-	Accuracy = 1,
-	SearchSpeed = .5,
-	TargetLockTime = 5,
-	Cooling = 1
-}
+ENT.BlacklistedNPCs={"npc_enemyfinder","bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_bullseye"}
+ENT.WhitelistedNPCs={"npc_rollermine"}
+ENT.SpecialTargetingHeights={["npc_rollermine"]=15}
 
+ENT.StaticPerfSpecs={
+	MaxElectricity=100,
+	SearchTime=7,
+	MaxDurability=100,
+	ThinkSpeed=1,
+	ShotCount=1,
+	BarrelLength=29
+}
+ENT.DynamicPerfSpecs={
+	MaxAmmo=300,
+	TurnSpeed=60,
+	TargetingRadius=15,
+	Armor=1,
+	FireRate=6,
+	Damage=15,
+	Accuracy=1,
+	SearchSpeed=.5,
+	TargetLockTime=5,
+	Cooling=1
+}
+ENT.DynamicPerfSpecExp=1.2
 -- All moddable attributes
 -- Each mod selected for it is +1, against it is -1
 ENT.ModPerfSpecs = {
@@ -110,36 +129,27 @@ function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
-	self:InitPerfSpecs(OldAmmo ~= ammoType)
-
-	if ammoType == "Pulse Laser" then
-		self.EZconsumes = {"power", "parts", "coolant"}
-	elseif ammoType == "HE Grenade" then
-		self.EZconsumes = {"munitions", "power", "parts", "coolant"}
+	self:InitPerfSpecs(OldAmmo~=ammoType)
+	if(ammoType=="Pulse Laser")then
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
+	elseif(ammoType=="HE Grenade")then
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.MUNITIONS,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	else
-		self.EZconsumes = {"ammo", "power", "parts", "coolant"}
+		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	end
 end
 
 function ENT:InitPerfSpecs(removeAmmo)
-	local PerfMult = self:GetPerfMult() or 1
-	local Grade = self:GetGrade()
-
-	for specName, value in pairs(self.StaticPerfSpecs) do
-		self[specName] = value
-	end
-
-	for specName, value in pairs(self.DynamicPerfSpecs) do
-		self[specName] = value * PerfMult * JMod.EZ_GRADE_BUFFS[Grade] ^ 1.2
-	end
-
-	self.MaxAmmo = math.Round(self.MaxAmmo / 100) * 100 -- a sight for sore eyes, ey jack?-titanicjames
-	self.TargetingRadius = self.TargetingRadius * 52.493 -- convert meters to source units
-	local MaxValue = 10
-
-	for attrib, value in pairs(self.ModPerfSpecs) do
-		local oldVal = self[attrib]
-
+	local PerfMult=self:GetPerfMult() or 1
+	local Grade=self:GetGrade()
+	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp end
+	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
+	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
+	
+	local MaxValue=10
+	for attrib,value in pairs(self.ModPerfSpecs) do
+		local oldVal=self[attrib]
 		if value > 0 then
 			local ratio = (math.abs(value / MaxValue) + 1) ^ 1.5
 			self[attrib] = self[attrib] * ratio
@@ -172,40 +182,24 @@ function ENT:InitPerfSpecs(removeAmmo)
 end
 
 ----
-local STATE_BROKEN, STATE_OFF, STATE_WATCHING, STATE_SEARCHING, STATE_ENGAGING, STATE_WHINING, STATE_OVERHEATED = -1, 0, 1, 2, 3, 4, 5
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Float", 0, "AimPitch")
-	self:NetworkVar("Float", 1, "AimYaw")
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Float", 2, "Electricity")
-	self:NetworkVar("Int", 1, "Ammo")
-	self:NetworkVar("Int", 2, "Grade")
-	self:NetworkVar("Float", 3, "PerfMult")
-	self:NetworkVar("String", 0, "AmmoType")
-	self:NetworkVar("Float", 4, "Coolant")
+local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING,STATE_OVERHEATED=-1,0,1,2,3,4,5
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Int",2,"Ammo")
+	self:NetworkVar("Float",1,"AimPitch")
+	self:NetworkVar("Float",2,"AimYaw")
+	self:NetworkVar("Float",3,"PerfMult")
+	self:NetworkVar("Float",4,"Coolant")
+	self:NetworkVar("String",0,"AmmoType")
 end
-
-if SERVER then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/oildrum001_explosive.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezsentry")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-		local phys = self.Entity:GetPhysicsObject()
-
-		if phys:IsValid() then
-			phys:Wake()
-			phys:SetMass(200)
+if(SERVER)then
+	function ENT:CustomInit()
+		local phys=self.Entity:GetPhysicsObject()
+		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
 
 		---
 		self:SetAmmoType("Bullet")
-		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		JMod.Colorify(self)
 		self:SetPerfMult(JMod.Config.SentryPerformanceMult)
 		self:InitPerfSpecs()
@@ -213,16 +207,8 @@ if SERVER then
 		self:Point(0, 0)
 		self.SearchStageTime = self.SearchTime / 2
 		self:SetAmmo(self.MaxAmmo)
-		self:SetElectricity(self.MaxElectricity)
-		self:SetState(STATE_OFF)
-		self.Durability = self.MaxDurability
-		self.NextWhine = 0
-		self.Heat = 0
-		---
-		self.EZupgradable = true
-		self.UpgradeProgress = {}
-		self.UpgradeCosts = JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Sentry"] and JMod.Config.Craftables["EZ Sentry"].craftingReqs)
-		---
+		self.NextWhine=0
+		self.Heat=0
 		self:ResetMemory()
 		self:CreateNPCTarget()
 	end
@@ -285,10 +271,9 @@ if SERVER then
 	end
 
 	function ENT:ConsumeElectricity(amt)
-		amt = (amt or .04) / self.Efficiency
-
-		if self:GetAmmoType() == "Pulse Laser" then
-			amt = amt / JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+		amt=(amt or .04)
+		if(self:GetAmmoType()=="Pulse Laser")then
+			amt=amt/JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 		end
 
 		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0, self.MaxElectricity)
@@ -298,78 +283,45 @@ if SERVER then
 			self:TurnOff()
 		end
 	end
-
-	function ENT:DetermineDmgResistance(dmg)
-		for k, typ in pairs(self.ImmuneDamageTypes) do
-			if dmg:IsDamageType(typ) then return 1000 end
-		end
-
-		for k, typ in pairs(self.ResistantDamageTypes) do
-			if dmg:IsDamageType(typ) then return self.Armor * 2 end
-		end
-
-		return self.Armor
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		if self then
-			self:TakePhysicsDamage(dmginfo)
-			local Armor = self:DetermineDmgResistance(dmginfo)
-			if Armor >= 1000 then return end
-			local Damage = dmginfo:GetDamage() / Armor
-			---
-			local IncomingVec = dmginfo:GetDamageForce():GetNormalized()
-			local Up, Right, Forward = self:GetUp(), self:GetRight(), self:GetForward()
-			local AimAng = self:GetAngles()
-			AimAng:RotateAroundAxis(Right, self:GetAimPitch())
-			AimAng:RotateAroundAxis(Up, self:GetAimYaw())
-			local AimVec = AimAng:Forward()
-			local AttackAngle = -math.deg(math.asin(AimVec:Dot(IncomingVec)))
-
-			if AttackAngle >= 60 then
-				Damage = Damage * .15
-
-				if math.random(1, 2) == 1 then
-					local SelfPos = self:GetPos()
-					sound.Play("snds_jack_gmod/ricochet_" .. math.random(1, 2) .. ".wav", SelfPos + VectorRand(), 70, math.random(80, 120))
-					local effectdata = EffectData()
-					effectdata:SetOrigin(SelfPos + Up * 30 + AimVec * 20)
-					effectdata:SetNormal(VectorRand())
-					effectdata:SetMagnitude(2) --amount and shoot hardness
-					effectdata:SetScale(1) --length of strands
-					effectdata:SetRadius(2) --thickness of strands
-					util.Effect("Sparks", effectdata, true, true)
-
-					if dmginfo:IsDamageType(DMG_BULLET) or dmginfo:IsDamageType(DMG_BUCKSHOT) then
-						local RicDir = VectorRand()
-						RicDir.z = RicDir.z / 2
-						RicDir:Normalize()
-
-						self:FireBullets({
-							Src = SelfPos,
-							Dir = RicDir,
-							Tracer = 1,
-							Num = 1,
-							Spread = Vector(0, 0, 0),
-							Damage = 10,
-							Force = 50,
-							Attacker = dmginfo:GetAttacker() or self
-						})
-					end
+	function ENT:CustomDetermineDmgMult(dmginfo)
+		local Mult=1
+		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
+		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
+		local AimAng=self:GetAngles()
+		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
+		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
+		local AimVec=AimAng:Forward()
+		local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
+		if(AttackAngle>=60)then
+			Mult=Mult*.2
+			if(math.random(1,2)==1)then
+				local SelfPos=self:GetPos()
+				sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav",SelfPos+VectorRand(),70,math.random(80,120))
+				local effectdata=EffectData()
+				effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
+				effectdata:SetNormal(VectorRand())
+				effectdata:SetMagnitude(2) --amount and shoot hardness
+				effectdata:SetScale(1) --length of strands
+				effectdata:SetRadius(2) --thickness of strands
+				util.Effect("Sparks",effectdata,true,true)
+				if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+					local RicDir=VectorRand()
+					RicDir.z=RicDir.z/2
+					RicDir:Normalize()
+					self:FireBullets({
+						Src=SelfPos,
+						Dir=RicDir,
+						Tracer=1,
+						Num=1,
+						Spread=Vector(0,0,0),
+						Damage=10,
+						Force=50,
+						Attacker=dmginfo:GetAttacker() or self
+					})
 				end
 			end
-
-			---
-			self.Durability = self.Durability - Damage
-
-			if self.Durability <= 0 then
-				self:Break(dmginfo)
-			end
-
-			if self.Durability <= -100 then
-				self:Destroy(dmginfo)
-			end
 		end
+		return Mult
 	end
 
 	function ENT:OnBreak()
@@ -1061,25 +1013,23 @@ if SERVER then
 			self:SetAimYaw(yaw)
 		end
 	end
-elseif CLIENT then
-	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
-		self.BaseGear = JMod.MakeModel(self, "models/props_phx/gears/spur36.mdl", nil, .25)
-		self.VertGear = JMod.MakeModel(self, "models/props_phx/gears/spur36.mdl", nil, .15)
-		self.MiniBaseGear = JMod.MakeModel(self, "models/props_phx/gears/spur12.mdl", nil, .25)
-		self.MiniVertGear = JMod.MakeModel(self, "models/props_phx/gears/spur12.mdl", nil, .15)
-		self.MachineGun = JMod.MakeModel(self, "models/ez/sentrygun.mdl")
-		self.MainPost = JMod.MakeModel(self, "models/mechanics/solid_steel/box_beam_12.mdl", nil, .2)
-		self.ElevationMotor = JMod.MakeModel(self, "models/xqm/hydcontrolbox.mdl", nil, .35)
-		self.TriggerMotor = JMod.MakeModel(self, "models/xqm/hydcontrolbox.mdl", nil, .3)
-		self.Shield = JMod.MakeModel(self, "models/hunter/tubes/circle2x2b.mdl", "phoenix_storms/gear", .3)
-		self.Light = JMod.MakeModel(self, "models/props_wasteland/light_spotlight02_lamp.mdl", nil, .3)
-		self.Lens = JMod.MakeModel(self, "models/hunter/misc/sphere025x025.mdl", "debug/env_cubemap_model", .3)
-		self.OmniLens = JMod.MakeModel(self, "models/hunter/misc/sphere025x025.mdl", "debug/env_cubemap_model", .3)
-		self.Camera = JMod.MakeModel(self, "models/mechanics/robotics/b2.mdl", "phoenix_storms/metal", .4)
-		self.LeftHandle = JMod.MakeModel(self, "models/props_wasteland/panel_leverhandle001a.mdl", "phoenix_storms/metal")
-		self.RightHandle = JMod.MakeModel(self, "models/props_wasteland/panel_leverhandle001a.mdl", "phoenix_storms/metal")
+elseif(CLIENT)then
+	function ENT:CustomInit()
+		self.BaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.25)
+		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
+		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
+		self.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
+		self.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
+		self.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
+		self.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
+		self.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
+		self.Shield=JMod.MakeModel(self,"models/hunter/tubes/circle2x2b.mdl","phoenix_storms/gear",.3)
+		self.Light=JMod.MakeModel(self,"models/props_wasteland/light_spotlight02_lamp.mdl",nil,.3)
+		self.Lens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.OmniLens=JMod.MakeModel(self,"models/hunter/misc/sphere025x025.mdl","debug/env_cubemap_model",.3)
+		self.Camera=JMod.MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
+		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		---
 		self.CurAimPitch = 0
 		self.CurAimYaw = 0

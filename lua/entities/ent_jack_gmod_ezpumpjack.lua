@@ -1,57 +1,46 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Author = "Jackarunda"
-ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Pumpjack"
-ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = true -- temporary, until Phase 2 of the econ update
-ENT.AdminOnly = false
-ENT.Base = "ent_jack_gmod_ezmachine_base"
-
-ENT.EZconsumes = {"power", "parts"}
-
-ENT.WhitelistedResources = {"water", "oil"}
-
-ENT.DepositKey = 0
-ENT.MaxElectricity = 200
+ENT.Type="anim"
+ENT.Author="Jackarunda"
+ENT.Information="glhfggwpezpznore"
+ENT.PrintName="EZ Pumpjack"
+ENT.Category="JMod - EZ Misc."
+ENT.Spawnable=true
+ENT.AdminOnly=false
+ENT.Base="ent_jack_gmod_ezmachine_base"
+---
+ENT.Model="models/hunter/blocks/cube4x4x1.mdl"
+ENT.Mass=3000
 ENT.SpawnHeight = 100
-local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Int", 1, "Grade")
-	self:NetworkVar("Float", 0, "Progress")
-	self:NetworkVar("Float", 1, "Electricity")
-	self:NetworkVar("String", 0, "ResourceType")
+---
+ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
+---
+ENT.EZupgradable=true
+ENT.StaticPerfSpecs={
+	MaxDurability=100,
+	MaxElectricity=200,
+}
+ENT.DynamicPerfSpecs={
+	Armor=5,
+	PumpRate = 1
+}
+---
+local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
+---
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Float",1,"Progress")
+	self:NetworkVar("String",0,"ResourceType")
 end
-
-if SERVER then
-	function ENT:Initialize()
-		self:SetModel("models/hunter/blocks/cube4x4x1.mdl")
-		--self:SetModelScale(math.Rand(1.5,3),0)
-		--self:SetMaterial("models/debug/debugwhite")
-		--self:SetColor(Color(math.random(190,210),math.random(140,160),0))
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-		self:SetAngles(Angle(0, 0, -90))
-
-		---
-		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(3000)
-			self:GetPhysicsObject():Wake()
-		end)
-
-		self:SetGrade(1)
+if(SERVER)then
+	function ENT:CustomInit()
+		self:SetAngles(Angle(0,0,-90))
 		self:SetProgress(0)
-		self:SetElectricity(200)
 		self:SetState(STATE_OFF)
-		self.Durability = 300
-		self.NextCalcThink = 0
-		-- TODO: make upgradable
+		self.Durability=300
+		self.NextCalcThink=0
+		self.MaxElectricity=200
+		self.DepositKey=0
+		self:TryPlace()
 	end
 
 	function ENT:UpdateDepositKey()
@@ -94,7 +83,31 @@ if SERVER then
 			--print("No valid deposit") --DEBUG
 		end
 	end
-
+	function ENT:TryPlace()
+		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
+		if((Tr.Hit)and(Tr.HitWorld))then
+			local Yaw=self:GetAngles().y
+			self:SetAngles(Angle(0,Yaw,-90))
+			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
+			--
+			local GroundIsSolid=true
+			for i=1,50 do
+				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
+				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
+			end
+			self:UpdateDepositKey()
+			if not(self.DepositKey)then
+				JMod.Hint(self.Owner,"oil derrick")
+			elseif(GroundIsSolid)then
+				if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
+				if(IsValid(self.Weld) and self.DepositKey)then
+					self:TurnOn(self.Owner)
+				else
+					JMod.Hint(self.Owner,"machine mounting problem")
+				end
+			end
+		end
+	end
 	function ENT:TurnOn(activator)
 		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)
@@ -119,14 +132,11 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local State = self:GetState()
-		local OldOwner = self.Owner
-		JMod.Owner(self, activator)
-		JMod.Colorify(self)
-
-		if IsValid(self.Owner) then
-			-- if owner changed then reset team color
-			if OldOwner ~= self.Owner then
+		local State=self:GetState()
+		local OldOwner=self.Owner
+		JMod.Owner(self,activator)
+		if(IsValid(self.Owner))then
+			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
 			end
 		end
@@ -135,81 +145,23 @@ if SERVER then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif State == STATE_OFF then
-			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
-
-			if Tr.Hit and Tr.HitWorld then
-				local Yaw = self:GetAngles().y
-				self:SetAngles(Angle(0, Yaw, -90))
-				self:SetPos(Tr.HitPos + Tr.HitNormal * 95)
-				--
-				local GroundIsSolid = true
-
-				for i = 1, 50 do
-					local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
-
-					if bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID then
-						GroundIsSolid = false
-						break
-					end
-				end
-
-				self:UpdateDepositKey()
-
-				if GroundIsSolid and self.DepositKey then
-					if not IsValid(self.Weld) then
-						self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 10000, false, false)
-					end
-
-					if IsValid(self.Weld) then
-						self:TurnOn(activator)
-					else
-						JMod.Hint(activator, "machine mounting problem")
-					end
-				else
-					JMod.Hint(activator, "oil derrick")
-				end
-			end
-		elseif State == STATE_RUNNING then
+		elseif(State==STATE_OFF)then
+			self:TryPlace()
+		elseif(State==STATE_RUNNING)then
 			self:TurnOff()
 		end
 	end
-
 	function ENT:OnRemove()
-		if self.SoundLoop then
-			self.SoundLoop:Stop()
-		end
+		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
-
 	function ENT:Think()
-		local State, Time = self:GetState(), CurTime()
-
-		if self.NextCalcThink < Time then
-			self.NextCalcThink = Time + 1
-
-			if State == STATE_BROKEN then
-				if self.SoundLoop then
-					self.SoundLoop:Stop()
-				end
-
-				if self:GetElectricity() > 0 then
-					if math.random(1, 4) == 2 then
-						JMod.DamageSpark(self)
-					end
-				end
-
-				return
-			elseif State == STATE_RUNNING then
-				if self:GetElectricity() <= 0 then
-					self:TurnOff()
-
-					return
-				end
-
-				if not (self.DepositKey and JMod.NaturalResourceTable[self.DepositKey]) then
-					self:TurnOff()
-
-					return
+		local State,Time=self:GetState(),CurTime()
+		if(self.NextCalcThink<Time)then
+			self.NextCalcThink=Time+1
+			if(State==STATE_BROKEN)then
+				if(self.SoundLoop)then self.SoundLoop:Stop() end
+				if(self:GetElectricity()>0)then
+					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 				end
 
 				if not IsValid(self.Weld) then
@@ -221,8 +173,7 @@ if SERVER then
 
 				self:ConsumeElectricity(.5)
 				-- This is just the rate at which we pump
-				local pumpRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2
-
+				local pumpRate = self.PumpRate^2
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
 				if JMod.NaturalResourceTable[self.DepositKey].rate then
@@ -251,22 +202,20 @@ if SERVER then
 				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
-
-		if State == STATE_RUNNING then end
-		self:NextThink(CurTime() + 1)
-
+		if not(IsValid(self.Weld))then
+			self:SetProgress(0)
+			self.DepositKey = nil
+			self:TurnOff()
+		end
 		return true
 	end
 
 	function ENT:SpawnBarrel(amt)
-		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local RandomArea = Vector(math.random(-20, 20), math.random(-20, 20), 15)
-		local Liquid = ents.Create(JMod.EZ_RESOURCE_ENTITIES[self:GetResourceType()])
-		Liquid:SetPos(SelfPos + Forward * 120 - Right * 90 + RandomArea)
-		Liquid:Spawn()
-		JMod.Owner(self.Owner)
-		Liquid:SetResource(amt)
-		Liquid:Activate()
+		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
+		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100))
+		local spawnAng = Angle(0,0,-90)
+		local ejectVec = Vector(500, 0, 0)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
 	end
 
 	function ENT:OnDestroy(dmginfo)
@@ -283,11 +232,9 @@ if SERVER then
 				oilFire:Activate()
 			end)
 		end
-
-		if not (self.DepositKey > 0) then return end
-
-		if self:GetResourceType() == "oil" then
-			if dmginfo:IsDamageType(DMG_BURN + DMG_SLOWBURN) then
+		if not(self.DepositKey)then return end
+		if(self:GetResourceType() == "oil")then
+			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
 				createOilFire()
 			elseif dmginfo:IsDamageType(DMG_BLAST + DMG_BLAST_SURFACE + DMG_PLASMA + DMG_ENERGYBEAM) and (math.random(0, 100) > 50) then
 				createOilFire()
@@ -296,12 +243,14 @@ if SERVER then
 			end
 		end
 	end
-elseif CLIENT then
-	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/tsbb/pump_jack.mdl")
-		self.Mdl:SetPos(self:GetPos() - self:GetRight() * 100)
-		local Ang = self:GetAngles()
-		Ang:RotateAroundAxis(self:GetForward(), 90)
+
+elseif(CLIENT)then
+	function ENT:CustomInit()
+		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
+		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
+		self.Mdl:SetPos(self:GetPos()-self:GetRight()*100)
+		local Ang=self:GetAngles()
+		Ang:RotateAroundAxis(self:GetForward(),90)
 		self.Mdl:SetAngles(Ang)
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
@@ -323,16 +272,11 @@ elseif CLIENT then
 		else
 			self.DriveMomentum = math.Clamp(self.DriveMomentum - FT / 3, 0, 0.4)
 		end
-
-		self.DriveCycle = self.DriveCycle + self.DriveMomentum * FT * 150
-
-		if self.DriveCycle > 360 then
-			self.DriveCycle = 0
-		end
-
-		local WalkingBeamDrive = math.sin((self.DriveCycle / 360) * math.pi * 2 - math.pi) * 20
-		self.Mdl:ManipulateBoneAngles(1, Angle(0, 0, WalkingBeamDrive))
-		self.Mdl:ManipulateBoneAngles(2, Angle(0, 0, self.DriveCycle))
+		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150*Grade
+		if(self.DriveCycle>360)then self.DriveCycle=0 end
+		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
+		self.Mdl:ManipulateBoneAngles(1,Angle(0,0,WalkingBeamDrive))
+		self.Mdl:ManipulateBoneAngles(2,Angle(0,0,self.DriveCycle))
 		--render.SetBlend(.5)
 		--self:DrawModel()
 		--render.SetBlend(1)
@@ -342,46 +286,37 @@ elseif CLIENT then
 		self.Mdl:SetRenderAngles(MdlAng)
 		self.Mdl:DrawModel()
 		--
-		local BasePos = SelfPos + Up * 32
-
-		local Obscured = util.TraceLine({
-			start = EyePos(),
-			endpos = BasePos,
-			filter = {LocalPlayer(), self},
-			mask = MASK_OPAQUE
-		}).Hit
-
-		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(SelfPos)
-		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
-		if (not DetailDraw) and Obscured then return end -- if player is far and sentry is obscured, draw nothing
-
-		-- if obscured, at least disable details
-		if Obscured then
-			DetailDraw = false
-		end
-
-		-- look incomplete to indicate damage, save on gpu comp too
-		if State == STATE_BROKEN then
-			DetailDraw = false
-		end
-
-		if DetailDraw then
-			if (Closeness < 20000) and (State == STATE_RUNNING) then
-				local DisplayAng = SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), -50)
-				local Opacity = math.random(50, 150)
-				cam.Start3D2D(SelfPos + Up * 25 - Right * 50 - Forward * 80, DisplayAng, .1)
-				draw.SimpleTextOutlined("EXTRACTING", "JMod-Display", 250, -60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(string.upper(Typ) or "N/A", "JMod-Display", 250, -30, Color(100, 255, 100, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("POWER", "JMod-Display", 250, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				local ElecFrac = self:GetElectricity() / 200
-				local R, G, B = JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 250, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 250, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				local ProgressFrac = self:GetProgress() / 100
-				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac * 100)) .. "%", "JMod-Display", 250, 90, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+		local BasePos=SelfPos+Up*32
+		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
+		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
+		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
+		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		local LadderAng=SelfAng:GetCopy()
+		LadderAng:RotateAroundAxis(Up,90)
+		LadderAng:RotateAroundAxis(Forward,80)
+		JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+		if(DetailDraw)then
+			if((Closeness<20000)and(State==STATE_RUNNING))then
+				local DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(),180)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-50)
+				local Opacity=math.random(50,150)
+				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
+				draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ExtractCol=Color(100,255,100,Opacity)
+				if(Typ=="water")then ExtractCol=Color(0,200,200,Opacity)
+				elseif(Typ=="oil")then ExtractCol=Color(120,80,0,Opacity) end
+				draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/200
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ProgressFrac=self:GetProgress()/100
+				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local CoolFrac=self:GetCoolant()/100
 				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				--local R,G,B=JMod.GoodBadColor(CoolFrac)

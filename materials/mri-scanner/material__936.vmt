@@ -5,14 +5,23 @@
 
 // BEGIN Textures
 	$basetexture "mri-scanner/mribed"
-
 	$bumpmap "mri-scanner/mribednormal"
 	"$model" 1
 	"$phong" "1"
-	"$phongexponent" "50"
-	"$phongboost" "1"	
-	"$phongfresnelranges"	"[.05 .5 5]"
-	"$halflambert" "1"
+	"$phongexponent" "10"
+	"$phongboost" "1"
+	"$phongfresnelranges"	"[1 1 1]"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+	Proxies
+	{
+		Color
+		{
+			resultVar    $color2 // pass the player color value to Gmod
+			default        0.23 0.35 0.41 // unused for now.
+		}
+	}
 // END Textures
 
 

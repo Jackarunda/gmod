@@ -1,59 +1,44 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.PrintName = "EZ Aid Radio"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Misc."
-ENT.Information = "glhfggwpezpznore"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
-ENT.NoSitAllowed = true
-
-ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS}
-
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.SpawnHeight = 20
+ENT.Type="anim"
+ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.PrintName="EZ Aid Radio"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Misc."
+ENT.Information="glhfggwpezpznore"
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
+ENT.NoSitAllowed=true
+ENT.Model="models/props_phx/oildrum001_explosive.mdl"
+ENT.Mat="models/mat_jack_gmod_ezradio"
+ENT.Mass=150
 ----
-local STATE_BROKEN, STATE_OFF, STATE_CONNECTING = -1, 0, 1
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Float", 0, "Electricity")
-	self:NetworkVar("Int", 1, "OutpostID")
+ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.SpawnHeight=20
+----
+ENT.StaticPerfSpecs={
+	MaxDurability=100,
+	Armor=.8
+}
+----
+local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Int",2,"OutpostID")
 end
-
-if SERVER then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/props_phx/oildrum001_explosive.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezradio")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-		local phys = self.Entity:GetPhysicsObject()
-
-		if phys:IsValid() then
-			phys:Wake()
-			phys:SetMass(150)
+if(SERVER)then
+	function ENT:CustomInit()
+		local phys = self:GetPhysicsObject()
+		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
 
 		---
-		JMod.Colorify(self)
+		self.ThinkSpeed=1
+		self.ElectricalEfficiency=2
 		---
-		self.MaxDurability = 100
-		self.MaxElectricity = 100
-		self.ThinkSpeed = 1
-		self.Efficiency = 1
-		---
-		self:SetState(STATE_OFF)
-		self:SetElectricity(self.MaxElectricity)
-		self.Durability = self.MaxDurability
-		self.NextWhine = 0
-		self.NextRealThink = 0
-		self.NextUseTime = 0
+		self.NextWhine=0
+		self.NextRealThink=0
+		self.NextUseTime=0
 		self:SetOutpostID(0)
 		self.HaveCheckedForSky = false
 		self.ConnectionAttempts = 0
@@ -279,11 +264,6 @@ if SERVER then
 			self:ConsumeElectricity(.02)
 		end
 	end
-
-	function ENT:OnRemove()
-	end
-
-	--
 	function ENT:UserIsAuthorized(ply)
 		if not ply then return false end
 		if not ply:IsPlayer() then return false end
@@ -382,16 +362,16 @@ if SERVER then
 
 		return false
 	end
-elseif CLIENT then
-	function ENT:Initialize()
-		self.Dish = JMod.MakeModel(self, "models/props_rooftop/satellitedish02.mdl")
-		self.Panel = JMod.MakeModel(self, "models/props_lab/reciever01a.mdl", nil, .8)
-		self.Headset = JMod.MakeModel(self, "models/lt_c/sci_fi/headset_2.mdl")
-		self.LeftHandle = JMod.MakeModel(self, "models/props_wasteland/panel_leverhandle001a.mdl", "phoenix_storms/metal")
-		self.RightHandle = JMod.MakeModel(self, "models/props_wasteland/panel_leverhandle001a.mdl", "phoenix_storms/metal")
-		self.MaxElectricity = 100
-		local Files, Folders = file.Find("sound/npc/combine_soldier/vo/*.wav", "GAME")
-		self.Voices = Files
+elseif(CLIENT)then
+	function ENT:CustomInit()
+		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
+		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
+		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
+		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.MaxElectricity=100
+		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
+		self.Voices=Files
 	end
 
 	local function ColorToVector(col)

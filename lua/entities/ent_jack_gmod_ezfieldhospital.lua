@@ -1,84 +1,56 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
-ENT.PrintName = "EZ Automated Field Hospital"
-ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Misc."
-ENT.Information = "glhfggwpezpznore"
-ENT.Spawnable = true
-ENT.AdminSpawnable = true
-ENT.Base = "ent_jack_gmod_ezmachine_base"
-
-ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES}
-
--- Config --
-ENT.StaticPerfSpecs = {
-	MaxElectricity = 100,
-	MaxDurability = 100
+ENT.Type="anim"
+ENT.PrintName="EZ Automated Field Hospital"
+ENT.Author="Jackarunda"
+ENT.Category="JMod - EZ Misc."
+ENT.Information="glhfggwpezpznore"
+ENT.Spawnable=true
+ENT.AdminSpawnable=true
+ENT.Base="ent_jack_gmod_ezmachine_base"
+---
+ENT.Model="models/mri-scanner/mri-scanner.mdl"
+ENT.Mass=750
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.POWER,
+    JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 }
-
-ENT.DynamicPerfSpecs = {
-	MaxSupplies = 50,
-	ElectricalEfficiency = 1,
-	HealEfficiency = 1,
-	HealSpeed = 1
+-- Config --
+ENT.StaticPerfSpecs={
+	MaxDurability=100
+}
+ENT.DynamicPerfSpecs={
+	Armor=.7,
+	MaxSupplies=50,
+	ElectricalEfficiency=1,
+	HealEfficiency=1,
+	HealSpeed=1
 }
 
 ----
-local STATE_BROKEN, STATE_OFF, STATE_ON, STATE_OCCUPIED, STATE_WORKING = -1, 0, 1, 2, 3
-
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Float", 0, "Electricity")
-	self:NetworkVar("Int", 1, "Supplies")
-	self:NetworkVar("Int", 2, "Grade")
+local STATE_BROKEN,STATE_OFF,STATE_ON,STATE_OCCUPIED,STATE_WORKING=-1,0,1,2,3
+function ENT:CustomSetupDataTables()
+	self:NetworkVar("Int",2,"Supplies")
 end
-
-if SERVER then
-	function ENT:Initialize()
-		self.Entity:SetModel("models/mri-scanner/mri-scanner.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-		local phys = self.Entity:GetPhysicsObject()
-
-		if phys:IsValid() then
-			phys:Wake()
-			phys:SetMass(750)
+if(SERVER)then
+	function ENT:CustomInit()
+		local phys=self:GetPhysicsObject()
+		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
 
 		---
-		if IsValid(self.Owner) then
-			local Tem = self.Owner:Team()
-
-			if Tem then
-				local Col = team.GetColor(Tem)
-				--if(Col)then self:SetColor(Col) end
-			end
-		end
-
-		---
-		self:SetGrade(JMod.EZ_GRADE_BASIC)
-		self:InitPerfSpecs()
-		self:SetElectricity(self.MaxElectricity)
-		self.Durability = self.MaxDurability
-		self.NextWhine = 0
-		self.NextRealThink = 0
-		self.NextUseTime = 0
-		self.IdleShutOffTime = 0
-		self.NextHumTime = 0
-		self:SetState(STATE_OFF)
-		self:SetElectricity(self.MaxElectricity)
+		self.NextWhine=0
+		self.NextRealThink=0
+		self.NextUseTime=0
+		self.IdleShutOffTime=0
+		self.NextHumTime=0
 		self:SetSupplies(self.MaxSupplies)
 		self.NextHeal = 0
 		self.NextEnter = 0
 		---
-		self.EZupgradable = true
-		self.UpgradeProgress = {}
-		self.UpgradeCosts = JMod.CalculateUpgradeCosts(JMod.Config.Craftables["EZ Automated Field Hospital"] and JMod.Config.Craftables["EZ Automated Field Hospital"].craftingReqs)
+		self.EZupgradable=true
 		--
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
@@ -115,15 +87,7 @@ if SERVER then
 			end
 		end
 	end
-
-	function ENT:SFX(str, absPath)
-		if absPath then
-			sound.Play(str, self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, math.random(90, 110))
-		else
-			sound.Play("snds_jack_gmod/" .. str .. ".wav", self:GetPos() + Vector(0, 0, 20) + VectorRand() * 10, 60, 100)
-		end
-	end
-
+	
 	function ENT:TurnOn()
 		if self:GetState() == STATE_ON then return end
 
@@ -378,28 +342,23 @@ if SERVER then
 			end)
 		end
 	end
-elseif CLIENT then
-	function ENT:Initialize()
-		self:InitPerfSpecs()
-		---
-		self.Camera = JMod.MakeModel(self, "models/props_combine/combinecamera001.mdl")
-		self.TopCanopy = JMod.MakeModel(self, "models/props_phx/construct/windows/window_dome360.mdl")
-		self.BottomCanopy = JMod.MakeModel(self, "models/props_phx/construct/windows/window_dome360.mdl")
+elseif(CLIENT)then
+	function ENT:CustomInit()
+		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.TopCanopy:SetSubMaterial(0,"mri-scanner/mri-dome_side")
+		self.BottomCanopy:SetSubMaterial(0,"mri-scanner/mri-dome_side")
+		self.TopCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
+		self.BottomCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
-		self.MaxElectricity = 100
-		self.OpenAmt = 1
+		self.OpenAmt=1
 	end
 
 	local function ColorToVector(col)
 		return Vector(col.r / 255, col.g / 255, col.b / 255)
 	end
-
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
-
-	local GradeColors = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
-
-	local GradeMats = {Material("phoenix_storms/metal"), Material("models/mat_jack_gmod_copper"), Material("models/mat_jack_gmod_silver"), Material("models/mat_jack_gmod_gold"), Material("models/mat_jack_gmod_platinum")}
-
+	local GlowSprite=Material("sprites/mat_jack_basicglow")
 	function ENT:Draw()
 		local SelfPos, SelfAng, State, FT, Grade = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime(), self:GetGrade()
 		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
@@ -438,14 +397,13 @@ elseif CLIENT then
 		end
 
 		---
-		local DisplayAng = SelfAng:GetCopy()
-		DisplayAng:RotateAroundAxis(Forward, 90)
-
-		if DetailDraw then
-			local CamAng = SelfAng:GetCopy()
-			CamAng:RotateAroundAxis(Up, -90)
-			CamAng:RotateAroundAxis(Right, 180)
-			JMod.RenderModel(self.Camera, BasePos + Up * 10 + Forward * 25, CamAng, nil, GradeColors[Grade], GradeMats[Grade])
+		local DisplayAng=SelfAng:GetCopy()
+		DisplayAng:RotateAroundAxis(Forward,90)
+		if(DetailDraw)then
+			local CamAng=SelfAng:GetCopy()
+			CamAng:RotateAroundAxis(Up,-90)
+			CamAng:RotateAroundAxis(Right,180)
+			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 			---
 			local Matricks = Matrix()
 			Matricks:Scale(Vector(.4, 1.45, .5))

@@ -6,6 +6,13 @@
 // BEGIN Textures
 	$basetexture "mri-scanner/mrimonitors"
 	$selfillum 1
+	$bumpmap "models/tex_jack_flat_normal"
+	$envmap "env_cubemap"
+	$envmaptint "[.5 .5 .5]"
+
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+
 // END Textures
 
 
