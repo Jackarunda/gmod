@@ -14,15 +14,16 @@ ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.MaxPower = 100
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 50
+	MaxDurability = 50,
+	MaxElectricity = 0
 }
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 0, "Progress")
-	self:NetworkVar("Float", 1, "Visibility")
+	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("Float", 2, "Visibility")
 end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
