@@ -1,4 +1,4 @@
--- Jackarunda 2021
+﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Type="anim"
 ENT.Author="Jackarunda"
@@ -341,7 +341,6 @@ elseif(CLIENT)then
 				end
 				cam.End3D2D()
 				--
-				jprint(self.DSU)
 				self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
 			end
 		end

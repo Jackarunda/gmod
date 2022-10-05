@@ -1,4 +1,4 @@
-AddCSLuaFile()
+﻿AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.PrintName = "EZ Solar Panel"
@@ -68,7 +68,7 @@ if(SERVER)then
 				self:ProducePower()
 				return
 			end
-			self:TurnOff() --No turning it off
+			self:TurnOff()
 		end
 	end
 
@@ -195,27 +195,27 @@ if(SERVER)then
 					elseif (weather == "Lava Eruption") or (weather =="Radioactive")then weatherMult = 0 
 					else weatherMult = 1 end
 				end
-
-				local AlignmentFactor = self:GetLightAlignment()
-				self:SetVisibility(self:CheckSky() * weatherMult * AlignmentFactor)
-				local vis = self:GetVisibility()
-				local grade = self:GetGrade()
-
-				if vis <= 0 or self:WaterLevel() >= 2 then
-					JMod.Hint(self.Owner, "solar panel no sun")
-				elseif self:GetProgress() < self.MaxPower then
-					local rate = math.Round(2.5 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
-					self:SetProgress(self:GetProgress() + rate)
-				end
-
-				if self:GetProgress() >= self.MaxPower then
-					self:ProducePower()
-				end
-
-				self:NextThink(CurTime() + 5)
-
-				return true
 			end
+
+			local AlignmentFactor = self:GetLightAlignment()
+			self:SetVisibility(self:CheckSky() * weatherMult * AlignmentFactor)
+			local vis = self:GetVisibility()
+			local grade = self:GetGrade()
+
+			if vis <= 0 or self:WaterLevel() >= 2 then
+				JMod.Hint(self.Owner, "solar panel no sun")
+			elseif self:GetProgress() < self.MaxPower then
+				local rate = math.Round(2.5 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
+				self:SetProgress(self:GetProgress() + rate)
+			end
+
+			if self:GetProgress() >= self.MaxPower then
+				self:ProducePower()
+			end
+
+			self:NextThink(CurTime() + 5)
+
+			return true
 		end
 	end
 elseif CLIENT then

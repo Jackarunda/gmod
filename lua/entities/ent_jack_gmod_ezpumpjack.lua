@@ -36,9 +36,7 @@ if(SERVER)then
 		self:SetAngles(Angle(0,0,-90))
 		self:SetProgress(0)
 		self:SetState(STATE_OFF)
-		self.Durability=300
 		self.NextCalcThink=0
-		self.MaxElectricity=200
 		self.DepositKey=0
 		self:TryPlace()
 	end
@@ -77,7 +75,8 @@ if(SERVER)then
 		if ClosestDeposit then
 			self.DepositKey = ClosestDeposit
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
-			--print("Our deposit is "..self.DepositKey) --DEBUG
+			--print("Our deposit is: "..self.DepositKey) --DEBUG
+			--print("Our deposit type is: "..JMod.NaturalResourceTable[self.DepositKey].typ)
 		else
 			self.DepositKey = nil
 			--print("No valid deposit") --DEBUG
@@ -134,6 +133,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local State=self:GetState()
 		local OldOwner=self.Owner
+		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.Owner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
@@ -148,6 +148,11 @@ if(SERVER)then
 		elseif(State==STATE_OFF)then
 			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
+			if alt then
+				self:SpawnBarrel()
+
+				return
+			end
 			self:TurnOff()
 		end
 	end
@@ -163,9 +168,15 @@ if(SERVER)then
 				if(self:GetElectricity()>0)then
 					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
 				end
-
+			elseif(State==STATE_RUNNING)then
 				if not IsValid(self.Weld) then
 					self.Weld = nil
+					self:TurnOff()
+
+					return
+				end
+
+				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
 
 					return
@@ -186,7 +197,7 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						-- Spawn barrel
 						self:SpawnBarrel(100, self.DepositKey)
-						self:SetProgress(0)
+						self:SetProgress(self:GetProgress() - amtToPump)
 					end
 				else
 					self:SetProgress(self:GetProgress() + pumpRate)
@@ -194,7 +205,7 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 						self:SpawnBarrel(amtToPump)
-						self:SetProgress(0)
+						self:SetProgress(self:GetProgress() - amtToPump)
 						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
 				end
@@ -207,12 +218,11 @@ if(SERVER)then
 			self.DepositKey = nil
 			self:TurnOff()
 		end
-		return true
 	end
 
 	function ENT:SpawnBarrel(amt)
 		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
-		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100))
+		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
 		local spawnAng = Angle(0,0,-90)
 		local ejectVec = Vector(500, 0, 0)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
@@ -245,7 +255,7 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	function ENT:CustomInit()
+	function ENT:Initialize()
 		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
 		self.Mdl:SetPos(self:GetPos()-self:GetRight()*100)
@@ -305,22 +315,25 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),-50)
 				local Opacity=math.random(50,150)
 				cam.Start3D2D(SelfPos+Up*25-Right*50-Forward*80,DisplayAng,.1)
-				draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ExtractCol=Color(100,255,100,Opacity)
-				if(Typ=="water")then ExtractCol=Color(0,200,200,Opacity)
-				elseif(Typ=="oil")then ExtractCol=Color(120,80,0,Opacity) end
-				draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ElecFrac=self:GetElectricity()/200
-				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ProgressFrac=self:GetProgress()/100
-				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				--local CoolFrac=self:GetCoolant()/100
-				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				--local R,G,B=JMod.GoodBadColor(CoolFrac)
-				--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					surface.SetDrawColor(10, 10, 10, Opacity + 50)
+					surface.DrawRect(184, -200, 128, 128)
+					JMod.StandardRankDisplay(Grade, 248, -140, 118, Opacity + 50)
+					draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ExtractCol=Color(100,255,100,Opacity)
+					if(Typ=="water")then ExtractCol=Color(0,200,200,Opacity)
+					elseif(Typ=="oil")then ExtractCol=Color(120,80,0,Opacity) end
+					draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ElecFrac=self:GetElectricity()/200
+					local R,G,B=JMod.GoodBadColor(ElecFrac)
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ProgressFrac=self:GetProgress()/100
+					draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					--local CoolFrac=self:GetCoolant()/100
+					--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					--local R,G,B=JMod.GoodBadColor(CoolFrac)
+					--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end
