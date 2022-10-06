@@ -196,7 +196,8 @@ if(SERVER)then
 					-- If the progress exceeds 100
 					if self:GetProgress() >= 100 then
 						-- Spawn barrel
-						self:SpawnBarrel(100, self.DepositKey)
+						local amtToPump = math.min(self:GetProgress(), 100)
+						self:SpawnBarrel(amtToPump)
 						self:SetProgress(self:GetProgress() - amtToPump)
 					end
 				else
