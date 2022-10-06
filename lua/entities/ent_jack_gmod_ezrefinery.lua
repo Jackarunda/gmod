@@ -27,8 +27,8 @@ ENT.DynamicPerfSpecs={
 local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
 ---
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "Fuel")
-	self:NetworkVar("Float", 2, "Progress")
+	self:NetworkVar("Float", 0, "Fuel")
+	self:NetworkVar("Float", 1, "Progress")
 end
 if(SERVER)then
 	function ENT:CustomInit()
