@@ -91,7 +91,7 @@ if(SERVER)then
 		if (amt <= 0) then return end
 
 		local pos = SelfPos + Forward*15 - Up*25 - Right*2
-		--[[for _, ent in pairs(ents.FindInSphere(pos, 100)) do -- We will review this at a later date. -AdventureBoots
+		for _, ent in pairs(ents.FindInSphere(pos, 100)) do -- We will review this at a later date. -AdventureBoots
 			--print(ent, ent.GetResourceType and ent:GetResourceType())
 			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
 			or ent:GetResourceType() == "power") and (ent:GetResource() + amt <= ent.MaxResource)) then
@@ -105,7 +105,7 @@ if(SERVER)then
 				self:SpawnEffect(pos)
 				return
 			end
-		end--]]
+		end
 		JMod.MachineSpawnResource(self, "power", amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300)
 		self:SetProgress(self:GetProgress() - amt)
 		self:SpawnEffect(pos)
@@ -226,8 +226,8 @@ elseif CLIENT then
 		self.ChargerModel = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl", nil, .5)
 		self:DrawShadow(true)
 	end
-	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
+	local GradeColors = JMod.EZ_GRADE_COLORS
+	local GradeMats = JMod.EZ_GRADE_MATS
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()

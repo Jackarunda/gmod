@@ -21,7 +21,7 @@ ENT.StaticPerfSpecs={
 	MaxElectricity=200,
 }
 ENT.DynamicPerfSpecs={
-	Armor=5,
+	Armor=2,
 	PumpRate = 1
 }
 ---
@@ -108,12 +108,14 @@ if(SERVER)then
 		end
 	end
 	function ENT:TurnOn(activator)
+		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)
 			self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 			self.SoundLoop:SetSoundLevel(65)
 			self.SoundLoop:Play()
 			self.SoundLoop:SetSoundLevel(65)
+			self.WellPos = SelfPos + Forward * 120 - Right * 95
 			self:SetProgress(0)
 		else
 			JMod.Hint(activator, "nopower")
@@ -170,6 +172,8 @@ if(SERVER)then
 				end
 			elseif(State==STATE_RUNNING)then
 				if not IsValid(self.Weld) then
+					self.DepositKey = nil
+					self.WellPos = nil
 					self.Weld = nil
 					self:TurnOff()
 
@@ -214,28 +218,40 @@ if(SERVER)then
 				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
-		if not(IsValid(self.Weld))then
-			self:SetProgress(0)
-			self.DepositKey = nil
-			self:TurnOff()
-		end
 	end
 
 	function ENT:SpawnBarrel(amt)
-		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
+		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
+		
+		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
+		for _, ent in pairs(ents.FindInSphere(pos, 200)) do -- We will review this at a later date. -AdventureBoots
+			--print(ent, ent.GetResourceType and ent:GetResourceType())
+			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
+			or ent:GetResourceType() == Typ) and (ent:GetResource() + amt <= ent.MaxResource)) then
+					
+				if ent:GetResourceType() == "generic" then
+					ent:ApplySupplyType(Typ)
+				end
+
+				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
+				self:SetProgress(self:GetProgress() - amt)
+				return
+			end
+		end
+
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
 		local spawnAng = Angle(0,0,-90)
-		local ejectVec = Vector(500, 0, 0)
+		local ejectVec = Forward*500
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
 	end
 
 	function ENT:OnDestroy(dmginfo)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-
+		if not self.WellPos then return end
 		local createOilFire = function()
 			timer.Simple(0.1, function()
 				local oilFire = ents.Create("ent_jack_gmod_ezoilfire")
-				oilFire:SetPos(SelfPos + Forward * 120 - Right * 95)
+				oilFire:SetPos(self.WellPos)
 				oilFire:SetAngles(Angle(180, 0, 90))
 				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()

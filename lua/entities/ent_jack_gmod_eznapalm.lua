@@ -309,4 +309,9 @@ elseif CLIENT then
 		render.SetColorModulation(OrigR, OrigG, OrigB)
 		self.RenderPos = LerpVector(FrameTime() * 20, self.RenderPos, self:GetPos())
 	end
+	function ENT:OnRemove()
+		if IsValid(self.Mawdel) then
+			self.Mawdel:Remove()
+		end
+	end
 end

@@ -67,7 +67,7 @@ if SERVER then
 	end
 
 	function ENT:BurnStuff()
-		local Up, Forward, Right, Range = self:GetUp(), self:GetForward(), self:GetRight(), 300
+		local Up, Forward, Right, Range = self:GetUp(), self:GetForward(), self:GetRight(), 500
 		local Pos = self:GetPos() + Right * 150
 
 		for i, ent in pairs(ents.FindInSphere(Pos + Right * 150, Range)) do
