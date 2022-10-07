@@ -130,6 +130,7 @@ if(SERVER)then
 					local Accepted = math.min(Missing, amt)
 					self:SetGas(Fool + Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
+					self:TurnOn()
 					return math.ceil(Accepted)
 				elseif (self:GetOreType()=="none") or (typ==self:GetOreType()) then
 					self:SetOreType(typ)
@@ -140,6 +141,7 @@ if(SERVER)then
 					local Accepted = math.min(Missing, amt)
 					self:SetOre(COre + Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
+					self:TurnOn()
 					return math.ceil(Accepted)
 				end
 			end
@@ -166,7 +168,7 @@ if(SERVER)then
 				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
 				self:SetProgress(self:GetProgress() - amt)
 				self:SetOre(self:GetOre() - amt)
-				if self:GetOre <= 0 then
+				if self:GetOre() <= 0 then
 					self:SetOreType("none")
 				end
 				return
@@ -187,7 +189,7 @@ if(SERVER)then
 		end
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
-		if self:GetOre <= 0 then
+		if self:GetOre() <= 0 then
 			self:SetOreType("none")
 		end
 	end
