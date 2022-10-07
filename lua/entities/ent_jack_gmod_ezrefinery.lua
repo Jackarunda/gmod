@@ -99,6 +99,8 @@ if(SERVER)then
 		elseif(State==STATE_RUNNING)then
 			if Alt then 
 				self:SpawnIngot()
+
+				return
 			end
 			self:TurnOff()
 		end
@@ -113,74 +115,6 @@ if(SERVER)then
 		local NewAmt = math.Clamp(self:GetGas() - amt, 0.0, self.MaxGas)
 		self:SetGas(NewAmt)
 		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
-	end
-
-	local NextRealThink, TimeSinceLastOre = 0, 0
-	function ENT:Think()
-		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
-		if NextRealThink > Time then 
-			return 
-		else
-			NextRealThink = Time + 1
-		end
-		if State == STATE_RUNNING then
-			if not OreTyp then return end
-			if self:GetOre() <= 0.0 then 
-				self:SpawnIngot() 
-
-				TimeSinceLastOre = TimeSinceLastOre + 1
-			else
-				TimeSinceLastOre = 0
-			end
-			if(TimeSinceLastOre >= 5)then self:TurnOff() end
-
-			self:ConsumeGas(.5)
-			
-			if self:GetProgress() >= self:GetOre() then
-				self:SpawnIngot()
-				return
-			else
-				local Grade = self:GetGrade()
-				local RefineAmt = math.min(Grade ^ 2, self:GetOre())
-				self:SetOre(self:GetOre())
-				self:SetProgress(self:GetProgress() + RefineAmt)
-			end
-
-		end
-	end
-	function ENT:SpawnIngot()
-		local amt = self:GetProgress()
-		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
-		
-		local pos = SelfPos
-		for _, ent in pairs(ents.FindInSphere(pos, 200)) do -- We will review this at a later date. -AdventureBoots
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
-			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
-			or ent:GetResourceType() == OreType) and (ent:GetResource() + amt <= ent.MaxResource)) then
-					
-				if ent:GetResourceType() == "generic" then
-					ent:ApplySupplyType(OreType)
-				end
-
-				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-				self:SetProgress(self:GetProgress() - amt)
-				self:SetOre(self:GetOre() - amt)
-				return
-			end
-		end
-
-		local spawnVec = self:WorldToLocal(SelfPos - Up * 2)
-		local spawnAng = Angle(0, 0, 0)
-		local ejectVec = Forward*100
-		for typ, v in pairs(JMod.RefiningTable[OreType]) do
-			local i = 1
-			timer.Simple(0.1*i, function()
-				if IsValid(self) then
-					JMod.MachineSpawnResource(self, typ, amt*v, spawnVec, spawnAng, ejectVec)
-				end
-			end)
-			i = i + 1
-		end
 	end
 
 	function ENT:TryLoadResource(typ,amt)
@@ -213,6 +147,79 @@ if(SERVER)then
 		return 0
 	end
 
+	function ENT:SpawnIngot()
+		local amt = self:GetProgress()
+		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
+		
+		if amt <= 0 then return end
+
+		local pos = SelfPos
+		for _, ent in pairs(ents.FindInSphere(pos, 200)) do
+			--print(ent, ent.GetResourceType and ent:GetResourceType())
+			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
+			or ent:GetResourceType() == OreType) and (ent:GetResource() + amt <= ent.MaxResource)) then
+					
+				if ent:GetResourceType() == "generic" then
+					ent:ApplySupplyType(OreType)
+				end
+
+				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
+				self:SetProgress(self:GetProgress() - amt)
+				self:SetOre(self:GetOre() - amt)
+				if self:GetOre <= 0 then
+					self:SetOreType("none")
+				end
+				return
+			end
+		end
+
+		local spawnVec = self:WorldToLocal(SelfPos)
+		local spawnAng = Angle(0, 0, 0)
+		local ejectVec = Forward*100
+		for typ, v in pairs(JMod.RefiningTable[OreType]) do
+			local i = 1
+			timer.Simple(0.1*i, function()
+				if IsValid(self) then
+					JMod.MachineSpawnResource(self, typ, amt*v, spawnVec, spawnAng, ejectVec)
+				end
+			end)
+			i = i + 1
+		end
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+		self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
+		if self:GetOre <= 0 then
+			self:SetOreType("none")
+		end
+	end
+
+	local TimeSinceLastOre = 0
+	function ENT:Think()
+		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
+
+		if State == STATE_RUNNING then
+			if not OreTyp then self:TurnOff() return end
+
+			self:ConsumeGas(.5)
+
+			if self:GetOre() <= 0 then
+				TimeSinceLastOre = TimeSinceLastOre + 1
+			else
+				TimeSinceLastOre = 0
+				local Grade = self:GetGrade()
+				local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
+				self:SetProgress(self:GetProgress() + RefineAmt)
+			end
+			if(TimeSinceLastOre >= 5)then self:TurnOff() end
+
+			if self:GetProgress() >= self:GetOre() then
+				self:SpawnIngot()
+			end
+		end
+		self:NextThink(Time + 1)
+
+		return true
+	end
+
 elseif(CLIENT)then
 	local GradeColors = JMod.GradeColors
 	local GradeMats = JMod.GradeMats
@@ -240,7 +247,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 
-		if DetailDraw then
+		if DetailDraw and State == STATE_RUNNING then
 
 			if Closeness < 20000 then
 				local DisplayAng = SelfAng:GetCopy()
@@ -261,7 +268,7 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("ORE REMAINING", "JMod-Display", 300, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)) .. "%", "JMod-Display", 300, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 300, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("GAS REMAINING", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(GasFrac * self.MaxGas)) .. "%", "JMod-Display", 0, 90, Color(GR, GG, GB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("ORE TYPE", "JMod-Display", 300, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
