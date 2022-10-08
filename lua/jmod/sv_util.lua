@@ -806,10 +806,8 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	if findCrate then
 		range = range or 200
 		for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(relativeSpawnPos), range)) do
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
 			if (ent:GetClass() == "ent_jack_gmod_ezcrate") then 
 				if (ent:GetResourceType() == "generic" or ent:GetResourceType() == resourceType) then
-					--print("----------------It has our resource!!!!")
 					local Accepted = ent:TryLoadResource(resourceType, amount)
 					
 					if Accepted > 0 then

@@ -9,7 +9,7 @@ ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/props_c17/FurnitureWashingmachine001a.mdl"
-ENT.Mass = 500
+ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
 ENT.EZconsumes = {
@@ -178,7 +178,7 @@ if(SERVER)then
 			local spawnVec = self:WorldToLocal(SelfPos)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward*100
-			timer.Simple(0.1*i, function()
+			timer.Simple(0.2*i, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, type, amt*modifier, spawnVec, spawnAng, ejectVec, true, 200)
 				end
