@@ -27,13 +27,13 @@ ENT.EZconsumes = {
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 200,
+	MaxDurability = 100,
 	MaxElectricity = 0,
-	MaxOre = 100,
 	MaxGas = 100
 }
 ENT.DynamicPerfSpecs = {
 	GasEffeciency = 1,
+	MaxOre = 100,
 	Armor = 1
 }
 ---
@@ -47,12 +47,12 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetAngles(Angle(0,0,0))
+		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
 		self:SetGas(100)
 		self:SetOre(0)
 		self:SetOreType("none")
-		self.NextCalcThink=0
+		self.NextCalcThink = 0
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
@@ -111,7 +111,7 @@ if(SERVER)then
 	end
 
 	function ENT:ConsumeGas(amt)
-		amt = (amt or .4)/self.GasEffeciency
+		amt = (amt or .5)/self.GasEffeciency
 		local NewAmt = math.Clamp(self:GetGas() - amt, 0.0, self.MaxGas)
 		self:SetGas(NewAmt)
 		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
@@ -210,7 +210,7 @@ if(SERVER)then
 				local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
 				self:SetProgress(self:GetProgress() + RefineAmt)
 			end
-			if(TimeSinceLastOre >= 5)then self:TurnOff() end
+			if TimeSinceLastOre >= 5 then self:TurnOff() end
 
 			if self:GetProgress() >= self:GetOre() then
 				self:ProduceResource()
