@@ -82,6 +82,7 @@ if SERVER then
 	end
 
 	function ENT:UseEffect()
+		-- bruh
 	end
 
 	-- stub

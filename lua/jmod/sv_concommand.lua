@@ -62,28 +62,15 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 end, nil, "Removes JMod radiation from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
-	--[[
-	local splad=EffectData()
-	splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*1000)
-	splad:SetScale(.5)
-	splad:SetNormal(Vector(0,0,-1))
-	util.Effect("eff_jack_gmod_efpburst",splad,true,true)
+	---[[
+	for i=1,10 do
+		local splad=EffectData()
+		splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*50)
+		splad:SetStart(ply:GetShootPos()+ply:GetAimVector()*50+Vector(0,100,0))
+		splad:SetFlags(1)
+		util.Effect("eff_jack_gmod_resource_props",splad,true,true)
+	end
 	--]]
-	--[[
-	local Eff=EffectData()
-	Tr=util.QuickTrace(ply:GetShootPos()+ply:GetAimVector()*1000,Vector(0,0,-3000))
-	Eff:SetOrigin(Tr.HitPos)
-	Eff:SetNormal(vector_up)
-	Eff:SetScale(10)
-	util.Effect("eff_jack_gmod_ezoilfiresmoke",Eff,true,true)
-	--]]
-	local SunEnt = ents.FindByClass("env_sun")[1]
-	local SkyCameraEnt = ents.FindByClass("sky_camera")[1]
-	local Vec = -(SkyCameraEnt:GetPos() - SunEnt:GetPos())
-	local Dir = Vec:GetNormalized()
-	local Ang = Dir:Angle()
-	player.GetAll()[1]:SetPos(SkyCameraEnt:GetPos())
-	player.GetAll()[1]:SetEyeAngles(Ang)
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)
