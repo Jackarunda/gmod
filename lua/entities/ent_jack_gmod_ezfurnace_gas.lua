@@ -9,7 +9,7 @@ ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/props_c17/FurnitureWashingmachine001a.mdl"
-ENT.Mass = 200
+ENT.Mass = 500
 ENT.SpawnHeight = 10
 ---
 ENT.EZconsumes = {
@@ -37,7 +37,7 @@ ENT.DynamicPerfSpecs = {
 	Armor = 1
 }
 ---
-local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
+local STATE_BROKEN,STATE_OFF,STATE_SMELTING=-1,0,1
 ---
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Gas")
@@ -56,8 +56,8 @@ if(SERVER)then
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
-			self:SetState(STATE_RUNNING)
-			self:EmitSound("snds_jack_littleignite.wav")
+			self:SetState(STATE_SMELTING)
+			self:EmitSound("snd_jack_littleignite.wav")
 			timer.Simple(0.1, function()
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 				self.SoundLoop:SetSoundLevel(50)
@@ -71,12 +71,12 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		self:SpawnIngot()
+		self:ProduceResource()
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
 
-		self:EmitSound("snds_jack_littleignite.wav")
+		self:EmitSound("snd_jack_littleignite.wav")
 	end
 
 	function ENT:Use(activator)
@@ -96,9 +96,9 @@ if(SERVER)then
 			return
 		elseif(State==STATE_OFF)then
 			self:TurnOn()
-		elseif(State==STATE_RUNNING)then
+		elseif(State==STATE_SMELTING)then
 			if Alt then 
-				self:SpawnIngot()
+				self:ProduceResource()
 
 				return
 			end
@@ -130,7 +130,9 @@ if(SERVER)then
 					local Accepted = math.min(Missing, amt)
 					self:SetGas(Fool + Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
-					self:TurnOn()
+					if self:GetState() == STATE_OFF then
+						self:TurnOn()
+					end
 					return math.ceil(Accepted)
 				elseif (self:GetOreType()=="none") or (typ==self:GetOreType()) then
 					self:SetOreType(typ)
@@ -140,8 +142,10 @@ if(SERVER)then
 					if(Missing < self.MaxOre * .1)then return 0 end
 					local Accepted = math.min(Missing, amt)
 					self:SetOre(COre + Accepted)
-					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
-					self:TurnOn()
+					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
+					if self:GetState() == STATE_OFF then
+						self:TurnOn()
+					end
 					return math.ceil(Accepted)
 				end
 			end
@@ -149,48 +153,43 @@ if(SERVER)then
 		return 0
 	end
 
-	function ENT:SpawnIngot()
+	function ENT:SpawnEffect(pos)
+		--[[local effectdata=EffectData()
+		effectdata:SetOrigin(pos)
+		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
+		effectdata:SetMagnitude(math.Rand(5,10))
+		effectdata:SetScale(math.Rand(.5,1.5))
+		effectdata:SetRadius(math.Rand(2,4))
+		util.Effect("Sparks", effectdata)]]--
+		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
+	end
+
+	function ENT:ProduceResource()
 		local amt = self:GetProgress()
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
 		
-		if amt <= 0 then return end
+		if amt <= 0 or OreType == "none" then self:SetOre(0) return end
+
+		local RefinedTable = JMod.RefiningTable[OreType]
 
 		local pos = SelfPos
-		for _, ent in pairs(ents.FindInSphere(pos, 200)) do
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
-			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
-			or ent:GetResourceType() == OreType) and (ent:GetResource() + amt <= ent.MaxResource)) then
-					
-				if ent:GetResourceType() == "generic" then
-					ent:ApplySupplyType(OreType)
-				end
-
-				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-				self:SetProgress(self:GetProgress() - amt)
-				self:SetOre(self:GetOre() - amt)
-				if self:GetOre() <= 0 then
-					self:SetOreType("none")
-				end
-				return
-			end
-		end
-
-		local spawnVec = self:WorldToLocal(SelfPos)
-		local spawnAng = Angle(0, 0, 0)
-		local ejectVec = Forward*100
-		for typ, v in pairs(JMod.RefiningTable[OreType]) do
+		for type, modifier in pairs(RefinedTable) do
 			local i = 1
+			local spawnVec = self:WorldToLocal(SelfPos)
+			local spawnAng = Angle(0, 0, 0)
+			local ejectVec = Forward*100
 			timer.Simple(0.1*i, function()
 				if IsValid(self) then
-					JMod.MachineSpawnResource(self, typ, amt*v, spawnVec, spawnAng, ejectVec)
+					JMod.MachineSpawnResource(self, type, amt*modifier, spawnVec, spawnAng, ejectVec, true, 200)
 				end
 			end)
 			i = i + 1
-		end
-		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
-		if self:GetOre() <= 0 then
-			self:SetOreType("none")
+			self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+			self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
+			self:SpawnEffect(pos)
+			if self:GetOre() <= 0 then
+				self:SetOreType("none")
+			end
 		end
 	end
 
@@ -198,7 +197,7 @@ if(SERVER)then
 	function ENT:Think()
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
 
-		if State == STATE_RUNNING then
+		if State == STATE_SMELTING then
 			if not OreTyp then self:TurnOff() return end
 
 			self:ConsumeGas(.5)
@@ -214,7 +213,7 @@ if(SERVER)then
 			if(TimeSinceLastOre >= 5)then self:TurnOff() end
 
 			if self:GetProgress() >= self:GetOre() then
-				self:SpawnIngot()
+				self:ProduceResource()
 			end
 		end
 		self:NextThink(Time + 1)
@@ -249,7 +248,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 
-		if DetailDraw and State == STATE_RUNNING then
+		if DetailDraw and State == STATE_SMELTING then
 
 			if Closeness < 20000 then
 				local DisplayAng = SelfAng:GetCopy()

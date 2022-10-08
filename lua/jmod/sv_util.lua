@@ -801,7 +801,28 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 	ent.block_pickup = isblock
 end
 
-function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector)
+function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
+	if amount <= 0 then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
+	if findCrate then
+		range = range or 200
+		for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(relativeSpawnPos), range)) do
+			--print(ent, ent.GetResourceType and ent:GetResourceType())
+			if (ent:GetClass() == "ent_jack_gmod_ezcrate") then 
+				if (ent:GetResourceType() == "generic" or ent:GetResourceType() == resourceType) then
+					--print("----------------It has our resource!!!!")
+					local Accepted = ent:TryLoadResource(resourceType, amount)
+					
+					if Accepted > 0 then
+						amount = amount - Accepted
+						if amount <= 0 then 
+						
+							return 
+						end
+					end
+				end
+			end
+		end
+	end
 	local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 	Resource:SetPos(machine:LocalToWorld(relativeSpawnPos))
 	Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))

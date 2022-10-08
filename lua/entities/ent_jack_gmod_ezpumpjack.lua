@@ -151,7 +151,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
 			if alt then
-				self:SpawnBarrel()
+				self:ProduceResource()
 
 				return
 			end
@@ -201,7 +201,7 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						-- Spawn barrel
 						local amtToPump = math.min(self:GetProgress(), 100)
-						self:SpawnBarrel(amtToPump)
+						self:ProduceResource(amtToPump)
 						self:SetProgress(self:GetProgress() - amtToPump)
 					end
 				else
@@ -209,7 +209,7 @@ if(SERVER)then
 
 					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-						self:SpawnBarrel(amtToPump)
+						self:ProduceResource(amtToPump)
 						self:SetProgress(self:GetProgress() - amtToPump)
 						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
@@ -220,29 +220,12 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:SpawnBarrel(amt)
+	function ENT:ProduceResource(amt)
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
 		
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
-		for _, ent in pairs(ents.FindInSphere(pos, 200)) do -- We will review this at a later date. -AdventureBoots
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
-			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
-			or ent:GetResourceType() == Typ) and (ent:GetResource() + amt <= ent.MaxResource)) then
-					
-				if ent:GetResourceType() == "generic" then
-					ent:ApplySupplyType(Typ)
-				end
-
-				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-				self:SetProgress(self:GetProgress() - amt)
-				return
-			end
-		end
-
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
-		local spawnAng = Angle(0,0,-90)
-		local ejectVec = Forward*500
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
 	end
 
 	function ENT:OnDestroy(dmginfo)

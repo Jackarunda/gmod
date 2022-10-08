@@ -66,7 +66,7 @@ if(SERVER)then
 			self:TurnOn()
 		elseif(State==STATE_ON)then
 			if(alt)then
-				self:ProducePower()
+				self:ProduceResource()
 				return
 			end
 			self:TurnOff()
@@ -84,29 +84,14 @@ if(SERVER)then
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
-	function ENT:ProducePower()
+	function ENT:ProduceResource()
 		local SelfPos,Up,Forward,Right = self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
 		local amt = math.min(math.floor(self:GetProgress()), self.MaxPower)
 
-		if (amt <= 0) then return end
+		if amt <= 0 then return end
 
 		local pos = SelfPos + Forward*15 - Up*25 - Right*2
-		for _, ent in pairs(ents.FindInSphere(pos, 100)) do -- We will review this at a later date. -AdventureBoots
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
-			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
-			or ent:GetResourceType() == "power") and (ent:GetResource() + amt <= ent.MaxResource)) then
-					
-				if ent:GetResourceType() == "generic" then
-					ent:ApplySupplyType("power")
-				end
-
-				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-				self:SetProgress(self:GetProgress() - amt)
-				self:SpawnEffect(pos)
-				return
-			end
-		end
-		JMod.MachineSpawnResource(self, "power", amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 		self:SpawnEffect(pos)
 	end
@@ -146,7 +131,7 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:EmitSound("buttons/button18.wav", 60, 80)
-		self:ProducePower()
+		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)
 		self.NextUse = CurTime() + 1
@@ -211,7 +196,7 @@ if(SERVER)then
 			end
 
 			if self:GetProgress() >= self.MaxPower then
-				self:ProducePower()
+				self:ProduceResource()
 			end
 
 			self:NextThink(CurTime() + 5)
