@@ -63,16 +63,10 @@ end, nil, "Removes JMod radiation from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
 	---[[
-	for i=1,10 do
-		local splad=EffectData()
-		splad:SetOrigin(ply:GetShootPos()+ply:GetAimVector()*50)
-		splad:SetStart(ply:GetShootPos()+ply:GetAimVector()*50+Vector(0,100,0))
-		splad:SetFlags(1)
-		util.Effect("eff_jack_gmod_resource_props",splad,true,true)
-	end
-	--]]
+	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.AMMO, ply:GetShootPos() + ply:GetAimVector() * 50, ply:GetShootPos() + ply:GetAimVector() * 50 + Vector(0, 100, 0), 1, 1, 1.1)
 end)
 
+--]]
 concommand.Add("jmod_debug_killme", function(ply)
 	if not IsValid(ply) then return end
 	if not GetConVar("sv_cheats"):GetBool() then return end

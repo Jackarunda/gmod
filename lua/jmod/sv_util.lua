@@ -251,8 +251,8 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
 					local DmgMul = 1
 
-					if BulletsFired > 200 then
-						DmgMul = 2
+					if BulletsFired > 500 then
+						DmgMul = 5
 					end
 
 					local firer = (IsValid(shooter) and shooter) or game.GetWorld()
@@ -267,7 +267,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 						Dir = Dir,
 						Spread = Spred,
 						AmmoType = "Buckshot" -- for identification as "fragments"
-						
+
 					})
 
 					BulletsFired = BulletsFired + 1
@@ -828,14 +828,50 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	JMod.Owner(machine.Owner)
 	Resource:SetResource(math.Round(amount))
 	Resource:Activate()
-	local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
+	-- local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
 	Resource:GetPhysicsObject():SetVelocity(ejectionVector)
-
+	--[[
 	timer.Simple(1, function()
 		if IsValid(Resource) then
 			constraint.RemoveConstraints(Resource, "NoCollide")
 		end
 	end)
+	--]]
+end
+
+local LiquidResourceTypes = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.COOLANT, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.CHEMICALS, JMod.EZ_RESOURCE_TYPES.FUEL}
+
+local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.PAPER, JMod.EZ_RESOURCE_TYPES.ANTIMATTER, JMod.EZ_RESOURCE_TYPES.PROPELLANT, JMod.EZ_RESOURCE_TYPES.CLOTH}
+
+function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale)
+	amt = amt or 1
+	spread = spread or 1
+	scale = scale or 1
+
+	for i = 1, 10 * amt do
+		local whee = EffectData()
+		whee:SetOrigin(fromPoint)
+		whee:SetStart(toPoint)
+		whee:SetFlags(JMod.ResourceToIndex[typ])
+		whee:SetMagnitude(spread)
+		whee:SetScale(scale)
+
+		if toPoint then
+			whee:SetSurfaceProp(1) -- we have somewhere to go
+		else
+			whee:SetSurfaceProp(0) -- just do a directionless explosion of particles
+		end
+
+		if typ == JMod.EZ_RESOURCE_TYPES.POWER then
+			util.Effect("eff_jack_gmod_resource_sparks", whee, true, true)
+		elseif table.HasValue(LiquidResourceTypes, typ) then
+			util.Effect("eff_jack_gmod_resource_liquid", whee, true, true)
+		elseif table.HasValue(SpriteResourceTypes, typ) then
+			util.Effect("eff_jack_gmod_resource_sprites", whee, true, true)
+		else
+			util.Effect("eff_jack_gmod_resource_props", whee, true, true)
+		end
+	end
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

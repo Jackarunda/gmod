@@ -65,6 +65,15 @@ JMod.EZ_RESOURCE_TYPES = {
 	ANTIMATTER = "antimatter"
 }
 
+JMod.ResourceToIndex = {}
+JMod.IndexToResource = {}
+
+for keyNumber, keyName in pairs(table.GetKeys(JMod.EZ_RESOURCE_TYPES)) do
+	local value = JMod.EZ_RESOURCE_TYPES[keyName]
+	JMod.ResourceToIndex[value] = keyNumber
+	JMod.IndexToResource[keyNumber] = value
+end
+
 JMod.EZ_RESOURCE_TYPE_ICONS = {}
 JMod.EZ_RESOURCE_TYPE_ICONS_SMOL = {}
 
@@ -164,23 +173,23 @@ JMod.RefiningTable = {
 PrintTable(JMod.RefiningTable)
 
 -- EZ item quality grade (upgrade level) definitions
-JMod.EZ_GRADE_BASIC=1
-JMod.EZ_GRADE_COPPER=2
-JMod.EZ_GRADE_SILVER=3
-JMod.EZ_GRADE_GOLD=4
-JMod.EZ_GRADE_PLATINUM=5
-JMod.EZ_GRADE_BUFFS={1,1.25,1.5,1.75,2}
-JMod.EZ_GRADE_NAMES={"basic","copper","silver","gold","platinum"}
-JMod.EZ_GRADE_COLORS={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-JMod.EZ_GRADE_MATS={
-	Material("phoenix_storms/metal"),
-	Material("models/mat_jack_gmod_copper"),
-	Material("models/mat_jack_gmod_silver"),
-	Material("models/mat_jack_gmod_gold"),
-	Material("models/mat_jack_gmod_platinum")
-}
-JMod.EZ_GRADE_UPGRADE_COSTS={.5,1,1.5,2}
-JMod.EZ_UPGRADE_RESOURCE_BLACKLIST={}
+JMod.EZ_GRADE_BASIC = 1
+JMod.EZ_GRADE_COPPER = 2
+JMod.EZ_GRADE_SILVER = 3
+JMod.EZ_GRADE_GOLD = 4
+JMod.EZ_GRADE_PLATINUM = 5
+
+JMod.EZ_GRADE_BUFFS = {1, 1.25, 1.5, 1.75, 2}
+
+JMod.EZ_GRADE_NAMES = {"basic", "copper", "silver", "gold", "platinum"}
+
+JMod.EZ_GRADE_COLORS = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
+
+JMod.EZ_GRADE_MATS = {Material("phoenix_storms/metal"), Material("models/mat_jack_gmod_copper"), Material("models/mat_jack_gmod_silver"), Material("models/mat_jack_gmod_gold"), Material("models/mat_jack_gmod_platinum")}
+
+JMod.EZ_GRADE_UPGRADE_COSTS = {.5, 1, 1.5, 2}
+
+JMod.EZ_UPGRADE_RESOURCE_BLACKLIST = {}
 
 JMod.EZ_GRADE_BUFFS = {1, 1.25, 1.5, 1.75, 2}
 
