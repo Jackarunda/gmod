@@ -33,12 +33,11 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetAngles(Angle(0,0,-90))
+		self:SetAngles(Angle(0, 0, -90))
 		self:SetProgress(0)
 		self:SetState(STATE_OFF)
-		self.NextCalcThink=0
-		self.DepositKey=0
-		self:TryPlace()
+		self.DepositKey = 0
+		self:TryPlace() 
 	end
 
 	function ENT:UpdateDepositKey()
@@ -98,7 +97,7 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				JMod.Hint(self.Owner,"oil derrick")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
+				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
 					self:TurnOn(self.Owner)
 				else
@@ -114,7 +113,6 @@ if(SERVER)then
 			self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 			self.SoundLoop:SetSoundLevel(65)
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(65)
 			self.WellPos = SelfPos + Forward * 120 - Right * 95
 			self:SetProgress(0)
 		else
@@ -158,65 +156,67 @@ if(SERVER)then
 			self:TurnOff()
 		end
 	end
+
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
+
 	function ENT:Think()
-		local State,Time=self:GetState(),CurTime()
-		if(self.NextCalcThink<Time)then
-			self.NextCalcThink=Time+1
-			if(State==STATE_BROKEN)then
-				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				if(self:GetElectricity()>0)then
-					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
-				end
-			elseif(State==STATE_RUNNING)then
-				if not IsValid(self.Weld) then
-					self.DepositKey = nil
-					self.WellPos = nil
-					self.Weld = nil
-					self:TurnOff()
+		local State, Time = self:GetState(), CurTime()
+		if State == STATE_BROKEN then
+			if self.SoundLoop then self.SoundLoop:Stop() end
 
-					return
-				end
-
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
-					self:TurnOff()
-
-					return
-				end
-
-				self:ConsumeElectricity(.5)
-				-- This is just the rate at which we pump
-				local pumpRate = self.PumpRate^2
-				-- Here's where we do the rescource deduction, and barrel production
-				-- If it's a flow (i.e. water)
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
-					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-					-- and set the progress to what it was last tick + our ability * the flowrate
-					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
-
-					-- If the progress exceeds 100
-					if self:GetProgress() >= 100 then
-						-- Spawn barrel
-						local amtToPump = math.min(self:GetProgress(), 100)
-						self:ProduceResource(amtToPump)
-						self:SetProgress(self:GetProgress() - amtToPump)
-					end
-				else
-					self:SetProgress(self:GetProgress() + pumpRate)
-
-					if self:GetProgress() >= 100 then
-						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-						self:ProduceResource(amtToPump)
-						self:SetProgress(self:GetProgress() - amtToPump)
-						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
-					end
-				end
-
-				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
+			if self:GetElectricity() > 0 then
+				if math.random(1, 4) == 2 then JMod.DamageSpark(self) end
 			end
+
+			return
+		elseif State == STATE_RUNNING then
+			if not IsValid(self.Weld) then
+				self.DepositKey = nil
+				self.WellPos = nil
+				self.Weld = nil
+				self:TurnOff()
+
+				return
+			end
+
+			if not JMod.NaturalResourceTable[self.DepositKey] then 
+				self:TurnOff()
+
+				return
+			end
+
+			self:ConsumeElectricity(.2)
+			-- This is just the rate at which we pump
+			local pumpRate = self.PumpRate^2
+			-- Here's where we do the rescource deduction, and barrel production
+			-- If it's a flow (i.e. water)
+			if JMod.NaturalResourceTable[self.DepositKey].rate then
+				-- We get the rate
+				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				-- and set the progress to what it was last tick + our ability * the flowrate
+				self:SetProgress(self:GetProgress() + pumpRate * flowRate)
+
+				-- If the progress exceeds 100
+				if self:GetProgress() >= 100 then
+					-- Spawn barrel
+					local amtToPump = math.min(self:GetProgress(), 100)
+					self:ProduceResource(amtToPump)
+					self:SetProgress(self:GetProgress() - amtToPump)
+				end
+			else
+				self:SetProgress(self:GetProgress() + pumpRate)
+
+				if self:GetProgress() >= 100 then
+					local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+					self:ProduceResource(amtToPump)
+					self:SetProgress(self:GetProgress() - amtToPump)
+					JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
+				end
+			end
+
+			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
 	end
 

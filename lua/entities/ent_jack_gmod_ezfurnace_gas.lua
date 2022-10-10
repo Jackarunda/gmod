@@ -29,11 +29,11 @@ ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 0,
+	MaxOre = 100,
 	MaxGas = 100
 }
 ENT.DynamicPerfSpecs = {
 	GasEffeciency = 1,
-	MaxOre = 100,
 	Armor = 1
 }
 ---
@@ -52,7 +52,6 @@ if(SERVER)then
 		self:SetGas(100)
 		self:SetOre(0)
 		self:SetOreType("none")
-		self.NextCalcThink = 0
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
@@ -85,7 +84,7 @@ if(SERVER)then
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.Owner(self,activator)
 		if(IsValid(self.Owner))then
-			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
+			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
 			end
 		end
