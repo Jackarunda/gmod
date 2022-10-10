@@ -1,7 +1,27 @@
 ﻿local ModelPool = {
-	[JMod.EZ_RESOURCE_TYPES.AMMO] = {"models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"}
+	[JMod.EZ_RESOURCE_TYPES.AMMO] = {"models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.COAL] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.LEADORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.STEEL] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.LEAD] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.COPPER] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.TITANIUM] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.SILVER] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.GOLD] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.URANIUM] = {"models/props_mining/ingot001.mdl"},
+	[JMod.EZ_RESOURCE_TYPES.PLATINUM] = {"models/props_mining/ingot001.mdl"}
 }
-
 function EFFECT:Init(data)
 	self.ResourceType = JMod.IndexToResource[data:GetFlags()]
 	self.Origin = data:GetOrigin()
