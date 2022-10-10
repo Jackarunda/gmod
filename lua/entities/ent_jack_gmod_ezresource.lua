@@ -138,7 +138,8 @@ if SERVER then
 
 				if Used > 0 then
 					self:SetResource(Resource - Used)
-					self:UseEffect(data.HitPos, data.HitEntity)
+					--self:UseEffect(data.HitPos, data.HitEntity)
+					JMod.ResourceEffect(self.EZsupplies, self:GetPos(), data.HitEntity:GetPos(), Used, 0.02, 0.3)
 
 					if Used >= Resource then
 						self.Loaded = true

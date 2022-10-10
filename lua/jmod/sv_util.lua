@@ -812,7 +812,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 					
 					if Accepted > 0 then
 						local entPos = ent:LocalToWorld(ent:OBBCenter())
-						JMod.ResourceEffect(resourceType, relativeSpawnPos, entPos, Accepted, 1, 0.5)
+						JMod.ResourceEffect(resourceType, relativeSpawnPos, entPos, Accepted, 1, 1)
 						amount = amount - Accepted
 						if amount <= 0 then 
 						
