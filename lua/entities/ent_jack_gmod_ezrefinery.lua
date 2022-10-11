@@ -1,7 +1,6 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
-ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Gas Furnace"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
@@ -13,49 +12,35 @@ ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
 ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.GAS,
-	JMod.EZ_RESOURCE_TYPES.IRONORE,
-	JMod.EZ_RESOURCE_TYPES.LEADORE,
-	JMod.EZ_RESOURCE_TYPES.ALUMINUMORE,
-	JMod.EZ_RESOURCE_TYPES.COPPERORE,
-	JMod.EZ_RESOURCE_TYPES.TUNGSTENORE,
-	JMod.EZ_RESOURCE_TYPES.TITANIUMORE,
-	JMod.EZ_RESOURCE_TYPES.SILVERORE,
-	JMod.EZ_RESOURCE_TYPES.GOLDORE,
-	JMod.EZ_RESOURCE_TYPES.PLATINUMORE
+	JMod.EZ_RESOURCE_TYPES.OIL,
+	JMod.EZ_RESOURCE_TYPES.POWER
 }
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 0,
-	MaxOre = 100,
-	MaxGas = 100
+	MaxOil = 100
 }
 ENT.DynamicPerfSpecs = {
-	GasEffeciency = 1,
+	ElectricalEffeciency = 1,
+	MaxElectricity = 100,
 	Armor = 1
 }
 ---
-local STATE_BROKEN,STATE_OFF,STATE_SMELTING=-1,0,1
+local STATE_BROKEN, STATE_OFF, STATE_REFINING = -1, 0, 1
 ---
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "Gas")
-	self:NetworkVar("Float", 2, "Progress")
-	self:NetworkVar("Float", 3, "Ore")
-	self:NetworkVar("String", 0, "OreType")
+	self:NetworkVar("Float", 1, "Progress")
 end
 if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
-		self:SetGas(100)
-		self:SetOre(0)
-		self:SetOreType("none")
+		self:SetOil(0)
 	end
 	function ENT:TurnOn(activator)
-		if self:GetGas() > 0 and self:GetOre() > 0 then
-			self:SetState(STATE_SMELTING)
+		if self:GetElectricity() > 0 and self:GetOil() > 0 then
+			self:SetState(STATE_REFINING)
 			self:EmitSound("snd_jack_littleignite.wav")
 			timer.Simple(0.1, function()
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
@@ -95,7 +80,7 @@ if(SERVER)then
 			return
 		elseif(State==STATE_OFF)then
 			self:TurnOn()
-		elseif(State==STATE_SMELTING)then
+		elseif(State==STATE_REFINING)then
 			if Alt then 
 				self:ProduceResource()
 
@@ -129,11 +114,11 @@ if(SERVER)then
 
 	function ENT:ProduceResource()
 		local amt = self:GetProgress()
-		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
+		local SelfPos, Forward, Up, Right = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight()
 		
-		if amt <= 0 or OreType == "none" then self:SetOre(0) return end
+		if amt <= 0 then return end
 
-		local RefinedTable = JMod.RefiningTable[OreType]
+		local RefinedTable = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.OIL]
 
 		local pos = SelfPos
 		for type, modifier in pairs(RefinedTable) do
@@ -148,34 +133,30 @@ if(SERVER)then
 			end)
 			i = i + 1
 			self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-			self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
+			self:SetOil(math.Clamp(self:GetOil() - amt, 0, self.MaxOil))
 			self:SpawnEffect(pos)
-			if self:GetOre() <= 0 then
-				self:SetOreType("none")
-			end
 		end
 	end
 
-	local TimeSinceLastOre = 0
+	local IdleThinkTime = 0
 	function ENT:Think()
-		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
+		local State, Time = self:GetState(), CurTime()
 
-		if State == STATE_SMELTING then
-			if not OreTyp then self:TurnOff() return end
+		if State == STATE_REFINING then
 
-			self:ConsumeGas(.5)
+			self:ConsumeElectricity(.5)
 
-			if self:GetOre() <= 0 then
-				TimeSinceLastOre = TimeSinceLastOre + 1
+			if self:GetOil() <= 0 then
+				IdleThinkTime = IdleThinkTime + 1
 			else
-				TimeSinceLastOre = 0
+				IdleThinkTime = 0
 				local Grade = self:GetGrade()
-				local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
+				local RefineAmt = math.min(Grade ^ 2, self:GetOil() - self:GetProgress())
 				self:SetProgress(self:GetProgress() + RefineAmt)
 			end
-			if TimeSinceLastOre >= 5 then self:TurnOff() end
+			if IdleThinkTime >= 10 then self:TurnOff() end
 
-			if self:GetProgress() >= self:GetOre() then
+			if self:GetProgress() >= self:GetOil() then
 				self:ProduceResource()
 			end
 		end
@@ -205,13 +186,13 @@ elseif(CLIENT)then
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
 		if (not(DetailDraw))and(Obscured) then return end -- if player is far and sentry is obscured, draw nothing
-		if Obscured then DetailDraw=false end -- if obscured, at least disable details
-		if State == STATE_BROKEN then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if Obscured then DetailDraw = false end -- if obscured, at least disable details
+		if State == STATE_BROKEN then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
 
-		if DetailDraw and State == STATE_SMELTING then
+		if DetailDraw and State == STATE_REFINING then
 
 			if Closeness < 20000 then
 				local DisplayAng = SelfAng:GetCopy()
@@ -220,23 +201,21 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 66)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
-				local OreFrac = self:GetOre() / self.MaxOre
-				local GasFrac = self:GetGas() / self.MaxGas
+				local ElecFrac = self:GetElectricity() / self.MaxElectricity
+				local Oilfrac = self:GetOil() / self.MaxOil
 				local R, G, B = JMod.GoodBadColor(ProFrac)
-				local OR, OG, OB = JMod.GoodBadColor(OreFrac)
-				local GR, GG, GB = JMod.GoodBadColor(GasFrac)
+				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
+				local OR, OG, OB = JMod.GoodBadColor(OilFrac)
 				cam.Start3D2D(SelfPos + Up * 25 + Right * 12 - Forward * 8, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(420, 0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 485, 65, 118, Opacity + 50)
 					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("ORE REMAINING", "JMod-Display", 300, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 300, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("GAS REMAINING", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(GasFrac * self.MaxGas)) .. "%", "JMod-Display", 0, 90, Color(GR, GG, GB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("ORE TYPE", "JMod-Display", 300, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 300, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * self.MaxElectricity)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("OIL", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(OilFrac * self.MaxOil)) .. "%", "JMod-Display", 0, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
