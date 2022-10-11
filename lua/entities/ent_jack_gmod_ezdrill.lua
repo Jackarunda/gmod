@@ -13,7 +13,7 @@ ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
 ENT.Mass = 1000
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 200
+	MaxElectricity = 100
 }
 ENT.DynamicPerfSpecs = {
 	Armor = 2
@@ -69,10 +69,10 @@ if(SERVER)then
 		if(ClosestDeposit)then 
 			self.DepositKey = ClosestDeposit 
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
-			print("Our deposit is "..self.DepositKey) --DEBUG
+			--print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
 			self.DepositKey = 0 
-			print("No valid deposit") --DEBUG
+			--print("No valid deposit") --DEBUG
 		end
 	end
 
@@ -242,7 +242,7 @@ elseif(CLIENT)then
 				local Opacity = math.random(50,150)
 				cam.Start3D2D(SelfPos, DisplayAng, .1)
 				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ElecFrac=self:GetElectricity()/self.MaxElectricity
+				local ElecFrac=self:GetElectricity()/100
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))

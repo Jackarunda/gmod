@@ -11,7 +11,7 @@ ENT.Model = "models/props_c17/furnitureboiler001a.mdl"
 ENT.Mass = 200
 --
 ENT.MaxDurability = 50
-ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.MaxPower = 100
 --
 ENT.StaticPerfSpecs = {
@@ -33,7 +33,7 @@ if(SERVER)then
 	function ENT:SpawnFunction(ply,tr,ClassName)
 		local ent=ents.Create(ClassName)
 		ent:SetPos(tr.HitPos + tr.HitNormal*25)
-		ent:SetAngles(Angle(90, 90, 0))
+		ent:SetAngles(Angle(0, 0, 0))
 		JMod.Owner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
@@ -166,12 +166,12 @@ elseif CLIENT then
 				local Opacity = math.random(50, 150)
 				local ElecFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ElecFrac)
-				cam.Start3D2D(SelfPos - Up * 35 - Forward * 20 - Right * 30, DisplayAng, .1)
+				cam.Start3D2D(SelfPos + Up * 5 - Forward * 20 - Right, DisplayAng, .1)
 				surface.SetDrawColor(10,10,10,Opacity+50)
-				surface.DrawRect(390,80,128,128)
-				JMod.StandardRankDisplay(Grade,452,148,118,Opacity+50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				surface.DrawRect(190,  0, 128, 128)
+				JMod.StandardRankDisplay(Grade, 252, 68, 118, Opacity + 50)
+				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
