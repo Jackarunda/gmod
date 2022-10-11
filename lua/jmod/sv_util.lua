@@ -803,42 +803,46 @@ end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
 	if amount <= 0 then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
-	if findCrate then
-		range = range or 200
-		for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(relativeSpawnPos), range)) do
-			if (ent:GetClass() == "ent_jack_gmod_ezcrate") then 
-				if (ent:GetResourceType() == "generic" or ent:GetResourceType() == resourceType) then
-					local Accepted = ent:TryLoadResource(resourceType, amount)
-					
-					if Accepted > 0 then
-						local entPos = ent:LocalToWorld(ent:OBBCenter())
-						JMod.ResourceEffect(resourceType, relativeSpawnPos, entPos, Accepted, 1, 1)
-						amount = amount - Accepted
-						if amount <= 0 then 
+	for i = 1, math.ceil(amount/100) do
+		if findCrate then
+			range = range or 200
+			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(relativeSpawnPos), range)) do
+				if (ent:GetClass() == "ent_jack_gmod_ezcrate") then 
+					if (ent:GetResourceType() == "generic" or ent:GetResourceType() == resourceType) then
+						local Accepted = ent:TryLoadResource(resourceType, amount)
 						
-							return 
+						if Accepted > 0 then
+							local entPos = ent:LocalToWorld(ent:OBBCenter())
+							JMod.ResourceEffect(resourceType, relativeSpawnPos, entPos, Accepted, 1, 1)
+							amount = amount - Accepted
+							if amount <= 0 then 
+							
+								return
+							end
 						end
 					end
 				end
 			end
 		end
+		local SpawnAmount = math.min(amount, 100)
+		local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
+		Resource:SetPos(machine:LocalToWorld(relativeSpawnPos))
+		Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
+		Resource:Spawn()
+		JMod.Owner(machine.Owner)
+		Resource:SetResource(math.Round(SpawnAmount))
+		Resource:Activate()
+		-- local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
+		Resource:GetPhysicsObject():SetVelocity(ejectionVector)
+		--[[
+		timer.Simple(1, function()
+			if IsValid(Resource) then
+				constraint.RemoveConstraints(Resource, "NoCollide")
+			end
+		end)
+		--]]
+		amount = amount - SpawnAmount
 	end
-	local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
-	Resource:SetPos(machine:LocalToWorld(relativeSpawnPos))
-	Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
-	Resource:Spawn()
-	JMod.Owner(machine.Owner)
-	Resource:SetResource(math.Round(amount))
-	Resource:Activate()
-	-- local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
-	Resource:GetPhysicsObject():SetVelocity(ejectionVector)
-	--[[
-	timer.Simple(1, function()
-		if IsValid(Resource) then
-			constraint.RemoveConstraints(Resource, "NoCollide")
-		end
-	end)
-	--]]
 end
 
 local LiquidResourceTypes = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.COOLANT, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.CHEMICALS, JMod.EZ_RESOURCE_TYPES.FUEL}

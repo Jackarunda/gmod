@@ -166,11 +166,11 @@ JMod.RefiningTable = {
 		[JMod.EZ_RESOURCE_TYPES.PLATINUM] = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 1.5,
-		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5
+		[JMod.EZ_RESOURCE_TYPES.FUEL] = 1.2,
+		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 1,
+		[JMod.EZ_RESOURCE_TYPES.GAS] = .2
 	}
 }
-PrintTable(JMod.RefiningTable)
 
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC = 1

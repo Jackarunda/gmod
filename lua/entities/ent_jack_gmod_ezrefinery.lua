@@ -1,13 +1,13 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
-ENT.PrintName = "EZ Gas Furnace"
+ENT.PrintName = "EZ Oil Refinery"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/props_c17/FurnitureWashingmachine001a.mdl"
+ENT.Model = "models/props_wasteland/laundry_washer003.mdl"
 ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
@@ -31,6 +31,7 @@ local STATE_BROKEN, STATE_OFF, STATE_REFINING = -1, 0, 1
 ---
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("Float", 2, "Oil")
 end
 if(SERVER)then
 	function ENT:CustomInit()
@@ -138,6 +139,12 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == JMod.EZ_RESOURCE_ENTITIES.OIL then
+			self:TurnOn()
+		end
+	end
+
 	local IdleThinkTime = 0
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
@@ -197,25 +204,25 @@ elseif(CLIENT)then
 			if Closeness < 20000 then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 66)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
-				local Oilfrac = self:GetOil() / self.MaxOil
+				local OilFrac = self:GetOil() / self.MaxOil
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
 				local OR, OG, OB = JMod.GoodBadColor(OilFrac)
-				cam.Start3D2D(SelfPos + Up * 25 + Right * 12 - Forward * 8, DisplayAng, .05)
+				cam.Start3D2D(SelfPos + Up * 25 + Forward * 24 - Right * 12, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
-					surface.DrawRect(420, 0, 128, 128)
-					JMod.StandardRankDisplay(Grade, 485, 65, 118, Opacity + 50)
+					surface.DrawRect(220, 0, 128, 128)
+					JMod.StandardRankDisplay(Grade, 285, 65, 118, Opacity + 50)
 					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * self.MaxElectricity)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("OIL", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(OilFrac * self.MaxOil)) .. "%", "JMod-Display", 0, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("OIL", "JMod-Display", 150, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(OilFrac * self.MaxOil)) .. "%", "JMod-Display", 150, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
