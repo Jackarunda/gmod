@@ -13,7 +13,7 @@ ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
 ENT.Mass = 1000
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 200
+	MaxElectricity = 100
 }
 ENT.DynamicPerfSpecs = {
 	Armor = 2
@@ -69,10 +69,10 @@ if(SERVER)then
 		if(ClosestDeposit)then 
 			self.DepositKey = ClosestDeposit 
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
-			print("Our deposit is "..self.DepositKey) --DEBUG
+			--print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
 			self.DepositKey = 0 
-			print("No valid deposit") --DEBUG
+			--print("No valid deposit") --DEBUG
 		end
 	end
 
@@ -248,7 +248,7 @@ elseif(CLIENT)then
                     local ExtractCol=Color(100,255,100,Opacity)
                     draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-                    local ElecFrac=self:GetElectricity()/200
+                    local ElecFrac=self:GetElectricity()/100
                     local R,G,B=JMod.GoodBadColor(ElecFrac)
                     draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
@@ -258,6 +258,18 @@ elseif(CLIENT)then
                     --draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     --local R,G,B=JMod.GoodBadColor(CoolFrac)
                     --draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.Start3D2D(SelfPos, DisplayAng, .1)
+				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ElecFrac=self:GetElectricity()/100
+				local R,G,B=JMod.GoodBadColor(ElecFrac)
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				local ProgressFrac=self:GetProgress()/100
+				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				--local CoolFrac=self:GetCoolant()/100
+				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				--local R,G,B=JMod.GoodBadColor(CoolFrac)
+				--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end
