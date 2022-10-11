@@ -223,7 +223,7 @@ elseif(CLIENT)then
 	end
 	function ENT:Draw()
 		self:DrawModel()
-		local Up, Right, Forward = self:GetUp(), self:GetRight(), self:GetForward()
+		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		--
 		local BasePos=SelfPos+Up*32
@@ -237,21 +237,27 @@ elseif(CLIENT)then
 			if Closeness < 20000 and State == STATE_RUNNING then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50,150)
-				cam.Start3D2D(SelfPos, DisplayAng, .1)
-				draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ProgressFrac=self:GetProgress()/100
-				draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				--local CoolFrac=self:GetCoolant()/100
-				--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				--local R,G,B=JMod.GoodBadColor(CoolFrac)
-				--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.Start3D2D(SelfPos+Up*40-Right*26-Forward*12, DisplayAng, .1)
+                    surface.SetDrawColor(10, 10, 10, Opacity + 50)
+                    surface.DrawRect(184, -200, 128, 128)
+                    JMod.StandardRankDisplay(Grade, 248, -140, 118, Opacity + 50)
+                    draw.SimpleTextOutlined("EXTRACTING","JMod-Display",250,-60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    local ExtractCol=Color(100,255,100,Opacity)
+                    draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    local ElecFrac=self:GetElectricity()/200
+                    local R,G,B=JMod.GoodBadColor(ElecFrac)
+                    draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    local ProgressFrac=self:GetProgress()/100
+                    draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    --local CoolFrac=self:GetCoolant()/100
+                    --draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+                    --local R,G,B=JMod.GoodBadColor(CoolFrac)
+                    --draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end
