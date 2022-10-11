@@ -122,6 +122,7 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
+		self:ProduceResource(self:GetProgress())
 
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -149,7 +150,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
 			if alt then
-				self:ProduceResource()
+				self:ProduceResource(self:GetProgress())
 
 				return
 			end
@@ -223,6 +224,8 @@ if(SERVER)then
 	function ENT:ProduceResource(amt)
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
 		
+		if amt <= 0 then return end
+
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
