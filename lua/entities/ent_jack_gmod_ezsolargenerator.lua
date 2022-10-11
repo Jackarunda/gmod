@@ -265,5 +265,5 @@ elseif CLIENT then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_solargenerator", "EZ Solar Panel")
+	language.Add("ent_jack_gmod_ezsolargenerator", "EZ Solar Panel")
 end
