@@ -146,7 +146,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif State == STATE_RUNNING then
 			if alt then
-				self:ProduceResource()
+				self:ProduceResource(self:GetProgress())
 
 				return
 			end
