@@ -267,7 +267,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 						Dir = Dir,
 						Spread = Spred,
 						AmmoType = "Buckshot" -- for identification as "fragments"
-
+						
 					})
 
 					BulletsFired = BulletsFired + 1
@@ -636,7 +636,7 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
-	local Gaymode, PlayerToCheck, InVehicle, TeamToCheck = engine.ActiveGamemode(), nil, false, nil
+	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
 
 	if ent:IsPlayer() then
 		PlayerToCheck = ent
@@ -829,29 +829,33 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale)
 	spread = spread or 1
 	scale = scale or 1
 
-	for i = 1, 10 * amt do
-		local whee = EffectData()
-		whee:SetOrigin(fromPoint)
-		whee:SetStart(toPoint)
-		whee:SetFlags(JMod.ResourceToIndex[typ])
-		whee:SetMagnitude(spread)
-		whee:SetScale(scale)
+	for j = 0, 2 * amt do
+		timer.Simple(j / 20, function()
+			for i = 1, 10 * amt do
+				local whee = EffectData()
+				whee:SetOrigin(fromPoint)
+				whee:SetStart(toPoint)
+				whee:SetFlags(JMod.ResourceToIndex[typ])
+				whee:SetMagnitude(spread)
+				whee:SetScale(scale)
 
-		if toPoint then
-			whee:SetSurfaceProp(1) -- we have somewhere to go
-		else
-			whee:SetSurfaceProp(0) -- just do a directionless explosion of particles
-		end
+				if toPoint then
+					whee:SetSurfaceProp(1) -- we have somewhere to go
+				else
+					whee:SetSurfaceProp(0) -- just do a directionless explosion of particles
+				end
 
-		if typ == JMod.EZ_RESOURCE_TYPES.POWER then
-			util.Effect("eff_jack_gmod_resource_sparks", whee, true, true)
-		elseif table.HasValue(LiquidResourceTypes, typ) then
-			util.Effect("eff_jack_gmod_resource_liquid", whee, true, true)
-		elseif table.HasValue(SpriteResourceTypes, typ) then
-			util.Effect("eff_jack_gmod_resource_sprites", whee, true, true)
-		else
-			util.Effect("eff_jack_gmod_resource_props", whee, true, true)
-		end
+				if typ == JMod.EZ_RESOURCE_TYPES.POWER then
+					util.Effect("eff_jack_gmod_resource_sparks", whee, true, true)
+				elseif table.HasValue(LiquidResourceTypes, typ) then
+					util.Effect("eff_jack_gmod_resource_liquid", whee, true, true)
+				elseif table.HasValue(SpriteResourceTypes, typ) then
+					util.Effect("eff_jack_gmod_resource_sprites", whee, true, true)
+				else
+					util.Effect("eff_jack_gmod_resource_props", whee, true, true)
+				end
+			end
+		end)
 	end
 end
 
