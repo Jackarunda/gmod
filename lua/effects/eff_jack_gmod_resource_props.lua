@@ -1,6 +1,11 @@
-﻿RockModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"}
+﻿﻿local RockModels = {"models/jmod/resources/rock01a.mdl", "models/jmod/resources/rock02a.mdl", "models/jmod/resources/rock03a.mdl", "models/jmod/resources/rock04a.mdl", "models/jmod/resources/rock05a.mdl"}
+
+local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
 
 local PropConfig = {
+	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = {
+		mdls = ElectronicsModels
+	},
 	[JMod.EZ_RESOURCE_TYPES.AMMO] = {
 		mdls = {"models/jhells/shell_9mm.mdl", "models/jhells/shell_762nato.mdl", "models/jhells/shell_57.mdl", "models/jhells/shell_556.mdl", "models/jhells/shell_338mag.mdl", "models/jhells/shell_12gauge.mdl", "models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"},
 		scl = 1.5
@@ -11,87 +16,121 @@ local PropConfig = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_ironore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.LEADORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_leadore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_aluminumore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_copperore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_tungstenore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_titaniumore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_silverore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_goldore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_uraniumore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/mat_jack_gmod_platinumore"
 	},
 	[JMod.EZ_RESOURCE_TYPES.STEEL] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_steel",
+		col = Color(50, 50, 50),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.LEAD] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_lead",
+		col = Color(50, 50, 50),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_aluminum",
+		col = Color(180, 180, 180),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPER] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_copper",
+		col = Color(150, 100, 80),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_tungsten",
+		col = Color(150, 150, 170),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.TITANIUM] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_titanium",
+		col = Color(160, 160, 160),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.SILVER] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_silver",
+		col = Color(150, 150, 150),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.GOLD] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_gold",
+		col = Color(150, 120, 50),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.URANIUM] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_uranium",
+		col = Color(50, 55, 50),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUM] = {
 		mdls = RockModels,
-		mat = ""
+		mat = "models/props_mining/ingot_jack_platinum",
+		col = Color(170, 160, 165),
+		scl = .5
 	}
 }
 
+local TotalParticleCount = 0
+
 function EFFECT:Init(data)
+	if TotalParticleCount >= 500 then
+		self:Remove()
+
+		return
+	end
+
+	TotalParticleCount = math.Clamp(TotalParticleCount + 1, 0, 9e9)
+
+	timer.Simple(5, function()
+		TotalParticleCount = math.Clamp(TotalParticleCount - 1, 0, 9e9)
+	end)
+
 	self.ResourceType = JMod.IndexToResource[data:GetFlags()]
 	self.Origin = data:GetOrigin()
 	self.Spread = data:GetMagnitude()
@@ -117,8 +156,9 @@ function EFFECT:Init(data)
 	end
 
 	self:SetModelScale(self.Scale * math.Rand(.75, 1.25) * (self.Data.scl or 1), 0)
-	local Col = math.random(200, 255)
-	self:SetColor(Color(Col, Col, Col))
+	local Col = self.Data.col or Color(255, 255, 255)
+	local ColFrac = math.Rand(1.1, .9)
+	self:SetColor(Color(math.Clamp(Col.r * ColFrac, 0, 255), math.Clamp(Col.g * ColFrac, 0, 255), math.Clamp(Col.b * ColFrac, 0, 255)))
 	self:DrawShadow(true)
 	self:SetAngles(AngleRand())
 	local pb_vert = 2 * self.Scale

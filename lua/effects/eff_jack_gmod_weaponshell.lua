@@ -26,12 +26,10 @@ function EFFECT:Init(data)
 		mdl = ent
 	end
 
-	if ent.Owner ~= LocalPlayer() then
-		if not GetConVar("arccw_shelleffects"):GetBool() then
-			self:Remove()
+	if ent.Owner ~= LocalPlayer() and not GetConVar("arccw_shelleffects"):GetBool() then
+		self:Remove()
 
-			return
-		end
+		return
 	end
 
 	if not mdl or not IsValid(mdl) then return end
