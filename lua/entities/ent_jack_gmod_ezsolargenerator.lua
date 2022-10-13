@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmodels/props/Scaffolding_smol.mdl"
+ENT.Model = "models/jmodels/props/machines/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
@@ -92,7 +92,7 @@ if(SERVER)then
 
 		local pos = SelfPos + Forward*15 - Up*25 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
-		self:SetProgress(self:GetProgress() - amt)
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)
 	end
 

@@ -1,0 +1,8 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "Models/props_citizen_tech/firetrap01"
+	"$surfaceprop" "metal"
+        "$envmap" "env_cubemap"	
+        "$basealphaenvmapmask" 1
+}

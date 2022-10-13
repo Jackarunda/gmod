@@ -165,7 +165,7 @@ if(SERVER)then
 			if self.SoundLoop then self.SoundLoop:Stop() end
 
 			if self:GetElectricity() > 0 then
-				if math.random(1,4) == 2 then self:DamageSpark() end
+				if math.random(1,4) == 2 then JMod.DamageSpark(self) end
 			end
 
 			return
@@ -200,7 +200,6 @@ if(SERVER)then
 			if self:GetProgress() >= 100 then
 				local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 				self:ProduceResource(amtToDrill)
-				self:SetProgress(self:GetProgress() - amtToDrill)
 				JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
 			end
 
@@ -218,6 +217,7 @@ if(SERVER)then
 		local pos = SelfPos
 		local spawnVec = self:WorldToLocal(Vector(SelfPos))
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 	end
 
 elseif(CLIENT)then

@@ -204,7 +204,6 @@ if(SERVER)then
 					-- Spawn barrel
 					local amtToPump = math.min(self:GetProgress(), 100)
 					self:ProduceResource(amtToPump)
-					self:SetProgress(self:GetProgress() - amtToPump)
 				end
 			else
 				self:SetProgress(self:GetProgress() + pumpRate)
@@ -212,7 +211,6 @@ if(SERVER)then
 				if self:GetProgress() >= 100 then
 					local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 					self:ProduceResource(amtToPump)
-					self:SetProgress(self:GetProgress() - amtToPump)
 					JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 				end
 			end
@@ -229,6 +227,7 @@ if(SERVER)then
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 	end
 
 	function ENT:OnDestroy(dmginfo)

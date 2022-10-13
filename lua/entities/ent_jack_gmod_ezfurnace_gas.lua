@@ -2,13 +2,13 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Gas Furnace"
+ENT.PrintName = "EZ Gas Smelter"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/props_c17/FurnitureWashingmachine001a.mdl"
+ENT.Model = "models/jmodels/props/machines/gas_smelter.mdl"
 ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
@@ -241,5 +241,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezfurnace_gas", "EZ Gas Furnace")
+	language.Add("ent_jack_gmod_ezfurnace_gas", "EZ Gas Smelter")
 end

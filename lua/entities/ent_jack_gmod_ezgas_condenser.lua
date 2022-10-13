@@ -92,7 +92,7 @@ if(SERVER)then
 
 		local pos = SelfPos
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.GAS, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Forward * 100, true, 200)
-		self:SetProgress(self:GetProgress() - amt)
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)
 	end
 
