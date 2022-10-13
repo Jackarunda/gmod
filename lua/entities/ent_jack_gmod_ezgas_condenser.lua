@@ -1,7 +1,7 @@
 ﻿AddCSLuaFile()
 
 ENT.Type = "anim"
-ENT.PrintName = "EZ Gas Condenser"
+ENT.PrintName = "EZ Gas Compressor"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
@@ -90,8 +90,8 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = SelfPos + Forward*15 - Up*25 - Right*2
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.GAS, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
+		local pos = SelfPos
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.GAS, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Forward * 100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 		self:SpawnEffect(pos)
 	end
@@ -118,12 +118,12 @@ if(SERVER)then
 		local State = self:GetState()
 		if(State == STATE_ON)then
 
-			self:ConsumeElectricity(.2)
+			self:ConsumeElectricity(.5)
 
 			local grade = self:GetGrade()
 
 			if self:GetProgress() < self.MaxGas then
-				local rate = math.Round(1 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
+				local rate = math.Round(2 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
 				self:SetProgress(self:GetProgress() + rate)
 			end
 
@@ -164,17 +164,21 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
-				local ElecFrac = self:GetProgress() / 100
-				local R, G, B = JMod.GoodBadColor(ElecFrac)
+				local ProFrac = self:GetProgress() / self.MaxGas
+				local R, G, B = JMod.GoodBadColor(ProFrac)
+				local ElecFrac = self:GetElectricity() / self.MaxElectricity
+				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
 				cam.Start3D2D(SelfPos + Up * 5 - Forward * 20 - Right, DisplayAng, .1)
-				surface.SetDrawColor(10,10,10,Opacity+50)
-				surface.DrawRect(190,  0, 128, 128)
-				JMod.StandardRankDisplay(Grade, 252, 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				surface.SetDrawColor(10, 10, 10, Opacity + 50)
+				surface.DrawRect(90,  0, 128, 128)
+				JMod.StandardRankDisplay(Grade, 152, 68, 118, Opacity + 50)
+				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Gas Condenser")
+	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Gas Compressor")
 end
