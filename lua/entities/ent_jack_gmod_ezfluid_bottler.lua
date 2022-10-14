@@ -1,7 +1,7 @@
 ﻿AddCSLuaFile()
 
 ENT.Type = "anim"
-ENT.PrintName = "EZ Gas Compressor"
+ENT.PrintName = "EZ Fluid Bottler"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
@@ -180,5 +180,5 @@ elseif CLIENT then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Gas Compressor")
+	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Fluid Bottler")
 end
