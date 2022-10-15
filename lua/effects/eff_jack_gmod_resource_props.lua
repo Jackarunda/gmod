@@ -176,7 +176,11 @@ function EFFECT:Init(data)
 		phys:SetMass(10)
 		phys:SetMaterial("gmod_silent")
 		phys:SetVelocity(MyFlightVec)
-		phys:EnableGravity(false)
+
+		if self.Target then
+			phys:EnableGravity(false)
+		end
+
 		phys:AddAngleVelocity(VectorRand() * math.random(1, 600))
 	end
 
