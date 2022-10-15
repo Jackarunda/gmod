@@ -1,6 +1,9 @@
-﻿local Refract = Material("sprites/mat_jack_shockwave")
+﻿DEFINE_BASECLASS( "eff_jack_gmod_explosion_base" )
+
+local Refract = Material("sprites/mat_jack_shockwave")
 
 function EFFECT:Init(data)
+	print("welp",self.Del_Bepis)
 	local Pos, Scale = data:GetOrigin(), data:GetScale()
 	self.DieTime = CurTime() + .3
 	local Emitter = ParticleEmitter(Pos)
