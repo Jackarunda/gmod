@@ -406,7 +406,7 @@ if(SERVER)then
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
-				elseif(self.GetOreType and (self:GetOreType()=="none" or typ==self:GetOreType())) then
+				elseif(self.GetOreType and (self:GetOreType()=="generic" or typ==self:GetOreType())) then
 					self:SetOreType(typ)
 					local COre = self:GetOre()
 					local Missing = self.MaxOre - COre

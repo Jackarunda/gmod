@@ -124,12 +124,12 @@ if(SERVER)then
 		local pos = SelfPos
 		for type, modifier in pairs(RefinedTable) do
 			local i = 1
-			local spawnVec = self:WorldToLocal(SelfPos)
+			local spawnVec = self:WorldToLocal(SelfPos + Up * 10 - Right * 50)
 			local spawnAng = Angle(0, 0, 0)
-			local ejectVec = Forward*100
-			timer.Simple(0.2*i, function()
+			local ejectVec = Forward
+			timer.Simple(1*i, function()
 				if IsValid(self) then
-					JMod.MachineSpawnResource(self, type, amt*modifier, spawnVec, spawnAng, ejectVec, true, 200)
+					JMod.MachineSpawnResource(self, type, amt*modifier, spawnVec + Forward * 15, spawnAng, ejectVec, true, 200)
 				end
 			end)
 			i = i + 1

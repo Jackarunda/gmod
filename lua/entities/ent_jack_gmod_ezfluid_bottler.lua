@@ -25,6 +25,7 @@ ENT.DynamicPerfSpecs = {
 }
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("String", 0, "FluidType")
 end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
@@ -90,7 +91,7 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = SelfPos
+		local pos = SelfPos - Forward * 30 - Up * 30
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.GAS, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Forward * 100, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)

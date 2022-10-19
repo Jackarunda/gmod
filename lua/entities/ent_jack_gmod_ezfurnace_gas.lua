@@ -51,7 +51,7 @@ if(SERVER)then
 		self:SetProgress(0)
 		self:SetGas(100)
 		self:SetOre(0)
-		self:SetOreType("none")
+		self:SetOreType("generic")
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
@@ -82,7 +82,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.Owner
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.Owner(self,activator)
+		JMod.Owner(self, activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -93,9 +93,9 @@ if(SERVER)then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif(State==STATE_OFF)then
+		elseif State==STATE_OFF then
 			self:TurnOn()
-		elseif(State==STATE_SMELTING)then
+		elseif State==STATE_SMELTING then
 			if Alt then 
 				self:ProduceResource()
 
@@ -127,18 +127,24 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == self:GetOreType() and accepted >= 1 then
+			self:TurnOn(self.Owner)
+		end
+	end
+
 	function ENT:ProduceResource()
 		local amt = self:GetProgress()
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
 		
-		if amt <= 0 or OreType == "none" then self:SetOre(0) return end
+		if amt <= 0 or OreType == "generic" then self:SetOre(0) return end
 
 		local RefinedTable = JMod.RefiningTable[OreType]
 
 		local pos = SelfPos
 		for type, modifier in pairs(RefinedTable) do
 			local i = 1
-			local spawnVec = self:WorldToLocal(SelfPos)
+			local spawnVec = self:WorldToLocal(SelfPos + Right * 30)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward*100
 			timer.Simple(0.2*i, function()
@@ -151,7 +157,7 @@ if(SERVER)then
 			self:SetOre(math.Clamp(self:GetOre() - amt, 0, self.MaxOre))
 			self:SpawnEffect(pos)
 			if self:GetOre() <= 0 then
-				self:SetOreType("none")
+				self:SetOreType("generic")
 			end
 		end
 	end
@@ -185,8 +191,15 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	local GradeColors = JMod.GradeColors
-	local GradeMats = JMod.GradeMats
+	function ENT:Initialize()
+		self.StaticPerfSpecs.BaseClass=nil
+		self.DynamicPerfSpecs.BaseClass=nil
+		self:InitPerfSpecs()
+		if(self.CustomInit)then self:CustomInit() end
+		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
+	end
+	local GradeColors = JMod.EZ_GRADE_COLORS
+	local GradeMats = JMod.EZ_GRADE_MATS
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -206,18 +219,23 @@ elseif(CLIENT)then
 		---
 		if (not(DetailDraw))and(Obscured) then return end -- if player is far and sentry is obscured, draw nothing
 		if Obscured then DetailDraw=false end -- if obscured, at least disable details
-		if State == STATE_BROKEN then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if State == STATE_BROKEN then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
 
-		if DetailDraw and State == STATE_SMELTING then
+		if DetailDraw then
+			local PipeAng = SelfAng:GetCopy()
+			PipeAng:RotateAroundAxis(PipeAng:Right(), 0)
+			PipeAng:RotateAroundAxis(PipeAng:Up(), 180)
+			PipeAng:RotateAroundAxis(PipeAng:Forward(), 0)
+			JMod.RenderModel(self.Piping, BasePos - Forward * 27 - Right * 30 + Up * 15, PipeAng, nil, GradeColors[Grade], GradeMats[Grade])
 
-			if Closeness < 20000 then
+			if Closeness < 20000 and State == STATE_SMELTING then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 66)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local OreFrac = self:GetOre() / self.MaxOre
@@ -225,7 +243,7 @@ elseif(CLIENT)then
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local OR, OG, OB = JMod.GoodBadColor(OreFrac)
 				local GR, GG, GB = JMod.GoodBadColor(GasFrac)
-				cam.Start3D2D(SelfPos + Up * 25 + Right * 12 - Forward * 8, DisplayAng, .05)
+				cam.Start3D2D(SelfPos - Forward * 10 + Right * 18 + Up * 50, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(420, 0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 485, 65, 118, Opacity + 50)

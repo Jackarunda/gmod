@@ -90,7 +90,7 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = SelfPos + Forward*15 - Up*25 - Right*2
+		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)
