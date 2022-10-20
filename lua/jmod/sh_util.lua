@@ -279,6 +279,20 @@ function JMod.TryCough(ent)
 	end
 end
 
+function JMod.ClearLoS(ent1, ent2)
+	if not IsValid(ent) then return false end
+	local TargPos, SelfPos = ent1:LocalToWorld(ent1:OBBCenter()) + vector_up, ent2:LocalToWorld(ent2:OBBCenter()) + vector_up
+
+	local Tr = util.TraceLine({
+		start = SelfPos,
+		endpos = TargPos,
+		filter = {ent1, ent2},
+		mask = MASK_SHOT + MASK_WATER
+	})
+
+	return not Tr.Hit
+end
+
 function JMod.DebugPos(pos, siz, label)
 	siz = siz or 1
 	label = label or math.Round(CurTime(), 2)
