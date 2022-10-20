@@ -62,7 +62,7 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 end, nil, "Removes JMod radiation from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
-	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS, ply:GetShootPos() + ply:GetAimVector() * 50, Vector(0, 0, -100), 1, 1, 1)
+	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.STEEL, ply:GetShootPos() + ply:GetAimVector() * 50, Vector(0, 0, -100), 1, .1, 1)
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)

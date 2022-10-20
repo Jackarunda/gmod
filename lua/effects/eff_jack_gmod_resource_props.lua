@@ -175,7 +175,7 @@ function EFFECT:Init(data)
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
 		phys:SetMaterial("gmod_silent")
-		phys:SetVelocity(MyFlightVec)
+		phys:SetVelocity(MyFlightVec * self.Spread)
 
 		if self.Target then
 			phys:EnableGravity(false)
