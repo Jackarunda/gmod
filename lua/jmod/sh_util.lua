@@ -280,7 +280,7 @@ function JMod.TryCough(ent)
 end
 
 function JMod.ClearLoS(ent1, ent2)
-	if not IsValid(ent) then return false end
+	if not IsValid(ent2) then return false end
 	local TargPos, SelfPos = ent1:LocalToWorld(ent1:OBBCenter()) + vector_up, ent2:LocalToWorld(ent2:OBBCenter()) + vector_up
 
 	local Tr = util.TraceLine({

@@ -826,7 +826,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			end
 		end
 		local SpawnAmount = math.min(amount, 100)
-		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount/100, 0.1, 1)
+		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount/100, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)

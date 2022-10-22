@@ -208,6 +208,12 @@ JMod.EZ_STATE_ARMING = 3
 JMod.EZ_STATE_ARMED = 4
 JMod.EZ_STATE_WARNING = 5
 
+JMod.EZ_HAZARD_PARTICALS = {
+	["ent_jack_gmod_ezgasparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .5},
+	["ent_jack_gmod_ezvirusparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .1},
+	["ent_jack_gmod_ezfalloutparticle"] = {JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, .2}
+}
+
 JMod.RadiationShieldingValues = {
 	[MAT_METAL] = .2,
 	[MAT_CONCRETE] = .15,

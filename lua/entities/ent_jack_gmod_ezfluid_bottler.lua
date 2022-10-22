@@ -16,15 +16,17 @@ ENT.MaxPower = 100
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 80,
-	MaxElectricity = 100,
-	MaxGas = 100
+	MaxElectricity = 100
 }
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
+
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("Float", 2, "Chemicals")
+	self:NetworkVar("Float", 3, "Fissile")
 	self:NetworkVar("String", 0, "FluidType")
 end
 
@@ -32,10 +34,10 @@ local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr,ClassName)
-		local ent=ents.Create(ClassName)
+		local ent = ents.Create(ClassName)
 		ent:SetPos(tr.HitPos + tr.HitNormal*25)
 		ent:SetAngles(Angle(0, 0, 0))
-		JMod.Owner(ent,ply)
+		JMod.Owner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -49,13 +51,21 @@ if(SERVER)then
 		self:SetState(STATE_ON)
 		self:SetProgress(0)
 		self.NextUse = 0
+		self.Range = 300
+		if self:WaterLevel() >= 1 then
+			self.Submerged = true
+			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.WATER)
+		else
+			self.Submerged = false 
+			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.GAS)
+		end
 	end
 
 	function ENT:Use(activator)
-		local State=self:GetState()
-		local OldOwner=self.Owner
+		local State = self:GetState()
+		local OldOwner = self.Owner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.Owner(self,activator)
+		JMod.Owner(self, activator)
 		JMod.Colorify(self)
 		if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
 			JMod.Colorify(self)
@@ -87,14 +97,22 @@ if(SERVER)then
 
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local amt = math.min(math.floor(self:GetProgress()), self.MaxPower)
+		local amt, chemAmt, fissileAmt = math.min(math.floor(self:GetProgress()), 100), math.min(math.floor(self:GetChemicals()), 100), math.min(math.floor(self:GetFissile()), 100)
 
-		if amt <= 0 then return end
+		if amt <= 0 then self:SetFluidType("generic") return end
 
-		local pos = SelfPos - Forward * 30 - Up * 30
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.GAS, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Forward * 100, true, 200)
+		local pos = self:WorldToLocal(SelfPos - Forward * 30 - Up * 30)
+		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), Forward * 100, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)
+		if chemAmt >= 1 then
+			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.CHEMICALS, chemAmt, pos, Angle(0, 0, 0), Forward * 100 + Right * 100, true, 200)
+			self:SetChemicals(math.Clamp(self:GetChemicals() - chemAmt, 0, 100))
+		end
+		if chemAmt >= 1 then
+			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, fissileAmt, pos, Angle(0, 0, 0), Forward * 100 - Right * 100, true, 200)
+			self:SetFissile(math.Clamp(self:GetFissile() - fissileAmt, 0, 100))
+		end
 	end
 
 	function ENT:TurnOn()
@@ -115,28 +133,84 @@ if(SERVER)then
 		self.NextUse = CurTime() + 1
 	end
 
+	function ENT:Submerge()
+		self:ProduceResource()
+		self.Submerged = true
+		self:SetFluidType(JMod.EZ_RESOURCE_TYPES.WATER)
+	end
+
+	function ENT:Surface()
+		self:ProduceResource()
+		self.Submerged = false
+		self:SetFluidType(JMod.EZ_RESOURCE_TYPES.GAS)
+	end
+
+	function ENT:CleanseAir()
+		local selfPos, selfGrade = self:LocalToWorld(self:OBBCenter()), self:GetGrade()
+		local entites = ents.FindInSphere(selfPos, self.Range)
+
+		for k, v in ipairs(entites) do
+
+			local particleTable = JMod.EZ_HAZARD_PARTICALS[v:GetClass()]
+
+			if istable(particleTable) then
+				if IsValid(v) and JMod.VisCheck(self:LocalToWorld(self:OBBCenter()), v, self) then 
+					if JMod.LinCh(selfGrade * 2, 1, self.Range/10) then
+
+						if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
+							self:SetChemicals(self:GetChemicals() + particleTable[2])
+						elseif particleTable[1] == JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL then
+							self:SetFissile(self:GetFissile() + particleTable[2])
+						end
+
+						SafeRemoveEntity(v)
+						self:ConsumeElectricity(.2)
+					end
+				end
+			end
+		end
+	end
+
 	function ENT:Think()
 		local State = self:GetState()
-		if(State == STATE_ON)then
+		if State == STATE_ON then
 
-			self:ConsumeElectricity(.5)
+			if self:WaterLevel() >= 1 then
+				if not self.Submerged then
+					self:Submerge()
+				
+					return
+				end
+
+			elseif self:WaterLevel() <= 0 then
+				if self.Submerged then
+					self:Surface()
+
+					return
+				end
+				self:CleanseAir()
+
+			end
+
+			self:ConsumeElectricity(1)
 
 			local grade = self:GetGrade()
 
-			if self:GetProgress() < self.MaxGas then
+			if self:GetProgress() < 100 then
 				local rate = math.Round(2 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
 				self:SetProgress(self:GetProgress() + rate)
 			end
 
-			if self:GetProgress() >= self.MaxGas then
+			if self:GetProgress() >= 100 then
 				self:ProduceResource()
 			end
 
-			self:NextThink(CurTime() + 2)
+			self:NextThink(CurTime() + 1)
 
 			return true
 		end
 	end
+
 elseif CLIENT then
 	local GradeColors = JMod.EZ_GRADE_COLORS
 	local GradeMats = JMod.EZ_GRADE_MATS
@@ -165,7 +239,7 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
-				local ProFrac = self:GetProgress() / self.MaxGas
+				local ProFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
