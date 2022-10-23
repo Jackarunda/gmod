@@ -4,7 +4,7 @@ ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Gas Smelter"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = true
+ENT.Spawnable = false -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
