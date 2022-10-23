@@ -185,7 +185,7 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.2)
+			self:ConsumeElectricity(.5)
 			-- This is just the rate at which we drill
 			local drillRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2
 			
@@ -209,15 +209,16 @@ if(SERVER)then
 		self:NextThink(CurTime() + 1)
 	end
 	
-	function ENT:ProduceResource(amt)
+	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
-		
+		local amt = math.min(self:GetProgress(), 100)
+
 		if amt <= 0 then return end
 
 		local pos = SelfPos
-		local spawnVec = self:WorldToLocal(Vector(SelfPos))
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
-		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+		local spawnVec = self:WorldToLocal(Vector(SelfPos) + Up * 15 + Forward * 20)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*100, true, 200)
+		self:SetProgress(self:GetProgress() - amt)
 	end
 
 elseif(CLIENT)then
@@ -237,7 +238,7 @@ elseif(CLIENT)then
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		if(DetailDraw)then
-			if Closeness < 20000 and State == STATE_RUNNING then
+			if (Closeness < 20000) and (State == STATE_RUNNING) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)

@@ -188,7 +188,7 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.2)
+			self:ConsumeElectricity(.5)
 			-- This is just the rate at which we pump
 			local pumpRate = self.PumpRate^2
 			-- Here's where we do the rescource deduction, and barrel production
@@ -221,13 +221,14 @@ if(SERVER)then
 
 	function ENT:ProduceResource(amt)
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
-		
+		local amt = math.min(self:GetProgress(), 100)
+
 		if amt <= 0 then return end
 
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
-		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+		self:SetProgress(self:GetProgress() - amt)
 	end
 
 	function ENT:OnDestroy(dmginfo)
@@ -305,11 +306,12 @@ elseif(CLIENT)then
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
-		local LadderAng=SelfAng:GetCopy()
-		LadderAng:RotateAroundAxis(Up,90)
-		LadderAng:RotateAroundAxis(Forward,80)
-		JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 		if(DetailDraw)then
+			local LadderAng=SelfAng:GetCopy()
+			LadderAng:RotateAroundAxis(Up,90)
+			LadderAng:RotateAroundAxis(Forward,80)
+			JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+			
 			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)
