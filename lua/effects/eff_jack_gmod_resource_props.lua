@@ -168,7 +168,7 @@ function EFFECT:Init(data)
 	local phys = self:GetPhysicsObject()
 	local MyFlightDir = VectorRand()
 	local MyFlightSpeed = math.random(1, 400)
-	local MyFlightVec = MyFlightDir * MyFlightSpeed
+	local MyFlightVec = MyFlightDir * MyFlightSpeed * self.Spread
 
 	if IsValid(phys) then
 		phys:Wake()

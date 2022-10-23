@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmodels/props/Scaffolding_smol.mdl"
+ENT.Model = "models/jmodels/props/machines/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
@@ -66,7 +66,7 @@ if(SERVER)then
 			self:TurnOn()
 		elseif(State==STATE_ON)then
 			if(alt)then
-				self:ProducePower()
+				self:ProduceResource()
 				return
 			end
 			self:TurnOff()
@@ -84,30 +84,15 @@ if(SERVER)then
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
-	function ENT:ProducePower()
+	function ENT:ProduceResource()
 		local SelfPos,Up,Forward,Right = self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
 		local amt = math.min(math.floor(self:GetProgress()), self.MaxPower)
 
-		if (amt <= 0) then return end
+		if amt <= 0 then return end
 
-		local pos = SelfPos + Forward*15 - Up*25 - Right*2
-		--[[for _, ent in pairs(ents.FindInSphere(pos, 100)) do -- We will review this at a later date. -AdventureBoots
-			--print(ent, ent.GetResourceType and ent:GetResourceType())
-			if ((ent:GetClass() == "ent_jack_gmod_ezcrate") and (ent:GetResourceType() == "generic" 
-			or ent:GetResourceType() == "power") and (ent:GetResource() + amt <= ent.MaxResource)) then
-					
-				if ent:GetResourceType() == "generic" then
-					ent:ApplySupplyType("power")
-				end
-
-				ent:SetResource(math.min(ent:GetResource() + amt, ent.MaxResource))
-				self:SetProgress(self:GetProgress() - amt)
-				self:SpawnEffect(pos)
-				return
-			end
-		end--]]
-		JMod.MachineSpawnResource(self, "power", amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300)
-		self:SetProgress(self:GetProgress() - amt)
+		local pos = SelfPos + Forward*15 - Up*50 - Right*2
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
+		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SpawnEffect(pos)
 	end
 
@@ -146,7 +131,7 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:EmitSound("buttons/button18.wav", 60, 80)
-		self:ProducePower()
+		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)
 		self.NextUse = CurTime() + 1
@@ -211,7 +196,7 @@ if(SERVER)then
 			end
 
 			if self:GetProgress() >= self.MaxPower then
-				self:ProducePower()
+				self:ProduceResource()
 			end
 
 			self:NextThink(CurTime() + 5)
@@ -226,8 +211,8 @@ elseif CLIENT then
 		self.ChargerModel = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl", nil, .5)
 		self:DrawShadow(true)
 	end
-	local GradeColors={Vector(.3,.3,.3),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2),Vector(.2,.2,.2)}
-	local GradeMats={Material("phoenix_storms/metal"),Material("models/mat_jack_gmod_copper"),Material("models/mat_jack_gmod_silver"),Material("models/mat_jack_gmod_gold"),Material("models/mat_jack_gmod_platinum")}
+	local GradeColors = JMod.EZ_GRADE_COLORS
+	local GradeMats = JMod.EZ_GRADE_MATS
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
@@ -280,5 +265,5 @@ elseif CLIENT then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_solargenerator", "EZ Solar Panel")
+	language.Add("ent_jack_gmod_ezsolargenerator", "EZ Solar Panel")
 end

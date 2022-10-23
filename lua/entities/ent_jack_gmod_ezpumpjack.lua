@@ -21,7 +21,7 @@ ENT.StaticPerfSpecs={
 	MaxElectricity=200,
 }
 ENT.DynamicPerfSpecs={
-	Armor=5,
+	Armor=2,
 	PumpRate = 1
 }
 ---
@@ -33,12 +33,11 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		self:SetAngles(Angle(0,0,-90))
+		self:SetAngles(Angle(0, 0, -90))
 		self:SetProgress(0)
 		self:SetState(STATE_OFF)
-		self.NextCalcThink=0
-		self.DepositKey=0
-		self:TryPlace()
+		self.DepositKey = 0
+		self:TryPlace() 
 	end
 
 	function ENT:UpdateDepositKey()
@@ -98,7 +97,7 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				JMod.Hint(self.Owner,"oil derrick")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld=constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
+				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
 					self:TurnOn(self.Owner)
 				else
@@ -108,12 +107,13 @@ if(SERVER)then
 		end
 	end
 	function ENT:TurnOn(activator)
+		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)
 			self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 			self.SoundLoop:SetSoundLevel(65)
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(65)
+			self.WellPos = SelfPos + Forward * 120 - Right * 95
 			self:SetProgress(0)
 		else
 			JMod.Hint(activator, "nopower")
@@ -122,6 +122,7 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
+		self:ProduceResource(self:GetProgress())
 
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -149,93 +150,94 @@ if(SERVER)then
 			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
 			if alt then
-				self:SpawnBarrel()
+				self:ProduceResource(self:GetProgress())
 
 				return
 			end
 			self:TurnOff()
 		end
 	end
+
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
+
 	function ENT:Think()
-		local State,Time=self:GetState(),CurTime()
-		if(self.NextCalcThink<Time)then
-			self.NextCalcThink=Time+1
-			if(State==STATE_BROKEN)then
-				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				if(self:GetElectricity()>0)then
-					if(math.random(1,4)==2)then JMod.DamageSpark(self) end
-				end
-			elseif(State==STATE_RUNNING)then
-				if not IsValid(self.Weld) then
-					self.Weld = nil
-					self:TurnOff()
+		local State, Time = self:GetState(), CurTime()
+		if State == STATE_BROKEN then
+			if self.SoundLoop then self.SoundLoop:Stop() end
 
-					return
-				end
-
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
-					self:TurnOff()
-
-					return
-				end
-
-				self:ConsumeElectricity(.5)
-				-- This is just the rate at which we pump
-				local pumpRate = self.PumpRate^2
-				-- Here's where we do the rescource deduction, and barrel production
-				-- If it's a flow (i.e. water)
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
-					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-					-- and set the progress to what it was last tick + our ability * the flowrate
-					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
-
-					-- If the progress exceeds 100
-					if self:GetProgress() >= 100 then
-						-- Spawn barrel
-						local amtToPump = math.min(self:GetProgress(), 100)
-						self:SpawnBarrel(amtToPump)
-						self:SetProgress(self:GetProgress() - amtToPump)
-					end
-				else
-					self:SetProgress(self:GetProgress() + pumpRate)
-
-					if self:GetProgress() >= 100 then
-						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-						self:SpawnBarrel(amtToPump)
-						self:SetProgress(self:GetProgress() - amtToPump)
-						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
-					end
-				end
-
-				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
+			if self:GetElectricity() > 0 then
+				if math.random(1, 4) == 2 then JMod.DamageSpark(self) end
 			end
-		end
-		if not(IsValid(self.Weld))then
-			self:SetProgress(0)
-			self.DepositKey = nil
-			self:TurnOff()
+
+			return
+		elseif State == STATE_RUNNING then
+			if not IsValid(self.Weld) then
+				self.DepositKey = nil
+				self.WellPos = nil
+				self.Weld = nil
+				self:TurnOff()
+
+				return
+			end
+
+			if not JMod.NaturalResourceTable[self.DepositKey] then 
+				self:TurnOff()
+
+				return
+			end
+
+			self:ConsumeElectricity(.5)
+			-- This is just the rate at which we pump
+			local pumpRate = self.PumpRate^2
+			-- Here's where we do the rescource deduction, and barrel production
+			-- If it's a flow (i.e. water)
+			if JMod.NaturalResourceTable[self.DepositKey].rate then
+				-- We get the rate
+				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				-- and set the progress to what it was last tick + our ability * the flowrate
+				self:SetProgress(self:GetProgress() + pumpRate * flowRate)
+
+				-- If the progress exceeds 100
+				if self:GetProgress() >= 100 then
+					-- Spawn barrel
+					local amtToPump = math.min(self:GetProgress(), 100)
+					self:ProduceResource(amtToPump)
+				end
+			else
+				self:SetProgress(self:GetProgress() + pumpRate)
+
+				if self:GetProgress() >= 100 then
+					local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+					self:ProduceResource(amtToPump)
+					JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
+				end
+			end
+
+			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
 	end
 
-	function ENT:SpawnBarrel(amt)
-		local SelfPos,Forward,Up,Right = self:GetPos(),self:GetForward(),self:GetUp(),self:GetRight()
+	function ENT:ProduceResource(amt)
+		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
+		local amt = math.min(self:GetProgress(), 100)
+
+		if amt <= 0 then return end
+
+		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
-		local spawnAng = Angle(0,0,-90)
-		local ejectVec = Vector(500, 0, 0)
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, spawnAng, ejectVec)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
+		self:SetProgress(self:GetProgress() - amt)
 	end
 
 	function ENT:OnDestroy(dmginfo)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-
+		if not self.WellPos then return end
 		local createOilFire = function()
 			timer.Simple(0.1, function()
 				local oilFire = ents.Create("ent_jack_gmod_ezoilfire")
-				oilFire:SetPos(SelfPos + Forward * 120 - Right * 95)
+				oilFire:SetPos(self.WellPos)
 				oilFire:SetAngles(Angle(180, 0, 90))
 				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()
@@ -304,11 +306,12 @@ elseif(CLIENT)then
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
-		local LadderAng=SelfAng:GetCopy()
-		LadderAng:RotateAroundAxis(Up,90)
-		LadderAng:RotateAroundAxis(Forward,80)
-		JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
 		if(DetailDraw)then
+			local LadderAng=SelfAng:GetCopy()
+			LadderAng:RotateAroundAxis(Up,90)
+			LadderAng:RotateAroundAxis(Forward,80)
+			JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+			
 			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(),90)

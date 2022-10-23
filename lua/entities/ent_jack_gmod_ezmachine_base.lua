@@ -343,69 +343,81 @@ if(SERVER)then
 		if(amt<=0)then return 0 end
 		for k,v in pairs(self.EZconsumes)do
 			if(typ==v)then
+				local Accepted = 0
 				if(typ==JMod.EZ_RESOURCE_TYPES.POWER)then
 					local Powa=self:GetElectricity()
 					local Missing=self.MaxElectricity-Powa
 					if(Missing<=0)then return 0 end
 					if(Missing<self.MaxElectricity*.1)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetElectricity(Powa+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110))
-					return math.ceil(Accepted)
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES)then
 					local Supps=self:GetSupplies()
 					local Missing=self.MaxSupplies-Supps
 					if(Missing<=0)then return 0 end
 					if(Missing<self.MaxSupplies*.1)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetSupplies(Supps+Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav",65,math.random(90,110)) -- TODO: new sound here
-					return math.ceil(Accepted)
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing=self.MaxDurability-self.Durability
 					if(Missing<=self.MaxDurability*.25)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self.Durability=self.Durability+Accepted
 					if(self.Durability>=self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav",65,math.random(90,110))
 					if(self.Durability>0)then
 						if(self:GetState()==JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
-					return math.ceil(Accepted)
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.GAS)then
 					local Fool=self:GetGas()
 					local Missing=self.MaxGas-Fool
 					if(Missing<=0)then return 0 end
 					if(Missing<self.MaxGas*.1)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetGas(Fool+Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav",65,math.random(90,110))
-					return math.ceil(Accepted)
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.AMMO)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
-					return Accepted
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
 					local Ammo=self:GetAmmo()
 					local Missing=self.MaxAmmo-Ammo
 					if(Missing<=1)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetAmmo(Ammo+Accepted)
 					self:EmitSound("snd_jack_turretammoload.wav",65,math.random(90,110))
-					return Accepted
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.COOLANT)then
 					local Kewl=self:GetCoolant()
 					local Missing=100-Kewl
 					if(Missing<10)then return 0 end
-					local Accepted=math.min(Missing,amt)
+					Accepted=math.min(Missing,amt)
 					self:SetCoolant(Kewl+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
-					return math.ceil(Accepted)
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.OIL)then
+					local Oil=self:GetOil()
+					local Missing=100-Oil
+					if(Missing<10)then return 0 end
+					Accepted=math.min(Missing,amt)
+					self:SetOil(Oil+Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
+				elseif(self.GetOreType and (self:GetOreType()=="generic" or typ==self:GetOreType())) then
+					self:SetOreType(typ)
+					local COre = self:GetOre()
+					local Missing = self.MaxOre - COre
+					if(Missing <= 0)then return 0 end
+					if(Missing < self.MaxOre * .1)then return 0 end
+					Accepted = math.min(Missing, amt)
+					self:SetOre(COre + Accepted)
+					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
 				end
+				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
+				return math.ceil(Accepted)
 			end
 		end
 		return 0
