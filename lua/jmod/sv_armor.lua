@@ -69,6 +69,8 @@ function JMod.EZarmorSync(ply)
 		end
 	end
 
+	hook.Run("JModHookEZArmorSync", ply)
+
 	net.Start("JMod_EZarmorSync")
 	net.WriteEntity(ply)
 	net.WriteTable(ply.EZarmor)
