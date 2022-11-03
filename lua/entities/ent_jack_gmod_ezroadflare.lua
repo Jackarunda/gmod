@@ -27,7 +27,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -113,7 +113,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.Owner(self, activator)
+				JMod.SetOwner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
@@ -175,7 +175,7 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInSphere(Pos, 30)) do
 				if v.JModHighlyFlammableFunc then
-					JMod.Owner(v, self.Owner)
+					JMod.SetOwner(v, self.Owner)
 					local Func = v[v.JModHighlyFlammableFunc]
 					Func(v)
 				end

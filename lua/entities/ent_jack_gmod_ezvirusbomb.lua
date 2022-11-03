@@ -26,7 +26,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -86,7 +86,7 @@ if SERVER then
 			local Att = dmginfo:GetAttacker()
 
 			if IsValid(Att) and Att:IsPlayer() then
-				JMod.Owner(self, Att)
+				JMod.SetOwner(self, Att)
 			end
 
 			self:Burst()
@@ -98,7 +98,7 @@ if SERVER then
 
 		if State == STATE_SEALED then
 			if Alt then
-				JMod.Owner(self, activator)
+				JMod.SetOwner(self, activator)
 				self:EmitSound("snd_jack_pinpull.wav", 55, 100)
 				self:EmitSound("snd_jack_spoonfling.wav", 55, 100)
 				self:SetState(STATE_TICKING)
@@ -134,7 +134,7 @@ if SERVER then
 			timer.Simple(i / 200, function()
 				local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 				Gas:SetPos(SelfPos)
-				JMod.Owner(Gas, Owner)
+				JMod.SetOwner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 500))
@@ -155,7 +155,7 @@ if SERVER then
 		elseif State == STATE_VENTING then
 			local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-			JMod.Owner(Gas, self.Owner or self)
+			JMod.SetOwner(Gas, self.Owner or self)
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)

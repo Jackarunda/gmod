@@ -232,7 +232,7 @@ local function VirusCough(ply)
 	if math.random(1, 10) == 10 then
 		local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 		Gas:SetPos(ply:GetPos())
-		JMod.Owner(Gas, ply)
+		JMod.SetOwner(Gas, ply)
 		Gas:Spawn()
 		Gas:Activate()
 		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())

@@ -18,7 +18,7 @@ if SERVER then
 		local ent=ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 90))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -114,7 +114,7 @@ if SERVER then
 			Flame:SetPos(SelfPos + Vector(0, 0, 10))
 			Flame:SetAngles(FireVec:Angle())
 			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod.Owner(Flame, self.Owner or self)
+			JMod.SetOwner(Flame, self.Owner or self)
 			Flame.SpeedMul = 1
 			Flame.Creator = self
 			Flame.HighVisuals = true

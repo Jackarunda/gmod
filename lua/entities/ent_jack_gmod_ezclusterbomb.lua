@@ -25,7 +25,7 @@ if SERVER then
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -118,7 +118,7 @@ if SERVER then
 			if math.random(1, 5) == 1 then
 				self:Break()
 			else
-				JMod.Owner(self, dmginfo:GetAttacker())
+				JMod.SetOwner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
@@ -129,7 +129,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -142,7 +142,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -168,7 +168,7 @@ if SERVER then
 		timer.Simple(0, function()
 			for i = 1, 50 do
 				local Bomblet = ents.Create("ent_jack_gmod_ezbomblet")
-				JMod.Owner(Bomblet, Att)
+				JMod.SetOwner(Bomblet, Att)
 				Bomblet:SetPos(Pos + VectorRand() * math.Rand(1, 50))
 				Bomblet:Spawn()
 				Bomblet:Activate()

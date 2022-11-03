@@ -32,7 +32,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(90, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -112,7 +112,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.Owner(self, activator)
+				JMod.SetOwner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
@@ -123,7 +123,7 @@ if SERVER then
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_OFF)
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 			self:DrawShadow(true)
 		end
 	end
@@ -197,7 +197,7 @@ if SERVER then
 		local State = self:GetState()
 		if State ~= STATE_OFF then return end
 		JMod.Hint(armer, "mine friends")
-		JMod.Owner(self, armer)
+		JMod.SetOwner(self, armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 90)
 

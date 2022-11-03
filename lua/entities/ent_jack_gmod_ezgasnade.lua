@@ -44,7 +44,7 @@ if SERVER then
 			timer.Simple(i / 120, function()
 				local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 				Gas:SetPos(SelfPos)
-				JMod.Owner(Gas, Owner)
+				JMod.SetOwner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 200))

@@ -452,7 +452,7 @@ function SWEP:PrimaryAttack()
 										local Ent = ents.Create(Class)
 										Ent:SetPos(Pos + Norm * 10 * (buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
-										JMod.Owner(Ent, self.Owner)
+										JMod.SetOwner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 									end
@@ -798,7 +798,7 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	Ent:Spawn()
 	Ent:Activate()
 	Ent:SetResource(amt or 100)
-	JMod.Owner(Ent)
+	JMod.SetOwner(Ent, self.Owner)
 end
 
 function SWEP:Think()

@@ -145,7 +145,7 @@ if(SERVER)then
 								local Ent=ents.Create(ItemInfo.results)
 								Ent:SetPos(Pos)
 								Ent:SetAngles(Ang)
-								JMod.Owner(Ent,ply)
+								JMod.SetOwner(Ent,ply)
 								Ent:Spawn()
 								Ent:Activate()
 								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
