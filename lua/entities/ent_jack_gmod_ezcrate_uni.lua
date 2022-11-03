@@ -24,7 +24,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		JMod.Hint(ply, self.ClassName)

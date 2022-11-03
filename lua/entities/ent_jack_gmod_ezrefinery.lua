@@ -68,7 +68,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.Owner
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.Owner(self,activator)
+		JMod.SetOwner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)

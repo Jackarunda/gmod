@@ -284,7 +284,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 		ent:SetAngles(ang)
 
 		if ply then
-			JMod.Owner(ent, ply)
+			JMod.SetOwner(ent, ply)
 		end
 
 		ent:Spawn()
@@ -297,7 +297,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 	Bocks:SetContents(ent)
 
 	if ply then
-		JMod.Owner(Bocks, ply)
+		JMod.SetOwner(Bocks, ply)
 	end
 
 	Bocks:Spawn()
@@ -600,22 +600,61 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	end
 end
 
-function JMod.Owner(ent, newOwner)
-	--[[
-		1) am i valid? if not, return world
-		2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
-		3) is there .Owner? is it valid? if so, return it
-		4 otherwise return world
-	]]
-	--
-	if not IsValid(ent) then return end
+--[[
+	1) am i valid? if not, return world
+	2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
+	3) is there .Owner? is it valid? if so, return it
+	4 otherwise return world
+]]--
 
-	if not IsValid(newOwner) then
-		newOwner = game.GetWorld()
+function JMod.SetOwner(ent, newOwner)
+	
+	if not IsValid(ent) then return game.GetWorld() end
+
+	if ent.GetOwner and IsValid(ent:GetOwner()) then
+		local OldOwner = ent:GetOwner()
+	else
+		local OldOwner = ent.Owner or game.GetWorld()
 	end
 
-	local OldOwner = ent.Owner
-	if OldOwner and (OldOwner == newOwner) then return end
+	if IsValid(newOwner) then
+		if OldOwner and (OldOwner == newOwner) then 
+
+			return OldOwner 
+		end
+
+		if CPPI and isfunction(ent.CPPISetOwner) then
+			ent:CPPISetOwner(newOwner)
+		end
+
+		return newOwner
+	end
+end
+
+function JMod.GetOwner(ent)
+	if not IsValid(ent) then return game.GetWorld() end
+
+	if ent.GetOwner and IsValid(ent:GetOwner()) then
+
+		return ent:GetOwner()
+	elseif ent.Owner and IsValid(ent.Owner) then
+
+		return ent.Owner
+	else
+		
+		return game.GetWorld()
+	end
+end
+
+function JMod.SetOwner(ent, newOwner)
+	if not(IsValid(ent) or IsValid(newOwner)) then return end
+
+	if JMod.GetOwner(ent) == newOwner then return end
+
+	if ent.SetOwner and isfunction(ent.SetOwner) then
+		--ent:SetOwner(newOwner)
+	end
+
 	ent.Owner = newOwner
 
 	if CPPI and isfunction(ent.CPPISetOwner) then
@@ -832,7 +871,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
 			Resource:Spawn()
-			JMod.Owner(machine.Owner)
+			JMod.SetOwner(machine.Owner)
 			Resource:SetResource(math.Round(SpawnAmount))
 			Resource:Activate()
 			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)

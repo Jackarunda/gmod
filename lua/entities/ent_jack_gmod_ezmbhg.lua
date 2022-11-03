@@ -23,7 +23,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -96,7 +96,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_CHARGING)
@@ -142,7 +142,7 @@ if SERVER then
 		timer.Simple(2, function()
 			local Bam = ents.Create("ent_jack_gmod_ezblackhole")
 			Bam:SetPos(SelfPos)
-			JMod.Owner(Bam, Own)
+			JMod.SetOwner(Bam, Own)
 			Bam:Spawn()
 			Bam:Activate()
 		end)

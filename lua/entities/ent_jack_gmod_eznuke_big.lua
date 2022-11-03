@@ -23,7 +23,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -106,7 +106,7 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.Owner(Gas, self.Owner or game.GetWorld())
+			JMod.SetOwner(Gas, self.Owner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
@@ -143,7 +143,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -157,7 +157,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -218,7 +218,7 @@ if SERVER then
 							for k = 1, 30 * JMod.Config.NuclearRadiationMult do
 								local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 								Gas:SetPos(SelfPos)
-								JMod.Owner(Gas, Att)
+								JMod.SetOwner(Gas, Att)
 								Gas:Spawn()
 								Gas:Activate()
 								Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 1000) + Vector(0, 0, 2000 * JMod.Config.NuclearRadiationMult))

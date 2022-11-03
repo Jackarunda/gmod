@@ -27,7 +27,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -97,13 +97,13 @@ if SERVER then
 		if State == STATE_BURNT then return end
 		local Dude = activator or activatorAgain
 		local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.Owner(self, Dude)
+		JMod.SetOwner(self, Dude)
 		local Time = CurTime()
 
 		if State == STATE_OFF then
 			if tobool(onOff) then
 				if Alt then
-					JMod.Owner(self, activator)
+					JMod.SetOwner(self, activator)
 					net.Start("JMod_ColorAndArm")
 					net.WriteEntity(self)
 					net.Send(activator)

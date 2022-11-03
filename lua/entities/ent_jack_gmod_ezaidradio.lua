@@ -139,7 +139,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		local OldOwner = self.Owner
-		JMod.Owner(self, activator)
+		JMod.SetOwner(self, activator)
 
 		if IsValid(self.Owner) then
 			-- if owner changed then reset team color

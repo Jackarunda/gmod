@@ -366,7 +366,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		local OldOwner = self.Owner
-		JMod.Owner(self, activator)
+		JMod.SetOwner(self, activator)
 
 		if IsValid(self.Owner) then
 			-- if owner changed then reset team color
@@ -866,7 +866,7 @@ if(SERVER)then
 			Gnd:SetPos(ShootPos)
 			ShootAng:RotateAroundAxis(ShootAng:Right(), -90)
 			Gnd:SetAngles(ShootAng)
-			JMod.Owner(Gnd, self.Owner or self)
+			JMod.SetOwner(Gnd, self.Owner or self)
 			Gnd.Dmg = Dmg
 			Gnd:Spawn()
 			Gnd:Activate()

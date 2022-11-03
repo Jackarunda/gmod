@@ -94,7 +94,7 @@ if SERVER then
 			end
 
 			if IsValid(Yay) then
-				JMod.Owner(Yay, owner)
+				JMod.SetOwner(Yay, owner)
 
 				-- this arrests overlap-ejection velocity so items don't thwack players
 				timer.Simple(.025, function()

@@ -25,7 +25,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.Owner(ent, ply)
+		JMod.SetOwner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -121,7 +121,7 @@ if SERVER then
 			if math.random(1, 3) == 1 then
 				self:Break()
 			else
-				JMod.Owner(self, dmginfo:GetAttacker())
+				JMod.SetOwner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
@@ -134,7 +134,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.Owner(self, activator)
+				JMod.SetOwner(self, activator)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
@@ -146,7 +146,7 @@ if SERVER then
 		elseif State == STATE_ARMED then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
 			self:SetState(STATE_OFF)
-			JMod.Owner(self, activator)
+			JMod.SetOwner(self, activator)
 			self.EZlaunchableWeaponArmedTime = nil
 		end
 	end
