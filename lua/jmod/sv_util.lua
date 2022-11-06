@@ -607,7 +607,7 @@ end
 	4 otherwise return world
 ]]--
 
-function JMod.SetOwner(ent, newOwner)
+function JMod.Owner(ent, newOwner)
 	
 	if not IsValid(ent) then return game.GetWorld() end
 
