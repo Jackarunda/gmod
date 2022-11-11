@@ -1,7 +1,7 @@
 ﻿local RockModels = {"models/jmod/resources/rock01a.mdl", "models/jmod/resources/rock02a.mdl", "models/jmod/resources/rock03a.mdl", "models/jmod/resources/rock04a.mdl", "models/jmod/resources/rock05a.mdl"}
 local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
 local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
-local PartsModels = {"models/mechanics/robotics/a1.mdl", "models/mechanics/robotics/b1.mdl", "models/mechanics/robotics/xfoot.mdl", "models/props_phx/gears/bevel9.mdl", "models/props_phx/gears/bevel24.mdl", "models/props_phx/gears/spur9.mdl", "models/Mechanics/gears/gear12x12_small.mdl", "models/Mechanics/gears/gear16x24_small.mdl", "models/Mechanics/gears/gear12x6.mdl", "models/xeon133/slider/slider_12x12x24.mdl", "models/mechanics/solid_steel/plank_4.mdl"}
+local PartsModels = {"models/props_phx/misc/iron_beam1.mdl", "models/props_phx/gibs/flakgib1.mdl", "models/props_phx/gibs/flakgib1.mdl", "models/mechanics/robotics/a1.mdl", "models/mechanics/robotics/b1.mdl", "models/mechanics/robotics/xfoot.mdl", "models/props_phx/gears/bevel9.mdl", "models/props_phx/gears/bevel24.mdl", "models/props_phx/gears/spur9.mdl", "models/Mechanics/gears/gear12x12_small.mdl", "models/Mechanics/gears/gear16x24_small.mdl", "models/Mechanics/gears/gear12x6.mdl", "models/xeon133/slider/slider_12x12x24.mdl", "models/mechanics/solid_steel/plank_4.mdl"}
 
 local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = {
@@ -12,11 +12,14 @@ local PropConfig = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = {
 		mdls = PartsModels,
-		scl = .75
+		mat = "phoenix_storms/gear",
+		scl = .15,
+		col = Color(180, 180, 180),
+		highlyRandomColor = true
 	},
 	[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = {
 		mdls = RockModels,
-		scl = .75,
+		scl = .25,
 		mat = "models/debug/debugwhite",
 		col = Color(200, 180, 80)
 	},
@@ -172,6 +175,7 @@ function EFFECT:Init(data)
 	self:SetModelScale(self.Scale * math.Rand(.75, 1.25) * (self.Data.scl or 1), 0)
 	local Col = self.Data.col or Color(255, 255, 255)
 	local ColFrac = math.Rand(1.1, .9)
+	if (self.Data.highlyRandomColor)then ColFrac = math.Rand(.5, 1.5) end
 	self:SetColor(Color(math.Clamp(Col.r * ColFrac, 0, 255), math.Clamp(Col.g * ColFrac, 0, 255), math.Clamp(Col.b * ColFrac, 0, 255)))
 	self:DrawShadow(true)
 	self:SetAngles(AngleRand())
@@ -219,7 +223,7 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
+		Phys:ApplyForceCenter(Vec:GetNormalized() * 3 * self.Speed - Phys:GetVelocity() / 4)
 	end
 
 	return true
