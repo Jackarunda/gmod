@@ -1,10 +1,24 @@
 ﻿local RockModels = {"models/jmod/resources/rock01a.mdl", "models/jmod/resources/rock02a.mdl", "models/jmod/resources/rock03a.mdl", "models/jmod/resources/rock04a.mdl", "models/jmod/resources/rock05a.mdl"}
-
 local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
+local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
+local PartsModels = {"models/mechanics/robotics/a1.mdl", "models/mechanics/robotics/b1.mdl", "models/mechanics/robotics/xfoot.mdl", "models/props_phx/gears/bevel9.mdl", "models/props_phx/gears/bevel24.mdl", "models/props_phx/gears/spur9.mdl", "models/Mechanics/gears/gear12x12_small.mdl", "models/Mechanics/gears/gear16x24_small.mdl", "models/Mechanics/gears/gear12x6.mdl", "models/xeon133/slider/slider_12x12x24.mdl", "models/mechanics/solid_steel/plank_4.mdl"}
 
 local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = {
 		mdls = ElectronicsModels
+	},
+	[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = {
+		mdls = SheetModels
+	},
+	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = {
+		mdls = PartsModels,
+		scl = .75
+	},
+	[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = {
+		mdls = RockModels,
+		scl = .75,
+		mat = "models/debug/debugwhite",
+		col = Color(200, 180, 80)
 	},
 	[JMod.EZ_RESOURCE_TYPES.AMMO] = {
 		mdls = {"models/jhells/shell_9mm.mdl", "models/jhells/shell_762nato.mdl", "models/jhells/shell_57.mdl", "models/jhells/shell_556.mdl", "models/jhells/shell_338mag.mdl", "models/jhells/shell_12gauge.mdl", "models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"},

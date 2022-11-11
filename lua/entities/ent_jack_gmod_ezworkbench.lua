@@ -65,6 +65,7 @@ if(SERVER)then
 		eff:SetOrigin(pos+VectorRand())
 		eff:SetScale(Scale)
 		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
+		-- todo: useEffects
 	end
 	function ENT:Use(activator)
 		if(self:GetState()==STATE_FINE)then
@@ -113,15 +114,15 @@ if(SERVER)then
 	end
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
-		
+
 		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self))then
-		
+
 			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
 			end
-		
+
 			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,nil,nil,self)
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
 			for i=1,BuildSteps do
