@@ -20,23 +20,13 @@ If you don't know anything about Git, then skip down and read the Git Noob secti
 
 Clone this repo into your local gmod/addons directory. It will work just fine in gmod right from there, because this repo is orgnized exactly like a Gmod Legacy Addon. You can make changes directly right there, test them in gmod automatically (lua auto-reload ftw), and then push them up into git. Simple.
 
-All the old addons can be found for download here:
+# All the old addons can be found for download here:
 
-FunGuns: https://www.dropbox.com/s/kxxbex74acct06r/FunGuns.7z?dl=0
+https://www.dropbox.com/s/67bl1emsnip5c4j/jackarundas%20Explosives%201.7z?dl=0
+JIEX1
 
-Homicide: https://www.dropbox.com/s/qoegratt6amsxdl/Homicide.7z?dl=0
-
-Defense Solutions: https://www.dropbox.com/s/ac8xg6tibl1gxfr/JIDS.7z?dl=0
-
-OpSquads: https://www.dropbox.com/s/2k54kb7lq8ikw5o/OpSquads.7z?dl=0
-
-Explosives: https://www.dropbox.com/s/8inhop8y3panltc/JIEX.7z?dl=0
-
-SENTs: https://www.dropbox.com/s/7yc1gz3yw8oe88r/SENTs.7z?dl=0
-
-BFS 2114: https://www.dropbox.com/s/qrpwohdcwypmbvr/JIBFS2114.7z?dl=0
-
-Old BFS 2114 Wiki: http://jibfs.wikia.com/wiki/JIBFS_Wiki 
+https://www.dropbox.com/s/vqt9mwtgxyc1eiv/Jackarunda%27s%20Explosives%202.7z?dl=0
+JIEX2
 
 # Git Noob?
 
