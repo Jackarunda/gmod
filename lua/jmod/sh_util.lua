@@ -212,7 +212,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 	return RequirementsMet
 end
 
-function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt)
+function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local AllDone, Attempts, RequirementsRemaining = false, 0, table.FullCopy(requirements)
 
@@ -238,6 +238,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt)
 
 					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeCanTake
 				else
+					if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 					Donor:SetResource(AmountWeCanTake - AmountWeNeed)
 					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeNeed
 				end

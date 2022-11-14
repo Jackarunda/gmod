@@ -1,15 +1,38 @@
 ﻿local RockModels = {"models/jmod/resources/rock01a.mdl", "models/jmod/resources/rock02a.mdl", "models/jmod/resources/rock03a.mdl", "models/jmod/resources/rock04a.mdl", "models/jmod/resources/rock05a.mdl"}
 local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
 local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
-local PartsModels = {"models/props_phx/misc/iron_beam1.mdl", "models/props_phx/gibs/flakgib1.mdl", "models/props_phx/gibs/flakgib1.mdl", "models/mechanics/robotics/a1.mdl", "models/mechanics/robotics/b1.mdl", "models/mechanics/robotics/xfoot.mdl", "models/props_phx/gears/bevel9.mdl", "models/props_phx/gears/bevel24.mdl", "models/props_phx/gears/spur9.mdl", "models/Mechanics/gears/gear12x12_small.mdl", "models/Mechanics/gears/gear16x24_small.mdl", "models/Mechanics/gears/gear12x6.mdl", "models/xeon133/slider/slider_12x12x24.mdl", "models/mechanics/solid_steel/plank_4.mdl", "models/jmodels/props/bolt/bolt.mdl"}
 local MedModels = {"models/healthvial.mdl", "models/bandages.mdl", "models/items/medjit_small.mdl", "models/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
+local PartsModels = {
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmodels/props/bolt/bolt.mdl",
+	"models/Mechanics/gears/gear12x12_small.mdl",
+	"models/Mechanics/gears/gear12x6.mdl",
+	"models/Mechanics/gears/gear16x24_small.mdl",
+	"models/mechanics/robotics/a1.mdl",
+	"models/mechanics/robotics/b1.mdl",
+	"models/mechanics/robotics/xfoot.mdl",
+	"models/mechanics/solid_steel/plank_4.mdl",
+	"models/props_phx/gears/bevel24.mdl",
+	"models/props_phx/gears/bevel9.mdl",
+	"models/props_phx/gears/spur9.mdl",
+	"models/props_phx/gibs/flakgib1.mdl",
+	"models/props_phx/misc/iron_beam1.mdl",
+	"models/squad/sf_plates/sf_plate1x1.mdl",
+	"models/squad/sf_plates/sf_plate2x2.mdl",
+	"models/xeon133/slider/slider_12x12x24.mdl"
+}
 
 local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = {
 		mdls = ElectronicsModels
 	},
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = {
-		mdls = SheetModels
+		mdls = SheetModels,
+		mat = "models/debug/debugwhite"
 	},
 	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = {
 		mdls = MedModels
@@ -17,7 +40,7 @@ local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = {
 		mdls = PartsModels,
 		mat = "phoenix_storms/gear",
-		scl = .15,
+		scl = .25,
 		col = Color(180, 180, 180),
 		highlyRandomColor = true
 	},
@@ -138,6 +161,9 @@ local PropConfig = {
 }
 
 local TotalParticleCount = 0
+timer.Create("JMod_ResourcePropsParticleClear", 60, 0, function()
+	TotalParticleCount = 0 // we should reset this periodically in case some gmod nonsense causes it to get out of sync
+end)
 
 function EFFECT:Init(data)
 	if TotalParticleCount >= 500 then
@@ -148,7 +174,7 @@ function EFFECT:Init(data)
 
 	TotalParticleCount = math.Clamp(TotalParticleCount + 1, 0, 9e9)
 
-	timer.Simple(5, function()
+	timer.Simple(3, function()
 		TotalParticleCount = math.Clamp(TotalParticleCount - 1, 0, 9e9)
 	end)
 
@@ -156,6 +182,7 @@ function EFFECT:Init(data)
 	self.Origin = data:GetOrigin()
 	self.Spread = data:GetMagnitude()
 	self.Scale = data:GetScale()
+	self.Radius = data:GetRadius()
 	local SurfaceProp = data:GetSurfaceProp()
 	self.Speed = math.Rand(.75, 1.5)
 
@@ -197,7 +224,7 @@ function EFFECT:Init(data)
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
 		phys:SetMaterial("gmod_silent")
-		phys:SetVelocity(MyFlightVec * self.Spread)
+		phys:SetVelocity(MyFlightVec * self.Spread + Vector(0, 0, self.Radius))
 
 		if self.Target then
 			phys:EnableGravity(false)
@@ -227,7 +254,7 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * 3 * self.Speed - Phys:GetVelocity() / 4)
+		Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
 	end
 
 	return true

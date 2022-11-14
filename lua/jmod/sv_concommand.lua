@@ -59,10 +59,10 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 
 		print("JMod: decontaminated map by admin command")
 	end
-end, nil, "Removes JMod radiation from map and players")
+end, nil, "Removes JMod radiation and from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
-	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, ply:GetShootPos() + ply:GetAimVector() * 50, Vector(0, 0, -100), 1, .1, 1)
+	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, Vector(100, 0, -100), Vector(0, 0, -100), 1, 1, 1, 0)
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)
