@@ -896,11 +896,12 @@ local LiquidResourceTypes = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPE
 
 local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.PAPER, JMod.EZ_RESOURCE_TYPES.ANTIMATTER, JMod.EZ_RESOURCE_TYPES.PROPELLANT, JMod.EZ_RESOURCE_TYPES.CLOTH}
 
-function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale)
+function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpeed)
 	--print("Type: " .. tostring(typ) .. " From point: " .. tostring(fromPoint) .. " Amount: " .. amt)
 	amt = amt or 1
 	spread = spread or 1
 	scale = scale or 1
+	upSpeed = upSpeed or 0
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
@@ -910,6 +911,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale)
 				whee:SetStart(toPoint)
 				whee:SetFlags(JMod.ResourceToIndex[typ])
 				whee:SetMagnitude(spread)
+				whee:SetRadius(upSpeed)
 				whee:SetScale(scale)
 
 				if toPoint then

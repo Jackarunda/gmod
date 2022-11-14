@@ -82,82 +82,54 @@ if(SERVER)then
 			JMod.Hint(activator, "destroyed")
 		end
 	end
-	function ENT:ConsumeResourcesInRange(requirements)
-		local AllDone,Attempts,RequirementsRemaining=false,0,table.FullCopy(requirements)
-		while not((AllDone)or(Attempts>1000))do
-			local TypesNeeded=table.GetKeys(RequirementsRemaining)
-			if((TypesNeeded)and(#TypesNeeded>0))then
-				local ResourceTypeToLookFor=TypesNeeded[1]
-				local AmountWeNeed=RequirementsRemaining[ResourceTypeToLookFor]
-				local Donor=JMod.FindResourceContainer(ResourceTypeToLookFor,1,nil,nil,self) -- every little bit helps
-				if(Donor)then
-					local AmountWeCanTake=Donor:GetResource()
-					if(AmountWeNeed>=AmountWeCanTake)then
-						Donor:SetResource(0)
-						if Donor:GetClass() == "ent_jack_gmod_ezcrate" then
-							Donor:ApplySupplyType("generic")
-						else
-							Donor:Remove()
-						end
-						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeCanTake
-					else
-						Donor:SetResource(AmountWeCanTake-AmountWeNeed)
-						RequirementsRemaining[ResourceTypeToLookFor]=RequirementsRemaining[ResourceTypeToLookFor]-AmountWeNeed
-					end
-					if(RequirementsRemaining[ResourceTypeToLookFor]<=0)then RequirementsRemaining[ResourceTypeToLookFor]=nil end
-				end
-			else
-				AllDone=true
-			end
-			Attempts=Attempts+1
-		end
-	end
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
 
 		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self))then
-
 			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
 			end
-
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,nil,nil,self)
-			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55-self:GetForward()*30-self:GetRight()*5,self:GetAngles(),10
-			for i=1,BuildSteps do
-				timer.Simple(i/100,function()
-					if(IsValid(self))then
-						if(i<BuildSteps)then
-							sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
-						else
-							local StringParts=string.Explode(" ",ItemInfo.results)
-							if((StringParts[1])and(StringParts[1]=="FUNC"))then
-								local FuncName=StringParts[2]
-								if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-									local Ent=JMod.LuaConfig.BuildFuncs[FuncName](ply,Pos,Ang)
-									if(Ent)then
+			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true)
+			timer.Simple(1,function()
+				if(IsValid(self))then
+					for i=1,BuildSteps do
+						timer.Simple(i/100,function()
+							if(IsValid(self))then
+								if(i<BuildSteps)then
+									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
+								else
+									local StringParts=string.Explode(" ",ItemInfo.results)
+									if((StringParts[1])and(StringParts[1]=="FUNC"))then
+										local FuncName=StringParts[2]
+										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
+											local Ent=JMod.LuaConfig.BuildFuncs[FuncName](ply,Pos,Ang)
+											if(Ent)then
+												if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
+											end
+										else
+											print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+										end
+									else
+										local Ent=ents.Create(ItemInfo.results)
+										Ent:SetPos(Pos)
+										Ent:SetAngles(Ang)
+										JMod.SetOwner(Ent,ply)
+										Ent:Spawn()
+										Ent:Activate()
 										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 									end
-								else
-									print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+									self:BuildEffect(Pos)
+									self:ConsumeElectricity(.5)
+									self:SetGas(math.Clamp(self:GetGas()-1,0,self.MaxGas))
 								end
-							else
-								local Ent=ents.Create(ItemInfo.results)
-								Ent:SetPos(Pos)
-								Ent:SetAngles(Ang)
-								JMod.SetOwner(Ent,ply)
-								Ent:Spawn()
-								Ent:Activate()
-								if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 							end
-							self:BuildEffect(Pos)
-							self:ConsumeElectricity(.5)
-							self:SetGas(math.Clamp(self:GetGas()-1,0,self.MaxGas))
-						end
+						end)
 					end
-				end)
-			end
+				end
+			end)
 		else
 			JMod.Hint(ply,"missing supplies")
 		end
