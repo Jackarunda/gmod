@@ -36,12 +36,12 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube05x4x05.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/hunter/blocks/cube05x4x05.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -53,7 +53,7 @@ if SERVER then
 		---
 		self:SetState(STATE_OFF)
 		self.NextDet = 0
-		self.FuelLeft = 200
+		self.FuelLeft = 100
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
@@ -333,24 +333,23 @@ if SERVER then
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
 				Phys:ApplyForceCenter(-self:GetRight() * 25000)
-				self.FuelLeft = self.FuelLeft - 5
+				self.FuelLeft = self.FuelLeft - 1
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(self:GetRight())
 				Eff:SetScale(5)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
-
-				Tr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()), self:GetRight() * -5000, self)
-				if Tr.Hit then
-					self:Detonate()
-				end
 			else
-				timer.Simple(3, function()
+				timer.Simple(0.5, function()
 					if IsValid(self) then
 						self:Detonate()
 					end
 				end)
+			end
+			Tr = util.QuickTrace(self:LocalToWorld(self:OBBCenter()), Phys:GetVelocity():GetNormalized() * 5000, self)
+			if Tr.Hit then
+				self:Detonate()
 			end
 		end
 

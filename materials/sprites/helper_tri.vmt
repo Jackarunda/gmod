@@ -1,0 +1,11 @@
+unlitgeneric
+{
+	$basetexture "sprites/helper_tri"
+	$nocull 1
+	$alphatest 1
+	$alphatestreference 0.01
+	$allowalphatocoverage 1
+	$vertexalpha 1
+	$vertexcolor 1
+	$ignorez 1
+}
