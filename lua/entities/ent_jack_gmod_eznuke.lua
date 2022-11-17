@@ -37,12 +37,12 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/TrashBin01a.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/props_junk/TrashBin01a.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -290,8 +290,9 @@ if SERVER then
 
 	--
 	function ENT:Think()
+		local State = self:GetState()
 		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "State", State)
 			--WireLib.TriggerOutput(self, "Guided", self:GetGuided())
 		end
 
