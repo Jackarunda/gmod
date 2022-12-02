@@ -185,6 +185,20 @@ if SERVER then
 		---
 		SendClientNukeEffect(SelfPos, 12000)
 		util.ScreenShake(SelfPos, 1000, 10, 10, 2000 * Range)
+
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		NukeFlash:SetPos(SelfPos)
+		NukeFlash:SetShadows(true)
+		NukeFlash:Spawn()
+		NukeFlash:Activate()
+
+		timer.Simple(math.random(3, 5), function()
+			if IsValid(NukeFlash) then
+				SafeRemoveEntity(NukeFlash)
+			end
+		end)
+
+
 		local Eff = "pcf_jack_nuke_ground"
 
 		if not util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld then

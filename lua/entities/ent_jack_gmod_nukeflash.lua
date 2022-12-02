@@ -1,7 +1,7 @@
 ﻿-- from the Advanced Light Entities addon
 AddCSLuaFile()
 DEFINE_BASECLASS("jmod_base_light")
-ENT.Spawnable = false
+ENT.Spawnable = true --false
 ENT.AdminOnly = true
 ENT.PrintName = "Expensive Light (new)"
 ENT.Category = "Render"
@@ -98,9 +98,9 @@ function ENT:SetupDataTables()
 		self:SetDrawHelper(true)
 		self:SetDrawSprite(true)
 		self:SetShadows(true)
-		self:SetBrightness(2000)
+		self:SetBrightness(500)
 		self:SetFarZ(20000)
-		self:SetNearZ(4)
+		self:SetNearZ(12)
 		self:SetLightColor(Vector(255, 200, 175))
 	end
 end
