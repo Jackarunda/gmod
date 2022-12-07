@@ -908,7 +908,9 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 			for i = 1, 10 * amt do
 				local whee = EffectData()
 				whee:SetOrigin(fromPoint)
-				whee:SetStart(toPoint)
+				if toPoint then
+					whee:SetStart(toPoint)
+				end
 				whee:SetFlags(JMod.ResourceToIndex[typ])
 				whee:SetMagnitude(spread)
 				whee:SetRadius(upSpeed)

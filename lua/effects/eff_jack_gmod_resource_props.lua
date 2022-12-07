@@ -54,6 +54,10 @@ local PropConfig = {
 		mdls = {"models/jhells/shell_9mm.mdl", "models/jhells/shell_762nato.mdl", "models/jhells/shell_57.mdl", "models/jhells/shell_556.mdl", "models/jhells/shell_338mag.mdl", "models/jhells/shell_12gauge.mdl", "models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"},
 		scl = 1.5
 	},
+	[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = {
+		mdls = {"models/jhells/shell_9mm.mdl"},
+		scl = 5
+	},
 	[JMod.EZ_RESOURCE_TYPES.COAL] = {
 		mdls = RockModels,
 		mat = "models/mat_jack_gmod_coal"
@@ -242,7 +246,7 @@ end
 -- stub
 -- sound.Play(self.Sounds[math.random(#self.Sounds)], self:GetPos(), 65, self.HitPitch, 1)
 function EFFECT:Think()
-	local Vec = self.Target - self:GetPos()
+	local Vec = (self.Target or self:GetPos() + Vector(0, 0, 1)) - self:GetPos()
 	local Phys = self:GetPhysicsObject()
 	local Dist = Vec:Length()
 	if self.DieTime < CurTime() then return false end
