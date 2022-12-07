@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 40,
+		Version = 40.1,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -68,8 +68,8 @@ function JMod.InitGlobalConfig(forceNew)
 			EatSpeed = 1,
 			BoostMult = 1
 		},
-		WeaponsThatUseMunitions = {"weapon_rpg", "weapon_frag"},
-		WeaponAmmoBlacklist = {"weapon_crossbow"},
+		AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
+		WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
 		RadioSpecs = {
 			DeliveryTimeMult = 1,
 			ParachuteDragMult = 1,

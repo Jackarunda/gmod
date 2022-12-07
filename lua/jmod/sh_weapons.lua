@@ -404,8 +404,13 @@ JMod.AmmoTable = {
 }
 
 for k, v in pairs(JMod.AmmoTable) do
+	v.carrylimit = v.carrylimit or -2
 	game.AddAmmoType({
-		name = k
+		name = k,
+		maxcarry = v.carrylimit,
+		npcdmg = v.basedmg,
+		plydmg = v.basedmg,
+		dmgtype = v.dmgtype or DMG_BULLET
 	})
 
 	if CLIENT then
@@ -720,7 +725,7 @@ elseif SERVER then
 		end
 	end, nil, "Switches your current ammo type for your EZ weapon.")
 
-	function JMod.GiveAmmo(ply, ent)
+	function JMod.GiveAmmo(ply, ent, noRemove)
 		-- it's a resource box
 		if ent.EZsupplies then
 			local Wep = ply:GetActiveWeapon()
@@ -748,7 +753,9 @@ elseif SERVER then
 							ent:SetResource(ent:GetResource() - ResourceToTake)
 
 							if ent:GetResource() <= 0 then
-								ent:Remove()
+								if not noRemove then
+									ent:Remove()
+								end
 
 								return
 							end
@@ -781,7 +788,9 @@ elseif SERVER then
 							ent:SetResource(ent:GetResource() - 100 * .1)
 
 							if ent:GetResource() <= 0 then
-								ent:Remove()
+								if not noRemove then
+									ent:Remove()
+								end
 
 								return
 							end
@@ -812,7 +821,9 @@ elseif SERVER then
 							ent:SetResource(ent:GetResource() - 100 * .1)
 
 							if ent:GetResource() <= 0 then
-								ent:Remove()
+								if not noRemove then
+									ent:Remove()
+								end
 
 								return
 							end
@@ -833,7 +844,9 @@ elseif SERVER then
 				ent:SetCount(CountInBox - AmtToGive)
 
 				if ent:GetCount() <= 0 then
-					ent:Remove()
+					if not noRemove then
+						ent:Remove()
+					end
 
 					return
 				end
