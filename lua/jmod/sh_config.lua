@@ -68,8 +68,8 @@ function JMod.InitGlobalConfig(forceNew)
 			EatSpeed = 1,
 			BoostMult = 1
 		},
-		WeaponsThatUseMunitions = {"weapon_rpg", "weapon_frag"},
-		WeaponAmmoBlacklist = {"weapon_crossbow"},
+		AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
+		WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
 		RadioSpecs = {
 			DeliveryTimeMult = 1,
 			ParachuteDragMult = 1,
