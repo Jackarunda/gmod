@@ -731,61 +731,29 @@ elseif SERVER then
 			local Wep = ply:GetActiveWeapon()
 
 			if Wep then
-				local PrimType, SecType, PrimSize, SecSize, WepClass = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2(), Wep:GetClass()
-				if table.HasValue(JMod.Config.WeaponAmmoBlacklist, WepClass) then return end
+				local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
+				local PrimMax, SecMax, PrimName, SecName = game.GetAmmoMax(PrimType), game.GetAmmoMax(SecType), game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
+				
 				local IsMunitionBox = ent.EZsupplies == "munitions"
+
 				--[[ PRIMARY --]]
-				local PrimName = game.GetAmmoName(PrimType)
-
-				if PrimName and JMod.AmmoTable[PrimName] then
-					-- use JMOD ammo rules
-					local AmmoInfo, CurrentAmmo = JMod.AmmoTable[PrimName], ply:GetAmmoCount(PrimName)
-
-					if ent.EZsupplies == AmmoInfo.resourcetype then
-						local ResourceLeftInBox = ent:GetResource() * 3
-						local SpaceLeftInPlayerInv, MaxAmtToGive, AmtLeftInBox = AmmoInfo.carrylimit - CurrentAmmo, math.ceil(100 / AmmoInfo.sizemult), math.ceil(ResourceLeftInBox * 6 / AmmoInfo.sizemult)
-						local AmtToGive = math.min(SpaceLeftInPlayerInv, MaxAmtToGive, AmtLeftInBox)
-
-						if AmtToGive > 0 then
-							local ResourceToTake = math.ceil(AmtToGive / 18 * AmmoInfo.sizemult)
-							ply:GiveAmmo(AmtToGive, PrimType)
-							ent:UseEffect(ent:GetPos(), ent)
-							ent:SetResource(ent:GetResource() - ResourceToTake)
-
-							if ent:GetResource() <= 0 then
-								if not noRemove then
-									ent:Remove()
-								end
-
-								return
-							end
-						end
-					end
-				else
-					-- use DEFAULT ammo rules
-					if table.HasValue(JMod.Config.WeaponsThatUseMunitions, WepClass) then
-						if not IsMunitionBox then return end
-					else
-						if IsMunitionBox then return end
-					end
-
+				local IsPrimMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, PrimName)
+				if (IsPrimMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, PrimName)) then
 					if PrimType and (PrimType ~= -1) then
 						if PrimSize == -1 then
 							PrimSize = -PrimSize
 						end
 
-						if PrimSize < 2 then
-							PrimSize = PrimSize * 4
-						elseif PrimSize < 3 then
-							PrimSize = PrimSize * 3
-						elseif PrimSize < 6 then
-							PrimSize = PrimSize * 2
-						end
+						local CurrentAmmo, ResourceLeftInBox = ply:GetAmmoCount(PrimName), ent:GetResource()
+						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
+						local AmmoPerResourceUnit = PrimMax / 30
+						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
+						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo))
 
-						if ply:GetAmmoCount(PrimType) <= PrimSize * 10 * JMod.Config.AmmoCarryLimitMult then
-							ply:GiveAmmo(PrimSize, PrimType)
+						if ply:GetAmmoCount(PrimType) < PrimMax * JMod.Config.AmmoCarryLimitMult then
+							ply:GiveAmmo(AmtToGive, PrimType)
+							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)
-							ent:SetResource(ent:GetResource() - 100 * .1)
 
 							if ent:GetResource() <= 0 then
 								if not noRemove then
@@ -797,28 +765,26 @@ elseif SERVER then
 						end
 					end
 				end
-
-				--[[ SECONDARY --]]
-				local SecName = game.GetAmmoName(SecType)
-
-				if PrimName and JMod.AmmoTable[PrimName] then
-				else -- use JMOD ammo rules -- TODO, no jmod weapons use secondary ammo currently
-					-- use DEFAULT ammo rules
-					if table.HasValue(JMod.Config.WeaponsThatUseMunitions, WepClass) then
-						if not IsMunitionBox then return end
-					else
-						if IsMunitionBox then return end
-					end
-
+				
+				if ent:GetResource() <= 0 then return end
+				--[[ Secondary --]]
+				local IsSecMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, SecName)
+				if (IsSecMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, SecName)) then
 					if SecType and (SecType ~= -1) then
 						if SecSize == -1 then
 							SecSize = -SecSize
 						end
 
-						if ply:GetAmmoCount(SecType) <= SecSize * 5 * JMod.Config.AmmoCarryLimitMult then
-							ply:GiveAmmo(math.ceil(SecSize / 2), SecType)
+						local CurrentAmmo, ResourceLeftInBox = ply:GetAmmoCount(SecName), ent:GetResource()
+						local SpaceLeftInPlayerInv = SecMax - CurrentAmmo
+						local AmmoPerResourceUnit = SecMax / 30
+						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
+						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo))
+						
+						if ply:GetAmmoCount(SecType) < SecMax * JMod.Config.AmmoCarryLimitMult then
+							ply:GiveAmmo(AmtToGive, SecType)
+							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)
-							ent:SetResource(ent:GetResource() - 100 * .1)
 
 							if ent:GetResource() <= 0 then
 								if not noRemove then

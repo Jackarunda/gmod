@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 40.1,
+		Version = 40,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
