@@ -4,7 +4,7 @@ ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Gas Smelter"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
@@ -52,6 +52,7 @@ if(SERVER)then
 		self:SetGas(100)
 		self:SetOre(0)
 		self:SetOreType("generic")
+		self.TimeSinceLastOre = 0
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
@@ -162,7 +163,6 @@ if(SERVER)then
 		end
 	end
 
-	local TimeSinceLastOre = 0
 	function ENT:Think()
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
 
@@ -172,14 +172,14 @@ if(SERVER)then
 			self:ConsumeGas(.5)
 
 			if self:GetOre() <= 0 then
-				TimeSinceLastOre = TimeSinceLastOre + 1
+				self.TimeSinceLastOre = self.TimeSinceLastOre + 1
 			else
-				TimeSinceLastOre = 0
+				self.TimeSinceLastOre = 0
 				local Grade = self:GetGrade()
 				local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
 				self:SetProgress(self:GetProgress() + RefineAmt)
 			end
-			if TimeSinceLastOre >= 5 then self:TurnOff() end
+			if self.TimeSinceLastOre >= 5 then self:TurnOff() end
 
 			if self:GetProgress() >= self:GetOre() then
 				self:ProduceResource()

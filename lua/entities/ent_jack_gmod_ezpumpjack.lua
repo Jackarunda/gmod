@@ -21,8 +21,7 @@ ENT.StaticPerfSpecs={
 	MaxElectricity=200,
 }
 ENT.DynamicPerfSpecs={
-	Armor=2,
-	PumpRate = 1
+	Armor=2
 }
 ---
 local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
@@ -35,9 +34,10 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, -90))
 		self:SetProgress(0)
-		self:SetState(STATE_OFF)
 		self.DepositKey = 0
-		self:TryPlace() 
+		timer.Simple(0.1, function()
+			self:TryPlace() 
+		end)
 	end
 
 	function ENT:UpdateDepositKey()
@@ -188,9 +188,9 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.5)
+			self:ConsumeElectricity(.1)
 			-- This is just the rate at which we pump
-			local pumpRate = self.PumpRate^2
+			local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 			-- Here's where we do the rescource deduction, and barrel production
 			-- If it's a flow (i.e. water)
 			if JMod.NaturalResourceTable[self.DepositKey].rate then
@@ -217,6 +217,10 @@ if(SERVER)then
 
 			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
+
+		self:NextThink(CurTime() + 1)
+
+		return true 
 	end
 
 	function ENT:ProduceResource(amt)
