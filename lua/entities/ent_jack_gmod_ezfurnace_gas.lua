@@ -200,6 +200,7 @@ elseif(CLIENT)then
 	end
 	local GradeColors = JMod.EZ_GRADE_COLORS
 	local GradeMats = JMod.EZ_GRADE_MATS
+	local WhiteSquare = Material("white_square")
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -223,7 +224,29 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
-
+		local GlowPos = BasePos + Up * 60 + Right * 7.5
+		local GlowAng = Angle(SelfAng.p, SelfAng.y, SelfAng.r)
+		GlowAng:RotateAroundAxis(Up, -90)
+		local GlowDir = GlowAng:Forward()
+		render.SetMaterial(WhiteSquare)
+		for i = 1, 5 do
+			render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5), GlowDir, 40, 20, Color( 255, 255, 200, 50 ) )
+		end
+		for i = 1, 20 do
+			render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5, GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ) )
+		end
+		local light = DynamicLight(self:EntIndex())
+		if (light) then
+			light.Pos = GlowPos + Right * 7 + Up * 1
+			light.r = 255
+			light.g = 200
+			light.b = 100
+			light.Brightness = 4
+			light.Decay = 1000
+			light.Size = 200
+			light.DieTime = CurTime() + 0.1
+		end
+		---
 		if DetailDraw then
 			local PipeAng = SelfAng:GetCopy()
 			PipeAng:RotateAroundAxis(PipeAng:Right(), 0)
