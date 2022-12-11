@@ -53,6 +53,8 @@ if(SERVER)then
 		self:SetOre(0)
 		self:SetOreType("generic")
 		self.TimeSinceLastOre = 0
+		self.NextEffThink = 0
+		self.NextSmeltThink = 0
 	end
 	function ENT:TurnOn(activator)
 		if self:GetGas() > 0 and self:GetOre() > 0 then
@@ -165,28 +167,40 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
+		if (self.NextSmeltThink < Time) then
+			self.NextSmeltThink = Time + 1
+			if State == STATE_SMELTING then
+				if not OreTyp then self:TurnOff() return end
 
-		if State == STATE_SMELTING then
-			if not OreTyp then self:TurnOff() return end
+				self:ConsumeGas(.5)
 
-			self:ConsumeGas(.5)
+				if self:GetOre() <= 0 then
+					self.TimeSinceLastOre = self.TimeSinceLastOre + 1
+				else
+					self.TimeSinceLastOre = 0
+					local Grade = self:GetGrade()
+					local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
+					self:SetProgress(self:GetProgress() + RefineAmt)
+				end
+				if self.TimeSinceLastOre >= 5 then self:TurnOff() end
 
-			if self:GetOre() <= 0 then
-				self.TimeSinceLastOre = self.TimeSinceLastOre + 1
-			else
-				self.TimeSinceLastOre = 0
-				local Grade = self:GetGrade()
-				local RefineAmt = math.min(Grade ^ 2, self:GetOre() - self:GetProgress())
-				self:SetProgress(self:GetProgress() + RefineAmt)
-			end
-			if self.TimeSinceLastOre >= 5 then self:TurnOff() end
-
-			if self:GetProgress() >= self:GetOre() then
-				self:ProduceResource()
+				if self:GetProgress() >= self:GetOre() then
+					self:ProduceResource()
+				end
 			end
 		end
-		self:NextThink(Time + 1)
+		if (self.NextEffThink < Time) then
+			self.NextEffThink = Time + .1
+			if (State == STATE_SMELTING) then
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos() + self:GetUp() * 110 + self:GetRight() * -5 + self:GetForward() * 12)
+				Eff:SetNormal(self:GetUp())
+				Eff:SetScale(.1)
+				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
+			end
+		end
 
+		self:NextThink(Time + .1)
 		return true
 	end
 
@@ -201,6 +215,7 @@ elseif(CLIENT)then
 	local GradeColors = JMod.EZ_GRADE_COLORS
 	local GradeMats = JMod.EZ_GRADE_MATS
 	local WhiteSquare = Material("white_square")
+	local HeatWaveMat = Material("sprites/heatwave")
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -224,27 +239,33 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
-		local GlowPos = BasePos + Up * 60 + Right * 7.5
-		local GlowAng = Angle(SelfAng.p, SelfAng.y, SelfAng.r)
-		GlowAng:RotateAroundAxis(Up, -90)
-		local GlowDir = GlowAng:Forward()
-		render.SetMaterial(WhiteSquare)
-		for i = 1, 5 do
-			render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5), GlowDir, 40, 20, Color( 255, 255, 200, 50 ) )
-		end
-		for i = 1, 20 do
-			render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5, GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ) )
-		end
-		local light = DynamicLight(self:EntIndex())
-		if (light) then
-			light.Pos = GlowPos + Right * 7 + Up * 1
-			light.r = 255
-			light.g = 200
-			light.b = 100
-			light.Brightness = 4
-			light.Decay = 1000
-			light.Size = 200
-			light.DieTime = CurTime() + 0.1
+		if (State == STATE_SMELTING) then
+			local GlowPos = BasePos + Up * 60 + Right * 7.5
+			local GlowAng = SelfAng:GetCopy()
+			GlowAng:RotateAroundAxis(GlowAng:Up(), -90)
+			local GlowDir = GlowAng:Forward()
+			render.SetMaterial(WhiteSquare)
+			for i = 1, 5 do
+				render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255, 255, 255, 200 ) )
+			end
+			for i = 1, 20 do
+				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ) )
+			end
+			render.SetMaterial(HeatWaveMat)
+			for i = 1, 2 do
+				render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 120) - Right * 8 + Forward * 10, 60, 60, Color(255, 255 - i * 10, 255 - i * 20, 25))
+			end
+			local light = DynamicLight(self:EntIndex())
+			if (light) then
+				light.Pos = GlowPos + Right * 7 + Up * 1
+				light.r = 255
+				light.g = 200
+				light.b = 100
+				light.Brightness = 4
+				light.Decay = 1000
+				light.Size = 200 * math.Rand(.9, 1)
+				light.DieTime = CurTime() + 0.1
+			end
 		end
 		---
 		if DetailDraw then
