@@ -147,9 +147,9 @@ if(SERVER)then
 		local pos = SelfPos
 		for type, modifier in pairs(RefinedTable) do
 			local i = 1
-			local spawnVec = self:WorldToLocal(SelfPos + Right * 30)
+			local spawnVec = self:WorldToLocal(SelfPos + Right * 30 + Up * 20 * i)
 			local spawnAng = Angle(0, 0, 0)
-			local ejectVec = Forward*100
+			local ejectVec = Forward * 100
 			timer.Simple(0.2*i, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, type, amt*modifier, spawnVec, spawnAng, ejectVec, true, 200)
@@ -206,8 +206,8 @@ if(SERVER)then
 
 elseif(CLIENT)then
 	function ENT:Initialize()
-		self.StaticPerfSpecs.BaseClass=nil
-		self.DynamicPerfSpecs.BaseClass=nil
+		self.StaticPerfSpecs.BaseClass = nil
+		self.DynamicPerfSpecs.BaseClass = nil
 		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
 		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
@@ -246,10 +246,10 @@ elseif(CLIENT)then
 			local GlowDir = GlowAng:Forward()
 			render.SetMaterial(WhiteSquare)
 			for i = 1, 5 do
-				render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255, 255, 255, 200 ) )
+				render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255, 255, 255, 200 ), GlowAng.r)
 			end
 			for i = 1, 20 do
-				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ) )
+				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), GlowAng.r)
 			end
 			render.SetMaterial(HeatWaveMat)
 			for i = 1, 2 do

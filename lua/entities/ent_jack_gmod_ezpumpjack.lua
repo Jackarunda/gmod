@@ -1,34 +1,34 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Pumpjack"
-ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true
-ENT.AdminOnly=false
-ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Pumpjack"
+ENT.Category = "JMod - EZ Misc."
+ENT.Spawnable = true
+ENT.AdminOnly = false
+ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model="models/hunter/blocks/cube4x4x1.mdl"
-ENT.Mass=3000
+ENT.Model = "models/hunter/blocks/cube4x4x1.mdl"
+ENT.Mass = 3000
 ENT.SpawnHeight = 100
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---
-ENT.EZupgradable=true
-ENT.StaticPerfSpecs={
-	MaxDurability=100,
-	MaxElectricity=200,
+ENT.EZupgradable = true
+ENT.StaticPerfSpecs = {
+	MaxDurability = 100,
+	MaxElectricity = 200,
 }
-ENT.DynamicPerfSpecs={
-	Armor=2
+ENT.DynamicPerfSpecs = {
+	Armor = 2
 }
 ---
-local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
+local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float",1,"Progress")
-	self:NetworkVar("String",0,"ResourceType")
+	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("String", 0, "ResourceType")
 end
 if(SERVER)then
 	function ENT:CustomInit()
