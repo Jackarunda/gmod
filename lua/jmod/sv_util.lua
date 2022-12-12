@@ -853,7 +853,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 						
 						if Accepted > 0 then
 							local entPos = ent:LocalToWorld(ent:OBBCenter())
-							JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), entPos, amount/100, 0.1, 1)
+							JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), entPos, amount * 0.05, 0.1, 1)
 							amount = amount - Accepted
 							if amount <= 0 then 
 							
@@ -865,7 +865,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			end
 		end
 		local SpawnAmount = math.min(amount, 100)
-		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount/100, 1, 1)
+		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.05, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
@@ -902,6 +902,9 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 	spread = spread or 1
 	scale = scale or 1
 	upSpeed = upSpeed or 0
+
+	amt = math.Clamp(amt, 0.5, 5)
+	print(amt)
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
