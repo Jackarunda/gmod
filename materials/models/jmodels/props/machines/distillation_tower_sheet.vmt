@@ -1,0 +1,10 @@
+
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "Models/props_wasteland/coolingtank02"
+	"$surfaceprop" "metal"
+        "$envmap" "env_cubemap"	
+        "$basealphaenvmapmask" 1
+	
+}

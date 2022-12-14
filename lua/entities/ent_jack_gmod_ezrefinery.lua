@@ -3,11 +3,11 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Oil Refinery"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/props_wasteland/laundry_washer003.mdl"
+ENT.Model = "models/jmodels/props/machines/oil_refinery.mdl"
 ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
@@ -38,6 +38,8 @@ if(SERVER)then
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
 		self:SetOil(0)
+		--self:SetSubMaterial(2, "models/props_pipes/pipesystem01a_skin1") -- Pipe on top
+		--self:SetSubMaterial(1, "models/props_wasteland/coolingtank02_skin3") -- Distillation tower
 	end
 	function ENT:TurnOn(activator)
 		if self:GetElectricity() > 0 and self:GetOil() > 0 then
@@ -175,6 +177,10 @@ if(SERVER)then
 elseif(CLIENT)then
 	local GradeColors = JMod.GradeColors
 	local GradeMats = JMod.GradeMats
+	function ENT:CustomInit()
+		self.Tank = JMod.MakeModel(self, "models/props_wasteland/horizontalcoolingtank04.mdl")
+		
+	end
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -190,7 +196,7 @@ elseif(CLIENT)then
 		}).Hit
 
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DetailDraw = Closeness < 400000 -- cutoff point is 4000 units when the fov is 90 degrees
 		---
 		if (not(DetailDraw))and(Obscured) then return end -- if player is far and sentry is obscured, draw nothing
 		if Obscured then DetailDraw = false end -- if obscured, at least disable details
@@ -198,14 +204,15 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
-
-		if DetailDraw and State == STATE_REFINING then
-
-			if Closeness < 20000 then
+		if DetailDraw then
+			local TankAng = SelfAng:GetCopy()
+			TankAng:RotateAroundAxis(Up, -90)
+			JMod.RenderModel(self.Tank, SelfPos + Up * 55 - Right * 30, TankAng, Vector(0.2, 0.2, 0.2), JMod.EZ_GRADE_COLORS[Grade], JMod.EZ_GRADE_MATS[Grade])
+			--if Closeness < 20000 and State == STATE_REFINING then
 				local DisplayAng = SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 45)
+				DisplayAng:RotateAroundAxis(DisplayAng:Right(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
@@ -213,7 +220,7 @@ elseif(CLIENT)then
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
 				local OR, OG, OB = JMod.GoodBadColor(OilFrac)
-				cam.Start3D2D(SelfPos + Up * 25 + Forward * 24 - Right * 12, DisplayAng, .05)
+				cam.Start3D2D(SelfPos + Up * 35 + Forward * 45 - Right * 28, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(220, 0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 285, 65, 118, Opacity + 50)
@@ -224,7 +231,7 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined("OIL", "JMod-Display", 150, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(OilFrac * self.MaxOil)) .. "%", "JMod-Display", 150, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
-			end
+			--end
 		end
 	end
 	language.Add("ent_jack_gmod_ezrefinery", "EZ Refinery")
