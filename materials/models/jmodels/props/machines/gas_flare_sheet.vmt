@@ -1,6 +1,6 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models/props_pipes/Pipesystem01a_skin1"
+	"$baseTexture" "models/jmodels/props/machines/gas_flare_sheet"
 	"$surfaceprop" "metal"
 //	"$envmap" "env_cubemap"
  //	"$basealphaenvmapmask" 1

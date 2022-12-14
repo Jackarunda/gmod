@@ -2,9 +2,9 @@
 "VertexLitGeneric"
 {
 	// Original shader: VertexLitTexture
-	"$basetexture" "Models/props_wasteland/coolingtank02"
+	"$basetexture" "models/jmodels/props/machines/distillation_tower_sheet"
 	"$surfaceprop" "metal"
-        "$envmap" "env_cubemap"	
-        "$basealphaenvmapmask" 1
+    "$envmap" "env_cubemap"	
+    "$basealphaenvmapmask" 1
 	
 }
