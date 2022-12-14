@@ -414,17 +414,24 @@ if(SERVER)then
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.COOLANT)then
 					local Kewl=self:GetCoolant()
 					local Missing=100-Kewl
-					if(Missing<10)then return 0 end
+					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetCoolant(Kewl+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.OIL)then
 					local Oil=self:GetOil()
 					local Missing=100-Oil
-					if(Missing<10)then return 0 end
+					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav",65,math.random(90,110))
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.FUEL)then
+					local Fuel = self:GetFuel()
+					local Missing = 100 - Fuel
+					if(Missing < 1)then return 0 end
+					Accepted = math.min(Missing, amt)
+					self:SetFuel(Fuel + Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
 				elseif(self.GetOreType and (self:GetOreType()=="generic" or typ==self:GetOreType())) then
 					self:SetOreType(typ)
 					local COre = self:GetOre()

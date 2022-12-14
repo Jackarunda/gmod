@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Gas Smelter"
+ENT.PrintName = "EZ Ore Smelter"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
@@ -13,7 +13,8 @@ ENT.Mass = 200
 ENT.SpawnHeight = 10
 ---
 ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.GAS,
+	JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.FUEL,
 	JMod.EZ_RESOURCE_TYPES.IRONORE,
 	JMod.EZ_RESOURCE_TYPES.LEADORE,
 	JMod.EZ_RESOURCE_TYPES.ALUMINUMORE,
@@ -28,19 +29,19 @@ ENT.EZconsumes = {
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 0,
+	MaxElectricity = 200,
 	MaxOre = 100,
-	MaxGas = 100
+	MaxFuel = 100
 }
 ENT.DynamicPerfSpecs = {
-	GasEffeciency = 1,
+	FuelEffeciency = 1,
 	Armor = 1
 }
 ---
 local STATE_BROKEN,STATE_OFF,STATE_SMELTING=-1,0,1
 ---
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 1, "Gas")
+	self:NetworkVar("Float", 1, "Fuel")
 	self:NetworkVar("Float", 2, "Progress")
 	self:NetworkVar("Float", 3, "Ore")
 	self:NetworkVar("String", 0, "OreType")
@@ -49,7 +50,7 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
-		self:SetGas(100)
+		self:SetFuel(self.MaxFuel)
 		self:SetOre(0)
 		self:SetOreType("generic")
 		self.TimeSinceLastOre = 0
@@ -57,7 +58,7 @@ if(SERVER)then
 		self.NextSmeltThink = 0
 	end
 	function ENT:TurnOn(activator)
-		if self:GetGas() > 0 and self:GetOre() > 0 then
+		if self:GetFuel() > 0 and self:GetOre() > 0 then
 			self:SetState(STATE_SMELTING)
 			self:EmitSound("snd_jack_littleignite.wav")
 			timer.Simple(0.1, function()
@@ -112,11 +113,17 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
-	function ENT:ConsumeGas(amt)
-		amt = (amt or .5)/self.GasEffeciency
-		local NewAmt = math.Clamp(self:GetGas() - amt, 0.0, self.MaxGas)
-		self:SetGas(NewAmt)
-		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
+	function ENT:ConsumeFuel(amt)
+		local Elec = self:GetElectricity()
+		amt = (amt or .5)/self.FuelEffeciency
+		if Elec > 0 then
+			local NewAmt = math.Clamp(Elec - amt, 0.0, self.MaxElectricity)
+			self:SetElectricity(NewAmt)
+		else
+			local NewAmt = math.Clamp(self:GetFuel() - amt, 0.0, self.MaxFuel)
+			self:SetFuel(NewAmt)
+			if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
+		end
 	end
 
 	function ENT:SpawnEffect(pos)
@@ -172,7 +179,7 @@ if(SERVER)then
 			if State == STATE_SMELTING then
 				if not OreTyp then self:TurnOff() return end
 
-				self:ConsumeGas(.5)
+				self:ConsumeFuel(.5)
 
 				if self:GetOre() <= 0 then
 					self.TimeSinceLastOre = self.TimeSinceLastOre + 1
@@ -283,11 +290,13 @@ elseif(CLIENT)then
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local OreFrac = self:GetOre() / self.MaxOre
-				local GasFrac = self:GetGas() / self.MaxGas
+				local FuelFrac = self:GetFuel() / self.MaxFuel
+				local ElecFrac = self:GetElectricity() / self.MaxElectricity
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local OR, OG, OB = JMod.GoodBadColor(OreFrac)
-				local GR, GG, GB = JMod.GoodBadColor(GasFrac)
-				cam.Start3D2D(SelfPos - Forward * 10 + Right * 18 + Up * 50, DisplayAng, .05)
+				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
+				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
+				cam.Start3D2D(SelfPos - Forward * 10 + Right * 18 + Up * 56, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(420, 0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 485, 65, 118, Opacity + 50)
@@ -295,13 +304,15 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("ORE REMAINING", "JMod-Display", 300, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 300, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("GAS REMAINING", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(GasFrac * self.MaxGas)) .. "%", "JMod-Display", 0, 90, Color(GR, GG, GB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("POWER REMAINING", "JMod-Display", 0, 120, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * self.MaxElectricity * .5)) .. "%", "JMod-Display", 0, 150, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("FUEL REMAINING", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * self.MaxFuel)) .. "%", "JMod-Display", 0, 90, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("ORE TYPE", "JMod-Display", 300, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 300, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezfurnace_gas", "EZ Gas Smelter")
+	language.Add("ent_jack_gmod_ezfurnace_gas", "EZ Ore Smelter")
 end
