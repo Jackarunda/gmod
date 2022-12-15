@@ -72,16 +72,16 @@ if(SERVER)then
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
 			--print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
-			self.DepositKey = 0 
+			self.DepositKey = nil
 			--print("No valid deposit") --DEBUG
 		end
 	end
 
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
-		if((Tr.Hit)and(Tr.HitWorld))then
+		if (Tr.Hit) and (Tr.HitWorld) then
 			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(0, Yaw,0))
+			self:SetAngles(Angle(0, Yaw, 0))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * 0.1)
 			--
 			local GroundIsSolid = true
@@ -91,7 +91,7 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not self.DepositKey then
-				JMod.Hint(self.Owner, "oil derrick")
+				--JMod.Hint(self.Owner, "oil derrick")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
@@ -173,8 +173,8 @@ if(SERVER)then
 		elseif State == STATE_RUNNING then
 			if not IsValid(self.Weld) then
 				self.DepositKey = nil
-				self.WellPos = nil
-				self.Weld = nil
+				--self.WellPos = nil
+				--self.Weld = nil
 				self:TurnOff()
 
 				return
