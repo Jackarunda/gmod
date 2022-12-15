@@ -4,13 +4,14 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Drill"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = true -- Temporary, until the next phase of Econ2
+ENT.Spawnable = false -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes = {"power", "parts"}
 --
 ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
 ENT.Mass = 1000
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 100
@@ -189,7 +190,6 @@ if(SERVER)then
 			self:ConsumeElectricity(.1)
 			-- This is just the rate at which we drill
 			local drillRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
-			print(drillRate)
 			
 			-- Get the amount of resouces left in the ground
 			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
