@@ -14,6 +14,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.OIL,
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
 ---

@@ -7,7 +7,10 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = false -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.EZconsumes = {"power", "parts"}
+ENT.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.POWER
+}
 --
 ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
 ENT.Mass = 1000
