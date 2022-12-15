@@ -191,7 +191,7 @@ if(SERVER)then
 				end
 				if self.TimeSinceLastOre >= 5 then self:TurnOff() end
 
-				if self:GetProgress() >= self:GetOre() then
+				if self:GetProgress() >= math.min(self:GetOre(), 100) then
 					self:ProduceResource()
 				end
 			end
