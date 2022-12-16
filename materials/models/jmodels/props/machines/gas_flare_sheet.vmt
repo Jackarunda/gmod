@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jmodels/props/machines/gas_flare_sheet"
+	"$surfaceprop" "metal"
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+//	"$envmap" "env_cubemap"
+ //	"$basealphaenvmapmask" 1
+//	"$envmaptint" "[ .125 .125 .125]"
+}
+

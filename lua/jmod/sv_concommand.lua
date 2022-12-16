@@ -62,7 +62,13 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 end, nil, "Removes JMod radiation and from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
-	JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, Vector(100, 0, -100), Vector(0, 0, -100), 1, 1, 1, 0)
+	--JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, Vector(100, 0, -100), Vector(0, 0, -100), 1, 1, 1, 0)
+	--[[
+	for k,v in pairs(game.GetAmmoTypes())do
+		print(v,"\n","max",game.GetAmmoMax(k),"dmg",game.GetAmmoPlayerDamage(k),"\n")
+	end
+	--]]
+	ply:TakeDamage(-10)
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)
