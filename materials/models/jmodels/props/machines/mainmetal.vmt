@@ -1,0 +1,9 @@
+VertexlitGeneric
+{
+	$basetexture "models/jmodels/props/machines/mainmetal"
+	$bumpmap "models/jmodels/props/machines/mainmetal_norm"
+	$envmap env_cubemap
+	$envmaptint "[.1 .1 .1]"
+	$blendTintByBaseAlpha "1"
+	$blendTintColorOverBase "0.0"
+}

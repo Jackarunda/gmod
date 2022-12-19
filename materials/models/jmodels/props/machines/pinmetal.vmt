@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/trilogynetworks_drill/pinmetal"
+	"$bumpmap" "models/trilogynetworks_drill/pinmetal_norm"
+	$envmap env_cubemap
+	$envmaptint "[.3 .3 .3]"
+}

@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Drill"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.EZconsumes = {
@@ -12,7 +12,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
 --
-ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
+ENT.Model = "models/jmodels/props/machines/drill.mdl"
 ENT.Mass = 1000
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.StaticPerfSpecs = {
@@ -223,7 +223,7 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = SelfPos
-		local spawnVec = self:WorldToLocal(Vector(SelfPos) + Up * 15 + Forward * 20)
+		local spawnVec = self:WorldToLocal(Vector(SelfPos) + Up * 15 + Forward * 40)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 	end
@@ -240,7 +240,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local DrillPos = SelfPos + Forward * 10 + Right * .5 - Up
+		local DrillPos = SelfPos + Forward * 20 + Right * .5 - Up
 
 		--
 		if State == STATE_RUNNING then
@@ -253,7 +253,7 @@ elseif(CLIENT)then
 		end
 		local DrillAng = SelfAng:GetCopy()
 		DrillAng:RotateAroundAxis(Up, self.DrillSpin)
-		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(1.5, 1.5, 1.9), nil, self.DrillMat)
+		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(2.5, 2.5, 3.9), nil, self.DrillMat)
 		--
 
 		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit

@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/trilogynetworks_drill/cable"
+	"$bumpmap" "models/trilogynetworks_drill/cable_norm"
+	$envmap env_cubemap
+	$envmaptint "[.1 .1 .1]"
+}
