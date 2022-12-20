@@ -186,7 +186,7 @@ JMod.EZ_GRADE_NAMES = {"basic", "copper", "silver", "gold", "platinum"}
 
 JMod.EZ_GRADE_COLORS = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
 
-JMod.EZ_GRADE_MATS = {Material("phoenix_storms/metal"), Material("models/mat_jack_gmod_copper"), Material("models/mat_jack_gmod_silver"), Material("models/mat_jack_gmod_gold"), Material("models/mat_jack_gmod_platinum")}
+JMod.EZ_GRADE_MATS = {Material("models/mats_jack_grades/1"), Material("models/mats_jack_grades/2"), Material("models/mats_jack_grades/3"), Material("models/mats_jack_grades/4"), Material("models/mats_jack_grades/5")}
 
 JMod.EZ_GRADE_UPGRADE_COSTS = {.5, 1, 1.5, 2}
 

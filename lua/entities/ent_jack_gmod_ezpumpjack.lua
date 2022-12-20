@@ -86,8 +86,8 @@ if(SERVER)then
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100),Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
 			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(0, Yaw, -90))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * 95)
+			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 180, Tr.HitNormal:Angle().y + 0, Tr.HitNormal:Angle().z + 0))
+			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
 			for i = 1, 50 do

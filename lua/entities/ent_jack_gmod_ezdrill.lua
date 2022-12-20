@@ -4,23 +4,24 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Drill"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
+---
+ENT.Model = "models/jmodels/props/machines/drill_support.mdl"
+ENT.Mass = 2000
+ENT.SpawnHeight = 105
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
---
-ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
-ENT.Mass = 1000
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 100
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 1.2
 }
 --
 --ENT.WhitelistedResources = {}
@@ -85,8 +86,8 @@ if(SERVER)then
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
 			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(0, Yaw, 0))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * 0.1)
+			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, 0))
+			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
 			for i = 1, 50 do
@@ -232,6 +233,8 @@ elseif(CLIENT)then
 
 	function ENT:Initialize()
 		self.Auger = JMod.MakeModel(self, "models/jmod/jmodels/drill_auger.mdl")
+		self.DrillMotor = JMod.MakeModel(self, "models/props_wasteland/laundry_basket001.mdl")
+		self.PowerBox = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl")
 		self.DrillMat = Material("phoenix_storms/grey_steel")
 		self.DrillSpin = 0
 	end
@@ -240,8 +243,16 @@ elseif(CLIENT)then
 		self:DrawModel()
 		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local DrillPos = SelfPos + Forward * 10 + Right * .5 - Up
-
+		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
+		local MotorPos = BoxPos + Up * -45 + Right * 3
+		local DrillPos = MotorPos + Up * -120
+		--
+		local PowerBoxAng = SelfAng:GetCopy()
+		PowerBoxAng:RotateAroundAxis(Up, -90)
+		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.2), nil, JMod.EZ_GRADE_MATS[Grade])
+		local MotorAng = SelfAng:GetCopy()
+		MotorAng:RotateAroundAxis(Up, 90)
+		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
 		--
 		if State == STATE_RUNNING then
 			self.DrillSpin = self.DrillSpin - FrameTime() * 300
@@ -253,7 +264,9 @@ elseif(CLIENT)then
 		end
 		local DrillAng = SelfAng:GetCopy()
 		DrillAng:RotateAroundAxis(Up, self.DrillSpin)
-		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(1.5, 1.5, 1.9), nil, self.DrillMat)
+		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
+		
+		
 		--
 
 		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit

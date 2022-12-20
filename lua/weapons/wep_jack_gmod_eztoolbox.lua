@@ -839,6 +839,7 @@ function SWEP:Think()
 					elseif IsValid(Phys) then
 						if Alt then
 							-- loosen
+							--Prog = JMod.UpdateDeconstruct(Ent)
 							if constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled() then
 								JMod.Hint(self.Owner, "work spread")
 								local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
@@ -867,6 +868,7 @@ function SWEP:Think()
 							end
 						else
 							-- salvage
+							--Prog = JMod.UpdateDeconstruct(Ent)
 							if SERVER then
 								if constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled() then
 									self.Owner:PrintMessage(HUD_PRINTCENTER, "object is constrained")
@@ -894,14 +896,18 @@ function SWEP:Think()
 										if Prog >= 100 then
 											sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
 
+											--local i = 0
 											for k, v in pairs(Yield) do
-												local AmtLeft = v
+												--timer.Simple(i*0.5, function()
+													local AmtLeft = v
 
-												while AmtLeft > 0 do
-													local Remove = math.min(AmtLeft, 100)
-													self:CreateResourceEntity(Pos + VectorRand() * 20 + Vector(0, 0, 20), k, Remove)
-													AmtLeft = AmtLeft - Remove
-												end
+													while AmtLeft > 0 do
+														local Remove = math.min(AmtLeft, 100)
+														self:CreateResourceEntity(Pos + VectorRand() * 50 + Vector(0, 0, 20), k, Remove)
+														AmtLeft = AmtLeft - Remove
+													end
+												--end)
+												--i = i + 1
 											end
 
 											SafeRemoveEntity(Ent)

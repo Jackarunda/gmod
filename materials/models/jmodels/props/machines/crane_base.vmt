@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$color"				"[1 1 1]"
+	"$baseTexture"			"models/jmodels/props/machines/crane_base"
+//	"$envmap"			"env_cubemap"
+//	"$envmaptint"			.35 .35 .35
+//	"$envmapmask"			"models/crane_docks/crane_base_spec"
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+}

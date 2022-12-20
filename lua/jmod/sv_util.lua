@@ -867,6 +867,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		local SpawnAmount = math.min(amount, 100)
 		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()
+			if not(IsValid(machine)) then return end
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
