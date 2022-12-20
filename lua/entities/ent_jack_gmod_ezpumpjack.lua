@@ -1,43 +1,43 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Author="Jackarunda"
-ENT.Information="glhfggwpezpznore"
-ENT.PrintName="EZ Pumpjack"
-ENT.Category="JMod - EZ Misc."
-ENT.Spawnable=true
-ENT.AdminOnly=false
-ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.Type = "anim"
+ENT.Author = "Jackarunda"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Pumpjack"
+ENT.Category = "JMod - EZ Misc."
+ENT.Spawnable = true
+ENT.AdminOnly = false
+ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model="models/hunter/blocks/cube4x4x1.mdl"
-ENT.Mass=3000
+ENT.Model = "models/hunter/blocks/cube4x4x1.mdl"
+ENT.Mass = 3000
 ENT.SpawnHeight = 100
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---
-ENT.EZupgradable=true
-ENT.StaticPerfSpecs={
-	MaxDurability=100,
-	MaxElectricity=200,
+ENT.EZupgradable = true
+ENT.StaticPerfSpecs = {
+	MaxDurability = 100,
+	MaxElectricity = 200,
 }
-ENT.DynamicPerfSpecs={
-	Armor=2,
-	PumpRate = 1
+ENT.DynamicPerfSpecs = {
+	Armor = 2
 }
 ---
-local STATE_BROKEN,STATE_OFF,STATE_RUNNING=-1,0,1
+local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float",1,"Progress")
-	self:NetworkVar("String",0,"ResourceType")
+	self:NetworkVar("Float", 1, "Progress")
+	self:NetworkVar("String", 0, "ResourceType")
 end
 if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, -90))
 		self:SetProgress(0)
-		self:SetState(STATE_OFF)
 		self.DepositKey = 0
-		self:TryPlace() 
+		timer.Simple(0.1, function()
+			self:TryPlace() 
+		end)
 	end
 
 	function ENT:UpdateDepositKey()
@@ -81,31 +81,36 @@ if(SERVER)then
 			--print("No valid deposit") --DEBUG
 		end
 	end
+
 	function ENT:TryPlace()
-		local Tr=util.QuickTrace(self:GetPos()+Vector(0,0,100),Vector(0,0,-500),self)
-		if((Tr.Hit)and(Tr.HitWorld))then
-			local Yaw=self:GetAngles().y
-			self:SetAngles(Angle(0,Yaw,-90))
-			self:SetPos(Tr.HitPos+Tr.HitNormal*95)
+		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100),Vector(0, 0, -500), self)
+		if (Tr.Hit) and (Tr.HitWorld) then
+			local Yaw = self:GetAngles().y
+			self:SetAngles(Angle(0, Yaw, -90))
+			self:SetPos(Tr.HitPos + Tr.HitNormal * 95)
 			--
-			local GroundIsSolid=true
-			for i=1,50 do
-				local Contents=util.PointContents(Tr.HitPos-Vector(0,0,10*i))
-				if(bit.band(util.PointContents(self:GetPos()),CONTENTS_SOLID)==CONTENTS_SOLID)then GroundIsSolid=false break end
+			local GroundIsSolid = true
+			for i = 1, 50 do
+				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
+				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID)then GroundIsSolid = false break end
 			end
 			self:UpdateDepositKey()
 			if not(self.DepositKey)then
-				JMod.Hint(self.Owner,"oil derrick")
+				JMod.Hint(self.Owner, "oil derrick")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self,Tr.Entity,0,0,50000,false,false) end
+				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
 					self:TurnOn(self.Owner)
 				else
-					JMod.Hint(self.Owner,"machine mounting problem")
+					if self:GetState() > 0 then
+						self:TurnOff()
+					end
+					JMod.Hint(self.Owner, "machine mounting problem")
 				end
 			end
 		end
 	end
+
 	function ENT:TurnOn(activator)
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 		if self:GetElectricity() > 0 then
@@ -176,7 +181,7 @@ if(SERVER)then
 			if not IsValid(self.Weld) then
 				self.DepositKey = nil
 				self.WellPos = nil
-				self.Weld = nil
+				--self.Weld = nil
 				self:TurnOff()
 
 				return
@@ -188,9 +193,9 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.5)
+			self:ConsumeElectricity(.1)
 			-- This is just the rate at which we pump
-			local pumpRate = self.PumpRate^2
+			local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 			-- Here's where we do the rescource deduction, and barrel production
 			-- If it's a flow (i.e. water)
 			if JMod.NaturalResourceTable[self.DepositKey].rate then
@@ -217,6 +222,10 @@ if(SERVER)then
 
 			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
+
+		self:NextThink(CurTime() + 1)
+
+		return true 
 	end
 
 	function ENT:ProduceResource(amt)

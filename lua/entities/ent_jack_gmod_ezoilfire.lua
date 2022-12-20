@@ -106,6 +106,7 @@ if SERVER then
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos() + self:GetRight() * 10)
 		Eff:SetNormal(self:GetRight())
+		Eff:SetScale(1)
 		util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
 
 		if math.random(1, 4) == 2 then

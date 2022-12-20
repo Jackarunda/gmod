@@ -7,10 +7,14 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = false -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.EZconsumes = {"power", "parts"}
+ENT.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.POWER
+}
 --
 ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
 ENT.Mass = 1000
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 100
@@ -31,9 +35,10 @@ end
 if(SERVER)then
 	function ENT:CustomInit()
 		self:SetProgress(0)
-		self:SetState(STATE_OFF)
-		self:TryPlace()
 		self.DepositKey = 0
+		timer.Simple(0.1, function()
+			self:TryPlace() 
+		end)
 	end
 
 	function ENT:UpdateDepositKey()
@@ -71,16 +76,16 @@ if(SERVER)then
 			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
 			--print("Our deposit is "..self.DepositKey) --DEBUG
 		else 
-			self.DepositKey = 0 
+			self.DepositKey = nil
 			--print("No valid deposit") --DEBUG
 		end
 	end
 
 	function ENT:TryPlace()
-		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
-		if((Tr.Hit)and(Tr.HitWorld))then
+		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
+		if (Tr.Hit) and (Tr.HitWorld) then
 			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(0, Yaw,0))
+			self:SetAngles(Angle(0, Yaw, 0))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * 0.1)
 			--
 			local GroundIsSolid = true
@@ -90,7 +95,7 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not self.DepositKey then
-				JMod.Hint(self.Owner, "oil derrick")
+				--JMod.Hint(self.Owner, "oil derrick")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
@@ -172,8 +177,8 @@ if(SERVER)then
 		elseif State == STATE_RUNNING then
 			if not IsValid(self.Weld) then
 				self.DepositKey = nil
-				self.WellPos = nil
-				self.Weld = nil
+				--self.WellPos = nil
+				--self.Weld = nil
 				self:TurnOff()
 
 				return
@@ -185,9 +190,9 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.5)
+			self:ConsumeElectricity(.1)
 			-- This is just the rate at which we drill
-			local drillRate = JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2
+			local drillRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 			
 			-- Get the amount of resouces left in the ground
 			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
@@ -207,6 +212,8 @@ if(SERVER)then
 		end
 
 		self:NextThink(CurTime() + 1)
+
+		return true 
 	end
 	
 	function ENT:ProduceResource()
@@ -222,16 +229,34 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
+
 	function ENT:Initialize()
-	--
+		self.Auger = JMod.MakeModel(self, "models/jmod/jmodels/drill_auger.mdl")
+		self.DrillMat = Material("phoenix_storms/grey_steel")
+		self.DrillSpin = 0
 	end
+
 	function ENT:Draw()
 		self:DrawModel()
 		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+		local DrillPos = SelfPos + Forward * 10 + Right * .5 - Up
+
 		--
-		local BasePos=SelfPos+Up*32
-		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		if State == STATE_RUNNING then
+			self.DrillSpin = self.DrillSpin - FrameTime() * 300
+			if self.DrillSpin > 360 then
+				self.DrillSpin = 0
+			elseif self.DrillSpin < 0 then
+				self.DrillSpin = 360
+			end
+		end
+		local DrillAng = SelfAng:GetCopy()
+		DrillAng:RotateAroundAxis(Up, self.DrillSpin)
+		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(1.5, 1.5, 1.9), nil, self.DrillMat)
+		--
+
+		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
