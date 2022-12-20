@@ -167,6 +167,42 @@ surface.CreateFont("JMod-SharpieHandwriting", {
 	outline = false
 })
 
+surface.CreateFont("JMod-Debug", {
+	font = "Arial",
+	extended = false,
+	size = 120,
+	weight = 900,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false
+})
+
+surface.CreateFont("JMod-Debug-S", {
+	font = "Arial",
+	extended = false,
+	size = 60,
+	weight = 900,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false
+})
+
 local function CreateClientLag(amt)
 	local W, H = ScrW(), ScrH()
 

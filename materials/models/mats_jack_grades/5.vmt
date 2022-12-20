@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/mats_jack_grades/5_diffuse"
+	"$surfaceprop" "metal"
+	"$bumpmap" "models/mats_jack_grades/5_normal"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.2 .5 .5]"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongtint" "[.8 .5 1]"
+	"$phongboost" "20"
+	"$phongexponent" "20"
+}

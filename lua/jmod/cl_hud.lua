@@ -308,3 +308,22 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 		CurVisionBlur = 0
 	end
 end)
+
+local FrameTimeSum, FramesCounted, AvgFramerate = 0, 0, 0
+hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
+	if (GetConVar("jmod_debug_display"):GetBool()) then
+		local FT = FrameTime()
+		-- fps
+		FrameTimeSum = FrameTimeSum + FT
+		FramesCounted = FramesCounted + 1
+		if (FramesCounted > 9) then
+			AvgFramerate = math.Round(1 / (FrameTimeSum / 10))
+			FramesCounted = 0
+			FrameTimeSum = 0
+		end
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.DrawRect( 10, 10, 256, 256 )
+		draw.SimpleText("avg FPS", "JMod-Debug-S", 138, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(AvgFramerate, "JMod-Debug", 138, 160, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+end )
