@@ -225,7 +225,7 @@ if(SERVER)then
 			self.NextEffectThinkTime = Time + .1
 			if State == STATE_RUNNING then
 				local Dert = EffectData()
-				Dert:SetOrigin(SelfPos - Up * 100)
+				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
 				Dert:SetNormal(vector_up)
 				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
 			end
@@ -284,7 +284,7 @@ elseif(CLIENT)then
 		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
 		--
 		if State == STATE_RUNNING then
-			self.DrillSpin = self.DrillSpin - FrameTime() * 300
+			self.DrillSpin = self.DrillSpin - FrameTime() * 600
 			if self.DrillSpin > 360 then
 				self.DrillSpin = 0
 			elseif self.DrillSpin < 0 then
