@@ -265,11 +265,6 @@ elseif(CLIENT)then
 		local MotorAng = SelfAng:GetCopy()
 		MotorAng:RotateAroundAxis(Up, 90)
 		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
-		MotorAng:RotateAroundAxis(Up, -90)
-		MotorAng:RotateAroundAxis(Forward, 90)
-		JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
-		MotorAng:RotateAroundAxis(Right, 90)
-		JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		--
 		if State == STATE_RUNNING then
 			self.DrillSpin = self.DrillSpin - FrameTime() * 300
@@ -279,20 +274,30 @@ elseif(CLIENT)then
 				self.DrillSpin = 360
 			end
 		end
-		local DrillAng = SelfAng:GetCopy()
-		DrillAng:RotateAroundAxis(Up, self.DrillSpin)
-		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
-		
-		
 		--
 
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DrillDraw = true
 		if ((not(DetailDraw)) and (Obscured)) then return end -- if player is far and sentry is obscured, draw nothing
 		if Obscured then DetailDraw = false end -- if obscured, at least disable details
-		if State == STATE_BROKEN then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
-		if(DetailDraw)then
+		if State == STATE_BROKEN then DetailDraw = false DrillDraw = false end -- look incomplete to indicate damage, save on gpu comp too
+
+		if DrillDraw then
+			MotorAng:RotateAroundAxis(Up, -90)
+			MotorAng:RotateAroundAxis(Forward, 90)
+			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+			local DrillAng = SelfAng:GetCopy()
+			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
+			JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
+			local PipeEndAng = SelfAng:GetCopy()
+			PipeEndAng:RotateAroundAxis(Right, 90)
+			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)
+			JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, PipeEndAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+		end
+		
+		if DetailDraw then
 			if (Closeness < 40000) and (State == STATE_RUNNING) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
