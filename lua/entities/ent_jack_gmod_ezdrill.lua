@@ -89,11 +89,11 @@ if(SERVER)then
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Yaw = self:GetAngles().y
-			if Tr.HitNormal:Angle().y > 10 then
-				Yaw = Tr.HitNormal:Angle().y
+			local Roll = self:GetAngles().z
+			if Tr.HitNormal:Angle().z > 30 then
+				Roll = Tr.HitNormal:Angle().z
 			end
-			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, 0))
+			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Tr.HitNormal:Angle().y, Roll))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
