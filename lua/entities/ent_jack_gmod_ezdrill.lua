@@ -90,6 +90,9 @@ if(SERVER)then
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
 			local Yaw = self:GetAngles().y
+			if Tr.HitNormal:Angle().y > 10 then
+				Yaw = Tr.HitNormal:Angle().y
+			end
 			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, 0))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
@@ -226,7 +229,7 @@ if(SERVER)then
 			if State == STATE_RUNNING then
 				local Dert = EffectData()
 				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
-				Dert:SetNormal(vector_up)
+				Dert:SetNormal(Up)
 				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
 			end
 		end
@@ -251,7 +254,7 @@ if(SERVER)then
 elseif(CLIENT)then
 
 	function ENT:Initialize()
-		self.Auger = JMod.MakeModel(self, "models/jmod/jmodels/drill_auger.mdl")
+		self.Auger = JMod.MakeModel(self, "models/jmodels/props/machines/drill_auger.mdl")
 		self.DrillPipe = JMod.MakeModel(self, "models/props_pipes/pipe03_straight01_long.mdl")
 		self.DrillPipeEnd = JMod.MakeModel(self, "models/props_pipes/pipe03_connector01.mdl")
 		self.DrillMotor = JMod.MakeModel(self, "models/props_wasteland/laundry_basket001.mdl")
@@ -271,7 +274,7 @@ elseif(CLIENT)then
 		local PipePos = DrillPos + Up * 150.5 + Right * -8.5
 		--
 		if self.CurDepth - self:GetProgress() > 1 then
-			self.CurDepth = Lerp(math.ease.InOutCubic(FrameTime() * 10), self.CurDepth, self:GetProgress())
+			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 10), self.CurDepth, self:GetProgress())
 		else
 			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 5), self.CurDepth, self:GetProgress())
 		end
