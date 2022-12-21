@@ -11,7 +11,7 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/hunter/blocks/cube4x4x1.mdl"
 ENT.Mass = 3000
-ENT.SpawnHeight = 100
+ENT.SpawnHeight = 95
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---
@@ -83,10 +83,17 @@ if(SERVER)then
 	end
 
 	function ENT:TryPlace()
-		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100),Vector(0, 0, -500), self)
+		--local SelfAng = self:GetAngles()
+		--local Right = SelfAng:Right()
+		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
+			local Pitch = Tr.HitNormal:Angle().x + 90
 			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 180, Tr.HitNormal:Angle().y + 0, Tr.HitNormal:Angle().z + 0))
+			if Tr.HitNormal:Angle().y >= 20 then
+				Yaw = Tr.HitNormal:Angle().y
+			end
+			local Roll = Tr.HitNormal:Angle().z - 90
+			self:SetAngles(Angle(Pitch, Yaw, Roll))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
@@ -193,7 +200,7 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.1)
+			self:ConsumeElectricity(.2)
 			-- This is just the rate at which we pump
 			local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 			-- Here's where we do the rescource deduction, and barrel production
