@@ -39,6 +39,8 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetProgress(0)
 		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
+		self.NextEffectThinkTime = 0
 		timer.Simple(0.1, function()
 			self:TryPlace() 
 		end)
@@ -169,52 +171,67 @@ if(SERVER)then
 	
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
-		if State == STATE_BROKEN then
-			if self.SoundLoop then self.SoundLoop:Stop() end
+		local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
 
-			if self:GetElectricity() > 0 then
-				if math.random(1,4) == 2 then JMod.DamageSpark(self) end
-			end
+		if (self.NextResourceThinkTime < Time) then
+			self.NextResourceThinkTime = Time + 1
+			if State == STATE_BROKEN then
+				if self.SoundLoop then self.SoundLoop:Stop() end
 
-			return
-		elseif State == STATE_RUNNING then
-			if not IsValid(self.Weld) then
-				self.DepositKey = nil
-				--self.WellPos = nil
-				--self.Weld = nil
-				self:TurnOff()
+				if self:GetElectricity() > 0 then
+					if math.random(1,4) == 2 then JMod.DamageSpark(self) end
+				end
 
 				return
+			elseif State == STATE_RUNNING then
+				if not IsValid(self.Weld) then
+					self.DepositKey = nil
+					--self.WellPos = nil
+					--self.Weld = nil
+					self:TurnOff()
+
+					return
+				end
+
+				if not JMod.NaturalResourceTable[self.DepositKey] then 
+					self:TurnOff()
+
+					return
+				end
+
+				self:ConsumeElectricity(.2)
+				-- This is just the rate at which we drill
+				local drillRate = 0.8 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				
+				-- Get the amount of resouces left in the ground
+				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+				--print("Amount left: "..amtLeft) --DEBUG
+				-- If there's nothing left, we shouldn't do anything
+				if amtLeft <= 0 then self:TryPlace() return end
+				-- While progress is less than 100
+				self:SetProgress(self:GetProgress() + drillRate)
+
+				if self:GetProgress() >= 100 then
+					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+					self:ProduceResource(amtToDrill)
+					JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
+				end
+
+				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
-
-			if not JMod.NaturalResourceTable[self.DepositKey] then 
-				self:TurnOff()
-
-				return
-			end
-
-			self:ConsumeElectricity(.2)
-			-- This is just the rate at which we drill
-			local drillRate = 0.8 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
-			
-			-- Get the amount of resouces left in the ground
-			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-			--print("Amount left: "..amtLeft) --DEBUG
-			-- If there's nothing left, we shouldn't do anything
-			if amtLeft <= 0 then self:TryPlace() return end
-			-- While progress is less than 100
-			self:SetProgress(self:GetProgress() + drillRate)
-
-			if self:GetProgress() >= 100 then
-				local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-				self:ProduceResource(amtToDrill)
-				JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
-			end
-
-			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
 
-		self:NextThink(CurTime() + 1)
+		if (self.NextEffectThinkTime < Time) then
+			self.NextEffectThinkTime = Time + .1
+			if State == STATE_RUNNING then
+				local Dert = EffectData()
+				Dert:SetOrigin(SelfPos - Up * 100)
+				Dert:SetNormal(vector_up)
+				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
+			end
+		end
+
+		self:NextThink(CurTime() + .1)
 
 		return true 
 	end
