@@ -35,6 +35,7 @@ if(SERVER)then
 		self:SetAngles(Angle(0, 0, -90))
 		self:SetProgress(0)
 		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
 		timer.Simple(0.1, function()
 			self:TryPlace() 
 		end)
@@ -176,63 +177,63 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
-		if State == STATE_BROKEN then
-			if self.SoundLoop then self.SoundLoop:Stop() end
 
-			if self:GetElectricity() > 0 then
-				if math.random(1, 4) == 2 then JMod.DamageSpark(self) end
-			end
+		if (self.NextResourceThinkTime < Time) then
+			self.NextResourceThinkTime = Time + 1
+			if State == STATE_BROKEN then
+				if self.SoundLoop then self.SoundLoop:Stop() end
 
-			return
-		elseif State == STATE_RUNNING then
-			if not IsValid(self.Weld) then
-				self.DepositKey = nil
-				self.WellPos = nil
-				--self.Weld = nil
-				self:TurnOff()
+				if self:GetElectricity() > 0 then
+					if math.random(1, 4) == 2 then JMod.DamageSpark(self) end
+				end
 
 				return
-			end
+			elseif State == STATE_RUNNING then
+				if not IsValid(self.Weld) then
+					self.DepositKey = nil
+					self.WellPos = nil
+					--self.Weld = nil
+					self:TurnOff()
 
-			if not JMod.NaturalResourceTable[self.DepositKey] then 
-				self:TurnOff()
-
-				return
-			end
-
-			self:ConsumeElectricity(.2)
-			-- This is just the rate at which we pump
-			local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
-			-- Here's where we do the rescource deduction, and barrel production
-			-- If it's a flow (i.e. water)
-			if JMod.NaturalResourceTable[self.DepositKey].rate then
-				-- We get the rate
-				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				-- and set the progress to what it was last tick + our ability * the flowrate
-				self:SetProgress(self:GetProgress() + pumpRate * flowRate)
-
-				-- If the progress exceeds 100
-				if self:GetProgress() >= 100 then
-					-- Spawn barrel
-					local amtToPump = math.min(self:GetProgress(), 100)
-					self:ProduceResource(amtToPump)
+					return
 				end
-			else
-				self:SetProgress(self:GetProgress() + pumpRate)
 
-				if self:GetProgress() >= 100 then
-					local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-					self:ProduceResource(amtToPump)
-					JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
+				if not JMod.NaturalResourceTable[self.DepositKey] then 
+					self:TurnOff()
+
+					return
 				end
-			end
 
-			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
+				self:ConsumeElectricity(.2)
+				-- This is just the rate at which we pump
+				local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				-- Here's where we do the rescource deduction, and barrel production
+				-- If it's a flow (i.e. water)
+				if JMod.NaturalResourceTable[self.DepositKey].rate then
+					-- We get the rate
+					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					-- and set the progress to what it was last tick + our ability * the flowrate
+					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
+
+					-- If the progress exceeds 100
+					if self:GetProgress() >= 100 then
+						-- Spawn barrel
+						local amtToPump = math.min(self:GetProgress(), 100)
+						self:ProduceResource(amtToPump)
+					end
+				else
+					self:SetProgress(self:GetProgress() + pumpRate)
+
+					if self:GetProgress() >= 100 then
+						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+						self:ProduceResource(amtToPump)
+						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
+					end
+				end
+
+				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
+			end
 		end
-
-		self:NextThink(CurTime() + 1)
-
-		return true 
 	end
 
 	function ENT:ProduceResource(amt)

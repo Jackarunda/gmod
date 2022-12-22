@@ -41,6 +41,7 @@ if(SERVER)then
 		self.DepositKey = 0
 		self.NextResourceThinkTime = 0
 		self.NextEffectThinkTime = 0
+		self.NextOSHAthinkTime = 0
 		timer.Simple(0.1, function()
 			self:TryPlace() 
 		end)
@@ -89,8 +90,8 @@ if(SERVER)then
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Roll = self:GetAngles().z
-			if Tr.HitNormal:Angle().z > 30 then
+			local Roll = 0
+			if Tr.HitNormal:Angle().z > 10 then
 				Roll = Tr.HitNormal:Angle().z
 			end
 			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Tr.HitNormal:Angle().y, Roll))
@@ -173,7 +174,7 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
-		local State, Time = self:GetState(), CurTime()
+		local State, Time, Prog = self:GetState(), CurTime(), self:GetProgress()
 		local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
 
 		if (self.NextResourceThinkTime < Time) then
@@ -234,9 +235,28 @@ if(SERVER)then
 			end
 		end
 
-		self:NextThink(CurTime() + .1)
-
-		return true 
+		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
+			self.NextOSHAthinkTime = Time + .1
+			local Tr = util.TraceHull(
+				{
+					start = SelfPos + Up * (25 - Prog),
+					endpos = SelfPos + Up * (-100 - Prog),
+					mins = Vector(-4, -4, -4),
+					maxs = Vector(4, 4, 4),
+					filter = {self},
+					mask = MASK_SHOT,
+					ignoreworld = true
+				}
+			)
+			if Tr.Hit and IsValid(Tr.Entity) then
+				local Dmg = DamageInfo()
+				Dmg:SetDamage(20)
+				Dmg:SetDamageType(DMG_CRUSH)
+				Dmg:SetInflictor(self)
+				Dmg:SetAttacker(JMod.GetOwner(self))
+				Tr.Entity:TakeDamageInfo(Dmg)
+			end
+		end
 	end
 	
 	function ENT:ProduceResource()
@@ -246,7 +266,7 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = SelfPos
-		local spawnVec = self:WorldToLocal(SelfPos - Up * 50 - Right * 50)
+		local spawnVec = self:WorldToLocal(SelfPos + Up * 50 - Right * 50)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Right * 100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 	end
@@ -274,7 +294,7 @@ elseif(CLIENT)then
 		local PipePos = DrillPos + Up * 150.5 + Right * -8.5
 		--
 		if self.CurDepth - self:GetProgress() > 1 then
-			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 10), self.CurDepth, self:GetProgress())
+			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 15), self.CurDepth, self:GetProgress())
 		else
 			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 5), self.CurDepth, self:GetProgress())
 		end
@@ -302,7 +322,10 @@ elseif(CLIENT)then
 		local DrillDraw = true
 		if ((not(DetailDraw)) and (Obscured)) then return end -- if player is far and sentry is obscured, draw nothing
 		if Obscured then DetailDraw = false end -- if obscured, at least disable details
-		if State == STATE_BROKEN then DetailDraw = false DrillDraw = false end -- look incomplete to indicate damage, save on gpu comp too
+		if State == STATE_BROKEN then 
+			DetailDraw = false 
+			DrillDraw = false 
+		end -- look incomplete to indicate damage, save on gpu comp too
 
 		if DrillDraw then
 			MotorAng:RotateAroundAxis(Up, -90)
