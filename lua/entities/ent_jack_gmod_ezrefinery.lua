@@ -47,7 +47,7 @@ if(SERVER)then
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 	end
 	function ENT:TurnOn(activator)
-		if self:GetElectricity() > 0 and self:GetOil() > 0 then
+		if (self:GetElectricity() > 0) and (self:GetOil() > 0) and (self:GetState() == STATE_OFF) then
 			self:SetState(STATE_REFINING)
 			self:EmitSound("snd_jack_littleignite.wav")
 			timer.Simple(0.1, function()

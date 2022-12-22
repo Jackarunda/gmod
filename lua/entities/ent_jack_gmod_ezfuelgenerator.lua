@@ -72,13 +72,13 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if self:GetFuel() > 0 then
+		if (self:GetState() == STATE_OFF) and (self:GetFuel() > 0) then
 			self.NextUseTime = CurTime() + 8
 			self:EmitSound("snd_jack_genstart.mp3")
 			self:SetState(STATE_ON)
 			timer.Simple(8, function()
 				if IsValid(self) then
-					self.SoundLoop:SetSoundLevel(80)
+					self.SoundLoop:SetSoundLevel(70)
 					self.SoundLoop:Play()
 				end
 			end)
