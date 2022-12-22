@@ -90,11 +90,10 @@ if(SERVER)then
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Roll = 0
-			if Tr.HitNormal:Angle().z > 10 then
-				Roll = Tr.HitNormal:Angle().z
-			end
-			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Tr.HitNormal:Angle().y, Roll))
+			local Roll = Tr.HitNormal:Angle().z
+			local Yaw = Tr.HitNormal:Angle().y
+			--Yaw = self:GetAngles().y
+			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, Roll))
 			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
@@ -316,12 +315,10 @@ elseif(CLIENT)then
 		end
 		--
 
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
 		local DrillDraw = true
-		if ((not(DetailDraw)) and (Obscured)) then return end -- if player is far and sentry is obscured, draw nothing
-		if Obscured then DetailDraw = false end -- if obscured, at least disable details
 		if State == STATE_BROKEN then 
 			DetailDraw = false 
 			DrillDraw = false 
@@ -339,6 +336,9 @@ elseif(CLIENT)then
 			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)
 			JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, PipeEndAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		end
+
+		if (not(DetailDraw)) and (Obscured) then return end -- if player is far and sentry is obscured, draw nothing
+		if Obscured then DetailDraw = false end -- if obscured, at least disable details
 		
 		if DetailDraw then
 			if (Closeness < 40000) and (State == STATE_RUNNING) then
