@@ -51,7 +51,7 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
-		self:SetFuel(self.MaxFuel)
+		self:SetFuel(0)
 		self:SetOre(0)
 		self:SetOreType("generic")
 		self.TimeSinceLastOre = 0
