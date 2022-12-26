@@ -236,24 +236,16 @@ if(SERVER)then
 
 		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
 			self.NextOSHAthinkTime = Time + .1
-			local Tr = util.TraceHull(
-				{
-					start = SelfPos + Up * (25 - Prog),
-					endpos = SelfPos + Up * (-100 - Prog),
-					mins = Vector(-4, -4, -4),
-					maxs = Vector(4, 4, 4),
-					filter = {self},
-					mask = MASK_SHOT,
-					ignoreworld = true
-				}
-			)
-			if Tr.Hit and IsValid(Tr.Entity) then
-				local Dmg = DamageInfo()
-				Dmg:SetDamage(20)
-				Dmg:SetDamageType(DMG_CRUSH)
-				Dmg:SetInflictor(self)
-				Dmg:SetAttacker(JMod.GetOwner(self))
-				Tr.Entity:TakeDamageInfo(Dmg)
+			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-4, -4, -4), SelfPos + Up * (25 - Prog) + Vector(4, 4, 4))
+			for _, v in ipairs(FoundEnts) do
+				if IsValid(v) and (v ~= self) then
+					local Dmg = DamageInfo()
+					Dmg:SetDamage(20)
+					Dmg:SetDamageType(DMG_CRUSH)
+					Dmg:SetInflictor(self)
+					Dmg:SetAttacker(JMod.GetOwner(self))
+					v:TakeDamageInfo(Dmg)
+				end
 			end
 		end
 	end
