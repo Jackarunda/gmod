@@ -1081,6 +1081,11 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetPos(0, 0)
 	PlayerDisplay:SetSize(PDispBG:GetWide(), PDispBG:GetTall())
 	PlayerDisplay:SetModel(Ply:GetModel())
+	for k,v in pairs( Ply:GetBodyGroups() ) do
+		local ent = PlayerDisplay.Entity
+		local cur_bgid = Ply:GetBodygroup( v.id )
+		ent:SetBodygroup( v.id, cur_bgid )
+	end
 	PlayerDisplay:SetFOV(35)
 	PlayerDisplay:SetCursor("arrow")
 	local Ent = PlayerDisplay:GetEntity()
