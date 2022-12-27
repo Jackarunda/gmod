@@ -236,15 +236,20 @@ if(SERVER)then
 
 		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
 			self.NextOSHAthinkTime = Time + .1
-			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-4, -4, -4), SelfPos + Up * (25 - Prog) + Vector(4, 4, 4))
+			local BasePos = SelfPos + Up * (-10 - Prog)
+			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-4, -4, -4), BasePos + Vector(4, 4, 4))
 			for _, v in ipairs(FoundEnts) do
-				if IsValid(v) and (v ~= self) then
+				if IsValid(v) and IsValid(v:GetPhysicsObject()) and (v ~= self) then
 					local Dmg = DamageInfo()
+					Dmg:SetDamagePosition(BasePos)
+					Dmg:SetDamageForce(Vector(0, 0, 1000))
 					Dmg:SetDamage(20)
 					Dmg:SetDamageType(DMG_CRUSH)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(JMod.GetOwner(self))
 					v:TakeDamageInfo(Dmg)
+					--print(tostring(v))
+					self:EmitSound("Boulder.ImpactHard")
 				end
 			end
 		end
@@ -270,7 +275,7 @@ elseif(CLIENT)then
 		self.DrillPipeEnd = JMod.MakeModel(self, "models/props_pipes/pipe03_connector01.mdl")
 		self.DrillMotor = JMod.MakeModel(self, "models/props_wasteland/laundry_basket001.mdl")
 		self.PowerBox = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl")
-		self.DrillMat = Material("phoenix_storms/grey_steel")
+		self.DrillMat = Material("mechanics/metal2")
 		self.DrillSpin = 0
 		self.CurDepth = 0
 	end
