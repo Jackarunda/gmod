@@ -761,7 +761,7 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
 						local AmmoPerResourceUnit = PrimMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo))
+						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), math.floor(SpaceLeftInPlayerInv / ResourceUnitPerAmmo))
 
 						if ply:GetAmmoCount(PrimType) < PrimMax * JMod.Config.AmmoCarryLimitMult then
 							ply:GiveAmmo(AmtToGive, PrimType)
@@ -792,7 +792,7 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = SecMax - CurrentAmmo
 						local AmmoPerResourceUnit = SecMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo))
+						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), math.floor(SpaceLeftInPlayerInv / ResourceUnitPerAmmo))
 						
 						if ply:GetAmmoCount(SecType) < SecMax * JMod.Config.AmmoCarryLimitMult then
 							ply:GiveAmmo(AmtToGive, SecType)
