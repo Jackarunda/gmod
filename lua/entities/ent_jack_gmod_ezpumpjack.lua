@@ -193,9 +193,11 @@ if(SERVER)then
 				return
 			end
 
-			self:ConsumeElectricity(.1)
+			local GradeBuff = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+
+			self:ConsumeElectricity(.48 * GradeBuff ^ 1.5)
 			-- This is just the rate at which we pump
-			local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+			local pumpRate = 0.5 * (GradeBuff ^ 2)
 			-- Here's where we do the rescource deduction, and barrel production
 			-- If it's a flow (i.e. water)
 			if JMod.NaturalResourceTable[self.DepositKey].rate then
