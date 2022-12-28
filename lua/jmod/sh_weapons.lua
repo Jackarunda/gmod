@@ -750,6 +750,7 @@ elseif SERVER then
 				local IsMunitionBox = ent.EZsupplies == "munitions"
 
 				--[[ PRIMARY --]]
+				PrimMax = PrimMax * JMod.Config.AmmoCarryLimitMult
 				local IsPrimMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, PrimName)
 				if (IsPrimMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, PrimName)) then
 					if PrimType and (PrimType ~= -1) then
@@ -761,9 +762,9 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
 						local AmmoPerResourceUnit = PrimMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), math.floor(SpaceLeftInPlayerInv / ResourceUnitPerAmmo))
+						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
 
-						if ply:GetAmmoCount(PrimType) < PrimMax * JMod.Config.AmmoCarryLimitMult then
+						if ply:GetAmmoCount(PrimType) < PrimMax then
 							ply:GiveAmmo(AmtToGive, PrimType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)
@@ -780,6 +781,7 @@ elseif SERVER then
 				end
 				
 				if ent:GetResource() <= 0 then return end
+				SecMax = SecMax * JMod.Config.AmmoCarryLimitMult
 				--[[ Secondary --]]
 				local IsSecMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, SecName)
 				if (IsSecMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, SecName)) then
@@ -792,9 +794,9 @@ elseif SERVER then
 						local SpaceLeftInPlayerInv = SecMax - CurrentAmmo
 						local AmmoPerResourceUnit = SecMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
-						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), math.floor(SpaceLeftInPlayerInv / ResourceUnitPerAmmo))
+						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
 						
-						if ply:GetAmmoCount(SecType) < SecMax * JMod.Config.AmmoCarryLimitMult then
+						if ply:GetAmmoCount(SecType) < SecMax then
 							ply:GiveAmmo(AmtToGive, SecType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)
