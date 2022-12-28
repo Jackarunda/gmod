@@ -78,6 +78,7 @@
 	["hint toggle"] = "Press Use to toggle power on and off",
 	["hint destroyed"] = "Device was destroyed; touch with a box of parts to repair",
 	["hint nopower"] = "Device ran out of power; touch with a battery to recharge",
+	["hint nopower trifuel"] = "Device has no power; touch with a battery, a fuel can, or a coal block to recharge",
 	["hint bleeding"] = "You are bleeding; seek First-Aid ASAP",
 	["hint blockphysgun"] = "This object can not be physgunned right now",
 	["hint horizontal surface"] = "This object can only be placed on horizontal surfaces!",

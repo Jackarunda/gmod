@@ -134,45 +134,6 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter"
 }
 
-JMod.RefiningTable = {
-	[JMod.EZ_RESOURCE_TYPES.IRONORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.LEADORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.LEAD] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.COPPER] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.TITANIUM] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.SILVER] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.GOLD] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.URANIUM] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = { 
-		[JMod.EZ_RESOURCE_TYPES.PLATINUM] = .5
-	},
-	[JMod.EZ_RESOURCE_TYPES.OIL] = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 3,
-		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 1,
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .5,
-		[JMod.EZ_RESOURCE_TYPES.GAS] = .2
-	}
-}
-
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC = 1
 JMod.EZ_GRADE_COPPER = 2
@@ -183,8 +144,6 @@ JMod.EZ_GRADE_PLATINUM = 5
 JMod.EZ_GRADE_BUFFS = {1, 1.25, 1.5, 1.75, 2}
 
 JMod.EZ_GRADE_NAMES = {"basic", "copper", "silver", "gold", "platinum"}
-
-JMod.EZ_GRADE_COLORS = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
 
 JMod.EZ_GRADE_MATS = {Material("models/mats_jack_grades/1"), Material("models/mats_jack_grades/2"), Material("models/mats_jack_grades/3"), Material("models/mats_jack_grades/4"), Material("models/mats_jack_grades/5")}
 
@@ -208,7 +167,7 @@ JMod.EZ_STATE_ARMING = 3
 JMod.EZ_STATE_ARMED = 4
 JMod.EZ_STATE_WARNING = 5
 
-JMod.EZ_HAZARD_PARTICALS = {
+JMod.EZ_HAZARD_PARTICLES = {
 	["ent_jack_gmod_ezgasparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .5},
 	["ent_jack_gmod_ezvirusparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .1},
 	["ent_jack_gmod_ezfalloutparticle"] = {JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, .2}

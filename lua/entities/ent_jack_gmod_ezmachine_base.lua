@@ -105,6 +105,7 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
+ENT.FlexFuels = nil -- "Flex Fuels" are other resource types that the machine will load as electricity
 ENT.DamageTypeTable={
 	[DMG_BUCKSHOT]=.2,
 	[DMG_SNIPER]=.7,
@@ -157,6 +158,12 @@ function ENT:SetupDataTables()
 	end
 end
 
+--[[
+function ENT:GravGunPickupAllowed(ply)
+	return true
+end
+--]]
+
 function ENT:InitPerfSpecs()
 	local Grade = self:GetGrade()
 	local NetworkTable = {}
@@ -168,13 +175,15 @@ function ENT:InitPerfSpecs()
 	end
 	if (self.DynamicPerfSpecs) then
 		for specName, value in pairs(self.DynamicPerfSpecs)do
-			local NewValue = value * JMod.EZ_GRADE_BUFFS[Grade] ^ (self.DynamicPerfSpecExp)
-			if (NewValue > 2) then
-				self[specName] = math.ceil(NewValue)
-				NetworkTable[specName] = NewValue
-			else
-				self[specName] = NewValue
-				NetworkTable[specName] = NewValue
+			if(type(value)~="table")then
+				local NewValue = value * JMod.EZ_GRADE_BUFFS[Grade] ^ (self.DynamicPerfSpecExp)
+				if (NewValue > 2) then
+					self[specName] = math.ceil(NewValue)
+					NetworkTable[specName] = NewValue
+				else
+					self[specName] = NewValue
+					NetworkTable[specName] = NewValue
+				end
 			end
 		end
 	end
@@ -270,7 +279,7 @@ if(SERVER)then
 	end
 
 	function ENT:DetermineDamageMultiplier(dmg)
-		local Mult=.15/(self.Armor or 1)
+		local Mult=.5/(self.Armor or 1)
 		for typ,mul in pairs(self.DamageTypeTable)do
 			if(dmg:IsDamageType(typ))then Mult=Mult*mul break end
 		end
@@ -379,7 +388,6 @@ if(SERVER)then
 					local Powa = self:GetElectricity()
 					local Missing = self.MaxElectricity - Powa
 					if(Missing <= 0)then return 0 end
-					--if(Missing < self.MaxElectricity * .1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetElectricity(Powa + Accepted)
 					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110))
@@ -438,19 +446,43 @@ if(SERVER)then
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.FUEL)then
-					local Fuel = self:GetFuel()
-					local Missing = self.MaxFuel - Fuel
-					if(Missing < 1)then return 0 end
-					Accepted = math.min(Missing, amt)
-					self:SetFuel(Fuel + Accepted)
+					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
+						local Powa = self:GetElectricity()
+						local Missing = self.MaxElectricity - Powa
+						if(Missing <= 0)then return 0 end
+						local PotentialPower = math.min(Missing, amt * JMod.FuelPowerConversions[typ])
+						self:SetElectricity(Powa + PotentialPower)
+						Accepted = PotentialPower / JMod.FuelPowerConversions[typ]
+					else
+						local Fuel = self:GetFuel()
+						local Missing = self.MaxFuel - Fuel
+						if(Missing < 1)then return 0 end
+						Accepted = math.min(Missing, amt)
+						self:SetFuel(Fuel + Accepted)
+					end
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.COAL)then
+					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
+						local Powa = self:GetElectricity()
+						local Missing = self.MaxElectricity - Powa
+						if(Missing <= 0)then return 0 end
+						local PotentialPower = math.min(Missing, amt * JMod.FuelPowerConversions[typ])
+						self:SetElectricity(Powa + PotentialPower)
+						Accepted = PotentialPower / JMod.FuelPowerConversions[typ]
+					else
+						local Coal = self:GetCoal()
+						local Missing = self.MaxCoal - Coal
+						if(Missing < 1)then return 0 end
+						Accepted = math.min(Missing, amt)
+						self:SetCoal(Coal + Accepted)
+					end
+					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
 				elseif (string.find(typ, " ore")) then
 					if(self.GetOreType and (self:GetOreType() == "generic" or typ == self:GetOreType())) then
 						self:SetOreType(typ)
 						local COre = self:GetOre()
 						local Missing = self.MaxOre - COre
 						if(Missing <= 0)then return 0 end
-						--if(Missing < self.MaxOre * .1)then return 0 end
 						Accepted = math.min(Missing, amt)
 						self:SetOre(COre + Accepted)
 						self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
