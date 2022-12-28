@@ -757,7 +757,6 @@ elseif SERVER then
 						if PrimSize == -1 then
 							PrimSize = -PrimSize
 						end
-						print(PrimMax)
 
 						local CurrentAmmo, ResourceLeftInBox = ply:GetAmmoCount(PrimName), ent:GetResource()
 						local SpaceLeftInPlayerInv = PrimMax - CurrentAmmo
