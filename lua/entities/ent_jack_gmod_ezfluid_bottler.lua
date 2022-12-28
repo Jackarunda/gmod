@@ -151,7 +151,7 @@ if(SERVER)then
 
 		for k, v in ipairs(entites) do
 
-			local particleTable = JMod.EZ_HAZARD_PARTICALS[v:GetClass()]
+			local particleTable = JMod.EZ_HAZARD_PARTICLES[v:GetClass()]
 
 			if istable(particleTable) then
 				if IsValid(v) and JMod.VisCheck(self:LocalToWorld(self:OBBCenter()), v, self) then 
@@ -212,7 +212,6 @@ if(SERVER)then
 	end
 
 elseif CLIENT then
-	local GradeColors = JMod.EZ_GRADE_COLORS
 	local GradeMats = JMod.EZ_GRADE_MATS
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()

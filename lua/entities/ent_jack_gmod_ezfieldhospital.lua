@@ -351,8 +351,10 @@ elseif(CLIENT)then
 		self.BottomCanopy:SetSubMaterial(0,"mri-scanner/mri-dome_side")
 		self.TopCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
 		self.BottomCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
+		self.Rotator=JMod.MakeModel(self,"models/hunter/tubes/tube4x4x1.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
 		self.OpenAmt=1
+		self.DriveCycle=0
 	end
 
 	local function ColorToVector(col)
@@ -396,6 +398,11 @@ elseif(CLIENT)then
 			self.OpenAmt = math.Clamp(self.OpenAmt + FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,1)
 		end
 
+		if (State == STATE_WORKING) then
+			self.DriveCycle=self.DriveCycle+FT*100
+			if(self.DriveCycle>360)then self.DriveCycle=0 end
+		end
+
 		---
 		local DisplayAng=SelfAng:GetCopy()
 		DisplayAng:RotateAroundAxis(Forward,90)
@@ -403,7 +410,7 @@ elseif(CLIENT)then
 			local CamAng=SelfAng:GetCopy()
 			CamAng:RotateAroundAxis(Up,-90)
 			CamAng:RotateAroundAxis(Right,180)
-			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.Camera,BasePos+Up*10+Forward*25,CamAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
 			---
 			local Matricks = Matrix()
 			Matricks:Scale(Vector(.4, 1.45, .5))
@@ -418,7 +425,14 @@ elseif(CLIENT)then
 			local BottomCanopyAng = SelfAng:GetCopy()
 			BottomCanopyAng:RotateAroundAxis(Right, 180)
 			JMod.RenderModel(self.BottomCanopy, BasePos - Up * 17 + Right * 2, BottomCanopyAng)
-
+			---
+			local Matricks = Matrix()
+			Matricks:Scale(Vector(.58, .58, .3))
+			self.Rotator:EnableMatrix("RenderMultiply", Matricks)
+			local RotatorAng = SelfAng:GetCopy()
+			RotatorAng:RotateAroundAxis(Forward,90)
+			RotatorAng:RotateAroundAxis(Right,self.DriveCycle)
+			JMod.RenderModel(self.Rotator, BasePos - Up*10 - Right*22, RotatorAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
 			---
 			if State > 0 then
 				local Opacity = math.random(50, 200)

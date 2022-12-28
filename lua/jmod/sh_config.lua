@@ -681,6 +681,20 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "toolbox",
 				description = "Heals players so you don't have to get more blood on you."
 			},
+			["EZ Smelting Furnace"] = {
+				results = "ent_jack_gmod_ezfurnace",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 20,
+				},
+				sizeScale = 2,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Turns ores into metal. Very power hungry."
+			},
 			["EZ Bomb Bay"] = {
 				results = "ent_jack_gmod_ezbombbay",
 				craftingReqs = {

@@ -268,6 +268,7 @@ if(SERVER)then
 
 elseif(CLIENT)then
 	function ENT:Initialize()
+		self.MachineryBox = JMod.MakeModel(self, "models/hunter/blocks/cube05x105x05.mdl")
 		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")
 		self.Mdl:SetPos(self:GetPos()-self:GetRight()*100)
@@ -294,7 +295,7 @@ elseif(CLIENT)then
 		else
 			self.DriveMomentum = math.Clamp(self.DriveMomentum - FT / 3, 0, 0.4)
 		end
-		self.DriveCycle=self.DriveCycle+self.DriveMomentum*FT*150*Grade
+		self.DriveCycle=self.DriveCycle+self.DriveMomentum*Grade*FT*100
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
 		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
 		self.Mdl:ManipulateBoneAngles(1,Angle(0,0,WalkingBeamDrive))
@@ -307,8 +308,12 @@ elseif(CLIENT)then
 		MdlAng:RotateAroundAxis(Forward, 90)
 		self.Mdl:SetRenderAngles(MdlAng)
 		self.Mdl:DrawModel()
-		--
 		local BasePos=SelfPos+Up*32
+		local BoxAng=SelfAng:GetCopy()
+		BoxAng:RotateAroundAxis(Up,90)
+		BoxAng:RotateAroundAxis(Forward,90)
+		JMod.RenderModel(self.MachineryBox,BasePos-Up*32-Right*74+Forward*20,BoxAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
+		--
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
@@ -319,7 +324,7 @@ elseif(CLIENT)then
 			local LadderAng=SelfAng:GetCopy()
 			LadderAng:RotateAroundAxis(Up,90)
 			LadderAng:RotateAroundAxis(Forward,80)
-			JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.Ladder,BasePos-Right*80+Forward*30-Up*60,LadderAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
 			
 			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()

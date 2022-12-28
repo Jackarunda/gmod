@@ -259,6 +259,9 @@ JMod.Hints = {
 	["nopower"] = {
 		LangKey = "hint nopower"
 	},
+	["nopower_trifuel"] = {
+		LangKey = "hint nopower trifuel"
+	},
 	["bleeding"] = {
 		LangKey = "hint bleeding"
 	},
