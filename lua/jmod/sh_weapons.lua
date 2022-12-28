@@ -412,6 +412,19 @@ for k, v in pairs(JMod.AmmoTable) do
 		plydmg = v.basedmg,
 		dmgtype = v.dmgtype or DMG_BULLET
 	})
+	if SERVER then
+		timer.Simple(1, function()
+			if (v.resourcetype) and (v.resourcetype == "munitions") then
+				if not(table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, k)) then
+					table.insert(JMod.Config.AmmoTypesThatAreMunitions, k)
+				end
+			elseif not(v.resourcetype) then
+				if not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, k)) then
+					table.insert(JMod.Config.WeaponAmmoBlacklist, k)
+				end
+			end
+		end)
+	end
 
 	if CLIENT then
 		language.Add(k .. "_ammo", k)
