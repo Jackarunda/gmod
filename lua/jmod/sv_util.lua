@@ -845,25 +845,48 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	local SpawnPos = machine:LocalToWorld(relativeSpawnPos)
 	for i = 1, math.ceil(amount/100) do
 		if findCrate then
-			range = range or 200
+			range = range or 256
+			local BestCrate = nil
+			local IsGenericCrate = true
+
 			for _, ent in pairs(ents.FindInSphere(SpawnPos, range)) do
-				if (ent:GetClass() == "ent_jack_gmod_ezcrate") then 
-					if (ent:GetResourceType() == "generic" or ent:GetResourceType() == resourceType) then
-						local Accepted = ent:TryLoadResource(resourceType, amount)
-						
-						if Accepted > 0 then
-							local entPos = ent:LocalToWorld(ent:OBBCenter())
-							JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
-							amount = amount - Accepted
-							if amount <= 0 then 
-							
-								return
-							end
+				if (ent:GetClass() == "ent_jack_gmod_ezcrate") then
+					local Dist = SpawnPos:Distance(ent:LocalToWorld(ent:OBBCenter()))
+					if (ent:GetResourceType() == resourceType) then
+						if (Dist <= range) then
+							BestCrate = ent
+							range = Dist
+							IsGenericCrate = false
+							print("We found a crate with similar resource")
+							print(tostring(BestCrate))
+						end
+
+					elseif (ent:GetResourceType() == "generic") and (IsGenericCrate == true) then
+						if (Dist <= range) then
+							BestCrate = ent
+							range = Dist
+							IsGenericCrate = true
+							print("We found a crate with generic resource")
+							print(tostring(BestCrate))
 						end
 					end
 				end
 			end
+			if IsValid(BestCrate) then
+				local Accepted = BestCrate:TryLoadResource(resourceType, amount)
+				
+				if Accepted > 0 then
+					local entPos = BestCrate:LocalToWorld(BestCrate:OBBCenter())
+					JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
+					amount = amount - Accepted
+					if amount <= 0 then 
+					
+						return
+					end
+				end
+			end
 		end
+
 		local SpawnAmount = math.min(amount, 100)
 		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()

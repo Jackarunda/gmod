@@ -122,8 +122,8 @@ if(SERVER)then
 										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
 									end
 									self:BuildEffect(Pos)
-									self:ConsumeElectricity(.5)
-									self:SetGas(math.Clamp(self:GetGas()-1,0,self.MaxGas))
+									self:ConsumeElectricity(4)
+									self:SetGas(math.Clamp(self:GetGas()-2,0,self.MaxGas))
 								end
 							end
 						end)
@@ -171,8 +171,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(Up,90)
 				local Opacity=math.random(50,200)
 				cam.Start3D2D(BasePos-Right*24-Forward*53.5-Up,DisplayAng,.04)
-				draw.SimpleTextOutlined("Jackarunda","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				draw.SimpleTextOutlined("Industries","JMod-Display",0,30,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				draw.SimpleTextOutlined("JMOD","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				local ElecFrac=self:GetElectricity()/self.MaxElectricity
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))

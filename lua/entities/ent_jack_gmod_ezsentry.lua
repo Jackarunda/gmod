@@ -22,7 +22,7 @@ ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.EZupgradable=true
 ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezsentry"
-ENT.Mass=300
+ENT.Mass=250
 -- config --
 ENT.AmmoTypes = {
 	["Bullet"] = {}, -- Simple pew pew

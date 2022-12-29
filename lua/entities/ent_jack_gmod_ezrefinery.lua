@@ -248,7 +248,7 @@ elseif(CLIENT)then
 			---
 			local TankAng = SelfAng:GetCopy()
 			TankAng:RotateAroundAxis(Up, -90)
-			JMod.RenderModel(self.Tank, SelfPos + Up * 110 - Right * 60, TankAng, Vector(0.4, 0.4, 0.4), JMod.EZ_GRADE_COLORS[Grade], JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.Tank, SelfPos + Up * 110 - Right * 60, TankAng, Vector(0.4, 0.4, 0.4), nil, JMod.EZ_GRADE_MATS[Grade])
 			local ScreenAng = SelfAng:GetCopy()
 			--ScreenAng:RotateAroundAxis(Up, 0)
 			JMod.RenderModel(self.Monitor, BasePos - Forward * 2, ScreenAng, Vector(2, 2.5, 2.5))

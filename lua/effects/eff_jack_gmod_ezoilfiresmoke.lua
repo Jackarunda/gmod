@@ -21,7 +21,7 @@
 			FireParticle:SetLighting(false)
 			local Brightness = math.Rand(.5, 1)
 			FireParticle:SetColor(255 * Brightness, 100 * Brightness, 1 * Brightness)
-			FireParticle:SetCollide(false)
+			FireParticle:SetCollide(true)
 		end
 	end
 
