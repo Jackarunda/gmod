@@ -1,15 +1,17 @@
 ﻿-- AdventureBoots Late 2021
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Fuel Generator"
+ENT.PrintName = "EZ Liquid Fuel Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmodels/props/machines/diesel_jenerator.mdl"
+ENT.Mat = "models/jmodels/props/machines/lfg"
 --
-ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.Mass = 250
 ENT.SpawnHeight = 10
 --
 ENT.StaticPerfSpecs = {
@@ -38,7 +40,6 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = true
 		self:SetProgress(0)
-		self:SetMaterial("models/props_mining/diesel_generator.mdl")
 		self.NextResourceThink = 0
 		self.NextUseTime = 0
 		self.SoundLoop = CreateSound(self, "snd_jack_genrun_loop2.wav")
@@ -215,5 +216,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezfuelgenerator", "EZ Fuel Generator")
+	language.Add("ent_jack_gmod_ezlfg", "EZ Liquid Fuel Generator")
 end
