@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$basetexture"	"models/jmodels/props/machines/lfg"
-	"$bumpmap" "models/jmodels/props/machines/lfg_normal"
+	"$basetexture"	"models/jmod/machines/lfg"
+	"$bumpmap" "models/jmod/machines/lfg_normal"
 
 	"$phong" "1"
 	"$phongexponent"  "30"
