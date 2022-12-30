@@ -7,12 +7,12 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmodels/props/machines/diesel_jenerator.mdl"
+ENT.Model = "models/jmod/machines/diesel_jenerator.mdl"
 --ENT.Mat = "models/jmodels/props/machines/lfg"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 250
-ENT.SpawnHeight = 10
+ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
@@ -131,10 +131,10 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * -5 + Forward * 60)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 100, true, 200)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(pos)
+		self:SpawnEffect(self:WorldToLocal(pos))
 	end
 
 	function ENT:ConsumeFuel(amt)
@@ -202,7 +202,7 @@ elseif(CLIENT)then
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 
-				cam.Start3D2D(SelfPos + Forward * 10 + Right * 25 + Up * 15, DisplayAng, .1)
+				cam.Start3D2D(SelfPos + Forward * 10 + Right * 25 + Up * 50, DisplayAng, .1)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
 				local RankX, RankY = 60, 50
 				surface.DrawRect(RankX, RankY, 128, 128)
