@@ -231,7 +231,7 @@ if(SERVER)then
 elseif(CLIENT)then
 
 	function ENT:Initialize()
-		self.Auger = JMod.MakeModel(self, "models/jmod/jmodels/drill_auger.mdl")
+		self.Auger = JMod.MakeModel(self, "models/jmod/jmod/drill_auger.mdl")
 		self.DrillMat = Material("phoenix_storms/grey_steel")
 		self.DrillSpin = 0
 	end

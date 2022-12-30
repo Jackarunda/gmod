@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.CHEMICALS
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
-ENT.Model = "models/jmodels/resources/plastic_crate25a.mdl"
+ENT.Model = "models/jmod/resources/plastic_crate25a.mdl"
 ENT.Material = nil
 
 ENT.RandomSkins = {0, 1, 2, 3, 4}

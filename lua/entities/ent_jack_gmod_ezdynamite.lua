@@ -36,7 +36,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmodels/explosives/grenades/dynamite/dynamite.mdl")
+		self:SetModel("models/jmod/explosives/grenades/dynamite/dynamite.mdl")
 		--self:SetModelScale(.25, 0)
 		self:SetMaterial("models/entities/mat_jack_dynamite")
 		self:SetBodygroup(0, 0)

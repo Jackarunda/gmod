@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.GAS
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
-ENT.Model = "models/jmodels/explosives/props_explosive/explosive_butane_can.mdl"
+ENT.Model = "models/jmod/explosives/props_explosive/explosive_butane_can.mdl"
 ENT.Material = "models/shiny"
 ENT.Color = Color(100, 100, 100)
 ENT.ModelScale = 1

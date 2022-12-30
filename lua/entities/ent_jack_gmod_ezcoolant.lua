@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.COOLANT
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmodels/resources/coolant_bottle.mdl"
+ENT.Model = "models/jmod/resources/coolant_bottle.mdl"
 ENT.Material = "models/shiny"
 ENT.Color = Color(50, 120, 180)
 ENT.ModelScale = 1

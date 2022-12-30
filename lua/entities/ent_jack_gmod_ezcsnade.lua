@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Tear Gas Grenade"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 100, 0)
-ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model = "models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material = "models/mats_jack_nades/tear_gas_grenade"
 ENT.SpoonScale = 2
 

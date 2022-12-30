@@ -34,14 +34,14 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/military2/bomb/bomb_cbu.mdl")
-		self.Entity:SetMaterial("models/military2/bomb/cluster_minelayer")
-		--self.Entity:SetModelScale(1.5,0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/explosives/bombs/bomb_cbu.mdl")
+		self:SetSkin(2)
+		--self:SetMaterial("models/jmod/explosives/bombs/cluster_minelayer")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
