@@ -8,7 +8,7 @@ ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmodels/props/machines/diesel_jenerator.mdl"
-ENT.Mat = "models/jmodels/props/machines/lfg"
+--ENT.Mat = "models/jmodels/props/machines/lfg"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 250
