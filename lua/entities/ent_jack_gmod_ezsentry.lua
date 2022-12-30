@@ -16,7 +16,7 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
-print(ENT.BaseClass)
+--print(ENT.BaseClass)
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.EZupgradable=true
