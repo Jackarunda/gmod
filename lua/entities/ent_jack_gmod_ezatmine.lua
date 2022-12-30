@@ -259,7 +259,7 @@ if SERVER then
 	--aw fuck you
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = JMod.MakeModel(self, "models/thedoctor/mines/clustermine_1.mdl", "models/jacky_camouflage/digi2")
+		self.Mdl = JMod.MakeModel(self, "models/jmod/explosives/mines/clustermine_1.mdl", "models/jacky_camouflage/digi2")
 	end
 
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
