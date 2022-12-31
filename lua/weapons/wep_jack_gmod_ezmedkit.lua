@@ -12,7 +12,7 @@ SWEP.InstantPickup = true -- Fort Fights compatibility
 SWEP.EZdroppable = true
 SWEP.ViewModel = "models/weapons/c_arms_citizen.mdl"
 SWEP.WorldModel = "models/props_c17/tools_wrench01a.mdl"
-SWEP.BodyHolsterModel = "models/items/medjit_large.mdl"
+SWEP.BodyHolsterModel = "models/jmod/items/medjit_large.mdl"
 SWEP.BodyHolsterSlot = "hips"
 SWEP.BodyHolsterAng = Angle(-90, -20, 110)
 SWEP.BodyHolsterAngL = Angle(-90, 20, 70)
@@ -110,7 +110,7 @@ SWEP.WElements = {
 	},
 	["box"] = {
 		type = "Model",
-		model = "models/items/medjit_large.mdl",
+		model = "models/jmod/items/medjit_large.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
 		rel = "",
 		pos = Vector(-14.027, 3.635, -0.519),
@@ -180,7 +180,7 @@ SWEP.WElements = {
 	},
 	["bottle"] = {
 		type = "Model",
-		model = "models/items/medjit_small.mdl",
+		model = "models/jmod/items/medjit_small.mdl",
 		bone = "ValveBiped.Bip01_Pelvis",
 		rel = "",
 		pos = Vector(-11.948, 9.869, -6.753),
@@ -194,7 +194,7 @@ SWEP.WElements = {
 	},
 	["container"] = {
 		type = "Model",
-		model = "models/items/medjit_medium.mdl",
+		model = "models/jmod/items/medjit_medium.mdl",
 		bone = "ValveBiped.Bip01_Pelvis",
 		rel = "",
 		pos = Vector(6.752, 9.869, -1.558),
@@ -208,7 +208,7 @@ SWEP.WElements = {
 	},
 	["kit"] = {
 		type = "Model",
-		model = "models/items/healthkit.mdl",
+		model = "models/jmod/items/healthkit.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
 		rel = "",
 		pos = Vector(-15.065, 0.518, 4.675),
@@ -264,7 +264,7 @@ SWEP.WElements = {
 	}
 }
 
-SWEP.Props = {"models/healthvial.mdl", "models/bandages.mdl", "models/items/medjit_small.mdl", "models/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
+SWEP.Props = {"models/healthvial.mdl", "models/bandages.mdl", "models/jmod/items/medjit_small.mdl", "models/jmod/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
 
 function SWEP:Initialize()
 	self:SetHoldType("fist")
