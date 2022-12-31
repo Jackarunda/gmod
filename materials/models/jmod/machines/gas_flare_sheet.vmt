@@ -1,6 +1,6 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models/jmodels/props/machines/gas_flare_sheet"
+	"$baseTexture" "models/jmod/machines/gas_flare_sheet"
 	"$surfaceprop" "metal"
 	"$blendtintbybasealpha" "1"
  	"$blendtintcoloroverbase" "0"

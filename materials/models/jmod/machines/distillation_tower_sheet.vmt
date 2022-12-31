@@ -2,7 +2,7 @@
 "VertexLitGeneric"
 {
 	// Original shader: VertexLitTexture
-	"$basetexture" "models/jmodels/props/machines/distillation_tower_sheet"
+	"$basetexture" "models/jmod/machines/distillation_tower_sheet"
 	"$surfaceprop" "metal"
     // "$envmap" "env_cubemap"	
     "$basealphaenvmapmask" "0"
