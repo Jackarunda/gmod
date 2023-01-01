@@ -15,17 +15,19 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.OIL,
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.POWER
+	JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.FUEL
 }
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
+	MaxElectricity = 300,
+	MaxFuel = 100,
 	MaxOil = 400
 }
 ENT.DynamicPerfSpecs = {
-	ElectricalEffeciency = 1,
-	MaxElectricity = 100,
+	FuelEffeciency = 1,
 	Armor = 1
 }
 ---
@@ -34,11 +36,13 @@ local STATE_BROKEN, STATE_OFF, STATE_REFINING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
 	self:NetworkVar("Float", 2, "Oil")
+	self:NetworkVar("Float", 3, "Fuel")
 end
 if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
+		self:SetFuel(0)
 		self:SetOil(0)
 		self.NextThinkTime = 0
 		self.IdleThinkTime = 0
@@ -46,8 +50,9 @@ if(SERVER)then
 		--self:SetSubMaterial(1, "models/props_wasteland/coolingtank02_skin3") -- Distillation tower
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 	end
+
 	function ENT:TurnOn(activator)
-		if self:GetElectricity() > 0 and self:GetOil() > 0 then
+		if (self:GetElectricity() > 0) and (self:GetOil() > 0) and (self:GetState() == STATE_OFF) then
 			self:SetState(STATE_REFINING)
 			self:EmitSound("snd_jack_littleignite.wav")
 			timer.Simple(0.1, function()
@@ -85,9 +90,9 @@ if(SERVER)then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif(State==STATE_OFF)then
+		elseif State == STATE_OFF then
 			self:TurnOn()
-		elseif(State==STATE_REFINING)then
+		elseif State == STATE_REFINING then
 			if Alt then 
 				self:ProduceResource()
 
@@ -101,6 +106,7 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
+	-------- This function isn't being used
 	function ENT:SpawnEffect(pos)
 		--[[local effectdata=EffectData()
 		effectdata:SetOrigin(pos)
@@ -135,7 +141,7 @@ if(SERVER)then
 		end
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:SetOil(math.Clamp(self:GetOil() - amt, 0, self.MaxOil))
-		self:SpawnEffect(pos)
+		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
@@ -145,6 +151,19 @@ if(SERVER)then
 					self:TurnOn() 
 				end 
 			end)
+		end
+	end
+
+	function ENT:ConsumeFuel(amt)
+		local Elec = self:GetElectricity()
+		amt = (amt or .5)--/self.FuelEffeciency
+		if Elec > 0 then
+			local NewAmt = math.Clamp(Elec - amt * 3, 0.0, self.MaxElectricity)
+			self:SetElectricity(NewAmt)
+		else
+			local NewAmt = math.Clamp(self:GetFuel() - amt, 0.0, self.MaxFuel)
+			self:SetFuel(NewAmt)
+			if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
 		end
 	end
 
@@ -162,7 +181,7 @@ if(SERVER)then
 			if self.NextThinkTime <= Time then
 				self.NextThinkTime = Time + 1
 
-				self:ConsumeElectricity(.3)
+				self:ConsumeFuel(.2)
 
 				if self:GetOil() <= 0 then
 					self.IdleThinkTime = self.IdleThinkTime + 1
@@ -260,9 +279,11 @@ elseif(CLIENT)then
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
+				local FuelFrac = self:GetFuel() / self.MaxFuel
 				local OilFrac = self:GetOil() / self.MaxOil
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
+				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 				local OR, OG, OB = JMod.GoodBadColor(OilFrac)
 				cam.Start3D2D(SelfPos + Up * 70 + Forward * 46 - Right * 25, DisplayAng, .05)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
@@ -272,6 +293,8 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 120, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 150, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined("OIL", "JMod-Display", 150, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(OilFrac * 100)) .. "%", "JMod-Display", 150, 30, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
