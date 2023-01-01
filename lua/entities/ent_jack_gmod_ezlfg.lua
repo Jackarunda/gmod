@@ -8,7 +8,7 @@ ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/diesel_jenerator.mdl"
---ENT.Mat = "models/jmodels/props/machines/lfg"
+ENT.EZupgradable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 250
@@ -16,7 +16,6 @@ ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 0,
 	MaxFuel = 100
 }
 
@@ -38,29 +37,24 @@ local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
 
 if(SERVER)then
 	function ENT:CustomInit()
-		self.EZupgradable = true
 		self:SetProgress(0)
 		self.NextResourceThink = 0
 		self.NextUseTime = 0
-		self.SoundLoop = CreateSound(self, "snd_jack_genrun_loop2.wav")
-		--self.SoundLoop = CreateSound(self, "vehicles/v8/v8_firstgear_rev_loop1.wav")
+		self.NextEffThink = 0
+		self.NextEnvThink = 0
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav")
 	end
 
 	function ENT:Use(activator)
-		if self.NextUseTime > CurTime() then
-			self:EmitSound("buttons/button2.wav", 60, 100)
-
-			return
-		end
+		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local OldOwner = JMod.GetOwner(self)
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.SetOwner(self, activator)
 		JMod.Colorify(self)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
-		return
+			return
 		elseif State == STATE_OFF then
 			self:TurnOn()
 		elseif State == STATE_ON then
@@ -73,45 +67,37 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if (self:GetState() == STATE_OFF) and (self:GetFuel() > 0) then
-			self.NextUseTime = CurTime() + 8
-			self:EmitSound("snd_jack_genstart.mp3")
-			self:SetState(STATE_ON)
-			timer.Simple(8, function()
-				if IsValid(self) then
-					self.SoundLoop:SetSoundLevel(70)
-					self.SoundLoop:Play()
-				end
-			end)
-		else
-			self:EmitSound("buttons/button2.wav", 60, 100)
+		if (self:GetState() == STATE_OFF) then
+			if (self:GetFuel() > 0) then
+				self.NextUseTime = CurTime() + 1
+				self:SetState(STATE_ON)
+				self.SoundLoop:SetSoundLevel(70)
+				self.SoundLoop:Play()
+			else
+				self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
+				self.NextUseTime = CurTime() + 1
+			end
 		end
 	end
 
 	function ENT:TurnOff()
-		self.NextUseTime = CurTime() + 8
-		if self.SoundLoop then
-			self.SoundLoop:Stop()
-		end
-		self:EmitSound("snd_jack_genstop.mp3")
+		self.NextUseTime = CurTime() + 1
+		if self.SoundLoop then self.SoundLoop:Stop() end
+		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.FUEL then
-			timer.Simple(0.1, function() 
-				if IsValid(self) then
-					self:TurnOn() 
-				end 
+			timer.Simple(.1, function() 
+				if IsValid(self) then self:TurnOn() end 
 			end)
 		end
 	end
 
 	function ENT:OnRemove()
-		if self.SoundLoop then
-			self.SoundLoop:Stop()
-		end
+		if self.SoundLoop then self.SoundLoop:Stop() end
 	end
 
 	function ENT:SpawnEffect(pos)
@@ -122,12 +108,12 @@ if(SERVER)then
 		effectdata:SetScale(math.Rand(.5, 1.5))
 		effectdata:SetRadius(math.Rand(2, 4))
 		util.Effect("Sparks", effectdata)
-		self:EmitSound("items/suitchargeok1.wav", 75, 120)
+		--self:EmitSound("items/suitchargeok1.wav", 75, 120)
 	end
 
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local amt = math.min(math.floor(self:GetProgress()), 100)
+		local amt = math.min(math.ceil(self:GetProgress()), 100)
 
 		if amt <= 0 then return end
 
@@ -148,18 +134,46 @@ if(SERVER)then
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 
-		if State == STATE_ON then
-			if self.NextResourceThink < Time then
-				self.NextResourceThink = Time + 1
+		if self.NextResourceThink < Time then
+			self.NextResourceThink = Time + 1
+			if State == STATE_ON then
+				local OverallSpeed = .25
+				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade] ^ 1.5
+				local PowerToProduce = 3 * JMod.EZ_GRADE_BUFFS[Grade] ^ 2
 
-				self:ConsumeFuel(.2)
+				self:ConsumeFuel(FuelToConsume * OverallSpeed)
 
-				local Rate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				self:SetProgress(self:GetProgress() + PowerToProduce * OverallSpeed)
 
-				self:SetProgress(self:GetProgress() + Rate)
+				if self:GetProgress() >= 100 then self:ProduceResource() end
+			end
+		end
 
-				if self:GetProgress() >= 100 then
-					self:ProduceResource()
+		if (self.NextEffThink < Time) then
+			self.NextEffThink = Time + .1
+			if (State == STATE_ON) then
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos() + self:GetUp() * 65 + self:GetRight() * 11 + self:GetForward() * 35)
+				Eff:SetNormal(self:GetUp())
+				Eff:SetScale(1)
+				util.Effect("eff_jack_gmod_ezexhaust", Eff, true)
+			end
+		end
+
+		if (self.NextEnvThink < Time) then
+			self.NextEnvThink = Time + 5
+			if (State == STATE_ON) then
+				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+				if not (Tr.HitSky) then
+					if (math.random(1, 3) == 1) then
+						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						JMod.SetOwner(Gas, self.Owner)
+						Gas:SetDTBool(0, true)
+						Gas:Spawn()
+						Gas:Activate()
+						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+					end
 				end
 			end
 		end
@@ -168,13 +182,15 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
+		self.BasalPlat = JMod.MakeModel(self, "models/hunter/blocks/cube1x1x025.mdl")
+		self.Pistoney = JMod.MakeModel(self, "models/mechanics/robotics/a1.mdl")
 	end
 
 	local GradeColors = JMod.EZ_GRADE_COLORS
 	local GradeMats = JMod.EZ_GRADE_MATS
 
 	function ENT:Draw()
-		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
+		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
@@ -189,12 +205,19 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
+		local BasalPlatAng = SelfAng:GetCopy()
+		JMod.RenderModel(self.BasalPlat, BasePos + Up * 12 + Forward * 8 - Right * 0, BasalPlatAng, nil, Vector(1,1,1), GradeMats[Grade])
+		---
+		local WeDoBeBobbin = (State == STATE_ON and math.sin(CurTime() * 100) / 2 + .5) or 0
+		local PistoneyAng = SelfAng:GetCopy()
+		PistoneyAng:RotateAroundAxis(Right, 90)
+		JMod.RenderModel(self.Pistoney, BasePos + Up * (44.5 + 5 * WeDoBeBobbin) - Forward * 19, PistoneyAng, nil, Vector(1, 1, 1), GradeMats[Grade])
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
@@ -202,9 +225,9 @@ elseif(CLIENT)then
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 
-				cam.Start3D2D(SelfPos + Forward * 10 + Right * 25 + Up * 50, DisplayAng, .1)
+				cam.Start3D2D(SelfPos + Forward * -36 + Right * -12 + Up * 53, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				local RankX, RankY = 60, 50
+				local RankX, RankY = -70, 190
 				surface.DrawRect(RankX, RankY, 128, 128)
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
 				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))

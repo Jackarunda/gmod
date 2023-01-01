@@ -316,7 +316,7 @@ function JMod.InitGlobalConfig(forceNew)
 					}
 				},
 				["sentry"] = {
-					description = "Shoots enemies so you don't have to! Just remember to refill the ammo and power.",
+					description = "Consumes ammo, power and coolant. Produces casualties.",
 					category = "Machines",
 					results = "ent_jack_gmod_ezsentry"
 				},
@@ -656,9 +656,9 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezsolargenerator",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 10,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100
 				},
 				sizeScale = 4,
 				category = "Machines",
@@ -694,6 +694,19 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Turns ores into metal. Very power hungry."
+			},
+			["EZ Liquid Fuel Generator"] = {
+				results = "ent_jack_gmod_ezlfg",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20
+				},
+				sizeScale = 1.5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Produces Power from Fuel. Very noisy."
 			},
 			["EZ Bomb Bay"] = {
 				results = "ent_jack_gmod_ezbombbay",
