@@ -120,7 +120,7 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(self:WorldToLocal(pos))
+		self:SpawnEffect(self:LocalToWorld(pos))
 	end
 
 	function ENT:ConsumeFuel(amt)
@@ -129,6 +129,12 @@ if(SERVER)then
 		local NewAmt = math.Clamp(self:GetFuel() - amt, 0.0, self.MaxFuel)
 		self:SetFuel(NewAmt)
 		if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
+	end
+
+	function ENT:OnBreak()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:Think()
