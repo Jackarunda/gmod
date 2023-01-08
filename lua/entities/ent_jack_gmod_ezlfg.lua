@@ -192,9 +192,6 @@ elseif(CLIENT)then
 		self.Pistoney = JMod.MakeModel(self, "models/mechanics/robotics/a1.mdl")
 	end
 
-	local GradeColors = JMod.EZ_GRADE_COLORS
-	local GradeMats = JMod.EZ_GRADE_MATS
-
 	function ENT:Draw()
 		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -212,12 +209,12 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		local BasalPlatAng = SelfAng:GetCopy()
-		JMod.RenderModel(self.BasalPlat, BasePos + Up * 12 + Forward * 8 - Right * 0, BasalPlatAng, nil, Vector(1,1,1), GradeMats[Grade])
+		JMod.RenderModel(self.BasalPlat, BasePos + Up * 12 + Forward * 8 - Right * 0, BasalPlatAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 		---
 		local WeDoBeBobbin = (State == STATE_ON and math.sin(CurTime() * 100) / 2 + .5) or 0
 		local PistoneyAng = SelfAng:GetCopy()
 		PistoneyAng:RotateAroundAxis(Right, 90)
-		JMod.RenderModel(self.Pistoney, BasePos + Up * (44.5 + 5 * WeDoBeBobbin) - Forward * 19, PistoneyAng, nil, Vector(1, 1, 1), GradeMats[Grade])
+		JMod.RenderModel(self.Pistoney, BasePos + Up * (44.5 + 5 * WeDoBeBobbin) - Forward * 19, PistoneyAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then

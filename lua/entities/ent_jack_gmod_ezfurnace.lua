@@ -219,7 +219,6 @@ elseif(CLIENT)then
 		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
 		self.Panel = JMod.MakeModel(self, "models/hunter/blocks/cube05x1x025.mdl")
 	end
-	local GradeMats = JMod.EZ_GRADE_MATS
 	local WhiteSquare = Material("white_square")
 	local HeatWaveMat = Material("sprites/heatwave")
 	function ENT:Draw()
@@ -278,12 +277,12 @@ elseif(CLIENT)then
 			local PipeAng = SelfAng:GetCopy()
 			PipeAng:RotateAroundAxis(Forward, 180)
 			PipeAng:RotateAroundAxis(Right, 180)
-			JMod.RenderModel(self.Piping, BasePos - Forward * 27 - Right * 30 + Up * 15, PipeAng, nil, Vector(1,1,1), GradeMats[Grade])
+			JMod.RenderModel(self.Piping, BasePos - Forward * 27 - Right * 30 + Up * 15, PipeAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 
 			local PanelAng = SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Right, 90)
 			PanelAng:RotateAroundAxis(Forward, 90)
-			JMod.RenderModel(self.Panel, BasePos + Up * 54 + Forward * 22.5 - Right * 2, PanelAng, nil, Vector(1,1,1), GradeMats[Grade])
+			JMod.RenderModel(self.Panel, BasePos + Up * 54 + Forward * 22.5 - Right * 2, PanelAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 
 			if Closeness < 20000 and State == STATE_SMELTING then
 				local DisplayAng = SelfAng:GetCopy()

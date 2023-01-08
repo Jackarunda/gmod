@@ -1045,8 +1045,6 @@ elseif(CLIENT)then
 
 	local GradeColors = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
 
-	local GradeMats = {Material("phoenix_storms/metal"), Material("models/mat_jack_gmod_copper"), Material("models/mat_jack_gmod_silver"), Material("models/mat_jack_gmod_gold"), Material("models/mat_jack_gmod_platinum")}
-
 	local AmmoBGs = {
 		["Bullet"] = 0,
 		["API Bullet"] = 0,
@@ -1170,7 +1168,7 @@ elseif(CLIENT)then
 		local ShieldAngle = AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(), 130)
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Up(), 45)
-		JMod.RenderModel(self.Shield, BasePos + AimForward * 17.5 + AimUp * 3.3 - AimRight * .7, ShieldAngle, nil, Vector(.1, .1, .1))
+		JMod.RenderModel(self.Shield, BasePos + AimForward * 17.5 + AimUp * 3.3 - AimRight * .7, ShieldAngle, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 
 		--[[
 		local GradePos=BasePos+Up*32+AimForward*22.2-AimUp*33.5-AimRight*.825
@@ -1186,7 +1184,7 @@ elseif(CLIENT)then
 			local CamAngle = AimAngle:GetCopy()
 			CamAngle:RotateAroundAxis(CamAngle:Forward(), -90)
 			CamAngle:RotateAroundAxis(CamAngle:Up(), 180)
-			JMod.RenderModel(self.Camera, BasePos + AimUp * 8.5 - AimForward - AimRight * .65, CamAngle, nil, GradeColors[Grade], GradeMats[Grade])
+			JMod.RenderModel(self.Camera, BasePos + AimUp * 8.5 - AimForward - AimRight * .65, CamAngle, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 			---
 			local TriggerAngle = AimAngle:GetCopy()
 			TriggerAngle:RotateAroundAxis(TriggerAngle:Forward(), 90)

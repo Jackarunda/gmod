@@ -205,8 +205,6 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	local GradeColors = JMod.GradeColors
-	local GradeMats = JMod.GradeMats
 	function ENT:CustomInit()
 		-- "models/props_wasteland/panel_leverbase001a.mdl"
 		-- "models/props_wasteland/panel_leverhandle001a.mdl"

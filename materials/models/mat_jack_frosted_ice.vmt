@@ -1,0 +1,22 @@
+"Refract"
+{
+	"$baseTexture" "models/tex_jack_frosted_ice_overlay"
+ 	"$model" 1
+ 	"$refractamount" "0"
+ 	"$bluramount" "0"
+	"$REFRACTTINT" "{255 255 255}"
+	"$scale" "[3 3]"
+	"$dudvmap" "effects/strider_pinch_dudv"
+	"$normalmap" "effects/strider_pinch_dudv"
+	"$nocull" 1
+	"$surfaceprop" "glass"
+	//"$envmap" "env_cubemap"
+	//"$envmapcontrast" "1"
+	//"$envmapsaturation" "[1 1 1]"
+	//"$envmaptint" "[.85 .85 .85]"
+
+	"Refract_DX60"
+	{
+		"$fallbackmaterial" "models/props_c17/frostedglass_01a_DX60"
+	}
+}
