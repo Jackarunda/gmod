@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.AMMO
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
-ENT.Model = "models/Items/BoxJRounds.mdl"
+ENT.Model = "models/jmod/items/BoxJRounds.mdl"
 ENT.Material = "models/mat_jack_gmod_ezammobox"
 ENT.ModelScale = 1
 ENT.Mass = 50

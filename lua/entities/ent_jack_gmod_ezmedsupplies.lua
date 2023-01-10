@@ -18,7 +18,7 @@ ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
 
-ENT.PropModels = {"models/items/healthkit.mdl", "models/healthvial.mdl", "models/items/medjit_medium.mdl", "models/items/medjit_small.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
+ENT.PropModels = {"models/jmod/items/healthkit.mdl", "models/healthvial.mdl", "models/jmod/items/medjit_medium.mdl", "models/jmod/items/medjit_small.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
 
 -- todo: missing texture
 ---

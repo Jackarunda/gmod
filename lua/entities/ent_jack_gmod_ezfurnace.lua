@@ -8,7 +8,7 @@ ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/jmodels/props/machines/gas_smelter.mdl"
+ENT.Model = "models/jmod/machines/gas_smelter.mdl"
 ENT.Mass = 500
 ENT.SpawnHeight = 10
 ---
@@ -56,6 +56,7 @@ if(SERVER)then
 		self.TimeSinceLastOre = 0
 		self.NextEffThink = 0
 		self.NextSmeltThink = 0
+		self.NextEnvThink = 0
 	end
 	function ENT:TurnOn(activator)
 		if self:GetElectricity() > 0 and self:GetOre() > 0 then
@@ -139,7 +140,7 @@ if(SERVER)then
 		local spawnVec = self:WorldToLocal(SelfPos + Right * 30 + Up * 20)
 		local spawnAng = Angle(0, 0, 0)
 		local ejectVec = Forward * 100
-		timer.Simple(0.2, function()
+		timer.Simple(0.3, function()
 			if IsValid(self) then
 				JMod.MachineSpawnResource(self, MetalType, amt, spawnVec, spawnAng, ejectVec, true, 200)
 			end
@@ -159,19 +160,20 @@ if(SERVER)then
 				if not OreTyp then self:TurnOff() return end
 
 				local Grade = self:GetGrade()
+				local GradeBuff = JMod.EZ_GRADE_BUFFS[Grade]
 
-				self:ConsumeElectricity(2 * Grade)
+				self:ConsumeElectricity(1.5 * JMod.EZ_GRADE_BUFFS[Grade] ^ 1.5)
 
 				if self:GetOre() <= 0 then
 					self.TimeSinceLastOre = self.TimeSinceLastOre + 1
 				else
 					self.TimeSinceLastOre = 0
-					local OreConsumeAmt = Grade ^ 1.25
-					local MetalProduceAmt = Grade ^ 1.25 * JMod.SmeltingTable[OreTyp][2]
+					local OreConsumeAmt = GradeBuff ^ 2
+					local MetalProduceAmt = GradeBuff ^ 2 * JMod.SmeltingTable[OreTyp][2]
 					self:SetOre(self:GetOre() - OreConsumeAmt)
 					self:SetProgress(self:GetProgress() + MetalProduceAmt)
 				end
-				if self.TimeSinceLastOre >= 5 then self:TurnOff() end
+				if self.TimeSinceLastOre >= 5 then self:TurnOff() return end
 
 				if self:GetProgress() >= 100 then
 					self:ProduceResource()
@@ -188,6 +190,21 @@ if(SERVER)then
 				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
 			end
 		end
+		if (self.NextEnvThink < Time) then
+			self.NextEnvThink = Time + 5
+			local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+			if not (Tr.HitSky) then
+				for i = 1, 1 do
+					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+					Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+					JMod.SetOwner(Gas, self.Owner)
+					Gas:SetDTBool(0, true)
+					Gas:Spawn()
+					Gas:Activate()
+					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+				end
+			end
+		end
 
 		self:NextThink(Time + .1)
 		return true
@@ -202,7 +219,6 @@ elseif(CLIENT)then
 		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
 		self.Panel = JMod.MakeModel(self, "models/hunter/blocks/cube05x1x025.mdl")
 	end
-	local GradeMats = JMod.EZ_GRADE_MATS
 	local WhiteSquare = Material("white_square")
 	local HeatWaveMat = Material("sprites/heatwave")
 	function ENT:Draw()
@@ -261,12 +277,12 @@ elseif(CLIENT)then
 			local PipeAng = SelfAng:GetCopy()
 			PipeAng:RotateAroundAxis(Forward, 180)
 			PipeAng:RotateAroundAxis(Right, 180)
-			JMod.RenderModel(self.Piping, BasePos - Forward * 27 - Right * 30 + Up * 15, PipeAng, nil, Vector(1,1,1), GradeMats[Grade])
+			JMod.RenderModel(self.Piping, BasePos - Forward * 27 - Right * 30 + Up * 15, PipeAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 
 			local PanelAng = SelfAng:GetCopy()
 			PanelAng:RotateAroundAxis(Right, 90)
 			PanelAng:RotateAroundAxis(Forward, 90)
-			JMod.RenderModel(self.Panel, BasePos + Up * 54 + Forward * 22.5 - Right * 2, PanelAng, nil, Vector(1,1,1), GradeMats[Grade])
+			JMod.RenderModel(self.Panel, BasePos + Up * 54 + Forward * 22.5 - Right * 2, PanelAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 
 			if Closeness < 20000 and State == STATE_SMELTING then
 				local DisplayAng = SelfAng:GetCopy()

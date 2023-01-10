@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmodels/props/machines/Scaffolding_smol.mdl"
+ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
@@ -211,8 +211,7 @@ elseif CLIENT then
 		self.ChargerModel = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl", nil, .5)
 		self:DrawShadow(true)
 	end
-	local GradeColors = JMod.EZ_GRADE_COLORS
-	local GradeMats = JMod.EZ_GRADE_MATS
+	
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
@@ -233,7 +232,7 @@ elseif CLIENT then
 		local BoxAng=SelfAng:GetCopy()
 		BoxAng:RotateAroundAxis(Right, 90)
 		BoxAng:RotateAroundAxis(Forward, 180)
-		JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2),GradeColors[Grade],GradeMats[Grade])
+		JMod.RenderModel(self.ChargerModel,BasePos-Up*25+Forward*6-Right*6,BoxAng,Vector(1.8,1.8,1.2), nil, JMod.EZ_GRADE_MATS[Grade])
 		local PanelAng=SelfAng:GetCopy()
 		PanelAng:RotateAroundAxis(Right, 60)
 		if(PanelDraw)then

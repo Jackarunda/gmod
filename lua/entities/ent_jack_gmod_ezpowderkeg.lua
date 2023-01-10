@@ -31,8 +31,8 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmodels/explosives/bombs/powderkeg/powderkeg.mdl")
-		self:SetMaterial("models/entities/mat_jack_powderkeg")
+		self:SetModel("models/jmod/explosives/powderkeg.mdl")
+		--self:SetMaterial("models/entities/mat_jack_powderkeg")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)

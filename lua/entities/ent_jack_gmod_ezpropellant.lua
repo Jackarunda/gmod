@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.PROPELLANT
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.Model = "models/jmodels/resources/propellent.mdl"
+ENT.Model = "models/jmod/resources/propellent.mdl"
 ENT.Material = "models/entities/mat_jack_powderbottle"
 ENT.ModelScale = 1
 ENT.Mass = 30

@@ -253,7 +253,7 @@ if SERVER then
 elseif CLIENT then
 	function ENT:Initialize()
 		self.Mdl = ClientsideModel("models/jailure/wwii/wwii.mdl")
-		self.Mdl:SetSubMaterial(0, "models/jmod/jailure/wwii/base")
+		self.Mdl:SetSubMaterial(0, "models/jmod/explosives/bombs/he_bomb")
 		self.Mdl:SetModelScale(.8, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)

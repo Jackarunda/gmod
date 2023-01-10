@@ -5,8 +5,8 @@ ENT.Author = "Jackarunda, TheOnly8Z"
 ENT.Category = "JMod - EZ Misc."
 ENT.PrintName = "EZ Gas Grenade"
 ENT.Spawnable = true
-ENT.Model = "models/jmodels/explosives/grenades/gasnade/gas_grenade.mdl"
-ENT.SpoonModel = "models/jmodels/explosives/grenades/gasnade/gas_grenade_spoon.mdl"
+ENT.Model = "models/jmod/explosives/grenades/gasnade/gas_grenade.mdl"
+ENT.SpoonModel = "models/jmod/explosives/grenades/gasnade/gas_grenade_spoon.mdl"
 
 --ENT.ModelScale=1.5
 if SERVER then

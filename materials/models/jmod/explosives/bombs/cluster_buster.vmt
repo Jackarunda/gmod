@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jmod/explosives/bombs/cluster_buster"
+    "$bumpmap" "models/jmod/explosives/bombs/cluster_buster_normal"
+	"$phong" "1"
+	"$phongexponent" "40"
+	"$phongboost" ".5"
+	"$phongfresnelranges" "[1 1 1]"
+	"$model" 1
+
+}

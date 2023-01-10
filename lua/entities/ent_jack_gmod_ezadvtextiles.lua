@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES
 ENT.JModPreferredCarryAngles = Angle(0, -90, 100)
-ENT.Model = "models/jmodels/resources/cylinderx15.mdl"
+ENT.Model = "models/jmod/resources/cylinderx15.mdl"
 ENT.Material = "models/mat_jack_gmod_advtextileroll"
 ENT.Color = Color(200, 200, 200)
 --ENT.ModelScale=1.5

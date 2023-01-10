@@ -16,13 +16,12 @@ ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
     JMod.EZ_RESOURCE_TYPES.COOLANT
 }
-print(ENT.BaseClass)
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.EZupgradable=true
 ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezsentry"
-ENT.Mass=300
+ENT.Mass=250
 -- config --
 ENT.AmmoTypes = {
 	["Bullet"] = {}, -- Simple pew pew
@@ -1019,7 +1018,7 @@ elseif(CLIENT)then
 		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
 		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
 		self.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
-		self.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
+		self.MachineGun=JMod.MakeModel(self,"models/jmod/ez/sentrygun.mdl")
 		self.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
 		self.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
 		self.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)
@@ -1045,8 +1044,6 @@ elseif(CLIENT)then
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
 
 	local GradeColors = {Vector(.3, .3, .3), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2), Vector(.2, .2, .2)}
-
-	local GradeMats = {Material("phoenix_storms/metal"), Material("models/mat_jack_gmod_copper"), Material("models/mat_jack_gmod_silver"), Material("models/mat_jack_gmod_gold"), Material("models/mat_jack_gmod_platinum")}
 
 	local AmmoBGs = {
 		["Bullet"] = 0,
@@ -1171,7 +1168,7 @@ elseif(CLIENT)then
 		local ShieldAngle = AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(), 130)
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Up(), 45)
-		JMod.RenderModel(self.Shield, BasePos + AimForward * 17.5 + AimUp * 3.3 - AimRight * .7, ShieldAngle, nil, Vector(.1, .1, .1))
+		JMod.RenderModel(self.Shield, BasePos + AimForward * 17.5 + AimUp * 3.3 - AimRight * .7, ShieldAngle, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 
 		--[[
 		local GradePos=BasePos+Up*32+AimForward*22.2-AimUp*33.5-AimRight*.825
@@ -1187,7 +1184,7 @@ elseif(CLIENT)then
 			local CamAngle = AimAngle:GetCopy()
 			CamAngle:RotateAroundAxis(CamAngle:Forward(), -90)
 			CamAngle:RotateAroundAxis(CamAngle:Up(), 180)
-			JMod.RenderModel(self.Camera, BasePos + AimUp * 8.5 - AimForward - AimRight * .65, CamAngle, nil, GradeColors[Grade], GradeMats[Grade])
+			JMod.RenderModel(self.Camera, BasePos + AimUp * 8.5 - AimForward - AimRight * .65, CamAngle, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 			---
 			local TriggerAngle = AimAngle:GetCopy()
 			TriggerAngle:RotateAroundAxis(TriggerAngle:Forward(), 90)

@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.POWER
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmodels/resources/battery_barrel.mdl"
+ENT.Model = "models/jmod/resources/battery_barrel.mdl"
 ENT.Material = "models/mat_jack_gmod_ezbattery"
 ENT.ModelScale = 1
 ENT.Mass = 50

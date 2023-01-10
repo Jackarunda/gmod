@@ -154,6 +154,8 @@ elseif CLIENT then
 			self:DrawModel()
 		end
 
+		if (self:GetDTBool(0)) then return end
+
 		local Time = CurTime()
 
 		if self.NextVisCheck < Time then

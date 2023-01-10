@@ -337,6 +337,96 @@ concommand.Add("jmod_debug_removeoutpost", function(ply, cmd, args)
 	JMod.RemoveRadioOutPost(tostring(Team))
 end, nil, "Removes a radio outpost for your team.")
 
+local function GetPlayerFromNick(nickname)
+	nickname = string.lower(nickname)
+	local Entities = ents.GetAll()
+	for _, v in ipairs(Entities) do
+		if not(IsValid(v)) and (v:IsPlayer()) and (string.lower(v:Nick())) == nickname then
+
+			return v
+		end
+	end
+	
+	return nil
+end
+
+concommand.Add("jmod_airdropplayer", function(ply, cmd, args) 
+	if not ply:IsUserGroup("superadmin") then return end
+
+	local TargetPly, TargetPos, Punish = GetPlayerFromNick(args[1]), ply:GetPos(), false
+
+	if not(IsValid(TargetPly)) then 
+		TargetPly = ply 
+	end
+	if isnumber(tonumber(args[2])) then
+		TargetPos = Vector(tonumber(args[2]), tonumber(args[3]) or 0, tonumber(args[4]) or 0)
+		Punish = tobool(args[5])
+	elseif tobool(args[2]) then
+		Punish = tobool(args[2])
+	end
+
+	local DropPos = FindDropPosFromSignalOrigin(TargetPos)
+
+	if DropPos then
+
+		TargetPly:ExitVehicle()
+		--TargetPly:SetPos(DropPos)
+		TargetPly:SetNoDraw(true)
+		local DropVelocity = VectorRand()
+		DropVelocity.z = 0
+		DropVelocity:Normalize()
+		DropVelocity = DropVelocity * 400
+		local Eff = EffectData()
+		Eff:SetOrigin(DropPos)
+		Eff:SetStart(DropVelocity)
+		util.Effect("eff_jack_gmod_jetflyby", Eff, true, true)
+
+		timer.Simple(0.9, function()
+			local Box = ents.Create("ent_jack_aidbox")
+			Box:SetPos(DropPos)
+			Box.InitialVel = -DropVelocity * 10
+			--Box.Contents = {"ent_jack_gmod_eztoolbox"}
+			Box.NoFadeIn = true
+			Box:SetDTBool(0, "true")
+			Box:Spawn()
+			Box:Initialize()
+			----- Create the chair
+			Box.Pod = ents.Create("prop_vehicle_prisoner_pod")
+			Box.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
+			local Ang, Up, Right, Forward = Box:GetAngles(), Box:GetUp(), Box:GetRight(), Box:GetForward()
+			Box.Pod:SetPos(Box:GetPos() - Up * 30)
+			Ang:RotateAroundAxis(Up, 0)
+			Ang:RotateAroundAxis(Forward, 0)
+			Box.Pod:SetAngles(Ang)
+			Box.Pod:Spawn()
+			Box.Pod:Activate()
+			Box.Pod:SetParent(Box)
+			Box.Pod:SetNoDraw(true)
+			Box.Pod:SetThirdPersonMode(true)
+			------
+			Box:SetPackageName(ply:Nick())
+			TargetPly:EnterVehicle(Box.Pod)
+			---
+			sound.Play("snd_jack_flyby_drop.mp3", DropPos, 150, 100)
+
+			for k, playa in pairs(ents.FindInSphere(DropPos, 6000)) do
+				if playa:IsPlayer() then
+					sound.Play("snd_jack_flyby_drop.mp3", playa:GetShootPos(), 50, 100)
+				end
+			end
+		end)
+	end
+end, nil, "Airdrops specified player on specified location")
+
+hook.Add("PlayerLeaveVehicle", "JMod_PlayerPackageExit", function( ply, veh )
+	Box = veh:GetParent()
+	if (IsValid(Box)) and (Box:GetClass() == "ent_jack_aidbox") then
+		ply:SetPos(Box:GetPos())
+		Box:Use(ply)
+		ply:SetNoDraw(false)
+	end
+end)
+
 local function GetArticle(word)
 	local FirstLetter = string.sub(word, 1, 1)
 

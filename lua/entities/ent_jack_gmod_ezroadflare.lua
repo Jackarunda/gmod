@@ -133,7 +133,7 @@ if SERVER then
 		self.BurnSound:Play()
 		---
 		local Spewn = ents.Create("ent_jack_spoon")
-		Spewn.Model = "models/jmodels/explosives/grenades/sticknade/stick_grenade_cap.mdl"
+		Spewn.Model = "models/jmod/explosives/grenades/sticknade/stick_grenade_cap.mdl"
 		Spewn:SetPos(self:GetPos())
 		Spewn:Spawn()
 		Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + VectorRand() * 250)
@@ -201,7 +201,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Cap = JMod.MakeModel(self, "models/jmodels/explosives/grenades/sticknade/stick_grenade_cap.mdl", nil, 2)
+		self.Cap = JMod.MakeModel(self, "models/jmod/explosives/grenades/sticknade/stick_grenade_cap.mdl", nil, 2)
 	end
 
 	function ENT:Think()

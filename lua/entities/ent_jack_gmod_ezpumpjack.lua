@@ -200,7 +200,6 @@ if(SERVER)then
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
-
 					return
 				end
 

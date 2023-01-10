@@ -14,7 +14,7 @@ ENT.DamageThreshold = 120
 ENT.JModEZstorable = true
 
 ---
-local Props = {"models/items/healthkit.mdl", "models/healthvial.mdl", "models/items/medjit_medium.mdl", "models/items/medjit_small.mdl", "models/weapons/w_models/w_syringe.mdl", "models/weapons/w_models/w_syringe_proj.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
+local Props = {"models/jmod/items/healthkit.mdl", "models/healthvial.mdl", "models/jmod/items/medjit_medium.mdl", "models/jmod/items/medjit_small.mdl", "models/weapons/w_models/w_syringe.mdl", "models/weapons/w_models/w_syringe_proj.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
 
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -115,7 +115,7 @@ if SERVER then
 	--aw fuck you
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/items/medjit_large.mdl")
+		self.Mdl = ClientsideModel("models/jmod/items/medjit_large.mdl")
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)

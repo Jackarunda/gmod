@@ -268,7 +268,7 @@ elseif(CLIENT)then
 		if(DetailDraw)then
 			local TankAng=SelfAng:GetCopy()
 			TankAng:RotateAroundAxis(Right,-90)
-			JMod.RenderModel(self.Tank,SelfPos+Forward*2,TankAng, Vector(.12, .12, .12),JMod.EZ_GRADE_COLORS[Grade],JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.Tank, SelfPos+Forward*2,TankAng, Vector(.12, .12, .12), nil, JMod.EZ_GRADE_MATS[Grade])
 			if((Closeness<30000)and(State==JMod.EZ_STATE_ON))then
 				local DisplayAng,Vary=SelfAng:GetCopy(),(math.sin(CurTime()*5)/2+.5)^.25
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)

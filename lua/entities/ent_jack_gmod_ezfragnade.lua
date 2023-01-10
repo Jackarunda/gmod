@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Frag Grenade"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Spawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, -140, 0)
-ENT.Model = "models/jmodels/explosives/grenades/fragnade/w_fragjade.mdl"
+ENT.Model = "models/jmod/explosives/grenades/fragnade/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
 ENT.SpoonScale = 2
 
