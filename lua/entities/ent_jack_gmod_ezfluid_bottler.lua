@@ -212,7 +212,6 @@ if(SERVER)then
 	end
 
 elseif CLIENT then
-	local GradeMats = JMod.EZ_GRADE_MATS
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
