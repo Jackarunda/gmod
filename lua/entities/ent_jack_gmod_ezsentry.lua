@@ -128,6 +128,13 @@ function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
+	if (OldAmmo~=ammoType) then
+		local AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.AMMO
+		if (OldAmmo == "HE Grenade") then
+			AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.MUNITIONS
+		end
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, self:GetAmmo(), self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
+	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}

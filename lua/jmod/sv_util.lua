@@ -857,7 +857,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = false
-							print("We found a crate with similar resource")
+							--print("We found a crate with similar resource")
 							print(tostring(BestCrate))
 						end
 
@@ -866,7 +866,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = true
-							print("We found a crate with generic resource")
+							--print("We found a crate with generic resource")
 							print(tostring(BestCrate))
 						end
 					end
