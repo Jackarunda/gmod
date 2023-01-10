@@ -37,7 +37,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/props_explosive/explosive_butane_can02.mdl")
+		self.Entity:SetModel("models/jmod/explosives/props_explosive/explosive_butane_can02.mdl")
 		--self.Entity:SetModelScale(.5,0)
 		self.Entity:SetMaterial("models/props_explosive/virus")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)

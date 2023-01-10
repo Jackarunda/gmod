@@ -35,8 +35,8 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/mines/submine/submine.mdl")
-		self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
+		self.Entity:SetModel("models/jmod/explosives/mines/submine.mdl")
+		--self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

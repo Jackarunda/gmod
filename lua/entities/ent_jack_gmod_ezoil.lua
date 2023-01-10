@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.OIL
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmodels/resources/oildrum075.mdl"
+ENT.Model = "models/jmod/resources/oildrum075.mdl"
 ENT.Material = "phoenix_storms/black_chrome"
 --ENT.Color=Color(100,100,100)
 ENT.SpawnHeight = 30

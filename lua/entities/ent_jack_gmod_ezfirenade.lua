@@ -5,9 +5,9 @@ ENT.Author = "Jackarunda, TheOnly8Z"
 ENT.Category = "JMod - EZ Explosives"
 ENT.PrintName = "EZ Incendiary Grenade"
 ENT.Spawnable = true
-ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model = "models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 --ENT.ModelScale=1.5
-ENT.SpoonModel = "models/jmodels/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
+ENT.SpoonModel = "models/jmod/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
 
 if SERVER then
 	function ENT:Prime()

@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.WATER
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmodels/resources/water_barrel.mdl"
+ENT.Model = "models/jmod/resources/water_barrel.mdl"
 --ENT.Material="models/shiny"
 --ENT.Color=Color(50,120,180)
 ENT.SpawnHeight = 30

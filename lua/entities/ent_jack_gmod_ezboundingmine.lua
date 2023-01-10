@@ -41,7 +41,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmodels/explosives/mines/boundingmine/bounding_mine.mdl")
+		self:SetModel("models/jmod/explosives/mines/boundingmine/bounding_mine.mdl")
 		--self:SetModelScale(1.5)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)

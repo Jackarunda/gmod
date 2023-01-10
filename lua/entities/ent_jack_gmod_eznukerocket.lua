@@ -352,8 +352,8 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/military2/bomb/bomb_kab.mdl")
-		self.Mdl:SetMaterial("models/military2/bomb/bomb_nukekab")
+		self.Mdl = ClientsideModel("models/jmod/explosives/bombs/bomb_nukekab.mdl")
+		--self.Mdl:SetMaterial("models/jmod/explosives/bombs/bomb_nukekab")
 		self.Mdl:SetModelScale(2, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)

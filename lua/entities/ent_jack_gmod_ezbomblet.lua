@@ -12,7 +12,7 @@ ENT.NoEZbombletDet = true
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/Items/AR2_Grenade.mdl")
+		self.Entity:SetModel("models/jmod/items/AR2_Grenade.mdl")
 		self.Entity:SetColor(Color(50, 50, 50))
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)

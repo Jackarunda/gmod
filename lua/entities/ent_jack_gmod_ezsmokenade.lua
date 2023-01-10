@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Smoke Grenade"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 140, 0)
-ENT.Model = "models/jmodels/explosives/grenades/firenade/incendiary_grenade.mdl"
+ENT.Model = "models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material = "models/mats_jack_nades/smokescreen"
 ENT.SpoonScale = 2
 
