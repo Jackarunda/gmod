@@ -2,13 +2,14 @@
 local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
 local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
 local MedModels = {"models/healthvial.mdl", "models/bandages.mdl", "models/jmod/items/medjit_small.mdl", "models/jmod/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
+local WoodModels = {"models/nova/chair_wood01.mdl", "models/props_junk/wood_crate001a_chunk04.mdl", "models/props_junk/wood_crate001a_chunk01.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/wheels/wooden_wheel1.mdl"}
 local PartsModels = {
-	"models/jmodels/props/bolt/bolt.mdl",
-	"models/jmodels/props/bolt/bolt.mdl",
-	"models/jmodels/props/bolt/bolt.mdl",
-	"models/jmodels/props/bolt/bolt.mdl",
-	"models/jmodels/props/bolt/bolt.mdl",
-	"models/jmodels/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/bolt/bolt.mdl",
 	"models/Mechanics/gears/gear12x12_small.mdl",
 	"models/Mechanics/gears/gear12x6.mdl",
 	"models/Mechanics/gears/gear16x24_small.mdl",
@@ -36,6 +37,10 @@ local PropConfig = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = {
 		mdls = MedModels
+	},
+	[JMod.EZ_RESOURCE_TYPES.WOOD] = {
+		mdls = WoodModels,
+		scl = .25
 	},
 	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = {
 		mdls = PartsModels,
