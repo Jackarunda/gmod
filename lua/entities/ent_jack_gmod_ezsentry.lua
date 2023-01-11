@@ -128,6 +128,13 @@ function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
+	if (OldAmmo~=ammoType) then
+		local AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.AMMO
+		if (OldAmmo == "HE Grenade") then
+			AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.MUNITIONS
+		end
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, self:GetAmmo(), self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
+	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
@@ -1018,7 +1025,7 @@ elseif(CLIENT)then
 		self.VertGear=JMod.MakeModel(self,"models/props_phx/gears/spur36.mdl",nil,.15)
 		self.MiniBaseGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.25)
 		self.MiniVertGear=JMod.MakeModel(self,"models/props_phx/gears/spur12.mdl",nil,.15)
-		self.MachineGun=JMod.MakeModel(self,"models/ez/sentrygun.mdl")
+		self.MachineGun=JMod.MakeModel(self,"models/jmod/ez/sentrygun.mdl")
 		self.MainPost=JMod.MakeModel(self,"models/mechanics/solid_steel/box_beam_12.mdl",nil,.2)
 		self.ElevationMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.35)
 		self.TriggerMotor=JMod.MakeModel(self,"models/xqm/hydcontrolbox.mdl",nil,.3)

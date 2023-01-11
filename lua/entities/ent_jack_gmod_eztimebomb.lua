@@ -37,7 +37,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/bombs/c4/w_c4_planted.mdl")
+		self.Entity:SetModel("models/jmod/explosives/bombs/c4/w_c4_planted.mdl")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)

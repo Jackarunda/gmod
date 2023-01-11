@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.BASICPARTS
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
-ENT.Model = "models/jmodels/resources/jack_crate.mdl"
+ENT.Model = "models/jmod/resources/jack_crate.mdl"
 ENT.Material = "models/mat_jack_gmod_ezparts"
 ENT.ModelScale = 1
 ENT.Mass = 50

@@ -47,7 +47,7 @@ end
 function EFFECT:Render()
 	local TimeLeftFraction = self.DieTime - CurTime()
 	local Opacity = math.Clamp(TimeLeftFraction * 255, 0, 255)
-	print(Opacity)
+	--print(Opacity)
 	---
 	render.SetMaterial(Wake)
 	render.DrawQuadEasy(self.Pos + self.Normal * 5, self.Normal, self.Size, self.Size, Color(255, 255, 255, Opacity))

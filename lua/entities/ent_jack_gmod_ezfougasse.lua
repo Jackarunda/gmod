@@ -42,7 +42,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmodels/explosives/mines/firebarrel/firebarrel.mdl")
+		self.Entity:SetModel("models/jmod/explosives/mines/firebarrel/firebarrel.mdl")
 		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)

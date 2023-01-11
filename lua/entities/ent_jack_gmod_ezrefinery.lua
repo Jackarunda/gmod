@@ -7,7 +7,7 @@ ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/jmodels/props/machines/oil_refinery.mdl"
+ENT.Model = "models/jmod/machines/oil_refinery.mdl"
 ENT.Mass = 2000
 ENT.SpawnHeight = 10
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)

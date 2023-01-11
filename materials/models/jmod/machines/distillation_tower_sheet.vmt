@@ -1,0 +1,16 @@
+
+"VertexLitGeneric"
+{
+	// Original shader: VertexLitTexture
+	"$basetexture" "models/jmod/machines/distillation_tower_sheet"
+	"$surfaceprop" "metal"
+    	// "$envmap" "env_cubemap"	
+    	"$basealphaenvmapmask" "0"
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "1"
+	"$phongexponent" "20"
+}

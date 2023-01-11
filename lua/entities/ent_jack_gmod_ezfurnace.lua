@@ -8,7 +8,7 @@ ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model = "models/jmodels/props/machines/gas_smelter.mdl"
+ENT.Model = "models/jmod/machines/gas_smelter.mdl"
 ENT.Mass = 500
 ENT.SpawnHeight = 10
 ---

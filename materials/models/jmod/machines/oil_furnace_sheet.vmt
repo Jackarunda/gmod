@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+    "$basetexture" "models/jmod/machines/oil_furnace_sheet"
+//	"$envmap" "env_cubemap"
+//	"$basealphaenvmapmask" "0"    
+	"$surfaceprop" "metal"
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".5"
+	"$phongexponent" "20"
+}
+
+
+

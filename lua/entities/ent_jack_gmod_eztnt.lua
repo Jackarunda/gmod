@@ -36,7 +36,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmodels/explosives/grenades/tnt/w_jnt.mdl")
+		self:SetModel("models/jmod/explosives/grenades/tnt/w_jnt.mdl")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)

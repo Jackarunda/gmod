@@ -6,7 +6,7 @@ ENT.PrintName = "EZ Flashbang"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 140, 0)
-ENT.Model = "models/jmodels/explosives/grenades/flashbang/flashbang.mdl"
+ENT.Model = "models/jmod/explosives/grenades/flashbang/flashbang.mdl"
 --ENT.ModelScale=1.5
 ENT.SpoonScale = 2
 

@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmodels/props/machines/Scaffolding_smol.mdl"
+ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)

@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.EXPLOSIVES
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmodels/resources/jack_crate.mdl"
+ENT.Model = "models/jmod/resources/jack_crate.mdl"
 ENT.Material = "models/mat_jack_gmod_ezexplosives"
 --ENT.ModelScale=.8
 ENT.Mass = 50
