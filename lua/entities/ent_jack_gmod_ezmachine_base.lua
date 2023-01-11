@@ -450,9 +450,9 @@ if(SERVER)then
 						local Powa = self:GetElectricity()
 						local Missing = self.MaxElectricity - Powa
 						if(Missing <= 0)then return 0 end
-						local PotentialPower = math.min(Missing, amt * JMod.FuelPowerConversions[typ])
+						local PotentialPower = math.min(Missing, amt * JMod.EnergyEconomyParameters.BasePowerConversions[typ])
 						self:SetElectricity(Powa + PotentialPower)
-						Accepted = PotentialPower / JMod.FuelPowerConversions[typ]
+						Accepted = PotentialPower / JMod.EnergyEconomyParameters.BasePowerConversions[typ]
 					else
 						local Fuel = self:GetFuel()
 						local Missing = self.MaxFuel - Fuel
@@ -466,9 +466,9 @@ if(SERVER)then
 						local Powa = self:GetElectricity()
 						local Missing = self.MaxElectricity - Powa
 						if(Missing <= 0)then return 0 end
-						local PotentialPower = math.min(Missing, amt * JMod.FuelPowerConversions[typ])
+						local PotentialPower = math.min(Missing, amt * JMod.EnergyEconomyParameters.BasePowerConversions[typ])
 						self:SetElectricity(Powa + PotentialPower)
-						Accepted = PotentialPower / JMod.FuelPowerConversions[typ]
+						Accepted = PotentialPower / JMod.EnergyEconomyParameters.BasePowerConversions[typ]
 					else
 						local Coal = self:GetCoal()
 						local Missing = self.MaxCoal - Coal
@@ -489,7 +489,7 @@ if(SERVER)then
 					end
 				end
 				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
-				self.NextRefillTime = Time + 2
+				self.NextRefillTime = Time + 1
 				return math.ceil(Accepted)
 			end
 		end

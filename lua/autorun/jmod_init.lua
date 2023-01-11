@@ -134,6 +134,19 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter"
 }
 
+for k, v in pairs({
+	"models/squad/sf_tris/sf_tri8x8.mdl",
+	"models/squad/sf_tris/sf_tri7x7.mdl",
+	"models/squad/sf_tris/sf_tri6x6.mdl",
+	"models/squad/sf_tris/sf_tri5x5.mdl",
+	"models/squad/sf_tris/sf_tri4x4.mdl",
+	"models/squad/sf_tris/sf_tri3x3.mdl",
+	"models/squad/sf_tris/sf_tri2x2.mdl",
+	"models/squad/sf_tris/sf_tri1x1.mdl",
+}) do
+	util.PrecacheModel(v)
+end
+
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC = 1
 JMod.EZ_GRADE_COPPER = 2

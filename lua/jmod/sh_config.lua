@@ -688,12 +688,26 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 20,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 50,
 				},
 				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Turns ores into metal. Very power hungry."
+			},
+			["EZ Oil Refinery"] = {
+				results = "ent_jack_gmod_ezrefinery",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 100,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 3,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Performs fractional distillation of crude oil, creating all kinds of cool products."
 			},
 			["EZ Liquid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezlfg",

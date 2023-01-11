@@ -23,6 +23,24 @@ surface.CreateFont("JMod-Display", {
 	outline = false
 })
 
+surface.CreateFont("JMod-Display-L", {
+	font = "Arial",
+	extended = false,
+	size = 60,
+	weight = 900,
+	blursize = 0,
+	scanlines = 4,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = false,
+	additive = false,
+	outline = false
+})
+
 surface.CreateFont("JMod-NumberLCD", {
 	font = "DS-Digital Bold",
 	extended = false,

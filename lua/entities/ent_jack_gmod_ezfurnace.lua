@@ -31,7 +31,7 @@ ENT.EZconsumes = {
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 400,
+	MaxElectricity = 500,
 	MaxOre = 500
 }
 ENT.DynamicPerfSpecs = {
@@ -53,7 +53,7 @@ if(SERVER)then
 		self:SetProgress(0)
 		self:SetOre(0)
 		self:SetOreType("generic")
-		self.TimeSinceLastOre = 0
+		self.LastOreTime = 0
 		self.NextEffThink = 0
 		self.NextSmeltThink = 0
 		self.NextEnvThink = 0
@@ -113,13 +113,6 @@ if(SERVER)then
 	end
 
 	function ENT:SpawnEffect(pos)
-		--[[local effectdata=EffectData()
-		effectdata:SetOrigin(pos)
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(5,10))
-		effectdata:SetScale(math.Rand(.5,1.5))
-		effectdata:SetRadius(math.Rand(2,4))
-		util.Effect("Sparks", effectdata)]]--
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 
@@ -165,18 +158,16 @@ if(SERVER)then
 				self:ConsumeElectricity(1.5 * JMod.EZ_GRADE_BUFFS[Grade] ^ 1.5)
 
 				if self:GetOre() <= 0 then
-					self.TimeSinceLastOre = self.TimeSinceLastOre + 1
+					if (Time - self.LastOreTime) >=5 then self:TurnOff() return end
 				else
-					self.TimeSinceLastOre = 0
+					self.LastOreTime = Time
 					local OreConsumeAmt = GradeBuff ^ 2
 					local MetalProduceAmt = GradeBuff ^ 2 * JMod.SmeltingTable[OreTyp][2]
 					self:SetOre(self:GetOre() - OreConsumeAmt)
 					self:SetProgress(self:GetProgress() + MetalProduceAmt)
-				end
-				if self.TimeSinceLastOre >= 5 then self:TurnOff() return end
-
-				if self:GetProgress() >= 100 then
-					self:ProduceResource()
+					if self:GetProgress() >= 100 then
+						self:ProduceResource()
+					end
 				end
 			end
 		end
@@ -211,11 +202,7 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	function ENT:Initialize()
-		self.StaticPerfSpecs.BaseClass = nil
-		self.DynamicPerfSpecs.BaseClass = nil
-		self:InitPerfSpecs()
-		if(self.CustomInit)then self:CustomInit() end
+	function ENT:CustomInit()
 		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
 		self.Panel = JMod.MakeModel(self, "models/hunter/blocks/cube05x1x025.mdl")
 	end

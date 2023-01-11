@@ -199,6 +199,7 @@ function EFFECT:Init(data)
 	end
 
 	self.Data = PropConfig[self.ResourceType]
+	if not self.Data then return end
 	local MyMdl = table.Random(self.Data.mdls)
 	self:SetPos(self.Origin + VectorRand() * math.random(1, 5 * self.Spread))
 	self:SetModel(MyMdl)
@@ -246,6 +247,7 @@ end
 -- stub
 -- sound.Play(self.Sounds[math.random(#self.Sounds)], self:GetPos(), 65, self.HitPitch, 1)
 function EFFECT:Think()
+	if not self.DieTime then return false end
 	local Vec = (self.Target or self:GetPos() + Vector(0, 0, 1)) - self:GetPos()
 	local Phys = self:GetPhysicsObject()
 	local Dist = Vec:Length()
@@ -265,6 +267,7 @@ function EFFECT:Think()
 end
 
 function EFFECT:Render()
+	if not self.DieTime then return end
 	if not IsValid(self) then return end
 	local Phys = self:GetPhysicsObject()
 	if not IsValid(Phys) then return end
