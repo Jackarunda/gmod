@@ -852,22 +852,19 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			for _, ent in pairs(ents.FindInSphere(SpawnPos, range)) do
 				if (ent:GetClass() == "ent_jack_gmod_ezcrate") then
 					local Dist = SpawnPos:Distance(ent:LocalToWorld(ent:OBBCenter()))
-					if (ent:GetResourceType() == resourceType) then
-						if (Dist <= range) then
+					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
+						if (ent:GetResourceType() == resourceType) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = false
 							--print("We found a crate with similar resource")
-							print(tostring(BestCrate))
-						end
-
-					elseif (ent:GetResourceType() == "generic") and (IsGenericCrate == true) then
-						if (Dist <= range) then
+							--print(tostring(BestCrate))
+						elseif (ent:GetResourceType() == "generic") and (IsGenericCrate == true) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = true
 							--print("We found a crate with generic resource")
-							print(tostring(BestCrate))
+							--print(tostring(BestCrate))
 						end
 					end
 				end
