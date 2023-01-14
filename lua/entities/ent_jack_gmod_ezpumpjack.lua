@@ -203,7 +203,7 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(.2)
+				self:ConsumeElectricity(.5)
 				-- This is just the rate at which we pump
 				local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 				-- Here's where we do the rescource deduction, and barrel production

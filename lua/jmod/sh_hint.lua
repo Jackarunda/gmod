@@ -520,6 +520,10 @@ JMod.Hints = {
 		LangKey = "hint oil derrick",
 		RepeatCount = 50
 	},
+	["ground drill"] = {
+		LangKey = "hint ground drill",
+		RepeatCount = 50
+	},
 	["ground scanner"] = {
 		LangKey = "hint ground scanner",
 		Time = 5

@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Drill"
+ENT.PrintName = "EZ Auger Drill"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.AdminOnly = false
@@ -11,19 +11,15 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/jmodels/props/machines/drill_support.mdl"
 ENT.Mass = 2000
-ENT.SpawnHeight = 105
+ENT.SpawnHeight = 115
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.POWER
-}
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 100
+	MaxElectricity = 200
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1.2
+	Armor = 2
 }
 --
 --ENT.WhitelistedResources = {}
@@ -103,7 +99,7 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not self.DepositKey then
-				--JMod.Hint(self.Owner, "oil derrick")
+				JMod.Hint(self.Owner, "ground drill")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
@@ -202,7 +198,7 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(.2)
+				self:ConsumeElectricity(1)
 				-- This is just the rate at which we drill
 				local drillRate = 0.8 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
 				
@@ -237,12 +233,12 @@ if(SERVER)then
 		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
 			self.NextOSHAthinkTime = Time + .1
 			local BasePos = SelfPos + Up * (-10 - Prog)
-			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-4, -4, -4), BasePos + Vector(4, 4, 4))
+			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-6, -6, -6), BasePos + Vector(6, 6, 6))
 			for _, v in ipairs(FoundEnts) do
 				if IsValid(v) and IsValid(v:GetPhysicsObject()) and (v ~= self) then
 					local Dmg = DamageInfo()
 					Dmg:SetDamagePosition(BasePos)
-					Dmg:SetDamageForce(Vector(0, 0, 1000))
+					Dmg:SetDamageForce(Vector(0, 0, 10000))
 					Dmg:SetDamage(20)
 					Dmg:SetDamageType(DMG_CRUSH)
 					Dmg:SetInflictor(self)
@@ -282,7 +278,7 @@ elseif(CLIENT)then
 
 	function ENT:Draw()
 		self:DrawModel()
-		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
+		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
 		local MotorPos = BoxPos + Up * -45 + Right * -3
@@ -290,9 +286,9 @@ elseif(CLIENT)then
 		local PipePos = DrillPos + Up * 150.5 + Right * -8.5
 		--
 		if self.CurDepth - self:GetProgress() > 1 then
-			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 15), self.CurDepth, self:GetProgress())
+			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
 		else
-			self.CurDepth = Lerp(math.ease.InOutExpo(FrameTime() * 5), self.CurDepth, self:GetProgress())
+			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 5), self.CurDepth, self:GetProgress())
 		end
 		--
 		local PowerBoxAng = SelfAng:GetCopy()
@@ -303,7 +299,7 @@ elseif(CLIENT)then
 		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
 		--
 		if State == STATE_RUNNING then
-			self.DrillSpin = self.DrillSpin - FrameTime() * 600
+			self.DrillSpin = self.DrillSpin - FT * 600
 			if self.DrillSpin > 360 then
 				self.DrillSpin = 0
 			elseif self.DrillSpin < 0 then
@@ -352,7 +348,7 @@ elseif(CLIENT)then
                     local ExtractCol=Color(100,255,100,Opacity)
                     draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-                    local ElecFrac=self:GetElectricity()/100
+                    local ElecFrac=self:GetElectricity()/200
                     local R,G,B=JMod.GoodBadColor(ElecFrac)
                     draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
@@ -367,5 +363,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezdrill","EZ Dill")
+	language.Add("ent_jack_gmod_ezaugerdrill","EZ Auger Drill")
 end

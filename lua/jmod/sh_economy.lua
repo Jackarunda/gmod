@@ -135,7 +135,7 @@ local ResourceInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = {
-		frequency = 3,
+		frequency = 4,
 		avgamt = 500,
 		avgsize = 100,
 		limits = {
@@ -168,7 +168,7 @@ local ResourceInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = {
-		frequency = 1,
+		frequency = 2,
 		avgamt = 500,
 		avgsize = 100,
 		limits = {
@@ -190,7 +190,7 @@ local ResourceInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
-		frequency = 1,
+		frequency = 2,
 		avgamt = 500,
 		avgsize = 100,
 		limits = {
