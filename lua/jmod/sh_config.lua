@@ -686,21 +686,20 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 50,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 500,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300
 				},
 				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Turns ores into metal. Very power hungry."
+				description = "Pulls chunks of coal and metallic ore out of the ground."
 			},
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 500,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 100,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
@@ -714,7 +713,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20
 				},
 				sizeScale = 1.5,
@@ -1006,7 +1005,21 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 200
+				},
+				sizeScale = 1.5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "A pump for extracting liquids from the ground."
+			},
+			["EZ Auger Drill"] = {
+				results = "ent_jack_gmod_ezaugerdrill",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 200,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
 				},
 				sizeScale = 1.5,
 				category = "Machines",
