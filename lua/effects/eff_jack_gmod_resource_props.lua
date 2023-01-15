@@ -3,6 +3,7 @@ local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_
 local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
 local MedModels = {"models/healthvial.mdl", "models/bandages.mdl", "models/jmod/items/medjit_small.mdl", "models/jmod/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
 local WoodModels = {"models/nova/chair_wood01.mdl", "models/props_junk/wood_crate001a_chunk04.mdl", "models/props_junk/wood_crate001a_chunk01.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/wheels/wooden_wheel1.mdl"}
+local FoodModels = {"models/props_junk/garbage_glassbottle001a.mdl", "models/props_junk/garbage_glassbottle002a.mdl", "models/props_junk/garbage_glassbottle003a.mdl", "models/props_junk/garbage_metalcan001a.mdl", "models/props_junk/garbage_milkcarton001a.mdl", "models/props_junk/garbage_milkcarton002a.mdl", "models/props_junk/garbage_plasticbottle003a.mdl", "models/props_junk/garbage_takeoutcarton001a.mdl", "models/props_junk/GlassBottle01a.mdl", "models/props_junk/glassjug01.mdl", "models/props_junk/PopCan01a.mdl", "models/props_junk/PopCan01a.mdl", "models/noesis/donut.mdl", "models/food/burger.mdl", "models/food/burger.mdl", "models/food/hotdog.mdl", "models/food/hotdog.mdl", "models/props_junk/watermelon01_chunk01a.mdl", "models/props_junk/watermelon01_chunk01b.mdl", "models/props_junk/watermelon01_chunk01c.mdl", "models/props_junk/watermelon01_chunk02a.mdl", "models/props_junk/watermelon01_chunk02c.mdl"}
 local PartsModels = {
 	"models/jmod/props/bolt/bolt.mdl",
 	"models/jmod/props/bolt/bolt.mdl",
@@ -41,6 +42,10 @@ local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.WOOD] = {
 		mdls = WoodModels,
 		scl = .25
+	},
+	[JMod.EZ_RESOURCE_TYPES.NUTRIENTS] = {
+		mdls = FoodModels,
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = {
 		mdls = PartsModels,
