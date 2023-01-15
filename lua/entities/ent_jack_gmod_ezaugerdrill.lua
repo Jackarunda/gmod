@@ -2,22 +2,21 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
-ENT.PrintName = "EZ Drill"
+ENT.Information = "glhfggwpezpznore"
+ENT.PrintName = "EZ Auger Drill"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.POWER
-}
---
-ENT.Model = "models/trilogynetworks_jackdrill/drill.mdl"
-ENT.Mass = 1000
+---
+ENT.Model = "models/jmodels/props/machines/drill_support.mdl"
+ENT.Mass = 2000
+ENT.SpawnHeight = 115
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 100
+	MaxElectricity = 200
 }
 ENT.DynamicPerfSpecs = {
 	Armor = 2
@@ -36,13 +35,16 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetProgress(0)
 		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
+		self.NextEffectThinkTime = 0
+		self.NextOSHAthinkTime = 0
 		timer.Simple(0.1, function()
 			self:TryPlace() 
 		end)
 	end
 
 	function ENT:UpdateDepositKey()
-		local SelfPos = self:GetPos()
+		local SelfPos = self:GetPos() + Vector(0, 0, -100)
 		-- first, figure out which deposits we are inside of, if any
 		local DepositsInRange = {}
 
@@ -84,9 +86,11 @@ if(SERVER)then
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Yaw = self:GetAngles().y
-			self:SetAngles(Angle(0, Yaw, 0))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * 0.1)
+			local Roll = Tr.HitNormal:Angle().z
+			local Yaw = Tr.HitNormal:Angle().y
+			--Yaw = self:GetAngles().y
+			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, Roll))
+			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 			--
 			local GroundIsSolid = true
 			for i = 1, 50 do
@@ -95,7 +99,7 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not self.DepositKey then
-				--JMod.Hint(self.Owner, "oil derrick")
+				JMod.Hint(self.Owner, "ground drill")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
@@ -165,55 +169,86 @@ if(SERVER)then
 	end
 	
 	function ENT:Think()
-		local State, Time = self:GetState(), CurTime()
-		if State == STATE_BROKEN then
-			if self.SoundLoop then self.SoundLoop:Stop() end
+		local State, Time, Prog = self:GetState(), CurTime(), self:GetProgress()
+		local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
 
-			if self:GetElectricity() > 0 then
-				if math.random(1,4) == 2 then JMod.DamageSpark(self) end
-			end
+		if (self.NextResourceThinkTime < Time) then
+			self.NextResourceThinkTime = Time + 1
+			if State == STATE_BROKEN then
+				if self.SoundLoop then self.SoundLoop:Stop() end
 
-			return
-		elseif State == STATE_RUNNING then
-			if not IsValid(self.Weld) then
-				self.DepositKey = nil
-				--self.WellPos = nil
-				--self.Weld = nil
-				self:TurnOff()
+				if self:GetElectricity() > 0 then
+					if math.random(1,4) == 2 then JMod.DamageSpark(self) end
+				end
 
 				return
+			elseif State == STATE_RUNNING then
+				if not IsValid(self.Weld) then
+					self.DepositKey = nil
+					--self.WellPos = nil
+					--self.Weld = nil
+					self:TurnOff()
+
+					return
+				end
+
+				if not JMod.NaturalResourceTable[self.DepositKey] then 
+					self:TurnOff()
+
+					return
+				end
+
+				self:ConsumeElectricity(1)
+				-- This is just the rate at which we drill
+				local drillRate = 0.8 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				
+				-- Get the amount of resouces left in the ground
+				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
+				--print("Amount left: "..amtLeft) --DEBUG
+				-- If there's nothing left, we shouldn't do anything
+				if amtLeft <= 0 then self:TryPlace() return end
+				-- While progress is less than 100
+				self:SetProgress(self:GetProgress() + drillRate)
+
+				if self:GetProgress() >= 100 then
+					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+					self:ProduceResource(amtToDrill)
+					JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
+				end
+
+				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
-
-			if not JMod.NaturalResourceTable[self.DepositKey] then 
-				self:TurnOff()
-
-				return
-			end
-
-			self:ConsumeElectricity(.1)
-			-- This is just the rate at which we drill
-			local drillRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
-			
-			-- Get the amount of resouces left in the ground
-			local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
-			--print("Amount left: "..amtLeft) --DEBUG
-			-- If there's nothing left, we shouldn't do anything
-			if amtLeft <= 0 then self:TryPlace() return end
-			-- While progress is less than 100
-			self:SetProgress(self:GetProgress() + drillRate)
-
-			if self:GetProgress() >= 100 then
-				local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-				self:ProduceResource(amtToDrill)
-				JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
-			end
-
-			JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 		end
 
-		self:NextThink(CurTime() + 1)
+		if (self.NextEffectThinkTime < Time) then
+			self.NextEffectThinkTime = Time + .1
+			if State == STATE_RUNNING then
+				local Dert = EffectData()
+				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
+				Dert:SetNormal(Up)
+				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
+			end
+		end
 
-		return true 
+		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
+			self.NextOSHAthinkTime = Time + .1
+			local BasePos = SelfPos + Up * (-10 - Prog)
+			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-6, -6, -6), BasePos + Vector(6, 6, 6))
+			for _, v in ipairs(FoundEnts) do
+				if IsValid(v) and IsValid(v:GetPhysicsObject()) and (v ~= self) then
+					local Dmg = DamageInfo()
+					Dmg:SetDamagePosition(BasePos)
+					Dmg:SetDamageForce(Vector(0, 0, 10000))
+					Dmg:SetDamage(20)
+					Dmg:SetDamageType(DMG_CRUSH)
+					Dmg:SetInflictor(self)
+					Dmg:SetAttacker(JMod.GetOwner(self))
+					v:TakeDamageInfo(Dmg)
+					--print(tostring(v))
+					self:EmitSound("Boulder.ImpactHard")
+				end
+			end
+		end
 	end
 	
 	function ENT:ProduceResource()
@@ -223,53 +258,89 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = SelfPos
-		local spawnVec = self:WorldToLocal(Vector(SelfPos) + Up * 15 + Forward * 20)
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*100, true, 200)
+		local spawnVec = self:WorldToLocal(SelfPos + Up * 50 - Right * 50)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Right * 100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 	end
 
 elseif(CLIENT)then
 
 	function ENT:Initialize()
-		self.Auger = JMod.MakeModel(self, "models/jmod/jmod/drill_auger.mdl")
-		self.DrillMat = Material("phoenix_storms/grey_steel")
+		self.Auger = JMod.MakeModel(self, "models/jmodels/props/machines/drill_auger.mdl")
+		self.DrillPipe = JMod.MakeModel(self, "models/props_pipes/pipe03_straight01_long.mdl")
+		self.DrillPipeEnd = JMod.MakeModel(self, "models/props_pipes/pipe03_connector01.mdl")
+		self.DrillMotor = JMod.MakeModel(self, "models/props_wasteland/laundry_basket001.mdl")
+		self.PowerBox = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl")
+		self.DrillMat = Material("mechanics/metal2")
 		self.DrillSpin = 0
+		self.CurDepth = 0
 	end
 
 	function ENT:Draw()
 		self:DrawModel()
-		local Up, Right, Forward, Grade, Typ, State = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState()
+		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local DrillPos = SelfPos + Forward * 10 + Right * .5 - Up
-
+		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
+		local MotorPos = BoxPos + Up * -45 + Right * -3
+		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
+		local PipePos = DrillPos + Up * 150.5 + Right * -8.5
+		--
+		if self.CurDepth - self:GetProgress() > 1 then
+			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
+		else
+			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 5), self.CurDepth, self:GetProgress())
+		end
+		--
+		local PowerBoxAng = SelfAng:GetCopy()
+		PowerBoxAng:RotateAroundAxis(Up, -90)
+		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.2), nil, JMod.EZ_GRADE_MATS[Grade])
+		local MotorAng = SelfAng:GetCopy()
+		MotorAng:RotateAroundAxis(Up, 90)
+		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
 		--
 		if State == STATE_RUNNING then
-			self.DrillSpin = self.DrillSpin - FrameTime() * 300
+			self.DrillSpin = self.DrillSpin - FT * 600
 			if self.DrillSpin > 360 then
 				self.DrillSpin = 0
 			elseif self.DrillSpin < 0 then
 				self.DrillSpin = 360
 			end
 		end
-		local DrillAng = SelfAng:GetCopy()
-		DrillAng:RotateAroundAxis(Up, self.DrillSpin)
-		JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(1.5, 1.5, 1.9), nil, self.DrillMat)
 		--
 
-		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
-		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
-		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
-		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
-		if(DetailDraw)then
-			if (Closeness < 20000) and (State == STATE_RUNNING) then
+		local Obscured = util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
+		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DrillDraw = true
+		if State == STATE_BROKEN then 
+			DetailDraw = false 
+			DrillDraw = false 
+		end -- look incomplete to indicate damage, save on gpu comp too
+
+		if DrillDraw then
+			MotorAng:RotateAroundAxis(Up, -90)
+			MotorAng:RotateAroundAxis(Forward, 90)
+			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+			local DrillAng = SelfAng:GetCopy()
+			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
+			JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
+			local PipeEndAng = SelfAng:GetCopy()
+			PipeEndAng:RotateAroundAxis(Right, 90)
+			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)
+			JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, PipeEndAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+		end
+
+		if (not(DetailDraw)) and (Obscured) then return end -- if player is far and sentry is obscured, draw nothing
+		if Obscured then DetailDraw = false end -- if obscured, at least disable details
+		
+		if DetailDraw then
+			if (Closeness < 40000) and (State == STATE_RUNNING) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
-				local Opacity = math.random(50,150)
-				cam.Start3D2D(SelfPos+Up*40-Right*26-Forward*12, DisplayAng, .1)
+				local Opacity = math.random(50, 150)
+				cam.Start3D2D(SelfPos + Up * 44 - Right * 22 + Forward * 28, DisplayAng, .15)
                     surface.SetDrawColor(10, 10, 10, Opacity + 50)
                     surface.DrawRect(184, -200, 128, 128)
                     JMod.StandardRankDisplay(Grade, 248, -140, 118, Opacity + 50)
@@ -277,7 +348,7 @@ elseif(CLIENT)then
                     local ExtractCol=Color(100,255,100,Opacity)
                     draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-                    local ElecFrac=self:GetElectricity()/100
+                    local ElecFrac=self:GetElectricity()/200
                     local R,G,B=JMod.GoodBadColor(ElecFrac)
                     draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
                     draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
@@ -292,5 +363,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezdrill","EZ Dill")
+	language.Add("ent_jack_gmod_ezaugerdrill","EZ Auger Drill")
 end

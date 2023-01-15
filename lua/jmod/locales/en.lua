@@ -149,6 +149,7 @@
 	["hint ent_jack_gmod_ezpropellant"] = "Propellant is used to craft various munitions",
 	["hint resource manage"] = "ALT+SHIFT+E to split resources, tap together to combine",
 	["hint oil derrick"] = "ground pump must be on solid ground above a liquid resource reserve",
+	["hint ground drill"] = "ground drill must be on solid ground above a solid resource deposit",
 	["hint ground scanner"] = "scanner can detect natural resources and metal objects, but must be on the ground and stationary",
 	["hint weapon steadiness"] = "hold ALT while aiming to focus and steady your aim",
 	["hint weapon drop"] = "press BACKSPACE to drop weapon",

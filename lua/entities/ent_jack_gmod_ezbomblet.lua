@@ -12,13 +12,19 @@ ENT.NoEZbombletDet = true
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/items/AR2_Grenade.mdl")
+		self.Entity:SetModel("models/weapons/ar2_grenade.mdl")
 		self.Entity:SetColor(Color(50, 50, 50))
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
+		self.Entity:PhysicsInitBox(Vector(-2, -2, -2), Vector(2, 2, 2))
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.IgnoreBlastTime = CurTime() + 2
+		timer.Simple(0, function()
+			if(IsValid(self))then
+				local phys = self:GetPhysicsObject()
+				if(IsValid(phys))then phys:SetBuoyancyRatio(.1) end
+			end
+		end)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
