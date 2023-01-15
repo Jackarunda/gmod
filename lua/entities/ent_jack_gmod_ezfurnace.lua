@@ -59,18 +59,22 @@ if(SERVER)then
 		self.NextEnvThink = 0
 	end
 	function ENT:TurnOn(activator)
-		if self:GetElectricity() > 0 and self:GetOre() > 0 then
-			self:SetState(STATE_SMELTING)
-			self:EmitSound("snd_jack_littleignite.wav")
-			timer.Simple(0.1, function()
-				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
-				self.SoundLoop:SetSoundLevel(50)
-				self.SoundLoop:Play()
-			end)
-		else
+		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
+			return
 		end
+		if (self:GetOre() <= 0) then
+			JMod.Hint(activator, "need ore")
+			return
+		end
+		self:SetState(STATE_SMELTING)
+		self:EmitSound("snd_jack_littleignite.wav")
+		timer.Simple(0.1, function()
+			if(self.SoundLoop)then self.SoundLoop:Stop() end
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
+			self.SoundLoop:SetSoundLevel(50)
+			self.SoundLoop:Play()
+		end)
 	end
 
 	function ENT:TurnOff()
@@ -97,7 +101,7 @@ if(SERVER)then
 
 			return
 		elseif State==STATE_OFF then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif State==STATE_SMELTING then
 			if Alt then 
 				self:ProduceResource()

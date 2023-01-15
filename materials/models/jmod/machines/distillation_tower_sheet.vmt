@@ -8,7 +8,7 @@
     	"$basealphaenvmapmask" "0"
 	"$blendtintbybasealpha" "1"
  	"$blendtintcoloroverbase" "0"
-	"$bumpmap" "models/tex_jack_flat_normal"
+	"$bumpmap" "models/jmod/machines/distillation_tower_normal"
 	"$phong" "1"
 	"$phongfresnelranges" "[1 1 1]"
 	"$phongboost" "1"

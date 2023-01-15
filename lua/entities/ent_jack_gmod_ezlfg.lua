@@ -56,7 +56,7 @@ if(SERVER)then
 			JMod.Hint(activator, "destroyed", self)
 			return
 		elseif State == STATE_OFF then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if alt then
 				self:ProduceResource()
@@ -66,7 +66,7 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(activator)
 		if (self:GetState() == STATE_OFF) then
 			if (self:GetFuel() > 0) then
 				self.NextUseTime = CurTime() + 1
@@ -76,6 +76,7 @@ if(SERVER)then
 			else
 				self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
 				self.NextUseTime = CurTime() + 1
+				JMod.Hint(activator, "need fuel")
 			end
 		end
 	end
@@ -89,7 +90,7 @@ if(SERVER)then
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
-		if typ == JMod.EZ_RESOURCE_TYPES.FUEL then
+		if typ == JMod.EZ_RESOURCE_TYPES.FUEL and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
@@ -143,13 +144,14 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local OverallSpeed = .25
-				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade] ^ 1.5
-				local PowerToProduce = 3 * JMod.EZ_GRADE_BUFFS[Grade] ^ 2
+				local NRGperFuel = JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
+				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
+				local PowerToProduce = FuelToConsume * NRGperFuel
+				local SpeedModifier = .5
 
-				self:ConsumeFuel(FuelToConsume * OverallSpeed)
+				self:ConsumeFuel(FuelToConsume * SpeedModifier)
 
-				self:SetProgress(self:GetProgress() + PowerToProduce * OverallSpeed)
+				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end

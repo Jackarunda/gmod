@@ -198,9 +198,10 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(1)
 				-- This is just the rate at which we drill
 				local drillRate = 0.8 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+
+				self:ConsumeElectricity(JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 1.5)
 				
 				-- Get the amount of resouces left in the ground
 				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt

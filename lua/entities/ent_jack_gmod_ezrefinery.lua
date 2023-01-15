@@ -52,19 +52,23 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if ((self:GetElectricity() > 0) and (self:GetOil() > 0)) then
-			self:SetState(STATE_REFINING)
-			self:EmitSound("snd_jack_littleignite.wav")
-			timer.Simple(0.1, function()
-				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
-				self.SoundLoop:SetSoundLevel(50)
-				self.SoundLoop:Play()
-				self:SetProgress(0)
-			end)
-		else
+		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
+			return
 		end
+		if (self:GetOil() <= 0) then
+			JMod.Hint(activator, "need oil")
+			return
+		end
+		self:SetState(STATE_REFINING)
+		self:EmitSound("snd_jack_littleignite.wav")
+		timer.Simple(0.1, function()
+			if(self.SoundLoop)then self.SoundLoop:Stop() end
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
+			self.SoundLoop:SetSoundLevel(50)
+			self.SoundLoop:Play()
+			self:SetProgress(0)
+		end)
 	end
 
 	function ENT:TurnOff()
@@ -91,7 +95,7 @@ if(SERVER)then
 
 			return
 		elseif State == STATE_OFF then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif State == STATE_REFINING then
 			if Alt then 
 				self:ProduceResource()
@@ -120,7 +124,7 @@ if(SERVER)then
 
 		local i = 0
 		for typ, modifier in pairs(RefinedTable) do
-			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 30 * i)
+			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 50 * i)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward
 			timer.Simple(i / 2, function()

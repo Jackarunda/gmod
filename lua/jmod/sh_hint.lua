@@ -528,6 +528,18 @@ JMod.Hints = {
 		LangKey = "hint ground scanner",
 		Time = 5
 	},
+	["need oil"] = {
+		LangKey = "hint need oil",
+		RepeatCount = 5
+	},
+	["need ore"] = {
+		LangKey = "hint need ore",
+		RepeatCount = 5
+	},
+	["need fuel"] = {
+		LangKey = "hint need fuel",
+		RepeatCount = 5
+	},
 	["machine mounting problem"] = {
 		LangKey = "hint machine mounting problem",
 		RepeatCount = 20
