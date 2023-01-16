@@ -82,20 +82,8 @@ ENT.StaticPerfSpecs = {
 	ThinkSpeed = 1,
 	Efficiency = .8,
 	ShotCount = 1,
-	BarrelLength = 29
-}
-
-ENT.BlacklistedNPCs={"npc_enemyfinder","bullseye_strider_focus","npc_turret_floor","npc_turret_ceiling","npc_turret_ground","npc_bullseye"}
-ENT.WhitelistedNPCs={"npc_rollermine"}
-ENT.SpecialTargetingHeights={["npc_rollermine"]=15}
-
-ENT.StaticPerfSpecs={
-	MaxElectricity=100,
-	SearchTime=7,
-	MaxDurability=100,
-	ThinkSpeed=1,
-	ShotCount=1,
-	BarrelLength=29
+	BarrelLength = 29,
+	MaxCoolant = 100
 }
 ENT.DynamicPerfSpecs={
 	MaxAmmo=300,

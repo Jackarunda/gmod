@@ -698,7 +698,7 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 500,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 100,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
@@ -712,9 +712,9 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezlfg",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
 				sizeScale = 1.5,
 				category = "Machines",

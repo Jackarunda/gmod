@@ -90,7 +90,7 @@ if(SERVER)then
 			local Yaw = Tr.HitNormal:Angle().y
 			--Yaw = self:GetAngles().y
 			self:SetAngles(Angle(Tr.HitNormal:Angle().x + 90, Yaw, Roll))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
+			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 10)
 			--
 			local GroundIsSolid = true
 			for i = 1, 50 do
@@ -117,7 +117,6 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity() > 0)then
 			self:SetState(STATE_RUNNING)
-			self:SetSequence("active")
 			self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 			self.SoundLoop:SetSoundLevel(60)
 			self.SoundLoop:Play()
@@ -128,7 +127,6 @@ if(SERVER)then
 	end
 	
 	function ENT:TurnOff()
-		self:SetSequence("idle")
 		self:SetState(STATE_OFF)
 		self:ProduceResource(self:GetProgress())
 

@@ -62,11 +62,23 @@ local PropConfig = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.AMMO] = {
 		mdls = {"models/jhells/shell_9mm.mdl", "models/jhells/shell_762nato.mdl", "models/jhells/shell_57.mdl", "models/jhells/shell_556.mdl", "models/jhells/shell_338mag.mdl", "models/jhells/shell_12gauge.mdl", "models/weapons/shotgun_shell.mdl", "models/weapons/shell.mdl", "models/weapons/rifleshell.mdl"},
-		scl = 1.5
+		scl = 2
 	},
 	[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = {
 		mdls = {"models/jhells/shell_9mm.mdl"},
 		scl = 5
+	},
+	[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {
+		mdls = RockModels,
+		mat = "models/props_building_details/courtyard_template001c_bars",
+		col = Color(200, 177, 120),
+		scl = .5
+	},
+	[JMod.EZ_RESOURCE_TYPES.DIAMOND] = { -- todo
+		mdls = RockModels,
+		mat = "models/props_building_details/courtyard_template001c_bars",
+		col = Color(200, 177, 120),
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.COAL] = {
 		mdls = RockModels,
