@@ -1,9 +1,44 @@
 ﻿local RockModels = {"models/jmod/resources/rock01a.mdl", "models/jmod/resources/rock02a.mdl", "models/jmod/resources/rock03a.mdl", "models/jmod/resources/rock04a.mdl", "models/jmod/resources/rock05a.mdl"}
-local ElectronicsModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/computer_caseb_p2a.mdl", "models/props/cs_office/computer_caseb_p3a.mdl", "models/props/cs_office/computer_caseb_p4a.mdl", "models/props/cs_office/computer_caseb_p5a.mdl", "models/props/cs_office/computer_caseb_p5b.mdl", "models/props/cs_office/computer_caseb_p6a.mdl", "models/props/cs_office/computer_caseb_p6b.mdl", "models/props/cs_office/computer_caseb_p7a.mdl", "models/props/cs_office/computer_caseb_p8a.mdl", "models/props/cs_office/computer_caseb_p9a.mdl"}
 local SheetModels = {"models/squad/sf_plates/sf_plate1x1.mdl", "models/squad/sf_plates/sf_plate2x2.mdl"}
 local MedModels = {"models/healthvial.mdl", "models/bandages.mdl", "models/jmod/items/medjit_small.mdl", "models/jmod/items/medjit_small.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline.mdl", "models/bloocobalt/l4d/items/w_eq_adrenaline_cap.mdl", "models/bloocobalt/l4d/items/w_eq_pills.mdl", "models/bloocobalt/l4d/items/w_eq_pills_cap.mdl", "models/bandages.mdl"}
 local WoodModels = {"models/nova/chair_wood01.mdl", "models/props_junk/wood_crate001a_chunk04.mdl", "models/props_junk/wood_crate001a_chunk01.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/construct/wood/wood_boardx1.mdl", "models/props_phx/wheels/wooden_wheel1.mdl"}
 local FoodModels = {"models/props_junk/garbage_glassbottle001a.mdl", "models/props_junk/garbage_glassbottle002a.mdl", "models/props_junk/garbage_glassbottle003a.mdl", "models/props_junk/garbage_metalcan001a.mdl", "models/props_junk/garbage_milkcarton001a.mdl", "models/props_junk/garbage_milkcarton002a.mdl", "models/props_junk/garbage_plasticbottle003a.mdl", "models/props_junk/garbage_takeoutcarton001a.mdl", "models/props_junk/GlassBottle01a.mdl", "models/props_junk/glassjug01.mdl", "models/props_junk/PopCan01a.mdl", "models/props_junk/PopCan01a.mdl", "models/noesis/donut.mdl", "models/food/burger.mdl", "models/food/burger.mdl", "models/food/hotdog.mdl", "models/food/hotdog.mdl", "models/props_junk/watermelon01_chunk01a.mdl", "models/props_junk/watermelon01_chunk01b.mdl", "models/props_junk/watermelon01_chunk01c.mdl", "models/props_junk/watermelon01_chunk02a.mdl", "models/props_junk/watermelon01_chunk02c.mdl"}
+local WheelModels = {"models/xqm/airplanewheel1.mdl", "models/xqm/airplanewheel1medium.mdl"}
+local BlockModels = {"models/hunter/blocks/cube025x025x025.mdl", "models/hunter/blocks/cube025x05x025.mdl", "models/hunter/blocks/cube05x05x025.mdl", "models/hunter/blocks/cube05x05x05.mdl"}
+local OrganicModels = { -- yeuch, i wish we had like.. corn, or green beans, or something
+	"models/Gibs/Antlion_gib_Large_2.mdl",
+	"models/gibs/antlion_gib_large_1.mdl",
+	"models/props_junk/watermelon01.mdl",
+	"models/props_junk/watermelon01_chunk01a.mdl",
+	"models/props_junk/watermelon01_chunk01b.mdl",
+	"models/props_junk/watermelon01_chunk02a.mdl",
+	"models/props_junk/watermelon01_chunk02b.mdl",
+	"models/pigeon.mdl"
+}
+local ScifiModels = {
+	"models/alyx_emptool_prop.mdl",
+	"models/items/boxflares.mdl",
+	"models/items/combine_rifle_cartridge01.mdl",
+	"models/items/combine_rifle_ammo01.mdl",
+	"models/props_c17/substation_transformer01d.mdl",
+	"models/props_combine/combine_light001a.mdl",
+	"models/props_combine/combinebutton.mdl",
+	"models/props_combine/tprotato2.mdl",
+	"models/weapons/w_package.mdl"
+}
+local ElectronicsModels = {
+	"models/props_lab/reciever01d.mdl",
+	"models/props/cs_office/computer_caseb_p2a.mdl",
+	"models/props/cs_office/computer_caseb_p3a.mdl",
+	"models/props/cs_office/computer_caseb_p4a.mdl",
+	"models/props/cs_office/computer_caseb_p5a.mdl",
+	"models/props/cs_office/computer_caseb_p5b.mdl",
+	"models/props/cs_office/computer_caseb_p6a.mdl",
+	"models/props/cs_office/computer_caseb_p6b.mdl",
+	"models/props/cs_office/computer_caseb_p7a.mdl",
+	"models/props/cs_office/computer_caseb_p8a.mdl",
+	"models/props/cs_office/computer_caseb_p9a.mdl"
+}
 local PartsModels = {
 	"models/jmod/props/bolt/bolt.mdl",
 	"models/jmod/props/bolt/bolt.mdl",
@@ -28,9 +63,28 @@ local PartsModels = {
 	"models/xeon133/slider/slider_12x12x24.mdl"
 }
 
+local PrecPartsMdls = {}
+table.Add(PrecPartsMdls, PartsModels)
+table.Add(PrecPartsMdls, ElectronicsModels)
+
+local AdvPartsMdls = {}
+table.Add(AdvPartsMdls, ElectronicsModels)
+table.Add(AdvPartsMdls, ScifiModels)
+
 local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = {
-		mdls = ElectronicsModels
+		mdls = AdvPartsMdls,
+		mat = "phoenix_storms/gear",
+		scl = .25,
+		col = Color(200, 180, 200),
+		highlyRandomColor = true
+	},
+	[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = {
+		mdls = PrecPartsMdls,
+		mat = "phoenix_storms/gear",
+		scl = .25,
+		col = Color(180, 200, 200),
+		highlyRandomColor = true
 	},
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = {
 		mdls = SheetModels,
@@ -42,6 +96,14 @@ local PropConfig = {
 	[JMod.EZ_RESOURCE_TYPES.WOOD] = {
 		mdls = WoodModels,
 		scl = .25
+	},
+	[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {
+		mdls = OrganicModels,
+		scl = .5
+	},
+	[JMod.EZ_RESOURCE_TYPES.PLASTIC] = {
+		mdls = BlockModels,
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.NUTRIENTS] = {
 		mdls = FoodModels,
@@ -74,15 +136,24 @@ local PropConfig = {
 		col = Color(200, 177, 120),
 		scl = .5
 	},
-	[JMod.EZ_RESOURCE_TYPES.DIAMOND] = { -- todo
+	[JMod.EZ_RESOURCE_TYPES.GLASS] = {
+		mdls = SheetModels,
+		mat = "models/mat_jack_gmod_generic_glass",
+		scl = 1
+	},
+	[JMod.EZ_RESOURCE_TYPES.DIAMOND] = {
 		mdls = RockModels,
-		mat = "models/props_building_details/courtyard_template001c_bars",
-		col = Color(200, 177, 120),
-		scl = .5
+		mat = "models/mat_jack_gmod_diamond",
+		scl = .25
 	},
 	[JMod.EZ_RESOURCE_TYPES.COAL] = {
 		mdls = RockModels,
 		mat = "models/mat_jack_gmod_coal"
+	},
+	[JMod.EZ_RESOURCE_TYPES.RUBBER] = {
+		mdls = WheelModels,
+		mat = "phoenix_storms/road",
+		scl = .5
 	},
 	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {
 		mdls = RockModels,
@@ -178,11 +249,21 @@ local PropConfig = {
 		col = Color(50, 55, 50),
 		scl = .5
 	},
+	[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = {
+		mdls = RockModels,
+		mat = "models/props_mining/ingot_jack_uranium",
+		col = Color(40, 45, 40),
+		scl = .4
+	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUM] = {
 		mdls = RockModels,
 		mat = "models/props_mining/ingot_jack_platinum",
 		col = Color(170, 160, 165),
 		scl = .5
+	},
+	[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {
+		mdl = "models/hunter/misc/sphere025x025.mdl",
+
 	}
 }
 
@@ -222,7 +303,7 @@ function EFFECT:Init(data)
 
 	self.Data = PropConfig[self.ResourceType]
 	if not self.Data then return end
-	local MyMdl = table.Random(self.Data.mdls)
+	local MyMdl = (self.Data.mdls and table.Random(self.Data.mdls)) or self.Data.mdl
 	self:SetPos(self.Origin + VectorRand() * math.random(1, 5 * self.Spread))
 	self:SetModel(MyMdl)
 
