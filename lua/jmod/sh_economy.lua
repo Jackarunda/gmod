@@ -1,34 +1,34 @@
 ﻿JMod.NaturalResourceTable = JMod.NaturalResourceTable or {}
 
 JMod.SmeltingTable = {
-	[JMod.EZ_RESOURCE_TYPES.IRONORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {
 		JMod.EZ_RESOURCE_TYPES.STEEL, .5
 	},
-	[JMod.EZ_RESOURCE_TYPES.LEADORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.LEADORE] = {
 		JMod.EZ_RESOURCE_TYPES.LEAD, .5
 	},
-	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.ALUMINUM, .5
 	},
-	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = { 
-		JMod.EZ_RESOURCE_TYPES.COPPER, .5
+	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
+		JMod.EZ_RESOURCE_TYPES.COPPER, .4
 	},
-	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = {
 		JMod.EZ_RESOURCE_TYPES.TUNGSTEN, .4
 	},
-	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.TITANIUM, .4
 	},
-	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = {
 		JMod.EZ_RESOURCE_TYPES.SILVER, .3
 	},
-	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = {
 		JMod.EZ_RESOURCE_TYPES.GOLD, .2
 	},
-	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.URANIUM, .1
 	},
-	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = { 
+	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.PLATINUM, .1
 	}
 }
@@ -125,7 +125,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
 		frequency = 8,
-		avgamt = 500,
+		avgamt = 400,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -136,7 +136,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.TUNGSTENORE] = {
 		frequency = 4,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -147,7 +147,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {
 		frequency = 4,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -158,7 +158,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.SILVERORE] = {
 		frequency = 3,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -169,7 +169,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.GOLDORE] = {
 		frequency = 2,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -180,7 +180,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {
 		frequency = 2,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -191,7 +191,7 @@ local ResourceInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
 		frequency = 2,
-		avgamt = 500,
+		avgamt = 300,
 		avgsize = 100,
 		limits = {
 			nowater = true

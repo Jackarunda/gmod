@@ -9,6 +9,7 @@
 	["hint unpackage"] = "WALK+USE to unpackage",
 	["hint sticky"] = "Hold Use, put near wall and release to stick object",
 	["hint arm"] = "Hold Walk and press Use to arm",
+	["hint activate"] = "hold Walk and press Use to activate",
 	["hint trigger"] = "Type *trigger* in chat or command jmod_ez_trigger to detonate",
 	["hint launch"] = "Type *launch* in chat or command jmod_ez_launch to fire one rocket",
 	["hint bombdrop"] = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb",

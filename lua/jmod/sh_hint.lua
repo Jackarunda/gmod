@@ -37,7 +37,12 @@ JMod.Hints = {
 	},
 	["arm"] = {
 		LangKey = "hint arm",
-		Followup = "bind walk"
+		Followup = "bind walk",
+		RepeatCount = 10
+	},
+	["activate"] ={
+		LangKey = "hint activate",
+		RepeatCount = 10
 	},
 	["trigger"] = {
 		LangKey = "hint trigger",

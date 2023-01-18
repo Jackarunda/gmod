@@ -1,0 +1,21 @@
+VertexLitGeneric
+{
+	$basetexture "\models\props\jigg\glass_lamp"
+	$envmap env_cubemap
+	$envmaptint "[1 1 1]"
+
+	$phong 1
+	$phongexponent	32
+	$phongfresnelranges	"[1 3 8]"
+
+	$phongboost 4
+	
+	$translucent 1
+	
+	$alpha 1
+	
+	$model 1
+	
+	$refractamount 1
+
+}
