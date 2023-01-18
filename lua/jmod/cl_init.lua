@@ -698,11 +698,19 @@ hook.Add("ScalePlayerDamage","JMOD_SCALEPLAYERDAMGE_CLIENT",function(ply, hitgro
 end)
 --]]
 concommand.Add("jacky_supershadows", function(ply, cmd, args)
-	RunConsoleCommand("r_projectedtexture_filter", .1)
-	RunConsoleCommand("r_flashlightdepthres", 16384)
-	RunConsoleCommand("mat_depthbias_shadowmap", .0000005)
-	RunConsoleCommand("mat_slopescaledepthbias_shadowmap", 2)
-	print("super shadows enabled, have fun with the lag")
+	if (tonumber(args[1]) == 1) then
+		RunConsoleCommand("r_projectedtexture_filter", .1)
+		RunConsoleCommand("r_flashlightdepthres", 16384)
+		RunConsoleCommand("mat_depthbias_shadowmap", .0000005)
+		RunConsoleCommand("mat_slopescaledepthbias_shadowmap", 2)
+		print("super shadows enabled, have fun with the lag")
+	elseif (tonumber(args[1]) == 0) then
+		RunConsoleCommand("r_projectedtexture_filter", 1)
+		RunConsoleCommand("r_flashlightdepthres", 1024)
+		RunConsoleCommand("mat_depthbias_shadowmap", .0001)
+		RunConsoleCommand("mat_slopescaledepthbias_shadowmap", 2)
+		print("default shadow settings restored")
+	end
 end, nil, "Enables higher detailed shadows; great for photography.")
 
 concommand.Add("jmod_debug_showgasparticles", function(ply, cmd, args)

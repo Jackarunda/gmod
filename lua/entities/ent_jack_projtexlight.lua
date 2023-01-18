@@ -66,13 +66,7 @@ if ( CLIENT ) then
 		--L:SetShadowFilter(0)
 		--L:SetShadowSlopeScaleDepthBias(2)
 
-		--RunConsoleCommand("r_projectedtexture_filter", .1)
-		--RunConsoleCommand("r_flashlightdepthres", 16384)
-		--RunConsoleCommand("mat_depthbias_shadowmap", .0000005)
-		--RunConsoleCommand("mat_slopescaledepthbias_shadowmap", 2)
-
 		L:Update()
-
 	end
 
 	local EMPTY_ANG=Angle( 0, 0, 0 )
@@ -143,7 +137,7 @@ if ( CLIENT ) then
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 90 )
-		--[[
+
 		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
@@ -153,11 +147,10 @@ if ( CLIENT ) then
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
 		end
-		--]]
 
 		EMPTY_ANG:Set( ang )
 		EMPTY_ANG:RotateAroundAxis( ri, 270 )
-		--[[
+
 		L=ProjectedTexture()
 
 		if ( IsValid( L ) ) then
@@ -167,7 +160,6 @@ if ( CLIENT ) then
 			self:UpdateProjectedTexture( L, pos, EMPTY_ANG, Shadows, FarZ, NearZ, LightColor, Brightness )
 
 		end
-		--]]
 
 	end
 
