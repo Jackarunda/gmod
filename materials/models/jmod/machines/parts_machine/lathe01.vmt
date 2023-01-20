@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jmod/machines/parts_machine/lathe01"
+	"$bumpmap" "models/jmod/machines/parts_machine/lathe01_normal"
+	"$normalmapalphaenvmapmask" "1"
+	"$surfaceprop" "metal"
+	"$model" "1"
+
+}

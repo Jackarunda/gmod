@@ -1,0 +1,9 @@
+"VertexlitGeneric"
+{
+	"$basetexture" 		"models/jmod/machines/parts_machine/basemetal"
+	$envmap			 env_cubemap
+	$envmaptint 		"[0.5 0.5 0.5]"
+	"$nocull" 			1
+
+	$envmapmask		"models/jmod/machines/parts_machine/basemetal_gray"			
+}

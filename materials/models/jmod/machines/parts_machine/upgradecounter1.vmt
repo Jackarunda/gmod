@@ -1,0 +1,5 @@
+"MonitorScreen"
+{
+	"$basetexture" "models/jmod/machines/parts_machine/UpgradeCounter1"
+	"$translucent" 1
+}

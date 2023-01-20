@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/machines/parts_machine/glass"
+	"$translucent" 1
+	$envmap			 env_cubemap
+}
