@@ -309,11 +309,53 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 end)
 
+local function distance (x1,y1,x2,y2)
+  local dx =x1-x2
+  local dy =y1-x2
+  return math.sqrt (dx*dx+dy*dy )
+end
+
+-- local function fpsGraphDraw(points, startX, endX, y, maxHeight, avgFPS)
+-- 	local oldCol = surface.GetDrawColor()
+
+-- 	surface.SetDrawColor(255,255,255,255)
+
+-- 	width = distance(startX, y, endX, y)
+
+-- 	segEnd = 0
+
+-- 	for i=points,1,-1 do
+
+-- 		segEnd += width / i 
+
+-- 		surface.DrawLine(x,y,ex,y)
+
+-- 	surface.SetDrawColor(oldCol)
+
+--<graph>
+function newArray(size)
+    local t = {}
+    for i = 1, size do
+        t[i] = i
+    end
+    return t
+end
+
+local gFrameTimeSum, gFramesCounted, gAvgFramerate = 0, 0, 0
+local samples = 100
+local FrameCounts=newArray(samples+1)
+--</graph>
+
 local FrameTimeSum, FramesCounted, AvgFramerate = 0, 0, 0
+
 hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
-	if (GetConVar("jmod_debug_display"):GetBool()) then
+	local debugDispalyCvar = GetConVar("jmod_debug_display")
+
+	if (debugDispalyCvar:GetBool()) then
 		local FT = FrameTime()
-		-- fps
+
+		-- aFPS
+
 		FrameTimeSum = FrameTimeSum + FT
 		FramesCounted = FramesCounted + 1
 		if (FramesCounted > 9) then
@@ -325,5 +367,68 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 		surface.DrawRect( 10, 10, 256, 256 )
 		draw.SimpleText("avg FPS", "JMod-Debug-S", 138, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		draw.SimpleText(AvgFramerate, "JMod-Debug", 138, 160, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+
+		-- FPS Graph
+		
+		local fpsMax = GetConVar("fps_max"):GetInt()
+
+		gFrameTimeSum = gFrameTimeSum + FT
+		gFramesCounted = gFramesCounted + 1
+		if (gFramesCounted > 2) then
+			gAvgFramerate = math.Round(1 / (gFrameTimeSum / 3))
+			table.insert(FrameCounts, gAvgFramerate)
+			table.remove(FrameCounts, 1)
+			gFramesCounted = 0
+			gFrameTimeSum = 0
+		end
+
+		if (debugDispalyCvar:GetInt() < 2) then return end
+		surface.SetDrawColor( 0, 0, 0, 200 )
+		surface.DrawRect( 276, 10, 276, 256 )
+		draw.SimpleText("graph", "JMod-Debug-S", 276+276/2, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		surface.SetDrawColor( 50, 50, 50, 100 )
+		surface.DrawRect( 286, 95, 236, 161 )
+
+		local sx = 286
+		local y = 175
+		local ex = 522
+		local x2 = sx
+
+
+
+		for i=samples,1,-1 do
+			
+			local ftt = table.Reverse(FrameCounts)
+
+			
+			local offset = math.abs((sx - ex) / (samples - 1))
+
+			x1 = x2+offset
+
+			local hue = (((ftt[i] - 0) / (fpsMax - 0)) * (120 - 0) + 0)
+			local col = HSLToColor(hue, 1, .5)
+			
+
+			surface.SetDrawColor(col)
+
+			local y1 = math.max(256-(161 / fpsMax)*fpsMax, 256-(161 / fpsMax)*ftt[i])
+			local y2 = math.max(256-(161 / fpsMax)*fpsMax, 256-(161 / fpsMax)*ftt[i+1])
+
+			if i > 1 then
+				surface.DrawLine(x1,y1,x2,y2)
+			end
+
+			if i == 1 then
+				maxFPS = math.max(unpack(ftt))
+				minFPS = math.min(unpack(ftt))
+				draw.SimpleTextOutlined("min", "DebugFixedSmall", 522+14, 245-15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+				draw.SimpleTextOutlined(minFPS, "DebugFixedSmall", 522+14, 245, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+				draw.SimpleTextOutlined("max", "DebugFixedSmall", 522+14, 100, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+				draw.SimpleTextOutlined(maxFPS, "DebugFixedSmall", 522+14, 100+15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+			end
+			
+			x2 = (x2 + offset)	
+
+		end
 	end
 end )
