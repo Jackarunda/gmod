@@ -153,7 +153,7 @@ if(SERVER)then
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
 		if (self.NextSmeltThink < Time) then
 			self.NextSmeltThink = Time + 1
-			if State == STATE_SMELTING then
+			if (State == STATE_SMELTING) then
 				if not OreTyp then self:TurnOff() return end
 
 				local Grade = self:GetGrade()
@@ -185,7 +185,7 @@ if(SERVER)then
 				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
 			end
 		end
-		if (self.NextEnvThink < Time) then
+		if (self.NextEnvThink < Time) and (State == STATE_SMELTING) then
 			self.NextEnvThink = Time + 5
 			local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then

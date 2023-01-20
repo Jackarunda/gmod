@@ -1,6 +1,6 @@
  VertexlitGeneric
 {
-	$baseTexture models\props\army\jlowstick_off
+	$baseTexture models\jmod\props\jlowstick_off
 	"$bumpmap" "models/tex_jack_flat_normal"
 	$model 1
 	"$phong" "1"
