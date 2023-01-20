@@ -309,30 +309,6 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 end)
 
-local function distance (x1,y1,x2,y2)
-  local dx =x1-x2
-  local dy =y1-x2
-  return math.sqrt (dx*dx+dy*dy )
-end
-
--- local function fpsGraphDraw(points, startX, endX, y, maxHeight, avgFPS)
--- 	local oldCol = surface.GetDrawColor()
-
--- 	surface.SetDrawColor(255,255,255,255)
-
--- 	width = distance(startX, y, endX, y)
-
--- 	segEnd = 0
-
--- 	for i=points,1,-1 do
-
--- 		segEnd += width / i 
-
--- 		surface.DrawLine(x,y,ex,y)
-
--- 	surface.SetDrawColor(oldCol)
-
---<graph>
 function newArray(size)
     local t = {}
     for i = 1, size do
@@ -342,16 +318,19 @@ function newArray(size)
 end
 
 local gFrameTimeSum, gFramesCounted, gAvgFramerate = 0, 0, 0
-local samples = 100
+local samplesCvar = GetConVar("jmod_debug_graph_samples")
+local samples = samplesCvar:GetInt()
+local lastSamples = samples
+local debugDisplayCvar = GetConVar("jmod_debug_display")
 local FrameCounts=newArray(samples+1)
+local ftt = table.Reverse(FrameCounts)
 --</graph>
 
 local FrameTimeSum, FramesCounted, AvgFramerate = 0, 0, 0
 
 hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
-	local debugDispalyCvar = GetConVar("jmod_debug_display")
 
-	if (debugDispalyCvar:GetBool()) then
+	if (debugDisplayCvar:GetBool()) then
 		local FT = FrameTime()
 
 		-- aFPS
@@ -370,6 +349,14 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 
 		-- FPS Graph
 		
+		if (debugDisplayCvar:GetInt() < 2) then return end
+		samples = samplesCvar:GetInt()
+
+		if lastSamples ~= samples then
+			FrameCounts=newArray(samples+1)
+			lastSamples = samples
+		end
+		
 		local fpsMax = GetConVar("fps_max"):GetInt()
 
 		gFrameTimeSum = gFrameTimeSum + FT
@@ -378,11 +365,11 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 			gAvgFramerate = math.Round(1 / (gFrameTimeSum / 3))
 			table.insert(FrameCounts, gAvgFramerate)
 			table.remove(FrameCounts, 1)
+			ftt = table.Reverse(FrameCounts)
 			gFramesCounted = 0
 			gFrameTimeSum = 0
 		end
 
-		if (debugDispalyCvar:GetInt() < 2) then return end
 		surface.SetDrawColor( 0, 0, 0, 200 )
 		surface.DrawRect( 276, 10, 276, 256 )
 		draw.SimpleText("graph", "JMod-Debug-S", 276+276/2, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -394,11 +381,7 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 		local ex = 522
 		local x2 = sx
 
-
-
 		for i=samples,1,-1 do
-			
-			local ftt = table.Reverse(FrameCounts)
 
 			
 			local offset = math.abs((sx - ex) / (samples - 1))
@@ -427,7 +410,7 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 				draw.SimpleTextOutlined(maxFPS, "DebugFixedSmall", 522+14, 100+15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
 			end
 			
-			x2 = (x2 + offset)	
+			x2 = (x2 + offset)
 
 		end
 	end
