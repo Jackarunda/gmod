@@ -6,7 +6,7 @@ VertexLitGeneric
 
 	$phong 1
 	$phongexponent	32
-	$phongfresnelranges	"[1 3 8]"
+	$phongfresnelranges	"[1 1 1]"
 
 	$phongboost 4
 	

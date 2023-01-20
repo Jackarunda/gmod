@@ -12,14 +12,15 @@ ENT.JModGUIcolorable = true
 ---
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.EZconsumes={
+    JMod.EZ_RESOURCE_TYPES.FUEL
+}
 ---
 local STATE_OFF, STATE_ON = 0, 1
-
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
 	self:NetworkVar("Float", 1, "Fuel")
 end
-
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -40,12 +41,13 @@ if SERVER then
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
+		self:SetUseType(ONOFF_USE)
 		self:GetPhysicsObject():SetMass(6)
 
 		---
 		timer.Simple(.01, function()
 			self:GetPhysicsObject():SetMass(10)
+			self:GetPhysicsObject():SetDamping(1, 1)
 			self:GetPhysicsObject():Wake()
 		end)
 
@@ -54,12 +56,19 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self.MaxFuel = 10
 		self:SetFuel(self.MaxFuel)
+		self.NextRefillTime = 0
+		self.Suffocated = 0
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
 				self.Entity:EmitSound("Drywall.ImpactHard")
+			end
+			if data.Speed > 600 and not self:IsPlayerHolding() then
+				local Pos, State = self:GetPos(), self:GetState()
+				sound.Play("Metal_Box.Break", Pos)
+				self:Remove()
 			end
 		end
 	end
@@ -80,29 +89,69 @@ if SERVER then
 		end
 	end
 
-	function ENT:Use(activator)
-		local State = self:GetState()
-		local Dude = activator
-		local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+	function ENT:Use(activator, activatorAgain, onOff)
+		local Dude = activator or activatorAgain
 		JMod.SetOwner(self, Dude)
 		local Time = CurTime()
 
-		if State == STATE_OFF then
+		if tobool(onOff) then
+			local State = self:GetState()
+			if State < 0 then return end
+			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+
 			if Alt then
-				if (self:GetFuel() <= 0) then
-					JMod.Hint(activator, "fuel")
-					return
+				if State == STATE_OFF then
+					if (self:GetFuel() <= 0) then
+						JMod.Hint(activator, "fuel")
+						return
+					end
+					self:Light()
+					JMod.Hint(Dude, "hang on ceiling")
+				else
+					self:TurnOff()
 				end
-				self:Light()
 			else
-				activator:PickupObject(self)
-				JMod.Hint(activator, "activate")
+				constraint.RemoveAll(self)
+				self.StuckStick = nil
+				self.StuckTo = nil
+				Dude:PickupObject(self)
+				self.NextStick = Time + .5
+				JMod.Hint(Dude, "activate")
 			end
-		elseif State == STATE_ON then
-			if Alt then
-				self:TurnOff()
-			else
-				activator:PickupObject(self)
+		else
+			if self:IsPlayerHolding() and (self.NextStick < Time) then
+				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
+
+				if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+					self.NextStick = Time + .5
+					local Ang = Tr.HitNormal:Angle()
+					Ang:RotateAroundAxis(Ang:Right(), 90)
+					self:SetAngles(Ang)
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 27)
+
+					-- crash prevention
+					if Tr.Entity:GetClass() == "func_breakable" then
+						timer.Simple(0, function()
+							self:GetPhysicsObject():Sleep()
+						end)
+					else
+						--local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+						local WorldPos = Tr.HitPos
+						local RelPos = Tr.Entity:WorldToLocal(WorldPos)
+						local Ball = constraint.Ballsocket(self, Tr.Entity, 0, Tr.PhysicsBone, RelPos, 3000, 3000, false )
+						self.StuckTo = Tr.Entity
+						self.StuckStick = Ball
+						timer.Simple(0, function()
+							if (IsValid(self)) then
+								self:GetPhysicsObject():ApplyForceCenter(VectorRand() * 2000)
+							end
+						end)
+					end
+
+					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+					Dude:DropObject()
+					JMod.Hint(Dude, "activate")
+				end
 			end
 		end
 	end
@@ -142,13 +191,27 @@ if SERVER then
 
 		if Fuel <= 0 then
 			self:TurnOff()
-
 			return
 		end
 
-		-- .017 fuel per second
+		if ((self:GetVelocity():Length() >= 650) or (self:WaterLevel() >= 3)) then
+			self:TurnOff()
+			return
+		end
+
+		if (Up.z < .75) then -- we are too tilted
+			self.Suffocated = self.Suffocated + 1
+			if (self.Suffocated >= 2) then
+				self:TurnOff()
+				return
+			end
+		else
+			self.Suffocated = 0
+		end
+
+		-- .011 fuel per second
 		-- 10 fuel total
-		-- = 10 minutes runtime
+		-- = 15.15 minutes runtime
 
 		self:SetFuel(Fuel - .083)
 		self:NextThink(Time + 5)
@@ -157,8 +220,25 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
+		--
 	end
 	--
+	function ENT:TryLoadResource(typ, amt)
+		if(amt <= 0)then return 0 end
+		local Time = CurTime()
+		if self.NextRefillTime > Time then return 0 end
+		local Accepted = 0
+		if(typ == JMod.EZ_RESOURCE_TYPES.FUEL)then
+			local Fool = self:GetFuel()
+			local Missing = self.MaxFuel - Fool
+			if(Missing <= 0)then return 0 end
+			Accepted=math.min(Missing, amt)
+			self:SetFuel(Fool + Accepted)
+			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+		end
+		self.NextRefillTime = Time + 1
+		return math.ceil(Accepted)
+	end
 elseif CLIENT then
 	function ENT:Initialize()
 	end

@@ -587,6 +587,10 @@ JMod.Hints = {
 	["weapon arrows"] = {
 		LangKey = "hint weapon arrows"
 	},
+	["hang on ceiling"] = {
+		LangKey = "hint hang on ceiling",
+		RepeatCount = 3
+	},
 	-- i like eggs
 	["idiot"] = {
 		LangKey = "hint idiot",

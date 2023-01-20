@@ -184,6 +184,7 @@
 	["hint need oil"] = "machine needs crude oil",
 	["hint need ore"] = "machine needs metal ore",
 	["hint need fuel"] = "machine needs fuel",
+	["hint hang on ceiling"] = "hold USE to pick up, release USE to hang on the ceiling",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",
