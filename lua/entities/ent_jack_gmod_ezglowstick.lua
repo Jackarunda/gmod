@@ -35,8 +35,8 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props/army/glowstick.mdl")
-		self.Entity:SetMaterial("models/props/army/jlowstick_off")
+		self.Entity:SetModel("models/jmod/props/glowstick.mdl")
+		self.Entity:SetMaterial("models/jmod/props/jlowstick_off")
 		--self.Entity:SetModelScale(1.5,0)
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
@@ -168,7 +168,7 @@ if SERVER then
 	function ENT:Light()
 		if self:GetState() == STATE_BURNT then return end
 		self:SetState(STATE_BURNIN)
-		self:SetMaterial("models/props/army/jlowstick_on")
+		self:SetMaterial("models/jmod/props/jlowstick_on")
 		self:DrawShadow(false)
 		self:EmitSound("snds_jack_gmod/glowstick_start.wav", 60, math.random(90, 110))
 	end
@@ -178,7 +178,7 @@ if SERVER then
 	function ENT:Burnout()
 		if self:GetState() == STATE_BURNT then return end
 		self:SetState(STATE_BURNT)
-		self:SetMaterial("models/props/army/jlowstick_off")
+		self:SetMaterial("models/jmod/props/jlowstick_off")
 		SafeRemoveEntityDelayed(self, 20)
 		self:DrawShadow(true)
 	end
