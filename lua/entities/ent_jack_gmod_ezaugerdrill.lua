@@ -39,8 +39,13 @@ if(SERVER)then
 		self.NextEffectThinkTime = 0
 		self.NextOSHAthinkTime = 0
 		timer.Simple(0.1, function()
-			self:TryPlace() 
+			self:TryPlace()
 		end)
+        timer.Simple(5, function()
+            if IsValid(self) then
+            JMod.Hint(self.Owner, "ore scan")
+            end
+        end)
 	end
 
 	function ENT:UpdateDepositKey()
