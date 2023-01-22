@@ -320,14 +320,19 @@ if(SERVER)then
 	end
 
 	function ENT:Break(dmginfo)
-		if(self:GetState()==JMod.EZ_STATE_BROKEN)then return end
+		if(self:GetState() == JMod.EZ_STATE_BROKEN)then return end
 		self:SetState(JMod.EZ_STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,20 do JMod.DamageSpark(self) end
-		self.Durability=0
-		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/20,50)
-		for i=1,GibNum do
-			self:FlingProp(table.Random(self.PropModels),Force)
+		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		for i = 1, 20 do JMod.DamageSpark(self) end
+		self.Durability = math.Clamp(self.Durability, -200, 0)
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), self:LocalToWorld(self:OBBCenter()), 2, 1, -10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/20, 50)
+		if JMod.Config.Craftables[self.PrintName] then
+			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 100), Spread, Scale, UpSpeed)
+			end
+		else
+			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
 		end
 		if(self.Pod)then -- machines with seats
 			if(IsValid(self.Pod:GetDriver()))then
@@ -343,9 +348,14 @@ if(SERVER)then
 		self.Destroyed=true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i=1,20 do JMod.DamageSpark(self) end
-		local Force,GibNum=dmginfo:GetDamageForce(),math.min(JMod.Config.SupplyEffectMult*self:GetPhysicsObject():GetMass()/10,100)
-		for j=1,GibNum do
-			self:FlingProp(table.Random(self.PropModels),Force)
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), self:LocalToWorld(self:OBBCenter()), 2, 1, 10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/10, 100)
+		if JMod.Config.Craftables[self.PrintName] then
+			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 100), Spread, Scale, UpSpeed)
+			end
+		else
+			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
 		end
 		if(self.Pod)then -- machines with seats
 			if(IsValid(self.Pod:GetDriver()))then
