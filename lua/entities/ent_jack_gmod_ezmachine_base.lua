@@ -273,17 +273,17 @@ if(SERVER)then
 	function ENT:ConsumeElectricity(amt)
 		if not(self.GetElectricity)then return end
 		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
-		local NewAmt=math.Clamp(self:GetElectricity()-amt,0.0,self.MaxElectricity)
+		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0.0, self.MaxElectricity)
 		self:SetElectricity(NewAmt)
-		if(NewAmt<=0 and self:GetState()>0)then self:TurnOff() end
+		if(NewAmt <= 0 and self:GetState() > 0)then self:TurnOff() end
 	end
 
 	function ENT:DetermineDamageMultiplier(dmg)
-		local Mult=.5/(self.Armor or 1)
-		for typ,mul in pairs(self.DamageTypeTable)do
-			if(dmg:IsDamageType(typ))then Mult=Mult*mul break end
+		local Mult = .5 / (self.Armor or 1)
+		for typ, mul in pairs(self.DamageTypeTable)do
+			if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
 		end
-		if(self.CustomDetermineDmgMult)then Mult=Mult*self:CustomDetermineDmgMult(dmg) end
+		if(self.CustomDetermineDmgMult)then Mult = Mult * self:CustomDetermineDmgMult(dmg) end
 		return Mult
 	end
 
@@ -291,32 +291,13 @@ if(SERVER)then
 		if not(IsValid(self))then return end
 		self:TakePhysicsDamage(dmginfo)
 		--
-		local DmgMult=self:DetermineDamageMultiplier(dmginfo)
-		if(DmgMult<=.001)then return end
-		local Damage=dmginfo:GetDamage()*DmgMult
-		self.Durability=self.Durability-Damage
-		if(self.Durability<=0)then self:Break(dmginfo) end
-		if(self.Durability<=-200)then self:Destroy(dmginfo) end
-	end
+		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
+		if(DmgMult <= .001)then return end
+		local Damage = dmginfo:GetDamage() * DmgMult
+		self.Durability = self.Durability - Damage
 
-	function ENT:FlingProp(mdl,force)
-		if not(util.IsValidModel(mdl))then
-			return
-		end
-		local Prop=ents.Create("prop_physics")
-		local Size=(self:OBBMaxs()-self:OBBMins()):Length()
-		Prop:SetPos(self:LocalToWorld(self:OBBCenter())+VectorRand()*math.random(1,Size/2))
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop,self,0,0)
-		local Phys=Prop:GetPhysicsObject()
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity()+VectorRand()*math.Rand(1,300)+self:GetUp()*100)
-		Phys:AddAngleVelocity(VectorRand()*math.Rand(1,10000))
-		if(force)then Phys:ApplyForceCenter(force/7) end
-		SafeRemoveEntityDelayed(Prop,math.random(10,20))
+		if(self.Durability <= 0)then self:Break(dmginfo) end
+		if(self.Durability <= -(self.MaxDurability * 2))then self:Destroy(dmginfo) end
 	end
 
 	function ENT:Break(dmginfo)
@@ -324,16 +305,18 @@ if(SERVER)then
 		self:SetState(JMod.EZ_STATE_BROKEN)
 		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 		for i = 1, 20 do JMod.DamageSpark(self) end
-		self.Durability = math.Clamp(self.Durability, -200, 0)
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), self:LocalToWorld(self:OBBCenter()), 2, 1, -10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/20, 50)
+
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 3, 10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
+
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 100), Spread, Scale, UpSpeed)
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 5000), Spread, Scale, UpSpeed)
 			end
 		else
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
 		end
+
 		if(self.Pod)then -- machines with seats
 			if(IsValid(self.Pod:GetDriver()))then
 				self.Pod:GetDriver():ExitVehicle()
@@ -345,18 +328,20 @@ if(SERVER)then
 
 	function ENT:Destroy(dmginfo)
 		if(self.Destroyed)then return end
-		self.Destroyed=true
+		self.Destroyed = true
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
-		for i=1,20 do JMod.DamageSpark(self) end
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), self:LocalToWorld(self:OBBCenter()), 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/10, 100)
+		for i = 1, 20 do JMod.DamageSpark(self) end
+
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 3, 10
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 100), Spread, Scale, UpSpeed)
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 3000), Spread, Scale, UpSpeed)
 			end
 		else
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
 		end
+
 		if(self.Pod)then -- machines with seats
 			if(IsValid(self.Pod:GetDriver()))then
 				self.Pod:GetDriver():ExitVehicle()
