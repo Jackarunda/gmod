@@ -995,7 +995,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = .75,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "A good way of stopping enemy tanks from passing through."
+				description = "A good way of stopping enemy vehicles from passing through."
 			},
 			["EZ Workbench"] = {
 				results = "ent_jack_gmod_ezworkbench",
@@ -1036,7 +1036,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 1.5,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "A pump for extracting liquids from the ground."
+				description = "A drill for extracting ores from the ground."
 			},
 			["HL2 Buggy"] = {
 				results = "FUNC spawnHL2buggy",
