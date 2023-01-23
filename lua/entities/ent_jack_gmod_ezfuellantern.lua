@@ -209,11 +209,12 @@ if SERVER then
 			self.Suffocated = 0
 		end
 
-		-- .011 fuel per second
+		-- .0055 fuel per second
 		-- 10 fuel total
-		-- = 15.15 minutes runtime
+		-- means about 30 minutes runtime
+		-- (we only think every 5 seconds, so mult consumption by 5)
 
-		self:SetFuel(Fuel - .083)
+		self:SetFuel(Fuel - .0275)
 		self:NextThink(Time + 5)
 
 		return true

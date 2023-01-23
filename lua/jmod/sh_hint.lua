@@ -42,7 +42,7 @@ JMod.Hints = {
 	},
 	["activate"] ={
 		LangKey = "hint activate",
-		RepeatCount = 10
+		RepeatCount = 5
 	},
 	["trigger"] = {
 		LangKey = "hint trigger",
@@ -589,7 +589,7 @@ JMod.Hints = {
 	},
 	["hang on ceiling"] = {
 		LangKey = "hint hang on ceiling",
-		RepeatCount = 3
+		RepeatCount = 2
 	},
 	-- i like eggs
 	["idiot"] = {

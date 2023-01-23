@@ -1,0 +1,16 @@
+"Refract"
+{
+ 	"$model" 1
+ 	"$refractamount" ".2"
+// 	"$bluramount" "1"
+	"$REFRACTTINT" "{250 250 250}"
+	"$scale" "[1 1]"
+ 	"$normalmap" "models/tex_jack_refract_liquid_normal"
+ 	"$surfaceprop" "water"
+	"$bumpframe" "0"
+	"$nocull" 1
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[1 1 1]"
+
+	"$REFRACTTINTTEXTURE" "models/tex_jack_refract_liquid_red"
+}

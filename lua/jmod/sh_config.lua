@@ -634,7 +634,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
 				},
 				sizeScale = 1,
-				category = "Munitions",
+				category = "Other",
 				craftingType = "workbench",
 				description = "They say Slotin was often in his trademark blue jeans and cowboy boots..."
 			},
@@ -909,6 +909,18 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Store your resources here, so you don't have to stack em so much in the warehouse."
+			},
+			["EZ Fuel Lantern"] = {
+				results = "ent_jack_gmod_ezfuellantern",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 10
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "workbench",
+				description = "Produces light when fuelled and ignited."
 			},
 			["EZ Sentry"] = {
 				results = "ent_jack_gmod_ezsentry",
@@ -1498,7 +1510,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PAPER] = 5,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 5
 				},
-				category = "Munitions",
+				category = "Other",
 				craftingType = "workbench",
 				description = "Colorable road flare, for signalling and illumination."
 			},
@@ -1508,7 +1520,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 5
 				},
-				category = "Munitions",
+				category = "Other",
 				craftingType = "workbench",
 				description = "Colorable glowstick, for identification, low-power illumination, and raves."
 			},
@@ -1519,7 +1531,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 50
 				},
-				category = "Munitions",
+				category = "Other",
 				craftingType = "workbench",
 				description = "Go ahead, tell your hitler jokes. We'll wait."
 			},

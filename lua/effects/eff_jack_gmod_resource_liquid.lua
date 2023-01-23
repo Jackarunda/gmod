@@ -1,18 +1,15 @@
 ﻿local LiquidConfig = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
-		mat = "models/shadertest/shader3",
-		col = Color(255, 255, 255, 255)
+		mat = "models/mat_jack_refract_liquid_blue"
 	},
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
-		mat = "phoenix_storms/black_chrome",
-		--col = Color(0, 0, 0, 255)
+		mat = "phoenix_storms/black_chrome"
 	},
 	[JMod.EZ_RESOURCE_TYPES.FUEL] = {
-		mat = "models/shadertest/shader4"
+		mat = "models/mat_jack_refract_liquid_red"
 	},
 	[JMod.EZ_RESOURCE_TYPES.COOLANT] = {
-		mat = "models/shadertest/shader3",
-		col = Color(0, 174, 255)
+		mat = "models/shadertest/shader3" -- todo
 	},
 	[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = {
 		mat = "models/props_lab/Tank_Glass001"
@@ -20,12 +17,12 @@
 }
 
 local TotalParticleCount = 0
-timer.Create("JMod_ResourcePropsParticleClear", 60, 0, function()
+timer.Create("JMod_ResourceLiquidParticleClear", 60, 0, function()
 	TotalParticleCount = 0 // we should reset this periodically in case some gmod nonsense causes it to get out of sync
 end)
 
 function EFFECT:Init(data)
-	if TotalParticleCount >= 500 then
+	if TotalParticleCount >= 800 then
 		self:Remove()
 
 		return
