@@ -39,6 +39,11 @@ if(SERVER)then
 		timer.Simple(0.1, function()
 			self:TryPlace() 
 		end)
+        timer.Simple(5, function()
+            if IsValid(self) then
+            JMod.Hint(self.Owner, "liquid scan")
+            end
+        end)
 	end
 
 	function ENT:UpdateDepositKey()

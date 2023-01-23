@@ -400,6 +400,21 @@ JMod.Hints = {
 		LangKey = "hint solar panel no sun",
 		RepeatCount = 3
 	},
+    ["ent_jack_gmod_ezfurnace"] = {
+		LangKey = "hint ent_jack_gmod_ezfurnace"
+	},
+    ["ent_jack_gmod_ezrefinery"] = {
+		LangKey = "hint ent_jack_gmod_ezrefinery"
+	},
+    ["ore scan"] = {
+		LangKey = "hint ore scan"
+	},
+    ["liquid scan"] = {
+		LangKey = "hint liquid scan"
+	},
+    ["ent_jack_gmod_ezlfg"] = {
+		LangKey = "hint ent_jack_gmod_ezlfg"
+    },
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",
