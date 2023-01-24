@@ -995,7 +995,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = .75,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "A good way of stopping enemy tanks from passing through."
+				description = "A good way of stopping enemy vehicles from passing through."
 			},
 			["EZ Workbench"] = {
 				results = "ent_jack_gmod_ezworkbench",
@@ -1036,7 +1036,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 1.5,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "A pump for extracting liquids from the ground."
+				description = "A drill for extracting ores from the ground."
 			},
 			["HL2 Buggy"] = {
 				results = "FUNC spawnHL2buggy",
@@ -1506,8 +1506,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Road Flare"] = {
 				results = "ent_jack_gmod_ezroadflare",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
-					[JMod.EZ_RESOURCE_TYPES.PAPER] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 10,
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 5
 				},
 				category = "Other",
@@ -1956,7 +1956,7 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezcoolant",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.WATER] = 90,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 100,
 				},
 				category = "Resources",
 				craftingType = "workbench",

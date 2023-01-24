@@ -228,6 +228,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 				local AmountWeCanTake = Donor:GetResource()
 
 				if AmountWeNeed >= AmountWeCanTake then
+					if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 					Donor:SetResource(0)
 
 					if Donor:GetClass() == "ent_jack_gmod_ezcrate" then

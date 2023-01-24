@@ -12,5 +12,5 @@
 	"$envmap" "env_cubemap"
 	"$envmaptint" "[10 10 10]"
 
-	"$REFRACTTINTTEXTURE" "models/tex_jack_refract_liquid_red"
+	"$REFRACTTINTTEXTURE" "models/tex_jack_refract_liquid_yellowgreen"
 }

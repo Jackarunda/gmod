@@ -9,10 +9,10 @@
 		mat = "models/mat_jack_refract_liquid_red"
 	},
 	[JMod.EZ_RESOURCE_TYPES.COOLANT] = {
-		mat = "models/shadertest/shader3" -- todo
+		mat = "models/mat_jack_refract_liquid_brightblue"
 	},
 	[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = {
-		mat = "models/props_lab/Tank_Glass001"
+		mat = "models/mat_jack_refract_liquid_yellowgreen"
 	}
 }
 
@@ -59,7 +59,7 @@ function EFFECT:Init(data)
 		self:SetMaterial(self.Data.mat)
 	end
 
-	self:SetModelScale(self.Scale * math.Rand(.25, 0.75) * (self.Data.scl or 1), 0)
+	self:SetModelScale(self.Scale * math.Rand(.25, 0.5) * (self.Data.scl or 1), 0)
 	local Col = self.Data.col or Color(255, 255, 255)
 	local ColFrac = math.Rand(1.1, .9)
 	if (self.Data.highlyRandomColor)then ColFrac = math.Rand(.5, 1.5) end
