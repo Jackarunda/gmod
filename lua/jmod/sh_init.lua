@@ -30,7 +30,6 @@ PrecacheParticleSystem("50lb_air")
 --
 CreateConVar("jmod_installed", 1, {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED, FCVAR_SERVER_CAN_EXECUTE}, "Used as a placeholder convar for being listed on GameTracker as a server with Jmod. Set 1 to be listed, 0 to be unlisted.")
 CreateClientConVar("jmod_debug_display", 0, false, false, "Shows some client performance information on the HUD.")
-CreateClientConVar("jmod_debug_graph_samples", 50, false, false, "Amount of samples to use for the fps graph.")
 
 JMod.RavebreakBeatTime = .4
 
