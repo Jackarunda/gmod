@@ -2,7 +2,7 @@
 {
  	"$model" 1
  	"$refractamount" ".2"
-// 	"$bluramount" "1"
+// 	"$bluramount" "10"
 	"$REFRACTTINT" "{250 250 250}"
 	"$scale" "[1 1]"
  	"$normalmap" "models/tex_jack_refract_liquid_normal"
@@ -10,7 +10,7 @@
 	"$bumpframe" "0"
 	"$nocull" 1
 	"$envmap" "env_cubemap"
-	"$envmaptint" "[1 1 1]"
+	"$envmaptint" "[10 10 10]"
 
 	"$REFRACTTINTTEXTURE" "models/tex_jack_refract_liquid_blue"
 }
