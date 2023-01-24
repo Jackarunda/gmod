@@ -363,7 +363,11 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
+		if self.Target then
+			Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
+		else 
+			Phys:ApplyForceCenter(Vec:GetNormalized() * 30)
+		end
 	end
 
 	return true
