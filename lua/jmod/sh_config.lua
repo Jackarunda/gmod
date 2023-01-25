@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 40,
+		Version = 40.5,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -1052,6 +1052,21 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."
+			},
+			["EZ Basic Parts, Full Box"] = {
+				results = "ent_jack_gmod_ezbasicparts",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 100,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 200,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 25
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "we in the money now"
 			},
 			["EZ Ammo"] = {
 				results = "ent_jack_gmod_ezammo",

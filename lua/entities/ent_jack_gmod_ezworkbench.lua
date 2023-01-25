@@ -12,7 +12,9 @@ ENT.Model="models/mosi/fallout4/furniture/workstations/weaponworkbench01.mdl"
 ENT.Mass=500
 ENT.JModPreferredCarryAngles=Angle(0,180,0)
 ENT.EZconsumes={
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.GAS
 }
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
