@@ -181,16 +181,18 @@ if(SERVER)then
 		end
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
-			local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
-			if not (Tr.HitSky) then
-				for i = 1, 1 do
-					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-					Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
-					JMod.SetOwner(Gas, self.Owner)
-					Gas:SetDTBool(0, true)
-					Gas:Spawn()
-					Gas:Activate()
-					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+			if (State == STATE_REFINING) then
+				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+				if not (Tr.HitSky) then
+					for i = 1, 1 do
+						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						JMod.SetOwner(Gas, self.Owner)
+						Gas:SetDTBool(0, true)
+						Gas:Spawn()
+						Gas:Activate()
+						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+					end
 				end
 			end
 		end

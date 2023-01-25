@@ -351,22 +351,20 @@ end
 -- sound.Play(self.Sounds[math.random(#self.Sounds)], self:GetPos(), 65, self.HitPitch, 1)
 function EFFECT:Think()
 	if not self.DieTime then return false end
-	local Vec = (self.Target or self:GetPos() + Vector(0, 0, 100)) - self:GetPos()
+	local Vec = (self.Target or self:GetPos() + Vector(0, 0, 1)) - self:GetPos()
 	local Phys = self:GetPhysicsObject()
 	local Dist = Vec:Length()
 	if self.DieTime < CurTime() then return false end
 
-	if Dist < 5 then
-		Phys:EnableMotion(false)
+	if self.Target then
+		if Dist < 5 then
+			Phys:EnableMotion(false)
 
-		return false
-	end
+			return false
+		end
 
-	if IsValid(Phys) then
-		if self.Target then
+		if IsValid(Phys) then
 			Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
-		else 
-			Phys:ApplyForceCenter(Vec:GetNormalized() * 30)
 		end
 	end
 
