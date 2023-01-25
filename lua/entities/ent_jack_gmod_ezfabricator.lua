@@ -1,7 +1,7 @@
 -- Jackarunda, AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Parts Machine"
+ENT.PrintName = "EZ Fabricator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
@@ -179,5 +179,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezpartsmachine","EZ Parts Machine")
+	language.Add("ent_jack_gmod_ezfabricator","EZ Fabricator")
 end
