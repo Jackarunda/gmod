@@ -309,109 +309,69 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 end)
 
-function newArray(size)
-    local t = {}
-    for i = 1, size do
-        t[i] = i
-    end
-    return t
-end
-
-local gFrameTimeSum, gFramesCounted, gAvgFramerate = 0, 0, 0
-local samplesCvar = GetConVar("jmod_debug_graph_samples")
-local samples = samplesCvar:GetInt()
-local lastSamples = samples
-local debugDisplayCvar = GetConVar("jmod_debug_display")
-local FrameCounts=newArray(samples+1)
-local ftt = table.Reverse(FrameCounts)
---</graph>
-
-local FrameTimeSum, FramesCounted, AvgFramerate = 0, 0, 0
+local FPSData = {
+	frameTimeSum = 0,
+	framesCounted = 0,
+	latestAverage = 0,
+	nextReadingTime = 0,
+	historicalAverages = {}
+}
 
 hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
+	if not(GetConVar("jmod_debug_display"):GetBool()) then return end
 
-	if (debugDisplayCvar:GetBool()) then
-		local FT = FrameTime()
+	local FT, Time = FrameTime(), CurTime()
 
-		-- aFPS
+	-- record data
+	FPSData.frameTimeSum = FPSData.frameTimeSum + FT
+	FPSData.framesCounted = FPSData.framesCounted + 1
+	if (FPSData.framesCounted >= 10) then
+		FPSData.latestAverage = math.Round(1 / (FPSData.frameTimeSum / 10))
+		FPSData.framesCounted = 0
+		FPSData.frameTimeSum = 0
+	end
+	if (FPSData.nextReadingTime < Time) then
+		table.insert(FPSData.historicalAverages, 1, FPSData.latestAverage)
+		table.remove(FPSData.historicalAverages, 51)
+		FPSData.nextReadingTime = Time + .1
+	end
 
-		FrameTimeSum = FrameTimeSum + FT
-		FramesCounted = FramesCounted + 1
-		if (FramesCounted > 9) then
-			AvgFramerate = math.Round(1 / (FrameTimeSum / 10))
-			FramesCounted = 0
-			FrameTimeSum = 0
-		end
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawRect( 10, 10, 256, 256 )
-		draw.SimpleText("avg FPS", "JMod-Debug-S", 138, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		draw.SimpleText(AvgFramerate, "JMod-Debug", 138, 160, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	-- display the current average
+	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.DrawRect( 10, 10, 256, 256 )
+	draw.SimpleText("avg FPS", "JMod-Debug-S", 138, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	draw.SimpleText(FPSData.latestAverage, "JMod-Debug", 138, 160, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
-		-- FPS Graph
+	-- display the FPS Graph
+	surface.SetDrawColor( 0, 0, 0, 200 )
+	surface.DrawRect( 276, 10, 276, 256 )
+	draw.SimpleText("graph", "JMod-Debug-S", 276+276/2, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	surface.SetDrawColor( 50, 50, 50, 100 )
+	surface.DrawRect( 286, 95, 236, 161 )
 		
-		if (debugDisplayCvar:GetInt() < 2) then return end
-		samples = samplesCvar:GetInt()
+	local fpsMax = GetConVar("fps_max"):GetInt()
 
-		if lastSamples ~= samples then
-			FrameCounts=newArray(samples+1)
-			lastSamples = samples
-		end
-		
-		local fpsMax = GetConVar("fps_max"):GetInt()
+	local unpacked = unpack(FPSData.historicalAverages)
+	local max, min = math.max(unpacked), math.min(unpacked)
+	draw.SimpleTextOutlined("min", "DebugFixedSmall", 522+14, 245-15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+	draw.SimpleTextOutlined(minFPS, "DebugFixedSmall", 522+14, 245, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+	draw.SimpleTextOutlined("max", "DebugFixedSmall", 522+14, 100, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
+	draw.SimpleTextOutlined(maxFPS, "DebugFixedSmall", 522+14, 100+15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
 
-		gFrameTimeSum = gFrameTimeSum + FT
-		gFramesCounted = gFramesCounted + 1
-		if (gFramesCounted > 2) then
-			gAvgFramerate = math.Round(1 / (gFrameTimeSum / 3))
-			table.insert(FrameCounts, gAvgFramerate)
-			table.remove(FrameCounts, 1)
-			ftt = table.Reverse(FrameCounts)
-			gFramesCounted = 0
-			gFrameTimeSum = 0
-		end
+	local MaxPoints = #FPSData.historicalAverages
 
-		surface.SetDrawColor( 0, 0, 0, 200 )
-		surface.DrawRect( 276, 10, 276, 256 )
-		draw.SimpleText("graph", "JMod-Debug-S", 276+276/2, 50, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
-		surface.SetDrawColor( 50, 50, 50, 100 )
-		surface.DrawRect( 286, 95, 236, 161 )
-
-		local sx = 286
-		local y = 175
-		local ex = 522
-		local x2 = sx
-
-		for i=samples,1,-1 do
-
-			
-			local offset = math.abs((sx - ex) / (samples - 1))
-
-			x1 = x2+offset
-
-			local hue = (((ftt[i] - 0) / (fpsMax - 0)) * (120 - 0) + 0)
-			local col = HSLToColor(hue, 1, .5)
-			
-
-			surface.SetDrawColor(col)
-
-			local y1 = math.max(256-(161 / fpsMax)*fpsMax, 256-(161 / fpsMax)*ftt[i])
-			local y2 = math.max(256-(161 / fpsMax)*fpsMax, 256-(161 / fpsMax)*ftt[i+1])
-
-			if i > 1 then
-				surface.DrawLine(x1,y1,x2,y2)
-			end
-
-			if i == 1 then
-				maxFPS = math.max(unpack(ftt))
-				minFPS = math.min(unpack(ftt))
-				draw.SimpleTextOutlined("min", "DebugFixedSmall", 522+14, 245-15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
-				draw.SimpleTextOutlined(minFPS, "DebugFixedSmall", 522+14, 245, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
-				draw.SimpleTextOutlined("max", "DebugFixedSmall", 522+14, 100, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
-				draw.SimpleTextOutlined(maxFPS, "DebugFixedSmall", 522+14, 100+15, Color(255, 255, 255, 120), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER,1,Color(0,0,0,50))
-			end
-			
-			x2 = (x2 + offset)
-
-		end
+	for fpsIndex, fpsAvg in pairs(FPSData.historicalAverages) do
+		-- get XY data for current data point
+		local IndexFraction, FPSfraction = fpsIndex / MaxPoints, fpsAvg / fpsMax
+		local R, G, B = JMod.GoodBadColor(FPSfraction)
+		local PixelX, PixelY = IndexFraction * 236 + 280, (1 - FPSfraction) * 161 + 95
+		-- get XY data for previous data point
+		local PreviousIndex = math.Clamp(fpsIndex - 1, 1, MaxPoints)
+		local PreviousAvg = FPSData.historicalAverages[PreviousIndex]
+		local PreviousIndexFraction, PreviousFPSfraction = PreviousIndex / MaxPoints, PreviousAvg / fpsMax
+		local PreviousPixelX, PreviousPixelY = PreviousIndexFraction * 236 + 280, (1 - PreviousFPSfraction) * 161 + 95
+		-- draw a line between them
+		surface.SetDrawColor(JMod.GoodBadColor(FPSfraction))
+		surface.DrawLine(PixelX, PixelY, PreviousPixelX, PreviousPixelY)
 	end
 end )
