@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Nuclear Rocket"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
@@ -82,11 +82,11 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			--[[local DetSpd=300
+			local DetSpd=300
 			if((data.Speed>DetSpd)and(self:GetState()==STATE_LAUNCHED))then
 				self:Detonate()
 				return
-			end]]
+			end
 			--
 			if data.Speed > 2000 then
 				self:Break()
@@ -303,13 +303,6 @@ if SERVER then
 		---
 		self.NextDet = CurTime() + .25
 
-		---
-		timer.Simple(30, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-
 		JMod.Hint(self.Owner, "backblast", self:GetPos())
 	end
 
@@ -336,12 +329,6 @@ if SERVER then
 				Eff:SetNormal(self:GetRight())
 				Eff:SetScale(5)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
-			else
-				timer.Simple(0.75, function()
-					if IsValid(self) then
-						self:Detonate()
-					end
-				end)
 			end
 		end
 
