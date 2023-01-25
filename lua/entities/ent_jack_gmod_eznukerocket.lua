@@ -4,8 +4,8 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Nuke Rocket"
-ENT.Spawnable = false
+ENT.PrintName = "EZ Nuclear Rocket"
+ENT.Spawnable = true
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
@@ -53,11 +53,10 @@ if SERVER then
 		---
 		self:SetState(STATE_OFF)
 		self.NextDet = 0
-		self.FuelLeft = 200
+		self.FuelLeft = 300
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Launch"}, {"Directly detonates rocket", "Arms rocket", "Launches rocket"})
-
 			self.Outputs = WireLib.CreateOutputs(self, {"State", "Fuel"}, {"-1 broken \n 0 off \n 1 armed \n 2 launched", "Fuel left in the tank"})
 		end
 	end
@@ -179,7 +178,7 @@ if SERVER then
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()
-			JMod.BlastDamageIgnoreWorld(SelfPos, Att, nil, 600, 800)
+			JMod.BlastDamageIgnoreWorld(SelfPos, Att, nil, 1200 * Power, 3000 * Range)
 		end)
 
 		---
@@ -197,14 +196,14 @@ if SERVER then
 		---
 		SendClientNukeEffect(SelfPos, 9000)
 
-		for h = 1, 40 do
+		for h = 1, 50 do
 			timer.Simple(h / 10, function()
 				local ThermalRadiation = DamageInfo()
 				ThermalRadiation:SetDamageType(DMG_BURN)
 				ThermalRadiation:SetDamage((50 / h) * Power)
 				ThermalRadiation:SetAttacker(Att)
 				ThermalRadiation:SetInflictor(game.GetWorld())
-				util.BlastDamageInfo(ThermalRadiation, SelfPos, 8500)
+				util.BlastDamageInfo(ThermalRadiation, SelfPos, 20000 * Range)
 			end)
 		end
 
