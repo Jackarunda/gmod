@@ -1,4 +1,3 @@
-"MonitorScreen"
-{
-	"$basetexture" "models/jmod/machines/parts_machine/Screen1"
+"VertexLitGeneric" {
+	$basetexture "black_square"
 }

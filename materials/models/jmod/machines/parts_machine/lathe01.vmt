@@ -1,9 +1,17 @@
-"VertexLitGeneric"
-{
-	"$baseTexture" "models/jmod/machines/parts_machine/lathe01"
-	"$bumpmap" "models/jmod/machines/parts_machine/lathe01_normal"
-	"$normalmapalphaenvmapmask" "1"
-	"$surfaceprop" "metal"
-	"$model" "1"
-
+"VertexLitGeneric" {
+	$baseTexture "models/jmod/machines/parts_machine/lathe01"
+	$nocull "1"
+	$bumpmap "models/jmod/machines/parts_machine/lathe01_normal"
+	//$envmap "env_cubemap"
+	//$normalmapalphaenvmapmask "1"
+	$envmaptint "[.2 .2 .2]"
+	$phong "1"
+	$phongexponent "10"
+	$phongboost "2"
+	$phongfresnelranges "[1 1 1]"
+	$blendtintbybasealpha "1"
+ 	$blendtintcoloroverbase "0"
+	$detail "\models\tex_jack_scratchedmetal"
+	$detailscale "20"
+	$detailblendfactor "2"
 }

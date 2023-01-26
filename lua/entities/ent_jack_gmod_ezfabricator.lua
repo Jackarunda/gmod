@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.Model = "models/jmod/machines/parts_machine.mdl"
-ENT.Mass = 500
+ENT.Mass = 1000
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -20,13 +20,18 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.StaticPerfSpecs={
 	MaxDurability = 100,
 	Armor = .8,
-	MaxElectricity = 100
+	MaxElectricity = 300,
+	MaxGas = 300,
+	MaxChemicals = 100,
+	MaxWater = 100
 }
 
 local STATE_BROKEN, STATE_FINE = -1, 0
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Gas")
+	self:NetworkVar("Float", 2, "Water")
+	self:NetworkVar("Float", 3, "Chemicals")
 end
 
 if(SERVER)then
@@ -38,6 +43,10 @@ if(SERVER)then
 		---
 		if not(self.Owner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
+		---
+		self:SetGas(self.MaxGas)
+		self:SetChemicals(self.MaxChemicals)
+		self:SetWater(self.MaxWater)
 	end
 
 	function ENT:UpdateConfig()
@@ -141,8 +150,13 @@ if(SERVER)then
 elseif(CLIENT)then
 
 	function ENT:CustomInit()
+		self.ZipZoop = JMod.MakeModel(self, "models/props_combine/combinetrain01a.mdl", "phoenix_storms/chrome", .05)
 	end
 
+	local ScreenOneMat = Material("models/jmod/machines/parts_machine/screen1_on")
+	local ScreenTwoMat = Material("models/jmod/machines/parts_machine/screen2_on")
+	local ScreenThreeMat = Material("models/jmod/machines/parts_machine/screen3_on")
+	local ScreenFourMat = Material("models/jmod/machines/parts_machine/screen4_on")
 	function ENT:DrawTranslucent()
 		local SelfPos, SelfAng, FT = self:GetPos(), self:GetAngles(), FrameTime()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -176,7 +190,43 @@ elseif(CLIENT)then
 				local R,G,B=JMod.GoodBadColor(ElecFrac)
 				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
+				-- because Source 2007 is impossibly stupid with its use of $selfillum and color tinting, we have to manually draw the screens as quads
+				DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Up, -90)
+				DisplayAng:RotateAroundAxis(Right, 180)
+				DisplayAng:RotateAroundAxis(Forward, -4.5)
+				render.SetMaterial(ScreenOneMat)
+				render.DrawQuadEasy(BasePos + Forward * 26.2 + Right * 16 - Up * 17.5, DisplayAng:Forward(), 12.5, 7, Color(255, 255, 255, 255), DisplayAng.r)
+				--
+				DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Up, -90)
+				DisplayAng:RotateAroundAxis(Right, 180)
+				DisplayAng:RotateAroundAxis(Forward, -19)
+				render.SetMaterial(ScreenTwoMat)
+				render.DrawQuadEasy(BasePos - Forward * 13.4 + Right * 22.1 - Up * 31.2, DisplayAng:Forward(), 9.5, 4.5, Color(255, 255, 255, 255), DisplayAng.r)
+				--
+				DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Up, -90)
+				DisplayAng:RotateAroundAxis(Right, 180)
+				DisplayAng:RotateAroundAxis(Forward, -36)
+				render.SetMaterial(ScreenThreeMat)
+				render.DrawQuadEasy(BasePos + Forward * 53.8 + Right * 25 - Up * 28, DisplayAng:Forward(), 11.2, 5.7, Color(170, 170, 170, 255), DisplayAng.r)
+				--
+				if (GetConVar("mat_specular"):GetBool()) then
+					DisplayAng=SelfAng:GetCopy()
+					DisplayAng:RotateAroundAxis(Up, -90)
+					DisplayAng:RotateAroundAxis(Right, 180)
+					DisplayAng:RotateAroundAxis(Forward, -89)
+					render.SetMaterial(ScreenFourMat)
+					render.DrawQuadEasy(BasePos - Forward * 11 - Right * 4.8 - Up * 29.9, DisplayAng:Forward(), 35.5, 19, Color(255, 255, 255, 3), DisplayAng.r)
+				end
 			end
+
+			local DisplayAng=SelfAng:GetCopy()
+			DisplayAng:RotateAroundAxis(Up, 0)
+			DisplayAng:RotateAroundAxis(Right, 180)
+			DisplayAng:RotateAroundAxis(Forward, -89)
+			JMod.RenderModel(self.ZipZoop, BasePos - Forward * 15 - Right * 9 - Up * 19, DisplayAng)
 		end
 	end
 	language.Add("ent_jack_gmod_ezfabricator","EZ Fabricator")

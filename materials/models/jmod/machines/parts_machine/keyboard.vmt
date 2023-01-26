@@ -1,4 +1,11 @@
-"VertexlitGeneric"
-{
-	"$basetexture" "models/jmod/machines/parts_machine/keyboard"
+"VertexlitGeneric" {
+	$basetexture "models/jmod/machines/parts_machine/keyboard"
+	$nocull "1"
+	$bumpmap "models/jmod/machines/parts_machine/keyboard_normal"
+	$phong "1"
+	$phongexponent "20"
+	$phongboost ".2"
+	$phongfresnelranges "[1 1 1]"
+	$blendtintbybasealpha "1"
+ 	$blendtintcoloroverbase "0"
 }

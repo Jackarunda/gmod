@@ -1000,9 +1000,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Workbench"] = {
 				results = "ent_jack_gmod_ezworkbench",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.GAS] = 100
 				},
@@ -1447,10 +1446,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.GAS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 100
 				},
 				category = "Tools",
 				craftingType = "workbench",
