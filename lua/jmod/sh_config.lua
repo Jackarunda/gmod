@@ -1070,7 +1070,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Precision Parts, Full Box"] = {
 				results = "ent_jack_gmod_ezprecparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 25,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 100,
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",
@@ -1079,7 +1082,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Advanced Parts, Full Box"] = {
 				results = "ent_jack_gmod_ezadvparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 500,
+					[JMod.EZ_RESOURCE_TYPES.GOLD] = 200,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 10,
+					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 10,
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",

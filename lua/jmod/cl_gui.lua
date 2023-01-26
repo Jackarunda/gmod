@@ -612,7 +612,7 @@ net.Receive("JMod_EZworkbench", function()
 	local Bench = net.ReadEntity()
 	local Buildables = net.ReadTable()
 
-	StandardSelectionMenu('crafting', "EZ Work Bench", Buildables, Bench, function(name, info, ply, ent) -- enable func
+	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
 return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
