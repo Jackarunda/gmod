@@ -1,0 +1,5 @@
+"UnlitGeneric" {
+	$basetexture "models/jmod/machines/parts_machine/screen4"
+	$vertexcolor "1"
+	$vertexalpha "1"
+}

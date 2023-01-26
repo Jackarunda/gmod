@@ -1,9 +1,14 @@
-"VertexlitGeneric"
-{
-	"$basetexture" 		"models/jmod/machines/parts_machine/basemetal"
-	$envmap			 env_cubemap
-	$envmaptint 		"[0.5 0.5 0.5]"
-	"$nocull" 			1
-
-	$envmapmask		"models/jmod/machines/parts_machine/basemetal_gray"			
+"VertexlitGeneric" {
+	$basetexture "models/jmod/machines/parts_machine/basemetal"
+	$nocull "1"
+	$bumpmap "models/tex_jack_flat_normal"
+	$phong "1"
+	$phongexponent "20"
+	$phongboost ".2"
+	$phongfresnelranges "[1 1 1]"
+	$blendtintbybasealpha "1"
+ 	$blendtintcoloroverbase "0"
+	$detail "\models\tex_jack_scratchedmetal"
+	$detailscale "20"
+	$detailblendfactor "2"
 }

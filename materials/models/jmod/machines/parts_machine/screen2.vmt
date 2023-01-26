@@ -1,4 +1,4 @@
 "MonitorScreen"
 {
-	"$basetexture" "models/jmod/machines/parts_machine/Screen2"
+	"$basetexture" "black_square"
 }
