@@ -211,15 +211,6 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(Forward, -36)
 				render.SetMaterial(ScreenThreeMat)
 				render.DrawQuadEasy(BasePos + Forward * 53.8 + Right * 25 - Up * 28, DisplayAng:Forward(), 11.2, 5.7, Color(170, 170, 170, 255), DisplayAng.r)
-				--
-				if (GetConVar("mat_specular"):GetBool()) then
-					DisplayAng=SelfAng:GetCopy()
-					DisplayAng:RotateAroundAxis(Up, -90)
-					DisplayAng:RotateAroundAxis(Right, 180)
-					DisplayAng:RotateAroundAxis(Forward, -89)
-					render.SetMaterial(ScreenFourMat)
-					render.DrawQuadEasy(BasePos - Forward * 11 - Right * 4.8 - Up * 29.9, DisplayAng:Forward(), 35.5, 19, Color(255, 255, 255, 3), DisplayAng.r)
-				end
 			end
 
 			local DisplayAng=SelfAng:GetCopy()
