@@ -10,5 +10,5 @@
  	$blendtintcoloroverbase "0"
 	$detail "\models\tex_jack_scratchedmetal"
 	$detailscale "20"
-	$detailblendfactor "2"
+	$detailblendfactor "1"
 }
