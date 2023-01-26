@@ -1066,7 +1066,25 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",
-				description = "we in the money now"
+				description = "3 boxes of parts used for crafting and repairs."
+			},
+			["EZ Precision Parts, Full Box"] = {
+				results = "ent_jack_gmod_ezprecparts",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "1 box of precision parts used for advanced parts, advanced textiles, and weapons."
+			},
+			["EZ Advanced Parts, Full Box"] = {
+				results = "ent_jack_gmod_ezadvparts",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "1 box of advparts used for crafting and upgrading."
 			},
 			["EZ Ammo"] = {
 				results = "ent_jack_gmod_ezammo",
