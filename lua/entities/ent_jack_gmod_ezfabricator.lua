@@ -179,17 +179,24 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		if(DetailDraw)then
-			if(self:GetElectricity()>0)then
-				local DisplayAng=SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(Forward,90)
-				DisplayAng:RotateAroundAxis(Up,90)
-				local Opacity=math.random(50,200)
-				cam.Start3D2D(BasePos-Right*24-Forward*53.5-Up,DisplayAng,.04)
-				draw.SimpleTextOutlined("JMOD","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ElecFrac=self:GetElectricity()/self.MaxElectricity
-				local R,G,B=JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			if(self:GetElectricity() > 0)then
+				local DisplayAng = SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Forward, 90)
+				local Opacity = math.random(50, 200)
+				local ElecFrac = self:GetElectricity()/self.MaxElectricity
+				local R,G,B = JMod.GoodBadColor(ElecFrac)
+
+				cam.Start3D2D(BasePos + Right * 15.8 + Forward * 11.5 + Up * -13, DisplayAng, .04)
+					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
+
+				local DisplayAng = SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(Forward, 90)
+				DisplayAng:RotateAroundAxis(Up, 180)
+				cam.Start3D2D(BasePos + Right * -54 + Forward * 8 + Up * -30, DisplayAng, .05)
+					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-600,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.End3D2D()
+
 				-- because Source 2007 is impossibly stupid with its use of $selfillum and color tinting, we have to manually draw the screens as quads
 				DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(Up, -90)
