@@ -117,11 +117,11 @@ function JMod.CalcWorkSpreadMult(ent, newPos)
 	return Mult
 end
 
-function JMod.GoodBadColor(frac)
+function JMod.GoodBadColor(frac, returnAsStruct, opacity)
 	-- color tech from bfs2114
 	local r, g, b = math.Clamp(3 - frac * 4, 0, 1), math.Clamp(frac * 2, 0, 1), math.Clamp(-3 + frac * 4, 0, 1)
-
-	return r * 255, g * 255, b * 255
+	if (returnAsStruct) then return Color(r * 255, g * 255, b * 255, opacity or 255) end
+	return r * 255, g * 255, b * 255, opacity or 255
 end
 
 function JMod.WhomILookinAt(ply, cone, dist)
