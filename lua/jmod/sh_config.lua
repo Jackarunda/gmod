@@ -2224,8 +2224,8 @@ function JMod.InitGlobalConfig(forceNew)
 		JMod.Config = NewConfig
 		file.Write("JMod_Config.txt", util.TableToJSON(JMod.Config, true))
 	end
-	for k,v in pairs(ents.FindByClass("ent_jack_gmod_ezworkbench"))do
-		if(IsValid(v))then
+	for k, v in pairs(ents.GetAll())do
+		if(IsValid(v) and v.UpdateConfig)then
 			v:UpdateConfig()
 		end
 	end
