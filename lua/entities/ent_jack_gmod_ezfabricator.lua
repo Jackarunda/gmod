@@ -174,27 +174,31 @@ elseif(CLIENT)then
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(self:GetState()<0)then DetailDraw=false end
-
 		---
 		self:DrawModel()
 		---
 		if(DetailDraw)then
 			if(self:GetElectricity() > 0)then
+				local Opacity = math.random(50, 200)
+				local ElecFrac, GasFrac, ChemFrac, WaterFrac = self:GetElectricity()/self.MaxElectricity, self:GetGas()/self.MaxGas, self:GetChemicals()/self.MaxChemicals, self:GetWater()/self.MaxWater
+
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(Forward, 90)
-				local Opacity = math.random(50, 200)
-				local ElecFrac = self:GetElectricity()/self.MaxElectricity
-				local R,G,B = JMod.GoodBadColor(ElecFrac)
-
-				cam.Start3D2D(BasePos + Right * 15.8 + Forward * 11.5 + Up * -13, DisplayAng, .04)
-					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.Start3D2D(BasePos + Right * 15.8 + Forward * 11.5 + Up * -13, DisplayAng, .033)
+					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",0,60,JMod.GoodBadColor(ElecFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,100,JMod.GoodBadColor(GasFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("CHEMICALS "..math.Round(ChemFrac*100).."%","JMod-Display",0,140,JMod.GoodBadColor(ChemFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("WATER "..math.Round(WaterFrac*100).."%","JMod-Display",0,180,JMod.GoodBadColor(WaterFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(Forward, 90)
 				DisplayAng:RotateAroundAxis(Up, 180)
-				cam.Start3D2D(BasePos + Right * -54 + Forward * 8 + Up * -30, DisplayAng, .05)
-					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-600,60,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+				cam.Start3D2D(BasePos + Right * -53.4 + Forward * 8 + Up * -30, DisplayAng, .1)
+					draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-550,10,JMod.GoodBadColor(ElecFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",-335,10,JMod.GoodBadColor(GasFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("CHEMICALS "..math.Round(ChemFrac*100).."%","JMod-Display",-80,10,JMod.GoodBadColor(ChemFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					draw.SimpleTextOutlined("WATER "..math.Round(WaterFrac*100).."%","JMod-Display",190,10,JMod.GoodBadColor(WaterFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 
 				-- because Source 2007 is impossibly stupid with its use of $selfillum and color tinting, we have to manually draw the screens as quads
@@ -202,7 +206,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(Up, -90)
 				DisplayAng:RotateAroundAxis(Right, 180)
 				DisplayAng:RotateAroundAxis(Forward, -4.5)
-				render.SetMaterial(ScreenOneMat)
+				render.SetMaterial((math.random(1, 18000) == 1 and ScreenFourMat) or ScreenOneMat)
 				render.DrawQuadEasy(BasePos + Forward * 26.2 + Right * 16 - Up * 17.5, DisplayAng:Forward(), 12.5, 7, Color(255, 255, 255, 255), DisplayAng.r)
 				--
 				DisplayAng=SelfAng:GetCopy()
@@ -224,7 +228,7 @@ elseif(CLIENT)then
 			DisplayAng:RotateAroundAxis(Up, 0)
 			DisplayAng:RotateAroundAxis(Right, 180)
 			DisplayAng:RotateAroundAxis(Forward, -89)
-			JMod.RenderModel(self.ZipZoop, BasePos - Forward * 15 - Right * 9 - Up * 19, DisplayAng)
+			JMod.RenderModel(self.ZipZoop, BasePos - Forward * 15 - Right * 9 - Up * 21, DisplayAng)
 		end
 	end
 	language.Add("ent_jack_gmod_ezfabricator","EZ Fabricator")

@@ -111,20 +111,22 @@ function JMod.InitGlobalConfig(forceNew)
 					description = "3 boxes of parts used for crafting and repairs.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezbasicparts", 3}
+						{"ent_jack_gmod_ezbasicparts", 2}
 					}
 				},
 				["advanced parts"] = {
 					description = "1 box of advparts used for crafting and upgrading.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezadvparts", 1, 20}
+						{"ent_jack_gmod_ezadvparts", 1, 5}
 					}
 				},
 				["precision parts"] = {
 					description = "1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
 					category = "Resources",
-					results = {"ent_jack_gmod_ezprecparts"}
+					results = {
+						{"ent_jack_gmod_ezprecparts", 1, 50}
+					}
 				},
 				["advanced textiles"] = {
 					description = "1 box of advtextiles used for armor.",
@@ -1052,44 +1054,93 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."
 			},
-			["EZ Basic Parts, Full Box"] = {
+			["EZ Basic Parts, x100"] = {
 				results = "ent_jack_gmod_ezbasicparts",
 				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 30,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 10,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 10,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "1 box of parts used for crafting and repairs."
+			},
+			["EZ Basic Parts, x300"] = {
+				results = {
+					{"ent_jack_gmod_ezbasicparts", 3}
+				},
+				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 100,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 200,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 25
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 150,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 90,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 60,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",
 				description = "3 boxes of parts used for crafting and repairs."
 			},
-			["EZ Precision Parts, Full Box"] = {
+			["EZ Precision Parts, x100"] = {
 				results = "ent_jack_gmod_ezprecparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 25,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 100,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 50
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",
-				description = "1 box of precision parts used for advanced parts, advanced textiles, and weapons."
+				description = "1 box of precision parts used for use in high-powered machines and weapons."
 			},
-			["EZ Advanced Parts, Full Box"] = {
-				results = "ent_jack_gmod_ezadvparts",
+			["EZ Precision Parts, x10"] = {
+				results = {
+					{"ent_jack_gmod_ezprecparts", 1, 10}
+				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 500,
-					[JMod.EZ_RESOURCE_TYPES.GOLD] = 200,
-					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 10,
-					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 10,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 10,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 10,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 5
 				},
 				category = "Resources",
 				craftingType = "adv_workbench",
-				description = "1 box of advparts used for crafting and upgrading."
+				description = "10 precision parts used for use in high-powered machines and weapons."
+			},
+			["EZ Advanced Parts, x50"] = {
+				results = {
+					{"ent_jack_gmod_ezadvparts", 1, 50}
+				},
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.GOLD] = 50,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 25,
+					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 25
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "50 Advanced Parts for use in hyper-advanced technology"
+			},
+			["EZ Advanced Parts, x5"] = {
+				results = {
+					{"ent_jack_gmod_ezadvparts", 1, 5}
+				},
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.GOLD] = 5,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 3,
+					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 3
+				},
+				category = "Resources",
+				craftingType = "adv_workbench",
+				description = "5 Advanced Parts for use in hyper-advanced technology"
 			},
 			["EZ Ammo"] = {
 				results = "ent_jack_gmod_ezammo",

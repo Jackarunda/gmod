@@ -35,8 +35,7 @@ ENT.StaticPerfSpecs = {
 	MaxOre = 500
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1,
-	ProductionSpeed = 1
+	Armor = 1
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL }
 ---
