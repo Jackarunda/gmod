@@ -135,7 +135,10 @@ if(SERVER)then
 										if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
 									end
 									self:BuildEffect(Pos)
-									self:ConsumeElectricity(5)
+									self:ConsumeElectricity(10)
+									self:SetGas(math.Clamp(self:GetGas() - 10, 0, self.MaxGas))
+									self:SetWater(math.Clamp(self:GetWater() - 4, 0, self.MaxWater))
+									self:SetChemicals(math.Clamp(self:GetChemicals() - 4, 0, self.MaxChemicals))
 								end
 							end
 						end)
