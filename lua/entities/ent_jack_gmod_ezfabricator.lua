@@ -13,6 +13,9 @@ ENT.Mass = 1000
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+	JMod.EZ_RESOURCE_TYPES.WATER,
+	JMod.EZ_RESOURCE_TYPES.GAS,
+	JMod.EZ_RESOURCE_TYPES.CHEMICALS,
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
 ENT.Base = "ent_jack_gmod_ezmachine_base"
@@ -82,7 +85,7 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		if(self:GetState() == STATE_FINE)then
-			if(self:GetElectricity() > 0)then
+			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4)then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)
@@ -98,47 +101,70 @@ if(SERVER)then
 	function ENT:TryBuild(itemName, ply)
 		local ItemInfo = self.Craftables[itemName]
 
+		if not(self:GetElectricity() >= 10) or not(self:GetGas() >= 8) or not(self:GetWater() >= 4) or not(self:GetChemicals() >= 4) then
+			JMod.Hint(ply, "refill")
+			return
+		end
+
 		if(JMod.HaveResourcesToPerformTask(nil, nil, ItemInfo.craftingReqs, self))then
 			local override, msg = hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER, msg or "cannot build")
 				return
 			end
+
 			local Pos, Ang, BuildSteps = self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
 			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true)
+
 			timer.Simple(1,function()
-				if(IsValid(self))then
+				if (IsValid(self)) then
 					for i=1,BuildSteps do
 						timer.Simple(i/100,function()
 							if(IsValid(self))then
 								if(i<BuildSteps)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
-									local StringParts=string.Explode(" ", ItemInfo.results)
-									if((StringParts[1])and(StringParts[1] == "FUNC"))then
-										local FuncName = StringParts[2]
-										if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
-											local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
-											if(Ent)then
-												if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+									if istable(ItemInfo.results) then
+										for k, v in ipairs(ItemInfo.results) do
+											for n = 1, (ItemInfo.results[k][2] or 1) do
+												local Ent = ents.Create(ItemInfo.results[k][1])
+												Ent:SetPos(Pos)
+												Ent:SetAngles(Ang)
+												JMod.SetOwner(Ent, ply)
+												Ent:Spawn()
+												Ent:Activate()
+												if (ItemInfo.results[k][3]) then
+													Ent:SetResource(ItemInfo.results[k][3])
+												end
 											end
-										else
-											print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
-										local Ent = ents.Create(ItemInfo.results)
-										Ent:SetPos(Pos)
-										Ent:SetAngles(Ang)
-										JMod.SetOwner(Ent, ply)
-										Ent:Spawn()
-										Ent:Activate()
-										if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+										local StringParts=string.Explode(" ", ItemInfo.results)
+										if((StringParts[1])and(StringParts[1] == "FUNC"))then
+											local FuncName = StringParts[2]
+											if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
+												local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
+												if(Ent)then
+													if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+												end
+											else
+												print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+											end
+										else
+											local Ent = ents.Create(ItemInfo.results)
+											Ent:SetPos(Pos)
+											Ent:SetAngles(Ang)
+											JMod.SetOwner(Ent, ply)
+											Ent:Spawn()
+											Ent:Activate()
+											if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+										end
 									end
 									self:BuildEffect(Pos)
-									self:ConsumeElectricity(10)
-									self:SetGas(math.Clamp(self:GetGas() - 10, 0, self.MaxGas))
-									self:SetWater(math.Clamp(self:GetWater() - 4, 0, self.MaxWater))
-									self:SetChemicals(math.Clamp(self:GetChemicals() - 4, 0, self.MaxChemicals))
+									self:SetElectricity(math.Clamp(self:GetElectricity() - 10 / BuildSteps, 0.0, self.MaxElectricity))
+									self:SetGas(math.Clamp(self:GetGas() - 8 / BuildSteps, 0.0, self.MaxGas))
+									self:SetWater(math.Clamp(self:GetWater() - 4 / BuildSteps, 0.0, self.MaxWater))
+									self:SetChemicals(math.Clamp(self:GetChemicals() - 4 / BuildSteps, 0.0, self.MaxChemicals))
 								end
 							end
 						end)
