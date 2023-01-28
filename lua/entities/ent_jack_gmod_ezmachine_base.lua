@@ -242,7 +242,9 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
-		self:SetElectricity(self.MaxElectricity)
+		if GetConVar("sv_cheats"):GetBool() then
+			self:SetElectricity(self.MaxElectricity)
+		end
 		---
 		if(self.Owner)then JMod.Colorify(self) end
 		---
