@@ -306,7 +306,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 3, 10
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
 		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
 
 		if JMod.Config.Craftables[self.PrintName] then
@@ -332,7 +332,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
-		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 3, 10
+		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
 		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
