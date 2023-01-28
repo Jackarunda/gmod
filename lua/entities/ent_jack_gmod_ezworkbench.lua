@@ -35,7 +35,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		self:SetGas(self.MaxGas)
+		--self:SetGas(self.MaxGas)
 		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end

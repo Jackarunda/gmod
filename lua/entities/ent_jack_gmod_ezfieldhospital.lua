@@ -46,7 +46,6 @@ if(SERVER)then
 		self.NextUseTime=0
 		self.IdleShutOffTime=0
 		self.NextHumTime=0
-		self:SetSupplies(self.MaxSupplies)
 		self.NextHeal = 0
 		self.NextEnter = 0
 		---
