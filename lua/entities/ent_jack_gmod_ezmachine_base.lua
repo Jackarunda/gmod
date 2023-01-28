@@ -435,6 +435,20 @@ if(SERVER)then
 					Accepted=math.min(Missing,amt)
 					self:SetCoolant(Kewl+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+					local Aqua = self:GetWater()
+					local Missing = self.MaxWater - Aqua
+					if(Missing < 1)then return 0 end
+					Accepted=math.min(Missing,amt)
+					self:SetWater(Aqua+Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
+					local Chem = self:GetChemicals()
+					local Missing = self.MaxChemicals - Chem
+					if(Missing < 1)then return 0 end
+					Accepted=math.min(Missing,amt)
+					self:SetChemicals(Chem+Accepted)
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.OIL)then
 					local Oil = self:GetOil()
 					local Missing = self.MaxOil - Oil

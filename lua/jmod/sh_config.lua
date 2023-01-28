@@ -1131,6 +1131,18 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "adv_workbench",
 				description = "5 Advanced Parts for use in hyper-advanced technology"
 			},
+			["EZ Chemicals"] = {
+				results = "ent_jack_gmod_ezchemicals",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.COAL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.OIL] = 10,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
+				},
+				category = "Resources",
+				craftingType = "workbench",
+				description = "Caustic burns and choking smoke."
+			},
 			["EZ Ammo"] = {
 				results = "ent_jack_gmod_ezammo",
 				craftingReqs = {
