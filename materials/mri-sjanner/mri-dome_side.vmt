@@ -1,12 +1,12 @@
-"VertexLitGeneric"
-{
-	"$basetexture" "mri-scanner/dome"
+"VertexLitGeneric" {
+	"$basetexture" "mri-sjanner/dome_side"
+	"$nocull" 1
 	"$surfaceprop" "plastic"
-	//"$bumpmap" "mri-scanner/dome_bump"
+	//"$bumpmap" "mri-sjanner/dome_side_bump"
 	"$envmap" "env_cubemap"
 	"$normalmapalphaenvmapmask" 1
 	"$envmapcontrast" 1
-	"$envmapsaturation" 0.2
+	"$envmapsaturation" 1
 	"$envmaptint" "[ .1 .1 .1 ]"
 	"$model" 1
 	"$phong"     "1"
@@ -15,5 +15,3 @@
  	"$phongfresnelranges"   "[.5 .8 1]"
 	"$HalfLambert" 1
 }
-
-
