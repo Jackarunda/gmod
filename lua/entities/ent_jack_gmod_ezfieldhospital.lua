@@ -9,7 +9,7 @@ ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model="models/mri-scanner/mri-scanner.mdl"
+ENT.Model="models/mri-sjanner/mri-sjanner.mdl"
 ENT.Mass=750
 ENT.EZconsumes={
     JMod.EZ_RESOURCE_TYPES.POWER,
@@ -449,13 +449,13 @@ elseif(CLIENT)then
 		if State <= 0 then
 			cam.Start3D2D(BasePos + Up * 40 + Right * 7.8 - Forward * 50, DisplayAng, 1)
 			surface.SetDrawColor(0, 0, 0, 255)
-			surface.DrawRect(39, 9, 22, 12)
+			--surface.DrawRect(39, 9, 22, 12)
 			cam.End3D2D()
 			---
 			cam.Start3D2D(BasePos + Up * 11 + Right * 3.8 - Forward * 50, DisplayAng, 1)
 			surface.SetDrawColor(0, 0, 0, 255)
-			surface.DrawRect(8, 9, 15, 10)
-			surface.DrawRect(77, 9, 15, 10)
+			--surface.DrawRect(8, 9, 15, 10)
+			--surface.DrawRect(77, 9, 15, 10)
 			cam.End3D2D()
 		end
 	end

@@ -161,10 +161,10 @@ if(SERVER)then
 										end
 									end
 									self:BuildEffect(Pos)
-									self:SetElectricity(math.Clamp(self:GetElectricity() - 10 / BuildSteps, 0.0, self.MaxElectricity))
-									self:SetGas(math.Clamp(self:GetGas() - 8 / BuildSteps, 0.0, self.MaxGas))
-									self:SetWater(math.Clamp(self:GetWater() - 4 / BuildSteps, 0.0, self.MaxWater))
-									self:SetChemicals(math.Clamp(self:GetChemicals() - 4 / BuildSteps, 0.0, self.MaxChemicals))
+									self:SetElectricity(math.Clamp(self:GetElectricity() - 15, 0.0, self.MaxElectricity))
+									self:SetGas(math.Clamp(self:GetGas() - 10, 0.0, self.MaxGas))
+									self:SetWater(math.Clamp(self:GetWater() - 5, 0.0, self.MaxWater))
+									self:SetChemicals(math.Clamp(self:GetChemicals() - 5, 0.0, self.MaxChemicals))
 								end
 							end
 						end)

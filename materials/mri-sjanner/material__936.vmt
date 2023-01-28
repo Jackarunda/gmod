@@ -1,11 +1,6 @@
-"VertexLitGeneric"
-{
-// File Created by Wall Worm ( http://dev.wallworm.com )
-	// Get Wall Worm Pro to remove this comment ( https://wallworm.com/store/index.php?route=product/product&product_id=54 )
-
-// BEGIN Textures
-	$basetexture "mri-scanner/mribed"
-	$bumpmap "mri-scanner/mribednormal"
+"VertexLitGeneric" {
+	$basetexture "mri-sjanner/mribed"
+	$bumpmap "mri-sjanner/mribednormal"
 	"$model" 1
 	"$phong" "1"
 	"$phongexponent" "10"
@@ -22,8 +17,4 @@
 			default        0.23 0.35 0.41 // unused for now.
 		}
 	}
-// END Textures
-
-
-
 }
