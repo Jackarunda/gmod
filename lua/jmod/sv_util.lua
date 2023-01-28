@@ -926,6 +926,8 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	amt = math.Clamp(amt, 0.5, 5)
 
+	if typ == JMod.EZ_RESOURCE_TYPES.POWER then amt = amt * 2 end
+
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
 			for i = 1, 10 * amt do
