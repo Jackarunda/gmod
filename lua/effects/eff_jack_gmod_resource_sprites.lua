@@ -1,17 +1,28 @@
 ﻿local Config = {
 	[JMod.EZ_RESOURCE_TYPES.POWER] = {
-		sprite = Material("mat_jack_smallarmstracer_front"),
-		trail = Material("mat_jack_smallarmstracer_main"),
+		sprite = "mat_jack_smallarmstracer_front",
+		trail = "mat_jack_smallarmstracer_main",
 		siz = 1,
 		trailLength = 1,
 		col = Color(255, 200, 120, 255)
 	},
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = {
-		sprite = Material("mat_jack_smallarmstracer_front"),
-		trail = Material("mat_jack_smallarmstracer_main"),
+		sprite = "mat_jack_smallarmstracer_front",
+		trail = "mat_jack_smallarmstracer_main",
 		siz = 2,
 		trailLength = 1,
 		cols = {Color(200, 200, 200, 255), Color(100, 200, 255, 255)}
+	},
+	[JMod.EZ_RESOURCE_TYPES.PAPER] = {
+		sprite = "sprites/mat_aboot_college_paper",
+		siz = 1.5,
+		cols = {Color(200, 200, 200, 255), Color(188, 180, 180, 255)},
+		use3D = true
+	},
+	[JMod.EZ_RESOURCE_TYPES.GAS] = {
+		sprite = "particle/smokestack",
+		siz = 5,
+		cols = {Color(100, 100, 100, 20), Color(200, 200, 200, 60)}
 	}
 }
 
@@ -35,9 +46,13 @@ function EFFECT:Init(data)
 	if not self.Data then return end
 
 	local MyMdl = "models/hunter/misc/sphere025x025.mdl"
+	self.Sprite = self.Data.sprite or table.Random(self.Data.sprites)
+	local What, Why = Material(self.Sprite)
+	self.Sprite = What -- garry you idiot
 	self.Color = self.Data.col or table.Random(self.Data.cols)
 	self.TrailColor = Color(self.Color.r - 20, self.Color.g - 20, self.Color.b - 20)
 	self:SetPos(self.Origin + VectorRand() * math.random(1, 5))
+	self:SetAngles(AngleRand())
 	self:SetModel(MyMdl)
 	self:SetModelScale(.5, 0)
 	self:DrawShadow(false)
@@ -56,13 +71,14 @@ function EFFECT:Init(data)
 		phys:SetMass(10)
 		phys:SetMaterial("gmod_silent")
 		phys:SetVelocity(MyFlightVec * VectorRand() * math.Rand(2, 3))
+		phys:AddAngleVelocity(VectorRand() * math.random(1, 100))
 
 		if self.Target then
 			phys:EnableGravity(false)
 		end
 	end
 
-	self.DieTime = CurTime() + 5
+	self.DieTime = CurTime() + math.Rand(3, 6)
 end
 
 function EFFECT:PhysicsCollide()
@@ -100,21 +116,31 @@ function EFFECT:Render()
 	if not IsValid(Phys) then return end
 
 	if Phys:IsMotionEnabled() then
-		local endPos = self:GetPos()
-		render.SetMaterial(self.Data.sprite)
-		render.DrawSprite(endPos, 10 * self.Data.siz, 10 * self.Data.siz, self.Color)
-		if (self.Target) then
-			if (self.Data.trail) then
-				local vel = self:GetVelocity()
-				local srcDist, destDist = endPos:Distance(self.Origin), self.Target:Distance(endPos)
-				local length = math.min(srcDist, destDist) / 2 * (self.Data.trailLength or 1)
-				local dir = vel:GetNormalized()
-				local startPos = endPos - dir * length
-				render.SetMaterial(self.Data.trail)
-				render.DrawBeam(startPos, endPos, 5, 0, 1, self.TrailColor)
-			end
+		local myPos = self:GetPos()
+		if (self.Data.use3D) then
+			local myAng = self:GetAngles()
+			local forward = myAng:Forward()
+			render.SetMaterial(self.Sprite)
+			render.DrawQuadEasy(myPos, forward, 15 * self.Data.siz, 10 * self.Data.siz, self.Color, myAng.r)
+			render.DrawQuadEasy(myPos, -forward, 15 * self.Data.siz, 10 * self.Data.siz, self.Color, myAng.r)
 		else
-			-- todo: render when moving without a target
+			render.SetMaterial(self.Sprite)
+			render.DrawSprite(myPos, 10 * self.Data.siz, 10 * self.Data.siz, self.Color)
+			if (self.Data.trail) then
+				if (self.Target) then
+					local vel = self:GetVelocity()
+					local srcDist, destDist = myPos:Distance(self.Origin), self.Target:Distance(myPos)
+					local length = math.min(srcDist, destDist) / 2 * (self.Data.trailLength or 1)
+					local dir = vel:GetNormalized()
+					local startPos = myPos - dir * length
+					render.SetMaterial(self.Data.trail)
+					render.DrawBeam(startPos, myPos, 5, 0, 1, self.TrailColor)
+				else
+					local vel = self:GetVelocity()
+					render.SetMaterial(self.Data.trail)
+					render.DrawBeam(myPos - vel / 10 * self.Data.trailLength, myPos, 5, 0, 1, self.TrailColor)
+				end
+			end
 		end
 	end
 end
