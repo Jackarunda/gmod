@@ -915,7 +915,7 @@ end
 
 local LiquidResourceTypes = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.COOLANT, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.CHEMICALS, JMod.EZ_RESOURCE_TYPES.FUEL}
 
-local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.PAPER, JMod.EZ_RESOURCE_TYPES.ANTIMATTER, JMod.EZ_RESOURCE_TYPES.PROPELLANT, JMod.EZ_RESOURCE_TYPES.CLOTH}
+local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.PAPER, JMod.EZ_RESOURCE_TYPES.ANTIMATTER, JMod.EZ_RESOURCE_TYPES.PROPELLANT, JMod.EZ_RESOURCE_TYPES.CLOTH, JMod.EZ_RESOURCE_TYPES.POWER}
 
 function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpeed)
 	--print("Type: " .. tostring(typ) .. " From point: " .. tostring(fromPoint) .. " Amount: " .. amt)
@@ -926,7 +926,9 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	amt = math.Clamp(amt, 0.5, 5)
 
-	if typ == JMod.EZ_RESOURCE_TYPES.POWER then amt = amt * 2 end
+	local UseSprites = table.HasValue(SpriteResourceTypes, typ)
+
+	if (UseSprites) then amt = amt * 2 end
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
@@ -947,11 +949,9 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 					whee:SetSurfaceProp(0) -- just do a directionless explosion of particles
 				end
 
-				if typ == JMod.EZ_RESOURCE_TYPES.POWER then
-					util.Effect("eff_jack_gmod_resource_sparks", whee, true, true)
-				elseif table.HasValue(LiquidResourceTypes, typ) then
+				if table.HasValue(LiquidResourceTypes, typ) then
 					util.Effect("eff_jack_gmod_resource_liquid", whee, true, true)
-				elseif table.HasValue(SpriteResourceTypes, typ) then
+				elseif UseSprites then
 					util.Effect("eff_jack_gmod_resource_sprites", whee, true, true)
 				else
 					util.Effect("eff_jack_gmod_resource_props", whee, true, true)

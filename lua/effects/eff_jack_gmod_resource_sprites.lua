@@ -1,13 +1,27 @@
-﻿local MaterialMain = Material("mat_jack_smallarmstracer_main")
-local MaterialFront = Material("mat_jack_smallarmstracer_front")
+﻿local Config = {
+	[JMod.EZ_RESOURCE_TYPES.POWER] = {
+		sprite = Material("mat_jack_smallarmstracer_front"),
+		trail = Material("mat_jack_smallarmstracer_main"),
+		siz = 1,
+		trailLength = 1,
+		col = Color(255, 200, 120, 255)
+	},
+	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = {
+		sprite = Material("mat_jack_smallarmstracer_front"),
+		trail = Material("mat_jack_smallarmstracer_main"),
+		siz = 2,
+		trailLength = 1,
+		cols = {Color(200, 200, 200, 255), Color(100, 200, 255, 255)}
+	}
+}
 
 function EFFECT:Init(data)
+	self.ResourceType = JMod.IndexToResource[data:GetFlags()]
 	self.Origin = data:GetOrigin()
 	self.Scale = data:GetScale()
 	local SurfaceProp = data:GetSurfaceProp()
 	self.Speed = math.Rand(.75, 1.5)
 	self.LifeTime = self.Scale * math.Rand(1, 2)
-	self.Bright = math.Rand(.9, 1.25)
 
 	if SurfaceProp == 0 then
 		self.Target = nil -- directionless explosion
@@ -17,7 +31,12 @@ function EFFECT:Init(data)
 		self.Speed = self.Speed * Dist / 50
 	end
 
+	self.Data = Config[self.ResourceType]
+	if not self.Data then return end
+
 	local MyMdl = "models/hunter/misc/sphere025x025.mdl"
+	self.Color = self.Data.col or table.Random(self.Data.cols)
+	self.TrailColor = Color(self.Color.r - 20, self.Color.g - 20, self.Color.b - 20)
 	self:SetPos(self.Origin + VectorRand() * math.random(1, 5))
 	self:SetModel(MyMdl)
 	self:SetModelScale(.5, 0)
@@ -81,16 +100,21 @@ function EFFECT:Render()
 	if not IsValid(Phys) then return end
 
 	if Phys:IsMotionEnabled() then
-		-- let's make a spark
 		local endPos = self:GetPos()
-		local vel = self:GetVelocity()
-		local srcDist, destDist = endPos:Distance(self.Origin), self.Target:Distance(endPos)
-		local length = math.min(srcDist, destDist) / 2
-		local dir = vel:GetNormalized()
-		local startPos = endPos - dir * length
-		render.SetMaterial(MaterialFront)
-		render.DrawSprite(endPos, 10, 10, Color(255, 200 * self.Bright, 120 * self.Bright, 255))
-		render.SetMaterial(MaterialMain)
-		render.DrawBeam(startPos, endPos, 5, 0, 1, Color(255, 200 * self.Bright, 100 * self.Bright, 255))
+		render.SetMaterial(self.Data.sprite)
+		render.DrawSprite(endPos, 10 * self.Data.siz, 10 * self.Data.siz, self.Color)
+		if (self.Target) then
+			if (self.Data.trail) then
+				local vel = self:GetVelocity()
+				local srcDist, destDist = endPos:Distance(self.Origin), self.Target:Distance(endPos)
+				local length = math.min(srcDist, destDist) / 2 * (self.Data.trailLength or 1)
+				local dir = vel:GetNormalized()
+				local startPos = endPos - dir * length
+				render.SetMaterial(self.Data.trail)
+				render.DrawBeam(startPos, endPos, 5, 0, 1, self.TrailColor)
+			end
+		else
+			-- todo: render when moving without a target
+		end
 	end
 end
