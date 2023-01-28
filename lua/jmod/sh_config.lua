@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 40.5,
+		Version = 40.6,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -646,8 +646,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
 				sizeScale = 1,
 				category = "Machines",
@@ -673,10 +672,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 100,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 200
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				sizeScale = 2,
 				category = "Machines",
@@ -688,7 +685,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 500,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300
 				},
 				sizeScale = 2,
@@ -701,7 +697,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 500,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 100,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
@@ -929,8 +924,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.AMMO] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				sizeScale = 1,
@@ -955,7 +948,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 75,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
 				sizeScale = 1,
@@ -1004,7 +996,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.GAS] = 100
 				},
 				sizeScale = 1.5,
@@ -1017,8 +1008,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 200
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
 				sizeScale = 1.5,
 				category = "Machines",
@@ -1031,7 +1021,6 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 200,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
 				},
 				sizeScale = 1.5,

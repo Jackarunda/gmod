@@ -200,7 +200,7 @@ if(SERVER)then
 		---
 		self:Point(0, 0)
 		self.SearchStageTime = self.SearchTime / 2
-		self:SetAmmo(self.MaxAmmo)
+		--self:SetAmmo(self.MaxAmmo)
 		self.NextWhine=0
 		self.Heat=0
 		self:ResetMemory()

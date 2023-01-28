@@ -16,7 +16,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 200
+	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
 	Armor = 2
@@ -164,6 +164,12 @@ if(SERVER)then
 				return
 			end
 			self:TurnOff()
+		end
+	end
+
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
+			self:TurnOn(self.Owner)
 		end
 	end
 	
