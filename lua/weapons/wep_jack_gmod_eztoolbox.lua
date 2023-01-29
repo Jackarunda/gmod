@@ -406,8 +406,8 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	if SERVER then
-		if not(self:GetElectricity() > 0) or not(self:GetGas() > 0) then
-			self:Msg("You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
+		if not(self:GetElectricity() > 12) or not(self:GetGas() > 16) then
+			self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 			return
 		end
 
@@ -420,14 +420,16 @@ function SWEP:PrimaryAttack()
 			if (buildInfo.results == "ez nail") and not self:FindNailPos() then return end
 			if (buildInfo.results == "ez box") and not self:GetPackagableObject() then return end
 			local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
-			local Reqs = buildInfo.craftingReqs
+			local Reqs = table.FullCopy(buildInfo.craftingReqs)
 
 			local PartsDonated = 0
 			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-			if (table.HasValue(Reqs, EZbasicParts)) and (self:GetBasicParts() > 0) then
-				local RemainingParts = math.Clamp(Reqs.EZbasicParts - self:GetBasicParts(), 0, Reqs.EZbasicParts)
-				Reqs.EZbasicParts = RemainingParts
-				PartsDonated = math.Clamp(Reqs.EZbasicParts - RemainingParts, 0, self.EZmaxBasicParts)
+			if (Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] > 0) and (self:GetBasicParts() > 0) then
+				local RequiredParts = Reqs[EZbasicParts]
+				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
+
+				PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
+				Reqs[EZbasicParts] = RemainingParts
 			end
 
 			if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
@@ -477,10 +479,12 @@ function SWEP:PrimaryAttack()
 										Ent:Activate()
 										self:SetElectricity(math.Clamp(self:GetElectricity()-16, 0, self.EZmaxElectricity))
 										self:SetGas(math.Clamp(self:GetGas()-12, 0, self.EZmaxGas))
-										self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
-										self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
 									end
 								end
+								if PartsDonated > 0 then
+									self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
+								end
+								self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
 							end
 						end
 					end)

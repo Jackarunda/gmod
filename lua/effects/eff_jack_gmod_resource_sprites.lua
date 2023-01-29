@@ -133,17 +133,18 @@ function EFFECT:Render()
 			render.SetMaterial(self.Sprite)
 			render.DrawSprite(myPos, 10 * self.Data.siz, 10 * self.Data.siz, self.Color)
 			if (self.Data.trail) then
+				local What, Why = Material(self.Data.trail)
 				if (self.Target) then
 					local vel = self:GetVelocity()
 					local srcDist, destDist = myPos:Distance(self.Origin), self.Target:Distance(myPos)
 					local length = math.min(srcDist, destDist) / 2 * (self.Data.trailLength or 1)
 					local dir = vel:GetNormalized()
 					local startPos = myPos - dir * length
-					render.SetMaterial(self.Data.trail)
+					render.SetMaterial(What)
 					render.DrawBeam(startPos, myPos, 5, 0, 1, self.TrailColor)
 				else
 					local vel = self:GetVelocity()
-					render.SetMaterial(self.Data.trail)
+					render.SetMaterial(What)
 					render.DrawBeam(myPos - vel / 10 * self.Data.trailLength, myPos, 5, 0, 1, self.TrailColor)
 				end
 			end
