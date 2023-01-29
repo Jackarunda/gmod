@@ -3,7 +3,7 @@
 ENT.Type = "anim"
 ENT.PrintName = "EZ Fluid Bottler"
 ENT.Author = "Jackarunda, AdventureBoots"
-ENT.Category = "JMod - EZ Misc."
+ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = false -- Temporary, until the next phase of Econ2
 ENT.Base = "ent_jack_gmod_ezmachine_base"

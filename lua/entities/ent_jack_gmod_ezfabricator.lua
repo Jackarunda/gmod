@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "EZ Fabricator"
 ENT.Author = "Jackarunda, AdventureBoots"
-ENT.Category = "JMod - EZ Misc."
+ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true

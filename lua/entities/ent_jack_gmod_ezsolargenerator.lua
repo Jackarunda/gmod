@@ -3,7 +3,7 @@
 ENT.Type = "anim"
 ENT.PrintName = "EZ Solar Panel"
 ENT.Author = "Jackarunda, AdventureBoots"
-ENT.Category = "JMod - EZ Misc."
+ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"

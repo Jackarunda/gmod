@@ -2,7 +2,7 @@ AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Oil Refinery"
-ENT.Category = "JMod - EZ Misc."
+ENT.Category = "JMod - EZ Machines"
 ENT.Spawnable = true -- Temporary, until the next phase of Econ2
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"

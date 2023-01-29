@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Type="anim"
 ENT.PrintName="EZ Machine"
 ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Misc."
+ENT.Category="JMod - EZ Machines"
 ENT.Information="glhfggwpezpznore"
 ENT.Spawnable=false
 ENT.AdminSpawnable=false
