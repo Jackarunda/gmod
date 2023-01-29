@@ -19,6 +19,12 @@
 		cols = {Color(200, 200, 200, 255), Color(188, 180, 180, 255)},
 		use3D = true
 	},
+	[JMod.EZ_RESOURCE_TYPES.CLOTH] = {
+		sprite = "sprites/mat_aboot_shirt",
+		siz = 1.5,
+		cols = {Color(217, 255, 46), Color(107, 213, 255), Color(145, 10, 0)},
+		use3D = true
+	},
 	[JMod.EZ_RESOURCE_TYPES.GAS] = {
 		sprite = "particle/smokestack",
 		siz = 5,
