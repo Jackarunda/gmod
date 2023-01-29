@@ -22,7 +22,7 @@
 	[JMod.EZ_RESOURCE_TYPES.CLOTH] = {
 		sprite = "sprites/mat_aboot_shirt",
 		siz = 1.5,
-		cols = {Color(217, 255, 46), Color(107, 213, 255), Color(145, 10, 0)},
+		cols = {Color(62, 105, 56), Color(70, 108, 122), Color(126, 54, 49)},
 		use3D = true
 	},
 	[JMod.EZ_RESOURCE_TYPES.GAS] = {
