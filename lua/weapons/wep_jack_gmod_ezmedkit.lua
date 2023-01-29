@@ -30,7 +30,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.EZaccepts = "medical supplies"
+SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES}
 SWEP.EZmaxSupplies = 100
 SWEP.ShowWorldModel = false
 

@@ -26,7 +26,7 @@ if SERVER then
 	function ENT:AltUse(ply)
 		local Wep = ply:GetActiveWeapon()
 
-		if Wep and Wep.EZaccepts and (Wep.EZaccepts == self.EZsupplies) then
+		if Wep and Wep.EZaccepts and (table.HasValue(Wep.EZaccepts, self.EZsupplies)) then
 			local ExistingAmt = Wep:GetSupplies()
 			local Missing = Wep.EZmaxSupplies - ExistingAmt
 

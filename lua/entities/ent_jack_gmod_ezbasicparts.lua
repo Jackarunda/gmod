@@ -33,6 +33,29 @@ if SERVER then
 		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
 		util.Effect("Sparks", effectdata, true, true)
 	end
+
+	function ENT:AltUse(ply)
+		local Wep = ply:GetActiveWeapon()
+
+		if Wep and Wep.EZaccepts and (table.HasValue(Wep.EZaccepts, self.EZsupplies)) then
+			local ExistingAmt = Wep:GetBasicParts()
+			local Missing = Wep.EZmaxBasicParts - ExistingAmt
+
+			if Missing > 0 then
+				local AmtToGive = math.min(Missing, self:GetResource())
+				Wep:SetBasicParts(ExistingAmt + AmtToGive)
+				sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+				self:SetResource(self:GetResource() - AmtToGive)
+
+				if self:GetResource() <= 0 then
+					self:Remove()
+
+					return
+				end
+			end
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()

@@ -91,6 +91,12 @@ if SERVER then
 		elseif not activator:HasWeapon("wep_jack_gmod_eztoolbox") then
 			activator:Give("wep_jack_gmod_eztoolbox")
 			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
+
+			ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
+			ToolBox:SetBasicParts(self.EZBasicParts or 0)
+			ToolBox:SetElectricity(self.GetElectricity or 0)
+			ToolBox:SetGas(self.GetGas or 0)
+
 			self:Remove()
 		else
 			activator:PickupObject(self)

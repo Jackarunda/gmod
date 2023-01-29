@@ -31,6 +31,10 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
+SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
+SWEP.EZmaxBasicParts = 100
+SWEP.EZmaxElectricity = 100
+SWEP.EZmaxGas = 100
 
 SWEP.VElements = {
 	["wrench"] = {
@@ -273,6 +277,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
 	self:NetworkVar("Int", 0, "Electricity")
 	self:NetworkVar("Int", 1, "Gas")
+	self:NetworkVar("Int", 2, "BasicParts")
 end
 
 function SWEP:UpdateNextIdle()
@@ -401,10 +406,11 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	if SERVER then
-		if not(self:GetElectricity() > 0) and not(self:GetGas() > 0) then
-			self:Msg("You need to refill your gas and/or power")
+		if not(self:GetElectricity() > 0) or not(self:GetGas() > 0) then
+			self:Msg("You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 			return
 		end
+
 		local Built, Upgraded, SelectedBuild = false, false, self:GetSelectedBuild()
 		local Ent, Pos, Norm = self:WhomIlookinAt()
 
@@ -415,6 +421,14 @@ function SWEP:PrimaryAttack()
 			if (buildInfo.results == "ez box") and not self:GetPackagableObject() then return end
 			local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
 			local Reqs = buildInfo.craftingReqs
+
+			local PartsDonated = 0
+			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
+			if (table.HasValue(Reqs, EZbasicParts)) and (self:GetBasicParts() > 0) then
+				local RemainingParts = math.Clamp(Reqs.EZbasicParts - self:GetBasicParts(), 0, Reqs.EZbasicParts)
+				Reqs.EZbasicParts = RemainingParts
+				PartsDonated = math.Clamp(Reqs.EZbasicParts - RemainingParts, 0, self.EZmaxBasicParts)
+			end
 
 			if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
 				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, buildInfo)
@@ -452,7 +466,7 @@ function SWEP:PrimaryAttack()
 										if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
 											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (buildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 										else
-											print("JMOD TOOLBOX ERROR: garrysmod/data/jmod_config.txt is missing, corrupt, or doesn't have an entry for that build function")
+											print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent = ents.Create(Class)
@@ -461,8 +475,10 @@ function SWEP:PrimaryAttack()
 										JMod.SetOwner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
-										self:SetElectricity(math.Clamp(self:GetElectricity()-16,0,self.MaxElectricity))
-										self:SetGas(math.Clamp(self:GetGas()-12,0,self.MaxGas))
+										self:SetElectricity(math.Clamp(self:GetElectricity()-16, 0, self.EZmaxElectricity))
+										self:SetGas(math.Clamp(self:GetGas()-12, 0, self.EZmaxGas))
+										self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
+										self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
 									end
 								end
 							end
@@ -722,6 +738,11 @@ function SWEP:OnDrop()
 	Kit:SetAngles(self:GetAngles())
 	Kit:Spawn()
 	Kit:Activate()
+
+	Kit.EZBasicParts = self:GetBasicParts()
+	Kit.EZElectricity = self:GetElectricity()
+	Kit.EZGas = self:GetGas()
+
 	local Phys = Kit:GetPhysicsObject()
 
 	if Phys then

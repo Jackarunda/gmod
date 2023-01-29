@@ -196,6 +196,10 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 		end
 	end
 
+	if (sourceEnt:GetClass() == "wep_jack_gmod_eztoolbox") then
+		Results[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = (Results[JMod.EZ_RESOURCE_TYPES.BASICPARTS] or 0) + sourceEnt:GetBasicParts()
+	end
+
 	return Results
 end
 
