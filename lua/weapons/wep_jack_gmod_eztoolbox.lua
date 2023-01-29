@@ -271,6 +271,8 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("String", 0, "SelectedBuild")
 	self:NetworkVar("Float", 1, "TaskProgress")
+	self:NetworkVar("Int", 0, "Electricity")
+	self:NetworkVar("Int", 1, "Gas")
 end
 
 function SWEP:UpdateNextIdle()
@@ -399,6 +401,10 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	if SERVER then
+		if not(self:GetElectricity() > 0) and not(self:GetGas() > 0) then
+			self:Msg("You need to refill your gas and/or power")
+			return
+		end
 		local Built, Upgraded, SelectedBuild = false, false, self:GetSelectedBuild()
 		local Ent, Pos, Norm = self:WhomIlookinAt()
 
@@ -414,7 +420,7 @@ function SWEP:PrimaryAttack()
 				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, buildInfo)
 
 				if override == false then
-					self.Owner:PrintMessage(HUD_PRINTCENTER, msg or "cannot build")
+					self:Msg(msg or "cannot build")
 
 					return
 				end
@@ -446,7 +452,7 @@ function SWEP:PrimaryAttack()
 										if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
 											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (buildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 										else
-											print("JMOD TOOLBOX ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+											print("JMOD TOOLBOX ERROR: garrysmod/data/jmod_config.txt is missing, corrupt, or doesn't have an entry for that build function")
 										end
 									else
 										local Ent = ents.Create(Class)
@@ -455,6 +461,8 @@ function SWEP:PrimaryAttack()
 										JMod.SetOwner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
+										self:SetElectricity(math.Clamp(self:GetElectricity()-16,0,self.MaxElectricity))
+										self:SetGas(math.Clamp(self:GetGas()-12,0,self.MaxGas))
 									end
 								end
 							end
@@ -864,20 +872,20 @@ function SWEP:Think()
 									SetAmt = 0
 								end
 							else
-								self.Owner:PrintMessage(HUD_PRINTCENTER, "object is already unconstrained")
+								self:Msg("object is already unconstrained")
 							end
 						else
 							-- salvage
 							--Prog = JMod.UpdateDeconstruct(Ent)
 							if SERVER then
 								if constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled() then
-									self.Owner:PrintMessage(HUD_PRINTCENTER, "object is constrained")
+									self:Msg("object is constrained")
 								else
 									local Mass = Phys:GetMass() ^ .8
 									local Yield, Msg = JMod.GetSalvageYield(Ent)
 
 									if #table.GetKeys(Yield) <= 0 then
-										self.Owner:PrintMessage(HUD_PRINTCENTER, Msg)
+										self:Msg(Msg)
 									else
 										JMod.Hint(self.Owner, "work spread")
 										local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
