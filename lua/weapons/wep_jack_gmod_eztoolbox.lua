@@ -406,17 +406,16 @@ function SWEP:PrimaryAttack()
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	if SERVER then
-		if not(self:GetElectricity() > 12) or not(self:GetGas() > 16) then
-			self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
-			return
-		end
-
 		local Built, Upgraded, SelectedBuild = false, false, self:GetSelectedBuild()
 		local Ent, Pos, Norm = self:WhomIlookinAt()
 
 		if SelectedBuild and SelectedBuild ~= "" then
 			local buildInfo = self.Craftables[SelectedBuild]
 			if not buildInfo then return end
+			if not(self:GetElectricity() >= 6 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 8 * (buildInfo.sizeScale or 1)) then
+				self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
+				return
+			end
 			if (buildInfo.results == "ez nail") and not self:FindNailPos() then return end
 			if (buildInfo.results == "ez box") and not self:GetPackagableObject() then return end
 			local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
