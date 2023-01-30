@@ -108,7 +108,7 @@ if(SERVER)then
 		local HitAmount = 0
 		for i = 1, 10 do
 			for j = 1, 10 do
-				local StartPos = self:LocalToWorld(Vector(-5 + j*1, -100 + i*25, 10 + j*7.5))
+				local StartPos = self:LocalToWorld(Vector(-5 + j*1, -100 + i*30, 10 + j*7.5))
 				local Dir = self:LocalToWorldAngles(Angle(260 - j*8, -10 + i*2, 0)):Forward()
 				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
 				if (Tr.HitSky) then 

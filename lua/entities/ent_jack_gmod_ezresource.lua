@@ -119,7 +119,7 @@ if SERVER then
 					if Sum <= 100 then
 						self:SetResource(Sum)
 						data.HitEntity:Remove()
-						self:UseEffect(data.HitPos, data.HitEntity)
+						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
 
 						return
 					end

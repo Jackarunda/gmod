@@ -424,7 +424,7 @@ function SWEP:PrimaryAttack()
 
 			local PartsDonated = 0
 			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-			if (Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] > 0) and (self:GetBasicParts() > 0) then
+			if Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] and (Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] > 0) and (self:GetBasicParts() > 0) then
 				local RequiredParts = Reqs[EZbasicParts]
 				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
 
