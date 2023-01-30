@@ -3,6 +3,7 @@ function JMod.AeroDrag(ent, forward, mult, spdReq)
 	if constraint.HasConstraints(ent) then return end
 	if ent:IsPlayerHolding() then return end
 	local Phys = ent:GetPhysicsObject()
+	if not IsValid(Phys) then return end
 	local Vel = Phys:GetVelocity()
 	local Spd = Vel:Length()
 
@@ -23,6 +24,7 @@ function JMod.AeroGuide(ent, forward, targetPos, turnMult, thrustMult, angleDrag
 	--if(constraint.HasConstraints(ent))then return end
 	--if(ent:IsPlayerHolding())then return end
 	local Phys = ent:GetPhysicsObject()
+	if not IsValid(Phys) then return end
 	local Vel = Phys:GetVelocity()
 	local Spd = Vel:Length()
 	--if(Spd<spdReq)then return end
