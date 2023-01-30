@@ -313,6 +313,7 @@ elseif(CLIENT)then
 		else
 			self.DriveMomentum = math.Clamp(self.DriveMomentum - FT / 3, 0, 0.4)
 		end
+		self.DriveMomentum = math.Rand(.1, 1)
 		self.DriveCycle=self.DriveCycle+self.DriveMomentum*Grade*FT*100
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
 		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
