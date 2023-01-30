@@ -126,7 +126,8 @@ if(SERVER)then
 	end
 
 	function ENT:ProduceResource()
-		local amt = math.Clamp(self:GetProgress(), 0, 100)
+		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
+
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
 		
 		if amt <= 0 or OreType == "generic" then return end

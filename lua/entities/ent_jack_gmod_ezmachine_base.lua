@@ -254,6 +254,7 @@ if(SERVER)then
 			self.UpgradeProgress={}
 			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
 		end
+		PrintTable(self.UpgradeCosts)
 		self.NextRefillTime = 0
 	end
 
