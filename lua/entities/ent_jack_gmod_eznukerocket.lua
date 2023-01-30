@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Nuclear Rocket"
-ENT.Spawnable = true
+ENT.Spawnable = false -- temporary, until we fix the textures and drawfunc
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
