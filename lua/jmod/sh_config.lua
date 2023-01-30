@@ -656,10 +656,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Solar Panel"] = {
 				results = "ent_jack_gmod_ezsolargenerator",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 150,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 100,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50
 				},
 				sizeScale = 4,
 				category = "Machines",
@@ -672,8 +672,9 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 100,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100
 				},
 				sizeScale = 2,
 				category = "Machines",
@@ -685,7 +686,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 300
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 400
 				},
 				sizeScale = 2,
 				category = "Machines",
@@ -695,10 +696,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 100,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
 				},
 				sizeScale = 3,
 				category = "Machines",
@@ -710,7 +711,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
 				sizeScale = 1.5,
@@ -922,7 +923,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Sentry"] = {
 				results = "ent_jack_gmod_ezsentry",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
@@ -946,9 +947,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Supply Radio"] = {
 				results = "ent_jack_gmod_ezaidradio",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 75,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 1
 				},
 				sizeScale = 1,
 				category = "Machines",
@@ -994,8 +995,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Workbench"] = {
 				results = "ent_jack_gmod_ezworkbench",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				sizeScale = 1.5,
 				category = "Machines",
@@ -1016,8 +1018,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Pumpjack"] = {
 				results = "ent_jack_gmod_ezpumpjack",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
 				sizeScale = 1.5,
@@ -1681,7 +1684,7 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezarmor_headset",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 20
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 5
 				},
 				category = "Apparel",
 				craftingType = "workbench",
