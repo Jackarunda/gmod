@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models\items/medjit"
-	"$bumpmap" "models/items/medjit_norm"
+	"$baseTexture" "models/jmod/items/medjit"
+	"$bumpmap" "models/jmod/items/medjit_norm"
 	
 	"$phong" "1"
 	"$phongexponent" "20"
