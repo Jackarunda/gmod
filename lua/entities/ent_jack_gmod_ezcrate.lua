@@ -11,21 +11,11 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 ---
-ENT.ChildEntity = ""
-ENT.MainTitleWord = "RESOURCES"
 
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
 	self:NetworkVar("String", 0, "ResourceType")
-end
-
-function ENT:ApplySupplyType(typ)
-	self:SetResourceType(typ)
-	self.EZsupplies = typ
-	self.MaxResource = 100 * 20 -- standard size
-	self.ChildEntity = JMod.EZ_RESOURCE_ENTITIES[typ]
-	self.MainTitleWord = string.upper(typ)
 end
 
 ---
@@ -54,8 +44,10 @@ if SERVER then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
-		self:SetResource(0)
-		self:ApplySupplyType("generic")
+		self:SetResource(self:GetResource() or 0)
+		self:ApplySupplyType(self:GetResourceType() or "generic")
+		
+		self.MaxResource = 100 * 20 -- standard size
 		self.EZconsumes = {}
 
 		for k, v in pairs(JMod.EZ_RESOURCE_TYPES) do
@@ -68,6 +60,16 @@ if SERVER then
 		timer.Simple(.01, function()
 			self:CalcWeight()
 		end)
+	end
+
+	function ENT:ApplySupplyType(typ)
+		self:SetResourceType(typ)
+		self.EZsupplies = typ
+		if typ == "generic" then
+			self.ChildEntity = ""
+		else
+			self.ChildEntity = JMod.EZ_RESOURCE_ENTITIES[typ]
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -138,8 +140,8 @@ if SERVER then
 	--aw fuck you
 	function ENT:TryLoadResource(typ, amt)
 		local Time = CurTime()
-		if self.NextLoad > Time then return 0 end
-		if amt <= 0 then return 0 end
+		if self.NextLoad > Time then self.NextLoad = math.Clamp(self.NextLoad, Time, Time + .5) return 0 end
+		if amt < 1 then return 0 end
 
 		-- If unloaded, we set our type to the item type
 		if self:GetResource() <= 0 and self:GetResourceType() == "generic" then
@@ -168,7 +170,7 @@ elseif CLIENT then
 		local Ang, Pos = self:GetAngles(), self:GetPos()
 		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(Pos)
 		local DetailDraw = Closeness < 45000 -- cutoff point is 500 units when the fov is 90 degrees
-		local i = string.upper(self:GetResourceType())
+		local ResourceName = string.upper(self:GetResourceType())
 		self:DrawModel()
 
 		if DetailDraw then
@@ -177,14 +179,14 @@ elseif CLIENT then
 			Ang:RotateAroundAxis(Ang:Up(), -90)
 			cam.Start3D2D(Pos + Up * 10 - Forward * 20 + Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText(i, "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText(ResourceName, "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText(Resource .. " UNITS", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(), 180)
 			cam.Start3D2D(Pos + Up * 10 + Forward * 20 - Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText(i, "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText(ResourceName, "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText(Resource .. " UNITS", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
