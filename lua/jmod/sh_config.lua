@@ -995,13 +995,23 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezworkbench",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.GAS] = 100
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300
 				},
 				sizeScale = 1.5,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Craft all your smaller items here."
+			},
+			["EZ Fabricator"] = {
+				results = "ent_jack_gmod_ezfabricator",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 800
+				},
+				sizeScale = 1.5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Craft parts here. Only for advanced players."
 			},
 			["EZ Pumpjack"] = {
 				results = "ent_jack_gmod_ezpumpjack",
@@ -1055,7 +1065,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "1 box of parts used for crafting and repairs."
 			},
 			["EZ Basic Parts, x300"] = {
@@ -1072,7 +1082,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "3 boxes of parts used for crafting and repairs."
 			},
 			["EZ Precision Parts, x100"] = {
@@ -1085,7 +1095,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 50
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "1 box of precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Precision Parts, x10"] = {
@@ -1100,7 +1110,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 5
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "10 precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Advanced Parts, x50"] = {
@@ -1114,7 +1124,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 25
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "50 Advanced Parts for use in hyper-advanced technology"
 			},
 			["EZ Advanced Parts, x5"] = {
@@ -1128,14 +1138,13 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 3
 				},
 				category = "Resources",
-				craftingType = "adv_workbench",
+				craftingType = "fabricator",
 				description = "5 Advanced Parts for use in hyper-advanced technology"
 			},
 			["EZ Chemicals"] = {
 				results = "ent_jack_gmod_ezchemicals",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.COAL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.OIL] = 10,
+					[JMod.EZ_RESOURCE_TYPES.OIL] = 50,
 					[JMod.EZ_RESOURCE_TYPES.GAS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
 				},

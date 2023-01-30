@@ -41,7 +41,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            JMod.Hint(self.Owner, "liquid scan")
+            	JMod.Hint(self.Owner, "liquid scan")
             end
         end)
 	end
@@ -360,7 +360,7 @@ elseif(CLIENT)then
 					elseif(Typ=="oil")then ExtractCol=Color(120,80,0,Opacity) end
 					draw.SimpleTextOutlined(string.upper(Typ) or "N/A","JMod-Display",250,-30,ExtractCol,TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 					draw.SimpleTextOutlined("POWER","JMod-Display",250,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					local ElecFrac=self:GetElectricity()/200
+					local ElecFrac=self:GetElectricity()/400
 					local R,G,B=JMod.GoodBadColor(ElecFrac)
 					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac*100)).."%","JMod-Display",250,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 					draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))

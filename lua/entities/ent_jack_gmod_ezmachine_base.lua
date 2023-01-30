@@ -244,6 +244,8 @@ if(SERVER)then
 		self.Durability = self.MaxDurability
 		if GetConVar("sv_cheats"):GetBool() then
 			self:SetElectricity(self.MaxElectricity)
+		else
+			self:SetElectricity(0)
 		end
 		---
 		if(self.Owner)then JMod.Colorify(self) end

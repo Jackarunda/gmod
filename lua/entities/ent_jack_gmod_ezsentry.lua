@@ -171,8 +171,6 @@ function ENT:InitPerfSpecs(removeAmmo)
 		self:SetAmmo(self.MaxAmmo)
 		self.MaxElectricity = self.MaxAmmo / 1.5
 	end
-
-	self:SetCoolant(100)
 end
 
 ----
@@ -205,6 +203,9 @@ if(SERVER)then
 		self.Heat=0
 		self:ResetMemory()
 		self:CreateNPCTarget()
+		---
+		self:SetAmmo(0)
+		self:SetCoolant(0)
 	end
 
 	function ENT:ResetMemory()

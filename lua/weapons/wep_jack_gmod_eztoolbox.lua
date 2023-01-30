@@ -220,7 +220,7 @@ function SWEP:Initialize()
 	self:SCKInitialize()
 	self.NextIdle = 0
 	self:Deploy()
-	self:SetSelectedBuild(0)
+	self:SetSelectedBuild("")
 	self:SetTaskProgress(0)
 	self.TaskEntity = nil
 	self.NextTaskProgress = 0
@@ -240,8 +240,9 @@ function SWEP:Initialize()
 		end
 	end
 
-	self:SetTaskProgress(0)
-	self:SetSelectedBuild("")
+	self:SetGas(0)
+	self:SetElectricity(0)
+	self:SetBasicParts(0)
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -974,12 +975,17 @@ function SWEP:DrawHUD()
 		draw.SimpleTextOutlined(Build, "Trebuchet24", W * .5, H * .7 - 50, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 150))
 	end
 
-	draw.SimpleTextOutlined("R: select build item", "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("LMB: build or upgrade", "Trebuchet24", W * .4, H * .7 + 30, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("ALT+LMB: modify", "Trebuchet24", W * .4, H * .7 + 60, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("RMB: salvage", "Trebuchet24", W * .4, H * .7 + 90, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("ALT+RMB: loosen", "Trebuchet24", W * .4, H * .7 + 120, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("Backspace: drop kit", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+	draw.SimpleTextOutlined("Power: "..math.floor(self:GetElectricity()), "Trebuchet24", W * .1, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+	draw.SimpleTextOutlined("Gas: "..math.floor(self:GetGas()), "Trebuchet24", W * .1, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+	draw.SimpleTextOutlined("Basic Parts: "..math.floor(self:GetBasicParts()), "Trebuchet24", W * .1, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+
+	draw.SimpleTextOutlined("R: select build item", "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("LMB: build or upgrade", "Trebuchet24", W * .4, H * .7 + 30, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("ALT+LMB: modify", "Trebuchet24", W * .4, H * .7 + 60, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("RMB: salvage", "Trebuchet24", W * .4, H * .7 + 90, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("ALT+RMB: loosen", "Trebuchet24", W * .4, H * .7 + 120, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("Backspace: drop kit", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
@@ -991,7 +997,7 @@ function SWEP:DrawHUD()
 	LastProg = Lerp(FrameTime() * 5, LastProg, Prog)
 end
 
------------------ shit -------------------
+----------------- sck -------------------
 function SWEP:SCKHolster()
 	if CLIENT and IsValid(self.Owner) then
 		local vm = self.Owner:GetViewModel()

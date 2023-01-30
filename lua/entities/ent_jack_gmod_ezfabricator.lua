@@ -47,15 +47,15 @@ if(SERVER)then
 		if not(self.Owner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
 		---
-		--self:SetGas(self.MaxGas)
-		--self:SetChemicals(self.MaxChemicals)
-		--self:SetWater(self.MaxWater)
+		self:SetGas(0)
+		self:SetChemicals(0)
+		self:SetWater(0)
 	end
 
 	function ENT:UpdateConfig()
 		self.Craftables = {}
 		for name, info in pairs(JMod.Config.Craftables)do
-			if(info.craftingType == "adv_workbench")then
+			if(info.craftingType == "fabricator")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy = table.FullCopy(info)

@@ -30,7 +30,7 @@ ENT.DynamicPerfSpecs = {
 	ProductionSpeed = 1,
 	Armor = 1
 }
-ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL }
+ENT.FlexFuels = {JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL}
 ---
 local STATE_BROKEN, STATE_OFF, STATE_REFINING = -1, 0, 1
 ---
