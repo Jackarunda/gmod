@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.DIAMOND
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/props/CS_militia/footlocker01_open.mdl"
+ENT.Model = "models/jmod/resources/diamondbox_open.mdl"
 ENT.Material = "phoenix_storms/grey_steel"
 ENT.Color = Color(100, 100, 100)
 ENT.ModelScale = 1
