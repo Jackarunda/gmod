@@ -114,7 +114,6 @@ if(SERVER)then
 				end
 			end
 		end
-		jprint(HitAmount)
 		return HitAmount*SkyMod
 	end
 
