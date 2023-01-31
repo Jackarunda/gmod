@@ -290,11 +290,11 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 			local Key = (JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
 
 			if ply:KeyDown(Key) then
-				StabilityStamina = math.Clamp(StabilityStamina - FT * 40, 0, 100)
+				StabilityStamina = math.Clamp(StabilityStamina - FT * 20, 0, 100)
 
 				if StabilityStamina > 0 then
 					FocusIn(Wep)
-					Amt = Amt * .4
+					Amt = Amt * .3
 				else
 					FocusOut(Wep)
 				end
@@ -318,38 +318,62 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 	end
 end)
 
+SWEP.LastTranslateFOV = 0
 function SWEP:TranslateFOV(fov)
-	local irons = self:GetActiveSights()
-	--if !irons then return end
-	--if !irons.Magnification then return fov end
-	--if irons.Magnification == 1 then return fov end
-	self.ApproachFOV = self.ApproachFOV or fov
-	self.CurrentFOV = self.CurrentFOV or fov
-	local div = 1
-	local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
+    local irons = self:GetActiveSights()
 
-	if self:GetState() == ArcCW.STATE_SIGHTS then
-		-- fov=75
-		app_vm = irons.ViewModelFOV or 45
-		div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
-	end
+    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
 
-	-- something about this doesn't work in multiplayer
-	-- if game.SinglePlayer() then self.CurrentFOV=self.CurrentFOV+(self.RecoilAmount*-0.1*self:GetSightDelta()) end
-	-- it also fucking sucks
-	self.ApproachFOV = fov / div
+    self.ApproachFOV = self.ApproachFOV or fov
+    self.CurrentFOV = self.CurrentFOV or fov
+
+    -- Only update every tick (this function is called multiple times per tick)
+    if self.LastTranslateFOV == UnPredictedCurTime() then return self.CurrentFOV end
+    local timed = UnPredictedCurTime() - self.LastTranslateFOV
+    self.LastTranslateFOV = UnPredictedCurTime()
+
+    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0)
+    if CLIENT then
+        app_vm = app_vm * (LocalPlayer():GetFOV()/GetConVar("fov_desired"):GetInt())
+    end
+
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        local asight = self:GetActiveSights()
+        local mag = asight and asight.ScopeMagnification or 1
+
+        local delta = math.pow(self:GetSightDelta(), 2)
+
+        if CLIENT then
+            local addads = math.Clamp(GetConVar("arccw_vm_add_ads"):GetFloat() or 0, -2, 14)
+            local csratio = math.Clamp(GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0, 0, 1)
+            local pfov = GetConVar("fov_desired"):GetInt()
+
+            if GetConVar("arccw_cheapscopes"):GetBool() and mag > 1 then
+                fov = (pfov / (asight and asight.Magnification or 1)) / (mag / (1 + csratio * mag) + (addads or 0) / 3)
+            else
+                fov = ( (pfov / (asight and asight.Magnification or 1)) * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta)
+            end
+
+            app_vm = irons.ViewModelFOV or 45
+
+            app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0) * 3 or 0)
+        end
+    end
+
+    self.ApproachFOV = fov
 
 	-- JACKARUNDA
 	if BreathStatus then
-		self.ApproachFOV = self.ApproachFOV * .95
+		self.ApproachFOV = self.ApproachFOV * .9
 	end
 
-	self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
-	self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
-	self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
-	-- return 90
+    -- magic number? multiplier of 10 seems similar to previous behavior
+    self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, timed * 10 * (self.CurrentFOV - self.ApproachFOV))
 
-	return self.CurrentFOV
+    self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
+    self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, timed * 10 * (self.CurrentViewModelFOV - app_vm))
+
+    return self.CurrentFOV
 end
 
 --[[
