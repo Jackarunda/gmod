@@ -115,16 +115,16 @@ if(SERVER)then
 	end
 
 	function ENT:ProduceResource()
-		local amt = self:GetProgress()
 		local SelfPos, Forward, Up, Right = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight()
-		
+		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
+
 		if amt <= 0 then return end
 
 		local RefinedTable = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.OIL]
 
 		local i = 0
 		for typ, modifier in pairs(RefinedTable) do
-			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 50 * i)
+			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 65 * i)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward
 			timer.Simple(i / 2, function()

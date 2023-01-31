@@ -11,7 +11,6 @@ ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 --
 ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
-ENT.MaxPower = 100
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 50,
@@ -85,8 +84,8 @@ if(SERVER)then
 	end
 
 	function ENT:ProduceResource()
-		local SelfPos,Up,Forward,Right = self:GetPos(),self:GetUp(),self:GetForward(),self:GetRight()
-		local amt = math.min(math.floor(self:GetProgress()), self.MaxPower)
+		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
+		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
 
@@ -188,12 +187,12 @@ if(SERVER)then
 
 			if vis <= 0 or self:WaterLevel() >= 2 then
 				JMod.Hint(self.Owner, "solar panel no sun")
-			elseif self:GetProgress() < self.MaxPower then
+			elseif self:GetProgress() < 100 then
 				local rate = math.Round(2.5 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
 				self:SetProgress(self:GetProgress() + rate)
 			end
 
-			if self:GetProgress() >= self.MaxPower then
+			if self:GetProgress() >= 100 then
 				self:ProduceResource()
 			end
 
