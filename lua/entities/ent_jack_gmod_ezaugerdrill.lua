@@ -264,7 +264,7 @@ if(SERVER)then
 	
 	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
-		local amt = math.min(self:GetProgress(), 100)
+		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
 

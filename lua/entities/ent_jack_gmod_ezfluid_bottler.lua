@@ -97,7 +97,7 @@ if(SERVER)then
 
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local amt, chemAmt, fissileAmt = math.min(math.floor(self:GetProgress()), 100), math.min(math.floor(self:GetChemicals()), 100), math.min(math.floor(self:GetFissile()), 100)
+		local amt, chemAmt, fissileAmt = math.Clamp(math.floor(self:GetProgress()), 0, 100), math.min(math.floor(self:GetChemicals()), 100), math.min(math.floor(self:GetFissile()), 100)
 
 		if amt <= 0 then self:SetFluidType("generic") return end
 

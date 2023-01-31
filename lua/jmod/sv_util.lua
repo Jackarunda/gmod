@@ -843,7 +843,7 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
-	if not amount then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
+	if not(amount) or (amount <= 0) then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos = machine:LocalToWorld(relativeSpawnPos)
 	for i = 1, math.ceil(amount/100) do
 		if findCrate then

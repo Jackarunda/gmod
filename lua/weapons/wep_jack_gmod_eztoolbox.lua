@@ -262,7 +262,7 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if self.Owner:KeyDown(IN_SPEED) then
+	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
 		Downness = Lerp(FT * 2, Downness, 10)
 	else
 		Downness = Lerp(FT * 2, Downness, 0)
@@ -846,7 +846,7 @@ function SWEP:Think()
 
 	local Prog, SetAmt = self:GetTaskProgress(), nil
 
-	if self.Owner:KeyDown(IN_SPEED) then
+	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
 		self:SetHoldType("normal")
 	else
 		self:SetHoldType("fist")
@@ -929,18 +929,18 @@ function SWEP:Think()
 										if Prog >= 100 then
 											sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
 
-											--local i = 0
+											local i = 0
 											for k, v in pairs(Yield) do
-												--timer.Simple(i*0.5, function()
+												timer.Simple(i*0.5, function()
 													local AmtLeft = v
 
 													while AmtLeft > 0 do
 														local Remove = math.min(AmtLeft, 100)
-														self:CreateResourceEntity(Pos + VectorRand() * 50 + Vector(0, 0, 20), k, Remove)
+														self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
 														AmtLeft = AmtLeft - Remove
 													end
-												--end)
-												--i = i + 1
+												end)
+												i = i + 1
 											end
 
 											SafeRemoveEntity(Ent)

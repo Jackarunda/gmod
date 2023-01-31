@@ -1007,8 +1007,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Fabricator"] = {
 				results = "ent_jack_gmod_ezfabricator",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 500,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 800
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 600,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 200,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 100
 				},
 				sizeScale = 1.5,
 				category = "Machines",
