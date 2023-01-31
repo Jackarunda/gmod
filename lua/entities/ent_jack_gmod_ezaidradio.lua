@@ -362,6 +362,14 @@ if(SERVER)then
 
 		return false
 	end
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextWhine = Time + math.random(0.1, 0.5)
+		ent.NextRealThink = Time + math.random(0.1, 0.5)
+		ent.NextUseTime = Time + math.random(0.1, 0.5)
+	end
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")

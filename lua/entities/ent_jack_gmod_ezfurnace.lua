@@ -204,6 +204,16 @@ if(SERVER)then
 		return true
 	end
 
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		self.LastOreTime = Time + math.random(0.1, 0.5)
+		self.NextEffThink = Time + math.random(0.1, 0.5)
+		self.NextSmeltThink = Time + math.random(0.1, 0.5)
+		self.NextEnvThink = Time + math.random(0.1, 0.5)
+	end
+
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")

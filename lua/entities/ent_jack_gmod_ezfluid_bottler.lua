@@ -62,6 +62,7 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
+		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
 		local OldOwner = self.Owner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
@@ -209,6 +210,13 @@ if(SERVER)then
 
 			return true
 		end
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextUse = Time + math.random(0.1, 0.5)
 	end
 
 elseif CLIENT then

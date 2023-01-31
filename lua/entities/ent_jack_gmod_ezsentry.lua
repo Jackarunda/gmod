@@ -228,6 +228,11 @@ if(SERVER)then
 			
 		}
 	end
+	
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		JMod.SetOwner(self, ply)
+		self:ResetMemory()
+	end
 
 	function ENT:CreateNPCTarget()
 		if not IsValid(self.NPCTarget) then
