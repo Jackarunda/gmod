@@ -5,7 +5,7 @@ Ha-HA, the fun has been DOUBLED!
 # Contributing
 
 If you think you can help, let Jackarunda know in the gmod Discord.
-[https://discord.gg/YgYNcPj](https://discord.gg/NubWvfwh96)
+https://discord.gg/NubWvfwh96
 
 # Setup for Contribution
 
