@@ -341,6 +341,19 @@ if(SERVER)then
 			end)
 		end
 	end
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		self.NextWhine = Time + math.random(0.1, 0.5)
+		self.NextRealThink = Time + math.random(0.1, 0.5)
+		self.NextUseTime = Time + math.random(0.1, 0.5)
+		self.IdleShutOffTime = Time + math.random(0.1, 0.5)
+		self.NextHumTime = Time + math.random(0.1, 0.5)
+		self.NextHeal = Time + math.random(0.1, 0.5)
+		self.NextEnter = Time + math.random(0.1, 0.5)
+		self.NextOpStart = Time + math.random(0.1, 0.5)
+	end
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
