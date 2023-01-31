@@ -397,6 +397,8 @@ function JMod.MakeModel(self, mdl, mat, scale, col)
 end
 
 function JMod.RenderModel(mdl, pos, ang, scale, color, mat, fullbright, translucency)
+	if not IsValid(mdl) then return end
+
 	if pos then
 		mdl:SetRenderOrigin(pos)
 	end
