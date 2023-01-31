@@ -42,7 +42,7 @@ surface.CreateFont("JMod-Display-L", {
 })
 
 surface.CreateFont("JMod-NumberLCD", {
-	font = "DS-Digital Bold",
+	font = "ds-digital bold",
 	extended = false,
 	size = 35,
 	weight = 100,
@@ -96,7 +96,7 @@ surface.CreateFont("JMod-Display-XS", {
 })
 
 surface.CreateFont("JMod-Stencil", {
-	font = "Capture it",
+	font = "capture it",
 	extended = false,
 	size = 60,
 	weight = 100,
@@ -114,7 +114,7 @@ surface.CreateFont("JMod-Stencil", {
 })
 
 surface.CreateFont("JMod-Stencil-MS", {
-	font = "Capture it",
+	font = "capture it",
 	extended = false,
 	size = 40,
 	weight = 100,
@@ -132,7 +132,7 @@ surface.CreateFont("JMod-Stencil-MS", {
 })
 
 surface.CreateFont("JMod-Stencil-S", {
-	font = "Capture it",
+	font = "capture it",
 	extended = false,
 	size = 20,
 	weight = 100,
@@ -150,7 +150,7 @@ surface.CreateFont("JMod-Stencil-S", {
 })
 
 surface.CreateFont("JMod-Stencil-XS", {
-	font = "Capture it",
+	font = "capture it",
 	extended = false,
 	size = 10,
 	weight = 100,
@@ -168,7 +168,7 @@ surface.CreateFont("JMod-Stencil-XS", {
 })
 
 surface.CreateFont("JMod-SharpieHandwriting", {
-	font = "Handwriting",
+	font = "handwriting",
 	extended = false,
 	size = 40,
 	weight = 900,

@@ -49,9 +49,9 @@ if(SERVER)then
 		self.EZupgradable=true
 		---
 		self:SetProgress(0)
-		self.Snd1=CreateSound(self,"snds_jack_gmod/40Hz_sine1.wav")
-		self.Snd2=CreateSound(self,"snds_jack_gmod/40Hz_sine2.wav")
-		self.Snd3=CreateSound(self,"snds_jack_gmod/40Hz_sine3.wav")
+		self.Snd1=CreateSound(self,"snds_jack_gmod/40hz_sine1.wav")
+		self.Snd2=CreateSound(self,"snds_jack_gmod/40hz_sine2.wav")
+		self.Snd3=CreateSound(self,"snds_jack_gmod/40hz_sine3.wav")
 		self.Snd1:SetSoundLevel(100)
 		self.Snd2:SetSoundLevel(100)
 		self.Snd3:SetSoundLevel(100)
