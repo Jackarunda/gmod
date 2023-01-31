@@ -508,6 +508,14 @@ if(SERVER)then
 		end
 		return 0
 	end
+
+	-- Entity save/dupe functionality
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+	end
+
 elseif(CLIENT)then
 	net.Receive("JMod_MachineSync", function(len, ply)
 		local Ent = net.ReadEntity()

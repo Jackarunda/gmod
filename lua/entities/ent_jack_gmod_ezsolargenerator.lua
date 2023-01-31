@@ -204,6 +204,14 @@ if(SERVER)then
 			return true
 		end
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextUse = Time + math.random(0.1, 0.5)
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.SolarCellModel = JMod.MakeModel(self, "models/hunter/plates/plate3x5.mdl", "models/mat_jack_gmod_solarcells", .5)
