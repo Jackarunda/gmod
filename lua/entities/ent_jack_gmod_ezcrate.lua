@@ -44,8 +44,8 @@ if SERVER then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
-		self:SetResource(self:GetResource() or 0)
-		self:ApplySupplyType(self:GetResourceType() or "generic")
+		self:SetResource(0)
+		self:ApplySupplyType("generic")
 		
 		self.MaxResource = 100 * 20 -- standard size
 		self.EZconsumes = {}
@@ -140,7 +140,7 @@ if SERVER then
 	--aw fuck you
 	function ENT:TryLoadResource(typ, amt)
 		local Time = CurTime()
-		if self.NextLoad > Time then self.NextLoad = math.Clamp(self.NextLoad, Time, Time + .5) return 0 end
+		if self.NextLoad > Time then self.NextLoad = math.min(self.NextLoad, Time + .5) return 0 end
 		if amt < 1 then return 0 end
 
 		-- If unloaded, we set our type to the item type

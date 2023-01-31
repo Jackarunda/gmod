@@ -276,7 +276,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/mk82.mdl")
+		self.Mdl = ClientsideModel("models/jmod/explosives/bombs/mk82.mdl")
 		self.Mdl:SetModelScale(.9, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)

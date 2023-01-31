@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models/military2/bomb/bomb_nmk82"
-       	"$bumpmap" "models/military2/bomb/bomb_nmk82_nomal"
+	"$baseTexture" "models/jmod/explosives/bombs/bomb_nmk82"
+       	"$bumpmap" "models/jmod/explosives/bombs/bomb_nmk82_nomal"
 	"$surfaceprop" "metal"
 	"$model" 1
 	"$phong" "1"
