@@ -1101,6 +1101,7 @@ net.Receive("JMod_Inventory", function()
 	local doneOnce = false
 
 	function PlayerDisplay:LayoutEntity(ent)
+
 		if not PDispBT:IsDown() then
 			entAngs = ent:GetAngles()
 			doneOnce = false
@@ -1121,6 +1122,8 @@ net.Receive("JMod_Inventory", function()
 		local cur_bgid = Ply:GetBodygroup( v.id )
 		Ent:SetBodygroup( v.id, cur_bgid )
 	end
+	Ent.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
+	
 
 	if Ply.EZarmor.suited and Ply.EZarmor.bodygroups then
 		PlayerDisplay:SetColor(Ply:GetColor())
