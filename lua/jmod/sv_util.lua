@@ -943,7 +943,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 				whee:SetFlags(JMod.ResourceToIndex[typ])
 				whee:SetMagnitude(spread)
 				whee:SetRadius(upSpeed)
-				whee:SetScale(scale)
+				whee:SetScale(scale * JMod.Config.SupplyEffectMult)
 
 				if toPoint then
 					whee:SetSurfaceProp(1) -- we have somewhere to go
