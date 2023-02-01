@@ -50,6 +50,7 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
+		if self.NextUse > CurTime() then return end
 		local State=self:GetState()
 		local OldOwner=self.Owner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
@@ -117,6 +118,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
+		if (self:GetState() == STATE_ON) then return end
 		if (self:CheckSky() > 0) then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
@@ -124,13 +126,14 @@ if(SERVER)then
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
+		timer.Simple(600, self:TurnOff())
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() == STATE_OFF) then return end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		self:SetProgress(0)
 		self.NextUse = CurTime() + 1
 	end
 
@@ -188,7 +191,7 @@ if(SERVER)then
 			if vis <= 0 or self:WaterLevel() >= 2 then
 				JMod.Hint(self.Owner, "solar panel no sun")
 			elseif self:GetProgress() < 100 then
-				local rate = math.Round(2.5 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
+				local rate = math.Round(1 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
 				self:SetProgress(self:GetProgress() + rate)
 			end
 
@@ -201,6 +204,14 @@ if(SERVER)then
 			return true
 		end
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextUse = Time + math.random(0.1, 0.5)
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.SolarCellModel = JMod.MakeModel(self, "models/hunter/plates/plate3x5.mdl", "models/mat_jack_gmod_solarcells", .5)

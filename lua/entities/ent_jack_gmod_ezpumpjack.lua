@@ -284,6 +284,13 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		self.NextResourceThinkTime = Time + math.random(0.1, 0.5)
+	end
+
 elseif(CLIENT)then
 	function ENT:Initialize()
 		self.MachineryBox = JMod.MakeModel(self, "models/hunter/blocks/cube05x105x05.mdl")

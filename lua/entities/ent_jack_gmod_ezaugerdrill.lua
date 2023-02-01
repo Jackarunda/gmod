@@ -110,7 +110,7 @@ if(SERVER)then
 				if(IsValid(self.Weld) and self.DepositKey)then
 					self:TurnOn(self.Owner)
 				else
-					if self:GetState() > 0 then
+					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
 					JMod.Hint(self.Owner, "machine mounting problem")
@@ -272,6 +272,15 @@ if(SERVER)then
 		local spawnVec = self:WorldToLocal(SelfPos + Up * 50 - Right * 50)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Right * 100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextResourceThinkTime = 0
+		ent.NextEffectThinkTime = 0
+		ent.NextOSHAthinkTime = 0
 	end
 
 elseif(CLIENT)then

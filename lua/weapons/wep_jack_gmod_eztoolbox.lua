@@ -497,12 +497,21 @@ function SWEP:PrimaryAttack()
 		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
 			local State = Ent:GetState()
 
+			local PartsDonated = 0
+			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
+			if self:GetBasicParts() > 0 then
+				local RequiredParts = 20
+				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
+
+				PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
+			end
+
 			if State == -1 then
 				self:Msg("device must be repaired before modifying")
 			elseif State ~= 0 then
 				self:Msg("device must be turned off to modify")
 			elseif JMod.HaveResourcesToPerformTask(nil, nil, {
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated
 			}, self) then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
@@ -577,19 +586,29 @@ end
 function SWEP:ModifyMachine(ent, tbl, ammoType)
 	local State = ent:GetState()
 
+	local PartsDonated = 0
+	local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
+	if self:GetBasicParts() > 0 then
+		local RequiredParts = 50
+		local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
+
+		PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
+	end
+
 	if State == -1 then
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
 	elseif JMod.HaveResourcesToPerformTask(nil, nil, {
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated
 	}, self) then
 		JMod.ConsumeResourcesInRange({
-			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50
+			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated
 		}, nil, nil, self)
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
+		self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
 	else
 		self:Msg("needs 50 Basic Parts nearby to perform modification")
 	end
@@ -832,6 +851,11 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	Ent:Activate()
 	Ent:SetResource(amt or 100)
 	JMod.SetOwner(Ent, self.Owner)
+	timer.Simple(.1, function()
+		if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
+			Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
+		end
+	end)
 end
 
 function SWEP:Think()
@@ -929,18 +953,14 @@ function SWEP:Think()
 										if Prog >= 100 then
 											sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
 
-											local i = 0
 											for k, v in pairs(Yield) do
-												timer.Simple(i*0.5, function()
-													local AmtLeft = v
+												local AmtLeft = v
 
-													while AmtLeft > 0 do
-														local Remove = math.min(AmtLeft, 100)
-														self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
-														AmtLeft = AmtLeft - Remove
-													end
-												end)
-												i = i + 1
+												while AmtLeft > 0 do
+													local Remove = math.min(AmtLeft, 100)
+													self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
+													AmtLeft = AmtLeft - Remove
+												end
 											end
 
 											SafeRemoveEntity(Ent)
