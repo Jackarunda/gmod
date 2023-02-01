@@ -1085,6 +1085,37 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetCursor("arrow")
 	local Ent = PlayerDisplay:GetEntity()
 
+	local PDispBT = vgui.Create("DButton", motherFrame)
+	PDispBT:SetPos(200, 30)
+	PDispBT:SetSize(200, 360)
+	PDispBT:SetText("")
+
+	function PDispBT:Paint(w, h)
+		surface.SetDrawColor(0, 0, 0, 0)
+		surface.DrawRect(0, 0, w, h)
+	end
+
+	local entAngs = nil
+	local curDif = nil
+	local lastCurPos = input.GetCursorPos()
+	local doneOnce = false
+
+	function PlayerDisplay:LayoutEntity(ent)
+		if not PDispBT:IsDown() then
+			entAngs = ent:GetAngles()
+			doneOnce = false
+		else
+			if not doneOnce then
+				lastCurPos = input.GetCursorPos()
+				doneOnce = true
+			end
+
+			curDif = input.GetCursorPos() - lastCurPos
+			
+			ent:SetAngles( Angle( 0, entAngs.y + curDif % 360, 0 ) )
+		end
+	end
+
 	Ent:SetSkin(Ply:GetSkin())
 	for k, v in pairs( Ply:GetBodyGroups() ) do
 		local cur_bgid = Ply:GetBodygroup( v.id )
