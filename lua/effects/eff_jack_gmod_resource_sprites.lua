@@ -42,7 +42,7 @@ function EFFECT:Init(data)
 	self.Origin = data:GetOrigin()
 	self.Scale = data:GetScale()
 	local SurfaceProp = data:GetSurfaceProp()
-	self.Speed = math.Rand(.75, 1.5)
+	self.Speed = math.Rand(.9, 1.1)
 	self.LifeTime = self.Scale * math.Rand(1, 2)
 
 	if SurfaceProp == 0 then
@@ -113,7 +113,7 @@ function EFFECT:Think()
 		end
 
 		if IsValid(Phys) then
-			Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
+			Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
 		end
 	end
 

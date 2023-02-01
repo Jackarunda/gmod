@@ -934,7 +934,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
-			for i = 1, 10 * amt do
+			for i = 1, 7 * amt do
 				local whee = EffectData()
 				whee:SetOrigin(fromPoint)
 				if toPoint then

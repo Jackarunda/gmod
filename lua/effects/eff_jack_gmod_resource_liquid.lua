@@ -40,7 +40,7 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	self.Radius = data:GetRadius()
 	local SurfaceProp = data:GetSurfaceProp()
-	self.Speed = math.Rand(.75, 1.5)
+	self.Speed = math.Rand(.9, 1.1)
 
 	if SurfaceProp == 0 then
 		self.Target = nil -- directionless explosion
@@ -111,7 +111,7 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * 30 * self.Speed - Phys:GetVelocity() / 4)
+		Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
 	end
 
 	return true
