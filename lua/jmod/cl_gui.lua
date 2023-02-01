@@ -1081,6 +1081,7 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetPos(0, 0)
 	PlayerDisplay:SetSize(PDispBG:GetWide(), PDispBG:GetTall())
 	PlayerDisplay:SetModel(Ply:GetModel())
+	PlayerDisplay:SetSkin(Ply:GetSkin())
 	for k,v in pairs( Ply:GetBodyGroups() ) do
 		local ent = PlayerDisplay.Entity
 		local cur_bgid = Ply:GetBodygroup( v.id )

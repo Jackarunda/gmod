@@ -168,9 +168,7 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					for i = 1, self:GetResource() / 10 do
-						self:UseEffect(Pos, game.GetWorld(), true)
-					end
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
 
 					self:Remove()
 				end
@@ -210,7 +208,7 @@ if SERVER then
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
-				self:UseEffect(self:GetPos(), self)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
 			end
 		elseif self.AltUse and AltPressed then
 			self:AltUse(activator)
