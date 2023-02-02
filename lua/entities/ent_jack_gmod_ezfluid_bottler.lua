@@ -10,7 +10,6 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/props_c17/furnitureboiler001a.mdl"
 ENT.Mass = 200
 --
-ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.MaxPower = 100
 --
