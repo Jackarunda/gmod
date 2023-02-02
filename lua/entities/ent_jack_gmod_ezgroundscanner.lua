@@ -57,17 +57,16 @@ if(SERVER)then
 		self.Snd3:SetSoundLevel(100)
 		self:InitPerfSpecs()
 	end
+
 	function ENT:TurnOn(activator)
 		if(self:GetElectricity()>0)then
 			self:SetState(JMod.EZ_STATE_ON)
-			self:EmitSound("snd_jack_metallicclick.wav",50,100)
-			self.Snd1:PlayEx(1,80)
-			self.Snd2:PlayEx(1,80)
-			self.Snd3:PlayEx(1,80)
+			self:SFX("snd_jack_metallicclick.wav")
 		else
 			JMod.Hint(activator,"nopower")
 		end
 	end
+
 	function ENT:TurnOff()
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:EmitSound("snd_jack_metallicclick.wav",50,100)
@@ -76,6 +75,7 @@ if(SERVER)then
 		self.Snd3:Stop()
 		self:SetProgress(0)
 	end
+
 	function ENT:Use(activator)
 		local State=self:GetState()
 		JMod.Hint(activator,"ground scanner")
@@ -100,6 +100,7 @@ if(SERVER)then
 			activator:PickupObject(self)
 		end
 	end
+
 	local function FindNaturalResourcesInRange(pos,rng,tbl)
 		rng=rng*52 -- meters to source units
 		local Res={}
@@ -116,6 +117,7 @@ if(SERVER)then
 		end
 		return Res
 	end
+
 	function ENT:CanScan()
 		if(self:GetVelocity():Length()<10)then
 			local Tr=util.TraceLine({
@@ -127,6 +129,7 @@ if(SERVER)then
 		end
 		return false
 	end
+
 	function ENT:Think()
 		local State=self:GetState()
 		if(State==JMod.EZ_STATE_BROKEN)then
@@ -154,6 +157,7 @@ if(SERVER)then
 		self:NextThink(CurTime()+.5)
 		return true
 	end
+
 	function ENT:SFX(snd)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
@@ -161,45 +165,57 @@ if(SERVER)then
 		self:EmitSound(snd,60,100)
 		timer.Simple(1,function()
 			if(IsValid(self) and self:GetState()==JMod.EZ_STATE_ON)then
-				self.Snd1:PlayEx(1,80)
-				self.Snd2:PlayEx(1,80)
-				self.Snd3:PlayEx(1,80)
+				Grade = self:GetGrade()
+				VolMod = 1 * Grade
+				self.Snd1:PlayEx(VolMod, 80)
+				self.Snd2:PlayEx(VolMod, 80)
+				self.Snd3:PlayEx(VolMod, 80)
 			end
 		end)
 	end
+
 	function ENT:FinishScan()
-		local Pos,Results=self:GetPos(),{}
+		local Pos, Results, Grade = self:GetPos(), {}, self:GetGrade()
 		table.Add(Results,FindNaturalResourcesInRange(Pos,self.ScanRange,JMod.NaturalResourceTable))
-		for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
-			if not(v==self)then
-				if(v.GetPhysicsObject)then
-					local AnomalyPos=v:LocalToWorld(v:OBBCenter())
-					if((Pos.z+5)>=AnomalyPos.z)then
-						local Phys=v:GetPhysicsObject()
+		if Grade > 1 then
+			for k,v in pairs(ents.FindInSphere(Pos,self.ScanRange*52))do
+				if v == self then continue end
+				if IsValid(v) then
+					local AnomalyPos = v:LocalToWorld(v:OBBCenter())
+					if (Pos.z + 64) >= AnomalyPos.z then
+						local Phys = v:GetPhysicsObject()
 						if(v.EZscannerDanger)then
-							table.insert(Results,{
-								typ="DANGER",
-								pos=AnomalyPos,
-								siz=20
+							table.insert(Results, {
+								typ = "DANGER",
+								pos = AnomalyPos,
+								siz = 20
 							})
-						elseif(IsValid(Phys))then
-							local Mat=Phys:GetMaterial()
-							if(table.HasValue(self.PhysMatDetectionWhitelist,Mat) and Phys:GetMass()>=20)then
-								local Class=v:GetClass()
+						elseif IsValid(Phys) then
+							local Mat = Phys:GetMaterial()
+							if table.HasValue(self.PhysMatDetectionWhitelist, Mat) and (Phys:GetMass() >= 20) then
+								local Class = v:GetClass()
 								if not(string.find(Class,"prop_door") or string.find(Class,"prop_dynamic"))then
-									if(math.Round((math.random(1,3000)))>=3000)then
-										table.insert(Results,{
-											typ="SMILEY",
-											pos=AnomalyPos,
-											siz=30
+									if math.Round(math.random(1, 3000)) >= 3000 then
+										table.insert(Results, {
+											typ = "SMILEY",
+											pos = AnomalyPos,
+											siz = 30
 										})
 									else
-										table.insert(Results,{
-											typ="ANOMALY",
-											pos=AnomalyPos,
-											siz=180
+										table.insert(Results, {
+											typ = "ANOMALY",
+											pos = AnomalyPos,
+											siz = 180
 										})
 									end
+								end
+							elseif v:IsPlayer() then
+								if ((v.EZarmor) and (v.EZarmor.totalWeight >= 100 / Grade)) then
+									table.insert(Results, {
+										typ = "ANOMALY",
+										pos = AnomalyPos,
+										siz = 180
+									})
 								end
 							end
 						end
@@ -228,11 +244,13 @@ if(SERVER)then
 		net.WriteTable(Results)
 		net.Broadcast()
 	end
+
 	function ENT:OnRemove()
 		self.Snd1:Stop()
 		self.Snd2:Stop()
 		self.Snd3:Stop()
 	end
+
 elseif(CLIENT)then
 	ENT.DSU=0 -- Display Start Up, a float that increases over time to allow UI elements to appear in sequence
 	ENT.LastState=0
@@ -258,7 +276,7 @@ elseif(CLIENT)then
 		--
 		self:DrawModel()
 		--
-		local BasePos=SelfPos+Up*32
+		local BasePos=SelfPos+Forward*2
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
@@ -268,7 +286,7 @@ elseif(CLIENT)then
 		if(DetailDraw)then
 			local TankAng=SelfAng:GetCopy()
 			TankAng:RotateAroundAxis(Right,-90)
-			JMod.RenderModel(self.Tank, SelfPos+Forward*2,TankAng, Vector(.12, .12, .12), nil, JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.Tank, BasePos,TankAng, Vector(.12, .12, .12), nil, JMod.EZ_GRADE_MATS[Grade])
 			if((Closeness<30000)and(State==JMod.EZ_STATE_ON))then
 				local DisplayAng,Vary=SelfAng:GetCopy(),(math.sin(CurTime()*5)/2+.5)^.25
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(),180)
