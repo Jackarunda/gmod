@@ -738,6 +738,21 @@ elseif SERVER then
 		end
 	end, nil, "Switches your current ammo type for your EZ weapon.")
 
+	local IsAmmoOnTable = function(ammoName, tableToCheck)
+		if not ammoName then return false end
+		local IsListed = false
+		for k, v in ipairs(tableToCheck) do
+			if ammoName == v then
+				IsListed = true
+				break
+			elseif string.find(v, '%*$') then
+				IsListed = (string.find(ammoName, '^'..string.sub(v, 1, -2)) ~= nil)
+				break
+			end
+		end
+		return IsListed
+	end
+
 	function JMod.GiveAmmo(ply, ent, noRemove)
 		-- it's a resource box
 		if ent.EZsupplies then
@@ -750,10 +765,10 @@ elseif SERVER then
 				local IsMunitionBox = ent.EZsupplies == "munitions"
 
 				--[[ PRIMARY --]]
-				PrimMax = PrimMax * JMod.Config.AmmoCarryLimitMult
-				local IsPrimMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, PrimName)
-				if (IsPrimMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, PrimName)) then
-					if PrimType and (PrimType ~= -1) then
+				if PrimName then
+					PrimMax = PrimMax * JMod.Config.AmmoCarryLimitMult
+					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.AmmoTypesThatAreMunitions)
+					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.WeaponAmmoBlacklist)) then
 						if PrimSize == -1 then
 							PrimSize = -PrimSize
 						end
@@ -781,11 +796,11 @@ elseif SERVER then
 				end
 				
 				if ent:GetResource() <= 0 then return end
-				SecMax = SecMax * JMod.Config.AmmoCarryLimitMult
 				--[[ Secondary --]]
-				local IsSecMunitions = table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, SecName)
-				if (IsSecMunitions == IsMunitionBox) and not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, SecName)) then
-					if SecType and (SecType ~= -1) then
+				if SecName then
+					SecMax = SecMax * JMod.Config.AmmoCarryLimitMult
+					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.AmmoTypesThatAreMunitions)
+					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.WeaponAmmoBlacklist)) then
 						if SecSize == -1 then
 							SecSize = -SecSize
 						end
