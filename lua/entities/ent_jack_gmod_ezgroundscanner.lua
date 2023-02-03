@@ -165,11 +165,9 @@ if(SERVER)then
 		self:EmitSound(snd,60,100)
 		timer.Simple(1,function()
 			if(IsValid(self) and self:GetState()==JMod.EZ_STATE_ON)then
-				Grade = self:GetGrade()
-				VolMod = 1 * Grade
-				self.Snd1:PlayEx(VolMod, 80)
-				self.Snd2:PlayEx(VolMod, 80)
-				self.Snd3:PlayEx(VolMod, 80)
+				self.Snd1:PlayEx(1, 80)
+				self.Snd2:PlayEx(1, 80)
+				self.Snd3:PlayEx(1, 80)
 			end
 		end)
 	end
