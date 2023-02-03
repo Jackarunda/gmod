@@ -14,7 +14,7 @@ local SpecialIcons = {
 
 local RankIcons = {Material("ez_rank_icons/grade_1.png"), Material("ez_rank_icons/grade_2.png"), Material("ez_rank_icons/grade_3.png"), Material("ez_rank_icons/grade_4.png"), Material("ez_rank_icons/grade_5.png")}
 
-local SelectionMenuIcons = {}
+JMod.SelectionMenuIcons = {}
 local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
 local QuestionMarkIcon = Material("question_mark.png")
 
@@ -391,7 +391,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 			end
 
 			surface.DrawRect(0, 0, w, h)
-			local ItemIcon = SelectionMenuIcons[itemName]
+			local ItemIcon = JMod.SelectionMenuIcons[itemName]
 
 			if ItemIcon then
 				--surface.SetDrawColor(100,100,100,(self.enabled and 255)or 40)
@@ -444,11 +444,11 @@ end
 local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc)
 	-- first, populate icons
 	for name, info in pairs(data) do
-		if not SelectionMenuIcons[name] then
+		if not JMod.SelectionMenuIcons[name] then
 			if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
-				SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
+				JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
 			elseif info.results and file.Exists("materials/entities/" .. tostring(info.results) .. ".png", "GAME") then
-				SelectionMenuIcons[name] = Material("entities/" .. tostring(info.results) .. ".png")
+				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info.results) .. ".png")
 			else
 				-- special logic for random tables and resources and such
 				local itemClass = info.results
@@ -457,24 +457,20 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 					itemClass = itemClass[1]
 				end
 
-				if type(itemClass) == "table" then
-					itemClass = itemClass[1]
-				end
-
 				if itemClass == "RAND" then
-					SelectionMenuIcons[name] = QuestionMarkIcon
+					JMod.SelectionMenuIcons[name] = QuestionMarkIcon
 				elseif type(itemClass) == "string" then
 					local IsResource = false
 
 					for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
 						if v == itemClass then
 							IsResource = true
-							SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
+							JMod.SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
 						end
 					end
 
 					if not IsResource then
-						SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+						JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
 					end
 				end
 			end
