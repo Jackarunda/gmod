@@ -171,6 +171,7 @@ JMod.EZ_GRADE_NAMES = {"basic", "copper", "silver", "gold", "platinum"}
 JMod.EZ_GRADE_UPGRADE_COSTS = {.5, 1, 1.5, 2}
 
 JMod.EZ_UPGRADE_RESOURCE_BLACKLIST = {}
+
 -- State enums
 JMod.EZ_STATE_BROKEN = -1
 JMod.EZ_STATE_OFF = 0
