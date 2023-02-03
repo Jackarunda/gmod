@@ -457,6 +457,10 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 					itemClass = itemClass[1]
 				end
 
+				if type(itemClass) == "table" then
+					itemClass = itemClass[1]
+				end
+
 				if itemClass == "RAND" then
 					JMod.SelectionMenuIcons[name] = QuestionMarkIcon
 				elseif type(itemClass) == "string" then
