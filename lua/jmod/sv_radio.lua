@@ -299,11 +299,8 @@ function JMod.RemoveRadioOutPost(teamID)
 	end
 
 	for k, ply in pairs(player.GetAll()) do
-		local PlyTeam = ply:Team()
-		if (tostring(PlyTeam) == teamID) or (tostring(ply:AccountID()) == teamID) and (PlyTeam ~= 1001) then
-			ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(PlyTeam) .. " has gained a radio outpost.")
-		elseif (PlyTeam == 1001) then
-			ply:PrintMessage(HUD_PRINTTALK, "Player " .. ply:Nick() .. " has gained a radio outpost.")
+		for k, ply in pairs(player.GetAll()) do
+			ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(tonumber(teamID)) .. " has lost a radio outpost.")
 		end
 	end
 end
