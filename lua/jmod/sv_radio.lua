@@ -251,7 +251,7 @@ function JMod.EZradioEstablish(transceiver, teamID)
 			end
 		end
 
-		print(Taken)
+		--print(Taken)
 
 		if not Taken then
 			ChosenStation = id
@@ -279,14 +279,10 @@ end
 
 -- this is on the global table for third-party use
 function JMod.AddNewRadioOutpost(teamID)
-    table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
-    for k, ply in pairs(player.GetAll()) do
-        if (tostring(ply:Team()) == teamID) or tostring(ply:AccountID()) == teamID and (ply:Team() ~= 1001) then
-            ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(teamID) .. " has gained a radio outpost.")
-        elseif ply:Team() == 1001 then
-            ply:PrintMessage(HUD_PRINTTALK, "Player " .. ply:Nick() .. " has gained a radio outpost.")
-        end
-    end
+	table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
+	for k, ply in pairs(player.GetAll()) do
+		ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(tonumber(teamID)) .. " has gained a radio outpost.")
+	end
 end
 
 -- this is also on the global table for third-party use
@@ -303,12 +299,13 @@ function JMod.RemoveRadioOutPost(teamID)
 	end
 
 	for k, ply in pairs(player.GetAll()) do
-        if (tostring(ply:Team()) == teamID) or (tostring(ply:AccountID()) == teamID) and (ply:Team() ~= 1001) then
-            ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(teamID) .. " has lost a radio outpost.")
-        elseif ply:Team() == 1001 then
-            ply:PrintMessage(HUD_PRINTTALK, "Player " .. ply:Nick() .. " has lost a radio outpost.")
-        end
-    end
+		local PlyTeam = ply:Team()
+		if (tostring(PlyTeam) == teamID) or (tostring(ply:AccountID()) == teamID) and (PlyTeam ~= 1001) then
+			ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(PlyTeam) .. " has gained a radio outpost.")
+		elseif (PlyTeam == 1001) then
+			ply:PrintMessage(HUD_PRINTTALK, "Player " .. ply:Nick() .. " has gained a radio outpost.")
+		end
+	end
 end
 
 concommand.Add("jmod_debug_addoutpost", function(ply, cmd, args)
