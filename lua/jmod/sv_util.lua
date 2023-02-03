@@ -934,7 +934,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
-			for i = 1, 7 * amt do
+			for i = 1, math.ceil(7 * amt * JMod.Config.SupplyEffectMult) do
 				local whee = EffectData()
 				whee:SetOrigin(fromPoint)
 				if toPoint then
@@ -943,7 +943,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 				whee:SetFlags(JMod.ResourceToIndex[typ])
 				whee:SetMagnitude(spread)
 				whee:SetRadius(upSpeed)
-				whee:SetScale(scale * JMod.Config.SupplyEffectMult)
+				whee:SetScale(scale)
 
 				if toPoint then
 					whee:SetSurfaceProp(1) -- we have somewhere to go

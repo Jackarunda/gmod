@@ -23,7 +23,7 @@ ENT.DynamicPerfSpecs = {
 }
 --
 --ENT.WhitelistedResources = {}
-ENT.BlacklistedResources = {"water", "oil", "geothermal", "geo"}
+ENT.BlacklistedResources = {"water", "oil", "geothermal"}
 
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---

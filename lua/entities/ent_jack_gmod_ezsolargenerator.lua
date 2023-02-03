@@ -9,7 +9,6 @@ ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 --
-ENT.MaxDurability = 50
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 --
 ENT.StaticPerfSpecs = {
@@ -43,7 +42,7 @@ if(SERVER)then
 
 	function ENT:CustomInit()
 		self.EZupgradable = true
-		self:SetState(STATE_ON)
+		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0
 		local mapName = game.GetMap()
@@ -126,7 +125,8 @@ if(SERVER)then
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		timer.Simple(600, self:TurnOff())
+		timer.Create("SolarAutoShutOff" .. tostring(self:EntIndex()), 600, 1, function() self:TurnOff() end)
+		timer.Start("SolarAutoShutOff" .. tostring(self:EntIndex()))
 	end
 
 	function ENT:TurnOff()
@@ -135,6 +135,7 @@ if(SERVER)then
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.NextUse = CurTime() + 1
+		timer.Remove("SolarAutoShutOff" .. tostring(self:EntIndex()))
 	end
 
 	function ENT:GetLightAlignment()

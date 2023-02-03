@@ -168,7 +168,7 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
 
 					self:Remove()
 				end
