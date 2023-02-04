@@ -547,6 +547,6 @@ elseif(CLIENT)then
 					self.Mdl:Remove()
 				end
 			end
-		end
+		end)
 	end
 end
