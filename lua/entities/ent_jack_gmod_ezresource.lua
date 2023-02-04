@@ -226,6 +226,13 @@ if SERVER then
 		if self.CustomThink then return self:CustomThink() end
 	end
 
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetOwner(self, ply)
+		ent.NextLoad = Time + math.random(1, 5)
+		ent.NextCombine = Time + math.random(1, 5)
+	end
+
 	function ENT:OnRemove()
 	end
 	--aw fuck you

@@ -513,7 +513,7 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then

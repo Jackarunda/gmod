@@ -365,10 +365,10 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		ent.NextWhine = Time + math.random(0.1, 0.5)
-		ent.NextRealThink = Time + math.random(0.1, 0.5)
-		ent.NextUseTime = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		ent.NextWhine = Time + math.Rand(0, 3)
+		ent.NextRealThink = Time + math.Rand(0, 3)
+		ent.NextUseTime = Time + math.Rand(0, 3)
 	end
 elseif(CLIENT)then
 	function ENT:CustomInit()
