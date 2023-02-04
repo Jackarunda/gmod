@@ -365,6 +365,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if self:GetState() > STATE_OFF then return end
 		local OldOwner = self.Owner
 		JMod.SetOwner(self, activator)
 

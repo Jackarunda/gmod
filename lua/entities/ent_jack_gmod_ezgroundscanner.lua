@@ -59,7 +59,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if(self:GetElectricity()>0)then
+		if self:GetState() > JMod.EZ_STATE_OFF then return end
+		if self:GetElectricity() > 0 then
 			self:SetState(JMod.EZ_STATE_ON)
 			self:SFX("snd_jack_metallicclick.wav")
 		else

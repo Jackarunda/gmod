@@ -59,6 +59,7 @@ if(SERVER)then
 		self.NextEnvThink = 0
 	end
 	function ENT:TurnOn(activator)
+		if self:GetState() > STATE_OFF then return end
 		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
 			return

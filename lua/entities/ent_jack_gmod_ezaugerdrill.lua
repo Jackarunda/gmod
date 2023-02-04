@@ -120,7 +120,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetElectricity() > 0 and IsValid(self.Weld) and self.DepositKey) then
+		if self:GetState() > STATE_OFF then return end
+		if (self:GetElectricity() > 0) and (IsValid(self.Weld)) and (self.DepositKey) then
 			self:SetState(STATE_RUNNING)
 			self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 			self.SoundLoop:SetSoundLevel(60)

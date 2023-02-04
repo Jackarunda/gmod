@@ -125,6 +125,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if self:GetState() > STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)

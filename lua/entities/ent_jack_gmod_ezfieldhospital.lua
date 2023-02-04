@@ -88,7 +88,7 @@ if(SERVER)then
 	end
 	
 	function ENT:TurnOn()
-		if self:GetState() == STATE_ON then return end
+		if self:GetState() > STATE_OFF then return end
 
 		if self:GetElectricity() <= 0 then
 			JMod.Hint(activator, "nopower")

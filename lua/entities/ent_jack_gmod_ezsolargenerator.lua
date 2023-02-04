@@ -117,7 +117,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if (self:GetState() == STATE_ON) then return end
+		if self:GetState() > STATE_OFF then return end
 		if (self:CheckSky() > 0) then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
