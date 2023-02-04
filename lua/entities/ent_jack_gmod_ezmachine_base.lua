@@ -535,14 +535,22 @@ elseif(CLIENT)then
 	end
 
 	function ENT:OnRemove()
-		if(self.CSmodels)then
-			for k,v in pairs(self.CSmodels)do
-				if(IsValid(v))then
-					v:Remove()
+		if self.CSmodels then
+			local CSModels = table.Copy(self.CSmodels)
+			timer.Simple(0, function()
+			if self:IsValid() then return end
+				for k,v in pairs(self.CSmodels)do
+					if(IsValid(v))then
+						v:Remove()
+					end
 				end
-			end
-		elseif(self.Mdl)then
-			self.Mdl:Remove()
+			end)
+		elseif self.Mdl then
+			local Mdl = self.Mdl
+				timer.Simple(0, function()
+					if self:IsValid() then return end
+					self.Mdl:Remove()
+				end)
 		end
 	end
 end
