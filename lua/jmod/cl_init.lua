@@ -437,6 +437,23 @@ function JMod.RenderModel(mdl, pos, ang, scale, color, mat, fullbright, transluc
 	render.SetBlend(1)
 end
 
+function JMod.SafeRemoveCSModel(ent, mdl, tab)
+	if tab and istable(tab) then
+		local ModelsToRemove = table.FullCopy(tab)
+		timer.Simple(0, function()
+			if IsValid(ent) then return end
+			for k, v in pairs(ModelsToRemove)do
+				if(IsValid(v))then
+					v:Remove()
+				end
+			end
+		end)
+	end
+	if mdl and IsValid(mdl) then
+		mdl:Remove()
+	end
+end
+
 local FRavg, FRcount = 0, 0
 
 function JMod.MeasureFramerate()

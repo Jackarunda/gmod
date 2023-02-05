@@ -534,23 +534,9 @@ elseif(CLIENT)then
 		if(self.CustomInit)then self:CustomInit() end
 	end
 
-		function ENT:OnRemove()
-		if self.CSmodels then
-			local CSModels = table.Copy(self.CSmodels)
-			timer.Simple(0, function()
-				if IsValid(self) then return end
-					for k,v in pairs(CSmodels)do
-						if(IsValid(v))then
-							v:Remove()
-						end
-					end
-				end)
-		elseif self.Mdl then
-			local Mdl = self.Mdl
-			timer.Simple(0, function()
-				if self:IsValid() then return end
-				self.Mdl:Remove()
-			end)
+	function ENT:OnRemove()
+		if self.Mdl or self.CSmodels then
+			JMod.SafeRemoveCSModel(self, IsValid(self.Mdl) and self.Mdl, self.CSmodels)
 		end
 	end
 end
