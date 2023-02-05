@@ -243,6 +243,9 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .1,
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .05
 	},
+    wood_solid = {
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = .7
+	},
 	metal = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .3,
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2
