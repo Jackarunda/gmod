@@ -91,7 +91,7 @@ if(SERVER)then
 				net.WriteTable(self.Craftables)
 				net.Send(activator)
 			else
-				JMod.Hint(activator, "refill")
+				JMod.Hint(activator, "refillfab")
 			end
 		else
 			JMod.Hint(activator, "destroyed")

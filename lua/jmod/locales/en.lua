@@ -190,6 +190,10 @@
     ["hint ore scan"] = "solid resource deposits can be found with a ground scanner",
     ["hint liquid scan"] = "liquid resource reserves can be found with a ground scanner",
     ["hint ent_jack_gmod_ezlfg"] = "the liquid fuel generator turns fuel into power",
+    ["hint ent_jack_gmod_ezfabricator"] = "the fabricator uses a heavy variety of resources to create parts",
+    ["hint refillfab"] = "fill the fabricator with power, gas, chemicals and water to enable making parts",
+    ["hint ent_jack_gmod_ezgroundscanner"] = "the ground scanner detects resource deposits, metallic props and mines",
+    ["hint ent_jack_gmod_ezsolargenerator"] = "the solar panel produces power when aimed at the map's sun without obstruction",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",

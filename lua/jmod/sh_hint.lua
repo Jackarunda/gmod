@@ -416,7 +416,13 @@ JMod.Hints = {
 	},
     ["ent_jack_gmod_ezlfg"] = {
 		LangKey = "hint ent_jack_gmod_ezlfg"
-    },
+	},
+	["ent_jack_gmod_ezfabricator"] = {
+		LangKey = "hint ent_jack_gmod_ezfabricator"
+	},
+	["ent_jack_gmod_ezgroundscanner"] = {
+		LangKey = "hint ent_jack_gmod_ezgroundscanner"
+	},
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",
@@ -565,6 +571,9 @@ JMod.Hints = {
 	["machine mounting problem"] = {
 		LangKey = "hint machine mounting problem",
 		RepeatCount = 20
+	},
+	["refillfab"] = {
+		LangKey = "hint refillfab"
 	},
 	-- Weapons
 	["weapon steadiness"] = {
