@@ -477,6 +477,7 @@ function SWEP:PrimaryAttack()
 										JMod.SetOwner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
+										JMod.Hint(self.Owner, Class)
 										self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (buildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
 										self:SetGas(math.Clamp(self:GetGas() - 6 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
 									end
