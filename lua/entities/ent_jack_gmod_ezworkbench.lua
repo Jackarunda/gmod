@@ -30,12 +30,15 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys=self.Entity:GetPhysicsObject()
+		local phys = self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
-		---
-		--self:SetGas(self.MaxGas)
+		if self.SpawnFull then
+			self:SetGas(self.MaxGas)
+		else
+			self:SetGas(0)
+		end
 		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end

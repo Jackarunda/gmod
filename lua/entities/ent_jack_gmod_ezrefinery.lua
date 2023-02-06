@@ -42,7 +42,11 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetAngles(Angle(0, 0, 0))
 		self:SetProgress(0)
-		self:SetOil(0)
+		if self.SpawnFull then
+			self:SetOil(self.MaxOil)
+		else
+			self:SetOil(0)
+		end
 		self.LastOilTime = 0
 		self.NextEffThink = 0
 		self.NextRefineThink = 0

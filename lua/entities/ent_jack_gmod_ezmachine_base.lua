@@ -210,6 +210,9 @@ if(SERVER)then
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetOwner(ent,ply)
+		if JMod.Config.SpawnMachinesFull then
+			ent.SpawnFull = true
+		end
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -242,7 +245,7 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
-		if GetConVar("sv_cheats"):GetBool() then
+		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
 		else
 			self:SetElectricity(0)

@@ -47,9 +47,15 @@ if(SERVER)then
 		if not(self.Owner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
 		---
-		self:SetGas(0)
-		self:SetChemicals(0)
-		self:SetWater(0)
+		if self.SpawnFull then
+			self:SetGas(self.MaxGas)
+			self:SetChemicals(self.MaxChemicals)
+			self:SetWater(self.MaxWater)
+		else
+			self:SetGas(0)
+			self:SetChemicals(0)
+			self:SetWater(0)
+		end
 	end
 
 	function ENT:UpdateConfig()
