@@ -450,7 +450,13 @@ function JMod.SafeRemoveCSModel(ent, mdl, tab)
 		end)
 	end
 	if mdl and IsValid(mdl) then
-		mdl:Remove()
+		local ModelToRemove = mdl
+		timer.Simple(0, function()
+			if IsValid(ent) then return end
+			if(IsValid(v))then
+				mdl:Remove()
+			end
+		end)
 	end
 end
 

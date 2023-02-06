@@ -45,6 +45,7 @@ if(SERVER)then
 		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0
+		self.TimerName = ""
 		local mapName = game.GetMap()
 	end
 
@@ -125,8 +126,9 @@ if(SERVER)then
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		timer.Create("SolarAutoShutOff" .. tostring(self:EntIndex()), 600, 1, function() self:TurnOff() end)
-		timer.Start("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		self.TimerName = ("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		timer.Create(self.TimerName, 600, 1, function() self:TurnOff() end)
+		timer.Start(self.TimerName)
 	end
 
 	function ENT:TurnOff()
@@ -135,7 +137,7 @@ if(SERVER)then
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.NextUse = CurTime() + 1
-		timer.Remove("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		timer.Remove("SolarAutoShutOff" .. self.TimerName)
 	end
 
 	function ENT:GetLightAlignment()
