@@ -82,20 +82,6 @@ if SERVER then
 		return false
 	end
 
-	function ENT:CanSee(ent)
-		if not IsValid(ent) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter()) + vector_up
-
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
-		})
-
-		return not Tr.Hit
-	end
-
 	function ENT:Think()
 		local Time = CurTime()
 
@@ -107,7 +93,7 @@ if SERVER then
 
 				if IsValid(Phys) and not (v == self) and not (Class == self.ClassName) and not IsBlackListed(Class) then
 					if v:IsPlayer() or v:IsNPC() or v:IsVehicle() then
-						if self:CanSee(v) and JMod.ShouldAttack(self, v, nil, true) then
+						if JMod.ClearLoS(self, v) and JMod.ShouldAttack(self, v, nil, true) then
 							table.insert(Targets, v)
 						end
 					end

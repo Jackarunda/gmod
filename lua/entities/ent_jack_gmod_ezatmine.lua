@@ -61,6 +61,7 @@ if SERVER then
 		---
 		self:SetState(STATE_OFF)
 		self.NextDet = 0
+		self.StillTicks = 0
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
@@ -73,7 +74,7 @@ if SERVER then
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMING)
+			self:SetState(STATE_ARMED)
 		end
 	end
 
@@ -134,6 +135,7 @@ if SERVER then
 		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 		timer.Simple(math.Rand(.1, .2) * JMod.Config.MineDelay, function()
+			if not IsValid(self) then return end
 			local SelfPos = self:LocalToWorld(self:OBBCenter())
 			local Eff = "100lb_ground"
 
@@ -193,13 +195,30 @@ if SERVER then
 		end)
 	end
 
-	function ENT:Arm(armer)
+	function ENT:Arm(armer, autoColor)
 		local State = self:GetState()
 		if State ~= STATE_OFF then return end
 		JMod.Hint(armer, "mine friends")
 		JMod.SetOwner(self, armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 90)
+
+		if autoColor then
+			print("we be autocoloring")
+			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
+
+			if Tr.Hit then
+				local Info = JMod.HitMatColors[Tr.MatType]
+
+				if Info then
+					self:SetColor(Info[1])
+
+					if Info[2] then
+						self:SetMaterial(Info[2])
+					end
+				end
+			end
+		end
 
 		timer.Simple(3, function()
 			if IsValid(self) then
@@ -214,20 +233,6 @@ if SERVER then
 				end
 			end
 		end)
-	end
-
-	function ENT:CanSee(ent)
-		if not IsValid(ent) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter()) + vector_up
-
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
-		})
-
-		return not Tr.Hit
 	end
 
 	function ENT:Think()
@@ -251,6 +256,22 @@ if SERVER then
 
 				return true
 			end
+		elseif self.AutoArm then
+			local Vel = self:GetPhysicsObject():GetVelocity()
+
+			if Vel:Length() < 1 then
+				self.StillTicks = self.StillTicks + 1
+			else
+				self.StillTicks = 0
+			end
+
+			if self.StillTicks > 4 then
+				self:Arm(self.Owner or game.GetWorld(), true)
+			end
+
+			self:NextThink(Time + .5)
+
+			return true
 		end
 	end
 
