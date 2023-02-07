@@ -130,6 +130,7 @@ if SERVER then
 
 		for i = 1, 4 do
 			timer.Simple(i, function()
+				if not IsValid(self) then return end
 				if i < 4 then
 					self:EmitSound("snd_jack_metallicclick.wav", 50, 100)
 				else

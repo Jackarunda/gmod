@@ -640,9 +640,19 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
-	if ent:IsNPC() or ent:IsPlayer() then return {}, "" end
-	if ent.EZsupplies or ent.EZammo then return {}, "no" end
-	if Class == "ent_jack_gmod_eztoolbox" then return {}, "STOP YOU MORON" end
+	if ent:IsNPC() or ent:IsPlayer() then return {}, (ent.PrintName and tostring(ent.PrintName .. " doesn't want to be salvaged")) or ".." end
+	local AnnoyedReplyTable = {
+		"no",
+		"...no",
+		"STOP YOU MORON",
+		"I have become wrench, destoyer of entities",
+		"Stop it!",
+		"You can't salvage this",
+		"Stop trying to salvage this already",
+	}
+	if ent.EZsupplies or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
+	if Class == "ent_jack_gmod_eztoolbox" then return {}, table.Random(AnnoyedReplyTable) end
+	if Class == "ent_jack_ezcompactbox" then return {}, table.Random(AnnoyedReplyTable) end
 
 	if SERVER then
 		for k, v in pairs(JMod.Config.SalvagingBlacklist) do
