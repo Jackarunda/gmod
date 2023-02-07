@@ -172,7 +172,7 @@ if SERVER then
 					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
 					end
-					SafeRemoveEntityDelayed(self, 0.01)
+					SafeRemoveEntity(self)
 				end
 			end
 		end
