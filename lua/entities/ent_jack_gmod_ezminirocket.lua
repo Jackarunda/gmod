@@ -156,8 +156,8 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/military2/missile/missile_patriot.mdl")
-		self.Mdl:SetMaterial("models/military2/missile/he")
+		self.Mdl = ClientsideModel("models/jmod/explosives/missile/missile_patriot.mdl")
+		self.Mdl:SetSkin(1)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
