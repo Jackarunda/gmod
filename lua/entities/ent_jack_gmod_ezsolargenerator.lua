@@ -37,6 +37,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
+		JMod.Hint(ply, ClassName)
 		return ent
 	end
 
