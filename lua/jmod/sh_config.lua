@@ -118,7 +118,7 @@ function JMod.InitGlobalConfig(forceNew)
 					description = "1 box of advparts used for crafting and upgrading.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezadvparts", 1, 20}
+						{"ent_jack_gmod_ezadvparts", 1, 15}
 					}
 				},
 				["precision parts"] = {
@@ -1065,7 +1065,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 30,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 20,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 10,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
 				},
@@ -1082,7 +1082,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 90,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 60,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 30,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 60,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 90,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
@@ -1093,7 +1093,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Precision Parts, x100"] = {
 				results = "ent_jack_gmod_ezprecparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 20,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 20,
 					[JMod.EZ_RESOURCE_TYPES.SILVER] = 30,
@@ -1108,7 +1108,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezprecparts", 1, 10}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 2,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 2,
 					[JMod.EZ_RESOURCE_TYPES.SILVER] = 3,
@@ -1123,7 +1123,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezadvparts", 1, 50}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 40,
 					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 20,
 					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 40
@@ -1137,7 +1137,7 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezadvparts", 1, 5}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 4,
 					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 2,
 					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 4
