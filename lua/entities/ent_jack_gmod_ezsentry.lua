@@ -204,8 +204,13 @@ if(SERVER)then
 		self:ResetMemory()
 		self:CreateNPCTarget()
 		---
-		self:SetAmmo(0)
-		self:SetCoolant(0)
+		if self.SpawnFull then
+			self:SetAmmo(self.MaxAmmo)
+			self:SetCoolant(self.MaxCoolant)
+		else
+			self:SetAmmo(0)
+			self:SetCoolant(0)
+		end
 	end
 
 	function ENT:ResetMemory()
