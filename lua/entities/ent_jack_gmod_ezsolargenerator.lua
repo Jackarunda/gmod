@@ -128,7 +128,9 @@ if(SERVER)then
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 		self.TimerName = ("SolarAutoShutOff" .. tostring(self:EntIndex()))
-		timer.Create(self.TimerName, 600, 1, function() self:TurnOff() end)
+		timer.Create(self.TimerName, 600, 1, function() 
+			if IsValid(self) then self:TurnOff() end 
+		end)
 		timer.Start(self.TimerName)
 	end
 
