@@ -34,7 +34,7 @@ function TOOL:LeftClick( trace )
 
 		local NewDeposit = {
 			typ = ResourceType,
-			pos = trace.HitPos + Vector(0, 0, 10),
+			pos = trace.HitPos,
 			siz = DepositSize
 		}
 
@@ -54,7 +54,12 @@ function TOOL:LeftClick( trace )
 			elseif ChosenInfo.avgamt then
 				NewDeposit.amt = Amt
 			end
-
+		else
+			if ChosenInfo.avgrate then
+				NewDeposit.rate = ResourceAmt * 0.01
+			elseif ChosenInfo.avgamt then
+				NewDeposit.amt = ResourceAmt 
+			end
 		end
 
 		-- Let's try and fill up nil slots
@@ -65,10 +70,14 @@ function TOOL:LeftClick( trace )
 			end
 		end
 		if GoodIndex then
-			table.insert(JMod.NaturalResourceTable, NewDeposit)
+			table.insert(JMod.NaturalResourceTable, GoodIndex, NewDeposit)
 		else
 			table.insert(JMod.NaturalResourceTable, NewDeposit)
 		end
+		net.Start("JMod_NaturalResources")
+		net.WriteBool(false)
+		net.WriteTable(JMod.NaturalResourceTable)
+		net.Send(self:GetOwner())
 	end
 
 	return true
@@ -114,14 +123,38 @@ local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel( CPanel )
 
-	CPanel:AddControl( "Header", { Description = "#"..prefix..".desc" } )
+	local Header = vgui.Create("DLabel", CPanel)
+	Header:SetText("#"..prefix..".desc")
+	CPanel:AddItem(Header)
 
 	CPanel:AddControl( "ComboBox", { Label = "#"..prefix..".presets", MenuButton = 1, Folder = "resource_deposits", Options = { [ "#preset.default" ] = ConVarsDefault }, CVars = table.GetKeys( ConVarsDefault ) } )
 
-	CPanel:AddControl( "TextBox", { Label = "#"..prefix..".type", Command = "jmod_deposit_type"} )
-	CPanel:AddControl( "Slider", { Label = "#"..prefix..".amt", Command = "jmod_deposit_amount", Min = 0, Max = 100000 } )
-	CPanel:AddControl( "Slider", { Label = "#"..prefix..".size", Command = "jmod_deposit_size", Min = 0, Max = 500 } )
+	local ResourceTypeList = vgui.Create("DListView", CPanel)
+	ResourceTypeList:SetHeight(300)
+	ResourceTypeList:SetMultiSelect(false)
+	ResourceTypeList:AddColumn("#"..prefix..".type")
+	ResourceTypeList:AddLine("random")
+	for _, v in ipairs(NatrualResourceTypes) do 
+		ResourceTypeList:AddLine(v)
+	end
+	ResourceTypeList.OnRowSelected = function( lst, index, pnl )
+		GetConVar("jmod_deposit_type"):SetString(pnl:GetColumnText(1))
+	end
+	CPanel:AddItem(ResourceTypeList)
 
+	local AmountSlider = vgui.Create("DNumSlider")
+	AmountSlider:SetText("#"..prefix..".amt")
+	AmountSlider:SetMinMax(0, 100000)
+	AmountSlider:SetDecimals(0)
+	AmountSlider:SetConVar("jmod_deposit_amount")
+	CPanel:AddItem(AmountSlider)
+
+	local SizeSlider = vgui.Create("DNumSlider")
+	SizeSlider:SetText("#"..prefix..".size")
+	SizeSlider:SetMinMax(0, 1000)
+	SizeSlider:SetDecimals(0)
+	SizeSlider:SetConVar("jmod_deposit_size")
+	CPanel:AddItem(SizeSlider)
 end
 
 if ( CLIENT ) then

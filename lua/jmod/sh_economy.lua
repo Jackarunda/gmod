@@ -1067,6 +1067,7 @@ if SERVER then
 		if not GetConVar("sv_cheats"):GetBool() then return end
 		if IsValid(ply) and not ply:IsSuperAdmin() then return end
 		net.Start("JMod_NaturalResources")
+		net.WriteBool(true)
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
@@ -1083,8 +1084,10 @@ elseif CLIENT then
 	local ShowNaturalResources = false
 
 	net.Receive("JMod_NaturalResources", function()
-		ShowNaturalResources = not ShowNaturalResources
-		print("natural resource display: " .. tostring(ShowNaturalResources))
+		if net.ReadBool() then
+			ShowNaturalResources = not ShowNaturalResources
+			print("natural resource display: " .. tostring(ShowNaturalResources))
+		end
 		JMod.NaturalResourceTable = net.ReadTable()
 	end)
 
