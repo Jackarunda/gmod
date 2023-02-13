@@ -93,6 +93,26 @@ concommand.Add("jmod_insta_upgrade", function(ply)
 	end
 end, nil, "Instantly upgrades upgradable machines you are looking at.")
 
+concommand.Add("jmod_deposits_save", function(ply, cmd, args)
+	if not(IsValid(ply)) and not(ply:IsSuperAdmin()) then return end
+	JMod.SaveDepositConfig(tostring(args[1]))
+end, nil, "Saves your current map deposit layout.")
+
+concommand.Add("jmod_deposits_load", function(ply, cmd, args)
+	if not(IsValid(ply)) and not(ply:IsSuperAdmin()) then return end
+	local Info = JMod.LoadDepositConfig(tostring(args[1]))
+	if isstring(Info) then
+		print(Info)
+		return
+	else
+		JMod.NaturalResourceTable = Info
+		net.Start("JMod_NaturalResources")
+		net.WriteBool(false)
+		net.WriteTable(JMod.NaturalResourceTable)
+		net.Send(ply)
+	end
+end, nil, "Saves your current map deposit layout.")
+
 concommand.Add("jmod_ez_inv", function(ply, cmd, args)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	JMod.EZ_Open_Inventory(ply)

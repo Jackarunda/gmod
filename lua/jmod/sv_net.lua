@@ -19,6 +19,7 @@ util.AddNetworkString("JMod_Bleeding")
 util.AddNetworkString("JMod_SFX")
 util.AddNetworkString("JMod_Ravebreak")
 util.AddNetworkString("JMod_NaturalResources")
+util.AddNetworkString("JMod_SaveLoadDeposits")
 util.AddNetworkString("JMod_ResourceScanner")
 util.AddNetworkString("JMod_VisualGunRecoil")
 util.AddNetworkString("JMod_EquippableSync")
@@ -145,4 +146,17 @@ net.Receive("JMod_ModifyMachine", function(ln, ply)
 	local Wepolini = ply:GetActiveWeapon()
 	if not (Wepolini and Wepolini.ModifyMachine) then return end
 	Wepolini:ModifyMachine(Ent, Tbl, AmmoType)
+end)
+
+net.Receive("JMod_SaveLoadDeposits", function(ln, ply) 
+	local Operation = net.ReadString()
+	local EntryID = net.ReadString()
+	if IsValid(ply) then 
+		--print(Operation, EntryID)
+		if string.lower(Operation) == "save" then
+		ply:ConCommand("jmod_deposits_save "..EntryID)
+		elseif string.lower(Operation) == "load" then
+			ply:ConCommand("jmod_deposits_load "..EntryID)
+		end
+	end
 end)

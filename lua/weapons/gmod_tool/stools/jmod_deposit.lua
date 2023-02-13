@@ -142,19 +142,59 @@ function TOOL.BuildCPanel( CPanel )
 	end
 	CPanel:AddItem(ResourceTypeList)
 
-	local AmountSlider = vgui.Create("DNumSlider")
+	local AmountSlider = vgui.Create("DNumSlider", CPanel)
 	AmountSlider:SetText("#"..prefix..".amt")
 	AmountSlider:SetMinMax(0, 100000)
 	AmountSlider:SetDecimals(0)
 	AmountSlider:SetConVar("jmod_deposit_amount")
 	CPanel:AddItem(AmountSlider)
 
-	local SizeSlider = vgui.Create("DNumSlider")
+	local SizeSlider = vgui.Create("DNumSlider", CPanel)
 	SizeSlider:SetText("#"..prefix..".size")
 	SizeSlider:SetMinMax(0, 1000)
 	SizeSlider:SetDecimals(0)
 	SizeSlider:SetConVar("jmod_deposit_size")
 	CPanel:AddItem(SizeSlider)
+
+	local MenuButton = vgui.Create("DButton", CPanel)
+	MenuButton:SetText("#"..prefix..".saveload")
+	MenuButton:SetMouseInputEnabled(true)
+	function MenuButton:DoClick()
+		local MotherFrame = vgui.Create("DFrame")
+		MotherFrame:SetTitle("JMod Resource Deposit Save/Load")
+		MotherFrame:SetSize(500, 200)
+		MotherFrame:Center()
+		MotherFrame:MakePopup()
+
+		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
+		local NameEntry = vgui.Create("DTextEntry", MotherFrame)
+		NameEntry:SetPos((W / 2) - 200, (H / 2) - 20)
+		NameEntry:SetSize(400, 20)
+		NameEntry:SetText("Enter save ID here")
+
+		local SaveButton = vgui.Create("DButton", MotherFrame)
+		SaveButton:SetPos((W * 0.2) - 50, H * 0.8)
+		SaveButton:SetSize(100, 30)
+		SaveButton:SetText("SAVE")
+		function SaveButton:DoClick()
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("save")
+				net.WriteString(NameEntry:GetText())
+			net.SendToServer()
+		end
+
+		local LoadButton = vgui.Create("DButton", MotherFrame)
+		LoadButton:SetPos((W * 0.8) - 50, H * 0.8)
+		LoadButton:SetSize(100, 30)
+		LoadButton:SetText("LOAD")
+		function LoadButton:DoClick()
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("load")
+				net.WriteString(NameEntry:GetText())
+			net.SendToServer()
+		end
+	end
+	CPanel:AddItem(MenuButton)
 end
 
 if ( CLIENT ) then
@@ -166,4 +206,5 @@ if ( CLIENT ) then
 	language.Add( prefix..".type", "Resource type" )
 	language.Add( prefix..".amt", "Resource amount" )
 	language.Add( prefix..".size", "Deposit size" )
+	language.Add( prefix..".saveload", "Save / Load" )
 end

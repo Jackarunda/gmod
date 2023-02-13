@@ -2281,8 +2281,10 @@ function JMod.InitGlobalConfig(forceNew)
 		if Existing and Existing.Version then
 			if Existing.Version == NewConfig.Version then
 				JMod.Config = util.JSONToTable(FileContents)
+				print("JMOD: config file loaded")
 			else
 				file.Write("JMod_Config_OLD.txt", FileContents)
+				print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
 			end
 		end
 	end
@@ -2290,13 +2292,15 @@ function JMod.InitGlobalConfig(forceNew)
 	if (not JMod.Config) or forceNew then
 		JMod.Config = NewConfig
 		file.Write("JMod_Config.txt", util.TableToJSON(JMod.Config, true))
+		print("JMOD: config reset to default")
 	end
+
+	print("JMOD: updating recipies...")
 	for k, v in pairs(ents.GetAll())do
 		if(IsValid(v) and v.UpdateConfig)then
 			v:UpdateConfig()
 		end
 	end
-	print("JMOD: config file loaded")
 
 	-- jmod lua config --
 	if not JMod.LuaConfig then
@@ -2322,6 +2326,72 @@ function JMod.InitGlobalConfig(forceNew)
 
 	SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
+end
+
+function JMod.LoadDepositConfig(configID)
+	if not isstring(configID) then print("No valid ID") return end
+	local FileContents = file.Read("JMod_Deposits_Config.txt")
+	
+	if FileContents then
+		local Existing = util.JSONToTable(FileContents) or {}
+		local MapName = game.GetMap()
+
+		local MapConfigs = Existing[MapName]
+		if istable(MapConfigs) and MapConfigs[configID] then
+			local NewResourceTable = {}
+			for k, v in pairs(MapConfigs[configID]) do
+				NewResourceTable[k] = {
+					typ = v.typ,
+					pos = Vector(v.pos[1], v.pos[2], v.pos[3]),
+					siz = v.siz
+				}
+				if v.rate then
+					NewResourceTable[k].rate = v.rate
+				else
+					NewResourceTable[k].amt = math.Round(v.amt)
+				end
+			end
+			print("JMod: Succesfully loaded new resource deposit map")
+			return NewResourceTable
+		else
+			PrintTable(Existing)
+			return "JMod: Map name and/or config ID don't exsist"
+		end
+	else 
+		return "jmod_deposits_config.txt is missing or corrupt"
+	end
+end
+
+function JMod.SaveDepositConfig(configID)
+	if not isstring(configID) then print("No valid ID") return end
+	local FileContents = file.Read("JMod_Deposits_Config.txt")
+	
+	local Existing = {}
+	if FileContents then
+		local Existing = util.JSONToTable(FileContents)
+	end
+
+	local ResourceMapToSave = JMod.NaturalResourceTable
+	local MapName = game.GetMap()
+
+	Existing[MapName] = Existing[MapName] or {}
+
+	NewResourceTable = {}
+	for k, v in pairs(ResourceMapToSave) do
+		NewResourceTable[k] = {
+			typ = v.typ,
+			pos = {v.pos[1], v.pos[2], v.pos[3]},
+			siz = v.siz
+		}
+		if v.rate then
+			NewResourceTable[k].rate = v.rate
+		else
+			NewResourceTable[k].amt = v.amt
+		end
+	end
+	Existing[MapName][configID] = NewResourceTable
+	file.Write("JMod_Deposits_Config.txt", util.TableToJSON(Existing))
+	--PrintTable(Existing)
 end
 
 hook.Add("Initialize", "JMOD_Initialize", function()
