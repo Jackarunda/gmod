@@ -167,10 +167,14 @@ function TOOL.BuildCPanel( CPanel )
 		MotherFrame:MakePopup()
 
 		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
+		local Instructions = vgui.Create("DLabel", MotherFrame)
+		Instructions:SetPos((W / 2) - 200, (H / 2) - 40)
+		Instructions:SetSize(400, 20)
+		Instructions:SetText("Enter ID here, no numbers (JSON doesn't like it)")
+
 		local NameEntry = vgui.Create("DTextEntry", MotherFrame)
 		NameEntry:SetPos((W / 2) - 200, (H / 2) - 20)
 		NameEntry:SetSize(400, 20)
-		NameEntry:SetText("Enter save ID here")
 
 		local SaveButton = vgui.Create("DButton", MotherFrame)
 		SaveButton:SetPos((W * 0.2) - 50, H * 0.8)
@@ -195,6 +199,14 @@ function TOOL.BuildCPanel( CPanel )
 		end
 	end
 	CPanel:AddItem(MenuButton)
+
+	local ShowHideButton = vgui.Create("DButton", CPanel)
+	ShowHideButton:SetText("#"..prefix..".showhide")
+	ShowHideButton:SetMouseInputEnabled(true)
+	function ShowHideButton:DoClick()
+		LocalPlayer():ConCommand("jmod_debug_shownaturalresources")
+	end
+	CPanel:AddItem(ShowHideButton)
 end
 
 if ( CLIENT ) then
@@ -207,4 +219,5 @@ if ( CLIENT ) then
 	language.Add( prefix..".amt", "Resource amount" )
 	language.Add( prefix..".size", "Deposit size" )
 	language.Add( prefix..".saveload", "Save / Load" )
+	language.Add( prefix..".showhide", "Show / Hide (requires sv_cheats)" )
 end

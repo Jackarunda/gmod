@@ -154,7 +154,7 @@ net.Receive("JMod_SaveLoadDeposits", function(ln, ply)
 	if IsValid(ply) then 
 		--print(Operation, EntryID)
 		if string.lower(Operation) == "save" then
-		ply:ConCommand("jmod_deposits_save "..EntryID)
+			ply:ConCommand("jmod_deposits_save "..EntryID)
 		elseif string.lower(Operation) == "load" then
 			ply:ConCommand("jmod_deposits_load "..EntryID)
 		end
