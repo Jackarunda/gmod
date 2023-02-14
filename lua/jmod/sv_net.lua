@@ -157,6 +157,12 @@ net.Receive("JMod_SaveLoadDeposits", function(ln, ply)
 			ply:ConCommand("jmod_deposits_save "..EntryID)
 		elseif string.lower(Operation) == "load" then
 			ply:ConCommand("jmod_deposits_load "..EntryID)
+		elseif string.lower(Operation) == "clear" then
+			JMod.NaturalResourceTable = {}
+			net.Start("JMod_NaturalResources")
+				net.WriteBool(false)
+				net.WriteTable(JMod.NaturalResourceTable)
+			net.Send(ply)
 		end
 	end
 end)

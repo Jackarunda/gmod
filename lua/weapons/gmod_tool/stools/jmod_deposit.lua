@@ -7,7 +7,8 @@ TOOL.ClientConVar[ "size" ] = "0"
 
 TOOL.Information = {
 	{ name = "left" },
-	{ name = "right" }
+	{ name = "right" },
+	{ name = "reload"}
 }
 
 local ResourceInfo = JMod.ResourceDepositInfo
@@ -119,6 +120,37 @@ function TOOL:RightClick( trace )
 	end
 end
 
+local Yeps = {"Yes", "yep", "Of course", "Leave me alone", ">:)"}
+
+function TOOL:Reload(tr)
+	if CLIENT then
+		local MotherFrame = vgui.Create("DFrame")
+		MotherFrame:SetTitle("Warning")
+		MotherFrame:SetSize(400, 200)
+		MotherFrame:Center()
+		MotherFrame:MakePopup()
+
+		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
+
+		local WarningText = vgui.Create("DLabel", MotherFrame)
+		WarningText:SetPos((W * 0.25) - 10, H * 0.4)
+		WarningText:SetSize(300, 20)
+		WarningText:SetText("Are you sure you want to remove all deposits?")
+
+		local YepButton = vgui.Create("DButton", MotherFrame)
+		YepButton:SetPos(W * 0.25, H * 0.6)
+		YepButton:SetSize(200, 50)
+		YepButton:SetText(table.Random(Yeps))
+		function YepButton:DoClick()
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("clear")
+			net.SendToServer()
+			MotherFrame:Close()
+		end
+	end
+	return true
+end
+
 local ConVarsDefault = TOOL:BuildConVarList()
 
 function TOOL.BuildCPanel( CPanel )
@@ -215,6 +247,7 @@ if ( CLIENT ) then
 	language.Add( prefix..".presets", "Presets" )
 	language.Add( prefix..".left", "Place resource deposit" )
 	language.Add( prefix..".right", "Remove resource deposit" )
+	language.Add( prefix..".reload", "Clears all resource deposits" )
 	language.Add( prefix..".type", "Resource type" )
 	language.Add( prefix..".amt", "Resource amount" )
 	language.Add( prefix..".size", "Deposit size" )
