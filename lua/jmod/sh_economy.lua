@@ -1064,7 +1064,7 @@ if SERVER then
 	end)
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
-		if not GetConVar("sv_cheats"):GetBool() then return end
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
 		if IsValid(ply) and not ply:IsSuperAdmin() then return end
 		net.Start("JMod_NaturalResources")
 		net.WriteBool(true)
