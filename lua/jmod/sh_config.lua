@@ -2328,18 +2328,21 @@ function JMod.InitGlobalConfig(forceNew)
 	print("JMOD: lua config file loaded")
 end
 
-function JMod.LoadDepositConfig(configID)
-	if not isstring(configID) then print("No valid ID") return end
-	local FileContents = file.Read("JMod_Deposits_Config.txt")
+function JMod.LoadDepositConfig(configID, forceMap)
+	if not configID then print("No valid ID") return end
+	local MapName = game.GetMap()
+	if forceMap then
+		MapName = forceMap
+	end
+	print(MapName)
+	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
 	
 	if FileContents then
-		local Existing = util.JSONToTable(FileContents) or {}
-		local MapName = game.GetMap()
+		local MapConfig = util.JSONToTable(FileContents) or {}
 
-		local MapConfigs = Existing[MapName]
-		if istable(MapConfigs) and MapConfigs[configID] then
+		if MapConfig[configID] then
 			local NewResourceTable = {}
-			for k, v in pairs(MapConfigs[configID]) do
+			for k, v in pairs(MapConfig[configID]) do
 				NewResourceTable[k] = {
 					typ = v.typ,
 					pos = Vector(v.pos[1], v.pos[2], v.pos[3]),
@@ -2354,27 +2357,23 @@ function JMod.LoadDepositConfig(configID)
 			print("JMod: Succesfully loaded new resource deposit map")
 			return NewResourceTable
 		else
-			PrintTable(Existing)
+			--PrintTable(MapConfig) -- Debug
 			return "JMod: Map name and/or config ID don't exsist"
 		end
 	else 
-		return "jmod_deposits_config.txt is missing or corrupt"
+		return "jmod_resources_"..MapName..".txt is missing or corrupt"
 	end
 end
 
 function JMod.SaveDepositConfig(configID)
 	if not isstring(configID) then print("No valid ID") return end
-	local FileContents = file.Read("JMod_Deposits_Config.txt")
-	
-	local Existing = {}
-	if FileContents then
-		local Existing = util.JSONToTable(FileContents)
-	end
-
-	local ResourceMapToSave = JMod.NaturalResourceTable
 	local MapName = game.GetMap()
 
-	Existing[MapName] = Existing[MapName] or {}
+	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
+	
+	local Existing = FileContents and util.JSONToTable(FileContents) or {}
+
+	local ResourceMapToSave = JMod.NaturalResourceTable
 
 	NewResourceTable = {}
 	for k, v in pairs(ResourceMapToSave) do
@@ -2389,8 +2388,9 @@ function JMod.SaveDepositConfig(configID)
 			NewResourceTable[k].amt = v.amt
 		end
 	end
-	Existing[MapName][configID] = NewResourceTable
-	file.Write("JMod_Deposits_Config.txt", util.TableToJSON(Existing))
+	Existing[configID] = NewResourceTable
+	file.Write("jmod_resources_"..MapName..".txt", util.TableToJSON(Existing))
+	print("JMod: Saved resource layout")
 	--PrintTable(Existing)
 end
 

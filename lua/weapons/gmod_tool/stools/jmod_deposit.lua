@@ -200,9 +200,9 @@ function TOOL.BuildCPanel( CPanel )
 
 		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
 		local Instructions = vgui.Create("DLabel", MotherFrame)
-		Instructions:SetPos((W / 2) - 200, (H / 2) - 40)
-		Instructions:SetSize(400, 20)
-		Instructions:SetText("Enter ID here, no numbers (JSON doesn't like it)")
+		Instructions:SetPos((W * 0.5) - 200, (H * 0.5) - 55)
+		Instructions:SetText("Enter ID here, no spaces in name, and at least one non-numeric character.\nPut a space and map name to force load from that file")
+		Instructions:SizeToContents()
 
 		local NameEntry = vgui.Create("DTextEntry", MotherFrame)
 		NameEntry:SetPos((W / 2) - 200, (H / 2) - 20)
