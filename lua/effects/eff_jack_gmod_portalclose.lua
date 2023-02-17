@@ -6,6 +6,7 @@ Flash:SetInt("$illumfactor", 8)
 function EFFECT:Init(data)
 	self.DieTime = CurTime() + 1
 	self.Position = data:GetOrigin()
+	self.Size = data:GetScale()
 	local emitter = ParticleEmitter(self.Position)
 
 	for i = 0, 25 do
@@ -14,7 +15,7 @@ function EFFECT:Init(data)
 		particle:SetDieTime(.75)
 		particle:SetStartAlpha(255)
 		particle:SetEndAlpha(255)
-		particle:SetStartSize(150)
+		particle:SetStartSize(self.Size or 150)
 		particle:SetEndSize(0)
 		particle:SetRoll(0)
 		particle:SetRollDelta(0)
