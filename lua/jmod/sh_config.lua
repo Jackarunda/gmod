@@ -2218,6 +2218,17 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "I'm not making that joke."
 			},
+			["EZ Hazmat Suit"] = {
+				results = "ent_jack_gmod_ezarmor_hazmat",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 40
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Full-body protection against environmental hazards, though fragile."
+			},
 			["EZ Stick Grenade"] = {
 				results = "ent_jack_gmod_ezsticknade",
 				craftingReqs = {
