@@ -116,6 +116,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
+		if self:GetState() > STATE_OFF then return end
 		if (self:GetElectricity() > 0) then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
@@ -214,8 +215,8 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		ent.NextUse = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		ent.NextUse = Time + math.Rand(0, 3)
 	end
 
 elseif CLIENT then

@@ -76,6 +76,9 @@ if SERVER then
 
 			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"1 is armed \n 0 is not \n -1 is broken"})
 		end
+		if self.CustomInit then
+			self:CustomInit()
+		end
 	end
 
 	function ENT:TriggerInput(iname, value)

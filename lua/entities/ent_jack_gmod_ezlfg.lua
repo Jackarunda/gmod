@@ -67,17 +67,16 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetState() == STATE_OFF) then
-			if (self:GetFuel() > 0) then
-				self.NextUseTime = CurTime() + 1
-				self:SetState(STATE_ON)
-				self.SoundLoop:SetSoundLevel(70)
-				self.SoundLoop:Play()
-			else
-				self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
-				self.NextUseTime = CurTime() + 1
-				JMod.Hint(activator, "need fuel")
-			end
+		if self:GetState() > STATE_OFF then return end
+		if (self:GetFuel() > 0) then
+			self.NextUseTime = CurTime() + 1
+			self:SetState(STATE_ON)
+			self.SoundLoop:SetSoundLevel(70)
+			self.SoundLoop:Play()
+		else
+			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
+			self.NextUseTime = CurTime() + 1
+			JMod.Hint(activator, "need fuel")
 		end
 	end
 
@@ -190,11 +189,11 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		self.NextResourceThink = 0
-		self.NextUseTime = 0
-		self.NextEffThink = 0
-		self.NextEnvThink = 0
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		self.NextResourceThink = Time + math.Rand(0, 3)
+		self.NextUseTime = Time + math.Rand(0, 3)
+		self.NextEffThink = Time + math.Rand(0, 3)
+		self.NextEnvThink = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then

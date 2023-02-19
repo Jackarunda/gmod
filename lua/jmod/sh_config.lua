@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 40.6,
+		Version = 41,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -49,6 +49,7 @@ function JMod.InitGlobalConfig(forceNew)
 		NuclearRadiationSickness = true,
 		VirusSpreadMult = 1,
 		FragExplosions = true,
+		SpawnMachinesFull = true,
 		ResourceEconomy = {
 			ResourceRichness = 1,
 			ExtractionSpeed = 1
@@ -118,7 +119,7 @@ function JMod.InitGlobalConfig(forceNew)
 					description = "1 box of advparts used for crafting and upgrading.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezadvparts", 1, 5}
+						{"ent_jack_gmod_ezadvparts", 1, 15}
 					}
 				},
 				["precision parts"] = {
@@ -1061,11 +1062,11 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Basic Parts, x100"] = {
 				results = "ent_jack_gmod_ezbasicparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 50,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 30,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 10,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 30,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 10,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
 				},
@@ -1078,11 +1079,11 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezbasicparts", 3}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 150,
-					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 90,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 60,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 90,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 60,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 90,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
@@ -1093,11 +1094,11 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Precision Parts, x100"] = {
 				results = "ent_jack_gmod_ezprecparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100,
-					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 100,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 50,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 20,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 20,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 30,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20
 				},
 				category = "Resources",
 				craftingType = "fabricator",
@@ -1108,11 +1109,11 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezprecparts", 1, 10}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 30,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 10,
-					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 10,
-					[JMod.EZ_RESOURCE_TYPES.SILVER] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 5
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 2,
+					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 2,
+					[JMod.EZ_RESOURCE_TYPES.SILVER] = 3,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 2
 				},
 				category = "Resources",
 				craftingType = "fabricator",
@@ -1123,10 +1124,10 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezadvparts", 1, 50}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 150,
-					[JMod.EZ_RESOURCE_TYPES.GOLD] = 50,
-					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 25
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.GOLD] = 40,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 20,
+					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 40
 				},
 				category = "Resources",
 				craftingType = "fabricator",
@@ -1137,10 +1138,10 @@ function JMod.InitGlobalConfig(forceNew)
 					{"ent_jack_gmod_ezadvparts", 1, 5}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 15,
-					[JMod.EZ_RESOURCE_TYPES.GOLD] = 5,
-					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 3,
-					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 3
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.GOLD] = 4,
+					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 2,
+					[JMod.EZ_RESOURCE_TYPES.PLATINUM] = 4
 				},
 				category = "Resources",
 				craftingType = "fabricator",
@@ -2217,6 +2218,17 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "I'm not making that joke."
 			},
+			["EZ Hazmat Suit"] = {
+				results = "ent_jack_gmod_ezarmor_hazmat",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 40
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Full-body protection against environmental hazards, though fragile."
+			},
 			["EZ Stick Grenade"] = {
 				results = "ent_jack_gmod_ezsticknade",
 				craftingReqs = {
@@ -2280,8 +2292,10 @@ function JMod.InitGlobalConfig(forceNew)
 		if Existing and Existing.Version then
 			if Existing.Version == NewConfig.Version then
 				JMod.Config = util.JSONToTable(FileContents)
+				print("JMOD: config file loaded")
 			else
 				file.Write("JMod_Config_OLD.txt", FileContents)
+				print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
 			end
 		end
 	end
@@ -2289,13 +2303,15 @@ function JMod.InitGlobalConfig(forceNew)
 	if (not JMod.Config) or forceNew then
 		JMod.Config = NewConfig
 		file.Write("JMod_Config.txt", util.TableToJSON(JMod.Config, true))
+		print("JMOD: config reset to default")
 	end
+
+	print("JMOD: updating recipies...")
 	for k, v in pairs(ents.GetAll())do
 		if(IsValid(v) and v.UpdateConfig)then
 			v:UpdateConfig()
 		end
 	end
-	print("JMOD: config file loaded")
 
 	-- jmod lua config --
 	if not JMod.LuaConfig then
@@ -2321,6 +2337,72 @@ function JMod.InitGlobalConfig(forceNew)
 
 	SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
+end
+
+function JMod.LoadDepositConfig(configID, forceMap)
+	if not configID then print("No valid ID") return end
+	local MapName = game.GetMap()
+	if forceMap then
+		MapName = forceMap
+	end
+	print(MapName)
+	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
+	
+	if FileContents then
+		local MapConfig = util.JSONToTable(FileContents) or {}
+
+		if MapConfig[configID] then
+			local NewResourceTable = {}
+			for k, v in pairs(MapConfig[configID]) do
+				NewResourceTable[k] = {
+					typ = v.typ,
+					pos = Vector(v.pos[1], v.pos[2], v.pos[3]),
+					siz = v.siz
+				}
+				if v.rate then
+					NewResourceTable[k].rate = v.rate
+				else
+					NewResourceTable[k].amt = math.Round(v.amt)
+				end
+			end
+			print("JMod: Succesfully loaded new resource deposit map")
+			return NewResourceTable
+		else
+			--PrintTable(MapConfig) -- Debug
+			return "JMod: Map name and/or config ID don't exsist"
+		end
+	else 
+		return "jmod_resources_"..MapName..".txt is missing or corrupt"
+	end
+end
+
+function JMod.SaveDepositConfig(configID)
+	if not isstring(configID) then print("No valid ID") return end
+	local MapName = game.GetMap()
+
+	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
+	
+	local Existing = FileContents and util.JSONToTable(FileContents) or {}
+
+	local ResourceMapToSave = JMod.NaturalResourceTable
+
+	NewResourceTable = {}
+	for k, v in pairs(ResourceMapToSave) do
+		NewResourceTable[k] = {
+			typ = v.typ,
+			pos = {v.pos[1], v.pos[2], v.pos[3]},
+			siz = v.siz
+		}
+		if v.rate then
+			NewResourceTable[k].rate = v.rate
+		else
+			NewResourceTable[k].amt = v.amt
+		end
+	end
+	Existing[configID] = NewResourceTable
+	file.Write("jmod_resources_"..MapName..".txt", util.TableToJSON(Existing))
+	print("JMod: Saved resource layout")
+	--PrintTable(Existing)
 end
 
 hook.Add("Initialize", "JMOD_Initialize", function()

@@ -58,7 +58,7 @@ JMod.EnergyEconomyParameters = {
 	}
 }
 
-local ResourceInfo = {
+JMod.ResourceDepositInfo = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
 		frequency = 10,
 		avgrate = .5,
@@ -242,6 +242,9 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.WOOD] = .4,
 		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .1,
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .05
+	},
+    wood_solid = {
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = .7
 	},
 	metal = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .3,
@@ -637,9 +640,19 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
-	if ent:IsNPC() or ent:IsPlayer() then return {}, "" end
-	if ent.EZsupplies or ent.EZammo then return {}, "no" end
-	if Class == "ent_jack_gmod_eztoolbox" then return {}, "STOP YOU MORON" end
+	if ent:IsNPC() or ent:IsPlayer() then return {}, (ent.PrintName and tostring(ent.PrintName .. " doesn't want to be salvaged")) or ".." end
+	local AnnoyedReplyTable = {
+		"no",
+		"...no",
+		"STOP YOU MORON",
+		"I have become wrench, destoyer of entities",
+		"Stop it!",
+		"You can't salvage this",
+		"Stop trying to salvage this already",
+	}
+	if ent.EZsupplies or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
+	if Class == "ent_jack_gmod_eztoolbox" then return {}, table.Random(AnnoyedReplyTable) end
+	if Class == "ent_jack_ezcompactbox" then return {}, table.Random(AnnoyedReplyTable) end
 
 	if SERVER then
 		for k, v in pairs(JMod.Config.SalvagingBlacklist) do
@@ -746,6 +759,7 @@ if SERVER then
 
 	local function RemoveOverlaps(tbl)
 		local Finished, Tries, RemovedCount = false, 0, 0
+		local ResourceInfo = JMod.ResourceDepositInfo
 
 		while not Finished do
 			local Removed = false
@@ -920,7 +934,7 @@ if SERVER then
 					if i == MaxTries then
 						local Frequencies = {}
 
-						for k, v in pairs(ResourceInfo) do
+						for k, v in pairs(JMod.ResourceDepositInfo) do
 							for i = 1, v.frequency do
 								table.insert(Frequencies, k)
 							end
@@ -931,7 +945,7 @@ if SERVER then
 						for k, PosInfo in pairs(GroundVectors) do
 							if #Resources < MaxResourceDepositCount then
 								local ChosenType = table.Random(Frequencies)
-								local ChosenInfo = ResourceInfo[ChosenType]
+								local ChosenInfo = JMod.ResourceDepositInfo[ChosenType]
 
 								-- we'll handle these afterward
 								if not ChosenInfo.dependency then
@@ -988,7 +1002,7 @@ if SERVER then
 						-- now let's handle dependent resources
 						local ResourcesToAdd = {}
 
-						for name, info in pairs(ResourceInfo) do
+						for name, info in pairs(JMod.ResourceDepositInfo) do
 							if info.dependency then
 								for k, resourceData in pairs(Resources) do
 									if resourceData.typ == info.dependency then
@@ -1050,9 +1064,10 @@ if SERVER then
 	end)
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
-		if not GetConVar("sv_cheats"):GetBool() then return end
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
 		if IsValid(ply) and not ply:IsSuperAdmin() then return end
 		net.Start("JMod_NaturalResources")
+		net.WriteBool(true)
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
@@ -1069,8 +1084,10 @@ elseif CLIENT then
 	local ShowNaturalResources = false
 
 	net.Receive("JMod_NaturalResources", function()
-		ShowNaturalResources = not ShowNaturalResources
-		print("natural resource display: " .. tostring(ShowNaturalResources))
+		if net.ReadBool() then
+			ShowNaturalResources = not ShowNaturalResources
+			print("natural resource display: " .. tostring(ShowNaturalResources))
+		end
 		JMod.NaturalResourceTable = net.ReadTable()
 	end)
 

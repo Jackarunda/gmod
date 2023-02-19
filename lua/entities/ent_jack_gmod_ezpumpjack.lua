@@ -125,6 +125,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if self:GetState() > STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 		if self:GetElectricity() > 0 then
 			self:SetState(STATE_RUNNING)
@@ -287,8 +288,8 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		self.NextResourceThinkTime = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		self.NextResourceThinkTime = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then

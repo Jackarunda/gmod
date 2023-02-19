@@ -120,7 +120,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetElectricity() > 0 and IsValid(self.Weld) and self.DepositKey) then
+		if self:GetState() > STATE_OFF then return end
+		if (self:GetElectricity() > 0) and (IsValid(self.Weld)) and (self.DepositKey) then
 			self:SetState(STATE_RUNNING)
 			self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 			self.SoundLoop:SetSoundLevel(60)
@@ -277,7 +278,7 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = 0
 		ent.NextEffectThinkTime = 0
 		ent.NextOSHAthinkTime = 0

@@ -37,6 +37,7 @@ if(SERVER)then
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
+		JMod.Hint(ply, ClassName)
 		return ent
 	end
 
@@ -45,6 +46,7 @@ if(SERVER)then
 		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0
+		self.TimerName = ""
 		local mapName = game.GetMap()
 	end
 
@@ -117,7 +119,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if (self:GetState() == STATE_ON) then return end
+		if self:GetState() > STATE_OFF then return end
 		if (self:CheckSky() > 0) then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
@@ -125,8 +127,11 @@ if(SERVER)then
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		timer.Create("SolarAutoShutOff" .. tostring(self:EntIndex()), 600, 1, function() self:TurnOff() end)
-		timer.Start("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		self.TimerName = ("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		timer.Create(self.TimerName, 600, 1, function() 
+			if IsValid(self) then self:TurnOff() end 
+		end)
+		timer.Start(self.TimerName)
 	end
 
 	function ENT:TurnOff()
@@ -135,7 +140,7 @@ if(SERVER)then
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.NextUse = CurTime() + 1
-		timer.Remove("SolarAutoShutOff" .. tostring(self:EntIndex()))
+		timer.Remove("SolarAutoShutOff" .. self.TimerName)
 	end
 
 	function ENT:GetLightAlignment()
@@ -209,8 +214,8 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		ent.NextUse = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		ent.NextUse = Time + math.Rand(0, 3)
 	end
 
 elseif CLIENT then

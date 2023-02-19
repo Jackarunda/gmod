@@ -7,8 +7,8 @@ JMod.Equippables = {
 		slot = "glowsticks",
 		mdls = {
 			{
-				mdl = "models/props/army/glowstick.mdl",
-				mat = "models/props/army/jlowstick_on",
+				mdl = "models/jmod/props/glowstick.mdl",
+				mat = "models/jmod/props/jlowstick_on",
 				scl = 1,
 				bon = "ValveBiped.Bip01_Spine4",
 				pos = Vector(-12, -10, -3),

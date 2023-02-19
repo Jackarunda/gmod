@@ -256,20 +256,6 @@ if SERVER then
 		end)
 	end
 
-	function ENT:CanSee(ent)
-		if not IsValid(ent) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter())
-
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
-		})
-
-		return not Tr.Hit
-	end
-
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())

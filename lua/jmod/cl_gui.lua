@@ -1125,12 +1125,13 @@ net.Receive("JMod_Inventory", function()
 	end
 	Ent.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
 	
-
-	if Ply.EZarmor.suited and Ply.EZarmor.bodygroups then
-		PlayerDisplay:SetColor(Ply:GetColor())
-
-		for k, v in pairs(Ply.EZarmor.bodygroups) do
-			Ent:SetBodygroup(k, v)
+	
+	if Ply.EZarmor.suited then
+		Ent:SetColor(Ply:GetColor())
+		if Ply.EZarmor.bodygroups then
+			for k, v in pairs(Ply.EZarmor.bodygroups) do
+				Ent:SetBodygroup(k, v)
+			end
 		end
 	end
 

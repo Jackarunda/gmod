@@ -35,9 +35,15 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys=self:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
+		end
+
+		if self.SpawnFull then
+			self:SetSupplies(self.MaxSupplies)
+		else
+			self:SetSupplies(0)
 		end
 
 		---
@@ -88,7 +94,7 @@ if(SERVER)then
 	end
 	
 	function ENT:TurnOn()
-		if self:GetState() == STATE_ON then return end
+		if self:GetState() > STATE_OFF then return end
 
 		if self:GetElectricity() <= 0 then
 			JMod.Hint(activator, "nopower")
@@ -344,15 +350,15 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		self.NextWhine = Time + math.random(0.1, 0.5)
-		self.NextRealThink = Time + math.random(0.1, 0.5)
-		self.NextUseTime = Time + math.random(0.1, 0.5)
-		self.IdleShutOffTime = Time + math.random(0.1, 0.5)
-		self.NextHumTime = Time + math.random(0.1, 0.5)
-		self.NextHeal = Time + math.random(0.1, 0.5)
-		self.NextEnter = Time + math.random(0.1, 0.5)
-		self.NextOpStart = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		self.NextWhine = Time + math.Rand(0, 3)
+		self.NextRealThink = Time + math.Rand(0, 3)
+		self.NextUseTime = Time + math.Rand(0, 3)
+		self.IdleShutOffTime = Time + math.Rand(0, 3)
+		self.NextHumTime = Time + math.Rand(0, 3)
+		self.NextHeal = Time + math.Rand(0, 3)
+		self.NextEnter = Time + math.Rand(0, 3)
+		self.NextOpStart = Time + math.Rand(0, 3)
 	end
 elseif(CLIENT)then
 	function ENT:CustomInit()

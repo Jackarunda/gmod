@@ -42,6 +42,7 @@ if SERVER then
 			timer.Simple(.1, function()
 				local MeltBlast = DamageInfo()
 				MeltBlast:SetInflictor(game.GetWorld())
+				MeltBlast:SetAttacker(game.GetWorld())
 				MeltBlast:SetDamage(500)
 				MeltBlast:SetDamageType(DMG_DISSOLVE)
 				util.BlastDamageInfo(MeltBlast, pos, 1000)

@@ -210,6 +210,9 @@ if(SERVER)then
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetOwner(ent,ply)
+		if JMod.Config.SpawnMachinesFull then
+			ent.SpawnFull = true
+		end
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -242,13 +245,13 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
-		if GetConVar("sv_cheats"):GetBool() then
+		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
 		else
 			self:SetElectricity(0)
 		end
 		---
-		if(self.Owner)then JMod.Colorify(self) end
+		if(JMod.GetOwner(self))then JMod.Colorify(self) end
 		---
 		if(self.EZupgradable)then
 			self.UpgradeProgress={}
@@ -513,7 +516,7 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then
@@ -535,14 +538,8 @@ elseif(CLIENT)then
 	end
 
 	function ENT:OnRemove()
-		if(self.CSmodels)then
-			for k,v in pairs(self.CSmodels)do
-				if(IsValid(v))then
-					v:Remove()
-				end
-			end
-		elseif(self.Mdl)then
-			self.Mdl:Remove()
+		if self.Mdl or self.CSmodels then
+			JMod.SafeRemoveCSModel(self, IsValid(self.Mdl) and self.Mdl, self.CSmodels)
 		end
 	end
 end

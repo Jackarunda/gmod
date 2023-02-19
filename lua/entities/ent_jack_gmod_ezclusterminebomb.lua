@@ -19,6 +19,19 @@ end
 
 ---
 if SERVER then
+	concommand.Add("jmod_debug_cluster_minelayer", function(ply, cmd, args, argStr)
+		if not ply:IsSuperAdmin() then return end
+		local SpawnPos = ply:GetEyeTrace().HitPos + Vector(0, 0, 5000)
+		local Bomb = ents.Create("ent_jack_gmod_ezclusterminebomb")
+		Bomb:SetPos(SpawnPos)
+		JMod.SetOwner(Bomb, ply)
+		Bomb:Spawn()
+		Bomb:Activate()
+		Bomb:SetState(STATE_ARMED)
+		Bomb.Payload = "ent_jack_gmod_ezatmine"
+		Bomb.PayloadAmt = 2
+	end, nil, nil)
+
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
@@ -55,6 +68,8 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self.LastUse = 0
 		self.FreefallTicks = 0
+		self.Payload = "ent_jack_gmod_ezlandmine"
+		self.PayloadAmt = 6
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
@@ -160,13 +175,13 @@ if SERVER then
 
 		---
 		timer.Simple(0, function()
-			for i = 1, 6 do
+			for i = 1, self.PayloadAmt do
 				local NumberOfMinesForThisRing, RingThrowDistance, Dir = 4 + i, 6 * i, Angle(0, 0, 0)
 				Dir:RotateAroundAxis(vector_up, i * 20)
 				local AngleRotationPerThrow = 360 / NumberOfMinesForThisRing
 
 				for j = 1, NumberOfMinesForThisRing do
-					local Mine = ents.Create("ent_jack_gmod_ezlandmine")
+					local Mine = ents.Create(self.Payload)
 					JMod.SetOwner(Mine, Att)
 					Mine:SetPos(Pos + Dir:Forward() * RingThrowDistance + Vector(0, 0, math.random(-10, 10)))
 					Mine:SetAngles(Angle(90, 0, 0))

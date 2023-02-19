@@ -59,6 +59,7 @@ if(SERVER)then
 		self.NextEnvThink = 0
 	end
 	function ENT:TurnOn(activator)
+		if self:GetState() > STATE_OFF then return end
 		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
 			return
@@ -208,11 +209,11 @@ if(SERVER)then
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetOwner(self, ply)
-		ent.NextRefillTime = Time + math.random(0.1, 0.5)
-		self.LastOreTime = Time + math.random(0.1, 0.5)
-		self.NextEffThink = Time + math.random(0.1, 0.5)
-		self.NextSmeltThink = Time + math.random(0.1, 0.5)
-		self.NextEnvThink = Time + math.random(0.1, 0.5)
+		ent.NextRefillTime = Time + math.Rand(0, 3)
+		self.LastOreTime = Time + math.Rand(0, 3)
+		self.NextEffThink = Time + math.Rand(0, 3)
+		self.NextSmeltThink = Time + math.Rand(0, 3)
+		self.NextEnvThink = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then

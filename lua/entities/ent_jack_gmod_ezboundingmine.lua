@@ -270,27 +270,13 @@ if SERVER then
 		end)
 	end
 
-	function ENT:CanSee(ent)
-		if not IsValid(ent) then return false end
-		local TargPos, SelfPos = ent:LocalToWorld(ent:OBBCenter()), self:LocalToWorld(self:OBBCenter()) + vector_up * 5
-
-		local Tr = util.TraceLine({
-			start = SelfPos,
-			endpos = TargPos,
-			filter = {self, ent},
-			mask = MASK_SHOT + MASK_WATER
-		})
-
-		return not Tr.Hit
-	end
-
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 
 		if State == JMod.EZ_STATE_ARMED then
 			for k, targ in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
-					if JMod.ShouldAttack(self, targ) and self:CanSee(targ) then
+					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ, false, 5) then
 						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
