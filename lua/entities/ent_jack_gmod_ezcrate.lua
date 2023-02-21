@@ -58,7 +58,9 @@ if SERVER then
 
 		---
 		timer.Simple(.01, function()
-			self:CalcWeight()
+			if IsValid(self) then
+				self:CalcWeight()
+			end
 		end)
 	end
 
@@ -119,6 +121,7 @@ if SERVER then
 		Box:Spawn()
 		Box:Activate()
 		Box:SetResource(Given)
+		Box:CalcWeight()
 		activator:PickupObject(Box)
 		Box.NextLoad = CurTime() + 2
 		self:SetResource(Resource - Given)

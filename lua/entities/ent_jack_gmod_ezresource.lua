@@ -72,13 +72,19 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(self.Mass)
-				self:GetPhysicsObject():Wake()
+				self:CalcWeight()
 			end
 		end)
 	end
 
-	function ENT:FlingProp(mdl)
+	function ENT:CalcWeight()
+		local Frac = self:GetResource() / 100
+		self:GetPhysicsObject():SetMass(self.Mass * Frac)
+		self:GetPhysicsObject():Wake()
+	end
+
+	-- I'm commenting this out to make sure we've tied up all of hte loose ends
+	--[[function ENT:FlingProp(mdl)
 		if not util.IsValidModel(mdl) then return end
 		local Prop = ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
@@ -101,7 +107,7 @@ if SERVER then
 		Phys:SetVelocity((VectorRand() + Vector(0, 0, 1)):GetNormalized() * math.Rand(100, 300))
 		Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
 		SafeRemoveEntityDelayed(Prop, math.Rand(5, 10))
-	end
+	end]]--
 
 	function ENT:PhysicsCollide(data, physobj)
 		if self.Loaded then return end
@@ -118,6 +124,7 @@ if SERVER then
 
 					if Sum <= 100 then
 						self:SetResource(Sum)
+						self:CalcWeight()
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
 
@@ -138,6 +145,7 @@ if SERVER then
 
 				if Used > 0 then
 					self:SetResource(Resource - Used)
+					self:CalcWeight()
 
 					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), 1, 1, 1)
 
@@ -208,10 +216,12 @@ if SERVER then
 				Box:Spawn()
 				Box:Activate()
 				Box:SetResource(NewCountOne)
+				Box:CalcWeight()
 				activator:PickupObject(Box)
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
+				self:CalcWeight()
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
 			end
 		elseif self.AltUse and AltPressed then
