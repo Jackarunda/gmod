@@ -22,7 +22,7 @@ function JMod.InitGlobalConfig(forceNew)
 		ToolKitUpgradeMult = 1,
 		MineDelay = 1,
 		MinePower = 1,
-		SalvagingBlacklist = {"func_"},
+		SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
 		DoorBreachResetTimeMult = 1,
 		SupplyEffectMult = 1,
 		FumigatorGasAmount = 1,
