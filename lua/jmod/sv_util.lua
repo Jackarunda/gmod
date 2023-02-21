@@ -896,6 +896,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:Spawn()
 			JMod.SetOwner(machine.Owner)
 			Resource:SetResource(math.Round(SpawnAmount))
+			Resource:CalcWeight()
 			Resource:Activate()
 			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
 			--Resource:GetPhysicsObject():SetVelocity(ejectionVector)
