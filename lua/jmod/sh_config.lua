@@ -22,7 +22,7 @@ function JMod.InitGlobalConfig(forceNew)
 		ToolKitUpgradeMult = 1,
 		MineDelay = 1,
 		MinePower = 1,
-		SalvagingBlacklist = {"func_"},
+		SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
 		DoorBreachResetTimeMult = 1,
 		SupplyEffectMult = 1,
 		FumigatorGasAmount = 1,
@@ -616,7 +616,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = .2,
 				category = "Other",
 				craftingType = "toolbox",
-				description = "binds the object you're looking at to the object behind it"
+				description = "Binds the object you're looking at to the object behind it"
 			},
 			["EZ Box"] = {
 				results = "ez box",
@@ -626,7 +626,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 1,
 				category = "Other",
 				craftingType = "toolbox",
-				description = "stores the object you're looking at in a box for transportation or storage"
+				description = "Stores the object you're looking at in a box for transportation or storage"
 			},
 			["EZ Criticality Weapon"] = {
 				results = "ent_jack_gmod_ezcriticalityweapon",
@@ -652,7 +652,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 1,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Scans the ground for resource deposits"
+				description = "Scans the ground for resource deposits when held still on solid ground."
 			},
 			["EZ Solar Panel"] = {
 				results = "ent_jack_gmod_ezsolargenerator",
@@ -665,7 +665,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 4,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Generates power via the sun"
+				description = "Generates power when aimed at the map's 'sun'."
 			},
 			["EZ Automated Field Hospital"] = {
 				results = "ent_jack_gmod_ezfieldhospital",
@@ -692,7 +692,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Pulls chunks of coal and metallic ore out of the ground."
+				description = "Uses flex-fuel technology to refine ores into their respective ingots."
 			},
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
@@ -705,7 +705,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Performs fractional distillation of crude oil, creating all kinds of cool products."
+				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
 			},
 			["EZ Liquid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezlfg",
@@ -860,7 +860,7 @@ function JMod.InitGlobalConfig(forceNew)
 				sizeScale = 1.5,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Takes a couple minutes to spin up, and then creates an impossibly weak black hole."
+				description = "Takes a couple minutes to spin up, and then creates an impossibly weak black hole that scales with time."
 			},
 			["EZ Micro Nuclear Bomb"] = {
 				results = "ent_jack_gmod_eznuke",
