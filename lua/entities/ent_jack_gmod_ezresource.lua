@@ -177,9 +177,9 @@ if SERVER then
 					sound.Play(self.BreakNoise, Pos)
 
 					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
-					if self.UseEffect then
+					--[[if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
-					end
+					end]]--
 					SafeRemoveEntity(self)
 				end
 			end
@@ -193,11 +193,12 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			for i = 1, self:GetResource() / 10 do
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
+			--[[for i = 1, self:GetResource() / 10 do
 				if self.UseEffect then
 					self:UseEffect(Pos, game.GetWorld(), true)
 				end
-			end
+			end]]--
 
 			self:Remove()
 		end
