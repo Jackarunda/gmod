@@ -79,7 +79,7 @@ if SERVER then
 
 	function ENT:CalcWeight()
 		local Frac = self:GetResource() / 100
-		self:GetPhysicsObject():SetMass(self.Mass * Frac)
+		self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
 		self:GetPhysicsObject():Wake()
 	end
 
