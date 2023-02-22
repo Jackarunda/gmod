@@ -2332,7 +2332,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Ent:SetKeyValue("vehiclescript", "scripts/vehicles/jeep_test.txt")
 		Ent:SetPos(position)
 		Ent:SetAngles(angles)
-		JMod.SetOwner(Ent, playa)
+		JMod.SetEZowner(Ent, playa)
 		Ent:Spawn()
 		Ent:Activate()
 	end

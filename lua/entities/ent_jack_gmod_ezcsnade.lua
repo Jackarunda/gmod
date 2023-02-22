@@ -41,7 +41,7 @@ if SERVER then
 			if self.FuelLeft > 0 then
 				local Gas = ents.Create("ent_jack_gmod_ezcsparticle")
 				Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-				JMod.SetOwner(Gas, self.Owner or self)
+				JMod.SetEZowner(Gas, self.Owner or self)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100))

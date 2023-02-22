@@ -81,7 +81,7 @@ if(SERVER)then
 		local State=self:GetState()
 		JMod.Hint(activator,"ground scanner")
 		local OldOwner=self.Owner
-		JMod.SetOwner(self,activator)
+		JMod.SetEZowner(self,activator)
 		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
 		if(Alt)then
 			if(IsValid(self.Owner))then

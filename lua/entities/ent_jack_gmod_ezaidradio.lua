@@ -139,7 +139,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		local OldOwner = self.Owner
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 
 		if IsValid(self.Owner) then
 			-- if owner changed then reset team color
@@ -364,7 +364,7 @@ if(SERVER)then
 	end
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextWhine = Time + math.Rand(0, 3)
 		ent.NextRealThink = Time + math.Rand(0, 3)

@@ -286,7 +286,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 		ent:SetAngles(ang)
 
 		if ply then
-			JMod.SetOwner(ent, ply)
+			JMod.SetEZowner(ent, ply)
 		end
 
 		ent:Spawn()
@@ -299,7 +299,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 	Bocks:SetContents(ent)
 
 	if ply then
-		JMod.SetOwner(Bocks, ply)
+		JMod.SetEZowner(Bocks, ply)
 	end
 
 	Bocks:Spawn()
@@ -633,7 +633,7 @@ function JMod.Owner(ent, newOwner)
 	end
 end
 
-function JMod.GetOwner(ent)
+function JMod.GetEZowner(ent)
 	if not IsValid(ent) then return game.GetWorld() end
 
 	if ent.GetOwner and IsValid(ent:GetOwner()) then
@@ -648,10 +648,10 @@ function JMod.GetOwner(ent)
 	end
 end
 
-function JMod.SetOwner(ent, newOwner)
+function JMod.SetEZowner(ent, newOwner)
 	if not(IsValid(ent) or IsValid(newOwner)) then return end
 
-	if JMod.GetOwner(ent) == newOwner then return end
+	if JMod.GetEZowner(ent) == newOwner then return end
 
 	if ent.SetOwner and isfunction(ent.SetOwner) then
 		--ent:SetOwner(newOwner)
@@ -894,7 +894,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
 			Resource:Spawn()
-			JMod.SetOwner(machine.Owner)
+			JMod.SetEZowner(machine.Owner)
 			Resource:SetResource(math.Round(SpawnAmount))
 			Resource:CalcWeight()
 			Resource:Activate()

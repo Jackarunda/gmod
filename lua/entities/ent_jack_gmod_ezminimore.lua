@@ -30,7 +30,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(ply:GetAngles() + Angle(0, -90, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -98,7 +98,7 @@ if SERVER then
 		local State = self:GetState()
 		if State < 0 then return end
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
 		if State == STATE_OFF then
@@ -156,7 +156,7 @@ if SERVER then
 			return
 		end
 
-		JMod.SetOwner(self, armer)
+		JMod.SetEZowner(self, armer)
 		JMod.Hint(armer, "mine friends")
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)

@@ -117,7 +117,7 @@ if SERVER then
 			local DirVec = Dir:Forward()
 			local Pos = self:LocalToWorld(self:OBBCenter())
 			local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
-			JMod.SetOwner(Skeet, Att)
+			JMod.SetEZowner(Skeet, Att)
 			Skeet:SetPos(Pos + DirVec * 30)
 			Skeet:SetAngles(Angle(0, 0, 0))
 			Skeet:Spawn()

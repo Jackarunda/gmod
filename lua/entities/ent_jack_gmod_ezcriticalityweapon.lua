@@ -27,7 +27,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -92,7 +92,7 @@ if SERVER then
 		local Dmg = dmginfo:GetDamage()
 
 		if JMod.LinCh(Dmg, 50, 120) then
-			JMod.SetOwner(self, dmginfo:GetAttacker() or self.Owner)
+			JMod.SetEZowner(self, dmginfo:GetAttacker() or self.Owner)
 			local Pos = self:GetPos()
 			self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 			local Owner, Count = self.Owner, 50
@@ -102,7 +102,7 @@ if SERVER then
 					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range = 500
 					Gas:SetPos(Pos)
-					JMod.SetOwner(Gas, Owner or game.GetWorld())
+					JMod.SetEZowner(Gas, Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
 					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
@@ -118,7 +118,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:EmitSound("snd_jack_pinpull.wav", 60, 100)
 				self:EmitSound("snd_jack_spoonfling.wav", 60, 100)
 				self:SetState(STATE_TICKING)

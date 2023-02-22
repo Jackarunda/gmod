@@ -38,7 +38,7 @@ if SERVER then
 	function ENT:Use(activator, activatorAgain, onOff)
 		if self.Exploded then return end
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		JMod.Hint(Dude, self.ClassName)
 		local Time = CurTime()
 		if self.ShiftAltUse and Dude:KeyDown(JMod.Config.AltFunctionKey) and Dude:KeyDown(IN_SPEED) then return self:ShiftAltUse(Dude, tobool(onOff)) end
@@ -90,7 +90,7 @@ if SERVER then
 		local SelfPos = self:GetPos()
 
 		if IsValid(self.AttachedBomb) then
-			JMod.SetOwner(self.AttachedBomb, self.Owner or self.AttachedBomb.Owner or game.GetWorld())
+			JMod.SetEZowner(self.AttachedBomb, self.Owner or self.AttachedBomb.Owner or game.GetWorld())
 			self.AttachedBomb:EZdetonateOverride(self)
 			JMod.Sploom(self.Owner, SelfPos, 3)
 			self:Remove()

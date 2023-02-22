@@ -154,7 +154,7 @@ if(SERVER)then
 		local State=self:GetState()
 		local OldOwner=self.Owner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self,activator)
+		JMod.SetEZowner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -269,7 +269,7 @@ if(SERVER)then
 				oilFire:SetAngles(Angle(180, 0, 90))
 				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()
-				JMod.SetOwner(oilFire, self.Owner)
+				JMod.SetEZowner(oilFire, self.Owner)
 				oilFire:Activate()
 			end)
 		end
@@ -287,7 +287,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThinkTime = Time + math.Rand(0, 3)
 	end

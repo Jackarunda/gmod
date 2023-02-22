@@ -49,7 +49,7 @@ if(SERVER)then
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
 		if State == STATE_BROKEN then
@@ -175,7 +175,7 @@ if(SERVER)then
 					if (math.random(1, 3) == 1) then
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
-						JMod.SetOwner(Gas, self.Owner)
+						JMod.SetEZowner(Gas, self.Owner)
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
 						Gas:Activate()
@@ -188,7 +188,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)

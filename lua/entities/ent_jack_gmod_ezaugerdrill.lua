@@ -145,7 +145,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.Owner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self,activator)
+		JMod.SetEZowner(self,activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -254,7 +254,7 @@ if(SERVER)then
 					Dmg:SetDamage(20)
 					Dmg:SetDamageType(DMG_CRUSH)
 					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(JMod.GetOwner(self))
+					Dmg:SetAttacker(JMod.GetEZowner(self))
 					v:TakeDamageInfo(Dmg)
 					--print(tostring(v))
 					self:EmitSound("Boulder.ImpactHard")
@@ -277,7 +277,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = 0
 		ent.NextEffectThinkTime = 0

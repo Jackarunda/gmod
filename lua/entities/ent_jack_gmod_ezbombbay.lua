@@ -19,7 +19,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -149,7 +149,7 @@ if SERVER then
 		droppedBomb:SetPos(Pos + Up * -50 + Forward * -6 + Right * 6)
 		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
 		droppedBomb:SetVelocity(self:GetVelocity())
-		JMod.SetOwner(droppedBomb, ply)
+		JMod.SetEZowner(droppedBomb, ply)
 
 		if arm then
 			droppedBomb.DropOwner = ply

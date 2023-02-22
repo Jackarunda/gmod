@@ -31,7 +31,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -119,7 +119,7 @@ if SERVER then
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 		end
 	end
 
@@ -158,7 +158,7 @@ if SERVER then
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod.SetOwner(Flame, self.Owner or self)
+			JMod.SetEZowner(Flame, self.Owner or self)
 			Flame:Spawn()
 			Flame:Activate()
 		end
@@ -167,7 +167,7 @@ if SERVER then
 	function ENT:Arm(armer)
 		local State = self:GetState()
 		if State ~= STATE_OFF then return end
-		JMod.SetOwner(self, armer)
+		JMod.SetEZowner(self, armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)
 

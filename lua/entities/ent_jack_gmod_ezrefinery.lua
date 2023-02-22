@@ -88,7 +88,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.Owner
 		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 		if(IsValid(self.Owner))then
 			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
@@ -192,7 +192,7 @@ if(SERVER)then
 					for i = 1, 1 do
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
-						JMod.SetOwner(Gas, self.Owner)
+						JMod.SetEZowner(Gas, self.Owner)
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
 						Gas:Activate()
@@ -208,7 +208,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.LastOilTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)

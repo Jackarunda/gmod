@@ -24,7 +24,7 @@ if SERVER then
 		local SpawnPos = ply:GetEyeTrace().HitPos + Vector(0, 0, 5000)
 		local Bomb = ents.Create("ent_jack_gmod_ezclusterminebomb")
 		Bomb:SetPos(SpawnPos)
-		JMod.SetOwner(Bomb, ply)
+		JMod.SetEZowner(Bomb, ply)
 		Bomb:Spawn()
 		Bomb:Activate()
 		Bomb:SetState(STATE_ARMED)
@@ -36,7 +36,7 @@ if SERVER then
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -127,7 +127,7 @@ if SERVER then
 			if math.random(1, 5) == 1 then
 				self:Break()
 			else
-				JMod.SetOwner(self, dmginfo:GetAttacker())
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
@@ -138,7 +138,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -151,7 +151,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -182,7 +182,7 @@ if SERVER then
 
 				for j = 1, NumberOfMinesForThisRing do
 					local Mine = ents.Create(self.Payload)
-					JMod.SetOwner(Mine, Att)
+					JMod.SetEZowner(Mine, Att)
 					Mine:SetPos(Pos + Dir:Forward() * RingThrowDistance + Vector(0, 0, math.random(-10, 10)))
 					Mine:SetAngles(Angle(90, 0, 0))
 					Mine.AutoArm = true

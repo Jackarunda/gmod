@@ -65,7 +65,7 @@ if SERVER then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
 		if tobool(onOff) then
@@ -89,7 +89,7 @@ if SERVER then
 		self.Exploded = true
 
 		if IsValid(self.Plunger) then
-			JMod.SetOwner(self, self.Plunger.Owner)
+			JMod.SetEZowner(self, self.Plunger.Owner)
 		end
 
 		timer.Simple(0, function()

@@ -30,7 +30,7 @@ if SERVER then
 					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range = 1000
 					Gas:SetPos(pos)
-					JMod.SetOwner(Gas, Owner or game.GetWorld())
+					JMod.SetEZowner(Gas, Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
 					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))

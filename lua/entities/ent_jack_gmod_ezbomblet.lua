@@ -44,7 +44,7 @@ if SERVER then
 		end
 
 		if dmginfo:GetDamage() >= 80 then
-			JMod.SetOwner(self, dmginfo:GetAttacker())
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end

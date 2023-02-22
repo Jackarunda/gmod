@@ -235,7 +235,7 @@ if(SERVER)then
 	end
 	
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		self:ResetMemory()
 	end
 
@@ -372,7 +372,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		local OldOwner = self.Owner
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 
 		if IsValid(self.Owner) then
 			-- if owner changed then reset team color
@@ -872,7 +872,7 @@ if(SERVER)then
 			Gnd:SetPos(ShootPos)
 			ShootAng:RotateAroundAxis(ShootAng:Right(), -90)
 			Gnd:SetAngles(ShootAng)
-			JMod.SetOwner(Gnd, self.Owner or self)
+			JMod.SetEZowner(Gnd, self.Owner or self)
 			Gnd.Dmg = Dmg
 			Gnd:Spawn()
 			Gnd:Activate()

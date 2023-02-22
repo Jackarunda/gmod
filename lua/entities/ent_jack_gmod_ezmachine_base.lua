@@ -209,7 +209,7 @@ if(SERVER)then
 		local ent=ents.Create(classname)
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent,ply)
+		JMod.SetEZowner(ent,ply)
 		if JMod.Config.SpawnMachinesFull then
 			ent.SpawnFull = true
 		end
@@ -251,7 +251,7 @@ if(SERVER)then
 			self:SetElectricity(0)
 		end
 		---
-		if(JMod.GetOwner(self))then JMod.Colorify(self) end
+		if(JMod.GetEZowner(self))then JMod.Colorify(self) end
 		---
 		if(self.EZupgradable)then
 			self.UpgradeProgress={}
@@ -515,7 +515,7 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 	end
 
