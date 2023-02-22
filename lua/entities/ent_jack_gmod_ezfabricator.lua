@@ -44,7 +44,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if not(self.Owner)then self:SetColor(Color(45, 101, 153)) end
+		if not(self.EZowner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
 		---
 		if self.SpawnFull then

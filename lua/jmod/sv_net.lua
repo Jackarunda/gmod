@@ -99,7 +99,7 @@ net.Receive("JMod_EZtimeBomb", function(ln, ply)
 	local ent = net.ReadEntity()
 	local tim = net.ReadInt(16)
 
-	if (ent:GetState() == 0) and (ent.Owner == ply) and ply:Alive() and (ply:GetPos():Distance(ent:GetPos()) <= 150) then
+	if (ent:GetState() == 0) and (ent.EZowner == ply) and ply:Alive() and (ply:GetPos():Distance(ent:GetPos()) <= 150) then
 		ent:SetTimer(math.min(tim, 600))
 		ent.DisarmNeeded = math.Round(math.min(tim, 600) / 4)
 		ent:NextThink(CurTime() + 1)

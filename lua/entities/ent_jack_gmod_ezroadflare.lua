@@ -77,7 +77,7 @@ if SERVER then
 				if self:GetState() == STATE_BURNIN then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetAttacker(self.EZowner or self)
 					Dmg:SetInflictor(self)
 					Dmg:SetDamage(5)
 					Dmg:SetDamagePosition(self:GetPos())
@@ -175,7 +175,7 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInSphere(Pos, 30)) do
 				if v.JModHighlyFlammableFunc then
-					JMod.SetEZowner(v, self.Owner)
+					JMod.SetEZowner(v, self.EZowner)
 					local Func = v[v.JModHighlyFlammableFunc]
 					Func(v)
 				end

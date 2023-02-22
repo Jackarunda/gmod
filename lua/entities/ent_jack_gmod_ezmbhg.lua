@@ -136,8 +136,8 @@ if SERVER then
 		end
 
 		util.ScreenShake(SelfPos, 99999, 99999, 3, 3000)
-		util.BlastDamage(self, self.Owner or self or game.GetWorld(), SelfPos, 200, 200)
-		local Own = self.Owner
+		util.BlastDamage(self, self.EZowner or self or game.GetWorld(), SelfPos, 200, 200)
+		local Own = self.EZowner
 
 		timer.Simple(2, function()
 			local Bam = ents.Create("ent_jack_gmod_ezblackhole")

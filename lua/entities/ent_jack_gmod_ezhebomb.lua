@@ -229,9 +229,9 @@ if SERVER then
 		local Phys, UseAeroDrag = self:GetPhysicsObject(), true
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 		--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
-		--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then
+		--if((designator:GetLasing())and(designator.EZowner)and(JMod.ShouldAllowControl(self,designator.EZowner)))then
 		--[[
-					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.Owner:GetEyeTrace().HitPos
+					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.EZowner:GetEyeTrace().HitPos
 					local TargVec=TargPos-SelfPos
 					local Dist,Dir,Vel=TargVec:Length(),TargVec:GetNormalized(),Phys:GetVelocity()
 					local Speed=Vel:Length()

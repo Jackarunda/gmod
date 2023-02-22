@@ -140,7 +140,7 @@ if SERVER then
 	function ENT:BombRelease(slotNum, arm, ply)
 		local NumOBombs = #self.Bombs
 		slotNum = slotNum or NumOBombs
-		ply = ply or self.Owner or game.GetWorld()
+		ply = ply or self.EZowner or game.GetWorld()
 		if NumOBombs <= 0 then return end
 		if slotNum == 0 or slotNum > NumOBombs then return end
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
@@ -193,7 +193,7 @@ if SERVER then
 		for i = 1, #self.Bombs do
 			timer.Simple(0.2, function()
 				if IsValid(self) then
-					self:BombRelease(i, false, self.Owner)
+					self:BombRelease(i, false, self.EZowner)
 				end
 			end)
 		end

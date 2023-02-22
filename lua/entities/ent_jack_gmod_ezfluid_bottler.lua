@@ -63,11 +63,11 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local OldOwner = self.Owner
+		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
-		if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
+		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
 		if(State==STATE_BROKEN)then

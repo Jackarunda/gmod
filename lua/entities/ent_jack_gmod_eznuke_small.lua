@@ -106,7 +106,7 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.SetEZowner(Gas, self.Owner or game.GetWorld())
+			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
@@ -133,7 +133,7 @@ if SERVER then
 	end
 
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if not (IsValid(ply) and ply:Alive() and (ply == self.Owner)) then return end
+		if not (IsValid(ply) and ply:Alive() and (ply == self.EZowner)) then return end
 		if not (self:GetState() == STATE_ARMED) then return end
 		self:Detonate()
 	end
@@ -171,7 +171,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.Owner or game.GetWorld(), JMod.Config.NukePowerMult, JMod.Config.NukeRangeMult
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.NukePowerMult, JMod.Config.NukeRangeMult
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()

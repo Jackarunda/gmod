@@ -39,7 +39,7 @@ if(SERVER)then
 		else
 			self:SetGas(0)
 		end
-		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
+		if not(self.EZowner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end
 	function ENT:UpdateConfig()

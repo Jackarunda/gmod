@@ -73,7 +73,7 @@ if SERVER then
 
 		if self.NextEffect < Time then
 			self.NextEffect = Time + 0.5
-			local Par, Att, Infl = self:GetParent(), self.Owner or self, Inflictor(self)
+			local Par, Att, Infl = self:GetParent(), self.EZowner or self, Inflictor(self)
 
 			if not IsValid(Att) then
 				Att = Infl

@@ -121,7 +121,7 @@ if SERVER then
 	end
 
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if not (IsValid(ply) and ply:Alive() and (ply == self.Owner)) then return end
+		if not (IsValid(ply) and ply:Alive() and (ply == self.EZowner)) then return end
 		if not (self:GetState() == STATE_ARMED) then return end
 		self:Detonate()
 	end
@@ -161,7 +161,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld()
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()

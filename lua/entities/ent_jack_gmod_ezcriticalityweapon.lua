@@ -72,7 +72,7 @@ if SERVER then
 				if self:GetState() == STATE_MELTED then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetAttacker(self.EZowner or self)
 					Dmg:SetInflictor(self)
 					Dmg:SetDamage(5)
 					Dmg:SetDamagePosition(self:GetPos())
@@ -92,10 +92,10 @@ if SERVER then
 		local Dmg = dmginfo:GetDamage()
 
 		if JMod.LinCh(Dmg, 50, 120) then
-			JMod.SetEZowner(self, dmginfo:GetAttacker() or self.Owner)
+			JMod.SetEZowner(self, dmginfo:GetAttacker() or self.EZowner)
 			local Pos = self:GetPos()
 			self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
-			local Owner, Count = self.Owner, 50
+			local Owner, Count = self.EZowner, 50
 
 			timer.Simple(.5, function()
 				for k = 1, JMod.Config.NuclearRadiationMult * Count do
@@ -135,7 +135,7 @@ if SERVER then
 		elseif State == STATE_MELTED then
 			local Dmg = DamageInfo()
 			Dmg:SetDamageType(DMG_BURN)
-			Dmg:SetAttacker(self.Owner or self)
+			Dmg:SetAttacker(self.EZowner or self)
 			Dmg:SetInflictor(self)
 			Dmg:SetDamage(5)
 			Dmg:SetDamagePosition(self:GetPos())
@@ -284,7 +284,7 @@ if SERVER then
 							Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
 							Dmg:SetDamage(DmgAmt / 3)
 							Dmg:SetInflictor(self)
-							Dmg:SetAttacker(self.Owner or self)
+							Dmg:SetAttacker(self.EZowner or self)
 							Dmg:SetDamagePosition(TargPos)
 							v:TakeDamageInfo(Dmg)
 							---
@@ -292,7 +292,7 @@ if SERVER then
 							Dmg2:SetDamageType(DMG_RADIATION)
 							Dmg2:SetDamage(DmgAmt / 4)
 							Dmg2:SetInflictor(self)
-							Dmg2:SetAttacker(self.Owner or self)
+							Dmg2:SetAttacker(self.EZowner or self)
 							Dmg2:SetDamagePosition(TargPos)
 							v:TakeDamageInfo(Dmg2)
 
@@ -319,7 +319,7 @@ if SERVER then
 						Dmg2:SetDamageType(DMG_RADIATION)
 						Dmg2:SetDamage(DmgAmt / 3)
 						Dmg2:SetInflictor(self)
-						Dmg2:SetAttacker(self.Owner or self)
+						Dmg2:SetAttacker(self.EZowner or self)
 						Dmg2:SetDamagePosition(TargPos)
 						v:TakeDamageInfo(Dmg2)
 						-- neutron activation

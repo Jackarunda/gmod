@@ -164,7 +164,7 @@ if SERVER then
 
 		timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
 			if IsValid(self) then
-				local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.Owner or game.GetWorld()
+				local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.EZowner or game.GetWorld()
 				---
 				local splad = EffectData()
 				splad:SetOrigin(SelfPos)

@@ -41,7 +41,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            	JMod.Hint(self.Owner, "liquid scan")
+            	JMod.Hint(self.EZowner, "liquid scan")
             end
         end)
 	end
@@ -109,16 +109,16 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not(self.DepositKey)then
-				JMod.Hint(self.Owner, "oil derrick")
+				JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
-					self:TurnOn(self.Owner)
+					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > 0 then
 						self:TurnOff()
 					end
-					JMod.Hint(self.Owner, "machine mounting problem")
+					JMod.Hint(self.EZowner, "machine mounting problem")
 				end
 			end
 		end
@@ -152,11 +152,11 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		local State=self:GetState()
-		local OldOwner=self.Owner
+		local OldOwner=self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.SetEZowner(self,activator)
-		if(IsValid(self.Owner))then
-			if(OldOwner~=self.Owner)then -- if owner changed then reset team color
+		if(IsValid(self.EZowner))then
+			if(OldOwner~=self.EZowner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
 			end
 		end
@@ -179,7 +179,7 @@ if(SERVER)then
 
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
-			self:TurnOn(self.Owner)
+			self:TurnOn(self.EZowner)
 		end
 	end
 
@@ -269,7 +269,7 @@ if(SERVER)then
 				oilFire:SetAngles(Angle(180, 0, 90))
 				oilFire.DepositKey = self.DepositKey
 				oilFire:Spawn()
-				JMod.SetEZowner(oilFire, self.Owner)
+				JMod.SetEZowner(oilFire, self.EZowner)
 				oilFire:Activate()
 			end)
 		end

@@ -190,7 +190,7 @@ if SERVER then
 	end
 
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if not (IsValid(ply) and ply:Alive() and (ply == self.Owner)) then return end
+		if not (IsValid(ply) and ply:Alive() and (ply == self.EZowner)) then return end
 		if self:GetState() ~= STATE_ARMED then return end
 		JMod.Hint(ply, "detpack combo", self:GetPos())
 		self:Detonate()
@@ -211,7 +211,7 @@ if SERVER then
 				Blam:SetOrigin(SelfPos)
 				Blam:SetScale(PowerMult)
 				util.Effect("eff_jack_plastisplosion", Blam, true, true)
-				JMod.Sploom(self.Owner or self or game.GetWorld(), SelfPos, 20)
+				JMod.Sploom(self.EZowner or self or game.GetWorld(), SelfPos, 20)
 				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 				for i = 1, PowerMult do
@@ -246,7 +246,7 @@ if SERVER then
 
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
-					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl, Att, SelfPos, 300 * PowerMult * RangeMult, 200 * PowerMult)
 					-- do a lot of damage point blank, mostly for breaching
 					util.BlastDamage(Infl, Att, SelfPos, 20 * PowerMult * RangeMult, 1700 * PowerMult)

@@ -116,7 +116,7 @@ if SERVER then
 		local Dude = activator or activatorAgain
 		JMod.SetEZowner(self, Dude)
 
-		if IsValid(self.Owner) then
+		if IsValid(self.EZowner) then
 			JMod.Colorify(self)
 		end
 
@@ -223,13 +223,13 @@ if SERVER then
 
 				if IsValid(self.AttachedBomb) then
 					self.AttachedBomb:EZdetonateOverride(self)
-					JMod.Sploom(self.Owner, SelfPos, 3)
+					JMod.Sploom(self.EZowner, SelfPos, 3)
 					self:Remove()
 
 					return
 				end
 
-				JMod.Sploom(self.Owner, SelfPos, math.random(50, 80))
+				JMod.Sploom(self.EZowner, SelfPos, math.random(50, 80))
 				util.ScreenShake(SelfPos, 99999, 99999, .3, 500)
 				local Dir = (self:GetUp() + VectorRand() * .01):GetNormalized()
 				JMod.RicPenBullet(self, SelfPos, Dir, (dmg or 800) * JMod.Config.MinePower, true, true)

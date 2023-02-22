@@ -23,7 +23,7 @@ if SERVER then
 	function ENT:UseEffect(pos, ent, destructive)
 		if destructive and not self.Sploomd then
 			self.Sploomd = true
-			local Owner, Count = self.Owner, self:GetResource() / 10
+			local Owner, Count = self.EZowner, self:GetResource() / 10
 
 			timer.Simple(.5, function()
 				for k = 1, JMod.Config.NuclearRadiationMult * Count * 10 do

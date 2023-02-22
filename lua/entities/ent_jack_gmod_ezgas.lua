@@ -25,7 +25,7 @@ if SERVER then
 		if destructive then
 			if math.random(1, 20) == 2 then
 				if math.random(1, 2) == 1 then
-					JMod.Sploom(self.Owner, self:GetPos(), math.random(50, 130))
+					JMod.Sploom(self.EZowner, self:GetPos(), math.random(50, 130))
 				end
 
 				for k, ent in pairs(ents.FindInSphere(pos, 600)) do

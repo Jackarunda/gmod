@@ -159,7 +159,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local Att = self.Owner or game.GetWorld()
+		local Att = self.EZowner or game.GetWorld()
 		local Vel, Pos, Ang = self:GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
 		self:Remove()

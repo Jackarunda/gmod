@@ -39,7 +39,7 @@ if SERVER then
 	function ENT:Impact(tr)
 		if self.Impacted then return end
 		self.Impacted = true
-		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self.Owner or self, self.CurVel:GetNormalized()
+		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self.EZowner or self, self.CurVel:GetNormalized()
 
 		self:FireBullets({
 			Damage = self.Damage * .66,
@@ -49,14 +49,14 @@ if SERVER then
 			Spread = Vector(0, 0, 0),
 			Src = self:GetPos(),
 			Dir = Dir,
-			Attacker = self.Owner or game.GetWorld(),
+			Attacker = self.EZowner or game.GetWorld(),
 			AmmoType = self.AmmoType
 		})
 
 		local Slash = DamageInfo()
 		Slash:SetDamagePosition(tr.HitPos)
 		Slash:SetDamageType(DMG_SLASH)
-		Slash:SetAttacker(self.Owner or game.GetWorld())
+		Slash:SetAttacker(self.EZowner or game.GetWorld())
 		Slash:SetInflictor(self)
 		Slash:SetDamageForce(Dir * self.Damage * .33)
 		Slash:SetDamage(self.Damage * .33)
@@ -155,7 +155,7 @@ if SERVER then
 		else
 			local Filter = {self}
 
-			table.insert(Filter, self.Owner)
+			table.insert(Filter, self.EZowner)
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask = MASK_SHOT
 
@@ -196,7 +196,7 @@ if SERVER then
 	end
 
 	function ENT:DropToGround()
-		local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -600), {self, self.Owner, self.StuckIn})
+		local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -600), {self, self.EZowner, self.StuckIn})
 
 		self:SetParent(nil)
 		self.StuckIn = nil

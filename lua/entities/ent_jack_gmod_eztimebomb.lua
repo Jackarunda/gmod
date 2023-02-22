@@ -225,7 +225,7 @@ if SERVER then
 
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
-					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl, Att, SelfPos, 120 * PowerMult, 120 * PowerMult)
 					-- do a lot of damage point blank, mostly for breaching
 					util.BlastDamage(Infl, Att, SelfPos, 20 * PowerMult, 1000 * PowerMult)

@@ -133,7 +133,7 @@ SWEP.Hook_AddShootSound = function(self, data) end --[[
 
 SWEP.Hook_PostFireBullets = function(self)
 	local SelfPos = self:GetPos()
-	local RPos, RDir = self.Owner:GetShootPos(), self.Owner:GetAimVector()
+	local RPos, RDir = self.EZowner:GetShootPos(), self.EZowner:GetAimVector()
 
 	if self.BackBlast then
 		if self.ShootEntityOffset then
@@ -156,12 +156,12 @@ SWEP.Hook_PostFireBullets = function(self)
 			Dist = RPos:Distance(Tr.HitPos)
 
 			if SERVER then
-				JMod.Hint(self.Owner, "backblast wall")
+				JMod.Hint(self.EZowner, "backblast wall")
 			end
 		end
 
 		for i = 1, 4 do
-			util.BlastDamage(self, self.Owner or self, RPos + RDir * (i * 40 - Dist) * self.BackBlast, 70 * self.BackBlast, 30 * self.BackBlast)
+			util.BlastDamage(self, self.EZowner or self, RPos + RDir * (i * 40 - Dist) * self.BackBlast, 70 * self.BackBlast, 30 * self.BackBlast)
 		end
 
 		if SERVER then
@@ -184,13 +184,13 @@ SWEP.Hook_PostFireBullets = function(self)
 		local Info = self:GetAttachment(self.MuzzleEffectAttachment or 1)
 
 		if CLIENT then
-			Info = self.Owner:GetViewModel():GetAttachment(self.MuzzleEffectAttachment or 1)
+			Info = self.EZowner:GetViewModel():GetAttachment(self.MuzzleEffectAttachment or 1)
 		end
 
 		if self.ExtraMuzzleLua then
 			local Eff = EffectData()
 			Eff:SetOrigin(Info.Pos)
-			Eff:SetNormal(self.Owner:GetAimVector())
+			Eff:SetNormal(self.EZowner:GetAimVector())
 			Eff:SetScale(self.ExtraMuzzleLuaScale or 1)
 			util.Effect(self.ExtraMuzzleLua, Eff, true)
 		end
@@ -206,14 +206,14 @@ SWEP.Hook_PostFireBullets = function(self)
 
 	if self.RecoilDamage and SERVER then
 		local Dmg = DamageInfo()
-		Dmg:SetDamagePosition(self.Owner:GetShootPos())
+		Dmg:SetDamagePosition(self.EZowner:GetShootPos())
 		Dmg:SetDamage(self.RecoilDamage)
 		Dmg:SetDamageType(DMG_CLUB)
-		Dmg:SetAttacker(self.Owner)
+		Dmg:SetAttacker(self.EZowner)
 		Dmg:SetInflictor(self)
-		Dmg:SetDamageForce(-self.Owner:GetAimVector() * self.RecoilDamage * 200)
-		self.Owner:SetVelocity(-self.Owner:GetAimVector() * self.RecoilDamage * 200)
-		self.Owner:TakeDamageInfo(Dmg)
+		Dmg:SetDamageForce(-self.EZowner:GetAimVector() * self.RecoilDamage * 200)
+		self.EZowner:SetVelocity(-self.EZowner:GetAimVector() * self.RecoilDamage * 200)
+		self.EZowner:TakeDamageInfo(Dmg)
 	end
 end
 
@@ -230,7 +230,7 @@ function SWEP:TryBustDoor(ent, dmginfo)
 	-- Magic number: 119.506 is the size of door01_left
 	-- The bigger the door is, the harder it is to bust
 	local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
-	JMod.Hint(self.Owner, "shotgun breach")
+	JMod.Hint(self.EZowner, "shotgun breach")
 	local WorkSpread = JMod.CalcWorkSpreadMult(ent, dmginfo:GetDamagePosition()) ^ 1.1
 	local Amt = dmginfo:GetDamage() * self.DoorBreachPower * WorkSpread
 	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
@@ -460,7 +460,7 @@ function SWEP:Bash(melee2)
 		if(k~="BaseClass")then
 			timer.Simple(v.t,function()
 				if(IsValid(self))then
-					self.Owner:ViewPunch(v.ang)
+					self.EZowner:ViewPunch(v.ang)
 				end
 			end)
 		end
@@ -540,11 +540,11 @@ function SWEP:MeleeAttack(melee2)
 	
 	if(self.MeleeHitBullet)then
 		self:FireBullets({
-			Src=self.Owner:GetShootPos(),
-			Dir=self.Owner:GetAimVector(),
+			Src=self.EZowner:GetShootPos(),
+			Dir=self.EZowner:GetAimVector(),
 			Damage=1,
 			Force=Vector(0,0,0),
-			Attacker=self.Owner,
+			Attacker=self.EZowner,
 			Tracer=0,
 			Distance=reach*1.2
 		})
@@ -608,7 +608,7 @@ function SWEP:MeleeAttack(melee2)
         dmginfo:SetDamage(dmg*relspeed*Randomness*GlobalMult)
         dmginfo:SetDamageType(self.MeleeDamageType or DMG_CLUB)
 
-		local ForceVec=self.Owner:EyeAngles()
+		local ForceVec=self.EZowner:EyeAngles()
 		local U,R,F=ForceVec:Up(),ForceVec:Right(),ForceVec:Forward()
 		ForceVec:RotateAroundAxis(R,self.MeleeForceAng.p)
 		ForceVec:RotateAroundAxis(U,self.MeleeForceAng.y)

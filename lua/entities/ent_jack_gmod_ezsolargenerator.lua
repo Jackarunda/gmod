@@ -53,11 +53,11 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUse > CurTime() then return end
 		local State=self:GetState()
-		local OldOwner=self.Owner
+		local OldOwner=self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
 		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
-		if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
+		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
 		if(State==STATE_BROKEN)then
@@ -195,7 +195,7 @@ if(SERVER)then
 			local grade = self:GetGrade()
 
 			if vis <= 0 or self:WaterLevel() >= 2 then
-				JMod.Hint(self.Owner, "solar panel no sun")
+				JMod.Hint(self.EZowner, "solar panel no sun")
 			elseif self:GetProgress() < 100 then
 				local rate = math.Round(1 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
 				self:SetProgress(self:GetProgress() + rate)

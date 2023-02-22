@@ -89,7 +89,7 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInSphere(self:GetPos(), 80)) do
 				if v.JModHighlyFlammableFunc then
-					JMod.SetEZowner(v, self.Owner)
+					JMod.SetEZowner(v, self.EZowner)
 					local Func = v[v.JModHighlyFlammableFunc]
 					Func(v)
 				end

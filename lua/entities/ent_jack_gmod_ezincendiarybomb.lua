@@ -155,7 +155,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld()
 		JMod.Sploom(Att, SelfPos, 100)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1000)
@@ -174,8 +174,8 @@ if SERVER then
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
-			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod.SetEZowner(Flame, self.Owner or self)
+			Flame:SetOwner(self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Flame, self.EZowner or self)
 			Flame:Spawn()
 			Flame:Activate()
 		end

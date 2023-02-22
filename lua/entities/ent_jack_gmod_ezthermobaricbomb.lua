@@ -160,7 +160,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.EZowner or game.GetWorld()
 		JMod.Sploom(Att, SelfPos, 100)
 
 		---

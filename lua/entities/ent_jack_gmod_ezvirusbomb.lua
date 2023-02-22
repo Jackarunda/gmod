@@ -127,7 +127,7 @@ if SERVER then
 	function ENT:Burst()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.Owner or self, self:GetPhysicsObject():GetVelocity()
+		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
 		JMod.Sploom(Owner, SelfPos, 100)
 
 		for i = 1, self.ContainedGas do
@@ -155,7 +155,7 @@ if SERVER then
 		elseif State == STATE_VENTING then
 			local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-			JMod.SetEZowner(Gas, self.Owner or self)
+			JMod.SetEZowner(Gas, self.EZowner or self)
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)
