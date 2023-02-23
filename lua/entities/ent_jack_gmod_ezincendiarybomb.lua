@@ -181,7 +181,11 @@ if SERVER then
 		end
 
 		---
-		self:Remove()
+		timer.Simple(0.01, function()
+			if IsValid(self) then
+				self:Remove()
+			end
+		end)
 	end
 
 	function ENT:OnRemove()
