@@ -92,7 +92,7 @@ if SERVER then
 		else
 			local Filter = {self}
 
-			table.insert(Filter, self.EZowner)
+			table.insert(Filter, self.Owner)
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask, HitWater, HitChainLink = MASK_SHOT, false, true
 

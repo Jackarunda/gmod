@@ -291,7 +291,7 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if self.EZowner:KeyDown(IN_SPEED) or self.EZowner:KeyDown(IN_ATTACK2) then
+	if self.Owner:KeyDown(IN_SPEED) or self.Owner:KeyDown(IN_ATTACK2) then
 		Downness = Lerp(FT * 2, Downness, 10)
 	else
 		Downness = Lerp(FT * 2, Downness, 0)
@@ -307,12 +307,12 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:UpdateNextIdle()
-	local vm = self.EZowner:GetViewModel()
+	local vm = self.Owner:GetViewModel()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
 function SWEP:PrimaryAttack()
-	if self.EZowner:KeyDown(IN_SPEED) then return end
+	if self.Owner:KeyDown(IN_SPEED) then return end
 	if self:GetSupplies() <= 0 then return end
 	self:Pawnch()
 	self:SetNextPrimaryFire(CurTime() + .65)
@@ -320,13 +320,13 @@ function SWEP:PrimaryAttack()
 
 	if SERVER then
 		local Ent, Pos, Norm = self:WhomIlookinAt()
-		local AimVec = self.EZowner:GetAimVector()
+		local AimVec = self.Owner:GetAimVector()
 
 		if IsValid(Ent) then
 			local Hit = false
 
 			if Ent:IsPlayer() then
-				local override = hook.Run("JMod_MedkitHeal", self.EZowner, self.EZowner, selfg)
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
@@ -352,7 +352,7 @@ function SWEP:PrimaryAttack()
 				local AddAmt = math.min(Missing, healAmt * JMod.Config.MedKitHealMult)
 				self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				Ent.EZhealth = Ent.EZhealth + AddAmt
-				self.EZowner:PrintMessage(HUD_PRINTCENTER, "treatment " .. Ent.EZhealth + Helf .. "/" .. Max)
+				self.Owner:PrintMessage(HUD_PRINTCENTER, "treatment " .. Ent.EZhealth + Helf .. "/" .. Max)
 				Ent:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 				Hit = true
 
@@ -362,7 +362,7 @@ function SWEP:PrimaryAttack()
 					self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				end
 			elseif Ent:IsNPC() and Ent.Health and Ent:Health() and tonumber(Ent:Health()) then
-				local override = hook.Run("JMod_MedkitHeal", self.EZowner, self.EZowner, selfg)
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
@@ -382,7 +382,7 @@ function SWEP:PrimaryAttack()
 				local AddAmt = math.min(Missing, healAmt * JMod.Config.MedKitHealMult)
 				self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				Ent:SetHealth(Helf + AddAmt)
-				self.EZowner:PrintMessage(HUD_PRINTCENTER, "health " .. Ent:Health() .. "/" .. Max)
+				self.Owner:PrintMessage(HUD_PRINTCENTER, "health " .. Ent:Health() .. "/" .. Max)
 				Hit = true
 			end
 
@@ -397,8 +397,8 @@ end
 local Anims = {"fists_right", "fists_right", "fists_left", "fists_left"}
 
 function SWEP:Pawnch()
-	self.EZowner:SetAnimation(PLAYER_ATTACK1)
-	local vm = self.EZowner:GetViewModel()
+	self.Owner:SetAnimation(PLAYER_ATTACK1)
+	local vm = self.Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
 	self:UpdateNextIdle()
 end
@@ -430,22 +430,22 @@ end
 
 --
 function SWEP:WhomIlookinAt()
-	local Tr = util.QuickTrace(self.EZowner:GetShootPos(), self.EZowner:GetAimVector() * 55, {self.EZowner})
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 55, {self.Owner})
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end
 
 function SWEP:SecondaryAttack()
-	if self.EZowner:KeyDown(IN_SPEED) then return end
+	if self.Owner:KeyDown(IN_SPEED) then return end
 	if self:GetSupplies() <= 0 then return end
 
 	if SERVER then
 		self:SetNextPrimaryFire(CurTime() + .65)
 		self:SetNextSecondaryFire(CurTime() + .85)
-		local Ent = self.EZowner
+		local Ent = self.Owner
 		local AimVec = Ent:GetAimVector()
 		local Pos = Ent:GetShootPos() - Vector(0, 0, 10) + AimVec * 5
-		local override = hook.Run("JMod_MedkitHeal", self.EZowner, self.EZowner, selfg)
+		local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
 		if override == false then return end
 		local healAmt = isnumber(override) and override or 2
 		local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
@@ -471,7 +471,7 @@ function SWEP:SecondaryAttack()
 		local AddAmt = math.min(Missing, healAmt)
 		self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 		Ent.EZhealth = Ent.EZhealth + AddAmt
-		self.EZowner:PrintMessage(HUD_PRINTCENTER, "treatment " .. Ent.EZhealth + Helf .. "/" .. Max)
+		self.Owner:PrintMessage(HUD_PRINTCENTER, "treatment " .. Ent.EZhealth + Helf .. "/" .. Max)
 		self:HealEffect(Ent)
 
 		if Ent.EZvirus and Ent.EZvirus.Severity > 1 then
@@ -542,8 +542,8 @@ end
 function SWEP:OnRemove()
 	self:SCKHolster()
 
-	if IsValid(self.EZowner) and CLIENT and self.EZowner:IsPlayer() then
-		local vm = self.EZowner:GetViewModel()
+	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
+		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -576,8 +576,8 @@ function SWEP:Holster(wep)
 	-- Not calling OnRemove to keep the models
 	self:SCKHolster()
 
-	if IsValid(self.EZowner) and CLIENT and self.EZowner:IsPlayer() then
-		local vm = self.EZowner:GetViewModel()
+	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
+		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
 			vm:SetMaterial("")
@@ -588,8 +588,8 @@ function SWEP:Holster(wep)
 end
 
 function SWEP:Deploy()
-	if not IsValid(self.EZowner) then return end
-	local vm = self.EZowner:GetViewModel()
+	if not IsValid(self.Owner) then return end
+	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
@@ -605,7 +605,7 @@ end
 
 function SWEP:Think()
 	local Time = CurTime()
-	local vm = self.EZowner:GetViewModel()
+	local vm = self.Owner:GetViewModel()
 	local idletime = self.NextIdle
 
 	if idletime > 0 and Time > idletime then
@@ -613,13 +613,13 @@ function SWEP:Think()
 		self:UpdateNextIdle()
 	end
 
-	local RightClickin = self.EZowner:KeyDown(IN_ATTACK2)
+	local RightClickin = self.Owner:KeyDown(IN_ATTACK2)
 
 	if not RightClickin then
 		self:SetNextSecondaryFire(CurTime() + .5)
 	end
 
-	if self.EZowner:KeyDown(IN_SPEED) then
+	if self.Owner:KeyDown(IN_SPEED) then
 		self:SetHoldType("normal")
 	elseif RightClickin then
 		self:SetHoldType("passive")
@@ -630,7 +630,7 @@ end
 
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
-	if self.EZowner:ShouldDrawLocalPlayer() then return end
+	if self.Owner:ShouldDrawLocalPlayer() then return end
 	local W, H, Supplies = ScrW(), ScrH(), self:GetSupplies()
 	draw.SimpleTextOutlined("Supplies: " .. Supplies, "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 200), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	draw.SimpleTextOutlined("LMB: heal target", "Trebuchet24", W * .4, H * .7 + 30, Color(255, 255, 255, 50), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
@@ -641,8 +641,8 @@ end
 
 ----------------- shit -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.EZowner) then
-		local vm = self.EZowner:GetViewModel()
+	if CLIENT and IsValid(self.Owner) then
+		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
 			self:ResetBonePositions(vm)
@@ -660,8 +660,8 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.WElements) -- create worldmodels
 
 		-- init view model bone build function
-		if IsValid(self.EZowner) then
-			local vm = self.EZowner:GetViewModel()
+		if IsValid(self.Owner) then
+			local vm = self.Owner:GetViewModel()
 
 			if IsValid(vm) then
 				self:ResetBonePositions(vm)
@@ -687,7 +687,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
-		local vm = self.EZowner:GetViewModel()
+		local vm = self.Owner:GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end
 		self:UpdateBonePositions(vm)
@@ -799,8 +799,8 @@ if CLIENT then
 			end
 		end
 
-		if IsValid(self.EZowner) then
-			bone_ent = self.EZowner
+		if IsValid(self.Owner) then
+			bone_ent = self.Owner
 		else
 			-- when the weapon is dropped
 			bone_ent = self
@@ -909,7 +909,7 @@ if CLIENT then
 				pos, ang = m:GetTranslation(), m:GetAngles()
 			end
 
-			if IsValid(self.EZowner) and self.EZowner:IsPlayer() and ent == self.EZowner:GetViewModel() and self.ViewModelFlip then
+			if IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip then
 				ang.r = -ang.r -- Fixes mirrored models
 			end
 		end
