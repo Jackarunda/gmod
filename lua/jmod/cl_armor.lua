@@ -131,12 +131,12 @@ end)
 net.Receive("JMod_EZarmorSync", function()
 	local ply = net.ReadEntity()
 
-	if ply.EZarmorModels then
+	--[[if ply.EZarmorModels then
 		for k, v in pairs(ply.EZarmorModels) do
 			v:Remove()
 			v = nil
 		end
-	end
+	end]]--
 
 	ply.EZarmor = net.ReadTable()
 end)

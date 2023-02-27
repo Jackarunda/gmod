@@ -631,6 +631,7 @@ if CLIENT then
 				ang:RotateAroundAxis(forward, WepAng.r)
 				mdl:SetRenderOrigin(pos)
 				mdl:SetRenderAngles(ang)
+				render.SetColorModulation(1, 1, 1)
 				mdl:DrawModel()
 			end
 		else
