@@ -97,7 +97,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 				Mdl:SetMaterial(ArmorInfo.mat or "")
 				Mdl:SetParent(ply)
 				Mdl:SetNoDraw(true)
-				Mdl.JModCSModel = true -- doesn't seem to be working though
+				--Mdl.JModCSModel = true -- doesn't seem to be working though
 				ply.EZarmorModels[id] = Mdl
 			end
 		end
@@ -130,15 +130,32 @@ end)
 
 net.Receive("JMod_EZarmorSync", function()
 	local ply = net.ReadEntity()
-
-	--[[if ply.EZarmorModels then
-		for k, v in pairs(ply.EZarmorModels) do
-			v:Remove()
-			v = nil
-		end
-	end]]--
-
 	ply.EZarmor = net.ReadTable()
+
+	if ply.EZarmorModels then
+		for k, v in pairs(ply.EZarmorModels) do
+			--if IsValid(v) then
+				local NoMatch = true
+				for id, armorData in pairs(ply.EZarmor.items) do
+					if k == id then
+						NoMatch = false 
+						break
+					end
+				end
+				if NoMatch then
+					print("Removing: ", v)
+					v:Remove()
+					v = nil
+					ply.EZarmorModels[k] = nil
+				end
+			--else
+			--	ply.EZarmorModels[k] = nil
+			--end
+		end
+	end
+	
+	PrintTable(ply.EZarmorModels)
+	--PrintTable(ply.EZarmor)
 end)
 
 concommand.Add("jmod_debug_countclientsidemodels", function()
