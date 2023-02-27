@@ -113,7 +113,7 @@ if SERVER then
 							JMod.Hint(activator, v)
 						end)
 					end
-					print(activator:GetWeapon(self.Specs.swep).Owner)
+					--print(activator:GetWeapon(self.Specs.swep).Owner)
 
 					self:Remove()
 				else
