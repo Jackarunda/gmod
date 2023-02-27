@@ -143,7 +143,7 @@ net.Receive("JMod_EZarmorSync", function()
 					end
 				end
 				if NoMatch then
-					print("Removing: ", v)
+					--print("Removing: ", v)
 					v:Remove()
 					v = nil
 					ply.EZarmorModels[k] = nil
@@ -154,7 +154,7 @@ net.Receive("JMod_EZarmorSync", function()
 		end
 	end
 	
-	PrintTable(ply.EZarmorModels)
+	--PrintTable(ply.EZarmorModels)
 	--PrintTable(ply.EZarmor)
 end)
 
