@@ -23,11 +23,7 @@ ENT.PropModels = {"models/props_lab/reciever01d.mdl", "models/props/cs_office/co
 
 ---
 if SERVER then
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 1 * JMod.Config.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels))
-		end
-
+	--[[function ENT:UseEffect(pos, ent)
 		local effectdata = EffectData()
 		effectdata:SetOrigin(pos + VectorRand())
 		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
@@ -35,7 +31,7 @@ if SERVER then
 		effectdata:SetScale(math.Rand(1, 2)) --length of strands
 		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
 		util.Effect("Sparks", effectdata, true, true)
-	end
+	end]]--
 
 	function ENT:CustomThink()
 		self:GetPhysicsObject():ApplyForceCenter(VectorRand() * math.random(1, 1000))

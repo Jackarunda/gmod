@@ -24,10 +24,11 @@ ENT.Hint = "antimatter"
 if SERVER then
 	function ENT:UseEffect(pos, ent, destructive)
 		if destructive and not self.Sploomd then
+			local Resources = self:GetResource()
 			self.Sploomd = true
 			local Blam = EffectData()
 			Blam:SetOrigin(pos)
-			Blam:SetScale(5)
+			Blam:SetScale(5 * (Resources / 100))
 			util.Effect("eff_jack_plastisplosion", Blam, true, true)
 			util.ScreenShake(pos, 99999, 99999, 1, 750 * 5)
 
@@ -43,9 +44,14 @@ if SERVER then
 				local MeltBlast = DamageInfo()
 				MeltBlast:SetInflictor(game.GetWorld())
 				MeltBlast:SetAttacker(game.GetWorld())
-				MeltBlast:SetDamage(500)
+				MeltBlast:SetDamage(Resources * 5)
 				MeltBlast:SetDamageType(DMG_DISSOLVE)
-				util.BlastDamageInfo(MeltBlast, pos, 1000)
+				util.BlastDamageInfo(MeltBlast, pos, Resources * 10)
+				for k, v in pairs(ents.FindInSphere(pos, Resources * 5)) do 
+					if v:GetClass() == "npc_strider" then
+						v:Fire("break")
+					end
+				end
 			end)
 		end
 	end

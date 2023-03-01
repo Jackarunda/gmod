@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 41,
+		Version = 41.6,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -25,6 +25,7 @@ function JMod.InitGlobalConfig(forceNew)
 		SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
 		DoorBreachResetTimeMult = 1,
 		SupplyEffectMult = 1,
+		MaxResourceMult = 1,
 		FumigatorGasAmount = 1,
 		PoisonGasDamage = 1,
 		PoisonGasLingerTime = 1,

@@ -17,16 +17,7 @@ ENT.ImpactNoise1 = "Rock.ImpactHard"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Boulder.ImpactHard"
 
-ENT.PropModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"}
-
----
-if SERVER then
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 1 * JMod.Config.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels))
-		end
-	end
-elseif CLIENT then
+if CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 

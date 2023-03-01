@@ -44,20 +44,6 @@ if SERVER then
 			end
 		end
 	end
-
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 4 * JMod.Config.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels))
-		end
-
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos + VectorRand())
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(1, 2)) --length of strands
-		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
-		util.Effect("Sparks", effectdata, true, true)
-	end
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()

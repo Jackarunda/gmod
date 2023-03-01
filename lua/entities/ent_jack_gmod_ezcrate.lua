@@ -47,7 +47,7 @@ if SERVER then
 		self:SetResource(0)
 		self:ApplySupplyType("generic")
 		
-		self.MaxResource = 100 * 20 -- standard size
+		self.MaxResource = 100 * 20 * JMod.Config.MaxResourceMult -- standard size
 		self.EZconsumes = {}
 
 		for k, v in pairs(JMod.EZ_RESOURCE_TYPES) do
@@ -115,7 +115,7 @@ if SERVER then
 		JMod.Hint(activator, "crate")
 		local Resource = self:GetResource()
 		if Resource <= 0 then return end
-		local Box, Given = ents.Create(self.ChildEntity), math.min(Resource, 100)
+		local Box, Given = ents.Create(self.ChildEntity), math.min(Resource, 100 * JMod.Config.MaxResourceMult)
 		Box:SetPos(self:GetPos() + self:GetUp() * 5)
 		Box:SetAngles(self:GetAngles())
 		Box:Spawn()

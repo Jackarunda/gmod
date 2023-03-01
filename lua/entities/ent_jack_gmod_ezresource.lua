@@ -9,7 +9,6 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
-
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
@@ -63,7 +62,8 @@ if SERVER then
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
 		---
-		self:SetResource(100)
+		self.MaxResources = 100 * JMod.Config.MaxResourceMult
+		self:SetResource(self.MaxResources)
 		---
 		self.NextLoad = 0
 		self.Loaded = false
@@ -78,7 +78,7 @@ if SERVER then
 	end
 
 	function ENT:CalcWeight()
-		local Frac = self:GetResource() / 100
+		local Frac = self:GetResource() / self.MaxResources
 		self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
 		self:GetPhysicsObject():Wake()
 	end
@@ -122,7 +122,7 @@ if SERVER then
 					-- try to combine
 					local Sum = self:GetResource() + data.HitEntity:GetResource()
 
-					if Sum <= 100 then
+					if Sum <= self.MaxResources then
 						self:SetResource(Sum)
 						self:CalcWeight()
 						data.HitEntity:Remove()
@@ -176,10 +176,10 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
-					--[[if self.UseEffect then
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
-					end]]--
+					end
 					SafeRemoveEntity(self)
 				end
 			end
@@ -193,12 +193,12 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
-			--[[for i = 1, self:GetResource() / 10 do
-				if self.UseEffect then
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+			if self.UseEffect then
+				for i = 1, self:GetResource() / 10 do			
 					self:UseEffect(Pos, game.GetWorld(), true)
 				end
-			end]]--
+			end
 
 			self:Remove()
 		end
@@ -223,7 +223,7 @@ if SERVER then
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
 				self:CalcWeight()
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResources, 1)
 			end
 		elseif self.AltUse and AltPressed then
 			self:AltUse(activator)
