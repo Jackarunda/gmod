@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
-ENT.Model = "models/kali/props/cases/hard case b.mdl"
+ENT.Model = "models/jmod/resources/hard_case_b.mdl"
 ENT.Material = nil
 ENT.Color = Color(100, 100, 100)
 ENT.ModelScale = 1

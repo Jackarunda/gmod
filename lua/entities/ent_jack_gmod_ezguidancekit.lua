@@ -30,7 +30,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/kali/props/cases/hard case b.mdl")
+		self:SetModel("models/jmod/resources/hard_case_b.mdl")
 		self:SetModelScale(.4, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)

@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.TUNGSTEN
 ENT.JModPreferredCarryAngles = Angle(180, 90, -90)
-ENT.Model = "models/props_mining/ingot001.mdl"
+ENT.Model = "models/jmod/resources/ingot001.mdl"
 ENT.Material = "models/props_mining/ingot_jack_tungsten"
 ENT.Color = Color(150, 150, 170)
 ENT.ModelScale = 1

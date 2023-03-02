@@ -850,8 +850,8 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	Ent:SetAngles(AngleRand())
 	Ent:Spawn()
 	Ent:Activate()
-	Ent:SetResource(amt or 100)
-	JMod.SetOwner(Ent, self.Owner)
+	Ent:SetResource(amt)
+	JMod.SetEZowner(Ent, self.Owner)
 	timer.Simple(.1, function()
 		if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
 			Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
@@ -958,7 +958,7 @@ function SWEP:Think()
 												local AmtLeft = v
 
 												while AmtLeft > 0 do
-													local Remove = math.min(AmtLeft, 100)
+													local Remove = math.min(AmtLeft, 100 * JMod.Config.MaxResourceMult)
 													self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
 													AmtLeft = AmtLeft - Remove
 												end
