@@ -28,7 +28,7 @@ if SERVER then
 			self.Sploomd = true
 			local Blam = EffectData()
 			Blam:SetOrigin(pos)
-			Blam:SetScale(5 * (Resources / 100))
+			Blam:SetScale(5 * (Resources / 200))
 			util.Effect("eff_jack_plastisplosion", Blam, true, true)
 			util.ScreenShake(pos, 99999, 99999, 1, 750 * 5)
 
@@ -46,7 +46,7 @@ if SERVER then
 				MeltBlast:SetAttacker(game.GetWorld())
 				MeltBlast:SetDamage(Resources * 5)
 				MeltBlast:SetDamageType(DMG_DISSOLVE)
-				util.BlastDamageInfo(MeltBlast, pos, Resources * 10)
+				util.BlastDamageInfo(MeltBlast, pos, Resources * 8)
 				for k, v in pairs(ents.FindInSphere(pos, Resources * 5)) do 
 					if v:GetClass() == "npc_strider" then
 						v:Fire("break")
