@@ -1042,6 +1042,7 @@ end
 net.Receive("JMod_Inventory", function()
 	local Ply = LocalPlayer()
 	local weight = Ply.EZarmor.totalWeight
+	local PlyModel = net.ReadString()
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(600, 400)
 	motherFrame:SetVisible(true)
@@ -1080,7 +1081,7 @@ net.Receive("JMod_Inventory", function()
 	local PlayerDisplay = vgui.Create("DModelPanel", PDispBG)
 	PlayerDisplay:SetPos(0, 0)
 	PlayerDisplay:SetSize(PDispBG:GetWide(), PDispBG:GetTall())
-	PlayerDisplay:SetModel(Ply:GetModel())
+	PlayerDisplay:SetModel(PlyModel or Ply:GetModel())
 	PlayerDisplay:SetLookAt(PlayerDisplay:GetEntity():GetBonePosition(0))
 	PlayerDisplay:SetFOV(37)
 	PlayerDisplay:SetCursor("arrow")
@@ -1119,6 +1120,7 @@ net.Receive("JMod_Inventory", function()
 	end
 
 	Ent:SetSkin(Ply:GetSkin())
+	--Ent:SetColor(Color(0, 0, 0))
 	for k, v in pairs( Ply:GetBodyGroups() ) do
 		local cur_bgid = Ply:GetBodygroup( v.id )
 		Ent:SetBodygroup( v.id, cur_bgid )
@@ -1155,22 +1157,16 @@ net.Receive("JMod_Inventory", function()
 			if(ent.EZarmorModels[id])then ent.EZarmorModels[id]:Remove() end
 		end
 	end
+	
+	local ArmorButtonsLeft = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf"}
+	local ArmorButtonsRight = {"chest", "back", "waist", "pelvis", "rightshoulder", "rightforearm", "rightthigh", "rightcalf"}
 
 	---
-	CreateArmorSlotButton(motherFrame, "head", 10, 30)
-	CreateArmorSlotButton(motherFrame, "eyes", 10, 75)
-	CreateArmorSlotButton(motherFrame, "mouthnose", 10, 120)
-	CreateArmorSlotButton(motherFrame, "ears", 10, 165)
-	CreateArmorSlotButton(motherFrame, "leftshoulder", 10, 210)
-	CreateArmorSlotButton(motherFrame, "leftforearm", 10, 255)
-	CreateArmorSlotButton(motherFrame, "leftthigh", 10, 300)
-	CreateArmorSlotButton(motherFrame, "leftcalf", 10, 345)
+	for k, v in ipairs(ArmorButtonsLeft) do
+		CreateArmorSlotButton(motherFrame, v, 10, 30 + ((k - 1) * 45))
+	end
 	---
-	CreateArmorSlotButton(motherFrame, "rightshoulder", 410, 30)
-	CreateArmorSlotButton(motherFrame, "rightforearm", 410, 75)
-	CreateArmorSlotButton(motherFrame, "chest", 410, 120)
-	CreateArmorSlotButton(motherFrame, "back", 410, 165)
-	CreateArmorSlotButton(motherFrame, "pelvis", 410, 210)
-	CreateArmorSlotButton(motherFrame, "rightthigh", 410, 255)
-	CreateArmorSlotButton(motherFrame, "rightcalf", 410, 300)
+	for k, v in ipairs(ArmorButtonsRight) do
+		CreateArmorSlotButton(motherFrame, v, 410, 30 + ((k - 1) * 45))
+	end
 end)
