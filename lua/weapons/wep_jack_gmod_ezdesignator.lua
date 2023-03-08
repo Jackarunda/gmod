@@ -386,6 +386,8 @@ if CLIENT then
 			end
 		end
 
+		local bone_ent
+
 		if IsValid(self.EZowner) then
 			bone_ent = self.EZowner
 		else

@@ -2388,7 +2388,7 @@ function JMod.SaveDepositConfig(configID)
 
 	local ResourceMapToSave = JMod.NaturalResourceTable
 
-	NewResourceTable = {}
+	local NewResourceTable = {}
 	for k, v in pairs(ResourceMapToSave) do
 		NewResourceTable[k] = {
 			typ = v.typ,

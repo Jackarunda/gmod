@@ -164,7 +164,7 @@ if(SERVER)then
 			return (AngleDifference+90)/180
 		end
 		if(StormFox)then
-			Minutes = StormFox.GetTime()
+			local Minutes = StormFox.GetTime()
 			local Frac = Minutes / 1440
 			Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
 			return math.Clamp(Frac, 0, 1)

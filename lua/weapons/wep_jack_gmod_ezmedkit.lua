@@ -799,6 +799,8 @@ if CLIENT then
 			end
 		end
 
+		local bone_ent
+
 		if IsValid(self.Owner) then
 			bone_ent = self.Owner
 		else

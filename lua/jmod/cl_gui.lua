@@ -120,7 +120,6 @@ function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, fo
 end
 
 function JMod.StandardRankDisplay(rank, x, y, siz, opacity)
-	font = font or "JMod-Stencil"
 	opacity = opacity or 150
 	surface.SetDrawColor(255, 255, 255, opacity)
 	surface.SetMaterial(RankIcons[rank])
@@ -1149,7 +1148,7 @@ net.Receive("JMod_Inventory", function()
 	end
 
 	function motherFrame:OnRemove()
-		ent = PlayerDisplay:GetEntity()
+		local ent = PlayerDisplay:GetEntity()
 		if not ent.EZarmor then return end
 		if not ent.EZarmor.items then return end
 
@@ -1157,7 +1156,7 @@ net.Receive("JMod_Inventory", function()
 			if(ent.EZarmorModels[id])then ent.EZarmorModels[id]:Remove() end
 		end
 	end
-	
+
 	local ArmorButtonsLeft = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf"}
 	local ArmorButtonsRight = {"chest", "back", "waist", "pelvis", "rightshoulder", "rightforearm", "rightthigh", "rightcalf"}
 
