@@ -32,7 +32,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.Owner or self, self:GetPhysicsObject():GetVelocity()
+		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
 		local Boom = ents.Create("env_explosion")
 		Boom:SetPos(SelfPos)
 		Boom:SetKeyValue("imagnitude", "50")
@@ -46,8 +46,8 @@ if SERVER then
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos + Vector(0, 0, 10))
 			Flame:SetAngles(FireVec:Angle())
-			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod.SetOwner(Flame, self.Owner or self)
+			Flame:SetOwner(self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Flame, self.EZowner or self)
 			Flame.SpeedMul = self:GetVelocity():Length() / 1000 + .5
 			Flame.Creator = self
 			Flame.HighVisuals = true

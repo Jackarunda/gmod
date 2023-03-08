@@ -24,7 +24,7 @@ if SERVER then
 		if destructive then
 			if math.random(1, 20) == 2 then
 				if math.random(1, 2) == 1 then
-					JMod.Sploom(self.Owner, self:GetPos(), math.random(50, 130))
+					JMod.Sploom(self.EZowner, self:GetPos(), math.random(50, 130))
 				end
 
 				local Tr = util.QuickTrace(pos, Vector(math.random(-200, 200), math.random(-200, 200), math.random(0, -200)), {self})
@@ -35,7 +35,7 @@ if SERVER then
 					Fiah:SetKeyValue("health", 30)
 					Fiah:SetKeyValue("fireattack", 1)
 					Fiah:SetKeyValue("firesize", math.random(20, 200))
-					Fiah:SetOwner(self.Owner or game.GetWorld())
+					Fiah:SetOwner(self.EZowner or game.GetWorld())
 					Fiah:Spawn()
 					Fiah:Activate()
 					Fiah:Fire("StartFire", "", 0)

@@ -23,7 +23,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -96,7 +96,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_CHARGING)
@@ -136,13 +136,13 @@ if SERVER then
 		end
 
 		util.ScreenShake(SelfPos, 99999, 99999, 3, 3000)
-		util.BlastDamage(self, self.Owner or self or game.GetWorld(), SelfPos, 200, 200)
-		local Own = self.Owner
+		util.BlastDamage(self, self.EZowner or self or game.GetWorld(), SelfPos, 200, 200)
+		local Own = self.EZowner
 
 		timer.Simple(2, function()
 			local Bam = ents.Create("ent_jack_gmod_ezblackhole")
 			Bam:SetPos(SelfPos)
-			JMod.SetOwner(Bam, Own)
+			JMod.SetEZowner(Bam, Own)
 			Bam:Spawn()
 			Bam:Activate()
 		end)

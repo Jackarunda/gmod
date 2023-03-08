@@ -30,7 +30,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -130,7 +130,7 @@ if SERVER then
 
 		if State == JMod.EZ_STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:Bury(activator)
 				JMod.Hint(activator, "mine friends")
 			else
@@ -140,7 +140,7 @@ if SERVER then
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(JMod.EZ_STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
@@ -183,11 +183,11 @@ if SERVER then
 			end
 		end
 
-		util.BlastDamage(self, self.Owner or self, SelfPos, 120 * JMod.Config.MinePower, 30 * JMod.Config.MinePower)
+		util.BlastDamage(self, self.EZowner or self, SelfPos, 120 * JMod.Config.MinePower, 30 * JMod.Config.MinePower)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
-		JMod.Sploom(self.Owner, SelfPos, math.random(10, 20))
-		JMod.FragSplosion(self, SelfPos, 3000, 20, 8000, self.Owner or game.GetWorld(), nil, nil, 3)
+		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
+		JMod.FragSplosion(self, SelfPos, 3000, 20, 8000, self.EZowner or game.GetWorld(), nil, nil, 3)
 		self:Remove()
 	end
 
@@ -255,7 +255,7 @@ if SERVER then
 	function ENT:Arm(armer)
 		local State = self:GetState()
 		if State ~= JMod.EZ_STATE_OFF then return end
-		JMod.SetOwner(self, armer)
+		JMod.SetEZowner(self, armer)
 		self:SetState(JMod.EZ_STATE_ARMING)
 		self:SetBodygroup(2, 1)
 		self:EmitSound("snd_jack_minearm.wav", 60, 110)

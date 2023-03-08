@@ -27,7 +27,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 
@@ -77,7 +77,7 @@ if SERVER then
 				if self:GetState() == STATE_BURNIN then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.Owner or self)
+					Dmg:SetAttacker(self.EZowner or self)
 					Dmg:SetInflictor(self)
 					Dmg:SetDamage(5)
 					Dmg:SetDamagePosition(self:GetPos())
@@ -113,7 +113,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
@@ -175,7 +175,7 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInSphere(Pos, 30)) do
 				if v.JModHighlyFlammableFunc then
-					JMod.SetOwner(v, self.Owner)
+					JMod.SetEZowner(v, self.EZowner)
 					local Func = v[v.JModHighlyFlammableFunc]
 					Func(v)
 				end

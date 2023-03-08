@@ -123,7 +123,11 @@ if SERVER then
 			local Solid = Surface ~= "water" and Surface ~= "default"
 
 			if Tr.HitSky then
-				self:Remove()
+				timer.Simple(0.01, function()
+					if IsValid(self) then
+						SafeRemoveEntity(self)
+					end
+				end)
 
 				return
 			end
@@ -166,12 +170,12 @@ if SERVER then
 		self.Armed = true
 	end
 
-	function ENT:Stick(tr)
+	--[[function ENT:Stick(tr)
 		self.Impacted = true
 		self.Detonating = true
 		self.Stuck = true
 		self.StuckEnt = tr.Entity
-	end
+	end]]--
 
 	function ENT:OnTakeDamage(dmg)
 		if dmg:GetDamage() > 500 then
@@ -216,7 +220,7 @@ if SERVER then
 					Haz:SetDTInt(0, 1)
 					Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
 					Haz:SetAngles(tr.HitNormal:Angle())
-					JMod.SetOwner(Haz, self.Owner)
+					JMod.SetEZowner(Haz, self.EZowner)
 					Haz:SetDTEntity(0, self:GetDTEntity(0))
 					Haz.HighVisuals = self.HighVisuals
 					Haz:Spawn()
@@ -227,10 +231,18 @@ if SERVER then
 					end
 				end
 
-				SafeRemoveEntity(self)
+				timer.Simple(0.01, function()
+				if IsValid(self) then
+					SafeRemoveEntity(self)
+				end
+			end)
 			end)
 		else
-			SafeRemoveEntity(self)
+			timer.Simple(0.01, function()
+				if IsValid(self) then
+					SafeRemoveEntity(self)
+				end
+			end)
 		end
 	end
 elseif CLIENT then

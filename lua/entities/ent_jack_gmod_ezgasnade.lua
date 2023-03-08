@@ -32,7 +32,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.Owner or self, self:GetPhysicsObject():GetVelocity()
+		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
 		local Boom = ents.Create("env_explosion")
 		Boom:SetPos(SelfPos)
 		Boom:SetKeyValue("imagnitude", "50")
@@ -44,15 +44,15 @@ if SERVER then
 			timer.Simple(i / 120, function()
 				local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 				Gas:SetPos(SelfPos)
-				JMod.SetOwner(Gas, Owner)
+				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 200))
 			end)
 		end
 
-		if IsValid(self.Owner) then
-			JMod.Hint(self.Owner, "gas spread", self:GetPos())
+		if IsValid(self.EZowner) then
+			JMod.Hint(self.EZowner, "gas spread", self:GetPos())
 		end
 
 		self:Remove()

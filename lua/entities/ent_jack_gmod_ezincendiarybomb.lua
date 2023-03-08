@@ -25,7 +25,7 @@ if SERVER then
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -115,7 +115,7 @@ if SERVER then
 		self.Entity:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
-			JMod.SetOwner(self, dmginfo:GetAttacker())
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end
@@ -125,7 +125,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -138,7 +138,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -155,7 +155,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld()
 		JMod.Sploom(Att, SelfPos, 100)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1000)
@@ -174,14 +174,18 @@ if SERVER then
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
-			Flame:SetOwner(self.Owner or game.GetWorld())
-			JMod.SetOwner(Flame, self.Owner or self)
+			Flame:SetOwner(self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Flame, self.EZowner or self)
 			Flame:Spawn()
 			Flame:Activate()
 		end
 
 		---
-		self:Remove()
+		timer.Simple(0.01, function()
+			if IsValid(self) then
+				self:Remove()
+			end
+		end)
 	end
 
 	function ENT:OnRemove()

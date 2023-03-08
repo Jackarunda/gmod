@@ -25,7 +25,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -121,7 +121,7 @@ if SERVER then
 			if math.random(1, 3) == 1 then
 				self:Break()
 			else
-				JMod.SetOwner(self, dmginfo:GetAttacker())
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
@@ -134,7 +134,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
@@ -146,7 +146,7 @@ if SERVER then
 		elseif State == STATE_ARMED then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
 			self:SetState(STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 			self.EZlaunchableWeaponArmedTime = nil
 		end
 	end
@@ -155,7 +155,7 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), self.Owner or game.GetWorld(), -self:GetRight()
+		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld(), -self:GetRight()
 		JMod.Sploom(Att, SelfPos, 10)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
@@ -219,7 +219,7 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, self.Owner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(self, self.EZowner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
@@ -233,7 +233,7 @@ if SERVER then
 			end
 		end)
 
-		JMod.Hint(self.Owner, "backblast", self:GetPos())
+		JMod.Hint(self.EZowner, "backblast", self:GetPos())
 	end
 
 	function ENT:EZdetonateOverride(detonator)

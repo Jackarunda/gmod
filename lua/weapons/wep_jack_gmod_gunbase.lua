@@ -313,7 +313,11 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 
 	if input.WasKeyPressed(KEY_BACKSPACE) then
 		if not (ply:IsTyping() or gui.IsConsoleVisible()) then
-			RunConsoleCommand("jmod_ez_dropweapon")
+			local Time = CurTime()
+			if not(ply.NextDropTime) or ply.NextDropTime < Time then
+				RunConsoleCommand("jmod_ez_dropweapon")
+				ply.NextDropTime = Time + .1 --Prevent drop spamming
+			end
 		end
 	end
 end)

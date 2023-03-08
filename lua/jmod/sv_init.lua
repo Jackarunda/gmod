@@ -137,7 +137,7 @@ function JMod.FalloutIrradiate(self, obj)
 	end
 
 	---
-	local Dmg, Helf, Att = DamageInfo(), obj:Health(), (IsValid(self.Owner) and self.Owner) or self
+	local Dmg, Helf, Att = DamageInfo(), obj:Health(), (IsValid(self.EZowner) and self.EZowner) or self
 	Dmg:SetDamageType(DMG_RADIATION)
 	Dmg:SetDamage(DmgAmt)
 	Dmg:SetInflictor(self)
@@ -232,7 +232,7 @@ local function VirusCough(ply)
 	if math.random(1, 10) == 10 then
 		local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 		Gas:SetPos(ply:GetPos())
-		JMod.SetOwner(Gas, ply)
+		JMod.SetEZowner(Gas, ply)
 		Gas:Spawn()
 		Gas:Activate()
 		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
@@ -630,7 +630,7 @@ function JMod.EZ_Remote_Trigger(ply)
 	timer.Simple(.75, function()
 		if IsValid(ply) and ply:Alive() then
 			for k, v in pairs(ents.GetAll()) do
-				if v.JModEZremoteTriggerFunc and v.Owner and (v.Owner == ply) then
+				if v.JModEZremoteTriggerFunc and v.EZowner and (v.EZowner == ply) then
 					v:JModEZremoteTriggerFunc(ply)
 				end
 			end

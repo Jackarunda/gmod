@@ -33,7 +33,7 @@ if SERVER then
 		end
 
 		local Force = VectorRand() * 40 - Vector(0, 0, 10)
-		JMod.TryVirusInfectInRange(self, self.Owner, 0, 0)
+		JMod.TryVirusInfectInRange(self, self.EZowner, 0, 0)
 		self:Extinguish()
 		local Phys = self:GetPhysicsObject()
 		Phys:SetVelocity(Phys:GetVelocity() * .1)

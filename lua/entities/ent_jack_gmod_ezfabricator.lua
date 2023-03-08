@@ -44,7 +44,7 @@ if(SERVER)then
 			phys:SetBuoyancyRatio(.3)
 		end
 		---
-		if not(self.Owner)then self:SetColor(Color(45, 101, 153)) end
+		if not(self.EZowner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
 		---
 		if self.SpawnFull then
@@ -136,7 +136,7 @@ if(SERVER)then
 												local Ent = ents.Create(ItemInfo.results[k][1])
 												Ent:SetPos(Pos)
 												Ent:SetAngles(Ang)
-												JMod.SetOwner(Ent, ply)
+												JMod.SetEZowner(Ent, ply)
 												Ent:Spawn()
 												Ent:Activate()
 												if (ItemInfo.results[k][3]) then
@@ -160,7 +160,7 @@ if(SERVER)then
 											local Ent = ents.Create(ItemInfo.results)
 											Ent:SetPos(Pos)
 											Ent:SetAngles(Ang)
-											JMod.SetOwner(Ent, ply)
+											JMod.SetEZowner(Ent, ply)
 											Ent:Spawn()
 											Ent:Activate()
 											if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end

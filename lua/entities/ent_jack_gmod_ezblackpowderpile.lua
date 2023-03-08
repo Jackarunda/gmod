@@ -53,14 +53,14 @@ if SERVER then
 		end
 
 		if dmginfo:IsDamageType(DMG_BURN) then
-			JMod.SetOwner(self, dmginfo:GetAttacker())
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Arm()
 		end
 	end
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 
 		if Dude:KeyDown(JMod.Config.AltFunctionKey) then
 			self:Arm()
@@ -89,7 +89,7 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInSphere(self:GetPos(), 80)) do
 				if v.JModHighlyFlammableFunc then
-					JMod.SetOwner(v, self.Owner)
+					JMod.SetEZowner(v, self.EZowner)
 					local Func = v[v.JModHighlyFlammableFunc]
 					Func(v)
 				end

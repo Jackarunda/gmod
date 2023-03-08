@@ -43,7 +43,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            JMod.Hint(self.Owner, "ore scan")
+            JMod.Hint(self.EZowner, "ore scan")
             end
         end)
 	end
@@ -104,16 +104,16 @@ if(SERVER)then
 			end
 			self:UpdateDepositKey()
 			if not self.DepositKey then
-				JMod.Hint(self.Owner, "ground drill")
+				JMod.Hint(self.EZowner, "ground drill")
 			elseif(GroundIsSolid)then
 				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
 				if(IsValid(self.Weld) and self.DepositKey)then
-					self:TurnOn(self.Owner)
+					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.Owner, "machine mounting problem")
+					JMod.Hint(self.EZowner, "machine mounting problem")
 				end
 			end
 		end
@@ -143,11 +143,11 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		local State = self:GetState()
-		local OldOwner = self.Owner
+		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self,activator)
-		if(IsValid(self.Owner))then
-			if(OldOwner ~= self.Owner)then -- if owner changed then reset team color
+		JMod.SetEZowner(self,activator)
+		if(IsValid(self.EZowner))then
+			if(OldOwner ~= self.EZowner)then -- if owner changed then reset team color
 				JMod.Colorify(self)
 			end
 		end
@@ -171,7 +171,7 @@ if(SERVER)then
 
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
-			self:TurnOn(self.Owner)
+			self:TurnOn(self.EZowner)
 		end
 	end
 	
@@ -254,7 +254,7 @@ if(SERVER)then
 					Dmg:SetDamage(20)
 					Dmg:SetDamageType(DMG_CRUSH)
 					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(JMod.GetOwner(self))
+					Dmg:SetAttacker(JMod.GetEZowner(self))
 					v:TakeDamageInfo(Dmg)
 					--print(tostring(v))
 					self:EmitSound("Boulder.ImpactHard")
@@ -277,7 +277,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = 0
 		ent.NextEffectThinkTime = 0

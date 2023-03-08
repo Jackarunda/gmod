@@ -22,11 +22,11 @@ function EFFECT:Init(data)
 
 	if not IsValid(ent) then return end
 
-	if ent.Owner ~= LocalPlayer() then
+	if ent.EZowner ~= LocalPlayer() then
 		mdl = ent
 	end
 
-	if ent.Owner ~= LocalPlayer() and not GetConVar("arccw_shelleffects"):GetBool() then
+	if ent.EZowner ~= LocalPlayer() and not GetConVar("arccw_shelleffects"):GetBool() then
 		self:Remove()
 
 		return
@@ -75,8 +75,8 @@ function EFFECT:Init(data)
 	local phys = self:GetPhysicsObject()
 	local plyvel = Vector(0, 0, 0)
 
-	if IsValid(ent.Owner) then
-		plyvel = ent.Owner:GetAbsVelocity()
+	if IsValid(ent.EZowner) then
+		plyvel = ent.EZowner:GetAbsVelocity()
 	end
 
 	phys:Wake()
