@@ -22,7 +22,7 @@ if CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, 3.5, 10), Angle(-90, 0, 90), .035, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(0, 3.5, 1), Angle(-90, 0, 90), .035, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

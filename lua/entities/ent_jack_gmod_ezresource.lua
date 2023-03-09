@@ -19,7 +19,7 @@ if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 20) * (self.ModelScale or 1)
 		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
+		ent:SetAngles(self.SpawnAngle or Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
@@ -33,12 +33,12 @@ if SERVER then
 
 	function ENT:Initialize()
 		if self.Models then
-			self.Entity:SetModal(table.Random(self.Models))
+			self:SetModal(table.Random(self.Models))
 		else
-			self.Entity:SetModel(self.Model)
+			self:SetModel(self.Model)
 		end
 
-		self.Entity:SetMaterial(self.Material)
+		self:SetMaterial(self.Material)
 
 		if self.ModelScale then
 			self:SetModelScale(self.ModelScale, 0)
@@ -56,11 +56,11 @@ if SERVER then
 			self:SetSkin(table.Random(self.RandomSkins))
 		end
 
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		---
 		self.MaxResources = 100 * JMod.Config.MaxResourceMult
 		self:SetResource(self.MaxResources)
