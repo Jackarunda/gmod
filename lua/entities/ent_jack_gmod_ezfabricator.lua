@@ -119,8 +119,8 @@ if(SERVER)then
 				return
 			end
 
-			local Pos, Ang, BuildSteps = self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true)
+			local Pos, Ang, BuildSteps = self:GetPos() + self:GetUp()*75 - self:GetForward()*10 - self:GetRight()*5, self:GetAngles(), 10
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs, Pos, nil, self, true)
 
 			timer.Simple(1,function()
 				if (IsValid(self)) then

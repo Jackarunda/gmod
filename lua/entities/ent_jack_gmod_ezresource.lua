@@ -24,6 +24,7 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
+		ent:SetResource(ent.MaxResources)
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
@@ -63,7 +64,7 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		---
 		self.MaxResources = 100 * JMod.Config.MaxResourceMult
-		self:SetResource(self.MaxResources)
+		self:SetResource(100)
 		---
 		self.NextLoad = 0
 		self.Loaded = false

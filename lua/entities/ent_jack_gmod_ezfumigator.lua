@@ -38,7 +38,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/props_explosive/explosive_butane_can02.mdl")
+		self.Entity:SetModel("models/jmod/props/fumigator.mdl")
 		self.Entity:SetMaterial("models/props_explosive/poison")
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)

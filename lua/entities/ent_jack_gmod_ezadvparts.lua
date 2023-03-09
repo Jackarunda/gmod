@@ -34,7 +34,8 @@ if SERVER then
 	end]]--
 
 	function ENT:CustomThink()
-		self:GetPhysicsObject():ApplyForceCenter(VectorRand() * math.random(1, 1000))
+		local Phys = self:GetPhysicsObject()
+		Phys:ApplyForceCenter(VectorRand() * math.random(1, 1000 * (Phys:GetMass() / self.Mass)))
 		self:NextThink(CurTime() + math.Rand(2, 4))
 
 		return true
