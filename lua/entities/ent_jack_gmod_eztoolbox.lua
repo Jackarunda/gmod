@@ -92,7 +92,7 @@ if SERVER then
 			activator:Give("wep_jack_gmod_eztoolbox")
 			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
 
-			ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
+			local ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
 			ToolBox:SetBasicParts(self.EZBasicParts or 0)
 			ToolBox:SetElectricity(self.EZElectricity or 0)
 			ToolBox:SetGas(self.EZGas or 0)

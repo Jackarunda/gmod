@@ -413,7 +413,7 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 end, nil, "Airdrops specified player on specified location")
 
 hook.Add("PlayerLeaveVehicle", "JMod_PlayerPackageExit", function( ply, veh )
-	Box = veh:GetParent()
+	local Box = veh:GetParent()
 	if (IsValid(Box)) and (Box:GetClass() == "ent_jack_aidbox") then
 		ply:SetPos(Box:GetPos())
 		Box:Use(ply)

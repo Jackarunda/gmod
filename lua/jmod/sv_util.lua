@@ -248,7 +248,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 			local Tr = util.QuickTrace(origin, Dir * fragMaxDist, shooter)
 
 			if Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets) then
-				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.EZlowFragPlease
+				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease
 
 				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
 					local DmgMul = 1
@@ -706,7 +706,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif ent.LFS and ent.GetEngineActive then
+	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and ent:GetEngineActive()) then
 		-- LunasFlightSchool compatibility
 		if ent:GetEngineActive() and ent.GetDriver then
 			local Pilot = ent:GetDriver()

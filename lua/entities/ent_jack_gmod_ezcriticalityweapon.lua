@@ -415,7 +415,7 @@ elseif CLIENT then
 				render.SetMaterial(GlowSprite)
 				render.DrawSprite(SpritePos, 500, 500, Color(Col.r, Col.g, Col.b, 20 * Frac ^ 1.5))
 				render.DrawQuadEasy(QuadPos, Vector(0, 0, 1), 500, 500, Color(Col.r, Col.g, Col.b, 40 * Frac ^ 1.5))
-				DLight = DynamicLight(self:EntIndex())
+				local DLight = DynamicLight(self:EntIndex())
 
 				if DLight then
 					DLight.Brightness = Frac ^ 1.5
@@ -451,7 +451,7 @@ elseif CLIENT then
 			render.DrawQuadEasy(QuadPos, Vector(0, 0, 1), 500, 500, Color(0, 20, 255, 50))
 			render.DrawSprite(SpritePos + Vec * 10, 100, 100, Color(255, 255, 255, 50))
 			render.DrawQuadEasy(QuadPos, Vector(0, 0, 1), 100, 100, Color(255, 255, 255, 50))
-			DLight = DynamicLight(self:EntIndex())
+			local DLight = DynamicLight(self:EntIndex())
 
 			if DLight then
 				DLight.Brightness = 1
