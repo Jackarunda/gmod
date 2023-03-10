@@ -37,16 +37,16 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x075x025.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
+			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -78,7 +78,7 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			if (data.Speed > 700) and (self:GetState() == STATE_ARMED) then
+			if (data.Speed > 500) and (self:GetState() == STATE_ARMED) then
 				self:Detonate()
 
 				return
@@ -245,7 +245,7 @@ if SERVER then
 		--end
 		--end
 		--end
-		JMod.AeroDrag(self, -self:GetRight(), 6)
+		JMod.AeroDrag(self, -self:GetRight(), 2)
 		self:NextThink(CurTime() + .1)
 
 		return true
