@@ -25,7 +25,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -106,7 +106,7 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.SetOwner(Gas, self.Owner or game.GetWorld())
+			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
@@ -127,14 +127,14 @@ if SERVER then
 			if math.random(1, 3) == 1 then
 				self:Break()
 			else
-				JMod.SetOwner(self, dmginfo:GetAttacker())
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			end
 		end
 	end
 
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if not (IsValid(ply) and ply:Alive() and (ply == self.Owner)) then return end
+		if not (IsValid(ply) and ply:Alive() and (ply == self.EZowner)) then return end
 		if not ((self:GetState() == STATE_ARMED) or (self:GetState() == STATE_LAUNCHED)) then return end
 		self:Detonate()
 	end
@@ -146,7 +146,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
@@ -158,7 +158,7 @@ if SERVER then
 		elseif State == STATE_ARMED then
 			self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
 			self:SetState(STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 			self.EZlaunchableWeaponArmedTime = nil
 		end
 	end
@@ -174,7 +174,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.Owner or game.GetWorld(), JMod.Config.NukePowerMult, JMod.Config.NukeRangeMult
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.NukePowerMult, JMod.Config.NukeRangeMult
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()
@@ -264,7 +264,7 @@ if SERVER then
 					for k = 1, 5 * JMod.Config.NuclearRadiationMult do
 						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 						Gas:SetPos(SelfPos)
-						JMod.SetOwner(Gas, Att)
+						JMod.SetEZowner(Gas, Att)
 						Gas:Spawn()
 						Gas:Activate()
 						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 250) + Vector(0, 0, 500 * JMod.Config.NuclearRadiationMult))
@@ -296,14 +296,14 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, self.Owner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(self, self.EZowner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
 		self.NextDet = CurTime() + .25
 
-		JMod.Hint(self.Owner, "backblast", self:GetPos())
+		JMod.Hint(self.EZowner, "backblast", self:GetPos())
 	end
 
 	function ENT:EZdetonateOverride(detonator)

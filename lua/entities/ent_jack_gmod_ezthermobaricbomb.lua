@@ -25,7 +25,7 @@ if SERVER then
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -130,7 +130,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -143,7 +143,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -160,7 +160,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.EZowner or game.GetWorld()
 		JMod.Sploom(Att, SelfPos, 100)
 
 		---

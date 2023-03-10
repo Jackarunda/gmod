@@ -24,7 +24,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -108,7 +108,7 @@ if SERVER then
 
 		if JMod.LinCh(dmginfo:GetDamage(), 100, 200) then
 			if self:WaterLevel() > 0 then
-				JMod.SetOwner(self, dmginfo:GetAttacker())
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
 			else
 				self:Break()
@@ -121,7 +121,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -143,7 +143,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -164,7 +164,7 @@ if SERVER then
 
 		timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
 			if IsValid(self) then
-				local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.Owner or game.GetWorld()
+				local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.EZowner or game.GetWorld()
 				---
 				local splad = EffectData()
 				splad:SetOrigin(SelfPos)

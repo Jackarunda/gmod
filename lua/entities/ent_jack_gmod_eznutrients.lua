@@ -20,14 +20,8 @@ ENT.BreakNoise = "Cardboard_Box.Break"
 ENT.Hint = "eat"
 
 ---
-ENT.FoodModels = {"models/props_junk/garbage_glassbottle001a.mdl", "models/props_junk/garbage_glassbottle002a.mdl", "models/props_junk/garbage_glassbottle003a.mdl", "models/props_junk/garbage_metalcan001a.mdl", "models/props_junk/garbage_milkcarton001a.mdl", "models/props_junk/garbage_milkcarton002a.mdl", "models/props_junk/garbage_plasticbottle003a.mdl", "models/props_junk/garbage_takeoutcarton001a.mdl", "models/props_junk/GlassBottle01a.mdl", "models/props_junk/glassjug01.mdl", "models/props_junk/PopCan01a.mdl", "models/props_junk/PopCan01a.mdl", "models/props/cs_office/trash_can_p8.mdl", "models/props/cs_office/Water_bottle.mdl", "models/props/cs_office/Water_bottle.mdl", "models/noesis/donut.mdl", "models/food/burger.mdl", "models/food/burger.mdl", "models/food/hotdog.mdl", "models/food/hotdog.mdl", "models/props_junk/watermelon01_chunk01a.mdl", "models/props_junk/watermelon01_chunk01b.mdl", "models/props_junk/watermelon01_chunk01c.mdl", "models/props_junk/watermelon01_chunk02a.mdl", "models/props_junk/watermelon01_chunk02c.mdl"}
 
 if SERVER then
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 7 * JMod.Config.SupplyEffectMult do
-			self:FlingProp(table.Random(self.FoodModels))
-		end
-	end
 
 	function ENT:AltUse(ply)
 		ply.EZnutrition = ply.EZnutrition or {
@@ -51,7 +45,7 @@ if SERVER then
 					end)
 				end
 
-				self:UseEffect()
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
 				ply.EZnutrition.NextEat = Time + 100 / JMod.Config.FoodSpecs.EatSpeed
 				ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + 20 * JMod.Config.FoodSpecs.ConversionEfficiency
 				self:SetResource(self:GetResource() - 10)

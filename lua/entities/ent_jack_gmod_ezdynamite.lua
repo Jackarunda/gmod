@@ -25,7 +25,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -113,7 +113,7 @@ if SERVER then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
 		if tobool(onOff) then
@@ -138,7 +138,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		JMod.Sploom(self.Owner or game.GetWorld(), SelfPos, 115)
+		JMod.Sploom(self.EZowner or game.GetWorld(), SelfPos, 115)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)

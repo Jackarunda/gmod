@@ -36,7 +36,7 @@ if(SERVER)then
 		local ent = ents.Create(ClassName)
 		ent:SetPos(tr.HitPos + tr.HitNormal*25)
 		ent:SetAngles(Angle(0, 0, 0))
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -63,11 +63,11 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local OldOwner = self.Owner
+		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self, activator)
+		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
-		if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
+		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
 		if(State==STATE_BROKEN)then
@@ -214,7 +214,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 	end

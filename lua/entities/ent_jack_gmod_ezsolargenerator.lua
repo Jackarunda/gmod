@@ -31,7 +31,7 @@ if(SERVER)then
 		local ent=ents.Create(ClassName)
 		ent:SetPos(tr.HitPos + tr.HitNormal*25)
 		ent:SetAngles(Angle(90, 90, 0))
-		JMod.SetOwner(ent,ply)
+		JMod.SetEZowner(ent,ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -53,11 +53,11 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUse > CurTime() then return end
 		local State=self:GetState()
-		local OldOwner=self.Owner
+		local OldOwner=self.EZowner
 		local alt = activator:KeyDown(JMod.Config.AltFunctionKey)
-		JMod.SetOwner(self,activator)
+		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
-		if(IsValid(self.Owner) and (OldOwner ~= self.Owner))then
+		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
 		if(State==STATE_BROKEN)then
@@ -164,7 +164,7 @@ if(SERVER)then
 			return (AngleDifference+90)/180
 		end
 		if(StormFox)then
-			Minutes = StormFox.GetTime()
+			local Minutes = StormFox.GetTime()
 			local Frac = Minutes / 1440
 			Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
 			return math.Clamp(Frac, 0, 1)
@@ -195,7 +195,7 @@ if(SERVER)then
 			local grade = self:GetGrade()
 
 			if vis <= 0 or self:WaterLevel() >= 2 then
-				JMod.Hint(self.Owner, "solar panel no sun")
+				JMod.Hint(self.EZowner, "solar panel no sun")
 			elseif self:GetProgress() < 100 then
 				local rate = math.Round(1 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
 				self:SetProgress(self:GetProgress() + rate)
@@ -213,7 +213,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 	end

@@ -14,7 +14,7 @@ local BaseClass = baseclass.Get(ENT.Base)
 
 if SERVER then
 	function ENT:JModEZremoteTriggerFunc(ply)
-		if IsValid(ply) and ply:Alive() and ply == self.Owner and self:GetState() == JMod.EZ_STATE_ARMED then
+		if IsValid(ply) and ply:Alive() and ply == self.EZowner and self:GetState() == JMod.EZ_STATE_ARMED then
 			self:Detonate()
 		end
 	end

@@ -44,7 +44,7 @@ function JMod.EZ_WeaponLaunch(ply)
 	local Weps = {}
 
 	for k, ent in pairs(ents.GetAll()) do
-		if ent.EZlaunchableWeaponArmedTime and IsValid(ent.Owner) and ent.Owner == ply and ent:GetState() == 1 then
+		if ent.EZlaunchableWeaponArmedTime and IsValid(ent.EZowner) and ent.EZowner == ply and ent:GetState() == 1 then
 			table.insert(Weps, ent)
 		end
 	end
@@ -77,9 +77,9 @@ function JMod.EZ_BombDrop(ply)
 	local Bays = {}
 
 	for k, ent in pairs(ents.GetAll()) do
-		if ent.EZdroppableBombArmedTime and IsValid(ent.Owner) and ent.Owner == ply then
+		if ent.EZdroppableBombArmedTime and IsValid(ent.EZowner) and ent.EZowner == ply then
 			table.insert(Boms, ent)
-		elseif ent.EZdroppableBombLoadTime and IsValid(ent.Owner) and ent.Owner == ply then
+		elseif ent.EZdroppableBombLoadTime and IsValid(ent.EZowner) and ent.EZowner == ply then
 			table.insert(Bays, ent)
 		end
 	end
@@ -248,7 +248,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 			local Tr = util.QuickTrace(origin, Dir * fragMaxDist, shooter)
 
 			if Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets) then
-				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.EZlowFragPlease
+				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease
 
 				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
 					local DmgMul = 1
@@ -286,7 +286,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 		ent:SetAngles(ang)
 
 		if ply then
-			JMod.SetOwner(ent, ply)
+			JMod.SetEZowner(ent, ply)
 		end
 
 		ent:Spawn()
@@ -299,7 +299,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 	Bocks:SetContents(ent)
 
 	if ply then
-		JMod.SetOwner(Bocks, ply)
+		JMod.SetEZowner(Bocks, ply)
 	end
 
 	Bocks:Spawn()
@@ -482,7 +482,7 @@ local SurfaceHardness = {
 function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul, tracerName, callback)
 	if not IsValid(ent) then return end
 	if num and num > 10 then return end
-	local Attacker = ent.Owner or ent or game.GetWorld()
+	local Attacker = ent.EZowner or ent or game.GetWorld()
 
 	ent:FireBullets({
 		Attacker = Attacker,
@@ -605,18 +605,18 @@ end
 --[[
 	1) am i valid? if not, return world
 	2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
-	3) is there .Owner? is it valid? if so, return it
+	3) is there .EZowner? is it valid? if so, return it
 	4 otherwise return world
 ]]--
 
-function JMod.Owner(ent, newOwner)
+function JMod.EZowner(ent, newOwner)
 	
 	if not IsValid(ent) then return game.GetWorld() end
 
 	if ent.GetOwner and IsValid(ent:GetOwner()) then
 		local OldOwner = ent:GetOwner()
 	else
-		local OldOwner = ent.Owner or game.GetWorld()
+		local OldOwner = ent.EZowner or game.GetWorld()
 	end
 
 	if IsValid(newOwner) then
@@ -633,31 +633,31 @@ function JMod.Owner(ent, newOwner)
 	end
 end
 
-function JMod.GetOwner(ent)
+function JMod.GetEZowner(ent)
 	if not IsValid(ent) then return game.GetWorld() end
 
 	if ent.GetOwner and IsValid(ent:GetOwner()) then
 
 		return ent:GetOwner()
-	elseif ent.Owner and IsValid(ent.Owner) then
+	elseif ent.EZowner and IsValid(ent.EZowner) then
 
-		return ent.Owner
+		return ent.EZowner
 	else
 		
 		return game.GetWorld()
 	end
 end
 
-function JMod.SetOwner(ent, newOwner)
+function JMod.SetEZowner(ent, newOwner)
 	if not(IsValid(ent) or IsValid(newOwner)) then return end
 
-	if JMod.GetOwner(ent) == newOwner then return end
+	if JMod.GetEZowner(ent) == newOwner then return end
 
 	if ent.SetOwner and isfunction(ent.SetOwner) then
 		--ent:SetOwner(newOwner)
 	end
 
-	ent.Owner = newOwner
+	ent.EZowner = newOwner
 
 	if CPPI and isfunction(ent.CPPISetOwner) then
 		ent:CPPISetOwner(newOwner)
@@ -666,12 +666,12 @@ end
 
 function JMod.ShouldAllowControl(self, ply)
 	if not IsValid(ply) then return false end
-	if not IsValid(self.Owner) then return false end
-	if ply == self.Owner then return true end
-	local Allies = self.Owner.JModFriends or {}
+	if not IsValid(self.EZowner) then return false end
+	if ply == self.EZowner then return true end
+	local Allies = self.EZowner.JModFriends or {}
 	if table.HasValue(Allies, ply) then return true end
 
-	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.Owner:Team()
+	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.EZowner:Team()
 end
 
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
@@ -692,9 +692,9 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		local Class = ent:GetClass()
 		if self.WhitelistedNPCs and table.HasValue(self.WhitelistedNPCs, Class) then return true end
 		if self.BlacklistedNPCs and table.HasValue(self.BlacklistedNPCs, Class) then return false end
-		if not IsValid(self.Owner) then return ent:Health() > 0 end
+		if not IsValid(self.EZowner) then return ent:Health() > 0 end
 
-		if ent.Disposition and (ent:Disposition(self.Owner) == D_HT) and ent.GetMaxHealth and ent.Health then
+		if ent.Disposition and (ent:Disposition(self.EZowner) == D_HT) and ent.GetMaxHealth and ent.Health then
 			if vehiclesOnly then
 				return ent:GetMaxHealth() > 100 and ent:Health() > 0
 			else
@@ -706,7 +706,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif ent.LFS and ent.GetEngineActive then
+	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and ent:GetEngineActive()) then
 		-- LunasFlightSchool compatibility
 		if ent:GetEngineActive() and ent.GetDriver then
 			local Pilot = ent:GetDriver()
@@ -718,10 +718,10 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 				return true
 			end
 		end
-	elseif ent.IS_DRONE and IsValid(ent.Owner) then
+	elseif ent.IS_DRONE and IsValid(ent.EZowner) then
 		-- Drones Rewrite compatibility
 		if ent.GetHealth and ent:GetHealth() > 0 then
-			PlayerToCheck = ent.Owner
+			PlayerToCheck = ent.EZowner
 		end
 	end
 
@@ -729,14 +729,14 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		if vehiclesOnly and not InVehicle then return false end
 		if PlayerToCheck.EZkillme then return true end -- for testing
 		if PlayerToCheck:GetObserverMode() ~= 0 then return false end
-		if self.Owner and (PlayerToCheck == self.Owner) then return false end
-		local Allies = (self.Owner and self.Owner.JModFriends) or {}
+		if self.EZowner and (PlayerToCheck == self.EZowner) then return false end
+		local Allies = (self.EZowner and self.EZowner.JModFriends) or {}
 		if table.HasValue(Allies, PlayerToCheck) then return false end
 		local OurTeam = nil
 
-		if IsValid(self.Owner) then
-			OurTeam = self.Owner:Team()
-			if Gaymode == "basewars" and self.Owner.IsAlly then return not self.Owner:IsAlly(PlayerToCheck) end
+		if IsValid(self.EZowner) then
+			OurTeam = self.EZowner:Team()
+			if Gaymode == "basewars" and self.EZowner.IsAlly then return not self.EZowner:IsAlly(PlayerToCheck) end
 		end
 
 		if Gaymode == "sandbox" and OurTeam == TEAM_UNASSIGNED then return PlayerToCheck:Alive() end
@@ -765,12 +765,12 @@ function JMod.EMP(pos, range)
 end
 
 function JMod.Colorify(ent)
-	if IsValid(ent.Owner) then
-		if engine.ActiveGamemode() == "sandbox" and ent.Owner:Team() == TEAM_UNASSIGNED then
-			local Col = ent.Owner:GetPlayerColor()
+	if IsValid(ent.EZowner) then
+		if engine.ActiveGamemode() == "sandbox" and ent.EZowner:Team() == TEAM_UNASSIGNED then
+			local Col = ent.EZowner:GetPlayerColor()
 			ent:SetColor(Color(Col.x * 255, Col.y * 255, Col.z * 255))
 		else
-			local Tem = ent.Owner:Team()
+			local Tem = ent.EZowner:Team()
 
 			if Tem then
 				local Col = team.GetColor(Tem)
@@ -894,8 +894,9 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
 			Resource:Spawn()
-			JMod.SetOwner(machine.Owner)
+			JMod.SetEZowner(machine.EZowner)
 			Resource:SetResource(math.Round(SpawnAmount))
+			Resource:CalcWeight()
 			Resource:Activate()
 			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
 			--Resource:GetPhysicsObject():SetVelocity(ejectionVector)

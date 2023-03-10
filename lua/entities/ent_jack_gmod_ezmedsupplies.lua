@@ -9,7 +9,8 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 ENT.JModPreferredCarryAngles = Angle(0, 180, 180)
-ENT.Model = "models/kali/props/cases/hard case b.mdl"
+ENT.SpawnAngle = Angle(0, 0, 180)
+ENT.Model = "models/jmod/resources/hard_case_b.mdl"
 ENT.Material = "models/kali/props/cases/hardcase/jardcase_b"
 ENT.ModelScale = 1
 ENT.Mass = 30
@@ -44,25 +45,11 @@ if SERVER then
 			end
 		end
 	end
-
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 4 * JMod.Config.SupplyEffectMult do
-			self:FlingProp(table.Random(self.PropModels))
-		end
-
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos + VectorRand())
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(2, 4)) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(1, 2)) --length of strands
-		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
-		util.Effect("Sparks", effectdata, true, true)
-	end
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, 3.4, 9.5), Angle(-90, 0, -90), .045, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(0, 3.4, 0), Angle(-90, 0, -90), .045, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES, self:GetResource(), nil, 0, 0, 200, true, "JMod-Stencil-MS")
 		end)
 	end

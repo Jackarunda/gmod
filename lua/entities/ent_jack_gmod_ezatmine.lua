@@ -32,7 +32,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(90, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -113,7 +113,7 @@ if SERVER then
 
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
@@ -124,7 +124,7 @@ if SERVER then
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
 		end
 	end
@@ -146,8 +146,8 @@ if SERVER then
 			util.ScreenShake(SelfPos, 99999, 99999, 1, 1000)
 			self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 100, 130)
-			JMod.Sploom(self.Owner, SelfPos, 10)
-			local Att = self.Owner or game.GetWorld()
+			JMod.Sploom(self.EZowner, SelfPos, 10)
+			local Att = self.EZowner or game.GetWorld()
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 30), 100, 5500)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 10), 300, 100)
 
@@ -199,7 +199,7 @@ if SERVER then
 		local State = self:GetState()
 		if State ~= STATE_OFF then return end
 		JMod.Hint(armer, "mine friends")
-		JMod.SetOwner(self, armer)
+		JMod.SetEZowner(self, armer)
 		self:SetState(STATE_ARMING)
 		self:EmitSound("snd_jack_minearm.wav", 60, 90)
 
@@ -266,7 +266,7 @@ if SERVER then
 			end
 
 			if self.StillTicks > 4 then
-				self:Arm(self.Owner or game.GetWorld(), true)
+				self:Arm(self.EZowner or game.GetWorld(), true)
 			end
 
 			self:NextThink(Time + .5)

@@ -39,7 +39,7 @@ if(SERVER)then
 		else
 			self:SetGas(0)
 		end
-		if not(self.Owner)then self:SetColor(Color(153, 47, 45, 255)) end
+		if not(self.EZowner)then self:SetColor(Color(153, 47, 45, 255)) end
 		self:UpdateConfig()
 	end
 	function ENT:UpdateConfig()
@@ -121,7 +121,7 @@ if(SERVER)then
 										local Ent=ents.Create(ItemInfo.results)
 										Ent:SetPos(Pos)
 										Ent:SetAngles(Ang)
-										JMod.SetOwner(Ent,ply)
+										JMod.SetEZowner(Ent,ply)
 										Ent:Spawn()
 										Ent:Activate()
 										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end

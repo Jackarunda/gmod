@@ -106,7 +106,7 @@ if SERVER then
 	function ENT:Detonate(delay, dmg)
 		if self.Exploded then return end
 		self.Exploded = true
-		local Att = self.Owner or game.GetWorld()
+		local Att = self.EZowner or game.GetWorld()
 		local Vel, Pos, Ang = self:GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
 		self:Remove()
@@ -117,7 +117,7 @@ if SERVER then
 			local DirVec = Dir:Forward()
 			local Pos = self:LocalToWorld(self:OBBCenter())
 			local Skeet = ents.Create("ent_jack_gmod_ezclusterbuster_skeet")
-			JMod.SetOwner(Skeet, Att)
+			JMod.SetEZowner(Skeet, Att)
 			Skeet:SetPos(Pos + DirVec * 30)
 			Skeet:SetAngles(Angle(0, 0, 0))
 			Skeet:Spawn()
@@ -128,7 +128,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		local Time, State, Phys, Att = CurTime(), self:GetState(), self:GetPhysicsObject(), self.Owner or game.GetWorld()
+		local Time, State, Phys, Att = CurTime(), self:GetState(), self:GetPhysicsObject(), self.EZowner or game.GetWorld()
 		local Vel, Pos, Ang = Phys:GetVelocity(), self:GetPos(), self:GetAngles()
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 

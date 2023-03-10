@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.URANIUM
 ENT.JModPreferredCarryAngles = Angle(180, 90, -90)
-ENT.Model = "models/props_mining/ingot001.mdl"
+ENT.Model = "models/jmod/resources/ingot001.mdl"
 ENT.Material = "models/props_mining/ingot_jack_uranium"
 ENT.Color = Color(50, 55, 50)
 ENT.ModelScale = 1
@@ -28,7 +28,7 @@ if SERVER then
 		if math.random(1, 200) <= self:GetResource() then
 			local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
-			Ent.Owner = self.Owner
+			Ent.EZowner = self.EZowner
 			Ent.LifeTime = 15
 			Ent.DmgAmt = 1
 			Ent.Range = 500

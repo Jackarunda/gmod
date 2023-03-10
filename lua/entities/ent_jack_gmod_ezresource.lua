@@ -9,7 +9,6 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
-
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
@@ -20,11 +19,12 @@ if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 20) * (self.ModelScale or 1)
 		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
+		ent:SetAngles(self.SpawnAngle or Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
+		ent:SetResource(ent.MaxResources)
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
@@ -34,12 +34,12 @@ if SERVER then
 
 	function ENT:Initialize()
 		if self.Models then
-			self.Entity:SetModal(table.Random(self.Models))
+			self:SetModal(table.Random(self.Models))
 		else
-			self.Entity:SetModel(self.Model)
+			self:SetModel(self.Model)
 		end
 
-		self.Entity:SetMaterial(self.Material)
+		self:SetMaterial(self.Material)
 
 		if self.ModelScale then
 			self:SetModelScale(self.ModelScale, 0)
@@ -57,12 +57,13 @@ if SERVER then
 			self:SetSkin(table.Random(self.RandomSkins))
 		end
 
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		---
+		self.MaxResources = 100 * JMod.Config.MaxResourceMult
 		self:SetResource(100)
 		---
 		self.NextLoad = 0
@@ -72,13 +73,19 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(self.Mass)
-				self:GetPhysicsObject():Wake()
+				self:CalcWeight()
 			end
 		end)
 	end
 
-	function ENT:FlingProp(mdl)
+	function ENT:CalcWeight()
+		local Frac = self:GetResource() / self.MaxResources
+		self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
+		self:GetPhysicsObject():Wake()
+	end
+
+	-- I'm commenting this out to make sure we've tied up all of hte loose ends
+	--[[function ENT:FlingProp(mdl)
 		if not util.IsValidModel(mdl) then return end
 		local Prop = ents.Create("prop_physics")
 		Prop:SetPos(self:GetPos())
@@ -101,7 +108,7 @@ if SERVER then
 		Phys:SetVelocity((VectorRand() + Vector(0, 0, 1)):GetNormalized() * math.Rand(100, 300))
 		Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
 		SafeRemoveEntityDelayed(Prop, math.Rand(5, 10))
-	end
+	end]]--
 
 	function ENT:PhysicsCollide(data, physobj)
 		if self.Loaded then return end
@@ -116,8 +123,9 @@ if SERVER then
 					-- try to combine
 					local Sum = self:GetResource() + data.HitEntity:GetResource()
 
-					if Sum <= 100 then
+					if Sum <= self.MaxResources then
 						self:SetResource(Sum)
+						self:CalcWeight()
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
 
@@ -138,6 +146,7 @@ if SERVER then
 
 				if Used > 0 then
 					self:SetResource(Resource - Used)
+					self:CalcWeight()
 
 					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), 1, 1, 1)
 
@@ -168,7 +177,7 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / 100, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
 					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
 					end
@@ -185,8 +194,9 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			for i = 1, self:GetResource() / 10 do
-				if self.UseEffect then
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+			if self.UseEffect then
+				for i = 1, self:GetResource() / 10 do			
 					self:UseEffect(Pos, game.GetWorld(), true)
 				end
 			end
@@ -208,11 +218,13 @@ if SERVER then
 				Box:Spawn()
 				Box:Activate()
 				Box:SetResource(NewCountOne)
+				Box:CalcWeight()
 				activator:PickupObject(Box)
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
+				self:CalcWeight()
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResources, 1)
 			end
 		elseif self.AltUse and AltPressed then
 			self:AltUse(activator)
@@ -232,7 +244,7 @@ if SERVER then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetOwner(self, ply)
+		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)
 		ent.NextCombine = Time + math.random(1, 5)
 	end

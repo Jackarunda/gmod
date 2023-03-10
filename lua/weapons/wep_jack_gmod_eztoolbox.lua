@@ -474,7 +474,7 @@ function SWEP:PrimaryAttack()
 										local Ent = ents.Create(Class)
 										Ent:SetPos(Pos + Norm * 10 * (buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
-										JMod.SetOwner(Ent, self.Owner)
+										JMod.SetEZowner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 										JMod.Hint(self.Owner, Class)
@@ -850,8 +850,8 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	Ent:SetAngles(AngleRand())
 	Ent:Spawn()
 	Ent:Activate()
-	Ent:SetResource(amt or 100)
-	JMod.SetOwner(Ent, self.Owner)
+	Ent:SetResource(amt)
+	JMod.SetEZowner(Ent, self.Owner)
 	timer.Simple(.1, function()
 		if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
 			Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
@@ -958,7 +958,7 @@ function SWEP:Think()
 												local AmtLeft = v
 
 												while AmtLeft > 0 do
-													local Remove = math.min(AmtLeft, 100)
+													local Remove = math.min(AmtLeft, 100 * JMod.Config.MaxResourceMult)
 													self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
 													AmtLeft = AmtLeft - Remove
 												end
@@ -1177,6 +1177,8 @@ if CLIENT then
 				end
 			end
 		end
+
+		local bone_ent
 
 		if IsValid(self.Owner) then
 			bone_ent = self.Owner

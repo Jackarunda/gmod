@@ -53,7 +53,7 @@ function ENT:OnRemove()
 end
 
 function ENT:Explode()
-	local owner, pos = self.Owner or game.GetWorld(), self:GetPos() + Vector(0, 0, 10)
+	local owner, pos = self.EZowner or game.GetWorld(), self:GetPos() + Vector(0, 0, 10)
 
 	for i = 1, 15 * (self.SplodeAmt or 1) do
 		timer.Simple(i * .1 * math.Rand(.9, 1.1), function()
@@ -67,7 +67,7 @@ function ENT:Explode()
 end
 
 function ENT:OnKilled(dmg)
-	self.Owner = dmg:GetAttacker()
+	self.EZowner = dmg:GetAttacker()
 	self:EmitSound("snds_jack_gmod/yee.wav")
 
 	timer.Simple(1.4, function()

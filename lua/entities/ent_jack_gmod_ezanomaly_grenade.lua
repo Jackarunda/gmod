@@ -21,7 +21,7 @@ local DetonationEffects = {
 			for i = 1, 100 do
 				local Nade = ents.Create("sent_ball")
 				Nade:SetPos(pos)
-				Nade.Owner = owner
+				Nade.EZowner = owner
 				Nade:Spawn()
 
 				timer.Simple(0, function()
@@ -49,7 +49,7 @@ local DetonationEffects = {
 					for j = 1, 10 do
 						local Nade = ents.Create("ent_jack_gmod_ezcheese")
 						Nade:SetPos(pos)
-						Nade.Owner = owner
+						Nade.EZowner = owner
 						Nade:Spawn()
 
 						timer.Simple(0, function()
@@ -118,7 +118,7 @@ local DetonationEffects = {
 			for i = 1, 5 do
 				local Nade = ents.Create("ent_jack_gmod_ezanomaly_grenade")
 				Nade:SetPos(pos)
-				Nade.Owner = owner
+				Nade.EZowner = owner
 				Nade:Spawn()
 
 				timer.Simple(0, function()
@@ -243,7 +243,7 @@ local DetonationEffects = {
 			for i = 1, 100 do
 				local Nade = ents.Create("npc_headcrab_fast")
 				Nade:SetPos(pos + VectorRand() * 10 + Vector(0, 0, 10))
-				Nade.Owner = owner
+				Nade.EZowner = owner
 				Nade:Spawn()
 				Nade:SetModelScale(math.Rand(.3, .5), 0)
 				local col = math.random(0, 50)
@@ -277,7 +277,7 @@ local DetonationEffects = {
 				Flame:SetPos(pos + Vector(0, 0, 10))
 				Flame:SetAngles(FireVec:Angle())
 				Flame:SetOwner(owner)
-				Flame.Owner = owner
+				Flame.EZowner = owner
 				Flame.SpeedMul = .8
 				Flame.Creator = self or game.GetWorld()
 				Flame.HighVisuals = false
@@ -295,7 +295,7 @@ local DetonationEffects = {
 				timer.Simple(math.Rand(0, 1), function()
 					local Nade = ents.Create("ent_jack_gmod_ezgasparticle")
 					Nade:SetPos(pos)
-					Nade.Owner = owner
+					Nade.EZowner = owner
 					Nade:Spawn()
 
 					timer.Simple(0, function()
@@ -313,7 +313,7 @@ local DetonationEffects = {
 			for i = 1, 30 do
 				local Nade = ents.Create("ent_jack_gmod_ezlandmine")
 				Nade:SetPos(pos)
-				Nade.Owner = owner
+				Nade.EZowner = owner
 				Nade:Spawn()
 
 				timer.Simple(0, function()
@@ -336,7 +336,7 @@ local DetonationEffects = {
 			for i = 1, 15 do
 				local Nade = ents.Create("ent_jack_gmod_ezfragnade")
 				Nade:SetPos(pos)
-				Nade.Owner = owner
+				Nade.EZowner = owner
 				Nade:Spawn()
 
 				timer.Simple(0, function()
@@ -365,7 +365,7 @@ local DetonationEffects = {
 			timer.Simple(1.6, function()
 				local Whoah = ents.Create("ent_jack_gmod_eznuke_small")
 				Whoah:SetPos(pos)
-				Whoah.Owner = owner
+				Whoah.EZowner = owner
 				Whoah:Spawn()
 
 				timer.Simple(0, function()
@@ -386,7 +386,7 @@ local DetonationEffects = {
 				timer.Simple(math.Rand(0, 1), function()
 					local Engie = ents.Create("npc_jack_gmod_tinydeskengineer")
 					Engie:SetPos(pos + VectorRand() * 50)
-					Engie.Owner = owner
+					Engie.EZowner = owner
 					Engie:Spawn()
 					Engie:Activate()
 				end)
@@ -399,7 +399,7 @@ local DetonationEffects = {
 			JMod.Sploom(owner, pos, 10)
 			local Whoah = ents.Create("ent_jack_gmod_ezblackhole")
 			Whoah:SetPos(pos)
-			Whoah.Owner = owner
+			Whoah.EZowner = owner
 			Whoah:Spawn()
 		end
 	}, -- SUCC
@@ -409,7 +409,7 @@ local DetonationEffects = {
 			JMod.Sploom(owner, pos, 10)
 			local Whoah = ents.Create("ent_jack_gmod_eznuke_big")
 			Whoah:SetPos(pos)
-			Whoah.Owner = owner
+			Whoah.EZowner = owner
 			Whoah:Spawn()
 
 			timer.Simple(0, function()
@@ -559,7 +559,7 @@ if SERVER then
 	function ENT:Detonate()
 		--self.CurEff=16 -- DEBUG
 		local pos = self:GetPos() + Vector(0, 0, 10)
-		local NoRemove = self.DetonationEffects[self.CurEff].func(self, pos, self.Owner or self:GetOwner() or game.GetWorld())
+		local NoRemove = self.DetonationEffects[self.CurEff].func(self, pos, self.EZowner or self:GetOwner() or game.GetWorld())
 
 		if not NoRemove then
 			self:Remove()

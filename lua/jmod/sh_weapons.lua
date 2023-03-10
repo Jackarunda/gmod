@@ -403,37 +403,41 @@ JMod.AmmoTable = {
 	}
 }
 
-for k, v in pairs(JMod.AmmoTable) do
-	v.carrylimit = v.carrylimit or -2
-	game.AddAmmoType({
-		name = k,
-		maxcarry = v.carrylimit,
-		npcdmg = v.basedmg,
-		plydmg = v.basedmg,
-		dmgtype = v.dmgtype or DMG_BULLET
-	})
-	if SERVER then
-		timer.Simple(1, function()
-			if (v.resourcetype) and (v.resourcetype == "munitions") then
-				if not(table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, k)) then
-					table.insert(JMod.Config.AmmoTypesThatAreMunitions, k)
+function JMod.LoadAmmoTable()
+	for k, v in pairs(JMod.AmmoTable) do
+		v.carrylimit = v.carrylimit or -2
+		game.AddAmmoType({
+			name = k,
+			maxcarry = v.carrylimit,
+			npcdmg = v.basedmg,
+			plydmg = v.basedmg,
+			dmgtype = v.dmgtype or DMG_BULLET
+		})
+		if SERVER then
+			timer.Simple(1, function()
+				if (v.resourcetype) and (v.resourcetype == "munitions") then
+					if not(table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, k)) then
+						table.insert(JMod.Config.AmmoTypesThatAreMunitions, k)
+					end
+				elseif not(v.resourcetype) then
+					if not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, k)) then
+						table.insert(JMod.Config.WeaponAmmoBlacklist, k)
+					end
 				end
-			elseif not(v.resourcetype) then
-				if not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, k)) then
-					table.insert(JMod.Config.WeaponAmmoBlacklist, k)
-				end
+			end)
+		end
+
+		if CLIENT then
+			language.Add(k .. "_ammo", k)
+
+			if v.ent then
+				language.Add(v.ent, v.nicename)
 			end
-		end)
-	end
-
-	if CLIENT then
-		language.Add(k .. "_ammo", k)
-
-		if v.ent then
-			language.Add(v.ent, v.nicename)
 		end
 	end
 end
+
+JMod.LoadAmmoTable()
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end
@@ -627,6 +631,7 @@ if CLIENT then
 				ang:RotateAroundAxis(forward, WepAng.r)
 				mdl:SetRenderOrigin(pos)
 				mdl:SetRenderAngles(ang)
+				render.SetColorModulation(1, 1, 1)
 				mdl:DrawModel()
 			end
 		else

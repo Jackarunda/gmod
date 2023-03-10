@@ -47,7 +47,7 @@ function ENT:SUCC(Time, Phys, Age, Pos, MaxRange)
 			local Dist, Dir = Vec:Length(), Vec:GetNormalized()
 
 			if obj.TakeDamage then
-				obj:TakeDamage((MaxRange - Dist) / MaxRange * 50, obj.Owner, obj)
+				obj:TakeDamage((MaxRange - Dist) / MaxRange * 50, obj.EZowner, obj)
 			end
 		elseif IsValid(ObjPhys) and not (obj == self) and not self:IsBlacklisted(obj) then
 			-- not(obj:IsWorld())and 
@@ -117,7 +117,7 @@ function ENT:Rape(ent)
 		Dmg:SetDamagePosition(SelfPos)
 		Dmg:SetDamageForce((SelfPos - ent:GetPos()) * 10)
 		Dmg:SetInflictor(self)
-		Dmg:SetAttacker((IsValid(self.Owner) and self.Owner) or self)
+		Dmg:SetAttacker((IsValid(self.EZowner) and self.EZowner) or self)
 		ent:TakeDamageInfo(Dmg)
 
 		timer.Simple(0, function()
@@ -194,7 +194,7 @@ if SERVER then
 		Dmg:SetDamage(power / 10)
 		Dmg:SetDamageType(DMG_RADIATION)
 		Dmg:SetInflictor(self)
-		Dmg:SetAttacker((IsValid(self.Owner) and self.Owner) or self)
+		Dmg:SetAttacker((IsValid(self.EZowner) and self.EZowner) or self)
 		util.BlastDamageInfo(Dmg, self:GetPos(), 10000)
 	end
 

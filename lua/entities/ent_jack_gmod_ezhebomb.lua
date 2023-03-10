@@ -26,7 +26,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(180, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -37,16 +37,16 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x075x025.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
+			self:GetPhysicsObject():SetMass(200)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)
@@ -78,7 +78,7 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			if (data.Speed > 700) and (self:GetState() == STATE_ARMED) then
+			if (data.Speed > 500) and (self:GetState() == STATE_ARMED) then
 				self:Detonate()
 
 				return
@@ -111,7 +111,7 @@ if SERVER then
 		self.Entity:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
-			JMod.SetOwner(self, dmginfo:GetAttacker())
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end
@@ -121,7 +121,7 @@ if SERVER then
 		if State < 0 then return end
 
 		if State == STATE_OFF then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
@@ -134,7 +134,7 @@ if SERVER then
 
 			self.LastUse = Time
 		elseif State == STATE_ARMED then
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
@@ -151,7 +151,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetOwner(self)
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetEZowner(self)
 		JMod.Sploom(Att, SelfPos, 150)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
@@ -229,9 +229,9 @@ if SERVER then
 		local Phys, UseAeroDrag = self:GetPhysicsObject(), true
 		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
 		--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
-		--if((designator:GetLasing())and(designator.Owner)and(JMod.ShouldAllowControl(self,designator.Owner)))then
+		--if((designator:GetLasing())and(designator.EZowner)and(JMod.ShouldAllowControl(self,designator.EZowner)))then
 		--[[
-					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.Owner:GetEyeTrace().HitPos
+					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.EZowner:GetEyeTrace().HitPos
 					local TargVec=TargPos-SelfPos
 					local Dist,Dir,Vel=TargVec:Length(),TargVec:GetNormalized(),Phys:GetVelocity()
 					local Speed=Vel:Length()
@@ -245,7 +245,7 @@ if SERVER then
 		--end
 		--end
 		--end
-		JMod.AeroDrag(self, -self:GetRight(), 6)
+		JMod.AeroDrag(self, -self:GetRight(), 2)
 		self:NextThink(CurTime() + .1)
 
 		return true

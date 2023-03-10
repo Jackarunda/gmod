@@ -78,7 +78,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		JMod.Sploom(self.Owner or game.GetWorld(), SelfPos, 160)
+		JMod.Sploom(self.EZowner or game.GetWorld(), SelfPos, 160)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)
@@ -94,7 +94,7 @@ if SERVER then
 			dmginfo:SetDamage((Helf > 2000 and 1500) or 200)
 			dmginfo:SetDamageType((self.StickObj:GetClass() == "gmod_sent_vehicle_fphysics_base" and DMG_GENERIC) or DMG_BLAST)
 			dmginfo:SetInflictor(self)
-			dmginfo:SetAttacker(self.Owner)
+			dmginfo:SetAttacker(self.EZowner)
 			dmginfo:SetDamagePosition(SelfPos)
 			dmginfo:SetDamageForce((self.StickObj:GetPos() - self:GetPos()):GetNormalized() * 1000)
 			self.StickObj:TakeDamageInfo(dmginfo)

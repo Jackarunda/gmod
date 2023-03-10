@@ -20,11 +20,7 @@ ENT.BreakNoise = "Wood_Box.Break"
 
 ---
 if SERVER then
-	function ENT:UseEffect(pos, ent)
-		for i = 1, 2 * JMod.Config.SupplyEffectMult do
-			self:FlingProp("models/mechanics/gears/gear12x6_small.mdl")
-		end
-
+	--[[function ENT:UseEffect(pos, ent)
 		local effectdata = EffectData()
 		effectdata:SetOrigin(pos + VectorRand())
 		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
@@ -32,7 +28,7 @@ if SERVER then
 		effectdata:SetScale(math.Rand(1, 2)) --length of strands
 		effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
 		util.Effect("Sparks", effectdata, true, true)
-	end
+	end]]--
 
 	function ENT:AltUse(ply)
 		local Wep = ply:GetActiveWeapon()

@@ -25,7 +25,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -111,7 +111,7 @@ if SERVER then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
 		if tobool(onOff) then
@@ -171,7 +171,7 @@ if SERVER then
 
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
-					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl, Att, SelfPos, 120 * PowerMult, 180 * PowerMult)
 					self:Remove()
 				end)

@@ -26,7 +26,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -37,14 +37,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/props_explosive/explosive_butane_can02.mdl")
-		--self.Entity:SetModelScale(.5,0)
-		self.Entity:SetMaterial("models/props_explosive/virus")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/props/viruscan.mdl")
+		self:SetMaterial("models/props_explosive/virus")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -86,7 +85,7 @@ if SERVER then
 			local Att = dmginfo:GetAttacker()
 
 			if IsValid(Att) and Att:IsPlayer() then
-				JMod.SetOwner(self, Att)
+				JMod.SetEZowner(self, Att)
 			end
 
 			self:Burst()
@@ -98,7 +97,7 @@ if SERVER then
 
 		if State == STATE_SEALED then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:EmitSound("snd_jack_pinpull.wav", 55, 100)
 				self:EmitSound("snd_jack_spoonfling.wav", 55, 100)
 				self:SetState(STATE_TICKING)
@@ -127,14 +126,14 @@ if SERVER then
 	function ENT:Burst()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.Owner or self, self:GetPhysicsObject():GetVelocity()
+		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
 		JMod.Sploom(Owner, SelfPos, 100)
 
 		for i = 1, self.ContainedGas do
 			timer.Simple(i / 200, function()
 				local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 				Gas:SetPos(SelfPos)
-				JMod.SetOwner(Gas, Owner)
+				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 500))
@@ -155,7 +154,7 @@ if SERVER then
 		elseif State == STATE_VENTING then
 			local Gas = ents.Create("ent_jack_gmod_ezvirusparticle")
 			Gas:SetPos(self:LocalToWorld(self:OBBCenter()))
-			JMod.SetOwner(Gas, self.Owner or self)
+			JMod.SetEZowner(Gas, self.EZowner or self)
 			Gas:Spawn()
 			Gas:Activate()
 			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)

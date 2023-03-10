@@ -16,7 +16,7 @@ if SERVER then
 	function ENT:Use(activator, activatorAgain, onOff)
 		if self.Exploded then return end
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
 		if tobool(onOff) then
@@ -25,7 +25,7 @@ if SERVER then
 			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
 
 			if State == JMod.EZ_STATE_OFF and Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)

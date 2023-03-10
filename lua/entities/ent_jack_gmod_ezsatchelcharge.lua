@@ -24,7 +24,7 @@ if SERVER then
 		plunger:SetAngles(self:GetAngles())
 		plunger:Spawn()
 		plunger.Satchel = self
-		plunger.Owner = self.Owner
+		plunger.EZowner = self.EZowner
 		self.Plunger = plunger
 
 		timer.Simple(0, function()
@@ -65,7 +65,7 @@ if SERVER then
 
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
-		JMod.SetOwner(self, Dude)
+		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 
 		if tobool(onOff) then
@@ -89,7 +89,7 @@ if SERVER then
 		self.Exploded = true
 
 		if IsValid(self.Plunger) then
-			JMod.SetOwner(self, self.Plunger.Owner)
+			JMod.SetEZowner(self, self.Plunger.EZowner)
 		end
 
 		timer.Simple(0, function()
@@ -127,7 +127,7 @@ if SERVER then
 
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
-					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl, Att, SelfPos, 100 * PowerMult, 160 * PowerMult)
 					self:Remove()
 				end)

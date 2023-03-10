@@ -319,10 +319,10 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTDRAWTRANSLUCENTRENDERABLES"
 
 	if Time > NextSlamScan then
 		NextSlamScan = Time + .5
-		KnownSlams = ents.FindByClass("ent_jack_gmod_ezslam")
+		KnownSLAMs = ents.FindByClass("ent_jack_gmod_ezslam")
 	end
 
-	for k, ent in pairs(KnownSlams) do
+	for k, ent in pairs(KnownSLAMs) do
 		if IsValid(ent) then
 			local pos = ent:GetAttachment(1).Pos
 

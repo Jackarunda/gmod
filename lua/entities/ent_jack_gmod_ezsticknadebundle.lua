@@ -65,7 +65,7 @@ if SERVER then
 					plooie:SetNormal(vector_up)
 					util.Effect("eff_jack_minesplode", plooie, true, true)
 					util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
-					JMod.FragSplosion(self, SelfPos + Vector(0, 0, 20), 5000, 70, 7000, self.Owner or game.GetWorld())
+					JMod.FragSplosion(self, SelfPos + Vector(0, 0, 20), 5000, 70, 7000, self.EZowner or game.GetWorld())
 
 					timer.Simple(.1, function()
 						for i = 1, 5 do
@@ -111,7 +111,7 @@ if SERVER then
 
 					timer.Simple(0, function()
 						local ZaWarudo = game.GetWorld()
-						local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.Owner) and self.Owner) or (IsValid(self) and self) or ZaWarudo
+						local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 						util.BlastDamage(Infl, Att, SelfPos, 125 * PowerMult, 180 * PowerMult)
 						self:Remove()
 					end)

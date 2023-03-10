@@ -19,7 +19,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -140,7 +140,7 @@ if SERVER then
 	function ENT:BombRelease(slotNum, arm, ply)
 		local NumOBombs = #self.Bombs
 		slotNum = slotNum or NumOBombs
-		ply = ply or self.Owner or game.GetWorld()
+		ply = ply or self.EZowner or game.GetWorld()
 		if NumOBombs <= 0 then return end
 		if slotNum == 0 or slotNum > NumOBombs then return end
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
@@ -149,7 +149,7 @@ if SERVER then
 		droppedBomb:SetPos(Pos + Up * -50 + Forward * -6 + Right * 6)
 		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
 		droppedBomb:SetVelocity(self:GetVelocity())
-		JMod.SetOwner(droppedBomb, ply)
+		JMod.SetEZowner(droppedBomb, ply)
 
 		if arm then
 			droppedBomb.DropOwner = ply
@@ -193,7 +193,7 @@ if SERVER then
 		for i = 1, #self.Bombs do
 			timer.Simple(0.2, function()
 				if IsValid(self) then
-					self:BombRelease(i, false, self.Owner)
+					self:BombRelease(i, false, self.EZowner)
 				end
 			end)
 		end

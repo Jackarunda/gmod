@@ -36,7 +36,7 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self.Owner or self, -self:GetRight()
+		local SelfPos, Att, Dir = (tr and tr.HitPos + tr.HitNormal * 5) or self:GetPos() + Vector(0, 0, 30), self.EZowner or self, -self:GetRight()
 		JMod.Sploom(Att, SelfPos, 150)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 700)

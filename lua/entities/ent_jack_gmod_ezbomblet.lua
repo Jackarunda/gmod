@@ -44,7 +44,7 @@ if SERVER then
 		end
 
 		if dmginfo:GetDamage() >= 80 then
-			JMod.SetOwner(self, dmginfo:GetAttacker())
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
 			self:Detonate()
 		end
 	end
@@ -52,7 +52,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.Owner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld()
 		---
 		local splad = EffectData()
 		splad:SetOrigin(SelfPos)
