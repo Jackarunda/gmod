@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezweapon"
 ENT.PrintName = "EZ Combat Knife"
-ENT.Spawnable = false -- melee weapon release is delayed
+ENT.Spawnable = false
 ENT.Category = "JMod - EZ Weapons"
 ENT.WeaponName = "Combat Knife"
 

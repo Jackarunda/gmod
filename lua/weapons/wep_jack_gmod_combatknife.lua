@@ -4,14 +4,11 @@ SWEP.PrintName = "Combat Knife"
 JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezweapon_combatknife", true)
 SWEP.Slot = 0
 SWEP.ViewModel = "models/weapons/yurie_cod/iw7/tactical_knife_iw7_vm.mdl"
-SWEP.WorldModel = "models/weapons/w_jmod_combatknife.mdl"
+SWEP.WorldModel = "models/weapons/w_jmod_pocketknife.mdl"
 SWEP.ViewModelFOV = 62
-SWEP.MeleeRange = 5
-SWEP.MeleeDamage = 20
+SWEP.MeleeRange = 1
+SWEP.MeleeDamage = 15
 
--- VMBoneMods
--- VMElement
--- WMElement
 SWEP.Firemodes = {
 	{
 		Mode = 1,
@@ -32,31 +29,18 @@ SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav", "snds_jack_gm
 
 SWEP.MeleeHitNPCSound = {"snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav"}
 
-SWEP.MeleeViewMovements = {
-	{
-		t = 0,
-		ang = Angle(0, -5, 0)
-	},
-	{
-		t = .02,
-		ang = Angle(0, 30, 0)
-	}
-}
-
-SWEP.MeleeForceDir = Angle(0, 60, 0)
-
 --[[
-idle
-hitcenter1
-hitcenter2
-hitcenter3
-draw
-holster
-sprint
+vm_knifeonly_drop
+vm_knifeonly_idle
+vm_knifeonly_raise
+vm_knifeonly_sprint_in
+vm_knifeonly_sprint_loop
+vm_knifeonly_sprint_out
+vm_knifeonly_swipe
 --]]
 SWEP.Animations = {
 	["draw"] = {
-		Source = "draw",
+		Source = "vm_knifeonly_raise",
 		Time = .8,
 		SoundTable = {
 			{
@@ -67,15 +51,15 @@ SWEP.Animations = {
 		}
 	},
 	["ready"] = {
-		Source = "draw",
+		Source = "vm_knifeonly_raise",
 		Time = 1,
 	},
 	["idle"] = {
-		Source = "idle",
+		Source = "vm_knifeonly_idle",
 		Time = 10,
 	},
 	["bash"] = {
-		Source = "hitcenter1",
+		Source = "vm_knifeonly_swipe",
 		SoundTable = {
 			{
 				s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
