@@ -46,7 +46,7 @@ if SERVER then
 
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(200)
+			self:GetPhysicsObject():SetMass(150)
 			self:GetPhysicsObject():Wake()
 			self:GetPhysicsObject():EnableDrag(false)
 		end)

@@ -9,6 +9,11 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModEZstorable = true
+
+---
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "State")
+end
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -16,7 +21,7 @@ if SERVER then
 		local ent = ents.Create(self.ClassName)
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
-		JMod.SetOwner(ent, ply)
+		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
 		--local effectdata=EffectData()
@@ -41,6 +46,7 @@ if SERVER then
 			self:GetPhysicsObject():Wake()
 		end)
 
+		self.UsableMats = {}
 		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
 	end
 
@@ -94,7 +100,7 @@ if SERVER then
 
 		if State == JMod.EZ_STATE_OFF then
 			if Alt then
-				JMod.SetOwner(self, activator)
+				JMod.SetEZowner(self, activator)
 				self:Bury(activator)
 				JMod.Hint(activator, "mine friends")
 			else
@@ -104,7 +110,7 @@ if SERVER then
 		else
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(JMod.EZ_STATE_OFF)
-			JMod.SetOwner(self, activator)
+			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
