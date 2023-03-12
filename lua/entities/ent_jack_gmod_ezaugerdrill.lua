@@ -245,20 +245,43 @@ if(SERVER)then
 		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
 			self.NextOSHAthinkTime = Time + .1
 			local BasePos = SelfPos + Up * (-10 - Prog)
-			local FoundEnts = ents.FindInBox(SelfPos + Up * (-100 - Prog) + Vector(-6, -6, -6), BasePos + Vector(6, 6, 6))
-			for _, v in ipairs(FoundEnts) do
-				if IsValid(v) and IsValid(v:GetPhysicsObject()) and (v ~= self) then
-					local Dmg = DamageInfo()
-					Dmg:SetDamagePosition(BasePos)
-					Dmg:SetDamageForce(Vector(0, 0, 10000))
-					Dmg:SetDamage(20)
-					Dmg:SetDamageType(DMG_CRUSH)
-					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(JMod.GetEZowner(self))
-					v:TakeDamageInfo(Dmg)
-					--print(tostring(v))
-					self:EmitSound("Boulder.ImpactHard")
+			local HullTr = util.TraceHull({
+				start = SelfPos + Up * (-100 - Prog),
+				endpos = BasePos,
+				maxs = Vector(6, 6, 6),
+				mins = Vector(-6, -6, -6),
+				filter = self,
+				mask = MASK_SOLID,
+				ignoreworld = true
+			})
+			if HullTr.Hit then
+				local pierce = 0
+				while HullTr.Fraction < 1 and pierce < 100 do
+					pierce = pierce + 1
+					local ent = HullTr.Entity
+					if IsValid(ent) and IsValid(ent:GetPhysicsObject()) then
+						local Dmg = DamageInfo()
+						Dmg:SetDamagePosition(BasePos)
+						Dmg:SetDamageForce(Vector(0, 0, 10000))
+						Dmg:SetDamage(10)
+						Dmg:SetDamageType(DMG_CRUSH)
+						Dmg:SetInflictor(ent)
+						Dmg:SetAttacker(JMod.GetEZowner(self))
+						ent:TakeDamageInfo(Dmg)
+						--print(tostring(ent))
+					end
+					util.TraceHull({
+						start = SelfPos + Up * (-100 - Prog) * HullTr.Fraction,
+						endpos = BasePos,
+						maxs = Vector(6, 6, 6),
+						mins = Vector(-6, -6, -6),
+						filter = self,
+						mask = MASK_SOLID,
+						ignoreworld = true,
+						output = HullTr
+					})
 				end
+				self:EmitSound("Boulder.ImpactHard")
 			end
 		end
 	end

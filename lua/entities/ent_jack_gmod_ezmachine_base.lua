@@ -262,7 +262,7 @@ if(SERVER)then
 
 	function ENT:PhysicsCollide(data,physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
-			self.Entity:EmitSound("Metal_Box.ImpactHard")
+			self:EmitSound("Metal_Box.ImpactHard")
 			if(data.Speed>800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()))then
 				local Dam,World=DamageInfo(),game.GetWorld()
 				Dam:SetDamage(data.Speed/3)
@@ -273,6 +273,7 @@ if(SERVER)then
 				Dam:SetDamageForce(data.TheirOldVelocity)
 				JMod.DamageSpark(self)
 				self:TakeDamageInfo(Dam)
+				self:EmitSound("Metal_Box.Break")
 			end
 		end
 	end
