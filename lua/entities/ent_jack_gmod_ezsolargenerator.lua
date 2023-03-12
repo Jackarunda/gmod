@@ -135,7 +135,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() == STATE_OFF) then return end
+		if (self:GetState() >= STATE_OFF) then return end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
