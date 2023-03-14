@@ -908,6 +908,43 @@ JMod.ArmorTable = {
 		wgt = 15,
 		dur = 8,
 		ent = "ent_jack_gmod_ezarmor_hazmat"
+	},
+	["Parachute"] = {
+		PrintName = "Parachute",
+		mdl = "models/vex/seventysix/backpacks/backpack_parachute.mdl",
+		slots = {
+			back = .8
+		},
+		eff = {
+			parachute = {mdl = "models/jessev92/rnl/items/parachute_deployed.mdl", offset = 60}
+		},
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine2",
+		siz = Vector(1.2, 1.2, 1.2),
+		pos = Vector(-3, 0, 0),
+		ang = Angle(-90, 0, -90),
+		wgt = 30,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_parachute"
+	},
+	["ZParachute"] = {
+		PrintName = "ZParachute",
+		mdl = "models/jessev92/resliber/weapons/parachute_backpack_closed_w.mdl",
+		slots = {
+			back = .8
+		},
+		eff = {
+			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50}
+			--parachute = {mdl ="models/jessev92/resliber/items/parachute.mdl", offset = 60}
+		},
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine1",
+		siz = Vector(1, 1, 1),
+		pos = Vector(-3, -45, 0),
+		ang = Angle(-90, 0, 90),
+		wgt = 30,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_zparachute"
 	}
 }
 
@@ -979,15 +1016,36 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
+--hook.Remove("Move", "JMOD_ARMOR_MOVE")
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-    if ply.IsProne and ply:IsProne() then return end
+	if ply.IsProne and ply:IsProne() then return end
 
-    if ply.EZarmor and ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
-        local origSpeed = mv:GetMaxSpeed()
-        local origClientSpeed = mv:GetMaxClientSpeed()
-        mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
-        mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
-    end
+	if ply.EZarmor then
+		if ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
+			local origSpeed = mv:GetMaxSpeed()
+			local origClientSpeed = mv:GetMaxClientSpeed()
+			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
+			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
+		end
+		if SERVER and IsFirstTimePredicted() then
+			if ply:GetNW2Bool("EZparachuting", false) then
+				local ChuteTime = ply:GetNW2Float("ChuteTime", 0)
+				local Vel = ply:GetVelocity()
+				local NewVel = (-Vel * 0.05)
+				--jprint("We be parachuting " .. tostring(math.Round(Vel:Length())))
+				if ply:KeyDown(IN_FORWARD) then
+					local AimDir = ply:GetForward()
+					AimDir.z = 0
+					NewVel = NewVel + AimDir * 10
+				end
+				mv:SetVelocity(Vel + NewVel * (ChuteTime * 0.5))
+				ply:SetNW2Float("ChuteTime", math.Clamp(ChuteTime + .06, 0, 2))
+				if ply:WaterLevel() >= 2 then
+					ply:SetNW2Bool("EZparachuting", false)
+				end
+			end
+		end
+	end
 end)
 
 if CLIENT then

@@ -266,6 +266,44 @@ local function VirusHostThink(dude)
 	end
 end
 
+local function OpenChute(ply)
+	ply:EmitSound("CmbSoldier_ZipLine_Clip")
+	ply.ChuteOpening = true
+	timer.Simple(0.5, function()
+		ply.ChuteOpening = nil
+		if not IsValid(ply) or not ply:Alive() or ply:OnGround() or not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
+		ply:SetNW2Float("ChuteTime", 0)
+		ply:SetNW2Bool("EZparachuting", true)
+		ply:ViewPunch(Angle(-20, 0, 0))
+		ply:EmitSound("V92_ZP_BF2_Deploy")
+	end)
+end
+
+hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
+	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
+	if ply.IsProne and ply:IsProne() then return end
+	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
+
+	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
+	if key == IN_JUMP and not IsParaOpen then
+		if (math.abs(ply:GetPhysicsObject():GetVelocity():Length()) >= 200) and not ply:OnGround() then
+			OpenChute(ply)
+		end
+	end
+
+	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.AltFunctionKey) and IsParaOpen then
+		ply:SetNW2Bool("EZparachuting", false)
+	end
+end)
+
+hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, speed)
+	--print("Player: " .. tostring(ply) .. " hit ", (water and "water") or "ground", "floater: " .. tostring(float), "Going: " .. tostring(speed))
+	if ply:GetNW2Bool("EZparachuting", false) then
+		ply:ViewPunch(Angle(20, 0, 0))
+		ply:SetNW2Bool("EZparachuting", false)
+	end
+end)
+
 local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextSync = 0, 0, 0, 0, 0
 
 hook.Add("Think", "JMOD_SERVER_THINK", function()
@@ -302,11 +340,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextMainThink > Time then return end
 	NextMainThink = Time + 1
 
+	local Playas = player.GetAll()
 	---
-	for k, playa in pairs(player.GetAll()) do
-		local Alive = playa:Alive()
+	for k, playa in pairs(Playas) do
+		if playa:Alive() then
 
-		if Alive then
 			if playa.EZhealth then
 				local Healin = playa.EZhealth
 
@@ -407,7 +445,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextNutritionThink < Time then
 		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
 
-		for k, playa in pairs(player.GetAll()) do
+		for k, playa in pairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
 					local Nuts = playa.EZnutrition.Nutrients
@@ -444,7 +482,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextArmorThink < Time then
 		NextArmorThink = Time + 2
 
-		for k, playa in pairs(player.GetAll()) do
+		for k, playa in pairs(Playas) do
 			if playa.EZarmor and playa:Alive() then
 				if playa.EZarmor.effects.nightVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
@@ -524,7 +562,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.WeaponSwayMult = JMod.Config.WeaponSwayMult
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	net.Start("JMod_LuaConfigSync")
-	net.WriteData(util.Compress(util.TableToJSON(ToSend)))
+		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()
 end
 

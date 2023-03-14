@@ -68,12 +68,15 @@ function JMod.EZarmorSync(ply)
 			ply.EZarmor.sndlop = ArmorInfo.sndlop
 		end
 	end
+	if not ply.EZarmor.effects.parachute and ply:GetNW2Bool("EZparachuting", false) then
+		ply:SetNW2Bool("EZparachuting", false)
+	end
 
 	hook.Run("JModHookEZArmorSync", ply)
 
 	net.Start("JMod_EZarmorSync")
-	net.WriteEntity(ply)
-	net.WriteTable(ply.EZarmor)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.EZarmor)
 	net.Broadcast()
 end
 
