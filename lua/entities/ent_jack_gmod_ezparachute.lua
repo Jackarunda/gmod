@@ -45,6 +45,7 @@ if SERVER then
 
 	function ENT:Think()
 		local Time, State, Owner = CurTime(), self:GetState(), self.Owner
+		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
 
 		if IsValid(Owner) then
 			if not Owner:GetNW2Bool("EZparachuting", false) then
@@ -52,21 +53,20 @@ if SERVER then
 			end
 			------ Parachute Pos and Angles ------
 			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
-			local AimDirAng = Angle(DirAng.p, (math.abs(DirAng.r) > 1 and DirAng.r) or Aim.y, DirAng.r) --Angle(Dir:Angle().p, Aim.y, Dir:Angle().r)
+			local AimDirAng = Angle(DirAng.p, (math.abs(DirAng.r) > 1 and DirAng.r) or Aim.y, DirAng.r)
 			local BPos = Owner:LocalToWorld(Owner:OBBCenter())
 			local BIndex = Owner:LookupBone("ValveBiped.Bip01_Spine1")
 			if BIndex then
-				BPos = Owner:GetBonePosition(BIndex)
+				local matrix = Owner:GetBoneMatrix(BIndex)
+				BPos = matrix:GetTranslation()
 			end
-			local Pos = BPos + AimDirAng:Forward() * self.MdlOffset or 0
+			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self.MdlOffset or 0)
 			AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
 			self:SetPos(Pos)
 			self:SetAngles(AimDirAng)
 		else
 			self:Collapse()
 		end
-
-		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
 
 		if State == STATE_FINE then
 			------ Parachute simluation ------
@@ -77,7 +77,7 @@ if SERVER then
 				if Owner:KeyDown(IN_FORWARD) then
 					local AimDir = Owner:GetForward()
 					AimDir.z = 0
-					NewVel = NewVel + AimDir * self.Drag * 0.2
+					NewVel = NewVel + AimDir * 10 / self.Drag
 				end
 				Owner:SetVelocity(NewVel * ChuteProg)
 			else
@@ -130,7 +130,7 @@ if SERVER then
 elseif CLIENT then
 	function ENT:Draw()
 		local Mat = Matrix()
-		local ChuteProg = self:GetNW2Float("ChuteProg", 1)
+		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
 		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
 		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
 		Mat:Scale(Siz)

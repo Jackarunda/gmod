@@ -312,7 +312,7 @@ end)
 hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, speed)
 	--print("Player: " .. tostring(ply) .. " hit ", (water and "water") or "ground", "floater: " .. tostring(float), "Going: " .. tostring(speed))
 	if ply:GetNW2Bool("EZparachuting", false) then
-		timer.Simple(0.5, function()
+		timer.Simple(0.2, function()
 			ply:ViewPunch(Angle(2, 0, 0))
 			if IsValid(ply) and ply:Alive() and ply:OnGround() then
 				DetachChute(ply)
