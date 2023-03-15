@@ -18,7 +18,7 @@ if SERVER then
 		self:SetMoveType(MOVETYPE_FLY)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:SetCollisionGroup(COLLISION_GROUP_WORLD)
-		self:DrawShadow(true)
+		--self:DrawShadow(true)
 		local Phys = self:GetPhysicsObject()
 
 		if IsValid(Phys) then
@@ -68,21 +68,29 @@ if SERVER then
 			self:Collapse()
 		end
 
+		local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
+
 		if State == STATE_FINE then
 			------ Parachute simluation ------
-			local Vel = Owner:GetVelocity()
-			local NewVel = -Vel * math.Clamp(self.Drag * 0.01, 0, .99)
-			--jprint(self.Drag * 0.01, NewVel)
 			if Owner:IsPlayer() then
+				local Vel = Owner:GetVelocity()
+				local NewVel = -Vel * Drag --+ Vector(0, 0, -Owner.EZarmor.totalWeight)
+				--jprint(Drag, NewVel)
 				if Owner:KeyDown(IN_FORWARD) then
 					local AimDir = Owner:GetForward()
 					AimDir.z = 0
-					NewVel = NewVel + AimDir * 10 / self.Drag
+					NewVel = NewVel + AimDir * 100 * Drag
 				end
 				Owner:SetVelocity(NewVel * ChuteProg)
 			else
-				if IsValid(Owner:GetPhysicsObject()) then
-					Owner:GetPhysicsObject():SetVelocity(Vel + NewVel * ChuteProg)
+				local Phys = Owner:GetPhysicsObject()
+				if Owner:IsRagdoll() then 
+					Phys = Owner:GetPhysicsObjectNum(10)
+				end
+				if IsValid(Phys) then
+					local Vel = Phys:GetVelocity()
+					local NewVel = -Vel * Drag
+					Phys:SetVelocity(Vel + NewVel * ChuteProg)
 				end
 			end
 			if Owner:WaterLevel() >= 2 then
@@ -134,7 +142,8 @@ elseif CLIENT then
 		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
 		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
 		Mat:Scale(Siz)
-		self:EnableMatrix("RenderMultiply", Mat)
+		jprint(ChuteProg, Size)
+		--self:EnableMatrix("RenderMultiply", Mat)
 		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_ezparachute", "EZ parachute")

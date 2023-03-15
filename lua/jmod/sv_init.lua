@@ -676,7 +676,8 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH", function(ply)
 	if IsValid(ply.EZparachute) then
 		local Ragdoll = ply:GetRagdollEntity()
 		if IsValid(Ragdoll) then
-			ply.EZparachute.Chutist = Ragdoll
+			print("There's a valid ragdoll to attach the chute to!")
+			ply.EZparachute.Owner = Ragdoll
 			Ragdoll:SetNW2Bool("EZparachuting", true)
 		else
 			ply.EZparachute:Collapse()

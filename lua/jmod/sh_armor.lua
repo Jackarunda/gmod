@@ -916,7 +916,7 @@ JMod.ArmorTable = {
 			back = .8
 		},
 		eff = {
-			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 3}
+			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 5}
 			--parachute = {mdl ="models/jessev92/resliber/items/parachute.mdl", offset = 60, drag = 2}
 		},
 		def = NonArmorProtectionProfile,
@@ -1015,24 +1015,11 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
 			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
 		end
-		--[[if SERVER and IsFirstTimePredicted() then
-			if ply:GetNW2Bool("EZparachuting", false) and IsValid(ply.EZparachute) then
-				local ChuteProg = ply.EZparachute:GetNW2Float("ChuteProg", 0)
-				local Vel = ply:GetVelocity()
-				local NewVel = (-Vel * 0.05)
-				--jprint("We be parachuting " .. tostring(math.Round(Vel:Length())))
-				if ply:KeyDown(IN_FORWARD) then
-					local AimDir = ply:GetForward()
-					AimDir.z = 0
-					NewVel = NewVel + AimDir * 10
-				end
-				mv:SetVelocity(Vel + NewVel * (ChuteProg * 0.5))
-				ply.EZparachute:SetNW2Float("ChuteProg", math.Clamp(ChuteProg + .06, 0, 2))
-				if ply:WaterLevel() >= 2 then
-					ply:SetNW2Bool("EZparachuting", false)
-				end
+		if SERVER and IsFirstTimePredicted() then
+			if ply:GetNW2Bool("EZparachuting", false) and IsValid(ply.EZparachute) and ply:GetMoveType() ~= MOVETYPE_WALK then
+				ply:SetNW2Bool("EZparachuting", false)
 			end
-		end]]--
+		end
 	end
 end)
 
