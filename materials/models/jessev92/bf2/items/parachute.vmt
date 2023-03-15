@@ -1,0 +1,17 @@
+
+VertexLitGeneric
+{
+
+	$basetexture			models/jessev92/bf2/items/parachute_d
+	$bumpmap				models/jessev92/bf2/items/parachute_b
+	
+	$halflambert			1
+	$ambientocclusion		1
+	$ambientoccltexture		models/jessev92/bf2/items/parachute_a
+	
+	$detail             	models/jessev92/detail/cloth
+	$detailscale			24
+	$detailblendfactor		0.25
+	$detailblendmode			0
+
+}
