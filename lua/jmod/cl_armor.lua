@@ -100,7 +100,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 				ply.EZarmorModels[id] = Mdl
 			end
 		end
-
+		--[[]
 		if ply:GetNW2Bool("EZparachuting", false) then
 			if IsValid(ply.EZparachute) then
 				local Dir, Aim = ply:GetVelocity():GetNormalized(), ply:GetAngles()
@@ -111,8 +111,8 @@ function JMod.ArmorPlayerModelDraw(ply)
 				ply.EZparachute:SetRenderOrigin(Pos)
 				ply.EZparachute:SetRenderAngles(AimDirAng)
 				local Mat = Matrix()
-				local ChuteTime = ply:GetNW2Float("ChuteTime", 1)
-				local ChuteZ, ChuteExpand = math.Clamp(ChuteTime, 0, 1), math.Clamp(ChuteTime - 1, 0.1, 1)
+				local ChuteProg = ply:GetNW2Float("ChuteProg", 1)
+				local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
 				local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
 				Mat:Scale(Siz)
 				ply.EZparachute:EnableMatrix("RenderMultiply", Mat)
@@ -129,7 +129,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 		elseif IsValid(ply.EZparachute) then
 			ply.EZparachute:Remove()
 		end
-
+		]]--
 		if ply.EZarmorboneedited then
 			local edited = false
 

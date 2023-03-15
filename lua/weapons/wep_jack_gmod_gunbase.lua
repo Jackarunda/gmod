@@ -133,6 +133,7 @@ SWEP.Hook_AddShootSound = function(self, data) end --[[
 
 SWEP.Hook_PostFireBullets = function(self)
 	local SelfPos = self:GetPos()
+	if not IsValid(self.Owner) then return end
 	local RPos, RDir = self.Owner:GetShootPos(), self.Owner:GetAimVector()
 
 	if self.BackBlast then

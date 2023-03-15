@@ -272,11 +272,24 @@ local function OpenChute(ply)
 	timer.Simple(0.5, function()
 		ply.ChuteOpening = nil
 		if not IsValid(ply) or not ply:Alive() or ply:OnGround() or not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
-		ply:SetNW2Float("ChuteTime", 0)
 		ply:SetNW2Bool("EZparachuting", true)
-		ply:ViewPunch(Angle(-20, 0, 0))
 		ply:EmitSound("V92_ZP_BF2_Deploy")
+		local Chute = ents.Create("ent_jack_gmod_ezparachute")
+		Chute:SetPos(ply:GetPos())
+		Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
+		Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
+		Chute.Drag = ply.EZarmor.effects.parachute.drag
+		Chute.Owner = ply
+		Chute:Spawn()
+		Chute:Activate()
+		ply.EZparachute = Chute
 	end)
+end
+
+local function DetachChute(ply) 
+	ply:ViewPunch(Angle(5, 0, 0))
+	ply:EmitSound("CmbSoldier_ZipLine_Clip")
+	ply:SetNW2Bool("EZparachuting", false)
 end
 
 hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
@@ -292,17 +305,23 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 	end
 
 	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.AltFunctionKey) and IsParaOpen then
-		ply:SetNW2Bool("EZparachuting", false)
+		DetachChute(ply)
 	end
 end)
 
 hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, speed)
 	--print("Player: " .. tostring(ply) .. " hit ", (water and "water") or "ground", "floater: " .. tostring(float), "Going: " .. tostring(speed))
 	if ply:GetNW2Bool("EZparachuting", false) then
-		ply:ViewPunch(Angle(20, 0, 0))
-		ply:SetNW2Bool("EZparachuting", false)
+		timer.Simple(0.5, function()
+			ply:ViewPunch(Angle(2, 0, 0))
+			if IsValid(ply) and ply:Alive() and ply:OnGround() then
+				DetachChute(ply)
+			end
+		end)
 	end
 end)
+
+
 
 local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextSync = 0, 0, 0, 0, 0
 
@@ -342,7 +361,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 	local Playas = player.GetAll()
 	---
-	for k, playa in pairs(Playas) do
+	for i = 1, #Playas do
+		local playa = Playas[i]
 		if playa:Alive() then
 
 			if playa.EZhealth then
@@ -445,7 +465,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextNutritionThink < Time then
 		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
 
-		for k, playa in pairs(Playas) do
+		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
 					local Nuts = playa.EZnutrition.Nutrients
@@ -482,7 +502,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextArmorThink < Time then
 		NextArmorThink = Time + 2
 
-		for k, playa in pairs(Playas) do
+		for _, playa in ipairs(Playas) do
 			if playa.EZarmor and playa:Alive() then
 				if playa.EZarmor.effects.nightVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
@@ -532,7 +552,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	end
 
 	---
-	for k, v in pairs(ents.FindByClass("npc_*")) do
+	for _, v in ipairs(ents.FindByClass("npc_*")) do
 		VirusHostThink(v)
 
 		if v.EZNPCincapacitate then
@@ -649,6 +669,18 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 	if ply.JackyMatDeathUnset then
 		ply.JackyMatDeathUnset = false
 		ply:SetMaterial("")
+	end
+end)
+
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH", function(ply) 
+	if IsValid(ply.EZparachute) then
+		local Ragdoll = ply:GetRagdollEntity()
+		if IsValid(Ragdoll) then
+			ply.EZparachute.Chutist = Ragdoll
+			Ragdoll:SetNW2Bool("EZparachuting", true)
+		else
+			ply.EZparachute:Collapse()
+		end
 	end
 end)
 

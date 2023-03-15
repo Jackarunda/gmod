@@ -911,31 +911,13 @@ JMod.ArmorTable = {
 	},
 	["Parachute"] = {
 		PrintName = "Parachute",
-		mdl = "models/vex/seventysix/backpacks/backpack_parachute.mdl",
-		slots = {
-			back = .8
-		},
-		eff = {
-			parachute = {mdl = "models/jessev92/rnl/items/parachute_deployed.mdl", offset = 60}
-		},
-		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine2",
-		siz = Vector(1.2, 1.2, 1.2),
-		pos = Vector(-3, 0, 0),
-		ang = Angle(-90, 0, -90),
-		wgt = 30,
-		dur = 100,
-		ent = "ent_jack_gmod_ezarmor_parachute"
-	},
-	["ZParachute"] = {
-		PrintName = "ZParachute",
 		mdl = "models/jessev92/resliber/weapons/parachute_backpack_closed_w.mdl",
 		slots = {
 			back = .8
 		},
 		eff = {
-			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50}
-			--parachute = {mdl ="models/jessev92/resliber/items/parachute.mdl", offset = 60}
+			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 3}
+			--parachute = {mdl ="models/jessev92/resliber/items/parachute.mdl", offset = 60, drag = 2}
 		},
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine1",
@@ -944,7 +926,7 @@ JMod.ArmorTable = {
 		ang = Angle(-90, 0, 90),
 		wgt = 30,
 		dur = 100,
-		ent = "ent_jack_gmod_ezarmor_zparachute"
+		ent = "ent_jack_gmod_ezarmor_parachute"
 	}
 }
 
@@ -1016,6 +998,12 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
+hook.Add("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY", function(num)
+	if LocalPlayer():GetNW2Bool("EZparachuting", false) then
+		return 0.4
+	end
+end)
+
 --hook.Remove("Move", "JMOD_ARMOR_MOVE")
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 	if ply.IsProne and ply:IsProne() then return end
@@ -1027,9 +1015,9 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
 			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
 		end
-		if SERVER and IsFirstTimePredicted() then
-			if ply:GetNW2Bool("EZparachuting", false) then
-				local ChuteTime = ply:GetNW2Float("ChuteTime", 0)
+		--[[if SERVER and IsFirstTimePredicted() then
+			if ply:GetNW2Bool("EZparachuting", false) and IsValid(ply.EZparachute) then
+				local ChuteProg = ply.EZparachute:GetNW2Float("ChuteProg", 0)
 				local Vel = ply:GetVelocity()
 				local NewVel = (-Vel * 0.05)
 				--jprint("We be parachuting " .. tostring(math.Round(Vel:Length())))
@@ -1038,13 +1026,13 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 					AimDir.z = 0
 					NewVel = NewVel + AimDir * 10
 				end
-				mv:SetVelocity(Vel + NewVel * (ChuteTime * 0.5))
-				ply:SetNW2Float("ChuteTime", math.Clamp(ChuteTime + .06, 0, 2))
+				mv:SetVelocity(Vel + NewVel * (ChuteProg * 0.5))
+				ply.EZparachute:SetNW2Float("ChuteProg", math.Clamp(ChuteProg + .06, 0, 2))
 				if ply:WaterLevel() >= 2 then
 					ply:SetNW2Bool("EZparachuting", false)
 				end
 			end
-		end
+		end]]--
 	end
 end)
 
@@ -1083,3 +1071,45 @@ for _, ply in pairs(player.GetAll()) do
 end
 --]]
 LoadAdditionalArmor()
+
+-- Sounds
+sound.Add({	name = "CmbSoldier_ZipLine_Clip",
+	channel = CHAN_BODY,
+	volume	= 1.0,
+	level	= 50,
+	pitch	= { 90, 110 },
+	sound	= { "npc/combine_soldier/zipline_clip1.wav", "npc/combine_soldier/zipline_clip2.wav"}
+} )
+
+sound.Add({	name = "V92_ZPWep_Deploy",
+	channel	= CHAN_BODY,
+	volume	= 1.0,
+	level	= 100,
+	pitch	= { 105, 110 },
+	--sound	= {"jessev92/parachute/deploy1.wav","jessev92/parachute/deploy2.wav","jessev92/parachute/deploy3.wav","jessev92/parachute/deploy4.wav","jessev92/parachute/deploy5.wav"}
+	sound	= {"common/null.wav"}
+})
+
+sound.Add({	name = "V92_ZP_BF2142_Deploy",
+	channel	= CHAN_BODY,
+	volume	= 1.0,
+	level	= 75,
+	pitch	= { 105, 110 },
+	sound	= {"jessev92/bf2142/vehicles/parachute_open.wav"}
+})
+
+sound.Add({	name = "V92_ZP_BF2_Deploy",
+	channel	= CHAN_BODY,
+	volume	= 1.0,
+	level	= 75,
+	pitch	= { 105, 110 },
+	sound	= {"jessev92/bf2/vehicles/parachute_deploy.wav"}
+})
+
+sound.Add({	name = "V92_ZP_BF2_Idle",
+	channel	= CHAN_STATIC,
+	volume	= 1.0,
+	level	= 75,
+	pitch	= { 105, 110 },
+	sound	= {"jessev92/bf2/vehicles/parachute_ride_loop.wav"}
+})

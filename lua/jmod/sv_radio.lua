@@ -121,7 +121,6 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 						Box.NoFadeIn = true
 						Box:SetDTBool(0, "true")
 						Box:Spawn()
-						Box:Initialize()
 						Box:SetPackageName(station.deliveryType)
 						---
 						sound.Play("snd_jack_flyby_drop.mp3", DropPos, 150, 100)
@@ -383,7 +382,6 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 			Box.NoFadeIn = true
 			Box:SetDTBool(0, "true")
 			Box:Spawn()
-			Box:Initialize()
 			----- Create the chair
 			Box.Pod = ents.Create("prop_vehicle_prisoner_pod")
 			Box.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
