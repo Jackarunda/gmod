@@ -680,7 +680,7 @@ hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	if JMod.Config.QoL.RealisticFallDamage then return spd ^ 2 / 8000 end
 end)
 
-hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
+hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
 	ply.EZnutrition = nil
 	ply.EZhealth = nil
 	ply.EZkillme = nil
@@ -691,54 +691,58 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 	end
 end)
 
-hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH", function(ply)
-	if JMod.Config.QoL.JModCorpse then
+--hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
+	if JMod.Config.QoL.JModCorpse and ply.EZarmor and ply.EZarmor.items then
 		SafeRemoveEntity(ply:GetRagdollEntity())
 		local Ragdoll = ents.Create("prop_ragdoll")
-		Ragdoll:SetModel(ply:GetModel())
+		if ply.EZoriginalPlayerModel then
+			Ragdoll:SetModel(ply.EZoriginalPlayerModel)
+		else
+			Ragdoll:SetModel(ply:GetModel())
+		end
 		Ragdoll:SetPos(ply:GetPos())
 		Ragdoll:Spawn()
 		Ragdoll:Activate()
 		if IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
 			--local CCounter = 0
-			if ply.EZarmor and ply.EZarmor.items then
-				for k, v in pairs(ply.EZarmor.items) do
-					local ArmorInfo = JMod.ArmorTable[v.name]
-					if not ArmorInfo.plymdl then
-						local Index = Ragdoll:LookupBone(ArmorInfo.bon)
-						local Pos, Ang = Ragdoll:GetBonePosition(Index)
-						if Pos and Ang then
-							-- Pos it
-							local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
-							Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
-							Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
-							Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
-							Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
-							-- Spawn it
-							local ArmorPiece = ents.Create(ArmorInfo.ent)
-							ArmorPiece:SetPos(Pos)
-							ArmorPiece:SetAngles(Ang)
-							ArmorPiece:SetOwner(Ragdoll)
-							ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
-							--ArmorPiece:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-							ArmorPiece:Spawn()
-							ArmorPiece:Activate()
-							for _, v in pairs(Ragdoll.EZarmorP) do
-								local NoCollide = constraint.NoCollide(ArmorPiece, v, 0, 0)
-								NoCollide:Activate()
-								--CCounter = CCounter + 1
-							end
-							Ragdoll.EZarmorP[v.name] = ArmorPiece
-							-- Attach it
-							local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
-							Weld:Activate()
+			for k, v in pairs(ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[v.name]
+				if not ArmorInfo.plymdl then
+					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
+					local Pos, Ang = Ragdoll:GetBonePosition(Index)
+					
+					if Pos and Ang then
+						-- Pos it
+						local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
+						Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
+						Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
+						Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
+						Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
+						-- Spawn it
+						local ArmorPiece = ents.Create(ArmorInfo.ent)
+						ArmorPiece:SetPos(Pos)
+						ArmorPiece:SetAngles(Ang)
+						ArmorPiece:SetOwner(Ragdoll)
+						ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
+						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
+						ArmorPiece:Spawn()
+						ArmorPiece:Activate()
+						for _, v in pairs(Ragdoll.EZarmorP) do
+							local NoCollide = constraint.NoCollide(ArmorPiece, v, 0, 0)
+							NoCollide:Activate()
+							--CCounter = CCounter + 1
 						end
+						Ragdoll.EZarmorP[v.name] = ArmorPiece
+						-- Attach it
+						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
+						Weld:Activate()
 					end
 				end
-				--print("We created " .. tostring(CCounter) .. " constraints")
-				--SafeRemoveEntityDelayed(Ragdoll, 30)
 			end
+			--print("We created " .. tostring(CCounter) .. " constraints")
+			--SafeRemoveEntityDelayed(Ragdoll, 30)
 			if IsValid(ply.EZparachute) then
 				ply.EZparachute.Owner = Ragdoll
 				ply.EZparachute.AttachBone = 1
