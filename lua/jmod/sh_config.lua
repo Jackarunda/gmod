@@ -11,7 +11,7 @@ end
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Author = "Jackarunda",
-		Version = 41.6,
+		Version = 41.8,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Hints = true,
 		AltFunctionKey = IN_WALK,
@@ -61,6 +61,7 @@ function JMod.InitGlobalConfig(forceNew)
 			RealisticFallDamage = false,
 			Drowning = false,
 			GiveHandsOnSpawn = false,
+			JModCorpse = false,
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0
 		},

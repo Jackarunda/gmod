@@ -1,4 +1,5 @@
-﻿local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
+﻿JMod.Wind = Vector(0, 0, 0)
+local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
 
 if force_workshop:GetBool() then
 	resource.AddWorkshop("1919689921")
@@ -273,7 +274,6 @@ local function OpenChute(ply)
 		ply.ChuteOpening = nil
 		if not IsValid(ply) or not ply:Alive() or ply:OnGround() or not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
 		ply:SetNW2Bool("EZparachuting", true)
-		ply:EmitSound("V92_ZP_BF2_Deploy")
 		local Chute = ents.Create("ent_jack_gmod_ezparachute")
 		Chute:SetPos(ply:GetPos())
 		Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
@@ -323,7 +323,8 @@ end)
 
 
 
-local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextSync = 0, 0, 0, 0, 0
+local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextNatrualThink, NextSync = 0, 0, 0, 0, 0, 0
+local WindChange = Vector(0, 0, 0)
 
 hook.Add("Think", "JMOD_SERVER_THINK", function()
 	--[[
@@ -569,6 +570,24 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	end
 
 	---
+	if NextNatrualThink < Time then
+		NextNatrualThink = Time + 5
+		JMod.Wind = JMod.Wind + WindChange / 10
+		SetGlobal2Vector("JMod_Wind", JMod.Wind)
+
+		if JMod.Wind:Length() > 1 then
+			JMod.Wind:Normalize()
+			WindChange = -WindChange
+		end
+	
+		WindChange = WindChange + Vector(math.Rand(-.5, .5), math.Rand(-.5, .5), 0)
+	
+		if WindChange:Length() > 1 then
+			WindChange:Normalize()
+		end
+	end
+
+	---
 	if NextSync < Time then
 		NextSync = Time + 30
 		JMod.LuaConfigSync(false)
@@ -672,15 +691,59 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 	end
 end)
 
-hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH", function(ply) 
-	if IsValid(ply.EZparachute) then
-		local Ragdoll = ply:GetRagdollEntity()
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH", function(ply)
+	if JMod.Config.QoL.JModCorpse then
+		SafeRemoveEntity(ply:GetRagdollEntity())
+		local Ragdoll = ents.Create("prop_ragdoll")
+		Ragdoll:SetModel(ply:GetModel())
+		Ragdoll:SetPos(ply:GetPos())
+		Ragdoll:Spawn()
+		Ragdoll:Activate()
 		if IsValid(Ragdoll) then
-			print("There's a valid ragdoll to attach the chute to!")
-			ply.EZparachute.Owner = Ragdoll
-			Ragdoll:SetNW2Bool("EZparachuting", true)
-		else
-			ply.EZparachute:Collapse()
+			Ragdoll.EZarmorP = {}
+			--local CCounter = 0
+			if ply.EZarmor and ply.EZarmor.items then
+				for k, v in pairs(ply.EZarmor.items) do
+					local ArmorInfo = JMod.ArmorTable[v.name]
+					if not ArmorInfo.plymdl then
+						local Index = Ragdoll:LookupBone(ArmorInfo.bon)
+						local Pos, Ang = Ragdoll:GetBonePosition(Index)
+						if Pos and Ang then
+							-- Pos it
+							local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
+							Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
+							Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
+							Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
+							Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
+							-- Spawn it
+							local ArmorPiece = ents.Create(ArmorInfo.ent)
+							ArmorPiece:SetPos(Pos)
+							ArmorPiece:SetAngles(Ang)
+							ArmorPiece:SetOwner(Ragdoll)
+							ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
+							--ArmorPiece:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+							ArmorPiece:Spawn()
+							ArmorPiece:Activate()
+							for _, v in pairs(Ragdoll.EZarmorP) do
+								local NoCollide = constraint.NoCollide(ArmorPiece, v, 0, 0)
+								NoCollide:Activate()
+								--CCounter = CCounter + 1
+							end
+							Ragdoll.EZarmorP[v.name] = ArmorPiece
+							-- Attach it
+							local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
+							Weld:Activate()
+						end
+					end
+				end
+				--print("We created " .. tostring(CCounter) .. " constraints")
+				--SafeRemoveEntityDelayed(Ragdoll, 30)
+			end
+			if IsValid(ply.EZparachute) then
+				ply.EZparachute.Owner = Ragdoll
+				ply.EZparachute.AttachBone = 1
+				Ragdoll:SetNW2Bool("EZparachuting", false)
+			end
 		end
 	end
 end)

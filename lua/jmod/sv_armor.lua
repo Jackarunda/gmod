@@ -375,6 +375,8 @@ end
 
 function JMod.CalcSpeed(ply)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
+	local Phys = ply:GetPhysicsObject()
+	local OriginalWeight = ply.EZorigWeight or Phys:GetMass()
 
 	for k, v in pairs(ply.EZarmor.items) do
 		local ArmorInfo = JMod.ArmorTable[v.name]
@@ -382,6 +384,8 @@ function JMod.CalcSpeed(ply)
 	end
 
 	ply.EZarmor.totalWeight = TotalWeight
+	ply.EZorigWeight = OriginalWeight
+	Phys:SetMass(OriginalWeight + TotalWeight)
 
 	if ply.EZarmor.totalWeight >= 150 then
 		JMod.Hint(ply, "chonky boi")

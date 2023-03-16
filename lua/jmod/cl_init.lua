@@ -281,18 +281,7 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 
 	if NextThink > Time then return end
 	NextThink = Time + 5
-	JMod.Wind = JMod.Wind + WindChange / 10
-
-	if JMod.Wind:Length() > 1 then
-		JMod.Wind:Normalize()
-		WindChange = -WindChange
-	end
-
-	WindChange = WindChange + Vector(math.Rand(-.5, .5), math.Rand(-.5, .5), 0)
-
-	if WindChange:Length() > 1 then
-		WindChange:Normalize()
-	end
+	JMod.Wind = GetGlobal2Vector("JMod_Wind", JMod.Wind)
 end)
 
 --[[

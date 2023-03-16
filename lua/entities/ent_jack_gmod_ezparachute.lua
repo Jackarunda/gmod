@@ -36,11 +36,14 @@ if SERVER then
 		self.Durability = 100
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
+		local Owner = self.Owner
 		timer.Simple(0.4, function() 
-			if IsValid(self) and IsValid(self.Owner) and self.Owner:IsPlayer() and self.Owner:Alive() then 
-				self.Owner:ViewPunch(Angle(10, 0, 0))
+			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
+				Owner:ViewPunch(Angle(10, 0, 0))
+				Owner:EmitSound("V92_ZP_BF2_Deploy")
 			end 
 		end)
+		Owner.ParachuteBumpSmooth = 0
 	end
 
 	function ENT:Think()
@@ -55,7 +58,7 @@ if SERVER then
 			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
 			local AimDirAng = Angle(DirAng.p, (math.abs(DirAng.r) > 1 and DirAng.r) or Aim.y, DirAng.r)
 			local BPos = Owner:LocalToWorld(Owner:OBBCenter())
-			local BIndex = Owner:LookupBone("ValveBiped.Bip01_Spine1")
+			local BIndex = Owner:LookupBone("ValveBiped.Bip01_Spine2")
 			if BIndex then
 				local matrix = Owner:GetBoneMatrix(BIndex)
 				BPos = matrix:GetTranslation()
@@ -64,44 +67,47 @@ if SERVER then
 			AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
 			self:SetPos(Pos)
 			self:SetAngles(AimDirAng)
+
+			local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
+
+			if State == STATE_FINE then
+				------ Parachute simluation ------
+				if Owner:IsPlayer() then
+					local Vel = Owner:GetVelocity()
+					local NewVel = -Vel * Drag + JMod.Wind * math.Rand(1, 2)
+					--jprint(Drag, NewVel)
+					--jprint(JMod.Wind)
+					if Owner:KeyDown(IN_FORWARD) then
+						local AimDir = Owner:GetForward()
+						AimDir.z = 0
+						NewVel = NewVel + AimDir * 100 * Drag
+					end
+					Owner:SetVelocity(NewVel * (ChuteProg^.5))
+				else
+					local Phys = Owner:GetPhysicsObject()
+					if Owner:IsRagdoll() then
+						Phys = Owner:GetPhysicsObjectNum(1)
+					end
+					if IsValid(Phys) then
+						local Vel = Phys:GetVelocity()
+						local NewVel = -Vel * Drag * 2
+						Phys:SetVelocity(Vel + NewVel * (ChuteProg^.5))
+					end
+				end
+				if Owner:WaterLevel() >= 2 then
+					Owner:SetNW2Bool("EZparachuting", false)
+				end
+				self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg + .03, 0, 2))
+			end
 		else
 			self:Collapse()
 		end
 
-		local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
-
-		if State == STATE_FINE then
-			------ Parachute simluation ------
-			if Owner:IsPlayer() then
-				local Vel = Owner:GetVelocity()
-				local NewVel = -Vel * Drag --+ Vector(0, 0, -Owner.EZarmor.totalWeight)
-				--jprint(Drag, NewVel)
-				if Owner:KeyDown(IN_FORWARD) then
-					local AimDir = Owner:GetForward()
-					AimDir.z = 0
-					NewVel = NewVel + AimDir * 100 * Drag
-				end
-				Owner:SetVelocity(NewVel * ChuteProg)
-			else
-				local Phys = Owner:GetPhysicsObject()
-				if Owner:IsRagdoll() then 
-					Phys = Owner:GetPhysicsObjectNum(10)
-				end
-				if IsValid(Phys) then
-					local Vel = Phys:GetVelocity()
-					local NewVel = -Vel * Drag
-					Phys:SetVelocity(Vel + NewVel * ChuteProg)
-				end
-			end
-			if Owner:WaterLevel() >= 2 then
-				Owner:SetNW2Bool("EZparachuting", false)
-			end
-			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg + .03, 0, 2))
-		elseif State == STATE_COLLAPSING then
+		if State == STATE_COLLAPSING then
 			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg - .03, 0, 2))
 			if ChuteProg <= 0 then
 				self:Remove()
-			end
+			end 
 		end
 
 		self:NextThink(Time + 0.01)
@@ -116,7 +122,7 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmg)
 		if dmg:IsDamageType(DMG_RADIATION) then return end
-		self.Durability = math.Clamp(self.Durability - dmg:GetDamage() - (200/dmg:GetDamage())^2, 0, 100)
+		self.Durability = math.Clamp(self.Durability - (dmg:GetDamage() - (200/dmg:GetDamage())^2), 0, 100)
 		if self.Durability <= 0 then
 			self:Remove()
 		end
@@ -142,8 +148,7 @@ elseif CLIENT then
 		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
 		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
 		Mat:Scale(Siz)
-		jprint(ChuteProg, Size)
-		--self:EnableMatrix("RenderMultiply", Mat)
+		self:EnableMatrix("RenderMultiply", Mat)
 		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_ezparachute", "EZ parachute")
