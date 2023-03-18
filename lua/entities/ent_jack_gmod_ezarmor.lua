@@ -21,6 +21,7 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
+		JMod.Hint(ply, self.ClassName)
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)
@@ -46,11 +47,11 @@ if SERVER then
 			self:SetModelScale(self.ModelScale)
 		end
 
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(10)
 		self.Durability = self.Durability or self.Specs.dur
 
@@ -106,6 +107,9 @@ if SERVER then
 				JMod.Hint(activator, "armor friends")
 			else
 				JMod.Hint(activator, "inventory")
+			end
+			if self.Specs.effects and self.Specs.effects.parachute then
+				JMod.Hint(activator, "parachute")
 			end
 		else
 			activator:PickupObject(self)

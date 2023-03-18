@@ -268,6 +268,7 @@ local function VirusHostThink(dude)
 end
 
 local function OpenChute(ply)
+	if ply.ChuteOpening then return end
 	ply:EmitSound("CmbSoldier_ZipLine_Clip")
 	ply.ChuteOpening = true
 	timer.Simple(0.5, function()
@@ -299,7 +300,7 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
 	if key == IN_JUMP and not IsParaOpen then
-		if (math.abs(ply:GetPhysicsObject():GetVelocity():Length()) >= 200) and not ply:OnGround() then
+		if (math.abs(ply:GetPhysicsObject():GetVelocity():Length()) >= 300) and not ply:OnGround() then
 			OpenChute(ply)
 		end
 	end

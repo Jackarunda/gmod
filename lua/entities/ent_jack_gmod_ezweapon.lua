@@ -28,25 +28,18 @@ if SERVER then
 
 	function ENT:Initialize()
 		self.Specs = JMod.WeaponTable[self.WeaponName]
-		self.Entity:SetModel(self.Specs.mdl)
-		self.Entity:SetMaterial(self.Specs.mat or "")
+		self:SetModel(self.Specs.mdl)
+		self:SetMaterial(self.Specs.mat or "")
 
-		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
-		if self.ModelScale and not self.Specs.gayPhysics then
-			self:SetModelScale(self.ModelScale)
-		end
-
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		if self.Specs.size then
-			self:SetModelScale(self.Specs.size, 0)
+			self:SetModelScale(self.Specs.size, 0.00001)
 		end
-
-		self:GetPhysicsObject():SetMass(20)
 
 		timer.Simple(.01, function()
 			self:GetPhysicsObject():SetMass(20)
@@ -57,14 +50,15 @@ if SERVER then
 		self.EZID = self.EZID or JMod.GenerateGUID()
 		---
 		self.MagRounds = self.MagRounds or 0
+		self:Activate()
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.1 then
 			if data.Speed > 50 then
-				self.Entity:EmitSound("weapon.ImpactHard")
-			elseif data.Speed > 10 then
-				self.Entity:EmitSound("weapon.ImpactSoft")
+				self:EmitSound("weapon.ImpactHard")
+			elseif data.Speed > 5 then
+				self:EmitSound("weapon.ImpactSoft")
 			end
 		end
 	end

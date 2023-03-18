@@ -284,6 +284,13 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 	JMod.Wind = GetGlobal2Vector("JMod_Wind", JMod.Wind)
 end)
 
+hook.Add("CreateMove", "ParachuteShake", function(ucmd)
+	if LocalPlayer():GetNW2Bool("EZparachuting", false) then
+		local Shake = math.sin(RealTime()*10) * 0.08
+		ucmd:SetViewAngles((ucmd:GetViewAngles() + Angle(Shake, Shake, 0)))
+	end
+end)
+
 --[[
 	Sum=Sum+(1/FrameTime())
 	Count=Count+1
