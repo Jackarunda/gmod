@@ -284,11 +284,28 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 	JMod.Wind = GetGlobal2Vector("JMod_Wind", JMod.Wind)
 end)
 
-hook.Add("CreateMove", "ParachuteShake", function(ucmd)
-	if LocalPlayer():GetNW2Bool("EZparachuting", false) then
-		local Shake = math.sin(RealTime()*10) * 0.08
-		ucmd:SetViewAngles((ucmd:GetViewAngles() + Angle(Shake, Shake, 0)))
-	end
+local WDir = VectorRand()
+
+hook.Add("CreateMove", "ParachuteShake", function(cmd)
+	local ply = LocalPlayer()
+	if not ply:Alive() then return end
+	local Wep = ply:GetActiveWeapon()
+
+	--if ply:GetNW2Bool("EZparachuting", false) then
+		local Amt, Sporadicness, FT = 20 * 2, 10, FrameTime()
+
+		if ply:KeyDown(IN_FORWARD) then
+			Sporadicness = Sporadicness * 1.5
+			Amt = Amt * 2
+		end
+
+		local S, EAng = .05, cmd:GetViewAngles()
+		--(JMod.Wind + EAng:Forward())
+		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
+		EAng.pitch = math.NormalizeAngle(EAng.pitch + WDir.z * FT * Amt * S)
+		EAng.yaw = math.NormalizeAngle(EAng.yaw + WDir.x * FT * Amt * S)
+		cmd:SetViewAngles(EAng)
+	--end
 end)
 
 --[[
