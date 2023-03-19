@@ -291,8 +291,8 @@ hook.Add("CreateMove", "ParachuteShake", function(cmd)
 	if not ply:Alive() then return end
 	local Wep = ply:GetActiveWeapon()
 
-	--if ply:GetNW2Bool("EZparachuting", false) then
-		local Amt, Sporadicness, FT = 20 * 2, 10, FrameTime()
+	if ply:GetNW2Bool("EZparachuting", false) then
+		local Amt, Sporadicness, FT = 30, 20, FrameTime()
 
 		if ply:KeyDown(IN_FORWARD) then
 			Sporadicness = Sporadicness * 1.5
@@ -302,10 +302,10 @@ hook.Add("CreateMove", "ParachuteShake", function(cmd)
 		local S, EAng = .05, cmd:GetViewAngles()
 		--(JMod.Wind + EAng:Forward())
 		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
-		EAng.pitch = math.NormalizeAngle(EAng.pitch + WDir.z * FT * Amt * S)
+		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
 		EAng.yaw = math.NormalizeAngle(EAng.yaw + WDir.x * FT * Amt * S)
 		cmd:SetViewAngles(EAng)
-	--end
+	end
 end)
 
 --[[

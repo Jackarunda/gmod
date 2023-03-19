@@ -31,15 +31,15 @@ if SERVER then
 		self:SetModel(self.Specs.mdl)
 		self:SetMaterial(self.Specs.mat or "")
 
+		if self.Specs.size then
+			self:SetModelScale(self.Specs.size, 0)
+		end
+
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-
-		if self.Specs.size then
-			self:SetModelScale(self.Specs.size, 0.00001)
-		end
 
 		timer.Simple(.01, function()
 			self:GetPhysicsObject():SetMass(20)

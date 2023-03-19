@@ -281,6 +281,7 @@ local function OpenChute(ply)
 		Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
 		Chute.Drag = ply.EZarmor.effects.parachute.drag
 		Chute.Owner = ply
+		--Chute.ChuteColor = ply.EZarmor.effects.parachute
 		Chute:Spawn()
 		Chute:Activate()
 		ply.EZparachute = Chute
@@ -730,11 +731,11 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
 						ArmorPiece:Spawn()
 						ArmorPiece:Activate()
-						for _, v in pairs(Ragdoll.EZarmorP) do
+						--[[for _, v in pairs(Ragdoll.EZarmorP) do
 							local NoCollide = constraint.NoCollide(ArmorPiece, v, 0, 0)
 							NoCollide:Activate()
 							--CCounter = CCounter + 1
-						end
+						end]]--
 						Ragdoll.EZarmorP[v.name] = ArmorPiece
 						-- Attach it
 						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
@@ -743,7 +744,20 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 				end
 			end
 			--print("We created " .. tostring(CCounter) .. " constraints")
-			--SafeRemoveEntityDelayed(Ragdoll, 30)
+			timer.Simple(30, function()
+				if IsValid(Ragdoll) and Ragdoll.EZarmorP then
+					for _, v in pairs(Ragdoll.EZarmorP) do
+						local Con = constraint.FindConstraintEntity(v, "Weld")
+						if IsValid(Con) then
+							local Ent1, Ent2 = Con:GetConstrainedEntities()
+							if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
+								SafeRemoveEntity(v)
+							end
+						end
+					end
+					SafeRemoveEntity(Ragdoll)
+				end
+			end)
 			if IsValid(ply.EZparachute) then
 				ply.EZparachute.Owner = Ragdoll
 				ply.EZparachute.AttachBone = 1

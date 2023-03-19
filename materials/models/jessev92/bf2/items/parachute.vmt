@@ -2,7 +2,7 @@
 VertexLitGeneric
 {
 
-	$basetexture			models/jessev92/bf2/items/parachute_d
+	$basetexture			models/jmod/bf2/items/parachute_d
 	$bumpmap				models/jessev92/bf2/items/parachute_b
 	
 	$halflambert			1

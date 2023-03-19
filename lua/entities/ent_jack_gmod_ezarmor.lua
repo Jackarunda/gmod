@@ -31,8 +31,8 @@ if SERVER then
 
 	function ENT:Initialize()
 		self.Specs = JMod.ArmorTable[self.ArmorName]
-		self.Entity:SetModel(self.entmdl or self.Specs.mdl)
-		self.Entity:SetMaterial(self.Specs.mat or "")
+		self:SetModel(self.entmdl or self.Specs.mdl)
+		self:SetMaterial(self.Specs.mat or "")
 
 		if self.Specs.lbl then
 			self:SetDTString(0, self.Specs.lbl)

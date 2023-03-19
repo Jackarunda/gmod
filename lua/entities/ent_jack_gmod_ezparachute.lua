@@ -28,6 +28,7 @@ if SERVER then
 			Phys:SetMaterial("cloth")
 		end
 		self.SndLoop = CreateSound(self, "V92_ZP_BF2_Idle")
+		self.SndLoop:ChangeVolume(0.5)
 		timer.Simple(1, function()
 			if IsValid(self) then
 				self.SndLoop:Play()
@@ -37,13 +38,14 @@ if SERVER then
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self.Owner
-		timer.Simple(0.4, function() 
+		timer.Simple(0.5, function() 
 			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
 				Owner:ViewPunch(Angle(10, 0, 0))
 				Owner:EmitSound("V92_ZP_BF2_Deploy")
 			end 
 		end)
-		Owner.ParachuteBumpSmooth = 0
+		self:SetColor(self.ChuteColor or Color(83, 83, 55))
+		--self:SetColor(self.ChuteColor or Color(255, 255, 255))
 	end
 
 	function ENT:Think()
