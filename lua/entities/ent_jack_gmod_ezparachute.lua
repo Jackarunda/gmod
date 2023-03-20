@@ -38,11 +38,12 @@ if SERVER then
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self.Owner
+		self:SetNW2Entity("Owner", Owner)
 		timer.Simple(0.5, function() 
 			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
 				Owner:ViewPunch(Angle(10, 0, 0))
 				Owner:EmitSound("V92_ZP_BF2_Deploy")
-			end 
+			end
 		end)
 		self:SetColor(self.ChuteColor or Color(83, 83, 55))
 		--self:SetColor(self.ChuteColor or Color(255, 255, 255))
@@ -151,6 +152,13 @@ elseif CLIENT then
 		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
 		Mat:Scale(Siz)
 		self:EnableMatrix("RenderMultiply", Mat)
+		local Owner = self:GetNW2Entity("Owner")
+		if (IsValid(Owner)) then
+			local Vel = Owner:GetVelocity():GetNormalized()
+			local RenderAng = Vel:Angle()
+			RenderAng:RotateAroundAxis(RenderAng:Right(), 90)
+			self:SetRenderAngles(RenderAng)
+		end
 		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_ezparachute", "EZ parachute")

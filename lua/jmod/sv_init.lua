@@ -307,10 +307,10 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
-	if key == IN_JUMP and not IsParaOpen then
-		--jprint(ply:GetPhysicsObject():GetVelocity():Length())
-		if ply:GetPhysicsObject():GetVelocity().z <= -350 and not ply:OnGround() then
-			OpenChute(ply)
+	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
+		--jprint(ply:GetVelocity():Length())
+		if not(util.QuickTrace(ply:GetShootPos(), Vector(0, 0, -350), ply).Hit) then
+			if ply:GetVelocity():Length() > 250 then OpenChute(ply) end
 		end
 	end
 
