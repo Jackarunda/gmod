@@ -912,12 +912,16 @@ JMod.ArmorTable = {
 	["Parachute"] = {
 		PrintName = "Parachute",
 		mdl = "models/jessev92/resliber/weapons/parachute_backpack_closed_w.mdl",
+		clr = {
+			r = 83,
+			g = 83,
+			b = 55
+		},
 		slots = {
 			back = .8
 		},
 		eff = {
-			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 5}
-			--parachute = {mdl ="models/jessev92/resliber/items/parachute.mdl", offset = 60, drag = 2}
+			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 3}
 		},
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine1",

@@ -272,6 +272,7 @@ local function OpenChute(ply)
 	ply:EmitSound("CmbSoldier_ZipLine_Clip")
 	ply.ChuteOpening = true
 	timer.Simple(0.5, function()
+		if not ply.ChuteOpening then return end
 		ply.ChuteOpening = nil
 		if not IsValid(ply) or not ply:Alive() or ply:OnGround() or not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
 		ply:SetNW2Bool("EZparachuting", true)
@@ -281,7 +282,12 @@ local function OpenChute(ply)
 		Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
 		Chute.Drag = ply.EZarmor.effects.parachute.drag
 		Chute.Owner = ply
-		--Chute.ChuteColor = ply.EZarmor.effects.parachute
+		for k, v in pairs(ply.EZarmor.items) do
+			if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+				Chute.ChuteColor = ply.EZarmor.items[k].col 
+				break
+			end
+		end
 		Chute:Spawn()
 		Chute:Activate()
 		ply.EZparachute = Chute
@@ -292,6 +298,7 @@ local function DetachChute(ply)
 	ply:ViewPunch(Angle(5, 0, 0))
 	ply:EmitSound("CmbSoldier_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", false)
+	ply.ChuteOpening = nil
 end
 
 hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
@@ -301,7 +308,8 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
 	if key == IN_JUMP and not IsParaOpen then
-		if (math.abs(ply:GetPhysicsObject():GetVelocity():Length()) >= 300) and not ply:OnGround() then
+		--jprint(ply:GetPhysicsObject():GetVelocity():Length())
+		if ply:GetPhysicsObject():GetVelocity().z <= -350 and not ply:OnGround() then
 			OpenChute(ply)
 		end
 	end
@@ -315,9 +323,11 @@ hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, spee
 	--print("Player: " .. tostring(ply) .. " hit ", (water and "water") or "ground", "floater: " .. tostring(float), "Going: " .. tostring(speed))
 	if ply:GetNW2Bool("EZparachuting", false) then
 		timer.Simple(0.2, function()
-			ply:ViewPunch(Angle(2, 0, 0))
-			if IsValid(ply) and ply:Alive() and ply:OnGround() then
-				DetachChute(ply)
+			if IsValid(ply) and ply:Alive() then
+				ply:ViewPunch(Angle(2, 0, 0))
+				if ply:OnGround() then
+					DetachChute(ply)
+				end
 			end
 		end)
 	end

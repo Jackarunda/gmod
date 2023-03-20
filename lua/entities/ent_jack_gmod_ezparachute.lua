@@ -76,7 +76,7 @@ if SERVER then
 				------ Parachute simluation ------
 				if Owner:IsPlayer() then
 					local Vel = Owner:GetVelocity()
-					local NewVel = -Vel * Drag + JMod.Wind * math.Rand(1, 2)
+					local NewVel = -Vel * Drag + JMod.Wind * math.Rand(1, 1.5) * Drag * 0.5
 					--jprint(Drag, NewVel)
 					--jprint(JMod.Wind)
 					if Owner:KeyDown(IN_FORWARD) then
@@ -92,7 +92,7 @@ if SERVER then
 					end
 					if IsValid(Phys) then
 						local Vel = Phys:GetVelocity()
-						local NewVel = -Vel * Drag * 2
+						local NewVel = -Vel * Drag * 2 + JMod.Wind * math.Rand(1, 1.5) * Drag
 						Phys:SetVelocity(Vel + NewVel * (ChuteProg^.5))
 					end
 				end

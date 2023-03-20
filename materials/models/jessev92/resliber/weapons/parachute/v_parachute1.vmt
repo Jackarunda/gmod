@@ -2,11 +2,14 @@
 VertexLitGeneric
 {
 
-	$basetexture			models/jessev92/resliber/weapons/parachute/v_parachute1_d
+	$basetexture			models/jmod/resliber/weapons/parachute/v_parachute1_d
 	$bumpmap				models/jessev92/resliber/weapons/parachute/v_parachute1_b
 	
-	$nocull					1
-	$halflambert			1
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+
+	$nocull					0
+	$halflambert			0
 	$ambientocclusion		1
 	
 	$phong					1
