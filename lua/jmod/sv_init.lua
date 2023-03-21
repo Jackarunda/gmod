@@ -269,7 +269,7 @@ end
 
 local function OpenChute(ply)
 	if ply.ChuteOpening then return end
-	ply:EmitSound("CmbSoldier_ZipLine_Clip")
+	ply:EmitSound("JMod_ZipLine_Clip")
 	ply.ChuteOpening = true
 	timer.Simple(0.5, function()
 		if not ply.ChuteOpening then return end
@@ -296,7 +296,7 @@ end
 
 local function DetachChute(ply) 
 	ply:ViewPunch(Angle(5, 0, 0))
-	ply:EmitSound("CmbSoldier_ZipLine_Clip")
+	ply:EmitSound("JMod_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", false)
 	ply.ChuteOpening = nil
 end

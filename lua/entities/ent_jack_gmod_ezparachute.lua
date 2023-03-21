@@ -27,7 +27,7 @@ if SERVER then
 			Phys:EnableDrag(false)
 			Phys:SetMaterial("cloth")
 		end
-		self.SndLoop = CreateSound(self, "V92_ZP_BF2_Idle")
+		self.SndLoop = CreateSound(self, "JMod_BF2_Para_Idle")
 		self.SndLoop:ChangeVolume(0.5)
 		timer.Simple(1, function()
 			if IsValid(self) then
@@ -42,7 +42,7 @@ if SERVER then
 		timer.Simple(0.5, function() 
 			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
 				Owner:ViewPunch(Angle(10, 0, 0))
-				Owner:EmitSound("V92_ZP_BF2_Deploy")
+				Owner:EmitSound("JMod_BF2_Para_Deploy")
 			end
 		end)
 		self:SetColor(self.ChuteColor or Color(83, 83, 55))

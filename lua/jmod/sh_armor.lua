@@ -1064,7 +1064,7 @@ end
 LoadAdditionalArmor()
 
 -- Sounds
-sound.Add({	name = "CmbSoldier_ZipLine_Clip",
+sound.Add({	name = "JMod_ZipLine_Clip",
 	channel = CHAN_BODY,
 	volume	= 1.0,
 	level	= 50,
@@ -1072,7 +1072,7 @@ sound.Add({	name = "CmbSoldier_ZipLine_Clip",
 	sound	= { "npc/combine_soldier/zipline_clip1.wav", "npc/combine_soldier/zipline_clip2.wav"}
 } )
 
-sound.Add({	name = "V92_ZPWep_Deploy",
+sound.Add({	name = "JMod_ParaWep_Deploy",
 	channel	= CHAN_BODY,
 	volume	= 1.0,
 	level	= 100,
@@ -1081,7 +1081,7 @@ sound.Add({	name = "V92_ZPWep_Deploy",
 	sound	= {"common/null.wav"}
 })
 
-sound.Add({	name = "V92_ZP_BF2142_Deploy",
+sound.Add({	name = "JMod_BF2142_Para_Deploy",
 	channel	= CHAN_BODY,
 	volume	= 1.0,
 	level	= 75,
@@ -1089,7 +1089,7 @@ sound.Add({	name = "V92_ZP_BF2142_Deploy",
 	sound	= {"jessev92/bf2142/vehicles/parachute_open.wav"}
 })
 
-sound.Add({	name = "V92_ZP_BF2_Deploy",
+sound.Add({	name = "JMod_BF2_Para_Deploy",
 	channel	= CHAN_BODY,
 	volume	= 1.0,
 	level	= 75,
@@ -1097,7 +1097,7 @@ sound.Add({	name = "V92_ZP_BF2_Deploy",
 	sound	= {"jessev92/bf2/vehicles/parachute_deploy.wav"}
 })
 
-sound.Add({	name = "V92_ZP_BF2_Idle",
+sound.Add({	name = "JMod_BF2_Para_Idle",
 	channel	= CHAN_STATIC,
 	volume	= 1.0,
 	level	= 75,
