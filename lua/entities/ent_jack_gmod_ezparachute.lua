@@ -67,9 +67,9 @@ if SERVER then
 				BPos = matrix:GetTranslation()
 			end
 			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self.MdlOffset or 0)
-			AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
+			--AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
 			self:SetPos(Pos)
-			self:SetAngles(AimDirAng)
+			--self:SetAngles(AimDirAng)
 
 			local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
 
@@ -154,10 +154,17 @@ elseif CLIENT then
 		self:EnableMatrix("RenderMultiply", Mat)
 		local Owner = self:GetNW2Entity("Owner")
 		if (IsValid(Owner)) then
-			local Vel = Owner:GetVelocity():GetNormalized()
-			local RenderAng = Vel:Angle()
-			RenderAng:RotateAroundAxis(RenderAng:Right(), 90)
-			self:SetRenderAngles(RenderAng)
+			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
+			local AimDirAng = Angle(DirAng.p, DirAng.y, DirAng.r)
+			local BPos, BIndex = Owner:LocalToWorld(Owner:OBBCenter()), Owner:LookupBone("ValveBiped.Bip01_Spine2")
+			if BIndex then
+				local matrix = Owner:GetBoneMatrix(BIndex)
+				BPos = matrix:GetTranslation()
+			end
+			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * 10)
+			AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
+			self:SetRenderOrigin(Pos)
+			self:SetRenderAngles(AimDirAng)
 		end
 		self:DrawModel()
 	end

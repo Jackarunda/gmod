@@ -1002,11 +1002,7 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
-hook.Add("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY", function(num)
-	if LocalPlayer():GetNW2Bool("EZparachuting", false) then
-		return 0.4
-	end
-end)
+--hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")
 
 --hook.Remove("Move", "JMOD_ARMOR_MOVE")
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)

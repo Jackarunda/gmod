@@ -270,28 +270,22 @@ end
 local function OpenChute(ply)
 	if ply.ChuteOpening then return end
 	ply:EmitSound("JMod_ZipLine_Clip")
-	ply.ChuteOpening = true
-	timer.Simple(0.5, function()
-		if not ply.ChuteOpening then return end
-		ply.ChuteOpening = nil
-		if not IsValid(ply) or not ply:Alive() or ply:OnGround() or not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
-		ply:SetNW2Bool("EZparachuting", true)
-		local Chute = ents.Create("ent_jack_gmod_ezparachute")
-		Chute:SetPos(ply:GetPos())
-		Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
-		Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
-		Chute.Drag = ply.EZarmor.effects.parachute.drag
-		Chute.Owner = ply
-		for k, v in pairs(ply.EZarmor.items) do
-			if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
-				Chute.ChuteColor = ply.EZarmor.items[k].col 
-				break
-			end
+	ply:SetNW2Bool("EZparachuting", true)
+	local Chute = ents.Create("ent_jack_gmod_ezparachute")
+	Chute:SetPos(ply:GetPos())
+	Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
+	Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
+	Chute.Drag = ply.EZarmor.effects.parachute.drag
+	Chute.Owner = ply
+	for k, v in pairs(ply.EZarmor.items) do
+		if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+			Chute.ChuteColor = ply.EZarmor.items[k].col 
+			break
 		end
-		Chute:Spawn()
-		Chute:Activate()
-		ply.EZparachute = Chute
-	end)
+	end
+	Chute:Spawn()
+	Chute:Activate()
+	ply.EZparachute = Chute
 end
 
 local function DetachChute(ply) 
@@ -308,7 +302,6 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
 	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
-		--jprint(ply:GetVelocity():Length())
 		if not(util.QuickTrace(ply:GetShootPos(), Vector(0, 0, -350), ply).Hit) then
 			if ply:GetVelocity():Length() > 250 then OpenChute(ply) end
 		end
