@@ -8,7 +8,7 @@ ENT.PrintName = "EZ HE Rocket"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 8)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ---

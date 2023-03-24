@@ -158,6 +158,8 @@ if SERVER then
 
 	function ENT:Use(activator, caller)
 		--if true then return end
+		local Time = CurTime()
+		if not((activator.NextAidBoxOpenTime or 0) < Time) then activator:PrintMessage(HUD_PRINTCENTER, "No opening in rapid sucession") return end
 		local Pos = self:LocalToWorld(self:OBBCenter() + Vector(0, 0, 10))
 		local Up = self:GetUp()
 		local Right = self:GetRight()
@@ -202,6 +204,7 @@ if SERVER then
 			sound.Play("snd_jack_itemsget.wav", Pos, 75, 100)
 		end)
 
+		activator.NextAidBoxOpenTime = Time + 2
 		self:Remove()
 	end
 

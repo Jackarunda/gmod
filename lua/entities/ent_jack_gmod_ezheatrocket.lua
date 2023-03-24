@@ -8,7 +8,7 @@ ENT.PrintName = "EZ HEAT Rocket"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 8)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ---
@@ -36,18 +36,22 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/plates/plate150.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/hunter/plates/plate150.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
+		local Phys = self:GetPhysicsObject()
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(40)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
+			if IsValid(Phys) then
+				Phys:SetMaterial("metal")
+				Phys:SetMass(40)
+				Phys:Wake()
+				Phys:EnableDrag(false)
+			end
 		end)
 
 		---
@@ -285,7 +289,6 @@ elseif CLIENT then
 	function ENT:Draw()
 		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
 		Ang:RotateAroundAxis(Ang:Up(), 90)
-		--self:DrawModel()
 		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()

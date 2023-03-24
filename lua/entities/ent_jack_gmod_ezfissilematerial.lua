@@ -8,7 +8,7 @@ ENT.Spawnable = true
 ENT.AdminOnly = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.Model = "models/kali/props/cases/hard case c.mdl"
 ENT.ModelScale = 1
 ENT.Skin = 2
