@@ -782,6 +782,21 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 	end
 end)
 
+concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 
+	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	local Tr = ply:GetEyeTrace()
+	local Ent = Tr.Entity
+	if IsValid(Ent) then
+		local Chute = ents.Create("ent_jack_gmod_ezparachute")
+		Chute:SetPos(Ent:GetPos())
+		Chute:SetNW2Entity("Owner", Ent)
+		Chute:Spawn()
+		Chute:Activate()
+		Ent:SetNW2Bool("EZparachuting", true)
+		Ent.EZparachute = Chute
+	end
+end, nil, "Apply's an EZ parachute to an entity")
+
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
 		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)

@@ -14,7 +14,7 @@ end
 
 if SERVER then
 	function ENT:Initialize()
-		self:SetModel(self.ParachuteMdl)
+		self:SetModel(self.ParachuteMdl or "models/jessev92/bf2/parachute.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_FLY)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -36,6 +36,10 @@ if SERVER then
 			end
 		end)
 		self.Durability = 100
+		self.MdlOffset = self.MdlOffset or 15
+		self.Drag = self.Drag or 5
+		self.AttachBone = self.AttachBone or 0
+		self.ChuteColor = self.ChuteColor or Color(83, 83, 55)
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self:GetNW2Entity("Owner")
