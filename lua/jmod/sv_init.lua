@@ -276,7 +276,7 @@ local function OpenChute(ply)
 	Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
 	Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
 	Chute.Drag = ply.EZarmor.effects.parachute.drag
-	Chute.Owner = ply
+	Chute:SetNW2Entity("Owner", ply)
 	for k, v in pairs(ply.EZarmor.items) do
 		if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
 			Chute.ChuteColor = ply.EZarmor.items[k].col 
@@ -712,6 +712,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		if IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
 			--local CCounter = 0
+			local Parachute = false
 			for k, v in pairs(ply.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[v.name]
 				if not ArmorInfo.plymdl then
@@ -740,6 +741,12 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 							--CCounter = CCounter + 1
 						end]]--
 						Ragdoll.EZarmorP[v.name] = ArmorPiece
+						if ArmorInfo.eff and ArmorInfo.eff.parachute then
+							Parachute = v.name
+							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
+							BonePhys:ApplyForceCenter(Vector(0, 0, -100))
+							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
+						end
 						-- Attach it
 						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
 						Weld:Activate()
@@ -761,11 +768,16 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 					SafeRemoveEntity(Ragdoll)
 				end
 			end)
-			if IsValid(ply.EZparachute) then
-				ply.EZparachute.Owner = Ragdoll
-				ply.EZparachute.AttachBone = 1
-				Ragdoll:SetNW2Bool("EZparachuting", false)
+			if IsValid(ply.EZparachute) and Parachute then
+				ply.EZparachute:SetNW2Entity("Owner", Ragdoll.EZarmorP[Parachute])
+				ParachuteEnt = Ragdoll.EZarmorP[Parachute]
+				ParachuteEnt:SetNW2Bool("EZparachuting", true)
+				ParachuteEnt.EZparachute = ply.EZparachute
+				ParachuteEnt.EZparachute.AttachBone = 0
+				ParachuteEnt.EZparachute.Drag = ParachuteEnt.EZparachute.Drag * 5
 			end
+			ply:SetNW2Bool("EZparachuting", true)
+			ply.EZparachute = nil
 		end
 	end
 end)
