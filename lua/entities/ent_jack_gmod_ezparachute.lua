@@ -9,6 +9,7 @@ local STATE_COLLAPSING, STATE_FINE = -1, 0
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
+	self:NetworkVar("Int", 1, "Offset")
 end
 
 if SERVER then
@@ -47,6 +48,7 @@ if SERVER then
 		end)
 		self:SetColor(self.ChuteColor or Color(83, 83, 55))
 		--self:SetColor(self.ChuteColor or Color(255, 255, 255))
+		self:SetOffset(self.MdlOffset)
 	end
 
 	function ENT:Think()
@@ -68,18 +70,19 @@ if SERVER then
 			end
 			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self.MdlOffset or 0)
 			--AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
-			self:SetPos(Pos)
+			--self:SetPos(Pos)
+			self:SetPos(Owner:GetPos())
+			--jprint(Pos)
 			--self:SetAngles(AimDirAng)
 
 			local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
 
 			if State == STATE_FINE then
 				------ Parachute simluation ------
+				local WindFactor = JMod.Wind * math.Rand(1, 1.5)
 				if Owner:IsPlayer() then
 					local Vel = Owner:GetVelocity()
-					local NewVel = -Vel * Drag + JMod.Wind * math.Rand(1, 1.5) * Drag * 0.5
-					--jprint(Drag, NewVel)
-					--jprint(JMod.Wind)
+					local NewVel = -Vel * Drag + WindFactor * Drag * 0.5
 					if Owner:KeyDown(IN_FORWARD) then
 						local AimDir = Owner:GetForward()
 						AimDir.z = 0
@@ -93,7 +96,7 @@ if SERVER then
 					end
 					if IsValid(Phys) then
 						local Vel = Phys:GetVelocity()
-						local NewVel = -Vel * Drag * 2 + JMod.Wind * math.Rand(1, 1.5) * Drag
+						local NewVel = -Vel * Drag * 2 + WindFactor * Drag
 						Phys:SetVelocity(Vel + NewVel * (ChuteProg^.5))
 					end
 				end
@@ -145,7 +148,13 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	function ENT:Initialize()
+		local Owner = self:GetNW2Entity("Owner")
+		self.LerpedYaw = Owner:GetVelocity():GetNormalized():Angle().y
+	end
+
 	function ENT:Draw()
+		local FT = FrameTime()
 		local Mat = Matrix()
 		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
 		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
@@ -155,16 +164,17 @@ elseif CLIENT then
 		local Owner = self:GetNW2Entity("Owner")
 		if (IsValid(Owner)) then
 			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
-			local AimDirAng = Angle(DirAng.p, DirAng.y, DirAng.r)
+			local FinalAng = Angle(DirAng.p, self.LerpedYaw, DirAng.r)
 			local BPos, BIndex = Owner:LocalToWorld(Owner:OBBCenter()), Owner:LookupBone("ValveBiped.Bip01_Spine2")
 			if BIndex then
 				local matrix = Owner:GetBoneMatrix(BIndex)
 				BPos = matrix:GetTranslation()
 			end
-			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * 10)
-			AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
+			local Pos = BPos + (FinalAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self:GetOffset() or 0)
+			FinalAng:RotateAroundAxis(FinalAng:Right(), 90)
+			self:SetRenderAngles(FinalAng)
 			self:SetRenderOrigin(Pos)
-			self:SetRenderAngles(AimDirAng)
+			self.LerpedYaw = math.ApproachAngle(self.LerpedYaw, Aim.y, FT * 120)
 		end
 		self:DrawModel()
 	end

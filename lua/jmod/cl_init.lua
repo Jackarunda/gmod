@@ -287,14 +287,14 @@ end)
 local WDir = VectorRand()
 
 hook.Add("CreateMove", "ParachuteShake", function(cmd)
-	local ply = LocalPlayer()
-	if not ply:Alive() then return end
-	local Wep = ply:GetActiveWeapon()
+	local Ply = LocalPlayer()
+	if not Ply:Alive() then return end
+	local Wep = Ply:GetActiveWeapon()
 
-	if ply:GetNW2Bool("EZparachuting", false) then
+	if Ply:GetNW2Bool("EZparachuting", false) then
 		local Amt, Sporadicness, FT = 30, 20, FrameTime()
 
-		if ply:KeyDown(IN_FORWARD) then
+		if Ply:KeyDown(IN_FORWARD) then
 			Sporadicness = Sporadicness * 1.5
 			Amt = Amt * 2
 		end
@@ -303,8 +303,11 @@ hook.Add("CreateMove", "ParachuteShake", function(cmd)
 		--(JMod.Wind + EAng:Forward())
 		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
 		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
-		EAng.yaw = math.NormalizeAngle(EAng.yaw + WDir.x * FT * Amt * S)
+		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * FT * Amt * S)
 		cmd:SetViewAngles(EAng)
+	else
+		Ply.LerpedYaw = cmd:GetViewAngles().y
 	end
 end)
 
