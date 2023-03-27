@@ -6,16 +6,20 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.JModPreferredCarryAngles = Angle(-90, 90, 0)
 
+function ENT:SetupDataTables()
+	self:NetworkVar("String", 0, "PackageName")
+end
+
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/wood_crate001a.mdl")
-		self.Entity:SetMaterial("models/mat_jack_aidbox")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/props_junk/wood_crate001a.mdl")
+		self:SetMaterial("models/mat_jack_aidbox")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
 		self.InitialVel = self.InitialVel or Vector(0, 0, 0)
-		local Phys = self.Entity:GetPhysicsObject()
+		local Phys = self:GetPhysicsObject()
 
 		if IsValid(Phys) then
 			Phys:Wake()
@@ -27,7 +31,7 @@ if SERVER then
 		timer.Simple(.1, function()
 			if IsValid(self) then
 				self:GetPhysicsObject():SetVelocity(self.InitialVel + VectorRand() * math.Rand(0, 200))
-				self:GetPhysicsObject():AddAngleVelocity(VectorRand() * math.Rand(0, 3000))
+				--self:GetPhysicsObject():AddAngleVelocity(VectorRand() * math.Rand(0, 3000))
 			end
 		end)
 
@@ -36,18 +40,27 @@ if SERVER then
 		self.Parachuted = self:GetDTBool(0)
 
 		if self.Parachuted then
-			self:GetPhysicsObject():SetDragCoefficient(40 * JMod.Config.RadioSpecs.ParachuteDragMult)
-			self:GetPhysicsObject():SetAngleDragCoefficient(40)
+			--self:GetPhysicsObject():SetAngleDragCoefficient(40)
+			local Chute = ents.Create("ent_jack_gmod_ezparachute")
+			Chute:SetPos(self:LocalToWorld(self:OBBCenter()))
+			Chute:SetNW2Entity("Owner", self)
+			Chute.ParachuteName = "Parachute"
+			Chute:Spawn()
+			Chute:Activate()
+			Chute.Drag = JMod.Config.RadioSpecs.ParachuteDragMult
+			Chute:SetNW2Float("ChuteProg", 2)
+			self:SetNW2Bool("EZparachuting", true)
+			self.EZparachute = Chute
 		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.Speed > 2000 and data.DeltaTime > .2 then
-			self.Entity:EmitSound("Boulder.ImpactHard")
-			self.Entity:EmitSound("Canister.ImpactHard")
-			self.Entity:EmitSound("Boulder.ImpactHard")
-			self.Entity:EmitSound("Canister.ImpactHard")
-			self.Entity:EmitSound("Boulder.ImpactHard")
+			self:EmitSound("Boulder.ImpactHard")
+			self:EmitSound("Canister.ImpactHard")
+			self:EmitSound("Boulder.ImpactHard")
+			self:EmitSound("Canister.ImpactHard")
+			self:EmitSound("Boulder.ImpactHard")
 			util.ScreenShake(data.HitPos, 99999, 99999, .5, 500)
 			local Poof = EffectData()
 			Poof:SetOrigin(data.HitPos)
@@ -72,7 +85,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 	end
 
 	local function SpawnItem(itemClass, pos, owner, resourceAmt)
@@ -227,17 +240,8 @@ if SERVER then
 	function ENT:Think()
 		local Time = CurTime()
 
-		if not self.DoneDropping then
-			if self:GetVelocity():Length() < 200 then
-				self.DoneDropping = true
-				self:GetPhysicsObject():SetDragCoefficient(1)
-				self:GetPhysicsObject():SetAngleDragCoefficient(1)
-				self:SetDTBool(0, false)
-				self:NextThink(Time + .015)
-
-				return true
-			end
-		else
+		if not self:GetNW2Bool("EZparachuting", false) then
+			self:GetPhysicsObject():SetAngleDragCoefficient(1)
 			self.SignalStopTime = self.SignalStopTime or Time + 60
 
 			if Time < self.SignalStopTime then
@@ -274,40 +278,10 @@ if SERVER then
 end
 
 if CLIENT then
-	function ENT:Initialize()
-		if self:GetDTBool(0) then
-			self.Parachute = ClientsideModel("models/jessev92/rnl/items/parachute_deployed.mdl")
-			self.Parachute:SetNoDraw(true)
-			self.Parachute:SetParent(self)
-		end
-
-		self.InitTime = CurTime()
-	end
 
 	local TxtCol = Color(255, 240, 150, 80)
-
 	function ENT:Draw()
 		local Pos = self:GetPos()
-
-		if CurTime() - self.InitTime >= .15 then
-			render.SetBlend(self:GetDTFloat(0))
-
-			if self:GetDTBool(0) then
-				local Vel = self:GetVelocity()
-
-				if Vel:Length() > 0 then
-					local Dir = Vel:GetNormalized()
-					Dir = Dir + Vector(.01, 0, 0) -- stop the turn spasming
-					local Ang = Dir:Angle()
-					Ang:RotateAroundAxis(Ang:Right(), 90)
-					self.Parachute:SetRenderOrigin(Pos + Dir * 50)
-					self.Parachute:SetRenderAngles(Ang)
-					self.Parachute:DrawModel()
-				end
-			end
-
-			render.SetBlend(1)
-		end
 
 		self:DrawModel()
 		local Name = self:GetPackageName()
@@ -322,8 +296,4 @@ if CLIENT then
 	end
 
 	language.Add("ent_jack_aidbox", "Aid Package")
-end
-
-function ENT:SetupDataTables()
-	self:NetworkVar("String", 0, "PackageName")
 end

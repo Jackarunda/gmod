@@ -924,9 +924,9 @@ JMod.ArmorTable = {
 			parachute = {mdl = "models/jessev92/bf2/parachute.mdl", offset = 50, drag = 3}
 		},
 		def = NonArmorProtectionProfile,
-		bon = "ValveBiped.Bip01_Spine1",
+		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
-		pos = Vector(-3, -45, 0),
+		pos = Vector(-3, -50, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 20,
 		dur = 100,

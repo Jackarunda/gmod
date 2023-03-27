@@ -38,7 +38,7 @@ if SERVER then
 		self.Durability = 100
 		self.MdlOffset = self.MdlOffset or 15
 		self.Drag = self.Drag or 5
-		self.AttachBone = self.AttachBone or 0
+		self:SetNW2Int("AttachBone", self.AttachBone or 0)
 		self.ChuteColor = self.ChuteColor or Color(83, 83, 55)
 
 		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
@@ -60,6 +60,7 @@ if SERVER then
 				Owner:EmitSound("JMod_BF2_Para_Deploy")
 			end
 		end)
+		Owner.EZparachute = self
 		self.NextCollapseTime = CurTime()
 	end
 
@@ -69,7 +70,7 @@ if SERVER then
 
 		if IsValid(Owner) then
 			if not Owner:GetNW2Bool("EZparachuting", false) then
-				self:Collapse() -- We need to check this fisrt and foremost
+				self:Collapse() -- We need to check this first and foremost
 			end
 			------ Parachute Pos and Angles ------
 			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
@@ -100,12 +101,14 @@ if SERVER then
 				else
 					local Phys = Owner:GetPhysicsObject()
 					if Owner:IsRagdoll() then
-						Phys = Owner:GetPhysicsObjectNum(self.AttachBone or 0)
+						Phys = Owner:GetPhysicsObjectNum(self:GetNW2Int("AttachBone", 0))
 					end
 					if IsValid(Phys) then
 						local Vel = Phys:GetVelocity()
 						local NewVel = -Vel * Drag + WindFactor * Drag
-						Phys:SetVelocity(Vel + NewVel * (ChuteProg^.5))
+						Phys:AddVelocity(NewVel * (ChuteProg^.5))
+						--Phys:AddAngleVelocity(Phys:GetAngleVelocity())
+						JMod.AeroDrag(Owner, self:GetUp(), 1, 10)
 						if math.abs(Vel:Length()) <= 5 then
 							if self.NextCollapseTime <= Time then
 								self:Collapse()
@@ -166,7 +169,10 @@ if SERVER then
 elseif CLIENT then
 	function ENT:Initialize()
 		local Owner = self:GetNW2Entity("Owner")
-		self.LerpedYaw = Owner:GetVelocity():GetNormalized():Angle().y
+		if IsValid(Owner) then
+			self.LerpedYaw = Owner:GetVelocity():GetNormalized():Angle().y
+			self.LerpedPitch = Owner:GetVelocity():GetNormalized():Angle().p
+		end
 	end
 
 	function ENT:Draw()
@@ -179,18 +185,29 @@ elseif CLIENT then
 		self:EnableMatrix("RenderMultiply", Mat)
 		local Owner = self:GetNW2Entity("Owner")
 		if IsValid(Owner) then
-			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
-			local FinalAng = Angle(DirAng.p, self.LerpedYaw, DirAng.r)
+			local Dir = Owner:GetVelocity():GetNormalized()
+			--Dir = Dir + Vector(0, 0, 0)
+			local DirAng = Dir:Angle()
+			local FinalAng = Angle(self.LerpedPitch, self.LerpedYaw, DirAng.r)
 			local BPos, BIndex = Owner:LocalToWorld(Owner:OBBCenter()), Owner:LookupBone("ValveBiped.Bip01_Spine2")
-			if BIndex then
-				local matrix = Owner:GetBoneMatrix(BIndex)
-				BPos = matrix:GetTranslation() or Vector(0, 0, 0)
+			local AttachBone = self:GetNW2Int("AttachBone", 0)
+			if BIndex or (AttachBone and AttachBone > 0) then
+				--jprint(Owner:GetBonePosition(BIndex))
+				--local matrix = Owner:GetBoneMatrix(BIndex or AttachBone)
+				BPos = Owner:GetBonePosition(BIndex or AttachBone)
 			end
 			local Pos = BPos + (FinalAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self:GetOffset() or 0)
 			FinalAng:RotateAroundAxis(FinalAng:Right(), 90)
 			self:SetRenderAngles(FinalAng)
 			self:SetRenderOrigin(Pos)
-			self.LerpedYaw = math.ApproachAngle(self.LerpedYaw, Aim.y, FT * 120)
+			if math.abs(DirAng.p - self.LerpedPitch) > 2 then
+				self.LerpedPitch = math.ApproachAngle(self.LerpedPitch, DirAng.p, FT * 120)
+			end
+			if Owner:IsPlayer() then
+				self.LerpedYaw = math.ApproachAngle(self.LerpedYaw, Owner:GetAngles().y, FT * 120)
+			elseif math.abs(DirAng.p - self.LerpedPitch) > 2 then
+				self.LerpedYaw = math.ApproachAngle(self.LerpedYaw, DirAng.y, FT * 120)
+			end
 		end
 		self:DrawModel()
 	end
