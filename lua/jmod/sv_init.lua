@@ -273,12 +273,10 @@ local function OpenChute(ply)
 	ply:SetNW2Bool("EZparachuting", true)
 	local Chute = ents.Create("ent_jack_gmod_ezparachute")
 	Chute:SetPos(ply:GetPos())
-	Chute.ParachuteMdl = ply.EZarmor.effects.parachute.mdl
-	Chute.MdlOffset = ply.EZarmor.effects.parachute.offset
-	Chute.Drag = ply.EZarmor.effects.parachute.drag
 	Chute:SetNW2Entity("Owner", ply)
 	for k, v in pairs(ply.EZarmor.items) do
 		if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+			Chute.ParachuteName = ply.EZarmor.items[k].name
 			Chute.ChuteColor = ply.EZarmor.items[k].col 
 			break
 		end
@@ -735,16 +733,11 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
 						ArmorPiece:Spawn()
 						ArmorPiece:Activate()
-						--[[for _, v in pairs(Ragdoll.EZarmorP) do
-							local NoCollide = constraint.NoCollide(ArmorPiece, v, 0, 0)
-							NoCollide:Activate()
-							--CCounter = CCounter + 1
-						end]]--
 						Ragdoll.EZarmorP[v.name] = ArmorPiece
 						if ArmorInfo.eff and ArmorInfo.eff.parachute then
 							Parachute = v.name
 							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
-							BonePhys:ApplyForceCenter(Vector(0, 0, -100))
+							--BonePhys:ApplyForceCenter(Vector(0, 0, -100))
 							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
 						end
 						-- Attach it
@@ -790,6 +783,13 @@ concommand.Add("jmod_debug_parachute", function(ply, cmd, args)
 		local Chute = ents.Create("ent_jack_gmod_ezparachute")
 		Chute:SetPos(Ent:GetPos())
 		Chute:SetNW2Entity("Owner", Ent)
+		Chute.ParachuteName = "Parachute"
+		for k, v in pairs(ply.EZarmor.items) do
+			if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+				Chute.ChuteColor = ply.EZarmor.items[k].col 
+				break
+			end
+		end
 		Chute:Spawn()
 		Chute:Activate()
 		Ent:SetNW2Bool("EZparachuting", true)

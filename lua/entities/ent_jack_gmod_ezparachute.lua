@@ -40,6 +40,17 @@ if SERVER then
 		self.Drag = self.Drag or 5
 		self.AttachBone = self.AttachBone or 0
 		self.ChuteColor = self.ChuteColor or Color(83, 83, 55)
+
+		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
+			local ParachuteType = JMod.ArmorTable[self.ParachuteName]
+			self.ParachuteMdl = ParachuteType.eff.parachute.mdl
+			self.MdlOffset = ParachuteType.eff.parachute.offset
+			self.Drag = ParachuteType.eff.parachute.drag
+			self.ChuteColor = Color(ParachuteType.clr.r, ParachuteType.clr.g, ParachuteType.clr.b) 
+		end
+
+		self:SetColor(self.ChuteColor)
+		self:SetOffset(self.MdlOffset)
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self:GetNW2Entity("Owner")
@@ -49,9 +60,7 @@ if SERVER then
 				Owner:EmitSound("JMod_BF2_Para_Deploy")
 			end
 		end)
-		self:SetColor(self.ChuteColor or Color(83, 83, 55))
-		--self:SetColor(self.ChuteColor or Color(255, 255, 255))
-		self:SetOffset(self.MdlOffset)
+		self.NextCollapseTime = CurTime()
 	end
 
 	function ENT:Think()
@@ -60,7 +69,7 @@ if SERVER then
 
 		if IsValid(Owner) then
 			if not Owner:GetNW2Bool("EZparachuting", false) then
-				self:Collapse()
+				self:Collapse() -- We need to check this fisrt and foremost
 			end
 			------ Parachute Pos and Angles ------
 			local DirAng, Aim = Owner:GetVelocity():GetNormalized():Angle(), Owner:GetAngles()
@@ -98,7 +107,11 @@ if SERVER then
 						local NewVel = -Vel * Drag + WindFactor * Drag
 						Phys:SetVelocity(Vel + NewVel * (ChuteProg^.5))
 						if math.abs(Vel:Length()) <= 5 then
-							Owner:SetNW2Bool("EZparachuting", false)
+							if self.NextCollapseTime <= Time then
+								self:Collapse()
+							end
+						else
+							self.NextCollapseTime = Time + 1
 						end
 					end
 				end
@@ -171,7 +184,7 @@ elseif CLIENT then
 			local BPos, BIndex = Owner:LocalToWorld(Owner:OBBCenter()), Owner:LookupBone("ValveBiped.Bip01_Spine2")
 			if BIndex then
 				local matrix = Owner:GetBoneMatrix(BIndex)
-				BPos = matrix:GetTranslation()
+				BPos = matrix:GetTranslation() or Vector(0, 0, 0)
 			end
 			local Pos = BPos + (FinalAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self:GetOffset() or 0)
 			FinalAng:RotateAroundAxis(FinalAng:Right(), 90)
