@@ -268,7 +268,6 @@ local function VirusHostThink(dude)
 end
 
 local function OpenChute(ply)
-	if ply.ChuteOpening then return end
 	ply:EmitSound("JMod_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", true)
 	local Chute = ents.Create("ent_jack_gmod_ezparachute")
@@ -290,7 +289,6 @@ local function DetachChute(ply)
 	ply:ViewPunch(Angle(5, 0, 0))
 	ply:EmitSound("JMod_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", false)
-	ply.ChuteOpening = nil
 end
 
 hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
@@ -298,7 +296,7 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 	if ply.IsProne and ply:IsProne() then return end
 	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
 
-	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or ply.ChuteOpening
+	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or IsValid(ply.EZparachute)
 	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
 		if not(util.QuickTrace(ply:GetShootPos(), Vector(0, 0, -350), ply).Hit) then
 			if ply:GetVelocity():Length() > 250 then OpenChute(ply) end
@@ -709,7 +707,6 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		Ragdoll:Activate()
 		if IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
-			--local CCounter = 0
 			local Parachute = false
 			for k, v in pairs(ply.EZarmor.items) do
 				local ArmorInfo = JMod.ArmorTable[v.name]
@@ -737,7 +734,6 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 						if ArmorInfo.eff and ArmorInfo.eff.parachute then
 							Parachute = v.name
 							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
-							--BonePhys:ApplyForceCenter(Vector(0, 0, -100))
 							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
 						end
 						-- Attach it
