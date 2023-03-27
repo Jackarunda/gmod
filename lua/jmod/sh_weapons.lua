@@ -783,8 +783,7 @@ elseif SERVER then
 						local AmmoPerResourceUnit = PrimMax / 30
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
 						local AmtToGive = math.min(PrimSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
-
-						if ply:GetAmmoCount(PrimType) < PrimMax then
+						if (AmtToGive > 0) and (ply:GetAmmoCount(PrimType) < PrimMax) then
 							ply:GiveAmmo(AmtToGive, PrimType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)
@@ -816,7 +815,7 @@ elseif SERVER then
 						local ResourceUnitPerAmmo = 1 / AmmoPerResourceUnit
 						local AmtToGive = math.min(SecSize, math.floor(ResourceLeftInBox / ResourceUnitPerAmmo), SpaceLeftInPlayerInv)
 						
-						if ply:GetAmmoCount(SecType) < SecMax then
+						if (AmtToGive > 0) and (ply:GetAmmoCount(SecType) < SecMax) then
 							ply:GiveAmmo(AmtToGive, SecType)
 							ent:SetResource(ResourceLeftInBox - math.ceil(AmtToGive * ResourceUnitPerAmmo))
 							ent:UseEffect(ent:GetPos(), ent)

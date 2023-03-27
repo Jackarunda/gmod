@@ -602,46 +602,15 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	end
 end
 
---[[
-	1) am i valid? if not, return world
-	2) is there GetOwner? if so, call it, check if the return is valid, and if so, return it
-	3) is there .EZowner? is it valid? if so, return it
-	4 otherwise return world
-]]--
-
-function JMod.EZowner(ent, newOwner)
-	
-	if not IsValid(ent) then return game.GetWorld() end
-
-	if ent.GetOwner and IsValid(ent:GetOwner()) then
-		local OldOwner = ent:GetOwner()
-	else
-		local OldOwner = ent.EZowner or game.GetWorld()
-	end
-
-	if IsValid(newOwner) then
-		if OldOwner and (OldOwner == newOwner) then 
-
-			return OldOwner 
-		end
-
-		if CPPI and isfunction(ent.CPPISetOwner) then
-			ent:CPPISetOwner(newOwner)
-		end
-
-		return newOwner
-	end
-end
-
 function JMod.GetEZowner(ent)
 	if not IsValid(ent) then return game.GetWorld() end
 
-	if ent.GetOwner and IsValid(ent:GetOwner()) then
-
-		return ent:GetOwner()
-	elseif ent.EZowner and IsValid(ent.EZowner) then
+	if ent.EZowner and IsValid(ent.EZowner) then
 
 		return ent.EZowner
+	elseif ent.GetOwner and IsValid(ent:GetOwner()) then
+
+		return ent:GetOwner()
 	else
 		
 		return game.GetWorld()
