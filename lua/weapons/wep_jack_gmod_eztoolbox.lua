@@ -600,9 +600,7 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
-	elseif JMod.HaveResourcesToPerformTask(nil, nil, {
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated
-	}, self) then
+	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated }, self) then
 		JMod.ConsumeResourcesInRange({
 			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated
 		}, nil, nil, self)
@@ -671,7 +669,7 @@ function SWEP:Pawnch()
 	self:UpdateNextIdle()
 end
 
-function SWEP:FlingProp(mdl, force)
+--[[function SWEP:FlingProp(mdl, force)
 	local Prop = ents.Create("prop_physics")
 	Prop:SetPos(self:GetPos() + self:GetUp() * 25 + VectorRand() * math.Rand(1, 25))
 	Prop:SetAngles(VectorRand():Angle())
@@ -689,7 +687,7 @@ function SWEP:FlingProp(mdl, force)
 	end
 
 	SafeRemoveEntityDelayed(Prop, math.random(5, 10))
-end
+end]]--
 
 function SWEP:SwitchSelectedBuild(name)
 	self:SetSelectedBuild(name)

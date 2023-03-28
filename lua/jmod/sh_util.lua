@@ -126,8 +126,8 @@ function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
 	if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then
 		ent:SetNW2Float("EZ"..task.."Progress", 0)
 	end
-
 	ent:SetNW2Float("EZcancel"..task.."Time", Time + 3)
+	
 	local Prog = ent:GetNW2Float("EZ"..task.."Progress", 0)
 	local Phys = ent:GetPhysicsObject()
 	
