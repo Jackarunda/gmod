@@ -870,8 +870,6 @@ function SWEP:Think()
 		self:UpdateNextIdle()
 	end
 
-	local Prog, SetAmt = self:GetTaskProgress(), nil
-
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
 		self:SetHoldType("normal")
 	else
@@ -882,106 +880,40 @@ function SWEP:Think()
 				self.NextTaskProgress = Time + .6
 				SetAmt = 0
 				local Alt = self.Owner:KeyDown(JMod.Config.AltFunctionKey)
-
+				local Task = (Alt and "loosen") or "salvage"
 				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})
-
 				local Ent, Pos = Tr.Entity, Tr.HitPos
 
 				if IsValid(Ent) then
-					local Phys = Ent:GetPhysicsObject()
-					local Task = (Alt and "loosen") or "salvage"
-
 					if Ent ~= self.TaskEntity or Task ~= self.CurTask then
 						self:SetTaskProgress(0)
 						self.TaskEntity = Ent
 						self.CurTask = Task
-					elseif IsValid(Phys) then
-						if Alt then
-							-- loosen
-							--Prog = JMod.UpdateDeconstruct(Ent)
-							if constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled() then
-								JMod.Hint(self.Owner, "work spread")
-								local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
-								local Mass = Phys:GetMass() ^ .8
-								local AddAmt = 300 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
-								SetAmt = math.Clamp(Prog + AddAmt, 0, 100)
-								self:Pawnch()
-								sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
-								sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
+					elseif IsValid(Ent:GetPhysicsObject()) then
+						local Message = JMod.ToolboxDeconstruct(Ent, Pos, self.Owner, (Alt and "loosen") or "salvage")
 
+						if Message then
+							self:Msg(Message)
+						else
+							self:Pawnch()
+							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
+							sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
+							if SERVER then
+								JMod.Hint(self.Owner, "work spread")
+								self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))
 								timer.Simple(.1, function()
 									if IsValid(self) then
-										self:UpgradeEffect(Pos, 1, true)
+										self:UpgradeEffect(Pos, 2, true)
 									end
 								end)
-
-								if Prog >= 100 then
-									sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
-									constraint.RemoveAll(Ent)
-									Phys:EnableMotion(true)
-									Phys:Wake()
-									SetAmt = 0
-								end
-							else
-								self:Msg("object is already unconstrained")
 							end
-						else
-							-- salvage
-							--Prog = JMod.UpdateDeconstruct(Ent)
-							if SERVER then
-								if constraint.HasConstraints(Ent) or not Phys:IsMotionEnabled() then
-									self:Msg("object is constrained")
-								else
-									local Mass = Phys:GetMass() ^ .8
-									local Yield, Msg = JMod.GetSalvageYield(Ent)
-
-									if #table.GetKeys(Yield) <= 0 then
-										self:Msg(Msg)
-									else
-										JMod.Hint(self.Owner, "work spread")
-										local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
-										local AddAmt = 250 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
-										SetAmt = math.Clamp(Prog + AddAmt, 0, 100)
-										self:Pawnch()
-										sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
-										sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
-
-										timer.Simple(.1, function()
-											if IsValid(self) then
-												self:UpgradeEffect(Pos, 2, true)
-											end
-										end)
-
-										if Prog >= 100 then
-											sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
-
-											for k, v in pairs(Yield) do
-												local AmtLeft = v
-
-												while AmtLeft > 0 do
-													local Remove = math.min(AmtLeft, 100 * JMod.Config.MaxResourceMult)
-													self:CreateResourceEntity(Pos + VectorRand() * 40 + Vector(0, 0, 30), k, Remove)
-													AmtLeft = AmtLeft - Remove
-												end
-											end
-
-											SafeRemoveEntity(Ent)
-											SetAmt = 0
-										end
-									end
-								end
-							end
-						end
+						end 
 					end
 				end
 			end
 		else
-			SetAmt = 0
+			self:SetTaskProgress(0)
 		end
-	end
-
-	if SERVER and SetAmt ~= nil then
-		self:SetTaskProgress(SetAmt)
 	end
 end
 
