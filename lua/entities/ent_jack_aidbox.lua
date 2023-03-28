@@ -44,10 +44,13 @@ if SERVER then
 			local Chute = ents.Create("ent_jack_gmod_ezparachute")
 			Chute:SetPos(self:LocalToWorld(self:OBBCenter()))
 			Chute:SetNW2Entity("Owner", self)
-			Chute.ParachuteName = "Parachute"
+			--Chute.ParachuteName = "Parachute"
+			Chute.ParachuteMdl = "models/jessev92/rnl/items/parachute_deployed.mdl"
+			Chute.Drag = JMod.Config.RadioSpecs.ParachuteDragMult
+			Chute.MdlOffset = 50
+			Chute.ChuteColor = Color(255, 255, 255)
 			Chute:Spawn()
 			Chute:Activate()
-			Chute.Drag = JMod.Config.RadioSpecs.ParachuteDragMult
 			Chute:SetNW2Float("ChuteProg", 2)
 			self:SetNW2Bool("EZparachuting", true)
 			self.EZparachute = Chute
@@ -74,7 +77,7 @@ if SERVER then
 				util.Decal("Rollermine.Crater", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			end
 		elseif data.Speed > 80 and data.DeltaTime > .2 then
-			self.Entity:EmitSound("Canister.ImpactHard")
+			self:EmitSound("Canister.ImpactHard")
 		end
 
 		if data.DeltaTime > .1 then

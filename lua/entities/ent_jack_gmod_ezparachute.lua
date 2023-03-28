@@ -54,6 +54,7 @@ if SERVER then
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self:GetNW2Entity("Owner")
+		self:SetParent(Owner)
 		timer.Simple(0.5, function() 
 			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
 				Owner:ViewPunch(Angle(10, 0, 0))
@@ -82,7 +83,7 @@ if SERVER then
 				BPos = matrix:GetTranslation()
 			end
 			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self.MdlOffset or 0)
-			self:SetPos(Owner:GetPos())
+			--self:SetPos(Owner:GetPos())
 
 			local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
 
@@ -108,7 +109,7 @@ if SERVER then
 						local NewVel = -Vel * Drag + WindFactor * Drag
 						Phys:AddVelocity(NewVel * (ChuteProg^.5))
 						--Phys:AddAngleVelocity(Phys:GetAngleVelocity())
-						JMod.AeroDrag(Owner, self:GetUp(), 1, 10)
+						JMod.AeroDrag(Owner, self:GetUp(), 0.5, 100)
 						if math.abs(Vel:Length()) <= 5 then
 							if self.NextCollapseTime <= Time then
 								self:Collapse()
