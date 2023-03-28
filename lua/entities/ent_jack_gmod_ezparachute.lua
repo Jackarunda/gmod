@@ -54,7 +54,6 @@ if SERVER then
 		self:SetState(STATE_FINE)
 		self:SetNW2Float("ChuteProg", 0)
 		local Owner = self:GetNW2Entity("Owner")
-		self:SetParent(Owner)
 		timer.Simple(0.5, function() 
 			if IsValid(self) and IsValid(Owner) and Owner:IsPlayer() and Owner:Alive() then 
 				Owner:ViewPunch(Angle(10, 0, 0))
@@ -83,7 +82,7 @@ if SERVER then
 				BPos = matrix:GetTranslation()
 			end
 			local Pos = BPos + (AimDirAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self.MdlOffset or 0)
-			--self:SetPos(Owner:GetPos())
+			self:SetPos(Pos)
 
 			local Drag = math.Clamp(self.Drag * 0.01, 0, 1)
 
