@@ -459,6 +459,9 @@ JMod.Hints = {
 		LangKey = "hint ent_jack_gmod_ezarmorheadset",
 		Followup = "headset radio"
 	},
+	["ent_jack_gmod_ezarmor_parachute"] = {
+		LangKey = "hint parachute"
+	},
 	["headset radio"] = {
 		LangKey = "hint headset radio"
 	},
@@ -470,6 +473,9 @@ JMod.Hints = {
 	},
 	["armorcharge_electricity"] = {
 		LangKey = "hint armorcharge_electricity"
+	},
+	["parachute"] = {
+		LangKey = "hint parachute"
 	},
 	["armorcharge_gas"] = {
 		LangKey = "hint armorcharge_gas"

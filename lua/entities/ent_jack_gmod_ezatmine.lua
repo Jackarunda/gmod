@@ -204,7 +204,6 @@ if SERVER then
 		self:EmitSound("snd_jack_minearm.wav", 60, 90)
 
 		if autoColor then
-			print("we be autocoloring")
 			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
 
 			if Tr.Hit then

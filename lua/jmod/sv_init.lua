@@ -1,4 +1,5 @@
-﻿local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
+﻿JMod.Wind = Vector(0, 0, 0)
+local force_workshop = CreateConVar("jmod_forceworkshop", 1, {FCVAR_ARCHIVE}, "Force clients to download JMod+its content? (requires a restart upon change)")
 
 if force_workshop:GetBool() then
 	resource.AddWorkshop("1919689921")
@@ -266,7 +267,65 @@ local function VirusHostThink(dude)
 	end
 end
 
-local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextSync = 0, 0, 0, 0, 0
+local function OpenChute(ply)
+	ply:EmitSound("JMod_ZipLine_Clip")
+	ply:SetNW2Bool("EZparachuting", true)
+	local Chute = ents.Create("ent_jack_gmod_ezparachute")
+	Chute:SetPos(ply:GetPos())
+	Chute:SetNW2Entity("Owner", ply)
+	for k, v in pairs(ply.EZarmor.items) do
+		if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+			Chute.ParachuteName = ply.EZarmor.items[k].name
+			Chute.ChuteColor = ply.EZarmor.items[k].col 
+			break
+		end
+	end
+	Chute:Spawn()
+	Chute:Activate()
+	ply.EZparachute = Chute
+end
+
+local function DetachChute(ply) 
+	ply:ViewPunch(Angle(5, 0, 0))
+	ply:EmitSound("JMod_ZipLine_Clip")
+	ply:SetNW2Bool("EZparachuting", false)
+end
+
+hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
+	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
+	if ply.IsProne and ply:IsProne() then return end
+	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
+
+	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or IsValid(ply.EZparachute)
+	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
+		if not(util.QuickTrace(ply:GetShootPos(), Vector(0, 0, -350), ply).Hit) then
+			if ply:GetVelocity():Length() > 250 then OpenChute(ply) end
+		end
+	end
+
+	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.AltFunctionKey) and IsParaOpen then
+		DetachChute(ply)
+	end
+end)
+
+hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, speed)
+	--print("Player: " .. tostring(ply) .. " hit ", (water and "water") or "ground", "floater: " .. tostring(float), "Going: " .. tostring(speed))
+	if ply:GetNW2Bool("EZparachuting", false) then
+		timer.Simple(0.2, function()
+			if IsValid(ply) and ply:Alive() then
+				ply:ViewPunch(Angle(2, 0, 0))
+				if ply:OnGround() then
+					DetachChute(ply)
+				end
+			end
+		end)
+	end
+end)
+
+
+
+local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextNatrualThink, NextSync = 0, 0, 0, 0, 0, 0
+local WindChange = Vector(0, 0, 0)
 
 hook.Add("Think", "JMOD_SERVER_THINK", function()
 	--[[
@@ -302,11 +361,12 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextMainThink > Time then return end
 	NextMainThink = Time + 1
 
+	local Playas = player.GetAll()
 	---
-	for k, playa in pairs(player.GetAll()) do
-		local Alive = playa:Alive()
+	for i = 1, #Playas do
+		local playa = Playas[i]
+		if playa:Alive() then
 
-		if Alive then
 			if playa.EZhealth then
 				local Healin = playa.EZhealth
 
@@ -407,7 +467,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextNutritionThink < Time then
 		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
 
-		for k, playa in pairs(player.GetAll()) do
+		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
 					local Nuts = playa.EZnutrition.Nutrients
@@ -444,7 +504,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextArmorThink < Time then
 		NextArmorThink = Time + 2
 
-		for k, playa in pairs(player.GetAll()) do
+		for _, playa in ipairs(Playas) do
 			if playa.EZarmor and playa:Alive() then
 				if playa.EZarmor.effects.nightVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
@@ -494,7 +554,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	end
 
 	---
-	for k, v in pairs(ents.FindByClass("npc_*")) do
+	for _, v in ipairs(ents.FindByClass("npc_*")) do
 		VirusHostThink(v)
 
 		if v.EZNPCincapacitate then
@@ -507,6 +567,24 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 				v:SetNPCState(NPC_STATE_ALERT)
 				v.EZNPCincapacitated = false
 			end
+		end
+	end
+
+	---
+	if NextNatrualThink < Time then
+		NextNatrualThink = Time + 5
+		JMod.Wind = JMod.Wind + WindChange / 10
+		SetGlobal2Vector("JMod_Wind", JMod.Wind)
+
+		if JMod.Wind:Length() > 1 then
+			JMod.Wind:Normalize()
+			WindChange = -WindChange
+		end
+	
+		WindChange = WindChange + Vector(math.Rand(-.5, .5), math.Rand(-.5, .5), 0)
+	
+		if WindChange:Length() > 1 then
+			WindChange:Normalize()
 		end
 	end
 
@@ -524,7 +602,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.WeaponSwayMult = JMod.Config.WeaponSwayMult
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	net.Start("JMod_LuaConfigSync")
-	net.WriteData(util.Compress(util.TableToJSON(ToSend)))
+		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()
 end
 
@@ -603,7 +681,7 @@ hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	if JMod.Config.QoL.RealisticFallDamage then return spd ^ 2 / 8000 end
 end)
 
-hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
+hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
 	ply.EZnutrition = nil
 	ply.EZhealth = nil
 	ply.EZkillme = nil
@@ -613,6 +691,107 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		ply:SetMaterial("")
 	end
 end)
+
+--hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
+	if JMod.Config.QoL.JModCorpse and ply.EZarmor and ply.EZarmor.items then
+		SafeRemoveEntity(ply:GetRagdollEntity())
+		local Ragdoll = ents.Create("prop_ragdoll")
+		if ply.EZoriginalPlayerModel then
+			Ragdoll:SetModel(ply.EZoriginalPlayerModel)
+		else
+			Ragdoll:SetModel(ply:GetModel())
+		end
+		Ragdoll:SetPos(ply:GetPos())
+		Ragdoll:Spawn()
+		Ragdoll:Activate()
+		if IsValid(Ragdoll) then
+			Ragdoll.EZarmorP = {}
+			local Parachute = false
+			for k, v in pairs(ply.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[v.name]
+				if not ArmorInfo.plymdl then
+					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
+					local Pos, Ang = Ragdoll:GetBonePosition(Index)
+					
+					if Pos and Ang then
+						-- Pos it
+						local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
+						Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
+						Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
+						Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
+						Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
+						-- Spawn it
+						local ArmorPiece = ents.Create(ArmorInfo.ent)
+						ArmorPiece:SetPos(Pos)
+						ArmorPiece:SetAngles(Ang)
+						ArmorPiece:SetOwner(Ragdoll)
+						ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
+						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
+						ArmorPiece:Spawn()
+						ArmorPiece:Activate()
+						Ragdoll.EZarmorP[v.name] = ArmorPiece
+						if ArmorInfo.eff and ArmorInfo.eff.parachute then
+							Parachute = v.name
+							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
+							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
+						end
+						-- Attach it
+						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
+						Weld:Activate()
+					end
+				end
+			end
+			--print("We created " .. tostring(CCounter) .. " constraints")
+			timer.Simple(30, function()
+				if IsValid(Ragdoll) and Ragdoll.EZarmorP then
+					for _, v in pairs(Ragdoll.EZarmorP) do
+						local Con = constraint.FindConstraintEntity(v, "Weld")
+						if IsValid(Con) then
+							local Ent1, Ent2 = Con:GetConstrainedEntities()
+							if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
+								SafeRemoveEntity(v)
+							end
+						end
+					end
+					SafeRemoveEntity(Ragdoll)
+				end
+			end)
+			if IsValid(ply.EZparachute) and Parachute then
+				ply.EZparachute:SetNW2Entity("Owner", Ragdoll.EZarmorP[Parachute])
+				ParachuteEnt = Ragdoll.EZarmorP[Parachute]
+				ParachuteEnt:SetNW2Bool("EZparachuting", true)
+				ParachuteEnt.EZparachute = ply.EZparachute
+				ParachuteEnt.EZparachute.AttachBone = 0
+				ParachuteEnt.EZparachute.Drag = ParachuteEnt.EZparachute.Drag * 5
+			end
+			ply:SetNW2Bool("EZparachuting", true)
+			ply.EZparachute = nil
+		end
+	end
+end)
+
+concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 
+	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	local Tr = ply:GetEyeTrace()
+	local Ent = Tr.Entity
+	if IsValid(Ent) then
+		local Chute = ents.Create("ent_jack_gmod_ezparachute")
+		Chute:SetPos(Ent:GetPos())
+		Chute:SetNW2Entity("Owner", Ent)
+		Chute.ParachuteName = "Parachute"
+		for k, v in pairs(ply.EZarmor.items) do
+			if JMod.ArmorTable[v.name].eff and JMod.ArmorTable[v.name].eff.parachute then
+				Chute.ChuteColor = ply.EZarmor.items[k].col 
+				break
+			end
+		end
+		Chute:Spawn()
+		Chute:Activate()
+		Ent:SetNW2Bool("EZparachuting", true)
+		Ent.EZparachute = Chute
+	end
+end, nil, "Apply's an EZ parachute to an entity")
 
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then

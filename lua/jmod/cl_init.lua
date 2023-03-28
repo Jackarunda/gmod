@@ -281,17 +281,33 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 
 	if NextThink > Time then return end
 	NextThink = Time + 5
-	JMod.Wind = JMod.Wind + WindChange / 10
+	JMod.Wind = GetGlobal2Vector("JMod_Wind", JMod.Wind)
+end)
 
-	if JMod.Wind:Length() > 1 then
-		JMod.Wind:Normalize()
-		WindChange = -WindChange
-	end
+local WDir = VectorRand()
 
-	WindChange = WindChange + Vector(math.Rand(-.5, .5), math.Rand(-.5, .5), 0)
+hook.Add("CreateMove", "ParachuteShake", function(cmd)
+	local Ply = LocalPlayer()
+	if not Ply:Alive() then return end
+	local Wep = Ply:GetActiveWeapon()
 
-	if WindChange:Length() > 1 then
-		WindChange:Normalize()
+	if Ply:GetNW2Bool("EZparachuting", false) then
+		local Amt, Sporadicness, FT = 30, 20, FrameTime()
+
+		if Ply:KeyDown(IN_FORWARD) then
+			Sporadicness = Sporadicness * 1.5
+			Amt = Amt * 2
+		end
+
+		local S, EAng = .05, cmd:GetViewAngles()
+		--(JMod.Wind + EAng:Forward())
+		WDir = (WDir + FT * VectorRand() * Sporadicness):GetNormalized()
+		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
+		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * FT * Amt * S)
+		cmd:SetViewAngles(EAng)
+	else
+		Ply.LerpedYaw = cmd:GetViewAngles().y
 	end
 end)
 

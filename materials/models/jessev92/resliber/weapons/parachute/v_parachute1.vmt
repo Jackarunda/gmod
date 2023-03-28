@@ -1,0 +1,25 @@
+
+VertexLitGeneric
+{
+
+	$basetexture			models/jmod/resliber/weapons/parachute/v_parachute1_d
+	$bumpmap				models/jessev92/resliber/weapons/parachute/v_parachute1_b
+	
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+
+	$nocull					0
+	$halflambert			0
+	$ambientocclusion		1
+	
+	$phong					1
+	$phongexponent			2
+	$phongboost				0.5
+	$phongfresnelranges		"[ 0.1 0.1 0.1 ]"
+	
+	$detail             	models/jessev92/detail/cloth
+	$detailscale			8
+	$detailblendfactor		1
+	$detailblendmode		0
+
+}

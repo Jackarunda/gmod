@@ -123,6 +123,7 @@
 	["hint ent_jack_gmod_ezarmor_thermals"] = "Thermal Goggles highlights living things when worn",
 	["hint ent_jack_gmod_ezarmor_headset"] = "Headset allows you to privately communicate with your friends",
 	["hint headset radio"] = "You can also remotely communicate to aid radios",
+	["hint parachute"] = "Press jump to deploy parachute",
 	["hint armordurability"] = "One or more of your jmod armor pieces is about to be destroyed, repair from the inventory menu",
 	["hint armorcharge_chemicals"] = "Your equipment's chemical charge is nearly depleted, recharge from the inventory menu",
 	["hint armorcharge_electricity"] = "Your equipment's electrical charge is nearly depleted, recharge from the inventory menu",

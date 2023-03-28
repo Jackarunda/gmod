@@ -68,12 +68,15 @@ function JMod.EZarmorSync(ply)
 			ply.EZarmor.sndlop = ArmorInfo.sndlop
 		end
 	end
+	if not ply.EZarmor.effects.parachute and ply:GetNW2Bool("EZparachuting", false) then
+		ply:SetNW2Bool("EZparachuting", false)
+	end
 
 	hook.Run("JModHookEZArmorSync", ply)
 
 	net.Start("JMod_EZarmorSync")
-	net.WriteEntity(ply)
-	net.WriteTable(ply.EZarmor)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.EZarmor)
 	net.Broadcast()
 end
 
@@ -372,6 +375,7 @@ end
 
 function JMod.CalcSpeed(ply)
 	local Walk, Run, TotalWeight = ply.EZoriginalWalkSpeed or 200, ply.EZoriginalRunSpeed or 400, 0
+	local Phys = ply:GetPhysicsObject()
 
 	for k, v in pairs(ply.EZarmor.items) do
 		local ArmorInfo = JMod.ArmorTable[v.name]
