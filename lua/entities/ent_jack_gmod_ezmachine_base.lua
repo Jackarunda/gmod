@@ -305,7 +305,7 @@ if(SERVER)then
 		local Damage = dmginfo:GetDamage() * DmgMult
 		self.Durability = self.Durability - Damage
 		self:SetNW2Float("EZdurability", self.Durability)
-		
+
 		if(self.Durability <= 0)then self:Break(dmginfo) end
 		if(self.Durability <= -(self.MaxDurability * 2))then self:Destroy(dmginfo) end
 	end
@@ -414,6 +414,7 @@ if(SERVER)then
 					if(self.Durability > 0)then
 						if(self:GetState() == JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
+					self:SetNW2Float("EZdurability", self.Durability)
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.GAS)then
 					local Fool = self:GetGas()
 					local Missing = self.MaxGas - Fool
