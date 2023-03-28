@@ -213,8 +213,6 @@ SWEP.WElements = {
 SWEP.LastSalvageAttempt = 0
 SWEP.NextSwitch = 0
 
-local PackageBlacklist = {"func_"}
-
 function SWEP:Initialize()
 	self:SetHoldType("fist")
 	self:SCKInitialize()
@@ -286,120 +284,6 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
-function SWEP:FindNailPos()
-	local Pos, Vec = self.Owner:GetShootPos(), self.Owner:GetAimVector()
-
-	local Tr1 = util.QuickTrace(Pos, Vec * 80, {self.Owner})
-
-	if Tr1.Hit then
-		local Ent1 = Tr1.Entity
-		if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return nil end
-		if not IsValid(Ent1:GetPhysicsObject()) then return nil end
-
-		local Tr2 = util.QuickTrace(Pos, Vec * 120, {self.Owner, Ent1})
-
-		if Tr2.Hit then
-			local Ent2 = Tr2.Entity
-			if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
-			if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return nil end
-			local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
-			if Dist > 30 then return nil end
-
-			return true, Tr1.HitPos, Vec, Ent1, Ent2
-		end
-	end
-end
-
-function SWEP:Nail()
-	local Success, Pos, Vec, Ent1, Ent2 = self:FindNailPos()
-	if not Success then return end
-	local Weld = constraint.Find(Ent1, Ent2, "Weld", 0, 0)
-
-	if Weld then
-		local Strength = Weld:GetTable().forcelimit + 3000
-		Weld:Remove()
-
-		timer.Simple(.1, function()
-			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
-		end)
-	else
-		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 3000, false, false)
-	end
-
-	local Nail = ents.Create("prop_dynamic")
-	Nail:SetModel("models/crossbow_bolt.mdl")
-	Nail:SetMaterial("models/shiny")
-	Nail:SetColor(Color(50, 50, 50))
-	Nail:SetPos(Pos - Vec * 2)
-	Nail:SetAngles(Vec:Angle())
-	Nail:Spawn()
-	Nail:Activate()
-	Nail:SetParent(Ent1)
-	Ent1.EZnails = Ent1.EZnails or {}
-	table.insert(Ent1.EZnails, Nail)
-	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
-end
-
-function SWEP:GetPackagableObject()
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})
-
-	local Ent = Tr.Entity
-
-	if IsValid(Ent) and not Ent:IsWorld() then
-		if Ent.EZunpackagable then
-			self:Msg("No.")
-
-			return nil
-		end
-
-		if Ent:IsPlayer() or Ent:IsNPC() then return nil end
-		if Ent:IsRagdoll() then return nil end
-		local Constraints, Constrained = constraint.GetTable(Ent), false
-
-		for k, v in pairs(Constraints) do
-			if v.Type ~= "NoCollide" then
-				Constrained = true
-				break
-			end
-		end
-
-		if Constrained then
-			self:Msg("object is constrained")
-
-			return nil
-		end
-
-		for k, v in pairs(PackageBlacklist) do
-			if string.find(Ent:GetClass(), v) then
-				self:Msg("can't package this")
-
-				return nil
-			end
-		end
-
-		return Ent
-	end
-
-	return nil
-end
-
-function SWEP:Package()
-	local Ent = self:GetPackagableObject()
-
-	if Ent then
-		JMod.PackageObject(Ent)
-		sound.Play("snds_jack_gmod/packagify.wav", self:GetPos(), 60, math.random(90, 110))
-
-		for i = 1, 3 do
-			timer.Simple(i / 3, function()
-				if IsValid(self) then
-					sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", self:GetPos(), 60, math.random(80, 120))
-				end
-			end)
-		end
-	end
-end
-
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:Pawnch()
@@ -417,14 +301,14 @@ function SWEP:PrimaryAttack()
 				self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 				return
 			end
-			if (buildInfo.results == "ez nail") and not self:FindNailPos() then return end
-			if (buildInfo.results == "ez box") and not self:GetPackagableObject() then return end
+			if (buildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
+			if (buildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
 			local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
 			local Reqs = table.FullCopy(buildInfo.craftingReqs)
 
 			local PartsDonated = 0
 			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-			if Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] and (Reqs[JMod.EZ_RESOURCE_TYPES.BASICPARTS] > 0) and (self:GetBasicParts() > 0) then
+			if Reqs[EZbasicParts] and (Reqs[EZbasicParts] > 0) and (self:GetBasicParts() > 0) then
 				local RequiredParts = Reqs[EZbasicParts]
 				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
 
@@ -456,9 +340,9 @@ function SWEP:PrimaryAttack()
 								local Class = buildInfo.results
 
 								if Class == "ez nail" then
-									self:Nail()
+									JMod.Nail(self.Owner)
 								elseif Class == "ez box" then
-									self:Package()
+									JMod.Package(self.Owner)
 								else
 									local StringParts = string.Explode(" ", Class)
 
@@ -762,9 +646,9 @@ function SWEP:OnDrop()
 	Kit:Spawn()
 	Kit:Activate()
 
-	Kit.EZBasicParts = self:GetBasicParts()
-	Kit.EZElectricity = self:GetElectricity()
-	Kit.EZGas = self:GetGas()
+	Kit:SetBasicParts(self:GetBasicParts())
+	Kit:SetElectricity(self:GetElectricity())
+	Kit:SetGas(self:GetGas())
 
 	local Phys = Kit:GetPhysicsObject()
 
@@ -919,7 +803,8 @@ local LastProg = 0
 
 function SWEP:DrawHUD()
 	if GetConVar("cl_drawhud"):GetBool() == false then return end
-	if self.Owner:ShouldDrawLocalPlayer() then return end
+	local Ply = self.Owner
+	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H, Build = ScrW(), ScrH(), self:GetSelectedBuild()
 	local W, H, Msg = ScrW(), ScrH()
 
@@ -930,6 +815,7 @@ function SWEP:DrawHUD()
 	draw.SimpleTextOutlined("Power: "..math.floor(self:GetElectricity()), "Trebuchet24", W * .1, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	draw.SimpleTextOutlined("Gas: "..math.floor(self:GetGas()), "Trebuchet24", W * .1, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	draw.SimpleTextOutlined("Basic Parts: "..math.floor(self:GetBasicParts()), "Trebuchet24", W * .1, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+	
 	draw.SimpleTextOutlined("ALT+R: clear build item", "Trebuchet24", W * .4, H * .7 - 30, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("R: select build item", "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("LMB: build or upgrade", "Trebuchet24", W * .4, H * .7 + 30, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
@@ -941,9 +827,16 @@ function SWEP:DrawHUD()
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
-		draw.SimpleTextOutlined((self.Owner:KeyDown(JMod.Config.AltFunctionKey) and "Loosening...") or "Salvaging...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined((Ply:KeyDown(JMod.Config.AltFunctionKey) and "Loosening...") or "Salvaging...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
+	end
+
+	local Tr = util.QuickTrace(Ply:EyePos(), Ply:GetAimVector() * 80, {Ply})
+	local Ent = Tr.Entity
+	if IsValid(Ent) then
+		draw.SimpleTextOutlined(tostring(Ent), "Trebuchet24", W * .7, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined("Durability: "..tostring(Ent:GetNW2Float("EZdurability", 0)), "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	end
 
 	LastProg = Lerp(FrameTime() * 5, LastProg, Prog)

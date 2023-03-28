@@ -304,6 +304,7 @@ function JMod.PackageObject(ent, pos, ang, ply)
 
 	Bocks:Spawn()
 	Bocks:Activate()
+	return Bocks
 end
 
 function JMod.SimpleForceExplosion(pos, power, range, sourceEnt)
@@ -930,6 +931,197 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 				end
 			end
 		end)
+	end
+end
+
+function JMod.FindNailPos(ply, origin, dir)
+	local Pos, Vec = origin or ply:GetShootPos(), dir or ply:GetAimVector()
+
+	local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+
+	if Tr1.Hit then
+		local Ent1 = Tr1.Entity
+		if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return nil end
+		if not IsValid(Ent1:GetPhysicsObject()) then return nil end
+
+		local Tr2 = util.QuickTrace(Pos, Vec * 120, {ply, Ent1})
+
+		if Tr2.Hit then
+			local Ent2 = Tr2.Entity
+			if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
+			if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return nil end
+			local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+			if Dist > 30 then return nil end
+
+			return true, Tr1.HitPos, Vec, Ent1, Ent2
+		end
+	end
+end
+
+function JMod.Nail(ply)
+	local Success, Pos, Vec, Ent1, Ent2 = JMod.FindNailPos(ply)
+	if not Success then return end
+	local Weld = constraint.Find(Ent1, Ent2, "Weld", 0, 0)
+
+	if Weld then
+		local Strength = Weld:GetTable().forcelimit + 3000
+		Weld:Remove()
+
+		timer.Simple(.1, function()
+			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
+		end)
+	else
+		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 3000, false, false)
+	end
+
+	local Nail = ents.Create("prop_dynamic")
+	Nail:SetModel("models/crossbow_bolt.mdl")
+	Nail:SetMaterial("models/shiny")
+	Nail:SetColor(Color(50, 50, 50))
+	Nail:SetPos(Pos - Vec * 2)
+	Nail:SetAngles(Vec:Angle())
+	Nail:Spawn()
+	Nail:Activate()
+	Nail:SetParent(Ent1)
+	Ent1.EZnails = Ent1.EZnails or {}
+	table.insert(Ent1.EZnails, Nail)
+	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+end
+
+function JMod.GetPackagableObject(packager, origin, dir)
+	local PackageBlacklist = {"func_"}
+	local Tr = util.QuickTrace(origin or packager:GetShootPos(), (dir or packager:GetAimVector()) * 80, {packager})
+
+	local Ent = Tr.Entity
+
+	if IsValid(Ent) and not Ent:IsWorld() then
+		if Ent.EZunpackagable then
+			packager:PrintMessage(HUD_PRINTCENTER, "No.")
+
+			return nil
+		end
+
+		if Ent:IsPlayer() or Ent:IsNPC() then return nil end
+		if Ent:IsRagdoll() then return nil end
+		local Constraints, Constrained = constraint.GetTable(Ent), false
+
+		for k, v in pairs(Constraints) do
+			if v.Type ~= "NoCollide" then
+				Constrained = true
+				break
+			end
+		end
+
+		if Constrained then
+			packager:PrintMessage(HUD_PRINTCENTER, "object is constrained")
+
+			return nil
+		end
+
+		for k, v in pairs(PackageBlacklist) do
+			if string.find(Ent:GetClass(), v) then
+				packager:PrintMessage(HUD_PRINTCENTER, "can't package this")
+
+				return nil
+			end
+		end
+
+		return Ent
+	end
+
+	return nil
+end
+
+function JMod.Package(packager)
+	local Ent = JMod.GetPackagableObject(packager)
+
+	if Ent then
+		JMod.PackageObject(Ent)
+		sound.Play("snds_jack_gmod/packagify.wav", packager:GetPos(), 60, math.random(90, 110))
+
+		for i = 1, 3 do
+			timer.Simple(i / 3, function()
+				if IsValid(packager) then
+					sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", packager:GetPos(), 60, math.random(80, 120))
+				end
+			end)
+		end
+	end
+end
+
+function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
+	local Time = CurTime()
+
+	if not IsValid(ent) then return "Invalid Ent" end
+
+	if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then
+		ent:SetNW2Float("EZ"..task.."Progress", 0)
+	end
+	ent:SetNW2Float("EZcancel"..task.."Time", Time + 3)
+	
+	local Prog = ent:GetNW2Float("EZ"..task.."Progress", 0)
+	local Phys = ent:GetPhysicsObject()
+	
+	if IsValid(Phys) then
+		local WorkSpreadMult = JMod.CalcWorkSpreadMult(ent, pos)
+
+		if task == "loosen" then
+			if constraint.HasConstraints(ent) or not Phys:IsMotionEnabled() then
+				local Mass = Phys:GetMass() ^ .8
+				local AddAmt = 300 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
+				ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
+
+				if Prog >= 100 then
+					sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 70, math.random(50, 60))
+					constraint.RemoveAll(ent)
+					Phys:EnableMotion(true)
+					Phys:Wake()
+					ent:SetNW2Float("EZ"..task.."Progress", 0)
+				end
+			else
+				return "object is already unconstrained"
+			end
+		elseif task == "salvage" then
+			if constraint.HasConstraints(ent) or not Phys:IsMotionEnabled() then
+				return "object is constrained"
+			else
+				local Mass = Phys:GetMass() ^ .8
+				local Yield, Message = JMod.GetSalvageYield(ent)
+
+				if #table.GetKeys(Yield) <= 0 then
+					return Message
+				else
+					local AddAmt = 250 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
+					ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
+					
+					if Prog >= 100 then
+						sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 70, math.random(50, 60))
+
+						for k, v in pairs(Yield) do
+							local AmtLeft = v
+
+							while AmtLeft > 0 do
+								local Remove = math.min(AmtLeft, 100 * JMod.Config.MaxResourceMult)
+								local Ent = ents.Create(JMod.EZ_RESOURCE_ENTITIES[k])
+								Ent:SetPos(pos + VectorRand() * 40 + Vector(0, 0, 30))
+								Ent:SetAngles(AngleRand())
+								Ent:Spawn()
+								Ent:Activate()
+								Ent:SetResource(Remove)
+								JMod.SetEZowner(Ent, deconstructor)
+								timer.Simple(.1, function()
+									if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
+										Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
+									end
+								end)
+								AmtLeft = AmtLeft - Remove
+							end
+						end
+						SafeRemoveEntity(ent)
+					end
+				end
+			end
+		end
 	end
 end
 

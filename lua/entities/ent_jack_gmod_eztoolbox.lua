@@ -16,6 +16,12 @@ ENT.JModEZstorable = true
 ---
 local Props = {"models/props_c17/tools_wrench01a.mdl", "models/props_c17/tools_pliers01a.mdl", "models/props_forest/circularsaw01.mdl", "models/props_silo/welding_torch.mdl", "models/props_mining/pickaxe01.mdl", "models/props_silo/welding_helmet.mdl", "models/props_forest/axe.mdl", "models/weapons/w_defuser.mdl", "models/weapons/w_defuser.mdl", "models/props_c17/tools_wrench01a.mdl", "models/props_c17/tools_pliers01a.mdl"}
 
+function ENT:SetupDataTables() 
+	self:NetworkVar("Float", 0, "Electricity")
+	self:NetworkVar("Float", 1, "Gas")
+	self:NetworkVar("Float", 2, "BasicParts")
+end
+
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
@@ -23,12 +29,11 @@ if SERVER then
 		ent:SetAngles(Angle(0, 0, 0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
+		if JMod.Config.SpawnMachinesFull then
+			ent.SpawnFull = true
+		end
 		ent:Spawn()
 		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-
 		return ent
 	end
 
@@ -45,6 +50,13 @@ if SERVER then
 			self:GetPhysicsObject():SetMass(50)
 			self:GetPhysicsObject():Wake()
 		end)
+		self.MaxElectricity = 100
+		self.MaxGas = 100
+		self.MaxBasicParts = 100
+		if self.SpawnFull then
+			self:SetElectricity(100)
+			self:SetGas(100)
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -93,9 +105,9 @@ if SERVER then
 			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
 
 			local ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
-			ToolBox:SetBasicParts(self.EZBasicParts or 0)
-			ToolBox:SetElectricity(self.EZElectricity or 0)
-			ToolBox:SetGas(self.EZGas or 0)
+			ToolBox:SetBasicParts(self:GetBasicParts())
+			ToolBox:SetElectricity(self:GetElectricity())
+			ToolBox:SetGas(self:GetGas())
 
 			self:Remove()
 		else
@@ -103,16 +115,21 @@ if SERVER then
 		end
 	end
 
-	function ENT:Think()
-	end
-
-	--
-	function ENT:OnRemove()
-	end
-	--aw fuck you
 elseif CLIENT then
+	function ENT:Initialize()
+		self.MaxElectricity = 100
+		self.MaxGas = 100
+		self.MaxBasicParts = 100
+	end
 	function ENT:Draw()
 		self:DrawModel()
+		local Opacity = math.random(50, 200)
+		local ElecFrac, GasFrac, PartFrac = self:GetElectricity()/self.MaxElectricity, self:GetGas()/self.MaxGas, self:GetBasicParts()/self.MaxBasicParts
+		JMod.HoloGraphicDisplay(self, Vector(0, -5, 17), Angle(90, -50, 90), .05, 300, function()
+			draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-200,10,JMod.GoodBadColor(ElecFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,10,JMod.GoodBadColor(GasFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			draw.SimpleTextOutlined("PARTS "..math.Round(PartFrac*100).."%","JMod-Display",200,10,JMod.GoodBadColor(PartFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		end)
 	end
 
 	language.Add("ent_jack_gmod_eztoolbox", "EZ Toolbox")

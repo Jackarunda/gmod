@@ -245,6 +245,7 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
+		self:SetNW2Float("EZdurability", self.Durability)
 		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
 		else
@@ -303,7 +304,8 @@ if(SERVER)then
 		if(DmgMult <= .001)then return end
 		local Damage = dmginfo:GetDamage() * DmgMult
 		self.Durability = self.Durability - Damage
-
+		self:SetNW2Float("EZdurability", self.Durability)
+		
 		if(self.Durability <= 0)then self:Break(dmginfo) end
 		if(self.Durability <= -(self.MaxDurability * 2))then self:Destroy(dmginfo) end
 	end
