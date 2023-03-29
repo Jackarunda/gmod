@@ -244,6 +244,7 @@ if(SERVER)then
 
 		if (self.NextOSHAthinkTime < Time) and (State == STATE_RUNNING) then
 			self.NextOSHAthinkTime = Time + .1
+			local HitEnts = {self}
 			local BasePos = SelfPos + Up * (-10 - Prog)
 			local HullTr = util.TraceHull({
 				start = SelfPos + Up * (-100 - Prog),
@@ -269,13 +270,14 @@ if(SERVER)then
 						Dmg:SetAttacker(JMod.GetEZowner(self))
 						ent:TakeDamageInfo(Dmg)
 						--print(tostring(ent))
+						table.insert(HitEnts, ent)
 					end
 					util.TraceHull({
 						start = SelfPos + Up * (-100 - Prog) * HullTr.Fraction,
 						endpos = BasePos,
 						maxs = Vector(6, 6, 6),
 						mins = Vector(-6, -6, -6),
-						filter = self,
+						filter = HitEnts,
 						mask = MASK_SOLID,
 						ignoreworld = true,
 						output = HullTr
@@ -327,7 +329,7 @@ elseif(CLIENT)then
 		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
 		local MotorPos = BoxPos + Up * -45 + Right * -3
 		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
-		local PipePos = DrillPos + Up * 150.5 + Right * -8.5
+		local PipePos = DrillPos + Up * 145 + Right * -8.5
 		--
 		if self.CurDepth - self:GetProgress() > 1 then
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
@@ -364,7 +366,7 @@ elseif(CLIENT)then
 		if DrillDraw then
 			MotorAng:RotateAroundAxis(Up, -90)
 			MotorAng:RotateAroundAxis(Forward, 90)
-			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 0.9, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 			local DrillAng = SelfAng:GetCopy()
 			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
 			JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
