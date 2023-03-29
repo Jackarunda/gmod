@@ -908,6 +908,9 @@ JMod.ArmorTable = {
 		plymdl = "models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
+		eff = {
+			eyePro = true
+		},
 		wgt = 15,
 		dur = 8,
 		ent = "ent_jack_gmod_ezarmor_hazmat"
