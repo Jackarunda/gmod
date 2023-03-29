@@ -167,6 +167,9 @@ JMod.ArmorTable = {
 		pos = Vector(0, .1, 0),
 		ang = Angle(100, 180, 90),
 		wgt = 5,
+		eff = {
+			eyePro = true
+		},
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
 		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_gasmask",

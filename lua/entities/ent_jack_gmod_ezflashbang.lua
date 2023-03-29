@@ -32,9 +32,13 @@ if SERVER then
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
 		local plooie = EffectData()
 		plooie:SetOrigin(SelfPos)
-		util.Effect("eff_jack_gmod_flashbang", plooie, true, true)
-		util.ScreenShake(SelfPos, 20, 20, .2, 1000)
-
+		for k,ply in pairs(player.GetHumans()) do 
+			if ply.EZarmor and not (ply.EZarmor.effects.eyePro) then 
+				util.Effect("eff_jack_gmod_flashbang", plooie, true, true)
+				util.ScreenShake(SelfPos, 20, 20, .2, 1000)
+			else return nil
+			end
+		end
 		for k, v in pairs(ents.FindInSphere(SelfPos, 200)) do
 			if v:IsNPC() then
 				v.EZNPCincapacitate = Time + math.Rand(3, 5)
