@@ -703,6 +703,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 			Ragdoll:SetModel(ply:GetModel())
 		end
 		Ragdoll:SetPos(ply:GetPos())
+		Ragdoll:SetAngles(ply:GetAngles())
 		Ragdoll:Spawn()
 		Ragdoll:Activate()
 		if IsValid(Ragdoll) then

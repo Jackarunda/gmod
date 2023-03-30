@@ -12,6 +12,41 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 1, "Offset")
 end
 
+hook.Remove("UpdateAnimation", "JMOD_PARACHUTE_ANIM")
+--[[hook.Add("UpdateAnimation", "JMOD_PARACHUTE_ANIM", function(ply, vel, maxSped)
+	if IsValid(ply) and ply:GetNW2Bool("EZparachuting", false) and IsFirstTimePredicted() then
+		--ply:SetPoseParameter("aim_pitch", math.sin(CurTime()) * 90)
+		--ply:SetPoseParameter("aim_yaw", math.sin(CurTime()) * 90)
+		--ply:SetPoseParameter("body_yaw", math.sin(CurTime()) * 90)
+		--ply:SetPoseParameter("body_pitch", math.sin(CurTime()) * 90)
+		--jprint(ply:GetPoseParameter("body_pitch"))
+		if SERVER then
+			for i = 0, ply:GetNumPoseParameters() - 1 do
+				local sPose = ply:GetPoseParameterName(i)
+				ply:SetPoseParameter(sPose, math.sin(CurTime()) * 90)
+				--jprint(sPose, ply:GetPoseParameter(sPose))
+			end
+		else
+			for i = 0, ply:GetNumPoseParameters() - 1 do
+				local flMin, flMax = ply:GetPoseParameterRange(i)
+				local sPose = ply:GetPoseParameterName(i)
+				ply:SetPoseParameter(sPose, math.Remap(math.sin(CurTime()) * 90, 0, 1, flMin, flMax))
+			end
+		end
+		if CLIENT then 
+			ply:InvalidateBoneCache()
+			ply:SetupBones() 
+		end
+		--return false
+	end
+end)]]--
+hook.Remove("CalcMainActivity", "JMOD_PARACHUTE_ANIM")
+--[[hook.Add("CalcMainActivity", "JMOD_PARACHUTE_ANIM", function(ply, vel) 
+	if ply:GetNW2Bool("EZparachuting", false) then
+		return ACT_MP_STAND_IDLE, 24
+	end
+end)]]--
+
 if SERVER then
 	function ENT:Initialize()
 		self:SetModel(self.ParachuteMdl or "models/jessev92/bf2/parachute.mdl")

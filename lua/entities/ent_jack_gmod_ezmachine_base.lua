@@ -127,10 +127,10 @@ ENT.DamageTypeTable={
 	[DMG_FALL]=1,
 	[DMG_SONIC]=.6,
 	[DMG_ENERGYBEAM]=.8,
-	[DMG_SLOWBURN]=.3,
+	[DMG_SLOWBURN]=.1,
 	[DMG_PHYSGUN]=1,
-	[DMG_AIRBOAT]=.5,
-	[DMG_DISSOLVE]=.6,
+	[DMG_AIRBOAT]=.75,
+	[DMG_DISSOLVE]=.8,
 	[DMG_BLAST_SURFACE]=.8,
 	[DMG_DIRECT]=.3,
 	[DMG_GENERIC]=1,
@@ -261,20 +261,25 @@ if(SERVER)then
 		self.NextRefillTime = 0
 	end
 
-	function ENT:PhysicsCollide(data,physobj)
+	function ENT:PhysicsCollide(data, physobj)
 		if((data.Speed>80)and(data.DeltaTime>0.2))then
 			self:EmitSound("Metal_Box.ImpactHard")
-			if(data.Speed>800 and not self:IsPlayerHolding() and not (data.HitEntity and data.HitEntity.IsPlayerHolding and data.HitEntity:IsPlayerHolding()))then
+			local Ent = data.HitEntity
+			local Held = false
+			if self:IsPlayerHolding() or Ent:IsPlayerHolding() then Held = true end
+			if(data.Speed>800)then
 				local Dam,World=DamageInfo(),game.GetWorld()
-				Dam:SetDamage(data.Speed/3)
-				Dam:SetAttacker(data.HitEntity or World)
-				Dam:SetInflictor(data.HitEntity or World)
+				Dam:SetDamage((not(Held) and data.Speed/5) or 0)
+				Dam:SetAttacker(Ent or World)
+				Dam:SetInflictor(Ent or World)
 				Dam:SetDamageType(DMG_CRUSH)
 				Dam:SetDamagePosition(data.HitPos)
-				Dam:SetDamageForce(data.TheirOldVelocity)
-				JMod.DamageSpark(self)
+				Dam:SetDamageForce(data.TheirOldVelocity / physobj:GetMass())
+				if Held then
+					JMod.DamageSpark(self)
+					self:EmitSound("Metal_Box.Break")
+				end
 				self:TakeDamageInfo(Dam)
-				self:EmitSound("Metal_Box.Break")
 			end
 		end
 	end
