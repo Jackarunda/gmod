@@ -266,10 +266,12 @@ if(SERVER)then
 			self:EmitSound("Metal_Box.ImpactHard")
 			local Ent = data.HitEntity
 			local Held = false
-			if self:IsPlayerHolding() or Ent:IsPlayerHolding() then Held = true end
+			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if(data.Speed>800)then
-				local Dam,World=DamageInfo(),game.GetWorld()
-				Dam:SetDamage((not(Held) and data.Speed/5) or 0)
+				local Dam, World=DamageInfo(), game.GetWorld()
+				local PhysDamage = math.Round(data.Speed / (physobj:GetMass() / data.HitObject:GetMass())^2, 2)
+				--jprint(data.HitObject:GetMass())
+				Dam:SetDamage((not(Held) and PhysDamage) or 0)
 				Dam:SetAttacker(Ent or World)
 				Dam:SetInflictor(Ent or World)
 				Dam:SetDamageType(DMG_CRUSH)
@@ -308,6 +310,7 @@ if(SERVER)then
 		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
 		if(DmgMult <= .001)then return end
 		local Damage = dmginfo:GetDamage() * DmgMult
+		--jprint(Damage)
 		self.Durability = self.Durability - Damage
 		self:SetNW2Float("EZdurability", self.Durability)
 
