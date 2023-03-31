@@ -9,7 +9,7 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 ENT.JModEZstorable = true
 

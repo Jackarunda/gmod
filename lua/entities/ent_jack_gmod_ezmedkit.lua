@@ -9,12 +9,16 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -180, 0)
 ENT.DamageThreshold = 120
 ENT.JModEZstorable = true
 
 ---
 local Props = {"models/jmod/items/healthkit.mdl", "models/healthvial.mdl", "models/jmod/items/medjit_medium.mdl", "models/jmod/items/medjit_small.mdl", "models/weapons/w_models/w_syringe.mdl", "models/weapons/w_models/w_syringe_proj.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
+
+function ENT:SetupDataTables() 
+	self:NetworkVar("Float", 0, "Supplies")
+end
 
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -45,6 +49,8 @@ if SERVER then
 			self:GetPhysicsObject():SetMass(50)
 			self:GetPhysicsObject():Wake()
 		end)
+		self.MaxSupplies = 100
+		self:SetSupplies(self.MaxSupplies)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -96,7 +102,7 @@ if SERVER then
 				local Wep = activator:GetWeapon("wep_jack_gmod_ezmedkit")
 
 				if IsValid(Wep) then
-					Wep:SetSupplies(self.Supplies or 50)
+					Wep:SetSupplies(self:GetSupplies())
 				end
 
 				self:Remove()
@@ -119,6 +125,7 @@ elseif CLIENT then
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
 		self.Mdl:SetNoDraw(true)
+		self.MaxSupplies = 100
 	end
 
 	function ENT:Draw()
@@ -127,6 +134,11 @@ elseif CLIENT then
 		self.Mdl:SetRenderOrigin(self:GetPos() - self:GetUp() * 4)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
+		local Opacity = math.random(50, 200)
+		local SupplyFrac = self:GetSupplies()/self.MaxSupplies
+		JMod.HoloGraphicDisplay(self, Vector(0, 6, 17), Angle(-90, 55, 90), .05, 300, function()
+			draw.SimpleTextOutlined("SUPPLIES "..math.Round(SupplyFrac*100).."%","JMod-Display",0,-5,JMod.GoodBadColor(SupplyFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		end)
 	end
 
 	language.Add("ent_jack_gmod_ezmedkit", "EZ Medkit")

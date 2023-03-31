@@ -9,7 +9,7 @@ ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/jmod/machines/gas_smelter.mdl"
-ENT.Mass = 500
+ENT.Mass = 750
 ENT.SpawnHeight = 10
 ---
 ENT.EZconsumes = {

@@ -21,7 +21,7 @@ ENT.EZconsumes = {
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
-	MaxDurability = 100,
+	MaxDurability = 150,
 	Armor = .8,
 	MaxElectricity = 300,
 	MaxGas = 300,

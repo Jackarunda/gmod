@@ -488,7 +488,7 @@ function SWEP:OnDrop()
 	Kit:SetAngles(self:GetAngles())
 	Kit:Spawn()
 	Kit:Activate()
-	Kit.Supplies = self:GetSupplies()
+	Kit:SetSupplies(self:GetSupplies())
 	local Phys = Kit:GetPhysicsObject()
 
 	if Phys then

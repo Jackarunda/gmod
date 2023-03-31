@@ -113,7 +113,7 @@ ENT.DamageTypeTable={
 	[DMG_BULLET]=.5,
 	[DMG_SLASH]=.2,
 	[DMG_BLAST]=.8,
-	[DMG_CLUB]=.9,
+	[DMG_CLUB]=.5,
 	[DMG_SHOCK]=1,
 	[DMG_BURN]=.3,
 	[DMG_ACID]=.4,
@@ -270,7 +270,7 @@ if(SERVER)then
 			if(data.Speed>800)then
 				local Dam, World=DamageInfo(), game.GetWorld()
 				local PhysDamage = math.Round(data.Speed / (physobj:GetMass() / data.HitObject:GetMass())^2, 2)
-				--jprint(data.HitObject:GetMass())
+				--jprint(PhysDamage)
 				Dam:SetDamage((not(Held) and PhysDamage) or 0)
 				Dam:SetAttacker(Ent or World)
 				Dam:SetInflictor(Ent or World)
@@ -308,7 +308,7 @@ if(SERVER)then
 		self:TakePhysicsDamage(dmginfo)
 		--
 		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
-		if(DmgMult <= .001)then return end
+		if(DmgMult <= .01)then return end
 		local Damage = dmginfo:GetDamage() * DmgMult
 		--jprint(Damage)
 		self.Durability = self.Durability - Damage
