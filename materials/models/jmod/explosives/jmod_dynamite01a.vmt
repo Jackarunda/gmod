@@ -1,0 +1,5 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/explosives/jmod_dynamite01a
+	$surfaceprop	paper
+}

@@ -9,7 +9,7 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(-90, 90, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.JModEZstorable = true
 ENT.JModHighlyFlammableFunc = "Arm"
 
@@ -36,9 +36,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmod/explosives/grenades/dynamite/dynamite.mdl")
-		--self:SetModelScale(.25, 0)
-		self:SetMaterial("models/entities/mat_jack_dynamite")
+		self:SetModel("models/jmod/explosives/grenades/dynamite/jmod_dynamite01a.mdl")
 		self:SetBodygroup(0, 0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -158,12 +156,17 @@ if SERVER then
 		local state = self:GetState()
 
 		if state == JMod.EZ_STATE_ARMED then
-			local Fsh = EffectData()
-			Fsh:SetOrigin(self:GetPos() + self:GetForward() * 6)
-			Fsh:SetScale(1)
-			Fsh:SetNormal(self:GetForward())
-			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
-			self.Entity:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))
+			if self.Fuze > 10 then
+				local AttNum = self:LookupAttachment("spark")
+				local Att = self:GetAttachment(AttNum)
+				local Fsh = EffectData()
+				Fsh:SetOrigin(self:GetPos() + self:GetUp() * 10 * (self.Fuze / 100))
+				Fsh:SetScale(1)
+				Fsh:SetNormal(-Att.Ang:Right())
+				util.Effect("eff_jack_fuzeburn", Fsh, true, true)
+				self:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))
+			end
+
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
 			self.Fuze = self.Fuze - .7
 
@@ -181,7 +184,7 @@ if SERVER then
 
 	function ENT:OnRemove()
 	end
-	--aw fuck you
+
 elseif CLIENT then
 	function ENT:Initialize()
 	end
