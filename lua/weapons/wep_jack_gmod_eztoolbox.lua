@@ -223,6 +223,7 @@ function SWEP:Initialize()
 	self.TaskEntity = nil
 	self.NextTaskProgress = 0
 	self.CurTask = nil
+	self.CurrentBuildSize = 1
 
 	if SERVER then
 		self.Craftables = {}
@@ -297,7 +298,7 @@ function SWEP:PrimaryAttack()
 		if SelectedBuild and SelectedBuild ~= "" then
 			local buildInfo = self.Craftables[SelectedBuild]
 			if not buildInfo then return end
-			if not(self:GetElectricity() >= 6 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 8 * (buildInfo.sizeScale or 1)) then
+			if not(self:GetElectricity() >= 8 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (buildInfo.sizeScale or 1)) then
 				self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 				return
 			end
@@ -575,6 +576,7 @@ end]]--
 
 function SWEP:SwitchSelectedBuild(name)
 	self:SetSelectedBuild(name)
+	self.CurrentBuildSize = 1
 end
 
 function SWEP:Reload()
@@ -836,8 +838,12 @@ function SWEP:DrawHUD()
 	local Ent = Tr.Entity
 	if IsValid(Ent) and Ent.Base == "ent_jack_gmod_ezmachine_base" then
 		draw.SimpleTextOutlined((Ent.PrintName and tostring(Ent.PrintName)) or tostring(Ent), "Trebuchet24", W * .7, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-		draw.SimpleTextOutlined("Durability: "..tostring(Ent:GetNW2Float("EZdurability", 0) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		if Ent.MaxDurability then
+		draw.SimpleTextOutlined("Durability: "..tostring(math.Round(Ent:GetNW2Float("EZdurability", 0)) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		end
+		if Ent.GetGrade and Ent:GetGrade() > 0 then
 		draw.SimpleTextOutlined("Grade: "..tostring(Ent:GetGrade()), "Trebuchet24", W * .7, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		end
 	end
 
 	LastProg = Lerp(FrameTime() * 5, LastProg, Prog)

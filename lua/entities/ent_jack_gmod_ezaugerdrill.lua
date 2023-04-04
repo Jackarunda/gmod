@@ -19,7 +19,7 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 1.75
 }
 --
 --ENT.WhitelistedResources = {}

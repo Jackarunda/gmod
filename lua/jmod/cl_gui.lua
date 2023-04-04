@@ -603,6 +603,18 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.WriteEntity(ent)
 		net.WriteString(name)
 		net.SendToServer()
+		ent.CurrentBuildSize = info.sizeScale or 1
+		SafeRemoveEntity(ent.PreivewEnt)
+		if string.find(info.results, "ent_") then
+			local ClientPreview = ents.CreateClientside(info.results)
+			ClientPreview:SetPos(ply:GetPos())
+			ClientPreview:Spawn()
+			ClientPreview:Activate()
+			ClientPreview:SetColor(Color(255, 255, 255, 100))
+			ClientPreview:SetRenderMode(RENDERMODE_TRANSCOLOR)
+			ClientPreview:SetNoDraw(true)
+			ent.PreivewEnt = ClientPreview
+		end
 	end, nil)
 end)
 

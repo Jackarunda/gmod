@@ -589,32 +589,43 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 	end
 end)
 
+local Translucent = Color(255, 255, 255, 100)
 hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", function()
 	local ply, Time = LocalPlayer(), CurTime()
+	
+	if ply:Alive() then
+		if ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+			for key, targ in pairs(WHOTents) do
+				if IsValid(targ) then
+					local Br = .9
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
-		for key, targ in pairs(WHOTents) do
-			if IsValid(targ) then
-				local Br = .9
-
-				if targ.EZWHOTcoldTime then
-					Br = .75 * (targ.EZWHOTcoldTime - Time) / 30
-				end
-
-				if Br > .1 then
-					render.ModelMaterialOverride(ThermalGlowMat)
-					render.SuppressEngineLighting(true)
-					render.SetColorModulation(Br, Br, Br)
-
-					if targ:GetRenderMode() == RENDERMODE_TRANSALPHA then
-						targ:DrawModel()
+					if targ.EZWHOTcoldTime then
+						Br = .75 * (targ.EZWHOTcoldTime - Time) / 30
 					end
 
-					render.SetColorModulation(1, 1, 1)
-					render.SuppressEngineLighting(false)
-					render.ModelMaterialOverride(nil)
+					if Br > .1 then
+						render.ModelMaterialOverride(ThermalGlowMat)
+						render.SuppressEngineLighting(true)
+						render.SetColorModulation(Br, Br, Br)
+
+						if targ:GetRenderMode() == RENDERMODE_TRANSALPHA then
+							targ:DrawModel()
+						end
+
+						render.SetColorModulation(1, 1, 1)
+						render.SuppressEngineLighting(false)
+						render.ModelMaterialOverride(nil)
+					end
 				end
 			end
+		end
+		local ActiveWep = ply:GetActiveWeapon()
+		if ActiveWep:GetClass() == "wep_jack_gmod_eztoolbox" and IsValid(ActiveWep.PreivewEnt) then
+			local Ent, Pos, Normal = ActiveWep:WhomIlookinAt()
+			ActiveWep.PreivewEnt:SetPos(Pos + Normal * 10 * ActiveWep.CurrentBuildSize)
+			ActiveWep.PreivewEnt:SetAngles(Angle(0, ply:EyeAngles().y, 0))
+			ActiveWep.PreivewEnt:DrawModel()
+			--ActiveWep.PreivewEnt:SetColor(Translucent)
 		end
 	end
 end)

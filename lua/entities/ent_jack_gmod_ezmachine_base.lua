@@ -106,11 +106,11 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
 ENT.FlexFuels = nil -- "Flex Fuels" are other resource types that the machine will load as electricity
-ENT.DamageTypeTable={
+ENT.DefualtDamageTypeTable={
 	[DMG_BUCKSHOT]=.2,
-	[DMG_SNIPER]=.7,
+	[DMG_SNIPER]=.6,
 	[DMG_CRUSH]=1,
-	[DMG_BULLET]=.5,
+	[DMG_BULLET]=.3,
 	[DMG_SLASH]=.2,
 	[DMG_BLAST]=.8,
 	[DMG_CLUB]=.5,
@@ -243,6 +243,7 @@ if(SERVER)then
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
+		self.DamageTypeTable = self.DefualtDamageTypeTable
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
 		self:SetNW2Float("EZdurability", self.Durability)
@@ -310,8 +311,8 @@ if(SERVER)then
 		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
 		if(DmgMult <= .01)then return end
 		local Damage = dmginfo:GetDamage() * DmgMult
-		--jprint(Damage)
-		self.Durability = self.Durability - Damage
+		jprint(Damage)
+		self.Durability = self.Durability - math.Round(Damage, 2)
 		self:SetNW2Float("EZdurability", self.Durability)
 
 		if(self.Durability <= 0)then self:Break(dmginfo) end
@@ -414,7 +415,7 @@ if(SERVER)then
 					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110)) -- TODO: new sound here
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
-					if(Missing <= self.MaxDurability * .25)then return 0 end
+					if(Missing <= 0)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self.Durability = self.Durability + Accepted
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
@@ -543,6 +544,7 @@ elseif(CLIENT)then
 	end)
 
 	function ENT:Initialize()
+		self:SetModel(self.Model)
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
 		self:InitPerfSpecs()
