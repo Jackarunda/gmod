@@ -146,6 +146,19 @@ if SERVER then
 		self:Remove()
 	end
 
+	function ENT:BurnFuze(amt) 
+		self.Fuze = self.Fuze - amt
+
+		if self.Fuze <= 0 then
+			self:Detonate()
+
+			return
+		end
+		local BoneIndex = self:LookupBone("Fuze"..math.Round(self.Fuze/10))
+		--local BoneMatrix = self:GetBoneMatrix(BoneIndex)
+		jprint(BoneIndex)
+	end
+
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
@@ -160,7 +173,8 @@ if SERVER then
 				local AttNum = self:LookupAttachment("spark")
 				local Att = self:GetAttachment(AttNum)
 				local Fsh = EffectData()
-				Fsh:SetOrigin(self:GetPos() + self:GetUp() * 10 * (self.Fuze / 100))
+				--Fsh:SetOrigin(self:GetPos() + self:GetUp() * 10 * (self.Fuze / 100))
+				Fsh:SetOrigin(Att.Pos)
 				Fsh:SetScale(1)
 				Fsh:SetNormal(-Att.Ang:Right())
 				util.Effect("eff_jack_fuzeburn", Fsh, true, true)
@@ -168,13 +182,8 @@ if SERVER then
 			end
 
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
-			self.Fuze = self.Fuze - .7
-
-			if self.Fuze <= 0 then
-				self:Detonate()
-
-				return
-			end
+			self:BurnFuze(.7)
+			
 
 			self:NextThink(Time + .05)
 
