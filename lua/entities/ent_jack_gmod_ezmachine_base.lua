@@ -11,6 +11,7 @@ ENT.NoSitAllowed=true
 ----
 ENT.Model="models/props_lab/reciever01d.mdl"
 ENT.Mass=150
+ENT.IsJackyEZmachine=true
 ----
 ENT.PropModels={
 	"models/props_lab/reciever01d.mdl",

@@ -704,6 +704,45 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
+	if ent.IsJackyEZmachine then
+		if ent.GetElectricity then
+			Results[JMod.EZ_RESOURCE_TYPES.POWER] = Results[JMod.EZ_RESOURCE_TYPES.POWER] or 0 + ent:GetElectricity()
+		end
+		if ent.GetGas then
+			Results[JMod.EZ_RESOURCE_TYPES.GAS] = Results[JMod.EZ_RESOURCE_TYPES.GAS] or 0 + ent:GetGas()
+		end
+		if ent.GetCoolant then
+			Results[JMod.EZ_RESOURCE_TYPES.COOLANT] = Results[JMod.EZ_RESOURCE_TYPES.COOLANT] or 0 + ent:GetCoolant()
+		end
+		if ent.GetWater then
+			Results[JMod.EZ_RESOURCE_TYPES.WATER] = Results[JMod.EZ_RESOURCE_TYPES.WATER] or 0 + ent:GetWater()
+		end
+		if ent.GetChemicals then
+			Results[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = Results[JMod.EZ_RESOURCE_TYPES.CHEMICALS] or 0 + ent:GetChemicals()
+		end
+		if ent.GetOil then
+			Results[JMod.EZ_RESOURCE_TYPES.OIL] = Results[JMod.EZ_RESOURCE_TYPES.Oil] or 0 + ent:GetOil()
+		end
+		if ent.GetFuel then
+			Results[JMod.EZ_RESOURCE_TYPES.FUEL] = Results[JMod.EZ_RESOURCE_TYPES.FUEL] or 0 + ent:GetFuel()
+		end
+		if ent.GetAmmo then
+			Results[JMod.EZ_RESOURCE_TYPES.AMMO] = Results[JMod.EZ_RESOURCE_TYPES.AMMO] or 0 + ent:GetAmmo()
+		end
+		if ent.GetMunitions then
+			Results[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = Results[JMod.EZ_RESOURCE_TYPES.MUNITIONS] or 0 + ent:GetMunitions()
+		end
+		if ent.GetSupplies then
+			Results[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = Results[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] or 0 + ent:GetSupplies()
+		end
+		if ent.GetCoal then
+			Results[JMod.EZ_RESOURCE_TYPES.COAL] = Results[JMod.EZ_RESOURCE_TYPES.COAL] or 0 + ent:GetCoal()
+		end
+		if ent.GetOre and ent.GetOreType and ent.GetOreType() ~= "generic" then
+			Results[ent.GetOreType()] = Results[ent.GetOreType()] or 0 + ent:GetOre()
+		end
+	end
+
 	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
 end
 
