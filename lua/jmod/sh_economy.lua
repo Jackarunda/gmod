@@ -624,6 +624,20 @@ local SpecializedSalvagingTable = {
 	}
 }
 
+local ResourceToMethod = {
+	[JMod.EZ_RESOURCE_TYPES.POWER] = "Electricity",
+	[JMod.EZ_RESOURCE_TYPES.GAS] = "Gas",
+	[JMod.EZ_RESOURCE_TYPES.COOLANT] = "Coolant",
+	[JMod.EZ_RESOURCE_TYPES.WATER] = "Water",
+	[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = "Chemicals",
+	[JMod.EZ_RESOURCE_TYPES.OIL] = "Oil",
+	[JMod.EZ_RESOURCE_TYPES.FUEL] = "Fuel",
+	[JMod.EZ_RESOURCE_TYPES.AMMO] = "Ammo",
+	[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = "Munitions",
+	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = "Supplies",
+	[JMod.EZ_RESOURCE_TYPES.COAL] = "Coal"
+}
+
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
@@ -705,6 +719,18 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	if ent.IsJackyEZmachine then
+		for k, v in pairs(ResourceToMethod) do
+			local ReourceMethod = ent["Get"..v]
+			if ent["Get"..v] then
+				Results = Results[k] or 0 + ent["Get"..v]()
+			end
+			if ent.GetOre and ent.GetOreType and ent.GetOreType() ~= "generic" then
+				Results[ent.GetOreType()] = Results[ent.GetOreType()] or 0 + ent:GetOre()
+			end
+		end
+	end
+
+	--[[if ent.IsJackyEZmachine then
 		if ent.GetElectricity then
 			Results[JMod.EZ_RESOURCE_TYPES.POWER] = Results[JMod.EZ_RESOURCE_TYPES.POWER] or 0 + ent:GetElectricity()
 		end
@@ -741,7 +767,7 @@ function JMod.GetSalvageYield(ent)
 		if ent.GetOre and ent.GetOreType and ent.GetOreType() ~= "generic" then
 			Results[ent.GetOreType()] = Results[ent.GetOreType()] or 0 + ent:GetOre()
 		end
-	end
+	end]]--
 
 	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
 end

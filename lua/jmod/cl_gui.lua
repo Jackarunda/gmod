@@ -610,8 +610,8 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 			ClientPreview:SetPos(ply:GetPos())
 			ClientPreview:Spawn()
 			ClientPreview:Activate()
-			ClientPreview:SetColor(Color(255, 255, 255, 100))
 			ClientPreview:SetRenderMode(RENDERMODE_TRANSCOLOR)
+			ClientPreview:SetColor(Color(255, 255, 255, 100))
 			ClientPreview:SetNoDraw(true)
 			ent.PreivewEnt = ClientPreview
 		end
