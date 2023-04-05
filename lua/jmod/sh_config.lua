@@ -615,7 +615,8 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5
 				},
-				sizeScale = .2,
+				oneHanded = true,
+				sizeScale = .1,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"

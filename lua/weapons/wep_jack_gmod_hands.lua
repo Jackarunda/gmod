@@ -160,7 +160,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:ApplyForce()
-	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos()
+	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos() + Vector(0, 0, 1)
 	local phys = self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
 
 	if IsValid(phys) then
@@ -184,9 +184,13 @@ function SWEP:ApplyForce()
 		end
 
 		vec:Normalize()
-		local avec, velo = vec * len, phys:GetVelocity() - self.Owner:GetVelocity()
+		local avec, velo = vec * len^1.5, phys:GetVelocity() - self.Owner:GetVelocity()
 		local Force = (avec - velo / 2) * mul
+		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 4000 * JMod.Config.HandGrabStrength)
+		Force = ForceNormal * ForceMagnitude
+		jprint(ForceMagnitude)
 
 		if ForceMagnitude > 4000 * JMod.Config.HandGrabStrength then
 			self:SetCarrying()
@@ -298,10 +302,12 @@ end
 function SWEP:PrimaryAttack()
 	if SERVER then
 		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
+
 		if self.Owner:KeyDown(JMod.Config.AltFunctionKey) and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
 			local ToolBox = self.Owner:GetWeapon("wep_jack_gmod_eztoolbox")
 			local SelectedBuild = ToolBox:GetSelectedBuild()
-			if JMod.Config.Craftables[SelectedBuild].results == "ez nail" then
+			local BuildInfo = JMod.Config.Craftables[SelectedBuild]
+			if BuildInfo and BuildInfo.oneHanded then
 				self.Owner:SelectWeapon(ToolBox)
 				ToolBox:BuildItem(SelectedBuild)
 				timer.Simple(0.1, function()
