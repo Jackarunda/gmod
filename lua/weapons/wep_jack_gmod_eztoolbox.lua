@@ -285,6 +285,99 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
+function SWEP:BuildItem(selectedBuild)
+	local Built = false
+	local Ent, Pos, Norm = self:WhomIlookinAt()
+	local buildInfo = self.Craftables[selectedBuild]
+	if not buildInfo then return end
+	if not(self:GetElectricity() >= 8 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (buildInfo.sizeScale or 1)) then
+		self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
+		return
+	end
+	if (buildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
+	if (buildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
+	local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
+	local Reqs = table.FullCopy(buildInfo.craftingReqs)
+
+	local PartsDonated = 0
+	local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
+	if Reqs[EZbasicParts] and (Reqs[EZbasicParts] > 0) and (self:GetBasicParts() > 0) then
+		local RequiredParts = Reqs[EZbasicParts]
+		local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
+
+		PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
+		Reqs[EZbasicParts] = RemainingParts
+	end
+
+	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
+		local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, buildInfo)
+
+		if override == false then
+			self:Msg(msg or "cannot build")
+
+			return
+		end
+
+		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
+		Built = true
+		local BuildSteps = math.ceil(20 * (buildInfo.sizeScale or 1))
+
+		for i = 1, BuildSteps do
+			timer.Simple(i / 100, function()
+				if IsValid(self) then
+					if i < BuildSteps then
+						if Sound then
+							sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+						end
+					else
+						local Class = buildInfo.results
+
+						if Class == "ez nail" then
+							JMod.Nail(self.Owner)
+						elseif Class == "ez box" then
+							JMod.Package(self.Owner)
+						else
+							local StringParts = string.Explode(" ", Class)
+
+							if StringParts[1] and (StringParts[1] == "FUNC") then
+								local FuncName = StringParts[2]
+
+								if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
+									JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (buildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
+								else
+									print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
+								end
+							else
+								local Ent = ents.Create(Class)
+								Ent:SetPos(Pos + Norm * 20 * (buildInfo.sizeScale or 1))
+								Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
+								JMod.SetEZowner(Ent, self.Owner)
+								Ent:Spawn()
+								Ent:Activate()
+								JMod.Hint(self.Owner, Class)
+								self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (buildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
+								self:SetGas(math.Clamp(self:GetGas() - 4 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
+							end
+						end
+						if PartsDonated > 0 then
+							self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
+						end
+						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
+					end
+				end
+			end)
+		end
+	end
+
+	if not Built then
+		self:Msg("missing supplies for build")
+	else
+		self:BuildEffect(Pos, selectedBuild, not Sound)
+	end
+	
+	return Built
+end
+
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:Pawnch()
@@ -296,90 +389,7 @@ function SWEP:PrimaryAttack()
 		local Ent, Pos, Norm = self:WhomIlookinAt()
 
 		if SelectedBuild and SelectedBuild ~= "" then
-			local buildInfo = self.Craftables[SelectedBuild]
-			if not buildInfo then return end
-			if not(self:GetElectricity() >= 8 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (buildInfo.sizeScale or 1)) then
-				self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
-				return
-			end
-			if (buildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
-			if (buildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
-			local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
-			local Reqs = table.FullCopy(buildInfo.craftingReqs)
-
-			local PartsDonated = 0
-			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-			if Reqs[EZbasicParts] and (Reqs[EZbasicParts] > 0) and (self:GetBasicParts() > 0) then
-				local RequiredParts = Reqs[EZbasicParts]
-				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
-
-				PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
-				Reqs[EZbasicParts] = RemainingParts
-			end
-
-			if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
-				local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, buildInfo)
-
-				if override == false then
-					self:Msg(msg or "cannot build")
-
-					return
-				end
-
-				JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
-				Built = true
-				local BuildSteps = math.ceil(20 * (buildInfo.sizeScale or 1))
-
-				for i = 1, BuildSteps do
-					timer.Simple(i / 100, function()
-						if IsValid(self) then
-							if i < BuildSteps then
-								if Sound then
-									sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
-								end
-							else
-								local Class = buildInfo.results
-
-								if Class == "ez nail" then
-									JMod.Nail(self.Owner)
-								elseif Class == "ez box" then
-									JMod.Package(self.Owner)
-								else
-									local StringParts = string.Explode(" ", Class)
-
-									if StringParts[1] and (StringParts[1] == "FUNC") then
-										local FuncName = StringParts[2]
-
-										if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-											JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (buildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
-										else
-											print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
-										end
-									else
-										local Ent = ents.Create(Class)
-										Ent:SetPos(Pos + Norm * 20 * (buildInfo.sizeScale or 1))
-										Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
-										JMod.SetEZowner(Ent, self.Owner)
-										Ent:Spawn()
-										Ent:Activate()
-										JMod.Hint(self.Owner, Class)
-										self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (buildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
-										self:SetGas(math.Clamp(self:GetGas() - 4 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
-									end
-								end
-								if PartsDonated > 0 then
-									self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
-								end
-								self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
-							end
-						end
-					end)
-				end
-			end
-
-			if not Built then
-				self:Msg("missing supplies for build")
-			end
+			Built = self:BuildItem(SelectedBuild)
 		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
 			local State = Ent:GetState()
 
@@ -458,13 +468,9 @@ function SWEP:PrimaryAttack()
 				end
 			end
 		end
-
-		if Built or Upgraded then
-			if Built then
-				self:BuildEffect(Pos, SelectedBuild, not Sound)
-			elseif Upgraded then
-				self:UpgradeEffect(Pos, nil, not Sound)
-			end
+		
+		if Upgraded then
+			self:UpgradeEffect(Pos, nil, not Sound)
 		end
 	end
 end
@@ -600,7 +606,7 @@ end
 function SWEP:BuildEffect(pos, buildType, suppressSound)
 	if CLIENT then return end
 	local Scale = (self.Craftables[buildType].sizeScale or 1) ^ .5
-	self:UpgradeEffect(pos, Scale * 4, suppressSound)
+	self:UpgradeEffect(pos, Scale * 2, suppressSound)
 	local eff = EffectData()
 	eff:SetOrigin(pos + VectorRand())
 	eff:SetScale(Scale)

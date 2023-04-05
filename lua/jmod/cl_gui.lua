@@ -604,7 +604,7 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.WriteString(name)
 		net.SendToServer()
 		ent.CurrentBuildSize = info.sizeScale or 0
-		ent.EZpreviewBox = {mins = Vector(info.sizeScale * -20, info.sizeScale * -20, info.sizeScale * -20), maxs = Vector(info.sizeScale * 20, info.sizeScale * 20, info.sizeScale * 20)}
+		ent.EZpreviewBox = {mins = Vector(ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20), maxs = Vector(ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20)}
 		--SafeRemoveEntity(ent.PreivewEnt)
 		--[[if string.find(info.results, "ent_") then
 			local ClientPreview = ents.CreateClientside(info.results)

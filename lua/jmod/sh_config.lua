@@ -664,7 +664,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.SILVER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50
 				},
-				sizeScale = 4,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Generates power when aimed at the map's 'sun'."
