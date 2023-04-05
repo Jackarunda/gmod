@@ -357,14 +357,14 @@ function SWEP:PrimaryAttack()
 										end
 									else
 										local Ent = ents.Create(Class)
-										Ent:SetPos(Pos + Norm * 10 * (buildInfo.sizeScale or 1))
+										Ent:SetPos(Pos + Norm * 20 * (buildInfo.sizeScale or 1))
 										Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
 										JMod.SetEZowner(Ent, self.Owner)
 										Ent:Spawn()
 										Ent:Activate()
 										JMod.Hint(self.Owner, Class)
 										self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (buildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
-										self:SetGas(math.Clamp(self:GetGas() - 6 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
+										self:SetGas(math.Clamp(self:GetGas() - 4 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
 									end
 								end
 								if PartsDonated > 0 then
@@ -576,7 +576,6 @@ end]]--
 
 function SWEP:SwitchSelectedBuild(name)
 	self:SetSelectedBuild(name)
-	self.CurrentBuildSize = 1
 end
 
 function SWEP:Reload()
@@ -584,8 +583,8 @@ function SWEP:Reload()
 		local Time = CurTime()
 
 		if self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
-			self:SetSelectedBuild("")
-		else -- do nothing
+			self:SwitchSelectedBuild("")
+		else
 			if self.NextSwitch < Time then
 				self.NextSwitch = Time + .5
 				JMod.Hint(self.Owner, "craft")
@@ -600,7 +599,7 @@ end
 
 function SWEP:BuildEffect(pos, buildType, suppressSound)
 	if CLIENT then return end
-	local Scale = (self.Craftables[buildType].sizeScale or 1) ^ .6
+	local Scale = (self.Craftables[buildType].sizeScale or 1) ^ .5
 	self:UpgradeEffect(pos, Scale * 4, suppressSound)
 	local eff = EffectData()
 	eff:SetOrigin(pos + VectorRand())
@@ -632,7 +631,7 @@ function SWEP:WhomIlookinAt()
 		table.insert(Filter, v)
 	end
 
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, Filter)
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100 * self.CurrentBuildSize, Filter)
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end
@@ -836,7 +835,7 @@ function SWEP:DrawHUD()
 
 	local Tr = util.QuickTrace(Ply:EyePos(), Ply:GetAimVector() * 80, {Ply})
 	local Ent = Tr.Entity
-	if IsValid(Ent) and Ent.Base == "ent_jack_gmod_ezmachine_base" then
+	if IsValid(Ent) and Ent.IsJackyEZmachine then
 		draw.SimpleTextOutlined((Ent.PrintName and tostring(Ent.PrintName)) or tostring(Ent), "Trebuchet24", W * .7, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		if Ent.MaxDurability then
 		draw.SimpleTextOutlined("Durability: "..tostring(math.Round(Ent:GetNW2Float("EZdurability", 0)) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))

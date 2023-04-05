@@ -312,7 +312,7 @@ if(SERVER)then
 		local DmgMult = self:DetermineDamageMultiplier(dmginfo)
 		if(DmgMult <= .01)then return end
 		local Damage = dmginfo:GetDamage() * DmgMult
-		jprint(Damage)
+		--jprint(Damage)
 		self.Durability = self.Durability - math.Round(Damage, 2)
 		self:SetNW2Float("EZdurability", self.Durability)
 

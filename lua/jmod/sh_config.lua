@@ -679,7 +679,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100
 				},
-				sizeScale = 2,
+				sizeScale = 4,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Heals players so you don't have to get more blood on you."
@@ -704,7 +704,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
 				},
-				sizeScale = 3,
+				sizeScale = 5,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
@@ -717,7 +717,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
-				sizeScale = 1.5,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Produces Power from Fuel. Very noisy."
@@ -728,7 +728,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
 				},
-				sizescale = 1.5,
+				sizescale = 4,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "A bay for safely holding large amounts of bombs."
@@ -740,7 +740,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 400
 				},
-				sizescale = 1.5,
+				sizescale = 2,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Bigger than the EZ bomb, but smaller than the Mega."
@@ -845,7 +845,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 1200
 				},
-				sizeScale = 1,
+				sizeScale = 4,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Anything on the surface of the enemy bunker is gonna be gone, and they'll need to cleanup the bunker."
@@ -859,7 +859,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 600,
 					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = 25
 				},
-				sizeScale = 1.5,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Takes a couple minutes to spin up, and then creates an impossibly weak black hole that scales with time."
@@ -918,7 +918,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL] = 10
 				},
-				sizeScale = 1,
+				sizeScale = 0.5,
 				category = "Other",
 				craftingType = "workbench",
 				description = "Produces light when fuelled and ignited."
@@ -979,7 +979,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 600,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
 				},
-				sizeScale = 1.5,
+				sizeScale = 1,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Now we are all sons of bitches."
@@ -1002,7 +1002,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
-				sizeScale = 1.5,
+				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Craft all your smaller items here."
@@ -1015,7 +1015,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 200,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 100
 				},
-				sizeScale = 1.5,
+				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Craft parts here. Only for advanced players."
@@ -1028,7 +1028,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
-				sizeScale = 1.5,
+				sizeScale = 10,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "A pump for extracting liquids from the ground."
@@ -1041,7 +1041,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
 				},
-				sizeScale = 1.5,
+				sizeScale = 10,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "A drill for extracting ores from the ground."
@@ -1056,7 +1056,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FUEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.AMMO] = 200
 				},
-				sizeScale = 2,
+				sizeScale = 4,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."

@@ -311,7 +311,7 @@ if(SERVER)then
 
 elseif(CLIENT)then
 
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		self.Auger = JMod.MakeModel(self, "models/jmodels/props/machines/drill_auger.mdl")
 		self.DrillPipe = JMod.MakeModel(self, "models/props_pipes/pipe03_straight01_long.mdl")
 		self.DrillPipeEnd = JMod.MakeModel(self, "models/props_pipes/pipe03_connector01.mdl")
@@ -323,7 +323,9 @@ elseif(CLIENT)then
 	end
 
 	function ENT:Draw()
+		--
 		self:DrawModel()
+		--
 		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8

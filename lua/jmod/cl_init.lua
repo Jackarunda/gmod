@@ -619,13 +619,18 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 				end
 			end
 		end
-		local ActiveWep = ply:GetActiveWeapon()
-		if ActiveWep:GetClass() == "wep_jack_gmod_eztoolbox" and IsValid(ActiveWep.PreivewEnt) then
-			local Ent, Pos, Normal = ActiveWep:WhomIlookinAt()
-			ActiveWep.PreivewEnt:SetPos(Pos + Normal * 10 * ActiveWep.CurrentBuildSize)
-			ActiveWep.PreivewEnt:SetAngles(Angle(0, ply:EyeAngles().y, 0))
-			ActiveWep.PreivewEnt:DrawModel()
-			--ActiveWep.PreivewEnt:SetColor(Translucent)
+		local ToolBox = ply:GetActiveWeapon()
+
+		if ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
+			local Ent, Pos, Normal = ToolBox:WhomIlookinAt()
+			render.DrawWireframeBox(Pos + Normal * 20 * ToolBox.CurrentBuildSize, Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
+			--[[local Tr = util.TraceHull({
+				start = ply:EyePos(),
+				endpos = ply:EyePos() + ply:GetAimVector() * 80 * ToolBox.CurrentBuildSize,
+				filter = {ply},
+				mask = MASK_SOLID
+			})
+			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 10 * ToolBox.CurrentBuildSize, Angle(0, 0, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)]]--
 		end
 	end
 end)
