@@ -298,6 +298,21 @@ end
 function SWEP:PrimaryAttack()
 	if SERVER then
 		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
+		if self.Owner:KeyDown(JMod.Config.AltFunctionKey) and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
+			local ToolBox = self.Owner:GetWeapon("wep_jack_gmod_eztoolbox")
+			local SelectedBuild = ToolBox:GetSelectedBuild()
+			if JMod.Config.Craftables[SelectedBuild].results == "ez nail" then
+				self.Owner:SelectWeapon(ToolBox)
+				ToolBox:BuildItem(SelectedBuild)
+				timer.Simple(0.1, function()
+					if IsValid(self) and self.Owner:Alive() and self.Owner:HasWeapon("wep_jack_gmod_hands") then
+						self.Owner:SelectWeapon(self.Owner:GetWeapon("wep_jack_gmod_hands"))
+					end
+				end)
+
+				return
+			end
+		end
 	end
 
 	local side = "fists_left"
