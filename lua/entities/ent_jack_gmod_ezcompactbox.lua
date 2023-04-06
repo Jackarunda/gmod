@@ -12,6 +12,8 @@ ENT.EZunpackagable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 
+--- Refrence:
+--- Scl, Mass, HoloPos, HoloScale
 ENT.ScaleSpecs = {
 	{.25, 10, 5, .025}, -- lol
 	{.5, 35, 10, .05}, -- max mass for E-carry
@@ -40,7 +42,7 @@ if SERVER then
 			return
 		end
 
-		local Mass = ContentsPhys:GetMass()
+		local Mass = self.ExtraMass or ContentsPhys:GetMass()
 
 		if Mass <= 35 then
 			self:SetSizeScale(1)
@@ -48,23 +50,24 @@ if SERVER then
 			self:SetSizeScale(2)
 		elseif Mass <= 1200 then
 			self:SetSizeScale(3)
-		elseif Mass <= 4800 then
-			self:SetSizeScale(4)
-		elseif Mass <= 19200 then
-			self:SetSizeScale(5)
 		else
-			self:SetSizeScale(6)
+			self:SetSizeScale(3)
+			timer.Simple(0.01, function()
+				if IsValid(self) then
+					local NewBox = self:MultiplePackage(Mass - 1200)
+				end
+			end)
 		end
 
 		local Specs = self.ScaleSpecs[self:GetSizeScale()]
 		---
-		self.Entity:SetModel("models/props_junk/wood_crate001a.mdl")
+		self:SetModel("models/props_junk/wood_crate001a.mdl")
 		self:SetModelScale(Specs[1], 0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		---
 		self.LastUsedTime = 0
 		self.Unpackaging = false
@@ -75,22 +78,24 @@ if SERVER then
 		end)
 
 		---
-		Contents:SetNoDraw(true)
-		Contents:SetNotSolid(true)
-		ContentsPhys:Sleep()
+		--if not self.ExtraMass then
+			Contents:SetNoDraw(true)
+			Contents:SetNotSolid(true)
+			ContentsPhys:Sleep()
+		--end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 100 then
-				self.Entity:EmitSound("Wood_Crate.ImpactHard")
-				self.Entity:EmitSound("Wood_Box.ImpactHard")
+				self:EmitSound("Wood_Crate.ImpactHard")
+				self:EmitSound("Wood_Box.ImpactHard")
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if dmginfo:GetDamage() > self.DamageThreshold then
 			local Pos = self:GetPos()
@@ -100,8 +105,26 @@ if SERVER then
 		end
 	end
 
+	function ENT:MultiplePackage(massToDistibute)
+		self.Boxes = self.Boxes or {self}
+		local OurContents = self:GetContents()
+		local Bocks = ents.Create("ent_jack_gmod_ezcompactbox")
+		Bocks:SetPos(self:LocalToWorld(self:OBBCenter()) + Vector(0, 0, 20 * self.ScaleSpecs[self:GetSizeScale()][1]))
+		Bocks:SetAngles(self:GetAngles())
+		Bocks:SetContents(OurContents)
+		Bocks.ExtraMass = massToDistibute
+		table.insert(self.Boxes, Bocks)
+		Bocks.Boxes = self.Boxes
+
+		if IsValid(JMod.GetEZowner(self)) then
+			JMod.SetEZowner(Bocks, JMod.GetEZowner(self))
+		end
+		
+		Bocks:Spawn()
+		Bocks:Activate()
+	end
+
 	function ENT:OpenEffect(pos)
-		if CLIENT then return end
 		local Scale = self:GetSizeScale() ^ .5
 		local eff = EffectData()
 		eff:SetOrigin(pos + VectorRand())
@@ -134,17 +157,32 @@ if SERVER then
 				if i < 4 then
 					self:EmitSound("snd_jack_metallicclick.wav", 50, 100)
 				else
-					self:ReleaseItem()
+					if self.Boxes then
+						local AllTogether = true
+						for _, v in ipairs(self.Boxes) do
+							if not(IsValid(v)) or not(self:GetPos():Distance(v:GetPos()) <= 500) then
+								AllTogether = false
+							end
+						end
+						if AllTogether then
+							self:ReleaseItem()
+						else
+							self.Unpackaging = false
+						end
+					else
+						self:ReleaseItem()
+					end
 				end
 			end)
 		end
 	end
 
 	function ENT:ReleaseItem()
-		local Pos, Ang, Contents, Vel = self:LocalToWorld(self:OBBCenter()), self:GetAngles(), self:GetContents(), self:GetPhysicsObject():GetVelocity()
+		local Contents = self:GetContents()
+		local Pos, Ang, Vel = self:LocalToWorld(self:OBBCenter()), Contents.JModPreferredCarryAngles or self:GetAngles(), self:GetPhysicsObject():GetVelocity()
 
+		self:OpenEffect(Pos)
 		if IsValid(Contents) then
-			self:OpenEffect(Pos)
 			Contents:SetPos(Pos + Vector(0, 0, 30))
 			Contents:SetAngles(Ang)
 			Contents:SetNoDraw(false)
@@ -157,6 +195,12 @@ if SERVER then
 			end
 
 			self:SetContents(nil)
+			if self.Boxes then
+				for _, v in ipairs(self.Boxes) do
+					v:SetContents(nil)
+					v:ReleaseItem()
+				end
+			end
 		end
 
 		self:Remove()
@@ -176,6 +220,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
+
 		local Contents = self:GetContents()
 
 		if IsValid(Contents) then
@@ -183,6 +228,14 @@ if SERVER then
 			self:NextThink(CurTime() + 1)
 
 			return true
+		elseif self.Boxes then
+			for i = 1, #self.Boxes do
+				if not IsValid(self.Boxes[i]) then
+					self:Remove()
+
+					break
+				end
+			end
 		else
 			self:Remove()
 		end

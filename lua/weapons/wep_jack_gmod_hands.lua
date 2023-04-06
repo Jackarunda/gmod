@@ -180,7 +180,7 @@ function SWEP:ApplyForce()
 		end
 
 		if self.CarryEnt:GetClass() == "prop_ragdoll" then
-			mul = mul * 2
+			mul = mul * 10
 		end
 
 		vec:Normalize()
@@ -188,15 +188,15 @@ function SWEP:ApplyForce()
 		local Force = (avec - velo / 2) * mul
 		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
-		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 4000 * JMod.Config.HandGrabStrength)
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2500 * JMod.Config.HandGrabStrength)
 		Force = ForceNormal * ForceMagnitude
-		jprint(ForceMagnitude)
+		--jprint(ForceMagnitude)
 
-		if ForceMagnitude > 4000 * JMod.Config.HandGrabStrength then
+		--[[if ForceMagnitude > 2500 * JMod.Config.HandGrabStrength then
 			self:SetCarrying()
 
 			return
-		end
+		end]]--
 
 		local CounterDir, CounterAmt = velo:GetNormalized(), velo:Length()
 
