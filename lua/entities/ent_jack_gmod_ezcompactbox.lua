@@ -78,11 +78,9 @@ if SERVER then
 		end)
 
 		---
-		--if not self.ExtraMass then
-			Contents:SetNoDraw(true)
-			Contents:SetNotSolid(true)
-			ContentsPhys:Sleep()
-		--end
+		Contents:SetNoDraw(true)
+		Contents:SetNotSolid(true)
+		ContentsPhys:Sleep()
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -113,7 +111,6 @@ if SERVER then
 		Bocks:SetAngles(self:GetAngles())
 		Bocks:SetContents(OurContents)
 		Bocks.ExtraMass = massToDistibute
-		table.insert(self.Boxes, Bocks)
 		Bocks.Boxes = self.Boxes
 
 		if IsValid(JMod.GetEZowner(self)) then
@@ -122,6 +119,10 @@ if SERVER then
 		
 		Bocks:Spawn()
 		Bocks:Activate()
+		
+		for _, v in ipairs(self.Boxes) do
+			table.insert(v.Boxes, Bocks)
+		end
 	end
 
 	function ENT:OpenEffect(pos)
@@ -160,7 +161,7 @@ if SERVER then
 					if self.Boxes then
 						local AllTogether = true
 						for _, v in ipairs(self.Boxes) do
-							if not(IsValid(v)) or not(self:GetPos():Distance(v:GetPos()) <= 500) then
+							if not(IsValid(v)) or not(self:GetPos():Distance(v:GetPos()) <= 500 * #self.Boxes) then
 								AllTogether = false
 							end
 						end
