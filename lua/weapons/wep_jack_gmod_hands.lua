@@ -173,7 +173,7 @@ function SWEP:ApplyForce()
 		local vec = target - TargetPos
 		local len, mul = vec:Length(), self.CarryEnt:GetPhysicsObject():GetMass()
 
-		if len > self.ReachDistance then
+		if len > self.ReachDistance or (IsValid(self.Owner:GetGroundEntity()) and self.Owner:GetGroundEntity() == self.CarryEnt) then
 			self:SetCarrying()
 
 			return
@@ -188,7 +188,7 @@ function SWEP:ApplyForce()
 		local Force = (avec - velo / 2) * mul
 		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
-		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2500 * JMod.Config.HandGrabStrength)
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.Config.HandGrabStrength)
 		Force = ForceNormal * ForceMagnitude
 		--jprint(ForceMagnitude)
 

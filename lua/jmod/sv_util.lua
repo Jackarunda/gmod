@@ -964,14 +964,14 @@ function JMod.Nail(ply)
 	local Weld = constraint.Find(Ent1, Ent2, "Weld", 0, 0)
 
 	if Weld then
-		local Strength = Weld:GetTable().forcelimit + 4000
+		local Strength = Weld:GetTable().forcelimit + 3500
 		Weld:Remove()
 
 		timer.Simple(.1, function()
 			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
 		end)
 	else
-		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 4000, false, false)
+		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 3500, false, false)
 	end
 
 	local Nail = ents.Create("prop_dynamic")
