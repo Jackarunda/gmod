@@ -41,9 +41,12 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(20)
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:SetMass(20)
+				Phys:Wake()
+			end
 		end)
 
 		---

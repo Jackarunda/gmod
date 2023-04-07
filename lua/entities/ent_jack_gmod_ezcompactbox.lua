@@ -53,6 +53,7 @@ if SERVER then
 		else
 			self:SetSizeScale(3)
 			self:MultiplePackage(Mass - 1200)
+			self.ExtraMass = 1200
 		end
 
 		local Specs = self.ScaleSpecs[self:GetSizeScale()]
@@ -68,9 +69,12 @@ if SERVER then
 		self.LastUsedTime = 0
 		self.Unpackaging = false
 
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(Specs[2])
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:SetMass(Specs[2])
+				Phys:Wake()
+			end
 		end)
 
 		---
@@ -111,7 +115,7 @@ if SERVER then
 				Bocks:SetAngles(self:GetAngles())
 				Bocks:SetContents(OurContents)
 				Bocks:SetNW2Int("EZpackageNum", i + 1)
-				Bocks.ExtraMass = 1200
+				Bocks.ExtraMass = math.min(1200, math.Clamp(massToDistibute - i * 1200, 1200 - massToDistibute % 1200, 50000))
 
 				if IsValid(JMod.GetEZowner(self)) then
 					JMod.SetEZowner(Bocks, JMod.GetEZowner(self))
@@ -123,7 +127,6 @@ if SERVER then
 				table.insert(self.Boxes, Bocks)
 				if i == NeededBoxes then
 					for k, v in ipairs(self.Boxes) do
-						print(v:GetNW2Int("EZpackageNum", 0))
 						v.Boxes = self.Boxes
 						v:SetNW2Int("EZtotalBoxes", i + 1)
 					end
@@ -273,7 +276,7 @@ elseif CLIENT then
 			local MdlParts = string.Explode("/", Contents:GetModel())
 			local Txt2 = string.Replace(MdlParts[#MdlParts], ".mdl", "")
 			local Txt3 = ""
-			local PackageNum = self:GetNW2Float("EZpackageNum", 0)
+			local PackageNum = self:GetNW2Int("EZpackageNum", 0)
 			if PackageNum > 0 then
 				Txt3 = "Item #"..tostring(Contents:EntIndex()).."("..tostring(PackageNum).."/"..tostring(self:GetNW2Int("EZtotalBoxes", 1))..")"
 			end
