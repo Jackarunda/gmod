@@ -605,17 +605,6 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.SendToServer()
 		ent.CurrentBuildSize = info.sizeScale or 0
 		ent.EZpreviewBox = {mins = Vector(ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20), maxs = Vector(ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20)}
-		--SafeRemoveEntity(ent.PreivewEnt)
-		--[[if string.find(info.results, "ent_") then
-			local ClientPreview = ents.CreateClientside(info.results)
-			ClientPreview:SetPos(ply:GetPos())
-			ClientPreview:Spawn()
-			ClientPreview:Activate()
-			ClientPreview:SetRenderMode(RENDERMODE_TRANSCOLOR)
-			ClientPreview:SetColor(Color(255, 255, 255, 100))
-			ClientPreview:SetNoDraw(true)
-			ent.PreivewEnt = ClientPreview
-		end]]--
 	end, nil)
 end)
 

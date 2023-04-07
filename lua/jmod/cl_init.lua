@@ -624,13 +624,6 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		if IsValid(ToolBox) and ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
 			local Ent, Pos, Normal = ToolBox:WhomIlookinAt()
 			render.DrawWireframeBox(Pos + Normal * 20 * ToolBox.CurrentBuildSize, Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
-			--[[local Tr = util.TraceHull({
-				start = ply:EyePos(),
-				endpos = ply:EyePos() + ply:GetAimVector() * 80 * ToolBox.CurrentBuildSize,
-				filter = {ply},
-				mask = MASK_SOLID
-			})
-			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 10 * ToolBox.CurrentBuildSize, Angle(0, 0, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)]]--
 		end
 	end
 end)
