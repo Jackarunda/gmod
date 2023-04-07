@@ -8,7 +8,7 @@ ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/jmod/machines/oil_refinery.mdl"
-ENT.Mass = 3500
+ENT.Mass = 4000
 ENT.SpawnHeight = 10
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---
