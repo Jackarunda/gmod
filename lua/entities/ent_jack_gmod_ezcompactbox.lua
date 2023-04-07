@@ -52,11 +52,7 @@ if SERVER then
 			self:SetSizeScale(3)
 		else
 			self:SetSizeScale(3)
-			timer.Simple(0.01, function()
-				if IsValid(self) then
-					local NewBox = self:MultiplePackage(Mass - 1200)
-				end
-			end)
+			self:MultiplePackage(Mass - 1200)
 		end
 
 		local Specs = self.ScaleSpecs[self:GetSizeScale()]
@@ -104,24 +100,35 @@ if SERVER then
 	end
 
 	function ENT:MultiplePackage(massToDistibute)
-		self.Boxes = self.Boxes or {self}
-		local OurContents = self:GetContents()
-		local Bocks = ents.Create("ent_jack_gmod_ezcompactbox")
-		Bocks:SetPos(self:LocalToWorld(self:OBBCenter()) + Vector(0, 0, 20 * self.ScaleSpecs[self:GetSizeScale()][1]))
-		Bocks:SetAngles(self:GetAngles())
-		Bocks:SetContents(OurContents)
-		Bocks.ExtraMass = massToDistibute
-		Bocks.Boxes = self.Boxes
+		local NeededBoxes = math.ceil(massToDistibute / 1200)
+		self:SetNW2Int("EZpackageNum", 1)
+		self.Boxes = {self}
+		for i = 1, NeededBoxes do
+			timer.Simple(0.01 * i, function()
+				local OurContents = self:GetContents()
+				local Bocks = ents.Create("ent_jack_gmod_ezcompactbox")
+				Bocks:SetPos(self:LocalToWorld(self:OBBCenter()) + Vector(0, 0, 20 * self.ScaleSpecs[self:GetSizeScale()][1] * i))
+				Bocks:SetAngles(self:GetAngles())
+				Bocks:SetContents(OurContents)
+				Bocks:SetNW2Int("EZpackageNum", i + 1)
+				Bocks.ExtraMass = 1200
 
-		if IsValid(JMod.GetEZowner(self)) then
-			JMod.SetEZowner(Bocks, JMod.GetEZowner(self))
-		end
-		
-		Bocks:Spawn()
-		Bocks:Activate()
-		
-		for _, v in ipairs(self.Boxes) do
-			table.insert(v.Boxes, Bocks)
+				if IsValid(JMod.GetEZowner(self)) then
+					JMod.SetEZowner(Bocks, JMod.GetEZowner(self))
+				end
+				
+				Bocks:Spawn()
+				Bocks:Activate()
+
+				table.insert(self.Boxes, Bocks)
+				if i == NeededBoxes then
+					for k, v in ipairs(self.Boxes) do
+						print(v:GetNW2Int("EZpackageNum", 0))
+						v.Boxes = self.Boxes
+						v:SetNW2Int("EZtotalBoxes", i + 1)
+					end
+				end
+			end)
 		end
 	end
 
@@ -265,18 +272,25 @@ elseif CLIENT then
 			local Txt = Contents.PrintName or Contents:GetClass()
 			local MdlParts = string.Explode("/", Contents:GetModel())
 			local Txt2 = string.Replace(MdlParts[#MdlParts], ".mdl", "")
+			local Txt3 = ""
+			local PackageNum = self:GetNW2Float("EZpackageNum", 0)
+			if PackageNum > 0 then
+				Txt3 = "Item #"..tostring(Contents:EntIndex()).."("..tostring(PackageNum).."/"..tostring(self:GetNW2Int("EZtotalBoxes", 1))..")"
+			end
 			local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
 			Ang:RotateAroundAxis(Ang:Right(), 90)
 			Ang:RotateAroundAxis(Ang:Up(), -90)
 			cam.Start3D2D(Pos + Up * Specs[3] / 2 - Forward * Specs[3], Ang, Specs[4])
 			draw.SimpleText(Txt, "JMod-SharpieHandwriting", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText(Txt2, "JMod-SharpieHandwriting", 0, 60, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText(Txt3, "JMod-SharpieHandwriting", 0, 105, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(), 180)
 			cam.Start3D2D(Pos + Up * Specs[3] / 2 + Forward * (Specs[3] + .2), Ang, Specs[4])
 			draw.SimpleText(Txt, "JMod-SharpieHandwriting", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText(Txt2, "JMod-SharpieHandwriting", 0, 60, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText(Txt3, "JMod-SharpieHandwriting", 0, 105, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
 	end
