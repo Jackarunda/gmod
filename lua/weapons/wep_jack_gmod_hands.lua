@@ -173,7 +173,9 @@ function SWEP:ApplyForce()
 		local vec = target - TargetPos
 		local len, mul = vec:Length(), self.CarryEnt:GetPhysicsObject():GetMass()
 
-		if len > self.ReachDistance or (IsValid(self.Owner:GetGroundEntity()) and self.Owner:GetGroundEntity() == self.CarryEnt) then
+		local StandingEnt = self.Owner:GetGroundEntity()
+		local StandingOn = IsValid(StandingEnt) and ((StandingEnt == self.CarryEnt) or (StandingEnt:IsConstrained() and table.HasValue(constraint.GetAllConstrainedEntities(StandingEnt), self.CarryEnt)))
+		if len > self.ReachDistance or StandingOn then
 			self:SetCarrying()
 
 			return
