@@ -481,7 +481,7 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 	local PartsDonated = 0
 	local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
 	if self:GetBasicParts() > 0 then
-		local RequiredParts = 50
+		local RequiredParts = 20
 		local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
 
 		PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
@@ -491,16 +491,16 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
-	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated }, self) then
+	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated }, self) then
 		JMod.ConsumeResourcesInRange({
-			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50 - PartsDonated
+			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated
 		}, nil, nil, self)
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
 		self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
 	else
-		self:Msg("needs 50 Basic Parts nearby to perform modification")
+		self:Msg("needs 20 Basic Parts nearby to perform modification")
 	end
 end
 
