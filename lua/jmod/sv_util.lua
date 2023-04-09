@@ -934,6 +934,51 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 	end
 end
 
+function JMod.FindBoltPos(ply, origin, dir)
+	local Pos, Vec = origin or ply:GetShootPos(), dir or ply:GetAimVector()
+
+	local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+
+	if Tr1.Hit then
+		local Ent1 = Tr1.Entity
+		if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return nil end
+		if not IsValid(Ent1:GetPhysicsObject()) then return nil end
+
+		local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
+
+		if Tr2.Hit then
+			local Ent2 = Tr2.Entity
+			if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
+			if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return nil end
+			local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+			if Dist > 30 then return nil end
+
+			return true, Tr1.HitPos, Tr2.HitPos, Ent1, Ent2
+		end
+	end
+end
+
+function JMod.Bolt(ply)
+	local Success, Pos, Vec, Ent1, Ent2 = JMod.FindBoltPos(ply)
+	if not Success then return end
+	
+	local Axis = constraint.Axis(Ent1, Ent2, 0, 0, Ent1:WorldToLocal(Pos), Ent2:WorldToLocal(Vec), 50000, 0, 1, false)
+	
+	local Dir = (Pos - Vec):GetNormalized()
+	local Bolt = ents.Create("prop_dynamic")
+	Bolt:SetModel("models/crossbow_bolt.mdl")
+	Bolt:SetMaterial("models/shiny")
+	Bolt:SetColor(Color(50, 50, 50))
+	Bolt:SetPos(Pos - Dir * 20)
+	Bolt:SetAngles(Dir:Angle())
+	Bolt:Spawn()
+	Bolt:Activate()
+	Bolt:SetParent(Ent1)
+	Ent1.EZnails = Ent1.EZnails or {}
+	table.insert(Ent1.EZnails, Bolt)
+	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+end
+
 function JMod.FindNailPos(ply, origin, dir)
 	local Pos, Vec = origin or ply:GetShootPos(), dir or ply:GetAimVector()
 
@@ -967,7 +1012,7 @@ function JMod.Nail(ply)
 		local Strength = Weld:GetTable().forcelimit + 3500
 		Weld:Remove()
 
-		timer.Simple(.1, function()
+		timer.Simple(.01, function()
 			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
 		end)
 	else
@@ -1077,6 +1122,14 @@ function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
 					Phys:EnableMotion(true)
 					Phys:Wake()
 					ent:SetNW2Float("EZ"..task.."Progress", 0)
+					if ent.EZnails then
+						for _, v in ipairs(ent.EZnails) do
+							if IsValid(v) then
+								v:Remove()
+							end
+						end
+						ent.EZnails = {}
+					end
 				end
 			else
 				return "object is already unconstrained"

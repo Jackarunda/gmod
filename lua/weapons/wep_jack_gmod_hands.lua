@@ -15,8 +15,11 @@ else
 	local HandTex, ClosedTex = surface.GetTextureID("vgui/hud/gmod_hand"), surface.GetTextureID("vgui/hud/gmod_closedhand")
 
 	function SWEP:DrawHUD()
+		if GetConVar("cl_drawhud"):GetBool() == false then return end
 		if not (GetViewEntity() == LocalPlayer()) then return end
 		if LocalPlayer():InVehicle() then return end
+		local Ply = self.Owner
+		local W, H, Build = ScrW(), ScrH()
 
 		if not self:GetFists() then
 			local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * self.ReachDistance, {self.Owner})
@@ -35,6 +38,10 @@ else
 					surface.DrawTexturedRect(ScrW() / 2 - (64 * Size), ScrH() / 2 - (64 * Size), 128 * Size, 128 * Size)
 				end
 			end
+		end
+		local ToolBox = Ply:GetWeapon("wep_jack_gmod_eztoolbox")
+		if IsValid(ToolBox) and ToolBox:GetNW2Bool("EZoneHandedBuild", false) then
+			draw.SimpleTextOutlined("ALT+LMB: use toolbox onehanded: "..ToolBox:GetSelectedBuild(), "Trebuchet24", W * .4, H * .7 + 60, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 		end
 	end
 end
@@ -160,7 +167,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:ApplyForce()
-	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos() + Vector(0, 0, 1)
+	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos() + Vector(0, 0, 5)
 	local phys = self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
 
 	if IsValid(phys) then
@@ -192,13 +199,6 @@ function SWEP:ApplyForce()
 		local ForceMagnitude = Force:Length()
 		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.Config.HandGrabStrength)
 		Force = ForceNormal * ForceMagnitude
-		--jprint(ForceMagnitude)
-
-		--[[if ForceMagnitude > 2500 * JMod.Config.HandGrabStrength then
-			self:SetCarrying()
-
-			return
-		end]]--
 
 		local CounterDir, CounterAmt = velo:GetNormalized(), velo:Length()
 
@@ -310,13 +310,8 @@ function SWEP:PrimaryAttack()
 			local SelectedBuild = ToolBox:GetSelectedBuild()
 			local BuildInfo = JMod.Config.Craftables[SelectedBuild]
 			if BuildInfo and BuildInfo.oneHanded then
-				self.Owner:SelectWeapon(ToolBox)
 				ToolBox:BuildItem(SelectedBuild)
-				timer.Simple(0.1, function()
-					if IsValid(self) and self.Owner:Alive() and self.Owner:HasWeapon("wep_jack_gmod_hands") then
-						self.Owner:SelectWeapon(self.Owner:GetWeapon("wep_jack_gmod_hands"))
-					end
-				end)
+				self:SetNextPrimaryFire(CurTime() + .6)
 
 				return
 			end

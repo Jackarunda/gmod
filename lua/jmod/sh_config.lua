@@ -616,10 +616,21 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5
 				},
 				oneHanded = true,
-				sizeScale = .01,
+				sizeScale = .05,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"
+			},
+			["EZ Bolt"] = {
+				results = "ez bolt",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10
+				},
+				oneHanded = true,
+				sizeScale = .05,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "Creates a single axis bearing for conecting rotating objects"
 			},
 			["EZ Box"] = {
 				results = "ez box",

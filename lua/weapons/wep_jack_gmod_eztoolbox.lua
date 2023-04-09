@@ -295,8 +295,9 @@ function SWEP:BuildItem(selectedBuild)
 		return
 	end
 	if (buildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
+	if (buildInfo.results == "ez bolt") and not JMod.FindBoltPos(self.Owner) then return end
 	if (buildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
-	local Sound = buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
+	local Sound = buildInfo.results ~= "ez bolt" and buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
 	local Reqs = table.FullCopy(buildInfo.craftingReqs)
 
 	local PartsDonated = 0
@@ -334,6 +335,8 @@ function SWEP:BuildItem(selectedBuild)
 
 						if Class == "ez nail" then
 							JMod.Nail(self.Owner)
+						elseif Class == "ez bolt" then
+								JMod.Bolt(self.Owner)
 						elseif Class == "ez box" then
 							JMod.Package(self.Owner)
 						else
@@ -582,6 +585,12 @@ end]]--
 
 function SWEP:SwitchSelectedBuild(name)
 	self:SetSelectedBuild(name)
+	local BuildInfo = JMod.Config.Craftables[name]
+	if BuildInfo and BuildInfo.oneHanded then
+		self:SetNW2Bool("EZoneHandedBuild", true)
+	else
+		self:SetNW2Bool("EZoneHandedBuild", false)
+	end
 end
 
 function SWEP:Reload()
@@ -637,7 +646,7 @@ function SWEP:WhomIlookinAt()
 		table.insert(Filter, v)
 	end
 
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100 * self.CurrentBuildSize, Filter)
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100 * math.Clamp(self.CurrentBuildSize, .5, 100), Filter)
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end
@@ -813,7 +822,6 @@ function SWEP:DrawHUD()
 	local Ply = self.Owner
 	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H, Build = ScrW(), ScrH(), self:GetSelectedBuild()
-	local W, H, Msg = ScrW(), ScrH()
 
 	if Build and (Build ~= "") then
 		draw.SimpleTextOutlined(Build, "Trebuchet24", W * .5, H * .7 - 60, Color(255, 255, 255, 150), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 150))
