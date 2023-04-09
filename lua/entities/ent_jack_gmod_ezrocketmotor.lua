@@ -48,8 +48,9 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(Phys) then
-				Phys:SetMaterial("metal")
-				Phys:SetMass(40)
+				Phys:SetMaterial("plastic")
+				Phys:SetMass(20)
+				Phys:SetDragCoefficient(0)
 				Phys:Wake()
 				Phys:EnableDrag(false)
 			end
@@ -169,15 +170,22 @@ if SERVER then
 		end
 	end
 
+	function ENT:CutBurn() 
+		if self:GetState() ~= STATE_LAUNCHED then return end
+		self:SetState(STATE_ARMED)
+		self:GetPhysicsObject():SetMass(20)
+	end
+
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
-		--[[if IsValid(self.StuckTo) then
+		if IsValid(self.StuckTo) then
 			if IsValid(self.StuckTo:GetPhysicsObject()) then
 				Phys = self.StuckTo:GetPhysicsObject()
 			end
-		end]]--
+		end
+		Phys:SetMass(0)
 		Phys:EnableMotion(true)
 		Phys:Wake()
 		Phys:ApplyForceCenter(self:GetForward() * 20000)
@@ -201,20 +209,26 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		local State = self:GetState()
 		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "State", State)
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
 
-		if self:GetState() == STATE_LAUNCHED then
+		if not table.HasValue(constraint.GetAllConstrainedEntities(self), self.StuckTo) then
+			self.StuckTo = nil
+			self:CutBurn()
+		end
+
+		if State == STATE_LAUNCHED then
 			local Phys = self:GetPhysicsObject()
-			--[[if IsValid(self.StuckTo) and IsValid(self.StuckTo:GetPhysicsObject()) then
+			if IsValid(self.StuckTo) and IsValid(self.StuckTo:GetPhysicsObject()) then
 				Phys = self.StuckTo:GetPhysicsObject()
-			end]]--
+			end
 
 			if self.FuelLeft > 0 then
 				Phys:ApplyForceCenter(self:GetForward() * 20000)
-				self.FuelLeft = self.FuelLeft - 2.5
+				self.FuelLeft = self.FuelLeft - 3
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
@@ -227,8 +241,11 @@ if SERVER then
 					SafeRemoveEntity(self)
 				end)
 			end
+		elseif State == STATE_ARMED and self.LastState == STATE_LAUNCHED then
+			self:CutBurn()
 		end
 
+		self.LastState = State
 		self:NextThink(CurTime() + .05)
 
 		return true
