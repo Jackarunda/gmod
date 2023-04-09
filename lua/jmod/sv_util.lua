@@ -1016,7 +1016,7 @@ function JMod.Nail(ply)
 			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
 		end)
 	else
-		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 3500, false, false)
+		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 3000, false, false)
 	end
 
 	local Nail = ents.Create("prop_dynamic")

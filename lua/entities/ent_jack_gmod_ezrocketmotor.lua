@@ -8,7 +8,7 @@ ENT.PrintName = "EZ Rocket Motor"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZRackOffset = Vector(0, 0, 8)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ---
@@ -123,6 +123,7 @@ if SERVER then
 			if State == STATE_OFF then
 				if Alt then
 					self:SetState(STATE_ARMED)
+					self.EZlaunchableWeaponArmedTime = CurTime()
 					self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
 					JMod.Hint(activator, "launch")
 				else
@@ -136,6 +137,7 @@ if SERVER then
 			else
 				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
 				self:SetState(STATE_OFF)
+				self.EZlaunchableWeaponArmedTime = CurTime()
 			end
 		else
 			if self:IsPlayerHolding() and (self.NextStick < Time) then
@@ -144,10 +146,9 @@ if SERVER then
 				if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
 					self.NextStick = Time + .5
 					local Ang = Tr.HitNormal:Angle()
-					--Ang:RotateAroundAxis(Ang:Right(), -90)
-					--Ang:RotateAroundAxis(Ang:Up(), 90)
+					Ang:RotateAroundAxis(Ang:Up(), 180)
 					self:SetAngles(Ang)
-					self:SetPos(Tr.HitPos)
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 12)
 
 					-- crash prevention
 					if Tr.Entity:GetClass() == "func_breakable" then
@@ -155,7 +156,7 @@ if SERVER then
 							self:GetPhysicsObject():Sleep()
 						end)
 					else
-						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 10000, false, false)
 						self.StuckTo = Tr.Entity
 						self.StuckStick = Weld
 					end
@@ -172,15 +173,19 @@ if SERVER then
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
-		--constraint.RemoveAll(self)
+		--[[if IsValid(self.StuckTo) then
+			if IsValid(self.StuckTo:GetPhysicsObject()) then
+				Phys = self.StuckTo:GetPhysicsObject()
+			end
+		end]]--
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetRight() * 20000)
+		Phys:ApplyForceCenter(self:GetForward() * 20000)
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(95, 105))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(self:GetRight())
+		Eff:SetNormal(-self:GetForward())
 		Eff:SetScale(2)
 		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
 
@@ -192,8 +197,6 @@ if SERVER then
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
 
-		---
-
 		JMod.Hint(self.EZowner, "backblast", self:GetPos())
 	end
 
@@ -203,19 +206,26 @@ if SERVER then
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
 
-		local Phys = self:GetPhysicsObject()
-		--JMod.AeroDrag(self, -self:GetRight(), .75)
-
 		if self:GetState() == STATE_LAUNCHED then
+			local Phys = self:GetPhysicsObject()
+			--[[if IsValid(self.StuckTo) and IsValid(self.StuckTo:GetPhysicsObject()) then
+				Phys = self.StuckTo:GetPhysicsObject()
+			end]]--
+
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 20000)
-				self.FuelLeft = self.FuelLeft - 5
+				Phys:ApplyForceCenter(self:GetForward() * 20000)
+				self.FuelLeft = self.FuelLeft - 2.5
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(self:GetRight())
+				Eff:SetNormal(-self:GetForward())
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
+			elseif not self.Spent then
+				self.Spent = true
+				timer.Simple(2, function()
+					SafeRemoveEntity(self)
+				end)
 			end
 		end
 
@@ -227,11 +237,11 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 	function ENT:Draw()
-		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
+		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), -self:GetForward()
 		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or CurTime() + 1
+			self.BurnoutTime = self.BurnoutTime or CurTime() + 2
 
 			if self.BurnoutTime > CurTime() then
 				render.SetMaterial(GlowSprite)
