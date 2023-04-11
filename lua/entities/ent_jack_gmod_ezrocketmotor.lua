@@ -71,8 +71,8 @@ if SERVER then
 	function ENT:TriggerInput(iname, value)
 		if iname == "Arm" and value > 0 then
 			self:SetState(STATE_ARMED)
-		elseif iname == "Arm" and value == 0 then
-			self:SetState(STATE_OFF)
+		--elseif iname == "Arm" and value == 0 then
+		--	self:SetState(STATE_OFF)
 		elseif iname == "Launch" and value > 0 then
 			self:SetState(STATE_ARMED)
 			self:Launch()
@@ -180,15 +180,18 @@ if SERVER then
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
-		if IsValid(self.StuckTo) then
-			if IsValid(self.StuckTo:GetPhysicsObject()) then
-				Phys = self.StuckTo:GetPhysicsObject()
-			end
-		end
 		Phys:SetMass(0)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(self:GetForward() * 20000)
+
+		if IsValid(self.StuckTo) then
+			if IsValid(self.StuckTo:GetPhysicsObject()) then
+				Phys = self.StuckTo:GetPhysicsObject()
+				Phys:EnableMotion(true)
+				Phys:Wake()
+				Phys:ApplyForceCenter(self:GetForward() * 20000)
+			end
+		end
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(95, 105))
 		local Eff = EffectData()
@@ -215,7 +218,7 @@ if SERVER then
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
 
-		if not table.HasValue(constraint.GetAllConstrainedEntities(self), self.StuckTo) then
+		if IsValid(self.StuckTo) and not table.HasValue(constraint.GetAllConstrainedEntities(self), self.StuckTo) then
 			self.StuckTo = nil
 			self:CutBurn()
 		end
@@ -228,7 +231,8 @@ if SERVER then
 
 			if self.FuelLeft > 0 then
 				Phys:ApplyForceCenter(self:GetForward() * 20000)
-				self.FuelLeft = self.FuelLeft - 3
+				self.FuelLeft = self.FuelLeft - 2.5
+				--jprint(1 / self.FuelLeft)
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
@@ -237,12 +241,15 @@ if SERVER then
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
 				self.Spent = true
-				timer.Simple(2, function()
-					SafeRemoveEntity(self)
+				timer.Simple(1, function()
+					if IsValid(self) then
+						--JMod.Sploom(JMod.GetEZowner(self), self:GetPos(), 0, 0)
+						SafeRemoveEntity(self)
+					end
 				end)
 			end
 		elseif State == STATE_ARMED and self.LastState == STATE_LAUNCHED then
-			self:CutBurn()
+			--self:CutBurn()
 		end
 
 		self.LastState = State
@@ -258,7 +265,7 @@ elseif CLIENT then
 		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or CurTime() + 2
+			self.BurnoutTime = self.BurnoutTime or CurTime() + 1.5
 
 			if self.BurnoutTime > CurTime() then
 				render.SetMaterial(GlowSprite)
