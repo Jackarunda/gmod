@@ -2344,7 +2344,7 @@ function JMod.InitGlobalConfig(forceNew)
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
-		if Existing.Version then
+		if Existing and Existing.Version then
 			file.Write("JMod_Config_OLD.txt", FileContents)
 			print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
 			print("JMOD: Writing old config to 'JMod_Config_OLD.txt'...\n")
