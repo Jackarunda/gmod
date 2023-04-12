@@ -14,7 +14,7 @@ ENT.EZgasParticle = true
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self.LifeTime = math.random(50, 100) * JMod.Config.PoisonGasLingerTime
+		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
@@ -76,7 +76,7 @@ if SERVER then
 				elseif self:ShouldDamage(obj) and (math.random(1, 3) == 1) and (self.NextDmg < Time) then
 					local Dmg, Helf = DamageInfo(), obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(math.random(1, 4) * JMod.Config.PoisonGasDamage)
+					Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(self.EZowner or self)
 					Dmg:SetDamagePosition(obj:GetPos())

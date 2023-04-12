@@ -125,7 +125,7 @@ if SERVER then
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State == JMod.EZ_STATE_OFF then
 				if Alt then
@@ -232,7 +232,7 @@ if SERVER then
 				JMod.Sploom(self.EZowner, SelfPos, math.random(50, 80))
 				util.ScreenShake(SelfPos, 99999, 99999, .3, 500)
 				local Dir = (self:GetUp() + VectorRand() * .01):GetNormalized()
-				JMod.RicPenBullet(self, SelfPos, Dir, (dmg or 800) * JMod.Config.MinePower, true, true)
+				JMod.RicPenBullet(self, SelfPos, Dir, (dmg or 800) * JMod.Config.Explosives.Mine.Power, true, true)
 				self:Remove()
 			end
 		end)

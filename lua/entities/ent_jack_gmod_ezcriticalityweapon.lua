@@ -98,14 +98,14 @@ if SERVER then
 			local Owner, Count = self.EZowner, 50
 
 			timer.Simple(.5, function()
-				for k = 1, JMod.Config.NuclearRadiationMult * Count do
+				for k = 1, JMod.Config.Particles.NuclearRadiationMult * Count do
 					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 					Gas.Range = 500
 					Gas:SetPos(Pos)
 					JMod.SetEZowner(Gas, Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
-					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
+					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 				end
 			end)
 
@@ -114,7 +114,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local State, Alt = self:GetState(), activator:KeyDown(JMod.Config.AltFunctionKey)
+		local State, Alt = self:GetState(), activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_OFF then
 			if Alt then
@@ -272,7 +272,7 @@ if SERVER then
 					local Vec = TargPos - SelfPos
 					local Dir, Dist = Vec:GetNormalized(), math.Clamp(Vec:Length(), 0, Range)
 					local DistFrac = 1 - (Dist / Range)
-					local DmgAmt = math.Rand(.1, 1) * JMod.Config.NuclearRadiationMult * DistFrac ^ 2
+					local DmgAmt = math.Rand(.1, 1) * JMod.Config.Particles.NuclearRadiationMult * DistFrac ^ 2
 
 					if (Playa and v:Alive()) or NPC then
 						local Shielding = DetermineShieldingFactor(SelfPos, TargPos, self, v, Vec, Dist) -- shielding calcs are spensive, only run them for players/NPCs
@@ -303,7 +303,7 @@ if SERVER then
 								---
 								local DmgTaken = Helf - v:Health()
 
-								if (DmgTaken > 0) and JMod.Config.NuclearRadiationSickness then
+								if (DmgTaken > 0) and JMod.Config.Explosives.Nuke.RadiationSickness then
 									v.EZirradiated = (v.EZirradiated or 0) + DmgTaken * 5 -- fuckin ouch
 
 									timer.Simple(10, function()

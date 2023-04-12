@@ -175,7 +175,7 @@ function JMod.BlastThatDoor(ent, vel)
 			end
 		end)
 
-		timer.Simple(30 * JMod.Config.DoorBreachResetTimeMult, function()
+		timer.Simple(30 * JMod.Config.Explosives.DoorBreachResetTimeMult, function()
 			if IsValid(ent) then
 				ent:SetNotSolid(false)
 				ent:SetNoDraw(false)
@@ -213,7 +213,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	shooter = shooter or game.GetWorld()
 	zReduction = zReduction or 2
 
-	if not JMod.Config.FragExplosions then
+	if not JMod.Config.Explosives.FragExplosions then
 		util.BlastDamage(shooter, attacker, origin, fragDmg * 8, fragDmg)
 
 		return
@@ -373,7 +373,7 @@ local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_
 
 function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local origPower = power
-	power = power * JMod.Config.ExplosionPropDestroyPower
+	power = power * JMod.Config.Explosives.PropDestroyPower
 	local maxRange = 250 * power * (range or 1) -- todo: this still doesn't do what i want for the nuke
 	local maxMassToDestroy = 10 * power ^ .8
 	local masMassToLoosen = 30 * power
@@ -905,7 +905,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
-			for i = 1, math.ceil(7 * amt * JMod.Config.SupplyEffectMult) do
+			for i = 1, math.ceil(7 * amt * JMod.Config.Machines.SupplyEffectMult) do
 				local whee = EffectData()
 				whee:SetOrigin(fromPoint)
 				if toPoint then
@@ -1068,7 +1068,7 @@ function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
 		if task == "loosen" then
 			if constraint.HasConstraints(ent) or not Phys:IsMotionEnabled() then
 				local Mass = Phys:GetMass() ^ .8
-				local AddAmt = 300 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
+				local AddAmt = 300 / Mass * WorkSpreadMult * JMod.Config.Tools.Toolbox.DeconstructSpeedMult
 				ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 
 				if Prog >= 100 then
@@ -1091,7 +1091,7 @@ function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
 				if #table.GetKeys(Yield) <= 0 then
 					return Message
 				else
-					local AddAmt = 250 / Mass * WorkSpreadMult * JMod.Config.ToolboxDeconstructSpeedMult
+					local AddAmt = 250 / Mass * WorkSpreadMult * JMod.Config.Tools.Toolbox.DeconstructSpeedMult
 					ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 					
 					if Prog >= 100 then
@@ -1101,7 +1101,7 @@ function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
 							local AmtLeft = v
 
 							while AmtLeft > 0 do
-								local Remove = math.min(AmtLeft, 100 * JMod.Config.MaxResourceMult)
+								local Remove = math.min(AmtLeft, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 								local Ent = ents.Create(JMod.EZ_RESOURCE_ENTITIES[k])
 								Ent:SetPos(pos + VectorRand() * 40 + Vector(0, 0, 30))
 								Ent:SetAngles(AngleRand())

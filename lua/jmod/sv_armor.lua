@@ -142,7 +142,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 							if shouldDmgArmor then
 								if not IsDamageOneOfTypes(dmg, JMod.BiologicalDmgTypes) then
-									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.ArmorDegredationMult
+									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.Armor.DegredationMult
 
 									if damType == DMG_BUCKSHOT then
 										ArmorDmgAmt = ArmorDmgAmt / 2.5
@@ -255,7 +255,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			end
 		end
 
-		Mul = (Mul * (1 - Protection)) / JMod.Config.ArmorProtectionMult
+		Mul = (Mul * (1 - Protection)) / JMod.Config.Armor.ProtectionMult
 
 		-- if there's no armor on the struck bodypart
 		if NoProtection and JMod.Config.QoL.RealisticLocationalDamage then
@@ -306,7 +306,7 @@ local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 		Protection = Protection * AmmoAPmul
 	end
 
-	Mul = (Mul * (1 - Protection)) / JMod.Config.ArmorProtectionMult
+	Mul = (Mul * (1 - Protection)) / JMod.Config.Armor.ProtectionMult
 
 	if Mul < .001 then
 		dmg:ScaleDamage(0)
@@ -389,7 +389,7 @@ function JMod.CalcSpeed(ply)
 	end
 
 	local WeighedFrac = TotalWeight / 250
-	ply.EZarmor.speedfrac = math.Clamp(1 - (.8 * WeighedFrac * JMod.Config.ArmorWeightMult), .05, 1)
+	ply.EZarmor.speedfrac = math.Clamp(1 - (.8 * WeighedFrac * JMod.Config.Armor.WeightMult), .05, 1)
 end
 
 hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, vol, filter)

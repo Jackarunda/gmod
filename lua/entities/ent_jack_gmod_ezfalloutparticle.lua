@@ -15,7 +15,7 @@ ENT.JModDontIrradiate = true
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self.LifeTime = self.LifeTime or math.random(100, 200) * JMod.Config.NuclearRadiationMult
+		self.LifeTime = self.LifeTime or math.random(100, 200) * JMod.Config.Particles.NuclearRadiationMult
 		self.DieTime = Time + self.LifeTime
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")

@@ -72,7 +72,7 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 
 		Explosives = {
-			Mines = {
+			Mine = {
 				Delay = 1,
 				Power = 1,
 			},
@@ -84,12 +84,13 @@ function JMod.InitGlobalConfig(forceNew)
 			Nuke = {
 				RangeMult = 1,
 				PowerMult = 1,
+				RadiationSickness = true,
 			},
 
 			BombDisarmSpeed = 1,
 			DoorBreachResetTimeMult = 1,
 			FragExplosions = true,
-			ExplosionPropDestroyPower = 1,
+			PropDestroyPower = 1,
 		},
 
 		Particles = {
@@ -97,8 +98,7 @@ function JMod.InitGlobalConfig(forceNew)
 			FumigatorGasAmount = 1,
 			PoisonGasDamage = 1,
 			PoisonGasLingerTime = 1,
-			RadiationMult = 1,
-			RadiationSickness = true,
+			NuclearRadiationMult = 1,
 		},
 
 
@@ -2344,13 +2344,19 @@ function JMod.InitGlobalConfig(forceNew)
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
-		if Existing and Existing.Info.Version then
-			if Existing.Info.Version == NewConfig.Info.Version then
-				JMod.Config = util.JSONToTable(FileContents)
-				print("JMOD: config file loaded")
-			else
-				file.Write("JMod_Config_OLD.txt", FileContents)
-				print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
+		if Existing.Version then 
+			file.Write("JMod_Config_OLD.txt", FileContents)
+			print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
+			print("JMOD: Writing old config to 'JMod_Config_OLD.txt'...\n")
+		else
+			if Existing and Existing.Info.Version then
+				if Existing.Info.Version == NewConfig.Info.Version then
+					JMod.Config = util.JSONToTable(FileContents)
+					print("JMOD: config file loaded")
+				else
+					file.Write("JMod_Config_OLD.txt", FileContents)
+					print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
+				end
 			end
 		end
 	end

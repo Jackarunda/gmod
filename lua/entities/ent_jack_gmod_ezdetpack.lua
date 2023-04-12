@@ -110,7 +110,7 @@ if SERVER then
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State == STATE_OFF then
 				if Alt then
@@ -205,7 +205,7 @@ if SERVER then
 			if IsValid(self) then
 				if self.SympatheticDetonated then return end
 				local SelfPos, PowerMult = self:IncludeSympatheticDetpacks(self:LocalToWorld(self:OBBCenter()))
-				PowerMult = (PowerMult ^ .75) * JMod.Config.DetpackPowerMult
+				PowerMult = (PowerMult ^ .75) * JMod.Config.Explosives.Detpack.PowerMult
 				--
 				local Blam = EffectData()
 				Blam:SetOrigin(SelfPos)

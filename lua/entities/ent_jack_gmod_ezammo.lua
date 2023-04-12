@@ -24,7 +24,7 @@ local ShellEffects = {"RifleShellEject", "PistolShellEject", "ShotgunShellEject"
 
 if SERVER then
 	function ENT:UseEffect(pos, ent)
-		for i = 1, 30 * JMod.Config.SupplyEffectMult do
+		for i = 1, 30 * JMod.Config.Machines.SupplyEffectMult do
 			timer.Simple(i / 200, function()
 				local Eff = EffectData()
 				Eff:SetOrigin(pos)

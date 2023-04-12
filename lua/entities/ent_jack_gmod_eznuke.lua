@@ -106,13 +106,13 @@ if SERVER then
 			JMod.DamageSpark(self)
 		end
 
-		for k = 1, 10 * JMod.Config.NuclearRadiationMult do
+		for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
 			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.NuclearRadiationMult))
+			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 		end
 
 		SafeRemoveEntityDelayed(self, 10)
@@ -185,7 +185,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.NukePowerMult, JMod.Config.NukeRangeMult
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()
@@ -264,13 +264,13 @@ if SERVER then
 				if i == 20 then
 					for j = 1, 10 do
 						timer.Simple(j / 10, function()
-							for k = 1, 20 * JMod.Config.NuclearRadiationMult do
+							for k = 1, 20 * JMod.Config.Particles.NuclearRadiationMult do
 								local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 								Gas:SetPos(SelfPos)
 								JMod.SetEZowner(Gas, Att)
 								Gas:Spawn()
 								Gas:Activate()
-								Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 1000 * JMod.Config.NuclearRadiationMult))
+								Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 1000 * JMod.Config.Particles.NuclearRadiationMult))
 							end
 						end)
 					end

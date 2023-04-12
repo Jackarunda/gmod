@@ -188,7 +188,7 @@ function SWEP:ApplyForce()
 		local Force = (avec - velo / 2) * mul
 		local ForceMagnitude = Force:Length()
 
-		if ForceMagnitude > 4000 * JMod.Config.HandGrabStrength then
+		if ForceMagnitude > 4000 * JMod.Config.General.HandGrabStrength then
 			self:SetCarrying()
 
 			return

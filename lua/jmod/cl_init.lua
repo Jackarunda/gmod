@@ -377,8 +377,8 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.LuaConfig = JMod.LuaConfig or {}
 	JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
 	JMod.Config = JMod.Config or {}
-	JMod.Config.AltFunctionKey = Payload.AltFunctionKey
-	JMod.Config.WeaponSwayMult = Payload.WeaponSwayMult
+	JMod.Config.General.AltFunctionKey = Payload.AltFunctionKey
+	JMod.Config.Weapons.SwayMult = Payload.WeaponSwayMult
 
 	if tobool(net.ReadBit()) then
 		for k, v in pairs(player.GetAll()) do

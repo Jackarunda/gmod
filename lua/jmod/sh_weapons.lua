@@ -416,12 +416,12 @@ function JMod.LoadAmmoTable()
 		if SERVER then
 			timer.Simple(1, function()
 				if (v.resourcetype) and (v.resourcetype == "munitions") then
-					if not(table.HasValue(JMod.Config.AmmoTypesThatAreMunitions, k)) then
-						table.insert(JMod.Config.AmmoTypesThatAreMunitions, k)
+					if not(table.HasValue(JMod.Config.Weapons.AmmoTypesThatAreMunitions, k)) then
+						table.insert(JMod.Config.Weapons.AmmoTypesThatAreMunitions, k)
 					end
 				elseif not(v.resourcetype) then
-					if not(table.HasValue(JMod.Config.WeaponAmmoBlacklist, k)) then
-						table.insert(JMod.Config.WeaponAmmoBlacklist, k)
+					if not(table.HasValue(JMod.Config.Weapons.WeaponAmmoBlacklist, k)) then
+						table.insert(JMod.Config.Weapons.WeaponAmmoBlacklist, k)
 					end
 				end
 			end)
@@ -771,9 +771,9 @@ elseif SERVER then
 
 				--[[ PRIMARY --]]
 				if PrimName then
-					PrimMax = PrimMax * JMod.Config.AmmoCarryLimitMult
-					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.AmmoTypesThatAreMunitions)
-					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.WeaponAmmoBlacklist)) then
+					PrimMax = PrimMax * JMod.Config.Weapons.AmmoCarryLimitMult
+					local IsPrimMunitions = IsAmmoOnTable(PrimName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
+					if (IsPrimMunitions == IsMunitionBox) and not(IsAmmoOnTable(PrimName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if PrimSize == -1 then
 							PrimSize = -PrimSize
 						end
@@ -802,9 +802,9 @@ elseif SERVER then
 				if ent:GetResource() <= 0 then return end
 				--[[ Secondary --]]
 				if SecName then
-					SecMax = SecMax * JMod.Config.AmmoCarryLimitMult
-					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.AmmoTypesThatAreMunitions)
-					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.WeaponAmmoBlacklist)) then
+					SecMax = SecMax * JMod.Config.Weapons.AmmoCarryLimitMult
+					local IsSecMunitions = IsAmmoOnTable(SecName, JMod.Config.Weapons.AmmoTypesThatAreMunitions)
+					if (IsSecMunitions == IsMunitionBox) and not(IsAmmoOnTable(SecName, JMod.Config.Weapons.WeaponAmmoBlacklist)) then
 						if SecSize == -1 then
 							SecSize = -SecSize
 						end
