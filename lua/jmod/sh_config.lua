@@ -10,51 +10,104 @@ end
 
 function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
-		Author = "Jackarunda",
-		Version = 41.8,
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
-		Hints = true,
-		AltFunctionKey = IN_WALK,
-		SentryPerformanceMult = 1,
-		ToolboxDeconstructSpeedMult = 1,
-		MedBayHealMult = 1,
-		MedKitHealMult = 1,
-		ToolKitUpgradeMult = 1,
-		MineDelay = 1,
-		MinePower = 1,
-		SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
-		DoorBreachResetTimeMult = 1,
-		SupplyEffectMult = 1,
-		MaxResourceMult = 1,
-		FumigatorGasAmount = 1,
-		PoisonGasDamage = 1,
-		PoisonGasLingerTime = 1,
-		DetpackPowerMult = 1,
-		AmmoCarryLimitMult = 1,
-		MicroBlackHoleGeneratorChargeSpeed = 1,
-		MicroBlackHoleEvaporateSpeed = 1,
-		MicroBlackHoleGravityStrength = 1,
-		ToolboxDeWeldSpeed = 1,
-		HandGrabStrength = 1,
-		BombDisarmSpeed = 1,
-		ExplosionPropDestroyPower = 1,
-		ArmorProtectionMult = 1,
-		ArmorDegredationMult = 1,
-		ArmorChargeDepletionMult = 1,
-		ArmorWeightMult = 1,
-		WeaponDamageMult = 1,
-		WeaponSwayMult = 1,
-		NukeRangeMult = 1,
-		NukePowerMult = 1,
-		NuclearRadiationMult = 1,
-		NuclearRadiationSickness = true,
-		VirusSpreadMult = 1,
-		FragExplosions = true,
-		SpawnMachinesFull = true,
+
+		Info = {
+			Author = "Jackarunda",
+			Version = 41.9,
+		},
+
+
+		General = {
+			Hints = true,
+			AltFunctionKey = IN_WALK,
+			HandGrabStrength = 1,
+		},
+
+		Armor = {
+			ProtectionMult = 1,
+			DegradationMult = 1,
+			ChargeDepletionMult = 1,
+			WeightMult = 1,
+		},
+
+		Tools = {
+			Medkit = {
+				HealMult = 1,
+			},
+
+			Toolbox = {
+				DeWeldSpeed = 1,
+				UpgradeMult = 1,
+				DeconstructSpeedMult = 1,
+				SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
+			},
+		},
+
+		Weapons = {
+			DamageMult = 1,
+			SwayMult = 1,
+			AmmoCarryLimitMult = 1,
+			WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
+			AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
+		},
+
+		Machines = {
+			Sentry = {
+				PerformanceMult = 1,
+			},
+
+			MedBay = {
+				HealMult = 1,
+			},
+
+			Blackhole = {
+				GeneratorChargeSpeed = 1,
+				EvaporateSpeed = 1,
+				GravityStrength = 1,
+			},
+
+			SpawnMachinesFull = true,
+			SupplyEffectMult = 1,
+		},
+
+		Explosives = {
+			Mines = {
+				Delay = 1,
+				Power = 1,
+			},
+
+			Detpack = {
+				PowerMult = 1,
+			},
+
+			Nuke = {
+				RangeMult = 1,
+				PowerMult = 1,
+			},
+
+			BombDisarmSpeed = 1,
+			DoorBreachResetTimeMult = 1,
+			FragExplosions = true,
+			ExplosionPropDestroyPower = 1,
+		},
+
+		Particles = {
+			VirusSpreadMult = 1,
+			FumigatorGasAmount = 1,
+			PoisonGasDamage = 1,
+			PoisonGasLingerTime = 1,
+			RadiationMult = 1,
+			RadiationSickness = true,
+		},
+
+
 		ResourceEconomy = {
 			ResourceRichness = 1,
-			ExtractionSpeed = 1
+			ExtractionSpeed = 1,
+			MaxResourceMult = 1,
 		},
+
 		QoL = {
 			RealisticLocationalDamage = false,
 			ExtinguishUnderwater = false,
@@ -63,16 +116,16 @@ function JMod.InitGlobalConfig(forceNew)
 			GiveHandsOnSpawn = false,
 			JModCorpse = false,
 			BleedDmgMult = 0,
-			BleedSpeedMult = 0
+			BleedSpeedMult = 0,
 		},
+
 		FoodSpecs = {
 			DigestSpeed = 1,
 			ConversionEfficiency = 1,
 			EatSpeed = 1,
-			BoostMult = 1
+			BoostMult = 1,
 		},
-		AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
-		WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
+
 		RadioSpecs = {
 			DeliveryTimeMult = 1,
 			ParachuteDragMult = 1,
@@ -2283,7 +2336,7 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "The longer you set the time, the harder it is to defuse."
 			}
-		}
+		},
 	}
 
 	local FileContents = file.Read("JMod_Config.txt")
@@ -2291,8 +2344,8 @@ function JMod.InitGlobalConfig(forceNew)
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
-		if Existing and Existing.Version then
-			if Existing.Version == NewConfig.Version then
+		if Existing and Existing.Info.Version then
+			if Existing.Info.Version == NewConfig.Info.Version then
 				JMod.Config = util.JSONToTable(FileContents)
 				print("JMOD: config file loaded")
 			else
