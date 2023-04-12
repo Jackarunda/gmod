@@ -131,6 +131,8 @@ if SERVER then
 					constraint.RemoveAll(self)
 					self.StuckStick = nil
 					self.StuckTo = nil
+					self:SetParent(nil)
+					self:SetPos(activator:EyePos() + activator:GetAimVector() * 5)
 					Dude:PickupObject(self)
 					self.NextStick = Time + .5
 					JMod.Hint(Dude, "sticky")
@@ -144,7 +146,7 @@ if SERVER then
 			if self:IsPlayerHolding() and (self.NextStick < Time) then
 				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
 
-				if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+				if Tr.Hit and IsValid(Tr.Entity) and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
 					self.NextStick = Time + .5
 					local Ang = Tr.HitNormal:Angle()
 					Ang:RotateAroundAxis(Ang:Up(), 180)
