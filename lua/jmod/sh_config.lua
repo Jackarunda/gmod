@@ -2361,7 +2361,7 @@ function JMod.LoadDepositConfig(configID, forceMap)
 	if forceMap then
 		MapName = forceMap
 	end
-	print(MapName)
+	--print(MapName)
 	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
 	
 	if FileContents then

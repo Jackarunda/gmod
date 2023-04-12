@@ -235,6 +235,8 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 
 		if not (ent:GetClass() == "prop_ragdoll") then
 			self.CarryPos = ent:WorldToLocal(pos)
+			self.CarryAng = ent:GetAngles()
+			--jprint(self.CarryAng)
 		else
 			self.CarryPos = nil
 		end
@@ -243,6 +245,7 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 		self.CarryBone = nil
 		self.CarryPos = nil
 		self.CarryDist = nil
+		self.CarryAng = nil
 	end
 end
 

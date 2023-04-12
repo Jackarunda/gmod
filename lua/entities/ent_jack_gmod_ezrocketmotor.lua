@@ -157,9 +157,10 @@ if SERVER then
 							self:GetPhysicsObject():Sleep()
 						end)
 					else
-						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 10000, false, false)
+						--local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 10000, false, false)
 						self.StuckTo = Tr.Entity
-						self.StuckStick = Weld
+						--self.StuckStick = Weld
+						self:SetParent(Tr.Entity)
 					end
 
 					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
@@ -180,16 +181,16 @@ if SERVER then
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
-		Phys:SetMass(0)
-		Phys:EnableMotion(true)
-		Phys:Wake()
+		--Phys:SetMass(0)
+		--Phys:EnableMotion(true)
+		--Phys:Wake()
 
 		if IsValid(self.StuckTo) then
 			if IsValid(self.StuckTo:GetPhysicsObject()) then
 				Phys = self.StuckTo:GetPhysicsObject()
 				Phys:EnableMotion(true)
 				Phys:Wake()
-				Phys:ApplyForceCenter(self:GetForward() * 20000)
+				Phys:ApplyForceCenter(self:GetForward() * 25000)
 			end
 		end
 		---
@@ -218,10 +219,10 @@ if SERVER then
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
 
-		if IsValid(self.StuckTo) and not table.HasValue(constraint.GetAllConstrainedEntities(self), self.StuckTo) then
-			self.StuckTo = nil
-			self:CutBurn()
-		end
+		--if IsValid(self.StuckTo) and not table.HasValue(constraint.GetAllConstrainedEntities(self), self.StuckTo) then
+		--	self.StuckTo = nil
+		--	self:CutBurn()
+		--end
 
 		if State == STATE_LAUNCHED then
 			local Phys = self:GetPhysicsObject()
@@ -249,7 +250,7 @@ if SERVER then
 				end)
 			end
 		elseif State == STATE_ARMED and self.LastState == STATE_LAUNCHED then
-			--self:CutBurn()
+			self:CutBurn()
 		end
 
 		self.LastState = State
