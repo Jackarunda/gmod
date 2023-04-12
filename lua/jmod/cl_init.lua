@@ -377,6 +377,8 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.LuaConfig = JMod.LuaConfig or {}
 	JMod.LuaConfig.ArmorOffsets = Payload.ArmorOffsets
 	JMod.Config = JMod.Config or {}
+	JMod.Config.General = JMod.Config.General or {}
+	JMod.Config.Weapons = JMod.Config.Weapons or {}
 	JMod.Config.General.AltFunctionKey = Payload.AltFunctionKey
 	JMod.Config.Weapons.SwayMult = Payload.WeaponSwayMult
 
