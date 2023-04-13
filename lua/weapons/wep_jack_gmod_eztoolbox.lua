@@ -530,7 +530,7 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt)
 
 	---
 	if (DonorCurAmt - Given) <= 0 then
-		if donor:GetClass() == "ent_jack_gmod_ezcrate" then
+		if donor.IsJackyEZcrate then
 			donor:SetResource(0)
 			donor:ApplySupplyType("generic")
 		else
