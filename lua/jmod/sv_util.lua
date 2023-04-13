@@ -814,29 +814,26 @@ end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
 	if not(amount) or (amount < 1) then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
-	local SpawnPos = machine:LocalToWorld(relativeSpawnPos)
+	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	for i = 1, math.ceil(amount/100) do
 		if findCrate then
 			range = range or 256
+			range = range * range -- Sqr root stuff
 			local BestCrate = nil
 			local IsGenericCrate = true
 
 			for _, ent in pairs(ents.FindInSphere(SpawnPos, range)) do
-				if (ent:GetClass() == "ent_jack_gmod_ezcrate") then
-					local Dist = SpawnPos:Distance(ent:LocalToWorld(ent:OBBCenter()))
+				if (ent.IsJackyEZcrate) then
+					local Dist = SpawnPos:DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
 					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
 						if (ent:GetResourceType() == resourceType) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = false
-							--print("We found a crate with similar resource")
-							--print(tostring(BestCrate))
 						elseif (ent:GetResourceType() == "generic") and (IsGenericCrate == true) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = true
-							--print("We found a crate with generic resource")
-							--print(tostring(BestCrate))
 						end
 					end
 				end
@@ -859,12 +856,11 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		local SpawnAmount = math.min(amount, 100)
 		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()
-			if not(IsValid(machine)) then return end
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
-			Resource:SetAngles(machine:LocalToWorldAngles(relativeSpawnAngle))
+			Resource:SetAngles(SpawnAngle)
 			Resource:Spawn()
-			JMod.SetEZowner(machine.EZowner)
+			JMod.SetEZowner(MachineOwner)
 			Resource:SetResource(math.Round(SpawnAmount))
 			Resource:CalcWeight()
 			Resource:Activate()

@@ -190,14 +190,17 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 		if obj.IsJackyEZresource and JMod.VisCheck(pos, obj, sourceEnt) then
 			local Typ = obj.EZsupplies
 			Results[Typ] = (Results[Typ] or 0) + obj:GetResource()
-		elseif obj:GetClass() == "ent_jack_gmod_ezcrate" and JMod.VisCheck(pos, obj, sourceEnt) then
+		elseif obj.IsJackyEZcrate and JMod.VisCheck(pos, obj, sourceEnt) then
 			local Typ = obj:GetResourceType()
 			Results[Typ] = (Results[Typ] or 0) + obj:GetResource()
 		end
 	end
 
-	if (sourceEnt:GetClass() == "wep_jack_gmod_eztoolbox") then
-		Results[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = (Results[JMod.EZ_RESOURCE_TYPES.BASICPARTS] or 0) + sourceEnt:GetBasicParts()
+	local ContainedResources = sourceEnt.GetContainedResources and sourceEnt:GetContainedResources()
+	if ContainedResources then
+		for k, v in pairs(ContainedResources) do
+			Results[k] = (Results[k] or 0) + v
+		end
 	end
 
 	return Results
@@ -235,7 +238,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 					if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 					Donor:SetResource(0)
 
-					if Donor:GetClass() == "ent_jack_gmod_ezcrate" then
+					if Donor.IsJackyEZcrate then
 						Donor:ApplySupplyType("generic")
 					else
 						Donor:Remove()
@@ -264,7 +267,7 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.IsJackyEZresource or obj:GetClass() == "ent_jack_gmod_ezcrate" then
+		if obj.IsJackyEZresource or obj.IsJackyEZresource then
 			if (obj.EZsupplies == typ) and (obj:GetResource() >= amt) and JMod.VisCheck(pos, obj, sourceEnt) then return obj end
 		end
 	end

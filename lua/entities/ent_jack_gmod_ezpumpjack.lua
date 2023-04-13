@@ -142,7 +142,7 @@ if(SERVER)then
 
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		self:ProduceResource(self:GetProgress())
+		self:ProduceResource()
 
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -170,7 +170,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif(State==STATE_RUNNING)then
 			if alt then
-				self:ProduceResource(self:GetProgress())
+				self:ProduceResource()
 
 				return
 			end
@@ -231,14 +231,14 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						-- Spawn barrel
 						local amtToPump = math.min(self:GetProgress(), 100)
-						self:ProduceResource(amtToPump)
+						self:ProduceResource()
 					end
 				else
 					self:SetProgress(self:GetProgress() + pumpRate)
 
 					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-						self:ProduceResource(amtToPump)
+						self:ProduceResource()
 						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
 				end
@@ -248,7 +248,7 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:ProduceResource(amt)
+	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, Typ = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetResourceType()
 		local amt = math.min(self:GetProgress(), 100)
 

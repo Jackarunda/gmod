@@ -367,8 +367,9 @@ if(SERVER)then
 				self.Pod:GetDriver():ExitVehicle()
 			end
 		end
-		if(self.OnDestroy)then self:OnDestroy(dmginfo) end
-		SafeRemoveEntityDelayed(self, 0.1)
+		if self.ProduceResource then self:ProduceResource() end
+		if self.OnDestroy then self:OnDestroy(dmginfo) end
+		SafeRemoveEntityDelayed(self, 0.5)
 	end
 
 	function ENT:SFX(str,absPath)
@@ -389,7 +390,6 @@ if(SERVER)then
 	end
 
 	function ENT:OnRemove()
-		--
 	end
 
 	function ENT:TryLoadResource(typ, amt)

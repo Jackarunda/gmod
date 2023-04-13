@@ -134,7 +134,7 @@ if(SERVER)then
 	
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		self:ProduceResource(self:GetProgress())
+		self:ProduceResource()
 
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -161,7 +161,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif State == STATE_RUNNING then
 			if alt then
-				self:ProduceResource(self:GetProgress())
+				self:ProduceResource()
 
 				return
 			end
@@ -224,7 +224,7 @@ if(SERVER)then
 
 				if self:GetProgress() >= 100 then
 					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-					self:ProduceResource(amtToDrill)
+					self:ProduceResource()
 					JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
 				end
 
