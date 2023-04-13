@@ -285,33 +285,32 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
+function SWEP:GetEZdonateableResources(resourceType)
+	local AvaliableResources = {
+		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self:GetBasicParts(),
+		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
+		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
+	}
+	return (resourceType and AvaliableResources[resourceType]) or AvaliableResources
+end
+
 function SWEP:BuildItem(selectedBuild)
 	local Built = false
 	local Ent, Pos, Norm = self:WhomIlookinAt()
-	local buildInfo = self.Craftables[selectedBuild]
-	if not buildInfo then return end
-	if not(self:GetElectricity() >= 8 * (buildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (buildInfo.sizeScale or 1)) then
+	local BuildInfo = self.Craftables[selectedBuild]
+	if not BuildInfo then return end
+	if not(self:GetElectricity() >= 8 * (BuildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (BuildInfo.sizeScale or 1)) then
 		self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 		return
 	end
-	if (buildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
-	if (buildInfo.results == "ez bolt") and not JMod.FindBoltPos(self.Owner) then return end
-	if (buildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
-	local Sound = buildInfo.results ~= "ez bolt" and buildInfo.results ~= "ez nail" and buildInfo.results ~= "ez box"
-	local Reqs = table.FullCopy(buildInfo.craftingReqs)
-
-	local PartsDonated = 0
-	local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-	if Reqs[EZbasicParts] and (Reqs[EZbasicParts] > 0) and (self:GetBasicParts() > 0) then
-		local RequiredParts = Reqs[EZbasicParts]
-		local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
-
-		PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
-		Reqs[EZbasicParts] = RemainingParts
-	end
+	if (BuildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
+	if (BuildInfo.results == "ez bolt") and not JMod.FindBoltPos(self.Owner) then return end
+	if (BuildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
+	local Sound = BuildInfo.results ~= "ez bolt" and BuildInfo.results ~= "ez nail" and BuildInfo.results ~= "ez box"
+	local Reqs = table.FullCopy(BuildInfo.craftingReqs)
 
 	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
-		local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, buildInfo)
+		local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, BuildInfo)
 
 		if override == false then
 			self:Msg(msg or "cannot build")
@@ -321,7 +320,7 @@ function SWEP:BuildItem(selectedBuild)
 
 		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
 		Built = true
-		local BuildSteps = math.ceil(20 * (buildInfo.sizeScale or 1))
+		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
 		for i = 1, BuildSteps do
 			timer.Simple(i / 100, function()
@@ -331,7 +330,7 @@ function SWEP:BuildItem(selectedBuild)
 							sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
 						end
 					else
-						local Class = buildInfo.results
+						local Class = BuildInfo.results
 
 						if Class == "ez nail" then
 							JMod.Nail(self.Owner)
@@ -346,24 +345,21 @@ function SWEP:BuildItem(selectedBuild)
 								local FuncName = StringParts[2]
 
 								if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-									JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (buildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
+									JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 								else
 									print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 								end
 							else
 								local Ent = ents.Create(Class)
-								Ent:SetPos(Pos + Norm * 20 * (buildInfo.sizeScale or 1))
+								Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
 								Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
 								JMod.SetEZowner(Ent, self.Owner)
 								Ent:Spawn()
 								Ent:Activate()
 								JMod.Hint(self.Owner, Class)
-								self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (buildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
-								self:SetGas(math.Clamp(self:GetGas() - 4 * (buildInfo.sizeScale or 1), 0, self.EZmaxGas))
+								self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
+								self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
 							end
-						end
-						if PartsDonated > 0 then
-							self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
 						end
 						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
 					end
@@ -396,21 +392,12 @@ function SWEP:PrimaryAttack()
 		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
 			local State = Ent:GetState()
 
-			local PartsDonated = 0
-			local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-			if self:GetBasicParts() > 0 then
-				local RequiredParts = 20
-				local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
-
-				PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
-			end
-
 			if State == -1 then
 				self:Msg("device must be repaired before modifying")
 			elseif State ~= 0 then
 				self:Msg("device must be turned off to modify")
 			elseif JMod.HaveResourcesToPerformTask(nil, nil, {
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
 			}, self) then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
@@ -481,27 +468,17 @@ end
 function SWEP:ModifyMachine(ent, tbl, ammoType)
 	local State = ent:GetState()
 
-	local PartsDonated = 0
-	local EZbasicParts = JMod.EZ_RESOURCE_TYPES.BASICPARTS
-	if self:GetBasicParts() > 0 then
-		local RequiredParts = 20
-		local RemainingParts = math.Clamp(RequiredParts - self:GetBasicParts(), 0, RequiredParts)
-
-		PartsDonated = math.Clamp(RequiredParts - RemainingParts, 0, self.EZmaxBasicParts)
-	end
-
 	if State == -1 then
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
-	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated }, self) then
+	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 }, self) then
 		JMod.ConsumeResourcesInRange({
-			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 - PartsDonated
+			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
 		}, nil, nil, self)
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
-		self:SetBasicParts(math.Clamp(self:GetBasicParts() - PartsDonated, 0, self.EZmaxBasicParts))
 	else
 		self:Msg("needs 20 Basic Parts nearby to perform modification")
 	end

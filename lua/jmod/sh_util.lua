@@ -196,7 +196,7 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 		end
 	end
 
-	local ContainedResources = sourceEnt.GetContainedResources and sourceEnt:GetContainedResources()
+	local ContainedResources = sourceEnt.GetEZdonateableResources and sourceEnt:GetEZdonateableResources()
 	if ContainedResources then
 		for k, v in pairs(ContainedResources) do
 			Results[k] = (Results[k] or 0) + v
@@ -232,29 +232,42 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 			local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
 
 			if Donor then
-				local AmountWeCanTake = Donor:GetResource()
-
-				if AmountWeNeed >= AmountWeCanTake then
-					if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
-					Donor:SetResource(0)
-
-					if Donor.IsJackyEZcrate then
-						Donor:ApplySupplyType("generic")
-					else
-						Donor:Remove()
-					end
-
-					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeCanTake
+				if Donor.GetEZdonateableResources then
+					local AmountWeCanTake = sourceEnt:GetEZdonateableResources(ResourceTypeToLookFor)
+					local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
+					local ResourceSetMethod = Donor["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[ResourceTypeToLookFor]]
+					ResourceSetMethod(Donor, AmountWeCanTake - AmountToTake)
+					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
 				else
-					if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
-					Donor:SetResource(AmountWeCanTake - AmountWeNeed)
-					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeNeed
+					local AmountWeCanTake = Donor:GetResource()
+
+					if AmountWeNeed >= AmountWeCanTake then
+						if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
+						Donor:SetResource(0)
+
+						if Donor.IsJackyEZcrate then
+							Donor:ApplySupplyType("generic")
+						else
+							Donor:Remove()
+						end
+
+						RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeCanTake
+					else
+						if (useResourceEffects)then JMod.ResourceEffect(Donor.EZsupplies, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
+						Donor:SetResource(AmountWeCanTake - AmountWeNeed)
+						RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountWeNeed
+					end
 				end
 
 				if RequirementsRemaining[ResourceTypeToLookFor] <= 0 then
 					RequirementsRemaining[ResourceTypeToLookFor] = nil
 				end
 			end
+
+			--[[if IsValid(sourceEnt) and RequirementsRemaining[ResourceTypeToLookFor] > 0 and sourceEnt.GetEZdonateableResources then
+				local Donation = sourceEnt:GetEZdonateableResources(ResourceTypeToLookFor)
+
+			end]]--
 		else
 			AllDone = true
 		end
@@ -267,9 +280,12 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.IsJackyEZresource or obj.IsJackyEZresource then
+		if obj.IsJackyEZresource or obj.IsJackyEZcrate then
 			if (obj.EZsupplies == typ) and (obj:GetResource() >= amt) and JMod.VisCheck(pos, obj, sourceEnt) then return obj end
 		end
+	end
+	if IsValid(sourceEnt) and sourceEnt.GetEZdonateableResources and sourceEnt:GetEZdonateableResources(typ) then
+		return sourceEnt
 	end
 end
 
