@@ -263,11 +263,6 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 					RequirementsRemaining[ResourceTypeToLookFor] = nil
 				end
 			end
-
-			--[[if IsValid(sourceEnt) and RequirementsRemaining[ResourceTypeToLookFor] > 0 and sourceEnt.GetEZdonateableResources then
-				local Donation = sourceEnt:GetEZdonateableResources(ResourceTypeToLookFor)
-
-			end]]--
 		else
 			AllDone = true
 		end
