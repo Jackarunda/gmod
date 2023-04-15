@@ -303,10 +303,7 @@ function SWEP:BuildItem(selectedBuild)
 		self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
 		return
 	end
-	if (BuildInfo.results == "ez nail") and not JMod.FindNailPos(self.Owner) then return end
-	if (BuildInfo.results == "ez bolt") and not JMod.FindBoltPos(self.Owner) then return end
-	if (BuildInfo.results == "ez box") and not JMod.GetPackagableObject(self.Owner) then return end
-	local Sound = BuildInfo.results ~= "ez bolt" and BuildInfo.results ~= "ez nail" and BuildInfo.results ~= "ez box"
+	local Sound = not BuildInfo.noSound
 	local Reqs = table.FullCopy(BuildInfo.craftingReqs)
 
 	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
@@ -331,35 +328,26 @@ function SWEP:BuildItem(selectedBuild)
 						end
 					else
 						local Class = BuildInfo.results
+						local StringParts = string.Explode(" ", Class)
 
-						if Class == "ez nail" then
-							JMod.Nail(self.Owner)
-						elseif Class == "ez bolt" then
-								JMod.Bolt(self.Owner)
-						elseif Class == "ez box" then
-							JMod.Package(self.Owner)
-						else
-							local StringParts = string.Explode(" ", Class)
+						if StringParts[1] and (StringParts[1] == "FUNC") then
+							local FuncName = StringParts[2]
 
-							if StringParts[1] and (StringParts[1] == "FUNC") then
-								local FuncName = StringParts[2]
-
-								if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
-									JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
-								else
-									print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
-								end
+							if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
+								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 							else
-								local Ent = ents.Create(Class)
-								Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
-								Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
-								JMod.SetEZowner(Ent, self.Owner)
-								Ent:Spawn()
-								Ent:Activate()
-								JMod.Hint(self.Owner, Class)
-								self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
-								self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
+								print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
+						else
+							local Ent = ents.Create(Class)
+							Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
+							Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
+							JMod.SetEZowner(Ent, self.Owner)
+							Ent:Spawn()
+							Ent:Activate()
+							JMod.Hint(self.Owner, Class)
+							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
+							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
 						end
 						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
 					end

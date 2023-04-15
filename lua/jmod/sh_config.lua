@@ -611,32 +611,35 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 		Craftables = {
 			["EZ Nail"] = {
-				results = "ez nail",
+				results = "FUNC EZnail",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5
 				},
 				oneHanded = true,
+				noSound = true,
 				sizeScale = .05,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"
 			},
 			["EZ Bolt"] = {
-				results = "ez bolt",
+				results = "FUNC EZbolt",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 8
 				},
 				oneHanded = true,
+				noSound = true,
 				sizeScale = .05,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Creates a single axis bearing for conecting rotating objects"
 			},
 			["EZ Box"] = {
-				results = "ez box",
+				results = "FUNC EZbox",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15
 				},
+				noSound = true,
 				sizeScale = 1,
 				category = "Other",
 				craftingType = "toolbox",
@@ -2350,6 +2353,15 @@ function JMod.InitGlobalConfig(forceNew)
 		Ent:Spawn()
 		Ent:Activate()
 	end
+	JMod.LuaConfig.BuildFuncs.EZnail = function(playa, position, angles)
+		JMod.Nail(playa)
+	end
+	JMod.LuaConfig.BuildFuncs.EZbolt = function(playa, position, angles)
+		JMod.Bolt(playa)
+	end
+	JMod.LuaConfig.BuildFuncs.EZbox = function(playa, position, angles)
+		JMod.Package(playa)
+	end
 
 	SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
@@ -2425,4 +2437,10 @@ hook.Add("Initialize", "JMOD_Initialize", function()
 	if SERVER then
 		JMod.InitGlobalConfig()
 	end
+end)
+
+hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, buildInfo)
+	if (buildInfo.results == "FUNC EZnail") and not JMod.FindNailPos(playa) then return false, "No applicable nail pos" end
+	if (buildInfo.results == "FUNC EZbolt") and not JMod.FindBoltPos(playa) then return false, "No applicable bolt pos" end
+	if (buildInfo.results == "FUNC EZbox") and not JMod.GetPackagableObject(playa) then return false, "Can't packaged" end
 end)
