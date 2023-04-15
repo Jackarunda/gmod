@@ -12,6 +12,19 @@ ENT.IsJackyEZresource = true
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
+	self:NetworkVar("String", 0, "ResourceType")
+end
+
+function ENT:GetEZsupplies(typ)
+	local Supplies = {[self:GetResourceType()] = self:GetResource()}
+	return (typ and Supplies[typ]) or Supplies
+end
+
+function ENT:SetEZsupplies(typ, amt, setter)
+	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end -- Important because this is shared as well
+	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
+	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
+	self:SetSupplies(math.Clamp(amt, 0, self.MaxResources)) -- Otherwise, just set our resource to the new value
 end
 
 ---
@@ -65,6 +78,7 @@ if SERVER then
 		---
 		self.MaxResources = 100 * JMod.Config.MaxResourceMult
 		self:SetResource(100)
+		self:SetResourceType(self.EZsupplies)
 		---
 		self.NextLoad = 0
 		self.Loaded = false

@@ -285,7 +285,7 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
-function SWEP:GetEZdonateableResources(resourceType)
+function SWEP:GetEZSupplies(resourceType)
 	local AvaliableResources = {
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self:GetBasicParts(),
 		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),

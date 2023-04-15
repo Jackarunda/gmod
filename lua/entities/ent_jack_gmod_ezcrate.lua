@@ -19,6 +19,18 @@ function ENT:SetupDataTables()
 	self:NetworkVar("String", 0, "ResourceType")
 end
 
+function ENT:GetEZsupplies(typ)
+	local Supplies = {[self:GetResourceType()] = self:GetResource()}
+	return (typ and Supplies[typ]) or Supplies
+end
+
+function ENT:SetEZsupplies(typ, amt, setter)
+	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if typ ~= self:GetResourceType() then return end
+	if amt <= 0 then self:ApplySupplyType("generic") end
+	self:SetResource(math.Clamp(amt, 0, self.MaxResource))
+end
+
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
