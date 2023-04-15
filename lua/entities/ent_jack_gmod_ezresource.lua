@@ -12,7 +12,6 @@ ENT.IsJackyEZresource = true
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
-	--self:NetworkVar("String", 0, "ResourceType")
 end
 
 function ENT:GetEZsupplies(typ)
@@ -86,7 +85,6 @@ if SERVER then
 		---
 		self.MaxResources = 100 * JMod.Config.MaxResourceMult
 		self:SetResource(100)
-		--self:SetResourceType(self.EZsupplies)
 		---
 		self.NextLoad = 0
 		self.Loaded = false
