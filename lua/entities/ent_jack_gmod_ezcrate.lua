@@ -21,7 +21,15 @@ end
 
 function ENT:GetEZsupplies(typ)
 	local Supplies = {[self:GetResourceType()] = self:GetResource()}
-	return (typ and Supplies[typ]) or Supplies
+	if typ then
+		if Supplies[typ] then
+			return Supplies[typ]
+		else
+			return 
+		end
+	else
+		return Supplies
+	end
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)

@@ -248,7 +248,15 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
 		if obj.GetEZsupplies then
 			local AvaliableResources = obj:GetEZsupplies(typ)
-			if (AvaliableResources) and (AvaliableResources >= amt) and JMod.VisCheck(pos, obj, sourceEnt) then return obj end
+			if (AvaliableResources and JMod.VisCheck(pos, obj, sourceEnt)) then
+				if (typ and AvaliableResources >= amt) then
+
+					return obj
+				else
+
+					return obj
+				end
+			end
 		end
 	end
 	

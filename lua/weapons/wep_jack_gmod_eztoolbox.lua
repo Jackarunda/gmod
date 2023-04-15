@@ -291,7 +291,15 @@ function SWEP:GetEZSupplies(resourceType)
 		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
 		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
 	}
-	return (resourceType and AvaliableResources[resourceType]) or AvaliableResources
+	if typ then
+		if AvaliableResources[typ] then
+			return AvaliableResources[typ]
+		else
+			return 
+		end
+	else
+		return AvaliableResources
+	end
 end
 
 function SWEP:BuildItem(selectedBuild)
@@ -425,7 +433,7 @@ function SWEP:PrimaryAttack()
 							local ResourceContainer = JMod.FindResourceContainer(resourceType, UpgradeRate, nil, nil, self)
 
 							if ResourceContainer then
-								self:UpgradeEntWithResource(Ent, ResourceContainer, UpgradeRate)
+								self:UpgradeEntWithResource(Ent, ResourceContainer, UpgradeRate, resourceType)
 								Upgraded = true
 								break
 							end
@@ -476,30 +484,14 @@ function SWEP:Msg(msg)
 	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
 end
 
-function SWEP:UpgradeEntWithResource(recipient, donor, amt)
-	local Type, Grade = donor.EZsupplies, recipient:GetGrade()
+function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
+	local DonorCurAmt, Grade = donor:GetEZsupplies(resourceType), recipient:GetGrade()
 	local RequiredSupplies = recipient.UpgradeCosts[Grade + 1]
-	local DonorCurAmt = 0
-	if Type then
-		DonorCurAmt = donor:GetResource()
-	elseif donor.GetEZdonateableResources then
-		local DonorSupplies = donor:GetEZdonateableResources()
-		for typ, amt in pairs(RequiredSupplies) do
-			if ((recipient.UpgradeProgress[typ] or 0) < amt) and (DonorSupplies[typ] and DonorSupplies[typ] > 0) then
-				DonorCurAmt = DonorSupplies[typ]
-				Type = typ
-			else
-				return
-			end
-		end
-	else
-		return
-	end
 	---
-	local CurAmt= recipient.UpgradeProgress[Type] or 0
-	local Limit = RequiredSupplies[Type]
+	local CurAmt= recipient.UpgradeProgress[resourceType] or 0
+	local Limit = RequiredSupplies[resourceType]
 	local Given = math.min(DonorCurAmt, Limit - CurAmt, amt)
-	recipient.UpgradeProgress[Type] = CurAmt + Given
+	recipient.UpgradeProgress[resourceType] = CurAmt + Given
 	---
 	local Msg = "UPGRADING\n"
 
@@ -510,19 +502,7 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt)
 	self:Msg(Msg)
 
 	---
-	if donor.GetEZdonateableResources then
-		local ResourceSetMethod = donor["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[Type]]
-		ResourceSetMethod(donor, DonorCurAmt - Given)
-	elseif (DonorCurAmt - Given) <= 0 then
-		if donor.IsJackyEZcrate then
-			donor:SetResource(0)
-			donor:ApplySupplyType("generic")
-		else
-			donor:Remove()
-		end
-	else
-		donor:SetResource(DonorCurAmt - Given)
-	end
+	donor:SetEZsupplies(resourceType, DonorCurAmt - Given, self)
 
 	local HaveEverything = true
 
