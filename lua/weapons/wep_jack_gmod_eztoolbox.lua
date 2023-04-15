@@ -285,20 +285,28 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
-function SWEP:GetEZSupplies(resourceType)
+function SWEP:GetEZsupplies(resourceType)
 	local AvaliableResources = {
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self:GetBasicParts(),
 		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
 		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
 	}
-	if typ then
-		if AvaliableResources[typ] then
-			return AvaliableResources[typ]
+	if resourceType then
+		if AvaliableResources[resourceType] then
+			return AvaliableResources[resourceType]
 		else
 			return 
 		end
 	else
 		return AvaliableResources
+	end
+end
+
+function SWEP:SetEZsupplies(typ, amt, setter)
+	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+	if self.ResourceSetMethod then
+		ResourceSetMethod(self, amt)
 	end
 end
 
