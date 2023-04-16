@@ -187,8 +187,16 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 	local Results = {}
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.GetEZsupplies and JMod.VisCheck(pos, obj, sourceEnt) then
+		if obj.GetEZsupplies and JMod.VisCheck(pos, obj, sourceEnt) and not(sourceEnt and obj == sourceEnt) then
 			local Supplies = obj:GetEZsupplies()
+			for k, v in pairs(Supplies) do
+				Results[k] = (Results[k] or 0) + v
+			end
+		end
+	end
+	if sourceEnt and sourceEnt.GetEZsupplies then
+		local Supplies = sourceEnt:GetEZsupplies()
+		if Supplies then
 			for k, v in pairs(Supplies) do
 				Results[k] = (Results[k] or 0) + v
 			end
@@ -222,11 +230,11 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 			local ResourceTypeToLookFor = TypesNeeded[1]
 			local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor]
 			local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
-
+			--jprint(Donor)
 			if Donor then
-				local AmountWeCanTake = sourceEnt:GetEZsupplies(ResourceTypeToLookFor)
+				local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
 				local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
-				sourceEnt:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
+				Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
 				RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
 				if (useResourceEffects)then JMod.ResourceEffect(ResourceTypeToLookFor, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 
@@ -246,7 +254,7 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.GetEZsupplies then
+		if obj.GetEZsupplies and not(sourceEnt and obj == sourceEnt) then
 			local AvaliableResources = obj:GetEZsupplies(typ)
 			if (AvaliableResources and JMod.VisCheck(pos, obj, sourceEnt)) then
 				if (typ and AvaliableResources >= amt) then
@@ -256,6 +264,18 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 
 					return obj
 				end
+			end
+		end
+	end
+	if sourceEnt and sourceEnt.GetEZsupplies then
+		local AvaliableResources = sourceEnt:GetEZsupplies(typ)
+		if AvaliableResources then
+			if (typ and AvaliableResources >= amt) then
+
+				return obj
+			else
+
+				return obj
 			end
 		end
 	end
