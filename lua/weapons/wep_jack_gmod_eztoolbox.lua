@@ -305,7 +305,7 @@ end
 function SWEP:SetEZsupplies(typ, amt, setter)
 	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
 	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-	if self.ResourceSetMethod then
+	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
 	end
 end
