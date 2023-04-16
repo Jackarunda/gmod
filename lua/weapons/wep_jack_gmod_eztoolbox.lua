@@ -330,7 +330,6 @@ function SWEP:BuildItem(selectedBuild)
 
 			return
 		end
-
 		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))

@@ -230,7 +230,6 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 			local ResourceTypeToLookFor = TypesNeeded[1]
 			local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor]
 			local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
-			--jprint(Donor)
 			if Donor then
 				local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
 				local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
@@ -267,15 +266,15 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 			end
 		end
 	end
-	if sourceEnt and sourceEnt.GetEZsupplies then
+	if IsValid(sourceEnt) and sourceEnt.GetEZsupplies then
 		local AvaliableResources = sourceEnt:GetEZsupplies(typ)
 		if AvaliableResources then
 			if (typ and AvaliableResources >= amt) then
 
-				return obj
+				return sourceEnt
 			else
 
-				return obj
+				return sourceEnt
 			end
 		end
 	end
