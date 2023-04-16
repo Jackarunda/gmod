@@ -42,13 +42,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/mines/firebarrel/firebarrel.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezfougasse")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/explosives/mines/firebarrel/firebarrel.mdl")
+		self:SetMaterial("models/mat_jack_gmod_ezfougasse")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -89,7 +89,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 20, 100) then
 			local Pos, State = self:GetPos(), self:GetState()
@@ -194,7 +194,7 @@ if SERVER then
 
 			for k, targ in pairs(ents.FindInSphere(SearchPos, 200)) do
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
-					if JMod.ShouldAttack(self, targ) and JMod.ClearLos(self, targ) then
+					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
