@@ -928,7 +928,7 @@ JMod.ArmorTable = {
 		siz = Vector(1, 1, 1),
 		pos = Vector(-3, -50, 0),
 		ang = Angle(-90, 0, 90),
-		wgt = 20,
+		wgt = 30,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_parachute"
 	}

@@ -19,7 +19,7 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 1.75
 }
 --
 --ENT.WhitelistedResources = {}
@@ -134,7 +134,7 @@ if(SERVER)then
 	
 	function ENT:TurnOff()
 		self:SetState(STATE_OFF)
-		self:ProduceResource(self:GetProgress())
+		self:ProduceResource()
 
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -161,7 +161,7 @@ if(SERVER)then
 			self:TryPlace()
 		elseif State == STATE_RUNNING then
 			if alt then
-				self:ProduceResource(self:GetProgress())
+				self:ProduceResource()
 
 				return
 			end
@@ -224,7 +224,7 @@ if(SERVER)then
 
 				if self:GetProgress() >= 100 then
 					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
-					self:ProduceResource(amtToDrill)
+					self:ProduceResource()
 					JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
 				end
 
@@ -311,7 +311,7 @@ if(SERVER)then
 
 elseif(CLIENT)then
 
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		self.Auger = JMod.MakeModel(self, "models/jmodels/props/machines/drill_auger.mdl")
 		self.DrillPipe = JMod.MakeModel(self, "models/props_pipes/pipe03_straight01_long.mdl")
 		self.DrillPipeEnd = JMod.MakeModel(self, "models/props_pipes/pipe03_connector01.mdl")
@@ -323,7 +323,9 @@ elseif(CLIENT)then
 	end
 
 	function ENT:Draw()
+		--
 		self:DrawModel()
+		--
 		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8

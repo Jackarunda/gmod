@@ -32,7 +32,9 @@ ENT.PhysMatDetectionWhitelist={
 	"solidmetal"
 }
 ENT.StaticPerfSpecs={
-	MaxDurability=100
+	MaxElectricity=100,
+	MaxDurability=100,
+	Armor=1
 }
 ENT.DynamicPerfSpecs={
 	Armor=.8,
@@ -55,7 +57,7 @@ if(SERVER)then
 		self.Snd1:SetSoundLevel(100)
 		self.Snd2:SetSoundLevel(100)
 		self.Snd3:SetSoundLevel(100)
-		self:InitPerfSpecs()
+		--self:InitPerfSpecs()
 	end
 
 	function ENT:TurnOn(activator)

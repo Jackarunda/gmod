@@ -10,12 +10,33 @@ ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
+ENT.IsJackyEZcrate = true
 ---
 
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
 	self:NetworkVar("String", 0, "ResourceType")
+end
+
+function ENT:GetEZsupplies(typ)
+	local Supplies = {[self:GetResourceType()] = self:GetResource()}
+	if typ then
+		if Supplies[typ] then
+			return Supplies[typ]
+		else
+			return 
+		end
+	else
+		return Supplies
+	end
+end
+
+function ENT:SetEZsupplies(typ, amt, setter)
+	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if typ ~= self:GetResourceType() then return end
+	if amt <= 0 then self:ApplySupplyType("generic") end
+	self:SetResource(math.Clamp(amt, 0, self.MaxResource))
 end
 
 ---

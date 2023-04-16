@@ -15,8 +15,11 @@ else
 	local HandTex, ClosedTex = surface.GetTextureID("vgui/hud/gmod_hand"), surface.GetTextureID("vgui/hud/gmod_closedhand")
 
 	function SWEP:DrawHUD()
+		if GetConVar("cl_drawhud"):GetBool() == false then return end
 		if not (GetViewEntity() == LocalPlayer()) then return end
 		if LocalPlayer():InVehicle() then return end
+		local Ply = self.Owner
+		local W, H, Build = ScrW(), ScrH()
 
 		if not self:GetFists() then
 			local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * self.ReachDistance, {self.Owner})
@@ -36,6 +39,10 @@ else
 				end
 			end
 		end
+		local ToolBox = Ply:GetWeapon("wep_jack_gmod_eztoolbox")
+		if IsValid(ToolBox) and ToolBox:GetNW2Bool("EZoneHandedBuild", false) then
+			draw.SimpleTextOutlined("ALT+LMB: use toolbox onehanded: "..ToolBox:GetSelectedBuild(), "Trebuchet24", W * .4, H * .7 + 60, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+		end
 	end
 end
 
@@ -45,7 +52,7 @@ SWEP.InstantPickup = true -- FF compat
 SWEP.Author = ""
 SWEP.Contact = ""
 SWEP.Purpose = ""
-SWEP.Instructions = "you suck"
+SWEP.Instructions = "Grab and move stuff with your friends!"
 SWEP.Spawnable = true
 SWEP.AdminOnly = false
 SWEP.HoldType = "normal"
@@ -160,7 +167,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:ApplyForce()
-	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos()
+	local target = self.Owner:GetAimVector() * self.CarryDist + self.Owner:GetShootPos() + Vector(0, 0, 5)
 	local phys = self.CarryEnt:GetPhysicsObjectNum(self.CarryBone)
 
 	if IsValid(phys) then
@@ -173,26 +180,25 @@ function SWEP:ApplyForce()
 		local vec = target - TargetPos
 		local len, mul = vec:Length(), self.CarryEnt:GetPhysicsObject():GetMass()
 
-		if len > self.ReachDistance then
+		local StandingEnt = self.Owner:GetGroundEntity()
+		local StandingOn = IsValid(StandingEnt) and ((StandingEnt == self.CarryEnt) or (StandingEnt:IsConstrained() and table.HasValue(constraint.GetAllConstrainedEntities(StandingEnt), self.CarryEnt)))
+		if len > self.ReachDistance or StandingOn then
 			self:SetCarrying()
 
 			return
 		end
 
 		if self.CarryEnt:GetClass() == "prop_ragdoll" then
-			mul = mul * 2
+			mul = mul * 10
 		end
 
 		vec:Normalize()
-		local avec, velo = vec * len, phys:GetVelocity() - self.Owner:GetVelocity()
+		local avec, velo = vec * len^1.5, phys:GetVelocity() - self.Owner:GetVelocity()
 		local Force = (avec - velo / 2) * mul
+		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
-
-		if ForceMagnitude > 4000 * JMod.Config.General.HandGrabStrength then
-			self:SetCarrying()
-
-			return
-		end
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.Config.General.HandGrabStrength)
+		Force = ForceNormal * ForceMagnitude
 
 		local CounterDir, CounterAmt = velo:GetNormalized(), velo:Length()
 
@@ -229,6 +235,7 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 
 		if not (ent:GetClass() == "prop_ragdoll") then
 			self.CarryPos = ent:WorldToLocal(pos)
+			--self.CarryAng = ent:GetAngles()
 		else
 			self.CarryPos = nil
 		end
@@ -237,6 +244,7 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 		self.CarryBone = nil
 		self.CarryPos = nil
 		self.CarryDist = nil
+		--self.CarryAng = nil
 	end
 end
 
@@ -298,6 +306,18 @@ end
 function SWEP:PrimaryAttack()
 	if SERVER then
 		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
+
+		if self.Owner:KeyDown(JMod.Config.AltFunctionKey) and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
+			local ToolBox = self.Owner:GetWeapon("wep_jack_gmod_eztoolbox")
+			local SelectedBuild = ToolBox:GetSelectedBuild()
+			local BuildInfo = JMod.Config.Craftables[SelectedBuild]
+			if BuildInfo and BuildInfo.oneHanded then
+				ToolBox:BuildItem(SelectedBuild)
+				self:SetNextPrimaryFire(CurTime() + .6)
+
+				return
+			end
+		end
 	end
 
 	local side = "fists_left"

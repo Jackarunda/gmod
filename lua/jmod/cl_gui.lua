@@ -603,6 +603,8 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.WriteEntity(ent)
 		net.WriteString(name)
 		net.SendToServer()
+		ent.CurrentBuildSize = info.sizeScale or 0
+		ent.EZpreviewBox = {mins = Vector(ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20), maxs = Vector(ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20)}
 	end, nil)
 end)
 

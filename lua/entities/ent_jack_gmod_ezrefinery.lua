@@ -3,12 +3,12 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.PrintName = "EZ Oil Refinery"
 ENT.Category = "JMod - EZ Machines"
-ENT.Spawnable = true -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true
 ENT.AdminOnly = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.Model = "models/jmod/machines/oil_refinery.mdl"
-ENT.Mass = 2000
+ENT.Mass = 4000
 ENT.SpawnHeight = 10
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---

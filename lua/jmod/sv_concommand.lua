@@ -108,7 +108,7 @@ concommand.Add("jmod_deposits_load", function(ply, cmd, args)
 	if not ID then
 		ID = "map_default"
 	end
-	local Info = JMod.LoadDepositConfig(tostring(ID), tostring(args[2]))
+	local Info = JMod.LoadDepositConfig(tostring(ID), args[2] and tostring(args[2]))
 	if isstring(Info) then
 		print(Info)
 		return
