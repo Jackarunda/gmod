@@ -58,7 +58,7 @@ function ENT:SUCC(Time, Phys, Age, Pos, MaxRange)
 				self:Rape(obj)
 			else
 				-- inverse square law bitchins
-				local PullStrength = ((1 - Dist / MaxRange) ^ 2) * ((JMod.Config and JMod.Config.MicroBlackHoleGravityStrength) or 1)
+				local PullStrength = ((1 - Dist / MaxRange) ^ 2) * ((JMod.Config and JMod.Config.Machines.Blackhole.GravityStrength) or 1)
 				local Mass = ObjPhys:GetMass()
 				local ApplyForce, Mul = true, 1
 
@@ -170,7 +170,7 @@ if SERVER then
 	function ENT:Think()
 		local Time, Phys, Age, Pos = CurTime(), self:GetPhysicsObject(), self:GetAge(), self:LocalToWorld(self:OBBCenter())
 		Phys:EnableMotion(false)
-		self:SetAge(Age + .05 * JMod.Config.MicroBlackHoleEvaporateSpeed)
+		self:SetAge(Age + .05 * JMod.Config.Machines.Blackhole.EvaporateSpeed)
 		local MaxRange = Age * 150
 		self:SUCC(Time, Phys, Age, Pos, MaxRange)
 

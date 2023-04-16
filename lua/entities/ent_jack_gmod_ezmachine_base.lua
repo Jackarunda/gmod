@@ -211,7 +211,7 @@ if(SERVER)then
 		ent:SetAngles(Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent,ply)
-		if JMod.Config.SpawnMachinesFull then
+		if JMod.Config.Machines.SpawnMachinesFull then
 			ent.SpawnFull = true
 		end
 		ent:Spawn()
@@ -327,7 +327,7 @@ if(SERVER)then
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/2000, 20)
 
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
@@ -353,7 +353,7 @@ if(SERVER)then
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
+		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
 				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 3000), Spread, Scale, UpSpeed)

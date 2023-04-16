@@ -38,7 +38,7 @@ local function JackaSpawnHook(ply)
 	end)
 
 	net.Start("JMod_PlayerSpawn")
-	net.WriteBit(JMod.Config.Hints)
+	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
 end
 
@@ -131,7 +131,7 @@ function JMod.GeigerCounterSound(ply, intensity)
 end
 
 function JMod.FalloutIrradiate(self, obj)
-	local DmgAmt = self.DmgAmt or math.random(4, 20) * JMod.Config.NuclearRadiationMult
+	local DmgAmt = self.DmgAmt or math.random(4, 20) * JMod.Config.Particles.NuclearRadiationMult
 
 	if obj:WaterLevel() >= 3 then
 		DmgAmt = DmgAmt / 3
@@ -162,7 +162,7 @@ function JMod.FalloutIrradiate(self, obj)
 		---
 		local DmgTaken = Helf - obj:Health()
 
-		if (DmgTaken > 0) and JMod.Config.NuclearRadiationSickness then
+		if (DmgTaken > 0) and JMod.Config.Explosives.Nuke.RadiationSickness then
 			obj.EZirradiated = (obj.EZirradiated or 0) + DmgTaken * 3
 
 			timer.Simple(10, function()
@@ -177,7 +177,7 @@ function JMod.FalloutIrradiate(self, obj)
 end
 
 function JMod.TryVirusInfectInRange(host, att, hostFaceProt, hostSkinProt)
-	local Range, SelfPos = 300 * JMod.Config.VirusSpreadMult, host:GetPos()
+	local Range, SelfPos = 300 * JMod.Config.Particles.VirusSpreadMult, host:GetPos()
 
 	if hostFaceProt > 0 or hostSkinProt > 0 then
 		Range = Range * (1 - (hostFaceProt + hostSkinProt) / 2)
@@ -303,7 +303,7 @@ hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 		end
 	end
 
-	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.AltFunctionKey) and IsParaOpen then
+	if IsFirstTimePredicted() and key == IN_JUMP and ply:KeyDown(JMod.Config.General.AltFunctionKey) and IsParaOpen then
 		DetachChute(ply)
 	end
 end)
@@ -511,7 +511,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						local Info = JMod.ArmorTable[armorData.name]
 
 						if Info.eff and Info.eff.nightVision then
-							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.ArmorChargeDepletionMult / 10, 0, 9e9)
+							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
 								JMod.EZarmorWarning(playa, "armor's electricity soon to be depleted!")
@@ -523,7 +523,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						local Info = JMod.ArmorTable[armorData.name]
 
 						if Info.eff and Info.eff.thermalVision then
-							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.ArmorChargeDepletionMult / 10, 0, 9e9)
+							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
 								JMod.EZarmorWarning(playa, "armor's electricity soon to be depleted!")
@@ -598,8 +598,8 @@ end)
 function JMod.LuaConfigSync(copyArmorOffsets)
 	local ToSend = {}
 	ToSend.ArmorOffsets = (JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {}
-	ToSend.AltFunctionKey = JMod.Config.AltFunctionKey
-	ToSend.WeaponSwayMult = JMod.Config.WeaponSwayMult
+	ToSend.AltFunctionKey = JMod.Config.General.AltFunctionKey
+	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))

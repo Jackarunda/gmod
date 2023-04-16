@@ -162,7 +162,7 @@ if SERVER then
 		self.Exploded = true
 		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-		timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
+		timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 			if IsValid(self) then
 				local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), self.EZowner or game.GetWorld()
 				---

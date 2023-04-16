@@ -340,7 +340,7 @@ function SWEP:PrimaryAttack()
 
 				if Ent.EZbleeding > 0 then
 					Ent:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
-					Ent.EZbleeding = math.Clamp(Ent.EZbleeding - JMod.Config.MedKitHealMult * 5, 0, 9e9)
+					Ent.EZbleeding = math.Clamp(Ent.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 5, 0, 9e9)
 					self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 					Ent:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 					self:HealEffect(Ent)
@@ -349,7 +349,7 @@ function SWEP:PrimaryAttack()
 					return
 				end
 
-				local AddAmt = math.min(Missing, healAmt * JMod.Config.MedKitHealMult)
+				local AddAmt = math.min(Missing, healAmt * JMod.Config.Tools.Medkit.HealMult)
 				self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				Ent.EZhealth = Ent.EZhealth + AddAmt
 				self.Owner:PrintMessage(HUD_PRINTCENTER, "treatment " .. Ent.EZhealth + Helf .. "/" .. Max)
@@ -358,7 +358,7 @@ function SWEP:PrimaryAttack()
 
 				if Ent.EZvirus and Ent.EZvirus.Severity > 1 then
 					Ent:PrintMessage(HUD_PRINTCENTER, "boosting immune system")
-					Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.MedKitHealMult * 2, 1, 9e9)
+					Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.Tools.Medkit.HealMult * 2, 1, 9e9)
 					self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				end
 			elseif Ent:IsNPC() and Ent.Health and Ent:Health() and tonumber(Ent:Health()) then
@@ -375,11 +375,11 @@ function SWEP:PrimaryAttack()
 				end
 
 				if Ent.EZvirus and Ent.EZvirus.Severity > 1 then
-					Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.MedKitHealMult * 2, 1, 9e9)
+					Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.Tools.Medkit.HealMult * 2, 1, 9e9)
 					self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				end
 
-				local AddAmt = math.min(Missing, healAmt * JMod.Config.MedKitHealMult)
+				local AddAmt = math.min(Missing, healAmt * JMod.Config.Tools.Medkit.HealMult)
 				self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				Ent:SetHealth(Helf + AddAmt)
 				self.Owner:PrintMessage(HUD_PRINTCENTER, "health " .. Ent:Health() .. "/" .. Max)
@@ -459,7 +459,7 @@ function SWEP:SecondaryAttack()
 
 		if Ent.EZbleeding > 0 then
 			Ent:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
-			Ent.EZbleeding = math.Clamp(Ent.EZbleeding - JMod.Config.MedKitHealMult * 5, 0, 9e9)
+			Ent.EZbleeding = math.Clamp(Ent.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 5, 0, 9e9)
 			self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 			Ent:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 			self:HealEffect(Ent)
@@ -476,7 +476,7 @@ function SWEP:SecondaryAttack()
 
 		if Ent.EZvirus and Ent.EZvirus.Severity > 1 then
 			Ent:PrintMessage(HUD_PRINTCENTER, "boosting immune system")
-			Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.MedKitHealMult * 2, 1, 9e9)
+			Ent.EZvirus.Severity = math.Clamp(Ent.EZvirus.Severity - JMod.Config.Tools.Medkit.HealMult * 2, 1, 9e9)
 			self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 		end
 	end

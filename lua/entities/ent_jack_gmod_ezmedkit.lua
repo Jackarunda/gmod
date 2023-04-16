@@ -92,7 +92,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		if activator:KeyDown(JMod.Config.AltFunctionKey) then
+		if activator:KeyDown(JMod.Config.General.AltFunctionKey) then
 			activator:PickupObject(self)
 		elseif not activator:HasWeapon("wep_jack_gmod_ezmedkit") then
 			activator:Give("wep_jack_gmod_ezmedkit")

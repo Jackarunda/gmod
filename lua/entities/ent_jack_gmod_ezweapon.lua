@@ -75,7 +75,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
 			activator:PickupObject(self)

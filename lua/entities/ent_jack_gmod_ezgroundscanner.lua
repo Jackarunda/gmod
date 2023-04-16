@@ -84,7 +84,7 @@ if(SERVER)then
 		JMod.Hint(activator,"ground scanner")
 		local OldOwner=self.EZowner
 		JMod.SetEZowner(self,activator)
-		local Alt=activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt=activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		if(Alt)then
 			if(IsValid(self.EZowner))then
 				if(OldOwner~=self.EZowner)then -- if owner changed then reset team color

@@ -97,7 +97,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State < 0 then return end
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
@@ -131,7 +131,7 @@ if SERVER then
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 
-		if JMod.Config.FragExplosions then
+		if JMod.Config.Explosives.FragExplosions then
 			JMod.FragSplosion(self, SelfPos, 1000, 10, 8000, self.EZowner or game.GetWorld(), Up, .9)
 		else
 			util.BlastDamage(self, self.EZowner or game.GetWorld(), SelfPos + Up * 350, 350, 110)
@@ -188,7 +188,7 @@ if SERVER then
 					self:SetState(STATE_WARNING)
 					sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-					timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
+					timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 						if IsValid(self) then
 							if self:GetState() == STATE_WARNING then
 								self:Detonate()

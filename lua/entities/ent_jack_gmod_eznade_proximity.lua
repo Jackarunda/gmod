@@ -60,7 +60,7 @@ if SERVER then
 						self:SetState(JMod.EZ_STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-						timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
+						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then
 								if self:GetState() == JMod.EZ_STATE_WARNING then
 									self:Detonate()

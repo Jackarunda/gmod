@@ -393,7 +393,7 @@ function SWEP:PrimaryAttack()
 
 		if SelectedBuild and SelectedBuild ~= "" then
 			Built = self:BuildItem(SelectedBuild)
-		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
+		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 			local State = Ent:GetState()
 
 			if State == -1 then
@@ -431,7 +431,7 @@ function SWEP:PrimaryAttack()
 
 				if Grade < 5 then
 					local WorkSpreadMult = JMod.CalcWorkSpreadMult(Ent, Pos)
-					local UpgradeRate = JMod.Config.ToolKitUpgradeMult * 1 * math.Round(WorkSpreadMult)
+					local UpgradeRate = JMod.Config.Tools.Toolbox.UpgradeMult * 1 * math.Round(WorkSpreadMult)
 					local RequiredMats = Ent.UpgradeCosts[Grade + 1]
 
 					for resourceType, requiredAmt in pairs(RequiredMats) do
@@ -569,7 +569,7 @@ function SWEP:Reload()
 	if SERVER then
 		local Time = CurTime()
 
-		if self.Owner:KeyDown(JMod.Config.AltFunctionKey) then
+		if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 			self:SwitchSelectedBuild("")
 		else
 			if self.NextSwitch < Time then
@@ -749,7 +749,7 @@ function SWEP:Think()
 			if self.NextTaskProgress < Time then
 				self.NextTaskProgress = Time + .6
 				SetAmt = 0
-				local Alt = self.Owner:KeyDown(JMod.Config.AltFunctionKey)
+				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 				local Task = (Alt and "loosen") or "salvage"
 				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})
 				local Ent, Pos = Tr.Entity, Tr.HitPos
@@ -814,7 +814,7 @@ function SWEP:DrawHUD()
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
-		draw.SimpleTextOutlined((Ply:KeyDown(JMod.Config.AltFunctionKey) and "Loosening...") or "Salvaging...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined((Ply:KeyDown(JMod.Config.General.AltFunctionKey) and "Loosening...") or "Salvaging...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
 	end

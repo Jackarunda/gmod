@@ -983,7 +983,7 @@ function JMod.GetArmorBiologicalResistance(ply, typ)
 end
 
 function JMod.DepleteArmorChemicalCharge(ply, amt)
-	local SubtractAmt = amt * JMod.Config.ArmorDegredationMult * math.Rand(.5, 1.5)
+	local SubtractAmt = amt * JMod.Config.Armor.DegredationMult * math.Rand(.5, 1.5)
 
 	if ply.EZarmor then
 		for k, armorData in pairs(ply.EZarmor.items) do

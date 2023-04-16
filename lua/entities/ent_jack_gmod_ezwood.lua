@@ -21,7 +21,7 @@ ENT.BreakNoise = "Wood.Break"
 ---
 if SERVER then
 	function ENT:UseEffect(pos, ent)
-		for i = 1, 1 * JMod.Config.SupplyEffectMult do
+		for i = 1, 1 * JMod.Config.Machines.SupplyEffectMult do
 			local Eff = EffectData()
 			Eff:SetOrigin(pos)
 			Eff:SetEntity(ent)

@@ -264,39 +264,39 @@ if(SERVER)then
 
 		if (Injury > 0) or (Rads > 0) or gassed or contaminated then
 			if Bleed > 0 then
-				self.Patient.EZbleeding = math.Clamp(Bleed - self.HealEfficiency * JMod.Config.MedBayHealMult * 5, 0, 9e9)
+				self.Patient.EZbleeding = math.Clamp(Bleed - self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult * 5, 0, 9e9)
 				self.Patient:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
 				self:HealEffect()
 			elseif Rads > 0 or contaminated then
-				self.Patient.EZirradiated = math.Clamp(Rads - self.HealEfficiency * JMod.Config.MedBayHealMult * 5, 0, 9e9)
+				self.Patient.EZirradiated = math.Clamp(Rads - self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult * 5, 0, 9e9)
 
 				if RemoveContamination then
-					RemoveContamination(self.Patient, 140 * self.HealEfficiency * JMod.Config.MedBayHealMult)
+					RemoveContamination(self.Patient, 140 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult)
 				end
 
 				self:HealEffect("hl1/ambience/steamburst1.wav", true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER, "decontaminating")
 			elseif gassed then
-				removeDelayedExposure(self.Patient, 3 * self.HealEfficiency * JMod.Config.MedBayHealMult, "Mustard")
-				removeDelayedExposure(self.Patient, 140 * self.HealEfficiency * JMod.Config.MedBayHealMult, "MustardSkin")
-				removeDelayedExposure(self.Patient, 8.58 * self.HealEfficiency * JMod.Config.MedBayHealMult, "Cyanide")
-				removeDelayedExposure(self.Patient, 390 * self.HealEfficiency * JMod.Config.MedBayHealMult, "TearGas")
-				removeDelayedExposure(self.Patient, 57 * self.HealEfficiency * JMod.Config.MedBayHealMult, "Chlorine")
-				removeDelayedExposure(self.Patient, 57 * self.HealEfficiency * JMod.Config.MedBayHealMult, "PhosgeneImmediate")
-				removeDelayedExposure(self.Patient, 4.5 * self.HealEfficiency * JMod.Config.MedBayHealMult, "Phosgene")
-				removeDelayedExposure(self.Patient, .105 * self.HealEfficiency * JMod.Config.MedBayHealMult, "Sarin")
-				removeDelayedExposure(self.Patient, .045 * self.HealEfficiency * JMod.Config.MedBayHealMult, "VX")
+				removeDelayedExposure(self.Patient, 3 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "Mustard")
+				removeDelayedExposure(self.Patient, 140 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "MustardSkin")
+				removeDelayedExposure(self.Patient, 8.58 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "Cyanide")
+				removeDelayedExposure(self.Patient, 390 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "TearGas")
+				removeDelayedExposure(self.Patient, 57 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "Chlorine")
+				removeDelayedExposure(self.Patient, 57 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "PhosgeneImmediate")
+				removeDelayedExposure(self.Patient, 4.5 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "Phosgene")
+				removeDelayedExposure(self.Patient, .105 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "Sarin")
+				removeDelayedExposure(self.Patient, .045 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult, "VX")
 				self:HealEffect("hl1/ambience/steamburst1.wav", true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER, "curing poisoning")
 			else
 				if Infection > 1 then
-					self.Patient.EZvirus.Severity = math.Clamp(Infection - self.HealEfficiency * JMod.Config.MedBayHealMult * 3, 1, 9e9)
+					self.Patient.EZvirus.Severity = math.Clamp(Infection - self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult * 3, 1, 9e9)
 					self.Patient:PrintMessage(HUD_PRINTCENTER, "boosting immune system")
 				else
 					self.Patient:PrintMessage(HUD_PRINTCENTER, "repairing damage")
 				end
 
-				local HealAmt = isnumber(override) and math.min(Injury, override) or math.min(Injury, math.ceil(3 * self.HealEfficiency * JMod.Config.MedBayHealMult))
+				local HealAmt = isnumber(override) and math.min(Injury, override) or math.min(Injury, math.ceil(3 * self.HealEfficiency * JMod.Config.Machines.Medbay.HealMult))
 				self.Patient:SetHealth(Helf + HealAmt)
 				self:HealEffect()
 			end

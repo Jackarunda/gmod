@@ -96,7 +96,7 @@ if SERVER then
 		local State = self:GetState()
 		if State == STATE_BURNT then return end
 		local Dude = activator or activatorAgain
-		local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
 

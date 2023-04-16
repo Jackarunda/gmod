@@ -62,6 +62,15 @@ function EFFECT:Init(data)
 			particle:SetBounce(0.5)
 		end
 
+		local SmokeTable = {
+			"particle/smokestack",
+			"particles/smokey",
+			"particle/particle_smokegrenade",
+			"sprites/mat_jack_smoke1",
+			"sprites/mat_jack_smoke2",
+			"sprites/mat_jack_smoke3"
+		}
+
 		for i = 0, 6 * Scayul ^ .5 do
 			local Inverse = 6 * Scayul ^ .5 - i
 			local particle = self.Emitter:Add("particles/flamelet" .. math.random(1, 5), Pos)
@@ -79,26 +88,15 @@ function EFFECT:Init(data)
 			particle:SetColor(derg, derg, derg - math.random(0, 50))
 			particle:SetLighting(false)
 			particle:SetCollide(true)
+		end
 
-			timer.Simple(.1, function()
-				local Emitter = ParticleEmitter(Pos)
+		timer.Simple(.1, function()
+			local Emitter = ParticleEmitter(Pos)
+			for i = 0, 6 * Scayul ^ .5 do
 				local sprite
-				local chance = math.random(1, 6)
-
-				if chance == 1 then
-					sprite = "particle/smokestack"
-				elseif chance == 2 then
-					sprite = "particles/smokey"
-				elseif chance == 3 then
-					sprite = "particle/particle_smokegrenade"
-				elseif chance == 4 then
-					sprite = "sprites/mat_jack_smoke1"
-				elseif chance == 5 then
-					sprite = "sprites/mat_jack_smoke2"
-				elseif chance == 6 then
-					sprite = "sprites/mat_jack_smoke3"
-				end
-
+				local chance = math.random(1, #SmokeTable)
+				sprite = SmokeTable[chance]
+				local Inverse = 6 * Scayul ^ .5 - i
 				local particle = Emitter:Add(sprite, Pos)
 				particle:SetVelocity(SprayDirection * 1000 * i * Scayul ^ .5 + AddVel + Velo)
 				particle:SetAirResistance(200)
@@ -114,9 +112,9 @@ function EFFECT:Init(data)
 				particle:SetCollide(true)
 				local darg = math.Rand(200, 255)
 				particle:SetColor(darg, darg, darg)
-				Emitter:Finish()
-			end)
-		end
+			end
+			Emitter:Finish()
+		end)
 	end
 
 	self.Emitter:Finish()

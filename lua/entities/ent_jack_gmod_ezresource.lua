@@ -83,7 +83,7 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		---
-		self.MaxResources = 100 * JMod.Config.MaxResourceMult
+		self.MaxResources = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
 		self:SetResource(100)
 		---
 		self.NextLoad = 0
@@ -200,7 +200,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local AltPressed, Count = activator:KeyDown(JMod.Config.AltFunctionKey), self:GetResource()
+		local AltPressed, Count = activator:KeyDown(JMod.Config.General.AltFunctionKey), self:GetResource()
 
 		if AltPressed and activator:KeyDown(IN_SPEED) then
 			-- split resource entity in half

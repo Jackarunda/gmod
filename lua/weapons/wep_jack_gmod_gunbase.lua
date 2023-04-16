@@ -273,7 +273,7 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 	local Wep = ply:GetActiveWeapon()
 
 	if Wep and IsValid(Wep) and Wep.AimSwayFactor and Wep.GetState and (Wep:GetState() == ArcCW.STATE_SIGHTS) then
-		local GlobalMult = (JMod.Config and JMod.Config.WeaponSwayMult) or 1
+		local GlobalMult = (JMod.Config and JMod.Config.Weapons.SwayMult) or 1
 		local Amt, Sporadicness, FT = 20 * Wep.AimSwayFactor * GlobalMult, 20, FrameTime()
 
 		if ply:Crouching() then
@@ -288,7 +288,7 @@ hook.Add("CreateMove", "JMod_CreateMove", function(cmd)
 			Sporadicness = Sporadicness * 1.5
 			Amt = Amt * 2
 		else
-			local Key = (JMod.Config and JMod.Config.AltFunctionKey) or IN_WALK
+			local Key = (JMod.Config and JMod.Config.General.AltFunctionKey) or IN_WALK
 
 			if ply:KeyDown(Key) then
 				StabilityStamina = math.Clamp(StabilityStamina - FT * 20, 0, 100)
@@ -607,7 +607,7 @@ function SWEP:MeleeAttack(melee2)
 
 		local RandFact=self.MeleeDmgRand or 0
 		local Randomness=math.Rand(1-RandFact,1+RandFact)
-		local GlobalMult=((JMod.Config and JMod.Config.WeaponDamageMult) or 1)*.8 -- gmod kiddie factor
+		local GlobalMult=((JMod.Config and JMod.Config.Weapons.DamageMult) or 1)*.8 -- gmod kiddie factor
 
         dmginfo:SetInflictor(self)
         dmginfo:SetDamage(dmg*relspeed*Randomness*GlobalMult)

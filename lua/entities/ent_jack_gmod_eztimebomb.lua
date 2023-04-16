@@ -113,7 +113,7 @@ if SERVER then
 		if tobool(onOff) then
 			local State = self:GetState()
 			if State < 0 then return end
-			local Alt = Dude:KeyDown(JMod.Config.AltFunctionKey)
+			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State == STATE_OFF then
 				if Alt then
@@ -135,7 +135,7 @@ if SERVER then
 				if Alt then
 					if self.NextDisarm < Time then
 						self.NextDisarm = Time + .2
-						self.DisarmProgress = self.DisarmProgress + JMod.Config.BombDisarmSpeed
+						self.DisarmProgress = self.DisarmProgress + JMod.Config.Explosives.BombDisarmSpeed
 						self.NextDisarmFail = Time + 1
 						Dude:PrintMessage(HUD_PRINTCENTER, "disarming: " .. self.DisarmProgress .. "/" .. math.ceil(self.DisarmNeeded))
 

@@ -655,7 +655,7 @@ function JMod.GetSalvageYield(ent)
 	if Class == "ent_jack_ezcompactbox" then return {}, table.Random(AnnoyedReplyTable) end
 
 	if SERVER then
-		for k, v in pairs(JMod.Config.SalvagingBlacklist) do
+		for k, v in pairs(JMod.Config.Tools.Toolbox.SalvagingBlacklist) do
 			if string.find(Class, v) then return {}, "object may not be salvaged" end
 		end
 	end

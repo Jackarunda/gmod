@@ -63,7 +63,7 @@ if(SERVER)then
 				return
 			end
 
-			local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+			local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State > 0 then
 				if Alt and State == JMod.EZ_STATION_STATE_READY then

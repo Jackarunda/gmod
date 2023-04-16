@@ -193,7 +193,7 @@ if(SERVER)then
 		---
 		self:SetAmmoType("Bullet")
 		JMod.Colorify(self)
-		self:SetPerfMult(JMod.Config.SentryPerformanceMult)
+		self:SetPerfMult(JMod.Config.Machines.Sentry.PerformanceMult)
 		self:InitPerfSpecs()
 		---
 		self:Point(0, 0)

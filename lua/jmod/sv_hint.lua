@@ -1,5 +1,5 @@
 ﻿function JMod.Hint(ply, key)
-	if not (JMod.Config.Hints and ply and key) then return nil end
+	if not (JMod.Config.General.Hints and ply and key) then return nil end
 	if not IsValid(ply) then return end
 	local tbl = JMod.Hints[key]
 	if not tbl then return nil end
@@ -43,7 +43,7 @@ concommand.Add("jmod_resethints", function(ply, cmd, args)
 end, nil, "Resets your Jmod hints.")
 
 hook.Add("PlayerInitialSpawn", "JMOD_HINT", function(ply)
-	if JMod.Config and JMod.Config.Hints then
+	if JMod.Config and JMod.Config.General.Hints then
 		timer.Simple(10, function()
 			if IsValid(ply) then
 				if ply:IsSuperAdmin() then

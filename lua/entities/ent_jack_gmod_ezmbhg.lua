@@ -160,7 +160,7 @@ if SERVER then
 		local State, Time = self:GetState(), CurTime()
 
 		if State == STATE_CHARGING then
-			self.Charge = self.Charge + .1 * JMod.Config.MicroBlackHoleGeneratorChargeSpeed
+			self.Charge = self.Charge + .1 * JMod.Config.Machines.Blackhole.GeneratorChargeSpeed
 
 			if self.Hum then
 				self.Hum:ChangePitch(1 + self.Charge * 2.53)

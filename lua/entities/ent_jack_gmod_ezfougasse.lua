@@ -107,7 +107,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State < 0 then return end
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_OFF then
 			if Alt then
@@ -134,7 +134,7 @@ if SERVER then
 		local Sploom = EffectData()
 		Sploom:SetOrigin(SelfPos)
 		util.Effect("Explosion", Sploom, true, true)
-		util.BlastDamage(self, self.EZowner or self, SelfPos, 150 * JMod.Config.MinePower, math.random(50, 100) * JMod.Config.MinePower)
+		util.BlastDamage(self, self.EZowner or self, SelfPos, 150 * JMod.Config.Explosives.Mine.Power, math.random(50, 100) * JMod.Config.Explosives.Mine.Power)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self.Entity:EmitSound("BaseExplosionEffect.Sound")
 		--self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
@@ -198,7 +198,7 @@ if SERVER then
 						self:SetState(STATE_WARNING)
 						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-						timer.Simple(math.Rand(.15, .4) * JMod.Config.MineDelay, function()
+						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then
 								if self:GetState() == STATE_WARNING then
 									self:Detonate()

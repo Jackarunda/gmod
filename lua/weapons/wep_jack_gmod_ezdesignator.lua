@@ -119,7 +119,7 @@ function SWEP:SecondaryAttack()
 	if self.EZowner:KeyDown(IN_SPEED) then return end
 	if CLIENT then return end
 
-	if self.EZowner:KeyDown(JMod.Config.AltFunctionKey) then
+	if self.EZowner:KeyDown(JMod.Config.General.AltFunctionKey) then
 		local Kit = ents.Create("ent_jack_gmod_ezdesignator")
 		Kit:SetPos(self.EZowner:GetShootPos() + self.EZowner:GetAimVector() * 20)
 		Kit:SetAngles(self.EZowner:GetAimVector():Angle())

@@ -54,7 +54,7 @@ if SERVER then
 
 		---
 		self:SetState(STATE_SEALED)
-		self.ContainedGas = 100 * JMod.Config.FumigatorGasAmount
+		self.ContainedGas = 100 * JMod.Config.Particles.FumigatorGasAmount
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Activate"}, {"This will activate the fumigator"})
@@ -92,7 +92,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		local State, Alt = self:GetState(), activator:KeyDown(JMod.Config.AltFunctionKey)
+		local State, Alt = self:GetState(), activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_SEALED then
 			if Alt then

@@ -109,7 +109,7 @@ if SERVER then
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State < 0 then return end
-		local Alt = activator:KeyDown(JMod.Config.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_OFF then
 			if Alt then
@@ -134,7 +134,7 @@ if SERVER then
 		self.Exploded = true
 		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-		timer.Simple(math.Rand(.1, .2) * JMod.Config.MineDelay, function()
+		timer.Simple(math.Rand(.1, .2) * JMod.Config.Explosives.Mine.Delay, function()
 			if not IsValid(self) then return end
 			local SelfPos = self:LocalToWorld(self:OBBCenter())
 			local Eff = "100lb_ground"

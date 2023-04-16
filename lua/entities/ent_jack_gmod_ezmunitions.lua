@@ -27,7 +27,7 @@ if SERVER then
 			num = 1
 		end
 
-		for i = 1, num * JMod.Config.SupplyEffectMult do
+		for i = 1, num * JMod.Config.Machines.SupplyEffectMult do
 			timer.Simple(i / 200, function()
 				if not IsValid(self) then return end
 				local Eff = EffectData()
