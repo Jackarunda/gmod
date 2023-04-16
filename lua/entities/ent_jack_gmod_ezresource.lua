@@ -14,6 +14,26 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
 end
 
+function ENT:GetEZsupplies(typ)
+	local Supplies = {[self.EZsupplies] = self:GetResource()}
+	if typ then
+		if Supplies[typ] then
+			return Supplies[typ]
+		else
+			return 
+		end
+	else
+		return Supplies
+	end
+end
+
+function ENT:SetEZsupplies(typ, amt, setter)
+	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end -- Important because this is shared as well
+	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
+	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
+	self:SetResource(math.Clamp(amt, 0, self.MaxResources)) -- Otherwise, just set our resource to the new value
+end
+
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -83,32 +103,6 @@ if SERVER then
 		self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
 		self:GetPhysicsObject():Wake()
 	end
-
-	-- I'm commenting this out to make sure we've tied up all of hte loose ends
-	--[[function ENT:FlingProp(mdl)
-		if not util.IsValidModel(mdl) then return end
-		local Prop = ents.Create("prop_physics")
-		Prop:SetPos(self:GetPos())
-		Prop:SetAngles(VectorRand():Angle())
-		Prop:SetModel(mdl)
-		Prop:SetModelScale(.5, 0)
-		Prop:Spawn()
-		Prop:Activate()
-		Prop.JModNoPickup = true
-
-		if math.random(1, 2) == 1 then
-			if Prop.SetHealth then
-				Prop:SetHealth(100)
-			end
-		end
-
-		Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		constraint.NoCollide(Prop, self, 0, 0)
-		local Phys = Prop:GetPhysicsObject()
-		Phys:SetVelocity((VectorRand() + Vector(0, 0, 1)):GetNormalized() * math.Rand(100, 300))
-		Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
-		SafeRemoveEntityDelayed(Prop, math.Rand(5, 10))
-	end]]--
 
 	function ENT:PhysicsCollide(data, physobj)
 		if self.Loaded then return end

@@ -611,20 +611,35 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 		Craftables = {
 			["EZ Nail"] = {
-				results = "ez nail",
+				results = "FUNC EZnail",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5
 				},
-				sizeScale = .2,
+				oneHanded = true,
+				noSound = true,
+				sizeScale = .05,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"
 			},
+			["EZ Bolt"] = {
+				results = "FUNC EZbolt",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 8
+				},
+				oneHanded = true,
+				noSound = true,
+				sizeScale = .05,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "Creates a single axis bearing for conecting rotating objects"
+			},
 			["EZ Box"] = {
-				results = "ez box",
+				results = "FUNC EZbox",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15
 				},
+				noSound = true,
 				sizeScale = 1,
 				category = "Other",
 				craftingType = "toolbox",
@@ -664,7 +679,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.SILVER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50
 				},
-				sizeScale = 4,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Generates power when aimed at the map's 'sun'."
@@ -679,7 +694,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100
 				},
-				sizeScale = 2,
+				sizeScale = 4,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Heals players so you don't have to get more blood on you."
@@ -704,7 +719,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
 				},
-				sizeScale = 3,
+				sizeScale = 5,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
@@ -717,7 +732,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
-				sizeScale = 1.5,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Produces Power from Fuel. Very noisy."
@@ -728,7 +743,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
 				},
-				sizescale = 1.5,
+				sizescale = 4,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "A bay for safely holding large amounts of bombs."
@@ -740,7 +755,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 400
 				},
-				sizescale = 1.5,
+				sizescale = 2,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Bigger than the EZ bomb, but smaller than the Mega."
@@ -845,7 +860,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 1200
 				},
-				sizeScale = 1,
+				sizeScale = 4,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Anything on the surface of the enemy bunker is gonna be gone, and they'll need to cleanup the bunker."
@@ -859,7 +874,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 600,
 					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = 25
 				},
-				sizeScale = 1.5,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Takes a couple minutes to spin up, and then creates an impossibly weak black hole that scales with time."
@@ -918,7 +933,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL] = 10
 				},
-				sizeScale = 1,
+				sizeScale = 0.5,
 				category = "Other",
 				craftingType = "workbench",
 				description = "Produces light when fuelled and ignited."
@@ -979,7 +994,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 600,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
 				},
-				sizeScale = 1.5,
+				sizeScale = 1,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "Now we are all sons of bitches."
@@ -1002,7 +1017,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
-				sizeScale = 1.5,
+				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Craft all your smaller items here."
@@ -1015,7 +1030,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 200,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 100
 				},
-				sizeScale = 1.5,
+				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Craft parts here. Only for advanced players."
@@ -1028,7 +1043,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
-				sizeScale = 1.5,
+				sizeScale = 10,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "A pump for extracting liquids from the ground."
@@ -1041,7 +1056,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
 				},
-				sizeScale = 1.5,
+				sizeScale = 10,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "A drill for extracting ores from the ground."
@@ -1056,7 +1071,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.FUEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.AMMO] = 200
 				},
-				sizeScale = 2,
+				sizeScale = 4,
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."
@@ -2338,6 +2353,15 @@ function JMod.InitGlobalConfig(forceNew)
 		Ent:Spawn()
 		Ent:Activate()
 	end
+	JMod.LuaConfig.BuildFuncs.EZnail = function(playa, position, angles)
+		JMod.Nail(playa)
+	end
+	JMod.LuaConfig.BuildFuncs.EZbolt = function(playa, position, angles)
+		JMod.Bolt(playa)
+	end
+	JMod.LuaConfig.BuildFuncs.EZbox = function(playa, position, angles)
+		JMod.Package(playa)
+	end
 
 	SetArmorPlayerModelModifications()
 	print("JMOD: lua config file loaded")
@@ -2349,7 +2373,7 @@ function JMod.LoadDepositConfig(configID, forceMap)
 	if forceMap then
 		MapName = forceMap
 	end
-	print(MapName)
+	--print(MapName)
 	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
 	
 	if FileContents then
@@ -2413,4 +2437,10 @@ hook.Add("Initialize", "JMOD_Initialize", function()
 	if SERVER then
 		JMod.InitGlobalConfig()
 	end
+end)
+
+hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, buildInfo)
+	if (buildInfo.results == "FUNC EZnail") and not JMod.FindNailPos(playa) then return false, "No applicable nail pos" end
+	if (buildInfo.results == "FUNC EZbolt") and not JMod.FindBoltPos(playa) then return false, "No applicable bolt pos" end
+	if (buildInfo.results == "FUNC EZbox") and not JMod.GetPackagableObject(playa) then return false, "Can't packaged" end
 end)

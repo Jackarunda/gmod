@@ -134,6 +134,21 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter"
 }
 
+JMod.EZ_RESOURCE_TYPE_METHODS = {
+	[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = "BasicParts",
+	[JMod.EZ_RESOURCE_TYPES.POWER] = "Electricity",
+	[JMod.EZ_RESOURCE_TYPES.GAS] = "Gas",
+	[JMod.EZ_RESOURCE_TYPES.COOLANT] = "Coolant",
+	[JMod.EZ_RESOURCE_TYPES.WATER] = "Water",
+	[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = "Chemicals",
+	[JMod.EZ_RESOURCE_TYPES.OIL] = "Oil",
+	[JMod.EZ_RESOURCE_TYPES.FUEL] = "Fuel",
+	[JMod.EZ_RESOURCE_TYPES.AMMO] = "Ammo",
+	[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = "Munitions",
+	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = "Supplies",
+	[JMod.EZ_RESOURCE_TYPES.COAL] = "Coal"
+}
+
 for k, v in pairs({
 	"models/squad/sf_tris/sf_tri8x8.mdl",
 	"models/squad/sf_tris/sf_tri7x7.mdl",
