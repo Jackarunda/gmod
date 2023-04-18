@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda",
-			Version = 41.9,
+			Version = 41.95,
 		},
 		General = {
 			Hints = true,
@@ -1711,17 +1711,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "Effective area denial for those without gasmasks. Might be a warcrime."
 			},
-			["EZ Gas Mask"] = {
-				results = "ent_jack_gmod_ezarmor_gasmask",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Protect yourself against the enemies' warcrimes."
-			},
 			["EZ Gebalte Ladung"] = {
 				results = "ent_jack_gmod_ezsticknadebundle",
 				craftingReqs = {
@@ -1731,52 +1720,6 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Munitions",
 				craftingType = "workbench",
 				description = "A very heavy and very explosive stick grenade."
-			},
-			["EZ Headset"] = {
-				results = "ent_jack_gmod_ezarmor_headset",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 5
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Headset that allows you to remotely communicate with radios and your friends."
-			},
-			["EZ Heavy Left Shoulder Armor"] = {
-				results = "ent_jack_gmod_ezarmor_hlshoulder",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "You must care about your shoulders if you wear this."
-			},
-			["EZ Heavy Right Shoulder Armor"] = {
-				results = "ent_jack_gmod_ezarmor_hrshoulder",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "You must care about your shoulders if you wear this."
-			},
-			["EZ Heavy Torso Armor"] = {
-				results = "ent_jack_gmod_ezarmor_htorso",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 50,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 50
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Turtle shell. Heavy defense."
 			},
 			["EZ Impact Grenade"] = {
 				results = "ent_jack_gmod_ezimpactnade",
@@ -1808,6 +1751,63 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Munitions",
 				craftingType = "workbench",
 				description = "Anti-personnel land mine. Try your best to match the color with the ground."
+			},
+			["EZ Gas Mask"] = {
+				results = JMod.ArmorTable["GasMask"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Protect yourself against the enemies' warcrimes."
+			},
+			["EZ Headset"] = {
+				results = JMod.ArmorTable["Headset"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 5
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Headset that allows you to remotely communicate with radios and your friends."
+			},
+			["EZ Heavy Left Shoulder Armor"] = {
+				results = JMod.ArmorTable["Heavy-Left-Shoulder"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "You must care about your shoulders if you wear this."
+			},
+			["EZ Heavy Right Shoulder Armor"] = {
+				results = JMod.ArmorTable["Heavy-Right-Shoulder"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "You must care about your shoulders if you wear this."
+			},
+			["EZ Heavy Torso Armor"] = {
+				results = JMod.ArmorTable["Heavy-Vest"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 50,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 50
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Turtle shell. Heavy defense."
 			},
 			["BUCKET"] = {
 				results = JMod.ArmorTable["Metal Bucket"].ent,
@@ -1847,9 +1847,9 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "congrats you are now 5"
 			},
 			["EZ Light Helmet"] = {
-				results = "ent_jack_gmod_ezarmor_lhead",
+				results = JMod.ArmorTable["Light-Helmet"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
 				},
@@ -1858,7 +1858,7 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "Simple lightweight helmet that doesn't block much damage."
 			},
 			["EZ Respirator"] = {
-				results = "ent_jack_gmod_ezarmor_respirator",
+				results = JMod.ArmorTable["Respirator"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 5,
@@ -1869,9 +1869,9 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "You can wear goggles while protecting your lungs, but you'll have to retreat."
 			},
 			["EZ Riot Helmet"] = {
-				results = "ent_jack_gmod_ezarmor_riot",
+				results = JMod.ArmorTable["Riot-Helmet"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10
 				},
 				category = "Apparel",
@@ -1879,9 +1879,9 @@ function JMod.InitGlobalConfig(forceNew)
 				"The light helmet, but with cheap glass attached to the front. Light face defense."
 			},
 			["EZ Heavy Riot Helmet"] = {
-				results = "ent_jack_gmod_ezarmor_rioth",
+				results = JMod.ArmorTable["Heavy-Riot-Helmet"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15
 				},
@@ -1890,9 +1890,9 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "Heavy riot helmet with proper ballistic protection."
 			},
 			["EZ Ultra Heavy Helmet"] = {
-				results = "ent_jack_gmod_ezarmor_maska",
+				results = JMod.ArmorTable["Ultra-Heavy-Helmet"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 10
@@ -1902,9 +1902,8 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "Strongest helmet avaliable, at the cost of weight and vision."
 			},
 			["EZ Light Left Shoulder Armor"] = {
-				results = "ent_jack_gmod_ezarmor_llshoulder",
+				results = JMod.ArmorTable["Light-Left-Shoulder"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
 				},
@@ -1913,9 +1912,8 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "Decent protection for your shoulders."
 			},
 			["EZ Light Right Shoulder Armor"] = {
-				results = "ent_jack_gmod_ezarmor_lrshoulder",
+				results = JMod.ArmorTable["Light-Right-Shoulder"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
 				},
@@ -1924,15 +1922,188 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "Decent protection for your shoulders."
 			},
 			["EZ Light Torso Armor"] = {
-				results = "ent_jack_gmod_ezarmor_ltorso",
+				results = JMod.ArmorTable["Light-Vest"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
 				},
 				category = "Apparel",
 				craftingType = "workbench",
 				description = "Will provide light damage protection at little cost to mobility."
+			},
+			["EZ Medium Helmet"] = {
+				results = JMod.ArmorTable["Medium-Helmet"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Well-rounded helmet with balanced protection and weight."
+			},
+			["EZ Medium Torso Armor"] = {
+				results = JMod.ArmorTable["Medium-Vest"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 25,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "A vest, that while somewhat heavy, will provide appreciable over-all protection to your torso."
+			},
+			["EZ Medium-Heavy Torso Armor"] = {
+				results = JMod.ArmorTable["Medium-Heavy-Vest"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 25,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 25
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "It's in the name, for when you need a bit more protection than the medium provides."
+			},
+			["EZ Medium-Light Torso Armor"] = {
+				results = JMod.ArmorTable["Medium-Light-Vest"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 15,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "A lightweight balance between the Light and Medium vests."
+			},
+			["EZ Thermal Goggles"] = {
+				results = JMod.ArmorTable["ThermalGoggles"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 25
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Allows you to visualize most heat signatures."
+			},
+			["EZ Night Vision Goggles"] = {
+				results = JMod.ArmorTable["NightVisionGoggles"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 30,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 25
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "See at night, be blinded by bright light."
+			},
+			["EZ Left Calf Armor"] = {
+				results = JMod.ArmorTable["Left-Calf"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "For your legs."
+			},
+			["EZ Left Forearm Armor"] = {
+				results = JMod.ArmorTable["Left-Forearm"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Convenient armor for the limbs hanging in front of your chest."
+			},
+			["EZ Light Left Thigh Armor"] = {
+				results = JMod.ArmorTable["Light-Left-Thigh"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Keep your thigh."
+			},
+			["EZ Heavy Left Thigh Armor"] = {
+				results = JMod.ArmorTable["Heavy-Left-Thigh"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "i'm not making that joke."
+			},
+			["EZ Pelvis Armor"] = {
+				results = JMod.ArmorTable["Pelvis"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Prevent annihilation of your family jewels."
+			},
+			["EZ Right Calf Armor"] = {
+				results = JMod.ArmorTable["Right-Calf"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "For your legs."
+			},
+			["EZ Right Forearm Armor"] = {
+				results = JMod.ArmorTable["Right-Forearm"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Convenient armor for the limbs hanging in front of your chest."
+			},
+			["EZ Light Right Thigh Armor"] = {
+				results = JMod.ArmorTable["Light-Right-Thigh"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Keep your thigh."
+			},
+			["EZ Heavy Right Thigh Armor"] = {
+				results = JMod.ArmorTable["Heavy-Right-Thigh"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "I'm not making that joke."
+			},
+			["EZ Hazmat Suit"] = {
+				results = JMod.ArmorTable["Hazmat-Suit"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 40
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Full-body protection against environmental hazards, though fragile."
 			},
 			["EZ Medical Supplies"] = {
 				results = "ent_jack_gmod_ezmedsupplies",
@@ -1945,51 +2116,6 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Resources",
 				craftingType = "workbench",
 				description = "Necessities to heal anyone."
-			},
-			["EZ Medium Helmet"] = {
-				results = "ent_jack_gmod_ezarmor_mhead",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Well-rounded helmet with balanced protection and weight."
-			},
-			["EZ Medium Torso Armor"] = {
-				results = "ent_jack_gmod_ezarmor_mtorso",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 25,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "A vest, that while somewhat heavy, will provide appreciable over-all protection to your torso."
-			},
-			["EZ Medium-Heavy Torso Armor"] = {
-				results = "ent_jack_gmod_ezarmor_mhtorso",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 25,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 25
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "It's in the name, for when you need a bit more protection than the medium provides."
-			},
-			["EZ Medium-Light Torso Armor"] = {
-				results = "ent_jack_gmod_ezarmor_mltorso",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 15,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "A lightweight balance between the Light and Medium vests."
 			},
 			["EZ Medkit"] = {
 				results = "ent_jack_gmod_ezmedkit",
@@ -2074,17 +2200,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "Ammo for your explosive toys."
 			},
-			["EZ Night Vision Goggles"] = {
-				results = "ent_jack_gmod_ezarmor_nvgs",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 25
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "See at night, be blinded by bright light."
-			},
 			["EZ Powder Keg"] = {
 				results = "ent_jack_gmod_ezpowderkeg",
 				craftingReqs = {
@@ -2166,118 +2281,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "Smokescreen so nobody knows who they're shooting."
 			},
-			["EZ Left Calf Armor"] = {
-				results = "ent_jack_gmod_ezarmor_slcalf",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "For your legs."
-			},
-			["EZ Left Forearm Armor"] = {
-				results = "ent_jack_gmod_ezarmor_slforearm",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Convenient armor for the limbs hanging in front of your chest."
-			},
-			["EZ Light Left Thigh Armor"] = {
-				results = "ent_jack_gmod_ezarmor_llthigh",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Keep your thigh."
-			},
-			["EZ Heavy Left Thigh Armor"] = {
-				results = "ent_jack_gmod_ezarmor_hlthigh",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "i'm not making that joke."
-			},
-			["EZ Pelvis Armor"] = {
-				results = "ent_jack_gmod_ezarmor_spelvis",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Prevent annihilation of your family jewels."
-			},
-			["EZ Right Calf Armor"] = {
-				results = "ent_jack_gmod_ezarmor_srcalf",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "For your legs."
-			},
-			["EZ Right Forearm Armor"] = {
-				results = "ent_jack_gmod_ezarmor_srforearm",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Convenient armor for the limbs hanging in front of your chest."
-			},
-			["EZ Light Right Thigh Armor"] = {
-				results = "ent_jack_gmod_ezarmor_lrthigh",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Keep your thigh."
-			},
-			["EZ Heavy Right Thigh Armor"] = {
-				results = "ent_jack_gmod_ezarmor_hrthigh",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "I'm not making that joke."
-			},
-			["EZ Hazmat Suit"] = {
-				results = "ent_jack_gmod_ezarmor_hazmat",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 40
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Full-body protection against environmental hazards, though fragile."
-			},
 			["EZ Stick Grenade"] = {
 				results = "ent_jack_gmod_ezsticknade",
 				craftingReqs = {
@@ -2308,17 +2311,6 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Munitions",
 				craftingType = "workbench",
 				description = "Simple breaching device. Reacts to powder from the powder keg."
-			},
-			["EZ Thermal Goggles"] = {
-				results = "ent_jack_gmod_ezarmor_thermals",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 25
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Allows you to visualize most heat signatures."
 			},
 			["EZ Time Bomb"] = {
 				results = "ent_jack_gmod_eztimebomb",
