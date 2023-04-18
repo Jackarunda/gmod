@@ -142,7 +142,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 							if shouldDmgArmor then
 								if not IsDamageOneOfTypes(dmg, JMod.BiologicalDmgTypes) then
-									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.Armor.DegredationMult
+									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.Armor.DegradationMult
 
 									if damType == DMG_BUCKSHOT then
 										ArmorDmgAmt = ArmorDmgAmt / 2.5

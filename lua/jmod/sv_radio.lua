@@ -203,7 +203,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 			local Info = JMod.ArmorTable[data.name]
 
 			if Info.eff and Info.eff.teamComms then
-				local SubtractAmt = JMod.Config.Armor.DegredationMult / 2
+				local SubtractAmt = JMod.Config.Armor.DegradationMult / 2
 				data.chrg.power = math.Clamp(data.chrg.power - SubtractAmt, 0, 9e9)
 
 				if data.chrg.power <= Info.chrg.power * .25 then
