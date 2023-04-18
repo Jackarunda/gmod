@@ -1070,10 +1070,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Pumpjack"] = {
 				results = "ent_jack_gmod_ezpumpjack",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 300,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				sizeScale = 10,
 				category = "Machines",
@@ -1084,9 +1084,9 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezaugerdrill",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 50
 				},
 				sizeScale = 10,
 				category = "Machines",
