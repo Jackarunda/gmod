@@ -142,7 +142,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 							if shouldDmgArmor then
 								if not IsDamageOneOfTypes(dmg, JMod.BiologicalDmgTypes) then
-									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.Armor.DegredationMult
+									local ArmorDmgAmt = Protection * dmgAmt * JMod.Config.Armor.DegradationMult
 
 									if damType == DMG_BUCKSHOT then
 										ArmorDmgAmt = ArmorDmgAmt / 2.5
@@ -575,11 +575,10 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		local RepairRecipe, RepairStatus, BuildRecipe = {}, 0, nil
-
-		for k, v in pairs(JMod.Config.Recipes) do
-			if v[1] == ItemInfo.ent then
+		for k, v in pairs(JMod.Config.Craftables) do
+			if v.results == ItemInfo.ent then
 				if ItemData.dur < ItemInfo.dur * .9 then
-					BuildRecipe = v[2]
+					BuildRecipe = v.craftingReqs
 				end
 
 				break
