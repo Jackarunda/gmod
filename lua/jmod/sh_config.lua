@@ -1573,16 +1573,6 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
 			},
-			["EZ Ballistic Mask"] = {
-				results = "ent_jack_gmod_ezarmor_balmask",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5
-				},
-				category = "Apparel",
-				craftingType = "workbench",
-				description = "Face protection for the narcissists."
-			},
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
@@ -1751,6 +1741,16 @@ function JMod.InitGlobalConfig(forceNew)
 				category = "Munitions",
 				craftingType = "workbench",
 				description = "Anti-personnel land mine. Try your best to match the color with the ground."
+			},
+			["EZ Ballistic Mask"] = {
+				results = JMod.ArmorTable["BallisticMask"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 5
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Face protection for the narcissists."
 			},
 			["EZ Gas Mask"] = {
 				results = JMod.ArmorTable["GasMask"].ent,
@@ -2042,7 +2042,7 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "i'm not making that joke."
 			},
 			["EZ Pelvis Armor"] = {
-				results = JMod.ArmorTable["Pelvis"].ent,
+				results = JMod.ArmorTable["Pelvis-Panel"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
@@ -2095,7 +2095,7 @@ function JMod.InitGlobalConfig(forceNew)
 				description = "I'm not making that joke."
 			},
 			["EZ Hazmat Suit"] = {
-				results = JMod.ArmorTable["Hazmat-Suit"].ent,
+				results = JMod.ArmorTable["Hazmat Suit"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 20,
