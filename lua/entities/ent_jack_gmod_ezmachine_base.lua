@@ -395,8 +395,8 @@ if(SERVER)then
 	function ENT:TryLoadResource(typ, amt)
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
-		if self.NextRefillTime > Time then return 0 end
-		for k,v in pairs(self.EZconsumes)do
+		if (self.NextRefillTime > Time) or (typ == "generic") then return 0 end
+		for _,v in pairs(self.EZconsumes)do
 			if(typ == v)then
 				local Accepted = 0
 				if(typ == JMod.EZ_RESOURCE_TYPES.POWER)then
@@ -433,7 +433,7 @@ if(SERVER)then
 					Accepted=math.min(Missing, amt)
 					self:SetGas(Fool + Accepted)
 					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
-				elseif(typ==JMod.EZ_RESOURCE_TYPES.AMMO)then
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.AMMO)then
 					local Ammo = self:GetAmmo()
 					local Missing = self.MaxAmmo - Ammo
 					if(Missing <= 1)then return 0 end
