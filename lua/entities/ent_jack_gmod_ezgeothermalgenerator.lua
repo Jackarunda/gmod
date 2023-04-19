@@ -14,9 +14,9 @@ ENT.SpawnHeight = 52
 ENT.Mass = 8000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 500,
+	MaxDurability = 400,
 	MaxElectricity = 0,
-	MaxWater = 500
+	MaxWater = 200
 }
 --
 ENT.DynamicPerfSpecs = {
@@ -53,6 +53,9 @@ if(SERVER)then
 		self.EZupgradable = true
 		self:TurnOn()
 		self:SetProgress(0)
+		if self.SpawnFull then
+			self:SetWater(self.MaxWater)
+		end
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
 	end
@@ -112,14 +115,14 @@ if(SERVER)then
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
 				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID)then GroundIsSolid = false break end
 			end
+
 			self:UpdateDepositKey()
+
 			if not(self.DepositKey)then
 				--JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				if not self.Planted then 
-					self:GetPhysicsObject():EnableMotion(false)
-					self.Planted = true
-				end
+				self:GetPhysicsObject():EnableMotion(false)
+				self.Installed = true
 				if(self.DepositKey)then
 					self:TurnOn(JMod.GetEZowner(self))
 				else
@@ -166,7 +169,6 @@ if(SERVER)then
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
 		self:SetWater(self:GetWater() - amt / (self:GetGrade()^2))
-		--jprint(self:GetWater())
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 		--self:EmitSound("ambient/gas/steam2.wav") -- Sigh, looping steam
@@ -174,8 +176,11 @@ if(SERVER)then
 
 	function ENT:TurnOn()
 		if (self:GetState() ~= STATE_OFF) then return end
-		self:SetState(STATE_ON)
-		self:TryPlace()
+		if self.Installed then
+			self:SetState(STATE_ON)
+		else
+			self:TryPlace()
+		end
 	end
 
 	function ENT:TurnOff()
@@ -195,9 +200,9 @@ if(SERVER)then
 
 				return
 			elseif State == STATE_ON then
-				if self.Planted then
-					if Phys:IsMotionEnabled() then
-						self.Planted = false
+				if self.Installed then
+					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+						self.Installed = false
 						self:TurnOff()
 
 						return
@@ -210,15 +215,15 @@ if(SERVER)then
 					return
 				end
 
-				local Pressure = (self:GetWater() / self.MaxWater)^2
+				--local Pressure = (self:GetWater() / self.MaxWater)^2
 				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				self:SetProgress(self:GetProgress() + self.ChargeSpeed * FlowRate * Pressure)
+				self:SetProgress(self:GetProgress() + self.ChargeSpeed * FlowRate)
 
 				if self:GetProgress() >= 100 then
 					self:ProduceResource()
 				end
 
-				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
+				--JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
 	end
@@ -273,7 +278,7 @@ elseif CLIENT then
 				JMod.StandardRankDisplay(Grade, 446, 160, 118, Opacity + 50)
 				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("PRESSURE", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("WATER", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			elseif State ~= STATE_ON then
