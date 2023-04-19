@@ -33,7 +33,7 @@ function ENT:CustomSetupDataTables()
 	self:NetworkVar("Int", 2,"Water")
 end
 
-local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
 
 if(SERVER)then
 	function ENT:SpawnFunction(ply,tr,ClassName)
@@ -114,14 +114,17 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				--JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 100000, false, false) end
-				if(IsValid(self.Weld) and self.DepositKey)then
-					self:TurnOn(self.EZowner)
+				if not self.Planted then 
+					self:GetPhysicsObject():EnableMotion(false)
+					self.Planted = true
+				end
+				if(self.DepositKey)then
+					self:TurnOn(JMod.GetEZowner(self))
 				else
 					if self:GetState() > 0 then
 						self:TurnOff()
 					end
-					--JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(self.EZowner, "machine mounting problem")
 				end
 			end
 		end
@@ -129,20 +132,21 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		if self.NextUse > CurTime() then return end
-		local State=self:GetState()
-		local OldOwner=self.EZowner
+		local State = self:GetState()
+		local OldOwner = JMod.GetEZowner(self)
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self,activator)
+		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
-		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
+		if(IsValid(JMod.GetEZowner(self)) and (OldOwner ~= JMod.GetEZowner(self)))then
 			JMod.Colorify(self)
 		end
-		if(State==STATE_BROKEN)then
-			JMod.Hint(activator,"destroyed",self)
-		return
-		elseif(State==STATE_OFF)then
+		if(State == STATE_BROKEN)then
+			JMod.Hint(activator, "destroyed", self)
+
+			return
+		elseif(State == STATE_OFF)then
 			self:TurnOn()
-		elseif(State==STATE_ON)then
+		elseif(State == STATE_ON)then
 			if(alt)then
 				self:ProduceResource()
 				return
@@ -180,17 +184,19 @@ if(SERVER)then
 		
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
+			local Phys = self:GetPhysicsObject()
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
 				return
-			elseif State == STATE_RUNNING then
-				if not IsValid(self.Weld) then
-					self.DepositKey = nil
-					self.WellPos = nil
-					self:TurnOff()
+			elseif State == STATE_ON then
+				if self.Planted then
+					if Phys:IsMotionEnabled() then
+						self.Planted = false
+						self:TurnOff()
 
-					return
+						return
+					end
 				end
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
@@ -200,6 +206,7 @@ if(SERVER)then
 
 				local Pressure = self:GetWater() / self.MaxWater
 				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				--jprint(self:GetProgress(), self.ChargeSpeed, flowRate, Pressure)
 				self:SetProgress(self:GetProgress() + self.ChargeSpeed * flowRate * Pressure)
 
 				-- If the progress exceeds 100
@@ -236,11 +243,10 @@ elseif CLIENT then
 		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
-		local PanelDraw = true
 		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
