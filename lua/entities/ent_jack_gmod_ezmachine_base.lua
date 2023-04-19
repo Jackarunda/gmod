@@ -327,7 +327,7 @@ if(SERVER)then
 		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 3000), Spread, Scale, UpSpeed)
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 600), Spread, Scale, UpSpeed)
 			end
 		else
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
