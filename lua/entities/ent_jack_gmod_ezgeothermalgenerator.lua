@@ -199,16 +199,14 @@ if(SERVER)then
 				end
 
 				local Pressure = self:GetWater() / self.MaxWater
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-					self:SetProgress(self:GetProgress() + self.ChargeSpeed * flowRate * Pressure)
+				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				self:SetProgress(self:GetProgress() + self.ChargeSpeed * flowRate * Pressure)
 
-					-- If the progress exceeds 100
-					if self:GetProgress() >= 100 then
-						-- Spawn barrel
-						local amtToPump = math.min(self:GetProgress(), 100)
-						self:ProduceResource()
-					end
+				-- If the progress exceeds 100
+				if self:GetProgress() >= 100 then
+					-- Spawn barrel
+					local amtToPump = math.min(self:GetProgress(), 100)
+					self:ProduceResource()
 				end
 
 				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
@@ -257,7 +255,7 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
 				local Opacity = math.random(50, 150)
 				local ElecFrac = self:GetProgress() / 100
-				local PresFrac = self:GetPressure()
+				local PresFrac = self:GetWater() / 500
 				local R, G, B = JMod.GoodBadColor(ElecFrac)
 				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
 				cam.Start3D2D(SelfPos + Up * 36 + Forward * -40 + Right * 15, DisplayAng, .1)
