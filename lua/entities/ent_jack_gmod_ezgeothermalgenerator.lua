@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Geothermal Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = false --Until it's completed
+ENT.Spawnable = true --Until it's completed
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/geothermal.mdl"
 --
