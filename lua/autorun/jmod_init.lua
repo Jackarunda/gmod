@@ -257,6 +257,37 @@ JMod.HitMatColors = {
 	[MAT_WARPSHIELD] = {Color(255, 255, 255)}
 }
 
+JMod.DefualtArmorTable={
+	[DMG_BUCKSHOT]=.2,
+	[DMG_SNIPER]=.6,
+	[DMG_CRUSH]=1,
+	[DMG_BULLET]=.3,
+	[DMG_SLASH]=.2,
+	[DMG_BLAST]=.8,
+	[DMG_CLUB]=.5,
+	[DMG_SHOCK]=1,
+	[DMG_BURN]=.3,
+	[DMG_ACID]=.4,
+	[DMG_PLASMA]=.4,
+	[DMG_VEHICLE]=1,
+	[DMG_DROWN]=0,
+	[DMG_PARALYZE]=0,
+	[DMG_NERVEGAS]=0,
+	[DMG_POISON]=0,
+	[DMG_RADIATION]=0,
+	[DMG_FALL]=1,
+	[DMG_SONIC]=.6,
+	[DMG_ENERGYBEAM]=.8,
+	[DMG_SLOWBURN]=.1,
+	[DMG_PHYSGUN]=1,
+	[DMG_AIRBOAT]=.75,
+	[DMG_DISSOLVE]=.8,
+	[DMG_BLAST_SURFACE]=.8,
+	[DMG_DIRECT]=.3,
+	[DMG_GENERIC]=1,
+	[DMG_MISSILEDEFENSE]=1
+}
+
 -- we have to load locales before any other files
 -- because files that add concommands have help text
 -- and we want the help text to be localized

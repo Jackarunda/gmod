@@ -13,13 +13,13 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 52
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 200,
+	MaxDurability = 300,
 	MaxElectricity = 0,
 	MaxWater = 500
 }
 --
 ENT.DynamicPerfSpecs = {
-	Armor = 1,
+	Armor = 1.5,
 	ChargeSpeed = 1
 }
 --
@@ -161,10 +161,13 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = SelfPos + Up*100
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
+		local pos = SelfPos + Up*20 - Right*50 + Forward*25
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
+		self:SetWater(self:GetWater() - amt / (self:GetGrade()^2))
+		--jprint(self:GetWater())
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		--self:EmitSound("ambient/gas/steam2.wav") -- Sigh, looping steam
 	end
 
 	function ENT:TurnOn()
@@ -201,18 +204,15 @@ if(SERVER)then
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
+
 					return
 				end
 
-				local Pressure = self:GetWater() / self.MaxWater
-				local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				--jprint(self:GetProgress(), self.ChargeSpeed, flowRate, Pressure)
-				self:SetProgress(self:GetProgress() + self.ChargeSpeed * flowRate * Pressure)
+				local Pressure = (self:GetWater() / self.MaxWater)^2
+				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				self:SetProgress(self:GetProgress() + self.ChargeSpeed * FlowRate * Pressure)
 
-				-- If the progress exceeds 100
 				if self:GetProgress() >= 100 then
-					-- Spawn barrel
-					local amtToPump = math.min(self:GetProgress(), 100)
 					self:ProduceResource()
 				end
 
@@ -234,6 +234,7 @@ elseif CLIENT then
 		self:DrawShadow(true)
 	end
 	
+	local White = Material("models/rendertarget")--"models/debug/debugwhite")
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
@@ -273,6 +274,13 @@ elseif CLIENT then
 				draw.SimpleTextOutlined("PRESSURE", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
+			elseif State ~= STATE_ON then
+				DisplayAng=SelfAng:GetCopy()
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
+				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
+				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
+				render.SetMaterial(White)
+				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -39.5 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 100), DisplayAng.r)
 			end
 		end
 	end

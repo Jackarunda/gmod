@@ -107,36 +107,6 @@ ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
 ENT.FlexFuels = nil -- "Flex Fuels" are other resource types that the machine will load as electricity
-ENT.DefualtDamageTypeTable={
-	[DMG_BUCKSHOT]=.2,
-	[DMG_SNIPER]=.6,
-	[DMG_CRUSH]=1,
-	[DMG_BULLET]=.3,
-	[DMG_SLASH]=.2,
-	[DMG_BLAST]=.8,
-	[DMG_CLUB]=.5,
-	[DMG_SHOCK]=1,
-	[DMG_BURN]=.3,
-	[DMG_ACID]=.4,
-	[DMG_PLASMA]=.4,
-	[DMG_VEHICLE]=1,
-	[DMG_DROWN]=0,
-	[DMG_PARALYZE]=0,
-	[DMG_NERVEGAS]=0,
-	[DMG_POISON]=0,
-	[DMG_RADIATION]=0,
-	[DMG_FALL]=1,
-	[DMG_SONIC]=.6,
-	[DMG_ENERGYBEAM]=.8,
-	[DMG_SLOWBURN]=.1,
-	[DMG_PHYSGUN]=1,
-	[DMG_AIRBOAT]=.75,
-	[DMG_DISSOLVE]=.8,
-	[DMG_BLAST_SURFACE]=.8,
-	[DMG_DIRECT]=.3,
-	[DMG_GENERIC]=1,
-	[DMG_MISSILEDEFENSE]=1
-}
 --- These stats do not change when the machine is upgraded
 ENT.StaticPerfSpecs={ 
 	MaxElectricity=100,
@@ -244,7 +214,7 @@ if(SERVER)then
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
-		self.DamageTypeTable = self.DefualtDamageTypeTable
+		self.DamageTypeTable = JMod.DefualtArmorTable
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability
 		self:SetNW2Float("EZdurability", self.Durability)
