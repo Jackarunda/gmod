@@ -294,7 +294,7 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		self.MachineryBox = JMod.MakeModel(self, "models/hunter/blocks/cube05x105x05.mdl")
 		self.Ladder=JMod.MakeModel(self,"models/props_c17/metalladder001.mdl")
 		self.Mdl=ClientsideModel("models/tsbb/pump_jack.mdl")

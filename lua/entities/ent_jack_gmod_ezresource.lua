@@ -10,6 +10,8 @@ ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
 ---
+local LoadOnSpawn = CreateConVar("jmod_debug_loadresourceonspawn", "0", FCVAR_NONE, "Attempts to load spawned resources directly into entities you are looking at")
+---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "Resource")
 end
@@ -45,6 +47,14 @@ if SERVER then
 		ent:Spawn()
 		ent:Activate()
 		ent:SetResource(ent.MaxResources)
+		local HitEnt = tr.Entity
+		if IsValid(HitEnt) and HitEnt.TryLoadResource then
+			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResources)
+			if Accepted > 0 then
+				ent:SetEZsupplies(self.EZsupplies, ent.MaxResources - Accepted, HitEnt)
+				--JMod.ResourceEffect(self.EZsupplies, ent:LocalToWorld(ent:OBBCenter()), HitEnt:LocalToWorld(HitEnt:OBBCenter()), Accepted, 1, 1, 1)
+			end
+		end
 		--local effectdata=EffectData()
 		--effectdata:SetEntity(ent)
 		--util.Effect("propspawn",effectdata)

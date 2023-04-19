@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/machines/geothermalv2_sheet"
+	"$surfaceprop" "metal"	
+
+//    "$basealphaenvmapmask" "0"
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+
+//	"$bumpmap" "models/jmod/machines/distillation_tower_normal"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "1"
+	"$phongexponent" "20"
+}
