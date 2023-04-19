@@ -71,7 +71,6 @@ if(SERVER)then
 
 			-- store they desposit's key if we're inside of it
 			if (Dist <= v.siz) and v.typ == "geothermal" then
-				if not v.rate and (v.amt < 0) then break end
 				table.insert(DepositsInRange, k)
 			end
 		end
@@ -222,8 +221,6 @@ if(SERVER)then
 				if self:GetProgress() >= 100 then
 					self:ProduceResource()
 				end
-
-				--JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
 	end
