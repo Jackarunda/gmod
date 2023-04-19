@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda",
-			Version = 41.95,
+			Version = 41.96,
 		},
 		General = {
 			Hints = true,
