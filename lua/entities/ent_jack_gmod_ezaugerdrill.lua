@@ -15,7 +15,7 @@ ENT.SpawnHeight = 115
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 300,
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {

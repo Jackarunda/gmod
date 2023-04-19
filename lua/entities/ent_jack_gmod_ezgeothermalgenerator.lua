@@ -11,9 +11,10 @@ ENT.Model = "models/jmod/machines/geothermal.mdl"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 52
+ENT.Mass = 8000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 500,
 	MaxElectricity = 0,
 	MaxWater = 500
 }
@@ -24,6 +25,7 @@ ENT.DynamicPerfSpecs = {
 }
 --
 ENT.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
 
@@ -240,10 +242,10 @@ elseif CLIENT then
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
-		local BasePos=SelfPos
-		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
-		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
+		local BasePos = SelfPos + Up * 36 + Forward * -40 + Right * 15
+		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
+		local DetailDraw = Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
@@ -265,7 +267,7 @@ elseif CLIENT then
 				local PresFrac = self:GetWater() / 500
 				local R, G, B = JMod.GoodBadColor(ElecFrac)
 				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
-				cam.Start3D2D(SelfPos + Up * 36 + Forward * -40 + Right * 15, DisplayAng, .1)
+				cam.Start3D2D(BasePos, DisplayAng, .1)
 				surface.SetDrawColor(10,10,10,Opacity+50)
 				surface.DrawRect(380, 100, 128, 128)
 				JMod.StandardRankDisplay(Grade, 446, 160, 118, Opacity + 50)

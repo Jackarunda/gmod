@@ -234,26 +234,27 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if((data.Speed>80)and(data.DeltaTime>0.2))then
-			self:EmitSound("Metal_Box.ImpactHard")
+		if (data.Speed>80) and (data.DeltaTime>0.2) then
+			self:EmitSound("Metal_Box.ImpactSoft")
 			local Ent = data.HitEntity
 			local Held = false
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
-			if(data.Speed>800)then
-				local Dam, World=DamageInfo(), game.GetWorld()
+			if (data.Speed > 150) and (data.Speed < 800) then
+				self:EmitSound("Metal_Box.ImpactHard")
+			elseif (data.Speed > 800) then
+				local Dam, World = DamageInfo(), game.GetWorld()
 				local PhysDamage = math.Round(data.Speed / (physobj:GetMass() / data.HitObject:GetMass())^2, 2)
-				--jprint(PhysDamage)
-				Dam:SetDamage((not(Held) and PhysDamage) or 0)
+				Dam:SetDamage(PhysDamage)
 				Dam:SetAttacker(Ent or World)
 				Dam:SetInflictor(Ent or World)
 				Dam:SetDamageType(DMG_CRUSH)
 				Dam:SetDamagePosition(data.HitPos)
 				Dam:SetDamageForce(data.TheirOldVelocity / physobj:GetMass())
-				if Held then
+				if not Held then
 					JMod.DamageSpark(self)
+					self:TakeDamageInfo(Dam)
 					self:EmitSound("Metal_Box.Break")
 				end
-				self:TakeDamageInfo(Dam)
 			end
 		end
 	end
@@ -387,7 +388,7 @@ if(SERVER)then
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
-					Accepted = math.min(Missing, amt)
+					Accepted = math.min(Missing / 2, amt)
 					self.Durability = self.Durability + Accepted
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))

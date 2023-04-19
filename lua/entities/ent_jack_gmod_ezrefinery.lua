@@ -22,7 +22,7 @@ ENT.EZconsumes = {
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxElectricity = 500,
 	MaxOil = 500
 }

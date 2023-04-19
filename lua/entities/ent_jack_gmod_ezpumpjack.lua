@@ -18,7 +18,7 @@ ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 300,
 	MaxElectricity = 400,
 }
 ENT.DynamicPerfSpecs = {
