@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda",
-			Version = 41.97,
+			Version = 41.98,
 		},
 		General = {
 			Hints = true,
@@ -962,7 +962,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Fuel Lantern"] = {
 				results = "ent_jack_gmod_ezfuellantern",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 10,
 					[JMod.EZ_RESOURCE_TYPES.FUEL] = 10
 				},
@@ -1575,10 +1575,8 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 100
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				category = "Tools",
 				craftingType = "workbench",
@@ -2120,7 +2118,7 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezmedkit",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 50
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 100
 				},
 				category = "Tools",
 				craftingType = "workbench",
