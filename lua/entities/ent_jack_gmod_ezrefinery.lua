@@ -122,7 +122,7 @@ if(SERVER)then
 
 		local RefinedTable = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.OIL]
 
-		local i = 0
+		local i = 1
 		for typ, modifier in pairs(RefinedTable) do
 			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 65 * i)
 			local spawnAng = Angle(0, 0, 0)
