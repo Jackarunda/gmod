@@ -38,26 +38,16 @@ end
 local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
 
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr,ClassName)
-		local ent = ents.Create(ClassName)
-		ent:SetPos(tr.HitPos + tr.HitNormal*ent.SpawnHeight)
-		ent:SetAngles(Angle(0, 0, 0))
-		JMod.SetEZowner(ent,ply)
-		ent:Spawn()
-		ent:Activate()
-		JMod.Hint(ply, ClassName)
-		return ent
-	end
-
 	function ENT:CustomInit()
 		self.EZupgradable = true
-		self:TurnOn()
 		self:SetProgress(0)
+		jprint(self.SpawnFull)
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
 		else
 			self:SetWater(0)
 		end
+		self:TurnOn()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
 	end
