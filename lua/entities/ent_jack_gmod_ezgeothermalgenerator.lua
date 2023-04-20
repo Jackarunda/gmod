@@ -55,6 +55,8 @@ if(SERVER)then
 		self:SetProgress(0)
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
+		else
+			self:SetWater(0)
 		end
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
@@ -100,15 +102,6 @@ if(SERVER)then
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Pitch = Tr.HitNormal:Angle().x + 90
-			local Yaw = self:GetAngles().y
-			if Tr.HitNormal:Angle().y >= 20 then
-				Yaw = Tr.HitNormal:Angle().y
-			end
-			local Roll = Tr.HitNormal:Angle().z - 90
-			self:SetAngles(Angle(0, 0, 0))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
-			--
 			local GroundIsSolid = true
 			for i = 1, 50 do
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
@@ -120,6 +113,15 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				--JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
+				local Pitch = Tr.HitNormal:Angle().x + 90
+				local Yaw = self:GetAngles().y
+				if Tr.HitNormal:Angle().y >= 20 then
+					Yaw = Tr.HitNormal:Angle().y
+				end
+				local Roll = Tr.HitNormal:Angle().z - 90
+				self:SetAngles(Angle(0, 0, 0))
+				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
+				---
 				self:GetPhysicsObject():EnableMotion(false)
 				self.Installed = true
 				if(self.DepositKey)then
@@ -175,9 +177,10 @@ if(SERVER)then
 
 	function ENT:TurnOn()
 		if self:GetState() ~= STATE_OFF then return end
-		if self:GetWater() <= 0 then return end
 		if self.Installed then
-			self:SetState(STATE_ON)
+			if self:GetWater() > 0 then
+				self:SetState(STATE_ON)
+			end
 		else
 			self:TryPlace()
 		end
@@ -257,14 +260,12 @@ elseif CLIENT then
 		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		--if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
 
 		if DetailDraw then
-			JMod.RenderModel(self.PanelBackModel, BasePos - Forward * 0.6 + Right * .5, PanelAng, Vector(1.01, 1.01, 1))
-
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 90)
