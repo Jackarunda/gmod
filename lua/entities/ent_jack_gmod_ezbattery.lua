@@ -17,6 +17,7 @@ ENT.ImpactNoise1 = "Canister.ImpactHard"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.WeightlessResource = true
 
 ---
 if SERVER then

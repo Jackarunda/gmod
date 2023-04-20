@@ -34,6 +34,7 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
 	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
 	self:SetResource(math.Clamp(amt, 0, self.MaxResources)) -- Otherwise, just set our resource to the new value
+	self:CalcWeight()
 end
 
 ---
@@ -103,15 +104,22 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
+				self:GetPhysicsObject():SetMass(math.max(self.Mass, 1))
+				self:GetPhysicsObject():Wake()
 				self:CalcWeight()
 			end
 		end)
 	end
 
 	function ENT:CalcWeight()
-		local Frac = self:GetResource() / self.MaxResources
-		self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
-		self:GetPhysicsObject():Wake()
+		timer.Simple(0.01, function()
+			if IsValid(self) and IsValid(self:GetPhysicsObject()) then
+				local Frac = self:GetResource() / self.MaxResources
+				if self.WeightlessResource then Frac = 1 end
+				self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
+				self:GetPhysicsObject():Wake()
+			end
+		end)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -222,7 +230,10 @@ if SERVER then
 				Box:Spawn()
 				Box:Activate()
 				Box:SetResource(NewCountOne)
-				Box:CalcWeight()
+				timer.Simple(1, function() 
+					Box:CalcWeight() 
+				end)
+				--
 				activator:PickupObject(Box)
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
