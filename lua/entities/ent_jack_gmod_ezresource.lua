@@ -104,7 +104,7 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(math.max(self.Mass, 1))
+				self:GetPhysicsObject():SetMass(math.max(self.Mass, self.MinimumMass or 5))
 				self:GetPhysicsObject():Wake()
 				self:CalcWeight()
 			end
@@ -116,7 +116,7 @@ if SERVER then
 			if IsValid(self) and IsValid(self:GetPhysicsObject()) then
 				local Frac = self:GetResource() / self.MaxResources
 				if self.WeightlessResource then Frac = 1 end
-				self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, 1))
+				self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, self.MinimumMass or 5))
 				self:GetPhysicsObject():Wake()
 			end
 		end)

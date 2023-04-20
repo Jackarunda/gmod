@@ -15,6 +15,7 @@ ENT.Model = "models/jmod/resources/water_barrel.mdl"
 ENT.SpawnHeight = 30
 ENT.ModelScale = 1
 ENT.Mass = 40
+ENT.MinimumMass = 10
 ENT.ImpactNoise1 = "Plastic_Barrel.ImpactHard"
 ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
