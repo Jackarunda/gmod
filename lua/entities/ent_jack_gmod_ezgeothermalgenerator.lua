@@ -14,13 +14,13 @@ ENT.SpawnHeight = 52
 ENT.Mass = 8000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 400,
+	MaxDurability = 300,
 	MaxElectricity = 0,
 	MaxWater = 200
 }
 --
 ENT.DynamicPerfSpecs = {
-	Armor = 1.5,
+	Armor = 2,
 	ChargeSpeed = 1
 }
 --
@@ -28,20 +28,21 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
+ENT.WhitelistedResources = {
+	"geothermal"
+}
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
-	self:NetworkVar("Float", 2, "Pressure")
 	self:NetworkVar("Int", 2,"Water")
 end
 
-local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
+local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 
 if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = true
 		self:SetProgress(0)
-		jprint(self.SpawnFull)
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
 		else
@@ -50,43 +51,6 @@ if(SERVER)then
 		self:TurnOn()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
-	end
-
-	function ENT:UpdateDepositKey()
-		local SelfPos = self:GetPos()
-		-- first, figure out which deposits we are inside of, if any
-		local DepositsInRange = {}
-
-		for k, v in pairs(JMod.NaturalResourceTable) do
-			-- Make sure the resource is on the whitelist
-			local Dist = SelfPos:Distance(v.pos)
-
-			-- store they desposit's key if we're inside of it
-			if (Dist <= v.siz) and v.typ == "geothermal" then
-				table.insert(DepositsInRange, k)
-			end
-		end
-
-		-- now, among all the deposits we are inside of, let's find the closest one
-		local ClosestDeposit, ClosestRange = nil, 9e9
-
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange) do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				local Dist = SelfPos:Distance(DepositInfo.pos)
-
-				if Dist < ClosestRange then
-					ClosestDeposit = v
-					ClosestRange = Dist
-				end
-			end
-		end
-
-		if ClosestDeposit then
-			self.DepositKey = ClosestDeposit
-		else
-			self.DepositKey = nil
-		end
 	end
 
 	function ENT:TryPlace()
@@ -114,10 +78,10 @@ if(SERVER)then
 				---
 				self:GetPhysicsObject():EnableMotion(false)
 				self.Installed = true
-				if(self.DepositKey)then
+				if self.DepositKey then
 					self:TurnOn(JMod.GetEZowner(self))
 				else
-					if self:GetState() > 0 then
+					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
 					JMod.Hint(self.EZowner, "machine mounting problem")
@@ -142,13 +106,14 @@ if(SERVER)then
 			return
 		elseif(State == STATE_OFF)then
 			self:TurnOn()
-		elseif(State == STATE_ON)then
+		elseif(State == STATE_RUNNING)then
 			if(alt)then
 				self:ProduceResource()
 				return
 			end
 			self:TurnOff()
 		end
+		--jprint(self.Installed, State)
 	end
 
 	function ENT:ProduceResource()
@@ -169,7 +134,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 		if self.Installed then
 			if self:GetWater() > 0 then
-				self:SetState(STATE_ON)
+				self:SetState(STATE_RUNNING)
 			end
 		else
 			self:TryPlace()
@@ -192,7 +157,7 @@ if(SERVER)then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
 				return
-			elseif State == STATE_ON then
+			elseif State == STATE_RUNNING then
 				if self:GetWater() <= 0 then
 					self:TurnOff()
 
@@ -256,7 +221,7 @@ elseif CLIENT then
 		---
 
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_ON then
+			if Closeness < 20000 and State == STATE_RUNNING then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
@@ -275,7 +240,7 @@ elseif CLIENT then
 				draw.SimpleTextOutlined("WATER", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
-			elseif State ~= STATE_ON then
+			elseif State ~= STATE_RUNNING then
 				DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)

@@ -47,48 +47,6 @@ if(SERVER)then
         end)
 	end
 
-	function ENT:UpdateDepositKey()
-		local SelfPos = self:GetPos()
-		-- first, figure out which deposits we are inside of, if any
-		local DepositsInRange = {}
-
-		for k, v in pairs(JMod.NaturalResourceTable) do
-			-- Make sure the resource is on the whitelist
-			local Dist = SelfPos:Distance(v.pos)
-
-			-- store they desposit's key if we're inside of it
-			if (Dist <= v.siz) and table.HasValue(self.WhitelistedResources, v.typ) then
-				if not v.rate and (v.amt < 0) then break end
-				table.insert(DepositsInRange, k)
-			end
-		end
-
-		-- now, among all the deposits we are inside of, let's find the closest one
-		local ClosestDeposit, ClosestRange = nil, 9e9
-
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange) do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				local Dist = SelfPos:Distance(DepositInfo.pos)
-
-				if Dist < ClosestRange then
-					ClosestDeposit = v
-					ClosestRange = Dist
-				end
-			end
-		end
-
-		if ClosestDeposit then
-			self.DepositKey = ClosestDeposit
-			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
-			--print("Our deposit is: "..self.DepositKey) --DEBUG
-			--print("Our deposit type is: "..JMod.NaturalResourceTable[self.DepositKey].typ)
-		else
-			self.DepositKey = nil
-			--print("No valid deposit") --DEBUG
-		end
-	end
-
 	function ENT:TryPlace()
 		--local SelfAng = self:GetAngles()
 		--local Right = SelfAng:Right()
@@ -108,7 +66,9 @@ if(SERVER)then
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
 				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID)then GroundIsSolid = false break end
 			end
+			
 			self:UpdateDepositKey()
+
 			if not(self.DepositKey)then
 				JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
@@ -116,7 +76,7 @@ if(SERVER)then
 				if(IsValid(self.Weld) and self.DepositKey)then
 					self:TurnOn(self.EZowner)
 				else
-					if self:GetState() > 0 then
+					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
 					JMod.Hint(self.EZowner, "machine mounting problem")

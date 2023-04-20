@@ -19,11 +19,11 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1.75
+	Armor = 2
 }
 --
 --ENT.WhitelistedResources = {}
-ENT.BlacklistedResources = {"water", "oil", "geothermal"}
+ENT.BlacklistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL, "geothermal"}
 
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---
@@ -48,46 +48,6 @@ if(SERVER)then
         end)
 	end
 
-	function ENT:UpdateDepositKey()
-		local SelfPos = self:GetPos() + Vector(0, 0, -100)
-		-- first, figure out which deposits we are inside of, if any
-		local DepositsInRange = {}
-
-		for k, v in pairs(JMod.NaturalResourceTable)do
-			-- Make sure the resource is on the whitelist
-			local Dist = SelfPos:Distance(v.pos)
-
-			-- store they desposit's key if we're inside of it
-			if (Dist <= v.siz) and (not(table.HasValue(self.BlacklistedResources, v.typ))) then 
-				if v.rate or (v.amt < 0) then break end
-				table.insert(DepositsInRange, k)
-			end
-		end
-
-		-- now, among all the deposits we are inside of, let's find the closest one
-		local ClosestDeposit, ClosestRange = nil, 9e9
-
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange)do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				local Dist = SelfPos:Distance(DepositInfo.pos)
-
-				if(Dist < ClosestRange)then
-					ClosestDeposit = v
-					ClosestRange = Dist
-				end
-			end
-		end
-		if(ClosestDeposit)then 
-			self.DepositKey = ClosestDeposit 
-			self:SetResourceType(JMod.NaturalResourceTable[self.DepositKey].typ)
-			--print("Our deposit is "..self.DepositKey) --DEBUG
-		else 
-			self.DepositKey = nil
-			--print("No valid deposit") --DEBUG
-		end
-	end
-
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		local SelfAng = self:GetAngles()
@@ -102,7 +62,9 @@ if(SERVER)then
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
 				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID)then GroundIsSolid=false break end
 			end
+
 			self:UpdateDepositKey()
+			
 			if not self.DepositKey then
 				JMod.Hint(self.EZowner, "ground drill")
 			elseif(GroundIsSolid)then
