@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda",
-			Version = 41.96,
+			Version = 41.97,
 		},
 		General = {
 			Hints = true,
@@ -1116,7 +1116,6 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
-					[JMod.EZ_RESOURCE_TYPES.WOOD] = 10,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
 				},
 				category = "Resources",
@@ -1133,7 +1132,6 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 60,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 30,
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 90,
-					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
 				category = "Resources",
