@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.PrintName = "EZ Acorn"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false --wonder when jack will get back to this...
 ENT.AdminSpawnable = true
 ---
 ENT.JModEZstorable = true
