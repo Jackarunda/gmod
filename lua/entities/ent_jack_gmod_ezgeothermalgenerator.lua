@@ -174,7 +174,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if (self:GetState() ~= STATE_OFF) then return end
+		if self:GetState() ~= STATE_OFF then return end
+		if self:GetWater() <= 0 then return end
 		if self.Installed then
 			self:SetState(STATE_ON)
 		else
@@ -183,7 +184,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= STATE_OFF) then return end
+		if self:GetState() <= STATE_OFF then return end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 	end
@@ -199,6 +200,11 @@ if(SERVER)then
 
 				return
 			elseif State == STATE_ON then
+				if self:GetWater() <= 0 then
+					self:TurnOff()
+
+					return 
+				end
 				if self.Installed then
 					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
 						self.Installed = false
@@ -238,7 +244,7 @@ elseif CLIENT then
 		self:DrawShadow(true)
 	end
 	
-	local White = Material("models/rendertarget")--"models/debug/debugwhite")
+	local Black = Material("models/rendertarget")--"models/debug/debugwhite")
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
@@ -266,7 +272,7 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
 				local Opacity = math.random(50, 150)
 				local ElecFrac = self:GetProgress() / 100
-				local PresFrac = self:GetWater() / 500
+				local PresFrac = self:GetWater() / 200
 				local R, G, B = JMod.GoodBadColor(ElecFrac)
 				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
 				cam.Start3D2D(BasePos, DisplayAng, .1)
@@ -283,8 +289,8 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
-				render.SetMaterial(White)
-				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -39.5 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 100), DisplayAng.r)
+				render.SetMaterial(Black)
+				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -40 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 100), DisplayAng.r)
 			end
 		end
 	end

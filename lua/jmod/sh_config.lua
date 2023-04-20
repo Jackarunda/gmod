@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda",
-			Version = 41.96,
+			Version = 41.97,
 		},
 		General = {
 			Hints = true,
@@ -58,6 +58,7 @@ function JMod.InitGlobalConfig(forceNew)
 			},
 			SpawnMachinesFull = true,
 			SupplyEffectMult = 1,
+			DurabilityMult = 1,
 		},
 		Explosives = {
 			Mine = {

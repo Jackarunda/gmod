@@ -216,7 +216,7 @@ if(SERVER)then
 		self:InitPerfSpecs()
 		self.DamageTypeTable = JMod.DefualtArmorTable
 		if(self.CustomInit)then self:CustomInit() end
-		self.Durability = self.MaxDurability
+		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
 		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
@@ -388,7 +388,7 @@ if(SERVER)then
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
-					Accepted = math.min(Missing / 2, amt)
+					Accepted = math.min(math.Round(Missing / 2), amt)
 					self.Durability = self.Durability + Accepted
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
