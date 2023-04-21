@@ -450,8 +450,14 @@ function SWEP:PrimaryAttack()
 					if not Upgraded then
 						local str = "missing supplies for upgrade"
 
-						for k, v in pairs(RequiredMats) do
-							str = str .. " \n " .. k .. " " .. v
+						if Ent.UpgradeProgress then 
+							for typ, amount in pairs(RequiredMats) do
+								str = str .. " \n " .. typ .. ": " .. tostring(RequiredMats[typ] - (Ent.UpgradeProgress[typ] or 0 ))
+							end
+						else
+							for k, v in pairs(RequiredMats) do
+								str = str .. " \n " .. k .. " " .. v
+							end
 						end
 
 						self:Msg(str)
