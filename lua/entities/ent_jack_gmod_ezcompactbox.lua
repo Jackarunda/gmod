@@ -83,7 +83,7 @@ if SERVER then
 		ContentsPhys:Sleep()
 		if Contents.IsJackyEZmachine then --EZ machine compat
 			if Contents.EZinstalled then Contents.EZinstalled = false end
-			if Contents.TurnOff then Contents:TurnOff() end
+			--if Contents.TurnOff then Contents:TurnOff() end
 		end
 	end
 

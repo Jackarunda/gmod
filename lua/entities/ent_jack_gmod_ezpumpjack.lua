@@ -90,7 +90,7 @@ if(SERVER)then
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
 		if self.EZinstalled then
-			if self:GetElectricity() > 0 then
+			if (self:GetElectricity() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 				self.SoundLoop:SetSoundLevel(65)

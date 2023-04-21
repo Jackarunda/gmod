@@ -133,7 +133,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 
 		if self.EZinstalled then
-			if self:GetWater() > 0 then
+			if (self:GetWater() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
 				if self.SoundLoop then 
 					self.SoundLoop:Play() 

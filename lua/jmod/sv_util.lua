@@ -1064,6 +1064,10 @@ function JMod.GetPackagableObject(packager, origin, dir)
 			end
 		end
 
+		if Ent.IsJackyEZmachine and Ent.GetState and Ent:GetState() ~= 0 then
+			return nil, "device must be turned off to package"
+		end
+
 		return Ent
 	end
 

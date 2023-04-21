@@ -52,11 +52,7 @@ if(SERVER)then
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -500), self)
 		local SelfAng = self:GetAngles()
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Roll = Tr.HitNormal:Angle().r
-			local Yaw = Tr.HitNormal:Angle().y
-			self:SetAngles(Angle(Tr.HitNormal:Angle().p + 90, (Yaw >= 20 and Yaw) or SelfAng.y, Roll))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 5)
-			--
+			
 			local GroundIsSolid = true
 			for i = 1, 50 do
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
@@ -68,8 +64,15 @@ if(SERVER)then
 			if not self.DepositKey then
 				JMod.Hint(self.EZowner, "ground drill")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
-				if(IsValid(self.Weld) and self.DepositKey)then
+				--
+				local Roll = Tr.HitNormal:Angle().r
+				local Yaw = Tr.HitNormal:Angle().y
+				self:SetAngles(Angle(Tr.HitNormal:Angle().p + 90, (Yaw >= 20 and Yaw) or SelfAng.y, Roll))
+				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 5)
+				--
+				self:GetPhysicsObject():EnableMotion(false)
+				self.EZinstalled = true
+				if self.DepositKey then
 					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
@@ -82,15 +85,19 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
-		if (self:GetElectricity() > 0) and (IsValid(self.Weld)) and (self.DepositKey) then
-			self:SetState(STATE_RUNNING)
-			self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
-			self.SoundLoop:SetSoundLevel(60)
-			self.SoundLoop:Play()
-			self:SetProgress(0)
+		if self:GetState() ~= STATE_OFF then return end
+		if self.EZinstalled then
+			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				self:SetState(STATE_RUNNING)
+				self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
+				self.SoundLoop:SetSoundLevel(60)
+				self.SoundLoop:Play()
+				self:SetProgress(0)
+			else
+				JMod.Hint(activator, "nopower")
+			end
 		else
-			JMod.Hint(activator,"nopower")
+			self:TryPlace()
 		end
 	end
 	
@@ -147,6 +154,7 @@ if(SERVER)then
 
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
+			local Phys = self:GetPhysicsObject()
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
@@ -156,10 +164,14 @@ if(SERVER)then
 
 				return
 			elseif State == STATE_RUNNING then
-				if not IsValid(self.Weld) then
-					self.DepositKey = nil
-					--self.WellPos = nil
-					--self.Weld = nil
+				if self.EZinstalled then
+					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+						self.EZinstalled = false
+						self:TurnOff()
+
+						return
+					end
+				else
 					self:TurnOff()
 
 					return
