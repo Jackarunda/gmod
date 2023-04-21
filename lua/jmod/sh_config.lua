@@ -2469,5 +2469,9 @@ end)
 hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, buildInfo)
 	if (buildInfo.results == "FUNC EZnail") and not JMod.FindNailPos(playa) then return false, "No applicable nail pos" end
 	if (buildInfo.results == "FUNC EZbolt") and not JMod.FindBoltPos(playa) then return false, "No applicable bolt pos" end
-	if (buildInfo.results == "FUNC EZbox") and not JMod.GetPackagableObject(playa) then return false, "Can't packaged" end
+	if (buildInfo.results == "FUNC EZbox") and not JMod.GetPackagableObject(playa) then 
+		local _, Message = JMod.GetPackagableObject(playa) 
+		
+		return false, Message 
+	end
 end)

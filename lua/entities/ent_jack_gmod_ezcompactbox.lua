@@ -81,6 +81,10 @@ if SERVER then
 		Contents:SetNoDraw(true)
 		Contents:SetNotSolid(true)
 		ContentsPhys:Sleep()
+		if Contents.IsJackyEZmachine then --EZ machine compat
+			if Contents.EZinstalled then Contents.EZinstalled = false end
+			if Contents.TurnOff then Contents:TurnOff() end
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)

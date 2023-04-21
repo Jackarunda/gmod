@@ -51,6 +51,7 @@ if(SERVER)then
 		self:TurnOn()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
+		self.SoundLoop = CreateSound(self, "ambient/machines/laundry_machine1_amb.wav")
 	end
 
 	function ENT:TryPlace()
@@ -75,8 +76,8 @@ if(SERVER)then
 				self:SetPos(Tr.HitPos + Tr.HitNormal * (self.SpawnHeight - 15))
 				---
 				self:GetPhysicsObject():EnableMotion(false)
-				self.Installed = true
-				--
+				self.EZinstalled = true
+				---
 				if self.DepositKey then
 					self:TurnOn(JMod.GetEZowner(self))
 				else
@@ -125,14 +126,19 @@ if(SERVER)then
 		self:SetWater(self:GetWater() - amt / (self:GetGrade()^2))
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
-		--self:EmitSound("ambient/gas/steam2.wav") -- Sigh, looping steam
+		self:EmitSound("snds_jack_gmod/hiss.wav", 80, 100)
 	end
 
 	function ENT:TurnOn()
 		if self:GetState() ~= STATE_OFF then return end
-		if self.Installed then
+
+		if self.EZinstalled then
 			if self:GetWater() > 0 then
 				self:SetState(STATE_RUNNING)
+				if self.SoundLoop then 
+					self.SoundLoop:Play() 
+					self.SoundLoop:SetSoundLevel(80)
+				end
 			end
 		else
 			self:TryPlace()
@@ -143,6 +149,9 @@ if(SERVER)then
 		if self:GetState() <= STATE_OFF then return end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		if self.SoundLoop then 
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:Think()
@@ -152,19 +161,25 @@ if(SERVER)then
 			self.NextResourceThinkTime = Time + 1
 
 			local Phys = self:GetPhysicsObject()
-
-			if self.Installed then
-				if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-					self.Installed = false
-					self:TurnOff()
-				end
-			end
-
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
 				return
 			elseif State == STATE_RUNNING then
+
+				if self.EZinstalled then
+					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+						self.EZinstalled = false
+						self:TurnOff()
+
+						return
+					end
+				else
+					self:TurnOff()
+
+					return
+				end
+
 				if self:GetWater() <= 0 then
 					self:TurnOff()
 
@@ -185,6 +200,12 @@ if(SERVER)then
 					self:ProduceResource()
 				end
 			end
+		end
+	end
+
+	function ENT:OnRemove()
+		if self.SoundLoop then 
+			self.SoundLoop:Stop()
 		end
 	end
 

@@ -1037,9 +1037,8 @@ function JMod.GetPackagableObject(packager, origin, dir)
 
 	if IsValid(Ent) and not Ent:IsWorld() then
 		if Ent.EZunpackagable then
-			packager:PrintMessage(HUD_PRINTCENTER, "No.")
 
-			return nil
+			return nil, "No."
 		end
 
 		if Ent:IsPlayer() or Ent:IsNPC() then return nil end
@@ -1054,16 +1053,14 @@ function JMod.GetPackagableObject(packager, origin, dir)
 		end
 
 		if Constrained then
-			packager:PrintMessage(HUD_PRINTCENTER, "object is constrained")
 
-			return nil
+			return nil, "object is constrained"
 		end
 
 		for k, v in pairs(PackageBlacklist) do
 			if string.find(Ent:GetClass(), v) then
-				packager:PrintMessage(HUD_PRINTCENTER, "can't package this")
 
-				return nil
+				return nil, "can't package this"
 			end
 		end
 
@@ -1074,7 +1071,7 @@ function JMod.GetPackagableObject(packager, origin, dir)
 end
 
 function JMod.Package(packager)
-	local Ent = JMod.GetPackagableObject(packager)
+	local Ent, Message = JMod.GetPackagableObject(packager)
 
 	if Ent then
 		JMod.PackageObject(Ent)
@@ -1087,6 +1084,8 @@ function JMod.Package(packager)
 				end
 			end)
 		end
+	elseif isstring(Message) then
+		packager:PrintMessage(HUD_PRINTCENTER, Message)
 	end
 end
 

@@ -48,32 +48,32 @@ if(SERVER)then
 	end
 
 	function ENT:TryPlace()
-		--local SelfAng = self:GetAngles()
-		--local Right = SelfAng:Right()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
 		if (Tr.Hit) and (Tr.HitWorld) then
-			local Pitch = Tr.HitNormal:Angle().x + 90
-			local Yaw = self:GetAngles().y
-			if Tr.HitNormal:Angle().y >= 20 then
-				Yaw = Tr.HitNormal:Angle().y
-			end
-			local Roll = Tr.HitNormal:Angle().z - 90
-			self:SetAngles(Angle(Pitch, Yaw, Roll))
-			self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
-			--
 			local GroundIsSolid = true
 			for i = 1, 50 do
 				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
 				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID)then GroundIsSolid = false break end
 			end
-			
+
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
 				JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				if not(IsValid(self.Weld))then self.Weld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, false, false) end
-				if(IsValid(self.Weld) and self.DepositKey)then
+				local Pitch = Tr.HitNormal:Angle().x + 90
+				local Yaw = self:GetAngles().y
+				if Tr.HitNormal:Angle().y >= 20 then
+					Yaw = Tr.HitNormal:Angle().y
+				end
+				local Roll = Tr.HitNormal:Angle().z - 90
+				self:SetAngles(Angle(Pitch, Yaw, Roll))
+				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
+				---
+				self:GetPhysicsObject():EnableMotion(false)
+				self.EZinstalled = true
+				---
+				if self.DepositKey then
 					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
@@ -88,15 +88,20 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
-		if self:GetElectricity() > 0 then
-			self:SetState(STATE_RUNNING)
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
-			self.SoundLoop:SetSoundLevel(65)
-			self.SoundLoop:Play()
-			self.WellPos = SelfPos + Forward * 120 - Right * 95
-			self:SetProgress(0)
+
+		if self.EZinstalled then
+			if self:GetElectricity() > 0 then
+				self:SetState(STATE_RUNNING)
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
+				self.SoundLoop:SetSoundLevel(65)
+				self.SoundLoop:Play()
+				self.WellPos = SelfPos + Forward * 120 - Right * 95
+				self:SetProgress(0)
+			else
+				JMod.Hint(activator, "nopower")
+			end
 		else
-			JMod.Hint(activator, "nopower")
+			self:TryPlace()
 		end
 	end
 
@@ -127,7 +132,7 @@ if(SERVER)then
 
 			return
 		elseif(State==STATE_OFF)then
-			self:TryPlace()
+			self:TurnOn(activator)
 		elseif(State==STATE_RUNNING)then
 			if alt then
 				self:ProduceResource()
@@ -153,6 +158,8 @@ if(SERVER)then
 
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
+			local Phys = self:GetPhysicsObject()
+
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
@@ -162,10 +169,15 @@ if(SERVER)then
 
 				return
 			elseif State == STATE_RUNNING then
-				if not IsValid(self.Weld) then
-					self.DepositKey = nil
-					self.WellPos = nil
-					--self.Weld = nil
+				
+				if self.EZinstalled then
+					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+						self.EZinstalled = false
+						self:TurnOff()
+
+						return
+					end
+				else
 					self:TurnOff()
 
 					return
@@ -173,6 +185,7 @@ if(SERVER)then
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
+
 					return
 				end
 
