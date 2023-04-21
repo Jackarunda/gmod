@@ -139,8 +139,8 @@ function ENT:InitPerfSpecs()
 	local Grade = self:GetGrade()
 	local NetworkTable = {}
 	if (self.StaticPerfSpecs) then
-		for specName, value in 
-			pairs(self.StaticPerfSpecs)do self[specName] = value 
+		for specName, value in pairs(self.StaticPerfSpecs)do 
+			self[specName] = value 
 			NetworkTable[specName] = NewValue
 		end
 	end
@@ -435,8 +435,8 @@ if(SERVER)then
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
-					Accepted = math.min(math.Round(Missing / 2), amt)
-					self.Durability = self.Durability + Accepted
+					Accepted = math.min(Missing / 2, amt)
+					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
 					if(self.Durability > 0)then

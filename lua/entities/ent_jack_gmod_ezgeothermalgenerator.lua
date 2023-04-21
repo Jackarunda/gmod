@@ -67,17 +67,16 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				--JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				local Pitch = Tr.HitNormal:Angle().x + 90
+				local HitAng = Tr.HitNormal:Angle()
+				local Pitch = HitAng.p
 				local Yaw = self:GetAngles().y
-				if Tr.HitNormal:Angle().y >= 20 then
-					Yaw = Tr.HitNormal:Angle().y
-				end
-				local Roll = Tr.HitNormal:Angle().z - 90
-				self:SetAngles(Angle(0, 0, 0))
-				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
+				local Roll = HitAng.r
+				self:SetAngles(Angle(0, Yaw, Roll))
+				self:SetPos(Tr.HitPos + Tr.HitNormal * (self.SpawnHeight - 15))
 				---
 				self:GetPhysicsObject():EnableMotion(false)
 				self.Installed = true
+				--
 				if self.DepositKey then
 					self:TurnOn(JMod.GetEZowner(self))
 				else
@@ -113,14 +112,13 @@ if(SERVER)then
 			end
 			self:TurnOff()
 		end
-		--jprint(self.Installed, State)
 	end
 
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
-		if amt <= 0 then return end
+		if amt < 1 then return end
 
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
@@ -152,7 +150,16 @@ if(SERVER)then
 		
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
+
 			local Phys = self:GetPhysicsObject()
+
+			if self.Installed then
+				if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+					self.Installed = false
+					self:TurnOff()
+				end
+			end
+
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
@@ -162,14 +169,6 @@ if(SERVER)then
 					self:TurnOff()
 
 					return 
-				end
-				if self.Installed then
-					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-						self.Installed = false
-						self:TurnOff()
-
-						return
-					end
 				end
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
@@ -202,7 +201,7 @@ elseif CLIENT then
 		self:DrawShadow(true)
 	end
 	
-	local Black = Material("models/rendertarget")--"models/debug/debugwhite")
+	local Black = Material("black_square_model")--"models/debug/debugwhite")
 	function ENT:Draw()
 		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
@@ -246,7 +245,7 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
 				render.SetMaterial(Black)
-				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -40 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 100), DisplayAng.r)
+				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -40 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 255), DisplayAng.r)
 			end
 		end
 	end
