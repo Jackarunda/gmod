@@ -505,8 +505,16 @@ local function IsWHOT(ent)
 		if not ent.EZWHOTcoldTime then
 			ent.EZWHOTcoldTime = Time + 30
 		end
-	elseif ent:IsVehicle() or (simfphys and simfphys.IsCar(ent)) then
-		-- HL2/Simfphys vehicles
+	elseif ent:IsVehicle() then
+		-- HL2 vehicles
+		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length() >= 200 then
+			ent.EZWHOTcoldTime = Time + math.Clamp(ent:GetVelocity():Length() / 20, 10, 40)
+		end
+
+		if LocalPlayer() == ent:GetDriver() then return false end
+	elseif simfphys and simfphys.IsCar then -- have to check for IsCar because some addons create the 'simfphys' object even if simfphys isn't enable/installed, weeeee
+		-- simfphys vehicles
+		if not simfphys.IsCar(ent) then return end
 		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length() >= 200 then
 			ent.EZWHOTcoldTime = Time + math.Clamp(ent:GetVelocity():Length() / 20, 10, 40)
 		end
