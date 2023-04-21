@@ -512,7 +512,7 @@ local function IsWHOT(ent)
 		end
 
 		if LocalPlayer() == ent:GetDriver() then return false end
-	elseif simfphys and simfphys.IsCar then -- have to check for IsCar because some addons create the 'simfphys' object even if simfphys isn't enable/installed, weeeee
+	elseif simfphys and simfphys.IsCar then -- have to check for IsCar because some addons create the 'simfphys' object even if simfphys isn't enabled/installed, weeeee
 		-- simfphys vehicles
 		if not simfphys.IsCar(ent) then return end
 		if IsValid(ent:GetDriver()) and ent:GetVelocity():Length() >= 200 then
