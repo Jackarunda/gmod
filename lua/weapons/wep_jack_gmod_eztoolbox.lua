@@ -292,7 +292,7 @@ function SWEP:GetEZsupplies(resourceType)
 		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
 	}
 	if resourceType then
-		if AvaliableResources[resourceType] then
+		if AvaliableResources[resourceType] and AvaliableResources[resourceType] > 0 then
 			return AvaliableResources[resourceType]
 		else
 			return 

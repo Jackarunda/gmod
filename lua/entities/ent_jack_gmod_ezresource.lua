@@ -19,7 +19,7 @@ end
 function ENT:GetEZsupplies(typ)
 	local Supplies = {[self.EZsupplies] = self:GetResource()}
 	if typ then
-		if Supplies[typ] then
+		if Supplies[typ] and Supplies[typ] > 0 then
 			return Supplies[typ]
 		else
 			return 
