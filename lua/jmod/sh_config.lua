@@ -12,8 +12,8 @@ function JMod.InitGlobalConfig(forceNew)
 	local NewConfig = {
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
-			Author = "Jackarunda",
-			Version = 41.98,
+			Author = "Jackarunda & Friends",
+			Version = 41.99,
 		},
 		General = {
 			Hints = true,
@@ -1094,6 +1094,18 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "toolbox",
 				description = "A drill for extracting ores from the ground."
 			},
+			["EZ Geothermal Generator"] = {
+				results = "ent_jack_gmod_ezgeothermalgenerator",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 200
+				},
+				sizeScale = 10,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Bulky machine for utilizing geothermal deposits, and creating power from them."
+			},
 			["HL2 Buggy"] = {
 				results = "FUNC spawnHL2buggy",
 				craftingReqs = {
@@ -1199,8 +1211,8 @@ function JMod.InitGlobalConfig(forceNew)
 				results = "ent_jack_gmod_ezchemicals",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 50,
-					[JMod.EZ_RESOURCE_TYPES.GAS] = 200,
-					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 50
 				},
 				category = "Resources",
 				craftingType = "workbench",
@@ -2102,13 +2114,22 @@ function JMod.InitGlobalConfig(forceNew)
 				craftingType = "workbench",
 				description = "Full-body protection against environmental hazards, though fragile."
 			},
+			["EZ Parachute"] = {
+				results = JMod.ArmorTable["Parachute"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 50
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Valuable tool to break your fall with when falling high distances."
+			},
 			["EZ Medical Supplies"] = {
 				results = "ent_jack_gmod_ezmedsupplies",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25
 				},
 				category = "Resources",
 				craftingType = "workbench",
@@ -2188,10 +2209,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Munitions"] = {
 				results = "ent_jack_gmod_ezmunitions",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 100,
-					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 50,
-					[JMod.EZ_RESOURCE_TYPES.LEAD] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 75,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 50
 				},
 				category = "Resources",
 				craftingType = "workbench",
@@ -2210,7 +2230,6 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Propellant"] = {
 				results = "ent_jack_gmod_ezpropellant",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 25,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 50
 				},
@@ -2231,9 +2250,9 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Nutrients"] = {
 				results = "ent_jack_gmod_eznutrients",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PAPER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 25
 				},
 				category = "Resources",
 				craftingType = "workbench",
@@ -2256,7 +2275,7 @@ function JMod.InitGlobalConfig(forceNew)
 				},
 				category = "Munitions",
 				craftingType = "workbench",
-				description = "we wile e coyote now, meep meep"
+				description = "Powerful explosive charge with a traditional plunger detonator that you can drag away."
 			},
 			["EZ Signal Grenade"] = {
 				results = "ent_jack_gmod_ezsignalnade",
