@@ -21,7 +21,7 @@ ENT.StaticPerfSpecs = {
 --
 ENT.DynamicPerfSpecs = {
 	Armor = 2,
-	ChargeSpeed = 1
+	ChargeRate = 1
 }
 --
 ENT.EZconsumes = {
@@ -51,7 +51,7 @@ if(SERVER)then
 		self:TurnOn()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
-		self.SoundLoop = CreateSound(self, "ambient/machines/laundry_machine1_amb.wav")
+		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.wav")
 	end
 
 	function ENT:TryPlace()
@@ -123,22 +123,29 @@ if(SERVER)then
 
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
-		self:SetWater(self:GetWater() - amt / (self:GetGrade()^2))
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
-		self:EmitSound("snds_jack_gmod/hiss.wav", 80, 100)
 	end
 
 	function ENT:TurnOn()
 		if self:GetState() ~= STATE_OFF then return end
 
 		if self.EZinstalled then
+			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+			timer.Simple(0.6, function()
+				if not IsValid(self) then return end
+				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
+			end)
 			if (self:GetWater() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
-				if self.SoundLoop then 
-					self.SoundLoop:Play() 
-					self.SoundLoop:SetSoundLevel(80)
-				end
+				timer.Simple(1, function()
+					if not IsValid(self) then return end
+					if self.SoundLoop then 
+						self.SoundLoop:Play() 
+						self.SoundLoop:SetSoundLevel(100)
+						self.SoundLoop:ChangePitch(100)
+					end
+				end)
 			end
 		else
 			self:TryPlace()
@@ -149,9 +156,13 @@ if(SERVER)then
 		if self:GetState() <= STATE_OFF then return end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		if self.SoundLoop then 
-			self.SoundLoop:Stop()
-		end
+		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+		timer.Simple(1, function()
+			if not IsValid(self) then return end
+			if self.SoundLoop then 
+				self.SoundLoop:Stop()
+			end
+		end)
 	end
 
 	function ENT:Think()
@@ -194,12 +205,19 @@ if(SERVER)then
 
 				--local Pressure = (self:GetWater() / self.MaxWater)^2
 				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				self:SetProgress(self:GetProgress() + self.ChargeSpeed * FlowRate)
+				self:SetProgress(self:GetProgress() + FlowRate / (5 / self.ChargeRate))
+				self:SetWater(self:GetWater() - FlowRate / (10 / (self.ChargeRate)))
 
 				if self:GetProgress() >= 100 then
 					self:ProduceResource()
 				end
 			end
+		end
+	end
+
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted >= 1 then
+			self:TurnOn(JMod.GetEZowner(self))
 		end
 	end
 
