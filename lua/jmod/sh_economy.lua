@@ -708,7 +708,7 @@ function JMod.GetSalvageYield(ent)
 		for k, v in pairs(JMod.EZ_RESOURCE_TYPE_METHODS) do
 			local ResourceMethod = ent["Get"..v]
 			if ResourceMethod then
-				Results[k] = (Results[k] or 0) + ResourceMethod(ent)
+				Results[k] = (Results[k] or 0) + math.Round(ResourceMethod(ent))
 			end
 			if ent.GetOre and ent.GetOreType and ent:GetOreType() ~= "generic" then
 				Results[ent:GetOreType()] = (Results[ent:GetOreType()] or 0) + ent:GetOre()

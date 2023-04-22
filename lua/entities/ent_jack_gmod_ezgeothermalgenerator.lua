@@ -34,7 +34,7 @@ ENT.WhitelistedResources = {
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
-	self:NetworkVar("Int", 2,"Water")
+	self:NetworkVar("Int", 2, "Water")
 end
 
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
@@ -51,6 +51,7 @@ if(SERVER)then
 		self:TurnOn()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
+		self.NextWaterLoseTime = 0
 		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.wav")
 	end
 
@@ -203,14 +204,27 @@ if(SERVER)then
 					return
 				end
 
-				--local Pressure = (self:GetWater() / self.MaxWater)^2
 				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
 				self:SetProgress(self:GetProgress() + FlowRate / (5 / self.ChargeRate))
-				self:SetWater(self:GetWater() - FlowRate / (10 / (self.ChargeRate)))
+				if self.NextWaterLoseTime < Time then
+					self.NextWaterLoseTime = Time + FlowRate / (1/(self.ChargeRate*10))
+
+					self:SetWater(self:GetWater() - 1 * FlowRate)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, math.random(75, 80) * self.ChargeRate)
+					local Foof = EffectData()
+					Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
+					Foof:SetNormal(self:GetUp())
+					Foof:SetScale(1)
+					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+				end
+				
 
 				if self:GetProgress() >= 100 then
 					self:ProduceResource()
 				end
+
+				self.LastWater = math.floor(self:GetWater())
 			end
 		end
 	end
@@ -233,6 +247,7 @@ if(SERVER)then
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 		ent.NexResourceThinkTime = Time + math.Rand(0, 3)
+		self.NextWaterLoseTime = Time
 	end
 
 elseif CLIENT then
