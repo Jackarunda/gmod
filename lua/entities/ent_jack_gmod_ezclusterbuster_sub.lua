@@ -76,10 +76,7 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if not IsValid(self) then return end
-		if data.HitEntity.EZclusterBusterMunition then return end
-
-		if data.DeltaTime > 0.2 then
+		if (data.DeltaTime > 0.2) and not(data.HitEntity.EZclusterBusterMunition) then
 			self:Detonate()
 		end
 	end
@@ -109,7 +106,7 @@ if SERVER then
 		local Att = self.EZowner or game.GetWorld()
 		local Vel, Pos, Ang = self:GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
-		self:Remove()
+		SafeRemoveEntityDelayed(self, 0.01)
 		JMod.Sploom(Att, Pos, 10)
 		local Dir = Angle(0, 0, 0)
 

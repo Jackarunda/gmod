@@ -123,7 +123,7 @@ if SERVER then
 			local Solid = Surface ~= "water" and Surface ~= "default"
 
 			if Tr.HitSky then
-				timer.Simple(0.01, function()
+				timer.Simple(0.1, function()
 					if IsValid(self) then
 						SafeRemoveEntity(self)
 					end
@@ -231,14 +231,14 @@ if SERVER then
 					end
 				end
 
-				timer.Simple(0.01, function()
+				timer.Simple(0.1, function()
 				if IsValid(self) then
 					SafeRemoveEntity(self)
 				end
 			end)
 			end)
 		else
-			timer.Simple(0.01, function()
+			timer.Simple(0.1, function()
 				if IsValid(self) then
 					SafeRemoveEntity(self)
 				end

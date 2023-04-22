@@ -33,10 +33,7 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if not IsValid(self) then return end
-		if data.HitEntity.EZclusterBusterMunition then return end
-
-		if data.DeltaTime > 0.2 and data.Speed > 25 then
+		if (data.DeltaTime > 0.2 and data.Speed > 25) and not(data.HitEntity.EZclusterBusterMunition) then
 			self:Detonate()
 		end
 	end
@@ -69,7 +66,7 @@ if SERVER then
 			JMod.RicPenBullet(self, Pos, dir, 1100, true, true)
 		end
 
-		self:Remove()
+		SafeRemoveEntityDelayed(self, 0.01)
 	end
 
 	local BlackList = {"prop_", "func_"}
