@@ -27,9 +27,9 @@ if SERVER then
 		end
 
 		for i = 1, 1 do
-			local Eff = EffectData()
-			Eff:SetOrigin(pos + VectorRand() * 10)
-			util.Effect("StriderBlood", Eff, true, true)
+			--local Eff = EffectData()
+			--Eff:SetOrigin(pos + VectorRand() * 10)
+			--util.Effect("StriderBlood", Eff, true, true)
 
 			if destructive and not vFireInstalled then
 				local Tr = util.QuickTrace(pos, Vector(math.random(-200, 200), math.random(-200, 200), math.random(0, -200)), {self})

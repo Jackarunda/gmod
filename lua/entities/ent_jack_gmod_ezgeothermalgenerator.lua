@@ -207,10 +207,10 @@ if(SERVER)then
 				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
 				self:SetProgress(self:GetProgress() + FlowRate / (5 / self.ChargeRate))
 				if self.NextWaterLoseTime < Time then
-					self.NextWaterLoseTime = Time + FlowRate / (1/(self.ChargeRate*10))
+					self.NextWaterLoseTime = Time + FlowRate / (5/(self.ChargeRate*10))
 
 					self:SetWater(self:GetWater() - 1 * FlowRate)
-					self:EmitSound("snds_jack_gmod/hiss.wav", 100, math.random(75, 80) * self.ChargeRate)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
 					local Foof = EffectData()
 					Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
 					Foof:SetNormal(self:GetUp())

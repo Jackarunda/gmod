@@ -374,7 +374,7 @@ if(SERVER)then
 		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		if JMod.Config.Craftables[self.PrintName] then
 			for k, v in pairs(JMod.Config.Craftables[self.PrintName].craftingReqs) do
-				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 600), Spread, Scale, UpSpeed)
+				JMod.ResourceEffect(k, StartPoint, ToPoint, GibNum * (v / 800), Spread, Scale, UpSpeed)
 			end
 		else
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.BASICPARTS, StartPoint, ToPoint, GibNum, Spread, Scale, UpSpeed)
@@ -387,7 +387,9 @@ if(SERVER)then
 		end
 		if self.ProduceResource then self:ProduceResource() end
 		if self.OnDestroy then self:OnDestroy(dmginfo) end
-		SafeRemoveEntityDelayed(self, 0.5)
+		self:SetNoDraw(true)
+		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+		SafeRemoveEntityDelayed(self, 2)
 	end
 
 	function ENT:SFX(str,absPath)

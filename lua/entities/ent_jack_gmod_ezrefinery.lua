@@ -201,6 +201,32 @@ if(SERVER)then
 		return true
 	end
 
+	function ENT:OnDestroy()
+		local Oil = self:GetOil()
+		if Oil > 10 then
+			if vFireInstalled then
+				CreateVFireBall(math.random(5, 15), math.random(5, 15), self:GetUp()*20, VectorRand() * math.random(100, 200))
+			else
+				for i = 1, math.Round((Oil / self.MaxOil) * 10) do
+					local Tr = util.QuickTrace(self:GetPos() + self:GetUp()*20, Vector(math.random(-200, 200), math.random(-200, 200), math.random(0, -200)), {self})
+
+					if Tr.Hit then
+						local Fiah = ents.Create("env_fire")
+						Fiah:SetPos(Tr.HitPos + Tr.HitNormal)
+						Fiah:SetKeyValue("health", 30)
+						Fiah:SetKeyValue("fireattack", 1)
+						Fiah:SetKeyValue("firesize", math.random(20, 200))
+						Fiah:SetOwner(self.EZowner or game.GetWorld())
+						Fiah:Spawn()
+						Fiah:Activate()
+						Fiah:Fire("StartFire", "", 0)
+						Fiah:Fire("kill", "", math.random(1, 5))
+					end
+				end
+			end
+		end
+	end
+
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply)
