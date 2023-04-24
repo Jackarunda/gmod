@@ -27,9 +27,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/sadfart.wav"
+SWEP.ShootSound = "snds_jack_gmod/sadfart.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/sadfart.wav"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_M3"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bpmuzzle"
