@@ -1,6 +1,7 @@
 ﻿local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
-local MenuOpen = false
+local FriendMenuOpen = false
+local SelectionMenuOpen = false
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
 local FavMat = Material("icon16/star.png")
@@ -180,8 +181,8 @@ net.Receive("JMod_Friends", function()
 		return
 	end
 
-	if MenuOpen then return end
-	MenuOpen = true
+	if FriendMenuOpen then return end
+	FriendMenuOpen = true
 	local Frame, W, H, Myself, FriendList = vgui.Create("DFrame"), 300, 400, LocalPlayer(), net.ReadTable()
 	Frame:SetPos(40, 80)
 	Frame:SetSize(W, H)
@@ -193,7 +194,7 @@ net.Receive("JMod_Friends", function()
 	Frame:Center()
 
 	Frame.OnClose = function()
-		MenuOpen = false
+		FriendMenuOpen = false
 		net.Start("JMod_Friends")
 		net.WriteTable(FriendList)
 		net.SendToServer()
@@ -442,6 +443,7 @@ end
 
 local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc)
 	-- first, populate icons
+	if SelectionMenuOpen then return end
 	for name, info in pairs(data) do
 		if not JMod.SelectionMenuIcons[name] then
 			if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
@@ -513,6 +515,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	function MotherFrame:OnClose()
 		if not self.positiveClosed then
 			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav")
+			SelectionMenuOpen = false
 		end
 	end
 
@@ -581,6 +584,9 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	end
 
 	PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc)
+
+	SelectionMenuOpen = true
+
 end
 
 --[[
@@ -596,6 +602,7 @@ net.Receive("JMod_EZtoolbox", function()
 	local Buildables = net.ReadTable()
 	local Kit = net.ReadEntity()
 
+	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, function(name, info, ply, ent) -- enable func
 return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
 		-- click func
@@ -613,6 +620,7 @@ net.Receive("JMod_EZworkbench", function()
 	local Bench = net.ReadEntity()
 	local Buildables = net.ReadTable()
 
+	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
 return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
 		-- click func
@@ -889,6 +897,7 @@ net.Receive("JMod_EZradio", function()
 	local Radio = net.ReadEntity()
 	local Orderables = net.ReadTable()
 
+	if SelectionMenuOpen then return end
 	StandardSelectionMenu('selecting', "EZ Radio", Orderables, Radio, function(name, info, ply, ent)
 		-- enable func
 		local override, msg = hook.Run("JMod_CanRadioRequest", ply, ent, name)
