@@ -760,9 +760,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Liquid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezlfg",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20,
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
 				sizeScale = 2,
