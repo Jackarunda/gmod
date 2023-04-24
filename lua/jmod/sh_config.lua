@@ -918,7 +918,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 300,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 50
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
 				},
 				sizeScale = 1,
 				category = "Explosives",
@@ -942,7 +942,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 75
 				},
 				sizeScale = 1,
 				category = "Explosives",
@@ -1025,7 +1025,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 600,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 300
 				},
 				sizeScale = 1,
 				category = "Explosives",
