@@ -747,7 +747,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
