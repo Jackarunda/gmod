@@ -515,8 +515,8 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	function MotherFrame:OnClose()
 		if not self.positiveClosed then
 			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav")
-			SelectionMenuOpen = false
 		end
+		SelectionMenuOpen = false
 	end
 
 	local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
