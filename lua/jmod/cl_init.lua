@@ -600,7 +600,7 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 end)
 
 local Translucent = Color(255, 255, 255, 100)
-hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", function()
+hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", function(bDepth, bSkybox)
 	local ply, Time = LocalPlayer(), CurTime()
 	
 	if ply:Alive() then
@@ -629,6 +629,8 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 				end
 			end
 		end
+
+		if bSkybox then return end -- avoid drawing in the skybox
 		local ToolBox = ply:GetActiveWeapon()
 
 		if IsValid(ToolBox) and ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
