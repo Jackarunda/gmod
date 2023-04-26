@@ -636,10 +636,10 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 				table.insert(Filter, v)
 			end
-			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp(1, .5, 100), Filter)
+			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.CurrentBuildSize or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
+			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreviewBox.sizeScale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
 		end
 	end
 end)

@@ -616,8 +616,8 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		temp_ent:Spawn()													-- have to do this to get an accurate bounding box
 		local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way
 		temp_ent:Remove()
-
-		ent.EZpreviewBox = {mins = min, maxs = max}
+		
+		ent.EZpreviewBox = {mins = min, maxs = max, sizeScale = info.SizeScale}
 
 	end, nil)
 end)
