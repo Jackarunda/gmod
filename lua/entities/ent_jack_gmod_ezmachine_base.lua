@@ -147,6 +147,7 @@ function ENT:InitPerfSpecs()
 	if (self.DynamicPerfSpecs) then
 		for specName, value in pairs(self.DynamicPerfSpecs)do
 			if(type(value)~="table")then
+				if not JMod.EZ_GRADE_BUFFS[Grade] then return end
 				local NewValue = value * JMod.EZ_GRADE_BUFFS[Grade] ^ (self.DynamicPerfSpecExp)
 				if (NewValue > 2) then
 					self[specName] = math.ceil(NewValue)

@@ -632,8 +632,14 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		local ToolBox = ply:GetActiveWeapon()
 
 		if IsValid(ToolBox) and ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
-			local Ent, Pos, Normal = ToolBox:WhomIlookinAt()
-			render.DrawWireframeBox(Pos + Normal * 20 * ToolBox.CurrentBuildSize, Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
+			local Filter = {ply}
+			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
+				table.insert(Filter, v)
+			end
+			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp(1, .5, 100), Filter)
+			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
+																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
+			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreviewBox.sizescale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
 		end
 	end
 end)

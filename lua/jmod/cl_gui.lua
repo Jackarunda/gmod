@@ -610,8 +610,15 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.WriteEntity(ent)
 		net.WriteString(name)
 		net.SendToServer()
-		ent.CurrentBuildSize = info.sizeScale or 0
-		ent.EZpreviewBox = {mins = Vector(ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20, ent.CurrentBuildSize * -20), maxs = Vector(ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20, ent.CurrentBuildSize * 20)}
+		
+		-- wireframe preview																			  
+		local temp_ent = ents.CreateClientside(info["results"])
+		temp_ent:Spawn()													-- have to do this to get an accurate bounding box
+		local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way
+		temp_ent:Remove()
+
+		ent.EZpreviewBox = {mins = min, maxs = max}
+
 	end, nil)
 end)
 
