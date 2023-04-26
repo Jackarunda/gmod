@@ -639,7 +639,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp(1, .5, 100), Filter)
 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreviewBox.sizescale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
+			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.CurrentBuildSize or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreviewBox.mins, ToolBox.EZpreviewBox.maxs, Translucent, true)
 		end
 	end
 end)
