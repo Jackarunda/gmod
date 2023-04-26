@@ -296,13 +296,15 @@ function JMod.TryCough(ent)
 	end
 end
 
-function JMod.ClearLoS(ent1, ent2, ignoreWater, up)
+function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 	if not IsValid(ent2) then return false end
 	local SelfPos, TargPos = ent1:LocalToWorld(ent1:OBBCenter()) + vector_up * (up or 1), ent2:LocalToWorld(ent2:OBBCenter()) + vector_up
-	if ignoreWater then
-		local Mask = MASK_SHOT
-	else 
-		local Mask = MASK_SHOT + MASK_WATER
+
+	local Mask = MASK_SHOT + MASK_WATER
+	if onlyHitWorld then
+		Mask = MASK_SOLID_BRUSHONLY
+	elseif ignoreWater then
+		Mask = MASK_SHOT
 	end
 
 	local Tr = util.TraceLine({

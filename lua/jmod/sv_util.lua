@@ -636,6 +636,7 @@ end
 
 function JMod.ShouldAllowControl(self, ply)
 	if not IsValid(ply) then return false end
+	if (ply.EZkillme) then return false end
 	if not IsValid(self.EZowner) then return false end
 	if ply == self.EZowner then return true end
 	local Allies = self.EZowner.JModFriends or {}

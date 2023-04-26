@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/lemine"
+	"$bumpmap" "models/jmod/lemine_normal"
+	"$envmap" "env_cubemap"
+	"$normalmapalphaenvmapmask" "1"
+	"$envmaptint" "[.5 .5 .5]"
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongboost" "10"
+	"$phongfresnelranges" "[1 1 1]"
+	"$detail" "models\tex_jack_gmod_metaldetail"
+	"$detailscale"		"8"
+	"$detailblendfactor"		".8"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}
