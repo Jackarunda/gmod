@@ -11,7 +11,7 @@ SWEP.BodyHolsterAngL = Angle(0, 15, 180)
 SWEP.BodyHolsterPos = Vector(5.5, -3, -3)
 SWEP.BodyHolsterPosL = Vector(1, -6, 3)
 SWEP.BodyHolsterScale = .9
-JMod.ApplyAmmoSpecs(SWEP, "Black Powder Paper Cartridge", 1.1)
+JMod.ApplyAmmoSpecs(SWEP, "Black Powder Paper Cartridge", 1.2)
 SWEP.Primary.ClipSize = 1 -- DefaultClip is automatically set.
 SWEP.Recoil = 2
 SWEP.Delay = 60 / 100 -- 60/RPM.
@@ -26,7 +26,7 @@ SWEP.Firemodes = {
 	}
 }
 
-SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
+SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
 SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
 SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"

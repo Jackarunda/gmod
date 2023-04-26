@@ -747,7 +747,7 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
@@ -760,9 +760,10 @@ function JMod.InitGlobalConfig(forceNew)
 			["EZ Liquid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezlfg",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 20,
 					[JMod.EZ_RESOURCE_TYPES.OIL] = 20
 				},
 				sizeScale = 2,
@@ -918,7 +919,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 300,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 50
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
 				},
 				sizeScale = 1,
 				category = "Explosives",
@@ -942,7 +943,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 75
 				},
 				sizeScale = 1,
 				category = "Explosives",
@@ -1025,7 +1026,7 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 600,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 300
 				},
 				sizeScale = 1,
 				category = "Explosives",

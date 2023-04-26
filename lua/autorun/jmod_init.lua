@@ -178,14 +178,6 @@ JMod.EZ_GRADE_MATS = {Material("models/mats_jack_grades/1"), Material("models/ma
 JMod.EZ_GRADE_UPGRADE_COSTS = {.5, 1, 1.5, 2}
 
 JMod.EZ_UPGRADE_RESOURCE_BLACKLIST = {}
-
-JMod.EZ_GRADE_BUFFS = {1, 1.25, 1.5, 1.75, 2}
-
-JMod.EZ_GRADE_NAMES = {"basic", "copper", "silver", "gold", "platinum"}
-
-JMod.EZ_GRADE_UPGRADE_COSTS = {.5, 1, 1.5, 2}
-
-JMod.EZ_UPGRADE_RESOURCE_BLACKLIST = {}
 -- State enums
 JMod.EZ_STATE_BROKEN = -1
 JMod.EZ_STATE_OFF = 0
