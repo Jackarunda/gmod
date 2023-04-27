@@ -178,7 +178,7 @@ if SERVER then
 			end
 		end)
 
-		JMod.FragSplosion(self, SelfPos, 10000, 200, 2000, self.EZowner or game.GetWorld(), nil, nil, 4)
+		JMod.FragSplosion(self, SelfPos, 10000, 200, 1500, self.EZowner or game.GetWorld(), nil, nil, 4)
 		---
 		self:Remove()
 
@@ -233,17 +233,27 @@ if SERVER then
 			if (ent ~= self) then
 				local Phys = ent:GetPhysicsObject()
 				if (IsValid(Phys)) then
-					local Playa, NPC, Mass, Speed, Veh = ent:IsPlayer(), ent:IsNPC(), Phys:GetMass(), Phys:GetVelocity():Length(), ent:IsVehicle()
-					if (Playa and ent:Alive() and JMod.ShouldAllowControl(self, ent) and JMod.ClearLoS(self, ent, true, 20, true)) then
+					local IsPlaya, IsNPC, Mass, Speed, IsVehicular = ent:IsPlayer(), ent:IsNPC(), Phys:GetMass(), Phys:GetVelocity():Length(), ent:IsVehicle()
+					if (IsPlaya and ent:Alive() and JMod.ShouldAllowControl(self, ent) and JMod.ClearLoS(self, ent, true, 20, true)) then
 						DangerClose = true
 					elseif (JMod.ShouldAttack(self, ent) and JMod.ClearLoS(self, ent, true, 20, true)) then
-						if (Speed < 1) then Speed = 0 end
-						local SpeedFactor = Speed
-						local MassFactor = Mass ^ .75
-						local HealthFactor = ((ent.Health and ent:Health()) or 100) ^ .5
-						local ThreatAddition = SpeedFactor * MassFactor * HealthFactor * math.Rand(.8, 1.2)
-						-- print(ent, Playa, Veh, SpeedFactor, MassFactor, HealthFactor, ThreatAddition)
-						Threat = Threat + ThreatAddition
+						if (Speed < 1) then Speed = 10 end
+						local Dist = Pos:Distance(ent:GetPos())
+						local ThreatAddition = 0
+						if (IsPlaya) then
+							local SpeedFactor = Speed
+							local DistFactor = (Dist < 150 and 8) or 1
+							ThreatAddition = SpeedFactor * DistFactor / 60
+						elseif (IsNPC) then
+							local SpeedFactor = Speed
+							local HealthFactor = ((ent.Health and ent:Health()) or 100) ^ .6
+							ThreatAddition = SpeedFactor * HealthFactor / 1500
+						elseif (IsVehicular) then
+							local SpeedFactor = Speed
+							local MassFactor = Mass ^ .5
+						end
+						-- jprint(ent, ThreatAddition, math.Round(self.Anger))
+						Threat = Threat + ThreatAddition * math.Rand(.8, 1.2)
 					end
 				end
 			end
@@ -267,7 +277,7 @@ if SERVER then
 		if State == STATE_ARMED then
 			if not(IsValid(self.Weld))then self:Detonate() return end
 			if (Threat > 0) then self:RileUp() return end
-			self.Anger = math.Clamp(self.Anger - .5, 0, 100)
+			self.Anger = math.Clamp(self.Anger - .2, 0, 100)
 		elseif State == STATE_WARNING then
 			if (Threat <= 0) then self:CalmDown() return end
 			self.Anger = math.Clamp(self.Anger + Threat, 0, 100)

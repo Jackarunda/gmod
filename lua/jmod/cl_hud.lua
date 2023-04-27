@@ -320,7 +320,7 @@ local FPSData = {
 hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 	if not(GetConVar("jmod_debug_display"):GetBool()) then return end
 
-	local FT, Time = FrameTime(), CurTime()
+	local FT, Time, ply, W, H = FrameTime(), CurTime(), LocalPlayer(), ScrW(), ScrH()
 
 	-- record data
 	FPSData.frameTimeSum = FPSData.frameTimeSum + FT
@@ -374,4 +374,23 @@ hook.Add("PostDrawHUD", "JMod_PostDrawHUD", function()
 		surface.SetDrawColor(JMod.GoodBadColor(FPSfraction))
 		surface.DrawLine(PixelX, PixelY, PreviousPixelX, PreviousPixelY)
 	end
+
+	-- rangefinder
+	local ShootPos, AimVec = ply:GetShootPos(), ply:GetAimVector()
+	local veh, adjustment = ply:GetVehicle(), 0
+	if (IsValid(veh)) then adjustment = 200 end
+	local Tr = util.QuickTrace(ShootPos + AimVec * adjustment, AimVec * 9e9, ply)
+	if (Tr.Hit) then
+		local Dist = Tr.HitPos:Distance(ShootPos) - adjustment
+		draw.SimpleTextOutlined(Tr.Entity, "Default", W/2 - 10, H/2 + 10, Color(255, 255, 255, 180), TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 180))
+		draw.SimpleTextOutlined(math.Round(Dist).." hu", "Default", W/2 + 10, H/2 + 10, Color(255, 255, 255, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 180))
+		draw.SimpleTextOutlined(math.Round(Dist * .75 / 12).." ft", "Default", W/2 + 10, H/2 + 25, Color(255, 255, 255, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 180))
+		draw.SimpleTextOutlined(math.Round(Dist / 52.49, 1).." m", "Default", W/2 + 10, H/2 + 40, Color(255, 255, 255, 180), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0, 180))
+	end
+
+	-- gps
+	-- todo: pos and angle of view
+
+	-- speedometer
+	-- todo: speed of player in hu/s, m/s, ft/s and mph
 end )
