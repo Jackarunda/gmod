@@ -611,7 +611,10 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.WriteString(name)
 		net.SendToServer()
 		
-		-- wireframe preview																			  
+		-- wireframe preview
+		StringParts = string.Explode(" ", info["results"])																	  
+		if StringParts[1] and (StringParts[1] == "FUNC") then return end
+		
 		local temp_ent = ents.CreateClientside(info["results"])
 		temp_ent:Spawn()													-- have to do this to get an accurate bounding box
 		local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way

@@ -632,6 +632,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 
 		if bSkybox then return end -- avoid drawing in the skybox
 		local ToolBox = ply:GetActiveWeapon()
+		if not ToolBox.EZpreviewBox then return end
 
 		if IsValid(ToolBox) and ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
 			local Filter = {ply}
