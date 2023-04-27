@@ -632,11 +632,13 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 
 		if bSkybox then return end -- avoid drawing in the skybox
 		local ToolBox = ply:GetActiveWeapon()
-		print(ToolBox:GetSelectedBuild())
+
+		if not IsValid(ToolBox) then return end
+		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
 		
 		if ToolBox.EZpreview then
 			if ToolBox.EZpreview.Box then
-				if IsValid(ToolBox) and ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" and ToolBox:GetSelectedBuild() ~= "" then
+				if ToolBox:GetSelectedBuild() ~= "" then
 					local Filter = {ply}
 					for k, v in pairs(ents.FindByClass("npc_bullseye")) do
 						table.insert(Filter, v)
@@ -662,7 +664,6 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 					if Tr2.Hit then
 						local Ent2 = Tr2.Entity
 						if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
-						--if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return end
 						local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
 						if Dist > 30 then return end
 					end
@@ -672,7 +673,6 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 				-- and also use ent:GetPhysicsObject() which will return nil 99% of the time on client
 
 				if not Tr1.Hit or not Tr2.Hit or not Vec then return end
-				print("aaaaa")
 
 				render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
 

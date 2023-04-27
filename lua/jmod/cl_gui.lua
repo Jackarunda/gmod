@@ -613,8 +613,7 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 
 		-- wireframe preview
 		ent.EZpreview = {}
-		ent.EZpreview.Box = nil
-		StringParts = string.Explode(" ", info["results"])																	  
+		local StringParts = string.Explode(" ", info["results"])																	  
 		if StringParts[1] and (StringParts[1] == "FUNC") then
 
 			ent.EZpreview = {Box = nil}	
