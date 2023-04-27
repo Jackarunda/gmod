@@ -47,10 +47,10 @@ if SERVER then
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
 		self.Entity:SetUseType(SIMPLE_USE)
-		self:GetPhysicsObject():SetMass(150)
+		self:GetPhysicsObject():SetMass(240)
 		---
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
+			self:GetPhysicsObject():SetMass(240)
 			self:GetPhysicsObject():Wake()
 		end)
 		---
@@ -64,6 +64,9 @@ if SERVER then
 
 		---
 		self.Anger = 0
+		self.FlaresLeft = 10
+		self.FiredFlareForThisThreatCycle = false
+		self.NextFlareFire = 0
 
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/warmine_mk2.wav")
 		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/warmine_mk2.wav")
@@ -87,6 +90,9 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
+		if JMod.LinCh(dmginfo:GetDamage(), 1000, 2000) then
+			self:Detonate()
+		end
 	end
 
 	function ENT:Use(activator)
@@ -115,6 +121,7 @@ if SERVER then
 				if (self.SoundLoop2) then self.SoundLoop2:Stop() end
 				self.Anger = 0
 				self:SetState(STATE_OFF)
+				if (IsValid(self.Weld)) then self.Weld:Remove() end
 			else
 				self:Detonate()
 			end
@@ -146,10 +153,10 @@ if SERVER then
 		end
 
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 300, 80)
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 300, 120)
 
 		timer.Simple(.25, function()
-			util.BlastDamage(game.GetWorld(), Att, SelfPos, 600, 80)
+			util.BlastDamage(game.GetWorld(), Att, SelfPos, 600, 120)
 		end)
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do
@@ -171,7 +178,6 @@ if SERVER then
 			end
 		end)
 
-		--------------shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
 		JMod.FragSplosion(self, SelfPos, 10000, 200, 2000, self.EZowner or game.GetWorld(), nil, nil, 4)
 		---
 		self:Remove()
@@ -202,7 +208,7 @@ if SERVER then
 					local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
 
 					if Tr.Hit then
-						constraint.Weld(Tr.Entity, self, 0, 0, 50000, false, false)
+						self.Weld = constraint.Weld(Tr.Entity, self, 0, 0, 50000, false, false)
 					end
 				end
 			end
@@ -228,15 +234,15 @@ if SERVER then
 				local Phys = ent:GetPhysicsObject()
 				if (IsValid(Phys)) then
 					local Playa, NPC, Mass, Speed, Veh = ent:IsPlayer(), ent:IsNPC(), Phys:GetMass(), Phys:GetVelocity():Length(), ent:IsVehicle()
-					if (Playa and ent:InVehicle()) then Veh = true end
 					if (Playa and ent:Alive() and JMod.ShouldAllowControl(self, ent) and JMod.ClearLoS(self, ent, true, 20, true)) then
 						DangerClose = true
 					elseif (JMod.ShouldAttack(self, ent) and JMod.ClearLoS(self, ent, true, 20, true)) then
 						if (Speed < 1) then Speed = 0 end
-						local PhysFactor = Mass * Speed ^ 1.2 / 100
-						local HealthFactor = (((ent.Health and ent:Health()) or 100) / 2) ^ .5
-						local ThreatAddition = (PhysFactor * HealthFactor) / 2000 * math.Rand(.8, 1.2)
-						if (Playa or Veh) then ThreatAddition = ThreatAddition * 4 end
+						local SpeedFactor = Speed
+						local MassFactor = Mass ^ .75
+						local HealthFactor = ((ent.Health and ent:Health()) or 100) ^ .5
+						local ThreatAddition = SpeedFactor * MassFactor * HealthFactor * math.Rand(.8, 1.2)
+						-- print(ent, Playa, Veh, SpeedFactor, MassFactor, HealthFactor, ThreatAddition)
 						Threat = Threat + ThreatAddition
 					end
 				end
@@ -256,9 +262,10 @@ if SERVER then
 
 		local Threat, DangerClose = self:GetCurrentThreatSummary()
 
-		--jprint(self.Anger.." "..tostring(DangerClose))
+		-- jprint(self.Anger.." "..tostring(DangerClose))
 
 		if State == STATE_ARMED then
+			if not(IsValid(self.Weld))then self:Detonate() return end
 			if (Threat > 0) then self:RileUp() return end
 			self.Anger = math.Clamp(self.Anger - .5, 0, 100)
 		elseif State == STATE_WARNING then
@@ -287,9 +294,13 @@ elseif CLIENT then
 		local State, Vary = self:GetState(), math.sin(CurTime() * 50) / 2 + .5
 
 		if State == STATE_ARMING or State == STATE_WARNING then
+			local GlowPos = self:GetPos() + Vector(0, 0, 10)
+			local Vec = (GlowPos - EyePos()):GetNormalized()
+			GlowPos = GlowPos - Vec * 20
+
 			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 10), 300 * Vary, 300 * Vary, Color(255, 0, 0))
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 10), 150 * Vary, 150 * Vary, Color(255, 255, 255))
+			render.DrawSprite(GlowPos, 300 * Vary, 300 * Vary, Color(255, 0, 0))
+			render.DrawSprite(GlowPos, 150 * Vary, 150 * Vary, Color(255, 255, 255))
 			local DLight = DynamicLight(self:EntIndex())
 			if DLight then
 				DLight.Brightness = 6 * Vary
