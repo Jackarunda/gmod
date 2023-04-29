@@ -38,6 +38,8 @@ function EFFECT:Render()
 				filter = {self, ply}
 			}).Hit then
 				LocalPlayer().EZflashbanged = 100 * (1 - Pos:Distance(self.Position) / 1000)
+				net.Start("JMod_FlashbangWobble")
+				net.ReadEntity(LocalPlayer())
 			end
 		end
 	end
