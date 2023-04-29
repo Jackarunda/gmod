@@ -49,7 +49,7 @@ net.Receive("JMod_Friends", function(length, ply)
 	end
 end)
 
-net.Receive("JMOD_FlashbangWobble",function()
+net.Receive("JMod_FlashbangWobble",function()
 	local ply = net.ReadEntity()
 		
 	ply.PunchTime = ply.PunchTime or 0
