@@ -1,4 +1,4 @@
-﻿util.AddNetworkString("JMod_Friends") -- ^:3
+util.AddNetworkString("JMod_Friends") -- ^:3
 util.AddNetworkString("JMod_ColorAndArm")
 util.AddNetworkString("JMod_EZtoolbox")
 util.AddNetworkString("JMod_EZworkbench")
@@ -16,6 +16,7 @@ util.AddNetworkString("JMod_Inventory")
 util.AddNetworkString("JMod_EZradio")
 util.AddNetworkString("JMod_EZweaponMod")
 util.AddNetworkString("JMod_Bleeding")
+util.AddNetworkString("JMod_FlashbangWobble")
 util.AddNetworkString("JMod_SFX")
 util.AddNetworkString("JMod_Ravebreak")
 util.AddNetworkString("JMod_NaturalResources")
@@ -46,6 +47,31 @@ net.Receive("JMod_Friends", function(length, ply)
 	else
 		ply.JModFriends = {}
 	end
+end)
+
+net.Receive("JMOD_FlashbangWobble",function()
+	local ply = net.ReadEntity()
+		
+	ply.PunchTime = ply.PunchTime or 0
+
+	local Wobbletime = 15
+	ply.PunchTime = CurTime() + Wobbletime
+
+	local hookName = "FlashbangWobble_" .. ply:EntIndex()
+
+	hook.Add("JMod_FlashbangWobbleHook",hookName,function()
+	if !IsValid(ply) or (IsValid(ply) && (ply:Health() <= 0 or ply.PunchTime < CurTime())) then
+		hook.Remove("RFS",hookName)
+		ply:SetEyeAngles(Angle(ply:EyeAngles().p,ply:EyeAngles().y,0))
+		return
+	end
+		local remaining = ply.PunchTime - CurTime()
+		local remainingCalculate = (remaining / Wobbletime)
+
+		local AngleLerp = LerpAngle(FrameTime() *2,ply:EyeAngles(),ply:EyeAngles() + AngleRand(-90 * remainingCalculate,90 * remainingCalculate))
+		AngleLerp[3] = ply:EyeAngles()[3]
+		ply:SetEyeAngles(LP)
+	end)
 end)
 
 net.Receive("JMod_ColorAndArm", function(l, ply)
