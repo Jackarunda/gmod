@@ -250,6 +250,8 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 
 		if ply.EZflashbanged then
 			if ply:Alive() then
+				ply:ViewPunch(Angle(math.random(7,14),math.random(7,14),math.random(7,14),)
+				ply:SetDSP(30)
 				DrawMotionBlur(.001, math.Clamp(ply.EZflashbanged / 20, 0, 1), .01)
 				ply.EZflashbanged = ply.EZflashbanged - 7 * FT
 			else
