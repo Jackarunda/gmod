@@ -64,7 +64,7 @@ if SERVER then
 
 		---
 		self.Anger = 0
-		self.FlaresLeft = 10
+		self.FlaresLeft = 20
 		self.FiredFlareForThisThreatCycle = false
 		self.NextFlareFire = 0
 
@@ -251,6 +251,7 @@ if SERVER then
 						elseif (IsVehicular) then
 							local SpeedFactor = Speed
 							local MassFactor = Mass ^ .5
+							ThreatAddition = SpeedFactor * MassFactor / 1500
 						end
 						-- jprint(ent, ThreatAddition, math.Round(self.Anger))
 						Threat = Threat + ThreatAddition * math.Rand(.8, 1.2)
@@ -259,6 +260,18 @@ if SERVER then
 			end
 		end
 		return Threat, DangerClose
+	end
+
+	function ENT:FireFlare()
+		self.FlaresLeft = self.FlaresLeft - 1
+		self.FiredFlareForThisThreatCycle = true
+		self.NextFlareFire = CurTime() + 10
+		local Flare = ents.Create("ent_jack_gmod_ezflareprojectile")
+		Flare:SetPos(self:GetPos() + Vector(0, 0, 15))
+		Flare:Spawn()
+		Flare:Activate()
+		Flare:GetPhysicsObject():SetVelocity(Vector(0, 0, 1500) + VectorRand() * math.random(0, 100))
+		self:EmitSound("snds_jack_gmod/flaregun_fire.wav", 75, math.random(90, 110))
 	end
 
 	function ENT:Think()
@@ -278,9 +291,13 @@ if SERVER then
 			if not(IsValid(self.Weld))then self:Detonate() return end
 			if (Threat > 0) then self:RileUp() return end
 			self.Anger = math.Clamp(self.Anger - .2, 0, 100)
+			if (self.Anger <= 0) then self.FiredFlareForThisThreatCycle = false end
 		elseif State == STATE_WARNING then
 			if (Threat <= 0) then self:CalmDown() return end
 			self.Anger = math.Clamp(self.Anger + Threat, 0, 100)
+			if (self.Anger >= 25 and self.FlaresLeft > 0 and not self.FiredFlareForThisThreatCycle and self.NextFlareFire < Time) then
+				self:FireFlare()
+			end
 			if (self.Anger >= 100 and not DangerClose) then self:Detonate() return end
 		end
 		self:NextThink(Time + .3)

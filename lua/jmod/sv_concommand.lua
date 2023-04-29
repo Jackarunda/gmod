@@ -70,6 +70,13 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	Eff:SetOrigin(ply:GetShootPos() + ply:GetAimVector() * 200)
 	util.Effect("eff_jack_floating_ice_chunk", Eff, true, true)
 	--]]
+	local Tr=ply:GetEyeTrace()
+	local Flare = ents.Create("ent_jack_gmod_ezflareprojectile")
+	Flare:SetPos(Tr.HitPos + Vector(0, 0, 15))
+	Flare:Spawn()
+	Flare:Activate()
+	Flare:GetPhysicsObject():SetVelocity(Vector(0, 0, 1500) + VectorRand() * math.random(0, 100))
+	sound.Play("snds_jack_gmod/flaregun_fire.wav", Tr.HitPos, 75, math.random(90, 110))
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)
