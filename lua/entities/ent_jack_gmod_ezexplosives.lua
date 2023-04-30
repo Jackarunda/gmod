@@ -1,4 +1,4 @@
-﻿-- Jackarunda 2021
+-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezresource"
 ENT.PrintName = "EZ Explosives Box"
@@ -20,35 +20,50 @@ ENT.BreakNoise = "Wood_Box.Break"
 
 ---
 if SERVER then
-	
-	function ENT:Detonate()
-		if IsValid(self) then
-			timer.Simple(math.Rand(0,1), function()
-				JMod.Sploom(self.EZowner, self:GetPos() + VectorRand() * math.random(0, 300), math.random(50, 130))
-			end)
-		end
+
+	function ENT:CustomInit()
+		self.BlownUp = false
 	end
-	
-	function ENT:Initialize()
-		self.CanSploom = true
-	end
-	
+
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 
-		if (JMod.LinCh(dmginfo:GetDamage(), 80, 200) and math.random(1, 3) == 2 and self.CanSploom) then
-			self.CanSploom = false
-			JMod.SetEZowner(self, dmginfo:GetAttacker())
+		if (math.random(1, 6) == 3)then
+			JMod.SetEZowner(self, dmginfo:GetAttacker() or game:GetWorld())
 			self:Detonate()
 		end
 	end
-	
-	function ENT:UseEffect(pos, ent, bad)
-		if bad and (math.random(1, 3) == 2) and self.CanSploom then
-			self.Entity:TakePhysicsDamage(dmginfo)
-			self.CanSploom = false
-			JMod.SetEZowner(self, dmginfo:GetAttacker())
-			self:Detonate()
+
+	function ENT:Detonate()
+		if IsValid(self) then
+
+			if self.BlownUp then
+				return
+			end
+
+			self.BlownUp = not self.BlownUp
+
+			self:GetPhysicsObject():EnableMotion(false)
+
+			local plooie = EffectData()
+			plooie:SetOrigin(self:GetPos())
+			plooie:SetScale(math.Rand(0.125,0.5))
+
+			util.Effect("eff_jack_plastisplosion", plooie)
+
+			if (math.random(1, 3) == 2) then
+				JMod.Sploom(self.EZowner, self:GetPos(), 150, 96)
+			else
+				JMod.FragSplosion(self, self:GetPos() + Vector(0, 16, 0), 600, 15, 1024, self.EZowner or game.GetWorld() or self)
+			end
+
+			JMod.BlastDoors(self.EZowner or self, self:GetPos(), 150, 96, false)
+			self:EmitSound("snd_jack_fragsplodeclose.wav", 100, 100)
+			util.ScreenShake(self:GetPos(), 55, 55, .5, 512)
+
+			timer.Simple(0.05, function()
+				SafeRemoveEntity(self)
+			end)
 		end
 	end
 	
