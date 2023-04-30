@@ -20,11 +20,38 @@ ENT.BreakNoise = "Wood_Box.Break"
 
 ---
 if SERVER then
-	function ENT:UseEffect(pos, ent, bad)
-		if bad and (math.random(1, 3) == 2) then
-			JMod.Sploom(self.EZowner, self:GetPos() + VectorRand() * math.random(0, 300), math.random(50, 130))
+	
+	function ENT:Detonate()
+		if IsValid(self) then
+			timer.Simple(math.Rand(0,1), function()
+				JMod.Sploom(self.EZowner, self:GetPos() + VectorRand() * math.random(0, 300), math.random(50, 130))
+			end)
 		end
 	end
+	
+	function ENT:Initialize()
+		self.CanSploom = true
+	end
+	
+	function ENT:OnTakeDamage(dmginfo)
+		self.Entity:TakePhysicsDamage(dmginfo)
+
+		if (JMod.LinCh(dmginfo:GetDamage(), 80, 200) and math.random(1, 3) == 2 and self.CanSploom) then
+			self.CanSploom = false
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
+			self:Detonate()
+		end
+	end
+	
+	function ENT:UseEffect(pos, ent, bad)
+		if bad and (math.random(1, 3) == 2) and self.CanSploom then
+			self.Entity:TakePhysicsDamage(dmginfo)
+			self.CanSploom = false
+			JMod.SetEZowner(self, dmginfo:GetAttacker())
+			self:Detonate()
+		end
+	end
+	
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
