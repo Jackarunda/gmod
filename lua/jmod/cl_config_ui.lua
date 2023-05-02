@@ -101,17 +101,27 @@ local function PopulateControls(parent, controls, motherFrame)
 
 				icon:SetMaterial(mat)
 
-				if isOpen and tablePanel then tablePanel:Remove() else
+				if isOpen and tablePanel then
+					tablePanel:SizeTo(tablePanel:GetWide(), 0, 0.25)
 
+					timer.Simple(0.25, function() tablePanel:Remove() end)
+					 
+				else
 					tablePanel = Scroll:Add("DScrollPanel")
 					local control_frame_x,control_frame_y = control_frame:GetPos()
 					tablePanel:SetSize(control_frame:GetWide(), 150)
 					tablePanel:SetPos(control_frame_x, control_frame_y + control_frame:GetTall())
+					tablePanel:SlideDown(0.25)
+					
 					function tablePanel:Paint(w,h,x,y)
 						surface.SetDrawColor(50, 50, 50, 60)
 						surface.DrawRect(0, 0, w, h)
 
 						BlurBackground(self)
+					end
+
+					function tablePanel:OnRemove()
+						tablePanel:SlideUp(0.25)
 					end
 
 					local y2 = 10
