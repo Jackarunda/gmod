@@ -1,6 +1,8 @@
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 local arrowMat = Material("icon16/arrow_right.png")
+local addIconMat = Material("icon16/add.png")
+local removeIconMat = Material("icon16/delete.png")
 
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
@@ -40,6 +42,7 @@ local function PopulateControls(parent, controls, motherFrame)
 	table.sort(AlphabetizedSettings, function(a, b) return a < b end)
 
 	for k, setting in pairs(AlphabetizedSettings) do
+		if setting == "AltFunctionKey" then continue end
 		local control_frame = Scroll:Add("DPanel")
 		control_frame:SetSize(W - 40, 42)
 		control_frame:SetPos(0, Y)
@@ -59,10 +62,11 @@ local function PopulateControls(parent, controls, motherFrame)
 			slider:SetPos((control_frame:GetWide() - 10) - control_frame:GetWide()/2, control_frame:GetTall()/2 - 7)
 			slider:SetDefaultValue(controls["settings"][setting])
 			slider:SetMax(10)
-			slider:SetMin(0.1)
+			slider:SetMin(0)
+			slider:SetDecimals(2)
 			slider:ResetToDefaultValue()
 
-			function slider:OnValueChanged(val)
+			function slider:OnChange(val)
 				controls["settings"][setting] = val
 			end
 
@@ -82,17 +86,18 @@ local function PopulateControls(parent, controls, motherFrame)
 		if type(controls["settings"][setting]) == "table" then
 
 			local tablePanel = nil
+			local addButton = nil
 			local isOpen = false
 
-			local icon = control_frame:Add("DSprite")
-			icon:SetSize(16,16)
-			icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
+			local arrow_icon = control_frame:Add("DSprite")
+			arrow_icon:SetSize(16,16)
+			arrow_icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
 
 			local start = SysTime()
 			local lerp_reset = false
 			local firstTime = true
 
-			function icon:Paint(w,h)
+			function arrow_icon:Paint(w,h)
 				surface.SetDrawColor( 255, 255, 255, 255 )
 				surface.SetMaterial(arrowMat)
 
@@ -128,8 +133,7 @@ local function PopulateControls(parent, controls, motherFrame)
 				if isOpen and tablePanel then
 					tablePanel:SizeTo(tablePanel:GetWide(), 0, 0.25)
 
-					timer.Simple(0.25, function() tablePanel:Remove() end)
-					 
+					timer.Simple(0.25, function() tablePanel:Remove();addButton:Remove() end)
 				else
 					tablePanel = Scroll:Add("DScrollPanel")
 					local control_frame_x,control_frame_y = control_frame:GetPos()
@@ -144,23 +148,71 @@ local function PopulateControls(parent, controls, motherFrame)
 						BlurBackground(self)
 					end
 
-					function tablePanel:OnRemove()
-						tablePanel:SlideUp(0.25)
+					function setup_table_value(index, value)
+
+						if value == nil then value = "" end
+
+						local holder_panel = tablePanel:Add("DPanel")
+						holder_panel:SetSize(tablePanel:GetWide(), 16)
+						holder_panel:SetText(value)
+						holder_panel:Dock(TOP)
+						holder_panel:DockMargin(0,5,0,5)
+						function holder_panel:Paint() return end
+
+
+						local textEntry = holder_panel:Add("DTextEntry")
+						textEntry:SetSize(tablePanel:GetWide() - 40, 16)
+						textEntry:SetPos(0,0)
+						textEntry:SetText(value)
+						textEntry:SetUpdateOnType(true)
+
+						function textEntry:OnValueChange(val)
+							controls["settings"][setting][index] = val
+						end
+
+						local removeButt = holder_panel:Add("DButton")
+						removeButt:SetSize(16,16)
+						removeButt:SetPos(holder_panel:GetWide() - 35, 0)
+
+						function removeButt:Paint(w,h)
+							surface.SetDrawColor(255, 255, 255, 255)
+							surface.SetMaterial(removeIconMat)
+							surface.DrawTexturedRect(0, 0, w, h)
+						end
+
+						function removeButt:DoClick()
+							table.remove(controls["settings"][setting], index)
+							holder_panel:Remove()
+							self:Remove()
+						end
 					end
 
-					local y2 = 10
-					
 					for index,value in ipairs(controls["settings"][setting]) do
-						local textEntry = tablePanel:Add("DTextEntry")
-						textEntry:SetSize(tablePanel:GetWide() - 75, 16)
-						textEntry:SetPos(5, y2)
-						textEntry:SetText(value)
-						y2 = y2 + 24
+						setup_table_value(index, value)
+					end
+
+					addButton = control_frame:Add("DButton")
+					addButton:SetSize(16,16)
+					local arrow_x,arrow_y = arrow_icon:GetPos()
+					addButton:SetPos((control_frame:GetWide() - 243) + 16, control_frame:GetTall()/2 -8)
+
+					function addButton:DoClick()
+						local i = #controls["settings"][setting] + 1
+						table.insert(controls["settings"][setting], i, "")
+						setup_table_value(i, nil)
+					end
+
+					function addButton:Paint(w, h)
+						if isOpen then
+							surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 0, 255))
+						else
+							surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 255, 0))
+						end
+						surface.SetMaterial(addIconMat)
+						surface.DrawTexturedRect(0, 0, w, h)
 					end
 				end
-				
 				isOpen = !isOpen
-			
 			end
 		end
 
@@ -265,6 +317,8 @@ net.Receive("JMod_ConfigUI", function()
 	local AlphabetizedCategoryNames = table.GetKeys(categories)
 	table.sort(AlphabetizedCategoryNames, function(a, b) return a < b end)
 	local ActiveTab = AlphabetizedCategoryNames[1]
+	PrintTable(AlphabetizedCategoryNames)
+	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
 
 	for k, cat in pairs(AlphabetizedCategoryNames) do
 		surface.SetFont("DermaDefault")
