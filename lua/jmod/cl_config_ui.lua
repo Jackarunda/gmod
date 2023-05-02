@@ -1,7 +1,6 @@
 local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
-local downMat = Material("icon16/arrow_down.png")
-local rightMat = Material("icon16/arrow_right.png")
+local arrowMat = Material("icon16/arrow_right.png")
 
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
@@ -82,14 +81,40 @@ local function PopulateControls(parent, controls, motherFrame)
 
 		if type(controls["settings"][setting]) == "table" then
 
-			local mat = rightMat
 			local tablePanel = nil
 			local isOpen = false
 
 			local icon = control_frame:Add("DSprite")
-			icon:SetMaterial(mat)
 			icon:SetSize(16,16)
 			icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
+
+			local start = SysTime()
+			local lerp_reset = false
+			local firstTime = true
+
+			function icon:Paint(w,h)
+				surface.SetDrawColor( 255, 255, 255, 255 )
+				surface.SetMaterial(arrowMat)
+
+				if lerp_reset then 
+					start = SysTime()
+					lerp_reset = false
+				end
+
+				if firstTime then
+					if isOpen then
+						firstTime = false
+					end
+					surface.DrawTexturedRectRotated(0,0,w,h,0)
+					return
+				end
+
+				if isOpen then
+					surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, 0, -90))
+				else
+					surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, -90, 0))
+				end
+			end
 
 			local butt = control_frame:Add("DButton")
 			butt:SetSize(control_frame:GetSize())
@@ -97,9 +122,8 @@ local function PopulateControls(parent, controls, motherFrame)
 			function butt:Paint(w,h) end -- make it invis
 
 			function butt:DoClick()
-				if mat == rightMat then mat = downMat else mat = rightMat end
 
-				icon:SetMaterial(mat)
+				lerp_reset = true -- reset the timer used for the arrow animation
 
 				if isOpen and tablePanel then
 					tablePanel:SizeTo(tablePanel:GetWide(), 0, 0.25)
@@ -113,7 +137,7 @@ local function PopulateControls(parent, controls, motherFrame)
 					tablePanel:SetPos(control_frame_x, control_frame_y + control_frame:GetTall())
 					tablePanel:SlideDown(0.25)
 					
-					function tablePanel:Paint(w,h,x,y)
+					function tablePanel:Paint(w,h)
 						surface.SetDrawColor(50, 50, 50, 60)
 						surface.DrawRect(0, 0, w, h)
 
