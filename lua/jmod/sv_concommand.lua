@@ -140,3 +140,8 @@ end, nil, "Drops any bombs you have armed and welded.")
 concommand.Add("jmod_ez_launch", function(ply, cmd, args)
 	JMod.EZ_WeaponLaunch(ply)
 end, nil, "Fires any active missiles you own.")
+
+concommand.Add("jmod_ez_config", function(ply, cmd, args)
+	if not ply:IsAdmin() or not (IsValid(ply) and ply:Alive()) then return end
+	JMod.EZ_Open_ConfigUI(ply)
+end, nil, "Opens the EZ config editor.")

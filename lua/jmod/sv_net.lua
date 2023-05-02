@@ -25,6 +25,7 @@ util.AddNetworkString("JMod_VisualGunRecoil")
 util.AddNetworkString("JMod_EquippableSync")
 util.AddNetworkString("JMod_MachineSync")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
+util.AddNetworkString("JMod_ConfigUI")
 
 net.Receive("JMod_Friends", function(length, ply)
 	local List, Good = net.ReadTable(), true
