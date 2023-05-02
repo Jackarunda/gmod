@@ -86,7 +86,7 @@ local function PopulateControls(parent, controls, motherFrame)
 			local tablePanel = nil
 			local isOpen = false
 
-			local icon = control_frame:Add("DSprite") -- why a button? because derma
+			local icon = control_frame:Add("DSprite")
 			icon:SetMaterial(mat)
 			icon:SetSize(16,16)
 			icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
@@ -122,8 +122,6 @@ local function PopulateControls(parent, controls, motherFrame)
 						textEntry:SetPos(5, y2)
 						textEntry:SetText(value)
 						y2 = y2 + 24
-
-						--aPanel:Add("DButton")
 					end
 				end
 				
