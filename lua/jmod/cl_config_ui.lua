@@ -3,6 +3,7 @@ local Dynamic = 0
 local arrowMat = Material("icon16/arrow_right.png")
 local addIconMat = Material("icon16/add.png")
 local removeIconMat = Material("icon16/delete.png")
+local changes_made = false
 
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
@@ -84,8 +85,9 @@ local function PopulateControls(parent, controls, motherFrame)
 				slider:SetDecimals(2)
 				slider:ResetToDefaultValue()
 
-				function slider:OnChange(val)
+				function slider:OnValueChanged(val)
 					control_table[setting] = val
+					changes_made = true
 				end
 
 			end
@@ -96,8 +98,9 @@ local function PopulateControls(parent, controls, motherFrame)
 				checkbox:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2 - 7)
 				checkbox:SetValue(control_table[setting])
 
-				function checkbox:OnValueChanged(val)
+				function checkbox:OnChange(val)
 					control_table[setting] = val
+					changes_made = true
 				end
 			end
 
@@ -186,6 +189,7 @@ local function PopulateControls(parent, controls, motherFrame)
 
 							function textEntry:OnValueChange(val)
 								control_table[setting][index] = val
+								changes_made = true
 							end
 
 							local removeButt = holder_panel:Add("DButton")
@@ -200,6 +204,7 @@ local function PopulateControls(parent, controls, motherFrame)
 
 							function removeButt:DoClick()
 								table.remove(control_table[setting], index)
+								changes_made = true
 								holder_panel:Remove()
 								self:Remove()
 							end
@@ -217,6 +222,7 @@ local function PopulateControls(parent, controls, motherFrame)
 						function addButton:DoClick()
 							local i = #control_table[setting] + 1
 							table.insert(control_table[setting], i, "")
+							changes_made = true
 							setup_table_value(i, nil)
 						end
 
@@ -271,6 +277,10 @@ net.Receive("JMod_ConfigUI", function()
 	local specialTables = {}
 
 	local categories = {}
+
+	local old_table = nil
+
+	changes_made = false
 
 	-- for cat,st in pairs(config) do
 	-- 	if table.HasValue(catBlacklist, cat) then continue end
@@ -356,6 +366,54 @@ net.Receive("JMod_ConfigUI", function()
 	table.sort(AlphabetizedCategoryNames, function(a, b) return a < b end)
 	local ActiveTab = AlphabetizedCategoryNames[1]
 	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
+
+	local applyButt = TabPanel:Add("DButton")
+
+	applyButt:SetSize(100,16)
+	applyButt:SetPos((TabPanel:GetWide() - 16) - 94, 8)
+	applyButt:SetText("")
+	applyButt:SetTextColor(color_white)
+
+	function applyButt:Paint(w,h)
+		if not changes_made then return end
+
+		if self:GetText() != "Apply Changes" then self:SetText("Apply Changes") end
+
+		surface.SetDrawColor(50, 50, 50, 60)
+
+		surface.DrawRect(0, 0, w, h)
+
+		BlurBackground(self)
+	end
+
+	function applyButt:DoClick()
+		local modifiedConfig = {}
+
+		for cat,catTable in pairs(categories) do
+			modifiedConfig[cat] = {}
+			for normalOrSubcat,settingTable in pairs(catTable) do
+				table.Merge(modifiedConfig[cat], settingTable)
+			end
+		end
+
+		for _,name in ipairs(catBlacklist) do
+			
+			if not modifiedConfig[name] then
+				modifiedConfig[name] = {}
+			end
+
+			if name == "Note" then
+				modifiedConfig[name] = config[name]
+			else
+				table.Merge(modifiedConfig[name], config[name])
+			end
+		end
+
+		print(modifiedConfig)
+		PrintTable(modifiedConfig)
+		print("\n---------------------------------------------------------------\n")
+		--PrintTable(config)
+	end
 
 	for k, cat in pairs(AlphabetizedCategoryNames) do
 		surface.SetFont("DermaDefault")
