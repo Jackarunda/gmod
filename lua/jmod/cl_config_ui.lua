@@ -38,187 +38,225 @@ local function PopulateControls(parent, controls, motherFrame)
 	Scroll:SetSize(W - 20, H - 20)
 	Scroll:SetPos(10, 10)
 	---
-	local Y, AlphabetizedSettings = 0, table.GetKeys(controls["settings"])
-	table.sort(AlphabetizedSettings, function(a, b) return a < b end)
+	local Y = 0
 
-	for k, setting in pairs(AlphabetizedSettings) do
-		if setting == "AltFunctionKey" then continue end
-		local control_frame = Scroll:Add("DPanel")
-		control_frame:SetSize(W - 40, 42)
-		control_frame:SetPos(0, Y)
+	local function handle_settings(control_table, AlphabetizedSettings, subcatName)
+		if subcatName then
+			local subcatLabel = Scroll:Add("DPanel")
+			subcatLabel:SetSize(W - 40, 42)
+			subcatLabel:SetPos(0, Y)
 
-		function control_frame:Paint(w, h)
+			function subcatLabel:Paint(w, h)
 
-			surface.SetDrawColor(50, 50, 50, 60)
+				surface.SetDrawColor(255, 255, 255, 60)
+				surface.DrawLine(w/2 - 75, 2, w/2 + 75, 2)
+				surface.DrawLine(w/2 - 75, 39, w/2 + 75, 39)
 
-			surface.DrawRect(0, 0, w, h)
-
-			draw.SimpleText(setting, "DermaDefault", 5, 15, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		end
-
-		if type(controls["settings"][setting]) == "number" then
-			local slider = control_frame:Add("DNumSlider")
-			slider:SetSize(control_frame:GetWide()/2,14)
-			slider:SetPos((control_frame:GetWide() - 10) - control_frame:GetWide()/2, control_frame:GetTall()/2 - 7)
-			slider:SetDefaultValue(controls["settings"][setting])
-			slider:SetMax(10)
-			slider:SetMin(0)
-			slider:SetDecimals(2)
-			slider:ResetToDefaultValue()
-
-			function slider:OnChange(val)
-				controls["settings"][setting] = val
+				draw.SimpleText(subcatName, "DermaLarge", w/2, 6, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			end
 
+			Y = Y + 47
 		end
 
-		if type(controls["settings"][setting]) == "boolean" then
-			local checkbox = control_frame:Add("DCheckBox")
-			checkbox:SetSize(14,14)
-			checkbox:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2 - 7)
-			checkbox:SetValue(controls["settings"][setting])
+		for k, setting in pairs(AlphabetizedSettings) do
+			
+			if setting == "AltFunctionKey" then continue end
+			local control_frame = Scroll:Add("DPanel")
+			control_frame:SetSize(W - 40, 42)
+			control_frame:SetPos(0, Y)
 
-			function checkbox:OnValueChanged(val)
-				controls["settings"][setting] = val
+			function control_frame:Paint(w, h)
+
+				surface.SetDrawColor(50, 50, 50, 60)
+
+				surface.DrawRect(0, 0, w, h)
+
+				draw.SimpleText(setting, "DermaDefault", 5, 15, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
-		end
 
-		if type(controls["settings"][setting]) == "table" then
+			if type(control_table[setting]) == "number" then
+				local slider = control_frame:Add("DNumSlider")
+				slider:SetSize(control_frame:GetWide()/2,14)
+				slider:SetPos((control_frame:GetWide() - 10) - control_frame:GetWide()/2, control_frame:GetTall()/2 - 7)
+				slider:SetDefaultValue(control_table[setting])
+				slider:SetMax(10)
+				slider:SetMin(0)
+				slider:SetDecimals(2)
+				slider:ResetToDefaultValue()
 
-			local tablePanel = nil
-			local addButton = nil
-			local isOpen = false
-
-			local arrow_icon = control_frame:Add("DSprite")
-			arrow_icon:SetSize(16,16)
-			arrow_icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
-
-			local start = SysTime()
-			local lerp_reset = false
-			local firstTime = true
-
-			function arrow_icon:Paint(w,h)
-				surface.SetDrawColor( 255, 255, 255, 255 )
-				surface.SetMaterial(arrowMat)
-
-				if lerp_reset then 
-					start = SysTime()
-					lerp_reset = false
+				function slider:OnChange(val)
+					control_table[setting] = val
 				end
 
-				if firstTime then
+			end
+
+			if type(control_table[setting]) == "boolean" then
+				local checkbox = control_frame:Add("DCheckBox")
+				checkbox:SetSize(14,14)
+				checkbox:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2 - 7)
+				checkbox:SetValue(control_table[setting])
+
+				function checkbox:OnValueChanged(val)
+					control_table[setting] = val
+				end
+			end
+
+			if type(control_table[setting]) == "table" then
+
+				local tablePanel = nil
+				local addButton = nil
+				local isOpen = false
+
+				local arrow_icon = control_frame:Add("DSprite")
+				arrow_icon:SetSize(16,16)
+				arrow_icon:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2)
+
+				local start = SysTime()
+				local lerp_reset = false
+				local firstTime = true
+
+				function arrow_icon:Paint(w,h)
+					surface.SetDrawColor( 255, 255, 255, 255 )
+					surface.SetMaterial(arrowMat)
+
+					if lerp_reset then 
+						start = SysTime()
+						lerp_reset = false
+					end
+
+					if firstTime then
+						if isOpen then
+							firstTime = false
+						end
+						surface.DrawTexturedRectRotated(0,0,w,h,0)
+						return
+					end
+
 					if isOpen then
-						firstTime = false
+						surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, 0, -90))
+					else
+						surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, -90, 0))
 					end
-					surface.DrawTexturedRectRotated(0,0,w,h,0)
-					return
 				end
 
-				if isOpen then
-					surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, 0, -90))
-				else
-					surface.DrawTexturedRectRotated(0,0,w,h,Lerp((SysTime() - start) / 0.25, -90, 0))
-				end
-			end
+				local butt = control_frame:Add("DButton")
+				butt:SetSize(control_frame:GetSize())
+				butt:SetText("")
+				function butt:Paint(w,h) end -- make it invis
 
-			local butt = control_frame:Add("DButton")
-			butt:SetSize(control_frame:GetSize())
-			butt:SetText("")
-			function butt:Paint(w,h) end -- make it invis
+				function butt:DoClick()
 
-			function butt:DoClick()
+					lerp_reset = true -- reset the timer used for the arrow animation
 
-				lerp_reset = true -- reset the timer used for the arrow animation
+					if isOpen and tablePanel then
+						tablePanel:SizeTo(tablePanel:GetWide(), 0, 0.25)
 
-				if isOpen and tablePanel then
-					tablePanel:SizeTo(tablePanel:GetWide(), 0, 0.25)
+						timer.Simple(0.25, function() tablePanel:Remove();addButton:Remove() end)
+					else
+						tablePanel = Scroll:Add("DScrollPanel")
+						local control_frame_x,control_frame_y = control_frame:GetPos()
+						tablePanel:SetSize(control_frame:GetWide(), 150)
+						tablePanel:SetPos(control_frame_x, control_frame_y + control_frame:GetTall())
+						tablePanel:SlideDown(0.25)
+						
+						function tablePanel:Paint(w,h)
+							surface.SetDrawColor(50, 50, 50, 60)
+							surface.DrawRect(0, 0, w, h)
 
-					timer.Simple(0.25, function() tablePanel:Remove();addButton:Remove() end)
-				else
-					tablePanel = Scroll:Add("DScrollPanel")
-					local control_frame_x,control_frame_y = control_frame:GetPos()
-					tablePanel:SetSize(control_frame:GetWide(), 150)
-					tablePanel:SetPos(control_frame_x, control_frame_y + control_frame:GetTall())
-					tablePanel:SlideDown(0.25)
-					
-					function tablePanel:Paint(w,h)
-						surface.SetDrawColor(50, 50, 50, 60)
-						surface.DrawRect(0, 0, w, h)
-
-						BlurBackground(self)
-					end
-
-					function setup_table_value(index, value)
-
-						if value == nil then value = "" end
-
-						local holder_panel = tablePanel:Add("DPanel")
-						holder_panel:SetSize(tablePanel:GetWide(), 16)
-						holder_panel:SetText(value)
-						holder_panel:Dock(TOP)
-						holder_panel:DockMargin(0,5,0,5)
-						function holder_panel:Paint() return end
-
-
-						local textEntry = holder_panel:Add("DTextEntry")
-						textEntry:SetSize(tablePanel:GetWide() - 40, 16)
-						textEntry:SetPos(0,0)
-						textEntry:SetText(value)
-						textEntry:SetUpdateOnType(true)
-
-						function textEntry:OnValueChange(val)
-							controls["settings"][setting][index] = val
+							BlurBackground(self)
 						end
 
-						local removeButt = holder_panel:Add("DButton")
-						removeButt:SetSize(16,16)
-						removeButt:SetPos(holder_panel:GetWide() - 35, 0)
+						function setup_table_value(index, value)
 
-						function removeButt:Paint(w,h)
-							surface.SetDrawColor(255, 255, 255, 255)
-							surface.SetMaterial(removeIconMat)
+							if value == nil then value = "" end
+
+							local holder_panel = tablePanel:Add("DPanel")
+							holder_panel:SetSize(tablePanel:GetWide(), 16)
+							holder_panel:SetText(value)
+							holder_panel:Dock(TOP)
+							holder_panel:DockMargin(0,5,0,5)
+							function holder_panel:Paint() return end
+
+
+							local textEntry = holder_panel:Add("DTextEntry")
+							textEntry:SetSize(tablePanel:GetWide() - 40, 16)
+							textEntry:SetPos(0,0)
+							textEntry:SetText(value)
+							textEntry:SetUpdateOnType(true)
+
+							function textEntry:OnValueChange(val)
+								control_table[setting][index] = val
+							end
+
+							local removeButt = holder_panel:Add("DButton")
+							removeButt:SetSize(16,16)
+							removeButt:SetPos(holder_panel:GetWide() - 35, 0)
+
+							function removeButt:Paint(w,h)
+								surface.SetDrawColor(255, 255, 255, 255)
+								surface.SetMaterial(removeIconMat)
+								surface.DrawTexturedRect(0, 0, w, h)
+							end
+
+							function removeButt:DoClick()
+								table.remove(control_table[setting], index)
+								holder_panel:Remove()
+								self:Remove()
+							end
+						end
+
+						for index,value in ipairs(control_table[setting]) do
+							setup_table_value(index, value)
+						end
+
+						addButton = control_frame:Add("DButton")
+						addButton:SetSize(16,16)
+						local arrow_x,arrow_y = arrow_icon:GetPos()
+						addButton:SetPos((control_frame:GetWide() - 243) + 16, control_frame:GetTall()/2 -8)
+
+						function addButton:DoClick()
+							local i = #control_table[setting] + 1
+							table.insert(control_table[setting], i, "")
+							setup_table_value(i, nil)
+						end
+
+						function addButton:Paint(w, h)
+							if isOpen then
+								surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 0, 255))
+							else
+								surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 255, 0))
+							end
+							surface.SetMaterial(addIconMat)
 							surface.DrawTexturedRect(0, 0, w, h)
 						end
-
-						function removeButt:DoClick()
-							table.remove(controls["settings"][setting], index)
-							holder_panel:Remove()
-							self:Remove()
-						end
 					end
-
-					for index,value in ipairs(controls["settings"][setting]) do
-						setup_table_value(index, value)
-					end
-
-					addButton = control_frame:Add("DButton")
-					addButton:SetSize(16,16)
-					local arrow_x,arrow_y = arrow_icon:GetPos()
-					addButton:SetPos((control_frame:GetWide() - 243) + 16, control_frame:GetTall()/2 -8)
-
-					function addButton:DoClick()
-						local i = #controls["settings"][setting] + 1
-						table.insert(controls["settings"][setting], i, "")
-						setup_table_value(i, nil)
-					end
-
-					function addButton:Paint(w, h)
-						if isOpen then
-							surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 0, 255))
-						else
-							surface.SetDrawColor(255, 255, 255, Lerp((SysTime() - start) / 0.25, 255, 0))
-						end
-						surface.SetMaterial(addIconMat)
-						surface.DrawTexturedRect(0, 0, w, h)
-					end
+					isOpen = !isOpen
 				end
-				isOpen = !isOpen
 			end
+
+
+			Y = Y + 47
 		end
-
-
-		Y = Y + 47
 	end
+
+	local AlphabetizedNormal = table.GetKeys(controls["settings"])
+	table.sort(AlphabetizedNormal, function(a, b) return a < b end)
+
+	handle_settings(controls["settings"],AlphabetizedNormal, nil) -- normal settings not in sub catagories
+
+	local AlphabetizedSubcats = table.GetKeys(controls["subcats"])
+	table.sort(AlphabetizedSubcats, function(a, b) return a < b end)
+
+	for _,v in ipairs(AlphabetizedSubcats) do
+
+		local AlphabetizedSubcatSettings = table.GetKeys(controls["subcats"][v])
+		table.sort(AlphabetizedSubcatSettings, function(a, b) return a < b end)
+
+		handle_settings(controls["subcats"][v], AlphabetizedSubcatSettings, v)
+	end
+
+
+
 end
 
 /*-----------+
@@ -317,7 +355,6 @@ net.Receive("JMod_ConfigUI", function()
 	local AlphabetizedCategoryNames = table.GetKeys(categories)
 	table.sort(AlphabetizedCategoryNames, function(a, b) return a < b end)
 	local ActiveTab = AlphabetizedCategoryNames[1]
-	PrintTable(AlphabetizedCategoryNames)
 	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
 
 	for k, cat in pairs(AlphabetizedCategoryNames) do
