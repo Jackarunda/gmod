@@ -263,14 +263,10 @@ local function PopulateControls(parent, controls, motherFrame)
 
 
 
-end
-
-/*-----------+
- | Config UI |
- +-----------*/
+end 
 
 net.Receive("JMod_ConfigUI", function()
-	local config = net.ReadTable() -- NETWORKED IN SV_CONFIG_UI, NEEDS PERMISSION CHECK
+	local config = net.ReadTable() 
 
 	local catBlacklist = {"Craftables", "Note", "RadioSpecs", "Info"}
 
