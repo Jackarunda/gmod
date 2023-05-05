@@ -337,6 +337,7 @@ net.Receive("JMod_ConfigUI", function()
 			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav")
 		end
 		SelectionMenuOpen = false
+		if timer.Exists("configui_reset_timeout") then timer.Remove("configui_reset_timeout") end
 	end
 
 	local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
@@ -383,11 +384,26 @@ net.Receive("JMod_ConfigUI", function()
 		BlurBackground(self)
 	end
 
+	local hasClicked = false
+
 	function resetButt:DoClick()
-		changes_made = false
-		LocalPlayer():ConCommand("jmod_resetconfig")
-		LocalPlayer():ConCommand("jmod_ez_config")
-		MotherFrame:Close()
+		
+		if hasClicked == true then
+			changes_made = false
+			LocalPlayer():ConCommand("jmod_resetconfig")
+			LocalPlayer():ConCommand("jmod_ez_config")
+			MotherFrame:Close()
+			return
+		end
+
+		hasClicked = true
+		
+		self:SetText("Are you sure?")
+		
+		timer.Create("configui_reset_timeout", 2, 1, function()
+			hasClicked = false
+			self:SetText("Reset to Defaults")
+		end)
 	end
 
 	local applyButt = TabPanel:Add("DButton")
