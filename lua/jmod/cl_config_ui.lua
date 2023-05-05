@@ -367,6 +367,29 @@ net.Receive("JMod_ConfigUI", function()
 	local ActiveTab = AlphabetizedCategoryNames[1]
 	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
 
+	local resetButt = TabPanel:Add("DButton")
+
+	resetButt:SetSize(100,16)
+	resetButt:SetPos((TabPanel:GetWide() - 16) - 200, 8)
+	resetButt:SetText("Reset to Defaults")
+	resetButt:SetTextColor(color_white)
+
+	function resetButt:Paint(w,h)
+
+		surface.SetDrawColor(50, 50, 50, 60)
+
+		surface.DrawRect(0, 0, w, h)
+
+		BlurBackground(self)
+	end
+
+	function resetButt:DoClick()
+		changes_made = false
+		LocalPlayer():ConCommand("jmod_resetconfig")
+		LocalPlayer():ConCommand("jmod_ez_config")
+		MotherFrame:Close()
+	end
+
 	local applyButt = TabPanel:Add("DButton")
 
 	applyButt:SetSize(100,16)

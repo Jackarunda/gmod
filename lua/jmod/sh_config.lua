@@ -2351,23 +2351,23 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		NewConfig = configToApply
 	end
 
-	local FileContents = file.Read("JMod_Config.txt")
+	local FileContents = file.Read("jmod_config.txt")
 
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
 		if Existing and Existing.Version then
-			file.Write("JMod_Config_OLD.txt", FileContents)
+			file.Write("jmod_config_old.txt", FileContents)
 			print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
-			print("JMOD: Writing old config to 'JMod_Config_OLD.txt'...\n")
+			print("JMOD: Writing old config to 'jmod_config_old.txt'...\n")
 		else
 			if Existing and Existing.Info.Version then
 				if Existing.Info.Version == NewConfig.Info.Version then
 					JMod.Config = util.JSONToTable(FileContents)
 					print("JMOD: config file loaded")
 				else
-					file.Write("JMod_Config_OLD.txt", FileContents)
-					print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
+					file.Write("jmod_config_old.txt", FileContents)
+					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
 				end
 			end
 		end
@@ -2375,7 +2375,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 
 	if (not JMod.Config) or forceNew then
 		JMod.Config = NewConfig
-		file.Write("JMod_Config.txt", util.TableToJSON(JMod.Config, true))
+		file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
 		print("JMOD: config reset to default")
 	end
 	-- This is to make sure the ammo types are saved on config reload
