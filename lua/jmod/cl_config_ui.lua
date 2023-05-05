@@ -375,7 +375,10 @@ net.Receive("JMod_ConfigUI", function()
 	applyButt:SetTextColor(color_white)
 
 	function applyButt:Paint(w,h)
-		if not changes_made then return end
+		if not changes_made then
+			if self:GetText() != "" then self:SetText("") end
+			return
+		end
 
 		if self:GetText() != "Apply Changes" then self:SetText("Apply Changes") end
 
@@ -387,6 +390,8 @@ net.Receive("JMod_ConfigUI", function()
 	end
 
 	function applyButt:DoClick()
+		if not changes_made then return end
+
 		local modifiedConfig = {}
 
 		for cat,catTable in pairs(categories) do
@@ -409,10 +414,11 @@ net.Receive("JMod_ConfigUI", function()
 			end
 		end
 
-		print(modifiedConfig)
-		PrintTable(modifiedConfig)
-		print("\n---------------------------------------------------------------\n")
-		--PrintTable(config)
+		net.Start("JMod_ApplyConfig")
+		net.WriteTable(modifiedConfig)
+		net.SendToServer()
+
+		changes_made = false
 	end
 
 	for k, cat in pairs(AlphabetizedCategoryNames) do

@@ -8,7 +8,12 @@
 	}
 end
 
-function JMod.InitGlobalConfig(forceNew)
+function JMod.InitGlobalConfig(forceNew, configToApply)
+
+	if type(configToApply) == "table" then
+		PrintTable(configToApply)
+	end
+
 	local NewConfig = {
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
@@ -2341,6 +2346,10 @@ function JMod.InitGlobalConfig(forceNew)
 			}
 		},
 	}
+
+	if configToApply != nil then
+		NewConfig = configToApply
+	end
 
 	local FileContents = file.Read("JMod_Config.txt")
 

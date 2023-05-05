@@ -26,6 +26,7 @@ util.AddNetworkString("JMod_EquippableSync")
 util.AddNetworkString("JMod_MachineSync")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
 util.AddNetworkString("JMod_ConfigUI")
+util.AddNetworkString("JMod_ApplyConfig")
 
 net.Receive("JMod_Friends", function(length, ply)
 	local List, Good = net.ReadTable(), true
@@ -166,4 +167,12 @@ net.Receive("JMod_SaveLoadDeposits", function(ln, ply)
 			net.Send(ply)
 		end
 	end
+end)
+
+net.Receive("JMod_ApplyConfig", function(ln, ply)
+	if not ply:IsValid() then return end
+	if not ply:IsSuperAdmin() then return end
+	local config = net.ReadTable()
+
+	JMod.InitGlobalConfig(true, config)
 end)
