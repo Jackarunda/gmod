@@ -187,9 +187,14 @@ local function PopulateControls(parent, controls, motherFrame)
 							textEntry:SetText(value)
 							textEntry:SetUpdateOnType(true)
 
+							local lastval = value
+
 							function textEntry:OnValueChange(val)
-								control_table[setting][index] = val
-								changes_made = true
+								if val != lastval then
+									control_table[setting][index] = val
+									changes_made = true
+								end
+								lastval = val
 							end
 
 							function textEntry:Paint(w,h)
