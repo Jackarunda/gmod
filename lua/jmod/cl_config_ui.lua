@@ -192,6 +192,23 @@ local function PopulateControls(parent, controls, motherFrame)
 								changes_made = true
 							end
 
+							function textEntry:Paint(w,h)
+								surface.SetDrawColor(100, 100, 100, 60)
+								surface.DrawRect(0, 0, w, h)
+								surface.DrawOutlinedRect(0,0,w,h)
+								surface.SetDrawColor(255, 255, 255, 255)
+
+								draw.SimpleText(self:GetText(), DermaDefault, 5,7,color_white,TEXT_ALIGN_LEFT,TEXT_ALIGN_CENTER)
+
+								if math.Round(CurTime() * 2.5) % 2 == 0 and self:HasFocus() then
+									surface.SetFont("DermaDefault")
+									local tw,th = surface.GetTextSize(self:GetText())
+									surface.SetDrawColor(255, 255, 255, 255)					-- text cursor
+									surface.DrawLine(tw + 6, 2, tw + 6, h-3)
+								end
+
+							end
+
 							local removeButt = holder_panel:Add("DButton")
 							removeButt:SetSize(16,16)
 							removeButt:SetPos(holder_panel:GetWide() - 35, 0)
