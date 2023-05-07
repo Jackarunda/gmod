@@ -38,6 +38,19 @@ local function PopulateControls(parent, controls, motherFrame)
 	local Scroll = vgui.Create("DScrollPanel", parent)
 	Scroll:SetSize(W - 20, H - 20)
 	Scroll:SetPos(10, 10)
+	local sbar = Scroll:GetVBar()
+	function sbar:Paint(w, h)
+		draw.RoundedBox(0, 0, 0, w, h, Color(50, 50, 50, 200))
+	end
+	function sbar.btnUp:Paint(w, h)
+		draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60, 200))
+	end
+	function sbar.btnDown:Paint(w, h)
+		draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60, 200))
+	end
+	function sbar.btnGrip:Paint(w, h)
+		draw.RoundedBox(0, 0, 0, w, h, Color(75, 75, 75, 200))
+	end
 	---
 	local Y = 0
 
@@ -161,6 +174,20 @@ local function PopulateControls(parent, controls, motherFrame)
 						tablePanel:SetSize(control_frame:GetWide(), 150)
 						tablePanel:SetPos(control_frame_x, control_frame_y + control_frame:GetTall())
 						tablePanel:SlideDown(0.25)
+
+						local sbar = tablePanel:GetVBar()
+						function sbar:Paint(w, h)
+							draw.RoundedBox(0, 0, 0, w, h, Color(50, 50, 50))
+						end
+						function sbar.btnUp:Paint(w, h)
+							draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60))
+						end
+						function sbar.btnDown:Paint(w, h)
+							draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60))
+						end
+						function sbar.btnGrip:Paint(w, h)
+							draw.RoundedBox(0, 0, 0, w, h, Color(75, 75, 75))
+						end
 						
 						function tablePanel:Paint(w,h)
 							surface.SetDrawColor(50, 50, 50, 60)
