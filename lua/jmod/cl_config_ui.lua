@@ -217,6 +217,7 @@ local function PopulateControls(parent, controls, motherFrame)
 							local removeButt = holder_panel:Add("DButton")
 							removeButt:SetSize(16,16)
 							removeButt:SetPos(holder_panel:GetWide() - 35, 0)
+							removeButt:SetText("")
 
 							function removeButt:Paint(w,h)
 								surface.SetDrawColor(255, 255, 255, 255)
@@ -240,6 +241,7 @@ local function PopulateControls(parent, controls, motherFrame)
 						addButton:SetSize(16,16)
 						local arrow_x,arrow_y = arrow_icon:GetPos()
 						addButton:SetPos((control_frame:GetWide() - 243) + 16, control_frame:GetTall()/2 -8)
+						addButton:SetText("")
 
 						function addButton:DoClick()
 							local i = #control_table[setting] + 1
