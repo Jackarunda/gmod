@@ -172,7 +172,6 @@ end)
 net.Receive("JMod_ApplyConfig", function(ln, ply)
 	if not ply:IsValid() then return end
 	if not ply:IsSuperAdmin() then return end
-	local config = net.ReadTable()
-
-	JMod.InitGlobalConfig(true, config)
+	local data = util.JSONToTable(util.Decompress(net.ReadData(ln)))
+	JMod.InitGlobalConfig(true, data)
 end)

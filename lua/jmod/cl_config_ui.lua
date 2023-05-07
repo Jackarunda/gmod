@@ -316,8 +316,10 @@ local function PopulateControls(parent, controls, motherFrame)
 
 end 
 
-net.Receive("JMod_ConfigUI", function()
-	local config = net.ReadTable() 
+net.Receive("JMod_ConfigUI", function(dataLength)
+	data = util.JSONToTable(util.Decompress(net.ReadData(dataLength)))
+
+	local config = data
 
 	local catBlacklist = {"Craftables", "Note", "RadioSpecs", "Info"}
 
@@ -501,7 +503,7 @@ net.Receive("JMod_ConfigUI", function()
 		end
 
 		net.Start("JMod_ApplyConfig")
-		net.WriteTable(modifiedConfig)
+		net.WriteData(util.Compress(util.TableToJSON(modifiedConfig)))
 		net.SendToServer()
 
 		changes_made = false
