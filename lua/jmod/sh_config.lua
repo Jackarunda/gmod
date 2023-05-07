@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 41.99,
+			Version = 42,
 		},
 		General = {
 			Hints = true,
@@ -56,6 +56,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				GeneratorChargeSpeed = 1,
 				EvaporateSpeed = 1,
 				GravityStrength = 1,
+				Whitelist = {"func_physbox", "func_breakable"},
+				Blacklist = {"func_", "_dynamic"},
+				DamageEnts = {"func_breakable"}
 			},
 			SpawnMachinesFull = true,
 			SupplyEffectMult = 1,
@@ -2416,6 +2419,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	end
 
 	SetArmorPlayerModelModifications()
+
 	print("JMOD: lua config file loaded")
 end
 
