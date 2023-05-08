@@ -3,6 +3,7 @@ local Dynamic = 0
 local arrowMat = Material("icon16/arrow_right.png")
 local addIconMat = Material("icon16/add.png")
 local removeIconMat = Material("icon16/delete.png")
+local infoIconMat = Material("icon16/information.png")
 local changes_made = false
 
 local function BlurBackground(panel)
@@ -73,8 +74,9 @@ local function PopulateControls(parent, controls, motherFrame)
 		end
 
 		for k, setting in pairs(AlphabetizedSettings) do
+
+			--if setting == "AltFunctionKey" then continue end
 			
-			if setting == "AltFunctionKey" then continue end
 			local control_frame = Scroll:Add("DPanel")
 			control_frame:SetSize(W - 40, 42)
 			control_frame:SetPos(0, Y)
@@ -87,8 +89,57 @@ local function PopulateControls(parent, controls, motherFrame)
 
 				draw.SimpleText(setting, "DermaDefault", 5, 15, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
+			
+			if setting == "AltFunctionKey" then
+				local comboBox = control_frame:Add("DComboBox")
+				comboBox:SetSize(107,16)
+				comboBox:SetPos(control_frame:GetWide() - 243, control_frame:GetTall()/2 - 8)
+
+				comboBox:AddChoice("+walk", IN_WALK)   -- 1
+				comboBox:AddChoice("+speed", IN_SPEED) -- 2
+				comboBox:AddChoice("+alt1", IN_ALT1)   -- 3
+				comboBox:AddChoice("+alt2", IN_ALT2)   -- 4
+
+				comboBox:SetSortItems(false)
+				
+				local choices = {IN_WALK,IN_SPEED,IN_ALT1,IN_ALT2}
+
+				for k,v in ipairs(choices) do
+					if v == control_table[setting] then
+						comboBox:ChooseOptionID(k)
+						continue
+					end
+				end
+
+				function comboBox:OnSelect(i,v,d)
+					control_table[setting] = d
+					changes_made = true
+				end
+
+				local whatButt = control_frame:Add("DButton")
+				local x,y = comboBox:GetPos()
+				local w,h = comboBox:GetSize()
+				whatButt:SetSize(16,16)
+				whatButt:SetPos(x + w + 5, y)
+				whatButt:SetText("")
+				whatButt:SetTooltip("Click me for more info on what these options mean.")
+
+				function whatButt:Paint(w,h)
+					surface.SetDrawColor(255, 255, 255, 255)
+					surface.SetMaterial(infoIconMat)
+					surface.DrawTexturedRect(0, 0, w, h)
+				end
+
+				function whatButt:DoClick()
+					gui.OpenURL("https://wiki.facepunch.com/gmod/Enums/IN")
+				end
+
+				Y = Y + 47
+				continue
+			end
 
 			if type(control_table[setting]) == "number" then
+				
 				local slider = control_frame:Add("DNumSlider")
 				slider:SetSize(control_frame:GetWide()/2,14)
 				slider:SetPos((control_frame:GetWide() - 10) - control_frame:GetWide()/2, control_frame:GetTall()/2 - 7)
@@ -108,7 +159,7 @@ local function PopulateControls(parent, controls, motherFrame)
 			if type(control_table[setting]) == "boolean" then
 				local checkbox = control_frame:Add("DCheckBox")
 				checkbox:SetSize(14,14)
-				checkbox:SetPos(control_frame:GetWide() - (243), control_frame:GetTall()/2 - 7)
+				checkbox:SetPos(control_frame:GetWide() - 243, control_frame:GetTall()/2 - 7)
 				checkbox:SetValue(control_table[setting])
 
 				function checkbox:OnChange(val)
