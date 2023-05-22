@@ -390,7 +390,7 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 	for cat,st in pairs(config) do
 		if table.HasValue(catBlacklist, cat) then continue end
 
-		categories[cat] = {["subcats"] = {}, ["settings"] = {}}
+		categories[cat] = {subcats = {}, settings = {}}
 
 		for setting,v in pairs(st) do
 			if type(v) == "table" and v[1] == nil then
