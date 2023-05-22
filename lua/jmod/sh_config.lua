@@ -2270,7 +2270,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 15
 				},
 				category = "Munitions",
-				description = "Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam."
+				description = "Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam.",
+				craftingType = "workbench"
 			},
 			["EZ Satchel Charge"] = {
 				results = "ent_jack_gmod_ezsatchelcharge",
