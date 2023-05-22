@@ -19,6 +19,7 @@ function JMod.InitGlobalConfig(forceNew)
 			Hints = true,
 			AltFunctionKey = IN_WALK,
 			HandGrabStrength = 1,
+			CraftingDebug = false
 		},
 		Armor = {
 			ProtectionMult = 1,

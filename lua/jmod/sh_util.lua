@@ -208,15 +208,15 @@ end
 
 function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, cache)
 	local RequirementsMet, ResourcesInRange = true, cache or JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
-
 	for typ, amt in pairs(requirements) do
 		if not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt)) then
 			RequirementsMet = false
 			break
 		end
 	end
-
-	return RequirementsMet
+	print(JMod.Config.General.CraftingDebug)
+	return RequirementsMet and (JMod.Config.General.CraftingDebug == true)
+	
 end
 
 function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects)

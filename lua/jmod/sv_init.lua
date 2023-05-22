@@ -599,6 +599,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	local ToSend = {}
 	ToSend.ArmorOffsets = (JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {}
 	ToSend.AltFunctionKey = JMod.Config.General.AltFunctionKey
+	ToSend.CraftingDebug = JMod.Config.General.CraftingDebug
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	net.Start("JMod_LuaConfigSync")

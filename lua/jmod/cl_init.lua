@@ -380,6 +380,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.General = JMod.Config.General or {}
 	JMod.Config.Weapons = JMod.Config.Weapons or {}
 	JMod.Config.General.AltFunctionKey = Payload.AltFunctionKey
+	JMod.Config.General.CraftingDebug = Payload.CraftingDebug
 	JMod.Config.Weapons.SwayMult = Payload.WeaponSwayMult
 
 	if tobool(net.ReadBit()) then
