@@ -325,12 +325,14 @@ function SWEP:BuildItem(selectedBuild)
 	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
 		local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, BuildInfo)
 
-		if override == false then
+		if override == false and JMod.Config.General.CraftingDebug == false then
 			self:Msg(msg or "cannot build")
 
 			return
 		end
-		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
+		if JMod.Config.General.CraftingDebug == false then
+			JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
+		end
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 

@@ -215,7 +215,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 		end
 	end
 	print(JMod.Config.General.CraftingDebug)
-	return RequirementsMet and (JMod.Config.General.CraftingDebug == true)
+	return RequirementsMet or (true and JMod.Config.General.CraftingDebug == true)
 	
 end
 
