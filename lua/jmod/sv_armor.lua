@@ -611,7 +611,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		end
 
 		if RepairStatus == 0 then
-			ply:PrintMessage(HUD_PRINTCENTER, "item can not be repaired")
+			ply:PrintMessage(HUD_PRINTCENTER, "Item can not be repaired")
 		elseif RepairStatus == 1 then
 			local mats = ""
 
@@ -619,9 +619,9 @@ net.Receive("JMod_Inventory", function(ln, ply)
 				mats = mats .. k .. ", "
 			end
 
-			ply:PrintMessage(HUD_PRINTCENTER, "missing resources for repair, need " .. mats)
+			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need " .. mats)
 		elseif RepairStatus == 2 then
-			ply:PrintMessage(HUD_PRINTCENTER, "item repaired")
+			ply:PrintMessage(HUD_PRINTCENTER, "Item repaired")
 
 			for i = 1, 10 do
 				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", ply:GetPos(), 60, math.random(80, 120))
@@ -631,40 +631,67 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		local ID = net.ReadString()
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
-		local RechargeRecipe, RechargeStatus = {}, 0
+		local RechargeRecipe, RechargeStatus, PartialRecharge = {}, 0, false
 
 		for resourceName, maxAmt in pairs(ItemInfo.chrg) do
 			local missing = maxAmt - ItemData.chrg[resourceName]
 
 			if missing > 0 then
-				RechargeRecipe[resourceName] = missing * 1.1 -- 10% penalty for doing this in the field
+				RechargeRecipe[resourceName] = missing
 				RechargeStatus = 1
 			end
 		end
 
 		if RechargeStatus == 1 then
-			if JMod.HaveResourcesToPerformTask(nil, nil, RechargeRecipe, ply) then
-				RechargeStatus = 2
-				JMod.ConsumeResourcesInRange(RechargeRecipe, nil, nil, ply)
+			local AvaliableResources, ResourcesToConsume = JMod.CountResourcesInRange(nil, nil, ply), {}
 
-				for resourceName, maxAmt in pairs(ItemInfo.chrg) do
-					ItemData.chrg[resourceName] = maxAmt
+			for resourceName, missing in pairs(RechargeRecipe) do
+				missing = math.ceil(missing)
+				if AvaliableResources[resourceName] then
+					local AmtToConsume = math.Clamp(AvaliableResources[resourceName], 0, missing)
+					ResourcesToConsume[resourceName] = math.Clamp(AvaliableResources[resourceName], 0, missing)
+					ItemData.chrg[resourceName] = math.Clamp(ItemData.chrg[resourceName] + AmtToConsume, 0, ItemInfo.chrg[resourceName])
+
+					if AmtToConsume >= missing then
+						RechargeRecipe[resourceName] = nil
+						PartialRecharge = true
+					else
+						RechargeRecipe[resourceName] = missing - AmtToConsume
+						PartialRecharge = true
+					end
 				end
+			end
+
+			JMod.ConsumeResourcesInRange(ResourcesToConsume, nil, nil, ply)
+
+			if table.IsEmpty(RechargeRecipe) then
+				RechargeStatus = 2
 			end
 		end
 
 		if RechargeStatus == 0 then
-			ply:PrintMessage(HUD_PRINTCENTER, "item can not be recharged")
+			ply:PrintMessage(HUD_PRINTCENTER, "Item can not be recharged")
+
 		elseif RechargeStatus == 1 then
 			local mats = ""
 
 			for k, v in pairs(RechargeRecipe) do
-				mats = mats .. k .. ", "
+				if next(RechargeRecipe, k) ~= nil then
+					mats = mats .. k .. ", "
+				else
+					mats = mats .. k
+				end
 			end
 
-			ply:PrintMessage(HUD_PRINTCENTER, "missing resources for recharge, need " .. mats)
+			if PartialRecharge then
+				ply:PrintMessage(HUD_PRINTCENTER, "Item partially recharged, still needs: " .. mats)
+				sound.Play("items/ammo_pickup.wav", ply:GetPos(), 60, math.random(100, 140))
+			else
+				ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for recharge, needs: " .. mats)
+			end
+
 		elseif RechargeStatus == 2 then
-			ply:PrintMessage(HUD_PRINTCENTER, "item recharged")
+			ply:PrintMessage(HUD_PRINTCENTER, "Item recharged")
 			sound.Play("items/ammo_pickup.wav", ply:GetPos(), 60, math.random(100, 140))
 		end
 	end

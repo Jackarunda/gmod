@@ -514,7 +514,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
-								JMod.EZarmorWarning(playa, "armor's electricity soon to be depleted!")
+								JMod.EZarmorWarning(playa, "Night vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
 							end
 						end
 					end
@@ -526,7 +526,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 							armorData.chrg.power = math.Clamp(armorData.chrg.power - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
-								JMod.EZarmorWarning(playa, "armor's electricity soon to be depleted!")
+								JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
 							end
 						end
 					end
