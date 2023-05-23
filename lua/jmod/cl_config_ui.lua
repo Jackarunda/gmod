@@ -33,7 +33,7 @@ end
  |         for each setting.         |
  +-----------------------------------*/
 
-local function PopulateControls(parent, controls, motherFrame)
+local function PopulateControls(parent, data, motherFrame, isCraftables)
 	parent:Clear()
 	local W, H = parent:GetWide(), parent:GetTall()
 	local Scroll = vgui.Create("DScrollPanel", parent)
@@ -150,7 +150,7 @@ local function PopulateControls(parent, controls, motherFrame)
 				slider:ResetToDefaultValue()
 
 				function slider:OnValueChanged(val)
-					control_table[setting] = val
+					control_table[setting] = math.Round(val, 2)
 					changes_made = true
 				end
 
@@ -347,24 +347,43 @@ local function PopulateControls(parent, controls, motherFrame)
 		end
 	end
 
-	local AlphabetizedNormal = table.GetKeys(controls["settings"])
+	local function handle_craftables(AlphabetizedItemNames)
+		local craftables = {}
+
+		for itemName, itemInfo in pairs(data) do
+			local category = itemInfo.category or "other"
+			craftables[category] = craftables[category] or {}
+			craftables[category][itemName] = itemInfo
+		end
+
+		for k,v in pairs(craftables) do
+			print(k)
+		end
+	end
+
+	if isCraftables then
+		local AlphabetizedCraftables = table.GetKeys(data)
+		table.sort(AlphabetizedCraftables, function(a, b) return a < b end)
+
+		handle_craftables(AlphabetizedCraftables)
+		return
+	end
+
+	local AlphabetizedNormal = table.GetKeys(data["settings"])
 	table.sort(AlphabetizedNormal, function(a, b) return a < b end)
 
-	handle_settings(controls["settings"],AlphabetizedNormal, nil) -- normal settings not in sub catagories
+	handle_settings(data["settings"],AlphabetizedNormal, nil) -- normal settings not in sub catagories
 
-	local AlphabetizedSubcats = table.GetKeys(controls["subcats"])
+	local AlphabetizedSubcats = table.GetKeys(data["subcats"])
 	table.sort(AlphabetizedSubcats, function(a, b) return a < b end)
 
 	for _,v in ipairs(AlphabetizedSubcats) do
 
-		local AlphabetizedSubcatSettings = table.GetKeys(controls["subcats"][v])
+		local AlphabetizedSubcatSettings = table.GetKeys(data["subcats"][v])
 		table.sort(AlphabetizedSubcatSettings, function(a, b) return a < b end)
 
-		handle_settings(controls["subcats"][v], AlphabetizedSubcatSettings, v)
+		handle_settings(data["subcats"][v], AlphabetizedSubcatSettings, v)
 	end
-
-
-
 end 
 
 net.Receive("JMod_ConfigUI", function(dataLength)
@@ -378,16 +397,20 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 
 	local categories = {}
 
-	local old_table = nil
-
-	changes_made = false
-
 	-- for cat,st in pairs(config) do
 	-- 	if table.HasValue(catBlacklist, cat) then continue end
 	-- 	categories[cat] = st
 	-- end
 
 	for cat,st in pairs(config) do
+		if cat == "Craftables" then
+			categories["Craftables"] = {}
+			
+			for craftable,settings in pairs(st) do
+				categories["Craftables"][craftable] = settings
+			end
+		end
+
 		if table.HasValue(catBlacklist, cat) then continue end
 
 		categories[cat] = {subcats = {}, settings = {}}
@@ -465,8 +488,14 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 
 	local AlphabetizedCategoryNames = table.GetKeys(categories)
 	table.sort(AlphabetizedCategoryNames, function(a, b) return a < b end)
+
+	local key = table.KeyFromValue(AlphabetizedCategoryNames, "Craftables")
+
+	table.move(AlphabetizedCategoryNames, key, key, #AlphabetizedCategoryNames)
+	table.remove(AlphabetizedCategoryNames, key)
+
 	local ActiveTab = AlphabetizedCategoryNames[1]
-	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
+	PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame, false)
 
 	local resetButt = TabPanel:Add("DButton")
 
@@ -534,6 +563,7 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 		local modifiedConfig = {}
 
 		for cat,catTable in pairs(categories) do
+			if cat == "Craftables" then continue end
 			modifiedConfig[cat] = {}
 			for normalOrSubcat,settingTable in pairs(catTable) do
 				table.Merge(modifiedConfig[cat], settingTable)
@@ -568,6 +598,7 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 		TabBtn:SetText("")
 		TabBtn.Category = cat
 
+
 		function TabBtn:Paint(x, y)
 			local Hovr = self:IsHovered()
 			local Col = (Hovr and 80) or 20
@@ -579,7 +610,11 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 		function TabBtn:DoClick()
 			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
 			ActiveTab = self.Category
-			PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
+			if cat == "Craftables" then
+				PopulateControls(ActiveTabPanel, categories["Craftables"], motherFrame, true)
+			else
+				PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame, false)
+			end
 		end
 
 		tabX = tabX + TextWidth + 15
