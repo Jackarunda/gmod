@@ -247,13 +247,13 @@ if(SERVER)then
 		JMod.SetEZowner(self, ply)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
-		ent.NexResourceThinkTime = Time + math.Rand(0, 3)
+		ent.NextResourceThinkTime = Time + math.Rand(0, 3)
 		self.NextWaterLoseTime = Time
 	end
 
 elseif CLIENT then
 	function ENT:CustomInit()
-		self:DrawShadow(true)
+		self.Piping = JMod.MakeModel(self, "models/props_c17/gasmeter002a.mdl")
 	end
 	
 	local Black = Material("black_square_model")--"models/debug/debugwhite")
@@ -267,41 +267,44 @@ elseif CLIENT then
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
-		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		if((not(DetailDraw))and(Obscured))then return end -- if player is far and machine is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
-		--if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
 		---
-
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_RUNNING then
-				local DisplayAng = SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
-				local Opacity = math.random(50, 150)
-				local ElecFrac = self:GetProgress() / 100
-				local PresFrac = self:GetWater() / 200
-				local R, G, B = JMod.GoodBadColor(ElecFrac)
-				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
-				cam.Start3D2D(BasePos, DisplayAng, .1)
-				surface.SetDrawColor(10,10,10,Opacity+50)
-				surface.DrawRect(380, 100, 128, 128)
-				JMod.StandardRankDisplay(Grade, 446, 160, 118, Opacity + 50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("WATER", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				cam.End3D2D()
-			elseif State ~= STATE_RUNNING then
-				DisplayAng=SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
-				render.SetMaterial(Black)
-				render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -40 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 255), DisplayAng.r)
-			end
+			local PipeAng = SelfAng:GetCopy()
+			PipeAng:RotateAroundAxis(Up, 90)
+			--PipeAng:RotateAroundAxis(Right, 0)
+			JMod.RenderModel(self.Piping, BasePos + Up * -14 + Forward * 80 + Right * -46, PipeAng, Vector(1.5, 1.5, 1.5), nil, JMod.EZ_GRADE_MATS[Grade])
+		end
+		if Closeness < 20000 and State == STATE_RUNNING then
+			local DisplayAng = SelfAng:GetCopy()
+			DisplayAng:RotateAroundAxis(DisplayAng:Right(), 90)
+			DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+			DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
+			local Opacity = math.random(50, 150)
+			local ElecFrac = self:GetProgress() / 100
+			local PresFrac = self:GetWater() / 200
+			local R, G, B = JMod.GoodBadColor(ElecFrac)
+			local PR, PG, PB = JMod.GoodBadColor(PresFrac)
+			cam.Start3D2D(BasePos, DisplayAng, .1)
+			surface.SetDrawColor(10,10,10,Opacity+50)
+			surface.DrawRect(380, 100, 128, 128)
+			JMod.StandardRankDisplay(Grade, 446, 160, 118, Opacity + 50)
+			draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+			draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+			draw.SimpleTextOutlined("WATER", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+			draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+			cam.End3D2D()
+		elseif State ~= STATE_RUNNING then
+			DisplayAng=SelfAng:GetCopy()
+			DisplayAng:RotateAroundAxis(DisplayAng:Up(), 180)
+			DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
+			DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 0)
+			render.SetMaterial(Black)
+			render.DrawQuadEasy(SelfPos + Up * 31 + Forward * -40 + Right * 43, DisplayAng:Forward(), 50, 50, Color(0, 0, 0, 255), DisplayAng.r)
 		end
 	end
 	language.Add("ent_jack_gmod_ezsolargenerator", "EZ Solar Panel")
