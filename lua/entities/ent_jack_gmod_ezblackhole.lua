@@ -8,12 +8,6 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.NoSitAllowed = true
 
-ENT.Blacklist = {"func_", "_dynamic"}
-
-ENT.Whitelist = {"func_physbox", "func_breakable"}
-
-ENT.DamageEnts = {"func_breakable"}
-
 ENT.PhyslessPointEnts = {"rpg_missile", "crossbow_bolt", "grenade_ar2", "grenade_spit", "npc_grenade_bugbait"}
 
 ENT.PhysNPCs = {"npc_cscanner", "npc_clawscanner", "npc_turret_floor", "npc_rollermine"}
@@ -42,7 +36,7 @@ function ENT:SUCC(Time, Phys, Age, Pos, MaxRange)
 			if SERVER and (math.random(1, 100) == 42) then
 				obj:Fire("becomeragdoll", "", 0)
 			end
-		elseif table.HasValue(self.DamageEnts, Class) then
+		elseif table.HasValue(JMod.Config.Machines.Blackhole.DamageEnts, Class) then
 			local Vec = Pos - obj:GetPos()
 			local Dist, Dir = Vec:Length(), Vec:GetNormalized()
 
@@ -98,9 +92,9 @@ end
 
 function ENT:IsBlacklisted(ent)
 	local Class = ent:GetClass()
-	if table.HasValue(self.Whitelist, Class) then return false end
+	if table.HasValue(JMod.Config.Machines.Blackhole.Whitelist, Class) then return false end
 
-	for k, v in pairs(self.Blacklist) do
+	for k, v in pairs(JMod.Config.Machines.Blackhole.Blacklist) do
 		if string.find(Class, v) then return true end
 	end
 

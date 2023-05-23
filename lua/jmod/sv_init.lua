@@ -43,7 +43,7 @@ local function JackaSpawnHook(ply)
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
-hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", JackaSpawnHook)
+hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply) JackaSpawnHook(ply) ; JMod.LuaConfigSync(false) end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
@@ -600,6 +600,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.ArmorOffsets = (JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets) or {}
 	ToSend.AltFunctionKey = JMod.Config.General.AltFunctionKey
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
+	ToSend.Blackhole = JMod.Config.Machines.Blackhole
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))

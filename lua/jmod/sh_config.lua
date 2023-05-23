@@ -8,12 +8,13 @@
 	}
 end
 
-function JMod.InitGlobalConfig(forceNew)
+function JMod.InitGlobalConfig(forceNew, configToApply)
+
 	local NewConfig = {
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 41.99,
+			Version = 42,
 		},
 		General = {
 			Hints = true,
@@ -55,6 +56,9 @@ function JMod.InitGlobalConfig(forceNew)
 				GeneratorChargeSpeed = 1,
 				EvaporateSpeed = 1,
 				GravityStrength = 1,
+				Whitelist = {"func_physbox", "func_breakable"},
+				Blacklist = {"func_", "_dynamic"},
+				DamageEnts = {"func_breakable"}
 			},
 			SpawnMachinesFull = true,
 			SupplyEffectMult = 1,
@@ -2266,7 +2270,8 @@ function JMod.InitGlobalConfig(forceNew)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 15
 				},
 				category = "Munitions",
-				description = "Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam."
+				description = "Fires an armor-piercing mega bullet at any enemy vehicle to cross the laser beam.",
+				craftingType = "workbench"
 			},
 			["EZ Satchel Charge"] = {
 				results = "ent_jack_gmod_ezsatchelcharge",
@@ -2342,23 +2347,27 @@ function JMod.InitGlobalConfig(forceNew)
 		},
 	}
 
-	local FileContents = file.Read("JMod_Config.txt")
+	if configToApply != nil then
+		NewConfig = configToApply
+	end
+
+	local FileContents = file.Read("jmod_config.txt")
 
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
 		if Existing and Existing.Version then
-			file.Write("JMod_Config_OLD.txt", FileContents)
+			file.Write("jmod_config_old.txt", FileContents)
 			print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
-			print("JMOD: Writing old config to 'JMod_Config_OLD.txt'...\n")
+			print("JMOD: Writing old config to 'jmod_config_old.txt'...\n")
 		else
 			if Existing and Existing.Info.Version then
 				if Existing.Info.Version == NewConfig.Info.Version then
 					JMod.Config = util.JSONToTable(FileContents)
 					print("JMOD: config file loaded")
 				else
-					file.Write("JMod_Config_OLD.txt", FileContents)
-					print("JMOD: config versions do not match, writing old config to 'JMod_Config_OLD.txt'...")
+					file.Write("jmod_config_old.txt", FileContents)
+					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
 				end
 			end
 		end
@@ -2366,7 +2375,7 @@ function JMod.InitGlobalConfig(forceNew)
 
 	if (not JMod.Config) or forceNew then
 		JMod.Config = NewConfig
-		file.Write("JMod_Config.txt", util.TableToJSON(JMod.Config, true))
+		file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
 		print("JMOD: config reset to default")
 	end
 	-- This is to make sure the ammo types are saved on config reload
@@ -2411,6 +2420,7 @@ function JMod.InitGlobalConfig(forceNew)
 	end
 
 	SetArmorPlayerModelModifications()
+
 	print("JMOD: lua config file loaded")
 end
 
