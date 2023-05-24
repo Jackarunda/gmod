@@ -456,7 +456,7 @@ JMod.Hints = {
 		LangKey = "hint ent_jack_gmod_ezarmor_thermals"
 	},
 	["ent_jack_gmod_ezarmor_headset"] = {
-		LangKey = "hint ent_jack_gmod_ezarmorheadset",
+		LangKey = "hint ent_jack_gmod_ezarmor_headset",
 		Followup = "headset radio"
 	},
 	["ent_jack_gmod_ezarmor_parachute"] = {

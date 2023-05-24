@@ -121,12 +121,9 @@ if SERVER then
 		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
 			local Pos, State = self:GetPos(), self:GetState()
 
-			if State == STATE_ARMED then
+			if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
-			elseif not (State == STATE_BROKEN) then
-				sound.Play("Metal_Box.Break", Pos)
-				self:SetState(STATE_BROKEN)
-				SafeRemoveEntityDelayed(self, 10)
 			end
 		end
 	end
@@ -166,7 +163,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self)
 		JMod.Sploom(Att, SelfPos, 100)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 2000)
