@@ -37,16 +37,16 @@ local function JackaSpawnHook(ply)
 		end
 	end)
 
-	if JMod.Config.QoL.BombOwnershipLossOnRespawn then
+	if JMod.Config.Explosives.BombOwnershipLossOnRespawn then
 		for k, ent in pairs(ents.GetAll()) do
 			local EZowner = JMod.GetEZowner(ent)
 
 			if ent.EZdroppableBombArmedTime and IsValid(EZowner) and EZowner == ply then
-				JMod.SetEZowner(game.GetWorld())
+				JMod.SetEZowner(ent, game.GetWorld())
 			elseif ent.EZdroppableBombLoadTime and IsValid(EZowner) and EZowner == ply then
-				JMod.SetEZowner(game.GetWorld())
+				JMod.SetEZowner(ent, game.GetWorld())
 			elseif ent.EZlaunchableWeaponArmedTime and IsValid(EZowner) and EZowner == ply and ent:GetState() == 1 then
-				JMod.SetEZowner(game.GetWorld())
+				JMod.SetEZowner(ent, game.GetWorld())
 			end
 		end
 	end

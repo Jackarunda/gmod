@@ -619,13 +619,10 @@ function JMod.GetEZowner(ent)
 end
 
 function JMod.SetEZowner(ent, newOwner)
-	if not(IsValid(ent) or IsValid(newOwner)) then return end
+	if not IsValid(ent) then return end
+	if not IsValid(newOwner) then newOwner = game.GetWorld() end
 
 	if JMod.GetEZowner(ent) == newOwner then return end
-
-	if ent.SetOwner and isfunction(ent.SetOwner) then
-		--ent:SetOwner(newOwner)
-	end
 
 	ent.EZowner = newOwner
 

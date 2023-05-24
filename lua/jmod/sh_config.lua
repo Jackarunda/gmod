@@ -81,6 +81,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			DoorBreachResetTimeMult = 1,
 			FragExplosions = true,
 			PropDestroyPower = 1,
+			BombOwnershipLossOnRespawn = false,
 		},
 		Particles = {
 			VirusSpreadMult = 1,
@@ -95,7 +96,6 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			MaxResourceMult = 1,
 		},
 		QoL = {
-			BombOwnershipLossOnRespawn = false,
 			RealisticLocationalDamage = false,
 			ExtinguishUnderwater = false,
 			RealisticFallDamage = false,
