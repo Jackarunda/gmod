@@ -383,6 +383,9 @@ JMod.Hints = {
 	["refill"] = {
 		LangKey = "hint refill"
 	},
+	["refill geo"] = {
+		LangKey = "hint refill geo"
+	},
 	["ent_jack_gmod_eztoolbox"] = {
 		LangKey = "hint ent_jack_gmod_eztoolbox"
 	},

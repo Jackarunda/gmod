@@ -129,6 +129,7 @@ if(SERVER)then
 
 		if self.EZinstalled then
 			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+			self.NextUse = CurTime() + 1
 			timer.Simple(0.6, function()
 				if not IsValid(self) then return end
 				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
@@ -143,6 +144,8 @@ if(SERVER)then
 						self.SoundLoop:ChangePitch(100)
 					end
 				end)
+			elseif self:GetWater() <= 0 then
+				JMod.Hint(self.EZowner, "refill geo")
 			end
 		else
 			self:TryPlace()

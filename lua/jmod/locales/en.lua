@@ -107,6 +107,7 @@
 	["hint ent_jack_gmod_ezworkbench"] = "Workbench allows you to craft items from resources",
 	["hint craft"] = "Resources nearby will automatically be detected and consumed",
 	["hint refill"] = "Refill power and gas to keep the Workbench functional",
+	["hint refill geo"] = "Refill water to keep the Geothermal generator functional",
 	["hint ent_jack_gmod_eztoolbox"] = "Toolbox can craft, nail, package, upgrade and salvage things",
 	["hint ent_jack_gmod_ezmedkit"] = "Medkit can be used to heal oneself or other players",
 	["hint ent_jack_gmod_ezsolargenerator"] = "Produces power relative to how much sunight it gets",

@@ -105,6 +105,7 @@
 	["hint ent_jack_gmod_ezworkbench"] = "Workbench allows ye t' craft items from resources",
 	["hint craft"] = "Resources nearby will automatically be detected 'n consumed",
 	["hint refill"] = "Refill power 'n gas t' keep the Workbench functional",
+	["hint refill geo"] = "Put more water in there to keep the bilge runnin'",
 	["hint ent_jack_gmod_eztoolbox"] = "Toolbox can craft, nail, package, upgrade 'n salvage things",
 	["hint ent_jack_gmod_ezmedkit"] = "Medkit can be used t' heal oneself or other crewmembers",
 	["hint ent_jack_gmod_ezsolargenerator"] = "Needs t' sun to be useful",
