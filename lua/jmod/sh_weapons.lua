@@ -237,7 +237,8 @@ JMod.WeaponTable = {
 	["Flintlock Pistol"] = {
 		mdl = "models/weapons/w_jmod_musket.mdl",
 		swep = "wep_jack_gmod_flintlockmusket",
-		ent = "ent_jack_gmod_ezweapon_flp"
+		ent = "ent_jack_gmod_ezweapon_flp",
+		Spawnable = false
 	},
 	["Cap and Ball Revolver"] = {
 		mdl = "models/krazy/gtav/weapons/navyrevolver_w.mdl",
@@ -247,17 +248,20 @@ JMod.WeaponTable = {
 	["Magnum Trapdoor Revolver"] = {
 		mdl = "models/krazy/gtav/weapons/navyrevolver_w.mdl",
 		swep = "wep_jack_gmod_bigiron",
-		ent = "ent_jack_gmod_ezweapon_bigiron"
+		ent = "ent_jack_gmod_ezweapon_bigiron",
+		Spawnable = false
 	},
 	["Pocket Knife"] = {
 		mdl = "models/weapons/w_jmod_pocketknife.mdl",
 		swep = "wep_jack_gmod_pocketknife",
-		ent = "ent_jack_gmod_ezweapon_pocketknife"
+		ent = "ent_jack_gmod_ezweapon_pocketknife",
+		Spawnable = false
 	},
 	["Combat Knife"] = {
 		mdl = "models/weapons/w_jmod_pocketknife.mdl",
 		swep = "wep_jack_gmod_combatknife",
-		ent = "ent_jack_gmod_ezweapon_combatknife"
+		ent = "ent_jack_gmod_ezweapon_combatknife",
+		Spawnable = false
 	}
 }
 
@@ -437,7 +441,33 @@ function JMod.LoadAmmoTable()
 	end
 end
 
+-- Dynamically create weapon Ents
+function JMod.GenerateWeaponEntities(tbl)
+	for name, info in pairs(tbl) do
+		if info.noent then continue end
+
+		local WeaponEnt = {}
+		WeaponEnt.Base = "ent_jack_gmod_ezweapon"
+		WeaponEnt.PrintName = info.PrintName or name
+		if info.Spawnable == nil then
+			WeaponEnt.Spawnable = true
+		else
+			WeaponEnt.Spawnable = info.Spawnable
+		end
+		WeaponEnt.AdminOnly = info.AdminOnly or false
+		WeaponEnt.Category = info.Category or "JMod - EZ Weapons"
+		WeaponEnt.WeaponName = name
+		WeaponEnt.ModelScale = info.gayPhysics and nil or info.size -- or math.max(info.siz.x, info.siz.y, info.siz.z)
+		scripted_ents.Register(WeaponEnt, info.ent)
+
+		if CLIENT then
+			language.Add(info.ent, name)
+		end
+	end
+end
+
 JMod.LoadAmmoTable()
+JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end
