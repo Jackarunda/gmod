@@ -148,6 +148,7 @@
 	["hint ent_jack_gmod_ezparts use"] = "Bump parts into broken devices t' fix 'em",
 	["hint ent_jack_gmod_ezpropellant"] = "Propellant be used t' craft various munitions",
 	["hint resource manage"] = "ALT+SHIFT+E t' split resources, tap together t' combine",
+	["hint geothermal gen"] = "the underground bolier requires a hot fissure to function properly",
 	["hint oil derrick"] = "ground pump must be on solid ground above a liquid resource reserve",
 	["hint ground scanner"] = "scanner can detect natural resources 'n metal objects, but must be on the ground 'n stationary",
 	["hint weapon steadiness"] = "hold ALT while aimin' t' focus 'n steady yer aim",

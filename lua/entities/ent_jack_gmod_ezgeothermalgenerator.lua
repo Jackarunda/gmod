@@ -67,7 +67,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				--JMod.Hint(self.EZowner, "oil derrick")
+				JMod.Hint(self.EZowner, "geothermal gen")
 			elseif(GroundIsSolid)then
 				local HitAng = Tr.HitNormal:Angle()
 				local Pitch = HitAng.p
@@ -96,11 +96,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self, activator)
-		JMod.Colorify(self)
-		if(IsValid(JMod.GetEZowner(self)) and (OldOwner ~= JMod.GetEZowner(self)))then
-			JMod.Colorify(self)
-		end
+		JMod.SetEZowner(self, activator, true)
 		if(State == STATE_BROKEN)then
 			JMod.Hint(activator, "destroyed", self)
 

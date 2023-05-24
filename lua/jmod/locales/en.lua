@@ -150,6 +150,7 @@
 	["hint ent_jack_gmod_ezparts use"] = "Bump parts into broken devices to fix them",
 	["hint ent_jack_gmod_ezpropellant"] = "Propellant is used to craft various munitions",
 	["hint resource manage"] = "ALT+SHIFT+E to split resources, tap together to combine",
+	["hint geothermal gen"] = "geothermal generator requires a geothermal vent to produce power",
 	["hint oil derrick"] = "Pumpjack must be on solid ground above a liquid resource reserve",
 	["hint ground drill"] = "Drill must be on solid ground above a solid resource deposit",
 	["hint ground scanner"] = "Scanner can detect natural resources and metal objects, but must be on the ground and stationary",

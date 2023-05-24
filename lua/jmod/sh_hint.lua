@@ -550,6 +550,10 @@ JMod.Hints = {
 	["resource manage"] = {
 		LangKey = "hint resource manage"
 	},
+	["geothermal gen"] = {
+		LangKey = "hint geothermal gen",
+		RepeatCount = 50
+	},
 	["oil derrick"] = {
 		LangKey = "hint oil derrick",
 		RepeatCount = 50
