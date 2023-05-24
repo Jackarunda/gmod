@@ -449,7 +449,11 @@ function JMod.GenerateWeaponEntities(tbl)
 		local WeaponEnt = {}
 		WeaponEnt.Base = "ent_jack_gmod_ezweapon"
 		WeaponEnt.PrintName = info.PrintName or name
-		WeaponEnt.Spawnable = info.Spawnable or true
+		if info.Spawnable == nil then
+			WeaponEnt.Spawnable = true
+		else
+			WeaponEnt.Spawnable = info.Spawnable
+		end
 		WeaponEnt.AdminOnly = info.AdminOnly or false
 		WeaponEnt.Category = info.Category or "JMod - EZ Weapons"
 		WeaponEnt.WeaponName = name
