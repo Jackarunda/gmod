@@ -618,7 +618,7 @@ function JMod.GetEZowner(ent)
 	end
 end
 
-function JMod.SetEZowner(ent, newOwner)
+function JMod.SetEZowner(ent, newOwner, setColor)
 	if not IsValid(ent) then return end
 	if not IsValid(newOwner) then newOwner = game.GetWorld() end
 
@@ -628,6 +628,10 @@ function JMod.SetEZowner(ent, newOwner)
 
 	if CPPI and isfunction(ent.CPPISetOwner) then
 		ent:CPPISetOwner(newOwner)
+	end
+
+	if setColor then
+		JMod.Colorify(ent)
 	end
 end
 
@@ -655,6 +659,8 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		if ent.Health and (type(ent.Health) == "function") then
 			local Helf = ent:Health()
 			if (type(Helf) == "number") and (Helf > 0) then return true end
+		elseif ent.Health and (type(ent.Health) == "number") then
+			if ent.Health > 0 then return true end
 		end
 	elseif ent:IsNPC() then
 		local Class = ent:GetClass()
@@ -733,7 +739,7 @@ function JMod.EMP(pos, range)
 end
 
 function JMod.Colorify(ent)
-	if IsValid(ent.EZowner) then
+	if IsValid(JMod.GetEZowner(ent)) then
 		if engine.ActiveGamemode() == "sandbox" and ent.EZowner:Team() == TEAM_UNASSIGNED then
 			local Col = ent.EZowner:GetPlayerColor()
 			ent:SetColor(Color(Col.x * 255, Col.y * 255, Col.z * 255))
@@ -748,6 +754,8 @@ function JMod.Colorify(ent)
 				end
 			end
 		end
+	else
+		ent:SetColor(Color(255, 255, 255))
 	end
 end
 

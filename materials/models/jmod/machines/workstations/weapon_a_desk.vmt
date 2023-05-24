@@ -1,8 +1,8 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/mosi/fallout4/furniture/workstations/weapon_drill"
-	"$bumpmap" "models/mosi/fallout4/furniture/workstations/weapon_drill_n"
-
+	"$basetexture" "models/jmod/machines/workstations/weapon_a_desk"
+	"$bumpmap" "models/jmod/machines/workstations/weapon_a_desk_n"
+	
 	"$phong" "1"
 	"$phongexponent" "10"
 	"$phongfresnelranges" "[1 1 1]"
