@@ -3,16 +3,16 @@
 local Sprites = {"particle/smokestack"}
 
 function EFFECT:Init(data)
-	local Pos, Norm, Vel, Life = data:GetOrigin(), data:GetNormal(), data:GetStart(), data:GetScale()
+	local Pos, Norm, Vel, Scl = data:GetOrigin(), data:GetNormal(), data:GetStart(), data:GetScale()
 	local R, G, B = 255, 250, 250
 	local Emitter = ParticleEmitter(Pos)
 	local Sprite = Sprites[math.random(1, #Sprites)]
 
-	for i = 1, 2 do
+	for i = 1, 2 * Scl do
 		local RollParticle = Emitter:Add(Sprite, Pos)
 
 		if RollParticle then
-			RollParticle:SetVelocity(Vel + Norm * math.random(50, 100) + VectorRand() * 10)
+			RollParticle:SetVelocity(Vel + Norm * math.random(50, 100) + VectorRand() * 10 * (Scl ^.8))
 			RollParticle:SetAirResistance(100)
 			RollParticle:SetDieTime(math.Rand(3, 5))
 			RollParticle:SetStartAlpha(math.random(150, 200))

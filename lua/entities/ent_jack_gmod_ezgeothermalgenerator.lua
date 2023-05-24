@@ -235,6 +235,39 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:OnDestroy(dmginfo)
+		local Pos = self:GetPos()
+		local Foof = EffectData()
+		Foof:SetOrigin(Pos + self:GetUp() * 10)
+		Foof:SetNormal(self:GetUp())
+		Foof:SetScale(100)
+		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+
+		local Range = 400
+		for _, ent in pairs(ents.FindInSphere(Pos, Range)) do
+			if ent ~= self then
+				local DDistance = Pos:Distance(ent:GetPos())
+				local DistanceFactor = (1 - DDistance / Range) ^ 2
+
+				if JMod.ClearLoS(self, ent) then
+					local Dmg = DamageInfo()
+					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
+					Dmg:SetDamageType(DMG_BURN)
+					Dmg:SetDamageForce(Vector(0, 0, 5000) * DistanceFactor) -- some random upward force
+					Dmg:SetAttacker(dmginfo:GetAttacker() or game.GetWorld()) -- the earth is mad at you
+					Dmg:SetInflictor(dmginfo:GetAttacker() or game.GetWorld())
+					Dmg:SetDamagePosition(ent:GetPos())
+
+					if ent.TakeDamageInfo then
+						ent:TakeDamageInfo(Dmg)
+					end
+				end
+			end
+		end
+	end
+
 	function ENT:OnRemove()
 		if self.SoundLoop then 
 			self.SoundLoop:Stop()
