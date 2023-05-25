@@ -1,14 +1,14 @@
 "VertexlitGeneric"
 {
-	"$basetexture" "models/mosi/fallout4/furniture/workstations/weapon_tank"
-	"$bumpmap" "models/mosi/fallout4/furniture/workstations/weapon_tank_n"
+	"$basetexture" "models/jmod/machines/workstations/weapon_tank"
+	"$bumpmap" "models/jmod/machines/workstations/weapon_tank_n"
 
 	"$phong"	"1"
 	"$phongexponent"	"1"
 	"$phongalbedotint"	"1"
 	"$phongboost"	"1"
 	"$phongfresnelranges"	"[1 3 8]"
-	"$phongexponenttexture" "models\mosi\fallout4\furniture\workstations\shared\white"
+	"$phongexponenttexture" "models\jmod\machines\workstations\shared\white"
 	"$blendtintbybasealpha" "1"
  	"$blendtintcoloroverbase" "0"
 	

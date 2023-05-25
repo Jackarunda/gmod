@@ -67,7 +67,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				--JMod.Hint(self.EZowner, "oil derrick")
+				JMod.Hint(self.EZowner, "geothermal gen")
 			elseif(GroundIsSolid)then
 				local HitAng = Tr.HitNormal:Angle()
 				local Pitch = HitAng.p
@@ -96,11 +96,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self, activator)
-		JMod.Colorify(self)
-		if(IsValid(JMod.GetEZowner(self)) and (OldOwner ~= JMod.GetEZowner(self)))then
-			JMod.Colorify(self)
-		end
+		JMod.SetEZowner(self, activator, true)
 		if(State == STATE_BROKEN)then
 			JMod.Hint(activator, "destroyed", self)
 
@@ -133,6 +129,7 @@ if(SERVER)then
 
 		if self.EZinstalled then
 			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+			self.NextUse = CurTime() + 1
 			timer.Simple(0.6, function()
 				if not IsValid(self) then return end
 				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
@@ -147,6 +144,8 @@ if(SERVER)then
 						self.SoundLoop:ChangePitch(100)
 					end
 				end)
+			elseif self:GetWater() <= 0 then
+				JMod.Hint(self.EZowner, "refill geo")
 			end
 		else
 			self:TryPlace()
@@ -205,7 +204,7 @@ if(SERVER)then
 				end
 
 				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
-				self:SetProgress(self:GetProgress() + FlowRate / (self.ChargeRate / 2))
+				self:SetProgress(self:GetProgress() + FlowRate / (self.ChargeRate))
 
 				if self.NextWaterLoseTime < Time then
 					self.NextWaterLoseTime = Time + FlowRate * self.ChargeRate * 20
@@ -233,6 +232,39 @@ if(SERVER)then
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted >= 1 then
 			self:TurnOn(JMod.GetEZowner(self))
+		end
+	end
+
+	function ENT:OnDestroy(dmginfo)
+		local Pos = self:GetPos()
+		local Foof = EffectData()
+		Foof:SetOrigin(Pos + self:GetUp() * 10)
+		Foof:SetNormal(self:GetUp())
+		Foof:SetScale(100)
+		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+
+		local Range = 400
+		for _, ent in pairs(ents.FindInSphere(Pos, Range)) do
+			if ent ~= self then
+				local DDistance = Pos:Distance(ent:GetPos())
+				local DistanceFactor = (1 - DDistance / Range) ^ 2
+
+				if JMod.ClearLoS(self, ent) then
+					local Dmg = DamageInfo()
+					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
+					Dmg:SetDamageType(DMG_BURN)
+					Dmg:SetDamageForce(Vector(0, 0, 5000) * DistanceFactor) -- some random upward force
+					Dmg:SetAttacker(dmginfo:GetAttacker() or game.GetWorld()) -- the earth is mad at you
+					Dmg:SetInflictor(dmginfo:GetAttacker() or game.GetWorld())
+					Dmg:SetDamagePosition(ent:GetPos())
+
+					if ent.TakeDamageInfo then
+						ent:TakeDamageInfo(Dmg)
+					end
+				end
+			end
 		end
 	end
 
