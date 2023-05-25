@@ -240,7 +240,7 @@ if(SERVER)then
 		local Foof = EffectData()
 		Foof:SetOrigin(Pos + self:GetUp() * 10)
 		Foof:SetNormal(self:GetUp())
-		Foof:SetScale(100)
+		Foof:SetScale(50)
 		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
