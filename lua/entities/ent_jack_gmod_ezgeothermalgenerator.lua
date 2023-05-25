@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Geothermal Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true --Until it's completed
+ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/geothermal.mdl"
 --
@@ -210,13 +210,6 @@ if(SERVER)then
 					self.NextWaterLoseTime = Time + FlowRate * self.ChargeRate * 20
 
 					self:SetWater(self:GetWater() - 1 * FlowRate)
-					self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
-					local Foof = EffectData()
-					Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
-					Foof:SetNormal(self:GetUp())
-					Foof:SetScale(1)
-					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
-					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 				end
 				
 
@@ -227,6 +220,19 @@ if(SERVER)then
 				self.LastWater = math.floor(self:GetWater())
 			end
 		end
+
+		if State == STATE_RUNNING then
+			self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
+			local Foof = EffectData()
+			Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
+			Foof:SetNormal(self:GetUp())
+			Foof:SetScale(1)
+			Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+			util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+		end
+
+		self:NextThink(Time + .2)
+		return true
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)

@@ -18,7 +18,7 @@
 
 local TotalParticleCount = 0
 timer.Create("JMod_ResourceLiquidParticleClear", 60, 0, function()
-	TotalParticleCount = 0 // we should reset this periodically in case some gmod nonsense causes it to get out of sync
+	TotalParticleCount = 0 -- we should reset this periodically in case some gmod nonsense causes it to get out of sync
 end)
 
 function EFFECT:Init(data)
