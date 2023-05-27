@@ -635,74 +635,74 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		if not IsValid(ToolBox) then return end
 		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
 		
-		if ToolBox.EZpreview then
-			if ToolBox.EZpreview.Box then
-				if ToolBox:GetSelectedBuild() ~= "" then
-					local Filter = {ply}
-					for k, v in pairs(ents.FindByClass("npc_bullseye")) do
-						table.insert(Filter, v)
-					end
-					local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
-					-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
-																																													--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-					render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.Box.sizeScale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
-				end
+		-- if ToolBox.EZpreview then
+		-- 	if ToolBox.EZpreview.Box then
+		-- 		if ToolBox:GetSelectedBuild() ~= "" then
+		-- 			local Filter = {ply}
+		-- 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
+		-- 				table.insert(Filter, v)
+		-- 			end
+		-- 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
+		-- 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
+		-- 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
+		-- 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.Box.sizeScale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
+		-- 		end
 
-			elseif ToolBox:GetSelectedBuild() == "EZ Nail" then
-				local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
+		-- 	elseif ToolBox:GetSelectedBuild() == "EZ Nail" then
+		-- 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
-				local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
-				local Tr2 = nil
+		-- 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+		-- 		local Tr2 = nil
 
-				if Tr1.Hit then
-					local Ent1 = Tr1.Entity
-					if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
+		-- 		if Tr1.Hit then
+		-- 			local Ent1 = Tr1.Entity
+		-- 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
 
-					Tr2 = util.QuickTrace(Pos, Vec * 120, {ply, Ent1})
+		-- 			Tr2 = util.QuickTrace(Pos, Vec * 120, {ply, Ent1})
 
-					if Tr2.Hit then
-						local Ent2 = Tr2.Entity
-						if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
-						local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
-						if Dist > 30 then return end
-					end
-				end
-				-- would've liked to use the existing funcs to find nail location here
-				-- but they're server-side only
-				-- and also use ent:GetPhysicsObject() which will return nil 99% of the time on client
+		-- 			if Tr2.Hit then
+		-- 				local Ent2 = Tr2.Entity
+		-- 				if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
+		-- 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+		-- 				if Dist > 30 then return end
+		-- 			end
+		-- 		end
+		-- 		-- would've liked to use the existing funcs to find nail location here
+		-- 		-- but they're server-side only
+		-- 		-- and also use ent:GetPhysicsObject() which will return nil 99% of the time on client
 
-				if not Tr1.Hit or not Tr2.Hit or not Vec then return end
+		-- 		if not Tr1.Hit or not Tr2.Hit or not Vec then return end
 
-				render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
+		-- 		render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
 
-			elseif ToolBox:GetSelectedBuild() == "EZ Bolt" then
-				local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
+		-- 	elseif ToolBox:GetSelectedBuild() == "EZ Bolt" then
+		-- 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
-				local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+		-- 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
 
-				if Tr1.Hit then
-					local Ent1 = Tr1.Entity
-					if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
+		-- 		if Tr1.Hit then
+		-- 			local Ent1 = Tr1.Entity
+		-- 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
 
-					local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
+		-- 			local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
 
-					if Tr2.Hit then
-						local Ent2 = Tr2.Entity
-						if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
-						if Ent2:IsWorld() then return end
-						local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
-						if Dist > 30 then return end
+		-- 			if Tr2.Hit then
+		-- 				local Ent2 = Tr2.Entity
+		-- 				if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
+		-- 				if Ent2:IsWorld() then return end
+		-- 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+		-- 				if Dist > 30 then return end
 
-					end
+		-- 			end
 
-					if not Tr1.Hit or not Tr2.Hit or not Vec then return end
+		-- 			if not Tr1.Hit or not Tr2.Hit or not Vec then return end
 
-					local Dir = (Tr1.HitPos - Tr2.HitPos):GetNormalized()
+		-- 			local Dir = (Tr1.HitPos - Tr2.HitPos):GetNormalized()
 
-					render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
-				end
-			end
-		end
+		-- 			render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
+		-- 		end
+		-- 	end
+		-- end
 	end
 end)
 
