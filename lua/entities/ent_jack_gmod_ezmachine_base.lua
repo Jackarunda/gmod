@@ -216,7 +216,12 @@ if(SERVER)then
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
 		self.DamageTypeTable = JMod.DefualtArmorTable
+		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
+
+		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
+		--=== Apply changes and state things that shouldn't be overrideable below.====-
+		
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
 		--print(self:GetNW2Float("EZdurability", -1))

@@ -81,6 +81,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)

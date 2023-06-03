@@ -125,7 +125,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if self:GetState() ~= STATE_OFF then return end
+		if self:GetState() > 0 then return end
 
 		if self.EZinstalled then
 			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
@@ -153,7 +153,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if self:GetState() <= STATE_OFF then return end
+		if (self:GetState() <= 0) then return end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
@@ -167,29 +167,27 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+		local Phys = self:GetPhysicsObject()
+
+		if self.EZinstalled then
+			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+				self.EZinstalled = false
+				self:TurnOff()
+
+				return
+			end
+		end
 		
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
 
-			local Phys = self:GetPhysicsObject()
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
 				return
 			elseif State == STATE_RUNNING then
 
-				if self.EZinstalled then
-					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-						self.EZinstalled = false
-						self:TurnOff()
-
-						return
-					end
-				else
-					self:TurnOff()
-
-					return
-				end
+				if not self.EZinstalled then self:TurnOff() return end
 
 				if self:GetWater() <= 0 then
 					self:TurnOff()
