@@ -291,6 +291,19 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 		print("JMod detected unaccounted-for lua file '" .. f .. "'-check prefixes!")
 	end
 end
+
+concommand.Add("aboot_debug", function(ply, cmd, args) 
+	if not GetConVar("sv_cheats"):GetBool() then return end
+	local EyeTrace = ply:GetEyeTrace()
+	local EffectSpot = EyeTrace.HitPos + Vector(0, 0, 20)
+	local Poof = EffectData()
+	Poof:SetNormal(Vector(0, 0, -1))
+	Poof:SetScale(1)
+	Poof:SetOrigin(EffectSpot)
+	Poof:SetStart(Vector(0, 0, 10))
+	util.Effect("eff_aboot_gmod_ezjumppoof", Poof, true)
+	EmitSound(JModHL2.EZ_JUMPSNDS.BOOST1, EffectSpot, -1)
+end, nil, "Debug testing command")
 --[[
 Physics Sounds
 

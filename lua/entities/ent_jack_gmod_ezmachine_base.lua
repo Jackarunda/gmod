@@ -219,6 +219,7 @@ if(SERVER)then
 		if(self.CustomInit)then self:CustomInit() end
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
+		--print(self:GetNW2Float("EZdurability", -1))
 		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
 		else
@@ -228,8 +229,8 @@ if(SERVER)then
 		if(JMod.GetEZowner(self))then JMod.Colorify(self) end
 		---
 		if(self.EZupgradable)then
-			self.UpgradeProgress={}
-			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+			self.UpgradeProgress = {}
+			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 		self.NextRefillTime = 0
 	end
