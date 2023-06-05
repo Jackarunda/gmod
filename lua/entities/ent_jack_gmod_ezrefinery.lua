@@ -128,7 +128,7 @@ if(SERVER)then
 			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 65 * i)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward
-			timer.Simple(i / 2, function()
+			timer.Simple(i * .5, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, typ, amt*modifier, spawnVec, spawnAng, ejectVec, true, 5000)
 				end

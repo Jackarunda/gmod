@@ -819,6 +819,7 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
+	amount = math.Round(amount)
 	if not(amount) or (amount < 1) then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
@@ -828,17 +829,16 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			local BestCrate = nil
 			local IsGenericCrate = true
 
-			for _, ent in pairs(ents.FindInSphere(SpawnPos, range)) do
+			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(machine:OBBCenter()), range)) do
 				if (ent.IsJackyEZcrate) then
-					local Dist = SpawnPos:DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
+					local Dist = machine:LocalToWorld(machine:OBBCenter()):DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
 					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
-						local SuppliesOfType = ent:GetEZsupplies(resourceType)
-						print(SuppliesOfType, resourceType)
-						if SuppliesOfType and SuppliesOfType >= 0 then
+						local EntSupplies = ent:GetEZsupplies()
+						if EntSupplies[resourceType] ~= nil then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = false
-						elseif (IsGenericCrate == true) then
+						elseif EntSupplies["generic"] == 0 and (IsGenericCrate == true) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = true
@@ -846,8 +846,9 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 					end
 				end
 			end
+			
 			if IsValid(BestCrate) then
-				local Accepted = BestCrate:TryLoadResource(resourceType, amount)
+				local Accepted = BestCrate:TryLoadResource(resourceType, amount, true)
 				
 				if Accepted > 0 then
 					local entPos = BestCrate:LocalToWorld(BestCrate:OBBCenter())
@@ -863,13 +864,13 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 
 		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
-		timer.Simple(1 * math.ceil(amount/100), function()
+		timer.Simple(1 * math.ceil(amount/100 * JMod.Config.ResourceEconomy.MaxResourceMult), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(SpawnAngle)
 			Resource:Spawn()
 			JMod.SetEZowner(MachineOwner)
-			Resource:SetResource(math.Round(SpawnAmount))
+			Resource:SetResource(SpawnAmount)
 			Resource:CalcWeight()
 			Resource:Activate()
 			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
