@@ -821,7 +821,7 @@ end
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
 	if not(amount) or (amount < 1) then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
-	for i = 1, math.ceil(amount/100) do
+	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
 		if findCrate then
 			range = range or 256
 			range = range * range -- Sqr root stuff
@@ -832,11 +832,13 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 				if (ent.IsJackyEZcrate) then
 					local Dist = SpawnPos:DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
 					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
-						if (ent:GetResourceType() == resourceType) then
+						local SuppliesOfType = ent:GetEZsupplies(resourceType)
+						print(SuppliesOfType, resourceType)
+						if SuppliesOfType and SuppliesOfType >= 0 then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = false
-						elseif (ent:GetResourceType() == "generic") and (IsGenericCrate == true) then
+						elseif (IsGenericCrate == true) then
 							BestCrate = ent
 							range = Dist
 							IsGenericCrate = true
@@ -859,7 +861,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			end
 		end
 
-		local SpawnAmount = math.min(amount, 100)
+		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])

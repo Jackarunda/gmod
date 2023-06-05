@@ -25,7 +25,7 @@ function ENT:GetEZsupplies(typ)
 		if Supplies[typ] and Supplies[typ] then
 			return Supplies[typ]
 		else
-			return 
+			return nil
 		end
 	else
 		return Supplies
