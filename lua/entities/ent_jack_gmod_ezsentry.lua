@@ -235,7 +235,7 @@ if(SERVER)then
 	end
 	
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		self:ResetMemory()
 	end
 

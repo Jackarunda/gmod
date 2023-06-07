@@ -556,8 +556,11 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + 1
+		if ent.NextUseTime then
+			ent.NextUseTime = Time + 1
+		end
 	end
 
 elseif(CLIENT)then
