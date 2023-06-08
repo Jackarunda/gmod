@@ -243,15 +243,15 @@ if SERVER then
 						if (IsPlaya) then
 							local SpeedFactor = Speed
 							local DistFactor = (Dist < 150 and 8) or 1
-							ThreatAddition = SpeedFactor * DistFactor / 60
+							ThreatAddition = SpeedFactor * DistFactor / 50
 						elseif (IsNPC) then
 							local SpeedFactor = Speed
 							local HealthFactor = ((ent.Health and ent:Health()) or 100) ^ .6
-							ThreatAddition = SpeedFactor * HealthFactor / 1500
+							ThreatAddition = SpeedFactor * HealthFactor / 1200
 						elseif (IsVehicular) then
 							local SpeedFactor = Speed
 							local MassFactor = Mass ^ .5
-							ThreatAddition = SpeedFactor * MassFactor / 1500
+							ThreatAddition = SpeedFactor * MassFactor / 1200
 						end
 						-- jprint(ent, ThreatAddition, math.Round(self.Anger))
 						Threat = Threat + ThreatAddition * math.Rand(.8, 1.2)
