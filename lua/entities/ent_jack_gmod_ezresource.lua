@@ -33,8 +33,7 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end -- Important because this is shared as well
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
 	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
-	self:SetResource(math.Clamp(amt, 0, self.MaxResources)) -- Otherwise, just set our resource to the new value
-	self:CalcWeight()
+	self:SetResource(math.max(amt, 0)) -- Otherwise, just set our resource to the new value
 end
 
 ---
@@ -104,19 +103,7 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(math.max(self.Mass, self.MinimumMass or 5))
-				self:GetPhysicsObject():Wake()
-				self:CalcWeight()
-			end
-		end)
-	end
-
-	function ENT:CalcWeight()
-		timer.Simple(0.01, function()
-			if IsValid(self) and IsValid(self:GetPhysicsObject()) then
-				local Frac = self:GetResource() / self.MaxResources
-				if self.WeightlessResource then Frac = 1 end
-				self:GetPhysicsObject():SetMass(math.max(self.Mass * Frac, self.MinimumMass or 5))
+				self:GetPhysicsObject():SetMass(math.max(self.Mass))
 				self:GetPhysicsObject():Wake()
 			end
 		end)
@@ -137,7 +124,6 @@ if SERVER then
 
 					if Sum <= self.MaxResources then
 						self:SetResource(Sum)
-						self:CalcWeight()
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
 
@@ -158,7 +144,6 @@ if SERVER then
 
 				if Used > 0 then
 					self:SetResource(Resource - Used)
-					self:CalcWeight()
 
 					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), 1, 1, 1)
 
@@ -230,15 +215,15 @@ if SERVER then
 				Box:Spawn()
 				Box:Activate()
 				Box:SetResource(NewCountOne)
-				timer.Simple(1, function() 
-					Box:CalcWeight() 
-				end)
 				--
-				activator:PickupObject(Box)
+				timer.Simple(0.1, function()
+					if IsValid(Box) and IsValid(activator) and activator:Alive() then
+						activator:PickupObject(Box)
+					end
+				end)
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
-				self:CalcWeight()
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResources, 1)
 			end
 		elseif self.AltUse and AltPressed then

@@ -143,7 +143,11 @@ if SERVER then
 		Box:Activate()
 		Box:SetResource(Given)
 		Box:CalcWeight()
-		activator:PickupObject(Box)
+		timer.Simple(0.1, function()
+			if IsValid(Box) and IsValid(activator) and activator:Alive() then
+				activator:PickupObject(Box)
+			end
+		end)
 		Box.NextLoad = CurTime() + 2
 		self:SetResource(Resource - Given)
 		self:EmitSound("Ammo_Crate.Close")
