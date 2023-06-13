@@ -49,6 +49,7 @@ if(SERVER)then
 
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
+		SelfAng = self:GetAngles()
 		if (Tr.Hit) and (Tr.HitWorld) then
 			local GroundIsSolid = true
 			for i = 1, 50 do
@@ -61,13 +62,12 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				local Pitch = Tr.HitNormal:Angle().x + 90
-				local Yaw = self:GetAngles().y
-				if Tr.HitNormal:Angle().y >= 20 then
-					Yaw = Tr.HitNormal:Angle().y
-				end
-				local Roll = Tr.HitNormal:Angle().z - 90
-				self:SetAngles(Angle(Pitch, Yaw, Roll))
+				local HitAngle = Tr.HitNormal:Angle()
+				--jprint("Before", HitAngle)
+				HitAngle:RotateAroundAxis(HitAngle:Up(), 90)
+				--jprint("After", HitAngle)
+				--self:SetAngles(HitAngle)
+				self:SetAngles(Angle(0, SelfAng.y, -90))
 				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 				---
 				self:GetPhysicsObject():EnableMotion(false)
@@ -118,23 +118,24 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		local State=self:GetState()
-		local OldOwner=self.EZowner
+		local State = self:GetState()
+		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self,activator)
-		if(IsValid(self.EZowner))then
-			if(OldOwner~=self.EZowner)then -- if owner changed then reset team color
-				JMod.Colorify(self)
-			end
-		end
+		JMod.SetEZowner(self, activator, true)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif(State==STATE_OFF)then
+		elseif State == STATE_OFF then
+			if alt and self.EZinstalled then
+				self:GetPhysicsObject():EnableMotion(true)
+				self.EZinstalled = false
+
+				return
+			end
 			self:TurnOn(activator)
-		elseif(State==STATE_RUNNING)then
+		elseif State == STATE_RUNNING then
 			if alt then
 				self:ProduceResource()
 

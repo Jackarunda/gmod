@@ -821,7 +821,7 @@ end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
 	amount = math.Round(amount)
-	if not(amount) or (amount < 1) then print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
+	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
 		if findCrate then
@@ -872,7 +872,6 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:Spawn()
 			JMod.SetEZowner(MachineOwner)
 			Resource:SetResource(SpawnAmount)
-			Resource:CalcWeight()
 			Resource:Activate()
 			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
 			--Resource:GetPhysicsObject():SetVelocity(ejectionVector)

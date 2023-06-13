@@ -65,9 +65,10 @@ if(SERVER)then
 				JMod.Hint(self.EZowner, "ground drill")
 			elseif(GroundIsSolid)then
 				--
-				local Roll = Tr.HitNormal:Angle().r
-				local Yaw = Tr.HitNormal:Angle().y
-				self:SetAngles(Angle(Tr.HitNormal:Angle().p + 90, (Yaw >= 20 and Yaw) or SelfAng.y, Roll))
+				local HitAngle = Tr.HitNormal:Angle()
+				HitAngle:RotateAroundAxis(HitAngle:Right(), 270)
+				HitAngle:RotateAroundAxis(HitAngle:Up(), SelfAng.y - HitAngle.y)
+				self:SetAngles(HitAngle)
 				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 5)
 				--
 				self:GetPhysicsObject():EnableMotion(false)
@@ -85,7 +86,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() ~= STATE_OFF then return end
+		if self:GetState() < STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
@@ -115,20 +116,20 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self,activator)
-		if(IsValid(self.EZowner))then
-			if(OldOwner ~= self.EZowner)then -- if owner changed then reset team color
-				JMod.Colorify(self)
-			end
-		end
+		JMod.SetEZowner(self, activator, true)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
 		elseif State == STATE_OFF then
-			if (self:GetElectricity() <= 0) then JMod.Hint(activator, "nopower") return end
-			self:TryPlace()
+			if alt and self.EZinstalled then
+				self:GetPhysicsObject():EnableMotion(true)
+				self.EZinstalled = false 
+				
+				return
+			end
+			self:TurnOn(activator)
 		elseif State == STATE_RUNNING then
 			if alt then
 				self:ProduceResource()
