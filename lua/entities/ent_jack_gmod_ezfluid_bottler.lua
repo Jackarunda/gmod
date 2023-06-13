@@ -5,20 +5,22 @@ ENT.PrintName = "EZ Fluid Bottler"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = false -- Temporary, until the next phase of Econ2
+ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/props_c17/furnitureboiler001a.mdl"
-ENT.Mass = 200
+ENT.Model = "models/compressor/compressorbake.mdl"
+ENT.Mass = 500
+ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.MaxPower = 100
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 80,
+	MaxDurability = 100,
 	MaxElectricity = 100
 }
 
 ENT.DynamicPerfSpecs = {
+	Armor = 1,
 	ChargeSpeed = 1
 }
 
@@ -31,33 +33,16 @@ end
 
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 
-if(SERVER)then
-	function ENT:SpawnFunction(ply,tr,ClassName)
-		local ent = ents.Create(ClassName)
-		ent:SetPos(tr.HitPos + tr.HitNormal*25)
-		ent:SetAngles(Angle(0, 0, 0))
-		JMod.SetEZowner(ent, ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-		return ent
-	end
-
+if SERVER then
 	function ENT:CustomInit()
 		self.EZupgradable = true
-		self:SetState(STATE_ON)
-		self:SetProgress(0)
-		self.NextUse = 0
 		self.Range = 300
-		if self:WaterLevel() >= 1 then
-			self.Submerged = true
-			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.WATER)
-		else
-			self.Submerged = false 
-			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.GAS)
-		end
+		self.NextUseTime = 0
+		self:SetProgress(0)
+		timer.Simple(0, function()
+			self:TurnOn()
+		end)
+		self.SoundLoop = CreateSound(self, "ambient/machines/engine1.wav")
 	end
 
 	function ENT:Use(activator)
@@ -65,18 +50,14 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self, activator)
-		JMod.Colorify(self)
-		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
-			JMod.Colorify(self)
-		end
-		if(State==STATE_BROKEN)then
-			JMod.Hint(activator,"destroyed",self)
+		JMod.SetEZowner(self, activator, false)
+		if State == STATE_BROKEN then
+			JMod.Hint(activator, "destroyed", self)
 		return
-		elseif(State==STATE_OFF)then
+		elseif State == STATE_OFF then
 			self:TurnOn()
-		elseif(State==STATE_ON)then
-			if(alt)then
+		elseif State == STATE_ON then
+			if alt then
 				self:ProduceResource()
 				return
 			end
@@ -84,66 +65,67 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:SpawnEffect(pos)
-		--[[local effectdata=EffectData()
-		effectdata:SetOrigin(pos)
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(5,10))
-		effectdata:SetScale(math.Rand(.5,1.5))
-		effectdata:SetRadius(math.Rand(2,4))
-		util.Effect("Sparks", effectdata)]]--
-		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+	function ENT:OnRemove()
+		self.SoundLoop:Stop()
 	end
 
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local amt, chemAmt, fissileAmt = math.Clamp(math.floor(self:GetProgress()), 0, 100), math.min(math.floor(self:GetChemicals()), 100), math.min(math.floor(self:GetFissile()), 100)
 
-		if amt <= 0 then self:SetFluidType("generic") return end
+		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos - Forward * 30 - Up * 30)
-		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), Forward * 100, true, 200)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 55)
+		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), -Forward, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(pos)
+		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 		if chemAmt >= 1 then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.CHEMICALS, chemAmt, pos, Angle(0, 0, 0), Forward * 100 + Right * 100, true, 200)
+			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.CHEMICALS, chemAmt, pos, Angle(0, 0, 0), -Forward, true, 200)
 			self:SetChemicals(math.Clamp(self:GetChemicals() - chemAmt, 0, 100))
 		end
 		if chemAmt >= 1 then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, fissileAmt, pos, Angle(0, 0, 0), Forward * 100 - Right * 100, true, 200)
+			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, fissileAmt, pos, Angle(0, 0, 0), -Forward, true, 200)
 			self:SetFissile(math.Clamp(self:GetFissile() - fissileAmt, 0, 100))
 		end
 	end
 
 	function ENT:TurnOn()
 		if self:GetState() > STATE_OFF then return end
-		if (self:GetElectricity() > 0) then
+		if self:GetElectricity() > 0 then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
-			self.NextUse = CurTime() + 1
+			self:CheckWaterLevel()
+			self.NextUseTime = CurTime() + 1
+			self.SoundLoop:Play()
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)
-		self.NextUse = CurTime() + 1
+		self.NextUseTime = CurTime() + 1
+		self.SoundLoop:Stop()
 	end
 
-	function ENT:Submerge()
-		self:ProduceResource()
-		self.Submerged = true
-		self:SetFluidType(JMod.EZ_RESOURCE_TYPES.WATER)
-	end
-
-	function ENT:Surface()
-		self:ProduceResource()
-		self.Submerged = false
-		self:SetFluidType(JMod.EZ_RESOURCE_TYPES.GAS)
+	function ENT:CheckWaterLevel()
+		if self:WaterLevel() >= 1 then
+			if self.Submerged == false then
+				self:ProduceResource()
+			end
+			self.Submerged = true
+			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.WATER)
+		else
+			if self.Submerged == true then
+				self:ProduceResource()
+			end
+			self.Submerged = false 
+			self:SetFluidType(JMod.EZ_RESOURCE_TYPES.GAS)
+		end
 	end
 
 	function ENT:CleanseAir()
@@ -176,30 +158,20 @@ if(SERVER)then
 		local State = self:GetState()
 		if State == STATE_ON then
 
-			if self:WaterLevel() >= 1 then
-				if not self.Submerged then
-					self:Submerge()
-				
-					return
-				end
-
-			elseif self:WaterLevel() <= 0 then
-				if self.Submerged then
-					self:Surface()
-
-					return
-				end
-				self:CleanseAir()
-
-			end
-
-			self:ConsumeElectricity(1)
+			self:CheckWaterLevel()
 
 			local grade = self:GetGrade()
 
+			self:ConsumeElectricity(0.34)
+
 			if self:GetProgress() < 100 then
-				local rate = math.Round(2 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
-				self:SetProgress(self:GetProgress() + rate)
+				local rate = math.Round(1.36 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
+				if not(self.Submerged) then
+					self:SetProgress(self:GetProgress() + (rate * 0.5))
+					self:CleanseAir()
+				else
+					self:SetProgress(self:GetProgress() + rate)
+				end
 			end
 
 			if self:GetProgress() >= 100 then
@@ -214,9 +186,9 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
-		ent.NextUse = Time + math.Rand(0, 3)
+		ent.NextUseTime = Time + math.Rand(0, 3)
 	end
 
 elseif CLIENT then
@@ -242,21 +214,22 @@ elseif CLIENT then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 135)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
-				cam.Start3D2D(SelfPos + Up * 5 - Forward * 20 - Right, DisplayAng, .1)
-				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				surface.DrawRect(90,  0, 128, 128)
-				JMod.StandardRankDisplay(Grade, 152, 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				cam.Start3D2D(SelfPos + Up * 45 + Forward * 21 - Right * 17, DisplayAng, .1)
+					surface.SetDrawColor(10, 10, 10, Opacity + 50)
+					surface.DrawRect(90,  0, 128, 128)
+					JMod.StandardRankDisplay(Grade, 152, 68, 118, Opacity + 50)
+					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(string.upper(self:GetFluidType()), "JMod-Display", 0, 120, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end

@@ -235,7 +235,7 @@ if(SERVER)then
 	end
 	
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		self:ResetMemory()
 	end
 
@@ -357,8 +357,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		local State = self:GetState()
-		if (State == STATE_OFF) or (State == STATE_BROKEN) then return end
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 		self:ResetMemory()

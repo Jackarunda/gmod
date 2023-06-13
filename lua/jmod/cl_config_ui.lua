@@ -26,12 +26,12 @@ local function BlurBackground(panel)
 	Dynamic = math.Clamp(Dynamic + (1 / FrameRate) * 7, 0, 1)
 end
 
-/*-----------------------------------+
- |           For ConfigUI,           |
- | Parses the settings in the config |
- |  then draws the correct controls  |
- |         for each setting.         |
- +-----------------------------------*/
+--[[-----------------------------------+
+|             For ConfigUI,            |
+|   Parses the settings in the config  |
+|    then draws the correct controls   |
+|           for each setting.          |
++-------------------------------------]]
 
 local function PopulateControls(parent, data, motherFrame, isCraftables)
 	parent:Clear()

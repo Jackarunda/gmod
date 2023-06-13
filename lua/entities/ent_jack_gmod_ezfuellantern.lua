@@ -179,7 +179,7 @@ if SERVER then
 	end
 
 	function ENT:TurnOff()
-		if self:GetState() == STATE_OFF then return end
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		if (IsValid(self.ProjTexLight)) then self.ProjTexLight:Remove() end
 	end

@@ -331,6 +331,7 @@ concommand.Add("jmod_debug_removeoutpost", function(ply, cmd, args)
 end, nil, "Removes a radio outpost for your team.")
 
 local function GetPlayerFromNick(nickname)
+	if not nickname then return nil end
 	nickname = string.lower(nickname)
 	local Entities = ents.GetAll()
 	for _, v in ipairs(Entities) do
@@ -345,7 +346,7 @@ end
 
 concommand.Add("jmod_airdropplayer", function(ply, cmd, args) 
 	if not ply:IsUserGroup("superadmin") then return end
-
+	
 	local TargetPly, TargetPos, Punish = GetPlayerFromNick(args[1]), ply:GetPos(), false
 
 	if not(IsValid(TargetPly)) then 

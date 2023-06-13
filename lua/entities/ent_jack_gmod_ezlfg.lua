@@ -81,6 +81,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
@@ -188,7 +189,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)

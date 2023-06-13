@@ -79,6 +79,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -208,7 +209,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.LastOreTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)

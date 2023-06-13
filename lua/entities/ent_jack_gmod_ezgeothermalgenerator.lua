@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Geothermal Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true --Until it's completed
+ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/geothermal.mdl"
 --
@@ -125,7 +125,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn()
-		if self:GetState() ~= STATE_OFF then return end
+		if self:GetState() > 0 then return end
 
 		if self.EZinstalled then
 			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
@@ -153,7 +153,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if self:GetState() <= STATE_OFF then return end
+		if (self:GetState() <= 0) then return end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
@@ -167,29 +167,27 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+		local Phys = self:GetPhysicsObject()
+
+		if self.EZinstalled then
+			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+				self.EZinstalled = false
+				self:TurnOff()
+
+				return
+			end
+		end
 		
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
 
-			local Phys = self:GetPhysicsObject()
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
 				return
 			elseif State == STATE_RUNNING then
 
-				if self.EZinstalled then
-					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-						self.EZinstalled = false
-						self:TurnOff()
-
-						return
-					end
-				else
-					self:TurnOff()
-
-					return
-				end
+				if not self.EZinstalled then self:TurnOff() return end
 
 				if self:GetWater() <= 0 then
 					self:TurnOff()
@@ -210,13 +208,6 @@ if(SERVER)then
 					self.NextWaterLoseTime = Time + FlowRate * self.ChargeRate * 20
 
 					self:SetWater(self:GetWater() - 1 * FlowRate)
-					self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
-					local Foof = EffectData()
-					Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
-					Foof:SetNormal(self:GetUp())
-					Foof:SetScale(1)
-					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
-					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 				end
 				
 
@@ -227,6 +218,19 @@ if(SERVER)then
 				self.LastWater = math.floor(self:GetWater())
 			end
 		end
+
+		if State == STATE_RUNNING then
+			self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
+			local Foof = EffectData()
+			Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
+			Foof:SetNormal(self:GetUp())
+			Foof:SetScale(1)
+			Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+			util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+		end
+
+		self:NextThink(Time + .2)
+		return true
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
@@ -240,7 +244,7 @@ if(SERVER)then
 		local Foof = EffectData()
 		Foof:SetOrigin(Pos + self:GetUp() * 10)
 		Foof:SetNormal(self:GetUp())
-		Foof:SetScale(100)
+		Foof:SetScale(50)
 		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
@@ -276,7 +280,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = Time + math.Rand(0, 3)

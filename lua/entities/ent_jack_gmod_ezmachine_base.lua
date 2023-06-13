@@ -216,9 +216,15 @@ if(SERVER)then
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
 		self.DamageTypeTable = JMod.DefualtArmorTable
+		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
+
+		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
+		--=== Apply changes and state things that shouldn't be overrideable below.====-
+		
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
+		--print(self:GetNW2Float("EZdurability", -1))
 		if self.SpawnFull then
 			self:SetElectricity(self.MaxElectricity)
 		else
@@ -228,8 +234,8 @@ if(SERVER)then
 		if(JMod.GetEZowner(self))then JMod.Colorify(self) end
 		---
 		if(self.EZupgradable)then
-			self.UpgradeProgress={}
-			self.UpgradeCosts=JMod.CalculateUpgradeCosts(JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs)
+			self.UpgradeProgress = {}
+			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 		self.NextRefillTime = 0
 	end
@@ -550,8 +556,11 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
+		JMod.SetEZowner(self, ply, true)
+		ent.NextRefillTime = Time + 1
+		if ent.NextUseTime then
+			ent.NextUseTime = Time + 1
+		end
 	end
 
 elseif(CLIENT)then

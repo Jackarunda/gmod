@@ -71,6 +71,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()

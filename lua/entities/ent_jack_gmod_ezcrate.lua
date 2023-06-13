@@ -22,10 +22,10 @@ end
 function ENT:GetEZsupplies(typ)
 	local Supplies = {[self:GetResourceType()] = self:GetResource()}
 	if typ then
-		if Supplies[typ] and Supplies[typ] then
+		if Supplies[typ] then
 			return Supplies[typ]
 		else
-			return 
+			return 0
 		end
 	else
 		return Supplies
@@ -143,7 +143,11 @@ if SERVER then
 		Box:Activate()
 		Box:SetResource(Given)
 		Box:CalcWeight()
-		activator:PickupObject(Box)
+		timer.Simple(0.1, function()
+			if IsValid(Box) and IsValid(activator) and activator:Alive() then
+				activator:PickupObject(Box)
+			end
+		end)
 		Box.NextLoad = CurTime() + 2
 		self:SetResource(Resource - Given)
 		self:EmitSound("Ammo_Crate.Close")
@@ -162,9 +166,9 @@ if SERVER then
 	end
 
 	--aw fuck you
-	function ENT:TryLoadResource(typ, amt)
+	function ENT:TryLoadResource(typ, amt, overrideTimer)
 		local Time = CurTime()
-		if self.NextLoad > Time then self.NextLoad = math.min(self.NextLoad, Time + .5) return 0 end
+		if (self.NextLoad > Time) and not(overrideTimer) then self.NextLoad = math.min(self.NextLoad, Time + .5) return 0 end
 		if amt < 1 then return 0 end
 
 		-- If unloaded, we set our type to the item type

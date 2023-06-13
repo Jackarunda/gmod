@@ -259,9 +259,6 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 				if (typ and AvaliableResources >= amt) then
 
 					return obj
-				else
-
-					return obj
 				end
 			end
 		end
@@ -270,9 +267,6 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 		local AvaliableResources = sourceEnt:GetEZsupplies(typ)
 		if AvaliableResources then
 			if (typ and AvaliableResources >= amt) then
-
-				return sourceEnt
-			else
 
 				return sourceEnt
 			end

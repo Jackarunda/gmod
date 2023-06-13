@@ -612,22 +612,22 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.SendToServer()
 
 		-- wireframe preview
-		ent.EZpreview = {}
-		local StringParts = string.Explode(" ", info["results"])																	  
-		if StringParts[1] and (StringParts[1] == "FUNC") then
+		-- ent.EZpreview = {}
+		-- local StringParts = string.Explode(" ", info["results"])																	  
+		-- if StringParts[1] and (StringParts[1] == "FUNC") then
 
-			ent.EZpreview = {Box = nil}	
+		-- 	ent.EZpreview = {Box = nil}	
 
-		else
+		-- else
 
-			local temp_ent = ents.CreateClientside(info["results"])
-			temp_ent:Spawn()													-- have to do this to get an accurate bounding box
-			local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way
-			temp_ent:Remove()
+		-- 	local temp_ent = ents.CreateClientside(info["results"])
+		-- 	temp_ent:Spawn()													-- have to do this to get an accurate bounding box
+		-- 	local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way
+		-- 	temp_ent:Remove()
 			
-			ent.EZpreview = {Box = {mins = min, maxs = max, sizeScale = info.SizeScale}}
+		-- 	ent.EZpreview = {Box = {mins = min, maxs = max, sizeScale = info.SizeScale}}
 
-		end
+		-- end
 
 	end, nil)
 end)

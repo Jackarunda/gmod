@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/kycea_compressor/kycea_compressor4"
+	"$bumpmap" "models/tex_jack_flat_normal"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".5"
+	"$phongexponent" "20"
+	$detail "\models\tex_jack_scratchedmetal"
+	$detailscale "8"
+	$detailblendfactor "1.5"
+}

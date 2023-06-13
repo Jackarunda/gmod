@@ -72,6 +72,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -127,9 +128,9 @@ if(SERVER)then
 			local spawnVec = self:WorldToLocal(SelfPos + Forward * 65 + Right * 40 + Up * 65 * i)
 			local spawnAng = Angle(0, 0, 0)
 			local ejectVec = Forward
-			timer.Simple(i / 2, function()
+			timer.Simple(i * .2, function()
 				if IsValid(self) then
-					JMod.MachineSpawnResource(self, typ, amt*modifier, spawnVec, spawnAng, ejectVec, true, 200)
+					JMod.MachineSpawnResource(self, typ, amt*modifier, spawnVec, spawnAng, ejectVec, true, 5000)
 				end
 			end)
 			i = i + 1
@@ -229,7 +230,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.LastOilTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)

@@ -12,7 +12,7 @@ function ENT:SetupDataTables()
 	self:NetworkVar("Int", 1, "Offset")
 end
 
-hook.Remove("UpdateAnimation", "JMOD_PARACHUTE_ANIM")
+--hook.Remove("UpdateAnimation", "JMOD_PARACHUTE_ANIM")
 --[[hook.Add("UpdateAnimation", "JMOD_PARACHUTE_ANIM", function(ply, vel, maxSped)
 	if IsValid(ply) and ply:GetNW2Bool("EZparachuting", false) and IsFirstTimePredicted() then
 		--ply:SetPoseParameter("aim_pitch", math.sin(CurTime()) * 90)
@@ -40,7 +40,7 @@ hook.Remove("UpdateAnimation", "JMOD_PARACHUTE_ANIM")
 		--return false
 	end
 end)]]--
-hook.Remove("CalcMainActivity", "JMOD_PARACHUTE_ANIM")
+--hook.Remove("CalcMainActivity", "JMOD_PARACHUTE_ANIM")
 --[[hook.Add("CalcMainActivity", "JMOD_PARACHUTE_ANIM", function(ply, vel) 
 	if ply:GetNW2Bool("EZparachuting", false) then
 		return ACT_MP_STAND_IDLE, 24

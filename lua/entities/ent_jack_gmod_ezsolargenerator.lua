@@ -135,7 +135,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= STATE_OFF) then return end
+		if (self:GetState() <= 0) then return end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
@@ -213,7 +213,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 	end

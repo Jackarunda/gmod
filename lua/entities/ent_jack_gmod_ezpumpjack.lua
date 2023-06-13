@@ -49,6 +49,7 @@ if(SERVER)then
 
 	function ENT:TryPlace()
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -500), self)
+		SelfAng = self:GetAngles()
 		if (Tr.Hit) and (Tr.HitWorld) then
 			local GroundIsSolid = true
 			for i = 1, 50 do
@@ -61,13 +62,12 @@ if(SERVER)then
 			if not(self.DepositKey)then
 				JMod.Hint(self.EZowner, "oil derrick")
 			elseif(GroundIsSolid)then
-				local Pitch = Tr.HitNormal:Angle().x + 90
-				local Yaw = self:GetAngles().y
-				if Tr.HitNormal:Angle().y >= 20 then
-					Yaw = Tr.HitNormal:Angle().y
-				end
-				local Roll = Tr.HitNormal:Angle().z - 90
-				self:SetAngles(Angle(Pitch, Yaw, Roll))
+				local HitAngle = Tr.HitNormal:Angle()
+				--jprint("Before", HitAngle)
+				HitAngle:RotateAroundAxis(HitAngle:Up(), 90)
+				--jprint("After", HitAngle)
+				--self:SetAngles(HitAngle)
+				self:SetAngles(Angle(0, SelfAng.y, -90))
 				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight)
 				---
 				self:GetPhysicsObject():EnableMotion(false)
@@ -106,6 +106,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -117,23 +118,24 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		local State=self:GetState()
-		local OldOwner=self.EZowner
+		local State = self:GetState()
+		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self,activator)
-		if(IsValid(self.EZowner))then
-			if(OldOwner~=self.EZowner)then -- if owner changed then reset team color
-				JMod.Colorify(self)
-			end
-		end
+		JMod.SetEZowner(self, activator, true)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif(State==STATE_OFF)then
+		elseif State == STATE_OFF then
+			if alt and self.EZinstalled then
+				self:GetPhysicsObject():EnableMotion(true)
+				self.EZinstalled = false
+
+				return
+			end
 			self:TurnOn(activator)
-		elseif(State==STATE_RUNNING)then
+		elseif State == STATE_RUNNING then
 			if alt then
 				self:ProduceResource()
 
@@ -155,11 +157,20 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+		local Phys = self:GetPhysicsObject()
+
+		if self.EZinstalled then
+			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+				self.EZinstalled = false
+				self:TurnOff()
+
+				return
+			end
+		end
 
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
-			local Phys = self:GetPhysicsObject()
-
+			
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
@@ -170,18 +181,7 @@ if(SERVER)then
 				return
 			elseif State == STATE_RUNNING then
 				
-				if self.EZinstalled then
-					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-						self.EZinstalled = false
-						self:TurnOff()
-
-						return
-					end
-				else
-					self:TurnOff()
-
-					return
-				end
+				if not self.EZinstalled then self:TurnOff() return end
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
@@ -261,7 +261,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThinkTime = Time + math.Rand(0, 3)
 	end

@@ -88,8 +88,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		local State = self:GetState()
-		if (State == STATE_OFF) or (State == STATE_BROKEN) then return end
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 	end
@@ -364,7 +363,7 @@ if(SERVER)then
 	end
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextWhine = Time + math.Rand(0, 3)
 		ent.NextRealThink = Time + math.Rand(0, 3)

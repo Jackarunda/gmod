@@ -65,9 +65,10 @@ if(SERVER)then
 				JMod.Hint(self.EZowner, "ground drill")
 			elseif(GroundIsSolid)then
 				--
-				local Roll = Tr.HitNormal:Angle().r
-				local Yaw = Tr.HitNormal:Angle().y
-				self:SetAngles(Angle(Tr.HitNormal:Angle().p + 90, (Yaw >= 20 and Yaw) or SelfAng.y, Roll))
+				local HitAngle = Tr.HitNormal:Angle()
+				HitAngle:RotateAroundAxis(HitAngle:Right(), 270)
+				HitAngle:RotateAroundAxis(HitAngle:Up(), SelfAng.y - HitAngle.y)
+				self:SetAngles(HitAngle)
 				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 5)
 				--
 				self:GetPhysicsObject():EnableMotion(false)
@@ -85,7 +86,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() ~= STATE_OFF then return end
+		if self:GetState() < STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
@@ -102,6 +103,7 @@ if(SERVER)then
 	end
 	
 	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -114,20 +116,20 @@ if(SERVER)then
 		local State = self:GetState()
 		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self,activator)
-		if(IsValid(self.EZowner))then
-			if(OldOwner ~= self.EZowner)then -- if owner changed then reset team color
-				JMod.Colorify(self)
-			end
-		end
+		JMod.SetEZowner(self, activator, true)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
 		elseif State == STATE_OFF then
-			if (self:GetElectricity() <= 0) then JMod.Hint(activator, "nopower") return end
-			self:TryPlace()
+			if alt and self.EZinstalled then
+				self:GetPhysicsObject():EnableMotion(true)
+				self.EZinstalled = false 
+				
+				return
+			end
+			self:TurnOn(activator)
 		elseif State == STATE_RUNNING then
 			if alt then
 				self:ProduceResource()
@@ -151,10 +153,19 @@ if(SERVER)then
 	function ENT:Think()
 		local State, Time, Prog = self:GetState(), CurTime(), self:GetProgress()
 		local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
+		local Phys = self:GetPhysicsObject()
+
+		if self.EZinstalled then
+			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
+				self.EZinstalled = false
+				self:TurnOff()
+
+				return
+			end
+		end
 
 		if (self.NextResourceThinkTime < Time) then
 			self.NextResourceThinkTime = Time + 1
-			local Phys = self:GetPhysicsObject()
 			if State == STATE_BROKEN then
 				if self.SoundLoop then self.SoundLoop:Stop() end
 
@@ -164,18 +175,7 @@ if(SERVER)then
 
 				return
 			elseif State == STATE_RUNNING then
-				if self.EZinstalled then
-					if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
-						self.EZinstalled = false
-						self:TurnOff()
-
-						return
-					end
-				else
-					self:TurnOff()
-
-					return
-				end
+				if not self.EZinstalled then self:TurnOff() return end
 
 				if not JMod.NaturalResourceTable[self.DepositKey] then 
 					self:TurnOff()
@@ -260,6 +260,9 @@ if(SERVER)then
 				self:EmitSound("Boulder.ImpactHard")
 			end
 		end
+
+		self:NextThink(CurTime() + .1)
+		return true
 	end
 	
 	function ENT:ProduceResource()
@@ -276,7 +279,7 @@ if(SERVER)then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = 0
 		ent.NextEffectThinkTime = 0

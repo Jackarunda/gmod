@@ -113,7 +113,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if self:GetState() == STATE_OFF then return end
+		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
 		self:SFX("afh_shutdown")
 		self.Patient = nil
@@ -349,7 +349,7 @@ if(SERVER)then
 	end
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply)
+		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextWhine = Time + math.Rand(0, 3)
 		self.NextRealThink = Time + math.Rand(0, 3)
