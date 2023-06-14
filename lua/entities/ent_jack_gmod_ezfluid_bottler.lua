@@ -36,13 +36,14 @@ local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 if SERVER then
 	function ENT:CustomInit()
 		self.EZupgradable = true
-		self.Range = 300
+		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
 		timer.Simple(0, function()
 			self:TurnOn()
 		end)
-		self.SoundLoop = CreateSound(self, "ambient/machines/engine1.wav")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
+		self.NextLogicThink = 0
 	end
 
 	function ENT:Use(activator)
@@ -157,29 +158,32 @@ if SERVER then
 	function ENT:Think()
 		local State = self:GetState()
 		if State == STATE_ON then
+			local Time = CurTime()
+			if (self.NextLogicThink < Time) then
+				self:CheckWaterLevel()
 
-			self:CheckWaterLevel()
+				local grade = self:GetGrade()
 
-			local grade = self:GetGrade()
+				self:ConsumeElectricity(0.34)
 
-			self:ConsumeElectricity(0.34)
-
-			if self:GetProgress() < 100 then
-				local rate = math.Round(1.36 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
-				if not(self.Submerged) then
-					self:SetProgress(self:GetProgress() + (rate * 0.5))
-					self:CleanseAir()
-				else
-					self:SetProgress(self:GetProgress() + rate)
+				if self:GetProgress() < 100 then
+					local rate = math.Round(1.36 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
+					if not(self.Submerged) then
+						self:SetProgress(self:GetProgress() + (rate * 0.5))
+						self:CleanseAir()
+					else
+						self:SetProgress(self:GetProgress() + rate)
+					end
 				end
+
+				self.NextLogicThink = Time + 1
 			end
 
-			if self:GetProgress() >= 100 then
-				self:ProduceResource()
-			end
+			local Eff = EffectData()
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * 50 + self:GetUp() * 20)
+			util.Effect("eff_jack_gmod_airsuck", Eff, true, true)
 
-			self:NextThink(CurTime() + 1)
-
+			self:NextThink(CurTime() + .1)
 			return true
 		end
 	end
@@ -194,7 +198,6 @@ if SERVER then
 elseif CLIENT then
 	function ENT:CustomInit()
 		local Grade = self:GetGrade()
-		self.OldGrade = Grade
 		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 	end
 
@@ -221,14 +224,14 @@ elseif CLIENT then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 135)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -135)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
-				cam.Start3D2D(SelfPos + Up * 45 + Forward * 21 - Right * 17, DisplayAng, .1)
+				cam.Start3D2D(SelfPos + Up * 45 - Forward * 12 - Right * 27, DisplayAng, .1)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(90,  0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 152, 68, 118, Opacity + 50)
@@ -240,7 +243,6 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
-		self.OldGrade = Grade
 	end
 	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Fluid Bottler")
 end
