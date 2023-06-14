@@ -2,10 +2,11 @@
 	local NumParticles = 5
 	local emitter = ParticleEmitter(data:GetOrigin())
 	local Pos = data:GetOrigin()
+	local Scl = data:GetScale()
 	local bubel = self:WaterLevel() > 0
 
 	for i = 0, NumParticles do
-		local Offset = VectorRand() * 100
+		local Offset = VectorRand() * 100 * Scl
 		if emitter then
 			local rollparticle
 			if (bubel) then
@@ -22,7 +23,7 @@
 				rollparticle:SetColor(Rando, Rando, Rando)
 				rollparticle:SetStartAlpha(0)
 				rollparticle:SetEndAlpha((bubel and 255) or math.random(100, 255))
-				rollparticle:SetStartSize(50)
+				rollparticle:SetStartSize(50 * Scl)
 				rollparticle:SetEndSize(0)
 				if not bubel then
 					rollparticle:SetRoll(math.Rand(-360, 360))

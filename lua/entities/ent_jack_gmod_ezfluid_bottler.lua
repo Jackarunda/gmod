@@ -174,13 +174,16 @@ if SERVER then
 					else
 						self:SetProgress(self:GetProgress() + rate)
 					end
+				else
+					self:ProduceResource()
 				end
 
 				self.NextLogicThink = Time + 1
 			end
 
 			local Eff = EffectData()
-			Eff:SetOrigin(self:GetPos() + self:GetRight() * 50 + self:GetUp() * 20)
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * -10 + self:GetUp() * 80)
+			Eff:SetScale(0.1)
 			util.Effect("eff_jack_gmod_airsuck", Eff, true, true)
 
 			self:NextThink(CurTime() + .1)
