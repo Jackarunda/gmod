@@ -10,4 +10,7 @@
 	"$phongtint" "[1 .4 .1]"
 	"$phongboost" "2"
 	"$phongexponent" "30"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
 }

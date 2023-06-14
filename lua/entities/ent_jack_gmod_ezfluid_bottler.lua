@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/compressor/compressorbake.mdl"
 ENT.Mass = 500
-ENT.EZcolorable = false
+ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.MaxPower = 100
@@ -50,7 +50,7 @@ if SERVER then
 		local State = self:GetState()
 		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self, activator, false)
+		JMod.SetEZowner(self, activator, true)
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 		return
@@ -75,7 +75,7 @@ if SERVER then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 55)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 60)
 		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), -Forward, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
@@ -192,6 +192,12 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	function ENT:CustomInit()
+		local Grade = self:GetGrade()
+		self.OldGrade = Grade
+		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
+	end
+
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -209,6 +215,7 @@ elseif CLIENT then
 		---
 		self:DrawModel()
 		---
+		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
@@ -233,6 +240,7 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
+		self.OldGrade = Grade
 	end
 	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Fluid Bottler")
 end
