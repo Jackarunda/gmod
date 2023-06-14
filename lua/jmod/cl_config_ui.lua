@@ -351,13 +351,53 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 		local craftables = {}
 
 		for itemName, itemInfo in pairs(data) do
-			local category = itemInfo.category or "other"
+			local category = itemInfo.craftingType or "other"
 			craftables[category] = craftables[category] or {}
 			craftables[category][itemName] = itemInfo
 		end
 
+		local holder_panel = parent:Add("DPanel")
+		holder_panel:SetSize(W,H)
+		function holder_panel:Paint() end
+
+		local machinesPanel = holder_panel:Add("DScrollPanel")
+		machinesPanel:SetSize(W/4, H - 20)
+		machinesPanel:Dock(LEFT)
+		machinesPanel:DockMargin(5,5,0,5)
+		function machinesPanel:Paint(w, h)
+			surface.SetDrawColor(0, 0, 0, 50)
+			surface.DrawRect(0, 0, w, h)
+		end
+		--[[theming]]
+
+		local w, h = machinesPanel:GetSize()
+		craftablesPanel = holder_panel:Add("DScrollPanel")
+		craftablesPanel:SetSize(630, H - 20)
+		craftablesPanel:Dock(LEFT)
+		craftablesPanel:DockMargin(5,5,5,5)
+		function craftablesPanel:Paint(w, h)
+			surface.SetDrawColor(0, 0, 0, 50)
+			surface.DrawRect(0, 0, w, h)
+		end
+
 		for k,v in pairs(craftables) do
-			print(k)
+			machineButton = machinesPanel:Add("DButton")
+			machineButton:SetHeight(50)
+			machineButton:Dock(TOP)
+			machineButton:DockMargin(5,5,5,5)
+			local label = k
+			label = string.SetChar(label, 1, string.sub(string.upper(label), 1, 1))
+			machineButton:SetText(label)
+			machineButton:SetTextColor(color_white)
+
+			function machineButton:Paint(w,h)
+
+				surface.SetDrawColor(30, 30, 30, 60)
+
+				surface.DrawRect(0, 0, w, h)
+
+				-- BlurBackground(self)
+			end
 		end
 	end
 
