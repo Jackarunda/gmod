@@ -347,6 +347,8 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 		end
 	end
 
+	local machineSelected = "workbench"
+
 	local function handle_craftables(AlphabetizedItemNames)
 		local craftables = {}
 
@@ -392,12 +394,95 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 			function machineButton:Paint(w,h)
 
-				surface.SetDrawColor(30, 30, 30, 60)
+				local Hovr = self:IsHovered()
+				local Col = (Hovr and 80) or 20
+				surface.SetDrawColor(0, 0, 0, (k == machineSelected and 100) or Col)
 
 				surface.DrawRect(0, 0, w, h)
 
-				-- BlurBackground(self)
+				--BlurBackground(self)
 			end
+		end
+
+		local Y = 0
+
+		local w, h = craftablesPanel:GetSize()
+		for k,v in pairs(craftables[machineSelected]) do
+			local Butt = craftablesPanel:Add("DButton")
+			Butt:SetSize(w - 20, 42)
+			Butt:SetPos(0, Y)
+			Butt:SetText("")
+			local typ = "crafting"
+			local itemInfo = v
+			local itemName = k
+			local desc = itemInfo.description or ""
+
+			if typ == "crafting" then
+				desc = desc .. "\n "
+
+				for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
+					desc = desc .. resourceName .. " x" .. tostring(resourceAmt) .. ", "
+				end
+			end
+
+			Butt:SetTooltip(desc)
+			Butt.enabled = true
+			Butt:SetMouseInputEnabled(true)
+			Butt.hovered = false
+
+			function Butt:Paint(w, h)
+				local Hovr = self:IsHovered()
+
+				if Hovr then
+					if not self.hovered then
+						self.hovered = true
+
+						if self.enabled then
+							surface.PlaySound("snds_jack_gmod/ez_gui/hover_ready.wav")
+						end
+					end
+				else
+					self.hovered = false
+				end
+
+				local Brite = (Hovr and 50) or 30
+
+				if self.enabled then
+					surface.SetDrawColor(Brite, Brite, Brite, 60)
+				else
+					surface.SetDrawColor(0, 0, 0, (Hovr and 50) or 20)
+				end
+
+				surface.DrawRect(0, 0, w, h)
+				local ItemIcon = JMod.SelectionMenuIcons[itemName]
+
+				if ItemIcon then
+					--surface.SetDrawColor(100,100,100,(self.enabled and 255)or 40)
+					--surface.DrawRect(5,5,32,32)
+					surface.SetMaterial(ItemIcon)
+					surface.SetDrawColor(255, 255, 255, (self.enabled and 255) or 40)
+					surface.DrawTexturedRect(5, 5, 32, 32)
+				end
+
+				draw.SimpleText(itemName, "DermaDefault", (ItemIcon and 47) or 5, 15, Color(255, 255, 255, (self.enabled and 255) or 40), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+
+				if typ == "crafting" then
+					local X = w - 30 -- let's draw the resources right to left
+
+					for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
+						local Txt = "x" .. tostring(resourceAmt)
+						surface.SetFont("DermaDefault")
+						local TxtSize = surface.GetTextSize(Txt)
+						draw.SimpleText(Txt, "DermaDefault", X - TxtSize, 15, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+						X = X - (TxtSize + 3)
+						surface.SetMaterial(JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[resourceName])
+						surface.SetDrawColor(255, 255, 255, 255)
+						surface.DrawTexturedRect(X - 32, 5, 32, 32)
+						X = X - (32 + 6)
+					end
+				end
+			end
+			Y = Y + 47
 		end
 	end
 
