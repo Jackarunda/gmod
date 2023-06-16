@@ -21,6 +21,7 @@ if SERVER then
 		self:RebuildPhysics()
 		self:DrawShadow(false)
 		self.NextDmg = Time + 5
+		self.CurrentDir = VectorRand()
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -72,13 +73,13 @@ if SERVER then
 			if not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle then
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * 40
+					Force = Force - Vec * 20
 				elseif self:ShouldDamage(obj) and (math.random(1, 3) == 1) and (self.NextDmg < Time) then
 					local Dmg, Helf = DamageInfo(), obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
 					Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
 					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.EZowner or self)
+					Dmg:SetAttacker(JMod.GetEZowner(self) or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
 
@@ -90,30 +91,44 @@ if SERVER then
 			end
 		end
 
+		self:ApplyForce(Force)
 		self:Extinguish()
-		local Phys = self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity() * .8)
-		Phys:ApplyForceCenter(Force)
 		self:NextThink(Time + math.Rand(2, 4))
 
 		return true
+	end
+
+	function ENT:ApplyForce(force)
+		local SelfPos, FinalDir = self:GetPos(), force + self.CurrentDir
+		local Tr = util.TraceLine({
+			start = SelfPos,
+			endpos = SelfPos + FinalDir,
+			mask = MASK_SHOT,
+			filter = self
+		})
+		if Tr.Hit then
+			FinalDir = FinalDir - ((SelfPos - Tr.HitPos):GetNormalized()*20)
+		end
+		
+		self:SetPos(SelfPos + FinalDir)
 	end
 
 	function ENT:RebuildPhysics()
 		local size = 1
 		self:PhysicsInitSphere(size, "gmod_silent")
 		self:SetCollisionBounds(Vector(-.1, -.1, -.1), Vector(.1, .1, .1))
-		self:PhysWake()
-		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+		self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 		local Phys = self:GetPhysicsObject()
 		Phys:SetMass(1)
 		Phys:EnableGravity(false)
 		Phys:SetMaterial("gmod_silent")
+		Phys:EnableCollisions(false)
+		Phys:Sleep()
 	end
 
-	function ENT:PhysicsCollide(data, physobj)
-		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal * 100)
-	end
+	--function ENT:PhysicsCollide(data, physobj)
+	--	self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal * 100)
+	--end
 
 	function ENT:OnTakeDamage(dmginfo)
 	end
@@ -124,6 +139,10 @@ if SERVER then
 
 	--
 	function ENT:GravGunPickupAllowed(ply)
+		return false
+	end
+	--
+	function ENT:GravGunPunt(ply)
 		return false
 	end
 elseif CLIENT then
