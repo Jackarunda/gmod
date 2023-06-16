@@ -13,6 +13,7 @@ function EFFECT:Think()
 	local TimeLeft = self.DieTime - CurTime()
 	if TimeLeft > 0 then return true end
 
+	self.Plane:Remove()
 	return false
 end
 

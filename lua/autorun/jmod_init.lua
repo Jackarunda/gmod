@@ -273,6 +273,8 @@ JMod.DefualtArmorTable={
 	[DMG_MISSILEDEFENSE]=1
 }
 
+JMod.EZ_OwnerID = {}
+
 -- we have to load locales before any other files
 -- because files that add concommands have help text
 -- and we want the help text to be localized

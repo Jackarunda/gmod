@@ -26,15 +26,26 @@ local function CreateRadioStation(teamID)
 		notified = false,
 		restrictedPackageStock = {},
 		restrictedPackageDelivering = nil,
-		restrictedPackageDeliveryTime = 0
+		restrictedPackageDeliveryTime = 0,
+		outpostDirection = Vector(math.Rand(-1, 1), math.Rand(-1, 1), 0):GetNormalized()
 	}
+end
+
+local function FindEZradios() 
+	local Radios = {}
+	for _, v in ipairs(ents.GetAll()) do
+		if v.EZradio == true then
+			table.insert(Radios, v)
+		end
+	end
+
+	return Radios
 end
 
 local function NotifyAllRadios(stationID, msgID, direct)
 	local Station = JMod.EZ_RADIO_STATIONS[stationID]
-	local Radios = ents.FindByClass("ent_jack_gmod_ezaidradio")
 
-	for k, v in pairs(Radios) do
+	for _, v in ipairs(FindEZradios()) do
 		if v:GetState() > 0 and v:GetOutpostID() == stationID then
 			if msgID then
 				if direct then
@@ -103,9 +114,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 				local DropPos = FindDropPosFromSignalOrigin(station.deliveryLocation)
 
 				if DropPos then
-					local DropVelocity = VectorRand()
-					DropVelocity.z = 0
-					DropVelocity:Normalize()
+					local DropVelocity = station.outpostDirection
 					DropVelocity = DropVelocity * 400
 					local Eff = EffectData()
 					Eff:SetOrigin(DropPos)
@@ -193,7 +202,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 	end
 
 	for k, v in pairs(ents.FindInSphere(ply:GetPos(), 150)) do
-		if v.EZreceiveSpeech then
+		if v.EZreceiveSpeech and (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
 			if v:EZreceiveSpeech(ply, txt) then return "" end -- hide the player's radio chatter from the server
 		end
 	end
@@ -213,10 +222,13 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		end
 
 		local bestradio = nil
-
-		for _, v in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
-			if v:UserIsAuthorized(ply) and (not bestradio or bestradio:GetPos():Distance(ply:GetPos()) < v:GetPos():DistToSqr(ply:GetPos())) then
-				bestradio = v
+		
+		for _, v in ipairs(FindEZradios()) do
+			print(v, v:GetPos():DistToSqr(ply:GetPos()))
+			if v:UserIsAuthorized(ply) and (not(bestradio) or (bestradio:GetPos():DistToSqr(ply:GetPos()) > v:GetPos():DistToSqr(ply:GetPos()))) then
+				if (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
+					bestradio = v
+				end
 			end
 		end
 
@@ -224,7 +236,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 	end
 end)
 
-function JMod.EZradioEstablish(transceiver, teamID)
+function JMod.EZradioEstablish(transceiver, teamID, reassign)
 	local AlliedStations = {}
 
 	for k, v in pairs(JMod.EZ_RADIO_STATIONS) do
@@ -238,23 +250,29 @@ function JMod.EZradioEstablish(transceiver, teamID)
 		table.insert(AlliedStations, #JMod.EZ_RADIO_STATIONS)
 	end
 
-	local ChosenStation = nil
+	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), nil
 
-	for k, id in pairs(AlliedStations) do
-		local Taken = false
-
-		for key, radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
-			if radio ~= transceiver and radio:GetState() > 0 and radio:GetOutpostID() == id then
-				Taken = true
+	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) then
+		if JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY then
+			return
+		end
+	else
+		for k, id in pairs(AlliedStations) do
+			local Taken = false
+	
+			for _, radio in ipairs(FindEZradios()) do
+				if radio ~= transceiver and radio:GetState() > 0 and radio:GetOutpostID() == id then
+					Taken = true
+					break
+				end
+			end
+	
+			--print(Taken)
+	
+			if not Taken then
+				ChosenStation = id
 				break
 			end
-		end
-
-		--print(Taken)
-
-		if not Taken then
-			ChosenStation = id
-			break
 		end
 	end
 
@@ -286,14 +304,16 @@ end
 
 -- this is also on the global table for third-party use
 function JMod.RemoveRadioOutPost(teamID)
+	local RemovedOutpost = nil
 	for k, v in pairs(JMod.EZ_RADIO_STATIONS) do
 		if v.teamID == teamID then
 			table.remove(JMod.EZ_RADIO_STATIONS, k)
+			RemovedOutpost = k
 			break
 		end
 	end
 
-	for _, radio in pairs(ents.FindByClass("ent_jack_gmod_ezaidradio")) do
+	for _, radio in ipairs(FindEZradios()) do
 		radio:TurnOff()
 	end
 
