@@ -9,6 +9,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.CollisionGroup = COLLISION_GROUP_NONE
 ENT.NoPhys = true
+ENT.IsEZrocket = true
 local ThinkRate = 22 --Hz
 
 ---

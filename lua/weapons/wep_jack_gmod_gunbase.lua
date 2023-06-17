@@ -158,8 +158,7 @@ SWEP.Hook_PostFireBullets = function(self)
 
 		local Tr = util.QuickTrace(RPos, -RDir * Dist, function(fuck)
 			if fuck:IsPlayer() or fuck:IsNPC() then return false end
-			local Class = fuck:GetClass()
-			if Class == "ent_jack_gmod_ezminirocket" then return false end
+			if fuck.IsEZrocket == true then return false end
 
 			return true
 		end)
