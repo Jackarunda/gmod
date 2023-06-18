@@ -9,6 +9,7 @@ game.AddParticles("particles/gb5_large_explosion.pcf")
 game.AddParticles("particles/gb5_500lb.pcf")
 game.AddParticles("particles/gb5_100lb.pcf")
 game.AddParticles("particles/gb5_50lb.pcf")
+-- game.AddParticles("particles/inferno_fx.pcf")
 
 game.AddDecal("BigScorch", {"decals/big_scorch1", "decals/big_scorch2", "decals/big_scorch3"})
 

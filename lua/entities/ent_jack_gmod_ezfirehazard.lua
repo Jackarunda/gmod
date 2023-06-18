@@ -68,7 +68,7 @@ if SERVER then
 		if self.NextSound < Time then
 			self.NextSound = Time + 1
 			self:EmitSound(table.Random(self.TypeInfo[2]), 65, math.random(90, 110))
-			JMod.EmitAIsound(self:GetPos(), 300, .5, 8)
+			if (math.random(1,2) == 1) then JMod.EmitAIsound(self:GetPos(), 300, .5, 8) end
 		end
 
 		if self.NextEffect < Time then
@@ -147,14 +147,27 @@ elseif CLIENT then
 		self.CastLight = (self.HighVisuals and math.random(1, 2) == 1) or (math.random(1, 10) == 1)
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
+		
+		self.Offset = Vector(0, 0, 0)
+		self.SizeX = 1
+		self.SizeY = 1
+		self.NextRandomize = 0
 	end
 
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
+	local Col = Color(255, 255, 255, 255)
 
 	function ENT:Draw()
 		local Time, Pos = CurTime(), self:GetPos()
 		render.SetMaterial(GlowSprite)
-		render.DrawSprite(Pos + VectorRand() * self.Size * math.Rand(0, .25), self.Size * math.Rand(.75, 1.25), self.Size * math.Rand(.75, 1.25), Color(255, 255, 255, 255))
+		render.DrawSprite(Pos + self.Offset, self.SizeX, self.SizeY, Col)
+
+		if (self.NextRandomize < Time) then
+			self.Offset = VectorRand() * self.Size * math.Rand(0, .25)
+			self.SizeX = self.Size * math.Rand(.75, 1.25)
+			self.SizeY = self.Size * math.Rand(.75, 1.25)
+			self.NextRandomize = Time + .2
+		end
 
 		if self.CastLight and not GAMEMODE.Lagging then
 			local dlight = DynamicLight(self:EntIndex())
