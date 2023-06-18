@@ -348,6 +348,7 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 	end
 
 	local function handle_craftables(selectedMachine)
+
 		local selectedMachine = selectedMachine or "workbench"
 
 		local craftables = {}
@@ -355,8 +356,10 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 		for itemName, itemInfo in pairs(data) do
 			local machine = itemInfo.craftingType or "other"
 			craftables[machine] = craftables[machine] or {}
+			
 			local category = itemInfo.category or "other"
 			craftables[machine][category] = craftables[machine][category] or {}
+			
 			craftables[machine][category][itemName] = itemInfo
 		end
 
@@ -381,6 +384,19 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 		function craftablesPanel:Paint(w, h)
 			surface.SetDrawColor(0, 0, 0, 50)
 			surface.DrawRect(0, 0, w, h)
+		end
+		local sbar = craftablesPanel:GetVBar()
+		function sbar:Paint(w, h)
+			draw.RoundedBox(0, 0, 0, w, h, Color(50, 50, 50))
+		end
+		function sbar.btnUp:Paint(w, h)
+			draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60))
+		end
+		function sbar.btnDown:Paint(w, h)
+			draw.RoundedBox(0, 0, 0, w, h, Color(60, 60, 60))
+		end
+		function sbar.btnGrip:Paint(w, h)
+			draw.RoundedBox(0, 0, 0, w, h, Color(75, 75, 75))
 		end
 
 		for k,v in pairs(craftables) do
@@ -430,6 +446,42 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 			Y = Y + 47
 			for k,v in pairs(v) do
+				if not JMod.SelectionMenuIcons[k] then
+					if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(k) .. ".png", "GAME") then
+						JMod.SelectionMenuIcons[k] = Material("jmod_selection_menu_icons/" .. tostring(k) .. ".png")
+					elseif v.results and file.Exists("materials/entities/" .. tostring(v.results) .. ".png", "GAME") then
+						JMod.SelectionMenuIcons[k] = Material("entities/" .. tostring(v.results) .. ".png")
+					else
+						-- special logic for random tables and resources and such
+						local itemClass = v.results
+
+						if type(itemClass) == "table" then
+							itemClass = itemClass[1]
+						end
+
+						if type(itemClass) == "table" then
+							itemClass = itemClass[1]
+						end
+
+						if itemClass == "RAND" then
+							JMod.SelectionMenuIcons[k] = QuestionMarkIcon
+						elseif type(itemClass) == "string" then
+							local IsResource = false
+
+							for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
+								if v == itemClass then
+									IsResource = true
+									JMod.SelectionMenuIcons[k] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
+								end
+							end
+
+							if not IsResource then
+								JMod.SelectionMenuIcons[k] = Material("entities/" .. itemClass .. ".png")
+							end
+						end
+					end
+				end
+
 				local Butt = craftablesPanel:Add("DButton")
 				Butt:SetSize(w - 20, 42)
 				Butt:SetPos(0, Y)
