@@ -15,6 +15,7 @@ ENT.Mass=150
 ----
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
+ENT.EZradio = true
 ----
 ENT.StaticPerfSpecs={
 	MaxDurability=100,
@@ -138,21 +139,14 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		local OldOwner = self.EZowner
-		JMod.SetEZowner(self, activator)
-
-		if IsValid(self.EZowner) then
-			-- if owner changed then reset team color
-			if OldOwner ~= self.EZowner then
-				JMod.Colorify(self)
-			end
-		end
+		JMod.SetEZowner(self, activator, true)
 
 		self:SetState(STATE_CONNECTING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
 		self.ConnectionAttempts = 0
 	end
 
-	function ENT:Connect(ply)
+	function ENT:Connect(ply, reassign)
 		if not ply then return end
 		local Team = 0
 
@@ -162,14 +156,19 @@ if(SERVER)then
 			Team = ply:Team()
 		end
 
-		JMod.EZradioEstablish(self, tostring(Team)) -- we store team indices as strings because they might be huge (if it's a player's acct id)
+		local OldID = self:GetOutpostID()
+		JMod.EZradioEstablish(self, tostring(Team), reassign) -- we store team indices as strings because they might be huge (if it's a player's acct id)
 		local OutpostID = self:GetOutpostID()
 		local Station = JMod.EZ_RADIO_STATIONS[OutpostID]
 		self:SetState(Station.state)
 
 		timer.Simple(1, function()
 			if IsValid(self) then
-				self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID)
+				if reassign and (OldID == OutpostID) then
+					self:Speak("No other avaliable J.I. Radio Outpost found")
+				else
+					self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID .. "\nBearing: " .. tostring(math.Round(Station.outpostDirection:Angle().y)))
+				end
 			end
 		end)
 	end
@@ -352,6 +351,10 @@ if(SERVER)then
 				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase)
 
 				return true
+			elseif Name == "reassign outpost" then
+				self:Connect(ply, true)
+
+				return true
 			elseif JMod.Config.RadioSpecs.AvailablePackages[Name] then
 				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Name, BFFreq), ParrotPhrase)
 
@@ -361,6 +364,7 @@ if(SERVER)then
 
 		return false
 	end
+
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply, true)

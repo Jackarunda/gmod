@@ -370,15 +370,8 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
-		local OldOwner = self.EZowner
-		JMod.SetEZowner(self, activator)
-
-		if IsValid(self.EZowner) then
-			-- if owner changed then reset team color
-			if OldOwner ~= self.EZowner then
-				JMod.Colorify(self)
-			end
-		end
+		local OldOwner = JMod.GetEZowner(self)
+		JMod.SetEZowner(self, activator, true)
 
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
@@ -871,7 +864,7 @@ if(SERVER)then
 			Gnd:SetPos(ShootPos)
 			ShootAng:RotateAroundAxis(ShootAng:Right(), -90)
 			Gnd:SetAngles(ShootAng)
-			JMod.SetEZowner(Gnd, self.EZowner or self)
+			JMod.SetEZowner(Gnd, JMod.GetEZowner(self) or self)
 			Gnd.Dmg = Dmg
 			Gnd:Spawn()
 			Gnd:Activate()
@@ -909,7 +902,7 @@ if(SERVER)then
 				util.Effect("eff_jack_heavylaserbeamimpact", Derp2, true, true)
 				---
 				local DmgInfo = DamageInfo()
-				DmgInfo:SetAttacker(self.EZowner or self)
+				DmgInfo:SetAttacker(JMod.GetEZowner(self))
 				DmgInfo:SetInflictor(self)
 
 				if Tr.Entity:IsOnFire() then

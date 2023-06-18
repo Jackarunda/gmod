@@ -609,9 +609,6 @@ function JMod.GetEZowner(ent)
 	if ent.EZowner and IsValid(ent.EZowner) then
 
 		return ent.EZowner
-	elseif ent.GetOwner and IsValid(ent:GetOwner()) then
-
-		return ent:GetOwner()
 	else
 		
 		return game.GetWorld()
@@ -630,8 +627,14 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 		ent:CPPISetOwner(newOwner)
 	end
 
-	if setColor then
+	if setColor == true then
 		JMod.Colorify(ent)
+	end
+
+	if newOwner:IsPlayer() then
+		if (JMod.EZ_OwnerID[newOwner:SteamID()] ~= newOwner) and not(IsValid(JMod.EZ_OwnerID[newOwner:SteamID()])) then
+			JMod.EZ_OwnerID[newOwner:SteamID()] = newOwner
+		end
 	end
 end
 

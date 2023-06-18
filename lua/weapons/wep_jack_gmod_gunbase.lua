@@ -2,6 +2,15 @@
 SWEP.Spawnable = false -- this obviously has to be set to true
 SWEP.Category = "JMod - EZ Weapons" -- edit this if you like
 SWEP.AdminOnly = false
+----
+SWEP.Trivia_Class = "Freedom Gun"
+SWEP.Trivia_Desc = "Gun that maintains a healty amount of freedom, or tyranny, depending on the user"
+SWEP.Trivia_Manufacturer = "Jackarunda Industries and Company"
+SWEP.Trivia_Calibre = "50 cal."
+SWEP.Trivia_Mechanism = "Patriotism"
+SWEP.Trivia_Country = "'Murica"
+SWEP.Trivia_Year = 1775
+----
 SWEP.EZdroppable = true
 SWEP.UseHands = true
 SWEP.DefaultBodygroups = "000000"
@@ -112,6 +121,8 @@ SWEP.MeleeViewMovements = {
 	}
 }
 
+SWEP.CustomToggleCustomizeHUD = true
+
 -- teehee --
 hook.Add("InitPostEntity", "JMod_ArcCW_InitPostEntity", function()
 	if not ArcCW then return end
@@ -147,8 +158,7 @@ SWEP.Hook_PostFireBullets = function(self)
 
 		local Tr = util.QuickTrace(RPos, -RDir * Dist, function(fuck)
 			if fuck:IsPlayer() or fuck:IsNPC() then return false end
-			local Class = fuck:GetClass()
-			if Class == "ent_jack_gmod_ezminirocket" then return false end
+			if fuck.IsEZrocket == true then return false end
 
 			return true
 		end)
@@ -408,9 +418,42 @@ end
 
 -- customization
 function SWEP:ToggleCustomizeHUD(ic)
+	if self.CustomToggleCustomizeHUD == true then return end
+	if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
+	if self:GetReloading() then ic = false end
+
+	noinspect = noinspect or GetConVar("arccw_noinspect")
+	if ic then
+		if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
+
+		self:SetState(ArcCW.STATE_CUSTOMIZE)
+		self:ExitSights()
+		self:SetShouldHoldType()
+		self:ExitBipod()
+		if noinspect and !noinspect:GetBool() then
+			self:PlayAnimation(self:SelectAnimation("enter_inspect"), nil, true, nil, nil, true, false)
+		end
+
+		if CLIENT then
+			self:OpenCustomizeHUD()
+		end
+	else
+		self:SetState(ArcCW.STATE_IDLE)
+		self.Sighted = false
+		self.Sprinted = false
+		self:SetShouldHoldType()
+
+		if noinspect and !noinspect:GetBool() then
+			self:PlayAnimation(self:SelectAnimation("exit_inspect"), nil, true, nil, nil, true, false)
+		end
+
+		if CLIENT then
+			self:CloseCustomizeHUD()
+			self:SendAllDetails()
+		end
+	end
 end
 
--- jmod will have its own customization system
 -- arctic's bash code is REALLY bad tbh
 --[[ -- TODO: do this when we introduce melee weps
 function SWEP:Bash(melee2)

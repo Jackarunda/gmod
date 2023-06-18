@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/compressor/compressorbake.mdl"
 ENT.Mass = 500
-ENT.EZcolorable = false
+ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.MaxPower = 100
@@ -36,13 +36,14 @@ local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 if SERVER then
 	function ENT:CustomInit()
 		self.EZupgradable = true
-		self.Range = 300
+		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
 		timer.Simple(0, function()
 			self:TurnOn()
 		end)
-		self.SoundLoop = CreateSound(self, "ambient/machines/engine1.wav")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
+		self.NextLogicThink = 0
 	end
 
 	function ENT:Use(activator)
@@ -50,7 +51,7 @@ if SERVER then
 		local State = self:GetState()
 		local OldOwner = self.EZowner
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
-		JMod.SetEZowner(self, activator, false)
+		JMod.SetEZowner(self, activator, true)
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 		return
@@ -75,7 +76,7 @@ if SERVER then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 55)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 60)
 		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), -Forward, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
@@ -157,29 +158,35 @@ if SERVER then
 	function ENT:Think()
 		local State = self:GetState()
 		if State == STATE_ON then
+			local Time = CurTime()
+			if (self.NextLogicThink < Time) then
+				self:CheckWaterLevel()
 
-			self:CheckWaterLevel()
+				local grade = self:GetGrade()
 
-			local grade = self:GetGrade()
+				self:ConsumeElectricity(0.34)
 
-			self:ConsumeElectricity(0.34)
-
-			if self:GetProgress() < 100 then
-				local rate = math.Round(1.36 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
-				if not(self.Submerged) then
-					self:SetProgress(self:GetProgress() + (rate * 0.5))
-					self:CleanseAir()
+				if self:GetProgress() < 100 then
+					local rate = math.Round(1.36 * JMod.EZ_GRADE_BUFFS[grade] ^ 2, 2)
+					if not(self.Submerged) then
+						self:SetProgress(self:GetProgress() + (rate * 0.5))
+						self:CleanseAir()
+					else
+						self:SetProgress(self:GetProgress() + rate)
+					end
 				else
-					self:SetProgress(self:GetProgress() + rate)
+					self:ProduceResource()
 				end
+
+				self.NextLogicThink = Time + 1
 			end
 
-			if self:GetProgress() >= 100 then
-				self:ProduceResource()
-			end
+			local Eff = EffectData()
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * -10 + self:GetUp() * 80)
+			Eff:SetScale(0.1)
+			util.Effect("eff_jack_gmod_airsuck", Eff, true, true)
 
-			self:NextThink(CurTime() + 1)
-
+			self:NextThink(CurTime() + .1)
 			return true
 		end
 	end
@@ -192,6 +199,11 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	function ENT:CustomInit()
+		local Grade = self:GetGrade()
+		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
+	end
+
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -209,19 +221,20 @@ elseif CLIENT then
 		---
 		self:DrawModel()
 		---
+		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 135)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -135)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ProFrac)
 				local ElecFrac = self:GetElectricity() / self.MaxElectricity
 				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
-				cam.Start3D2D(SelfPos + Up * 45 + Forward * 21 - Right * 17, DisplayAng, .1)
+				cam.Start3D2D(SelfPos + Up * 45 - Forward * 12 - Right * 27, DisplayAng, .1)
 					surface.SetDrawColor(10, 10, 10, Opacity + 50)
 					surface.DrawRect(90,  0, 128, 128)
 					JMod.StandardRankDisplay(Grade, 152, 68, 118, Opacity + 50)

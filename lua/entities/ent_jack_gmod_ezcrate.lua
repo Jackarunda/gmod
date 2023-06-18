@@ -142,7 +142,6 @@ if SERVER then
 		Box:Spawn()
 		Box:Activate()
 		Box:SetResource(Given)
-		Box:CalcWeight()
 		timer.Simple(0.1, function()
 			if IsValid(Box) and IsValid(activator) and activator:Alive() then
 				activator:PickupObject(Box)

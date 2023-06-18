@@ -9,11 +9,10 @@ function EFFECT:Init(data)
 	self.Normal = Vector(0, 0, 1)
 
 	local Tr = util.TraceLine({
-		start = self.Pos + Vector(0, 0, 500),
-		endpos = self.Pos - Vector(0, 0, -1000),
+		start = self.Pos + Vector(0, 0, 1000),
+		endpos = self.Pos,
 		filter = {self.Mine},
-		mask = -1 -- hit water
-		
+		mask = MASK_WATER
 	})
 
 	if Tr.Hit then

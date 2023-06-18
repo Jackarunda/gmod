@@ -1112,6 +1112,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Bulky machine for utilizing geothermal deposits, and creating power from them."
 			},
+			["EZ Fluid Bottler"] = {
+				results = "ent_jack_gmod_ezfluid_bottler",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50
+				},
+				sizeScale = 10,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Machine for compressing air into EZ gas and bottling water. \nAlso cleans the air of toxins and radioactive fallout"
+			},
 			["HL2 Buggy"] = {
 				results = "FUNC spawnHL2buggy",
 				craftingReqs = {

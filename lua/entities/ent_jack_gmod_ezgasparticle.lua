@@ -14,13 +14,19 @@ ENT.EZgasParticle = true
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
+		self.Entity:SetMoveType(MOVETYPE_NONE)
+		self.Entity:DrawShadow(false)
+		local phys = self.Entity:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:EnableCollisions(false)
+			phys:EnableGravity(false)
+		end
+		self.Entity:SetNotSolid(true)
+		self:DrawShadow(false)
 		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
-		self:RebuildPhysics()
-		self:DrawShadow(false)
 		self.NextDmg = Time + 5
+		self.CurVel = self.CurVel or VectorRand()
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -49,36 +55,35 @@ if SERVER then
 		local Tr = util.TraceLine({
 			start = self:GetPos(),
 			endpos = ent:GetPos(),
-			filter = {self, ent},
+			filter = {self, ent, self.Canister},
 			mask = MASK_SHOT
 		})
-
 		return not Tr.Hit
 	end
 
 	function ENT:Think()
 		if CLIENT then return end
-		local Time, SelfPos = CurTime(), self:GetPos()
+		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), 1
 
 		if self.DieTime < Time then
 			self:Remove()
-
 			return
 		end
 
-		local Force = VectorRand() * 10
+		local Force = VectorRand() * 10 + JMod.Wind * 5
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, 300)) do
-			if not (obj == self) and self:CanSee(obj) then
+			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle then
+					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * 40
-				elseif self:ShouldDamage(obj) and (math.random(1, 3) == 1) and (self.NextDmg < Time) then
+					Force = Force - Vec * 1
+				elseif math.random(1, 3) == 1 and self.NextDmg < Time and self:ShouldDamage(obj) then
 					local Dmg, Helf = DamageInfo(), obj:Health()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
+					Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
 					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(self.EZowner or self)
+					Dmg:SetAttacker(JMod.GetEZowner(self) or self)
 					Dmg:SetDamagePosition(obj:GetPos())
 					obj:TakeDamageInfo(Dmg)
 
@@ -90,40 +95,54 @@ if SERVER then
 			end
 		end
 
-		self:Extinguish()
-		local Phys = self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity() * .8)
-		Phys:ApplyForceCenter(Force)
-		self:NextThink(Time + math.Rand(2, 4))
+		-- self:Extinguish()
 
+		-- apply acceleration
+		self.CurVel = self.CurVel + Force / ThinkRateHz
+
+		-- apply air resistance
+		-- self.CurVel = self.CurVel / 1
+
+		-- observe current velocity
+		local NewPos = SelfPos + self.CurVel / ThinkRateHz
+
+		-- make sure we're not gonna hit something. If so, bounce
+		local MoveTrace = util.TraceLine({
+			start = SelfPos,
+			endpos = NewPos,
+			filter = { self, self.Canister },
+			mask = MASK_SHOT
+		})
+		if not MoveTrace.Hit then
+			-- move unobstructed
+			self:SetPos(NewPos)
+		else
+			-- bounce in accordance with Ideal Gas Law
+			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
+			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
+			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
+			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
+			self.CurVel = -(CurVelAng:Forward() * Speed)
+		end
+
+		-- YOU BETTER THINK AGAIN!
+		self:NextThink(Time + 1 / ThinkRateHz)
 		return true
 	end
 
-	function ENT:RebuildPhysics()
-		local size = 1
-		self:PhysicsInitSphere(size, "gmod_silent")
-		self:SetCollisionBounds(Vector(-.1, -.1, -.1), Vector(.1, .1, .1))
-		self:PhysWake()
-		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		local Phys = self:GetPhysicsObject()
-		Phys:SetMass(1)
-		Phys:EnableGravity(false)
-		Phys:SetMaterial("gmod_silent")
-	end
-
-	function ENT:PhysicsCollide(data, physobj)
-		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal * 100)
-	end
-
 	function ENT:OnTakeDamage(dmginfo)
+		-- herp
 	end
 
-	--self:TakePhysicsDamage( dmginfo )
 	function ENT:Use(activator, caller)
+		-- horp
 	end
 
-	--
 	function ENT:GravGunPickupAllowed(ply)
+		return false
+	end
+
+	function ENT:GravGunPunt(ply)
 		return false
 	end
 elseif CLIENT then
@@ -133,7 +152,8 @@ elseif CLIENT then
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
 		self.Visible = true
 		self.Show = true
-		self.siz = 1
+		self.siz = math.random(50, 150)
+		self.LastPos = self:GetPos()
 
 		timer.Simple(2, function()
 			if IsValid(self) then
@@ -142,18 +162,9 @@ elseif CLIENT then
 		end)
 
 		self.NextVisCheck = CurTime() + 6
-		self.DebugShow = LocalPlayer().EZshowGasParticles
-
-		if self.DebugShow then
-			self:SetModelScale(2)
-		end
 	end
 
 	function ENT:DrawTranslucent()
-		if self.DebugShow then
-			self:DrawModel()
-		end
-
 		if (self:GetDTBool(0)) then return end
 
 		local Time = CurTime()
@@ -166,8 +177,8 @@ elseif CLIENT then
 		if self.Show then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 30))
-			self.siz = math.Clamp(self.siz + FrameTime() * 200, 0, 500)
+			render.DrawSprite(self.LastPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 10))
+			self.LastPos = LerpVector(FrameTime() * 1, self.LastPos, self:GetPos())
 		end
 	end
 end

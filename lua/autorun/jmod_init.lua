@@ -46,6 +46,8 @@ JMod.EZ_RESOURCE_TYPES = {
 	CLOTH = "cloth",
 	CERAMIC = "ceramic",
 	PAPER = "paper",
+	SAND = "sand",
+	CONCRETE = "concrete",
 	--
 	AMMO = "ammo",
 	MUNITIONS = "munitions",
@@ -131,7 +133,9 @@ JMod.EZ_RESOURCE_ENTITIES = {
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = "ent_jack_gmod_ezadvtextiles",
 	[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = "ent_jack_gmod_ezadvparts",
 	[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = "ent_jack_gmod_ezfissilematerial",
-	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter"
+	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = "ent_jack_gmod_ezantimatter",
+	[JMod.EZ_RESOURCE_TYPES.SAND] = "ent_jack_gmod_ezsand",
+	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "ent_jack_gmod_ezconcrete"
 }
 
 JMod.EZ_RESOURCE_TYPE_METHODS = {
@@ -146,7 +150,9 @@ JMod.EZ_RESOURCE_TYPE_METHODS = {
 	[JMod.EZ_RESOURCE_TYPES.AMMO] = "Ammo",
 	[JMod.EZ_RESOURCE_TYPES.MUNITIONS] = "Munitions",
 	[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = "Supplies",
-	[JMod.EZ_RESOURCE_TYPES.COAL] = "Coal"
+	[JMod.EZ_RESOURCE_TYPES.COAL] = "Coal",
+	[JMod.EZ_RESOURCE_TYPES.SAND] = "Sand",
+	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "Concrete"
 }
 
 -- EZ item quality grade (upgrade level) definitions
@@ -266,6 +272,8 @@ JMod.DefualtArmorTable={
 	[DMG_GENERIC]=1,
 	[DMG_MISSILEDEFENSE]=1
 }
+
+JMod.EZ_OwnerID = {}
 
 -- we have to load locales before any other files
 -- because files that add concommands have help text
