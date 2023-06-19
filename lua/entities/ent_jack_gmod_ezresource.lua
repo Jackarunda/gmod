@@ -244,7 +244,7 @@ if SERVER then
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
+		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)
 		ent.NextCombine = Time + math.random(1, 5)
 	end
