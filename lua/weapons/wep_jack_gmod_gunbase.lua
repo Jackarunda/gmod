@@ -398,7 +398,7 @@ end
 --]]
 function SWEP:OnDrop()
 	local Specs = JMod.WeaponTable[self.PrintName]
-
+	print(Specs)
 	if Specs then
 		local Ent = ents.Create(Specs.ent)
 		Ent:SetPos(self:GetPos())

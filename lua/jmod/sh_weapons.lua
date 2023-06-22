@@ -407,8 +407,8 @@ JMod.AmmoTable = {
 	}
 }
 
-function JMod.LoadAmmoTable()
-	for k, v in pairs(JMod.AmmoTable) do
+function JMod.LoadAmmoTable(tbl)
+	for k, v in pairs(tbl) do
 		v.carrylimit = v.carrylimit or -2
 		game.AddAmmoType({
 			name = k,
@@ -466,7 +466,7 @@ function JMod.GenerateWeaponEntities(tbl)
 	end
 end
 
-JMod.LoadAmmoTable()
+JMod.LoadAmmoTable(JMod.AmmoTable)
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
 function JMod.GetAmmoSpecs(typ)
