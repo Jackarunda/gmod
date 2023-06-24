@@ -513,9 +513,9 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 
 	-- todo: implement this when we add these types
 	if Specs.tracer then
-		wep.Tracer = true
+		wep.Tracer = Specs.tracer
 	else
-		wep.Tracer = false
+		wep.Tracer = nil
 	end
 end
 

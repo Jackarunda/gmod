@@ -18,7 +18,7 @@ SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 900 -- projectile or phys bullet muzzle velocity
 -- IN M/S
-SWEP.TracerNum = 0 -- tracer every X
+--SWEP.TracerNum = 0 -- tracer every X
 SWEP.TracerCol = Color(255, 25, 25)
 SWEP.TracerWidth = 3
 SWEP.AimSwayFactor = .9
@@ -46,7 +46,6 @@ SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.BulletBones = {} -- the bone that represents bullets in gun/mag -- [0]="bulletchamber", -- [1]="bullet1"
 SWEP.ShootSoundWorldCount = 1
---SWEP.Hook_PostFireBullets -- todo
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 SWEP.AlwaysPhysBullet = false
