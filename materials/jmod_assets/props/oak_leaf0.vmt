@@ -1,0 +1,11 @@
+
+            "VertexLitGeneric"
+            {
+                "%keywords" "gm_d_map_assets_props"
+                "$model" "1"
+        
+            "$basetexture" "jmod_assets/props/oak_leaf0_D"
+            "$translucent" "1"
+        
+        }
+    
