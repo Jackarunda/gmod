@@ -470,21 +470,24 @@ JMod.LoadAmmoTable(JMod.AmmoTable)
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
 
 -- support third-party additions to the jmod ammo/weapons table
-local function LoadAdditionalAmmo()
+function JMod.LoadAdditionalAmmo()
 	if JMod.AdditionalAmmoTable then
 		table.Merge(JMod.AmmoTable, JMod.AdditionalAmmoTable)
 		JMod.LoadAmmoTable(JMod.AdditionalAmmoTable)
 	end
 end
-hook.Add("Initialize", "JMod_LoadAdditionalAmmo", LoadAdditionalAmmo)
+hook.Add("Initialize", "JMod_LoadAdditionalAmmo", JMod.LoadAdditionalAmmo)
 
-local function LoadAdditionalWeaponEntities()
+function JMod.LoadAdditionalWeaponEntities()
 	if JMod.AdditionalWeaponTable then
 		table.Merge(JMod.WeaponTable, JMod.AdditionalWeaponTable)
 		JMod.GenerateWeaponEntities(JMod.AdditionalWeaponTable)
 	end
 end
-hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", LoadAdditionalWeaponEntities)
+hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
+
+JMod.LoadAdditionalAmmo()
+JMod.LoadAdditionalWeaponEntities()
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end
