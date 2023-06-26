@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 --
-ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(90, 90, 0)
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 50,
@@ -27,20 +27,6 @@ end
 local STATE_BROKEN, STATE_OFF,  STATE_ON = -1, 0, 1
 
 if(SERVER)then
-	function ENT:SpawnFunction(ply,tr,ClassName)
-		local ent=ents.Create(ClassName)
-		ent:SetPos(tr.HitPos + tr.HitNormal*25)
-		ent:SetAngles(Angle(90, 90, 0))
-		JMod.SetEZowner(ent,ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-		JMod.Hint(ply, ClassName)
-		return ent
-	end
-
 	function ENT:CustomInit()
 		self.EZupgradable = true
 		self:TurnOn()

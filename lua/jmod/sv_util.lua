@@ -825,7 +825,7 @@ end
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
 	amount = math.Round(amount)
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
-	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
+	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
 		if findCrate then
 			range = range or 256
@@ -871,7 +871,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		timer.Simple(1 * math.ceil(amount/100 * JMod.Config.ResourceEconomy.MaxResourceMult), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
-			Resource:SetAngles(SpawnAngle)
+			Resource:SetAngles(SpawnAngle or Resource.JModPreferredCarryAngles or Angle(0, 0, 0))
 			Resource:Spawn()
 			JMod.SetEZowner(MachineOwner)
 			Resource:SetResource(SpawnAmount)

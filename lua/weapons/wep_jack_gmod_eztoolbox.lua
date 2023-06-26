@@ -753,7 +753,6 @@ function SWEP:Think()
 		if self.Owner:KeyDown(IN_ATTACK2) then
 			if self.NextTaskProgress < Time then
 				self.NextTaskProgress = Time + .6
-				SetAmt = 0
 				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 				local Task = (Alt and "loosen") or "salvage"
 				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})

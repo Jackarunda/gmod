@@ -179,7 +179,7 @@ if(SERVER)then
 	function ENT:SpawnFunction(ply,tr,classname)
 		local SpawnPos=tr.HitPos+tr.HitNormal*(self.SpawnHeight or 60)
 		local ent=ents.Create(classname)
-		ent:SetAngles(Angle(0,0,0))
+		ent:SetAngles((ent.JModPreferredCarryAngles and ent.JModPreferredCarryAngles) or Angle(0,0,0))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent,ply)
 		if JMod.Config.Machines.SpawnMachinesFull then
@@ -203,15 +203,15 @@ if(SERVER)then
 			self:SetMaterial(self.Mat)
 		end
 		self:PhysicsInit(SOLID_VPHYSICS)
-        self:SetMoveType(MOVETYPE_VPHYSICS)	
-        self:SetSolid(SOLID_VPHYSICS)
-        self:DrawShadow(true)
-        self:SetUseType(SIMPLE_USE)
-        local phys = self:GetPhysicsObject()
-        if phys:IsValid() then
-            phys:Wake()
-            phys:SetMass(self.Mass)
-        end
+		self:SetMoveType(MOVETYPE_VPHYSICS)	
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
+		local phys = self:GetPhysicsObject()
+		if phys:IsValid() then
+			phys:Wake()
+			phys:SetMass(self.Mass)
+		end
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
 		self:InitPerfSpecs()
