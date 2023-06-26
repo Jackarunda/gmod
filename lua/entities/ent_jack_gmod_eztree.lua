@@ -197,7 +197,7 @@ if(SERVER)then
 
 	function ENT:Wither() 
 		self:SetState(STATE_WITHERING)
-		self:SetSubMaterial(1, nil)
+		self:SetSubMaterial(1, "jmod_assets/props/oak_leaf1")
 	end
 
 	function ENT:GetDayLight()
@@ -219,6 +219,9 @@ if(SERVER)then
 		end
 
 		if State >= STATE_SAD then
+			if self.LastState ~= STATE_GROWING then
+				self:SetSubMaterial(1, nil)
+			end
 			if not self.EZinstalled then
 				self:SetState(STATE_WITHERING)
 
@@ -258,10 +261,12 @@ if(SERVER)then
 			if self:GetProgress() >= 100 then
 				self:Grow()
 			end
-			if State == STATE_SAD and GetWater() >= 10 then
-				self:SetState(STATE_GROWING)
-			end
+			
 		elseif State == STATE_WITHERING then
+		end
+
+		if State ~= STATE_GROWING and self:GetWater() >= 10 then
+			self:SetState(STATE_GROWING)
 		end
 
 		self.LastState = State
