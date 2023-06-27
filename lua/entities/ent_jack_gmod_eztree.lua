@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Misc"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmod_assets/tree0_sapling0.mdl"
+ENT.Model = "models/jmod/props/tree0.mdl"
 ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
@@ -22,9 +22,9 @@ ENT.DynamicPerfSpecs = {
 }
 ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 ENT.GrowthStageStats = {
-	{mdl = "models/jmod_assets/tree0_sapling0.mdl", height = 5, wood = 1}, 
-	{mdl = "models/jmod_assets/tree0_sapling1.mdl", height = 60, wood = 25}, 
-	{mdl = "models/jmod_assets/tree0_sapling2.mdl", height = 120, wood = 100}
+	{mdl = "models/jmod/props/tree0.mdl", height = 5, wood = 1}, 
+	{mdl = "models/jmod/props/tree1.mdl", height = 60, wood = 25}, 
+	{mdl = "models/jmod/props/tree2.mdl", height = 120, wood = 100}
 }
 
 function ENT:CustomSetupDataTables()
@@ -192,12 +192,12 @@ if(SERVER)then
 
 	function ENT:Sadden() 
 		self:SetState(STATE_SAD)
-		self:SetSubMaterial(1, "jmod_assets/props/oak_leaf1")
+		self:SetSubMaterial(1, "models/jmod/props/oak_leaf1")
 	end
 
 	function ENT:Wither() 
 		self:SetState(STATE_WITHERING)
-		self:SetSubMaterial(1, "jmod_assets/props/oak_leaf1")
+		self:SetSubMaterial(1, "models/jmod/props/oak_leaf1")
 	end
 
 	function ENT:GetDayLight()
@@ -220,7 +220,7 @@ if(SERVER)then
 
 		if State >= STATE_SAD then
 			if self.LastState ~= STATE_GROWING then
-				self:SetSubMaterial(1, nil)
+				self:SetSubMaterial(1, "models/jmod/props/oak_leaf0")
 			end
 			if not self.EZinstalled then
 				self:SetState(STATE_WITHERING)

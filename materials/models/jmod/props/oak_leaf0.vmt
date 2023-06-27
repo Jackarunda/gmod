@@ -1,6 +1,8 @@
+
 "VertexLitGeneric"
 {
 	"$model" "1"
-	"$basetexture" "jmod_assets/props/oak_leaf1_D"
+	"$basetexture" "models/jmod/props/oak_leaf0_D"
 	"$translucent" "1"
 }
+    
