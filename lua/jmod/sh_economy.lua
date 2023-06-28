@@ -777,12 +777,8 @@ function JMod.GetDepositAtPos(machine, positionToCheck)
 		-- store they desposit's key if we're inside of it
 		if (Dist <= v.siz) then
 			if IsValid(machine) then
-				if istable(machine.BlacklistedResources) then
-					if table.HasValue(machine.BlacklistedResources, v.typ) then continue end
-				end
-				if istable(machine.WhitelistedResources) then
-					if not table.HasValue(machine.WhitelistedResources, v.typ) then continue end
-				end
+				if istable(machine.BlacklistedResources) and table.HasValue(machine.BlacklistedResources, v.typ) then continue end
+				if istable(machine.WhitelistedResources) and not(table.HasValue(machine.WhitelistedResources, v.typ)) then continue end
 			end
 			if (v.rate or (v.amt > 0)) then
 				table.insert(DepositsInRange, k)
@@ -1125,6 +1121,19 @@ if SERVER then
 			-- we don't use table.remove because the index shifting causes too many other problems
 			JMod.NaturalResourceTable[key] = nil
 		end
+	end
+
+	local ScroungedPositions = {}
+
+	function JMod.ScroungeArea(pos)
+		--[[
+			1) Do about 10^2 Grid traces (todo: Figure out what grid works best) to get an idea of what's around the player.
+			2) Do about 5^2 downward traces to see what ground the player is on.
+			3) Use the ratio of different materials to determine what the scrounging results are.
+			4) Reduce the results according to the proximity to previously scrounged areas.
+			5) Add the position to the scrounging table.
+			Note: We should have a cooldown so players don't spam the server with scrounge requests.
+		]]--
 	end
 
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()
