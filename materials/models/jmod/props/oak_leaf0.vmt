@@ -3,6 +3,9 @@
 {
 	"$model" "1"
 	"$basetexture" "models/jmod/props/oak_leaf0_D"
-	"$translucent" "1"
+//	"$translucent" "1"
+	"$alphatest"			"1"
+	"$alphatestreference"	"0.5"
+	"$allowalphatocoverage"	"1"
 }
     

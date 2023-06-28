@@ -241,50 +241,7 @@ if(SERVER)then
 	end
 
 	function ENT:UpdateDepositKey()
-		local SelfPos = self:GetPos() - Vector(0, 0, self.SpawnHeight or 60)
-		-- first, figure out which deposits we are inside of, if any
-		local DepositsInRange = {}
-
-		for k, v in pairs(JMod.NaturalResourceTable) do
-			-- Make sure the resource is on the whitelist
-			local Dist = SelfPos:Distance(v.pos)
-
-			-- store they desposit's key if we're inside of it
-			if (Dist <= v.siz) then
-				if istable(self.BlacklistedResources) then
-					if table.HasValue(self.BlacklistedResources, v.typ) then continue end
-				end
-				if istable(self.WhitelistedResources) then
-					if not table.HasValue(self.WhitelistedResources, v.typ) then continue end
-				end
-				if (v.rate or (v.amt > 0)) then
-					table.insert(DepositsInRange, k)
-				end
-			end
-		end
-
-		-- now, among all the deposits we are inside of, let's find the closest one
-		local ClosestDeposit, ClosestRange = nil, 9e9
-
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange) do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				local Dist = SelfPos:Distance(DepositInfo.pos)
-
-				if Dist < ClosestRange then
-					ClosestDeposit = v
-					ClosestRange = Dist
-				end
-			end
-		end
-
-		if ClosestDeposit then
-			self.DepositKey = ClosestDeposit
-			if self.SetResourceType then self:SetResourceType(JMod.NaturalResourceTable[ClosestDeposit].typ) end
-		else
-			self.DepositKey = nil
-		end
-		--print(ClosestDeposit)
+		self.DepositKey = JMod.GetDepositAtPos(self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
