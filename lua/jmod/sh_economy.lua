@@ -766,7 +766,7 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 	return Results
 end
 
-JMod.GetDepositAtPos(positionToCheck)
+function JMod.GetDepositAtPos(machine, positionToCheck)
 	-- first, figure out which deposits we are inside of, if any
 	local DepositsInRange = {}
 
@@ -776,11 +776,13 @@ JMod.GetDepositAtPos(positionToCheck)
 
 		-- store they desposit's key if we're inside of it
 		if (Dist <= v.siz) then
-			if istable(self.BlacklistedResources) then
-				if table.HasValue(self.BlacklistedResources, v.typ) then continue end
-			end
-			if istable(self.WhitelistedResources) then
-				if not table.HasValue(self.WhitelistedResources, v.typ) then continue end
+			if IsValid(machine) then
+				if istable(machine.BlacklistedResources) then
+					if table.HasValue(machine.BlacklistedResources, v.typ) then continue end
+				end
+				if istable(machine.WhitelistedResources) then
+					if not table.HasValue(machine.WhitelistedResources, v.typ) then continue end
+				end
 			end
 			if (v.rate or (v.amt > 0)) then
 				table.insert(DepositsInRange, k)
@@ -804,8 +806,8 @@ JMod.GetDepositAtPos(positionToCheck)
 	end
 
 	if ClosestDeposit then
+		if IsValid(machine) and machine.SetResourceType then machine:SetResourceType(JMod.NaturalResourceTable[ClosestDeposit].typ) end
 		return ClosestDeposit
-		if self.SetResourceType then self:SetResourceType(JMod.NaturalResourceTable[ClosestDeposit].typ) end
 	else
 		return nil
 	end

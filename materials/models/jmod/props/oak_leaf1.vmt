@@ -2,5 +2,7 @@
 {
 	"$model" "1"
 	"$basetexture" "models/jmod/props/oak_leaf1_D"
-	"$translucent" "1"
+	"$alphatest"			"1"
+	"$alphatestreference"	"0.5"
+	"$allowalphatocoverage"	"1"
 }

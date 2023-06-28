@@ -241,7 +241,7 @@ if(SERVER)then
 	end
 
 	function ENT:UpdateDepositKey()
-		self.DepositKey = JMod.GetDepositAtPos(self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
+		self.DepositKey = JMod.GetDepositAtPos(self, self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
