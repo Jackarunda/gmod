@@ -145,3 +145,7 @@ concommand.Add("jmod_ez_config", function(ply, cmd, args)
 	if not ply:IsAdmin() or not (IsValid(ply) and ply:Alive()) then return end
 	JMod.EZ_Open_ConfigUI(ply)
 end, nil, "Opens the EZ config editor.")
+
+concommand.Add("jmod_ez_scrounge", function(ply, cmd) 
+	JMod.EZ_ScroungeArea(ply)
+end, nil, "Scrounges area for useful props to salvage.")

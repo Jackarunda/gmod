@@ -315,7 +315,7 @@ local SalvagingTable = {
 	},
 	sandbags = {
 		[JMod.EZ_RESOURCE_TYPES.WOOD] = .1,
-		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .1
+		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .2
 	},
 	concrete = {
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .4
@@ -457,6 +457,12 @@ local SalvagingTable = {
 	},
 	chainlink = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
+	},
+	snow = {
+		[JMod.EZ_RESOURCE_TYPES.WATER] = .5
+	},
+	ice = {
+		[JMod.EZ_RESOURCE_TYPES.WATER] = .6
 	}
 }
 
@@ -650,7 +656,7 @@ function JMod.GetSalvageYield(ent)
 		"You can't salvage this",
 		"Stop trying to salvage this already",
 	}
-	if ent.EZsupplies or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
+	if ent.IsJackyEZresource or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
 	if Class == "ent_jack_gmod_eztoolbox" then return {}, table.Random(AnnoyedReplyTable) end
 	if Class == "ent_jack_ezcompactbox" then return {}, table.Random(AnnoyedReplyTable) end
 
@@ -886,7 +892,10 @@ if SERVER then
 		end
 	end
 	--]]
-	local NatureMats, MaxTries, SurfacePropBlacklist, RockNames = {MAT_SNOW, MAT_SAND, MAT_FOLIAGE, MAT_SLOSH, MAT_GRASS, MAT_DIRT}, 10000, {"paper", "plaster", "rubber", "carpet"}, {"rock", "boulder"}
+	JMod.NatureMats = {[MAT_SNOW]="snow", [MAT_SAND]="sand", [MAT_FOLIAGE]="foliage", [MAT_SLOSH]="slime", [MAT_GRASS]="grass", [MAT_DIRT]="dirt"}
+	JMod.CityMats = {[MAT_CONCRETE]="concrete", [MAT_GLASS]="glass", [MAT_METAL]="metal", [MAT_GRATE]="chainlink", [MAT_TILE]="tile", [MAT_VENT]="metalvent", [MAT_PLASTIC]="plastic"}
+
+	local MaxTries, SurfacePropBlacklist, RockNames = 10000, {"paper", "plaster", "rubber", "carpet"}, {"rock", "boulder"}
 
 	local function TabContainsSubString(tbl, str)
 		if not str then return false end
@@ -900,7 +909,7 @@ if SERVER then
 
 	local function IsSurfaceSuitable(tr, props, mat, tex)
 		if not (tr.Hit and tr.HitWorld and not tr.StartSolid and not tr.HitSky) then return false end
-		if not table.HasValue(NatureMats, tr.MatType) then return false end
+		if not JMod.NatureMats[tr.MatType] then return false end
 		if TabContainsSubString(SurfacePropBlacklist, mat) then return false end
 		if TabContainsSubString(SurfacePropBlacklist, HitTexture) then return false end
 
@@ -1123,12 +1132,94 @@ if SERVER then
 		end
 	end
 
-	local ScroungedPositions = {}
+	local ScroungeTable = {
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = {["models/props_c17/trappropeller_lever"] = 5},
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {["models/props_junk/PopCan01a"] = 1, ["models/props_junk/garbage_metalcan002a"] = 1},
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = {["models/props_interiors/furniture_chair01a"] = 16},
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {["models/jmod/resources/rock05a"] = 5}
+	}
 
-	function JMod.ScroungeArea(pos)
+	local ScroungedPositions, Amount = {}, 100
+
+	function JMod.EZ_ScroungeArea(ply)
+		local ScroungeResults = {}
+		local Pos = ply:GetShootPos()
+		for i = 1, Amount do
+			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
+			local StartPos = Pos + Offset
+			local Contents = util.PointContents(StartPos)
+			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+				local DownTr = util.TraceLine({
+					start = StartPos,
+					endpos = StartPos - Vector(0, 0, 600),
+					filter = {ply},
+					mask = MASK_SOLID_BRUSHONLY
+				})
+				if DownTr.Hit then
+					local SurfaceResult = nil
+					local Mat = DownTr.MatType
+					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
+					if not MaterialType then
+						SurfaceResult = SalvagingTable[util.GetSurfacePropName(DownTr.SurfaceProps)]
+					else
+						SurfaceResult = SalvagingTable[MaterialType]
+					end
+	
+					if SurfaceResult then
+						for k, v in pairs(SurfaceResult) do
+							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v
+						end
+					end
+				end
+			end 
+		end
+		--PrintTable(ScroungeResults)
+		for EZresource, amt in pairs(ScroungeResults) do
+			if not ScroungeTable[EZresource] then return end
+
+			amt = math.Round(amt)
+
+			local Break = 0
+			while amt > 0 and Break < 10 do
+				local bestModel, resultantMass = nil, amt
+				for model, mass in pairs(ScroungeTable[EZresource]) do
+					if not bestModel then
+						bestModel = model
+						resultantMass = mass
+					elseif mass <= amt then
+						bestModel = model
+						resultantMass = mass
+					end
+				end
+				if bestModel then
+					local Loot = ents.Create("prop_physics")
+					Loot:SetModel(bestModel..".mdl")
+					Loot:SetPos(Pos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(-10, 10)))
+					Loot:Spawn()
+					Loot:Activate()
+					if resultantMass > amt then
+						timer.Simple(1, function()
+							if IsValid(Loot) then
+								Loot:GetPhysicsObject():SetMass(resultantMass)
+								Loot:Activate()
+							end
+						end)
+					end
+					Loot.EZsupplies = EZresource
+				end
+				amt = amt - math.min(resultantMass, amt)
+				Break = Break + 1
+			end
+		end
+		local index = table.insert(ScroungedPositions, Pos)
+		timer.Simple(60, function()
+			if ScroungedPositions[index] then
+				ScroungedPositions[index] = nil
+			end
+		end)
 		--[[
-			1) Do about 10^2 Grid traces (todo: Figure out what grid works best) to get an idea of what's around the player.
-			2) Do about 5^2 downward traces to see what ground the player is on.
+			1) Check for open air
+			2) Do downward traces to see what ground the player is on.
 			3) Use the ratio of different materials to determine what the scrounging results are.
 			4) Reduce the results according to the proximity to previously scrounged areas.
 			5) Add the position to the scrounging table.
