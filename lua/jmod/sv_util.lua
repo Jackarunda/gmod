@@ -1105,7 +1105,7 @@ function JMod.Package(packager)
 	end
 end
 
-function JMod.ToolboxDeconstruct(ent, pos, deconstructor, task)
+function JMod.EZprogressTask(ent, pos, deconstructor, task)
 	local Time = CurTime()
 
 	if not IsValid(ent) then return "Invalid Ent" end

@@ -463,6 +463,12 @@ local SalvagingTable = {
 	},
 	ice = {
 		[JMod.EZ_RESOURCE_TYPES.WATER] = .6
+	},
+	rock = {
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
+	},
+	boulder = {
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
 	}
 }
 
@@ -1181,12 +1187,12 @@ if SERVER then
 
 			local Break = 0
 			while amt > 0 and Break < 10 do
-				local bestModel, resultantMass = nil, amt
+				local bestModel, resultantMass = nil, 1
 				for model, mass in pairs(ScroungeTable[EZresource]) do
 					if not bestModel then
 						bestModel = model
 						resultantMass = mass
-					elseif mass <= amt then
+					elseif (mass <= amt) and (mass > resultantMass) then
 						bestModel = model
 						resultantMass = mass
 					end
@@ -1200,8 +1206,8 @@ if SERVER then
 					if resultantMass > amt then
 						timer.Simple(1, function()
 							if IsValid(Loot) then
-								Loot:GetPhysicsObject():SetMass(resultantMass)
-								Loot:Activate()
+								Loot:GetPhysicsObject():SetMass(amt)
+								--Loot:Activate()
 							end
 						end)
 					end

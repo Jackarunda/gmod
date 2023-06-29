@@ -77,6 +77,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "NextDown")
 	self:NetworkVar("Bool", 3, "Blocking")
 	self:NetworkVar("Bool", 4, "IsCarrying")
+	self:NetworkVar("Float", 2, "TaskProgress")
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -228,6 +229,7 @@ function SWEP:GetCarrying()
 end
 
 function SWEP:SetCarrying(ent, bone, pos, dist)
+	if not SERVER then return end
 	if IsValid(ent) then
 		self.CarryEnt = ent
 		self.CarryBone = bone
@@ -306,8 +308,9 @@ end
 function SWEP:PrimaryAttack()
 	if SERVER then
 		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
+		local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 
-		if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
+		if Alt and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
 			local ToolBox = self.Owner:GetWeapon("wep_jack_gmod_eztoolbox")
 			local SelectedBuild = ToolBox:GetSelectedBuild()
 			local BuildInfo = JMod.Config.Craftables[SelectedBuild]
@@ -317,6 +320,34 @@ function SWEP:PrimaryAttack()
 
 				return
 			end
+		end
+		if IsValid(self:GetCarrying()) then
+			local PhysObj = self.CarryEnt:GetPhysicsObject()
+			self:SetNextPrimaryFire(CurTime() + .35)
+
+			if IsValid(PhysObj) then 
+				if (PhysObj:GetMass() >= (16 * JMod.Config.General.HandGrabStrength)) then
+					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
+					return
+				end
+				Pos = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * (self.CarryDist+5), {self.Owner}).HitPos
+				local Task = (Alt and "loosen") or "salvage"
+				local Message = JMod.EZprogressTask(self.CarryEnt, Pos, self.Owner, Task)
+
+				if Message then
+					self.Owner:PrintMessage(HUD_PRINTCENTER, Message)
+				else
+					sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
+					if SERVER then
+						JMod.Hint(self.Owner, "work spread")
+						self:SetTaskProgress(self.CarryEnt:GetNW2Float("EZ"..Task.."Progress", 0))
+					end
+				end
+			end
+
+			return
+		else
+			self:SetTaskProgress(0)
 		end
 	end
 

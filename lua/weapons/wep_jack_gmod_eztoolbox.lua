@@ -764,7 +764,7 @@ function SWEP:Think()
 						self.TaskEntity = Ent
 						self.CurTask = Task
 					elseif IsValid(Ent:GetPhysicsObject()) then
-						local Message = JMod.ToolboxDeconstruct(Ent, Pos, self.Owner, (Alt and "loosen") or "salvage")
+						local Message = JMod.EZprogressTask(Ent, Pos, self.Owner, (Alt and "loosen") or "salvage")
 
 						if Message then
 							self:Msg(Message)
