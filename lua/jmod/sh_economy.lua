@@ -1150,9 +1150,8 @@ if SERVER then
 	function JMod.EZ_ScroungeArea(ply)
 		local Time = CurTime()
 		ply.NextScroungeTime = ply.NextScroungeTime or 0
-		print(ply.NextScroungeTime)
 		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
-		ply.NextScroungeTime = Time + 10
+		ply.NextScroungeTime = Time + 15
 		local Pos = ply:GetShootPos()
 
 		-- Let's find te nearest other scrounge location:
