@@ -998,15 +998,15 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 		surface.DrawRect(0, 0, w, h)
 		draw.SimpleText(JMod.ArmorSlotNiceNames[slot], "DermaDefault", Buttalony:GetWide() / 2, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
+		local Str = "--EMPTY--"
 		if ItemID then
-			local Str = ItemData.name --..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
+			Str = ItemData.name --..": "..math.Round(ItemData.dur/ItemInfo.dur*100).."%"
 
 			if ItemData.tgl and ItemInfo.tgl.slots[slot] == 0 then
 				Str = "DISENGAGED"
 			end
-
-			draw.SimpleText(Str, "DermaDefault", Buttalony:GetWide() / 2, 25, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		end
+		draw.SimpleText(Str, "DermaDefault", Buttalony:GetWide() / 2, 25, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	if ItemID then
@@ -1066,12 +1066,39 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 	end
 end
 
+local function CreateCommandButton(parent, commandTbl, x, y, num)
+	local Buttalony, Ply = vgui.Create("DButton", parent), LocalPlayer()
+	Buttalony:SetSize(180, 20)
+	Buttalony:SetPos(x, y)
+	Buttalony:SetText("")
+	Buttalony:SetCursor("hand")
+
+	function Buttalony:Paint(w, h)
+		surface.SetDrawColor(50, 50, 50, 100)
+		surface.DrawRect(0, 0, w, h)
+
+		draw.SimpleText(num..": "..commandTbl.name, "DermaDefault", Buttalony:GetWide() / 2, 10, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+
+	local HelpStr = commandTbl.helpTxt
+	if commandTbl.adminOnly then
+		HelpStr = "ADMIN ONLY!\n"..commandTbl.helpTxt
+	end
+		
+	Buttalony:SetTooltip(HelpStr)
+
+	function Buttalony:DoClick()
+		Ply:ConCommand("jmod_ez_"..commandTbl.name)
+		parent:Close()
+	end
+end
+
 net.Receive("JMod_Inventory", function()
 	local Ply = LocalPlayer()
 	local weight = Ply.EZarmor.totalWeight
 	local PlyModel = net.ReadString()
 	local motherFrame = vgui.Create("DFrame")
-	motherFrame:SetSize(600, 400)
+	motherFrame:SetSize(800, 400)
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
@@ -1195,5 +1222,19 @@ net.Receive("JMod_Inventory", function()
 	---
 	for k, v in ipairs(ArmorButtonsRight) do
 		CreateArmorSlotButton(motherFrame, v, 410, 30 + ((k - 1) * 45))
+	end
+	local ShownCommands = {}
+	for k, v in ipairs(JMod.EZ_CONCOMMANDS) do
+		if v.noShow and v.noShow == true then continue end
+		CreateCommandButton(motherFrame, v, 600, 30 + (#ShownCommands * 25), #ShownCommands + 1)
+		table.insert(ShownCommands, v.name)
+	end
+
+	function motherFrame:OnKeyCodePressed(num)
+		if num > 10 then return end
+		if num == 1 then num = 11 end -- Weird wrap around for the 0 slot
+		Ply:ConCommand("jmod_ez_"..ShownCommands[num - 1])
+		motherFrame:Close()
+		return true
 	end
 end)

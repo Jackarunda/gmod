@@ -1148,8 +1148,29 @@ if SERVER then
 	local ScroungedPositions, Amount = {}, 100
 
 	function JMod.EZ_ScroungeArea(ply)
-		local ScroungeResults = {}
+		local Time = CurTime()
+		ply.NextScroungeTime = ply.NextScroungeTime or 0
+		print(ply.NextScroungeTime)
+		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
+		ply.NextScroungeTime = Time + 10
 		local Pos = ply:GetShootPos()
+
+		-- Let's find te nearest other scrounge location:
+		local ClosestDist = 9e9
+		for i = 1, #ScroungedPositions do
+			local ScroungedPos = ScroungedPositions[i]
+			local DistanceTo = Pos:DistToSqr(ScroungedPos)
+			if (DistanceTo < ClosestDist) then
+				ClosestDist = DistanceTo
+			end
+		end
+		if ClosestDist <= (500^2) then
+			ClosestDist = math.sqrt(ClosestDist)
+		else
+			ClosestDist = nil
+		end
+
+		local ScroungeResults = {}
 		for i = 1, Amount do
 			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
 			local StartPos = Pos + Offset
@@ -1162,9 +1183,10 @@ if SERVER then
 					mask = MASK_SOLID_BRUSHONLY
 				})
 				if DownTr.Hit then
-					local SurfaceResult = nil
+					local SurfaceResult, PreScroungeMod = nil, (ClosestDist and (ClosestDist / 500)) or 1
 					local Mat = DownTr.MatType
 					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
+
 					if not MaterialType then
 						SurfaceResult = SalvagingTable[util.GetSurfacePropName(DownTr.SurfaceProps)]
 					else
@@ -1173,7 +1195,7 @@ if SERVER then
 	
 					if SurfaceResult then
 						for k, v in pairs(SurfaceResult) do
-							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v
+							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v * PreScroungeMod
 						end
 					end
 				end
@@ -1223,13 +1245,14 @@ if SERVER then
 				ScroungedPositions[index] = nil
 			end
 		end)
+
 		--[[
-			1) Check for open air
-			2) Do downward traces to see what ground the player is on.
+			1) Check for open air positions
+			2) Do downward traces from those positions to see what ground the player is on.
 			3) Use the ratio of different materials to determine what the scrounging results are.
 			4) Reduce the results according to the proximity to previously scrounged areas.
 			5) Add the position to the scrounging table.
-			Note: We should have a cooldown so players don't spam the server with scrounge requests.
+			6) Update a cooldown so players don't spam the server with scrounge requests.
 		]]--
 	end
 
