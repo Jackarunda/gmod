@@ -1149,10 +1149,13 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply)
 		local Time = CurTime()
+
 		ply.NextScroungeTime = ply.NextScroungeTime or 0
 		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
 		ply.NextScroungeTime = Time + 15
+
 		local Pos = ply:GetShootPos()
+		local PreScroungeMod = 1
 
 		-- Let's find te nearest other scrounge location:
 		local ClosestDist = 9e9
@@ -1169,6 +1172,11 @@ if SERVER then
 			ClosestDist = nil
 		end
 
+		if ClosestDist then
+			PreScroungeMod = ClosestDist / 500
+		end
+		
+		--jprint(PreScroungeMod)
 		local ScroungeResults = {}
 		for i = 1, Amount do
 			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
@@ -1182,7 +1190,7 @@ if SERVER then
 					mask = MASK_SOLID_BRUSHONLY
 				})
 				if DownTr.Hit then
-					local SurfaceResult, PreScroungeMod = nil, (ClosestDist and (ClosestDist / 500)) or 1
+					local SurfaceResult = nil
 					local Mat = DownTr.MatType
 					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
 
@@ -1200,7 +1208,9 @@ if SERVER then
 				end
 			end 
 		end
-		--PrintTable(ScroungeResults)
+
+		PrintTable(ScroungeResults)
+
 		for EZresource, amt in pairs(ScroungeResults) do
 			if not ScroungeTable[EZresource] then return end
 
@@ -1224,15 +1234,12 @@ if SERVER then
 					Loot:SetPos(Pos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(-10, 10)))
 					Loot:Spawn()
 					Loot:Activate()
-					if resultantMass > amt then
-						timer.Simple(1, function()
-							if IsValid(Loot) then
-								Loot:GetPhysicsObject():SetMass(amt)
-								--Loot:Activate()
-							end
-						end)
-					end
-					Loot.EZsupplies = EZresource
+					timer.Simple(1, function()
+						if IsValid(Loot) then
+							Loot:GetPhysicsObject():SetMass(resultantMass)
+							--Loot:Activate()
+						end
+					end)
 				end
 				amt = amt - math.min(resultantMass, amt)
 				Break = Break + 1
