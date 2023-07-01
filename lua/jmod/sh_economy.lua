@@ -1240,6 +1240,7 @@ if SERVER then
 							--Loot:Activate()
 						end
 					end)
+					JMod.SetEZowner(Loot, ply)
 				end
 				amt = amt - math.min(resultantMass, amt)
 				Break = Break + 1
