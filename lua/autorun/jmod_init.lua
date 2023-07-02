@@ -300,16 +300,6 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
--- This needs to be here I guess, probably due to load order
-JMod.EZ_CONCOMMANDS = {
-	{name = "inv", func = JMod.EZ_Open_Inventory, helpTxt = "Opens your EZ inventory to manage your armour.", noShow = true},
-	{name = "bombdrop", func = JMod.EZ_BombDrop, helpTxt = "Drops any bombs you have armed and welded."},
-	{name = "launch", func = JMod.EZ_WeaponLaunch, helpTxt = "Fires any active missiles you own."},
-	{name = "trigger", func = JMod.EZ_Remote_Trigger, helpTxt = "Triggers any EZ bombs/mini-nades you have armed."},
-	{name = "scrounge", func = JMod.EZ_ScroungeArea, helpTxt = "Scrounges area for useful props to salvage."},
-	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
-}
-
 
 --[[
 Physics Sounds
