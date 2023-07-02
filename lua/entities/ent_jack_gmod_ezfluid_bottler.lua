@@ -138,7 +138,7 @@ if SERVER then
 			local particleTable = JMod.EZ_HAZARD_PARTICLES[v:GetClass()]
 
 			if istable(particleTable) then
-				if IsValid(v) and JMod.VisCheck(self:LocalToWorld(self:OBBCenter()), v, self) then 
+				if IsValid(v) and JMod.ClearLoS(self, v, false, 0, true) then 
 					if JMod.LinCh(selfGrade * 2, 1, self.Range/10) then
 
 						if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
