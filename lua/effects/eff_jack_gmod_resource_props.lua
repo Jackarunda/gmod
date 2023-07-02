@@ -261,10 +261,10 @@ local PropConfig = {
 		col = Color(170, 160, 165),
 		scl = .5
 	},
-	[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {
+	--[[[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {
 		mdl = "models/hunter/misc/sphere025x025.mdl",
-
-	}
+		mat = {"models/mat_jack_gmod_grainblock", "models/mat_jack_gmod_beanblock"}
+	}]]--
 }
 
 local TotalParticleCount = 0

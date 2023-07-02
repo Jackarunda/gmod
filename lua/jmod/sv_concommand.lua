@@ -1,4 +1,5 @@
-﻿concommand.Add("jmod_friends", function(ply)
+﻿
+concommand.Add("jmod_friends", function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
 	net.WriteTable(ply.JModFriends or {})
@@ -86,10 +87,6 @@ concommand.Add("jmod_debug_killme", function(ply)
 	print("good luck")
 end, nil, "Makes all your entities hate you.")
 
-concommand.Add("jmod_ez_trigger", function(ply, help)
-	JMod.EZ_Remote_Trigger(ply)
-end, nil, "Triggers any EZ bombs/mini-nades you have armed.")
-
 concommand.Add("jmod_insta_upgrade", function(ply)
 	if not IsValid(ply) then return end
 	if not ply:IsSuperAdmin() then return end
@@ -128,20 +125,22 @@ concommand.Add("jmod_deposits_load", function(ply, cmd, args)
 	end
 end, nil, "Loads a specified deposit layout, first argument is layout ID, second is map name. \n Only use second argument to force load from a differnt map")
 
-concommand.Add("jmod_ez_inv", function(ply, cmd, args)
-	if not (IsValid(ply) and ply:Alive()) then return end
-	JMod.EZ_Open_Inventory(ply)
-end, nil, "Opens your EZ inventory to manage your armour.")
+timer.Simple(0, function()
+	-- This needs to be here I guess, probably due to load order
+	JMod.EZ_CONCOMMANDS = {
+		{name = "inv", func = JMod.EZ_Open_Inventory, helpTxt = "Opens your EZ inventory to manage your armour.", noShow = true},
+		{name = "bombdrop", func = JMod.EZ_BombDrop, helpTxt = "Drops any bombs you have armed and welded."},
+		{name = "launch", func = JMod.EZ_WeaponLaunch, helpTxt = "Fires any active missiles you own."},
+		{name = "trigger", func = JMod.EZ_Remote_Trigger, helpTxt = "Triggers any EZ bombs/mini-nades you have armed."},
+		{name = "scrounge", func = JMod.EZ_ScroungeArea, helpTxt = "Scrounges area for useful props to salvage."},
+		{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
+	}
 
-concommand.Add("jmod_ez_bombdrop", function(ply, cmd, args)
-	JMod.EZ_BombDrop(ply)
-end, nil, "Drops any bombs you have armed and welded.")
-
-concommand.Add("jmod_ez_launch", function(ply, cmd, args)
-	JMod.EZ_WeaponLaunch(ply)
-end, nil, "Fires any active missiles you own.")
-
-concommand.Add("jmod_ez_config", function(ply, cmd, args)
-	if not ply:IsAdmin() or not (IsValid(ply) and ply:Alive()) then return end
-	JMod.EZ_Open_ConfigUI(ply)
-end, nil, "Opens the EZ config editor.")
+	for _, v in ipairs(JMod.EZ_CONCOMMANDS) do
+		concommand.Add("jmod_ez_"..v.name, function(ply, cmd, args)
+			if not (IsValid(ply) and ply:Alive()) then return end
+			if v.adminOnly and not(ply:IsAdmin()) then ply:PrintMessage(HUD_PRINTCENTER, "This command is admin only") return end
+			v.func(ply, cmd, args)
+		end, nil, v.helpTxt)
+	end
+end)

@@ -201,6 +201,12 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		return ""
 	end
 
+	if (lowerTxt == "*scrounge*") or (lowerTxt == "*scavange*") then
+		JMod.EZ_ScroungeArea(ply)
+
+		return ""
+	end
+
 	for k, v in pairs(ents.FindInSphere(ply:GetPos(), 150)) do
 		if v.EZreceiveSpeech and (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
 			if v:EZreceiveSpeech(ply, txt) then return "" end -- hide the player's radio chatter from the server

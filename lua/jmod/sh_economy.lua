@@ -315,7 +315,7 @@ local SalvagingTable = {
 	},
 	sandbags = {
 		[JMod.EZ_RESOURCE_TYPES.WOOD] = .1,
-		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .1
+		[JMod.EZ_RESOURCE_TYPES.CLOTH] = .2
 	},
 	concrete = {
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .4
@@ -457,6 +457,18 @@ local SalvagingTable = {
 	},
 	chainlink = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
+	},
+	snow = {
+		[JMod.EZ_RESOURCE_TYPES.WATER] = .5
+	},
+	ice = {
+		[JMod.EZ_RESOURCE_TYPES.WATER] = .6
+	},
+	rock = {
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
+	},
+	boulder = {
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
 	}
 }
 
@@ -650,7 +662,7 @@ function JMod.GetSalvageYield(ent)
 		"You can't salvage this",
 		"Stop trying to salvage this already",
 	}
-	if ent.EZsupplies or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
+	if ent.IsJackyEZresource or ent.EZammo then return {}, table.Random(AnnoyedReplyTable) end
 	if Class == "ent_jack_gmod_eztoolbox" then return {}, table.Random(AnnoyedReplyTable) end
 	if Class == "ent_jack_ezcompactbox" then return {}, table.Random(AnnoyedReplyTable) end
 
@@ -766,6 +778,49 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 	return Results
 end
 
+function JMod.GetDepositAtPos(machine, positionToCheck)
+	-- first, figure out which deposits we are inside of, if any
+	local DepositsInRange = {}
+
+	for k, v in pairs(JMod.NaturalResourceTable) do
+		-- Make sure the resource is on the whitelist
+		local Dist = positionToCheck:Distance(v.pos)
+
+		-- store they desposit's key if we're inside of it
+		if (Dist <= v.siz) then
+			if IsValid(machine) then
+				if istable(machine.BlacklistedResources) and table.HasValue(machine.BlacklistedResources, v.typ) then continue end
+				if istable(machine.WhitelistedResources) and not(table.HasValue(machine.WhitelistedResources, v.typ)) then continue end
+			end
+			if (v.rate or (v.amt > 0)) then
+				table.insert(DepositsInRange, k)
+			end
+		end
+	end
+
+	-- now, among all the deposits we are inside of, let's find the closest one
+	local ClosestDeposit, ClosestRange = nil, 9e9
+
+	if #DepositsInRange > 0 then
+		for k, v in pairs(DepositsInRange) do
+			local DepositInfo = JMod.NaturalResourceTable[v]
+			local Dist = positionToCheck:Distance(DepositInfo.pos)
+
+			if Dist < ClosestRange then
+				ClosestDeposit = v
+				ClosestRange = Dist
+			end
+		end
+	end
+
+	if ClosestDeposit then
+		if IsValid(machine) and machine.SetResourceType then machine:SetResourceType(JMod.NaturalResourceTable[ClosestDeposit].typ) end
+		return ClosestDeposit
+	else
+		return nil
+	end
+end
+
 if SERVER then
 	concommand.Add("jmod_debug_checksalvage", function(ply, cmd, args)
 		if not (IsValid(ply) and ply:IsSuperAdmin()) then return end
@@ -843,7 +898,10 @@ if SERVER then
 		end
 	end
 	--]]
-	local NatureMats, MaxTries, SurfacePropBlacklist, RockNames = {MAT_SNOW, MAT_SAND, MAT_FOLIAGE, MAT_SLOSH, MAT_GRASS, MAT_DIRT}, 10000, {"paper", "plaster", "rubber", "carpet"}, {"rock", "boulder"}
+	JMod.NatureMats = {[MAT_SNOW]="snow", [MAT_SAND]="sand", [MAT_FOLIAGE]="foliage", [MAT_SLOSH]="slime", [MAT_GRASS]="grass", [MAT_DIRT]="dirt"}
+	JMod.CityMats = {[MAT_CONCRETE]="concrete", [MAT_GLASS]="glass", [MAT_METAL]="metal", [MAT_GRATE]="chainlink", [MAT_TILE]="tile", [MAT_VENT]="metalvent", [MAT_PLASTIC]="plastic"}
+
+	local MaxTries, SurfacePropBlacklist, RockNames = 10000, {"paper", "plaster", "rubber", "carpet"}, {"rock", "boulder"}
 
 	local function TabContainsSubString(tbl, str)
 		if not str then return false end
@@ -857,7 +915,7 @@ if SERVER then
 
 	local function IsSurfaceSuitable(tr, props, mat, tex)
 		if not (tr.Hit and tr.HitWorld and not tr.StartSolid and not tr.HitSky) then return false end
-		if not table.HasValue(NatureMats, tr.MatType) then return false end
+		if not JMod.NatureMats[tr.MatType] then return false end
 		if TabContainsSubString(SurfacePropBlacklist, mat) then return false end
 		if TabContainsSubString(SurfacePropBlacklist, HitTexture) then return false end
 
@@ -1078,6 +1136,131 @@ if SERVER then
 			-- we don't use table.remove because the index shifting causes too many other problems
 			JMod.NaturalResourceTable[key] = nil
 		end
+	end
+
+	local ScroungeTable = {
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = {["models/props_c17/trappropeller_lever"] = 5},
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {["models/props_junk/PopCan01a"] = 1, ["models/props_junk/garbage_metalcan002a"] = 1},
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = {["models/props_interiors/furniture_chair01a"] = 16},
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {["models/jmod/resources/rock05a"] = 5}
+	}
+
+	local ScroungedPositions, Amount = {}, 100
+
+	function JMod.EZ_ScroungeArea(ply)
+		local Time = CurTime()
+
+		ply.NextScroungeTime = ply.NextScroungeTime or 0
+		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
+		ply.NextScroungeTime = Time + 15
+
+		local Pos = ply:GetShootPos()
+		local PreScroungeMod = 1
+
+		-- Let's find te nearest other scrounge location:
+		local ClosestDist = 9e9
+		for i = 1, #ScroungedPositions do
+			local ScroungedPos = ScroungedPositions[i]
+			local DistanceTo = Pos:DistToSqr(ScroungedPos)
+			if (DistanceTo < ClosestDist) then
+				ClosestDist = DistanceTo
+			end
+		end
+		if ClosestDist <= (500^2) then
+			ClosestDist = math.sqrt(ClosestDist)
+		else
+			ClosestDist = nil
+		end
+
+		if ClosestDist then
+			PreScroungeMod = ClosestDist / 500
+		end
+		
+		--jprint(PreScroungeMod)
+		local ScroungeResults = {}
+		for i = 1, Amount do
+			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
+			local StartPos = Pos + Offset
+			local Contents = util.PointContents(StartPos)
+			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+				local DownTr = util.TraceLine({
+					start = StartPos,
+					endpos = StartPos - Vector(0, 0, 600),
+					filter = {ply},
+					mask = MASK_SOLID_BRUSHONLY
+				})
+				if DownTr.Hit then
+					local SurfaceResult = nil
+					local Mat = DownTr.MatType
+					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
+
+					if not MaterialType then
+						SurfaceResult = SalvagingTable[util.GetSurfacePropName(DownTr.SurfaceProps)]
+					else
+						SurfaceResult = SalvagingTable[MaterialType]
+					end
+	
+					if SurfaceResult then
+						for k, v in pairs(SurfaceResult) do
+							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v * PreScroungeMod
+						end
+					end
+				end
+			end 
+		end
+
+		PrintTable(ScroungeResults)
+
+		for EZresource, amt in pairs(ScroungeResults) do
+			if not ScroungeTable[EZresource] then return end
+
+			amt = math.Round(amt)
+
+			local Break = 0
+			while amt > 0 and Break < 10 do
+				local bestModel, resultantMass = nil, 1
+				for model, mass in pairs(ScroungeTable[EZresource]) do
+					if not bestModel then
+						bestModel = model
+						resultantMass = mass
+					elseif (mass <= amt) and (mass > resultantMass) then
+						bestModel = model
+						resultantMass = mass
+					end
+				end
+				if bestModel then
+					local Loot = ents.Create("prop_physics")
+					Loot:SetModel(bestModel..".mdl")
+					Loot:SetPos(Pos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(-10, 10)))
+					Loot:Spawn()
+					Loot:Activate()
+					timer.Simple(1, function()
+						if IsValid(Loot) then
+							Loot:GetPhysicsObject():SetMass(resultantMass)
+							--Loot:Activate()
+						end
+					end)
+					JMod.SetEZowner(Loot, ply)
+				end
+				amt = amt - math.min(resultantMass, amt)
+				Break = Break + 1
+			end
+		end
+		local index = table.insert(ScroungedPositions, Pos)
+		timer.Simple(60, function()
+			if ScroungedPositions[index] then
+				ScroungedPositions[index] = nil
+			end
+		end)
+
+		--[[
+			1) Check for open air positions
+			2) Do downward traces from those positions to see what ground the player is on.
+			3) Use the ratio of different materials to determine what the scrounging results are.
+			4) Reduce the results according to the proximity to previously scrounged areas.
+			5) Add the position to the scrounging table.
+			6) Update a cooldown so players don't spam the server with scrounge requests.
+		]]--
 	end
 
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()

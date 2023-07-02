@@ -9,20 +9,22 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+--
 ENT.EZgasParticle = true
+ENT.ThinkRate = 1
+--
 
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
 		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:DrawShadow(false)
+		self.Entity:SetNotSolid(true)
+		self:DrawShadow(false)
 		local phys = self.Entity:GetPhysicsObject()
 		if IsValid(phys) then
 			phys:EnableCollisions(false)
 			phys:EnableGravity(false)
 		end
-		self.Entity:SetNotSolid(true)
-		self:DrawShadow(false)
 		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
@@ -33,7 +35,7 @@ if SERVER then
 		if not IsValid(ent) then return end
 		if ent:IsPlayer() then return ent:Alive() end
 
-		if ent:IsNPC() and ent.Health and ent:Health() then
+		if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
 			local Phys = ent:GetPhysicsObject()
 
 			if IsValid(Phys) then
@@ -61,6 +63,21 @@ if SERVER then
 		return not Tr.Hit
 	end
 
+	function ENT:DamageObj(obj)
+		local Dmg, Helf = DamageInfo(), obj:Health()
+		Dmg:SetDamageType(DMG_NERVEGAS)
+		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetInflictor(self)
+		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
+		Dmg:SetDamagePosition(obj:GetPos())
+		obj:TakeDamageInfo(Dmg)
+
+		if (obj:Health() < Helf) and obj:IsPlayer() then
+			JMod.Hint(obj, "gas damage")
+			JMod.TryCough(obj)
+		end
+	end
+
 	function ENT:Think()
 		if CLIENT then return end
 		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), 1
@@ -79,18 +96,7 @@ if SERVER then
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
 					Force = Force - Vec * 1
 				elseif math.random(1, 3) == 1 and self.NextDmg < Time and self:ShouldDamage(obj) then
-					local Dmg, Helf = DamageInfo(), obj:Health()
-					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
-					Dmg:SetInflictor(self)
-					Dmg:SetAttacker(JMod.GetEZowner(self) or self)
-					Dmg:SetDamagePosition(obj:GetPos())
-					obj:TakeDamageInfo(Dmg)
-
-					if (obj:Health() < Helf) and obj:IsPlayer() then
-						JMod.Hint(obj, "gas damage")
-						JMod.TryCough(obj)
-					end
+					self:DamageObj(obj)
 				end
 			end
 		end

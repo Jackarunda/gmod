@@ -1,0 +1,47 @@
+
+"VertexLitGeneric"{
+
+	"$model" "1"
+	"$basetexture" "models/jmod/props/oak_leaf0_D"
+	"$alphatest"			"1"
+	"$alphatestreference"	"0.5"
+	"$allowalphatocoverage"	"1"
+
+//Testing stuff here
+	"$treesway" "1"
+	"$treeswaystatic" "1"
+	"$treeswayheight" "500"
+	"$treeswaystartradius" "0.5"
+	"$treeswayspeed" "0.01"
+	"$treeswaystrength" "1"
+	"$treeswayscrumblestrength" "1"
+	
+
+//	"$translate" "[0 0]"
+//	"$randoffset" "0"
+
+//	"Proxies"{
+//		EntityRandom{
+//			resultVar $randoffset
+//		}
+//		Sine{
+//			sineperiod	4
+//			sinemin		0
+//			sinemax		0.005
+//			timeoffset	randoffset
+//			resultVar	"$translate[0]"
+//		}
+//		Sine{
+//			sineperiod	5.5
+//			sinemin		0
+//			sinemax		0.005
+//			timeoffset	randoffset
+//			resultVar	"$translate[1]"
+//		}
+//		TextureTransform{
+//			translateVar	$translate
+//			resultVar	$basetexturetransform
+//		}
+//	}
+}
+    

@@ -9,8 +9,8 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.WOOD
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
-ENT.Material = "phoenix_storms/wood_dome"
+ENT.Model = "models/jmod/props/resources.mdl"
+--ENT.Material = "phoenix_storms/wood_dome"
 ENT.Color = Color(100, 100, 100)
 ENT.ModelScale = 1
 ENT.Mass = 50
@@ -33,7 +33,7 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .05, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(0, -12.5, 1), Angle(90, 0, 90), .05, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.WOOD, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

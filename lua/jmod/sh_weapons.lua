@@ -407,8 +407,8 @@ JMod.AmmoTable = {
 	}
 }
 
-function JMod.LoadAmmoTable()
-	for k, v in pairs(JMod.AmmoTable) do
+function JMod.LoadAmmoTable(tbl)
+	for k, v in pairs(tbl) do
 		v.carrylimit = v.carrylimit or -2
 		game.AddAmmoType({
 			name = k,
@@ -466,8 +466,28 @@ function JMod.GenerateWeaponEntities(tbl)
 	end
 end
 
-JMod.LoadAmmoTable()
+JMod.LoadAmmoTable(JMod.AmmoTable)
 JMod.GenerateWeaponEntities(JMod.WeaponTable)
+
+-- support third-party additions to the jmod ammo/weapons table
+function JMod.LoadAdditionalAmmo()
+	if JMod.AdditionalAmmoTable then
+		table.Merge(JMod.AmmoTable, JMod.AdditionalAmmoTable)
+		JMod.LoadAmmoTable(JMod.AdditionalAmmoTable)
+	end
+end
+hook.Add("Initialize", "JMod_LoadAdditionalAmmo", JMod.LoadAdditionalAmmo)
+
+function JMod.LoadAdditionalWeaponEntities()
+	if JMod.AdditionalWeaponTable then
+		table.Merge(JMod.WeaponTable, JMod.AdditionalWeaponTable)
+		JMod.GenerateWeaponEntities(JMod.AdditionalWeaponTable)
+	end
+end
+hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
+
+JMod.LoadAdditionalAmmo()
+JMod.LoadAdditionalWeaponEntities()
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end
@@ -513,9 +533,9 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 
 	-- todo: implement this when we add these types
 	if Specs.tracer then
-		wep.Tracer = true
+		wep.Tracer = Specs.tracer
 	else
-		wep.Tracer = false
+		wep.Tracer = nil
 	end
 end
 
