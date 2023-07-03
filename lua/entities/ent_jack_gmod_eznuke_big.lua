@@ -230,13 +230,21 @@ if SERVER then
 		end
 
 		---
+		--local SplodePos = self:GetPos()
 		for i = 0, 5 do
 			timer.Simple(i * 1.5, function()
 				if i == 4 then
 					game.CleanUpMap()
+					-- It's weird having all Things sitting around like normal after a nuke wipes the map.
 					--[[for _, v in ipairs(ents.FindByClass("func_breakable_surf")) do
-						v:Fire("Shatter", "Vector(0.5, 0.5, 1000)")
-						--v:Fire("Kill")
+						--v:Fire("Shatter", "Vector(0.5, 0.5, 1000)")
+						v:Fire("Kill")
+					end
+					for _, v in ipairs(ents.FindByClass("prop_physics")) do
+						local Phys = v:GetPhysicsObject()
+						if IsValid(Phys) then
+							Phys:ApplyForceOffset((SplodePos - v:GetPos()) * 10000, v:GetPos() + VectorRand() * 100)
+						end
 					end]]--
 				else
 					for k, ply in pairs(player.GetAll()) do
