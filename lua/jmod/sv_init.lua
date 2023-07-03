@@ -250,7 +250,7 @@ local function VirusCough(ply)
 		JMod.SetEZowner(Gas, ply)
 		Gas:Spawn()
 		Gas:Activate()
-		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		Gas.CurVel = (ply:GetVelocity())
 	end
 end
 

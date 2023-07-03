@@ -13,7 +13,7 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.EZfalloutParticle = true
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 2500
-ENT.ThinkRate = 1
+ENT.ThinkRate = 2
 --
 
 if SERVER then

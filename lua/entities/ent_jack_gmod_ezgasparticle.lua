@@ -84,7 +84,7 @@ if SERVER then
 
 	function ENT:Think()
 		if CLIENT then return end
-		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), 1
+		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), self.ThinkRate
 
 		if self.DieTime < Time then
 			self:Remove()

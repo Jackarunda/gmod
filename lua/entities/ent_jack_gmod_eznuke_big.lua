@@ -234,6 +234,9 @@ if SERVER then
 			timer.Simple(i * 1.5, function()
 				if i == 4 then
 					game.CleanUpMap()
+					--[[for _, v in ipairs(ents.FindByClass("func_breakable_surf")) do
+						v:Fire("Shatter", "Vector(0.5, 0.5, 1000)")
+					end]]--
 				else
 					for k, ply in pairs(player.GetAll()) do
 						local Dmg = DamageInfo()
