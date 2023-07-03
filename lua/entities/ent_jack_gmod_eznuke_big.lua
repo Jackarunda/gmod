@@ -236,6 +236,7 @@ if SERVER then
 					game.CleanUpMap()
 					--[[for _, v in ipairs(ents.FindByClass("func_breakable_surf")) do
 						v:Fire("Shatter", "Vector(0.5, 0.5, 1000)")
+						--v:Fire("Kill")
 					end]]--
 				else
 					for k, ply in pairs(player.GetAll()) do
