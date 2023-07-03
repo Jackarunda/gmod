@@ -23,7 +23,7 @@ if SERVER then
 		self.Entity:SetMoveType(MOVETYPE_NONE)
 		self.Entity:SetNotSolid(true)
 		self:DrawShadow(false)
-		self.CurVel or VectorRand() * 10
+		self.CurVel = self.CurVel or VectorRand() * 10
 	end
 
 	function ENT:ShouldDamage(ent)

@@ -182,7 +182,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld()
 		---
 		SendClientNukeEffect(SelfPos, 9e9)
 		util.ScreenShake(SelfPos, 1000, 15, 15, 50000)
@@ -196,8 +196,8 @@ if SERVER then
 			end)
 		end
 
-		for i = 1, 10 do
-			timer.Simple(i, function()
+		for i = 1, 5 do
+			timer.Simple(i * 2, function()
 				if i > 6 then
 					JMod.DecalSplosion(SelfPos + Vector(0, 0, i * 350), "GiantScorch", 40000, 20)
 				end
@@ -213,8 +213,8 @@ if SERVER then
 				util.Effect("eff_jack_gmod_ezthermonuke", Pof, true, true)
 
 				if i == 10 then
-					for j = 1, 10 do
-						timer.Simple(j / 10, function()
+					--[[for j = 1, 10 do
+						timer.Simple(j / 5, function()
 							for k = 1, 30 * JMod.Config.Particles.NuclearRadiationMult do
 								local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 								Gas:SetPos(SelfPos)
@@ -224,28 +224,26 @@ if SERVER then
 								Gas.CurVel = (VectorRand() * math.random(1, 1000) + Vector(0, 0, 2000 * JMod.Config.Particles.NuclearRadiationMult))
 							end
 						end)
-					end
+					end]]--
 				end
 			end)
 		end
 
 		---
-		--local SplodePos = self:GetPos()
 		for i = 0, 5 do
 			timer.Simple(i * 1.5, function()
 				if i == 4 then
 					game.CleanUpMap()
 					-- It's weird having all Things sitting around like normal after a nuke wipes the map.
-					--[[for _, v in ipairs(ents.FindByClass("func_breakable_surf")) do
-						--v:Fire("Shatter", "Vector(0.5, 0.5, 1000)")
-						v:Fire("Kill")
+					for _, v in ipairs(ents.FindByClass("func_breakable_surf")) do
+						v:Fire("Break")
 					end
 					for _, v in ipairs(ents.FindByClass("prop_physics")) do
 						local Phys = v:GetPhysicsObject()
 						if IsValid(Phys) then
-							Phys:ApplyForceOffset((SplodePos - v:GetPos()) * 10000, v:GetPos() + VectorRand() * 100)
+							Phys:ApplyForceOffset((SelfPos - v:GetPos()) * 10000, v:GetPos() + VectorRand() * 100)
 						end
-					end]]--
+					end
 				else
 					for k, ply in pairs(player.GetAll()) do
 						local Dmg = DamageInfo()
