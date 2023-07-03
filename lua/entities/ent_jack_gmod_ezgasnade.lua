@@ -47,7 +47,7 @@ if SERVER then
 				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
-				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 200))
+				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 200))
 			end)
 		end
 

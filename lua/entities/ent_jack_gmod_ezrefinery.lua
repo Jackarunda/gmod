@@ -192,7 +192,7 @@ if(SERVER)then
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+						Gas.CurVel = (VectorRand() * math.random(1, 100))
 					end
 				end
 			end

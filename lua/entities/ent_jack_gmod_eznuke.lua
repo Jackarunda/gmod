@@ -112,7 +112,7 @@ if SERVER then
 			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+			Gas.CurVel = (VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 		end
 
 		SafeRemoveEntityDelayed(self, 10)
@@ -270,7 +270,7 @@ if SERVER then
 								JMod.SetEZowner(Gas, Att)
 								Gas:Spawn()
 								Gas:Activate()
-								Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 1000 * JMod.Config.Particles.NuclearRadiationMult))
+								Gas.CurVel = (VectorRand() * math.random(1, 500) + Vector(0, 0, 1000 * JMod.Config.Particles.NuclearRadiationMult))
 							end
 						end)
 					end

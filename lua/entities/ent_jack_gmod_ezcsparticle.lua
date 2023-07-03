@@ -12,11 +12,14 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.EZgasParticle = true
 ENT.ThinkRate = 1
+ENT.AffectRange = 200
 --
 
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
+		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetNotSolid(true)
 		self:DrawShadow(false)
@@ -32,17 +35,20 @@ if SERVER then
 	end
 
 	function ENT:DamageObj(obj)
+		local RespiratorMultiplier = 1
 		if obj:IsPlayer() then
+			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 			
 			net.Start("JMod_VisionBlur")
 			net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
 			net.Send(obj)
 			JMod.Hint(obj, "tear gas")
+			if faceProt < 1 then
+				JMod.TryCough(obj)
+			end
 		elseif obj:IsNPC() then
 			obj.EZNPCincapacitate = Time + math.Rand(2, 5)
 		end
-
-		JMod.TryCough(obj)
 
 		if math.random(1, 20) == 1 then
 			local Dmg, Helf = DamageInfo(), obj:Health()
@@ -71,7 +77,7 @@ elseif CLIENT then
 		end)
 
 		self.NextVisCheck = CurTime() + 6
-		self.DebugShow = LocalPlayer().EZshowGasParticles
+		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 
 		if self.DebugShow then
 			self:SetModelScale(2)
@@ -79,6 +85,7 @@ elseif CLIENT then
 	end
 
 	function ENT:DrawTranslucent()
+		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
 			self:DrawModel()
 		end

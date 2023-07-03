@@ -136,7 +136,7 @@ if SERVER then
 				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
-				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 500))
+				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 500))
 			end)
 		end
 
@@ -157,7 +157,7 @@ if SERVER then
 			JMod.SetEZowner(Gas, self.EZowner or self)
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)
+			Gas.CurVel = (self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)
 			self.ContainedGas = self.ContainedGas - 1
 			self:NextThink(Time + .2)
 			self:EmitSound("snds_jack_gmod/hiss.wav", 55, math.random(90, 110))
