@@ -23,7 +23,7 @@ end
 function JMod.EZarmorSync(ply)
 	if not ply.EZarmor then return end
 	ply.EZarmor.effects = {}
-	ply.EZarmor.mskmat = nil
+	ply.EZarmor.mskmats = {}
 	ply.EZarmor.sndlop = nil
 	ply.EZarmor.blackvision = nil
 
@@ -61,7 +61,7 @@ function JMod.EZarmorSync(ply)
 		end
 
 		if ArmorInfo.mskmat and ArmorInfo.mskmat ~= "" then
-			ply.EZarmor.mskmat = ArmorInfo.mskmat
+			ply.EZarmor.mskmats[id] = ArmorInfo.mskmat
 		end
 
 		if ArmorInfo.sndlop and ArmorInfo.sndlop ~= "" then

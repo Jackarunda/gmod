@@ -6,20 +6,24 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 	if ply.EZarmor then
 		local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
 
-		if ply.EZarmor.mskmat and Alive and not ThirdPerson then
-			local Mat = MaskMats[ply.EZarmor.mskmat]
-
-			if not Mat then
-				Mat = Material(ply.EZarmor.mskmat)
-				MaskMats[ply.EZarmor.mskmat] = Mat
-			end
+		local ArmorMaskmats = ply.EZarmor.mskmats
+		if ArmorMaskmats and not(table.IsEmpty(ArmorMaskmats)) and Alive and not ThirdPerson then
 
 			local Col = render.GetLightColor(EyePos())
-			surface.SetMaterial(Mat)
-			surface.SetDrawColor(Col.r * 255, Col.g * 255, Col.b * 255, 255)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			for id, maskMat in pairs(ArmorMaskmats) do -- TODO: Sort by slot relevance
+				local Mat = MaskMats[maskMat]
+
+				if not Mat then
+					Mat = Material(maskMat)
+					MaskMats[maskMat] = Mat
+				end
+
+				surface.SetMaterial(Mat)
+				surface.SetDrawColor(Col.r * 255, Col.g * 255, Col.b * 255, 255)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			end
 		end
 
 		Play = Alive and ply.EZarmor.sndlop and not ThirdPerson
