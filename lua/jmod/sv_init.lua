@@ -721,9 +721,6 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		Ragdoll:SetAngles(ply:GetAngles())
 		Ragdoll:Spawn()
 		----------------------Kycea contribution Begin----------------------
-		Ragdoll:SetPos(ply:GetPos())
-		Ragdoll:SetAngles(ply:GetAngles())
-		Ragdoll:Spawn()
 		for i = 0, Ragdoll:GetPhysicsObjectCount() do
 			local physobj = Ragdoll:GetPhysicsObjectNum(i)
 			if (physobj) and IsValid(physobj)then
