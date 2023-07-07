@@ -720,6 +720,22 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		Ragdoll:SetPos(ply:GetPos())
 		Ragdoll:SetAngles(ply:GetAngles())
 		Ragdoll:Spawn()
+		----------------------Kycea contribution Begin----------------------
+		Ragdoll:SetPos(ply:GetPos())
+		Ragdoll:SetAngles(ply:GetAngles())
+		Ragdoll:Spawn()
+		for i = 0, Ragdoll:GetPhysicsObjectCount() do
+			local physobj = Ragdoll:GetPhysicsObjectNum(i)
+			if (physobj) and IsValid(physobj)then
+				local pos, ang = ply:GetBonePosition(ply:TranslatePhysBoneToBone(i))
+				physobj:SetPos(pos)
+				physobj:SetVelocity(ply:GetVelocity())
+				physobj:SetMass(physobj:GetMass())
+				physobj:SetAngles(ang)
+				physobj:EnableMotion(true)
+			end
+		end
+		----------------------Kycea contribution end------------------------
 		Ragdoll:Activate()
 		if IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
