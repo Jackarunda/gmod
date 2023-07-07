@@ -731,7 +731,6 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 				physobj:SetPos(pos)
 				physobj:SetVelocity(ply:GetVelocity())
 				physobj:SetAngles(ang)
-				physobj:EnableMotion(true)
 			end
 		end
 		----------------------Kycea contribution end------------------------
