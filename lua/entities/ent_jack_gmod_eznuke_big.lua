@@ -277,6 +277,18 @@ if SERVER then
 
 		JMod.AeroDrag(self, self:GetRight(), 8)
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) then
+			JMod.SetEZowner(self, ply)
+			if self.EZdroppableBombArmedTime then
+				self.EZdroppableBombArmedTime = self.EZdroppableBombArmedTime - CurTime()
+			end
+		else
+			SafeRemoveEntity(ent)
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.Mdl = ClientsideModel("models/thedoctor/tsar.mdl")

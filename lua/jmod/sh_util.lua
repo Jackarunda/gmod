@@ -311,6 +311,10 @@ function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 	return not Tr.Hit
 end
 
+function JMod.IsAdmin(ply)
+	return (game.SinglePlayer()) or ((IsValid(ply) and ply:IsPlayer()) and (ply:IsUserGroup("admin") or ply:IsUserGroup("superadmin")))
+end
+
 function JMod.DebugPos(pos, siz, label)
 	siz = siz or 1
 	label = label or math.Round(CurTime(), 2)
