@@ -197,7 +197,7 @@ if SERVER then
 	}
 	function ENT:PostEntityPaste(ply)
 		local Type = self:GetResourceType()
-		if not(JMod.IsAdmin(ply)) and table.HasValue(Type) then
+		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) then
 			self:SetEZsupplies(Type, 0, self)
 		end
 		self.NextLoad = 0
