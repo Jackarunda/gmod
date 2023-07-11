@@ -182,7 +182,7 @@ if SERVER then
 			end
 
 			local Eff = EffectData()
-			Eff:SetOrigin(self:GetPos() + self:GetRight() * -10 + self:GetUp() * 80)
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * -13 + self:GetUp() * 80)
 			Eff:SetScale(0.1)
 			util.Effect("eff_jack_gmod_airsuck", Eff, true, true)
 

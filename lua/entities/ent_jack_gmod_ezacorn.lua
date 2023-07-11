@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.PrintName = "EZ Acorn"
 ENT.NoSitAllowed = true
-ENT.Spawnable = false --wonder when jack will get back to this...
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModEZstorable = true
@@ -43,7 +43,7 @@ if SERVER then
 			self:GetPhysicsObject():Wake()
 		end)
 
-		self.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+		self.UsableMats = {MAT_DIRT-, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
 		self:Activate()
 	end
@@ -109,7 +109,6 @@ if SERVER then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
-
 		if State == STATE_NORMAL then
 			if Time - 120 > self.LastTouchedTime then
 				self:Remove()

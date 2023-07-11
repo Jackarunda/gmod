@@ -3,9 +3,9 @@
 ENT.Type = "anim"
 ENT.PrintName = "EZ Tree"
 ENT.Author = "Jackarunda, AdventureBoots"
-ENT.Category = "JMod - EZ Misc"
+ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = true
+ENT.Spawnable = false
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/props/tree0.mdl"
 ENT.EZcolorable = false
@@ -14,11 +14,8 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
 --
 ENT.StaticPerfSpecs = {
-	MaxElectricity = 0,
-	MaxWater = 100
-}
-ENT.DynamicPerfSpecs = {
-	MaxDurability = 10,
+	MaxWater = 100,
+	MaxDurability = 100
 }
 ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 ENT.GrowthStageStats = {
@@ -28,27 +25,19 @@ ENT.GrowthStageStats = {
 }
 
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float", 0, "Water") -- Because why does a tree need electricity?
-	self:NetworkVar("Float", 1, "Progress")
-	self:NetworkVar("Float", 2, "Visibility")
+	-- we will indicate status through other means
 end
-
-local STATE_WITHERING, STATE_SAD, STATE_GROWING = -1, 0, 1
 
 if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
-		self:TurnOn()
-		self:SetProgress(0)
-		self.GrowthStage = 1
-		self.DepositKey = 0
-		self.BaseWaterGain = 0
-		self.LastState = STATE_GROWING
-		local mapName = game.GetMap()
-		self:TryPlant()
-	end
-
-	function ENT:Use(activator)
+		self.Growth = 0
+		self.Hydration = 20
+		self.Health = 100
+		self.NextLeafDrop = 0
+		self.NextAcornDrop = 0
+		self.NextAppleDrop = 0
+		self.WaterProximity = self:GetWaterProximity()
 		self:TryPlant()
 	end
 
@@ -62,7 +51,7 @@ if(SERVER)then
 		self:EmitSound("Wood.Break")
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
-		local Force, GibNum = dmginfo:GetDamageForce(), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
+		local Force, GibNum = (dmginfo and dmginfo:GetDamageForce()) or Vector(0, 0, 0), math.min(JMod.Config.Machines.SupplyEffectMult * self:GetPhysicsObject():GetMass()/1000, 30)
 		
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WOOD, self.GrowthStageStats[self.GrowthStage].wood, Vector(0, 0, 10), nil, Force, false, 0)
 
@@ -187,17 +176,7 @@ if(SERVER)then
 				end
 			end
 		end
-		return HitAmount*SkyMod
-	end
-
-	function ENT:Sadden() 
-		self:SetState(STATE_SAD)
-		self:SetSubMaterial(1, "models/jmod/props/oak_leaf1")
-	end
-
-	function ENT:Wither() 
-		self:SetState(STATE_WITHERING)
-		self:SetSubMaterial(1, "models/jmod/props/oak_leaf1")
+		return HitAmount * SkyMod
 	end
 
 	function ENT:GetDayLight()
@@ -205,123 +184,76 @@ if(SERVER)then
 			local Minutes = StormFox.GetTime()
 			local Frac = Minutes / 1440
 			Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
-			return math.Clamp(Frac, 0, 1)
+			local Mult = math.Clamp(Frac, 0, 1)
+			if (StormFox.IsNight())then 
+				Mult = 0 
+			else
+				local Weather = StormFox.GetWeather()
+				if (Weather == "Fog") or (Weather == "Cloudy")then Mult = 0.3 
+				elseif (Weather == "Snowin'") or (Weather == "Sandstorm") then Mult = 0.1 
+				elseif (Weather == "Lava Eruption") or (Weather == "Radioactive") then Mult = 0 
+				else Mult = 1 end
+			end
 		end
 		return 1
 	end
 
+	function ENT:GetWaterProximity()
+		local BasePos, DownVec = self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200)
+		for i = 1, 100 do
+			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), 0)
+			local Tr = util.TraceLine({
+				start = BasePos + Offset,
+				endpos = BasePos + Offset + DownVec,
+				filter = self,
+				mask = MASK_SOLID_BRUSHONLY + MASK_WATER
+			})
+			if (Tr.Hit) then
+				print(Tr.Contents)
+			end
+		end
+		return 0
+	end
+
 	function ENT:Think()
-		local State = self:GetState()
-		local WaterGain = self.BaseWaterGain or 0
-
-		if not self:GetPhysicsObject():IsMotionEnabled() then
-			self.EZinstalled = false
+		if (self.Health <= 0) then self:Destroy() return end
+		local Time, SelfPos = CurTime()
+		--
+		local WaterLossMult, DaylightMult = 1 - self.WaterProximity, self:GetDayLight() * self:CheckSky()
+		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -200), self)
+		if not(Tr.Hit)then
+			self:Destroy()
+			return
+		else
+			if (Tr.MatType == MAT_GRASS) then
+				WaterLossMult = .5
+			elseif (Tr.MatType == MAT_DIRT or Tr.MatType == MAT_SLOSH) then
+				WaterLossMult = 1
+			elseif (Tr.MatType == MAT_SAND) then
+				WaterLossMult = 2
+			end
 		end
-
-		if State >= STATE_SAD then
-			if self.LastState ~= STATE_GROWING then
-				self:SetSubMaterial(1, "models/jmod/props/oak_leaf0")
-			end
-			if not self.EZinstalled then
-				self:SetState(STATE_WITHERING)
-
-				return
-			end
-			local WeatherMult = 1
-			if(StormFox)then 
-				if (StormFox.IsNight())then 
-					WeatherMult = 0 
-				else
-					local Weather = StormFox.GetWeather()
-					if (Weather == "Fog") or (Weather == "Cloudy")then WeatherMult = 0.3 
-					elseif (Weather == "Snowin'") or (Weather == "Sandstorm") then WeatherMult = 0.1 
-					elseif (Weather == "Lava Eruption") or (Weather == "Radioactive") then WeatherMult = 0 
-					else WeatherMult = 1 end
-				end
-				if StormFox.IsRaining() then
-					WaterGain = WaterGain + .8
-				end
-			end
-			
-			local Daylight = self:GetDayLight()
-			self:SetVisibility(self:CheckSky() * WeatherMult * Daylight)
-			local Vis = self:GetVisibility()
-			local Grade = self:GetGrade()
-
-			if self:GetProgress() < 100 then
-				local Rate = math.Round(1 * Vis, 2)
-				if State == STATE_SAD then
-					self:SetProgress(math.Round(self:GetProgress() + Rate * .5, 2))
-				else
-					self:SetProgress(math.Round(self:GetProgress() + Rate, 2))
-				end
-				self:SetWater(math.Clamp(self:GetWater() + (WaterGain - (.5 + Rate)), 0, 100))
-			end
-
-			if self:GetProgress() >= 100 then
-				self:Grow()
-			end
-			
-		elseif State == STATE_WITHERING then
+		if StormFox and StormFox.IsRaining() then
+			WaterLossMult = -1
 		end
-
-		if State ~= STATE_GROWING and self:GetWater() >= 10 then
-			self:SetState(STATE_GROWING)
+		--
+		self.Hydration = self.Hydration - 1 * WaterLossMult
+		if (self.Hydration <= 0) then
+			self.Health = self.Health - 1
+		else
+			local GrowthMult = DaylightMult * (self.Hydration / 100)
 		end
-
-		self.LastState = State
-
-		self:NextThink(CurTime() + math.random(9, 11))
+		--
+		self:NextThink(Time + math.Rand(9, 11))
 		return true
 	end
-
-	function ENT:TurnOn() end --Stub
-	function ENT:TurnOff() end --Stub
-
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
-		ent.NextUse = Time + math.Rand(0, 3)
-	end
-
 elseif CLIENT then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
 	end
-	
-	function ENT:Draw()
-		local SelfPos,SelfAng,State=self:GetPos(),self:GetAngles(),self:GetState()
-		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
-		local Grade = self:GetGrade()
-		---
-		self:DrawModel()
-		---
-		if State == STATE_WITHERING then return end
-		---
 
-		if DetailDraw then
-			if Closeness < 20000 and State == STATE_GROWING then
-				local DisplayAng = SelfAng:GetCopy()
-				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
-				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
-				local Opacity = math.random(50, 150)
-				local ElecFrac = self:GetProgress() / 100
-				local VisFrac = self:GetVisibility()
-				local R, G, B = JMod.GoodBadColor(ElecFrac)
-				local VR, VG, VB = JMod.GoodBadColor(VisFrac)
-				cam.Start3D2D(SelfPos + Up * 35 - Forward * 15 - Right * 30, DisplayAng, .1)
-				surface.SetDrawColor(10,10,10,Opacity+50)
-				surface.DrawRect(390,80,128,128)
-				JMod.StandardRankDisplay(Grade,452,148,118,Opacity+50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 150, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 150, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("EFFICIENCY", "JMod-Display", 350, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(VisFrac * 100)) .. "%", "JMod-Display", 350, 60, Color(VR, VG, VB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				cam.End3D2D()
-			end
-		end
+	function ENT:Draw()
+		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_eztree", "EZ Tree")
 end

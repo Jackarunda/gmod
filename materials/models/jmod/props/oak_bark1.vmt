@@ -1,0 +1,8 @@
+
+"VertexLitGeneric"
+{
+	"$model" "1"
+	"$basetexture" "models/jmod/props/oak_bark1_D"
+	"$bumpmap" "models/jmod/props/oak_bark1_N"
+}
+    
