@@ -35,7 +35,7 @@ if SERVER then
 			Ent.DragMult = .3
 			Ent:Spawn()
 			Ent:Activate()
-			Ent:SetVelocity(self:GetVelocity())
+			Ent.CurVel = self:GetVelocity()
 		end
 
 		self:NextThink(CurTime() + math.Rand(10, 20))

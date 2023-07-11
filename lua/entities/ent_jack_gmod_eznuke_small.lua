@@ -109,7 +109,7 @@ if SERVER then
 			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+			Gas.CurVel = (VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 		end
 
 		SafeRemoveEntityDelayed(self, 10)
@@ -264,7 +264,7 @@ if SERVER then
 						JMod.SetEZowner(Gas, Att)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 250) + Vector(0, 0, 500 * JMod.Config.Particles.NuclearRadiationMult))
+						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 500 * JMod.Config.Particles.NuclearRadiationMult))
 					end
 				end)
 			end
@@ -283,6 +283,18 @@ if SERVER then
 
 		JMod.AeroDrag(self, self:GetRight(), .5)
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) then
+			JMod.SetEZowner(self, ply)
+			if self.EZdroppableBombArmedTime then
+				self.EZdroppableBombArmedTime = self.EZdroppableBombArmedTime - CurTime()
+			end
+		else
+			SafeRemoveEntity(ent)
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 	end

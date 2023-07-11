@@ -1,4 +1,5 @@
-﻿concommand.Add("jmod_friends", function(ply)
+﻿
+concommand.Add("jmod_friends", function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
 	net.WriteTable(ply.JModFriends or {})
@@ -123,11 +124,3 @@ concommand.Add("jmod_deposits_load", function(ply, cmd, args)
 		net.Send(ply)
 	end
 end, nil, "Loads a specified deposit layout, first argument is layout ID, second is map name. \n Only use second argument to force load from a differnt map")
-
-for _, v in ipairs(JMod.EZ_CONCOMMANDS) do
-	concommand.Add("jmod_ez_"..v.name, function(ply, cmd, args)
-		if not (IsValid(ply) and ply:Alive()) then return end
-		if v.adminOnly and not(ply:IsAdmin()) then ply:PrintMessage(HUD_PRINTCENTER, "This command is admin only") return end
-		v.func(ply, cmd, args)
-	end, nil, v.helpTxt)
-end

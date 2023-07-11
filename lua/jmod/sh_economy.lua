@@ -1214,7 +1214,7 @@ if SERVER then
 		for EZresource, amt in pairs(ScroungeResults) do
 			if not ScroungeTable[EZresource] then return end
 
-			amt = math.Round(amt)
+			amt = math.floor(amt)
 
 			local Break = 0
 			while amt > 0 and Break < 10 do

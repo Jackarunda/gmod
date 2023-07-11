@@ -44,7 +44,7 @@ if SERVER then
 				JMod.SetEZowner(Gas, self.EZowner or self)
 				Gas:Spawn()
 				Gas:Activate()
-				Gas:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100))
+				Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100)
 				self:EmitSound("snd_jack_sss.wav", 55, 80)
 				self.FuelLeft = self.FuelLeft - 1
 

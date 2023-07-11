@@ -138,7 +138,7 @@ if SERVER then
 			local particleTable = JMod.EZ_HAZARD_PARTICLES[v:GetClass()]
 
 			if istable(particleTable) then
-				if IsValid(v) and JMod.VisCheck(self:LocalToWorld(self:OBBCenter()), v, self) then 
+				if IsValid(v) and JMod.ClearLoS(self, v, false, 0, true) then 
 					if JMod.LinCh(selfGrade * 2, 1, self.Range/10) then
 
 						if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
@@ -209,17 +209,17 @@ elseif CLIENT then
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
-		local BasePos = SelfPos
+		local BasePos = SelfPos + Up*30
 		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		local PanelDraw = true
 		---
+		self:DrawModel()
+		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
-		---
-		self:DrawModel()
 		---
 		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 

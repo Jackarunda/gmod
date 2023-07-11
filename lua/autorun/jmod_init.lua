@@ -310,6 +310,16 @@ JMod.EZ_CONCOMMANDS = {
 	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
 }
 
+if SERVER then
+	for _, v in ipairs(JMod.EZ_CONCOMMANDS) do
+		concommand.Add("jmod_ez_"..v.name, function(ply, cmd, args)
+			if not (IsValid(ply) and ply:Alive()) then return end
+			if v.adminOnly and not(ply:IsAdmin()) then ply:PrintMessage(HUD_PRINTCENTER, "This command is admin only") return end
+			v.func(ply, cmd, args)
+		end, nil, v.helpTxt)
+	end
+end
+
 
 --[[
 Physics Sounds

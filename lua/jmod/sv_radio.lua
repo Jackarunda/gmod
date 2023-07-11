@@ -238,7 +238,14 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 			end
 		end
 
-		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then return "" end
+		local ExplodedString = string.Explode(" ", lowerTxt)
+		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then 
+
+			return "" 
+		elseif not(bestradio) and (ExplodedString[1] == "supply") and (ExplodedString[2] == "radio:") then
+
+			ply:PrintMessage(HUD_PRINTCENTER, "No good radios in range")
+		end
 	end
 end)
 

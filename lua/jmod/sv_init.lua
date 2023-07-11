@@ -250,7 +250,7 @@ local function VirusCough(ply)
 		JMod.SetEZowner(Gas, ply)
 		Gas:Spawn()
 		Gas:Activate()
-		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		Gas.CurVel = (ply:GetVelocity())
 	end
 end
 
@@ -720,6 +720,17 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 		Ragdoll:SetPos(ply:GetPos())
 		Ragdoll:SetAngles(ply:GetAngles())
 		Ragdoll:Spawn()
+		----------------------Kycea contribution Begin----------------------
+		for i = 0, Ragdoll:GetPhysicsObjectCount() do
+			local physobj = Ragdoll:GetPhysicsObjectNum(i)
+			if (physobj) and IsValid(physobj)then
+				local pos, ang = ply:GetBonePosition(ply:TranslatePhysBoneToBone(i))
+				physobj:SetPos(pos)
+				physobj:SetVelocity(ply:GetVelocity())
+				physobj:SetAngles(ang)
+			end
+		end
+		----------------------Kycea contribution end------------------------
 		Ragdoll:Activate()
 		if IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}

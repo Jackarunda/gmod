@@ -243,6 +243,11 @@ if SERVER then
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+			SafeRemoveEntity(ent)
+
+			return
+		end
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)

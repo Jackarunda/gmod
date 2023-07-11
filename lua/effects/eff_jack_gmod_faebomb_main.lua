@@ -3,7 +3,7 @@
 local Refract = Material("sprites/mat_jack_shockwave")
 
 function EFFECT:Init(data)
-	print("welp",self.Del_Bepis)
+	--print("welp",self.Del_Bepis)
 	local Pos, Scale = data:GetOrigin(), data:GetScale()
 	self.DieTime = CurTime() + .3
 	local Emitter = ParticleEmitter(Pos)

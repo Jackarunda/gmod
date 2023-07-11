@@ -430,6 +430,9 @@ function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 				JMod.BlastThatDoor(door, (door:LocalToWorld(door:OBBCenter()) - pos):GetNormalized() * 1000)
 			end
 		end
+		if door:GetClass() == "func_breakable_surf" then
+			door:Fire("Break")
+		end
 	end
 end
 
