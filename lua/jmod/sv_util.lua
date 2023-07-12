@@ -1192,6 +1192,45 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 	end
 end
 
+function JMod.BuildRecipe(results, ply)
+	if istable(results) then
+		for k, v in ipairs(results) do
+			for n = 1, (results[k][2] or 1) do
+				local Ent = ents.Create(results[k][1])
+				Ent:SetPos(Pos)
+				Ent:SetAngles(Ang)
+				JMod.SetEZowner(Ent, ply)
+				Ent:Spawn()
+				Ent:Activate()
+				if (results[k][3]) then
+					Ent:SetResource(results[k][3])
+				end
+			end
+		end
+	else
+		local StringParts=string.Explode(" ", results)
+		if((StringParts[1])and(StringParts[1] == "FUNC"))then
+			local FuncName = StringParts[2]
+			if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
+				local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
+				if(Ent)then
+					if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+				end
+			else
+				print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+			end
+		else
+			local Ent = ents.Create(results)
+			Ent:SetPos(Pos)
+			Ent:SetAngles(Ang)
+			JMod.SetEZowner(Ent, ply)
+			Ent:Spawn()
+			Ent:Activate()
+			if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
+		end
+	end
+end
+
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
 	if ent.block_pickup then
 		JMod.Hint(ply, "blockphysgun")
