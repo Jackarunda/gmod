@@ -1192,7 +1192,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 	end
 end
 
-function JMod.BuildRecipe(results, ply)
+function JMod.BuildRecipe(results, ply, Pos, Ang)
 	if istable(results) then
 		for k, v in ipairs(results) do
 			for n = 1, (results[k][2] or 1) do
