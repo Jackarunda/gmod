@@ -708,10 +708,11 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
 end)
 
 --hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
-hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
 	if JMod.Config.QoL.JModCorpse and ply.EZarmor and ply.EZarmor.items then
 		SafeRemoveEntity(ply:GetRagdollEntity())
 		local Ragdoll = ents.Create("prop_ragdoll")
+		Ragdoll.EZcorpse = true
 		if ply.EZoriginalPlayerModel then
 			Ragdoll:SetModel(ply.EZoriginalPlayerModel)
 		else
@@ -753,10 +754,16 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 						ArmorPiece:SetPos(Pos)
 						ArmorPiece:SetAngles(Ang)
 						ArmorPiece:SetOwner(Ragdoll)
+						--ArmorPiece:SetParent(Ragdoll, Index)
+						--ArmorPiece:FollowBone(Ragdoll, Index)
+						--ArmorPiece:SetLocalPos(Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z)
+						--ArmorPiece:SetLocalAngles(ArmorInfo.ang)
+						--ArmorPiece:AddEffects(EF_BONEMERGE)
 						ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
 						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
 						ArmorPiece:Spawn()
 						ArmorPiece:Activate()
+
 						Ragdoll.EZarmorP[v.name] = ArmorPiece
 						if ArmorInfo.eff and ArmorInfo.eff.parachute then
 							Parachute = v.name
@@ -771,13 +778,15 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
 			end
 			--print("We created " .. tostring(CCounter) .. " constraints")
 			timer.Simple(30, function()
-				if IsValid(Ragdoll) and Ragdoll.EZarmorP then
-					for _, v in pairs(Ragdoll.EZarmorP) do
-						local Con = constraint.FindConstraintEntity(v, "Weld")
-						if IsValid(Con) then
-							local Ent1, Ent2 = Con:GetConstrainedEntities()
-							if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
-								SafeRemoveEntity(v)
+				if IsValid(Ragdoll) then
+					if IsValid(Ragdoll.EZarmorP) then
+						for _, v in pairs(Ragdoll.EZarmorP) do
+							local Con = constraint.FindConstraintEntity(v, "Weld")
+							if IsValid(Con) then
+								local Ent1, Ent2 = Con:GetConstrainedEntities()
+								if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
+									SafeRemoveEntity(v)
+								end
 							end
 						end
 					end
