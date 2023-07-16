@@ -130,42 +130,7 @@ if(SERVER)then
 								if(i<BuildSteps)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
-									if istable(ItemInfo.results) then
-										for k, v in ipairs(ItemInfo.results) do
-											for n = 1, (ItemInfo.results[k][2] or 1) do
-												local Ent = ents.Create(ItemInfo.results[k][1])
-												Ent:SetPos(Pos)
-												Ent:SetAngles(Ang)
-												JMod.SetEZowner(Ent, ply)
-												Ent:Spawn()
-												Ent:Activate()
-												if (ItemInfo.results[k][3]) then
-													Ent:SetResource(ItemInfo.results[k][3])
-												end
-											end
-										end
-									else
-										local StringParts=string.Explode(" ", ItemInfo.results)
-										if((StringParts[1])and(StringParts[1] == "FUNC"))then
-											local FuncName = StringParts[2]
-											if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
-												local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
-												if(Ent)then
-													if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
-												end
-											else
-												print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
-											end
-										else
-											local Ent = ents.Create(ItemInfo.results)
-											Ent:SetPos(Pos)
-											Ent:SetAngles(Ang)
-											JMod.SetEZowner(Ent, ply)
-											Ent:Spawn()
-											Ent:Activate()
-											if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
-										end
-									end
+									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang)
 									self:BuildEffect(Pos)
 									self:SetElectricity(math.Clamp(self:GetElectricity() - 15, 0.0, self.MaxElectricity))
 									self:SetGas(math.Clamp(self:GetGas() - 10, 0.0, self.MaxGas))

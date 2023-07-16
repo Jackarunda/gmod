@@ -500,6 +500,7 @@ function JMod.ApplyAmmoSpecs(wep, typ, mult)
 	mult = mult or 1
 	wep.Primary.Ammo = typ
 	local Specs = JMod.GetAmmoSpecs(typ)
+	if not Specs then print("[JMod] - " ..typ.." is not a registered ammo type") return end
 	wep.Damage = Specs.basedmg * mult
 	wep.Num = Specs.projnum or 1
 
