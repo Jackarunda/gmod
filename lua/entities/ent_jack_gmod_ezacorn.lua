@@ -8,9 +8,13 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
+ENT.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.WATER
+}
 ENT.JModEZstorable = true
+ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
-local STATE_NORMAL, STATE_BURIED = 0, 1
+local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -43,9 +47,10 @@ if SERVER then
 			self:GetPhysicsObject():Wake()
 		end)
 
-		self.UsableMats = {MAT_DIRT-, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
-		self:Activate()
+		self:SetState(STATE_NORMAL)
+		self.Hydration = 0
+		self.GroundWeld = nil
 	end
 
 	function ENT:Bury(activator)
@@ -54,10 +59,10 @@ if SERVER then
 		if Tr.Hit and table.HasValue(self.UsableMats, Tr.MatType) and IsValid(Tr.Entity:GetPhysicsObject()) then
 			local Ang = Tr.HitNormal:Angle()
 			Ang:RotateAroundAxis(Ang:Right(), -90)
-			local Pos = Tr.HitPos - Tr.HitNormal * 10
+			local Pos = Tr.HitPos - Tr.HitNormal * 0
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
-			constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+			self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 			local Fff = EffectData()
 			Fff:SetOrigin(Tr.HitPos)
 			Fff:SetNormal(Tr.HitNormal)
@@ -69,6 +74,21 @@ if SERVER then
 			self:SetState(STATE_BURIED)
 			--JackaGenericUseEffect(activator)
 		end
+	end
+
+	function ENT:TryLoadResource(typ, amt)
+		if(amt <= 0)then return 0 end
+		local Time = CurTime()
+		local Accepted = 0
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+			local Wata = self.Hydration
+			local Missing = 50 - Wata
+			if (Missing <= 0) then return 0 end
+			Accepted = math.min(Missing, amt)
+			self.Hydration = Wata + Accepted
+			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+		end
+		return math.ceil(Accepted)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -103,6 +123,7 @@ if SERVER then
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
+			self:SetState(STATE_NORMAL)
 			activator:PickupObject(self)
 		end
 	end
@@ -114,29 +135,36 @@ if SERVER then
 				self:Remove()
 			end
 		elseif State == STATE_BURIED then
+			if not IsValid(self.GroundWeld) then self:Remove() end
+			if (self.Hydration >= 50) then
+				self:SetState(STATE_GERMINATING)
+				self:SetColor(Color(150, 150, 150))
+			end
+		elseif State == STATE_GERMINATING then
+			if not IsValid(self.GroundWeld) then self:Remove() end
 			if Time - 60 > self.LastTouchedTime then
 				self:SpawnTree()
 			end
 		end
-		self:NextThink(Time + 1)
+		self:NextThink(Time + 5)
 		return true
 	end
 
 	function ENT:SpawnTree() 
 		local Tree = ents.Create("ent_jack_gmod_eztree")
-		Tree:SetPos(self:GetPos() + Vector(0, 0, 10))
-		Tree:SetAngles(Angle(0, 0, math.random(0, 360)))
-		Tree:SetWater(10)
+		Tree:SetPos(self:GetPos())
 		Tree:Spawn()
 		Tree:Activate()
 		self:Remove()
 	end
 
 	function ENT:OnRemove()
+		--
 	end
 	
 elseif CLIENT then
 	function ENT:Initialize()
+		--
 	end
 
 	function ENT:Draw()

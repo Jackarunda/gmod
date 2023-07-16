@@ -156,7 +156,7 @@ if SERVER then
 		end
 		local BoneIndex = self:LookupBone("Fuze"..math.Round(self.Fuze/10))
 		--local BoneMatrix = self:GetBoneMatrix(BoneIndex)
-		jprint(BoneIndex)
+		--jprint(BoneIndex)
 	end
 
 	function ENT:Think()

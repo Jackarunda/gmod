@@ -12,8 +12,8 @@ game.AddParticles("particles/gb5_50lb.pcf")
 -- game.AddParticles("particles/inferno_fx.pcf")
 
 game.AddDecal("BigScorch", {"decals/big_scorch1", "decals/big_scorch2", "decals/big_scorch3"})
-
 game.AddDecal("GiantScorch", {"decals/giant_scorch1", "decals/giant_scorch2", "decals/giant_scorch3"})
+game.AddDecal("EZtreeRoots", {"decals/ez_tree_roots"})
 
 PrecacheParticleSystem("pcf_jack_nuke_ground")
 PrecacheParticleSystem("pcf_jack_nuke_air")

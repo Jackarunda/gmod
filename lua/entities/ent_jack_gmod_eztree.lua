@@ -23,6 +23,7 @@ ENT.GrowthStageStats = {
 	{mdl = "models/jmod/props/tree1.mdl", height = 60, wood = 25}, 
 	{mdl = "models/jmod/props/tree2.mdl", height = 120, wood = 100}
 }
+ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
 function ENT:CustomSetupDataTables()
 	-- we will indicate status through other means
@@ -32,12 +33,12 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
 		self.Growth = 0
-		self.Hydration = 20
-		self.Health = 100
+		self.Hydration = 100
+		self.Helf = 100
 		self.NextLeafDrop = 0
 		self.NextAcornDrop = 0
 		self.NextAppleDrop = 0
-		self.WaterProximity = self:GetWaterProximity()
+		self.NextWaterCheck = 0
 		self:TryPlant()
 	end
 
@@ -100,61 +101,62 @@ if(SERVER)then
             phys:Wake()
             phys:SetMass(self.Mass)
         end
-		self:TryPlant()
 		self:SetProgress(self:GetProgress() - 100)
 	end
 
 	function ENT:TryPlant()
-		self.EZinstalled = not(self:GetPhysicsObject():IsMotionEnabled())
-		if self.EZinstalled then return end
-		self.BaseWaterGain = 0
+		self.WaterProximity = 0
+		self.InstalledMat = nil
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200), self)
-		SelfAng = self:GetAngles()
-		if (Tr.Hit) and (Tr.HitWorld) then
-			local GroundIsSolid = true
-			for i = 1, 50 do
-				local Contents = util.PointContents(Tr.HitPos - Vector(0, 0, 10 * i))
-				if(bit.band(util.PointContents(self:GetPos()), CONTENTS_SOLID) == CONTENTS_SOLID) then GroundIsSolid = false break end
-			end
-			
-			if(GroundIsSolid)then
-				local HitAngle = Tr.HitNormal:Angle()
-				HitAngle:RotateAroundAxis(self:GetForward(), 90)
-				self:SetAngles(Angle(0, 0, 0))
-				self:SetPos(Tr.HitPos + Tr.HitNormal * (self.SpawnHeight-3))
-				---
-				self:GetPhysicsObject():EnableMotion(false)
-				self.EZinstalled = true
-				---
-				self.BaseWaterGain = self:CheckForWater()
-				---
-				if self:GetWater() < 10 then
-					self:Sadden()
-				else
-					self:SetState(STATE_GROWING)
+		if (Tr.Hit) then
+			self.InstalledMat = Tr.MatType
+			if not (table.HasValue(self.UsableMats, self.InstalledMat)) then self:Remove() return end
+			if (self:WaterLevel() > 0) then self:Remove() return end
+			self.EZinstalled = true
+			self.WaterProximity = self:GetWaterProximity()
+			jprint(self.WaterProximity)
+			util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+			timer.Simple(.1, function()
+				if (IsValid(self)) then
+					local HitAngle = Tr.HitNormal:Angle()
+					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
+					self:SetAngles(HitAngle)
+					self:SetPos(Tr.HitPos)
+					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 				end
-			else
-				self:SetState(STATE_WITHERING)
-			end
+			end)
+		else
+			self:Remove()
 		end
 	end
 
-	function ENT:CheckForWater()
-		local WaterAround = 0
-		for i = 1, 10 do
-			for j = 1, 5 do
-				local PointToCheck = self:GetPos() - self:GetUp()*10 + Angle(0, 0, i*36):Forward() * j * 5
-				if bit.band( util.PointContents( PointToCheck ), CONTENTS_WATER ) then WaterAround = WaterAround + 0.02 end
+	function ENT:GetWaterProximity()
+		local WaterAround, SelfPos = 0, self:GetPos()
+		for i = 1, 50 do
+			local PointToCheck = SelfPos + Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, -500))
+			if (bit.band(util.PointContents(PointToCheck), CONTENTS_WATER) == CONTENTS_WATER) then WaterAround = WaterAround + .1 end
+		end
+		-- figger out all deposits we are inside of
+		local DepositsInRange = {}
+		for k, v in pairs(JMod.NaturalResourceTable) do
+			local Dist = SelfPos:Distance(v.pos)
+			if (Dist <= v.siz) then
+				if (v.rate or (v.amt > 0)) then
+					table.insert(DepositsInRange, k)
+				end
+			end
+		end
+		-- now, among all the deposits we are inside of, let's figger out if one is water
+		if #DepositsInRange > 0 then
+			for k, v in pairs(DepositsInRange) do
+				local DepositInfo = JMod.NaturalResourceTable[v]
+				if (DepositInfo.typ == JMod.EZ_RESOURCE_TYPES.WATER) then
+					WaterAround = WaterAround + .5
+				end
 			end
 		end
 		---
-		self:UpdateDepositKey()
-		---
-		local Deposit = JMod.NaturalResourceTable[self.Depositkey]
-		if Deposit and Deposit.typ == JMod.EZ_RESOURCE_TYPES.WATER then
-			WaterAround = WaterAround + Deposit.rate
-		end
-		self.BaseWaterGain = WaterAround
+		return math.Clamp(WaterAround, 0, 1)
 	end
 
 	function ENT:CheckSky()
@@ -198,26 +200,9 @@ if(SERVER)then
 		return 1
 	end
 
-	function ENT:GetWaterProximity()
-		local BasePos, DownVec = self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200)
-		for i = 1, 100 do
-			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), 0)
-			local Tr = util.TraceLine({
-				start = BasePos + Offset,
-				endpos = BasePos + Offset + DownVec,
-				filter = self,
-				mask = MASK_SOLID_BRUSHONLY + MASK_WATER
-			})
-			if (Tr.Hit) then
-				print(Tr.Contents)
-			end
-		end
-		return 0
-	end
-
 	function ENT:Think()
-		if (self.Health <= 0) then self:Destroy() return end
-		local Time, SelfPos = CurTime()
+		if (self.Helf <= 0) then self:Destroy() return end
+		local Time, SelfPos = CurTime(), self:GetPos()
 		--
 		local WaterLossMult, DaylightMult = 1 - self.WaterProximity, self:GetDayLight() * self:CheckSky()
 		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -200), self)
@@ -239,9 +224,14 @@ if(SERVER)then
 		--
 		self.Hydration = self.Hydration - 1 * WaterLossMult
 		if (self.Hydration <= 0) then
-			self.Health = self.Health - 1
+			self.Helf = self.Helf - 1
 		else
 			local GrowthMult = DaylightMult * (self.Hydration / 100)
+		end
+		--
+		if (self.NextWaterCheck < Time) then
+			self.WaterProximity = self:GetWaterProximity()
+			self.NextWaterCheck = Time + 20
 		end
 		--
 		self:NextThink(Time + math.Rand(9, 11))
@@ -249,9 +239,8 @@ if(SERVER)then
 	end
 elseif CLIENT then
 	function ENT:CustomInit()
-		self:DrawShadow(true)
+		--
 	end
-
 	function ENT:Draw()
 		self:DrawModel()
 	end

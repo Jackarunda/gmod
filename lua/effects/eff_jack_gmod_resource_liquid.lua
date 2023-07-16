@@ -93,6 +93,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:PhysicsCollide()
+	--
 end
 
 -- stub
@@ -111,7 +112,7 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
+		Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * 1 * self.Speed - Phys:GetVelocity() / 4)
 	end
 
 	return true
