@@ -1174,7 +1174,8 @@ net.Receive("JMod_Inventory", function()
 	end
 
 	Ent:SetSkin(Ply:GetSkin())
-	--Ent:SetColor(Color(0, 0, 0))
+	--Ent:SetColor(Color(255, 208, 0))
+	--Ent:SetMaterial("models/mat_jack_aidboxside")
 	for k, v in pairs( Ply:GetBodyGroups() ) do
 		local cur_bgid = Ply:GetBodygroup( v.id )
 		Ent:SetBodygroup( v.id, cur_bgid )
