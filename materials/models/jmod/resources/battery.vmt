@@ -1,0 +1,15 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jmod/resources/battery"
+//	"$bumpmap" "models/jmod/resources/battery_norm"
+	
+	"$phong" "1"
+	"$phongexponent" "20"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".1"
+
+//	"$detail" "models\tex_jack_gmod_metaldetail"
+//	"$detailscale"		"5"
+//	"$detailblendfactor"		".5"
+
+}

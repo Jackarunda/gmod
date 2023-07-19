@@ -9,11 +9,11 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.POWER
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmod/resources/battery_barrel.mdl"
-ENT.Material = "models/mat_jack_gmod_ezbattery"
+ENT.Model = "models/jmod/resources/battery_v2.mdl"
+--ENT.Material = "models/mat_jack_gmod_ezbattery"
 ENT.ModelScale = 1
 ENT.Mass = 50
-ENT.ImpactNoise1 = "Canister.ImpactHard"
+ENT.ImpactNoise1 = "Metal_Box.ImpactHard"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
@@ -57,7 +57,7 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, 8.31, 12), Angle(-90, 0, 90), .03, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(0, 8.31, 8), Angle(-90, 0, 90), .03, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.POWER, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end
