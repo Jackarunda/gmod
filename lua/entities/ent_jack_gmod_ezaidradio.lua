@@ -94,7 +94,7 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 	end
 
-	function ENT:Speak(msg, parrot)
+	function ENT:Speak(msg, parrot, parrotply)
 		if self:GetState() < 1 then return end
 		self:ConsumeElectricity()
 
@@ -106,6 +106,7 @@ if(SERVER)then
 					net.WriteBool(true)
 					net.WriteString(parrot)
 					net.WriteEntity(self)
+					net.WriteEntity(parrotply)
 					net.Send(ply)
 				end
 			end
@@ -314,7 +315,7 @@ if(SERVER)then
 				if State == 2 then
 					--local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
 					local Msg, Num = 'stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:', 1
-					self:Speak(Msg, ParrotPhrase)
+					self:Speak(Msg, ParrotPhrase, ply)
 					local str = ""
 
 					for name, items in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
