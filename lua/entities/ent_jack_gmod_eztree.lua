@@ -88,7 +88,6 @@ if(SERVER)then
 	end
 
 	function ENT:Grow()
-		self:Upgrade() -- This is for gaining durability
 		self.GrowthStage = self.GrowthStage + 1
 		self:SetModel(self.GrowthStageStats[self.GrowthStage].mdl)
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -105,7 +104,6 @@ if(SERVER)then
 	end
 
 	function ENT:TryPlant()
-		self.WaterProximity = 0
 		self.InstalledMat = nil
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 100), Vector(0, 0, -200), self)
 		if (Tr.Hit) then
@@ -113,8 +111,6 @@ if(SERVER)then
 			if not (table.HasValue(self.UsableMats, self.InstalledMat)) then self:Remove() return end
 			if (self:WaterLevel() > 0) then self:Remove() return end
 			self.EZinstalled = true
-			self.WaterProximity = self:GetWaterProximity()
-			jprint(self.WaterProximity)
 			util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
@@ -161,20 +157,20 @@ if(SERVER)then
 
 	function ENT:CheckSky()
 		local SkyMod, MapName = 1, string.lower(game.GetMap())
-		for k,mods in pairs(JMod.MapSolarPowerModifiers)do
+		for k, mods in pairs(JMod.MapSolarPowerModifiers)do
 			local keywords, mult = mods[1], mods[2]
-			for _,word in pairs(keywords)do
-				if(string.find(MapName,word))then SkyMod=mult break end
+			for _, word in pairs(keywords) do
+				if (string.find(MapName, word)) then SkyMod = mult break end
 			end
 		end
-		local HitAmount, StartPos = 0, self:GetPos() + self:GetUp()*100
+		local HitAmount, StartPos = 0, self:GetPos() + self:GetUp() * 100
 		for i = 1, 10 do
 			for j = 1, 10 do
-				local Dir = (self:GetAngles() + Angle((i+11)*18, (j+11)*18, 0)):Forward()
-				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir*9e9, filter = {self}, mask = MASK_SOLID})
+				local Dir = (self:GetAngles() + Angle((i + 11) * 18, (j + 11) * 18, 0)):Forward()
+				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
 				--JMod.Sploom(game.GetWorld(), Tr.HitPos, 1, 10)
 				if (Tr.HitSky) then
-					HitAmount = HitAmount + 0.02
+					HitAmount = HitAmount + .02
 				end
 			end
 		end
@@ -202,9 +198,11 @@ if(SERVER)then
 
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
+		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Remove() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		--
-		local WaterLossMult, DaylightMult = 1 - self.WaterProximity, self:GetDayLight() * self:CheckSky()
+		jprint("water " .. self:GetWaterProximity() .. " daylight " .. self:GetDayLight() .. " sky " .. self:CheckSky())
+		local WaterLossMult, DaylightMult = 1 - self:GetWaterProximity(), self:GetDayLight() * self:CheckSky()
 		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -200), self)
 		if not(Tr.Hit)then
 			self:Destroy()
@@ -229,20 +227,26 @@ if(SERVER)then
 			local GrowthMult = DaylightMult * (self.Hydration / 100)
 		end
 		--
-		if (self.NextWaterCheck < Time) then
-			self.WaterProximity = self:GetWaterProximity()
-			self.NextWaterCheck = Time + 20
-		end
-		--
 		self:NextThink(Time + math.Rand(9, 11))
 		return true
 	end
 elseif CLIENT then
+	local Roots = Material("decals/ez_tree_roots")
 	function ENT:CustomInit()
 		--
 	end
 	function ENT:Draw()
+		--local SelfPos = self:GetPos()
 		self:DrawModel()
+		--[[
+		render.SetMaterial(Roots)
+		local rCol = render.GetLightColor(SelfPos)
+		rCol.x = rCol.x ^ .5
+		rCol.y = rCol.y ^ .5
+		rCol.z = rCol.z ^ .5
+		local Col = Color(255 * rCol.x, 255 * rCol.y, 255 * rCol.z)
+		render.DrawQuadEasy(SelfPos, self:GetUp(), 150, 150, Col, 0)
+		--]]
 	end
 	language.Add("ent_jack_gmod_eztree", "EZ Tree")
 end
