@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.5,
+			Version = 42.6,
 		},
 		General = {
 			Hints = true,
@@ -741,8 +741,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezfurnace",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 400
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
 				sizeScale = 2,
 				category = "Machines",
@@ -752,10 +753,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Oil Refinery"] = {
 				results = "ent_jack_gmod_ezrefinery",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 400,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
 				sizeScale = 5,
 				category = "Machines",
@@ -910,7 +911,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.ADVANCEDPARTS] = 25,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.POWER] = 600,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 400,
 					[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = 25
 				},
 				sizeScale = 2,
@@ -1052,7 +1053,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Workbench"] = {
 				results = "ent_jack_gmod_ezworkbench",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
@@ -1065,7 +1066,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezfabricator",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 600,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 400,
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 200,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 100
 				},
@@ -1077,9 +1078,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Pumpjack"] = {
 				results = "ent_jack_gmod_ezpumpjack",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				sizeScale = 10,
@@ -1605,7 +1606,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				category = "Tools",
