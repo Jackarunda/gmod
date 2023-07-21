@@ -125,7 +125,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 					timer.Simple(.9, function()
 						local Box = ents.Create("ent_jack_aidbox")
 						Box:SetPos(DropPos)
-						Box.InitialVel = -DropVelocity * 10
+						Box.InitialVel = -DropVelocity * math.random(1, 3)
 						Box.Contents = DeliveryItems
 						Box.NoFadeIn = true
 						Box:SetDTBool(0, "true")

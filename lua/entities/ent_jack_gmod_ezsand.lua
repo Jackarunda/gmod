@@ -57,8 +57,8 @@ elseif CLIENT then
 		local JugAng = Ang:GetCopy()
 		JMod.RenderModel(self.Bag, BasePos, Ang, self.ScaleVec, self.ColorVec)
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -15, 0), Angle(90, 0, 90), .04, 300, function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, true)
+		JMod.HoloGraphicDisplay(self, Vector(-2, -15.2, 0), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end
 
