@@ -57,7 +57,7 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, 7, 8), Angle(-90, 0, 90), .03, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(0, 7, 6.5), Angle(-90, 0, 90), .03, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.POWER, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end

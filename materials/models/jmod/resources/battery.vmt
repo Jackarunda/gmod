@@ -6,7 +6,7 @@
 	"$model" 1
 	"$phong" "1"
 	"$phongexponent" "20"
-	"$phongboost" "5"
+	"$phongboost" "20"
 	"$phongfresnelranges" "[1 1 1]"
 	"$envmap" "env_cubemap"
 	"$normalmapalphaenvmapmask" "1"
@@ -14,5 +14,5 @@
 
 	"$detail" "models\tex_jack_gmod_metaldetail"
 	"$detailscale"		"5"
-	"$detailblendfactor"		".5"
+	"$detailblendfactor"		".8"
 }
