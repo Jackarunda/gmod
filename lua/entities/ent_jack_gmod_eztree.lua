@@ -163,18 +163,15 @@ if(SERVER)then
 				if (string.find(MapName, word)) then SkyMod = mult break end
 			end
 		end
-		local HitAmount, StartPos = 0, self:GetPos() + self:GetUp() * 100
-		for i = 1, 10 do
-			for j = 1, 10 do
-				local Dir = (self:GetAngles() + Angle((i + 11) * 18, (j + 11) * 18, 0)):Forward()
-				local Tr = util.TraceLine({start = StartPos, endpos = StartPos + Dir * 9e9, filter = {self}, mask = MASK_SOLID})
-				--JMod.Sploom(game.GetWorld(), Tr.HitPos, 1, 10)
-				if (Tr.HitSky) then
-					HitAmount = HitAmount + .02
-				end
+		local Pos, HitAmount = self:GetPos() + Vector(0, 0, 50), 0
+		for i = 1, 9 do -- Pitch
+			for j = 1, 36 do -- Yaw
+				local Dir = Angle(i * -18, j * 10, 0):Forward()
+				local Tr = util.QuickTrace(Pos, Dir * 20000, self)
+				if (Tr.HitSky) then HitAmount = HitAmount + .01 end
 			end
 		end
-		return HitAmount * SkyMod
+		return math.Clamp(HitAmount, 0, 1) * SkyMod
 	end
 
 	function ENT:GetDayLight()
@@ -200,31 +197,34 @@ if(SERVER)then
 		if (self.Helf <= 0) then self:Destroy() return end
 		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Remove() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
-		--
-		jprint("water " .. self:GetWaterProximity() .. " daylight " .. self:GetDayLight() .. " sky " .. self:CheckSky())
-		local WaterLossMult, DaylightMult = 1 - self:GetWaterProximity(), self:GetDayLight() * self:CheckSky()
-		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -200), self)
+		local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
+		jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
+		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
 		if not(Tr.Hit)then
 			self:Destroy()
 			return
 		else
 			if (Tr.MatType == MAT_GRASS) then
-				WaterLossMult = .5
+				Ground = 1
 			elseif (Tr.MatType == MAT_DIRT or Tr.MatType == MAT_SLOSH) then
-				WaterLossMult = 1
+				Ground = .5
 			elseif (Tr.MatType == MAT_SAND) then
-				WaterLossMult = 2
+				Ground = .25
 			end
 		end
-		if StormFox and StormFox.IsRaining() then
-			WaterLossMult = -1
-		end
+		if StormFox and StormFox.IsRaining() then Water = 1 end
 		--
-		self.Hydration = self.Hydration - 1 * WaterLossMult
-		if (self.Hydration <= 0) then
-			self.Helf = self.Helf - 1
+		if (self.Hydration > 0) then
+			local Growth = Water * Light * Sky * Ground * 2
+			if (self.Helf < 100) then -- heal
+				self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
+			else -- grow
+				self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+			end
+			local WaterLoss = math.Clamp(1 - Water, .01, 1)
+			self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 1)
 		else
-			local GrowthMult = DaylightMult * (self.Hydration / 100)
+			self.Helf = math.Clamp(self.Helf - 2, 0, 100)
 		end
 		--
 		self:NextThink(Time + math.Rand(9, 11))
