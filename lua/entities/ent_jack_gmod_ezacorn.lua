@@ -150,12 +150,16 @@ if SERVER then
 		return true
 	end
 
-	function ENT:SpawnTree() 
-		local Tree = ents.Create("ent_jack_gmod_eztree")
-		Tree:SetPos(self:GetPos())
-		Tree:Spawn()
-		Tree:Activate()
+	function ENT:SpawnTree()
+		local Pos, Owner = self:GetPos(), self.EZowner
 		self:Remove()
+		timer.Simple(.1, function()
+			local Tree = ents.Create("ent_jack_gmod_eztree")
+			Tree:SetPos(Pos + Vector(0, 0, 10))
+			Tree:Spawn()
+			Tree:Activate()
+			JMod.SetEZowner(Tree, Owner)
+		end)
 	end
 
 	function ENT:OnRemove()
