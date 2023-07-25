@@ -87,9 +87,15 @@ if SERVER then
 
 					if self.HasSpawnAmmo then
 						GivenWep:SetClip1(GivenWep.Primary.ClipSize)
+						if GivenWep.Secondary.ClipSize and GivenWep.Secondary.ClipSize > 0 then
+							GivenWep:SetClip1(GivenWep.Secondary.ClipSize)
+						end
 						self.HasSpawnAmmo = false
 					else
 						GivenWep:SetClip1(self.MagRounds)
+						if GivenWep.Secondary.ClipSize and GivenWep.Secondary.ClipSize > 0 and Ent.MorRounds and Ent.MorRounds > 0 then
+							GivenWep:SetClip2(Ent.MorRounds)
+						end
 					end
 
 					activator:SelectWeapon(self.Specs.swep)
