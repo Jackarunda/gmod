@@ -201,7 +201,7 @@ if(SERVER)then
 					return
 				end
 
-				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate --* JMod.Config.ResourceEconomy.ExtractionSpeed
 				self:SetProgress(self:GetProgress() + FlowRate / (self.ChargeRate))
 
 				if self.NextWaterLoseTime < Time then
