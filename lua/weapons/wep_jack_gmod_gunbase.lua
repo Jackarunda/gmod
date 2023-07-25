@@ -403,6 +403,9 @@ function SWEP:OnDrop()
 		Ent:SetPos(self:GetPos())
 		Ent:SetAngles(self:GetAngles())
 		Ent.MagRounds = self:Clip1()
+		if self:Clip2() > 0 then
+			Ent.MorRounds = self:Clip2()
+		end
 		Ent:Spawn()
 		Ent:Activate()
 		local Phys = Ent:GetPhysicsObject()

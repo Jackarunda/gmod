@@ -196,7 +196,7 @@ if(SERVER)then
 				-- If it's a flow (i.e. water)
 				if JMod.NaturalResourceTable[self.DepositKey].rate then
 					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate * JMod.Config.ResourceEconomy.ExtractionSpeed
 					-- and set the progress to what it was last tick + our ability * the flowrate
 					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
 

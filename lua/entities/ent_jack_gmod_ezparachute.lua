@@ -145,9 +145,9 @@ if SERVER then
 						--Phys:AddAngleVelocity(Phys:GetAngleVelocity())
 						JMod.AeroDrag(Owner, self:GetUp(), 0.5, 100)
 						if math.abs(Vel:Length()) <= 5 then
-							if self.NextCollapseTime <= Time then
+							--if self.NextCollapseTime <= Time then
 								self:Collapse()
-							end
+							--end
 						else
 							self.NextCollapseTime = Time + 1
 						end
@@ -163,7 +163,7 @@ if SERVER then
 		end
 
 		if State == STATE_COLLAPSING then
-			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg - .03, 0, 2))
+			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg - .05, 0, 2))
 			if ChuteProg <= 0 then
 				self:Remove()
 			end 

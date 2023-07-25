@@ -622,16 +622,22 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	if not IsValid(ent) then return end
 	if not IsValid(newOwner) then newOwner = game.GetWorld() end
 
-	if JMod.GetEZowner(ent) == newOwner then return end
+	if JMod.GetEZowner(ent) == newOwner then
+		if setColor == true then
+			JMod.Colorify(ent)
+		end
+
+		return 
+	end
 
 	ent.EZowner = newOwner
 
-	if CPPI and isfunction(ent.CPPISetOwner) then
-		ent:CPPISetOwner(newOwner)
-	end
-
 	if setColor == true then
 		JMod.Colorify(ent)
+	end
+
+	if CPPI and isfunction(ent.CPPISetOwner) then
+		ent:CPPISetOwner(newOwner)
 	end
 
 	if newOwner:IsPlayer() then
