@@ -33,10 +33,7 @@ if(SERVER)then
 		self.LastLeafMat = ""
 		self.LastBarkMat = ""
 		self.LastModel = ""
-		self.NextLeafDrop = 0
-		self.NextAcornDrop = 0
-		self.NextAppleDrop = 0
-		self.NextWaterCheck = 0
+		self.NextGrowThink = 0
 		self:UpdateAppearance()
 	end
 
@@ -64,10 +61,10 @@ if(SERVER)then
 		self:EmitSound("Wood.Break")
 
 		local WoodAmt, RubberAmt = 0, 0
-		if (self.Growth > 66) then
+		if (self.Growth >= 66) then
 			WoodAmt = 300
 			RubberAmt = ((math.random(1, 2) == 1) and 50) or 0
-		elseif (self.Growth > 33) then
+		elseif (self.Growth >= 33) then
 			WoodAmt = 100
 		else
 			WoodAmt = 25
@@ -103,7 +100,8 @@ if(SERVER)then
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
 					local HitAngle = Tr.HitNormal:Angle()
-					HitAngle:RotateAroundAxis(HitAngle:Right(), -90) 
+					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
+					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
 					self:SetAngles(HitAngle)
 					self:SetPos(Tr.HitPos)
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
@@ -185,38 +183,49 @@ if(SERVER)then
 		if (self.Helf <= 0) then self:Destroy() return end
 		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
-		local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
-		-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
-		local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
-		if not(Tr.Hit)then
-			self:Destroy()
-			return
-		else
-			if (Tr.MatType == MAT_GRASS) then
-				Ground = 1
-			elseif (Tr.MatType == MAT_DIRT or Tr.MatType == MAT_SLOSH) then
-				Ground = .5
-			elseif (Tr.MatType == MAT_SAND) then
-				Ground = .25
+		if (self.NextGrowThink < Time) then
+			self.NextGrowThink = Time + math.random(9, 11)
+			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
+			-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
+			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
+			if not(Tr.Hit)then
+				self:Destroy()
+				return
+			else
+				if (Tr.MatType == MAT_GRASS) then
+					Ground = 1
+				elseif (Tr.MatType == MAT_DIRT or Tr.MatType == MAT_SLOSH) then
+					Ground = .5
+				elseif (Tr.MatType == MAT_SAND) then
+					Ground = .25
+				end
+			end
+			if StormFox and StormFox.IsRaining() then Water = 1 end
+			--
+			if (self.Hydration > 0) then
+				local Growth = Light * Sky * Ground * 9e9
+				if (self.Helf < 100) then -- heal
+					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
+				else -- grow
+					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+				end
+				local WaterLoss = math.Clamp(1 - Water, .05, 1) * 2.5
+				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
+			else
+				self.Helf = math.Clamp(self.Helf - 2, 0, 100)
+			end
+			self:UpdateAppearance()
+		end
+		if (self.Growth >= 100 and self.Helf >= 100 and self.Hydration >= 60) then
+			local DropPos = SelfPos + self:GetUp() * 200 + Vector(math.random(-100, 100), math.random(-100, 100), 0)
+			if (math.random(1, 2) == 1) then
+				local Leaf = EffectData()
+				Leaf:SetOrigin(DropPos)
+				util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
 			end
 		end
-		if StormFox and StormFox.IsRaining() then Water = 1 end
 		--
-		if (self.Hydration > 0) then
-			local Growth = Light * Sky * Ground * 1.5
-			if (self.Helf < 100) then -- heal
-				self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
-			else -- grow
-				self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
-			end
-			local WaterLoss = math.Clamp(1 - Water, .05, 1) * 3
-			self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
-		else
-			self.Helf = math.Clamp(self.Helf - 2, 0, 100)
-		end
-		self:UpdateAppearance()
-		--
-		self:NextThink(Time + math.Rand(9, 11))
+		self:NextThink(Time + math.Rand(2, 4))
 		return true
 	end
 
