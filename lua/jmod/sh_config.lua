@@ -358,6 +358,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 						{"weapon_frag", 3}
 					}
 				},
+				["acorns"] = {
+					description = "A bunch of seeds to start your tree farm.",
+					category = "Other",
+					results = {
+						{"ent_jack_gmod_ezacorn", 6}
+					}
+				},
 				["sentry"] = {
 					description = "Consumes ammo, power and coolant. Produces casualties.",
 					category = "Machines",
