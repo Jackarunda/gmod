@@ -145,7 +145,8 @@ local function PopulateControls(parent, controls, motherFrame)
 				slider:SetPos((control_frame:GetWide() - 10) - control_frame:GetWide()/2, control_frame:GetTall()/2 - 7)
 				slider:SetDefaultValue(control_table[setting])
 				slider:SetMax(10)
-				slider:SetMin(0)
+				if setting=="RestrictedPackageShipTime" then slider:SetMax(5000) end
+ 				slider:SetMin(0)
 				slider:SetDecimals(2)
 				slider:ResetToDefaultValue()
 
@@ -360,6 +361,8 @@ local function PopulateControls(parent, controls, motherFrame)
 		local AlphabetizedSubcatSettings = table.GetKeys(controls["subcats"][v])
 		table.sort(AlphabetizedSubcatSettings, function(a, b) return a < b end)
 
+		if v == "AvailablePackages" then continue end
+
 		handle_settings(controls["subcats"][v], AlphabetizedSubcatSettings, v)
 	end
 
@@ -372,7 +375,7 @@ net.Receive("JMod_ConfigUI", function(dataLength)
 
 	local config = data
 
-	local catBlacklist = {"Craftables", "Note", "RadioSpecs", "Info"}
+	local catBlacklist = {"Craftables", "Note", "Info"}
 
 	local specialTables = {}
 
