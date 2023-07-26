@@ -1,0 +1,5 @@
+"UnlitGeneric" {
+	"$basetexture" "models/jmod/props/leaf1"
+	"$vertexalpha" 1
+	"$vertexcolor" 1
+}
