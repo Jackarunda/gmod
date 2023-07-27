@@ -1,0 +1,8 @@
+"VertexlitGeneric" {
+	$basetexture "models/Nick/JappleWhite/Apple Baked"
+	$normalmap "models/tex_jack_flat_normal"
+	$phong "1" 
+	$phongboost "2"
+	$phongexponent "10"
+	$phongfresnelranges "[1 1 1]"
+}
