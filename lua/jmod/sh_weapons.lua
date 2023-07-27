@@ -435,7 +435,7 @@ function JMod.LoadAmmoTable(tbl)
 			language.Add(k .. "_ammo", k)
 
 			if v.ent then
-				language.Add(v.ent, v.nicename)
+				language.Add(v.ent, v.nicename or ("EZ " .. k))
 			end
 		end
 	end
@@ -486,8 +486,8 @@ function JMod.LoadAdditionalWeaponEntities()
 end
 hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
 
-JMod.LoadAdditionalAmmo()
-JMod.LoadAdditionalWeaponEntities()
+--JMod.LoadAdditionalAmmo()
+--JMod.LoadAdditionalWeaponEntities()
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end
