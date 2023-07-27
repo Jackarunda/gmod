@@ -15,7 +15,7 @@ ENT.ModelScale = 1
 ENT.Mass = 50
 ENT.ImpactNoise1 = "Weapon.ImpactSoft"
 ENT.ImpactNoise2 = "Metal_Box.ImpactHard"
-ENT.DamageThreshold = 120
+ENT.DamageThreshold = 80
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = nil
 

@@ -79,6 +79,37 @@ local GoggleDarkness, GogglesWereOn, CurVisionBlur, CurEyeClose = 0, false, 0, 0
 local ThermalGlowMat = Material("models/debug/debugwhite")
 local blurMaterial = Material('pp/bokehblur')
 
+JMod.EZ_NightVisionScreenSpaceEffect = function(ply)
+
+	DrawColorModify({
+		["$pp_colour_addr"] = 0,
+		["$pp_colour_addg"] = 0,
+		["$pp_colour_addb"] = 0,
+		["$pp_colour_brightness"] = .01,
+		["$pp_colour_contrast"] = 7,
+		["$pp_colour_colour"] = 0,
+		["$pp_colour_mulr"] = 0,
+		["$pp_colour_mulg"] = 0,
+		["$pp_colour_mulb"] = 0
+	})
+
+	DrawColorModify({
+		["$pp_colour_addr"] = 0,
+		["$pp_colour_addg"] = .1,
+		["$pp_colour_addb"] = 0,
+		["$pp_colour_brightness"] = 0,
+		["$pp_colour_contrast"] = 1,
+		["$pp_colour_colour"] = 1,
+		["$pp_colour_mulr"] = 0,
+		["$pp_colour_mulg"] = 0,
+		["$pp_colour_mulb"] = 0
+	})
+
+	if ply and not ply.EZflashbanged then
+		DrawMotionBlur(FrameTime() * 50, .8, .01)
+	end
+end
+
 local RavebreakColors = {Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255), Color(0, 255, 255), Color(255, 0, 255), Color(255, 255, 0)}
 
 local NextRavebreakBeat, CurRavebreakColor, CurRavebreakLightPos = 0, math.random(1, 6), Vector(0, 0, 0)
@@ -148,34 +179,8 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 					GogglesWereOn = true
 					GoggleDarkness = 100
 				end
+				JMod.EZ_NightVisionScreenSpaceEffect(ply)
 
-				DrawColorModify({
-					["$pp_colour_addr"] = 0,
-					["$pp_colour_addg"] = 0,
-					["$pp_colour_addb"] = 0,
-					["$pp_colour_brightness"] = .01,
-					["$pp_colour_contrast"] = 7,
-					["$pp_colour_colour"] = 0,
-					["$pp_colour_mulr"] = 0,
-					["$pp_colour_mulg"] = 0,
-					["$pp_colour_mulb"] = 0
-				})
-
-				DrawColorModify({
-					["$pp_colour_addr"] = 0,
-					["$pp_colour_addg"] = .1,
-					["$pp_colour_addb"] = 0,
-					["$pp_colour_brightness"] = 0,
-					["$pp_colour_contrast"] = 1,
-					["$pp_colour_colour"] = 1,
-					["$pp_colour_mulr"] = 0,
-					["$pp_colour_mulg"] = 0,
-					["$pp_colour_mulb"] = 0
-				})
-
-				if not ply.EZflashbanged then
-					DrawMotionBlur(FT * 50, .8, .01)
-				end
 			elseif ply.EZarmor.effects.nightVisionWP then
 				if not GogglesWereOn then
 					GogglesWereOn = true
