@@ -105,6 +105,7 @@ if(SERVER)then
 					self:SetAngles(HitAngle)
 					self:SetPos(Tr.HitPos)
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+					self:GetPhysicsObject():Sleep()
 				end
 			end)
 		else
@@ -186,7 +187,7 @@ if(SERVER)then
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
 			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
-			-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
+			jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
 			if not(Tr.Hit)then
 				self:Destroy()
