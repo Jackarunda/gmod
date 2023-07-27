@@ -256,5 +256,4 @@ if SERVER then
 
 	function ENT:OnRemove()
 	end
-	--aw fuck you
 end
