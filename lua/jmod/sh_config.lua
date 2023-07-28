@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.6,
+			Version = 42.61,
 		},
 		General = {
 			Hints = true,
@@ -55,6 +55,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			Blackhole = {
 				GeneratorChargeSpeed = 1,
 				EvaporateSpeed = 1,
+				MaxAge = 100,
 				GravityStrength = 1,
 				Whitelist = {"func_physbox", "func_breakable"},
 				Blacklist = {"func_", "_dynamic"},
