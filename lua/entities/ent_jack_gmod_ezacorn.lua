@@ -7,6 +7,7 @@ ENT.PrintName = "EZ Acorn"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
+ENT.JModEZstorable = true
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.WATER
@@ -33,8 +34,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/cktheamazingfrog/player/scrat/acorn.mdl")
-		self:SetModelScale(.25)
+		self:SetModel("models/jmod/props/plants/acorn.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -42,12 +42,16 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(5)
 
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(5)
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				self:SetMass(5)
+				self:Wake()
+			end
 		end)
 
 		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
+		self.EZremoveSelf = self.EZremoveSelf or false
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
 		self.GroundWeld = nil
@@ -133,7 +137,7 @@ if SERVER then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
-			if Time - 60 > self.LastTouchedTime then
+			if self.EZremoveSelf and (Time - 60 > self.LastTouchedTime) then
 				self:Remove()
 			end
 		elseif State == STATE_BURIED then

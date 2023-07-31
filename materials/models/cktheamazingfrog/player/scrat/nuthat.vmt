@@ -1,6 +1,0 @@
-"VertexlitGeneric"
-{
-	"$basetexture" "models/cktheamazingfrog/player/scrat/nuthat"
-	"$surfaceprop" "Wood_Solid"
-	"$bumpmap" "models/tex_jack_flat_normal"
-}

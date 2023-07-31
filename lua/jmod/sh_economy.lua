@@ -469,6 +469,9 @@ local SalvagingTable = {
 	},
 	boulder = {
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
+	},
+	grass = {
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .5
 	}
 }
 
@@ -631,6 +634,12 @@ local SpecializedSalvagingTable = {
 			substrings = {"/hunter/"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .7,
+			}
+		},
+		{
+			substrings = {"acorn"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .7,
 			}
 		}
 	}
