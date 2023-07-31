@@ -1,0 +1,14 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/machines/centrifugeatlas_kyceatex"
+	"$surfaceprop" "metal"
+//	"$bumpmap" "models/jmod/machines/geothermalv2_normal"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".5"
+	"$phongexponent" "20"
+}

@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Wheat"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_eztree"
 ENT.Model = "models/jmod/props/plants/razorgrain_pile.mdl"
 ENT.EZcolorable = false
@@ -39,7 +39,14 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		self.Helf = self.Helf - dmginfo:GetDamage() / 2
-		if (self.Helf <= 0) then self:Destroy() return end
+
+		if (self.Helf <= 33) then
+		self:UpdateAppearance()
+		elseif (self.Helf <= 0) then 
+			self:Destroy() 
+
+			return 
+		end
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -67,7 +74,7 @@ if(SERVER)then
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed>80) and (data.DeltaTime>0.2) then
 			self:EmitSound("Dirt.Impact", 100, 80)
-			self:EmitSound("Dirt.Scrape", 100, 80)
+			self:EmitSound("Dirt.Impact", 100, 80)
 		end
 	end
 
@@ -149,7 +156,7 @@ if(SERVER)then
 			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
-				local Growth = Light * Sky * Ground * 9e9
+				local Growth = Light * Sky * Ground * 2
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else -- grow
@@ -171,9 +178,9 @@ if(SERVER)then
 		local NewWheatMat, NewSubModel
 		-- my kingdom for Switch statements
 		if (self.Growth < 33) then
-			NewSubModel = 2
+			NewSubModel = 3
 		elseif (self.Growth < 66) then
-			NewSubModel = 1
+			NewSubModel = 2
 		else
 			NewSubModel = 0
 		end
