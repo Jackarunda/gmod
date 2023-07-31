@@ -61,6 +61,7 @@ if SERVER then
 		else
 			ply:PickupObject(self)
 			JMod.Hint(ply, "alt to eat")
+			self.LastTouchedTime = Time
 		end
 	end
 
