@@ -20,8 +20,8 @@ if SERVER then
 		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
 			if IsValid(Phys) then
-				self:SetMass(5)
-				self:Wake()
+				Phys:SetMass(5)
+				Phys:Wake()
 			end
 		end)
 		---
