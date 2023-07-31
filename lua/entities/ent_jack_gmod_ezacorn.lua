@@ -116,8 +116,10 @@ if SERVER then
 			if Alt then
 				JMod.SetEZowner(self, activator)
 				self:Bury(activator)
+				JMod.Hint(activator, "water seed")
 			else
 				activator:PickupObject(self)
+				JMod.Hint(activator, "alt to plant")
 			end
 		elseif State == STATE_BURIED then
 			self:DrawShadow(true)
@@ -131,7 +133,7 @@ if SERVER then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
-			if Time - 120 > self.LastTouchedTime then
+			if Time - 60 > self.LastTouchedTime then
 				self:Remove()
 			end
 		elseif State == STATE_BURIED then

@@ -82,6 +82,7 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	tre:SetPos(ply:GetEyeTrace().HitPos + Vector(0, 0, 10))
 	tre:Spawn()
 	tre:Activate()
+	JMod.SetEZowner(tre, ply)
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)

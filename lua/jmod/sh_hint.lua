@@ -73,6 +73,23 @@ JMod.Hints = {
 		LangKey = "hint arm boundingmine",
 		Followup = "bind walk"
 	},
+	["alt to plant"] = {
+		LangKey = "hint alt to plant"
+	},
+	["tree growth"] = {
+		LangKey = "hint tree growth"
+	},
+	["plant water"] = {
+		LangKey = "hint plant water",
+		RepeatCount = 10
+	},
+	["tree mature"] = {
+		LangKey = "hint tree mature",
+		Time = 8
+	},
+	["water seed"] = {
+		LangKey = "hint water seed"
+	},
 	["arm powderkeg"] = {
 		LangKey = "hint arm powderkeg",
 		Followup = "bind walk"
@@ -298,6 +315,9 @@ JMod.Hints = {
 	["can not eat"] = {
 		LangKey = "hint can not eat",
 		RepeatCount = 5
+	},
+	["alt to eat"] = {
+		LangKey = "hint alt to eat"
 	},
 	["missing supplies"] = {
 		LangKey = "hint missing supplies",

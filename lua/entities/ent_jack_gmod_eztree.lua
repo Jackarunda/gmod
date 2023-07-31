@@ -106,6 +106,7 @@ if(SERVER)then
 					self:SetPos(Tr.HitPos)
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 					self:GetPhysicsObject():Sleep()
+					JMod.Hint(self.EZowner, "tree growth")
 				end
 			end)
 		else
@@ -183,11 +184,11 @@ if(SERVER)then
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
 		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Destroy() return end
-		local Time, SelfPos = CurTime(), self:GetPos()
+		local Time, SelfPos, Owner, Vel = CurTime(), self:GetPos(), self.EZowner, self:GetPhysicsObject():GetVelocity()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
 			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
-			jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
+			-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
 			if not(Tr.Hit)then
 				self:Destroy()
@@ -204,7 +205,7 @@ if(SERVER)then
 			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
-				local Growth = Light * Sky * Ground * 9e9
+				local Growth = Light * Sky * Ground * 1.5
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else -- grow
@@ -218,20 +219,35 @@ if(SERVER)then
 			self:UpdateAppearance()
 		end
 		if (self.Growth >= 100 and self.Helf >= 100 and self.Hydration >= 60) then
-			local DropPos = SelfPos + self:GetUp() * 200 + Vector(math.random(-100, 100), math.random(-100, 100), 0)
-			if (math.random(1, 2) == 1) then
-				local Leaf = EffectData()
-				Leaf:SetOrigin(DropPos)
-				util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
+			local DropPos = SelfPos + self:GetUp() * 200 + Vector(math.random(-80, 80), math.random(-80, 80), 0)
+			local Leaf = EffectData()
+			Leaf:SetOrigin(DropPos)
+			util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
+			if (math.random(1, 20) == 2) then
+				local Apol = ents.Create("ent_jack_gmod_ezapple")
+				Apol:SetPos(DropPos)
+				JMod.SetEZowner(Apol, Owner)
+				Apol:Spawn()
+				Apol:Activate()
+				Apol:GetPhysicsObject():SetVelocity(Vel)
+			end
+			if (math.random(1, 40) == 10) then
+				local Apol = ents.Create("ent_jack_gmod_ezacorn")
+				Apol:SetPos(DropPos)
+				JMod.SetEZowner(Apol, Owner)
+				Apol:Spawn()
+				Apol:Activate()
+				Apol:GetPhysicsObject():SetVelocity(Vel)
 			end
 		end
 		--
-		self:NextThink(Time + math.Rand(2, 4))
+		self:NextThink(Time + math.Rand(9, 11))
 		return true
 	end
 
 	function ENT:UpdateAppearance()
 		local NewLeafMat, NewBarkMat, NewModel
+		local WillDehydrate, WillReachMaturity = false, false
 		-- my kingdom for Switch statements
 		if (self.Growth < 33) then
 			NewModel = "tree0.mdl"
@@ -239,11 +255,13 @@ if(SERVER)then
 			NewModel = "tree1.mdl"
 		else
 			NewModel = "tree2.mdl"
+			WillReachMaturity = true
 		end
 		if (self.Hydration < 10) then
 			NewLeafMat = "oak_leaf2"
 		elseif (self.Hydration < 30) then
 			NewLeafMat = "oak_leaf1"
+			WillDehydrate = true
 		elseif (self.Hydration < 60) then
 			NewLeafMat = "oak_leaf0"
 		else
@@ -272,6 +290,9 @@ if(SERVER)then
 			end
 			self.LastModel = NewModel
 			self:TryPlant()
+			if (WillReachMaturity) then
+				JMod.Hint(self.EZowner, "tree mature")
+			end
 		end
 		timer.Simple(0, function()
 			if (IsValid(self)) then
@@ -282,6 +303,9 @@ if(SERVER)then
 				if (NewLeafMat ~= self.LastLeafMat) then
 					self:SetSubMaterial(1, NewLeafMat)
 					self.LastLeafMat = NewLeafMat
+					if (WillDehydrate) then
+						JMod.Hint(self.EZowner, "plant water")
+					end
 				end
 			end
 		end)
