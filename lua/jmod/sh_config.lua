@@ -152,21 +152,21 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					description = "3 boxes of parts used for crafting and repairs.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezbasicparts", 2}
+						{"ent_jack_gmod_ezbasicparts", 3}
 					}
 				},
 				["advanced parts"] = {
-					description = "1 box of advparts used for crafting and upgrading.",
+					description = "20 units of advparts used for crafting and upgrading.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezadvparts", 1, 15}
+						{"ent_jack_gmod_ezadvparts", 1, 20}
 					}
 				},
 				["precision parts"] = {
-					description = "1 box of precision parts used for advanced parts, advanced textiles, and weapons.",
+					description = "80 units of precision parts used for advanced parts, advanced textiles, and weapons.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezprecparts", 1, 50}
+						{"ent_jack_gmod_ezprecparts", 1, 80}
 					}
 				},
 				["advanced textiles"] = {
@@ -252,7 +252,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["medical supplies"] = {
-					description = "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital.",
+					description = "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital and EZ Medkit.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezmedsupplies", 2}
@@ -359,10 +359,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["acorns"] = {
-					description = "A bunch of seeds to start your tree farm.",
+					description = "4 barrels of water and 4 acorns to start your tree farm.",
 					category = "Other",
 					results = {
-						{"ent_jack_gmod_ezacorn", 6}
+						{"ent_jack_gmod_ezacorn", 4},
+                        {"ent_jack_gmod_ezawater", 4}
 					}
 				},
 				["sentry"] = {
@@ -582,10 +583,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["water"] = {
-					description = "Water in a quantity of 300, used in coolant, chemicals, and nutrients.",
+					description = "Water in a quantity of 400, used in coolant, chemicals, and nutrients.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezwater", 3}
+						{"ent_jack_gmod_ezwater", 4}
 					}
 				},
 				["wood"] = {
