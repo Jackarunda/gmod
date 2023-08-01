@@ -220,10 +220,12 @@ if(SERVER)then
 		end
 		if (self.Growth >= 100 and self.Helf >= 100 and self.Hydration >= 60) then
 			local DropPos = SelfPos + self:GetUp() * 200 + Vector(math.random(-80, 80), math.random(-80, 80), 0)
-			local Leaf = EffectData()
-			Leaf:SetOrigin(DropPos)
-			util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
-			if (math.random(1, 20) == 2) then
+			if (math.random(1, 2) == 1) then
+				local Leaf = EffectData()
+				Leaf:SetOrigin(DropPos)
+				util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
+			end
+			if (math.random(1, 30) == 2) then
 				local Apol = ents.Create("ent_jack_gmod_ezapple")
 				Apol:SetPos(DropPos)
 				JMod.SetEZowner(Apol, Owner)
@@ -232,7 +234,7 @@ if(SERVER)then
 				Apol:GetPhysicsObject():SetVelocity(Vel)
 				Apol.EZremoveSelf = true
 			end
-			if (math.random(1, 40) == 10) then
+			if (math.random(1, 60) == 10) then
 				local Apol = ents.Create("ent_jack_gmod_ezacorn")
 				Apol:SetPos(DropPos)
 				JMod.SetEZowner(Apol, Owner)
@@ -243,7 +245,7 @@ if(SERVER)then
 			end
 		end
 		--
-		self:NextThink(Time + math.Rand(9, 11))
+		self:NextThink(Time + math.Rand(2, 4))
 		return true
 	end
 
