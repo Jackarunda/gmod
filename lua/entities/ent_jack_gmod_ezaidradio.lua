@@ -114,7 +114,7 @@ if(SERVER)then
 
 		local MsgLength = string.len(msg)
 
-		for i = 1, math.Round(MsgLength / 15) do
+		for i = 1, math.Round(MsgLength / 30) do
 			timer.Simple(i * .75, function()
 				if IsValid(self) and (self:GetState() > 0) then
 					self:EmitSound("/npc/combine_soldier/vo/" .. self.Voices[math.random(1, #self.Voices)], 65, 120)
