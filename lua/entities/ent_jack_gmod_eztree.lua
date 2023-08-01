@@ -218,7 +218,7 @@ if(SERVER)then
 			end
 			self:UpdateAppearance()
 		end
-		if (self.Growth >= 100 and self.Helf >= 100 and self.Hydration >= 60) then
+		if (self.Growth >= 100 and self.Helf >= 76 and self.Hydration >= 60) then
 			local DropPos = SelfPos + self:GetUp() * 200 + Vector(math.random(-80, 80), math.random(-80, 80), 0)
 			if (math.random(1, 2) == 1) then
 				local Leaf = EffectData()

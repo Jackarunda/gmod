@@ -46,7 +46,7 @@ if SERVER then
 				end
 
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
-				ply.EZnutrition.NextEat = Time + 100 / JMod.Config.FoodSpecs.EatSpeed
+				ply.EZnutrition.NextEat = Time + 20 / JMod.Config.FoodSpecs.EatSpeed
 				ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + 20 * JMod.Config.FoodSpecs.ConversionEfficiency
 				self:SetResource(self:GetResource() - 10)
 
