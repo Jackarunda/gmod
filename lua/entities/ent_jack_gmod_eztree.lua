@@ -230,6 +230,7 @@ if(SERVER)then
 				Apol:Spawn()
 				Apol:Activate()
 				Apol:GetPhysicsObject():SetVelocity(Vel)
+				Apol.EZremoveSelf = true
 			end
 			if (math.random(1, 40) == 10) then
 				local Apol = ents.Create("ent_jack_gmod_ezacorn")
@@ -238,6 +239,7 @@ if(SERVER)then
 				Apol:Spawn()
 				Apol:Activate()
 				Apol:GetPhysicsObject():SetVelocity(Vel)
+				Apol.EZremoveSelf = true
 			end
 		end
 		--

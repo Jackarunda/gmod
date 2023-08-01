@@ -1,0 +1,6 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/props/plants/nuthat"
+	"$surfaceprop" "wood_solid"
+	"$bumpmap" "models/tex_jack_flat_normal"
+}

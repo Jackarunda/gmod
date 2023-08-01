@@ -17,8 +17,6 @@ ENT.StaticPerfSpecs = {
 	MaxWater = 100,
 	MaxDurability = 100
 }
-ENT.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
-ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
 function ENT:CustomSetupDataTables()
 	-- we will indicate status through other means
@@ -73,8 +71,8 @@ if(SERVER)then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed>80) and (data.DeltaTime>0.2) then
-			self:EmitSound("Dirt.Impact", 100, 80)
-			self:EmitSound("Dirt.Impact", 100, 80)
+			--self:EmitSound("Dirt.Impact", 100, 80)
+			--self:EmitSound("Dirt.Impact", 100, 80)
 		end
 	end
 

@@ -6,6 +6,7 @@ ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Apple"
 ENT.Spawnable = true
 ENT.AdminOnly = false
+ENT.JModEZstorable = true
 
 if SERVER then
 	function ENT:Initialize()
@@ -16,12 +17,16 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(5)
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:SetMass(5)
+				Phys:Wake()
+			end
 		end)
 		---
 		self.LastTouchedTime = CurTime()
+		self.EZremoveSelf = self.EZremoveSelf or false
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -61,13 +66,14 @@ if SERVER then
 		else
 			ply:PickupObject(self)
 			JMod.Hint(ply, "alt to eat")
+			self.EZremoveSelf = false
 			self.LastTouchedTime = Time
 		end
 	end
 
 	function ENT:Think()
 		local Time = CurTime()
-		if Time - 60 > self.LastTouchedTime then
+		if self.EZremoveSelf and (Time - 60 > self.LastTouchedTime) then
 			self:Remove()
 		end
 	end
