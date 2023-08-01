@@ -52,7 +52,7 @@ function ENT:SUCC(Time, Phys, Age, Pos, MaxRange)
 				self:Rape(obj)
 			else
 				-- inverse square law bitchins
-				local PullStrength = ((1 - Dist / MaxRange) ^ 2) * ((JMod.Config and JMod.Config.Machines.Blackhole.GravityStrength) or 1)
+				local PullStrength = ((1 - Dist / MaxRange) ^ 2) * JMod.Config.Machines.Blackhole.GravityStrength
 				local Mass = ObjPhys:GetMass()
 				local ApplyForce, Mul = true, 1
 
@@ -137,6 +137,7 @@ if SERVER then
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self.Entity:SetSolid(SOLID_VPHYSICS)
 		self.Entity:DrawShadow(true)
+		self.HawkingRadiationAge = JMod.Config.Machines.Blackhole.MaxAge - math.sqrt(JMod.Config.Machines.Blackhole.MaxAge) + 1
 
 		---
 		timer.Simple(.01, function()
@@ -168,11 +169,11 @@ if SERVER then
 		local MaxRange = Age * 150
 		self:SUCC(Time, Phys, Age, Pos, MaxRange)
 
-		if Age > 90 then
-			self:EmitHawkingRadiation(Age - 90)
+		if Age > self.HawkingRadiationAge then
+			self:EmitHawkingRadiation(Age - self.HawkingRadiationAge)
 		end
 
-		if Age >= 100 then
+		if Age >= JMod.Config.Machines.Blackhole.MaxAge then
 			self:Die()
 
 			return
