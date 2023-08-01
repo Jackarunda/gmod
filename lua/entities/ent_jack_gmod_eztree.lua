@@ -85,7 +85,37 @@ if(SERVER)then
 		if (data.Speed>80) and (data.DeltaTime>0.2) then
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
+			if self.EZinstalled and IsValid(data.PhysObject) and IsValid(data.HitObject)and not(data.PhysObject:IsMotionEnabled()) then
+				local TheirForce = data.TheirOldVelocity:Length() * data.HitObject:GetMass()
+				local Phys = self:GetPhysicsObject()
+				local ForceThreshold = Phys:GetMass() * 500 * self.Growth
+				jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
+				if TheirForce >= ForceThreshold then
+					--self.EZinstalled = false
+					Phys:EnableMotion(true)
+					Phys:SetVelocity(data.TheirOldVelocity:GetNormalized() * (TheirForce - ForceThreshold) / 10 * self.Growth)
+				else
+					local CrushDamage = DamageInfo()
+					local Dmg = math.floor(TheirForce / 1000000 * self.Growth)
+					jprint(Dmg)
+					CrushDamage:SetDamage(Dmg)
+					CrushDamage:SetDamageType(DMG_CRUSH)
+					CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
+					CrushDamage:SetDamagePosition(data.HitPos)
+					self:TakeDamageInfo(CrushDamage)
+					--[[if data.HitEntity:IsVehicle() then
+						local CrashDamage = DamageInfo()
+						--jprint(Dmg)
+						CrashDamage:SetDamage(Dmg * 2)
+						CrashDamage:SetDamageType(DMG_CRUSH)
+						CrashDamage:SetDamageForce(data.TheirOldVelocity * -0.001)
+						CrashDamage:SetDamagePosition(data.HitPos)
+						data.HitEntity:TakeDamageInfo(CrashDamage)
+					end]]--
+				end
+			end
 		end
+		
 	end
 
 	function ENT:TryPlant()
@@ -104,8 +134,13 @@ if(SERVER)then
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
 					self:SetAngles(HitAngle)
 					self:SetPos(Tr.HitPos)
-					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-					self:GetPhysicsObject():Sleep()
+					if Tr.Entity == game.GetWorld() then
+						self:GetPhysicsObject():EnableMotion(false)
+						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+					else
+						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+						self:GetPhysicsObject():Sleep()
+					end
 					JMod.Hint(self.EZowner, "tree growth")
 				end
 			end)
@@ -183,7 +218,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Destroy() return end
+		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not self:GetPhysicsObject():IsMotionEnabled())) then self:Destroy() return end
 		local Time, SelfPos, Owner, Vel = CurTime(), self:GetPos(), self.EZowner, self:GetPhysicsObject():GetVelocity()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
