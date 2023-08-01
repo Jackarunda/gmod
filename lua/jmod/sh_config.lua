@@ -359,11 +359,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["acorns"] = {
-					description = "4 barrels of water and 4 acorns to start your tree farm.",
+					description = "2 barrels of water and 4 acorns to start your tree farm.",
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
-                        {"ent_jack_gmod_ezwater", 4}
+                        {"ent_jack_gmod_ezwater", 2}
 					}
 				},
 				["sentry"] = {
