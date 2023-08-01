@@ -349,7 +349,7 @@ if(SERVER)then
 					return true
 				end
 			elseif Name == "status" then
-				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase)
+				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase, ply)
 
 				return true
 			elseif Name == "reassign outpost" then
@@ -357,7 +357,7 @@ if(SERVER)then
 
 				return true
 			elseif JMod.Config.RadioSpecs.AvailablePackages[Name] then
-				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Name, BFFreq), ParrotPhrase)
+				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Name, BFFreq), ParrotPhrase, ply)
 
 				return true
 			end
