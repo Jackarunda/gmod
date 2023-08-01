@@ -892,7 +892,7 @@ net.Receive("JMod_EZradio", function()
 		local tbl = {radio:GetColor(), "Aid Radio", Color(255, 255, 255), ": ", msg}
 
 		if parrot then
-			tbl = {Color(200, 200, 200), "(HIDDEN) ", ply, Color(255, 255, 255), ": ", Color(200, 200, 200), msg}
+			tbl = {Color(200, 200, 200), "(HIDDEN) ", LocalPlayer(), Color(255, 255, 255), ": ", Color(200, 200, 200), msg}
 		end
 
 		chat.AddText(unpack(tbl))

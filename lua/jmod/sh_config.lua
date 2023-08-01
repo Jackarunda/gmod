@@ -363,7 +363,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
-                        {"ent_jack_gmod_ezawater", 4}
+                        {"ent_jack_gmod_ezwater", 4}
 					}
 				},
 				["sentry"] = {
