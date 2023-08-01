@@ -854,6 +854,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Cluster bomb that can pierce multiple hard targets from the air."
 			},
+            ["EZ War Mine"] = {
+				results = "ent_jack_gmod_ezwarmine",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
+                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
+                    [JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
+				},
+				sizeScale = 1,
+				category = "Munitions",
+				craftingType = "workbench",
+				description = "Smart perimeter defense mine that warns the user of approaching enemies. Will explode violently when angered enough."
+			},
 			["EZ General Purpose Crate"] = {
 				results = "ent_jack_gmod_ezcrate_uni",
 				craftingReqs = {
