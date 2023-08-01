@@ -360,11 +360,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["acorns"] = {
-					description = "2 barrels of water and 4 acorns to start your tree farm.",
+					description = "4 barrels of water and 4 acorns to start your tree farm.",
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
-                        {"ent_jack_gmod_ezwater", 2}
+                        {"ent_jack_gmod_ezwater", 4}
 					}
 				},
 				["sentry"] = {
@@ -584,10 +584,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["water"] = {
-					description = "Water in a quantity of 400, used in coolant, chemicals, and nutrients.",
+					description = "Water in a quantity of 600, used in coolant, chemicals, and nutrients.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezwater", 4}
+						{"ent_jack_gmod_ezwater", 6}
 					}
 				},
 				["wood"] = {
