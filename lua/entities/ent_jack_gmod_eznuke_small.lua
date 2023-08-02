@@ -44,11 +44,12 @@ if SERVER then
 		self.Entity:SetUseType(SIMPLE_USE)
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(100)
-				self:GetPhysicsObject():Wake()
-				self:GetPhysicsObject():EnableDrag(false)
+			if IsValid(Phys) then
+				Phys:SetMass(100)
+				Phys:Wake()
+				Phys:EnableDrag(false)
 			end
 		end)
 

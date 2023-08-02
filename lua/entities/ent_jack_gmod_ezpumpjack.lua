@@ -13,6 +13,7 @@ ENT.Model = "models/hunter/blocks/cube4x4x1.mdl"
 ENT.Mass = 3000
 ENT.SpawnHeight = 95
 ENT.JModPreferredCarryAngles = Angle(0, 0, -90)
+ENT.EZanchorage = 2000
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---

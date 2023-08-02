@@ -14,6 +14,7 @@ ENT.Mass = 2000
 ENT.SpawnHeight = 115
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZupgradable = true
+ENT.EZanchorage = 500
 ENT.StaticPerfSpecs = {
 	MaxDurability = 300,
 	MaxElectricity = 400

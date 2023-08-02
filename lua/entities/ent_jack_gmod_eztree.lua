@@ -95,7 +95,7 @@ if(SERVER)then
 				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
 				local PhysDamage = TheirForce/(physobj:GetMass()*100)
 
-				jprint(PhysDamage)
+				--jprint(PhysDamage)
 				--jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
 
 				if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then

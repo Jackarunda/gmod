@@ -12,6 +12,7 @@ ENT.Model = "models/jmod/machines/geothermal.mdl"
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 52
 ENT.Mass = 8000
+ENT.EZanchorage = 2000
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 300,
@@ -260,8 +261,8 @@ if(SERVER)then
 					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
 					Dmg:SetDamageType(DMG_BURN)
 					Dmg:SetDamageForce(Vector(0, 0, 5000) * DistanceFactor) -- some random upward force
-					Dmg:SetAttacker(dmginfo:GetAttacker() or game.GetWorld()) -- the earth is mad at you
-					Dmg:SetInflictor(dmginfo:GetAttacker() or game.GetWorld())
+					Dmg:SetAttacker((IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker()) or game.GetWorld()) -- the earth is mad at you
+					Dmg:SetInflictor(self or game.GetWorld())
 					Dmg:SetDamagePosition(ent:GetPos())
 
 					if ent.TakeDamageInfo then
