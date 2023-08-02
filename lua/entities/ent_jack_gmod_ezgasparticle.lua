@@ -164,6 +164,16 @@ elseif CLIENT then
 	local Mat = Material("particle/smokestack")
 
 	function ENT:Initialize()
+		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetNotSolid(true)
+		self:DrawShadow(false)
+		local phys = self:GetPhysicsObject()
+		if IsValid(phys) then
+			phys:EnableCollisions(false)
+			phys:EnableGravity(false)
+		end
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
 		self.Visible = true
 		self.Show = true
@@ -178,11 +188,18 @@ elseif CLIENT then
 
 		self.NextVisCheck = CurTime() + 6
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+
+		if self.DebugShow then
+			self:SetModelScale(2)
+		end
 	end
 
 	function ENT:DrawTranslucent()
 		if (self:GetDTBool(0)) then return end
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		if self.DebugShow then
+			self:DrawModel()
+		end
 
 		local Time = CurTime()
 
