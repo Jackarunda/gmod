@@ -52,7 +52,10 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		self.Helf = self.Helf - dmginfo:GetDamage() / 2
-		if (self.Helf <= 0) then self:Destroy() return end
+		if (self.Helf <= 0) then
+			self:Destroy(dmginfo) 
+			return 
+		end
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -70,52 +73,45 @@ if(SERVER)then
 			WoodAmt = 25
 		end
 
-		local SpawnPos = Vector(0, 0, 100)
-		if (WoodAmt > 0) then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WOOD, WoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
-		end
-		if (RubberAmt > 0) then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.RUBBER, RubberAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+		if not(self:IsOnFire() or (dmginfo and dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))) then
+			local SpawnPos = Vector(0, 0, 100)
+			if (WoodAmt > 0) then
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WOOD, WoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+			end
+			if (RubberAmt > 0) then
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.RUBBER, RubberAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+			end
 		end
 
 		SafeRemoveEntityDelayed(self, 0)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.Speed>80) and (data.DeltaTime>0.2) then
+		if (data.Speed > 100) and (data.DeltaTime>0.2) then
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
 			self:EmitSound("Wood.ImpactSoft", 100, 80)
-			if self.EZinstalled and IsValid(data.PhysObject) and IsValid(data.HitObject)and not(data.PhysObject:IsMotionEnabled()) then
-				local TheirForce = data.TheirOldVelocity:Length() * data.HitObject:GetMass()
-				local Phys = self:GetPhysicsObject()
-				local ForceThreshold = Phys:GetMass() * 500 * self.Growth
-				jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
-				if TheirForce >= ForceThreshold then
-					--self.EZinstalled = false
-					Phys:EnableMotion(true)
-					Phys:SetVelocity(data.TheirOldVelocity:GetNormalized() * (TheirForce - ForceThreshold) / 10 * self.Growth)
-				else
+			if IsValid(data.HitObject) then
+				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
+				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
+				local PhysDamage = TheirForce/(physobj:GetMass()*100)
+
+				jprint(PhysDamage)
+				--jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
+
+				if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
+					physobj:EnableMotion(true)
+					--physobj:SetVelocity(data.TheirOldVelocity:GetNormalized() * ((TheirForce - ForceThreshold) / (physobj:GetMass() * self.Growth)))
+				end
+				if PhysDamage >= 1 then
 					local CrushDamage = DamageInfo()
-					local Dmg = math.floor(TheirForce / 1000000 * self.Growth)
-					jprint(Dmg)
-					CrushDamage:SetDamage(Dmg)
+					CrushDamage:SetDamage(math.floor(PhysDamage))
 					CrushDamage:SetDamageType(DMG_CRUSH)
 					CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
 					CrushDamage:SetDamagePosition(data.HitPos)
 					self:TakeDamageInfo(CrushDamage)
-					--[[if data.HitEntity:IsVehicle() then
-						local CrashDamage = DamageInfo()
-						--jprint(Dmg)
-						CrashDamage:SetDamage(Dmg * 2)
-						CrashDamage:SetDamageType(DMG_CRUSH)
-						CrashDamage:SetDamageForce(data.TheirOldVelocity * -0.001)
-						CrashDamage:SetDamagePosition(data.HitPos)
-						data.HitEntity:TakeDamageInfo(CrashDamage)
-					end]]--
 				end
 			end
 		end
-		
 	end
 
 	function ENT:TryPlant()
@@ -240,7 +236,7 @@ if(SERVER)then
 			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
-				local Growth = Light * Sky * Ground * 1.5
+				local Growth = Light * Sky * Ground * 1.5 * 9e9
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else -- grow
