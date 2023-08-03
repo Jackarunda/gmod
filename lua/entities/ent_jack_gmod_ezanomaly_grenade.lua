@@ -300,7 +300,7 @@ local DetonationEffects = {
 
 					timer.Simple(0, function()
 						Nade.Canister = self
-						Nade.CurVel = VectorRand() * math.random(1, 200)
+						Nade.CurVel = VectorRand() * math.random(1, 100)
 					end)
 				end)
 			end

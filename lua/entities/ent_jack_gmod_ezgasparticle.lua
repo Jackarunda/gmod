@@ -95,7 +95,7 @@ if SERVER then
 			self:CalcMove(ThinkRateHz)
 
 		else
-			local Force = VectorRand() * 10 + JMod.Wind * 5
+			local Force = (VectorRand() * 10) + JMod.Wind * 5
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then

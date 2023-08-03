@@ -137,7 +137,7 @@ if SERVER then
 				Gas:Spawn()
 				Gas:Activate()
 				Gas.Canister = self
-				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 100))
+				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 50))
 			end)
 		end
 

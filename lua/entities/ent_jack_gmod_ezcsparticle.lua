@@ -63,14 +63,14 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local Force = VectorRand(-8, 8) + JMod.Wind * 2 - Vector(0, 0, 3)
+		local Force = VectorRand(-8, 8) + (JMod.Wind * 3) - Vector(0, 0, 2)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * 0.5
+					Force = Force - Vec * 1
 				elseif self.NextDmg < Time and self:ShouldDamage(obj) then
 					self:DamageObj(obj)
 				end
@@ -81,7 +81,7 @@ if SERVER then
 		self.CurVel = self.CurVel + Force / ThinkRateHz
 
 		-- apply air resistance
-		-- self.CurVel = self.CurVel / 1
+		self.CurVel = self.CurVel / 1.5
 
 		-- observe current velocity
 		local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -144,7 +144,7 @@ elseif CLIENT then
 		if self.Show then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 10))
+			render.DrawSprite(SelfPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
 			self.siz = math.Clamp(self.siz + FrameTime() * 200, 0, 500)
 		end
 	end
