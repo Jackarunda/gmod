@@ -11,6 +11,8 @@ ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.EZvirusParticle = true
+ENT.AffectRange = 300
+--
 
 if SERVER then
 	function ENT:Initialize()
@@ -26,18 +28,13 @@ if SERVER then
 		self.CurVel = self.CurVel or VectorRand() * 10
 	end
 
-	function ENT:ShouldDamage(ent)
-		if not IsValid(ent) then return end
-		return JMod.ShouldDamageBiologically(ent)
-	end
-
-	function ENT:DamageObj(obj)
-		JMod.TryVirusInfectInRange(self, JMod.GetEZowner(self), 0, 0)
-	end
-
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos = self:GetPos()
 		local Force = (VectorRand() * 40) + (JMod.Wind * 5) + Vector(0, 0, -15)
+
+		if (self.NextDmg < CurTime()) then
+			JMod.TryVirusInfectInRange(self, JMod.GetEZowner(self), 0, 0)
+		end
 	
 		-- apply acceleration
 		self.CurVel = self.CurVel + Force / ThinkRateHz
