@@ -19,10 +19,10 @@ ENT.AffectRange = 300
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:SetNotSolid(true)
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetNotSolid(true)
 		self:DrawShadow(false)
-		local phys = self.Entity:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if IsValid(phys) then
 			phys:EnableCollisions(false)
 			phys:EnableGravity(false)
@@ -103,7 +103,7 @@ if SERVER then
 						-- repel in accordance with Ideal Gas Law
 						local Vec = (obj:GetPos() - SelfPos):GetNormalized()
 						Force = Force - Vec * 1
-					elseif self.NextDmg < Time and self:ShouldDamage(obj) then
+					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
 						self:DamageObj(obj)
 					end
 				end

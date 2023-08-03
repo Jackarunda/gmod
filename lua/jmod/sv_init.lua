@@ -80,8 +80,8 @@ hook.Add("AllowPlayerPickup", "JMOD_PLAYERPICKUP", function(ply, ent)
 end)
 
 function JMod.ShouldDamageBiologically(ent)
-	if not IsValid(ent) then return end
-	if ent.JModDontIrradiate then return end
+	if not IsValid(ent) then return false end
+	if (ent.JModDontIrradiate and ent.JModDontIrradiate == true) then return false end
 	if ent:IsPlayer() then return ent:Alive() end
 
 	if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then

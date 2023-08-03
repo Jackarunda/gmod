@@ -35,8 +35,8 @@ if SERVER then
 	end
 
 	function ENT:ShouldDamage(ent)
-		if not IsValid(ent) then return end
-		return JMod.ShouldDamageBiologically(obj) and (math.random(1, 5) == 1)
+		if not IsValid(ent) then return false end
+		return (JMod.ShouldDamageBiologically(ent) and (math.random(1, 5) == 1))
 	end
 
 	function ENT:DamageObj(obj)
@@ -44,18 +44,15 @@ if SERVER then
 	end
 	--
 elseif CLIENT then
-	function ENT:Initialize()
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
-
-		if self.DebugShow then
-			self:SetModelScale(10)
-		end
-	end
+	--[[function ENT:Initialize()
+		self:SetModelScale(10, 0)
+	end]]--
 
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
 			self:DrawModel()
+			self:SetModelScale(10, 0)
 		end
 	end
 end

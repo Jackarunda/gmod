@@ -123,10 +123,8 @@ elseif CLIENT then
 
 		self.NextVisCheck = CurTime() + 6
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
-
-		if self.DebugShow then
-			self:SetModelScale(2)
-		end
+		
+		self:SetModelScale(2)
 	end
 
 	function ENT:DrawTranslucent()

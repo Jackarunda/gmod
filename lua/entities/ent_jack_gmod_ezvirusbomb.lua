@@ -136,6 +136,7 @@ if SERVER then
 				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
+				Gas.Canister = self
 				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 500))
 			end)
 		end

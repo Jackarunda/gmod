@@ -20,29 +20,30 @@ if SERVER then
 		self.NextDmg = Time + 5
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:SetNotSolid(true)
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetNotSolid(true)
 		self:DrawShadow(false)
 		self.CurVel = self.CurVel or VectorRand() * 10
 	end
 
 	function ENT:ShouldDamage(ent)
 		if not IsValid(ent) then return end
-		return JMod.ShouldDamageBiologically(obj)
+		return JMod.ShouldDamageBiologically(ent)
 	end
 
 	function ENT:DamageObj(obj)
-		JMod.TryVirusInfectInRange(self, self.EZowner, 0, 0)
+		JMod.TryVirusInfectInRange(self, JMod.GetEZowner(self), 0, 0)
 	end
 
 	function ENT:CalcMove(ThinkRateHz)
-		local Force = VectorRand() * 40 + JMod.Wind * 5 - Vector(0, 0, 10)
+		local SelfPos = self:GetPos()
+		local Force = (VectorRand() * 40) + (JMod.Wind * 5) + Vector(0, 0, -15)
 	
 		-- apply acceleration
 		self.CurVel = self.CurVel + Force / ThinkRateHz
 
 		-- apply air resistance
-		-- self.CurVel = self.CurVel / 1
+		self.CurVel = self.CurVel / 1
 
 		-- observe current velocity
 		local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -63,7 +64,7 @@ if SERVER then
 			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
 			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
 			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
-			self.CurVel = -(CurVelAng:Forward() * Speed)
+			self.CurVel = -(CurVelAng:Forward() * Speed * 0.5) -- These particles aren't very 'gassy'
 		end
 	end
 
