@@ -552,6 +552,7 @@ elseif(CLIENT)then
 
 	function ENT:Initialize()
 		self:SetModel(self.Model)
+		if self.ClientOnly then return end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
 		self:InitPerfSpecs()
