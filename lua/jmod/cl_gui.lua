@@ -612,22 +612,37 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		net.SendToServer()
 
 		-- wireframe preview
-		-- ent.EZpreview = {}
-		-- local StringParts = string.Explode(" ", info["results"])																	  
-		-- if StringParts[1] and (StringParts[1] == "FUNC") then
-
-		-- 	ent.EZpreview = {Box = nil}	
-
-		-- else
-
-		-- 	local temp_ent = ents.CreateClientside(info["results"])
-		-- 	temp_ent:Spawn()													-- have to do this to get an accurate bounding box
-		-- 	local min,max,center = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		--            couldn't find a better way
-		-- 	temp_ent:Remove()
+		ent.EZpreview = {}
+		local StringParts = string.Explode(" ", info["results"])																	  
+		if StringParts[1] and (StringParts[1] == "FUNC") then
+			if info.sizeScale then
+				local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
+				ent.EZpreview = {Box = {mins = -ScaledMinMax, maxs = ScaledMinMax}, SizeScale = info.sizeScale}
+			else
+				ent.EZpreview = {Box = nil} --No way to tell size
+			end
+		else
+			local temp_ent = ents.CreateClientside(info["results"])
+			if temp_ent.Base == "ent_jack_gmod_ezmachine_base" then
+				temp_ent.ClientOnly = true
+			end
+			temp_ent:Spawn()												-- have to do this to get an accurate bounding box
+			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
+			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles
 			
-		-- 	ent.EZpreview = {Box = {mins = min, maxs = max, sizeScale = info.SizeScale}}
+			if Min:IsZero() and Max:IsZero() then
+				if info.sizeScale then
+					local ScaledMinMax = Vector(info.sizeScale * 10, info.sizeScale * 10, info.sizeScale * 10)
+					Min = -ScaledMinMax
+					Max = ScaledMinMax
+				elseif IsValid(temp_ent.Mdl) then
+					Min, Max = temp_ent.Mdl:GetModelBounds()
+				end
+			end
+			SafeRemoveEntityDelayed(temp_ent, 0)
 
-		-- end
+			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang and Ang}
+		end
 
 	end, nil)
 end)
