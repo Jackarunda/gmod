@@ -14,7 +14,7 @@ SWEP.BodyHolsterScale = 1
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "pistol"
 SWEP.HoldtypeSights = "revolver"
-JMod.ApplyAmmoSpecs(SWEP, "Pistol Round", 1.1)
+JMod.ApplyAmmoSpecs(SWEP, "Medium Pistol Round")
 SWEP.HipDispersion = 1100
 SWEP.Primary.ClipSize = 6 -- DefaultClip is automatically set.
 SWEP.ChamberSize = 0 -- revolver lol
