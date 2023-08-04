@@ -329,10 +329,19 @@ JMod.AmmoTable = {
 		resourcetype = "ammo",
 		sizemult = 3,
 		carrylimit = 300,
-		basedmg = 20,
+		basedmg = 30,
 		effrange = 50,
 		terminaldmg = 5,
 		penetration = 20
+	},
+    ["Medium Pistol Round"] = {
+		resourcetype = "ammo",
+		sizemult = 4,
+		carrylimit = 200,
+		basedmg = 40,
+		effrange = 65,
+		terminaldmg = 10,
+		penetration = 25
 	},
 	["Plinking Round"] = {
 		resourcetype = "ammo",
@@ -347,10 +356,10 @@ JMod.AmmoTable = {
 		resourcetype = "ammo",
 		sizemult = 6,
 		carrylimit = 150,
-		basedmg = 35,
+		basedmg = 55,
 		effrange = 50,
 		terminaldmg = 15,
-		penetration = 25
+		penetration = 35
 	},
 	["Small Shotgun Round"] = {
 		resourcetype = "ammo",
@@ -369,8 +378,8 @@ JMod.AmmoTable = {
 		carrylimit = 20,
 		ent = "ent_jack_gmod_ezprojectilenade",
 		nicename = "EZ 40mm Grenade",
-		basedmg = 220,
-		blastrad = 150
+		basedmg = 240,
+		blastrad = 180
 	},
 	["Mini Rocket"] = {
 		resourcetype = "munitions",
@@ -385,8 +394,8 @@ JMod.AmmoTable = {
 		sizemult = 24,
 		carrylimit = 30,
 		ent = "ent_jack_gmod_ezarrow",
-		armorpiercing = .6,
-		basedmg = 70
+		armorpiercing = .7,
+		basedmg = 75
 	},
 	["Black Powder Paper Cartridge"] = {
 		sizemult = 7,
