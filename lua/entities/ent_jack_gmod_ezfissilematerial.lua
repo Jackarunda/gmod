@@ -28,12 +28,12 @@ if SERVER then
 			timer.Simple(.5, function()
 				for k = 1, JMod.Config.Particles.NuclearRadiationMult * Count * 10 do
 					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-					Gas.Range = 1000
+					Gas.Range = 500
 					Gas:SetPos(pos)
 					JMod.SetEZowner(Gas, Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
-					Gas.CurVel = (VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+					Gas.CurVel = (VectorRand() * math.random(1, 500) + Vector(0, 0, 100 * JMod.Config.Particles.NuclearRadiationMult))
 				end
 			end)
 		end

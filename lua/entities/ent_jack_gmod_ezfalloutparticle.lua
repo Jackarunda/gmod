@@ -42,6 +42,53 @@ if SERVER then
 	function ENT:DamageObj(obj)
 		JMod.FalloutIrradiate(self, obj)
 	end
+
+	function ENT:CalcMove(ThinkRateHz)
+		local SelfPos, Time = self:GetPos(), CurTime()
+		local RandDir = VectorRand()
+		--RandDir.z = RandDir.z / 2
+		local Force = RandDir * 12 + (JMod.Wind * 3)
+
+		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
+			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
+				if obj.EZgasParticle and not(obj.EZvirusParticle) then
+					-- repel in accordance with Ideal Gas Law
+					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
+					Force = Force - Vec * 1
+				elseif self.NextDmg < Time and self:ShouldDamage(obj) then
+					self:DamageObj(obj)
+				end
+			end
+		end
+	
+		-- apply acceleration
+		self.CurVel = self.CurVel + Force / ThinkRateHz
+
+		-- apply air resistance
+		self.CurVel = self.CurVel / 1.5
+
+		-- observe current velocity
+		local NewPos = SelfPos + self.CurVel / ThinkRateHz
+
+		-- make sure we're not gonna hit something. If so, bounce
+		local MoveTrace = util.TraceLine({
+			start = SelfPos,
+			endpos = NewPos,
+			filter = { self, self.Canister },
+			mask = MASK_SHOT
+		})
+		if not MoveTrace.Hit then
+			-- move unobstructed
+			self:SetPos(NewPos)
+		else
+			-- bounce in accordance with Ideal Gas Law
+			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
+			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
+			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
+			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
+			self.CurVel = -(CurVelAng:Forward() * Speed)
+		end
+	end
 	--
 elseif CLIENT then
 	--[[function ENT:Initialize()
