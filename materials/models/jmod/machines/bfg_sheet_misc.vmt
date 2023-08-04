@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models/jmod/machines/lfg"
+	"$bumpmap" "models/jmod/machines/lfg_normal"
+
+	"$phong" "1"
+	"$phongexponent"  "30"
+	"$phongboost" "2"
+	"$phongfresnelranges" "[.1 1 1]"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+}
