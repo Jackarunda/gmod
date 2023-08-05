@@ -16,7 +16,8 @@ ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxFuel = 100
+	MaxFuel = 100,
+	MaxWater = 100
 }
 
 ENT.DynamicPerfSpecs = {
@@ -41,7 +42,15 @@ local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
 if(SERVER)then
 	function ENT:CustomInit()
 		self:SetProgress(0)
+		if self.SpawnFull then
+			self:SetWater(self.MaxWater)
+			--self:SetFuel(self.MaxFuel)
+		else
+			self:SetWater(0) 
+			--self:SetFuel(0)     not a thing yet
+		end
 		self.NextResourceThink = 0
+		self.NextWaterLoseTime = 0
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextFoofThink = 0
@@ -72,7 +81,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		self:EmitSound("snd_jack_littleignite.wav")
-		if (self:GetElectricity() > 0) then
+		if (self:GetElectricity() > 0) and (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			timer.Simple(0.1, function()
@@ -81,9 +90,13 @@ if(SERVER)then
 				self.SoundLoop:SetSoundLevel(60)
 				self.SoundLoop:Play()
 			end)
-		else
-			JMod.Hint(activator, "need fuel")
+		
+		elseif self:GetElectricity() <= 0 then 
+				JMod.Hint(activator, "need fuel")
+		elseif self:GetWater() <= 0 then
+				JMod.Hint(activator, "refill geo")
 		end
+			
 	end
 
 	function ENT:TurnOff()
@@ -138,9 +151,19 @@ if(SERVER)then
 				local PowerToProduce = FuelToConsume * NRGperFuel
 				local SpeedModifier = .1
 
+				if self:GetWater() <= 0 or self:GetElectricity() <= 0 then
+					self:TurnOff()
+				end
+
 				self:ConsumeElectricity(FuelToConsume * SpeedModifier)
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
+
+				if self.NextWaterLoseTime < Time then
+					self.NextWaterLoseTime = Time + 1
+
+					self:SetWater(self:GetWater() - 0.5 * SpeedModifier)
+				end
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
@@ -195,6 +218,7 @@ if(SERVER)then
 		self.NextUseTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)
 		self.NextEnvThink = Time + math.Rand(0, 3)
+		self.NextWaterLoseTime = Time
 	end
 
 	function ENT:OnDestroy(dmginfo)
@@ -326,18 +350,22 @@ elseif(CLIENT)then
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
 				local FuelFrac = self:GetElectricity() / self.MaxFuel
+				local PresFrac = self:GetWater() / 100
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
+				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
 				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 
 				cam.Start3D2D(SelfPos + Forward * -23 + Right * -16 + Up * 53, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				local RankX, RankY = -70, 190
+				local RankX, RankY = -70, 240
 				surface.DrawRect(RankX, RankY, 128, 128)
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 10, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 0, 40, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("WATER", "JMod-Display", 0, 80, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(PresFrac * 100)) .. "%", "JMod-Display", 0, 110, Color(PR, PG, PB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 150, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 180, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
