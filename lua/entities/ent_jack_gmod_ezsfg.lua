@@ -16,7 +16,7 @@ ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxFuel = 100,
+	MaxElectricity = 100,
 	MaxWater = 100
 }
 
@@ -44,10 +44,8 @@ if(SERVER)then
 		self:SetProgress(0)
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
-			--self:SetFuel(self.MaxFuel)
 		else
-			self:SetWater(0) 
-			--self:SetFuel(0)     not a thing yet
+			self:SetWater(0)
 		end
 		self.NextResourceThink = 0
 		self.NextWaterLoseTime = 0
@@ -139,6 +137,12 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:ConsumeWater(amt)
+		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
+		local NewAmt = math.Clamp(self:GetWater() - amt, 0.0, self.MaxWater)
+		self:SetWater(NewAmt)
+	end
+
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
@@ -149,7 +153,7 @@ if(SERVER)then
 				local NRGperFuel = 5.5
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
-				local SpeedModifier = .1
+				local SpeedModifier = .2
 
 				if self:GetWater() <= 0 or self:GetElectricity() <= 0 then
 					self:TurnOff()
@@ -159,11 +163,7 @@ if(SERVER)then
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
 
-				if self.NextWaterLoseTime < Time then
-					self.NextWaterLoseTime = Time + 1
-
-					self:SetWater(self:GetWater() - 0.5 * SpeedModifier)
-				end
+				self:ConsumeWater(FuelToConsume * 0.2 * SpeedModifier)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
@@ -183,7 +183,7 @@ if(SERVER)then
 		if (self.NextFoofThink < Time) then
 			self.NextFoofThink = Time + .3
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.wav", 80, math.random(75, 80))
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80))
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)
@@ -257,8 +257,6 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
-		--self.BasalPlat = JMod.MakeModel(self, "models/hunter/blocks/cube1x1x025.mdl")
-		--self.Pistoney = JMod.MakeModel(self, "models/mechanics/robotics/a1.mdl")
 		self.Piston = JMod.MakeModel(self, "models/jmod/machines/biofuel_piston.mdl")
 		self.Pusher = JMod.MakeModel(self, "models/jmod/machines/biofuel_pusher.mdl")
 		self.Flywheel = JMod.MakeModel(self, "models/jmod/machines/biofuel_flywheel.mdl")
@@ -274,7 +272,7 @@ elseif(CLIENT)then
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
-		--if State == STATE_RUNNING then
+		--if State == STATE_ON then
 			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 3, 0, 0.4)
 		--else
 		--	self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 3, 0, 0.4)
@@ -349,7 +347,7 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
-				local FuelFrac = self:GetElectricity() / self.MaxFuel
+				local FuelFrac = self:GetElectricity() / self.MaxElectricity
 				local PresFrac = self:GetWater() / 100
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
