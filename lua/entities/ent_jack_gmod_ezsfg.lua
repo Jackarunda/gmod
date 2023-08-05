@@ -158,7 +158,7 @@ if(SERVER)then
 			end
 		end
 		if (self.NextFoofThink < Time) then
-			self.NextFoofThink = Time + .2
+			self.NextFoofThink = Time + .3
 			if (State == STATE_ON) then
 				self:EmitSound("snds_jack_gmod/hiss.wav", 80, math.random(75, 80))
 				local Foof = EffectData()
@@ -235,6 +235,11 @@ elseif(CLIENT)then
 		self:DrawShadow(true)
 		--self.BasalPlat = JMod.MakeModel(self, "models/hunter/blocks/cube1x1x025.mdl")
 		--self.Pistoney = JMod.MakeModel(self, "models/mechanics/robotics/a1.mdl")
+		self.Piston = JMod.MakeModel(self, "models/jmod/machines/biofuel_piston.mdl")
+		self.Pusher = JMod.MakeModel(self, "models/jmod/machines/biofuel_pusher.mdl")
+		self.Flywheel = JMod.MakeModel(self, "models/jmod/machines/biofuel_flywheel.mdl")
+		self.WheelTurn = 0
+		self.WheelMomentum = 0
 	end
 
 	local WhiteSquare = Material("white_square")
@@ -244,6 +249,21 @@ elseif(CLIENT)then
 		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
+		---
+		--if State == STATE_RUNNING then
+			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 3, 0, 0.4)
+		--else
+		--	self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 3, 0, 0.4)
+		--end
+		self.WheelTurn = self.WheelTurn - self.WheelMomentum*Grade*FT*300
+
+		if self.WheelTurn > 360 then
+			self.WheelTurn = 1
+		elseif self.WheelTurn < 0 then
+			self.WheelTurn = 360
+		end
+		local PistonCycle = math.sin((self.WheelTurn/360)*math.pi*2-math.pi+2)*16
+		local InAndOut = math.sin((self.WheelTurn/360)*-math.pi*2-math.pi-0.7)*9
 		---
 		local BasePos = SelfPos
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
@@ -284,13 +304,18 @@ elseif(CLIENT)then
 				light.DieTime = CurTime() + 0.1
 			end
 		end
-		--local BasalPlatAng = SelfAng:GetCopy()
-		--JMod.RenderModel(self.BasalPlat, BasePos + Up * 12 + Forward * 8 - Right * 0, BasalPlatAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
-		---
-		--local WeDoBeBobbin = (State == STATE_ON and math.sin(CurTime() * 100) / 2 + .5) or 0
-		--local PistoneyAng = SelfAng:GetCopy()
-		--PistoneyAng:RotateAroundAxis(Right, 90)
-		--JMod.RenderModel(self.Pistoney, BasePos + Up * (44.5 + 5 * WeDoBeBobbin) - Forward * 19, PistoneyAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+		local PistonPos = BasePos + Up * 33.5 + Forward * 35.5 - Right * 22.8
+		local PistonAng = SelfAng:GetCopy()
+		--PistonCycle = 0
+		PistonAng:RotateAroundAxis(Right, PistonCycle + -28)
+		JMod.RenderModel(self.Piston, PistonPos, PistonAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
+		--InAndOut = 0
+		local PusherPos = PistonPos + PistonAng:Forward() * (33 + InAndOut) - PistonAng:Right() * 0.4 + PistonAng:Up() * 0.1
+		JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
+		local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
+		local FlywheelAng = SelfAng:GetCopy()
+		FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
+		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
