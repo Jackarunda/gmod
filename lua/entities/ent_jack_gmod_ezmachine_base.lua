@@ -510,6 +510,22 @@ if(SERVER)then
 						self:SetCoal(Coal + Accepted)
 					end
 					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.WOOD)then
+					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
+						local Powa = self:GetElectricity()
+						local Missing = self.MaxElectricity - Powa
+						if(Missing <= 0)then return 0 end
+						local PotentialPower = math.min(Missing, amt * JMod.EnergyEconomyParameters.BasePowerConversions[typ])
+						self:SetElectricity(Powa + PotentialPower)
+						Accepted = PotentialPower / JMod.EnergyEconomyParameters.BasePowerConversions[typ]
+					else
+						local Wood = self:GetWood()
+						local Missing = self.MaxWood - Wood
+						if(Missing < 1)then return 0 end
+						Accepted = math.min(Missing, amt)
+						self:SetWood(Wood + Accepted)
+					end
+					self:EmitSound("Wood.ImpactSoft", 65, math.random(90, 110))
 				elseif (string.find(typ, " ore")) then
 					if(self.GetOreType and (self:GetOreType() == "generic" or typ == self:GetOreType())) then
 						self:SetOreType(typ)

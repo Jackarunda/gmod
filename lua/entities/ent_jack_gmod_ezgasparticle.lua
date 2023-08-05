@@ -195,11 +195,11 @@ elseif CLIENT then
 	end
 
 	function ENT:DrawTranslucent()
-		if (self:GetDTBool(0)) then return end
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
 			self:DrawModel()
 		end
+		if (self:GetDTBool(0)) then return end
 
 		local Time = CurTime()
 
