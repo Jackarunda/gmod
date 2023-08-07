@@ -55,17 +55,21 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
-		if State == STATE_BROKEN then
-			JMod.Hint(activator, "destroyed", self)
-			return
-		elseif State == STATE_OFF then
-			self:TurnOn(activator)
-		elseif State == STATE_ON then
-			self:TurnOff()
+		if Alt then
+			if State == STATE_BROKEN then
+				JMod.Hint(activator, "destroyed", self)
+				return
+			elseif State == STATE_OFF then
+				self:TurnOn(activator)
+			elseif State == STATE_ON then
+				self:TurnOff()
+			end
+		else
+			activator:PickupObject(self)
 		end
 	end
 
@@ -117,33 +121,61 @@ if(SERVER)then
 		if self.NextLiquidThink < Time then
 			self.NextLiquidThink = Time + .15
 			if State == STATE_ON then
-				local LiquidToSpray = 4
+				local LiquidToSpray = 3
 				local SpeedModifier = 1
 
 				local CurrentRot = self:GetHeadRot()
 				local SelfAng = self:GetAngles()
-				local SprayAng = SelfAng:GetCopy()
-				SprayAng:RotateAroundAxis(SelfAng:Up(), CurrentRot)
 				for i = 1, LiquidToSpray do
-					SprayAng:RotateAroundAxis(SprayAng:Right(), -5)
-					local WaterTr = util.QuickTrace(self:GetPos() + SelfAng:Up() * 64, SprayAng:Forward() * 9e9, {self})
-					JMod.Sploom(self, WaterTr.HitPos, 0, 0)
+					local SprayAng = SelfAng:GetCopy()
+					SprayAng:RotateAroundAxis(SelfAng:Up(), CurrentRot)
+					SprayAng:RotateAroundAxis(SprayAng:Right(), 35 + i)
+					local TraceStart = self:GetPos() + SelfAng:Up() * 32
+					local TraceDat = {
+						start = TraceStart,
+						endpos = TraceStart + SprayAng:Forward()*i*100,
+						mins = Vector(-1, -1, -1)*(8+i),
+						maxs = Vector(1, 1, 1)*(8+i),
+						filter = {self},
+						mask = MASK_SHOT+MASK_WATER
+					}
+					local WaterTr = util.TraceHull(TraceDat)
+					if not WaterTr.Hit then
+						SprayAng = WaterTr.Normal:Angle()
+						SprayAng:RotateAroundAxis(SprayAng:Right(), -90+i*4)
+						TraceDat.start = WaterTr.HitPos
+						TraceDat.endpos = WaterTr.HitPos + SprayAng:Forward()*1000
+						WaterTr = util.TraceHull(TraceDat)
+					end
+					local WatEnt = WaterTr.Entity
+					if IsValid(WatEnt) then
+						if WatEnt:IsOnFire() then
+							WatEnt:Extinguish()
+						elseif WatEnt.EZconsumes and table.HasValue(WatEnt.EZconsumes, JMod.EZ_RESOURCE_TYPES.WATER) then
+							WatEnt:TryLoadResource(JMod.EZ_RESOURCE_TYPES.WATER, 1)
+						end
+					end
 				end
 
 				--self:ConsumeLiquid(LiquidToSpray * SpeedModifier)
 				self:EmitSound("snds_jack_gmod/hiss.wav", 60, 200)
 
-				local TurnSpeed = 8
+				local TurnSpeed = 5
+				local RotMin, RotMax = 180, 360
+				if CurrentRot > RotMax then
+					--self:SetHeadRot(CurrentRot - 360)
+					self.Dir = "right"
+				elseif CurrentRot < RotMin then
+					--self:SetHeadRot(CurrentRot + 360)
+					self.Dir = "left"
+				end
 				if self.Dir == "right" then
 					self:SetHeadRot(CurrentRot - TurnSpeed * SpeedModifier)
 				elseif self.Dir == "left" then
 					self:SetHeadRot(CurrentRot + TurnSpeed * SpeedModifier)
 				end
-				if CurrentRot > 360 then
-					self:SetHeadRot(CurrentRot - 360)
-				elseif CurrentRot < 0 then
-					self:SetHeadRot(CurrentRot + 360)
-				end
+				
+				--jprint(self:GetHeadRot(), self.Dir)
 			end
 		end
 
@@ -167,8 +199,10 @@ elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
 		self.Sprinkleer = JMod.MakeModel(self, "models/jmod/machines/sprinkler_head.mdl")
+		self.Debug = false
 	end
 
+	local DebugCooler = Color(61, 200, 255)
 	function ENT:Draw()
 		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -189,6 +223,33 @@ elseif(CLIENT)then
 		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
+		--[[if self.Debug then
+			local CurrentRot = self:GetHeadRot()
+			local SelfAng = self:GetAngles()
+			for i = 1, 3 do
+				local SprayAng = SelfAng:GetCopy()
+				SprayAng:RotateAroundAxis(SelfAng:Up(), CurrentRot)
+				SprayAng:RotateAroundAxis(SprayAng:Right(), 35 + i)
+				local TraceStart = self:GetPos() + SelfAng:Up() * 32
+				local TraceDat = {
+					start = TraceStart,
+					endpos = TraceStart + SprayAng:Forward()*i*100,
+					mins = Vector(-1, -1, -0.1)*(8+i),
+					maxs = Vector(1, 1, 0.1)*(8+i),
+					filter = {self},
+					mask = MASK_SHOT+MASK_WATER
+				}
+				local WaterTr = util.TraceHull(TraceDat)
+				if not WaterTr.Hit then
+					SprayAng = WaterTr.Normal:Angle()
+					SprayAng:RotateAroundAxis(SprayAng:Right(), -90+i*4)
+					TraceDat.start = WaterTr.HitPos
+					TraceDat.endpos = WaterTr.HitPos + SprayAng:Forward()*1000
+					WaterTr = util.TraceHull(TraceDat)
+				end
+				render.DrawWireframeSphere(WaterTr.HitPos, 20, 10, 10, DebugCooler, true)
+			end
+		end]]--
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
