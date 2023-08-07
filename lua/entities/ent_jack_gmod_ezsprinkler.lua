@@ -78,6 +78,11 @@ if(SERVER)then
 		if (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
+			if not self.SoundLoop then
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/impact_sprinkler")
+				self.SoundLoop:Play()
+				self.SoundLoop:SetSoundLevel(70)
+			end
 		else
 			self.NextUseTime = CurTime() + 1
 			if self:GetLiquidType() == "Fuel" then
@@ -92,15 +97,18 @@ if(SERVER)then
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_OFF)
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
-	--[[function ENT:ResourceLoaded(typ, accepted)
+	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
 		end
-	end]]--
+	end
 
 	function ENT:ConsumeLiquid(amt)
 		local SelfType = self:GetLiquidType()
@@ -119,70 +127,44 @@ if(SERVER)then
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 
 		if self.NextLiquidThink < Time then
-			self.NextLiquidThink = Time + .15
+			self.NextLiquidThink = Time + 5
 			if State == STATE_ON then
-				local LiquidToSpray = 3
-				local SpeedModifier = 1
+				local LiquidToSpray = 10
 
-				local CurrentRot = self:GetHeadRot()
-				local SelfAng = self:GetAngles()
-				for i = 1, LiquidToSpray do
-					local SprayAng = SelfAng:GetCopy()
-					SprayAng:RotateAroundAxis(SelfAng:Up(), CurrentRot)
-					SprayAng:RotateAroundAxis(SprayAng:Right(), 35 + i)
-					local TraceStart = self:GetPos() + SelfAng:Up() * 32
-					local TraceDat = {
-						start = TraceStart,
-						endpos = TraceStart + SprayAng:Forward()*i*100,
-						mins = Vector(-1, -1, -1)*(8+i),
-						maxs = Vector(1, 1, 1)*(8+i),
-						filter = {self},
-						mask = MASK_SHOT+MASK_WATER
-					}
-					local WaterTr = util.TraceHull(TraceDat)
-					if not WaterTr.Hit then
-						SprayAng = WaterTr.Normal:Angle()
-						SprayAng:RotateAroundAxis(SprayAng:Right(), -90+i*4)
-						TraceDat.start = WaterTr.HitPos
-						TraceDat.endpos = WaterTr.HitPos + SprayAng:Forward()*1000
-						WaterTr = util.TraceHull(TraceDat)
-					end
-					local WatEnt = WaterTr.Entity
-					if IsValid(WatEnt) then
-						if WatEnt:IsOnFire() then
-							WatEnt:Extinguish()
-						elseif WatEnt.EZconsumes and table.HasValue(WatEnt.EZconsumes, JMod.EZ_RESOURCE_TYPES.WATER) then
-							WatEnt:TryLoadResource(JMod.EZ_RESOURCE_TYPES.WATER, 1)
-						end
-					end
-				end
-
-				--self:ConsumeLiquid(LiquidToSpray * SpeedModifier)
-				self:EmitSound("snds_jack_gmod/hiss.wav", 60, 200)
-
-				local TurnSpeed = 5
-				local RotMin, RotMax = 180, 360
-				if CurrentRot > RotMax then
-					--self:SetHeadRot(CurrentRot - 360)
-					self.Dir = "right"
-				elseif CurrentRot < RotMin then
-					--self:SetHeadRot(CurrentRot + 360)
-					self.Dir = "left"
-				end
-				if self.Dir == "right" then
-					self:SetHeadRot(CurrentRot - TurnSpeed * SpeedModifier)
-				elseif self.Dir == "left" then
-					self:SetHeadRot(CurrentRot + TurnSpeed * SpeedModifier)
-				end
-				
-				--jprint(self:GetHeadRot(), self.Dir)
+				--self:ConsumeLiquid(LiquidToSpray)
 			end
 		end
 
 		if (self.NextEffThink < Time) then
 			self.NextEffThink = Time + .1
 			if (State == STATE_ON) then
+				--self:EmitSound("snds_jack_gmod/hiss.wav", 60, 200)
+				local CurrentRot = self:GetHeadRot()
+				local SelfAng = self:GetAngles()
+				local TurnSpeed = 5
+				local RotMin, RotMax = 0, 360
+				if CurrentRot > RotMax then
+					self.Dir = "right"
+				elseif CurrentRot < RotMin then
+					self.Dir = "left"
+				end
+				if self.Dir == "right" then
+					self:SetHeadRot(CurrentRot - TurnSpeed)
+				elseif self.Dir == "left" then
+					self:SetHeadRot(CurrentRot + TurnSpeed * 2)
+				end
 			end
+		end
+	end
+
+	function ENT:OnBreak()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
+	end
+	function ENT:OnRemove()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
 		end
 	end
 
@@ -223,33 +205,6 @@ elseif(CLIENT)then
 		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
-		--[[if self.Debug then
-			local CurrentRot = self:GetHeadRot()
-			local SelfAng = self:GetAngles()
-			for i = 1, 3 do
-				local SprayAng = SelfAng:GetCopy()
-				SprayAng:RotateAroundAxis(SelfAng:Up(), CurrentRot)
-				SprayAng:RotateAroundAxis(SprayAng:Right(), 35 + i)
-				local TraceStart = self:GetPos() + SelfAng:Up() * 32
-				local TraceDat = {
-					start = TraceStart,
-					endpos = TraceStart + SprayAng:Forward()*i*100,
-					mins = Vector(-1, -1, -0.1)*(8+i),
-					maxs = Vector(1, 1, 0.1)*(8+i),
-					filter = {self},
-					mask = MASK_SHOT+MASK_WATER
-				}
-				local WaterTr = util.TraceHull(TraceDat)
-				if not WaterTr.Hit then
-					SprayAng = WaterTr.Normal:Angle()
-					SprayAng:RotateAroundAxis(SprayAng:Right(), -90+i*4)
-					TraceDat.start = WaterTr.HitPos
-					TraceDat.endpos = WaterTr.HitPos + SprayAng:Forward()*1000
-					WaterTr = util.TraceHull(TraceDat)
-				end
-				render.DrawWireframeSphere(WaterTr.HitPos, 20, 10, 10, DebugCooler, true)
-			end
-		end]]--
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
@@ -266,10 +221,6 @@ elseif(CLIENT)then
 				--local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 
 				cam.Start3D2D(SelfPos - Forward * 1 - Up * 8 - Right * 12, DisplayAng, .06)
-				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				--[[local RankX, RankY = -70, 190
-				surface.DrawRect(RankX, RankY, 128, 128)
-				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)]]--
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(PowFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined("WATER", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
