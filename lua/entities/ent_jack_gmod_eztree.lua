@@ -28,7 +28,7 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
 		self.Growth = 0
-		self.Hydration = 100
+		self.Hydration = self.Hydration or 100
 		self.Helf = 100
 		self.LastLeafMat = ""
 		self.LastBarkMat = ""
@@ -348,6 +348,13 @@ if(SERVER)then
 				end
 			end
 		end)
+
+		function ENT:PostEntityPaste(ply, ent, createdEntities)
+			local Time = CurTime()
+			JMod.SetEZowner(self, ply, true)
+			self.NextRefillTime = Time
+			self.NextGrowThink = Time + math.random(10, 11)
+		end
 	end
 elseif CLIENT then
 	local Roots = Material("decals/ez_tree_roots")

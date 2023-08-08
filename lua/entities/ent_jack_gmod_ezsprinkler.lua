@@ -165,7 +165,7 @@ if(SERVER)then
 	end
 
 	local ThinkRate = 60/12 --Hz
-	local EntsToRemove = {"ent_jack_gmod_eznapalm"}
+	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true}
 	function ENT:Think()
 		local Time, State, SelfPos = CurTime(), self:GetState(), self:GetPos()
 		local WaterConversionSpeed = 2
@@ -177,9 +177,9 @@ if(SERVER)then
 				local WaterConsumptionAmt = 6 * WaterConversionSpeed
 
 				for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRange)) do
-					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) then
+					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) and JMod.ClearLoS(self, v, false, 34) then
 						if v:IsOnFire() then v:Extinguish() end
-						if table.HasValue(EntsToRemove, v:GetClass()) and math.random(1, 3) == 3 then
+						if EntsToRemove[v:GetClass()] and math.random(1, 2) == 2 then
 							SafeRemoveEntity(v)
 						end
 						if v.Hydration then
@@ -284,7 +284,9 @@ elseif(CLIENT)then
 		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
-		--render.DrawWireframeSphere(SelfPos, 400, 12, 12, DebugCooler, true)
+		if self.Debug then
+			render.DrawWireframeSphere(SelfPos, 400, 12, 12, DebugCooler, true)
+		end
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then

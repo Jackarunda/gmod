@@ -142,6 +142,9 @@ if SERVER then
 			end
 		elseif State == STATE_BURIED then
 			if not IsValid(self.GroundWeld) then self:Remove() end
+			local Water = 0
+			if StormFox and StormFox.IsRaining() then Water = 5 end
+			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
 			if (self.Hydration >= 50) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
@@ -157,19 +160,27 @@ if SERVER then
 	end
 
 	function ENT:SpawnTree()
-		local Pos, Owner = self:GetPos(), self.EZowner
+		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()
 			local Tree = ents.Create("ent_jack_gmod_eztree")
 			Tree:SetPos(Pos + Vector(0, 0, 10))
 			Tree:Spawn()
 			Tree:Activate()
+			Tree.Hydration = WatToGive * 2
 			JMod.SetEZowner(Tree, Owner)
 		end)
 	end
 
 	function ENT:OnRemove()
 		--
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetEZowner(self, ply, true)
+		self.NextRefillTime = Time
+		self.LastTouchedTime = Time
 	end
 	
 elseif CLIENT then
