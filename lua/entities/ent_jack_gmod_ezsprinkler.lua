@@ -14,11 +14,12 @@ ENT.EZcolorable = false
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
 ENT.Mass = 35
 ENT.SpawnHeight = 1
+ENT.SprayRange = 400
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxWater = 500,
-	--MaxFuel = 500,
+	MaxWater = 200,
+	--MaxFuel = 200,
 	Armor = 0.5
 }
 
@@ -44,6 +45,8 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.Dir = "right"
+		self.SoundRight = "snds_jack_gmod/sprankler_slow_loop.wav"
+		self.SoundLeft = "snds_jack_gmod/sprankler_fast_loop.wav"
 		self:SetLiquidType("Water")
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
@@ -74,15 +77,15 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
+		if self:GetState() <= STATE_BROKEN then return end
 		if (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/impact_sprinkler")
-				self.SoundLoop:Play()
-				self.SoundLoop:SetSoundLevel(70)
+				self.SoundLoop = CreateSound(self, (self.Dir == "left" and self.SoundLeft) or self.SoundRight)
 			end
+			self.SoundLoop:Play()
+			self.SoundLoop:SetSoundLevel(100)
 		else
 			self.NextUseTime = CurTime() + 1
 			if self:GetLiquidType() == "Fuel" then
@@ -123,30 +126,67 @@ if(SERVER)then
 		end
 	end
 
+	local ThinkRate = 60/12 --Hz
+	local EntsToRemove = {"ent_jack_gmod_eznapalm"}
 	function ENT:Think()
-		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
+		local Time, State, SelfPos = CurTime(), self:GetState(), self:GetPos()
+		local WaterConversionSpeed = 2
 
 		if self.NextLiquidThink < Time then
-			self.NextLiquidThink = Time + 5
+			self.NextLiquidThink = Time + ThinkRate
 			if State == STATE_ON then
-				local LiquidToSpray = 10
+				local WaterDeliveryAmt = 1 * WaterConversionSpeed
+				local WaterConsumptionAmt = 6 * WaterConversionSpeed
 
-				--self:ConsumeLiquid(LiquidToSpray)
+				for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRange)) do
+					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) then
+						if v:IsOnFire() then v:Extinguish() end
+						if table.HasValue(EntsToRemove, v:GetClass()) and math.random(1, 3) == 3 then
+							SafeRemoveEntity(v)
+						end
+						if v.Hydration then
+							v.Hydration = math.Clamp(v.Hydration + WaterDeliveryAmt, 0, 100)
+						end
+					end
+				end
+				self:ConsumeLiquid(WaterConsumptionAmt)
 			end
 		end
 
 		if (self.NextEffThink < Time) then
-			self.NextEffThink = Time + .1
+			local SpeedMult = (self.Dir == "left") and 8 or 1
+			self.NextEffThink = Time + .05 / SpeedMult
 			if (State == STATE_ON) then
-				--self:EmitSound("snds_jack_gmod/hiss.wav", 60, 200)
 				local CurrentRot = self:GetHeadRot()
 				local SelfAng = self:GetAngles()
+
+				local SplachAngle = SelfAng:GetCopy()
+				SplachAngle:RotateAroundAxis(SplachAngle:Up(), CurrentRot)
+				SplachAngle:RotateAroundAxis(SplachAngle:Right(), 35)
+				local Splach = EffectData()
+				Splach:SetOrigin(SelfPos + self:GetUp() * 35 + SplachAngle:Forward() * 2)
+				Splach:SetStart(SplachAngle:Forward())
+				Splach:SetScale(1)
+				util.Effect("eff_jack_gmod_spranklerspray", Splach)
+
 				local TurnSpeed = 5
 				local RotMin, RotMax = 0, 360
 				if CurrentRot > RotMax then
 					self.Dir = "right"
+					if self.SoundLoop then
+						self.SoundLoop:Stop()
+					end
+					self.SoundLoop = CreateSound(self, self.SoundRight)
+					self.SoundLoop:Play()
+					self.SoundLoop:SetSoundLevel(100)
 				elseif CurrentRot < RotMin then
 					self.Dir = "left"
+					if self.SoundLoop then
+						self.SoundLoop:Stop()
+					end
+					self.SoundLoop = CreateSound(self, self.SoundLeft)
+					self.SoundLoop:Play()
+					self.SoundLoop:SetSoundLevel(100)
 				end
 				if self.Dir == "right" then
 					self:SetHeadRot(CurrentRot - TurnSpeed)
@@ -205,6 +245,7 @@ elseif(CLIENT)then
 		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
+		render.DrawWireframeSphere(SelfPos, 400, 12, 12, DebugCooler, true)
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then

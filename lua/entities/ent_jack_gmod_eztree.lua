@@ -51,7 +51,11 @@ if(SERVER)then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-		self.Helf = self.Helf - dmginfo:GetDamage() / 2
+		if dmginfo:IsDamageType(DMG_BURN) and self.Hydration >= 0 then
+			self.Hydration = math.Clamp(self.Hydration - dmginfo:GetDamage() / 4, 0, 100)
+		else
+			self.Helf = self.Helf - dmginfo:GetDamage() / 2
+		end
 		if (self.Helf <= 0) then
 			self:Destroy(dmginfo) 
 			return 
@@ -236,7 +240,7 @@ if(SERVER)then
 			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
-				local Growth = Light * Sky * Ground * 1.5 * 9e9
+				local Growth = Light * Sky * Ground * 1.5
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else -- grow
