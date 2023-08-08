@@ -22,7 +22,7 @@ function ENT:GetEZsupplies(typ)
 		if Supplies[typ] and Supplies[typ] > 0 then
 			return Supplies[typ]
 		else
-			return 
+			return 0
 		end
 	else
 		return Supplies

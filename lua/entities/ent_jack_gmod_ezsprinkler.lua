@@ -47,7 +47,8 @@ if(SERVER)then
 		self.Dir = "right"
 		self.SoundRight = "snds_jack_gmod/sprankler_slow_loop.wav"
 		self.SoundLeft = "snds_jack_gmod/sprankler_fast_loop.wav"
-		self:SetLiquidType("Water")
+		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
+		self.PerferredDonor = nil
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
 		else
@@ -78,7 +79,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() <= STATE_BROKEN then return end
-		if (self:GetWater() > 0) then
+		if (self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
@@ -88,9 +89,9 @@ if(SERVER)then
 			self.SoundLoop:SetSoundLevel(100)
 		else
 			self.NextUseTime = CurTime() + 1
-			if self:GetLiquidType() == "Fuel" then
+			if self:GetLiquidType() == JMod.EZ_RESOURCE_TYPES.FUEL then
 				JMod.Hint(activator, "need fuel")
-			elseif self:GetLiquidType() == "Water" then
+			elseif self:GetLiquidType() == JMod.EZ_RESOURCE_TYPES.WATER then
 				JMod.Hint(activator, "need water")
 			end
 		end
@@ -113,16 +114,53 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:LoadLiquidFromDonor(typ, amt)
+		local SelfPos = self:GetPos()
+		if IsValid(self.PerferredDonor) and (self.PerferredDonor:GetPos():Distance(SelfPos) <= 100) and self.PerferredDonor:GetEZsupplies(typ) > 0 then
+			local Supplies = self.PerferredDonor:GetEZsupplies(typ)
+			local Required = math.min(Supplies, amt)
+			local Accepted = self:TryLoadResource(typ, Required)
+			self.PerferredDonor:SetEZsupplies(typ, Supplies - Required, self)
+			--typ, fromPoint, toPoint, amt, spread, scale, upSpeed
+			JMod.ResourceEffect(typ, self.PerferredDonor:LocalToWorld(self.PerferredDonor:OBBCenter()), self:LocalToWorld(self:OBBCenter()), amt/200, 1, 1)
+
+			return Accepted
+		end
+		for _, v in ipairs(ents.FindInSphere(SelfPos, 100)) do
+			if v.GetEZsupplies and (v:GetEZsupplies(typ) and v:GetEZsupplies(typ) > 0) then
+				local Supplies = v:GetEZsupplies(typ)
+				local Required = math.min(Supplies, amt)
+				local Accepted = self:TryLoadResource(typ, Required)
+				v:SetEZsupplies(typ, Supplies - Required, self)
+				self.PerferredDonor = v
+
+				return Accepted
+			end
+		end
+
+		return 0
+	end
+
 	function ENT:ConsumeLiquid(amt)
 		local SelfType = self:GetLiquidType()
-		if SelfType == "Water" then
+		if SelfType == JMod.EZ_RESOURCE_TYPES.WATER then
 			local NewAmt = math.Clamp(self:GetWater() - amt, 0.0, self.MaxWater)
 			self:SetWater(NewAmt)
-			if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
-		elseif SelfType == "Fuel" then
+			if(NewAmt <= 0) and (self:GetState() > 0) then
+				local Loaded = self:LoadLiquidFromDonor(SelfType, amt)
+				if Loaded < amt then
+					self:TurnOff()
+				end
+			end
+		elseif SelfType == JMod.EZ_RESOURCE_TYPES.FUEL then
 			local NewAmt = math.Clamp(self:GetFuel() - amt, 0.0, self.MaxFuel)
 			self:SetFuel(NewAmt)
-			if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
+			if(NewAmt <= 0) and (self:GetState() > 0) then 
+				local Loaded = self:LoadLiquidFromDonor(SelfType, amt)
+				if Loaded < amt then
+					self:TurnOff()
+				end
+			end
 		end
 	end
 
@@ -149,13 +187,14 @@ if(SERVER)then
 						end
 					end
 				end
+				self:ConsumeElectricity(0.2 * WaterConversionSpeed)
 				self:ConsumeLiquid(WaterConsumptionAmt)
 			end
 		end
 
 		if (self.NextEffThink < Time) then
 			local SpeedMult = (self.Dir == "left") and 8 or 1
-			self.NextEffThink = Time + .05 / SpeedMult
+			self.NextEffThink = Time + .025 / SpeedMult
 			if (State == STATE_ON) then
 				local CurrentRot = self:GetHeadRot()
 				local SelfAng = self:GetAngles()
@@ -245,7 +284,7 @@ elseif(CLIENT)then
 		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
-		render.DrawWireframeSphere(SelfPos, 400, 12, 12, DebugCooler, true)
+		--render.DrawWireframeSphere(SelfPos, 400, 12, 12, DebugCooler, true)
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
