@@ -54,6 +54,7 @@ if(SERVER)then
 		else
 			self:SetWater(0)
 		end
+		self:SetColor(Color(61, 194, 255))
 	end
 
 	function ENT:Use(activator)
@@ -169,7 +170,7 @@ if(SERVER)then
 	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
 	function ENT:Think()
 		local Time, State, SelfPos = CurTime(), self:GetState(), self:GetPos()
-		local WaterConversionSpeed = 2
+		local WaterConversionSpeed = 1.5
 
 		if self.NextLiquidThink < Time then
 			self.NextLiquidThink = Time + ThinkRate

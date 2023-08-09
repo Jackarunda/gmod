@@ -20,6 +20,15 @@ ENT.BreakNoise = "Wood.Break"
 
 ---
 if SERVER then
+	function ENT:UseEffect(pos, ent)
+		for i = 1, 1 * JMod.Config.Machines.SupplyEffectMult do
+			local Eff = EffectData()
+			Eff:SetOrigin(pos)
+			Eff:SetEntity(ent)
+			Eff:SetStart(Vector(0, 0, 0))
+			--util.Effect("eff_jack_gmod_woodsplode", Eff, true, true)
+		end
+	end
 	function ENT:CustomThink()
 		if self:IsOnFire() then
 			local WoodLeft = self:GetResource()
