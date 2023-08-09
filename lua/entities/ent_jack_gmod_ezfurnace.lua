@@ -26,7 +26,8 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.SILVERORE,
 	JMod.EZ_RESOURCE_TYPES.GOLDORE,
 	JMod.EZ_RESOURCE_TYPES.URANIUMORE,
-	JMod.EZ_RESOURCE_TYPES.PLATINUMORE
+	JMod.EZ_RESOURCE_TYPES.PLATINUMORE,
+	JMod.EZ_RESOURCE_TYPES.SAND
 }
 ---
 ENT.EZupgradable = true
@@ -134,14 +135,17 @@ if(SERVER)then
 		
 		if amt <= 0 or OreType == "generic" then return end
 
-		local MetalType = JMod.SmeltingTable[OreType][1]
+		local RefinedType = JMod.SmeltingTable[OreType][1]
 
 		local spawnVec = self:WorldToLocal(SelfPos + Right * 30 + Up * 20)
 		local spawnAng = Angle(0, 0, 0)
 		local ejectVec = Forward * 100
 		timer.Simple(0.3, function()
 			if IsValid(self) then
-				JMod.MachineSpawnResource(self, MetalType, amt, spawnVec, spawnAng, ejectVec, true, 200)
+				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
+				if OreType = JMod.EZ_RESOURCE_TYPES.SAND and amt >= 75 and math.random(0, 100) then
+					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
+				end
 			end
 		end)
 		self:SetProgress(0)
@@ -305,12 +309,12 @@ elseif(CLIENT)then
 					JMod.StandardRankDisplay(Grade, 485, 65, 118, Opacity + 50)
 					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("ORE REMAINING", "JMod-Display", 300, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 300, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("POWER REMAINING", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("AMT REMAINING", "JMod-Display", 290, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 290, 90, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 60, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 					draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 90, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("ORE TYPE", "JMod-Display", 300, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 300, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined("TYPE", "JMod-Display", 290, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 290, 30, Color(228, 215, 101, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end

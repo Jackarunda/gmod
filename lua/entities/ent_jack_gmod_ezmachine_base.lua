@@ -526,7 +526,7 @@ if(SERVER)then
 						self:SetWood(Wood + Accepted)
 					end
 					self:EmitSound("Wood.ImpactSoft", 65, math.random(90, 110))
-				elseif (string.find(typ, " ore")) then
+				elseif (string.find(typ, " ore"))or(typ==JMod.EZ_RESOURCE_TYPES.SAND) then
 					if(self.GetOreType and (self:GetOreType() == "generic" or typ == self:GetOreType())) then
 						self:SetOreType(typ)
 						local COre = self:GetOre()

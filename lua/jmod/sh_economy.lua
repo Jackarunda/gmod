@@ -30,7 +30,10 @@ JMod.SmeltingTable = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.PLATINUM, .2
-	}
+	},
+	[JMod.EZ_RESOURCE_TYPES.SAND] = {
+		JMod.EZ_RESOURCE_TYPES.GLASS, .75
+	},
 }
 
 JMod.RefiningTable = {
