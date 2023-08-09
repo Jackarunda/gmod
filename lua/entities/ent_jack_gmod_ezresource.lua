@@ -181,6 +181,8 @@ if SERVER then
 					SafeRemoveEntity(self)
 				end
 			end
+
+			if self.CustomImpact then self:CustomImpact(data, physobj) end
 		end
 	end
 
