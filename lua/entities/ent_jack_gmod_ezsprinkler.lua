@@ -188,8 +188,8 @@ if(SERVER)then
 						end
 					end
 				end
-				--self:ConsumeElectricity(0.5 * WaterConversionSpeed)
-				--self:ConsumeLiquid(WaterConsumptionAmt)
+				self:ConsumeElectricity(0.5 * WaterConversionSpeed)
+				self:ConsumeLiquid(WaterConsumptionAmt)
 			end
 		end
 
