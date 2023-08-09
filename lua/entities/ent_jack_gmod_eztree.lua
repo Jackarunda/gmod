@@ -14,6 +14,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
 --
 ENT.StaticPerfSpecs = {
+	MaxElectricity = 0,
 	MaxWater = 100,
 	MaxDurability = 100
 }
@@ -348,13 +349,13 @@ if(SERVER)then
 				end
 			end
 		end)
+	end
 
-		function ENT:PostEntityPaste(ply, ent, createdEntities)
-			local Time = CurTime()
-			JMod.SetEZowner(self, ply, true)
-			self.NextRefillTime = Time
-			self.NextGrowThink = Time + math.random(10, 11)
-		end
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetEZowner(self, ply, true)
+		self.NextRefillTime = Time
+		self.NextGrowThink = Time + math.random(10, 11)
 	end
 elseif CLIENT then
 	local Roots = Material("decals/ez_tree_roots")
