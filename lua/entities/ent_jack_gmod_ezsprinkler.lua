@@ -32,7 +32,6 @@ ENT.EZconsumes = {
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Water")
-	--self:NetworkVar("Float", 2, "Fuel")
 	self:NetworkVar("Float", 3, "HeadRot")
 	self:NetworkVar("String", 1, "LiquidType")
 end
@@ -88,7 +87,7 @@ if(SERVER)then
 				self.SoundLoop = CreateSound(self, (self.Dir == "left" and self.SoundLeft) or self.SoundRight)
 			end
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(100)
+			self.SoundLoop:SetSoundLevel(60)
 		else
 			self.NextUseTime = CurTime() + 1
 			if self:GetLiquidType() == JMod.EZ_RESOURCE_TYPES.FUEL then
@@ -176,7 +175,7 @@ if(SERVER)then
 			self.NextLiquidThink = Time + ThinkRate
 			if State == STATE_ON then
 				local WaterDeliveryAmt = 1 * WaterConversionSpeed
-				local WaterConsumptionAmt = 6 * WaterConversionSpeed
+				local WaterConsumptionAmt = 4 * WaterConversionSpeed
 
 				for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRange)) do
 					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) and JMod.ClearLoS(self, v, false, 34) then
@@ -189,14 +188,13 @@ if(SERVER)then
 						end
 					end
 				end
-				self:ConsumeElectricity(0.5 * WaterConversionSpeed)
-				self:ConsumeLiquid(WaterConsumptionAmt)
+				--self:ConsumeElectricity(0.5 * WaterConversionSpeed)
+				--self:ConsumeLiquid(WaterConsumptionAmt)
 			end
 		end
 
 		if (self.NextEffThink < Time) then
-			local SpeedMult = (self.Dir == "left") and 8 or 1
-			self.NextEffThink = Time + .025 / SpeedMult
+			self.NextEffThink = Time + ((self.Dir == "left") and .075 or .15)
 			if (State == STATE_ON) then
 				local CurrentRot = self:GetHeadRot()
 				local SelfAng = self:GetAngles()
@@ -206,8 +204,12 @@ if(SERVER)then
 				SplachAngle:RotateAroundAxis(SplachAngle:Right(), 35)
 				local Splach = EffectData()
 				Splach:SetOrigin(SelfPos + self:GetUp() * 35 + SplachAngle:Forward() * 2)
-				Splach:SetStart(SplachAngle:Forward())
-				Splach:SetScale(1)
+				local Zoop = SplachAngle:Forward()
+				if (self.Dir == "left") then
+					Zoop = Zoop / 4
+				end
+				Splach:SetStart(Zoop)
+				Splach:SetScale((self.Dir == "right") and 1 or .4)
 				util.Effect("eff_jack_gmod_spranklerspray", Splach)
 
 				local TurnSpeed = 5
@@ -219,7 +221,7 @@ if(SERVER)then
 					end
 					self.SoundLoop = CreateSound(self, self.SoundRight)
 					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(100)
+					self.SoundLoop:SetSoundLevel(60)
 				elseif CurrentRot < RotMin then
 					self.Dir = "left"
 					if self.SoundLoop then
@@ -227,7 +229,7 @@ if(SERVER)then
 					end
 					self.SoundLoop = CreateSound(self, self.SoundLeft)
 					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(100)
+					self.SoundLoop:SetSoundLevel(60)
 				end
 				if self.Dir == "right" then
 					self:SetHeadRot(CurrentRot - TurnSpeed)
@@ -236,6 +238,9 @@ if(SERVER)then
 				end
 			end
 		end
+
+		self:NextThink(Time + .05)
+		return true
 	end
 
 	function ENT:OnBreak()

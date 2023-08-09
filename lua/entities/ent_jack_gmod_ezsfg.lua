@@ -1,4 +1,5 @@
-﻿-- AdventureBoots Late 2021
+﻿-- AdventureBoots Mid 2023
+-- Zackarunda, shortly thereafter
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "EZ Solid Fuel Generator"
@@ -11,7 +12,7 @@ ENT.Model = "models/jmod/machines/biofuel_jenerator.mdl"
 ENT.EZupgradable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Mass = 250
+ENT.Mass = 400
 ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
@@ -313,17 +314,6 @@ elseif(CLIENT)then
 			render.SetMaterial(HeatWaveMat)
 			for i = 1, 2 do
 				render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
-			end
-			local light = DynamicLight(self:EntIndex())
-			if (light) then
-				light.Pos = GlowPos + Up * 1
-				light.r = 255
-				light.g = 200
-				light.b = 100
-				light.Brightness = 4
-				light.Decay = 1000
-				light.Size = 200 * math.Rand(.9, 1)
-				light.DieTime = CurTime() + 0.1
 			end
 		end
 		local PistonPos = BasePos + Up * 33.5 + Forward * 35.5 - Right * 22.8

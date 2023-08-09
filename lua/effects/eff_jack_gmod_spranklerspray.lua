@@ -4,54 +4,40 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	self.Pos = data:GetOrigin()
 	self.Dir = data:GetStart()
-	self.DieTime = CurTime() + math.Rand(0.5, 1) * self.Scale
-	--self.Size = 5
 	---
 	local emitter = ParticleEmitter(self.Pos)
 
 	for i = 1, 20 * self.Scale do
 		local Sprite = table.Random({"effects/splash1", "effects/splash2", "effects/splash4"})
-		local SpraySize = math.random(1, 15) * self.Scale
 
 		local particle = emitter:Add(Sprite, self.Pos)
-		particle:SetVelocity(self.Dir * 40 * SpraySize)
+		particle:SetVelocity(self.Dir * math.random(400, 500) + VectorRand() * math.random(0, 10))
 		particle:SetCollide(true)
 		particle:SetLighting(false)
 		particle:SetBounce(.01)
-		particle:SetGravity(Vector(0, 0, -50)*SpraySize)
-		particle:SetAirResistance(10/SpraySize)
-		particle:SetDieTime(SpraySize * 0.05)
-		particle:SetStartAlpha(250-SpraySize*5)
+		particle:SetGravity(Vector(0, 0, -600))
+		particle:SetAirResistance(math.random(0, 50))
+		particle:SetDieTime(math.Rand(.5, 1.2) * self.Scale)
+		particle:SetStartAlpha(255)
 		particle:SetEndAlpha(0)
 		particle:SetStartSize(1)
-		particle:SetEndSize(5 * SpraySize)
+		particle:SetEndSize(math.random(1, 30))
 		particle:SetRoll(math.Rand(180, 480))
 		--particle:SetRollDelta(math.Rand(-1, 1) * 6)
-		particle:SetColor(255, 255, 255)
+		if (math.random(1, 2) == 1) then
+			particle:SetColor(180, 200, 210)
+		else
+			particle:SetColor(220, 220, 220)
+		end
 	end
 
 	emitter:Finish()
 end
 
 function EFFECT:Think()
-	if self.DieTime > CurTime() then
-		--self.Size = self.Size + .3
-		self:NextThink(CurTime() + .1)
-
-		return true
-	else
-		return false
-	end
+	return false
 end
 
 function EFFECT:Render()
-	local TimeLeftFraction = self.DieTime - CurTime()
-	local Opacity = math.Clamp(TimeLeftFraction * 255, 0, 255)
-	--print(Opacity)
-	---
-	--render.SetMaterial(Wake)
-	--render.DrawQuadEasy(self.Pos + self.Normal * 5, self.Normal, self.Size, self.Size, Color(255, 255, 255, Opacity))
-	--render.DrawQuadEasy(self.Pos + self.Normal * 5, self.Normal, self.Size, self.Size, Color(255, 255, 255, Opacity))
-
 	return
 end
