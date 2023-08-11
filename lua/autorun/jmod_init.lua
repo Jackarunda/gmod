@@ -273,6 +273,37 @@ JMod.DefualtArmorTable={
 	[DMG_MISSILEDEFENSE]=1
 }
 
+JMod.TreeArmorTable={
+	[DMG_BUCKSHOT]=.2,
+	[DMG_SNIPER]=.2,
+	[DMG_CRUSH]=.9,
+	[DMG_BULLET]=.2,
+	[DMG_SLASH]=1.1,
+	[DMG_BLAST]=1.1,
+	[DMG_CLUB]=1.1,
+	[DMG_SHOCK]=.9,
+	[DMG_BURN]=.3,
+	[DMG_ACID]=1,
+	[DMG_PLASMA]=.3,
+	[DMG_VEHICLE]=1,
+	[DMG_DROWN]=0,
+	[DMG_PARALYZE]=0,
+	[DMG_NERVEGAS]=0,
+	[DMG_POISON]=0,
+	[DMG_RADIATION]=.1,
+	[DMG_FALL]=0,
+	[DMG_SONIC]=0,
+	[DMG_ENERGYBEAM]=1,
+	[DMG_SLOWBURN]=.3,
+	[DMG_PHYSGUN]=1,
+	[DMG_AIRBOAT]=.5,
+	[DMG_DISSOLVE]=1,
+	[DMG_BLAST_SURFACE]=1,
+	[DMG_DIRECT]=1,
+	[DMG_GENERIC]=1,
+	[DMG_MISSILEDEFENSE]=1
+}
+
 JMod.EZ_OwnerID = {}
 
 -- we have to load locales before any other files

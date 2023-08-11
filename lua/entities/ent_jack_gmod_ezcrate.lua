@@ -37,6 +37,7 @@ function ENT:SetEZsupplies(typ, amt, setter)
 	if typ ~= self:GetResourceType() then return end
 	if amt <= 0 then self:ApplySupplyType("generic") end
 	self:SetResource(math.Clamp(amt, 0, self.MaxResource))
+	self:CalcWeight()
 end
 
 ---

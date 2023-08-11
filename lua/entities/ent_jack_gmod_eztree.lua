@@ -6,7 +6,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = false
-ENT.Base = "ent_jack_gmod_ezmachine_base"
+ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/tree0.mdl"
 ENT.EZcolorable = false
 --
@@ -36,18 +36,6 @@ if(SERVER)then
 		self.LastModel = ""
 		self.NextGrowThink = 0
 		self:UpdateAppearance()
-	end
-
-	function ENT:Break(dmginfo)
-		self:Destroy(dmginfo)
-	end
-
-	function ENT:GetWater()
-		return self.Hydration
-	end
-
-	function ENT:SetWater(amt)
-		self.Hydration = amt
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -100,12 +88,8 @@ if(SERVER)then
 				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
 				local PhysDamage = TheirForce/(physobj:GetMass()*100)
 
-				--jprint(PhysDamage)
-				--jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
-
 				if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
 					physobj:EnableMotion(true)
-					--physobj:SetVelocity(data.TheirOldVelocity:GetNormalized() * ((TheirForce - ForceThreshold) / (physobj:GetMass() * self.Growth)))
 				end
 				if PhysDamage >= 1 then
 					local CrushDamage = DamageInfo()
@@ -150,80 +134,13 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:GetWaterProximity()
-		local WaterAround, SelfPos = 0, self:GetPos()
-		for i = 1, 50 do
-			local PointToCheck = SelfPos + Vector(math.random(-800, 800), math.random(-800, 800), math.random(0, -500))
-			if (bit.band(util.PointContents(PointToCheck), CONTENTS_WATER) == CONTENTS_WATER) then WaterAround = WaterAround + .1 end
-		end
-		-- figger out all deposits we are inside of
-		local DepositsInRange = {}
-		for k, v in pairs(JMod.NaturalResourceTable) do
-			local Dist = SelfPos:Distance(v.pos)
-			if (Dist <= v.siz) then
-				if (v.rate or (v.amt > 0)) then
-					table.insert(DepositsInRange, k)
-				end
-			end
-		end
-		-- now, among all the deposits we are inside of, let's figger out if one is water
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange) do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				if (DepositInfo.typ == JMod.EZ_RESOURCE_TYPES.WATER) then
-					WaterAround = WaterAround + .5
-				end
-			end
-		end
-		---
-		return math.Clamp(WaterAround, 0, 1)
-	end
-
-	function ENT:CheckSky()
-		local SkyMod, MapName = 1, string.lower(game.GetMap())
-		for k, mods in pairs(JMod.MapSolarPowerModifiers)do
-			local keywords, mult = mods[1], mods[2]
-			for _, word in pairs(keywords) do
-				if (string.find(MapName, word)) then SkyMod = mult break end
-			end
-		end
-		local Pos, HitAmount = self:GetPos() + Vector(0, 0, 50), 0
-		for i = 1, 9 do -- Pitch
-			for j = 1, 36 do -- Yaw
-				local Dir = Angle(i * -18, j * 10, 0):Forward()
-				local Tr = util.QuickTrace(Pos, Dir * 20000, self)
-				if (Tr.HitSky) then HitAmount = HitAmount + .01 end
-			end
-		end
-		return math.Clamp(HitAmount, 0, 1) * SkyMod
-	end
-
-	function ENT:GetDayLight()
-		if(StormFox)then
-			local Minutes = StormFox.GetTime()
-			local Frac = Minutes / 1440
-			Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
-			local Mult = math.Clamp(Frac, 0, 1)
-			if (StormFox.IsNight())then 
-				Mult = 0 
-			else
-				local Weather = StormFox.GetWeather()
-				if (Weather == "Fog") or (Weather == "Cloudy")then Mult = 0.3 
-				elseif (Weather == "Snowin'") or (Weather == "Sandstorm") then Mult = 0.1 
-				elseif (Weather == "Lava Eruption") or (Weather == "Radioactive") then Mult = 0 
-				else Mult = 1 end
-			end
-		end
-		return 1
-	end
-
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
 		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not self:GetPhysicsObject():IsMotionEnabled())) then self:Destroy() return end
 		local Time, SelfPos, Owner, Vel = CurTime(), self:GetPos(), self.EZowner, self:GetPhysicsObject():GetVelocity()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
-			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
+			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(SelfPos + Vector(0, 0, 50)), 1
 			-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
 			if not(Tr.Hit)then

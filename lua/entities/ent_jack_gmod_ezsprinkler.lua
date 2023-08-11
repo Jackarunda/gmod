@@ -148,7 +148,7 @@ if(SERVER)then
 			local NewAmt = math.Clamp(self:GetWater() - amt, 0.0, self.MaxWater)
 			self:SetWater(NewAmt)
 			if(NewAmt <= 0) and (self:GetState() > 0) then
-				local Loaded = self:LoadLiquidFromDonor(SelfType, amt)
+				local Loaded = self:LoadLiquidFromDonor(SelfType, amt * 5)
 				if Loaded < amt then
 					self:TurnOff()
 				end
@@ -157,7 +157,7 @@ if(SERVER)then
 			local NewAmt = math.Clamp(self:GetFuel() - amt, 0.0, self.MaxFuel)
 			self:SetFuel(NewAmt)
 			if(NewAmt <= 0) and (self:GetState() > 0) then 
-				local Loaded = self:LoadLiquidFromDonor(SelfType, amt)
+				local Loaded = self:LoadLiquidFromDonor(SelfType, amt * 5)
 				if Loaded < amt then
 					self:TurnOff()
 				end

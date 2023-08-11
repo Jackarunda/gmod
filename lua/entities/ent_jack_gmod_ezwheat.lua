@@ -5,10 +5,9 @@ ENT.PrintName = "EZ Wheat"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = false
-ENT.Base = "ent_jack_gmod_eztree"
+ENT.Spawnable = true
+ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/razorgrain_pile.mdl"
-ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
@@ -26,7 +25,7 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
 		self.Growth = 0
-		self.Hydration = 100
+		self.Hydration = self.Hydration or 100
 		self.Helf = 100
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
@@ -70,9 +69,23 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.Speed>80) and (data.DeltaTime>0.2) then
-			--self:EmitSound("Dirt.Impact", 100, 80)
-			--self:EmitSound("Dirt.Impact", 100, 80)
+		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
+			self:EmitSound("Dirt.Impact", 100, 80)
+			self:EmitSound("Dirt.Impact", 100, 80)
+			if IsValid(data.HitObject) then
+				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
+				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
+				local PhysDamage = TheirForce/(physobj:GetMass()*100)
+
+				if PhysDamage >= 1 then
+					local CrushDamage = DamageInfo()
+					CrushDamage:SetDamage(math.floor(PhysDamage))
+					CrushDamage:SetDamageType(DMG_CRUSH)
+					--CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
+					CrushDamage:SetDamagePosition(data.HitPos)
+					self:TakeDamageInfo(CrushDamage)
+				end
+			end
 		end
 	end
 
@@ -92,8 +105,14 @@ if(SERVER)then
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
 					self:SetAngles(HitAngle)
 					self:SetPos(Tr.HitPos)
-					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-					self:GetPhysicsObject():Sleep()
+					if Tr.Entity == game.GetWorld() then
+						self:GetPhysicsObject():EnableMotion(false)
+						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+					else
+						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+						self:GetPhysicsObject():Sleep()
+					end
+					JMod.Hint(self.EZowner, "tree growth")
 				end
 			end)
 		else
@@ -101,42 +120,13 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:GetWaterProximity()
-		local WaterAround, SelfPos = 0, self:GetPos()
-		for i = 1, 50 do
-			local PointToCheck = SelfPos + Vector(math.random(-800, 800), math.random(-800, 800), math.random(0, -200))
-			if (bit.band(util.PointContents(PointToCheck), CONTENTS_WATER) == CONTENTS_WATER) then WaterAround = WaterAround + .1 end
-		end
-		-- figger out all deposits we are inside of
-		local DepositsInRange = {}
-		for k, v in pairs(JMod.NaturalResourceTable) do
-			local Dist = SelfPos:Distance(v.pos)
-			if (Dist <= v.siz) then
-				if (v.rate or (v.amt > 0)) then
-					table.insert(DepositsInRange, k)
-				end
-			end
-		end
-		-- now, among all the deposits we are inside of, let's figger out if one is water
-		if #DepositsInRange > 0 then
-			for k, v in pairs(DepositsInRange) do
-				local DepositInfo = JMod.NaturalResourceTable[v]
-				if (DepositInfo.typ == JMod.EZ_RESOURCE_TYPES.WATER) then
-					WaterAround = WaterAround + .5
-				end
-			end
-		end
-		---
-		return math.Clamp(WaterAround, 0, 1)
-	end
-
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not IsValid(self.GroundWeld)) then self:Destroy() return end
+		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not(self:GetPhysicsObject():IsMotionEnabled()))) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
-			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(), 1
+			local Water, Light, Sky, Ground = self:GetWaterProximity(), self:GetDayLight(), self:CheckSky(SelfPos + self:GetUp() * 10), 1
 			-- jprint("water", Water, "light", Light, "sky", Sky, "ground", Ground, "helf", self.Helf, "growth", self.Growth, "hydration", self.Hydration)
 			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 50), Vector(0, 0, -200), self)
 			if not(Tr.Hit)then
