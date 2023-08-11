@@ -143,7 +143,7 @@ if(SERVER)then
 		timer.Simple(0.3, function()
 			if IsValid(self) then
 				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
-				if OreType = JMod.EZ_RESOURCE_TYPES.SAND and amt >= 75 and math.random(0, 100) then
+				if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 75) and math.random(0, 100) then
 					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 				end
 			end
