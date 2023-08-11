@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.WOOD
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmod/props/resources.mdl"
+ENT.Model = "models/jmod/resources/ez_wood.mdl"
 --ENT.Material = "phoenix_storms/wood_dome"
 ENT.Color = Color(100, 100, 100)
 ENT.ModelScale = 1

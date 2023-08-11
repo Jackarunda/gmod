@@ -9,9 +9,10 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.SAND
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x075x025.mdl"
-ENT.Material = "phoenix_storms/egg"
-ENT.Color = Color(255, 255, 255)
+--ENT.Model = "models/hunter/blocks/cube05x075x025.mdl"
+ENT.Model = "models/jmod/resources/sandbag.mdl"
+--ENT.Material = "phoenix_storms/egg"
+ENT.Color = Color(255, 237, 197)
 ENT.ModelScale = 1
 ENT.Mass = 100
 ENT.ImpactNoise1 = "Dirt.ImpactHard"
@@ -44,21 +45,21 @@ if SERVER then
 elseif CLIENT then
 
 	function ENT:Initialize()
-		self.Bag = JMod.MakeModel(self, "models/props_junk/cardboard_box003b.mdl", "phoenix_storms/egg", .97)
-		self.ScaleVec =  Vector(1.2, 1.2, 1.2)
-		self.ColorVec = self.Color:ToVector()
+		--self.Bag = JMod.MakeModel(self, "models/jmod/resources/sandbag.mdl", nil, .97)
+		--self.ScaleVec =  Vector(1.2, 1.2, 1.2)
+		--self.ColorVec = self.Color:ToVector()
 	end
 
 	function ENT:Draw()
 		local Ang, Pos = self:GetAngles(), self:GetPos()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
-		--self:DrawModel()
-		local BasePos = Pos
-		local JugAng = Ang:GetCopy()
-		JMod.RenderModel(self.Bag, BasePos, Ang, self.ScaleVec, self.ColorVec)
+		self:DrawModel()
+		--local BasePos = Pos
+		--local JugAng = Ang:GetCopy()
+		--JMod.RenderModel(self.Bag, BasePos, Ang, self.ScaleVec, self.ColorVec)
 
-		JMod.HoloGraphicDisplay(self, Vector(-2, -15.2, 0), Angle(90, 0, 90), .04, 300, function()
-			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, false)
+		JMod.HoloGraphicDisplay(self, Vector(-2, -13, 0), Angle(90, 0, 90), .04, 300, function()
+			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, false, "JMod-Stencil", 220)
 		end)
 	end
 

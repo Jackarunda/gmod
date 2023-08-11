@@ -4,8 +4,8 @@
 	"$bumpmap" "models/jmod/machines/lfg_normal"
 
 	"$phong" "1"
-	"$phongexponent"  "30"
-	"$phongboost" "2"
+	"$phongexponent"  "50"
+	"$phongboost" ".1"
 	"$phongfresnelranges" "[.1 1 1]"
 
 	"$blendtintbybasealpha" "1"
