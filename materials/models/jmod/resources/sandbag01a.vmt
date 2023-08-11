@@ -3,6 +3,7 @@
 	"$baseTexture" "models/jmod/resources/sandbag01a"
 //	"$bumpmap" "models/jmod/resources/"
 	"$surfaceprop" "cloth"
+	"$nodecal" "1"
 
 //	"$phong" "1"
 //	"$phongexponent" "20"
@@ -12,3 +13,5 @@
 //	"$normalmapalphaenvmapmask" "1"
 //	"$envmaptint" "[.2 .2 .2]"
 }
+
+// "https://www.freepik.com/free-photo/hessian-fabric-texture_33266547.htm#query=burlap" - Image by Vectonauta on Freepik

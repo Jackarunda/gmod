@@ -213,7 +213,7 @@ if(SERVER)then
 				local Dert = EffectData()
 				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
 				Dert:SetNormal(Up)
-				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
+				--util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
 			end
 		end
 
@@ -296,13 +296,17 @@ elseif(CLIENT)then
 		self.DrillMotor = JMod.MakeModel(self, "models/props_wasteland/laundry_basket001.mdl")
 		self.PowerBox = JMod.MakeModel(self, "models/props_lab/powerbox01a.mdl")
 		self.DrillMat = Material("mechanics/metal2")
+		self.LaserMat = Material("trails/laser")
 		self.DrillSpin = 0
 		self.CurDepth = 0
 	end
 
-	function ENT:Draw()
+	local MiningLazCol = Color(255, 0, 0)
+
+	function ENT:Draw(flags)
 		--
 		self:DrawModel()
+		--self:Draw()
 		--
 		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
@@ -349,7 +353,17 @@ elseif(CLIENT)then
 			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 0.9, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 			local DrillAng = SelfAng:GetCopy()
 			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
-			JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
+			--[[if (Grade == 5) then
+				local LazAng = SelfAng:GetCopy()
+				LazAng:RotateAroundAxis(Up, self.DrillSpin)
+				render.SetMaterial(self.LaserMat)
+				render.DrawQuadEasy(DrillPos + Up * 50, LazAng:Forward(), 60, 100, MiningLazCol, -LazAng.r)
+				render.DrawQuadEasy(DrillPos + Up * 50, -LazAng:Forward(), 40, 100, MiningLazCol, -LazAng.r)
+				render.DrawQuadEasy(DrillPos + Up * 50, LazAng:Right(), 60, 100, MiningLazCol, LazAng.p)
+				render.DrawQuadEasy(DrillPos + Up * 50, -LazAng:Right(), 40, 100, MiningLazCol, LazAng.p)
+			else]]--
+				JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
+			--end
 			local PipeEndAng = SelfAng:GetCopy()
 			PipeEndAng:RotateAroundAxis(Right, 90)
 			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)

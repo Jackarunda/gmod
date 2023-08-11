@@ -73,6 +73,18 @@ JMod.ResourceDepositInfo = {
 			sand = 2
 		}
 	},
+	[JMod.EZ_RESOURCE_TYPES.SAND] = {
+		frequency = 6,
+		avgamt = 400,
+		avgsize = 200,
+		limits = {
+			nowater = true
+		},
+		boosts = {
+			sand = 3,
+			rock = 2
+		}
+	},
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
 		frequency = 8,
 		avgamt = 500,

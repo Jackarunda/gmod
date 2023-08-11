@@ -15,7 +15,7 @@ ENT.Model = "models/jmod/resources/sandbag.mdl"
 ENT.Color = Color(255, 237, 197)
 ENT.ModelScale = 1
 ENT.Mass = 100
-ENT.ImpactNoise1 = "Dirt.ImpactHard"
+ENT.ImpactNoise1 = "Dirt.Impact"
 ENT.DamageThreshold = 300
 ENT.BreakNoise = "Dirt.ImpactHard"
 
@@ -24,7 +24,7 @@ if SERVER then
 		local DmgAmt, ResourceAmt = dmginfo:GetDamage(), self:GetResource()
 		local DmgVec = dmginfo:GetDamageForce()
 		dmginfo:SetDamage(DmgAmt / ResourceAmt)
-		dmginfo:SetDamageForce(DmgVec / (ResourceAmt^1.1))
+		dmginfo:SetDamageForce(DmgVec / (ResourceAmt^1.5))
 		self:TakePhysicsDamage(dmginfo)
 		self:SetResource(math.Clamp(ResourceAmt - DmgAmt / 100, 0, 100))
 
