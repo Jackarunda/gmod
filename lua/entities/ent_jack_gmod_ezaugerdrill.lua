@@ -303,7 +303,7 @@ elseif(CLIENT)then
 
 	local MiningLazCol = Color(255, 0, 0)
 
-	function ENT:Draw(flags)
+	function ENT:Draw()
 		--
 		self:DrawModel()
 		--self:Draw()
@@ -353,6 +353,10 @@ elseif(CLIENT)then
 			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 0.9, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 			local DrillAng = SelfAng:GetCopy()
 			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
+			local PipeEndAng = SelfAng:GetCopy()
+			PipeEndAng:RotateAroundAxis(Right, 90)
+			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)
+			JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, PipeEndAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 			--[[if (Grade == 5) then
 				local LazAng = SelfAng:GetCopy()
 				LazAng:RotateAroundAxis(Up, self.DrillSpin)
@@ -364,10 +368,6 @@ elseif(CLIENT)then
 			else]]--
 				JMod.RenderModel(self.Auger, DrillPos, DrillAng, Vector(3, 3, 3.2), nil, self.DrillMat)
 			--end
-			local PipeEndAng = SelfAng:GetCopy()
-			PipeEndAng:RotateAroundAxis(Right, 90)
-			PipeEndAng:RotateAroundAxis(Up, self.DrillSpin)
-			JMod.RenderModel(self.DrillPipeEnd, DrillPos + Up * 101, PipeEndAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		end
 
 		if (not(DetailDraw)) and (Obscured) then return end -- if player is far and sentry is obscured, draw nothing

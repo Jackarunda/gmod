@@ -32,8 +32,8 @@
 	},
 	[JMod.EZ_RESOURCE_TYPES.SAND] = {
 		sprite = "particle/smokestack",
-		siz = 5,
-		cols = {Color(223, 198, 56, 50), Color(219, 201, 96, 50)}
+		siz = 3,
+		cols = {Color(199, 177, 54, 50), Color(173, 159, 76, 50)}
 	},
 	[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = {
 		sprites = {"effects/fleck_cement1", "effects/fleck_cement2"},

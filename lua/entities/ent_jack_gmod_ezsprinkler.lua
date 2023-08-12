@@ -206,7 +206,7 @@ if(SERVER)then
 				Splach:SetOrigin(SelfPos + self:GetUp() * 35 + SplachAngle:Forward() * 2)
 				local Zoop = SplachAngle:Forward()
 				if (self.Dir == "left") then
-					Zoop = Zoop / 4
+					Zoop = Zoop / 1
 				end
 				Splach:SetStart(Zoop)
 				Splach:SetScale((self.Dir == "right") and 1 or .4)
