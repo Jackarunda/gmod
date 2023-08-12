@@ -250,40 +250,46 @@ if(SERVER)then
 			local Ent = data.HitEntity
 			local Held = false
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
-			if (data.Speed > 150) and (data.Speed < 500) then
+			if (data.Speed > 150) then
 				self:EmitSound("Metal_Box.ImpactHard")
-			elseif (data.Speed > 500) then
-				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
-				local ForceThreshold = physobj:GetMass() * (self.EZanchorage or 1000)
-				local PhysDamage = TheirForce/(physobj:GetMass())
-				
-				--jprint("Their Speed: ", math.Round(data.TheirOldVelocity:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
-				--jprint(PhysDamage)
-				if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-					physobj:EnableMotion(true)
-				end
-				if PhysDamage >= 1 and not(Held) then
+				if (data.Speed > 500) then
 					local World = game.GetWorld()
-					local CrushDamage = DamageInfo()
-					CrushDamage:SetDamage(math.floor(PhysDamage))
-					CrushDamage:SetDamageType(DMG_CRUSH)
-					CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
-					CrushDamage:SetDamagePosition(data.HitPos)
-					CrushDamage:SetAttacker(Ent or World)
-					CrushDamage:SetInflictor(Ent or World)
-					self:TakeDamageInfo(CrushDamage)
-					self:EmitSound("Metal_Box.Break")
-					JMod.DamageSpark(self)
+					local CollisionDir = data.OurOldVelocity - data.TheirOldVelocity
+					local TheirForce = (.5 * data.HitObject:GetMass() * ((CollisionDir:Length()/16)*0.3048)^2)
+					if Ent == World then
+						TheirForce = (.5 * physobj:GetMass() * ((CollisionDir:Length()/16)*0.3048)^2)
+					end
+					local ForceThreshold = physobj:GetMass() * (self.EZanchorage or 1000)
+					local PhysDamage = TheirForce/(physobj:GetMass())
 
-					--[[if data.HitEntity:IsVehicle() then
-						local CrashDamage = DamageInfo()
-						--jprint(Dmg)
-						CrashDamage:SetDamage(Dmg * 2)
-						CrashDamage:SetDamageType(DMG_CRUSH)
-						CrashDamage:SetDamageForce(data.TheirOldVelocity * -0.001)
-						CrashDamage:SetDamagePosition(data.HitPos)
-						data.HitEntity:TakeDamageInfo(CrashDamage)
-					end]]--
+					--jprint(PhysDamage)
+					--jprint("Their Speed: ", math.Round(CollisionDir:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
+					
+					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
+						physobj:EnableMotion(true)
+					end
+					if PhysDamage >= 1 and not(Held) then
+						local CrushDamage = DamageInfo()
+						CrushDamage:SetDamage(math.floor(PhysDamage))
+						CrushDamage:SetDamageType(DMG_CRUSH)
+						CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
+						CrushDamage:SetDamagePosition(data.HitPos)
+						CrushDamage:SetAttacker(Ent or World)
+						CrushDamage:SetInflictor(Ent or World)
+						self:TakeDamageInfo(CrushDamage)
+						self:EmitSound("Metal_Box.Break")
+						JMod.DamageSpark(self)
+
+						--[[if data.HitEntity:IsVehicle() then
+							local CrashDamage = DamageInfo()
+							--jprint(Dmg)
+							CrashDamage:SetDamage(Dmg * 2)
+							CrashDamage:SetDamageType(DMG_CRUSH)
+							CrashDamage:SetDamageForce(data.TheirOldVelocity * -0.001)
+							CrashDamage:SetDamagePosition(data.HitPos)
+							data.HitEntity:TakeDamageInfo(CrashDamage)
+						end]]--
+					end
 				end
 			end
 		end
