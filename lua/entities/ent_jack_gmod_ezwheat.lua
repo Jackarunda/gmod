@@ -30,20 +30,8 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
+		self.Mutation = 0
 		self:UpdateAppearance()
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		self:TakePhysicsDamage(dmginfo)
-		self.Helf = self.Helf - dmginfo:GetDamage() / 2
-
-		if (self.Helf <= 33) then
-		self:UpdateAppearance()
-		elseif (self.Helf <= 0) then 
-			self:Destroy() 
-
-			return 
-		end
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -69,6 +57,7 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
+		--jprint("Cutting colision", data.DeltaTime)
 		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
 			self:EmitSound("Dirt.Impact", 100, 80)
 			self:EmitSound("Dirt.Impact", 100, 80)
@@ -86,6 +75,18 @@ if(SERVER)then
 					self:TakeDamageInfo(CrushDamage)
 				end
 			end
+		end
+		if (self.Mutation > 90) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
+			local PlyToCut = data.HitEntity
+			local Cut = DamageInfo()
+			Cut:SetDamage(2)
+			Cut:SetDamageType(DMG_SLASH)
+			--Cut:SetDamageForce(-data.TheirOldVelocity*.9)
+			Cut:SetDamagePosition(data.HitPos + self:GetUp() * 32)
+			PlyToCut:TakeDamageInfo(Cut)
+			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
+			PlyToCut:ViewPunch(Angle(0, 0, math.random(-8, 8)))
+			self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
 		end
 	end
 
@@ -147,13 +148,13 @@ if(SERVER)then
 				local Growth = Light * Sky * Ground * 2
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
-				else -- grow
-					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+				else
+					self.Growth = math.Clamp(self.Growth + Growth, 0, (self.Mutation > 90) and 65 or 100)
 				end
-				local WaterLoss = math.Clamp(1 - Water, .05, 1) * 2.5
+				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
 			else
-				self.Helf = math.Clamp(self.Helf - 2, 0, 100)
+				self.Helf = math.Clamp(self.Helf - 1, 0, 100)
 			end
 			self:UpdateAppearance()
 		end
@@ -181,8 +182,12 @@ if(SERVER)then
 			NewWheatMat = "razorgrain_d"
 		elseif (self.Hydration < 60) then
 			NewWheatMat = "razorgrain_d"
+			self:SetColor(Color(200, 228, 149))
 		else
 			NewWheatMat = "razorgrain_d"
+		end
+		if self.Mutation > 90 then
+			self:SetColor(Color(180, 184, 145))
 		end
 		NewWheatMat = "models/jmod/props/plants/" .. NewWheatMat
 		--
