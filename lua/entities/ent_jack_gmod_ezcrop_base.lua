@@ -91,6 +91,7 @@ if(SERVER)then
 		self.DamageTypeTable = JMod.TreeArmorTable
 		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 100}
 		self.MaxWater = 100
+
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
@@ -172,9 +173,11 @@ if(SERVER)then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-		local Damage = dmginfo:GetDamage() * self:DetermineDamageMultiplier(dmginfo:GetDamage())
-		if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) or dmginfo:IsDamageType(DMG_RADIATION) and self.Hydration >= 0 then
+		local Damage = dmginfo:GetDamage() * self:DetermineDamageMultiplier(dmginfo)
+		if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and self.Hydration >= 0 then
 			self.Hydration = math.Clamp(self.Hydration - Damage, 0, 100)
+		elseif (self.Mutation ~= nil) and dmginfo:IsDamageType(DMG_RADIATION) then
+			self.Mutation = math.Clamp( self.Mutation + Damage, 0, 100)
 		else
 			self.Helf = self.Helf - Damage
 		end
@@ -272,14 +275,6 @@ if(SERVER)then
 			end
 		end
 		return 1
-	end
-
-	function ENT:SFX(str,absPath)
-		if(absPath)then
-			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
-		else
-			sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
-		end
 	end
 
 	function ENT:OnRemove()

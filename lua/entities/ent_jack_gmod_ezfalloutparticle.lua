@@ -35,7 +35,6 @@ if SERVER then
 	end
 
 	function ENT:ShouldDamage(ent)
-		if not IsValid(ent) then return false end
 		return (JMod.ShouldDamageBiologically(ent) and (math.random(1, 5) == 1))
 	end
 

@@ -82,6 +82,7 @@ end)
 function JMod.ShouldDamageBiologically(ent)
 	if not IsValid(ent) then return false end
 	if (ent.JModDontIrradiate and ent.JModDontIrradiate == true) then return false end
+	if (ent.IsJackyEZcrop) then return true end
 	if ent:IsPlayer() then return ent:Alive() end
 
 	if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
