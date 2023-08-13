@@ -273,11 +273,11 @@ elseif(CLIENT)then
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
-		--if State == STATE_ON then
-			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 3, 0, 0.4)
-		--else
-		--	self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 3, 0, 0.4)
-		--end
+		if State == STATE_ON then
+			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 8, 0, 7)
+		else
+			self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 2, 0, 7)
+		end
 		self.WheelTurn = self.WheelTurn - self.WheelMomentum*Grade*FT*300
 
 		if self.WheelTurn > 360 then
@@ -285,8 +285,6 @@ elseif(CLIENT)then
 		elseif self.WheelTurn < 0 then
 			self.WheelTurn = 360
 		end
-		local PistonCycle = math.sin((self.WheelTurn/360)*math.pi*2-math.pi+2)*16
-		local InAndOut = math.sin((self.WheelTurn/360)*-math.pi*2-math.pi-0.7)*9
 		---
 		local BasePos = SelfPos
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
@@ -316,19 +314,26 @@ elseif(CLIENT)then
 				render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
 			end
 		end
-		local PistonPos = BasePos + Up * 33.5 + Forward * 35.5 - Right * 22.8
-		local PistonAng = SelfAng:GetCopy()
-		--PistonCycle = 0
-		PistonAng:RotateAroundAxis(Right, PistonCycle + -28)
-		JMod.RenderModel(self.Piston, PistonPos, PistonAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
-		--InAndOut = 0
-		local PusherPos = PistonPos + PistonAng:Forward() * (33 + InAndOut) - PistonAng:Right() * 0.4 + PistonAng:Up() * 0.1
-		JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
+		--- render wheel
 		local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
 		local FlywheelAng = SelfAng:GetCopy()
 		FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
-		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1,1,1), JMod.EZ_GRADE_MATS[Grade])
-
+		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+		--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
+		local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 4
+		local WheelTurnRadians = math.rad(self.WheelTurn)
+		local PistonEndX = -math.sin(WheelTurnRadians)
+		local PistonEndY = -math.cos(WheelTurnRadians)
+		local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 4
+		-- now that we know the desired tip positions, we can calc the angle for the piston housing
+		local PistonVec = PistonEndPos - PistonPivotPos
+		local PistonDir = PistonVec:GetNormalized()
+		local PistonAng = PistonDir:Angle()
+		JMod.RenderModel(self.Piston, PistonPivotPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+		-- now render the piston shaft at the same angle, but slide it along the vector by some amount
+		local PusherPos = PistonEndPos
+		JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+		---
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()

@@ -48,7 +48,7 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	local SurfaceProp = data:GetSurfaceProp()
 	self.Speed = math.Rand(.9, 1.1)
-	self.LifeTime = self.Scale * math.Rand(1, 2)
+	self.LifeTime = self.Scale * math.Rand(.8, 1.5)
 
 	if SurfaceProp == 0 then
 		self.Target = nil -- directionless explosion
