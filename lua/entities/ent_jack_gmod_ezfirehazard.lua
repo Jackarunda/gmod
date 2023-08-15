@@ -50,6 +50,12 @@ if SERVER then
 		return ent
 	end
 
+	local DamageBlacklist = {
+		["vfire_ball"] = true,
+		["ent_jack_gmod_ezfirehazard"] = true,
+		["ent_jack_gmod_eznapalm"] = true
+	}
+
 	function ENT:Think()
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
 
@@ -86,13 +92,8 @@ if SERVER then
 			end
 
 			for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
-				local blacklist = {
-					["vfire_ball"] = true,
-					["ent_jack_gmod_ezfirehazard"] = true,
-					["ent_jack_gmod_eznapalm"] = true
-				}
 
-				if not blacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
+				if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
 					local Dam = DamageInfo()
 					Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
 					Dam:SetDamageType(DMG_BURN)
@@ -103,7 +104,7 @@ if SERVER then
 
 					if vFireInstalled then
 						CreateVFireEntFires(v, math.random(1, 3))
-					elseif math.random() <= 0.15 then
+					elseif (v:IsOnFire() == false) and (math.random() <= 0.15) then
 						v:Ignite(10)
 					end
 				end
@@ -113,7 +114,7 @@ if SERVER then
 				CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), self:GetOwner())
 			end
 
-			if math.random(1, 3) == 1 then
+			if math.random(1, 12) == 1 then
 				local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
 
 				if Tr.Hit then

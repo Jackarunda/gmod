@@ -274,10 +274,10 @@ JMod.DefualtArmorTable={
 }
 
 JMod.TreeArmorTable={
-	[DMG_BUCKSHOT]=.2,
+	[DMG_BUCKSHOT]=.1,
 	[DMG_SNIPER]=.2,
 	[DMG_CRUSH]=.9,
-	[DMG_BULLET]=.2,
+	[DMG_BULLET]=.1,
 	[DMG_SLASH]=1.1,
 	[DMG_BLAST]=1.1,
 	[DMG_CLUB]=1.1,

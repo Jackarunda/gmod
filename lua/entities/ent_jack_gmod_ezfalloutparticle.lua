@@ -44,9 +44,9 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = VectorRand()
+		local RandDir = VectorRand() * math.random(24, 400)
 		--RandDir.z = RandDir.z / 2
-		local Force = RandDir * 12 + (JMod.Wind * 3)
+		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -5)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
