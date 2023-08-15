@@ -127,7 +127,7 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Right * -60, true, 200)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		--self:SpawnEffect(self:LocalToWorld(pos))
 	end
@@ -164,7 +164,7 @@ if(SERVER)then
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
 
-				self:ConsumeWater(FuelToConsume * 0.2 * SpeedModifier)
+				self:ConsumeWater(FuelToConsume * 0.3 * SpeedModifier)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
@@ -182,7 +182,7 @@ if(SERVER)then
 			end
 		end
 		if (self.NextFoofThink < Time) then
-			self.NextFoofThink = Time + .3
+			self.NextFoofThink = Time + .3/Grade
 			if (State == STATE_ON) then
 				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80))
 				local Foof = EffectData()
@@ -274,9 +274,9 @@ elseif(CLIENT)then
 		local Grade = self:GetGrade()
 		---
 		if State == STATE_ON then
-			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 8, 0, 7)
+			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 8, 0, 1)
 		else
-			self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 2, 0, 7)
+			self.WheelMomentum = math.Clamp(self.WheelMomentum - FT / 2, 0, 1)
 		end
 		self.WheelTurn = self.WheelTurn - self.WheelMomentum*Grade*FT*300
 
@@ -320,11 +320,11 @@ elseif(CLIENT)then
 		FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
 		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
 		--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
-		local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 4
+		local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 1.2
 		local WheelTurnRadians = math.rad(self.WheelTurn)
 		local PistonEndX = -math.sin(WheelTurnRadians)
 		local PistonEndY = -math.cos(WheelTurnRadians)
-		local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 4
+		local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 1.2
 		-- now that we know the desired tip positions, we can calc the angle for the piston housing
 		local PistonVec = PistonEndPos - PistonPivotPos
 		local PistonDir = PistonVec:GetNormalized()

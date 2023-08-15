@@ -229,8 +229,8 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
-		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
+		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*120-Right*50))
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, 90), Forward*500, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
 	end
 

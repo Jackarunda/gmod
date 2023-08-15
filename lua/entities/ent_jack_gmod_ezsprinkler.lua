@@ -186,6 +186,7 @@ if(SERVER)then
 						if v.Hydration then
 							v.Hydration = math.Clamp(v.Hydration + WaterDeliveryAmt, 0, 100)
 						end
+						v:RemoveAllDecals()
 					end
 				end
 				self:ConsumeElectricity(0.5 * WaterConversionSpeed)
