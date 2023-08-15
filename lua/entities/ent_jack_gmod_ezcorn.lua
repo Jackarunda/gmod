@@ -1,13 +1,13 @@
 ﻿AddCSLuaFile()
 
 ENT.Type = "anim"
-ENT.PrintName = "EZ Wheat"
+ENT.PrintName = "EZ Corn"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezcrop_base"
-ENT.Model = "models/jmod/props/plants/razorgrain_pile.mdl"
+ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
@@ -231,5 +231,5 @@ elseif CLIENT then
 		render.DrawQuadEasy(SelfPos, self:GetUp(), 150, 150, Col, 0)
 		--]]
 	end
-	language.Add("ent_jack_gmod_eztree", "EZ Tree")
+	language.Add("ent_jack_gmod_eztree", "EZ Corn")
 end
