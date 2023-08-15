@@ -32,6 +32,7 @@ if(SERVER)then
 		self.NextGrowThink = 0
 		self.Mutation = 0
 		self:UpdateAppearance()
+		self:UseTriggerBounds(true, 0)
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -41,11 +42,11 @@ if(SERVER)then
 
 		local FoodAmt = 0
 		if (self.Growth >= 66) then
-			FoodAmt = 100
-		elseif (self.Growth >= 33) then
-			FoodAmt = 50
-		else
 			FoodAmt = 25
+		elseif (self.Growth >= 33) then
+			FoodAmt = 15
+		else
+			FoodAmt = 5
 		end
 
 		local SpawnPos = Vector(0, 0, 100)
@@ -75,18 +76,6 @@ if(SERVER)then
 					self:TakeDamageInfo(CrushDamage)
 				end
 			end
-		end
-		if (self.Mutation > 90) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
-			local PlyToCut = data.HitEntity
-			local Cut = DamageInfo()
-			Cut:SetDamage(2)
-			Cut:SetDamageType(DMG_SLASH)
-			--Cut:SetDamageForce(-data.TheirOldVelocity*.9)
-			Cut:SetDamagePosition(data.HitPos + self:GetUp() * 32)
-			PlyToCut:TakeDamageInfo(Cut)
-			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
-			PlyToCut:ViewPunch(Angle(0, 0, math.random(-8, 8)))
-			self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
 		end
 	end
 
@@ -142,7 +131,6 @@ if(SERVER)then
 					Ground = .25
 				end
 			end
-			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
 				local Growth = Light * Sky * Ground * 2
@@ -163,39 +151,52 @@ if(SERVER)then
 		return true
 	end
 
+	function ENT:Use(activator)
+		if not activator:KeyDown(JMod.Config.General.AltFunctionKey) then return end
+		if self.Growth >= 66 then
+			local Maize = ents.Create("ent_jack_gmod_ezcorn_ear")
+			Maize:SetMaterial("models/jmod/props/plants/cornv81t_d")
+			Maize:SetPos(self:GetPos() + self:GetUp() * 5)
+			Maize:Spawn()
+			Maize:Activate()
+			--
+			self.Growth = 30
+			self.Helf = 33
+			self:UpdateAppearance()
+		end
+	end
+
 	function ENT:UpdateAppearance()
-		local NewWheatMat, NewSubModel
+		local NewCornMat, NewSubModel, CornColor
 		-- my kingdom for Switch statements
 		if (self.Growth < 33) then
-			NewSubModel = 3
-		elseif (self.Growth < 66) then
 			NewSubModel = 2
+		elseif (self.Growth < 66) then
+			NewSubModel = 1
 		else
 			NewSubModel = 0
 		end
-		if (self.Helf < 25) then
-			NewSubModel = 3
+
+		if (self.Hydration < 30) then
+			NewCornMat = "corn01t_d"
+		elseif (self.Hydration < 60) then
+			NewCornMat = "cornv81t_d"
+		else
+			NewCornMat = "cornv81t_d"
 		end
 
-		local WheatColor = nil
-		if (self.Hydration < 10) then
-			NewWheatMat = "razorgrain_d"
-		elseif (self.Hydration < 30) then
-			NewWheatMat = "razorgrain_d"
-		elseif (self.Hydration < 60) then
-			NewWheatMat = "razorgrain_d"
-			WheatColor = Color(222, 228, 168)
-		else
-			NewWheatMat = "razorgrain_d"
-			WheatColor = Color(207, 228, 168)
+		if (self.Helf < 25) then
+			CornColor = Color(145, 141, 93)
 		end
-		if WheatColor then
-			self:SetColor(WheatColor)
-		end
+
 		if self.Mutation > 90 then
-			self:SetColor(Color(180, 184, 145))
+			CornColor = Color(180, 184, 145)
 		end
-		NewWheatMat = "models/jmod/props/plants/" .. NewWheatMat
+		if CornColor then
+			self:SetColor(CornColor)
+		end
+
+		NewCornMat = "models/jmod/props/plants/" .. NewCornMat
 		--
 		if (NewSubModel ~= self.LastSubModel) then
 			self:SetBodygroup(0, NewSubModel)
@@ -206,9 +207,9 @@ if(SERVER)then
 		end
 		timer.Simple(0, function()
 			if (IsValid(self)) then
-				if (NewWheatMat ~= self.LastWheatMat) then
-					self:SetSubMaterial(0, NewWheatMat)
-					self.LastWheatMat = NewWheatMat
+				if (NewCornMat ~= self.LastWheatMat) then
+					self:SetSubMaterial(0, NewCornMat)
+					self.LastWheatMat = NewCornMat
 				end
 			end
 		end)
@@ -218,7 +219,7 @@ elseif CLIENT then
 	function ENT:CustomInit()
 		--
 	end
-	function ENT:Draw()
+	function ENT:DrawTranslucent()
 		--local SelfPos = self:GetPos()
 		self:DrawModel()
 		--[[

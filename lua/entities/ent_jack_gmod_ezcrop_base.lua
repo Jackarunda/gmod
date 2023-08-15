@@ -212,6 +212,7 @@ if(SERVER)then
 
 	function ENT:GetWaterProximity()
 		local WaterAround, SelfPos = 0, self:GetPos()
+		if StormFox and StormFox.IsRaining() then return 1 end -- Why do expensive calcs if it's raining?
 		for i = 1, 50 do
 			local PointToCheck = SelfPos + Vector(math.random(-800, 800), math.random(-800, 800), math.random(0, -500))
 			if (bit.band(util.PointContents(PointToCheck), CONTENTS_WATER) == CONTENTS_WATER) then WaterAround = WaterAround + .1 end
@@ -319,6 +320,12 @@ if(SERVER)then
 			ent.NextUseTime = Time + 1
 		end
 	end
+
+	hook.Add("GravGunOnPickedUp", "JMOD_Fruit_GravGun_TimeReset", function(ply, ent) 
+		if ent.LastTouchedTime then
+			ent.LastTouchedTime = CurTime()
+		end
+	end)
 
 elseif(CLIENT)then
 	net.Receive("JMod_MachineSync", function(len, ply)

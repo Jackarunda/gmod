@@ -51,6 +51,7 @@ if SERVER then
 		end)
 
 		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
+		self.LastWateredTime = 0
 		self.EZremoveSelf = self.EZremoveSelf or false
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
@@ -76,6 +77,7 @@ if SERVER then
 			self.ShootDir = Tr.HitNormal
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
+			self:SetCollisionGroup(COLLISION_GROUP_WORLD)
 			--JackaGenericUseEffect(activator)
 		end
 	end
@@ -90,6 +92,7 @@ if SERVER then
 			if (Missing <= 0) then return 0 end
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
+			self.LastWateredTime = Time
 			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
 		end
 		return math.ceil(Accepted)
@@ -104,7 +107,7 @@ if SERVER then
 		local Pos, State = self:GetPos(), self:GetState()
 
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
-			sound.Play("Metal_Box.Break", Pos)
+			sound.Play("Wood_Solid.Break", Pos)
 			--self:SetState(JMod.EZ_STATE_BROKEN)
 			SafeRemoveEntityDelayed(self, 1)
 		end
@@ -130,24 +133,42 @@ if SERVER then
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
 			self:SetState(STATE_NORMAL)
+			self:SetCollisionGroup(COLLISION_GROUP_NONE)
 			activator:PickupObject(self)
 		end
+	end
+
+	function ENT:Degenerate() 
+		constraint.RemoveAll(self)
+		self:SetNotSolid(true)
+		self:DrawShadow(false)
+		self:GetPhysicsObject():EnableCollisions(false)
+		self:GetPhysicsObject():EnableGravity(false)
+		self:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+		timer.Simple(2, function()
+			if (IsValid(self)) then self:Remove() end
+		end)
 	end
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
 			if self.EZremoveSelf and (Time - 60 > self.LastTouchedTime) then
-				self:Remove()
+				self:Degenerate()
 			end
 		elseif State == STATE_BURIED then
 			if not IsValid(self.GroundWeld) then self:Remove() end
 			local Water = 0
-			if StormFox and StormFox.IsRaining() then Water = 5 end
+			if StormFox and StormFox.IsRaining() then 
+				Water = 5
+				self.LastWateredTime = Time
+			end
 			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
 			if (self.Hydration >= 50) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
+			elseif (self.Hydration <= 1) and (self.LastWateredTime > Time - 600) then
+				self:Degenerate()
 			end
 		elseif State == STATE_GERMINATING then
 			if not IsValid(self.GroundWeld) then self:Remove() end
@@ -181,6 +202,13 @@ if SERVER then
 		JMod.SetEZowner(self, ply, true)
 		self.NextRefillTime = Time
 		self.LastTouchedTime = Time
+	end
+
+	function ENT:GravGunPickupAllowed(ply) 
+		local State = self:GetState()
+		if (State == STATE_NORMAL) then
+			return true
+		end
 	end
 	
 elseif CLIENT then

@@ -72,18 +72,32 @@ if SERVER then
 		end
 	end
 
+	function ENT:Degenerate() 
+		constraint.RemoveAll(self)
+		self:SetNotSolid(true)
+		self:DrawShadow(false)
+		self:GetPhysicsObject():EnableCollisions(false)
+		self:GetPhysicsObject():EnableGravity(false)
+		self:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+		timer.Simple(2, function()
+			if (IsValid(self)) then self:Remove() end
+		end)
+	end
+
 	function ENT:Think()
 		local Time = CurTime()
 		if self.EZremoveSelf and (Time - 60 > self.LastTouchedTime) then
-			self:Remove()
+			self:Degenerate() 
 		end
 	end
 elseif CLIENT then
 	function ENT:Initialize()
+		--
 	end
-	--
+
 	function ENT:Draw()
 		self:DrawModel()
 	end
+
 	language.Add("ent_jack_gmod_ezapple", "EZ Apple")
 end

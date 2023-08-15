@@ -142,7 +142,6 @@ if(SERVER)then
 					Ground = .25
 				end
 			end
-			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
 				local Growth = Light * Sky * Ground * 2
@@ -164,7 +163,7 @@ if(SERVER)then
 	end
 
 	function ENT:UpdateAppearance()
-		local NewWheatMat, NewSubModel
+		local NewWheatMat, NewSubModel, WheatColor
 		-- my kingdom for Switch statements
 		if (self.Growth < 33) then
 			NewSubModel = 3
@@ -177,7 +176,6 @@ if(SERVER)then
 			NewSubModel = 3
 		end
 
-		local WheatColor = nil
 		if (self.Hydration < 10) then
 			NewWheatMat = "razorgrain_d"
 		elseif (self.Hydration < 30) then
@@ -189,11 +187,11 @@ if(SERVER)then
 			NewWheatMat = "razorgrain_d"
 			WheatColor = Color(207, 228, 168)
 		end
+		if self.Mutation > 90 then
+			WheatColor = Color(180, 184, 145)
+		end
 		if WheatColor then
 			self:SetColor(WheatColor)
-		end
-		if self.Mutation > 90 then
-			self:SetColor(Color(180, 184, 145))
 		end
 		NewWheatMat = "models/jmod/props/plants/" .. NewWheatMat
 		--

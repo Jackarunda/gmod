@@ -155,7 +155,6 @@ if(SERVER)then
 					Ground = .25
 				end
 			end
-			if StormFox and StormFox.IsRaining() then Water = 1 end
 			--
 			if (self.Hydration > 0) then
 				local Growth = Light * Sky * Ground * 1.5
