@@ -130,7 +130,7 @@ if SERVER then
 	end
 
 	function ENT:CleanseAir()
-		local selfPos, selfGrade = self:LocalToWorld(self:OBBCenter()), self:GetGrade()
+		local selfPos, Grade = self:LocalToWorld(self:OBBCenter()), self:GetGrade()
 		local entites = ents.FindInSphere(selfPos, self.Range)
 
 		for k, v in ipairs(entites) do
@@ -138,8 +138,8 @@ if SERVER then
 			local particleTable = JMod.EZ_HAZARD_PARTICLES[v:GetClass()]
 
 			if istable(particleTable) and IsValid(v) and JMod.ClearLoS(self, v, false, 10, true) then 
-				if JMod.LinCh(selfGrade * 2, 1, self.Range/10) then
-
+				local LinCh = JMod.LinCh(Grade * 1.1, 1, 5)
+				if LinCh then
 					if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
 						self:SetChemicals(self:GetChemicals() + particleTable[2])
 					elseif particleTable[1] == JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL then
