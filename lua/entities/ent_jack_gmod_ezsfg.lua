@@ -17,8 +17,8 @@ ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 500,
-	MaxWater = 100
+	MaxElectricity = 200,
+	MaxWater = 500
 }
 
 ENT.DynamicPerfSpecs = {
@@ -151,7 +151,7 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local NRGperFuel = 5.5
+				local NRGperFuel = 1
 				local GradeModifier = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = GradeModifier * NRGperFuel
 				local SpeedModifier = .25
@@ -160,24 +160,26 @@ if(SERVER)then
 					self:TurnOff()
 				end
 
-				self:ConsumeElectricity(GradeModifier * SpeedModifier * 5.6)
+				self:ConsumeElectricity(GradeModifier * SpeedModifier * 1.12)
+
+				self:ConsumeWater(GradeModifier * 0.44 * SpeedModifier)
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
-
-				self:ConsumeWater(GradeModifier * 2.2 * SpeedModifier)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
 		end
 
 		if (self.NextEffThink < Time) then
-			self.NextEffThink = Time + .1
+			self.NextEffThink = Time + .5 * Grade
 			if (State == STATE_ON) then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos() + Up * 90 + Forward * 70)
 				Eff:SetNormal(JMod.Wind:GetNormalized())
-				Eff:SetScale(.1)
-				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
+				Eff:SetStart(Vector(.1, .1, .1))
+				Eff:SetAngles(Angle(50*Grade, 50*Grade, 50*Grade))
+				Eff:SetScale(.05)
+				util.Effect("eff_jack_gmod_ezsmokesignal", Eff, true)
 				--
 			end
 		end
@@ -311,7 +313,8 @@ elseif(CLIENT)then
 			end
 			render.SetMaterial(HeatWaveMat)
 			for i = 1, 2 do
-				render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
 			end
 		end
 		--- render wheel
@@ -343,7 +346,7 @@ elseif(CLIENT)then
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
 				local FuelFrac = self:GetElectricity() / self.MaxElectricity
-				local PresFrac = self:GetWater() / 100
+				local PresFrac = self:GetWater() / self.MaxWater
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 				local PR, PG, PB = JMod.GoodBadColor(PresFrac)
 				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
