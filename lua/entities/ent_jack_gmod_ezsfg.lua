@@ -17,7 +17,7 @@ ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxElectricity = 100,
+	MaxElectricity = 500,
 	MaxWater = 100
 }
 
@@ -152,19 +152,19 @@ if(SERVER)then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
 				local NRGperFuel = 5.5
-				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
-				local PowerToProduce = FuelToConsume * NRGperFuel
-				local SpeedModifier = .2
+				local GradeModifier = JMod.EZ_GRADE_BUFFS[Grade]
+				local PowerToProduce = GradeModifier * NRGperFuel
+				local SpeedModifier = .25
 
 				if self:GetWater() <= 0 or self:GetElectricity() <= 0 then
 					self:TurnOff()
 				end
 
-				self:ConsumeElectricity(FuelToConsume * SpeedModifier)
+				self:ConsumeElectricity(GradeModifier * SpeedModifier * 5.6)
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
 
-				self:ConsumeWater(FuelToConsume * 0.3 * SpeedModifier)
+				self:ConsumeWater(GradeModifier * 2.2 * SpeedModifier)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end

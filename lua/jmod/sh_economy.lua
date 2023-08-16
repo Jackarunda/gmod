@@ -52,8 +52,8 @@ JMod.RefiningTable = {
 JMod.EnergyEconomyParameters = {
 	BasePowerConversions = {
 		[JMod.EZ_RESOURCE_TYPES.FUEL] = 11,
-		[JMod.EZ_RESOURCE_TYPES.COAL] = 8,
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = 3
+		[JMod.EZ_RESOURCE_TYPES.COAL] = 4,
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = 1
 	},
 	FuelGennyEfficiencies = {
 		[JMod.EZ_GRADE_BASIC] = .2,
