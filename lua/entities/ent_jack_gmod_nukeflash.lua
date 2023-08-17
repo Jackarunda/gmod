@@ -114,7 +114,6 @@ if SERVER then
 			self.LifeDuration = self.LifeDuration or 10
 			self.MaxAltitude = self.MaxAltitude or 2000
 			self.DieTime = CurTime() + self.LifeDuration
-			jprint(self.LifeDuration)
 		end
 	end
 

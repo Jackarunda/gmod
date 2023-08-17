@@ -44,17 +44,17 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = Vector(math.random(-400, 400), math.random(-400, 400), math.random(-100, 100))
+		local RandDir = Vector(math.random(-200, 200), math.random(-200, 200), math.random(-100, 100))
 		--RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -5)
+		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -50)
 
-		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
+		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange*2)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
 					Force = Force - Vec * 1
-				elseif self.NextDmg < Time and self:ShouldDamage(obj) then
+				elseif self.NextDmg < Time and SelfPos:Distance(obj:GetPos()) <= self.AffectRange and self:ShouldDamage(obj) then
 					self:DamageObj(obj)
 				end
 			end
@@ -74,7 +74,7 @@ if SERVER then
 			start = SelfPos,
 			endpos = NewPos,
 			filter = { self, self.Canister },
-			mask = MASK_SHOT
+			mask = MASK_SHOT+MASK_WATER
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
@@ -85,7 +85,7 @@ if SERVER then
 			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
 			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
 			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
-			self.CurVel = -(CurVelAng:Forward() * Speed)
+			self.CurVel = -(CurVelAng:Forward() * Speed * 2)
 		end
 	end
 	--

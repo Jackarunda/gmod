@@ -223,7 +223,8 @@ if SERVER then
 		---
 		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
 		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		self.LifeDuration = 4
+		NukeFlash.LifeDuration = 4
+		NukeFlash.MaxAltitude = 500
 		NukeFlash:Spawn()
 		NukeFlash:Activate()
 

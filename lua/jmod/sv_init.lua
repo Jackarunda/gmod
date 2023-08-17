@@ -143,6 +143,9 @@ function JMod.GeigerCounterSound(ply, intensity)
 	if intensity <= .1 and math.random(1, 2) == 1 then return end
 	local Num = math.Clamp(math.Round(math.Rand(0, intensity) * 15), 1, 10)
 	ply:EmitSound("snds_jack_gmod/geiger" .. Num .. ".wav", 55, math.random(95, 105))
+	--local Leaf = EffectData()
+	--Leaf:SetOrigin(ply:GetPos() + VectorRand(-100, 100) + Vector(0, 0, 64))
+	--util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
 end
 
 function JMod.FalloutIrradiate(self, obj)

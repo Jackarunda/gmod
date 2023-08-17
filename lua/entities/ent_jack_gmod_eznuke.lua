@@ -219,7 +219,7 @@ if SERVER then
 
 		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
 		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		self.LifeDuration = 10
+		NukeFlash.LifeDuration = 10
 		NukeFlash:Spawn()
 		NukeFlash:Activate()
 
