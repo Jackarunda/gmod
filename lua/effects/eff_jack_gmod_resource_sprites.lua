@@ -48,7 +48,6 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	local SurfaceProp = data:GetSurfaceProp()
 	self.Speed = math.Rand(.9, 1.1)
-	self.LifeTime = self.Scale * math.Rand(.8, 1.5)
 
 	if SurfaceProp == 0 then
 		self.Target = nil -- directionless explosion
@@ -94,7 +93,7 @@ function EFFECT:Init(data)
 		end
 	end
 
-	self.DieTime = CurTime() + math.Rand(3, 6)
+	self.DieTime = CurTime() + math.Rand(1.2, 1.5)
 end
 
 function EFFECT:PhysicsCollide()
@@ -118,7 +117,7 @@ function EFFECT:Think()
 		end
 
 		if IsValid(Phys) then
-			Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
+			Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * 1 * self.Speed - Phys:GetVelocity() / 4)
 		end
 	end
 

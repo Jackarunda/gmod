@@ -154,7 +154,7 @@ if(SERVER)then
 				local NRGperFuel = 1 * JMod.EnergyEconomyParameters.SteamGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
-				local SpeedModifier = .3
+				local SpeedModifier = 4
 
 				if self:GetWater() <= 0 or self:GetElectricity() <= 0 then
 					self:TurnOff()
@@ -175,11 +175,9 @@ if(SERVER)then
 			if (State == STATE_ON) then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos() + Up * 90 + Forward * 70)
-				Eff:SetNormal(JMod.Wind:GetNormalized())
-				Eff:SetStart(Vector(.1, .1, .1))
-				Eff:SetAngles(Angle(50*Grade, 50*Grade, 50*Grade))
-				Eff:SetScale(.05)
-				util.Effect("eff_jack_gmod_ezsmokesignal", Eff, true)
+				Eff:SetNormal(Up)
+				Eff:SetScale(1)
+				util.Effect("eff_jack_gmod_ezexhaust", Eff, true)
 				--
 			end
 		end

@@ -147,7 +147,7 @@ if(SERVER)then
 				local NRGperFuel = 4 * JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
-				local SpeedModifier = .5
+				local SpeedModifier = .3
 
 				self:ConsumeFuel(FuelToConsume * SpeedModifier)
 
