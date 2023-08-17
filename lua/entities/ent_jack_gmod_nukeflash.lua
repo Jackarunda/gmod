@@ -123,15 +123,17 @@ if SERVER then
 	function ENT:Think()
 		local Time = CurTime()
 
-		if self.LifeDuration and (self.DieTime > Time) then
-			local MaxBrightness = 5000
-			local LifeFrac = (self.DieTime - Time) / self.LifeDuration
-			--jprint(ThinkRate)
-			self:SetBrightness(MaxBrightness * math.ease.OutCubic(LifeFrac))
-			self:SetPos(self:GetPos() + Vector(0, 0, self.MaxAltitude / self.LifeDuration * ThinkRate))
-		else
-			self:SetActiveState(false)
-			self:Remove()
+		if self.LifeDuration then
+			if (self.DieTime > Time) then
+				local MaxBrightness = 5000
+				local LifeFrac = (self.DieTime - Time) / self.LifeDuration
+				--jprint(ThinkRate)
+				self:SetBrightness(MaxBrightness * math.ease.OutCubic(LifeFrac))
+				self:SetPos(self:GetPos() + Vector(0, 0, self.MaxAltitude / self.LifeDuration * ThinkRate))
+			else
+				self:SetActiveState(false)
+				self:Remove()
+			end
 		end
 
 		self:NextThink(CurTime() + ThinkRate)

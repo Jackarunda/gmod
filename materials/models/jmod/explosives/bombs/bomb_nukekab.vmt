@@ -1,14 +1,14 @@
 "VertexLitGeneric"
 {
 	"$baseTexture" "models/jmod/explosives/bombs/bomb_nukekab01b"
-//  "$bumpmap" "models/jmod/explosives/bombs/bomb_nukekab_normal"
+	"$bumpmap" "models/jmod/explosives/bombs/bomb_nukekab_normal"
 
 	"$phong" "1"
 	"$phongexponent" "40"
 	"$phongboost" "2"
-	"$phongfresnelranges" "[.1 .1 .1]"
-	"$halflambert" "1"
-	"$model" "1"
+	"$phongfresnelranges" "[.2 .2 .2]"
+//	"$halflambert" "1"
+//	"$model" "1"
 
 	"$surfaceprop" "metal"
 

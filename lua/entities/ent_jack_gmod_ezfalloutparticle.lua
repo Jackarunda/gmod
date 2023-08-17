@@ -44,7 +44,7 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = VectorRand() * math.random(24, 400)
+		local RandDir = Vector(math.random(-400, 400), math.random(-400, 400), math.random(-100, 100))
 		--RandDir.z = RandDir.z / 2
 		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -5)
 
