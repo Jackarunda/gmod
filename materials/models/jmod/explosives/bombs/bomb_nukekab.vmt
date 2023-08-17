@@ -1,12 +1,19 @@
 "VertexLitGeneric"
 {
-	"$baseTexture" "models/jmod/explosives/bombs/bomb_nukekab"
-    "$bumpmap" "models/jmod/explosives/bombs/bomb_nukekab_normal"
+	"$baseTexture" "models/jmod/explosives/bombs/bomb_nukekab01b"
+//  "$bumpmap" "models/jmod/explosives/bombs/bomb_nukekab_normal"
+
 	"$phong" "1"
 	"$phongexponent" "40"
 	"$phongboost" "2"
-	"$phongfresnelranges" "[.05 .5 1]"
+	"$phongfresnelranges" "[.1 .1 .1]"
 	"$halflambert" "1"
-	"$model" 1
+	"$model" "1"
 
+	"$surfaceprop" "metal"
+
+	"$detail" "models/tex_jack_scratchedmetal"
+	"$detailscale" "1.00"
+	"$detailblendfactor" "1.0"
+	"$detailblendmode" "0"
 }
