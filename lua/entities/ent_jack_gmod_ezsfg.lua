@@ -18,7 +18,7 @@ ENT.SpawnHeight = 5
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 200,
-	MaxWater = 500
+	MaxWater = 300
 }
 
 ENT.DynamicPerfSpecs = {

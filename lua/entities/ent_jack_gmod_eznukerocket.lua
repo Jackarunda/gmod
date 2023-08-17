@@ -351,6 +351,7 @@ elseif CLIENT then
 
 	--
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
+	local Trefoil = Material("png_jack_gmod_radiation.png")
 
 	function ENT:Draw()
 		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
@@ -359,6 +360,29 @@ elseif CLIENT then
 		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
 		self.Mdl:SetRenderAngles(Ang)
 		self.Mdl:DrawModel()
+
+		local Ang, Pos = self:GetAngles(), self:GetPos()
+		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(Pos)
+		local DetailDraw = Closeness < 21000
+
+		if DetailDraw then
+			local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
+			Ang:RotateAroundAxis(Ang:Up(), 90)
+			Ang:RotateAroundAxis(Ang:Forward(), 180)
+			
+			cam.Start3D2D(Pos - Up * 14.5 - Right * 3 + Forward * 3, Ang, .025)
+			surface.SetDrawColor(255, 255, 255, 120)
+			surface.SetMaterial(Trefoil)
+			surface.DrawTexturedRect(-128, 160, 512, 512)
+			cam.End3D2D()
+			---
+			Ang:RotateAroundAxis(Ang:Forward(), 180)
+			cam.Start3D2D(Pos - Up * 9.4 + Right * 9.9 + Forward * 0, Ang, .025)
+			surface.SetDrawColor(255, 255, 255, 120)
+			surface.SetMaterial(Trefoil)
+			--surface.DrawTexturedRect(-128, 160, 256, 256)
+			cam.End3D2D()
+		end
 
 		if self:GetState() == STATE_LAUNCHED then
 			self.BurnoutTime = self.BurnoutTime or CurTime() + 1
