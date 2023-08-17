@@ -175,7 +175,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Resources",
 					results = "ent_jack_gmod_ezadvtextiles"
 				},
-				["batteries"] = {
+				["power"] = {
 					description = "4 battery cells used for crafting and recharging electronics.",
 					category = "Resources",
 					results = {
@@ -713,10 +713,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25
 				},
-				sizeScale = 1,
+				sizeScale = 2,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Scans the ground for resource deposits when held still on solid ground."
+				description = "Scans the ground for resource deposits when held still on solid ground. \nDoubles as a form of psychological torture."
 			},
 			["EZ Solar Panel"] = {
 				results = "ent_jack_gmod_ezsolargenerator",
@@ -807,7 +807,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizescale = 2,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "Bigger than the EZ bomb, but smaller than the Mega."
+				description = "Bigger than the EZ Bomb, but smaller than the Mega."
 			},
 			["EZ Bomb"] = {
 				results = "ent_jack_gmod_ezbomb",
@@ -949,10 +949,24 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 300,
 					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200
 				},
-				sizeScale = 1,
+				sizeScale = 2,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "Half the map is gonna be gone along with the bunker."
+				description = "Powerful nuclear weapon that will easily level a large portion of the map."
+			},
+			["EZ Nuclear Rocket"] = {
+				results = "ent_jack_gmod_eznukerocket",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 300,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 300
+				},
+				sizeScale = 4,
+				category = "Explosives",
+				craftingType = "toolbox",
+				description = "High velocity map deletion."
 			},
 			["EZ Mini Naval Mine"] = {
 				results = "ent_jack_gmod_eznavalmine",
@@ -960,10 +974,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 200
 				},
-				sizeScale = 1,
+				sizeScale = 2,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "Ships beware! This mine is ready to send em to davy jones' locker!"
+				description = "Ships beware! This mine is ready to send em to Davy Jones' locker!"
 			},
 			["EZ Nano Nuclear Bomb"] = {
 				results = "ent_jack_gmod_eznuke_small",
@@ -976,17 +990,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = 1,
 				category = "Explosives",
 				craftingType = "toolbox",
-				description = "as the Mega bomb, while also having radiation as a bonus."
+				description = "Weak nuclear bomb, though easily transportable."
 			},
 			["EZ Resource Crate"] = {
 				results = "ent_jack_gmod_ezcrate",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 100
 				},
-				sizeScale = 1.5,
+				sizeScale = 2,
 				category = "Other",
 				craftingType = "toolbox",
-				description = "Store your resources here, so you don't have to stack em so much in the warehouse."
+				description = "Store your resources here for clean organization and automatic pulling when crafting."
 			},
 			["EZ Fuel Lantern"] = {
 				results = "ent_jack_gmod_ezfuellantern",
@@ -1019,7 +1033,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100
 				},
-				sizeScale = 1,
+				sizeScale = 1.5,
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "A small alternative to the EZ Bomb, it has airbrakes for low altitude bombing."
@@ -1095,7 +1109,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = 3,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Craft parts here. Only for advanced players."
+				description = "Highly advanced machine used for manufacturing Parts."
 			},
 			["EZ Pumpjack"] = {
 				results = "ent_jack_gmod_ezpumpjack",
@@ -1142,12 +1156,12 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50
 				},
-				sizeScale = 10,
+				sizeScale = 8,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Machine for compressing air into EZ gas and bottling water. \nAlso cleans the air of toxins and radioactive fallout"
+				description = "Machine for compressing air into EZ gas and bottling water. \nAlso cleans the air of toxins and radioactive fallout."
 			},
-			["EZ Steam Generator"] = {
+			["EZ Solid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezsfg",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
@@ -1158,7 +1172,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = 8,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Machine that takes water and coal or wood to produce power"
+				description = "Generator that uses coal or wood to heat water to produce power."
 			},
 			["EZ Sprinkler"] = {
 				results = "ent_jack_gmod_ezsprinkler",

@@ -91,9 +91,9 @@ if(SERVER)then
 			end)
 		
 		elseif self:GetElectricity() <= 0 then 
-				JMod.Hint(activator, "need fuel")
+				JMod.Hint(activator, "need combustibles")
 		elseif self:GetWater() <= 0 then
-				JMod.Hint(activator, "refill geo")
+				JMod.Hint(activator, "refill sfg water")
 		end
 			
 	end

@@ -406,6 +406,15 @@ JMod.Hints = {
 	["refill geo"] = {
 		LangKey = "hint refill geo"
 	},
+	["refill sfg water"] = {
+		LangKey = "hint refill sfg water"
+	},
+	["need combustibles"] = {
+		LangKey = "hint need combustibles"
+	},
+	["ent_jack_gmod_ezsfg"] = {
+		LangKey = "hint ent_jack_gmod_ezsfg"
+	},
 	["ent_jack_gmod_eztoolbox"] = {
 		LangKey = "hint ent_jack_gmod_eztoolbox"
 	},
