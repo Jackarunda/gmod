@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Corn"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = true
+ENT.Spawnable = false -- For now...
 ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --

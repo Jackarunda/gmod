@@ -14,7 +14,7 @@ function EFFECT:Init(data)
 		if RollParticle then
 			RollParticle:SetVelocity(Vel + Norm * math.random(50, 100) + VectorRand() * 10 * (Scl ^.8))
 			RollParticle:SetAirResistance(100)
-			RollParticle:SetDieTime(math.Rand(2, 12) * Scl)
+			RollParticle:SetDieTime(math.Rand(2, 12))
 			RollParticle:SetStartAlpha(math.random(150, 200))
 			RollParticle:SetEndAlpha(0)
 			local Size = math.Rand(20, 40)

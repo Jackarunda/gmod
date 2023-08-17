@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.61,
+			Version = 42.62,
 		},
 		General = {
 			Hints = true,
@@ -1146,6 +1146,30 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Machine for compressing air into EZ gas and bottling water. \nAlso cleans the air of toxins and radioactive fallout"
+			},
+			["EZ Steam Generator"] = {
+				results = "ent_jack_gmod_ezsfg",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 250,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 8,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Machine that takes water and coal or wood to produce power"
+			},
+			["EZ Sprinkler"] = {
+				results = "ent_jack_gmod_ezsprinkler",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 20,
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Machine for watering trees and other EZ crops."
 			},
 			["HL2 Buggy"] = {
 				results = "FUNC spawnHL2buggy",

@@ -228,13 +228,15 @@ if(SERVER)then
 		local Pos = self:GetPos()
 		local Foof = EffectData()
 		Foof:SetOrigin(Pos + self:GetUp() * 10)
-		Foof:SetNormal(self:GetUp())
+		--Foof:SetNormal(self:GetUp())
 		Foof:SetScale(50)
-		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+		Foof:SetStart(self:GetPhysicsObject():GetVelocity() + VectorRand() * math.random(10, 100))
 		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
 
-		local Range = 250
+		local Steeam = (self:GetWater() / self.MaxWater) / (self:GetElectricity() / self.MaxElectricity)
+
+		local Range = 250 * Steeam
 		for _, ent in pairs(ents.FindInSphere(Pos, Range)) do
 			if ent ~= self then
 				local DDistance = Pos:Distance(ent:GetPos())
@@ -242,7 +244,7 @@ if(SERVER)then
 
 				if JMod.ClearLoS(self, ent) then
 					local Dmg = DamageInfo()
-					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
+					Dmg:SetDamage(100 * DistanceFactor * Steeam) -- wanna scale this with distance
 					Dmg:SetDamageType(DMG_BURN)
 					Dmg:SetDamageForce(Vector(0, 0, 5000) * DistanceFactor) -- some random upward force
 					Dmg:SetAttacker((IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker()) or game.GetWorld()) -- the earth is mad at you

@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Corn Cob"
 ENT.Category = "JMod - EZ Misc."
-ENT.Spawnable = true
+ENT.Spawnable = false -- For now...
 ENT.AdminOnly = false
 ENT.JModEZstorable = true
 
