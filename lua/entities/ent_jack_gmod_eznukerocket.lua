@@ -211,7 +211,7 @@ if SERVER then
 		for k, ply in pairs(player.GetAll()) do
 			local Dist = ply:GetPos():Distance(SelfPos)
 
-			if (Dist > 1000) and (Dist < 15000) then
+			if (Dist > 1000) and (Dist < 120000) then
 				timer.Simple(Dist / 6000, function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 90)
 					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
@@ -219,6 +219,13 @@ if SERVER then
 				end)
 			end
 		end
+
+		---
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+		self.LifeDuration = 4
+		NukeFlash:Spawn()
+		NukeFlash:Activate()
 
 		---
 		for i = 1, 5 do
@@ -367,20 +374,21 @@ elseif CLIENT then
 
 		if DetailDraw then
 			local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
-			Ang:RotateAroundAxis(Ang:Up(), 90)
+			Ang:RotateAroundAxis(Ang:Up(), 0)
+			Ang:RotateAroundAxis(Ang:Right(), 90)
 			Ang:RotateAroundAxis(Ang:Forward(), 180)
 			
-			cam.Start3D2D(Pos - Up * 14.5 - Right * 3 + Forward * 3, Ang, .025)
+			cam.Start3D2D(Pos - Up * 4 - Right * 3 + Forward * 16, Ang, .05)
 			surface.SetDrawColor(255, 255, 255, 120)
 			surface.SetMaterial(Trefoil)
-			surface.DrawTexturedRect(-128, 160, 512, 512)
+			surface.DrawTexturedRect(0, 0, 256, 256)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Forward(), 180)
-			cam.Start3D2D(Pos - Up * 9.4 + Right * 9.9 + Forward * 0, Ang, .025)
+			cam.Start3D2D(Pos - Up * 4 - Right * 3 - Forward * 16, Ang, .05)
 			surface.SetDrawColor(255, 255, 255, 120)
 			surface.SetMaterial(Trefoil)
-			--surface.DrawTexturedRect(-128, 160, 256, 256)
+			surface.DrawTexturedRect(0, 0, 256, 256)
 			cam.End3D2D()
 		end
 

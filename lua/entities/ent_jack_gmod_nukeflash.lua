@@ -52,7 +52,7 @@ function ENT:SetupDataTables()
 		Edit = {
 			type = "Float",
 			min = 0.01,
-			max = 15,
+			max = 5000,
 			title = "Brightness",
 			order = 3,
 			category = "Light"
@@ -64,7 +64,7 @@ function ENT:SetupDataTables()
 		Edit = {
 			type = "Float",
 			min = 32,
-			max = 2048,
+			max = 20000,
 			title = "Size",
 			order = 5,
 			category = "Light"
@@ -108,12 +108,33 @@ end
 if SERVER then
 	function ENT:Initialize()
 		BaseClass.Initialize(self)
-		self.LifeDuration = 10
-		self.DieTime = CurTime() + self.LifeDuration
+		if not self.Sandbox then
+			self:SetDrawHelper(false)
+			self:SetBrightness(100)
+			self.LifeDuration = self.LifeDuration or 10
+			self.MaxAltitude = self.MaxAltitude or 2000
+			self.DieTime = CurTime() + self.LifeDuration
+			jprint(self.LifeDuration)
+		end
 	end
 
+	local ThinkRate = 60 / 1200 --HZ
+
 	function ENT:Think()
-		self:NextThink(CurTime() + .05)
+		local Time = CurTime()
+
+		if self.LifeDuration and (self.DieTime > Time) then
+			local MaxBrightness = 5000
+			local LifeFrac = (self.DieTime - Time) / self.LifeDuration
+			--jprint(ThinkRate)
+			self:SetBrightness(MaxBrightness * math.ease.OutCubic(LifeFrac))
+			self:SetPos(self:GetPos() + Vector(0, 0, self.MaxAltitude / self.LifeDuration * ThinkRate))
+		else
+			self:SetActiveState(false)
+			self:Remove()
+		end
+
+		self:NextThink(CurTime() + ThinkRate)
 
 		return true
 	end
@@ -125,6 +146,7 @@ if SERVER then
 	function ENT:SpawnFunction(ply, tr, ClassName)
 		if not tr.Hit then return end
 		local ent = ents.Create(ClassName)
+		--ent.Sandbox = true
 		ent:SetPos(tr.HitPos + (tr.HitNormal * 32))
 		ent:Spawn()
 		ent:Activate()
