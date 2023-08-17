@@ -16,8 +16,8 @@ ENT.Mass = 400
 ENT.SpawnHeight = 5
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
-	MaxElectricity = 200,
+	MaxDurability = 120,
+	MaxElectricity = 500,
 	MaxWater = 300
 }
 
@@ -139,7 +139,7 @@ if(SERVER)then
 	end
 
 	function ENT:ConsumeWater(amt)
-		amt = (amt or .2)/(self.ElectricalEfficiency or 1)
+		amt = (amt or .2)
 		local NewAmt = math.Clamp(self:GetWater() - amt, 0.0, self.MaxWater)
 		self:SetWater(NewAmt)
 	end
@@ -151,18 +151,18 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local NRGperFuel = 1
-				local GradeModifier = JMod.EZ_GRADE_BUFFS[Grade]
-				local PowerToProduce = GradeModifier * NRGperFuel
-				local SpeedModifier = .25
+				local NRGperFuel = 1 * JMod.EnergyEconomyParameters.SteamGennyEfficiencies[Grade]
+				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
+				local PowerToProduce = FuelToConsume * NRGperFuel
+				local SpeedModifier = .3
 
 				if self:GetWater() <= 0 or self:GetElectricity() <= 0 then
 					self:TurnOff()
 				end
 
-				self:ConsumeElectricity(GradeModifier * SpeedModifier * 1.12)
+				self:ConsumeElectricity(FuelToConsume * SpeedModifier)
 
-				self:ConsumeWater(GradeModifier * 0.44 * SpeedModifier)
+				self:ConsumeWater(FuelToConsume * 0.4 * JMod.EnergyEconomyParameters.SteamGennyEfficiencies[Grade] * SpeedModifier)
 
 				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
 
@@ -200,7 +200,7 @@ if(SERVER)then
 			self.NextEnvThink = Time + 3
 			if (State == STATE_ON) then
 				local Tr = util.QuickTrace(self:GetPos() + Forward * 120, Vector(0, 0, 9e9), self)
-				if not (Tr.HitSky) and (math.random(1, 3) == 1) then
+				if not (Tr.HitSky) and (math.random(1, Grade) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 					Gas:SetPos(self:GetPos() + Forward * 120 + Vector(0, 0, 100))
 					JMod.SetEZowner(Gas, self.EZowner)

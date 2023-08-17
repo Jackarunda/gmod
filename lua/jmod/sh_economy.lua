@@ -52,10 +52,17 @@ JMod.RefiningTable = {
 JMod.EnergyEconomyParameters = {
 	BasePowerConversions = {
 		[JMod.EZ_RESOURCE_TYPES.FUEL] = 11,
-		[JMod.EZ_RESOURCE_TYPES.COAL] = 4,
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = 1
+		[JMod.EZ_RESOURCE_TYPES.COAL] = 7,
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = 4.4
 	},
 	FuelGennyEfficiencies = {
+		[JMod.EZ_GRADE_BASIC] = .2,
+		[JMod.EZ_GRADE_COPPER] = .275,
+		[JMod.EZ_GRADE_SILVER] = .35,
+		[JMod.EZ_GRADE_GOLD] = .425,
+		[JMod.EZ_GRADE_PLATINUM] = .5
+	},
+	SteamGennyEfficiencies = {
 		[JMod.EZ_GRADE_BASIC] = .2,
 		[JMod.EZ_GRADE_COPPER] = .275,
 		[JMod.EZ_GRADE_SILVER] = .35,
