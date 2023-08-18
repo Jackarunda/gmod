@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Nuclear Rocket"
-ENT.Spawnable = true -- temporary, until we fix the textures and drawfunc
+ENT.Spawnable = false -- temporary, until we fix the textures and drawfunc
 ENT.AdminOnly = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
@@ -135,7 +135,7 @@ if SERVER then
 
 	function ENT:JModEZremoteTriggerFunc(ply)
 		if not (IsValid(ply) and ply:Alive() and (ply == self.EZowner)) then return end
-		if not ((self:GetState() == STATE_ARMED) or (self:GetState() == STATE_LAUNCHED)) then return end
+		if not ((self:GetState() == STATE_LAUNCHED)) then return end
 		self:Detonate()
 	end
 

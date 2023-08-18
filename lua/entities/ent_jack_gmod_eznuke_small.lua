@@ -266,7 +266,7 @@ if SERVER then
 		timer.Simple(5, function()
 			for j = 1, 10 do
 				timer.Simple(j / 10, function()
-					for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
+					for k = 1, 5 * JMod.Config.Particles.NuclearRadiationMult do
 						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 						Gas:SetPos(SelfPos)
 						JMod.SetEZowner(Gas, Att)
