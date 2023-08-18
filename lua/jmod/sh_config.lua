@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.62,
+			Version = 42.63,
 		},
 		General = {
 			Hints = true,
@@ -222,6 +222,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezfuel", 2}
+					}
+				},
+				["coal"] = {
+					description = "300 units of Coal, used for running generators.",
+					category = "Resources",
+					results = {
+						{"ent_jack_gmod_ezcoal", 3}
 					}
 				},
 				["propellant"] = {
