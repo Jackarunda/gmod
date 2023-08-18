@@ -193,6 +193,13 @@ if SERVER then
 
 		---
 		SendClientNukeEffect(SelfPos, 8000)
+		---
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+		NukeFlash.LifeDuration = 2
+		NukeFlash.MaxAltitude = 1000
+		NukeFlash:Spawn()
+		NukeFlash:Activate()
 
 		for h = 1, 40 do
 			timer.Simple(h / 10, function()
@@ -217,14 +224,6 @@ if SERVER then
 				end)
 			end
 		end
-
-		---
-		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
-		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		NukeFlash.LifeDuration = 2
-		NukeFlash.MaxAltitude = 1000
-		NukeFlash:Spawn()
-		NukeFlash:Activate()
 
 		---
 		for i = 1, 5 do

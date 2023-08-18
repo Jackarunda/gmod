@@ -182,20 +182,27 @@ if SERVER then
 		end)
 
 		---
-		util.ScreenShake(SelfPos, 1000, 10, 5, 8000)
-		local Eff = "pcf_jack_moab"
+		SendClientNukeEffect(SelfPos, 12000)
+		util.ScreenShake(SelfPos, 1000, 10, 10, 2000 * Range)
+		local Eff = "pcf_jack_nuke_ground"
 
 		if not util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld then
-			Eff = "pcf_jack_moab_air"
+			Eff = "pcf_jack_nuke_air"
 		end
 
-		for i = 1, 10 do
+		for i = 1, 19 do
 			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
 		end
 
 		---
-		SendClientNukeEffect(SelfPos, 9000)
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+		NukeFlash.LifeDuration = 10
+		NukeFlash.MaxAltitude = 500
+		NukeFlash:Spawn()
+		NukeFlash:Activate()
 
+		---
 		for h = 1, 50 do
 			timer.Simple(h / 10, function()
 				local ThermalRadiation = DamageInfo()
@@ -211,58 +218,69 @@ if SERVER then
 		for k, ply in pairs(player.GetAll()) do
 			local Dist = ply:GetPos():Distance(SelfPos)
 
-			if (Dist > 1000) and (Dist < 120000) then
+			if Dist > 1000 then
 				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 90)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
-					util.ScreenShake(ply:GetPos(), 1000, 10, 5, 100)
+					ply:EmitSound("snds_jack_gmod/nuke_far.mp3", 55, 100)
+					util.ScreenShake(ply:GetPos(), 1000, 10, 10, 100)
 				end)
 			end
 		end
 
 		---
-		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
-		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		NukeFlash.LifeDuration = 4
-		NukeFlash.MaxAltitude = 500
-		NukeFlash:Spawn()
-		NukeFlash:Activate()
+		for i = 1, 20 do
+			timer.Simple(i / 4, function()
+				SelfPos = SelfPos + Vector(0, 0, 100)
+				---
+				local powa, renj = 10 + i * 2.5 * Power, 1 + i / 10 * Range
 
-		---
-		for i = 1, 5 do
-			timer.Simple(i / 5, function()
-				util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 200 * i), 6000 * Range, 300 * Power)
+				---
+				if i == 1 then
+					JMod.EMP(SelfPos, renj * 10000)
+
+					for k, ent in pairs(ents.FindInSphere(SelfPos, renj)) do
+						if ent:GetClass() == "npc_helicopter" then
+							ent:Fire("selfdestruct", "", math.Rand(0, 2))
+						end
+					end
+				end
+
+				---
+				util.BlastDamage(game.GetWorld(), Att, SelfPos, 1600 * i * Range, 300 / i * Power)
+
+				---
+				JMod.WreckBuildings(nil, SelfPos, powa, renj, i < 3)
+				JMod.BlastDoors(nil, SelfPos, powa, renj, i < 3)
+				---
+				SendClientNukeEffect(SelfPos, 2000 * renj)
+
+				---
+				if i == 10 then
+					JMod.DecalSplosion(SelfPos + Vector(0, 0, 500) + Vector(0, 0, 1000), "GiantScorch", 8000, 40)
+				end
+
+				---
+				if i == 20 then
+					for j = 1, 10 do
+						timer.Simple(j / 10, function()
+							for k = 1, 20 * JMod.Config.Particles.NuclearRadiationMult do
+								local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
+								Gas:SetPos(SelfPos + Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 100)))
+								JMod.SetEZowner(Gas, Att)
+								Gas:Spawn()
+								Gas:Activate()
+								Gas.CurVel = (Vector(math.random(-500, 500), math.random(-500, 500), math.random(800, 1200)) * JMod.Config.Particles.NuclearRadiationMult)
+							end
+						end)
+					end
+				end
 			end)
 		end
 
 		---
-		for k, ent in pairs(ents.FindInSphere(SelfPos, 3000)) do
-			if ent:GetClass() == "npc_helicopter" then
-				ent:Fire("selfdestruct", "", math.Rand(0, 2))
-			end
-		end
-
-		---
-		JMod.WreckBuildings(self, SelfPos, 15)
-		JMod.BlastDoors(self, SelfPos, 15)
-
-		---
-		timer.Simple(.2, function()
-			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
-
-			if Tr.Hit then
-				util.Decal("GiantScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-			end
-		end)
-
-		---
 		self:Remove()
 
-		timer.Simple(.1, function()
+		timer.Simple(0, function()
 			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
-			local Eff = EffectData()
-			Eff:SetOrigin(SelfPos)
-			util.Effect("eff_jack_gmod_tinynukeflash", Eff, true, true)
 		end)
 
 		---

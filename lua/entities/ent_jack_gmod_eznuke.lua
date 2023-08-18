@@ -206,6 +206,13 @@ if SERVER then
 		end
 
 		---
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+		NukeFlash.LifeDuration = 10
+		NukeFlash:Spawn()
+		NukeFlash:Activate()
+
+		---
 		for k, ply in pairs(player.GetAll()) do
 			local Dist = ply:GetPos():Distance(SelfPos)
 
@@ -216,12 +223,6 @@ if SERVER then
 				end)
 			end
 		end
-
-		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
-		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		NukeFlash.LifeDuration = 10
-		NukeFlash:Spawn()
-		NukeFlash:Activate()
 
 		---
 		for h = 1, 80 do
@@ -244,16 +245,16 @@ if SERVER then
 				---
 				if i == 1 then
 					JMod.EMP(SelfPos, renj * 10000)
+
+					for k, ent in pairs(ents.FindInSphere(SelfPos, renj)) do
+						if ent:GetClass() == "npc_helicopter" then
+							ent:Fire("selfdestruct", "", math.Rand(0, 2))
+						end
+					end
 				end
 
 				---
 				util.BlastDamage(game.GetWorld(), Att, SelfPos, 1600 * i * Range, 300 / i * Power)
-
-				for k, ent in pairs(ents.FindInSphere(SelfPos, renj)) do
-					if ent:GetClass() == "npc_helicopter" then
-						ent:Fire("selfdestruct", "", math.Rand(0, 2))
-					end
-				end
 
 				---
 				JMod.WreckBuildings(nil, SelfPos, powa, renj, i < 3)
