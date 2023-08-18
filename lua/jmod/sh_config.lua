@@ -954,7 +954,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Powerful nuclear weapon that will easily level a large portion of the map."
 			},
-			["EZ Nuclear Rocket"] = {
+			--[[["EZ Nuclear Rocket"] = {
 				results = "ent_jack_gmod_eznukerocket",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
@@ -967,7 +967,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "High velocity map deletion."
-			},
+			},]]--
 			["EZ Mini Naval Mine"] = {
 				results = "ent_jack_gmod_eznavalmine",
 				craftingReqs = {
