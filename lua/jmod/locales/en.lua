@@ -201,6 +201,8 @@
     ["hint refillfab"] = "Fill the fabricator with power, gas, chemicals and water to enable making parts",
     ["hint ent_jack_gmod_ezgroundscanner"] = "The EZ Ground Scanner detects resource deposits, metallic props and mines",
     ["hint ent_jack_gmod_ezsolargenerator"] = "The EZ Solar Panel produces power when aimed at the map's sun without obstruction",
+	["hint ent_jack_gmod_ezsprinkler"] = "The EZ Sprinkler waters EZ plants in a radius, puts out fires, and removes decals",
+	["hint sprinkler water"] = "This sprinkler needs water to run, refill it or put a crate with water next to it",
 	["hint alt to plant"] = "press ALT+E to plant seed(s) in suitable area",
 	["hint tree growth"] = "trees grow best on grass or dirt, in full sunlight, and near a body of water",
 	["hint plant water"] = "your plant is becoming dehydrated, tap with a Water barrel to refresh",
