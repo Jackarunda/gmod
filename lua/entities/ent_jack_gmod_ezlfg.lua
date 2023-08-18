@@ -144,7 +144,7 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local NRGperFuel = 4 * JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
+				local NRGperFuel = 3 * JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
 				local SpeedModifier = .3
