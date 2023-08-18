@@ -38,7 +38,7 @@ JMod.SmeltingTable = {
 
 JMod.RefiningTable = {
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 3,
+		[JMod.EZ_RESOURCE_TYPES.FUEL] = 4,
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
 		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .5,
 		[JMod.EZ_RESOURCE_TYPES.GAS] = .2
@@ -51,9 +51,9 @@ JMod.RefiningTable = {
 -- https://docs.google.com/spreadsheets/d/1-U5iuH2o6hzwhsHVbSRiBa6NJhib-sj8xQcId_e3H_s/edit#gid=0
 JMod.EnergyEconomyParameters = {
 	BasePowerConversions = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 11,
-		[JMod.EZ_RESOURCE_TYPES.COAL] = 7,
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = 4.4
+		[JMod.EZ_RESOURCE_TYPES.FUEL] = 12,
+		[JMod.EZ_RESOURCE_TYPES.COAL] = 8,
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = 4
 	},
 	FuelGennyEfficiencies = {
 		[JMod.EZ_GRADE_BASIC] = .2,
@@ -105,7 +105,7 @@ JMod.ResourceDepositInfo = {
 	},]]--
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
 		frequency = 8,
-		avgamt = 500,
+		avgamt = 600,
 		avgsize = 300,
 		boosts = {
 			water = 2
@@ -114,7 +114,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.COAL] = {
 		frequency = 12,
-		avgamt = 500,
+		avgamt = 800,
 		avgsize = 300,
 		limits = {
 			nowater = true
