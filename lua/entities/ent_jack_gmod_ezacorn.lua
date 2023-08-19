@@ -153,7 +153,7 @@ if SERVER then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
-			if self.EZremoveSelf and (Time - 60 > self.LastTouchedTime) then
+			if self.EZremoveSelf and (Time - 300 > self.LastTouchedTime) then
 				self:Degenerate()
 			end
 		elseif State == STATE_BURIED then
