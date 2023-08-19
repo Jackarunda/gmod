@@ -771,7 +771,7 @@ function JMod.GetSalvageYield(ent)
 
 		if ent.EZupgradable then
 			local Grade = ent:GetGrade()
-			if Grade > 0 then
+			if Grade > 1 then
 				for k, v in pairs(ent.UpgradeCosts[Grade]) do
 					Results[k] = (Results[k] or 0) + math.Round(v*.9)
 				end
