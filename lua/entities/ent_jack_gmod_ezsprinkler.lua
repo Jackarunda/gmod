@@ -17,6 +17,7 @@ ENT.SpawnHeight = 1
 ENT.SprayRange = 400
 --
 ENT.StaticPerfSpecs = {
+	MaxElectricity = 100,
 	MaxDurability = 100,
 	MaxWater = 200,
 	--MaxFuel = 200,
@@ -79,8 +80,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() <= STATE_BROKEN then return end
-		if self:GetElectricity() <= 0 then return end
-		if (self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0) then
+		if (self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0) and self:GetElectricity() > 0 then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
@@ -90,10 +90,10 @@ if(SERVER)then
 			self.SoundLoop:SetSoundLevel(60)
 		else
 			self.NextUseTime = CurTime() + 1
-			if self:GetLiquidType() == JMod.EZ_RESOURCE_TYPES.FUEL then
-				JMod.Hint(activator, "need fuel")
+			if self:GetElectricity() <= 0 then 
+				JMod.Hint(activator, "nopower")
 			elseif self:GetLiquidType() == JMod.EZ_RESOURCE_TYPES.WATER then
-				JMod.Hint(activator, "need water")
+				JMod.Hint(activator, "sprinkler water")
 			end
 		end
 	end

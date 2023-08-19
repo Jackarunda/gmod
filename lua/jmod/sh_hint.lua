@@ -280,7 +280,7 @@ JMod.Hints = {
 	},
 	["nopower"] = {
 		LangKey = "hint nopower",
-		RepeatCount = 3
+		RepeatCount = 10
 	},
 	["nopower_trifuel"] = {
 		LangKey = "hint nopower trifuel",
@@ -410,7 +410,15 @@ JMod.Hints = {
 		LangKey = "hint refill sfg water"
 	},
 	["need combustibles"] = {
-		LangKey = "hint need combustibles"
+		LangKey = "hint need combustibles",
+		RepeatCount = 3
+	},
+	["ent_jack_gmod_ezsprinkler"] = {
+		LangKey = "hint ent_jack_gmod_ezsprinkler"
+	},
+	["sprinkler water"] = {
+		LangKey = "hint sprinkler water",
+		RepeatCount = 5
 	},
 	["ent_jack_gmod_ezsfg"] = {
 		LangKey = "hint ent_jack_gmod_ezsfg"

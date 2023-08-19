@@ -14,7 +14,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.62,
+			Version = 42.63,
 		},
 		General = {
 			Hints = true,
@@ -150,89 +150,96 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["basic parts"] = {
-					description = "3 boxes of parts used for crafting and repairs.",
+					description = "300 units of Basic Parts, used for most crafting and machine repairs.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezbasicparts", 3}
 					}
 				},
 				["advanced parts"] = {
-					description = "20 units of advparts used for crafting and upgrading.",
+					description = "20 units of Advanced Parts, used for powerful crafting and upgrading.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezadvparts", 1, 20}
 					}
 				},
 				["precision parts"] = {
-					description = "80 units of precision parts used for advanced parts, advanced textiles, and weapons.",
+					description = "80 units of Precision Parts, used for machine upgrading and various recipes.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezprecparts", 1, 80}
 					}
 				},
 				["advanced textiles"] = {
-					description = "1 box of advtextiles used for armor.",
+					description = "100 units of Advanced Textiles, used for armor.",
 					category = "Resources",
 					results = "ent_jack_gmod_ezadvtextiles"
 				},
 				["power"] = {
-					description = "4 battery cells used for crafting and recharging electronics.",
+					description = "400 units of Power, used for crafting and recharging electronics.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezbattery", 4}
 					}
 				},
 				["ammo"] = {
-					description = "3 boxes of ammo for crafting and resupplying weapons and entities.",
+					description = "300 units of Ammo, for crafting and resupplying weapons and entities.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezammo", 3}
 					}
 				},
 				["coolant"] = {
-					description = "5 bottles of coolant for preventing machines from overheating.",
+					description = "500 units of Coolant, for preventing machines from overheating.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezcoolant", 5}
 					}
 				},
 				["munitions"] = {
-					description = "2 boxes of munitions used for crafting items and reloading explosive weapons and HE grenade sentries.",
+					description = "200 units of Munitions, used for crafting items and reloading explosive weapons and HE grenade sentries.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezmunitions", 2}
 					}
 				},
 				["explosives"] = {
-					description = "2 boxes of explosives used for crafting explosives.",
+					description = "200 units of Explosives, used for crafting explosives.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezexplosives", 2}
 					}
 				},
 				["chemicals"] = {
-					description = "2 boxes of chemicals used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
+					description = "200 Units of Chemicals, used for crafting items and reloading filters in HAZMAT suits, gasmasks, and respirators.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezchemicals", 2}
 					}
 				},
 				["fuel"] = {
-					description = "4 cans of fuel used for crafting items and running generators.",
+					description = "200 units of Fuel, used for crafting items and running generators.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezfuel", 4}
+						{"ent_jack_gmod_ezfuel", 2}
+					}
+				},
+				["coal"] = {
+					description = "300 units of Coal, used for running generators.",
+					category = "Resources",
+					results = {
+						{"ent_jack_gmod_ezcoal", 3}
 					}
 				},
 				["propellant"] = {
-					description = "4 cans of propellant used for crafting items.",
+					description = "400 units of Propellant, used for crafting items.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezpropellant", 4}
 					}
 				},
 				["gas"] = {
-					description = "3 canisters of gas used for crafting items and powering the EZ Workbench",
+					description = "300 units of Gas, used for crafting items and powering the EZ Workbench",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezgas", 3}
@@ -246,14 +253,14 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["rations"] = {
-					description = "5 boxes of nutrients to be eaten by players. Can overcharge health.",
+					description = "500 units of Nutrients, to be eaten by players. Can overcharge health.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_eznutrients", 5}
 					}
 				},
 				["medical supplies"] = {
-					description = "Two boxes of medical supplies for resupplying the EZ Automated Field Hospital and EZ Medkit.",
+					description = "200 units of Medical Supplies, for resupplying the EZ Automated Field Hospital and EZ Medkit.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezmedsupplies", 2}
@@ -360,7 +367,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["acorns"] = {
-					description = "4 barrels of water and 4 acorns to start your tree farm.",
+					description = "400 units of water and 4 acorns to start your tree farm.",
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
@@ -427,12 +434,12 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["antimatter"] = {
-					description = "A can of antimatter. Be careful with it, unless you want to evaporate everything within 20km!",
+					description = "100 units of Antimatter. Be careful with it, unless you want to evaporate your base!",
 					category = "Resources",
 					results = "ent_jack_gmod_ezantimatter"
 				},
 				["fissile material"] = {
-					description = "A box filled with fissile material used to craft nuclear devices.",
+					description = "100 units of Fissile Material, used to craft nuclear devices.",
 					category = "Resources",
 					results = "ent_jack_gmod_ezfissilematerial"
 				},
@@ -509,143 +516,143 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["steel"] = {
-					description = "Steel in a quantity of 200, used in basic parts and some weapons.",
+					description = "200 units of Steel, used in basic parts and some weapons.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezsteel", 2}
 					}
 				},
 				["copper"] = {
-					description = "Copper in a quantity of 100, used in basic parts.",
+					description = "100 units of Copper, used in basic parts.",
 					category = "Resources",
 					results = "ent_jack_gmod_ezcopper"
 				},
 				["aluminum"] = {
-					description = "Aluminum in a quantity of 200, used in basic parts.",
+					description = "200 units of Aluminum, used in basic parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezaluminum", 2}
 					}
 				},
 				["lead"] = {
-					description = "Lead in a quantity of 200, very useful in ammo production for fending off other players.",
+					description = "200 units of Lead, very useful in ammo production for fending off other players.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezlead", 2}
 					}
 				},
 				["silver"] = {
-					description = "Silver in a quantity of 50, used for high tier stuff.",
+					description = "50 units of Silver, used for high tier stuff.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezsilver", 1, 50}
 					}
 				},
 				["gold"] = {
-					description = "Gold in a quantity of 20, used in advanced parts.",
+					description = "20 units of Gold, used in advanced parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezgold", 1, 20}
 					}
 				},
 				["titanium"] = {
-					description = "Titanium in a quantity of 50, used in high-tier weaponry.",
+					description = "50 units of Titanium, used in high-tier weaponry.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_eztitanium", 1, 50}
 					}
 				},
 				["tungsten"] = {
-					description = "Tungsten in a quantity of 50, used in high-tier weaponry.",
+					description = "50 units of Tungsten, used in high-tier weaponry.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_eztungsten", 1, 50}
 					}
 				},
 				["platinum"] = {
-					description = "Platinum in a quantity of 10, used in advanced parts.",
+					description = "10 units of Platinum, used in advanced parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezplatinum", 1, 10}
 					}
 				},
 				["uranium"] = {
-					description = "Uranium in a quantity of 20, used in fissile material enrichment.",
+					description = "20 units of Uranium, used in fissile material enrichment.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezuranium", 1, 20}
 					}
 				},
 				["diamond"] = {
-					description = "diamond in a quantity of 10, used in advanced parts.",
+					description = "10 units of Diamond, used in advanced parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezdiamond", 1, 10}
 					}
 				},
 				["water"] = {
-					description = "Water in a quantity of 600, used in coolant, chemicals, and nutrients.",
+					description = "600 units of Water, used in coolant, chemicals, and nutrients.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezwater", 6}
 					}
 				},
 				["wood"] = {
-					description = "Wood in a quantity of 200, used in paper and electricity production.",
+					description = "200 units of Wood, used in paper and electricity production.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezwood", 2}
 					}
 				},
 				["paper"] = {
-					description = "Paper in a quantity of 200, used in nutrients.",
+					description = "200 units of Paper, used in nutrients.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezpaper", 2}
 					}
 				},
 				["plastic"] = {
-					description = "Plastic in a quantity of 200, used in basic parts.",
+					description = "200 units of Plastic, used in basic parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezplastic", 2}
 					}
 				},
 				["organics"] = {
-					description = "Organics in a quantity of 200, used in nutrients.",
+					description = "200 units of Organics, used in nutrients.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezorganics", 2, 100}
+						{"ent_jack_gmod_ezorganics", 2}
 					}
 				},
 				["oil"] = {
-					description = "Oil in a quantity of 100, used in plastic, fuel, and rubber.",
+					description = "100 units of Oil, used in plastic, fuel, and rubber.",
 					category = "Resources",
 					results = "ent_jack_gmod_ezoil"
 				},
 				["cloth"] = {
-					description = "Cloth in a quantity of 200, used in advanced textiles.",
+					description = "200 units of Cloth, used in advanced textiles.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezcloth", 2}
 					}
 				},
 				["rubber"] = {
-					description = "Rubber in a quantity of 200, used in basic parts.",
+					description = "200 units of Rubber, used in basic parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezrubber", 2}
 					}
 				},
 				["glass"] = {
-					description = "Glass in a quantity of 200, used in basic parts.",
+					description = "200 units of Glass, used in basic parts.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezglass", 2}
 					}
 				},
 				["ceramic"] = {
-					description = "Ceramic in a quantity of 200, used in armor.",
+					description = "200 units of Ceramic, used in armor.",
 					category = "Resources",
 					results = {
 						{"ent_jack_gmod_ezceramic", 2}
@@ -907,7 +914,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.FUEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 200,
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 20
 				},
 				sizeScale = 1,
@@ -954,7 +961,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Powerful nuclear weapon that will easily level a large portion of the map."
 			},
-			["EZ Nuclear Rocket"] = {
+			--[[["EZ Nuclear Rocket"] = {
 				results = "ent_jack_gmod_eznukerocket",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
@@ -967,7 +974,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "High velocity map deletion."
-			},
+			},]]--
 			["EZ Mini Naval Mine"] = {
 				results = "ent_jack_gmod_eznavalmine",
 				craftingReqs = {
