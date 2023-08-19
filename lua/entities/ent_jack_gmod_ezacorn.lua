@@ -77,7 +77,7 @@ if SERVER then
 			self.ShootDir = Tr.HitNormal
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
-			self:SetCollisionGroup(COLLISION_GROUP_WORLD)
+			self:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
 			--JackaGenericUseEffect(activator)
 		end
 	end
