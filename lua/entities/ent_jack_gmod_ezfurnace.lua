@@ -157,6 +157,9 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
+
+		self:UpdateWireOutputs()
+
 		if (self.NextSmeltThink < Time) then
 			self.NextSmeltThink = Time + 1
 			if (State == STATE_SMELTING) then

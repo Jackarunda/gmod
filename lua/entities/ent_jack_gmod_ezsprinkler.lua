@@ -171,6 +171,8 @@ if(SERVER)then
 		local Time, State, SelfPos = CurTime(), self:GetState(), self:GetPos()
 		local WaterConversionSpeed = 1.5
 
+		self:UpdateWireOutputs()
+
 		if self.NextLiquidThink < Time then
 			self.NextLiquidThink = Time + ThinkRate
 			if State == STATE_ON then

@@ -103,17 +103,6 @@ if(SERVER)then
 		--if self.SoundLoop then self.SoundLoop:Stop() end
 	end
 
-	function ENT:SpawnEffect(pos)
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos)
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(5, 10))
-		effectdata:SetScale(math.Rand(.5, 1.5))
-		effectdata:SetRadius(math.Rand(2, 4))
-		util.Effect("Sparks", effectdata)
-		--self:EmitSound("items/suitchargeok1.wav", 75, 120)
-	end
-
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
@@ -148,6 +137,8 @@ if(SERVER)then
 
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
+
+		self:UpdateWireOutputs()
 
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1

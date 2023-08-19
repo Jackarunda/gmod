@@ -156,6 +156,8 @@ if(SERVER)then
 		local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
 		local Phys = self:GetPhysicsObject()
 
+		self:UpdateWireOutputs()
+
 		if self.EZinstalled then
 			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
 				self.EZinstalled = false

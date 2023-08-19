@@ -155,6 +155,9 @@ if SERVER then
 
 	function ENT:Think()
 		local State = self:GetState()
+
+		self:UpdateWireOutputs()
+
 		if State == STATE_ON then
 			local Time = CurTime()
 			if (self.NextLogicThink < Time) then

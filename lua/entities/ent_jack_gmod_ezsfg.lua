@@ -89,13 +89,12 @@ if(SERVER)then
 				self.SoundLoop:SetSoundLevel(60)
 				self.SoundLoop:Play()
 			end)
-		
 		elseif self:GetElectricity() <= 0 then 
-				JMod.Hint(activator, "need combustibles")
+			JMod.Hint(activator, "need combustibles")
 		elseif self:GetWater() <= 0 then
-				JMod.Hint(activator, "refill sfg water")
+			JMod.Hint(activator, "refill sfg water")
 		end
-			
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:TurnOff()
@@ -106,6 +105,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_littleignite.wav")
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
@@ -147,6 +147,8 @@ if(SERVER)then
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
+
+		self:UpdateWireOutputs()
 
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1

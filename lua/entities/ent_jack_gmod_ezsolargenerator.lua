@@ -161,6 +161,9 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State = self:GetState()
+
+		self:UpdateWireOutputs()
+		
 		if(State == STATE_ON)then
 			local weatherMult = 1
 			if(StormFox)then 

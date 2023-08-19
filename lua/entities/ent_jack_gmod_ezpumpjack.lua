@@ -160,6 +160,8 @@ if(SERVER)then
 		local State, Time = self:GetState(), CurTime()
 		local Phys = self:GetPhysicsObject()
 
+		self:UpdateWireOutputs()
+
 		if self.EZinstalled then
 			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
 				self.EZinstalled = false

@@ -141,6 +141,8 @@ if(SERVER)then
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 
+		self:UpdateWireOutputs()
+
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then

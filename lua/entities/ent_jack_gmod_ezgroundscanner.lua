@@ -136,6 +136,9 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State=self:GetState()
+
+		self:UpdateWireOutputs()
+
 		if(State==JMod.EZ_STATE_BROKEN)then
 			self.Snd1:Stop()
 			self.Snd2:Stop()

@@ -175,6 +175,8 @@ if(SERVER)then
 	function ENT:Think()
 		local State, Time, Electricity = self:GetState(), CurTime(), self:GetElectricity()
 
+		self:UpdateWireOutputs()
+
 		if self.NextRealThink < Time then
 			if not IsValid(self.Pod) then
 				self:Remove()

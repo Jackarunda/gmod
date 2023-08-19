@@ -221,6 +221,10 @@ if(SERVER)then
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
+
+		if self.SetupWire and istable(WireLib) then
+			self:SetupWire()
+		end
 		
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
@@ -238,6 +242,65 @@ if(SERVER)then
 			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 		self.NextRefillTime = 0
+	end
+
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+		---
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "Progress [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Machine's progress, \nnot always applicable"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = ResourceName.." [NORMAL]"
+			table.insert(WireOutputs, OutResourceName)
+			table.insert(WireOutputDesc, ResourceDesc)
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:UpdateWireOutputs()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+			if self.GetProgress then
+				WireLib.TriggerOutput(self, "Progress", self:GetProgress())
+			end
+			for _, typ in ipairs(self.EZconsumes) do
+				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+					WireLib.TriggerOutput(self, "Durability", self.Durability)
+				else
+					local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+					if ResourceGetMethod then
+						local ResourceName = string.Replace(typ, " ", "")
+						WireLib.TriggerOutput(self, ResourceName, ResourceGetMethod(self, amt))
+					end
+				end
+			end
+		end
+	end
+
+	function ENT:TriggerInput(iname, value)
+		local State = self:GetState()
+		if State < 0 then return end
+		if iname == "OnOff" then
+			if value == 1 then
+				self:TurnOn()
+			elseif value == 0 then
+				self:TurnOff()
+			end
+		elseif iname == "ToggleState" then
+			if value > 0 then
+				if State == 0 then
+					self:TurnOn()
+				elseif State > 0 then
+					self:TurnOff()
+				end
+			end
+		end
 	end
 
 	function ENT:UpdateDepositKey()

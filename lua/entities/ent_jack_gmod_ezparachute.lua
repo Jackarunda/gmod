@@ -218,6 +218,8 @@ elseif CLIENT then
 		self:EnableMatrix("RenderMultiply", Mat)
 		local Owner = self:GetNW2Entity("Owner")
 		if IsValid(Owner) then
+			--self.LerpedPitch = self.LerpedPitch or 0
+			--self.LerpedYaw = self.LerpedYaw or 0
 			local Dir = Owner:GetVelocity():GetNormalized()
 			--Dir = Dir + Vector(0, 0, 0)
 			local DirAng = Dir:Angle()

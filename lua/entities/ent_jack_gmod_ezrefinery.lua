@@ -147,6 +147,9 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+
+		self:UpdateWireOutputs()
+
 		if (self.NextRefineThink < Time) then
 			self.NextRefineThink = Time + 1
 			if State == STATE_REFINING then

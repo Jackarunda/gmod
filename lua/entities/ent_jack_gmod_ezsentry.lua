@@ -344,10 +344,11 @@ if(SERVER)then
 			end
 
 			if State > 0 then
-				self:TurnOff()
+				self:TurnOff(activator)
 			else
 				if self:GetElectricity() > 0 then
 					self:TurnOn(activator)
+					JMod.SetEZowner(self, activator, true)
 					JMod.Hint(activator, "sentry friends")
 				else
 					JMod.Hint(activator, "nopower")
@@ -356,8 +357,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) and IsValid(self.Target) and (self.Target == activator) and not(activator == self.EZowner) then return end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 		self:ResetMemory()
@@ -370,9 +372,6 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
-		local OldOwner = JMod.GetEZowner(self)
-		JMod.SetEZowner(self, activator, true)
-
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
 		self:ResetMemory()
@@ -507,6 +506,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		local Time = CurTime()
+		self:UpdateWireOutputs()
 
 		if self.NextRealThink < Time then
 			local Electricity, Ammo = self:GetElectricity(), self:GetAmmo()

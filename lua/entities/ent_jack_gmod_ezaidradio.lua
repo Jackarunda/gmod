@@ -80,12 +80,19 @@ if(SERVER)then
 			else
 				if self:GetElectricity() > 0 then
 					self:TurnOn(activator)
+					JMod.SetEZowner(self, activator, true)
 					JMod.Hint(activator, "aid help")
 				else
 					JMod.Hint(self.EZowner, "nopower")
 				end
 			end
 		end
+	end
+
+	function ENT:TurnOn(activator)
+		self:SetState(STATE_CONNECTING)
+		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
+		self.ConnectionAttempts = 0
 	end
 
 	function ENT:TurnOff()
@@ -138,15 +145,6 @@ if(SERVER)then
 		end)
 	end
 
-	function ENT:TurnOn(activator)
-		local OldOwner = self.EZowner
-		JMod.SetEZowner(self, activator, true)
-
-		self:SetState(STATE_CONNECTING)
-		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
-		self.ConnectionAttempts = 0
-	end
-
 	function ENT:Connect(ply, reassign)
 		if not ply then return end
 		local Team = 0
@@ -176,6 +174,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+		self:UpdateWireOutputs()
 
 		if self.NextRealThink < Time then
 			local Electricity = self:GetElectricity()
@@ -264,7 +263,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:UserIsAuthorized(ply)
-		if not ply then return false end
+		if not IsValid(ply) then return false end
 		if not ply:IsPlayer() then return false end
 		if self.EZowner and (ply == self.EZowner) then return true end
 		local Allies = (self.EZowner and self.EZowner.JModFriends) or {}

@@ -65,7 +65,7 @@ if SERVER then
 	end
 
 	function ENT:TriggerInput(iname, value)
-		if (iname == "Detonate") and (self:GetState() == STATE_ARMED) and (value > 0) then
+		if (iname == "Detonate") and (value > 0) then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
 			self:SetState(STATE_ARMED)

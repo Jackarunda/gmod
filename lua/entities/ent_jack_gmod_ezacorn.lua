@@ -153,7 +153,7 @@ if SERVER then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
-			if self.EZremoveSelf and (Time - 300 < self.LastTouchedTime) then
+			if self.EZremoveSelf and (Time - 300 > self.LastTouchedTime) then
 				self:Degenerate()
 			end
 		elseif State == STATE_BURIED then
@@ -167,12 +167,12 @@ if SERVER then
 			if (self.Hydration >= 50) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
-			elseif (self.Hydration <= 1) and (self.LastWateredTime > Time - 600) then
+			elseif (self.Hydration <= 1) and (Time - 600 > self.LastWateredTime) then
 				self:Degenerate()
 			end
 		elseif State == STATE_GERMINATING then
 			if not IsValid(self.GroundWeld) then self:Remove() end
-			if Time - 60 < self.LastTouchedTime then
+			if Time - 60 > self.LastTouchedTime then
 				self:SpawnTree()
 			end
 		end
