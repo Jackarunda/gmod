@@ -412,6 +412,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 						{"ent_jack_gmod_ezfumigator", 2}
 					}
 				},
+				["bioweapon canister"] = {
+					description = "A canister of J.I.'s premier bioweapon, a lethal and infectious airborne pathogen that can cripple the enemy (or innocents) if they are not prepared.",
+					category = "Other",
+					results = "ent_jack_gmod_ezvirusbomb"
+				},
 				["fougasse mines"] = {
 					description = "4 fougasse mines. Blasts napalm at whoever triggers it.",
 					category = "Explosives",
@@ -659,7 +664,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 			},
-			RestrictedPackages = {"antimatter", "fissile material"},
+			RestrictedPackages = {"antimatter", "fissile material", "bioweapon canister"},
 			RestrictedPackageShipTime = 600,
 			RestrictedPackagesAllowed = true
 		},
