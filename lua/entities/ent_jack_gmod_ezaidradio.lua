@@ -50,6 +50,48 @@ if(SERVER)then
 		self.Voices = Files
 	end
 
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]", "Requester [ENTITY]", "Request [STRING]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off", "Player making request", "Radio request"})
+		---
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "LastUser [ENTITY]", "RecievedSpeech [STRING]", "SuccessfulTransmit [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Last player to use radio", "The message recieved by the radio", "Outputs 1 on success"}
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:UpdateWireOutputs()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+		end
+	end
+
+	function ENT:TriggerInput(iname, value)
+		local State = self:GetState()
+		if State < 0 then return end
+		if iname == "OnOff" then
+			if value == 1 then
+				self:TurnOn()
+			elseif value == 0 then
+				self:TurnOff()
+			end
+		elseif iname == "ToggleState" then
+			if value > 0 then
+				if State == 0 then
+					self:TurnOn()
+				elseif State > 0 then
+					self:TurnOff()
+				end
+			end
+		elseif iname == "Request" then
+			local Requester = JMod.GetEZowner(self)
+			if IsValid(self.Inputs.Requester) then
+				Requester = self.Inputs.Requester.Value
+			end
+			self:EZreceiveSpeech(Requester, value)
+		end
+	end
+
 	function ENT:Use(activator)
 		local Time = CurTime()
 		if self.NextUseTime > Time then return end
@@ -284,7 +326,7 @@ if(SERVER)then
 
 	function ENT:EZreceiveSpeech(ply, txt)
 		local State = self:GetState()
-		if State < 2 then return end
+		if State < 2 then return false end
 
 		if not self:TryFindSky() then
 			JMod.Hint(self.EZowner, "aid sky")
@@ -296,21 +338,27 @@ if(SERVER)then
 				end
 			end)
 
-			return
+			return false
 		end
 
-		if not self:UserIsAuthorized(ply) then return end
+		if not self:UserIsAuthorized(ply) then return false end
 		txt = string.lower(txt)
 		local NormalReq, BFFreq = string.sub(txt, 1, 14) == "supply radio: ", string.sub(txt, 1, 6) == "heyo: "
+		local SuccessfulTransmit = false
 
 		if NormalReq or BFFreq then
-			local Name, ParrotPhrase = string.sub(txt, 15), txt
+			local Message, ParrotPhrase = string.sub(txt, 15), txt
 
 			if BFFreq then
-				Name = string.sub(txt, 7)
+				Message = string.sub(txt, 7)
 			end
 
-			if Name == "help" then
+			if istable(WireLib) then
+				WireLib.TriggerOutput(self, "LastUser", ply)
+				WireLib.TriggerOutput(self, "RecievedSpeech", Message)
+			end
+
+			if Message == "help" then
 				if State == 2 then
 					--local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
 					local Msg, Num = 'stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:', 1
@@ -345,24 +393,28 @@ if(SERVER)then
 
 					JMod.Hint(self.EZowner, "aid package")
 
-					return true
+					SuccessfulTransmit = true
 				end
-			elseif Name == "status" then
+			elseif Message == "status" then
 				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase, ply)
 
-				return true
-			elseif Name == "reassign outpost" then
+				SuccessfulTransmit = true
+			elseif Message == "reassign outpost" then
 				self:Connect(ply, true)
 
-				return true
-			elseif JMod.Config.RadioSpecs.AvailablePackages[Name] then
-				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Name, BFFreq), ParrotPhrase, ply)
+				SuccessfulTransmit = true
+			elseif JMod.Config.RadioSpecs.AvailablePackages[Message] then
+				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Message, BFFreq), ParrotPhrase, ply)
 
-				return true
+				SuccessfulTransmit = true
 			end
 		end
 
-		return false
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "SuccessfulTransmit", (SuccessfulTransmit and 1) or 0)
+		end
+
+		return SuccessfulTransmit
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)

@@ -54,6 +54,7 @@ if(SERVER)then
 		self.NextEffThink = 0
 		self.NextFoofThink = 0
 		self.NextEnvThink = 0
+		self.Suffocated = 0
 	end
 
 	function ENT:Use(activator)
@@ -208,6 +209,15 @@ if(SERVER)then
 					Gas:Spawn()
 					Gas:Activate()
 					Gas.CurVel = (VectorRand() * math.random(1, 100))
+				end
+				if (Up.z < .70) then -- we are too tilted
+					self.Suffocated = self.Suffocated + 1
+					if (self.Suffocated >= 2) then
+						self:TurnOff()
+						return
+					end
+				else
+					self.Suffocated = 0
 				end
 			end
 		end

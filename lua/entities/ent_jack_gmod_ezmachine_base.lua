@@ -248,16 +248,26 @@ if(SERVER)then
 		if not(istable(WireLib)) then return end
 		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
 		---
-		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "Progress [NORMAL]"}
-		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Machine's progress, \nnot always applicable"}
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
 		for _, typ in ipairs(self.EZconsumes) do
 			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
 			local ResourceName = string.Replace(typ, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
-			local OutResourceName = ResourceName.." [NORMAL]"
-			table.insert(WireOutputs, OutResourceName)
-			table.insert(WireOutputDesc, ResourceDesc)
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			if not(istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ)) then
+				table.insert(WireOutputs, OutResourceName)
+				table.insert(WireOutputDesc, ResourceDesc)
+			end
+		end
+		if self.GetProgress then
+			table.insert(WireOutputs, "Progress [NORMAL]")
+			table.insert(WireOutputDesc,  "Machine's progress")
+		end
+		if self.FlexFuels then
+			table.insert(WireOutputs, "FlexFuel [NORMAL]")
+			table.insert(WireOutputDesc,  "Machine's flex fuel left")
 		end
 		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
 	end
@@ -273,10 +283,14 @@ if(SERVER)then
 				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
 					WireLib.TriggerOutput(self, "Durability", self.Durability)
 				else
-					local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-					if ResourceGetMethod then
-						local ResourceName = string.Replace(typ, " ", "")
-						WireLib.TriggerOutput(self, ResourceName, ResourceGetMethod(self, amt))
+					if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
+						WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
+					else
+						local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+						if ResourceGetMethod then
+							local ResourceName = string.Replace(typ, " ", "")
+							WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
+						end
 					end
 				end
 			end
