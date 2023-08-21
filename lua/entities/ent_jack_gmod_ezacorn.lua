@@ -50,8 +50,9 @@ if SERVER then
 			end
 		end)
 
-		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
-		self.LastWateredTime = 0
+		local Time = CurTime()
+		self.LastTouchedTime = Time -- we need to have some kind of auto-despawn, since they multiply
+		self.LastWateredTime = Time
 		self.EZremoveSelf = self.EZremoveSelf or false
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
@@ -67,6 +68,7 @@ if SERVER then
 			local Pos = Tr.HitPos - Tr.HitNormal * 0
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
+			self:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
 			self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 			local Fff = EffectData()
 			Fff:SetOrigin(Tr.HitPos)
@@ -77,7 +79,6 @@ if SERVER then
 			self.ShootDir = Tr.HitNormal
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
-			self:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
 			--JackaGenericUseEffect(activator)
 		end
 	end
@@ -153,11 +154,11 @@ if SERVER then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		if State == STATE_NORMAL then
-			if self.EZremoveSelf and (Time - 300 > self.LastTouchedTime) then
+			if self.EZremoveSelf and ((Time - 300) > self.LastTouchedTime) then
 				self:Degenerate()
 			end
 		elseif State == STATE_BURIED then
-			if not IsValid(self.GroundWeld) then self:Remove() end
+			if not IsValid(self.GroundWeld) then self:Degenerate() end
 			local Water = 0
 			if StormFox and StormFox.IsRaining() then 
 				Water = 5
@@ -167,12 +168,13 @@ if SERVER then
 			if (self.Hydration >= 50) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
-			elseif (self.Hydration <= 1) and (Time - 600 > self.LastWateredTime) then
+			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
+				jprint("We dehydrated")
 				self:Degenerate()
 			end
 		elseif State == STATE_GERMINATING then
-			if not IsValid(self.GroundWeld) then self:Remove() end
-			if Time - 60 > self.LastTouchedTime then
+			if not IsValid(self.GroundWeld) then self:Degenerate() end
+			if ((Time - 60) > self.LastTouchedTime) then
 				self:SpawnTree()
 			end
 		end

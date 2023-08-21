@@ -105,5 +105,5 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezapple", "EZ Corn Cob")
+	language.Add("ent_jack_gmod_ezcorn_ear", "EZ Corn Cob")
 end
