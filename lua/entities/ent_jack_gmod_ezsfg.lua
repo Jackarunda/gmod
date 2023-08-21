@@ -130,12 +130,35 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		--self:SpawnEffect(self:LocalToWorld(pos))
+		self:EmitSound("snds_jack_gmod/steam_whistle_start.wav", 150, 100)
+		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.wav", nil)
+		timer.Simple(0.16, function()
+			if not(IsValid(self)) then return end
+			self.SteamLoop:Play()
+			for i = 0, 10 do
+				timer.Simple(i * 0.1, function()
+					if not(IsValid(self)) then return end
+					local Foof = EffectData()
+					Foof:SetOrigin(SelfPos + Up * 74 + Right * 0 + Forward * 34)
+					Foof:SetNormal(Up)
+					Foof:SetScale(0.5)
+					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+					if i == 10 then
+						self.SteamLoop:Stop()
+						self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100)
+					end
+				end)
+			end
+		end)
 	end
 
 	function ENT:OnBreak()
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
+		end
+		if self.SteamLoop then
+			self.SteamLoop:Stop()
 		end
 	end
 
@@ -200,7 +223,7 @@ if(SERVER)then
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 3
 			if (State == STATE_ON) then
-				local Tr = util.QuickTrace(self:GetPos() + Forward * 120, Vector(0, 0, 9e9), self)
+				local Tr = util.QuickTrace(self:GetPos() + Forward * 70, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) and (math.random(1, Grade) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 					Gas:SetPos(self:GetPos() + Forward * 120 + Vector(0, 0, 100))
