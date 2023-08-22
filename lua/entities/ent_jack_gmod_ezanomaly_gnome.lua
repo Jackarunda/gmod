@@ -66,9 +66,21 @@ if SERVER then
 	end
 
 	---
+	local Objectives = {"eat", "kill"}
 	function ENT:GetObjective()
-		-- todo: more things than just killing
-		return "kill"
+		local CurObjective = self.EZobjective
+		if self.EZobjective then
+			local Target = self:GetTarget(self.EZobjective)
+			if self:CanCompleteObjective(self.EZobjective, Target) then
+				return self.EZobjective
+			end 
+		end
+
+		if not(table.IsEmpty(ents.FindByClass("ent_jack_gmod_ezapple"))) then
+			return "eat"
+		else
+			return "kill"
+		end
 	end
 
 	function ENT:GetTarget(objective)
@@ -77,7 +89,7 @@ if SERVER then
 		if objective == "kill" then
 			local Closest, SelfPos = 9e9, self:GetPos()
 
-			for k, v in pairs(player.GetAll()) do
+			for _, v in ipairs(player.GetAll()) do
 				if v:Alive() then
 					local Dist = SelfPos:Distance(v:GetPos())
 
@@ -85,6 +97,17 @@ if SERVER then
 						Target = v
 						Closest = Dist
 					end
+				end
+			end
+		elseif objective == "eat" then
+			local Closest, SelfPos = 9e9, self:GetPos()
+
+			for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezapple")) do
+				local Dist = SelfPos:Distance(v:GetPos())
+
+				if Dist < Closest then
+					Target = v
+					Closest = Dist
 				end
 			end
 		end
@@ -188,6 +211,8 @@ if SERVER then
 	function ENT:GetDesiredPosition(objective, target)
 		if objective == "kill" then
 			if target then return self:FindGroundAt(target:GetShootPos() - target:GetAimVector() * 100) end
+		elseif objective == "eat" then
+			if target then return self:FindGroundAt(target:GetPos() + Vector(math.random(-20, 20), math.random(-20, 20), 0)) end
 		end
 
 		return nil
@@ -214,6 +239,18 @@ if SERVER then
 			local Dist = TargPos:Distance(SelfPos)
 
 			if (Dist <= 220) and (Dist >= 80) then
+				return not util.TraceLine({
+					start = SelfPos,
+					endpos = TargPos,
+					filter = {self, target},
+					mask = MASK_SHOT
+				}).Hit
+			end
+		elseif objective == "eat" then
+			local TargPos = target:GetPos() + Vector(0, 0, 1)
+			local Dist = TargPos:Distance(SelfPos)
+
+			if (Dist <= 20) and (Dist >= 2) then
 				return not util.TraceLine({
 					start = SelfPos,
 					endpos = TargPos,
@@ -263,6 +300,12 @@ if SERVER then
 
 						local Vec = ((Target:GetShootPos() - Vector(0, 0, 10)) - SelfPos):GetNormalized()
 						self:GetPhysicsObject():ApplyForceCenter(Vec * 100000)
+					end
+				elseif Objective == "eat" then
+					if Target then
+						Target:Remove()
+						sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+						self.Restlessness = 1
 					end
 				end
 			else

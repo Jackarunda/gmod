@@ -192,14 +192,14 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(.5)
+				self:ConsumeElectricity(.5 * JMod.Config.ResourceEconomy.ExtractionSpeed)
 				-- This is just the rate at which we pump
-				local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
 				if JMod.NaturalResourceTable[self.DepositKey].rate then
 					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate * JMod.Config.ResourceEconomy.ExtractionSpeed
+					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
 					-- and set the progress to what it was last tick + our ability * the flowrate
 					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
 

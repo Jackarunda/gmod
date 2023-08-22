@@ -761,11 +761,13 @@ function JMod.GetSalvageYield(ent)
 	if ent.IsJackyEZmachine then
 		for k, v in pairs(JMod.EZ_RESOURCE_TYPE_METHODS) do
 			local ResourceMethod = ent["Get"..v]
-			if ResourceMethod then
-				Results[k] = (Results[k] or 0) + math.Round(ResourceMethod(ent))
-			end
-			if ent.GetOre and ent.GetOreType and ent:GetOreType() ~= "generic" then
-				Results[ent:GetOreType()] = (Results[ent:GetOreType()] or 0) + ent:GetOre()
+			if not(istable(ent.FlexFuels) and (v == "Electricity")) then
+				if ResourceMethod then
+					Results[k] = (Results[k] or 0) + math.Round(ResourceMethod(ent))
+				end
+				if ent.GetOre and ent.GetOreType and ent:GetOreType() ~= "generic" then
+					Results[ent:GetOreType()] = (Results[ent:GetOreType()] or 0) + ent:GetOre()
+				end
 			end
 		end
 
