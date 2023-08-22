@@ -215,7 +215,7 @@ if(SERVER)then
 				local Dert = EffectData()
 				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
 				Dert:SetNormal(Up)
-				--util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
+				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
 			end
 		end
 
@@ -313,9 +313,9 @@ elseif(CLIENT)then
 		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
 		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
-		local MotorPos = BoxPos + Up * -45 + Right * -3
+		local MotorPos = BoxPos + Up * -48 + Right * -3
 		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
-		local PipePos = DrillPos + Up * 145 + Right * -8.5
+		local PipePos = DrillPos + Up * 149 + Right * -8.5
 		--
 		if self.CurDepth - self:GetProgress() > 1 then
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
@@ -325,7 +325,7 @@ elseif(CLIENT)then
 		--
 		local PowerBoxAng = SelfAng:GetCopy()
 		PowerBoxAng:RotateAroundAxis(Up, -90)
-		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.2), nil, JMod.EZ_GRADE_MATS[Grade])
+		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.3), nil, JMod.EZ_GRADE_MATS[Grade])
 		local MotorAng = SelfAng:GetCopy()
 		MotorAng:RotateAroundAxis(Up, 90)
 		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
@@ -352,7 +352,7 @@ elseif(CLIENT)then
 		if DrillDraw then
 			MotorAng:RotateAroundAxis(Up, -90)
 			MotorAng:RotateAroundAxis(Forward, 90)
-			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 0.9, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+			JMod.RenderModel(self.DrillPipe, PipePos, MotorAng, Vector(1, 1, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 			local DrillAng = SelfAng:GetCopy()
 			DrillAng:RotateAroundAxis(Up, self.DrillSpin)
 			local PipeEndAng = SelfAng:GetCopy()

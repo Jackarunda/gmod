@@ -54,6 +54,23 @@ if(SERVER)then
 			end
 		end
 	end
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		---
+		local WireOutputs = {"State [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is fine"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			table.insert(WireOutputs, OutResourceName)
+			table.insert(WireOutputDesc, ResourceDesc)
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
 	function ENT:BuildEffect(pos)
 		if(CLIENT)then return end
 		local Scale=.5
@@ -110,6 +127,7 @@ if(SERVER)then
 									self:BuildEffect(Pos)
 									self:ConsumeElectricity(8)
 									self:SetGas(math.Clamp(self:GetGas()-6,0,self.MaxGas))
+									self:UpdateWireOutputs()
 								end
 							end
 						end)

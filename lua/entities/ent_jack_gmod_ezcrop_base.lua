@@ -232,7 +232,7 @@ if(SERVER)then
 			for k, v in pairs(DepositsInRange) do
 				local DepositInfo = JMod.NaturalResourceTable[v]
 				if (DepositInfo.typ == JMod.EZ_RESOURCE_TYPES.WATER) then
-					WaterAround = WaterAround + .5
+					WaterAround = WaterAround + .9
 				end
 			end
 		end
