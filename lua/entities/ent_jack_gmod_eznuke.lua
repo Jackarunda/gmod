@@ -155,7 +155,6 @@ if SERVER then
 				JMod.Hint(activator, "dualdet")
 			else
 				JMod.Hint(activator, "double tap to arm")
-				JMod.Hint(activator, "arm")
 			end
 
 			self.LastUse = Time
@@ -206,11 +205,11 @@ if SERVER then
 		end
 
 		---
-		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		--[[local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
 		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
 		NukeFlash.LifeDuration = 10
 		NukeFlash:Spawn()
-		NukeFlash:Activate()
+		NukeFlash:Activate()]]--
 
 		---
 		for k, ply in pairs(player.GetAll()) do
@@ -271,9 +270,9 @@ if SERVER then
 				if i == 20 then
 					for j = 1, 10 do
 						timer.Simple(j / 10, function()
-							for k = 1, 20 * JMod.Config.Particles.NuclearRadiationMult do
+							for k = 1, 15 * JMod.Config.Particles.NuclearRadiationMult do
 								local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-								Gas:SetPos(SelfPos + Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 100)))
+								Gas:SetPos(SelfPos + Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 200)))
 								JMod.SetEZowner(Gas, Att)
 								Gas:Spawn()
 								Gas:Activate()

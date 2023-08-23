@@ -272,7 +272,7 @@ if SERVER then
 						JMod.SetEZowner(Gas, Att)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 500 * JMod.Config.Particles.NuclearRadiationMult))
+						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 600 * JMod.Config.Particles.NuclearRadiationMult))
 					end
 				end)
 			end

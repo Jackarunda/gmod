@@ -40,6 +40,7 @@ if SERVER then
 
 	function ENT:DamageObj(obj)
 		JMod.FalloutIrradiate(self, obj)
+		self.NextDmg = CurTime() + math.random(1, 5)
 	end
 
 	function ENT:CalcMove(ThinkRateHz)

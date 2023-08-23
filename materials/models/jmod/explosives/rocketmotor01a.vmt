@@ -1,0 +1,5 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/explosives/rocketmotor01a
+	$surfaceprop	plastic
+}

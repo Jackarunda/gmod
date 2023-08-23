@@ -1196,31 +1196,25 @@ if SERVER then
 
 		ply.NextScroungeTime = ply.NextScroungeTime or 0
 		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
-		ply.NextScroungeTime = Time + 15
+		ply.NextScroungeTime = Time + 20
 
 		local Pos = ply:GetShootPos()
 		local PreScroungeMod = 1
 
 		-- Let's find te nearest other scrounge location:
 		local ClosestDist = 9e9
-		for i = 1, #ScroungedPositions do
-			local ScroungedPos = ScroungedPositions[i]
-			local DistanceTo = Pos:DistToSqr(ScroungedPos)
+		for _, pos in pairs(ScroungedPositions) do
+			local DistanceTo = Pos:Distance(pos)
 			if (DistanceTo < ClosestDist) then
 				ClosestDist = DistanceTo
 			end
 		end
-		if ClosestDist <= (500^2) then
-			ClosestDist = math.sqrt(ClosestDist)
-		else
-			ClosestDist = nil
-		end
-
 		if ClosestDist then
-			PreScroungeMod = ClosestDist / 500
+			PreScroungeMod = ClosestDist / 512
 		end
 		
-		--jprint(PreScroungeMod)
+		jprint("ClosestScrounge: "..ClosestDist)
+		jprint("prescrounge mod: "..PreScroungeMod)
 		local ScroungeResults = {}
 		for i = 1, Amount do
 			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
@@ -1253,7 +1247,7 @@ if SERVER then
 			end 
 		end
 
-		PrintTable(ScroungeResults)
+		--PrintTable(ScroungeResults)
 
 		for EZresource, amt in pairs(ScroungeResults) do
 			if not ScroungeTable[EZresource] then return end

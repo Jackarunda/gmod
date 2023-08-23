@@ -152,7 +152,6 @@ if SERVER then
 				JMod.Hint(activator, "dualdet")
 			else
 				JMod.Hint(activator, "double tap to arm")
-				JMod.Hint(activator, "arm")
 			end
 
 			self.LastUse = Time
