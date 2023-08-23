@@ -13,7 +13,7 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.EZfalloutParticle = true
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 2500
-ENT.ThinkRate = 2
+ENT.ThinkRate = 1
 --
 
 if SERVER then
@@ -32,6 +32,7 @@ if SERVER then
 		self.LifeTime = self.LifeTime or math.random(100, 200) * JMod.Config.Particles.NuclearRadiationMult
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + math.random(1, 10)
+		self.FalloutEff = true--math.random(1, 5) == 1
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -49,12 +50,14 @@ if SERVER then
 		--RandDir.z = RandDir.z / 2
 		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -50)
 
+		local NearbyParticles = 0
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange*2)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
 					Force = Force - Vec * 1
+					NearbyParticles = NearbyParticles + 1
 				elseif self.NextDmg < Time and SelfPos:Distance(obj:GetPos()) <= self.AffectRange and self:ShouldDamage(obj) then
 					self:DamageObj(obj)
 				end
@@ -88,6 +91,14 @@ if SERVER then
 			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
 			self.CurVel = -(CurVelAng:Forward() * Speed * 2)
 		end
+
+		--[[if self.FalloutEff and self.NextDmg < Time then
+			Feff = EffectData()
+			Feff:SetOrigin(self:GetPos())
+			Feff:SetStart(self.CurVel / 500)
+			Feff:SetScale(1)
+			util.Effect("eff_jack_gmod_ezfalloutdust", Feff, true, false)
+		end--]]
 	end
 	--
 elseif CLIENT then

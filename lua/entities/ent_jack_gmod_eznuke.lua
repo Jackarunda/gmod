@@ -205,11 +205,11 @@ if SERVER then
 		end
 
 		---
-		--[[local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
 		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
 		NukeFlash.LifeDuration = 10
 		NukeFlash:Spawn()
-		NukeFlash:Activate()]]--
+		NukeFlash:Activate()
 
 		---
 		for k, ply in pairs(player.GetAll()) do

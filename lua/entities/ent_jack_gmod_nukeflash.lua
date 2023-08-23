@@ -99,8 +99,8 @@ function ENT:SetupDataTables()
 		self:SetDrawSprite(true)
 		self:SetShadows(true)
 		self:SetBrightness(2000)
-		self:SetFarZ(20000)
-		self:SetNearZ(4)
+		self:SetFarZ(20000 * JMod.Config.Explosives.Nuke.RangeMult)
+		self:SetNearZ(10)
 		self:SetLightColor(Vector(255, 200, 175))
 	end
 end

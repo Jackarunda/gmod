@@ -650,6 +650,7 @@ concommand.Add("jacky_trace_debug", function(ply)
 		print("mass", Ent:GetPhysicsObject():GetMass())
 		print("model", Ent:GetModel())
 		---
+		if Ent == game.GetWorld() then return end
 		print("----------- entity animation data -----------")
 
 		for k, v in pairs(Ent:GetSequenceList()) do
