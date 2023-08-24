@@ -78,19 +78,21 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	Flare:GetPhysicsObject():SetVelocity(Vector(0, 0, 1500) + VectorRand() * math.random(0, 100))
 	sound.Play("snds_jack_gmod/flaregun_fire.wav", Tr.HitPos, 75, math.random(90, 110))
 	--]]
-	--[[
+	
 	local tre = ents.Create("ent_jack_gmod_eztree")
 	tre:SetPos(ply:GetEyeTrace().HitPos + Vector(0, 0, 10))
 	tre:Spawn()
 	tre:Activate()
 	JMod.SetEZowner(tre, ply)
-	--]]
+	
+	--[[
 	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 500, ply)
 	Feff = EffectData()
 	Feff:SetOrigin(Tr.HitPos)
 	Feff:SetStart(Vector(0,0,0))
 	Feff:SetScale(1)
 	util.Effect("eff_jack_gmod_ezfalloutdust", Feff, true, false)
+	--]]
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)

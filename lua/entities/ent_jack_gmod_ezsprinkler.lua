@@ -182,7 +182,7 @@ if(SERVER)then
 				for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRange)) do
 					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) and JMod.ClearLoS(self, v, false, 34) then
 						if v:IsOnFire() then v:Extinguish() end
-						if EntsToRemove[v:GetClass()] and math.random(1, 2) == 2 then
+						if EntsToRemove[v:GetClass()] and math.random(1, 3) >= 2 then
 							SafeRemoveEntity(v)
 						end
 						if v.Hydration then

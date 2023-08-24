@@ -7,18 +7,17 @@ ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
+---
 ENT.Model = "models/compressor/compressorbake.mdl"
 ENT.Mass = 500
 ENT.EZcolorable = true
---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.MaxPower = 100
---
+ENT.SpawnHeight = 10
+---
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 100
 }
-
 ENT.DynamicPerfSpecs = {
 	Armor = 1,
 	ChargeSpeed = 1
