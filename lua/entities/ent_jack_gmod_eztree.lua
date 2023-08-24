@@ -30,6 +30,7 @@ if(SERVER)then
 		self.EZupgradable = false
 		self.Growth = 0
 		self.Hydration = self.Hydration or 100
+		self.OldHydration = self.Hydration
 		self.Helf = 100
 		self.LastLeafMat = ""
 		self.LastBarkMat = ""
@@ -217,7 +218,9 @@ if(SERVER)then
 			NewLeafMat = "oak_leaf2"
 		elseif (self.Hydration < 30) then
 			NewLeafMat = "oak_leaf1"
-			WillDehydrate = true
+			if self.OldHydration and self.OldHydration > self.Hydration then
+				WillDehydrate = true
+			end
 		elseif (self.Hydration < 60) then
 			NewLeafMat = "oak_leaf0"
 		else
@@ -265,6 +268,7 @@ if(SERVER)then
 				end
 			end
 		end)
+		self.OldHydration = self.Hydration
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
