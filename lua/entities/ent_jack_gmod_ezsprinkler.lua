@@ -80,7 +80,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() <= STATE_BROKEN then return end
-		if (self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0) and self:GetElectricity() > 0 then
+		if ((self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0)) and self:GetElectricity() > 0 then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
@@ -167,6 +167,7 @@ if(SERVER)then
 
 	local ThinkRate = 60/12 --Hz
 	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
+
 	function ENT:Think()
 		local Time, State, SelfPos = CurTime(), self:GetState(), self:GetPos()
 		local WaterConversionSpeed = 1.5
@@ -239,6 +240,8 @@ if(SERVER)then
 				elseif self.Dir == "left" then
 					self:SetHeadRot(CurrentRot + TurnSpeed * 2)
 				end
+			elseif self.SoundLoop then
+				self.SoundLoop:Stop()
 			end
 		end
 
