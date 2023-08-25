@@ -195,12 +195,14 @@ if SERVER then
 		end
 
 		---
-		local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
-		NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-		NukeFlash.LifeDuration = 10
-		NukeFlash.MaxAltitude = 500
-		NukeFlash:Spawn()
-		NukeFlash:Activate()
+		if (JMod.Config.QoL.NukeFlashLightEnabled) then
+			local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+			NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+			NukeFlash.LifeDuration = 10
+			NukeFlash.MaxAltitude = 500
+			NukeFlash:Spawn()
+			NukeFlash:Activate()
+		end
 
 		---
 		for h = 1, 50 do
