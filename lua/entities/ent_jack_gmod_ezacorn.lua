@@ -169,7 +169,6 @@ if SERVER then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
 			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
-				jprint("We dehydrated")
 				self:Degenerate()
 			end
 		elseif State == STATE_GERMINATING then

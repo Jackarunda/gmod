@@ -114,7 +114,8 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 
-		if dmginfo:GetDamage() > self.DamageThreshold then
+		if (dmginfo:GetDamage() > self.DamageThreshold) and not(self.Destroyed) then
+			self.Destroyed = true
 			local Pos = self:GetPos()
 			sound.Play("Wood_Crate.Break", Pos)
 			sound.Play("Wood_Box.Break", Pos)
