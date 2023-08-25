@@ -9,33 +9,32 @@
 end
 
 function JMod.InitGlobalConfig(forceNew, configToApply)
-
 	local NewConfig = {
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 42.63,
+			Version = 43
 		},
 		General = {
 			Hints = true,
 			AltFunctionKey = IN_WALK,
-			HandGrabStrength = 1,
+			HandGrabStrength = 1
 		},
 		Armor = {
 			ProtectionMult = 1,
 			DegradationMult = 1,
 			ChargeDepletionMult = 1,
-			WeightMult = 1,
+			WeightMult = 1
 		},
 		Tools = {
 			Medkit = {
-				HealMult = 1,
+				HealMult = 1
 			},
 			Toolbox = {
 				DeWeldSpeed = 1,
 				UpgradeMult = 1,
 				DeconstructSpeedMult = 1,
-				SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"},
+				SalvagingBlacklist = {"func_", "ent_jack_gmod_ezcompactbox"}
 			},
 		},
 		Weapons = {
@@ -43,14 +42,14 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			SwayMult = 1,
 			AmmoCarryLimitMult = 1,
 			WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
-			AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
+			AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"}
 		},
 		Machines = {
 			Sentry = {
-				PerformanceMult = 1,
+				PerformanceMult = 1
 			},
 			MedBay = {
-				HealMult = 1,
+				HealMult = 1
 			},
 			Blackhole = {
 				GeneratorChargeSpeed = 1,
@@ -63,38 +62,38 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			},
 			SpawnMachinesFull = true,
 			SupplyEffectMult = 1,
-			DurabilityMult = 1,
+			DurabilityMult = 1
 		},
 		Explosives = {
 			Mine = {
 				Delay = 1,
-				Power = 1,
+				Power = 1
 			},
 			Detpack = {
-				PowerMult = 1,
+				PowerMult = 1
 			},
 			Nuke = {
 				RangeMult = 1,
 				PowerMult = 1,
-				RadiationSickness = true,
+				RadiationSickness = true
 			},
 			BombDisarmSpeed = 1,
 			DoorBreachResetTimeMult = 1,
 			FragExplosions = true,
 			PropDestroyPower = 1,
-			BombOwnershipLossOnRespawn = false,
+			BombOwnershipLossOnRespawn = false
 		},
 		Particles = {
 			VirusSpreadMult = 1,
 			FumigatorGasAmount = 1,
 			PoisonGasDamage = 1,
 			PoisonGasLingerTime = 1,
-			NuclearRadiationMult = 1,
+			NuclearRadiationMult = 1
 		},
 		ResourceEconomy = {
 			ResourceRichness = 1,
 			ExtractionSpeed = 1,
-			MaxResourceMult = 1,
+			MaxResourceMult = 1
 		},
 		QoL = {
 			RealisticLocationalDamage = false,
@@ -105,12 +104,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			JModCorpse = false,
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
+			NukeFlashLightEnabled = false
 		},
 		FoodSpecs = {
 			DigestSpeed = 1,
 			ConversionEfficiency = 1,
 			EatSpeed = 1,
-			BoostMult = 1,
+			BoostMult = 1
 		},
 		RadioSpecs = {
 			DeliveryTimeMult = 1,

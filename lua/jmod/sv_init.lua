@@ -859,6 +859,7 @@ function JMod.EZ_Remote_Trigger(ply)
 end
 
 hook.Add("PlayerCanSeePlayersChat", "JMOD_PLAYERSEECHAT", function(txt, teamOnly, listener, talker)
+	if not IsValid(talker) then return end
 	if talker.EZarmor and talker.EZarmor.effects.teamComms then return JMod.PlayersCanComm(listener, talker) end
 end)
 
