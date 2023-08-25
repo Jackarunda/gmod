@@ -8,11 +8,12 @@ ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
+ENT.Mass = 100
 --
-ENT.JModPreferredCarryAngles = Angle(90, 90, 0)
+ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 50,
+	MaxDurability = 75,
 	MaxElectricity = 0
 }
 

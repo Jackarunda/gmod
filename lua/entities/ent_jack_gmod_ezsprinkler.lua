@@ -12,16 +12,16 @@ ENT.EZupgradable = false
 ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
-ENT.Mass = 35
+ENT.Mass = 50
 ENT.SpawnHeight = 1
 ENT.SprayRange = 400
 --
 ENT.StaticPerfSpecs = {
 	MaxElectricity = 100,
-	MaxDurability = 100,
+	MaxDurability = 50,
 	MaxWater = 200,
 	--MaxFuel = 200,
-	Armor = 0.5
+	Armor = 1
 }
 
 ENT.EZconsumes = {
