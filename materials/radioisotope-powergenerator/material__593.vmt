@@ -1,0 +1,12 @@
+"VertexLitGeneric"
+{
+// File Created by Wall Worm Pro ( http://dev.wallworm.com )
+
+// BEGIN Textures
+	$basetexture "radioisotope-powergenerator/light"
+	$selfillum 1
+// END Textures
+
+
+
+}

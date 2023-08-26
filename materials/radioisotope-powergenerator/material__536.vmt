@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+// File Created by Wall Worm Pro ( http://dev.wallworm.com )
+
+// BEGIN Textures
+	$basetexture "radioisotope-powergenerator/radioisotope-powergenerator"
+	$bumpmap "radioisotope-powergenerator/radioisotope-powergenerator-normal"
+	"$model" 1
+	"$phong" "1"
+	"$phongexponent" "100"
+	"$phongboost" "1"		
+	"$phongfresnelranges"	"[.05 .5 5]"
+	"$halflambert" "1"
+// END Textures
+
+
+
+}
