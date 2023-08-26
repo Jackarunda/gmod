@@ -563,6 +563,13 @@ if(SERVER)then
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.URANIUM)then
+					local Uran = self:GetUranium()
+					local Missing = self.MaxUranium - Uran
+					if(Missing < 1)then return 0 end
+					Accepted=math.min(Missing,amt)
+					self:SetUranium(Uran+Accepted)
+					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.FUEL)then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()

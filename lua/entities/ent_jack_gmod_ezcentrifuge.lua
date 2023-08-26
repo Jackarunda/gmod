@@ -8,17 +8,18 @@ ENT.Information = ""
 ENT.Spawnable = false -- Until we finsih the next phase of Econ 2
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/centrifuge.mdl"
+---
 ENT.EZupgradable = true
---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 250
 ENT.SpawnHeight = 1
+ENT.EZcolorable = false
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 600,
 	MaxUranium = 200,
-	MaxChemicals = 100
+	MaxGas = 100
 }
 
 ENT.DynamicPerfSpecs = {
@@ -26,12 +27,14 @@ ENT.DynamicPerfSpecs = {
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.Chemicals
+	JMod.EZ_RESOURCE_TYPES.POWER,
+	JMod.EZ_RESOURCE_TYPES.GAS,
+	JMod.EZ_RESOURCE_TYPES.URANIUM,
 }
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
-	self:NetworkVar("Float", 2, "Chemicals")
+	self:NetworkVar("Float", 2, "Gas")
 	self:NetworkVar("Float", 3, "Uranium")
 end
 
@@ -44,7 +47,11 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		--self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
+		if self.SpawnFull then
+			self:SetGas(self.MaxGas)
+			self:SetUranium(self.MaxUranium)
+		end
 	end
 
 	function ENT:Use(activator)
@@ -70,37 +77,37 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
-		if (self:GetChemicals() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
+		if (self:GetGas() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
-			--self.SoundLoop:SetSoundLevel(70)
-			--self.SoundLoop:Play()
+			self.SoundLoop:Play()
+			self.SoundLoop:SetSoundLevel(120)
 		else
-			--self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
+			self:EmitSound("snds_jack_gmod/afh_unseal.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
-			JMod.Hint(activator, "need Chemicals")
+			JMod.Hint(activator, "need Gas")
 		end
 	end
 
 	function ENT:TurnOff()
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
-		--if self.SoundLoop then self.SoundLoop:Stop() end
-		--self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
+		if self.SoundLoop then self.SoundLoop:Stop() end
+		self:EmitSound("snds_jack_gmod/afh_shutdown.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
-		if typ == JMod.EZ_RESOURCE_TYPES.Chemicals and accepted > 0 then
+		--[[if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
-		end
+		end]]--
 	end
 
 	function ENT:OnRemove()
-		--if self.SoundLoop then self.SoundLoop:Stop() end
+		if self.SoundLoop then self.SoundLoop:Stop() end
 	end
 
 	function ENT:ProduceResource()
@@ -109,30 +116,29 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60 + Right * 70)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(self:LocalToWorld(pos))
 	end
 
-	function ENT:ConsumeChemicals(amt)
-		if not(self.GetChemicals)then return end
-		local NewAmt = math.Clamp(self:GetChemicals() - amt, 0.0, self.MaxChemicals)
-		self:SetChemicals(NewAmt)
+	function ENT:ConsumeGas(amt)
+		if not(self.GetGas)then return end
+		local NewAmt = math.Clamp(self:GetGas() - amt, 0.0, self.MaxGas)
+		self:SetGas(NewAmt)
 		if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
 	end
 
 	function ENT:ConsumeUranium(amt)
-		if not(self.GetChemicals)then return end
+		if not(self.GetUranium)then return end
 		local NewAmt = math.Clamp(self:GetUranium() - amt, 0.0, self.MaxUranium)
 		self:SetUranium(NewAmt)
 		if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
 	end
 
 	function ENT:OnBreak()
-		--if self.SoundLoop then
-		--	self.SoundLoop:Stop()
-		--end
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:Think()
@@ -143,14 +149,14 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local FissilePerU = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.URANIUM]
+				local FissilePerU = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.URANIUM][JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL]
 				local UtoConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local FissileToProduce = FissilePerU * UtoConsume
-				local ChemicalsToConsume = UtoConsume * .5
+				local GasToConsume = UtoConsume * .5
 				local SpeedModifier = 1
 
 				self:ConsumeUranium(FissileToProduce * SpeedModifier)
-				self:ConsumeChemicals(ChemicalsToConsume * SpeedModifier)
+				self:ConsumeGas(GasToConsume * SpeedModifier)
 				self:ConsumeElectricity(2 * SpeedModifier)
 
 				self:SetProgress(self:GetProgress() + FissileToProduce * SpeedModifier)
@@ -225,23 +231,31 @@ elseif(CLIENT)then
 			if Closeness < 20000 and State == STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
-				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
+				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
-				local ChemicalsFrac = self:GetChemicals() / self.MaxChemicals
+				local ElecFrac = self:GetElectricity() / self.MaxElectricity
+				local GasFrac = self:GetGas() / self.MaxGas
+				local UraniumFrac = self:GetUranium() / self.MaxUranium
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
-				local FR, FG, FB = JMod.GoodBadColor(ChemicalsFrac)
+				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
+				local FR, FG, FB = JMod.GoodBadColor(GasFrac)
+				local UR, UG, UB = JMod.GoodBadColor(UraniumFrac)
 
-				cam.Start3D2D(SelfPos + Forward * -36 + Right * -12 + Up * 53, DisplayAng, .06)
+				cam.Start3D2D(SelfPos + Forward * 21 + Right * 51 + Up * 50, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				local RankX, RankY = -70, 190
+				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
-				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("Chemicals", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ChemicalsFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 200, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 200, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("POWER", "JMod-Display", 200, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 200, 120, Color(ER, EG, EB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("GAS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(GasFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined("URANIUM", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(UraniumFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(UR, UG, UB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 
 			end
