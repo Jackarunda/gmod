@@ -7,7 +7,7 @@ ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/radioisotope-powergenerator/radioisotope-powergenerator.mdl"
+ENT.Model = "models/jmod/machines/radioisotope-powergenerator.mdl"
 --
 ENT.EZupgradable = true
 ENT.EZcolorable = false
@@ -38,7 +38,9 @@ if(SERVER)then
 		self:SetProgress(0)
 		self.NextResourceThink = 0
 		self.NextUseTime = 0
-		self.TimerName = ""
+		--self.TimerName = ""
+		self.PowerSLI = 0 -- Power Since Last Interaction
+		self.MaxPowerSLI = 500
 	end
 
 	function ENT:Use(activator)
@@ -55,8 +57,8 @@ if(SERVER)then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if alt then
-				self:ProduceResource()
-				timer.Start(self.TimerName)
+				self:ProduceResource(activator)
+				--timer.Start(self.TimerName)
 				return
 			end
 			self:TurnOff()
@@ -69,10 +71,10 @@ if(SERVER)then
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
 		self.TimerName = ("RTGautoShutOff" .. tostring(self:EntIndex()))
-		timer.Create(self.TimerName, 1200, 1, function() 
+		--[[timer.Create(self.TimerName, 1200, 1, function() 
 			if IsValid(self) then self:TurnOff() end 
 		end)
-		timer.Start(self.TimerName)
+		timer.Start(self.TimerName)--]]
 	end
 
 	function ENT:TurnOff()
@@ -81,10 +83,10 @@ if(SERVER)then
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		timer.Remove("RTGautoShutOff" .. self.TimerName)
+		--timer.Remove("RTGautoShutOff" .. self.TimerName)
 	end
 
-	function ENT:ProduceResource()
+	function ENT:ProduceResource(activator)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
@@ -94,6 +96,15 @@ if(SERVER)then
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+
+		if IsValid(activator) then
+			self.PowerSLI = 0
+		else
+			self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
+		end
+		if self.PowerSLI >= self.MaxPowerSLI then
+			self:TurnOff()
+		end
 	end
 
 	function ENT:Think()
@@ -148,7 +159,7 @@ elseif(CLIENT)then
 		---
 		local CylinderAng = SelfAng:GetCopy()
 		CylinderAng:RotateAroundAxis(Right, 0)
-		JMod.RenderModel(self.Cylinder, BasePos + Up * 18.5, CylinderAng, Vector(0.25, 0.25, 1), nil, JMod.EZ_GRADE_MATS[Grade])
+		JMod.RenderModel(self.Cylinder, BasePos + Up * 18.5, CylinderAng, Vector(0.26, 0.26, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		
 		if DetailDraw then
 			if (Closeness < 20000) and (State == STATE_ON) then
