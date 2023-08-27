@@ -453,7 +453,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			if JMod.Config.QoL.Drowning then
 				if playa:WaterLevel() >= 3 then
-					playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					if (playa.EZarmoor and playa.EZarmor.effects.scuba) then
+						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
+					else
+						playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					end
 
 					if playa.EZoxygen <= 25 then
 						playa.EZneedGasp = true
@@ -545,6 +549,20 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
 								JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+							end
+						end
+					end
+				end
+
+				if playa.EZarmor.effects.scuba then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.scuba then
+							armorData.chrg.gas = math.Clamp(armorData.chrg.gas - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+
+							if armorData.chrg.gas <= Info.chrg.gas * .25 then
+								JMod.EZarmorWarning(playa, "SCBA breathing gas charge is low ("..tostring(armorData.chrg.gas).."/"..tostring(Info.chrg.gas)..")")
 							end
 						end
 					end
