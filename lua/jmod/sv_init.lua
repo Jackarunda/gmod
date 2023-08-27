@@ -453,7 +453,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			if JMod.Config.QoL.Drowning then
 				if playa:WaterLevel() >= 3 then
-					playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					if (playa.EZarmoor and playa.EZarmor.effects.scuba) then
+						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
+					else
+						playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					end
 
 					if playa.EZoxygen <= 25 then
 						playa.EZneedGasp = true
