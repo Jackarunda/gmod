@@ -1,7 +1,7 @@
 ﻿-- AdventureBoots Late 2021
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Radioisotopic Power System"
+ENT.PrintName = "EZ Radioisotope Thermoelectric Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
@@ -17,21 +17,18 @@ ENT.Mass = 250
 ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
-	MaxFissile = 50
+	MaxDurability = 100
 }
 
 ENT.DynamicPerfSpecs = {
 	Armor = 1
 }
 ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-	JMod.EZ_RESOURCE_TYPES.FISSILE
+	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
-	self:NetworkVar("Float", 2, "Fissile")
 end
 
 local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
@@ -43,9 +40,6 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		if self.SpawnFull then
-			self:SetFissile(self.MaxFissile)
-		end
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 	end
 
@@ -71,16 +65,11 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
-		if (self:GetFissile() > 0) then
-			self.NextUseTime = CurTime() + 1
-			self:SetState(STATE_ON)
-			self.SoundLoop:SetSoundLevel(70)
-			self.SoundLoop:Play()
-		else
-			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
-			self.NextUseTime = CurTime() + 1
-			JMod.Hint(activator, "need fuel")
+		if (self:GetState() ~= STATE_OFF) then JMod.Hint(activator, "destroyed", self) return end
+		self.NextUseTime = CurTime() + 1
+		self:SetState(STATE_ON)
+		self.SoundLoop:SetSoundLevel(80)
+		self.SoundLoop:Play()
 		end
 	end
 
@@ -91,14 +80,6 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-	end
-
-	function ENT:ResourceLoaded(typ, accepted)
-		if typ == JMod.EZ_RESOURCE_TYPES.FUEL and accepted > 0 then
-			timer.Simple(.1, function() 
-				if IsValid(self) then self:TurnOn() end 
-			end)
-		end
 	end
 
 	function ENT:OnRemove()
@@ -116,14 +97,6 @@ if(SERVER)then
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 	end
 
-	function ENT:ConsumeFissile(amt)
-		if not(self.GetFissile)then return end
-		amt = (amt or .2)/(self.FissileEffeciancy or 1)
-		local NewAmt = math.Clamp(self:GetFissile() - amt, 0.0, self.MaxFissile)
-		self:SetFissile(NewAmt)
-		if(NewAmt <= 0) and (self:GetState() > 0)then self:TurnOff() end
-	end
-
 	function ENT:OnBreak()
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
@@ -138,14 +111,10 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local NRGperFuel = 100
-				local FuelToConsume = .25 * JMod.EZ_GRADE_BUFFS[Grade]
-				local PowerToProduce = FuelToConsume * NRGperFuel
-				local SpeedModifier = .05
+				local PowerPerMin = 10
+				local PowerToProduce = (60/PowerPerMin) * JMod.EZ_GRADE_BUFFS[Grade]
 
-				self:ConsumeFissile(FuelToConsume * SpeedModifier)
-
-				self:SetProgress(self:GetProgress() + PowerToProduce * SpeedModifier)
+				self:SetProgress(self:GetProgress() + PowerToProduce)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
@@ -160,35 +129,16 @@ if(SERVER)then
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_ezexhaust", Eff, true)
 			end
-		end
-
-		if (self.NextEnvThink < Time) then
-			self.NextEnvThink = Time + 5
-			if (State == STATE_ON) then
-				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
-				if not (Tr.HitSky) then
-					if (math.random(1, 3) == 1) then
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
-						JMod.SetEZowner(Gas, self.EZowner)
-						Gas:SetDTBool(0, true)
-						Gas:Spawn()
-						Gas:Activate()
-						Gas.CurVel = (VectorRand() * math.random(1, 100))
-					end
-				end
-			end
 		end--]]
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
+		ent.NextRefillTime = Time + math.Rand(0, 1)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)
-		self.NextEnvThink = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then
@@ -216,14 +166,13 @@ elseif(CLIENT)then
 		---
 		
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_ON then
+			if (Closeness < 20000) and (State == STATE_ON) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Forward(), 90)
 				local Opacity = math.random(50, 150)
 				local ProgFrac = self:GetProgress() / 100
-				local FuelFrac = self:GetFissile() / self.MaxFissile
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 				local FR, FG, FB = JMod.GoodBadColor(FuelFrac)
 
@@ -234,8 +183,6 @@ elseif(CLIENT)then
 				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
 				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 			if State == STATE_ON then
@@ -245,5 +192,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezrps", "EZ Radioisotope Power System")
+	language.Add("ent_jack_gmod_ezrps", "EZ Radioisotope Thermoelectric Generator")
 end
