@@ -554,6 +554,20 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
+				if playa.EZarmor.effects.scuba then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.scuba then
+							armorData.chrg.gas = math.Clamp(armorData.chrg.gas - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+
+							if armorData.chrg.gas <= Info.chrg.gas * .25 then
+								JMod.EZarmorWarning(playa, "SCBA breathing gas charge is low ("..tostring(armorData.chrg.gas).."/"..tostring(Info.chrg.gas)..")")
+							end
+						end
+					end
+				end
+
 				JMod.CalcSpeed(playa)
 				JMod.EZarmorSync(playa)
 			end

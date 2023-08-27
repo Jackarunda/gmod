@@ -43,7 +43,7 @@ function JMod.EZarmorSync(ply)
 			end
 		end
 
-		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0))
+		local dead = item.chrg and ((item.chrg.power and item.chrg.power <= 0) or (item.chrg.chemicals and item.chrg.chemicals <= 0) or (item.chrg.gas and item.chrg.gas <= 0))
 
 		if ArmorInfo.eff and not dead then
 			for effName, effMag in pairs(ArmorInfo.eff) do
