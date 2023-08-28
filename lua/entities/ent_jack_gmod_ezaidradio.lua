@@ -207,8 +207,10 @@ if(SERVER)then
 			if IsValid(self) then
 				if reassign and (OldID == OutpostID) then
 					self:Speak("No other avaliable J.I. Radio Outpost found")
-				else
+				elseif Station and istable(Station) then
 					self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID .. "\nBearing: " .. tostring(math.Round(Station.outpostDirection:Angle().y)))
+				else
+					self:Speak("Comm line lost with J.I. Radio Outpost...")
 				end
 			end
 		end)

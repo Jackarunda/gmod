@@ -33,7 +33,8 @@ if(SERVER)then
 		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0
-		self.TimerName = ""
+		self.PowerSLI = 0 -- Power Since Last Interaction
+		self.MaxPowerSLI = 500
 		local mapName = game.GetMap()
 	end
 
@@ -61,6 +62,27 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:TurnOn()
+		if self:GetState() > STATE_OFF then return end
+		if (self:CheckSky() > 0) then
+			self:EmitSound("buttons/button1.wav", 60, 80)
+			self:SetState(STATE_ON)
+			self.NextUse = CurTime() + 1
+		else
+			self:EmitSound("buttons/button2.wav", 60, 100)
+		end
+		self.PowerSLI = 0 
+	end
+
+	function ENT:TurnOff()
+		if (self:GetState() <= 0) then return end
+		self:EmitSound("buttons/button18.wav", 60, 80)
+		self:ProduceResource()
+		self:SetState(STATE_OFF)
+		self.NextUse = CurTime() + 1
+		self.PowerSLI = 0 
+	end
+
 	function ENT:SpawnEffect(pos)
 		local effectdata=EffectData()
 		effectdata:SetOrigin(pos)
@@ -81,7 +103,14 @@ if(SERVER)then
 		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(pos)
+		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		--self:SpawnEffect(pos)
+
+		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
+		
+		if self.PowerSLI >= self.MaxPowerSLI then
+			self:TurnOff()
+		end
 	end
 
 	function ENT:CheckSky()
