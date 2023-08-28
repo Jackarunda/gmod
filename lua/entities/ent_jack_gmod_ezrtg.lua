@@ -38,7 +38,6 @@ if(SERVER)then
 		self:SetProgress(0)
 		self.NextResourceThink = 0
 		self.NextUseTime = 0
-		--self.TimerName = ""
 		self.PowerSLI = 0 -- Power Since Last Interaction
 		self.MaxPowerSLI = 500
 	end
@@ -58,7 +57,6 @@ if(SERVER)then
 		elseif State == STATE_ON then
 			if alt then
 				self:ProduceResource(activator)
-				--timer.Start(self.TimerName)
 				return
 			end
 			self:TurnOff()
@@ -70,11 +68,7 @@ if(SERVER)then
 		self:EmitSound("buttons/button1.wav", 60, 80)
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
-		self.TimerName = ("RTGautoShutOff" .. tostring(self:EntIndex()))
-		--[[timer.Create(self.TimerName, 1200, 1, function() 
-			if IsValid(self) then self:TurnOff() end 
-		end)
-		timer.Start(self.TimerName)--]]
+		self.PowerSLI = 0
 	end
 
 	function ENT:TurnOff()
@@ -83,7 +77,7 @@ if(SERVER)then
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		--timer.Remove("RTGautoShutOff" .. self.TimerName)
+		self.PowerSLI = 0
 	end
 
 	function ENT:ProduceResource(activator)
@@ -97,11 +91,8 @@ if(SERVER)then
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 
-		if IsValid(activator) then
-			self.PowerSLI = 0
-		else
-			self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
-		end
+		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
+		
 		if self.PowerSLI >= self.MaxPowerSLI then
 			self:TurnOff()
 		end
