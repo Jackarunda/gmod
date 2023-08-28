@@ -33,7 +33,8 @@ if(SERVER)then
 		self:TurnOn()
 		self:SetProgress(0)
 		self.NextUse = 0
-		self.TimerName = ""
+		self.PowerSLI = 0 -- Power Since Last Interaction
+		self.MaxPowerSLI = 500
 		local mapName = game.GetMap()
 	end
 
@@ -71,11 +72,7 @@ if(SERVER)then
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		self.TimerName = ("SolarAutoShutOff" .. tostring(self:EntIndex()))
-		timer.Create(self.TimerName, 1200, 1, function() 
-			if IsValid(self) then self:TurnOff() end 
-		end)
-		timer.Start(self.TimerName)
+		self.PowerSLI = 0 
 	end
 
 	function ENT:TurnOff()
@@ -84,7 +81,7 @@ if(SERVER)then
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.NextUse = CurTime() + 1
-		timer.Remove("SolarAutoShutOff" .. self.TimerName)
+		self.PowerSLI = 0 
 	end
 
 	function ENT:SpawnEffect(pos)
@@ -107,7 +104,14 @@ if(SERVER)then
 		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:SpawnEffect(pos)
+		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		--self:SpawnEffect(pos)
+
+		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
+		
+		if self.PowerSLI >= self.MaxPowerSLI then
+			self:TurnOff()
+		end
 	end
 
 	function ENT:CheckSky()

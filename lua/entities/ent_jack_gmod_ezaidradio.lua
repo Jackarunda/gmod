@@ -210,7 +210,7 @@ if(SERVER)then
 				elseif Station and istable(Station) then
 					self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID .. "\nBearing: " .. tostring(math.Round(Station.outpostDirection:Angle().y)))
 				else
-					self:Speak("Lost contact with J.I. Radio Outpost...")
+					self:Speak("Comm line lost with J.I. Radio Outpost...")
 				end
 			end
 		end)

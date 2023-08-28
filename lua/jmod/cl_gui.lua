@@ -1243,7 +1243,9 @@ net.Receive("JMod_Inventory", function()
 	function motherFrame:OnKeyCodePressed(num)
 		if num > 10 then return end
 		if num == 1 then num = 11 end -- Weird wrap around for the 0 slot
-		Ply:ConCommand("jmod_ez_"..ShownCommands[num - 1])
+		if ShownCommands[num - 1] then
+			Ply:ConCommand("jmod_ez_"..ShownCommands[num - 1])
+		end
 		motherFrame:Close()
 		return true
 	end
