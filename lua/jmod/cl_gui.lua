@@ -988,7 +988,8 @@ local ArmorSlotButtons = {
 
 local ArmorResourceNiceNames = {
 	chemicals = "Chemicals",
-	power = "Electricity"
+	power = "Electricity",
+	gas = "Compressed Gas"
 }
 
 local OpenDropdown = nil
