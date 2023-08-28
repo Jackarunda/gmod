@@ -3,7 +3,10 @@
 // File Created by Wall Worm Pro ( http://dev.wallworm.com )
 
 // BEGIN Textures
-	$basetexture "models/jmod/machines/light"
-	$selfillum 1
+	"$basetexture" "models/jmod/machines/light"
+	"$selfillum" "1"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
 // END Textures
 }

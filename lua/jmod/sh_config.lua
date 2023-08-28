@@ -1186,6 +1186,20 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Generator that uses coal or wood to heat water to produce power."
 			},
+			["EZ Radioisotope Thermoelectric Generator"] = {
+				results = "ent_jack_gmod_ezrtg",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 200,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 200,
+					[JMod.EZ_RESOURCE_TYPES.URANIUM] = 300
+				},
+				sizeScale = 6,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Generator that uses radioactive decay to slowly create power.\nWorks just about anywhere."
+			},
 			["EZ Sprinkler"] = {
 				results = "ent_jack_gmod_ezsprinkler",
 				craftingReqs = {

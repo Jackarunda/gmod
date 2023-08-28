@@ -10,14 +10,14 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/radioisotope-powergenerator.mdl"
 --
 ENT.EZupgradable = true
-ENT.EZcolorable = false
+ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.Mass = 250
 ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100
+	MaxDurability = 120
 }
 
 ENT.DynamicPerfSpecs = {
@@ -45,7 +45,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
@@ -55,7 +55,7 @@ if(SERVER)then
 		elseif State == STATE_OFF then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
-			if alt then
+			if Alt then
 				self:ProduceResource(activator)
 				return
 			end
@@ -64,7 +64,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetState() ~= STATE_OFF) then JMod.Hint(activator, "destroyed", self) return end
+		if (self:GetState() ~= STATE_OFF) then return end
 		self:EmitSound("buttons/button1.wav", 60, 80)
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
@@ -113,6 +113,20 @@ if(SERVER)then
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
+		end
+	end
+
+	function ENT:OnDestroy()
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 25 do
+			timer.Simple(i * .05, function()
+				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
+				Gas.Range = 500
+				Gas:SetPos(self:GetPos())
+				JMod.SetEZowner(Gas, JMod.GetEZowner(self))
+				Gas:Spawn()
+				Gas:Activate()
+				Gas.CurVel = (VectorRand() * math.random(1, 1000) + Vector(0, 0, 100 * JMod.Config.Particles.NuclearRadiationMult))
+			end)
 		end
 	end
 

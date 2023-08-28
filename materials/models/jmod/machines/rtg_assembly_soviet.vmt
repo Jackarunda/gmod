@@ -1,7 +1,7 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/jmod/machines/radioisotope-powergenerator"
-	"$bumpmap" "models/jmod/machines/radioisotope-powergenerator-normal"
+	"$basetexture" "models/jmod/machines/radioisotope-powergenerator-top_soviet"
+	"$bumpmap" "models/jmod/machines/radioisotope-powergenerator-top-normal"
 	"$phong" "1"
 	"$phongexponent" "100"
 	"$phongboost" "1"		
