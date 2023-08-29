@@ -1,27 +1,29 @@
 ﻿-- AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Radioisotope Thermoelectric Generator"
+ENT.PrintName = "EZ Mini Radioisotope Thermoelectric Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
-ENT.Information = ""
-ENT.Spawnable = true
+ENT.Information = "Probably came out of a soviet satillite"
+ENT.Spawnable = false
+--ENT.AdminOnly = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.Model = "models/jmod/machines/radioisotope-powergenerator.mdl"
+ENT.Model = "models/jmod/machines/radioisotope-powergenerator-small.mdl"
+ENT.Mat = "models/jmod/machines/rtg_assembly_soviet.vmt"
 --
-ENT.EZupgradable = true
-ENT.EZcolorable = true
+ENT.EZupgradable = false
+ENT.EZcolorable = false
 --
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.Mass = 250
+ENT.Mass = 40
 ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 120
+	MaxDurability = 100
 }
 
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = .8
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
@@ -37,6 +39,7 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self:SetProgress(0)
 		self.NextResourceThink = 0
+		self.NextEnvThink = 0
 		self.NextUseTime = 0
 		self.PowerSLI = 0 -- Power Since Last Interaction
 		self.MaxPowerSLI = 500
@@ -59,7 +62,7 @@ if(SERVER)then
 				self:ProduceResource(activator)
 				return
 			end
-			self:TurnOff()
+			activator:PickupObject(self)
 		end
 	end
 
@@ -86,7 +89,7 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 60)
+		local pos = self:WorldToLocal(SelfPos + Up * 10 + Right * 14)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
@@ -99,25 +102,41 @@ if(SERVER)then
 	end
 
 	function ENT:Think()
-		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
+		local Time, State = CurTime(), self:GetState()
 
 		self:UpdateWireOutputs()
 
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
-				local PowerPerMin = 10
-				local PowerToProduce = (PowerPerMin/60) * JMod.EZ_GRADE_BUFFS[Grade]
+				local PowerPerMin = 5
+				local PowerToProduce = (PowerPerMin/60)
 
 				self:SetProgress(self:GetProgress() + PowerToProduce)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
 			end
 		end
+
+		if self.NextEnvThink < Time then
+			self.NextEnvThink = Time + math.random(10, 20)
+			if math.random(1, 100) == 1 then
+				local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
+				Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
+				Ent.EZowner = self.EZowner
+				Ent.LifeTime = 15
+				Ent.DmgAmt = 1
+				Ent.Range = 500
+				Ent.DragMult = .3
+				Ent:Spawn()
+				Ent:Activate()
+				Ent.CurVel = self:GetVelocity()
+			end
+		end
 	end
 
 	function ENT:OnDestroy()
-		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 30 do
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 10 do
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas.Range = 500
@@ -135,16 +154,14 @@ if(SERVER)then
 		JMod.SetEZowner(self, ply, true)
 		ent.NextRefillTime = Time + math.Rand(0, 1)
 		self.NextResourceThink = Time + math.Rand(0, 3)
+		self.NextEnvThink = Time + math.Rand(1, 10)
 		self.NextUseTime = Time + math.Rand(0, 3)
 	end
 
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
-		self.Cylinder = JMod.MakeModel(self, "models/hunter/tubes/tube2x2x05.mdl")
 	end
-
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
 
 	function ENT:Draw()
 		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
@@ -162,9 +179,6 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
-		local CylinderAng = SelfAng:GetCopy()
-		CylinderAng:RotateAroundAxis(Right, 0)
-		JMod.RenderModel(self.Cylinder, BasePos + Up * 18.5, CylinderAng, Vector(0.26, 0.26, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		
 		if DetailDraw then
 			if (Closeness < 20000) and (State == STATE_ON) then
@@ -176,21 +190,12 @@ elseif(CLIENT)then
 				local ProgFrac = self:GetProgress() / 100
 				local R, G, B = JMod.GoodBadColor(ProgFrac)
 
-				cam.Start3D2D(SelfPos + Forward * 5 + Right * 35 + Up * 20, DisplayAng, .06)
-				surface.SetDrawColor(10, 10, 10, Opacity + 50)
-				local RankX, RankY = -65, 70
-				surface.DrawRect(RankX, RankY, 128, 128)
-				JMod.StandardRankDisplay(Grade, RankX + 62, RankY + 68, 118, Opacity + 50)
+				cam.Start3D2D(SelfPos + Right * 7.8 + Up * 5, DisplayAng, .06)
 				draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(ProgFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
-			if State == STATE_ON then
-				render.SetMaterial(GlowSprite)
-				render.DrawSprite(SelfPos + Forward * -8.5 + Right * 33 + Up * 24, 20, 20, Color(255, 0, 0))
-				render.DrawSprite(SelfPos + Forward * -8.5 + Right * 33 + Up * 24, 15, 15, Color(255, 0, 0))
-			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezrtg", "EZ Radioisotope Thermoelectric Generator")
+	language.Add("ent_jack_gmod_ezrps", "EZ Radioisotope Thermoelectric Generator")
 end
