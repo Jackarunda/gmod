@@ -68,6 +68,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
+		if (self:WaterLevel() > 1) then return end
 		if (self:GetFuel() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
@@ -146,6 +147,7 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
+				if self:WaterLevel() > 1 then self:TurnOff() return end
 				local NRGperFuel = JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
@@ -187,6 +189,9 @@ if(SERVER)then
 				end
 			end
 		end
+
+		self:NextThink(Time + .1)
+		return true
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)

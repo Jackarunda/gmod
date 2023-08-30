@@ -171,6 +171,7 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 		
 		if(State == STATE_ON)then
+			if (self:WaterLevel() > 0) then self:TurnOff() return end
 			local weatherMult = 1
 			if(StormFox)then 
 				if (StormFox.IsNight())then 

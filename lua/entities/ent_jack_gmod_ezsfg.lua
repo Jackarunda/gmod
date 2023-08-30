@@ -80,6 +80,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
+		if (self:WaterLevel() > 1) then return end
 		self:EmitSound("snd_jack_littleignite.wav")
 		if (self:GetElectricity() > 0) and (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
@@ -177,6 +178,17 @@ if(SERVER)then
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
+				if (self:WaterLevel() > 0) then 
+					self:TurnOff() 
+					local Foof = EffectData()
+					Foof:SetOrigin(self:GetPos())
+					Foof:SetNormal(-Right)
+					Foof:SetScale(10)
+					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+					return 
+				end
 				local NRGperFuel = 1 * JMod.EnergyEconomyParameters.SteamGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
