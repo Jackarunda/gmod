@@ -56,6 +56,7 @@ if(SERVER)then
 		elseif(State==STATE_ON)then
 			if(alt)then
 				self:ProduceResource()
+				timer.Start(self.TimerName)
 				return
 			end
 			self:TurnOff()
@@ -134,31 +135,6 @@ if(SERVER)then
 		return HitAmount*SkyMod
 	end
 
-	function ENT:TurnOn()
-		if self:GetState() > STATE_OFF then return end
-		if (self:CheckSky() > 0) then
-			self:EmitSound("buttons/button1.wav", 60, 80)
-			self:SetState(STATE_ON)
-			self.NextUse = CurTime() + 1
-		else
-			self:EmitSound("buttons/button2.wav", 60, 100)
-		end
-		self.TimerName = ("SolarAutoShutOff" .. tostring(self:EntIndex()))
-		timer.Create(self.TimerName, 600, 1, function() 
-			if IsValid(self) then self:TurnOff() end 
-		end)
-		timer.Start(self.TimerName)
-	end
-
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
-		self:EmitSound("buttons/button18.wav", 60, 80)
-		self:ProduceResource()
-		self:SetState(STATE_OFF)
-		self.NextUse = CurTime() + 1
-		timer.Remove("SolarAutoShutOff" .. self.TimerName)
-	end
-
 	function ENT:GetLightAlignment()
 		local LightEnt=ents.FindByClass("light_environment")[1]
 		local SunEnt=ents.FindByClass("env_sun")[1]
@@ -195,6 +171,7 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 		
 		if(State == STATE_ON)then
+			if (self:WaterLevel() > 0) then self:TurnOff() return end
 			local weatherMult = 1
 			if(StormFox)then 
 				if (StormFox.IsNight())then 

@@ -94,6 +94,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
+		if (self:WaterLevel() > 0) then return end
 		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
 			return
@@ -196,6 +197,17 @@ if(SERVER)then
 		if (self.NextSmeltThink < Time) then
 			self.NextSmeltThink = Time + 1
 			if (State == STATE_SMELTING) then
+				if (self:WaterLevel() > 0) then 
+					self:TurnOff() 
+					local Foof = EffectData()
+					Foof:SetOrigin(self:GetPos())
+					Foof:SetNormal(Vector(0, 0, 1))
+					Foof:SetScale(10)
+					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 120, 90)
+					return 
+				end
 				if not OreTyp then self:TurnOff() return end
 
 				local Grade = self:GetGrade()

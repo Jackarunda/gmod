@@ -81,6 +81,7 @@ if SERVER then
 			local Pos = Tr.HitPos - Tr.HitNormal * 10
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
+			--self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
 			constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 			local Fff = EffectData()
 			Fff:SetOrigin(Tr.HitPos)
@@ -98,9 +99,13 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
+			--jprint(self.EZlaunchBury)
 			if data.Speed > 25 then
 				if (self:GetState() == JMod.EZ_STATE_ARMED) and (math.random(1, 5) == 3) then
 					self:Detonate()
+				--elseif self.EZlaunchBury then
+				--	self:Bury(JMod.GetEZowner(self))
+				--	self.EZlaunchBury = false
 				else
 					self:EmitSound("Weapon.ImpactHard")
 				end
@@ -299,7 +304,33 @@ if SERVER then
 
 	function ENT:OnRemove()
 	end
-	--aw fuck you
+--[[]
+	function ENT:GravGunPunt(ply)
+		if (self:GetState() == JMod.EZ_STATE_OFF) and IsValid(self.EZholdingPlayer) then
+			
+			self.EZlaunchBury = true
+			self.EZholdingPlayer = nil
+			--self:SetState(STATE_LAUNCHED)
+			--self:EmitSound("npc/roller/mine/rmine_predetonate.wav")
+
+			return true
+		else
+			ply:DropObject()
+		end
+	end
+
+	hook.Add("GravGunOnPickedUp", "JMOD_BOUNDINGMINE_GRAB", function(ply, ent)
+		if ent:GetClass() == "ent_jack_gmod_ezboundingmine" then 
+			local State = ent:GetState()
+			--ent.EZlastGravGunGrabTime = CurTime()
+
+			if State ~= JMod.EZ_STATE_ARMED then
+				JMod.SetEZowner(ent, ply)
+				ent.EZholdingPlayer = ply
+			end
+		end
+	end)--]]
+
 elseif CLIENT then
 	function ENT:Initialize()
 	end

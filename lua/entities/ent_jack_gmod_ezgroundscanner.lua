@@ -61,6 +61,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if (self:WaterLevel() > 0) and (self:GetGrade() ~= 5) then return end
 		if self:GetState() > JMod.EZ_STATE_OFF then return end
 		if self:GetElectricity() > 0 then
 			self:SetState(JMod.EZ_STATE_ON)
@@ -148,6 +149,7 @@ if(SERVER)then
 			end
 			return
 		elseif(State==JMod.EZ_STATE_ON)then
+			if (self:WaterLevel() > 0) and (self:GetGrade() ~= 5) then self:TurnOff() return end
 			if(self:GetElectricity()<=0)then self:TurnOff() return end
 			self:ConsumeElectricity(.3)
 			if(self:CanScan())then
@@ -171,7 +173,7 @@ if(SERVER)then
 		self.Snd3:Stop()
 		self:EmitSound(snd,60,100)
 		timer.Simple(1,function()
-			if(IsValid(self) and self:GetState()==JMod.EZ_STATE_ON)then
+			if(IsValid(self)) and (self:GetState()==JMod.EZ_STATE_ON) and (self:GetGrade() ~= 5) then
 				self.Snd1:PlayEx(1, 80)
 				self.Snd2:PlayEx(1, 80)
 				self.Snd3:PlayEx(1, 80)
