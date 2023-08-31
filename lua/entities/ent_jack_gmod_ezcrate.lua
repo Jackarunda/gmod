@@ -77,7 +77,11 @@ if SERVER then
 		end
 
 		self.NextLoad = 0
-
+		---
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Drop Resource [NORMAL]"}, {"Drops a resource out on an input > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"Type [STRING]", "Amount Left [NORMAL]"}, {"Will be 'generic' by default", "Amount of resources left in the crate"})
+		end
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
@@ -109,6 +113,8 @@ if SERVER then
 		local Frac = self:GetResource() / self.MaxResource
 		self:GetPhysicsObject():SetMass(100 + Frac * 300)
 		self:GetPhysicsObject():Wake()
+		WireLib.TriggerOutput(self, "Type", self:GetResourceType())
+		WireLib.TriggerOutput(self, "Amount Left", self:GetResource())
 	end
 
 	function ENT:OnTakeDamage(dmginfo)

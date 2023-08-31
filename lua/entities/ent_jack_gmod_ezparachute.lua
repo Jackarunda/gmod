@@ -49,6 +49,15 @@ end)]]--
 
 if SERVER then
 	function ENT:Initialize()
+		
+		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
+			local ParachuteType = JMod.ArmorTable[self.ParachuteName]
+			self.ParachuteMdl = ParachuteType.eff.parachute.mdl
+			self.MdlOffset = ParachuteType.eff.parachute.offset
+			self.Drag = ParachuteType.eff.parachute.drag
+			self.ChuteColor = Color(ParachuteType.clr.r, ParachuteType.clr.g, ParachuteType.clr.b) 
+		end
+
 		self:SetModel(self.ParachuteMdl or "models/jessev92/bf2/parachute.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_FLY)
@@ -75,14 +84,6 @@ if SERVER then
 		self.Drag = self.Drag or 5
 		self:SetNW2Int("AttachBone", self.AttachBone or 0)
 		self.ChuteColor = self.ChuteColor or Color(83, 83, 55)
-
-		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
-			local ParachuteType = JMod.ArmorTable[self.ParachuteName]
-			self.ParachuteMdl = ParachuteType.eff.parachute.mdl
-			self.MdlOffset = ParachuteType.eff.parachute.offset
-			self.Drag = ParachuteType.eff.parachute.drag
-			self.ChuteColor = Color(ParachuteType.clr.r, ParachuteType.clr.g, ParachuteType.clr.b) 
-		end
 
 		self:SetColor(self.ChuteColor)
 		self:SetOffset(self.MdlOffset)
