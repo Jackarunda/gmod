@@ -198,7 +198,7 @@ function SWEP:ApplyForce()
 		local Force = (avec - velo / 2) * mul
 		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
-		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.Config.General.HandGrabStrength)
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.GetPlayerStrength(self.Owner))
 		Force = ForceNormal * ForceMagnitude
 
 		local CounterDir, CounterAmt = velo:GetNormalized(), velo:Length()
@@ -326,7 +326,7 @@ function SWEP:PrimaryAttack()
 			self:SetNextPrimaryFire(CurTime() + .35)
 
 			if IsValid(PhysObj) then 
-				if (PhysObj:GetMass() > (16 * JMod.Config.General.HandGrabStrength)) then
+				if (PhysObj:GetMass() > (20 * JMod.GetPlayerStrength(self.Owner))) then
 					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
 					return
 				end
