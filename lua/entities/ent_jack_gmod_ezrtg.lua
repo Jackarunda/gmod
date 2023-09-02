@@ -187,8 +187,10 @@ elseif(CLIENT)then
 			end
 			if State == STATE_ON then
 				render.SetMaterial(GlowSprite)
-				render.DrawSprite(SelfPos + Forward * -8.5 + Right * 33 + Up * 24, 20, 20, Color(255, 0, 0))
-				render.DrawSprite(SelfPos + Forward * -8.5 + Right * 33 + Up * 24, 15, 15, Color(255, 0, 0))
+				local SpritePos = SelfPos + Forward * -8.5 + Right * 33 + Up * 23
+				local Vec = (SpritePos - EyePos()):GetNormalized()
+				render.DrawSprite(SpritePos - Vec * 5, 20, 20, Color(255, 0, 0))
+				render.DrawSprite(SpritePos - Vec * 5, 10, 10, Color(255, 255, 255, 150))
 			end
 		end
 	end
