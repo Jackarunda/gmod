@@ -1186,13 +1186,13 @@ if SERVER then
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = {"models/props_c17/trappropeller_lever.mdl"},
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {"models/props_junk/PopCan01a.mdl", "models/props_junk/garbage_metalcan002a.mdl"},
 		[JMod.EZ_RESOURCE_TYPES.COPPER] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = {"models/props_interiors/furniture_chair01a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = {"models/props_interiors/furniture_chair01a.mdl", "models/nova/chair_wood01.mdl","ent_jack_gmod_ezwheatseed"},
 		[JMod.EZ_RESOURCE_TYPES.CLOTH] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.PAPER] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.PAPER] = {"models/props_junk/cardboard_box004a.mdl"},
 		[JMod.EZ_RESOURCE_TYPES.RUBBER] = {"models/jmod/resources/rock05a.mdl"},
 		[JMod.EZ_RESOURCE_TYPES.GLASS] = {"models/jmod/resources/rock05a.mdl"},
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {"ent_jack_gmod_ezwheatseeds"}
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {"ent_jack_gmod_ezwheatseed", "models/props_junk/cardboard_box004a.mdl"}
 	}
 
 	local ScroungedPositions, Amount = {}, 100

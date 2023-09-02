@@ -1246,6 +1246,7 @@ function JMod.GetPlayerStrength(ply)
 
 		return 1 + (ply.EZnutrition.Nutrients * 0.1) * JMod.Config.General.HandGrabStrength
 	else
+		
 		return 1 * JMod.Config.General.HandGrabStrength
 	end
 end
