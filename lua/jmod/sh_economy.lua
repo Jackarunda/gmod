@@ -1183,38 +1183,46 @@ if SERVER then
 	end
 
 	local ScroungeTable = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = {["models/props_c17/trappropeller_lever"] = 5},
-		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {["models/props_junk/PopCan01a"] = 1, ["models/props_junk/garbage_metalcan002a"] = 1},
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = {["models/props_interiors/furniture_chair01a"] = 16},
-		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {["models/jmod/resources/rock05a"] = 5}
+		[JMod.EZ_RESOURCE_TYPES.STEEL] = {"models/props_c17/trappropeller_lever.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {"models/props_junk/PopCan01a.mdl", "models/props_junk/garbage_metalcan002a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.COPPER] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = {"models/props_interiors/furniture_chair01a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.CLOTH] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.PAPER] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.RUBBER] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.GLASS] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {"models/jmod/resources/rock05a.mdl"},
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {"ent_jack_gmod_ezwheatseeds"}
 	}
 
 	local ScroungedPositions, Amount = {}, 100
 
-	function JMod.EZ_ScroungeArea(ply)
+	function JMod.EZ_ScroungeArea(ply, debugMode)
 		local Time = CurTime()
 
-		ply.NextScroungeTime = ply.NextScroungeTime or 0
-		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
-		ply.NextScroungeTime = Time + 20
+		if not debugMode then --Gatekeeping the gatekeeper
+			ply.NextScroungeTime = ply.NextScroungeTime or 0
+			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
+			ply.NextScroungeTime = Time + 20
+		end
 
 		local Pos = ply:GetShootPos()
 		local PreScroungeMod = 1
 
 		-- Let's find te nearest other scrounge location:
-		local ClosestDist = 9e9
-		for _, pos in pairs(ScroungedPositions) do
+		local ClosestDist = nil
+		for _, pos in ipairs(ScroungedPositions) do
 			local DistanceTo = Pos:Distance(pos)
 			if (DistanceTo < ClosestDist) then
 				ClosestDist = DistanceTo
 			end
 		end
-		if ClosestDist then
-			PreScroungeMod = ClosestDist / 512
+		if ClosestDist and not(debugMode) then
+			PreScroungeMod = ClosestDist / 1024
+			--jprint("ClosestScrounge: "..ClosestDist)
+			--jprint("prescrounge mod: "..PreScroungeMod)
 		end
 		
-		jprint("ClosestScrounge: "..ClosestDist)
-		jprint("prescrounge mod: "..PreScroungeMod)
 		local ScroungeResults = {}
 		for i = 1, Amount do
 			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
@@ -1247,49 +1255,71 @@ if SERVER then
 			end 
 		end
 
-		--PrintTable(ScroungeResults)
-
+		if debugMode then
+			print("--Scrounge Results--")
+			PrintTable(ScroungeResults)
+		end
+		local ScroungeTypes = {}
 		for EZresource, amt in pairs(ScroungeResults) do
-			if not ScroungeTable[EZresource] then return end
-
-			amt = math.floor(amt)
-
-			local Break = 0
-			while amt > 0 and Break < 10 do
-				local bestModel, resultantMass = nil, 1
-				for model, mass in pairs(ScroungeTable[EZresource]) do
-					if not bestModel then
-						bestModel = model
-						resultantMass = mass
-					elseif (mass <= amt) and (mass > resultantMass) then
-						bestModel = model
-						resultantMass = mass
-					end
+			if amt > 0 then
+				for i = 1, math.floor(amt) do
+					table.insert(ScroungeTypes, EZresource)
 				end
-				if bestModel then
-					local Loot = ents.Create("prop_physics")
-					Loot:SetModel(bestModel..".mdl")
-					Loot:SetPos(Pos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(-10, 10)))
-					Loot:Spawn()
-					Loot:Activate()
-					timer.Simple(1, function()
-						if IsValid(Loot) then
-							Loot:GetPhysicsObject():SetMass(resultantMass)
-							--Loot:Activate()
-						end
-					end)
-					JMod.SetEZowner(Loot, ply)
-				end
-				amt = amt - math.min(resultantMass, amt)
-				Break = Break + 1
 			end
 		end
-		local index = table.insert(ScroungedPositions, Pos)
-		timer.Simple(60, function()
-			if ScroungedPositions[index] then
-				ScroungedPositions[index] = nil
+		if debugMode then
+			print("--Scrounge Types--")
+			PrintTable(ScroungeTypes)
+		end
+
+		local StuffPerScrounge = 5
+		local Break = 0
+		while Break < StuffPerScrounge do
+			Break = Break + 1
+			local EZresource = table.Random(ScroungeTypes)
+			if not ScroungeTable[EZresource] then continue end
+
+			local ScroungedItem = table.Random(ScroungeTable[EZresource])
+			local IsProp = string.find(ScroungedItem, ".mdl")
+			local Loot
+			if IsProp then
+				Loot = ents.Create("prop_physics")
+				Loot:SetModel(ScroungedItem)
+			else
+				Loot = ents.Create("prop_physics")
 			end
-		end)
+			if not Loot then jprint("[JMOD]: Scrounge failed on "..ScroungedItem) break end
+
+			local RandDir = VectorRand() * 100
+			RandDir.z = RandDir.z / 4
+			local AntiClipTr = util.TraceHull({
+				start = Pos, 
+				endpos = Pos + RandDir, 
+				mins = Vector(-10, -10, -10), 
+				maxs = Vector(10, 10, 10), 
+				mask = MASK_SOLID,
+				filter = {ply}
+			})
+			Loot:SetPos(AntiClipTr.HitPos)
+			Loot:Spawn()
+			Loot:Activate()
+			
+			--timer.Simple(1, function()
+			--	if IsValid(Loot) then
+			--		Loot:GetPhysicsObject():SetMass(resultantMass)
+			--		Loot:Activate()
+			--	end
+			--end)
+			JMod.SetEZowner(Loot, ply)
+		end
+		if not debugMode then
+			local index = table.insert(ScroungedPositions, Pos)
+			timer.Simple(60, function()
+				if not table.IsEmpty(ScroungedPositions) then
+					table.remove(ScroungedPositions, 1)
+				end
+			end)
+		end--]]
 
 		--[[
 			1) Check for open air positions
@@ -1300,6 +1330,12 @@ if SERVER then
 			6) Update a cooldown so players don't spam the server with scrounge requests.
 		]]--
 	end
+
+	concommand.Add("jmod_debug_scrounge", function(ply, cmd, args)
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
+		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		JMod.EZ_ScroungeArea(ply, true)
+	end, nil, "Test scrounging without any modifiers")
 
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()
 		JMod.GenerateNaturalResources()
