@@ -692,7 +692,8 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and ent:GetEngineActive()) then
+	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and ent.GetEngineActive and not(ent.ExplodedAlready)) then
+		--jprint(ent.LVS, ent.GetEngineActive(), ent.GetDriver and ent:GetDriver())
 		-- LunasFlightSchool compatibility
 		if ent:GetEngineActive() and ent.GetDriver then
 			local Pilot = ent:GetDriver()
@@ -1236,6 +1237,16 @@ function JMod.BuildRecipe(results, ply, Pos, Ang)
 			Ent:Activate()
 			if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
 		end
+	end
+end
+
+function JMod.GetPlayerStrength(ply)
+	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
+	if ply.EZnutrition then
+
+		return 1 + (ply.EZnutrition.Nutrients * 0.1) * JMod.Config.General.HandGrabStrength
+	else
+		return 1 * JMod.Config.General.HandGrabStrength
 	end
 end
 
