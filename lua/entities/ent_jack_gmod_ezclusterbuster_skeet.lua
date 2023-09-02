@@ -87,9 +87,9 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInCone(Pos, Vector(0, 0, -1), 1500, math.cos(math.rad(45)))) do
 				local Phys, Class = v:GetPhysicsObject(), v:GetClass()
-
+				
 				if IsValid(Phys) and not (v == self) and not (Class == self.ClassName) and not IsBlackListed(Class) then
-					if v:IsPlayer() or v:IsNPC() or v:IsVehicle() then
+					if v:IsPlayer() or v:IsNPC() or v:IsVehicle() or v.LVS then
 						if JMod.ClearLoS(self, v) and JMod.ShouldAttack(self, v, nil, true) then
 							table.insert(Targets, v)
 						end

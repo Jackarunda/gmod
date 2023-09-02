@@ -692,7 +692,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and ent.GetEngineActive and not(ent.ExplodedAlready)) then
+	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and not(ent.ExplodedAlready)) then
 		--jprint(ent.LVS, ent.GetEngineActive(), ent.GetDriver and ent:GetDriver())
 		-- LunasFlightSchool compatibility
 		if ent:GetEngineActive() and ent.GetDriver then
