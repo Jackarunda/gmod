@@ -200,7 +200,7 @@ if(SERVER)then
 			self:DrawShadow(true)
 			self:SetUseType(SIMPLE_USE)
 			self.LastSubModel = NewSubModel
-			--self:TryPlant()
+			self:TryPlant()
 		end
 		timer.Simple(0, function()
 			if (IsValid(self)) then
