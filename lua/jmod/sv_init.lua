@@ -732,101 +732,12 @@ end)
 
 --hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
 hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
-	if JMod.Config.QoL.JModCorpse and ply.EZarmor and ply.EZarmor.items then
+	if (JMod.Config.QoL.JModCorpseStayTime > 0) and ply.EZarmor and ply.EZarmor.items then
 		SafeRemoveEntity(ply:GetRagdollEntity())
-		local Ragdoll = ents.Create("prop_ragdoll")
-		Ragdoll.EZcorpse = true
-		if ply.EZoriginalPlayerModel then
-			Ragdoll:SetModel(ply.EZoriginalPlayerModel)
-		else
-			Ragdoll:SetModel(ply:GetModel())
-		end
-		Ragdoll:SetPos(ply:GetPos())
-		Ragdoll:SetAngles(ply:GetAngles())
-		Ragdoll:Spawn()
-		----------------------Kycea contribution Begin----------------------
-		for i = 0, Ragdoll:GetPhysicsObjectCount() do
-			local physobj = Ragdoll:GetPhysicsObjectNum(i)
-			if (physobj) and IsValid(physobj)then
-				local pos, ang = ply:GetBonePosition(ply:TranslatePhysBoneToBone(i))
-				physobj:SetPos(pos)
-				physobj:SetVelocity(ply:GetVelocity())
-				physobj:SetAngles(ang)
-			end
-		end
-		----------------------Kycea contribution end------------------------
-		Ragdoll:Activate()
-		if IsValid(Ragdoll) then
-			Ragdoll.EZarmorP = {}
-			local Parachute = false
-			for k, v in pairs(ply.EZarmor.items) do
-				local ArmorInfo = JMod.ArmorTable[v.name]
-				if not ArmorInfo.plymdl then
-					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
-					local Pos, Ang = Ragdoll:GetBonePosition(Index)
-					
-					if Pos and Ang then
-						-- Pos it
-						local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
-						Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
-						Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
-						Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
-						Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
-						-- Spawn it
-						local ArmorPiece = ents.Create(ArmorInfo.ent)
-						ArmorPiece:SetPos(Pos)
-						ArmorPiece:SetAngles(Ang)
-						ArmorPiece:SetOwner(Ragdoll)
-						--ArmorPiece:SetParent(Ragdoll, Index)
-						--ArmorPiece:FollowBone(Ragdoll, Index)
-						--ArmorPiece:SetLocalPos(Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z)
-						--ArmorPiece:SetLocalAngles(ArmorInfo.ang)
-						--ArmorPiece:AddEffects(EF_BONEMERGE)
-						ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
-						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
-						ArmorPiece:Spawn()
-						ArmorPiece:Activate()
-
-						Ragdoll.EZarmorP[v.name] = ArmorPiece
-						if ArmorInfo.eff and ArmorInfo.eff.parachute then
-							Parachute = v.name
-							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
-							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
-						end
-						-- Attach it
-						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
-						Weld:Activate()
-					end
-				end
-			end
-			--print("We created " .. tostring(CCounter) .. " constraints")
-			timer.Simple(30, function()
-				if IsValid(Ragdoll) then
-					if IsValid(Ragdoll.EZarmorP) then
-						for _, v in pairs(Ragdoll.EZarmorP) do
-							local Con = constraint.FindConstraintEntity(v, "Weld")
-							if IsValid(Con) then
-								local Ent1, Ent2 = Con:GetConstrainedEntities()
-								if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
-									SafeRemoveEntity(v)
-								end
-							end
-						end
-					end
-					SafeRemoveEntity(Ragdoll)
-				end
-			end)
-			if IsValid(ply.EZparachute) and Parachute then
-				ply.EZparachute:SetNW2Entity("Owner", Ragdoll.EZarmorP[Parachute])
-				ParachuteEnt = Ragdoll.EZarmorP[Parachute]
-				ParachuteEnt:SetNW2Bool("EZparachuting", true)
-				ParachuteEnt.EZparachute = ply.EZparachute
-				ParachuteEnt.EZparachute.AttachBone = 0
-				ParachuteEnt.EZparachute.Drag = ParachuteEnt.EZparachute.Drag * 5
-			end
-			ply:SetNW2Bool("EZparachuting", true)
-			ply.EZparachute = nil
-		end
+		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+		EZcorpse.DeadPlayer = ply
+		EZcorpse:Spawn()
+		EZcorpse:Activate()
 	end
 end)
 

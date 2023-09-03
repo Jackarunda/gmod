@@ -71,6 +71,28 @@ if(SERVER)then
 		self.NextOpStart = 0
 	end
 
+	function ENT:ReviveCorpses()
+		for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezcorpse")) do
+			--jprint(v, v.VeryDead)
+			if (self:GetPos():Distance(v:GetPos()) < 512) and not(v.VeryDead) then
+				if IsValid(v.DeadPlayer) and not(v.DeadPlayer:Alive()) then
+					if IsValid(v.EZragdoll) then
+						if istable(v.EZragdoll.EZarmorP) then
+							constraint.RemoveAll(v.EZragdoll)
+							v.EZragdoll.EZarmorP = nil
+						end
+					end
+					v.DeadPlayer:Spawn()
+					v.DeadPlayer:SetPos(v.EZragdoll:GetPos())
+					v.DeadPlayer:EnterVehicle(self.Pod)
+					v.DeadPlayer:SetHealth(1)
+					v:Remove()
+					break
+				end
+			end
+		end
+	end
+
 	function ENT:Use(activator)
 		local State = self:GetState()
 		if State == STATE_BROKEN then return end
@@ -110,6 +132,7 @@ if(SERVER)then
 		self.Pod:Fire("unlock", "", 1.4)
 		self.NextEnter = Time + 1.6
 		self:ConsumeElectricity()
+		self:ReviveCorpses()
 	end
 
 	function ENT:TurnOff()
