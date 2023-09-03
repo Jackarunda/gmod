@@ -1,10 +1,10 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/jmod/machines/reactorcooling"
-	"$bumpmap" "models/jmod/machines/reactorcooling-normal"
-	"$phong" "1"
-	"$phongexponent" "100"
-	"$phongboost" "1"		
-	"$phongfresnelranges"	"[.05 .5 5]"
-	"$halflambert" "1"
+	"$basetexture" "models/jmod/machines/rtg_pipe"
+	"$bumpmap" "models/tex_jack_flat_normal"
+
+	"$envmap" "env_cubemap"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
 }

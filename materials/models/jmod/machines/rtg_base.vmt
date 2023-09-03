@@ -1,13 +1,17 @@
 "VertexLitGeneric"
 {
-	"$basetexture" "models/jmod/machines/radioisotope-powergenerator"
-	"$bumpmap" "models/jmod/machines/radioisotope-powergenerator-normal"
+	"$basetexture" "models/jmod/machines/rtg"
+	"$bumpmap" "models/tex_jack_flat_normal"
 	"$phong" "1"
-	"$phongexponent" "100"
-	"$phongboost" "1"		
-	"$phongfresnelranges"	"[.05 .5 5]"
-	"$halflambert" "1"
+	"$phongexponent" "20"
+	"$phongboost" ".5"		
+	"$phongfresnelranges"	"[1 1 1]"
 
 	"$blendtintbybasealpha" "1"
  	"$blendtintcoloroverbase" "0"
+
+	"$detail" "models/tex_jack_scratchedmetal"
+	"$detailscale" "10"
+	"$detailblendfactor" "1"
+	"$detailblendmode" "0"
 }
