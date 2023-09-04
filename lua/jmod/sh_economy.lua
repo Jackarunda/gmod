@@ -1195,140 +1195,138 @@ if SERVER then
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {"ent_jack_gmod_ezwheatseed", "models/props_junk/cardboard_box004a.mdl"}
 	}
 
-	local ScroungedPositions, Amount = {}, 100
+	local ScroungeTable = {
+		["urban"] = {
+			"models/props_junk/PopCan01a.mdl",
+			"models/props_junk/PopCan01a.mdl",
+			"models/props_junk/PopCan01a.mdl",
+			"models/props_junk/PopCan01a.mdl",
+			"models/props_junk/PopCan01a.mdl",
+			"models/props_interiors/furniture_chair01a.mdl",
+			"models/props_junk/cardboard_box004a.mdl",
+			"models/props_c17/metalpot002a.mdl",
+			"models/props_debris/wood_chunk06a.mdl",
+			"models/props_interiors/pot01a.mdl",
+			"models/props_interiors/pot02a.mdl",
+			"models/props_junk/garbage_coffeemug001a.mdl",
+			"models/props_junk/garbage_glassbottle001a.mdl",
+			"models/props_junk/garbage_glassbottle003a.mdl",
+			"models/props_junk/garbage_milkcarton001a.mdl",
+			"models/props_junk/garbage_milkcarton002a.mdl",
+			"models/props_junk/garbage_metalcan002a.mdl",
+			"models/props_junk/garbage_metalcan001a.mdl",
+			"models/props_junk/garbage_metalcan002a.mdl",
+			"models/props_junk/garbage_metalcan001a.mdl",
+			"models/props_junk/garbage_metalcan002a.mdl",
+			"models/props_junk/garbage_metalcan001a.mdl",
+			"models/props_junk/garbage_takeoutcarton001a.mdl",
+			"models/props_junk/garbage_plasticbottle003a.mdl",
+			"models/props_junk/glassbottle01a.mdl",
+			"models/props_junk/glassjug01.mdl",
+			"models/props_junk/metal_paintcan001a.mdl",
+			"models/props_junk/shoe001a.mdl",
+			"models/props_junk/terracotta01.mdl",
+			"models/props_junk/trafficcone001a.mdl",
+			"models/props_junk/plasticcrate01a.mdl"
+		},
+		["rural"] = {
+			"models/jmod/resources/rock05a.mdl",
+			"models/jmod/resources/rock05a.mdl",
+			"ent_jack_gmod_ezwheatseed",
+			"models/props_foliage/driftwood_03a.mdl",
+			"models/props_foliage/driftwood_03a.mdl",
+			"models/props_junk/watermelon01.mdl",
+			"models/props_junk/rock001a.mdl",
+			"models/props_junk/rock001a.mdl"
+		}
+	}
 
-	function JMod.EZ_ScroungeArea(ply, debugMode)
+	local ScroungedPositions = {}
+
+	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
 
-		if not debugMode then --Gatekeeping the gatekeeper
-			ply.NextScroungeTime = ply.NextScroungeTime or 0
-			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
-			ply.NextScroungeTime = Time + 20
-		end
+		local Pos, Range = ply:GetShootPos(), 500
 
-		local Pos = ply:GetShootPos()
-		local PreScroungeMod = 1
-
-		-- Let's find te nearest other scrounge location:
-		local ClosestDist = nil
-		for _, pos in ipairs(ScroungedPositions) do
+		for k, pos in pairs(ScroungedPositions) do
 			local DistanceTo = Pos:Distance(pos)
-			if (DistanceTo < ClosestDist) then
-				ClosestDist = DistanceTo
-			end
+			if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
 		end
-		if ClosestDist and not(debugMode) then
-			PreScroungeMod = ClosestDist / 1024
-			--jprint("ClosestScrounge: "..ClosestDist)
-			--jprint("prescrounge mod: "..PreScroungeMod)
+
+		if true then
+			ply.NextScroungeTime = ply.NextScroungeTime or 0
+			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down there pardner") return end
+			ply.NextScroungeTime = Time + 20
 		end
 		
 		local ScroungeResults = {}
-		for i = 1, Amount do
-			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
-			local StartPos = Pos + Offset
+		for i = 1, 100 do
+			local StartPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
 			local Contents = util.PointContents(StartPos)
 			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
 				local DownTr = util.TraceLine({
 					start = StartPos,
-					endpos = StartPos - Vector(0, 0, 600),
+					endpos = StartPos - Vector(0, 0, Range * 2),
 					filter = {ply},
 					mask = MASK_SOLID_BRUSHONLY
 				})
 				if DownTr.Hit then
-					local SurfaceResult = nil
 					local Mat = DownTr.MatType
-					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
+					local IsNatureMat = not not JMod.NatureMats[Mat]
+					local IsCityMat = not not JMod.CityMats[Mat]
 
-					if not MaterialType then
-						SurfaceResult = SalvagingTable[util.GetSurfacePropName(DownTr.SurfaceProps)]
+					if (IsNatureMat or IsCityMat) then
+						table.insert(ScroungeResults, (IsNatureMat and "rural") or (IsCityMat and "urban"))
+					end
+				end
+			end
+		end
+
+		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = 5, 0, 0, 1000
+		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do
+			AttemptedCount = AttemptedCount + 1
+			local PotentialSpawnPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
+			local Contents = util.PointContents(PotentialSpawnPos)
+			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+				local AntiClipTr = util.TraceHull({
+					start = PotentialSpawnPos,
+					endpos = PotentialSpawnPos,
+					mins = Vector(-20, -20, -20),
+					maxs = Vector(20, 20, 20),
+					mask = MASK_SOLID,
+					filter = {ply}
+				})
+				if not AntiClipTr.Hit then
+					local EnvironmentType = table.Random(ScroungeResults)
+					local SelectedScroungeTable = ScroungeTable[EnvironmentType]
+					local ScroungedItem = table.Random(SelectedScroungeTable)
+					local Loot
+					if string.find(ScroungedItem, ".mdl") then
+						Loot = ents.Create("prop_physics")
+						Loot:SetModel(ScroungedItem)
+						Loot:SetHealth(100)
 					else
-						SurfaceResult = SalvagingTable[MaterialType]
+						Loot = ents.Create(ScroungedItem)
 					end
-	
-					if SurfaceResult then
-						for k, v in pairs(SurfaceResult) do
-							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v * PreScroungeMod
-						end
-					end
-				end
-			end 
-		end
-
-		if debugMode then
-			print("--Scrounge Results--")
-			PrintTable(ScroungeResults)
-		end
-		local ScroungeTypes = {}
-		for EZresource, amt in pairs(ScroungeResults) do
-			if amt > 0 then
-				for i = 1, math.floor(amt) do
-					table.insert(ScroungeTypes, EZresource)
+					local SetPos = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
+					Loot:SetPos(SetPos.HitPos + Vector(0, 0, 10))
+					Loot:SetAngles(AngleRand())
+					Loot:Spawn()
+					Loot:Activate()
+					JMod.SetEZowner(Loot, ply)
+					SpawnedItems = SpawnedItems + 1
 				end
 			end
 		end
-		if debugMode then
-			print("--Scrounge Types--")
-			PrintTable(ScroungeTypes)
-		end
 
-		local StuffPerScrounge = 5
-		local Break = 0
-		while Break < StuffPerScrounge do
-			Break = Break + 1
-			local EZresource = table.Random(ScroungeTypes)
-			if not ScroungeTable[EZresource] then continue end
-
-			local ScroungedItem = table.Random(ScroungeTable[EZresource])
-			local IsProp = string.find(ScroungedItem, ".mdl")
-			local Loot
-			if IsProp then
-				Loot = ents.Create("prop_physics")
-				Loot:SetModel(ScroungedItem)
-			else
-				Loot = ents.Create("prop_physics")
-			end
-			if not Loot then jprint("[JMOD]: Scrounge failed on "..ScroungedItem) break end
-
-			local RandDir = VectorRand() * 100
-			RandDir.z = RandDir.z / 4
-			local AntiClipTr = util.TraceHull({
-				start = Pos, 
-				endpos = Pos + RandDir, 
-				mins = Vector(-10, -10, -10), 
-				maxs = Vector(10, 10, 10), 
-				mask = MASK_SOLID,
-				filter = {ply}
-			})
-			Loot:SetPos(AntiClipTr.HitPos)
-			Loot:Spawn()
-			Loot:Activate()
-			
-			--timer.Simple(1, function()
-			--	if IsValid(Loot) then
-			--		Loot:GetPhysicsObject():SetMass(resultantMass)
-			--		Loot:Activate()
-			--	end
-			--end)
-			JMod.SetEZowner(Loot, ply)
-		end
-		if not debugMode then
-			local index = table.insert(ScroungedPositions, Pos)
-			timer.Simple(60, function()
+		if true then
+			table.insert(ScroungedPositions, Pos)
+			timer.Simple(300, function()
 				if not table.IsEmpty(ScroungedPositions) then
 					table.remove(ScroungedPositions, 1)
 				end
 			end)
-		end--]]
-
-		--[[
-			1) Check for open air positions
-			2) Do downward traces from those positions to see what ground the player is on.
-			3) Use the ratio of different materials to determine what the scrounging results are.
-			4) Reduce the results according to the proximity to previously scrounged areas.
-			5) Add the position to the scrounging table.
-			6) Update a cooldown so players don't spam the server with scrounge requests.
-		]]--
+		end
 	end
 
 	concommand.Add("jmod_debug_scrounge", function(ply, cmd, args)
@@ -1356,8 +1354,7 @@ if SERVER then
 			local depositToRemove = table.remove(JMod.NaturalResourceTable, args[i])
 			print("Removed deposit #: " .. args[i])
 		end
-	end, nil, "Removes one or more natural resource deposits")]]
-	--
+	end, nil, "Removes one or more natural resource deposits")--]]
 elseif CLIENT then
 	local ShowNaturalResources = false
 
