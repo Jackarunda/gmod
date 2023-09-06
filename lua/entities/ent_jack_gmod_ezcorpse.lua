@@ -98,6 +98,7 @@ if SERVER then
 			Ply:SetNW2Bool("EZparachuting", true)
 			Ply.EZparachute = nil
 		end
+		Ragdoll.IsEZcorpse = true
 		self.EZragdoll = Ragdoll
 		timer.Simple(0, function()
 			if IsValid(self) and IsValid(self.EZragdoll) then

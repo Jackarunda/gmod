@@ -116,7 +116,7 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60 + Right * 70)
+		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60 + Right * 10)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 	end
@@ -218,7 +218,7 @@ elseif(CLIENT)then
 		local BasePos = SelfPos
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
-		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DetailDraw = Closeness < 1200000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
 		if((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw = false end -- if obscured, at least disable details
@@ -243,7 +243,7 @@ elseif(CLIENT)then
 				local FR, FG, FB = JMod.GoodBadColor(GasFrac)
 				local UR, UG, UB = JMod.GoodBadColor(UraniumFrac)
 
-				cam.Start3D2D(SelfPos + Forward * 21 + Right * 51 + Up * 50, DisplayAng, .06)
+				cam.Start3D2D(SelfPos - Forward * 10 - Right * 5 + Up * 50, DisplayAng, .06)
 				surface.SetDrawColor(10, 10, 10, Opacity + 50)
 				local RankX, RankY = 300, 30
 				surface.DrawRect(RankX, RankY, 128, 128)

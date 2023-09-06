@@ -719,10 +719,12 @@ hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
 	if JMod.Config.QoL.RealisticFallDamage then return spd ^ 2 / 8000 end
 end)
 
-hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
+hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)
 	ply.EZnutrition = nil
 	ply.EZhealth = nil
 	ply.EZkillme = nil
+	ply.EZoverDamage = dmg:GetDamage()
+	jprint(ply:Health(), ply.EZoverDamage)
 
 	if ply.JackyMatDeathUnset then
 		ply.JackyMatDeathUnset = false
@@ -736,9 +738,13 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		SafeRemoveEntity(ply:GetRagdollEntity())
 		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
 		EZcorpse.DeadPlayer = ply
+		if ply.EZoverDamage then
+			EZcorpse.EZoverDamage = ply.EZoverDamage
+		end
 		EZcorpse:Spawn()
 		EZcorpse:Activate()
 	end
+	ply.EZoverDamage = nil
 end)
 
 concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 
