@@ -209,6 +209,11 @@
 	["hint plant water"] = "your plant is becoming dehydrated, tap with a Water barrel to refresh",
 	["hint tree mature"] = "your tree is all grown up. Mature trees drop leaves, acorns, apples, and can be chopped down for wood",
 	["hint water seed"] = "tap the seed with a Water barrel to make it grow",
+	["hint ent_jack_sleepingbag"] = "You can set your spawnpoint by using it, or roll it up with Alt+E.",
+	["hint sleeping bag set spawn"] = "Spawn point has been set!",
+	["hint sleeping bag someone else"] = "This bed has already been claimed by someone else!",
+	["hint sleeping bag already you"] = "This bed is already yours!",
+	["hint sleeping bag wait"] = "You must wait 60 seconds before spawning at your bed again.",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",

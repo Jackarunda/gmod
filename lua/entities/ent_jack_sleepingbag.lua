@@ -17,7 +17,7 @@ elseif (SERVER) then
 		self.Entity:PhysicsInit(SOLID_VPHYSICS)
 		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid( SOLID_VPHYSICS )
-		self.jackSleepingBagOwner=nil
+		JMod.SetEZowner(self,nil)
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:Wake()
@@ -30,23 +30,24 @@ elseif (SERVER) then
 		self.nextSpawnTime=0
 	end
 
-	function ENT:Use(a)
-		local Alt = a:KeyDown(JMod.Config.General.AltFunctionKey)
-		if (a:IsPlayer() and Alt) then
+	function ENT:Use(ply)
+		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
+		if (ply:IsPlayer() and Alt) then
 			--Turn into rolled bedroll
-		elseif a:IsPlayer() then 
-			if (self.jackSleepingBagOwner and IsValid(self.jackSleepingBagOwner)) then
-				if (a~=self.jackSleepingBagOwner) then
-					a:PrintMessage(HUD_PRINTCENTER,"This bed is already claimed!")
+		elseif ply:IsPlayer() then
+			
+			if (self.EZowner and IsValid(self.EZowner)) then
+				if (ply~=self.EZowner) then
+					JMod.Hint(ply,"sleeping bag someone else")
 				else
-					a:PrintMessage(HUD_PRINTCENTER,"This bed is already yours!")
+					JMod.Hint(ply,"sleeping bag already you")
 				end
 			else
-				if (IsValid(a.jackSleepingBag)) then a.jackSleepingBag.jackSleepingBagOwner=nil;a.jackSleepingBag:SetColor(Color(100,100,100)) end
-				a:PrintMessage(HUD_PRINTCENTER,"Bed has been claimed!")
-				self.jackSleepingBagOwner=a
-				a.jackSleepingBag=self
-				local Col=a:GetPlayerColor()
+				if (IsValid(ply.JModSpawnPointEntity)) then ply.JModSpawnPointEntity.EZowner=nil;ply.JModSpawnPointEntity:SetColor(Color(100,100,100)) end
+				JMod.Hint(ply,"sleeping bag set spawn")
+				JMod.SetEZowner(self,ply)
+				ply.JModSpawnPointEntity=self
+				local Col=ply:GetPlayerColor()
 				self:SetColor(Color(255*Col.x,255*Col.y,255*Col.z))
 			end
 		end
@@ -66,19 +67,19 @@ elseif (SERVER) then
 	end
 
 	function ENT:OnRemove()
-		if(IsValid(self.jackSleepingBagOwner))then self.jackSleepingBagOwner.jackSleepingBag=nil end
+		if(IsValid(self.EZowner))then self.EZowner.JModSpawnPointEntity=nil end
 	end
 
-	local function jackSpawnHook(p)
-		if((p.jackSleepingBag)and(IsValid(p.jackSleepingBag)))then
-			if(p.jackSleepingBag.nextSpawnTime<CurTime())then
-				p.jackSleepingBag.nextSpawnTime=CurTime()+60
-				p:SetPos(p.jackSleepingBag:GetPos())
+	local function jackSpawnHook(ply)
+		if((ply.JModSpawnPointEntity)and(IsValid(ply.JModSpawnPointEntity)))then
+			if(ply.JModSpawnPointEntity.nextSpawnTime<CurTime())then
+				ply.JModSpawnPointEntity.nextSpawnTime=CurTime()+60
+				ply:SetPos(ply.JModSpawnPointEntity:GetPos())
 				local effectdata=EffectData()
-				effectdata:SetEntity(p)
+				effectdata:SetEntity(ply)
 				util.Effect("propspawn",effectdata)
 			else
-				p:PrintMessage(HUD_PRINTCENTER,"You must wait 60 seconds before spawning at your bed again.")
+				JMod.Hint(ply,"sleeping bag wait")
 			end
 		end
 	end

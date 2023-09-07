@@ -466,6 +466,21 @@ JMod.Hints = {
 	["ent_jack_gmod_ezrtg"] = {
 		LangKey = "hint ent_jack_gmod_ezrtg"
 	},
+	["ent_jack_sleepingbag"] = {
+		LangKey = "hint ent_jack_sleepingbag"
+	},
+	["sleeping bag set spawn"] = {
+		LangKey = "hint sleeping bag set spawn"
+	},
+	["sleeping bag someone else"] = {
+		LangKey = "hint sleeping bag someone else"
+	},
+	["sleeping bag already you"] = {
+		LangKey = "hint sleeping bag already you"
+	},
+	["sleeping bag wait"] = {
+		LangKey = "hint sleeping bag wait"
+	},
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",

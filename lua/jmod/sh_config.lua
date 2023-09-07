@@ -276,6 +276,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Other",
 					results = "ent_jack_gmod_ezcrate_uni"
 				},
+				["sleeping bag"] = {
+					description = "A sleeping bag you can set your spawn point at.",
+					category = "Other",
+					results = "ent_jack_sleepingbag"
+				},
 				["frag grenades"] = {
 					description = "10 frag grenades used for explosions.",
 					category = "Explosives",
@@ -889,6 +894,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Other",
 				craftingType = "toolbox",
 				description = "It's a box, tap it with whatever you want to store. Only works with JMod items."
+			},
+			["EZ Sleeping Bag"] = {
+				results = "ent_jack_sleepingbag",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "A sleeping bag you can set your spawn point at."
 			},
 			["EZ HE Rocket"] = {
 				results = "ent_jack_gmod_ezherocket",
