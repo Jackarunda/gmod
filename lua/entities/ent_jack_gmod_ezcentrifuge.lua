@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Enrichment Centrifuge"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true -- Until we finsih the next phase of Econ 2
+ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/centrifuge.mdl"
 ---
@@ -160,7 +160,7 @@ if(SERVER)then
 				local FissileToProduce = FissilePerU * UtoConsume
 				local GasToConsume = UtoConsume * .4
 				local SpeedModifier = 0.0008 * UtoConsume ^ 2
-				--jprint(1/SpeedModifier/60)
+				--jprint((SpeedModifier/60) * 5)
 
 				self:ConsumeUranium(FissileToProduce * SpeedModifier)
 				self:ConsumeGas(GasToConsume * SpeedModifier)
@@ -187,6 +187,7 @@ if(SERVER)then
 elseif(CLIENT)then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
+		self:SetSubMaterial(1, JMod.EZ_GRADE_MATS[self:GetGrade()]:GetName())
 	end
 
 	function ENT:Draw()
@@ -205,6 +206,7 @@ elseif(CLIENT)then
 		---
 		self:DrawModel()
 		---
+		self:SetSubMaterial(1, JMod.EZ_GRADE_MATS[Grade]:GetName())
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then

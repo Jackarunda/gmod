@@ -517,6 +517,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 							end
 						end
 					end
+					if Nuts > 100 then
+						if math.random(1, 3) == 3 then
+							playa:EmitSound("snd_jack_hmcd_burp.wav", 100, math.random(80, 100))
+						end
+					end
 				end
 			end
 		end
