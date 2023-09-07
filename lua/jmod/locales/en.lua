@@ -194,6 +194,8 @@
 	["hint hang on ceiling"] = "Hold USE to pick up, release USE to hang on the ceiling",
     ["hint ent_jack_gmod_ezfurnace"] = "The smelting furnace allows you to refine ore into ingots",
     ["hint ent_jack_gmod_ezrefinery"] = "The refinery turns crude oil into plastic, fuel, rubber, and gas",
+	["hint ent_jack_gmod_ezcentrifuge"] = "The U-255 Enrichment Centrifuge turns uranium into fissile material",
+	["hint refill centrifuge"] = "The centrifuge requires power, gas, and uranium to run",
     ["hint ore scan"] = "Solid resource deposits can be found with a ground scanner",
     ["hint liquid scan"] = "Liquid resource reserves can be found with a ground scanner",
     ["hint ent_jack_gmod_ezlfg"] = "The EZ Liquid Fuel Generator turns fuel into power",
