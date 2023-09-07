@@ -5,21 +5,21 @@ ENT.PrintName = "EZ Enrichment Centrifuge"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = false -- Until we finsih the next phase of Econ 2
+ENT.Spawnable = true -- Until we finsih the next phase of Econ 2
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/centrifuge.mdl"
 ---
 ENT.EZupgradable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Mass = 250
+ENT.Mass = 600
 ENT.SpawnHeight = 1
-ENT.EZcolorable = false
+ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 600,
 	MaxUranium = 200,
-	MaxGas = 100
+	MaxGas = 300
 }
 
 ENT.DynamicPerfSpecs = {
@@ -81,7 +81,8 @@ if(SERVER)then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
 			self.SoundLoop:Play()
-			self.SoundLoop:SetSoundLevel(120)
+			self.SoundLoop:SetSoundLevel(70)
+			self.SoundLoop:ChangeVolume(.9)
 		else
 			self:EmitSound("snds_jack_gmod/afh_unseal.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1

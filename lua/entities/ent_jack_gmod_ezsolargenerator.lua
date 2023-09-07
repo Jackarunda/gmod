@@ -56,7 +56,6 @@ if(SERVER)then
 		elseif(State==STATE_ON)then
 			if(alt)then
 				self:ProduceResource()
-				timer.Start(self.TimerName)
 				return
 			end
 			self:TurnOff()
