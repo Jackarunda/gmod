@@ -69,19 +69,4 @@ elseif (SERVER) then
 	function ENT:OnRemove()
 		if(IsValid(self.EZowner))then self.EZowner.JModSpawnPointEntity=nil end
 	end
-
-	local function jackSpawnHook(ply)
-		if((ply.JModSpawnPointEntity)and(IsValid(ply.JModSpawnPointEntity)))then
-			if(ply.JModSpawnPointEntity.nextSpawnTime<CurTime())then
-				ply.JModSpawnPointEntity.nextSpawnTime=CurTime()+60
-				ply:SetPos(ply.JModSpawnPointEntity:GetPos())
-				local effectdata=EffectData()
-				effectdata:SetEntity(ply)
-				util.Effect("propspawn",effectdata)
-			else
-				JMod.Hint(ply,"sleeping bag wait")
-			end
-		end
-	end
-	hook.Add("PlayerSpawn","jackSpawnHook",jackSpawnHook)
 end

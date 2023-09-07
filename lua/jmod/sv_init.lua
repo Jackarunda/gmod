@@ -51,6 +51,18 @@ local function JackaSpawnHook(ply)
 		end
 	end
 
+	if((ply.JModSpawnPointEntity)and(IsValid(ply.JModSpawnPointEntity)))then
+		if(ply.JModSpawnPointEntity.nextSpawnTime<CurTime())then
+			ply.JModSpawnPointEntity.nextSpawnTime=CurTime()+60
+			ply:SetPos(ply.JModSpawnPointEntity:GetPos())
+			local effectdata=EffectData()
+			effectdata:SetEntity(ply)
+			util.Effect("propspawn",effectdata)
+		else
+			JMod.Hint(ply,"sleeping bag wait")
+		end
+	end
+
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)
