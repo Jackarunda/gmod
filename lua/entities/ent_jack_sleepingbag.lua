@@ -69,7 +69,7 @@ elseif (SERVER) then
 		if(IsValid(self.jackSleepingBagOwner))then self.jackSleepingBagOwner.jackSleepingBag=nil end
 	end
 
-	local function bbusSpawnHook(p)
+	local function jackSpawnHook(p)
 		if((p.jackSleepingBag)and(IsValid(p.jackSleepingBag)))then
 			if(p.jackSleepingBag.nextSpawnTime<CurTime())then
 				p.jackSleepingBag.nextSpawnTime=CurTime()+60
@@ -82,5 +82,5 @@ elseif (SERVER) then
 			end
 		end
 	end
-	hook.Add("PlayerSpawn","bbusSpawnHook",bbusSpawnHook)
+	hook.Add("PlayerSpawn","jackSpawnHook",jackSpawnHook)
 end
