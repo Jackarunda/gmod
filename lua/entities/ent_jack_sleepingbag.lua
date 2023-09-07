@@ -1,7 +1,7 @@
 ENT.Type 			= "anim"
 ENT.PrintName		= "Sleeping Bag"
 ENT.Author			= "Basipek"
-ENT.Category			= "JMod - Misc"
+ENT.Category			= "JMod - EZ Misc."
 ENT.Spawnable			= true
 ENT.AdminSpawnable		= true
 
