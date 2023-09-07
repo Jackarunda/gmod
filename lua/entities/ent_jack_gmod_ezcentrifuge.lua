@@ -18,7 +18,7 @@ ENT.EZcolorable = true
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 500,
-	MaxUranium = 500,
+	MaxUranium = 400,
 	MaxGas = 200
 }
 
@@ -159,7 +159,7 @@ if(SERVER)then
 				local UtoConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local FissileToProduce = FissilePerU * UtoConsume
 				local GasToConsume = UtoConsume * .4
-				local SpeedModifier = 0.0008 * UtoConsume ^ 2
+				local SpeedModifier = 0.0008 * 5 * UtoConsume ^ 2
 				--jprint((SpeedModifier/60) * 5)
 
 				self:ConsumeUranium(FissileToProduce * SpeedModifier)

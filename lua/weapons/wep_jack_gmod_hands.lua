@@ -326,7 +326,7 @@ function SWEP:PrimaryAttack()
 			self:SetNextPrimaryFire(CurTime() + .35)
 
 			if IsValid(PhysObj) then 
-				if (PhysObj:GetMass() > (20 * JMod.GetPlayerStrength(self.Owner))) then
+				if (PhysObj:GetMass() > 35) then
 					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
 					return
 				end
