@@ -213,8 +213,8 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {
 		frequency = 2,
-		avgamt = 300,
-		avgsize = 100,
+		avgamt = 400,
+		avgsize = 200,
 		limits = {
 			nowater = true
 		},
