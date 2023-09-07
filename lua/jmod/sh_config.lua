@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 43.5
+			Version = 44
 		},
 		General = {
 			Hints = true,
@@ -777,6 +777,20 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
+			},
+			["EZ Uranium Enrichment Centrifuge"] = {
+				results = "ent_jack_gmod_ezcentrifuge",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
 				sizeScale = 5,

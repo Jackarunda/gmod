@@ -160,7 +160,7 @@ if(SERVER)then
 				local FissileToProduce = FissilePerU * UtoConsume
 				local GasToConsume = UtoConsume * .4
 				local SpeedModifier = 0.0008 * UtoConsume ^ 2
-				--jprint(1/SpeedModifier)
+				--jprint(1/SpeedModifier/60)
 
 				self:ConsumeUranium(FissileToProduce * SpeedModifier)
 				self:ConsumeGas(GasToConsume * SpeedModifier)
