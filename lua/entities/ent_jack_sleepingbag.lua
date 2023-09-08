@@ -32,16 +32,16 @@ elseif (SERVER) then
 		
 		self.nextSpawnTime=0
 		
-        self.Pod = ents.Create("prop_vehicle_prisoner_pod")
-        self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
-        local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
-        self.Pod:SetPos(self:GetPos())
-        Ang:RotateAroundAxis(Forward, -90)
-        self.Pod:SetAngles(Ang)
-        self.Pod:Spawn()
-        self.Pod:Activate()
-        self.Pod:SetParent(self)
-        self.Pod:SetNoDraw(true)
+		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
+		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
+		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
+		self.Pod:SetPos(self:GetPos())
+		Ang:RotateAroundAxis(Forward, -90)
+		self.Pod:SetAngles(Ang)
+		self.Pod:Spawn()
+		self.Pod:Activate()
+		self.Pod:SetParent(self)
+		self.Pod:SetNoDraw(true)
 		self.Pod:Fire("lock", "", 0)
 	end
 	
