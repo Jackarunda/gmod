@@ -212,7 +212,7 @@
 	["hint ent_jack_sleepingbag"] = "You can set your spawnpoint by using it, or roll it up with Alt+E.",
 	["hint sleeping bag set spawn"] = "Spawn point has been set!",
 	["hint sleeping bag someone else"] = "This bed has already been claimed by someone else!",
-	["hint sleeping bag already you"] = "This bed is already yours!",
+	["hint sleeping bag unroll first"] = "Unroll the bed first! (Alt+E)",
 	["hint sleeping bag wait"] = "You must wait 60 seconds before spawning at your bed again.",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",

@@ -50,14 +50,19 @@ local function JackaSpawnHook(ply)
 			end
 		end
 	end
-
-	if((ply.JModSpawnPointEntity)and(IsValid(ply.JModSpawnPointEntity)))then
-		if(ply.JModSpawnPointEntity.nextSpawnTime<CurTime())then
-			ply.JModSpawnPointEntity.nextSpawnTime=CurTime()+60
-			ply:SetPos(ply.JModSpawnPointEntity:GetPos())
-			local effectdata=EffectData()
-			effectdata:SetEntity(ply)
-			util.Effect("propspawn",effectdata)
+	
+	local STATE_ROLLED, STATE_UNROLLED = 0, 1
+	local sleepingbag = ply.JModSpawnPointEntity
+	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
+		if(sleepingbag.nextSpawnTime<CurTime())then
+			sleepingbag.nextSpawnTime=CurTime()+60
+			if not IsValid(sleepingbag.Pod:GetDriver()) then--Get inside if already yours
+				if sleepingbag.NextEnter < CurTime() then
+					local Up = sleepingbag:GetUp()
+					sleepingbag.Pod.EZvehicleEjectPos = sleepingbag.Pod:WorldToLocal(sleepingbag:GetPos()+Up*20)
+					ply:EnterVehicle(sleepingbag.Pod)
+				end
+			end
 		else
 			JMod.Hint(ply,"sleeping bag wait")
 		end
