@@ -1,0 +1,8 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/props/wheat_packet_tex"
+
+	"$phong" "1"
+}
+    
