@@ -48,13 +48,28 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		self.LastTouchedTime = CurTime()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
-			-- Use heal
+			if activator.EZbleeding > 0 then
+				activator:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
+				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 15, 0, 9e9)
+				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
+				--
+				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
+				Ent.EZhealth = Ent.EZhealth or 0
+				local Missing = Max - (Helf + Ent.EZhealth)
+				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
+				Ent.EZhealth = Ent.EZhealth + AddAmt
+
+				self:Remove()
+
+				return
+			else
+				JMod.Hint(activator, "ifak")
+			end
 		else
-			-- Pickup
+			activator:PickupObject(self)
 		end
 	end
 
