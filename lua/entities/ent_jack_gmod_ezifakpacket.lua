@@ -51,7 +51,7 @@ if SERVER then
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
-			if activator.EZbleeding > 0 then
+			if activator.EZbleeding and (activator.EZbleeding > 0) then
 				activator:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
 				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 15, 0, 9e9)
 				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))

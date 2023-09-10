@@ -472,6 +472,10 @@ JMod.Hints = {
 	["ent_jack_gmod_ezrtg"] = {
 		LangKey = "hint ent_jack_gmod_ezrtg"
 	},
+	["ifak"] = {
+		LangKey = "hint ifak",
+		Repeat = 5
+	},
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",
