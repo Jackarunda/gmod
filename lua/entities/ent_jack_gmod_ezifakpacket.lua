@@ -31,7 +31,7 @@ if SERVER then
 		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
 			if IsValid(Phys) then
-				Phys:SetMass(8)
+				Phys:SetMass(10)
 				Phys:Wake()
 			end
 		end)
@@ -39,7 +39,7 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-		local Pos, State = self:GetPos(), self:GetState()
+		local Pos = self:GetPos()
 
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
 			sound.Play("Wood_Solid.Break", Pos)
@@ -53,7 +53,7 @@ if SERVER then
 		if Alt then
 			if activator.EZbleeding and (activator.EZbleeding > 0) then
 				activator:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
-				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 15, 0, 9e9)
+				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 50, 0, 9e9)
 				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 				--
 				local Helf, Max = activator:Health(), activator:GetMaxHealth()

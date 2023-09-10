@@ -729,7 +729,7 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, d
 	ply.EZhealth = nil
 	ply.EZkillme = nil
 	ply.EZoverDamage = dmg:GetDamage()
-	jprint(ply:Health(), ply.EZoverDamage)
+	--jprint(ply:Health(), ply.EZoverDamage)
 
 	if ply.JackyMatDeathUnset then
 		ply.JackyMatDeathUnset = false
