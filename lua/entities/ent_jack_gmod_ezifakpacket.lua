@@ -56,11 +56,11 @@ if SERVER then
 				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 15, 0, 9e9)
 				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 				--
-				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
-				Ent.EZhealth = Ent.EZhealth or 0
-				local Missing = Max - (Helf + Ent.EZhealth)
+				local Helf, Max = activator:Health(), activator:GetMaxHealth()
+				activator.EZhealth = activator.EZhealth or 0
+				local Missing = Max - (Helf + activator.EZhealth)
 				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
-				Ent.EZhealth = Ent.EZhealth + AddAmt
+				activator.EZhealth = activator.EZhealth + AddAmt
 
 				self:Remove()
 
