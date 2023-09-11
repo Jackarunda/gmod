@@ -13,6 +13,7 @@ util.AddNetworkString("JMod_VisionBlur")
 util.AddNetworkString("JMod_ArmorColor")
 util.AddNetworkString("JMod_EZarmorSync")
 util.AddNetworkString("JMod_Inventory")
+util.AddNetworkString("JMod_ItemInventory") -- Item inventory
 util.AddNetworkString("JMod_EZradio")
 util.AddNetworkString("JMod_EZweaponMod")
 util.AddNetworkString("JMod_Bleeding")
@@ -174,4 +175,35 @@ net.Receive("JMod_ApplyConfig", function(ln, ply)
 	if not ply:IsSuperAdmin() then return end
 	local data = util.JSONToTable(util.Decompress(net.ReadData(ln)))
 	JMod.InitGlobalConfig(true, data)
+end)
+
+
+net.Receive("JMod_ItemInventory", function(len, ply)
+	local itemID = net.ReadInt(32)
+	local command = net.ReadString()
+	local target = Entity(itemID)
+	if !(target and IsValid(target)) then JMod.Hint(ply,"hint item inventory missing") return false end
+	
+	if command == "take" then
+		target:SetNoDraw(true)
+		target:SetNotSolid(true)
+		target:GetPhysicsObject():EnableMotion(false)
+		JMod.Hint(ply,"hint item inventory add")
+		target.EZInvOwner = ply
+	elseif command == "drop" then
+		target:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
+		target:SetAngles(AngleRand())
+		target:SetNoDraw(false)
+		target:SetNotSolid(false)
+		target:GetPhysicsObject():EnableMotion(true)
+		ply:PickupObject(target)
+		target.EZInvOwner = nil
+		JMod.Hint(ply,"hint item inventory drop")
+	elseif command == "full" then
+		JMod.Hint(ply,"hint item inventory full")
+	elseif command == "missing" then
+		JMod.Hint(ply,"hint item inventory missing")
+	end
+	
+	
 end)

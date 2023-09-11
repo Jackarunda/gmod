@@ -490,6 +490,18 @@ JMod.Hints = {
 	["inventory"] = {
 		LangKey = "hint inventory"
 	},
+	["hint item inventory add"] = {
+		LangKey = "hint item inventory add"
+	},
+	["hint item inventory drop"] = {
+		LangKey = "hint item inventory drop"
+	},
+	["hint item inventory missing"] = {
+		LangKey = "hint item inventory missing"
+	},
+	["hint item inventory full"] = {
+		LangKey = "hint item inventory full"
+	},
 	["armor weight"] = {
 		LangKey = "hint armor weight"
 	},

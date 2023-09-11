@@ -1102,6 +1102,111 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 	end
 end
 
+--Item Inventory
+local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
+	local Buttalony, Ply = vgui.Create( "SpawnIcon" , scrollFrame ), LocalPlayer()
+	Buttalony:SetModel( itemTable.model )
+	Buttalony:SetSize(50, 50)
+	Buttalony:SetPos(x, y)
+	Buttalony:SetText(itemTable.name)
+	Buttalony:SetCursor("hand")
+	
+	function Buttalony:Paint(w, h)
+		surface.SetDrawColor(50, 50, 50, 100)
+		surface.DrawRect(0, 0, w, h)
+
+		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+
+	local HelpStr = itemTable.name
+	
+	Buttalony:SetTooltip(HelpStr)
+	
+	function Buttalony:DoClick()
+		local Options={
+			[1]={
+				title="Drop",
+				actionFunc = function(itemTable)
+					if itemTable.id and IsValid(Entity(itemTable.id)) and Entity(itemTable.id):GetModel()==itemTable.model then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
+						net.Start("JMod_ItemInventory")
+						net.WriteInt(itemTable.id, 32)
+						net.WriteString("drop")
+						net.SendToServer()
+					else
+						net.Start("JMod_ItemInventory")
+						net.WriteInt(LocalPlayer():EntIndex(), 32)
+						net.WriteString("missing")
+						net.SendToServer()
+					end
+					
+					-- refresh+update the inv list
+					local jmodinvfinal={}
+					for k,v in ipairs(LocalPlayer().JModInv) do
+						if (v.id and IsValid(Entity(v.id)) and Entity(v.id):GetModel()==v.model) and !(v.id==itemTable.id) then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
+							table.insert(jmodinvfinal,v)
+						end
+					end
+					
+					LocalPlayer().JModInv=jmodinvfinal
+					
+				end
+			}
+		}
+		
+		local Dropdown = vgui.Create("DPanel", parent)
+		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40)
+		local ecks, why = gui.MousePos()
+		local harp, darp = parent:GetPos()
+		local fack, fock = parent:GetSize()
+		local floop, florp = Dropdown:GetSize()
+		Dropdown:SetPos(math.Clamp(ecks - harp, 0, fack - floop), math.Clamp(why - darp, 0, fock - florp))
+
+		function Dropdown:Paint(w, h)
+			surface.SetDrawColor(70, 70, 70, 220)
+			surface.DrawRect(0, 0, w, h)
+		end
+
+		for k, option in pairs(Options) do
+			local Butt = vgui.Create("DButton", Dropdown)
+			Butt:SetPos(5, k * 40 - 35)
+			Butt:SetSize(floop - 10, 30)
+			Butt:SetText(option.title)
+
+			function Butt:DoClick()
+				option.actionFunc(itemTable)
+				parent:Close()
+			end
+		end
+
+		OpenDropdown = Dropdown
+	end
+end
+
+net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
+	local itemID = net.ReadInt(32)
+	local command = net.ReadString()
+	local target = Entity(itemID)
+	if !(target and IsValid(target)) or (target:EntIndex()==-1) then return false end
+	
+	if command == "take_cl" then
+		local Ply = LocalPlayer()
+		local jmodinv = Ply.JModInv or {}
+
+		if target and IsValid(target) and (target:EntIndex()~=-1) then
+			table.insert(jmodinv,{name= target.PrintName or target:GetModel(),model = target:GetModel(), id = target:EntIndex()})
+		end
+
+		local jmodinvfinal={}
+		for k,v in ipairs(jmodinv) do
+			if v.id and IsValid(Entity(v.id)) and Entity(v.id):GetModel()==v.model then -- MODEL CHECK MAKES SURE IT'S STILL THE SAME LAD
+				table.insert(jmodinvfinal,v)
+			end
+		end
+
+		Ply.JModInv=jmodinvfinal
+	end
+end)
+
 net.Receive("JMod_Inventory", function()
 	local Ply = LocalPlayer()
 	local weight = Ply.EZarmor.totalWeight
@@ -1238,6 +1343,19 @@ net.Receive("JMod_Inventory", function()
 		if v.noShow and v.noShow == true then continue end
 		CreateCommandButton(motherFrame, v, 600, 30 + (#ShownCommands * 25), #ShownCommands + 1)
 		table.insert(ShownCommands, v.name)
+	end
+	
+	--Item Inventory
+	local DScrollPanel = vgui.Create( "DScrollPanel", motherFrame )
+	DScrollPanel:SetPos(600,30 + (#ShownCommands * 25))
+	DScrollPanel:SetSize(180,370-(#ShownCommands * 25))
+	
+	local ShownItems={}
+	if Ply and Ply.JModInv then
+		for k, v in ipairs(Ply.JModInv) do
+			CreateInvButton(motherFrame, v, (#ShownItems % 3 *50), (math.floor(#ShownItems/3) * 50), DScrollPanel)
+			table.insert(ShownItems, v.name)
+		end
 	end
 
 	function motherFrame:OnKeyCodePressed(num)
