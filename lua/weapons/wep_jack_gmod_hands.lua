@@ -451,6 +451,33 @@ end
 
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
+	
+	if !(self:GetFists()) then--pick up to inv
+		if self:GetCarrying() and IsValid(self:GetCarrying()) then
+			local Tar=self:GetCarrying()
+			local ply=self.Owner
+			
+			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and !Tar:IsConstrained() then
+				if (true) then --CHECK FOR INV LIMIT HERE
+					Tar:SetNoDraw(true)
+					Tar:SetNotSolid(true)
+					Tar:GetPhysicsObject():EnableMotion(false)
+					Tar:SetParent(ply)
+					JMod.Hint(ply,"hint item inventory add")
+					Tar.EZInvOwner = ply
+					
+					net.Start("JMod_ItemInventory")--send to client so the player can update their inv
+					net.WriteInt(Tar:EntIndex(), 32)
+					net.WriteString("take_cl")
+					net.Send(ply)
+				else
+					JMod.Hint(ply,"hint item inventory full")
+				end
+			end
+			
+		end
+	end
+	
 	self:SetFists(false)
 	self:SetBlocking(false)
 	self:SetCarrying()
