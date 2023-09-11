@@ -77,10 +77,8 @@ elseif (SERVER) then
 						JMod.Hint(ply,"sleeping bag someone else")
 					else
 						if not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
-							if self.NextEnter < CurTime() then
-								self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(activator:GetPos())
-								activator:EnterVehicle(self.Pod)
-							end
+							self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(activator:GetPos())
+							activator:EnterVehicle(self.Pod)
 						end
 					end
 				else

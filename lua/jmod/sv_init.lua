@@ -56,12 +56,15 @@ local function JackaSpawnHook(ply)
 	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
 		if(sleepingbag.nextSpawnTime<CurTime())then
 			sleepingbag.nextSpawnTime=CurTime()+60
-			if not IsValid(sleepingbag.Pod:GetDriver()) then--Get inside if already yours
-				if sleepingbag.NextEnter < CurTime() then
-					local Up = sleepingbag:GetUp()
-					sleepingbag.Pod.EZvehicleEjectPos = sleepingbag.Pod:WorldToLocal(sleepingbag:GetPos()+Up*20)
-					ply:EnterVehicle(sleepingbag.Pod)
-				end
+			if not IsValid(sleepingbag.Pod:GetDriver()) then--Get inside when respawn
+				local Up = sleepingbag:GetUp()
+				sleepingbag.Pod.EZvehicleEjectPos = sleepingbag.Pod:WorldToLocal(sleepingbag:GetPos()+Up*20)
+				ply:EnterVehicle(sleepingbag.Pod)
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(75)
+				net.WriteFloat(2000)
+				net.WriteBit(true)
+				net.Send(ply)
 			end
 		else
 			JMod.Hint(ply,"sleeping bag wait")
