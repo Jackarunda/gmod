@@ -188,6 +188,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		target:SetNoDraw(true)
 		target:SetNotSolid(true)
 		target:GetPhysicsObject():EnableMotion(false)
+		target:SetParent(ply)
 		JMod.Hint(ply,"hint item inventory add")
 		target.EZInvOwner = ply
 	elseif command == "drop" then
@@ -195,6 +196,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		target:SetAngles(AngleRand())
 		target:SetNoDraw(false)
 		target:SetNotSolid(false)
+		target:SetParent(nil)
 		target:GetPhysicsObject():EnableMotion(true)
 		ply:PickupObject(target)
 		target.EZInvOwner = nil
