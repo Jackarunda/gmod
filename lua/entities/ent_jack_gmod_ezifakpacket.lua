@@ -7,6 +7,7 @@ ENT.PrintName = "EZ IFAK"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.JModEZstorable = true
+ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)

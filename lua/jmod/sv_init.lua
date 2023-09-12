@@ -29,6 +29,7 @@ local function JackaSpawnHook(ply)
 	ply.EZirradiated = nil
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
+	JMod.SyncBleeding(ply)
 	ply.EZvirus = nil
 
 	timer.Simple(0, function()
@@ -432,6 +433,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						util.Decal("Blood", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 					end
 				end
+				JMod.SyncBleeding(playa)
 			end
 
 			if playa.EZirradiated then
@@ -472,6 +474,12 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						Dmg:SetDamagePosition(playa:GetPos())
 						Dmg:SetDamageForce(Vector(0, 0, 0))
 						playa:TakeDamageInfo(Dmg)
+						--
+						net.Start("JMod_VisionBlur")
+						net.WriteFloat(4)
+						net.WriteFloat(3)
+						net.WriteBit(false)
+						net.Send(playa)
 					end
 				elseif playa.EZoxygen < 100 then
 					if playa.EZneedGasp then
@@ -519,6 +527,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 					if Nuts > 100 then
 						if math.random(1, 3) == 3 then
+							playa:ViewPunch(Angle(math.random(2, 3), 0, 0))
 							playa:EmitSound("snd_jack_jmod_burp.wav", 100, math.random(80, 100))
 						end
 					end
