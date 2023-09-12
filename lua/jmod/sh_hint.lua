@@ -476,7 +476,7 @@ JMod.Hints = {
 		LangKey = "hint sleeping bag someone else"
 	},
 	["sleeping bag unroll first"] = {
-		LangKey = "hint sleeping bag already you"
+		LangKey = "sleeping bag unroll first"
 	},
 	["sleeping bag wait"] = {
 		LangKey = "hint sleeping bag wait"
