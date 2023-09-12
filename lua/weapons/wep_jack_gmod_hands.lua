@@ -459,9 +459,11 @@ function SWEP:Reload()
 			
 			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and !Tar:IsConstrained() then
 				if (true) then --CHECK FOR INV LIMIT HERE
+					Tar:SetPos(ply:GetPos())
 					Tar:SetNoDraw(true)
 					Tar:SetNotSolid(true)
-					Tar:GetPhysicsObject():EnableMotion(false)
+					--Tar:GetPhysicsObject():EnableMotion(false)
+					Tar:GetPhysicsObject():Sleep()
 					Tar:SetParent(ply)
 					JMod.Hint(ply,"hint item inventory add")
 					Tar.EZInvOwner = ply

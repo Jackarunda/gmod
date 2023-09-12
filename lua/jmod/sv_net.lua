@@ -185,6 +185,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	if !(target and IsValid(target)) then JMod.Hint(ply,"hint item inventory missing") return false end
 	
 	if command == "take" then
+		target:SetPos(ply:GetPos())
 		target:SetNoDraw(true)
 		target:SetNotSolid(true)
 		target:GetPhysicsObject():EnableMotion(false)
@@ -192,13 +193,19 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		JMod.Hint(ply,"hint item inventory add")
 		target.EZInvOwner = ply
 	elseif command == "drop" then
-		target:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
-		target:SetAngles(AngleRand())
 		target:SetNoDraw(false)
 		target:SetNotSolid(false)
 		target:SetParent(nil)
-		target:GetPhysicsObject():EnableMotion(true)
-		ply:PickupObject(target)
+		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
+		target:SetPos(Tr.HitPos + Vector(0, 0, 10))
+		target:SetAngles(target.JModPreferredCarryAngles or AngleRand())
+		timer.Simple(0, function()
+			if IsValid(target) then
+				target:GetPhysicsObject():EnableMotion(true)
+				target:GetPhysicsObject():Wake()
+			end
+		end)
+		--ply:PickupObject(target)
 		target.EZInvOwner = nil
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif command == "full" then
@@ -206,6 +213,4 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	elseif command == "missing" then
 		JMod.Hint(ply,"hint item inventory missing")
 	end
-	
-	
 end)
