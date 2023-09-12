@@ -72,7 +72,7 @@ if(SERVER)then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(false)
+		self.Pod:SetNoDraw(true)
 	end
 
 	function ENT:ReviveCorpses()

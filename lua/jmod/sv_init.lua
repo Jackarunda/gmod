@@ -520,10 +520,15 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
+					local InBed = IsValid(playa:GetVehicle()) and (playa:GetVehicle():GetParent() == playa.JModSpawnPointEntity)
+					local RestMult = 1
+					if InBed then
+						RestMult = 2
+					end
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1
+						playa.EZnutrition.Nutrients = Nuts - 1 * RestMult
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
@@ -533,7 +538,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 								playa:RemoveAllDecals()
 							end
 						elseif math.Rand(0, 1) < .75 then
-							local BoostMult = JMod.Config.FoodSpecs.BoostMult
+							local BoostMult = JMod.Config.FoodSpecs.BoostMult * RestMult
 							local BoostedFrac = (Helf - Max) / Max
 
 							if math.Rand(0, 1) > BoostedFrac then
@@ -806,7 +811,13 @@ end, nil, "Apply's an EZ parachute to an entity")
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
 		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
-		ply:SetPos(WorldPos)
+		local Tr = util.TraceEntity({
+			start = veh:GetPos(),
+			endpos = WorldPos,
+			mask = MASK_SOLID,
+			filter = {ply, veh, veh:GetParent()}
+		}, ply)
+		ply:SetPos(Tr.HitPos)
 		veh.EZvehicleEjectPos = nil
 	end
 end)
