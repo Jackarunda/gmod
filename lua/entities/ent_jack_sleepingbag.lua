@@ -33,13 +33,16 @@ elseif (SERVER) then
 		self:SetUseType(SIMPLE_USE)
 		
 		self.nextSpawnTime=0
-		
+		self:CreatePod()
+	end
+
+	function ENT:CreatePod()
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
-		self.Pod:SetPos(self:GetPos()+Up*15)
-		Ang:RotateAroundAxis(Forward, -90)
-		Ang:RotateAroundAxis(Right, 85)
+		self.Pod:SetPos(self:GetPos()+Up*10+Right*10)
+		Ang:RotateAroundAxis(Up, -90)
+		Ang:RotateAroundAxis(Forward, -85)
 		self.Pod:SetAngles(Ang)
 		self.Pod:Spawn()
 		self.Pod:Activate()
@@ -94,6 +97,7 @@ elseif (SERVER) then
 
 	function ENT:Use(ply)
 		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
+		if not IsValid(self.Pod) then self:CreatePod() end
 		if (ply:IsPlayer() and Alt) then
 			if (self.State==STATE_UNROLLED) then
 				self:RollUp()

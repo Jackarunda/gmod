@@ -57,6 +57,11 @@ if(SERVER)then
 		---
 		self.EZupgradable=true
 		--
+		self:CreatePod()
+		self.NextOpStart = 0
+	end
+
+	function ENT:CreatePod()
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
@@ -67,8 +72,7 @@ if(SERVER)then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(true)
-		self.NextOpStart = 0
+		self.Pod:SetNoDraw(false)
 	end
 
 	function ENT:ReviveCorpses()
@@ -202,7 +206,7 @@ if(SERVER)then
 
 		if self.NextRealThink < Time then
 			if not IsValid(self.Pod) then
-				self:Remove()
+				self:CreatePod()
 
 				return
 			end
