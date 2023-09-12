@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 43.5
+			Version = 44.1
 		},
 		General = {
 			Hints = true,
@@ -117,6 +117,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ParachuteDragMult = 1,
 			StartingOutpostCount = 1,
 			AvailablePackages = {
+				-- How to use results in radio orders
+				-- String names class
+				-- String starting with FUNC direct to function
+				-- Table of things spawns all of those things
+				-- Table starting with RAND will take a random value from the rest of the table
+				-- A table with the setup {class, number} will spawn that number of class
+				-- If you add a second number to that table, if the class is an EZ resource, it will attempt to set the resource to that number
 				["arms"] = {
 					description = "buncha random guns, good luck getting what you want.",
 					category = "Weapons",
@@ -448,11 +455,6 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Resources",
 					results = "ent_jack_gmod_ezantimatter"
 				},
-				["fissile material"] = {
-					description = "100 units of Fissile Material, used to craft nuclear devices.",
-					category = "Resources",
-					results = "ent_jack_gmod_ezfissilematerial"
-				},
 				["dynamite"] = {
 					description = "12 dynamite sticks for comical explosions.",
 					category = "Explosives",
@@ -590,7 +592,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					description = "20 units of Uranium, used in fissile material enrichment.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezuranium", 1, 20}
+						{"ent_jack_gmod_ezuranium", 5}
 					}
 				},
 				["diamond"] = {
@@ -669,11 +671,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 			},
-			RestrictedPackages = {"antimatter", "fissile material", "bioweapon canister"},
+			RestrictedPackages = {"antimatter", "bioweapon canister"},
 			RestrictedPackageShipTime = 600,
 			RestrictedPackagesAllowed = true
 		},
 		Craftables = {
+			-- How to use results in craftables
+			-- String names class
+			-- String starting with FUNC direct to function
+			-- A table with the setup {class, number} will spawn that number of class
+			-- If you add a second number to that table, if the class is an EZ resource, it will attempt to set the resource to that number
 			["EZ Nail"] = {
 				results = "FUNC EZnail",
 				craftingReqs = {
@@ -782,6 +789,20 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 200,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
 					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 200,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
+			},
+			["EZ Uranium Enrichment Centrifuge"] = {
+				results = "ent_jack_gmod_ezcentrifuge",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 400,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 300,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 200,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
 				sizeScale = 5,

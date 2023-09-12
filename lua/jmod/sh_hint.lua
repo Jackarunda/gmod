@@ -448,6 +448,12 @@ JMod.Hints = {
     ["ent_jack_gmod_ezrefinery"] = {
 		LangKey = "hint ent_jack_gmod_ezrefinery"
 	},
+	["ent_jack_gmod_ezcentrifuge"] = {
+		LangKey = "hint ent_jack_gmod_ezcentrifuge"
+	},
+	["refill centrifuge"] = {
+		LangKey = "hint refill centrifuge"
+	},
     ["ore scan"] = {
 		LangKey = "hint ore scan"
 	},
@@ -481,6 +487,10 @@ JMod.Hints = {
 	["sleeping bag wait"] = {
 		LangKey = "hint sleeping bag wait"
 	},
+	["ifak"] = {
+		LangKey = "hint ifak",
+		Repeat = 5
+	},
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",
@@ -494,6 +504,18 @@ JMod.Hints = {
 	},
 	["inventory"] = {
 		LangKey = "hint inventory"
+	},
+	["hint item inventory add"] = {
+		LangKey = "hint item inventory add"
+	},
+	["hint item inventory drop"] = {
+		LangKey = "hint item inventory drop"
+	},
+	["hint item inventory missing"] = {
+		LangKey = "hint item inventory missing"
+	},
+	["hint item inventory full"] = {
+		LangKey = "hint item inventory full"
 	},
 	["armor weight"] = {
 		LangKey = "hint armor weight"

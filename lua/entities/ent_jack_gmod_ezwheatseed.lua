@@ -34,7 +34,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/props_junk/cardboard_box004a.mdl")
+		self:SetModel("models/jmod/props/seed_packet.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)

@@ -110,6 +110,8 @@
 	["hint ent_jack_gmod_ezmedkit"] = "Medkit can be used t' heal oneself or other crewmembers",
 	["hint ent_jack_gmod_ezsolargenerator"] = "Needs t' sun to be useful",
 	["hint solar panel no sun"] = "It be to dim for the sun collector t' work, me matey",
+	["hint ent_jack_gmod_ezcentrifuge"] = "The shiny loot spinner turns glowly loot inter dangerously glowly loot",
+	["hint refill centrifuge"] = "The centrifuge requires power 'n gas w' some glowly loot t' turn round",
 	["hint ent_jack_gmod_ezrtg"] = "Uses glowy loot to produce power",
 	["hint sentry friends"] = "Set yer scallywags wit' command jmod_friends; yer sentries won't shoot at 'em",
 	["hint armor wear"] = "Hold Walk 'n press Use t' set color 'n equip armor",

@@ -41,6 +41,8 @@ if SERVER then
 			
 			net.Start("JMod_VisionBlur")
 			net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
+			net.WriteFloat(2)
+			net.WriteBit(false)
 			net.Send(obj)
 			JMod.Hint(obj, "tear gas")
 			if faceProt < 1 then

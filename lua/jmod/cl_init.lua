@@ -895,6 +895,8 @@ end)
 net.Receive("JMod_VisionBlur", function()
 	local ply = LocalPlayer()
 	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0) + net.ReadFloat(), 0, 75)
+	ply.EZvisionBlurFadeAmt = net.ReadFloat()
+	ply.JMod_RequiredWakeAmount = (tobool(net.ReadBit()) and 100) or 0
 end)
 
 net.Receive("JMod_Bleeding", function()
