@@ -67,7 +67,16 @@ if SERVER then
 		local ent = data.HitEntity
 
 		if IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject().GetVolume and ent:GetPhysicsObject():GetVolume() then
-			local Class = ent:GetClass()
+			if ent.JModEZstorable and ent:IsPlayerHolding() then
+				self.NextLoad = CurTime() + 0.5
+				timer.Simple(0, function()
+					if IsValid(self) and IsValid(ent) then
+						JMod.AddToInventory(self, ent)
+					end
+				end)
+				self:SetItemCount(self:GetItemCount() + 1)
+			end
+			--[[local Class = ent:GetClass()
 			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / 500)
 
 			if ent.EZstorageVolumeOverride then
@@ -84,7 +93,7 @@ if SERVER then
 				timer.Simple(0, function()
 					SafeRemoveEntity(ent)
 				end)
-			end
+			end--]]
 		end
 	end
 
@@ -96,7 +105,7 @@ if SERVER then
 			sound.Play("Wood_Crate.Break", Pos)
 			sound.Play("Wood_Box.Break", Pos)
 
-			for class, tbl in pairs(self.Items) do
+			--[[for class, tbl in pairs(self.Items) do
 				for i = 1, tbl[1] do
 					local ent = ents.Create(class)
 					ent:SetPos(self:GetPos() + VectorRand() * 10)
@@ -104,7 +113,7 @@ if SERVER then
 					ent:Spawn()
 					ent:Activate()
 				end
-			end
+			end--]]
 
 			self:Remove()
 		end
@@ -112,9 +121,10 @@ if SERVER then
 
 	function ENT:Use(activator)
 		if self:GetItemCount() <= 0 then return end
-		net.Start("JMod_UniCrate")
+		net.Start("JMod_ItemInventory")
 		net.WriteEntity(self)
-		net.WriteTable(self.Items)
+		net.WriteString("open_menu")
+		net.WriteTable(self.JModInv)
 		net.Send(activator)
 	end
 

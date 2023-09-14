@@ -663,56 +663,6 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent
 	end, nil)
 end)
 
--- no side display for now
--- todo: this menu will be deprecated when we get the inventory system
-net.Receive("JMod_UniCrate", function()
-	local box = net.ReadEntity()
-	local items = net.ReadTable()
-	local frame = vgui.Create("DFrame")
-	frame:SetSize(200, 300)
-	frame:SetTitle("Storage Crate")
-	frame:Center()
-	frame:MakePopup()
-
-	frame.OnClose = function()
-		frame = nil
-	end
-
-	frame.Paint = function(self, w, h)
-		BlurBackground(self)
-	end
-
-	local scrollPanel = vgui.Create("DScrollPanel", frame)
-	scrollPanel:SetSize(190, 270)
-	scrollPanel:SetPos(5, 30)
-	local layout = vgui.Create("DIconLayout", scrollPanel)
-	layout:SetSize(190, 270)
-	layout:SetPos(0, 0)
-	layout:SetSpaceY(5)
-
-	for class, tbl in pairs(items) do
-		local sent = scripted_ents.Get(class)
-		local button = vgui.Create("DButton", layout)
-		button:SetSize(190, 25)
-		button:SetText("")
-
-		function button:Paint(w, h)
-			surface.SetDrawColor(50, 50, 50, 100)
-			surface.DrawRect(0, 0, w, h)
-			local msg = sent.PrintName .. " x" .. tbl[1] .. " (" .. (tbl[2] * tbl[1]) .. " volume)"
-			draw.SimpleText(msg, "DermaDefault", 5, 3, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		end
-
-		button.DoClick = function()
-			net.Start("JMod_UniCrate")
-			net.WriteEntity(box)
-			net.WriteString(class)
-			net.SendToServer()
-			frame:Close()
-		end
-	end
-end)
-
 net.Receive("JMod_EZtimeBomb", function()
 	local ent = net.ReadEntity()
 	local frame = vgui.Create("DFrame")
@@ -1103,7 +1053,7 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 end
 
 --Item Inventory
-local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
+local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 	local Buttalony, Ply = vgui.Create( "SpawnIcon" , scrollFrame ), LocalPlayer()
 	Buttalony:SetModel( itemTable.model )
 	Buttalony:SetSize(50, 50)
@@ -1131,15 +1081,18 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
 			[1]={
 				title="Drop",
 				actionFunc = function(itemTable)
-					if itemTable.ent and IsValid(itemTable.ent) then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
+					if itemTable.ent and IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-						net.WriteInt(itemTable.ent:EntIndex(), 32)
+						net.WriteEntity(itemTable.ent)
 						net.WriteString("drop")
+						--if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						--end
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-						net.WriteInt(Ply:EntIndex(), 32)
 						net.WriteString("missing")
+						net.WriteEntity(Ply)
 						net.SendToServer()
 					end
 					
@@ -1179,15 +1132,39 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
 end
 
 net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
-	local itemID = net.ReadInt(32)
+	local invEnt = net.ReadEntity()
 	local command = net.ReadString()
-	local target = Entity(itemID)
-
-	if not(IsValid(target)) or (target:EntIndex()==-1) then return false end
+	local items = net.ReadTable()
 	
 	if command == "take_cl" then
 		local Ply = LocalPlayer()
-		JMod.AddToInventory(Ply, target)
+		Ply.JModInv = items
+	elseif command == "open_menu" then
+		local frame = vgui.Create("DFrame")
+		frame:SetSize(210, 300)
+		frame:SetTitle(invEnt.PrintName or "Player")
+		frame:Center()
+		frame:MakePopup()
+
+		frame.OnClose = function()
+			frame = nil
+		end
+
+		frame.Paint = function(self, w, h)
+			BlurBackground(self)
+		end
+
+		local scrollPanel = vgui.Create("DScrollPanel", frame)
+		scrollPanel:SetSize(200, 370)
+		scrollPanel:SetPos(5, 30)
+		
+		local ShownItems={}
+		if items then
+			for k, v in ipairs(items) do
+				CreateInvButton(frame, v, (#ShownItems % 4 * 50), (math.floor(#ShownItems/4) * 50), scrollPanel, invEnt)
+				table.insert(ShownItems, v.name)
+			end
+		end
 	end
 end)
 
@@ -1330,14 +1307,14 @@ net.Receive("JMod_Inventory", function()
 	end
 	
 	--Item Inventory
-	local DScrollPanel = vgui.Create( "DScrollPanel", motherFrame )
-	DScrollPanel:SetPos(600,30 + (#ShownCommands * 25))
-	DScrollPanel:SetSize(180,370-(#ShownCommands * 25))
+	local DScrollyPanel = vgui.Create( "DScrollPanel", motherFrame )
+	DScrollyPanel:SetPos(600,30 + (#ShownCommands * 25))
+	DScrollyPanel:SetSize(180,370-(#ShownCommands * 25))
 	
 	local ShownItems={}
 	if Ply.JModInv then
 		for k, v in ipairs(Ply.JModInv) do
-			CreateInvButton(motherFrame, v, (#ShownItems % 3 *50), (math.floor(#ShownItems/3) * 50), DScrollPanel)
+			CreateInvButton(motherFrame, v, (#ShownItems % 3 *50), (math.floor(#ShownItems/3) * 50), DScrollyPanel, Ply)
 			table.insert(ShownItems, v.name)
 		end
 	end

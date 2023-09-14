@@ -179,31 +179,19 @@ end)
 
 
 net.Receive("JMod_ItemInventory", function(len, ply)
-	local itemID = net.ReadInt(32)
+	local target = net.ReadEntity()
 	local command = net.ReadString()
-	local target = Entity(itemID)
+	local invEnt = net.ReadEntity()
+	if not IsValid(invEnt) then
+		invEnt = ply
+	end
 	if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
 	
 	if command == "take" then
-		--print("Server Recived take")
-		--print(ply, target)
-		JMod.AddToInventory(ply, target)
+		JMod.AddToInventory(invEnt, target)
 	elseif command == "drop" then
-		--[[target:SetNoDraw(false)
-		target:SetNotSolid(false)
-		target:SetParent(nil)
 		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
-		target:SetPos(Tr.HitPos + Vector(0, 0, 10))
-		target:SetAngles(target.JModPreferredCarryAngles or AngleRand())
-		timer.Simple(0, function()
-			if IsValid(target) then
-				target:GetPhysicsObject():EnableMotion(true)
-				target:GetPhysicsObject():Wake()
-			end
-		end)
-		target.EZInvOwner = nil--]]
-		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
-		JMod.RemoveFromInventory(ply, target, Tr.HitPos + Vector(0, 0, 10))
+		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif command == "use" then
 		---

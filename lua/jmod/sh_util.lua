@@ -312,13 +312,13 @@ function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 end
 
 function JMod.IsEntContained(container, target)
+	print(IsValid(target), IsValid(target.EZInvOwner), (target.EZInvOwner == container), IsValid(target:GetParent()), (target:GetParent() == target.EZInvOwner))
 	return IsValid(target) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
 end
 
 function JMod.AddToInventory(invEnt, target)
-	--print("Shared Func")
-	--print(invEnt, target)
-
+	print(invEnt, target, JMod.IsEntContained(invEnt, target))
+	if JMod.IsEntContained(invEnt, target) or target:IsPlayer() then return end
 	local jmodinv = invEnt.JModInv or {}
 
 	if target and IsValid(target) and (target:EntIndex() ~= -1) then
@@ -345,6 +345,7 @@ function JMod.AddToInventory(invEnt, target)
 		target:SetNoDraw(true)
 		target:SetNotSolid(true)
 		target:GetPhysicsObject():EnableMotion(false)
+		target:GetPhysicsObject():Sleep()
 		if invEnt:IsPlayer() then
 			JMod.Hint(invEnt,"hint item inventory add")
 		end
@@ -354,6 +355,8 @@ function JMod.AddToInventory(invEnt, target)
 end
 
 function JMod.RemoveFromInventory(invEnt, target, pos)
+	print(invEnt, target, pos, JMod.IsEntContained(invEnt, target))
+	if not JMod.IsEntContained(invEnt, target) then return end
 	if SERVER then
 		if not pos then
 			SafeRemoveEntity(target)
@@ -372,6 +375,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos)
 			end
 		end)
 	end
+
 	target.EZInvOwner = nil
 
 	local jmodinv = invEnt.JModInv or {}
@@ -381,6 +385,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos)
 		if v.ent ~= target then
 			local StoredEnt = v.ent
 			if JMod.IsEntContained(invEnt, StoredEnt) then
+				print(invEnt, StoredEnt)
 				table.insert(jmodinvfinal, v)
 			end
 		end
