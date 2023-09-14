@@ -1123,6 +1123,10 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
 	Buttalony:SetTooltip(HelpStr)
 	
 	function Buttalony:DoClick()
+		if OpenDropdown then
+			OpenDropdown:Remove()
+		end
+		
 		local Options={
 			[1]={
 				title="Drop",
