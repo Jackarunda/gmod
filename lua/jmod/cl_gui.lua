@@ -1085,9 +1085,9 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 						net.Start("JMod_ItemInventory")
 						net.WriteEntity(itemTable.ent)
 						net.WriteString("drop")
-						--if invEnt ~= Ply then
+						if invEnt ~= Ply then
 							net.WriteEntity(invEnt)
-						--end
+						end
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
@@ -1095,9 +1095,6 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 						net.WriteEntity(Ply)
 						net.SendToServer()
 					end
-					
-					-- refresh+update the inv list
-					JMod.RemoveFromInventory(Ply, itemTable.ent)
 				end
 			}
 		}
@@ -1136,7 +1133,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	local command = net.ReadString()
 	local items = net.ReadTable()
 	
-	if command == "take_cl" then
+	if command == "update_cl" then
 		local Ply = LocalPlayer()
 		Ply.JModInv = items
 	elseif command == "open_menu" then
@@ -1172,6 +1169,8 @@ net.Receive("JMod_Inventory", function()
 	local Ply = LocalPlayer()
 	local weight = Ply.EZarmor.totalWeight
 	local PlyModel = net.ReadString()
+	local Ply.JModInv = net.ReadTable()
+
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(800, 400)
 	motherFrame:SetVisible(true)

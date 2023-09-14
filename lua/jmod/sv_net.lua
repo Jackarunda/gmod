@@ -112,29 +112,6 @@ net.Receive("JMod_EZtimeBomb", function(ln, ply)
 	end
 end)
 
-net.Receive("JMod_UniCrate", function(ln, ply)
-	local box = net.ReadEntity()
-	local class = net.ReadString()
-	if not IsValid(box) or (box:GetPos() - ply:GetPos()):Length() > 100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
-	local ent = ents.Create(class)
-	ent:SetPos(box:GetPos())
-	ent:SetAngles(box:GetAngles())
-	ent:Spawn()
-	ent:Activate()
-
-	timer.Simple(0.01, function()
-		ply:PickupObject(ent)
-	end)
-
-	box:SetItemCount(box:GetItemCount() - box.Items[class][2])
-
-	box.Items[class] = box.Items[class][1] > 1 and {box.Items[class][1] - 1, box.Items[class][2]} or nil
-
-	box.NextLoad = CurTime() + 2
-	box:EmitSound("Ammo_Crate.Close")
-	box:CalcWeight()
-end)
-
 net.Receive("JMod_ModifyMachine", function(ln, ply)
 	if not ply:Alive() then return end
 	local AmmoType = nil

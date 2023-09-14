@@ -461,13 +461,6 @@ function SWEP:Reload()
 				if not(Tar.JModInv) then --CHECK FOR INV LIMIT HERE
 					JMod.AddToInventory(ply, Tar)
 					JMod.Hint(ply,"hint item inventory add")
-					
-					net.Start("JMod_ItemInventory")--send to client so the player can update their inv
-					net.WriteEntity(Tar)
-					net.WriteString("take_cl")
-					net.WriteEntity(ply)
-					net.WriteTable(ply.JModInv)
-					net.Send(ply)
 				elseif Tar.JModInv then
 					net.Start("JMod_ItemInventory")--send to client so the player can update their inv
 					net.WriteEntity(Tar)
