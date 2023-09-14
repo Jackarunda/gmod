@@ -497,7 +497,8 @@ JMod.Hints = {
 		LangKey = "hint item inventory drop"
 	},
 	["hint item inventory missing"] = {
-		LangKey = "hint item inventory missing"
+		LangKey = "hint item inventory missing",
+		Repeat = 100
 	},
 	["hint item inventory full"] = {
 		LangKey = "hint item inventory full"

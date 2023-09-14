@@ -1127,28 +1127,20 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame)
 			[1]={
 				title="Drop",
 				actionFunc = function(itemTable)
-					if itemTable.id and IsValid(Entity(itemTable.id)) and Entity(itemTable.id):GetModel()==itemTable.model then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
+					if itemTable.ent and IsValid(itemTable.ent) then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
 						net.Start("JMod_ItemInventory")
-						net.WriteInt(itemTable.id, 32)
+						net.WriteInt(itemTable.ent:EntIndex(), 32)
 						net.WriteString("drop")
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-						net.WriteInt(LocalPlayer():EntIndex(), 32)
+						net.WriteInt(Ply:EntIndex(), 32)
 						net.WriteString("missing")
 						net.SendToServer()
 					end
 					
 					-- refresh+update the inv list
-					local jmodinvfinal={}
-					for k,v in ipairs(LocalPlayer().JModInv) do
-						if (v.id and IsValid(Entity(v.id)) and Entity(v.id):GetModel()==v.model) and !(v.id==itemTable.id) then -- THIS CHECK MAKES SURE IT'S STILL THE SAME LAD
-							table.insert(jmodinvfinal,v)
-						end
-					end
-					
-					LocalPlayer().JModInv=jmodinvfinal
-					
+					JMod.RemoveFromInventory(Ply, itemTable.ent)
 				end
 			}
 		}
@@ -1186,24 +1178,12 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	local itemID = net.ReadInt(32)
 	local command = net.ReadString()
 	local target = Entity(itemID)
-	if !(target and IsValid(target)) or (target:EntIndex()==-1) then return false end
+
+	if not(IsValid(target)) or (target:EntIndex()==-1) then return false end
 	
 	if command == "take_cl" then
 		local Ply = LocalPlayer()
-		local jmodinv = Ply.JModInv or {}
-
-		if target and IsValid(target) and (target:EntIndex()~=-1) then
-			table.insert(jmodinv,{name= target.PrintName or target:GetModel(),model = target:GetModel(), id = target:EntIndex()})
-		end
-
-		local jmodinvfinal={}
-		for k,v in ipairs(jmodinv) do
-			if v.id and IsValid(Entity(v.id)) and Entity(v.id):GetModel()==v.model then -- MODEL CHECK MAKES SURE IT'S STILL THE SAME LAD
-				table.insert(jmodinvfinal,v)
-			end
-		end
-
-		Ply.JModInv=jmodinvfinal
+		JMod.AddToInventory(Ply, target)
 	end
 end)
 
@@ -1351,7 +1331,7 @@ net.Receive("JMod_Inventory", function()
 	DScrollPanel:SetSize(180,370-(#ShownCommands * 25))
 	
 	local ShownItems={}
-	if Ply and Ply.JModInv then
+	if Ply.JModInv then
 		for k, v in ipairs(Ply.JModInv) do
 			CreateInvButton(motherFrame, v, (#ShownItems % 3 *50), (math.floor(#ShownItems/3) * 50), DScrollPanel)
 			table.insert(ShownItems, v.name)

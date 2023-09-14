@@ -311,6 +311,84 @@ function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 	return not Tr.Hit
 end
 
+function JMod.IsEntContained(container, target)
+	return IsValid(target) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+end
+
+function JMod.AddToInventory(invEnt, target)
+	--print("Shared Func")
+	--print(invEnt, target)
+
+	local jmodinv = invEnt.JModInv or {}
+
+	if target and IsValid(target) and (target:EntIndex() ~= -1) then
+		table.insert(jmodinv, {name = target.PrintName or target:GetModel(), model = target:GetModel(), ent = target})
+	end
+
+	target.EZInvOwner = invEnt
+	target:SetParent(invEnt)
+
+	local jmodinvfinal = {}
+	for k, v in ipairs(jmodinv) do
+		if v.ent then
+			local StoredEnt = v.ent
+			if JMod.IsEntContained(invEnt, target) then
+				table.insert(jmodinvfinal, v)
+			end
+		end
+	end
+
+	invEnt.JModInv = jmodinvfinal
+
+	if SERVER then
+		target:SetPos(invEnt:GetPos())
+		target:SetNoDraw(true)
+		target:SetNotSolid(true)
+		target:GetPhysicsObject():EnableMotion(false)
+		if invEnt:IsPlayer() then
+			JMod.Hint(invEnt,"hint item inventory add")
+		end
+	elseif CLIENT then
+		--
+	end
+end
+
+function JMod.RemoveFromInventory(invEnt, target, pos)
+	if SERVER then
+		if not pos then
+			SafeRemoveEntity(target)
+
+			return 
+		end
+		target:SetNoDraw(false)
+		target:SetNotSolid(false)
+		target:SetParent(nil)
+		target:SetPos(pos)
+		target:SetAngles(target.JModPreferredCarryAngles or AngleRand())
+		timer.Simple(0, function()
+			if IsValid(target) then
+				target:GetPhysicsObject():EnableMotion(true)
+				target:GetPhysicsObject():Wake()
+			end
+		end)
+	end
+	target.EZInvOwner = nil
+
+	local jmodinv = invEnt.JModInv or {}
+
+	local jmodinvfinal = {}
+	for k, v in ipairs(jmodinv) do
+		if v.ent ~= target then
+			local StoredEnt = v.ent
+			if JMod.IsEntContained(invEnt, StoredEnt) then
+				table.insert(jmodinvfinal, v)
+			end
+		end
+	end
+
+	invEnt.JModInv = jmodinvfinal
+end
+
 function JMod.IsAdmin(ply)
 	return (game.SinglePlayer()) or ((IsValid(ply) and ply:IsPlayer()) and (ply:IsUserGroup("admin") or ply:IsUserGroup("superadmin")))
 end
