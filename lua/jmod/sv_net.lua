@@ -4,7 +4,6 @@ util.AddNetworkString("JMod_EZtoolbox")
 util.AddNetworkString("JMod_EZworkbench")
 util.AddNetworkString("JMod_Hint")
 util.AddNetworkString("JMod_EZtimeBomb")
-util.AddNetworkString("JMod_UniCrate")
 util.AddNetworkString("JMod_LuaConfigSync")
 util.AddNetworkString("JMod_PlayerSpawn")
 util.AddNetworkString("JMod_ModifyMachine")
@@ -156,25 +155,40 @@ end)
 
 
 net.Receive("JMod_ItemInventory", function(len, ply)
-	local target = net.ReadEntity()
 	local command = net.ReadString()
+	local amt, resourceType, target
+	if command == "drop_res" then
+		amt = net.ReadUInt(12)
+		resourceType = net.ReadString()
+	else
+		target = net.ReadEntity()
+	end
 	local invEnt = net.ReadEntity()
+
 	if not IsValid(invEnt) then
 		invEnt = ply
 	end
-	if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+
+	print(command, amt, resourceType, target, invEnt)
 	
 	if command == "take" then
+		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
 		JMod.AddToInventory(invEnt, target)
 	elseif command == "drop" then
+		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
 		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
 		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		JMod.Hint(ply,"hint item inventory drop")
+	elseif command == "drop_res" then
+		local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
+		JMod.RemoveFromInventory(invEnt, resourceType, Tr.HitPos + Vector(0, 0, 10), amt)
+		--JMod.Hint(ply,"hint item inventory drop")
 	elseif command == "use" then
 		---
 	elseif command == "full" then
 		JMod.Hint(ply,"hint item inventory full")
 	elseif command == "missing" then
+		JMod.UpdateInv(invEnt)
 		JMod.Hint(ply,"hint item inventory missing")
 	end
 end)

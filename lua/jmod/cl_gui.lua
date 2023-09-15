@@ -1055,7 +1055,9 @@ end
 --Item Inventory
 local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 	local Buttalony, Ply = vgui.Create( "SpawnIcon" , scrollFrame ), LocalPlayer()
-	Buttalony:SetModel( itemTable.model )
+	if itemTable.model then
+		Buttalony:SetModel( itemTable.model )
+	end
 	Buttalony:SetSize(50, 50)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetText(itemTable.name)
@@ -1083,8 +1085,17 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 				actionFunc = function(itemTable)
 					if itemTable.ent and IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-						net.WriteEntity(itemTable.ent)
 						net.WriteString("drop")
+						net.WriteEntity(itemTable.ent)
+						if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						end
+						net.SendToServer()
+					elseif itemTable.res and (itemTable.amt > 0) then
+						net.Start("JMod_ItemInventory")
+						net.WriteString("drop_res")
+						net.WriteUInt(itemTable.amt, 12)
+						net.WriteString(itemtable.res)
 						if invEnt ~= Ply then
 							net.WriteEntity(invEnt)
 						end
@@ -1169,7 +1180,10 @@ net.Receive("JMod_Inventory", function()
 	local Ply = LocalPlayer()
 	local weight = Ply.EZarmor.totalWeight
 	local PlyModel = net.ReadString()
-	local Ply.JModInv = net.ReadTable()
+	local itemTable = net.ReadTable()
+	Ply.JModInv = itemTable
+
+	PrintTable(Ply.JModInv)
 
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(800, 400)
