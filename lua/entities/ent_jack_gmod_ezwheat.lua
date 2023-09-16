@@ -148,7 +148,7 @@ if(SERVER)then
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth, 0, (self.Mutation > 90) and 65 or 100)
+					self.Growth = math.Clamp(self.Growth + Growth, 0, ((self.Mutation > 90) and 65) or 100)
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)

@@ -1240,6 +1240,17 @@ function JMod.BuildRecipe(results, ply, Pos, Ang)
 	end
 end
 
+function JMod.ConsumeNutrients(ply, amt)
+	amt = math.Round(amt)
+	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
+	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
+
+	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
+		local Old = ply:getDarkRPVar("energy")
+		ply:setDarkRPVar("energy", math.Clamp(Old + amt * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
+	end
+end
+
 function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
 	if ply.EZnutrition then

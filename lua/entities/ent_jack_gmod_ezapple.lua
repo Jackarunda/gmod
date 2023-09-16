@@ -49,13 +49,7 @@ if SERVER then
 				if ply.EZnutrition.Nutrients < 100 then
 					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
 
-					ply.EZnutrition.NextEat = Time + 5 / JMod.Config.FoodSpecs.EatSpeed
-					ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + 5 * JMod.Config.FoodSpecs.ConversionEfficiency
-
-					if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
-						local Old = ply:getDarkRPVar("energy")
-						ply:setDarkRPVar("energy", math.Clamp(Old + 5 * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
-					end
+					JMod.ConsumeNutrients(ply, 5)
 
 					self:Remove()
 
