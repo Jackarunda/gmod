@@ -191,7 +191,7 @@ if SERVER then
 		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()
-			local Stalk = ents.Create("ent_jack_gmod_ezcorn")
+			local Stalk = ents.Create("ent_jack_gmod_ezcorn_stalk")
 			Stalk:SetPos(Pos + Vector(0, 0, 10))
 			Stalk:Spawn()
 			Stalk:Activate()
