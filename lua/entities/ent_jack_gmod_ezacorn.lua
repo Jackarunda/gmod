@@ -12,7 +12,6 @@ ENT.JModEZstorable = true
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
-ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
@@ -126,6 +125,8 @@ if SERVER then
 				self:Bury(activator)
 				JMod.Hint(activator, "water seed")
 			else
+				self.EZremoveSelf = false
+				self.LastTouchedTime = Time
 				activator:PickupObject(self)
 				JMod.Hint(activator, "alt to plant")
 			end
