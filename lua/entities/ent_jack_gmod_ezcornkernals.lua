@@ -185,7 +185,7 @@ if SERVER then
 		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()
-			local Stalk = ents.Create("ent_jack_gmod_ezcorn_stalk")
+			local Stalk = ents.Create("ent_jack_gmod_ezcornstalk")
 			Stalk:SetPos(Pos + Vector(0, 0, 10))
 			Stalk:Spawn()
 			Stalk:Activate()
@@ -221,5 +221,5 @@ elseif CLIENT then
 		self:DrawModel()
 	end
 
-	language.Add("ent_jack_gmod_ezwheatseed", "EZ Wheat Seed")
+	language.Add("ent_jack_gmod_ezcornkernals", "EZ Corn Kernels")
 end

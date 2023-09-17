@@ -31,7 +31,6 @@ if(SERVER)then
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
 		self.Mutation = 0
-		self:TryPlant()
 		self:UpdateAppearance()
 		self:UseTriggerBounds(true, 0)
 	end
@@ -235,5 +234,5 @@ elseif CLIENT then
 		render.DrawQuadEasy(SelfPos, self:GetUp(), 150, 150, Col, 0)
 		--]]
 	end
-	language.Add("ent_jack_gmod_eztree", "EZ Corn")
+	language.Add("ent_jack_gmod_ezcornstalk", "EZ Corn")
 end

@@ -99,7 +99,7 @@ if SERVER then
 		local State = self:GetState()
 
 		if State == STATE_NORMAL then
-			if ply:KeyDown(IN_SPEED) then
+			--if ply:KeyDown(IN_SPEED) then
 				if Alt then
 					ply.EZnutrition = ply.EZnutrition or {
 						NextEat = 0,
@@ -124,7 +124,7 @@ if SERVER then
 					ply:PickupObject(self)
 					JMod.Hint(ply, "alt to plant")
 				end
-			else
+			--[[else
 				if Alt then
 					JMod.SetEZowner(self, ply)
 					self:Bury(ply)
@@ -135,7 +135,7 @@ if SERVER then
 					self.EZremoveSelf = false
 					self.LastTouchedTime = Time
 				end
-			end
+			end]]--
 		elseif State == STATE_BURIED then
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
@@ -192,7 +192,7 @@ if SERVER then
 		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()
-			local Stalk = ents.Create("ent_jack_gmod_ezcorn_stalk")
+			local Stalk = ents.Create("ent_jack_gmod_ezcornstalk")
 			Stalk:SetPos(Pos + Vector(0, 0, 10))
 			Stalk:Spawn()
 			Stalk:Activate()
@@ -227,5 +227,5 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 	end
-	language.Add("ent_jack_gmod_ezcorn_ear", "EZ Corn Cob")
+	language.Add("ent_jack_gmod_ezcornear", "EZ Corn Cob")
 end

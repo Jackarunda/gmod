@@ -65,9 +65,6 @@ if(SERVER)then
 		end
 		ent:Spawn()
 		ent:Activate()
-		if ent.TryPlant then
-			ent:TryPlant()
-		end
 		JMod.Hint(ply, classname)
 		return ent
 	end
@@ -95,7 +92,9 @@ if(SERVER)then
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
-		
+		if self.TryPlant then
+			self:TryPlant()
+		end
 		if self.SpawnFull then
 			self:SetWater(self.Hydration or 100)
 		else
