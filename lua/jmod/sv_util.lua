@@ -1241,6 +1241,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang)
 end
 
 function JMod.ConsumeNutrients(ply, amt)
+	local Time = CurTime()
 	amt = math.Round(amt)
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
 	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
