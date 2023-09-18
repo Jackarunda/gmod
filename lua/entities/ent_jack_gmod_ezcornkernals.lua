@@ -35,6 +35,7 @@ if SERVER then
 
 	function ENT:Initialize()
 		self:SetModel("models/jmod/props/seed_packet.mdl")
+		self:SetMaterial("models/jmod/props/corn_packet")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
