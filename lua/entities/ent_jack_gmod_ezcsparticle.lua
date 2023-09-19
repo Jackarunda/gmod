@@ -36,6 +36,7 @@ if SERVER then
 
 	function ENT:DamageObj(obj)
 		local RespiratorMultiplier = 1
+		local Time = CurTime()
 		if obj:IsPlayer() then
 			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 			
