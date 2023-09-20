@@ -1,4 +1,4 @@
-﻿-- Jackarunda 2023
+﻿-- AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"

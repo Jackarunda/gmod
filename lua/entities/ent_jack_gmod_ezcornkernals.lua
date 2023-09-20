@@ -1,9 +1,9 @@
-﻿-- Jackarunda 2023
+﻿-- AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
-ENT.PrintName = "EZ Wheat Seed"
+ENT.PrintName = "EZ Corn Kernals"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
