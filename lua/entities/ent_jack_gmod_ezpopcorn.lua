@@ -33,9 +33,15 @@ if SERVER then
 		self:SetPop(5)
 	end
 
-	function ENT:PhysicsCollide(data, physobj)
+	--[[function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 50 then
-			--self:EmitSound("physics/body/body_medium_impact_soft7.wav", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+		end
+	end--]]
+	
+	function ENT:OnTakeDamage(damage)
+		if damage:IsDamageType(DMG_BURN) or damage:IsDamageType(DMG_SLOWBURN) then
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 		end
 	end
 
@@ -51,6 +57,7 @@ if SERVER then
 			if ply.EZnutrition.NextEat < Time then
 				if ply.EZnutrition.Nutrients < 100 then
 					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+					self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 
 					JMod.ConsumeNutrients(ply, 1)
 
@@ -59,8 +66,6 @@ if SERVER then
 					local Eff = EffectData()
 					Eff:SetOrigin(self:GetPos() + self:GetUp() * 10)
 					util.Effect("eff_jack_gmod_ezpopcorn", Eff, true, true)
-
-					ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 				else
 					JMod.Hint(ply, "nutrition filled")
 				end

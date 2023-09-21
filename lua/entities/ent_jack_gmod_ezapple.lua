@@ -52,8 +52,6 @@ if SERVER then
 					JMod.ConsumeNutrients(ply, 5)
 
 					self:Remove()
-
-					ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 				else
 					JMod.Hint(ply, "nutrition filled")
 				end

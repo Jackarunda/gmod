@@ -55,8 +55,6 @@ if SERVER then
 					self:Remove()
 				end
 
-				ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
-
 				if ply.EZvirus and ply.EZvirus.Severity > 1 then
 					if ply.EZvirus.InfectionWarned then
 						ply:PrintMessage(HUD_PRINTCENTER, "immune system boosted")

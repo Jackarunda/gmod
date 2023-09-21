@@ -108,9 +108,18 @@ if SERVER then
 		self:TakePhysicsDamage(dmginfo)
 		local Pos, State = self:GetPos(), self:GetState()
 
+		if not(self.NoMorePop) and (State == STATE_NORMAL) and dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and (math.random(1, 10) >= 4) then
+			local Pop = ents.Create("ent_jack_gmod_ezpopcorn")
+			Pop:SetPos(self:GetPos())
+			Pop:Spawn()
+			Pop:Activate()
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			self.NoMorePop = true
+			SafeRemoveEntityDelayed(self, 0)
+		end
+
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
 			sound.Play("Wood_Solid.Break", Pos)
-			--self:SetState(JMod.EZ_STATE_BROKEN)
 			SafeRemoveEntityDelayed(self, 1)
 		end
 	end
@@ -157,6 +166,14 @@ if SERVER then
 		if State == STATE_NORMAL then
 			if self.EZremoveSelf and ((Time - 300) > self.LastTouchedTime) then
 				self:Degenerate()
+			end
+			if self:IsOnFire() then
+				local Pop = ents.Create("ent_jack_gmod_ezpopcorn")
+				Pop:SetPos(self:GetPos())
+				Pop:Spawn()
+				Pop:Activate()
+				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+				SafeRemoveEntityDelayed(self, 0)
 			end
 		elseif State == STATE_BURIED then
 			if not IsValid(self.GroundWeld) then self:Degenerate() end

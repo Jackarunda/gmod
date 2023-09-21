@@ -1250,6 +1250,8 @@ function JMod.ConsumeNutrients(ply, amt)
 		local Old = ply:getDarkRPVar("energy")
 		ply:setDarkRPVar("energy", math.Clamp(Old + amt * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
 	end
+
+	ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 end
 
 function JMod.GetPlayerStrength(ply)

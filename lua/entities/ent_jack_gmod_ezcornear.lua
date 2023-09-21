@@ -112,8 +112,6 @@ if SERVER then
 							JMod.ConsumeNutrients(ply, 4)
 	
 							self:Remove()
-	
-							ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 						else
 							JMod.Hint(ply, "nutrition filled")
 						end
@@ -136,13 +134,13 @@ if SERVER then
 					self.LastTouchedTime = Time
 				end
 			end]]--
-		elseif State == STATE_BURIED then
+		--[[elseif State == STATE_BURIED then
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
 			self:SetState(STATE_NORMAL)
 			self:SetCollisionGroup(COLLISION_GROUP_NONE)
-			ply:PickupObject(self)
+			ply:PickupObject(self)--]]
 		end
 	end
 
@@ -199,6 +197,26 @@ if SERVER then
 			Stalk.Hydration = WatToGive * 2
 			JMod.SetEZowner(Stalk, Owner)
 		end)
+	end
+
+	function ENT:OnTakeDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
+		local Pos, State = self:GetPos(), self:GetState()
+
+		if not(self.NoMorePop) and (State == STATE_NORMAL) and dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and (math.random(1, 10) >= 4) then
+			local Pop = ents.Create("ent_jack_gmod_ezcornkernals")
+			Pop:SetPos(self:GetPos())
+			Pop:Spawn()
+			Pop:Activate()
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			self.NoMorePop = true
+			SafeRemoveEntityDelayed(self, 0)
+		end
+
+		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
+			sound.Play("Wood_Solid.Break", Pos)
+			SafeRemoveEntityDelayed(self, 1)
+		end
 	end
 
 	function ENT:OnRemove()
