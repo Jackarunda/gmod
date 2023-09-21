@@ -343,19 +343,20 @@ if SERVER then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
+		local ThrustDir = self:GetRight()
 
 		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, -self:GetRight(), .75)
+		JMod.AeroDrag(self, -ThrustDir, .75)
 
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 25000)
+				Phys:ApplyForceCenter(-ThrustDir * 25000)
 				self.FuelLeft = self.FuelLeft - 5
 				---
 				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(self:GetRight())
-				Eff:SetScale(5)
+				Eff:SetOrigin(self:GetPos() + ThrustDir * 100)
+				Eff:SetNormal(ThrustDir)
+				Eff:SetScale(8)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			end
 		end
@@ -414,20 +415,20 @@ elseif CLIENT then
 		end
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or CurTime() + 1
+			self.BurnoutTime = self.BurnoutTime or CurTime() + 2
 
 			if self.BurnoutTime > CurTime() then
 				render.SetMaterial(GlowSprite)
 
 				for i = 1, 10 do
 					local Inv = 10 - i
-					render.DrawSprite(Pos + Dir * (i * 10 + math.random(30, 40)), 5 * Inv, 5 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
+					render.DrawSprite(Pos + Dir * (i * 10 + math.random(100, 130)), 8 * Inv, 8 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
 				end
 
 				local dlight = DynamicLight(self:EntIndex())
 
 				if dlight then
-					dlight.pos = Pos + Dir * 45
+					dlight.pos = Pos + Dir * 130
 					dlight.r = 255
 					dlight.g = 175
 					dlight.b = 100
