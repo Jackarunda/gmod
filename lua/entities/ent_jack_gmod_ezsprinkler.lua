@@ -186,7 +186,7 @@ if(SERVER)then
 						if EntsToRemove[v:GetClass()] and math.random(1, 3) >= 2 then
 							SafeRemoveEntity(v)
 						end
-						if v.Hydration then
+						if  v.Hydration and table.HasValue(v.EZconsumes, JMod.EZ_RESOURCE_TYPES.WATER) then
 							v.Hydration = math.Clamp(v.Hydration + WaterDeliveryAmt, 0, 100)
 						end
 						v:RemoveAllDecals()

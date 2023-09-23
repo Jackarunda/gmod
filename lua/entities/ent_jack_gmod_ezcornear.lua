@@ -9,9 +9,7 @@ ENT.Spawnable = true -- For now...
 ENT.AdminOnly = false
 ---
 ENT.JModEZstorable = true
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.WATER
-}
+ENT.EZconsumes = nil
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
@@ -43,8 +41,17 @@ if SERVER then
 		self.LastWateredTime = Time
 		self.EZremoveSelf = self.EZremoveSelf or false
 		self:SetState(STATE_NORMAL)
+		self.Mutated = false
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self.Hydration = 0
 		self.GroundWeld = nil
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self:SetSubMaterial(0, "models/jmod/props/plants/corn01t_d")
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.EXPLOSIVES}
 	end
 
 	function ENT:Bury(activator)
@@ -75,7 +82,7 @@ if SERVER then
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)then
 			local Wata = self.Hydration
 			local Missing = 50 - Wata
 			if (Missing <= 0) then return 0 end
@@ -195,6 +202,13 @@ if SERVER then
 			Stalk:Spawn()
 			Stalk:Activate()
 			Stalk.Hydration = WatToGive * 2
+			if self.Mutated then
+				timer.Simple(0, function()
+					if IsValid(Stalk) and not(Stalk.Mutated) then
+						Stalk:Mutate()
+					end
+				end)
+			end
 			JMod.SetEZowner(Stalk, Owner)
 		end)
 	end
@@ -203,7 +217,11 @@ if SERVER then
 		self:TakePhysicsDamage(dmginfo)
 		local Pos, State = self:GetPos(), self:GetState()
 
-		if not(self.NoMorePop) and (State == STATE_NORMAL) and dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and (math.random(1, 10) >= 4) then
+		local Damage = dmginfo:GetDamage()
+		if dmginfo:IsDamageType(DMG_RADIATION) and (math.random(0, 1000) >= 999) then
+			self.Mutate()
+		end
+		if not(self.NoMorePop) and (State == STATE_NORMAL) and dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and (math.random(1, 10) > 6) then
 			local Pop = ents.Create("ent_jack_gmod_ezcornkernals")
 			Pop:SetPos(self:GetPos())
 			Pop:Spawn()

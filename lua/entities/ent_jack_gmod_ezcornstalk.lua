@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
+ENT.EZconsumes = nil
 --
 ENT.StaticPerfSpecs = {
 	MaxWater = 100,
@@ -30,9 +31,16 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutation = 0
+		self.Mutated = false
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:UseTriggerBounds(true, 0)
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.EXPLOSIVES}
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -40,21 +48,26 @@ if(SERVER)then
 		self.Destroyed = true
 		self:EmitSound("Dirt.Impact")
 
-		local FoodAmt = 0
-		if (self.Growth >= 66) then
-			FoodAmt = 25
-		elseif (self.Growth >= 33) then
-			FoodAmt = 15
-		else
-			FoodAmt = 5
-		end
-
-		local SpawnPos = Vector(0, 0, 100)
-		if (FoodAmt > 0) then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
-		end
-
+		self:ProduceResource(true)
 		SafeRemoveEntityDelayed(self, 0)
+	end
+
+	function ENT:ProduceResource(destroyed)
+		local SpawnPos = Vector(0, 0, 100)
+		if (self.Growth >= 66) then
+			--JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, 50, SpawnPos, Angle(0, 0, 0), nil, false)
+			if self.Mutated then
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.MUNITIONS, math.random(10, 30), SpawnPos, Angle(0, 0, 0), nil, false)
+			else
+				for i = 1, math.random(1, 3) do
+					local Corn = ents.Create("ent_jack_gmod_ezcornear")
+					Corn:SetPos(SpawnPos + VectorRand(-10, 10))
+					Corn:SetAngles(AngleRand())
+					Corn:Spawn()
+					Corn:Activate()
+				end
+			end
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -137,7 +150,7 @@ if(SERVER)then
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth, 0, (self.Mutation > 90) and 65 or 100)
+					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
@@ -154,13 +167,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		if Alt and (self.Growth >= 66) then
-			for i = 1, 2 do
-				local Maize = ents.Create("ent_jack_gmod_ezcorn_ear")
-				Maize:SetPos(self:GetPos() + self:GetUp() * 5 * i)
-				Maize:Spawn()
-				Maize:Activate()
-			end
-			--
+			self:ProduceResource(false)
 			self:Remove()
 			--[[self.Growth = 30
 			self.Helf = 33
@@ -191,7 +198,7 @@ if(SERVER)then
 			CornColor = Color(145, 141, 93)
 		end
 
-		if self.Mutation > 90 then
+		if self.Mutated then
 			CornColor = Color(180, 184, 145)
 		end
 		if CornColor then

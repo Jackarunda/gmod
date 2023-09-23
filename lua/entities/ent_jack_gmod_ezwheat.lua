@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/props/plants/razorgrain_pile.mdl"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 0
+ENT.EZconsumes = nil
 --
 ENT.StaticPerfSpecs = {
 	MaxWater = 100,
@@ -30,8 +31,15 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutation = 0
+		self.Mutated = false
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.PROPELLANT}
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -39,6 +47,7 @@ if(SERVER)then
 		self.Destroyed = true
 		self:EmitSound("Dirt.Impact")
 
+		local SpawnPos = Vector(0, 0, 100)
 		local FoodAmt = 0
 		if (self.Growth >= 66) then
 			FoodAmt = 100
@@ -48,9 +57,12 @@ if(SERVER)then
 			FoodAmt = 25
 		end
 
-		local SpawnPos = Vector(0, 0, 100)
-		if (FoodAmt > 0) then
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+		if (FoodAmt > 0) then 
+			if (self.Mutated) then
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.AMMO, FoodAmt / 2, SpawnPos, Angle(0, 0, 0), nil, false)
+			else
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+			end
 		end
 
 		SafeRemoveEntityDelayed(self, 0)
@@ -76,12 +88,12 @@ if(SERVER)then
 				end
 			end
 		end
-		if (self.Mutation > 90) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
+		if (self.Mutated) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
 			local PlyToCut = data.HitEntity
 			local Cut = DamageInfo()
 			Cut:SetDamage(2)
 			Cut:SetDamageType(DMG_SLASH)
-			--Cut:SetDamageForce(-data.TheirOldVelocity*.9)
+			Cut:SetDamageForce(-data.TheirOldVelocity*1.1)
 			Cut:SetDamagePosition(data.HitPos + self:GetUp() * 32)
 			PlyToCut:TakeDamageInfo(Cut)
 			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
@@ -148,7 +160,7 @@ if(SERVER)then
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth, 0, ((self.Mutation > 90) and 65) or 100)
+					self.Growth = math.Clamp(self.Growth + Growth, 0, (self.Mutated and 65) or 100)
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
@@ -187,7 +199,7 @@ if(SERVER)then
 			NewWheatMat = "razorgrain_d"
 			WheatColor = Color(207, 228, 168)
 		end
-		if self.Mutation > 90 then
+		if self.Mutated then
 			WheatColor = Color(180, 184, 145)
 		end
 		if WheatColor then

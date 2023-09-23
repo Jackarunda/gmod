@@ -315,7 +315,7 @@ if SERVER then
 		Phys:Wake()
 		Phys:ApplyForceCenter(-self:GetRight() * 20000)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(80, 100))
+		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(60, 80))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(self:GetRight())

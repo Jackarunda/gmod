@@ -9,9 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.JModEZstorable = true
 ---
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.WATER
-}
+ENT.EZconsumes = nil
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
@@ -56,7 +54,17 @@ if SERVER then
 		self.EZremoveSelf = self.EZremoveSelf or false
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
+		self.Mutation = 0
+		self.Mutated = false
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self.GroundWeld = nil
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self:SetSubMaterial(0, "models/jmod/props/bullet_packet")
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.PROPELLANT}
 	end
 
 	function ENT:Bury(activator)
@@ -79,6 +87,7 @@ if SERVER then
 			self.ShootDir = Tr.HitNormal
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
+			self.LastWateredTime = CurTime()
 			--JackaGenericUseEffect(activator)
 		end
 	end
@@ -87,7 +96,7 @@ if SERVER then
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
 			local Wata = self.Hydration
 			local Missing = 50 - Wata
 			if (Missing <= 0) then return 0 end
@@ -107,6 +116,10 @@ if SERVER then
 		self:TakePhysicsDamage(dmginfo)
 		local Pos, State = self:GetPos(), self:GetState()
 
+		local Damage = dmginfo:GetDamage()
+		if dmginfo:IsDamageType(DMG_RADIATION) and (math.random(0, 1000) >= 999) then
+			self:Mutate()
+		end
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
 			sound.Play("Wood_Solid.Break", Pos)
 			--self:SetState(JMod.EZ_STATE_BROKEN)
@@ -177,6 +190,9 @@ if SERVER then
 				self:SpawnTree()
 			end
 		end
+		if not(self.Mutated) and (self.Mutation > 90) then
+			self:Mutate()
+		end
 		self:NextThink(Time + 5)
 		return true
 	end
@@ -189,6 +205,13 @@ if SERVER then
 			Tree:SetPos(Pos + Vector(0, 0, 10))
 			Tree:Spawn()
 			Tree:Activate()
+			if self.Mutated then
+				timer.Simple(0, function()
+					if IsValid(Tree) and not(Tree.Mutated) then
+						Tree:Mutate()
+					end
+				end)
+			end
 			Tree.Hydration = WatToGive * 2
 			JMod.SetEZowner(Tree, Owner)
 		end)

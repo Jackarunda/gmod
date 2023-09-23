@@ -173,10 +173,11 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		local Damage = dmginfo:GetDamage() * self:DetermineDamageMultiplier(dmginfo)
+		if dmginfo:IsDamageType(DMG_RADIATION) and isfunction(self.Mutate) and (math.random(0, 1000) >= 999) then
+			self:Mutate()
+		end
 		if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and self.Hydration >= 0 then
 			self.Hydration = math.Clamp(self.Hydration - Damage, 0, 100)
-		elseif (self.Mutation ~= nil) and dmginfo:IsDamageType(DMG_RADIATION) then
-			self.Mutation = math.Clamp( self.Mutation + Damage, 0, 100)
 		else
 			self.Helf = self.Helf - Damage
 		end
@@ -298,9 +299,26 @@ if(SERVER)then
 					local Chem = self:GetChemicals()
 					local Missing = self.MaxChemicals - Chem
 					if(Missing < 1)then return 0 end
-					Accepted=math.min(Missing,amt)
-					self:SetChemicals(Chem+Accepted)
+					Accepted = math.min(Missing,amt)
+					self:SetChemicals(Chem + Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
+					jprint("Propellent")
+					local Wata = self.Hydration
+					local Missing = 100 - Wata
+					if (Missing <= 0) then return 0 end
+					Accepted = math.min(Missing, amt)
+					self.Hydration = Wata + Accepted
+					self.LastWateredTime = Time
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)then
+					local Wata = self.Hydration
+					local Missing = 100 - Wata
+					if (Missing <= 0) then return 0 end
+					Accepted = math.min(Missing, amt)
+					self.Hydration = Wata + Accepted
+					self.LastWateredTime = Time
+					self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
 				end
 				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
 				self.NextRefillTime = Time + 1
