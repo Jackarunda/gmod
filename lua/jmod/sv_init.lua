@@ -51,6 +51,26 @@ local function JackaSpawnHook(ply)
 			end
 		end
 	end
+	
+	local STATE_ROLLED, STATE_UNROLLED = 0, 1
+	local sleepingbag = ply.JModSpawnPointEntity
+	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
+		if(sleepingbag.nextSpawnTime<CurTime())then
+			sleepingbag.nextSpawnTime=CurTime()+60
+			if not IsValid(sleepingbag.Pod:GetDriver()) then--Get inside when respawn
+				local Up = sleepingbag:GetUp()
+				sleepingbag.Pod.EZvehicleEjectPos = sleepingbag.Pod:WorldToLocal(sleepingbag:GetPos()+Up*20)
+				ply:EnterVehicle(sleepingbag.Pod)
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(5)
+				net.WriteFloat(2000)
+				net.WriteBit(true)
+				net.Send(ply)
+			end
+		else
+			JMod.Hint(ply,"sleeping bag wait")
+		end
+	end
 
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
@@ -501,10 +521,15 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
+					local InBed = IsValid(playa:GetVehicle()) and (playa:GetVehicle():GetParent() == playa.JModSpawnPointEntity)
+					local RestMult = 1
+					if InBed then
+						RestMult = 2
+					end
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1
+						playa.EZnutrition.Nutrients = Nuts - 1 * RestMult
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
@@ -514,7 +539,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 								playa:RemoveAllDecals()
 							end
 						elseif math.Rand(0, 1) < .75 then
-							local BoostMult = JMod.Config.FoodSpecs.BoostMult
+							local BoostMult = JMod.Config.FoodSpecs.BoostMult * RestMult
 							local BoostedFrac = (Helf - Max) / Max
 
 							if math.Rand(0, 1) > BoostedFrac then
@@ -787,7 +812,13 @@ end, nil, "Apply's an EZ parachute to an entity")
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
 		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
-		ply:SetPos(WorldPos)
+		local Tr = util.TraceEntity({
+			start = veh:GetPos(),
+			endpos = WorldPos,
+			mask = MASK_SOLID,
+			filter = {ply, veh, veh:GetParent()}
+		}, ply)
+		ply:SetPos(Tr.HitPos)
 		veh.EZvehicleEjectPos = nil
 	end
 end)
