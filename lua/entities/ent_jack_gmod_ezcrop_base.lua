@@ -303,7 +303,6 @@ if(SERVER)then
 					self:SetChemicals(Chem + Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
-					jprint("Propellent")
 					local Wata = self.Hydration
 					local Missing = 100 - Wata
 					if (Missing <= 0) then return 0 end

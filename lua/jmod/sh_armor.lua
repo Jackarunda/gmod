@@ -1009,7 +1009,7 @@ end
 --hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")
 
 --hook.Remove("Move", "JMOD_ARMOR_MOVE")
-hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
+hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
 	if ply.IsProne and ply:IsProne() then return end
 
 	if ply.EZarmor then

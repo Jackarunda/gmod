@@ -35,6 +35,7 @@ if(SERVER)then
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:UseTriggerBounds(true, 0)
+		self:Mutate()
 	end
 
 	function ENT:Mutate()
@@ -160,9 +161,135 @@ if(SERVER)then
 			self:UpdateAppearance()
 		end
 		--
+		if self.Mutated and (math.random(0, 2) == 1) then
+			local Target = self:FindTarget()
+			if (IsValid(Target)) and (SelfPos:Distance(Target:GetPos()) > 120) then 
+				local RandVec = Vector(math.random(-1, 1), math.random(-1, 1), 0) * 100
+				local DesiredPosition = Target:GetPos() + RandVec
+				local Moved = self:TryMoveTowardPoint(DesiredPosition)
+
+				if not(Moved) then
+					self:TryMoveRandomly()
+				end
+			end
+		end
+		--
 		self:NextThink(Time + math.Rand(2, 4))
 		return true
 	end
+
+	--[[ START GNOME CODE ]]--
+	function ENT:FindTarget()
+		local SelfPos = self:GetPos()
+		if IsValid(self.StalkTarget) then
+			return self.StalkTarget
+		else
+			local RandomTarg = nil--table.Random(player.GetAll())
+			for k, v in ipairs(ents.FindByClass("ent_jack_gmod_ezsprinkler")) do
+				if not(IsValid(RandomTarg)) then
+					RandomTarg = v
+				elseif v:GetPos():DistToSqr(RandomTarg:GetPos()) < SelfPos:DistToSqr(RandomTarg:GetPos()) then
+					RandomTarg = v
+				end
+			end
+			self.StalkTarget = RandomTarg
+			return RandomTarg
+		end
+		return nil
+	end
+
+	function ENT:FindGroundAt(pos)
+		local Tr = util.QuickTrace(pos + Vector(0, 0, 30), Vector(0, 0, -300), {self})
+
+		if Tr.Hit and not Tr.StartSolid then return Tr.HitPos end
+
+		return nil
+	end
+
+	function ENT:IsLocationClear(pos)
+		local Tr = util.QuickTrace(pos + Vector(0, 0, 100), Vector(0, 0, -200), self)
+		if (Tr.Hit) then
+			self.InstalledMat = Tr.MatType
+			return (table.HasValue(self.UsableMats, self.InstalledMat))
+		end
+		return false
+	end
+
+	function ENT:TryMoveTowardPoint(pos)
+		local SelfPos = self:GetPos()
+		local Dir = (pos - SelfPos):GetNormalized()
+		local NewPos = SelfPos + Dir * 100 * (self.Restlessness or 2)
+		local NewGroundPos = self:FindGroundAt(NewPos)
+
+		if NewGroundPos then
+			if not self:IsLocationBeingWatched(NewGroundPos) then
+				if self:IsLocationClear(NewGroundPos) then
+					self:SnapTo(NewGroundPos)
+
+					return true
+				end
+			end
+		end
+
+		return false
+	end
+
+	function ENT:TryMoveRandomly()
+		local SelfPos = self:GetPos()
+		local Dir = VectorRand()
+		local NewPos = SelfPos + Dir * 50 * 1
+		local NewGroundPos = self:FindGroundAt(NewPos)
+
+		if NewGroundPos then
+			if not self:IsLocationBeingWatched(NewGroundPos) then
+				if self:IsLocationClear(NewGroundPos) then
+					self:SnapTo(NewGroundPos)
+
+					return true
+				end
+			end
+		end
+
+		return false
+	end
+
+	function ENT:SnapTo(pos)
+		local Yaw = (pos - self:GetPos()):GetNormalized():Angle().y
+		self:SetPos(pos)
+		self:SetAngles(Angle(0, Yaw, 0))
+		self:TryPlant()
+	end
+
+	function ENT:IsLocationBeingWatched(pos)
+		--if(true)then return false end
+		local PotentialObservers = table.Merge(ents.FindByClass("gmod_cameraprop"), player.GetAll())
+
+		for k, obs in pairs(PotentialObservers) do
+			local ObsPos = (obs.GetShootPos and obs:GetShootPos()) or obs:GetPos()
+			local DirectVec = ObsPos - pos
+			local DirectDir = DirectVec:GetNormalized()
+			local FacingDir = (obs.GetAimVector and obs:GetAimVector()) or obs:GetForward()
+			local ApproachAngle = -math.deg(math.asin(DirectDir:Dot(FacingDir)))
+
+			if ApproachAngle > 30 then
+				local Dist = DirectVec:Length()
+
+				if Dist < 5000 then
+					local Tr = util.TraceLine({
+						start = pos,
+						endpos = ObsPos,
+						filter = {self, obs},
+						mask = MASK_SHOT - CONTENTS_WINDOW
+					})
+
+					if not Tr.Hit then return true end
+				end
+			end
+		end
+
+		return false
+	end
+	--[[ END GNOME CODE ]]--
 
 	function ENT:Use(activator)
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
