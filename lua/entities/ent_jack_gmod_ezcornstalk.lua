@@ -35,7 +35,6 @@ if(SERVER)then
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:UseTriggerBounds(true, 0)
-		self:Mutate()
 	end
 
 	function ENT:Mutate()
@@ -62,7 +61,7 @@ if(SERVER)then
 			else
 				for i = 1, math.random(1, 3) do
 					local Corn = ents.Create("ent_jack_gmod_ezcornear")
-					Corn:SetPos(SpawnPos + VectorRand(-10, 10))
+					Corn:SetPos(self:GetPos() + (SpawnPos*i) + VectorRand(-10, 10))
 					Corn:SetAngles(AngleRand())
 					Corn:Spawn()
 					Corn:Activate()
@@ -72,7 +71,6 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		--jprint("Cutting colision", data.DeltaTime)
 		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
 			self:EmitSound("Dirt.Impact", 100, 80)
 			self:EmitSound("Dirt.Impact", 100, 80)
@@ -85,7 +83,6 @@ if(SERVER)then
 					local CrushDamage = DamageInfo()
 					CrushDamage:SetDamage(math.floor(PhysDamage))
 					CrushDamage:SetDamageType(DMG_CRUSH)
-					--CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
 					CrushDamage:SetDamagePosition(data.HitPos)
 					self:TakeDamageInfo(CrushDamage)
 				end
@@ -152,6 +149,13 @@ if(SERVER)then
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
 					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+				end
+				if self.Growth > 90 then
+					if (math.random(1, 2) == 1) then
+						local Leaf = EffectData()
+						Leaf:SetOrigin(SelfPos + Vector(0, 0, 100))
+						util.Effect("eff_jack_gmod_ezcorndust", Leaf, true, true)
+					end
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
@@ -327,6 +331,7 @@ if(SERVER)then
 
 		if self.Mutated then
 			CornColor = Color(180, 184, 145)
+			NewCornMat = "corn01t_d"
 		end
 		if CornColor then
 			self:SetColor(CornColor)
