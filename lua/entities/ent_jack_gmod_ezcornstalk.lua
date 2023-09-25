@@ -150,7 +150,7 @@ if(SERVER)then
 				else
 					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
 				end
-				if self.Growth > 90 then
+				if self.Growth > 66 then
 					if (math.random(1, 2) == 1) then
 						local Leaf = EffectData()
 						Leaf:SetOrigin(SelfPos + Vector(0, 0, 100))
