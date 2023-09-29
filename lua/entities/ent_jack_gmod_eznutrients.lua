@@ -47,7 +47,7 @@ if SERVER then
 
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
 				local AmtToRemove = math.min(10, self:GetResource())
-				self:SetResource(AmtToRemove)
+				self:SetResource(self:GetResource() - AmtToRemove)
 
 				JMod.ConsumeNutrients(ply, AmtToRemove * 2)
 
