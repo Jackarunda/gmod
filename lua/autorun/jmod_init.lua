@@ -351,6 +351,32 @@ if SERVER then
 	end
 end
 
+--[[local ImpactSounds = {
+	Metal = {"Canister.ImpactSoft", "Metal_Barrel.BulletImpact", "Metal_Barrel.ImpactSoft", "Metal_Box.BulletImpact", "Metal_Box.ImpactSoft", "Metal_SeafloorCar.BulletImpact", "MetalGrate.BulletImpact", "MetalGrate.ImpactSoft", "MetalVehicle.ImpactSoft", "MetalVent.ImpactHard",},
+	Wood = {"Wood.BulletImpact", "Wood.ImpactSoft", "Wood_Box.BulletImpact", "Wood_Box.ImpactSoft", "Wood_Crate.ImpactSoft", "Wood_Furniture.ImpactSoft", "Wood_Panel.BulletImpact", "Wood_Panel.ImpactSoft", "Wood_Plank.BulletImpact", "Wood_Plank.ImpactSoft", "Wood_Solid.BulletImpact", "Wood_Solid.ImpactSoft"},
+	Flesh = {"Flesh.BulletImpact", "Flesh.ImpactSoft"},
+	Concrete = {"Concrete.BulletImpact", "Concrete.ImpactSoft"},
+	Dirt = {"Dirt.BulletImpact", "Dirt.Impact"}
+}
+
+JMod.EZ_BulletMatImpactTable = {
+	[MAT_METAL] = ImpactSounds.Metal,
+	[MAT_WOOD] = ImpactSounds.Wood,
+	[MAT_FLESH] = ImpactSounds.Flesh,
+	[MAT_CONCRETE] = ImpactSounds.Concrete,
+	[MAT_DIRT] = ImpactSounds.Dirt,
+	[MAT_DEFAULT] = ImpactSounds.Concrete,
+}
+JMod.EZ_BulletPhysImpactTable = {
+	"metal" = ImpactSounds.Metal,
+	"wood" = ImpactSounds.Wood,
+	"concrete" = ImpactSounds.Concrete,
+}
+
+JMod.EZ_PhysImpactSound = function(physmat)
+
+end--]]
+
 --[[
 Physics Sounds
 
