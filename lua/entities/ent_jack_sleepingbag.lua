@@ -48,7 +48,7 @@ elseif (SERVER) then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(false)
+		self.Pod:SetNoDraw(true)
 		self.Pod:Fire("lock", "", 0)
 		self.Pod:SetNotSolid(true)
 	end
