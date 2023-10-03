@@ -8,7 +8,7 @@ ENT.AdminSpawnable = true
 ENT.Mass=35
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
-local MODEL_ROLLED, MODEL_UNROLLED = "models/props_phx/misc/soccerball.mdl","models/props_trainstation/traincar_rack001.mdl" --placeholder models
+local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
 
 if (CLIENT) then
 	function ENT:Draw()
@@ -40,9 +40,10 @@ elseif (SERVER) then
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
-		self.Pod:SetPos(self:GetPos()+Up*10+Right*10)
-		Ang:RotateAroundAxis(Up, -90)
-		Ang:RotateAroundAxis(Forward, -85)
+		self.Pod:SetPos(self:GetPos()+Up*12-Right*1+Forward*45)
+		--Ang:RotateAroundAxis(Up, 0)
+		--Ang:RotateAroundAxis(Forward, 0)
+		Ang:RotateAroundAxis(Right, 85)
 		self.Pod:SetAngles(Ang)
 		self.Pod:Spawn()
 		self.Pod:Activate()
@@ -124,8 +125,9 @@ elseif (SERVER) then
 					JMod.Hint(ply, "sleeping bag set spawn")
 					JMod.SetEZowner(self, ply)
 					ply.JModSpawnPointEntity = self
-					--[[local Col = ply:GetPlayerColor()
-					self:SetColor(Color(255*Col.x,255*Col.y,255*Col.z))--]]
+					local Col = ply:GetPlayerColor()
+					self:SetColor(Color(255*Col.x,255*Col.y,255*Col.z))
+					--JMod.Colorify(self)
 				end
 			elseif (self.State == STATE_ROLLED) then
 				JMod.Hint(ply, "sleeping bag unroll first")

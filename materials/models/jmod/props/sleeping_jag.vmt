@@ -1,8 +1,8 @@
 VertexLitGeneric
 {
-$baseTexture "models\props_equipment/sleeping_jag1"
+$baseTexture "models/jmod/props/sleeping_jag"
 $envmap env_cubemap
-$envmapmask "models/props_equipment/sleeping_jag1_ref"
+$envmapmask "models/jmod/props/sleeping_jag_ref"
 $envmaptint "[1 1 1]"
 $envmapcontrast ".7"
 $envmapsaturation ".8"
