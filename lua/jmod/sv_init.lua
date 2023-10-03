@@ -811,14 +811,15 @@ end, nil, "Apply's an EZ parachute to an entity")
 
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
-		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
+		--[[local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
 		local Tr = util.TraceEntity({
 			start = veh:GetPos(),
 			endpos = WorldPos,
 			mask = MASK_SOLID,
 			filter = {ply, veh, veh:GetParent()}
 		}, ply)
-		ply:SetPos(Tr.HitPos)
+		ply:SetPos(Tr.HitPos)--]]
+		ply:SetPos(veh:LocalToWorld(veh.EZvehicleEjectPos))
 		veh.EZvehicleEjectPos = nil
 	end
 end)

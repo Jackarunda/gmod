@@ -48,9 +48,11 @@ elseif (SERVER) then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
-		self.Pod:SetNoDraw(true)
-		self.Pod:Fire("lock", "", 0)
+		--self.Pod:SetNoDraw(true)
 		self.Pod:SetNotSolid(true)
+		--self.Pod:Fire("lock", "", 0)
+		self.Pod:SetThirdPersonMode(false)
+		--self.Pod:SetCameraDistance(0)
 	end
 	
 	function ENT:RollUp() 
@@ -73,14 +75,18 @@ elseif (SERVER) then
 			phys:Wake()
 			phys:SetMass(self.Mass)
 		end
-		
-		self:SetColor(Color(100,100,100))
+		self:SetPos(self:GetPos() + Vector(0, 0, 10))
+		local Angy = self:GetAngles()
+		Angy:RotateAroundAxis(self:GetUp(), -90)
+		self:SetAngles(Angy)
+
+		--self:SetColor(Color(100,100,100))
 		self.Pod.EZvehicleEjectPos = nil
 	end
 	
 	function ENT:UnRoll()
 		self.State = STATE_UNROLLED
-		--self.Pod:Fire("unlock", "", 0)
+		self.Pod:Fire("unlock", "", 0)
 		self:SetModel(MODEL_UNROLLED)
 		
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -94,6 +100,11 @@ elseif (SERVER) then
 			phys:Wake()
 			phys:SetMass(self.Mass)
 		end
+		self:SetPos(self:GetPos() + Vector(0, 0, 10))
+		local Angy = self:GetAngles()
+		Angy:RotateAroundAxis(self:GetUp(), 90)
+		--Angy:RotateAroundAxis(self:GetForward(), 90)
+		self:SetAngles(Angy)
 	end
 
 	function ENT:Use(ply)
@@ -144,8 +155,8 @@ elseif (SERVER) then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if((data.Speed>80)and(data.DeltaTime>0.2))then
-			self.Entity:EmitSound("Body.ImpactSoft")
+		if((data.Speed>50)and(data.DeltaTime>0.2))then
+			self.Entity:EmitSound("Flesh.ImpactSoft")
 		end
 	end
 

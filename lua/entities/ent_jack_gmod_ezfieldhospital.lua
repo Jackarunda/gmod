@@ -73,6 +73,7 @@ if(SERVER)then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
+		self.Pod:SetThirdPersonMode(false)
 	end
 
 	function ENT:ReviveCorpses()
