@@ -27,13 +27,13 @@ elseif (SERVER) then
 		if phys:IsValid()then
 			phys:Wake()
 			phys:SetMass(35)
-			self:SetColor(Color(100,100,100))
+			self:SetColor(Color(100, 100, 100))
 		end
 		
 		self:SetUseType(SIMPLE_USE)
 		
-		self.nextSpawnTime=0
-		self:CreatePod()
+		self.nextSpawnTime = 0
+		--self:CreatePod()
 	end
 
 	function ENT:CreatePod()
@@ -48,7 +48,7 @@ elseif (SERVER) then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
-		--self.Pod:SetNoDraw(true)
+		self.Pod:SetNoDraw(true)
 		self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
 		self.Pod:SetThirdPersonMode(false)
@@ -57,13 +57,20 @@ elseif (SERVER) then
 	
 	function ENT:RollUp() 
 		self.State = STATE_ROLLED
-		JMod.SetEZowner(self,nil)
-		if(IsValid(self.Pod:GetDriver()))then
-			self.Pod:GetDriver():ExitVehicle() -- GET OUT OF BED
+		--JMod.SetEZowner(self, nil)
+
+		timer.Simple(0, function()
+			jprint(self.Pod)
+		end)
+		if(IsValid(self.Pod))then
+			self.Pod:SetParent(nil)
+			self.Pod:SetNotSolid(false)
+			self.Pod:Remove()
+			--self.Pod = nil
+			--SafeRemoveEntity(self.Pod)
 		end
-		self.Pod:Fire("lock", "", 0) -- Just to make sure
+
 		self:SetModel(MODEL_ROLLED)
-		
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)    
 		self:SetSolid(SOLID_VPHYSICS)
@@ -81,7 +88,7 @@ elseif (SERVER) then
 		self:SetAngles(Angy)
 
 		--self:SetColor(Color(100,100,100))
-		self.Pod.EZvehicleEjectPos = nil
+		--self.Pod.EZvehicleEjectPos = nil
 	end
 	
 	function ENT:UnRoll()
@@ -105,6 +112,7 @@ elseif (SERVER) then
 		Angy:RotateAroundAxis(self:GetUp(), 90)
 		--Angy:RotateAroundAxis(self:GetForward(), 90)
 		self:SetAngles(Angy)
+		self:CreatePod()
 	end
 
 	function ENT:Use(ply)
@@ -149,13 +157,13 @@ elseif (SERVER) then
 
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
-		if((dmginfo:IsDamageType(DMG_BURN))or(dmginfo:IsDamageType(DMG_DIRECT)))then
-			if(math.random(1,3)==2)then self:Remove() end
+		if((dmginfo:IsDamageType(DMG_BURN)) or (dmginfo:IsDamageType(DMG_DIRECT)))then
+			if(math.random(1, 3) == 2)then self:Remove() end
 		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if((data.Speed>50)and(data.DeltaTime>0.2))then
+		if((data.Speed > 50) and (data.DeltaTime > 0.2))then
 			self.Entity:EmitSound("Flesh.ImpactSoft")
 		end
 	end
@@ -163,7 +171,7 @@ elseif (SERVER) then
 	function ENT:OnRemove()
 		if(IsValid(self.EZowner))then self.EZowner.JModSpawnPointEntity=nil end
 		if(self.Pod)then -- machines with seats
-		  if(IsValid(self.Pod:GetDriver()))then
+		  if(IsValid(self.Pod) and IsValid(self.Pod:GetDriver()))then
 				self.Pod:GetDriver():ExitVehicle()
 			end
 		end
