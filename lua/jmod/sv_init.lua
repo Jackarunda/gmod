@@ -57,15 +57,15 @@ local function JackaSpawnHook(ply)
 	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
 		if(sleepingbag.nextSpawnTime<CurTime())then
 			sleepingbag.nextSpawnTime=CurTime()+60
-			if not IsValid(sleepingbag.Pod:GetDriver()) then--Get inside when respawn
+			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
 				local Up = sleepingbag:GetUp()
-				sleepingbag.Pod.EZvehicleEjectPos = sleepingbag.Pod:WorldToLocal(sleepingbag:GetPos()+Up*20)
 				ply:EnterVehicle(sleepingbag.Pod)
 				net.Start("JMod_VisionBlur")
 				net.WriteFloat(5)
 				net.WriteFloat(2000)
 				net.WriteBit(true)
 				net.Send(ply)
+				sleepingbag.Pod.EZvehicleEjectPos = nil
 			end
 		else
 			JMod.Hint(ply,"sleeping bag wait")
@@ -812,14 +812,13 @@ end, nil, "Apply's an EZ parachute to an entity")
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
 		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
-		local Tr = util.TraceEntity({
-			start = veh:GetPos(),
+		local Tr = util.TraceLine({
+			start = veh:LocalToWorld(veh:OBBCenter()),
 			endpos = WorldPos,
 			mask = MASK_SOLID,
 			filter = {ply, veh, veh:GetParent()}
-		}, ply)
-		ply:SetPos(Tr.HitPos)
-		--ply:SetPos(veh:LocalToWorld(veh.EZvehicleEjectPos))
+		})
+		if not Tr.Hit then ply:SetPos(veh:LocalToWorld(veh.EZvehicleEjectPos)) end
 		veh.EZvehicleEjectPos = nil
 	end
 end)

@@ -9,6 +9,7 @@ ENT.Mass = 35
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
+local ClothSounds = {"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
 
 if (CLIENT) then
 	function ENT:Draw()
@@ -50,13 +51,15 @@ elseif (SERVER) then
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
 		self.Pod:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
+		self.Pod:Fire("lock")
+		--self.Pod.EZvehicleEjectPos = 
 		--self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
 		--self.Pod:SetThirdPersonMode(false)
 		--self.Pod:SetCameraDistance(0)
 	end
 	
-	function ENT:RollUp() 
+	function ENT:RollUp()
 		self.State = STATE_ROLLED
 		--JMod.SetEZowner(self, nil)
 		if(IsValid(self.Pod))then
@@ -73,24 +76,19 @@ elseif (SERVER) then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
+
+		sound.Play("snd_jack_clothequip.wav", self:GetPos(), 65, math.random(90, 110))
 		
 		local phys = self:GetPhysicsObject()
 		if phys:IsValid() then
 			phys:Wake()
 			phys:SetMass(self.Mass)
 		end
-		self:SetPos(self:GetPos() + Vector(0, 0, 10))
-		local Angy = self:GetAngles()
-		Angy:RotateAroundAxis(self:GetUp(), -90)
-		self:SetAngles(Angy)
-
-		--self:SetColor(Color(100,100,100))
-		--self.Pod.EZvehicleEjectPos = nil
+		self:SetPos(self:GetPos() + Vector(0, 0, 20))
 	end
-	
+
 	function ENT:UnRoll()
 		self.State = STATE_UNROLLED
-		--self.Pod:Fire("unlock", "", 0)
 		self:SetModel(MODEL_UNROLLED)
 		
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -104,16 +102,23 @@ elseif (SERVER) then
 			phys:Wake()
 			phys:SetMass(self.Mass)
 		end
-		self:SetPos(self:GetPos() + Vector(0, 0, 10))
-		local Angy = self:GetAngles()
-		Angy:RotateAroundAxis(self:GetUp(), 90)
-		--Angy:RotateAroundAxis(self:GetForward(), 90)
-		self:SetAngles(Angy)
+		local SelfPos = self:LocalToWorld(self:OBBCenter())
+		local Tr = util.TraceLine({
+			start = SelfPos + Vector(0, 0, 100),
+			endpos = SelfPos - Vector(0, 0, 100),
+			filter = { self, self.EZowner }
+		})
+		if (Tr.Hit) then
+			self:SetPos(Tr.HitPos + Tr.HitNormal)
+			local Ang = Tr.HitNormal:Angle()
+			Ang:RotateAroundAxis(Ang:Right(), -90)
+			self:SetAngles(Ang)
+		end
+		sound.Play("snd_jack_clothunequip.wav", self:GetPos(), 65, math.random(90, 110))
 		self:CreatePod()
 	end
 
 	function ENT:Use(ply)
-		jprint("USED")
 		if not (ply:IsPlayer()) then return end
 		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
 		if not IsValid(self.Pod) then self:CreatePod() end
@@ -131,8 +136,8 @@ elseif (SERVER) then
 					else
 						if not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
 							self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
-							--ply:EnterVehicle(self.Pod)
 							self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
+							sound.Play("snd_jack_clothequip.wav", self:GetPos(), 65, math.random(90, 110))
 						end
 					end
 				else
@@ -172,6 +177,7 @@ elseif (SERVER) then
 		if(self.Pod)then -- machines with seats
 		  if(IsValid(self.Pod) and IsValid(self.Pod:GetDriver()))then
 				self.Pod:GetDriver():ExitVehicle()
+				self.Pod:Remove()
 			end
 		end
 	end
