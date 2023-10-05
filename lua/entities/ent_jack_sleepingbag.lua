@@ -5,7 +5,7 @@ ENT.Author = "Basipek"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
-ENT.Mass=35
+ENT.Mass = 35
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
@@ -49,6 +49,7 @@ elseif (SERVER) then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
+		self.Pod:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
 		--self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
 		--self.Pod:SetThirdPersonMode(false)
