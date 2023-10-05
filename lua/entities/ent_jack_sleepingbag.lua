@@ -49,22 +49,18 @@ elseif (SERVER) then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
-		self.Pod:SetNotSolid(true)
+		--self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
-		self.Pod:SetThirdPersonMode(false)
+		--self.Pod:SetThirdPersonMode(false)
 		--self.Pod:SetCameraDistance(0)
 	end
 	
 	function ENT:RollUp() 
 		self.State = STATE_ROLLED
 		--JMod.SetEZowner(self, nil)
-
-		timer.Simple(0, function()
-			jprint(self.Pod)
-		end)
 		if(IsValid(self.Pod))then
 			self.Pod:SetParent(nil)
-			self.Pod:SetNotSolid(false)
+			--self.Pod:SetNotSolid(false)
 			self.Pod:Remove()
 			--self.Pod = nil
 			--SafeRemoveEntity(self.Pod)
@@ -93,7 +89,7 @@ elseif (SERVER) then
 	
 	function ENT:UnRoll()
 		self.State = STATE_UNROLLED
-		self.Pod:Fire("unlock", "", 0)
+		--self.Pod:Fire("unlock", "", 0)
 		self:SetModel(MODEL_UNROLLED)
 		
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -116,6 +112,7 @@ elseif (SERVER) then
 	end
 
 	function ENT:Use(ply)
+		jprint("USED")
 		if not (ply:IsPlayer()) then return end
 		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
 		if not IsValid(self.Pod) then self:CreatePod() end
@@ -133,7 +130,8 @@ elseif (SERVER) then
 					else
 						if not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
 							self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
-							ply:EnterVehicle(self.Pod)
+							--ply:EnterVehicle(self.Pod)
+							self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 						end
 					end
 				else
