@@ -113,7 +113,6 @@ elseif (SERVER) then
 	end
 
 	function ENT:Use(ply)
-		jprint("USED")
 		if not (ply:IsPlayer()) then return end
 		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
 		if not IsValid(self.Pod) then self:CreatePod() end
