@@ -37,7 +37,8 @@ elseif (SERVER) then
 	end
 
 	function ENT:CreatePod()
-		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
+		--self.Pod = ents.Create("prop_vehicle_prisoner_pod")
+		self.Pod = ents.Create("juaseat")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
 		self.Pod:SetPos(self:GetPos()+Up*12-Right*1+Forward*45)
@@ -48,6 +49,12 @@ elseif (SERVER) then
 		self.Pod:Spawn()
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
+		self.Pod:SetSitTime(1)
+		self.Pod:SetSitAnim("drive_pd")
+		--self.Pod:SetSeatPos(Vector(0,0,0))
+		self.Pod:SetExitPos(Vector(10, 10, 10))
+		self.Pod:SetViewPos(Vector(0, 0, 64))
+		self.Pod:SetFPViewLock(1)
 		--self.Pod:SetNoDraw(true)
 		self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
