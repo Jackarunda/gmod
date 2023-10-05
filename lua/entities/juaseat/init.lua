@@ -71,7 +71,7 @@ end)
 function ENT:Enter(ply)
 	if self:GetLocked() then self:EmitSound("doors/default_locked.wav") return end
 	if hook.Run("CanPlayerEnterVehicle", ply, self, 0) then
-		if IsValid(ply.LuaVehicle) then ply.LuaVehicle:Exit() end
+		if IsValid(ply.LuaVehicle) then ply:PrintMessage(HUD_PRINTCENTER, "Already in vehicle "..ply.LuaVehicle) ply.LuaVehicle:Exit() end
 		if prone then --Prone Mod Compatibility
 			prone.Exit(ply)
 		end

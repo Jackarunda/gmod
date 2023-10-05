@@ -101,7 +101,7 @@ hook.Add("CalcVehicleView", "JuaSeat - CalcVehicleView", function(veh, ply, view
 			if veh:GetThirdPersonMode() or ply:GetViewEntity() ~= ply then
 				view.drawviewer = true
 				tr.HitPos = veh:GetVehicleViewPosition() - (ply:GetAimVector() * veh:GetCameraDistance())
-				if veh:GetCamSolid() or force:GetBool() then
+				if veh:GetCamSolid() or force and force:GetBool() then
 					util.TraceHull({
 						start=pos,
 						endpos = tr.HitPos,

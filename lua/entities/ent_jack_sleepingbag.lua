@@ -50,7 +50,7 @@ elseif (SERVER) then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetSitTime(1)
-		self.Pod:SetSitAnim("drive_pd")
+		self.Pod:SetSitAnim("menu_combine")--"drive_pd")
 		--self.Pod:SetSeatPos(Vector(0,0,0))
 		self.Pod:SetExitPos(Vector(10, 10, 10))
 		self.Pod:SetViewPos(Vector(0, 0, 64))
