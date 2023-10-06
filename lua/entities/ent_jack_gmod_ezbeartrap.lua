@@ -2,9 +2,9 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Author = "Jackarunda"
-ENT.Category = "JMod - EZ Explosives"
+ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Land Mine"
+ENT.PrintName = "EZ Bear Trap"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -40,8 +40,8 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/jmod/beartrap.mdl")
---		self:SetMaterial("models/jacky_camouflage/digi2")
+		self:SetModel("models/jmod/beartrap01a.mdl")
+		self:SetMaterial("models/jacky_camouflage/digi2")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -57,7 +57,7 @@ if SERVER then
 
 		---
 		self:SetState(STATE_CLOSED)
-		self:SetBodygroup(0, 1)
+		self:SetBodygroup(1, 1)
 
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Snap", "Arm"}, {"This will directly Snap the trap", "Arms trap when > 0"})
@@ -82,7 +82,7 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.DeltaTime > 0.2) then
-			if (data.Speed > 25) then
+			if (data.Speed > 10) then
 				if (self:GetState() == STATE_OPEN) then
 					if self:ShouldSnap(data.HitEntity) then
 						self:Snap(data.HitEntity)
@@ -109,6 +109,7 @@ if SERVER then
 			--[[elseif not (State == STATE_BROKEN) and (math.random(1, 5) == 1) then
 				sound.Play("Metal_Box.Break", Pos)
 				self:SetState(STATE_BROKEN)
+				self:SetBodygroup(1, 2)
 				SafeRemoveEntityDelayed(self, 10)--]]
 			end
 		end
@@ -127,12 +128,16 @@ if SERVER then
 				net.WriteEntity(self)
 				net.Send(activator)
 			else
+				if IsValid(self.Anchor) then
+					self.Anchor:Remove()
+				end
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_CLOSED)
+			self:SetBodygroup(1, 1)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
 		end
@@ -147,12 +152,15 @@ if SERVER then
 		end
 		if IsValid(victim) then
 			local SnapDamage = DamageInfo(victim:GetPos())
-			SnapDamage:SetDamagePosition()
+			SnapDamage:SetDamagePosition(self:GetPos())
 			SnapDamage:SetDamageType(DMG_SLASH)
 			if victim:IsPlayer() then
-				victim.EZImmobilizationTime = CurTime() + 10
+				victim.EZImmobilizationTime = (victim.EZImmobilizationTime or CurTime()) + 10
 				SnapDamage:SetDamage(20)
 			else
+				if victim:IsNPC() then
+					victim.EZNPCincapacitate = (victim.EZNPCincapacitate or CurTime()) + math.Rand(2, 3)
+				end
 				SnapDamage:SetDamage(40)
 			end
 			victim:TakeDamageInfo(SnapDamage)
@@ -160,7 +168,7 @@ if SERVER then
 		end
 		self:EmitSound("Weapon.ImpactHard")
 		self:SetState(STATE_CLOSED)
-		self:SetBodygroup(0, 1)
+		self:SetBodygroup(1, 1)
 	end
 
 	function ENT:Arm(armer, autoColor)
@@ -171,7 +179,8 @@ if SERVER then
 		self:SetState(STATE_OPEN)
 		self:EmitSound("snd_jack_pinpull.wav")
 		self:EmitSound("Dirt.BulletImpact")
-		self:SetBodygroup(0, 0)
+		self:SetBodygroup(1, 0)
+		self:RemoveAllDecals()
 
 		--[[if autoColor then
 			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
@@ -197,7 +206,7 @@ if SERVER then
 			Fff:SetNormal(Tr.HitNormal)
 			Fff:SetScale(1)
 			util.Effect("eff_jack_sminebury", Fff, true, true)
-			constraint.Weld(Tr.Entity, self, 0, 0, 10000, false, false)
+			self.Anchor = constraint.Weld(Tr.Entity, self, 0, 0, 10000, false, false)
 		end
 	end
 
@@ -255,9 +264,6 @@ elseif CLIENT then
 	function ENT:Initialize()
 	end
 
-	--
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
-
 	function ENT:Draw()
 		self:DrawModel()
 		--[[local State, Vary = self:GetState(), math.sin(CurTime() * 50) / 2 + .5
@@ -267,5 +273,5 @@ elseif CLIENT then
 		end--]]
 	end
 
-	language.Add("ent_jack_gmod_ezlandmine", "EZ Landmine")
+	language.Add("ent_jack_gmod_ezbeartrap", "EZ Bear Trap")
 end

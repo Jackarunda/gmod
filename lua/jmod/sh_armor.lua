@@ -1011,11 +1011,11 @@ end
 --hook.Remove("Move", "JMOD_ARMOR_MOVE")
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
 	if ply.IsProne and ply:IsProne() then return end
+	local origSpeed = mv:GetMaxSpeed()
+	local origClientSpeed = mv:GetMaxClientSpeed()
 
 	if ply.EZarmor then
 		if ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
-			local origSpeed = mv:GetMaxSpeed()
-			local origClientSpeed = mv:GetMaxClientSpeed()
 			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
 			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
 		end
@@ -1027,7 +1027,9 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
 	end
 	if ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime()) then
 		mv:SetMaxSpeed(origSpeed * 0.01)
-			mv:SetMaxClientSpeed(origClientSpeed * 0.01)
+		mv:SetMaxClientSpeed(origClientSpeed * 0.01)
+	else
+		ply.EZImmobilizationTime = nil
 	end
 end)
 
