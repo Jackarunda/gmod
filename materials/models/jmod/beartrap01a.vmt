@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/jmod/beartrap01a"	
+	
+                 $halflambert "1"
+}
+
