@@ -820,6 +820,20 @@ hook.Add("PlayerEndVoice", "JMOD_PLAYERENDVOICE", function(ply)
 	end
 end)
 
+hook.Add("CalcVehicleView", "JMOD_VEHICLEVIEWCORRECTION", function(veh, ply, view) 
+	local PodParent = veh:GetParent()
+	if IsValid(PodParent) and ((PodParent:GetClass() == "ent_jack_sleepingbag") or (PodParent:GetClass() == "ent_jack_gmod_ezfieldhospital")) then
+		
+		local ViewOrigin = veh:GetPos() + veh:GetUp() * 64
+		--local LerpedViewAng = LerpAngle(FrameTime() * 100, view.angles, veh:GetAngles())
+		--local ViewAng = LerpedViewAng--veh:GetAttachment(veh:LookupAttachment("vehicle_driver_eyes")).Ang
+		view.origin = ViewOrigin
+		--view.angles = ViewAng
+		
+		return view
+	end
+end)
+
 --[[
 hook.Add("ScalePlayerDamage","JMOD_SCALEPLAYERDAMGE_CLIENT",function(ply, hitgroup, dmg)
 	return true

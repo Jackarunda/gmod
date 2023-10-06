@@ -74,6 +74,7 @@ if(SERVER)then
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
 		self.Pod:SetThirdPersonMode(false)
+		--self.Pod.IsJackyPod = true
 	end
 
 	function ENT:ReviveCorpses()

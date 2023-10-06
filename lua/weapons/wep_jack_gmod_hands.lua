@@ -183,7 +183,8 @@ function SWEP:ApplyForce()
 
 		local StandingEnt = self.Owner:GetGroundEntity()
 		local StandingOn = IsValid(StandingEnt) and ((StandingEnt == self.CarryEnt) or (StandingEnt:IsConstrained() and table.HasValue(constraint.GetAllConstrainedEntities(StandingEnt), self.CarryEnt)))
-		if len > self.ReachDistance or StandingOn then
+		local PlyIn = (self.CarryEnt == self.Owner:GetVehicle())
+		if len > self.ReachDistance or StandingOn or PlyIn then
 			self:SetCarrying()
 
 			return

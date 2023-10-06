@@ -52,6 +52,7 @@ elseif (SERVER) then
 		self.Pod:SetNoDraw(true)
 		self.Pod:SetCollisionGroup(COLLISION_GROUP_IN_VEHICLE)
 		self.Pod:Fire("lock")
+		--self.Pod.IsJackyPod = true
 		--self.Pod.EZvehicleEjectPos = 
 		--self.Pod:SetNotSolid(true)
 		--self.Pod:Fire("lock", "", 0)
