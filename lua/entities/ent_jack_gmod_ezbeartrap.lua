@@ -95,7 +95,8 @@ if SERVER then
 	end
 
 	function ENT:ShouldSnap(ent)
-		return JMod.ShouldDamageBiologically(ent)
+		--return JMod.ShouldDamageBiologically(ent)
+		return true
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -217,28 +218,14 @@ if SERVER then
 
 		local State, Time = self:GetState(), CurTime()
 
-		--[[if State == STATE_OPEN then
-			for k, targ in pairs(ents.FindInSphere(self:GetPos(), 100)) do
-				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
-					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
-						self:SetState(STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
-
-						timer.Simple(math.Rand(.05, .3) * JMod.Config.Explosives.Mine.Delay, function()
-							if IsValid(self) then
-								if self:GetState() == STATE_WARNING then
-									self:Snap()
-								end
-							end
-						end)
-					end
-				end
+		if State == STATE_OPEN then
+			if not IsValid(self.Anchor) then
+				self:Snap()
 			end
-
 			self:NextThink(Time + .3)
 
 			return true
-		else--]]if self.AutoArm then
+		elseif self.AutoArm then
 			local Vel = self:GetPhysicsObject():GetVelocity()
 
 			if Vel:Length() < 1 then
