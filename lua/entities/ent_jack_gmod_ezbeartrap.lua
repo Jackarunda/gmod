@@ -19,7 +19,7 @@ ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret
 ENT.WhitelistedNPCs = {"npc_rollermine"}
 
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMING, STATE_ARMED, STATE_WARNING = -1, 0, 1, 2, 3
+local STATE_BROKEN, STATE_CLOSED, STATE_OPEN = -1, 0, 1
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -40,13 +40,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_pipes/pipe02_connector01.mdl")
-		self.Entity:SetMaterial("models/jacky_camouflage/digi2")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/beartrap.mdl")
+--		self:SetMaterial("models/jacky_camouflage/digi2")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(20)
 
 		---
@@ -56,14 +56,14 @@ if SERVER then
 		end)
 
 		---
-		self:SetState(STATE_OFF)
+		self:SetState(STATE_CLOSED)
+		self:SetBodygroup(0, 1)
 
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"This will directly detonate the bomb", "Arms bomb when > 0"})
+			self.Inputs = WireLib.CreateInputs(self, {"Snap", "Arm"}, {"This will directly Snap the trap", "Arms trap when > 0"})
 
-			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 is broken \n 0 is unarmed \n 1 is arming \n 2 is armed \n 3 is warning"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State"}, {"-1 is broken \n 0 is closed \n 1 is open \n 2 is triggered"})
 		end
-
 		---
 		self.StillTicks = 0
 
@@ -73,37 +73,43 @@ if SERVER then
 	end
 
 	function ENT:TriggerInput(iname, value)
-		if iname == "Detonate" and value > 0 then
-			self:Detonate()
+		if iname == "Snap" and value > 0 then
+			self:Snap()
 		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
+			self:Arm()
 		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if data.DeltaTime > 0.2 then
-			if data.Speed > 25 then
-				if (self:GetState() == STATE_ARMED) and (math.random(1, 5) == 3) then
-					self:Detonate()
+		if (data.DeltaTime > 0.2) then
+			if (data.Speed > 25) then
+				if (self:GetState() == STATE_OPEN) then
+					if self:ShouldSnap(data.HitEntity) then
+						self:Snap(data.HitEntity)
+					end
 				else
-					self.Entity:EmitSound("Weapon.ImpactHard")
+					self:EmitSound("Weapon.ImpactHard")
 				end
 			end
 		end
 	end
 
-	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+	function ENT:ShouldSnap(ent)
+		return JMod.ShouldDamageBiologically(ent)
+	end
 
-		if JMod.LinCh(dmginfo:GetDamage(), 10, 50) then
+	function ENT:OnTakeDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
+
+		if JMod.LinCh(dmginfo:GetDamage(), 10, 60) then
 			local Pos, State = self:GetPos(), self:GetState()
 
-			if State == STATE_ARMED then
-				self:Detonate()
-			elseif not (State == STATE_BROKEN) then
+			if State == STATE_OPEN then
+				self:Snap()
+			--[[elseif not (State == STATE_BROKEN) and (math.random(1, 5) == 1) then
 				sound.Play("Metal_Box.Break", Pos)
 				self:SetState(STATE_BROKEN)
-				SafeRemoveEntityDelayed(self, 10)
+				SafeRemoveEntityDelayed(self, 10)--]]
 			end
 		end
 	end
@@ -114,7 +120,7 @@ if SERVER then
 		self.AutoArm = false
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
-		if State == STATE_OFF then
+		if State == STATE_CLOSED then
 			if Alt then
 				JMod.SetEZowner(self, activator)
 				net.Start("JMod_ColorAndArm")
@@ -126,56 +132,48 @@ if SERVER then
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
 			self:EmitSound("snd_jack_minearm.wav", 60, 70)
-			self:SetState(STATE_OFF)
+			self:SetState(STATE_CLOSED)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
 		end
 	end
 
-	function ENT:Detonate()
-		if self.Exploded then return end
-		self.Exploded = true
-		local SelfPos = self:LocalToWorld(self:OBBCenter())
-		local Up = Vector(0, 0, 1)
-		local EffectType = 1
-		local Traec = util.QuickTrace(self:GetPos(), Vector(0, 0, -5), self.Entity)
-
-		if Traec.Hit then
-			if (Traec.MatType == MAT_DIRT) or (Traec.MatType == MAT_SAND) then
-				EffectType = 1
-			elseif (Traec.MatType == MAT_CONCRETE) or (Traec.MatType == MAT_TILE) then
-				EffectType = 2
-			elseif (Traec.MatType == MAT_METAL) or (Traec.MatType == MAT_GRATE) then
-				EffectType = 3
-			elseif Traec.MatType == MAT_WOOD then
-				EffectType = 4
-			end
-		else
-			EffectType = 5
+	function ENT:Snap(victim)
+		if (self:GetState() == STATE_CLOSED) then return end
+		if not(IsValid(victim)) then
+			local SelfPos = self:LocalToWorld(self:OBBCenter())
+			local Traec = util.QuickTrace(SelfPos, Vector(0, 0, 5), self)
+			victim = Traec.HitEntity
 		end
-
-		local plooie = EffectData()
-		plooie:SetOrigin(SelfPos)
-		plooie:SetScale(1)
-		plooie:SetRadius(EffectType)
-		plooie:SetNormal(Up)
-		util.Effect("eff_jack_minesplode", plooie, true, true)
-		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
-		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
-		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
-		JMod.FragSplosion(self, SelfPos, 1000, 20 * JMod.Config.Explosives.Mine.Power, 3000, self.EZowner, Up, 1.2, 3)
-		self:Remove()
+		if IsValid(victim) then
+			local SnapDamage = DamageInfo(victim:GetPos())
+			SnapDamage:SetDamagePosition()
+			SnapDamage:SetDamageType(DMG_SLASH)
+			if victim:IsPlayer() then
+				victim.EZImmobilizationTime = CurTime() + 10
+				SnapDamage:SetDamage(20)
+			else
+				SnapDamage:SetDamage(40)
+			end
+			victim:TakeDamageInfo(SnapDamage)
+			self:EmitSound("Flesh.ImpactHard")
+		end
+		self:EmitSound("Weapon.ImpactHard")
+		self:SetState(STATE_CLOSED)
+		self:SetBodygroup(0, 1)
 	end
 
 	function ENT:Arm(armer, autoColor)
 		local State = self:GetState()
-		if State ~= STATE_OFF then return end
-		JMod.Hint(armer, "mine friends")
-		JMod.SetEZowner(self, armer)
-		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.wav", 60, 110)
+		if State ~= STATE_CLOSED then return end
+		--JMod.Hint(armer, "mine friends") --This is indiscriminant about who it snaps.
+		JMod.SetEZowner(self, armer or game.GetWorld())
+		self:SetState(STATE_OPEN)
+		self:EmitSound("snd_jack_pinpull.wav")
+		self:EmitSound("Dirt.BulletImpact")
+		self:SetBodygroup(0, 0)
 
-		if autoColor then
+		--[[if autoColor then
 			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
 
 			if Tr.Hit then
@@ -189,21 +187,18 @@ if SERVER then
 					end
 				end
 			end
+		end--]]
+
+		self:DrawShadow(false)
+		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
+		if Tr.Hit then
+			local Fff = EffectData()
+			Fff:SetOrigin(Tr.HitPos)
+			Fff:SetNormal(Tr.HitNormal)
+			Fff:SetScale(1)
+			util.Effect("eff_jack_sminebury", Fff, true, true)
+			constraint.Weld(Tr.Entity, self, 0, 0, 10000, false, false)
 		end
-
-		timer.Simple(3, function()
-			if IsValid(self) then
-				if self:GetState() == STATE_ARMING then
-					self:SetState(STATE_ARMED)
-					self:DrawShadow(false)
-					local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
-
-					if Tr.Hit then
-						constraint.Weld(Tr.Entity, self, 0, 0, 5000, false, false)
-					end
-				end
-			end
-		end)
 	end
 
 	function ENT:Think()
@@ -213,7 +208,7 @@ if SERVER then
 
 		local State, Time = self:GetState(), CurTime()
 
-		if State == STATE_ARMED then
+		--[[if State == STATE_OPEN then
 			for k, targ in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
 					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
@@ -223,7 +218,7 @@ if SERVER then
 						timer.Simple(math.Rand(.05, .3) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then
 								if self:GetState() == STATE_WARNING then
-									self:Detonate()
+									self:Snap()
 								end
 							end
 						end)
@@ -234,7 +229,7 @@ if SERVER then
 			self:NextThink(Time + .3)
 
 			return true
-		elseif self.AutoArm then
+		else--]]if self.AutoArm then
 			local Vel = self:GetPhysicsObject():GetVelocity()
 
 			if Vel:Length() < 1 then
@@ -265,17 +260,11 @@ elseif CLIENT then
 
 	function ENT:Draw()
 		self:DrawModel()
-		local State, Vary = self:GetState(), math.sin(CurTime() * 50) / 2 + .5
+		--[[local State, Vary = self:GetState(), math.sin(CurTime() * 50) / 2 + .5
 
-		if State == STATE_ARMING then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 20, 20, Color(255, 0, 0))
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 10, 10, Color(255, 255, 255))
-		elseif State == STATE_WARNING then
-			render.SetMaterial(GlowSprite)
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 30 * Vary, 30 * Vary, Color(255, 0, 0))
-			render.DrawSprite(self:GetPos() + Vector(0, 0, 4), 15 * Vary, 15 * Vary, Color(255, 255, 255))
-		end
+		if State == STATE_OPEN then
+		elseif State == STATE_CLOSED then
+		end--]]
 	end
 
 	language.Add("ent_jack_gmod_ezlandmine", "EZ Landmine")
