@@ -12,7 +12,7 @@ ENT.AdminSpawnable = true
 ENT.JModGUIcolorable = true
 ENT.JModEZstorable = true
 ENT.EZscannerDanger = true
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 
 ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 
@@ -41,7 +41,7 @@ if SERVER then
 
 	function ENT:Initialize()
 		self:SetModel("models/jmod/beartrap01a.mdl")
-		self:SetMaterial("models/jacky_camouflage/digi2")
+		--self:SetMaterial("models/jacky_camouflage/digi2")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -124,23 +124,25 @@ if SERVER then
 
 		if State == STATE_CLOSED then
 			if Alt then
+				SafeRemoveEntity(self.Anchor)
+				self:SetMaterial("models/jacky_camouflage/digi2")
 				JMod.SetEZowner(self, activator)
 				net.Start("JMod_ColorAndArm")
 				net.WriteEntity(self)
 				net.Send(activator)
 			else
-				if IsValid(self.Anchor) then
-					self.Anchor:Remove()
-				end
+				SafeRemoveEntity(self.Anchor)
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
-			self:EmitSound("snd_jack_minearm.wav", 60, 70)
+			--self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_CLOSED)
 			self:SetBodygroup(1, 1)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
+			self:SetMaterial("")
+			self:SetColor(Color(255, 255, 255))
 		end
 	end
 
@@ -170,18 +172,13 @@ if SERVER then
 		self:EmitSound("Weapon.ImpactHard")
 		self:SetState(STATE_CLOSED)
 		self:SetBodygroup(1, 1)
+		self:SetMaterial("")
+		self:SetColor(Color(255, 255, 255))
 	end
 
 	function ENT:Arm(armer, autoColor)
 		local State = self:GetState()
 		if State ~= STATE_CLOSED then return end
-		--JMod.Hint(armer, "mine friends") --This is indiscriminant about who it snaps.
-		JMod.SetEZowner(self, armer or game.GetWorld())
-		self:SetState(STATE_OPEN)
-		self:EmitSound("snd_jack_pinpull.wav")
-		self:EmitSound("Dirt.BulletImpact")
-		self:SetBodygroup(1, 0)
-		self:RemoveAllDecals()
 
 		--[[if autoColor then
 			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
@@ -199,15 +196,25 @@ if SERVER then
 			end
 		end--]]
 
-		self:DrawShadow(false)
 		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
 		if Tr.Hit then
-			local Fff = EffectData()
-			Fff:SetOrigin(Tr.HitPos)
-			Fff:SetNormal(Tr.HitNormal)
-			Fff:SetScale(1)
-			util.Effect("eff_jack_sminebury", Fff, true, true)
 			self.Anchor = constraint.Weld(Tr.Entity, self, 0, 0, 10000, false, false)
+			--
+			if IsValid(self.Anchor) then
+				local Fff = EffectData()
+				Fff:SetOrigin(Tr.HitPos)
+				Fff:SetNormal(Tr.HitNormal)
+				Fff:SetScale(1)
+				util.Effect("eff_jack_sminebury", Fff, true, true)
+				self:EmitSound("snd_jack_pinpull.wav")
+				self:EmitSound("Dirt.BulletImpact")
+				--
+				JMod.SetEZowner(self, armer or game.GetWorld())
+				self:SetState(STATE_OPEN)
+				self:SetBodygroup(1, 0)
+				self:RemoveAllDecals()
+				self:DrawShadow(false)
+			end
 		end
 	end
 
