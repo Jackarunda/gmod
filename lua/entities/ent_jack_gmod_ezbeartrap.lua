@@ -95,7 +95,6 @@ if SERVER then
 	end
 
 	function ENT:ShouldSnap(ent)
-		--return JMod.ShouldDamageBiologically(ent)
 		return true
 	end
 
@@ -107,11 +106,6 @@ if SERVER then
 
 			if State == STATE_OPEN then
 				self:Snap()
-			--[[elseif not (State == STATE_BROKEN) and (math.random(1, 5) == 1) then
-				sound.Play("Metal_Box.Break", Pos)
-				self:SetState(STATE_BROKEN)
-				self:SetBodygroup(1, 2)
-				SafeRemoveEntityDelayed(self, 10)--]]
 			end
 		end
 	end
@@ -148,15 +142,16 @@ if SERVER then
 
 	function ENT:Snap(victim)
 		if (self:GetState() == STATE_CLOSED) then return end
+		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		if not(IsValid(victim)) then
-			local SelfPos = self:LocalToWorld(self:OBBCenter())
 			local Traec = util.QuickTrace(SelfPos, Vector(0, 0, 5), self)
 			victim = Traec.HitEntity
-		end
-		if IsValid(victim) then
+		else
 			local SnapDamage = DamageInfo(victim:GetPos())
 			SnapDamage:SetDamagePosition(self:GetPos())
 			SnapDamage:SetDamageType(DMG_SLASH)
+			SnapDamage:SetInflictor(self)
+			SnapDamage:SetAttacker(self.EZowner or game.GetWorld())
 			if victim:IsPlayer() then
 				victim.EZImmobilizationTime = (victim.EZImmobilizationTime or CurTime()) + 10
 				SnapDamage:SetDamage(20)
@@ -167,13 +162,18 @@ if SERVER then
 				SnapDamage:SetDamage(40)
 			end
 			victim:TakeDamageInfo(SnapDamage)
-			self:EmitSound("Flesh.ImpactHard")
 		end
-		self:EmitSound("Weapon.ImpactHard")
-		self:SetState(STATE_CLOSED)
+		sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".wav", SelfPos, 70, math.random(90, 110))
 		self:SetBodygroup(1, 1)
 		self:SetMaterial("")
 		self:SetColor(Color(255, 255, 255))
+		-- chance to break
+		if (math.random(1, 10) == 5) then
+			self:SetState(STATE_BROKEN)
+			SafeRemoveEntityDelayed(self, 10)
+		else
+			self:SetState(STATE_CLOSED)
+		end
 	end
 
 	function ENT:Arm(armer, autoColor)
@@ -206,8 +206,7 @@ if SERVER then
 				Fff:SetNormal(Tr.HitNormal)
 				Fff:SetScale(1)
 				util.Effect("eff_jack_sminebury", Fff, true, true)
-				self:EmitSound("snd_jack_pinpull.wav")
-				self:EmitSound("Dirt.BulletImpact")
+				sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
 				--
 				JMod.SetEZowner(self, armer or game.GetWorld())
 				self:SetState(STATE_OPEN)

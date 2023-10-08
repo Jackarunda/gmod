@@ -1026,8 +1026,8 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
 		end
 	end
 	if ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime()) then
-		mv:SetMaxSpeed(origSpeed * 0.01)
-		mv:SetMaxClientSpeed(origClientSpeed * 0.01)
+		mv:SetMaxSpeed(origSpeed * .01)
+		mv:SetMaxClientSpeed(origClientSpeed * .01)
 	else
 		ply.EZImmobilizationTime = nil
 	end
