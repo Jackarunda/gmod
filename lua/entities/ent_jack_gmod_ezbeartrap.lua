@@ -196,7 +196,7 @@ if SERVER then
 			end
 		end--]]
 
-		local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), self)
+		local Tr = util.QuickTrace(self:GetPos(), self:GetUp()*-5, self)
 		if Tr.Hit then
 			self.Anchor = constraint.Weld(Tr.Entity, self, 0, 0, 10000, false, false)
 			--

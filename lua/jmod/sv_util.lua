@@ -844,7 +844,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			local IsGenericCrate = true
 
 			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(machine:OBBCenter()), range)) do
-				if (ent.IsJackyEZcrate) then
+				if (ent.IsJackyEZcrate) and table.HasValue(ent.EZconsumes, resourceType) then
 					local Dist = machine:LocalToWorld(machine:OBBCenter()):DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
 					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
 						local EntSupplies = ent:GetEZsupplies()
