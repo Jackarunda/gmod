@@ -243,6 +243,7 @@ net.Receive("JMod_ColorAndArm", function()
 			local Col = Picker:GetColor()
 			net.Start("JMod_ColorAndArm")
 			net.WriteEntity(Ent)
+			net.WriteBit(false)
 			net.WriteColor(Color(Col.r, Col.g, Col.b))
 			net.WriteBit(false)
 			net.SendToServer()
@@ -258,17 +259,38 @@ net.Receive("JMod_ColorAndArm", function()
 	Picker:SetColor(Ent:GetColor())
 	local Butt = vgui.Create("DButton", Frame)
 	Butt:SetPos(5, 245)
-	Butt:SetSize(190, 50)
+	Butt:SetSize(95, 50)
 	Butt:SetText("ARM")
 
 	function Butt:DoClick()
 		local Col = Picker:GetColor()
 		net.Start("JMod_ColorAndArm")
 		net.WriteEntity(Ent)
+		net.WriteBit(false)
 		net.WriteColor(Color(Col.r, Col.g, Col.b))
 		net.WriteBit(true)
 		net.SendToServer()
 		Frame:Close()
+	end
+
+	local ButtWhat = vgui.Create("DButton", Frame)
+	ButtWhat:SetPos(100, 245)
+	ButtWhat:SetSize(95, 50)
+	ButtWhat:SetText("AUTO-COLOR")
+
+	function ButtWhat:DoClick()
+		net.Start("JMod_ColorAndArm")
+		net.WriteEntity(Ent)
+		net.WriteBit(true)
+		net.WriteColor(Color(255, 255, 255))
+		net.WriteBit(false)
+		net.SendToServer()
+		timer.Simple(0.1, function()
+			if IsValid(Ent) then
+				Picker:SetColor(Ent:GetColor())
+			end
+		end)
+		NextColorCheck = CurTime() + 1
 	end
 end)
 

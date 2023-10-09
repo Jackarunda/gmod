@@ -55,7 +55,25 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	local ent = net.ReadEntity()
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
-	ent:SetColor(net.ReadColor())
+		local AutoColor = net.ReadBit()
+		local Col = net.ReadColor()
+
+		if AutoColor == 1 then
+			local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
+			if Tr.Hit then
+				local Info = JMod.HitMatColors[Tr.MatType]
+
+				if Info then
+					ent:SetColor(Info[1])
+
+					if Info[2] then
+						ent:SetMaterial(Info[2])
+					end
+				end
+			end
+		else
+			ent:SetColor(Col)
+		end
 
 	if net.ReadBit() == 1 then
 		if ent.Prime then
