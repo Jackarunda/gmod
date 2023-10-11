@@ -560,18 +560,16 @@ end
 net.Receive("JMod_Inventory", function(ln, ply)
 	if not ply:Alive() then return end
 	local ActionType = net.ReadInt(8)
+	local ID = net.ReadString()
 
 	if ActionType == 1 then
-		local ID = net.ReadString()
+		
 		JMod.RemoveArmorByID(ply, ID)
 	elseif ActionType == 2 then
-		local ID = net.ReadString()
-
 		if ply.EZarmor.items[ID] then
 			ply.EZarmor.items[ID].tgl = not ply.EZarmor.items[ID].tgl
 		end
 	elseif ActionType == 3 then
-		local ID = net.ReadString()
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		local RepairRecipe, RepairStatus, BuildRecipe = {}, 0, nil
@@ -628,7 +626,6 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			end
 		end
 	elseif ActionType == 4 then
-		local ID = net.ReadString()
 		local ItemData = ply.EZarmor.items[ID]
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		local RechargeRecipe, RechargeStatus, PartialRecharge = {}, 0, false
