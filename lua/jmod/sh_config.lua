@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.1
+			Version = 44.2
 		},
 		General = {
 			Hints = true,
@@ -286,7 +286,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				["sleeping bag"] = {
 					description = "A sleeping bag you can set your spawn point at.",
 					category = "Other",
-					results = "ent_jack_sleepingbag"
+					results = {"ent_jack_sleepingbag", 2}
 				},
 				["frag grenades"] = {
 					description = "10 frag grenades used for explosions.",
@@ -1892,6 +1892,24 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Munitions",
 				craftingType = "workbench",
 				description = "Anti-personnel land mine. Try your best to match the color with the ground."
+			},
+			["EZ Bear Trap"] = {
+				results = "ent_jack_gmod_ezbeartrap",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15
+				},
+				category = "Other",
+				craftingType = "workbench",
+				description = "Basic trap for catching/slowing down enemies.\n Try your best to match the color with the ground."
+			},
+			["EZ Sleeping Bag"] = {
+				results = "ent_jack_sleepingbag",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
+				},
+				category = "Other",
+				craftingType = "workbench",
+				description = "A sleeping bag that also works as a partial respawn point"
 			},
 			["EZ Ballistic Mask"] = {
 				results = JMod.ArmorTable["BallisticMask"].ent,
