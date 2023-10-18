@@ -19,6 +19,8 @@ ENT.AffectRange = 300
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
+		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetNotSolid(true)
 		self:DrawShadow(false)
@@ -27,6 +29,7 @@ if SERVER then
 			phys:EnableCollisions(false)
 			phys:EnableGravity(false)
 		end
+		self:SetModelScale(2)
 		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
@@ -113,7 +116,7 @@ if SERVER then
 			self.CurVel = self.CurVel + Force / ThinkRateHz
 
 			-- apply air resistance
-			-- self.CurVel = self.CurVel / 1
+			self.CurVel = self.CurVel / 1
 
 			-- observe current velocity
 			local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -164,16 +167,6 @@ elseif CLIENT then
 	local Mat = Material("particle/smokestack")
 
 	function ENT:Initialize()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
-		self:SetMoveType(MOVETYPE_NONE)
-		self:SetNotSolid(true)
-		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
 		self.Visible = true
 		self.Show = true
@@ -188,10 +181,6 @@ elseif CLIENT then
 
 		self.NextVisCheck = CurTime() + 6
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
-
-		if self.DebugShow then
-			self:SetModelScale(2)
-		end
 	end
 
 	function ENT:DrawTranslucent()

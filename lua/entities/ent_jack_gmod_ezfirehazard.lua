@@ -7,13 +7,17 @@ ENT.NoSitAllowed = true
 ENT.IsRemoteKiller = true
 local ThinkRate = 22 --Hz
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 0, "HighVisuals")
+end
+
 if SERVER then
 	function ENT:Initialize()
 		self.Ptype = 1
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 20, 30, 100
+			"eff_jack_gmod_heavyfire", 20, 30, 150
 		}
 
 		----
@@ -34,11 +38,12 @@ if SERVER then
 		self.DieTime = Time + math.Rand(self.TypeInfo[4], self.TypeInfo[5])
 		self.NextSound = 0
 		self.NextEffect = 0
+		self.NextEnvThink = Time + 5
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
 
 		if self.HighVisuals then
-			self:SetDTBool(0, true)
+			self:SetHighVisuals(true)
 		end
 	end
 
@@ -104,17 +109,17 @@ if SERVER then
 
 					if vFireInstalled then
 						CreateVFireEntFires(v, math.random(1, 3))
-					elseif (v:IsOnFire() == false) and (math.random() <= 0.15) then
-						v:Ignite(10)
+					elseif (v:IsOnFire() == false) and (math.random(1, 15) == 1) then
+						v:Ignite(math.random(8, 12))
 					end
 				end
 			end
 
-			if vFireInstalled and math.random() <= 0.01 then
+			if vFireInstalled and (math.random(1, 100) == 1) then
 				CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), self:GetOwner())
 			end
 
-			if math.random(1, 12) == 1 then
+			if math.random(1, 50) == 1 then
 				local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
 
 				if Tr.Hit then
@@ -123,21 +128,37 @@ if SERVER then
 			end
 		end
 
-		if IsValid(self) then
-			if self.DieTime < Time then
-				self:Remove()
-
-				return
+		if (self.NextEnvThink < Time) then
+			self.NextEnvThink = Time + 5
+			if (State == STATE_ON) then
+				local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+				if not (Tr.HitSky) then
+					if (math.random(1, 15) == 1) then
+						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						JMod.SetEZowner(Gas, self.EZowner)
+						Gas:SetDTBool(0, false)
+						Gas:Spawn()
+						Gas:Activate()
+						Gas.CurVel = (Vector(0, 0, 100) + VectorRand() * 50)
+					end
+				end
 			end
-
-			self:NextThink(Time + (1 / ThinkRate))
 		end
+
+		if self.DieTime < Time then
+			self:Remove()
+
+			return
+		end
+
+		self:NextThink(Time + (1 / ThinkRate))
 
 		return true
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		local HighVisuals = self:GetDTBool(0)
+		local HighVisuals = self:GetHighVisuals()
 		self.Ptype = 1
 
 		self.TypeInfo = {
@@ -145,7 +166,7 @@ elseif CLIENT then
 			"eff_jack_gmod_heavyfire", 15, 14, 100
 		}
 
-		self.CastLight = (self.HighVisuals and math.random(1, 2) == 1) or (math.random(1, 10) == 1)
+		self.CastLight = (HighVisuals and (math.random(1, 4) == 1))
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
@@ -181,7 +202,7 @@ elseif CLIENT then
 				dlight.brightness = 3
 				dlight.Decay = 200
 				dlight.Size = 400
-				dlight.DieTime = CurTime() + .5
+				dlight.DieTime = CurTime() + 1
 			end
 		end
 	end
