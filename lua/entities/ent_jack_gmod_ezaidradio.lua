@@ -109,12 +109,16 @@ if(SERVER)then
 			local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State > 0 then
-				if Alt and State == JMod.EZ_STATION_STATE_READY then
-					net.Start("JMod_EZradio")
-					net.WriteBool(false)
-					net.WriteEntity(self)
-					net.WriteTable(JMod.Config.RadioSpecs.AvailablePackages)
-					net.Send(activator)
+				if Alt then
+					if State == JMod.EZ_STATION_STATE_READY then
+						net.Start("JMod_EZradio")
+						net.WriteBool(false)
+						net.WriteEntity(self)
+						net.WriteTable(JMod.Config.RadioSpecs.AvailablePackages)
+						net.Send(activator)
+					elseif (State == JMod.EZ_STATION_STATE_BUSY) or (State == JMod.EZ_STATION_STATE_DELIVERING) then
+						self:Connect(activator, true)
+					end
 				else
 					self:TurnOff()
 					JMod.Hint(activator, "toggle")

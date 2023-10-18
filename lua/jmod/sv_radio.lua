@@ -201,11 +201,11 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		return ""
 	end
 
-	--if (lowerTxt == "*scrounge*") or (lowerTxt == "*scavange*") then
-		--JMod.EZ_ScroungeArea(ply)
+	if (lowerTxt == "*scrounge*") or (lowerTxt == "*scavange*") then
+		JMod.EZ_ScroungeArea(ply)
 
-		--return ""
-	--end
+		return ""
+	end
 
 	for k, v in pairs(ents.FindInSphere(ply:GetPos(), 150)) do
 		if v.EZreceiveSpeech and (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
@@ -273,16 +273,15 @@ function JMod.EZradioEstablish(transceiver, teamID, reassign)
 		for k, id in pairs(AlliedStations) do
 			local Taken = false
 	
-			for _, radio in ipairs(FindEZradios()) do
+			--[[for _, radio in ipairs(FindEZradios()) do
 				if radio ~= transceiver and radio:GetState() > 0 and radio:GetOutpostID() == id then
 					Taken = true
 					break
 				end
-			end
-	
+			end--]]
 			--print(Taken)
 	
-			if not Taken then
+			if not Taken and (JMod.EZ_RADIO_STATIONS[id].state == JMod.EZ_STATION_STATE_READY) then
 				ChosenStation = id
 				break
 			end

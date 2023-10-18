@@ -731,8 +731,9 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
 		return PlayerToCheck:Alive()
 	end
+	--local ThirdpartyAttack hook.Run("JMOD_SHOULDATTACK", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
-	return peaceWasNeverAnOption or false
+	return (peaceWasNeverAnOption or false)
 end
 
 function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
