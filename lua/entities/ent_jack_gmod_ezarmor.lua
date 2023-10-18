@@ -72,13 +72,13 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self.Entity:EmitSound("Body.ImpactSoft")
+				self:EmitSound(util.GetSurfaceData(data.OurSurfaceProps).impactSoftSound)
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if dmginfo:GetDamage() >= 5 then
 			self.Durability = self.Durability - dmginfo:GetDamage() / 2

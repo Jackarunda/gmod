@@ -221,7 +221,6 @@ if SERVER then
 					Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
 					Haz:SetAngles(tr.HitNormal:Angle())
 					JMod.SetEZowner(Haz, self.EZowner)
-					Haz:SetDTEntity(0, self:GetDTEntity(0))
 					Haz.HighVisuals = self.HighVisuals
 					Haz:Spawn()
 					Haz:Activate()
