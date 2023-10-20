@@ -124,7 +124,7 @@ SWEP.WElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["pickaxe"] = {
+	--[[["pickaxe"] = {
 		type = "Model",
 		model = "models/props_mining/pickaxe01.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
@@ -137,7 +137,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},
+	},--]]
 	["mask"] = {
 		type = "Model",
 		model = "models/props_silo/welding_helmet.mdl",

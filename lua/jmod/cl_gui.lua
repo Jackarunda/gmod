@@ -608,7 +608,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc)
 
 	SelectionMenuOpen = true
-
+	return MotherFrame
 end
 
 --[[
@@ -625,7 +625,7 @@ net.Receive("JMod_EZtoolbox", function()
 	local Kit = net.ReadEntity()
 
 	if SelectionMenuOpen then return end
-	StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, function(name, info, ply, ent) -- enable func
+	local MotherFrame = StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, function(name, info, ply, ent) -- enable func
 return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZtoolbox")
@@ -667,6 +667,29 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 		end
 
 	end, nil)
+
+	--[[local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
+	MotherFrame:SetTall(550)
+
+	local ToolPanel = vgui.Create("DPanel", MotherFrame)
+	ToolPanel:SetPos(10, 495)
+	ToolPanel:SetSize(W - 20, 45)
+	function ToolPanel:Paint(w, h)
+		surface.SetDrawColor(0, 0, 0, 50)
+		surface.DrawRect(0, 0, w, h)
+	end
+
+	local PickButton = vgui.Create("DButton", ToolPanel)
+	PickButton:SetPos(5, 5)
+	PickButton:SetSize(100, 35)
+	PickButton:SetText("")
+	function PickButton:Paint(x, y)
+		local Hovr = self:IsHovered()
+		local Col = (Hovr and 80) or 20
+		surface.SetDrawColor(0, 0, 0, Col)
+		surface.DrawRect(0, 0, x, y)
+		draw.SimpleText("PICKAXE", "DermaDefault", x * 0.5, y * 0.5, Color(255, 255, 255, Col * 2), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end--]]
 end)
 
 -- no side display for now
