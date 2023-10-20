@@ -13,11 +13,11 @@ SWEP.ViewModel = "models/weapons/HL2meleepack/v_pickaxe.mdl"
 SWEP.WorldModel = "models/props_mining/pickaxe01.mdl"
 SWEP.BodyHolsterModel = "models/props_mining/pickaxe01.mdl"
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(-70, 0, 200)
-SWEP.BodyHolsterAngL = Angle(-70, -10, -30)
-SWEP.BodyHolsterPos = Vector(0, -15, 10)
-SWEP.BodyHolsterPosL = Vector(0, -15, -11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterAng = Angle(-93, 0, 10)
+SWEP.BodyHolsterAngL = Angle(-93, 0, 0)
+SWEP.BodyHolsterPos = Vector(3, -24, -3)
+SWEP.BodyHolsterPosL = Vector(4, -24, 3)
+SWEP.BodyHolsterScale = .75
 SWEP.ViewModelFOV = 52
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -47,7 +47,7 @@ SWEP.VElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["shovel"] = {
+	--[[["shovel"] = {
 		type = "Model",
 		model = "models/props_junk/shovel01a.mdl",
 		bone = "ValveBiped.Bip01_L_Hand",
@@ -60,7 +60,7 @@ SWEP.VElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.WElements = {
