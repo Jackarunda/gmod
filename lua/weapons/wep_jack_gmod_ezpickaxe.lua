@@ -98,9 +98,6 @@ SWEP.WElements = {
 SWEP.HitDistance		= 50
 SWEP.HitInclination		= 0.4
 SWEP.HitPushback		= 1000
-SWEP.HitRate			= 1.35
-SWEP.MinDamage			= 34
-SWEP.MaxDamage			= 50
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
 local HitSoundWorld = Sound( "Canister.ImpactHard" )
@@ -194,7 +191,7 @@ function SWEP:Hitscan()
 
 			timer.Simple(0.3, function() 
 				if not(IsValid(self)) then return end
-				bullet = {}
+				--[[bullet = {}
 				bullet.Num    = 1
 				bullet.Src    = StrikePos
 				bullet.Dir    = StrikeVector:GetNormalized()
@@ -204,8 +201,17 @@ function SWEP:Hitscan()
 				bullet.Hullsize = 2
 				bullet.Distance = self.HitDistance * 1.5
 				bullet.Damage = math.random( 34, 60 )
-				self.Owner:FireBullets(bullet)
+				self.Owner:FireBullets(bullet)--]]
+				local PickDam = DamageInfo()
+				PickDam:SetAttacker(self.Owner)
+				PickDam:SetInflictor(self)
+				PickDam:SetDamagePosition(StrikePos)
+				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
+				PickDam:SetDamage(math.random( 34, 60 ))
+				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
+				tr.Entity:TakeDamageInfo(PickDam)
 
+				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
 				local effectdata = EffectData()
 				effectdata:SetOrigin( vPoint )
@@ -275,8 +281,8 @@ function SWEP:WhomIlookinAt()
 end
 
 function SWEP:SecondaryAttack()
-	self:SetNextPrimaryFire( CurTime() + 0.35 )
-	self:SetNextSecondaryFire( CurTime() + 1.0 )
+	self:SetNextPrimaryFire(CurTime() + .8)
+	self:SetNextSecondaryFire(CurTime() + 1)
 
 	--self:EmitSound( SwingSound )
 
@@ -293,11 +299,11 @@ function SWEP:SecondaryAttack()
 	if ( tr.Hit ) then
 		self:EmitSound( PushSoundBody )
 		if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
-			tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * 500 )
+			tr.Entity:SetVelocity( self.Owner:GetAimVector() * 1500 )
 		elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
-			tr.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * 500, tr.HitPos)
+			tr.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * 1500, tr.HitPos)
 		end
-		self.Owner:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * -250 )
+		--self.Owner:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * -250 )
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end
 	self:UpdateNextIdle()
