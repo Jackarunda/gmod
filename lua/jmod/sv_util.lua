@@ -844,7 +844,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			local BestCrate = nil
 			local IsGenericCrate = true
 
-			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(machine:OBBCenter()), range)) do
+			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(ejectionVector or machine:OBBCenter()), range)) do
 				if (ent.IsJackyEZcrate) and table.HasValue(ent.EZconsumes, resourceType) then
 					local Dist = machine:LocalToWorld(machine:OBBCenter()):DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
 					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
@@ -867,7 +867,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 				
 				if Accepted > 0 then
 					local entPos = BestCrate:LocalToWorld(BestCrate:OBBCenter())
-					JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
+					JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
 					amount = amount - Accepted
 					if amount <= 0 then 
 					
@@ -878,7 +878,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		end
 
 		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
-		JMod.ResourceEffect(resourceType, machine:LocalToWorld(machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
+		JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		timer.Simple(1 * math.ceil(amount/100 * JMod.Config.ResourceEconomy.MaxResourceMult), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
@@ -1118,6 +1118,46 @@ end
 
 function JMod.EZprogressTask(ent, pos, deconstructor, task)
 	local Time = CurTime()
+
+	if task == "mining" then
+		local DepositKey = JMod.GetDepositAtPos(ent, pos)
+
+		--if not DepositKey then return "No deposit" end
+		
+		if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
+			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent.EZpreviousMiningPos = nil
+		end
+		if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then
+			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent.EZpreviousMiningPos = nil
+		end
+		ent:SetNW2Float("EZcancel"..task.."Time", Time + 5)
+		ent.EZpreviousMiningPos = pos
+
+		local Prog = ent:GetNW2Float("EZ"..task.."Progress", 0)
+		local AddAmt = math.random(10, 15)
+
+		ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
+
+		if Prog >= 100 then
+			if not(DepositKey) or not(JMod.NaturalResourceTable[DepositKey]) or not(JMod.NaturalResourceTable[DepositKey].amt) then
+				ent:SetNW2Float("EZ"..task.."Progress", 0)
+				ent.EZpreviousMiningPos = nil
+				return "Nothing of value here"
+			else
+				local amtLeft = JMod.NaturalResourceTable[DepositKey].amt
+				local amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, 100)--math.random(40, 50))
+				JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 100)), Angle(0, 0, 0), ent:GetUp() * 100, true, 200)
+				JMod.DepleteNaturalResource(DepositKey, amtToMine)
+				ent:SetNW2Float("EZ"..task.."Progress", 0)
+				ent.EZpreviousMiningPos = nil
+				return "Eureka!"
+			end
+		end
+
+		return nil
+	end
 
 	if not IsValid(ent) then return "Invalid Ent" end
 

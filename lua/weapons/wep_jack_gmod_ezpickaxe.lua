@@ -94,6 +94,19 @@ SWEP.WElements = {
 	},--]]
 }
 
+--
+SWEP.HitDistance		= 50
+SWEP.HitInclination		= 0.4
+SWEP.HitPushback		= 1000
+SWEP.HitRate			= 1.35
+SWEP.MinDamage			= 34
+SWEP.MaxDamage			= 50
+
+local SwingSound = Sound( "Weapon_Crowbar.Single" )
+local HitSoundWorld = Sound( "Canister.ImpactHard" )
+local HitSoundBody = Sound( "Flesh.ImpactHard" )
+local PushSoundBody = Sound( "Flesh.ImpactSoft" )
+--
 
 function SWEP:Initialize()
 	self:SetHoldType("melee2")
@@ -121,7 +134,7 @@ end
 
 local Downness = 0
 
---[[function SWEP:GetViewModelPosition(pos, ang)
+function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
@@ -146,10 +159,83 @@ end
 
 
 function SWEP:PrimaryAttack()
-	--if self.Owner:KeyDown(IN_SPEED) then return end
-	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime() + 1.5)
-	self:SetNextSecondaryFire(CurTime() + 1)
+	if self.Owner:KeyDown(IN_SPEED) then return end
+	self:SetNextPrimaryFire(CurTime() + 1.2)
+	self:SetNextSecondaryFire(CurTime() + .8)
+	local Hit = self:Hitscan()
+	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
+	timer.Simple(0.1, function()
+		if IsValid(self) then
+			self:EmitSound( SwingSound )
+		end
+	end)
+	self:Pawnch(Hit)
+end
+
+function SWEP:Hitscan()
+	if not SERVER then return end
+	--This function calculate the trajectory
+	
+	for i = 0, 170 do
+
+		local tr = util.TraceLine( {
+			start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
+			endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
+			filter = self.Owner,
+			mask = MASK_SHOT_HULL
+		} )
+
+		--This if shot the bullets
+
+		if ( tr.Hit ) then
+
+			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
+			local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+
+			timer.Simple(0.3, function() 
+				if not(IsValid(self)) then return end
+				bullet = {}
+				bullet.Num    = 1
+				bullet.Src    = StrikePos
+				bullet.Dir    = StrikeVector:GetNormalized()
+				bullet.Spread = Vector(0, 0, 0)
+				bullet.Tracer = 0
+				bullet.Force  = 30
+				bullet.Hullsize = 2
+				bullet.Distance = self.HitDistance * 1.5
+				bullet.Damage = math.random( 34, 60 )
+				self.Owner:FireBullets(bullet)
+
+				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
+				local effectdata = EffectData()
+				effectdata:SetOrigin( vPoint )
+				util.Effect( "BloodImpact", effectdata )--]]
+
+				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
+
+				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
+					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
+					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
+					self:SetTaskProgress(0)
+				elseif tr.Entity:IsWorld() then
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+
+					if Message then
+						self:Msg(Message)
+						self:SetTaskProgress(0)
+					else
+						sound.Play("snds_jack_gmod/ez_tools/hit.wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
+						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
+					end
+				else
+					sound.Play("Canister.ImpactHard", tr.HitPos, 75, 100, 1)
+				end
+			end)
+
+			return i < 80
+		end
+		--else vm:SendViewModelMatchingSequence( vm:LookupSequence( "misscenter1" ) ) end
+	end
 end
 
 function SWEP:Msg(msg)
@@ -157,12 +243,17 @@ function SWEP:Msg(msg)
 end
 
 --,"fists_uppercut"} -- the uppercut looks so bad
-local Anims = {"misscenter1"}--{"fists_right", "fists_right", "fists_left", "fists_left"}
+local Anims = {"misscenter1", "hitcenter1"}--{"fists_right", "fists_right", "fists_left", "fists_left"}
 
-function SWEP:Pawnch()
+function SWEP:Pawnch(hit)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
+	--vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
+	if hit then
+		vm:SendViewModelMatchingSequence(vm:LookupSequence("hitcenter1"))
+	else
+		vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
+	end
 	self:UpdateNextIdle()
 end
 
@@ -184,6 +275,32 @@ function SWEP:WhomIlookinAt()
 end
 
 function SWEP:SecondaryAttack()
+	self:SetNextPrimaryFire( CurTime() + 0.35 )
+	self:SetNextSecondaryFire( CurTime() + 1.0 )
+
+	--self:EmitSound( SwingSound )
+
+	local vm = self.Owner:GetViewModel()
+	vm:SendViewModelMatchingSequence( vm:LookupSequence( "pushback" ) )
+
+	local tr = util.TraceLine( {
+		start = self.Owner:GetShootPos(),
+		endpos = self.Owner:GetShootPos() + self.Owner:GetAimVector() * 1.5 * 40,
+		filter = self.Owner,
+		mask = MASK_SHOT_HULL
+	} )
+
+	if ( tr.Hit ) then
+		self:EmitSound( PushSoundBody )
+		if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
+			tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * 500 )
+		elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
+			tr.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * 500, tr.HitPos)
+		end
+		self.Owner:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * -250 )
+		self.Owner:SetAnimation(PLAYER_RELOAD)
+	end
+	self:UpdateNextIdle()
 end
 
 --
@@ -256,7 +373,7 @@ function SWEP:Deploy()
 	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
+		vm:SendViewModelMatchingSequence(vm:LookupSequence("draw"))
 		self:UpdateNextIdle()
 		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
 	end
@@ -284,19 +401,19 @@ function SWEP:Think()
 
 		if self.Owner:KeyDown(IN_ATTACK2) then
 			if self.NextTaskProgress < Time then
-				self.NextTaskProgress = Time + .6
+				self.NextTaskProgress = Time + .8
 				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 				local Task = (Alt and "loosen") or "mining"
-				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})
+				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, {self.Owner})
 				local Ent, Pos = Tr.Entity, Tr.HitPos
 
-				if IsValid(Ent) then
+				--[[if IsValid(Ent) then
 					if Ent ~= self.TaskEntity or Task ~= self.CurTask then
 						self:SetTaskProgress(0)
 						self.TaskEntity = Ent
 						self.CurTask = Task
-					elseif IsValid(Ent:GetPhysicsObject()) then
-						local Message = JMod.EZprogressTask(Ent, Pos, self.Owner, (Alt and "loosen") or "mining")
+					elseif SERVER and IsValid(Ent:GetPhysicsObject()) then
+						local Message = JMod.EZprogressTask(Ent, Pos, self.Owner, "loosen")
 
 						if Message then
 							self:Msg(Message)
@@ -304,20 +421,22 @@ function SWEP:Think()
 							self:Pawnch()
 							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
 							--sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
-							if SERVER then
-								JMod.Hint(self.Owner, "work spread")
-								self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))
-								timer.Simple(.1, function()
-									if IsValid(self) then
-										self:UpgradeEffect(Pos, 2, true)
-									end
-								end)
-							end
+							self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))
 						end 
 					end
-				end
+				end]]--
+				--[[if SERVER and Tr.Hit then
+					local Message = JMod.EZprogressTask(self, Pos, self.Owner, "mining")
+					if Message then
+						self:Msg(Message)
+					else
+						self:Pawnch()
+						sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 75, math.random(50, 70))
+						self:SetTaskProgress(self:GetNW2Float("EZ"..Task.."Progress", 0))
+					end
+				end--]]
 			end
-		else
+		elseif not self.Owner:KeyDown(IN_ATTACK) then
 			self:SetTaskProgress(0)
 		end
 	end
