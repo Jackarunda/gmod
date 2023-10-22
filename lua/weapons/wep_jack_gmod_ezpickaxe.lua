@@ -104,6 +104,7 @@ local HitSoundWorld = Sound( "Canister.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
+SWEP.BlacklistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.SAND, "geothermal"}
 
 function SWEP:Initialize()
 	self:SetHoldType("melee2")
@@ -111,6 +112,7 @@ function SWEP:Initialize()
 	self.NextIdle = 0
 	self:Deploy()
 	self:SetTaskProgress(0)
+	self:SetResourceType("")
 	self.TaskEntity = nil
 	self.NextTaskProgress = 0
 	self.CurTask = nil
@@ -147,6 +149,7 @@ end--]]
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
+	self:NetworkVar("String", 0, "ResourceType")
 end
 
 function SWEP:UpdateNextIdle()
@@ -191,23 +194,12 @@ function SWEP:Hitscan()
 
 			timer.Simple(0.3, function() 
 				if not(IsValid(self)) then return end
-				--[[bullet = {}
-				bullet.Num    = 1
-				bullet.Src    = StrikePos
-				bullet.Dir    = StrikeVector:GetNormalized()
-				bullet.Spread = Vector(0, 0, 0)
-				bullet.Tracer = 0
-				bullet.Force  = 30
-				bullet.Hullsize = 2
-				bullet.Distance = self.HitDistance * 1.5
-				bullet.Damage = math.random( 34, 60 )
-				self.Owner:FireBullets(bullet)--]]
 				local PickDam = DamageInfo()
 				PickDam:SetAttacker(self.Owner)
 				PickDam:SetInflictor(self)
 				PickDam:SetDamagePosition(StrikePos)
 				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
-				PickDam:SetDamage(math.random( 34, 60 ))
+				PickDam:SetDamage(math.random(30, 50))
 				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
 				tr.Entity:TakeDamageInfo(PickDam)
 
@@ -234,7 +226,7 @@ function SWEP:Hitscan()
 						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 					end
 				else
-					sound.Play("Canister.ImpactHard", tr.HitPos, 75, 100, 1)
+					sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
 			end)
 
@@ -409,38 +401,9 @@ function SWEP:Think()
 			if self.NextTaskProgress < Time then
 				self.NextTaskProgress = Time + .8
 				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
-				local Task = (Alt and "loosen") or "mining"
+				local Task = "mining"
 				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, {self.Owner})
 				local Ent, Pos = Tr.Entity, Tr.HitPos
-
-				--[[if IsValid(Ent) then
-					if Ent ~= self.TaskEntity or Task ~= self.CurTask then
-						self:SetTaskProgress(0)
-						self.TaskEntity = Ent
-						self.CurTask = Task
-					elseif SERVER and IsValid(Ent:GetPhysicsObject()) then
-						local Message = JMod.EZprogressTask(Ent, Pos, self.Owner, "loosen")
-
-						if Message then
-							self:Msg(Message)
-						else
-							self:Pawnch()
-							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
-							--sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
-							self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))
-						end 
-					end
-				end]]--
-				--[[if SERVER and Tr.Hit then
-					local Message = JMod.EZprogressTask(self, Pos, self.Owner, "mining")
-					if Message then
-						self:Msg(Message)
-					else
-						self:Pawnch()
-						sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 75, math.random(50, 70))
-						self:SetTaskProgress(self:GetNW2Float("EZ"..Task.."Progress", 0))
-					end
-				end--]]
 			end
 		elseif not self.Owner:KeyDown(IN_ATTACK) then
 			self:SetTaskProgress(0)
@@ -456,12 +419,13 @@ function SWEP:DrawHUD()
 	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H = ScrW(), ScrH()
 
+	draw.SimpleTextOutlined("LMB: mine/attack", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("Backspace: drop pick", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
-		draw.SimpleTextOutlined((Ply:KeyDown(JMod.Config.General.AltFunctionKey) and "Loosening...") or "Mining...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined("Mining... "..self:GetResourceType(), "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
 	end
