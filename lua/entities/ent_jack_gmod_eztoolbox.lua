@@ -128,7 +128,7 @@ elseif CLIENT then
 		JMod.HoloGraphicDisplay(self, Vector(0, -5, 17), Angle(90, -50, 90), .05, 300, function()
 			draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-200,10,JMod.GoodBadColor(ElecFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 			draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,10,JMod.GoodBadColor(GasFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-			draw.SimpleTextOutlined("PARTS "..math.Round(PartFrac*100).."%","JMod-Display",200,10,JMod.GoodBadColor(PartFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+			draw.SimpleTextOutlined("PARTS "..tostring(self:GetBasicParts()).."/"..tostring(self.MaxBasicParts),"JMod-Display",200,10,Color(255, 255, 255),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 		end)
 	end
 

@@ -354,13 +354,26 @@ function SWEP:BuildItem(selectedBuild)
 								print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
 						else
-							local Ent = ents.Create(Class)
+							local Ent
+							if string.Right(Class, 4) == ".mdl" then
+								Ent = ents.Create("prop_physics")
+								Ent:SetModel(Class)
+							else
+								Ent = ents.Create(Class)
+							end
 							Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
 							Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
 							JMod.SetEZowner(Ent, self.Owner)
 							Ent:SetCreator(self.Owner)
 							Ent:Spawn()
 							Ent:Activate()
+							if BuildInfo.skin then
+								if istable(BuildInfo.skin) then
+									Ent:SetSkin(table.Random(BuildInfo.skin))
+								else
+									Ent:SetSkin(BuildInfo.skin)
+								end
+							end
 							JMod.Hint(self.Owner, Class)
 							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
 							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))

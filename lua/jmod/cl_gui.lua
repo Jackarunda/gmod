@@ -472,6 +472,8 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 				JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
 			elseif info.results and file.Exists("materials/entities/" .. tostring(info.results) .. ".png", "GAME") then
 				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info.results) .. ".png")
+			elseif info.results and file.Exists("materials/spawnicons/" .. tostring(string.Replace(info.results, ".mdl", "")) .. ".png", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. tostring(string.Replace(info.results, ".mdl", "")) .. ".png")
 			else
 				-- special logic for random tables and resources and such
 				local itemClass = info.results
@@ -644,9 +646,15 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 				ent.EZpreview = {Box = nil} --No way to tell size
 			end
 		else
-			local temp_ent = ents.CreateClientside(info["results"])
-			if temp_ent.Base == "ent_jack_gmod_ezmachine_base" then
-				temp_ent.ClientOnly = true
+			local temp_ent
+			if string.Right(info["results"], 4) == ".mdl" then
+				temp_ent = ents.CreateClientProp(info["results"])
+				temp_ent:SetModel(info["results"])
+			else
+				temp_ent = ents.CreateClientside(info["results"])
+				if temp_ent.Base == "ent_jack_gmod_ezmachine_base" then
+					temp_ent.ClientOnly = true
+				end
 			end
 			temp_ent:Spawn()												-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
@@ -665,7 +673,6 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 
 			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang and Ang}
 		end
-
 	end, nil)
 
 	--[[local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()

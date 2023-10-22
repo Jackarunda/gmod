@@ -729,9 +729,9 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	local ScaleByMass = true
-
 	for name, info in pairs(JMod.Config.Craftables) do
-		if info.results == Class then
+		--jprint((info.results == Mdl))
+		if isstring(info.results) and ((info.results == Class) or (string.lower(info.results) == Mdl)) then
 			Info = info.craftingReqs
 			ScaleByMass = false
 		end
