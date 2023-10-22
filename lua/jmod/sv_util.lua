@@ -661,6 +661,10 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
+
+	local Override = hook.Call("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
+	if (Override ~= nil) then return Override end
+
 	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
 
 	if ent:IsPlayer() then
@@ -731,7 +735,6 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
 		return PlayerToCheck:Alive()
 	end
-	--local ThirdpartyAttack hook.Run("JMOD_SHOULDATTACK", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 
 	return (peaceWasNeverAnOption or false)
 end
@@ -1240,7 +1243,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 	end
 end
 
-function JMod.BuildRecipe(results, ply, Pos, Ang)
+function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 	if istable(results) then
 		for k, v in ipairs(results) do
 			for n = 1, (results[k][2] or 1) do
@@ -1262,11 +1265,24 @@ function JMod.BuildRecipe(results, ply, Pos, Ang)
 			local FuncName = StringParts[2]
 			if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
 				local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
-				if(Ent)then
-					if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
-				end
 			else
 				print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+			end
+		elseif string.Right(results, 4) == ".mdl" then
+			local Ent = ents.Create("prop_physics")
+			Ent:SetModel(results)
+			Ent:SetPos(Pos)
+			Ent:SetAngles(Ang)
+			JMod.SetEZowner(Ent, ply)
+			Ent:SetCreator(ply)
+			Ent:Spawn()
+			Ent:Activate()
+			if skinNum then
+				if istable(skinNum) then
+					Ent:SetSkin(table.Random(skinNum))
+				else
+					Ent:SetSkin(skinNum)
+				end
 			end
 		else
 			local Ent = ents.Create(results)
@@ -1276,7 +1292,6 @@ function JMod.BuildRecipe(results, ply, Pos, Ang)
 			Ent:SetCreator(ply)
 			Ent:Spawn()
 			Ent:Activate()
-			if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
 		end
 	end
 end
