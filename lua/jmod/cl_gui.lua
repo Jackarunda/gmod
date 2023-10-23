@@ -472,8 +472,8 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 				JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
 			elseif info.results and file.Exists("materials/entities/" .. tostring(info.results) .. ".png", "GAME") then
 				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info.results) .. ".png")
-			elseif info.results and file.Exists("materials/spawnicons/" .. tostring(string.Replace(info.results, ".mdl", "")) .. ".png", "GAME") then
-				JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. tostring(string.Replace(info.results, ".mdl", "")) .. ".png")
+			elseif info.results and file.Exists("materials/spawnicons/" .. string.Replace(tostring(info.results), ".mdl", "") .. ".png", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. string.Replace(tostring(info.results), ".mdl", "") .. ".png")
 			else
 				-- special logic for random tables and resources and such
 				local itemClass = info.results
@@ -1393,4 +1393,36 @@ net.Receive("JMod_Inventory", function()
 		motherFrame:Close()
 		return true
 	end
+end)
+
+local Yeps = {"Yes", "yep", "Of course", "Leave me alone", ">:)"}
+
+net.Receive("JMod_SaveLoadDeposits", function()
+	local command = net.ReadString()
+	print(command)
+	--if command == "warning" then
+		local MotherFrame = vgui.Create("DFrame")
+		MotherFrame:SetTitle("Warning")
+		MotherFrame:SetSize(400, 200)
+		MotherFrame:Center()
+		MotherFrame:MakePopup()
+
+		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
+
+		local WarningText = vgui.Create("DLabel", MotherFrame)
+		WarningText:SetPos((W * 0.25) - 10, H * 0.4)
+		WarningText:SetSize(300, 20)
+		WarningText:SetText("Are you sure you want to remove all deposits?")
+
+		local YepButton = vgui.Create("DButton", MotherFrame)
+		YepButton:SetPos(W * 0.25, H * 0.6)
+		YepButton:SetSize(200, 50)
+		YepButton:SetText(table.Random(Yeps))
+		function YepButton:DoClick()
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("clear")
+			net.SendToServer()
+			MotherFrame:Close()
+		end
+	--end
 end)
