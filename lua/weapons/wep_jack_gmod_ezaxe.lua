@@ -76,7 +76,7 @@ local HitSoundWorld = Sound( "Metal.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
-SWEP.BlacklistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL, JMod.EZ_RESOURCE_TYPES.SAND, "geothermal"}
+SWEP.DoorBreachPower = 2
 
 function SWEP:Initialize()
 	self:SetHoldType("melee2")
@@ -189,24 +189,43 @@ function SWEP:Hitscan()
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
 				elseif JMod.IsDoor(tr.Entity) then
-					local ent = tr.Entity
-					JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-					ent.ArcCW_BustDamage = nil
-
-					-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
-					for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-						if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
-							JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-							otherDoor.ArcCW_BustDamage = nil
-							break
-						end
-					end
+					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
 				else
 					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
 				return true
 			end
 		end)
+	end
+end
+
+function SWEP:TryBustDoor(ent, dmg, pos)
+	if not self.DoorBreachPower then return end
+	self.NextDoorShot = self.NextDoorShot or 0
+	if self.NextDoorShot > CurTime() then return end
+	if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not JMod.IsDoor(ent) then return end
+	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
+	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
+	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
+	-- Magic number: 119.506 is the size of door01_left
+	-- The bigger the door is, the harder it is to bust
+	local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+	JMod.Hint(self.Owner, "shotgun breach")
+	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
+	local Amt = dmg * self.DoorBreachPower * WorkSpread
+	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
+	if ent.ArcCW_BustDamage > threshold then
+		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+		ent.ArcCW_BustDamage = nil
+
+		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
+		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
+			if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
+				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+				otherDoor.ArcCW_BustDamage = nil
+				break
+			end
+		end
 	end
 end
 
@@ -387,7 +406,7 @@ function SWEP:DrawHUD()
 
 	draw.SimpleTextOutlined("LMB: swing", "Trebuchet24", W * .4, H * .7 + 110, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("RMB: push", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
-	draw.SimpleTextOutlined("Backspace: drop pick", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("Backspace: drop axe", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	
 	local Prog = self:GetTaskProgress()
 

@@ -4,7 +4,7 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ Pickaxe"
+ENT.PrintName = "EZ Axe"
 ENT.NoSitAllowed = true
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
@@ -30,7 +30,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/props_mining/pickaxe01.mdl")
+		self:SetModel("models/props_forest/axe.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -67,9 +67,9 @@ if SERVER then
 	function ENT:Use(activator)
 		if activator:KeyDown(JMod.Config.General.AltFunctionKey) then
 			activator:PickupObject(self)
-		elseif not activator:HasWeapon("wep_jack_gmod_ezpickaxe") then
-			activator:Give("wep_jack_gmod_ezpickaxe")
-			activator:SelectWeapon("wep_jack_gmod_ezpickaxe")
+		elseif not activator:HasWeapon("wep_jack_gmod_ezaxe") then
+			activator:Give("wep_jack_gmod_ezaxe")
+			activator:SelectWeapon("wep_jack_gmod_ezaxe")
 
 			self:Remove()
 		else
@@ -84,5 +84,5 @@ elseif CLIENT then
 		self:DrawModel()
 	end
 
-	language.Add("ent_jack_gmod_ezpickaxe", "EZ Pickaxe")
+	language.Add("ent_jack_gmod_ezaxe", "EZ Axe")
 end

@@ -1124,8 +1124,6 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 
 	if task == "mining" then
 		local DepositKey = JMod.GetDepositAtPos(ent, pos)
-
-		--if not DepositKey then return "No deposit" end
 		
 		if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
 			ent:SetNW2Float("EZ"..task.."Progress", 0)
@@ -1143,25 +1141,26 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 
 		ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 
-		if Prog >= 100 then
-			if not(DepositKey) or not(JMod.NaturalResourceTable[DepositKey]) or not(JMod.NaturalResourceTable[DepositKey].amt) then
-				ent:SetNW2Float("EZ"..task.."Progress", 0)
-				ent.EZpreviousMiningPos = nil
-				local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 500)
-				if JMod.NaturalResourceTable[NearestGoodDeposit] then
-					return JMod.NaturalResourceTable[NearestGoodDeposit].typ .. " nearby"
-				else
-					return "nothing of value nearby"
-				end
+		if (Prog >= 25) and  (not(DepositKey) or not(JMod.NaturalResourceTable[DepositKey]) or not(JMod.NaturalResourceTable[DepositKey].amt)) then
+			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent.EZpreviousMiningPos = nil
+			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 1.5)
+			if JMod.NaturalResourceTable[NearestGoodDeposit] then
+				return JMod.NaturalResourceTable[NearestGoodDeposit].typ .. " nearby"
 			else
-				local amtLeft = JMod.NaturalResourceTable[DepositKey].amt
-				local amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(5, 10))--math.random(40, 50))
-				JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 100)), Angle(0, 0, 0), ent:GetUp() * 100, true, 200)
-				JMod.DepleteNaturalResource(DepositKey, amtToMine)
-				ent:SetNW2Float("EZ"..task.."Progress", 0)
-				ent.EZpreviousMiningPos = nil
-				return "Eureka!"
+				return "nothing of value nearby"
 			end
+		elseif Prog >= 100 then
+			local amtLeft = JMod.NaturalResourceTable[DepositKey].amt
+			local amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(5, 10))
+			if (JMod.NaturalResourceTable[DepositKey].typ == JMod.EZ_RESOURCE_TYPES.DIAMOND) then
+				amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(1, 2))
+			end
+			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 10)), Angle(0, 0, 0), ent:GetUp() * 100, true, 200)
+			JMod.DepleteNaturalResource(DepositKey, amtToMine)
+			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent.EZpreviousMiningPos = nil
+			return "Eureka!"
 		end
 
 		return nil

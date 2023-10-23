@@ -822,7 +822,7 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 	return Results
 end
 
-function JMod.GetDepositAtPos(machine, positionToCheck, range)
+function JMod.GetDepositAtPos(machine, positionToCheck, mult)
 	-- first, figure out which deposits we are inside of, if any
 	local DepositsInRange = {}
 
@@ -831,7 +831,7 @@ function JMod.GetDepositAtPos(machine, positionToCheck, range)
 		local Dist = positionToCheck:Distance(v.pos)
 
 		-- store they desposit's key if we're inside of it
-		if (Dist <= (range or v.siz)) then
+		if (Dist <= v.siz * (mult or 1)) then
 			if IsValid(machine) then
 				if istable(machine.BlacklistedResources) and table.HasValue(machine.BlacklistedResources, v.typ) then continue end
 				if istable(machine.WhitelistedResources) and not(table.HasValue(machine.WhitelistedResources, v.typ)) then continue end
