@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.2
+			Version = 44.3
 		},
 		General = {
 			Hints = true,
@@ -1179,7 +1179,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 100,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 50
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 25
 				},
 				sizeScale = 10,
 				category = "Machines",
