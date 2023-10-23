@@ -1,23 +1,23 @@
 ﻿-- Jackarunda 2021 - AdventureBoots 2023
 AddCSLuaFile()
-SWEP.PrintName = "EZ Pickaxe"
+SWEP.PrintName = "EZ Axe"
 SWEP.Author = "Jackarunda"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezpickaxe")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezaxe")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
-SWEP.ViewModel = "models/weapons/HL2meleepack/v_pickaxe.mdl"
-SWEP.WorldModel = "models/props_mining/pickaxe01.mdl"
-SWEP.BodyHolsterModel = "models/props_mining/pickaxe01.mdl"
+SWEP.ViewModel = "models/weapons/HL2meleepack/v_axe.mdl"
+SWEP.WorldModel = "models/props_forest/axe.mdl"
+SWEP.BodyHolsterModel = "models/props_forest/axe.mdl"
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(-93, 0, 10)
-SWEP.BodyHolsterAngL = Angle(-93, 0, 0)
-SWEP.BodyHolsterPos = Vector(3, -24, -3)
-SWEP.BodyHolsterPosL = Vector(4, -24, 3)
-SWEP.BodyHolsterScale = .75
+SWEP.BodyHolsterAng = Angle(-93, -90, 0)
+SWEP.BodyHolsterAngL = Angle(-93, -90, 0)
+SWEP.BodyHolsterPos = Vector(3, -10, -3)
+SWEP.BodyHolsterPosL = Vector(4, -10, 3)
+SWEP.BodyHolsterScale = 1
 SWEP.ViewModelFOV = 52
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -33,74 +33,46 @@ SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
 
 SWEP.VElements = {
-	--[[["pickaxe"] = {
-		type = "Model",
-		model = "models/props_mining/pickaxe01.mdl",
-		bone = "ValveBiped.Bip01_R_Hand",
-		rel = "",
-		pos = Vector(3, 1.5, 6),
-		angle = Angle(0, 180, 180),
-		size = Vector(.5, .5, .5),
-		color = Color(255, 255, 255, 255),
-		surpresslightning = false,
-		material = "",
-		skin = 0,
-		bodygroup = {}
-	},--]]
-	--[[["shovel"] = {
-		type = "Model",
-		model = "models/props_junk/shovel01a.mdl",
-		bone = "ValveBiped.Bip01_L_Hand",
-		rel = "",
-		pos = Vector(3.5, 1, 6),
-		angle = Angle(0, 180, 180),
-		size = Vector(.5, .5, .5),
-		color = Color(255, 255, 255, 255),
-		surpresslightning = false,
-		material = "",
-		skin = 0,
-		bodygroup = {}
-	}--]]
-}
-
-SWEP.WElements = {
-	["pickaxe"] = {
-		type = "Model",
-		model = "models/props_mining/pickaxe01.mdl",
-		bone = "ValveBiped.Bip01_R_Hand",
-		rel = "",
-		pos = Vector(3.4, .4, 8),
-		angle = Angle(180, -10, 6),
-		size = Vector(0.75, 0.75, 0.75),
-		color = Color(255, 255, 255, 255),
-		surpresslightning = false,
-		material = "",
-		skin = 0,
-		bodygroup = {}
-	},
-	--[[["axe"] = {
+	["axe"] = {
 		type = "Model",
 		model = "models/props_forest/axe.mdl",
-		bone = "ValveBiped.Bip01_Spine4",
+		bone = "ValveBiped.Bip01_L_Hand",
 		rel = "",
-		pos = Vector(-7.792, 2, 4),
-		angle = Angle(118.052, 87.662, 180),
+		pos = Vector(3, 2, 10),
+		angle = Angle(0, 0, -85),
 		size = Vector(1, 1, 1),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},--]]
+	}
+}
+
+SWEP.WElements = {
+	["axe"] = {
+		type = "Model",
+		model = "models/props_forest/axe.mdl",
+		bone = "ValveBiped.Bip01_R_Hand",
+		rel = "",
+		pos = Vector(3, 1, -8),
+		angle = Angle(0, -10, 90),
+		size = Vector(1, 1, 1),
+		color = Color(255, 255, 255, 255),
+		surpresslightning = false,
+		material = "",
+		skin = 0,
+		bodygroup = {}
+	}
 }
 
 --
-SWEP.HitDistance		= 50
+SWEP.HitDistance		= 35
 SWEP.HitInclination		= 0.4
-SWEP.HitPushback		= 1000
+SWEP.HitPushback		= 700
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
-local HitSoundWorld = Sound( "Canister.ImpactHard" )
+local HitSoundWorld = Sound( "Metal.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
@@ -112,7 +84,6 @@ function SWEP:Initialize()
 	self.NextIdle = 0
 	self:Deploy()
 	self:SetTaskProgress(0)
-	self:SetResourceType("")
 	self.TaskEntity = nil
 	self.NextTaskProgress = 0
 	self.CurTask = nil
@@ -137,9 +108,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		Downness = Lerp(FT * 2, Downness, 10)
+		Downness = Lerp(FT * 2, Downness, 5)
 	else
-		Downness = Lerp(FT * 2, Downness, 0)
+		Downness = Lerp(FT * 2, Downness, -2)
 	end
 
 	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
@@ -149,7 +120,6 @@ end--]]
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
-	self:NetworkVar("String", 0, "ResourceType")
 end
 
 function SWEP:UpdateNextIdle()
@@ -157,10 +127,9 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
-
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:SetNextPrimaryFire(CurTime() + 1.2)
+	self:SetNextPrimaryFire(CurTime() + 0.9)
 	self:SetNextSecondaryFire(CurTime() + .8)
 	local Hit = self:Hitscan()
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
@@ -169,42 +138,45 @@ function SWEP:PrimaryAttack()
 			self:EmitSound( SwingSound )
 		end
 	end)
-	self:Pawnch(Hit)
+	self:Pawnch()
 end
 
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
-	
+	local HitSomething = false 
+
 	for i = 0, 170 do
+		timer.Simple(i * (0.4/170), function() 
+			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
 
-		local tr = util.TraceLine( {
-			start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
-			endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
-			filter = self.Owner,
-			mask = MASK_SHOT_HULL
-		} )
+			local tr = util.TraceLine( {
+				start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
+				endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
+				filter = self.Owner,
+				mask = MASK_SHOT_HULL
+			} )
 
-		--This if shot the bullets
+			--This if shot the bullets
 
-		if ( tr.Hit ) then
+			if ( tr.Hit ) then
+				HitSomething = true
 
-			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
-			local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+				if not(IsValid(self)) or not(IsValid(self.Owner)) then return end
 
-			timer.Simple((i * 0.4/170) + 0.1, function() 
-				if not(IsValid(self)) then return end
+				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
+				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+
 				local PickDam = DamageInfo()
 				PickDam:SetAttacker(self.Owner)
 				PickDam:SetInflictor(self)
 				PickDam:SetDamagePosition(StrikePos)
-				PickDam:SetDamageType(DMG_GENERIC)
-				PickDam:SetDamage(math.random(30, 50))
+				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
+				PickDam:SetDamage(math.random(35, 50))
 				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
 				tr.Entity:TakeDamageInfo(PickDam)
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-				--sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactBulletSound, tr.HitPos, 75, 100, 1)
 				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
 				local effectdata = EffectData()
 				effectdata:SetOrigin( vPoint )
@@ -216,25 +188,25 @@ function SWEP:Hitscan()
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
-				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+				elseif JMod.IsDoor(tr.Entity) then
+					local ent = tr.Entity
+					JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+					ent.ArcCW_BustDamage = nil
 
-					if Message then
-						self:Msg(Message)
-						self:SetTaskProgress(0)
-						self:SetResourceType("")
-					else
-						sound.Play("snds_jack_gmod/ez_tools/hit.wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
-						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
+					-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
+					for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
+						if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
+							JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+							otherDoor.ArcCW_BustDamage = nil
+							break
+						end
 					end
 				else
-					sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
+					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
-			end)
-
-			return i < 80
-		end
-		--else vm:SendViewModelMatchingSequence( vm:LookupSequence( "misscenter1" ) ) end
+				return true
+			end
+		end)
 	end
 end
 
@@ -242,20 +214,10 @@ function SWEP:Msg(msg)
 	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
 end
 
---,"fists_uppercut"} -- the uppercut looks so bad
-local Anims = {"misscenter1", "hitcenter1"}--{"fists_right", "fists_right", "fists_left", "fists_left"}
-
-function SWEP:Pawnch(hit)
+function SWEP:Pawnch()
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
-	--vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
-	--jprint(not(hit) and "false" or "true")
-	--jprint(vm:LookupSequence("hitcenter1"))
-	if hit then
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("hitcenter1"))
-	else
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
-	end
+	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
 	self:UpdateNextIdle()
 end
 
@@ -307,13 +269,13 @@ end
 
 --
 function SWEP:OnDrop()
-	local Pick = ents.Create("ent_jack_gmod_ezpickaxe")
-	Pick:SetPos(self:GetPos())
-	Pick:SetAngles(self:GetAngles())
-	Pick:Spawn()
-	Pick:Activate()
+	local Axe = ents.Create("ent_jack_gmod_ezaxe")
+	Axe:SetPos(self:GetPos())
+	Axe:SetAngles(self:GetAngles())
+	Axe:Spawn()
+	Axe:Activate()
 
-	local Phys = Pick:GetPhysicsObject()
+	local Phys = Axe:GetPhysicsObject()
 
 	if Phys then
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
@@ -423,14 +385,14 @@ function SWEP:DrawHUD()
 	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H = ScrW(), ScrH()
 
-	draw.SimpleTextOutlined("LMB: swing/mine", "Trebuchet24", W * .4, H * .7 + 110, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
-	draw.SimpleTextOutlined("LMB: push", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("LMB: swing", "Trebuchet24", W * .4, H * .7 + 110, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("RMB: push", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("Backspace: drop pick", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
-		draw.SimpleTextOutlined("Mining... "..self:GetResourceType(), "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined("Hacking... ", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
 	end

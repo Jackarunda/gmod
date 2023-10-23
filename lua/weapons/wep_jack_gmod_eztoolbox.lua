@@ -152,7 +152,7 @@ SWEP.WElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["axe"] = {
+	--[[["axe"] = {
 		type = "Model",
 		model = "models/props_forest/axe.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
@@ -165,7 +165,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},
+	},--]]
 	["toolbox"] = {
 		type = "Model",
 		model = "models/weapons/w_models/w_tooljox.mdl",
