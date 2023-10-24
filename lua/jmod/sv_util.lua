@@ -881,7 +881,9 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		end
 
 		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
-		JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), SpawnPos, SpawnAmount * 0.02, 1, 1)
+		if ejectionVector then
+			JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector), SpawnPos, SpawnAmount * 0.02, 1, 1)
+		end
 		timer.Simple(1 * math.ceil(amount/100 * JMod.Config.ResourceEconomy.MaxResourceMult), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
@@ -1144,7 +1146,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 		if (Prog >= 25) and  (not(DepositKey) or not(JMod.NaturalResourceTable[DepositKey]) or not(JMod.NaturalResourceTable[DepositKey].amt)) then
 			ent:SetNW2Float("EZ"..task.."Progress", 0)
 			ent.EZpreviousMiningPos = nil
-			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 1.5)
+			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 2)
 			if JMod.NaturalResourceTable[NearestGoodDeposit] then
 				return JMod.NaturalResourceTable[NearestGoodDeposit].typ .. " nearby"
 			else
@@ -1156,11 +1158,13 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 			if (JMod.NaturalResourceTable[DepositKey].typ == JMod.EZ_RESOURCE_TYPES.DIAMOND) then
 				amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(1, 2))
 			end
-			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 10)), Angle(0, 0, 0), ent:GetUp() * 100, true, 200)
+			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
 			JMod.DepleteNaturalResource(DepositKey, amtToMine)
 			ent:SetNW2Float("EZ"..task.."Progress", 0)
 			ent.EZpreviousMiningPos = nil
-			return "Eureka!"
+			JMod.ResourceEffect(JMod.NaturalResourceTable[DepositKey].typ, pos, nil, 1, 1, 1, 5)
+			util.Decal("EZgroundHole", pos + Vector(0, 0, 10), pos + Vector(0, 0, -10))
+			return nil
 		end
 
 		return nil

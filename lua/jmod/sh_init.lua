@@ -14,6 +14,7 @@ game.AddParticles("particles/gb5_50lb.pcf")
 game.AddDecal("BigScorch", {"decals/big_scorch1", "decals/big_scorch2", "decals/big_scorch3"})
 game.AddDecal("GiantScorch", {"decals/giant_scorch1", "decals/giant_scorch2", "decals/giant_scorch3"})
 game.AddDecal("EZtreeRoots", {"decals/ez_tree_roots"})
+game.AddDecal("EZgroundHole", {"decals/ez_ground_cracks"})
 
 PrecacheParticleSystem("pcf_jack_nuke_ground")
 PrecacheParticleSystem("pcf_jack_nuke_air")

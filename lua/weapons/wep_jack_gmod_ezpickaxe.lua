@@ -177,7 +177,6 @@ function SWEP:Hitscan()
 	--This function calculate the trajectory
 	
 	for i = 0, 170 do
-
 		local tr = util.TraceLine( {
 			start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
 			endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
@@ -185,10 +184,7 @@ function SWEP:Hitscan()
 			mask = MASK_SHOT_HULL
 		} )
 
-		--This if shot the bullets
-
-		if ( tr.Hit ) then
-
+		if (tr.Hit) then
 			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
 			local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 

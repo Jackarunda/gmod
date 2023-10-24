@@ -114,6 +114,8 @@ concommand.Add("jmod_insta_upgrade", function(ply)
 
 	if IsValid(Ent) and Ent.EZupgradable then
 		Ent:Upgrade()
+	elseif IsValid(Ent) and Ent.Growth then
+		Ent.Growth = 100
 	end
 end, nil, "Instantly upgrades upgradable machines you are looking at.")
 
