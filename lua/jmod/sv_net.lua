@@ -152,8 +152,22 @@ net.Receive("JMod_SaveLoadDeposits", function(ln, ply)
 		--print(Operation, EntryID)
 		if string.lower(Operation) == "save" then
 			ply:ConCommand("jmod_deposits_save "..EntryID)
-		elseif string.lower(Operation) == "load" then
+		elseif (string.lower(Operation) == "load") then
 			ply:ConCommand("jmod_deposits_load "..EntryID)
+		elseif string.lower(Operation) == "load_list" then
+			local ListOfOptions = {}
+			local FileContents = file.Read("jmod_resources_"..game.GetMap()..".txt")
+			
+			if FileContents then
+				local MapConfig = util.JSONToTable(FileContents) or {}
+				for k, v in pairs(MapConfig) do
+					table.insert(ListOfOptions, k)
+				end
+			end
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("load_list")
+				net.WriteTable(ListOfOptions)
+			net.Send(ply)
 		elseif string.lower(Operation) == "clear" then
 			JMod.NaturalResourceTable = {}
 			net.Start("JMod_NaturalResources")

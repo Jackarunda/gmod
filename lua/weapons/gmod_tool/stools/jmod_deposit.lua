@@ -202,10 +202,19 @@ function TOOL.BuildCPanel( CPanel )
 		LoadButton:SetSize(100, 30)
 		LoadButton:SetText("LOAD")
 		function LoadButton:DoClick()
-			net.Start("JMod_SaveLoadDeposits")
-				net.WriteString("load")
-				net.WriteString(NameEntry:GetText())
-			net.SendToServer()
+			print("LoadButton pressed")
+			print(NameEntry:GetText())
+			if NameEntry:GetText() then
+				net.Start("JMod_SaveLoadDeposits")
+					net.WriteString("load")
+					net.WriteString(NameEntry:GetText())
+				net.SendToServer()
+			else
+				net.Start("JMod_SaveLoadDeposits")
+					net.WriteString("load_list")
+				net.SendToServer()
+			end
+			--MotherFrame:Close()
 		end
 	end
 	CPanel:AddItem(MenuButton)

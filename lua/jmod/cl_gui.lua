@@ -1399,8 +1399,8 @@ local Yeps = {"Yes", "yep", "Of course", "Leave me alone", ">:)"}
 
 net.Receive("JMod_SaveLoadDeposits", function()
 	local command = net.ReadString()
-	print(command)
-	--if command == "warning" then
+	--print(command)
+	if command == "warning" then
 		local MotherFrame = vgui.Create("DFrame")
 		MotherFrame:SetTitle("Warning")
 		MotherFrame:SetSize(400, 200)
@@ -1424,5 +1424,50 @@ net.Receive("JMod_SaveLoadDeposits", function()
 			net.SendToServer()
 			MotherFrame:Close()
 		end
-	--end
+	elseif command == "load_list" then
+		local Options = net.ReadTable()
+
+		local MotherFrame = vgui.Create("DFrame")
+		MotherFrame:SetSize(400, 600)
+		MotherFrame:SetVisible(true)
+		MotherFrame:SetDraggable(true)
+		MotherFrame:ShowCloseButton(true)
+		MotherFrame:SetTitle("Load_Options")
+		MotherFrame:Center()
+		MotherFrame:MakePopup()
+
+		function MotherFrame:Paint()
+			BlurBackground(self)
+		end	
+
+		local Dropdown = vgui.Create("DPanel", MotherFrame)
+		Dropdown:SetSize(MotherFrame:GetWide(), #Options * 40)
+		local ecks, why = gui.MousePos()
+		local harp, darp = MotherFrame:GetPos()
+		local fack, fock = MotherFrame:GetSize()
+		local floop, florp = Dropdown:GetSize()
+		--Dropdown:SetPos(math.Clamp(ecks - harp, 0, fack - floop), math.Clamp(why - darp, 0, fock - florp))
+		--Dropdown:SetPos(0, 20)
+		Dropdown:Dock(TOP)
+
+		function Dropdown:Paint(w, h)
+			surface.SetDrawColor(70, 70, 70, 220)
+			surface.DrawRect(0, 0, w, h)
+		end
+
+		for k, option in pairs(Options) do
+			local Butt = vgui.Create("DButton", Dropdown)
+			Butt:SetPos(5, k * 40 - 35)
+			Butt:SetSize(floop - 20, 25)
+			Butt:SetText(option)
+
+			function Butt:DoClick()
+				net.Start("JMod_SaveLoadDeposits")
+					net.WriteString("load")
+					net.WriteString(option)
+				net.SendToServer()
+				MotherFrame:Close()
+			end
+		end
+	end
 end)
