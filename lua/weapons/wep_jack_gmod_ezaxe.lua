@@ -67,9 +67,9 @@ SWEP.WElements = {
 }
 
 --
-SWEP.HitDistance		= 35
+SWEP.HitDistance		= 40
 SWEP.HitInclination		= 0.4
-SWEP.HitPushback		= 700
+SWEP.HitPushback		= 1000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
 local HitSoundWorld = Sound( "Metal.ImpactHard" )
@@ -173,7 +173,7 @@ function SWEP:Hitscan()
 				PickDam:SetDamagePosition(StrikePos)
 				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
 				PickDam:SetDamage(math.random(35, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
+				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 1000)
 				tr.Entity:TakeDamageInfo(PickDam)
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)

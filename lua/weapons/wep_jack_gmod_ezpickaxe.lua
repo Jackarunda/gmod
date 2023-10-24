@@ -216,6 +216,18 @@ function SWEP:Hitscan()
 					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
 
 					if Message then
+						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5)
+						if (math.random(1, 100) == 1) and (tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND) then
+							timer.Simple(math.Rand(1, 2), function() 
+								local npc = ents.Create("npc_antlion")
+								npc:SetPos(tr.HitPos + Vector(0, 0, 30))
+								npc:SetAngles(Angle(0, math.random(0, 360), 0))
+								npc:SetKeyValue("startburrowed","1")
+								npc:Spawn()
+								npc:Activate()
+								npc:Fire("unburrow", "", 0)
+							end)
+						end
 						self:Msg(Message)
 						self:SetTaskProgress(0)
 						self:SetResourceType("")

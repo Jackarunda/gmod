@@ -27,7 +27,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		JMod.Sploom(self.EZowner, self:GetPos(), math.random(10, 20))
+		JMod.Sploom(self.EZowner, self:GetPos(), math.random(10, 20), 254)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local plooie = EffectData()
 		plooie:SetOrigin(SelfPos)
@@ -40,7 +40,8 @@ if SERVER then
 		local OnGround = util.QuickTrace(SelfPos + Vector(0, 0, 5), Vector(0, 0, -15), {self}).Hit
 
 		local Spred = Vector(0, 0, 0)
-		JMod.FragSplosion(self, SelfPos + Vector(0, 0, 20), 3000, 80, 5000, self.EZowner or game.GetWorld())
+		--              shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
+		JMod.FragSplosion(self, SelfPos + Vector(0, 0, 10), 3000, 80, 2500, self.EZowner or game.GetWorld())
 		self:Remove()
 	end
 elseif CLIENT then
