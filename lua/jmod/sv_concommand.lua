@@ -63,6 +63,8 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 end, nil, "Removes JMod radiation and from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
+	if not(JMod.IsAdmin(ply)) then return end
+	JMod.DebugArrangeEveryone(ply)
 	--JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.PROPELLANT, Vector(100, 0, -100), Vector(-100, 0, -100), 1, 1, 1, 0)
 	--local Tr=ply:GetEyeTrace()
 	--util.Decal("GiantScorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
@@ -93,11 +95,13 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	Feff:SetScale(1)
 	util.Effect("eff_jack_gmod_ezfalloutdust", Feff, true, false)
 	--]]
+	--[[
 	net.Start("JMod_VisionBlur")
 	net.WriteFloat(75)
 	net.WriteFloat(2000)
 	net.WriteBit(true)
 	net.Send(ply)
+	--]]
 end)
 
 concommand.Add("jmod_debug_killme", function(ply)
