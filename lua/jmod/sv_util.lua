@@ -1329,6 +1329,25 @@ function JMod.GetPlayerStrength(ply)
 	end
 end
 
+function JMod.DebugArrangeEveryone(ply)
+	local Origin, Dist, Ang = ply:GetPos(), 50, Angle(0, 0, 0)
+	local Beings = player.GetAll()
+	table.Add(Beings, ents.FindByClass("npc_*"))
+	for k, playa in pairs(Beings) do
+		if (playa ~= ply) then
+			local Target = Origin + Ang:Forward() * Dist
+			local Tr = util.QuickTrace(Target + Vector(0, 0, 300), Vector(0, 0, -600), playa)
+			playa:SetPos(Tr.HitPos)
+			Ang:RotateAroundAxis(vector_up, 25)
+			Dist = Dist + 120
+		end
+	end
+	ply:SetPos(Origin + Vector(0, 0, 200))
+	ply:SetMoveType(MOVETYPE_NOCLIP)
+	ply:SetHealth(999)
+	RunConsoleCommand("r_cleardecals")
+end
+
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
 	if ent.block_pickup then
 		JMod.Hint(ply, "blockphysgun")
