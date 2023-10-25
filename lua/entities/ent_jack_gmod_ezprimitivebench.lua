@@ -40,7 +40,7 @@ if(SERVER)then
 	function ENT:UpdateConfig()
 		self.Craftables={}
 		for name,info in pairs(JMod.Config.Craftables)do
-			if(info.craftingType=="workbench")then
+			if (istable(info.craftingType) and table.HasValue(info.craftingType,"craftingtable")) or (info.craftingType=="craftingtable")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy=table.FullCopy(info)

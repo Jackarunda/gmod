@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.3
+			Version = 44.4
 		},
 		General = {
 			Hints = true,
@@ -1735,6 +1735,40 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Tools",
 				craftingType = "workbench",
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."
+			},
+			["EZ Primitive Toolbox"] = {
+				results = "ent_jack_gmod_eztoolbox",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 80,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 20,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
+				},
+				category = "Tools",
+				craftingType = "craftingtable",
+				description = "Build, Upgrade, Salvage. All you need to build the big machines."
+			},
+			["EZ Pick Axe"] = {
+				results = "ent_jack_gmod_ezpickaxe",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 45,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30
+				},
+				category = "Tools",
+				craftingType = {"craftingtable", "workbench"},
+				description = "I am a dwarf and I'm digging in a hole"
+			},
+			["EZ Axe"] = {
+				results = "ent_jack_gmod_ezaxe",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 35,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25
+				},
+				category = "Tools",
+				craftingType = {"craftingtable", "workbench"},
+				description = "I must find a little woodsman, in me!"
 			},
 			["EZ Detpack"] = {
 				results = "ent_jack_gmod_ezdetpack",

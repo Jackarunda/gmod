@@ -217,7 +217,7 @@ function SWEP:Hitscan()
 
 					if Message then
 						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5)
-						if (math.random(1, 100) == 1) and (tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND) then
+						if (math.random(1, 1000) == 1) and ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
 							timer.Simple(math.Rand(1, 2), function() 
 								local npc = ents.Create("npc_antlion")
 								npc:SetPos(tr.HitPos + Vector(0, 0, 30))

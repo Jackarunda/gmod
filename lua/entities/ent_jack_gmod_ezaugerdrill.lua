@@ -39,6 +39,7 @@ if(SERVER)then
 		self.NextResourceThinkTime = 0
 		self.NextEffectThinkTime = 0
 		self.NextOSHAthinkTime = 0
+		self.NextHoleThinkTime = 0
 		timer.Simple(0.1, function()
 			self:TryPlace()
 		end)
@@ -216,6 +217,10 @@ if(SERVER)then
 				Dert:SetOrigin(SelfPos - Up * 100 - Right * 0 - Forward * 9)
 				Dert:SetNormal(Up)
 				util.Effect("eff_jack_gmod_augerdig", Dert, true, true)
+				if (self.NextHoleThinkTime < Time) then
+					self.NextHoleThinkTime = Time + 5
+					util.Decal("EZgroundHole", SelfPos, SelfPos - Up * 120 - Right * 0 - Forward * 9)
+				end
 			end
 		end
 
@@ -240,9 +245,9 @@ if(SERVER)then
 					if IsValid(ent) and IsValid(ent:GetPhysicsObject()) then
 						local Dmg = DamageInfo()
 						Dmg:SetDamagePosition(BasePos)
-						Dmg:SetDamageForce(Vector(0, 0, 10000))
+						Dmg:SetDamageForce(Vector(math.random(-1000, 1000), math.random(-1000, 1000), 0))
 						Dmg:SetDamage(10)
-						Dmg:SetDamageType(DMG_CRUSH)
+						Dmg:SetDamageType(DMG_GENERIC)
 						Dmg:SetInflictor(ent)
 						Dmg:SetAttacker(JMod.GetEZowner(self))
 						ent:TakeDamageInfo(Dmg)
@@ -261,6 +266,24 @@ if(SERVER)then
 					})
 				end
 				self:EmitSound("Boulder.ImpactHard")
+			end
+			if math.random(0, 100) == 1 then
+				local Rock = ents.Create("prop_physics")
+				Rock:SetModel("models/props_junk/rock001a.mdl")
+				Rock:SetPos(SelfPos + Up * -90 * HullTr.Fraction)
+				Rock:Spawn()
+				Rock:Activate()
+
+				timer.Simple(0, function()
+					if IsValid(Rock) and IsValid(Rock:GetPhysicsObject()) then 
+						Rock:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 1200) + VectorRand() * 10000)-- Yeet
+					end
+				end)
+				timer.Simple(5, function() 
+					if IsValid(Rock) then
+						SafeRemoveEntity(Rock)
+					end
+				end)
 			end
 		end
 

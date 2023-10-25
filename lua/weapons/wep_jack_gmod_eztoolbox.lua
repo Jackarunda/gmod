@@ -229,7 +229,7 @@ function SWEP:Initialize()
 		self.Craftables = {}
 
 		for name, info in pairs(JMod.Config.Craftables) do
-			if info.craftingType == "toolbox" then
+			if (istable(info.craftingType) and table.HasValue(info.craftingType,"toolbox")) or (info.craftingType=="toolbox")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy = table.FullCopy(info)
