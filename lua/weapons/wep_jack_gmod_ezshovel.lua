@@ -1,23 +1,23 @@
-﻿-- Jackarunda 2021 - AdventureBoots 2023
+﻿-- AdventureBoots 2023
 AddCSLuaFile()
-SWEP.PrintName = "EZ Axe"
+SWEP.PrintName = "EZ Shovel"
 SWEP.Author = "Jackarunda"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezaxe")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezpickaxe")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
-SWEP.ViewModel = "models/weapons/HL2meleepack/v_axe.mdl"
-SWEP.WorldModel = "models/props_forest/axe.mdl"
-SWEP.BodyHolsterModel = "models/props_forest/axe.mdl"
+SWEP.ViewModel = "models/weapons/hl2meleepack/v_shovel.mdl"
+SWEP.WorldModel = "models/props_junk/shovel01a.mdl"
+SWEP.BodyHolsterModel = "models/props_junk/shovel01a.mdl"
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(-93, -90, 0)
-SWEP.BodyHolsterAngL = Angle(-93, -90, 0)
-SWEP.BodyHolsterPos = Vector(3, -10, -3)
-SWEP.BodyHolsterPosL = Vector(4, -10, 3)
-SWEP.BodyHolsterScale = 1
+SWEP.BodyHolsterAng = Angle(-93, 0, 10)
+SWEP.BodyHolsterAngL = Angle(-93, 0, 0)
+SWEP.BodyHolsterPos = Vector(3, -24, -3)
+SWEP.BodyHolsterPosL = Vector(4, -24, 3)
+SWEP.BodyHolsterScale = .75
 SWEP.ViewModelFOV = 52
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -33,50 +33,78 @@ SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
 
 SWEP.VElements = {
-	["axe"] = {
+	--[[["pickaxe"] = {
 		type = "Model",
-		model = "models/props_forest/axe.mdl",
-		bone = "ValveBiped.Bip01_L_Hand",
+		model = "models/props_mining/pickaxe01.mdl",
+		bone = "ValveBiped.Bip01_R_Hand",
 		rel = "",
-		pos = Vector(3, 2, 10),
-		angle = Angle(0, 0, -85),
-		size = Vector(1, 1, 1),
+		pos = Vector(3, 1.5, 6),
+		angle = Angle(0, 180, 180),
+		size = Vector(.5, .5, .5),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	},--]]
+	--[[["shovel"] = {
+		type = "Model",
+		model = "models/props_junk/shovel01a.mdl",
+		bone = "ValveBiped.Bip01_L_Hand",
+		rel = "",
+		pos = Vector(3.5, 1, 6),
+		angle = Angle(0, 180, 180),
+		size = Vector(.5, .5, .5),
+		color = Color(255, 255, 255, 255),
+		surpresslightning = false,
+		material = "",
+		skin = 0,
+		bodygroup = {}
+	}--]]
 }
 
 SWEP.WElements = {
-	["axe"] = {
+	["pickaxe"] = {
 		type = "Model",
-		model = "models/props_forest/axe.mdl",
+		model = "models/props_mining/pickaxe01.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
 		rel = "",
-		pos = Vector(3, 1, -8),
-		angle = Angle(0, -10, 90),
+		pos = Vector(3.4, .4, 8),
+		angle = Angle(180, -10, 6),
+		size = Vector(0.75, 0.75, 0.75),
+		color = Color(255, 255, 255, 255),
+		surpresslightning = false,
+		material = "",
+		skin = 0,
+		bodygroup = {}
+	},
+	--[[["axe"] = {
+		type = "Model",
+		model = "models/props_forest/axe.mdl",
+		bone = "ValveBiped.Bip01_Spine4",
+		rel = "",
+		pos = Vector(-7.792, 2, 4),
+		angle = Angle(118.052, 87.662, 180),
 		size = Vector(1, 1, 1),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	},--]]
 }
 
 --
-SWEP.HitDistance		= 40
+SWEP.HitDistance		= 60
 SWEP.HitInclination		= 0.4
-SWEP.HitPushback		= 1000
+SWEP.HitPushback		= 2000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
-local HitSoundWorld = Sound( "Metal.ImpactHard" )
+local HitSoundWorld = Sound( "Canister.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
-SWEP.DoorBreachPower = 2
+SWEP.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.SAND, JMod.EZ_RESOURCE_TYPES.CLAY}
 
 function SWEP:Initialize()
 	self:SetHoldType("melee2")
@@ -84,6 +112,7 @@ function SWEP:Initialize()
 	self.NextIdle = 0
 	self:Deploy()
 	self:SetTaskProgress(0)
+	self:SetResourceType("")
 	self.TaskEntity = nil
 	self.NextTaskProgress = 0
 	self.CurTask = nil
@@ -108,7 +137,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		Downness = Lerp(FT * 2, Downness, 5)
+		Downness = Lerp(FT * 2, Downness, 0)
 	else
 		Downness = Lerp(FT * 2, Downness, -2)
 	end
@@ -120,6 +149,7 @@ end--]]
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
+	self:NetworkVar("String", 0, "ResourceType")
 end
 
 function SWEP:UpdateNextIdle()
@@ -127,9 +157,10 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
+
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:SetNextPrimaryFire(CurTime() + 0.9)
+	self:SetNextPrimaryFire(CurTime() + 1.2)
 	self:SetNextSecondaryFire(CurTime() + .8)
 	local Hit = self:Hitscan()
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
@@ -138,14 +169,14 @@ function SWEP:PrimaryAttack()
 			self:EmitSound( SwingSound )
 		end
 	end)
-	self:Pawnch()
+	self:Pawnch(Hit)
 end
 
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
 	local HitSomething = false 
-
+	
 	for i = 0, 170 do
 		timer.Simple(i * (0.4/170), function() 
 			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
@@ -157,73 +188,57 @@ function SWEP:Hitscan()
 				mask = MASK_SHOT_HULL
 			} )
 
-			--This if shot the bullets
-
-			if ( tr.Hit ) then
-				HitSomething = true
-
+			if (tr.Hit) then
 				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
 				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+				HitSomething = true 
 
 				local PickDam = DamageInfo()
 				PickDam:SetAttacker(self.Owner)
 				PickDam:SetInflictor(self)
 				PickDam:SetDamagePosition(StrikePos)
-				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
-				PickDam:SetDamage(math.random(35, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 1000)
+				PickDam:SetDamageType(DMG_GENERIC)
+				PickDam:SetDamage(math.random(30, 50))
+				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
 				tr.Entity:TakeDamageInfo(PickDam)
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
-				local effectdata = EffectData()
-				effectdata:SetOrigin( vPoint )
-				util.Effect( "BloodImpact", effectdata )--]]
-
-				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
 
 				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
-				elseif JMod.IsDoor(tr.Entity) then
-					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
+				elseif tr.Entity:IsWorld() then
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+
+					if Message then
+						self:Msg(Message)
+						self:SetTaskProgress(0)
+						self:SetResourceType("")
+					else
+						sound.Play("Dirt.Impact", tr.HitPos + VectorRand(), 75, math.random(50, 70))
+						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
+					end
+
+					if (math.random(1, 1000) == 1) then 
+						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 
+						if ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
+							timer.Simple(math.Rand(1, 2), function() 
+								local npc = ents.Create("npc_antlion")
+								npc:SetPos(tr.HitPos + Vector(0, 0, 30))
+								npc:SetAngles(Angle(0, math.random(0, 360), 0))
+								npc:SetKeyValue("startburrowed","1")
+								npc:Spawn()
+								npc:Activate()
+								npc:Fire("unburrow", "", 0)
+							end)
+						end
+					end
 				else
-					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
+					sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
-				return true
 			end
 		end)
-	end
-end
-
-function SWEP:TryBustDoor(ent, dmg, pos)
-	if not self.DoorBreachPower then return end
-	self.NextDoorShot = self.NextDoorShot or 0
-	if self.NextDoorShot > CurTime() then return end
-	if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not JMod.IsDoor(ent) then return end
-	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
-	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
-	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
-	-- Magic number: 119.506 is the size of door01_left
-	-- The bigger the door is, the harder it is to bust
-	local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
-	JMod.Hint(self.Owner, "shotgun breach")
-	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
-	local Amt = dmg * self.DoorBreachPower * WorkSpread
-	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
-	if ent.ArcCW_BustDamage > threshold then
-		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-		ent.ArcCW_BustDamage = nil
-
-		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
-		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-			if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
-				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-				otherDoor.ArcCW_BustDamage = nil
-				break
-			end
-		end
 	end
 end
 
@@ -231,7 +246,7 @@ function SWEP:Msg(msg)
 	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
 end
 
-function SWEP:Pawnch()
+function SWEP:Pawnch(hit)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
@@ -241,7 +256,6 @@ end
 function SWEP:Reload()
 	--
 end
-
 
 function SWEP:WhomIlookinAt()
 	local Filter = {self.Owner}
@@ -286,13 +300,13 @@ end
 
 --
 function SWEP:OnDrop()
-	local Axe = ents.Create("ent_jack_gmod_ezaxe")
-	Axe:SetPos(self:GetPos())
-	Axe:SetAngles(self:GetAngles())
-	Axe:Spawn()
-	Axe:Activate()
+	local Pick = ents.Create("ent_jack_gmod_ezshovel")
+	Pick:SetPos(self:GetPos())
+	Pick:SetAngles(self:GetAngles())
+	Pick:Spawn()
+	Pick:Activate()
 
-	local Phys = Axe:GetPhysicsObject()
+	local Phys = Pick:GetPhysicsObject()
 
 	if Phys then
 		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
@@ -402,14 +416,14 @@ function SWEP:DrawHUD()
 	if Ply:ShouldDrawLocalPlayer() then return end
 	local W, H = ScrW(), ScrH()
 
-	draw.SimpleTextOutlined("LMB: swing", "Trebuchet24", W * .4, H * .7 + 110, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
-	draw.SimpleTextOutlined("RMB: push", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
-	draw.SimpleTextOutlined("Backspace: drop axe", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("LMB: swing/mine", "Trebuchet24", W * .4, H * .7 + 110, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("LMB: push", "Trebuchet24", W * .4, H * .7 + 130, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
+	draw.SimpleTextOutlined("Backspace: drop pick", "Trebuchet24", W * .4, H * .7 + 150, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	
 	local Prog = self:GetTaskProgress()
 
 	if Prog > 0 then
-		draw.SimpleTextOutlined("Hacking... ", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
+		draw.SimpleTextOutlined("Digging... "..self:GetResourceType(), "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
 	end
