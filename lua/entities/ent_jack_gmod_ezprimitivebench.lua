@@ -153,6 +153,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time, OreTyp = self:GetState(), CurTime(), self:GetOreType()
+		local FirePos = self:GetPos() + self:GetUp() * -8 + self:GetRight() * 50 + self:GetForward() * -8
 
 		if (State == STATE_PROCESSING) then
 			if (self.NextSmeltThink < Time) then
@@ -160,7 +161,7 @@ if(SERVER)then
 				if (self:WaterLevel() > 0) then 
 					self:TurnOff() 
 					local Foof = EffectData()
-					Foof:SetOrigin(self:GetPos())
+					Foof:SetOrigin(FirePos)
 					Foof:SetNormal(Vector(0, 0, 1))
 					Foof:SetScale(10)
 					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
@@ -188,7 +189,7 @@ if(SERVER)then
 			if (self.NextEffThink < Time) then
 				self.NextEffThink = Time + .1
 				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos() + self:GetUp() * -8 + self:GetRight() * 50 + self:GetForward() * -8)
+				Eff:SetOrigin(FirePos)
 				Eff:SetNormal(self:GetUp())
 				Eff:SetScale(.05)
 				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
@@ -196,11 +197,11 @@ if(SERVER)then
 			if (self.NextEnvThink < Time) then
 				self.NextEnvThink = Time + 5
 
-				local Tr = util.QuickTrace(self:GetPos() + self:GetUp() * -8 + self:GetRight() * 50 + self:GetForward() * -8, Vector(0, 0, 9e9), self)
+				local Tr = util.QuickTrace(FirePos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						Gas:SetPos(Tr.HitPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
@@ -222,7 +223,7 @@ if(SERVER)then
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
 				if (self:GetState() == STATE_PROCESSING) and Held and (Ent:GetClass() == "prop_physics") then
-					timer.Simple(0, function()
+					timer.Simple(1, function()
 						if not(IsValid(self) or IsValid(Ent)) then return end
 						local Yield, Message = JMod.GetSalvageYield(Ent)
 						PrintTable(Yield)

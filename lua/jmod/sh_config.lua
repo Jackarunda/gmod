@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.4
+			Version = 44.45
 		},
 		General = {
 			Hints = true,
@@ -2428,7 +2428,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 50
 				},
 				category = "Resources",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Propellant for guns and other things."
 			},
 			["EZ Coolant"] = {
@@ -2449,7 +2449,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PAPER] = 25
 				},
 				category = "Resources",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Tasty food! 99% Plastic Free!"
 			},
 			["EZ SLAM"] = {
