@@ -113,8 +113,10 @@ if SERVER then
 		local Frac = self:GetResource() / self.MaxResource
 		self:GetPhysicsObject():SetMass(100 + Frac * 300)
 		self:GetPhysicsObject():Wake()
-		WireLib.TriggerOutput(self, "Type", self:GetResourceType())
-		WireLib.TriggerOutput(self, "Amount Left", self:GetResource())
+		if (WireLib) then
+			WireLib.TriggerOutput(self, "Type", self:GetResourceType())
+			WireLib.TriggerOutput(self, "Amount Left", self:GetResource())
+		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
