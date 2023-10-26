@@ -216,8 +216,17 @@ function SWEP:Hitscan()
 					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
 
 					if Message then
-						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5)
-						if (math.random(1, 1000) == 1) and ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
+						self:Msg(Message)
+						self:SetTaskProgress(0)
+						self:SetResourceType("")
+					else
+						sound.Play("snds_jack_gmod/ez_tools/hit.wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
+						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
+					end
+
+					if (math.random(1, 1000) == 1) then 
+						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 
+						if ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
 							timer.Simple(math.Rand(1, 2), function() 
 								local npc = ents.Create("npc_antlion")
 								npc:SetPos(tr.HitPos + Vector(0, 0, 30))
@@ -228,12 +237,6 @@ function SWEP:Hitscan()
 								npc:Fire("unburrow", "", 0)
 							end)
 						end
-						self:Msg(Message)
-						self:SetTaskProgress(0)
-						self:SetResourceType("")
-					else
-						sound.Play("snds_jack_gmod/ez_tools/hit.wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
-						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 					end
 				else
 					sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)

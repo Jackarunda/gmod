@@ -118,7 +118,6 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
-
 		self:EmitSound("snd_jack_littleignite.wav")
 	end
 
@@ -153,10 +152,6 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
-	function ENT:SpawnEffect(pos)
-		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
-	end
-
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == self:GetOreType() and accepted >= 1 then
 			self:TurnOn(self.EZowner)
@@ -177,13 +172,13 @@ if(SERVER)then
 		timer.Simple(0.3, function()
 			if IsValid(self) then
 				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
-				if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 75) and math.random(0, 100) then
+				if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 75) and math.random(0, 1000) then
 					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 				end
 			end
 		end)
 		self:SetProgress(0)
-		self:SpawnEffect(SelfPos)
+		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 		if self:GetOre() <= 0 then
 			self:SetOreType("generic")
 		end
@@ -216,7 +211,7 @@ if(SERVER)then
 				self:ConsumeElectricity(1.5 * JMod.EZ_GRADE_BUFFS[Grade] ^ 1.5)
 
 				if self:GetOre() <= 0 then
-					if (Time - self.LastOreTime) >=5 then self:TurnOff() return end
+					if (Time - self.LastOreTime) >= 5 then self:TurnOff() return end
 				else
 					self.LastOreTime = Time
 					local OreConsumeAmt = GradeBuff ^ 2

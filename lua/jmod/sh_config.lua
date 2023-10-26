@@ -1379,7 +1379,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.LEAD] = 20
 				},
 				category = "Resources",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Ancient black powder ammo for the similarly ancient guns."
 			},
 			["EZ Arrows"] = {
@@ -1400,7 +1400,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Cumbersome musket that comes with a bayonet."
 			},
 			["EZ Flintlock Blunderbuss"] = {
@@ -1411,18 +1411,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Prehistoric shotgun that you can delete enemies with! (unless they have armor)"
 			},
 			["EZ Cap and Ball Revolver"] = {
 				results = JMod.WeaponTable["Cap and Ball Revolver"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 10,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 5
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "A very inaccurate, outdated revolver. Fires 6 shots."
 			},
 			["EZ Break-Action Shotgun"] = {

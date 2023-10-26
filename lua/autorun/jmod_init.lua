@@ -331,6 +331,46 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
+local PrimitiveBenchReqs = {["wood"] = 150, ["concrete"] = 50, ["metal"] = 20}
+
+local Handcraft = function(ply, cmd, args)
+	local WeHaveNuff = false
+	local LocalResources = {["wood"] = {amt = 0, props = {}}, ["concrete"] = {amt = 0, props = {}}, ["metal"] = {amt = 0, props = {}}}
+	for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 150)) do
+		if IsValid(ent) and (ent:GetClass() == "prop_physics") then
+			local Phys = ent:GetPhysicsObject()
+			if IsValid(Phys) then
+				local Mat = Phys:GetMaterial()
+				if PrimitiveBenchReqs[Mat] and (LocalResources[Mat].amt < PrimitiveBenchReqs[Mat]) then
+					LocalResources[Mat].amt = LocalResources[Mat].amt + Phys:GetMass()
+					table.insert(LocalResources[Mat].props, ent)
+				end
+			end
+		end
+	end
+	local NuffWood, NuffStone, NuffMetal = false, false, false
+	if LocalResources["wood"].amt >= PrimitiveBenchReqs["wood"] then NuffWood = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more wood") end
+	if LocalResources["concrete"].amt >= PrimitiveBenchReqs["concrete"] then NuffStone = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more stone") end
+	if LocalResources["metal"].amt >= PrimitiveBenchReqs["metal"] then NuffMetal = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more metal") end
+	WeHaveNuff = (NuffWood and NuffStone and NuffMetal)
+	jprint("We have enough", WeHaveNuff)
+	if WeHaveNuff then
+		timer.Simple(0.5, function()
+			local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
+			local Bench = ents.Create("ent_jack_gmod_ezprimitivebench")
+			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 80))
+			Bench:SetAngles(-ply:GetAngles())
+			Bench:Spawn()
+			Bench:Activate()
+		end)
+		for mat, tbl in pairs(LocalResources) do
+			for _, ent in ipairs(tbl.props) do
+				SafeRemoveEntity(ent)
+			end
+		end
+	end
+end
+
 -- This needs to be here I guess, probably due to load order
 JMod.EZ_CONCOMMANDS = {
 	{name = "inv", func = JMod.EZ_Open_Inventory, helpTxt = "Opens your EZ inventory to manage your armour.", noShow = true},
@@ -338,7 +378,8 @@ JMod.EZ_CONCOMMANDS = {
 	{name = "launch", func = JMod.EZ_WeaponLaunch, helpTxt = "Fires any active missiles you own."},
 	{name = "trigger", func = JMod.EZ_Remote_Trigger,  helpTxt = "Triggers any EZ bombs/mini-nades you have armed."},
 	{name = "scrounge", func = JMod.EZ_ScroungeArea, helpTxt = "Scrounges area for useful props to salvage."},
-	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
+	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true},
+	{name = "handcraft", func = Handcraft, helpTxt = "Construct crafting table from scrap."}
 }
 
 if SERVER then
