@@ -18,7 +18,7 @@ SWEP.BodyHolsterAngL = Angle(-93, -90, 0)
 SWEP.BodyHolsterPos = Vector(3, -10, -3)
 SWEP.BodyHolsterPosL = Vector(4, -10, 3)
 SWEP.BodyHolsterScale = 1
-SWEP.ViewModelFOV = 52
+SWEP.ViewModelFOV = 60
 SWEP.Slot = 0
 SWEP.SlotPos = 5
 SWEP.InstantPickup = true -- Fort Fights compatibility
@@ -69,7 +69,7 @@ SWEP.WElements = {
 --
 SWEP.HitDistance		= 40
 SWEP.HitInclination		= 0.4
-SWEP.HitPushback		= 1000
+SWEP.HitPushback		= 2000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
 local HitSoundWorld = Sound( "Metal.ImpactHard" )
@@ -168,10 +168,10 @@ function SWEP:Hitscan()
 				local PickDam = DamageInfo()
 				PickDam:SetAttacker(self.Owner)
 				PickDam:SetInflictor(self)
-				PickDam:SetDamagePosition(StrikePos)
+				PickDam:SetDamagePosition(tr.HitPos)
 				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
 				PickDam:SetDamage(math.random(35, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 1000)
+				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
 				tr.Entity:TakeDamageInfo(PickDam)
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)

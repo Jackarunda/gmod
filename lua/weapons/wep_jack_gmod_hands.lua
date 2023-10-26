@@ -326,11 +326,20 @@ function SWEP:PrimaryAttack()
 			local PhysObj = self.CarryEnt:GetPhysicsObject()
 			self:SetNextPrimaryFire(CurTime() + .35)
 
-			if IsValid(PhysObj) then 
+			if IsValid(PhysObj) then
 				if (PhysObj:GetMass() > 35) then
 					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
 					return
 				end
+				local CraftingTableNear = false
+				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezprimitivebench")) do
+					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
+				end
+				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezworkbench")) do
+					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
+				end
+				if not(CraftingTableNear) then self.Owner:PrintMessage(HUD_PRINTCENTER, "You need to be closer to a craftingtable or workbench") return end
+
 				Pos = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * (self.CarryDist+5), {self.Owner}).HitPos
 				local Task = (Alt and "loosen") or "salvage"
 				local Message = JMod.EZprogressTask(self.CarryEnt, Pos, self.Owner, Task)
@@ -453,7 +462,7 @@ end
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
 	
-	if !(self:GetFists()) then--pick up to inv
+	if not(self:GetFists()) then--pick up to inv
 		if self:GetCarrying() and IsValid(self:GetCarrying()) then
 			local Tar=self:GetCarrying()
 			local ply=self.Owner
