@@ -331,11 +331,11 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
-local PrimitiveBenchReqs = {["wood"] = 150, ["concrete"] = 50, ["metal"] = 20}
+local PrimitiveBenchReqs = {["wood"] = 50, ["boulder"] = 20, ["metal"] = 10}
 
 local Handcraft = function(ply, cmd, args)
 	local WeHaveNuff = false
-	local LocalResources = {["wood"] = {amt = 0, props = {}}, ["concrete"] = {amt = 0, props = {}}, ["metal"] = {amt = 0, props = {}}}
+	local LocalResources = {["wood"] = {amt = 0, props = {}}, ["boulder"] = {amt = 0, props = {}}, ["metal"] = {amt = 0, props = {}}}
 	for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 150)) do
 		if IsValid(ent) and (ent:GetClass() == "prop_physics") then
 			local Phys = ent:GetPhysicsObject()
@@ -349,11 +349,11 @@ local Handcraft = function(ply, cmd, args)
 		end
 	end
 	local NuffWood, NuffStone, NuffMetal = false, false, false
-	if LocalResources["wood"].amt >= PrimitiveBenchReqs["wood"] then NuffWood = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more wood") end
-	if LocalResources["concrete"].amt >= PrimitiveBenchReqs["concrete"] then NuffStone = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more stone") end
-	if LocalResources["metal"].amt >= PrimitiveBenchReqs["metal"] then NuffMetal = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more metal") end
+	if LocalResources["wood"].amt >= PrimitiveBenchReqs["wood"] then NuffWood = true else ply:PrintMessage(HUD_PRINTCENTER, "You need "..tostring(PrimitiveBenchReqs["wood"] - LocalResources["wood"].amt ).." more wood") end
+	if LocalResources["boulder"].amt >= PrimitiveBenchReqs["boulder"] then NuffStone = true else ply:PrintMessage(HUD_PRINTCENTER, "You need "..tostring(PrimitiveBenchReqs["concrete"] - LocalResources["concrete"].amt ).." more stone") end
+	if LocalResources["metal"].amt >= PrimitiveBenchReqs["metal"] then NuffMetal = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more "..tostring(PrimitiveBenchReqs["metal"] - LocalResources["metal"].amt ).." metal") end
 	WeHaveNuff = (NuffWood and NuffStone and NuffMetal)
-	jprint("We have enough", WeHaveNuff)
+	--jprint("We have enough", WeHaveNuff)
 	if WeHaveNuff then
 		timer.Simple(0.5, function()
 			local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)

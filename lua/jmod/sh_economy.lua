@@ -681,6 +681,19 @@ local SpecializedSalvagingTable = {
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .7,
 			}
+		},
+		{
+			substrings = {"metalbucket"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .6,
+			}
+		},
+		{
+			substrings = {"sawblade"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .7,
+				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = .2,
+			}
 		}
 	}
 }
@@ -1211,6 +1224,7 @@ if SERVER then
 			"models/props_junk/PopCan01a.mdl",
 			"models/props_junk/PopCan01a.mdl",
 			"models/props_interiors/furniture_chair01a.mdl",
+			"models/nova/chair_wood01.mdl",
 			"models/props_junk/cardboard_box004a.mdl",
 			"models/props_c17/metalpot002a.mdl",
 			"models/props_debris/wood_chunk06a.mdl",
@@ -1235,14 +1249,19 @@ if SERVER then
 			"models/props_junk/shoe001a.mdl",
 			"models/props_junk/terracotta01.mdl",
 			"models/props_junk/trafficcone001a.mdl",
-			"models/props_junk/plasticcrate01a.mdl"
+			"models/props_junk/plasticcrate01a.mdl",
+			"models/props_junk/metalbucket02a.mdl",
+			"models/props_junk/metalbucket01a.mdl"
 		},
 		["rural"] = {
 			"models/jmod/resources/rock05a.mdl",
 			"models/jmod/resources/rock05a.mdl",
 			"ent_jack_gmod_ezwheatseed",
+			"ent_jack_gmod_ezacorn",
+			"ent_jack_gmod_ezacorn",
 			"models/props_foliage/driftwood_03a.mdl",
 			"models/props_foliage/driftwood_03a.mdl",
+			"models/props_debris/wood_chunk06a.mdl",
 			"models/props_junk/watermelon01.mdl",
 			"models/props_junk/rock001a.mdl",
 			"models/props_junk/rock001a.mdl"
