@@ -170,7 +170,6 @@ function SWEP:PrimaryAttack()
 		end
 	end)
 	self:Pawnch(Hit)
-	JMod.Hint(self.Owner, "prospecting")
 end
 
 function SWEP:Hitscan()
@@ -241,6 +240,7 @@ function SWEP:Hitscan()
 					end
 				else
 					sound.Play("Canister.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
+					JMod.Hint(self.Owner, "prospecting")
 				end
 			end)
 
