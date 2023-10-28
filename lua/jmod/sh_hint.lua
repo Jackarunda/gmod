@@ -290,7 +290,7 @@ JMod.Hints = {
 	["dementia"] = {
 		LangKey = "hint jack forgot these hints",
 		RepeatCount = 999
-	}
+	},
 	["toggle"] = {
 		LangKey = "hint toggle"
 	},
@@ -759,7 +759,7 @@ JMod.Hints = {
 	["wep_jack_gmod_crossbow"] = {
 		LangKey = "hint wep_jack_gmod_crossbow",
 		RepeatCount = 5
-	}
+	},
 	-- Tools
 	["prospecting"] = {
 		LangKey = "hint prospecting",
