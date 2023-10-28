@@ -272,6 +272,25 @@ JMod.Hints = {
 		LangKey = "hint ent_jack_gmod_eznade_timed"
 	},
 	-- Misc. Mechanics
+	["hands grab"] = {
+		LangKey = "hint hands grab",
+		Followup = "hands drag"
+	},
+	["hands drag"] = {
+		LangKey = "hint hands drag",
+		Followup = "hands inv"
+	},
+	["hands inv"] = {
+		LangKey = "hint hands inv",
+		Followup = "hands salvage"
+	},
+	["hands salvage"] = {
+		LangKey = "hint hands salvage"
+	},
+	["dementia"] = {
+		LangKey = "hint jack forgot these hints",
+		RepeatCount = 999
+	}
 	["toggle"] = {
 		LangKey = "hint toggle"
 	},
@@ -739,6 +758,11 @@ JMod.Hints = {
 	},
 	["wep_jack_gmod_crossbow"] = {
 		LangKey = "hint wep_jack_gmod_crossbow",
+		RepeatCount = 5
+	}
+	-- Tools
+	["prospecting"] = {
+		LangKey = "hint prospecting",
 		RepeatCount = 5
 	}
 }

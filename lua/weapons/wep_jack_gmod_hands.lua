@@ -141,7 +141,7 @@ function SWEP:SecondaryAttack()
 	if self:GetFists() then return end
 
 	if SERVER then
-		JMod.Hint(self.Owner, "jmod hands grab", "jmod hands drag")
+		JMod.Hint(self.Owner, "hands grab")
 		self:SetCarrying()
 		local tr = self.Owner:GetEyeTraceNoCursor()
 
@@ -308,7 +308,7 @@ end
 
 function SWEP:PrimaryAttack()
 	if SERVER then
-		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
+		JMod.Hint(self.Owner, "hands salvage")
 		local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
@@ -349,7 +349,6 @@ function SWEP:PrimaryAttack()
 				else
 					sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
 					if SERVER then
-						JMod.Hint(self.Owner, "work spread")
 						self:SetTaskProgress(self.CarryEnt:GetNW2Float("EZ"..Task.."Progress", 0))
 					end
 				end
