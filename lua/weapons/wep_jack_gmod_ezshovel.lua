@@ -212,9 +212,15 @@ function SWEP:Hitscan()
 					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
 
 					if Message then
-						self:Msg(Message)
-						self:SetTaskProgress(0)
-						self:SetResourceType("")
+						if (tr.MatType == MAT_SAND) then
+							self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
+							self:SetTaskProgress(100)
+							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, 2, self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
+						else
+							self:Msg(Message)
+							self:SetTaskProgress(0)
+							self:SetResourceType("")
+						end
 					else
 						sound.Play("Dirt.Impact", tr.HitPos + VectorRand(), 75, math.random(50, 70))
 						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))

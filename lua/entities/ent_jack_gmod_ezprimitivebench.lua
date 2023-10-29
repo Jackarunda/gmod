@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Type = "anim"
-ENT.PrintName = "EZ Primitive Workbench"
+ENT.PrintName = "EZ Crafting Table"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "glhfggwpezpznore"
@@ -385,5 +385,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezprimitivebench","EZ Primitive Workbench")
+	language.Add("ent_jack_gmod_ezprimitivebench","EZ Crafting Table")
 end
