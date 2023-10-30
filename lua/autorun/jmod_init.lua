@@ -67,6 +67,12 @@ JMod.EZ_RESOURCE_TYPES = {
 	ANTIMATTER = "antimatter"
 }
 
+JMod.PrimitiveResourceTypes = {
+	["wood"] = { JMod.EZ_RESOURCE_TYPES.WOOD },
+	["metal"] = { JMod.EZ_RESOURCETYPES.ALUMINUM, JMod.EZ_RESOURCE_TYPES.COPPER, JMod.EZ_RESOURCE_TYPES.STEEL },
+	["rock"] = { JMod.EZ_RESOURCE_TYPES.CONCRETE, JMod.EZ_RESOURCE_TYPES.CERAMIC }
+}
+
 JMod.ResourceToIndex = {}
 JMod.IndexToResource = {}
 
@@ -331,43 +337,36 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
-local PrimitiveBenchReqs = {["wood"] = 50, ["boulder"] = 20, ["metal"] = 10}
+local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 50, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, {[JMod.EZ_RESOURCE_TYPES.STEEL] = 10, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 12}}
 
 local Handcraft = function(ply, cmd, args)
-	local WeHaveNuff = false
-	local LocalResources = {["wood"] = {amt = 0, props = {}}, ["boulder"] = {amt = 0, props = {}}, ["metal"] = {amt = 0, props = {}}}
-	for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 150)) do
-		if IsValid(ent) and (ent:GetClass() == "prop_physics") then
-			local Phys = ent:GetPhysicsObject()
-			if IsValid(Phys) then
-				local Mat = Phys:GetMaterial()
-				if PrimitiveBenchReqs[Mat] and (LocalResources[Mat].amt < PrimitiveBenchReqs[Mat]) then
-					LocalResources[Mat].amt = LocalResources[Mat].amt + Phys:GetMass()
-					table.insert(LocalResources[Mat].props, ent)
+	local LocalScrap = {}
+	for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 200)) do 
+		if IsValid(ent) and (ent:GetClass() == "prop_physics") and (ent:GetPhysicsObject():GetMass() <= 35) then
+			local Yield, Message = JMod.GetSalvageYield(ent)
+
+			if (#table.GetKeys(Yield) > 0) then
+				for k, v in pairs(Yield) do
+					LocalScrap[k] = (LocalScrap[k] or 0) + v
 				end
 			end
 		end
 	end
-	local NuffWood, NuffStone, NuffMetal = false, false, false
-	if LocalResources["wood"].amt >= PrimitiveBenchReqs["wood"] then NuffWood = true else ply:PrintMessage(HUD_PRINTCENTER, "You need "..tostring(PrimitiveBenchReqs["wood"] - LocalResources["wood"].amt ).." more wood") end
-	if LocalResources["boulder"].amt >= PrimitiveBenchReqs["boulder"] then NuffStone = true else ply:PrintMessage(HUD_PRINTCENTER, "You need "..tostring(PrimitiveBenchReqs["concrete"] - LocalResources["concrete"].amt ).." more stone") end
-	if LocalResources["metal"].amt >= PrimitiveBenchReqs["metal"] then NuffMetal = true else ply:PrintMessage(HUD_PRINTCENTER, "You need more "..tostring(PrimitiveBenchReqs["metal"] - LocalResources["metal"].amt ).." metal") end
-	WeHaveNuff = (NuffWood and NuffStone and NuffMetal)
-	--jprint("We have enough", WeHaveNuff)
-	if WeHaveNuff then
+	--PrintTable(LocalScrap)
+	if JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, LocalScrap) then
 		timer.Simple(0.5, function()
-			local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply)
+			local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
 			local Bench = ents.Create("ent_jack_gmod_ezprimitivebench")
-			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 80))
+			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 30))
 			Bench:SetAngles(-ply:GetAngles())
 			Bench:Spawn()
 			Bench:Activate()
 		end)
-		for mat, tbl in pairs(LocalResources) do
+		--[[for mat, tbl in pairs(LocalScrap) do
 			for _, ent in ipairs(tbl.props) do
 				SafeRemoveEntity(ent)
 			end
-		end
+		end--]]
 	end
 end
 

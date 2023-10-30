@@ -210,7 +210,19 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 	local RequirementsMet, ResourcesInRange = true, cache or JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 
 	for typ, amt in pairs(requirements) do
-		if not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt)) then
+		if istable(amt) then
+			local FlexibleReqs = false
+			for Typ, Amt in pairs(amt) do
+				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= Amt)) then
+					FlexibleReqs = true
+					break
+				end
+			end
+			if not(FlexibleReqs) then
+				RequirementsMet = false
+				break
+			end
+		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt)) then
 			RequirementsMet = false
 			break
 		end
