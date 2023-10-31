@@ -75,6 +75,7 @@ if SERVER then
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
 			--JackaGenericUseEffect(activator)
+			self.LastWateredTime = CurTime()
 		end
 	end
 
