@@ -277,26 +277,31 @@ if(SERVER)then
 	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
-		
-		if amt <= 0 or OreType == "generic" then return end
-
-		local RefinedType = JMod.SmeltingTable[OreType][1]
 
 		local spawnVec = self:WorldToLocal(SelfPos + Forward * 10 + Up * 50)
 		local spawnAng = self:GetAngles()
 		local ejectVec = Up * 50
-		timer.Simple(0.3, function()
-			if IsValid(self) then
-				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
-				if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 100) then
-					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
+
+		if amt > 0 or OreType ~= "generic" then
+			local RefinedType = JMod.SmeltingTable[OreType][1]
+			timer.Simple(0.3, function()
+				if IsValid(self) then
+					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
+					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 100) then
+						JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
+					end
 				end
-			end
-		end)
-		self:SetProgress(0)
-		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
+			end)
+			self:SetProgress(0)
+			self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
+		end
+
 		if self:GetOre() <= 0 then
 			self:SetOreType("generic")
+		elseif OreType ~= "generic" then
+			JMod.MachineSpawnResource(self, OreType, self:GetOre(), spawnVec + Up * 4 + Right * 20, spawnAng, ejectVec, false)
+			self:SetOreType("generic")
+			self:SetOre(0)
 		end
 	end
 

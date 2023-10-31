@@ -1251,7 +1251,9 @@ if SERVER then
 			"models/props_junk/trafficcone001a.mdl",
 			"models/props_junk/plasticcrate01a.mdl",
 			"models/props_junk/metalbucket02a.mdl",
-			"models/props_junk/metalbucket01a.mdl"
+			"models/props_junk/metalbucket01a.mdl",
+			"models/props_vehicles/carparts_tire01a.mdl",
+			"models/props_vehicles/carparts_tire01a.mdl"
 		},
 		["rural"] = {
 			"models/jmod/resources/rock05a.mdl",

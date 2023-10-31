@@ -1753,7 +1753,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Pick Axe"] = {
 				results = "ent_jack_gmod_ezpickaxe",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 45,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30
 				},
 				category = "Tools",
@@ -1763,12 +1763,22 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Axe"] = {
 				results = "ent_jack_gmod_ezaxe",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 35,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 15,
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 25
 				},
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
 				description = "I must find a little woodsman, in me!"
+			},
+			["EZ Shovel"] = {
+				results = "ent_jack_gmod_ezshovel",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 12,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 15
+				},
+				category = "Tools",
+				craftingType = {"craftingtable", "workbench"},
+				description = "Give me a spade, and I'll give you a hooole"
 			},
 			["EZ Detpack"] = {
 				results = "ent_jack_gmod_ezdetpack",
