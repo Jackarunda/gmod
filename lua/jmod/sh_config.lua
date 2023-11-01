@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.45
+			Version = 44.46
 		},
 		General = {
 			Hints = true,
@@ -1357,7 +1357,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 50
 				},
 				category = "Resources",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Caustic burns and choking smoke."
 			},
 			["EZ Ammo"] = {
@@ -1370,6 +1370,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Resources",
 				craftingType = "workbench",
 				description = "General purpose bullets. Don't ask how we got so many types of ammo in one box."
+			},
+			["EZ Paper"] = {
+				results = "ent_jack_gmod_ezpaper",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
+				},
+				category = "Resources",
+				craftingType = {"workbench", "craftingtable"},
+				description = "Brown paper packages tied up with strings."
 			},
 			["EZ Black Powder Paper Cartridges"] = {
 				results = "ent_jack_gmod_ezammobox_bppc",
@@ -1735,6 +1745,27 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Tools",
 				craftingType = "workbench",
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."
+			},
+			["EZ Primitive Power"] = {
+				results = "ent_jack_gmod_ezbattery",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 20,
+					[JMod.EZ_RESOURCE_TYPES.LEAD] = 20,
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 5
+				},
+				category = "Resources",
+				craftingType = "craftingtable",
+				description = "Uses a chemical reaction to give you 100 power"
+			},
+			["EZ Primitive Gas"] = {
+				results = {"ent_jack_gmod_ezgas", 1, 50},
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 50
+				},
+				category = "Resources",
+				craftingType = "craftingtable",
+				description = "Uses a chemical reaction to give you 50 gas"
 			},
 			["EZ Primitive Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
