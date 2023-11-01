@@ -88,7 +88,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() < STATE_OFF then return end
+		if self:GetState() ~= STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
@@ -203,7 +203,6 @@ if(SERVER)then
 				if self:GetProgress() >= 100 then
 					local amtToDrill = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 					self:ProduceResource()
-					JMod.DepleteNaturalResource(self.DepositKey, amtToDrill)
 				end
 
 				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
@@ -301,6 +300,7 @@ if(SERVER)then
 		local spawnVec = self:WorldToLocal(SelfPos + Up * 50 - Right * 50)
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Right * 100, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
+		JMod.DepleteNaturalResource(self.DepositKey, amt)
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)

@@ -215,7 +215,6 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 						self:ProduceResource()
-						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
 				end
 
@@ -234,6 +233,7 @@ if(SERVER)then
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*120-Right*50))
 		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, 90), Forward*500, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
+		JMod.DepleteNaturalResource(self.DepositKey, amt)
 	end
 
 	function ENT:OnDestroy(dmginfo)
