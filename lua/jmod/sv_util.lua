@@ -1121,7 +1121,8 @@ function JMod.Package(packager)
 	end
 end
 
-function JMod.EZprogressTask(ent, pos, deconstructor, task)
+function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
+	mult = mult or 1
 	local Time = CurTime()
 
 	if task == "mining" then
@@ -1139,11 +1140,11 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 		ent.EZpreviousMiningPos = pos
 
 		local Prog = ent:GetNW2Float("EZ"..task.."Progress", 0)
-		local AddAmt = math.random(15, 25)
+		local AddAmt = math.random(15, 25) * mult
 
 		ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 
-		if (Prog >= 25) and  (not(DepositKey) or not(JMod.NaturalResourceTable[DepositKey]) or not(JMod.NaturalResourceTable[DepositKey].amt)) then
+		if (Prog >= 25) and not(JMod.NaturalResourceTable[DepositKey]) then
 			ent:SetNW2Float("EZ"..task.."Progress", 0)
 			ent.EZpreviousMiningPos = nil
 			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 2)
@@ -1153,17 +1154,26 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task)
 				return "nothing of value nearby"
 			end
 		elseif Prog >= 100 then
-			local amtLeft = JMod.NaturalResourceTable[DepositKey].amt
-			local amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(5, 10))
-			if (JMod.NaturalResourceTable[DepositKey].typ == JMod.EZ_RESOURCE_TYPES.DIAMOND) then
-				amtToMine = math.min(JMod.NaturalResourceTable[DepositKey].amt, math.random(1, 2))
+			local AmtToProduce
+
+			if JMod.NaturalResourceTable[DepositKey].rate then
+				local Rate = JMod.NaturalResourceTable[DepositKey].rate
+				AmtToProduce = Rate * Prog
+			else
+				local AmtLeft = JMod.NaturalResourceTable[DepositKey].amt
+				AmtToProduce = math.min(AmtLeft, math.random(5, 10))
+				if (JMod.NaturalResourceTable[DepositKey].typ == JMod.EZ_RESOURCE_TYPES.DIAMOND) then
+					AmtToProduce = math.min(AmtLeft, math.random(1, 2))
+				end
+				JMod.DepleteNaturalResource(DepositKey, AmtToProduce)
 			end
-			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, amtToMine, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
-			JMod.DepleteNaturalResource(DepositKey, amtToMine)
+
+			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, AmtToProduce, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
 			ent:SetNW2Float("EZ"..task.."Progress", 0)
 			ent.EZpreviousMiningPos = nil
 			JMod.ResourceEffect(JMod.NaturalResourceTable[DepositKey].typ, pos, nil, 1, 1, 1, 5)
 			util.Decal("EZgroundHole", pos + Vector(0, 0, 10), pos + Vector(0, 0, -10))
+			
 			return nil
 		end
 
@@ -1253,18 +1263,16 @@ end
 
 function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 	if istable(results) then
-		for k, v in ipairs(results) do
-			for n = 1, (results[k][2] or 1) do
-				local Ent = ents.Create(results[k][1])
-				Ent:SetPos(Pos)
-				Ent:SetAngles(Ang)
-				JMod.SetEZowner(Ent, ply)
-				Ent:SetCreator(ply)
-				Ent:Spawn()
-				Ent:Activate()
-				if (results[k][3]) then
-					Ent:SetResource(results[k][3])
-				end
+		for n = 1, (results[2] or 1) do
+			local Ent = ents.Create(results[1])
+			Ent:SetPos(Pos)
+			Ent:SetAngles(Ang)
+			JMod.SetEZowner(Ent, ply)
+			Ent:SetCreator(ply)
+			Ent:Spawn()
+			Ent:Activate()
+			if (results[3]) then
+				Ent:SetResource(results[3])
 			end
 		end
 	else

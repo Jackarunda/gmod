@@ -104,7 +104,7 @@ local HitSoundWorld = Sound( "Canister.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
-SWEP.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.SAND, JMod.EZ_RESOURCE_TYPES.CLAY}
+SWEP.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.SAND, JMod.EZ_RESOURCE_TYPES.CLAY, JMod.EZ_RESOURCE_TYPES.WATER}
 
 function SWEP:Initialize()
 	self:SetHoldType("melee2")
@@ -209,7 +209,7 @@ function SWEP:Hitscan()
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
 				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 1)
 
 					if Message then
 						if (tr.MatType == MAT_SAND) then

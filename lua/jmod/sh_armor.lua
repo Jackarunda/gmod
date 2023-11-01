@@ -494,6 +494,7 @@ JMod.ArmorTable = {
 			head = 1,
 			eyes = .75
 		},
+		eff = {scuba = true},
 		def = PoorArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(.75, .75, .75),

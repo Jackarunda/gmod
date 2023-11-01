@@ -478,7 +478,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			if JMod.Config.QoL.Drowning then
 				if playa:WaterLevel() >= 3 then
-					if (playa.EZarmoor and playa.EZarmor.effects.scuba) then
+					if (playa.EZarmor and playa.EZarmor.effects.scuba) then
 						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
 					else
 						playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
@@ -600,7 +600,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					for id, armorData in pairs(playa.EZarmor.items) do
 						local Info = JMod.ArmorTable[armorData.name]
 
-						if Info.eff and Info.eff.scuba then
+						if (Info.eff and Info.eff.scuba) and (armorData.chrg and armorData.chrg.gas) then
 							armorData.chrg.gas = math.Clamp(armorData.chrg.gas - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
 
 							if armorData.chrg.gas <= Info.chrg.gas * .25 then
