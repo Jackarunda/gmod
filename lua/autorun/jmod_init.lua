@@ -337,36 +337,23 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
-local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 50, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, {[JMod.EZ_RESOURCE_TYPES.STEEL] = 10, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 12}}
+local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 40, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 12}
 
 local Handcraft = function(ply, cmd, args)
-	local LocalScrap = {}
-	for _, ent in ipairs(ents.FindInSphere(ply:GetPos(), 200)) do 
-		if IsValid(ent) and (ent:GetClass() == "prop_physics") and (ent:GetPhysicsObject():GetMass() <= 35) then
-			local Yield, Message = JMod.GetSalvageYield(ent)
-
-			if (#table.GetKeys(Yield) > 0) then
-				for k, v in pairs(Yield) do
-					LocalScrap[k] = (LocalScrap[k] or 0) + v
-				end
-			end
-		end
-	end
-	--PrintTable(LocalScrap)
-	if JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, LocalScrap) then
+	local Pos = ply:GetPos()
+	local AvaliableResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
+	--PrintTable(AvaliableResources)
+	if JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources) then
+		local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
+		JMod.BuildEffect(WherePutBench.HitPos + Vector(0, 0, 30))
 		timer.Simple(0.5, function()
-			local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
 			local Bench = ents.Create("ent_jack_gmod_ezprimitivebench")
 			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 30))
 			Bench:SetAngles(-ply:GetAngles())
 			Bench:Spawn()
 			Bench:Activate()
 		end)
-		--[[for mat, tbl in pairs(LocalScrap) do
-			for _, ent in ipairs(tbl.props) do
-				SafeRemoveEntity(ent)
-			end
-		end--]]
+		JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
 	end
 end
 

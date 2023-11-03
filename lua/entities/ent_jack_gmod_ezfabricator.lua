@@ -71,24 +71,6 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:BuildEffect(pos)
-		local Scale = .5
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos + VectorRand())
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1, 2) * Scale) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5, 1.5) * Scale) --length of strands
-		effectdata:SetRadius(math.Rand(2, 4) * Scale) --thickness of strands
-		util.Effect("Sparks", effectdata,true,true)
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1, 27)..".wav", pos, 60, math.random(80, 120))
-		local eff = EffectData()
-		eff:SetOrigin(pos + VectorRand())
-		eff:SetScale(Scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke", eff, true, true)
-		-- todo: useEffects
-	end
-
 	function ENT:Use(activator)
 		if(self:GetState() == STATE_FINE)then
 			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4)then
@@ -131,7 +113,7 @@ if(SERVER)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
 									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang, ItemInfo.skin)
-									self:BuildEffect(Pos)
+									JMod.BuildEffect(Pos)
 									self:SetElectricity(math.Clamp(self:GetElectricity() - 15, 0.0, self.MaxElectricity))
 									self:SetGas(math.Clamp(self:GetGas() - 10, 0.0, self.MaxGas))
 									self:SetWater(math.Clamp(self:GetWater() - 5, 0.0, self.MaxWater))

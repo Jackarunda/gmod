@@ -1337,6 +1337,24 @@ function JMod.GetPlayerStrength(ply)
 	end
 end
 
+function JMod.BuildEffect(pos)
+	local Scale = .5
+	local effectdata = EffectData()
+	effectdata:SetOrigin(pos + VectorRand())
+	effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
+	effectdata:SetMagnitude(math.Rand(1, 2) * Scale) --amount and shoot hardness
+	effectdata:SetScale(math.Rand(.5, 1.5) * Scale) --length of strands
+	effectdata:SetRadius(math.Rand(2, 4) * Scale) --thickness of strands
+	util.Effect("Sparks", effectdata,true,true)
+	sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
+	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1, 27)..".wav", pos, 60, math.random(80, 120))
+	local eff = EffectData()
+	eff:SetOrigin(pos + VectorRand())
+	eff:SetScale(Scale)
+	util.Effect("eff_jack_gmod_ezbuildsmoke", eff, true, true)
+	-- todo: useEffects
+end
+
 function JMod.DebugArrangeEveryone(ply)
 	local Origin, Dist, Ang = ply:GetPos(), 50, Angle(0, 0, 0)
 	local Beings = player.GetAll()

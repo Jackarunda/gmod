@@ -88,25 +88,6 @@ if(SERVER)then
 		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
 	end
 
-	function ENT:BuildEffect(pos)
-		if(CLIENT)then return end
-		local Scale=.5
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos+VectorRand())
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1,2)*Scale) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)*Scale) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)*Scale) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-		local eff=EffectData()
-		eff:SetOrigin(pos+VectorRand())
-		eff:SetScale(Scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
-		-- todo: useEffects
-	end
-
 	function ENT:Use(activator)
 		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		local State = self:GetState()
@@ -232,7 +213,7 @@ if(SERVER)then
 							JMod.GetEZowner(self):PrintMessage(HUD_PRINTCENTER, Message)
 						elseif Ent:GetPhysicsObject():GetMass() <= 35 then
 							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
-							self:BuildEffect(Pos)
+							JMod.BuildEffect(Pos)
 
 							local i = 0
 							for k, v in pairs(Yield) do
@@ -325,7 +306,7 @@ if(SERVER)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
 									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang, ItemInfo.skin)
-									self:BuildEffect(Pos)
+									JMod.BuildEffect(Pos)
 									self:ConsumeElectricity(8)
 									self:UpdateWireOutputs()
 								end

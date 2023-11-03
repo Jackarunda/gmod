@@ -770,6 +770,8 @@ function JMod.GetSalvageYield(ent)
 
 	local Results = {}
 
+	local PhysNum = ent:GetPhysicsObjectCount()
+
 	for k, v in pairs(Info) do
 		if ScaleByMass then
 			Results[k] = math.ceil(v * Mass)
@@ -801,7 +803,7 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
-	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
+	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nnumber of physics: " .. PhysNum .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
 end
 
 function JMod.CalculateUpgradeCosts(buildRequirements)

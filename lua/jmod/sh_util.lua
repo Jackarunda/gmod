@@ -231,7 +231,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 	return RequirementsMet
 end
 
-function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects)
+function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects, propsToConsume)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local AllDone, Attempts, RequirementsRemaining = false, 0, table.FullCopy(requirements)
 
@@ -241,16 +241,35 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 		if TypesNeeded and (#TypesNeeded > 0) then
 			local ResourceTypeToLookFor = TypesNeeded[1]
 			local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor]
-			local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
-			if Donor then
-				local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
-				local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
-				Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
-				RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
-				if (useResourceEffects)then JMod.ResourceEffect(ResourceTypeToLookFor, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
+			if propsToConsume then
+				for entID, yield in pairs(propsToConsume) do
+					local HasWhatWeNeed = false
+					for typ, amt in pairs(yield) do
+						if RequirementsRemaining[typ] then
+							RequirementsRemaining[typ] = RequirementsRemaining[typ] - amt
+							HasWhatWeNeed = true
+							if (RequirementsRemaining[typ] <= 0) then
+								RequirementsRemaining[typ] = nil
+							end
+						end
+					end
+					--print(Entity(entID), HasWhatWeNeed)
+					if HasWhatWeNeed then
+						SafeRemoveEntity(Entity(entID)) -- R.I.P. Props
+					end
+				end
+			else
+				local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
+				if Donor then
+					local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
+					local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
+					Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
+					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
+					if (useResourceEffects)then JMod.ResourceEffect(ResourceTypeToLookFor, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 
-				if RequirementsRemaining[ResourceTypeToLookFor] <= 0 then
-					RequirementsRemaining[ResourceTypeToLookFor] = nil
+					if (RequirementsRemaining[ResourceTypeToLookFor] <= 0) then
+						RequirementsRemaining[ResourceTypeToLookFor] = nil
+					end
 				end
 			end
 		else
@@ -259,23 +278,25 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 
 		Attempts = Attempts + 1
 	end
+	return AllDone
 end
 
 function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
-	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	local ValidSource = IsValid(sourceEnt)
+	pos = (ValidSource and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
 		if obj.GetEZsupplies and not(sourceEnt and obj == sourceEnt) then
 			local AvaliableResources = obj:GetEZsupplies(typ)
-			if (AvaliableResources and JMod.VisCheck(pos, obj, sourceEnt)) then
-				if (typ and AvaliableResources >= amt) then
+			if AvaliableResources and (typ and AvaliableResources >= amt) then
+				if JMod.VisCheck(pos, obj, sourceEnt) then
 
 					return obj
 				end
 			end
 		end
 	end
-	if IsValid(sourceEnt) and sourceEnt.GetEZsupplies then
+	if ValidSource and sourceEnt.GetEZsupplies then
 		local AvaliableResources = sourceEnt:GetEZsupplies(typ)
 		if AvaliableResources then
 			if (typ and AvaliableResources >= amt) then
@@ -284,7 +305,31 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 			end
 		end
 	end
-	
+end
+
+function JMod.FindSuitableScrap(pos, range, sourceEnt)
+	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	local AvaliableResources, LocalScrap = {}, {}
+
+	for k, obj in ipairs(ents.FindInSphere(pos, range or 200)) do 
+		local Clss = obj:GetClass()
+		if (Clss == "prop_physics") or (Clss == "prop_ragdoll") then
+			if obj:GetPhysicsObject():GetMass() <= 40 then
+				local Yield, Message = JMod.GetSalvageYield(obj)
+
+				if (#table.GetKeys(Yield) > 0) then
+					local EntID = obj:EntIndex()
+					LocalScrap[EntID] = {}
+					for k, v in pairs(Yield) do
+						LocalScrap[EntID][k] = v
+						AvaliableResources[k] = (AvaliableResources[k] or 0) + v
+					end
+				end
+			end
+		end
+	end
+
+	return AvaliableResources, LocalScrap
 end
 
 function JMod.TryCough(ent)
