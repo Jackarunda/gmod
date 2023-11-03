@@ -381,7 +381,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 			desc = desc .. "\n "
 
 			for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-				desc = desc .. resourceName .. " x" .. tostring(resourceAmt) .. ", "
+				desc = desc .. resourceName .. " x" .. tostring(math.Round(resourceAmt * mult)) .. ", "
 			end
 		end
 
@@ -710,7 +710,7 @@ net.Receive("JMod_EZworkbench", function()
 
 	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, 1.3) end, function(name, info, ply, ent)
+return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, Multiplier) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
 		net.WriteEntity(ent)

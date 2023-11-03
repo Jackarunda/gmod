@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.47
+			Version = 44.48
 		},
 		General = {
 			Hints = true,
@@ -1632,7 +1632,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 35
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A designated marksman rifle. Strong semi-auto rifle equipped with a scope for long range target removal."
 			},
 			["EZ Machine Pistol"] = {
@@ -1652,7 +1652,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A magnum pistol. Strong semi-auto pistol."
 			},
 			["EZ Submachine Gun"] = {
@@ -1692,7 +1692,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 75
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A fully-automatic shotgun. Fast firing magazine-fed automatic shotgun for close range deletion."
 			},
 			["EZ Light Machine Gun"] = {
@@ -1714,7 +1714,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 25
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A medium machine gun. Powerful machine gun with decent fire rate for dealing serious damage."
 			},
 			["EZ Anti-Materiel Rifle"] = {
@@ -1725,7 +1725,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 50
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "An Anti-materiel rifle. Use to obliterate your enemies and their property in quick succession."
 			},
 			["EZ Multiple Grenade Launcher"] = {
@@ -1736,7 +1736,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.TITANIUM] = 50
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A Multiple Grenade Launcher. Use wisely to wreak havoc at close-medium range."
 			},
 			["EZ Multiple Rocket Launcher"] = {
@@ -1747,7 +1747,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 50
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
 			},
 			["EZ Toolbox"] = {
@@ -1760,7 +1760,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."
 			},
-			["EZ Primitive Power"] = {
+			["EZ Chemical Power"] = {
 				results = "ent_jack_gmod_ezbattery",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.COPPER] = 20,
@@ -1768,32 +1768,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 5
 				},
 				category = "Resources",
-				craftingType = "craftingtable",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Uses a chemical reaction to give you 100 power"
 			},
-			["EZ Primitive Gas"] = {
+			["EZ Electrolysis Gas"] = {
 				results = {"ent_jack_gmod_ezgas", 1, 50},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.POWER] = 50,
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 50
 				},
 				category = "Resources",
-				craftingType = "craftingtable",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Uses a chemical reaction to give you 50 gas"
-			},
-			["EZ Primitive Toolbox"] = {
-				results = "ent_jack_gmod_eztoolbox",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 80,
-					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 50,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.WOOD] = 20,
-					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
-				},
-				category = "Tools",
-				craftingType = "craftingtable",
-				description = "Build, Upgrade, Salvage. All you need to build the big machines."
 			},
 			["EZ Pick Axe"] = {
 				results = "ent_jack_gmod_ezpickaxe",

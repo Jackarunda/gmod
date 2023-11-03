@@ -77,6 +77,7 @@ if(SERVER)then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)
+				net.WriteFloat(1)
 				net.Send(activator)
 			else
 				JMod.Hint(activator, "refillfab")
