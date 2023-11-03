@@ -206,14 +206,15 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 	return Results
 end
 
-function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, cache)
+function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, cache, mult)
+	mult = mult or 1
 	local RequirementsMet, ResourcesInRange = true, cache or JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 
 	for typ, amt in pairs(requirements) do
 		if istable(amt) then
 			local FlexibleReqs = false
 			for Typ, Amt in pairs(amt) do
-				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= Amt)) then
+				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= Amt * mult)) then
 					FlexibleReqs = true
 					break
 				end
@@ -222,7 +223,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 				RequirementsMet = false
 				break
 			end
-		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt)) then
+		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt * mult)) then
 			RequirementsMet = false
 			break
 		end
@@ -231,7 +232,8 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 	return RequirementsMet
 end
 
-function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects, propsToConsume)
+function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects, propsToConsume, mult)
+	mult = mult or 1
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
 	local AllDone, Attempts, RequirementsRemaining = false, 0, table.FullCopy(requirements)
 
@@ -240,7 +242,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 
 		if TypesNeeded and (#TypesNeeded > 0) then
 			local ResourceTypeToLookFor = TypesNeeded[1]
-			local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor]
+			local AmountWeNeed = RequirementsRemaining[ResourceTypeToLookFor] * mult
 			if propsToConsume then
 				for entID, yield in pairs(propsToConsume) do
 					local HasWhatWeNeed = false

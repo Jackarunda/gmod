@@ -99,6 +99,7 @@ if(SERVER)then
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
+					net.WriteFloat(1.3)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
 				end
@@ -289,14 +290,14 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
 
-		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self))then
+		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self,1.3))then
 			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
 			end
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true)
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true,1.3)
 			timer.Simple(1,function()
 				if(IsValid(self))then
 					for i=1,BuildSteps do

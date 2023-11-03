@@ -357,7 +357,8 @@ net.Receive("JMod_ArmorColor", function()
 end)
 
 -- local FavIcon=Material("white_star_64.png")
-local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc, clickFunc)
+local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc, clickFunc, mult)
+	mult = mult or 1
 	parent:Clear()
 	local W, H = parent:GetWide(), parent:GetTall()
 	local Scroll = vgui.Create("DScrollPanel", parent)
@@ -429,6 +430,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 				local X = w - 30 -- let's draw the resources right to left
 
 				for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
+					resourceAmt = resourceAmt * mult
 					local Have = LocallyAvailableResources[resourceName] and (LocallyAvailableResources[resourceName] >= resourceAmt)
 					local Txt = "x" .. tostring(resourceAmt)
 					surface.SetFont("DermaDefault")
@@ -463,7 +465,8 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 	end
 end
 
-local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc)
+local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc, mult)
+	mult = mult or 1
 	-- first, populate icons
 	if SelectionMenuOpen then return end
 	for name, info in pairs(data) do
@@ -601,13 +604,13 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 		function TabBtn:DoClick()
 			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
 			ActiveTab = self.Category
-			PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc)
+			PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc, mult)
 		end
 
 		tabX = tabX + TextWidth + 15
 	end
 
-	PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc)
+	PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc, mult)
 
 	SelectionMenuOpen = true
 	return MotherFrame
@@ -703,16 +706,17 @@ end)
 net.Receive("JMod_EZworkbench", function()
 	local Bench = net.ReadEntity()
 	local Buildables = net.ReadTable()
+	local Multiplier = net.ReadFloat()
 
 	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
+return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, 1.3) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
 		net.WriteEntity(ent)
 		net.WriteString(name)
 		net.SendToServer()
-	end, nil)
+	end, nil, Multiplier)
 end)
 
 net.Receive("JMod_EZtimeBomb", function()
