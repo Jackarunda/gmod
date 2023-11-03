@@ -1264,7 +1264,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "Gordon, remember to bring back the scout car."
 			},
 			["EZ Basic Parts, x50"] = {
-				results = {"ent_jack_gmod_ezbasicparts", 1, 25},
+				results = {"ent_jack_gmod_ezbasicparts", 1, 50},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
 					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 15,

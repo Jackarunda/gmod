@@ -430,7 +430,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 				local X = w - 30 -- let's draw the resources right to left
 
 				for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-					resourceAmt = resourceAmt * mult
+					resourceAmt = math.Round(resourceAmt * mult)
 					local Have = LocallyAvailableResources[resourceName] and (LocallyAvailableResources[resourceName] >= resourceAmt)
 					local Txt = "x" .. tostring(resourceAmt)
 					surface.SetFont("DermaDefault")
