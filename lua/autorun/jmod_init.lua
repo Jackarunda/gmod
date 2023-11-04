@@ -343,6 +343,7 @@ local Handcraft = function(ply, cmd, args)
 	local Pos = ply:GetPos()
 	local AvaliableResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
 	--PrintTable(AvaliableResources)
+	--jprint(JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources))
 	if JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources) then
 		local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
 		JMod.BuildEffect(WherePutBench.HitPos + Vector(0, 0, 30))

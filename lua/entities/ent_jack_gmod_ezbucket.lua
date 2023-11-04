@@ -46,7 +46,7 @@ if SERVER then
 			self:GetPhysicsObject():SetMass(50)
 			self:GetPhysicsObject():Wake()
 		end)
-		self.MaxWater = 100
+		self.MaxWater = 50
 		if self.SpawnFull then
 			self:SetWater(self.MaxWater)
 		end
@@ -90,14 +90,14 @@ if SERVER then
 
 elseif CLIENT then
 	function ENT:Initialize()
-		self.MaxWater = 100
+		self.MaxWater = 50
 	end
 	function ENT:Draw()
 		self:DrawModel()
 		local Opacity = math.random(50, 200)
 		local WaterFrac = self:GetWater()/self.MaxWater
-		JMod.HoloGraphicDisplay(self, Vector(0, -5, 17), Angle(90, -50, 90), .05, 300, function()
-			draw.SimpleTextOutlined("WATER "..math.Round(WaterFrac*100).."%","JMod-Display",-200,10,JMod.GoodBadColor(WaterFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+		JMod.HoloGraphicDisplay(self, Vector(10, 0, 5), Angle(90, -90, 90), .05, 300, function()
+			draw.SimpleTextOutlined("WATER "..self:GetWater(),"JMod-Display",-200,10,JMod.GoodBadColor(WaterFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 		end)
 	end
 

@@ -30,7 +30,7 @@ function ENT:GetEZsupplies(typ)
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end -- Important because this is shared as well
+	if not SERVER then  return end -- Important because this is shared as well
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
 	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
 	self:SetResource(math.max(amt, 0)) -- Otherwise, just set our resource to the new value

@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.48
+			Version = 44.49
 		},
 		General = {
 			Hints = true,
@@ -1810,6 +1810,15 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
 				description = "Give me a spade, and I'll give you a hooole"
+			},
+			["EZ Bucket"] = {
+				results = "ent_jack_gmod_ezbucket",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 20
+				},
+				category = "Tools",
+				craftingType = {"craftingtable", "workbench"},
+				description = "I am wise to collect water with my bucket"
 			},
 			["EZ Detpack"] = {
 				results = "ent_jack_gmod_ezdetpack",

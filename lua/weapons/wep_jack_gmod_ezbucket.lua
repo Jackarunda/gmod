@@ -17,7 +17,7 @@ SWEP.BodyHolsterAng = Angle(-70, 0, 200)
 SWEP.BodyHolsterAngL = Angle(-70, -10, -30)
 SWEP.BodyHolsterPos = Vector(0, -15, 10)
 SWEP.BodyHolsterPosL = Vector(0, -15, -11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterScale = .6
 SWEP.ViewModelFOV = 52
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -55,9 +55,9 @@ SWEP.WElements = {
 		model = "models/props_junk/metalbucket01a.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
 		rel = "",
-		pos = Vector(2.596, 1, 3.635),
-		angle = Angle(0, -90, -90),
-		size = Vector(1, 1, 1),
+		pos = Vector(10, 5.5, 2),
+		angle = Angle(-90, -90, 170),
+		size = Vector(.8, .8, .8),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
@@ -77,6 +77,7 @@ function SWEP:Initialize()
 	self:SetSelectedBuild("")
 	self:SetTaskProgress(0)
 	self.NextTaskProgress = 0
+	self.MaxWater = 50
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -134,7 +135,7 @@ function SWEP:GetEZsupplies(resourceType)
 end
 
 function SWEP:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if not SERVER then  return end
 	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
 	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
@@ -144,10 +145,33 @@ end
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime() + .6)
-	self:SetNextSecondaryFire(CurTime() + 1)
+	self:SetNextPrimaryFire(CurTime() + 1.5)
+	self:SetNextSecondaryFire(CurTime() + 1.5)
 
 	if SERVER then
+		local ShootPos = self.Owner:GetShootPos()
+		local WaterTr = util.TraceLine({
+			start = ShootPos,
+			endpos = ShootPos + self.Owner:GetAimVector() * 60,
+			mask = MASK_WATER+MASK_SOLID,
+			filter = self.Owner
+		})
+		if WaterTr.Hit then
+			--jprint(bit.band(util.PointContents(WaterTr.HitPos + Vector(0, 0, -2)), CONTENTS_WATER))
+			local SelfWater = self:GetWater()
+			if bit.band(util.PointContents(WaterTr.HitPos + Vector(0, 0, -4)), CONTENTS_WATER) == CONTENTS_WATER then
+				self:SetWater(math.Clamp(SelfWater + 50, 0, self.MaxWater))
+				sound.Play("snds_jack_gmod/liquid_load.wav", ShootPos, 90, math.random(90, 110), 1)
+			elseif IsValid(WaterTr.Entity) and WaterTr.Entity.GetEZsupplies then
+				local TheirWater = WaterTr.Entity:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER)
+				if TheirWater and (TheirWater > 0) then
+					local WaterToTake = math.Clamp(TheirWater, 0, self.MaxWater - SelfWater)
+					self:SetWater(math.Clamp(SelfWater + WaterToTake, 0, self.MaxWater))
+					WaterTr.Entity:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER, TheirWater - WaterToTake, self)
+					sound.Play("snds_jack_gmod/liquid_load.wav", ShootPos, 90, math.random(90, 110), 1)
+				end
+			end
+		end
 	end
 end
 
@@ -157,12 +181,13 @@ function SWEP:Msg(msg)
 end
 
 --,"fists_uppercut"} -- the uppercut looks so bad
-local Anims = {"fists_right", "fists_right"} --, "fists_left", "fists_left"}
+--local Anims = {"fists_right", "fists_right", "fists_left", "fists_left"}
 
-function SWEP:Pawnch()
+function SWEP:Pawnch(sequence)
+	sequence = sequence or "fists_right"
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
+	vm:SendViewModelMatchingSequence(vm:LookupSequence(sequence))
 	self:UpdateNextIdle()
 end
 
@@ -175,6 +200,18 @@ function SWEP:Reload()
 end
 
 function SWEP:SecondaryAttack()
+	self:Pawnch("fists_uppercut")
+	self:SetNextPrimaryFire(CurTime() + 1.5)
+	self:SetNextSecondaryFire(CurTime() + 1.5)
+	if SERVER then
+		local Water = self:GetWater()
+		if Water > 0 then
+			local SpawnTr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 60, self.Owner)
+			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 10))
+			self:SetWater(0)
+			sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+		end
+	end
 end
 
 --
@@ -298,37 +335,7 @@ function SWEP:Think()
 		if self.Owner:KeyDown(IN_ATTACK2) then
 			if self.NextTaskProgress < Time then
 				self.NextTaskProgress = Time + .6
-				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
-				local Task = (Alt and "loosen") or "salvage"
-				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 80, {self.Owner})
-				local Ent, Pos = Tr.Entity, Tr.HitPos
-
-				if IsValid(Ent) then
-					if Ent ~= self.TaskEntity or Task ~= self.CurTask then
-						self:SetTaskProgress(0)
-						self.TaskEntity = Ent
-						self.CurTask = Task
-					elseif IsValid(Ent:GetPhysicsObject()) then
-						local Message = JMod.EZprogressTask(Ent, Pos, self.Owner, (Alt and "loosen") or "salvage")
-
-						if Message then
-							self:Msg(Message)
-						else
-							self:Pawnch()
-							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
-							sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
-							if SERVER then
-								JMod.Hint(self.Owner, "work spread")
-								self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))
-								timer.Simple(.1, function()
-									if IsValid(self) then
-										self:UpgradeEffect(Pos, 2, true)
-									end
-								end)
-							end
-						end 
-					end
-				end
+				
 			end
 		else
 			self:SetTaskProgress(0)
@@ -350,18 +357,6 @@ function SWEP:DrawHUD()
 		draw.SimpleTextOutlined((Ply:KeyDown(JMod.Config.General.AltFunctionKey) and "Loosening...") or "Salvaging...", "Trebuchet24", W * .5, H * .45, Color(255, 255, 255, 100), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 		draw.RoundedBox(10, W * .3, H * .5, W * .4, H * .05, Color(0, 0, 0, 100))
 		draw.RoundedBox(10, W * .3 + 5, H * .5 + 5, W * .4 * LastProg / 100 - 10, H * .05 - 10, Color(255, 255, 255, 100))
-	end
-
-	local Tr = util.QuickTrace(Ply:EyePos(), Ply:GetAimVector() * 80, {Ply})
-	local Ent = Tr.Entity
-	if IsValid(Ent) and Ent.IsJackyEZmachine then
-		draw.SimpleTextOutlined((Ent.PrintName and tostring(Ent.PrintName)) or tostring(Ent), "Trebuchet24", W * .7, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-		if Ent.MaxDurability then
-		draw.SimpleTextOutlined("Durability: "..tostring(math.Round(Ent:GetNW2Float("EZdurability", 0)) + Ent.MaxDurability * 2).."/"..Ent.MaxDurability*3, "Trebuchet24", W * .7, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-		end
-		if Ent.GetGrade and Ent:GetGrade() > 0 then
-		draw.SimpleTextOutlined("Grade: "..tostring(Ent:GetGrade()), "Trebuchet24", W * .7, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-		end
 	end
 
 	LastProg = Lerp(FrameTime() * 5, LastProg, Prog)

@@ -57,9 +57,17 @@ if(SERVER)then
 			FoodAmt = 25
 		end
 
-		if (FoodAmt > 0) then 
+		if (FoodAmt > 0) then
+			local Seedy = ents.Create("ent_jack_gmod_ezwheatseed")
+			Seedy:SetPos(self:LocalToWorld(SpawnPos + VectorRand(-50, 50)))
+			Seedy:SetAngles(AngleRand())
+			Seedy:Spawn()
+			Seedy:Activate()
 			if (self.Mutated) then
 				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.AMMO, FoodAmt / 2, SpawnPos, Angle(0, 0, 0), nil, false)
+				if math.random(1, 2) == 1 then
+					Seedy:Mutate()
+				end
 			else
 				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
 			end

@@ -33,7 +33,7 @@ function ENT:GetEZsupplies(typ)
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if not SERVER then  return end
 	if typ ~= self:GetResourceType() then return end
 	if amt <= 0 then self:ApplySupplyType("generic") end
 	self:SetResource(math.Clamp(amt, 0, self.MaxResource))
