@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.49
+			Version = 44.51
 		},
 		General = {
 			Hints = true,
@@ -916,17 +916,6 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "It's a box, tap it with whatever you want to store. Only works with JMod items."
 			},
-			["EZ Sleeping Bag"] = {
-				results = "ent_jack_sleepingbag",
-				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
-				},
-				sizeScale = 1,
-				category = "Other",
-				craftingType = "toolbox",
-				description = "A sleeping bag you can set your spawn point at."
-			},
 			["EZ HE Rocket"] = {
 				results = "ent_jack_gmod_ezherocket",
 				craftingReqs = {
@@ -1753,11 +1742,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 80
 				},
 				category = "Tools",
-				craftingType = "workbench",
+				craftingType = {"craftingtable", "workbench"},
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."
 			},
 			["EZ Chemical Power"] = {
@@ -1989,11 +1977,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Sleeping Bag"] = {
 				results = "ent_jack_sleepingbag",
 				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 1,
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
 				},
+				sizeScale = 1,
 				category = "Other",
-				craftingType = "workbench",
-				description = "A sleeping bag that also works as a partial respawn point"
+				craftingType = {"toolbox", "workbench", "crafting table"},
+				description = "A sleeping bag you can set your spawn point at."
 			},
 			["EZ Ballistic Mask"] = {
 				results = JMod.ArmorTable["BallisticMask"].ent,

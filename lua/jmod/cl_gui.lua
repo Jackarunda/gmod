@@ -655,7 +655,7 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 				temp_ent:SetModel(info["results"])
 			else
 				temp_ent = ents.CreateClientside(info["results"])
-				if temp_ent.Base == "ent_jack_gmod_ezmachine_base" then
+				if temp_ent.IsJackyEZmachine then
 					temp_ent.ClientOnly = true
 				end
 			end
