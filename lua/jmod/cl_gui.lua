@@ -1239,7 +1239,7 @@ net.Receive("JMod_Inventory", function()
 	local itemTable = net.ReadTable()
 	Ply.JModInv = itemTable
 
-	PrintTable(Ply.JModInv)
+	--PrintTable(Ply.JModInv)
 
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(800, 400)

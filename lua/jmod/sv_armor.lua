@@ -566,7 +566,8 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		
 		JMod.RemoveArmorByID(ply, ID)
 	elseif ActionType == 2 then
-		if ply.EZarmor.items[ID] then
+		local ItemData = ply.EZarmor.items[ID]
+		if ItemData and JMod.ArmorTable[ItemData.name].tgl then
 			ply.EZarmor.items[ID].tgl = not ply.EZarmor.items[ID].tgl
 		end
 	elseif ActionType == 3 then
