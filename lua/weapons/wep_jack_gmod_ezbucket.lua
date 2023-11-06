@@ -207,9 +207,21 @@ function SWEP:SecondaryAttack()
 		local Water = self:GetWater()
 		if Water > 0 then
 			local SpawnTr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 60, self.Owner)
-			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 10))
-			self:SetWater(0)
-			sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+			if IsValid(SpawnTr.Entity) and SpawnTr.Entity:IsOnFire() then
+				self:SetWater(Water - math.random(2, 3))
+				SpawnTr.Entity:Extinguish()
+				sound.Play("snds_jack_gmod/hiss.wav", SpawnTr.HitPos, 100, math.random(90, 100))
+			elseif IsValid(SpawnTr.Entity) and SpawnTr.Entity.TryLoadResource then
+				local WaterUsed = SpawnTr.Entity:TryLoadResource(JMod.EZ_RESOURCE_TYPES.WATER, Water)
+				if WaterUsed > 0 then
+					self:SetWater(math.Clamp(Water - WaterUsed, 0, self.MaxWater))
+					sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+				end
+			else
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 10))
+				self:SetWater(0)
+				sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+			end
 		end
 	end
 end
