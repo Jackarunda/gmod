@@ -250,8 +250,9 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 	local ply, DrawNVGlamp = LocalPlayer(), false
 
 	if not ply:ShouldDrawLocalPlayer() then
-		if ply:Alive() and ply.EZarmor and ply.EZarmor.effects then
-			if ply.EZarmor.effects.nightVision or ply.EZarmor.effects.nightVisionWP then
+		if ply:Alive() and JMod.PlyHasArmorEff(ply) then
+			local ArmorEffects = ply.EZarmor.effects
+			if ArmorEffects.nightVision or ArmorEffects.nightVisionWP then
 				DrawNVGlamp = true
 
 				if not IsValid(ply.EZNVGlamp) then
@@ -558,7 +559,7 @@ local thermalmodify = {
 hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 	local ply, Time = LocalPlayer(), CurTime()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		DrawColorModify(thermalmodify)
 
 		if NextWHOTcheck < Time then
@@ -603,7 +604,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 	local ply, Time = LocalPlayer(), CurTime()
 	
 	if ply:Alive() then
-		if ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+		if JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 			for key, targ in pairs(WHOTents) do
 				if IsValid(targ) then
 					local Br = .9
@@ -726,7 +727,7 @@ hook.Add("SetupWorldFog", "JMOD_WORLDFOG", function()
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
@@ -748,7 +749,7 @@ hook.Add("SetupSkyboxFog", "JMOD_SKYFOG", function(scale)
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
@@ -784,7 +785,7 @@ hook.Add("PlayerStartVoice", "JMOD_PLAYERSTARTVOICE", function(ply)
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		surface.PlaySound("snds_jack_gmod/radio_start.wav")
 	end
 end)
@@ -794,7 +795,7 @@ hook.Add("OnPlayerChat", "JMOD_ONPLAYERCHAT", function(ply, text, isTeam, isDead
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		CommNoise()
 
 		if not isTeam and not isDead then
@@ -815,7 +816,7 @@ hook.Add("PlayerEndVoice", "JMOD_PLAYERENDVOICE", function(ply)
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		CommNoise()
 	end
 end)

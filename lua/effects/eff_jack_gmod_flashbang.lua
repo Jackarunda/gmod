@@ -37,7 +37,7 @@ function EFFECT:Render()
 				start = Pos,
 				endpos = self.Position,
 				filter = {self, ply}
-			}).Hit and not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.flashresistant) then
+			}).Hit and not(JMod.PlyHasArmorEff(ply, "flashresistant")) then
 				LocalPlayer().EZflashbanged = 100 * (self.Scale and self.Scale or 1) * (1 - Pos:Distance(self.Position) / 1000)
 			end
 		end

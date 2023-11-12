@@ -154,7 +154,7 @@ if(SERVER)then
 
 		if parrot then
 			for _, ply in pairs(player.GetAll()) do
-				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
+				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and JMod.PlyHasArmorEff(ply, "teamComms"))) then
 					net.Start("JMod_EZradio")
 					net.WriteBool(true)
 					net.WriteBool(true)
@@ -179,7 +179,7 @@ if(SERVER)then
 		timer.Simple(.5, function()
 			if IsValid(self) then
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
+					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and JMod.PlyHasArmorEff(ply, "teamComms"))) then
 						net.Start("JMod_EZradio")
 						net.WriteBool(true)
 						net.WriteBool(false)

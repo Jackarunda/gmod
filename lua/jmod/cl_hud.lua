@@ -183,20 +183,21 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 
 	if FirstPerson then
-		if Alive and ply.EZarmor and ply.EZarmor.effects then
+		if Alive and JMod.PlyHasArmorEff(ply) then
+			local ArmorEffects = ply.EZarmor.effects
 			if ply.EZarmor.blackvision then
 				surface.SetDrawColor(0, 0, 0, 255)
 				surface.DrawRect(-1, -1, W + 2, H + 2)
 				draw.SimpleText("vision device is dead; please recharge", "JMod-Display", W / 2, H * .8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				--GoggleDarkness=100
-			elseif ply.EZarmor.effects.nightVision then
+			elseif ArmorEffects.nightVision then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100
 				end
 				JMod.EZ_NightVisionScreenSpaceEffect(ply)
 
-			elseif ply.EZarmor.effects.nightVisionWP then
+			elseif ArmorEffects.nightVisionWP then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100
@@ -229,7 +230,7 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 				if not ply.EZflashbanged then
 					DrawMotionBlur(FT * 50, .8, .01)
 				end
-			elseif ply.EZarmor.effects.thermalVision then
+			elseif ArmorEffects.thermalVision then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100

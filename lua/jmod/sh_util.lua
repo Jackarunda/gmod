@@ -370,6 +370,14 @@ function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 	return not Tr.Hit
 end
 
+function JMod.PlyHasArmorEff(ply, eff)
+	if eff then
+		return ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects[eff]
+	else
+		return ply.EZarmor and ply.EZarmor.effects
+	end
+end
+
 function JMod.IsAdmin(ply)
 	return (game.SinglePlayer()) or ((IsValid(ply) and ply:IsPlayer()) and (ply:IsUserGroup("admin") or ply:IsUserGroup("superadmin")))
 end

@@ -699,7 +699,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 end)
 
 hook.Add("OnDamagedByExplosion", "JModOnDamagedByExplosion", function(ply, dmg)
-	if ply.EZarmor and ply.EZarmor.effects.earPro then return true end
+	if JMod.PlyHasArmorEff(ply, "earPro") then return true end
 end)
 
 concommand.Add("jmod_debug_fullarmor", function(ply, cmd, args)

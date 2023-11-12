@@ -213,7 +213,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		end
 	end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms then
+	if JMod.PlyHasArmorEff(ply, "teamComms") then
 		for id, data in pairs(ply.EZarmor.items) do
 			local Info = JMod.ArmorTable[data.name]
 

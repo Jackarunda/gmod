@@ -336,7 +336,7 @@ end
 hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
 	if ply.IsProne and ply:IsProne() then return end
-	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
+	if not(JMod.PlyHasArmorEff(ply, "parachute")) then return end
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or IsValid(ply.EZparachute)
 	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
