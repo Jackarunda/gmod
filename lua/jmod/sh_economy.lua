@@ -84,8 +84,8 @@ JMod.ResourceDepositInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.SAND] = {
-		frequency = 6,
-		avgamt = 600,
+		frequency = 5,
+		avgamt = 800,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -125,7 +125,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {
 		frequency = 12,
-		avgamt = 500,
+		avgamt = 700,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -146,7 +146,7 @@ JMod.ResourceDepositInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = {
-		frequency = 10,
+		frequency = 9,
 		avgamt = 500,
 		avgsize = 200,
 		limits = {
@@ -158,7 +158,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
 		frequency = 8,
-		avgamt = 400,
+		avgamt = 500,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -180,7 +180,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {
 		frequency = 4,
-		avgamt = 300,
+		avgamt = 350,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -1044,7 +1044,7 @@ if SERVER then
 					print("JMOD: map bounds determined to be:", xMin, xMax, yMin, yMax, zMin, zMax)
 					endFunc(xMin, xMax, yMin, yMax, zMin, zMax)
 				elseif i % 1000 == 0 then
-					print(math.Round(i / 10000 * 100) .. "%")
+					print("JMOD: " .. math.Round(i / 10000 * 100) .. "%")
 				end
 			end)
 		end
@@ -1181,12 +1181,25 @@ if SERVER then
 						end
 
 						table.Add(Resources, ResourcesToAdd)
+						
+						if #Resources > (MaxResourceDepositCount / 2) then
+							for k, v in ipairs(Resources) do
+								local ResourceInfo = JMod.ResourceDepositInfo[v.typ]
+								v.siz = math.min(v.siz * 2, ResourceInfo.avgsize * 3)
+								if not v.rate then
+									v.amt = math.min(v.amt * 2, ResourceInfo.avgamt * 3)
+								else
+									v.rate =  math.min(v.rate * 1.5, ResourceInfo.avgrate * 1.5)
+								end
+							end
+						end
+
 						RemoveOverlaps(Resources)
 						table.sort(Resources, function(a, b) return a.siz > b.siz end)
 						JMod.NaturalResourceTable = Resources
 						print("JMOD: resource generation finished with " .. #Resources .. " resource deposits")
 					elseif i % 1000 == 0 then
-						print(math.Round(i / MaxTries * 100) .. "%")
+						print("JMOD: " .. math.Round(i / MaxTries * 100) .. "%")
 					end
 				end)
 			end
@@ -1204,19 +1217,6 @@ if SERVER then
 			JMod.NaturalResourceTable[key] = nil
 		end
 	end
-
-	local ScroungeTable = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = {"models/props_c17/trappropeller_lever.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {"models/props_junk/PopCan01a.mdl", "models/props_junk/garbage_metalcan002a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.COPPER] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = {"models/props_interiors/furniture_chair01a.mdl", "models/nova/chair_wood01.mdl","ent_jack_gmod_ezwheatseed"},
-		[JMod.EZ_RESOURCE_TYPES.CLOTH] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.PAPER] = {"models/props_junk/cardboard_box004a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.RUBBER] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.GLASS] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {"models/jmod/resources/rock05a.mdl"},
-		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = {"ent_jack_gmod_ezwheatseed", "models/props_junk/cardboard_box004a.mdl"}
-	}
 
 	local ScroungeTable = {
 		["urban"] = {
@@ -1369,6 +1369,8 @@ if SERVER then
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()
 		JMod.GenerateNaturalResources()
 	end)
+
+	concommand.Add("jmod_debug_generatenaturalresources", JMod.GenerateNaturalResources(), nil, "Re-generates the natrual resource deposits")
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end

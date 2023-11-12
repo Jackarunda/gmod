@@ -661,6 +661,7 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
+	--if not IsValid(self.EZowner) then self.EZowner = self end
 
 	local Override = hook.Call("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if (Override ~= nil) then return Override end
