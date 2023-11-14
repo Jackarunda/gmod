@@ -214,7 +214,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 		if istable(amt) then
 			local FlexibleReqs = false
 			for Typ, Amt in pairs(amt) do
-				if (ResourcesInRange[Typ] and math.Round(ResourcesInRange[Typ] >= Amt * mult)) then
+				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= math.Round(Amt * mult))) then
 					FlexibleReqs = true
 					break
 				end
@@ -223,7 +223,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 				RequirementsMet = false
 				break
 			end
-		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= amt * mult)) then
+		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= math.Round(amt * mult))) then
 			RequirementsMet = false
 			break
 		end
