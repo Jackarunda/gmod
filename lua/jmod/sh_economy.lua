@@ -774,7 +774,7 @@ function JMod.GetSalvageYield(ent)
 
 	for k, v in pairs(Info) do
 		if ScaleByMass then
-			Results[k] = math.ceil(v * Mass)
+			Results[k] = math.ceil(v * Mass * JMod.Config.ResourceEconomy.SalvageYield)
 		else
 			Results[k] = math.ceil(v * .6)
 		end
@@ -1187,7 +1187,7 @@ if SERVER then
 								local ResourceInfo = JMod.ResourceDepositInfo[v.typ]
 								v.siz = math.min(v.siz * 2, ResourceInfo.avgsize * 3)
 								if not v.rate then
-									v.amt = math.min(v.amt * 2, ResourceInfo.avgamt * 3)
+									v.amt = v.amt * 2
 								else
 									v.rate =  math.min(v.rate * 1.5, ResourceInfo.avgrate * 1.5)
 								end

@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.51
+			Version = 44.55
 		},
 		General = {
 			Hints = true,
@@ -93,7 +93,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		ResourceEconomy = {
 			ResourceRichness = 1,
 			ExtractionSpeed = 1,
-			MaxResourceMult = 1
+			MaxResourceMult = 1,
+			SalvageYield = 1
 		},
 		QoL = {
 			RealisticLocationalDamage = false,
@@ -104,7 +105,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			JModCorpseStayTime = 0,
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
-			NukeFlashLightEnabled = false
+			NukeFlashLightEnabled = false,
+			--ChangePitchWithHostTimeScale = true
 		},
 		FoodSpecs = {
 			DigestSpeed = 1,

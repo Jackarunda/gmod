@@ -355,6 +355,8 @@ local Handcraft = function(ply, cmd, args)
 			Bench:Activate()
 		end)
 		JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
+	else
+		ply:PrintMessage(HUD_PRINTCENTER, "More scrap needed, look for wood, stone and metal")
 	end
 end
 
