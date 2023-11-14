@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.55
+			Version = 44.6
 		},
 		General = {
 			Hints = true,
@@ -106,7 +106,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
 			NukeFlashLightEnabled = false,
-			--ChangePitchWithHostTimeScale = true
+			ChangePitchWithHostTimeScale = true
 		},
 		FoodSpecs = {
 			DigestSpeed = 1,
@@ -309,6 +309,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezglowstick", 20}
+					}
+				},
+				["First-Aid kits"] = {
+					description = "5 Individual First Aid Kits for stopping bleeding",
+					category = "Other",
+					results = {
+						{"ent_jack_gmod_ezifak", 5}
 					}
 				},
 				["gas grenades"] = {
@@ -1893,6 +1900,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Colorable glowstick, for identification, low-power illumination, and raves."
 			},
+			["EZ IFAK"] = {
+				results = "ent_jack_gmod_ezifak",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 5,
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 5
+				},
+				category = "Other",
+				craftingType = "workbench",
+				description = "Individual First Aid Kit for stopping bleeding."
+			},
 			["EZ Fumigator"] = {
 				results = "ent_jack_gmod_ezfumigator",
 				craftingReqs = {
@@ -2653,6 +2670,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	SetArmorPlayerModelModifications()
 
 	print("JMOD: lua config file loaded")
+	if SERVER then
+		print("JMOD: syncing lua config's")
+		JMod.LuaConfigSync(true)
+	end
 end
 
 function JMod.LoadDepositConfig(configID, forceMap)

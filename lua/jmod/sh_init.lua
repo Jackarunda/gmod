@@ -99,6 +99,7 @@ local cheats = GetConVar("sv_cheats")
 local timeScale = GetConVar("host_timescale")
 
 hook.Add("EntityEmitSound", "JMOD_EntityEmitSound", function(t)
+	if not(JMod.Config.QoL.ChangePitchWithHostTimeScale) then return end
 	local p = t.Pitch
 
 	if game.GetTimeScale() ~= 1 then
