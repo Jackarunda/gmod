@@ -83,7 +83,7 @@ JMod.ResourceDepositInfo = {
 			sand = 2
 		}
 	},
-	[JMod.EZ_RESOURCE_TYPES.SAND] = {
+	--[[[JMod.EZ_RESOURCE_TYPES.SAND] = {
 		frequency = 5,
 		avgamt = 800,
 		avgsize = 200,
@@ -93,7 +93,7 @@ JMod.ResourceDepositInfo = {
 		boosts = {
 			sand = 2
 		}
-	},
+	},--]]
 	--[[[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {
 		frequency = 6,
 		avgamt = 200,
@@ -408,12 +408,12 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 2
 	},
 	alienflesh = {
-		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 1.5,
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 1,
 		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .5
 	},
 	antlion = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .5,
-		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 1.5
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 1
 	},
 	weapon = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .1,
@@ -702,11 +702,12 @@ function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
 	if ent:IsWorld() then return {}, "can't salvage the world" end
+	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
 	if not IsValid(Phys) then return {}, "cannot salvage: invalid physics" end
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
-	Mass = math.ceil(Mass ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	Mass = math.ceil((Mass * PhysNum) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
 
 	-- again, more corrections
 	if Class == "func_physbox" then
@@ -714,7 +715,7 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
-	if ent:IsNPC() or ent:IsPlayer() then return {}, (ent.PrintName and tostring(ent.PrintName .. " doesn't want to be salvaged")) or ".." end
+	if ent:IsNPC() or ent:IsPlayer() then return {}, (tostring(ent.PrintName or "They") .. " don't want to be salvaged") or ".." end
 	local AnnoyedReplyTable = {
 		"no",
 		"...no",
@@ -769,8 +770,6 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	local Results = {}
-
-	local PhysNum = ent:GetPhysicsObjectCount()
 
 	for k, v in pairs(Info) do
 		if ScaleByMass then
@@ -918,7 +917,11 @@ if SERVER then
 							local Dist, Min = v.pos:Distance(w.pos), v.siz + w.siz
 
 							if Dist < Min then
-								table.remove(tbl, k)
+								--if v.siz < w.siz then
+								--	table.remove(tbl, l)
+								--else
+									table.remove(tbl, k)
+								--end
 								RemovedCount = RemovedCount + 1
 								Removed = true
 								break
@@ -1005,6 +1008,8 @@ if SERVER then
 		return false
 	end
 
+	local InverseOperationInterval = 10000 --1000
+
 	function JMod.DetermineMapBounds(endFunc)
 		print("JMOD: measuring map bounds...")
 		local xMin, xMax, yMin, yMax, zMin, zMax, SkyCamPos, SkyCamElims = 9e9, -9e9, 9e9, -9e9, 9e9, -9e9, nil, 0
@@ -1015,7 +1020,7 @@ if SERVER then
 		end
 
 		for i = 1, 10000 do
-			timer.Simple(i / 1000, function()
+			timer.Simple(i / InverseOperationInterval, function()
 				local Pos = Vector(math.random(-20000, 20000), math.random(-20000, 20000), math.random(-20000, 20000))
 
 				if util.IsInWorld(Pos) then
@@ -1057,12 +1062,16 @@ if SERVER then
 		JMod.DetermineMapBounds(function(xMin, xMax, yMin, yMax, zMin, zMax)
 			local GroundVectors = {}
 			print("JMOD: generating natural resources...")
+			--local WorldCenter = Vector(xMax + xMin, yMax + yMin, zMax + zMin)
+			--print("DEBUG: WORLDCENTER: " .. tostring(WorldCenter))
 
 			for i = 1, MaxTries do
-				timer.Simple(i / 1000, function()
+				timer.Simple(i / InverseOperationInterval, function()
 					local CheckPos = Vector(math.random(xMin, xMax), math.random(yMin, yMax), math.random(zMin, zMax))
+					debugoverlay.Cross(CheckPos, 10, 2, ColorRand(), true)
 					-- we're in the world... start the worldhit trace
-					local Tr = util.QuickTrace(CheckPos, Vector(0, 0, -4000))
+					local Tr = util.QuickTrace(CheckPos, Vector(0, 0, -6000))
+					debugoverlay.Line(CheckPos, Tr.HitPos, 2, ColorRand(), true)
 					local Props = util.GetSurfaceData(Tr.SurfaceProps)
 					local MatName = string.lower((Props and Props.name) or "")
 					local HitTexture = string.lower(Tr.HitTexture)
@@ -1181,7 +1190,7 @@ if SERVER then
 						end
 
 						table.Add(Resources, ResourcesToAdd)
-						
+
 						if #Resources > (MaxResourceDepositCount / 2) then
 							for k, v in ipairs(Resources) do
 								local ResourceInfo = JMod.ResourceDepositInfo[v.typ]
@@ -1370,7 +1379,11 @@ if SERVER then
 		JMod.GenerateNaturalResources()
 	end)
 
-	concommand.Add("jmod_debug_generatenaturalresources", JMod.GenerateNaturalResources(), nil, "Re-generates the natrual resource deposits")
+	concommand.Add("jmod_debug_generatenaturalresources", function(ply, cmd, args) 
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
+		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		JMod.GenerateNaturalResources() 
+	end, nil, "Re-generates the natrual resource deposits")
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
@@ -1380,6 +1393,7 @@ if SERVER then
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
+
 	--[[concommand.Add("jmod_debug_remove_naturalresource",function(ply,cmd,args)
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
@@ -1388,6 +1402,7 @@ if SERVER then
 			print("Removed deposit #: " .. args[i])
 		end
 	end, nil, "Removes one or more natural resource deposits")--]]
+
 elseif CLIENT then
 	local ShowNaturalResources = false
 

@@ -1222,7 +1222,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 			if constraint.HasConstraints(ent) or not Phys:IsMotionEnabled() then
 				return "object is constrained"
 			else
-				local Mass = Phys:GetMass() ^ .8
+				local Mass = (Phys:GetMass() * ent:GetPhysicsObjectCount()) ^ .8
 				local Yield, Message = JMod.GetSalvageYield(ent)
 
 				if #table.GetKeys(Yield) <= 0 then

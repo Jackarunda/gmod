@@ -204,15 +204,38 @@ function SWEP:Hitscan()
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 
-				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
+				if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
+					if tr.Entity.IsEZcorpse then
+						local GravePos = tr.Entity:GetPos()
+						timer.Simple(0.2, function()
+							--if IsValid(tr.Entity) then
+								local GraveStone = ents.Create("prop_physics")
+								GraveStone:SetModel("models/props_c17/gravestone002a.mdl")
+								GraveStone:SetPos(GravePos)
+								GraveStone:SetAngles(Angle(0, 0, 0))
+								GraveStone:Spawn()
+								GraveStone:Activate()
+								local WeldTr = util.QuickTrace(GraveStone:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), {GraveStone, tr.Entity, self.Owner})
+								if WeldTr.Hit then
+									GraveStone:SetPos(WeldTr.HitPos)
+									local StoneAng = WeldTr.HitNormal:Angle()
+									StoneAng:RotateAroundAxis(StoneAng:Right(), -90)
+									GraveStone:SetAngles(StoneAng)
+									GraveStone:SetPos(GravePos + StoneAng:Up() * 25)
+									constraint.Weld(WeldTr.Entity, GraveStone, 0, 0, 10000, false, false)
+								end
+							--end
+						end)
+						SafeRemoveEntityDelayed(tr.Entity, 0.1)
+					end
 				elseif tr.Entity:IsWorld() then
 					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 1)
 
 					if Message then
-						if (tr.MatType == MAT_SAND) then
+						if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 							self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 							self:SetTaskProgress(100)
 							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, 2, self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)

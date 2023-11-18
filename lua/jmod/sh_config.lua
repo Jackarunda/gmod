@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.6
+			Version = 44.61
 		},
 		General = {
 			Hints = true,
@@ -1089,8 +1089,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezaidradio",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 100,
-					[JMod.EZ_RESOURCE_TYPES.DIAMOND] = 1
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.GLASS] = 5
 				},
 				sizeScale = 1,
 				category = "Machines",
