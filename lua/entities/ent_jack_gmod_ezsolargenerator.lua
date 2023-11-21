@@ -38,6 +38,38 @@ if(SERVER)then
 		local mapName = game.GetMap()
 	end
 
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+		---
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "Visibility [NORMAL]", "Progress [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Solar panel light visibility", "Machine's progress"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			table.insert(WireOutputs, OutResourceName)
+			table.insert(WireOutputDesc, ResourceDesc)
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:UpdateWireOutputs()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+			WireLib.TriggerOutput(self, "Progress", self:GetProgress())
+			WireLib.TriggerOutput(self, "Visibility", self:GetVisibility())
+			for _, typ in ipairs(self.EZconsumes) do
+				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+					WireLib.TriggerOutput(self, "Durability", self.Durability)
+				end
+			end
+		end
+	end
+
 	function ENT:Use(activator)
 		if self.NextUse > CurTime() then return end
 		local State=self:GetState()
