@@ -1109,20 +1109,19 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 end
 
 --Item Inventory
-local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
-	local Buttalony, Ply = vgui.Create( "SpawnIcon" , scrollFrame ), LocalPlayer()
+local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt, resourceType)
+	local Buttalony, Ply = vgui.Create("SpawnIcon", scrollFrame), LocalPlayer()
 	if itemTable.model then
-		Buttalony:SetModel( itemTable.model )
+		Buttalony:SetModel(itemTable.model)
 	end
+	Buttalony:SetText(itemTable.name)
 	Buttalony:SetSize(50, 50)
 	Buttalony:SetPos(x, y)
-	Buttalony:SetText(itemTable.name)
 	Buttalony:SetCursor("hand")
 	
 	function Buttalony:Paint(w, h)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
-
 		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
@@ -1139,19 +1138,10 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 			[1]={
 				title="Drop",
 				actionFunc = function(itemTable)
-					if itemTable.ent and IsValid(itemTable.ent) then
+					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
 						net.WriteString("drop")
 						net.WriteEntity(itemTable.ent)
-						if invEnt ~= Ply then
-							net.WriteEntity(invEnt)
-						end
-						net.SendToServer()
-					elseif itemTable.res and (itemTable.amt > 0) then
-						net.Start("JMod_ItemInventory")
-						net.WriteString("drop_res")
-						net.WriteUInt(itemTable.amt, 12)
-						net.WriteString(itemtable.res)
 						if invEnt ~= Ply then
 							net.WriteEntity(invEnt)
 						end
@@ -1195,14 +1185,73 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt)
 	end
 end
 
+local function CreateResButton(parent, resourceType, amt, x, y, scrollFrame, invEnt)
+	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
+	Buttalony:SetText("")
+	Buttalony:SetSize(50, 50)
+	Buttalony:SetPos(x, y)
+	Buttalony:SetCursor("hand")
+	
+	function Buttalony:Paint(w, h)
+		surface.SetDrawColor(50, 50, 50, 100)
+		surface.DrawRect(0, 0, w, h)
+		JMod.StandardResourceDisplay(resourceType, amt, "JMod-Stencil-XS", w / 2, h / 3, 30, true)
+		draw.SimpleText(amt, "JMod-Stencil-XS", w / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+	end
+
+	HelpStr = (resourceType .. " x" .. amt)
+	
+	Buttalony:SetTooltip(HelpStr)
+	
+	function Buttalony:DoClick()
+		if OpenDropdown then
+			OpenDropdown:Remove()
+		end
+
+		local frame = vgui.Create("DFrame")
+		frame:SetSize(350, 150)
+		frame:SetTitle("Resource drop amount")
+		frame:Center()
+		frame:MakePopup()
+
+		function frame:Paint(w, h)
+			BlurBackground(self)
+		end
+
+		local amtSlide = vgui.Create("DNumSlider", frame)
+		amtSlide:SetText(string.upper(resourceType))
+		amtSlide:SetSize(280, 20)
+		amtSlide:SetPos((frame:GetWide() - amtSlide:GetWide()) / 2, 30)
+		amtSlide:SetMin(0)
+		amtSlide:SetMax(amt)
+		amtSlide:SetValue(100)
+		amtSlide:SetDecimals(0)
+
+		local apply = vgui.Create("DButton", frame)
+		apply:SetSize(100, 30)
+		apply:SetPos((frame:GetWide() - apply:GetWide()) / 2, 75)
+		apply:SetText("DROP")
+
+		apply.DoClick = function()
+			net.Start("JMod_ItemInventory")
+				net.WriteString("drop_res")
+				net.WriteUInt(amtSlide:GetValue(), 12)
+				net.WriteString(resourceType)
+			net.SendToServer()
+			frame:Close()
+			parent:Close()
+		end
+	end
+end
+
 net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
 	local invEnt = net.ReadEntity()
 	local command = net.ReadString()
-	local items = net.ReadTable()
+	local newInv = net.ReadTable()
 	
 	if command == "update_cl" then
 		local Ply = LocalPlayer()
-		Ply.JModInv = items
+		Ply.JModInv = newInv
 	elseif command == "open_menu" then
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(210, 300)
@@ -1222,11 +1271,17 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		scrollPanel:SetSize(200, 370)
 		scrollPanel:SetPos(5, 30)
 		
-		local ShownItems={}
-		if items then
-			for k, v in ipairs(items) do
-				CreateInvButton(frame, v, (#ShownItems % 4 * 50), (math.floor(#ShownItems/4) * 50), scrollPanel, invEnt)
-				table.insert(ShownItems, v.name)
+		local ShownItems = 0
+		if newInv then
+			for k, v in ipairs(newInv.items) do
+				CreateInvButton(frame, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), scrollPanel, invEnt)
+				ShownItems = ShownItems + 1
+			end
+			if newInv.EZresources then
+				for k, v in pairs(newInv.EZresources) do
+					CreateResButton(frame, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), scrollPanel, invEnt)
+					ShownItems = ShownItems + 1
+				end
 			end
 		end
 	end
@@ -1380,11 +1435,15 @@ net.Receive("JMod_Inventory", function()
 	DScrollyPanel:SetPos(600,30 + (#ShownCommands * 25))
 	DScrollyPanel:SetSize(180,370-(#ShownCommands * 25))
 	
-	local ShownItems={}
+	local ShownItems = 0
 	if Ply.JModInv then
-		for k, v in ipairs(Ply.JModInv) do
-			CreateInvButton(motherFrame, v, (#ShownItems % 3 *50), (math.floor(#ShownItems/3) * 50), DScrollyPanel, Ply)
-			table.insert(ShownItems, v.name)
+		for k, v in ipairs(Ply.JModInv.items) do
+			CreateInvButton(motherFrame, v, (ShownItems % 3 *50), (math.floor(ShownItems/3) * 50), DScrollyPanel, Ply)
+			ShownItems = ShownItems + 1
+		end
+		for k, v in pairs(Ply.JModInv.EZresources) do
+			CreateResButton(motherFrame, k, v, (ShownItems % 3 *50), (math.floor(ShownItems/3) * 50), DScrollyPanel, Ply, k)
+			ShownItems = ShownItems + 1
 		end
 	end
 

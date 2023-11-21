@@ -466,10 +466,13 @@ function SWEP:Reload()
 			local Tar=self:GetCarrying()
 			local ply=self.Owner
 			
-			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and !Tar:IsConstrained() then
+			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and not(Tar:IsWorld()) and !Tar:IsConstrained() then
 				if not(Tar.JModInv) then --CHECK FOR INV LIMIT HERE
-					JMod.AddToInventory(ply, Tar)
-					JMod.Hint(ply,"hint item inventory add")
+					local Phys = Tar:GetPhysicsObject()
+					if Phys:GetMass() <= 100 then 
+						JMod.AddToInventory(ply, Tar)
+						JMod.Hint(ply,"hint item inventory add")
+					end
 				elseif Tar.JModInv then
 					net.Start("JMod_ItemInventory")--send to client so the player can update their inv
 					net.WriteEntity(Tar)

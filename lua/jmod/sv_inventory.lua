@@ -1,37 +1,42 @@
 ﻿function JMod.EZ_Open_Inventory(ply)
-	ply.JModInv = ply.JModInv or {}
+	JMod.UpdateInv(ply)
 	net.Start("JMod_Inventory")
 	net.WriteString(ply:GetModel())
 	net.WriteTable(ply.JModInv)
 	net.Send(ply)
 end
 
-function JMod.IsEntContained(container, target)
-	return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+
+function JMod.IsEntContained(target, container)
+	if container then
+		return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+	else
+		return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+	end
 end
 
 function JMod.UpdateInv(invEnt)
-	local jmodinv = invEnt.JModInv or {}
+	invEnt.JModInv = invEnt.JModInv or {EZresources = {}, items = {}}
 
-	local jmodinvfinal = {}
-	for k, v in ipairs(jmodinv) do
-		local StoredEnt = v.ent
-		--print(invEnt, StoredEnt)
-		if IsValid(StoredEnt) then
-			if JMod.IsEntContained(invEnt, StoredEnt) then
-				table.insert(jmodinvfinal, v)
-			end
-		elseif v.res then
-			table.insert(jmodinvfinal, {name = k, res = k, amt = v})
+	local jmodinvfinal = {EZresources = {}, items = {}}
+	for k, v in ipairs(invEnt.JModInv.items) do
+		if JMod.IsEntContained(v.ent, invEnt) then
+			table.insert(jmodinvfinal.items, v)
+		end
+	end
+	for k, v in pairs(invEnt.JModInv.EZresources) do
+		if v > 0 then
+			jmodinvfinal.EZresources[k] = v
 		end
 	end
 
 	invEnt.JModInv = jmodinvfinal
+	PrintTable(invEnt.JModInv)
 end
 
 function JMod.AddToInventory(invEnt, target)
-	--print(invEnt, target, JMod.IsEntContained(invEnt, target))
-	if JMod.IsEntContained(invEnt, target) or target:IsPlayer() then return end
+	--print(invEnt, target, JMod.IsEntContained(target))
+	if JMod.IsEntContained(target, invEnt) or target:IsPlayer() then return end
 
 	target.EZInvOwner = invEnt
 	target:SetParent(invEnt)
@@ -40,62 +45,56 @@ function JMod.AddToInventory(invEnt, target)
 	target:SetNotSolid(true)
 	target:GetPhysicsObject():EnableMotion(false)
 	target:GetPhysicsObject():Sleep()
+
+	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}}
+
+	if target.IsJackyEZresource then
+		jmodinv.EZresources[target.EZsupplies] = (jmodinv.EZresources[target.EZsupplies] or 0) + target:GetResource()
+		SafeRemoveEntityDelayed(target, 0)
+	else
+		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), model = target:GetModel(), ent = target})
+	end
+
+	invEnt.JModInv = jmodinv
+
+	JMod.UpdateInv(invEnt)
+
 	if invEnt:IsPlayer() then
 		JMod.Hint(invEnt,"hint item inventory add")
 	end
-
-	local jmodinv = invEnt.JModInv or {}
-
-	if target.IsJackyEZresource then
-		table.insert(jmodinv, {name = target.EZsupplies, res = target.EZsupplies, amt = target:GetResource()})
-		SafeRemoveEntityDelayed(target, 0)
-	else
-		table.insert(jmodinv, {name = target.PrintName or target:GetModel(), model = target:GetModel(), ent = target})
-	end
-
-	local jmodinvfinal = {}
-	local invresources = {}
-	for k, v in ipairs(jmodinv) do
-		if v.ent then
-			local StoredEnt = v.ent
-			if JMod.IsEntContained(invEnt, target) then
-				table.insert(jmodinvfinal, v)
-			end
-		elseif v.res then
-			if invresources[v.res] then
-				invresources[v.res] = invresources[v.res] + v.amt
-			else
-				invresources[v.res] = v.amt
-			end
-		end
-	end
-	if not(table.Empty(invresources)) then
-		for k, v in pairs(invresources) do
-			table.insert(jmodinvfinal, {name = k, res = k, amt = v})
-		end
-	end
-
-	invEnt.JModInv = jmodinvfinal
 end
 
 function JMod.RemoveFromInventory(invEnt, target, pos, amt)
-	if JMod.EZ_RESOURCE_TYPES[target] then
-		if not pos then
-			pos = invEnt:GetPos() + invEnt:GetUp() * 10
+	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}}
+
+	if JMod.EZ_RESOURCE_ENTITIES[target] and invEnt.JModInv.EZresources[target] then
+		local AmountLeft = amt
+		local Safety = 0
+		while (AmountLeft > 0) or (Safety > 1000) do
+			local AmountToGive = math.min(AmountLeft, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
+			AmountLeft = AmountLeft - AmountToGive
+			timer.Simple(Safety * 0.1, function()
+				if not pos then
+					pos = invEnt:GetPos() + invEnt:GetUp() * 10
+				end
+				local Box = ents.Create(JMod.EZ_RESOURCE_ENTITIES[target])
+				Box:SetPos(pos + Vector(0, 0, Safety * 10))
+				Box:SetAngles(invEnt:GetAngles())
+				Box:Spawn()
+				Box:Activate()
+				Box:SetResource(AmountToGive)
+			end)
+			Safety = Safety + 1
 		end
-		local Box, Given = ents.Create(JMod.EZ_RESOURCE_ENTITIES[JMod.EZ_RESOURCE_TYPES[target]]), math.min(amt, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
-		Box:SetPos(pos)
-		Box:SetAngles(invEnt:GetAngles())
-		Box:Spawn()
-		Box:Activate()
-		Box:SetResource(Given)
+
+		invEnt.JModInv.EZresources[target] = invEnt.JModInv.EZresources[target] - amt
 		--[[timer.Simple(0.1, function()
 			if IsValid(Box) and IsValid(activator) and activator:Alive() then
 				activator:PickupObject(Box)
 			end
 		end)--]]
 	else
-		if not JMod.IsEntContained(invEnt, target) then return end
+		if not JMod.IsEntContained(target, invEnt) then return end
 
 		target.EZInvOwner = nil
 
@@ -117,17 +116,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt)
 		end)
 	end
 
-	local jmodinv = invEnt.JModInv or {}
-
-	local jmodinvfinal = {}
-	for k, v in ipairs(jmodinv) do
-		local StoredEnt = v.ent
-		if JMod.IsEntContained(invEnt, StoredEnt) then
-			table.insert(jmodinvfinal, v)
-		end
-	end
-
-	invEnt.JModInv = jmodinvfinal
+	JMod.UpdateInv(invEnt)
 
 	if invEnt.NextLoad and invEnt.CalcWeight then 
 		invEnt.NextLoad = CurTime() + 2

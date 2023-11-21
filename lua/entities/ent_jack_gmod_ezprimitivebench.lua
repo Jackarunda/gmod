@@ -205,8 +205,8 @@ if(SERVER)then
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
 				if (self:GetState() == STATE_PROCESSING) and Held and (Ent:GetClass() == "prop_physics") then
-					timer.Simple(1, function()
-						if not(IsValid(self) or IsValid(Ent)) then return end
+					--timer.Simple(1, function()
+					--	if not(IsValid(self) or IsValid(Ent)) then return end
 						local Yield, Message = JMod.GetSalvageYield(Ent)
 						PrintTable(Yield)
 
@@ -223,7 +223,7 @@ if(SERVER)then
 							end
 							SafeRemoveEntity(Ent)
 						end
-					end)
+					--end)
 				end
 				self:EmitSound("Wood.ImpactHard")
 				if (data.Speed > 500) then
