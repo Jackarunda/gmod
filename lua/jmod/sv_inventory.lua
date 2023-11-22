@@ -53,8 +53,8 @@ function JMod.UpdateInv(invEnt)
 			if (Capacity <= (jmodinvfinal.weight + (amt * JMod.EZ_RESOURCE_INV_WEIGHT))) then
 				local Overflow = (amt * JMod.EZ_RESOURCE_INV_WEIGHT) - (Capacity - jmodinvfinal.weight)
 				JMod.RemoveFromInventory(invEnt, typ, EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100)), Overflow / JMod.EZ_RESOURCE_INV_WEIGHT, true)
-				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + amt - Overflow)
-				jmodinvfinal.EZresources[typ] = math.Round(amt)
+				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + ((amt - Overflow) * JMod.EZ_RESOURCE_INV_WEIGHT))
+				jmodinvfinal.EZresources[typ] = math.Round(amt - Overflow / JMod.EZ_RESOURCE_INV_WEIGHT)
 			else
 				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + (amt * JMod.EZ_RESOURCE_INV_WEIGHT))
 				jmodinvfinal.EZresources[typ] = math.Round(amt)
@@ -67,7 +67,6 @@ function JMod.UpdateInv(invEnt)
 end
 
 function JMod.AddToInventory(invEnt, target, amt, noUpdate)
-	--print(invEnt, target, JMod.IsEntContained(target))
 	if JMod.IsEntContained(target) or target:IsPlayer() then return end
 
 	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}, weight = 0}
@@ -76,6 +75,7 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 		local SuppliesLeft = target:GetEZsupplies(target.EZsupplies)
 		jmodinv.EZresources[target.EZsupplies] = (jmodinv.EZresources[target.EZsupplies] or 0) + math.min(SuppliesLeft, amt)
 		target:SetEZsupplies(target.EZsupplies, SuppliesLeft - (amt or SuppliesLeft))
+		JMod.ResourceEffect(target.EZsupplies, target:LocalToWorld(target:OBBCenter()), invEnt:LocalToWorld(invEnt:OBBCenter()), 1, 1, 1)
 	else
 		target.EZInvOwner = invEnt
 		target:SetParent(invEnt)
@@ -101,7 +101,6 @@ end
 
 function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}, weight = 0}
-	local ReturnToSender
 
 	if JMod.EZ_RESOURCE_ENTITIES[target] and invEnt.JModInv.EZresources[target] then
 		local AmountLeft = amt

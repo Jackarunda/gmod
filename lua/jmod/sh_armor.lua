@@ -935,7 +935,7 @@ JMod.ArmorTable = {
 	},
 	["Backpack"] = {
 		PrintName = "Backpack",
-		mdl = "models/jessev92/resliber/weapons/parachute_backpack_closed_w.mdl",
+		mdl = "models/modified/backpack_3.mdl",
 		clr = {
 			r = 255,
 			g = 255,
@@ -948,7 +948,7 @@ JMod.ArmorTable = {
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
-		pos = Vector(-3, -50, 0),
+		pos = Vector(-2, 0, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 10,
 		dur = 100,

@@ -381,7 +381,7 @@ if SERVER then
 	end
 end
 
-JMod.EZ_RESOURCE_INV_WEIGHT = 0.5
+JMod.EZ_RESOURCE_INV_WEIGHT = .5
 
 --[[local ImpactSounds = {
 	Metal = {"Canister.ImpactSoft", "Metal_Barrel.BulletImpact", "Metal_Barrel.ImpactSoft", "Metal_Box.BulletImpact", "Metal_Box.ImpactSoft", "Metal_SeafloorCar.BulletImpact", "MetalGrate.BulletImpact", "MetalGrate.ImpactSoft", "MetalVehicle.ImpactSoft", "MetalVent.ImpactHard",},
