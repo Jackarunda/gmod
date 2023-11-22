@@ -461,26 +461,32 @@ end
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
 	
-	if not(self:GetFists()) then--pick up to inv
+	if not(self:GetFists()) then -- Pick up to inv
 		if self:GetCarrying() and IsValid(self:GetCarrying()) then
-			local Tar=self:GetCarrying()
-			local ply=self.Owner
+			local Tar = self:GetCarrying()
+			local ply = self.Owner
 			
 			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and not(Tar:IsWorld()) and !Tar:IsConstrained() then
-				if not(Tar.JModInv) then --CHECK FOR INV LIMIT HERE
-					local Phys = Tar:GetPhysicsObject()
-					if Phys:GetMass() <= 100 then 
-						JMod.AddToInventory(ply, Tar)
-						JMod.Hint(ply,"hint item inventory add")
-					end
-				elseif Tar.JModInv then
-					net.Start("JMod_ItemInventory")--send to client so the player can update their inv
+				if Tar.JModInv then
+					net.Start("JMod_ItemInventory") -- Send to client so the player can update their inv
 					net.WriteEntity(Tar)
 					net.WriteString("open_menu")
 					net.WriteTable(Tar.JModInv)
 					net.Send(ply)
 				else
-					JMod.Hint(ply,"hint item inventory full")
+					JMod.UpdateInv(ply)
+					local Phys = Tar:GetPhysicsObject()
+					local RoomLeft = (200 - ply.JModInv.weight) -- This is just an arbitrary limit for now
+					local RoomWeNeed = Phys:GetMass()
+					if Tar.IsJackyEZresource then
+						RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies), RoomLeft)
+					end
+					if RoomWeNeed <= RoomLeft then 
+						JMod.AddToInventory(ply, Tar, RoomWeNeed)
+						JMod.Hint(ply,"hint item inventory add")
+					else
+						JMod.Hint(ply,"hint item inventory full")
+					end
 				end
 			end
 		end
