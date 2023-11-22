@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.61
+			Version = 44.7
 		},
 		General = {
 			Hints = true,
@@ -85,6 +85,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		},
 		Particles = {
 			VirusSpreadMult = 1,
+			SludgeVirusInfectChance = 0.1,
 			FumigatorGasAmount = 1,
 			PoisonGasDamage = 1,
 			PoisonGasLingerTime = 1,

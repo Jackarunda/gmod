@@ -476,16 +476,18 @@ function SWEP:Reload()
 				else
 					JMod.UpdateInv(ply)
 					local Phys = Tar:GetPhysicsObject()
-					local RoomLeft = (200 - ply.JModInv.weight) -- This is just an arbitrary limit for now
-					local RoomWeNeed = Phys:GetMass()
-					if Tar.IsJackyEZresource then
-						RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies), RoomLeft)
-					end
-					if RoomWeNeed <= RoomLeft then 
-						JMod.AddToInventory(ply, Tar, RoomWeNeed)
-						JMod.Hint(ply,"hint item inventory add")
-					else
-						JMod.Hint(ply,"hint item inventory full")
+					local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.weight)
+					if RoomLeft > 0 then
+						local RoomWeNeed = Phys:GetMass()
+						if Tar.IsJackyEZresource then
+							RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies) * JMod.EZ_RESOURCE_INV_WEIGHT, RoomLeft)
+						end
+						if RoomWeNeed <= RoomLeft then 
+							JMod.AddToInventory(ply, Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT)
+							JMod.Hint(ply,"hint item inventory add")
+						else
+							JMod.Hint(ply,"hint item inventory full")
+						end
 					end
 				end
 			end

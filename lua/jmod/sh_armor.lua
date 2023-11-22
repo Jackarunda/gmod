@@ -932,6 +932,27 @@ JMod.ArmorTable = {
 		wgt = 30,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_parachute"
+	},
+	["Backpack"] = {
+		PrintName = "Backpack",
+		mdl = "models/jessev92/resliber/weapons/parachute_backpack_closed_w.mdl",
+		clr = {
+			r = 255,
+			g = 255,
+			b = 255
+		},
+		slots = {
+			back = .8
+		},
+		storage = 100,
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine2",
+		siz = Vector(1, 1, 1),
+		pos = Vector(-3, -50, 0),
+		ang = Angle(-90, 0, 90),
+		wgt = 10,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_backpack"
 	}
 }
 

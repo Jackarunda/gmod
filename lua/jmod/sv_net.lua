@@ -200,8 +200,6 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	if not IsValid(invEnt) then
 		invEnt = ply
 	end
-
-	print(command, amt, resourceType, target, invEnt)
 	
 	if command == "take" then
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end

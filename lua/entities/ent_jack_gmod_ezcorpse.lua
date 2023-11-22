@@ -22,11 +22,9 @@ if SERVER then
 
 		local Ply = self.DeadPlayer
 		local Ragdoll = ents.Create("prop_ragdoll")
-		if self.DeadPlayer.EZoriginalPlayerModel then
-			Ragdoll:SetModel(Ply.EZoriginalPlayerModel)
-		else
-			Ragdoll:SetModel(Ply:GetModel())
-		end
+		Ragdoll:SetModel(Ply:GetModel())
+		Ragdoll:SetSkin(self.DeadPlayer:GetSkin())
+		Ragdoll:SetBodyGroups(self.BodyGroupValues)
 		Ragdoll:SetPos(Ply:GetPos())
 		Ragdoll:SetAngles(Ply:GetAngles())
 		Ragdoll:Spawn()
@@ -46,7 +44,7 @@ if SERVER then
 			end
 		end)
 		----------------------Kycea contribution end------------------------
-		if IsValid(Ragdoll) then
+		if (Ply.EZarmor and Ply.EZarmor.items) and IsValid(Ragdoll) then
 			Ragdoll.EZarmorP = {}
 			local Parachute = false
 			for k, v in pairs(Ply.EZarmor.items) do

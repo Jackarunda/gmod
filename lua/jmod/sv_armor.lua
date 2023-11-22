@@ -72,6 +72,8 @@ function JMod.EZarmorSync(ply)
 		ply:SetNW2Bool("EZparachuting", false)
 	end
 
+	JMod.UpdateInv(ply)
+
 	hook.Run("JModHookEZArmorSync", ply)
 
 	net.Start("JMod_EZarmorSync")
@@ -314,7 +316,7 @@ local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 		dmg:ScaleDamage(Mul)
 
 		if isInSewage then
-			if math.random(1, 10) == 2 then
+			if math.Rand(0, 1) < JMod.Config.Particles.SludgeVirusInfectChance then
 				JMod.ViralInfect(ply, game.GetWorld())
 			end
 		end
@@ -382,6 +384,10 @@ function JMod.CalcSpeed(ply)
 		TotalWeight = TotalWeight + ArmorInfo.wgt
 	end
 
+	if ply.JModInv then
+		TotalWeight = TotalWeight + ply.JModInv.weight
+	end
+	
 	ply.EZarmor.totalWeight = TotalWeight
 
 	if ply.EZarmor.totalWeight >= 150 then

@@ -24,6 +24,8 @@ local function JackaSpawnHook(ply)
 		totalWeight = 0
 	}
 
+	ply.JModInv = {EZresources = {}, items = {}, weight = 0}
+
 	JMod.EZarmorSync(ply)
 	ply.EZhealth = nil
 	ply.EZirradiated = nil
@@ -775,19 +777,33 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, d
 	end
 end)
 
---hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
 hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
-	if (JMod.Config.QoL.JModCorpseStayTime > 0) and ply.EZarmor and ply.EZarmor.items then
-		SafeRemoveEntity(ply:GetRagdollEntity())
+	if (JMod.Config.QoL.JModCorpseStayTime > 0) then
+		local PlyRagdoll = ply:GetRagdollEntity()
+		local BodyGroupValues = ""
+		for i = 1, PlyRagdoll:GetNumBodyGroups() do
+			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
+		end
+		SafeRemoveEntity(PlyRagdoll)
 		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
 		EZcorpse.DeadPlayer = ply
 		if ply.EZoverDamage then
 			EZcorpse.EZoverDamage = ply.EZoverDamage
 		end
+		EZcorpse.BodyGroupValues = BodyGroupValues
 		EZcorpse:Spawn()
 		EZcorpse:Activate()
 	end
 	ply.EZoverDamage = nil
+
+	if ply.JModInv then
+		for _, v in ipairs(ply.JModInv.items) do
+			JMod.RemoveFromInventory(ply, v.ent, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+		end
+		for typ, amt in pairs(ply.JModInv.EZresources) do
+			JMod.RemoveFromInventory(ply, typ, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)), amt)
+		end
+	end
 end)
 
 concommand.Add("jmod_debug_parachute", function(ply, cmd, args) 

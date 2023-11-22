@@ -1241,6 +1241,8 @@ local function CreateResButton(parent, resourceType, amt, x, y, scrollFrame, inv
 			frame:Close()
 			parent:Close()
 		end
+		
+		OpenDropdown = frame
 	end
 end
 
@@ -1301,7 +1303,7 @@ net.Receive("JMod_Inventory", function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Inventory | Current Armour Weight: " .. weight .. "kg.")
+	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg.")
 
 	function motherFrame:Paint()
 		BlurBackground(self)
