@@ -137,10 +137,14 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 		target:SetParent(nil)
 		target:SetPos(pos)
 		target:SetAngles(target.JModPreferredCarryAngles or AngleRand())
+		local Phys = target:GetPhysicsObject()
 		timer.Simple(0, function()
-			if IsValid(target) then
-				target:GetPhysicsObject():EnableMotion(true)
-				target:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:EnableMotion(true)
+				Phys:Wake()
+				if IsValid(invEnt) and IsValid(invEnt:GetPhysicsObject()) then
+					Phys:SetVelocity(invEnt:GetPhysicsObject():GetVelocity())
+				end
 			end
 		end)
 	end

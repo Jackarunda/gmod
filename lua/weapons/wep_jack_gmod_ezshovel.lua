@@ -218,7 +218,7 @@ function SWEP:Hitscan()
 								GraveStone:SetAngles(Angle(0, 0, 0))
 								GraveStone:Spawn()
 								GraveStone:Activate()
-								local WeldTr = util.QuickTrace(GraveStone:GetPos() + Vector(0, 0, 20), Vector(0, 0, -40), {GraveStone, tr.Entity, self.Owner})
+								local WeldTr = util.QuickTrace(GravePos + Vector(0, 0, 20), Vector(0, 0, -40), {GraveStone, tr.Entity, self.Owner})
 								if WeldTr.Hit then
 									GraveStone:SetPos(WeldTr.HitPos)
 									local StoneAng = WeldTr.HitNormal:Angle()

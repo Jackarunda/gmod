@@ -935,11 +935,11 @@ JMod.ArmorTable = {
 	},
 	["Backpack"] = {
 		PrintName = "Backpack",
-		mdl = "models/modified/backpack_3.mdl",
+		mdl = "models/jmod/props/backpack_3.mdl",
 		clr = {
-			r = 255,
-			g = 255,
-			b = 255
+			r = 50,
+			g = 50,
+			b = 50
 		},
 		slots = {
 			back = .8
@@ -1070,17 +1070,35 @@ if CLIENT then
 	concommand.Add("jmod_ez_toggleeyes", function()
 		local ply = LocalPlayer()
 		if not (IsValid(ply) and ply:Alive()) then return end
-		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, "eyes")
+		-- 2 eyes
+		ply:ConCommand("jmod_ez_armoraction toggle eyes")
+	end)
 
+	local ArmorCommands = {"drop", "toggle", "repair", "recharge"}
+	local ArmorNames = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf", "chest", "back", "waist", "pelvis", "rightshoulder", "rightforearm", "rightthigh", "rightcalf"}
+
+	concommand.Add("jmod_ez_armoraction", function(ply, cmd, args)
+		if not(IsValid(ply)) or not(ply:Alive()) then return end
+		local action = args[1]
+		local slot = args[2]
+		if not slot then return end
+		if isstring(action) then
+			action = table.KeyFromValue(ArmorCommands, action)
+		end
+		if isnumber(slot) then
+			slot = ArmorNames[slot]
+		end
+
+		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
 		if not ItemID then
-			ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing anything that covers your eyes!")
+			ply:PrintMessage(HUD_PRINTCENTER, "There's nothing in slot " .. slot)
 		else
 			net.Start("JMod_Inventory")
-			net.WriteInt(2, 8) -- toggle
+			net.WriteInt(action, 8)
 			net.WriteString(ItemID)
 			net.SendToServer()
 		end
-	end)
+	end, nil, "Manipulate armor inventory with a concommand.")
 end
 
 -- Debug
