@@ -1,11 +1,12 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.PrintName = "Sleeping Bag"
-ENT.Author = "Basipek"
+ENT.Author = "Basipek, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.Mass = 35
+ENT.JModEZstorable = true
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"

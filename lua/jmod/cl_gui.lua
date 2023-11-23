@@ -1434,8 +1434,8 @@ net.Receive("JMod_Inventory", function()
 	
 	--Item Inventory
 	local DScrollyPanel = vgui.Create( "DScrollPanel", motherFrame )
-	DScrollyPanel:SetPos(600,30 + (#ShownCommands * 25))
-	DScrollyPanel:SetSize(180,370-(#ShownCommands * 25))
+	DScrollyPanel:SetPos(600, 30 + (#ShownCommands * 25))
+	DScrollyPanel:SetSize(180, 370-(#ShownCommands * 25))
 	
 	local ShownItems = 0
 	if Ply.JModInv then
@@ -1447,6 +1447,12 @@ net.Receive("JMod_Inventory", function()
 			CreateResButton(motherFrame, k, v, (ShownItems % 3 *50), (math.floor(ShownItems/3) * 50), DScrollyPanel, Ply, k)
 			ShownItems = ShownItems + 1
 		end
+	end
+	if ShownItems <= 0 then
+		local InfoLabel = vgui.Create("DLabel", motherFrame)
+		InfoLabel:SetPos(610, 100 + (#ShownCommands * 25))
+		InfoLabel:SetSize(300, 20)
+		InfoLabel:SetText("Use JMod Hands to pick up items")
 	end
 
 	function motherFrame:OnKeyCodePressed(num)

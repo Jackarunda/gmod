@@ -23,6 +23,8 @@ function JMod.GetStorageCapacity(ent)
 end
 
 function JMod.IsEntContained(target, container)
+	--print(target, container)
+	--print(IsValid(target), (target:EntIndex() ~= -1), IsValid(target.EZInvOwner), (target.EZInvOwner == container), IsValid(target:GetParent()), (target:GetParent() == target.EZInvOwner))
 	if container then
 		return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
 	else
@@ -38,6 +40,7 @@ function JMod.UpdateInv(invEnt)
 
 	local jmodinvfinal = {EZresources = {}, items = {}, weight = 0}
 	for k, v in ipairs(invEnt.JModInv.items) do
+		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
 		if JMod.IsEntContained(v.ent, invEnt) then
 			local Phys = v.ent:GetPhysicsObject()
 			if IsValid(Phys) and (Capacity >= (jmodinvfinal.weight + Phys:GetMass())) then
@@ -79,8 +82,8 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 	else
 		target.EZInvOwner = invEnt
 		target:SetParent(invEnt)
-		target:SetPos(Vector(0, 0, 0))
-		target:SetAngles(Angle(0, 0, 0))
+		target:SetPos(invEnt:OBBCenter())
+		target:SetAngles(target.JModPreferredCarryAngles or Angle(0, 0, 0))
 		target:SetNoDraw(true)
 		target:SetNotSolid(true)
 		target:GetPhysicsObject():EnableMotion(false)
@@ -90,7 +93,11 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 
 	invEnt.JModInv = jmodinv
 
-	if not noUpdate then
+	--PrintTable(invEnt.JModInv)
+
+	if noUpdate then
+		--
+	else
 		JMod.UpdateInv(invEnt)
 	end
 
@@ -149,7 +156,9 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 		end)
 	end
 
-	if not noUpdate then
+	if noUpdate then
+		--
+	else
 		JMod.UpdateInv(invEnt)
 	end
 
