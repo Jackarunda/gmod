@@ -141,9 +141,9 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 		end
 		target:SetNoDraw(false)
 		target:SetNotSolid(false)
+		target:SetAngles(target.JModPreferredCarryAngles or Angle(0, 0, 0))
 		target:SetParent(nil)
 		target:SetPos(pos)
-		target:SetAngles(target.JModPreferredCarryAngles or AngleRand())
 		local Phys = target:GetPhysicsObject()
 		timer.Simple(0, function()
 			if IsValid(Phys) then
@@ -167,4 +167,57 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 		invEnt:EmitSound("Ammo_Crate.Close")
 		invEnt:CalcWeight()
 	end
+
+	if IsValid(target) then
+		return target
+	end
 end
+
+-- I put this in here because they all have to do with each other
+net.Receive("JMod_ItemInventory", function(len, ply)
+	local command = net.ReadString()
+	local amt, resourceType, target
+	if command == "drop_res" then
+		amt = net.ReadUInt(12)
+		resourceType = net.ReadString()
+	else
+		target = net.ReadEntity()
+	end
+	local invEnt = net.ReadEntity()
+
+	if not IsValid(invEnt) then
+		invEnt = ply
+	end
+	
+	if command == "take" then
+		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+		JMod.AddToInventory(invEnt, target)
+	elseif command == "drop" then
+		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+		local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 50, ply)
+		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
+		JMod.Hint(ply,"hint item inventory drop")
+	elseif command == "use" then
+		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+		local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 50, ply)
+		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
+		if item then
+			Phys = item:GetPhysicsObject()
+			if (item:GetClass() == "prop_physics") and IsValid(Phys) and (Phys:GetMass() <= 35) then
+				ply:PickupObject(item)
+			else
+				print(ply:KeyDown(JMod.Config.General.AltFunctionKey))
+				item:Use(ply, ply, USE_ON)
+			end
+		end
+	elseif command == "drop_res" then
+		local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 50, ply)
+		JMod.RemoveFromInventory(invEnt, resourceType, Tr.HitPos + Vector(0, 0, 10), amt)
+		--JMod.Hint(ply,"hint item inventory drop")
+	elseif command == "full" then
+		JMod.Hint(ply,"hint item inventory full")
+	elseif command == "missing" then
+		JMod.UpdateInv(invEnt)
+		JMod.Hint(ply,"hint item inventory missing")
+	end
+end)

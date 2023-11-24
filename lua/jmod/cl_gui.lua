@@ -1153,6 +1153,25 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt, res
 						net.SendToServer()
 					end
 				end
+			},
+			[2]={
+				title="Use",
+				actionFunc = function(itemTable)
+					if IsValid(itemTable.ent) then
+						net.Start("JMod_ItemInventory")
+						net.WriteString("use")
+						net.WriteEntity(itemTable.ent)
+						if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						end
+						net.SendToServer()
+					else
+						net.Start("JMod_ItemInventory")
+						net.WriteString("missing")
+						net.WriteEntity(Ply)
+						net.SendToServer()
+					end
+				end
 			}
 		}
 		
