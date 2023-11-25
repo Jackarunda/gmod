@@ -337,14 +337,15 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
-local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 40, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 12}
+local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 30, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 10}
 
 local Handcraft = function(ply, cmd, args)
 	local Pos = ply:GetPos()
 	local AvaliableResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
 	--PrintTable(AvaliableResources)
 	--jprint(JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources))
-	if JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources) then
+	local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources)
+	if EnoughStuff then
 		local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
 		JMod.BuildEffect(WherePutBench.HitPos + Vector(0, 0, 30))
 		timer.Simple(0.5, function()
@@ -356,7 +357,11 @@ local Handcraft = function(ply, cmd, args)
 		end)
 		JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
 	else
-		ply:PrintMessage(HUD_PRINTCENTER, "More scrap needed, look for wood, stone and metal")
+		local Mssg = ""
+		for k, v in pairs(StuffLeft) do
+			Mssg = Mssg .. ", " .. tostring(v) .. " more " .. tostring(k)
+		end
+		ply:PrintMessage(HUD_PRINTCENTER, "You need" .. Mssg)
 	end
 end
 

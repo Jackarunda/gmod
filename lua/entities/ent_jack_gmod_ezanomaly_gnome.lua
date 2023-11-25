@@ -45,6 +45,7 @@ if SERVER then
 
 		self.FreezeTime = 0
 		self.Restlessness = 1
+		self.NextBiteTime = 0
 		--self:SetVisualState(STATE_GNORMAL)
 	end
 
@@ -63,6 +64,26 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
+		if activator:IsPlayer() then
+			local Time = CurTime()
+			if self.NextBiteTime < Time then
+				self.NextBiteTime = Time + math.Rand(1, 2)
+				timer.Simple(0.1, function()
+					if not(IsValid(self)) or not(IsValid(activator)) then return end
+					sound.Play("npc/headcrab/headbite.wav", self:GetPos(), 120, math.random(90, 110))
+					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+					local Dmg = DamageInfo()
+					Dmg:SetDamage(math.random(1, 2))
+					Dmg:SetDamageType(DMG_SLASH)
+					Dmg:SetAttacker(activator)
+					Dmg:SetInflictor(game.GetWorld())
+					Dmg:SetDamageForce(Vector(0, 0, 0))
+					Dmg:SetDamagePosition(activator:GetBonePosition(activator:LookupBone("ValveBiped.Bip01_L_Hand")) or activator:GetPos())
+					activator:TakeDamageInfo(Dmg)
+					self.Restlessness = self.Restlessness + 1
+				end)
+			end
+		end
 	end
 
 	---
@@ -149,7 +170,7 @@ if SERVER then
 	function ENT:TryMoveRandomly()
 		local SelfPos = self:GetPos()
 		local Dir = VectorRand()
-		local NewPos = SelfPos + Dir * 50 * self.Restlessness
+		local NewPos = SelfPos + Dir * 50 * math.Clamp(self.Restlessness, 1, 5)
 		local NewGroundPos = self:FindGroundAt(NewPos)
 
 		if NewGroundPos then
@@ -300,26 +321,158 @@ if SERVER then
 
 						local Vec = ((Target:GetShootPos() - Vector(0, 0, 10)) - SelfPos):GetNormalized()
 						self:GetPhysicsObject():ApplyForceCenter(Vec * 100000)
+						timer.Simple(0.5, function()
+							if IsValid(Target) and Target:Alive() then
+								self.Restlessness = self.Restlessness + 5 -- We want him DEAD!!!
+							else
+								self.Restlessness = 1 -- He died
+							end
+						end)
 					end
 				elseif Objective == "eat" then
 					if Target then
 						Target:Remove()
 						sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
-						self.Restlessness = 1
+						self.Restlessness = self.Restlessness - 10
 					end
 				end
 			else
 				self:TryMoveRandomly()
 			end
 
-			self.Restlessness = math.Clamp(self.Restlessness + .1, 1, 5)
+			self.Restlessness = math.Clamp(self.Restlessness + .1, 1, 100)
+			--jprint(self.Restlessness)
+
+			if self.Restlessness >= 100 then
+				self:Detonate()
+			end
 		else
-			self.Restlessness = 1
+			self.Restlessness = self.Restlessness - 1
 		end
 
-		self:NextThink(Time + math.Rand(2, 4) / self.Restlessness)
+		self:NextThink(Time + math.Rand(2, 4) / math.Clamp(self.Restlessness, 1, 5))
 
 		return true
+	end
+
+	local function SendClientNukeEffect(pos, range)
+		net.Start("JMod_NuclearBlast")
+		net.WriteVector(pos)
+		net.WriteFloat(range)
+		net.WriteFloat(1)
+		net.Broadcast()
+	end
+
+	function ENT:Detonate()
+		if self.Exploded then return end
+		self.Exploded = true
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
+
+		--JMod.Sploom(Att,SelfPos,500)
+		timer.Simple(.1, function()
+			JMod.BlastDamageIgnoreWorld(SelfPos, Att, nil, 600, 800)
+		end)
+
+		---
+		util.ScreenShake(SelfPos, 1000, 10, 5, 8000)
+		local Eff = "pcf_jack_moab"
+
+		if not util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld then
+			Eff = "pcf_jack_moab_air"
+		end
+
+		for i = 1, 10 do
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
+		end
+
+		---
+		SendClientNukeEffect(SelfPos, 8000)
+		---
+		if (JMod.Config.QoL.NukeFlashLightEnabled) then
+			local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+			NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+			NukeFlash.LifeDuration = 2
+			NukeFlash.MaxAltitude = 1000
+			NukeFlash:Spawn()
+			NukeFlash:Activate()
+		end
+
+		for h = 1, 40 do
+			timer.Simple(h / 10, function()
+				local ThermalRadiation = DamageInfo()
+				ThermalRadiation:SetDamageType(DMG_BURN)
+				ThermalRadiation:SetDamage((50 / h) * Power)
+				ThermalRadiation:SetAttacker(Att)
+				ThermalRadiation:SetInflictor(game.GetWorld())
+				util.BlastDamageInfo(ThermalRadiation, SelfPos, 12000)
+			end)
+		end
+
+		---
+		for k, ply in pairs(player.GetAll()) do
+			local Dist = ply:GetPos():Distance(SelfPos)
+
+			if (Dist > 1000) and (Dist < 120000) then
+				timer.Simple(Dist / 6000, function()
+					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 90)
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
+					util.ScreenShake(ply:GetPos(), 1000, 10, 5, 100)
+				end)
+			end
+		end
+
+		---
+		for i = 1, 5 do
+			timer.Simple(i / 5, function()
+				util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 200 * i), 6000 * Range, 300 * Power)
+			end)
+		end
+
+		---
+		for k, ent in pairs(ents.FindInSphere(SelfPos, 2000)) do
+			if ent:GetClass() == "npc_helicopter" then
+				ent:Fire("selfdestruct", "", math.Rand(0, 2))
+			end
+		end
+
+		---
+		JMod.WreckBuildings(self, SelfPos, 15)
+		JMod.BlastDoors(self, SelfPos, 15)
+
+		---
+		timer.Simple(.2, function()
+			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
+
+			if Tr.Hit then
+				util.Decal("GiantScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+			end
+		end)
+
+		---
+		self:Remove()
+
+		timer.Simple(.1, function()
+			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
+			local Eff = EffectData()
+			Eff:SetOrigin(SelfPos)
+			util.Effect("eff_jack_gmod_tinynukeflash", Eff, true, true)
+		end)
+
+		---
+		timer.Simple(5, function()
+			for j = 1, 10 do
+				timer.Simple(j / 10, function()
+					for k = 1, 5 * JMod.Config.Particles.NuclearRadiationMult do
+						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
+						Gas:SetPos(SelfPos)
+						JMod.SetEZowner(Gas, Att)
+						Gas:Spawn()
+						Gas:Activate()
+						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 600 * JMod.Config.Particles.NuclearRadiationMult))
+					end
+				end)
+			end
+		end)
 	end
 
 	function ENT:OnRemove()

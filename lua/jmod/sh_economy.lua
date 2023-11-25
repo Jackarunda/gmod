@@ -1285,15 +1285,16 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
+		local Debug = args[1]
 
 		local Pos, Range = ply:GetShootPos(), 500
 
-		for k, pos in pairs(ScroungedPositions) do
-			local DistanceTo = Pos:Distance(pos)
-			if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
-		end
+		if not Debug then
+			for k, pos in pairs(ScroungedPositions) do
+				local DistanceTo = Pos:Distance(pos)
+				if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
+			end
 
-		if true then
 			ply.NextScroungeTime = ply.NextScroungeTime or 0
 			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down there pardner") return end
 			ply.NextScroungeTime = Time + 20
@@ -1323,6 +1324,7 @@ if SERVER then
 		end
 
 		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = 5, 0, 0, 1000
+		local LastEnv
 		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do
 			AttemptedCount = AttemptedCount + 1
 			local PotentialSpawnPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
@@ -1341,20 +1343,23 @@ if SERVER then
 					local SelectedScroungeTable = ScroungeTable[EnvironmentType]
 					local ScroungedItem = table.Random(SelectedScroungeTable)
 					local Loot
-					if string.find(ScroungedItem, ".mdl") then
+					if LastEnv and (LastEnv ~= EnvironmentType) and (math.random(1, 1000) == 1) then
+						Loot = ents.Create("ent_jack_gmod_ezanomaly_gnome")
+					elseif string.find(ScroungedItem, ".mdl") then
 						Loot = ents.Create("prop_physics")
 						Loot:SetModel(ScroungedItem)
 						Loot:SetHealth(100)
 					else
 						Loot = ents.Create(ScroungedItem)
 					end
-					local SetPos = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
-					Loot:SetPos(SetPos.HitPos + Vector(0, 0, 10))
+					local PosSet = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
+					Loot:SetPos(PosSet.HitPos + Vector(0, 0, 10))
 					Loot:SetAngles(AngleRand())
 					Loot:Spawn()
 					Loot:Activate()
 					JMod.SetEZowner(Loot, ply)
 					SpawnedItems = SpawnedItems + 1
+					LastEnv = EnvironmentType
 				end
 			end
 		end
@@ -1372,7 +1377,7 @@ if SERVER then
 	concommand.Add("jmod_debug_scrounge", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
 		if IsValid(ply) and not ply:IsSuperAdmin() then return end
-		JMod.EZ_ScroungeArea(ply, true)
+		JMod.EZ_ScroungeArea(ply, nil, {true})
 	end, nil, "Test scrounging without any modifiers")
 
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()

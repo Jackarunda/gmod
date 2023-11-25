@@ -210,6 +210,8 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 	mult = mult or 1
 	local RequirementsMet, ResourcesInRange = true, cache or JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 
+	local StuffLeftToGet = {}
+
 	for typ, amt in pairs(requirements) do
 		if istable(amt) then
 			local FlexibleReqs = false
@@ -224,12 +226,15 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 				break
 			end
 		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= math.Round(amt * mult))) then
+			if amt - (ResourcesInRange[typ] or 0) > 0 then
+				StuffLeftToGet[typ] = amt - (ResourcesInRange[typ] or 0)
+			end
 			RequirementsMet = false
-			break
+			--break
 		end
 	end
 
-	return RequirementsMet
+	return RequirementsMet, StuffLeftToGet
 end
 
 function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects, propsToConsume, mult)
