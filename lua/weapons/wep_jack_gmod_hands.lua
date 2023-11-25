@@ -128,6 +128,7 @@ function SWEP:CanPickup(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
 	if ent:IsWorld() then return false end
+--	if ent:GetParent() then return false end
 	local class = ent:GetClass()
 	if pickupWhiteList[class] then return true end
 	if CLIENT then return true end
@@ -475,7 +476,7 @@ function SWEP:Reload()
 					net.Send(ply)
 				else
 					local TarClass = Tar:GetClass()
-					if (TarClass == "prop_physics") or (TarClass == "prop_ragdoll") or Tar.JModEZstorable then
+					if (TarClass == "prop_physics") or (TarClass == "prop_ragdoll") or Tar.JModEZstorable or Tar.IsJackyEZresource then
 						JMod.UpdateInv(ply)
 						local Phys = Tar:GetPhysicsObject()
 						local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.weight)

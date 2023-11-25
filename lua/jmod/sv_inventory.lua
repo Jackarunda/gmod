@@ -173,6 +173,25 @@ function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
 	end
 end
 
+local pickupWhiteList = {
+	--["prop_ragdoll"] = true,
+	["prop_physics"] = true,
+	["prop_physics_multiplayer"] = true
+}
+
+local CanPickup = function(ent)
+	if not(IsValid(ent)) then return false end
+	if ent:IsNPC() then return false end
+	if ent:IsPlayer() then return false end
+	if ent:IsWorld() then return false end
+	local class = ent:GetClass()
+	if pickupWhiteList[class] then return true end
+	if CLIENT then return true end
+	if IsValid(ent:GetPhysicsObject()) then return true end
+
+	return false
+end
+
 -- I put this in here because they all have to do with each other
 net.Receive("JMod_ItemInventory", function(len, ply)
 	local command = net.ReadString()
@@ -203,7 +222,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		if item then
 			Phys = item:GetPhysicsObject()
-			if (item:GetClass() == "prop_physics") and IsValid(Phys) and (Phys:GetMass() <= 35) then
+			if pickupWhiteList[item:GetClass()] and IsValid(Phys) and (Phys:GetMass() <= 35) then
 				ply:PickupObject(item)
 			else
 				print(ply:KeyDown(JMod.Config.General.AltFunctionKey))
@@ -221,3 +240,38 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		JMod.Hint(ply,"hint item inventory missing")
 	end
 end)
+
+function JMod.EZ_GrabItem(ply, cmd, args)
+	if not(IsValid(ply)) or not(ply:Alive()) then return end
+
+	local Tar = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply).Entity
+
+	if not(CanPickup(Tar)) then return end
+
+	if Tar.JModInv then
+		net.Start("JMod_ItemInventory") -- Send to client so the player can update their inv
+		net.WriteEntity(Tar)
+		net.WriteString("open_menu")
+		net.WriteTable(Tar.JModInv)
+		net.Send(ply)
+	else
+		local TarClass = Tar:GetClass()
+		if (TarClass == "prop_physics") or (TarClass == "prop_ragdoll") or Tar.JModEZstorable or Tar.IsJackyEZresource then
+			JMod.UpdateInv(ply)
+			local Phys = Tar:GetPhysicsObject()
+			local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.weight)
+			if RoomLeft > 0 then
+				local RoomWeNeed = Phys:GetMass()
+				if Tar.IsJackyEZresource then
+					RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies) * JMod.EZ_RESOURCE_INV_WEIGHT, RoomLeft)
+				end
+				if RoomWeNeed <= RoomLeft then 
+					JMod.AddToInventory(ply, Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT)
+					JMod.Hint(ply,"hint item inventory add")
+				else
+					JMod.Hint(ply,"hint item inventory full")
+				end
+			end
+		end
+	end
+end

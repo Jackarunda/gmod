@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.7
+			Version = 44.8
 		},
 		General = {
 			Hints = true,
@@ -2371,12 +2371,32 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Parachute"] = {
 				results = JMod.ArmorTable["Parachute"].ent,
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 50
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
 				},
 				category = "Apparel",
 				craftingType = "workbench",
 				description = "Valuable tool to break your fall with when falling high distances."
+			},
+			["EZ Backpack"] = {
+				results = JMod.ArmorTable["Backpack"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 50
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Carry more items and resources to school."
+			},
+			["EZ Pouches"] = {
+				results = JMod.ArmorTable["Pouches"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 4,
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 30
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "Handy bags for carrying some extra bits and pieces."
 			},
 			["EZ Medical Supplies"] = {
 				results = "ent_jack_gmod_ezmedsupplies",

@@ -372,8 +372,9 @@ JMod.EZ_CONCOMMANDS = {
 	{name = "launch", func = JMod.EZ_WeaponLaunch, helpTxt = "Fires any active missiles you own."},
 	{name = "trigger", func = JMod.EZ_Remote_Trigger,  helpTxt = "Triggers any EZ bombs/mini-nades you have armed."},
 	{name = "scrounge", func = JMod.EZ_ScroungeArea, helpTxt = "Scrounges area for useful props to salvage."},
-	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true},
-	{name = "handcraft", func = Handcraft, helpTxt = "Construct crafting table from scrap."}
+	--{name = "grab", func = JMod.EZ_GrabItem, helpTxt ="Grabs the item and tries to put it in your inventory"},
+	{name = "handcraft", func = Handcraft, helpTxt = "Construct crafting table from scrap."},
+	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
 }
 
 if SERVER then

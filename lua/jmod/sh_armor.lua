@@ -942,7 +942,7 @@ JMod.ArmorTable = {
 			b = 50
 		},
 		slots = {
-			back = .8
+			back = .9
 		},
 		storage = 100,
 		def = NonArmorProtectionProfile,
@@ -950,9 +950,25 @@ JMod.ArmorTable = {
 		siz = Vector(1, 1, 1),
 		pos = Vector(-2, 0, 0),
 		ang = Angle(-90, 0, 90),
-		wgt = 10,
+		wgt = 5,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_backpack"
+	},
+	["Pouches"] = {
+		PrintName = "Pouches",
+		mdl = "models/weapons/w_defuser.mdl",
+		slots = {
+			waist = .5
+		},
+		storage = 50,
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine",
+		siz = Vector(1, 1, 1),
+		pos = Vector(4, -3, 0),
+		ang = Angle(-80, 0, 90),
+		wgt = 5,
+		dur = 50,
+		ent = "ent_jack_gmod_ezarmor_pouch"
 	}
 }
 
@@ -1081,14 +1097,16 @@ if CLIENT then
 		if not(IsValid(ply)) or not(ply:Alive()) then return end
 		local action = args[1]
 		local slot = args[2]
-		if not slot then return end
-		if isstring(action) then
+
+		if not(action) or not(slot) then return end
+
+		if not isnumber(tonumber(action)) then
 			action = table.KeyFromValue(ArmorCommands, action)
 		end
-		if isnumber(slot) then
-			slot = ArmorNames[slot]
+		if isnumber(tonumber(slot)) then
+			slot = ArmorNames[tonumber(slot)]
 		end
-
+		
 		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
 		if not ItemID then
 			ply:PrintMessage(HUD_PRINTCENTER, "There's nothing in slot " .. slot)
@@ -1098,7 +1116,7 @@ if CLIENT then
 			net.WriteString(ItemID)
 			net.SendToServer()
 		end
-	end, nil, "Manipulate armor inventory with a concommand.")
+	end, nil, "First argument is action, second arg is slot to apply the action to")
 end
 
 -- Debug
