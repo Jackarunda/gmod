@@ -467,7 +467,9 @@ function SWEP:Reload()
 			local Tar = self:GetCarrying()
 			local ply = self.Owner
 			
-			if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and not(Tar:IsWorld()) and !Tar:IsConstrained() then
+			JMod.EZ_GrabItem(ply, nil, {Tar})
+
+			--[[if Tar and IsValid(Tar) and (Tar:EntIndex()~=-1) and not(Tar:IsWorld()) and !Tar:IsConstrained() then
 				if Tar.JModInv then
 					net.Start("JMod_ItemInventory") -- Send to client so the player can update their inv
 					net.WriteEntity(Tar)
@@ -479,9 +481,13 @@ function SWEP:Reload()
 					if (TarClass == "prop_physics") or (TarClass == "prop_ragdoll") or Tar.JModEZstorable or Tar.IsJackyEZresource then
 						JMod.UpdateInv(ply)
 						local Phys = Tar:GetPhysicsObject()
-						local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.weight)
+						local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.volume)
 						if RoomLeft > 0 then
-							local RoomWeNeed = Phys:GetMass()
+							local RoomWeNeed = Phys:GetVolume()
+							Vol = math.ceil(Vol / 500) -- Weird maths
+							if ent.EZstorageVolumeOverride then
+								Vol = ent.EZstorageVolumeOverride
+							end
 							if Tar.IsJackyEZresource then
 								RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies) * JMod.EZ_RESOURCE_INV_WEIGHT, RoomLeft)
 							end
@@ -494,7 +500,7 @@ function SWEP:Reload()
 						end
 					end
 				end
-			end
+			end]]--
 		end
 	end
 	

@@ -761,7 +761,8 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
-	if JMod.Config.QoL.RealisticFallDamage then return spd ^ 2 / 8000 end
+	local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
+	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
 hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)

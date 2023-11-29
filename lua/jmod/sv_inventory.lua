@@ -242,7 +242,11 @@ end)
 function JMod.EZ_GrabItem(ply, cmd, args)
 	if not(IsValid(ply)) or not(ply:Alive()) then return end
 
-	local Tar = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply).Entity
+	local Tar = args[1] 
+
+	if not IsValid(Tar) then
+		Tar = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 80, ply).Entity
+	end
 
 	if not(CanPickup(Tar)) then return end
 
