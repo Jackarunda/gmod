@@ -1,4 +1,4 @@
-﻿JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0}
+﻿JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0}
 
 function JMod.EZ_Open_Inventory(ply)
 	JMod.UpdateInv(ply)
@@ -6,22 +6,6 @@ function JMod.EZ_Open_Inventory(ply)
 	net.WriteString(ply:GetModel())
 	net.WriteTable(ply.JModInv)
 	net.Send(ply)
-end
-
-function JMod.GetStorageCapacity(ent)
-	local Capacity = 100
-	if ent:IsPlayer() then
-		Capacity = 50
-		if ent.EZarmor and ent.EZarmor.items then
-			for id, v in pairs(ent.EZarmor.items) do
-				local ArmorInfo = JMod.ArmorTable[v.name]
-				if ArmorInfo.storage then
-					Capacity = Capacity + ArmorInfo.storage
-				end
-			end
-		end
-	end
-	return Capacity
 end
 
 function JMod.IsEntContained(target, container)
@@ -43,8 +27,18 @@ function JMod.UpdateInv(invEnt)
 		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
 		if JMod.IsEntContained(v.ent, invEnt) then
 			local Phys = v.ent:GetPhysicsObject()
-			if IsValid(Phys) and (Capacity >= (jmodinvfinal.weight + Phys:GetMass())) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
-				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
+			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
+				local Vol = Phys:GetVolume()
+				if (Vol ~= nil) then
+					Vol = math.ceil(Vol / 500)
+					if v.ent.EZstorageVolumeOverride then
+						Vol = v.ent.EZstorageVolumeOverride
+					end
+					if (Capacity >= (jmodinvfinal.volume + Vol)) then
+						jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
+						jmodinvfinal.volume = math.Round(jmodinvfinal.volume + Vol)
+					end
+				end
 			else
 				JMod.RemoveFromInventory(invEnt, v.ent, EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100)), nil, true)
 			end
@@ -54,12 +48,14 @@ function JMod.UpdateInv(invEnt)
 	for typ, amt in pairs(invEnt.JModInv.EZresources) do
 		if amt > 0 then
 			if (Capacity <= (jmodinvfinal.weight + (amt * JMod.EZ_RESOURCE_INV_WEIGHT))) then
-				local Overflow = (amt * JMod.EZ_RESOURCE_INV_WEIGHT) - (Capacity - jmodinvfinal.weight)
+				local Overflow = (amt * JMod.EZ_RESOURCE_INV_WEIGHT) - (Capacity - jmodinvfinal.volume)
 				JMod.RemoveFromInventory(invEnt, typ, EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100)), Overflow / JMod.EZ_RESOURCE_INV_WEIGHT, true)
 				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + ((amt - Overflow) * JMod.EZ_RESOURCE_INV_WEIGHT))
+				jmodinvfinal.volume = math.Round(jmodinvfinal.volume + ((amt - Overflow) * JMod.EZ_RESOURCE_INV_WEIGHT))
 				jmodinvfinal.EZresources[typ] = math.Round(amt - Overflow / JMod.EZ_RESOURCE_INV_WEIGHT)
 			else
 				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + (amt * JMod.EZ_RESOURCE_INV_WEIGHT))
+				jmodinvfinal.volume = math.Round(jmodinvfinal.volume + (amt * JMod.EZ_RESOURCE_INV_WEIGHT))
 				jmodinvfinal.EZresources[typ] = math.Round(amt)
 			end
 		end
@@ -67,10 +63,6 @@ function JMod.UpdateInv(invEnt)
 
 	invEnt.JModInv = jmodinvfinal
 	--PrintTable(invEnt.JModInv)
-
-	--[[if invEnt.CalcWeight then
-		invEnt:CalcWeight()
-	end--]]
 end
 
 function JMod.AddToInventory(invEnt, target, amt, noUpdate)
@@ -98,8 +90,6 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 	end
 
 	invEnt.JModInv = jmodinv
-
-	--PrintTable(invEnt.JModInv)
 
 	if noUpdate then
 		--
@@ -267,15 +257,25 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 		if (TarClass == "prop_physics") or (TarClass == "prop_ragdoll") or Tar.JModEZstorable or Tar.IsJackyEZresource then
 			JMod.UpdateInv(ply)
 			local Phys = Tar:GetPhysicsObject()
-			local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.weight)
+			local RoomLeft = JMod.GetStorageCapacity(ply) - (ply.JModInv.volume)
 			if RoomLeft > 0 then
-				local RoomWeNeed = Phys:GetMass()
+				local RoomWeNeed = Phys:GetVolume()
+
 				if Tar.IsJackyEZresource then
 					RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies) * JMod.EZ_RESOURCE_INV_WEIGHT, RoomLeft)
 				end
-				if RoomWeNeed <= RoomLeft then 
-					JMod.AddToInventory(ply, Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT)
-					JMod.Hint(ply,"hint item inventory add")
+
+				if (RoomWeNeed ~= nil) then
+					RoomWeNeed = math.ceil(RoomWeNeed / 500)
+					if Tar.EZstorageVolumeOverride then
+						RoomWeNeed = Tar.EZstorageVolumeOverride
+					end
+					if (RoomWeNeed <= RoomLeft) then 
+						JMod.AddToInventory(ply, Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT)
+						JMod.Hint(ply,"hint item inventory add")
+					end
+				elseif RoomWeNeed == nil then
+					JMod.Hint(ply, "corrupt physics")
 				else
 					JMod.Hint(ply,"hint item inventory full")
 				end

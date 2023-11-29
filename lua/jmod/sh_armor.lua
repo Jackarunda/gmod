@@ -944,7 +944,7 @@ JMod.ArmorTable = {
 		slots = {
 			back = .9
 		},
-		storage = 100,
+		storage = 50,
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
@@ -960,7 +960,7 @@ JMod.ArmorTable = {
 		slots = {
 			waist = .5
 		},
-		storage = 50,
+		storage = 25,
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine",
 		siz = Vector(1, 1, 1),
@@ -1042,6 +1042,22 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 			end
 		end
 	end
+end
+
+function JMod.GetStorageCapacity(ent)
+	local Capacity = 100
+	if ent:IsPlayer() then
+		Capacity = 25
+		if ent.EZarmor and ent.EZarmor.items then
+			for id, v in pairs(ent.EZarmor.items) do
+				local ArmorInfo = JMod.ArmorTable[v.name]
+				if ArmorInfo.storage then
+					Capacity = Capacity + ArmorInfo.storage
+				end
+			end
+		end
+	end
+	return Capacity
 end
 
 --hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")

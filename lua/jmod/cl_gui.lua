@@ -1322,7 +1322,7 @@ net.Receive("JMod_Inventory", function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg.")
+	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg. | Current Inventory Volume: " .. Ply.JModInv.volume .. "/" .. JMod.GetStorageCapacity(Ply))
 
 	function motherFrame:Paint()
 		BlurBackground(self)
