@@ -72,8 +72,6 @@ function JMod.EZarmorSync(ply)
 		ply:SetNW2Bool("EZparachuting", false)
 	end
 
-	JMod.UpdateInv(ply)
-
 	hook.Run("JModHookEZArmorSync", ply)
 
 	net.Start("JMod_EZarmorSync")
@@ -425,8 +423,10 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 		end
 	end)
 
+	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
+
 	if not broken then
-		local Ent = ents.Create(Specs.ent)
+		Ent = ents.Create(Specs.ent)
 		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
 		Ent:SetAngles(AngleRand())
 		Ent.ArmorDurability = Info.dur
@@ -454,6 +454,22 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	end
 
 	ply.EZarmor.items[ID] = nil
+	
+	local StowItems = not(broken) and Specs.storage and IsValid(Ent)
+
+	local RemovedItems = JMod.UpdateInv(ply, StowItems, true)
+
+	if StowItems and not(table.IsEmpty(RemovedItems)) then
+		for _, v in ipairs(RemovedItems) do
+			timer.Simple(0, function()
+				if istable(v) then
+					JMod.AddToInventory(Ent, v[1], v[2])
+				else
+					JMod.AddToInventory(Ent, v)
+				end
+			end)
+		end
+	end
 end
 
 local function GetArmorBySlot(currentArmorItems, slot)
@@ -557,6 +573,15 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 		ply:EmitSound(NewArmorSpecs.snds.eq, 60, math.random(80, 120))
 	else
 		ply:EmitSound(table.Random(EquipSounds), 60, math.random(80, 120))
+	end
+
+	if IsValid(nameOrEnt) and nameOrEnt.JModInv then
+		for _, v in ipairs(nameOrEnt.JModInv.items) do
+			JMod.AddToInventory(ply, v.ent)
+		end
+		for k, v in pairs(nameOrEnt.JModInv.EZresources) do
+			JMod.AddToInventory(ply, k, v)
+		end
 	end
 
 	JMod.CalcSpeed(ply)

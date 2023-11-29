@@ -19,7 +19,6 @@ ENT.ImpactSensitivity = 800
 ENT.DamageThreshold = 50
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = "antimatter"
-ENT.WeightlessResource = true
 
 ---
 if SERVER then

@@ -585,6 +585,7 @@ JMod.ArmorTable = {
 		ang = Angle(-90, 0, 90),
 		wgt = 5,
 		dur = 250,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_ltorso",
 		gayPhysics = true
 	},
@@ -598,10 +599,11 @@ JMod.ArmorTable = {
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1.05, 1.05, .95),
-		pos = Vector(-3, -4.5, 0),
+		pos = Vector(-3, -6, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 10,
 		dur = 450,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_mltorso",
 		gayPhysics = true
 	},
@@ -619,6 +621,7 @@ JMod.ArmorTable = {
 		ang = Angle(-90, 0, 90),
 		wgt = 20,
 		dur = 625,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_mtorso",
 		gayPhysics = true
 	},
@@ -944,7 +947,7 @@ JMod.ArmorTable = {
 		slots = {
 			back = .9
 		},
-		storage = 50,
+		storage = 25,
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
@@ -960,7 +963,7 @@ JMod.ArmorTable = {
 		slots = {
 			waist = .5
 		},
-		storage = 25,
+		storage = 10,
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine",
 		siz = Vector(1, 1, 1),
@@ -1044,21 +1047,6 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
-function JMod.GetStorageCapacity(ent)
-	local Capacity = 100
-	if ent:IsPlayer() then
-		Capacity = 25
-		if ent.EZarmor and ent.EZarmor.items then
-			for id, v in pairs(ent.EZarmor.items) do
-				local ArmorInfo = JMod.ArmorTable[v.name]
-				if ArmorInfo.storage then
-					Capacity = Capacity + ArmorInfo.storage
-				end
-			end
-		end
-	end
-	return Capacity
-end
 
 --hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")
 

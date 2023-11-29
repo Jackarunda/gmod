@@ -465,48 +465,53 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 	end
 end
 
+local function CacheSelectionMenuIcon(name, info)
+	if not JMod.SelectionMenuIcons[name] then
+		if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
+		elseif info and file.Exists("materials/entities/" .. tostring(info) .. ".png", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".png")
+		elseif info and file.Exists("materials/spawnicons/" .. string.Replace(tostring(info), ".mdl", "") .. ".png", "GAME") then
+			JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. string.Replace(tostring(info), ".mdl", "") .. ".png")
+		else
+			-- special logic for random tables and resources and such
+			local itemClass = info
+
+			if type(itemClass) == "table" then
+				itemClass = itemClass[1]
+			end
+
+			if type(itemClass) == "table" then
+				itemClass = itemClass[1]
+			end
+
+			if itemClass == "RAND" then
+				JMod.SelectionMenuIcons[name] = QuestionMarkIcon
+			elseif type(itemClass) == "string" then
+				local IsResource = false
+
+				for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
+					if v == itemClass then
+						IsResource = true
+						JMod.SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
+					end
+				end
+
+				if not IsResource then
+					JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+				end
+			end
+		end
+	end
+	return JMod.SelectionMenuIcons[name]
+end
+
 local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc, mult)
 	mult = mult or 1
 	-- first, populate icons
 	if SelectionMenuOpen then return end
 	for name, info in pairs(data) do
-		if not JMod.SelectionMenuIcons[name] then
-			if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
-				JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
-			elseif info.results and file.Exists("materials/entities/" .. tostring(info.results) .. ".png", "GAME") then
-				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info.results) .. ".png")
-			elseif info.results and file.Exists("materials/spawnicons/" .. string.Replace(tostring(info.results), ".mdl", "") .. ".png", "GAME") then
-				JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. string.Replace(tostring(info.results), ".mdl", "") .. ".png")
-			else
-				-- special logic for random tables and resources and such
-				local itemClass = info.results
-
-				if type(itemClass) == "table" then
-					itemClass = itemClass[1]
-				end
-
-				if type(itemClass) == "table" then
-					itemClass = itemClass[1]
-				end
-
-				if itemClass == "RAND" then
-					JMod.SelectionMenuIcons[name] = QuestionMarkIcon
-				elseif type(itemClass) == "string" then
-					local IsResource = false
-
-					for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
-						if v == itemClass then
-							IsResource = true
-							JMod.SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
-						end
-					end
-
-					if not IsResource then
-						JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
-					end
-				end
-			end
-		end
+		CacheSelectionMenuIcon(name, info.results or "") 
 	end
 
 	-- then, populate info with nearby available resources
@@ -1109,19 +1114,29 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 end
 
 --Item Inventory
-local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt, resourceType)
-	local Buttalony, Ply = vgui.Create("SpawnIcon", scrollFrame), LocalPlayer()
-	if itemTable.model then
-		Buttalony:SetModel(itemTable.model)
+local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt, resourceType)
+	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
+	local Matty = nil
+	if string.find(itemTable.ent:GetClass(), "prop_") then
+		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.model)
+	else
+		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.ent:GetClass())
 	end
-	Buttalony:SetText(itemTable.name)
-	Buttalony:SetSize(50, 50)
+	Buttalony:SetMaterial(Matty)
+	Buttalony:SetText("")--itemTable.name)
+	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetCursor("hand")
 	
 	function Buttalony:Paint(w, h)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
+		if self:IsHovered() then
+			surface.SetDrawColor(61, 118, 192, 100)
+			surface.DrawOutlinedRect(0, 0, w, h, 3)
+			surface.SetDrawColor(255, 255, 255, 100)
+			surface.DrawOutlinedRect(0, 0, w, h, 1)
+		end
 		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
@@ -1204,10 +1219,10 @@ local function CreateInvButton(parent, itemTable, x, y, scrollFrame, invEnt, res
 	end
 end
 
-local function CreateResButton(parent, resourceType, amt, x, y, scrollFrame, invEnt)
+local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFrame, invEnt)
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	Buttalony:SetText("")
-	Buttalony:SetSize(50, 50)
+	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
 	Buttalony:SetCursor("hand")
 	
@@ -1216,6 +1231,12 @@ local function CreateResButton(parent, resourceType, amt, x, y, scrollFrame, inv
 		surface.DrawRect(0, 0, w, h)
 		JMod.StandardResourceDisplay(resourceType, amt, "JMod-Stencil-XS", w / 2, h / 3, 30, true)
 		draw.SimpleText(amt, "JMod-Stencil-XS", w / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		if self:IsHovered() then
+			surface.SetDrawColor(61, 118, 192, 100)
+			surface.DrawOutlinedRect(0, 0, w, h, 3)
+			surface.SetDrawColor(255, 255, 255, 100)
+			surface.DrawOutlinedRect(0, 0, w, h, 1)
+		end
 	end
 
 	HelpStr = (resourceType .. " x" .. amt)
@@ -1295,12 +1316,12 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		local ShownItems = 0
 		if newInv then
 			for k, v in ipairs(newInv.items) do
-				CreateInvButton(frame, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), scrollPanel, invEnt)
+				CreateInvButton(frame, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
 				ShownItems = ShownItems + 1
 			end
 			if newInv.EZresources then
 				for k, v in pairs(newInv.EZresources) do
-					CreateResButton(frame, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), scrollPanel, invEnt)
+					CreateResButton(frame, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
 					ShownItems = ShownItems + 1
 				end
 			end
@@ -1322,7 +1343,7 @@ net.Receive("JMod_Inventory", function()
 	motherFrame:SetVisible(true)
 	motherFrame:SetDraggable(true)
 	motherFrame:ShowCloseButton(true)
-	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg. | Current Inventory Volume: " .. Ply.JModInv.volume .. "/" .. JMod.GetStorageCapacity(Ply))
+	motherFrame:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg. | Current Inventory Volume: " .. tostring(Ply.JModInv.volume) .. "/" .. tostring(Ply.JModInv.maxVolume))
 
 	function motherFrame:Paint()
 		BlurBackground(self)
@@ -1457,13 +1478,14 @@ net.Receive("JMod_Inventory", function()
 	DScrollyPanel:SetSize(180, 370-(#ShownCommands * 25))
 	
 	local ShownItems = 0
+	local ButtonSize = 55
 	if Ply.JModInv then
 		for k, v in ipairs(Ply.JModInv.items) do
-			CreateInvButton(motherFrame, v, (ShownItems % 3 *50), (math.floor(ShownItems/3) * 50), DScrollyPanel, Ply)
+			CreateInvButton(motherFrame, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply)
 			ShownItems = ShownItems + 1
 		end
 		for k, v in pairs(Ply.JModInv.EZresources) do
-			CreateResButton(motherFrame, k, v, (ShownItems % 3 *50), (math.floor(ShownItems/3) * 50), DScrollyPanel, Ply, k)
+			CreateResButton(motherFrame, k, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply, k)
 			ShownItems = ShownItems + 1
 		end
 	end

@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.9
+			Version = 44.91
 		},
 		General = {
 			Hints = true,
@@ -2383,7 +2383,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = JMod.ArmorTable["Backpack"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 50
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 40
 				},
 				category = "Apparel",
 				craftingType = "workbench",
@@ -2393,7 +2393,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = JMod.ArmorTable["Pouches"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 4,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 30
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
 				},
 				category = "Apparel",
 				craftingType = "workbench",
