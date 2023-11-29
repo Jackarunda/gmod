@@ -1,4 +1,6 @@
-﻿function JMod.EZ_Open_Inventory(ply)
+﻿JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0}
+
+function JMod.EZ_Open_Inventory(ply)
 	JMod.UpdateInv(ply)
 	net.Start("JMod_Inventory")
 	net.WriteString(ply:GetModel())
@@ -7,7 +9,7 @@
 end
 
 function JMod.GetStorageCapacity(ent)
-	local Capacity = 0
+	local Capacity = 100
 	if ent:IsPlayer() then
 		Capacity = 50
 		if ent.EZarmor and ent.EZarmor.items then
@@ -23,27 +25,25 @@ function JMod.GetStorageCapacity(ent)
 end
 
 function JMod.IsEntContained(target, container)
-	--print(target, container)
-	--print(IsValid(target), (target:EntIndex() ~= -1), IsValid(target.EZInvOwner), (target.EZInvOwner == container), IsValid(target:GetParent()), (target:GetParent() == target.EZInvOwner))
+	local Contained = IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
 	if container then
-		return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and (target.EZInvOwner == container) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
-	else
-		return IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+		Contained = Contained and (target.EZInvOwner == container)
 	end
+	return Contained
 end
 
 function JMod.UpdateInv(invEnt)
-	invEnt.JModInv = invEnt.JModInv or {EZresources = {}, items = {}, weight = 0}
+	invEnt.JModInv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	local Capacity = JMod.GetStorageCapacity(invEnt)
 	local EntPos = invEnt:LocalToWorld(invEnt:OBBCenter())
 
-	local jmodinvfinal = {EZresources = {}, items = {}, weight = 0}
+	local jmodinvfinal = table.Copy(JMod.DEFAULT_INVENTORY)
 	for k, v in ipairs(invEnt.JModInv.items) do
 		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
 		if JMod.IsEntContained(v.ent, invEnt) then
 			local Phys = v.ent:GetPhysicsObject()
-			if IsValid(Phys) and (Capacity >= (jmodinvfinal.weight + Phys:GetMass())) then
+			if IsValid(Phys) and (Capacity >= (jmodinvfinal.weight + Phys:GetMass())) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
 				jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
 			else
 				JMod.RemoveFromInventory(invEnt, v.ent, EntPos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100)), nil, true)
@@ -67,12 +67,17 @@ function JMod.UpdateInv(invEnt)
 
 	invEnt.JModInv = jmodinvfinal
 	--PrintTable(invEnt.JModInv)
+
+	--[[if invEnt.CalcWeight then
+		invEnt:CalcWeight()
+	end--]]
 end
 
 function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 	if JMod.IsEntContained(target) or target:IsPlayer() then return end
+	if (JMod.Config.QoL.AllowActiveItemsInInventory == false) and (target.GetState and target:GetState() ~= 0) then return end -- Open up! The fun police are here!
 
-	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}, weight = 0}
+	local jmodinv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	if target.IsJackyEZresource then
 		local SuppliesLeft = target:GetEZsupplies(target.EZsupplies)
@@ -80,6 +85,7 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 		target:SetEZsupplies(target.EZsupplies, SuppliesLeft - (amt or SuppliesLeft))
 		JMod.ResourceEffect(target.EZsupplies, target:LocalToWorld(target:OBBCenter()), invEnt:LocalToWorld(invEnt:OBBCenter()), 1, 1, 1)
 	else
+		DropEntityIfHeld(target)
 		target.EZInvOwner = invEnt
 		target:SetParent(invEnt)
 		target:SetPos(invEnt:OBBCenter())
@@ -107,7 +113,7 @@ function JMod.AddToInventory(invEnt, target, amt, noUpdate)
 end
 
 function JMod.RemoveFromInventory(invEnt, target, pos, amt, noUpdate)
-	local jmodinv = invEnt.JModInv or {EZresources = {}, items = {}, weight = 0}
+	local jmodinv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	if JMod.EZ_RESOURCE_ENTITIES[target] and invEnt.JModInv.EZresources[target] then
 		local AmountLeft = amt
@@ -204,6 +210,8 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	end
 	local invEnt = net.ReadEntity()
 
+	--jprint(invEnt, ply, target)
+
 	if not IsValid(invEnt) then
 		invEnt = ply
 	end
@@ -212,12 +220,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
 		JMod.AddToInventory(invEnt, target)
 	elseif command == "drop" then
-		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
 		local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 50, ply)
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif command == "use" then
-		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
+		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
 		local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 50, ply)
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		if item then

@@ -53,8 +53,11 @@ if SERVER then
 	end
 
 	function ENT:CalcWeight()
-		self:GetPhysicsObject():SetMass(50 + (self:GetItemCount() / self.MaxItems) * 250)
+		JMod.UpdateInv(self)
+		--self:GetPhysicsObject():SetMass(50 + (self:GetItemCount() / self.MaxItems) * 250)
+		self:GetPhysicsObject():SetMass(50 + self.JModInv.weight)
 		self:GetPhysicsObject():Wake()
+		self:SetItemCount(self.JModInv.weight)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -72,9 +75,10 @@ if SERVER then
 				timer.Simple(0, function()
 					if IsValid(self) and IsValid(ent) then
 						JMod.AddToInventory(self, ent)
+						self:CalcWeight()
 					end
 				end)
-				self:SetItemCount(self:GetItemCount() + 1)
+				--self:SetItemCount(self:GetItemCount() + 1)
 			end
 			--[[local Class = ent:GetClass()
 			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / 500)
@@ -120,7 +124,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		if self:GetItemCount() <= 0 then return end
+		--if self:GetItemCount() <= 0 then return end
 		net.Start("JMod_ItemInventory")
 		net.WriteEntity(self)
 		net.WriteString("open_menu")

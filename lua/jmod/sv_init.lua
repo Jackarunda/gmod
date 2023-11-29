@@ -24,7 +24,7 @@ local function JackaSpawnHook(ply)
 		totalWeight = 0
 	}
 
-	ply.JModInv = {EZresources = {}, items = {}, weight = 0}
+	ply.JModInv = table.Copy(JMod.DEFAULT_INVENTORY)
 
 	JMod.EZarmorSync(ply)
 	ply.EZhealth = nil

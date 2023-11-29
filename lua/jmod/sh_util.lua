@@ -192,6 +192,11 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 			for k, v in pairs(Supplies) do
 				Results[k] = (Results[k] or 0) + v
 			end
+		elseif obj:IsPlayer() and JMod.VisCheck(pos, obj, sourceEnt) and obj.JModInv then
+			local Supplies = obj.JModInv.EZresources
+			for k, v in pairs(Supplies) do
+				Results[k] = (Results[k] or 0) + v
+			end
 		end
 	end
 	if sourceEnt and sourceEnt.GetEZsupplies then
@@ -270,7 +275,11 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 				if Donor then
 					local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
 					local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
-					Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
+					if Donor:IsPlayer() then
+						Donor.JModInv.EZresources[ResourceTypeToLookFor] = (AmountWeCanTake - AmountToTake)
+					else
+						Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
+					end
 					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
 					if (useResourceEffects)then JMod.ResourceEffect(ResourceTypeToLookFor, Donor:LocalToWorld(Donor:OBBCenter()), pos, 1, 1, 1, 300) end
 
@@ -290,15 +299,25 @@ end
 
 function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	local ValidSource = IsValid(sourceEnt)
-	pos = (ValidSource and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	pos = pos or (ValidSource and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
-		if obj.GetEZsupplies and not(sourceEnt and obj == sourceEnt) then
-			local AvaliableResources = obj:GetEZsupplies(typ)
-			if AvaliableResources and (typ and AvaliableResources >= amt) then
-				if JMod.VisCheck(pos, obj, sourceEnt) then
+		if not(sourceEnt and obj == sourceEnt) then
+			if obj.GetEZsupplies then
+				local AvaliableResources = obj:GetEZsupplies(typ)
+				if AvaliableResources and (typ and AvaliableResources >= amt) then
+					if JMod.VisCheck(pos, obj, sourceEnt) then
 
-					return obj
+						return obj
+					end
+				end
+			elseif obj:IsPlayer() and obj.JModInv then
+				local AvaliableResources = obj.JModInv.EZresources[typ]
+				if AvaliableResources and (typ and AvaliableResources >= amt) then
+					if JMod.VisCheck(pos, obj, sourceEnt) then
+
+						return obj
+					end
 				end
 			end
 		end
