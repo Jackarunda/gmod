@@ -492,7 +492,7 @@ function SWEP:Reload()
 								RoomWeNeed = math.min(Tar:GetEZsupplies(Tar.EZsupplies) * JMod.EZ_RESOURCE_INV_WEIGHT, RoomLeft)
 							end
 							if RoomWeNeed <= RoomLeft then 
-								JMod.AddToInventory(ply, Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT)
+								JMod.AddToInventory(ply, {Tar, RoomWeNeed / JMod.EZ_RESOURCE_INV_WEIGHT})
 								JMod.Hint(ply,"hint item inventory add")
 							else
 								JMod.Hint(ply,"hint item inventory full")

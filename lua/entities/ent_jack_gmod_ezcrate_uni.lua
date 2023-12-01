@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 ENT.MaxItems = JMod.EZsmallCrateSize or 100
+ENT.KeepJModInv = true
 
 ---
 function ENT:SetupDataTables()

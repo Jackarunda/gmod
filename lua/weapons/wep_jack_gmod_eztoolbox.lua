@@ -31,8 +31,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
-SWEP.EZmaxBasicParts = 100
+SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.EZmaxElectricity = 100
 SWEP.EZmaxGas = 100
 
@@ -241,7 +240,6 @@ function SWEP:Initialize()
 
 	self:SetGas(0)
 	self:SetElectricity(0)
-	self:SetBasicParts(0)
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -277,7 +275,6 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
 	self:NetworkVar("Int", 0, "Electricity")
 	self:NetworkVar("Int", 1, "Gas")
-	self:NetworkVar("Int", 2, "BasicParts")
 end
 
 function SWEP:UpdateNextIdle()
@@ -287,7 +284,6 @@ end
 
 function SWEP:GetEZsupplies(resourceType)
 	local AvaliableResources = {
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self:GetBasicParts(),
 		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
 		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
 	}
@@ -378,7 +374,7 @@ function SWEP:BuildItem(selectedBuild)
 							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
 							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
 						end
-						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
+						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " ")
 					end
 				end
 			end)
@@ -653,7 +649,6 @@ function SWEP:OnDrop()
 	Kit:Spawn()
 	Kit:Activate()
 
-	Kit:SetBasicParts(self:GetBasicParts())
 	Kit:SetElectricity(self:GetElectricity())
 	Kit:SetGas(self:GetGas())
 
@@ -820,7 +815,6 @@ function SWEP:DrawHUD()
 
 	draw.SimpleTextOutlined("Power: "..math.floor(self:GetElectricity()), "Trebuchet24", W * .1, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	draw.SimpleTextOutlined("Gas: "..math.floor(self:GetGas()), "Trebuchet24", W * .1, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("Basic Parts: "..math.floor(self:GetBasicParts()), "Trebuchet24", W * .1, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	
 	draw.SimpleTextOutlined("ALT+R: clear build item", "Trebuchet24", W * .4, H * .7 - 30, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("R: select build item", "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))

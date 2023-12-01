@@ -192,7 +192,7 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 			for k, v in pairs(Supplies) do
 				Results[k] = (Results[k] or 0) + v
 			end
-		elseif obj:IsPlayer() and JMod.VisCheck(pos, obj, sourceEnt) and obj.JModInv then
+		elseif obj.JModInv and JMod.VisCheck(pos, obj, sourceEnt) then
 			local Supplies = obj.JModInv.EZresources
 			for k, v in pairs(Supplies) do
 				Results[k] = (Results[k] or 0) + v
@@ -273,11 +273,14 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 			else
 				local Donor = JMod.FindResourceContainer(ResourceTypeToLookFor, 1, pos, range, sourceEnt) -- every little bit helps
 				if Donor then
-					local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
-					local AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
-					if Donor:IsPlayer() then
+					local AmountToTake = 0
+					if Donor.JModInv then
+						local AmountWeCanTake = Donor.JModInv.EZresources[ResourceTypeToLookFor]
+						AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
 						Donor.JModInv.EZresources[ResourceTypeToLookFor] = (AmountWeCanTake - AmountToTake)
 					else
+						local AmountWeCanTake = Donor:GetEZsupplies(ResourceTypeToLookFor)
+						AmountToTake = math.min(AmountWeNeed, AmountWeCanTake)
 						Donor:SetEZsupplies(ResourceTypeToLookFor, AmountWeCanTake - AmountToTake, sourceEnt and sourceEnt)
 					end
 					RequirementsRemaining[ResourceTypeToLookFor] = RequirementsRemaining[ResourceTypeToLookFor] - AmountToTake
@@ -311,7 +314,7 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 						return obj
 					end
 				end
-			elseif obj:IsPlayer() and obj.JModInv then
+			elseif obj.JModInv then
 				local AvaliableResources = obj.JModInv.EZresources[typ]
 				if AvaliableResources and (typ and AvaliableResources >= amt) then
 					if JMod.VisCheck(pos, obj, sourceEnt) then

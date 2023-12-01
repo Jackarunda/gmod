@@ -802,7 +802,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 			JMod.RemoveFromInventory(ply, v.ent, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
 		end
 		for typ, amt in pairs(ply.JModInv.EZresources) do
-			JMod.RemoveFromInventory(ply, typ, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)), amt)
+			JMod.RemoveFromInventory(ply, {typ, amt}, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
 		end
 	end
 end)

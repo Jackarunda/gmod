@@ -1078,7 +1078,9 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 
 			function Butt:DoClick()
 				option.actionFunc(slot, ItemID, ItemData, ItemInfo)
-				parent:Close()
+				if IsValid(parent) then
+					parent:Close()
+				end
 			end
 		end
 
@@ -1109,7 +1111,9 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 
 	function Buttalony:DoClick()
 		Ply:ConCommand("jmod_ez_"..commandTbl.name)
-		parent:Close()
+		if IsValid(parent) then
+			parent:Close()
+		end
 	end
 end
 
@@ -1118,11 +1122,13 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	local Matty = nil
 	if string.find(itemTable.ent:GetClass(), "prop_") then
-		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.model)
+		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.name)
 	else
 		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.ent:GetClass())
 	end
-	Buttalony:SetMaterial(Matty)
+	if Matty then
+		Buttalony:SetMaterial(Matty)
+	end
 	Buttalony:SetText("")--itemTable.name)
 	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
@@ -1164,7 +1170,9 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					else
 						net.Start("JMod_ItemInventory")
 						net.WriteString("missing")
-						net.WriteEntity(Ply)
+						if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						end
 						net.SendToServer()
 					end
 				end
@@ -1211,7 +1219,9 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 
 			function Butt:DoClick()
 				option.actionFunc(itemTable)
-				parent:Close()
+				if IsValid(parent) then
+					parent:Close()
+				end
 			end
 		end
 
@@ -1229,7 +1239,9 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 	function Buttalony:Paint(w, h)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
-		JMod.StandardResourceDisplay(resourceType, amt, "JMod-Stencil-XS", w / 2, h / 3, 30, true)
+		if isstring(resourceType) then
+			JMod.StandardResourceDisplay(resourceType, amt, "JMod-Stencil-XS", w / 2, h / 3, 30, true)
+		end
 		draw.SimpleText(amt, "JMod-Stencil-XS", w / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 		if self:IsHovered() then
 			surface.SetDrawColor(61, 118, 192, 100)
@@ -1277,9 +1289,12 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 				net.WriteString("drop_res")
 				net.WriteUInt(amtSlide:GetValue(), 12)
 				net.WriteString(resourceType)
+				net.WriteEntity(invEnt)
 			net.SendToServer()
 			frame:Close()
-			parent:Close()
+			if IsValid(parent) then
+				parent:Close()
+			end
 		end
 		
 		OpenDropdown = frame
@@ -1290,18 +1305,24 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	local invEnt = net.ReadEntity()
 	local command = net.ReadString()
 	local newInv = net.ReadTable()
-	
-	if command == "update_cl" then
-		local Ply = LocalPlayer()
-		Ply.JModInv = newInv
-	elseif command == "open_menu" then
+
+	if not(IsValid(invEnt)) then 
+		invEnt = LocalPlayer()
+	end
+
+	invEnt.JModInv = newInv
+
+	if command == "open_menu" then
 		local frame = vgui.Create("DFrame")
-		frame:SetSize(210, 300)
-		frame:SetTitle(invEnt.PrintName or "Player")
+		frame:SetSize(210, 312)
+		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
 		frame:Center()
 		frame:MakePopup()
 
 		frame.OnClose = function()
+			if OpenDropdown then
+				OpenDropdown:Remove()
+			end
 			frame = nil
 		end
 
@@ -1326,6 +1347,10 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 				end
 			end
 		end
+		local Status = vgui.Create("DLabel", frame)
+		Status:SetSize(200, 10)
+		Status:SetPos(2, 300)
+		Status:SetText("Current Inventory Space: " .. tostring(invEnt.JModInv.volume) .. "/" .. tostring(invEnt.JModInv.maxVolume))
 	end
 end)
 
