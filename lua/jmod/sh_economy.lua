@@ -802,6 +802,12 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
+	if ent.JModInv then
+		for k, v in pairs(ent.JModInv.EZresources) do
+			Results[k] = (Results[k] or 0) + v
+		end
+	end
+
 	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nnumber of physics: " .. PhysNum .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
 end
 
