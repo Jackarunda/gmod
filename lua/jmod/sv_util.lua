@@ -1254,6 +1254,11 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 								AmtLeft = AmtLeft - Remove
 							end
 						end
+						if ent.JModInv then
+							for _, v in ipairs(ent.JModInv.items) do
+								JMod.RemoveFromInventory(ent, v.ent, pos + VectorRand() * 50)
+							end
+						end
 						SafeRemoveEntity(ent)
 					end
 				end

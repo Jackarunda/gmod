@@ -265,9 +265,15 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 							end
 						end
 					end
+					local Ent = Entity(entID)
+					if Ent.JModInv then
+						for _, v in ipairs(Ent.JModInv.items) do
+							JMod.RemoveFromInventory(Ent, v.ent, pos + VectorRand() * 50)
+						end
+					end
 					--print(Entity(entID), HasWhatWeNeed)
 					if HasWhatWeNeed then
-						SafeRemoveEntity(Entity(entID)) -- R.I.P. Props
+						SafeRemoveEntity(Ent) -- R.I.P. Props
 					end
 				end
 			else
