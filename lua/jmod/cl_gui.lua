@@ -1343,7 +1343,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 
 			stow.DoClick = function()
 				net.Start("JMod_ItemInventory")
-					net.WriteString("take_res")
+					net.WriteString("stow_res")
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(Ply:GetEyeTrace().Entity)

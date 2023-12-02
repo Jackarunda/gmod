@@ -9,7 +9,10 @@ function JMod.EZ_Open_Inventory(ply)
 end
 
 function JMod.GetStorageCapacity(ent)
+	if not(IsValid(ent)) then return 0 end
 	local Capacity = 100
+	local Phys = ent:GetPhysicsObject()
+
 	if ent:IsPlayer() then
 		Capacity = 10
 		if ent.EZarmor and ent.EZarmor.items then
@@ -23,10 +26,22 @@ function JMod.GetStorageCapacity(ent)
 	elseif ent.ArmorName then
 		local Specs = JMod.ArmorTable[ent.ArmorName]
 		Capacity = Specs.storage
-	elseif IsValid(ent:GetPhysicsObject()) then
-		Vol = ent:GetPhysicsObject():GetVolume()
+	elseif ent.EZstorageSpace then
+		Capacity = ent.EZstorageSpace
+	elseif IsValid(Phys) then
+		local Vol = Phys:GetVolume()
 		if Vol ~= nil then
-			Capacity = math.ceil(Vol / 500)
+			local SurfID = util.GetSurfaceIndex(Phys:GetMaterial())
+			local SurfData = util.GetSurfaceData(SurfID)
+			if SurfData.thickness > 0 then
+				local SurfArea = Phys:GetSurfaceArea()
+				Vol = Vol - (SurfArea * SurfData.thickness * 0.0254^3 * SurfData.density)
+				Capacity = math.ceil(Vol / 500)
+			else
+				Capacity = 0
+			end
+		else
+			Capacity = 0
 		end
 	end
 	return Capacity
@@ -109,8 +124,9 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 end
 
 function JMod.AddToInventory(invEnt, target, noUpdate)
-	--jprint(invEnt, target, amt, noUpdate)
-	if not(IsValid(invEnt)) then return end
+	--jprint(invEnt, target, noUpdate)
+	invEnt = invEnt or target.EZInvOwner
+	if JMod.GetStorageCapacity(invEnt) <= 0 then return end
 	local AddingResource = istable(target)
 	if not(AddingResource) and (target:IsPlayer() or (JMod.Config.QoL.AllowActiveItemsInInventory and (target.GetState and target:GetState() ~= 0))) then return end -- Open up! The fun police are here!
 
@@ -248,8 +264,7 @@ local CanPickup = function(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
 	if ent:IsWorld() then return false end
-	local class = ent:GetClass()
-	if pickupWhiteList[class] then return true end
+	--if pickupWhiteList[ent:GetClass()] then return true end
 	if CLIENT then return true end
 	if IsValid(ent:GetPhysicsObject()) then return true end
 
@@ -260,7 +275,7 @@ end
 net.Receive("JMod_ItemInventory", function(len, ply)
 	local command = net.ReadString()
 	local amt, resourceType, target
-	if (command == "drop_res") or (command == "take_res") then
+	if string.find(command, "_res") then
 		amt = net.ReadUInt(12)
 		resourceType = net.ReadString()
 	else
@@ -268,21 +283,23 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	end
 	local invEnt = net.ReadEntity()
 
+	local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 60, ply)
+
 	if not IsValid(invEnt) then
 		invEnt = ply
 	end
 
-	local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 60, ply)
-
 	if command == "take" then
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
-		if (JMod.IsEntContained(target) and (Tr.Entity ~= invEnt)) or (Tr.Entity ~= target) then return end
+		if (JMod.IsEntContained(target) and ((invEnt ~= ply) and (Tr.Entity ~= invEnt))) then return end
 		JMod.AddToInventory(invEnt, target)
 	elseif command == "drop" then
 		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
+		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif command == "use" then
+		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		if item then
@@ -295,16 +312,16 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			end
 		end
 	elseif command == "drop_res" then
+		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, Tr.HitPos + Vector(0, 0, 10), false)
 	elseif command == "take_res" then
-		if invEnt ~= ply then
-			if (Tr.Entity ~= invEnt) then return end
-			JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
-			JMod.AddToInventory(invEnt, {resourceType, amt})
-		else
-			JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
-			JMod.AddToInventory(ply, {resourceType, amt})
-		end
+		if (Tr.Entity ~= invEnt) then return end
+		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
+		JMod.AddToInventory(ply, {resourceType, amt})
+	elseif command == "stow_res" then
+		if (Tr.Entity ~= invEnt) then return end
+		JMod.RemoveFromInventory(ply, {resourceType, amt}, nil, false)
+		JMod.AddToInventory(invEnt, {resourceType, amt})
 	elseif command == "full" then
 		JMod.Hint(ply,"hint item inventory full")
 	elseif command == "missing" then
@@ -329,7 +346,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			net.WriteString("open_menu")
 			net.WriteTable(Tar.JModInv)
 		net.Send(ply)
-	elseif not(Tar:IsConstrained()) and ((CanPickup(Tar) and Tar.JModEZstorable) or Tar.IsJackyEZresource) then
+	elseif not(Tar:IsConstrained()) and ((pickupWhiteList[Tar:GetClass()] and CanPickup(Tar)) or Tar.JModEZstorable or Tar.IsJackyEZresource) then
 		JMod.UpdateInv(ply)
 		local Phys = Tar:GetPhysicsObject()
 		local RoomLeft = (ply.JModInv.maxVolume) - (ply.JModInv.volume)

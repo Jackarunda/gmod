@@ -118,6 +118,7 @@ ENT.DynamicPerfSpecs={
 	--
 }
 ENT.DynamicPerfSpecExp=1
+ENT.EZstorageSpace = 0
 
 ---- Shared Functions ----
 function ENT:SetupDataTables()
