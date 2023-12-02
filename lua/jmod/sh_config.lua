@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.91
+			Version = 44.92
 		},
 		General = {
 			Hints = true,
@@ -1392,8 +1392,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
 				},
 				category = "Resources",
-				craftingType = {"workbench", "craftingtable"},
+				craftingType = {"workbench", "craftingtable", "fabricator"},
 				description = "Brown paper packages tied up with strings."
+			},
+			["EZ Cloth"] = {
+				results = "ent_jack_gmod_ezcloth",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 10
+				},
+				category = "Resources",
+				craftingType = {"workbench", "craftingtable", "fabricator"},
+				description = "Look at this silk."
 			},
 			["EZ Black Powder Paper Cartridges"] = {
 				results = "ent_jack_gmod_ezammobox_bppc",
@@ -2373,7 +2383,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = JMod.ArmorTable["Parachute"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 15,
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 300
 				},
 				category = "Apparel",
 				craftingType = "workbench",

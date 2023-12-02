@@ -947,7 +947,7 @@ JMod.ArmorTable = {
 		slots = {
 			back = .9
 		},
-		storage = 25,
+		storage = 30,
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
