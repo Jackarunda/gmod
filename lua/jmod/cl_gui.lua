@@ -1197,6 +1197,44 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				end
 			}
 		}
+
+		if invEnt == Ply then
+			table.insert(Options, {
+				title="Stow",
+				actionFunc = function(itemTable)
+					if IsValid(itemTable.ent) then
+						net.Start("JMod_ItemInventory")
+							net.WriteString("take")
+							net.WriteEntity(itemTable.ent)
+							net.WriteEntity(Ply:GetEyeTrace().Entity)
+						net.SendToServer()
+					else
+						net.Start("JMod_ItemInventory")
+							net.WriteString("missing")
+							net.WriteEntity(invEnt)
+						net.SendToServer()
+					end
+				end
+			})
+		else
+			table.insert(Options, {
+				title="Take",
+				actionFunc = function(itemTable)
+					if IsValid(itemTable.ent) then
+						net.Start("JMod_ItemInventory")
+							net.WriteString("take")
+							net.WriteEntity(itemTable.ent)
+							net.WriteEntity(Ply)
+						net.SendToServer()
+					else
+						net.Start("JMod_ItemInventory")
+							net.WriteString("missing")
+							net.WriteEntity(invEnt)
+						net.SendToServer()
+					end
+				end
+			})
+		end
 		
 		local Dropdown = vgui.Create("DPanel", parent)
 		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40)
@@ -1261,7 +1299,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 		end
 
 		local frame = vgui.Create("DFrame")
-		frame:SetSize(350, 150)
+		frame:SetSize(350, 160)
 		frame:SetTitle("Resource drop amount")
 		frame:Center()
 		frame:MakePopup()
@@ -1294,6 +1332,44 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 			frame:Close()
 			if IsValid(parent) then
 				parent:Close()
+			end
+		end
+
+		if invEnt == Ply then
+			local stow = vgui.Create("DButton", frame)
+			stow:SetSize(100, 30)
+			stow:SetPos((frame:GetWide() - apply:GetWide()) / 2, 120)
+			stow:SetText("STOW")
+
+			stow.DoClick = function()
+				net.Start("JMod_ItemInventory")
+					net.WriteString("take_res")
+					net.WriteUInt(amtSlide:GetValue(), 12)
+					net.WriteString(resourceType)
+					net.WriteEntity(Ply:GetEyeTrace().Entity)
+				net.SendToServer()
+				frame:Close()
+				if IsValid(parent) then
+					parent:Close()
+				end
+			end
+		else
+			local tek = vgui.Create("DButton", frame)
+			tek:SetSize(100, 30)
+			tek:SetPos((frame:GetWide() - apply:GetWide()) / 2, 120)
+			tek:SetText("TAKE")
+
+			tek.DoClick = function()
+				net.Start("JMod_ItemInventory")
+					net.WriteString("take_res")
+					net.WriteUInt(amtSlide:GetValue(), 12)
+					net.WriteString(resourceType)
+					net.WriteEntity(invEnt)
+				net.SendToServer()
+				frame:Close()
+				if IsValid(parent) then
+					parent:Close()
+				end
 			end
 		end
 		
