@@ -204,11 +204,10 @@ if(SERVER)then
 			local Pos = data.HitPos
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
-				if (self:GetState() == STATE_PROCESSING) and Held and (Ent:GetClass() == "prop_physics") then
-					--timer.Simple(1, function()
-					--	if not(IsValid(self) or IsValid(Ent)) then return end
+				if (Ent:GetClass() == "prop_physics") and Held then
+					DropEntityIfHeld(Ent)
+					timer.Simple(0.1, function()
 						local Yield, Message = JMod.GetSalvageYield(Ent)
-						PrintTable(Yield)
 
 						if #table.GetKeys(Yield) <= 0 then
 							JMod.GetEZowner(self):PrintMessage(HUD_PRINTCENTER, Message)
@@ -218,7 +217,7 @@ if(SERVER)then
 
 							local i = 0
 							for k, v in pairs(Yield) do
-								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 30), Angle(0, 0, 0), Vector(0, 0, 100), true, 200)
+								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + data.HitNormal * 20 + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), true, 200)
 								i = i + 1
 							end
 							if Ent.JModInv then
@@ -228,7 +227,7 @@ if(SERVER)then
 							end
 							SafeRemoveEntity(Ent)
 						end
-					--end)
+					end)
 				end
 				self:EmitSound("Wood.ImpactHard")
 				if (data.Speed > 500) then

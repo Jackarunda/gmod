@@ -1233,57 +1233,39 @@ if SERVER then
 		end
 	end
 
-	local ScroungeTable = {
+	local ScroungeTableItems = {
 		["urban"] = {
-			"models/props_junk/PopCan01a.mdl",
-			"models/props_junk/PopCan01a.mdl",
-			"models/props_junk/PopCan01a.mdl",
-			"models/props_junk/PopCan01a.mdl",
-			"models/props_junk/PopCan01a.mdl",
-			"models/props_interiors/furniture_chair01a.mdl",
-			"models/nova/chair_wood01.mdl",
-			"models/props_junk/cardboard_box004a.mdl",
-			"models/props_c17/metalpot002a.mdl",
-			"models/props_debris/wood_chunk06a.mdl",
-			"models/props_interiors/pot01a.mdl",
-			"models/props_interiors/pot02a.mdl",
-			"models/props_junk/garbage_coffeemug001a.mdl",
-			"models/props_junk/garbage_glassbottle001a.mdl",
-			"models/props_junk/garbage_glassbottle003a.mdl",
-			"models/props_junk/garbage_milkcarton001a.mdl",
-			"models/props_junk/garbage_milkcarton002a.mdl",
-			"models/props_junk/garbage_metalcan002a.mdl",
-			"models/props_junk/garbage_metalcan001a.mdl",
-			"models/props_junk/garbage_metalcan002a.mdl",
-			"models/props_junk/garbage_metalcan001a.mdl",
-			"models/props_junk/garbage_metalcan002a.mdl",
-			"models/props_junk/garbage_metalcan001a.mdl",
-			"models/props_junk/garbage_takeoutcarton001a.mdl",
-			"models/props_junk/garbage_plasticbottle003a.mdl",
-			"models/props_junk/glassbottle01a.mdl",
-			"models/props_junk/glassjug01.mdl",
-			"models/props_junk/metal_paintcan001a.mdl",
-			"models/props_junk/shoe001a.mdl",
-			"models/props_junk/terracotta01.mdl",
-			"models/props_junk/trafficcone001a.mdl",
-			"models/props_junk/plasticcrate01a.mdl",
-			"models/props_junk/metalbucket02a.mdl",
-			"models/props_junk/metalbucket01a.mdl",
-			"models/props_vehicles/carparts_tire01a.mdl",
-			"models/props_vehicles/carparts_tire01a.mdl"
+			["models/props_junk/PopCan01a.mdl"] = 5,
+			["models/props_interiors/furniture_chair01a.mdl"] = 1,
+			["models/nova/chair_wood01.mdl"] = 1,
+			["models/props_junk/cardboard_box004a.mdl"] = 1,
+			["models/props_c17/metalpot002a.mdl"] = 1,
+			["models/props_debris/wood_chunk06a.mdl"] = 1,
+			["models/props_interiors/pot01a.mdl"] = 2,
+			["models/props_junk/garbage_coffeemug001a.mdl"] = 1,
+			["models/props_junk/garbage_glassbottle001a.mdl"] = 2,
+			["models/props_junk/garbage_milkcarton001a.mdl"] = 1,
+			["models/props_junk/garbage_metalcan002a.mdl"] = 6,
+			["models/props_junk/garbage_takeoutcarton001a.mdl"] = 1,
+			["models/props_junk/garbage_plasticbottle003a.mdl"] = 1,
+			["models/props_junk/glassbottle01a.mdl"] = 1,
+			["models/props_junk/glassjug01.mdl"] = 1,
+			["models/props_junk/metal_paintcan001a.mdl"] = 1,
+			["models/props_junk/shoe001a.mdl"] = 1,
+			["models/props_junk/terracotta01.mdl"] = 1,
+			["models/props_junk/trafficcone001a.mdl"] = 1,
+			["models/props_junk/plasticcrate01a.mdl"] = 1,
+			["models/props_junk/metalbucket02a.mdl"] = 2,
+			["models/props_vehicles/carparts_tire01a.mdl"] = 2
 		},
 		["rural"] = {
-			"models/jmod/resources/rock05a.mdl",
-			"models/jmod/resources/rock05a.mdl",
-			"ent_jack_gmod_ezwheatseed",
-			"ent_jack_gmod_ezacorn",
-			"ent_jack_gmod_ezacorn",
-			"models/props_foliage/driftwood_03a.mdl",
-			"models/props_foliage/driftwood_03a.mdl",
-			"models/props_debris/wood_chunk06a.mdl",
-			"models/props_junk/watermelon01.mdl",
-			"models/props_junk/rock001a.mdl",
-			"models/props_junk/rock001a.mdl"
+			["ent_jack_gmod_ezwheatseed"] = 1,
+			["ent_jack_gmod_ezacorn"] = 2,
+			["models/props_foliage/driftwood_03a.mdl"] = 2,
+			["models/props_debris/wood_chunk06a.mdl"] = 3,
+			["models/props_junk/watermelon01.mdl"] = 1,
+			["models/jmod/resources/rock05a.mdl"] = 2,
+			["models/props_junk/rock001a.mdl"] = 1
 		}
 	}
 
@@ -1304,6 +1286,17 @@ if SERVER then
 			ply.NextScroungeTime = ply.NextScroungeTime or 0
 			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down there pardner") return end
 			ply.NextScroungeTime = Time + 20
+		end
+
+		local ScroungeTable = {}
+
+		for typ, tbl in pairs(ScroungeTableItems) do
+			ScroungeTable[typ] = ScroungeTable[typ] or {}
+			for item, freq in pairs(tbl) do
+				for i = 1, (freq or 1) do
+					table.insert(ScroungeTable[typ], item)
+				end
+			end
 		end
 		
 		local ScroungeResults = {}
