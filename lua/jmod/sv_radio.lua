@@ -27,7 +27,8 @@ local function CreateRadioStation(teamID)
 		restrictedPackageStock = {},
 		restrictedPackageDelivering = nil,
 		restrictedPackageDeliveryTime = 0,
-		outpostDirection = Vector(math.Rand(-1, 1), math.Rand(-1, 1), 0):GetNormalized()
+		outpostDirection = Vector(math.Rand(-1, 1), math.Rand(-1, 1), 0):GetNormalized(),
+		lastCaller = nil
 	}
 end
 
@@ -113,6 +114,10 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 				station.state = JMod.EZ_STATION_STATE_BUSY
 				local DropPos = FindDropPosFromSignalOrigin(station.deliveryLocation)
 
+				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", station, DropPos)
+
+				if AlternateDelivery and AlternateDelivery == true then return end
+				
 				if DropPos then
 					local DropVelocity = station.outpostDirection
 					DropVelocity = DropVelocity * 400
@@ -485,6 +490,7 @@ end)
 --]]
 local function StartDelivery(pkg, transceiver, id, bff, ply)
 	local Station = JMod.EZ_RADIO_STATIONS[id]
+	Station.lastCaller = transceiver
 	local Time = CurTime()
 	local DeliveryTime, Pos = math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60)), ply:GetPos()
 	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.EZowner, transceiver, pkg, DeliveryTime, Pos)
