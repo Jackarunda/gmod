@@ -337,6 +337,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 end)
 
 function JMod.EZ_GrabItem(ply, cmd, args)
+	if not SERVER then return end
 	if not(IsValid(ply)) or not(ply:Alive()) then return end
 
 	local Tar = args[1] 
@@ -344,6 +345,8 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	if not IsValid(Tar) then
 		Tar = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 50, ply).Entity
 	end
+
+	if not(IsValid(Tar)) then return end
 
 	if Tar.JModInv and not(table.IsEmpty(Tar.JModInv.items) and table.IsEmpty(Tar.JModInv.EZresources)) then
 		JMod.UpdateInv(Tar)

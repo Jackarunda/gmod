@@ -260,6 +260,8 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 		-- if there's no armor on the struck bodypart
 		if NoProtection and JMod.Config.QoL.RealisticLocationalDamage then
 			Mul = Mul * JMod.BodyPartDamageMults[hitgroup]
+		else
+			sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav", ply:GetShootPos() + VectorRand() * 10, 70, math.random(80,120))
 		end
 
 		if ArmorPieceBroke then
@@ -343,8 +345,8 @@ hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
 		local IsInSewage = (dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and IsShit
 
 		if IsDamageOneOfTypes(dmginfo, JMod.LocationalDmgTypes) then
-		elseif IsDamageOneOfTypes(dmginfo, JMod.FullBodyDmgTypes) then
 			-- scaling handled in scaleplayerdamage
+		elseif IsDamageOneOfTypes(dmginfo, JMod.FullBodyDmgTypes) then
 			FullBodyDmgHandling(victim, dmginfo, false, IsInSewage)
 		elseif IsDamageOneOfTypes(dmginfo, JMod.BiologicalDmgTypes) then
 			FullBodyDmgHandling(victim, dmginfo, true, IsInSewage)

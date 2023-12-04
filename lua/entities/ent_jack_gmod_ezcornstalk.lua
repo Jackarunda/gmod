@@ -167,13 +167,19 @@ if(SERVER)then
 		--
 		if self.Mutated and (math.random(0, 2) == 1) then
 			local Target = self:FindTarget()
-			if (IsValid(Target)) and (SelfPos:Distance(Target:GetPos()) > 120) then 
-				local RandVec = Vector(math.random(-1, 1), math.random(-1, 1), 0) * 100
-				local DesiredPosition = Target:GetPos() + RandVec
-				local Moved = self:TryMoveTowardPoint(DesiredPosition)
+			if (IsValid(Target)) then 
+				if (SelfPos:Distance(Target:GetPos()) <= 120) then 
+					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 5) == 1)) then 
+						JMod.FalloutIrradiate(self, Target)
+					end
+				else
+					local RandVec = Vector(math.random(-1, 1), math.random(-1, 1), 0) * 100
+					local DesiredPosition = Target:GetPos() + RandVec
+					local Moved = self:TryMoveTowardPoint(DesiredPosition)
 
-				if not(Moved) then
-					self:TryMoveRandomly()
+					if not(Moved) then
+						self:TryMoveRandomly()
+					end
 				end
 			end
 		end
