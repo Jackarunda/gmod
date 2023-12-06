@@ -323,7 +323,7 @@ function SWEP:PrimaryAttack()
 				return
 			end
 		end
-		if IsValid(self:GetCarrying()) then
+		--[[if IsValid(self:GetCarrying()) then
 			local PhysObj = self.CarryEnt:GetPhysicsObject()
 			self:SetNextPrimaryFire(CurTime() + .35)
 
@@ -358,7 +358,7 @@ function SWEP:PrimaryAttack()
 			return
 		else
 			self:SetTaskProgress(0)
-		end
+		end--]]
 	end
 
 	local side = "fists_left"

@@ -342,7 +342,7 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
-local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 30, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 20, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 10}
+local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 8}
 
 local Handcraft = function(ply, cmd, args)
 	local Pos = ply:GetPos()

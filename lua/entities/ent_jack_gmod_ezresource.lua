@@ -9,6 +9,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
+ENT.EZstorageSpace = 0
 ---
 local LoadOnSpawn = CreateConVar("jmod_debug_loadresourceonspawn", "0", FCVAR_NONE, "Attempts to load spawned resources directly into entities you are looking at")
 ---

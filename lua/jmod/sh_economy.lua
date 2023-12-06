@@ -1256,7 +1256,9 @@ if SERVER then
 			["models/props_junk/trafficcone001a.mdl"] = 1,
 			["models/props_junk/plasticcrate01a.mdl"] = 1,
 			["models/props_junk/metalbucket02a.mdl"] = 2,
-			["models/props_vehicles/carparts_tire01a.mdl"] = 2
+			["models/props_vehicles/carparts_tire01a.mdl"] = 2,
+			["models/props_junk/cinderblock01a.mdl"] = 1
+			-- We need a cinderblock
 		},
 		["rural"] = {
 			["ent_jack_gmod_ezwheatseed"] = 1,
