@@ -700,6 +700,7 @@ local SpecializedSalvagingTable = {
 
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
+	if ent.GetState and (ent:GetState() >= 1) then return {}, "bruh, it's active" end
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
 	if ent:IsWorld() then return {}, "can't salvage the world" end
 	local PhysNum = ent:GetPhysicsObjectCount()

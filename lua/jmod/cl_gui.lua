@@ -1195,7 +1195,20 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 						net.SendToServer()
 					end
 				end
-			}
+			},
+			--[[[3]={
+				title="Alt+Use",
+				actionFunc = function(itemTable)
+					--Ply:ConCommand("+alt1")
+					net.Start("JMod_ItemInventory")
+					net.WriteString("use")
+					net.WriteEntity(itemTable.ent)
+					if invEnt ~= Ply then
+						net.WriteEntity(invEnt)
+					end
+					net.SendToServer()
+				end
+			}-]]
 		}
 
 		if invEnt == Ply then
@@ -1394,6 +1407,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
 		frame:Center()
 		frame:MakePopup()
+		--frame:SetKeyboardInputEnabled(false)
 
 		frame.OnClose = function()
 			if OpenDropdown then
