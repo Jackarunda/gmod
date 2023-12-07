@@ -1327,7 +1327,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 		amtSlide:SetPos((frame:GetWide() - amtSlide:GetWide()) / 2, 30)
 		amtSlide:SetMin(0)
 		amtSlide:SetMax(amt)
-		amtSlide:SetValue(100)
+		amtSlide:SetValue(((JMod.Config.ResourceEconomy and JMod.Config.ResourceEconomy.MaxResourceMult) or 1) * 100)
 		amtSlide:SetDecimals(0)
 
 		local apply = vgui.Create("DButton", frame)

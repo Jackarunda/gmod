@@ -117,25 +117,28 @@ if(SERVER)then
 
 	function ENT:LoadLiquidFromDonor(typ, amt)
 		local SelfPos = self:GetPos()
-		if IsValid(self.PerferredDonor) and (self.PerferredDonor:GetPos():Distance(SelfPos) <= 100) and self.PerferredDonor:GetEZsupplies(typ) > 0 then
+		if IsValid(self.PerferredDonor) and (self.PerferredDonor:GetPos():Distance(SelfPos) <= 100) then
 			local Supplies = self.PerferredDonor:GetEZsupplies(typ)
-			local Required = math.min(Supplies, amt)
-			local Accepted = self:TryLoadResource(typ, Required)
-			self.PerferredDonor:SetEZsupplies(typ, Supplies - Required, self)
-			--typ, fromPoint, toPoint, amt, spread, scale, upSpeed
-			JMod.ResourceEffect(typ, self.PerferredDonor:LocalToWorld(self.PerferredDonor:OBBCenter()), self:LocalToWorld(self:OBBCenter()), amt/200, 1, 1)
-
-			return Accepted
-		end
-		for _, v in ipairs(ents.FindInSphere(SelfPos, 100)) do
-			if v.GetEZsupplies and (v:GetEZsupplies(typ) and v:GetEZsupplies(typ) > 0) then
-				local Supplies = v:GetEZsupplies(typ)
+			if (Supplies) and (Supplies > 0) then
 				local Required = math.min(Supplies, amt)
 				local Accepted = self:TryLoadResource(typ, Required)
-				v:SetEZsupplies(typ, Supplies - Required, self)
-				self.PerferredDonor = v
+				self.PerferredDonor:SetEZsupplies(typ, Supplies - Required, self)
+				JMod.ResourceEffect(typ, self.PerferredDonor:LocalToWorld(self.PerferredDonor:OBBCenter()), self:LocalToWorld(self:OBBCenter()), amt/200, 1, 1)
 
 				return Accepted
+			end
+		end
+		for _, v in ipairs(ents.FindInSphere(SelfPos, 100)) do
+			if v.GetEZsupplies then
+				local Supplies = v:GetEZsupplies(typ)
+				if Supplies and Supplies > 0 then
+					local Required = math.min(Supplies, amt)
+					local Accepted = self:TryLoadResource(typ, Required)
+					v:SetEZsupplies(typ, Supplies - Required, self)
+					self.PerferredDonor = v
+
+					return Accepted
+				end
 			end
 		end
 

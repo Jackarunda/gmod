@@ -291,7 +291,7 @@ function SWEP:GetEZsupplies(resourceType)
 		if AvaliableResources[resourceType] and AvaliableResources[resourceType] > 0 then
 			return AvaliableResources[resourceType]
 		else
-			return 
+			return nil
 		end
 	else
 		return AvaliableResources

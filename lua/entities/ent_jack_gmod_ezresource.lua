@@ -23,7 +23,7 @@ function ENT:GetEZsupplies(typ)
 		if Supplies[typ] and Supplies[typ] > 0 then
 			return Supplies[typ]
 		else
-			return 0
+			return nil
 		end
 	else
 		return Supplies
@@ -47,12 +47,12 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetResource(ent.MaxResources)
+		ent:SetResource(ent.MaxResource)
 		local HitEnt = tr.Entity
 		if IsValid(HitEnt) and HitEnt.TryLoadResource then
-			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResources)
+			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResource)
 			if Accepted > 0 then
-				ent:SetEZsupplies(self.EZsupplies, ent.MaxResources - Accepted, HitEnt)
+				ent:SetEZsupplies(self.EZsupplies, ent.MaxResource - Accepted, HitEnt)
 				--JMod.ResourceEffect(self.EZsupplies, ent:LocalToWorld(ent:OBBCenter()), HitEnt:LocalToWorld(HitEnt:OBBCenter()), Accepted, 1, 1, 1)
 			end
 		end
@@ -94,7 +94,7 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		---
-		self.MaxResources = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
+		self.MaxResource = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
 		self:SetResource(100)
 		---
 		self.NextLoad = 0
@@ -123,7 +123,7 @@ if SERVER then
 					-- try to combine
 					local Sum = self:GetResource() + data.HitEntity:GetResource()
 
-					if Sum <= self.MaxResources then
+					if Sum <= self.MaxResource then
 						self:SetResource(Sum)
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
@@ -175,7 +175,7 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
 					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
 					end
@@ -194,7 +194,7 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
 			if self.UseEffect then
 				for i = 1, self:GetResource() / 10 do			
 					self:UseEffect(Pos, game.GetWorld(), true)
@@ -227,7 +227,7 @@ if SERVER then
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResources, 1)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResource, 1)
 			end
 		elseif self.AltUse and AltPressed then
 			self:AltUse(activator)

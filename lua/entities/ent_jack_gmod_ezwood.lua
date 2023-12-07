@@ -33,7 +33,7 @@ if SERVER then
 		if self:IsOnFire() then
 			local WoodLeft = self:GetResource()
 			if WoodLeft <= 2 then
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
 				self:Remove()
 			else
 				self:SetEZsupplies(self.EZsupplies, WoodLeft - math.random(0, 2), self)

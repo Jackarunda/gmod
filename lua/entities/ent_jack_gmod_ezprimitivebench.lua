@@ -217,7 +217,7 @@ if(SERVER)then
 
 							local i = 0
 							for k, v in pairs(Yield) do
-								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + data.HitNormal * 20 + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), true, 200)
+								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), true, 200)
 								i = i + 1
 							end
 							if Ent.JModInv then

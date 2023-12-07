@@ -382,6 +382,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
 	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
 	JMod.Config.QoL = Payload.QoL
+	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
 
 	if tobool(net.ReadBit()) then
 		for k, v in pairs(player.GetAll()) do

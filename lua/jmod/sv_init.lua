@@ -683,6 +683,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.Blackhole = JMod.Config.Machines.Blackhole
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
 	ToSend.QoL = JMod.Config.QoL
+	ToSend.MaxResourceMult =JMod.Config.ResourceEconomy.MaxResourceMult
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()
