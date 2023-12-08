@@ -641,8 +641,9 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	end
 
 	if newOwner:IsPlayer() then
-		if (JMod.EZ_OwnerID[newOwner:SteamID()] ~= newOwner) and not(IsValid(JMod.EZ_OwnerID[newOwner:SteamID()])) then
-			JMod.EZ_OwnerID[newOwner:SteamID()] = newOwner
+		local NewPersistantID = newOwner:SteamID()
+		if not(ent.EZownerID) or (ent.EZownerID ~= NewPersistantID) then
+			ent.EZownerID = NewPersistantID
 		end
 	end
 end
@@ -1240,6 +1241,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				return "object is constrained"
 			else
 				local Mass = (Phys:GetMass() * ent:GetPhysicsObjectCount()) ^ .8
+				DropEntityIfHeld(ent)
 				local Yield, Message = JMod.GetSalvageYield(ent)
 
 				if #table.GetKeys(Yield) <= 0 then

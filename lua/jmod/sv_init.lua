@@ -58,7 +58,7 @@ local function JackaSpawnHook(ply)
 	local sleepingbag = ply.JModSpawnPointEntity
 	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
 		--if(sleepingbag.nextSpawnTime<CurTime())then
-			sleepingbag.nextSpawnTime=CurTime()+60
+			--sleepingbag.nextSpawnTime=CurTime()+60
 			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
 				local Up = sleepingbag:GetUp()
 				--ply:EnterVehicle(sleepingbag.Pod)
@@ -83,6 +83,18 @@ end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply) JackaSpawnHook(ply) ; JMod.LuaConfigSync(false) end)
+
+gameevent.Listen("player_connect")
+hook.Add("player_connect", "JMod_ReclaimEZentities", function(data)
+	local Reclaimer = Player(data.UserID)
+	for i, ent in ipairs(ents.GetAll()) do
+		if ent.EZownerID then
+			if (data.SteamID == ent.EZownerID) then
+				--JMod.SetEZowner(ent, Reclaimer)
+			end
+		end
+	end
+end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
