@@ -631,6 +631,7 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	end
 
 	ent.EZowner = newOwner
+	ent.EZownerID = newOwner:SteamID64()
 
 	if setColor == true then
 		JMod.Colorify(ent)
@@ -638,13 +639,6 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 
 	if CPPI and isfunction(ent.CPPISetOwner) then
 		ent:CPPISetOwner(newOwner)
-	end
-
-	if newOwner:IsPlayer() then
-		local NewPersistantID = newOwner:SteamID()
-		if not(ent.EZownerID) or (ent.EZownerID ~= NewPersistantID) then
-			ent.EZownerID = NewPersistantID
-		end
 	end
 end
 

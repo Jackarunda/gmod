@@ -75,6 +75,24 @@ local function JackaSpawnHook(ply)
 		--	JMod.Hint(ply,"sleeping bag wait")
 		--end
 	end
+	
+	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
+	timer.Simple(1, function()
+		if (IsValid(ply)) then
+			if not(ply.JMod_DidPlayerReclaimItems) then
+				-- this will only run once per player per session
+				local ID, num = ply:SteamID64(), 0
+				for k, v in pairs(ents.GetAll()) do
+					if (v.EZownerID and v.EZownerID == ID) then
+						JMod.SetEZowner(v, ply)
+						num = num + 1
+					end
+				end
+				ply.JMod_DidPlayerReclaimItems = true
+				if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
+			end
+		end
+	end)
 
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
@@ -83,18 +101,6 @@ end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply) JackaSpawnHook(ply) ; JMod.LuaConfigSync(false) end)
-
-gameevent.Listen("player_connect")
-hook.Add("player_connect", "JMod_ReclaimEZentities", function(data)
-	local Reclaimer = Player(data.UserID)
-	for i, ent in ipairs(ents.GetAll()) do
-		if ent.EZownerID then
-			if (data.SteamID == ent.EZownerID) then
-				--JMod.SetEZowner(ent, Reclaimer)
-			end
-		end
-	end
-end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
