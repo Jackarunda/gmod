@@ -136,7 +136,7 @@ if SERVER then
 		end
 
 		util.ScreenShake(SelfPos, 99999, 99999, 3, 3000)
-		util.BlastDamage(self, self.EZowner or self or game.GetWorld(), SelfPos, 200, 200)
+		util.BlastDamage(JMod.GetEZowner(self) or game.GetWorld(), SelfPos, 200, 200)
 		local Own = self.EZowner
 
 		timer.Simple(2, function()

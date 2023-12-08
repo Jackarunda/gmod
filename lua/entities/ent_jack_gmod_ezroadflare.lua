@@ -77,7 +77,7 @@ if SERVER then
 				if self:GetState() == STATE_BURNIN then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.EZowner or self)
+					Dmg:SetAttacker(JMod.GetEZowner(self))
 					Dmg:SetInflictor(self)
 					Dmg:SetDamage(5)
 					Dmg:SetDamagePosition(self:GetPos())

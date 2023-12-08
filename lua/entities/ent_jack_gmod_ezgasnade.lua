@@ -52,7 +52,7 @@ if SERVER then
 		end
 
 		if IsValid(self.EZowner) then
-			JMod.Hint(self.EZowner, "gas spread", self:GetPos())
+			JMod.Hint(JMod.GetEZowner(self), "gas spread", self:GetPos())
 		end
 
 		self:Remove()

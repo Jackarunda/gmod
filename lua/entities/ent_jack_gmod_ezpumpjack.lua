@@ -43,7 +43,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            	JMod.Hint(self.EZowner, "liquid scan")
+            	JMod.Hint(JMod.GetEZowner(self), "liquid scan")
             end
         end)
 	end
@@ -61,7 +61,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				JMod.Hint(self.EZowner, "oil derrick")
+				JMod.Hint(JMod.GetEZowner(self), "oil derrick")
 			elseif(GroundIsSolid)then
 				local HitAngle = Tr.HitNormal:Angle()
 				--jprint("Before", HitAngle)
@@ -80,7 +80,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
 		end

@@ -41,7 +41,7 @@ if SERVER then
 
 		local Spred = Vector(0, 0, 0)
 		--              shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
-		JMod.FragSplosion(self, SelfPos + Vector(0, 0, 10), 3000, 80, 2500, self.EZowner or game.GetWorld())
+		JMod.FragSplosion(self, SelfPos + Vector(0, 0, 10), 3000, 80, 2500, JMod.GetEZowner(self))
 		self:Remove()
 	end
 elseif CLIENT then

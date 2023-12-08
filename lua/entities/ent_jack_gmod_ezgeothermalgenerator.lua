@@ -68,7 +68,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				JMod.Hint(self.EZowner, "geothermal gen")
+				JMod.Hint(JMod.GetEZowner(self), "geothermal gen")
 			elseif(GroundIsSolid)then
 				local HitAng = Tr.HitNormal:Angle()
 				local Pitch = HitAng.p
@@ -86,7 +86,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
 		end
@@ -146,7 +146,7 @@ if(SERVER)then
 					end
 				end)
 			elseif self:GetWater() <= 0 then
-				JMod.Hint(self.EZowner, "refill geo")
+				JMod.Hint(JMod.GetEZowner(self), "refill geo")
 			end
 		else
 			self:TryPlace()

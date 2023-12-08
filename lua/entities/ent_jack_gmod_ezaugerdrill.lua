@@ -45,7 +45,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            JMod.Hint(self.EZowner, "ore scan")
+            JMod.Hint(JMod.GetEZowner(self), "ore scan")
             end
         end)
 	end
@@ -64,7 +64,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 			
 			if not self.DepositKey then
-				JMod.Hint(self.EZowner, "ground drill")
+				JMod.Hint(JMod.GetEZowner(self), "ground drill")
 			elseif(GroundIsSolid)then
 				--
 				local HitAngle = Tr.HitNormal:Angle()
@@ -81,7 +81,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
 		end

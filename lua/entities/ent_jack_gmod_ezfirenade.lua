@@ -46,7 +46,7 @@ if SERVER then
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos + Vector(0, 0, 10))
 			Flame:SetAngles(FireVec:Angle())
-			Flame:SetOwner(self.EZowner or game.GetWorld())
+			Flame:SetOwner(JMod.GetEZowner(self))
 			JMod.SetEZowner(Flame, self.EZowner or self)
 			Flame.SpeedMul = self:GetVelocity():Length() / 1000 + .5
 			Flame.Creator = self

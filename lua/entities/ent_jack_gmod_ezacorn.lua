@@ -184,7 +184,7 @@ if SERVER then
 	end
 
 	function ENT:SpawnTree()
-		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
+		local Pos, Owner, WatToGive = self:GetPos(), JMod.GetEZowner(self), self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()
 			local Tree = ents.Create("ent_jack_gmod_eztree")

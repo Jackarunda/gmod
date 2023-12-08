@@ -106,7 +106,7 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Gas, JMod.GetEZowner(self))
 			Gas:Spawn()
 			Gas:Activate()
 			Gas.CurVel = (VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
@@ -181,7 +181,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), JMod.GetEZowner(self)
 		---
 		SendClientNukeEffect(SelfPos, 9e9)
 		util.ScreenShake(SelfPos, 1000, 15, 15, 50000)

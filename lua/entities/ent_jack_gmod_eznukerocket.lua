@@ -106,7 +106,7 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Gas, JMod.GetEZowner(self))
 			Gas:Spawn()
 			Gas:Activate()
 			Gas.CurVel = (VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
@@ -174,7 +174,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), JMod.GetEZowner(self), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()
@@ -324,14 +324,14 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, self.EZowner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
 		self.NextDet = CurTime() + .25
 
-		JMod.Hint(self.EZowner, "backblast", self:GetPos())
+		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
 	end
 
 	function ENT:EZdetonateOverride(detonator)

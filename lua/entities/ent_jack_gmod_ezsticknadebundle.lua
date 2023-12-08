@@ -65,7 +65,7 @@ if SERVER then
 					plooie:SetNormal(vector_up)
 					util.Effect("eff_jack_minesplode", plooie, true, true)
 					util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
-					JMod.FragSplosion(self, SelfPos + Vector(0, 0, 20), 5000, 70, 7000, self.EZowner or game.GetWorld())
+					JMod.FragSplosion(self, SelfPos + Vector(0, 0, 20), 5000, 70, 7000, JMod.GetEZowner(self))
 
 					timer.Simple(.1, function()
 						for i = 1, 5 do

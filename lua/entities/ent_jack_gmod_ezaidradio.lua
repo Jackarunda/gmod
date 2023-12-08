@@ -101,7 +101,7 @@ if(SERVER)then
 			local State = self:GetState()
 
 			if State == STATE_BROKEN then
-				JMod.Hint(self.EZowner, "destroyed")
+				JMod.Hint(JMod.GetEZowner(self), "destroyed")
 
 				return
 			end
@@ -129,7 +129,7 @@ if(SERVER)then
 					JMod.SetEZowner(self, activator, true)
 					JMod.Hint(activator, "aid help")
 				else
-					JMod.Hint(self.EZowner, "nopower")
+					JMod.Hint(JMod.GetEZowner(self), "nopower")
 				end
 			end
 		end
@@ -236,7 +236,7 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.EZowner)
 				else
-					JMod.Hint(self.EZowner, "aid sky")
+					JMod.Hint(JMod.GetEZowner(self), "aid sky")
 					self.ConnectionAttempts = self.ConnectionAttempts + 1
 
 					if self.ConnectionAttempts > 5 then
@@ -337,7 +337,7 @@ if(SERVER)then
 		if State < 2 then return false end
 
 		if not self:TryFindSky() then
-			JMod.Hint(self.EZowner, "aid sky")
+			JMod.Hint(JMod.GetEZowner(self), "aid sky")
 			self:Speak("Can not establish connection to any outpost. Shutting down.")
 
 			timer.Simple(1, function()
@@ -399,7 +399,7 @@ if(SERVER)then
 						end
 					end)
 
-					JMod.Hint(self.EZowner, "aid package")
+					JMod.Hint(JMod.GetEZowner(self), "aid package")
 
 					SuccessfulTransmit = true
 				end

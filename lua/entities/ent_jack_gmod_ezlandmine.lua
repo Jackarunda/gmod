@@ -244,7 +244,7 @@ if SERVER then
 			end
 
 			if self.StillTicks > 4 then
-				self:Arm(self.EZowner or game.GetWorld(), true)
+				self:Arm(JMod.GetEZowner(self), true)
 			end
 
 			self:NextThink(Time + .5)

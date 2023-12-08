@@ -154,7 +154,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 100), JMod.GetEZowner(self)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 8000)
 		local Eff = "cloudmaker_ground"
@@ -207,7 +207,7 @@ if SERVER then
 		end)
 
 		---
-		JMod.FragSplosion(self, SelfPos, 20000, 400, 8000, self.EZowner or game.GetWorld())
+		JMod.FragSplosion(self, SelfPos, 20000, 400, 8000, JMod.GetEZowner(self))
 		---
 		self:Remove()
 

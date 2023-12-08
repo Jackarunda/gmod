@@ -147,7 +147,7 @@ if SERVER then
 			self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 100, 130)
 			JMod.Sploom(self.EZowner, SelfPos, 10)
-			local Att = self.EZowner or game.GetWorld()
+			local Att = JMod.GetEZowner(self)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 30), 100, 5500)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 10), 300, 100)
 
@@ -265,7 +265,7 @@ if SERVER then
 			end
 
 			if self.StillTicks > 4 then
-				self:Arm(self.EZowner or game.GetWorld(), true)
+				self:Arm(JMod.GetEZowner(self), true)
 			end
 
 			self:NextThink(Time + .5)

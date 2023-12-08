@@ -143,7 +143,7 @@ if SERVER then
 		self.NextDropTime = Time + .9
 		local NumOBombs = #self.Bombs
 		slotNum = slotNum or NumOBombs
-		ply = ply or self.EZowner or game.GetWorld()
+		ply = ply or JMod.GetEZowner(self)
 		if NumOBombs <= 0 then return end
 		if slotNum == 0 or slotNum > NumOBombs then return end
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()

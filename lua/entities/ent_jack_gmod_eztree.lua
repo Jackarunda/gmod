@@ -127,7 +127,7 @@ if(SERVER)then
 						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 						self:GetPhysicsObject():Sleep()
 					end
-					JMod.Hint(self.EZowner, "tree growth")
+					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
 		else
@@ -250,7 +250,7 @@ if(SERVER)then
 			self.LastModel = NewModel
 			self:TryPlant()
 			if (WillReachMaturity) then
-				JMod.Hint(self.EZowner, "tree mature")
+				JMod.Hint(JMod.GetEZowner(self), "tree mature")
 			end
 		end
 		timer.Simple(0, function()
@@ -263,7 +263,7 @@ if(SERVER)then
 					self:SetSubMaterial(1, NewLeafMat)
 					self.LastLeafMat = NewLeafMat
 					if (WillDehydrate) then
-						JMod.Hint(self.EZowner, "plant water")
+						JMod.Hint(JMod.GetEZowner(self), "plant water")
 					end
 				end
 			end

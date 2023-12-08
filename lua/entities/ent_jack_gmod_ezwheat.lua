@@ -133,7 +133,7 @@ if(SERVER)then
 						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 						self:GetPhysicsObject():Sleep()
 					end
-					JMod.Hint(self.EZowner, "tree growth")
+					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
 		else

@@ -222,7 +222,7 @@ if(SERVER)then
 			local grade = self:GetGrade()
 
 			if vis <= 0 or self:WaterLevel() >= 2 then
-				JMod.Hint(self.EZowner, "solar panel no sun")
+				JMod.Hint(JMod.GetEZowner(self), "solar panel no sun")
 			elseif self:GetProgress() < 100 then
 				local rate = math.Round(1 * JMod.EZ_GRADE_BUFFS[grade] ^ 2 * vis, 2)
 				self:SetProgress(self:GetProgress() + rate)

@@ -484,7 +484,7 @@ if(SERVER)then
 		self.SearchData.State = 0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav", 65, 100)
-		JMod.Hint(self.EZowner, "sentry upgrade")
+		JMod.Hint(JMod.GetEZowner(self), "sentry upgrade")
 	end
 
 	function ENT:Disengage()
@@ -501,7 +501,7 @@ if(SERVER)then
 		self.SearchData.State = 0
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_standdown.wav", 65, 100)
-		JMod.Hint(self.EZowner, "sentry modify")
+		JMod.Hint(JMod.GetEZowner(self), "sentry modify")
 	end
 
 	function ENT:Think()

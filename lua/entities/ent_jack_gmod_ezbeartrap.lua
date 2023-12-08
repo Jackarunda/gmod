@@ -151,7 +151,7 @@ if SERVER then
 			SnapDamage:SetDamagePosition(self:GetPos())
 			SnapDamage:SetDamageType(DMG_SLASH)
 			SnapDamage:SetInflictor(self)
-			SnapDamage:SetAttacker(self.EZowner or game.GetWorld())
+			SnapDamage:SetAttacker(JMod.GetEZowner(self))
 			if victim:IsPlayer() then
 				victim.EZImmobilizationTime = (victim.EZImmobilizationTime or CurTime()) + 10
 				SnapDamage:SetDamage(20)
@@ -241,7 +241,7 @@ if SERVER then
 			end
 
 			if self.StillTicks > 4 then
-				self:Arm(self.EZowner or game.GetWorld(), true)
+				self:Arm(JMod.GetEZowner(self), true)
 			end
 
 			self:NextThink(Time + .5)

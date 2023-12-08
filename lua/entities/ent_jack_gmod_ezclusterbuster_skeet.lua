@@ -28,7 +28,7 @@ if SERVER then
 		end)
 
 		---
-		self.EZowner = self.EZowner or game.GetWorld()
+		self.EZowner = JMod.GetEZowner(self)
 		self.NextSeek = CurTime() + math.Rand(1, 3)
 	end
 
@@ -52,7 +52,7 @@ if SERVER then
 	function ENT:Detonate(dir)
 		if self.Exploded then return end
 		self.Exploded = true
-		local Att = self.EZowner or game.GetWorld()
+		local Att = JMod.GetEZowner(self)
 		local Pos = self:GetPos()
 		JMod.Sploom(Att, Pos, 100)
 		util.ScreenShake(Pos, 99999, 99999, .1, 1000)

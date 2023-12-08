@@ -132,9 +132,9 @@ if SERVER then
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 
 		if JMod.Config.Explosives.FragExplosions then
-			JMod.FragSplosion(self, SelfPos, 1000, 10, 8000, self.EZowner or game.GetWorld(), Up, .9)
+			JMod.FragSplosion(self, SelfPos, 1000, 10, 8000, JMod.GetEZowner(self), Up, .9)
 		else
-			util.BlastDamage(self, self.EZowner or game.GetWorld(), SelfPos + Up * 350, 350, 110)
+			util.BlastDamage(self, JMod.GetEZowner(self), SelfPos + Up * 350, 350, 110)
 		end
 
 		self:Remove()

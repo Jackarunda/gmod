@@ -136,7 +136,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		JMod.Sploom(self.EZowner or game.GetWorld(), SelfPos, 115)
+		JMod.Sploom(JMod.GetEZowner(self), SelfPos, 115)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)
