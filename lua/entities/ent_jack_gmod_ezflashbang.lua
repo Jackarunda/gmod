@@ -46,7 +46,7 @@ if SERVER then
 
 		timer.Simple(.1, function()
 			if not IsValid(self) then return end
-			util.BlastDamage(JMod.GetEZowner(self), SelfPos, 1000, 2)
+			util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 1000, 2)
 		end)
 
 		SafeRemoveEntityDelayed(self, 10)
