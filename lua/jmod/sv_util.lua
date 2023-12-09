@@ -656,7 +656,7 @@ end
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if not IsValid(ent) then return false end
 	if ent:IsWorld() then return false end
-	--if not IsValid(self.EZowner) then self.EZowner = self end
+	local SelfOwner = JMod.GetEZowner(self)
 
 	local Override = hook.Call("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if (Override ~= nil) then return Override end
@@ -692,20 +692,34 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif (ent.LFS and ent.GetEngineActive) or (ent.LVS and not(ent.ExplodedAlready)) then
-		--jprint(ent.LVS, ent.GetEngineActive(), ent.GetDriver and ent:GetDriver())
+	elseif (ent.LFS and ent.GetEngineActive and ent:GetEngineActive()) then
 		-- LunasFlightSchool compatibility
-		if ent:GetEngineActive() and ent.GetDriver then
+		if ent.GetDriver then
 			local Pilot = ent:GetDriver()
 
 			if IsValid(Pilot) then
 				PlayerToCheck = ent:GetDriver()
 				InVehicle = true
-			else
-				return true
 			end
+		else
+			return peaceWasNeverAnOption or false
 		end
-	elseif ent.IS_DRONE and IsValid(ent.EZowner) then
+	elseif (ent.LVS and not(ent.ExplodedAlready)) then
+		if ent.GetDriver and IsValid(ent:GetDriver()) then
+			PlayerToCheck = ent:GetDriver()
+			InVehicle = true
+		elseif SelfOwner.lvsGetAITeam then --and ((ent.GetEngineActive and ent:GetEngineActive()))
+			local OurTeam = SelfOwner:lvsGetAITeam()
+			if ent.GetAITEAM and ent.GetAI and ent:GetAI() then
+				local TheirTeam = ent:GetAITEAM()
+				if ((OurTeam ~= 0) and (TheirTeam ~= 0) and TheirTeam ~= OurTeam) or (TheirTeam == 3) then
+					return true
+				end
+			end
+		else
+			return peaceWasNeverAnOption or false
+		end
+	elseif ent.IS_DRONE and IsValid(JMod.GetEZowner(ent)) then
 		-- Drones Rewrite compatibility
 		if ent.GetHealth and ent:GetHealth() > 0 then
 			PlayerToCheck = ent.EZowner
@@ -716,14 +730,14 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 		if vehiclesOnly and not InVehicle then return false end
 		if PlayerToCheck.EZkillme then return true end -- for testing
 		if PlayerToCheck:GetObserverMode() ~= 0 then return false end
-		if self.EZowner and (PlayerToCheck == self.EZowner) then return false end
-		local Allies = (self.EZowner and self.EZowner.JModFriends) or {}
+		if (SelfOwner) and (PlayerToCheck == SelfOwner) then return false end
+		local Allies = (SelfOwner and SelfOwner.JModFriends) or {}
 		if table.HasValue(Allies, PlayerToCheck) then return false end
 		local OurTeam = nil
 
-		if IsValid(self.EZowner) then
-			OurTeam = self.EZowner:Team()
-			if Gaymode == "basewars" and self.EZowner.IsAlly then return not self.EZowner:IsAlly(PlayerToCheck) end
+		if IsValid(SelfOwner) then
+			OurTeam = SelfOwner:Team()
+			if Gaymode == "basewars" and SelfOwner.IsAlly then return not SelfOwner:IsAlly(PlayerToCheck) end
 		end
 
 		if Gaymode == "sandbox" and OurTeam == TEAM_UNASSIGNED then return PlayerToCheck:Alive() end
