@@ -414,7 +414,10 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:CanSee(ent)
+	// 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
+	// if we name it something else, then it works fine
+	// i hate retarded gmod script kiddies
+	function ENT:CanSee2(ent)
 		if not IsValid(ent) then return false end
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
 		local Dist = TargPos:Distance(SelfPos)
@@ -434,7 +437,7 @@ if(SERVER)then
 		if not IsValid(ent) then return false end
 		if ent == self.NPCTarget then return false end
 
-		return JMod.ShouldAttack(self, ent) and self:CanSee(ent)
+		return JMod.ShouldAttack(self, ent) and self:CanSee2(ent)
 	end
 
 	function ENT:TryFindTarget()
