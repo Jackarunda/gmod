@@ -79,7 +79,7 @@ function EFFECT:Init(data)
 		phys:Wake()
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
-		phys:SetMaterial("gmod_silent")
+		phys:SetMaterial("Default_silent")
 		phys:SetVelocity(MyFlightVec * self.Spread + Vector(0, 0, self.Radius))
 
 		if self.Target then

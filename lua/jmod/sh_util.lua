@@ -424,3 +424,28 @@ function JMod.DebugRay(pos, siz, label)
 	label = label or math.Round(CurTime(), 2)
 	-- ayo
 end
+
+local Holidays = {
+	Christmas = {
+		startDay = 250, -- 350, roughly the start of the week before the week of christmas most years
+		endDay = 364 -- 364, roughly a week after
+	},
+	Easter = {
+		startDay = 87, -- 87, roughly 3 days before easter most years
+		endDay = 92 -- 92, roughly 2 days after
+	}
+}
+local CachedHoliday, NextCheck = nil, 0
+function JMod.GetHoliday()
+	local Time = CurTime()
+	if (NextCheck < Time) then
+		local CurDay = tonumber(os.date("%j")) -- get day of the year, 1-366
+		for holidayName, days in pairs(Holidays) do
+			if (CurDay >= days.startDay and CurDay <= days.endDay) then
+				CachedHoliday = holidayName
+			end
+		end
+		NextCheck = Time + 360 -- only check once every hour
+	end
+	return CachedHoliday
+end

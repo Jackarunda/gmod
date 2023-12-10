@@ -126,6 +126,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 					Eff:SetStart(DropVelocity)
 					util.Effect("eff_jack_gmod_jetflyby", Eff, true, true)
 					local DeliveryItems = JMod.Config.RadioSpecs.AvailablePackages[station.deliveryType].results
+					local IsChrimsas = JMod.GetHoliday() == "Christmas"
 
 					timer.Simple(.9, function()
 						local Box = ents.Create("ent_jack_aidbox")
@@ -137,11 +138,11 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 						Box:Spawn()
 						Box:SetPackageName(station.deliveryType)
 						---
-						sound.Play("snd_jack_flyby_drop.mp3", DropPos, 150, 100)
+						sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.mp3") or "snd_jack_flyby_drop.mp3", DropPos, 150, 100)
 
 						for k, playa in pairs(ents.FindInSphere(DropPos, 6000)) do
 							if playa:IsPlayer() then
-								sound.Play("snd_jack_flyby_drop.mp3", playa:GetShootPos(), 50, 100)
+								sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.mp3") or "snd_jack_flyby_drop.mp3", playa:GetShootPos(), 50, 100)
 							end
 						end
 
@@ -399,7 +400,6 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 	local DropPos = FindDropPosFromSignalOrigin(TargetPos)
 
 	if DropPos then
-
 		TargetPly:ExitVehicle()
 		--TargetPly:SetPos(DropPos)
 		TargetPly:SetNoDraw(true)

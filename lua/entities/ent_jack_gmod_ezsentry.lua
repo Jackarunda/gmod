@@ -414,9 +414,9 @@ if(SERVER)then
 		end
 	end
 
-	// 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
-	// if we name it something else, then it works fine
-	// i hate retarded gmod script kiddies
+	-- 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
+	-- if we name it something else, then it works fine
+	-- i hate retarded gmod script kiddies
 	function ENT:CanSee2(ent)
 		if not IsValid(ent) then return false end
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
