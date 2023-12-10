@@ -18,7 +18,7 @@ SWEP.BodyHolsterAngL = Angle(-93, -90, 0)
 SWEP.BodyHolsterPos = Vector(3, -10, -3)
 SWEP.BodyHolsterPosL = Vector(4, -10, 3)
 SWEP.BodyHolsterScale = 1
-SWEP.ViewModelFOV = 60
+SWEP.ViewModelFOV = 50
 SWEP.Slot = 0
 SWEP.SlotPos = 5
 SWEP.InstantPickup = true -- Fort Fights compatibility
@@ -67,7 +67,7 @@ SWEP.WElements = {
 }
 
 --
-SWEP.HitDistance		= 40
+SWEP.HitDistance		= 45
 SWEP.HitInclination		= 0.4
 SWEP.HitPushback		= 2000
 
@@ -129,8 +129,8 @@ end
 
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:SetNextPrimaryFire(CurTime() + 0.9)
-	self:SetNextSecondaryFire(CurTime() + .8)
+	self:SetNextPrimaryFire(CurTime() + .8)
+	self:SetNextSecondaryFire(CurTime() + .7)
 	local Hit = self:Hitscan()
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
@@ -257,7 +257,7 @@ end
 
 function SWEP:SecondaryAttack()
 	self:SetNextPrimaryFire(CurTime() + .8)
-	self:SetNextSecondaryFire(CurTime() + 1)
+	self:SetNextSecondaryFire(CurTime() + .7)
 
 	--self:EmitSound( SwingSound )
 
@@ -273,12 +273,14 @@ function SWEP:SecondaryAttack()
 
 	if ( tr.Hit ) then
 		self:EmitSound( PushSoundBody )
+		local PushVector = self.Owner:GetAimVector() * 1000
+		self:EmitSound( PushSoundBody )
 		if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
-			tr.Entity:SetVelocity( self.Owner:GetAimVector() * 1500 )
+			tr.Entity:SetVelocity(PushVector * Vector( 1, 1, 0 ))
 		elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
-			tr.Entity:GetPhysicsObject():ApplyForceOffset(self.Owner:GetAimVector() * 1500, tr.HitPos)
+			tr.Entity:GetPhysicsObject():ApplyForceOffset(PushVector, tr.HitPos)
 		end
-		--self.Owner:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * -250 )
+		self.Owner:SetVelocity( -PushVector * .25 * Vector( 1, 1, 0 ))
 		self.Owner:SetAnimation(PLAYER_RELOAD)
 	end
 	self:UpdateNextIdle()
@@ -359,8 +361,8 @@ function SWEP:Deploy()
 		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
 	end
 
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
+	self:SetNextPrimaryFire(CurTime() + .5)
+	self:SetNextSecondaryFire(CurTime() + .5)
 
 	return true
 end
