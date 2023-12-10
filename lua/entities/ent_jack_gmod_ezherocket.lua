@@ -216,7 +216,7 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
