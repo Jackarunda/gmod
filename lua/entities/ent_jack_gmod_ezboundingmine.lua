@@ -188,7 +188,7 @@ if SERVER then
 			end
 		end
 
-		util.BlastDamage(JMod.GetEZowner(self), SelfPos, 120 * JMod.Config.Explosives.Mine.Power, 30 * JMod.Config.Explosives.Mine.Power)
+		util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 120 * JMod.Config.Explosives.Mine.Power, 30 * JMod.Config.Explosives.Mine.Power)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))

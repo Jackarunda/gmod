@@ -508,7 +508,16 @@ function SWEP:Msg(msg)
 end
 
 function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
-	local DonorCurAmt, Grade = donor:GetEZsupplies(resourceType), recipient:GetGrade()
+	local DonorCurAmt
+	local TakeFromInv = false
+	if donor.GetEZsupplies then
+		DonorCurAmt = donor:GetEZsupplies(resourceType)
+	elseif donor.JModInv then
+		DonorCurAmt = donor.JModInv.EZresources[resourceType]
+		TakeFromInv = true
+	end
+
+	local Grade = recipient:GetGrade()
 	local RequiredSupplies = recipient.UpgradeCosts[Grade + 1]
 	---
 	local CurAmt= recipient.UpgradeProgress[resourceType] or 0
@@ -525,7 +534,11 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
 	self:Msg(Msg)
 
 	---
-	donor:SetEZsupplies(resourceType, DonorCurAmt - Given, self)
+	if TakeFromInv then
+		JMod.RemoveFromInventory(donor, {resourceType, Given})
+	else
+		donor:SetEZsupplies(resourceType, DonorCurAmt - Given, self)
+	end
 
 	local HaveEverything = true
 

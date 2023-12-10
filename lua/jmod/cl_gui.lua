@@ -19,6 +19,15 @@ JMod.SelectionMenuIcons = {}
 local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
 local QuestionMarkIcon = Material("question_mark.png")
 
+local JModIcon = "jmod_icon.png"
+list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon )
+list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon )
+
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
 	local layers, density, alpha = 1, 1, 255
