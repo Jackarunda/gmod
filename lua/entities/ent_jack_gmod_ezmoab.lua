@@ -6,6 +6,7 @@ ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Mega Bomb"
 ENT.Spawnable = true
+ENT.AdminOnly = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)

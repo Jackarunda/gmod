@@ -137,7 +137,11 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp end
+	for specName,value in pairs(self.DynamicPerfSpecs)do 
+		if(type(value)~="table")then
+			self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp 
+		end
+	end
 	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
@@ -234,8 +238,7 @@ if(SERVER)then
 		}
 	end
 	
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		JMod.SetEZowner(self, ply, true)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
 	end
 

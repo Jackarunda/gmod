@@ -149,10 +149,8 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 1)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextEnvThink = Time + math.Rand(1, 10)
 		self.NextUseTime = Time + math.Rand(0, 3)
