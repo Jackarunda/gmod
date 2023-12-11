@@ -52,24 +52,23 @@ if SERVER then
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
+			local Helf, Max = activator:Health(), activator:GetMaxHealth()
+			activator.EZhealth = activator.EZhealth or 0
+			local Missing = Max - (Helf + activator.EZhealth)
+			if Missing > 0 then
+				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
+				activator.EZhealth = activator.EZhealth + AddAmt
+				--
+				self:Remove()
+			end
 			if activator.EZbleeding and (activator.EZbleeding > 0) then
 				activator:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
 				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 50, 0, 9e9)
 				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
-				--
-				local Helf, Max = activator:Health(), activator:GetMaxHealth()
-				activator.EZhealth = activator.EZhealth or 0
-				local Missing = Max - (Helf + activator.EZhealth)
-				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
-				activator.EZhealth = activator.EZhealth + AddAmt
-
 				self:Remove()
-
-				return
-			else
-				JMod.Hint(activator, "ifak")
 			end
 		else
+			JMod.Hint(activator, "ifak")
 			activator:PickupObject(self)
 		end
 	end

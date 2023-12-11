@@ -326,7 +326,7 @@ function SWEP:PrimaryAttack()
 			local Hit = false
 
 			if Ent:IsPlayer() then
-				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
@@ -362,7 +362,7 @@ function SWEP:PrimaryAttack()
 					self:SetSupplies(math.Clamp(self:GetSupplies() - 1, 0, 100))
 				end
 			elseif Ent:IsNPC() and Ent.Health and Ent:Health() and tonumber(Ent:Health()) then
-				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+				local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
 				if override == false then return end
 				local healAmt = isnumber(override) and override or 3
 				local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
@@ -445,7 +445,7 @@ function SWEP:SecondaryAttack()
 		local Ent = self.Owner
 		local AimVec = Ent:GetAimVector()
 		local Pos = Ent:GetShootPos() - Vector(0, 0, 10) + AimVec * 5
-		local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, selfg)
+		local override = hook.Run("JMod_MedkitHeal", self.Owner, self.Owner, self)
 		if override == false then return end
 		local healAmt = isnumber(override) and override or 2
 		local Helf, Max = Ent:Health(), Ent:GetMaxHealth()
