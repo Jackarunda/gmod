@@ -129,7 +129,7 @@ if SERVER then
 			end
 		end
 		
-		if Dam > 20 then
+		if JMod.LinCh(Dam, 20, 100) then
 			self:SetState(STATE_BROKEN)
 			self:SetBodygroup(1, 0)
 			self.BrokenRemoveTime = CurTime() + 2
