@@ -12,8 +12,9 @@ end
 
 if SERVER then
 	function ENT:Initialize()
+		self.Chrimsas = JMod.GetHoliday() == "Christmas"
 		self:SetModel("models/props_junk/wood_crate001a.mdl")
-		self:SetMaterial("models/mat_jack_aidbox")
+		self:SetMaterial((self.Chrimsas and "models/mat_jack_aidbox_Christmas") or "models/mat_jack_aidbox")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -195,13 +196,11 @@ if SERVER then
 		Poof:SetOrigin(Pos)
 		Poof:SetScale(2)
 		util.Effect("eff_jack_aidopen", Poof, true, true)
-		self:EmitSound("snd_jack_aidboxopen.wav", 75, 100)
-		self:EmitSound("snd_jack_aidboxopen.wav", 75, 100)
-		self:EmitSound("snd_jack_aidboxopen.wav", 75, 100)
-		self:EmitSound("snd_jack_aidboxopen.wav", 75, 100)
+		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.wav") or "snd_jack_aidboxopen.wav"
+		self:EmitSound(Snd, 75, 100)
 
 		SpawnContents(self.Contents or {
-			{"item_ammo_pistol", 40}
+			{"item_ammo_pistol", 1}
 		}, Pos, activator)
 
 		--JackaGenericUseEffect(activator)
@@ -216,8 +215,10 @@ if SERVER then
 			activator:SetAnimation(PLAYER_ATTACK1)
 		end
 
+		local Snd = (self.Chrimsas and "snds_jack_gmod/merry_Christmas_group_shout.wav") or "snd_jack_itemsget.wav"
+
 		timer.Simple(2, function()
-			sound.Play("snd_jack_itemsget.wav", Pos, 75, 100)
+			sound.Play(Snd, Pos, 75, 100)
 		end)
 
 		activator.NextAidBoxOpenTime = Time + 2
@@ -227,13 +228,13 @@ if SERVER then
 	function ENT:MakeSide(pos, ang, dir)
 		local Side = ents.Create("prop_physics")
 		Side:SetModel("models/hunter/plates/plate1x1.mdl")
-		Side:SetMaterial("models/mat_jack_aidboxside")
+		Side:SetMaterial(self:GetMaterial())
 		Side:SetColor(Color(200, 200, 200, 255))
 		Side:SetPos(pos)
 		Side:SetAngles(ang)
 		Side:Spawn()
 		Side:Activate()
-		Side:GetPhysicsObject():SetMaterial("gmod_silent")
+		Side:GetPhysicsObject():SetMaterial("Default_silent")
 		Side:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
 		Side:GetPhysicsObject():ApplyForceCenter(dir * 2000)
 		Side:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
@@ -247,16 +248,21 @@ if SERVER then
 			self:GetPhysicsObject():SetAngleDragCoefficient(1)
 			self.SignalStopTime = self.SignalStopTime or Time + 60
 
-			if Time < self.SignalStopTime then
+			if true then
 				if not self.last_sound or self.last_sound <= Time then
 					self.last_sound = Time + 2
-					self:EmitSound("snds_jack_gmod/ezsentry_disengage.wav", 75, 70, 0.5)
+					if (self.Chrimsas) then
+						self:EmitSound("snds_jack_gmod/2-sec-jinglebell.wav", 75, 100, 0.5)
+					else
+						self:EmitSound("snds_jack_gmod/ezsentry_disengage.wav", 75, 70, 0.5)
+					end
 				end
 
 				local Foof = EffectData()
-				Foof:SetOrigin(self:GetPos())
-				Foof:SetNormal(self:GetUp())
-				Foof:SetAngles(Angle(100, 255, 100))
+				Foof:SetOrigin(self:LocalToWorld(self:OBBCenter()))
+				Foof:SetNormal(vector_up)
+				local Col = (self.Chrimsas and math.random(1, 3) == 1 and Angle(255, 50, 50)) or Angle(50, 150, 50)
+				Foof:SetAngles(Col)
 				Foof:SetStart(self:GetVelocity())
 				util.Effect("eff_jack_gmod_aidboxsignal", Foof, true, true)
 				self:NextThink(Time + .1)

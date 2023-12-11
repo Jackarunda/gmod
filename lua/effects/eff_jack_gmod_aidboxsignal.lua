@@ -12,7 +12,7 @@ function EFFECT:Init(data)
 	if RollParticle then
 		RollParticle:SetVelocity(Vel + Norm * math.random(50, 100) + VectorRand() * 10)
 		RollParticle:SetAirResistance(100)
-		RollParticle:SetDieTime(math.Rand(1, 15))
+		RollParticle:SetDieTime(math.Rand(2, 15))
 		RollParticle:SetStartAlpha(255)
 		RollParticle:SetEndAlpha(0)
 		local Size = math.Rand(20, 40)
@@ -28,6 +28,31 @@ function EFFECT:Init(data)
 		RollParticle:SetCollide(true)
 		RollParticle:SetBounce(1)
 	end
+
+	--[[
+	for i = 0, 50 do
+		local particle = Emitter:Add("sprites/mat_jack_nicespark", Pos)
+		if particle then
+			particle:SetVelocity(Vel + Norm * math.random(200, 600) + VectorRand() * 50)
+			particle:SetLifeTime(0)
+			particle:SetDieTime(math.Rand(.5, 1))
+			local herpdemutterfickendenderp = math.Rand(200, 255)
+			particle:SetColor(255, herpdemutterfickendenderp - 10, herpdemutterfickendenderp - 20)
+			particle:SetStartAlpha(255)
+			particle:SetEndAlpha(0)
+			local Siz = math.Rand(.1, 1)
+			particle:SetStartSize(Siz * 5)
+			particle:SetEndSize(0)
+			particle:SetRoll(math.Rand(-360, 360))
+			particle:SetRollDelta(math.Rand(-0.21, 0.21))
+			particle:SetAirResistance(20)
+			particle:SetGravity(Vector(0, 0, -600))
+			particle:SetLighting(false)
+			particle:SetCollide(true)
+			particle:SetBounce(0.95)
+		end
+	end
+	--]]
 
 	Emitter:Finish()
 end

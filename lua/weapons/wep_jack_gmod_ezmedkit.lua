@@ -414,7 +414,7 @@ function SWEP:FlingProp(mdl, pos, force)
 	Prop:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 	constraint.NoCollide(Prop, self, 0, 0)
 	local Phys = Prop:GetPhysicsObject()
-	Phys:SetMaterial("gmod_silent")
+	Phys:SetMaterial("Default_silent")
 	Phys:SetVelocity(VectorRand() * math.Rand(1, 300) + self:GetUp() * 100)
 	Phys:AddAngleVelocity(VectorRand() * math.Rand(1, 10000))
 

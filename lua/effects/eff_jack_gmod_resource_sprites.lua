@@ -84,7 +84,7 @@ function EFFECT:Init(data)
 		phys:Wake()
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
-		phys:SetMaterial("gmod_silent")
+		phys:SetMaterial("Default_silent")
 		phys:SetVelocity(MyFlightVec * VectorRand() * math.Rand(2, 3))
 		phys:AddAngleVelocity(VectorRand() * math.random(1, 100))
 

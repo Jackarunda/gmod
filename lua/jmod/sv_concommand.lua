@@ -53,7 +53,14 @@ end, nil, "Removes JMod radiation and from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
 	if not(JMod.IsAdmin(ply)) then return end
-	JMod.DebugArrangeEveryone(ply)
+	--[[
+	local Eff = EffectData()
+	Eff:SetOrigin(ply:GetPos())
+	Eff:SetStart(Vector(0, 400, 0))
+	util.Effect("eff_jack_gmod_jetflyby", Eff, true, true)
+	--]]
+	--print(JMod.GetHoliday())
+	--JMod.DebugArrangeEveryone(ply)
 	--JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.PROPELLANT, Vector(100, 0, -100), Vector(-100, 0, -100), 1, 1, 1, 0)
 	--local Tr=ply:GetEyeTrace()
 	--util.Decal("GiantScorch", Tr.HitPos+Tr.HitNormal, Tr.HitPos-Tr.HitNormal)
