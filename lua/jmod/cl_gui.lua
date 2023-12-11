@@ -19,14 +19,14 @@ JMod.SelectionMenuIcons = {}
 local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
 local QuestionMarkIcon = Material("question_mark.png")
 
-local JModIcon, JModLegacyIcon = "jmod_icon.png", "jmod_icon_legacy.png"
-list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon )
+local JModIcon, JModLegacyIcon = "jmod_icon", "jmod_icon_legacy.png"
+list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon.."_armor.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon.."_explosives.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon.."_machines.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon..".png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon.."_resources.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon.."_specialammo.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon.."_weapons.png" )
 --
 list.Set( "ContentCategoryIcons", "JMod - LEGACY Armor", JModLegacyIcon )
 list.Set( "ContentCategoryIcons", "JMod - LEGACY Explosives", JModLegacyIcon )
