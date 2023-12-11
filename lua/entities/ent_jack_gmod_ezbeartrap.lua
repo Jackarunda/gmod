@@ -66,6 +66,10 @@ if SERVER then
 		end
 		---
 		self.StillTicks = 0
+		self.PryProgress = 0
+		self.PryNeeded = 10
+		self.NextPryFail = 0
+		self.NextPry = 0
 
 		if self.AutoArm then
 			self:NextThink(CurTime() + math.Rand(.1, 1))
@@ -77,6 +81,17 @@ if SERVER then
 			self:Snap()
 		elseif iname == "Arm" and value > 0 then
 			self:Arm()
+		end
+	end
+
+	function ENT:GetTrappedPlayer()
+		if self:GetState() ~= STATE_CLOSED then
+			self.EZtrappedPlayer = nil
+
+			return nil
+		else
+
+			return self.EZtrappedPlayer
 		end
 	end
 
@@ -95,39 +110,72 @@ if SERVER then
 	end
 
 	function ENT:ShouldSnap(ent)
-		return true
+		if IsValid(ent) and ent:IsPlayer() or (table.HasValue(self.WhiteListedNPCs, ent:GetClass()) or not(table.HasValue(self.BlackListedNPCs, ent:GetClass()))) then
+			
+			return true
+		end
+
+		return false
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-
-		if JMod.LinCh(dmginfo:GetDamage(), 10, 60) then
+		local Dam = dmginfo:GetDamage()
+		if JMod.LinCh(Dam, 10, 20) then
 			local Pos, State = self:GetPos(), self:GetState()
 
 			if State == STATE_OPEN then
 				self:Snap()
 			end
 		end
+		
+		if Dam > 20 then
+			self:SetState(STATE_BROKEN)
+			self:SetBodygroup(1, 0)
+			self.BrokenRemoveTime = CurTime() + 2
+		end
 	end
 
 	function ENT:Use(activator)
-		local State = self:GetState()
+		local State, Time = self:GetState(), CurTime()
 		if State < 0 then return end
 		self.AutoArm = false
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_CLOSED then
-			if Alt then
-				SafeRemoveEntity(self.Anchor)
-				self:SetMaterial("models/jacky_camouflage/digi2")
-				JMod.SetEZowner(self, activator)
-				net.Start("JMod_ColorAndArm")
-				net.WriteEntity(self)
-				net.Send(activator)
+
+			if IsValid(self.EZtrappedPlayer) then
+				if self.NextPry < Time then
+					self.NextPry = Time + .2
+					self.PryProgress = self.PryProgress + JMod.Config.Explosives.BombDisarmSpeed
+					self.NextPryFail = Time + 1
+					activator:PrintMessage(HUD_PRINTCENTER, "Prying: " .. self.PryProgress .. "/" .. math.ceil(self.PryNeeded))
+
+					if self.PryProgress >= self.PryNeeded then
+						self.PryProgress = 0
+						self.EZtrappedPlayer = nil
+						sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
+						self:SetBodygroup(1, 0)
+						timer.Simple(1, function()
+							if IsValid(self) and (self:GetState() == STATE_CLOSED) then self:SetBodygroup(1, 1) end
+						end)
+					end
+
+					JMod.Hint(activator, "defuse")
+				end
 			else
-				SafeRemoveEntity(self.Anchor)
-				activator:PickupObject(self)
-				JMod.Hint(activator, "arm")
+				if Alt then
+					SafeRemoveEntity(self.Anchor)
+					self:SetMaterial("models/jacky_camouflage/digi2")
+					JMod.SetEZowner(self, activator)
+					net.Start("JMod_ColorAndArm")
+					net.WriteEntity(self)
+					net.Send(activator)
+				else
+					SafeRemoveEntity(self.Anchor)
+					activator:PickupObject(self)
+					JMod.Hint(activator, "arm")
+				end
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
 			--self:EmitSound("snd_jack_minearm.wav", 60, 70)
@@ -153,11 +201,12 @@ if SERVER then
 			SnapDamage:SetInflictor(self)
 			SnapDamage:SetAttacker(JMod.GetEZowner(self))
 			if victim:IsPlayer() then
-				victim.EZImmobilizationTime = (victim.EZImmobilizationTime or CurTime()) + 10
+				JMod.EZimmobilize(victim, 9e9, self)
+				self.EZtrappedPlayer = victim
 				SnapDamage:SetDamage(20)
 			else
 				if victim:IsNPC() then
-					victim.EZNPCincapacitate = (victim.EZNPCincapacitate or CurTime()) + math.Rand(2, 3)
+					victim.EZNPCincapacitate = (victim.EZNPCincapacitate or CurTime()) + math.Rand(2, 5)
 				end
 				SnapDamage:SetDamage(40)
 			end
@@ -170,7 +219,8 @@ if SERVER then
 		-- chance to break
 		if (math.random(1, 10) == 5) then
 			self:SetState(STATE_BROKEN)
-			SafeRemoveEntityDelayed(self, 10)
+			self.BrokenRemoveTime = CurTime() + 10
+			self:SetBodygroup(1, 0)
 		else
 			self:SetState(STATE_CLOSED)
 		end
@@ -179,22 +229,6 @@ if SERVER then
 	function ENT:Arm(armer, autoColor)
 		local State = self:GetState()
 		if State ~= STATE_CLOSED then return end
-
-		--[[if autoColor then
-			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)
-
-			if Tr.Hit then
-				local Info = JMod.HitMatColors[Tr.MatType]
-
-				if Info then
-					self:SetColor(Info[1])
-
-					if Info[2] then
-						self:SetMaterial(Info[2])
-					end
-				end
-			end
-		end--]]
 
 		local Tr = util.QuickTrace(self:GetPos(), self:GetUp()*-5, self)
 		if Tr.Hit then
@@ -224,11 +258,23 @@ if SERVER then
 
 		local State, Time = self:GetState(), CurTime()
 
+		if self.NextPryFail < Time then
+			self.PryProgress = 0
+		end
+
 		if State == STATE_OPEN then
 			if not IsValid(self.Anchor) then
 				self:Snap()
 			end
 			self:NextThink(Time + .3)
+
+			return true
+		elseif State == STATE_BROKEN then
+			if self.BrokenRemoveTime and self.BrokenRemoveTime < Time then
+				SafeRemoveEntity(self)
+			end
+
+			self:NextThink(Time + 1)
 
 			return true
 		elseif self.AutoArm then

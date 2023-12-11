@@ -692,18 +692,6 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	elseif ent:IsVehicle() then
 		PlayerToCheck = ent:GetDriver()
 		InVehicle = true
-	elseif (ent.LFS and ent.GetEngineActive and ent:GetEngineActive()) then
-		-- LunasFlightSchool compatibility
-		if ent.GetDriver then
-			local Pilot = ent:GetDriver()
-
-			if IsValid(Pilot) then
-				PlayerToCheck = ent:GetDriver()
-				InVehicle = true
-			end
-		else
-			return peaceWasNeverAnOption or false
-		end
 	elseif (ent.LVS and not(ent.ExplodedAlready)) then
 		if ent.GetDriver and IsValid(ent:GetDriver()) then
 			PlayerToCheck = ent:GetDriver()
@@ -1405,6 +1393,15 @@ function JMod.DebugArrangeEveryone(ply)
 	ply:SetMoveType(MOVETYPE_NOCLIP)
 	ply:SetHealth(999)
 	RunConsoleCommand("r_cleardecals")
+end
+
+function JMod.EZimmobilize(victim, timeToImmobilize, immobilizer)
+	if not IsValid(victim) then return end
+	local Time = CurTime()
+	victim.EZimmobilizers = victim.EZimmobilizers or {}
+	if not(IsValid(immobilizer)) then immobilizer = victim end
+	victim.EZimmobilizers[immobilizer] = (victim.EZimmobilizers[immobilizer] or Time) + timeToImmobilize
+	victim.EZImmobilizationTime = timeToImmobilize
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
