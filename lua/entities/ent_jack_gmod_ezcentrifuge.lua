@@ -6,6 +6,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
+ENT.AdminOnly = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/centrifuge.mdl"
 ---

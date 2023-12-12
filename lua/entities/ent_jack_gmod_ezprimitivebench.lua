@@ -210,7 +210,7 @@ if(SERVER)then
 						local Yield, Message = JMod.GetSalvageYield(Ent)
 
 						if #table.GetKeys(Yield) <= 0 then
-							JMod.GetEZowner(self):PrintMessage(HUD_PRINTCENTER, Message)
+							--
 						elseif Ent:GetPhysicsObject():GetMass() <= 35 then
 							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 70, math.random(50, 60))
 							JMod.BuildEffect(Pos)
