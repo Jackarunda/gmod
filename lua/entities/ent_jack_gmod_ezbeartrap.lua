@@ -85,13 +85,13 @@ if SERVER then
 	end
 
 	function ENT:GetTrappedPlayer()
-		if self:GetState() ~= STATE_CLOSED then
+		if (self:GetState() == STATE_CLOSED) and IsValid(self.EZtrappedPlayer) and (self:GetPos():Distance(self.EZtrappedPlayer:GetPos()) < 100) then
+
+			return self.EZtrappedPlayer
+		else
 			self.EZtrappedPlayer = nil
 
 			return nil
-		else
-
-			return self.EZtrappedPlayer
 		end
 	end
 
@@ -121,7 +121,7 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		local Dam = dmginfo:GetDamage()
-		if JMod.LinCh(Dam, 10, 20) then
+		if JMod.LinCh(Dam, 10, 30) then
 			local Pos, State = self:GetPos(), self:GetState()
 
 			if State == STATE_OPEN then
@@ -129,7 +129,7 @@ if SERVER then
 			end
 		end
 		
-		if JMod.LinCh(Dam, 20, 100) then
+		if JMod.LinCh(Dam, 30, 120) then
 			self:SetState(STATE_BROKEN)
 			self:SetBodygroup(1, 0)
 			self.BrokenRemoveTime = CurTime() + 2
@@ -157,7 +157,7 @@ if SERVER then
 						sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
 						self:SetBodygroup(1, 0)
 						timer.Simple(1, function()
-							if IsValid(self) and (self:GetState() == STATE_CLOSED) then self:SetBodygroup(1, 1) end
+							if IsValid(self) and (self:GetState() == STATE_CLOSED) then self:SetBodygroup(1, 1) sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".wav", self:GetPos(), 70, math.random(90, 110)) end
 						end)
 					end
 
