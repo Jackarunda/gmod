@@ -67,7 +67,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
 		if JMod.IsEntContained(v.ent, invEnt) then
 			local Phys = v.ent:GetPhysicsObject()
-			if IsValid(Phys) and not(JMod.Config.QoL.AllowActiveItemsInInventory and (v.ent.GetState and v.ent:GetState() ~= 0)) then
+			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
 				local Vol = Phys:GetVolume()
 				if (Vol ~= nil) then
 					Vol = math.ceil(Vol / 500)
@@ -127,7 +127,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	invEnt = invEnt or target.EZInvOwner
 	if JMod.GetStorageCapacity(invEnt) <= 0 then return false end
 	local AddingResource = istable(target)
-	if not(AddingResource) and (target:IsPlayer() or (JMod.Config.QoL.AllowActiveItemsInInventory and (target.GetState and target:GetState() ~= 0))) then return false end -- Open up! The fun police are here!
+	if not(AddingResource) and (target:IsPlayer() or ((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (target.GetState and target:GetState() ~= 0))) then return false end -- Open up! The fun police are here!
 
 	if JMod.IsEntContained(target) then
 		JMod.RemoveFromInventory(target.EZInvOwner, target, nil, false, true)
@@ -157,6 +157,16 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		target:GetPhysicsObject():EnableMotion(false)
 		target:GetPhysicsObject():Sleep()
 		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target})
+
+		local Children = target:GetChildren()
+		if Children then
+			for k, v in pairs(Children) do
+				v.EZnoDraw = v:GetNoDraw()
+				v.EZnoSolid = v:IsSolid()
+				v:SetNoDraw(true)
+				v:SetNotSolid(true)
+			end
+		end
 	end
 
 	invEnt.JModInv = jmodinv
@@ -226,6 +236,13 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 					end
 				end
 			end)
+			local Children = target:GetChildren()
+			if Children then
+				for k, v in pairs(Children) do
+					v:SetNoDraw(v.EZnoDraw or false)
+					v:SetNotSolid(v.EZnoDraw or false)
+				end
+			end
 		end
 	end
 
@@ -297,7 +314,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.wav"), Tr.HitPos, 60, math.random(90, 110))
 		JMod.Hint(ply,"hint item inventory drop")
-	elseif command == "use" then
+	elseif (command == "use") or (command == "prime") then
 		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
 		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
@@ -306,8 +323,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			if pickupWhiteList[item:GetClass()] and IsValid(Phys) and (Phys:GetMass() <= 35) then
 				ply:PickupObject(item)
 			else
-				print(ply:KeyDown(JMod.Config.General.AltFunctionKey))
 				item:Use(ply, ply, USE_ON)
+				if command == "prime" and item.Prime then
+					timer.Simple(0.1, function()
+						if IsValid(item) then item:Prime() end
+					end)
+				end
 			end
 		end
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.wav"), Tr.HitPos, 60, math.random(90, 110))
@@ -382,9 +403,21 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			
 			if (RoomWeNeed ~= nil) then
 				if (RoomWeNeed <= RoomLeft) then 
-					JMod.AddToInventory(ply, (IsResources and {Tar, RoomWeNeed / ResourceWeight}) or Tar)
-					JMod.Hint(ply,"hint item inventory add")
-					sound.Play("snd_jack_clothequip.wav", ply:GetPos(), 60, math.random(90, 110))
+					local Added = JMod.AddToInventory(ply, (IsResources and {Tar, RoomWeNeed / ResourceWeight}) or Tar)
+					--
+					if not(Added) then
+						ply:PrintMessage(HUD_PRINTCENTER, "Couldn't grab item")
+					else
+						local Wep = ply:GetActiveWeapon()
+						if IsValid(Wep) then
+							Wep:SendWeaponAnim(ACT_VM_DRAW)
+						end
+						ply:ViewPunch(Angle(1, 0, 0))
+						ply:SetAnimation(PLAYER_ATTACK1)
+						--
+						JMod.Hint(ply,"hint item inventory add")
+						sound.Play("snd_jack_clothequip.wav", ply:GetPos(), 60, math.random(90, 110))
+					end
 				else
 					JMod.Hint(ply,"hint item inventory full")
 				end
@@ -396,6 +429,31 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 		end
 	end
 end
+
+local QuickNadeBlackList = {"ent_jack_gmod_ezsatchelcharge"}
+
+concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	if (ply.EZnextQuickNadeTime or 0) > CurTime() then return end
+	ply.EZnextQuickNadeTime = CurTime() + 1
+	for k, tbl in ipairs(ply.JModInv.items) do
+		local Item = tbl.ent
+		if IsValid(Item) and Item.Base and not(table.HasValue(QuickNadeBlackList, Item:GetClass())) then
+			local ItemBaseClass = Item.Base
+			if (ItemBaseClass == "ent_jack_gmod_ezgrenade") then
+				local item = JMod.RemoveFromInventory(ply, Item, ply:GetShootPos() + ply:GetAimVector() * 10)
+				if item then
+					item:Use(ply, ply, USE_ON)
+					timer.Simple(0.1, function()
+						if IsValid(item) and (item:GetState() == JMod.EZ_STATE_OFF) then item:Prime() end
+					end)
+					sound.Play("snd_jack_clothunequip.wav", ply:GetShootPos(), 60, math.random(90, 110))
+					return
+				end
+			end
+		end
+	end
+end, nil, "Quick throw first grenade in JMod inventory")
 
 concommand.Add("jmod_debug_stow", function(ply, cmd, args) 
 	if not (IsValid(ply) and ply:IsSuperAdmin()) then return end

@@ -1213,19 +1213,38 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				end
 			},
 			--[[[3]={
-				title="Alt+Use",
+				title="Prime",
 				actionFunc = function(itemTable)
 					--Ply:ConCommand("+alt1")
 					net.Start("JMod_ItemInventory")
-					net.WriteString("use")
+					net.WriteString("prime")
 					net.WriteEntity(itemTable.ent)
 					if invEnt ~= Ply then
 						net.WriteEntity(invEnt)
 					end
 					net.SendToServer()
 				end
-			}-]]
+			}--]]
 		}
+
+		if itemTable.ent.Base then
+			local ItemBaseClass = itemTable.ent.Base
+
+			if ItemBaseClass and (ItemBaseClass == "ent_jack_gmod_ezgrenade") then
+				table.insert(Options, {
+					title="Prime",
+					actionFunc = function(itemTable)
+						net.Start("JMod_ItemInventory")
+						net.WriteString("prime")
+						net.WriteEntity(itemTable.ent)
+						if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						end
+						net.SendToServer()
+					end
+				})
+			end
+		end
 
 		if invEnt == Ply then
 			table.insert(Options, {
@@ -1265,8 +1284,9 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			})
 		end
 		
+		local ButtonTall = 25
 		local Dropdown = vgui.Create("DPanel", parent)
-		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40)
+		Dropdown:SetSize(Buttalony:GetWide(), #Options * ButtonTall * 1.35)
 		local ecks, why = gui.MousePos()
 		local harp, darp = parent:GetPos()
 		local fack, fock = parent:GetSize()
@@ -1280,8 +1300,8 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 
 		for k, option in pairs(Options) do
 			local Butt = vgui.Create("DButton", Dropdown)
-			Butt:SetPos(5, k * 40 - 35)
-			Butt:SetSize(floop - 10, 30)
+			Butt:SetPos(5, k * ButtonTall * 1.25 - ButtonTall)
+			Butt:SetSize(floop - 10, ButtonTall)
 			Butt:SetText(option.title)
 
 			function Butt:DoClick()
