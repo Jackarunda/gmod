@@ -114,7 +114,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 				station.state = JMod.EZ_STATION_STATE_BUSY
 				local DropPos = FindDropPosFromSignalOrigin(station.deliveryLocation)
 
-				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", station, DropPos)
+				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", stationID, DropPos)
 
 				if AlternateDelivery and AlternateDelivery == true then return end
 				
