@@ -112,16 +112,45 @@ ENT.ModPerfSpecs = {
 	Cooling = 0
 }
 
+ENT.AmmoRefundTable = {
+	["Bullet"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["Buckshot"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["API Bullet"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["HE Grenade"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
+		conversionMult = 1
+	},
+	["Pulse Laser"] = {
+		varToRead = "Electricity",
+		spawnType = JMod.EZ_RESOURCE_TYPES.POWER,
+		conversionMult = 1
+	}
+}
+
 function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
 	if (OldAmmo~=ammoType) then
-		local AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.AMMO
-		if (OldAmmo == "HE Grenade") then
-			AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.MUNITIONS
-		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, self:GetAmmo(), self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
+		local RefundInfo = self.AmmoRefundTable[OldAmmo]
+		local AmmoTypeToSpawn = RefundInfo.spawnType
+		local NetVarValueName = "Get" .. RefundInfo.varToRead
+		local NetVarValue = self[NetVarValueName](self)
+		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
 	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
