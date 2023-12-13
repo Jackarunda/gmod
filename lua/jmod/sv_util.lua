@@ -631,7 +631,9 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	end
 
 	ent.EZowner = newOwner
-	ent.EZownerID = newOwner:SteamID64()
+	if newOwner:IsPlayer() then
+		ent.EZownerID = newOwner:SteamID64()
+	end
 
 	if setColor == true then
 		JMod.Colorify(ent)
