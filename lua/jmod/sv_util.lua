@@ -871,7 +871,9 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 				if BestCrate.TryLoadResource then
 					Accepted = BestCrate:TryLoadResource(resourceType, amount, true)
 				else
-					Accepted = math.min(BestCrate.MaxResource - BestCrate:GetEZsupplies(resourceType), Accepted)
+					local SuppliesContained = BestCrate:GetEZsupplies(resourceType)
+					Accepted = math.min(BestCrate.MaxResource - SuppliesContained, Accepted)
+					BestCrate:SetEZsupplies(resourceType, SuppliesContained + Accepted)
 				end
 				
 				if Accepted > 0 then
