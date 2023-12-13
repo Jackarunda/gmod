@@ -329,6 +329,24 @@ local function VirusHostThink(dude)
 	end
 end
 
+local function ImmobilizedThink(dude)
+	local Time = CurTime()
+	dude.EZImmobilizationTime = 0
+	if dude.EZimmobilizers and dude:Alive() then
+		for immobilizer, immobilizeTime in pairs(dude.EZimmobilizers) do
+			if not(IsValid(immobilizer)) or (immobilizer.GetTrappedPlayer and (immobilizer:GetTrappedPlayer() ~= dude)) or (immobilizeTime < Time) then
+				dude.EZimmobilizers[immobilizer] = nil
+			else
+				dude.EZImmobilizationTime = math.max(dude.EZImmobilizationTime, immobilizeTime)
+			end
+		end
+	else
+		dude.EZimmobilizers = nil
+	end
+end
+
+--- PARACHUTE LOGIC
+
 local function OpenChute(ply)
 	ply:EmitSound("JMod_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", true)
@@ -533,6 +551,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					playa.EZoxygen = math.Clamp(playa.EZoxygen + 25, 0, 100) -- recover in 4 seconds
 				end
 			end
+
+			ImmobilizedThink(playa)
 		end
 	end
 

@@ -1326,6 +1326,8 @@ if SERVER then
 			end
 		end
 
+		if table.IsEmpty(ScroungeResults) then ply:PrintMessage(HUD_PRINTCENTER, "There's nothing here") return end
+
 		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = 5, 0, 0, 1000
 		local LastEnv
 		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do

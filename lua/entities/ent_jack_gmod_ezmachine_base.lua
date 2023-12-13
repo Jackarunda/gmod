@@ -641,10 +641,38 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + 1
-		if ent.NextUseTime then
-			ent.NextUseTime = Time + 1
+		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+			SafeRemoveEntity(ent)
+		else
+			JMod.SetEZowner(self, ply, true)
+			ent.NextRefillTime = Time + 1
+			if ent.NextUseTime then
+				ent.NextUseTime = Time + 1
+			end
+			if ent.OnPostEntityPaste then
+				ent:OnPostEntityPaste(ply, ent, createdEntities)
+			end
+			if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
+				for _, typ in ipairs(ent.EZconsumes) do
+					if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
+						ent:SetElectricity(0)
+					else
+						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+							local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+							if ResourceSetMethod then
+								ResourceSetMethod(ent, 0)
+							end
+						end
+					end
+				end
+			end
+			if ent.SetProgress then
+				ent:SetProgress(0)
+			end
+			if ent.EZupgradable then
+				ent:SetGrade(JMod.EZ_GRADE_BASIC)
+				ent:InitPerfSpecs()
+			end
 		end
 	end
 

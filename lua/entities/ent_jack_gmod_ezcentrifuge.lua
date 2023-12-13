@@ -6,6 +6,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
+ENT.AdminOnly = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/centrifuge.mdl"
 ---
@@ -175,10 +176,8 @@ if(SERVER)then
 		return true
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)
 	end

@@ -81,11 +81,11 @@ if SERVER then
 			self:EmitSound("Canister.ImpactHard")
 		end
 
-		if data.DeltaTime > .1 then
+		--[[if data.DeltaTime > .1 then
 			local Phys = self:GetPhysicsObject()
 			Phys:SetVelocity(Phys:GetVelocity() / 1.5)
 			Phys:AddAngleVelocity(-Phys:GetAngleVelocity() / 1.30)
-		end
+		end--]]
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -111,24 +111,25 @@ if SERVER then
 			end
 
 			if IsValid(Yay) then
+				local YayPhys = Yay:GetPhysicsObject()
 				JMod.SetEZowner(Yay, owner)
 
 				-- this arrests overlap-ejection velocity so items don't thwack players
 				timer.Simple(.025, function()
-					if IsValid(Yay) then
-						Yay:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+					if IsValid(YayPhys) then
+						YayPhys:SetVelocity(Vector(0, 0, 0))
 					end
 				end)
 
 				timer.Simple(.05, function()
-					if IsValid(Yay) then
-						Yay:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+					if IsValid(YayPhys) then
+						YayPhys:SetVelocity(Vector(0, 0, 0))
 					end
 				end)
 
 				timer.Simple(.1, function()
-					if IsValid(Yay) then
-						Yay:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
+					if IsValid(YayPhys) then
+						YayPhys:SetVelocity(Vector(0, 0, 0))
 					end
 				end)
 			end

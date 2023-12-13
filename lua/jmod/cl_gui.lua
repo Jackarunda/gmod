@@ -19,14 +19,21 @@ JMod.SelectionMenuIcons = {}
 local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
 local QuestionMarkIcon = Material("question_mark.png")
 
-local JModIcon = "jmod_icon.png"
-list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon )
-list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon )
+local JModIcon, JModLegacyIcon = "jmod_icon", "jmod_icon_legacy.png"
+list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon.."_armor.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon.."_explosives.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon.."_machines.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon..".png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon.."_resources.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon.."_specialammo.png" )
+list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon.."_weapons.png" )
+--
+list.Set( "ContentCategoryIcons", "JMod - LEGACY Armor", JModLegacyIcon )
+list.Set( "ContentCategoryIcons", "JMod - LEGACY Explosives", JModLegacyIcon )
+list.Set( "ContentCategoryIcons", "JMod - LEGACY Sentries", JModLegacyIcon )
+list.Set( "ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
+list.Set( "ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
+list.Set( "ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
@@ -1206,19 +1213,38 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				end
 			},
 			--[[[3]={
-				title="Alt+Use",
+				title="Prime",
 				actionFunc = function(itemTable)
 					--Ply:ConCommand("+alt1")
 					net.Start("JMod_ItemInventory")
-					net.WriteString("use")
+					net.WriteString("prime")
 					net.WriteEntity(itemTable.ent)
 					if invEnt ~= Ply then
 						net.WriteEntity(invEnt)
 					end
 					net.SendToServer()
 				end
-			}-]]
+			}--]]
 		}
+
+		if itemTable.ent.Base then
+			local ItemBaseClass = itemTable.ent.Base
+
+			if ItemBaseClass and (ItemBaseClass == "ent_jack_gmod_ezgrenade") then
+				table.insert(Options, {
+					title="Prime",
+					actionFunc = function(itemTable)
+						net.Start("JMod_ItemInventory")
+						net.WriteString("prime")
+						net.WriteEntity(itemTable.ent)
+						if invEnt ~= Ply then
+							net.WriteEntity(invEnt)
+						end
+						net.SendToServer()
+					end
+				})
+			end
+		end
 
 		if invEnt == Ply then
 			table.insert(Options, {
@@ -1258,8 +1284,9 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			})
 		end
 		
+		local ButtonTall = 25
 		local Dropdown = vgui.Create("DPanel", parent)
-		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40)
+		Dropdown:SetSize(Buttalony:GetWide(), #Options * ButtonTall * 1.35)
 		local ecks, why = gui.MousePos()
 		local harp, darp = parent:GetPos()
 		local fack, fock = parent:GetSize()
@@ -1273,8 +1300,8 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 
 		for k, option in pairs(Options) do
 			local Butt = vgui.Create("DButton", Dropdown)
-			Butt:SetPos(5, k * 40 - 35)
-			Butt:SetSize(floop - 10, 30)
+			Butt:SetPos(5, k * ButtonTall * 1.25 - ButtonTall)
+			Butt:SetSize(floop - 10, ButtonTall)
 			Butt:SetText(option.title)
 
 			function Butt:DoClick()

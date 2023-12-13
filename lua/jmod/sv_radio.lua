@@ -43,7 +43,7 @@ local function FindEZradios()
 	return Radios
 end
 
-local function NotifyAllRadios(stationID, msgID, direct)
+function JMod.NotifyAllRadios(stationID, msgID, direct)
 	local Station = JMod.EZ_RADIO_STATIONS[stationID]
 
 	for _, v in ipairs(FindEZradios()) do
@@ -146,26 +146,26 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 							end
 						end
 
-						NotifyAllRadios(stationID, "good drop")
+						JMod.NotifyAllRadios(stationID, "good drop")
 					end)
 				else
-					NotifyAllRadios(stationID, "drop failed")
+					JMod.NotifyAllRadios(stationID, "drop failed")
 				end
 			elseif (station.nextNotifyTime < Time) and not station.notified then
 				station.notified = true
-				NotifyAllRadios(stationID, "drop soon")
+				JMod.NotifyAllRadios(stationID, "drop soon")
 			end
 		elseif station.state == JMod.EZ_STATION_STATE_BUSY then
 			if station.nextReadyTime < Time then
 				station.state = JMod.EZ_STATION_STATE_READY
-				NotifyAllRadios(stationID, "ready")
+				JMod.NotifyAllRadios(stationID, "ready")
 			end
 		end
 
 		if station.restrictedPackageDelivering then
 			if station.restrictedPackageDeliveryTime < Time then
 				table.insert(station.restrictedPackageStock, station.restrictedPackageDelivering)
-				NotifyAllRadios(stationID, "attention, this outpost has received a special shipment of " .. station.restrictedPackageDelivering .. " from regional HQ", true)
+				JMod.NotifyAllRadios(stationID, "attention, this outpost has received a special shipment of " .. station.restrictedPackageDelivering .. " from regional HQ", true)
 				station.restrictedPackageDelivering = nil
 				station.restrictedPackageDeliveryTime = 0
 			end
@@ -503,7 +503,7 @@ local function StartDelivery(pkg, transceiver, id, bff, ply)
 	Station.deliveryType = pkg
 	Station.notified = false
 	Station.nextNotifyTime = Time + (DeliveryTime - 5)
-	NotifyAllRadios(id) -- do a notify to update all radio states
+	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
 	if bff then return "ayo GOOD COPY homie, we sendin " .. GetArticle(pkg) .. " " .. pkg .. " box right over to " .. math.Round(Pos.x) .. " " .. math.Round(Pos.y) .. " " .. math.Round(Pos.z) .. " in prolly like " .. DeliveryTime .. " seconds" end
 
 	return "roger wilco, sending " .. GetArticle(pkg) .. " " .. pkg .. " package to coordinates " .. math.Round(Pos.x) .. ", " .. math.Round(Pos.z) .. "; ETA " .. DeliveryTime .. " seconds"
@@ -512,7 +512,7 @@ end
 function JMod.EZradioRequest(transceiver, id, ply, pkg, bff)
 	local PackageInfo, Station, Time = JMod.Config.RadioSpecs.AvailablePackages[pkg], JMod.EZ_RADIO_STATIONS[id], CurTime()
 	if not Station then return end
-	NotifyAllRadios(id) -- do a notify to update all radio states
+	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
 	transceiver.BFFd = bff
 	local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
 	if override == false then return msg or "negative on that request." end
@@ -567,7 +567,7 @@ end
 function JMod.EZradioStatus(transceiver, id, ply, bff)
 	local Station, Time, Msg = JMod.EZ_RADIO_STATIONS[id], CurTime(), ""
 	if not Station then return end
-	NotifyAllRadios(id) -- do a notify to update all radio states
+	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
 	transceiver.BFFd = bff
 
 	if Station.state == JMod.EZ_STATION_STATE_DELIVERING then
