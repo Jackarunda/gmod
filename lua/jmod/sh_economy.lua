@@ -736,6 +736,8 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
+	if ent.LVS and (Mat == "default_silent") then Mat = "metalvehicle" end
+
 	local Specialized, Info = false, SalvagingTable[Mat]
 
 	for _, typeInfo in pairs(SpecializedSalvagingTable.modelname) do

@@ -85,11 +85,11 @@ if SERVER then
 	end
 
 	function ENT:GetTrappedPlayer()
-		if (self:GetState() == STATE_CLOSED) and IsValid(self.EZtrappedPlayer) and (self:GetPos():Distance(self.EZtrappedPlayer:GetPos()) < 100) then
+		if (self:GetState() == STATE_CLOSED) and IsValid(self.EZtrappedEnt) and (self:GetPos():Distance(self.EZtrappedEnt:GetPos()) < 100) then
 
-			return self.EZtrappedPlayer
+			return self.EZtrappedEnt
 		else
-			self.EZtrappedPlayer = nil
+			self.EZtrappedEnt = nil
 
 			return nil
 		end
@@ -110,7 +110,7 @@ if SERVER then
 	end
 
 	function ENT:ShouldSnap(ent)
-		if IsValid(ent) and ent:IsPlayer() or (table.HasValue(self.WhiteListedNPCs, ent:GetClass()) or not(table.HasValue(self.BlackListedNPCs, ent:GetClass()))) then
+		if IsValid(ent) and ent:IsPlayer() or (table.HasValue(self.WhitelistedNPCs, ent:GetClass()) or not(table.HasValue(self.BlacklistedNPCs, ent:GetClass()))) then
 			
 			return true
 		end
@@ -144,7 +144,7 @@ if SERVER then
 
 		if State == STATE_CLOSED then
 
-			if IsValid(self.EZtrappedPlayer) then
+			if IsValid(self.EZtrappedEnt) then
 				if self.NextPry < Time then
 					self.NextPry = Time + .2
 					self.PryProgress = self.PryProgress + JMod.Config.Explosives.BombDisarmSpeed
@@ -153,7 +153,7 @@ if SERVER then
 
 					if self.PryProgress >= self.PryNeeded then
 						self.PryProgress = 0
-						self.EZtrappedPlayer = nil
+						self.EZtrappedEnt = nil
 						sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
 						self:SetBodygroup(1, 0)
 						timer.Simple(1, function()
@@ -201,8 +201,8 @@ if SERVER then
 			SnapDamage:SetInflictor(self)
 			SnapDamage:SetAttacker(JMod.GetEZowner(self))
 			if victim:IsPlayer() then
-				JMod.EZimmobilize(victim, 9e9, self)
-				self.EZtrappedPlayer = victim
+				JMod.EZimmobilize(victim, 60, self)
+				self.EZtrappedEnt = victim
 				SnapDamage:SetDamage(20)
 			else
 				if victim:IsNPC() then
