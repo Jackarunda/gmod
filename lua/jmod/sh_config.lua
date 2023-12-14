@@ -2627,7 +2627,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		},
 	}
 
-	if configToApply != nil then
+	if (configToApply ~= nil) and istable(configToApply) then
 		NewConfig = configToApply
 	end
 
@@ -2636,27 +2636,41 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	if FileContents then
 		local Existing = util.JSONToTable(FileContents)
 
-		if Existing and Existing.Version then
-			file.Write("jmod_config_old.txt", FileContents)
-			print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
-			print("JMOD: Writing old config to 'jmod_config_old.txt'...\n")
-		else
-			if Existing and Existing.Info.Version then
-				if Existing.Info.Version == NewConfig.Info.Version then
+		if Existing then
+			if Existing.Version then
+				file.Write("jmod_config_old_legacy.txt", FileContents)
+				print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
+				print("JMOD: Writing old config to 'jmod_config_old_legacy.txt'...\n")
+			elseif Existing.Info.Version then
+				if (Existing.Info.Version == NewConfig.Info.Version) then
 					JMod.Config = util.JSONToTable(FileContents)
 					print("JMOD: config file loaded")
 				else
 					file.Write("jmod_config_old.txt", FileContents)
 					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
 				end
+			else
+				print("JMOD: unable to compare versions!! (check config layout)")
 			end
+		else
+			print("JMOD: invalid config syntax!! (make sure to lint the json)")
 		end
+	else
+		print("JMOD: config missing or corrupted!! (can not update)")
 	end
 
-	if (not JMod.Config) or forceNew then
+	if not(JMod.Config) or forceNew then
 		JMod.Config = NewConfig
-		file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
-		print("JMOD: config reset to default")
+		if forceNew then
+			if FileContents then
+				print("JMOD: as a precaution, writing file contents to 'jmod_config_old.txt'...")
+				file.Write("jmod_config_old.txt", FileContents)
+			end
+			file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
+			print("JMOD: config reset to default")
+		else
+			print("JMOD: no config detected, temporarily using default")
+		end
 	end
 	-- This is to make sure the ammo types are saved on config reload
 	JMod.LoadAmmoTable(JMod.AmmoTable)
@@ -2705,6 +2719,12 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	if SERVER then
 		print("JMOD: syncing lua config's")
 		JMod.LuaConfigSync(true)
+	end
+	if not forceNew then
+		print("-----Config Info-----")
+		for k, v in pairs(JMod.Config.Info) do
+			print(k..":", v)
+		end
 	end
 end
 
