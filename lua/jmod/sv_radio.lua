@@ -35,7 +35,7 @@ end
 local function FindEZradios() 
 	local Radios = {}
 	for _, v in ipairs(ents.GetAll()) do
-		if v.EZradio == true then
+		if v.EZradio and (v.EZradio == true) then
 			table.insert(Radios, v)
 		end
 	end
@@ -46,21 +46,21 @@ end
 function JMod.NotifyAllRadios(stationID, msgID, direct)
 	local Station = JMod.EZ_RADIO_STATIONS[stationID]
 
-	for _, v in ipairs(FindEZradios()) do
-		if v:GetState() > 0 and v:GetOutpostID() == stationID then
+	for _, radio in ipairs(FindEZradios()) do
+		if radio:GetState() > 0 and radio:GetOutpostID() == stationID then
 			if msgID then
 				if direct then
-					v:Speak(msgID)
+					radio:Speak(msgID)
 				else
-					if v.BFFd then
-						v:Speak(NotifyAllMsgs["bff"][msgID])
+					if radio.BFFd then
+						radio:Speak(NotifyAllMsgs["bff"][msgID])
 					else
-						v:Speak(NotifyAllMsgs["normal"][msgID])
+						radio:Speak(NotifyAllMsgs["normal"][msgID])
 					end
 				end
 			end
 
-			v:SetState(Station.state)
+			radio:SetState(Station.state)
 		end
 	end
 end

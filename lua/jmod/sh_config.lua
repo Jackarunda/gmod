@@ -313,11 +313,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 						{"ent_jack_gmod_ezglowstick", 20}
 					}
 				},
-				["First-Aid kits"] = {
+				["first-aid kits"] = {
 					description = "5 Individual First Aid Kits for stopping bleeding",
 					category = "Other",
 					results = {
-						{"ent_jack_gmod_ezifak", 5}
+						{"ent_jack_gmod_ezifakpacket", 5}
 					}
 				},
 				["gas grenades"] = {
