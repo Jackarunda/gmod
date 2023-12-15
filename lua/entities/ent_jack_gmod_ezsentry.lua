@@ -52,7 +52,7 @@ ENT.AmmoTypes = {
 	}, -- explosive projectile
 	["Pulse Laser"] = {
 		Accuracy = 3,
-		Damage = .4,
+		Damage = .25,
 		MaxElectricity = 2,
 		BarrelLength = .75
 	} -- bzew
@@ -150,6 +150,12 @@ function ENT:SetMods(tbl, ammoType)
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
 		local NetVarValue = self[NetVarValueName](self)
 		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
+		if (OldAmmo == "Pulse Laser") then
+			// we were using Electricity as ammo, and now our MaxElectricity is about to change
+			// we're gonna kick our all our Electricity, so set ours to 0
+			// no exploit
+			self:SetElectricity(0)
+		end
 		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
 	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
