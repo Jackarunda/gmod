@@ -318,7 +318,7 @@ JMod.ArmorTable = {
 	},
 	["Headset"] = {
 		PrintName = "Headset",
-		mdl = "models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
+		mdl = "models/jmod/props/items/sci_fi_headset.mdl", -- sci fi lt
 		slots = {
 			ears = 1
 		},

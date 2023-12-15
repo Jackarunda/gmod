@@ -351,11 +351,15 @@ if(SERVER)then
 
 		if not self:UserIsAuthorized(ply) then return false end
 		txt = string.lower(txt)
-		local NormalReq, BFFreq = string.sub(txt, 1, 14) == "supply radio: ", string.sub(txt, 1, 6) == "heyo: "
+		local NormalReq, AltReq, BFFreq = string.sub(txt, 1, 14) == "supply radio: ", string.sub(txt, 1, 11) == "aid radio: ", string.sub(txt, 1, 6) == "heyo: "
 		local SuccessfulTransmit = false
 
-		if NormalReq or BFFreq then
+		if NormalReq or AltReq or BFFreq then
 			local Message, ParrotPhrase = string.sub(txt, 15), txt
+
+			if AltReq then
+				Message = string.sub(txt, 12)
+			end
 
 			if BFFreq then
 				Message = string.sub(txt, 7)

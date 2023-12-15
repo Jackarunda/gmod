@@ -415,7 +415,7 @@ function SWEP:AttackFront()
 	local AimVec = self.Owner:GetAimVector()
 
 	if IsValid(Ent) or (Ent and Ent.IsWorld and Ent:IsWorld()) then
-		local SelfForce, Mul = 125, 1
+		local SelfForce, Mul = 125, (JMod.GetPlayerStrength(self.Owner) or 1)
 
 		if self:IsEntSoft(Ent) then
 			SelfForce = 25
