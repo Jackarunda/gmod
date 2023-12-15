@@ -138,7 +138,7 @@ if(SERVER)then
 		self.Pod:Fire("unlock", "", 1.4)
 		self.NextEnter = Time + 1.6
 		self:ConsumeElectricity()
-		self:ReviveCorpses()
+		--self:ReviveCorpses()
 	end
 
 	function ENT:TurnOff()
