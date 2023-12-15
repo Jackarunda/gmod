@@ -47,7 +47,7 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 	local Station = JMod.EZ_RADIO_STATIONS[stationID]
 
 	for _, radio in ipairs(FindEZradios()) do
-		if radio:GetState() > 0 and radio:GetOutpostID() == stationID then
+		if (radio:GetState() > JMod.EZ_STATE_OFF) and (radio:GetOutpostID() == stationID) then
 			if msgID then
 				if direct then
 					radio:Speak(msgID)
