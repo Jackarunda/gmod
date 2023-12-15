@@ -1138,13 +1138,16 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	local Matty = nil
 	if string.find(itemTable.ent:GetClass(), "prop_") then
-		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.name)
+		Buttalony:Remove()
+		Buttalony = vgui.Create("SpawnIcon", scrollFrame)
+		Buttalony:SetModel(itemTable.name)
 	else
 		Matty = CacheSelectionMenuIcon(itemTable.name, itemTable.ent:GetClass())
+		if Matty then
+			Buttalony:SetMaterial(Matty)
+		end
 	end
-	if Matty then
-		Buttalony:SetMaterial(Matty)
-	end
+
 	Buttalony:SetText("")--itemTable.name)
 	Buttalony:SetSize(w, h)
 	Buttalony:SetPos(x, y)
