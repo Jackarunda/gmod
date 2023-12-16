@@ -1388,7 +1388,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Paper"] = {
 				results = "ent_jack_gmod_ezpaper",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.WOOD] = 100,
+					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
 					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
 				},
 				category = "Resources",
@@ -1912,7 +1912,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Colorable glowstick, for identification, low-power illumination, and raves."
 			},
-			["EZ IFAK"] = {
+			["EZ IFAK Packet"] = {
 				results = "ent_jack_gmod_ezifakpacket",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 5,
