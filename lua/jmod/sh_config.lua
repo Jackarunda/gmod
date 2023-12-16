@@ -819,7 +819,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = 5,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
+				description = "Turns uranium into fissile material"
 			},
 			["EZ Liquid Fuel Generator"] = {
 				results = "ent_jack_gmod_ezlfg",
