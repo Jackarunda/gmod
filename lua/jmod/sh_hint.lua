@@ -120,6 +120,13 @@ JMod.Hints = {
 		LangKey = "hint defuse",
 		Followup = "bind walk"
 	},
+	["open trap"] = {
+		LangKey = "hint open trap",
+		RepeatCount = 5
+	},
+	["ready trap"] = {
+		LangKey = "hint ready trap"
+	},
 	["detpack combo"] = {
 		LangKey = "hint detpack combo"
 	},
@@ -509,6 +516,9 @@ JMod.Hints = {
 	["ifak"] = {
 		LangKey = "hint ifak",
 		Repeat = 5
+	},
+	["ent_jack_gmod_ezbeartrap"] = {
+		LangKey = "hint ent_jack_gmod_ezbeartrap"
 	},
 	-- Armor
 	["armor wear"] = {
