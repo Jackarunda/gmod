@@ -1647,7 +1647,7 @@ net.Receive("JMod_Inventory", function()
 		local InfoLabel = vgui.Create("DLabel", motherFrame)
 		InfoLabel:SetPos(610, 100 + (#ShownCommands * 25))
 		InfoLabel:SetSize(300, 20)
-		InfoLabel:SetText("Use JMod Hands to pick up items")
+		InfoLabel:SetText("Use Grab command to pick up items.")
 	end
 
 	function motherFrame:OnKeyCodePressed(num)
