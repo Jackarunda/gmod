@@ -100,7 +100,9 @@ if SERVER then
 			if (data.Speed > 10) then
 				if (self:GetState() == STATE_OPEN) then
 					if self:ShouldSnap(data.HitEntity) then
-						self:Snap(data.HitEntity)
+						timer.Simple(0, function()
+							if IsValid(self) and IsValid(data.HitEntity) then self:Snap(data.HitEntity) end
+						end)
 					end
 				else
 					self:EmitSound("Weapon.ImpactHard")
@@ -133,6 +135,7 @@ if SERVER then
 			self:SetState(STATE_BROKEN)
 			self:SetBodygroup(1, 0)
 			self.BrokenRemoveTime = CurTime() + 2
+			sound.Play("Metal_Box.Break", Pos, 70, math.random(90, 110))
 		end
 	end
 
@@ -201,6 +204,7 @@ if SERVER then
 			SnapDamage:SetInflictor(self)
 			SnapDamage:SetAttacker(JMod.GetEZowner(self))
 			if victim:IsPlayer() then
+				victim:SetVelocity(-victim:GetVelocity())
 				JMod.EZimmobilize(victim, 60, self)
 				self.EZtrappedEnt = victim
 				SnapDamage:SetDamage(20)
@@ -221,6 +225,7 @@ if SERVER then
 			self:SetState(STATE_BROKEN)
 			self.BrokenRemoveTime = CurTime() + 10
 			self:SetBodygroup(1, 0)
+			sound.Play("Metal_Box.Break", SelfPos, 70, math.random(90, 110))
 		else
 			self:SetState(STATE_CLOSED)
 		end
@@ -263,6 +268,13 @@ if SERVER then
 		end
 
 		if State == STATE_OPEN then
+			if self.BrokenRemoveTime then
+				self:SetState(STATE_BROKEN)
+				self:SetBodygroup(1, 0)
+				sound.Play("Metal_Box.Break", self:GetPos(), 70, math.random(90, 110))
+
+				return
+			end
 			if not IsValid(self.Anchor) then
 				self:Snap()
 			end

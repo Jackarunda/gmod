@@ -1048,15 +1048,18 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 end
 
 
---hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")
+hook.Add("SetupMove", "JMOD_DISABLE_JUMP", function(ply, mvd, cmd)
+	if mvd:KeyDown(IN_JUMP) and (ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime())) then
+		local NewButtons = bit.band(mvd:GetButtons(), bit.bnot(IN_JUMP))
+		mvd:SetButtons(NewButtons)
+	end
+end)
 
---hook.Remove("Move", "JMOD_ARMOR_MOVE")
 hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
-	if ply.IsProne and ply:IsProne() then return end
 	local origSpeed = mv:GetMaxSpeed()
 	local origClientSpeed = mv:GetMaxClientSpeed()
 
-	if ply.EZarmor then
+	if not(ply.IsProne and ply:IsProne()) and ply.EZarmor then
 		if ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
 			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
 			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
@@ -1067,11 +1070,10 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
 			end
 		end
 	end
+
 	if ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime()) then
 		mv:SetMaxSpeed(origSpeed * .01)
 		mv:SetMaxClientSpeed(origClientSpeed * .01)
-	else
-		ply.EZImmobilizationTime = nil
 	end
 end)
 
