@@ -104,7 +104,7 @@ if(SERVER)then
 					JMod.Hint(activator, "craft")
 				end
 			else
-				JMod.Hint(activator, "refill")
+				JMod.Hint(activator, "refillprimbench")
 			end
 		elseif (State == STATE_PROCESSING) then
 			self:TurnOff(activator)

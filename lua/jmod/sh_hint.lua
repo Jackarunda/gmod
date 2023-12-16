@@ -685,6 +685,9 @@ JMod.Hints = {
 	["refillfab"] = {
 		LangKey = "hint refillfab"
 	},
+	["refillprimbench"] = {
+		LangKey = "hint refillprimbench"
+	},
 	-- Weapons
 	["weapon steadiness"] = {
 		LangKey = "hint weapon steadiness"
