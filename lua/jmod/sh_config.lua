@@ -1913,7 +1913,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "Colorable glowstick, for identification, low-power illumination, and raves."
 			},
 			["EZ IFAK"] = {
-				results = "ent_jack_gmod_ezifak",
+				results = "ent_jack_gmod_ezifakpacket",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = 5,
 					[JMod.EZ_RESOURCE_TYPES.PAPER] = 5
