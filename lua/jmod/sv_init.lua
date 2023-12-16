@@ -57,8 +57,8 @@ local function JackaSpawnHook(ply)
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
 	local sleepingbag = ply.JModSpawnPointEntity
 	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
-		--if(sleepingbag.nextSpawnTime<CurTime())then
-			--sleepingbag.nextSpawnTime=CurTime()+60
+		if(sleepingbag.nextSpawnTime < CurTime())then
+			sleepingbag.nextSpawnTime = CurTime() + 60
 			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
 				local Up = sleepingbag:GetUp()
 				--ply:EnterVehicle(sleepingbag.Pod)
@@ -71,9 +71,9 @@ local function JackaSpawnHook(ply)
 				net.Send(ply)
 				sleepingbag.Pod.EZvehicleEjectPos = nil
 			end
-		--else
-		--	JMod.Hint(ply,"sleeping bag wait")
-		--end
+		else
+			JMod.Hint(ply,"sleeping bag wait")
+		end
 	end
 	
 	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
