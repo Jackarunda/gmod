@@ -333,6 +333,8 @@ elseif(CLIENT)then
 	function ENT:CustomInit()
 		--self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
 		self.MaxOre = 30
+		--models/props_interiors/pot02a.mdl
+		--models/props_junk/garbage_metalcan002a.mdl
 	end
 
 	function ENT:DrawTranslucent()
