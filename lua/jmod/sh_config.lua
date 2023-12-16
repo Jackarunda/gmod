@@ -13,12 +13,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45
+			Version = 45.01
 		},
 		General = {
 			Hints = true,
 			AltFunctionKey = IN_WALK,
-			HandGrabStrength = 1
+			HandGrabStrength = 1,
+			AllowScrounging = true
 		},
 		Armor = {
 			ProtectionMult = 1,

@@ -164,7 +164,7 @@ if SERVER then
 						end)
 					end
 
-					JMod.Hint(activator, "defuse")
+					JMod.Hint(activator, "open trap")
 				end
 			else
 				if Alt then
@@ -177,7 +177,7 @@ if SERVER then
 				else
 					SafeRemoveEntity(self.Anchor)
 					activator:PickupObject(self)
-					JMod.Hint(activator, "arm")
+					JMod.Hint(activator, "ready trap")
 				end
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
@@ -223,10 +223,11 @@ if SERVER then
 		-- chance to break
 		if (math.random(1, 10) == 5) then
 			self:SetState(STATE_BROKEN)
-			self.BrokenRemoveTime = CurTime() + 10
+			self.BrokenRemoveTime = CurTime() + 5
 			self:SetBodygroup(1, 0)
 			sound.Play("Metal_Box.Break", SelfPos, 70, math.random(90, 110))
 		else
+			JMod.Hint(victim, "open trap")
 			self:SetState(STATE_CLOSED)
 		end
 	end

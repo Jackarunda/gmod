@@ -227,6 +227,9 @@
 	["hint hands inv"] = "Press reload to stash the held entity in you inventory",
 	["hint hands salvage"] = "Primary attack while holding to salvage the ent",
 	["hint prospecting"] = "Hit ground to find nearby deposits and then mine them",
+	["hint ready trap"] = "ALT + USE to ready this trap, it is indiscriminate",
+	["hint open trap"] = "Press USE on the trap until it's opened",
+	["hint ent_jack_gmod_ezbeartrap"] = "Beartrap will last for about 10 snaps before breaking",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",

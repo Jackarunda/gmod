@@ -1283,7 +1283,8 @@ if SERVER then
 
 		local Pos, Range = ply:GetShootPos(), 500
 
-		if not Debug then
+		if not(Debug and JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is disallowed") return end
+		if not (Debug and JMod.IsAdmin(ply)) then
 			for k, pos in pairs(ScroungedPositions) do
 				local DistanceTo = Pos:Distance(pos)
 				if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
