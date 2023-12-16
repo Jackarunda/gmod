@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 44.92
+			Version = 45
 		},
 		General = {
 			Hints = true,
@@ -1280,11 +1280,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Basic Parts, x100"] = {
 				results = "ent_jack_gmod_ezbasicparts",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 30,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 40,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 20,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 30,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 20,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 10
 				},
 				category = "Resources",
@@ -1296,11 +1296,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					{"ent_jack_gmod_ezbasicparts", 3}
 				},
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 150,
-					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 90,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 120,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 60,
 					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 60,
 					[JMod.EZ_RESOURCE_TYPES.GLASS] = 30,
-					[JMod.EZ_RESOURCE_TYPES.COPPER] = 90,
+					[JMod.EZ_RESOURCE_TYPES.COPPER] = 60,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 30
 				},
 				category = "Resources",
@@ -1389,21 +1389,21 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezpaper",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.WOOD] = 30,
-					[JMod.EZ_RESOURCE_TYPES.WATER] = 100
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 70
 				},
 				category = "Resources",
-				craftingType = {"workbench", "craftingtable", "fabricator"},
-				description = "Brown paper packages tied up with strings."
+				craftingType = {"workbench", "craftingtable"},
+				description = "Writing material that can be used for more malicious purposes."
 			},
 			["EZ Cloth"] = {
 				results = "ent_jack_gmod_ezcloth",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 100,
-					[JMod.EZ_RESOURCE_TYPES.WATER] = 10
+					[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 80,
+					[JMod.EZ_RESOURCE_TYPES.WATER] = 20
 				},
 				category = "Resources",
-				craftingType = {"workbench", "craftingtable", "fabricator"},
-				description = "Look at this silk."
+				craftingType = {"workbench", "craftingtable"},
+				description = "Mysterious fabrication of fabric from edible organics. Don't ask how."
 			},
 			["EZ Black Powder Paper Cartridges"] = {
 				results = "ent_jack_gmod_ezammobox_bppc",
