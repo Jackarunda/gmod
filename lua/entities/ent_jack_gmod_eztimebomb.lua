@@ -137,7 +137,7 @@ if SERVER then
 						self.NextDisarm = Time + .2
 						self.DisarmProgress = self.DisarmProgress + JMod.Config.Explosives.BombDisarmSpeed
 						self.NextDisarmFail = Time + 1
-						Dude:PrintMessage(HUD_PRINTCENTER, "disarming: " .. self.DisarmProgress .. "/" .. math.ceil(self.DisarmNeeded))
+						Dude:PrintMessage(HUD_PRINTCENTER, "disarming: " .. math.floor(self.DisarmProgress) .. "/" .. math.ceil(self.DisarmNeeded))
 
 						if self.DisarmProgress >= self.DisarmNeeded then
 							self:SetState(STATE_OFF)

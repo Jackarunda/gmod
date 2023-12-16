@@ -152,7 +152,7 @@ if SERVER then
 					self.NextPry = Time + .2
 					self.PryProgress = self.PryProgress + JMod.Config.Explosives.BombDisarmSpeed
 					self.NextPryFail = Time + 1
-					activator:PrintMessage(HUD_PRINTCENTER, "Prying: " .. self.PryProgress .. "/" .. math.ceil(self.PryNeeded))
+					activator:PrintMessage(HUD_PRINTCENTER, "Prying: " .. math.floor(self.PryProgress) .. "/" .. math.ceil(self.PryNeeded))
 
 					if self.PryProgress >= self.PryNeeded then
 						self.PryProgress = 0
