@@ -439,7 +439,7 @@ elseif(CLIENT)then
 	function ENT:CustomInit()
 		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
 		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
-		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
+		self.Headset=JMod.MakeModel(self,"models/jmod/props/items/sci_fi_headset.mdl")
 		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
