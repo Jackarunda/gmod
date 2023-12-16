@@ -18,10 +18,6 @@ ENT.StaticPerfSpecs = {
 	MaxDurability = 100
 }
 
-function ENT:CustomSetupDataTables()
-	-- we will indicate status through other means
-end
-
 if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
@@ -101,10 +97,11 @@ if(SERVER)then
 			--util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
-					local HitAngle = Tr.HitNormal:Angle()
+					--[[local HitAngle = Tr.HitNormal:Angle()
 					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
-					self:SetAngles(HitAngle)
+					self:SetAngles(HitAngle)--]]
+					self:SetAngles(Angle(0, math.random(0, 360, 0)))
 					self:SetPos(Tr.HitPos)
 					if Tr.Entity == game.GetWorld() then
 						self:GetPhysicsObject():EnableMotion(false)

@@ -115,11 +115,12 @@ if(SERVER)then
 			util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
-					local HitAngle = Tr.HitNormal:Angle()
+					--[[local HitAngle = Tr.HitNormal:Angle()
 					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
-					self:SetAngles(HitAngle)
-					self:SetPos(Tr.HitPos)
+					self:SetAngles(HitAngle)--]]
+					self:SetAngles(Angle(0, math.random(0, 360, 0)))
+					self:SetPos(Tr.HitPos - 2)
 					if Tr.Entity == game.GetWorld() then
 						self:GetPhysicsObject():EnableMotion(false)
 						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
