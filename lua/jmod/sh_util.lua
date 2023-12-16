@@ -427,7 +427,7 @@ end
 
 local Holidays = {
 	Christmas = {
-		startDay = 250, -- 350, roughly the start of the week before the week of christmas most years
+		startDay = 350, -- 350, roughly the start of the week before the week of christmas most years
 		endDay = 364 -- 364, roughly a week after
 	},
 	Easter = {
