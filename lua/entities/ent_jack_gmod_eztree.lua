@@ -120,7 +120,7 @@ if(SERVER)then
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
 					self:SetAngles(HitAngle)--]]
 					self:SetAngles(Angle(0, math.random(0, 360, 0)))
-					self:SetPos(Tr.HitPos - 2)
+					self:SetPos(Tr.HitPos + Vector(0, 0, -2))
 					if Tr.Entity == game.GetWorld() then
 						self:GetPhysicsObject():EnableMotion(false)
 						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
