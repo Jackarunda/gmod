@@ -535,7 +535,8 @@ local SpecializedSalvagingTable = {
 			substrings = {"oildrum"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.OIL] = .4
+				[JMod.EZ_RESOURCE_TYPES.OIL] = .3,
+				[JMod.EZ_RESOURCE_TYPES.FUEL] = .1
 			}
 		},
 		{
@@ -1283,8 +1284,8 @@ if SERVER then
 
 		local Pos, Range = ply:GetShootPos(), 500
 
-		if not(Debug and JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is disallowed") return end
-		if not (Debug and JMod.IsAdmin(ply)) then
+		if not(JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is not allowed") return end
+		if not (Debug or JMod.IsAdmin(ply)) then
 			for k, pos in pairs(ScroungedPositions) do
 				local DistanceTo = Pos:Distance(pos)
 				if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
