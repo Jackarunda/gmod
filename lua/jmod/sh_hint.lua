@@ -356,6 +356,9 @@ JMod.Hints = {
 	["stick to self"] = {
 		LangKey = "hint stick to self"
 	},
+	["scrounge"] = {
+		LangKey = "hint scavenging"
+	},
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {
 		LangKey = "hint ent_jack_gmod_ezaidradio"
@@ -519,6 +522,21 @@ JMod.Hints = {
 	},
 	["ent_jack_gmod_ezbeartrap"] = {
 		LangKey = "hint ent_jack_gmod_ezbeartrap"
+	},
+	["ent_jack_gmod_ezprimitivebench"] = {
+		LangKey = "hint ent_jack_gmod_ezprimitivebench"
+	},
+	["ent_jack_gmod_ezshovel"] = {
+		LangKey = "hint ent_jack_gmod_ezshovel"
+	},
+	["ent_jack_gmod_ezpickaxe"] = {
+		LangKey = "hint ent_jack_gmod_ezpickaxe"
+	},
+	["ent_jack_gmod_ezaxe"] = {
+		LangKey = "hint ent_jack_gmod_ezaxe"
+	},
+	["ent_jack_gmod_ezbucket"] = {
+		LangKey = "hint ent_jack_gmod_ezbucket"
 	},
 	-- Armor
 	["armor wear"] = {

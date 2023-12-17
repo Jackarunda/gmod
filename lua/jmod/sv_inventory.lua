@@ -1,6 +1,7 @@
 ﻿JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
 
 function JMod.EZ_Open_Inventory(ply)
+	JMod.Hint(ply, "scrounge")
 	JMod.UpdateInv(ply)
 	net.Start("JMod_Inventory")
 		net.WriteString(ply:GetModel())

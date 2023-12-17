@@ -230,6 +230,12 @@
 	["hint ready trap"] = "ALT + USE to ready this trap, it is indiscriminate",
 	["hint open trap"] = "Press USE on the trap until it's opened",
 	["hint ent_jack_gmod_ezbeartrap"] = "Beartrap will last for about 10 snaps before breaking",
+	["hint ent_jack_gmod_ezprimitivebench"] = "The bench salvages props and smelts most metals",
+	["hint scavenging"] = "Type *scrounge* in chat or command jmod_ez_scrounge to find small props for salvaging",
+	["hint ent_jack_gmod_ezpickaxe"] = "Use the pickaxe to find a deposit and then bring ores back to the bench",
+	["hint ent_jack_gmod_ezshovel"] = "Dig up sand and dirt to use for crafting, or whack your enemies",
+	["hint ent_jack_gmod_ezbucket"] = "Gather water at water deposits",
+	["hint ent_jack_gmod_ezaxe"] = "Chop down EZ trees with this bute, or become a homicidal-maniac",
 	--commands
 	["command jmod_cl_reloadconfig"] = "re-reads the lua client config from harddrive to ingame memory",
 	["command jmod_debug_showgasparticles"] = "causes gas and fallout particles to render as white balls",
