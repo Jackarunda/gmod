@@ -2,6 +2,7 @@
 local Dynamic = 0
 local FriendMenuOpen = false
 local SelectionMenuOpen = false
+local CurrentColor = Color(255, 255, 255)
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
 local FavMat = Material("icon16/star.png")
@@ -234,6 +235,11 @@ end)
 
 net.Receive("JMod_ColorAndArm", function()
 	local Ent, NextColorCheck = net.ReadEntity(), 0
+	if net.ReadBool() then
+		CurrentColor = Ent:GetColor()
+
+		return
+	end
 	if not IsValid(Ent) then return end
 	local Frame = vgui.Create("DFrame")
 	Frame:SetSize(200, 300)
@@ -301,12 +307,7 @@ net.Receive("JMod_ColorAndArm", function()
 		net.WriteColor(Color(255, 255, 255))
 		net.WriteBit(false)
 		net.SendToServer()
-		timer.Simple(0.1, function()
-			if IsValid(Ent) then
-				Picker:SetColor(Ent:GetColor())
-			end
-		end)
-		NextColorCheck = CurTime() + 1
+		Frame:Close()
 	end
 end)
 

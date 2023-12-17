@@ -71,6 +71,13 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 					end
 				end
 			end
+			timer.Simple(.1, function()
+				if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
+				net.Start("JMod_ColorAndArm")
+				net.WriteEntity(ent)
+				net.WriteBool(false)
+				net.Send(ply)
+			end)
 		else
 			ent:SetColor(Col)
 		end
