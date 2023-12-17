@@ -3,7 +3,7 @@ AddCSLuaFile()
 SWEP.PrintName = "EZ Shovel"
 SWEP.Author = "Jackarunda"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezpickaxe")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezshovel")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
