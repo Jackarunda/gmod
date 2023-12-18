@@ -232,13 +232,13 @@ function SWEP:Hitscan()
 						SafeRemoveEntityDelayed(tr.Entity, 0.1)
 					end
 				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 1)
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 2)
 
 					if Message then
 						if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 							self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 							self:SetTaskProgress(100)
-							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, 2, self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
+							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
 						else
 							self:Msg(Message)
 							self:SetTaskProgress(0)
