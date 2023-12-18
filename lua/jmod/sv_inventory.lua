@@ -277,6 +277,7 @@ local CanPickup = function(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
 	if ent:IsWorld() then return false end
+	if string.find("func_", ent:GetClass()) then return false end
 	--if pickupWhiteList[ent:GetClass()] then return true end
 	if CLIENT then return true end
 	if IsValid(ent:GetPhysicsObject()) then return true end
