@@ -1262,8 +1262,8 @@ if SERVER then
 			["models/props_junk/metalbucket02a.mdl"] = 2,
 			["models/props_vehicles/carparts_tire01a.mdl"] = 2,
 			["models/props_junk/cinderblock01a.mdl"] = 1,
-			["models/props_junk/propane_tank001a.mdl"] = 1
-			-- We need a cinderblock
+			["models/props_junk/propane_tank001a.mdl"] = 1,
+			["models/props_vehicles/car002a_physics.mdl"] = .5
 		},
 		["rural"] = {
 			["ent_jack_gmod_ezwheatseed"] = 1,
@@ -1272,7 +1272,8 @@ if SERVER then
 			["models/props_debris/wood_chunk06a.mdl"] = 3,
 			["models/props_junk/watermelon01.mdl"] = 1,
 			["models/jmod/resources/rock05a.mdl"] = 2,
-			["models/props_junk/rock001a.mdl"] = 1
+			["models/props_junk/rock001a.mdl"] = 1,
+			["models/props_vehicles/car003b_physics.mdl"] = 0.1
 		}
 	}
 
@@ -1285,7 +1286,7 @@ if SERVER then
 		local Pos, Range = ply:GetShootPos(), 500
 
 		if not(JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is not allowed") return end
-		if not (Debug or JMod.IsAdmin(ply)) then
+		if not (Debug) then
 			for k, pos in pairs(ScroungedPositions) do
 				local DistanceTo = Pos:Distance(pos)
 				if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
@@ -1301,7 +1302,7 @@ if SERVER then
 		for typ, tbl in pairs(ScroungeTableItems) do
 			ScroungeTable[typ] = ScroungeTable[typ] or {}
 			for item, freq in pairs(tbl) do
-				for i = 1, (freq or 1) do
+				for i=1, (freq * 10 or 10) do
 					table.insert(ScroungeTable[typ], item)
 				end
 			end
@@ -1362,7 +1363,10 @@ if SERVER then
 						Loot = ents.Create(ScroungedItem)
 					end
 					local PosSet = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
-					Loot:SetPos(PosSet.HitPos + Vector(0, 0, 10))
+					local Mins, Maxs = Loot:GetCollisionBounds()
+					local BBVec = Maxs - Mins
+					local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
+					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight))
 					Loot:SetAngles(AngleRand())
 					Loot:Spawn()
 					Loot:Activate()
@@ -1455,6 +1459,16 @@ elseif CLIENT then
 					surface.SetDrawColor(255, 255, 255, 100)
 					surface.SetMaterial(DebugMat)
 					surface.DrawTexturedRect(0, 0, 100, 100)
+				end)
+			end
+		end
+
+		local Ply = LocalPlayer()
+		local Wep = Ply:GetActiveWeapon()
+		if IsValid(Wep) and Wep.ScanResults then
+			for k, v in pairs(Wep.ScanResults) do
+				JMod.HoloGraphicDisplay(nil, v.pos, Angle(0, 0, 0), 1, 30000, function()
+					JMod.StandardResourceDisplay(v.typ, v.amt or v.rate, nil, 0, 0, v.siz * 2, true, nil, nil, v.rate)
 				end)
 			end
 		end
