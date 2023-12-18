@@ -17,7 +17,7 @@ if SERVER then
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 20, 30, 150
+			"eff_jack_gmod_heavyfire", 20, 30, 200
 		}
 
 		----
