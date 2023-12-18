@@ -427,6 +427,16 @@ function SWEP:Think()
 			self:SetTaskProgress(0)
 		end
 	end
+
+	if CLIENT then
+		if self.ScanResults then
+			self.LastScanTime = self.LastScanTime or Time
+			if self.LastScanTime < (Time - 30) then
+				self.ScanResults = nil
+				self.LastScanTime = nil
+			end
+		end
+	end
 end
 
 local LastProg = 0

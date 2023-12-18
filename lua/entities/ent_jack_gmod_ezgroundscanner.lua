@@ -265,6 +265,9 @@ elseif(CLIENT)then
 		local Ent=net.ReadEntity()
 		if(IsValid(Ent))then
 			Ent.ScanResults=net.ReadTable()
+			if Ent.LastScanTime then
+				Ent.LastScanTime = CurTime()
+			end
 		end
 	end)
 	function ENT:CustomInit()

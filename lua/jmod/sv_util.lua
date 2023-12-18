@@ -867,19 +867,20 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			end
 			
 			if IsValid(BestCrate) then
-				local Accepted = amount
+				local Remaining = amount
 				if BestCrate.TryLoadResource then
-					Accepted = BestCrate:TryLoadResource(resourceType, amount, true)
+					Remaining = BestCrate:TryLoadResource(resourceType, amount, true)
 				else
 					local SuppliesContained = BestCrate:GetEZsupplies(resourceType)
-					Accepted = math.min(BestCrate.MaxResource - SuppliesContained, Accepted)
-					BestCrate:SetEZsupplies(resourceType, SuppliesContained + Accepted)
+					if not SuppliesContained then SuppliesContained = 0 end -- To fix weird bugs
+					Remaining = math.min(BestCrate.MaxResource - SuppliesContained, Remaining)
+					BestCrate:SetEZsupplies(resourceType, SuppliesContained + Remaining)
 				end
 				
-				if Accepted > 0 then
+				if Remaining > 0 then
 					local entPos = BestCrate:LocalToWorld(BestCrate:OBBCenter())
 					JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
-					amount = amount - Accepted
+					amount = amount - Remaining
 					if amount <= 0 then 
 					
 						return
@@ -1144,30 +1145,36 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 	mult = mult or 1
 	local Time = CurTime()
 
+	if not IsValid(ent) then return "Invalid Ent" end
+
 	if task == "mining" then
 		local DepositKey = JMod.GetDepositAtPos(ent, pos)
 		
 		if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
-			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
 		end
-		if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then
-			ent:SetNW2Float("EZ"..task.."Progress", 0)
+		if ent:GetNW2Float("EZcancelminingTime", 0) <= Time then
+			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
 		end
-		ent:SetNW2Float("EZcancel"..task.."Time", Time + 5)
+		ent:SetNW2Float("EZcancelminingTime", Time + 5)
 		ent.EZpreviousMiningPos = pos
 
-		local Prog = ent:GetNW2Float("EZ"..task.."Progress", 0)
+		local Prog = ent:GetNW2Float("EZminingProgress", 0)
 		local AddAmt = math.random(15, 25) * mult
 
-		ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
+		ent:SetNW2Float("EZminingProgress", math.Clamp(Prog + AddAmt, 0, 100))
 
 		if (Prog >= 25) and not(JMod.NaturalResourceTable[DepositKey]) then
-			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
-			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 2)
+			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 3)
 			if JMod.NaturalResourceTable[NearestGoodDeposit] then
+				net.Start("JMod_ResourceScanner")
+					net.WriteEntity(ent)
+					net.WriteTable({JMod.NaturalResourceTable[NearestGoodDeposit]})
+				net.Broadcast()
 				return JMod.NaturalResourceTable[NearestGoodDeposit].typ .. " nearby"
 			else
 				return "nothing of value nearby"
@@ -1188,18 +1195,21 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 			end
 
 			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, AmtToProduce, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
-			ent:SetNW2Float("EZ"..task.."Progress", 0)
+			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
 			JMod.ResourceEffect(JMod.NaturalResourceTable[DepositKey].typ, pos, nil, 1, 1, 1, 5)
 			util.Decal("EZgroundHole", pos + Vector(0, 0, 10), pos + Vector(0, 0, -10))
+			--
+			net.Start("JMod_ResourceScanner")
+				net.WriteEntity(ent)
+				net.WriteTable({JMod.NaturalResourceTable[DepositKey]})
+			net.Broadcast()
 			
 			return nil
 		end
 
 		return nil
 	end
-
-	if not IsValid(ent) then return "Invalid Ent" end
 
 	if ent:GetNW2Float("EZcancel"..task.."Time", 0) <= Time then
 		ent:SetNW2Float("EZ"..task.."Progress", 0)
