@@ -309,7 +309,6 @@ end
 
 function SWEP:PrimaryAttack()
 	if SERVER then
-		JMod.Hint(self.Owner, "hands salvage")
 		local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
