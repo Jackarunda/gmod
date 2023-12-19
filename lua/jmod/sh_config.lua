@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.01
+			Version = 45.02
 		},
 		General = {
 			Hints = true,
@@ -187,7 +187,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Resources",
 					results = "ent_jack_gmod_ezadvtextiles"
 				},
-				["power"] = {
+				["batteries"] = {
 					description = "400 units of Power, used for crafting and recharging electronics.",
 					category = "Resources",
 					results = {
@@ -1766,6 +1766,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 80
 				},
+				noRequirementScaling = true,
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."

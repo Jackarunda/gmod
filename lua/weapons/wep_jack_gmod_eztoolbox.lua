@@ -528,7 +528,7 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
 	local Msg = "UPGRADING\n"
 
 	for typ, amount in pairs(RequiredSupplies) do
-		Msg = Msg .. typ .. ": " .. tostring(recipient.UpgradeProgress[typ] or 0) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
+		Msg = Msg .. typ .. ": " .. tostring(math.floor(recipient.UpgradeProgress[typ] or 0)) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
 	end
 
 	self:Msg(Msg)

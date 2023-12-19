@@ -35,6 +35,7 @@ ENT.StaticPerfSpecs={
 	MaxDurability = 90,
 	Armor = .7
 }
+ENT.ResourceReqMult = 1.3
 local STATE_BROKEN, STATE_FINE, STATE_PROCESSING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -99,7 +100,7 @@ if(SERVER)then
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
-					net.WriteFloat(1.3)
+					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
 				end
@@ -294,14 +295,15 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
 
-		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self,nil,1.3))then
+		local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil,200,ItemInfo.craftingReqs,self,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
+		if(EnoughStuff)then
 			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
 			end
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true,nil,1.3)
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,200,self,true,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
 			timer.Simple(1,function()
 				if(IsValid(self))then
 					for i=1,BuildSteps do
@@ -321,6 +323,11 @@ if(SERVER)then
 				end
 			end)
 		else
+			local Mssg = ""
+			for k, v in pairs(StuffLeft) do
+				Mssg = Mssg .. ", " .. tostring(v) .. " more " .. tostring(k)
+			end
+			ply:PrintMessage(HUD_PRINTCENTER, "You need" .. Mssg)
 			JMod.Hint(ply,"missing supplies")
 		end
 	end

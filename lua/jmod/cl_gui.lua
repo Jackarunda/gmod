@@ -398,7 +398,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 			desc = desc .. "\n "
 
 			for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-				desc = desc .. resourceName .. " x" .. tostring(math.Round(resourceAmt * mult)) .. ", "
+				desc = desc .. resourceName .. " x" .. tostring(math.ceil(resourceAmt * ((not(itemInfo.noRequirementScaling) and mult) or 1))) .. ", "
 			end
 		end
 
@@ -447,7 +447,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 				local X = w - 30 -- let's draw the resources right to left
 
 				for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-					resourceAmt = math.Round(resourceAmt * mult)
+					resourceAmt = math.ceil(resourceAmt * ((not(itemInfo.noRequirementScaling) and mult) or 1))
 					local Have = LocallyAvailableResources[resourceName] and (LocallyAvailableResources[resourceName] >= resourceAmt)
 					local Txt = "x" .. tostring(resourceAmt)
 					surface.SetFont("DermaDefault")
@@ -732,7 +732,7 @@ net.Receive("JMod_EZworkbench", function()
 
 	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, Multiplier) end, function(name, info, ply, ent)
+return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, (not(info.noRequirementScaling) and Multiplier) or 1) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
 		net.WriteEntity(ent)

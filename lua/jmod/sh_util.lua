@@ -217,7 +217,7 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 		if istable(amt) then
 			local FlexibleReqs = false
 			for Typ, Amt in pairs(amt) do
-				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= math.Round(Amt * mult))) then
+				if (ResourcesInRange[Typ] and (ResourcesInRange[Typ] >= math.ceil(Amt * mult))) then
 					FlexibleReqs = true
 					break
 				end
@@ -226,8 +226,8 @@ function JMod.HaveResourcesToPerformTask(pos, range, requirements, sourceEnt, ca
 				RequirementsMet = false
 				break
 			end
-		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= math.Round(amt * mult))) then
-			if amt - (ResourcesInRange[typ] or 0) > 0 then
+		elseif not (ResourcesInRange[typ] and (ResourcesInRange[typ] >= math.ceil(amt * mult))) then
+			if (amt - (ResourcesInRange[typ] or 0)) > 0 then
 				StuffLeftToGet[typ] = amt - (ResourcesInRange[typ] or 0)
 			end
 			RequirementsMet = false
@@ -248,7 +248,7 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 
 		if TypesNeeded and (#TypesNeeded > 0) then
 			local ResourceTypeToLookFor = TypesNeeded[1]
-			local AmountWeNeed = math.Round(RequirementsRemaining[ResourceTypeToLookFor] * mult)
+			local AmountWeNeed = math.ceil(RequirementsRemaining[ResourceTypeToLookFor] * mult)
 			if propsToConsume then
 				for entID, yield in pairs(propsToConsume) do
 					local HasWhatWeNeed = false
