@@ -323,8 +323,10 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		if item then
 			Phys = item:GetPhysicsObject()
 			if pickupWhiteList[item:GetClass()] and IsValid(Phys) and (Phys:GetMass() <= 35) then
+				ply:DropObject()
 				ply:PickupObject(item)
 			else
+				ply:DropObject()
 				item:Use(ply, ply, USE_ON)
 				if command == "prime" and item.Prime then
 					timer.Simple(0.1, function()

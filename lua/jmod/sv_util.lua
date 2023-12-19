@@ -1166,7 +1166,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 
 		ent:SetNW2Float("EZminingProgress", math.Clamp(Prog + AddAmt, 0, 100))
 
-		if (Prog >= 25) and not(JMod.NaturalResourceTable[DepositKey]) then
+		if (Prog >= 10) and not(JMod.NaturalResourceTable[DepositKey]) then
 			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
 			local NearestGoodDeposit = JMod.GetDepositAtPos(ent, pos, 3)
