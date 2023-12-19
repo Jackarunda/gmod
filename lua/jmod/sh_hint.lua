@@ -288,11 +288,7 @@ JMod.Hints = {
 		Followup = "hands inv"
 	},
 	["hands inv"] = {
-		LangKey = "hint hands inv",
-		Followup = "hands salvage"
-	},
-	["hands salvage"] = {
-		LangKey = "hint hands salvage"
+		LangKey = "hint hands inv"
 	},
 	["dementia"] = {
 		LangKey = "hint jack forgot these hints",
@@ -525,6 +521,9 @@ JMod.Hints = {
 	},
 	["ent_jack_gmod_ezprimitivebench"] = {
 		LangKey = "hint ent_jack_gmod_ezprimitivebench"
+	},
+	["prim bench smelt"] = {
+		LangKey = "hint prim bench smelt"
 	},
 	["ent_jack_gmod_ezshovel"] = {
 		LangKey = "hint ent_jack_gmod_ezshovel"

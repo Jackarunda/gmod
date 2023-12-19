@@ -672,6 +672,28 @@ local SpecializedSalvagingTable = {
 			}
 		},
 		{
+			substrings = {"computer"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
+			}
+		},
+		{
+			substrings = {"sink", "mooring_cleat"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .5,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
+			}
+		},
+		{
+			substrings = {"pot"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .4,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .1
+			}
+		},
+		{
 			substrings = {"/hunter/"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .7,
@@ -1263,7 +1285,10 @@ if SERVER then
 			["models/props_vehicles/carparts_tire01a.mdl"] = 2,
 			["models/props_junk/cinderblock01a.mdl"] = 1,
 			["models/props_junk/propane_tank001a.mdl"] = 1,
-			["models/props_vehicles/car002a_physics.mdl"] = .5
+			["models/props_vehicles/car002a_physics.mdl"] = .5,
+			["models/props_wasteland/barricade001a.mdl"] = 1,
+			["models/props_interiors/SinkKitchen01a.mdl"] = 1,
+			["models/props_borealis/mooring_cleat01.mdl"] = 2
 		},
 		["rural"] = {
 			["ent_jack_gmod_ezwheatseed"] = 1,
@@ -1310,7 +1335,7 @@ if SERVER then
 		
 		local ScroungeResults = {}
 		for i = 1, 100 do
-			local StartPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
+			local StartPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range/2))
 			local Contents = util.PointContents(StartPos)
 			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
 				local DownTr = util.TraceLine({
