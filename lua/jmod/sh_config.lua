@@ -2408,7 +2408,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
 				},
 				category = "Apparel",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Handy bags for carrying some extra bits and pieces."
 			},
 			["EZ Medical Supplies"] = {

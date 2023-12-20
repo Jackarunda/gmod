@@ -131,11 +131,11 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + .8)
 	self:SetNextSecondaryFire(CurTime() + .7)
-	local Hit = self:Hitscan()
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
+			local Hit = self:Hitscan()
 		end
 	end)
 	self:Pawnch()
@@ -200,6 +200,7 @@ function SWEP:Hitscan()
 				else
 					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
+				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, self.Owner})
 				return true
 			end
 		end)
