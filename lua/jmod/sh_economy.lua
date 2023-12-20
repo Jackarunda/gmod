@@ -799,7 +799,7 @@ function JMod.GetSalvageYield(ent)
 
 	for k, v in pairs(Info) do
 		if ScaleByMass then
-			Results[k] = math.ceil(v * Mass * JMod.Config.ResourceEconomy.SalvageYield)
+			Results[k] = math.ceil(v * Mass * 1.5 * JMod.Config.ResourceEconomy.SalvageYield)
 		else
 			Results[k] = math.ceil(v * .6)
 		end
@@ -1398,6 +1398,22 @@ if SERVER then
 					JMod.SetEZowner(Loot, ply)
 					SpawnedItems = SpawnedItems + 1
 					LastEnv = EnvironmentType
+
+					timer.Simple(3, function()
+						if (IsValid(Loot)) then
+							-- record natural resting place
+							Loot.SpawnPos = Loot:GetPos()
+							timer.Simple(60, function()
+								if (IsValid(Loot)) then
+								local CurPos = Loot:GetPos()
+									if (CurPos:Distance(Loot.SpawnPos) <= 1) then
+										-- it hasn't moved an inch in a whole minute
+										SafeRemoveEntity(Loot)
+									end
+								end
+							end)
+						end
+					end)
 				end
 			end
 		end
