@@ -18,10 +18,11 @@ ENT.DamageThreshold = 120
 ENT.BreakNoise = "Boulder.ImpactHard"
 
 if CLIENT then
+    local drawvec, drawang = Vector(0, -12, 1), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .04, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .04, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PLATINUMORE, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

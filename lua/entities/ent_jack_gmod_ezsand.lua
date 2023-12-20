@@ -49,7 +49,7 @@ elseif CLIENT then
 		--self.ScaleVec =  Vector(1.2, 1.2, 1.2)
 		--self.ColorVec = self.Color:ToVector()
 	end
-
+    local drawvec, drawang = Vector(-2, -13, 0), Angle(90, 0, 90)
 	function ENT:Draw()
 		local Ang, Pos = self:GetAngles(), self:GetPos()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
@@ -58,7 +58,7 @@ elseif CLIENT then
 		--local JugAng = Ang:GetCopy()
 		--JMod.RenderModel(self.Bag, BasePos, Ang, self.ScaleVec, self.ColorVec)
 
-		JMod.HoloGraphicDisplay(self, Vector(-2, -13, 0), Angle(90, 0, 90), .04, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .04, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, false, "JMod-Stencil", 220)
 		end)
 	end

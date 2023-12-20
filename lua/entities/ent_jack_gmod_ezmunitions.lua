@@ -43,10 +43,11 @@ if SERVER then
 		JMod.GiveAmmo(ply, self)
 	end
 elseif CLIENT then
+    local drawvec, drawang = Vector(-0.7, 7.4, 14), Angle(-90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(-0.7, 7.4, 14), Angle(-90, 0, 90), .045, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .045, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.MUNITIONS, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end

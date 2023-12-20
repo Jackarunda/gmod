@@ -24,10 +24,11 @@ if SERVER then
 	end
 	-- it's rubber
 elseif CLIENT then
+    local drawvec, drawang = Vector(0, -9.5, 0), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -9.5, 0), Angle(90, 0, 90), .05, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .05, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.RUBBER, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end

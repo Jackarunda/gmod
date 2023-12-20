@@ -70,10 +70,11 @@ if SERVER then
 	end
 	--
 elseif CLIENT then
+    local drawvec, drawang = Vector(0, 8.15, 15), Angle(-90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, 8.15, 15), Angle(-90, 0, 90), .03, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .03, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.GAS, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

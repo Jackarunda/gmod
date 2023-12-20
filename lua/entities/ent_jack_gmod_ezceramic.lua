@@ -24,10 +24,11 @@ if SERVER then
 	end
 	-- it's ceramic
 elseif CLIENT then
+    local drawvec, drawang = Vector(0, -12, 0), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -12, 0), Angle(90, 0, 90), .06, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .06, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.CERAMIC, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end
