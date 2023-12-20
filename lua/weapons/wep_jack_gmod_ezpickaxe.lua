@@ -213,7 +213,7 @@ function SWEP:Hitscan()
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
 				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
 
 					if Message then
 						self:Msg(Message)
