@@ -188,9 +188,10 @@ if(SERVER)then
 				end
 
 				-- This is just the rate at which we drill
-				local drillRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
+				local GradeModifier = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+				local drillRate = 1 * (GradeModifier ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 
-				self:ConsumeElectricity(JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 1.5  * JMod.Config.ResourceEconomy.ExtractionSpeed)
+				self:ConsumeElectricity(0.75 * (GradeModifier ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed)
 				
 				-- Get the amount of resouces left in the ground
 				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
@@ -266,7 +267,7 @@ if(SERVER)then
 				end
 				self:EmitSound("Boulder.ImpactHard")
 			end
-			if math.random(0, 100) == 1 then
+			if math.random(0, 500) == 1 then
 				local Rock = ents.Create("prop_physics")
 				Rock:SetModel("models/props_junk/rock001a.mdl")
 				Rock:SetPos(SelfPos + Up * -90 * HullTr.Fraction)
