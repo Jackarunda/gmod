@@ -182,12 +182,21 @@ function SWEP:Hitscan()
 
 				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
 
-				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
+				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") then
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
+				elseif string.find(tr.Entity:GetClass(), "prop_ragdoll") then
+					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
+					if Mesg then
+						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
+						self:SetTaskProgress(0)
+					else
+						self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
+					end
 				elseif JMod.IsDoor(tr.Entity) then
 					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
+					self:SetTaskProgress(0)
 				else
 					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
