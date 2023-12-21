@@ -346,10 +346,16 @@ local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, [JMod.EZ_RESOURC
 
 local Handcraft = function(ply, cmd, args)
 	local Pos = ply:GetPos()
-	local AvaliableResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
-	--PrintTable(AvaliableResources)
-	--jprint(JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources))
-	local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvaliableResources)
+	local ScrapResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
+	local ResourcesFromResourceEntities = JMod.CountResourcesInRange(nil, nil, ply)
+	local AvailableResources = {}
+	for k, v in pairs(ScrapResources) do
+		AvailableResources[k] = (AvailableResources[k] or 0) + v
+	end
+	for k, v in pairs(ResourcesFromResourceEntities) do
+		AvailableResources[k] = (AvailableResources[k] or 0) + v
+	end
+	local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvailableResources)
 	if EnoughStuff then
 		local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
 		JMod.BuildEffect(WherePutBench.HitPos + Vector(0, 0, 30))
@@ -360,7 +366,8 @@ local Handcraft = function(ply, cmd, args)
 			Bench:Spawn()
 			Bench:Activate()
 		end)
-		JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
+		JMod.ConsumeResourcesInRange(ScrapResources, Pos, 200, ply, false, LocalScrap)
+		JMod.ConsumeResourcesInRange(ResourcesFromResourceEntities, Pos, 200, ply, false)
 	else
 		local Mssg = ""
 		for k, v in pairs(StuffLeft) do
