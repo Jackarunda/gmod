@@ -197,15 +197,23 @@ if(SERVER)then
 		self:NextThink(Time + .1)
 	end
 
+	local SalvageableMats = {
+		MAT_WOOD,
+		MAT_DIRT,
+		MAT_FLESH,
+		MAT_GRASS,
+		MAT_SLOSH
+	}
+
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed>80) and (data.DeltaTime>0.2) then
 			self:EmitSound("Wood.ImpactSoft")
 			local Ent = data.HitEntity
 			local Held = false
 			local Pos = data.HitPos
-			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
+			if (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
-				if (Ent:GetClass() == "prop_physics") and Held then
+				if Held and (Ent:GetPhysicsObject():GetMass() <= 35) and ((Ent:GetClass() == "prop_physics") or (table.HasValue(SalvageableMats, Ent:GetMaterialType()))) then
 					DropEntityIfHeld(Ent)
 					timer.Simple(0.1, function()
 						local Yield, Message = JMod.GetSalvageYield(Ent)
@@ -274,7 +282,7 @@ if(SERVER)then
 			timer.Simple(0.3, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
-					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 100) then
+					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 200) then
 						JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 					end
 				end
