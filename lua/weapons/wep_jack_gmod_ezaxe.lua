@@ -141,6 +141,14 @@ function SWEP:PrimaryAttack()
 	self:Pawnch()
 end
 
+local FleshTypes = {
+	MAT_ANTLION,
+	MAT_FLESH,
+	MAT_BLOODYFLESH,
+	MAT_FLESH,
+	MAT_ALIENFLESH
+}
+
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
@@ -175,10 +183,6 @@ function SWEP:Hitscan()
 				tr.Entity:TakeDamageInfo(PickDam)
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
-				local effectdata = EffectData()
-				effectdata:SetOrigin( vPoint )
-				util.Effect( "BloodImpact", effectdata )--]]
 
 				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
 
@@ -186,7 +190,13 @@ function SWEP:Hitscan()
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
-				elseif string.find(tr.Entity:GetClass(), "prop_ragdoll") then
+				elseif (table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll")) then
+					--
+					local vPoint = (tr.HitPos)
+					local effectdata = EffectData()
+					effectdata:SetOrigin( vPoint )
+					util.Effect( "BloodImpact", effectdata )
+					--
 					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
 					if Mesg then
 						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
