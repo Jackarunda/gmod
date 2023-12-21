@@ -190,13 +190,13 @@ function SWEP:Hitscan()
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
-				elseif (table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll")) then
 					--
 					local vPoint = (tr.HitPos)
 					local effectdata = EffectData()
 					effectdata:SetOrigin( vPoint )
 					util.Effect( "BloodImpact", effectdata )
 					--
+				elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or (util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) then
 					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
 					if Mesg then
 						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)

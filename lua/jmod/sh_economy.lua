@@ -1288,7 +1288,8 @@ if SERVER then
 			["models/props_vehicles/car002a_physics.mdl"] = .5,
 			["models/props_wasteland/barricade001a.mdl"] = 1,
 			["models/props_interiors/SinkKitchen01a.mdl"] = 1,
-			["models/props_borealis/mooring_cleat01.mdl"] = 2
+			["models/props_borealis/mooring_cleat01.mdl"] = 2,
+			["models/items/car_battery01.mdl"] = 0.3
 		},
 		["rural"] = {
 			["ent_jack_gmod_ezwheatseed"] = 1,
@@ -1298,7 +1299,9 @@ if SERVER then
 			["models/props_junk/watermelon01.mdl"] = 1,
 			["models/jmod/resources/rock05a.mdl"] = 2,
 			["models/props_junk/rock001a.mdl"] = 1,
-			["models/props_vehicles/car003b_physics.mdl"] = 0.1
+			["models/props_vehicles/car003b_physics.mdl"] = 0.1,
+			["models/props_c17/streetsign004f.mdl"] = 1,
+			["models/items/car_battery01.mdl"] = 0.1
 		}
 	}
 
@@ -1407,8 +1410,14 @@ if SERVER then
 								if (IsValid(Loot)) then
 								local CurPos = Loot:GetPos()
 									if (CurPos:Distance(Loot.SpawnPos) <= 1) then
-										-- it hasn't moved an inch in a whole minute
-										SafeRemoveEntity(Loot)
+										-- it hasn't moved an inch in a whole two minutes
+										constraint.RemoveAll(Loot)
+										Loot:SetNotSolid(true)
+										Loot:DrawShadow(false)
+										Loot:GetPhysicsObject():EnableCollisions(false)
+										Loot:GetPhysicsObject():EnableGravity(false)
+										Loot:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+										SafeRemoveEntityDelayed(Loot, 2)
 									end
 								end
 							end)
