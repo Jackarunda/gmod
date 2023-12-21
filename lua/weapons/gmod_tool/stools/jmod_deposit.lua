@@ -23,11 +23,9 @@ function TOOL:LeftClick( trace )
 
 	if SERVER then
 
-		if ( ResourceType == "random" ) then
+		if ( ResourceType == "random" ) or not(ResourceInfo[ResourceType]) then
 			ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)]
 		end
-
-		if not ResourceInfo[ResourceType] then ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)] end
 
 		local ChosenInfo = ResourceInfo[ResourceType]
 
