@@ -1400,10 +1400,10 @@ if SERVER then
 					LastEnv = EnvironmentType
 
 					timer.Simple(3, function()
-						if (IsValid(Loot)) then
+						if (IsValid(Loot)) and (Loot:GetPhysicsObject():GetMass() <= 35) then
 							-- record natural resting place
 							Loot.SpawnPos = Loot:GetPos()
-							timer.Simple(60, function()
+							timer.Simple(120, function()
 								if (IsValid(Loot)) then
 								local CurPos = Loot:GetPos()
 									if (CurPos:Distance(Loot.SpawnPos) <= 1) then
