@@ -172,6 +172,11 @@ function SWEP:PrimaryAttack()
 	self:Pawnch(Hit)
 end
 
+local DirtTypes = {
+	MAT_DIRT,
+	MAT_SAND
+}
+
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
@@ -231,7 +236,7 @@ function SWEP:Hitscan()
 						end)
 						SafeRemoveEntityDelayed(tr.Entity, 0.1)
 					end
-				elseif tr.Entity:IsWorld() then
+				elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
 					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 2)
 
 					if Message then
