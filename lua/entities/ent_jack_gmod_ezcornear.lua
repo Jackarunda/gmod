@@ -21,7 +21,7 @@ end
 if SERVER then
 	function ENT:Initialize()
 		self:SetModel("models/jmod/props/plants/corn_cob.mdl")
-		self:SetMaterial("models/jmod/props/plants/cornv81t_d")
+		self:SetMaterial("models/jmod/props/plants/cornear")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)

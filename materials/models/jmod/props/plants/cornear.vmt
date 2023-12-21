@@ -1,0 +1,10 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/props/plants/cornear"
+	"$bumpmap" "models/jmod/props/plants/corn01_n"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" "3"
+	"$phongexponent" "20"
+	"$phongtint" "[1 1 .5]"
+}

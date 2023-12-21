@@ -2,9 +2,6 @@
 {
 	"$basetexture" "models/jmod/props/plants/cornV81_d"
 	"$bumpmap" "models/jmod/props/plants/corn01_n"
-	"$phong" "1"
-	"$phongfresnelranges" "[1 1 1]"
-	"$phongboost" "3"
-	"$phongexponent" "20"
-	"$phongtint" "[1 1 .5]"
+	"$alphatest" 1
+	"$nocull" 1
 }
