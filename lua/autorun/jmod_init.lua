@@ -371,9 +371,9 @@ local Handcraft = function(ply, cmd, args)
 	else
 		local Mssg = ""
 		for k, v in pairs(StuffLeft) do
-			Mssg = Mssg .. ", " .. tostring(v) .. " more " .. tostring(k)
+			Mssg = Mssg .. tostring(v) .. " more " .. tostring(k) .. ", "
 		end
-		ply:PrintMessage(HUD_PRINTCENTER, "You need" .. Mssg)
+		ply:PrintMessage(HUD_PRINTCENTER, "You need: " .. string.sub(Mssg, 1, -3))
 	end
 end
 
