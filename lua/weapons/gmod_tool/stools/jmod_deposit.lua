@@ -27,6 +27,8 @@ function TOOL:LeftClick( trace )
 			ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)]
 		end
 
+		if not ResourceInfo[ResourceType] then ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)] end
+
 		local ChosenInfo = ResourceInfo[ResourceType]
 
 		if DepositSize == 0 then
