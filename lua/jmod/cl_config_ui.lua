@@ -368,11 +368,11 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 			if istable(machine) then
 				for _,m in pairs(machine) do
-					fuckthis(itemInfo,itemName,m)
+					sortData(itemInfo,itemName,m)
 					print(m)
 				end
 			else
-				fuckthis(itemInfo,itemName,machine)
+				sortData(itemInfo,itemName,machine)
 			end
 
 		end
