@@ -354,7 +354,7 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 		local craftables = {}
 
-		function fuckthis(itemInfo, itemName, machine)
+		local function sortData(itemInfo, itemName, machine)
 			craftables[machine] = craftables[machine] or {}
 			
 			local category = itemInfo.category or "other"
