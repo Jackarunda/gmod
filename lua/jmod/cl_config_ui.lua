@@ -354,14 +354,27 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 		local craftables = {}
 
-		for itemName, itemInfo in pairs(data) do
-			local machine = itemInfo.craftingType or "other"
+		function fuckthis(itemInfo, itemName, machine)
 			craftables[machine] = craftables[machine] or {}
 			
 			local category = itemInfo.category or "other"
 			craftables[machine][category] = craftables[machine][category] or {}
 			
 			craftables[machine][category][itemName] = itemInfo
+		end
+
+		for itemName, itemInfo in pairs(data) do
+			local machine = itemInfo.craftingType or "other"
+
+			if istable(machine) then
+				for _,m in pairs(machine) do
+					fuckthis(itemInfo,itemName,m)
+					print(m)
+				end
+			else
+				fuckthis(itemInfo,itemName,machine)
+			end
+
 		end
 
 		local holder_panel = parent:Add("DPanel")
@@ -405,7 +418,9 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 			machineButton:SetHeight(50)
 			machineButton:Dock(TOP)
 			machineButton:DockMargin(5,5,5,5)
-			local label = k
+
+			label = k 
+
 			label = string.SetChar(label, 1, string.sub(string.upper(label), 1, 1))
 			machineButton:SetText(label)
 			machineButton:SetTextColor(color_white)
@@ -580,7 +595,7 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 
 		if v == "AvailablePackages" then continue end
 
-		handle_settings(controls["subcats"][v], AlphabetizedSubcatSettings, v)
+		handle_settings(data["subcats"][v], AlphabetizedSubcatSettings, v)
 
 	end
 end 
