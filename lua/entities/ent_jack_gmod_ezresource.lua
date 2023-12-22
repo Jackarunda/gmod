@@ -108,6 +108,10 @@ if SERVER then
 				self:GetPhysicsObject():Wake()
 			end
 		end)
+
+		if (self.CustomInit) then
+			self:CustomInit()
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -238,6 +242,10 @@ if SERVER then
 			if JMod.Hints[self:GetClass() .. " use"] then
 				JMod.Hint(activator, self:GetClass() .. " use")
 			end
+		end
+
+		if (self.CustomUse) then
+			self:CustomUse()
 		end
 	end
 

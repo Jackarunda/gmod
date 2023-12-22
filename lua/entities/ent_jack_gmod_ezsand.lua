@@ -20,6 +20,11 @@ ENT.DamageThreshold = 300
 ENT.BreakNoise = "Dirt.ImpactHard"
 
 if SERVER then
+	function ENT:CustomInit()
+		self.LastMoved = CurTime()
+		self.Gefrozen = false
+	end
+
 	function ENT:OnTakeDamage(dmginfo)
 		local DmgAmt, ResourceAmt = dmginfo:GetDamage(), self:GetResource()
 		local DmgVec = dmginfo:GetDamageForce()
@@ -42,6 +47,42 @@ if SERVER then
 			self:Remove()
 		end
 	end
+
+	function ENT:CustomThink()
+		local Time = CurTime()
+
+		local TimeSinceMoved = Time - self.LastMoved
+		local IsMovin = self:GetPhysicsObject():GetVelocity():Length() > 1
+
+		if (IsMovin) then
+			self.LastMoved = Time
+		else
+			if (TimeSinceMoved > 5 and not self.Gefrozen) then
+				self:DoTheFreeze()
+			end
+		end
+
+		self:NextThink(Time + 2)
+		return true
+	end
+
+	function ENT:DoTheFreeze()
+		self:GetPhysicsObject():SetMass(500)
+		self:GetPhysicsObject():Sleep()
+		self.Gefrozen = true
+	end
+
+	function ENT:GetSchmovin()
+		self:GetPhysicsObject():SetMass(100)
+		self:GetPhysicsObject():Wake()
+		self.Gefrozen = false
+	end
+
+	function ENT:CustomUse()
+		if (self.Gefrozen) then
+			self:GetSchmovin()
+		end
+	end
 elseif CLIENT then
 
 	function ENT:Initialize()
@@ -58,7 +99,7 @@ elseif CLIENT then
 		--local JugAng = Ang:GetCopy()
 		--JMod.RenderModel(self.Bag, BasePos, Ang, self.ScaleVec, self.ColorVec)
 
-		JMod.HoloGraphicDisplay(self, Vector(-2, -13, 0), Angle(90, 0, 90), .04, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(-2, -13, 0), Angle(90, 0, 90), .04, 200, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.SAND, self:GetResource(), nil, 0, 0, 200, false, "JMod-Stencil", 220)
 		end)
 	end
