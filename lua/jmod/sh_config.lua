@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.02
+			Version = 45.03
 		},
 		General = {
 			Hints = true,
@@ -2015,7 +2015,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				sizeScale = 1,
 				category = "Other",
-				craftingType = {"toolbox", "workbench", "crafting table"},
+				craftingType = {"toolbox", "workbench", "craftingtable"},
 				description = "A sleeping bag you can set your spawn point at."
 			},
 			["EZ Ballistic Mask"] = {
