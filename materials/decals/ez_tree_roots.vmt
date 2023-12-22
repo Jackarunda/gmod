@@ -1,0 +1,7 @@
+"LightmappedGeneric" {
+	"$basetexture" "decals/ez_tree_roots"
+	"$decal" 1
+	"$decalscale" .4
+	"$translucent" 1
+	"$vertexcolor" 1
+}

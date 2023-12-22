@@ -44,11 +44,12 @@ if SERVER then
 		self.Entity:SetUseType(SIMPLE_USE)
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			if IsValid(self) then
-				self:GetPhysicsObject():SetMass(100)
-				self:GetPhysicsObject():Wake()
-				self:GetPhysicsObject():EnableDrag(false)
+			if IsValid(Phys) then
+				Phys:SetMass(100)
+				Phys:Wake()
+				Phys:EnableDrag(false)
 			end
 		end)
 
@@ -106,10 +107,10 @@ if SERVER then
 		for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
 			local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 			Gas:SetPos(self:GetPos())
-			JMod.SetEZowner(Gas, self.EZowner or game.GetWorld())
+			JMod.SetEZowner(Gas, JMod.GetEZowner(self))
 			Gas:Spawn()
 			Gas:Activate()
-			Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+			Gas.CurVel = (VectorRand() * math.random(1, 50) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 		end
 
 		SafeRemoveEntityDelayed(self, 10)
@@ -171,7 +172,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), self.EZowner or game.GetWorld(), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
+		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), JMod.GetEZowner(self), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
 
 		--JMod.Sploom(Att,SelfPos,500)
 		timer.Simple(.1, function()
@@ -192,6 +193,15 @@ if SERVER then
 
 		---
 		SendClientNukeEffect(SelfPos, 8000)
+		---
+		if (JMod.Config.QoL.NukeFlashLightEnabled) then
+			local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
+			NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
+			NukeFlash.LifeDuration = 2
+			NukeFlash.MaxAltitude = 1000
+			NukeFlash:Spawn()
+			NukeFlash:Activate()
+		end
 
 		for h = 1, 40 do
 			timer.Simple(h / 10, function()
@@ -208,7 +218,7 @@ if SERVER then
 		for k, ply in pairs(player.GetAll()) do
 			local Dist = ply:GetPos():Distance(SelfPos)
 
-			if (Dist > 1000) and (Dist < 15000) then
+			if (Dist > 1000) and (Dist < 120000) then
 				timer.Simple(Dist / 6000, function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 90)
 					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
@@ -258,13 +268,13 @@ if SERVER then
 		timer.Simple(5, function()
 			for j = 1, 10 do
 				timer.Simple(j / 10, function()
-					for k = 1, 10 * JMod.Config.Particles.NuclearRadiationMult do
+					for k = 1, 5 * JMod.Config.Particles.NuclearRadiationMult do
 						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 						Gas:SetPos(SelfPos)
 						JMod.SetEZowner(Gas, Att)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 250) + Vector(0, 0, 500 * JMod.Config.Particles.NuclearRadiationMult))
+						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 600 * JMod.Config.Particles.NuclearRadiationMult))
 					end
 				end)
 			end
@@ -283,6 +293,18 @@ if SERVER then
 
 		JMod.AeroDrag(self, self:GetRight(), .5)
 	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and (JMod.IsAdmin(ply)) then
+			JMod.SetEZowner(self, ply)
+			if self.EZdroppableBombArmedTime then
+				self.EZdroppableBombArmedTime = self.EZdroppableBombArmedTime - CurTime()
+			end
+		else
+			SafeRemoveEntity(ent)
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 	end

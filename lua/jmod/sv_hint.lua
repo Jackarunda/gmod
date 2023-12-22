@@ -1,6 +1,6 @@
 ﻿function JMod.Hint(ply, key)
 	if not (JMod.Config.General.Hints and ply and key) then return nil end
-	if not IsValid(ply) then return end
+	if not (IsValid(ply) and ply:IsPlayer()) then return end
 	local tbl = JMod.Hints[key]
 	if not tbl then return nil end
 	ply.JModHintsGiven = ply.JModHintsGiven or {}

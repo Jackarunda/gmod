@@ -30,6 +30,15 @@ if SERVER then
 		FX:SetScale(1)
 		util.Effect("WaterSplash", FX, true, true)
 	end
+	function ENT:CustomImpact(data, physobj)
+		if data.HitEntity:IsOnFire() and (self:GetResource() > 1) then
+			local WatLeftOver = self:GetResource() - 2
+			self:SetResource(WatLeftOver)
+			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.WATER, data.HitPos, nil, 10, 1, 1)
+			data.HitEntity:Extinguish()
+			self:Extinguish()
+		end
+	end
 elseif CLIENT then
 	local TxtCol = Color(255, 255, 255, 80)
 
@@ -41,5 +50,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

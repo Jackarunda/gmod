@@ -13,6 +13,7 @@ ENT.Model = "models/hunter/blocks/cube4x4x1.mdl"
 ENT.Mass = 3000
 ENT.SpawnHeight = 95
 ENT.JModPreferredCarryAngles = Angle(0, 0, -90)
+ENT.EZanchorage = 2000
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---
@@ -42,7 +43,7 @@ if(SERVER)then
 		end)
         timer.Simple(5, function()
             if IsValid(self) then
-            	JMod.Hint(self.EZowner, "liquid scan")
+            	JMod.Hint(JMod.GetEZowner(self), "liquid scan")
             end
         end)
 	end
@@ -60,7 +61,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				JMod.Hint(self.EZowner, "oil derrick")
+				JMod.Hint(JMod.GetEZowner(self), "oil derrick")
 			elseif(GroundIsSolid)then
 				local HitAngle = Tr.HitNormal:Angle()
 				--jprint("Before", HitAngle)
@@ -79,7 +80,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
 		end
@@ -159,6 +160,8 @@ if(SERVER)then
 		local State, Time = self:GetState(), CurTime()
 		local Phys = self:GetPhysicsObject()
 
+		self:UpdateWireOutputs()
+
 		if self.EZinstalled then
 			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
 				self.EZinstalled = false
@@ -189,9 +192,9 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(.5)
+				self:ConsumeElectricity(.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed)
 				-- This is just the rate at which we pump
-				local pumpRate = 0.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2)
+				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
 				if JMod.NaturalResourceTable[self.DepositKey].rate then
@@ -212,7 +215,6 @@ if(SERVER)then
 					if self:GetProgress() >= 100 then
 						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
 						self:ProduceResource()
-						JMod.DepleteNaturalResource(self.DepositKey, amtToPump)
 					end
 				end
 
@@ -228,9 +230,10 @@ if(SERVER)then
 		if amt <= 0 then return end
 
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
-		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*100-Right*50))
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, -90), Forward*500, true, 200)
+		local spawnVec = self:WorldToLocal(Vector(SelfPos+Forward*120-Right*50))
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, Angle(0, 0, 90), Forward*500, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
+		JMod.DepleteNaturalResource(self.DepositKey, amt)
 	end
 
 	function ENT:OnDestroy(dmginfo)
@@ -259,10 +262,8 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThinkTime = Time + math.Rand(0, 3)
 	end
 

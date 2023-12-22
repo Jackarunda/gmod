@@ -132,7 +132,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld()
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self)
 		-- when we detonate, we don't want other mines to detonate too. Waste of mines
 		-- remove some Anger from the others so that they can evaluate the battlefield again after we're gone
 		for k, v in pairs(ents.FindInSphere(SelfPos, 1000)) do
@@ -178,7 +178,7 @@ if SERVER then
 			end
 		end)
 
-		JMod.FragSplosion(self, SelfPos, 10000, 200, 1500, self.EZowner or game.GetWorld(), nil, nil, 4)
+		JMod.FragSplosion(self, SelfPos, 10000, 200, 1500, JMod.GetEZowner(self), nil, nil, 4)
 		---
 		self:Remove()
 

@@ -72,7 +72,7 @@ if SERVER then
 				if self:GetState() == STATE_MELTED then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_BURN)
-					Dmg:SetAttacker(self.EZowner or self)
+					Dmg:SetAttacker(JMod.GetEZowner(self))
 					Dmg:SetInflictor(self)
 					Dmg:SetDamage(5)
 					Dmg:SetDamagePosition(self:GetPos())
@@ -105,7 +105,7 @@ if SERVER then
 					JMod.SetEZowner(Gas, Owner or game.GetWorld())
 					Gas:Spawn()
 					Gas:Activate()
-					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+					Gas.CurVel = VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult)
 				end
 			end)
 
@@ -135,7 +135,7 @@ if SERVER then
 		elseif State == STATE_MELTED then
 			local Dmg = DamageInfo()
 			Dmg:SetDamageType(DMG_BURN)
-			Dmg:SetAttacker(self.EZowner or self)
+			Dmg:SetAttacker(JMod.GetEZowner(self))
 			Dmg:SetInflictor(self)
 			Dmg:SetDamage(5)
 			Dmg:SetDamagePosition(self:GetPos())
@@ -284,7 +284,7 @@ if SERVER then
 							Dmg:SetDamageType(DMG_GENERIC) -- neutron radiation, can't be blocked by a hazmat suit or gas mask
 							Dmg:SetDamage(DmgAmt / 3)
 							Dmg:SetInflictor(self)
-							Dmg:SetAttacker(self.EZowner or self)
+							Dmg:SetAttacker(JMod.GetEZowner(self))
 							Dmg:SetDamagePosition(TargPos)
 							v:TakeDamageInfo(Dmg)
 							---
@@ -292,7 +292,7 @@ if SERVER then
 							Dmg2:SetDamageType(DMG_RADIATION)
 							Dmg2:SetDamage(DmgAmt / 4)
 							Dmg2:SetInflictor(self)
-							Dmg2:SetAttacker(self.EZowner or self)
+							Dmg2:SetAttacker(JMod.GetEZowner(self))
 							Dmg2:SetDamagePosition(TargPos)
 							v:TakeDamageInfo(Dmg2)
 
@@ -319,7 +319,7 @@ if SERVER then
 						Dmg2:SetDamageType(DMG_RADIATION)
 						Dmg2:SetDamage(DmgAmt / 3)
 						Dmg2:SetInflictor(self)
-						Dmg2:SetAttacker(self.EZowner or self)
+						Dmg2:SetAttacker(JMod.GetEZowner(self))
 						Dmg2:SetDamagePosition(TargPos)
 						v:TakeDamageInfo(Dmg2)
 						-- neutron activation

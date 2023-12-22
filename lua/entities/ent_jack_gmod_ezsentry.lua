@@ -52,7 +52,7 @@ ENT.AmmoTypes = {
 	}, -- explosive projectile
 	["Pulse Laser"] = {
 		Accuracy = 3,
-		Damage = .4,
+		Damage = .25,
 		MaxElectricity = 2,
 		BarrelLength = .75
 	} -- bzew
@@ -112,16 +112,51 @@ ENT.ModPerfSpecs = {
 	Cooling = 0
 }
 
+ENT.AmmoRefundTable = {
+	["Bullet"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["Buckshot"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["API Bullet"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
+		conversionMult = 1
+	},
+	["HE Grenade"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
+		conversionMult = 1
+	},
+	["Pulse Laser"] = {
+		varToRead = "Electricity",
+		spawnType = JMod.EZ_RESOURCE_TYPES.POWER,
+		conversionMult = 1
+	}
+}
+
 function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
 	if (OldAmmo~=ammoType) then
-		local AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.AMMO
-		if (OldAmmo == "HE Grenade") then
-			AmmoTypeToSpawn = JMod.EZ_RESOURCE_TYPES.MUNITIONS
+		local RefundInfo = self.AmmoRefundTable[OldAmmo]
+		local AmmoTypeToSpawn = RefundInfo.spawnType
+		local NetVarValueName = "Get" .. RefundInfo.varToRead
+		local NetVarValue = self[NetVarValueName](self)
+		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
+		if (OldAmmo == "Pulse Laser") then
+			// we were using Electricity as ammo, and now our MaxElectricity is about to change
+			// we're gonna kick our all our Electricity, so set ours to 0
+			// no exploit
+			self:SetElectricity(0)
 		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, self:GetAmmo(), self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
 	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
@@ -137,7 +172,11 @@ function ENT:InitPerfSpecs(removeAmmo)
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
-	for specName,value in pairs(self.DynamicPerfSpecs)do self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp end
+	for specName,value in pairs(self.DynamicPerfSpecs)do 
+		if(type(value)~="table")then
+			self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp 
+		end
+	end
 	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
 	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
 	
@@ -234,8 +273,7 @@ if(SERVER)then
 		}
 	end
 	
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		JMod.SetEZowner(self, ply, true)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
 	end
 
@@ -344,10 +382,11 @@ if(SERVER)then
 			end
 
 			if State > 0 then
-				self:TurnOff()
+				self:TurnOff(activator)
 			else
 				if self:GetElectricity() > 0 then
 					self:TurnOn(activator)
+					JMod.SetEZowner(self, activator, true)
 					JMod.Hint(activator, "sentry friends")
 				else
 					JMod.Hint(activator, "nopower")
@@ -356,8 +395,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) and IsValid(self.Target) and (self.Target == activator) and not(activator == self.EZowner) then return end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 		self:ResetMemory()
@@ -370,9 +410,6 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
-		local OldOwner = JMod.GetEZowner(self)
-		JMod.SetEZowner(self, activator, true)
-
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
 		self:ResetMemory()
@@ -415,7 +452,10 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:CanSee(ent)
+	-- 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
+	-- if we name it something else, then it works fine
+	-- i hate retarded gmod script kiddies
+	function ENT:CanSee2(ent)
 		if not IsValid(ent) then return false end
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
 		local Dist = TargPos:Distance(SelfPos)
@@ -435,7 +475,7 @@ if(SERVER)then
 		if not IsValid(ent) then return false end
 		if ent == self.NPCTarget then return false end
 
-		return JMod.ShouldAttack(self, ent) and self:CanSee(ent)
+		return JMod.ShouldAttack(self, ent) and self:CanSee2(ent)
 	end
 
 	function ENT:TryFindTarget()
@@ -485,7 +525,7 @@ if(SERVER)then
 		self.SearchData.State = 0
 		self:SetState(STATE_ENGAGING)
 		self:EmitSound("snds_jack_gmod/ezsentry_engage.wav", 65, 100)
-		JMod.Hint(self.EZowner, "sentry upgrade")
+		JMod.Hint(JMod.GetEZowner(self), "sentry upgrade")
 	end
 
 	function ENT:Disengage()
@@ -502,11 +542,12 @@ if(SERVER)then
 		self.SearchData.State = 0
 		self:SetState(STATE_WATCHING)
 		self:EmitSound("snds_jack_gmod/ezsentry_standdown.wav", 65, 100)
-		JMod.Hint(self.EZowner, "sentry modify")
+		JMod.Hint(JMod.GetEZowner(self), "sentry modify")
 	end
 
 	function ENT:Think()
 		local Time = CurTime()
+		self:UpdateWireOutputs()
 
 		if self.NextRealThink < Time then
 			local Electricity, Ammo = self:GetElectricity(), self:GetAmmo()

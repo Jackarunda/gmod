@@ -47,12 +47,12 @@ if SERVER then
 				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
-				Gas:GetPhysicsObject():SetVelocity(SelfVel + VectorRand() * math.random(1, 200))
+				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 200))
 			end)
 		end
 
 		if IsValid(self.EZowner) then
-			JMod.Hint(self.EZowner, "gas spread", self:GetPos())
+			JMod.Hint(JMod.GetEZowner(self), "gas spread", self:GetPos())
 		end
 
 		self:Remove()

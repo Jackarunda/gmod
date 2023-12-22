@@ -15,7 +15,7 @@ ENT.BreakMats = {MAT_CONCRETE, MAT_EGGSHELL, MAT_GRATE, MAT_CLIP, MAT_METAL, MAT
 ENT.EZammo = "Arrow"
 ENT.CollisionGroup = COLLISION_GROUP_NONE
 ENT.NoPhys = true
-local ThinkRate = 22 --Hz
+local ThinkRate = 33 --Hz
 
 ---
 if SERVER then
@@ -69,7 +69,7 @@ if SERVER then
 				self:SetParent(tr.Entity)
 				self.StuckIn = tr.Entity
 			else
-				self:DropToGround()
+				self:DropToGround(tr.Entity)
 			end
 
 			return
@@ -128,11 +128,15 @@ if SERVER then
 					elseif self.StuckIn:IsNPC() and self.StuckIn.Health and self.StuckIn:Health() <= 0 then
 						StaySticked = false
 					end
+				else
+					StaySticked = false
 				end
 
 				if not StaySticked then
 					self:DropToGround()
 				end
+			else
+				self:DropToGround()
 			end
 
 			if self.DieTime < CurTime() then
@@ -195,13 +199,15 @@ if SERVER then
 		return true
 	end
 
-	function ENT:DropToGround()
-		local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -600), {self, self.Owner, self.StuckIn})
+	function ENT:DropToGround(entToIgnore)
+		local filterTab = {self, self.Owner, self.StuckIn}
+		if entToIgnore then table.insert(filterTab, entToIgnore) end
+		local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -600), filterTab)
 
 		self:SetParent(nil)
 		self.StuckIn = nil
 
-		if Tr.Hit then
+		if Tr.Hit and Tr.Fraction > 0.01 then
 			self:SetPos(Tr.HitPos + Tr.HitNormal * .1)
 			self:SetAngles(Angle(0, math.random(0, 360), 0))
 		end

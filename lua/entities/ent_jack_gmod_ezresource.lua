@@ -9,6 +9,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
+ENT.EZstorageSpace = 0
 ---
 local LoadOnSpawn = CreateConVar("jmod_debug_loadresourceonspawn", "0", FCVAR_NONE, "Attempts to load spawned resources directly into entities you are looking at")
 ---
@@ -22,7 +23,7 @@ function ENT:GetEZsupplies(typ)
 		if Supplies[typ] and Supplies[typ] > 0 then
 			return Supplies[typ]
 		else
-			return 
+			return nil
 		end
 	else
 		return Supplies
@@ -30,7 +31,7 @@ function ENT:GetEZsupplies(typ)
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end -- Important because this is shared as well
+	if not SERVER then  return end -- Important because this is shared as well
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
 	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
 	self:SetResource(math.max(amt, 0)) -- Otherwise, just set our resource to the new value
@@ -46,12 +47,12 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetResource(ent.MaxResources)
+		ent:SetResource(ent.MaxResource)
 		local HitEnt = tr.Entity
 		if IsValid(HitEnt) and HitEnt.TryLoadResource then
-			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResources)
+			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResource)
 			if Accepted > 0 then
-				ent:SetEZsupplies(self.EZsupplies, ent.MaxResources - Accepted, HitEnt)
+				ent:SetEZsupplies(self.EZsupplies, ent.MaxResource - Accepted, HitEnt)
 				--JMod.ResourceEffect(self.EZsupplies, ent:LocalToWorld(ent:OBBCenter()), HitEnt:LocalToWorld(HitEnt:OBBCenter()), Accepted, 1, 1, 1)
 			end
 		end
@@ -93,7 +94,7 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		---
-		self.MaxResources = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
+		self.MaxResource = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
 		self:SetResource(100)
 		---
 		self.NextLoad = 0
@@ -122,7 +123,7 @@ if SERVER then
 					-- try to combine
 					local Sum = self:GetResource() + data.HitEntity:GetResource()
 
-					if Sum <= self.MaxResources then
+					if Sum <= self.MaxResource then
 						self:SetResource(Sum)
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
@@ -174,13 +175,15 @@ if SERVER then
 					local Pos = self:GetPos()
 					sound.Play(self.BreakNoise, Pos)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
 					if self.UseEffect then
 						self:UseEffect(Pos, game.GetWorld(), true)
 					end
 					SafeRemoveEntity(self)
 				end
 			end
+
+			if self.CustomImpact then self:CustomImpact(data, physobj) end
 		end
 	end
 
@@ -191,7 +194,7 @@ if SERVER then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
-			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResources, 1, 1)
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
 			if self.UseEffect then
 				for i = 1, self:GetResource() / 10 do			
 					self:UseEffect(Pos, game.GetWorld(), true)
@@ -224,7 +227,7 @@ if SERVER then
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
 				self:SetResource(NewCountTwo)
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResources, 1)
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResource, 1)
 			end
 		elseif self.AltUse and AltPressed then
 			self:AltUse(activator)
@@ -243,6 +246,11 @@ if SERVER then
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+			SafeRemoveEntity(ent)
+
+			return
+		end
 		local Time = CurTime()
 		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)
@@ -250,6 +258,6 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
+		--
 	end
-	--aw fuck you
 end

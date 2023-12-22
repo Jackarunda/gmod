@@ -57,6 +57,11 @@ if(SERVER)then
 		---
 		self.EZupgradable=true
 		--
+		self:CreatePod()
+		self.NextOpStart = 0
+	end
+
+	function ENT:CreatePod()
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
@@ -68,7 +73,30 @@ if(SERVER)then
 		self.Pod:Activate()
 		self.Pod:SetParent(self)
 		self.Pod:SetNoDraw(true)
-		self.NextOpStart = 0
+		self.Pod:SetThirdPersonMode(false)
+		--self.Pod.IsJackyPod = true
+	end
+
+	function ENT:ReviveCorpses()
+		for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezcorpse")) do
+			--jprint(v, v.VeryDead)
+			if (self:GetPos():Distance(v:GetPos()) < 512) and not(v.VeryDead) then
+				if IsValid(v.DeadPlayer) and not(v.DeadPlayer:Alive()) then
+					if IsValid(v.EZragdoll) then
+						if istable(v.EZragdoll.EZarmorP) then
+							constraint.RemoveAll(v.EZragdoll)
+							v.EZragdoll.EZarmorP = nil
+						end
+					end
+					v.DeadPlayer:Spawn()
+					v.DeadPlayer:SetPos(v.EZragdoll:GetPos())
+					v.DeadPlayer:EnterVehicle(self.Pod)
+					v.DeadPlayer:SetHealth(1)
+					v:Remove()
+					break
+				end
+			end
+		end
 	end
 
 	function ENT:Use(activator)
@@ -110,6 +138,7 @@ if(SERVER)then
 		self.Pod:Fire("unlock", "", 1.4)
 		self.NextEnter = Time + 1.6
 		self:ConsumeElectricity()
+		--self:ReviveCorpses()
 	end
 
 	function ENT:TurnOff()
@@ -175,9 +204,11 @@ if(SERVER)then
 	function ENT:Think()
 		local State, Time, Electricity = self:GetState(), CurTime(), self:GetElectricity()
 
+		self:UpdateWireOutputs()
+
 		if self.NextRealThink < Time then
 			if not IsValid(self.Pod) then
-				self:Remove()
+				self:CreatePod()
 
 				return
 			end
@@ -347,10 +378,8 @@ if(SERVER)then
 			end)
 		end
 	end
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextWhine = Time + math.Rand(0, 3)
 		self.NextRealThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)

@@ -1,0 +1,18 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/machines/centrifuge_metal_tex"
+	"$surfaceprop" "metal"
+	"$bumpmap" "models/jmod/machines/centrifuge_metal_bump"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+
+	"$phong" "1"
+	"$phongfresnelranges" "[.5 .5 1]"
+	"$phongboost" "2"
+	"$phongexponent" "10"
+
+	"$detail" "models\tex_jack_gmod_metaldetail"
+	"$detailscale"		"8"
+	"$detailblendfactor"		".8"
+}

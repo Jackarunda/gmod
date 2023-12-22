@@ -1,25 +1,31 @@
 ﻿local MskSndLops, MaskMats = {}, {}
 
+local ColorableVignette = Material("mats_jack_gmod_sprites/hard_vignette_colorable.png")
+local CurrentBleed = 0
 hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 	local ply, Play = LocalPlayer(), false
+	local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
 
 	if ply.EZarmor then
-		local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
 
-		if ply.EZarmor.mskmat and Alive and not ThirdPerson then
-			local Mat = MaskMats[ply.EZarmor.mskmat]
-
-			if not Mat then
-				Mat = Material(ply.EZarmor.mskmat)
-				MaskMats[ply.EZarmor.mskmat] = Mat
-			end
+		local ArmorMaskmats = ply.EZarmor.mskmats
+		if ArmorMaskmats and not(table.IsEmpty(ArmorMaskmats)) and Alive and not ThirdPerson then
 
 			local Col = render.GetLightColor(EyePos())
-			surface.SetMaterial(Mat)
-			surface.SetDrawColor(Col.r * 255, Col.g * 255, Col.b * 255, 255)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
-			surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			for id, maskMat in pairs(ArmorMaskmats) do -- TODO: Sort by slot relevance
+				local Mat = MaskMats[maskMat]
+
+				if not Mat then
+					Mat = Material(maskMat)
+					MaskMats[maskMat] = Mat
+				end
+
+				surface.SetMaterial(Mat)
+				surface.SetDrawColor(Col.r * 255, Col.g * 255, Col.b * 255, 255)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+				surface.DrawTexturedRect(-1, -1, ScrW() + 2, ScrH() + 2)
+			end
 		end
 
 		Play = Alive and ply.EZarmor.sndlop and not ThirdPerson
@@ -32,6 +38,17 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 				MskSndLops[ply.EZarmor.sndlop]:Play()
 			end
 		end
+	end
+
+	local TargetBleed = ply.EZbleeding or 0--(math.sin(CurTime())+1)/2*100
+	if Alive and (TargetBleed > 0) and not(ThirdPerson) then
+		local W, H = ScrW(), ScrH()
+		surface.SetDrawColor(156, 0, 21)
+		surface.SetMaterial(ColorableVignette)
+		local Vscale = (CurrentBleed)/50
+		surface.DrawTexturedRect(-W/2/Vscale, -H/2/Vscale, W+W/Vscale, H+H/Vscale)
+		--jprint(math.Round(TargetBleed), math.Round(CurrentBleed), Vscale)
+		CurrentBleed = Lerp(FrameTime(), CurrentBleed, TargetBleed)
 	end
 
 	if not Play then
@@ -75,13 +92,46 @@ local GoggleDarkness, GogglesWereOn, CurVisionBlur, CurEyeClose = 0, false, 0, 0
 local ThermalGlowMat = Material("models/debug/debugwhite")
 local blurMaterial = Material('pp/bokehblur')
 
-local RavebreakColors = {Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255), Color(0, 255, 255), Color(255, 0, 255), Color(255, 255, 0)}
+JMod.EZ_NightVisionScreenSpaceEffect = function(ply)
 
+	DrawColorModify({
+		["$pp_colour_addr"] = 0,
+		["$pp_colour_addg"] = 0,
+		["$pp_colour_addb"] = 0,
+		["$pp_colour_brightness"] = .01,
+		["$pp_colour_contrast"] = 7,
+		["$pp_colour_colour"] = 0,
+		["$pp_colour_mulr"] = 0,
+		["$pp_colour_mulg"] = 0,
+		["$pp_colour_mulb"] = 0
+	})
+
+	DrawColorModify({
+		["$pp_colour_addr"] = 0,
+		["$pp_colour_addg"] = .1,
+		["$pp_colour_addb"] = 0,
+		["$pp_colour_brightness"] = 0,
+		["$pp_colour_contrast"] = 1,
+		["$pp_colour_colour"] = 1,
+		["$pp_colour_mulr"] = 0,
+		["$pp_colour_mulg"] = 0,
+		["$pp_colour_mulb"] = 0
+	})
+
+	if ply and not ply.EZflashbanged then
+		DrawMotionBlur(FrameTime() * 50, .8, .01)
+	end
+end
+
+local RavebreakColors = {Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255), Color(0, 255, 255), Color(255, 0, 255), Color(255, 255, 0)}
 local NextRavebreakBeat, CurRavebreakColor, CurRavebreakLightPos = 0, math.random(1, 6), Vector(0, 0, 0)
+local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
 
 hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	local ply, FT, SelfPos, Time, W, H = LocalPlayer(), FrameTime(), EyePos(), CurTime(), ScrW(), ScrH()
 	local AimVec, FirstPerson, Ravebreakin = ply:GetAimVector(), not ply:ShouldDrawLocalPlayer(), ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime > Time and ply.JMod_RavebreakStartTime < Time
+	local Wakin = ply.JMod_RequiredWakeAmount or 0
+	local Alive, BlurFadeAmt = ply:Alive(), ply.EZvisionBlurFadeAmt or 2
 
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
 	--JMod.MeasureFramerate()
@@ -133,46 +183,21 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	end
 
 	if FirstPerson then
-		if ply:Alive() and ply.EZarmor and ply.EZarmor.effects then
+		if Alive and JMod.PlyHasArmorEff(ply) then
+			local ArmorEffects = ply.EZarmor.effects
 			if ply.EZarmor.blackvision then
 				surface.SetDrawColor(0, 0, 0, 255)
 				surface.DrawRect(-1, -1, W + 2, H + 2)
 				draw.SimpleText("vision device is dead; please recharge", "JMod-Display", W / 2, H * .8, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 				--GoggleDarkness=100
-			elseif ply.EZarmor.effects.nightVision then
+			elseif ArmorEffects.nightVision then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100
 				end
+				JMod.EZ_NightVisionScreenSpaceEffect(ply)
 
-				DrawColorModify({
-					["$pp_colour_addr"] = 0,
-					["$pp_colour_addg"] = 0,
-					["$pp_colour_addb"] = 0,
-					["$pp_colour_brightness"] = .01,
-					["$pp_colour_contrast"] = 7,
-					["$pp_colour_colour"] = 0,
-					["$pp_colour_mulr"] = 0,
-					["$pp_colour_mulg"] = 0,
-					["$pp_colour_mulb"] = 0
-				})
-
-				DrawColorModify({
-					["$pp_colour_addr"] = 0,
-					["$pp_colour_addg"] = .1,
-					["$pp_colour_addb"] = 0,
-					["$pp_colour_brightness"] = 0,
-					["$pp_colour_contrast"] = 1,
-					["$pp_colour_colour"] = 1,
-					["$pp_colour_mulr"] = 0,
-					["$pp_colour_mulg"] = 0,
-					["$pp_colour_mulb"] = 0
-				})
-
-				if not ply.EZflashbanged then
-					DrawMotionBlur(FT * 50, .8, .01)
-				end
-			elseif ply.EZarmor.effects.nightVisionWP then
+			elseif ArmorEffects.nightVisionWP then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100
@@ -205,7 +230,7 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 				if not ply.EZflashbanged then
 					DrawMotionBlur(FT * 50, .8, .01)
 				end
-			elseif ply.EZarmor.effects.thermalVision then
+			elseif ArmorEffects.thermalVision then
 				if not GogglesWereOn then
 					GogglesWereOn = true
 					GoggleDarkness = 100
@@ -249,7 +274,7 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 		end
 
 		if ply.EZflashbanged then
-			if ply:Alive() then
+			if Alive then
 				DrawMotionBlur(.001, math.Clamp(ply.EZflashbanged / 20, 0, 1), .01)
 				ply.EZflashbanged = ply.EZflashbanged - 7 * FT
 			else
@@ -259,6 +284,15 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 			if ply.EZflashbanged <= 0 then
 				ply.EZflashbanged = nil
 			end
+		end
+
+		if Alive and (Wakin > 0) then
+			surface.SetDrawColor(255, 255, 255, 255)
+			surface.SetMaterial(BlackFadeTop)
+			surface.DrawTexturedRect(- W, - H + Wakin / 100 * H, W * 2, H)
+			surface.SetMaterial(BlackFadeBottom)
+			surface.DrawTexturedRect(- W, H - Wakin / 100 * H, W * 2, H)
+			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin - FT * 100, 0, 100)
 		end
 	end
 
@@ -292,12 +326,10 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 		blurMaterial:SetFloat("$focusradius", 1)
 		render.SetMaterial(blurMaterial)
 		render.DrawScreenQuad()
-		-- also add an eye-closing effect
-		-- todo
 	end
 
-	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0) - FT * 2, 0, 75)
-	CurVisionBlur = Lerp(FT * .5, CurVisionBlur, ply.EZvisionBlur)
+	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0) - FT * BlurFadeAmt, 0, 75)
+	CurVisionBlur = Lerp(FT * 3, CurVisionBlur, ply.EZvisionBlur)
 
 	if CurVisionBlur < .01 then
 		CurVisionBlur = 0

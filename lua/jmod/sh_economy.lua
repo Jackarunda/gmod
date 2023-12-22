@@ -30,26 +30,39 @@ JMod.SmeltingTable = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.PLATINUMORE] = {
 		JMod.EZ_RESOURCE_TYPES.PLATINUM, .2
-	}
+	},
+	[JMod.EZ_RESOURCE_TYPES.SAND] = {
+		JMod.EZ_RESOURCE_TYPES.GLASS, .75
+	},
 }
 
 JMod.RefiningTable = {
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 3,
+		[JMod.EZ_RESOURCE_TYPES.FUEL] = 4,
 		[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
 		[JMod.EZ_RESOURCE_TYPES.RUBBER] = .5,
 		[JMod.EZ_RESOURCE_TYPES.GAS] = .2
+	},
+	[JMod.EZ_RESOURCE_TYPES.URANIUM] = {
+		[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = .2
 	}
 }
 
 -- https://docs.google.com/spreadsheets/d/1-U5iuH2o6hzwhsHVbSRiBa6NJhib-sj8xQcId_e3H_s/edit#gid=0
 JMod.EnergyEconomyParameters = {
 	BasePowerConversions = {
-		[JMod.EZ_RESOURCE_TYPES.FUEL] = 11,
-		[JMod.EZ_RESOURCE_TYPES.COAL] = 8,
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = 3
+		[JMod.EZ_RESOURCE_TYPES.FUEL] = 20,
+		[JMod.EZ_RESOURCE_TYPES.COAL] = 10,
+		[JMod.EZ_RESOURCE_TYPES.WOOD] = 5
 	},
 	FuelGennyEfficiencies = {
+		[JMod.EZ_GRADE_BASIC] = .2,
+		[JMod.EZ_GRADE_COPPER] = .275,
+		[JMod.EZ_GRADE_SILVER] = .35,
+		[JMod.EZ_GRADE_GOLD] = .425,
+		[JMod.EZ_GRADE_PLATINUM] = .5
+	},
+	SteamGennyEfficiencies = {
 		[JMod.EZ_GRADE_BASIC] = .2,
 		[JMod.EZ_GRADE_COPPER] = .275,
 		[JMod.EZ_GRADE_SILVER] = .35,
@@ -70,9 +83,29 @@ JMod.ResourceDepositInfo = {
 			sand = 2
 		}
 	},
+	--[[[JMod.EZ_RESOURCE_TYPES.SAND] = {
+		frequency = 5,
+		avgamt = 800,
+		avgsize = 200,
+		limits = {
+			nowater = true
+		},
+		boosts = {
+			sand = 2
+		}
+	},--]]
+	--[[[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {
+		frequency = 6,
+		avgamt = 200,
+		avgsize = 200,
+		limits = {},
+		boosts = {
+			water = 3
+		}
+	},]]--
 	[JMod.EZ_RESOURCE_TYPES.OIL] = {
 		frequency = 8,
-		avgamt = 500,
+		avgamt = 600,
 		avgsize = 300,
 		boosts = {
 			water = 2
@@ -81,7 +114,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.COAL] = {
 		frequency = 12,
-		avgamt = 500,
+		avgamt = 800,
 		avgsize = 300,
 		limits = {
 			nowater = true
@@ -92,7 +125,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.IRONORE] = {
 		frequency = 12,
-		avgamt = 500,
+		avgamt = 700,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -113,7 +146,7 @@ JMod.ResourceDepositInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.ALUMINUMORE] = {
-		frequency = 10,
+		frequency = 9,
 		avgamt = 500,
 		avgsize = 200,
 		limits = {
@@ -125,7 +158,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
 		frequency = 8,
-		avgamt = 400,
+		avgamt = 500,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -147,7 +180,7 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.TITANIUMORE] = {
 		frequency = 4,
-		avgamt = 300,
+		avgamt = 350,
 		avgsize = 100,
 		limits = {
 			nowater = true
@@ -180,8 +213,8 @@ JMod.ResourceDepositInfo = {
 	},
 	[JMod.EZ_RESOURCE_TYPES.URANIUMORE] = {
 		frequency = 2,
-		avgamt = 300,
-		avgsize = 100,
+		avgamt = 400,
+		avgsize = 200,
 		limits = {
 			nowater = true
 		},
@@ -375,12 +408,12 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 2
 	},
 	alienflesh = {
-		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 1.5,
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = 1,
 		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .5
 	},
 	antlion = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .5,
-		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 1.5
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 1
 	},
 	weapon = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .1,
@@ -469,6 +502,9 @@ local SalvagingTable = {
 	},
 	boulder = {
 		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = .5
+	},
+	grass = {
+		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .5
 	}
 }
 
@@ -499,7 +535,8 @@ local SpecializedSalvagingTable = {
 			substrings = {"oildrum"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
-				[JMod.EZ_RESOURCE_TYPES.OIL] = .4
+				[JMod.EZ_RESOURCE_TYPES.OIL] = .3,
+				[JMod.EZ_RESOURCE_TYPES.FUEL] = .1
 			}
 		},
 		{
@@ -579,6 +616,13 @@ local SpecializedSalvagingTable = {
 			}
 		},
 		{
+			substrings = {"police"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.CLOTH] = 1,
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .3
+			}
+		},
+		{
 			substrings = {"helicopter"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.TITANIUM] = .1,
@@ -628,9 +672,50 @@ local SpecializedSalvagingTable = {
 			}
 		},
 		{
+			substrings = {"computer"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .5,
+				[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = .1
+			}
+		},
+		{
+			substrings = {"sink", "mooring_cleat"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .5,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .3
+			}
+		},
+		{
+			substrings = {"pot"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .4,
+				[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .2,
+				[JMod.EZ_RESOURCE_TYPES.COPPER] = .1
+			}
+		},
+		{
 			substrings = {"/hunter/"},
 			yield = {
 				[JMod.EZ_RESOURCE_TYPES.PLASTIC] = .7,
+			}
+		},
+		{
+			substrings = {"acorn"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .7,
+			}
+		},
+		{
+			substrings = {"metalbucket"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .6,
+			}
+		},
+		{
+			substrings = {"sawblade"},
+			yield = {
+				[JMod.EZ_RESOURCE_TYPES.STEEL] = .7,
+				[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = .2,
 			}
 		}
 	}
@@ -638,13 +723,15 @@ local SpecializedSalvagingTable = {
 
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
+	if ent.GetState and (ent:GetState() >= 1) then return {}, "bruh, it's active" end
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
 	if ent:IsWorld() then return {}, "can't salvage the world" end
+	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
 	if not IsValid(Phys) then return {}, "cannot salvage: invalid physics" end
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
-	Mass = math.ceil(Mass ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	Mass = math.ceil((Mass * PhysNum) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
 
 	-- again, more corrections
 	if Class == "func_physbox" then
@@ -652,7 +739,7 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
-	if ent:IsNPC() or ent:IsPlayer() then return {}, (ent.PrintName and tostring(ent.PrintName .. " doesn't want to be salvaged")) or ".." end
+	if ent:IsNPC() or ent:IsPlayer() then return {}, (tostring(ent.PrintName or "They") .. " don't want to be salvaged") or ".." end
 	local AnnoyedReplyTable = {
 		"no",
 		"...no",
@@ -672,6 +759,8 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
+	if ent.LVS and (Mat == "default_silent") then Mat = "metalvehicle" end
+
 	local Specialized, Info = false, SalvagingTable[Mat]
 
 	for _, typeInfo in pairs(SpecializedSalvagingTable.modelname) do
@@ -687,9 +776,9 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	local ScaleByMass = true
-
 	for name, info in pairs(JMod.Config.Craftables) do
-		if info.results == Class then
+		--jprint((info.results == Mdl))
+		if isstring(info.results) and ((info.results == Class) or (string.lower(info.results) == Mdl)) then
 			Info = info.craftingReqs
 			ScaleByMass = false
 		end
@@ -710,7 +799,7 @@ function JMod.GetSalvageYield(ent)
 
 	for k, v in pairs(Info) do
 		if ScaleByMass then
-			Results[k] = math.ceil(v * Mass)
+			Results[k] = math.ceil(v * Mass * 1.5 * JMod.Config.ResourceEconomy.SalvageYield)
 		else
 			Results[k] = math.ceil(v * .6)
 		end
@@ -719,17 +808,19 @@ function JMod.GetSalvageYield(ent)
 	if ent.IsJackyEZmachine then
 		for k, v in pairs(JMod.EZ_RESOURCE_TYPE_METHODS) do
 			local ResourceMethod = ent["Get"..v]
-			if ResourceMethod then
-				Results[k] = (Results[k] or 0) + math.Round(ResourceMethod(ent))
-			end
-			if ent.GetOre and ent.GetOreType and ent:GetOreType() ~= "generic" then
-				Results[ent:GetOreType()] = (Results[ent:GetOreType()] or 0) + ent:GetOre()
+			if not(istable(ent.FlexFuels) and (v == "Electricity")) then
+				if ResourceMethod then
+					Results[k] = (Results[k] or 0) + math.Round(ResourceMethod(ent))
+				end
+				if ent.GetOre and ent.GetOreType and ent:GetOreType() ~= "generic" then
+					Results[ent:GetOreType()] = (Results[ent:GetOreType()] or 0) + ent:GetOre()
+				end
 			end
 		end
 
 		if ent.EZupgradable then
 			local Grade = ent:GetGrade()
-			if Grade > 0 then
+			if Grade > 1 then
 				for k, v in pairs(ent.UpgradeCosts[Grade]) do
 					Results[k] = (Results[k] or 0) + math.Round(v*.9)
 				end
@@ -737,7 +828,13 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
-	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
+	if ent.JModInv then
+		for k, v in pairs(ent.JModInv.EZresources) do
+			Results[k] = (Results[k] or 0) + v
+		end
+	end
+
+	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nnumber of physics: " .. PhysNum .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
 end
 
 function JMod.CalculateUpgradeCosts(buildRequirements)
@@ -778,7 +875,8 @@ function JMod.CalculateUpgradeCosts(buildRequirements)
 	return Results
 end
 
-function JMod.GetDepositAtPos(machine, positionToCheck)
+function JMod.GetDepositAtPos(machine, positionToCheck, mult)
+	mult = mult or 1
 	-- first, figure out which deposits we are inside of, if any
 	local DepositsInRange = {}
 
@@ -787,7 +885,7 @@ function JMod.GetDepositAtPos(machine, positionToCheck)
 		local Dist = positionToCheck:Distance(v.pos)
 
 		-- store they desposit's key if we're inside of it
-		if (Dist <= v.siz) then
+		if (Dist <= (v.siz * mult)) then
 			if IsValid(machine) then
 				if istable(machine.BlacklistedResources) and table.HasValue(machine.BlacklistedResources, v.typ) then continue end
 				if istable(machine.WhitelistedResources) and not(table.HasValue(machine.WhitelistedResources, v.typ)) then continue end
@@ -851,7 +949,11 @@ if SERVER then
 							local Dist, Min = v.pos:Distance(w.pos), v.siz + w.siz
 
 							if Dist < Min then
-								table.remove(tbl, k)
+								--if v.siz < w.siz then
+								--	table.remove(tbl, l)
+								--else
+									table.remove(tbl, k)
+								--end
 								RemovedCount = RemovedCount + 1
 								Removed = true
 								break
@@ -938,6 +1040,8 @@ if SERVER then
 		return false
 	end
 
+	local InverseOperationInterval = 10000 --1000
+
 	function JMod.DetermineMapBounds(endFunc)
 		print("JMOD: measuring map bounds...")
 		local xMin, xMax, yMin, yMax, zMin, zMax, SkyCamPos, SkyCamElims = 9e9, -9e9, 9e9, -9e9, 9e9, -9e9, nil, 0
@@ -948,7 +1052,7 @@ if SERVER then
 		end
 
 		for i = 1, 10000 do
-			timer.Simple(i / 1000, function()
+			timer.Simple(i / InverseOperationInterval, function()
 				local Pos = Vector(math.random(-20000, 20000), math.random(-20000, 20000), math.random(-20000, 20000))
 
 				if util.IsInWorld(Pos) then
@@ -977,7 +1081,7 @@ if SERVER then
 					print("JMOD: map bounds determined to be:", xMin, xMax, yMin, yMax, zMin, zMax)
 					endFunc(xMin, xMax, yMin, yMax, zMin, zMax)
 				elseif i % 1000 == 0 then
-					print(math.Round(i / 10000 * 100) .. "%")
+					print("JMOD: " .. math.Round(i / 10000 * 100) .. "%")
 				end
 			end)
 		end
@@ -990,12 +1094,16 @@ if SERVER then
 		JMod.DetermineMapBounds(function(xMin, xMax, yMin, yMax, zMin, zMax)
 			local GroundVectors = {}
 			print("JMOD: generating natural resources...")
+			--local WorldCenter = Vector(xMax + xMin, yMax + yMin, zMax + zMin)
+			--print("DEBUG: WORLDCENTER: " .. tostring(WorldCenter))
 
 			for i = 1, MaxTries do
-				timer.Simple(i / 1000, function()
+				timer.Simple(i / InverseOperationInterval, function()
 					local CheckPos = Vector(math.random(xMin, xMax), math.random(yMin, yMax), math.random(zMin, zMax))
+					debugoverlay.Cross(CheckPos, 10, 2, ColorRand(), true)
 					-- we're in the world... start the worldhit trace
-					local Tr = util.QuickTrace(CheckPos, Vector(0, 0, -4000))
+					local Tr = util.QuickTrace(CheckPos, Vector(0, 0, -6000))
+					debugoverlay.Line(CheckPos, Tr.HitPos, 2, ColorRand(), true)
 					local Props = util.GetSurfaceData(Tr.SurfaceProps)
 					local MatName = string.lower((Props and Props.name) or "")
 					local HitTexture = string.lower(Tr.HitTexture)
@@ -1114,12 +1222,25 @@ if SERVER then
 						end
 
 						table.Add(Resources, ResourcesToAdd)
+
+						if #Resources > (MaxResourceDepositCount / 2) then
+							for k, v in ipairs(Resources) do
+								local ResourceInfo = JMod.ResourceDepositInfo[v.typ]
+								v.siz = math.min(v.siz * 2, ResourceInfo.avgsize * 3)
+								if not v.rate then
+									v.amt = v.amt * 2
+								else
+									v.rate =  math.min(v.rate * 1.5, ResourceInfo.avgrate * 1.5)
+								end
+							end
+						end
+
 						RemoveOverlaps(Resources)
 						table.sort(Resources, function(a, b) return a.siz > b.siz end)
 						JMod.NaturalResourceTable = Resources
 						print("JMOD: resource generation finished with " .. #Resources .. " resource deposits")
 					elseif i % 1000 == 0 then
-						print(math.Round(i / MaxTries * 100) .. "%")
+						print("JMOD: " .. math.Round(i / MaxTries * 100) .. "%")
 					end
 				end)
 			end
@@ -1138,134 +1259,199 @@ if SERVER then
 		end
 	end
 
-	local ScroungeTable = {
-		[JMod.EZ_RESOURCE_TYPES.STEEL] = {["models/props_c17/trappropeller_lever"] = 5},
-		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = {["models/props_junk/PopCan01a"] = 1, ["models/props_junk/garbage_metalcan002a"] = 1},
-		[JMod.EZ_RESOURCE_TYPES.WOOD] = {["models/props_interiors/furniture_chair01a"] = 16},
-		[JMod.EZ_RESOURCE_TYPES.CERAMIC] = {["models/jmod/resources/rock05a"] = 5}
+	local ScroungeTableItems = {
+		["urban"] = {
+			["models/props_junk/PopCan01a.mdl"] = 5,
+			["models/props_interiors/furniture_chair01a.mdl"] = 1,
+			["models/nova/chair_wood01.mdl"] = 1,
+			["models/props_junk/cardboard_box004a.mdl"] = 1,
+			["models/props_c17/metalpot002a.mdl"] = 1,
+			["models/props_debris/wood_chunk06a.mdl"] = 1,
+			["models/props_interiors/pot01a.mdl"] = 2,
+			["models/props_junk/garbage_coffeemug001a.mdl"] = 1,
+			["models/props_junk/garbage_glassbottle001a.mdl"] = 2,
+			["models/props_junk/garbage_milkcarton001a.mdl"] = 1,
+			["models/props_junk/garbage_metalcan002a.mdl"] = 6,
+			["models/props_junk/garbage_takeoutcarton001a.mdl"] = 1,
+			["models/props_junk/garbage_plasticbottle003a.mdl"] = 1,
+			["models/props_junk/glassbottle01a.mdl"] = 1,
+			["models/props_junk/glassjug01.mdl"] = 1,
+			["models/props_junk/metal_paintcan001a.mdl"] = 1,
+			["models/props_junk/shoe001a.mdl"] = 1,
+			["models/props_junk/terracotta01.mdl"] = 1,
+			["models/props_junk/trafficcone001a.mdl"] = 1,
+			["models/props_junk/plasticcrate01a.mdl"] = 1,
+			["models/props_junk/metalbucket02a.mdl"] = 2,
+			["models/props_vehicles/carparts_tire01a.mdl"] = 2,
+			["models/props_junk/cinderblock01a.mdl"] = 1,
+			["models/props_junk/propane_tank001a.mdl"] = 1,
+			["models/props_vehicles/car002a_physics.mdl"] = .5,
+			["models/props_wasteland/barricade001a.mdl"] = 1,
+			["models/props_interiors/SinkKitchen01a.mdl"] = 1,
+			["models/props_borealis/mooring_cleat01.mdl"] = 2,
+			["models/items/car_battery01.mdl"] = 0.3
+		},
+		["rural"] = {
+			["ent_jack_gmod_ezwheatseed"] = 1,
+			["ent_jack_gmod_ezacorn"] = 2,
+			["models/props_foliage/driftwood_03a.mdl"] = 2,
+			["models/props_debris/wood_chunk06a.mdl"] = 3,
+			["models/props_junk/watermelon01.mdl"] = 1,
+			["models/jmod/resources/rock05a.mdl"] = 2,
+			["models/props_junk/rock001a.mdl"] = 1,
+			["models/props_vehicles/car003b_physics.mdl"] = 0.1,
+			["models/props_c17/streetsign004f.mdl"] = 1,
+			["models/items/car_battery01.mdl"] = 0.1
+		}
 	}
 
-	local ScroungedPositions, Amount = {}, 100
+	local ScroungedPositions = {}
 
-	function JMod.EZ_ScroungeArea(ply)
+	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
+		local Debug = args[1]
 
-		ply.NextScroungeTime = ply.NextScroungeTime or 0
-		if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down boyo") return end
-		ply.NextScroungeTime = Time + 15
+		local Pos, Range = ply:GetShootPos(), 500
 
-		local Pos = ply:GetShootPos()
-		local PreScroungeMod = 1
+		if not(JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is not allowed") return end
+		if not (Debug) then
+			for k, pos in pairs(ScroungedPositions) do
+				local DistanceTo = Pos:Distance(pos)
+				if (DistanceTo < Range) then ply:PrintMessage(HUD_PRINTCENTER, "This area has been scavenged too recently") return end
+			end
 
-		-- Let's find te nearest other scrounge location:
-		local ClosestDist = 9e9
-		for i = 1, #ScroungedPositions do
-			local ScroungedPos = ScroungedPositions[i]
-			local DistanceTo = Pos:DistToSqr(ScroungedPos)
-			if (DistanceTo < ClosestDist) then
-				ClosestDist = DistanceTo
+			ply.NextScroungeTime = ply.NextScroungeTime or 0
+			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down there pardner") return end
+			ply.NextScroungeTime = Time + 20
+		end
+
+		local ScroungeTable = {}
+
+		for typ, tbl in pairs(ScroungeTableItems) do
+			ScroungeTable[typ] = ScroungeTable[typ] or {}
+			for item, freq in pairs(tbl) do
+				for i=1, (freq * 10 or 10) do
+					table.insert(ScroungeTable[typ], item)
+				end
 			end
 		end
-		if ClosestDist <= (500^2) then
-			ClosestDist = math.sqrt(ClosestDist)
-		else
-			ClosestDist = nil
-		end
-
-		if ClosestDist then
-			PreScroungeMod = ClosestDist / 500
-		end
 		
-		--jprint(PreScroungeMod)
 		local ScroungeResults = {}
-		for i = 1, Amount do
-			local Offset = Vector(math.random(-500, 500), math.random(-500, 500), math.random(0, 500))
-			local StartPos = Pos + Offset
+		for i = 1, 100 do
+			local StartPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range/2))
 			local Contents = util.PointContents(StartPos)
 			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
 				local DownTr = util.TraceLine({
 					start = StartPos,
-					endpos = StartPos - Vector(0, 0, 600),
+					endpos = StartPos - Vector(0, 0, Range * 2),
 					filter = {ply},
 					mask = MASK_SOLID_BRUSHONLY
 				})
 				if DownTr.Hit then
-					local SurfaceResult = nil
 					local Mat = DownTr.MatType
-					local MaterialType = JMod.NatureMats[Mat] or JMod.CityMats[Mat]
+					local IsNatureMat = not not JMod.NatureMats[Mat]
+					local IsCityMat = not not JMod.CityMats[Mat]
 
-					if not MaterialType then
-						SurfaceResult = SalvagingTable[util.GetSurfacePropName(DownTr.SurfaceProps)]
-					else
-						SurfaceResult = SalvagingTable[MaterialType]
-					end
-	
-					if SurfaceResult then
-						for k, v in pairs(SurfaceResult) do
-							ScroungeResults[k] = ((ScroungeResults[k] and ScroungeResults[k]) or 0) + v * PreScroungeMod
-						end
+					if (IsNatureMat or IsCityMat) then
+						table.insert(ScroungeResults, (IsNatureMat and "rural") or (IsCityMat and "urban"))
 					end
 				end
-			end 
+			end
 		end
 
-		PrintTable(ScroungeResults)
+		if table.IsEmpty(ScroungeResults) then ply:PrintMessage(HUD_PRINTCENTER, "There's nothing here") return end
 
-		for EZresource, amt in pairs(ScroungeResults) do
-			if not ScroungeTable[EZresource] then return end
-
-			amt = math.Round(amt)
-
-			local Break = 0
-			while amt > 0 and Break < 10 do
-				local bestModel, resultantMass = nil, 1
-				for model, mass in pairs(ScroungeTable[EZresource]) do
-					if not bestModel then
-						bestModel = model
-						resultantMass = mass
-					elseif (mass <= amt) and (mass > resultantMass) then
-						bestModel = model
-						resultantMass = mass
+		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = 5, 0, 0, 1000
+		local LastEnv
+		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do
+			AttemptedCount = AttemptedCount + 1
+			local PotentialSpawnPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
+			local Contents = util.PointContents(PotentialSpawnPos)
+			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+				local AntiClipTr = util.TraceHull({
+					start = PotentialSpawnPos,
+					endpos = PotentialSpawnPos,
+					mins = Vector(-20, -20, -20),
+					maxs = Vector(20, 20, 20),
+					mask = MASK_SOLID,
+					filter = {ply}
+				})
+				if not AntiClipTr.Hit then
+					local EnvironmentType = table.Random(ScroungeResults)
+					local SelectedScroungeTable = ScroungeTable[EnvironmentType]
+					local ScroungedItem = table.Random(SelectedScroungeTable)
+					local Loot
+					if LastEnv and (LastEnv ~= EnvironmentType) and (math.random(1, 1000) == 1) then
+						Loot = ents.Create("ent_jack_gmod_ezanomaly_gnome")
+					elseif string.find(ScroungedItem, ".mdl") then
+						Loot = ents.Create("prop_physics")
+						Loot:SetModel(ScroungedItem)
+						Loot:SetHealth(100)
+					else
+						Loot = ents.Create(ScroungedItem)
 					end
-				end
-				if bestModel then
-					local Loot = ents.Create("prop_physics")
-					Loot:SetModel(bestModel..".mdl")
-					Loot:SetPos(Pos + Vector(math.random(-100, 100), math.random(-100, 100), math.random(-10, 10)))
+					local PosSet = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
+					local Mins, Maxs = Loot:GetCollisionBounds()
+					local BBVec = Maxs - Mins
+					local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
+					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight))
+					Loot:SetAngles(AngleRand())
 					Loot:Spawn()
 					Loot:Activate()
-					timer.Simple(1, function()
-						if IsValid(Loot) then
-							Loot:GetPhysicsObject():SetMass(resultantMass)
-							--Loot:Activate()
+					JMod.SetEZowner(Loot, ply)
+					SpawnedItems = SpawnedItems + 1
+					LastEnv = EnvironmentType
+
+					timer.Simple(3, function()
+						if (IsValid(Loot)) and (Loot:GetPhysicsObject():GetMass() <= 35) then
+							-- record natural resting place
+							Loot.SpawnPos = Loot:GetPos()
+							timer.Simple(120, function()
+								if (IsValid(Loot)) then
+								local CurPos = Loot:GetPos()
+									if (CurPos:Distance(Loot.SpawnPos) <= 1) then
+										-- it hasn't moved an inch in a whole two minutes
+										constraint.RemoveAll(Loot)
+										Loot:SetNotSolid(true)
+										Loot:DrawShadow(false)
+										Loot:GetPhysicsObject():EnableCollisions(false)
+										Loot:GetPhysicsObject():EnableGravity(false)
+										Loot:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+										SafeRemoveEntityDelayed(Loot, 2)
+									end
+								end
+							end)
 						end
 					end)
-					JMod.SetEZowner(Loot, ply)
 				end
-				amt = amt - math.min(resultantMass, amt)
-				Break = Break + 1
 			end
 		end
-		local index = table.insert(ScroungedPositions, Pos)
-		timer.Simple(60, function()
-			if ScroungedPositions[index] then
-				ScroungedPositions[index] = nil
-			end
-		end)
 
-		--[[
-			1) Check for open air positions
-			2) Do downward traces from those positions to see what ground the player is on.
-			3) Use the ratio of different materials to determine what the scrounging results are.
-			4) Reduce the results according to the proximity to previously scrounged areas.
-			5) Add the position to the scrounging table.
-			6) Update a cooldown so players don't spam the server with scrounge requests.
-		]]--
+		if true then
+			table.insert(ScroungedPositions, Pos)
+			timer.Simple(300, function()
+				if not table.IsEmpty(ScroungedPositions) then
+					table.remove(ScroungedPositions, 1)
+				end
+			end)
+		end
 	end
+
+	concommand.Add("jmod_debug_scrounge", function(ply, cmd, args)
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
+		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		JMod.EZ_ScroungeArea(ply, nil, {true})
+	end, nil, "Test scrounging without any modifiers")
 
 	hook.Add("InitPostEntity", "JMod_InitPostEntityServer", function()
 		JMod.GenerateNaturalResources()
 	end)
+
+	concommand.Add("jmod_debug_generatenaturalresources", function(ply, cmd, args) 
+		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
+		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		JMod.GenerateNaturalResources() 
+	end, nil, "Re-generates the natrual resource deposits")
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
@@ -1275,6 +1461,7 @@ if SERVER then
 		net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end, nil, "Shows locations for natural resource extraction.")
+
 	--[[concommand.Add("jmod_debug_remove_naturalresource",function(ply,cmd,args)
 		if not(GetConVar("sv_cheats"):GetBool())then return end
 		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
@@ -1282,8 +1469,8 @@ if SERVER then
 			local depositToRemove = table.remove(JMod.NaturalResourceTable, args[i])
 			print("Removed deposit #: " .. args[i])
 		end
-	end, nil, "Removes one or more natural resource deposits")]]
-	--
+	end, nil, "Removes one or more natural resource deposits")--]]
+
 elseif CLIENT then
 	local ShowNaturalResources = false
 
@@ -1322,6 +1509,16 @@ elseif CLIENT then
 					surface.SetDrawColor(255, 255, 255, 100)
 					surface.SetMaterial(DebugMat)
 					surface.DrawTexturedRect(0, 0, 100, 100)
+				end)
+			end
+		end
+
+		local Ply = LocalPlayer()
+		local Wep = Ply:GetActiveWeapon()
+		if IsValid(Wep) and Wep.ScanResults then
+			for k, v in pairs(Wep.ScanResults) do
+				JMod.HoloGraphicDisplay(nil, v.pos, Angle(0, 0, 0), 1, 30000, function()
+					JMod.StandardResourceDisplay(v.typ, v.amt or v.rate, nil, 0, 0, v.siz * 2, true, nil, nil, v.rate)
 				end)
 			end
 		end

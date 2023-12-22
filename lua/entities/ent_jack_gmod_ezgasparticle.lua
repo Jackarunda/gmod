@@ -12,27 +12,34 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.EZgasParticle = true
 ENT.ThinkRate = 1
+ENT.JModDontIrradiate = true
+ENT.AffectRange = 300
 --
 
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:SetNotSolid(true)
+		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetNotSolid(true)
 		self:DrawShadow(false)
-		local phys = self.Entity:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if IsValid(phys) then
 			phys:EnableCollisions(false)
 			phys:EnableGravity(false)
 		end
+		self:SetModelScale(2)
 		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
-		self.CurVel = self.CurVel or VectorRand()
+		self.CurVel = self.CurVel or VectorRand() * 10
 	end
 
 	function ENT:ShouldDamage(ent)
+		if not(math.random(1, 3) == 1) then return end
 		if not IsValid(ent) then return end
+		if ent.EZgasParticle == true then return end
 		if ent:IsPlayer() then return ent:Alive() end
 
 		if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
@@ -80,59 +87,64 @@ if SERVER then
 
 	function ENT:Think()
 		if CLIENT then return end
-		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), 1
+		local Time, SelfPos, ThinkRateHz = CurTime(), self:GetPos(), self.ThinkRate
 
 		if self.DieTime < Time then
 			self:Remove()
 			return
 		end
 
-		local Force = VectorRand() * 10 + JMod.Wind * 5
+		if self.CalcMove then
+			self:CalcMove(ThinkRateHz)
 
-		for key, obj in pairs(ents.FindInSphere(SelfPos, 300)) do
-			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
-				if obj.EZgasParticle then
-					-- repel in accordance with Ideal Gas Law
-					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * 1
-				elseif math.random(1, 3) == 1 and self.NextDmg < Time and self:ShouldDamage(obj) then
-					self:DamageObj(obj)
+		else
+			local Force = (VectorRand() * 10) + JMod.Wind * 5
+
+			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
+				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
+					if obj.EZgasParticle and not(obj.EZvirusParticle) then
+						-- repel in accordance with Ideal Gas Law
+						local Vec = (obj:GetPos() - SelfPos):GetNormalized()
+						Force = Force - Vec * 1
+					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
+						self:DamageObj(obj)
+					end
 				end
+			end
+		
+			-- apply acceleration
+			self.CurVel = self.CurVel + Force / ThinkRateHz
+
+			-- apply air resistance
+			self.CurVel = self.CurVel / 1
+
+			-- observe current velocity
+			local NewPos = SelfPos + self.CurVel / ThinkRateHz
+
+			-- make sure we're not gonna hit something. If so, bounce
+			local MoveTrace = util.TraceLine({
+				start = SelfPos,
+				endpos = NewPos,
+				filter = { self, self.Canister },
+				mask = MASK_SHOT
+			})
+			if not MoveTrace.Hit then
+				-- move unobstructed
+				self:SetPos(NewPos)
+			else
+				-- bounce in accordance with Ideal Gas Law
+				self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
+				local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
+				CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
+				local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
+				self.CurVel = -(CurVelAng:Forward() * Speed)
 			end
 		end
 
 		-- self:Extinguish()
 
-		-- apply acceleration
-		self.CurVel = self.CurVel + Force / ThinkRateHz
-
-		-- apply air resistance
-		-- self.CurVel = self.CurVel / 1
-
-		-- observe current velocity
-		local NewPos = SelfPos + self.CurVel / ThinkRateHz
-
-		-- make sure we're not gonna hit something. If so, bounce
-		local MoveTrace = util.TraceLine({
-			start = SelfPos,
-			endpos = NewPos,
-			filter = { self, self.Canister },
-			mask = MASK_SHOT
-		})
-		if not MoveTrace.Hit then
-			-- move unobstructed
-			self:SetPos(NewPos)
-		else
-			-- bounce in accordance with Ideal Gas Law
-			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
-			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
-			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
-			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
-			self.CurVel = -(CurVelAng:Forward() * Speed)
-		end
-
 		-- YOU BETTER THINK AGAIN!
-		self:NextThink(Time + 1 / ThinkRateHz)
+		self:NextThink(Time + math.random(1 / ThinkRateHz, 1.5 / ThinkRateHz))
 		return true
 	end
 
@@ -168,9 +180,14 @@ elseif CLIENT then
 		end)
 
 		self.NextVisCheck = CurTime() + 6
+		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 	end
 
 	function ENT:DrawTranslucent()
+		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		if self.DebugShow then
+			self:DrawModel()
+		end
 		if (self:GetDTBool(0)) then return end
 
 		local Time = CurTime()

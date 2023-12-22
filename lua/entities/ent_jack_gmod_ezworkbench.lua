@@ -45,7 +45,7 @@ if(SERVER)then
 	function ENT:UpdateConfig()
 		self.Craftables={}
 		for name,info in pairs(JMod.Config.Craftables)do
-			if(info.craftingType=="workbench")then
+			if (istable(info.craftingType) and table.HasValue(info.craftingType,"workbench")) or (info.craftingType=="workbench")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy=table.FullCopy(info)
@@ -54,30 +54,30 @@ if(SERVER)then
 			end
 		end
 	end
-	function ENT:BuildEffect(pos)
-		if(CLIENT)then return end
-		local Scale=.5
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos+VectorRand())
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1,2)*Scale) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5,1.5)*Scale) --length of strands
-		effectdata:SetRadius(math.Rand(2,4)*Scale) --thickness of strands
-		util.Effect("Sparks",effectdata,true,true)
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav",pos+VectorRand(),60,math.random(80,120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",pos,60,math.random(80,120))
-		local eff=EffectData()
-		eff:SetOrigin(pos+VectorRand())
-		eff:SetScale(Scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke",eff,true,true)
-		-- todo: useEffects
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		---
+		local WireOutputs = {"State [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is fine"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			table.insert(WireOutputs, OutResourceName)
+			table.insert(WireOutputDesc, ResourceDesc)
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
 	end
+
 	function ENT:Use(activator)
 		if(self:GetState()==STATE_FINE)then
 			if(self:GetElectricity()>0 and self:GetGas()>0)then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)
+				net.WriteFloat(1)
 				net.Send(activator)
 				JMod.Hint(activator, "craft")
 			else
@@ -106,29 +106,11 @@ if(SERVER)then
 								if(i<BuildSteps)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
-									local StringParts=string.Explode(" ",ItemInfo.results)
-									if((StringParts[1])and(StringParts[1]=="FUNC"))then
-										local FuncName=StringParts[2]
-										if((JMod.LuaConfig)and(JMod.LuaConfig.BuildFuncs)and(JMod.LuaConfig.BuildFuncs[FuncName]))then
-											local Ent=JMod.LuaConfig.BuildFuncs[FuncName](ply,Pos,Ang)
-											if(Ent)then
-												if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
-											end
-										else
-											print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
-										end
-									else
-										local Ent=ents.Create(ItemInfo.results)
-										Ent:SetPos(Pos)
-										Ent:SetAngles(Ang)
-										JMod.SetEZowner(Ent,ply)
-										Ent:Spawn()
-										Ent:Activate()
-										if(Ent:GetPhysicsObject():GetMass()<=15)then ply:PickupObject(Ent) end
-									end
-									self:BuildEffect(Pos)
+									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang, ItemInfo.skin)
+									JMod.BuildEffect(Pos)
 									self:ConsumeElectricity(8)
 									self:SetGas(math.Clamp(self:GetGas()-6,0,self.MaxGas))
+									self:UpdateWireOutputs()
 								end
 							end
 						end)

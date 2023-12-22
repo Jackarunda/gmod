@@ -53,7 +53,7 @@ function ENT:OnRemove()
 end
 
 function ENT:Explode()
-	local owner, pos = self.EZowner or game.GetWorld(), self:GetPos() + Vector(0, 0, 10)
+	local owner, pos = JMod.GetEZowner(self), self:GetPos() + Vector(0, 0, 10)
 
 	for i = 1, 15 * (self.SplodeAmt or 1) do
 		timer.Simple(i * .1 * math.Rand(.9, 1.1), function()

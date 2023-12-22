@@ -250,8 +250,9 @@ hook.Add("Think", "JMOD_CLIENT_THINK", function()
 	local ply, DrawNVGlamp = LocalPlayer(), false
 
 	if not ply:ShouldDrawLocalPlayer() then
-		if ply:Alive() and ply.EZarmor and ply.EZarmor.effects then
-			if ply.EZarmor.effects.nightVision or ply.EZarmor.effects.nightVisionWP then
+		if ply:Alive() and JMod.PlyHasArmorEff(ply) then
+			local ArmorEffects = ply.EZarmor.effects
+			if ArmorEffects.nightVision or ArmorEffects.nightVisionWP then
 				DrawNVGlamp = true
 
 				if not IsValid(ply.EZNVGlamp) then
@@ -380,6 +381,8 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
 	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
 	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
+	JMod.Config.QoL = Payload.QoL
+	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
 
 	if tobool(net.ReadBit()) then
 		for k, v in pairs(player.GetAll()) do
@@ -558,7 +561,7 @@ local thermalmodify = {
 hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 	local ply, Time = LocalPlayer(), CurTime()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		DrawColorModify(thermalmodify)
 
 		if NextWHOTcheck < Time then
@@ -603,7 +606,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 	local ply, Time = LocalPlayer(), CurTime()
 	
 	if ply:Alive() then
-		if ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+		if JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 			for key, targ in pairs(WHOTents) do
 				if IsValid(targ) then
 					local Br = .9
@@ -635,74 +638,74 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		if not IsValid(ToolBox) then return end
 		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
 		
-		-- if ToolBox.EZpreview then
-		-- 	if ToolBox.EZpreview.Box then
-		-- 		if ToolBox:GetSelectedBuild() ~= "" then
-		-- 			local Filter = {ply}
-		-- 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
-		-- 				table.insert(Filter, v)
-		-- 			end
-		-- 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
-		-- 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
-		-- 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
-		-- 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.Box.sizeScale or 1), Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
-		-- 		end
+		 if ToolBox.EZpreview then
+		 	if ToolBox.EZpreview.Box then
+		 		if ToolBox:GetSelectedBuild() ~= "" then
+		 			local Filter = {ply}
+		 			for k, v in pairs(ents.FindByClass("npc_bullseye")) do
+		 				table.insert(Filter, v)
+		 			end
+		 			local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100 * math.Clamp((ToolBox.CurrentBuildSize or 1), .5, 100), Filter)
+		 			-- this trace code ^ is stolen from the toolbox, had to filter out ply to get a correct trace
+		 																																											--HSVToColor( CurTime() * 50 % 360, 1, 1 ) :troll:
+		 			render.DrawWireframeBox(Tr.HitPos + Tr.HitNormal * 20 * (ToolBox.EZpreview.SizeScale or 1), ToolBox.EZpreview.SpawnAngles or Angle(0, ply:EyeAngles().y, 0), ToolBox.EZpreview.Box.mins, ToolBox.EZpreview.Box.maxs, Translucent, true)
+		 		end
 
-		-- 	elseif ToolBox:GetSelectedBuild() == "EZ Nail" then
-		-- 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
+		 	elseif ToolBox:GetSelectedBuild() == "EZ Nail" then
+		 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
-		-- 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
-		-- 		local Tr2 = nil
+		 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+		 		local Tr2 = ni
+		 		if Tr1.Hit then
+		 			local Ent1 = Tr1.Entity
 
-		-- 		if Tr1.Hit then
-		-- 			local Ent1 = Tr1.Entity
-		-- 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
+		 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
 
-		-- 			Tr2 = util.QuickTrace(Pos, Vec * 120, {ply, Ent1})
+		 			Tr2 = util.QuickTrace(Pos, Vec * 120, {ply, Ent1})
 
-		-- 			if Tr2.Hit then
-		-- 				local Ent2 = Tr2.Entity
-		-- 				if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
-		-- 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
-		-- 				if Dist > 30 then return end
-		-- 			end
-		-- 		end
-		-- 		-- would've liked to use the existing funcs to find nail location here
-		-- 		-- but they're server-side only
-		-- 		-- and also use ent:GetPhysicsObject() which will return nil 99% of the time on client
+		 			if Tr2.Hit then
+		 				local Ent2 = Tr2.Entity
+		 				if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
+		 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+		 				if Dist > 30 then return end
+		 			end
+		 		end
+		 		-- would've liked to use the existing funcs to find nail location here
+		 		-- but they're server-side only
+		 		-- and also use ent:GetPhysicsObject() which will return nil 99% of the time on client
 
-		-- 		if not Tr1.Hit or not Tr2.Hit or not Vec then return end
+		 		if not Tr1.Hit or not Tr2.Hit or not Vec then return end
 
-		-- 		render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
+		 		render.DrawWireframeBox(Tr1.HitPos, Vec:Angle(), Vector(15,.5,.5), Vector(-15,-.5,-.5), color_white, false)
 
-		-- 	elseif ToolBox:GetSelectedBuild() == "EZ Bolt" then
-		-- 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
+		 	elseif ToolBox:GetSelectedBuild() == "EZ Bolt" then
+		 		local Pos, Vec = ply:GetShootPos(), ply:GetAimVector()
 
-		-- 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+		 		local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
 
-		-- 		if Tr1.Hit then
-		-- 			local Ent1 = Tr1.Entity
-		-- 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
+		 		if Tr1.Hit then
+		 			local Ent1 = Tr1.Entity
+		 			if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return end
 
-		-- 			local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
+		 			local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
 
-		-- 			if Tr2.Hit then
-		-- 				local Ent2 = Tr2.Entity
-		-- 				if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
-		-- 				if Ent2:IsWorld() then return end
-		-- 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
-		-- 				if Dist > 30 then return end
+		 			if Tr2.Hit then
+	 					local Ent2 = Tr2.Entity
+						if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return end
+		 				if Ent2:IsWorld() then return end
+		 				local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+		 				if Dist > 30 then return end
 
-		-- 			end
+		 			end
 
-		-- 			if not Tr1.Hit or not Tr2.Hit or not Vec then return end
+		 			if not Tr1.Hit or not Tr2.Hit or not Vec then return end
 
-		-- 			local Dir = (Tr1.HitPos - Tr2.HitPos):GetNormalized()
+		 			local Dir = (Tr1.HitPos - Tr2.HitPos):GetNormalized()
 
-		-- 			render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
-		-- 		end
-		-- 	end
-		-- end
+		 			render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
+		 		end
+		 	end
+		 end
 	end
 end)
 
@@ -726,7 +729,7 @@ hook.Add("SetupWorldFog", "JMOD_WORLDFOG", function()
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
@@ -748,7 +751,7 @@ hook.Add("SetupSkyboxFog", "JMOD_SKYFOG", function(scale)
 	local Time = CurTime()
 	local ply = LocalPlayer()
 
-	if ply:Alive() and ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.thermalVision and not ply:ShouldDrawLocalPlayer() then
+	if ply:Alive() and JMod.PlyHasArmorEff(ply, "thermalVision") and not ply:ShouldDrawLocalPlayer() then
 		render.FogMode(0)
 
 		return true
@@ -784,7 +787,7 @@ hook.Add("PlayerStartVoice", "JMOD_PLAYERSTARTVOICE", function(ply)
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		surface.PlaySound("snds_jack_gmod/radio_start.wav")
 	end
 end)
@@ -794,7 +797,7 @@ hook.Add("OnPlayerChat", "JMOD_ONPLAYERCHAT", function(ply, text, isTeam, isDead
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		CommNoise()
 
 		if not isTeam and not isDead then
@@ -815,8 +818,22 @@ hook.Add("PlayerEndVoice", "JMOD_PLAYERENDVOICE", function(ply)
 	if not ply:Alive() then return end
 	if not LocalPlayer():Alive() then return end
 
-	if ply.EZarmor and ply.EZarmor.effects.teamComms and JMod.PlayersCanComm(LocalPlayer(), ply) then
+	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
 		CommNoise()
+	end
+end)
+
+hook.Add("CalcVehicleView", "JMOD_VEHICLEVIEWCORRECTION", function(veh, ply, view) 
+	local PodParent = veh:GetParent()
+	if IsValid(PodParent) and ((PodParent:GetClass() == "ent_jack_sleepingbag") or (PodParent:GetClass() == "ent_jack_gmod_ezfieldhospital")) then
+		
+		local ViewOrigin = veh:GetPos() + veh:GetUp() * 64
+		--local LerpedViewAng = LerpAngle(FrameTime() * 100, view.angles, veh:GetAngles())
+		--local ViewAng = LerpedViewAng--veh:GetAttachment(veh:LookupAttachment("vehicle_driver_eyes")).Ang
+		view.origin = ViewOrigin
+		--view.angles = ViewAng
+		
+		return view
 	end
 end)
 
@@ -895,6 +912,8 @@ end)
 net.Receive("JMod_VisionBlur", function()
 	local ply = LocalPlayer()
 	ply.EZvisionBlur = math.Clamp((ply.EZvisionBlur or 0) + net.ReadFloat(), 0, 75)
+	ply.EZvisionBlurFadeAmt = net.ReadFloat()
+	ply.JMod_RequiredWakeAmount = (tobool(net.ReadBit()) and 100) or 0
 end)
 
 net.Receive("JMod_Bleeding", function()

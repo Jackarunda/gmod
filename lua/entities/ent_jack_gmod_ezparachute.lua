@@ -49,6 +49,15 @@ end)]]--
 
 if SERVER then
 	function ENT:Initialize()
+		
+		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
+			local ParachuteType = JMod.ArmorTable[self.ParachuteName]
+			self.ParachuteMdl = ParachuteType.eff.parachute.mdl
+			self.MdlOffset = ParachuteType.eff.parachute.offset
+			self.Drag = ParachuteType.eff.parachute.drag
+			self.ChuteColor = Color(ParachuteType.clr.r, ParachuteType.clr.g, ParachuteType.clr.b) 
+		end
+
 		self:SetModel(self.ParachuteMdl or "models/jessev92/bf2/parachute.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_FLY)
@@ -75,14 +84,6 @@ if SERVER then
 		self.Drag = self.Drag or 5
 		self:SetNW2Int("AttachBone", self.AttachBone or 0)
 		self.ChuteColor = self.ChuteColor or Color(83, 83, 55)
-
-		if self.ParachuteName and JMod.ArmorTable[self.ParachuteName] then
-			local ParachuteType = JMod.ArmorTable[self.ParachuteName]
-			self.ParachuteMdl = ParachuteType.eff.parachute.mdl
-			self.MdlOffset = ParachuteType.eff.parachute.offset
-			self.Drag = ParachuteType.eff.parachute.drag
-			self.ChuteColor = Color(ParachuteType.clr.r, ParachuteType.clr.g, ParachuteType.clr.b) 
-		end
 
 		self:SetColor(self.ChuteColor)
 		self:SetOffset(self.MdlOffset)
@@ -148,8 +149,6 @@ if SERVER then
 							if self.NextCollapseTime <= Time then
 								self:Collapse()
 							end
-						else
-							self.NextCollapseTime = Time + 1
 						end
 					end
 				end
@@ -163,7 +162,7 @@ if SERVER then
 		end
 
 		if State == STATE_COLLAPSING then
-			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg - .03, 0, 2))
+			self:SetNW2Float("ChuteProg", math.Clamp(ChuteProg - .05, 0, 2))
 			if ChuteProg <= 0 then
 				self:Remove()
 			end 
@@ -220,6 +219,8 @@ elseif CLIENT then
 		self:EnableMatrix("RenderMultiply", Mat)
 		local Owner = self:GetNW2Entity("Owner")
 		if IsValid(Owner) then
+			--self.LerpedPitch = self.LerpedPitch or 0
+			--self.LerpedYaw = self.LerpedYaw or 0
 			local Dir = Owner:GetVelocity():GetNormalized()
 			--Dir = Dir + Vector(0, 0, 0)
 			local DirAng = Dir:Angle()

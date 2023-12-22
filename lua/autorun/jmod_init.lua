@@ -67,6 +67,12 @@ JMod.EZ_RESOURCE_TYPES = {
 	ANTIMATTER = "antimatter"
 }
 
+JMod.PrimitiveResourceTypes = {
+	["wood"] = { JMod.EZ_RESOURCE_TYPES.WOOD },
+	["metal"] = { JMod.EZ_RESOURCE_TYPES.ALUMINUM, JMod.EZ_RESOURCE_TYPES.COPPER, JMod.EZ_RESOURCE_TYPES.STEEL },
+	["rock"] = { JMod.EZ_RESOURCE_TYPES.CONCRETE, JMod.EZ_RESOURCE_TYPES.CERAMIC }
+}
+
 JMod.ResourceToIndex = {}
 JMod.IndexToResource = {}
 
@@ -153,6 +159,11 @@ JMod.EZ_RESOURCE_TYPE_METHODS = {
 	[JMod.EZ_RESOURCE_TYPES.COAL] = "Coal",
 	[JMod.EZ_RESOURCE_TYPES.SAND] = "Sand",
 	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "Concrete"
+}
+
+JMod.EZ_WEIGHTLESS_RESOURCE_TYPES = {
+	[JMod.EZ_RESOURCE_TYPES.POWER] = true,
+	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = true
 }
 
 -- EZ item quality grade (upgrade level) definitions
@@ -245,7 +256,8 @@ JMod.HitMatColors = {
 JMod.DefualtArmorTable={
 	[DMG_BUCKSHOT]=.2,
 	[DMG_SNIPER]=.6,
-	[DMG_CRUSH]=1,
+	[DMG_CRUSH]=.6,
+	[DMG_VEHICLE]=.6,
 	[DMG_BULLET]=.3,
 	[DMG_SLASH]=.2,
 	[DMG_BLAST]=.8,
@@ -254,7 +266,6 @@ JMod.DefualtArmorTable={
 	[DMG_BURN]=.3,
 	[DMG_ACID]=.4,
 	[DMG_PLASMA]=.4,
-	[DMG_VEHICLE]=1,
 	[DMG_DROWN]=0,
 	[DMG_PARALYZE]=0,
 	[DMG_NERVEGAS]=0,
@@ -269,6 +280,37 @@ JMod.DefualtArmorTable={
 	[DMG_DISSOLVE]=.8,
 	[DMG_BLAST_SURFACE]=.8,
 	[DMG_DIRECT]=.3,
+	[DMG_GENERIC]=1,
+	[DMG_MISSILEDEFENSE]=1
+}
+
+JMod.TreeArmorTable={
+	[DMG_BUCKSHOT]=.1,
+	[DMG_SNIPER]=.2,
+	[DMG_CRUSH]=.9,
+	[DMG_BULLET]=.1,
+	[DMG_SLASH]=1.1,
+	[DMG_BLAST]=1.1,
+	[DMG_CLUB]=1.1,
+	[DMG_SHOCK]=.9,
+	[DMG_BURN]=.3,
+	[DMG_ACID]=1,
+	[DMG_PLASMA]=.3,
+	[DMG_VEHICLE]=1,
+	[DMG_DROWN]=0,
+	[DMG_PARALYZE]=0,
+	[DMG_NERVEGAS]=0,
+	[DMG_POISON]=0,
+	[DMG_RADIATION]=.2,
+	[DMG_FALL]=0,
+	[DMG_SONIC]=0,
+	[DMG_ENERGYBEAM]=1,
+	[DMG_SLOWBURN]=.3,
+	[DMG_PHYSGUN]=1,
+	[DMG_AIRBOAT]=.5,
+	[DMG_DISSOLVE]=1,
+	[DMG_BLAST_SURFACE]=1,
+	[DMG_DIRECT]=1,
 	[DMG_GENERIC]=1,
 	[DMG_MISSILEDEFENSE]=1
 }
@@ -300,6 +342,93 @@ for i, f in pairs(file.Find("jmod/*.lua", "LUA")) do
 	end
 end
 
+local PrimitiveBenchReqs = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, [JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, [JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 8}
+
+local Handcraft = function(ply, cmd, args)
+	local Pos = ply:GetPos()
+	local ScrapResources, LocalScrap = JMod.FindSuitableScrap(Pos, 200, ply)
+	local ResourcesFromResourceEntities = JMod.CountResourcesInRange(nil, nil, ply)
+	local AvailableResources = {}
+	for k, v in pairs(ScrapResources) do
+		AvailableResources[k] = (AvailableResources[k] or 0) + v
+	end
+	for k, v in pairs(ResourcesFromResourceEntities) do
+		AvailableResources[k] = (AvailableResources[k] or 0) + v
+	end
+	local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil, nil, PrimitiveBenchReqs, nil, AvailableResources)
+	if EnoughStuff then
+		local WherePutBench = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 100, ply)
+		JMod.BuildEffect(WherePutBench.HitPos + Vector(0, 0, 30))
+		timer.Simple(0.5, function()
+			local Bench = ents.Create("ent_jack_gmod_ezprimitivebench")
+			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 30))
+			Bench:SetAngles(-ply:GetAngles())
+			Bench:Spawn()
+			Bench:Activate()
+		end)
+		
+		local AllDone, Moar = JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
+		if not(AllDone) then
+			JMod.ConsumeResourcesInRange(Moar, Pos, 200, ply, false)
+		end
+	else
+		local Mssg = ""
+		for k, v in pairs(StuffLeft) do
+			Mssg = Mssg .. tostring(v) .. " more " .. tostring(k) .. ", "
+		end
+		ply:PrintMessage(HUD_PRINTCENTER, "You need: " .. string.sub(Mssg, 1, -3))
+	end
+end
+
+-- This needs to be here I guess, probably due to load order
+JMod.EZ_CONCOMMANDS = {
+	{name = "inv", func = JMod.EZ_Open_Inventory, helpTxt = "Opens your EZ inventory to manage your armour.", noShow = true},
+	{name = "bombdrop", func = JMod.EZ_BombDrop, helpTxt = "Drops any bombs you have armed and welded."},
+	{name = "launch", func = JMod.EZ_WeaponLaunch, helpTxt = "Fires any active missiles you own."},
+	{name = "trigger", func = JMod.EZ_Remote_Trigger,  helpTxt = "Triggers any EZ bombs/mini-nades you have armed."},
+	{name = "scrounge", func = JMod.EZ_ScroungeArea, helpTxt = "Scrounges area for useful props to salvage."},
+	{name = "grab", func = JMod.EZ_GrabItem, helpTxt = "Grabs the item and tries to put it in your inventory"},
+	{name = "handcraft", func = Handcraft, helpTxt = "Construct crafting table from scrap."},
+	{name = "config", func = JMod.EZ_Open_ConfigUI, helpTxt = "Opens the EZ config editor.", adminOnly = true}
+}
+
+if SERVER then
+	for _, v in ipairs(JMod.EZ_CONCOMMANDS) do
+		concommand.Add("jmod_ez_"..v.name, function(ply, cmd, args)
+			if not (IsValid(ply) and ply:Alive()) then return end
+			if v.adminOnly and not(JMod.IsAdmin(ply)) then ply:PrintMessage(HUD_PRINTCENTER, "This command is admin only") return end
+			v.func(ply, cmd, args)
+		end, nil, v.helpTxt)
+	end
+end
+
+JMod.EZ_RESOURCE_INV_WEIGHT = .5
+
+--[[local ImpactSounds = {
+	Metal = {"Canister.ImpactSoft", "Metal_Barrel.BulletImpact", "Metal_Barrel.ImpactSoft", "Metal_Box.BulletImpact", "Metal_Box.ImpactSoft", "Metal_SeafloorCar.BulletImpact", "MetalGrate.BulletImpact", "MetalGrate.ImpactSoft", "MetalVehicle.ImpactSoft", "MetalVent.ImpactHard",},
+	Wood = {"Wood.BulletImpact", "Wood.ImpactSoft", "Wood_Box.BulletImpact", "Wood_Box.ImpactSoft", "Wood_Crate.ImpactSoft", "Wood_Furniture.ImpactSoft", "Wood_Panel.BulletImpact", "Wood_Panel.ImpactSoft", "Wood_Plank.BulletImpact", "Wood_Plank.ImpactSoft", "Wood_Solid.BulletImpact", "Wood_Solid.ImpactSoft"},
+	Flesh = {"Flesh.BulletImpact", "Flesh.ImpactSoft"},
+	Concrete = {"Concrete.BulletImpact", "Concrete.ImpactSoft"},
+	Dirt = {"Dirt.BulletImpact", "Dirt.Impact"}
+}
+
+JMod.EZ_BulletMatImpactTable = {
+	[MAT_METAL] = ImpactSounds.Metal,
+	[MAT_WOOD] = ImpactSounds.Wood,
+	[MAT_FLESH] = ImpactSounds.Flesh,
+	[MAT_CONCRETE] = ImpactSounds.Concrete,
+	[MAT_DIRT] = ImpactSounds.Dirt,
+	[MAT_DEFAULT] = ImpactSounds.Concrete,
+}
+JMod.EZ_BulletPhysImpactTable = {
+	"metal" = ImpactSounds.Metal,
+	"wood" = ImpactSounds.Wood,
+	"concrete" = ImpactSounds.Concrete,
+}
+
+JMod.EZ_PhysImpactSound = function(physmat)
+
+end--]]
 
 --[[
 Physics Sounds

@@ -4,7 +4,6 @@ util.AddNetworkString("JMod_EZtoolbox")
 util.AddNetworkString("JMod_EZworkbench")
 util.AddNetworkString("JMod_Hint")
 util.AddNetworkString("JMod_EZtimeBomb")
-util.AddNetworkString("JMod_UniCrate")
 util.AddNetworkString("JMod_LuaConfigSync")
 util.AddNetworkString("JMod_PlayerSpawn")
 util.AddNetworkString("JMod_ModifyMachine")
@@ -13,6 +12,7 @@ util.AddNetworkString("JMod_VisionBlur")
 util.AddNetworkString("JMod_ArmorColor")
 util.AddNetworkString("JMod_EZarmorSync")
 util.AddNetworkString("JMod_Inventory")
+util.AddNetworkString("JMod_ItemInventory") -- Item inventory
 util.AddNetworkString("JMod_EZradio")
 util.AddNetworkString("JMod_EZweaponMod")
 util.AddNetworkString("JMod_Bleeding")
@@ -55,7 +55,32 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	local ent = net.ReadEntity()
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
-	ent:SetColor(net.ReadColor())
+		local AutoColor = net.ReadBit()
+		local Col = net.ReadColor()
+
+		if AutoColor == 1 then
+			local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
+			if Tr.Hit then
+				local Info = JMod.HitMatColors[Tr.MatType]
+
+				if Info then
+					ent:SetColor(Info[1])
+
+					if Info[2] then
+						ent:SetMaterial(Info[2])
+					end
+				end
+			end
+			timer.Simple(.1, function()
+				if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
+				net.Start("JMod_ColorAndArm")
+				net.WriteEntity(ent)
+				net.WriteBool(false)
+				net.Send(ply)
+			end)
+		else
+			ent:SetColor(Col)
+		end
 
 	if net.ReadBit() == 1 then
 		if ent.Prime then
@@ -111,29 +136,6 @@ net.Receive("JMod_EZtimeBomb", function(ln, ply)
 	end
 end)
 
-net.Receive("JMod_UniCrate", function(ln, ply)
-	local box = net.ReadEntity()
-	local class = net.ReadString()
-	if not IsValid(box) or (box:GetPos() - ply:GetPos()):Length() > 100 or not box.Items[class] or box.Items[class][1] <= 0 then return end
-	local ent = ents.Create(class)
-	ent:SetPos(box:GetPos())
-	ent:SetAngles(box:GetAngles())
-	ent:Spawn()
-	ent:Activate()
-
-	timer.Simple(0.01, function()
-		ply:PickupObject(ent)
-	end)
-
-	box:SetItemCount(box:GetItemCount() - box.Items[class][2])
-
-	box.Items[class] = box.Items[class][1] > 1 and {box.Items[class][1] - 1, box.Items[class][2]} or nil
-
-	box.NextLoad = CurTime() + 2
-	box:EmitSound("Ammo_Crate.Close")
-	box:CalcWeight()
-end)
-
 net.Receive("JMod_ModifyMachine", function(ln, ply)
 	if not ply:Alive() then return end
 	local AmmoType = nil
@@ -157,8 +159,22 @@ net.Receive("JMod_SaveLoadDeposits", function(ln, ply)
 		--print(Operation, EntryID)
 		if string.lower(Operation) == "save" then
 			ply:ConCommand("jmod_deposits_save "..EntryID)
-		elseif string.lower(Operation) == "load" then
+		elseif (string.lower(Operation) == "load") then
 			ply:ConCommand("jmod_deposits_load "..EntryID)
+		elseif string.lower(Operation) == "load_list" then
+			local ListOfOptions = {}
+			local FileContents = file.Read("jmod_resources_"..game.GetMap()..".txt")
+			
+			if FileContents then
+				local MapConfig = util.JSONToTable(FileContents) or {}
+				for k, v in pairs(MapConfig) do
+					table.insert(ListOfOptions, k)
+				end
+			end
+			net.Start("JMod_SaveLoadDeposits")
+				net.WriteString("load_list")
+				net.WriteTable(ListOfOptions)
+			net.Send(ply)
 		elseif string.lower(Operation) == "clear" then
 			JMod.NaturalResourceTable = {}
 			net.Start("JMod_NaturalResources")

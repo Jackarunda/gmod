@@ -51,6 +51,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if (self:WaterLevel() > 0) then return end
 		if self:GetState() > STATE_OFF then return end
 		if (self:GetElectricity() <= 0) then
 			JMod.Hint(activator, "nopower_trifuel")
@@ -147,10 +148,23 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+
+		self:UpdateWireOutputs()
+
 		if (self.NextRefineThink < Time) then
 			self.NextRefineThink = Time + 1
 			if State == STATE_REFINING then
-
+				if (self:WaterLevel() > 0) then 
+					self:TurnOff() 
+					local Foof = EffectData()
+					Foof:SetOrigin(self:GetPos())
+					Foof:SetNormal(Vector(0, 0, 1))
+					Foof:SetScale(10)
+					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
+					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+					return 
+				end
 				local Grade = self:GetGrade()
 				local GradeBuff = JMod.EZ_GRADE_BUFFS[Grade]
 
@@ -192,7 +206,7 @@ if(SERVER)then
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+						Gas.CurVel = (VectorRand() * math.random(1, 100))
 					end
 				end
 			end
@@ -217,7 +231,7 @@ if(SERVER)then
 						Fiah:SetKeyValue("health", 30)
 						Fiah:SetKeyValue("fireattack", 1)
 						Fiah:SetKeyValue("firesize", math.random(20, 200))
-						Fiah:SetOwner(self.EZowner or game.GetWorld())
+						Fiah:SetOwner(JMod.GetEZowner(self))
 						Fiah:Spawn()
 						Fiah:Activate()
 						Fiah:Fire("StartFire", "", 0)
@@ -228,10 +242,8 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.LastOilTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)
 		self.NextRefineThink = Time + math.Rand(0, 3)

@@ -1,0 +1,11 @@
+"LightmappedGeneric" {
+	"$basetexture" "decals/rollermine_crater"
+//	"$basetexture" "decals/ez_ground_cracks_1"
+//	"$bumpmap" "decals/ez_ground_cracks_normal"
+	"$decal" "1"
+	"$decalscale" ".4"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+	"$decalfadeduration" "300"
+	"$decalfadetime" "300"
+}

@@ -318,7 +318,7 @@ JMod.ArmorTable = {
 	},
 	["Headset"] = {
 		PrintName = "Headset",
-		mdl = "models/lt_c/sci_fi/headset_2.mdl", -- sci fi lt
+		mdl = "models/jmod/props/items/sci_fi_headset.mdl", -- sci fi lt
 		slots = {
 			ears = 1
 		},
@@ -494,6 +494,7 @@ JMod.ArmorTable = {
 			head = 1,
 			eyes = .75
 		},
+		eff = {scuba = true},
 		def = PoorArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(.75, .75, .75),
@@ -584,6 +585,7 @@ JMod.ArmorTable = {
 		ang = Angle(-90, 0, 90),
 		wgt = 5,
 		dur = 250,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_ltorso",
 		gayPhysics = true
 	},
@@ -597,10 +599,11 @@ JMod.ArmorTable = {
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1.05, 1.05, .95),
-		pos = Vector(-3, -4.5, 0),
+		pos = Vector(-3, -6, 0),
 		ang = Angle(-90, 0, 90),
 		wgt = 10,
 		dur = 450,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_mltorso",
 		gayPhysics = true
 	},
@@ -618,6 +621,7 @@ JMod.ArmorTable = {
 		ang = Angle(-90, 0, 90),
 		wgt = 20,
 		dur = 625,
+		storage = 5,
 		ent = "ent_jack_gmod_ezarmor_mtorso",
 		gayPhysics = true
 	},
@@ -931,6 +935,43 @@ JMod.ArmorTable = {
 		wgt = 30,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_parachute"
+	},
+	["Backpack"] = {
+		PrintName = "Backpack",
+		mdl = "models/jmod/props/backpack_3.mdl",
+		clr = {
+			r = 50,
+			g = 50,
+			b = 50
+		},
+		slots = {
+			back = .9
+		},
+		storage = 30,
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine2",
+		siz = Vector(1, 1, 1),
+		pos = Vector(-2, 0, 0),
+		ang = Angle(-90, 0, 90),
+		wgt = 5,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_backpack"
+	},
+	["Pouches"] = {
+		PrintName = "Pouches",
+		mdl = "models/weapons/w_defuser.mdl",
+		slots = {
+			waist = .5
+		},
+		storage = 10,
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine",
+		siz = Vector(1, 1, 1),
+		pos = Vector(4, -3, 0),
+		ang = Angle(-80, 0, 90),
+		wgt = 5,
+		dur = 50,
+		ent = "ent_jack_gmod_ezarmor_pouch"
 	}
 }
 
@@ -1006,16 +1047,20 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
---hook.Remove("AdjustMouseSensitivity", "JMOD_CHUTE_SENSITIVITY")
 
---hook.Remove("Move", "JMOD_ARMOR_MOVE")
-hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
-	if ply.IsProne and ply:IsProne() then return end
+hook.Add("SetupMove", "JMOD_DISABLE_JUMP", function(ply, mvd, cmd)
+	if mvd:KeyDown(IN_JUMP) and (ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime())) then
+		local NewButtons = bit.band(mvd:GetButtons(), bit.bnot(IN_JUMP))
+		mvd:SetButtons(NewButtons)
+	end
+end)
 
-	if ply.EZarmor then
+hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv)
+	local origSpeed = mv:GetMaxSpeed()
+	local origClientSpeed = mv:GetMaxClientSpeed()
+
+	if not(ply.IsProne and ply:IsProne()) and ply.EZarmor then
 		if ply.EZarmor.speedfrac and ply.EZarmor.speedfrac ~= 1 then
-			local origSpeed = mv:GetMaxSpeed()
-			local origClientSpeed = mv:GetMaxClientSpeed()
 			mv:SetMaxSpeed(origSpeed * ply.EZarmor.speedfrac)
 			mv:SetMaxClientSpeed(origClientSpeed * ply.EZarmor.speedfrac)
 		end
@@ -1024,6 +1069,11 @@ hook.Add("Move", "JMOD_ARMOR_MOVE", function(ply, mv, cmd)
 				ply:SetNW2Bool("EZparachuting", false)
 			end
 		end
+	end
+
+	if ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime()) then
+		mv:SetMaxSpeed(origSpeed * .01)
+		mv:SetMaxClientSpeed(origClientSpeed * .01)
 	end
 end)
 
@@ -1042,17 +1092,37 @@ if CLIENT then
 	concommand.Add("jmod_ez_toggleeyes", function()
 		local ply = LocalPlayer()
 		if not (IsValid(ply) and ply:Alive()) then return end
-		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, "eyes")
+		-- 2 eyes
+		ply:ConCommand("jmod_ez_armoraction toggle eyes")
+	end)
 
+	local ArmorCommands = {"drop", "toggle", "repair", "recharge"}
+	local ArmorNames = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf", "chest", "back", "waist", "pelvis", "rightshoulder", "rightforearm", "rightthigh", "rightcalf"}
+
+	concommand.Add("jmod_ez_armoraction", function(ply, cmd, args)
+		if not(IsValid(ply)) or not(ply:Alive()) then return end
+		local action = args[1]
+		local slot = args[2]
+
+		if not(action) or not(slot) then return end
+
+		if not isnumber(tonumber(action)) then
+			action = table.KeyFromValue(ArmorCommands, action)
+		end
+		if isnumber(tonumber(slot)) then
+			slot = ArmorNames[tonumber(slot)]
+		end
+		
+		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
 		if not ItemID then
-			ply:PrintMessage(HUD_PRINTCENTER, "You are not wearing anything that covers your eyes!")
+			ply:PrintMessage(HUD_PRINTCENTER, "There's nothing in slot " .. slot)
 		else
 			net.Start("JMod_Inventory")
-			net.WriteInt(2, 8) -- toggle
+			net.WriteInt(action, 8)
 			net.WriteString(ItemID)
 			net.SendToServer()
 		end
-	end)
+	end, nil, "First argument is action, second arg is slot to apply the action to")
 end
 
 -- Debug

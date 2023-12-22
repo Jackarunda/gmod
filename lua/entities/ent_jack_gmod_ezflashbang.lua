@@ -32,6 +32,7 @@ if SERVER then
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
 		local plooie = EffectData()
 		plooie:SetOrigin(SelfPos)
+		plooie:SetScale(1)
 		util.Effect("eff_jack_gmod_flashbang", plooie, true, true)
 		util.ScreenShake(SelfPos, 20, 20, .2, 1000)
 
@@ -45,7 +46,7 @@ if SERVER then
 
 		timer.Simple(.1, function()
 			if not IsValid(self) then return end
-			util.BlastDamage(self, self.EZowner or self, SelfPos, 1000, 2)
+			util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 1000, 2)
 		end)
 
 		SafeRemoveEntityDelayed(self, 10)

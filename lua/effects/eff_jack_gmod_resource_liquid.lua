@@ -79,7 +79,7 @@ function EFFECT:Init(data)
 		phys:Wake()
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
-		phys:SetMaterial("gmod_silent")
+		phys:SetMaterial("Default_silent")
 		phys:SetVelocity(MyFlightVec * self.Spread + Vector(0, 0, self.Radius))
 
 		if self.Target then
@@ -93,6 +93,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:PhysicsCollide()
+	--
 end
 
 -- stub
@@ -111,7 +112,7 @@ function EFFECT:Think()
 	end
 
 	if IsValid(Phys) then
-		Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
+		Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * 1 * self.Speed - Phys:GetVelocity() / 4)
 	end
 
 	return true

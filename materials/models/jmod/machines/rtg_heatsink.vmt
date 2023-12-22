@@ -1,0 +1,10 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/machines/rtg_pipe"
+	"$bumpmap" "models/tex_jack_flat_normal"
+
+	"$envmap" "env_cubemap"
+
+	"$blendtintbybasealpha" "1"
+ 	"$blendtintcoloroverbase" "0"
+}

@@ -15,7 +15,7 @@ ENT.ModelScale = 1
 ENT.Mass = 50
 ENT.ImpactNoise1 = "Weapon.ImpactSoft"
 ENT.ImpactNoise2 = "Metal_Box.ImpactHard"
-ENT.DamageThreshold = 120
+ENT.DamageThreshold = 80
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = nil
 
@@ -40,7 +40,7 @@ if SERVER then
 					Fiah:SetKeyValue("health", 30)
 					Fiah:SetKeyValue("fireattack", 1)
 					Fiah:SetKeyValue("firesize", math.random(20, 200))
-					Fiah:SetOwner(self.EZowner or game.GetWorld())
+					Fiah:SetOwner(JMod.GetEZowner(self))
 					Fiah:Spawn()
 					Fiah:Activate()
 					Fiah:Fire("StartFire", "", 0)
@@ -86,5 +86,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

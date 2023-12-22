@@ -1,0 +1,12 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/props/plants/razorgrain_d"
+	"$bumpmap" "models/jmod/props/plants/razorgrain_n"
+	"$alphatest" 1
+	"$nocull" 1
+    "$phongexponent" "7"
+    "$phongalbedotint "1
+    "$phong" "1" 
+    "$phongboost" "0.5" 
+    "$phongfresnelranges" "[0.2 0.2 2]"
+}

@@ -1,0 +1,8 @@
+
+"VertexLitGeneric"
+{
+	"$basetexture" "models/jmod/props/bullet_packet_tex"
+
+	"$phong" "1"
+}
+    

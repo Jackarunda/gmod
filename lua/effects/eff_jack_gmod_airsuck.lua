@@ -23,7 +23,7 @@
 				rollparticle:SetColor(Rando, Rando, Rando)
 				rollparticle:SetStartAlpha(0)
 				rollparticle:SetEndAlpha((bubel and 255) or math.random(100, 255))
-				rollparticle:SetStartSize(50 * Scl)
+				rollparticle:SetStartSize(100 * Scl)
 				rollparticle:SetEndSize(0)
 				if not bubel then
 					rollparticle:SetRoll(math.Rand(-360, 360))

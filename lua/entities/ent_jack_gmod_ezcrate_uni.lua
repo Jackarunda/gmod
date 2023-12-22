@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 ENT.MaxItems = JMod.EZsmallCrateSize or 100
+ENT.KeepJModInv = true
 
 ---
 function ENT:SetupDataTables()
@@ -53,8 +54,11 @@ if SERVER then
 	end
 
 	function ENT:CalcWeight()
-		self:GetPhysicsObject():SetMass(50 + (self:GetItemCount() / self.MaxItems) * 250)
+		JMod.UpdateInv(self)
+		--self:GetPhysicsObject():SetMass(50 + (self:GetItemCount() / self.MaxItems) * 250)
+		self:GetPhysicsObject():SetMass(50 + self.JModInv.weight)
 		self:GetPhysicsObject():Wake()
+		self:SetItemCount(self.JModInv.volume)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -66,24 +70,44 @@ if SERVER then
 		if self.NextLoad > CurTime() then return end
 		local ent = data.HitEntity
 
-		if IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject().GetVolume and ent:GetPhysicsObject():GetVolume() then
-			local Class = ent:GetClass()
-			local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / 500)
+		local Phys = ent:GetPhysicsObject()
+		if IsValid(Phys) then
+			local Vol = Phys:GetVolume()
+			if Vol ~= nil then
 
-			if ent.EZstorageVolumeOverride then
-				Vol = ent.EZstorageVolumeOverride
-			end
+				Vol = math.ceil(Vol / 500) -- Weird maths
+				if ent.EZstorageVolumeOverride then
+					Vol = ent.EZstorageVolumeOverride
+				end
 
-			if ent.JModEZstorable and ent:IsPlayerHolding() and (not ent.GetState or ent:GetState() == 0) and self:GetItemCount() + Vol <= self.MaxItems then
-				self.NextLoad = CurTime() + 0.5
+				if ent.JModEZstorable and ent:IsPlayerHolding() then
+					self.NextLoad = CurTime() + 0.5
+					timer.Simple(0, function()
+						if IsValid(self) and IsValid(ent) then
+							JMod.AddToInventory(self, ent)
+							self:CalcWeight()
+						end
+					end)
+					--self:SetItemCount(self:GetItemCount() + 1)
+				end
+				--[[local Class = ent:GetClass()
+				local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / 500)
 
-				self.Items[Class] = {(self.Items[Class] and self.Items[Class][1] or 0) + 1, Vol}
+				if ent.EZstorageVolumeOverride then
+					Vol = ent.EZstorageVolumeOverride
+				end
 
-				self:SetItemCount(self:GetItemCount() + Vol)
+				if ent.JModEZstorable and ent:IsPlayerHolding() and (not ent.GetState or ent:GetState() == 0) and self:GetItemCount() + Vol <= self.MaxItems then
+					self.NextLoad = CurTime() + 0.5
 
-				timer.Simple(0, function()
-					SafeRemoveEntity(ent)
-				end)
+					self.Items[Class] = {(self.Items[Class] and self.Items[Class][1] or 0) + 1, Vol}
+
+					self:SetItemCount(self:GetItemCount() + Vol)
+
+					timer.Simple(0, function()
+						SafeRemoveEntity(ent)
+					end)
+				end--]]
 			end
 		end
 	end
@@ -96,7 +120,7 @@ if SERVER then
 			sound.Play("Wood_Crate.Break", Pos)
 			sound.Play("Wood_Box.Break", Pos)
 
-			for class, tbl in pairs(self.Items) do
+			--[[for class, tbl in pairs(self.Items) do
 				for i = 1, tbl[1] do
 					local ent = ents.Create(class)
 					ent:SetPos(self:GetPos() + VectorRand() * 10)
@@ -104,17 +128,18 @@ if SERVER then
 					ent:Spawn()
 					ent:Activate()
 				end
-			end
+			end--]]
 
 			self:Remove()
 		end
 	end
 
 	function ENT:Use(activator)
-		if self:GetItemCount() <= 0 then return end
-		net.Start("JMod_UniCrate")
+		--if self:GetItemCount() <= 0 then return end
+		net.Start("JMod_ItemInventory")
 		net.WriteEntity(self)
-		net.WriteTable(self.Items)
+		net.WriteString("open_menu")
+		net.WriteTable(self.JModInv)
 		net.Send(activator)
 	end
 

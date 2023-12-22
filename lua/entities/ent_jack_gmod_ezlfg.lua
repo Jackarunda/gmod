@@ -16,7 +16,7 @@ ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
-	MaxFuel = 100
+	MaxFuel = 200
 }
 
 ENT.DynamicPerfSpecs = {
@@ -68,6 +68,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
+		if (self:WaterLevel() > 1) then return end
 		if (self:GetFuel() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
@@ -141,9 +142,12 @@ if(SERVER)then
 	function ENT:Think()
 		local Time, State, Grade = CurTime(), self:GetState(), self:GetGrade()
 
+		self:UpdateWireOutputs()
+
 		if self.NextResourceThink < Time then
 			self.NextResourceThink = Time + 1
 			if State == STATE_ON then
+				if self:WaterLevel() > 1 then self:TurnOff() return end
 				local NRGperFuel = JMod.EnergyEconomyParameters.BasePowerConversions[JMod.EZ_RESOURCE_TYPES.FUEL] * JMod.EnergyEconomyParameters.FuelGennyEfficiencies[Grade]
 				local FuelToConsume = JMod.EZ_GRADE_BUFFS[Grade]
 				local PowerToProduce = FuelToConsume * NRGperFuel
@@ -180,17 +184,18 @@ if(SERVER)then
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
 						Gas:Activate()
-						Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 100))
+						Gas.CurVel = (VectorRand() * math.random(1, 100))
 					end
 				end
 			end
 		end
+
+		self:NextThink(Time + .1)
+		return true
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		self.NextResourceThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)

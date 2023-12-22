@@ -61,7 +61,7 @@ if(SERVER)then
 	function ENT:UpdateConfig()
 		self.Craftables = {}
 		for name, info in pairs(JMod.Config.Craftables)do
-			if(info.craftingType == "fabricator")then
+			if (istable(info.craftingType) and table.HasValue(info.craftingType,"fabricator")) or (info.craftingType=="fabricator")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy = table.FullCopy(info)
@@ -71,30 +71,13 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:BuildEffect(pos)
-		local Scale = .5
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos + VectorRand())
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(1, 2) * Scale) --amount and shoot hardness
-		effectdata:SetScale(math.Rand(.5, 1.5) * Scale) --length of strands
-		effectdata:SetRadius(math.Rand(2, 4) * Scale) --thickness of strands
-		util.Effect("Sparks", effectdata,true,true)
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
-		sound.Play("snds_jack_gmod/ez_tools/"..math.random(1, 27)..".wav", pos, 60, math.random(80, 120))
-		local eff = EffectData()
-		eff:SetOrigin(pos + VectorRand())
-		eff:SetScale(Scale)
-		util.Effect("eff_jack_gmod_ezbuildsmoke", eff, true, true)
-		-- todo: useEffects
-	end
-
 	function ENT:Use(activator)
 		if(self:GetState() == STATE_FINE)then
 			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4)then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)
+				net.WriteFloat(1)
 				net.Send(activator)
 			else
 				JMod.Hint(activator, "refillfab")
@@ -130,43 +113,8 @@ if(SERVER)then
 								if(i<BuildSteps)then
 									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
-									if istable(ItemInfo.results) then
-										for k, v in ipairs(ItemInfo.results) do
-											for n = 1, (ItemInfo.results[k][2] or 1) do
-												local Ent = ents.Create(ItemInfo.results[k][1])
-												Ent:SetPos(Pos)
-												Ent:SetAngles(Ang)
-												JMod.SetEZowner(Ent, ply)
-												Ent:Spawn()
-												Ent:Activate()
-												if (ItemInfo.results[k][3]) then
-													Ent:SetResource(ItemInfo.results[k][3])
-												end
-											end
-										end
-									else
-										local StringParts=string.Explode(" ", ItemInfo.results)
-										if((StringParts[1])and(StringParts[1] == "FUNC"))then
-											local FuncName = StringParts[2]
-											if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
-												local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
-												if(Ent)then
-													if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
-												end
-											else
-												print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
-											end
-										else
-											local Ent = ents.Create(ItemInfo.results)
-											Ent:SetPos(Pos)
-											Ent:SetAngles(Ang)
-											JMod.SetEZowner(Ent, ply)
-											Ent:Spawn()
-											Ent:Activate()
-											if(Ent:GetPhysicsObject():GetMass() <= 15)then ply:PickupObject(Ent) end
-										end
-									end
-									self:BuildEffect(Pos)
+									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang, ItemInfo.skin)
+									JMod.BuildEffect(Pos)
 									self:SetElectricity(math.Clamp(self:GetElectricity() - 15, 0.0, self.MaxElectricity))
 									self:SetGas(math.Clamp(self:GetGas() - 10, 0.0, self.MaxGas))
 									self:SetWater(math.Clamp(self:GetWater() - 5, 0.0, self.MaxWater))

@@ -24,11 +24,14 @@ local function JackaSpawnHook(ply)
 		totalWeight = 0
 	}
 
+	ply.JModInv = table.Copy(JMod.DEFAULT_INVENTORY)
+
 	JMod.EZarmorSync(ply)
 	ply.EZhealth = nil
 	ply.EZirradiated = nil
 	ply.EZoxygen = 100
 	ply.EZbleeding = 0
+	JMod.SyncBleeding(ply)
 	ply.EZvirus = nil
 
 	timer.Simple(0, function()
@@ -50,6 +53,46 @@ local function JackaSpawnHook(ply)
 			end
 		end
 	end
+	
+	local STATE_ROLLED, STATE_UNROLLED = 0, 1
+	local sleepingbag = ply.JModSpawnPointEntity
+	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
+		if(sleepingbag.nextSpawnTime < CurTime())then
+			sleepingbag.nextSpawnTime = CurTime() + 60
+			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
+				local Up = sleepingbag:GetUp()
+				--ply:EnterVehicle(sleepingbag.Pod)
+				ply:SetPos(sleepingbag:GetPos())
+				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(5)
+				net.WriteFloat(2000)
+				net.WriteBit(true)
+				net.Send(ply)
+				sleepingbag.Pod.EZvehicleEjectPos = nil
+			end
+		else
+			JMod.Hint(ply,"sleeping bag wait")
+		end
+	end
+	
+	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
+	timer.Simple(1, function()
+		if (IsValid(ply)) then
+			if not(ply.JMod_DidPlayerReclaimItems) then
+				-- this will only run once per player per session
+				local ID, num = ply:SteamID64(), 0
+				for k, v in pairs(ents.GetAll()) do
+					if (v.EZownerID and v.EZownerID == ID) then
+						JMod.SetEZowner(v, ply)
+						num = num + 1
+					end
+				end
+				ply.JMod_DidPlayerReclaimItems = true
+				if (num > 0) then ply:PrintMessage(HUD_PRINTTALK, "JMod: you reclaimed control of " .. num .. " JMod items") end
+			end
+		end
+	end)
 
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
@@ -80,8 +123,10 @@ hook.Add("AllowPlayerPickup", "JMOD_PLAYERPICKUP", function(ply, ent)
 end)
 
 function JMod.ShouldDamageBiologically(ent)
-	if not IsValid(ent) then return end
-	if ent.JModDontIrradiate then return end
+	if not IsValid(ent) then return false end
+	if (ent.JModDontIrradiate and ent.JModDontIrradiate == true) then return false end
+	if (ent.IsJackyEZcrop) then return true end
+	if (ent.Mutation) and (ent.Mutation < 100) then return true end
 	if ent:IsPlayer() then return ent:Alive() end
 
 	if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
@@ -142,6 +187,9 @@ function JMod.GeigerCounterSound(ply, intensity)
 	if intensity <= .1 and math.random(1, 2) == 1 then return end
 	local Num = math.Clamp(math.Round(math.Rand(0, intensity) * 15), 1, 10)
 	ply:EmitSound("snds_jack_gmod/geiger" .. Num .. ".wav", 55, math.random(95, 105))
+	--local Leaf = EffectData()
+	--Leaf:SetOrigin(ply:GetPos() + VectorRand(-100, 100) + Vector(0, 0, 64))
+	--util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
 end
 
 function JMod.FalloutIrradiate(self, obj)
@@ -250,7 +298,7 @@ local function VirusCough(ply)
 		JMod.SetEZowner(Gas, ply)
 		Gas:Spawn()
 		Gas:Activate()
-		Gas:GetPhysicsObject():SetVelocity(ply:GetVelocity())
+		Gas.CurVel = (ply:GetVelocity() + ply:GetForward() * 10)
 	end
 end
 
@@ -281,6 +329,24 @@ local function VirusHostThink(dude)
 	end
 end
 
+local function ImmobilizedThink(dude)
+	local Time = CurTime()
+	dude.EZImmobilizationTime = 0
+	if dude.EZimmobilizers and dude:Alive() then
+		for immobilizer, immobilizeTime in pairs(dude.EZimmobilizers) do
+			if not(IsValid(immobilizer)) or (immobilizer.GetTrappedPlayer and (immobilizer:GetTrappedPlayer() ~= dude)) or (immobilizeTime < Time) then
+				dude.EZimmobilizers[immobilizer] = nil
+			else
+				dude.EZImmobilizationTime = math.max(dude.EZImmobilizationTime, immobilizeTime)
+			end
+		end
+	else
+		dude.EZimmobilizers = nil
+	end
+end
+
+--- PARACHUTE LOGIC
+
 local function OpenChute(ply)
 	ply:EmitSound("JMod_ZipLine_Clip")
 	ply:SetNW2Bool("EZparachuting", true)
@@ -308,7 +374,7 @@ end
 hook.Add("KeyPress", "JMOD_KEYPRESS", function(ply, key)
 	if ply:GetMoveType() ~= MOVETYPE_WALK then return end
 	if ply.IsProne and ply:IsProne() then return end
-	if not(ply.EZarmor and ply.EZarmor.effects and ply.EZarmor.effects.parachute) then return end
+	if not(JMod.PlyHasArmorEff(ply, "parachute")) then return end
 
 	local IsParaOpen = ply:GetNW2Bool("EZparachuting", false) or IsValid(ply.EZparachute)
 	if key == IN_JUMP and not IsParaOpen and not ply:OnGround() then
@@ -428,6 +494,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						util.Decal("Blood", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 					end
 				end
+				JMod.SyncBleeding(playa)
 			end
 
 			if playa.EZirradiated then
@@ -449,7 +516,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 			if JMod.Config.QoL.Drowning then
 				if playa:WaterLevel() >= 3 then
-					playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					if (playa.EZarmor and playa.EZarmor.effects.scuba) then
+						playa.EZoxygen = math.Clamp(playa.EZoxygen + 3, 0, 100)
+					else
+						playa.EZoxygen = math.Clamp(playa.EZoxygen - 1.67, 0, 100) -- 60 seconds before damage
+					end
 
 					if playa.EZoxygen <= 25 then
 						playa.EZneedGasp = true
@@ -464,6 +535,12 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						Dmg:SetDamagePosition(playa:GetPos())
 						Dmg:SetDamageForce(Vector(0, 0, 0))
 						playa:TakeDamageInfo(Dmg)
+						--
+						net.Start("JMod_VisionBlur")
+						net.WriteFloat(4)
+						net.WriteFloat(3)
+						net.WriteBit(false)
+						net.Send(playa)
 					end
 				elseif playa.EZoxygen < 100 then
 					if playa.EZneedGasp then
@@ -474,6 +551,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					playa.EZoxygen = math.Clamp(playa.EZoxygen + 25, 0, 100) -- recover in 4 seconds
 				end
 			end
+
+			ImmobilizedThink(playa)
 		end
 	end
 
@@ -484,10 +563,15 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
+					local InBed = IsValid(playa:GetVehicle()) and (playa:GetVehicle():GetParent() == playa.JModSpawnPointEntity)
+					local RestMult = 1
+					if InBed then
+						RestMult = 2
+					end
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1
+						playa.EZnutrition.Nutrients = Nuts - 1 * RestMult
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
@@ -497,7 +581,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 								playa:RemoveAllDecals()
 							end
 						elseif math.Rand(0, 1) < .75 then
-							local BoostMult = JMod.Config.FoodSpecs.BoostMult
+							local BoostMult = JMod.Config.FoodSpecs.BoostMult * RestMult
 							local BoostedFrac = (Helf - Max) / Max
 
 							if math.Rand(0, 1) > BoostedFrac then
@@ -507,6 +591,12 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 									playa:RemoveAllDecals()
 								end
 							end
+						end
+					end
+					if Nuts > 100 then
+						if math.random(1, 3) == 3 then
+							playa:ViewPunch(Angle(math.random(2, 3), 0, 0))
+							playa:EmitSound("snd_jack_jmod_burp.wav", 100, math.random(80, 100))
 						end
 					end
 				end
@@ -541,6 +631,20 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 
 							if armorData.chrg.power <= Info.chrg.power * .25 then
 								JMod.EZarmorWarning(playa, "Thermal vision charge is low ("..tostring(armorData.chrg.power).."/"..tostring(Info.chrg.power)..")")
+							end
+						end
+					end
+				end
+
+				if playa.EZarmor.effects.scuba then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if (Info.eff and Info.eff.scuba) and (armorData.chrg and armorData.chrg.gas) then
+							armorData.chrg.gas = math.Clamp(armorData.chrg.gas - JMod.Config.Armor.ChargeDepletionMult / 10, 0, 9e9)
+
+							if armorData.chrg.gas <= Info.chrg.gas * .25 then
+								JMod.EZarmorWarning(playa, "SCBA breathing gas charge is low ("..tostring(armorData.chrg.gas).."/"..tostring(Info.chrg.gas)..")")
 							end
 						end
 					end
@@ -616,6 +720,8 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
 	ToSend.Blackhole = JMod.Config.Machines.Blackhole
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
+	ToSend.QoL = JMod.Config.QoL
+	ToSend.MaxResourceMult =JMod.Config.ResourceEconomy.MaxResourceMult
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))
 	net.Broadcast()
@@ -646,6 +752,7 @@ concommand.Add("jacky_trace_debug", function(ply)
 		print("mass", Ent:GetPhysicsObject():GetMass())
 		print("model", Ent:GetModel())
 		---
+		if Ent == game.GetWorld() then return end
 		print("----------- entity animation data -----------")
 
 		for k, v in pairs(Ent:GetSequenceList()) do
@@ -693,13 +800,16 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
-	if JMod.Config.QoL.RealisticFallDamage then return spd ^ 2 / 8000 end
+	local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
+	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
-hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
+hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, dmg)
 	ply.EZnutrition = nil
 	ply.EZhealth = nil
 	ply.EZkillme = nil
+	ply.EZoverDamage = dmg:GetDamage()
+	--jprint(ply:Health(), ply.EZoverDamage)
 
 	if ply.JackyMatDeathUnset then
 		ply.JackyMatDeathUnset = false
@@ -707,82 +817,31 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply)
 	end
 end)
 
---hook.Remove("PlayerDeath", "JMOD_SERVER_PLAYERPARADEATH")
-hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply)
-	if JMod.Config.QoL.JModCorpse and ply.EZarmor and ply.EZarmor.items then
-		SafeRemoveEntity(ply:GetRagdollEntity())
-		local Ragdoll = ents.Create("prop_ragdoll")
-		if ply.EZoriginalPlayerModel then
-			Ragdoll:SetModel(ply.EZoriginalPlayerModel)
-		else
-			Ragdoll:SetModel(ply:GetModel())
+hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
+	if (JMod.Config.QoL.JModCorpseStayTime > 0) then
+		local PlyRagdoll = ply:GetRagdollEntity()
+		local BodyGroupValues = ""
+		for i = 1, PlyRagdoll:GetNumBodyGroups() do
+			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
 		end
-		Ragdoll:SetPos(ply:GetPos())
-		Ragdoll:SetAngles(ply:GetAngles())
-		Ragdoll:Spawn()
-		Ragdoll:Activate()
-		if IsValid(Ragdoll) then
-			Ragdoll.EZarmorP = {}
-			local Parachute = false
-			for k, v in pairs(ply.EZarmor.items) do
-				local ArmorInfo = JMod.ArmorTable[v.name]
-				if not ArmorInfo.plymdl then
-					local Index = Ragdoll:LookupBone(ArmorInfo.bon)
-					local Pos, Ang = Ragdoll:GetBonePosition(Index)
-					
-					if Pos and Ang then
-						-- Pos it
-						local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
-						Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
-						Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
-						Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
-						Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
-						-- Spawn it
-						local ArmorPiece = ents.Create(ArmorInfo.ent)
-						ArmorPiece:SetPos(Pos)
-						ArmorPiece:SetAngles(Ang)
-						ArmorPiece:SetOwner(Ragdoll)
-						ArmorPiece:ManipulateBoneScale(0, ArmorInfo.siz)
-						ArmorPiece:SetCollisionGroup(COLLISION_GROUP_INTERACTIVE_DEBRIS)
-						ArmorPiece:Spawn()
-						ArmorPiece:Activate()
-						Ragdoll.EZarmorP[v.name] = ArmorPiece
-						if ArmorInfo.eff and ArmorInfo.eff.parachute then
-							Parachute = v.name
-							local BonePhys = Ragdoll:GetPhysicsObjectNum(Index)
-							ArmorPiece:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, -100))
-						end
-						-- Attach it
-						local Weld = constraint.Weld(ArmorPiece, Ragdoll, 0, Ragdoll:TranslateBoneToPhysBone(Index), 0, true)
-						Weld:Activate()
-					end
-				end
-			end
-			--print("We created " .. tostring(CCounter) .. " constraints")
-			timer.Simple(30, function()
-				if IsValid(Ragdoll) and Ragdoll.EZarmorP then
-					for _, v in pairs(Ragdoll.EZarmorP) do
-						local Con = constraint.FindConstraintEntity(v, "Weld")
-						if IsValid(Con) then
-							local Ent1, Ent2 = Con:GetConstrainedEntities()
-							if (IsValid(Ent1) and Ent1 == Ragdoll) or (IsValid(Ent2) and Ent2 == Ragdoll) then
-								SafeRemoveEntity(v)
-							end
-						end
-					end
-					SafeRemoveEntity(Ragdoll)
-				end
-			end)
-			if IsValid(ply.EZparachute) and Parachute then
-				ply.EZparachute:SetNW2Entity("Owner", Ragdoll.EZarmorP[Parachute])
-				ParachuteEnt = Ragdoll.EZarmorP[Parachute]
-				ParachuteEnt:SetNW2Bool("EZparachuting", true)
-				ParachuteEnt.EZparachute = ply.EZparachute
-				ParachuteEnt.EZparachute.AttachBone = 0
-				ParachuteEnt.EZparachute.Drag = ParachuteEnt.EZparachute.Drag * 5
-			end
-			ply:SetNW2Bool("EZparachuting", true)
-			ply.EZparachute = nil
+		SafeRemoveEntity(PlyRagdoll)
+		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+		EZcorpse.DeadPlayer = ply
+		if ply.EZoverDamage then
+			EZcorpse.EZoverDamage = ply.EZoverDamage
+		end
+		EZcorpse.BodyGroupValues = BodyGroupValues
+		EZcorpse:Spawn()
+		EZcorpse:Activate()
+	end
+	ply.EZoverDamage = nil
+
+	if ply.JModInv then
+		for _, v in ipairs(ply.JModInv.items) do
+			JMod.RemoveFromInventory(ply, v.ent, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+		end
+		for typ, amt in pairs(ply.JModInv.EZresources) do
+			JMod.RemoveFromInventory(ply, {typ, amt}, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
 		end
 	end
 end)
@@ -812,7 +871,13 @@ end, nil, "Apply's an EZ parachute to an entity")
 hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 	if veh.EZvehicleEjectPos then
 		local WorldPos = veh:LocalToWorld(veh.EZvehicleEjectPos)
-		ply:SetPos(WorldPos)
+		local Tr = util.TraceLine({
+			start = veh:LocalToWorld(veh:OBBCenter()),
+			endpos = WorldPos,
+			mask = MASK_SOLID,
+			filter = {ply, veh, veh:GetParent()}
+		})
+		if not Tr.Hit then ply:SetPos(veh:LocalToWorld(veh.EZvehicleEjectPos)) end
 		veh.EZvehicleEjectPos = nil
 	end
 end)
@@ -834,6 +899,7 @@ function JMod.EZ_Remote_Trigger(ply)
 end
 
 hook.Add("PlayerCanSeePlayersChat", "JMOD_PLAYERSEECHAT", function(txt, teamOnly, listener, talker)
+	if not IsValid(talker) then return end
 	if talker.EZarmor and talker.EZarmor.effects.teamComms then return JMod.PlayersCanComm(listener, talker) end
 end)
 

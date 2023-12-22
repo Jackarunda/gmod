@@ -10,5 +10,5 @@ ENT.EZammo = "Arrow"
 if SERVER then
 elseif CLIENT then
 	--
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

@@ -5,12 +5,16 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Misc."
 ENT.PrintName = "EZ Acorn"
 ENT.NoSitAllowed = true
-ENT.Spawnable = false --wonder when jack will get back to this...
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
----
 ENT.JModEZstorable = true
+---
+ENT.EZconsumes = {
+	JMod.EZ_RESOURCE_TYPES.WATER
+}
+ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 
-local STATE_NORMAL, STATE_BURIED = 0, 1
+local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
@@ -29,8 +33,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/cktheamazingfrog/player/scrat/acorn.mdl")
-		self:SetModelScale(.25)
+		self:SetModel("models/jmod/props/plants/acorn.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -38,14 +41,21 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(5)
 
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(5)
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:SetMass(5)
+				Phys:Wake()
+			end
 		end)
 
-		self.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
-		self.LastTouchedTime = CurTime() -- we need to have some kind of auto-despawn, since they multiply
-		self:Activate()
+		local Time = CurTime()
+		self.LastTouchedTime = Time -- we need to have some kind of auto-despawn, since they multiply
+		self.LastWateredTime = Time
+		self.EZremoveSelf = self.EZremoveSelf or false
+		self:SetState(STATE_NORMAL)
+		self.Hydration = 0
+		self.GroundWeld = nil
 	end
 
 	function ENT:Bury(activator)
@@ -54,10 +64,11 @@ if SERVER then
 		if Tr.Hit and table.HasValue(self.UsableMats, Tr.MatType) and IsValid(Tr.Entity:GetPhysicsObject()) then
 			local Ang = Tr.HitNormal:Angle()
 			Ang:RotateAroundAxis(Ang:Right(), -90)
-			local Pos = Tr.HitPos - Tr.HitNormal * 10
+			local Pos = Tr.HitPos - Tr.HitNormal * 0
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
-			constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
+			self:SetCollisionGroup(COLLISION_GROUP_PASSABLE_DOOR)
+			self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
 			local Fff = EffectData()
 			Fff:SetOrigin(Tr.HitPos)
 			Fff:SetNormal(Tr.HitNormal)
@@ -68,7 +79,24 @@ if SERVER then
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
 			--JackaGenericUseEffect(activator)
+			self.LastWateredTime = CurTime()
 		end
+	end
+
+	function ENT:TryLoadResource(typ, amt)
+		if(amt <= 0)then return 0 end
+		local Time = CurTime()
+		local Accepted = 0
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+			local Wata = self.Hydration
+			local Missing = 50 - Wata
+			if (Missing <= 0) then return 0 end
+			Accepted = math.min(Missing, amt)
+			self.Hydration = Wata + Accepted
+			self.LastWateredTime = Time
+			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+		end
+		return math.ceil(Accepted)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -80,7 +108,7 @@ if SERVER then
 		local Pos, State = self:GetPos(), self:GetState()
 
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
-			sound.Play("Metal_Box.Break", Pos)
+			sound.Play("Wood_Solid.Break", Pos)
 			--self:SetState(JMod.EZ_STATE_BROKEN)
 			SafeRemoveEntityDelayed(self, 1)
 		end
@@ -96,48 +124,99 @@ if SERVER then
 			if Alt then
 				JMod.SetEZowner(self, activator)
 				self:Bury(activator)
+				JMod.Hint(activator, "water seed")
 			else
+				self.EZremoveSelf = false
+				self.LastTouchedTime = Time
 				activator:PickupObject(self)
+				JMod.Hint(activator, "alt to plant")
 			end
 		elseif State == STATE_BURIED then
 			self:DrawShadow(true)
 			constraint.RemoveAll(self)
 			self:SetPos(self:GetPos() + self:GetUp() * 40)
+			self:SetState(STATE_NORMAL)
+			self:SetCollisionGroup(COLLISION_GROUP_NONE)
 			activator:PickupObject(self)
 		end
 	end
 
+	function ENT:Degenerate() 
+		constraint.RemoveAll(self)
+		self:SetNotSolid(true)
+		self:DrawShadow(false)
+		self:GetPhysicsObject():EnableCollisions(false)
+		self:GetPhysicsObject():EnableGravity(false)
+		self:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+		timer.Simple(2, function()
+			if (IsValid(self)) then self:Remove() end
+		end)
+	end
+
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
-
 		if State == STATE_NORMAL then
-			if Time - 120 > self.LastTouchedTime then
-				self:Remove()
+			if self.EZremoveSelf and ((Time - 300) > self.LastTouchedTime) then
+				self:Degenerate()
 			end
 		elseif State == STATE_BURIED then
-			if Time - 60 > self.LastTouchedTime then
+			if not IsValid(self.GroundWeld) then self:Degenerate() end
+			local Water = 0
+			if StormFox and StormFox.IsRaining() then 
+				Water = 5
+				self.LastWateredTime = Time
+			end
+			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
+			if (self.Hydration >= 50) then
+				self:SetState(STATE_GERMINATING)
+				self:SetColor(Color(150, 150, 150))
+			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
+				self:Degenerate()
+			end
+		elseif State == STATE_GERMINATING then
+			if not IsValid(self.GroundWeld) then self:Degenerate() end
+			if ((Time - 60) > self.LastTouchedTime) then
 				self:SpawnTree()
 			end
 		end
-		self:NextThink(Time + 1)
+		self:NextThink(Time + 5)
 		return true
 	end
 
-	function ENT:SpawnTree() 
-		local Tree = ents.Create("ent_jack_gmod_eztree")
-		Tree:SetPos(self:GetPos() + Vector(0, 0, 10))
-		Tree:SetAngles(Angle(0, 0, math.random(0, 360)))
-		Tree:SetWater(10)
-		Tree:Spawn()
-		Tree:Activate()
+	function ENT:SpawnTree()
+		local Pos, Owner, WatToGive = self:GetPos(), JMod.GetEZowner(self), self.Hydration
 		self:Remove()
+		timer.Simple(.1, function()
+			local Tree = ents.Create("ent_jack_gmod_eztree")
+			Tree:SetPos(Pos + Vector(0, 0, 10))
+			Tree:Spawn()
+			Tree:Activate()
+			Tree.Hydration = WatToGive * 2
+			JMod.SetEZowner(Tree, Owner)
+		end)
 	end
 
 	function ENT:OnRemove()
+		--
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		JMod.SetEZowner(self, ply, true)
+		self.NextRefillTime = Time
+		self.LastTouchedTime = Time
+	end
+
+	function ENT:GravGunPickupAllowed(ply) 
+		local State = self:GetState()
+		if (State == STATE_NORMAL) then
+			return true
+		end
 	end
 	
 elseif CLIENT then
 	function ENT:Initialize()
+		--
 	end
 
 	function ENT:Draw()

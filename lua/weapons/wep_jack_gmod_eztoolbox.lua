@@ -31,8 +31,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
-SWEP.EZmaxBasicParts = 100
+SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.EZmaxElectricity = 100
 SWEP.EZmaxGas = 100
 
@@ -124,7 +123,7 @@ SWEP.WElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["pickaxe"] = {
+	--[[["pickaxe"] = {
 		type = "Model",
 		model = "models/props_mining/pickaxe01.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
@@ -137,7 +136,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},
+	},--]]
 	["mask"] = {
 		type = "Model",
 		model = "models/props_silo/welding_helmet.mdl",
@@ -152,7 +151,7 @@ SWEP.WElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["axe"] = {
+	--[[["axe"] = {
 		type = "Model",
 		model = "models/props_forest/axe.mdl",
 		bone = "ValveBiped.Bip01_Spine4",
@@ -165,7 +164,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},
+	},--]]
 	["toolbox"] = {
 		type = "Model",
 		model = "models/weapons/w_models/w_tooljox.mdl",
@@ -229,7 +228,7 @@ function SWEP:Initialize()
 		self.Craftables = {}
 
 		for name, info in pairs(JMod.Config.Craftables) do
-			if info.craftingType == "toolbox" then
+			if (istable(info.craftingType) and table.HasValue(info.craftingType,"toolbox")) or (info.craftingType=="toolbox")then
 				-- we store this here for client transmission later
 				-- because we can't rely on the client having the config
 				local infoCopy = table.FullCopy(info)
@@ -241,7 +240,6 @@ function SWEP:Initialize()
 
 	self:SetGas(0)
 	self:SetElectricity(0)
-	self:SetBasicParts(0)
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -277,7 +275,6 @@ function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
 	self:NetworkVar("Int", 0, "Electricity")
 	self:NetworkVar("Int", 1, "Gas")
-	self:NetworkVar("Int", 2, "BasicParts")
 end
 
 function SWEP:UpdateNextIdle()
@@ -287,7 +284,6 @@ end
 
 function SWEP:GetEZsupplies(resourceType)
 	local AvaliableResources = {
-		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self:GetBasicParts(),
 		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
 		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
 	}
@@ -295,7 +291,7 @@ function SWEP:GetEZsupplies(resourceType)
 		if AvaliableResources[resourceType] and AvaliableResources[resourceType] > 0 then
 			return AvaliableResources[resourceType]
 		else
-			return 
+			return nil
 		end
 	else
 		return AvaliableResources
@@ -303,7 +299,7 @@ function SWEP:GetEZsupplies(resourceType)
 end
 
 function SWEP:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if not SERVER then  return end
 	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
 	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
@@ -354,17 +350,31 @@ function SWEP:BuildItem(selectedBuild)
 								print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
 						else
-							local Ent = ents.Create(Class)
+							local Ent
+							if string.Right(Class, 4) == ".mdl" then
+								Ent = ents.Create("prop_physics")
+								Ent:SetModel(Class)
+							else
+								Ent = ents.Create(Class)
+							end
 							Ent:SetPos(Pos + Norm * 20 * (BuildInfo.sizeScale or 1))
 							Ent:SetAngles(Angle(0, self.Owner:EyeAngles().y, 0))
 							JMod.SetEZowner(Ent, self.Owner)
+							Ent:SetCreator(self.Owner)
 							Ent:Spawn()
 							Ent:Activate()
+							if BuildInfo.skin then
+								if istable(BuildInfo.skin) then
+									Ent:SetSkin(table.Random(BuildInfo.skin))
+								else
+									Ent:SetSkin(BuildInfo.skin)
+								end
+							end
 							JMod.Hint(self.Owner, Class)
 							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
 							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
 						end
-						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " " .. "Parts: " .. self:GetBasicParts() .. " ")
+						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " ")
 					end
 				end
 			end)
@@ -498,7 +508,16 @@ function SWEP:Msg(msg)
 end
 
 function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
-	local DonorCurAmt, Grade = donor:GetEZsupplies(resourceType), recipient:GetGrade()
+	local DonorCurAmt
+	local TakeFromInv = false
+	if donor.GetEZsupplies then
+		DonorCurAmt = donor:GetEZsupplies(resourceType)
+	elseif donor.JModInv then
+		DonorCurAmt = donor.JModInv.EZresources[resourceType]
+		TakeFromInv = true
+	end
+
+	local Grade = recipient:GetGrade()
 	local RequiredSupplies = recipient.UpgradeCosts[Grade + 1]
 	---
 	local CurAmt= recipient.UpgradeProgress[resourceType] or 0
@@ -509,13 +528,17 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
 	local Msg = "UPGRADING\n"
 
 	for typ, amount in pairs(RequiredSupplies) do
-		Msg = Msg .. typ .. ": " .. tostring(recipient.UpgradeProgress[typ] or 0) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
+		Msg = Msg .. typ .. ": " .. tostring(math.floor(recipient.UpgradeProgress[typ] or 0)) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
 	end
 
 	self:Msg(Msg)
 
 	---
-	donor:SetEZsupplies(resourceType, DonorCurAmt - Given, self)
+	if TakeFromInv then
+		JMod.RemoveFromInventory(donor, {resourceType, Given})
+	else
+		donor:SetEZsupplies(resourceType, DonorCurAmt - Given, self)
+	end
 
 	local HaveEverything = true
 
@@ -639,7 +662,6 @@ function SWEP:OnDrop()
 	Kit:Spawn()
 	Kit:Activate()
 
-	Kit:SetBasicParts(self:GetBasicParts())
 	Kit:SetElectricity(self:GetElectricity())
 	Kit:SetGas(self:GetGas())
 
@@ -724,6 +746,7 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 	local Ent = ents.Create(JMod.EZ_RESOURCE_ENTITIES[typ])
 	Ent:SetPos(pos)
 	Ent:SetAngles(AngleRand())
+	Ent:SetCreator(self.Owner)
 	Ent:Spawn()
 	Ent:Activate()
 	Ent:SetResource(amt)
@@ -805,7 +828,6 @@ function SWEP:DrawHUD()
 
 	draw.SimpleTextOutlined("Power: "..math.floor(self:GetElectricity()), "Trebuchet24", W * .1, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	draw.SimpleTextOutlined("Gas: "..math.floor(self:GetGas()), "Trebuchet24", W * .1, H * .5 + 30, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
-	draw.SimpleTextOutlined("Basic Parts: "..math.floor(self:GetBasicParts()), "Trebuchet24", W * .1, H * .5 + 60, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 50))
 	
 	draw.SimpleTextOutlined("ALT+R: clear build item", "Trebuchet24", W * .4, H * .7 - 30, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))
 	draw.SimpleTextOutlined("R: select build item", "Trebuchet24", W * .4, H * .7, Color(255, 255, 255, 30), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, 10))

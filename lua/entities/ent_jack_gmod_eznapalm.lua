@@ -24,9 +24,11 @@ if SERVER then
 		self:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
 		local phys = self:GetPhysicsObject()
 
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-		end
+		timer.Simple(0, function()
+			if IsValid(phys) then
+				phys:EnableCollisions(false)
+			end
+		end)
 
 		self:SetNotSolid(true)
 		local Time = CurTime()
@@ -49,7 +51,6 @@ if SERVER then
 		self:SetAngles(NewVel:Angle())
 		self.CurVel = NewVel
 		self.InitialVel = nil
-		self:Think()
 	end
 
 	local function Inflictor(ent)
@@ -123,11 +124,7 @@ if SERVER then
 			local Solid = Surface ~= "water" and Surface ~= "default"
 
 			if Tr.HitSky then
-				timer.Simple(0.1, function()
-					if IsValid(self) then
-						SafeRemoveEntity(self)
-					end
-				end)
+				SafeRemoveEntity(self)
 
 				return
 			end
@@ -213,36 +210,26 @@ if SERVER then
 			Dam:SetInflictor(Inflictor(self))
 			tr.Entity:TakeDamageInfo(Dam)
 
-			timer.Simple(.01, function()
-				local Haz = ents.Create("ent_jack_gmod_ezfirehazard")
 
-				if IsValid(Haz) then
-					Haz:SetDTInt(0, 1)
-					Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
-					Haz:SetAngles(tr.HitNormal:Angle())
-					JMod.SetEZowner(Haz, self.EZowner)
-					Haz:SetDTEntity(0, self:GetDTEntity(0))
-					Haz.HighVisuals = self.HighVisuals
-					Haz:Spawn()
-					Haz:Activate()
+			local Haz = ents.Create("ent_jack_gmod_ezfirehazard")
 
-					if not tr.Entity:IsWorld() then
-						Haz:SetParent(tr.Entity)
-					end
+			if IsValid(Haz) then
+				Haz:SetDTInt(0, 1)
+				Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
+				Haz:SetAngles(tr.HitNormal:Angle())
+				JMod.SetEZowner(Haz, self.EZowner)
+				Haz.HighVisuals = self.HighVisuals
+				Haz:Spawn()
+				Haz:Activate()
+
+				if not tr.Entity:IsWorld() then
+					Haz:SetParent(tr.Entity)
 				end
+			end
 
-				timer.Simple(0.1, function()
-				if IsValid(self) then
-					SafeRemoveEntity(self)
-				end
-			end)
-			end)
+			SafeRemoveEntity(self)
 		else
-			timer.Simple(0.1, function()
-				if IsValid(self) then
-					SafeRemoveEntity(self)
-				end
-			end)
+			SafeRemoveEntity(self)
 		end
 	end
 elseif CLIENT then

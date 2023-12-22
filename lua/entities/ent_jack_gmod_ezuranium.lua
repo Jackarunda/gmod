@@ -35,7 +35,7 @@ if SERVER then
 			Ent.DragMult = .3
 			Ent:Spawn()
 			Ent:Activate()
-			Ent:SetVelocity(self:GetVelocity())
+			Ent.CurVel = self:GetVelocity()
 		end
 
 		self:NextThink(CurTime() + math.Rand(10, 20))
@@ -51,5 +51,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

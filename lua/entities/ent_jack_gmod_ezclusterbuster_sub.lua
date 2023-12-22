@@ -103,7 +103,7 @@ if SERVER then
 	function ENT:Detonate(delay, dmg)
 		if self.Exploded then return end
 		self.Exploded = true
-		local Att = self.EZowner or game.GetWorld()
+		local Att = JMod.GetEZowner(self)
 		local Vel, Pos, Ang = self:GetVelocity(), self:LocalToWorld(self:OBBCenter()), self:GetAngles()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
 		SafeRemoveEntityDelayed(self, 0.01)
@@ -125,7 +125,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		local Time, State, Phys, Att = CurTime(), self:GetState(), self:GetPhysicsObject(), self.EZowner or game.GetWorld()
+		local Time, State, Phys, Att = CurTime(), self:GetState(), self:GetPhysicsObject(), JMod.GetEZowner(self)
 		local Vel, Pos, Ang = Phys:GetVelocity(), self:GetPos(), self:GetAngles()
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 

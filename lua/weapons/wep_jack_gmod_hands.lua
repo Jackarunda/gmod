@@ -128,6 +128,7 @@ function SWEP:CanPickup(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
 	if ent:IsWorld() then return false end
+--	if ent:GetParent() then return false end
 	local class = ent:GetClass()
 	if pickupWhiteList[class] then return true end
 	if CLIENT then return true end
@@ -141,7 +142,7 @@ function SWEP:SecondaryAttack()
 	if self:GetFists() then return end
 
 	if SERVER then
-		JMod.Hint(self.Owner, "jmod hands grab", "jmod hands drag")
+		JMod.Hint(self.Owner, "hands grab")
 		self:SetCarrying()
 		local tr = self.Owner:GetEyeTraceNoCursor()
 
@@ -183,7 +184,8 @@ function SWEP:ApplyForce()
 
 		local StandingEnt = self.Owner:GetGroundEntity()
 		local StandingOn = IsValid(StandingEnt) and ((StandingEnt == self.CarryEnt) or (StandingEnt:IsConstrained() and table.HasValue(constraint.GetAllConstrainedEntities(StandingEnt), self.CarryEnt)))
-		if len > self.ReachDistance or StandingOn then
+		local PlyIn = (self.CarryEnt == self.Owner:GetVehicle())
+		if len > self.ReachDistance or StandingOn or PlyIn then
 			self:SetCarrying()
 
 			return
@@ -198,7 +200,7 @@ function SWEP:ApplyForce()
 		local Force = (avec - velo / 2) * mul
 		local ForceNormal = Force:GetNormalized()
 		local ForceMagnitude = Force:Length()
-		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.Config.General.HandGrabStrength)
+		ForceMagnitude = math.Clamp(ForceMagnitude, 0, 2000 * JMod.GetPlayerStrength(self.Owner))
 		Force = ForceNormal * ForceMagnitude
 
 		local CounterDir, CounterAmt = velo:GetNormalized(), velo:Length()
@@ -307,7 +309,6 @@ end
 
 function SWEP:PrimaryAttack()
 	if SERVER then
-		JMod.Hint(self.Owner, "jmod hands", "jmod hands move")
 		local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
@@ -321,15 +322,24 @@ function SWEP:PrimaryAttack()
 				return
 			end
 		end
-		if IsValid(self:GetCarrying()) then
+		--[[if IsValid(self:GetCarrying()) then
 			local PhysObj = self.CarryEnt:GetPhysicsObject()
 			self:SetNextPrimaryFire(CurTime() + .35)
 
-			if IsValid(PhysObj) then 
-				if (PhysObj:GetMass() >= (16 * JMod.Config.General.HandGrabStrength)) then
+			if IsValid(PhysObj) then
+				if (PhysObj:GetMass() > 35) then
 					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
 					return
 				end
+				local CraftingTableNear = false
+				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezprimitivebench")) do
+					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
+				end
+				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezworkbench")) do
+					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
+				end
+				if not(CraftingTableNear) then self.Owner:PrintMessage(HUD_PRINTCENTER, "You need to be closer to a craftingtable or workbench") return end
+
 				Pos = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * (self.CarryDist+5), {self.Owner}).HitPos
 				local Task = (Alt and "loosen") or "salvage"
 				local Message = JMod.EZprogressTask(self.CarryEnt, Pos, self.Owner, Task)
@@ -339,7 +349,6 @@ function SWEP:PrimaryAttack()
 				else
 					sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
 					if SERVER then
-						JMod.Hint(self.Owner, "work spread")
 						self:SetTaskProgress(self.CarryEnt:GetNW2Float("EZ"..Task.."Progress", 0))
 					end
 				end
@@ -348,7 +357,7 @@ function SWEP:PrimaryAttack()
 			return
 		else
 			self:SetTaskProgress(0)
-		end
+		end--]]
 	end
 
 	local side = "fists_left"
@@ -405,7 +414,7 @@ function SWEP:AttackFront()
 	local AimVec = self.Owner:GetAimVector()
 
 	if IsValid(Ent) or (Ent and Ent.IsWorld and Ent:IsWorld()) then
-		local SelfForce, Mul = 125, 1
+		local SelfForce, Mul = 125, (JMod.GetPlayerStrength(self.Owner) or 1)
 
 		if self:IsEntSoft(Ent) then
 			SelfForce = 25
@@ -451,6 +460,16 @@ end
 
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
+	
+	if not(self:GetFists()) then -- Pick up to inv
+		if self:GetCarrying() and IsValid(self:GetCarrying()) then
+			local Tar = self:GetCarrying()
+			local ply = self.Owner
+			
+			JMod.EZ_GrabItem(ply, nil, {Tar})
+		end
+	end
+	
 	self:SetFists(false)
 	self:SetBlocking(false)
 	self:SetCarrying()

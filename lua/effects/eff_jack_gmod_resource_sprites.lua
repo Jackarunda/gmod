@@ -30,6 +30,11 @@
 		siz = 5,
 		cols = {Color(100, 100, 100, 20), Color(200, 200, 200, 60)}
 	},
+	[JMod.EZ_RESOURCE_TYPES.SAND] = {
+		sprite = "particle/smokestack",
+		siz = 3,
+		cols = {Color(199, 177, 54, 50), Color(173, 159, 76, 50)}
+	},
 	[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = {
 		sprites = {"effects/fleck_cement1", "effects/fleck_cement2"},
 		siz = 1,
@@ -43,7 +48,6 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	local SurfaceProp = data:GetSurfaceProp()
 	self.Speed = math.Rand(.9, 1.1)
-	self.LifeTime = self.Scale * math.Rand(1, 2)
 
 	if SurfaceProp == 0 then
 		self.Target = nil -- directionless explosion
@@ -80,7 +84,7 @@ function EFFECT:Init(data)
 		phys:Wake()
 		phys:SetDamping(0, 0)
 		phys:SetMass(10)
-		phys:SetMaterial("gmod_silent")
+		phys:SetMaterial("Default_silent")
 		phys:SetVelocity(MyFlightVec * VectorRand() * math.Rand(2, 3))
 		phys:AddAngleVelocity(VectorRand() * math.random(1, 100))
 
@@ -89,7 +93,7 @@ function EFFECT:Init(data)
 		end
 	end
 
-	self.DieTime = CurTime() + math.Rand(3, 6)
+	self.DieTime = CurTime() + math.Rand(1.2, 1.5)
 end
 
 function EFFECT:PhysicsCollide()
@@ -113,7 +117,7 @@ function EFFECT:Think()
 		end
 
 		if IsValid(Phys) then
-			Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * .7 * self.Speed - Phys:GetVelocity() / 4)
+			Phys:ApplyForceCenter(Vec:GetNormalized() * Dist * 1 * self.Speed - Phys:GetVelocity() / 4)
 		end
 	end
 

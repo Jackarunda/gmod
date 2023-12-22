@@ -73,6 +73,23 @@ JMod.Hints = {
 		LangKey = "hint arm boundingmine",
 		Followup = "bind walk"
 	},
+	["alt to plant"] = {
+		LangKey = "hint alt to plant"
+	},
+	["tree growth"] = {
+		LangKey = "hint tree growth"
+	},
+	["plant water"] = {
+		LangKey = "hint plant water",
+		RepeatCount = 10
+	},
+	["tree mature"] = {
+		LangKey = "hint tree mature",
+		Time = 8
+	},
+	["water seed"] = {
+		LangKey = "hint water seed"
+	},
 	["arm powderkeg"] = {
 		LangKey = "hint arm powderkeg",
 		Followup = "bind walk"
@@ -102,6 +119,13 @@ JMod.Hints = {
 	["defuse"] = {
 		LangKey = "hint defuse",
 		Followup = "bind walk"
+	},
+	["open trap"] = {
+		LangKey = "hint open trap",
+		RepeatCount = 5
+	},
+	["ready trap"] = {
+		LangKey = "hint ready trap"
 	},
 	["detpack combo"] = {
 		LangKey = "hint detpack combo"
@@ -255,6 +279,21 @@ JMod.Hints = {
 		LangKey = "hint ent_jack_gmod_eznade_timed"
 	},
 	-- Misc. Mechanics
+	["hands grab"] = {
+		LangKey = "hint hands grab",
+		Followup = "hands drag"
+	},
+	["hands drag"] = {
+		LangKey = "hint hands drag",
+		Followup = "hands inv"
+	},
+	["hands inv"] = {
+		LangKey = "hint hands inv"
+	},
+	["dementia"] = {
+		LangKey = "hint jack forgot these hints",
+		RepeatCount = 999
+	},
 	["toggle"] = {
 		LangKey = "hint toggle"
 	},
@@ -263,7 +302,7 @@ JMod.Hints = {
 	},
 	["nopower"] = {
 		LangKey = "hint nopower",
-		RepeatCount = 3
+		RepeatCount = 10
 	},
 	["nopower_trifuel"] = {
 		LangKey = "hint nopower trifuel",
@@ -299,6 +338,9 @@ JMod.Hints = {
 		LangKey = "hint can not eat",
 		RepeatCount = 5
 	},
+	["alt to eat"] = {
+		LangKey = "hint alt to eat"
+	},
 	["missing supplies"] = {
 		LangKey = "hint missing supplies",
 		RepeatCount = 5
@@ -309,6 +351,9 @@ JMod.Hints = {
 	},
 	["stick to self"] = {
 		LangKey = "hint stick to self"
+	},
+	["scrounge"] = {
+		LangKey = "hint scavenging"
 	},
 	-- Misc. Entities
 	["ent_jack_gmod_ezaidradio"] = {
@@ -386,6 +431,23 @@ JMod.Hints = {
 	["refill geo"] = {
 		LangKey = "hint refill geo"
 	},
+	["refill sfg water"] = {
+		LangKey = "hint refill sfg water"
+	},
+	["need combustibles"] = {
+		LangKey = "hint need combustibles",
+		RepeatCount = 3
+	},
+	["ent_jack_gmod_ezsprinkler"] = {
+		LangKey = "hint ent_jack_gmod_ezsprinkler"
+	},
+	["sprinkler water"] = {
+		LangKey = "hint sprinkler water",
+		RepeatCount = 5
+	},
+	["ent_jack_gmod_ezsfg"] = {
+		LangKey = "hint ent_jack_gmod_ezsfg"
+	},
 	["ent_jack_gmod_eztoolbox"] = {
 		LangKey = "hint ent_jack_gmod_eztoolbox"
 	},
@@ -411,6 +473,12 @@ JMod.Hints = {
     ["ent_jack_gmod_ezrefinery"] = {
 		LangKey = "hint ent_jack_gmod_ezrefinery"
 	},
+	["ent_jack_gmod_ezcentrifuge"] = {
+		LangKey = "hint ent_jack_gmod_ezcentrifuge"
+	},
+	["refill centrifuge"] = {
+		LangKey = "hint refill centrifuge"
+	},
     ["ore scan"] = {
 		LangKey = "hint ore scan"
 	},
@@ -426,6 +494,49 @@ JMod.Hints = {
 	["ent_jack_gmod_ezgroundscanner"] = {
 		LangKey = "hint ent_jack_gmod_ezgroundscanner"
 	},
+	["ent_jack_gmod_ezrtg"] = {
+		LangKey = "hint ent_jack_gmod_ezrtg"
+	},
+	["ent_jack_sleepingbag"] = {
+		LangKey = "hint ent_jack_sleepingbag"
+	},
+	["sleeping bag set spawn"] = {
+		LangKey = "hint sleeping bag set spawn"
+	},
+	["sleeping bag someone else"] = {
+		LangKey = "hint sleeping bag someone else"
+	},
+	["sleeping bag unroll first"] = {
+		LangKey = "hint sleeping bag unroll first"
+	},
+	["sleeping bag wait"] = {
+		LangKey = "hint sleeping bag wait"
+	},
+	["ifak"] = {
+		LangKey = "hint ifak",
+		Repeat = 5
+	},
+	["ent_jack_gmod_ezbeartrap"] = {
+		LangKey = "hint ent_jack_gmod_ezbeartrap"
+	},
+	["ent_jack_gmod_ezprimitivebench"] = {
+		LangKey = "hint ent_jack_gmod_ezprimitivebench"
+	},
+	["prim bench smelt"] = {
+		LangKey = "hint prim bench smelt"
+	},
+	["ent_jack_gmod_ezshovel"] = {
+		LangKey = "hint ent_jack_gmod_ezshovel"
+	},
+	["ent_jack_gmod_ezpickaxe"] = {
+		LangKey = "hint ent_jack_gmod_ezpickaxe"
+	},
+	["ent_jack_gmod_ezaxe"] = {
+		LangKey = "hint ent_jack_gmod_ezaxe"
+	},
+	["ent_jack_gmod_ezbucket"] = {
+		LangKey = "hint ent_jack_gmod_ezbucket"
+	},
 	-- Armor
 	["armor wear"] = {
 		LangKey = "hint armor wear",
@@ -439,6 +550,19 @@ JMod.Hints = {
 	},
 	["inventory"] = {
 		LangKey = "hint inventory"
+	},
+	["hint item inventory add"] = {
+		LangKey = "hint item inventory add"
+	},
+	["hint item inventory drop"] = {
+		LangKey = "hint item inventory drop"
+	},
+	["hint item inventory missing"] = {
+		LangKey = "hint item inventory missing",
+		Repeat = 100
+	},
+	["hint item inventory full"] = {
+		LangKey = "hint item inventory full"
 	},
 	["armor weight"] = {
 		LangKey = "hint armor weight"
@@ -588,6 +712,9 @@ JMod.Hints = {
 	["refillfab"] = {
 		LangKey = "hint refillfab"
 	},
+	["refillprimbench"] = {
+		LangKey = "hint refillprimbench"
+	},
 	-- Weapons
 	["weapon steadiness"] = {
 		LangKey = "hint weapon steadiness"
@@ -661,6 +788,11 @@ JMod.Hints = {
 	},
 	["wep_jack_gmod_crossbow"] = {
 		LangKey = "hint wep_jack_gmod_crossbow",
+		RepeatCount = 5
+	},
+	-- Tools
+	["prospecting"] = {
+		LangKey = "hint prospecting",
 		RepeatCount = 5
 	}
 }

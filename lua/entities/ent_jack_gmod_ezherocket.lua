@@ -155,7 +155,7 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), self.EZowner or game.GetWorld(), -self:GetRight()
+		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
 		JMod.Sploom(Att, SelfPos, 150)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
@@ -216,7 +216,7 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, self.EZowner or self, self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
@@ -230,7 +230,7 @@ if SERVER then
 			end
 		end)
 
-		JMod.Hint(self.EZowner, "backblast", self:GetPos())
+		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
 	end
 
 	function ENT:EZdetonateOverride(detonator)

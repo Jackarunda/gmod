@@ -207,7 +207,7 @@ if SERVER then
 		end)
 
 		---
-		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, self.EZowner or game.GetWorld())
+		JMod.FragSplosion(self, SelfPos, 15000, 300, 8000, JMod.GetEZowner(self))
 		---
 		self:Remove()
 

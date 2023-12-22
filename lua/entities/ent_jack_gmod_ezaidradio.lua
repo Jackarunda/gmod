@@ -50,6 +50,48 @@ if(SERVER)then
 		self.Voices = Files
 	end
 
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]", "Requester [ENTITY]", "Request [STRING]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off", "Player making request", "Radio request"})
+		---
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "LastUser [ENTITY]", "RecievedSpeech [STRING]", "SuccessfulTransmit [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Last player to use radio", "The message recieved by the radio", "Outputs 1 on success"}
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:UpdateWireOutputs()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+		end
+	end
+
+	function ENT:TriggerInput(iname, value)
+		local State = self:GetState()
+		if State < 0 then return end
+		if iname == "OnOff" then
+			if value == 1 then
+				self:TurnOn()
+			elseif value == 0 then
+				self:TurnOff()
+			end
+		elseif iname == "ToggleState" then
+			if value > 0 then
+				if State == 0 then
+					self:TurnOn()
+				elseif State > 0 then
+					self:TurnOff()
+				end
+			end
+		elseif iname == "Request" then
+			local Requester = JMod.GetEZowner(self)
+			if IsValid(self.Inputs.Requester) then
+				Requester = self.Inputs.Requester.Value
+			end
+			self:EZreceiveSpeech(Requester, value)
+		end
+	end
+
 	function ENT:Use(activator)
 		local Time = CurTime()
 		if self.NextUseTime > Time then return end
@@ -59,7 +101,7 @@ if(SERVER)then
 			local State = self:GetState()
 
 			if State == STATE_BROKEN then
-				JMod.Hint(self.EZowner, "destroyed")
+				JMod.Hint(JMod.GetEZowner(self), "destroyed")
 
 				return
 			end
@@ -67,12 +109,16 @@ if(SERVER)then
 			local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State > 0 then
-				if Alt and State == JMod.EZ_STATION_STATE_READY then
-					net.Start("JMod_EZradio")
-					net.WriteBool(false)
-					net.WriteEntity(self)
-					net.WriteTable(JMod.Config.RadioSpecs.AvailablePackages)
-					net.Send(activator)
+				if Alt then
+					if State == JMod.EZ_STATION_STATE_READY then
+						net.Start("JMod_EZradio")
+						net.WriteBool(false)
+						net.WriteEntity(self)
+						net.WriteTable(JMod.Config.RadioSpecs.AvailablePackages)
+						net.Send(activator)
+					elseif (State == JMod.EZ_STATION_STATE_BUSY) or (State == JMod.EZ_STATION_STATE_DELIVERING) then
+						self:Connect(activator, true)
+					end
 				else
 					self:TurnOff()
 					JMod.Hint(activator, "toggle")
@@ -80,12 +126,20 @@ if(SERVER)then
 			else
 				if self:GetElectricity() > 0 then
 					self:TurnOn(activator)
+					JMod.SetEZowner(self, activator, true)
 					JMod.Hint(activator, "aid help")
 				else
-					JMod.Hint(self.EZowner, "nopower")
+					JMod.Hint(JMod.GetEZowner(self), "nopower")
 				end
 			end
 		end
+	end
+
+	function ENT:TurnOn(activator)
+		if self:WaterLevel() > 3 then return end
+		self:SetState(STATE_CONNECTING)
+		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
+		self.ConnectionAttempts = 0
 	end
 
 	function ENT:TurnOff()
@@ -94,18 +148,19 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 	end
 
-	function ENT:Speak(msg, parrot)
+	function ENT:Speak(msg, parrot, parrotply)
 		if self:GetState() < 1 then return end
 		self:ConsumeElectricity()
 
 		if parrot then
 			for _, ply in pairs(player.GetAll()) do
-				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
+				if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and JMod.PlyHasArmorEff(ply, "teamComms"))) then
 					net.Start("JMod_EZradio")
 					net.WriteBool(true)
 					net.WriteBool(true)
 					net.WriteString(parrot)
 					net.WriteEntity(self)
+					net.WriteEntity(parrotply)
 					net.Send(ply)
 				end
 			end
@@ -113,7 +168,7 @@ if(SERVER)then
 
 		local MsgLength = string.len(msg)
 
-		for i = 1, math.Round(MsgLength / 15) do
+		for i = 1, math.Round(MsgLength / 30) do
 			timer.Simple(i * .75, function()
 				if IsValid(self) and (self:GetState() > 0) then
 					self:EmitSound("/npc/combine_soldier/vo/" .. self.Voices[math.random(1, #self.Voices)], 65, 120)
@@ -124,7 +179,7 @@ if(SERVER)then
 		timer.Simple(.5, function()
 			if IsValid(self) then
 				for _, ply in pairs(player.GetAll()) do
-					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and ply.EZarmor and ply.EZarmor.effects.teamComms)) then
+					if ply:Alive() and (ply:GetPos():DistToSqr(self:GetPos()) <= 200 * 200 or (self:UserIsAuthorized(ply) and JMod.PlyHasArmorEff(ply, "teamComms"))) then
 						net.Start("JMod_EZradio")
 						net.WriteBool(true)
 						net.WriteBool(false)
@@ -135,15 +190,6 @@ if(SERVER)then
 				end
 			end
 		end)
-	end
-
-	function ENT:TurnOn(activator)
-		local OldOwner = self.EZowner
-		JMod.SetEZowner(self, activator, true)
-
-		self:SetState(STATE_CONNECTING)
-		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
-		self.ConnectionAttempts = 0
 	end
 
 	function ENT:Connect(ply, reassign)
@@ -166,8 +212,10 @@ if(SERVER)then
 			if IsValid(self) then
 				if reassign and (OldID == OutpostID) then
 					self:Speak("No other avaliable J.I. Radio Outpost found")
-				else
+				elseif Station and istable(Station) then
 					self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID .. "\nBearing: " .. tostring(math.Round(Station.outpostDirection:Angle().y)))
+				else
+					self:Speak("Comm line lost with J.I. Radio Outpost...")
 				end
 			end
 		end)
@@ -175,6 +223,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
+		self:UpdateWireOutputs()
 
 		if self.NextRealThink < Time then
 			local Electricity = self:GetElectricity()
@@ -187,7 +236,7 @@ if(SERVER)then
 					self:Speak("Broadcast received, establishing comm line...")
 					self:Connect(self.EZowner)
 				else
-					JMod.Hint(self.EZowner, "aid sky")
+					JMod.Hint(JMod.GetEZowner(self), "aid sky")
 					self.ConnectionAttempts = self.ConnectionAttempts + 1
 
 					if self.ConnectionAttempts > 5 then
@@ -263,7 +312,7 @@ if(SERVER)then
 		end
 	end
 	function ENT:UserIsAuthorized(ply)
-		if not ply then return false end
+		if not IsValid(ply) then return false end
 		if not ply:IsPlayer() then return false end
 		if self.EZowner and (ply == self.EZowner) then return true end
 		local Allies = (self.EZowner and self.EZowner.JModFriends) or {}
@@ -283,11 +332,12 @@ if(SERVER)then
 	end
 
 	function ENT:EZreceiveSpeech(ply, txt)
+		if self:WaterLevel() > 3 then return end
 		local State = self:GetState()
-		if State < 2 then return end
+		if State < 2 then return false end
 
 		if not self:TryFindSky() then
-			JMod.Hint(self.EZowner, "aid sky")
+			JMod.Hint(JMod.GetEZowner(self), "aid sky")
 			self:Speak("Can not establish connection to any outpost. Shutting down.")
 
 			timer.Simple(1, function()
@@ -296,25 +346,35 @@ if(SERVER)then
 				end
 			end)
 
-			return
+			return false
 		end
 
-		if not self:UserIsAuthorized(ply) then return end
+		if not self:UserIsAuthorized(ply) then return false end
 		txt = string.lower(txt)
-		local NormalReq, BFFreq = string.sub(txt, 1, 14) == "supply radio: ", string.sub(txt, 1, 6) == "heyo: "
+		local NormalReq, AltReq, BFFreq = string.sub(txt, 1, 14) == "supply radio: ", string.sub(txt, 1, 11) == "aid radio: ", string.sub(txt, 1, 6) == "heyo: "
+		local SuccessfulTransmit = false
 
-		if NormalReq or BFFreq then
-			local Name, ParrotPhrase = string.sub(txt, 15), txt
+		if NormalReq or AltReq or BFFreq then
+			local Message, ParrotPhrase = string.sub(txt, 15), txt
 
-			if BFFreq then
-				Name = string.sub(txt, 7)
+			if AltReq then
+				Message = string.sub(txt, 12)
 			end
 
-			if Name == "help" then
+			if BFFreq then
+				Message = string.sub(txt, 7)
+			end
+
+			if istable(WireLib) then
+				WireLib.TriggerOutput(self, "LastUser", ply)
+				WireLib.TriggerOutput(self, "RecievedSpeech", Message)
+			end
+
+			if Message == "help" then
 				if State == 2 then
 					--local Msg,Num='stand near radio\nsay in chat: "status", or "supply radio: [package]"\navailable packages are:\n',1
 					local Msg, Num = 'stand near radio and say in chat "supply radio: status", or "supply radio: [package]". available packages are:', 1
-					self:Speak(Msg, ParrotPhrase)
+					self:Speak(Msg, ParrotPhrase, ply)
 					local str = ""
 
 					for name, items in pairs(JMod.Config.RadioSpecs.AvailablePackages) do
@@ -343,32 +403,34 @@ if(SERVER)then
 						end
 					end)
 
-					JMod.Hint(self.EZowner, "aid package")
+					JMod.Hint(JMod.GetEZowner(self), "aid package")
 
-					return true
+					SuccessfulTransmit = true
 				end
-			elseif Name == "status" then
-				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase)
+			elseif Message == "status" then
+				self:Speak(JMod.EZradioStatus(self, self:GetOutpostID(), ply, BFFreq), ParrotPhrase, ply)
 
-				return true
-			elseif Name == "reassign outpost" then
+				SuccessfulTransmit = true
+			elseif Message == "reassign outpost" then
 				self:Connect(ply, true)
 
-				return true
-			elseif JMod.Config.RadioSpecs.AvailablePackages[Name] then
-				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Name, BFFreq), ParrotPhrase)
+				SuccessfulTransmit = true
+			elseif JMod.Config.RadioSpecs.AvailablePackages[Message] then
+				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Message, BFFreq), ParrotPhrase, ply)
 
-				return true
+				SuccessfulTransmit = true
 			end
 		end
 
-		return false
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "SuccessfulTransmit", (SuccessfulTransmit and 1) or 0)
+		end
+
+		return SuccessfulTransmit
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextWhine = Time + math.Rand(0, 3)
 		ent.NextRealThink = Time + math.Rand(0, 3)
 		ent.NextUseTime = Time + math.Rand(0, 3)
@@ -377,7 +439,7 @@ elseif(CLIENT)then
 	function ENT:CustomInit()
 		self.Dish=JMod.MakeModel(self,"models/props_rooftop/satellitedish02.mdl")
 		self.Panel=JMod.MakeModel(self,"models/props_lab/reciever01a.mdl",nil,.8)
-		self.Headset=JMod.MakeModel(self,"models/lt_c/sci_fi/headset_2.mdl")
+		self.Headset=JMod.MakeModel(self,"models/jmod/props/items/sci_fi_headset.mdl")
 		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100

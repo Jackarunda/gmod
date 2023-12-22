@@ -46,20 +46,14 @@ if SERVER then
 				end
 
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
-				ply.EZnutrition.NextEat = Time + 100 / JMod.Config.FoodSpecs.EatSpeed
-				ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + 20 * JMod.Config.FoodSpecs.ConversionEfficiency
-				self:SetResource(self:GetResource() - 10)
+				local AmtToRemove = math.min(10, self:GetResource())
+				self:SetResource(self:GetResource() - AmtToRemove)
 
-				if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
-					local Old = ply:getDarkRPVar("energy")
-					ply:setDarkRPVar("energy", math.Clamp(Old + 20 * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
-				end
+				JMod.ConsumeNutrients(ply, AmtToRemove * 2)
 
 				if self:GetResource() <= 0 then
 					self:Remove()
 				end
-
-				ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 
 				if ply.EZvirus and ply.EZvirus.Severity > 1 then
 					if ply.EZvirus.InfectionWarned then
@@ -105,5 +99,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

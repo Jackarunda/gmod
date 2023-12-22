@@ -7,18 +7,17 @@ ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
+---
 ENT.Model = "models/compressor/compressorbake.mdl"
 ENT.Mass = 500
 ENT.EZcolorable = true
---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.MaxPower = 100
---
+ENT.SpawnHeight = 10
+---
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100,
 	MaxElectricity = 100
 }
-
 ENT.DynamicPerfSpecs = {
 	Armor = 1,
 	ChargeSpeed = 1
@@ -130,26 +129,24 @@ if SERVER then
 	end
 
 	function ENT:CleanseAir()
-		local selfPos, selfGrade = self:LocalToWorld(self:OBBCenter()), self:GetGrade()
+		local selfPos, Grade = self:LocalToWorld(self:OBBCenter()), self:GetGrade()
 		local entites = ents.FindInSphere(selfPos, self.Range)
 
 		for k, v in ipairs(entites) do
 
 			local particleTable = JMod.EZ_HAZARD_PARTICLES[v:GetClass()]
 
-			if istable(particleTable) then
-				if IsValid(v) and JMod.ClearLoS(self, v, false, 0, true) then 
-					if JMod.LinCh(selfGrade * 2, 1, self.Range/10) then
-
-						if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
-							self:SetChemicals(self:GetChemicals() + particleTable[2])
-						elseif particleTable[1] == JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL then
-							self:SetFissile(self:GetFissile() + particleTable[2])
-						end
-
-						SafeRemoveEntity(v)
-						self:ConsumeElectricity(.2)
+			if istable(particleTable) and IsValid(v) and JMod.ClearLoS(self, v, false, 10, true) then 
+				local LinCh = JMod.LinCh(Grade * 1.1, 1, 5)
+				if LinCh then
+					if particleTable[1] == JMod.EZ_RESOURCE_TYPES.CHEMICALS then
+						self:SetChemicals(self:GetChemicals() + particleTable[2])
+					elseif particleTable[1] == JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL then
+						self:SetFissile(self:GetFissile() + particleTable[2])
 					end
+
+					SafeRemoveEntity(v)
+					self:ConsumeElectricity(.2)
 				end
 			end
 		end
@@ -157,6 +154,9 @@ if SERVER then
 
 	function ENT:Think()
 		local State = self:GetState()
+
+		self:UpdateWireOutputs()
+
 		if State == STATE_ON then
 			local Time = CurTime()
 			if (self.NextLogicThink < Time) then
@@ -182,7 +182,7 @@ if SERVER then
 			end
 
 			local Eff = EffectData()
-			Eff:SetOrigin(self:GetPos() + self:GetRight() * -10 + self:GetUp() * 80)
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * -13 + self:GetUp() * 80)
 			Eff:SetScale(0.1)
 			util.Effect("eff_jack_gmod_airsuck", Eff, true, true)
 
@@ -191,10 +191,8 @@ if SERVER then
 		end
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUseTime = Time + math.Rand(0, 3)
 	end
 
@@ -209,17 +207,17 @@ elseif CLIENT then
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
-		local BasePos = SelfPos
+		local BasePos = SelfPos + Up*30
 		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		local PanelDraw = true
 		---
+		self:DrawModel()
+		---
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
-		---
-		self:DrawModel()
 		---
 		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 

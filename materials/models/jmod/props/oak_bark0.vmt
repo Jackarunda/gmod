@@ -3,5 +3,6 @@
 {
 	"$model" "1"
 	"$basetexture" "models/jmod/props/oak_bark0_D"
+	"$bumpmap" "models/jmod/props/oak_bark0_N"
 }
     

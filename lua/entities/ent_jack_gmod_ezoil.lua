@@ -39,7 +39,7 @@ if SERVER then
 				Fiah:SetKeyValue("health", 30)
 				Fiah:SetKeyValue("fireattack", 1)
 				Fiah:SetKeyValue("firesize", math.random(20, 200))
-				Fiah:SetOwner(self.EZowner or game.GetWorld())
+				Fiah:SetOwner(JMod.GetEZowner(self))
 				Fiah:Spawn()
 				Fiah:Activate()
 				Fiah:Fire("StartFire", "", 0)
@@ -58,5 +58,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end

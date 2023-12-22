@@ -19,7 +19,6 @@ local Props = {"models/props_c17/tools_wrench01a.mdl", "models/props_c17/tools_p
 function ENT:SetupDataTables() 
 	self:NetworkVar("Float", 0, "Electricity")
 	self:NetworkVar("Float", 1, "Gas")
-	self:NetworkVar("Float", 2, "BasicParts")
 end
 
 if SERVER then
@@ -46,13 +45,14 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(50)
-			self:GetPhysicsObject():Wake()
+			if not IsValid(Phys) then return end
+			Phys:SetMass(50)
+			Phys:Wake()
 		end)
 		self.MaxElectricity = 100
 		self.MaxGas = 100
-		self.MaxBasicParts = 100
 		if self.SpawnFull then
 			self:SetElectricity(100)
 			self:SetGas(100)
@@ -105,7 +105,6 @@ if SERVER then
 			activator:SelectWeapon("wep_jack_gmod_eztoolbox")
 
 			local ToolBox = activator:GetWeapon("wep_jack_gmod_eztoolbox")
-			ToolBox:SetBasicParts(self:GetBasicParts())
 			ToolBox:SetElectricity(self:GetElectricity())
 			ToolBox:SetGas(self:GetGas())
 
@@ -119,16 +118,14 @@ elseif CLIENT then
 	function ENT:Initialize()
 		self.MaxElectricity = 100
 		self.MaxGas = 100
-		self.MaxBasicParts = 100
 	end
 	function ENT:Draw()
 		self:DrawModel()
 		local Opacity = math.random(50, 200)
-		local ElecFrac, GasFrac, PartFrac = self:GetElectricity()/self.MaxElectricity, self:GetGas()/self.MaxGas, self:GetBasicParts()/self.MaxBasicParts
+		local ElecFrac, GasFrac = self:GetElectricity()/self.MaxElectricity, self:GetGas()/self.MaxGas
 		JMod.HoloGraphicDisplay(self, Vector(0, -5, 17), Angle(90, -50, 90), .05, 300, function()
 			draw.SimpleTextOutlined("POWER "..math.Round(ElecFrac*100).."%","JMod-Display",-200,10,JMod.GoodBadColor(ElecFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 			draw.SimpleTextOutlined("GAS "..math.Round(GasFrac*100).."%","JMod-Display",0,10,JMod.GoodBadColor(GasFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-			draw.SimpleTextOutlined("PARTS "..math.Round(PartFrac*100).."%","JMod-Display",200,10,JMod.GoodBadColor(PartFrac, true, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 		end)
 	end
 

@@ -28,7 +28,7 @@ if SERVER then
 		end)
 
 		---
-		self.EZowner = self.EZowner or game.GetWorld()
+		self.EZowner = JMod.GetEZowner(self)
 		self.NextSeek = CurTime() + math.Rand(1, 3)
 	end
 
@@ -52,7 +52,7 @@ if SERVER then
 	function ENT:Detonate(dir)
 		if self.Exploded then return end
 		self.Exploded = true
-		local Att = self.EZowner or game.GetWorld()
+		local Att = JMod.GetEZowner(self)
 		local Pos = self:GetPos()
 		JMod.Sploom(Att, Pos, 100)
 		util.ScreenShake(Pos, 99999, 99999, .1, 1000)
@@ -87,9 +87,9 @@ if SERVER then
 
 			for k, v in pairs(ents.FindInCone(Pos, Vector(0, 0, -1), 1500, math.cos(math.rad(45)))) do
 				local Phys, Class = v:GetPhysicsObject(), v:GetClass()
-
+				
 				if IsValid(Phys) and not (v == self) and not (Class == self.ClassName) and not IsBlackListed(Class) then
-					if v:IsPlayer() or v:IsNPC() or v:IsVehicle() then
+					if v:IsPlayer() or v:IsNPC() or v:IsVehicle() or v.LVS then
 						if JMod.ClearLoS(self, v) and JMod.ShouldAttack(self, v, nil, true) then
 							table.insert(Targets, v)
 						end

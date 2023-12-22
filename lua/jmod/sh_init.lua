@@ -12,8 +12,9 @@ game.AddParticles("particles/gb5_50lb.pcf")
 -- game.AddParticles("particles/inferno_fx.pcf")
 
 game.AddDecal("BigScorch", {"decals/big_scorch1", "decals/big_scorch2", "decals/big_scorch3"})
-
 game.AddDecal("GiantScorch", {"decals/giant_scorch1", "decals/giant_scorch2", "decals/giant_scorch3"})
+game.AddDecal("EZtreeRoots", {"decals/ez_tree_roots"})
+game.AddDecal("EZgroundHole", {"decals/ez_ground_cracks"})
 
 PrecacheParticleSystem("pcf_jack_nuke_ground")
 PrecacheParticleSystem("pcf_jack_nuke_air")
@@ -98,6 +99,7 @@ local cheats = GetConVar("sv_cheats")
 local timeScale = GetConVar("host_timescale")
 
 hook.Add("EntityEmitSound", "JMOD_EntityEmitSound", function(t)
+	if not(JMod.Config.QoL.ChangePitchWithHostTimeScale) then return end
 	local p = t.Pitch
 
 	if game.GetTimeScale() ~= 1 then

@@ -25,7 +25,7 @@ function ENT:GetEZsupplies(typ)
 		if Supplies[typ] then
 			return Supplies[typ]
 		else
-			return 0
+			return nil
 		end
 	else
 		return Supplies
@@ -33,10 +33,11 @@ function ENT:GetEZsupplies(typ)
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)
-	if not SERVER then print("[JMOD] - You can't set EZ supplies on client") return end
+	if not SERVER then  return end
 	if typ ~= self:GetResourceType() then return end
 	if amt <= 0 then self:ApplySupplyType("generic") end
 	self:SetResource(math.Clamp(amt, 0, self.MaxResource))
+	self:CalcWeight()
 end
 
 ---
@@ -76,7 +77,11 @@ if SERVER then
 		end
 
 		self.NextLoad = 0
-
+		---
+		if istable(WireLib) then
+			self.Inputs = WireLib.CreateInputs(self, {"Drop Resource [NORMAL]"}, {"Drops a resource out on an input > 0"})
+			self.Outputs = WireLib.CreateOutputs(self, {"Type [STRING]", "Amount Left [NORMAL]"}, {"Will be 'generic' by default", "Amount of resources left in the crate"})
+		end
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
@@ -108,12 +113,17 @@ if SERVER then
 		local Frac = self:GetResource() / self.MaxResource
 		self:GetPhysicsObject():SetMass(100 + Frac * 300)
 		self:GetPhysicsObject():Wake()
+		if (WireLib) then
+			WireLib.TriggerOutput(self, "Type", self:GetResourceType())
+			WireLib.TriggerOutput(self, "Amount Left", self:GetResource())
+		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 
-		if dmginfo:GetDamage() > self.DamageThreshold then
+		if (dmginfo:GetDamage() > self.DamageThreshold) and not(self.Destroyed) then
+			self.Destroyed = true
 			local Pos = self:GetPos()
 			sound.Play("Wood_Crate.Break", Pos)
 			sound.Play("Wood_Box.Break", Pos)
@@ -189,6 +199,18 @@ if SERVER then
 		end
 
 		return 0
+	end
+
+	local RestrictedMaterials = {
+		JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL,
+		JMod.EZ_RESOURCE_TYPES.ANTIMATTER
+	}
+	function ENT:PostEntityPaste(ply)
+		local Type = self:GetResourceType()
+		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) then
+			self:SetEZsupplies(Type, 0, self)
+		end
+		self.NextLoad = 0
 	end
 elseif CLIENT then
 	local TxtCol = Color(10, 10, 10, 220)

@@ -299,7 +299,8 @@ local DetonationEffects = {
 					Nade:Spawn()
 
 					timer.Simple(0, function()
-						Nade:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 200))
+						Nade.Canister = self
+						Nade.CurVel = VectorRand() * math.random(1, 100)
 					end)
 				end)
 			end

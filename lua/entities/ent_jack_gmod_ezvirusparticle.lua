@@ -1,6 +1,6 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
+ENT.Base = "ent_jack_gmod_ezgasparticle"
 ENT.PrintName = "EZ Virus Particle"
 ENT.Author = "Jackarunda"
 ENT.NoSitAllowed = true
@@ -9,69 +9,69 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+--
 ENT.EZvirusParticle = true
+ENT.AffectRange = 300
+--
 
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self.LifeTime = math.random(50, 100)
+		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
+		self.NextDmg = Time + 5
 		self:SetModel("models/dav0r/hoverball.mdl")
 		self:SetMaterial("models/debug/debugwhite")
-		self:RebuildPhysics()
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetNotSolid(true)
 		self:DrawShadow(false)
+		self.CurVel = self.CurVel or VectorRand() * 10
 	end
 
-	function ENT:Think()
-		if CLIENT then return end
-		local Time, SelfPos = CurTime(), self:GetPos()
+	function ENT:CalcMove(ThinkRateHz)
+		local SelfPos = self:GetPos()
+		local Force = (VectorRand() * 40) + (JMod.Wind * 5) + Vector(0, 0, -15)
 
-		if self.DieTime < Time then
-			self:Remove()
-
-			return
+		if (self.NextDmg < CurTime()) then
+			JMod.TryVirusInfectInRange(self, JMod.GetEZowner(self), 0, 0)
 		end
+	
+		-- apply acceleration
+		self.CurVel = self.CurVel + Force / ThinkRateHz
 
-		local Force = VectorRand() * 40 - Vector(0, 0, 10)
-		JMod.TryVirusInfectInRange(self, self.EZowner, 0, 0)
-		self:Extinguish()
-		local Phys = self:GetPhysicsObject()
-		Phys:SetVelocity(Phys:GetVelocity() * .1)
-		Phys:ApplyForceCenter(Force)
-		self:NextThink(Time + math.Rand(4, 8))
+		-- apply air resistance
+		self.CurVel = self.CurVel / 1
 
-		return true
+		-- observe current velocity
+		local NewPos = SelfPos + self.CurVel / ThinkRateHz
+
+		-- make sure we're not gonna hit something. If so, bounce
+		local MoveTrace = util.TraceLine({
+			start = SelfPos,
+			endpos = NewPos,
+			filter = { self, self.Canister },
+			mask = MASK_SHOT
+		})
+		if not MoveTrace.Hit then
+			-- move unobstructed
+			self:SetPos(NewPos)
+		else
+			-- bounce in accordance with Ideal Gas Law
+			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
+			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
+			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
+			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
+			self.CurVel = -(CurVelAng:Forward() * Speed * 0.5) -- These particles aren't very 'gassy'
+		end
 	end
 
-	function ENT:RebuildPhysics()
-		local size = 1
-		self:PhysicsInitSphere(size, "gmod_silent")
-		self:SetCollisionBounds(Vector(-.1, -.1, -.1), Vector(.1, .1, .1))
-		self:PhysWake()
-		self:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-		local Phys = self:GetPhysicsObject()
-		Phys:SetMass(1)
-		Phys:EnableGravity(false)
-		Phys:SetMaterial("gmod_silent")
-	end
-
-	function ENT:PhysicsCollide(data, physobj)
-		self:GetPhysicsObject():ApplyForceCenter(-data.HitNormal * 10)
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		self:TakePhysicsDamage(dmginfo)
-	end
-
-	function ENT:Use(activator, caller)
-	end
-	--
 elseif CLIENT then
 	function ENT:Initialize()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 	end
 
 	function ENT:DrawTranslucent()
+		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
 			self:DrawModel()
 		end

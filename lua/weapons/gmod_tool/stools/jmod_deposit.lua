@@ -23,7 +23,7 @@ function TOOL:LeftClick( trace )
 
 	if SERVER then
 
-		if ( ResourceType == "random" ) then
+		if ( ResourceType == "random" ) or not(ResourceInfo[ResourceType]) then
 			ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)]
 		end
 
@@ -120,33 +120,11 @@ function TOOL:RightClick( trace )
 	end
 end
 
-local Yeps = {"Yes", "yep", "Of course", "Leave me alone", ">:)"}
-
 function TOOL:Reload(tr)
-	if CLIENT then
-		local MotherFrame = vgui.Create("DFrame")
-		MotherFrame:SetTitle("Warning")
-		MotherFrame:SetSize(400, 200)
-		MotherFrame:Center()
-		MotherFrame:MakePopup()
-
-		local W, H = MotherFrame:GetWide(), MotherFrame:GetTall()
-
-		local WarningText = vgui.Create("DLabel", MotherFrame)
-		WarningText:SetPos((W * 0.25) - 10, H * 0.4)
-		WarningText:SetSize(300, 20)
-		WarningText:SetText("Are you sure you want to remove all deposits?")
-
-		local YepButton = vgui.Create("DButton", MotherFrame)
-		YepButton:SetPos(W * 0.25, H * 0.6)
-		YepButton:SetSize(200, 50)
-		YepButton:SetText(table.Random(Yeps))
-		function YepButton:DoClick()
-			net.Start("JMod_SaveLoadDeposits")
-				net.WriteString("clear")
-			net.SendToServer()
-			MotherFrame:Close()
-		end
+	if SERVER then
+		net.Start("JMod_SaveLoadDeposits")
+		net.WriteString("warning")
+		net.Send(self:GetOwner())
 	end
 	return true
 end
@@ -224,10 +202,19 @@ function TOOL.BuildCPanel( CPanel )
 		LoadButton:SetSize(100, 30)
 		LoadButton:SetText("LOAD")
 		function LoadButton:DoClick()
-			net.Start("JMod_SaveLoadDeposits")
-				net.WriteString("load")
-				net.WriteString(NameEntry:GetText())
-			net.SendToServer()
+			print("LoadButton pressed")
+			print(NameEntry:GetText())
+			if NameEntry:GetText() then
+				net.Start("JMod_SaveLoadDeposits")
+					net.WriteString("load")
+					net.WriteString(NameEntry:GetText())
+				net.SendToServer()
+			else
+				net.Start("JMod_SaveLoadDeposits")
+					net.WriteString("load_list")
+				net.SendToServer()
+			end
+			--MotherFrame:Close()
 		end
 	end
 	CPanel:AddItem(MenuButton)

@@ -118,6 +118,7 @@ ENT.DynamicPerfSpecs={
 	--
 }
 ENT.DynamicPerfSpecExp=1
+ENT.EZstorageSpace = 0
 
 ---- Shared Functions ----
 function ENT:SetupDataTables()
@@ -221,6 +222,10 @@ if(SERVER)then
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
+
+		if self.SetupWire and istable(WireLib) then
+			self:SetupWire()
+		end
 		
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
@@ -240,6 +245,81 @@ if(SERVER)then
 		self.NextRefillTime = 0
 	end
 
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+		---
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			if not(istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ)) then
+				table.insert(WireOutputs, OutResourceName)
+				table.insert(WireOutputDesc, ResourceDesc)
+			end
+		end
+		if self.GetProgress then
+			table.insert(WireOutputs, "Progress [NORMAL]")
+			table.insert(WireOutputDesc,  "Machine's progress")
+		end
+		if self.FlexFuels then
+			table.insert(WireOutputs, "FlexFuel [NORMAL]")
+			table.insert(WireOutputDesc,  "Machine's flex fuel left")
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:UpdateWireOutputs()
+		if istable(WireLib) then
+			WireLib.TriggerOutput(self, "State", self:GetState())
+			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+			if self.GetProgress then
+				WireLib.TriggerOutput(self, "Progress", self:GetProgress())
+			end
+			for _, typ in ipairs(self.EZconsumes) do
+				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+					WireLib.TriggerOutput(self, "Durability", self.Durability)
+				else
+					if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
+						WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
+					else
+						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+							local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+							if ResourceGetMethod then
+								local ResourceName = string.Replace(typ, " ", "")
+								WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
+							end
+						end
+					end
+				end
+			end
+		end
+	end
+
+	function ENT:TriggerInput(iname, value)
+		local State = self:GetState()
+		if State < 0 then return end
+		if iname == "OnOff" then
+			if value == 1 then
+				self:TurnOn()
+			elseif value == 0 then
+				self:TurnOff()
+			end
+		elseif iname == "ToggleState" then
+			if value > 0 then
+				if State == 0 then
+					self:TurnOn()
+				elseif State > 0 then
+					self:TurnOff()
+				end
+			end
+		end
+	end
+
 	function ENT:UpdateDepositKey()
 		self.DepositKey = JMod.GetDepositAtPos(self, self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
 	end
@@ -250,21 +330,46 @@ if(SERVER)then
 			local Ent = data.HitEntity
 			local Held = false
 			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
-			if (data.Speed > 150) and (data.Speed < 800) then
+			if (data.Speed > 150) then
 				self:EmitSound("Metal_Box.ImpactHard")
-			elseif (data.Speed > 800) then
-				local Dam, World = DamageInfo(), game.GetWorld()
-				local PhysDamage = math.Round(data.Speed / (physobj:GetMass() / data.HitObject:GetMass())^2, 2)
-				Dam:SetDamage(PhysDamage)
-				Dam:SetAttacker(Ent or World)
-				Dam:SetInflictor(Ent or World)
-				Dam:SetDamageType(DMG_CRUSH)
-				Dam:SetDamagePosition(data.HitPos)
-				Dam:SetDamageForce(data.TheirOldVelocity / physobj:GetMass())
-				if not Held then
-					JMod.DamageSpark(self)
-					self:TakeDamageInfo(Dam)
-					self:EmitSound("Metal_Box.Break")
+				if (data.Speed > 500) then
+					local World = game.GetWorld()
+					local CollisionDir = data.OurOldVelocity - data.TheirOldVelocity
+					local TheirForce = (.5 * data.HitObject:GetMass() * ((CollisionDir:Length()/16)*0.3048)^2)
+					if Ent == World then
+						TheirForce = (.5 * physobj:GetMass() * ((CollisionDir:Length()/16)*0.3048)^2)
+					end
+					local ForceThreshold = physobj:GetMass() * (self.EZanchorage or 1000)
+					local PhysDamage = TheirForce/(physobj:GetMass())
+
+					--jprint(PhysDamage)
+					--jprint("Their Speed: ", math.Round(CollisionDir:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
+					
+					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
+						physobj:EnableMotion(true)
+					end
+					if PhysDamage >= 1 and not(Held) then
+						local CrushDamage = DamageInfo()
+						CrushDamage:SetDamage(math.floor(PhysDamage))
+						CrushDamage:SetDamageType(DMG_CRUSH)
+						CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
+						CrushDamage:SetDamagePosition(data.HitPos)
+						CrushDamage:SetAttacker(Ent or World)
+						CrushDamage:SetInflictor(Ent or World)
+						self:TakeDamageInfo(CrushDamage)
+						self:EmitSound("Metal_Box.Break")
+						JMod.DamageSpark(self)
+
+						--[[if data.HitEntity:IsVehicle() then
+							local CrashDamage = DamageInfo()
+							--jprint(Dmg)
+							CrashDamage:SetDamage(Dmg * 2)
+							CrashDamage:SetDamageType(DMG_CRUSH)
+							CrashDamage:SetDamageForce(data.TheirOldVelocity * -0.001)
+							CrashDamage:SetDamagePosition(data.HitPos)
+							data.HitEntity:TakeDamageInfo(CrashDamage)
+						end]]--
+					end
 				end
 			end
 		end
@@ -459,6 +564,13 @@ if(SERVER)then
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.URANIUM)then
+					local Uran = self:GetUranium()
+					local Missing = self.MaxUranium - Uran
+					if(Missing < 1)then return 0 end
+					Accepted=math.min(Missing,amt)
+					self:SetUranium(Uran+Accepted)
+					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.FUEL)then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()
@@ -491,7 +603,23 @@ if(SERVER)then
 						self:SetCoal(Coal + Accepted)
 					end
 					self:EmitSound("Boulder.ImpactSoft", 65, math.random(90, 110))
-				elseif (string.find(typ, " ore")) then
+				elseif(typ==JMod.EZ_RESOURCE_TYPES.WOOD)then
+					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
+						local Powa = self:GetElectricity()
+						local Missing = self.MaxElectricity - Powa
+						if(Missing <= 0)then return 0 end
+						local PotentialPower = math.min(Missing, amt * JMod.EnergyEconomyParameters.BasePowerConversions[typ])
+						self:SetElectricity(Powa + PotentialPower)
+						Accepted = PotentialPower / JMod.EnergyEconomyParameters.BasePowerConversions[typ]
+					else
+						local Wood = self:GetWood()
+						local Missing = self.MaxWood - Wood
+						if(Missing < 1)then return 0 end
+						Accepted = math.min(Missing, amt)
+						self:SetWood(Wood + Accepted)
+					end
+					self:EmitSound("Wood.ImpactSoft", 65, math.random(90, 110))
+				elseif (string.find(typ, " ore"))or(typ==JMod.EZ_RESOURCE_TYPES.SAND) then
 					if(self.GetOreType and (self:GetOreType() == "generic" or typ == self:GetOreType())) then
 						self:SetOreType(typ)
 						local COre = self:GetOre()
@@ -513,10 +641,38 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + 1
-		if ent.NextUseTime then
-			ent.NextUseTime = Time + 1
+		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+			SafeRemoveEntity(ent)
+		else
+			JMod.SetEZowner(self, ply, true)
+			ent.NextRefillTime = Time + 1
+			if ent.NextUseTime then
+				ent.NextUseTime = Time + 1
+			end
+			if ent.OnPostEntityPaste then
+				ent:OnPostEntityPaste(ply, ent, createdEntities)
+			end
+			if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
+				for _, typ in ipairs(ent.EZconsumes) do
+					if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
+						ent:SetElectricity(0)
+					else
+						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+							local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+							if ResourceSetMethod then
+								ResourceSetMethod(ent, 0)
+							end
+						end
+					end
+				end
+			end
+			if ent.SetProgress then
+				ent:SetProgress(0)
+			end
+			if ent.EZupgradable then
+				ent:SetGrade(JMod.EZ_GRADE_BASIC)
+				ent:InitPerfSpecs()
+			end
 		end
 	end
 
@@ -533,6 +689,7 @@ elseif(CLIENT)then
 
 	function ENT:Initialize()
 		self:SetModel(self.Model)
+		if self.ClientOnly then return end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
 		self:InitPerfSpecs()

@@ -12,6 +12,7 @@ ENT.Model = "models/jmod/machines/geothermal.mdl"
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.SpawnHeight = 52
 ENT.Mass = 8000
+ENT.EZanchorage = 2000
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 300,
@@ -67,7 +68,7 @@ if(SERVER)then
 			self:UpdateDepositKey()
 
 			if not(self.DepositKey)then
-				JMod.Hint(self.EZowner, "geothermal gen")
+				JMod.Hint(JMod.GetEZowner(self), "geothermal gen")
 			elseif(GroundIsSolid)then
 				local HitAng = Tr.HitNormal:Angle()
 				local Pitch = HitAng.p
@@ -85,7 +86,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
-					JMod.Hint(self.EZowner, "machine mounting problem")
+					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
 		end
@@ -145,7 +146,7 @@ if(SERVER)then
 					end
 				end)
 			elseif self:GetWater() <= 0 then
-				JMod.Hint(self.EZowner, "refill geo")
+				JMod.Hint(JMod.GetEZowner(self), "refill geo")
 			end
 		else
 			self:TryPlace()
@@ -168,6 +169,8 @@ if(SERVER)then
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
 		local Phys = self:GetPhysicsObject()
+
+		self:UpdateWireOutputs()
 
 		if self.EZinstalled then
 			if Phys:IsMotionEnabled() or self:IsPlayerHolding() then
@@ -201,7 +204,7 @@ if(SERVER)then
 					return
 				end
 
-				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate --* JMod.Config.ResourceEconomy.ExtractionSpeed
 				self:SetProgress(self:GetProgress() + FlowRate / (self.ChargeRate))
 
 				if self.NextWaterLoseTime < Time then
@@ -260,8 +263,8 @@ if(SERVER)then
 					Dmg:SetDamage(100 * DistanceFactor) -- wanna scale this with distance
 					Dmg:SetDamageType(DMG_BURN)
 					Dmg:SetDamageForce(Vector(0, 0, 5000) * DistanceFactor) -- some random upward force
-					Dmg:SetAttacker(dmginfo:GetAttacker() or game.GetWorld()) -- the earth is mad at you
-					Dmg:SetInflictor(dmginfo:GetAttacker() or game.GetWorld())
+					Dmg:SetAttacker((IsValid(dmginfo:GetAttacker()) and dmginfo:GetAttacker()) or game.GetWorld()) -- the earth is mad at you
+					Dmg:SetInflictor(self or game.GetWorld())
 					Dmg:SetDamagePosition(ent:GetPos())
 
 					if ent.TakeDamageInfo then
@@ -278,10 +281,8 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-		ent.NextRefillTime = Time + math.Rand(0, 3)
 		ent.NextUse = Time + math.Rand(0, 3)
 		ent.NextResourceThinkTime = Time + math.Rand(0, 3)
 		self.NextWaterLoseTime = Time

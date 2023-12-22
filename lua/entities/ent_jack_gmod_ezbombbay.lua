@@ -46,7 +46,7 @@ if SERVER then
 
 		---
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Drop [NORMAL]", "DropDud [NORMAL]"}, {"Drops the specified bomb, input 0 to drop them all", "Drops bomb unarmed"})
+			self.Inputs = WireLib.CreateInputs(self, {"Drop [NORMAL]", "DropDud [NORMAL]"}, {"Drops the specified bomb, input -1 to drop them all", "Drops bomb unarmed"})
 
 			self.Outputs = WireLib.CreateOutputs(self, {"LastBomb [STRING]", "Amount [NORMAL]"}, {"The last loaded bomb", "How many bombs are contained in the bay"})
 		end
@@ -67,7 +67,7 @@ if SERVER then
 	function ENT:TriggerInput(iname, value)
 		if iname == "Drop" and value > 0 then
 			self:BombRelease(value, true)
-		elseif iname == "Drop" and value == 0 then
+		elseif iname == "Drop" and value == -1 then
 			if #self.Bombs > 0 then
 				for i = 1, #self.Bombs do
 					timer.Simple(1 * i, function()
@@ -79,7 +79,7 @@ if SERVER then
 			end
 		elseif iname == "DropDud" and value > 0 then
 			self:BombRelease(value, false)
-		elseif iname == "DropDud" and value == 0 then
+		elseif iname == "DropDud" and value == -1 then
 			if #self.Bombs > 0 then
 				for i = 1, #self.Bombs do
 					timer.Simple(1 * i, function()
@@ -138,9 +138,12 @@ if SERVER then
 	end
 
 	function ENT:BombRelease(slotNum, arm, ply)
+		local Time = CurTime()
+		if self.NextDropTime and (self.NextDropTime > Time) then return end
+		self.NextDropTime = Time + .9
 		local NumOBombs = #self.Bombs
 		slotNum = slotNum or NumOBombs
-		ply = ply or self.EZowner or game.GetWorld()
+		ply = ply or JMod.GetEZowner(self)
 		if NumOBombs <= 0 then return end
 		if slotNum == 0 or slotNum > NumOBombs then return end
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
@@ -206,6 +209,11 @@ if SERVER then
 	function ENT:Use(activator)
 		JMod.Hint(activator, "bomb bay")
 		self:BombRelease(#self.Bombs, false)
+	end
+
+	function ENT:PostEntityPaste(ply, ent)
+		local Time = CurTime()
+		self.NextDropTime = Time + 1
 	end
 elseif CLIENT then
 end

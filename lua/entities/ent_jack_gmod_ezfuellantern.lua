@@ -77,7 +77,7 @@ if SERVER then
 		self.Entity:TakePhysicsDamage(dmginfo)
 
 		if ((dmginfo:IsDamageType(DMG_BURN)) or (dmginfo:IsDamageType(DMG_DIRECT))) then
-			if (math.random(1, 10 == 2)) then
+			if (math.random(1, 10) == 2) then
 				self:Light()
 			end
 		end

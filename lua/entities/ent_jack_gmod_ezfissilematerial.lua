@@ -26,14 +26,16 @@ if SERVER then
 			local Owner, Count = self.EZowner, self:GetResource() / 10
 
 			timer.Simple(.5, function()
-				for k = 1, JMod.Config.Particles.NuclearRadiationMult * Count * 10 do
-					local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-					Gas.Range = 1000
-					Gas:SetPos(pos)
-					JMod.SetEZowner(Gas, Owner or game.GetWorld())
-					Gas:Spawn()
-					Gas:Activate()
-					Gas:GetPhysicsObject():SetVelocity(VectorRand() * math.random(1, 500) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
+				for i = 1, JMod.Config.Particles.NuclearRadiationMult * Count * 10 do
+					timer.Simple(i * .05, function()
+						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
+						Gas.Range = 500
+						Gas:SetPos(pos)
+						JMod.SetEZowner(Gas, Owner or game.GetWorld())
+						Gas:Spawn()
+						Gas:Activate()
+						Gas.CurVel = (VectorRand() * math.random(1, 1000) + Vector(0, 0, 100 * JMod.Config.Particles.NuclearRadiationMult))
+					end)
 				end
 			end)
 		end
@@ -51,5 +53,5 @@ elseif CLIENT then
 		end)
 	end
 
-	language.Add(ENT.ClassName, ENT.PrintName)
+	--language.Add(ENT.ClassName, ENT.PrintName)
 end
