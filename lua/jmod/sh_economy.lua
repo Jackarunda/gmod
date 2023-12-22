@@ -298,6 +298,7 @@ local SalvagingTable = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .5
 	},
 	metalvehicle = {
+		[JMod.EZ_RESOURCE_TYPES.LEAD] = .05,
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .2,
 		[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = .1,
 		[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = .1,
@@ -1271,9 +1272,10 @@ if SERVER then
 			["models/props_junk/garbage_coffeemug001a.mdl"] = 1,
 			["models/props_junk/garbage_glassbottle001a.mdl"] = 2,
 			["models/props_junk/garbage_milkcarton001a.mdl"] = 1,
-			["models/props_junk/garbage_metalcan002a.mdl"] = 6,
+			["models/props_junk/garbage_metalcan002a.mdl"] = 5,
 			["models/props_junk/garbage_takeoutcarton001a.mdl"] = 1,
-			["models/props_junk/garbage_plasticbottle003a.mdl"] = 1,
+			["models/props_junk/garbage_plasticbottle003a.mdl"] = 2,
+			["models/props_junk/garbage_plasticbottle001a.mdl"] = 1,
 			["models/props_junk/glassbottle01a.mdl"] = 1,
 			["models/props_junk/glassjug01.mdl"] = 1,
 			["models/props_junk/metal_paintcan001a.mdl"] = 1,
