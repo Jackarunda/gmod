@@ -576,13 +576,12 @@ local function PopulateControls(parent, data, motherFrame, isCraftables)
 		local AlphabetizedSubcatSettings = table.GetKeys(data["subcats"][v])
 		table.sort(AlphabetizedSubcatSettings, function(a, b) return a < b end)
 
-<<<<<<< HEAD
 		handle_settings(data["subcats"][v], AlphabetizedSubcatSettings, v)
-=======
+
 		if v == "AvailablePackages" then continue end
 
 		handle_settings(controls["subcats"][v], AlphabetizedSubcatSettings, v)
->>>>>>> master
+
 	end
 end 
 
