@@ -2015,7 +2015,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				sizeScale = 1,
 				category = "Other",
-				craftingType = {"toolbox", "workbench", "crafting table"},
+				craftingType = {"toolbox", "workbench", "craftingtable"},
 				description = "A sleeping bag you can set your spawn point at."
 			},
 			["EZ Ballistic Mask"] = {
