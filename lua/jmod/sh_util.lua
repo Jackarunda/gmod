@@ -301,7 +301,12 @@ function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useRe
 
 		Attempts = Attempts + 1
 	end
-	return AllDone
+
+	if next(RequirementsRemaining) then
+		return AllDone, RequirementsRemaining
+	else
+		return AllDone
+	end
 end
 
 function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)

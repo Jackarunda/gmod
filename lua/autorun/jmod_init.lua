@@ -366,8 +366,11 @@ local Handcraft = function(ply, cmd, args)
 			Bench:Spawn()
 			Bench:Activate()
 		end)
-		JMod.ConsumeResourcesInRange(ScrapResources, Pos, 200, ply, false, LocalScrap)
-		JMod.ConsumeResourcesInRange(ResourcesFromResourceEntities, Pos, 200, ply, false)
+		
+		local AllDone, Moar = JMod.ConsumeResourcesInRange(PrimitiveBenchReqs, Pos, 200, ply, false, LocalScrap)
+		if not(AllDone) then
+			JMod.ConsumeResourcesInRange(Moar, Pos, 200, ply, false)
+		end
 	else
 		local Mssg = ""
 		for k, v in pairs(StuffLeft) do
