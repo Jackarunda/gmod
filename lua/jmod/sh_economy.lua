@@ -1311,7 +1311,12 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
-		local Debug = args[1] and JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
+		local Debug = args[1] --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
+
+		if Debug then
+			if not JMod.IsAdmin(ply) then print("JMod: This console command only works for admins") return end
+			if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
+		end
 
 		local Pos, Range = ply:GetShootPos(), 500
 
@@ -1396,7 +1401,7 @@ if SERVER then
 					local Mins, Maxs = Loot:GetCollisionBounds()
 					local BBVec = Maxs - Mins
 					local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
-					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight))
+					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight + 1))
 					Loot:SetAngles(AngleRand())
 					Loot:Spawn()
 					Loot:Activate()
