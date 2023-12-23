@@ -52,7 +52,7 @@ if SERVER then
 		local Time = CurTime()
 
 		local TimeSinceMoved = Time - self.LastMoved
-		local IsMovin = self:GetPhysicsObject():GetVelocity():Length() > 1
+		local IsMovin = self:GetPhysicsObject():GetVelocity():Length() > 2
 
 		if (IsMovin) then
 			self.LastMoved = Time
@@ -67,12 +67,16 @@ if SERVER then
 	end
 
 	function ENT:DoTheFreeze()
+		self.WorldWeld = constraint.Weld(self, game.GetWorld(), 0, 0, 500, false, false)
 		self:GetPhysicsObject():SetMass(500)
 		self:GetPhysicsObject():Sleep()
 		self.Gefrozen = true
 	end
 
 	function ENT:GetSchmovin()
+		if IsValid(self.WorldWeld) then
+			SafeRemoveEntity(self.WorldWeld)
+		end
 		self:GetPhysicsObject():SetMass(100)
 		self:GetPhysicsObject():Wake()
 		self.Gefrozen = false
