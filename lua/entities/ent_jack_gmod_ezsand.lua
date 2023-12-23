@@ -52,14 +52,15 @@ if SERVER then
 		local Time = CurTime()
 
 		local TimeSinceMoved = Time - self.LastMoved
-		local IsMovin = self:GetPhysicsObject():GetVelocity():Length() > 2
+		local IsMovin = (self:GetPhysicsObject():GetVelocity():Length() > 5) or self:IsPlayerHolding()
 
 		if (IsMovin) then
 			self.LastMoved = Time
-		else
-			if (TimeSinceMoved > 5 and not self.Gefrozen) then
-				self:DoTheFreeze()
+			if self.Gefrozen or IsValid(self.FreezeWeld) then
+				self:GetSchmovin()
 			end
+		elseif (TimeSinceMoved > 5 and not(self.Gefrozen or IsValid(self.FreezeWeld))) then
+			self:DoTheFreeze()
 		end
 
 		self:NextThink(Time + 2)
@@ -67,17 +68,25 @@ if SERVER then
 	end
 
 	function ENT:DoTheFreeze()
-		self.WorldWeld = constraint.Weld(self, game.GetWorld(), 0, 0, 500, false, false)
+		if IsValid(self.FreezeWeld) then
+			SafeRemoveEntity(self.FreezeWeld)
+		end
+		local WeldTr = util.QuickTrace(self:GetPos(), Vector(0, 0, -12), self)
+		if WeldTr.Hit and (WeldTr.Entity ~= NULL) then
+			self.FreezeWeld = constraint.Weld(self, WeldTr.Entity, 0, 0, 500, false, false)
+		end
 		self:GetPhysicsObject():SetMass(500)
 		self:GetPhysicsObject():Sleep()
 		self.Gefrozen = true
 	end
 
 	function ENT:GetSchmovin()
-		if IsValid(self.WorldWeld) then
-			SafeRemoveEntity(self.WorldWeld)
+		if IsValid(self.FreezeWeld) then
+			SafeRemoveEntity(self.FreezeWeld)
 		end
-		self:GetPhysicsObject():SetMass(100)
+		if not(self:IsPlayerHolding()) then
+			self:GetPhysicsObject():SetMass(100) --Sorse
+		end
 		self:GetPhysicsObject():Wake()
 		self.Gefrozen = false
 	end
