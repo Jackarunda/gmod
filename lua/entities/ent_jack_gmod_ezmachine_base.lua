@@ -652,26 +652,28 @@ if(SERVER)then
 			if ent.OnPostEntityPaste then
 				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
-			if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
-				for _, typ in ipairs(ent.EZconsumes) do
-					if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
-						ent:SetElectricity(0)
-					else
-						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
-							local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-							if ResourceSetMethod then
-								ResourceSetMethod(ent, 0)
+			if not(JMod.IsAdmin(ply)) then
+				if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
+					for _, typ in ipairs(ent.EZconsumes) do
+						if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
+							ent:SetElectricity(0)
+						else
+							if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+								local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+								if ResourceSetMethod then
+									ResourceSetMethod(ent, 0)
+								end
 							end
 						end
 					end
 				end
-			end
-			if ent.SetProgress then
-				ent:SetProgress(0)
-			end
-			if ent.EZupgradable then
-				ent:SetGrade(JMod.EZ_GRADE_BASIC)
-				ent:InitPerfSpecs()
+				if ent.SetProgress then
+					ent:SetProgress(0)
+				end
+				if ent.EZupgradable then
+					ent:SetGrade(JMod.EZ_GRADE_BASIC)
+					ent:InitPerfSpecs()
+				end
 			end
 		end
 	end
