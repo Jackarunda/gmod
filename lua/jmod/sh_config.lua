@@ -1768,7 +1768,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 80
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50
 				},
 				noRequirementScaling = true,
 				category = "Tools",
