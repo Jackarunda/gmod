@@ -1311,11 +1311,11 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
-		local Debug = args[1]
+		local Debug = args[1] and JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
 
 		local Pos, Range = ply:GetShootPos(), 500
 
-		if not(JMod.Config.General.AllowScrounging) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is not allowed") return end
+		if not(JMod.Config.General.AllowScrounging) and not(Debug) then ply:PrintMessage(HUD_PRINTCENTER, "Scrounging is not allowed") return end
 		if not (Debug) then
 			for k, pos in pairs(ScroungedPositions) do
 				local DistanceTo = Pos:Distance(pos)
@@ -1324,7 +1324,7 @@ if SERVER then
 
 			ply.NextScroungeTime = ply.NextScroungeTime or 0
 			if ply.NextScroungeTime > Time then ply:PrintMessage(HUD_PRINTCENTER, "Slow down there pardner") return end
-			ply.NextScroungeTime = Time + 20
+			ply.NextScroungeTime = Time + (20 * JMod.Config.ResourceEconomy.ScroungeCooldownMult)
 		end
 
 		local ScroungeTable = {}
@@ -1363,7 +1363,7 @@ if SERVER then
 
 		if table.IsEmpty(ScroungeResults) then ply:PrintMessage(HUD_PRINTCENTER, "There's nothing here") return end
 
-		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = 5, 0, 0, 1000
+		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = math.Round(JMod.Config.ResourceEconomy.ScroungeResultAmount), 0, 0, 1000
 		local LastEnv
 		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do
 			AttemptedCount = AttemptedCount + 1
@@ -1404,34 +1404,36 @@ if SERVER then
 					SpawnedItems = SpawnedItems + 1
 					LastEnv = EnvironmentType
 
-					timer.Simple(3, function()
-						if (IsValid(Loot)) and (Loot:GetPhysicsObject():GetMass() <= 35) then
-							-- record natural resting place
-							Loot.SpawnPos = Loot:GetPos()
-							timer.Simple(120, function()
-								if (IsValid(Loot)) then
-								local CurPos = Loot:GetPos()
-									if (CurPos:Distance(Loot.SpawnPos) <= 1) then
-										-- it hasn't moved an inch in a whole two minutes
-										constraint.RemoveAll(Loot)
-										Loot:SetNotSolid(true)
-										Loot:DrawShadow(false)
-										Loot:GetPhysicsObject():EnableCollisions(false)
-										Loot:GetPhysicsObject():EnableGravity(false)
-										Loot:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
-										SafeRemoveEntityDelayed(Loot, 2)
+					if JMod.Config.ResourceEconomy.ScroungeDespawnTimeMult > 0 then
+						timer.Simple(3, function()
+							if (IsValid(Loot)) and (Loot:GetPhysicsObject():GetMass() <= 35) then
+								-- record natural resting place
+								Loot.SpawnPos = Loot:GetPos()
+								timer.Simple(120 * JMod.Config.ResourceEconomy.ScroungeDespawnTimeMult, function()
+									if (IsValid(Loot)) then
+									local CurPos = Loot:GetPos()
+										if (CurPos:Distance(Loot.SpawnPos) <= 1) then
+											-- it hasn't moved an inch in a whole two minutes
+											constraint.RemoveAll(Loot)
+											Loot:SetNotSolid(true)
+											Loot:DrawShadow(false)
+											Loot:GetPhysicsObject():EnableCollisions(false)
+											Loot:GetPhysicsObject():EnableGravity(false)
+											Loot:GetPhysicsObject():SetVelocity(Vector(0, 0, -5))
+											SafeRemoveEntityDelayed(Loot, 2)
+										end
 									end
-								end
-							end)
-						end
-					end)
+								end)
+							end
+						end)
+					end
 				end
 			end
 		end
 
-		if true then
+		if not Debug then
 			table.insert(ScroungedPositions, Pos)
-			timer.Simple(300, function()
+			timer.Simple(300 * JMod.Config.ResourceEconomy.ScroungeAreaRefreshMult, function()
 				if not table.IsEmpty(ScroungedPositions) then
 					table.remove(ScroungedPositions, 1)
 				end
