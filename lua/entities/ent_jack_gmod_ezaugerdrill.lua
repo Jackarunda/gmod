@@ -362,7 +362,7 @@ elseif(CLIENT)then
 		end
 		--
 
-		local Obscured = util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
 		local DrillDraw = true

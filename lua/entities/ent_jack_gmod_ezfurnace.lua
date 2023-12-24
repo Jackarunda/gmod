@@ -276,12 +276,12 @@ elseif(CLIENT)then
 		---
 		local BasePos = SelfPos
 
-		local Obscured = util.TraceLine({
+		local Obscured = false--[[util.TraceLine({
 			start=EyePos(), 
 			endpos=BasePos, 
 			filter = {LocalPlayer(), self}, 
 			mask = MASK_OPAQUE
-		}).Hit
+		}).Hit--]]
 
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees

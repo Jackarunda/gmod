@@ -300,7 +300,7 @@ elseif CLIENT then
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos + Up * 36 + Forward * -40 + Right * 15
-		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---

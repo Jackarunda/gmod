@@ -333,7 +333,7 @@ elseif(CLIENT)then
 			self.WheelTurn = 360
 		end
 		---
-		local BasePos = SelfPos
+		local BasePos = SelfPos + Up * 60
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees

@@ -315,7 +315,7 @@ elseif(CLIENT)then
 		BoxAng:RotateAroundAxis(Forward,90)
 		JMod.RenderModel(self.MachineryBox,BasePos-Up*32-Right*74+Forward*20,BoxAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
 		--
-		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Obscured=false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
