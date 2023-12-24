@@ -106,12 +106,12 @@ if(SERVER)then
 			--util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
-					--[[local HitAngle = Tr.HitNormal:Angle()
+					local HitAngle = Tr.HitNormal:Angle()
 					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
-					self:SetAngles(HitAngle)--]]
-					self:SetAngles(Angle(0, math.random(0, 360, 0)))
-					self:SetPos(Tr.HitPos)
+					self:SetAngles(HitAngle)
+					--self:SetAngles(Angle(0, math.random(0, 360, 0)))
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 5)
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
 					self:GetPhysicsObject():Sleep()
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
@@ -123,6 +123,7 @@ if(SERVER)then
 	end
 
 	function ENT:Think()
+		--jprint(self.Helf, self.EZinstalled, self.GroundWeld)
 		if (self.Helf <= 0) then self:Destroy() return end
 		if (self.EZinstalled and not(IsValid(self.GroundWeld))) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
@@ -201,7 +202,7 @@ if(SERVER)then
 			self:DrawShadow(true)
 			self:SetUseType(SIMPLE_USE)
 			self.LastSubModel = NewSubModel
-			self:TryPlant()
+			--self:TryPlant()
 		end
 		timer.Simple(0, function()
 			if (IsValid(self)) then
