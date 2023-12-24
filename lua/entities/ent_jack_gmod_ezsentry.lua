@@ -1119,7 +1119,7 @@ elseif(CLIENT)then
 		}).Hit
 
 		local Closeness = LocalPlayer():GetFOV() * EyePos():Distance(SelfPos)
-		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DetailDraw = Closeness < 36000 * 2 -- cutoff point is 400 units when the fov is 90 degrees
 		if (not DetailDraw) and Obscured then return end -- if player is far and sentry is obscured, draw nothing
 
 		-- if obscured, at least disable details

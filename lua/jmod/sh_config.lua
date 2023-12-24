@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.03
+			Version = 45.13
 		},
 		General = {
 			Hints = true,
@@ -96,7 +96,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ResourceRichness = 1,
 			ExtractionSpeed = 1,
 			MaxResourceMult = 1,
-			SalvageYield = 1
+			SalvageYield = 1,
+			ScroungeAreaRefreshMult = 1,
+			ScroungeCooldownMult = 1,
+			ScroungeDespawnTimeMult = 1,
+			ScroungeResultAmount = 5
 		},
 		QoL = {
 			RealisticLocationalDamage = false,
@@ -1764,7 +1768,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 80
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50
 				},
 				noRequirementScaling = true,
 				category = "Tools",

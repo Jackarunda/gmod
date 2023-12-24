@@ -1,7 +1,7 @@
 ﻿-- AdventureBoots Late 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Enrichment Centrifuge"
+ENT.PrintName = "EZ Uranium Enrichment Centrifuge"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
@@ -194,7 +194,7 @@ elseif(CLIENT)then
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 1200000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
@@ -239,5 +239,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezlfg", "EZ Enrichment Centrifuge")
+	language.Add("ent_jack_gmod_ezlfg", "EZ Uranium Enrichment Centrifuge")
 end

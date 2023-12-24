@@ -131,7 +131,6 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + .8)
 	self:SetNextSecondaryFire(CurTime() + .7)
-	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
@@ -180,11 +179,6 @@ function SWEP:Hitscan()
 				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
 				PickDam:SetDamage(math.random(35, 50))
 				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
-				tr.Entity:TakeDamageInfo(PickDam)
-
-				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-
-				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
 
 				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") then
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
@@ -196,13 +190,14 @@ function SWEP:Hitscan()
 					effectdata:SetOrigin( vPoint )
 					util.Effect( "BloodImpact", effectdata )
 					--
-				elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or (util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) then
+				elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
 					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
 					if Mesg then
 						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
 						self:SetTaskProgress(0)
 					else
 						self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
+						PickDam:SetDamage(0)
 					end
 				elseif JMod.IsDoor(tr.Entity) then
 					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
@@ -210,6 +205,10 @@ function SWEP:Hitscan()
 				else
 					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
+
+				tr.Entity:TakeDamageInfo(PickDam)
+
+				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, self.Owner})
 				return true
 			end
