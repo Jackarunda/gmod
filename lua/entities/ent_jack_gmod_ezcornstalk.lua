@@ -1,11 +1,11 @@
 ﻿-- AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Corn"
+ENT.PrintName = "EZ Cornstalk"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = false -- For now...
+ENT.Spawnable = true -- For now...
 ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
@@ -30,7 +30,7 @@ if(SERVER)then
 		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
-		self:UseTriggerBounds(true, 0)
+		self:GetPhysicsObject():SetMass(1)
 	end
 
 	function ENT:Mutate()
@@ -67,22 +67,8 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
-			self:EmitSound("Dirt.Impact", 100, 80)
-			self:EmitSound("Dirt.Impact", 100, 80)
-			if IsValid(data.HitObject) then
-				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
-				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
-				local PhysDamage = TheirForce/(physobj:GetMass()*100)
-
-				if PhysDamage >= 1 then
-					local CrushDamage = DamageInfo()
-					CrushDamage:SetDamage(math.floor(PhysDamage))
-					CrushDamage:SetDamageType(DMG_CRUSH)
-					CrushDamage:SetDamagePosition(data.HitPos)
-					self:TakeDamageInfo(CrushDamage)
-				end
-			end
+		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
+			self:EmitSound("snds_jack_gmod/ez_foliage/plant_brush_" .. math.random(1, 12) .. ".wav", 65, math.random(90, 110))
 		end
 	end
 
@@ -103,13 +89,8 @@ if(SERVER)then
 					self:SetAngles(HitAngle)--]]
 					self:SetAngles(Angle(0, math.random(0, 360, 0)))
 					self:SetPos(Tr.HitPos)
-					if Tr.Entity == game.GetWorld() then
-						self:GetPhysicsObject():EnableMotion(false)
-						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-					else
-						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-						self:GetPhysicsObject():Sleep()
-					end
+					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
+					self:GetPhysicsObject():Sleep()
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
@@ -120,7 +101,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not(self:GetPhysicsObject():IsMotionEnabled()))) then self:Destroy() return end
+		if (self.EZinstalled and not(IsValid(self.GroundWeld))) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
@@ -145,7 +126,7 @@ if(SERVER)then
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+					self.Growth = 100--math.Clamp(self.Growth + Growth, 0, 100)
 				end
 				if self.Growth > 66 then
 					if (math.random(1, 2) == 1) then
@@ -155,7 +136,7 @@ if(SERVER)then
 					end
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
-				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
+				self.Hydration = 100--math.Clamp(self.Hydration - WaterLoss, 0, 100)
 			else
 				self.Helf = math.Clamp(self.Helf - 1, 0, 100)
 			end
