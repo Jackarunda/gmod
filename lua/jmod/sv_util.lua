@@ -904,7 +904,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		if ejectionVector then
 			JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector), SpawnPos, SpawnAmount * 0.02, 1, 1)
 		end
-		timer.Simple(1 * math.ceil(amount/(100 * JMod.Config.ResourceEconomy.MaxResourceMult)), function()
+		timer.Simple(.3 * math.ceil(amount/(100 * JMod.Config.ResourceEconomy.MaxResourceMult)), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(SpawnAngle or Resource.JModPreferredCarryAngles or Angle(0, 0, 0))
