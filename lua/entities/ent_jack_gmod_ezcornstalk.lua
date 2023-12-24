@@ -68,7 +68,7 @@ if(SERVER)then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
-			self:EmitSound("snds_jack_gmod/ez_foliage/plant_brush_" .. math.random(1, 12) .. ".wav", 65, math.random(90, 110))
+			self:EmitSound("snds_jack_gmod/ez_foliage/plant_brush_" .. math.random(1, 12) .. ".wav", 65, math.random(90, 110), .8)
 		end
 	end
 
@@ -126,7 +126,7 @@ if(SERVER)then
 				if (self.Helf < 100) then -- heal
 					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
 				else
-					self.Growth = 100--math.Clamp(self.Growth + Growth, 0, 100)
+					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
 				end
 				if self.Growth > 66 then
 					if (math.random(1, 2) == 1) then
@@ -136,7 +136,7 @@ if(SERVER)then
 					end
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
-				self.Hydration = 100--math.Clamp(self.Hydration - WaterLoss, 0, 100)
+				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
 			else
 				self.Helf = math.Clamp(self.Helf - 1, 0, 100)
 			end
