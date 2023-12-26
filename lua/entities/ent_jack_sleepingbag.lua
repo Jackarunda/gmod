@@ -106,7 +106,7 @@ elseif (SERVER) then
 		end
 		local SelfPos = self:LocalToWorld(self:OBBCenter())
 		local Tr = util.TraceLine({
-			start = SelfPos + Vector(0, 0, 100),
+			start = SelfPos + Vector(0, 0, 50),
 			endpos = SelfPos - Vector(0, 0, 100),
 			filter = { self, self.EZowner }
 		})
