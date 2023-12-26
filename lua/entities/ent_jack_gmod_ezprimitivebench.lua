@@ -89,6 +89,12 @@ if(SERVER)then
 		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
 	end
 
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == self:GetOreType() and accepted >= 1 then
+			self:TurnOn(self.EZowner)
+		end
+	end
+
 	function ENT:Use(activator)
 		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		local State = self:GetState()
