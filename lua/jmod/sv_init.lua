@@ -94,6 +94,13 @@ local function JackaSpawnHook(ply)
 		end
 	end)
 
+	timer.Simple(1, function() 
+		local IFAK = ents.Create("ent_jack_gmod_ezifakpacket")
+		IFAK:Spawn()
+		IFAK:Activate()
+		JMod.AddToInventory(ply, IFAK)
+	end)
+
 	net.Start("JMod_PlayerSpawn")
 	net.WriteBit(JMod.Config.General.Hints)
 	net.Send(ply)

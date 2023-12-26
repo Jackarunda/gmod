@@ -25,10 +25,10 @@ if SERVER then
 			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
 
 			if State == JMod.EZ_STATE_OFF and Alt then
-				JMod.SetEZowner(self, activator)
+				JMod.SetEZowner(self, Dude)
 				net.Start("JMod_ColorAndArm")
-				net.WriteEntity(self)
-				net.Send(activator)
+					net.WriteEntity(self)
+				net.Send(Dude)
 			end
 
 			JMod.ThrowablePickup(Dude, self, self.HardThrowStr, self.SoftThrowStr)

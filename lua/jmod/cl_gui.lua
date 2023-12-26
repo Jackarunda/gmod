@@ -233,12 +233,13 @@ net.Receive("JMod_Friends", function()
 	PopulateList(Scroll, FriendList, Myself, W, H)
 end)
 
+local OldMouseX, OldMouseY = 0, 0
 net.Receive("JMod_ColorAndArm", function()
-	local Ent, NextColorCheck = net.ReadEntity(), 0
-	if net.ReadBool() then
-		CurrentColor = Ent:GetColor()
+	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
 
-		return
+	if UpdateColor == true then
+		CurrentColor = Ent:GetColor()
+		input.SetCursorPos(OldMouseX, OldMouseY)
 	end
 	if not IsValid(Ent) then return end
 	local Frame = vgui.Create("DFrame")
@@ -307,6 +308,7 @@ net.Receive("JMod_ColorAndArm", function()
 		net.WriteColor(Color(255, 255, 255))
 		net.WriteBit(false)
 		net.SendToServer()
+		OldMouseX, OldMouseY = input.GetCursorPos()
 		Frame:Close()
 	end
 end)

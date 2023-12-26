@@ -55,32 +55,33 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	local ent = net.ReadEntity()
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
-		local AutoColor = net.ReadBit()
-		local Col = net.ReadColor()
 
-		if AutoColor == 1 then
-			local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
-			if Tr.Hit then
-				local Info = JMod.HitMatColors[Tr.MatType]
+	local AutoColor = net.ReadBit()
+	local Col = net.ReadColor()
 
-				if Info then
-					ent:SetColor(Info[1])
+	if AutoColor == 1 then
+		local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
+		if Tr.Hit then
+			local Info = JMod.HitMatColors[Tr.MatType]
 
-					if Info[2] then
-						ent:SetMaterial(Info[2])
-					end
+			if Info then
+				ent:SetColor(Info[1])
+
+				if Info[2] then
+					ent:SetMaterial(Info[2])
 				end
 			end
-			timer.Simple(.1, function()
-				if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
-				net.Start("JMod_ColorAndArm")
-				net.WriteEntity(ent)
-				net.WriteBool(false)
-				net.Send(ply)
-			end)
-		else
-			ent:SetColor(Col)
 		end
+		timer.Simple(.1, function()
+			if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
+			net.Start("JMod_ColorAndArm")
+			net.WriteEntity(ent)
+			net.WriteBool(true)
+			net.Send(ply)
+		end)
+	else
+		ent:SetColor(Col)
+	end
 
 	if net.ReadBit() == 1 then
 		if ent.Prime then
