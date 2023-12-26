@@ -722,10 +722,13 @@ local SpecializedSalvagingTable = {
 	}
 }
 
+local BlacklistedGroups = {COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON}
+
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
 	if ent.GetState and (ent:GetState() >= 1) then return {}, "bruh, it's active" end
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
+	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), bit.bor(COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON))) then return {}, "cannot salvage: bad collision group" end
 	if ent:IsWorld() then return {}, "can't salvage the world" end
 	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
