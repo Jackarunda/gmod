@@ -464,7 +464,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if StowItems and not(table.IsEmpty(RemovedItems)) then
 		for _, v in ipairs(RemovedItems) do
 			timer.Simple(0, function()
-				JMod.AddToInventory(Ent, v)
+				local Success = JMod.AddToInventory(Ent, v)
 			end)
 		end
 	end
@@ -574,12 +574,14 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 	end
 
 	if IsValid(nameOrEnt) and nameOrEnt.JModInv then
+		nameOrEnt.KeepJModInv = true
 		for _, v in ipairs(nameOrEnt.JModInv.items) do
 			JMod.AddToInventory(ply, v.ent)
 		end
 		for k, v in pairs(nameOrEnt.JModInv.EZresources) do
 			JMod.AddToInventory(ply, {k, v})
 		end
+		nameOrEnt.KeepJModInv = false
 	end
 
 	JMod.CalcSpeed(ply)

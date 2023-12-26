@@ -66,6 +66,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 	for k, v in ipairs(invEnt.JModInv.items) do
 		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
+		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 		if JMod.IsEntContained(v.ent, invEnt) then
 			local Phys = v.ent:GetPhysicsObject()
 			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
@@ -79,12 +80,12 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 						jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
 						jmodinvfinal.volume = math.Round(jmodinvfinal.volume + Vol)
 					else
-						local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and (EntPos + RandomPos), nil, true, transfer)
+						local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and TrPos, true, transfer)
 						table.insert(RemovedItems, Removed)
 					end
 				end
 			else
-				local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and (EntPos + RandomPos), nil, true, transfer)
+				local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and TrPos, true, transfer)
 				table.insert(RemovedItems, Removed)
 			end
 			table.insert(jmodinvfinal.items, v)
@@ -186,20 +187,19 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 end
 
 function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
-	--jprint(invEnt, target, pos, noUpdate, transfer)
 	invEnt = invEnt or target.EZInvOwner
 	if not(IsValid(invEnt)) then return end
 
-	local RemovingResource
+	local RemovingResource = istable(target)
 
-	if istable(target) then
+	if RemovingResource then
 		RemovingResource = true
 		local resTyp = target[1]
 		local amt = target[2]
 		if JMod.EZ_RESOURCE_ENTITIES[resTyp] and invEnt.JModInv.EZresources[resTyp] then
 			local AmountLeft = amt
 			local Safety = 0
-			if pos then
+			if (pos) and not(transfer) then
 				while (AmountLeft > 0) or (Safety > 1000) do
 					local AmountToGive = math.min(AmountLeft, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 					AmountLeft = AmountLeft - AmountToGive
@@ -241,7 +241,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 			if Children then
 				for k, v in pairs(Children) do
 					v:SetNoDraw(v.EZnoDraw or false)
-					v:SetNotSolid(v.EZnoDraw or false)
+					v:SetNotSolid(v.EZnoSolid or false)
 				end
 			end
 		end
@@ -297,7 +297,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	end
 	local invEnt = net.ReadEntity()
 
-	local Tr = util.QuickTrace(ply:GetPos() + ply:GetViewOffset(), ply:GetAimVector() * 60, ply)
+	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 60, ply)
 	local InvSound = util.GetSurfaceData(Tr.SurfaceProps).impactSoftSound
 
 	if not IsValid(invEnt) then
@@ -307,7 +307,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	--jprint(((invEnt ~= ply) and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".wav"))
 	if command == "take" then
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
-		if (JMod.IsEntContained(target) and ((invEnt ~= ply) and (Tr.Entity ~= invEnt))) then return end
+		if JMod.IsEntContained(target) and (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.AddToInventory(invEnt, target)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothequip.wav"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "drop" then
