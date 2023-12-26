@@ -138,6 +138,7 @@ function JMod.BlastThatDoor(ent, vel)
 	sound.Play("Wood_Furniture.Break", Pozishun, 60, 100)
 	ent:Fire("unlock", "", 0)
 	ent:Fire("open", "", 0)
+	ent:Fire("lock", "", 0)
 	ent:SetNoDraw(true)
 	ent:SetNotSolid(true)
 
@@ -171,7 +172,7 @@ function JMod.BlastThatDoor(ent, vel)
 
 		timer.Simple(3, function()
 			if IsValid(Replacement) then
-				Replacement:SetCollisionGroup(COLLISION_GROUP_WEAPON)
+				Replacement:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 			end
 		end)
 
@@ -179,6 +180,7 @@ function JMod.BlastThatDoor(ent, vel)
 			if IsValid(ent) then
 				ent:SetNotSolid(false)
 				ent:SetNoDraw(false)
+				ent:Fire("unlock", "", 0)
 			end
 
 			if IsValid(Replacement) then
