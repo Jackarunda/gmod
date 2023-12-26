@@ -135,7 +135,7 @@ if SERVER then
 			self:SetState(STATE_BROKEN)
 			self:SetBodygroup(1, 0)
 			self.BrokenRemoveTime = CurTime() + 2
-			sound.Play("Metal_Box.Break", Pos, 70, math.random(90, 110))
+			sound.Play("Metal_Box.Break", self:GetPos(), 70, math.random(90, 110))
 		end
 	end
 
