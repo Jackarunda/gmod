@@ -332,7 +332,7 @@ if(SERVER)then
 	end
 
 	function ENT:EZreceiveSpeech(ply, txt)
-		if self:WaterLevel() > 3 then return end
+		if self:WaterLevel() > 3 then return false end
 		local State = self:GetState()
 		if State < 2 then return false end
 
