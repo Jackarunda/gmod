@@ -236,7 +236,6 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		local bestradio = nil
 		
 		for _, v in ipairs(FindEZradios()) do
-			print(v, v:GetPos():DistToSqr(ply:GetPos()))
 			if v:UserIsAuthorized(ply) and (not(bestradio) or (bestradio:GetPos():DistToSqr(ply:GetPos()) > v:GetPos():DistToSqr(ply:GetPos()))) then
 				if (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
 					bestradio = v
@@ -248,7 +247,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then 
 
 			return "" 
-		elseif not(bestradio) and (ExplodedString[1] == "supply") and (ExplodedString[2] == "radio:") then
+		elseif not(bestradio) and ((ExplodedString[1] == "supply") or (ExplodedString[1] == "aid")) and (ExplodedString[2] == "radio:") then
 
 			ply:PrintMessage(HUD_PRINTCENTER, "No good radios in range")
 		end
