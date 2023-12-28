@@ -355,17 +355,17 @@ net.Receive(
         local categories = {}
         changes_made = false
 
-        --[[ 
+		--[[ 
 			End result of the code below
 			----------------------------
 			categories[]
 			└> all main categories
-			   └> "settings"
-			   |   └> all top level settings in the category
-			   └> "subcats"
-			   	  └> every sub category in the main category
-			         └> "settings"
-			      	    └> all settings within the subcategory
+				└> "settings"
+				|   └> all top level settings in the category
+				└> "subcats"
+					└> every sub category in the main category
+						└> "settings"
+							└> all settings within the subcategory
 		]]--
 
         for cat, st in pairs(config) do
