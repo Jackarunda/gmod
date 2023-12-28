@@ -1485,6 +1485,7 @@ if SERVER then
 
 elseif CLIENT then
 	local ShowNaturalResources = false
+	local NaturalResourceDisplayCache = {}
 
 	net.Receive("JMod_NaturalResources", function()
 		if net.ReadBool() then
@@ -1529,9 +1530,13 @@ elseif CLIENT then
 		local Wep = Ply:GetActiveWeapon()
 		if IsValid(Wep) and Wep.ScanResults then
 			for k, v in pairs(Wep.ScanResults) do
-				JMod.HoloGraphicDisplay(nil, v.pos, Angle(0, 0, 0), 1, 30000, function()
-					JMod.StandardResourceDisplay(v.typ, v.amt or v.rate, nil, 0, 0, v.siz * 2, true, nil, nil, v.rate)
-				end)
+				-- let's draw this closer to the ground
+				local DrawTrace = util.QuickTrace(v.pos + Vector(0, 0, 100), Vector(0, 0, -200))
+				local Ang = DrawTrace.HitNormal:Angle()
+				Ang:RotateAroundAxis(Ang:Right(), -90)
+				JMod.HoloGraphicDisplay(nil, DrawTrace.HitPos + DrawTrace.HitNormal * 5, Ang, 1, 30000, function()
+					JMod.StandardResourceDisplay(v.typ, v.amt or v.rate, nil, 0, 0, v.siz * 2, true, nil, 50, v.rate)
+				end, true)
 			end
 		end
 	end)
