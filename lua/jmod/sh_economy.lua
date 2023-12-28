@@ -1263,7 +1263,7 @@ if SERVER then
 		end
 	end
 
-	local ScroungeTableItems = {
+	JMod.ScroungeTableItems = {
 		["urban"] = {
 			["models/props_junk/PopCan01a.mdl"] = 5,
 			["models/props_interiors/furniture_chair01a.mdl"] = 1,
@@ -1337,7 +1337,7 @@ if SERVER then
 
 		local ScroungeTable = {}
 
-		for typ, tbl in pairs(ScroungeTableItems) do
+		for typ, tbl in pairs(JMod.ScroungeTableItems) do
 			ScroungeTable[typ] = ScroungeTable[typ] or {}
 			for item, freq in pairs(tbl) do
 				for i=1, (freq * 10 or 10) do
