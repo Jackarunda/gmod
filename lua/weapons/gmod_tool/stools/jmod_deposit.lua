@@ -17,11 +17,14 @@ local prefix = "tool.jmod_deposit"
 
 function TOOL:LeftClick( trace )
 
-	local ResourceType = GetConVar("jmod_deposit_type"):GetString()
-	local ResourceAmt = GetConVar("jmod_deposit_amount"):GetInt()
-	local DepositSize = GetConVar("jmod_deposit_size"):GetInt()
+	local ResourceType = self:GetClientInfo("jmod_deposit_type")
+	local ResourceAmt = self:GetClientNumber("jmod_deposit_amount")
+	local DepositSize = self:GetClientNumber("jmod_deposit_size")
 
 	if SERVER then
+
+		local ply = self:GetOwner()
+		if IsValid(ply) and not ply:IsSuperAdmin() then return end
 
 		if ( ResourceType == "random" ) or not(ResourceInfo[ResourceType]) then
 			ResourceType = NatrualResourceTypes[math.random(#NatrualResourceTypes)]
@@ -76,8 +79,8 @@ function TOOL:LeftClick( trace )
 			table.insert(JMod.NaturalResourceTable, NewDeposit)
 		end
 		net.Start("JMod_NaturalResources")
-		net.WriteBool(false)
-		net.WriteTable(JMod.NaturalResourceTable)
+			net.WriteBool(false)
+			net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(self:GetOwner())
 	end
 
@@ -86,6 +89,10 @@ function TOOL:LeftClick( trace )
 end
 
 function TOOL:RightClick( trace )
+
+	local ply = self:GetOwner()
+	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+
 	local HitPos = trace.HitPos
 	-- first, figure out which deposits we are inside of, if any
 	local DepositsInRange = {}
@@ -116,6 +123,12 @@ function TOOL:RightClick( trace )
 	end
 	if(ClosestDeposit)then 
 		JMod.NaturalResourceTable[ClosestDeposit] = nil
+		if SERVER then
+			net.Start("JMod_NaturalResources")
+				net.WriteBool(false)
+				net.WriteTable(JMod.NaturalResourceTable)
+			net.Send(self:GetOwner())
+		end
 		return true
 	end
 end
