@@ -17,9 +17,9 @@ local prefix = "tool.jmod_deposit"
 
 function TOOL:LeftClick( trace )
 
-	local ResourceType = self:GetClientInfo("jmod_deposit_type")
-	local ResourceAmt = self:GetClientNumber("jmod_deposit_amount")
-	local DepositSize = self:GetClientNumber("jmod_deposit_size")
+	local ResourceType = self:GetClientInfo("type")
+	local ResourceAmt = self:GetClientNumber("amount")
+	local DepositSize = self:GetClientNumber("size")
 
 	if SERVER then
 
