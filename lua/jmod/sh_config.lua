@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.13
+			Version = 45.14
 		},
 		General = {
 			Hints = true,
@@ -1297,9 +1297,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "1 box of parts used for crafting and repairs."
 			},
 			["EZ Basic Parts, x300"] = {
-				results = {
-					{"ent_jack_gmod_ezbasicparts", 3}
-				},
+				results = {"ent_jack_gmod_ezbasicparts", 3},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 120,
 					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 60,
@@ -1326,9 +1324,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "1 box of precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Precision Parts, x10"] = {
-				results = {
-					{"ent_jack_gmod_ezprecparts", 1, 10}
-				},
+				results = {"ent_jack_gmod_ezprecparts", 1, 10},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 2,
@@ -1341,9 +1337,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "10 precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Advanced Parts, x50"] = {
-				results = {
-					{"ent_jack_gmod_ezadvparts", 1, 50}
-				},
+				results = {"ent_jack_gmod_ezadvparts", 1, 50},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 40,
@@ -1355,9 +1349,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "50 Advanced Parts for use in hyper-advanced technology"
 			},
 			["EZ Advanced Parts, x5"] = {
-				results = {
-					{"ent_jack_gmod_ezadvparts", 1, 5}
-				},
+				results = {"ent_jack_gmod_ezadvparts", 1, 5},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 4,
