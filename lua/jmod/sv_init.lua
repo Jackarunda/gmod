@@ -65,9 +65,9 @@ local function JackaSpawnHook(ply)
 				ply:SetPos(sleepingbag:GetPos())
 				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 				net.Start("JMod_VisionBlur")
-				net.WriteFloat(5)
-				net.WriteFloat(2000)
-				net.WriteBit(true)
+					net.WriteFloat(5)
+					net.WriteFloat(2000)
+					net.WriteBit(true)
 				net.Send(ply)
 				sleepingbag.Pod.EZvehicleEjectPos = nil
 			end
@@ -345,6 +345,17 @@ local function ImmobilizedThink(dude)
 	end
 end
 
+--- Sleepy Logic
+
+local function SleepySitThink(dude)
+	local Time = CurTime()
+	if dude.JMod_IsSleeping then
+		if dude:Health() < (dude:GetMaxHealth() * .25) then
+			dude.EZhealth = math.max(dude.EZhealth, 1)
+		end
+	end
+end
+
 --- PARACHUTE LOGIC
 
 local function OpenChute(ply)
@@ -553,6 +564,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			end
 
 			ImmobilizedThink(playa)
+
+			SleepySitThink(playa)
 		end
 	end
 
@@ -563,15 +576,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
-					local InBed = IsValid(playa:GetVehicle()) and (playa:GetVehicle():GetParent() == playa.JModSpawnPointEntity)
-					local RestMult = 1
-					if InBed then
-						RestMult = 2
-					end
+					local RestMult = (playa.JMod_IsSleeping and 2) or 1
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1 * RestMult
+						playa.EZnutrition.Nutrients = Nuts - 1
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
