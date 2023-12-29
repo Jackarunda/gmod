@@ -8,7 +8,7 @@ end
 
 local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
 --local NightmareGnome = ents.CreateClientProp("models/props_junk/gnome.mdl")
-local NextMemTime, CurrentMemory = 0, nil
+local NextMemTime, CurrentMemory, TimeToDisplay = 0, nil, 12
 local WasSleepy = false
 local ColorableVignette = Material("mats_jack_gmod_sprites/hard_vignette_colorable.png")
 local CurrentBleed = 0
@@ -81,7 +81,7 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin + FT * 100, 0, 100)
 			if not WasSleepy then
 				WasSleepy = true
-				NextMemTime = Time + 15
+				NextMemTime = Time + 1--TimeToDisplay * 1.5
 				CurrentMemory = nil
 			end
 		else
@@ -89,12 +89,15 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 		end
 		
 		if (NextMemTime < Time) then
-			NextMemTime = Time + 15
+			NextMemTime = Time + TimeToDisplay
 			CurrentMemory = FindPlyMemory()
 		end
 		if CurrentMemory then
 			surface.SetMaterial(CurrentMemory)
-			surface.SetDrawColor(255, 255, 255, (NextMemTime - Time) * 10)
+			surface.SetDrawColor(255, 255, 255, (math.sin(((NextMemTime - Time) - TimeToDisplay / 4) * (2 * math.pi) / TimeToDisplay) / 2 + .5)^.2 * 100)
+			surface.DrawTexturedRect(0, 0, W, H)
+			surface.SetDrawColor(20, 20, 20, 250)
+			surface.SetMaterial(ColorableVignette)
 			surface.DrawTexturedRect(0, 0, W, H)
 			surface.SetAlphaMultiplier(1)
 		end
