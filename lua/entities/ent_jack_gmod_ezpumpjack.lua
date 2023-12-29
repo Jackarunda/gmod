@@ -264,7 +264,13 @@ if(SERVER)then
 
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		self.NextResourceThinkTime = Time + math.Rand(0, 3)
+		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
+		if self:GetState(STATE_RUNNING) then
+			timer.Simple(0.1, function()
+				if IsValid(self) then self:TryPlace() end
+			end)
+		end
 	end
 
 elseif(CLIENT)then
