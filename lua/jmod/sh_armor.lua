@@ -1050,11 +1050,13 @@ end
 hook.Add("SetupMove", "JMOD_SLEEP", function(ply, mvd, cmd)
 	if not(ply:Alive()) then ply.JMod_IsSleeping = false return end
 	local Time = CurTime()
-	--print(ply.JMod_IsSleeping)
-	if not(ply:InVehicle() and (cmd:GetMouseX() < 100) and (cmd:GetMouseY() < 100) and not(mvd:KeyPressed(IN_ATTACK) or mvd:KeyPressed(IN_USE))) then
-		ply.JModLastLookMoveTime = Time
+	if (cmd:GetMouseX() < 10) and (cmd:GetMouseY() < 10) and (cmd:GetButtons() == 0) then
+		local Veh = ply:GetVehicle()
+		if not(IsValid(Veh) and IsValid(Veh:GetParent()) and Veh:GetParent().EZrespawnPoint) then
+			ply.JModLastLookMoveTime = Time
+		end
 	end
-	if (Time - ply.JModLastLookMoveTime) > 5 then
+	if (Time - ply.JModLastLookMoveTime) > 15 then
 		ply.JMod_IsSleeping = true
 	else
 		ply.JMod_IsSleeping = false

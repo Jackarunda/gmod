@@ -4,7 +4,7 @@ ENT.PrintName = "Sleeping Bag"
 ENT.Author = "Basipek, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Spawnable = true
-ENT.AdminSpawnable = true
+ENT.EZrespawnPoint = true
 ENT.Mass = 35
 ENT.JModEZstorable = true
 

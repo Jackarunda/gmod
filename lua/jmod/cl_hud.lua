@@ -82,6 +82,7 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 			if not WasSleepy then
 				WasSleepy = true
 				NextMemTime = Time + 15
+				CurrentMemory = nil
 			end
 		else
 			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin - FT * 100, 0, 100)
