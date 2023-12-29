@@ -29,7 +29,7 @@ if SERVER then
 		local DmgAmt, ResourceAmt = dmginfo:GetDamage(), self:GetResource()
 		local DmgVec = dmginfo:GetDamageForce()
 		dmginfo:SetDamage(DmgAmt / ResourceAmt)
-		dmginfo:SetDamageForce(DmgVec / (ResourceAmt^1.5))
+		dmginfo:SetDamageForce(DmgVec / (ResourceAmt^2))
 		self:TakePhysicsDamage(dmginfo)
 		self:SetResource(math.Clamp(ResourceAmt - DmgAmt / 100, 0, 100))
 
@@ -73,11 +73,12 @@ if SERVER then
 		end
 		local WeldTr = util.QuickTrace(self:GetPos(), Vector(0, 0, -12), self)
 		if WeldTr.Hit and (WeldTr.Entity ~= NULL) then
-			self.FreezeWeld = constraint.Weld(self, WeldTr.Entity, 0, 0, 500, false, false)
+			self.FreezeWeld = constraint.Weld(self, WeldTr.Entity, 0, 0, 1000, false, false)
 		end
 		self:GetPhysicsObject():SetMass(500)
 		self:GetPhysicsObject():Sleep()
 		self.Gefrozen = true
+		self:DrawShadow(false)
 	end
 
 	function ENT:GetSchmovin()
@@ -89,6 +90,7 @@ if SERVER then
 		end
 		self:GetPhysicsObject():Wake()
 		self.Gefrozen = false
+		self:DrawShadow(true)
 	end
 
 	function ENT:CustomUse()
