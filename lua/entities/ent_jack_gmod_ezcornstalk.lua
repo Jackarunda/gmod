@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Cornstalk"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = false -- For now...
+ENT.Spawnable = true -- For now...
 ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
@@ -14,14 +14,14 @@ ENT.SpawnHeight = 0
 ENT.EZconsumes = nil
 --
 ENT.StaticPerfSpecs = {
-	MaxWater = 100,
+	MaxWater = 50,
 	MaxDurability = 100
 }
 
 if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
-		self.Growth = 0
+		self.Growth = 100
 		self.Hydration = self.Hydration or 100
 		self.Helf = 100
 		self.LastWheatMat = ""
@@ -31,6 +31,7 @@ if(SERVER)then
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:GetPhysicsObject():SetMass(1)
+		self:Mutate()
 	end
 
 	function ENT:Mutate()
@@ -172,12 +173,13 @@ if(SERVER)then
 		if IsValid(self.StalkTarget) then
 			return self.StalkTarget
 		else
-			local RandomTarg = nil--table.Random(player.GetAll())
-			for k, v in ipairs(ents.FindByClass("ent_jack_gmod_ezsprinkler")) do
+			local RandomTarg = table.Random(ents.FindByClass("ent_jack_gmod_ezsprinkler"))
+			for k, v in player.Iterator() do
 				if not(IsValid(RandomTarg)) then
 					RandomTarg = v
-				elseif v:GetPos():DistToSqr(RandomTarg:GetPos()) < SelfPos:DistToSqr(RandomTarg:GetPos()) then
+				elseif SelfPos:GetPos():DistToSqr(RandomTarg:GetPos()) < SelfPos:DistToSqr(v:GetPos()) then
 					RandomTarg = v
+					break
 				end
 			end
 			self.StalkTarget = RandomTarg
@@ -242,6 +244,7 @@ if(SERVER)then
 	end
 
 	function ENT:SnapTo(pos)
+		constraint.RemoveAll(self)
 		local Yaw = (pos - self:GetPos()):GetNormalized():Angle().y
 		self:SetPos(pos)
 		self:SetAngles(Angle(0, Yaw, 0))

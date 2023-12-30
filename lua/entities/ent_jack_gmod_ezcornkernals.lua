@@ -14,6 +14,7 @@ ENT.EZconsumes = {
 }
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+ENT.MaxWater = 25
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
@@ -90,7 +91,7 @@ if SERVER then
 		local Accepted = 0
 		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
 			local Wata = self.Hydration
-			local Missing = 50 - Wata
+			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
@@ -183,7 +184,7 @@ if SERVER then
 				self.LastWateredTime = Time
 			end
 			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
-			if (self.Hydration >= 50) then
+			if (self.Hydration >= 25) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
 			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
@@ -208,6 +209,9 @@ if SERVER then
 			Stalk:Spawn()
 			Stalk:Activate()
 			Stalk.Hydration = WatToGive * 2
+			if self.Mutated then
+				Stalk:Mutate()
+			end
 			JMod.SetEZowner(Stalk, Owner)
 		end)
 	end
