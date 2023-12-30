@@ -86,6 +86,10 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 			end
 		else
 			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin - FT * 100, 0, 100)
+			if WasSleepy then
+				WasSleepy = false
+				CurrentMemory = nil
+			end
 		end
 		
 		if (NextMemTime < Time) then
@@ -94,9 +98,9 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 		end
 		if CurrentMemory then
 			surface.SetMaterial(CurrentMemory)
-			surface.SetDrawColor(255, 255, 255, (math.sin(((NextMemTime - Time) - TimeToDisplay / 4) * (2 * math.pi) / TimeToDisplay) / 2 + .5)^.2 * 100)
+			surface.SetDrawColor(255, 255, 255, (math.sin(((NextMemTime - Time) - TimeToDisplay / 4) * (2 * math.pi) / TimeToDisplay) / 2 + .4)^.2 * 100)
 			surface.DrawTexturedRect(0, 0, W, H)
-			surface.SetDrawColor(20, 20, 20, 250)
+			surface.SetDrawColor(0, 0, 0, 240)
 			surface.SetMaterial(ColorableVignette)
 			surface.DrawTexturedRect(0, 0, W, H)
 			surface.SetAlphaMultiplier(1)
