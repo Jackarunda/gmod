@@ -12,6 +12,7 @@ ENT.JModEZstorable = true
 ENT.EZconsumes = nil
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+ENT.MaxWater = 50
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
@@ -58,6 +59,8 @@ if SERVER then
 		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self.GroundWeld = nil
+		self.Hydration = 100
+		self:Mutate()
 	end
 
 	function ENT:Mutate()
@@ -98,7 +101,7 @@ if SERVER then
 		local Accepted = 0
 		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
 			local Wata = self.Hydration
-			local Missing = 50 - Wata
+			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
@@ -187,7 +190,7 @@ if SERVER then
 		elseif State == STATE_GERMINATING then
 			if not IsValid(self.GroundWeld) then self:Degenerate() end
 			if ((Time - 60) > self.LastTouchedTime) then
-				self:SpawnTree()
+				self:SpawnWheat()
 			end
 		end
 		if not(self.Mutated) and (self.Mutation > 90) then
@@ -197,7 +200,7 @@ if SERVER then
 		return true
 	end
 
-	function ENT:SpawnTree()
+	function ENT:SpawnWheat()
 		local Pos, Owner, WatToGive = self:GetPos(), self.EZowner, self.Hydration
 		self:Remove()
 		timer.Simple(.1, function()

@@ -265,7 +265,6 @@ JMod.WeaponTable = {
 	}
 }
 
--- keepcorpses caauses floating arrow bug
 JMod.AmmoTable = {
 	["Light Rifle Round"] = {
 		resourcetype = "ammo",

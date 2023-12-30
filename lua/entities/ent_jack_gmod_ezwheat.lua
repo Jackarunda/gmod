@@ -111,7 +111,7 @@ if(SERVER)then
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
 					self:SetAngles(HitAngle)
 					--self:SetAngles(Angle(0, math.random(0, 360, 0)))
-					self:SetPos(Tr.HitPos + Tr.HitNormal * 5)
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 1)
 					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
 					self:GetPhysicsObject():Sleep()
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
