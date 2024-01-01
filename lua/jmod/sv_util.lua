@@ -1151,7 +1151,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 		local DepositKey = JMod.GetDepositAtPos(ent, pos)
 		local DepositInfo = JMod.NaturalResourceTable[DepositKey]
 		if DepositInfo and ent.SetResourceType then
-			local NewTyp = JMod.NaturalResourceTable[DepositKey].typ
+			local NewType = JMod.NaturalResourceTable[DepositKey].typ
 			if ent.GetResourceType and (ent:GetResourceType() ~= NewType) then
 				ent:SetNW2Float("EZminingProgress", 0) -- No you don't
 			end 
