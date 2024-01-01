@@ -21,8 +21,8 @@ ENT.StaticPerfSpecs = {
 if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
-		self.Growth = 100
-		self.Hydration = self.Hydration or 100
+		self.Growth = 0
+		self.Hydration = self.Hydration or 0
 		self.Helf = 100
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
@@ -31,7 +31,6 @@ if(SERVER)then
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:GetPhysicsObject():SetMass(1)
-		self:Mutate()
 	end
 
 	function ENT:Mutate()

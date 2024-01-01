@@ -1149,6 +1149,14 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 
 	if task == "mining" then
 		local DepositKey = JMod.GetDepositAtPos(ent, pos)
+		local DepositInfo = JMod.NaturalResourceTable[DepositKey]
+		if DepositInfo and ent.SetResourceType then
+			local NewTyp = JMod.NaturalResourceTable[DepositKey].typ
+			if ent.GetResourceType and (ent:GetResourceType() ~= NewType) then
+				ent:SetNW2Float("EZminingProgress", 0) -- No you don't
+			end 
+			ent:SetResourceType(NewType)
+		end
 		
 		if ent.EZpreviousMiningPos and ent.EZpreviousMiningPos:Distance(pos) > 200 then
 			ent:SetNW2Float("EZminingProgress", 0)
@@ -1204,6 +1212,8 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				net.WriteEntity(ent)
 				net.WriteTable({JMod.NaturalResourceTable[DepositKey]})
 			net.Broadcast()
+
+			ent:SetResourceType("")
 			
 			return nil
 		end

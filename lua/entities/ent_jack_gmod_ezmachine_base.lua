@@ -322,6 +322,9 @@ if(SERVER)then
 
 	function ENT:UpdateDepositKey()
 		self.DepositKey = JMod.GetDepositAtPos(self, self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
+		local DepositInfo = JMod.NaturalResourceTable[self.DepositKey]
+		if DepositInfo and self.SetResourceType then self:SetResourceType(DepositInfo.typ) end
+		return self.DepositKey
 	end
 
 	function ENT:PhysicsCollide(data, physobj)

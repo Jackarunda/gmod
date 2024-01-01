@@ -135,8 +135,8 @@ JMod.ResourceDepositInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.LEADORE] = {
-		frequency = 8,
-		avgamt = 500,
+		frequency = 7,
+		avgamt = 600,
 		avgsize = 200,
 		limits = {
 			nowater = true
@@ -157,7 +157,7 @@ JMod.ResourceDepositInfo = {
 		}
 	},
 	[JMod.EZ_RESOURCE_TYPES.COPPERORE] = {
-		frequency = 8,
+		frequency = 10,
 		avgamt = 500,
 		avgsize = 200,
 		limits = {
@@ -916,7 +916,6 @@ function JMod.GetDepositAtPos(machine, positionToCheck, mult)
 	end
 
 	if ClosestDeposit then
-		if IsValid(machine) and machine.SetResourceType then machine:SetResourceType(JMod.NaturalResourceTable[ClosestDeposit].typ) end
 		return ClosestDeposit
 	else
 		return nil
@@ -1298,7 +1297,8 @@ if SERVER then
 		},
 		["rural"] = {
 			["ent_jack_gmod_ezwheatseed"] = 1,
-			["ent_jack_gmod_ezacorn"] = 2,
+			["ent_jack_gmod_ezcornkernals"] = 1,
+			["ent_jack_gmod_ezacorn"] = 1.5,
 			["models/props_foliage/driftwood_03a.mdl"] = 2,
 			["models/props_debris/wood_chunk06a.mdl"] = 3,
 			["models/props_junk/watermelon01.mdl"] = 1,
@@ -1396,7 +1396,7 @@ if SERVER then
 					elseif string.find(ScroungedItem, ".mdl") then
 						Loot = ents.Create("prop_physics")
 						Loot:SetModel(ScroungedItem)
-						Loot:SetHealth(100)
+						Loot:SetHealth(1000)
 					else
 						Loot = ents.Create(ScroungedItem)
 					end

@@ -59,8 +59,6 @@ if SERVER then
 		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self.GroundWeld = nil
-		self.Hydration = 100
-		self:Mutate()
 	end
 
 	function ENT:Mutate()
