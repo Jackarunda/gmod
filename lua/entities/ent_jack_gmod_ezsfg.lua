@@ -147,7 +147,9 @@ if(SERVER)then
 					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 					if i == 10 then
 						self.SteamLoop:Stop()
-						self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100)
+						timer.Simple(0, function()
+							if IsValid(self) then self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100) end
+						end)
 					end
 				end)
 			end
@@ -209,7 +211,7 @@ if(SERVER)then
 		end
 
 		if (self.NextEffThink < Time) then
-			self.NextEffThink = Time + .5 * Grade
+			self.NextEffThink = Time + .4 * Grade
 			if (State == STATE_ON) then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos() + Up * 90 + Forward * 70)
@@ -220,9 +222,9 @@ if(SERVER)then
 			end
 		end
 		if (self.NextFoofThink < Time) then
-			self.NextFoofThink = Time + .3/Grade
+			self.NextFoofThink = Time + .4/Grade
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80))
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80) * Grade / 4)
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)
@@ -333,8 +335,8 @@ elseif(CLIENT)then
 			self.WheelTurn = 360
 		end
 		---
-		local BasePos = SelfPos + Up * 60
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local BasePos = SelfPos
+		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos + Up * 60, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
@@ -345,45 +347,50 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		if (State == STATE_ON) then
-			local GlowPos = BasePos + Up * 60 + Forward * -13
-			local GlowAng = SelfAng:GetCopy()
-			GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
-			local GlowDir = GlowAng:Forward()
-			render.SetMaterial(WhiteSquare)
-			for i = 1, 5 do
-				render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 255, 255, 200 ), GlowAng.r)
-			end
-			for i = 1, 20 do
-				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), GlowAng.r)
-			end
-			render.SetMaterial(HeatWaveMat)
-			for i = 1, 2 do
-				--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
-				--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				local GlowPos = BasePos + Up * 60 + Forward * -13
+				local GlowAng = SelfAng:GetCopy()
+				local Roll = GlowAng.r
+				GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
+				local GlowDir = GlowAng:Forward()
+				render.SetMaterial(WhiteSquare)
+			if Closeness > 40000 then
+				render.DrawQuadEasy(GlowPos + GlowDir * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 189, 103, 243), Roll)
+			else
+				for i = 1, 5 do
+					render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 255, 255, 200 ), Roll)
+				end
+				for i = 1, 20 do
+					render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), Roll)
+				end
+				render.SetMaterial(HeatWaveMat)
+				for i = 1, 2 do
+					--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+					--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				end
 			end
 		end
-		--- render wheel
-		local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
-		local FlywheelAng = SelfAng:GetCopy()
-		FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
-		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
-		local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 1.2
-		local WheelTurnRadians = math.rad(self.WheelTurn)
-		local PistonEndX = -math.sin(WheelTurnRadians)
-		local PistonEndY = -math.cos(WheelTurnRadians)
-		local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 1.2
-		-- now that we know the desired tip positions, we can calc the angle for the piston housing
-		local PistonVec = PistonEndPos - PistonPivotPos
-		local PistonDir = PistonVec:GetNormalized()
-		local PistonAng = PistonDir:Angle()
-		JMod.RenderModel(self.Piston, PistonPivotPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		-- now render the piston shaft at the same angle, but slide it along the vector by some amount
-		local PusherPos = PistonEndPos
-		JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		---
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_ON then
+			--- render wheel
+			local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
+			local FlywheelAng = SelfAng:GetCopy()
+			FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
+			JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
+			local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 1.2
+			local WheelTurnRadians = math.rad(self.WheelTurn)
+			local PistonEndX = -math.sin(WheelTurnRadians)
+			local PistonEndY = -math.cos(WheelTurnRadians)
+			local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 1.2
+			-- now that we know the desired tip positions, we can calc the angle for the piston housing
+			local PistonVec = PistonEndPos - PistonPivotPos
+			local PistonDir = PistonVec:GetNormalized()
+			local PistonAng = PistonDir:Angle()
+			JMod.RenderModel(self.Piston, PistonPivotPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			-- now render the piston shaft at the same angle, but slide it along the vector by some amount
+			local PusherPos = PistonEndPos
+			JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			---
+			if Closeness < 20000 and (State == STATE_ON) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)
