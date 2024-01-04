@@ -399,9 +399,17 @@ function SWEP:OnDrop()
 	local Specs = JMod.WeaponTable[self.PrintName]
 
 	if Specs then
+		local Pos, Ang = self:GetPos(), self:GetAngles()
+		if IsValid(self.EZdropper) and self.EZdropper:IsPlayer() then
+			local AimPos, AimVec = self.EZdropper:GetShootPos(), self.EZdropper:GetAimVector()
+			local PlaceTr = util.QuickTrace(AimPos, AimVec * 60, {self, self.EZdropper})
+			Pos = PlaceTr.HitPos + PlaceTr.HitNormal * 5
+			--Ang = PlaceTr.HitNormal:Angle() --(PlaceTr.HitPos - AimPos):Angle()
+		end
+
 		local Ent = ents.Create(Specs.ent)
-		Ent:SetPos(self:GetPos())
-		Ent:SetAngles(self:GetAngles())
+		Ent:SetPos(Pos)
+		Ent:SetAngles(Ang)
 		Ent.MagRounds = self:Clip1()
 		if self:Clip2() > 0 then
 			Ent.MorRounds = self:Clip2()
@@ -415,6 +423,8 @@ function SWEP:OnDrop()
 		end
 
 		self:Remove()
+	else
+		self.EZdropper = nil
 	end
 end
 

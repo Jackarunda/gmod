@@ -761,6 +761,7 @@ elseif SERVER then
 		local Wep = ply:GetActiveWeapon()
 
 		if IsValid(Wep) and Wep.EZdroppable then
+			Wep.EZdropper = ply
 			ply:DropWeapon(Wep)
 		end
 	end, nil, "Drops your current EZ weapon.")
