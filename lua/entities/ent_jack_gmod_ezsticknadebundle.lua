@@ -13,29 +13,13 @@ ENT.HardThrowStr = 200
 ENT.SoftThrowStr = 100
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZspinThrow = true
+ENT.PinBodygroup = nil -- No pin
+ENT.SpoonBodygroup = {4, 1}
+ENT.DetDelay = 4
 --ENT.EZstorageVolumeOverride=2
 local BaseClass = baseclass.Get(ENT.Base)
 
 if SERVER then
-	function ENT:Prime()
-		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav", 60, 100)
-	end
-
-	function ENT:Arm()
-		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SetBodygroup(4, 1)
-
-		timer.Simple(4, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-
-		self:SetBodygroup(3, 1)
-		self:SpoonEffect()
-	end
-
 	function ENT:ShiftAltUse(activator, onOff)
 		if not onOff then return end
 		self.Splitterring = not self.Splitterring

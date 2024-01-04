@@ -11,6 +11,9 @@ ENT.Material = "models/mats_jack_nades/smokesignal"
 ENT.Color = Color(128, 128, 128)
 ENT.SpoonScale = 2
 ENT.JModGUIcolorable = true
+ENT.PinBodygroup = {3, 1}
+ENT.SpoonBodygroup = {2, 1}
+ENT.DetDelay = 2
 
 if SERVER then
 	function ENT:Use(activator, activatorAgain, onOff)
@@ -35,24 +38,6 @@ if SERVER then
 		end
 	end
 
-	function ENT:Prime()
-		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav", 60, 100)
-		self:SetBodygroup(3, 1)
-	end
-
-	function ENT:Arm()
-		self:SetBodygroup(2, 1)
-		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SpoonEffect()
-
-		timer.Simple(2, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-	end
-
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
@@ -60,7 +45,7 @@ if SERVER then
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 70, 150)
 	end
 
-	function ENT:CustomThink()
+	function ENT:CustomThink(State, Time)
 		if self.Exploded then
 			local Foof = EffectData()
 			Foof:SetOrigin(self:GetPos())

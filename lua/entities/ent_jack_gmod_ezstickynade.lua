@@ -9,25 +9,11 @@ ENT.Model = "models/jmod/explosives/grenades/stickynade/sticky_grenade.mdl"
 --ENT.ModelScale=2.25
 ENT.SpoonModel = "models/jmod/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
 ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
+ENT.PinBodygroup = {2, 1}
+ENT.SpoonBodygroup = nil
+ENT.DetDelay = 4
 
 if SERVER then
-	function ENT:Prime()
-		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:SetBodygroup(2, 1)
-		self:EmitSound("weapons/pinpull.wav", 60, 100)
-	end
-
-	function ENT:Arm()
-		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SpoonEffect()
-
-		timer.Simple(4, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-	end
-
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 30 then
 			self:EmitSound("Grenade.ImpactHard")

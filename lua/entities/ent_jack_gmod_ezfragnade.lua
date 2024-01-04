@@ -9,20 +9,11 @@ ENT.JModPreferredCarryAngles = Angle(0, -140, 0)
 ENT.Model = "models/jmod/explosives/grenades/fragnade/w_fragjade.mdl"
 ENT.Material = "models/mats_jack_nades/gnd"
 ENT.SpoonScale = 2
+ENT.PinBodygroup = nil
+ENT.SpoonBodygroup = {2, 1}
+ENT.DetDelay = 4
 
 if SERVER then
-	function ENT:Arm()
-		self:SetBodygroup(2, 1)
-		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SpoonEffect()
-
-		timer.Simple(self.FuzeTimeOverride or 4, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-	end
-
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
