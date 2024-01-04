@@ -414,7 +414,7 @@ local SalvagingTable = {
 	},
 	antlion = {
 		[JMod.EZ_RESOURCE_TYPES.ORGANICS] = .5,
-		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 1
+		[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = .7
 	},
 	weapon = {
 		[JMod.EZ_RESOURCE_TYPES.STEEL] = .1,
@@ -735,7 +735,13 @@ function JMod.GetSalvageYield(ent)
 	if not IsValid(Phys) then return {}, "cannot salvage: invalid physics" end
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
-	Mass = math.ceil((Mass * PhysNum) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
+	local RagMass = nil
+	for i = 1, PhysNum do
+		local RagPhys = ent:GetPhysicsObjectNum(i)
+		if not IsValid(RagPhys) then break end
+		RagMass = (RagMass or 0) + RagPhys:GetMass()
+	end
+	Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
 
 	-- again, more corrections
 	if Class == "func_physbox" then
@@ -1396,7 +1402,9 @@ if SERVER then
 					elseif string.find(ScroungedItem, ".mdl") then
 						Loot = ents.Create("prop_physics")
 						Loot:SetModel(ScroungedItem)
-						Loot:SetHealth(1000)
+						Loot:SetHealth(100)
+						-- Make this prop unbreakable
+						Loot:SetKeyValue("overridescript", "damage_table,")
 					else
 						Loot = ents.Create(ScroungedItem)
 					end
@@ -1404,7 +1412,7 @@ if SERVER then
 					local Mins, Maxs = Loot:GetCollisionBounds()
 					local BBVec = Maxs - Mins
 					local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
-					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight + 1))
+					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight + 2))
 					Loot:SetAngles(AngleRand())
 					Loot:Spawn()
 					Loot:Activate()
