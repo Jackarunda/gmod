@@ -209,12 +209,14 @@ if SERVER then
 	end
 
 	function ENT:Prime()
+		if (self:GetState() == JMod.EZ_STATE_ARMED) or (self:GetState() == JMod.EZ_STATE_PRIMED) then return end
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		self:SetBodygroup(1, 1)
 	end
 
 	function ENT:Arm()
+		if (self:GetState() == JMod.EZ_STATE_ARMED) then return end
 		self:SetBodygroup(2, 1)
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
