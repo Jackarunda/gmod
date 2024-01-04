@@ -74,17 +74,20 @@ if(SERVER)then
 
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
 		---
-		local WireOutputs = {"State [NORMAL]"}
-		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is fine"}
+		local WireOutputs = {"State [NORMAL]", "Progress [NORMAL]", "FlexFuel [NORMAL]", "Ore [NORMAL]", "OreType [STRING]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "Machine's progress", "Machine's flex fuel left", "Amount of ore left", "The type of ore it's processing"}
 		for _, typ in ipairs(self.EZconsumes) do
 			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
 			local ResourceName = string.Replace(typ, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
 			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
-			table.insert(WireOutputs, OutResourceName)
-			table.insert(WireOutputDesc, ResourceDesc)
+			if not(string.Right(ResourceName, 3) == "ore") and not(table.HasValue(self.FlexFuels, typ)) then
+				table.insert(WireOutputs, OutResourceName)
+				table.insert(WireOutputDesc, ResourceDesc)
+			end
 		end
 		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
 	end
@@ -93,6 +96,7 @@ if(SERVER)then
 		if typ == self:GetOreType() and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:Use(activator)
@@ -121,7 +125,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetState() == STATE_PROCESSING) then return end
+		local State = self:GetState()
+		if (State == STATE_PROCESSING) or (State == STATE_BROKEN) then return end
 		if (self:GetElectricity() <= 0) then JMod.Hint(activator, "refill") return end
 		self:SetState(STATE_PROCESSING)
 		self:EmitSound("snd_jack_littleignite.wav")
@@ -131,6 +136,7 @@ if(SERVER)then
 			self.SoundLoop:SetSoundLevel(50)
 			self.SoundLoop:Play()
 		end)
+		if WireLib then WireLib.TriggerOutput(self, "State", self:GetState()) end
 	end
 
 	function ENT:TurnOff(activator)
@@ -138,6 +144,7 @@ if(SERVER)then
 		self:SetState(STATE_FINE)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
+		if WireLib then WireLib.TriggerOutput(self, "State", self:GetState()) end
 	end
 
 	function ENT:Think()
@@ -158,7 +165,7 @@ if(SERVER)then
 					self:EmitSound("snds_jack_gmod/hiss.wav", 120, 90)
 					return 
 				end
-				--if not OreTyp then self:TurnOff() return end
+				if not OreTyp then self:TurnOff() return end
 
 				self:ConsumeElectricity(.2)
 

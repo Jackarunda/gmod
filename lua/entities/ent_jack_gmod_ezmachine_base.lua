@@ -243,11 +243,15 @@ if(SERVER)then
 			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 		self.NextRefillTime = 0
+
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
-		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+		if self.TurnOn and self.TurnOff then
+			self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+		end
 		---
 		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
 		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
@@ -274,25 +278,24 @@ if(SERVER)then
 	end
 
 	function ENT:UpdateWireOutputs()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
-			if self.GetProgress then
-				WireLib.TriggerOutput(self, "Progress", self:GetProgress())
-			end
-			for _, typ in ipairs(self.EZconsumes) do
-				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
-					WireLib.TriggerOutput(self, "Durability", self.Durability)
+		if not istable(WireLib) then return end
+		WireLib.TriggerOutput(self, "State", self:GetState())
+		WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+		if self.GetProgress then
+			WireLib.TriggerOutput(self, "Progress", self:GetProgress())
+		end
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+				WireLib.TriggerOutput(self, "Durability", self.Durability)
+			else
+				if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
+					WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
 				else
-					if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
-						WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
-					else
-						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
-							local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-							if ResourceGetMethod then
-								local ResourceName = string.Replace(typ, " ", "")
-								WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
-							end
+					if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+						local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+						if ResourceGetMethod then
+							local ResourceName = string.Replace(typ, " ", "")
+							WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
 						end
 					end
 				end

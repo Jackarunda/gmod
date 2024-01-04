@@ -73,7 +73,7 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		if(self:GetState() == STATE_FINE)then
-			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4)then
+			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4) then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)

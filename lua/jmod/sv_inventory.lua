@@ -138,7 +138,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	local jmodinv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
 
 	if AddingResource then
-		local res, amt = target[1], target[2]
+		local res, amt = target[1], target[2] or 9e9
 		if IsValid(res) and res.IsJackyEZresource then
 			local SuppliesLeft = res:GetEZsupplies(res.EZsupplies) -- You better not return nil
 			jmodinv.EZresources[res.EZsupplies] = (jmodinv.EZresources[res.EZsupplies] or 0) + math.min(SuppliesLeft, amt)

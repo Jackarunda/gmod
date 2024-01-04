@@ -354,7 +354,7 @@ elseif(CLIENT)then
 				local GlowDir = GlowAng:Forward()
 				render.SetMaterial(WhiteSquare)
 			if Closeness > 40000 then
-				render.DrawQuadEasy(GlowPos + GlowDir * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 189, 103, 243), Roll)
+				render.DrawQuadEasy(GlowPos + GlowDir * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 167, 116, 225), Roll)
 			else
 				for i = 1, 5 do
 					render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 255, 255, 200 ), Roll)
