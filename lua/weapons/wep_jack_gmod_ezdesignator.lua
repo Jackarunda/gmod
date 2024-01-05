@@ -70,7 +70,7 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if self.EZowner:KeyDown(IN_SPEED) then
+	if self.Owner:KeyDown(IN_SPEED) then
 		Downness = Lerp(FT * 2, Downness, 10)
 	else
 		Downness = Lerp(FT * 2, Downness, 0)
@@ -80,7 +80,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 		Downness = 10
 	end
 
-	if self.EZowner:KeyDown(IN_ATTACK2) then
+	if self.Owner:KeyDown(IN_ATTACK2) then
 		Downness = -5
 
 		return pos - ang:Up() * 10, ang
@@ -93,10 +93,10 @@ function SWEP:GetViewModelPosition(pos, ang)
 end
 
 function SWEP:PrimaryAttack()
-	if self.EZowner:KeyDown(IN_SPEED) then return end
+	if self.Owner:KeyDown(IN_SPEED) then return end
 	if CLIENT then return end
 
-	if self.EZowner:KeyDown(IN_ATTACK2) then
+	if self.Owner:KeyDown(IN_ATTACK2) then
 		if CLIENT then
 		elseif SERVER then
 			--
@@ -116,16 +116,16 @@ end
 
 --
 function SWEP:SecondaryAttack()
-	if self.EZowner:KeyDown(IN_SPEED) then return end
+	if self.Owner:KeyDown(IN_SPEED) then return end
 	if CLIENT then return end
 
-	if self.EZowner:KeyDown(JMod.Config.General.AltFunctionKey) then
+	if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 		local Kit = ents.Create("ent_jack_gmod_ezdesignator")
-		Kit:SetPos(self.EZowner:GetShootPos() + self.EZowner:GetAimVector() * 20)
-		Kit:SetAngles(self.EZowner:GetAimVector():Angle())
+		Kit:SetPos(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 20)
+		Kit:SetAngles(self.Owner:GetAimVector():Angle())
 		Kit:Spawn()
 		Kit:Activate()
-		Kit:GetPhysicsObject():SetVelocity(self.EZowner:GetVelocity())
+		Kit:GetPhysicsObject():SetVelocity(self.Owner:GetVelocity())
 		Kit.Electricity = self:GetElectricity()
 		self:Remove()
 
@@ -145,7 +145,7 @@ function SWEP:Holster(wep)
 end
 
 function SWEP:Deploy()
-	if not IsValid(self.EZowner) then return end
+	if not IsValid(self.Owner) then return end
 	self:SetReady(false)
 
 	timer.Simple(.5, function()
@@ -161,7 +161,7 @@ end
 function SWEP:Think()
 	local Time = CurTime()
 
-	if self.EZowner:KeyDown(IN_ATTACK) and self.EZowner:KeyDown(IN_ATTACK2) and (self:GetElectricity() > 0) then
+	if self.Owner:KeyDown(IN_ATTACK) and self.Owner:KeyDown(IN_ATTACK2) and (self:GetElectricity() > 0) then
 		self:SetLasing(true)
 	else
 		self:SetLasing(false)
@@ -173,7 +173,7 @@ local Vignet = Material("mats_jack_gmod_sprites/vignette.png")
 function SWEP:DrawHUD()
 	local W, H = ScrW(), ScrH()
 
-	if self.EZowner:KeyDown(IN_ATTACK2) and self:GetReady() then
+	if self.Owner:KeyDown(IN_ATTACK2) and self:GetReady() then
 		surface.SetMaterial(Vignet)
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.DrawTexturedRect(0, 0, W, H)
@@ -190,8 +190,8 @@ function SWEP:DrawHUD()
 		surface.DrawRect(W / 2, H / 2 - 30, 2, 60)
 		surface.SetDrawColor(255, 255, 255, 255)
 		surface.DrawRect(W / 2, H / 2, 2, 2)
-		local Tr = self.EZowner:GetEyeTrace()
-		local Dist = math.ceil(Tr.HitPos:Distance(self.EZowner:GetShootPos()) / 52)
+		local Tr = self.Owner:GetEyeTrace()
+		local Dist = math.ceil(Tr.HitPos:Distance(self.Owner:GetShootPos()) / 52)
 		draw.SimpleText("Battery: " .. math.ceil(self:GetElectricity() / 10 * 100) .. "%", "Trebuchet24", W * .5 + 100, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 		draw.SimpleText(Dist .. "m", "Trebuchet24", W * .5 - 150, H * .5, Color(255, 255, 255, 100), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	end
@@ -207,10 +207,10 @@ local CurFoV = 70
 function SWEP:TranslateFOV(fov)
 	local FT = FrameTime()
 
-	if self.EZowner:KeyDown(IN_ATTACK2) and self:GetReady() then
-		local ShootPos, AimVec = self.EZowner:GetShootPos(), self.EZowner:GetAimVector()
+	if self.Owner:KeyDown(IN_ATTACK2) and self:GetReady() then
+		local ShootPos, AimVec = self.Owner:GetShootPos(), self.Owner:GetAimVector()
 
-		local Tr = util.QuickTrace(ShootPos, AimVec * 50000, {self.EZowner})
+		local Tr = util.QuickTrace(ShootPos, AimVec * 50000, {self.Owner})
 
 		local Dist = Tr.HitPos:Distance(ShootPos)
 		local Reduction = Dist / 1000
@@ -230,13 +230,13 @@ function SWEP:TranslateFOV(fov)
 end
 
 function SWEP:AdjustMouseSensitivity()
-	if self.EZowner:KeyDown(IN_ATTACK2) then return self.EZowner:GetFOV() / 80 end
+	if self.Owner:KeyDown(IN_ATTACK2) then return self.Owner:GetFOV() / 80 end
 end
 
 ----------------- shit -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.EZowner) then
-		local vm = self.EZowner:GetViewModel()
+	if CLIENT and IsValid(self.Owner) then
+		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
 			self:ResetBonePositions(vm)
@@ -252,8 +252,8 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.VElements)
 		self:CreateModels(self.WElements)
 
-		if IsValid(self.EZowner) then
-			local vm = self.EZowner:GetViewModel()
+		if IsValid(self.Owner) then
+			local vm = self.Owner:GetViewModel()
 
 			if IsValid(vm) then
 				self:ResetBonePositions(vm)
@@ -275,7 +275,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
-		local vm = self.EZowner:GetViewModel()
+		local vm = self.Owner:GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end
 		self:UpdateBonePositions(vm)
@@ -388,8 +388,8 @@ if CLIENT then
 
 		local bone_ent
 
-		if IsValid(self.EZowner) then
-			bone_ent = self.EZowner
+		if IsValid(self.Owner) then
+			bone_ent = self.Owner
 		else
 			-- when the weapon is dropped
 			bone_ent = self
@@ -498,7 +498,7 @@ if CLIENT then
 				pos, ang = m:GetTranslation(), m:GetAngles()
 			end
 
-			if IsValid(self.EZowner) and self.EZowner:IsPlayer() and ent == self.EZowner:GetViewModel() and self.ViewModelFlip then
+			if IsValid(self.Owner) and self.Owner:IsPlayer() and ent == self.Owner:GetViewModel() and self.ViewModelFlip then
 				ang.r = -ang.r -- Fixes mirrored models
 			end
 		end
