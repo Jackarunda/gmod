@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.TUNGSTENORE
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
+ENT.Model = "models/jmod/resources/resourcecube.mdl"
 ENT.Material = "models/mat_jack_gmod_tungstenore"
 ENT.ModelScale = 1
 ENT.Mass = 50

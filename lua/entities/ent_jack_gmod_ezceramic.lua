@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.CERAMIC
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
+ENT.Model = "models/jmod/resources/resourcecube.mdl"
 ENT.Material = "models/props_building_details/courtyard_template001c_bars"
 ENT.Color = Color(200, 177, 120)
 ENT.ModelScale = 1

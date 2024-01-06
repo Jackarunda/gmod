@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.COPPERORE
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
+ENT.Model = "models/jmod/resources/resourcecube.mdl"
 ENT.Material = "models/mat_jack_gmod_copperore"
 ENT.ModelScale = 1
 ENT.Mass = 50
