@@ -65,7 +65,7 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 	end
 end
 
-local function FindDropPosFromSignalOrigin(origin)
+function JMod.FindDropPosFromSignalOrigin(origin)
 	local Height, Attempts, Pos, AcceptTFVonly = 0, 0, origin + Vector(0, 0, 200), false
 
 	while (Attempts < 1000) and not (Height > 5000) do
@@ -112,7 +112,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 			if station.nextDeliveryTime < Time then
 				station.nextReadyTime = Time + math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60) * 3)
 				station.state = JMod.EZ_STATION_STATE_BUSY
-				local DropPos = FindDropPosFromSignalOrigin(station.deliveryLocation)
+				local DropPos = JMod.FindDropPosFromSignalOrigin(station.deliveryLocation)
 
 				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", stationID, DropPos)
 
@@ -396,7 +396,7 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 		Punish = tobool(args[2])
 	end
 
-	local DropPos = FindDropPosFromSignalOrigin(TargetPos)
+	local DropPos = JMod.FindDropPosFromSignalOrigin(TargetPos)
 
 	if DropPos then
 		TargetPly:ExitVehicle()

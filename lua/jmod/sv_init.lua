@@ -350,8 +350,8 @@ end
 local function SleepySitThink(dude)
 	local Time = CurTime()
 	if dude.JMod_IsSleeping then
-		if dude:Health() < (dude:GetMaxHealth() * .25) then
-			dude.EZhealth = math.max(dude.EZhealth, 1)
+		if dude:Health() < (dude:GetMaxHealth() * .15) then
+			dude.EZhealth = math.max(dude.EZhealth or 0, 1)
 		end
 	end
 end

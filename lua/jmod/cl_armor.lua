@@ -1,10 +1,11 @@
-﻿function JMod.CopyArmorTableToPlayer(ply)
+﻿JMod.ArmorTableCopy = {}
+function JMod.CopyArmorTableToPlayer(ply)
 	-- make a copy of the global armor spec table, personalize it, and store it on the player
-	ply.JMod_ArmorTableCopy = table.FullCopy(JMod.ArmorTable)
+	JMod.ArmorTableCopy = table.FullCopy(JMod.ArmorTable)
 	local plyMdl = ply:GetModel()
 
 	if JMod.LuaConfig and JMod.LuaConfig.ArmorOffsets and JMod.LuaConfig.ArmorOffsets[plyMdl] then
-		table.Merge(ply.JMod_ArmorTableCopy, JMod.LuaConfig.ArmorOffsets[plyMdl])
+		table.Merge(JMod.ArmorTableCopy, JMod.LuaConfig.ArmorOffsets[plyMdl])
 	end
 end
 
@@ -16,7 +17,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 
 		local Time = CurTime()
 
-		if not ply.JMod_ArmorTableCopy or ((ply.NextEZarmorTableCopy or 0) < Time) then
+		if not JMod.ArmorTableCopy or ((ply.NextEZarmorTableCopy or 0) < Time) then
 			JMod.CopyArmorTableToPlayer(ply)
 			ply.NextEZarmorTableCopy = Time + 30
 		end
@@ -24,7 +25,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 		local plyboneedit = {}
 
 		for id, armorData in pairs(ply.EZarmor.items) do
-			local ArmorInfo = ply.JMod_ArmorTableCopy[armorData.name]
+			local ArmorInfo = JMod.ArmorTableCopy[armorData.name]
 
 			if armorData.tgl and ArmorInfo.tgl then
 				ArmorInfo = table.Merge(table.FullCopy(ArmorInfo), ArmorInfo.tgl)
