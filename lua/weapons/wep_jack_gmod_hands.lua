@@ -252,7 +252,7 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 	else
 		if IsValid(self.CarryEnt) then
 			local Index = self.CarryEnt:EntIndex()
-			timer.Simple(0.5, function() hook.Remove("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(Index)) end)
+			hook.Remove("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(Index))
 		end
 		self.CarryEnt = nil
 		self.CarryBone = nil
