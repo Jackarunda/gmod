@@ -1459,7 +1459,7 @@ if SERVER then
 
 	concommand.Add("jmod_debug_scrounge", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
-		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		if IsValid(ply) and not JMod.IsAdmin(ply) then return end
 		JMod.EZ_ScroungeArea(ply, nil, {true})
 	end, nil, "Test scrounging without any modifiers")
 
@@ -1467,15 +1467,14 @@ if SERVER then
 		JMod.GenerateNaturalResources()
 	end)
 
-	concommand.Add("jmod_debug_generatenaturalresources", function(ply, cmd, args) 
-		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
-		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	concommand.Add("jmod_admin_generatenaturalresources", function(ply, cmd, args)
+		if IsValid(ply) and not JMod.IsAdmin(ply) then return end
 		JMod.GenerateNaturalResources() 
 	end, nil, "Re-generates the natrual resource deposits")
 
 	concommand.Add("jmod_debug_shownaturalresources", function(ply, cmd, args)
 		if not GetConVar("sv_cheats"):GetBool() then print("JMod: This needs sv_cheats set to 1") return end
-		if IsValid(ply) and not ply:IsSuperAdmin() then return end
+		if IsValid(ply) and not JMod.IsAdmin(ply) then return end
 		net.Start("JMod_NaturalResources")
 		net.WriteBool(true)
 		net.WriteTable(JMod.NaturalResourceTable)
@@ -1484,7 +1483,7 @@ if SERVER then
 
 	--[[concommand.Add("jmod_debug_remove_naturalresource",function(ply,cmd,args)
 		if not(GetConVar("sv_cheats"):GetBool())then return end
-		if((IsValid(ply))and not(ply:IsSuperAdmin()))then return end
+		if((IsValid(ply))and not(JMod.IsAdmin(ply)))then return end
 		for i in #args do
 			local depositToRemove = table.remove(JMod.NaturalResourceTable, args[i])
 			print("Removed deposit #: " .. args[i])
