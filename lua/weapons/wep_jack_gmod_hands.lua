@@ -244,16 +244,16 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 		else
 			self.CarryPos = nil
 		end
-		hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(self.CarryEnt:EntIndex()), function(target, dmginfo)
+		--[[hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(self.CarryEnt:EntIndex()), function(target, dmginfo)
 			if (target == self.Owner) and (dmginfo:GetInflictor() == self.CarryEnt) and (dmginfo:GetDamageType() == DMG_CRUSH) then
 				return true
 			end
-		end)
+		end)--]]
 	else
-		if IsValid(self.CarryEnt) then
+		--[[if IsValid(self.CarryEnt) then
 			local Index = self.CarryEnt:EntIndex()
 			hook.Remove("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(Index))
-		end
+		end--]]
 		self.CarryEnt = nil
 		self.CarryBone = nil
 		self.CarryPos = nil
@@ -483,3 +483,15 @@ if CLIENT then
 		return pos, ang
 	end
 end
+
+-- Stop carry entity from damaging the player
+hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt", function(target, dmginfo)
+	if target:IsPlayer() then 
+		local Weppy = target:GetActiveWeapon() 
+		if IsValid(Weppy) and IsValid(Weppy.CarryEnt) then
+			if (dmginfo:GetInflictor() == Weppy.CarryEnt) and (dmginfo:GetDamageType() == DMG_CRUSH) then
+				return true
+			end
+		end
+	end
+end)
