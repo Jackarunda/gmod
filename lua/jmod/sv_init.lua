@@ -5,7 +5,8 @@ if force_workshop:GetBool() then
 	resource.AddWorkshop("1919689921")
 end
 
-local function JackaSpawnHook(ply)
+local function JackaSpawnHook(ply, transition)
+	if transition then return end
 	ply.JModSpawnTime = CurTime()
 	ply.JModFriends = ply.JModFriends or {}
 
@@ -56,12 +57,11 @@ local function JackaSpawnHook(ply)
 	
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
 	local sleepingbag = ply.JModSpawnPointEntity
-	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
-		if(sleepingbag.nextSpawnTime < CurTime())then
-			sleepingbag.nextSpawnTime = CurTime() + 60
+	if IsValid(sleepingbag) and (sleepingbag.State == STATE_UNROLLED)then
+		if (sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
+			sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
 			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
 				local Up = sleepingbag:GetUp()
-				--ply:EnterVehicle(sleepingbag.Pod)
 				ply:SetPos(sleepingbag:GetPos())
 				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 				net.Start("JMod_VisionBlur")
@@ -100,7 +100,7 @@ local function JackaSpawnHook(ply)
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
-hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply) JackaSpawnHook(ply) ; JMod.LuaConfigSync(false) end)
+hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) JackaSpawnHook(ply, transit) ; JMod.LuaConfigSync(false) end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
