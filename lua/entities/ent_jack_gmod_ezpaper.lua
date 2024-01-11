@@ -11,6 +11,7 @@ ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.PAPER
 ENT.JModPreferredCarryAngles = Angle(0, -90, 100)
 ENT.Model = "models/jmod/resources/cylinderx15.mdl"
 ENT.Material = "models/mat_jack_gmod_paperroll"
+ENT.PhysMat = "paper"
 ENT.Color = Color(200, 200, 200)
 --ENT.ModelScale=1.5
 ENT.Mass = 30
