@@ -1538,7 +1538,7 @@ elseif CLIENT then
 		if IsValid(Wep) and Wep.ScanResults then
 			for k, v in pairs(Wep.ScanResults) do
 				-- let's draw this closer to the ground
-				local DrawTrace = util.QuickTrace(v.pos + Vector(0, 0, 100), Vector(0, 0, -200))
+				local DrawTrace = util.QuickTrace(v.pos + Vector(0, 0, 20), Vector(0, 0, -200), {Ply, Wep})
 				local Ang = DrawTrace.HitNormal:Angle()
 				Ang:RotateAroundAxis(Ang:Right(), -90)
 				JMod.HoloGraphicDisplay(nil, DrawTrace.HitPos + DrawTrace.HitNormal * 5, Ang, 1, 30000, function()
