@@ -1,4 +1,5 @@
-﻿JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
+﻿JMod.VOLUMEDIV = 500
+JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
 
 function JMod.EZ_Open_Inventory(ply)
 	JMod.Hint(ply, "scrounge")
@@ -38,7 +39,7 @@ function JMod.GetStorageCapacity(ent)
 				if SurfData.thickness > 0 then
 					local SurfArea = Phys:GetSurfaceArea()
 					Vol = Vol - (SurfArea * SurfData.thickness * 0.0254^3 * SurfData.density)
-					Capacity = math.ceil(Vol / 500)
+					Capacity = math.ceil(Vol / JMod.VOLUMEDIV)
 				end
 			end
 		end
@@ -72,7 +73,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
 				local Vol = Phys:GetVolume()
 				if (Vol ~= nil) then
-					Vol = math.ceil(Vol / 500)
+					Vol = math.ceil(Vol / JMod.VOLUMEDIV)
 					if v.ent.EZstorageVolumeOverride then
 						Vol = v.ent.EZstorageVolumeOverride
 					end
@@ -152,12 +153,21 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		constraint.RemoveAll(target)
 		target.EZInvOwner = invEnt
 		target:SetParent(invEnt)
+		--[[local InvMin, InvMax, targMin, targMax = invEnt:OBBMins(), invEnt:OBBMaxs(), target:OBBMins(), target:OBBMaxs()
+		local PosToFit = Vector(invEnt:OBBCenter())
+		for i = 1, 3 do
+			PosToFit[i] = InvMax[i] - (targMax[i] - targMin[1])
+		end
+		target:SetPos(PosToFit)
+		target:SetAngles(target.JModPreferredCarryAngles or PosToFit:Angle())--]]
 		target:SetPos(invEnt:OBBCenter())
-		target:SetAngles(target.JModPreferredCarryAngles or Angle(0, 0, 0))
+		target:SetAngles(Angle(0, 0, 0))
 		target:SetNoDraw(true)
 		target:SetNotSolid(true)
-		target:GetPhysicsObject():EnableMotion(false)
-		target:GetPhysicsObject():Sleep()
+		if IsValid(target:GetPhysicsObject()) then
+			target:GetPhysicsObject():EnableMotion(false)
+			target:GetPhysicsObject():Sleep()
+		end
 		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target})
 
 		local Children = target:GetChildren()
@@ -401,7 +411,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 				if Tar.EZstorageVolumeOverride then
 					RoomWeNeed = Tar.EZstorageVolumeOverride
 				else
-					RoomWeNeed = math.ceil(RoomWeNeed / 500)
+					RoomWeNeed = math.ceil(RoomWeNeed / JMod.VOLUMEDIV)
 				end
 			end
 			
