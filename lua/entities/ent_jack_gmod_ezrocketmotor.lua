@@ -5,7 +5,7 @@ ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Rocket Motor"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
@@ -36,7 +36,8 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/Mechanics/robotics/a1.mdl")
+		self:SetModel("models/XQM/cylinderx1.mdl")
+		self:SetSubMaterial(0, "models/jmod/explosives/rocketmotor01a")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -240,7 +241,7 @@ if SERVER then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
 				Eff:SetNormal(-self:GetForward())
-				Eff:SetScale(1)
+				Eff:SetScale(0.5)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
 				self.Spent = true
