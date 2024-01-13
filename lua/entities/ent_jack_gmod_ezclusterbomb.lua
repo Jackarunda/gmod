@@ -202,7 +202,7 @@ if SERVER then
 			if self.FreefallTicks >= 10 then
 				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized() * 1500, self)
 
-				if Tr.Hit then
+				if Tr.Hit and not(Tr.HitSky) then
 					self:Detonate()
 				end
 			end
