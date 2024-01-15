@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.14
+			Version = 45.17
 		},
 		General = {
 			Hints = true,
@@ -732,6 +732,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Stores the object you're looking at in a box for transportation or storage"
 			},
+			["EZ Rope"] = {
+				results = "FUNC EZrope",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 1
+				},
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "Attaches a rope between two points"
+			},
 			["EZ Criticality Weapon"] = {
 				results = "ent_jack_gmod_ezcriticalityweapon",
 				craftingReqs = {
@@ -955,6 +967,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "EZ HE Rocket, except it's a lot more effective against armored vehicles with less boom."
+			},
+			["EZ Rocket Motor"] = {
+				results = "ent_jack_gmod_ezrocketmotor",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 20,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 50
+				},
+				sizeScale = 1,
+				category = "Explosives",
+				craftingType = "workbench",
+				description = "Attach to an object and launch to propell it away."
 			},
 			["EZ Incendiary Bomb"] = {
 				results = "ent_jack_gmod_ezincendiarybomb",
@@ -2711,6 +2734,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	JMod.LuaConfig.BuildFuncs.EZbox = function(playa, position, angles)
 		JMod.Package(playa)
 	end
+	JMod.LuaConfig.BuildFuncs.EZrope = function(playa, position, angles)
+		JMod.Rope(playa)
+	end
 
 	SetArmorPlayerModelModifications()
 
@@ -2806,5 +2832,16 @@ hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, build
 		local _, Message = JMod.GetPackagableObject(playa) 
 		
 		return false, Message 
+	end
+	if (buildInfo.results == "FUNC EZrope") then
+		local RopeTr = util.QuickTrace(playa:GetShootPos(), (playa:GetAimVector() * 80), {playa})
+		if not(RopeTr.Hit) then return false, "No applicible rope pos" end
+
+		if not(playa.EZropeData) then
+			playa.EZropeData = {RopeTr.HitPos, RopeTr.Entity}
+			return false, "Rope started"
+		end
+
+		return true, "Rope finished", math.Round(playa.EZropeData[1]:Distance(RopeTr.HitPos) / 32)
 	end
 end)

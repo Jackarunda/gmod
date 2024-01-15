@@ -1141,6 +1141,15 @@ function JMod.Package(packager)
 	end
 end
 
+function JMod.Rope(ply, origin, dir)
+	if not(ply.EZropeData) then return end
+	local RopeTr = util.QuickTrace(origin or ply:GetShootPos(), (dir or ply:GetAimVector()) * 80, {ply})
+	local LropePos1, LropePos2 = ply.EZropeData[2]:WorldToLocal(ply.EZropeData[1]), RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
+	local Dist = ply.EZropeData[1]:Distance(RopeTr.HitPos)
+	local Rope, Vrope = constraint.Rope(ply.EZropeData[2], RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, 5000, 1, "cable/rope", 0)
+	ply.EZropeData = nil
+end
+
 function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 	mult = mult or 1
 	local Time = CurTime()
