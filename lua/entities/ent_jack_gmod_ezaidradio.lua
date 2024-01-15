@@ -419,6 +419,14 @@ if(SERVER)then
 				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Message, BFFreq), ParrotPhrase, ply)
 
 				SuccessfulTransmit = true
+			else
+				local Override, Words = hook.Run("JMod_CanRadioRequest", self, ply, Message)
+				if Override then
+					SuccessfulTransmit = Override
+					self:Speak(Words or "transmition recieved", ParrotPhrase, ply)
+				else
+					self:Speak("I don't understand. Try 'help'", ParrotPhrase, ply)
+				end
 			end
 		end
 
