@@ -8,9 +8,8 @@ ENT.PrintName = "EZ Rocket Motor"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.EZRackOffset = Vector(0, 0, 8)
-ENT.EZRackAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.ThrustPower = 20000
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 
@@ -36,8 +35,7 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/XQM/cylinderx1.mdl")
-		self:SetSubMaterial(0, "models/jmod/explosives/rocketmotor01a")
+		self:SetModel("models/jmod/explosives/ez_rocket_engine01.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -150,9 +148,9 @@ if SERVER then
 				if Tr.Hit and IsValid(Tr.Entity) and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
 					self.NextStick = Time + .5
 					local Ang = Tr.HitNormal:Angle()
-					Ang:RotateAroundAxis(Ang:Up(), 180)
+					Ang:RotateAroundAxis(Ang:Right(), 90)
 					self:SetAngles(Ang)
-					self:SetPos(Tr.HitPos + Tr.HitNormal * 12)
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 5)
 
 					-- crash prevention
 					if Tr.Entity:GetClass() == "func_breakable" then
@@ -184,35 +182,40 @@ if SERVER then
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
-		--Phys:SetMass(0)
-		--Phys:EnableMotion(true)
-		--Phys:Wake()
 
 		if IsValid(self.StuckTo) then
 			if IsValid(self.StuckTo:GetPhysicsObject()) then
 				Phys = self.StuckTo:GetPhysicsObject()
 				Phys:EnableMotion(true)
 				Phys:Wake()
-				Phys:ApplyForceCenter(self:GetForward() * 25000)
+				local CenterOfMass = self.StuckTo:LocalToWorld(Phys:GetMassCenter())
+				if self:GetPos():Distance(CenterOfMass) < 50 then
+					self.ThrustStuckTo = true
+				end
 			end
 		end
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(95, 105))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(-self:GetForward())
+		Eff:SetNormal(-self:GetUp())
 		Eff:SetScale(2)
 		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			--util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetUp() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
 		---
 
 		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
+		timer.Simple(.3, function()
+			if IsValid(self) then
+				self:SetSkin(1)
+			end
+		end)
 	end
 
 	function ENT:Think()
@@ -234,13 +237,13 @@ if SERVER then
 			end
 
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(self:GetForward() * 20000)
-				self.FuelLeft = self.FuelLeft - 2.5
+				Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
+				self.FuelLeft = self.FuelLeft - 1.75
 				--jprint(1 / self.FuelLeft)
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(-self:GetForward())
+				Eff:SetNormal(-self:GetUp())
 				Eff:SetScale(0.5)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
@@ -265,7 +268,7 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 	function ENT:Draw()
-		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), -self:GetForward()
+		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), -self:GetUp()
 		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
