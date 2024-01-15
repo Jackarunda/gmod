@@ -1,5 +1,5 @@
 ﻿-- EZ Radio Code --
-local NotifyAllMsgs = {
+JMod.NotifyAllMsgs = {
 	["normal"] = {
 		["good drop"] = "good drop, package away, returning to base",
 		["drop failed"] = "drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB",
@@ -53,9 +53,9 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 					radio:Speak(msgID)
 				else
 					if radio.BFFd then
-						radio:Speak(NotifyAllMsgs["bff"][msgID])
+						radio:Speak(JMod.NotifyAllMsgs["bff"][msgID])
 					else
-						radio:Speak(NotifyAllMsgs["normal"][msgID])
+						radio:Speak(JMod.NotifyAllMsgs["normal"][msgID])
 					end
 				end
 			end
