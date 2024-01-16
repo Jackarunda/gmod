@@ -1,7 +1,7 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezresource"
-ENT.PrintName = "EZ Gold Ore"
+ENT.PrintName = "Ore Gold"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/gold ore.png"
 ENT.Spawnable = true

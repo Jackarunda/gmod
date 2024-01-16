@@ -1,7 +1,7 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezresource"
-ENT.PrintName = "EZ Tungsten Ore"
+ENT.PrintName = "Ore Tungsten"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/tungsten ore.png"
 ENT.Spawnable = true
