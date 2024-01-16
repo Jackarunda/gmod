@@ -10,6 +10,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.ThrustPower = 20000
+ENT.JModHighlyFlammableFunc = "Launch"
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 
@@ -73,7 +74,6 @@ if SERVER then
 		--elseif iname == "Arm" and value == 0 then
 		--	self:SetState(STATE_OFF)
 		elseif iname == "Launch" and value > 0 then
-			self:SetState(STATE_ARMED)
 			self:Launch()
 		end
 	end
@@ -107,7 +107,9 @@ if SERVER then
 		end
 
 		self:TakePhysicsDamage(dmginfo)
-
+		if dmginfo:IsDamageType(DMG_BURN) and JMod.LinCh(math.random(1, 1000), 900, 1000) then
+		    self:Launch()
+		end
 	end
 
 	function ENT:Use(activator, activatorAgain, onOff)
@@ -172,14 +174,13 @@ if SERVER then
 		end
 	end
 
-	function ENT:CutBurn() 
-		if self:GetState() ~= STATE_LAUNCHED then return end
+	function ENT:CutBurn()
 		self:SetState(STATE_ARMED)
-		self:GetPhysicsObject():SetMass(20)
 	end
 
 	function ENT:Launch()
-		if self:GetState() ~= STATE_ARMED then return end
+		local State = self:GetState()
+		if (State == STATE_LAUNCHED) or (State == STATE_BROKEN) then return end
 		self:SetState(STATE_LAUNCHED)
 		local Phys = self:GetPhysicsObject()
 
@@ -204,7 +205,7 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			--util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetUp() * i * 40, 50, 50)
+			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetUp() * i * -40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
@@ -248,6 +249,13 @@ if SERVER then
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
 				self.Spent = true
+				for k, v in pairs(ents.FindInSphere(self:GetPos(), 30)) do
+					if v.JModHighlyFlammableFunc then
+						JMod.SetEZowner(v, self.EZowner)
+						local Func = v[v.JModHighlyFlammableFunc]
+						Func(v)
+					end
+				end
 				timer.Simple(1, function()
 					if IsValid(self) then
 						--JMod.Sploom(JMod.GetEZowner(self), self:GetPos(), 0, 0)
@@ -255,11 +263,8 @@ if SERVER then
 					end
 				end)
 			end
-		elseif State == STATE_ARMED and self.LastState == STATE_LAUNCHED then
-			self:CutBurn()
 		end
 
-		self.LastState = State
 		self:NextThink(CurTime() + .05)
 
 		return true
