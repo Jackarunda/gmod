@@ -1141,13 +1141,22 @@ function JMod.Package(packager)
 	end
 end
 
-function JMod.Rope(ply, origin, dir)
-	if not(ply.EZropeData) then return end
+function JMod.Rope(ply, origin, dir, width, strength, mat)
+	local RopeStartData = ply and ply.EZropeData
+	--jprint(RopeStartData)
+	if not(RopeStartData) or not IsValid(RopeStartData.Ent) then
+		if origin and dir then
+			local RopeStartTr = util.QuickTrace(origin, dir * 80)
+			if not(RopeStartTr.Hit) then return end
+			RopeStartData = {Pos = RopeStartTr.HitPos, Ent = RopeStartTr.Entity}
+		else
+			return
+		end
+	end
 	local RopeTr = util.QuickTrace(origin or ply:GetShootPos(), (dir or ply:GetAimVector()) * 80, {ply})
-	local LropePos1, LropePos2 = ply.EZropeData[2]:WorldToLocal(ply.EZropeData[1]), RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
-	local Dist = ply.EZropeData[1]:Distance(RopeTr.HitPos)
-	local Rope, Vrope = constraint.Rope(ply.EZropeData[2], RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, 5000, 1, "cable/rope", 0)
-	ply.EZropeData = nil
+	local LropePos1, LropePos2 = ply.EZropeData.Ent:WorldToLocal(RopeStartData.Pos), RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
+	local Dist = RopeStartData.Pos:Distance(RopeTr.HitPos)
+	local Rope, Vrope = constraint.Rope(ply.EZropeData.Ent, RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, strength or 5000, width or 2, mat or "cable/cable2", false)
 end
 
 function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
@@ -1336,7 +1345,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			if((JMod.LuaConfig) and (JMod.LuaConfig.BuildFuncs) and (JMod.LuaConfig.BuildFuncs[FuncName]))then
 				local Ent = JMod.LuaConfig.BuildFuncs[FuncName](ply, Pos, Ang)
 			else
-				print("JMOD WORKBENCH ERROR: garrysmod/lua/autorun/JMod.LuaConfig.lua is missing, corrupt, or doesn't have an entry for that build function")
+				print("JMOD WORKBENCH ERROR: JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 			end
 		elseif string.Right(results, 4) == ".mdl" then
 			local Ent = ents.Create("prop_physics")

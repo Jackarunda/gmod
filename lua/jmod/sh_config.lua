@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.17
+			Version = 45.18
 		},
 		General = {
 			Hints = true,
@@ -705,7 +705,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				oneHanded = true,
 				noSound = true,
 				sizeScale = .05,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"
 			},
@@ -717,7 +717,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				oneHanded = true,
 				noSound = true,
 				sizeScale = .05,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Creates a single axis bearing for conecting rotating objects"
 			},
@@ -728,34 +728,45 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				noSound = true,
 				sizeScale = 1,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Stores the object you're looking at in a box for transportation or storage"
 			},
 			["EZ Rope"] = {
 				results = "FUNC EZrope",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 1
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 2
 				},
 				oneHanded = true,
 				noSound = true,
 				sizeScale = 0.1,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Attaches a rope between two points"
 			},
-			["EZ Criticality Weapon"] = {
-				results = "ent_jack_gmod_ezcriticalityweapon",
+			["EZ Cable"] = {
+				results = "FUNC EZcable",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 2
 				},
-				sizeScale = 1,
-				category = "Other",
-				craftingType = "workbench",
-				description = "They say Slotin was often in his trademark blue jeans and cowboy boots..."
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Tools",
+				craftingType = "toolbox",
+				description = "Attaches a strong cable between two points"
+			},
+			["EZ Chain"] = {
+				results = "FUNC EZchain",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 5
+				},
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Tools",
+				craftingType = "toolbox",
+				description = "Attaches a very strong chain between two points"
 			},
 			["EZ Ground Scanner"] = {
 				results = "ent_jack_gmod_ezgroundscanner",
@@ -975,7 +986,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 50
 				},
 				sizeScale = 1,
-				category = "Explosives",
+				category = "Other",
 				craftingType = "workbench",
 				description = "Attach to an object and launch to propell it away."
 			},
@@ -1912,6 +1923,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Frag nade, for sending hundreds of fragments into your enemy."
 			},
+			["EZ Criticality Weapon"] = {
+				results = "ent_jack_gmod_ezcriticalityweapon",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "workbench",
+				description = "They say Slotin was often in his trademark blue jeans and cowboy boots..."
+			},
 			["EZ Road Flare"] = {
 				results = "ent_jack_gmod_ezroadflare",
 				craftingReqs = {
@@ -2735,7 +2759,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		JMod.Package(playa)
 	end
 	JMod.LuaConfig.BuildFuncs.EZrope = function(playa, position, angles)
-		JMod.Rope(playa)
+		JMod.Rope(playa, nil, nil, 2, 5000, "cable/rope")
+		playa.EZropeData = nil
+	end
+	JMod.LuaConfig.BuildFuncs.EZcable = function(playa, position, angles)
+		JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
+		playa.EZropeData = nil
+	end
+	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)
+		JMod.Rope(playa, nil, nil, 2, 50000, "cable/mat_jack_gmod_chain")
+		playa.EZropeData = nil
 	end
 
 	SetArmorPlayerModelModifications()
@@ -2825,6 +2858,8 @@ hook.Add("Initialize", "JMOD_Initialize", function()
 	end
 end)
 
+local RopeCostList = {["FUNC EZrope"] = 64, ["FUNC EZcable"] = 64, ["FUNC EZchain"] = 64}
+
 hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, buildInfo)
 	if (buildInfo.results == "FUNC EZnail") and not JMod.FindNailPos(playa) then return false, "No applicable nail pos" end
 	if (buildInfo.results == "FUNC EZbolt") and not JMod.FindBoltPos(playa) then return false, "No applicable bolt pos" end
@@ -2833,15 +2868,19 @@ hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, build
 		
 		return false, Message 
 	end
-	if (buildInfo.results == "FUNC EZrope") then
+	if (RopeCostList[buildInfo.results]) then
 		local RopeTr = util.QuickTrace(playa:GetShootPos(), (playa:GetAimVector() * 80), {playa})
-		if not(RopeTr.Hit) then return false, "No applicible rope pos" end
+		if not(RopeTr.Hit) then 
+			playa.EZropeData = nil
 
-		if not(playa.EZropeData) then
-			playa.EZropeData = {RopeTr.HitPos, RopeTr.Entity}
-			return false, "Rope started"
+			return false, "No applicible cable pos" 
 		end
 
-		return true, "Rope finished", math.Round(playa.EZropeData[1]:Distance(RopeTr.HitPos) / 32)
+		if not(playa.EZropeData) or not IsValid(playa.EZropeData.Ent) then
+			playa.EZropeData = {Pos = RopeTr.HitPos, Ent = RopeTr.Entity}
+			return false, "Cable started"
+		end
+
+		return true, "Cable finished", math.Round(playa.EZropeData.Pos:Distance(RopeTr.HitPos) / RopeCostList[buildInfo.results])
 	end
 end)
