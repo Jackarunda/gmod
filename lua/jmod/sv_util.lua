@@ -1143,7 +1143,6 @@ end
 
 function JMod.Rope(ply, origin, dir, width, strength, mat)
 	local RopeStartData = ply and ply.EZropeData
-	--jprint(RopeStartData)
 	if not(RopeStartData) or not IsValid(RopeStartData.Ent) then
 		if origin and dir then
 			local RopeStartTr = util.QuickTrace(origin, dir * 80)

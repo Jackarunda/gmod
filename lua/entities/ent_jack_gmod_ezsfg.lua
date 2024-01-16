@@ -32,6 +32,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
+ENT.PowerProducer = true
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 2, "Progress")

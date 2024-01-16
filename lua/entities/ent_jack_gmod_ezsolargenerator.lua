@@ -16,10 +16,11 @@ ENT.StaticPerfSpecs = {
 	MaxDurability = 75,
 	MaxElectricity = 0
 }
-
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
+ENT.PowerProducer = true
+
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
 	self:NetworkVar("Float", 2, "Visibility")

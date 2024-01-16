@@ -27,6 +27,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.FUEL
 }
+ENT.JModPowerProducer = true
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
