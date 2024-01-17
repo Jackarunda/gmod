@@ -647,12 +647,13 @@ end
 function JMod.ShouldAllowControl(self, ply)
 	if not IsValid(ply) then return false end
 	if (ply.EZkillme) then return false end
-	if not IsValid(self.EZowner) then return false end
-	if ply == self.EZowner then return true end
-	local Allies = self.EZowner.JModFriends or {}
+	local EZowner = JMod.GetEZowner(self)
+	if not IsValid(EZowner) then return false end
+	if ply == EZowner then return true end
+	local Allies = EZowner.JModFriends or {}
 	if table.HasValue(Allies, ply) then return true end
 
-	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == self.EZowner:Team()
+	return (engine.ActiveGamemode() ~= "sandbox" or ply:Team() ~= TEAM_UNASSIGNED) and ply:Team() == EZowner:Team()
 end
 
 function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
@@ -842,8 +843,8 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
 	if machine.Connections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
-		local PowerToGive = amount / #machine.Connections
-		for k, connect in ipairs(machine.Connections) do
+		local PowerToGive = amount
+		for k, connect in pairs(machine.Connections) do
 			local Ent, Cable = connect.Ent, connect.Cable
 			if not IsValid(Ent) or not IsValid(Cable) or not(Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
 				machine.Connections[k] = nil

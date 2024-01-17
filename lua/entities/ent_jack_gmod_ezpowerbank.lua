@@ -4,14 +4,15 @@ ENT.Type = "anim"
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.PrintName = "Power Bank"
 ENT.Author = "Jackarunda"
-ENT.Category = "JMod - Machines"
+ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.JModPowerBank = true
+ENT.EZpowerBank = true
 ENT.Model = "models/props_lab/powerbox01a.mdl"
+ENT.Mass = 150
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity=1000,
@@ -40,19 +41,30 @@ if SERVER then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		if State == JMod.EZ_STATE_OFF then
-			self:TurnOn()
-		elseif State == JMod.EZ_STATE_ON then
-			self:TurnOff()
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		JMod.SetEZowner(self, activator)
+		if Alt then
+			self:ProduceResource()
+		else
+			if State == JMod.EZ_STATE_OFF then
+				self:TurnOn(activator)
+			elseif State == JMod.EZ_STATE_ON then
+				self:TurnOff()
+			end
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(dude)
 		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
 		self:SetState(JMod.EZ_STATE_ON)
-		for k, ent in ipairs(ents.FindInSphere(self:GetPos(), 400)) do
-			if ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) and ent.GetState and ent:GetState() ~= JMod.EZ_STATE_BROKEN) then
-				self:ConnectEnt(ent)
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
+		local SelfPos = self:GetPos()
+		for k, ent in ipairs(ents.FindInSphere(SelfPos, 1000)) do
+			local Dist = SelfPos:Distance(ent:GetPos())
+			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) and ent.GetState and ent:GetState() ~= JMod.EZ_STATE_BROKEN)) then
+				self:ConnectEnt(ent, 400)
+			elseif ent.EZpowerBank then
+				self:ConnectEnt(ent, 1000)
 			end
 		end
 	end
@@ -68,8 +80,9 @@ if SERVER then
 		end
 	end
 
-	function ENT:ConnectEnt(ent)
+	function ENT:ConnectEnt(ent, dist)
 		if not IsValid(ent) or (ent == self) then return end
+		if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(self)) then return end
 		local AlreadyConnected = false
 		for k, v in ipairs(self.Connections) do
 			if v.Ent == ent then
@@ -90,11 +103,12 @@ if SERVER then
 				break
 			end
 		end
-		local Cable = constraint.Rope(self, ent, 0, 0, Vector(0, 0, 0), ent.EZpowerPlug or Vector(0, 0, 0), 450, 20, 100, 2, "cable/cable2")
+		local Cable = constraint.Rope(self, ent, 0, 0, Vector(0, 0, 0), ent.EZpowerPlug or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
 		table.insert(ent.Connections, {Ent = self, Cable = Cable})
 		table.insert(self.Connections, {Ent = ent, Cable = Cable})
 	end
 
+	-- TODO: Figure out some logic inconsitancies with auto-turn on/off
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 		self.Connections = self.Connections or {}
@@ -104,21 +118,24 @@ if SERVER then
 			local SelfPower = self:GetElectricity()
 
 			for k, v in ipairs(self.Connections) do
-				if SelfPower <= 0 then break end
 				local Ent, Cable = v.Ent, v.Cable
 				if not IsValid(Ent) or not IsValid(Cable) then
 					table.remove(self.Connections, k)
-				elseif Ent.JModPowerProducer then
-					-- Do naught
-				elseif Ent.JModPowerBank then
+				elseif Ent.EZpowerProducer then
+					if SelfPower <= (self.MaxElectricity * .5) then
+						Ent:TurnOn()
+					elseif SelfPower >= (self.MaxElectricity * .9) then
+						Ent:TurnOff()
+					end
+				elseif (SelfPower >= 1) and Ent.EZpowerBank then
 					local EntPower = Ent:GetElectricity()
 					local ChargeDiff = SelfPower - EntPower
-					if (ChargeDiff > 0) then
+					if (ChargeDiff >= 1) then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2)
 						Ent.NextRefillTime = 0
 						self:SetElectricity(SelfPower - PowerTaken)
 					end
-				elseif table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
+				elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
 					local EntPower = Ent:GetElectricity()
 					if (Ent.MaxElectricity - EntPower) > 1 then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
@@ -140,14 +157,14 @@ if SERVER then
 		return true
 	end
 
-	function ENT:ProduceResource()
+	function ENT:ProduceResource(activator)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local amt = math.Clamp(math.floor(self:GetElectricity()), 0, self.MaxElectricity)
+		local amt = math.Clamp(math.floor(self:GetElectricity()), 0, 100)
 
 		if amt <= 0 then return end
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 20)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
-		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, self.MaxElectricity))
+		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, 100))
 	end
 
 elseif CLIENT then
