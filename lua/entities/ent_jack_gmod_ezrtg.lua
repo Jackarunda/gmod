@@ -19,13 +19,14 @@ ENT.SpawnHeight = 1
 ENT.StaticPerfSpecs = {
 	MaxDurability = 120
 }
-
 ENT.DynamicPerfSpecs = {
 	Armor = 1
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerPlug = Vector(3, -33, 15)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")

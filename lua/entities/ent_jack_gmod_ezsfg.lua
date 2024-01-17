@@ -32,7 +32,8 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
-ENT.PowerProducer = true
+ENT.EZpowerProducer = true
+ENT.EZpowerPlug = Vector(65, 18, 18)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 2, "Progress")
@@ -128,7 +129,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))

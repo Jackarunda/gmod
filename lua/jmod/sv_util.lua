@@ -841,6 +841,20 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
+	if machine.Connections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
+		local PowerToGive = amount / #machine.Connections
+		for k, connect in ipairs(machine.Connections) do
+			local Ent, Cable = connect.Ent, connect.Cable
+			if not IsValid(Ent) or not IsValid(Cable) or not(Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
+				machine.Connections[k] = nil
+			else
+				local Accepted = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, PowerToGive)
+				Ent.NextRefillTime = 0
+				amount = math.Clamp(amount - Accepted, 0, 100)
+			end
+		end
+	end
+	if amount <= 0 then return end
 	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
 		if findCrate then
 			range = range or 256
@@ -1156,6 +1170,7 @@ function JMod.Rope(ply, origin, dir, width, strength, mat)
 	local LropePos1, LropePos2 = ply.EZropeData.Ent:WorldToLocal(RopeStartData.Pos), RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
 	local Dist = RopeStartData.Pos:Distance(RopeTr.HitPos)
 	local Rope, Vrope = constraint.Rope(ply.EZropeData.Ent, RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, strength or 5000, width or 2, mat or "cable/cable2", false)
+	return Rope, RopeTr.Entity
 end
 
 function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)

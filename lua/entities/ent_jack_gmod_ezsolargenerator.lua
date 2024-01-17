@@ -19,7 +19,8 @@ ENT.StaticPerfSpecs = {
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
-ENT.PowerProducer = true
+ENT.EZpowerProducer = true
+ENT.EZpowerPlug = Vector(0, 0, -30)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -132,7 +133,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))

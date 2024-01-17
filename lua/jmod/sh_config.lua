@@ -2763,7 +2763,10 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		playa.EZropeData = nil
 	end
 	JMod.LuaConfig.BuildFuncs.EZcable = function(playa, position, angles)
-		JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
+		local Rope, Ent = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
+		--[[if IsValid(Rope) and IsValid(Ent) and (Ent.EZpowerProducer or (Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
+			table.insert(Ent.Connections, {Ent = Ent, Cable = Rope})
+		end--]]
 		playa.EZropeData = nil
 	end
 	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)

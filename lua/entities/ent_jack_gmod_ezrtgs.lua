@@ -21,13 +21,14 @@ ENT.SpawnHeight = 1
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100
 }
-
 ENT.DynamicPerfSpecs = {
 	Armor = .8
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerPlug = Vector(0, 0, 0)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -88,7 +89,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = self:WorldToLocal(SelfPos + Up * 10 + Right * 14)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
