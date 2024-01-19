@@ -130,8 +130,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			if alt and self.EZinstalled then
-				self:GetPhysicsObject():EnableMotion(true)
-				self.EZinstalled = false
+				JMod.EZinstallMachine(self, false)
 
 				return
 			end

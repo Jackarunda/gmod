@@ -351,8 +351,8 @@ if(SERVER)then
 					--jprint(PhysDamage)
 					--jprint("Their Speed: ", math.Round(CollisionDir:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
 					
-					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-						physobj:EnableMotion(true)
+					if (TheirForce >= ForceThreshold) then
+						JMod.EZinstallMachine(self, false)
 					end
 					if PhysDamage >= 1 and not(Held) then
 						local CrushDamage = DamageInfo()

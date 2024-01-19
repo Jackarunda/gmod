@@ -262,8 +262,8 @@ if(SERVER)then
 					local ForceThreshold = physobj:GetMass() * (self.EZanchorage or 1000)
 					local PhysDamage = TheirForce/(physobj:GetMass())
 
-					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-						physobj:EnableMotion(true)
+					if self.EZinstalled and (TheirForce >= ForceThreshold) then
+						JMod.EZinstallMachine(self, false)
 					end
 					if PhysDamage >= 1 and not(Held) then
 						local CrushDamage = DamageInfo()

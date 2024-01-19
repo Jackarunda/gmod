@@ -914,7 +914,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		if SpawnTr.Hit then
 			local SpawnPos = SpawnTr.HitPos + (SpawnTr.HitNormal * 40)
 		end
-
+		-- TODO: Figure out how to optimize the resource effects
 		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 		if ejectionVector then
 			JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector), SpawnPos, SpawnAmount * 0.02, 1, 1)
@@ -1460,6 +1460,16 @@ function JMod.EZimmobilize(victim, timeToImmobilize, immobilizer)
 	if not(IsValid(immobilizer)) then immobilizer = victim end
 	victim.EZimmobilizers[immobilizer] = (victim.EZimmobilizers[immobilizer] or Time) + timeToImmobilize
 	victim.EZImmobilizationTime = timeToImmobilize
+end
+
+function JMod.EZinstallMachine(machine, install)
+	install = install or true
+	if not(IsValid(machine)) then return end
+	local Phys = machine:GetPhysicsObject()
+	if not(IsValid(Phys)) then return end
+
+	machine.EZinstalled = install
+	Phys:EnableMotion(not install)
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

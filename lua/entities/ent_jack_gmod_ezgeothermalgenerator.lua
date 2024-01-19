@@ -79,8 +79,7 @@ if(SERVER)then
 				self:SetAngles(Angle(0, Yaw, Roll))
 				self:SetPos(Tr.HitPos + Tr.HitNormal * (self.SpawnHeight - 15))
 				---
-				self:GetPhysicsObject():EnableMotion(false)
-				self.EZinstalled = true
+				JMod.EZinstallMachine(self)
 				---
 				if self.DepositKey then
 					self:TurnOn(JMod.GetEZowner(self))
