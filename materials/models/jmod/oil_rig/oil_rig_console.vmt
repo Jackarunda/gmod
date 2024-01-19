@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/oil_rig/oil_rig_console
+	$detail detail/metal_detail_01
+	$detailscale 3
+	$detailblendfactor 1
+	$detailblendmode 0
+	$blendtintbybasealpha 1
+	$blendtintcoloroverbase 0
+	$surfaceprop	metal
+}

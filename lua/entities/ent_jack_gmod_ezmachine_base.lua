@@ -323,8 +323,8 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:UpdateDepositKey()
-		self.DepositKey = JMod.GetDepositAtPos(self, self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
+	function ENT:UpdateDepositKey(checkPos)
+		self.DepositKey = JMod.GetDepositAtPos(self, checkPos or (self:GetPos() - Vector(0, 0, self.SpawnHeight or 60)))
 		local DepositInfo = JMod.NaturalResourceTable[self.DepositKey]
 		if DepositInfo and self.SetResourceType then self:SetResourceType(DepositInfo.typ) end
 		return self.DepositKey

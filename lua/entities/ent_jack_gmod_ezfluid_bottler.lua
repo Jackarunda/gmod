@@ -199,6 +199,7 @@ if SERVER then
 elseif CLIENT then
 	function ENT:CustomInit()
 		local Grade = self:GetGrade()
+		self.LastGrade = Grade
 		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 	end
 
@@ -219,7 +220,7 @@ elseif CLIENT then
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
-		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
+		if self.LastGrade ~= Grade then self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName()) end
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
@@ -244,6 +245,7 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
+		self.LastGrade = Grade
 	end
 	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Fluid Bottler")
 end

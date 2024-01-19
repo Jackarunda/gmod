@@ -112,9 +112,9 @@ if SERVER then
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 		self.Connections = self.Connections or {}
-		local NumberOfConnected = #self.Connections
 
-		if (State == JMod.EZ_STATE_ON) and (NumberOfConnected > 0) then
+		if (State == JMod.EZ_STATE_ON) and (#self.Connections > 0) then
+			local NumberOfConnected = #self.Connections
 			local SelfPower = self:GetElectricity()
 
 			for k, v in ipairs(self.Connections) do
@@ -137,7 +137,7 @@ if SERVER then
 					end
 				elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
 					local EntPower = Ent:GetElectricity()
-					if (Ent.MaxElectricity - EntPower) > 1 then
+					if (Ent.MaxElectricity - EntPower) > Ent.MaxElectricity * .1 then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
 						Ent.NextRefillTime = 0
 						self:SetElectricity(SelfPower - PowerTaken)
@@ -193,12 +193,12 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), -90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
 				local Opacity = math.random(50, 150)
-				local ElecFrac = self:GetElectricity() / 1000
-				local R, G, B = JMod.GoodBadColor(ElecFrac)
+				local Elec = self:GetElectricity()
+				local R, G, B = JMod.GoodBadColor(Elec / 1000)
 
 				cam.Start3D2D(SelfPos + Forward * 13 + Up * 13, DisplayAng, .08)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(ElecFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(Elec)) .. "/" .. tostring(math.Round(self.MaxElectricity)), "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end
 		end
