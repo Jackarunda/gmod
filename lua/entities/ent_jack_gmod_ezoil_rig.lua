@@ -32,8 +32,10 @@ local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
 	self:NetworkVar("String", 0, "ResourceType")
+	self:NetworkVar("Int", 2, "PipeLength")
 end
-if(SERVER)then
+
+if SERVER then
 	function ENT:CustomInit()
 		self:SetProgress(0)
 		self.DepositKey = 0
@@ -51,36 +53,34 @@ if(SERVER)then
 
 	function ENT:TryPlace()
 		local TowerPos = self:GetPos() + Vector(0, 0, 130)
-		local Tr = util.QuickTrace(TowerPos, Vector(0, 0, -50000), self)
-		SelfAng = self:GetAngles()
-		if (Tr.Hit) and (Tr.HitWorld) then
+		local SeaBedTr = util.QuickTrace(TowerPos, Vector(0, 0, -50000), self)
+		if (SeaBedTr.Hit) and (SeaBedTr.HitWorld) then
 			local DeepWater = true
 			--[[for i = 1, 10 do
-				local Contents = util.PointContents(Tr.HitPos + Vector(0, 0, 10 * i))
+				local Contents = util.PointContents(SeaBedTr.HitPos + Vector(0, 0, 10 * i))
 				if(bit.band(Contents, CONTENTS_WATER) == CONTENTS_WATER)then DeepWater = false break end
 			end--]]
 
-			self:UpdateDepositKey(Tr.HitPos)
+			self:UpdateDepositKey(SeaBedTr.HitPos)
 
-			if not(self.DepositKey)then
+			if not(self.DepositKey) then
 				JMod.Hint(JMod.GetEZowner(self), "oil derrick")
-			elseif(DeepWater)then
-				local HitAngle = Tr.HitNormal:Angle()
-				self:SetAngles(Angle(0, SelfAng.y, 0))
+			elseif (DeepWater) then
 				local WaterTraceStart = util.QuickTrace(TowerPos, Vector(0, 0, 9e9), self).HitPos
 				local WaterSurfaceTr = util.TraceLine({
 					start = WaterTraceStart,
-					endpos = Tr.HitPos - Vector(0, 0, 1000),
+					endpos = self:GetPos() - Vector(0, 0, self.SpawnHeight + 5),
 					filter = self,
 					mask = MASK_WATER
 				})
+				if not(WaterSurfaceTr.Hit) then return end
+				SelfAng = self:GetAngles()
+				self:SetAngles(Angle(0, SelfAng.y, 0))
 				self:SetPos(WaterSurfaceTr.HitPos + WaterSurfaceTr.HitNormal * self.SpawnHeight)
 				---
-				self:GetPhysicsObject():EnableMotion(false)
-				self.EZinstalled = true
-				local AnchorTr = util.QuickTrace(TowerPos, Vector(0, 0, -500), self)
-				local Cable = constraint.Rope(self, game.GetWorld(), 0, 0, Vector(0, 0, 130), AnchorTr.HitPos, self:GetPos():Distance(AnchorTr.HitPos), 100, 0, 10, "", true, Color(0, 0, 0))
-				self.AnchorCable = Cable
+				JMod.EZinstallMachine(self)
+				--self:SetPipeLength(self:GetPos():Distance(SeaBedTr.HitPos))
+				local Cable = constraint.Rope(self, game.GetWorld(), 0, 0, Vector(0, 0, 130), SeaBedTr.HitPos, self:GetPos():Distance(SeaBedTr.HitPos), 100, self.EZanchorage, 10, "cable/cable2", true, Color(0, 0, 0))
 				---
 				if self.DepositKey then
 					self:TurnOn(self.EZowner)
@@ -138,8 +138,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			if alt and self.EZinstalled then
-				self:GetPhysicsObject():EnableMotion(true)
-				self.EZinstalled = false
+				JMod.EZinstallMachine(self, false)
 
 				return
 			end
@@ -194,7 +193,8 @@ if(SERVER)then
 				
 				if not self.EZinstalled then self:TurnOff() return end
 
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
+				local DepositInfo = JMod.NaturalResourceTable[self.DepositKey]
+				if not DepositInfo then 
 					self:TurnOff()
 
 					return
@@ -205,9 +205,9 @@ if(SERVER)then
 				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
+				if DepositInfo.rate then
 					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					local flowRate = DepositInfo.rate
 					-- and set the progress to what it was last tick + our ability * the flowrate
 					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
 
@@ -221,7 +221,7 @@ if(SERVER)then
 					self:SetProgress(self:GetProgress() + pumpRate)
 
 					if self:GetProgress() >= 100 then
-						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+						local amtToPump = math.min(DepositInfo.amt, 100)
 						self:ProduceResource()
 					end
 				end
@@ -298,11 +298,13 @@ elseif(CLIENT)then
 		self.LastGrade = Grade
 		self:SetSubMaterial(0, JMod.EZ_GRADE_MATS[Grade]:GetName())
 		self.Ladder = JMod.MakeModel(self, "models/props_c17/metalladder001.mdl")
+		--self.Pipe = JMod.MakeModel(self, "models/jmod/machines/oil_rig_pipe.mdl")
 	end
 
 	function ENT:Draw()
 		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
 		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+		--local PipeLength = self:GetPipeLength()
 
 		self:DrawModel()
 
@@ -311,7 +313,7 @@ elseif(CLIENT)then
 		local BasePos = SelfPos + Up * 30
 		local Obscured=false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<62000 -- cutoff point is 400 units when the fov is 90 degrees
+		local DetailDraw=Closeness<80000 -- cutoff point is ---- units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
@@ -320,7 +322,9 @@ elseif(CLIENT)then
 			LadderAng:RotateAroundAxis(Up,0)
 			LadderAng:RotateAroundAxis(Right,-7)
 			JMod.RenderModel(self.Ladder,BasePos-Forward*44-Up*34,LadderAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
-			
+			--self.Pipe:ManipulateBonePosition(2, Up * -PipeLength)
+			--JMod.RenderModel(self.Pipe,BasePos-Up*20,SelfAng,nil,Vector(1,1,PipeLength/64))
+
 			if((Closeness<20000)and(State==STATE_RUNNING))then
 				local DisplayAng=SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(),90)
@@ -342,10 +346,6 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined("PROGRESS","JMod-Display",250,60,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 					local ProgressFrac=self:GetProgress()/100
 					draw.SimpleTextOutlined(tostring(math.Round(ProgressFrac*100)).."%","JMod-Display",250,90,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					--local CoolFrac=self:GetCoolant()/100
-					--draw.SimpleTextOutlined("COOLANT","JMod-Display",90,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-					--local R,G,B=JMod.GoodBadColor(CoolFrac)
-					--draw.SimpleTextOutlined(tostring(math.Round(CoolFrac*100)).."%","JMod-Display",90,30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				cam.End3D2D()
 			end
 		end

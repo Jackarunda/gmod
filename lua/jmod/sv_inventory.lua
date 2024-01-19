@@ -12,6 +12,7 @@ end
 
 function JMod.GetStorageCapacity(ent)
 	if not(IsValid(ent)) then return 0 end
+	if ent.IsJackyEZcrate then return 0 end
 	local Capacity = 0
 	local Phys = ent:GetPhysicsObject()
 
