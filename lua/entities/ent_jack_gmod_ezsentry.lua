@@ -372,7 +372,7 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		if activator:IsPlayer() then
+		if IsValid(activator) and activator:IsPlayer() then
 			local State = self:GetState()
 
 			if State == STATE_BROKEN then
