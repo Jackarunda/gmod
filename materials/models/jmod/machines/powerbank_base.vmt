@@ -1,0 +1,9 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/machines/powerbank_body
+	$detail detail/metal_detail_01
+	$detailscale 6
+	$detailblendfactor 0.75
+	$detailblendmode 0
+	$surfaceprop	metal
+}

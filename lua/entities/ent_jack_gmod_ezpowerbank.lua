@@ -11,7 +11,7 @@ ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZpowerBank = true
-ENT.Model = "models/props_lab/powerbox01a.mdl"
+ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150
 --
 ENT.StaticPerfSpecs={ 
@@ -196,8 +196,8 @@ elseif CLIENT then
 				local Elec = self:GetElectricity()
 				local R, G, B = JMod.GoodBadColor(Elec / 1000)
 
-				cam.Start3D2D(SelfPos + Forward * 13 + Up * 13, DisplayAng, .08)
-				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				cam.Start3D2D(SelfPos + Forward * 10.5 + Up * 23, DisplayAng, .08)
+				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(200, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(Elec)) .. "/" .. tostring(math.Round(self.MaxElectricity)), "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
 			end

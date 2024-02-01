@@ -1,0 +1,11 @@
+VertexLitGeneric
+{
+	$basetexture	glass/combineglass001a
+	$envmap			env_cubemap
+	$surfaceprop	glass
+	$envmapmask	glass/combineglass001a_mask
+	$translucent	1
+	$envmapcontrast	.6
+	$envmaptint "[ .25 .25 .25]"
+
+}

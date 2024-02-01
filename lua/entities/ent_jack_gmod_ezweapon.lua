@@ -86,7 +86,7 @@ if SERVER then
 					local GivenWep = activator:GetWeapon(self.Specs.swep)
 
 					if self.HasSpawnAmmo then
-						GivenWep:SetClip1(GivenWep.Primary.ClipSize)
+						GivenWep:SetClip1(GivenWep.Primary.ClipSize or 0)
 						if GivenWep.Secondary.ClipSize and GivenWep.Secondary.ClipSize > 0 then
 							GivenWep:SetClip2(GivenWep.Secondary.ClipSize)
 						end
