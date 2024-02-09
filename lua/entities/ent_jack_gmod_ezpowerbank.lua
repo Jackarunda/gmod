@@ -9,7 +9,7 @@ ENT.Information = ""
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 --
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZpowerBank = true
 ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150
