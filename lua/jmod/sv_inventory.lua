@@ -49,7 +49,7 @@ function JMod.GetStorageCapacity(ent)
 end
 
 function JMod.IsEntContained(target, container)
-	local Contained = IsValid(target) and (target:EntIndex() ~= -1) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+	local Contained = IsValid(target) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
 	if container then
 		Contained = Contained and (target.EZInvOwner == container)
 	end
@@ -69,7 +69,7 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
 		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
-		if JMod.IsEntContained(v.ent, invEnt) then
+		if JMod.IsEntContained(v.ent, invEnt) and (v.ent:EntIndex() ~= -1) then
 			local Phys = v.ent:GetPhysicsObject()
 			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
 				local Vol = Phys:GetVolume()
@@ -131,7 +131,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	invEnt = invEnt or target.EZInvOwner
 	if JMod.GetStorageCapacity(invEnt) <= 0 then return false end
 	local AddingResource = istable(target)
-	if not(AddingResource) and (target:IsPlayer() or ((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (target.GetState and target:GetState() ~= 0))) then return false end -- Open up! The fun police are here!
+	if not(AddingResource) and ((target:IsPlayer() or ((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (target.GetState and target:GetState() ~= 0))) or (target:EntIndex() == -1)) then return false end -- Open up! The fun police are here!
 
 	if JMod.IsEntContained(target) then
 		JMod.RemoveFromInventory(target.EZInvOwner, target, nil, false, true)
