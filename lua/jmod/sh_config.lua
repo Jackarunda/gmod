@@ -399,7 +399,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
-                        {"ent_jack_gmod_ezwater", 4}
+						{"ent_jack_gmod_ezwater", 4}
 					}
 				},
 				["sentry"] = {
@@ -835,25 +835,25 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
 			},
-            ["EZ Power Bank"] = {
+			["EZ Power Bank"] = {
 				results = "ent_jack_gmod_ezpowerbank",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
-                    [JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
 				},
 				sizeScale = 5,
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Allows for power-grid construction by linking machines that either consume or produce EZ power."
 			},
-            ["EZ Oil Rig"] = {
+			["EZ Oil Rig"] = {
 				results = "ent_jack_gmod_ezoil_rig",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
-                    [JMod.EZ_RESOURCE_TYPES.PRECPARTS] = 75,
+					[JMod.EZ_RESOURCE_TYPES.PRECPARTS] = 75,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 500,
-                    [JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
 				sizeScale = 5,
 				category = "Machines",
@@ -957,13 +957,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Cluster bomb that can pierce multiple hard targets from the air."
 			},
-            ["EZ War Mine"] = {
+			["EZ War Mine"] = {
 				results = "ent_jack_gmod_ezwarmine",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
-                    [JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
 				},
 				sizeScale = 1,
 				category = "Munitions",

@@ -467,10 +467,10 @@ JMod.Hints = {
 		LangKey = "hint solar panel no sun",
 		RepeatCount = 3
 	},
-    ["ent_jack_gmod_ezfurnace"] = {
+	["ent_jack_gmod_ezfurnace"] = {
 		LangKey = "hint ent_jack_gmod_ezfurnace"
 	},
-    ["ent_jack_gmod_ezrefinery"] = {
+	["ent_jack_gmod_ezrefinery"] = {
 		LangKey = "hint ent_jack_gmod_ezrefinery"
 	},
 	["ent_jack_gmod_ezcentrifuge"] = {
@@ -479,13 +479,13 @@ JMod.Hints = {
 	["refill centrifuge"] = {
 		LangKey = "hint refill centrifuge"
 	},
-    ["ore scan"] = {
+	["ore scan"] = {
 		LangKey = "hint ore scan"
 	},
-    ["liquid scan"] = {
+	["liquid scan"] = {
 		LangKey = "hint liquid scan"
 	},
-    ["ent_jack_gmod_ezlfg"] = {
+	["ent_jack_gmod_ezlfg"] = {
 		LangKey = "hint ent_jack_gmod_ezlfg"
 	},
 	["ent_jack_gmod_ezfabricator"] = {
@@ -497,7 +497,7 @@ JMod.Hints = {
 	["ent_jack_gmod_ezrtg"] = {
 		LangKey = "hint ent_jack_gmod_ezrtg"
 	},
-    ["ent_jack_gmod_ezpowerbank"] = {
+	["ent_jack_gmod_ezpowerbank"] = {
 		LangKey = "hint ent_jack_gmod_ezpowerbank"
 	},
 	["ent_jack_sleepingbag"] = {

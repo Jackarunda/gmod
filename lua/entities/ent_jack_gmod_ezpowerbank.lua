@@ -28,7 +28,7 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
-        JMod.Hint(JMod.GetEZowner(ent), "ent_jack_gmod_ezpowerbank")
+		JMod.Hint(JMod.GetEZowner(ent), "ent_jack_gmod_ezpowerbank")
 		return ent
 	end
 
@@ -44,7 +44,7 @@ if SERVER then
 		local State = self:GetState()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
-        
+		
 		if Alt then
 			self:ProduceResource()
 		else
@@ -204,6 +204,6 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
-        language.Add("ent_jack_gmod_ezpower", "EZ Powerbank")
+		language.Add("ent_jack_gmod_ezpower", "EZ Powerbank")
 	end
 end
