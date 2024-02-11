@@ -497,6 +497,9 @@ JMod.Hints = {
 	["ent_jack_gmod_ezrtg"] = {
 		LangKey = "hint ent_jack_gmod_ezrtg"
 	},
+    ["ent_jack_gmod_ezpowerbank"] = {
+		LangKey = "hint ent_jack_gmod_ezpowerbank"
+	},
 	["ent_jack_sleepingbag"] = {
 		LangKey = "hint ent_jack_sleepingbag"
 	},

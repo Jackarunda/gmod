@@ -2,7 +2,7 @@
 AddCSLuaFile()
 ENT.Type = "anim"
 ENT.Base = "ent_jack_gmod_ezmachine_base"
-ENT.PrintName = "Power Bank"
+ENT.PrintName = "EZ Power Bank"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
@@ -28,6 +28,7 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
+        JMod.Hint(JMod.GetEZowner(ent), "ent_jack_gmod_ezpowerbank")
 		return ent
 	end
 
@@ -43,6 +44,7 @@ if SERVER then
 		local State = self:GetState()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
+        
 		if Alt then
 			self:ProduceResource()
 		else
@@ -202,5 +204,6 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
+        language.Add("ent_jack_gmod_ezpower", "EZ Powerbank")
 	end
 end

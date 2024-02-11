@@ -231,6 +231,7 @@
 	["hint ent_jack_gmod_ezbeartrap"] = "Beartrap will last for about 10 snaps before breaking",
 	["hint ent_jack_gmod_ezprimitivebench"] = "The primitive bench salvages props and smelts most metals, requires wood or coal to operate",
 	["hint prim bench smelt"] = "Fill the bench with ore and ALT+USE to start smelting",
+    ["hint ent_jack_gmod_ezpowerbank"] = "Press USE on the powerbank to link it to nearby machines to power them from this powerbank.",
 	["hint scavenging"] = "Type *scrounge* in chat or command jmod_ez_scrounge to find small props for salvaging",
 	["hint ent_jack_gmod_ezpickaxe"] = "Use the pickaxe to find a deposit and then bring ores back to the bench",
 	["hint ent_jack_gmod_ezshovel"] = "Dig up sand and dirt to use for crafting, or whack your enemies",

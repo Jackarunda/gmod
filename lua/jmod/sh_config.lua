@@ -835,6 +835,31 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
 			},
+            ["EZ Power Bank"] = {
+				results = "ent_jack_gmod_ezpowerbank",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+                    [JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Allows for power-grid construction by linking machines that either consume or produce EZ power."
+			},
+            ["EZ Oil Rig"] = {
+				results = "ent_jack_gmod_ezoil_rig",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+                    [JMod.EZ_RESOURCE_TYPES.PRECPARTS] = 75,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 500,
+                    [JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "A buoyant version of the EZ Pumpjack that allows for pumping oil deposits located underwater. Must be floating directly over an oil deposit to use."
+			},
 			["EZ Uranium Enrichment Centrifuge"] = {
 				results = "ent_jack_gmod_ezcentrifuge",
 				craftingReqs = {
