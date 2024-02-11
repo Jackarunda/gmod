@@ -81,6 +81,7 @@ if SERVER then
 				JMod.EZinstallMachine(self)
 				--self:SetPipeLength(self:GetPos():Distance(SeaBedTr.HitPos))
 				local Cable = constraint.Rope(self, game.GetWorld(), 0, 0, Vector(0, 0, 130), SeaBedTr.HitPos, self:GetPos():Distance(SeaBedTr.HitPos), 100, self.EZanchorage, 10, "cable/cable2", true, Color(0, 0, 0))
+				self.WellPos = SeaBedTr.HitPos
 				---
 				if self.DepositKey then
 					self:TurnOn(self.EZowner)
@@ -104,7 +105,6 @@ if SERVER then
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 				self.SoundLoop:SetSoundLevel(65)
 				self.SoundLoop:Play()
-				self.WellPos = SelfPos + Forward * 120 - Right * 95
 				self:SetProgress(0)
 			else
 				JMod.Hint(activator, "nopower")
@@ -229,6 +229,16 @@ if SERVER then
 				JMod.EmitAIsound(self:GetPos(), 300, .5, 256)
 			end
 		end
+		if ((self.NextEffThink or 0) < Time) then
+			self.NextEffThink = Time + .1
+			if (State == STATE_RUNNING) then
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos() + self:GetUp() * 150)
+				Eff:SetNormal(self:GetUp())
+				Eff:SetScale(.1)
+				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
+			end
+		end
 	end
 
 	function ENT:ProduceResource()
@@ -313,7 +323,7 @@ elseif(CLIENT)then
 		local BasePos = SelfPos + Up * 30
 		local Obscured=false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
-		local DetailDraw=Closeness<80000 -- cutoff point is ---- units when the fov is 90 degrees
+		local DetailDraw=Closeness<300000 -- cutoff point is ---- units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too

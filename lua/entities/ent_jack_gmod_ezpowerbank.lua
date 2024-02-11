@@ -15,9 +15,9 @@ ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150
 --
 ENT.StaticPerfSpecs={ 
-	MaxElectricity=1000,
-	MaxDurability=100,
-	Armor=1
+	MaxElectricity = 1000,
+	MaxDurability = 100,
+	Armor = 1.5
 }
 
 if SERVER then
@@ -44,6 +44,10 @@ if SERVER then
 		local State = self:GetState()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
+
+		if State == JMod.EZ_STATE_BROKEN then
+			JMod.Hint(activator, "destroyed", self)
+		end
 		
 		if Alt then
 			self:ProduceResource()

@@ -187,6 +187,7 @@
 	["hint ent_jack_gmod_ezcentrifuge"] = "The Enrichment Centrifuge turns glowy loot int'a fissile material",
 	["hint refill centrifuge"] = "The centrifuge requires power, gas, and glowy loot to run",
 	-- Hints to-do
+	["hint ent_jack_gmod_ezpowerbank"] = "Press USE on the powerbank to link it to nearby machines to power them from this powerbank.",
     ["hint ore scan"] = "Solid resource deposits can be found with a ground scanner",
     ["hint liquid scan"] = "Liquid resource reserves can be found with a ground scanner",
     ["hint ent_jack_gmod_ezlfg"] = "The EZ Liquid Fuel Generator turns fuel int'a power",

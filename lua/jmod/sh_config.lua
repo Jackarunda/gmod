@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.18
+			Version = 45.20
 		},
 		General = {
 			Hints = true,
@@ -851,7 +851,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = "ent_jack_gmod_ezoil_rig",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
-					[JMod.EZ_RESOURCE_TYPES.PRECPARTS] = 75,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 75,
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 500,
 					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
 				},
@@ -1326,6 +1326,20 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Other",
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."
+			},
+			["HL2 Airboat"] = {
+				results = "FUNC spawnHL2airboat",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 300,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 300
+				},
+				sizeScale = 4,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "The good ship mud skipper."
 			},
 			["EZ Basic Parts, x50"] = {
 				results = {"ent_jack_gmod_ezbasicparts", 1, 50},
@@ -2768,6 +2782,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		local Ent = ents.Create("prop_vehicle_jeep_old")
 		Ent:SetModel("models/buggy.mdl")
 		Ent:SetKeyValue("vehiclescript", "scripts/vehicles/jeep_test.txt")
+		Ent:SetPos(position)
+		Ent:SetAngles(angles)
+		JMod.SetEZowner(Ent, playa)
+		Ent:Spawn()
+		Ent:Activate()
+	end
+	JMod.LuaConfig.BuildFuncs.spawnHL2airboat = function(playa, position, angles)
+		local Ent = ents.Create("prop_vehicle_airboat")
+		Ent:SetModel("models/airboat.mdl")
+		Ent:SetKeyValue("vehiclescript", "scripts/vehicles/airboat.txt")
 		Ent:SetPos(position)
 		Ent:SetAngles(angles)
 		JMod.SetEZowner(Ent, playa)
