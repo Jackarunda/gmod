@@ -858,7 +858,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = 5,
 				category = "Machines",
 				craftingType = "toolbox",
-				description = "A buoyant version of the EZ Pumpjack that allows for pumping oil deposits located underwater. Must be floating directly over an oil deposit to use."
+				description = "A buoyant version of the EZ Pumpjack that allows for pumping oil deposits located underwater.\n Must be floating directly over an oil deposit to use."
 			},
 			["EZ Uranium Enrichment Centrifuge"] = {
 				results = "ent_jack_gmod_ezcentrifuge",

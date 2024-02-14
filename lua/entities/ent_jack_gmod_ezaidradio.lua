@@ -193,13 +193,14 @@ if(SERVER)then
 	end
 
 	function ENT:Connect(ply, reassign)
-		if not ply then return end
-		local Team = 0
+		if IsValid(ply) then
+			local Team = 0
 
-		if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
-			Team = ply:AccountID()
-		else
-			Team = ply:Team()
+			if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
+				Team = ply:AccountID()
+			else
+				Team = ply:Team()
+			end
 		end
 
 		local OldID = self:GetOutpostID()
