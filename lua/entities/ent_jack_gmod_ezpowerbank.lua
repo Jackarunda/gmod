@@ -60,15 +60,23 @@ if SERVER then
 		end
 	end
 
+	function ENT:RemoveConnection(key)
+		if not(self.Connections[key]) then return end
+		if IsValid(self.Connections[key].Cable) then
+			self.Connections[key].Cable:Remove()
+		end
+		self.Connections[key].Ent = nil
+	end
+
 	function ENT:TurnOn(dude)
 		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
 		self:SetState(JMod.EZ_STATE_ON)
 		if not(IsValid(dude) and dude:IsPlayer()) then return end
 		local SelfPos = self:GetPos()
-		for k, ent in ipairs(ents.FindInSphere(SelfPos, 1000)) do
+		for k, ent in pairs(ents.FindInSphere(SelfPos, 1000)) do
 			local Dist = SelfPos:Distance(ent:GetPos())
-			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) and ent.GetState and ent:GetState() ~= JMod.EZ_STATE_BROKEN)) then
-				self:ConnectEnt(ent, 400)
+			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
+				self:ConnectEnt(ent, 500)
 			elseif ent.EZpowerBank then
 				self:ConnectEnt(ent, 1000)
 			end
@@ -78,19 +86,16 @@ if SERVER then
 	function ENT:TurnOff()
 		if self:GetState() ~= JMod.EZ_STATE_ON then return end
 		self:SetState(JMod.EZ_STATE_OFF)
-		for k, v in ipairs(self.Connections) do
-			if IsValid(v.Cable) then
-				v.Cable:Remove()
-			end
-			self.Connections[k] = nil
+		for k, v in pairs(self.Connections) do
+			self:RemoveConnection(k)
 		end
 	end
 
 	function ENT:ConnectEnt(ent, dist)
 		if not IsValid(ent) or (ent == self) then return end
-		if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(self)) then return end
+		if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(self), true) then return end
 		local AlreadyConnected = false
-		for k, v in ipairs(self.Connections) do
+		for k, v in pairs(self.Connections) do
 			if v.Ent == ent then
 				AlreadyConnected = true
 
@@ -104,9 +109,7 @@ if SERVER then
 				if IsValid(v.Cable) then
 					v.Cable:Remove()
 				end
-				self.Connections[k] = nil
-
-				break
+				v.Ent = nil
 			end
 		end
 		local Cable = constraint.Rope(self, ent, 0, 0, Vector(0, 0, 0), ent.EZpowerPlug or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
@@ -123,10 +126,10 @@ if SERVER then
 			local NumberOfConnected = #self.Connections
 			local SelfPower = self:GetElectricity()
 
-			for k, v in ipairs(self.Connections) do
+			for k, v in pairs(self.Connections) do
 				local Ent, Cable = v.Ent, v.Cable
 				if not IsValid(Ent) or not IsValid(Cable) then
-					table.remove(self.Connections, k)
+					self:RemoveConnection(k)
 				elseif Ent.EZpowerProducer then
 					if SelfPower <= (self.MaxElectricity * .5) then
 						Ent:TurnOn()
@@ -147,7 +150,7 @@ if SERVER then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
 						Ent.NextRefillTime = 0
 						self:SetElectricity(SelfPower - PowerTaken)
-						if (EntPower < 1) and Ent.TurnOn and Ent:GetState() == JMod.EZ_STATE_OFF then
+						if (EntPower < 1) and Ent.GetState and Ent.TurnOn and Ent:GetState() == JMod.EZ_STATE_OFF then
 							Ent:TurnOn()
 						end
 					end

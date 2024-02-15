@@ -193,9 +193,8 @@ if(SERVER)then
 	end
 
 	function ENT:Connect(ply, reassign)
+		local Team = 0
 		if IsValid(ply) then
-			local Team = 0
-
 			if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
 				Team = ply:AccountID()
 			else

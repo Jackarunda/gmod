@@ -644,11 +644,12 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	end
 end
 
-function JMod.ShouldAllowControl(self, ply)
+function JMod.ShouldAllowControl(self, ply, neutral)
+	neutral = neutral or false
 	if not IsValid(ply) then return false end
 	if (ply.EZkillme) then return false end
 	local EZowner = JMod.GetEZowner(self)
-	if not IsValid(EZowner) then return false end
+	if not IsValid(EZowner) then return neutral end
 	if ply == EZowner then return true end
 	local Allies = EZowner.JModFriends or {}
 	if table.HasValue(Allies, ply) then return true end
