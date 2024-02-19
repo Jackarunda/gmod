@@ -49,6 +49,7 @@ if SERVER then
             end
         end)
 		self:GetPhysicsObject():SetBuoyancyRatio(.8)
+		self:GetPhysicsObject():Wake()
 	end
 
 	function ENT:TryPlace()
@@ -64,7 +65,7 @@ if SERVER then
 			self:UpdateDepositKey(SeaBedTr.HitPos)
 
 			if not(self.DepositKey) then
-				JMod.Hint(JMod.GetEZowner(self), "oil derrick")
+				JMod.Hint(JMod.GetEZowner(self), "oil rig")
 			elseif (DeepWater) then
 				local WaterTraceStart = util.QuickTrace(TowerPos, Vector(0, 0, 9e9), self).HitPos
 				local WaterSurfaceTr = util.TraceLine({
