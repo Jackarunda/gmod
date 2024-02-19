@@ -304,11 +304,9 @@ if(SERVER)then
 		end
 
 		if (self.Hydration < 30) then
-			NewCornMat = "corn01t_d"
-		elseif (self.Hydration < 60) then
-			NewCornMat = "cornv81t_d"
+			NewCornMat = "cornstalkdry"
 		else
-			NewCornMat = "cornv81t_d"
+			NewCornMat = "cornstalk"
 		end
 
 		if (self.Helf < 25) then
@@ -317,7 +315,7 @@ if(SERVER)then
 
 		if self.Mutated then
 			CornColor = Color(180, 184, 145)
-			NewCornMat = "corn01t_d"
+			NewCornMat = "cornstalk"
 		end
 		if CornColor then
 			self:SetColor(CornColor)
