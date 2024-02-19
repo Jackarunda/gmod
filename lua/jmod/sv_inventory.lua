@@ -388,7 +388,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 
 	if not(IsValid(Tar)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
 
-	if Tar.JModInv and not(table.IsEmpty(Tar.JModInv.items) and table.IsEmpty(Tar.JModInv.EZresources)) then
+	if Tar.JModInv and next(Tar.JModInv.items) and next(Tar.JModInv.EZresources) then
 		JMod.UpdateInv(Tar)
 		net.Start("JMod_ItemInventory")
 			net.WriteEntity(Tar)
@@ -396,6 +396,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			net.WriteTable(Tar.JModInv)
 		net.Send(ply)
 		sound.Play("snd_jack_clothequip.wav", ply:GetPos(), 50, math.random(90, 110))
+	--elseif Tar.IsEZcorpse then
 	elseif not(Tar:IsConstrained()) and ((pickupWhiteList[Tar:GetClass()] and CanPickup(Tar)) or Tar.JModEZstorable or Tar.IsJackyEZresource) then
 		JMod.UpdateInv(ply)
 		local Phys = Tar:GetPhysicsObject()

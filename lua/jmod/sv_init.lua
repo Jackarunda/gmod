@@ -827,14 +827,16 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, d
 end)
 
 hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
-	if (JMod.Config.QoL.JModCorpseStayTime > 0) then
+	local ShouldJModCorpse = JMod.Config.QoL.JModCorpseStayTime > 0
+	local EZcorpse
+	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
 		local BodyGroupValues = ""
 		for i = 1, PlyRagdoll:GetNumBodyGroups() do
 			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
 		end
 		SafeRemoveEntity(PlyRagdoll)
-		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+		EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
 		EZcorpse.DeadPlayer = ply
 		if ply.EZoverDamage then
 			EZcorpse.EZoverDamage = ply.EZoverDamage
@@ -842,15 +844,28 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		EZcorpse.BodyGroupValues = BodyGroupValues
 		EZcorpse:Spawn()
 		EZcorpse:Activate()
+		if IsValid(EZcorpse.EZragdoll) then
+			EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+		end
 	end
 	ply.EZoverDamage = nil
 
-	if ply.JModInv then
+	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
+	if (ply.JModInv and ShouldInvDrop or ShouldJModCorpse) then
+		local PlyPos = ply:GetPos()
 		for _, v in ipairs(ply.JModInv.items) do
-			JMod.RemoveFromInventory(ply, v.ent, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+			local RandomVec = Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100))
+			local Removed = JMod.RemoveFromInventory(ply, v.ent, PlyPos + RandomVec, false, ShouldJModCorpse and not ShouldInvDrop)
+			if ShouldJModCorpse and IsValid(Removed) then
+				JMod.AddToInventory( EZcorpse.EZragdoll, Removed)
+			end
 		end
 		for typ, amt in pairs(ply.JModInv.EZresources) do
-			JMod.RemoveFromInventory(ply, {typ, amt}, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+			local RandomVec = Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100))
+			local RemovedTyp, Removed = JMod.RemoveFromInventory(ply, {typ, amt}, PlyPos + RandomVec, false, ShouldJModCorpse and not ShouldInvDrop)
+			if ShouldJModCorpse then
+				JMod.AddToInventory(EZcorpse.EZragdoll, {RemovedTyp, Removed})
+			end
 		end
 	end
 end)
