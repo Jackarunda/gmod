@@ -263,12 +263,15 @@ function JMod.EZradioEstablish(transceiver, teamID, reassign)
 		end
 	end
 
-	if #AlliedStations <= 0 then
-		table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
-		table.insert(AlliedStations, #JMod.EZ_RADIO_STATIONS)
+	local MinimumOutposts = JMod.Config.RadioSpecs.StartingOutpostCount or 0
+	if #AlliedStations < MinimumOutposts then
+		for i = 1, MinimumOutposts - #AlliedStations do
+			table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
+			table.insert(AlliedStations, #JMod.EZ_RADIO_STATIONS)
+		end
 	end
 
-	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), nil
+	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), 0
 
 	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) then
 		if JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY then
