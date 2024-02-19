@@ -288,7 +288,7 @@ if(SERVER)then
 		for _,v in pairs(self.EZconsumes)do
 			if(typ == v)then
 				local Accepted = 0
-				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
+				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(self.Mutated and ((typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)))then
 					local Aqua = self:GetWater()
 					local Missing = self.MaxWater - Aqua
 					if(Missing < 1)then return 0 end

@@ -2,6 +2,8 @@
 local Sprites = { "effects/fleck_cement1", "effects/fleck_cement2" }
 function EFFECT:Init(data)
 	local Pos = data:GetOrigin()
+	local ColorStart = data:GetStart()
+	local R, G, B = ColorStart[1] or 255, ColorStart[2] or 235, ColorStart[3] or 85
 	local Emitter = ParticleEmitter(Pos)
 	for i = 1, 3 do
 		local Sprite = table.Random(Sprites)
@@ -21,8 +23,7 @@ function EFFECT:Init(data)
 			Particle:SetGravity(Vec)
 			Particle:SetLighting(false)
 			local Brightness = math.Rand(.5, 1)
-			--local Col = Color(255, 235, 85)
-			Particle:SetColor(255 * Brightness, 235 * Brightness, 85 * Brightness)
+			Particle:SetColor(R * Brightness, G * Brightness, B * Brightness)
 			Particle:SetCollide(true)
 			Particle:SetBounce(0)
 		end

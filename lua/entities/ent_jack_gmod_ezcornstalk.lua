@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Cornstalk"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = false -- For now...
+ENT.Spawnable = true -- For now...
 ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
@@ -27,7 +27,7 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutated = false
+		self.Mutated = true
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:GetPhysicsObject():SetMass(1)
@@ -129,11 +129,14 @@ if(SERVER)then
 					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
 				end
 				if self.Growth > 66 then
-					if (math.random(1, 2) == 1) then
+					--if (math.random(1, 2) == 1) then
 						local Leaf = EffectData()
 						Leaf:SetOrigin(SelfPos + Vector(0, 0, 100))
+						if (self.Mutated) then
+							Leaf:SetStart(Vector(131, 200, 70)) -- This is actually just a sneaky color
+						end
 						util.Effect("eff_jack_gmod_ezcorndust", Leaf, true, true)
-					end
+					--end
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
@@ -147,7 +150,7 @@ if(SERVER)then
 			local Target = self:FindTarget()
 			if (IsValid(Target)) then 
 				if (SelfPos:Distance(Target:GetPos()) <= 120) then 
-					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 5) == 1)) then 
+					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 10) == 1)) then 
 						JMod.FalloutIrradiate(self, Target)
 					end
 				else
@@ -211,7 +214,7 @@ if(SERVER)then
 		local NewGroundPos = self:FindGroundAt(NewPos)
 
 		if NewGroundPos then
-			if not self:IsLocationBeingWatched(NewGroundPos) then
+			if not self:IsLocationBeingWatched(NewGroundPos) and not self:IsLocationBeingWatched(SelfPos) then
 				if self:IsLocationClear(NewGroundPos) then
 					self:SnapTo(NewGroundPos)
 
@@ -271,8 +274,14 @@ if(SERVER)then
 						filter = {self, obs},
 						mask = MASK_SHOT - CONTENTS_WINDOW
 					})
+					local Tr2 = util.TraceLine({
+						start = pos + Vector(0, 0, 50),
+						endpos = ObsPos,
+						filter = {self, obs},
+						mask = MASK_SHOT - CONTENTS_WINDOW
+					})
 
-					if not Tr.Hit then return true end
+					if not Tr.Hit and not Tr2.Hit then return true end
 				end
 			end
 		end
@@ -317,7 +326,7 @@ if(SERVER)then
 
 		if self.Mutated then
 			CornColor = Color(180, 184, 145)
-			NewCornMat = "corn01t_d"
+			NewCornMat = "cornv81t_d"--"corn01t_d"
 		end
 		if CornColor then
 			self:SetColor(CornColor)
