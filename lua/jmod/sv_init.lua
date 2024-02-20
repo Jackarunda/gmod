@@ -124,8 +124,7 @@ end)
 
 function JMod.ShouldDamageBiologically(ent)
 	if not IsValid(ent) then return false end
-	if (ent.JModDontIrradiate and ent.JModDontIrradiate == true) then return false end
-	if (ent.IsJackyEZcrop) then return true end
+	if ent.JModDontIrradiate then return not ent.JModDontIrradiate end
 	if (ent.Mutation) and (ent.Mutation < 100) then return true end
 	if ent:IsPlayer() then return ent:Alive() end
 

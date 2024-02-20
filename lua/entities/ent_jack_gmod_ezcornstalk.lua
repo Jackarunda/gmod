@@ -5,7 +5,7 @@ ENT.PrintName = "EZ Cornstalk"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
-ENT.Spawnable = true -- For now...
+ENT.Spawnable = false -- For now...
 ENT.Base = "ent_jack_gmod_ezcrop_base"
 ENT.Model = "models/jmod/props/plants/corn_stalk01.mdl"
 --
@@ -27,7 +27,7 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutated = true
+		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:GetPhysicsObject():SetMass(1)
@@ -148,7 +148,7 @@ if(SERVER)then
 		--
 		if self.Mutated and (math.random(0, 2) == 1) then
 			local Target = self:FindTarget()
-			if (IsValid(Target)) then 
+			if (IsValid(Target) and not self:IsLocationBeingWatched(SelfPos)) then 
 				if (SelfPos:Distance(Target:GetPos()) <= 120) then 
 					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 10) == 1)) then 
 						JMod.FalloutIrradiate(self, Target)

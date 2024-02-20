@@ -15,6 +15,7 @@ ENT.EZconsumes = {
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 ENT.MaxWater = 25
+ENT.JModDontIrradiate = false
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
@@ -82,6 +83,7 @@ if SERVER then
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
 			--JackaGenericUseEffect(activator)
+			self.LastWateredTime = CurTime()
 		end
 	end
 

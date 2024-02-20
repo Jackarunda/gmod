@@ -11,7 +11,7 @@ ENT.NoSitAllowed = true
 ----
 ENT.Model="models/jmod/props/tree0.mdl"
 ENT.Mass=150
-ENT.IsJackyEZcrop = true
+ENT.JModDontIrradiate = false
 ENT.EZcolorable = false
 ----
 ENT.EZconsumes={
@@ -173,7 +173,8 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		local Damage = dmginfo:GetDamage() * self:DetermineDamageMultiplier(dmginfo)
-		if dmginfo:IsDamageType(DMG_RADIATION) and isfunction(self.Mutate) and (math.random(0, 10000) == 10000) then
+		print(dmginfo:IsDamageType(DMG_RADIATION))
+		if dmginfo:IsDamageType(DMG_RADIATION) and isfunction(self.Mutate) and (math.random(0, 10000) >= 9999) then
 			self:Mutate()
 		end
 		if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and self.Hydration >= 0 then
@@ -288,7 +289,7 @@ if(SERVER)then
 		for _,v in pairs(self.EZconsumes)do
 			if(typ == v)then
 				local Accepted = 0
-				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(self.Mutated and ((typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)))then
+				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
 					local Aqua = self:GetWater()
 					local Missing = self.MaxWater - Aqua
 					if(Missing < 1)then return 0 end

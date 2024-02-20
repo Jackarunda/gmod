@@ -13,6 +13,7 @@ ENT.EZconsumes = nil
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 ENT.MaxWater = 50
+ENT.JModDontIrradiate = false
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
@@ -97,7 +98,7 @@ if SERVER then
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
 			local Wata = self.Hydration
 			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end
