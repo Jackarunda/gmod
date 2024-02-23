@@ -104,7 +104,7 @@ if(SERVER)then
 
 			return
 		elseif(State == STATE_OFF)then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif(State == STATE_RUNNING)then
 			if(alt)then
 				self:ProduceResource()
@@ -126,12 +126,14 @@ if(SERVER)then
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(Dude, auto)
 		if self:GetState() > 0 then return end
 
 		if self.EZinstalled then
-			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
-			self.NextUse = CurTime() + 1
+			if IsValid(Dude) and not(auto) then
+				self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+				self.NextUse = CurTime() + 1
+			end
 			timer.Simple(0.6, function()
 				if not IsValid(self) then return end
 				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
@@ -239,7 +241,7 @@ if(SERVER)then
 
 	function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted >= 1 then
-			self:TurnOn(JMod.GetEZowner(self))
+			self:TurnOn(JMod.GetEZowner(self), true)
 		end
 	end
 

@@ -11,7 +11,7 @@ ENT.AdminSpawnable = true
 --- func_breakable
 ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
 ENT.Model = "models/jmod/ezhook01.mdl"
-ENT.EZhookType = "Hook"
+ENT.EZhookType = nil
 
 local STATE_BROKEN, STATE_UNHOOKED, STATE_HOOKED = -1, 0, 1
 
@@ -49,6 +49,7 @@ if SERVER then
 		---
 		self:SetState(STATE_UNHOOKED)
 		self.NextStick = 0
+		self.EZhookType = self.EZhookType or "Hook"
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -59,8 +60,10 @@ if SERVER then
 				timer.Simple(0, function()
 					if self.EZhookType == "Plugin" then
 						local Ent = data.HitEntity
-						local Connected = JMod.CreateConnection(self.EZconnector, Ent, self.EZconnector.MaxConnectionRange or 1000)
-						if Connected then SafeRemoveEntity(self) end
+						if IsValid(Ent) and not(Ent:IsPlayer()) and ((Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) or Ent.EZpowerProducer) then
+							local Connected = JMod.CreateConnection(self.EZconnector, Ent, self.EZconnector.MaxConnectionRange or 1000)
+							if Connected then SafeRemoveEntity(self) end
+						end
 					else
 						self.NextStick = Time + .5
 						local Ang = data.HitNormal:Angle()
@@ -102,43 +105,6 @@ if SERVER then
 		end
 	end
 
-	function ENT:OnHook(Dude)
-		local Time = CurTime()
-		local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
-
-		if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not(Tr.Entity:IsNPC()) and not(Tr.Entity:IsPlayer()) then
-			if self.EZhookType == "Plugin" then
-				local Ent = Tr.Entity
-				local Connected = JMod.CreateConnection(self.EZconnector, Ent, self.EZconnector.MaxConnectionRange or 1000)
-				if Connected then SafeRemoveEntity(self) end
-			else
-				self.NextStick = Time + .5
-				local Ang = Tr.HitNormal:Angle()
-				Ang:RotateAroundAxis(Ang:Right(), -90)
-				Ang:RotateAroundAxis(Ang:Up(), 90)
-				self:SetAngles(Ang)
-				self:SetPos(Tr.HitPos)
-
-				-- crash prevention
-				if Tr.Entity:GetClass() == "func_breakable" then
-					timer.Simple(0, function()
-						self:GetPhysicsObject():Sleep()
-					end)
-				else
-					local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 5000, true, false)
-					self.StuckTo = Tr.Entity
-					self.StuckStick = Weld
-				end
-
-				self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
-				self:SetState(STATE_HOOKED)
-				self:SetBodygroup(0, 0)
-				Dude:DropObject()
-				JMod.Hint(Dude, "arm")
-			end
-		end
-	end
-
 	function ENT:Use(activator, activatorAgain, onOff)
 		local Dude = activator or activatorAgain
 		if not IsValid(Dude) then return end
@@ -168,6 +134,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		if not IsValid(self.EZrope) then SafeRemoveEntity(self) end
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end

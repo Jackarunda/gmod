@@ -838,12 +838,13 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 	ent.block_pickup = isblock
 end
 
-function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range)
+function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range, pushPower)
 	amount = math.Round(amount)
+	pushPower = pushPower or true
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
-	if machine.EZconnections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
+	if pushPower and machine.EZconnections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
 		local PowerToGive = amount
 		for k, connect in pairs(machine.EZconnections) do
 			local Ent, Cable = connect.Ent, connect.Cable
@@ -1494,7 +1495,8 @@ function JMod.StartConnection(machine, ply)
 	machine.EZconnectorPlug = Hooky
 
 	local ropeLength = machine.MaxConnectionRange or 1000
-	constraint.Rope(machine, Hooky, 0, 0, machine.EZpowerSocket or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
+	local Rope = constraint.Rope(machine, Hooky, 0, 0, machine.EZpowerSocket or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
+	Hooky.EZrope = Rope
 
 	ply:DropObject()
 	ply:PickupObject(Hooky)
@@ -1507,12 +1509,11 @@ function JMod.CreateConnection(machine, ent, dist)
 	local AlreadyConnected = false
 	for k, v in pairs(machine.EZconnections) do
 		if v.Ent == ent then
-			AlreadyConnected = true
 
-			break
+			return false
 		end
 	end
-	if AlreadyConnected then return false end
+
 	ent.EZconnections = ent.EZconnections or {}
 	for k, v in pairs(ent.EZconnections) do
 		if (v.Ent == machine) then
@@ -1522,6 +1523,8 @@ function JMod.CreateConnection(machine, ent, dist)
 			v.Ent = nil
 		end
 	end
+	local DistanceBetween = (machine:GetPos() - ent:GetPos()):Length()
+	if (DistanceBetween > dist) then return false end
 	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), ent.EZpowerSocket or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
 	table.insert(ent.EZconnections, {Ent = machine, Cable = Cable})
 	table.insert(machine.EZconnections, {Ent = ent, Cable = Cable})

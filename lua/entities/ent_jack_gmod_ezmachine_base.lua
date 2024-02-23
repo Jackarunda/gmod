@@ -292,6 +292,22 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:ModConnections(dude)
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
+		local Connections = {}
+		if self.EZconnections then
+			for k, v in ipairs(self.EZconnections) do
+				if IsValid(v.Ent) then
+					table.insert(Connections, {v.Ent.PrintName, v.Ent:EntIndex()})
+				end
+			end
+		end
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(self)
+			net.WriteTable(Connections)
+		net.Send(dude)
+	end
+
 	function ENT:ConsumeElectricity(amt)
 		if not(self.GetElectricity)then return end
 		amt = (amt or .2)/(self.ElectricalEfficiency or 1)

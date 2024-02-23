@@ -1680,10 +1680,15 @@ net.Receive("JMod_ModifyConnections", function()
 	local List = vgui.Create("DListView", Frame)
 	List:Dock(FILL)
 	List:SetMultiSelect(false)
-	List:AddColumn("Connection")
+	List:AddColumn("Machine")
+	List:AddColumn("EntID")
 
 	for _, connection in ipairs(Connections) do
-		List:AddLine(connection)
+		local Line = List:AddLine(connection[1], connection[2])
+		local DisconnectIcon = vgui.Create("DImage", Line)
+		DisconnectIcon:SetImage("icon16/disconnect.png")
+		DisconnectIcon:SetSize(16, 16)
+		DisconnectIcon:Dock(RIGHT)
 	end
 
 	List.OnRowSelected = function(panel, rowIndex, row)
@@ -1691,7 +1696,7 @@ net.Receive("JMod_ModifyConnections", function()
 		net.Start("JMod_ModifyConnections")
 			net.WriteEntity(Ent)
 			net.WriteString("disconnect")
-			net.WriteEntity(row:GetValue(1))
+			net.WriteEntity(Entity(tonumber(row:GetValue(2))))
 		net.SendToServer()
 		Frame:Close()
 	end

@@ -67,8 +67,9 @@ if SERVER then
 			self.EZhooky = Hooky
 
 			local ropeLength = self.MaxConnectionRange or 1000
-			constraint.Rope(self, Hooky, 0, 0, Vector(0,0,0), Vector(0,0,9), ropeLength, 0, 1000, 2, "cable/cable2", false)
-			
+			local Rope = constraint.Rope(self, Hooky, 0, 0, Vector(0,0,0), Vector(0,0,9), ropeLength, 0, 1000, 2, "cable/cable2", false)
+			Hooky.EZrope = Rope
+
 			activator:DropObject()
 			activator:PickupObject(Hooky)
 		end

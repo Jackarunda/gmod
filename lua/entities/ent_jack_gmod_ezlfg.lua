@@ -50,7 +50,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
@@ -60,8 +60,8 @@ if(SERVER)then
 		elseif State == STATE_OFF then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
-			if alt then
-				self:ProduceResource()
+			if Alt then
+				self:ModConnections(activator)
 				return
 			end
 			self:TurnOff()

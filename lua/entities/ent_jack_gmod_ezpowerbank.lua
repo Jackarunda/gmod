@@ -39,20 +39,6 @@ if SERVER then
 		self.EZcolorable = false
 	end
 
-	function ENT:ModConnections(dude)
-		if not(IsValid(dude) and dude:IsPlayer()) then return end
-		local Entities = {}
-		for k, v in ipairs(self.EZconnections) do
-			if IsValid(v.Ent) then
-				table.insert(Entities, v.Ent)
-			end
-		end
-		net.Start("JMod_ModifyConnections")
-			net.WriteEntity(self)
-			net.WriteTable(Entities)
-		net.Send(dude)
-	end
-
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
@@ -160,7 +146,7 @@ if SERVER then
 
 		if amt <= 0 then return end
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 20)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200, false)
 		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, 100))
 	end
 
