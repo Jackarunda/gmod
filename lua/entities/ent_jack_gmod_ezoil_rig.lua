@@ -14,7 +14,7 @@ ENT.Mass = 3000
 ENT.SpawnHeight = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZanchorage = 2000
-ENT.EZpowerPlug = Vector(0, 0, 130)
+ENT.EZpowerSocket = Vector(0, 0, 130)
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES.OIL}
 ---

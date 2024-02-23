@@ -7,6 +7,7 @@ util.AddNetworkString("JMod_EZtimeBomb")
 util.AddNetworkString("JMod_LuaConfigSync")
 util.AddNetworkString("JMod_PlayerSpawn")
 util.AddNetworkString("JMod_ModifyMachine")
+util.AddNetworkString("JMod_ModifyConnections")
 util.AddNetworkString("JMod_NuclearBlast")
 util.AddNetworkString("JMod_VisionBlur")
 util.AddNetworkString("JMod_ArmorColor")
@@ -151,6 +152,33 @@ net.Receive("JMod_ModifyMachine", function(ln, ply)
 	local Wepolini = ply:GetActiveWeapon()
 	if not (Wepolini and Wepolini.ModifyMachine) then return end
 	Wepolini:ModifyMachine(Ent, Tbl, AmmoType)
+end)
+
+net.Receive("JMod_ModifyConnections", function(ln, ply)
+	if not ply:Alive() then return end
+	local Ent, Action = net.ReadEntity(), net.ReadString()
+	if not IsValid(Ent) then return end
+
+	if Action == "connect" then
+		print("Giving cable")
+		JMod.StartConnection(Ent, ply)
+	elseif Action == "disconnect" then
+		print("Disconnecting", Ent, Ent2)
+		local Ent2 = net.ReadEntity()
+		if not IsValid(Ent2) then return end
+		JMod.RemoveConnection(Ent, Ent2)
+	elseif Action == "disconnect_all" then
+		if Ent.DisconnectAll then
+			Ent:DisconnectAll()
+		elseif Ent.EZconnections then
+			for k, v in pairs(Ent.EZconnections) do
+				JMod.RemoveConnection(Ent, k)
+			end
+		end
+		print("Disconnecting all")
+	elseif Action == "produce" then
+		Ent:ProduceResource(ply)
+	end
 end)
 
 net.Receive("JMod_SaveLoadDeposits", function(ln, ply) 

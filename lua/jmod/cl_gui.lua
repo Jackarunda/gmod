@@ -1664,6 +1664,72 @@ net.Receive("JMod_Inventory", function()
 	end
 end)
 
+net.Receive("JMod_ModifyConnections", function()
+	local Ent = net.ReadEntity()
+	local Connections = net.ReadTable()
+	local Frame = vgui.Create("DFrame")
+	Frame:SetTitle("Modify Connections")
+	Frame:SetSize(300, 400)
+	Frame:Center()
+	Frame:MakePopup()
+
+	function Frame:Paint()
+		BlurBackground(self)
+	end
+
+	local List = vgui.Create("DListView", Frame)
+	List:Dock(FILL)
+	List:SetMultiSelect(false)
+	List:AddColumn("Connection")
+
+	for _, connection in ipairs(Connections) do
+		List:AddLine(connection)
+	end
+
+	List.OnRowSelected = function(panel, rowIndex, row)
+		-- Send a disconnect command for the selected connection
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(Ent)
+			net.WriteString("disconnect")
+			net.WriteEntity(row:GetValue(1))
+		net.SendToServer()
+		Frame:Close()
+	end
+
+	local ConnectButton = vgui.Create("DButton", Frame)
+	ConnectButton:SetText("Connect New")
+	ConnectButton:Dock(BOTTOM)
+	ConnectButton.DoClick = function()
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(Ent)
+			net.WriteString("connect")
+		net.SendToServer()
+		Frame:Close()
+	end
+
+	local DisconnectButton = vgui.Create("DButton", Frame)
+	DisconnectButton:SetText("Disconnect All")
+	DisconnectButton:Dock(BOTTOM)
+	DisconnectButton.DoClick = function()
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(Ent)
+			net.WriteString("disconnect_all")
+		net.SendToServer()
+		Frame:Close()
+	end
+
+	local ProduceResourceButton = vgui.Create("DButton", Frame)
+	ProduceResourceButton:SetText("Produce Resource")
+	ProduceResourceButton:Dock(BOTTOM)
+	ProduceResourceButton.DoClick = function()
+	    net.Start("JMod_ModifyConnections")
+			net.WriteEntity(Ent)
+			net.WriteString("produce")
+		net.SendToServer()
+		Frame:Close()
+	end
+end)
+
 local Yeps = {"Yes", "yep", "Of course", "Leave me alone", ">:)"}
 
 net.Receive("JMod_SaveLoadDeposits", function()

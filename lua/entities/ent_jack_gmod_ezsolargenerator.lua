@@ -20,7 +20,7 @@ ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerPlug = Vector(0, 0, -30)
+ENT.EZpowerSocket = Vector(0, 0, -30)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")

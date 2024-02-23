@@ -34,15 +34,30 @@ if SERVER then
 
 	function ENT:CustomInit()
 		self.NextUseTime = 0
-		self.Connections = {}
+		self.EZconnections = {}
 		self.EZupgradable = false
 		self.EZcolorable = false
+	end
+
+	function ENT:ModConnections(dude)
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
+		local Entities = {}
+		for k, v in ipairs(self.EZconnections) do
+			if IsValid(v.Ent) then
+				table.insert(Entities, v.Ent)
+			end
+		end
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(self)
+			net.WriteTable(Entities)
+		net.Send(dude)
 	end
 
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local IsPly = (IsValid(activator) and activator:IsPlayer())
+		local Alt = IsPly and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 
 		if State == JMod.EZ_STATE_BROKEN then
@@ -50,7 +65,8 @@ if SERVER then
 		end
 		
 		if Alt then
-			self:ProduceResource()
+			--self:ProduceResource()
+			self:ModConnections(activator)
 		else
 			if State == JMod.EZ_STATE_OFF then
 				self:TurnOn(activator)
@@ -60,79 +76,51 @@ if SERVER then
 		end
 	end
 
-	function ENT:RemoveConnection(key)
-		if not(self.Connections[key]) then return end
-		if IsValid(self.Connections[key].Cable) then
-			self.Connections[key].Cable:Remove()
-		end
-		self.Connections[key].Ent = nil
-	end
-
 	function ENT:TurnOn(dude)
 		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
 		self:SetState(JMod.EZ_STATE_ON)
-		if not(IsValid(dude) and dude:IsPlayer()) then return end
-		local SelfPos = self:GetPos()
-		for k, ent in pairs(ents.FindInSphere(SelfPos, 1000)) do
-			local Dist = SelfPos:Distance(ent:GetPos())
-			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
-				self:ConnectEnt(ent, 500)
-			elseif ent.EZpowerBank then
-				self:ConnectEnt(ent, 1000)
-			end
-		end
 	end
 
 	function ENT:TurnOff()
 		if self:GetState() ~= JMod.EZ_STATE_ON then return end
 		self:SetState(JMod.EZ_STATE_OFF)
-		for k, v in pairs(self.Connections) do
-			self:RemoveConnection(k)
+	end
+
+	function ENT:ConnectAll(dude)
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
+		local SelfPos = self:GetPos()
+		for k, ent in pairs(ents.FindInSphere(SelfPos, 1000)) do
+			local Dist = SelfPos:Distance(ent:GetPos())
+			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
+				JMod.CreateConnection(self, ent, 500)
+			elseif ent.EZpowerBank then
+				JMod.CreateConnection(self, ent, 1000)
+			end
 		end
 	end
 
-	function ENT:ConnectEnt(ent, dist)
-		if not IsValid(ent) or (ent == self) then return end
-		if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(self), true) then return end
-		local AlreadyConnected = false
-		for k, v in pairs(self.Connections) do
-			if v.Ent == ent then
-				AlreadyConnected = true
-
-				break
-			end
+	function ENT:DisconnectAll()
+		for k, v in pairs(self.EZconnections) do
+			JMod.RemoveConnection(self, k)
 		end
-		if AlreadyConnected then return end
-		ent.Connections = ent.Connections or {}
-		for k, v in pairs(ent.Connections) do
-			if (v.Ent == self) then
-				if IsValid(v.Cable) then
-					v.Cable:Remove()
-				end
-				v.Ent = nil
-			end
-		end
-		local Cable = constraint.Rope(self, ent, 0, 0, Vector(0, 0, 0), ent.EZpowerPlug or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
-		table.insert(ent.Connections, {Ent = self, Cable = Cable})
-		table.insert(self.Connections, {Ent = ent, Cable = Cable})
 	end
 
 	-- TODO: Figure out some logic inconsitancies with auto-turn on/off
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
-		self.Connections = self.Connections or {}
+		self.EZconnections = self.EZconnections or {}
 
-		if (State == JMod.EZ_STATE_ON) and (#self.Connections > 0) then
-			local NumberOfConnected = #self.Connections
+		if (State == JMod.EZ_STATE_ON) and (#self.EZconnections > 0) then
+			local NumberOfConnected = #self.EZconnections
 			local SelfPower = self:GetElectricity()
 
-			for k, v in pairs(self.Connections) do
+			for k, v in pairs(self.EZconnections) do
 				local Ent, Cable = v.Ent, v.Cable
 				if not IsValid(Ent) or not IsValid(Cable) then
-					self:RemoveConnection(k)
+					JMod.RemoveConnection(self, k)
 				elseif Ent.EZpowerProducer then
 					if SelfPower <= (self.MaxElectricity * .5) then
-						Ent:TurnOn()
+						Ent:TurnOn(nil, true)
 					elseif SelfPower >= (self.MaxElectricity * .9) then
 						Ent:TurnOff()
 					end
@@ -176,6 +164,9 @@ if SERVER then
 		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, 100))
 	end
 
+	function ENT:OnRemove()
+		if IsValid(self.EZconnectorPlug) then SafeRemoveEntity(self.EZconnectorPlug) end
+	end
 elseif CLIENT then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
@@ -211,6 +202,6 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
-		language.Add("ent_jack_gmod_ezpower", "EZ Powerbank")
+		language.Add("ent_jack_gmod_ezpowerbank", "EZ Power Bank")
 	end
 end

@@ -28,7 +28,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.FUEL
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerPlug = Vector(42, -1, 40)
+ENT.EZpowerSocket = Vector(42, -1, 40)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -68,7 +68,7 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:WaterLevel() > 1) then return end
 		if (self:GetFuel() > 0) then
@@ -76,7 +76,7 @@ if(SERVER)then
 			self:SetState(STATE_ON)
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
-		else
+		elseif IsValid(activator) and not(auto) then
 			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")

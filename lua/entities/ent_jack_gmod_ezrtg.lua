@@ -26,7 +26,7 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
 ENT.EZpowerProducer = true
-ENT.EZpowerPlug = Vector(3, -33, 15)
+ENT.EZpowerSocket = Vector(3, -33, 15)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -64,9 +64,11 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if (self:GetState() ~= STATE_OFF) then return end
-		self:EmitSound("buttons/button1.wav", 60, 80)
+		if IsValid(activator) and not(auto) then
+			self:EmitSound("buttons/button1.wav", 60, 80)
+		end
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
 		self.PowerSLI = 0

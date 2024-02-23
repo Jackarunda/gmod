@@ -33,7 +33,7 @@ ENT.EZconsumes = {
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
 ENT.EZpowerProducer = true
-ENT.EZpowerPlug = Vector(65, 18, 18)
+ENT.EZpowerSocket = Vector(65, 18, 18)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 2, "Progress")
@@ -80,10 +80,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:WaterLevel() > 1) then return end
-		self:EmitSound("snd_jack_littleignite.wav")
 		if (self:GetElectricity() > 0) and (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
@@ -97,6 +96,9 @@ if(SERVER)then
 			JMod.Hint(activator, "need combustibles")
 		elseif self:GetWater() <= 0 then
 			JMod.Hint(activator, "refill sfg water")
+		end
+		if IsValid(activator) and not(auto) then
+			self:EmitSound("snd_jack_littleignite.wav")
 		end
 		self:UpdateWireOutputs()
 	end

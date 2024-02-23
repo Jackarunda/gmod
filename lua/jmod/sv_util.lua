@@ -843,12 +843,12 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
-	if machine.Connections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
+	if machine.EZconnections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
 		local PowerToGive = amount
-		for k, connect in pairs(machine.Connections) do
+		for k, connect in pairs(machine.EZconnections) do
 			local Ent, Cable = connect.Ent, connect.Cable
 			if not IsValid(Ent) or not IsValid(Cable) or not(Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
-				machine.Connections[k] = nil
+				JMod.RemoveConnection(machine, k)
 			else
 				local Accepted = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, PowerToGive)
 				Ent.NextRefillTime = 0
@@ -1471,6 +1471,83 @@ function JMod.EZinstallMachine(machine, install)
 
 	machine.EZinstalled = install
 	Phys:EnableMotion(not install)
+end
+
+function JMod.StartConnection(machine, ply)
+	if not(IsValid(machine)) then return end
+	if IsValid(machine.EZconnectorPlug) then 
+		if machine.EZconnectorPlug:IsPlayerHolding() then return end
+		SafeRemoveEntity(machine.EZconnectorPlug)
+	end
+	if not(JMod.ShouldAllowControl(machine, ply, true)) then return end
+	if not IsValid(ply) then return end
+
+	local Hooky = ents.Create("ent_jack_gmod_ezhook")
+	if not IsValid(Hooky) then return end
+	Hooky:SetPos(machine:GetPos() + Vector(0, 0, 50)) -- Adjust the position as needed
+	Hooky:SetAngles(machine:GetAngles())
+	Hooky.Model = "models/props_lab/tpplug.mdl"
+	Hooky.EZhookType = "Plugin"
+	Hooky.EZconnector = machine
+	Hooky:Spawn()
+	Hooky:Activate()
+	machine.EZconnectorPlug = Hooky
+
+	local ropeLength = machine.MaxConnectionRange or 1000
+	constraint.Rope(machine, Hooky, 0, 0, machine.EZpowerSocket or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
+
+	ply:DropObject()
+	ply:PickupObject(Hooky)
+end
+
+function JMod.CreateConnection(machine, ent, dist)
+	dist = dist or 1000
+	if not IsValid(ent) or (ent == machine) then return false end
+	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
+	local AlreadyConnected = false
+	for k, v in pairs(machine.EZconnections) do
+		if v.Ent == ent then
+			AlreadyConnected = true
+
+			break
+		end
+	end
+	if AlreadyConnected then return false end
+	ent.EZconnections = ent.EZconnections or {}
+	for k, v in pairs(ent.EZconnections) do
+		if (v.Ent == machine) then
+			if IsValid(v.Cable) then
+				v.Cable:Remove()
+			end
+			v.Ent = nil
+		end
+	end
+	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), ent.EZpowerSocket or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
+	table.insert(ent.EZconnections, {Ent = machine, Cable = Cable})
+	table.insert(machine.EZconnections, {Ent = ent, Cable = Cable})
+
+	return true
+end
+
+function JMod.RemoveConnection(machine, connection)
+	if not IsValid(machine) then return end
+	-- Check if connection is a entity first
+	if type(connection) == "Entity" and IsValid(connection) then
+		-- Check if it is connected
+		for k, v in pairs(machine.EZconnections) do
+			if v.Ent == connection then
+				connection = k
+
+				break
+			end
+		end
+		if type(connection) ~= "number" then return end
+	end
+	if not(machine.EZconnections[connection]) then return end
+	if IsValid(machine.EZconnections[connection].Cable) then
+		machine.EZconnections[connection].Cable:Remove()
+	end
+	machine.EZconnections[connection].Ent = nil
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
