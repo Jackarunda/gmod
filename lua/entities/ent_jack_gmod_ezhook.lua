@@ -9,7 +9,7 @@ ENT.NoSitAllowed = true
 ENT.Spawnable = false
 ENT.AdminSpawnable = true
 --- func_breakable
-ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
+ENT.JModPreferredCarryAngles = Angle(180, 0, 0)
 ENT.Model = "models/jmod/ezhook01.mdl"
 ENT.EZhookType = nil
 
@@ -115,7 +115,7 @@ if SERVER then
 			local State = self:GetState()
 			if State < 0 then return end
 			local Alt = Dude:KeyDown(JMod.Config.General.AltFunctionKey)
-			self:SetBodygroup(0, 1)
+			self:SetBodygroup(1, 1)
 
 			if State == STATE_UNHOOKED then
 				if self.StuckStick then SafeRemoveEntity(self.StuckStick) end
@@ -129,7 +129,7 @@ if SERVER then
 				self:SetState(STATE_UNHOOKED)
 			end
 		else
-			self:SetBodygroup(0, 0)
+			self:SetBodygroup(1, 0)
 		end
 	end
 

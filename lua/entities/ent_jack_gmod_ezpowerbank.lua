@@ -51,7 +51,6 @@ if SERVER then
 		end
 		
 		if Alt then
-			--self:ProduceResource()
 			self:ModConnections(activator)
 		else
 			if State == JMod.EZ_STATE_OFF then
