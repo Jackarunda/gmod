@@ -1502,7 +1502,10 @@ function JMod.StartConnection(machine, ply)
 	ply:PickupObject(Hooky)
 end
 
-function JMod.CreateConnection(machine, ent, dist)
+function JMod.CreateConnection(machine, ent, resType, dist)
+	if not IsValid(machine) or not IsValid(ent) or not resType then return false end
+	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) or (resType == JMod.EZ_RESOURCE_TYPES.POWER and ent.EZpowerProducer) then return false end
+	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
 	dist = dist or 1000
 	if not IsValid(ent) or (ent == machine) then return false end
 	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end

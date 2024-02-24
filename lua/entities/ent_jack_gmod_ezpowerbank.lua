@@ -73,7 +73,8 @@ if SERVER then
 		self:SetState(JMod.EZ_STATE_OFF)
 	end
 
-	function ENT:ConnectAll(dude)
+	-- Deprecated
+	--[[function ENT:ConnectAll(dude)
 		if not(IsValid(dude) and dude:IsPlayer()) then return end
 		local SelfPos = self:GetPos()
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 1000)) do
@@ -84,7 +85,7 @@ if SERVER then
 				JMod.CreateConnection(self, ent, 1000)
 			end
 		end
-	end
+	end--]]
 
 	function ENT:DisconnectAll()
 		for k, v in pairs(self.EZconnections) do
@@ -98,48 +99,63 @@ if SERVER then
 		self.EZconnections = self.EZconnections or {}
 
 		if (State == JMod.EZ_STATE_ON) and (#self.EZconnections > 0) then
-			local NumberOfConnected = #self.EZconnections
-			local SelfPower = self:GetElectricity()
-
-			for k, v in pairs(self.EZconnections) do
-				local Ent, Cable = v.Ent, v.Cable
-				if not IsValid(Ent) or not IsValid(Cable) then
-					JMod.RemoveConnection(self, k)
-				elseif Ent.EZpowerProducer then
-					if SelfPower <= (self.MaxElectricity * .5) then
-						Ent:TurnOn(nil, true)
-					elseif SelfPower >= (self.MaxElectricity * .9) then
-						Ent:TurnOff()
-					end
-				elseif (SelfPower >= 1) and Ent.EZpowerBank then
-					local EntPower = Ent:GetElectricity()
-					local ChargeDiff = SelfPower - EntPower
-					if (ChargeDiff >= 1) then
-						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2)
-						Ent.NextRefillTime = 0
-						self:SetElectricity(SelfPower - PowerTaken)
-					end
-				elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-					local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or 0
-					local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
-					if (MaxElec - EntPower) > MaxElec * .1 then
-						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
-						Ent.NextRefillTime = 0
-						self:SetElectricity(SelfPower - PowerTaken)
-						if (EntPower < 1) and Ent.GetState and Ent.TurnOn and Ent:GetState() == JMod.EZ_STATE_OFF then
-							Ent:TurnOn()
-						end
-					end
-				end
-			end
-			if self:GetElectricity() > self.MaxElectricity then
-				self:ProduceResource()
-			end
-			self.PowerFlow = self:GetElectricity()
+			self:DistributePower()
 		end
 
 		self:NextThink(Time + 1)
 		return true
+	end
+
+	function ENT:DistributePower()
+		local NumberOfConnected = #self.EZconnections
+		local SelfPower = self:GetElectricity()
+
+		for k, v in pairs(self.EZconnections) do
+			local Ent, Cable = v.Ent, v.Cable
+			if not IsValid(Ent) or not IsValid(Cable) then
+				JMod.RemoveConnection(self, k)
+			elseif Ent.EZpowerProducer then
+				if SelfPower <= (self.MaxElectricity * .5) then
+					Ent:TurnOn(nil, true)
+				elseif SelfPower >= (self.MaxElectricity * .9) then
+					Ent:TurnOff()
+				end
+			elseif (SelfPower >= 1) and Ent.EZpowerBank then
+				local EntPower = Ent:GetElectricity()
+				local ChargeDiff = SelfPower - EntPower
+				if (ChargeDiff >= 1) then
+					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2)
+					Ent.NextRefillTime = 0
+					self:SetElectricity(SelfPower - PowerTaken)
+				end
+			elseif Ent.IsJackyEZcrate and ((Ent.GetResourceType and Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER)) then
+				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)
+				local ChargeDiff = EntPower - SelfPower
+				if SelfPower > (self.MaxElectricity * .9) then
+					local PowerGiven = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, self.MaxElectricity * .1)
+					Ent.NextRefillTime = 0
+					self:SetElectricity(SelfPower - PowerGiven)
+				elseif SelfPower <= (self.MaxElectricity * .5) then
+					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - self.MaxElectricity)
+					Ent:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - PowerTaken)
+				end
+			elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
+				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or 0
+				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
+				if (MaxElec - EntPower) > MaxElec * .1 then
+					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
+					Ent.NextRefillTime = 0
+					self:SetElectricity(SelfPower - PowerTaken)
+					if (EntPower < 1) and Ent.GetState and Ent.TurnOn and Ent:GetState() == JMod.EZ_STATE_OFF then
+						Ent:TurnOn()
+					end
+				end
+			end
+		end
+		if self:GetElectricity() > self.MaxElectricity then
+			self:ProduceResource()
+		end
+		self.PowerFlow = self:GetElectricity()
 	end
 
 	function ENT:ProduceResource(activator)

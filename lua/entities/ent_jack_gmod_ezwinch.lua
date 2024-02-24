@@ -94,6 +94,8 @@ if SERVER then
 
 		if not IsValid(self.EZhooky) or not IsValid(self.EZrope) then
 			self:SetState(STATE_OFF)
+
+			return
 		end
 
 		if (State == STATE_WINDING) then
