@@ -21,6 +21,7 @@ ENT.DynamicPerfSpecs = {
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(0, 0, -30)
+ENT.MaxConnectionRange = 200
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -76,23 +77,23 @@ if(SERVER)then
 		if self.NextUse > CurTime() then return end
 		local State=self:GetState()
 		local OldOwner=self.EZowner
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
 		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
-		if(State==STATE_BROKEN)then
-			JMod.Hint(activator,"destroyed",self)
-		return
-		elseif(State==STATE_OFF)then
-			self:TurnOn()
-		elseif(State==STATE_ON)then
-			if(alt)then
-				self:ProduceResource()
-				return
+		if State == STATE_BROKEN then
+			JMod.Hint(activator, "destroyed", self)
+		end
+		if Alt then
+			self:ModConnections(activator)
+		else
+			if State == STATE_OFF then
+				self:TurnOn(activator)
+			elseif State == STATE_RUNNING then
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 

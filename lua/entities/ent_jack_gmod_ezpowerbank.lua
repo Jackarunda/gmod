@@ -38,6 +38,7 @@ if SERVER then
 		self.EZconnections = {}
 		self.EZupgradable = false
 		self.EZcolorable = false
+		self.PowerFlow = 0
 	end
 
 	function ENT:Use(activator)
@@ -119,7 +120,7 @@ if SERVER then
 						self:SetElectricity(SelfPower - PowerTaken)
 					end
 				elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-					local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
+					local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or 0
 					local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
 					if (MaxElec - EntPower) > MaxElec * .1 then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
@@ -131,10 +132,10 @@ if SERVER then
 					end
 				end
 			end
-		end
-
-		if self:GetElectricity() > self.MaxElectricity then
-			self:ProduceResource()
+			if self:GetElectricity() > self.MaxElectricity then
+				self:ProduceResource()
+			end
+			self.PowerFlow = self:GetElectricity()
 		end
 
 		self:NextThink(Time + 1)

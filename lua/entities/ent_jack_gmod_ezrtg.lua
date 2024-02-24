@@ -27,6 +27,7 @@ ENT.EZconsumes = {
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(3, -33, 15)
+ENT.MaxConnectionRange = 200
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -53,14 +54,15 @@ if(SERVER)then
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 			return
-		elseif State == STATE_OFF then
-			self:TurnOn(activator)
-		elseif State == STATE_ON then
-			if Alt then
-				self:ProduceResource(activator)
-				return
+		end
+		if Alt then
+			self:ModConnections(activator)
+		else
+			if(State == STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State == STATE_RUNNING)then
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 
