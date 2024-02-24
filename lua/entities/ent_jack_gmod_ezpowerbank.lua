@@ -13,6 +13,7 @@ ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZpowerBank = true
 ENT.Model = "models/jmod/machines/ez_powerbank.mdl"
 ENT.Mass = 150
+ENT.MaxConnectionRange = 1000
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 1000,
@@ -166,7 +167,7 @@ elseif CLIENT then
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
-		if((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		--if((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw = false end -- if obscured, at least disable details
 		if(State == STATE_BROKEN)then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
 		---

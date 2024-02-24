@@ -363,6 +363,9 @@ if(SERVER)then
 			end
 			self.Pod:Fire("lock","",0)
 		end
+		if self.EZconnections then
+			self.EZconnections = nil
+		end
 		if(self.OnBreak)then self:OnBreak() end
 	end
 

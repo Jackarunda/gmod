@@ -25,6 +25,7 @@ ENT.StaticPerfSpecs = {
 ENT.DynamicPerfSpecs = {
 	Armor = 2
 }
+ENT.EZpowerSocket = Vector(-90, 80, 0)
 ---
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---
@@ -87,7 +88,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
+		if self:GetState() ~= STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
 		if self.EZinstalled then
@@ -107,7 +108,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+		if (self:GetState() <= STATE_OFF) then return end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 

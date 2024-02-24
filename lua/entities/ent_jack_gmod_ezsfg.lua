@@ -34,6 +34,7 @@ ENT.EZconsumes = {
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(65, 18, 18)
+ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 2, "Progress")
@@ -62,7 +63,7 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
@@ -72,11 +73,11 @@ if(SERVER)then
 		elseif State == STATE_OFF then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
-			if alt then
-				self:ProduceResource()
-				return
+			if Alt then
+				self:ModConnections(activator)
+			else
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 

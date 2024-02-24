@@ -97,7 +97,7 @@ if(SERVER)then
 		if self.NextUse > CurTime() then return end
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator, true)
 		if(State == STATE_BROKEN)then
 			JMod.Hint(activator, "destroyed", self)
@@ -106,11 +106,11 @@ if(SERVER)then
 		elseif(State == STATE_OFF)then
 			self:TurnOn(activator)
 		elseif(State == STATE_RUNNING)then
-			if(alt)then
-				self:ProduceResource()
-				return
+			if Alt then
+				self:ModConnections(activator)
+			else
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 
@@ -133,18 +133,18 @@ if(SERVER)then
 			if IsValid(Dude) and not(auto) then
 				self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
 				self.NextUse = CurTime() + 1
+				timer.Simple(0.6, function()
+					if not IsValid(self) then return end
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
+				end)
 			end
-			timer.Simple(0.6, function()
-				if not IsValid(self) then return end
-				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
-			end)
 			if (self:GetWater() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
 				timer.Simple(1, function()
 					if not IsValid(self) then return end
 					if self.SoundLoop then 
 						self.SoundLoop:Play() 
-						self.SoundLoop:SetSoundLevel(100)
+						self.SoundLoop:SetSoundLevel(75)
 						self.SoundLoop:ChangePitch(100)
 					end
 				end)

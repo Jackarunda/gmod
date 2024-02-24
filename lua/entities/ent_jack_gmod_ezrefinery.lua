@@ -184,11 +184,12 @@ if(SERVER)then
 				end
 			end
 		end
+		local GasPos = self:GetPos() + self:GetUp() * 270 + self:GetRight() * 40
 		if (self.NextEffThink < Time) then
 			self.NextEffThink = Time + .1
 			if (State == STATE_REFINING) then
 				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos() + self:GetUp() * 270 + self:GetRight() * 40)
+				Eff:SetOrigin(GasPos)
 				Eff:SetNormal(self:GetUp())
 				Eff:SetScale(.2)
 				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
@@ -197,11 +198,11 @@ if(SERVER)then
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
 			if (State == STATE_REFINING) then
-				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+				local Tr=util.QuickTrace(GasPos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						Gas:SetPos(GasPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()

@@ -160,10 +160,8 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	if not IsValid(Ent) then return end
 
 	if Action == "connect" then
-		print("Giving cable")
 		JMod.StartConnection(Ent, ply)
 	elseif Action == "disconnect" then
-		print("Disconnecting", Ent, Ent2)
 		local Ent2 = net.ReadEntity()
 		if not IsValid(Ent2) then return end
 		JMod.RemoveConnection(Ent, Ent2)
@@ -175,7 +173,6 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 				JMod.RemoveConnection(Ent, k)
 			end
 		end
-		print("Disconnecting all")
 	elseif Action == "produce" then
 		Ent:ProduceResource(ply)
 	end

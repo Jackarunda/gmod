@@ -896,7 +896,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 				
 				if Remaining > 0 then
 					local entPos = BestCrate:LocalToWorld(BestCrate:OBBCenter())
-					JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), entPos, amount * 0.02, 0.1, 1)
+					JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector or machine:OBBCenter()), entPos, amount * 0.01, 0.1, 1)
 					amount = amount - Remaining
 					if amount <= 0 then 
 					
@@ -919,7 +919,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 		-- TODO: Figure out how to optimize the resource effects
 		local SpawnAmount = math.min(amount, 100 * JMod.Config.ResourceEconomy.MaxResourceMult)
 		if ejectionVector then
-			JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector), SpawnPos, SpawnAmount * 0.02, 1, 1)
+			JMod.ResourceEffect(resourceType, machine:LocalToWorld(ejectionVector), SpawnPos, SpawnAmount * 0.01, 1, 1)
 		end
 		timer.Simple(.3 * math.ceil(amount/(100 * JMod.Config.ResourceEconomy.MaxResourceMult)), function()
 			local Resource = ents.Create(JMod.EZ_RESOURCE_ENTITIES[resourceType])
@@ -953,7 +953,7 @@ local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.
 
 function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpeed)
 	--print("Type: " .. tostring(typ) .. " From point: " .. tostring(fromPoint) .. " Amount: " .. amt)
-	amt = amt or 1
+	amt = (amt and math.min(amt, 1)) or 1
 	spread = spread or 1
 	scale = scale or 1
 	upSpeed = upSpeed or 0
@@ -1506,14 +1506,18 @@ function JMod.CreateConnection(machine, ent, dist)
 	dist = dist or 1000
 	if not IsValid(ent) or (ent == machine) then return false end
 	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
+	local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(ent.EZpowerSocket or Vector(0, 0, 0))):Length()
+	if (DistanceBetween > dist) then return false end
+	machine.EZconnections = machine.EZconnections or {}
 	local AlreadyConnected = false
 	for k, v in pairs(machine.EZconnections) do
 		if v.Ent == ent then
+			AlreadyConnected = true
 
-			return false
+			break
 		end
 	end
-
+	if AlreadyConnected then return false end
 	ent.EZconnections = ent.EZconnections or {}
 	for k, v in pairs(ent.EZconnections) do
 		if (v.Ent == machine) then
@@ -1523,8 +1527,6 @@ function JMod.CreateConnection(machine, ent, dist)
 			v.Ent = nil
 		end
 	end
-	local DistanceBetween = (machine:GetPos() - ent:GetPos()):Length()
-	if (DistanceBetween > dist) then return false end
 	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), ent.EZpowerSocket or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
 	table.insert(ent.EZconnections, {Ent = machine, Cable = Cable})
 	table.insert(machine.EZconnections, {Ent = ent, Cable = Cable})

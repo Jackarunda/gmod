@@ -29,6 +29,7 @@ ENT.EZconsumes = {
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(42, -1, 40)
+ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -62,9 +63,9 @@ if(SERVER)then
 		elseif State == STATE_ON then
 			if Alt then
 				self:ModConnections(activator)
-				return
+			else
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 

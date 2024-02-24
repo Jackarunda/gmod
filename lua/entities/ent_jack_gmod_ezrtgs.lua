@@ -29,6 +29,7 @@ ENT.EZconsumes = {
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(0, 0, 0)
+ENT.MaxConnectionRange = 100
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
