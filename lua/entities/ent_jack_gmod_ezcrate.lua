@@ -11,7 +11,6 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
 ENT.IsJackyEZcrate = true
----
 
 ---
 function ENT:SetupDataTables()

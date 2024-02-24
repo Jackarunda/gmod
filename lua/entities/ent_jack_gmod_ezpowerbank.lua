@@ -119,8 +119,9 @@ if SERVER then
 						self:SetElectricity(SelfPower - PowerTaken)
 					end
 				elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-					local EntPower = Ent:GetElectricity()
-					if (Ent.MaxElectricity - EntPower) > Ent.MaxElectricity * .1 then
+					local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
+					local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
+					if (MaxElec - EntPower) > MaxElec * .1 then
 						local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
 						Ent.NextRefillTime = 0
 						self:SetElectricity(SelfPower - PowerTaken)
