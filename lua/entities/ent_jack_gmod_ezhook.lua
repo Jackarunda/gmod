@@ -60,8 +60,8 @@ if SERVER then
 				timer.Simple(0, function()
 					if self.EZhookType == "Plugin" then
 						local Ent = data.HitEntity
-						if IsValid(Ent) and not(Ent:IsPlayer()) and ((Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) or Ent.EZpowerProducer) then
-							local Connected = JMod.CreateConnection(self.EZconnector, Ent, self.EZconnector.MaxConnectionRange or 1000)
+						if IsValid(Ent) and not(Ent:IsPlayer()) then
+							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, self.EZconnector.MaxConnectionRange or 1000)
 							if Connected then SafeRemoveEntity(self) end
 						end
 					else
@@ -99,7 +99,7 @@ if SERVER then
 		local Dmg = dmginfo:GetDamage()
 
 		if not(self:GetState() == STATE_BROKEN) and JMod.LinCh(Dmg, 30, 100) then
-			sound.Play("Metal_Box.Break", Pos)
+			sound.Play("Metal_Box.Break", self:GetPos())
 			self:SetState(STATE_BROKEN)
 			SafeRemoveEntityDelayed(self, 10)
 		end
