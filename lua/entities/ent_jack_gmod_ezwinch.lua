@@ -39,10 +39,12 @@ if SERVER then
 		self.EZconnections = {}
 		self.EZupgradable = false
 		self.EZcolorable = false
+		self.CurrentCableLength = 0
 	end
 
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
+		self.NextUseTime = CurTime() + .5
 		local State = self:GetState()
 		local IsPly = (IsValid(activator) and activator:IsPlayer())
 		local Alt = IsPly and activator:KeyDown(JMod.Config.General.AltFunctionKey)
@@ -50,6 +52,8 @@ if SERVER then
 
 		if State == JMod.EZ_STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
+
+			return
 		end
 		
 		if Alt then
@@ -74,7 +78,7 @@ if SERVER then
 				activator:DropObject()
 				Hooky:Use(activator, activator, USE_TOGGLE, 1)
 			end
-		else
+		elseif IsValid(self.EZhooky) and not(self.EZhooky:IsPlayerHolding()) and IsValid(self.EZrope) then
 			if State == STATE_OFF then
 				self:SetState(STATE_WINDING)
 			elseif State == STATE_WINDING then
@@ -85,19 +89,12 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOn(dude)
-		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
-		--self:SetState(JMod.EZ_STATE_ON)
-		if not(IsValid(dude) and dude:IsPlayer()) then return end
-	end
-
-	function ENT:TurnOff()
-		if self:GetState() ~= JMod.EZ_STATE_ON then return end
-		self:SetState(JMod.EZ_STATE_OFF)
-	end
-
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
+
+		if not IsValid(self.EZhooky) or not IsValid(self.EZrope) then
+			self:SetState(STATE_OFF)
+		end
 
 		if (State == STATE_WINDING) then
 			self.CurrentCableLength = math.Clamp(self.CurrentCableLength + 25, 10, self.MaxConnectionRange)
@@ -156,7 +153,7 @@ elseif CLIENT then
 			local WheelAng = SelfAng:GetCopy()
 			WheelAng:RotateAroundAxis(WheelAng:Forward(), self.WheelTurn)
 			JMod.RenderModel(self.Wheel, BasePos - Right * 11.25 - Forward * 7.5 - Up * 2, WheelAng, Vector(1, 1, 1))
-			if Closeness < 20000 and State == JMod.EZ_STATE_ON then
+			if Closeness < 20000 and State > JMod.EZ_STATE_OFF then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), -90)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
@@ -164,7 +161,7 @@ elseif CLIENT then
 				local Elec = self:GetElectricity()
 				local R, G, B = JMod.GoodBadColor(Elec / 1000)
 
-				cam.Start3D2D(SelfPos + Forward * 10.5 + Up * 23, DisplayAng, .08)
+				cam.Start3D2D(SelfPos + Forward * 10.5 + Up * 7, DisplayAng, .08)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(200, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(Elec)) .. "/" .. tostring(math.Round(self.MaxElectricity)), "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
