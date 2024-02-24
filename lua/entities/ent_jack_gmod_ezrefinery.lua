@@ -140,11 +140,11 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.OIL and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()

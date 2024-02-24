@@ -154,11 +154,11 @@ if SERVER then
 		end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end

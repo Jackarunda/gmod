@@ -105,14 +105,6 @@ if(SERVER)then
 		self:SetState(STATE_OFF)
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
-		--[[if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted > 0 then
-			timer.Simple(.1, function() 
-				if IsValid(self) then self:TurnOn() end 
-			end)
-		end]]--
-	end
-
 	function ENT:OnRemove()
 		if self.SoundLoop then self.SoundLoop:Stop() end
 	end

@@ -152,11 +152,11 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == self:GetOreType() and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()

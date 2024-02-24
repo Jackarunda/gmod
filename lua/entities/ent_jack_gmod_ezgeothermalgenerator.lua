@@ -240,11 +240,11 @@ if(SERVER)then
 		return true
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted >= 1 then
 			self:TurnOn(JMod.GetEZowner(self), true)
 		end
-	end
+	end--]]
 
 	function ENT:OnDestroy(dmginfo)
 		local Pos = self:GetPos()
