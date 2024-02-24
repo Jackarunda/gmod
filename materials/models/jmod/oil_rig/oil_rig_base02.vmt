@@ -1,11 +1,16 @@
 VertexLitGeneric
 {
-	$basetexture	models/jmod/oil_rig/oil_rig_base02
-	$detail detail/metal_detail_01
+	$basetexture "models/jmod/oil_rig/oil_rig_base02"
+	$detail "detail/metal_detail_01"
 	$detailscale 3
 	$detailblendfactor 1
 	$detailblendmode 0
 	$blendtintbybasealpha 1
 	$blendtintcoloroverbase 0
-	$surfaceprop	metal
+	$surfaceprop "metal"
+	$bumpmap "models/jmod/oil_rig/oil_rig_base02_n"
+	$phong "1"
+	$phongfresnelranges "[1 1 1]"
+	$phongboost ".1"
+	$phongexponent "40"
 }

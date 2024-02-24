@@ -1,5 +1,5 @@
 VertexLitGeneric
 {
-	$basetexture	models/jmod/oil_rig/oil_rig_pipe
-	$surfaceprop	metal
+	$basetexture "models/jmod/oil_rig/oil_rig_pipe"
+	$surfaceprop "metal"
 }
