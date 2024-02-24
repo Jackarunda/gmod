@@ -48,7 +48,7 @@ if SERVER then
 
 		---
 		self:SetState(STATE_UNHOOKED)
-		self.NextStick = 0
+		self.NextStick = self.NextStick or 0
 		self.EZhookType = self.EZhookType or "Hook"
 	end
 
@@ -118,13 +118,14 @@ if SERVER then
 			self:SetBodygroup(1, 1)
 
 			if State == STATE_UNHOOKED then
+				self.NextStick = Time + .5
+				Dude:PickupObject(self)
+				JMod.Hint(Dude, "sticky")
+			elseif State == STATE_HOOKED then
 				if self.StuckStick then SafeRemoveEntity(self.StuckStick) end
 				self.StuckStick = nil
 				self.StuckTo = nil
 				Dude:PickupObject(self)
-				self.NextStick = Time + .5
-				JMod.Hint(Dude, "sticky")
-			else
 				self:EmitSound("snd_jack_minearm.wav", 60, 70)
 				self:SetState(STATE_UNHOOKED)
 			end

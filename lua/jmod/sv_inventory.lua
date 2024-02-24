@@ -388,7 +388,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 
 	if not(IsValid(Tar)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
 
-	if Tar.JModInv and next(Tar.JModInv.items) and next(Tar.JModInv.EZresources) then
+	if Tar.JModInv and (next(Tar.JModInv.items) or next(Tar.JModInv.EZresources)) then
 		JMod.UpdateInv(Tar)
 		net.Start("JMod_ItemInventory")
 			net.WriteEntity(Tar)

@@ -6,12 +6,13 @@ ENT.PrintName = "EZ Winch"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = false
+ENT.Spawnable = true -- For now...
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/props_lab/citizenradio.mdl"
+ENT.Model = "models/jmod/ezwinch01.mdl"
 ENT.Mass = 50
+ENT.MaxConnectionRange = 1000
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 100,
@@ -19,6 +20,8 @@ ENT.StaticPerfSpecs={
 	Armor = 1.5
 }
 
+local STATE_BROKEN, STATE_OFF, STATE_WINDING, STATE_SPEELING = -1, 0, 1, 2
+--
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 20
@@ -50,34 +53,41 @@ if SERVER then
 		end
 		
 		if Alt then
-		else
 			if IsValid(self.EZhooky) then 
 				if self.EZhooky:IsPlayerHolding() then return end
 				SafeRemoveEntity(self.EZhooky)
+			else
+				local Hooky = ents.Create("ent_jack_gmod_ezhook")
+				if not IsValid(Hooky) then return end
+				Hooky:SetPos(self:GetPos() + Vector(0, 0, 50)) -- Adjust the position as needed
+				Hooky:SetAngles(self:GetAngles())
+				Hooky.EZconnector = machine
+				Hooky.NextStick = CurTime() + 1
+				Hooky:Spawn()
+				Hooky:Activate()
+				self.EZhooky = Hooky
+
+				self.CurrentCableLength = self.MaxConnectionRange
+				self.EZrope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/cable2", 2, true)
+				Hooky.EZrope = self.EZrope
+
+				activator:DropObject()
+				Hooky:Use(activator, activator, USE_TOGGLE, 1)
 			end
-
-			local Hooky = ents.Create("ent_jack_gmod_ezhook")
-			if not IsValid(Hooky) then return end
-			Hooky:SetPos(self:GetPos() + Vector(0, 0, 50)) -- Adjust the position as needed
-			Hooky:SetAngles(self:GetAngles())
-			Hooky.EZconnector = machine
-			Hooky:Spawn()
-			Hooky:Activate()
-			Hooky.NextStick = CurTime() + 1
-			self.EZhooky = Hooky
-
-			local ropeLength = self.MaxConnectionRange or 1000
-			local Rope = constraint.Rope(self, Hooky, 0, 0, Vector(0,0,0), Vector(0,0,9), ropeLength, 0, 1000, 2, "cable/cable2", false)
-			Hooky.EZrope = Rope
-
-			activator:DropObject()
-			activator:PickupObject(Hooky)
+		else
+			if State == STATE_OFF then
+				self:SetState(STATE_WINDING)
+			elseif State == STATE_WINDING then
+				self:SetState(STATE_SPEELING)
+			elseif State == STATE_SPEELING then
+				self:SetState(STATE_OFF)
+			end
 		end
 	end
 
 	function ENT:TurnOn(dude)
 		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
-		self:SetState(JMod.EZ_STATE_ON)
+		--self:SetState(JMod.EZ_STATE_ON)
 		if not(IsValid(dude) and dude:IsPlayer()) then return end
 	end
 
@@ -89,17 +99,41 @@ if SERVER then
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 
-		if (State == JMod.EZ_STATE_ON) then
-			
+		if (State == STATE_WINDING) then
+			self.CurrentCableLength = math.Clamp(self.CurrentCableLength + 25, 10, self.MaxConnectionRange)
+			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
+		elseif (State == STATE_SPEELING) then
+			self.CurrentCableLength = math.Clamp(self.CurrentCableLength - 25, 10, self.MaxConnectionRange)
+			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
 		end
 
-		self:NextThink(Time + 1)
+		self:NextThink(Time + .5)
 		return true
+	end
+
+	function ENT:OnRemove()
+		if IsValid(self.EZhooky) then
+			SafeRemoveEntity(self.EZhooky)
+		end
 	end
 
 elseif CLIENT then
 	function ENT:CustomInit()
 		self:DrawShadow(true)
+		self.Wheel = JMod.MakeModel(self, "models/jmod/ezwinch01_wheel.mdl")
+		self.WheelTurn = 0
+	end
+
+	function ENT:Think()
+		local Time, State = CurTime(), self:GetState()
+		if State == STATE_WINDING then
+			self.WheelTurn = self.WheelTurn + 100 * FrameTime()
+		elseif State == STATE_SPEELING then
+			self.WheelTurn = self.WheelTurn - 100 * FrameTime()
+		end
+		if self.WheelTurn > 360 then
+			self.WheelTurn = self.WheelTurn - 360
+		end
 	end
 
 	function ENT:Draw()
@@ -118,6 +152,9 @@ elseif CLIENT then
 		self:DrawModel()
 		---
 		if DetailDraw then
+			local WheelAng = SelfAng:GetCopy()
+			WheelAng:RotateAroundAxis(WheelAng:Forward(), self.WheelTurn)
+			JMod.RenderModel(self.Wheel, BasePos - Right * 11.25 - Forward * 7.5 - Up * 2, WheelAng, Vector(1, 1, 1))
 			if Closeness < 20000 and State == JMod.EZ_STATE_ON then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), -90)
