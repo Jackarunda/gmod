@@ -10,12 +10,7 @@ ENT.NoSitAllowed=true
 ENT.Spawnable=true
 ENT.AdminSpawnable=true
 ENT.SpawnHeight=15
-ENT.EZconsumes={
-    JMod.EZ_RESOURCE_TYPES.AMMO,
-    JMod.EZ_RESOURCE_TYPES.POWER,
-    JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-    JMod.EZ_RESOURCE_TYPES.COOLANT
-}
+ENT.EZconsumes=nil
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.EZupgradable=true
@@ -49,6 +44,15 @@ ENT.AmmoTypes = {
 		Damage = 3,
 		Accuracy = .8,
 		BarrelLength = .75
+	}, -- explosive projectile
+	["Rocket Launcher"] = {
+		MaxAmmo = .20,
+		FireRate = .05,
+		Damage = 3,
+		Accuracy = .8,
+		BarrelLength = 2,
+		TargetingRadius = 1.5,
+		SearchSpeed = 0.75
 	}, -- explosive projectile
 	["Pulse Laser"] = {
 		Accuracy = 3,
@@ -133,6 +137,11 @@ ENT.AmmoRefundTable = {
 		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
 		conversionMult = 1
 	},
+	["Rocket Launcher"] = {
+		varToRead = "Ammo",
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
+		conversionMult = 1
+	},
 	["Pulse Laser"] = {
 		varToRead = "Electricity",
 		spawnType = JMod.EZ_RESOURCE_TYPES.POWER,
@@ -156,12 +165,12 @@ function ENT:SetMods(tbl, ammoType)
 			// no exploit
 			self:SetElectricity(0)
 		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetForward() * -50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetForward(), true)
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetRight() * 50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetRight(), true)
 	end
 	self:InitPerfSpecs(OldAmmo~=ammoType)
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
-	elseif(ammoType=="HE Grenade")then
+	elseif(ammoType=="HE Grenade")or(ammoType=="Rocket Launcher")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.MUNITIONS,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	else
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
@@ -228,7 +237,12 @@ if(SERVER)then
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
-
+		self.EZconsumes = self.EZconsumes or {
+			JMod.EZ_RESOURCE_TYPES.AMMO,
+			JMod.EZ_RESOURCE_TYPES.POWER,
+			JMod.EZ_RESOURCE_TYPES.BASICPARTS,
+			JMod.EZ_RESOURCE_TYPES.COOLANT
+		}
 		---
 		self:SetAmmoType("Bullet")
 		JMod.Colorify(self)
@@ -910,6 +924,85 @@ if(SERVER)then
 			Gnd:Spawn()
 			Gnd:Activate()
 			Gnd:GetPhysicsObject():SetVelocity(self:GetVelocity() + ShootDir * Speed)
+		elseif ProjType == "Rocket Launcher" then
+			local Dmg, Inacc = self.Damage, .06 / self.Accuracy
+			AmmoConsume = 5
+			sound.Play("snds_jack_gmod/sentry_gl.wav", SelfPos, 70, math.random(90, 110))
+			ParticleEffect("muzzleflash_m79", ShootPos, AimAng, self)
+			sound.Play("snds_jack_gmod/sentry_far.wav", SelfPos + Up, 100, math.random(90, 110))
+			-- leading calcs --
+			local Speed, Gravity = 4000, GetConVar("sv_gravity"):GetFloat() -- Probably 600
+			local TargetVec = point - ShootPos
+			local Distance = TargetVec:Length()
+			local FlightTime = Distance / Speed
+			local CorrectedFirePosition = point + targVel * FlightTime
+			local ShootDir = (CorrectedFirePosition - ShootPos):GetNormalized()
+			-- ballistic calcs --
+			local Theta = math.deg(math.asin(Distance * Gravity / Speed ^ 2.5) / 2)
+
+			-- target too far away, no mathematical solution possible, shoot at 45 degrees
+			if Theta ~= Theta then
+				Theta = 45
+			end
+
+			Theta = Theta * (1 - math.abs(TargetVec:GetNormalized().z)) --reduce angle compensation to account for vertical displacement
+
+			if Theta > 45 then
+				Theta = 45
+			end
+
+			local ShootAng = ShootDir:Angle()
+			ShootAng:RotateAroundAxis(ShootAng:Right(), Theta ^ 1.1)
+			ShootDir = ShootAng:Forward()
+			-- end calcs --
+			ShootDir = (ShootDir + VectorRand() * math.Rand(.05, 1) * Inacc):GetNormalized()
+			local Rocket = ents.Create("ent_jack_gmod_ezminirocket")
+			Rocket:SetPos(ShootPos)
+			ShootAng:RotateAroundAxis(ShootAng:Up(), -90)
+			Rocket:SetAngles(ShootAng)
+			JMod.SetEZowner(Rocket, JMod.GetEZowner(self) or self)
+			Rocket.Damage = Dmg
+			Rocket.CurVel = self:GetVelocity() + ShootDir * Speed
+			Rocket:Spawn()
+			Rocket:Activate()
+
+			-- Backblast code copied from the weapon base --
+			self.BackBlast = 1
+			local RPos, RDir = ShootPos + ShootAng:Right() * 100, -ShootAng:Right()
+			local Dist = 200
+
+			local Tr = util.QuickTrace(RPos, RDir * Dist, function(dumb)
+				if dumb == self then return false end
+				if dumb:IsPlayer() or dumb:IsNPC() then return false end
+				if dumb.IsEZrocket == true then return false end
+
+				return true
+			end)
+
+			if Tr.Hit then
+				Dist = RPos:Distance(Tr.HitPos)
+
+				if SERVER then
+					JMod.Hint(JMod.GetEZowner(self), "backblast wall")
+				end
+			end
+
+			for i = 1, 4 do
+				util.BlastDamage(self, JMod.GetEZowner(self) or self, RPos + RDir * (i * 40 - Dist) * self.BackBlast, 70 * self.BackBlast, 30 * self.BackBlast)
+			end
+
+			if SERVER then
+				local FooF = EffectData()
+				FooF:SetOrigin(RPos)
+				FooF:SetScale(self.BackBlast)
+				FooF:SetNormal(RDir)
+				util.Effect("eff_jack_gmod_smalldustshock", FooF, true, true)
+				local Ploom = EffectData()
+				Ploom:SetOrigin(RPos)
+				Ploom:SetScale(self.BackBlast)
+				Ploom:SetNormal(RDir)
+				util.Effect("eff_jack_gmod_ezbackblast", Ploom, true, true)
+			end
 		elseif ProjType == "Pulse Laser" then
 			local Dmg, Inacc = self.Damage, .06 / self.Accuracy
 			local Force = Dmg / 5
@@ -1069,6 +1162,7 @@ elseif(CLIENT)then
 		self.Camera=JMod.MakeModel(self,"models/mechanics/robotics/b2.mdl","phoenix_storms/metal",.4)
 		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
+		self.RocketLauncher=JMod.MakeModel(self,"models/weapons/w_jmod_at4.mdl",nil,1)
 		---
 		self.CurAimPitch = 0
 		self.CurAimYaw = 0
@@ -1090,6 +1184,7 @@ elseif(CLIENT)then
 		["API Bullet"] = 0,
 		["Buckshot"] = 1,
 		["HE Grenade"] = 2,
+		["Rocket Launcher"] = 2,
 		["Pulse Laser"] = 3
 	}
 
@@ -1202,7 +1297,13 @@ elseif(CLIENT)then
 			self.MachineGun:SetBodygroup(0, AmmoBGs[AmmoType])
 		end
 
-		JMod.RenderModel(self.MachineGun, BasePos + AimUp * .5 - AimForward * (1 + self.VisualRecoil) - AimRight * .5, AimAngle)
+		if AmmoType == "Rocket Launcher" then
+			local RocketAngle = AimAngle:GetCopy()
+			RocketAngle:RotateAroundAxis(AimUp, 90)
+			JMod.RenderModel(self.RocketLauncher, BasePos - AimUp * 3.5 + AimForward * 20 - AimRight * .25, RocketAngle)
+		else
+			JMod.RenderModel(self.MachineGun, BasePos + AimUp * .5 - AimForward * (1 + self.VisualRecoil) - AimRight * .5, AimAngle)
+		end
 		self.VisualRecoil = math.Clamp(self.VisualRecoil - FT * 4, 0, 5)
 		---
 		local ShieldAngle = AimAngle:GetCopy()
