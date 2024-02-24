@@ -141,7 +141,7 @@ elseif(CLIENT)then
 	local ScreenThreeMat = Material("models/jmod/machines/parts_machine/screen3_on")
 	local ScreenFourMat = Material("models/jmod/machines/parts_machine/screen4_on")
 	function ENT:DrawTranslucent()
-		local SelfPos, SelfAng, FT = self:GetPos(), self:GetAngles(), FrameTime()
+		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		---
 		local BasePos = SelfPos + Up * 60

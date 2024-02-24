@@ -293,9 +293,9 @@ elseif(CLIENT)then
 	1	WalkingBeam
 	2	CounterWeight
 	--]]
-	function ENT:Draw()
-		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
-		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+	function ENT:Think()
+		local State, Grade, Time = self:GetState(), self:GetGrade(), CurTime()
+		local FT = FrameTime()
 
 		if State == STATE_RUNNING then
 			self.DriveMomentum = math.Clamp(self.DriveMomentum + FT / 3, 0, 0.4)
@@ -304,6 +304,13 @@ elseif(CLIENT)then
 		end
 		self.DriveCycle=self.DriveCycle+self.DriveMomentum*Grade*FT*100
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
+	end
+
+	
+	function ENT:Draw()
+		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+
 		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
 		self.Mdl:ManipulateBoneAngles(1,Angle(0,0,WalkingBeamDrive))
 		self.Mdl:ManipulateBoneAngles(2,Angle(0,0,self.DriveCycle))

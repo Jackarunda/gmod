@@ -330,33 +330,14 @@ elseif(CLIENT)then
 		self.CurDepth = 0
 	end
 
-	local MiningLazCol = Color(255, 0, 0)
-
-	function ENT:Draw()
-		--
-		self:DrawModel()
-		--self:Draw()
-		--
-		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
-		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
-		local MotorPos = BoxPos + Up * -48 + Right * -3
-		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
-		local PipePos = DrillPos + Up * 149 + Right * -8.5
-		--
+	function ENT:Think()
+		local State, Grade, Typ, Prog = self:GetState(), self:GetGrade(), self:GetResourceType(), self:GetProgress()
+		local FT = FrameTime()
 		if self.CurDepth - self:GetProgress() > 1 then
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
 		else
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 5), self.CurDepth, self:GetProgress())
 		end
-		--
-		local PowerBoxAng = SelfAng:GetCopy()
-		PowerBoxAng:RotateAroundAxis(Up, -90)
-		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.3), nil, JMod.EZ_GRADE_MATS[Grade])
-		local MotorAng = SelfAng:GetCopy()
-		MotorAng:RotateAroundAxis(Up, 90)
-		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
-		--
 		if State == STATE_RUNNING then
 			self.DrillSpin = self.DrillSpin - FT * 600
 			if self.DrillSpin > 360 then
@@ -365,8 +346,28 @@ elseif(CLIENT)then
 				self.DrillSpin = 360
 			end
 		end
-		--
+	end
 
+	local MiningLazCol = Color(255, 0, 0)
+
+	function ENT:Draw()
+		--
+		self:DrawModel()
+		--
+		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
+		local MotorPos = BoxPos + Up * -48 + Right * -3
+		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
+		local PipePos = DrillPos + Up * 149 + Right * -8.5
+		--
+		local PowerBoxAng = SelfAng:GetCopy()
+		PowerBoxAng:RotateAroundAxis(Up, -90)
+		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.3), nil, JMod.EZ_GRADE_MATS[Grade])
+		local MotorAng = SelfAng:GetCopy()
+		MotorAng:RotateAroundAxis(Up, 90)
+		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
+		--
 		local Obscured = false--util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees

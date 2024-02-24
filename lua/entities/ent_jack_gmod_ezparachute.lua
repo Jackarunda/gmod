@@ -209,27 +209,17 @@ elseif CLIENT then
 		end
 	end
 
-	function ENT:Draw()
+	function ENT:Think()
 		local FT = FrameTime()
-		local Mat = Matrix()
 		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
-		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
-		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
-		Mat:Scale(Siz)
-		self:EnableMatrix("RenderMultiply", Mat)
 		local Owner = self:GetNW2Entity("Owner")
 		if IsValid(Owner) then
-			--self.LerpedPitch = self.LerpedPitch or 0
-			--self.LerpedYaw = self.LerpedYaw or 0
 			local Dir = Owner:GetVelocity():GetNormalized()
-			--Dir = Dir + Vector(0, 0, 0)
 			local DirAng = Dir:Angle()
 			local FinalAng = Angle(self.LerpedPitch, self.LerpedYaw, DirAng.r)
 			local BPos, BIndex = Owner:LocalToWorld(Owner:OBBCenter()), Owner:LookupBone("ValveBiped.Bip01_Spine2")
 			local AttachBone = self:GetNW2Int("AttachBone", 0)
 			if BIndex or (AttachBone and AttachBone > 0) then
-				--jprint(Owner:GetBonePosition(BIndex))
-				--local matrix = Owner:GetBoneMatrix(BIndex or AttachBone)
 				BPos = Owner:GetBonePosition(BIndex or AttachBone)
 			end
 			local Pos = BPos + (FinalAng:Forward() * math.Clamp(ChuteProg - 1, 0, 1) * self:GetOffset() or 0)
@@ -245,6 +235,15 @@ elseif CLIENT then
 				self.LerpedYaw = math.ApproachAngle(self.LerpedYaw, DirAng.y, FT * 120)
 			end
 		end
+	end
+
+	function ENT:Draw()
+		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
+		local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
+		local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
+		local Mat = Matrix()
+		Mat:Scale(Siz)
+		self:EnableMatrix("RenderMultiply", Mat)
 		self:DrawModel()
 	end
 	language.Add("ent_jack_gmod_ezparachute", "EZ parachute")

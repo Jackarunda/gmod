@@ -318,14 +318,9 @@ elseif(CLIENT)then
 		self.WheelMomentum = 0
 	end
 
-	local WhiteSquare = Material("white_square")
-	local HeatWaveMat = Material("sprites/heatwave")
-
-	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
-		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
-		local Grade = self:GetGrade()
-		---
+	function ENT:Think()
+		local State, Grade = self:GetState(), self:GetGrade()
+		local FT = FrameTime()
 		if State == STATE_ON then
 			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 8, 0, 1)
 		else
@@ -338,6 +333,15 @@ elseif(CLIENT)then
 		elseif self.WheelTurn < 0 then
 			self.WheelTurn = 360
 		end
+	end
+
+	local WhiteSquare = Material("white_square")
+	local HeatWaveMat = Material("sprites/heatwave")
+
+	function ENT:Draw()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
 		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos + Up * 60, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit

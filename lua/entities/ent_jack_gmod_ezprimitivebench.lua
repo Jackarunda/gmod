@@ -367,7 +367,7 @@ elseif(CLIENT)then
 
 	function ENT:DrawTranslucent()
 		local State = self:GetState()
-		local SelfPos,SelfAng,FT=self:GetPos(),self:GetAngles(),FrameTime()
+		local SelfPos,SelfAng=self:GetPos(),self:GetAngles()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		---
 		local BasePos = SelfPos + Up*30

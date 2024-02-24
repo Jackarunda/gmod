@@ -314,7 +314,7 @@ elseif(CLIENT)then
 
 	function ENT:Draw()
 		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
-		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		--local PipeLength = self:GetPipeLength()
 
 		self:DrawModel()

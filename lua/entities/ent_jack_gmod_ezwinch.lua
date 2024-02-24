@@ -126,10 +126,11 @@ elseif CLIENT then
 
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
+		local FT = FrameTime()
 		if State == STATE_WINDING then
-			self.WheelTurn = self.WheelTurn + 100 * FrameTime()
+			self.WheelTurn = self.WheelTurn + 100 * FT
 		elseif State == STATE_SPEELING then
-			self.WheelTurn = self.WheelTurn - 100 * FrameTime()
+			self.WheelTurn = self.WheelTurn - 100 * FT
 		end
 		if self.WheelTurn > 360 then
 			self.WheelTurn = self.WheelTurn - 360
@@ -137,7 +138,7 @@ elseif CLIENT then
 	end
 
 	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		---
 		local BasePos = SelfPos

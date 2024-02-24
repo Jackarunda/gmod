@@ -274,6 +274,10 @@ elseif(CLIENT)then
 		self.Tank = JMod.MakeModel(self, "models/props_wasteland/horizontalcoolingtank04.mdl")
 		self.ScanResults = {}
 	end
+	function ENT:Think()
+		local FT=FrameTime()
+		self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
+	end
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
 	local WarningIcon=Material("ez_misc_icons/warning.png")
@@ -282,7 +286,7 @@ elseif(CLIENT)then
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		if((State==JMod.EZ_STATE_ON)and(self.LastState~=State))then self.DSU=0 end
 		self.LastState=State
-		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		--
 		self:DrawModel()
 		--
@@ -365,8 +369,6 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined(tostring(math.Round(ProgFrac*100)).."%","JMod-Display",200,-30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				end
 				cam.End3D2D()
-				--
-				self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
 			end
 		end
 	end
