@@ -103,6 +103,7 @@ if(SERVER)then
 			JMod.Hint(activator, "need ore")
 			return
 		end
+		if IsValid(activator) then self.EZstayOn = true end
 		self:SetState(STATE_SMELTING)
 		self:EmitSound("snd_jack_littleignite.wav")
 		timer.Simple(0.1, function()
@@ -113,8 +114,9 @@ if(SERVER)then
 		end)
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end

@@ -110,7 +110,7 @@ if(SERVER)then
 			if(State == STATE_OFF)then
 				self:TurnOn(activator)
 			elseif(State == STATE_RUNNING)then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		end
 	end
@@ -132,6 +132,7 @@ if(SERVER)then
 
 		if self.EZinstalled then
 			if IsValid(Dude) and not(auto) then
+				self.EZstayOn = true
 				self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
 				self.NextUse = CurTime() + 1
 				timer.Simple(0.6, function()
@@ -157,8 +158,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)

@@ -96,18 +96,24 @@ if(SERVER)then
 			end)
 		elseif self:GetElectricity() <= 0 then 
 			JMod.Hint(activator, "need combustibles")
+
+			return
 		elseif self:GetWater() <= 0 then
 			JMod.Hint(activator, "refill sfg water")
+
+			return
 		end
 		if IsValid(activator) and not(auto) then
+			self.EZstayOn = true
 			self:EmitSound("snd_jack_littleignite.wav")
 		end
 		self:UpdateWireOutputs()
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
+		if IsValid(activator) then self.EZstayOn = true end
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		--self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:EmitSound("snd_jack_littleignite.wav")

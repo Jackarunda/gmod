@@ -88,7 +88,7 @@ if SERVER then
 					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
-						self:TurnOff()
+						self:TurnOff(self.EZowner)
 					end
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
@@ -97,11 +97,12 @@ if SERVER then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
+		if self:GetState() ~= STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 				self.SoundLoop:SetSoundLevel(65)
@@ -115,8 +116,9 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -141,16 +143,16 @@ if SERVER then
 			if alt and self.EZinstalled then
 				JMod.EZinstallMachine(self, false)
 
-				return
+			else
+				self:TurnOn(activator)
 			end
-			self:TurnOn(activator)
 		elseif State == STATE_RUNNING then
 			if alt then
 				self:ProduceResource()
 
-				return
+			else
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 

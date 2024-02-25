@@ -142,7 +142,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+		if (self:GetState() <= STATE_OFF) then return end
 		self:SetState(STATE_OFF)
 		self:SFX("afh_shutdown")
 		self.Patient = nil

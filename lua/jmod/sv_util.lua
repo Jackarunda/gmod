@@ -752,7 +752,12 @@ end
 function JMod.EMP(pos, range)
 	for k, ent in pairs(ents.FindInSphere(pos, range)) do
 		if ent.SetState and ent.SetElectricity and ent.GetState and ent:GetState() > 0 then
-			ent:SetState(0)
+			if ent.TurnOff then 
+				ent:TurnOff() 
+			else
+				ent:SetState(JMod.EZ_STATE_OFF)
+			end
+			ent.EZstaysOn = nil
 		end
 	end
 end

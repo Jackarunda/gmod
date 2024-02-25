@@ -38,9 +38,6 @@ if SERVER then
 		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
-		timer.Simple(0, function()
-			self:TurnOn()
-		end)
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
 		self.NextLogicThink = 0
 	end
@@ -55,13 +52,13 @@ if SERVER then
 			JMod.Hint(activator, "destroyed", self)
 		return
 		elseif State == STATE_OFF then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if alt then
 				self:ProduceResource()
 				return
 			end
-			self:TurnOff()
+			self:TurnOff(activator)
 		end
 	end
 
@@ -89,9 +86,10 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		if self:GetElectricity() > 0 then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
 			self:CheckWaterLevel()
@@ -102,8 +100,9 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)

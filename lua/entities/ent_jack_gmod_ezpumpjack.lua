@@ -79,7 +79,7 @@ if(SERVER)then
 					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
-						self:TurnOff()
+						self:TurnOff(JMod.GetEZowner(self))
 					end
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
@@ -93,6 +93,7 @@ if(SERVER)then
 
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 				self.SoundLoop:SetSoundLevel(65)
@@ -107,8 +108,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(stayOff)
 		if (self:GetState() <= STATE_OFF) then return end
+		if stayOff then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 

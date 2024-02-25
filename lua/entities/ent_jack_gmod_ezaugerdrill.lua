@@ -90,6 +90,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 				self.SoundLoop:SetSoundLevel(60)
@@ -103,8 +104,9 @@ if(SERVER)then
 		end
 	end
 	
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -136,7 +138,7 @@ if(SERVER)then
 
 				return
 			end
-			self:TurnOff()
+			self:TurnOff(activator)
 		end
 	end
 

@@ -145,9 +145,9 @@ if SERVER then
 					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerTaken)
-					if (EntPower < 1) and Ent.GetState and Ent.TurnOn and Ent:GetState() == JMod.EZ_STATE_OFF then
-						Ent:TurnOn()
-					end
+				end
+				if (EntPower >= 1) and Ent.EZstayOn and Ent:GetState() == JMod.EZ_STATE_OFF then
+					Ent:TurnOn()
 				end
 			end
 		end

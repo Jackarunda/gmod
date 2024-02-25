@@ -215,20 +215,20 @@ if(SERVER)then
 	end
 
 	function ENT:TriggerInput(iname, value)
-		local State = self:GetState()
+		local State, Owner = self:GetState(), JMod.GetEZowner(self)
 		if State < 0 then return end
 		if iname == "OnOff" then
 			if value == 1 then
-				self:TurnOn()
+				self:TurnOn(Owner)
 			elseif value == 0 then
-				self:TurnOff()
+				self:TurnOff(Owner)
 			end
 		elseif iname == "ToggleState" then
 			if value > 0 then
 				if State == 0 then
-					self:TurnOn()
+					self:TurnOn(Owner)
 				elseif State > 0 then
-					self:TurnOff()
+					self:TurnOff(Owner)
 				end
 			end
 		end

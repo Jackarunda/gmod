@@ -65,7 +65,7 @@ if(SERVER)then
 			if(State == JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
 			elseif(State == JMod.EZ_STATE_ON)then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		end
 	end
@@ -79,15 +79,17 @@ if(SERVER)then
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
 		elseif IsValid(activator) and not(auto) then
+			self.EZstayOn = true
 			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
+		if IsValid(activator) then self.EZstayOn = nil end
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:ProduceResource()

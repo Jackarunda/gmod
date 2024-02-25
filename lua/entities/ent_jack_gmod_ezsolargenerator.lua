@@ -95,24 +95,26 @@ if(SERVER)then
 			if(State == JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
 			elseif(State == JMod.EZ_STATE_ON)then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:CheckSky() > 0) then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
-		else
+		elseif not(auto) then
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 		self.PowerSLI = 0
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator, auto)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)

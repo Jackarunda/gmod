@@ -61,9 +61,10 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:WaterLevel() > 0) and (self:GetGrade() ~= 5) then return end
+		if (self:WaterLevel() > 0) and (self:GetGrade() < 3) then return end
 		if self:GetState() > JMod.EZ_STATE_OFF then return end
 		if self:GetElectricity() > 0 then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:SetState(JMod.EZ_STATE_ON)
 			self:SFX("snd_jack_metallicclick.wav")
 		else
@@ -71,8 +72,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= JMod.EZ_STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()

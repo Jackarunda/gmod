@@ -79,6 +79,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		if (self:GetGas() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
+			if IsValid(activator) then self.EZstayOn = true end
 			self.NextUseTime = CurTime() + 1
 			self:EmitSound("ambient/machines/keyboard7_clicks_enter.wav", 70, 100)
 			self:SetState(STATE_ON)
@@ -96,8 +97,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self.NextUseTime = CurTime() + 1
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/afh_shutdown.wav", 70, 100)

@@ -61,6 +61,7 @@ if(SERVER)then
 			JMod.Hint(activator, "need oil")
 			return
 		end
+		if IsValid(activator) then self.EZstayOn = true end
 		self:SetState(STATE_REFINING)
 		self:EmitSound("snd_jack_littleignite.wav")
 		timer.Simple(0.1, function()
@@ -72,8 +73,9 @@ if(SERVER)then
 		end)
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -101,10 +103,9 @@ if(SERVER)then
 		elseif State == STATE_REFINING then
 			if Alt then 
 				self:ProduceResource()
-
-				return
+			else
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 

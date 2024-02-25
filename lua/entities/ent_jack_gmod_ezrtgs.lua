@@ -61,16 +61,17 @@ if(SERVER)then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if Alt then
-				self:ProduceResource(activator)
-				return
+				self:TurnOff(activator)
+			else
+				activator:PickupObject(self)
 			end
-			activator:PickupObject(self)
 		end
 	end
 
 	function ENT:TurnOn(activator, auto)
 		if (self:GetState() ~= STATE_OFF) then return end
 		if IsValid(activator) and not(auto) then
+			self.EZstayOn = true
 			self:EmitSound("buttons/button1.wav", 60, 80)
 		end
 		self.NextUseTime = CurTime() + 1
@@ -78,10 +79,13 @@ if(SERVER)then
 		self.PowerSLI = 0
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
-		self:EmitSound("buttons/button18.wav", 60, 80)
+		if IsValid(activator) then 
+			self.EZstayOn = true 
+			self:EmitSound("buttons/button18.wav", 60, 80)
+		end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.PowerSLI = 0
