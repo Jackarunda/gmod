@@ -74,9 +74,11 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		if self.NextUse > CurTime() then return end
-		local State=self:GetState()
-		local OldOwner=self.EZowner
+		local Time = CurTime()
+		if self.NextUse > Time then return end
+		self.NextUse = Time + 1
+		local State = self:GetState()
+		local OldOwner = self.EZowner
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
@@ -88,6 +90,7 @@ if(SERVER)then
 		end
 		if Alt then
 			self:ModConnections(activator)
+			self.PowerSLI = 0
 		else
 			if(State == JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
@@ -102,11 +105,10 @@ if(SERVER)then
 		if (self:CheckSky() > 0) then
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
-			self.NextUse = CurTime() + 1
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		self.PowerSLI = 0 
+		self.PowerSLI = 0
 	end
 
 	function ENT:TurnOff()
@@ -114,7 +116,6 @@ if(SERVER)then
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		self.NextUse = CurTime() + 1
 		self.PowerSLI = 0 
 	end
 
@@ -139,6 +140,7 @@ if(SERVER)then
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 		--self:SpawnEffect(pos)
+
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		

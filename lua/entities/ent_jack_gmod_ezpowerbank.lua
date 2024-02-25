@@ -117,7 +117,7 @@ if SERVER then
 			elseif Ent.EZpowerProducer then
 				if SelfPower <= (self.MaxElectricity * .5) then
 					Ent:TurnOn(nil, true)
-				elseif SelfPower >= (self.MaxElectricity * .9) then
+				elseif SelfPower > (self.MaxElectricity * .9) then
 					Ent:TurnOff()
 				end
 			elseif (SelfPower >= 1) and Ent.EZpowerBank then
@@ -130,9 +130,8 @@ if SERVER then
 				end
 			elseif Ent.IsJackyEZcrate and (Ent.GetResourceType and ((Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER) or (Ent:GetResourceType() == "generic"))) then
 				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
-				local ChargeDiff = EntPower - SelfPower
 				if SelfPower > (self.MaxElectricity * .9) then
-					local PowerGiven = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, self.MaxElectricity * .1)
+					local PowerGiven = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower - (self.MaxElectricity * .9))
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerGiven)
 				elseif SelfPower <= (self.MaxElectricity * .5) and (EntPower >= 1) then
@@ -164,7 +163,7 @@ if SERVER then
 
 		if amt <= 0 then return end
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 20)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200, false)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, false, 0, false)
 		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, 100))
 	end
 

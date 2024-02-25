@@ -840,7 +840,7 @@ end
 
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range, pushPower)
 	amount = math.Round(amount)
-	pushPower = pushPower or true
+	if not(pushPower) and pushPower ~= false then pushPower = true end
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
