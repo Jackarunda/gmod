@@ -58,9 +58,9 @@ if(SERVER)then
 		if Alt then
 			self:ModConnections(activator)
 		else
-			if(State == STATE_OFF)then
+			if(State == JMod.EZ_STATE_OFF)then
 				self:TurnOn(activator)
-			elseif(State == STATE_RUNNING)then
+			elseif(State == JMod.EZ_STATE_ON)then
 				self:TurnOff()
 			end
 		end

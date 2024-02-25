@@ -128,18 +128,18 @@ if SERVER then
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerTaken)
 				end
-			elseif Ent.IsJackyEZcrate and ((Ent.GetResourceType and Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER)) then
-				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)
+			elseif Ent.IsJackyEZcrate and (Ent.GetResourceType and ((Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER) or (Ent:GetResourceType() == "generic"))) then
+				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
 				local ChargeDiff = EntPower - SelfPower
 				if SelfPower > (self.MaxElectricity * .9) then
 					local PowerGiven = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, self.MaxElectricity * .1)
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerGiven)
-				elseif SelfPower <= (self.MaxElectricity * .5) then
-					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - self.MaxElectricity)
+				elseif SelfPower <= (self.MaxElectricity * .5) and (EntPower >= 1) then
+					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, math.min(EntPower, self.MaxElectricity))
 					Ent:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - PowerTaken)
 				end
-			elseif (SelfPower >= 1) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
+			elseif (SelfPower >= 1) and not(Ent.IsJackyEZcrate) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
 				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or 0
 				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
 				if (MaxElec - EntPower) > MaxElec * .1 then
