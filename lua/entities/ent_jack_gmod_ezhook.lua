@@ -61,7 +61,7 @@ if SERVER then
 				if (IsValid(Ent) and not(Ent:IsPlayer())) then
 					if self.EZhookType == "Plugin" then
 						timer.Simple(0, function()
-							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, self.EZconnector.MaxConnectionRange or 1000)
+							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), self.EZconnector.MaxConnectionRange or 1000)
 							if Connected then SafeRemoveEntity(self) end
 						end)
 					else

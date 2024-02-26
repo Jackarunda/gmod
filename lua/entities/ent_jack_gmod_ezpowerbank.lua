@@ -73,20 +73,6 @@ if SERVER then
 		self:SetState(JMod.EZ_STATE_OFF)
 	end
 
-	-- Deprecated
-	--[[function ENT:ConnectAll(dude)
-		if not(IsValid(dude) and dude:IsPlayer()) then return end
-		local SelfPos = self:GetPos()
-		for k, ent in pairs(ents.FindInSphere(SelfPos, 1000)) do
-			local Dist = SelfPos:Distance(ent:GetPos())
-			if (Dist <= 400) and (ent.EZpowerProducer or (ent.EZconsumes and table.HasValue(ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
-				JMod.CreateConnection(self, ent, 500)
-			elseif ent.EZpowerBank then
-				JMod.CreateConnection(self, ent, 1000)
-			end
-		end
-	end--]]
-
 	function ENT:DisconnectAll()
 		for k, v in pairs(self.EZconnections) do
 			JMod.RemoveConnection(self, k)
@@ -138,8 +124,8 @@ if SERVER then
 					local PowerTaken = self:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, math.min(EntPower, self.MaxElectricity))
 					Ent:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER, EntPower - PowerTaken)
 				end
-			elseif (SelfPower >= 1) and not(Ent.IsJackyEZcrate) and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
-				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or 0
+			elseif (SelfPower >= 1) and not(Ent.IsJackyEZcrate) and Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER) then
+				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or Ent.Electricity or 0
 				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
 				if (MaxElec - EntPower) > MaxElec * .1 then
 					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
@@ -149,6 +135,8 @@ if SERVER then
 				if (EntPower >= 1) and Ent.EZstayOn and Ent:GetState() == JMod.EZ_STATE_OFF then
 					Ent:TurnOn()
 				end
+			elseif SelfPower >= 1 then
+				JMod.RemoveConnection(self, k)
 			end
 		end
 		if self:GetElectricity() > self.MaxElectricity then

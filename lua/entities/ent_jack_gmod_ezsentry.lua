@@ -1020,7 +1020,7 @@ if(SERVER)then
 			local Tr = util.TraceLine({
 				start = ShootPos,
 				endpos = ShootPos + ShootDir * 20000,
-				mask = -1,
+				mask = MASK_SHOT,
 				filter = {self}
 			})
 

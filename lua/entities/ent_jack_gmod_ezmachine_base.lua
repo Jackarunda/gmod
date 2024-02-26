@@ -298,7 +298,7 @@ if(SERVER)then
 		if self.EZconnections then
 			for k, v in ipairs(self.EZconnections) do
 				if IsValid(v.Ent) then
-					table.insert(Connections, {v.Ent.PrintName, v.Ent:EntIndex()})
+					table.insert(Connections, {DisplayName = v.Ent.PrintName, Index = v.Ent:EntIndex()})
 				end
 			end
 		end

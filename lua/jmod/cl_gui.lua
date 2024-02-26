@@ -1684,7 +1684,7 @@ net.Receive("JMod_ModifyConnections", function()
 	List:AddColumn("EntID")
 
 	for _, connection in ipairs(Connections) do
-		local Line = List:AddLine(connection[1], connection[2])
+		local Line = List:AddLine(connection.DisplayName, connection.Index)
 		local DisconnectIcon = vgui.Create("DImage", Line)
 		DisconnectIcon:SetImage("icon16/disconnect.png")
 		DisconnectIcon:SetSize(16, 16)

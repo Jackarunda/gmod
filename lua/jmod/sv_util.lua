@@ -1507,14 +1507,78 @@ function JMod.StartConnection(machine, ply)
 	ply:PickupObject(Hooky)
 end
 
-function JMod.CreateConnection(machine, ent, resType, dist)
+local Shockables = {MAT_METAL, MAT_DEFAULT, MAT_GRATE, MAT_FLESH, MAT_ALIENFLESH}
+
+function JMod.ElectrifyProp(prop, electrify)
+	if not IsValid(prop) then return end
+	if electrify then
+		prop.EZelectricCallback = prop:AddCallback("PhysicsCollide", function(ent, data)
+			if not IsValid(ent) or not IsValid(data.HitEntity) then return end
+			local ShockEnt = data.HitEntity
+			if ShockEnt:IsPlayer() or ShockEnt:IsNPC() or table.HasValue(Shockables, ShockEnt:GetMaterialType()) then
+				if prop.Electricity <= 0 then return end
+				local Damage, Force = prop.Electricity * 5, prop.Electricity * 500 -- Adjust damage and force factors as desired
+				local dmginfo = DamageInfo()
+				dmginfo:SetDamage(Damage)
+				dmginfo:SetDamageForce(-data.HitNormal * Force)
+				dmginfo:SetDamagePosition(data.HitPos)
+				dmginfo:SetAttacker(JMod.GetEZowner(prop))
+				dmginfo:SetInflictor(prop)
+				dmginfo:SetDamageType(DMG_SHOCK)
+				ShockEnt:TakeDamageInfo(dmginfo)
+				-- Electrical effect
+				local effectdata = EffectData()
+				effectdata:SetOrigin(data.HitPos)
+				effectdata:SetNormal(data.HitNormal)
+				effectdata:SetMagnitude(math.Rand(5, 10)) --amount and shoot hardness
+				effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
+				effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
+				util.Effect("Sparks", effectdata, true, true)
+				-- Electrical sound
+				prop:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
+				-- Reduce power
+				prop.Electricity = 0
+			end
+		end)
+		prop.MaxElectricity = 10
+		prop.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER}
+		prop.Electricity = 0
+		prop.TryLoadResource = function(ent, resType, amount)
+			if amount < 1 then return 0 end
+			if resType == JMod.EZ_RESOURCE_TYPES.POWER then
+				local Missing = ent.MaxElectricity - ent.Electricity
+				if Missing <= 0 then return 0 end
+				local Accepted = math.min(Missing, amount)
+				ent.Electricity = ent.Electricity + Accepted
+
+				return Accepted
+			end
+		end
+		prop.PrintName = "Electric " .. (prop.PrintName or "Fence")
+	else
+		prop:RemoveCallback("PhysicsCollide", prop.EZelectricCallback)
+		prop.EZelectricCallback = nil
+		prop.Electricity = nil
+		prop.MaxElectricity = nil
+		prop.EZconsumes = nil
+		prop.TryLoadResource = nil
+		prop.PrintName = (prop.PrintName and string.Replace(prop.PrintName, "Electric ", "")) or nil
+	end
+end
+
+function JMod.CreateConnection(machine, ent, resType, pos, dist)
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
-	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and ent.EZpowerProducer) then return false end
+	if ent:GetClass() == "prop_physics" then 
+		JMod.ElectrifyProp(ent, true)
+		JMod.SetEZowner(ent, JMod.GetEZowner(machine))
+	end
+	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
 	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
 	dist = dist or 1000
 	if not IsValid(ent) or (ent == machine) then return false end
 	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
-	local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(ent.EZpowerSocket or Vector(0, 0, 0))):Length()
+	local PluginPos = ent.EZpowerSocket or pos or ent:LocalToWorld(ent:OBBCenter())
+	local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
 	if (DistanceBetween > dist) then return false end
 	machine.EZconnections = machine.EZconnections or {}
 	local AlreadyConnected = false
@@ -1535,7 +1599,7 @@ function JMod.CreateConnection(machine, ent, resType, dist)
 			v.Ent = nil
 		end
 	end
-	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), ent.EZpowerSocket or Vector(0, 0, 0), dist + 20, 10, 100, 2, "cable/cable2")
+	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), PluginPos, dist + 20, 10, 100, 2, "cable/cable2")
 	table.insert(ent.EZconnections, {Ent = machine, Cable = Cable})
 	table.insert(machine.EZconnections, {Ent = ent, Cable = Cable})
 
@@ -1557,6 +1621,10 @@ function JMod.RemoveConnection(machine, connection)
 		if type(connection) ~= "number" then return end
 	end
 	if not(machine.EZconnections[connection]) then return end
+	local ConnectedEnt = machine.EZconnections[connection].Ent
+	if IsValid(ConnectedEnt) and ConnectedEnt:GetClass() == "prop_physics" then 
+		JMod.ElectrifyProp(ConnectedEnt, false)
+	end
 	if IsValid(machine.EZconnections[connection].Cable) then
 		machine.EZconnections[connection].Cable:Remove()
 	end
