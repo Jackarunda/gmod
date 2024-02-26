@@ -57,13 +57,13 @@ if SERVER then
 		if data.DeltaTime > 0.2 and data.Speed > 25 then
 			self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
 			if self:IsPlayerHolding() then
-				timer.Simple(0, function()
+				local Ent = data.HitEntity
+				if (IsValid(Ent) and not(Ent:IsPlayer())) then
 					if self.EZhookType == "Plugin" then
-						local Ent = data.HitEntity
-						if IsValid(Ent) and not(Ent:IsPlayer()) then
+						timer.Simple(0, function()
 							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, self.EZconnector.MaxConnectionRange or 1000)
 							if Connected then SafeRemoveEntity(self) end
-						end
+						end)
 					else
 						self.NextStick = Time + .5
 						local Ang = data.HitNormal:Angle()
@@ -76,19 +76,19 @@ if SERVER then
 							timer.Simple(0, function()
 								self:GetPhysicsObject():Sleep()
 							end)
-						else
+						end
+						timer.Simple(0, function()
 							local Weld = constraint.Weld(self, data.HitEntity, 0, 0, 5000, true, false)
 							self.StuckTo = data.HitEntity
 							self.StuckStick = Weld
-						end
+						end)
 		
 						self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 						self:SetState(STATE_HOOKED)
 						self:SetBodygroup(0, 0)
 						DropEntityIfHeld(self)
-						JMod.Hint(Dude, "arm")
 					end
-				end)
+				end
 			end
 		end
 	end

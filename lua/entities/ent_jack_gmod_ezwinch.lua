@@ -72,7 +72,7 @@ if SERVER then
 				self.EZhooky = Hooky
 
 				self.CurrentCableLength = self.MaxConnectionRange
-				self.EZrope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/cable2", 2, true)
+				self.EZrope, self.EZvisualRope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/mat_jack_gmod_chain", 2, true)
 				Hooky.EZrope = self.EZrope
 
 				activator:DropObject()
@@ -86,6 +86,8 @@ if SERVER then
 			elseif State == STATE_SPEELING then
 				self:SetState(STATE_OFF)
 			end
+		else
+			self:SetState(STATE_OFF)
 		end
 	end
 
@@ -99,11 +101,13 @@ if SERVER then
 		end
 
 		if (State == STATE_WINDING) then
-			self.CurrentCableLength = math.Clamp(self.CurrentCableLength + 25, 10, self.MaxConnectionRange)
+			self.CurrentCableLength = math.Clamp(self.CurrentCableLength + 10, 10, self.MaxConnectionRange)
 			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
+			self.EZvisualRope:Fire("SetLength", self.CurrentCableLength, 0)
 		elseif (State == STATE_SPEELING) then
-			self.CurrentCableLength = math.Clamp(self.CurrentCableLength - 25, 10, self.MaxConnectionRange)
+			self.CurrentCableLength = math.Clamp(self.CurrentCableLength - 10, 10, self.MaxConnectionRange)
 			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
+			self.EZvisualRope:Fire("SetLength", self.CurrentCableLength, 0)
 		end
 
 		self:NextThink(Time + .5)
