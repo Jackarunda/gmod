@@ -78,7 +78,6 @@ if SERVER then
 		self.NextLoad = 0
 		---
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Drop Resource [NORMAL]"}, {"Drops a resource out on an input > 0"})
 			self.Outputs = WireLib.CreateOutputs(self, {"Type [STRING]", "Amount Left [NORMAL]"}, {"Will be 'generic' by default", "Amount of resources left in the crate"})
 		end
 		---
