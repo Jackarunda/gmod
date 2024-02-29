@@ -160,10 +160,20 @@ if(SERVER)then
 
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
+		local WireInputs = {}
+		local WireInputDesc = {}
 		if self.TurnOn and self.TurnOff then
-			self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
+			table.insert(WireInputs, "Toggle [NORMAL]")
+			table.insert(WireInputDesc, "Greater than 1 toggles machine on and off")
+			table.insert(WireInputs, "On-Off [NORMAL]")
+			table.insert(WireInputDesc, "1 turns on, 0 turns off")
 		end
-		---
+		if self.ProduceResource then
+			table.insert(WireInputs, "Produce [NORMAL]")
+			table.insert(WireInputDesc, "Produces resource")
+		end
+		self.Inputs = WireLib.CreateInputs(self, WireInputs, WireInputDesc)
+		--
 		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
 		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
 		for _, typ in ipairs(self.EZconsumes) do
@@ -217,19 +227,23 @@ if(SERVER)then
 	function ENT:TriggerInput(iname, value)
 		local State, Owner = self:GetState(), JMod.GetEZowner(self)
 		if State < 0 then return end
-		if iname == "OnOff" then
+		if iname == "On-Off" then
 			if value == 1 then
 				self:TurnOn(Owner)
 			elseif value == 0 then
 				self:TurnOff(Owner)
 			end
-		elseif iname == "ToggleState" then
+		elseif iname == "Toggle" then
 			if value > 0 then
 				if State == 0 then
 					self:TurnOn(Owner)
 				elseif State > 0 then
 					self:TurnOff(Owner)
 				end
+			end
+		elseif iname == "Produce" then
+			if value > 0 then
+				self:ProduceResource(Owner)
 			end
 		end
 	end

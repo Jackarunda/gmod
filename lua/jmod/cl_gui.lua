@@ -1701,37 +1701,29 @@ net.Receive("JMod_ModifyConnections", function()
 		Frame:Close()
 	end
 
-	local ConnectButton = vgui.Create("DButton", Frame)
-	ConnectButton:SetText("Connect New")
-	ConnectButton:Dock(BOTTOM)
-	ConnectButton.DoClick = function()
-		net.Start("JMod_ModifyConnections")
-			net.WriteEntity(Ent)
-			net.WriteString("connect")
-		net.SendToServer()
-		Frame:Close()
-	end
+	local ButtonOptions = {
+		{Text = "Connect New", Func = "connect", Icon = "icon16/connect.png"},
+		{Text = "Disconnect All", Func = "disconnect_all", Icon = "icon16/disconnect.png"},
+		{Text = "Produce Resource", Func = "produce", Icon = "icon16/brick_add.png"},
+	}
 
-	local DisconnectButton = vgui.Create("DButton", Frame)
-	DisconnectButton:SetText("Disconnect All")
-	DisconnectButton:Dock(BOTTOM)
-	DisconnectButton.DoClick = function()
-		net.Start("JMod_ModifyConnections")
-			net.WriteEntity(Ent)
-			net.WriteString("disconnect_all")
-		net.SendToServer()
-		Frame:Close()
-	end
-
-	local ProduceResourceButton = vgui.Create("DButton", Frame)
-	ProduceResourceButton:SetText("Produce Resource")
-	ProduceResourceButton:Dock(BOTTOM)
-	ProduceResourceButton.DoClick = function()
-	    net.Start("JMod_ModifyConnections")
-			net.WriteEntity(Ent)
-			net.WriteString("produce")
-		net.SendToServer()
-		Frame:Close()
+	for k, v in ipairs(ButtonOptions) do
+		local SelectButton = vgui.Create("DButton", Frame)
+		SelectButton:SetText(v.Text)
+		SelectButton:SetHeight(22)
+		SelectButton:Dock(BOTTOM)
+		SelectButton.DoClick = function()
+			net.Start("JMod_ModifyConnections")
+				net.WriteEntity(Ent)
+				net.WriteString(v.Func)
+			net.SendToServer()
+			Frame:Close()
+		end
+		SelectButton:DockPadding(2, 2, 2, 2)
+		local Icon = vgui.Create("DImage", SelectButton)
+		Icon:SetImage(v.Icon)
+		Icon:SetSize(16, 16)
+		Icon:Dock(RIGHT)
 	end
 end)
 
