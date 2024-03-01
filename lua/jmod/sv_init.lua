@@ -355,6 +355,12 @@ local function SleepySitThink(dude)
 	end
 end
 
+--- Egg hunt logic
+
+local function EasterEggThink(dude)
+	--
+end
+
 --- PARACHUTE LOGIC
 
 local function OpenChute(ply)
@@ -565,6 +571,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			ImmobilizedThink(playa)
 
 			SleepySitThink(playa)
+
+			if JMod.GetHoliday() == "Easter" then
+				EasterEggThink(playa)
+			end
 		end
 	end
 
