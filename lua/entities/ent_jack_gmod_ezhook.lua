@@ -48,24 +48,24 @@ if SERVER then
 
 		---
 		self:SetState(STATE_UNHOOKED)
-		self.NextStick = self.NextStick or 0
+		self.NextStick = self.NextStick or CurTime() + 1
 		self.EZhookType = self.EZhookType or "Hook"
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
 		local Time = CurTime()
-		if data.DeltaTime > 0.2 and data.Speed > 25 then
+		if Time > self.NextStick and data.DeltaTime > 0.2 and data.Speed > 50 then
 			self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
 			if self:IsPlayerHolding() then
 				local Ent = data.HitEntity
-				if (IsValid(Ent) and not(Ent:IsPlayer())) then
+				if (IsValid(Ent) and not(Ent:IsPlayer() or Ent:IsNPC() or Ent:IsNextBot() or Ent == self.EZconnector)) then
 					if self.EZhookType == "Plugin" then
 						timer.Simple(0, function()
 							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), self.EZconnector.MaxConnectionRange or 1000)
 							if Connected then SafeRemoveEntity(self) end
 						end)
 					else
-						self.NextStick = Time + .5
+						self.NextStick = Time + 1
 						local Ang = data.HitNormal:Angle()
 						Ang:RotateAroundAxis(Ang:Right(), 90)
 						self:SetAngles(Ang)

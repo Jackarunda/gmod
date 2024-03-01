@@ -6,16 +6,15 @@ ENT.PrintName = "EZ Winch"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = true -- For now...
+ENT.Spawnable = false -- For now...
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Model = "models/jmod/ezwinch01.mdl"
 ENT.Mass = 50
-ENT.MaxConnectionRange = 1000
 --
 ENT.StaticPerfSpecs={ 
-	MaxElectricity = 100,
+	MaxElectricity = 50,
 	MaxDurability = 100,
 	Armor = 1.5
 }
@@ -39,7 +38,22 @@ if SERVER then
 		self.EZconnections = {}
 		self.EZupgradable = false
 		self.EZcolorable = false
+		self.MaxConnectionRange = 1000
 		self.CurrentCableLength = 0
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
+	end
+
+	function ENT:StartSound()
+		if not self.SoundLoop then
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
+		end
+		self.SoundLoop:Play()
+	end
+
+	function ENT:EndSound()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:Use(activator)
@@ -55,68 +69,87 @@ if SERVER then
 
 			return
 		end
-		
-		if Alt then
-			if IsValid(self.EZhooky) then 
-				if self.EZhooky:IsPlayerHolding() then return end
-				SafeRemoveEntity(self.EZhooky)
-			else
+
+		if State == STATE_OFF then
+			if not(IsValid(self.Hooker)) then
 				local Hooky = ents.Create("ent_jack_gmod_ezhook")
-				if not IsValid(Hooky) then return end
 				Hooky:SetPos(self:GetPos() + Vector(0, 0, 50)) -- Adjust the position as needed
 				Hooky:SetAngles(self:GetAngles())
 				Hooky.EZconnector = machine
 				Hooky.NextStick = CurTime() + 1
 				Hooky:Spawn()
 				Hooky:Activate()
-				self.EZhooky = Hooky
+				self.Hooker = Hooky
 
-				self.CurrentCableLength = self.MaxConnectionRange
-				self.EZrope, self.EZvisualRope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/mat_jack_gmod_chain", 2, true)
-				Hooky.EZrope = self.EZrope
+				self.CurrentCableLength = 20
+				self.Chain, self.VisualRope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/mat_jack_gmod_chain", 2, true)
+				--self.Chain:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
+				--self.VisualRope:SetKeyValue( "Collide", "false")
+				--self.VisualRope:Fire("SetLength", self.CurrentCableLength, 0)
+				Hooky.Chain = self.Chain
 
 				activator:DropObject()
-				Hooky:Use(activator, activator, USE_TOGGLE, 1)
+				Hooky:Use(activator, activator, USE_ON, 1)
 			end
-		elseif IsValid(self.EZhooky) and not(self.EZhooky:IsPlayerHolding()) and IsValid(self.EZrope) then
-			if State == STATE_OFF then
-				self:SetState(STATE_WINDING)
-			elseif State == STATE_WINDING then
-				self:SetState(STATE_SPEELING)
-			elseif State == STATE_SPEELING then
-				self:SetState(STATE_OFF)
-			end
+
+			self:SetState(STATE_SPEELING)
+			return
 		else
-			self:SetState(STATE_OFF)
+			if Alt then
+				if IsValid(self.Hooker) and not(self.Hooker:IsPlayerHolding()) and IsValid(self.Chain) then 
+					if self.Hooker:IsPlayerHolding() then return end
+					SafeRemoveEntity(self.Hooker)
+				end
+				self:SetState(STATE_OFF)
+				self:EndSound()
+
+				return
+			end
+			if State == STATE_SPEELING then
+				self:SetState(STATE_WINDING)
+				self:StartSound()
+			elseif State == STATE_WINDING then
+				self:SetState(STATE_OFF)
+				self:EndSound()
+			end
 		end
+	end
+
+	function ENT:Ratchet(amt)
+		self.CurrentCableLength = math.Clamp(self.CurrentCableLength + amt, 10, self.MaxConnectionRange)
+		self.Chain:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
+		self.VisualRope:Fire("SetLength", self.CurrentCableLength, 0)
 	end
 
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 
-		if not IsValid(self.EZhooky) or not IsValid(self.EZrope) then
+		if not IsValid(self.Hooker) or not IsValid(self.Chain) then
 			self:SetState(STATE_OFF)
+			self:EndSound()
 
 			return
 		end
 
-		if (State == STATE_WINDING) then
-			self.CurrentCableLength = math.Clamp(self.CurrentCableLength + 10, 10, self.MaxConnectionRange)
-			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
-			self.EZvisualRope:Fire("SetLength", self.CurrentCableLength, 0)
-		elseif (State == STATE_SPEELING) then
-			self.CurrentCableLength = math.Clamp(self.CurrentCableLength - 10, 10, self.MaxConnectionRange)
-			self.EZrope:Fire("SetSpringLength", tostring(self.CurrentCableLength), 0)
-			self.EZvisualRope:Fire("SetLength", self.CurrentCableLength, 0)
+		if (State == STATE_SPEELING) then
+			self:Ratchet(5)
+		elseif (State == STATE_WINDING) then
+			self:Ratchet(-5)
 		end
 
-		self:NextThink(Time + .5)
+		-- If the current length is less than 10 or greater than the max, turn off the machine
+		if (self.CurrentCableLength <= 10) then
+			self:SetState(STATE_OFF)
+			self:EndSound()
+		end
+
+		self:NextThink(Time + .2)
 		return true
 	end
 
 	function ENT:OnRemove()
-		if IsValid(self.EZhooky) then
-			SafeRemoveEntity(self.EZhooky)
+		if IsValid(self.Hooker) then
+			SafeRemoveEntity(self.Hooker)
 		end
 	end
 
@@ -130,9 +163,9 @@ elseif CLIENT then
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 		local FT = FrameTime()
-		if State == STATE_WINDING then
+		if State == STATE_SPEELING then
 			self.WheelTurn = self.WheelTurn + 100 * FT
-		elseif State == STATE_SPEELING then
+		elseif State == STATE_WINDING then
 			self.WheelTurn = self.WheelTurn - 100 * FT
 		end
 		if self.WheelTurn > 360 then
@@ -165,7 +198,7 @@ elseif CLIENT then
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), 90)
 				local Opacity = math.random(50, 150)
 				local Elec = self:GetElectricity()
-				local R, G, B = JMod.GoodBadColor(Elec / 1000)
+				local R, G, B = JMod.GoodBadColor(Elec / 50)
 
 				cam.Start3D2D(SelfPos + Forward * 10.5 + Up * 7, DisplayAng, .08)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(200, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
