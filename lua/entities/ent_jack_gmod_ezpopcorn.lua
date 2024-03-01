@@ -31,7 +31,6 @@ if SERVER then
 		end)
 		---
 		self:SetPop(5)
-		self.Mutated = true
 	end
 
 	--[[function ENT:PhysicsCollide(data, physobj)

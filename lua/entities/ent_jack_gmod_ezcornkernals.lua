@@ -59,16 +59,15 @@ if SERVER then
 		self.Hydration = 0
 		self.GroundWeld = nil
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
-		--if self.Mutated then
+		if self.Mutated then
 			self:Mutate()
-		--end
+		end
 	end
 
 	function ENT:Mutate()
 		if (self.Mutated) then return end
 		self.Mutated = true
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.CHEMICALS}
-		PrintTable(self.EZconsumes)
 	end
 
 	function ENT:Bury(activator)
