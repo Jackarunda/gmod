@@ -289,21 +289,21 @@ if(SERVER)then
 		for _,v in pairs(self.EZconsumes)do
 			if(typ == v)then
 				local Accepted = 0
-				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
+				if(typ == JMod.EZ_RESOURCE_TYPES.WATER)or(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)or(typ == JMod.EZ_RESOURCE_TYPES.PROPELLANT)then
 					local Aqua = self:GetWater()
 					local Missing = self.MaxWater - Aqua
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetWater(Aqua+Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
-				elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
+				--[[elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
 					local Chem = self:GetChemicals()
 					local Missing = self.MaxChemicals - Chem
 					if(Missing < 1)then return 0 end
 					Accepted = math.min(Missing,amt)
 					self:SetChemicals(Chem + Accepted)
 					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
-				--[[elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
+				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
 					local Wata = self.Hydration
 					local Missing = 100 - Wata
 					if (Missing <= 0) then return 0 end

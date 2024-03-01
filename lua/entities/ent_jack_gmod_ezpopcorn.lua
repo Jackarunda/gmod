@@ -31,6 +31,7 @@ if SERVER then
 		end)
 		---
 		self:SetPop(5)
+		self.Mutated = true
 	end
 
 	--[[function ENT:PhysicsCollide(data, physobj)
@@ -50,24 +51,34 @@ if SERVER then
 		local Alt = ply:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
-			ply.EZnutrition = ply.EZnutrition or {
-				NextEat = 0,
-				Nutrients = 0
-			}
-			if ply.EZnutrition.NextEat < Time then
-				if ply.EZnutrition.Nutrients < 100 then
-					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
-					self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			if JMod.ConsumeNutrients(ply, 1) then
+				sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 
-					JMod.ConsumeNutrients(ply, 1)
+				self:SetPop(self:GetPop() - 1)
 
-					self:SetPop(self:GetPop() - 1)
-
-					local Eff = EffectData()
-					Eff:SetOrigin(self:GetPos() + self:GetUp() * 10)
-					util.Effect("eff_jack_gmod_ezpopcorn", Eff, true, true)
-				else
-					JMod.Hint(ply, "nutrition filled")
+				local Eff = EffectData()
+				Eff:SetOrigin(self:GetPos() + self:GetUp() * 10)
+				util.Effect("eff_jack_gmod_ezpopcorn", Eff, true, true)
+				if self.Mutated and not(ply.JMod_WillAsplode) and (math.random(1, 3) == 3) then
+					ply.JMod_WillAsplode = true
+					timer.Simple(math.random(1, 3), function()
+						if IsValid(ply) then
+							ply:EmitSound("vo/npc/male01/ohno.wav")
+							timer.Simple(1, function()
+								if not IsValid(ply) then return end
+								ply:EmitSound("vo/npc/male01/question27.wav")
+								timer.Simple(2, function()
+									if not IsValid(ply) then return end
+									local Pos, Range = ply:GetPos() + Vector(0, 0, 40), 40
+									ply:KillSilent()
+									for i = 1, 20 do
+										JMod.Sploom(ply, Pos + VectorRand() * Range, 1, 10)
+									end
+								end)
+							end)
+						end
+					end)
 				end
 			end
 		else

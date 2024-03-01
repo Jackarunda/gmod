@@ -808,7 +808,7 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
-	local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
+	--local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
 	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
@@ -848,6 +848,12 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		end
 	end
 	ply.EZoverDamage = nil
+	if ply.JMod_WillAsplode then
+		ply.EZnutrition = nil
+		ply.EZhealth = nil
+		ply.EZkillme = nil
+	end
+	ply.JMod_WillAsplode = nil
 
 	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
 	if (ply.JModInv and ShouldInvDrop or ShouldJModCorpse) then

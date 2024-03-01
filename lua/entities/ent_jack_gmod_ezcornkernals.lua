@@ -9,9 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.JModEZstorable = true
 ---
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.WATER
-}
+ENT.EZconsumes = nil
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
 ENT.MaxWater = 25
@@ -60,6 +58,17 @@ if SERVER then
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
 		self.GroundWeld = nil
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
+		--if self.Mutated then
+			self:Mutate()
+		--end
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.CHEMICALS}
+		PrintTable(self.EZconsumes)
 	end
 
 	function ENT:Bury(activator)
@@ -91,7 +100,7 @@ if SERVER then
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (self.Mutated and (typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS))then
 			local Wata = self.Hydration
 			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end

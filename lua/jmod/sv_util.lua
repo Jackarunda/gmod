@@ -1003,23 +1003,25 @@ end
 function JMod.FindBoltPos(ply, origin, dir)
 	local Pos, Vec = origin or ply:GetShootPos(), dir or ply:GetAimVector()
 
-	local Tr1 = util.QuickTrace(Pos, Vec * 80, {ply})
+	local HitTest = util.QuickTrace(Pos, Vec * 80, {ply})
 
-	if Tr1.Hit then
-		local Ent1 = Tr1.Entity
-		if Tr1.HitSky or Ent1:IsWorld() or Ent1:IsPlayer() or Ent1:IsNPC() then return nil end
+	if HitTest.Hit then
+		local Ent1 = HitTest.Entity
+		if HitTest.HitSky or Ent1:IsPlayer() or Ent1:IsNPC() then return nil end
 		if not IsValid(Ent1:GetPhysicsObject()) then return nil end
+		local HitPos1 = HitTest.HitPos
 
-		local Tr2 = util.QuickTrace(Tr1.HitPos, Tr1.HitNormal * -40, {ply, Ent1})
+		HitTest = util.QuickTrace(HitPos1, HitTest.HitNormal * 40, {ply, Ent1})
+		if not(HitTest.Hit) then HitTest = util.QuickTrace(HitPos1, HitTest.HitNormal * -40, {ply, Ent1}) end
 
-		if Tr2.Hit then
-			local Ent2 = Tr2.Entity
-			if (Ent1 == Ent2) or Tr2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
+		if HitTest.Hit then
+			local Ent2 = HitTest.Entity
+			if (Ent1 == Ent2) or HitTest.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
 			if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return nil end
-			local Dist = Tr1.HitPos:Distance(Tr2.HitPos)
+			local Dist = HitPos1:Distance(HitTest.HitPos)
 			if Dist > 30 then return nil end
 
-			return true, Tr1.HitPos, Tr2.HitPos, Ent1, Ent2
+			return true, HitPos1, HitTest.HitPos, Ent1, Ent2
 		end
 	end
 end
@@ -1401,6 +1403,14 @@ end
 function JMod.ConsumeNutrients(ply, amt)
 	local Time = CurTime()
 	amt = math.Round(amt)
+	--
+	ply.EZnutrition = ply.EZnutrition or {
+		NextEat = 0,
+		Nutrients = 0
+	}
+	if ply.EZnutrition.NextEat > Time then JMod.Hint(activator, "can not eat") return false end
+	if ply.EZnutrition.Nutrients >= 100 then JMod.Hint(ply, "nutrition filled") return false end
+	--
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
 	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
 
@@ -1410,6 +1420,7 @@ function JMod.ConsumeNutrients(ply, amt)
 	end
 
 	ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
+	return true
 end
 
 function JMod.GetPlayerStrength(ply)
@@ -1507,6 +1518,7 @@ function JMod.StartConnection(machine, ply)
 	ply:PickupObject(Hooky)
 end
 
+--[[
 local Shockables = {MAT_METAL, MAT_DEFAULT, MAT_GRATE, MAT_FLESH, MAT_ALIENFLESH}
 
 function JMod.ElectrifyProp(prop, electrify)
@@ -1554,7 +1566,7 @@ function JMod.ElectrifyProp(prop, electrify)
 				return Accepted
 			end
 		end
-		prop.PrintName = "Electric " .. (prop.PrintName or "Fence")
+		prop.PrintName = "Electric " .. string.StripExtension(string.GetFileFromFilename(prop:GetModel()))
 	else
 		prop:RemoveCallback("PhysicsCollide", prop.EZelectricCallback)
 		prop.EZelectricCallback = nil
@@ -1562,16 +1574,12 @@ function JMod.ElectrifyProp(prop, electrify)
 		prop.MaxElectricity = nil
 		prop.EZconsumes = nil
 		prop.TryLoadResource = nil
-		prop.PrintName = (prop.PrintName and string.Replace(prop.PrintName, "Electric ", "")) or nil
+		prop.PrintName = nil
 	end
-end
+end--]]
 
 function JMod.CreateConnection(machine, ent, resType, pos, dist)
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
-	if ent:GetClass() == "prop_physics" then 
-		JMod.ElectrifyProp(ent, true)
-		JMod.SetEZowner(ent, JMod.GetEZowner(machine))
-	end
 	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
 	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
 	dist = dist or 1000

@@ -27,16 +27,16 @@ if(SERVER)then
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
 		self:GetPhysicsObject():SetMass(1)
+		if self.Mutated then self:Mutate() end
 	end
 
 	function ENT:Mutate()
 		if (self.Mutated) then return end
 		self.Mutated = true
-		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.EXPLOSIVES}
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.CHEMICALS}
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -49,19 +49,15 @@ if(SERVER)then
 	end
 
 	function ENT:ProduceResource(destroyed)
-		local SpawnPos = Vector(0, 0, 100)
+		local SpawnPos = Vector(0, 0, 50)
 		if (self.Growth >= 66) then
-			--JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, 50, SpawnPos, Angle(0, 0, 0), nil, false)
-			if self.Mutated then
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.MUNITIONS, math.random(10, 30), SpawnPos, Angle(0, 0, 0), nil, false)
-			else
-				for i = 1, math.random(1, 3) do
-					local Corn = ents.Create("ent_jack_gmod_ezcornear")
-					Corn:SetPos(self:GetPos() + (SpawnPos*i) + VectorRand(-10, 10))
-					Corn:SetAngles(AngleRand())
-					Corn:Spawn()
-					Corn:Activate()
-				end
+			for i = 1, math.random(1, 3) do
+				local Corn = ents.Create("ent_jack_gmod_ezcornear")
+				Corn:SetPos(self:GetPos() + (SpawnPos*i) + VectorRand(-10, 10))
+				Corn:SetAngles(AngleRand())
+				Corn.Mutated = self.Mutated
+				Corn:Spawn()
+				Corn:Activate()
 			end
 		end
 	end
@@ -151,7 +147,7 @@ if(SERVER)then
 			if (IsValid(Target) and not self:IsLocationBeingWatched(SelfPos)) then 
 				if (SelfPos:Distance(Target:GetPos()) <= 120) then 
 					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 10) == 1)) then 
-						JMod.FalloutIrradiate(self, Target)
+						self:Gas(Target)
 					end
 				else
 					local RandVec = Vector(math.random(-1, 1), math.random(-1, 1), 0) * 100
@@ -167,6 +163,21 @@ if(SERVER)then
 		--
 		self:NextThink(Time + math.Rand(2, 4))
 		return true
+	end
+
+	function ENT:Gas(obj)
+		local Dmg, Helf = DamageInfo(), obj:Health()
+		Dmg:SetDamageType(DMG_NERVEGAS)
+		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetInflictor(self)
+		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
+		Dmg:SetDamagePosition(obj:GetPos())
+		obj:TakeDamageInfo(Dmg)
+
+		if (obj:Health() < Helf) and obj:IsPlayer() then
+			JMod.Hint(obj, "gas damage")
+			JMod.TryCough(obj)
+		end
 	end
 
 	--[[ START GNOME CODE ]]--
