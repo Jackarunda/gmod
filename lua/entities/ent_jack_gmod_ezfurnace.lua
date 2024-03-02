@@ -71,8 +71,8 @@ if(SERVER)then
 			local ResourceName = string.Replace(typ, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
-			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
-			if not(string.Right(ResourceName, 3) == "ore") and not(table.HasValue(self.FlexFuels, typ)) then
+			if not(string.Right(ResourceName, 3) == "ore") and not(ResourceName == "sand") and not(table.HasValue(self.FlexFuels, typ)) then
+				local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
 				table.insert(WireOutputs, OutResourceName)
 				table.insert(WireOutputDesc, ResourceDesc)
 			end

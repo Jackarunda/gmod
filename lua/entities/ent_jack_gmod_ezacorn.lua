@@ -100,7 +100,13 @@ if SERVER then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		--
+		if data.DeltaTime > 0.2 and data.Speed > 50 then
+			if math.random(0, 1000) >= 999 then
+				self:EmitSound("Weapon_Pistol.Single", 75, math.random(90, 110))
+			else
+				self:EmitSound("Wood_Solid.ImpactSoft", 75, math.random(90, 110))
+			end
+		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)

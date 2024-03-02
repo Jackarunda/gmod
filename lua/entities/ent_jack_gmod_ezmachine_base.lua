@@ -212,8 +212,9 @@ if(SERVER)then
 				if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
 					WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
 				else
-					if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
-						local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+					local MethodName = JMod.EZ_RESOURCE_TYPE_METHODS[typ]
+					if MethodName then
+						local ResourceGetMethod = self["Get"..MethodName]
 						if ResourceGetMethod then
 							local ResourceName = string.Replace(typ, " ", "")
 							WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
