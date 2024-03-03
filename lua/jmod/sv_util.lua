@@ -1473,10 +1473,9 @@ end
 
 function JMod.EZimmobilize(victim, timeToImmobilize, immobilizer)
 	if not IsValid(victim) then return end
-	local Time = CurTime()
 	victim.EZimmobilizers = victim.EZimmobilizers or {}
 	if not(IsValid(immobilizer)) then immobilizer = victim end
-	victim.EZimmobilizers[immobilizer] = (victim.EZimmobilizers[immobilizer] or Time) + timeToImmobilize
+	victim.EZimmobilizers[immobilizer] = (victim.EZimmobilizers[immobilizer] or CurTime()) + timeToImmobilize
 	victim.EZImmobilizationTime = timeToImmobilize
 end
 

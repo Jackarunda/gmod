@@ -496,9 +496,21 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
 	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 }, self) then
-		JMod.ConsumeResourcesInRange({
-			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
-		}, nil, nil, self)
+		local ChangedSomething = false
+		if ammoType ~= ent:GetAmmoType() then
+			ChangedSomething = true
+		else
+			for k, v in pairs(tbl) do
+				if ent.ModPerfSpecs[k] ~= v then
+					ChangedSomething = true
+				end
+			end
+		end
+		if ChangedSomething then
+			JMod.ConsumeResourcesInRange({
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
+			}, nil, nil, self)
+		end
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)

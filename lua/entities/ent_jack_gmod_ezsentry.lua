@@ -102,19 +102,6 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 ENT.DynamicPerfSpecExp=1.2
--- All moddable attributes
--- Each mod selected for it is +1, against it is -1
-ENT.ModPerfSpecs = {
-	MaxAmmo = 0,
-	TurnSpeed = 0,
-	TargetingRadius = 0,
-	Armor = 0,
-	FireRate = 0,
-	Damage = 0,
-	Accuracy = 0,
-	SearchSpeed = 0,
-	Cooling = 0
-}
 
 ENT.AmmoRefundTable = {
 	["Bullet"] = {
@@ -153,12 +140,27 @@ function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
-	if (OldAmmo~=ammoType) then
+	--- I hate doing this and calcing the max ammo early
+	local CalcMaxAmmo = self.DynamicPerfSpecs.MaxAmmo*(self:GetPerfMult() or 1)*JMod.EZ_GRADE_BUFFS[self:GetGrade()]^self.DynamicPerfSpecExp
+	local NewMaxAmmo = math.Round(CalcMaxAmmo/100)*100
+	if self.ModPerfSpecs.MaxAmmo > 0 then
+		local ratio = (math.abs(self.ModPerfSpecs.MaxAmmo / 10) + 1) ^ 1.5
+		NewMaxAmmo = math.Round(NewMaxAmmo * ratio)
+	elseif self.ModPerfSpecs.MaxAmmo < 0 then
+		local ratio = (math.abs(self.ModPerfSpecs.MaxAmmo / 10) + 1) ^ 3
+		NewMaxAmmo = math.Round(NewMaxAmmo / ratio)
+	end
+	NewMaxAmmo = NewMaxAmmo*(self.AmmoTypes[self:GetAmmoType()].MaxAmmo or 1)
+	-- End max ammo calcs
+	if (OldAmmo~=ammoType)or(NewMaxAmmo<self.MaxAmmo) then
 		local RefundInfo = self.AmmoRefundTable[OldAmmo]
 		local AmmoTypeToSpawn = RefundInfo.spawnType
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
 		local NetVarValue = self[NetVarValueName](self)
 		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
+		if (NewMaxAmmo < self.MaxAmmo) then
+			AmtToSpawn = math.abs(self.MaxAmmo - NewMaxAmmo)
+		end
 		if (OldAmmo == "Pulse Laser") then
 			// we were using Electricity as ammo, and now our MaxElectricity is about to change
 			// we're gonna kick our all our Electricity, so set ours to 0
@@ -167,7 +169,7 @@ function ENT:SetMods(tbl, ammoType)
 		end
 		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetRight() * 50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetRight(), true)
 	end
-	self:InitPerfSpecs(OldAmmo~=ammoType)
+	self:InitPerfSpecs((OldAmmo~=ammoType))
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	elseif(ammoType=="HE Grenade")or(ammoType=="Rocket Launcher")then
@@ -315,6 +317,19 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 			JMod.EZ_RESOURCE_TYPES.COOLANT
 		}
+		-- All moddable attributes
+		-- Each mod selected for it is +1, against it is -1
+		self.ModPerfSpecs = {
+			MaxAmmo = 0,
+			TurnSpeed = 0,
+			TargetingRadius = 0,
+			Armor = 0,
+			FireRate = 0,
+			Damage = 0,
+			Accuracy = 0,
+			SearchSpeed = 0,
+			Cooling = 0
+		}
 		---
 		self:SetAmmoType("Bullet")
 		JMod.Colorify(self)
@@ -357,10 +372,12 @@ if(SERVER)then
 			State = 0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
 			
 		}
+		self.EngageOverride = nil
 	end
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
+		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 	end
 
 	function ENT:CreateNPCTarget()
@@ -484,6 +501,7 @@ if(SERVER)then
 	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) and IsValid(self.Target) and (self.Target == activator) and not(activator == self.EZowner) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 		self:ResetMemory()
@@ -688,7 +706,7 @@ if(SERVER)then
 							-- aim at last known point
 							local NeedTurnPitch, NeedTurnYaw = self:GetTargetAimOffset(self.SearchData.LastKnownPos)
 
-							if (math.abs(NeedTurnPitch) > 0) or (math.abs(NeedTurnYaw) > 0) then
+							if (math.abs(NeedTurnPitch or 0) > 0) or (math.abs(NeedTurnYaw or 0) > 0) then
 								self:Turn(NeedTurnPitch, NeedTurnYaw)
 							end
 						elseif SearchState == 2 then
@@ -1163,7 +1181,7 @@ if(SERVER)then
 		local GoalPitch, GoalYaw = -TargAng.p, TargAng.y
 		local CurPitchOffset, CurYawOffset = self:GetAimPitch(), self:GetAimYaw()
 
-		return -(CurPitchOffset - GoalPitch), CurYawOffset - GoalYaw
+		return -CurPitchOffset - GoalPitch , CurYawOffset - GoalYaw
 	end
 
 	function ENT:RandomMove()
@@ -1249,6 +1267,7 @@ elseif(CLIENT)then
 		self.VisualRecoil = 0
 		---
 		self.LastAmmoType = ""
+		self.ModPerfSpecs = {}
 	end
 
 	function ENT:AddVisualRecoil(amt)

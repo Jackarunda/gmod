@@ -331,7 +331,7 @@ end
 local function ImmobilizedThink(dude)
 	local Time = CurTime()
 	dude.EZImmobilizationTime = 0
-	if dude.EZimmobilizers and dude:Alive() then
+	if dude.EZimmobilizers and next(dude.EZimmobilizers) and dude:Alive() then
 		for immobilizer, immobilizeTime in pairs(dude.EZimmobilizers) do
 			if not(IsValid(immobilizer)) or (immobilizer.GetTrappedPlayer and (immobilizer:GetTrappedPlayer() ~= dude)) or (immobilizeTime < Time) then
 				dude.EZimmobilizers[immobilizer] = nil
