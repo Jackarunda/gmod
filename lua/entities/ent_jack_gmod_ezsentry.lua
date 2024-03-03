@@ -137,7 +137,7 @@ ENT.AmmoRefundTable = {
 }
 
 function ENT:SetMods(tbl, ammoType)
-	local OldMaxAmmoSpec = self.ModPerfSpecs.MaxAmmo
+	local OldMaxAmmoSpec = (self.ModPerfSpecs and self.ModPerfSpecs.MaxAmmo) or 0
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
@@ -169,6 +169,7 @@ function ENT:SetMods(tbl, ammoType)
 end
 
 function ENT:InitPerfSpecs(removeAmmo)
+	if not self.ModPerfSpecs then return end
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -320,7 +321,7 @@ if(SERVER)then
 		self:SetAmmoType("Bullet")
 		JMod.Colorify(self)
 		self:SetPerfMult(JMod.Config.Machines.Sentry.PerformanceMult)
-		self:InitPerfSpecs()
+		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 		---
 		self:Point(0, 0)
 		self.SearchStageTime = self.SearchTime / 2

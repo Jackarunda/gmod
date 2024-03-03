@@ -126,6 +126,7 @@ if(SERVER)then
 		end
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:SetGrade(JMod.EZ_GRADE_BASIC)
+		self:InitPerfSpecs()
 		self.DamageTypeTable = JMod.DefualtArmorTable
 		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
 
@@ -133,7 +134,6 @@ if(SERVER)then
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
 
-		self:InitPerfSpecs()
 		---
 		if self.SetupWire and istable(WireLib) then
 			self:SetupWire()
