@@ -137,30 +137,16 @@ ENT.AmmoRefundTable = {
 }
 
 function ENT:SetMods(tbl, ammoType)
+	local OldMaxAmmoSpec = self.ModPerfSpecs.MaxAmmo
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
-	--- I hate doing this and calcing the max ammo early
-	local CalcMaxAmmo = self.DynamicPerfSpecs.MaxAmmo*(self:GetPerfMult() or 1)*JMod.EZ_GRADE_BUFFS[self:GetGrade()]^self.DynamicPerfSpecExp
-	local NewMaxAmmo = math.Round(CalcMaxAmmo/100)*100
-	if self.ModPerfSpecs.MaxAmmo > 0 then
-		local ratio = (math.abs(self.ModPerfSpecs.MaxAmmo / 10) + 1) ^ 1.5
-		NewMaxAmmo = math.Round(NewMaxAmmo * ratio)
-	elseif self.ModPerfSpecs.MaxAmmo < 0 then
-		local ratio = (math.abs(self.ModPerfSpecs.MaxAmmo / 10) + 1) ^ 3
-		NewMaxAmmo = math.Round(NewMaxAmmo / ratio)
-	end
-	NewMaxAmmo = NewMaxAmmo*(self.AmmoTypes[self:GetAmmoType()].MaxAmmo or 1)
-	-- End max ammo calcs
-	if (OldAmmo~=ammoType)or(NewMaxAmmo<self.MaxAmmo) then
+	if (OldAmmo~=ammoType)or(self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec) then
 		local RefundInfo = self.AmmoRefundTable[OldAmmo]
 		local AmmoTypeToSpawn = RefundInfo.spawnType
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
 		local NetVarValue = self[NetVarValueName](self)
 		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
-		if (NewMaxAmmo < self.MaxAmmo) then
-			AmtToSpawn = math.abs(self.MaxAmmo - NewMaxAmmo)
-		end
 		if (OldAmmo == "Pulse Laser") then
 			// we were using Electricity as ammo, and now our MaxElectricity is about to change
 			// we're gonna kick our all our Electricity, so set ours to 0
@@ -169,7 +155,7 @@ function ENT:SetMods(tbl, ammoType)
 		end
 		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetRight() * 50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetRight(), true)
 	end
-	self:InitPerfSpecs((OldAmmo~=ammoType))
+	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	elseif(ammoType=="HE Grenade")or(ammoType=="Rocket Launcher")then
