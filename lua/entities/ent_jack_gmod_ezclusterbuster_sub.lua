@@ -77,7 +77,7 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.DeltaTime > 0.2) and not(data.HitEntity.EZclusterBusterMunition) then
-			timer.Simple(0, function() self:Detonate() end)
+			timer.Simple(0, function() if IsValid(self) then self:Detonate() end end)
 		end
 	end
 

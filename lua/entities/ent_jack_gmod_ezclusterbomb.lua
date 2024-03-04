@@ -83,7 +83,7 @@ if SERVER then
 			local DetSpd = 500
 
 			if (data.Speed > DetSpd) and (self:GetState() == STATE_ARMED) then
-				self:Detonate()
+				timer.Simple(0, function() if IsValid(self) then self:Detonate() end end)
 
 				return
 			end

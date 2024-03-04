@@ -288,7 +288,9 @@ if(SERVER)then
 			end
 		elseif iname == "Shoot" then
 			if value > 0 then
-				self:FireAtPoint(nil, Vector(0, 0, 0))
+				self.FireOverride = true
+			else
+				self.FireOverride = false
 			end
 		end
 	end
@@ -798,7 +800,7 @@ if(SERVER)then
 			self.Heat = math.Clamp(self.Heat - CoolinAmt, 0, 100)
 		end
 
-		if self.Firing then
+		if self.Firing or self.FireOverride then
 			if self.NextFire < Time then
 				self.NextFire = Time + 1 / self.FireRate --  (1/self.FireRate^1.2+0.05) 
 				self:FireAtPoint(self.SearchData.LastKnownPos, self.SearchData.LastKnownVel or Vector(0, 0, 0))
@@ -1193,6 +1195,7 @@ if(SERVER)then
 	end
 
 	function ENT:Turn(pitch, yaw)
+		if self:GetElectricity() <= 0 then return end
 		local X, Y = self:GetAimYaw(), self:GetAimPitch()
 		local TurnAmtPitch = math.Clamp(pitch, -self.TurnSpeed / 8, self.TurnSpeed / 8)
 		local TurnAmtYaw = math.Clamp(yaw, -self.TurnSpeed / 4, self.TurnSpeed / 4)
@@ -1202,7 +1205,7 @@ if(SERVER)then
 			sound.Play("snds_jack_gmod/ezsentry_turn.wav", self:GetPos(), 60, math.random(95, 105))
 		end
 
-		self:ConsumeElectricity()
+		self:ConsumeElectricity(0.02)
 	end
 
 	function ENT:Point(pitch, yaw)
