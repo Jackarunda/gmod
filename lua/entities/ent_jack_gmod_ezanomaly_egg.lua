@@ -10,24 +10,16 @@ ENT.AdminSpawnable = true
 
 ---
 if SERVER then
-	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 20
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(0, 0, 0))
-		ent:SetPos(SpawnPos)
-		ent:Spawn()
-		ent:Activate()
-
-		return ent
-	end
-
 	function ENT:Initialize()
-		self:SetModel("models/props_phx/misc/egg.mdl")
+		self:SetModel("models/jmod/ez_egg01.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
+		--
+		self.Clr = Color(math.random(75, 255), math.random(75, 255), math.random(75, 255))
+		self:SetColor(self.Clr)
 		--
 		self:PrecacheGibs()
 		--
@@ -38,43 +30,54 @@ if SERVER then
 				Phys:Wake()
 			end
 		end)
+		timer.Simple(5, function()
+			if (IsValid(self)) then Phys:Sleep() end
+		end)
+		SafeRemoveEntityDelayed(self, 100)
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		--
+		if (data.Speed > 100) then self:Break() end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
-		if JMod.LinCh(dmginfo:GetDamage(), 5, 10) then
-			self:Break()
-		end
+		self:Break()
 	end
 
-	local Goodies = {
-		"nutrition",
-		"Pistol Round",
-		"Shotgun Round"
-	}
-
 	function ENT:Use(activator)
+		if (self.Opened) then return end
 		if not IsValid(activator) then return end
-		local Goodie = table.Random(Goodies)
-		if Goodie == "nutrition" then
-			if JMod.ConsumeNutrients(activator, math.random(1, 5)) then
-				sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
-				self:Break()
+		self:Break()
+		timer.Simple(.5, function()
+			if (IsValid(activator) and activator:Alive()) then
+				if JMod.ConsumeNutrients(activator, math.random(1, 15)) then
+					activator:EmitSound("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", 60, math.random(90, 110))
+				else
+					local Wep = activator:GetActiveWeapon()
+					if Wep then
+						local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
+						local PrimName, SecName = game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
+						if PrimName then activator:GiveAmmo(math.ceil(PrimSize / 3), PrimName, math.random(1, 2) == 1) end
+						if SecName then activator:GiveAmmo(math.max(math.ceil(SecSize / 9), 1), SecName, math.random(1, 2) == 1) end
+					end
+				end
 			end
-		else
-			activator:GiveAmmo(math.random(1, 5), Goodie, false)
-			self:Break()
-		end
+		end)
 	end
 
 	function ENT:Break()
-		self:EmitSound("physics/body/body_medium_break4.wav", 100, math.random(80, 120), .5, CHAN_AUTO)
-		self:GibBreakServer(Vector(0, 0, 0))
-		self:Remove()
+		if (self.Opened) then return end
+		self.Opened = true
+		sound.Play("snds_jack_gmod/easter_egg_break.wav", self:GetPos() + Vector(0, 0, 40), 60, math.random(80, 120))
+		self:SetBodygroup(1, 1)
+		self:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 1000))
+		local Eff = EffectData()
+		Eff:SetOrigin(self:LocalToWorld(self:OBBCenter()) + Vector(0, 0, 1))
+		util.Effect("eff_jack_gmod_eastereggpop", Eff, true, true)
+		timer.Simple(0, function()
+			SafeRemoveEntityDelayed(self, 7)
+		end)
 	end
 
 	function ENT:Think()
@@ -84,12 +87,6 @@ if SERVER then
 	function ENT:OnRemove()
 		--
 	end
-
-	function ENT:PostEntityPaste(ply, ent, createdEntities)
-		local Time = CurTime()
-		JMod.SetEZowner(self, ply, true)
-	end
-	
 elseif CLIENT then
 	function ENT:Initialize()
 		--

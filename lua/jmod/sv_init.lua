@@ -357,8 +357,104 @@ end
 
 --- Egg hunt logic
 
+local SpawnFails=0
+// copied from Homicide
+function JMod.FindHiddenSpawnLocation()
+	local DistMul, InitialDist, MinAddDist, SpawnExclusionDist = 10, 200, 300, 1000
+	local SpawnPos, Tries, Players, TryDist = nil, 0, player.GetAll(), InitialDist * DistMul
+	local NoBlockEnts = {}
+	table.Add(NoBlockEnts, Players)
+	for key, potential in pairs(Players) do
+		if not (potential:Alive()) then table.remove(Players, key) end
+	end
+	if (#Players < 1) then return nil end
+	local SelectedPlaya = table.Random(Players)
+	local Origin = SelectedPlaya:GetPos()
+	while ((SpawnPos == nil) and (TryDist <= 9000 * DistMul)) do
+		while ((SpawnPos == nil) and (Tries < 15)) do
+			local RandVec, Below, Vertical = VectorRand() * (math.Rand(10, TryDist) + MinAddDist), false, 0
+			if (math.random(1, 3) == 2) then RandVec.z = math.abs(RandVec.z) end
+			RandVec.z = RandVec.z / 2
+			if (math.random(1, 3) == 2) then RandVec.z = RandVec.z / 2 end
+			Vertical = RandVec.z
+			local TryPos = Origin + RandVec
+			if (util.IsInWorld(TryPos)) then
+				local Contents = util.PointContents(TryPos)
+				if ((Contents == CONTENTS_EMPTY) or (Contents == CONTENTS_TESTFOGVOLUME)) then
+					local Close = false
+					for key, plaiyah in pairs(Players) do -- spawn may not be close to a player
+						if(TryPos:Distance(plaiyah:GetPos()) < MinAddDist) then Close=true; break end
+					end
+					if not (Close) then
+						local AboveGround = true
+						if (Vertical < 0) then -- if the pos is below the player, then the player must be standing on something
+							local UpTr = util.QuickTrace(TryPos, Vector(0, 0, -Vertical + 10), Players) -- we therefore should be able to detect that something
+							if not (UpTr.Hit) then AboveGround=false end -- if we can't, then the pos is probably below the surface of "solid" groud
+						elseif (Vertical > 0) then -- if the pos is above the player, there's gotta be something that we can fall onto
+							local DownTr = util.QuickTrace(TryPos, Vector(0, 0, -Vertical * 5), Players) -- try to detect the surface we're gonna fall on
+							if not (DownTr.Hit) then AboveGround = false end -- if we can't see anything that far down, we're probably below the ground
+						end
+						if (AboveGround) then
+							local FinalDownTr = util.QuickTrace(TryPos, Vector(0, 0, -20000), NoBlockEnts)
+							if (FinalDownTr.Hit) then
+								TryPos = FinalDownTr.HitPos + Vector(0, 0, 10)
+								local CanSee = false
+								for key, ply in pairs(Players) do
+									if (ply:Alive()) then
+										local ToTrace = util.TraceLine({start = ply:GetShootPos(), endpos = TryPos + Vector(0, 0, 10), filter = NoBlockEnts})
+										if not (ToTrace.Hit) then
+											CanSee = true
+											break
+										end
+										local ToTrace2 = util.TraceLine({start = ply:GetShootPos(), endpos = TryPos - Vector(0, 0, 10), filter = NoBlockEnts})
+										if not (ToTrace2.Hit) then
+											CanSee=true
+											break
+										end
+									end
+								end
+								for key, cayum in pairs(ents.FindByClass("sky_camera")) do -- don't spawn shit in the skybox you stupid fucking game
+									local ToTrace = util.TraceLine({start = cayum:GetPos(), endpos = TryPos})
+									if not (ToTrace.Hit) then
+										CanSee = true
+										break
+									end
+								end
+								if not (CanSee) then
+									SpawnPos = TryPos
+								end
+							end
+						end
+					end
+				end
+			end
+			Tries=Tries + 1
+		end
+		TryDist = TryDist + 200 * DistMul
+		Tries=0
+	end
+	if(SpawnPos == nil)then
+		SpawnFails=SpawnFails + 1
+	else
+		SpawnFails = 0
+	end
+	return SpawnPos
+end
+
+local NextEasterThink = 0
 local function EasterEggThink(dude)
-	--
+	local Time = CurTime()
+	if (Time > NextEasterThink) then
+		NextEasterThink = Time + 10
+		local Pos = JMod.FindHiddenSpawnLocation()
+		if (Pos) then
+			local Eg = ents.Create("ent_jack_gmod_ezanomaly_egg")
+			Eg:SetPos(Pos)
+			Eg:SetAngles(AngleRand())
+			Eg:Spawn()
+			Eg:Activate()
+		end
+	end
 end
 
 --- PARACHUTE LOGIC
@@ -456,6 +552,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	local Time = CurTime()
 	if NextMainThink > Time then return end
 	NextMainThink = Time + 1
+
+	if JMod.GetHoliday() == "Easter" then
+		EasterEggThink()
+	end
 
 	local Playas = player.GetAll()
 	---
@@ -571,10 +671,6 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			ImmobilizedThink(playa)
 
 			SleepySitThink(playa)
-
-			if JMod.GetHoliday() == "Easter" then
-				EasterEggThink(playa)
-			end
 		end
 	end
 
@@ -800,6 +896,9 @@ concommand.Add("jacky_trace_debug", function(ply)
 				print("bone", i, Boner)
 			end
 		end
+
+		print("---------- entity bodygroup data -----------")
+		PrintTable(Ent:GetBodyGroups())
 	end
 
 	print("---------- end trace debug -----------")

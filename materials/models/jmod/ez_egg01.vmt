@@ -1,0 +1,15 @@
+VertexLitGeneric
+{
+	"$basetexture" "models/jmod/ez_egg01"
+	"$bumpmap" "models/jmod/ez_egg01_n"
+	"$surfaceprop" "plastic"
+	// "$halflambert" "1"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongexponent" "10"
+	"$phongboost" "1"
+	"$envmap" "env_cubemap"
+	"$envmaptint" "[.1 .1 .1]"
+	"$blendtintbybasealpha" "1"
+	"$blendtintcoloroverbase" "0"
+}

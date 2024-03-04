@@ -436,8 +436,8 @@ local Holidays = {
 		endDay = 364 -- 364, roughly a week after
 	},
 	Easter = {
-		startDay = 87, -- 87, roughly 3 days before easter most years
-		endDay = 92 -- 92, roughly 2 days after
+		startDay = 85, -- 85, roughly 5 days before easter most years
+		endDay = 95 -- 95, roughly 3 days after
 	}
 }
 local CachedHoliday, NextCheck = nil, 0

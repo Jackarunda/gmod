@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/tex_jack_gmod_easteregg"
+	"$surfaceprop" "plastic"
+	// "$halflambert" 1
+	"$bumpmap" "phoenix_storms/egg_bump"
+	"$phong" "1"
+	"$phongfresnelranges" "[1 1 1]"
+	"$phongboost" ".1"
+	"$phongexponent" "10"
+	"$model" 1
+}
+
