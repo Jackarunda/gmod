@@ -102,19 +102,6 @@ ENT.DynamicPerfSpecs={
 	Cooling=1
 }
 ENT.DynamicPerfSpecExp=1.2
--- All moddable attributes
--- Each mod selected for it is +1, against it is -1
-ENT.ModPerfSpecs = {
-	MaxAmmo = 0,
-	TurnSpeed = 0,
-	TargetingRadius = 0,
-	Armor = 0,
-	FireRate = 0,
-	Damage = 0,
-	Accuracy = 0,
-	SearchSpeed = 0,
-	Cooling = 0
-}
 
 ENT.AmmoRefundTable = {
 	["Bullet"] = {
@@ -150,10 +137,11 @@ ENT.AmmoRefundTable = {
 }
 
 function ENT:SetMods(tbl, ammoType)
+	local OldMaxAmmoSpec = (self.ModPerfSpecs and self.ModPerfSpecs.MaxAmmo) or 0
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
-	if (OldAmmo~=ammoType) then
+	if (OldAmmo~=ammoType)or(self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec) then
 		local RefundInfo = self.AmmoRefundTable[OldAmmo]
 		local AmmoTypeToSpawn = RefundInfo.spawnType
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
@@ -167,7 +155,7 @@ function ENT:SetMods(tbl, ammoType)
 		end
 		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetRight() * 50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetRight(), true)
 	end
-	self:InitPerfSpecs(OldAmmo~=ammoType)
+	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
 	if(ammoType=="Pulse Laser")then
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	elseif(ammoType=="HE Grenade")or(ammoType=="Rocket Launcher")then
@@ -175,9 +163,13 @@ function ENT:SetMods(tbl, ammoType)
 	else
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	end
+	if SERVER then
+		self:SetupWire()
+	end
 end
 
 function ENT:InitPerfSpecs(removeAmmo)
+	if not self.ModPerfSpecs then return end
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
 	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
@@ -232,22 +224,104 @@ function ENT:CustomSetupDataTables()
 	self:NetworkVar("String",0,"AmmoType")
 end
 if(SERVER)then
+	function ENT:SetupWire()
+		if not(istable(WireLib)) then return end
+		local WireInputs = {
+			"Toggle [NORMAL]", 
+			"On-Off [NORMAL]", 
+			"Engage [ENTITY]", 
+			"AimAt [VECTOR]", 
+			"Shoot [NORMAL]"
+		}
+		local WireInputDesc = {
+			"Greater than 1 toggles machine on and off", 
+			"1 turns on, 0 turns off", 
+			"Entity to get angry at",
+			"Vector to aim at",
+			"Fires sentry"
+		}
+		self.Inputs = WireLib.CreateInputs(self, WireInputs, WireInputDesc)
+		--
+		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
+			local ResourceName = string.Replace(typ, " ", "")
+			local ResourceDesc = "Amount of "..ResourceName.." left"
+			--
+			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
+			table.insert(WireOutputs, OutResourceName)
+			table.insert(WireOutputDesc, ResourceDesc)
+		end
+		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:TriggerInput(iname, value)
+		local State, Owner = self:GetState(), JMod.GetEZowner(self)
+		if State < 0 then return end
+		if iname == "On-Off" then
+			if value == 1 then
+				self:TurnOn(Owner)
+			elseif value == 0 then
+				self:TurnOff(Owner)
+			end
+		elseif iname == "Toggle" then
+			if value > 0 then
+				if State == 0 then
+					self:TurnOn(Owner)
+				elseif State > 0 then
+					self:TurnOff(Owner)
+				end
+			end
+		elseif iname == "Engage" then
+			if IsValid(value) then
+				self.EngageOverride = true
+				self:Engage(value)
+			else
+				self.EngageOverride = false
+			end
+		elseif iname == "AimAt" then
+			local NeedTurnPitch, NeedTurnYaw = self:GetTargetAimOffset(value)
+
+			if (math.abs(NeedTurnPitch) > 0) or (math.abs(NeedTurnYaw) > 0) then
+				self:Turn(NeedTurnPitch, NeedTurnYaw)
+			end
+		elseif iname == "Shoot" then
+			if value > 0 then
+				self:FireAtPoint(nil, Vector(0, 0, 0))
+			end
+		end
+	end
+
 	function ENT:CustomInit()
 		local phys=self.Entity:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
-		self.EZconsumes = self.EZconsumes or {
+		self.EZconsumes = {
 			JMod.EZ_RESOURCE_TYPES.AMMO,
 			JMod.EZ_RESOURCE_TYPES.POWER,
 			JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 			JMod.EZ_RESOURCE_TYPES.COOLANT
 		}
+		-- All moddable attributes
+		-- Each mod selected for it is +1, against it is -1
+		self.ModPerfSpecs = {
+			MaxAmmo = 0,
+			TurnSpeed = 0,
+			TargetingRadius = 0,
+			Armor = 0,
+			FireRate = 0,
+			Damage = 0,
+			Accuracy = 0,
+			SearchSpeed = 0,
+			Cooling = 0
+		}
 		---
 		self:SetAmmoType("Bullet")
 		JMod.Colorify(self)
 		self:SetPerfMult(JMod.Config.Machines.Sentry.PerformanceMult)
-		self:InitPerfSpecs()
+		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 		---
 		self:Point(0, 0)
 		self.SearchStageTime = self.SearchTime / 2
@@ -285,10 +359,12 @@ if(SERVER)then
 			State = 0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
 			
 		}
+		self.EngageOverride = nil
 	end
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
+		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 	end
 
 	function ENT:CreateNPCTarget()
@@ -412,6 +488,7 @@ if(SERVER)then
 	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) and IsValid(self.Target) and (self.Target == activator) and not(activator == self.EZowner) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 		self:ResetMemory()
@@ -487,6 +564,7 @@ if(SERVER)then
 	end
 
 	function ENT:CanEngage(ent)
+		if self.EngageOverride then return true end
 		if not IsValid(ent) then return false end
 		if ent == self.NPCTarget then return false end
 
@@ -615,7 +693,7 @@ if(SERVER)then
 							-- aim at last known point
 							local NeedTurnPitch, NeedTurnYaw = self:GetTargetAimOffset(self.SearchData.LastKnownPos)
 
-							if (math.abs(NeedTurnPitch) > 0) or (math.abs(NeedTurnYaw) > 0) then
+							if (math.abs(NeedTurnPitch or 0) > 0) or (math.abs(NeedTurnYaw or 0) > 0) then
 								self:Turn(NeedTurnPitch, NeedTurnYaw)
 							end
 						elseif SearchState == 2 then
@@ -733,15 +811,21 @@ if(SERVER)then
 	end
 
 	function ENT:FireAtPoint(point, targVel)
-		if not point then return end
-		local Ammo = self:GetAmmo()
-		if Ammo <= 0 then return end
 		local SelfPos, Up, Right, Forward, ProjType = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward(), self:GetAmmoType()
 		local AimAng = self:GetAngles()
 		AimAng:RotateAroundAxis(Right, self:GetAimPitch())
 		AimAng:RotateAroundAxis(Up, self:GetAimYaw())
 		local AimForward = AimAng:Forward()
 		local ShootPos = SelfPos + Up * 38 + AimForward * self.BarrelLength
+
+		if not point then
+			local Trace = util.QuickTrace(ShootPos, AimForward * 1000, self)
+			point = Trace.HitPos
+		end
+
+		---
+		local Ammo = self:GetAmmo()
+		if Ammo <= 0 then return end
 		local AmmoConsume, ElecConsume = 1, .02
 		local Heat = self.Damage * self.ShotCount / 30
 		self:AddVisualRecoil(Heat * 2)
@@ -1084,7 +1168,7 @@ if(SERVER)then
 		local GoalPitch, GoalYaw = -TargAng.p, TargAng.y
 		local CurPitchOffset, CurYawOffset = self:GetAimPitch(), self:GetAimYaw()
 
-		return -(CurPitchOffset - GoalPitch), CurYawOffset - GoalYaw
+		return -CurPitchOffset - GoalPitch , CurYawOffset - GoalYaw
 	end
 
 	function ENT:RandomMove()
@@ -1170,6 +1254,7 @@ elseif(CLIENT)then
 		self.VisualRecoil = 0
 		---
 		self.LastAmmoType = ""
+		self.ModPerfSpecs = {}
 	end
 
 	function ENT:AddVisualRecoil(amt)
