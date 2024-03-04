@@ -53,14 +53,13 @@ if SERVER then
 			if (IsValid(activator) and activator:Alive()) then
 				if JMod.ConsumeNutrients(activator, math.random(1, 15)) then
 					activator:EmitSound("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", 60, math.random(90, 110))
-				else
-					local Wep = activator:GetActiveWeapon()
-					if Wep then
-						local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
-						local PrimName, SecName = game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
-						if PrimName then activator:GiveAmmo(math.ceil(PrimSize / 3), PrimName, math.random(1, 2) == 1) end
-						if SecName then activator:GiveAmmo(math.max(math.ceil(SecSize / 9), 1), SecName, math.random(1, 2) == 1) end
-					end
+				end
+				local Wep = activator:GetActiveWeapon()
+				if Wep then
+					local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
+					local PrimName, SecName = game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
+					if PrimName then activator:GiveAmmo(math.max(math.ceil(PrimSize / 3), 1), PrimName, math.random(1, 2) == 1) end
+					if SecName then activator:GiveAmmo(math.max(math.ceil(SecSize / 3), 1), SecName, math.random(1, 2) == 1) end
 				end
 			end
 		end)
@@ -72,6 +71,7 @@ if SERVER then
 		sound.Play("snds_jack_gmod/easter_egg_break.wav", self:GetPos() + Vector(0, 0, 40), 60, math.random(80, 120))
 		self:SetBodygroup(1, 1)
 		self:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 1000))
+		self:GetPhysicsObject():AddAngleVelocity(VectorRand() * 100)
 		local Eff = EffectData()
 		Eff:SetOrigin(self:LocalToWorld(self:OBBCenter()) + Vector(0, 0, 1))
 		util.Effect("eff_jack_gmod_eastereggpop", Eff, true, true)
