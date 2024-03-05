@@ -231,14 +231,16 @@ if(SERVER)then
 			"On-Off [NORMAL]", 
 			"Engage [ENTITY]", 
 			"AimAt [VECTOR]", 
-			"Shoot [NORMAL]"
+			"Shoot [NORMAL]",
+			"Reset [NORMAL]"
 		}
 		local WireInputDesc = {
 			"Greater than 1 toggles machine on and off", 
 			"1 turns on, 0 turns off", 
 			"Entity to get angry at",
 			"Vector to aim at",
-			"Fires sentry"
+			"Fires sentry",
+			"Resets sentry memory"
 		}
 		self.Inputs = WireLib.CreateInputs(self, WireInputs, WireInputDesc)
 		--
@@ -281,16 +283,25 @@ if(SERVER)then
 				self.EngageOverride = false
 			end
 		elseif iname == "AimAt" then
-			local NeedTurnPitch, NeedTurnYaw = self:GetTargetAimOffset(value)
+			if value == Vector(0, 0, 0) then
+				self.AimOverride = nil
+			else
+				self.AimOverride = value
+				local NeedTurnPitch, NeedTurnYaw = self:GetTargetAimOffset(value)
 
-			if (math.abs(NeedTurnPitch) > 0) or (math.abs(NeedTurnYaw) > 0) then
-				self:Turn(NeedTurnPitch, NeedTurnYaw)
+				if (math.abs(NeedTurnPitch) > 0) or (math.abs(NeedTurnYaw) > 0) then
+					self:Turn(NeedTurnPitch, NeedTurnYaw)
+				end
 			end
 		elseif iname == "Shoot" then
 			if value > 0 then
 				self.FireOverride = true
 			else
 				self.FireOverride = false
+			end
+		elseif iname == "Reset" then
+			if value > 0 then
+				self:ResetMemory()
 			end
 		end
 	end
@@ -362,6 +373,8 @@ if(SERVER)then
 			
 		}
 		self.EngageOverride = nil
+		self.AimOverride = nil
+		self.FireOverride = nil
 	end
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
@@ -418,6 +431,7 @@ if(SERVER)then
 			self:TurnOff()
 		end
 	end
+
 	function ENT:CustomDetermineDmgMult(dmginfo)
 		local Mult=1
 		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
@@ -813,6 +827,8 @@ if(SERVER)then
 	end
 
 	function ENT:FireAtPoint(point, targVel)
+		local Ammo = self:GetAmmo()
+		if Ammo <= 0 then return end
 		local SelfPos, Up, Right, Forward, ProjType = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward(), self:GetAmmoType()
 		local AimAng = self:GetAngles()
 		AimAng:RotateAroundAxis(Right, self:GetAimPitch())
@@ -826,8 +842,6 @@ if(SERVER)then
 		end
 
 		---
-		local Ammo = self:GetAmmo()
-		if Ammo <= 0 then return end
 		local AmmoConsume, ElecConsume = 1, .02
 		local Heat = self.Damage * self.ShotCount / 30
 		self:AddVisualRecoil(Heat * 2)
@@ -1164,6 +1178,7 @@ if(SERVER)then
 	end
 
 	function ENT:GetTargetAimOffset(point)
+		if self.AimOverride then point = self.AimOverride end
 		if not point then return nil, nil end
 		local SelfPos = self:GetPos() + self:GetUp() * 35
 		local TargAng = self:WorldToLocalAngles((point - SelfPos):Angle())
