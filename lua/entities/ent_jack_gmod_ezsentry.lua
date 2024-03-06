@@ -153,7 +153,7 @@ function ENT:SetMods(tbl, ammoType)
 			// no exploit
 			self:SetElectricity(0)
 		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, self:GetRight() * 50 + self:GetUp() * 50, Angle(0, 0, 0), self:GetRight(), true)
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -20, 50), Angle(0, 0, 0), self:GetRight(), true)
 	end
 	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
 	if(ammoType=="Pulse Laser")then
