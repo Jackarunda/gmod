@@ -965,13 +965,13 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	ply.JMod_WillAsplode = nil
 
 	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
-	if (ply.JModInv and ShouldInvDrop or ShouldJModCorpse) then
+	if (ply.JModInv and (ShouldInvDrop or ShouldJModCorpse)) then
 		local PlyPos = ply:GetPos()
 		for _, v in ipairs(ply.JModInv.items) do
 			local RandomVec = Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100))
 			local Removed = JMod.RemoveFromInventory(ply, v.ent, PlyPos + RandomVec, false, ShouldJModCorpse and not ShouldInvDrop)
 			if ShouldJModCorpse and IsValid(Removed) then
-				JMod.AddToInventory( EZcorpse.EZragdoll, Removed)
+				JMod.AddToInventory(EZcorpse.EZragdoll, Removed)
 			end
 		end
 		for typ, amt in pairs(ply.JModInv.EZresources) do
