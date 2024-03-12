@@ -22,10 +22,11 @@ ENT.PropModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/pro
 
 ---
 if CLIENT then
+    local drawvec, drawang = Vector(0, -12, 1), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -12, 1), Angle(90, 0, 90), .04, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .04, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.COAL, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

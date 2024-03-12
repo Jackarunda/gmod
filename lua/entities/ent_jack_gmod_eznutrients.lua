@@ -56,7 +56,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	local TxtCol = Color(255, 255, 255, 80)
-
+    local drawvec, drawang = Vector(-3, 18, -2.8), Angle(-90, 0, 90)
 	function ENT:Initialize()
 		self.FoodBox = ClientsideModel("models/props/cs_office/cardboard_box03.mdl")
 		self.FoodBox:SetMaterial("models/mat_jack_aidfood")
@@ -67,7 +67,7 @@ elseif CLIENT then
 		self.WaterBox:SetParent(self)
 		self.WaterBox:SetNoDraw(true)
 	end
-
+    
 	function ENT:Draw()
 		local Ang, Pos, Up, Right, Forward = self:GetAngles(), self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
 		self.FoodBox:SetRenderOrigin(Pos - Right * 9 - Up * 9 + Forward * 5)
@@ -79,7 +79,7 @@ elseif CLIENT then
 		self.FoodBox:DrawModel()
 		self.WaterBox:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(-3, 18, -2.8), Angle(-90, 0, 90), .033, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .033, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.NUTRIENTS, self:GetResource(), nil, 0, 0, 200, false)
 		end)
 	end

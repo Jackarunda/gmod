@@ -30,7 +30,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	local TxtCol = Color(255, 255, 255, 80)
-
+    local drawvec, drawang = Vector(0, -4.1, -7), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 

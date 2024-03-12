@@ -105,7 +105,7 @@ elseif CLIENT then
 		--self.ScaleVec =  Vector(1.2, 1.2, 1.2)
 		--self.ColorVec = self.Color:ToVector()
 	end
-
+    local drawvec, drawang = Vector(-2, -13, 0), Angle(90, 0, 90)
 	function ENT:Draw()
 		local Ang, Pos = self:GetAngles(), self:GetPos()
 		local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()

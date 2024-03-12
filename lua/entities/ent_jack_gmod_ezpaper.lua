@@ -25,10 +25,11 @@ if SERVER then
 	end
 	-- todo: find a particle effect for this
 elseif CLIENT then
+    local drawvec, drawang = Vector(0, -.5, 9), Angle(0, 0, 0)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(0, -.5, 9), Angle(0, 0, 0), .025, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .025, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.PAPER, self:GetResource(), nil, 0, 0, 200, false, nil, 200, nil, 0)
 		end)
 	end
