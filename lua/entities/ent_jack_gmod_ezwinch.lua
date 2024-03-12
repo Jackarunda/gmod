@@ -6,12 +6,12 @@ ENT.PrintName = "EZ Winch"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
-ENT.Spawnable = false -- For now...
+ENT.Spawnable = true
 ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Model = "models/jmod/ezwinch01.mdl"
-ENT.Mass = 50
+ENT.Mass = 25
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 50,
@@ -145,6 +145,15 @@ if SERVER then
 
 		self:NextThink(Time + .2)
 		return true
+	end
+
+	function ENT:OnPostEntityPaste(ply, Ent, CreatedEntities)
+		self.Hooker = CreatedEntities[self.Hooker:EntIndex()]
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
+		timer.Simple(1, function()
+			self.Chain = constraint.Find(self, self.Hooker, "Elastic", 0, 0)
+			self.Hooker.Chain = self.Chain
+		end)
 	end
 
 	function ENT:OnRemove()

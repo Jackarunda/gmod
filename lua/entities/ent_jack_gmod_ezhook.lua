@@ -120,7 +120,7 @@ if SERVER then
 			if State == STATE_UNHOOKED then
 				self.NextStick = Time + .5
 				Dude:PickupObject(self)
-				JMod.Hint(Dude, "sticky")
+				--JMod.Hint(Dude, "sticky")
 			elseif State == STATE_HOOKED then
 				if self.StuckStick then SafeRemoveEntity(self.StuckStick) end
 				self.StuckStick = nil
@@ -135,7 +135,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if not IsValid(self.EZrope) then SafeRemoveEntity(self) end
+		if not IsValid(self.Chain) then SafeRemoveEntity(self) end
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end

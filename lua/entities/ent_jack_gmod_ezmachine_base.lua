@@ -601,6 +601,9 @@ if(SERVER)then
 			if ent.NextUseTime then
 				ent.NextUseTime = Time + 1
 			end
+			if ent.SoundLoop then
+				self.SoundLoop = nil
+			end
 			if ent.OnPostEntityPaste then
 				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
