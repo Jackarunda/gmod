@@ -30,11 +30,11 @@ if SERVER then
 	end
 elseif CLIENT then
 	local TxtCol = Color(255, 255, 255, 80)
-    local drawvec, drawang = Vector(0, -4.1, -7), Angle(90, 0, 90)
+    local drawvec, drawang = Vector(-5.1, 0, 0), Angle(180, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, Vector(-5.1, 0, 0), Angle(180, 0, 90), .04, 300, function()
+		JMod.HoloGraphicDisplay(self, drawvec, drawang, .04, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.COOLANT, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end
