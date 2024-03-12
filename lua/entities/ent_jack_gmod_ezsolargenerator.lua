@@ -16,10 +16,13 @@ ENT.StaticPerfSpecs = {
 	MaxDurability = 75,
 	MaxElectricity = 0
 }
-
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerSocket = Vector(0, 0, -30)
+ENT.MaxConnectionRange = 200
+
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
 	self:NetworkVar("Float", 2, "Visibility")
@@ -39,9 +42,20 @@ if(SERVER)then
 	end
 
 	function ENT:SetupWire()
-		if not(istable(WireLib)) then return end
-		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
-		---
+		local WireInputs = {}
+		local WireInputDesc = {}
+		if self.TurnOn and self.TurnOff then
+			table.insert(WireInputs, "Toggle [NORMAL]")
+			table.insert(WireInputDesc, "Greater than 1 toggles machine on and off")
+			table.insert(WireInputs, "On-Off [NORMAL]")
+			table.insert(WireInputDesc, "1 turns on, 0 turns off")
+		end
+		if self.ProduceResource then
+			table.insert(WireInputs, "Produce [NORMAL]")
+			table.insert(WireInputDesc, "Produces resource")
+		end
+		self.Inputs = WireLib.CreateInputs(self, WireInputs, WireInputDesc)
+		--
 		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]", "Visibility [NORMAL]", "Progress [NORMAL]"}
 		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade", "Solar panel light visibility", "Machine's progress"}
 		for _, typ in ipairs(self.EZconsumes) do
@@ -61,7 +75,7 @@ if(SERVER)then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
 			WireLib.TriggerOutput(self, "Progress", self:GetProgress())
-			WireLib.TriggerOutput(self, "Visibility", self:GetVisibility())
+			WireLib.TriggerOutput(self, "Visibility", math.Round(self:GetVisibility() * 100))
 			for _, typ in ipairs(self.EZconsumes) do
 				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
 					WireLib.TriggerOutput(self, "Durability", self.Durability)
@@ -71,47 +85,50 @@ if(SERVER)then
 	end
 
 	function ENT:Use(activator)
-		if self.NextUse > CurTime() then return end
-		local State=self:GetState()
-		local OldOwner=self.EZowner
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Time = CurTime()
+		if self.NextUse > Time then return end
+		self.NextUse = Time + 1
+		local State = self:GetState()
+		local OldOwner = self.EZowner
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self,activator)
 		JMod.Colorify(self)
 		if(IsValid(self.EZowner) and (OldOwner ~= self.EZowner))then
 			JMod.Colorify(self)
 		end
-		if(State==STATE_BROKEN)then
-			JMod.Hint(activator,"destroyed",self)
-		return
-		elseif(State==STATE_OFF)then
-			self:TurnOn()
-		elseif(State==STATE_ON)then
-			if(alt)then
-				self:ProduceResource()
-				return
+		if State == STATE_BROKEN then
+			JMod.Hint(activator, "destroyed", self)
+		end
+		if Alt then
+			self:ModConnections(activator)
+			self.PowerSLI = 0
+		else
+			if(State == JMod.EZ_STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State == JMod.EZ_STATE_ON)then
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:CheckSky() > 0) then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
-			self.NextUse = CurTime() + 1
-		else
+		elseif not(auto) then
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
-		self.PowerSLI = 0 
+		self.PowerSLI = 0
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator, auto)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		self.NextUse = CurTime() + 1
 		self.PowerSLI = 0 
 	end
 
@@ -131,12 +148,12 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 		--self:SpawnEffect(pos)
+
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		

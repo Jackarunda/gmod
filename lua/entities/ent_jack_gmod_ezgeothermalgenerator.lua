@@ -32,6 +32,8 @@ ENT.EZconsumes = {
 ENT.WhitelistedResources = {
 	"geothermal"
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerSocket = Vector(10, 30, 48)
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -77,8 +79,7 @@ if(SERVER)then
 				self:SetAngles(Angle(0, Yaw, Roll))
 				self:SetPos(Tr.HitPos + Tr.HitNormal * (self.SpawnHeight - 15))
 				---
-				self:GetPhysicsObject():EnableMotion(false)
-				self.EZinstalled = true
+				JMod.EZinstallMachine(self)
 				---
 				if self.DepositKey then
 					self:TurnOn(JMod.GetEZowner(self))
@@ -96,20 +97,21 @@ if(SERVER)then
 		if self.NextUse > CurTime() then return end
 		local State = self:GetState()
 		local OldOwner = JMod.GetEZowner(self)
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator, true)
 		if(State == STATE_BROKEN)then
 			JMod.Hint(activator, "destroyed", self)
 
 			return
-		elseif(State == STATE_OFF)then
-			self:TurnOn()
-		elseif(State == STATE_RUNNING)then
-			if(alt)then
-				self:ProduceResource()
-				return
+		end
+		if Alt then
+			self:ModConnections(activator)
+		else
+			if(State == STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State == STATE_RUNNING)then
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 
@@ -125,23 +127,26 @@ if(SERVER)then
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(Dude, auto)
 		if self:GetState() > 0 then return end
 
 		if self.EZinstalled then
-			self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
-			self.NextUse = CurTime() + 1
-			timer.Simple(0.6, function()
-				if not IsValid(self) then return end
-				self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
-			end)
+			if IsValid(Dude) and not(auto) then
+				self.EZstayOn = true
+				self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+				self.NextUse = CurTime() + 1
+				timer.Simple(0.6, function()
+					if not IsValid(self) then return end
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
+				end)
+			end
 			if (self:GetWater() > 0) and (self.DepositKey) then
 				self:SetState(STATE_RUNNING)
 				timer.Simple(1, function()
 					if not IsValid(self) then return end
 					if self.SoundLoop then 
 						self.SoundLoop:Play() 
-						self.SoundLoop:SetSoundLevel(100)
+						self.SoundLoop:SetSoundLevel(75)
 						self.SoundLoop:ChangePitch(100)
 					end
 				end)
@@ -153,8 +158,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
@@ -236,11 +242,11 @@ if(SERVER)then
 		return true
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.WATER and accepted >= 1 then
-			self:TurnOn(JMod.GetEZowner(self))
+			self:TurnOn(JMod.GetEZowner(self), true)
 		end
-	end
+	end--]]
 
 	function ENT:OnDestroy(dmginfo)
 		local Pos = self:GetPos()
@@ -300,7 +306,7 @@ elseif CLIENT then
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos + Up * 36 + Forward * -40 + Right * 15
-		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness<120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---

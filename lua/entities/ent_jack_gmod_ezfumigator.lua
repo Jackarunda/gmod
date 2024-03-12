@@ -91,23 +91,27 @@ if SERVER then
 		end
 	end
 
+	function ENT:Fume(activator) 
+		self:EmitSound("snd_jack_pinpull.wav", 60, 100)
+		self:EmitSound("snd_jack_spoonfling.wav", 60, 100)
+		self:SetState(STATE_TICKING)
+
+		timer.Simple(5, function()
+			if IsValid(self) then
+				self:EmitSound("snd_jack_sminepop.wav", 70, 120)
+				self:SetState(STATE_VENTING)
+			end
+		end)
+	end
+
 	function ENT:Use(activator)
 		local State, Alt = self:GetState(), activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if State == STATE_SEALED then
 			if Alt then
 				JMod.SetEZowner(self, activator)
-				self:EmitSound("snd_jack_pinpull.wav", 60, 100)
-				self:EmitSound("snd_jack_spoonfling.wav", 60, 100)
-				self:SetState(STATE_TICKING)
+				self:Fume(activator)
 				JMod.Hint(activator, "gas spread")
-
-				timer.Simple(5, function()
-					if IsValid(self) then
-						self:EmitSound("snd_jack_sminepop.wav", 70, 120)
-						self:SetState(STATE_VENTING)
-					end
-				end)
 			else
 				activator:PickupObject(self)
 				JMod.Hint(activator, "arm")

@@ -10,98 +10,9 @@ ENT.AdminSpawnable=false
 ENT.NoSitAllowed=true
 ----
 ENT.Model="models/props_lab/reciever01d.mdl"
-ENT.Mass=150
-ENT.IsJackyEZmachine=true
+ENT.Mass = 150
+ENT.IsJackyEZmachine = true
 ----
-ENT.PropModels={
-	"models/props_lab/reciever01d.mdl",
-	"models/props/cs_office/computer_caseb_p2a.mdl",
-	"models/props/cs_office/computer_caseb_p3a.mdl",
-	"models/props/cs_office/computer_caseb_p4a.mdl",
-	"models/props/cs_office/computer_caseb_p5a.mdl",
-	"models/props/cs_office/computer_caseb_p5b.mdl",
-	"models/props/cs_office/computer_caseb_p6a.mdl",
-	"models/props/cs_office/computer_caseb_p6b.mdl",
-	"models/props/cs_office/computer_caseb_p7a.mdl",
-	"models/props/cs_office/computer_caseb_p8a.mdl",
-	"models/props/cs_office/computer_caseb_p9a.mdl",
-	"models/gibs/helicopter_brokenpiece_02.mdl",
-	"models/gibs/manhack_gib03.mdl",
-	"models/gibs/manhack_gib04.mdl",
-	"models/gibs/manhack_gib05.mdl",
-	"models/gibs/manhack_gib06.mdl",
-	"models/gibs/metal_gib1.mdl",
-	"models/gibs/metal_gib2.mdl",
-	"models/gibs/metal_gib3.mdl",
-	"models/gibs/metal_gib4.mdl",
-	"models/gibs/metal_gib5.mdl",
-	"models/gibs/scanner_gib01.mdl",
-	"models/gibs/scanner_gib02.mdl",
-	"models/props_c17/canisterchunk01d.mdl",
-	"models/props_c17/canisterchunk01b.mdl",
-	"models/props_c17/canisterchunk01l.mdl",
-	"models/props_c17/canisterchunk01m.mdl",
-	"models/props_c17/canisterchunk02b.mdl",
-	"models/props_c17/canisterchunk02c.mdl",
-	"models/props_c17/canisterchunk02d.mdl",
-	"models/props_c17/canisterchunk02e.mdl",
-	"models/props_c17/canisterchunk02f.mdl",
-	"models/props_c17/canisterchunk01a.mdl",
-	"models/props_c17/canisterchunk01h.mdl",
-	"models/props_c17/oildrumchunk01a.mdl",
-	"models/props_c17/oildrumchunk01b.mdl",
-	"models/props_c17/oildrumchunk01c.mdl",
-	"models/props_c17/oildrumchunk01d.mdl",
-	"models/props_c17/oildrumchunk01e.mdl",
-	"models/props_c17/oildrumchunk01a.mdl",
-	"models/props_c17/oildrumchunk01b.mdl",
-	"models/props_c17/oildrumchunk01c.mdl",
-	"models/props_c17/oildrumchunk01d.mdl",
-	"models/props_c17/oildrumchunk01e.mdl",
-	"models/props_canal/boat001a_chunk010.mdl",
-	"models/props_canal/boat001a_chunk06.mdl",
-	"models/props_debris/concrete_chunk04a.mdl",
-	"models/props_debris/concrete_chunk05g.mdl",
-	"models/props_debris/prison_wallchunk001f.mdl",
-	"models/props_debris/wood_chunk04a.mdl",
-	"models/props_debris/wood_chunk06b.mdl",
-	"models/props_junk/glassjug01_chunk01.mdl",
-	"models/props_junk/glassjug01_chunk03.mdl",
-	"models/props_junk/vent001_chunk1.mdl",
-	"models/props_junk/vent001_chunk2.mdl",
-	"models/props_junk/vent001_chunk3.mdl",
-	"models/props_junk/vent001_chunk4.mdl",
-	"models/props_junk/vent001_chunk5.mdl",
-	"models/props_junk/vent001_chunk6.mdl",
-	"models/props_junk/vent001_chunk7.mdl",
-	"models/props_junk/vent001_chunk8.mdl",
-	"models/props_junk/wood_crate001a_chunk03.mdl",
-	"models/props_wasteland/prison_toiletchunk01g.mdl",
-	"models/props_wasteland/prison_toiletchunk01h.mdl",
-	"models/props_wasteland/prison_toiletchunk01i.mdl",
-	"models/props_wasteland/prison_toiletchunk01j.mdl",
-	"models/props_wasteland/prison_toiletchunk01k.mdl",
-	"models/props_wasteland/prison_toiletchunk01l.mdl",
-	"models/props_wasteland/prison_toiletchunk01m.mdl",
-	"models/props_wasteland/prison_toiletchunk01e.mdl",
-	"models/props_wasteland/prison_toiletchunk01c.mdl",
-	"models/props_wasteland/prison_sinkchunk001b.mdl",
-	"models/props_wasteland/prison_sinkchunk001c.mdl",
-	"models/props_wasteland/prison_sinkchunk001d.mdl",
-	"models/props_wasteland/prison_sinkchunk001e.mdl",
-	"models/props_wasteland/prison_sinkchunk001g.mdl",
-	"models/props_wasteland/prison_sinkchunk001h.mdl",
-	"models/Mechanics/gears/gear12x6_small.mdl",
-	"models/Mechanics/gears/gear12x12.mdl",
-	"models/props_phx/gears/bevel12.mdl",
-	"models/props_phx/gears/bevel9.mdl",
-	"models/Mechanics/gears2/gear_12t2.mdl",
-	"models/Mechanics/gears/gear12x6_small.mdl",
-	"models/Mechanics/gears/gear12x12.mdl",
-	"models/props_phx/gears/bevel12.mdl",
-	"models/props_phx/gears/bevel9.mdl",
-	"models/Mechanics/gears2/gear_12t2.mdl"
-}
 ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS, 
 	JMod.EZ_RESOURCE_TYPES.POWER
@@ -223,6 +134,7 @@ if(SERVER)then
 		if(self.CustomInit)then self:CustomInit() end
 		--=== Apply changes and state things that shouldn't be overrideable below.====-
 
+		---
 		if self.SetupWire and istable(WireLib) then
 			self:SetupWire()
 		end
@@ -243,12 +155,26 @@ if(SERVER)then
 			self.UpgradeCosts = JMod.CalculateUpgradeCosts((JMod.Config.Craftables[self.PrintName] and JMod.Config.Craftables[self.PrintName].craftingReqs) or (self.BackupRecipe and self.BackupRecipe))
 		end
 		self.NextRefillTime = 0
+
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
-		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
-		---
+		local WireInputs = {}
+		local WireInputDesc = {}
+		if self.TurnOn and self.TurnOff then
+			table.insert(WireInputs, "Toggle [NORMAL]")
+			table.insert(WireInputDesc, "Greater than 1 toggles machine on and off")
+			table.insert(WireInputs, "On-Off [NORMAL]")
+			table.insert(WireInputDesc, "1 turns on, 0 turns off")
+		end
+		if self.ProduceResource then
+			table.insert(WireInputs, "Produce [NORMAL]")
+			table.insert(WireInputDesc, "Produces resource")
+		end
+		self.Inputs = WireLib.CreateInputs(self, WireInputs, WireInputDesc)
+		--
 		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
 		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
 		for _, typ in ipairs(self.EZconsumes) do
@@ -274,25 +200,25 @@ if(SERVER)then
 	end
 
 	function ENT:UpdateWireOutputs()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Grade", self:GetGrade())
-			if self.GetProgress then
-				WireLib.TriggerOutput(self, "Progress", self:GetProgress())
-			end
-			for _, typ in ipairs(self.EZconsumes) do
-				if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
-					WireLib.TriggerOutput(self, "Durability", self.Durability)
+		if not istable(WireLib) then return end
+		WireLib.TriggerOutput(self, "State", self:GetState())
+		WireLib.TriggerOutput(self, "Grade", self:GetGrade())
+		if self.GetProgress then
+			WireLib.TriggerOutput(self, "Progress", self:GetProgress())
+		end
+		for _, typ in ipairs(self.EZconsumes) do
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then
+				WireLib.TriggerOutput(self, "Durability", self.Durability)
+			else
+				if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
+					WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
 				else
-					if istable(self.FlexFuels) and table.HasValue(self.FlexFuels, typ) then
-						WireLib.TriggerOutput(self, "FlexFuel", self:GetElectricity())
-					else
-						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
-							local ResourceGetMethod = self["Get"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-							if ResourceGetMethod then
-								local ResourceName = string.Replace(typ, " ", "")
-								WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
-							end
+					local MethodName = JMod.EZ_RESOURCE_TYPE_METHODS[typ]
+					if MethodName then
+						local ResourceGetMethod = self["Get"..MethodName]
+						if ResourceGetMethod then
+							local ResourceName = string.Replace(typ, " ", "")
+							WireLib.TriggerOutput(self, string.gsub(ResourceName, "^%l", string.upper), ResourceGetMethod(self))
 						end
 					end
 				end
@@ -301,27 +227,34 @@ if(SERVER)then
 	end
 
 	function ENT:TriggerInput(iname, value)
-		local State = self:GetState()
+		local State, Owner = self:GetState(), JMod.GetEZowner(self)
 		if State < 0 then return end
-		if iname == "OnOff" then
+		if iname == "On-Off" then
 			if value == 1 then
-				self:TurnOn()
+				self:TurnOn(Owner)
 			elseif value == 0 then
-				self:TurnOff()
+				self:TurnOff(Owner)
 			end
-		elseif iname == "ToggleState" then
+		elseif iname == "Toggle" then
 			if value > 0 then
 				if State == 0 then
-					self:TurnOn()
+					self:TurnOn(Owner)
 				elseif State > 0 then
-					self:TurnOff()
+					self:TurnOff(Owner)
 				end
+			end
+		elseif iname == "Produce" then
+			if value > 0 then
+				self:ProduceResource(Owner)
 			end
 		end
 	end
 
-	function ENT:UpdateDepositKey()
-		self.DepositKey = JMod.GetDepositAtPos(self, self:GetPos() - Vector(0, 0, self.SpawnHeight or 60))
+	function ENT:UpdateDepositKey(checkPos)
+		self.DepositKey = JMod.GetDepositAtPos(self, checkPos or (self:GetPos() - Vector(0, 0, self.SpawnHeight or 60)))
+		local DepositInfo = JMod.NaturalResourceTable[self.DepositKey]
+		if DepositInfo and self.SetResourceType then self:SetResourceType(DepositInfo.typ) end
+		return self.DepositKey
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -345,8 +278,8 @@ if(SERVER)then
 					--jprint(PhysDamage)
 					--jprint("Their Speed: ", math.Round(CollisionDir:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
 					
-					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-						physobj:EnableMotion(true)
+					if (TheirForce >= ForceThreshold) then
+						JMod.EZinstallMachine(self, false)
 					end
 					if PhysDamage >= 1 and not(Held) then
 						local CrushDamage = DamageInfo()
@@ -373,6 +306,22 @@ if(SERVER)then
 				end
 			end
 		end
+	end
+
+	function ENT:ModConnections(dude)
+		if not(IsValid(dude) and dude:IsPlayer()) then return end
+		local Connections = {}
+		if self.EZconnections then
+			for k, v in ipairs(self.EZconnections) do
+				if IsValid(v.Ent) then
+					table.insert(Connections, {DisplayName = v.Ent.PrintName, Index = v.Ent:EntIndex()})
+				end
+			end
+		end
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(self)
+			net.WriteTable(Connections)
+		net.Send(dude)
 	end
 
 	function ENT:ConsumeElectricity(amt)
@@ -429,6 +378,9 @@ if(SERVER)then
 				self.Pod:GetDriver():ExitVehicle()
 			end
 			self.Pod:Fire("lock","",0)
+		end
+		if self.EZconnections then
+			self.EZconnections = nil
 		end
 		if(self.OnBreak)then self:OnBreak() end
 	end
@@ -652,26 +604,28 @@ if(SERVER)then
 			if ent.OnPostEntityPaste then
 				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
-			if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
-				for _, typ in ipairs(ent.EZconsumes) do
-					if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
-						ent:SetElectricity(0)
-					else
-						if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
-							local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
-							if ResourceSetMethod then
-								ResourceSetMethod(ent, 0)
+			if not(JMod.IsAdmin(ply)) then
+				if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
+					for _, typ in ipairs(ent.EZconsumes) do
+						if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
+							ent:SetElectricity(0)
+						else
+							if JMod.EZ_RESOURCE_TYPE_METHODS[typ] then
+								local ResourceSetMethod = ent["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+								if ResourceSetMethod then
+									ResourceSetMethod(ent, 0)
+								end
 							end
 						end
 					end
 				end
-			end
-			if ent.SetProgress then
-				ent:SetProgress(0)
-			end
-			if ent.EZupgradable then
-				ent:SetGrade(JMod.EZ_GRADE_BASIC)
-				ent:InitPerfSpecs()
+				if ent.SetProgress then
+					ent:SetProgress(0)
+				end
+				if ent.EZupgradable then
+					ent:SetGrade(JMod.EZ_GRADE_BASIC)
+					ent:InitPerfSpecs()
+				end
 			end
 		end
 	end
@@ -692,8 +646,8 @@ elseif(CLIENT)then
 		if self.ClientOnly then return end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
-		self:InitPerfSpecs()
 		if(self.CustomInit)then self:CustomInit() end
+		self:InitPerfSpecs()
 	end
 
 	function ENT:OnRemove()

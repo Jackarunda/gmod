@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.01
+			Version = 45.30
 		},
 		General = {
 			Hints = true,
@@ -96,7 +96,11 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ResourceRichness = 1,
 			ExtractionSpeed = 1,
 			MaxResourceMult = 1,
-			SalvageYield = 1
+			SalvageYield = 1,
+			ScroungeAreaRefreshMult = 1,
+			ScroungeCooldownMult = 1,
+			ScroungeDespawnTimeMult = 1,
+			ScroungeResultAmount = 5
 		},
 		QoL = {
 			RealisticLocationalDamage = false,
@@ -105,6 +109,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			Drowning = false,
 			GiveHandsOnSpawn = false,
 			JModCorpseStayTime = 0,
+			JModInvDropOnDeath = false,
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
 			NukeFlashLightEnabled = false,
@@ -187,7 +192,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Resources",
 					results = "ent_jack_gmod_ezadvtextiles"
 				},
-				["power"] = {
+				["batteries"] = {
 					description = "400 units of Power, used for crafting and recharging electronics.",
 					category = "Resources",
 					results = {
@@ -395,7 +400,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					category = "Other",
 					results = {
 						{"ent_jack_gmod_ezacorn", 4},
-                        {"ent_jack_gmod_ezwater", 4}
+						{"ent_jack_gmod_ezwater", 4}
 					}
 				},
 				["sentry"] = {
@@ -701,7 +706,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				oneHanded = true,
 				noSound = true,
 				sizeScale = .05,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Binds the object you're looking at to the object behind it"
 			},
@@ -713,7 +718,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				oneHanded = true,
 				noSound = true,
 				sizeScale = .05,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Creates a single axis bearing for conecting rotating objects"
 			},
@@ -724,22 +729,45 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				noSound = true,
 				sizeScale = 1,
-				category = "Other",
+				category = "Tools",
 				craftingType = "toolbox",
 				description = "Stores the object you're looking at in a box for transportation or storage"
 			},
-			["EZ Criticality Weapon"] = {
-				results = "ent_jack_gmod_ezcriticalityweapon",
+			["EZ Rope"] = {
+				results = "FUNC EZrope",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
-					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25,
-					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 2
 				},
-				sizeScale = 1,
-				category = "Other",
-				craftingType = "workbench",
-				description = "They say Slotin was often in his trademark blue jeans and cowboy boots..."
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Tools",
+				craftingType = "toolbox",
+				description = "Attaches a rope between two points"
+			},
+			["EZ Cable"] = {
+				results = "FUNC EZcable",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 2
+				},
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Tools",
+				craftingType = "toolbox",
+				description = "Attaches a strong cable between two points"
+			},
+			["EZ Chain"] = {
+				results = "FUNC EZchain",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 5
+				},
+				oneHanded = true,
+				noSound = true,
+				sizeScale = 0.1,
+				category = "Tools",
+				craftingType = "toolbox",
+				description = "Attaches a very strong chain between two points"
 			},
 			["EZ Ground Scanner"] = {
 				results = "ent_jack_gmod_ezgroundscanner",
@@ -807,6 +835,31 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Performs fractional distillation of crude oil, creating fuel, plastic, rubber, and gas."
+			},
+			["EZ Power Bank"] = {
+				results = "ent_jack_gmod_ezpowerbank",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 25,
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Allows for power-grid construction by linking machines that either consume or produce EZ power."
+			},
+			["EZ Oil Rig"] = {
+				results = "ent_jack_gmod_ezoil_rig",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 75,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 500,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 100
+				},
+				sizeScale = 5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "A buoyant version of the EZ Pumpjack that allows for pumping oil deposits located underwater.\n Must be floating directly over an oil deposit to use."
 			},
 			["EZ Uranium Enrichment Centrifuge"] = {
 				results = "ent_jack_gmod_ezcentrifuge",
@@ -905,13 +958,13 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Cluster bomb that can pierce multiple hard targets from the air."
 			},
-            ["EZ War Mine"] = {
+			["EZ War Mine"] = {
 				results = "ent_jack_gmod_ezwarmine",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50,
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 25,
-                    [JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
-                    [JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 25
 				},
 				sizeScale = 1,
 				category = "Munitions",
@@ -951,6 +1004,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "EZ HE Rocket, except it's a lot more effective against armored vehicles with less boom."
+			},
+			["EZ Rocket Motor"] = {
+				results = "ent_jack_gmod_ezrocketmotor",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 20,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 50
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "workbench",
+				description = "Attach to an object and launch to propell it away."
 			},
 			["EZ Incendiary Bomb"] = {
 				results = "ent_jack_gmod_ezincendiarybomb",
@@ -1264,6 +1328,20 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Gordon, remember to bring back the scout car."
 			},
+			["HL2 Airboat"] = {
+				results = "FUNC spawnHL2airboat",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 300,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 150,
+					[JMod.EZ_RESOURCE_TYPES.POWER] = 50,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 300
+				},
+				sizeScale = 4,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "The good ship mud skipper."
+			},
 			["EZ Basic Parts, x50"] = {
 				results = {"ent_jack_gmod_ezbasicparts", 1, 50},
 				craftingReqs = {
@@ -1293,9 +1371,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "1 box of parts used for crafting and repairs."
 			},
 			["EZ Basic Parts, x300"] = {
-				results = {
-					{"ent_jack_gmod_ezbasicparts", 3}
-				},
+				results = {"ent_jack_gmod_ezbasicparts", 3},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.STEEL] = 120,
 					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 60,
@@ -1322,9 +1398,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "1 box of precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Precision Parts, x10"] = {
-				results = {
-					{"ent_jack_gmod_ezprecparts", 1, 10}
-				},
+				results = {"ent_jack_gmod_ezprecparts", 1, 10},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 2,
@@ -1337,9 +1411,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "10 precision parts used for use in high-powered machines and weapons."
 			},
 			["EZ Advanced Parts, x50"] = {
-				results = {
-					{"ent_jack_gmod_ezadvparts", 1, 50}
-				},
+				results = {"ent_jack_gmod_ezadvparts", 1, 50},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 100,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 40,
@@ -1351,9 +1423,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				description = "50 Advanced Parts for use in hyper-advanced technology"
 			},
 			["EZ Advanced Parts, x5"] = {
-				results = {
-					{"ent_jack_gmod_ezadvparts", 1, 5}
-				},
+				results = {"ent_jack_gmod_ezadvparts", 1, 5},
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
 					[JMod.EZ_RESOURCE_TYPES.GOLD] = 4,
@@ -1764,8 +1834,9 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 80
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 50
 				},
+				noRequirementScaling = true,
 				category = "Tools",
 				craftingType = {"craftingtable", "workbench"},
 				description = "Build, Upgrade, Salvage. All you need to build the big machines."
@@ -1892,6 +1963,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "workbench",
 				description = "Frag nade, for sending hundreds of fragments into your enemy."
 			},
+			["EZ Criticality Weapon"] = {
+				results = "ent_jack_gmod_ezcriticalityweapon",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL] = 25,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 100
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "workbench",
+				description = "They say Slotin was often in his trademark blue jeans and cowboy boots..."
+			},
 			["EZ Road Flare"] = {
 				results = "ent_jack_gmod_ezroadflare",
 				craftingReqs = {
@@ -2014,7 +2098,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				sizeScale = 1,
 				category = "Other",
-				craftingType = {"toolbox", "workbench", "crafting table"},
+				craftingType = {"toolbox", "workbench", "craftingtable"},
 				description = "A sleeping bag you can set your spawn point at."
 			},
 			["EZ Ballistic Mask"] = {
@@ -2407,7 +2491,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 20
 				},
 				category = "Apparel",
-				craftingType = "workbench",
+				craftingType = {"workbench", "craftingtable"},
 				description = "Handy bags for carrying some extra bits and pieces."
 			},
 			["EZ Medical Supplies"] = {
@@ -2648,6 +2732,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					print("JMOD: config file loaded")
 				else
 					file.Write("jmod_config_old.txt", FileContents)
+					print("JMOD: old config version: " .. tostring(Existing.Info.Version) .. ", new config version: " .. tostring(NewConfig.Info.Version))
 					print("JMOD: config versions do not match, writing old config to 'jmod_config_old.txt'...")
 				end
 			else
@@ -2704,6 +2789,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Ent:Spawn()
 		Ent:Activate()
 	end
+	JMod.LuaConfig.BuildFuncs.spawnHL2airboat = function(playa, position, angles)
+		local Ent = ents.Create("prop_vehicle_airboat")
+		Ent:SetModel("models/airboat.mdl")
+		Ent:SetKeyValue("vehiclescript", "scripts/vehicles/airboat.txt")
+		Ent:SetPos(position)
+		Ent:SetAngles(angles)
+		JMod.SetEZowner(Ent, playa)
+		Ent:Spawn()
+		Ent:Activate()
+	end
 	JMod.LuaConfig.BuildFuncs.EZnail = function(playa, position, angles)
 		JMod.Nail(playa)
 	end
@@ -2712,6 +2807,21 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	end
 	JMod.LuaConfig.BuildFuncs.EZbox = function(playa, position, angles)
 		JMod.Package(playa)
+	end
+	JMod.LuaConfig.BuildFuncs.EZrope = function(playa, position, angles)
+		JMod.Rope(playa, nil, nil, 2, 5000, "cable/rope")
+		playa.EZropeData = nil
+	end
+	JMod.LuaConfig.BuildFuncs.EZcable = function(playa, position, angles)
+		local Rope, Ent = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
+		--[[if IsValid(Rope) and IsValid(Ent) and (Ent.EZpowerProducer or (Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
+			table.insert(Ent.EZconnections, {Ent = Ent, Cable = Rope})
+		end--]]
+		playa.EZropeData = nil
+	end
+	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)
+		JMod.Rope(playa, nil, nil, 2, 50000, "cable/mat_jack_gmod_chain")
+		playa.EZropeData = nil
 	end
 
 	SetArmorPlayerModelModifications()
@@ -2801,6 +2911,8 @@ hook.Add("Initialize", "JMOD_Initialize", function()
 	end
 end)
 
+local RopeCostList = {["FUNC EZrope"] = 64, ["FUNC EZcable"] = 64, ["FUNC EZchain"] = 64}
+
 hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, buildInfo)
 	if (buildInfo.results == "FUNC EZnail") and not JMod.FindNailPos(playa) then return false, "No applicable nail pos" end
 	if (buildInfo.results == "FUNC EZbolt") and not JMod.FindBoltPos(playa) then return false, "No applicable bolt pos" end
@@ -2808,5 +2920,20 @@ hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, build
 		local _, Message = JMod.GetPackagableObject(playa) 
 		
 		return false, Message 
+	end
+	if (RopeCostList[buildInfo.results]) then
+		local RopeTr = util.QuickTrace(playa:GetShootPos(), (playa:GetAimVector() * 80), {playa})
+		if not(RopeTr.Hit) then 
+			playa.EZropeData = nil
+
+			return false, "No applicible cable pos" 
+		end
+
+		if not(playa.EZropeData) or not IsValid(playa.EZropeData.Ent) then
+			playa.EZropeData = {Pos = RopeTr.HitPos, Ent = RopeTr.Entity}
+			return false, "Cable started"
+		end
+
+		return true, "Cable finished", math.Round(playa.EZropeData.Pos:Distance(RopeTr.HitPos) / RopeCostList[buildInfo.results])
 	end
 end)

@@ -3,7 +3,7 @@ AddCSLuaFile()
 SWEP.PrintName = "EZ Shovel"
 SWEP.Author = "Jackarunda"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezpickaxe")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezshovel")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
@@ -13,10 +13,10 @@ SWEP.ViewModel = "models/weapons/hl2meleepack/v_shovel.mdl"
 SWEP.WorldModel = "models/props_junk/shovel01a.mdl"
 SWEP.BodyHolsterModel = "models/props_junk/shovel01a.mdl"
 SWEP.BodyHolsterSlot = "back"
-SWEP.BodyHolsterAng = Angle(-93, 0, 10)
-SWEP.BodyHolsterAngL = Angle(-93, 0, 0)
-SWEP.BodyHolsterPos = Vector(3, -24, -3)
-SWEP.BodyHolsterPosL = Vector(4, -24, 3)
+SWEP.BodyHolsterAng = Angle(-85, 0, 90)
+SWEP.BodyHolsterAngL = Angle(-93, 0, 90)
+SWEP.BodyHolsterPos = Vector(3, -10, -3)
+SWEP.BodyHolsterPosL = Vector(4, -10, 3)
 SWEP.BodyHolsterScale = .75
 SWEP.ViewModelFOV = 50
 SWEP.Slot = 0
@@ -64,14 +64,14 @@ SWEP.VElements = {
 }
 
 SWEP.WElements = {
-	["pickaxe"] = {
+	["shovel"] = {
 		type = "Model",
-		model = "models/props_mining/pickaxe01.mdl",
+		model = "models/props_junk/shovel01a.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
 		rel = "",
-		pos = Vector(3.4, .4, 8),
-		angle = Angle(180, -10, 6),
-		size = Vector(0.75, 0.75, 0.75),
+		pos = Vector(5, 2.3, -12),
+		angle = Angle(0, 180, 5),
+		size = Vector(1, 1, 1),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
@@ -172,6 +172,11 @@ function SWEP:PrimaryAttack()
 	self:Pawnch(Hit)
 end
 
+local DirtTypes = {
+	MAT_DIRT,
+	MAT_SAND
+}
+
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
@@ -231,14 +236,14 @@ function SWEP:Hitscan()
 						end)
 						SafeRemoveEntityDelayed(tr.Entity, 0.1)
 					end
-				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 1)
+				elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 2)
 
 					if Message then
 						if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 							self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 							self:SetTaskProgress(100)
-							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, 2, self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
+							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
 						else
 							self:Msg(Message)
 							self:SetTaskProgress(0)

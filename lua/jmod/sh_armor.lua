@@ -1047,6 +1047,19 @@ function JMod.DepleteArmorChemicalCharge(ply, amt)
 	end
 end
 
+hook.Add("SetupMove", "JMOD_SLEEP", function(ply, mvd, cmd)
+	if not(ply:Alive()) then ply.JMod_IsSleeping = false return end
+	local Time = CurTime()
+	local Veh = ply:GetVehicle()
+	if not((cmd:GetMouseX() < 10) and (cmd:GetMouseY() < 10) and (cmd:GetButtons() == 0) and IsValid(Veh) and IsValid(Veh:GetParent()) and Veh:GetParent().EZrespawnPoint) then
+		ply.JModLastLookMoveTime = Time
+	end
+	if (Time - ply.JModLastLookMoveTime) > 15 then
+		ply.JMod_IsSleeping = true
+	else
+		ply.JMod_IsSleeping = false
+	end
+end)
 
 hook.Add("SetupMove", "JMOD_DISABLE_JUMP", function(ply, mvd, cmd)
 	if mvd:KeyDown(IN_JUMP) and (ply.EZImmobilizationTime and (ply.EZImmobilizationTime > CurTime())) then

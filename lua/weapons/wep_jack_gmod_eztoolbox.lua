@@ -319,14 +319,18 @@ function SWEP:BuildItem(selectedBuild)
 	local Reqs = table.FullCopy(BuildInfo.craftingReqs)
 
 	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
-		local override, msg = hook.Run("JMod_CanKitBuild", self.Owner, self, BuildInfo)
+		local override, msg, mult = hook.Run("JMod_CanKitBuild", self.Owner, self, BuildInfo)
 
-		if override == false then
+		if override ~= nil and override == false then
 			self:Msg(msg or "cannot build")
 
 			return
+		elseif mult and not(JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self, nil, mult)) then
+			self:Msg("Insufficient resources to finish build")
+
+			return
 		end
-		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self)
+		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self, false, nil, mult or 1)
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
@@ -347,7 +351,7 @@ function SWEP:BuildItem(selectedBuild)
 							if JMod.LuaConfig and JMod.LuaConfig.BuildFuncs and JMod.LuaConfig.BuildFuncs[FuncName] then
 								JMod.LuaConfig.BuildFuncs[FuncName](self.Owner, Pos + Norm * 10 * (BuildInfo.sizeScale or 1), Angle(0, self.Owner:EyeAngles().y, 0))
 							else
-								print("JMOD TOOLBOX ERROR: garrysmod/jmod/lua/jmod/sv_config.lua-JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
+								print("JMOD TOOLBOX ERROR: JMod.LuaConfig is missing, corrupt, or doesn't have an entry for that build function")
 							end
 						else
 							local Ent
@@ -492,9 +496,21 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
 	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 }, self) then
-		JMod.ConsumeResourcesInRange({
-			[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
-		}, nil, nil, self)
+		local ChangedSomething = false
+		if ammoType ~= ent:GetAmmoType() then
+			ChangedSomething = true
+		else
+			for k, v in pairs(tbl) do
+				if ent.ModPerfSpecs[k] ~= v then
+					ChangedSomething = true
+				end
+			end
+		end
+		if ChangedSomething then
+			JMod.ConsumeResourcesInRange({
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
+			}, nil, nil, self)
+		end
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
@@ -528,7 +544,7 @@ function SWEP:UpgradeEntWithResource(recipient, donor, amt, resourceType)
 	local Msg = "UPGRADING\n"
 
 	for typ, amount in pairs(RequiredSupplies) do
-		Msg = Msg .. typ .. ": " .. tostring(recipient.UpgradeProgress[typ] or 0) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
+		Msg = Msg .. typ .. ": " .. tostring(math.floor(recipient.UpgradeProgress[typ] or 0)) .. "/" .. tostring(RequiredSupplies[typ]) .. "\n"
 	end
 
 	self:Msg(Msg)

@@ -24,49 +24,34 @@ ENT.Hint = "eat"
 if SERVER then
 
 	function ENT:AltUse(ply)
-		ply.EZnutrition = ply.EZnutrition or {
-			NextEat = 0,
-			Nutrients = 0
-		}
-
-		local Time = CurTime()
-
-		if ply.EZnutrition.NextEat < Time then
-			if ply.EZnutrition.Nutrients < 100 then
-				for i = 0, 3 do
-					timer.Simple(i / 4, function()
-						if IsValid(ply) then
-							if math.random(1, 2) == 1 then
-								ply:EmitSound("snd_jack_eat" .. tostring(math.random(1, 9)) .. ".wav", 75, math.Rand(90, 110))
-							else
-								ply:EmitSound("snd_jack_drink" .. tostring(math.random(1, 2)) .. ".wav", 75, math.Rand(90, 110))
-							end
+		if not IsValid(ply) then return end
+		local AmtToRemove = math.min(10, self:GetResource())
+		if JMod.ConsumeNutrients(ply, AmtToRemove * 2) then
+			for i = 0, 3 do
+				timer.Simple(i / 4, function()
+					if IsValid(ply) then
+						if math.random(1, 2) == 1 then
+							ply:EmitSound("snd_jack_eat" .. tostring(math.random(1, 9)) .. ".wav", 75, math.Rand(90, 110))
+						else
+							ply:EmitSound("snd_jack_drink" .. tostring(math.random(1, 2)) .. ".wav", 75, math.Rand(90, 110))
 						end
-					end)
-				end
-
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
-				local AmtToRemove = math.min(10, self:GetResource())
-				self:SetResource(self:GetResource() - AmtToRemove)
-
-				JMod.ConsumeNutrients(ply, AmtToRemove * 2)
-
-				if self:GetResource() <= 0 then
-					self:Remove()
-				end
-
-				if ply.EZvirus and ply.EZvirus.Severity > 1 then
-					if ply.EZvirus.InfectionWarned then
-						ply:PrintMessage(HUD_PRINTCENTER, "immune system boosted")
 					end
-
-					ply.EZvirus.Severity = math.Clamp(ply.EZvirus.Severity - 10, 1, 9e9)
-				end
-			else
-				JMod.Hint(activator, "nutrition filled")
+				end)
 			end
-		else
-			JMod.Hint(activator, "can not eat")
+			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
+			self:SetResource(self:GetResource() - AmtToRemove)
+
+			if self:GetResource() <= 0 then
+				self:Remove()
+			end
+
+			if ply.EZvirus and ply.EZvirus.Severity > 1 then
+				if ply.EZvirus.InfectionWarned then
+					ply:PrintMessage(HUD_PRINTCENTER, "immune system boosted")
+				end
+
+				ply.EZvirus.Severity = math.Clamp(ply.EZvirus.Severity - 10, 1, 9e9)
+			end
 		end
 	end
 elseif CLIENT then

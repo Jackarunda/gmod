@@ -1,10 +1,22 @@
 ﻿local MskSndLops, MaskMats = {}, {}
 
+local function FindPlyMemory()
+	local files, folders = file.Find("screenshots/*.jpg", "MOD")
+	if not(files) then return nil end
+	return Material("../screenshots/"..tostring(table.Random(files)))
+end
+
+local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
+--local NightmareGnome = ents.CreateClientProp("models/props_junk/gnome.mdl")
+local NextMemTime, CurrentMemory, TimeToDisplay = 0, nil, 12
+local WasSleepy = false
 local ColorableVignette = Material("mats_jack_gmod_sprites/hard_vignette_colorable.png")
 local CurrentBleed = 0
 hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 	local ply, Play = LocalPlayer(), false
+	local W, H, FT = ScrW(), ScrH(), FrameTime()
 	local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
+	local Wakin = ply.JMod_RequiredWakeAmount or 0
 
 	if ply.EZarmor then
 
@@ -42,13 +54,12 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 
 	local TargetBleed = ply.EZbleeding or 0--(math.sin(CurTime())+1)/2*100
 	if Alive and (TargetBleed > 0) and not(ThirdPerson) then
-		local W, H = ScrW(), ScrH()
 		surface.SetDrawColor(156, 0, 21)
 		surface.SetMaterial(ColorableVignette)
 		local Vscale = (CurrentBleed)/50
 		surface.DrawTexturedRect(-W/2/Vscale, -H/2/Vscale, W+W/Vscale, H+H/Vscale)
 		--jprint(math.Round(TargetBleed), math.Round(CurrentBleed), Vscale)
-		CurrentBleed = Lerp(FrameTime(), CurrentBleed, TargetBleed)
+		CurrentBleed = Lerp(FT, CurrentBleed, TargetBleed)
 	end
 
 	if not Play then
@@ -56,6 +67,46 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 			v:Stop()
 			MskSndLops[k] = nil
 		end
+	end
+
+	if Alive and ((Wakin > 0) or ply.JMod_IsSleeping) then
+		local Time = CurTime()
+		render.SetColorModulation(255, 255, 255)
+		render.SetMaterial(BlackFadeTop)
+		render.DrawScreenQuadEx(- W, - H + Wakin / 100 * H, W * 2, H)
+		render.SetMaterial(BlackFadeBottom)
+		render.DrawScreenQuadEx(- W, H - Wakin / 100 * H, W * 2, H)
+		
+		if ply.JMod_IsSleeping then
+			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin + FT * 100, 0, 100)
+			if not WasSleepy then
+				WasSleepy = true
+				NextMemTime = Time + 1--TimeToDisplay * 1.5
+				CurrentMemory = nil
+			end
+		else
+			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin - FT * 100, 0, 100)
+			if WasSleepy then
+				WasSleepy = false
+				CurrentMemory = nil
+			end
+		end
+		
+		if (NextMemTime < Time) then
+			NextMemTime = Time + TimeToDisplay
+			CurrentMemory = FindPlyMemory()
+		end
+		if CurrentMemory then
+			surface.SetMaterial(CurrentMemory)
+			surface.SetDrawColor(255, 255, 255, (math.sin(((NextMemTime - Time) - TimeToDisplay / 4) * (2 * math.pi) / TimeToDisplay) / 2 + .4)^.2 * 100)
+			surface.DrawTexturedRect(0, 0, W, H)
+			surface.SetDrawColor(0, 0, 0, 240)
+			surface.SetMaterial(ColorableVignette)
+			surface.DrawTexturedRect(0, 0, W, H)
+			surface.SetAlphaMultiplier(1)
+		end
+	else
+		WasSleepy = false
 	end
 end)
 
@@ -125,12 +176,10 @@ end
 
 local RavebreakColors = {Color(255, 0, 0), Color(0, 255, 0), Color(0, 0, 255), Color(0, 255, 255), Color(255, 0, 255), Color(255, 255, 0)}
 local NextRavebreakBeat, CurRavebreakColor, CurRavebreakLightPos = 0, math.random(1, 6), Vector(0, 0, 0)
-local BlackFadeTop, BlackFadeBottom = Material("png_jack_gmod_blackfadetop.png"), Material("png_jack_gmod_blackfadebottom.png")
 
 hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 	local ply, FT, SelfPos, Time, W, H = LocalPlayer(), FrameTime(), EyePos(), CurTime(), ScrW(), ScrH()
 	local AimVec, FirstPerson, Ravebreakin = ply:GetAimVector(), not ply:ShouldDrawLocalPlayer(), ply.JMod_RavebreakEndTime and ply.JMod_RavebreakEndTime > Time and ply.JMod_RavebreakStartTime < Time
-	local Wakin = ply.JMod_RequiredWakeAmount or 0
 	local Alive, BlurFadeAmt = ply:Alive(), ply.EZvisionBlurFadeAmt or 2
 
 	--CreateClientLag(10000) -- for debugging the effect at low framerates
@@ -284,15 +333,6 @@ hook.Add("RenderScreenspaceEffects", "JMOD_SCREENSPACE", function()
 			if ply.EZflashbanged <= 0 then
 				ply.EZflashbanged = nil
 			end
-		end
-
-		if Alive and (Wakin > 0) then
-			surface.SetDrawColor(255, 255, 255, 255)
-			surface.SetMaterial(BlackFadeTop)
-			surface.DrawTexturedRect(- W, - H + Wakin / 100 * H, W * 2, H)
-			surface.SetMaterial(BlackFadeBottom)
-			surface.DrawTexturedRect(- W, H - Wakin / 100 * H, W * 2, H)
-			ply.JMod_RequiredWakeAmount = math.Clamp(Wakin - FT * 100, 0, 100)
 		end
 	end
 

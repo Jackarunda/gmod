@@ -229,7 +229,7 @@ if SERVER then
 	function ENT:MakeSide(pos, ang, dir)
 		local Side = ents.Create("prop_physics")
 		Side:SetModel("models/hunter/plates/plate1x1.mdl")
-		Side:SetMaterial(self:GetMaterial())
+		Side:SetMaterial((self.Chrimsas and self:GetMaterial()) or "models/mat_jack_aidboxside")
 		Side:SetColor(Color(200, 200, 200, 255))
 		Side:SetPos(pos)
 		Side:SetAngles(ang)

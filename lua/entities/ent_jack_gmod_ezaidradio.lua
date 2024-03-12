@@ -193,20 +193,22 @@ if(SERVER)then
 	end
 
 	function ENT:Connect(ply, reassign)
-		if not ply then return end
 		local Team = 0
-
-		if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
-			Team = ply:AccountID()
-		else
-			Team = ply:Team()
+		if IsValid(ply) then
+			if engine.ActiveGamemode() == "sandbox" and ply:Team() == TEAM_UNASSIGNED then
+				Team = ply:AccountID()
+			else
+				Team = ply:Team()
+			end
 		end
 
 		local OldID = self:GetOutpostID()
 		JMod.EZradioEstablish(self, tostring(Team), reassign) -- we store team indices as strings because they might be huge (if it's a player's acct id)
 		local OutpostID = self:GetOutpostID()
 		local Station = JMod.EZ_RADIO_STATIONS[OutpostID]
-		self:SetState(Station.state)
+		if Station then
+			self:SetState(Station.state)
+		end
 
 		timer.Simple(1, function()
 			if IsValid(self) then
@@ -237,18 +239,18 @@ if(SERVER)then
 					self:Connect(self.EZowner)
 				else
 					JMod.Hint(JMod.GetEZowner(self), "aid sky")
-					self.ConnectionAttempts = self.ConnectionAttempts + 1
+				end
+				self.ConnectionAttempts = self.ConnectionAttempts + 1
 
 					if self.ConnectionAttempts > 5 then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
 
-						timer.Simple(1, function()
+						timer.Simple(1.2, function()
 							if IsValid(self) then
 								self:TurnOff()
 							end
 						end)
 					end
-				end
 			elseif State > 0 then
 				self:ConsumeElectricity(0.3)
 
@@ -332,7 +334,7 @@ if(SERVER)then
 	end
 
 	function ENT:EZreceiveSpeech(ply, txt)
-		if self:WaterLevel() > 3 then return end
+		if self:WaterLevel() > 3 then return false end
 		local State = self:GetState()
 		if State < 2 then return false end
 
@@ -419,6 +421,14 @@ if(SERVER)then
 				self:Speak(JMod.EZradioRequest(self, self:GetOutpostID(), ply, Message, BFFreq), ParrotPhrase, ply)
 
 				SuccessfulTransmit = true
+			else
+				local Override, Words = hook.Run("JMod_CanRadioRequest", self, ply, Message)
+				if Override then
+					SuccessfulTransmit = Override
+					self:Speak(Words or "transmition recieved", ParrotPhrase, ply)
+				else
+					self:Speak("I don't understand. Try 'help'", ParrotPhrase, ply)
+				end
 			end
 		end
 
@@ -460,7 +470,7 @@ elseif(CLIENT)then
 
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
-		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		---
 		local BasePos = SelfPos + Up * 32
 

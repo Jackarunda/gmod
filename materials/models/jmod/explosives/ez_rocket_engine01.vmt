@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/explosives/ez_rocket_engine01
+	$surfaceprop	cardboard
+	$nocull			1
+}

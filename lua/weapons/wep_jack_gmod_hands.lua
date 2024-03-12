@@ -130,9 +130,10 @@ function SWEP:CanPickup(ent)
 	if ent:IsWorld() then return false end
 --	if ent:GetParent() then return false end
 	local class = ent:GetClass()
-	if pickupWhiteList[class] then return true end
+--	if pickupWhiteList[class] then return true end
 	if CLIENT then return true end
-	if IsValid(ent:GetPhysicsObject()) then return true end
+	if ent:IsPlayerHolding() then return false end
+	if IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject():IsMotionEnabled() then return true end
 
 	return false
 end
@@ -243,7 +244,16 @@ function SWEP:SetCarrying(ent, bone, pos, dist)
 		else
 			self.CarryPos = nil
 		end
+		--[[hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(self.CarryEnt:EntIndex()), function(target, dmginfo)
+			if (target == self.Owner) and (dmginfo:GetInflictor() == self.CarryEnt) and (dmginfo:GetDamageType() == DMG_CRUSH) then
+				return true
+			end
+		end)--]]
 	else
+		--[[if IsValid(self.CarryEnt) then
+			local Index = self.CarryEnt:EntIndex()
+			hook.Remove("EntityTakeDamage", "CancelDamageFromCarryEnt"..tostring(Index))
+		end--]]
 		self.CarryEnt = nil
 		self.CarryBone = nil
 		self.CarryPos = nil
@@ -309,7 +319,6 @@ end
 
 function SWEP:PrimaryAttack()
 	if SERVER then
-		JMod.Hint(self.Owner, "hands salvage")
 		local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt and self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") and IsFirstTimePredicted() then
@@ -323,42 +332,6 @@ function SWEP:PrimaryAttack()
 				return
 			end
 		end
-		--[[if IsValid(self:GetCarrying()) then
-			local PhysObj = self.CarryEnt:GetPhysicsObject()
-			self:SetNextPrimaryFire(CurTime() + .35)
-
-			if IsValid(PhysObj) then
-				if (PhysObj:GetMass() > 35) then
-					self.Owner:PrintMessage(HUD_PRINTCENTER, "You can't salvage this with your bare hands")
-					return
-				end
-				local CraftingTableNear = false
-				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezprimitivebench")) do
-					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
-				end
-				for _, v in ipairs(ents.FindByClass("ent_jack_gmod_ezworkbench")) do
-					if v:GetPos():Distance(self.Owner:GetShootPos()) <= 100 then CraftingTableNear = true break end
-				end
-				if not(CraftingTableNear) then self.Owner:PrintMessage(HUD_PRINTCENTER, "You need to be closer to a craftingtable or workbench") return end
-
-				Pos = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * (self.CarryDist+5), {self.Owner}).HitPos
-				local Task = (Alt and "loosen") or "salvage"
-				local Message = JMod.EZprogressTask(self.CarryEnt, Pos, self.Owner, Task)
-
-				if Message then
-					self.Owner:PrintMessage(HUD_PRINTCENTER, Message)
-				else
-					sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
-					if SERVER then
-						self:SetTaskProgress(self.CarryEnt:GetNW2Float("EZ"..Task.."Progress", 0))
-					end
-				end
-			end
-
-			return
-		else
-			self:SetTaskProgress(0)
-		end--]]
 	end
 
 	local side = "fists_left"
@@ -510,3 +483,15 @@ if CLIENT then
 		return pos, ang
 	end
 end
+
+-- Stop carry entity from damaging the player
+hook.Add("EntityTakeDamage", "CancelDamageFromCarryEnt", function(target, dmginfo)
+	if target:IsPlayer() then 
+		local Weppy = target:GetActiveWeapon() 
+		if IsValid(Weppy) and IsValid(Weppy.CarryEnt) then
+			if (dmginfo:GetInflictor() == Weppy.CarryEnt) and (dmginfo:GetDamageType() == DMG_CRUSH) then
+				return true
+			end
+		end
+	end
+end)

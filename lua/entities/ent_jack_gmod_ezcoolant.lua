@@ -8,8 +8,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.COOLANT
-ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/jmod/resources/coolant_bottle.mdl"
+ENT.JModPreferredCarryAngles = Angle(0, 90, 0)
+ENT.Model = "models/jmod/resources/coolantbottle.mdl"
 ENT.Material = "models/shiny"
 ENT.Color = Color(50, 120, 180)
 ENT.ModelScale = 1
@@ -34,7 +34,7 @@ elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
 
-		JMod.HoloGraphicDisplay(self, drawvec, drawang, .04, 300, function()
+		JMod.HoloGraphicDisplay(self, Vector(-5.1, 0, 0), Angle(180, 0, 90), .04, 300, function()
 			JMod.StandardResourceDisplay(JMod.EZ_RESOURCE_TYPES.COOLANT, self:GetResource(), nil, 0, 0, 200, true)
 		end)
 	end

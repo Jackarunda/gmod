@@ -1,5 +1,5 @@
 ﻿-- EZ Radio Code --
-local NotifyAllMsgs = {
+JMod.NotifyAllMsgs = {
 	["normal"] = {
 		["good drop"] = "good drop, package away, returning to base",
 		["drop failed"] = "drop failed, pilot could not locate a good drop position for the reported coordinates. Aircraft is RTB",
@@ -53,9 +53,9 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 					radio:Speak(msgID)
 				else
 					if radio.BFFd then
-						radio:Speak(NotifyAllMsgs["bff"][msgID])
+						radio:Speak(JMod.NotifyAllMsgs["bff"][msgID])
 					else
-						radio:Speak(NotifyAllMsgs["normal"][msgID])
+						radio:Speak(JMod.NotifyAllMsgs["normal"][msgID])
 					end
 				end
 			end
@@ -65,7 +65,7 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 	end
 end
 
-local function FindDropPosFromSignalOrigin(origin)
+function JMod.FindDropPosFromSignalOrigin(origin)
 	local Height, Attempts, Pos, AcceptTFVonly = 0, 0, origin + Vector(0, 0, 200), false
 
 	while (Attempts < 1000) and not (Height > 5000) do
@@ -112,7 +112,7 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 			if station.nextDeliveryTime < Time then
 				station.nextReadyTime = Time + math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60) * 3)
 				station.state = JMod.EZ_STATION_STATE_BUSY
-				local DropPos = FindDropPosFromSignalOrigin(station.deliveryLocation)
+				local DropPos = JMod.FindDropPosFromSignalOrigin(station.deliveryLocation)
 
 				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", stationID, DropPos)
 
@@ -236,7 +236,6 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		local bestradio = nil
 		
 		for _, v in ipairs(FindEZradios()) do
-			print(v, v:GetPos():DistToSqr(ply:GetPos()))
 			if v:UserIsAuthorized(ply) and (not(bestradio) or (bestradio:GetPos():DistToSqr(ply:GetPos()) > v:GetPos():DistToSqr(ply:GetPos()))) then
 				if (v.GetState and v:GetState() == JMod.EZ_STATION_STATE_READY) then
 					bestradio = v
@@ -248,7 +247,7 @@ hook.Add("PlayerSay", "JMod_PLAYERSAY", function(ply, txt)
 		if bestradio and bestradio:EZreceiveSpeech(ply, txt) then 
 
 			return "" 
-		elseif not(bestradio) and (ExplodedString[1] == "supply") and (ExplodedString[2] == "radio:") then
+		elseif not(bestradio) and ((ExplodedString[1] == "supply") or (ExplodedString[1] == "aid")) and (ExplodedString[2] == "radio:") then
 
 			ply:PrintMessage(HUD_PRINTCENTER, "No good radios in range")
 		end
@@ -264,12 +263,15 @@ function JMod.EZradioEstablish(transceiver, teamID, reassign)
 		end
 	end
 
-	if #AlliedStations <= 0 then
-		table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
-		table.insert(AlliedStations, #JMod.EZ_RADIO_STATIONS)
+	local MinimumOutposts = JMod.Config.RadioSpecs.StartingOutpostCount or 0
+	if #AlliedStations < MinimumOutposts then
+		for i = 1, MinimumOutposts - #AlliedStations do
+			table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
+			table.insert(AlliedStations, #JMod.EZ_RADIO_STATIONS)
+		end
 	end
 
-	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), nil
+	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), 0
 
 	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) then
 		if JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY then
@@ -397,7 +399,7 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 		Punish = tobool(args[2])
 	end
 
-	local DropPos = FindDropPosFromSignalOrigin(TargetPos)
+	local DropPos = JMod.FindDropPosFromSignalOrigin(TargetPos)
 
 	if DropPos then
 		TargetPly:ExitVehicle()
@@ -493,10 +495,10 @@ local function StartDelivery(pkg, transceiver, id, bff, ply)
 	Station.lastCaller = transceiver
 	local Time = CurTime()
 	local DeliveryTime, Pos = math.ceil(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60)), ply:GetPos()
-	local newTime, newPos = hook.Run("JMod_RadioDelivery", transceiver.EZowner, transceiver, pkg, DeliveryTime, Pos)
+	local newTime, newPos = hook.Run("JMod_RadioDelivery", ply, transceiver, pkg, DeliveryTime, Pos)
 	DeliveryTime = newTime or DeliveryTime
 	Pos = newPos or Pos
-	JMod.Hint(transceiver.EZowner, "aid wait")
+	JMod.Hint(ply, "aid wait")
 	Station.state = JMod.EZ_STATION_STATE_DELIVERING
 	Station.nextDeliveryTime = Time + DeliveryTime
 	Station.deliveryLocation = Pos

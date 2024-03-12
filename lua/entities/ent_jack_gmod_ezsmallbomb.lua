@@ -116,16 +116,17 @@ if SERVER then
 			if IsValid(Att) and (self.DropOwner == Att) then return end
 		end
 
-		self.Entity:TakePhysicsDamage(dmginfo)
-
-		if JMod.LinCh(dmginfo:GetDamage(), 60, 120) then
+		if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
 			local Pos, State = self:GetPos(), self:GetState()
 
-			if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
+			if State == STATE_ARMED and not(dmginfo:IsBulletDamage()) then
 				JMod.SetEZowner(self, dmginfo:GetAttacker())
 				self:Detonate()
+			else
+				self:Break()
 			end
 		end
+		self.Entity:TakePhysicsDamage(dmginfo)
 	end
 
 	function ENT:Use(activator)

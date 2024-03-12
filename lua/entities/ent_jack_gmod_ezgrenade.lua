@@ -18,6 +18,9 @@ ENT.SpoonEnt = "ent_jack_spoon"
 ENT.SpoonModel = nil
 ENT.SpoonScale = nil
 ENT.SpoonSound = nil
+ENT.PinBodygroup = {1, 1} -- Body group to change to when we unpin the grenade
+ENT.SpoonBodygroup = {2, 1} -- Body group to change to when we release the spoon
+ENT.DetDelay = nil -- Delay before detonation
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.JModEZstorable = true
 
@@ -209,15 +212,27 @@ if SERVER then
 	end
 
 	function ENT:Prime()
+		if (self:GetState() ~= JMod.EZ_STATE_OFF) then return end
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self:EmitSound("weapons/pinpull.wav", 60, 100)
-		self:SetBodygroup(1, 1)
+		if self.PinBodygroup then self:SetBodygroup(self.PinBodygroup[1], self.PinBodygroup[2]) end
 	end
 
 	function ENT:Arm()
-		self:SetBodygroup(2, 1)
+		if (self:GetState() == JMod.EZ_STATE_ARMED) then return end
+		if self.SpoonBodygroup then self:SetBodygroup(self.SpoonBodygroup[1], self.SpoonBodygroup[2]) end
 		self:SetState(JMod.EZ_STATE_ARMED)
 		self:SpoonEffect()
+
+		if self.DetDelay then
+			timer.Simple(self.FuzeTimeOverride or self.DetDelay, function()
+				if IsValid(self) and self.Detonate then
+					self:Detonate()
+				end
+			end)
+		end
+
+		if self.OnArm then self:OnArm() end
 	end
 
 	function ENT:Detonate()

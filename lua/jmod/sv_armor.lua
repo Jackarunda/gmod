@@ -132,6 +132,7 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 
 			for armorSlot, coverage in pairs(ArmorInfo.slots) do
 				if (armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist") and (armorSlot == slot) then
+					if not(ArmorInfo.def) then break end
 					for damType, damProtection in pairs(ArmorInfo.def) do
 						if IsDamageThisType(dmg, damType) then
 							Protection = Protection + damProtection * coverage * protectionMul
@@ -339,30 +340,33 @@ hook.Add("ScaleNPCDamage", "JMod_ScaleNPCdamage", function(npc, hitgroup, dmginf
 end)
 
 hook.Add("EntityTakeDamage", "JMod_EntityTakeDamage", function(victim, dmginfo)
-	if victim:IsPlayer() and victim.EZarmor then
-		local Helf, IsPiercingDmg, Att = victim:Health(), IsDamageOneOfTypes(dmginfo, JMod.PiercingDmgTypes), dmginfo:GetAttacker()
-		local IsShit = bit.band(util.PointContents(victim:GetShootPos()), 268435472) == 268435472
-		local IsInSewage = (dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and IsShit
+	if victim:IsPlayer() then 
+		victim.JMod_IsSleeping = false
+		if victim.EZarmor then
+			local Helf, IsPiercingDmg, Att = victim:Health(), IsDamageOneOfTypes(dmginfo, JMod.PiercingDmgTypes), dmginfo:GetAttacker()
+			local IsShit = bit.band(util.PointContents(victim:GetShootPos()), 268435472) == 268435472
+			local IsInSewage = (dmginfo:IsDamageType(DMG_ACID) or dmginfo:IsDamageType(DMG_RADIATION)) and IsShit
 
-		if IsDamageOneOfTypes(dmginfo, JMod.LocationalDmgTypes) then
-			-- scaling handled in scaleplayerdamage
-		elseif IsDamageOneOfTypes(dmginfo, JMod.FullBodyDmgTypes) then
-			FullBodyDmgHandling(victim, dmginfo, false, IsInSewage)
-		elseif IsDamageOneOfTypes(dmginfo, JMod.BiologicalDmgTypes) then
-			FullBodyDmgHandling(victim, dmginfo, true, IsInSewage)
-		end
+			if IsDamageOneOfTypes(dmginfo, JMod.LocationalDmgTypes) then
+				-- scaling handled in scaleplayerdamage
+			elseif IsDamageOneOfTypes(dmginfo, JMod.FullBodyDmgTypes) then
+				FullBodyDmgHandling(victim, dmginfo, false, IsInSewage)
+			elseif IsDamageOneOfTypes(dmginfo, JMod.BiologicalDmgTypes) then
+				FullBodyDmgHandling(victim, dmginfo, true, IsInSewage)
+			end
 
-		if JMod.Config.QoL.BleedDmgMult > 0 and IsPiercingDmg then
-			timer.Simple(0, function()
-				local NewHelf = victim:Health()
-				local HelfLoss = Helf - NewHelf
+			if JMod.Config.QoL.BleedDmgMult > 0 and IsPiercingDmg then
+				timer.Simple(0, function()
+					local NewHelf = victim:Health()
+					local HelfLoss = Helf - NewHelf
 
-				if NewHelf > 0 and HelfLoss > 0 then
-					victim.EZbleeding = (victim.EZbleeding or 0) + HelfLoss * JMod.Config.QoL.BleedDmgMult
-					victim.EZbleedAttacker = Att
-					JMod.SyncBleeding(victim)
-				end
-			end)
+					if NewHelf > 0 and HelfLoss > 0 then
+						victim.EZbleeding = (victim.EZbleeding or 0) + HelfLoss * JMod.Config.QoL.BleedDmgMult
+						victim.EZbleedAttacker = Att
+						JMod.SyncBleeding(victim)
+					end
+				end)
+			end
 		end
 	end
 end)
@@ -464,7 +468,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if StowItems and not(table.IsEmpty(RemovedItems)) then
 		for _, v in ipairs(RemovedItems) do
 			timer.Simple(0, function()
-				JMod.AddToInventory(Ent, v)
+				local Success = JMod.AddToInventory(Ent, v)
 			end)
 		end
 	end
@@ -574,12 +578,14 @@ function JMod.EZ_Equip_Armor(ply, nameOrEnt)
 	end
 
 	if IsValid(nameOrEnt) and nameOrEnt.JModInv then
+		nameOrEnt.KeepJModInv = true
 		for _, v in ipairs(nameOrEnt.JModInv.items) do
 			JMod.AddToInventory(ply, v.ent)
 		end
 		for k, v in pairs(nameOrEnt.JModInv.EZresources) do
 			JMod.AddToInventory(ply, {k, v})
 		end
+		nameOrEnt.KeepJModInv = false
 	end
 
 	JMod.CalcSpeed(ply)

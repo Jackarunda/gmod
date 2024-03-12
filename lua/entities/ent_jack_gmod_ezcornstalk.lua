@@ -1,7 +1,7 @@
 ﻿-- AdventureBoots 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Corn"
+ENT.PrintName = "EZ Cornstalk"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Misc."
 ENT.Information = ""
@@ -14,7 +14,7 @@ ENT.SpawnHeight = 0
 ENT.EZconsumes = nil
 --
 ENT.StaticPerfSpecs = {
-	MaxWater = 100,
+	MaxWater = 50,
 	MaxDurability = 100
 }
 
@@ -22,21 +22,21 @@ if(SERVER)then
 	function ENT:CustomInit()
 		self.EZupgradable = false
 		self.Growth = 0
-		self.Hydration = self.Hydration or 100
+		self.Hydration = self.Hydration or 0
 		self.Helf = 100
 		self.LastWheatMat = ""
 		self.LastSubModel = 0
 		self.NextGrowThink = 0
-		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
-		self:UseTriggerBounds(true, 0)
+		self:GetPhysicsObject():SetMass(1)
+		if self.Mutated then self:Mutate() end
 	end
 
 	function ENT:Mutate()
 		if (self.Mutated) then return end
 		self.Mutated = true
-		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.EXPLOSIVES}
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.CHEMICALS}
 	end
 
 	function ENT:Destroy(dmginfo)
@@ -49,40 +49,22 @@ if(SERVER)then
 	end
 
 	function ENT:ProduceResource(destroyed)
-		local SpawnPos = Vector(0, 0, 100)
+		local SpawnPos = Vector(0, 0, 50)
 		if (self.Growth >= 66) then
-			--JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, 50, SpawnPos, Angle(0, 0, 0), nil, false)
-			if self.Mutated then
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.MUNITIONS, math.random(10, 30), SpawnPos, Angle(0, 0, 0), nil, false)
-			else
-				for i = 1, math.random(1, 3) do
-					local Corn = ents.Create("ent_jack_gmod_ezcornear")
-					Corn:SetPos(self:GetPos() + (SpawnPos*i) + VectorRand(-10, 10))
-					Corn:SetAngles(AngleRand())
-					Corn:Spawn()
-					Corn:Activate()
-				end
+			for i = 1, math.random(1, 3) do
+				local Corn = ents.Create("ent_jack_gmod_ezcornear")
+				Corn:SetPos(self:GetPos() + (SpawnPos*i) + VectorRand(-10, 10))
+				Corn:SetAngles(AngleRand())
+				Corn.Mutated = self.Mutated
+				Corn:Spawn()
+				Corn:Activate()
 			end
 		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
-			self:EmitSound("Dirt.Impact", 100, 80)
-			self:EmitSound("Dirt.Impact", 100, 80)
-			if IsValid(data.HitObject) then
-				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
-				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
-				local PhysDamage = TheirForce/(physobj:GetMass()*100)
-
-				if PhysDamage >= 1 then
-					local CrushDamage = DamageInfo()
-					CrushDamage:SetDamage(math.floor(PhysDamage))
-					CrushDamage:SetDamageType(DMG_CRUSH)
-					CrushDamage:SetDamagePosition(data.HitPos)
-					self:TakeDamageInfo(CrushDamage)
-				end
-			end
+		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
+			self:EmitSound("snds_jack_gmod/ez_foliage/plant_brush_" .. math.random(1, 12) .. ".wav", 65, math.random(90, 110), .8)
 		end
 	end
 
@@ -103,13 +85,8 @@ if(SERVER)then
 					self:SetAngles(HitAngle)--]]
 					self:SetAngles(Angle(0, math.random(0, 360, 0)))
 					self:SetPos(Tr.HitPos)
-					if Tr.Entity == game.GetWorld() then
-						self:GetPhysicsObject():EnableMotion(false)
-						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-					else
-						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-						self:GetPhysicsObject():Sleep()
-					end
+					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
+					self:GetPhysicsObject():Sleep()
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
@@ -120,7 +97,7 @@ if(SERVER)then
 
 	function ENT:Think()
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not(self:GetPhysicsObject():IsMotionEnabled()))) then self:Destroy() return end
+		if (self.EZinstalled and not(IsValid(self.GroundWeld))) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
@@ -148,11 +125,14 @@ if(SERVER)then
 					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
 				end
 				if self.Growth > 66 then
-					if (math.random(1, 2) == 1) then
+					--if (math.random(1, 2) == 1) then
 						local Leaf = EffectData()
 						Leaf:SetOrigin(SelfPos + Vector(0, 0, 100))
+						if (self.Mutated) then
+							Leaf:SetStart(Vector(131, 200, 70)) -- This is actually just a sneaky color
+						end
 						util.Effect("eff_jack_gmod_ezcorndust", Leaf, true, true)
-					end
+					--end
 				end
 				local WaterLoss = math.Clamp(1 - Water, .05, 1)
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
@@ -164,10 +144,10 @@ if(SERVER)then
 		--
 		if self.Mutated and (math.random(0, 2) == 1) then
 			local Target = self:FindTarget()
-			if (IsValid(Target)) then 
+			if (IsValid(Target) and not self:IsLocationBeingWatched(SelfPos)) then 
 				if (SelfPos:Distance(Target:GetPos()) <= 120) then 
-					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 5) == 1)) then 
-						JMod.FalloutIrradiate(self, Target)
+					if (JMod.ShouldDamageBiologically(Target) and (math.random(1, 10) == 1)) then 
+						self:Gas(Target)
 					end
 				else
 					local RandVec = Vector(math.random(-1, 1), math.random(-1, 1), 0) * 100
@@ -185,18 +165,34 @@ if(SERVER)then
 		return true
 	end
 
+	function ENT:Gas(obj)
+		local Dmg, Helf = DamageInfo(), obj:Health()
+		Dmg:SetDamageType(DMG_NERVEGAS)
+		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetInflictor(self)
+		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
+		Dmg:SetDamagePosition(obj:GetPos())
+		obj:TakeDamageInfo(Dmg)
+
+		if (obj:Health() < Helf) and obj:IsPlayer() then
+			JMod.Hint(obj, "gas damage")
+			JMod.TryCough(obj)
+		end
+	end
+
 	--[[ START GNOME CODE ]]--
 	function ENT:FindTarget()
 		local SelfPos = self:GetPos()
 		if IsValid(self.StalkTarget) then
 			return self.StalkTarget
 		else
-			local RandomTarg = nil--table.Random(player.GetAll())
-			for k, v in ipairs(ents.FindByClass("ent_jack_gmod_ezsprinkler")) do
+			local RandomTarg = table.Random(ents.FindByClass("ent_jack_gmod_ezsprinkler"))
+			for k, v in player.Iterator() do
 				if not(IsValid(RandomTarg)) then
 					RandomTarg = v
-				elseif v:GetPos():DistToSqr(RandomTarg:GetPos()) < SelfPos:DistToSqr(RandomTarg:GetPos()) then
+				elseif SelfPos:DistToSqr(RandomTarg:GetPos()) < SelfPos:DistToSqr(v:GetPos()) then
 					RandomTarg = v
+					break
 				end
 			end
 			self.StalkTarget = RandomTarg
@@ -229,7 +225,7 @@ if(SERVER)then
 		local NewGroundPos = self:FindGroundAt(NewPos)
 
 		if NewGroundPos then
-			if not self:IsLocationBeingWatched(NewGroundPos) then
+			if not self:IsLocationBeingWatched(NewGroundPos) and not self:IsLocationBeingWatched(SelfPos) then
 				if self:IsLocationClear(NewGroundPos) then
 					self:SnapTo(NewGroundPos)
 
@@ -261,6 +257,7 @@ if(SERVER)then
 	end
 
 	function ENT:SnapTo(pos)
+		constraint.RemoveAll(self)
 		local Yaw = (pos - self:GetPos()):GetNormalized():Angle().y
 		self:SetPos(pos)
 		self:SetAngles(Angle(0, Yaw, 0))
@@ -288,8 +285,14 @@ if(SERVER)then
 						filter = {self, obs},
 						mask = MASK_SHOT - CONTENTS_WINDOW
 					})
+					local Tr2 = util.TraceLine({
+						start = pos + Vector(0, 0, 50),
+						endpos = ObsPos,
+						filter = {self, obs},
+						mask = MASK_SHOT - CONTENTS_WINDOW
+					})
 
-					if not Tr.Hit then return true end
+					if not Tr.Hit and not Tr2.Hit then return true end
 				end
 			end
 		end
@@ -321,11 +324,9 @@ if(SERVER)then
 		end
 
 		if (self.Hydration < 30) then
-			NewCornMat = "corn01t_d"
-		elseif (self.Hydration < 60) then
-			NewCornMat = "cornv81t_d"
+			NewCornMat = "cornstalkdry"
 		else
-			NewCornMat = "cornv81t_d"
+			NewCornMat = "cornstalk"
 		end
 
 		if (self.Helf < 25) then
@@ -334,7 +335,7 @@ if(SERVER)then
 
 		if self.Mutated then
 			CornColor = Color(180, 184, 145)
-			NewCornMat = "corn01t_d"
+			NewCornMat = "cornstalk"
 		end
 		if CornColor then
 			self:SetColor(CornColor)

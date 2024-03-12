@@ -71,7 +71,7 @@ if SERVER then
 			util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 		end
 
-		self:Remove()
+		SafeRemoveEntityDelayed(self, 0)
 	end
 elseif CLIENT then
 	function ENT:Draw()

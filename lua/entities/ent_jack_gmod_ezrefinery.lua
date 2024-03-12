@@ -61,6 +61,7 @@ if(SERVER)then
 			JMod.Hint(activator, "need oil")
 			return
 		end
+		if IsValid(activator) then self.EZstayOn = true end
 		self:SetState(STATE_REFINING)
 		self:EmitSound("snd_jack_littleignite.wav")
 		timer.Simple(0.1, function()
@@ -72,8 +73,9 @@ if(SERVER)then
 		end)
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -101,10 +103,9 @@ if(SERVER)then
 		elseif State == STATE_REFINING then
 			if Alt then 
 				self:ProduceResource()
-
-				return
+			else
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 
@@ -140,11 +141,11 @@ if(SERVER)then
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.OIL and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:Think()
 		local State, Time = self:GetState(), CurTime()
@@ -184,11 +185,12 @@ if(SERVER)then
 				end
 			end
 		end
+		local GasPos = self:GetPos() + self:GetUp() * 270 + self:GetRight() * 40
 		if (self.NextEffThink < Time) then
 			self.NextEffThink = Time + .1
 			if (State == STATE_REFINING) then
 				local Eff = EffectData()
-				Eff:SetOrigin(self:GetPos() + self:GetUp() * 270 + self:GetRight() * 40)
+				Eff:SetOrigin(GasPos)
 				Eff:SetNormal(self:GetUp())
 				Eff:SetScale(.2)
 				util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
@@ -197,11 +199,11 @@ if(SERVER)then
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
 			if (State == STATE_REFINING) then
-				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+				local Tr=util.QuickTrace(GasPos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
 						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+						Gas:SetPos(GasPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
 						Gas:Spawn()
@@ -267,12 +269,12 @@ elseif(CLIENT)then
 		---
 		local BasePos = SelfPos
 
-		local Obscured = util.TraceLine({
+		local Obscured = false--[[util.TraceLine({
 			start = EyePos(), 
 			endpos = BasePos, 
 			filter = {LocalPlayer(), self}, 
 			mask = MASK_OPAQUE
-		}).Hit
+		}).Hit--]]
 
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 400000 -- cutoff point is 4000 units when the fov is 90 degrees

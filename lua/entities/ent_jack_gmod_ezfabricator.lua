@@ -73,7 +73,7 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		if(self:GetState() == STATE_FINE)then
-			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4)then
+			if(self:GetElectricity() >= 10) and (self:GetGas() >= 8) and (self:GetWater() >= 4) and (self:GetChemicals() >= 4) then
 				net.Start("JMod_EZworkbench")
 				net.WriteEntity(self)
 				net.WriteTable(self.Craftables)
@@ -141,16 +141,16 @@ elseif(CLIENT)then
 	local ScreenThreeMat = Material("models/jmod/machines/parts_machine/screen3_on")
 	local ScreenFourMat = Material("models/jmod/machines/parts_machine/screen4_on")
 	function ENT:DrawTranslucent()
-		local SelfPos, SelfAng, FT = self:GetPos(), self:GetAngles(), FrameTime()
+		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		---
 		local BasePos = SelfPos + Up * 60
-		local Obscured = util.TraceLine({
+		local Obscured = false--[[util.TraceLine({
 			start = EyePos(),
 			endpos = BasePos,
 			filter = {LocalPlayer(), self},
 			mask = MASK_OPAQUE
-		}).Hit
+		}).Hit--]]
 
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees

@@ -7,6 +7,7 @@ util.AddNetworkString("JMod_EZtimeBomb")
 util.AddNetworkString("JMod_LuaConfigSync")
 util.AddNetworkString("JMod_PlayerSpawn")
 util.AddNetworkString("JMod_ModifyMachine")
+util.AddNetworkString("JMod_ModifyConnections")
 util.AddNetworkString("JMod_NuclearBlast")
 util.AddNetworkString("JMod_VisionBlur")
 util.AddNetworkString("JMod_ArmorColor")
@@ -55,25 +56,33 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	local ent = net.ReadEntity()
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
-		local AutoColor = net.ReadBit()
-		local Col = net.ReadColor()
 
-		if AutoColor == 1 then
-			local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
-			if Tr.Hit then
-				local Info = JMod.HitMatColors[Tr.MatType]
+	local AutoColor = net.ReadBit()
+	local Col = net.ReadColor()
 
-				if Info then
-					ent:SetColor(Info[1])
+	if AutoColor == 1 then
+		local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
+		if Tr.Hit then
+			local Info = JMod.HitMatColors[Tr.MatType]
 
-					if Info[2] then
-						ent:SetMaterial(Info[2])
-					end
+			if Info then
+				ent:SetColor(Info[1])
+
+				if Info[2] then
+					ent:SetMaterial(Info[2])
 				end
 			end
-		else
-			ent:SetColor(Col)
 		end
+		timer.Simple(.1, function()
+			if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
+			net.Start("JMod_ColorAndArm")
+			net.WriteEntity(ent)
+			net.WriteBool(true)
+			net.Send(ply)
+		end)
+	else
+		ent:SetColor(Col)
+	end
 
 	if net.ReadBit() == 1 then
 		if ent.Prime then
@@ -143,6 +152,30 @@ net.Receive("JMod_ModifyMachine", function(ln, ply)
 	local Wepolini = ply:GetActiveWeapon()
 	if not (Wepolini and Wepolini.ModifyMachine) then return end
 	Wepolini:ModifyMachine(Ent, Tbl, AmmoType)
+end)
+
+net.Receive("JMod_ModifyConnections", function(ln, ply)
+	if not ply:Alive() then return end
+	local Ent, Action = net.ReadEntity(), net.ReadString()
+	if not IsValid(Ent) then return end
+
+	if Action == "connect" then
+		JMod.StartConnection(Ent, ply)
+	elseif Action == "disconnect" then
+		local Ent2 = net.ReadEntity()
+		if not IsValid(Ent2) then return end
+		JMod.RemoveConnection(Ent, Ent2)
+	elseif Action == "disconnect_all" then
+		if Ent.DisconnectAll then
+			Ent:DisconnectAll()
+		elseif Ent.EZconnections then
+			for k, v in pairs(Ent.EZconnections) do
+				JMod.RemoveConnection(Ent, k)
+			end
+		end
+	elseif Action == "produce" then
+		Ent:ProduceResource(ply)
+	end
 end)
 
 net.Receive("JMod_SaveLoadDeposits", function(ln, ply) 

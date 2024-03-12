@@ -9,11 +9,11 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.JModEZstorable = true
 ---
-ENT.EZconsumes = {
-	JMod.EZ_RESOURCE_TYPES.WATER
-}
+ENT.EZconsumes = nil
 ENT.JModEZstorable = true
 ENT.UsableMats = {MAT_DIRT, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
+ENT.MaxWater = 25
+ENT.JModDontIrradiate = false
 
 local STATE_NORMAL, STATE_BURIED, STATE_GERMINATING = 0, 1, 2
 ---
@@ -58,6 +58,16 @@ if SERVER then
 		self:SetState(STATE_NORMAL)
 		self.Hydration = 0
 		self.GroundWeld = nil
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
+		if self.Mutated then
+			self:Mutate()
+		end
+	end
+
+	function ENT:Mutate()
+		if (self.Mutated) then return end
+		self.Mutated = true
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.CHEMICALS}
 	end
 
 	function ENT:Bury(activator)
@@ -81,6 +91,7 @@ if SERVER then
 			self:DrawShadow(false)
 			self:SetState(STATE_BURIED)
 			--JackaGenericUseEffect(activator)
+			self.LastWateredTime = CurTime()
 		end
 	end
 
@@ -88,9 +99,9 @@ if SERVER then
 		if(amt <= 0)then return 0 end
 		local Time = CurTime()
 		local Accepted = 0
-		if(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
+		if(typ == JMod.EZ_RESOURCE_TYPES.WATER) or (self.Mutated and (typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS))then
 			local Wata = self.Hydration
-			local Missing = 50 - Wata
+			local Missing = self.MaxWater - Wata
 			if (Missing <= 0) then return 0 end
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
@@ -183,7 +194,7 @@ if SERVER then
 				self.LastWateredTime = Time
 			end
 			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
-			if (self.Hydration >= 50) then
+			if (self.Hydration >= 25) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
 			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
@@ -208,6 +219,9 @@ if SERVER then
 			Stalk:Spawn()
 			Stalk:Activate()
 			Stalk.Hydration = WatToGive * 2
+			if self.Mutated then
+				Stalk:Mutate()
+			end
 			JMod.SetEZowner(Stalk, Owner)
 		end)
 	end

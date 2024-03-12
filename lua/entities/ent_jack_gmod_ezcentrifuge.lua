@@ -1,7 +1,7 @@
 ﻿-- AdventureBoots Late 2023
 AddCSLuaFile()
 ENT.Type = "anim"
-ENT.PrintName = "EZ Enrichment Centrifuge"
+ENT.PrintName = "EZ Uranium Enrichment Centrifuge"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
@@ -79,6 +79,7 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		if (self:GetGas() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
+			if IsValid(activator) then self.EZstayOn = true end
 			self.NextUseTime = CurTime() + 1
 			self:EmitSound("ambient/machines/keyboard7_clicks_enter.wav", 70, 100)
 			self:SetState(STATE_ON)
@@ -96,21 +97,14 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self.NextUseTime = CurTime() + 1
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/afh_shutdown.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-	end
-
-	function ENT:ResourceLoaded(typ, accepted)
-		--[[if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted > 0 then
-			timer.Simple(.1, function() 
-				if IsValid(self) then self:TurnOn() end 
-			end)
-		end]]--
 	end
 
 	function ENT:OnRemove()
@@ -189,12 +183,12 @@ elseif(CLIENT)then
 	end
 
 	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 1200000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
@@ -239,5 +233,5 @@ elseif(CLIENT)then
 			end
 		end
 	end
-	language.Add("ent_jack_gmod_ezlfg", "EZ Enrichment Centrifuge")
+	language.Add("ent_jack_gmod_ezlfg", "EZ Uranium Enrichment Centrifuge")
 end

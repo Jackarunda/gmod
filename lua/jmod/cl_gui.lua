@@ -2,6 +2,7 @@
 local Dynamic = 0
 local FriendMenuOpen = false
 local SelectionMenuOpen = false
+local CurrentColor = Color(255, 255, 255)
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
 local FavMat = Material("icon16/star.png")
@@ -232,8 +233,14 @@ net.Receive("JMod_Friends", function()
 	PopulateList(Scroll, FriendList, Myself, W, H)
 end)
 
+local OldMouseX, OldMouseY = 0, 0
 net.Receive("JMod_ColorAndArm", function()
-	local Ent, NextColorCheck = net.ReadEntity(), 0
+	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
+
+	if UpdateColor == true then
+		CurrentColor = Ent:GetColor()
+		input.SetCursorPos(OldMouseX, OldMouseY)
+	end
 	if not IsValid(Ent) then return end
 	local Frame = vgui.Create("DFrame")
 	Frame:SetSize(200, 300)
@@ -301,12 +308,8 @@ net.Receive("JMod_ColorAndArm", function()
 		net.WriteColor(Color(255, 255, 255))
 		net.WriteBit(false)
 		net.SendToServer()
-		timer.Simple(0.1, function()
-			if IsValid(Ent) then
-				Picker:SetColor(Ent:GetColor())
-			end
-		end)
-		NextColorCheck = CurTime() + 1
+		OldMouseX, OldMouseY = input.GetCursorPos()
+		Frame:Close()
 	end
 end)
 
@@ -397,7 +400,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 			desc = desc .. "\n "
 
 			for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-				desc = desc .. resourceName .. " x" .. tostring(math.Round(resourceAmt * mult)) .. ", "
+				desc = desc .. resourceName .. " x" .. tostring(math.ceil(resourceAmt * ((not(itemInfo.noRequirementScaling) and mult) or 1))) .. ", "
 			end
 		end
 
@@ -446,7 +449,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 				local X = w - 30 -- let's draw the resources right to left
 
 				for resourceName, resourceAmt in pairs(itemInfo.craftingReqs) do
-					resourceAmt = math.Round(resourceAmt * mult)
+					resourceAmt = math.ceil(resourceAmt * ((not(itemInfo.noRequirementScaling) and mult) or 1))
 					local Have = LocallyAvailableResources[resourceName] and (LocallyAvailableResources[resourceName] >= resourceAmt)
 					local Txt = "x" .. tostring(resourceAmt)
 					surface.SetFont("DermaDefault")
@@ -731,7 +734,7 @@ net.Receive("JMod_EZworkbench", function()
 
 	if SelectionMenuOpen then return end
 	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, Multiplier) end, function(name, info, ply, ent)
+return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, (not(info.noRequirementScaling) and Multiplier) or 1) end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
 		net.WriteEntity(ent)
@@ -1658,6 +1661,69 @@ net.Receive("JMod_Inventory", function()
 		end
 		motherFrame:Close()
 		return true
+	end
+end)
+
+net.Receive("JMod_ModifyConnections", function()
+	local Ent = net.ReadEntity()
+	local Connections = net.ReadTable()
+	local Frame = vgui.Create("DFrame")
+	Frame:SetTitle("Modify Connections")
+	Frame:SetSize(300, 400)
+	Frame:Center()
+	Frame:MakePopup()
+
+	function Frame:Paint()
+		BlurBackground(self)
+	end
+
+	local List = vgui.Create("DListView", Frame)
+	List:Dock(FILL)
+	List:SetMultiSelect(false)
+	List:AddColumn("Machine")
+	List:AddColumn("EntID")
+
+	for _, connection in ipairs(Connections) do
+		local Line = List:AddLine(connection.DisplayName, connection.Index)
+		local DisconnectIcon = vgui.Create("DImage", Line)
+		DisconnectIcon:SetImage("icon16/disconnect.png")
+		DisconnectIcon:SetSize(16, 16)
+		DisconnectIcon:Dock(RIGHT)
+	end
+
+	List.OnRowSelected = function(panel, rowIndex, row)
+		-- Send a disconnect command for the selected connection
+		net.Start("JMod_ModifyConnections")
+			net.WriteEntity(Ent)
+			net.WriteString("disconnect")
+			net.WriteEntity(Entity(tonumber(row:GetValue(2))))
+		net.SendToServer()
+		Frame:Close()
+	end
+
+	local ButtonOptions = {
+		{Text = "Connect New", Func = "connect", Icon = "icon16/connect.png"},
+		{Text = "Disconnect All", Func = "disconnect_all", Icon = "icon16/disconnect.png"},
+		{Text = "Produce Resource", Func = "produce", Icon = "icon16/brick_add.png"},
+	}
+
+	for k, v in ipairs(ButtonOptions) do
+		local SelectButton = vgui.Create("DButton", Frame)
+		SelectButton:SetText(v.Text)
+		SelectButton:SetHeight(22)
+		SelectButton:Dock(BOTTOM)
+		SelectButton.DoClick = function()
+			net.Start("JMod_ModifyConnections")
+				net.WriteEntity(Ent)
+				net.WriteString(v.Func)
+			net.SendToServer()
+			Frame:Close()
+		end
+		SelectButton:DockPadding(2, 2, 2, 2)
+		local Icon = vgui.Create("DImage", SelectButton)
+		Icon:SetImage(v.Icon)
+		Icon:SetSize(16, 16)
+		Icon:Dock(RIGHT)
 	end
 end)
 

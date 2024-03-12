@@ -83,7 +83,7 @@ if SERVER then
 			local DetSpd = 500
 
 			if (data.Speed > DetSpd) and (self:GetState() == STATE_ARMED) then
-				self:Detonate()
+				timer.Simple(0, function() if IsValid(self) then self:Detonate() end end)
 
 				return
 			end
@@ -202,7 +202,7 @@ if SERVER then
 			if self.FreefallTicks >= 10 then
 				local Tr = util.QuickTrace(self:GetPos(), Phys:GetVelocity():GetNormalized() * 1500, self)
 
-				if Tr.Hit then
+				if Tr.Hit and not(Tr.HitSky) then
 					self:Detonate()
 				end
 			end

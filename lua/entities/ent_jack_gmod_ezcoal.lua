@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.COAL
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
+ENT.Model = "models/jmod/resources/resourcecube.mdl"
 ENT.Material = "models/mat_jack_gmod_coal"
 ENT.Color = Color(150, 150, 150)
 ENT.ModelScale = 1

@@ -73,8 +73,7 @@ if(SERVER)then
 				self:SetAngles(HitAngle)
 				self:SetPos(Tr.HitPos + Tr.HitNormal * self.SpawnHeight - Tr.HitNormal * 5)
 				--
-				self:GetPhysicsObject():EnableMotion(false)
-				self.EZinstalled = true
+				JMod.EZinstallMachine(self)
 				if self.DepositKey then
 					self:TurnOn(self.EZowner)
 				else
@@ -91,6 +90,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 				self.SoundLoop:SetSoundLevel(60)
@@ -104,8 +104,9 @@ if(SERVER)then
 		end
 	end
 	
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -126,8 +127,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			if alt and self.EZinstalled then
-				self:GetPhysicsObject():EnableMotion(true)
-				self.EZinstalled = false 
+				JMod.EZinstallMachine(self, false)
 				
 				return
 			end
@@ -138,15 +138,15 @@ if(SERVER)then
 
 				return
 			end
-			self:TurnOff()
+			self:TurnOff(activator)
 		end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 	
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -188,9 +188,10 @@ if(SERVER)then
 				end
 
 				-- This is just the rate at which we drill
-				local drillRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
+				local GradeModifier = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+				local drillRate = 1 * (GradeModifier ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 
-				self:ConsumeElectricity(JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 1.5  * JMod.Config.ResourceEconomy.ExtractionSpeed)
+				self:ConsumeElectricity(0.75 * (GradeModifier ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed)
 				
 				-- Get the amount of resouces left in the ground
 				local amtLeft = JMod.NaturalResourceTable[self.DepositKey].amt
@@ -266,7 +267,7 @@ if(SERVER)then
 				end
 				self:EmitSound("Boulder.ImpactHard")
 			end
-			if math.random(0, 100) == 1 then
+			if math.random(0, 500) == 1 then
 				local Rock = ents.Create("prop_physics")
 				Rock:SetModel("models/props_junk/rock001a.mdl")
 				Rock:SetPos(SelfPos + Up * -90 * HullTr.Fraction)
@@ -305,9 +306,16 @@ if(SERVER)then
 
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		ent.NextResourceThinkTime = 0
-		ent.NextEffectThinkTime = 0
-		ent.NextOSHAthinkTime = 0
+		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
+		self.NextEffectThinkTime = 0
+		self.NextOSHAthinkTime = 0
+		self.NextHoleThinkTime = 0
+		if self:GetState(STATE_RUNNING) then
+			timer.Simple(0.1, function()
+				if IsValid(self) then self:TryPlace() end
+			end)
+		end
 	end
 
 elseif(CLIENT)then
@@ -324,33 +332,14 @@ elseif(CLIENT)then
 		self.CurDepth = 0
 	end
 
-	local MiningLazCol = Color(255, 0, 0)
-
-	function ENT:Draw()
-		--
-		self:DrawModel()
-		--self:Draw()
-		--
-		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
-		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
-		local MotorPos = BoxPos + Up * -48 + Right * -3
-		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
-		local PipePos = DrillPos + Up * 149 + Right * -8.5
-		--
+	function ENT:Think()
+		local State, Grade, Typ, Prog = self:GetState(), self:GetGrade(), self:GetResourceType(), self:GetProgress()
+		local FT = FrameTime()
 		if self.CurDepth - self:GetProgress() > 1 then
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 15), self.CurDepth, self:GetProgress())
 		else
 			self.CurDepth = Lerp(math.ease.InOutExpo(FT * 5), self.CurDepth, self:GetProgress())
 		end
-		--
-		local PowerBoxAng = SelfAng:GetCopy()
-		PowerBoxAng:RotateAroundAxis(Up, -90)
-		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.3), nil, JMod.EZ_GRADE_MATS[Grade])
-		local MotorAng = SelfAng:GetCopy()
-		MotorAng:RotateAroundAxis(Up, 90)
-		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
-		--
 		if State == STATE_RUNNING then
 			self.DrillSpin = self.DrillSpin - FT * 600
 			if self.DrillSpin > 360 then
@@ -359,9 +348,29 @@ elseif(CLIENT)then
 				self.DrillSpin = 360
 			end
 		end
-		--
+	end
 
-		local Obscured = util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+	local MiningLazCol = Color(255, 0, 0)
+
+	function ENT:Draw()
+		--
+		self:DrawModel()
+		--
+		local Up, Right, Forward, Grade, Typ, State, FT = self:GetUp(), self:GetRight(), self:GetForward(), self:GetGrade(), self:GetResourceType(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+		local BoxPos = SelfPos + Up * 52 + Right * 3 + Forward * -8
+		local MotorPos = BoxPos + Up * -48 + Right * -3
+		local DrillPos = MotorPos + Up * -(120 + self.CurDepth)
+		local PipePos = DrillPos + Up * 149 + Right * -8.5
+		--
+		local PowerBoxAng = SelfAng:GetCopy()
+		PowerBoxAng:RotateAroundAxis(Up, -90)
+		JMod.RenderModel(self.PowerBox, BoxPos, PowerBoxAng, Vector(2, 1.8, 1.3), nil, JMod.EZ_GRADE_MATS[Grade])
+		local MotorAng = SelfAng:GetCopy()
+		MotorAng:RotateAroundAxis(Up, 90)
+		JMod.RenderModel(self.DrillMotor, MotorPos, MotorAng, Vector(0.8, 0.8, 0.8), nil, JMod.EZ_GRADE_MATS[Grade])
+		--
+		local Obscured = false--util.TraceLine({start = EyePos(), endpos = MotorPos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 36000 -- cutoff point is 400 units when the fov is 90 degrees
 		local DrillDraw = true

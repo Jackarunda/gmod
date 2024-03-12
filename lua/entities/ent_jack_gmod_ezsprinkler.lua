@@ -71,7 +71,7 @@ if(SERVER)then
 			elseif State == STATE_OFF then
 				self:TurnOn(activator)
 			elseif State == STATE_ON then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		else
 			activator:PickupObject(self)
@@ -82,6 +82,7 @@ if(SERVER)then
 		if self:GetState() <= STATE_BROKEN then return end
 		if ((self:GetWater() > 0) or (self:LoadLiquidFromDonor(self:GetLiquidType(), 100) > 0)) and self:GetElectricity() > 0 then
 			self.NextUseTime = CurTime() + 1
+			if IsValid(activator) then self.EZstayOn = true end
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
 				self.SoundLoop = CreateSound(self, (self.Dir == "left" and self.SoundLeft) or self.SoundRight)
@@ -98,22 +99,23 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		if self.SoundLoop then
 			self.SoundLoop:Stop()
 		end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if (typ == JMod.EZ_RESOURCE_TYPES.WATER) or (typ == JMod.EZ_RESOURCE_TYPES.POWER) and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
 		end
-	end
+	end--]]
 
 	function ENT:LoadLiquidFromDonor(typ, amt)
 		local SelfPos = self:GetPos()
@@ -279,12 +281,12 @@ elseif(CLIENT)then
 
 	local DebugCooler = Color(61, 200, 255)
 	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---

@@ -142,7 +142,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+		if (self:GetState() <= STATE_OFF) then return end
 		self:SetState(STATE_OFF)
 		self:SFX("afh_shutdown")
 		self.Patient = nil
@@ -404,6 +404,21 @@ elseif(CLIENT)then
 		self.DriveCycle=0
 	end
 
+	function ENT:Think()
+		local State, Grade, Time = self:GetState(), self:GetGrade(), CurTime()
+		local FT = FrameTime()
+		if State > 1 then
+			self.OpenAmt = math.Clamp(self.OpenAmt - FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,0)
+		else
+			self.OpenAmt = math.Clamp(self.OpenAmt + FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,1)
+		end
+
+		if (State == STATE_WORKING) then
+			self.DriveCycle=self.DriveCycle+FT*100
+			if(self.DriveCycle>360)then self.DriveCycle=0 end
+		end
+	end
+
 	local function ColorToVector(col)
 		return Vector(col.r / 255, col.g / 255, col.b / 255)
 	end
@@ -437,19 +452,6 @@ elseif(CLIENT)then
 
 		---
 		self:DrawModel()
-
-		---
-		if State > 1 then
-			self.OpenAmt = math.Clamp(self.OpenAmt - FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,0)
-		else
-			self.OpenAmt = math.Clamp(self.OpenAmt + FT * 1.3, 0, 1) --Lerp(FT*2,self.OpenAmt,1)
-		end
-
-		if (State == STATE_WORKING) then
-			self.DriveCycle=self.DriveCycle+FT*100
-			if(self.DriveCycle>360)then self.DriveCycle=0 end
-		end
-
 		---
 		local DisplayAng=SelfAng:GetCopy()
 		DisplayAng:RotateAroundAxis(Forward,90)

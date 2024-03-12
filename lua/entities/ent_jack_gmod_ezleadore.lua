@@ -1,7 +1,7 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezresource"
-ENT.PrintName = "EZ Lead Ore"
+ENT.PrintName = "Ore Lead"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/lead ore.png"
 ENT.Spawnable = true
@@ -9,7 +9,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.LEADORE
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
-ENT.Model = "models/hunter/blocks/cube05x05x05.mdl"
+ENT.Model = "models/jmod/resources/resourcecube.mdl"
 ENT.Material = "models/mat_jack_gmod_leadore"
 ENT.ModelScale = 1
 ENT.Mass = 50

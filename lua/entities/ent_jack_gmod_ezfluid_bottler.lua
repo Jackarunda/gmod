@@ -38,9 +38,6 @@ if SERVER then
 		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
-		timer.Simple(0, function()
-			self:TurnOn()
-		end)
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
 		self.NextLogicThink = 0
 	end
@@ -55,13 +52,13 @@ if SERVER then
 			JMod.Hint(activator, "destroyed", self)
 		return
 		elseif State == STATE_OFF then
-			self:TurnOn()
+			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if alt then
 				self:ProduceResource()
 				return
 			end
-			self:TurnOff()
+			self:TurnOff(activator)
 		end
 	end
 
@@ -89,9 +86,10 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOn()
+	function ENT:TurnOn(activator)
 		if self:GetState() > STATE_OFF then return end
 		if self:GetElectricity() > 0 then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
 			self:CheckWaterLevel()
@@ -102,8 +100,9 @@ if SERVER then
 		end
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
@@ -199,6 +198,7 @@ if SERVER then
 elseif CLIENT then
 	function ENT:CustomInit()
 		local Grade = self:GetGrade()
+		self.LastGrade = Grade
 		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
 	end
 
@@ -208,7 +208,7 @@ elseif CLIENT then
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos + Up*30
-		local Obscured = util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Obscured = false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		local PanelDraw = true
@@ -219,7 +219,7 @@ elseif CLIENT then
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false PanelDraw=false end -- look incomplete to indicate damage, save on gpu comp too
 		---
-		self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName())
+		if self.LastGrade ~= Grade then self:SetSubMaterial(4, JMod.EZ_GRADE_MATS[Grade]:GetName()) end
 
 		if DetailDraw then
 			if Closeness < 20000 and State == STATE_ON then
@@ -244,6 +244,7 @@ elseif CLIENT then
 				cam.End3D2D()
 			end
 		end
+		self.LastGrade = Grade
 	end
 	language.Add("ent_jack_gmod_ezgas_condenser", "EZ Fluid Bottler")
 end

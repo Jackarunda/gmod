@@ -1,0 +1,7 @@
+"VertexlitGeneric"
+{
+	"$basetexture" "models/jmod/props/plants/cornstalk"
+	"$bumpmap" "models/jmod/props/plants/cornstalk_n"
+	"$alphatest" 1
+	"$nocull" 1
+}

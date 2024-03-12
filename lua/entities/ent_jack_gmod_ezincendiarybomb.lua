@@ -83,7 +83,11 @@ if SERVER then
 			local DetSpd = 500
 
 			if (data.Speed > DetSpd) and (self:GetState() == STATE_ARMED) then
-				self:Detonate()
+				timer.Simple(0, function()
+					if IsValid(self) then
+						self:Detonate()
+					end
+				end)
 
 				return
 			end
@@ -172,6 +176,7 @@ if SERVER then
 		for i = 1, 100 do
 			local FireAng = (Dir + VectorRand() * .35 + Vector(0, 0, math.Rand(.01, .7))):Angle()
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
+			Flame.Creator = self
 			Flame:SetPos(SelfPos)
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(JMod.GetEZowner(self))
@@ -181,7 +186,7 @@ if SERVER then
 		end
 
 		---
-		timer.Simple(0.01, function()
+		timer.Simple(0, function()
 			if IsValid(self) then
 				self:Remove()
 			end

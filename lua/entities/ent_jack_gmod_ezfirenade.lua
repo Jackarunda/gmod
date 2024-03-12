@@ -8,27 +8,11 @@ ENT.Spawnable = true
 ENT.Model = "models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 --ENT.ModelScale=1.5
 ENT.SpoonModel = "models/jmod/explosives/grenades/firenade/incendiary_grenade_spoon.mdl"
+ENT.PinBodygroup = {3, 1}
+ENT.SpoonBodygroup = {2, 1}
+ENT.DetDelay = 4
 
 if SERVER then
-	function ENT:Prime()
-		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav", 60, 100)
-		self:SetBodygroup(3, 1)
-	end
-
-	function ENT:Arm()
-		self:SetBodygroup(2, 1)
-		self:SetState(JMod.EZ_STATE_ARMED)
-
-		timer.Simple(4, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-
-		self:SpoonEffect()
-	end
-
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true

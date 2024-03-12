@@ -49,7 +49,7 @@ if SERVER then
 
 		--self.SoundLoop:SetSoundLevel(80)
 		---
-		SafeRemoveEntityDelayed(self, 300)
+		self.RemoveTime = CurTime() + 300 / (self:WaterLevel() + 1)
 	end
 
 	function ENT:CanSee(ent)
@@ -98,40 +98,47 @@ if SERVER then
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 
 		if self:WaterLevel() >= 3 then
-			self:Remove()
+			local Eff = EffectData()
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * 10)
+			Eff:SetNormal(self:GetRight())
+			Eff:SetScale(.1)
+			util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
+		else
+			local Eff = EffectData()
+			Eff:SetOrigin(self:GetPos() + self:GetRight() * 10)
+			Eff:SetNormal(self:GetRight())
+			Eff:SetScale(1)
+			util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
 
-			return
-		end
+			if math.random(1, 4) == 2 then
+				local FireVec = VectorRand() + Vector(0, 0, 2)
+				local Flame = ents.Create("ent_jack_gmod_eznapalm")
+				Flame:SetPos(SelfPos + Vector(0, 0, 10))
+				Flame:SetAngles(FireVec:Angle())
+				Flame:SetOwner(JMod.GetEZowner(self))
+				JMod.SetEZowner(Flame, self.EZowner or self)
+				Flame.SpeedMul = 1
+				Flame.Creator = self
+				Flame.HighVisuals = true
+				Flame:Spawn()
+				Flame:Activate()
+			end
 
-		local Eff = EffectData()
-		Eff:SetOrigin(self:GetPos() + self:GetRight() * 10)
-		Eff:SetNormal(self:GetRight())
-		Eff:SetScale(1)
-		util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
-
-		if math.random(1, 4) == 2 then
-			local FireVec = VectorRand() + Vector(0, 0, 2)
-			local Flame = ents.Create("ent_jack_gmod_eznapalm")
-			Flame:SetPos(SelfPos + Vector(0, 0, 10))
-			Flame:SetAngles(FireVec:Angle())
-			Flame:SetOwner(JMod.GetEZowner(self))
-			JMod.SetEZowner(Flame, self.EZowner or self)
-			Flame.SpeedMul = 1
-			Flame.Creator = self
-			Flame.HighVisuals = true
-			Flame:Spawn()
-			Flame:Activate()
-		end
-
-		if self.DepositKey and JMod.NaturalResourceTable[self.DepositKey] then
-			if JMod.DepleteNaturalResource(self.DepositKey, .1) then
+			if self.DepositKey and JMod.NaturalResourceTable[self.DepositKey] then
+				if JMod.DepleteNaturalResource(self.DepositKey, .1) then
+					self:Remove()
+				end
+			else
 				self:Remove()
 			end
-		else
-			self:Remove()
+
+			self:BurnStuff()
 		end
 
-		self:BurnStuff()
+		if Time > self.RemoveTime then
+			self:Remove()
+		end
+		
 		self:NextThink(Time + .1)
 
 		return true
@@ -149,9 +156,13 @@ elseif CLIENT then
 	function ENT:Initialize()
 	end
 
+	function ENT:Think()
+	end
+
 	---
 	function ENT:Draw()
 		self:DrawModel()
+		if self:WaterLevel() >= 3 then return end
 		local Pos, Dir = self:GetPos(), self:GetRight()
 		render.SetMaterial(GlowSprite)
 

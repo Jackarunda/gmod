@@ -42,11 +42,12 @@ if SERVER then
 		if iname == "Detonate" and value > 0 then
 			self:Detonate()
 		elseif iname == "Prime" and value > 0 then
-			self:SetState(JMod.EZ_STATE_PRIMED)
+			self:Prime()
 		end
 	end
 
 	function ENT:Prime()
+		if (self:GetState() == JMod.EZ_STATE_ARMED) or (self:GetState() == JMod.EZ_STATE_PRIMED) then return end
 		self:EmitSound("weapons/c4/c4_plant.wav", 60, 80)
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
@@ -59,6 +60,7 @@ if SERVER then
 	end
 
 	function ENT:Arm()
+		if (self:GetState() == JMod.EZ_STATE_ARMED) then return end
 		--self:EmitSound("buttons/button5.wav",60,150)
 		self:SetState(JMod.EZ_STATE_ARMED)
 	end

@@ -9,26 +9,11 @@ ENT.JModPreferredCarryAngles = Angle(0, 100, 0)
 ENT.Model = "models/jmod/explosives/grenades/firenade/incendiary_grenade.mdl"
 ENT.Material = "models/mats_jack_nades/tear_gas_grenade"
 ENT.SpoonScale = 2
+ENT.PinBodygroup = {3, 1}
+ENT.SpoonBodygroup = {2, 1}
+ENT.DetDelay = 2
 
 if SERVER then
-	function ENT:Prime()
-		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.wav", 60, 100)
-		self:SetBodygroup(3, 1)
-	end
-
-	function ENT:Arm()
-		self:SetBodygroup(2, 1)
-		self:SetState(JMod.EZ_STATE_ARMED)
-		self:SpoonEffect()
-
-		timer.Simple(2, function()
-			if IsValid(self) then
-				self:Detonate()
-			end
-		end)
-	end
-
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true

@@ -34,6 +34,7 @@ if(SERVER)then
 		self.Mutated = false
 		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.WATER}
 		self:UpdateAppearance()
+		self:GetPhysicsObject():SetMass(1)
 	end
 
 	function ENT:Mutate()
@@ -77,24 +78,8 @@ if(SERVER)then
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
-		--jprint("Cutting colision", data.DeltaTime)
-		if (data.Speed > 80) and (data.DeltaTime > 0.2) then
-			self:EmitSound("Dirt.Impact", 100, 80)
-			self:EmitSound("Dirt.Impact", 100, 80)
-			if IsValid(data.HitObject) then
-				local TheirForce = (.5 * data.HitObject:GetMass() * ((data.TheirOldVelocity:Length()/16)*0.3048)^2)
-				local ForceThreshold = physobj:GetMass() * 10 * self.Growth
-				local PhysDamage = TheirForce/(physobj:GetMass()*100)
-
-				if PhysDamage >= 1 then
-					local CrushDamage = DamageInfo()
-					CrushDamage:SetDamage(math.floor(PhysDamage))
-					CrushDamage:SetDamageType(DMG_CRUSH)
-					--CrushDamage:SetDamageForce(data.TheirOldVelocity / 1000)
-					CrushDamage:SetDamagePosition(data.HitPos)
-					self:TakeDamageInfo(CrushDamage)
-				end
-			end
+		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
+			self:EmitSound("snds_jack_gmod/ez_foliage/grass_brush_" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110), .5)
 		end
 		if (self.Mutated) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
 			local PlyToCut = data.HitEntity
@@ -121,19 +106,14 @@ if(SERVER)then
 			--util.Decal("EZtreeRoots", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			timer.Simple(.1, function()
 				if (IsValid(self)) then
-					--[[local HitAngle = Tr.HitNormal:Angle()
+					local HitAngle = Tr.HitNormal:Angle()
 					HitAngle:RotateAroundAxis(HitAngle:Right(), -90)
 					HitAngle:RotateAroundAxis(Tr.HitNormal, math.random(0,  360))
-					self:SetAngles(HitAngle)--]]
-					self:SetAngles(Angle(0, math.random(0, 360, 0)))
-					self:SetPos(Tr.HitPos)
-					if Tr.Entity == game.GetWorld() then
-						self:GetPhysicsObject():EnableMotion(false)
-						--self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-					else
-						self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 50000, true)
-						self:GetPhysicsObject():Sleep()
-					end
+					self:SetAngles(HitAngle)
+					--self:SetAngles(Angle(0, math.random(0, 360, 0)))
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 1)
+					self.GroundWeld = constraint.Weld(self, Tr.Entity, 0, 0, 5000, true)
+					self:GetPhysicsObject():Sleep()
 					JMod.Hint(JMod.GetEZowner(self), "tree growth")
 				end
 			end)
@@ -143,8 +123,9 @@ if(SERVER)then
 	end
 
 	function ENT:Think()
+		--jprint(self.Helf, self.EZinstalled, self.GroundWeld)
 		if (self.Helf <= 0) then self:Destroy() return end
-		if (self.EZinstalled and not(IsValid(self.GroundWeld) or not(self:GetPhysicsObject():IsMotionEnabled()))) then self:Destroy() return end
+		if (self.EZinstalled and not(IsValid(self.GroundWeld))) then self:Destroy() return end
 		local Time, SelfPos = CurTime(), self:GetPos()
 		if (self.NextGrowThink < Time) then
 			self.NextGrowThink = Time + math.random(9, 11)
@@ -221,7 +202,7 @@ if(SERVER)then
 			self:DrawShadow(true)
 			self:SetUseType(SIMPLE_USE)
 			self.LastSubModel = NewSubModel
-			self:TryPlant()
+			--self:TryPlant()
 		end
 		timer.Simple(0, function()
 			if (IsValid(self)) then

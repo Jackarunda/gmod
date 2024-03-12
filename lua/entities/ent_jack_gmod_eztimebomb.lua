@@ -287,7 +287,7 @@ elseif CLIENT then
 		if self:GetState() == STATE_ARMED then
 			local ang, SelfPos = self:GetAngles(), self:GetPos()
 			ang:RotateAroundAxis(ang:Up(), -90)
-			local Up, Right, Forward, FT = ang:Up(), ang:Right(), ang:Forward(), FrameTime()
+			local Up, Right, Forward = ang:Up(), ang:Right(), ang:Forward()
 			local Amb = render.GetLightColor(SelfPos)
 			local Brightness = (Amb.x + Amb.y + Amb.z) / 3
 			local Opacity = math.random(50, 255) * Brightness

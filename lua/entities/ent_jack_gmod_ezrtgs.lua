@@ -21,13 +21,15 @@ ENT.SpawnHeight = 1
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100
 }
-
 ENT.DynamicPerfSpecs = {
 	Armor = .8
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerSocket = Vector(0, 0, 0)
+ENT.MaxConnectionRange = 100
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -59,25 +61,31 @@ if(SERVER)then
 			self:TurnOn(activator)
 		elseif State == STATE_ON then
 			if Alt then
-				self:ProduceResource(activator)
-				return
+				self:TurnOff(activator)
+			else
+				activator:PickupObject(self)
 			end
-			activator:PickupObject(self)
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if (self:GetState() ~= STATE_OFF) then return end
-		self:EmitSound("buttons/button1.wav", 60, 80)
+		if IsValid(activator) and not(auto) then
+			self.EZstayOn = true
+			self:EmitSound("buttons/button1.wav", 60, 80)
+		end
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
 		self.PowerSLI = 0
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
-		self:EmitSound("buttons/button18.wav", 60, 80)
+		if IsValid(activator) then 
+			self.EZstayOn = true 
+			self:EmitSound("buttons/button18.wav", 60, 80)
+		end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self.PowerSLI = 0
@@ -88,7 +96,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = self:WorldToLocal(SelfPos + Up * 10 + Right * 14)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
@@ -162,7 +169,7 @@ elseif(CLIENT)then
 	end
 
 	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---

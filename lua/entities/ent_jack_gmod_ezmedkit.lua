@@ -14,7 +14,16 @@ ENT.DamageThreshold = 120
 ENT.JModEZstorable = true
 
 ---
-local Props = {"models/jmod/items/healthkit.mdl", "models/healthvial.mdl", "models/jmod/items/medjit_medium.mdl", "models/jmod/items/medjit_small.mdl", "models/weapons/w_models/w_syringe.mdl", "models/weapons/w_models/w_syringe_proj.mdl", "models/weapons/w_models/w_bonesaw.mdl", "models/bandages.mdl"}
+local Props = {
+	--"models/jmod/items/healthkit.mdl", 
+	"models/healthvial.mdl", 
+	--"models/jmod/items/medjit_medium.mdl", 
+	"models/jmod/items/medjit_small.mdl", 
+	--"models/weapons/w_models/w_syringe.mdl", 
+	--"models/weapons/w_models/w_syringe_proj.mdl", 
+	"models/weapons/w_models/w_bonesaw.mdl", 
+	"models/bandages.mdl"
+}
 
 function ENT:SetupDataTables() 
 	self:NetworkVar("Float", 0, "Supplies")
@@ -72,21 +81,23 @@ if SERVER then
 			sound.Play("Plastic_Box.Break", Pos)
 
 			for k, mdl in pairs(Props) do
-				local Item = ents.Create("prop_physics")
-				Item:SetModel(mdl)
-				Item:SetPos(Pos + VectorRand() * 5 + Vector(0, 0, 10))
-				Item:SetAngles(VectorRand():Angle())
-				Item:Spawn()
-				Item:Activate()
-				Item:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
-				local Phys = Item:GetPhysicsObject()
+				if util.IsValidModel(mdl) then 
+					local Item = ents.Create("prop_physics")
+					Item:SetModel(mdl)
+					Item:SetPos(Pos + VectorRand() * 5 + Vector(0, 0, 10))
+					Item:SetAngles(VectorRand():Angle())
+					Item:Spawn()
+					Item:Activate()
+					Item:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+					local Phys = Item:GetPhysicsObject()
 
-				if IsValid(Phys) then
-					Phys:SetVelocity(self:GetVelocity() / 2 + Vector(0, 0, 200) + VectorRand() * math.Rand(10, 600))
-					Phys:AddAngleVelocity(VectorRand() * math.Rand(10, 3000))
+					if IsValid(Phys) then
+						Phys:SetVelocity(self:GetVelocity() / 2 + Vector(0, 0, 200) + VectorRand() * math.Rand(10, 600))
+						Phys:AddAngleVelocity(VectorRand() * math.Rand(10, 3000))
+					end
+
+					SafeRemoveEntityDelayed(Item, math.random(10, 20))
 				end
-
-				SafeRemoveEntityDelayed(Item, math.random(10, 20))
 			end
 
 			self:Remove()

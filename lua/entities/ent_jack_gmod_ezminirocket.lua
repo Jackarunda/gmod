@@ -93,7 +93,7 @@ if SERVER then
 		else
 			local Filter = {self}
 
-			table.insert(Filter, self.Owner)
+			table.insert(Filter, self:GetOwner())
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
 			local Mask, HitWater, HitChainLink = MASK_SHOT, false, true
 
@@ -164,6 +164,12 @@ elseif CLIENT then
 		self.Mdl:SetNoDraw(true)
 		self.RenderPos = self:GetPos()
 		self.NextRender = CurTime() + .05
+	end
+
+	function ENT:OnRemove()
+		if IsValid(self.Mdl) then
+			self.Mdl:Remove()
+		end
 	end
 
 	function ENT:Think()

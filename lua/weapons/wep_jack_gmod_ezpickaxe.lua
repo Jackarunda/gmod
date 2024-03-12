@@ -182,7 +182,7 @@ function SWEP:Hitscan()
 			endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
 			filter = self.Owner,
 			mask = MASK_SHOT_HULL
-		} )
+		})
 
 		if (tr.Hit) then
 			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
@@ -197,7 +197,7 @@ function SWEP:Hitscan()
 				PickDam:SetDamageType(DMG_GENERIC)
 				PickDam:SetDamage(math.random(30, 50))
 				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
-				tr.Entity:TakeDamageInfo(PickDam)
+				if (IsValid(tr.Entity)) then tr.Entity:TakeDamageInfo(PickDam) end
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 				--sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactBulletSound, tr.HitPos, 75, 100, 1)
@@ -213,7 +213,7 @@ function SWEP:Hitscan()
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
 				elseif tr.Entity:IsWorld() then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining")
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
 
 					if Message then
 						self:Msg(Message)
@@ -224,7 +224,7 @@ function SWEP:Hitscan()
 						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 					end
 
-					if (math.random(1, 1000) == 1) then 
+					if (math.random(1, 2) == 1) then 
 						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 
 						if ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
 							timer.Simple(math.Rand(1, 2), function() 
@@ -425,6 +425,16 @@ function SWEP:Think()
 			end
 		elseif not self.Owner:KeyDown(IN_ATTACK) then
 			self:SetTaskProgress(0)
+		end
+	end
+
+	if CLIENT then
+		if self.ScanResults then
+			self.LastScanTime = self.LastScanTime or Time
+			if self.LastScanTime < (Time - 30) then
+				self.ScanResults = nil
+				self.LastScanTime = nil
+			end
 		end
 	end
 end

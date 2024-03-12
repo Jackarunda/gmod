@@ -25,6 +25,7 @@ ENT.StaticPerfSpecs = {
 ENT.DynamicPerfSpecs = {
 	Armor = 2
 }
+ENT.EZpowerSocket = Vector(-90, 80, 0)
 ---
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1
 ---
@@ -78,7 +79,7 @@ if(SERVER)then
 					self:TurnOn(self.EZowner)
 				else
 					if self:GetState() > STATE_OFF then
-						self:TurnOff()
+						self:TurnOff(JMod.GetEZowner(self))
 					end
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
@@ -87,11 +88,12 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:GetState() > STATE_OFF then return end
+		if self:GetState() ~= STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
+				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
 				self.SoundLoop:SetSoundLevel(65)
@@ -106,8 +108,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(stayOff)
+		if (self:GetState() <= STATE_OFF) then return end
+		if stayOff then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 
@@ -130,8 +133,7 @@ if(SERVER)then
 			return
 		elseif State == STATE_OFF then
 			if alt and self.EZinstalled then
-				self:GetPhysicsObject():EnableMotion(true)
-				self.EZinstalled = false
+				JMod.EZinstallMachine(self, false)
 
 				return
 			end
@@ -146,11 +148,11 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.POWER and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -192,7 +194,7 @@ if(SERVER)then
 					return
 				end
 
-				self:ConsumeElectricity(.5 * JMod.Config.ResourceEconomy.ExtractionSpeed)
+				self:ConsumeElectricity(.5 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed)
 				-- This is just the rate at which we pump
 				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
@@ -264,7 +266,13 @@ if(SERVER)then
 
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		self.NextResourceThinkTime = Time + math.Rand(0, 3)
+		self.DepositKey = 0
+		self.NextResourceThinkTime = 0
+		if self:GetState(STATE_RUNNING) then
+			timer.Simple(0.1, function()
+				if IsValid(self) then self:TryPlace() end
+			end)
+		end
 	end
 
 elseif(CLIENT)then
@@ -287,9 +295,9 @@ elseif(CLIENT)then
 	1	WalkingBeam
 	2	CounterWeight
 	--]]
-	function ENT:Draw()
-		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
-		local Up, Right, Forward, FT = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward(), FrameTime()
+	function ENT:Think()
+		local State, Grade, Time = self:GetState(), self:GetGrade(), CurTime()
+		local FT = FrameTime()
 
 		if State == STATE_RUNNING then
 			self.DriveMomentum = math.Clamp(self.DriveMomentum + FT / 3, 0, 0.4)
@@ -298,6 +306,13 @@ elseif(CLIENT)then
 		end
 		self.DriveCycle=self.DriveCycle+self.DriveMomentum*Grade*FT*100
 		if(self.DriveCycle>360)then self.DriveCycle=0 end
+	end
+
+	
+	function ENT:Draw()
+		local Time, SelfPos, SelfAng, State, Grade, Typ = CurTime(), self:GetPos(), self:GetAngles(), self:GetState(), self:GetGrade(), self:GetResourceType()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+
 		local WalkingBeamDrive=math.sin((self.DriveCycle/360)*math.pi*2-math.pi)*20
 		self.Mdl:ManipulateBoneAngles(1,Angle(0,0,WalkingBeamDrive))
 		self.Mdl:ManipulateBoneAngles(2,Angle(0,0,self.DriveCycle))
@@ -315,7 +330,7 @@ elseif(CLIENT)then
 		BoxAng:RotateAroundAxis(Forward,90)
 		JMod.RenderModel(self.MachineryBox,BasePos-Up*32-Right*74+Forward*20,BoxAng,nil,Vector(1,1,1),JMod.EZ_GRADE_MATS[Grade])
 		--
-		local Obscured=util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
+		local Obscured=false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
 		local Closeness=LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw=Closeness<36000 -- cutoff point is 400 units when the fov is 90 degrees
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing

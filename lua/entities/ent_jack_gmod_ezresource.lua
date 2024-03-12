@@ -104,10 +104,17 @@ if SERVER then
 		---
 		timer.Simple(.01, function()
 			if IsValid(self) then
+				if self.PhysMat then
+					self:GetPhysicsObject():SetMaterial(self.PhysMat)
+				end
 				self:GetPhysicsObject():SetMass(math.max(self.Mass))
 				self:GetPhysicsObject():Wake()
 			end
 		end)
+
+		if (self.CustomInit) then
+			self:CustomInit()
+		end
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -238,6 +245,10 @@ if SERVER then
 			if JMod.Hints[self:GetClass() .. " use"] then
 				JMod.Hint(activator, self:GetClass() .. " use")
 			end
+		end
+
+		if (self.CustomUse) then
+			self:CustomUse()
 		end
 	end
 

@@ -5,7 +5,8 @@ if force_workshop:GetBool() then
 	resource.AddWorkshop("1919689921")
 end
 
-local function JackaSpawnHook(ply)
+local function JackaSpawnHook(ply, transition)
+	if transition then return end
 	ply.JModSpawnTime = CurTime()
 	ply.JModFriends = ply.JModFriends or {}
 
@@ -56,18 +57,17 @@ local function JackaSpawnHook(ply)
 	
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
 	local sleepingbag = ply.JModSpawnPointEntity
-	if(sleepingbag and (IsValid(sleepingbag)) and sleepingbag.State == STATE_UNROLLED)then
-		if(sleepingbag.nextSpawnTime < CurTime())then
-			sleepingbag.nextSpawnTime = CurTime() + 60
+	if IsValid(sleepingbag) and (sleepingbag.State == STATE_UNROLLED)then
+		if (sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
+			sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
 			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
 				local Up = sleepingbag:GetUp()
-				--ply:EnterVehicle(sleepingbag.Pod)
 				ply:SetPos(sleepingbag:GetPos())
 				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 				net.Start("JMod_VisionBlur")
-				net.WriteFloat(5)
-				net.WriteFloat(2000)
-				net.WriteBit(true)
+					net.WriteFloat(5)
+					net.WriteFloat(2000)
+					net.WriteBit(true)
 				net.Send(ply)
 				sleepingbag.Pod.EZvehicleEjectPos = nil
 			end
@@ -100,7 +100,7 @@ local function JackaSpawnHook(ply)
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
-hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply) JackaSpawnHook(ply) ; JMod.LuaConfigSync(false) end)
+hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) JackaSpawnHook(ply, transit) ; JMod.LuaConfigSync(false) end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")
@@ -124,8 +124,7 @@ end)
 
 function JMod.ShouldDamageBiologically(ent)
 	if not IsValid(ent) then return false end
-	if (ent.JModDontIrradiate and ent.JModDontIrradiate == true) then return false end
-	if (ent.IsJackyEZcrop) then return true end
+	if ent.JModDontIrradiate then return not ent.JModDontIrradiate end
 	if (ent.Mutation) and (ent.Mutation < 100) then return true end
 	if ent:IsPlayer() then return ent:Alive() end
 
@@ -332,7 +331,7 @@ end
 local function ImmobilizedThink(dude)
 	local Time = CurTime()
 	dude.EZImmobilizationTime = 0
-	if dude.EZimmobilizers and dude:Alive() then
+	if dude.EZimmobilizers and next(dude.EZimmobilizers) and dude:Alive() then
 		for immobilizer, immobilizeTime in pairs(dude.EZimmobilizers) do
 			if not(IsValid(immobilizer)) or (immobilizer.GetTrappedPlayer and (immobilizer:GetTrappedPlayer() ~= dude)) or (immobilizeTime < Time) then
 				dude.EZimmobilizers[immobilizer] = nil
@@ -342,6 +341,119 @@ local function ImmobilizedThink(dude)
 		end
 	else
 		dude.EZimmobilizers = nil
+	end
+end
+
+--- Sleepy Logic
+
+local function SleepySitThink(dude)
+	local Time = CurTime()
+	if dude.JMod_IsSleeping then
+		if dude:Health() < (dude:GetMaxHealth() * .15) then
+			dude.EZhealth = math.max(dude.EZhealth or 0, 1)
+		end
+	end
+end
+
+--- Egg hunt logic
+
+local SpawnFails=0
+// copied from Homicide
+function JMod.FindHiddenSpawnLocation()
+	local DistMul, InitialDist, MinAddDist, SpawnExclusionDist = 10, 200, 300, 1000
+	local SpawnPos, Tries, Players, TryDist = nil, 0, player.GetAll(), InitialDist * DistMul
+	local NoBlockEnts = {}
+	table.Add(NoBlockEnts, Players)
+	for key, potential in pairs(Players) do
+		if not (potential:Alive()) then table.remove(Players, key) end
+	end
+	if (#Players < 1) then return nil end
+	local SelectedPlaya = table.Random(Players)
+	local Origin = SelectedPlaya:GetPos()
+	while ((SpawnPos == nil) and (TryDist <= 9000 * DistMul)) do
+		while ((SpawnPos == nil) and (Tries < 15)) do
+			local RandVec, Below, Vertical = VectorRand() * (math.Rand(10, TryDist) + MinAddDist), false, 0
+			if (math.random(1, 3) == 2) then RandVec.z = math.abs(RandVec.z) end
+			RandVec.z = RandVec.z / 2
+			if (math.random(1, 3) == 2) then RandVec.z = RandVec.z / 2 end
+			Vertical = RandVec.z
+			local TryPos = Origin + RandVec
+			if (util.IsInWorld(TryPos)) then
+				local Contents = util.PointContents(TryPos)
+				if ((Contents == CONTENTS_EMPTY) or (Contents == CONTENTS_TESTFOGVOLUME)) then
+					local Close = false
+					for key, plaiyah in pairs(Players) do -- spawn may not be close to a player
+						if(TryPos:Distance(plaiyah:GetPos()) < MinAddDist) then Close=true; break end
+					end
+					if not (Close) then
+						local AboveGround = true
+						if (Vertical < 0) then -- if the pos is below the player, then the player must be standing on something
+							local UpTr = util.QuickTrace(TryPos, Vector(0, 0, -Vertical + 10), Players) -- we therefore should be able to detect that something
+							if not (UpTr.Hit) then AboveGround=false end -- if we can't, then the pos is probably below the surface of "solid" groud
+						elseif (Vertical > 0) then -- if the pos is above the player, there's gotta be something that we can fall onto
+							local DownTr = util.QuickTrace(TryPos, Vector(0, 0, -Vertical * 5), Players) -- try to detect the surface we're gonna fall on
+							if not (DownTr.Hit) then AboveGround = false end -- if we can't see anything that far down, we're probably below the ground
+						end
+						if (AboveGround) then
+							local FinalDownTr = util.QuickTrace(TryPos, Vector(0, 0, -20000), NoBlockEnts)
+							if (FinalDownTr.Hit) then
+								TryPos = FinalDownTr.HitPos + Vector(0, 0, 10)
+								local CanSee = false
+								for key, ply in pairs(Players) do
+									if (ply:Alive()) then
+										local ToTrace = util.TraceLine({start = ply:GetShootPos(), endpos = TryPos + Vector(0, 0, 10), filter = NoBlockEnts})
+										if not (ToTrace.Hit) then
+											CanSee = true
+											break
+										end
+										local ToTrace2 = util.TraceLine({start = ply:GetShootPos(), endpos = TryPos - Vector(0, 0, 10), filter = NoBlockEnts})
+										if not (ToTrace2.Hit) then
+											CanSee=true
+											break
+										end
+									end
+								end
+								for key, cayum in pairs(ents.FindByClass("sky_camera")) do -- don't spawn shit in the skybox you stupid fucking game
+									local ToTrace = util.TraceLine({start = cayum:GetPos(), endpos = TryPos})
+									if not (ToTrace.Hit) then
+										CanSee = true
+										break
+									end
+								end
+								if not (CanSee) then
+									SpawnPos = TryPos
+								end
+							end
+						end
+					end
+				end
+			end
+			Tries=Tries + 1
+		end
+		TryDist = TryDist + 200 * DistMul
+		Tries=0
+	end
+	if(SpawnPos == nil)then
+		SpawnFails=SpawnFails + 1
+	else
+		SpawnFails = 0
+	end
+	return SpawnPos
+end
+
+local NextEasterThink = 0
+local function EasterEggThink(dude)
+	local Time = CurTime()
+	if (Time > NextEasterThink) then
+		NextEasterThink = Time + 10
+		local Pos = JMod.FindHiddenSpawnLocation()
+		if (Pos) then
+			local Eg = ents.Create("ent_jack_gmod_ezanomaly_egg")
+			Eg:SetPos(Pos)
+			Eg:SetAngles(AngleRand())
+			Eg:Spawn()
+			Eg:Activate()
+		end
 	end
 end
 
@@ -440,6 +552,10 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	local Time = CurTime()
 	if NextMainThink > Time then return end
 	NextMainThink = Time + 1
+
+	if JMod.GetHoliday() == "Easter" then
+		EasterEggThink()
+	end
 
 	local Playas = player.GetAll()
 	---
@@ -553,6 +669,8 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 			end
 
 			ImmobilizedThink(playa)
+
+			SleepySitThink(playa)
 		end
 	end
 
@@ -563,15 +681,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		for _, playa in ipairs(Playas) do
 			if playa.EZnutrition then
 				if playa:Alive() then
-					local InBed = IsValid(playa:GetVehicle()) and (playa:GetVehicle():GetParent() == playa.JModSpawnPointEntity)
-					local RestMult = 1
-					if InBed then
-						RestMult = 2
-					end
+					local RestMult = (playa.JMod_IsSleeping and 2) or 1
 					local Nuts = playa.EZnutrition.Nutrients
 
 					if Nuts > 0 then
-						playa.EZnutrition.Nutrients = Nuts - 1 * RestMult
+						playa.EZnutrition.Nutrients = Nuts - 1
 						local Helf, Max, Nuts = playa:Health(), playa:GetMaxHealth()
 
 						if Helf < Max then
@@ -782,6 +896,9 @@ concommand.Add("jacky_trace_debug", function(ply)
 				print("bone", i, Boner)
 			end
 		end
+
+		print("---------- entity bodygroup data -----------")
+		PrintTable(Ent:GetBodyGroups())
 	end
 
 	print("---------- end trace debug -----------")
@@ -800,7 +917,7 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
-	local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
+	--local ThiccPlayer = (ply.EZarmor and ply.EZarmor.totalWeight or 10) / 10 -- Maybe?
 	if JMod.Config.QoL.RealisticFallDamage then return (spd ^ 2 / 8000) end
 end)
 
@@ -818,14 +935,16 @@ hook.Add("DoPlayerDeath", "JMOD_SERVER_DOPLAYERDEATH", function(ply, attacker, d
 end)
 
 hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, attacker)
-	if (JMod.Config.QoL.JModCorpseStayTime > 0) then
+	local ShouldJModCorpse = JMod.Config.QoL.JModCorpseStayTime > 0
+	local EZcorpse
+	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
 		local BodyGroupValues = ""
 		for i = 1, PlyRagdoll:GetNumBodyGroups() do
 			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
 		end
 		SafeRemoveEntity(PlyRagdoll)
-		local EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+		EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
 		EZcorpse.DeadPlayer = ply
 		if ply.EZoverDamage then
 			EZcorpse.EZoverDamage = ply.EZoverDamage
@@ -833,15 +952,34 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		EZcorpse.BodyGroupValues = BodyGroupValues
 		EZcorpse:Spawn()
 		EZcorpse:Activate()
+		if IsValid(EZcorpse.EZragdoll) then
+			EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+		end
 	end
 	ply.EZoverDamage = nil
+	if ply.JMod_WillAsplode then
+		ply.EZnutrition = nil
+		ply.EZhealth = nil
+		ply.EZkillme = nil
+	end
+	ply.JMod_WillAsplode = nil
 
-	if ply.JModInv then
+	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
+	if (ply.JModInv and (ShouldInvDrop or ShouldJModCorpse)) then
+		local PlyPos = ply:GetPos()
 		for _, v in ipairs(ply.JModInv.items) do
-			JMod.RemoveFromInventory(ply, v.ent, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+			local RandomVec = Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100))
+			local Removed = JMod.RemoveFromInventory(ply, v.ent, PlyPos + RandomVec, false, ShouldJModCorpse and not ShouldInvDrop)
+			if ShouldJModCorpse and IsValid(Removed) then
+				JMod.AddToInventory(EZcorpse.EZragdoll, Removed)
+			end
 		end
 		for typ, amt in pairs(ply.JModInv.EZresources) do
-			JMod.RemoveFromInventory(ply, {typ, amt}, ply:GetPos() + Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100)))
+			local RandomVec = Vector(math.random(-100, 100), math.random(-100, 100), math.random(0, 100))
+			local RemovedTyp, Removed = JMod.RemoveFromInventory(ply, {typ, amt}, PlyPos + RandomVec, false, ShouldJModCorpse and not ShouldInvDrop)
+			if ShouldJModCorpse then
+				JMod.AddToInventory(EZcorpse.EZragdoll, {RemovedTyp, Removed})
+			end
 		end
 	end
 end)

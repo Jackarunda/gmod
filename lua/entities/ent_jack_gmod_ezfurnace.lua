@@ -71,8 +71,8 @@ if(SERVER)then
 			local ResourceName = string.Replace(typ, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
-			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
-			if not(string.Right(ResourceName, 3) == "ore") and not(table.HasValue(self.FlexFuels, typ)) then
+			if not(string.Right(ResourceName, 3) == "ore") and not(ResourceName == "sand") and not(table.HasValue(self.FlexFuels, typ)) then
+				local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
 				table.insert(WireOutputs, OutResourceName)
 				table.insert(WireOutputDesc, ResourceDesc)
 			end
@@ -103,6 +103,7 @@ if(SERVER)then
 			JMod.Hint(activator, "need ore")
 			return
 		end
+		if IsValid(activator) then self.EZstayOn = true end
 		self:SetState(STATE_SMELTING)
 		self:EmitSound("snd_jack_littleignite.wav")
 		timer.Simple(0.1, function()
@@ -113,8 +114,9 @@ if(SERVER)then
 		end)
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
@@ -152,11 +154,11 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == self:GetOreType() and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
-	end
+	end--]]
 
 	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
@@ -276,12 +278,12 @@ elseif(CLIENT)then
 		---
 		local BasePos = SelfPos
 
-		local Obscured = util.TraceLine({
+		local Obscured = false--[[util.TraceLine({
 			start=EyePos(), 
 			endpos=BasePos, 
 			filter = {LocalPlayer(), self}, 
 			mask = MASK_OPAQUE
-		}).Hit
+		}).Hit--]]
 
 		local Closeness = LocalPlayer():GetFOV()*(EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees

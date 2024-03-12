@@ -133,7 +133,7 @@ elseif(CLIENT)then
 	end
 	local DarkSprite=Material("white_square")
 	function ENT:DrawTranslucent()
-		local SelfPos,SelfAng,FT=self:GetPos(),self:GetAngles(),FrameTime()
+		local SelfPos,SelfAng=self:GetPos(),self:GetAngles()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		---
 		local BasePos=SelfPos+Up*60

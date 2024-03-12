@@ -131,15 +131,22 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + .8)
 	self:SetNextSecondaryFire(CurTime() + .7)
-	local Hit = self:Hitscan()
-	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
+			local Hit = self:Hitscan()
 		end
 	end)
 	self:Pawnch()
 end
+
+local FleshTypes = {
+	MAT_ANTLION,
+	MAT_FLESH,
+	MAT_BLOODYFLESH,
+	MAT_FLESH,
+	MAT_ALIENFLESH
+}
 
 function SWEP:Hitscan()
 	if not SERVER then return end
@@ -172,25 +179,37 @@ function SWEP:Hitscan()
 				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
 				PickDam:SetDamage(math.random(35, 50))
 				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
-				tr.Entity:TakeDamageInfo(PickDam)
 
-				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-				--[[local vPoint = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10))
-				local effectdata = EffectData()
-				effectdata:SetOrigin( vPoint )
-				util.Effect( "BloodImpact", effectdata )--]]
-
-				--vm:SendViewModelMatchingSequence( vm:LookupSequence( "hitcenter1" ) )
-
-				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
+				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") then
 					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
 					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 					self:SetTaskProgress(0)
+					--
+					local vPoint = (tr.HitPos)
+					local effectdata = EffectData()
+					effectdata:SetOrigin( vPoint )
+					util.Effect( "BloodImpact", effectdata )
+					--
+				elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
+					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
+					if Mesg then
+						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
+						self:SetTaskProgress(0)
+					else
+						self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
+						PickDam:SetDamage(0)
+					end
 				elseif JMod.IsDoor(tr.Entity) then
 					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
+					self:SetTaskProgress(0)
 				else
 					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
 				end
+
+				tr.Entity:TakeDamageInfo(PickDam)
+
+				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
+				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, self.Owner})
 				return true
 			end
 		end)
@@ -201,13 +220,14 @@ function SWEP:TryBustDoor(ent, dmg, pos)
 	if not self.DoorBreachPower then return end
 	self.NextDoorShot = self.NextDoorShot or 0
 	if self.NextDoorShot > CurTime() then return end
-	if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not JMod.IsDoor(ent) then return end
+	local ArccWDoorBust = GetConVar("arccw_doorbust")
+	if (ArccWDoorBust and ArccWDoorBust:GetInt() == 0) or not(IsValid(ent)) or not(JMod.IsDoor(ent)) then return end
 	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
 	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
 	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
 	-- Magic number: 119.506 is the size of door01_left
 	-- The bigger the door is, the harder it is to bust
-	local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+	local threshold = ((ArccWDoorBust and GetConVar("arccw_doorbust_threshold"):GetInt()) or 1) * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
 	JMod.Hint(self.Owner, "shotgun breach")
 	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
 	local Amt = dmg * self.DoorBreachPower * WorkSpread
@@ -378,7 +398,7 @@ function SWEP:Think()
 	end
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		self:SetHoldType("normal")
+		self:SetHoldType("slam")
 	else
 		self:SetHoldType("melee2")
 

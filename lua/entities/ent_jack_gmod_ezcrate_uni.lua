@@ -75,7 +75,7 @@ if SERVER then
 			local Vol = Phys:GetVolume()
 			if Vol ~= nil then
 
-				Vol = math.ceil(Vol / 500) -- Weird maths
+				Vol = math.ceil(Vol / JMod.VOLUMEDIV) -- Weird maths
 				if ent.EZstorageVolumeOverride then
 					Vol = ent.EZstorageVolumeOverride
 				end
@@ -91,7 +91,7 @@ if SERVER then
 					--self:SetItemCount(self:GetItemCount() + 1)
 				end
 				--[[local Class = ent:GetClass()
-				local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / 500)
+				local Vol = (self.Items[Class] and self.Items[Class][2]) or math.ceil(ent:GetPhysicsObject():GetVolume() / JMod.VOLUMEDIV)
 
 				if ent.EZstorageVolumeOverride then
 					Vol = ent.EZstorageVolumeOverride

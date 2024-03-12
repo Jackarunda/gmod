@@ -27,6 +27,9 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.FUEL
 }
+ENT.EZpowerProducer = true
+ENT.EZpowerSocket = Vector(42, -1, 40)
+ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -48,25 +51,26 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 			return
-		elseif State == STATE_OFF then
-			self:TurnOn(activator)
-		elseif State == STATE_ON then
-			if alt then
-				self:ProduceResource()
-				return
+		end
+		if Alt then
+			self:ModConnections(activator)
+		else
+			if(State == JMod.EZ_STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State == JMod.EZ_STATE_ON)then
+				self:TurnOff(activator)
 			end
-			self:TurnOff()
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:WaterLevel() > 1) then return end
 		if (self:GetFuel() > 0) then
@@ -74,29 +78,31 @@ if(SERVER)then
 			self:SetState(STATE_ON)
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
-		else
+		elseif IsValid(activator) and not(auto) then
+			self.EZstayOn = true
 			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")
 		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
+		if IsValid(activator) then self.EZstayOn = nil end
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if typ == JMod.EZ_RESOURCE_TYPES.FUEL and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
 		end
-	end
+	end--]]
 
 	function ENT:OnRemove()
 		if self.SoundLoop then self.SoundLoop:Stop() end
@@ -118,7 +124,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
@@ -210,16 +215,16 @@ elseif(CLIENT)then
 	end
 
 	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
 		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos + Up * 30, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
-		if((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
+		--if((not(DetailDraw)) and (Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw = false end -- if obscured, at least disable details
 		if(State == STATE_BROKEN)then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
 		---

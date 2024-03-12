@@ -32,6 +32,9 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.WATER
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.WOOD }
+ENT.EZpowerProducer = true
+ENT.EZpowerSocket = Vector(65, 18, 18)
+ENT.MaxConnectionRange = 500
 
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 2, "Progress")
@@ -60,28 +63,28 @@ if(SERVER)then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
+		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
 		if State == STATE_BROKEN then
 			JMod.Hint(activator, "destroyed", self)
 			return
-		elseif State == STATE_OFF then
-			self:TurnOn(activator)
-		elseif State == STATE_ON then
-			if alt then
-				self:ProduceResource()
-				return
+		end
+		if Alt then
+			self:ModConnections(activator)
+		else
+			if(State == JMod.EZ_STATE_OFF)then
+				self:TurnOn(activator)
+			elseif(State == JMod.EZ_STATE_ON)then
+				self:TurnOff()
 			end
-			self:TurnOff()
 		end
 	end
 
-	function ENT:TurnOn(activator)
+	function ENT:TurnOn(activator, auto)
 		if self:GetState() > STATE_OFF then return end
 		if (self:WaterLevel() > 1) then return end
-		self:EmitSound("snd_jack_littleignite.wav")
 		if (self:GetElectricity() > 0) and (self:GetWater() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
@@ -93,15 +96,24 @@ if(SERVER)then
 			end)
 		elseif self:GetElectricity() <= 0 then 
 			JMod.Hint(activator, "need combustibles")
+
+			return
 		elseif self:GetWater() <= 0 then
 			JMod.Hint(activator, "refill sfg water")
+
+			return
+		end
+		if IsValid(activator) and not(auto) then
+			self.EZstayOn = true
+			self:EmitSound("snd_jack_littleignite.wav")
 		end
 		self:UpdateWireOutputs()
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(activator)
 		if (self:GetState() <= 0) then return end
 		self.NextUseTime = CurTime() + 1
+		if IsValid(activator) then self.EZstayOn = true end
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		--self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:EmitSound("snd_jack_littleignite.wav")
@@ -110,13 +122,13 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 	end
 
-	function ENT:ResourceLoaded(typ, accepted)
+	--[[function ENT:ResourceLoaded(typ, accepted)
 		if (typ == JMod.EZ_RESOURCE_TYPES.COAL) or (typ == JMod.EZ_RESOURCE_TYPES.WOOD) and accepted > 0 then
 			timer.Simple(.1, function() 
 				if IsValid(self) then self:TurnOn() end 
 			end)
 		end
-	end
+	end--]]
 
 	function ENT:OnRemove()
 		if self.SoundLoop then self.SoundLoop:Stop() end
@@ -127,7 +139,6 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
-
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
@@ -147,7 +158,9 @@ if(SERVER)then
 					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
 					if i == 10 then
 						self.SteamLoop:Stop()
-						self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100)
+						timer.Simple(0, function()
+							if IsValid(self) then self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100) end
+						end)
 					end
 				end)
 			end
@@ -209,7 +222,7 @@ if(SERVER)then
 		end
 
 		if (self.NextEffThink < Time) then
-			self.NextEffThink = Time + .5 * Grade
+			self.NextEffThink = Time + .4 * Grade
 			if (State == STATE_ON) then
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos() + Up * 90 + Forward * 70)
@@ -220,9 +233,9 @@ if(SERVER)then
 			end
 		end
 		if (self.NextFoofThink < Time) then
-			self.NextFoofThink = Time + .3/Grade
+			self.NextFoofThink = Time + .4/Grade
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80))
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80) * Grade / 4)
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)
@@ -312,14 +325,9 @@ elseif(CLIENT)then
 		self.WheelMomentum = 0
 	end
 
-	local WhiteSquare = Material("white_square")
-	local HeatWaveMat = Material("sprites/heatwave")
-
-	function ENT:Draw()
-		local SelfPos, SelfAng, State, FT = self:GetPos(), self:GetAngles(), self:GetState(), FrameTime()
-		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
-		local Grade = self:GetGrade()
-		---
+	function ENT:Think()
+		local State, Grade = self:GetState(), self:GetGrade()
+		local FT = FrameTime()
 		if State == STATE_ON then
 			self.WheelMomentum = math.Clamp(self.WheelMomentum + FT / 8, 0, 1)
 		else
@@ -332,9 +340,18 @@ elseif(CLIENT)then
 		elseif self.WheelTurn < 0 then
 			self.WheelTurn = 360
 		end
+	end
+
+	local WhiteSquare = Material("white_square")
+	local HeatWaveMat = Material("sprites/heatwave")
+
+	function ENT:Draw()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+		local Grade = self:GetGrade()
 		---
 		local BasePos = SelfPos
-		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
+		local Obscured = util.TraceLine({start = EyePos(), endpos = BasePos + Up * 60, filter = {LocalPlayer(), self}, mask = MASK_OPAQUE}).Hit
 		local Closeness = LocalPlayer():GetFOV() * (EyePos():Distance(SelfPos))
 		local DetailDraw = Closeness < 120000 -- cutoff point is 400 units when the fov is 90 degrees
 		---
@@ -345,45 +362,50 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		if (State == STATE_ON) then
-			local GlowPos = BasePos + Up * 60 + Forward * -13
-			local GlowAng = SelfAng:GetCopy()
-			GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
-			local GlowDir = GlowAng:Forward()
-			render.SetMaterial(WhiteSquare)
-			for i = 1, 5 do
-				render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 255, 255, 200 ), GlowAng.r)
-			end
-			for i = 1, 20 do
-				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), GlowAng.r)
-			end
-			render.SetMaterial(HeatWaveMat)
-			for i = 1, 2 do
-				--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
-				--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				local GlowPos = BasePos + Up * 60 + Forward * -13
+				local GlowAng = SelfAng:GetCopy()
+				local Roll = GlowAng.r
+				GlowAng:RotateAroundAxis(GlowAng:Up(), 180)
+				local GlowDir = GlowAng:Forward()
+				render.SetMaterial(WhiteSquare)
+			if Closeness > 40000 then
+				render.DrawQuadEasy(GlowPos + GlowDir * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 167, 116, 225), Roll)
+			else
+				for i = 1, 5 do
+					render.DrawQuadEasy(GlowPos + GlowDir * (1 + i / 5) * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255, 255, 255, 200 ), Roll)
+				end
+				for i = 1, 20 do
+					render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), Roll)
+				end
+				render.SetMaterial(HeatWaveMat)
+				for i = 1, 2 do
+					--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+					--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				end
 			end
 		end
-		--- render wheel
-		local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
-		local FlywheelAng = SelfAng:GetCopy()
-		FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
-		JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
-		local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 1.2
-		local WheelTurnRadians = math.rad(self.WheelTurn)
-		local PistonEndX = -math.sin(WheelTurnRadians)
-		local PistonEndY = -math.cos(WheelTurnRadians)
-		local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 1.2
-		-- now that we know the desired tip positions, we can calc the angle for the piston housing
-		local PistonVec = PistonEndPos - PistonPivotPos
-		local PistonDir = PistonVec:GetNormalized()
-		local PistonAng = PistonDir:Angle()
-		JMod.RenderModel(self.Piston, PistonPivotPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		-- now render the piston shaft at the same angle, but slide it along the vector by some amount
-		local PusherPos = PistonEndPos
-		JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
-		---
 		if DetailDraw then
-			if Closeness < 20000 and State == STATE_ON then
+			--- render wheel
+			local FlywheelPos = BasePos + Up * 18 + Forward * 64.5 - Right * 21.5
+			local FlywheelAng = SelfAng:GetCopy()
+			FlywheelAng:RotateAroundAxis(Right, self.WheelTurn)
+			JMod.RenderModel(self.Flywheel, FlywheelPos, FlywheelAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			--- calculate and render piston based on orientation of wheel (the piston is slaved to the wheel, in terms of render math)
+			local PistonPivotPos = FlywheelPos + Up * 16 - Forward * 29 - Right * 1.2
+			local WheelTurnRadians = math.rad(self.WheelTurn)
+			local PistonEndX = -math.sin(WheelTurnRadians)
+			local PistonEndY = -math.cos(WheelTurnRadians)
+			local PistonEndPos = FlywheelPos - PistonEndX * Forward * 9.3 + PistonEndY * Up * 9.3 - Right * 1.2
+			-- now that we know the desired tip positions, we can calc the angle for the piston housing
+			local PistonVec = PistonEndPos - PistonPivotPos
+			local PistonDir = PistonVec:GetNormalized()
+			local PistonAng = PistonDir:Angle()
+			JMod.RenderModel(self.Piston, PistonPivotPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			-- now render the piston shaft at the same angle, but slide it along the vector by some amount
+			local PusherPos = PistonEndPos
+			JMod.RenderModel(self.Pusher, PusherPos, PistonAng, nil, Vector(1, 1, 1), JMod.EZ_GRADE_MATS[Grade])
+			---
+			if Closeness < 20000 and (State == STATE_ON) then
 				local DisplayAng = SelfAng:GetCopy()
 				DisplayAng:RotateAroundAxis(DisplayAng:Right(), 0)
 				DisplayAng:RotateAroundAxis(DisplayAng:Up(), -90)

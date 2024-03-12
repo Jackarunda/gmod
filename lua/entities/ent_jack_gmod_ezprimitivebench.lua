@@ -35,6 +35,7 @@ ENT.StaticPerfSpecs={
 	MaxDurability = 90,
 	Armor = .7
 }
+ENT.ResourceReqMult = 1.3
 local STATE_BROKEN, STATE_FINE, STATE_PROCESSING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -73,19 +74,29 @@ if(SERVER)then
 
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
+		self.Inputs = WireLib.CreateInputs(self, {"ToggleState [NORMAL]", "OnOff [NORMAL]"}, {"Toggles the machine on or off with an input > 0", "1 turns on, 0 turns off"})
 		---
-		local WireOutputs = {"State [NORMAL]"}
-		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is fine"}
+		local WireOutputs = {"State [NORMAL]", "Progress [NORMAL]", "FlexFuel [NORMAL]", "Ore [NORMAL]", "OreType [STRING]"}
+		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "Machine's progress", "Machine's flex fuel left", "Amount of ore left", "The type of ore it's processing"}
 		for _, typ in ipairs(self.EZconsumes) do
 			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
 			local ResourceName = string.Replace(typ, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
 			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
-			table.insert(WireOutputs, OutResourceName)
-			table.insert(WireOutputDesc, ResourceDesc)
+			if not(string.Right(ResourceName, 3) == "ore") and not(table.HasValue(self.FlexFuels, typ)) then
+				table.insert(WireOutputs, OutResourceName)
+				table.insert(WireOutputDesc, ResourceDesc)
+			end
 		end
 		self.Outputs = WireLib.CreateOutputs(self, WireOutputs, WireOutputDesc)
+	end
+
+	function ENT:ResourceLoaded(typ, accepted)
+		if typ == self:GetOreType() and accepted >= 1 then
+			self:TurnOn(self.EZowner)
+		end
+		self:UpdateWireOutputs()
 	end
 
 	function ENT:Use(activator)
@@ -99,7 +110,7 @@ if(SERVER)then
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
-					net.WriteFloat(1.3)
+					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
 				end
@@ -114,7 +125,8 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:GetState() == STATE_PROCESSING) then return end
+		local State = self:GetState()
+		if (State == STATE_PROCESSING) or (State == STATE_BROKEN) then return end
 		if (self:GetElectricity() <= 0) then JMod.Hint(activator, "refill") return end
 		self:SetState(STATE_PROCESSING)
 		self:EmitSound("snd_jack_littleignite.wav")
@@ -124,6 +136,7 @@ if(SERVER)then
 			self.SoundLoop:SetSoundLevel(50)
 			self.SoundLoop:Play()
 		end)
+		if WireLib then WireLib.TriggerOutput(self, "State", self:GetState()) end
 	end
 
 	function ENT:TurnOff(activator)
@@ -131,6 +144,7 @@ if(SERVER)then
 		self:SetState(STATE_FINE)
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
+		if WireLib then WireLib.TriggerOutput(self, "State", self:GetState()) end
 	end
 
 	function ENT:Think()
@@ -151,7 +165,7 @@ if(SERVER)then
 					self:EmitSound("snds_jack_gmod/hiss.wav", 120, 90)
 					return 
 				end
-				--if not OreTyp then self:TurnOff() return end
+				if not OreTyp then self:TurnOff() return end
 
 				self:ConsumeElectricity(.2)
 
@@ -196,15 +210,23 @@ if(SERVER)then
 		self:NextThink(Time + .1)
 	end
 
+	local SalvageableMats = {
+		MAT_WOOD,
+		MAT_DIRT,
+		MAT_FLESH,
+		MAT_GRASS,
+		MAT_SLOSH
+	}
+
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed>80) and (data.DeltaTime>0.2) then
 			self:EmitSound("Wood.ImpactSoft")
 			local Ent = data.HitEntity
 			local Held = false
 			local Pos = data.HitPos
-			if self:IsPlayerHolding() or (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
+			if (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
-				if (Ent:GetClass() == "prop_physics") and Held then
+				if Held and (Ent:GetPhysicsObject():GetMass() <= 35) and ((Ent:GetClass() == "prop_physics") or (table.HasValue(SalvageableMats, Ent:GetMaterialType()))) then
 					DropEntityIfHeld(Ent)
 					timer.Simple(0.1, function()
 						local Yield, Message = JMod.GetSalvageYield(Ent)
@@ -240,8 +262,8 @@ if(SERVER)then
 					local ForceThreshold = physobj:GetMass() * (self.EZanchorage or 1000)
 					local PhysDamage = TheirForce/(physobj:GetMass())
 
-					if self.EZinstalled and not(physobj:IsMotionEnabled()) and (TheirForce >= ForceThreshold) then
-						physobj:EnableMotion(true)
+					if self.EZinstalled and (TheirForce >= ForceThreshold) then
+						JMod.EZinstallMachine(self, false)
 					end
 					if PhysDamage >= 1 and not(Held) then
 						local CrushDamage = DamageInfo()
@@ -273,7 +295,7 @@ if(SERVER)then
 			timer.Simple(0.3, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
-					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 100) then
+					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 200) then
 						JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 					end
 				end
@@ -294,14 +316,15 @@ if(SERVER)then
 	function ENT:TryBuild(itemName,ply)
 		local ItemInfo=self.Craftables[itemName]
 
-		if(JMod.HaveResourcesToPerformTask(nil,nil,ItemInfo.craftingReqs,self,nil,1.3))then
+		local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil,200,ItemInfo.craftingReqs,self,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
+		if(EnoughStuff)then
 			local override, msg=hook.Run("JMod_CanWorkbenchBuild", ply, workbench, itemName)
 			if override == false then
 				ply:PrintMessage(HUD_PRINTCENTER,msg or "cannot build")
 				return
 			end
 			local Pos,Ang,BuildSteps=self:GetPos()+self:GetUp()*55+self:GetForward()*0-self:GetRight()*5,self:GetAngles(),10
-			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,nil,self,true,nil,1.3)
+			JMod.ConsumeResourcesInRange(ItemInfo.craftingReqs,Pos,200,self,true,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
 			timer.Simple(1,function()
 				if(IsValid(self))then
 					for i=1,BuildSteps do
@@ -321,6 +344,11 @@ if(SERVER)then
 				end
 			end)
 		else
+			local Mssg = ""
+			for k, v in pairs(StuffLeft) do
+				Mssg = Mssg .. ", " .. tostring(v) .. " more " .. tostring(k)
+			end
+			ply:PrintMessage(HUD_PRINTCENTER, "You need" .. Mssg)
 			JMod.Hint(ply,"missing supplies")
 		end
 	end
@@ -339,7 +367,7 @@ elseif(CLIENT)then
 
 	function ENT:DrawTranslucent()
 		local State = self:GetState()
-		local SelfPos,SelfAng,FT=self:GetPos(),self:GetAngles(),FrameTime()
+		local SelfPos,SelfAng=self:GetPos(),self:GetAngles()
 		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		---
 		local BasePos = SelfPos + Up*30

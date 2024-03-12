@@ -61,9 +61,10 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if (self:WaterLevel() > 0) and (self:GetGrade() ~= 5) then return end
+		if (self:WaterLevel() > 0) and (self:GetGrade() < 3) then return end
 		if self:GetState() > JMod.EZ_STATE_OFF then return end
 		if self:GetElectricity() > 0 then
+			if IsValid(activator) then self.EZstayOn = true end
 			self:SetState(JMod.EZ_STATE_ON)
 			self:SFX("snd_jack_metallicclick.wav")
 		else
@@ -71,8 +72,9 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+	function ENT:TurnOff(activator)
+		if (self:GetState() <= JMod.EZ_STATE_OFF) then return end
+		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(JMod.EZ_STATE_OFF)
 		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()
@@ -265,11 +267,18 @@ elseif(CLIENT)then
 		local Ent=net.ReadEntity()
 		if(IsValid(Ent))then
 			Ent.ScanResults=net.ReadTable()
+			if Ent.LastScanTime then
+				Ent.LastScanTime = CurTime()
+			end
 		end
 	end)
 	function ENT:CustomInit()
 		self.Tank = JMod.MakeModel(self, "models/props_wasteland/horizontalcoolingtank04.mdl")
 		self.ScanResults = {}
+	end
+	function ENT:Think()
+		local FT=FrameTime()
+		self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
 	end
 	local SourceUnitsToMeters,MetersToPixels=.0192,7.5
 	local Circol,SourceUnitsToPixels=Material("mat_jack_gmod_blurrycirclefull"),SourceUnitsToMeters*MetersToPixels
@@ -279,7 +288,7 @@ elseif(CLIENT)then
 		local Time,SelfPos,SelfAng,State,Grade=CurTime(),self:GetPos(),self:GetAngles(),self:GetState(),self:GetGrade()
 		if((State==JMod.EZ_STATE_ON)and(self.LastState~=State))then self.DSU=0 end
 		self.LastState=State
-		local Up,Right,Forward,FT=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward(),FrameTime()
+		local Up,Right,Forward=SelfAng:Up(),SelfAng:Right(),SelfAng:Forward()
 		--
 		self:DrawModel()
 		--
@@ -362,8 +371,6 @@ elseif(CLIENT)then
 					draw.SimpleTextOutlined(tostring(math.Round(ProgFrac*100)).."%","JMod-Display",200,-30,Color(R,G,B,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
 				end
 				cam.End3D2D()
-				--
-				self.DSU=math.Clamp(self.DSU+FT*.7,0,1)
 			end
 		end
 	end

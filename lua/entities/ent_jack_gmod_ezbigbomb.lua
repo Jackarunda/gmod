@@ -257,11 +257,12 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/mk82_gbu.mdl")
+		--[[self.Mdl = ClientsideModel("models/jmod/mk82_gbu.mdl")
 		self.Mdl:SetModelScale(1.5, 0)
 		self.Mdl:SetPos(self:GetPos())
 		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
+		self.Mdl:SetNoDraw(true)--]]
+		self.Mdl = JMod.MakeModel(self, "models/jmod/mk82_gbu.mdl", nil, 1.5)
 		self.Guided = false
 	end
 
@@ -276,9 +277,7 @@ elseif CLIENT then
 		local Pos, Ang = self:GetPos(), self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Up(), 90)
 		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos - Ang:Up() * 15)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		JMod.RenderModel(self.Mdl, Pos, Ang)
 	end
 
 	function ENT:OnRemove()
