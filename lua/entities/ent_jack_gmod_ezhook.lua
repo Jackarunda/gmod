@@ -78,7 +78,7 @@ if SERVER then
 							end)
 						end
 						timer.Simple(0, function()
-							local Weld = constraint.Weld(self, data.HitEntity, 0, 0, 5000, true, false)
+							local Weld = constraint.Weld(self, data.HitEntity, 0, 0, 8000, true, false)
 							self.StuckTo = data.HitEntity
 							self.StuckStick = Weld
 						end)
@@ -126,7 +126,7 @@ if SERVER then
 				self.StuckStick = nil
 				self.StuckTo = nil
 				Dude:PickupObject(self)
-				self:EmitSound("snd_jack_minearm.wav", 60, 70)
+				self:EmitSound("snd_jack_claythunk.wav", 60, 70)
 				self:SetState(STATE_UNHOOKED)
 			end
 		else
@@ -135,7 +135,7 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		if not IsValid(self.Chain) then SafeRemoveEntity(self) end
+		if not(IsValid(self.Chain)) then SafeRemoveEntity(self) end
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 		end
@@ -149,7 +149,7 @@ elseif CLIENT then
 	end
 
 	--
-	local GlowSprite = Material("sprites/mat_jack_basicglow")
+	--local GlowSprite = Material("sprites/mat_jack_basicglow")
 
 	function ENT:Draw()
 		self:DrawModel()

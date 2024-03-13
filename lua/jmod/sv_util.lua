@@ -1511,7 +1511,7 @@ function JMod.StartConnection(machine, ply)
 
 	local ropeLength = machine.MaxConnectionRange or 1000
 	local Rope = constraint.Rope(machine, Hooky, 0, 0, machine.EZpowerSocket or Vector(0,0,0), Vector(10,0,0), ropeLength, 0, 1000, 2, "cable/cable2", false)
-	Hooky.EZrope = Rope
+	Hooky.Chain = Rope
 
 	ply:DropObject()
 	ply:PickupObject(Hooky)

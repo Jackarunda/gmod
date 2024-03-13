@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.30
+			Version = 45.31
 		},
 		General = {
 			Hints = true,
@@ -781,6 +781,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Machines",
 				craftingType = "toolbox",
 				description = "Scans the ground for resource deposits when held still on solid ground. \nDoubles as a form of psychological torture."
+			},
+			["EZ Electric Winch"] = {
+				results = "ent_jack_gmod_ezwinch",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50
+				},
+				sizeScale = 1.5,
+				category = "Machines",
+				craftingType = "toolbox",
+				description = "Allows you to move objects up and down with ease."
 			},
 			["EZ Solar Panel"] = {
 				results = "ent_jack_gmod_ezsolargenerator",
