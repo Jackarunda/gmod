@@ -11,7 +11,7 @@ ENT.AdminSpawnable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Model = "models/jmod/ezwinch01.mdl"
-ENT.Mass = 25
+ENT.Mass = 30
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 100,
@@ -96,6 +96,7 @@ if SERVER then
 		if not(IsValid(self.Chain)) or (self:GetState() < STATE_OFF) then return end
 		amt = amt or 5
 		if amt < 0 then
+			sound.Play("snds_jack_gmod/ezsentry_turn.wav", self:GetPos(), 60, math.random(90, 95))
 			if (self:GetElectricity() <= 0) then self:TurnOff() end
 			self:ConsumeElectricity(-amt * 0.05)
 		end
@@ -152,7 +153,7 @@ if SERVER then
 		self.Hooker = Hooky
 
 		self.CurrentCableLength = 20
-		self.Chain, self.VisualRope = constraint.Elastic(self, Hooky, 0, 0, Vector(-7.5,10,3), Vector(0,0,9), 5000, 2, 10, "cable/mat_jack_gmod_chain", 2, true)
+		self.Chain, self.VisualRope = constraint.Elastic(Hooky, self, 0, 0, Vector(0,0,9), Vector(-7.5,10,3), 5000, 10, 2, "cable/mat_jack_gmod_chain", 2, true)
 		self.VisualRope:SetKeyValue( "Collide", "false")
 		Hooky.Chain = self.Chain
 
@@ -208,7 +209,7 @@ if SERVER then
 		end
 
 		if (State == STATE_SPEELING) then
-			self:Ratchet(5)
+			self:Ratchet(10)
 		elseif (State == STATE_WINDING) then
 			self:Ratchet(-5)
 		end
@@ -235,9 +236,21 @@ if SERVER then
 		end)
 	end
 
+	function ENT:OnBreak()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
+		if IsValid(self.Hooker) then
+			SafeRemoveEntity(self.Hooker)
+		end
+	end
+
 	function ENT:OnRemove()
 		if IsValid(self.Hooker) then
 			SafeRemoveEntity(self.Hooker)
+		end
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
 		end
 	end
 
