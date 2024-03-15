@@ -42,7 +42,7 @@ if SERVER then
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
 
-		if self.HighVisuals then
+		if self.HighVisuals and (JMod.Config.QoL.NukeFlashLightEnabled or false) then
 			self:SetHighVisuals(true)
 		end
 	end
@@ -166,7 +166,7 @@ elseif CLIENT then
 			"eff_jack_gmod_heavyfire", 15, 14, 100
 		}
 
-		self.CastLight = (HighVisuals and (math.random(1, 4) == 1))
+		self.CastLight = (HighVisuals and (math.random(1, 6) == 1))
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
