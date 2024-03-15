@@ -249,6 +249,7 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
+		if self.ClientOnly then return end
 		local Time, State = CurTime(), self:GetState()
 		local FT = FrameTime()
 		if State == STATE_SPEELING then

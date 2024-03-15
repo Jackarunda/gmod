@@ -674,9 +674,13 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 			end
 		else
 			local temp_ent
-			if string.Right(info["results"], 4) == ".mdl" then
+			if (string.Right(info["results"], 4) == ".mdl") then
 				temp_ent = ents.CreateClientProp(info["results"])
-				temp_ent:SetModel(info["results"])
+				if not(util.IsValidModel(info["results"])) then
+					print("JMod: Invalid model in config: " .. info["results"])
+				else
+					temp_ent:SetModel(info["results"])
+				end
 			else
 				temp_ent = ents.CreateClientside(info["results"])
 				if temp_ent.IsJackyEZmachine then
