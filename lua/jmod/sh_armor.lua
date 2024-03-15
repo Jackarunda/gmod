@@ -1140,7 +1140,7 @@ end
 
 -- Debug
 --[[
-for _, ply in pairs(player.GetAll()) do
+for _, ply in player.Iterator() do
 	ply.NextEZarmorTableCopy=0
 end
 --]]

@@ -148,7 +148,7 @@ hook.Add("Think", "JModEquippableThink", function()
 	if CLIENT or (NextServerThink < Time) then
 		NextServerThink = Time + .1
 
-		for k, ply in pairs(player.GetAll()) do
+		for k, ply in player.Iterator() do
 			if ply:Alive() and ply.EZequippables then
 				for slot, info in pairs(ply.EZequippables) do
 					local EquippableSpecs, TimeLeft = JMod.Equippables[info.nam], info.tim - Time

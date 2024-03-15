@@ -908,7 +908,7 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	if not GetConVar("sv_cheats"):GetBool() then return end
 	if not ply:IsSuperAdmin() then return end
 
-	for k, v in pairs(player.GetAll()) do
+	for k, v in player.Iterator() do
 		if v ~= ply then
 			v:SetPos(ply:GetPos() + Vector(100 * k, 0, 0))
 			v:SetHealth(100)

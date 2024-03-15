@@ -110,7 +110,7 @@ if SERVER then
 		if objective == "kill" then
 			local Closest, SelfPos = 9e9, self:GetPos()
 
-			for _, v in ipairs(player.GetAll()) do
+			for _, v in player.Iterator() do
 				if v:Alive() then
 					local Dist = SelfPos:Distance(v:GetPos())
 
@@ -409,7 +409,7 @@ if SERVER then
 		end
 
 		---
-		for k, ply in pairs(player.GetAll()) do
+		for k, ply in player.Iterator() do
 			local Dist = ply:GetPos():Distance(SelfPos)
 
 			if (Dist > 1000) and (Dist < 120000) then

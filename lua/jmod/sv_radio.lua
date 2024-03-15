@@ -317,8 +317,17 @@ end
 -- this is on the global table for third-party use
 function JMod.AddNewRadioOutpost(teamID)
 	table.insert(JMod.EZ_RADIO_STATIONS, CreateRadioStation(teamID))
-	for k, ply in pairs(player.GetAll()) do
-		ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(tonumber(teamID)) .. " has gained a radio outpost.")
+
+	local TeamName = team.GetName(tonumber(teamID))
+
+	if TeamName == "" then
+		TeamName = player.GetByAccountID(tonumber(teamID)):Name()
+	else
+		TeamName = "Team " .. TeamName
+	end
+
+	for k, ply in player.Iterator() do
+		ply:PrintMessage(HUD_PRINTTALK, TeamName .. " has gained a radio outpost.")
 	end
 end
 
@@ -337,10 +346,16 @@ function JMod.RemoveRadioOutPost(teamID)
 		radio:TurnOff()
 	end
 
-	for k, ply in pairs(player.GetAll()) do
-		for k, ply in pairs(player.GetAll()) do
-			ply:PrintMessage(HUD_PRINTTALK, "Team " .. team.GetName(tonumber(teamID)) .. " has lost a radio outpost.")
-		end
+	local TeamName = team.GetName(tonumber(teamID))
+
+	if TeamName == "" then
+		TeamName = player.GetByAccountID(tonumber(teamID)):Name()
+	else
+		TeamName = "Team " .. TeamName
+	end
+
+	for k, ply in player.Iterator() do
+		ply:PrintMessage(HUD_PRINTTALK, TeamName .. " has lost a radio outpost.")
 	end
 end
 

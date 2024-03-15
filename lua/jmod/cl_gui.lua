@@ -60,7 +60,7 @@ local function PopulateList(parent, friendList, myself, W, H)
 	parent:Clear()
 	local Y = 0
 
-	for k, playa in pairs(player.GetAll()) do
+	for k, playa in player.Iterator() do
 		if playa ~= myself then
 			playa.JModFriends = playa.JModFriends or {}
 			local IsFriendBool = table.HasValue(playa.JModFriends, myself)
