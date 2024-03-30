@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 45.31
+			Version = 46
 		},
 		General = {
 			Hints = true,
@@ -114,7 +114,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			BleedSpeedMult = 0,
 			NukeFlashLightEnabled = false,
 			ChangePitchWithHostTimeScale = true,
-			AllowActiveItemsInInventory = false
+			AllowActiveItemsInInventory = false,
+			SeasonalEventsEnabled = true
 		},
 		FoodSpecs = {
 			DigestSpeed = 1,

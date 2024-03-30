@@ -96,5 +96,5 @@ elseif CLIENT then
 		self:DrawModel()
 	end
 
-	language.Add("ent_jack_gmod_ezanomaly_egg", "EZ Egg")
+	language.Add("ent_jack_gmod_ezeasteregg", "EZ Easter Egg")
 end

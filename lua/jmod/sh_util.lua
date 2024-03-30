@@ -442,6 +442,7 @@ local Holidays = {
 }
 local CachedHoliday, NextCheck = nil, 0
 function JMod.GetHoliday()
+	if not (JMod.Config.QoL.SeasonalEventsEnabled) then return end
 	local Time = CurTime()
 	if (NextCheck < Time) then
 		local CurDay = tonumber(os.date("%j")) -- get day of the year, 1-366

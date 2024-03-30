@@ -445,10 +445,10 @@ local NextEasterThink = 0
 local function EasterEggThink(dude)
 	local Time = CurTime()
 	if (Time > NextEasterThink) then
-		NextEasterThink = Time + 10
+		NextEasterThink = Time + 50
 		local Pos = JMod.FindHiddenSpawnLocation()
 		if (Pos) then
-			local Eg = ents.Create("ent_jack_gmod_ezanomaly_egg")
+			local Eg = ents.Create("ent_jack_gmod_ezeasteregg")
 			Eg:SetPos(Pos)
 			Eg:SetAngles(AngleRand())
 			Eg:Spawn()
