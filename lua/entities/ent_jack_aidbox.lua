@@ -178,7 +178,13 @@ if SERVER then
 		--if true then return end
 		local Time = CurTime()
 		if not((activator.NextAidBoxOpenTime or 0) < Time) then activator:PrintMessage(HUD_PRINTCENTER, "No opening in rapid sucession") return end
+		activator.NextAidBoxOpenTime = Time + 2
 		local Pos = self:LocalToWorld(self:OBBCenter() + Vector(0, 0, 10))
+		--
+		SpawnContents(self.Contents or {
+			{"item_ammo_pistol", 1}
+		}, Pos, activator)
+		--
 		local Up = self:GetUp()
 		local Right = self:GetRight()
 		local Forward = self:GetForward()
@@ -200,11 +206,6 @@ if SERVER then
 		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.wav") or "snd_jack_aidboxopen.wav"
 		self:EmitSound(Snd, 75, 100)
 
-		SpawnContents(self.Contents or {
-			{"item_ammo_pistol", 1}
-		}, Pos, activator)
-
-		--JackaGenericUseEffect(activator)
 		if activator:IsPlayer() then
 			local Wep = activator:GetActiveWeapon()
 
@@ -221,8 +222,7 @@ if SERVER then
 		timer.Simple(2, function()
 			sound.Play(Snd, Pos, 75, 100)
 		end)
-
-		activator.NextAidBoxOpenTime = Time + 2
+		
 		self:Remove()
 	end
 

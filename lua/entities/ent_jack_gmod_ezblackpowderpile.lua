@@ -21,9 +21,12 @@ if SERVER then
 		self:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(1)
-			self:GetPhysicsObject():Wake()
+			if IsValid(Phys) then
+				Phys:SetMass(1)
+				Phys:Wake()
+			end
 		end)
 
 		self.Ignited = false
@@ -38,7 +41,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if not data.HitEntity:IsWorld() then
 			if math.random(1, 2) == 1 then
-				self:Remove()
+				SafeRemoveEntityDelayed(self, 0)
 			end
 		end
 	end

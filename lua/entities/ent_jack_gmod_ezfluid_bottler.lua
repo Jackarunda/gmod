@@ -63,7 +63,9 @@ if SERVER then
 	end
 
 	function ENT:OnRemove()
-		self.SoundLoop:Stop()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:ProduceResource()
