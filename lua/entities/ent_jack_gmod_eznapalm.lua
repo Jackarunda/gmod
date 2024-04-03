@@ -265,6 +265,24 @@ elseif CLIENT then
 
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
+	function ENT:Think()
+		if math.random(1, 2) == 2 then
+			local Type, Pos, Dir, Ang = self:GetDTInt(0), self.RenderPos, self:GetForward(), self:GetAngles()
+			local dlight = DynamicLight(self:EntIndex())
+
+			if dlight then
+				dlight.pos = Pos - Dir * 15
+				dlight.r = self.TypeInfo[6].r
+				dlight.g = self.TypeInfo[6].g
+				dlight.b = self.TypeInfo[6].b
+				dlight.brightness = 2
+				dlight.Decay = 1000
+				dlight.Size = 200
+				dlight.DieTime = CurTime() + .1
+			end
+		end
+	end
+
 	function ENT:Draw()
 		local Time = CurTime()
 		if self.RenderTime > Time then return end
@@ -288,21 +306,6 @@ elseif CLIENT then
 
 		for i = 1, 20 do
 			render.DrawSprite(Pos - Dir * i * 5 + VectorRand() * math.Rand(0, 2) * i * ScatterFrac, 30 * ScatterFrac, 30 * ScatterFrac, Col)
-		end
-
-		if math.random(1, 2) == 2 then
-			local dlight = DynamicLight(self:EntIndex())
-
-			if dlight then
-				dlight.pos = Pos - Dir * 15
-				dlight.r = self.TypeInfo[6].r
-				dlight.g = self.TypeInfo[6].g
-				dlight.b = self.TypeInfo[6].b
-				dlight.brightness = 2
-				dlight.Decay = 1000
-				dlight.Size = 200
-				dlight.DieTime = CurTime() + .1
-			end
 		end
 
 		render.SetColorModulation(OrigR, OrigG, OrigB)

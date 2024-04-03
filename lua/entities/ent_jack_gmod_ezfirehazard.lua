@@ -179,6 +179,23 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 	local Col = Color(255, 255, 255, 255)
 
+	function ENT:Think()
+		if self.CastLight and not GAMEMODE.Lagging then
+			local dlight = DynamicLight(self:EntIndex())
+
+			if dlight then
+				dlight.pos = self:GetPos()
+				dlight.r = 255
+				dlight.g = 175
+				dlight.b = 100
+				dlight.brightness = 3
+				dlight.Decay = 200
+				dlight.Size = 400
+				dlight.DieTime = CurTime() + 1
+			end
+		end
+	end
+
 	function ENT:Draw()
 		local Time, Pos = CurTime(), self:GetPos()
 		render.SetMaterial(GlowSprite)
@@ -189,21 +206,6 @@ elseif CLIENT then
 			self.SizeX = self.Size * math.Rand(.75, 1.25)
 			self.SizeY = self.Size * math.Rand(.75, 1.25)
 			self.NextRandomize = Time + .2
-		end
-
-		if self.CastLight and not GAMEMODE.Lagging then
-			local dlight = DynamicLight(self:EntIndex())
-
-			if dlight then
-				dlight.pos = Pos
-				dlight.r = 255
-				dlight.g = 175
-				dlight.b = 100
-				dlight.brightness = 3
-				dlight.Decay = 200
-				dlight.Size = 400
-				dlight.DieTime = CurTime() + 1
-			end
 		end
 	end
 end
