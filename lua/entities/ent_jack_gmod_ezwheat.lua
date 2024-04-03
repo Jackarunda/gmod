@@ -48,29 +48,31 @@ if(SERVER)then
 		self.Destroyed = true
 		self:EmitSound("Dirt.Impact")
 
-		local SpawnPos = Vector(0, 0, 100)
-		local FoodAmt = 0
-		if (self.Growth >= 66) then
-			FoodAmt = 100
-		elseif (self.Growth >= 33) then
-			FoodAmt = 50
-		else
-			FoodAmt = 25
-		end
-
-		if (FoodAmt > 0) then
-			local Seedy = ents.Create("ent_jack_gmod_ezwheatseed")
-			Seedy:SetPos(self:LocalToWorld(SpawnPos + VectorRand(-50, 50)))
-			Seedy:SetAngles(AngleRand())
-			Seedy:Spawn()
-			Seedy:Activate()
-			if (self.Mutated) then
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.AMMO, FoodAmt / 2, SpawnPos, Angle(0, 0, 0), nil, false)
-				if math.random(1, 2) == 1 then
-					Seedy:Mutate()
-				end
+		if not(self:IsOnFire() or (dmginfo and (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN)))) then
+			local SpawnPos = Vector(0, 0, 100)
+			local FoodAmt = 0
+			if (self.Growth >= 66) then
+				FoodAmt = 100
+			elseif (self.Growth >= 33) then
+				FoodAmt = 50
 			else
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+				FoodAmt = 25
+			end
+
+			if (FoodAmt > 0) then
+				local Seedy = ents.Create("ent_jack_gmod_ezwheatseed")
+				Seedy:SetPos(self:LocalToWorld(SpawnPos + VectorRand(-50, 50)))
+				Seedy:SetAngles(AngleRand())
+				Seedy:Spawn()
+				Seedy:Activate()
+				if (self.Mutated) then
+					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.AMMO, FoodAmt / 2, SpawnPos, Angle(0, 0, 0), nil, false)
+					if math.random(1, 2) == 1 then
+						Seedy:Mutate()
+					end
+				else
+					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.ORGANICS, FoodAmt, SpawnPos, Angle(0, 0, 0), nil, false)
+				end
 			end
 		end
 

@@ -173,11 +173,10 @@ if(SERVER)then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 		local Damage = dmginfo:GetDamage() * self:DetermineDamageMultiplier(dmginfo)
-		print(dmginfo:IsDamageType(DMG_RADIATION))
 		if dmginfo:IsDamageType(DMG_RADIATION) and isfunction(self.Mutate) and (math.random(0, 10000) >= 9999) then
 			self:Mutate()
 		end
-		if dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN) and self.Hydration >= 0 then
+		if (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_SLOWBURN)) and self.Hydration > 0 then
 			self.Hydration = math.Clamp(self.Hydration - Damage, 0, 100)
 		else
 			self.Helf = self.Helf - Damage
