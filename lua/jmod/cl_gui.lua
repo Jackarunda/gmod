@@ -1240,7 +1240,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 		if itemTable.ent.Base then
 			local ItemBaseClass = itemTable.ent.Base
 
-			if ItemBaseClass and (ItemBaseClass == "ent_jack_gmod_ezgrenade") then
+			if ItemBaseClass and ((ItemBaseClass == "ent_jack_gmod_ezgrenade") or (ItemBaseClass == "ent_jack_gmod_ezmininade")) then
 				table.insert(Options, {
 					title="Prime",
 					actionFunc = function(itemTable)

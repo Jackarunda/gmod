@@ -456,7 +456,7 @@ concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
 		local Item = tbl.ent
 		if IsValid(Item) and Item.Base and not(table.HasValue(QuickNadeBlackList, Item:GetClass())) then
 			local ItemBaseClass = Item.Base
-			if (ItemBaseClass == "ent_jack_gmod_ezgrenade") then
+			if (ItemBaseClass == "ent_jack_gmod_ezgrenade") or (ItemBaseClass == "ent_jack_gmod_ezmininade") then
 				local item = JMod.RemoveFromInventory(ply, Item, ply:GetShootPos() + ply:GetAimVector() * 10)
 				if item then
 					item:Use(ply, ply, USE_ON)
