@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 46
+			Version = 47
 		},
 		General = {
 			Hints = true,
@@ -145,7 +145,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					}
 				},
 				["armor"] = {
-					description = "A random collection of armor*. *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
+					description = "A random collection of armor*.\n\n *Jackarunda Industries outsources package sorting. We are not liable for any unusual items.",
 					category = "Apparel",
 					results = {
 						{"RAND", JMod.ArmorTable["GasMask"].ent, JMod.ArmorTable["BallisticMask"].ent, JMod.ArmorTable["NightVisionGoggles"].ent, JMod.ArmorTable["ThermalGoggles"].ent, JMod.ArmorTable["Respirator"].ent, JMod.ArmorTable["Light-Helmet"].ent, JMod.ArmorTable["Medium-Helmet"].ent, JMod.ArmorTable["Heavy-Helmet"].ent, JMod.ArmorTable["Riot-Helmet"].ent, JMod.ArmorTable["Heavy-Riot-Helmet"].ent, JMod.ArmorTable["Ultra-Heavy-Helmet"].ent, JMod.ArmorTable["Metal Bucket"].ent, JMod.ArmorTable["Metal Pot"].ent, JMod.ArmorTable["Ceramic Pot"].ent, JMod.ArmorTable["Traffic Cone"].ent, JMod.ArmorTable["Light-Vest"].ent, JMod.ArmorTable["Medium-Light-Vest"].ent, JMod.ArmorTable["Medium-Vest"].ent, JMod.ArmorTable["Medium-Heavy-Vest"].ent, JMod.ArmorTable["Heavy-Vest"].ent, JMod.ArmorTable["Pelvis-Panel"].ent, JMod.ArmorTable["Light-Left-Shoulder"].ent, JMod.ArmorTable["Heavy-Left-Shoulder"].ent, JMod.ArmorTable["Light-Right-Shoulder"].ent, JMod.ArmorTable["Heavy-Right-Shoulder"].ent, JMod.ArmorTable["Left-Forearm"].ent, JMod.ArmorTable["Right-Forearm"].ent, JMod.ArmorTable["Light-Left-Thigh"].ent, JMod.ArmorTable["Heavy-Left-Thigh"].ent, JMod.ArmorTable["Light-Right-Thigh"].ent, JMod.ArmorTable["Heavy-Right-Thigh"].ent, JMod.ArmorTable["Left-Calf"].ent, JMod.ArmorTable["Right-Calf"].ent, JMod.ArmorTable["Hazmat Suit"].ent, 6}
@@ -396,12 +396,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 						{"weapon_frag", 3}
 					}
 				},
-				["acorns"] = {
-					description = "400 units of water and 4 acorns to start your tree farm.",
+				["seed kit"] = {
+					description = "Assorted seeds and water for starting your farm",
 					category = "Other",
 					results = {
-						{"ent_jack_gmod_ezacorn", 4},
+						{"RAND", "ent_jack_gmod_ezacorn", "ent_jack_gmod_ezwheatseed", "ent_jack_gmod_ezcornkernals", 4},
 						{"ent_jack_gmod_ezwater", 4}
+					}
+				},
+				["farming tools"] = {
+					description = "Tools for growing crops.",
+					category = "Tools",
+					results = {
+						{"ent_jack_gmod_ezaxe", 2}, {"ent_jack_gmod_ezshovel", 2}, {"ent_jack_gmod_ezbucket", 2}
 					}
 				},
 				["sentry"] = {
@@ -749,14 +756,14 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			["EZ Cable"] = {
 				results = "FUNC EZcable",
 				craftingReqs = {
-					[JMod.EZ_RESOURCE_TYPES.STEEL] = 2
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 2
 				},
 				oneHanded = true,
 				noSound = true,
 				sizeScale = 0.1,
 				category = "Tools",
 				craftingType = "toolbox",
-				description = "Attaches a strong cable between two points"
+				description = "Attaches a strong cable between two points, and creates an electrical connection"
 			},
 			["EZ Chain"] = {
 				results = "FUNC EZchain",
@@ -2825,10 +2832,16 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		playa.EZropeData = nil
 	end
 	JMod.LuaConfig.BuildFuncs.EZcable = function(playa, position, angles)
-		local Rope, Ent = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
-		--[[if IsValid(Rope) and IsValid(Ent) and (Ent.EZpowerProducer or (Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER))) then
-			table.insert(Ent.EZconnections, {Ent = Ent, Cable = Rope})
-		end--]]
+		local Ent1 = playa.EZropeData.Ent
+		local Rope, Ent2 = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
+		local PlugPos = Ent2:WorldToLocal(position)
+		local RopeDist = math.ceil(playa.EZropeData.Ent:GetPos():Distance(position))
+		if JMod.CreateConnection(Ent1, Ent2, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) or JMod.CreateConnection(Ent2, Ent1, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) then
+			local effectdata = EffectData()
+			effectdata:SetOrigin(position)
+			effectdata:SetScale(1)
+			util.Effect("Sparks", effectdata)
+		end
 		playa.EZropeData = nil
 	end
 	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)
