@@ -55,7 +55,7 @@ if SERVER then
 					activator:EmitSound("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", 60, math.random(90, 110))
 				end
 				local Wep = activator:GetActiveWeapon()
-				if Wep then
+				if IsValid(Wep) and Wep.GetPrimaryAmmoType and Wep.GetMaxClip1 then
 					local PrimType, SecType, PrimSize, SecSize = Wep:GetPrimaryAmmoType(), Wep:GetSecondaryAmmoType(), Wep:GetMaxClip1(), Wep:GetMaxClip2()
 					local PrimName, SecName = game.GetAmmoName(PrimType), game.GetAmmoName(SecType)
 					if PrimName then activator:GiveAmmo(math.max(math.ceil(PrimSize / 3), 1), PrimName, math.random(1, 2) == 1) end
