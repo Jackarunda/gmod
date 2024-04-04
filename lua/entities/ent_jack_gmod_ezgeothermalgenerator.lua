@@ -122,8 +122,8 @@ if(SERVER)then
 		if amt < 1 then return end
 
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, true, 200)
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 

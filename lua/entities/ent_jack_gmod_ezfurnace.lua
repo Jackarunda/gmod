@@ -146,7 +146,7 @@ if(SERVER)then
 
 				return
 			end
-			self:TurnOff()
+			self:TurnOff(activator)
 		end
 	end
 
@@ -179,10 +179,16 @@ if(SERVER)then
 				end
 			end
 		end)
-		self:SetProgress(0)
+		self:SetProgress(self:GetProgress() - amt)
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
-		if self:GetOre() <= 0 then
+
+		local OreLeft = self:GetOre()
+		if OreLeft <= 0 then
 			self:SetOreType("generic")
+		elseif OreType ~= "generic" then
+			self:SetOre(0)
+			self:SetOreType("generic")
+			JMod.MachineSpawnResource(self, OreType, OreLeft, spawnVec + Up * 20, spawnAng, ejectVec, false)
 		end
 	end
 

@@ -1513,66 +1513,6 @@ function JMod.StartConnection(machine, ply)
 	ply:PickupObject(Hooky)
 end
 
---[[
-local Shockables = {MAT_METAL, MAT_DEFAULT, MAT_GRATE, MAT_FLESH, MAT_ALIENFLESH}
-
-function JMod.ElectrifyProp(prop, electrify)
-	if not IsValid(prop) then return end
-	if electrify then
-		prop.EZelectricCallback = prop:AddCallback("PhysicsCollide", function(ent, data)
-			if not IsValid(ent) or not IsValid(data.HitEntity) then return end
-			local ShockEnt = data.HitEntity
-			if ShockEnt:IsPlayer() or ShockEnt:IsNPC() or table.HasValue(Shockables, ShockEnt:GetMaterialType()) then
-				if prop.Electricity <= 0 then return end
-				local Damage, Force = prop.Electricity * 5, prop.Electricity * 500 -- Adjust damage and force factors as desired
-				local dmginfo = DamageInfo()
-				dmginfo:SetDamage(Damage)
-				dmginfo:SetDamageForce(-data.HitNormal * Force)
-				dmginfo:SetDamagePosition(data.HitPos)
-				dmginfo:SetAttacker(JMod.GetEZowner(prop))
-				dmginfo:SetInflictor(prop)
-				dmginfo:SetDamageType(DMG_SHOCK)
-				ShockEnt:TakeDamageInfo(dmginfo)
-				-- Electrical effect
-				local effectdata = EffectData()
-				effectdata:SetOrigin(data.HitPos)
-				effectdata:SetNormal(data.HitNormal)
-				effectdata:SetMagnitude(math.Rand(5, 10)) --amount and shoot hardness
-				effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
-				effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
-				util.Effect("Sparks", effectdata, true, true)
-				-- Electrical sound
-				prop:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
-				-- Reduce power
-				prop.Electricity = 0
-			end
-		end)
-		prop.MaxElectricity = 10
-		prop.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER}
-		prop.Electricity = 0
-		prop.TryLoadResource = function(ent, resType, amount)
-			if amount < 1 then return 0 end
-			if resType == JMod.EZ_RESOURCE_TYPES.POWER then
-				local Missing = ent.MaxElectricity - ent.Electricity
-				if Missing <= 0 then return 0 end
-				local Accepted = math.min(Missing, amount)
-				ent.Electricity = ent.Electricity + Accepted
-
-				return Accepted
-			end
-		end
-		prop.PrintName = "Electric " .. string.StripExtension(string.GetFileFromFilename(prop:GetModel()))
-	else
-		prop:RemoveCallback("PhysicsCollide", prop.EZelectricCallback)
-		prop.EZelectricCallback = nil
-		prop.Electricity = nil
-		prop.MaxElectricity = nil
-		prop.EZconsumes = nil
-		prop.TryLoadResource = nil
-		prop.PrintName = nil
-	end
-end--]]
-
 function JMod.CreateConnection(machine, ent, resType, plugPos, dist, cable)
 	dist = dist or 1000
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
@@ -1632,13 +1572,10 @@ function JMod.RemoveConnection(machine, connection)
 	end
 	if not(machine.EZconnections[connection]) then return end
 	local ConnectedEnt = machine.EZconnections[connection].Ent
-	if IsValid(ConnectedEnt) and ConnectedEnt:GetClass() == "prop_physics" then 
-		JMod.ElectrifyProp(ConnectedEnt, false)
-	end
 	if IsValid(machine.EZconnections[connection].Cable) then
 		machine.EZconnections[connection].Cable:Remove()
 	end
-	machine.EZconnections[connection].Ent = nil
+	machine.EZconnections[connection] = nil
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

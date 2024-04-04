@@ -252,8 +252,8 @@ if SERVER then
 
 		local pos = SelfPos + Forward * 15 - Up * 25 - Right * 2
 		local spawnVec = self:WorldToLocal(Vector(SelfPos+Up*20+Forward*60-Right*50))
-		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, nil, Forward*500, true, 200)
 		self:SetProgress(self:GetProgress() - amt)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), amt, spawnVec, nil, Forward*500, true, 200)
 		JMod.DepleteNaturalResource(self.DepositKey, amt)
 	end
 

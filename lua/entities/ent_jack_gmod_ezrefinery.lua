@@ -122,6 +122,7 @@ if(SERVER)then
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 
 		if amt <= 0 then return end
+		self:SetProgress(0)
 
 		local RefinedTable = JMod.RefiningTable[JMod.EZ_RESOURCE_TYPES.OIL]
 
@@ -137,7 +138,6 @@ if(SERVER)then
 			end)
 			i = i + 1
 		end
-		self:SetProgress(0)
 		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 	end
 

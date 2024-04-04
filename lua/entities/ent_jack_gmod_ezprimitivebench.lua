@@ -304,12 +304,13 @@ if(SERVER)then
 			self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 		end
 
-		if self:GetOre() <= 0 then
+		local OreLeft = self:GetOre()
+		if OreLeft <= 0 then
 			self:SetOreType("generic")
 		elseif OreType ~= "generic" then
-			JMod.MachineSpawnResource(self, OreType, self:GetOre(), spawnVec + Up * 4 + Right * 20, spawnAng, ejectVec, false)
-			self:SetOreType("generic")
 			self:SetOre(0)
+			self:SetOreType("generic")
+			JMod.MachineSpawnResource(self, OreType, OreLeft, spawnVec + Up * 4 + Right * 20, spawnAng, ejectVec, false)
 		end
 	end
 

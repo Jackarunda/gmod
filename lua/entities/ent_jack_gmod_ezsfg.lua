@@ -140,8 +140,8 @@ if(SERVER)then
 
 		if amt <= 0 then return end
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, true, 200)
 		self:EmitSound("snds_jack_gmod/steam_whistle_start.wav", 150, 100)
 		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.wav", nil)
 		timer.Simple(0.16, function()

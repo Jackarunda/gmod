@@ -639,12 +639,18 @@ if(SERVER)then
 				end
 			end
 			if ent.EZconnections then
-				for _, Connection in ipairs(ent.EZconnections) do
-					local ConnectedEnt = Connection.Ent
-					local CableConnection = constraint.Find(ent, "Rope", ConnectedEnt)
-					if IsValid(ConnectedEnt) and IsValid(CableConnection) then
-						ent.Cable = CableConnection
-						break
+				for _, Connection in pairs(ent.EZconnections) do
+					if not(IsValid(Connection.Cable)) then
+						local ConnectedEnt = Connection.Ent
+						if IsValid(ConnectedEnt) then
+							local CableConnection = constraint.Find(ent, "Rope", ConnectedEnt)
+							print(ConnectedEnt, CableConnection)
+							if IsValid(ConnectedEnt) and IsValid(CableConnection) then
+								ent.Cable = CableConnection
+								ConnectedEnt.Cable = CableConnection
+								break
+							end
+						end
 					end
 				end
 			end
