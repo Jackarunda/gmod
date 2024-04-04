@@ -620,7 +620,7 @@ end
 
 function JMod.SetEZowner(ent, newOwner, setColor)
 	if not IsValid(ent) then return end
-	if not IsValid(newOwner) then newOwner = game.GetWorld() end
+	if not (newOwner and IsValid(newOwner)) then newOwner = game.GetWorld() end
 
 	if JMod.GetEZowner(ent) == newOwner then
 		if setColor == true then

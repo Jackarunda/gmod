@@ -150,6 +150,7 @@ if(SERVER)then
 			self:SetElectricity(0)
 		end
 		---
+		if self.EZownerID then JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID)) end
 		if(JMod.GetEZowner(self))then JMod.Colorify(self) end
 		---
 		if(self.EZupgradable)then
@@ -599,7 +600,11 @@ if(SERVER)then
 		if (ent.AdminOnly and ent.AdminOnly == true) and (not(JMod.IsAdmin(ply)) and not(ent:GetPersistent())) then
 			SafeRemoveEntity(ent)
 		else
-			JMod.SetEZowner(self, ply, true)
+			if IsValid(ply) then
+				JMod.SetEZowner(self, ply, true)
+			elseif self.EZownerID then
+				JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID), true)
+			end
 			ent.NextRefillTime = Time + 1
 			if ent.NextUseTime then
 				ent.NextUseTime = Time + 1
