@@ -127,8 +127,8 @@ if(SERVER)then
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
 		self:EmitSound("buttons/button18.wav", 60, 80)
-		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		self:ProduceResource()
 		self.PowerSLI = 0 
 	end
 

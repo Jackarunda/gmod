@@ -92,8 +92,8 @@ if(SERVER)then
 		if IsValid(activator) then self.EZstayOn = nil end
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
-		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		self:ProduceResource()
 	end
 
 	--[[function ENT:ResourceLoaded(typ, accepted)

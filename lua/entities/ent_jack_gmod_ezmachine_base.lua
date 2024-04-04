@@ -125,7 +125,9 @@ if(SERVER)then
 			phys:SetMass(self.Mass)
 		end
 		self:SetState(JMod.EZ_STATE_OFF)
-		self:SetGrade(JMod.EZ_GRADE_BASIC)
+		if self:GetGrade() == 0 then
+			self:SetGrade(JMod.EZ_GRADE_BASIC)
+		end
 		self:InitPerfSpecs()
 		self.DamageTypeTable = JMod.DefualtArmorTable
 		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
@@ -594,7 +596,7 @@ if(SERVER)then
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
-		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+		if (ent.AdminOnly and ent.AdminOnly == true) and (not(JMod.IsAdmin(ply)) and not(ent:GetPersistent())) then
 			SafeRemoveEntity(ent)
 		else
 			JMod.SetEZowner(self, ply, true)
@@ -608,7 +610,7 @@ if(SERVER)then
 			if ent.OnPostEntityPaste then
 				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
-			if not(JMod.IsAdmin(ply)) then
+			if not(JMod.IsAdmin(ply)) and not(ent:GetPersistent()) then
 				if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
 					for _, typ in ipairs(ent.EZconsumes) do
 						if istable(ent.FlexFuels) and table.HasValue(ent.FlexFuels, typ) then
@@ -629,6 +631,16 @@ if(SERVER)then
 				if ent.EZupgradable then
 					ent:SetGrade(JMod.EZ_GRADE_BASIC)
 					ent:InitPerfSpecs()
+				end
+			end
+			if ent.EZconnections then
+				for _, Connection in ipairs(ent.EZconnections) do
+					local ConnectedEnt = Connection.Ent
+					local CableConnection = constraint.Find(ent, "Rope", ConnectedEnt)
+					if IsValid(ConnectedEnt) and IsValid(CableConnection) then
+						ent.Cable = CableConnection
+						break
+					end
 				end
 			end
 		end

@@ -103,8 +103,6 @@ if SERVER then
 			elseif Ent.EZpowerProducer then
 				if SelfPower <= (self.MaxElectricity * .5) then
 					Ent:TurnOn(nil, true)
-				elseif SelfPower > (self.MaxElectricity * .9) then
-					Ent:TurnOff()
 				end
 			elseif (SelfPower >= 1) and Ent.EZpowerBank then
 				local EntPower = Ent:GetElectricity()

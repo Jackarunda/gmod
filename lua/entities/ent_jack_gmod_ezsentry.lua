@@ -13,6 +13,7 @@ ENT.SpawnHeight=15
 ENT.EZconsumes=nil
 ENT.EZscannerDanger=true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
+ENT.EZpowerSocket=Vector(-5, 0, 1)
 ENT.EZupgradable=true
 ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezsentry"

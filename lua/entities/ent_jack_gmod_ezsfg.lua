@@ -117,8 +117,8 @@ if(SERVER)then
 		if self.SoundLoop then self.SoundLoop:Stop() end
 		--self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:EmitSound("snd_jack_littleignite.wav")
-		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		self:ProduceResource()
 		self:UpdateWireOutputs()
 	end
 

@@ -84,8 +84,8 @@ if(SERVER)then
 			self.EZstayOn = nil
 			self:EmitSound("buttons/button18.wav", 60, 80)
 		end
-		self:ProduceResource()
 		self:SetState(STATE_OFF)
+		self:ProduceResource()
 		self.PowerSLI = 0
 	end
 

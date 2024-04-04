@@ -934,19 +934,15 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			JMod.SetEZowner(MachineOwner)
 			Resource:SetResource(SpawnAmount)
 			Resource:Activate()
-			--local NoCollide = constraint.NoCollide(machine, Resource, 0, 0)
-			--Resource:GetPhysicsObject():SetVelocity(ejectionVector)
-			--[[
-			timer.Simple(1, function()
-				if IsValid(Resource) then
-					constraint.RemoveConstraints(Resource, "NoCollide")
-				end
-			end)
-			--]]
 		end)
+
 		amount = amount - SpawnAmount
+
 		if amount <= 0 then
 			
+			if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and not(machine.EZstayOn) and machine.TurnOff then
+				machine:TurnOff()
+			end
 			return
 		end
 	end
@@ -1577,16 +1573,19 @@ function JMod.ElectrifyProp(prop, electrify)
 	end
 end--]]
 
-function JMod.CreateConnection(machine, ent, resType, pos, dist)
+function JMod.CreateConnection(machine, ent, resType, plugPos, dist, cable)
+	dist = dist or 1000
 	if not (IsValid(machine) and IsValid(ent) and resType) then return false end
+	if not IsValid(ent) or (ent == machine) then return false end
 	if not (ent.EZconsumes and table.HasValue(ent.EZconsumes, resType)) and not (resType == JMod.EZ_RESOURCE_TYPES.POWER and (ent.EZpowerProducer and not machine.EZpowerProducer)) then return false end
 	if ent.IsJackyEZcrate and ent.GetResourceType and not(ent:GetResourceType() == resType or ent:GetResourceType() == "generic") then return false end
-	dist = dist or 1000
-	if not IsValid(ent) or (ent == machine) then return false end
 	if not JMod.ShouldAllowControl(ent, JMod.GetEZowner(machine), true) then return false end
-	local PluginPos = ent.EZpowerSocket or pos or ent:LocalToWorld(ent:OBBCenter())
-	local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
-	if (DistanceBetween > dist) then return false end
+	local PluginPos = ent.EZpowerSocket or plugPos or ent:OBBCenter()
+	if not IsValid(cable) then
+		local DistanceBetween = (machine:GetPos() - ent:LocalToWorld(PluginPos)):Length()
+		if (DistanceBetween > dist) then return false end
+	end
+	--
 	machine.EZconnections = machine.EZconnections or {}
 	local AlreadyConnected = false
 	for k, v in pairs(machine.EZconnections) do
@@ -1597,6 +1596,7 @@ function JMod.CreateConnection(machine, ent, resType, pos, dist)
 		end
 	end
 	if AlreadyConnected then return false end
+	
 	ent.EZconnections = ent.EZconnections or {}
 	for k, v in pairs(ent.EZconnections) do
 		if (v.Ent == machine) then
@@ -1606,9 +1606,12 @@ function JMod.CreateConnection(machine, ent, resType, pos, dist)
 			v.Ent = nil
 		end
 	end
-	local Cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), PluginPos, dist + 20, 10, 100, 2, "cable/cable2")
-	table.insert(ent.EZconnections, {Ent = machine, Cable = Cable})
-	table.insert(machine.EZconnections, {Ent = ent, Cable = Cable})
+	--
+	if not IsValid(cable) then
+		cable = constraint.Rope(machine, ent, 0, 0, machine.EZpowerSocket or Vector(0, 0, 0), PluginPos, dist + 20, 10, 100, 2, "cable/cable2")
+	end
+	table.insert(ent.EZconnections, {Ent = machine, Cable = cable})
+	table.insert(machine.EZconnections, {Ent = ent, Cable = cable})
 
 	return true
 end
