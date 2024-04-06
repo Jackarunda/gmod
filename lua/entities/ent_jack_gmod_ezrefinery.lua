@@ -133,7 +133,7 @@ if(SERVER)then
 			local ejectVec = Forward
 			timer.Simple(i * .2, function()
 				if IsValid(self) then
-					JMod.MachineSpawnResource(self, typ, amt*modifier, spawnVec, spawnAng, ejectVec, true, 5000)
+					JMod.MachineSpawnResource(self, typ, amt*modifier, spawnVec, spawnAng, ejectVec, 400)
 				end
 			end)
 			i = i + 1

@@ -224,7 +224,7 @@ function SWEP:Hitscan()
 						self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 					end
 
-					if (math.random(1, 2) == 1) then 
+					if (math.random(1, 1000) == 1) then 
 						local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 
 						if ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
 							timer.Simple(math.Rand(1, 2), function() 

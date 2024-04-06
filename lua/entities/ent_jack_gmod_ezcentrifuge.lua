@@ -119,7 +119,7 @@ if(SERVER)then
 
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 70 + Right * 0)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, amt, pos, Angle(0, 90, 0), Forward * 60, true, 200)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, amt, pos, Angle(0, 90, 0), Forward * 60, 200)
 	end
 
 	function ENT:ConsumeGas(amt)

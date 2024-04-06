@@ -118,7 +118,7 @@ if(SERVER)then
 		if (self:GetState() <= STATE_OFF) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(STATE_OFF)
-		self:ProduceResource()
+		self:ProduceResource(IsValid(activator))
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 		self:EmitSound("snd_jack_littleignite.wav")
 	end
@@ -160,7 +160,7 @@ if(SERVER)then
 		end
 	end--]]
 
-	function ENT:ProduceResource()
+	function ENT:ProduceResource(dropOre)
 		local SelfPos, Forward, Up, Right, OreType = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight(), self:GetOreType()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
 		
@@ -173,7 +173,7 @@ if(SERVER)then
 		local ejectVec = Forward * 100
 		timer.Simple(0.3, function()
 			if IsValid(self) then
-				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
+				JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, 300)
 				if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 75) and math.random(0, 1000) then
 					JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 				end
@@ -185,7 +185,7 @@ if(SERVER)then
 		local OreLeft = self:GetOre()
 		if OreLeft <= 0 then
 			self:SetOreType("generic")
-		elseif OreType ~= "generic" then
+		elseif dropOre and (OreType ~= "generic") then
 			self:SetOre(0)
 			self:SetOreType("generic")
 			JMod.MachineSpawnResource(self, OreType, OreLeft, spawnVec + Up * 20, spawnAng, ejectVec, false)

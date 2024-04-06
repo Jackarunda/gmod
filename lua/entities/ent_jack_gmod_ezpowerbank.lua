@@ -58,7 +58,7 @@ if SERVER then
 			if State == JMod.EZ_STATE_OFF then
 				self:TurnOn(activator)
 			elseif State == JMod.EZ_STATE_ON then
-				self:TurnOff()
+				self:TurnOff(activator)
 			end
 		end
 	end
@@ -66,11 +66,17 @@ if SERVER then
 	function ENT:TurnOn(dude)
 		if self:GetState() ~= JMod.EZ_STATE_OFF then return end
 		self:SetState(JMod.EZ_STATE_ON)
+		if IsValid(dude) then
+			self.EZstayOn = true
+		end
 	end
 
-	function ENT:TurnOff()
+	function ENT:TurnOff(dude)
 		if self:GetState() ~= JMod.EZ_STATE_ON then return end
 		self:SetState(JMod.EZ_STATE_OFF)
+		if IsValid(dude) then
+			self.EZstayOn = nil
+		end
 	end
 
 	function ENT:DisconnectAll()
@@ -145,12 +151,13 @@ if SERVER then
 
 	function ENT:ProduceResource(activator)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
-		local amt = math.Clamp(math.floor(self:GetElectricity()), 0, 100)
+		local PowerLeft = self:GetElectricity()
+		local amt = math.Clamp(math.floor(PowerLeft), 0, 100)
 
 		if amt <= 0 then return end
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 20)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, false, 0, false)
-		self:SetElectricity(math.Clamp(self:GetElectricity() - amt, 0, 100))
+		self:SetElectricity(PowerLeft - amt)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, false)
 	end
 
 	function ENT:OnRemove()

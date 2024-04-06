@@ -843,20 +843,19 @@ function JMod.BlockPhysgunPickup(ent, isblock)
 	ent.block_pickup = isblock
 end
 
-function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrate, range, pushPower)
+function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrateRange)
 	amount = math.Round(amount)
-	if not(pushPower) and pushPower ~= false then pushPower = true end
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
-	if pushPower and machine.EZconnections and (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) then
+	if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and machine.EZconnections then
 		local PowerToGive = amount
 		for k, connect in pairs(machine.EZconnections) do
 			local Ent, Cable = connect.Ent, connect.Cable
 			if not IsValid(Ent) or not IsValid(Cable) or not(Ent.EZconsumes and table.HasValue(Ent.EZconsumes, JMod.EZ_RESOURCE_TYPES.POWER)) then
 				JMod.RemoveConnection(machine, k)
 			else
-				local Accepted = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, PowerToGive)
+				local Accepted = Ent:TryLoadResource(resourceType, PowerToGive)
 				Ent.NextRefillTime = 0
 				amount = math.Clamp(amount - Accepted, 0, 100)
 			end
@@ -864,24 +863,23 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 	end
 	if amount <= 0 then return end
 	for i = 1, math.ceil(amount/100*JMod.Config.ResourceEconomy.MaxResourceMult) do
-		if findCrate then
-			range = range or 256
-			range = range * range -- Sqr root stuff
+		if findCrateRange then
+			findCrateRange = findCrateRange * findCrateRange -- Sqr root stuff
 			local BestCrate = nil
 			local IsGenericCrate = true
 
-			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(ejectionVector or machine:OBBCenter()), range)) do
+			for _, ent in pairs(ents.FindInSphere(machine:LocalToWorld(ejectionVector or machine:OBBCenter()), findCrateRange)) do
 				if (ent.IsJackyEZcrate and table.HasValue(ent.EZconsumes, resourceType)) or (ent.IsJackyEZresource and (ent.EZsupplies == resourceType)) then
 					local Dist = MachineCenter:DistToSqr(ent:LocalToWorld(ent:OBBCenter()))
-					if (Dist <= range) and (ent:GetResource() < ent.MaxResource) then
+					if (Dist <= findCrateRange) and (ent:GetResource() < ent.MaxResource) then
 						local EntSupplies = ent:GetEZsupplies()
 						if (EntSupplies[resourceType] ~= nil) then
 							BestCrate = ent
-							range = Dist
+							findCrateRange = Dist
 							IsGenericCrate = false
 						elseif (EntSupplies["generic"] == 0) and (IsGenericCrate == true) then
 							BestCrate = ent
-							range = Dist
+							findCrateRange = Dist
 							IsGenericCrate = true
 						end
 					end
@@ -1240,7 +1238,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				JMod.DepleteNaturalResource(DepositKey, AmtToProduce)
 			end
 
-			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, AmtToProduce, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
+			JMod.MachineSpawnResource(ent, JMod.NaturalResourceTable[DepositKey].typ, AmtToProduce, ent:WorldToLocal(pos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, 100)
 			ent:SetNW2Float("EZminingProgress", 0)
 			ent.EZpreviousMiningPos = nil
 			JMod.ResourceEffect(JMod.NaturalResourceTable[DepositKey].typ, pos, nil, 1, 1, 1, 5)

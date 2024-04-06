@@ -243,7 +243,7 @@ function SWEP:Hitscan()
 						if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 							self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 							self:SetTaskProgress(100)
-							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, true, 200)
+							JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, 200)
 						else
 							self:Msg(Message)
 							self:SetTaskProgress(0)

@@ -239,7 +239,7 @@ if(SERVER)then
 
 							local i = 0
 							for k, v in pairs(Yield) do
-								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), true, 200)
+								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
 								i = i + 1
 							end
 							if Ent.JModInv then
@@ -294,7 +294,7 @@ if(SERVER)then
 			local RefinedType = JMod.SmeltingTable[OreType][1]
 			timer.Simple(0.3, function()
 				if IsValid(self) then
-					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, true, 200)
+					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, 200)
 					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 200) then
 						JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
 					end
