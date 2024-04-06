@@ -316,9 +316,10 @@ if(SERVER)then
 		if not(IsValid(dude) and dude:IsPlayer()) then return end
 		local Connections = {}
 		if self.EZconnections then
-			for k, v in ipairs(self.EZconnections) do
-				if IsValid(v.Ent) then
-					table.insert(Connections, {DisplayName = v.Ent.PrintName, Index = v.Ent:EntIndex()})
+			for entID, cable in pairs(self.EZconnections) do
+				local ConnectedEnt = Entity(entID)
+				if IsValid(ConnectedEnt) then
+					table.insert(Connections, {DisplayName = ConnectedEnt.PrintName, Index = entID})
 				end
 			end
 		end
@@ -384,7 +385,9 @@ if(SERVER)then
 			self.Pod:Fire("lock","",0)
 		end
 		if self.EZconnections then
-			self.EZconnections = nil
+			for entID, cable in ipairs(self.EZconnections) do
+				JMod.RemoveConnection(self, entID)
+			end
 		end
 		if(self.OnBreak)then self:OnBreak() end
 	end
@@ -639,15 +642,16 @@ if(SERVER)then
 				end
 			end
 			if ent.EZconnections then
-				for _, Connection in pairs(ent.EZconnections) do
-					if not(IsValid(Connection.Cable)) and Connection.Ent then
-						local ConnectedEnt = createdEntities[Connection.Ent:EntIndex()]
+				for entID, cable in pairs(ent.EZconnections) do
+					--print(ent, entID, cable, createdEntities[entID])
+					if createdEntities[entID] then
+						local ConnectedEnt = createdEntities[entID]
 						if IsValid(ConnectedEnt) then
-							local CableConnection = constraint.Find(ent, "Rope", ConnectedEnt)
-							print(ConnectedEnt, CableConnection)
-							if IsValid(ConnectedEnt) and IsValid(CableConnection) then
-								ent.Cable = CableConnection
-								ConnectedEnt.Cable = CableConnection
+							local CableConnection = constraint.FindConstraintEntity(ent, "Rope")
+							--print(ConnectedEnt, CableConnection)
+							if IsValid(CableConnection) then
+								ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
+								ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
 								break
 							end
 						end
