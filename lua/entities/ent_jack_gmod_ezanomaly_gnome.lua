@@ -86,19 +86,37 @@ if SERVER then
 		end
 	end
 
+	local function FindMachine(pos, returnWhenFound)
+		local Closest, ClosestDist = nil, 9e9
+
+		for _, v in ents.Iterator() do
+			local Dist = v:GetPos():Distance(pos)
+
+			if Dist < ClosestDist then
+				if v.Base and (v.Base == "ent_jack_gmod_ezmachine_base") and (v.GetState and (v:GetState() == JMod.EZ_STATE_ON)) and v.TurnOff then
+					Closest = v
+					ClosestDist = Dist
+					if returnWhenFound then return v end
+				end
+			end
+		end
+
+		return Closest
+	end
 	---
-	local Objectives = {"eat", "kill"}
+	local Objectives = {"eat", "kill", "shutdown"}
 	function ENT:GetObjective()
-		local CurObjective = self.EZobjective
-		if self.EZobjective then
-			local Target = self:GetTarget(self.EZobjective)
-			if self:CanCompleteObjective(self.EZobjective, Target) then
-				return self.EZobjective
+		if self.CurObjective then
+			local Target = self:GetTarget(self.CurObjective)
+			if self:CanCompleteObjective(self.CurObjective, Target) then
+				return self.CurObjective
 			end 
 		end
 
 		if not(table.IsEmpty(ents.FindByClass("ent_jack_gmod_ezapple"))) then
 			return "eat"
+		elseif IsValid(FindMachine(self:GetPos(), true)) then
+			return "shutdown"
 		else
 			return "kill"
 		end
@@ -120,6 +138,8 @@ if SERVER then
 					end
 				end
 			end
+		elseif objective == "shutdown" then
+			Target = FindMachine(self:GetPos())
 		elseif objective == "eat" then
 			local Closest, SelfPos = 9e9, self:GetPos()
 
@@ -232,6 +252,8 @@ if SERVER then
 	function ENT:GetDesiredPosition(objective, target)
 		if objective == "kill" then
 			if target then return self:FindGroundAt(target:GetShootPos() - target:GetAimVector() * 100) end
+		elseif objective == "shutdown" then
+			if target then return self:FindGroundAt(target:GetPos() + Vector(math.random(-50, 50), math.random(-50, 50), 0)) end
 		elseif objective == "eat" then
 			if target then return self:FindGroundAt(target:GetPos() + Vector(math.random(-20, 20), math.random(-20, 20), 0)) end
 		end
@@ -260,6 +282,18 @@ if SERVER then
 			local Dist = TargPos:Distance(SelfPos)
 
 			if (Dist <= 220) and (Dist >= 80) then
+				return not util.TraceLine({
+					start = SelfPos,
+					endpos = TargPos,
+					filter = {self, target},
+					mask = MASK_SHOT
+				}).Hit
+			end
+		elseif objective == "shutdown" then
+			local TargPos = target:GetPos() + Vector(0, 0, 1)
+			local Dist = TargPos:Distance(SelfPos)
+
+			if (Dist <= 55) and (Dist >= 10) then
 				return not util.TraceLine({
 					start = SelfPos,
 					endpos = TargPos,
@@ -328,6 +362,12 @@ if SERVER then
 								self.Restlessness = 1 -- He died
 							end
 						end)
+					end
+				elseif Objective == "shutdown" then
+					if Target then
+						Target:TurnOff()
+						Target.EZstayOn = false
+						self.Restlessness = self.Restlessness - 10
 					end
 				elseif Objective == "eat" then
 					if Target then

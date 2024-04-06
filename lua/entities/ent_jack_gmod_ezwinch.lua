@@ -226,7 +226,9 @@ if SERVER then
 	end
 
 	function ENT:OnPostEntityPaste(ply, Ent, CreatedEntities)
-		self.Hooker = CreatedEntities[self.Hooker:EntIndex()]
+		if self.Hooker then
+			self.Hooker = CreatedEntities[self.Hooker:EntIndex()]
+		end
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 		timer.Simple(1, function()
 			if IsValid(self) and IsValid(self.Hooker) then

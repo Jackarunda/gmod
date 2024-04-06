@@ -640,8 +640,8 @@ if(SERVER)then
 			end
 			if ent.EZconnections then
 				for _, Connection in pairs(ent.EZconnections) do
-					if not(IsValid(Connection.Cable)) then
-						local ConnectedEnt = Connection.Ent
+					if not(IsValid(Connection.Cable)) and Connection.Ent then
+						local ConnectedEnt = createdEntities[Connection.Ent:EntIndex()]
 						if IsValid(ConnectedEnt) then
 							local CableConnection = constraint.Find(ent, "Rope", ConnectedEnt)
 							print(ConnectedEnt, CableConnection)
