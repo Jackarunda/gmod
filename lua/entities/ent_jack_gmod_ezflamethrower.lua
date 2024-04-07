@@ -6,7 +6,7 @@ ENT.Category = "JMod - EZ Misc."
 ENT.Information = "glhfggwpezpznore"
 ENT.PrintName = "EZ Flamethrower"
 ENT.NoSitAllowed = true
-ENT.Spawnable = true
+ENT.Spawnable = false -- No warcrime for you
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
