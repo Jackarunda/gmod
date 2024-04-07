@@ -32,8 +32,8 @@ SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
 SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
-SWEP.EZmaxElectricity = 100
-SWEP.EZmaxGas = 100
+SWEP.MaxElectricity = 100
+SWEP.MaxGas = 100
 
 SWEP.VElements = {
 	["wrench"] = {
@@ -312,7 +312,7 @@ function SWEP:BuildItem(selectedBuild)
 	local BuildInfo = self.Craftables[selectedBuild]
 	if not BuildInfo then return end
 	if not(self:GetElectricity() >= 8 * (BuildInfo.sizeScale or 1)) or not(self:GetGas() >= 6 * (BuildInfo.sizeScale or 1)) then
-		self:Msg("   You need to refill your gas and/or power\nPress Walk + Use on gas or batteries to refill")
+		self:Msg("   You need to refill your gas and/or power\nPress Reload on gas or batteries to refill")
 		return
 	end
 	local Sound = not BuildInfo.noSound
@@ -375,8 +375,8 @@ function SWEP:BuildItem(selectedBuild)
 								end
 							end
 							JMod.Hint(self.Owner, Class)
-							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.EZmaxElectricity))
-							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.EZmaxGas))
+							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.MaxElectricity))
+							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.MaxGas))
 						end
 						self:Msg("Power: " .. self:GetElectricity() .. " " .. "Gas: " .. self:GetGas() .. " ")
 					end
@@ -612,6 +612,24 @@ end
 function SWEP:Reload()
 	if SERVER then
 		local Time = CurTime()
+		local Ent = self:WhomIlookinAt()
+		
+		if IsValid(Ent) and Ent.GetEZsupplies then
+			for typ, amt in pairs(Ent:GetEZsupplies()) do
+				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
+					local CurAmt = (self:GetEZsupplies(typ) or 0) + 8 * (self.CurrentBuildSize or 1)
+					local Take = math.min(amt, 100 - CurAmt)
+					
+					if Take > 0 then
+						Ent:SetEZsupplies(typ, amt - Take, self.Owner)
+						self:SetEZsupplies(typ, CurAmt + Take)
+						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+
+						return
+					end
+				end
+			end
+		end
 
 		if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 			self:SwitchSelectedBuild("")

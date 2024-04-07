@@ -31,27 +31,7 @@ ENT.PropModels = {
 -- todo: missing texture
 ---
 if SERVER then
-	function ENT:AltUse(ply)
-		local Wep = ply:GetActiveWeapon()
-
-		if Wep and Wep.EZaccepts and (table.HasValue(Wep.EZaccepts, self.EZsupplies)) then
-			local ExistingAmt = Wep:GetSupplies()
-			local Missing = Wep.EZmaxSupplies - ExistingAmt
-
-			if Missing > 0 then
-				local AmtToGive = math.min(Missing, self:GetResource())
-				Wep:SetSupplies(ExistingAmt + AmtToGive)
-				sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
-				self:SetResource(self:GetResource() - AmtToGive)
-
-				if self:GetResource() <= 0 then
-					self:Remove()
-
-					return
-				end
-			end
-		end
-	end
+	--
 elseif CLIENT then
     local drawvec, drawang = Vector(0, 3.4, 0), Angle(-90, 0, -90)
 	function ENT:Draw()

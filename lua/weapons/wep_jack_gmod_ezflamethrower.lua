@@ -10,7 +10,7 @@ SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
 SWEP.ViewModel = "models/weapons/sanic/c_m2.mdl"
-SWEP.WorldModel = "models/props_c17/tools_wrench01a.mdl"
+SWEP.WorldModel = "models/weapons/sanic/w_m2f2.mdl"
 SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
 SWEP.BodyHolsterSlot = "hips"
 SWEP.BodyHolsterAng = Angle(-70, 0, 200)
@@ -30,7 +30,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.ShowWorldModel = false
+SWEP.ShowWorldModel = true
 SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxFuel = 100
 SWEP.MaxGas = 100
@@ -47,20 +47,6 @@ SWEP.WElements = {
 		pos = Vector(2, 4, 0),
 		angle = Angle(90, -20, 0),
 		size = Vector(1.1, 1.1, 1.1),
-		color = Color(255, 255, 255, 255),
-		surpresslightning = false,
-		material = "",
-		skin = 0,
-		bodygroup = {}
-	},
-	["toolbox"] = {
-		type = "Model",
-		model = "models/weapons/w_models/w_tooljox.mdl",
-		bone = "ValveBiped.Bip01_Spine4",
-		rel = "",
-		pos = Vector(-7, 6, 0.518),
-		angle = Angle(-180, 85.324, 87.662),
-		size = Vector(0.5, 0.5, 0.5),
 		color = Color(255, 255, 255, 255),
 		surpresslightning = false,
 		material = "",
@@ -144,7 +130,6 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	end
 end
 
-local Lightup = false
 
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
@@ -156,18 +141,27 @@ function SWEP:PrimaryAttack()
 		local Fuel, Gas = self:GetFuel(), self:GetGas()
 
 		if (Fuel > 0) and (Gas > 0) then
-			local FireAng = (self.Owner:GetAimVector()):Angle()
+			local AimVec = self.Owner:GetAimVector()
+			local FireAng = (AimVec + VectorRand(0, 0.1)):GetNormalized():Angle()
+			local FirePos = self.Owner:GetShootPos() + FireAng:Forward() * 24 + FireAng:Right() * 4 + FireAng:Up() * -5
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
-			Flame:SetPos(self.Owner:GetShootPos() + FireAng:Forward() * 24 + FireAng:Right() * 4 + FireAng:Up() * -5)
+			Flame:SetPos(FirePos)
 			Flame:SetAngles(FireAng)
 			Flame:SetOwner(JMod.GetEZowner(self))
-			Flame.HighVisuals = Lightup and (math.random(1, 2) == 1)
-			Flame.SpeedMul = 1.1
+			Flame.HighVisuals = (math.random(1, 2) == 1)
+			Flame.SpeedMul = math.Rand(1, 1.2)
 			Flame.Creator = self.Owner
 			JMod.SetEZowner(Flame, self.EZowner or self)
 			Flame:Spawn()
 			Flame:Activate()
-			Lightup = not Lightup
+			--
+			local Foof = EffectData()
+			Foof:SetOrigin(FirePos)
+			Foof:SetNormal(FireAng:Forward())
+			Foof:SetScale(100)
+			Foof:SetStart(FireAng:Forward() * 1000)
+			Foof:SetAngles(Angle(50, 50, 50))
+			util.Effect("eff_jack_gmod_ezsmokesignal", Foof, true, true)
 
 			self:SetFuel(math.Clamp(Fuel - 1, 0, 100))
 			self:SetGas(math.Clamp(Gas - 1, 0, 100))
@@ -187,8 +181,7 @@ end
 function SWEP:Reload()
 	if SERVER then
 		local Time = CurTime()
-		local tr = self.Owner:GetEyeTrace()
-		local Ent = tr.Entity
+		local Ent = self:WhomIlookinAt()
 		
 		if IsValid(Ent) and Ent.GetEZsupplies then
 			for typ, amt in pairs(Ent:GetEZsupplies()) do
@@ -214,7 +207,7 @@ function SWEP:WhomIlookinAt()
 		table.insert(Filter, v)
 	end
 
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100 * math.Clamp(self.CurrentBuildSize, .5, 100), Filter)
+	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, Filter)
 
 	return Tr.Entity, Tr.HitPos, Tr.HitNormal
 end

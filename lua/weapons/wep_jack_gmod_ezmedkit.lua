@@ -31,7 +31,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES}
-SWEP.EZmaxSupplies = 100
+SWEP.MaxSupplies = 100
 SWEP.ShowWorldModel = false
 
 SWEP.VElements = {
@@ -271,7 +271,7 @@ function SWEP:Initialize()
 	self:SCKInitialize()
 	self.NextIdle = 0
 	self:Deploy()
-	self:SetSupplies(self.EZmaxSupplies)
+	self:SetSupplies(self.MaxSupplies)
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
@@ -309,6 +309,29 @@ end
 function SWEP:UpdateNextIdle()
 	local vm = self.Owner:GetViewModel()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
+end
+
+function SWEP:GetEZsupplies(resourceType)
+	local AvaliableResources = {
+		[JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES] = math.floor(self:GetSupplies()),
+	}
+	if resourceType then
+		if AvaliableResources[resourceType] and AvaliableResources[resourceType] > 0 then
+			return AvaliableResources[resourceType]
+		else
+			return nil
+		end
+	else
+		return AvaliableResources
+	end
+end
+
+function SWEP:SetEZsupplies(typ, amt, setter)
+	if not SERVER then  return end
+	local ResourceSetMethod = self["Set"..JMod.EZ_RESOURCE_TYPE_METHODS[typ]]
+	if ResourceSetMethod then
+		ResourceSetMethod(self, amt)
+	end
 end
 
 function SWEP:PrimaryAttack()
@@ -426,6 +449,25 @@ function SWEP:FlingProp(mdl, pos, force)
 end
 
 function SWEP:Reload()
+	if SERVER then
+		local Time = CurTime()
+		local Ent = self:WhomIlookinAt()
+		
+		if IsValid(Ent) and Ent.GetEZsupplies then
+			for typ, amt in pairs(Ent:GetEZsupplies()) do
+				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
+					local CurAmt = self:GetEZsupplies(typ) or 0
+					local Take = math.min(amt, 100 - CurAmt)
+					
+					Ent:SetEZsupplies(typ, amt - Take, self.Owner)
+					self:SetEZsupplies(typ, CurAmt + Take)
+					if Take > 0 then
+						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+					end
+				end
+			end
+		end
+	end
 end
 
 --

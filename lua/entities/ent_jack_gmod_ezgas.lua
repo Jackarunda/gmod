@@ -46,28 +46,6 @@ if SERVER then
 			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand() * math.random(300, 500))
 		end
 	end
-
-	function ENT:AltUse(ply)
-		local Wep = ply:GetActiveWeapon()
-
-		if Wep and Wep.EZaccepts and (table.HasValue(Wep.EZaccepts, self.EZsupplies)) then
-			local ExistingAmt = Wep:GetGas()
-			local Missing = Wep.EZmaxGas - ExistingAmt
-
-			if Missing > 0 then
-				local AmtToGive = math.min(Missing, self:GetResource())
-				Wep:SetGas(ExistingAmt + AmtToGive)
-				sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
-				self:SetResource(self:GetResource() - AmtToGive)
-
-				if self:GetResource() <= 0 then
-					self:Remove()
-
-					return
-				end
-			end
-		end
-	end
 	--
 elseif CLIENT then
     local drawvec, drawang = Vector(0, 8.15, 15), Angle(-90, 0, 90)
