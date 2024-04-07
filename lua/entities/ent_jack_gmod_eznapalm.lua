@@ -266,7 +266,7 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 	function ENT:Think()
-		if math.random(1, 2) == 2 then
+		if (math.random(1, 3) == 3) then
 			local Type, Pos, Dir, Ang = self:GetDTInt(0), self.RenderPos, self:GetForward(), self:GetAngles()
 			local dlight = DynamicLight(self:EntIndex())
 

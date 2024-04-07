@@ -90,7 +90,7 @@ if SERVER then
 		local Time, State = CurTime(), self:GetState()
 		self.EZconnections = self.EZconnections or {}
 
-		if (State == JMod.EZ_STATE_ON) and (#self.EZconnections > 0) then
+		if (State == JMod.EZ_STATE_ON) and table.Count(self.EZconnections) > 0 then
 			self:DistributePower()
 		end
 
