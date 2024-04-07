@@ -30,8 +30,8 @@ if SERVER then
 		if IsValid(phys) then
 			phys:EnableCollisions(false)
 		end
-
 		self:SetNotSolid(true)
+
 		local Time = CurTime()
 		self.NextFizz = 0
 		self.DamageMul = (self.DamageMul or 1) * math.Rand(.9, 1.1)
@@ -42,7 +42,7 @@ if SERVER then
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
 
-		if self.HighVisuals and (JMod.Config.QoL.NukeFlashLightEnabled or false) then
+		if self.HighVisuals and JMod.Config.QoL.NukeFlashLightEnabled then
 			self:SetHighVisuals(true)
 		end
 	end
@@ -63,12 +63,13 @@ if SERVER then
 
 	function ENT:Think()
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
+		local Water = self:WaterLevel()
 
 		--print(self:WaterLevel())
 		if self.NextFizz < Time then
 			self.NextFizz = Time + .5
 
-			if math.random(1, 2) == 2 or self.HighVisuals then
+			if (Water < 1) and ((math.random(1, 2) == 2) or self.HighVisuals) then
 				local Zap = EffectData()
 				Zap:SetOrigin(Pos)
 				Zap:SetStart(self:GetVelocity())
@@ -90,14 +91,21 @@ if SERVER then
 				Att = Infl
 			end
 
-			if IsValid(Par) and Par:IsPlayer() and not Par:Alive() then
-				self:Remove()
+			if IsValid(Par) then 
+				if Par:IsPlayer() and not Par:Alive() then
+					self:Remove()
 
-				return
+					return
+				end
+			elseif Water > 0 then
+				self:SetPos(Pos + Vector(0, 0, 10))
 			end
 
 			for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
 
+				if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and (v:GetPos():Distance(Pos) < self.Range * 0.1) then
+					v:Remove()
+				end
 				if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
 					local Dam = DamageInfo()
 					Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
@@ -130,19 +138,20 @@ if SERVER then
 
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
-			if (State == STATE_ON) then
-				local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
-				if not (Tr.HitSky) then
-					if (math.random(1, 15) == 1) then
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
-						JMod.SetEZowner(Gas, self.EZowner)
-						Gas:SetDTBool(0, false)
-						Gas:Spawn()
-						Gas:Activate()
-						Gas.CurVel = (Vector(0, 0, 100) + VectorRand() * 50)
-					end
+			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+			if not (Tr.HitSky) then
+				if (math.random(1, 15) == 1) then
+					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+					Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+					JMod.SetEZowner(Gas, self.EZowner)
+					Gas:SetDTBool(0, false)
+					Gas:Spawn()
+					Gas:Activate()
+					Gas.CurVel = (Vector(0, 0, 100) + VectorRand() * 50)
 				end
+			end
+			if Water > 0 then
+				self:Remove()
 			end
 		end
 
@@ -166,7 +175,7 @@ elseif CLIENT then
 			"eff_jack_gmod_heavyfire", 15, 14, 100
 		}
 
-		self.CastLight = (HighVisuals and (math.random(1, 6) == 1))
+		self.CastLight = (HighVisuals and (math.random(1, 5) == 1))
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
