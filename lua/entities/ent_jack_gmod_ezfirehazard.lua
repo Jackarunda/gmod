@@ -38,7 +38,7 @@ if SERVER then
 		self.DieTime = Time + math.Rand(self.TypeInfo[4], self.TypeInfo[5])
 		self.NextSound = 0
 		self.NextEffect = 0
-		self.NextEnvThink = Time + 5
+		self.NextEnvThink = Time + 3
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
 
@@ -152,14 +152,15 @@ if SERVER then
 			local Pos = self:GetPos()
 			local Tr = util.QuickTrace(Pos, Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then
-				if (math.random(1, 15) == 1) then
+				if (math.random(1, 2) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
 					Gas:SetPos(Pos + Vector(0, 0, 10))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, false)
 					Gas:Spawn()
 					Gas:Activate()
-					Gas.CurVel = (Vector(0, 0, 100) + VectorRand() * 50)
+					Gas:SetLifeTime(math.random(10, 20))
+					Gas.CurVel = (Vector(0, 0, 100) + VectorRand() * 150)
 				end
 			end
 			if Water > 0 then

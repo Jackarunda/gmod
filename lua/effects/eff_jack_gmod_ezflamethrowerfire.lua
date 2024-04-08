@@ -64,7 +64,7 @@
 		if SmokeParticle then
 			SmokeParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start)
 			SmokeParticle:SetAirResistance(100)
-			SmokeParticle:SetDieTime(math.Rand(1, 5) * Scl ^ .75)
+			SmokeParticle:SetDieTime(math.Rand(1, 2) * Scl ^ .75)
 			SmokeParticle:SetStartAlpha(200)
 			SmokeParticle:SetEndAlpha(0)
 			local Size = math.Rand(10, 30) * Scl
