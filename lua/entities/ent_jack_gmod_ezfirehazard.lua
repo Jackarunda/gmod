@@ -17,7 +17,7 @@ if SERVER then
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 20, 30, 200
+			"eff_jack_gmod_heavyfire", 10, 20, 200
 		}
 
 		----
@@ -42,8 +42,13 @@ if SERVER then
 		self.Range = self.TypeInfo[6]
 		self.Power = 3
 
-		if self.HighVisuals and JMod.Config.QoL.NukeFlashLightEnabled then
+		if self.HighVisuals then
 			self:SetHighVisuals(true)
+			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -self.Range), {self})
+
+			if Tr.Hit then
+				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+			end
 		end
 	end
 
@@ -101,10 +106,15 @@ if SERVER then
 				self:SetPos(Pos + Vector(0, 0, 10))
 			end
 
+			local FireNearby = false
+
 			for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
 
-				if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and (v:GetPos():Distance(Pos) < self.Range * 0.1) then
-					v:Remove()
+				if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
+					FireNearby = v.HighVisuals
+					if (v:GetPos():Distance(Pos) < self.Range * 0.1) then
+						v:Remove()
+					end
 				end
 				if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
 					local Dam = DamageInfo()
@@ -121,6 +131,11 @@ if SERVER then
 						v:Ignite(math.random(8, 12))
 					end
 				end
+			end
+
+			if not FireNearby then
+				self.HighVisuals = true
+				self:SetHighVisuals(true)
 			end
 
 			if vFireInstalled and (math.random(1, 100) == 1) then
@@ -167,15 +182,15 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		local HighVisuals = self:GetHighVisuals()
+		self.HighVisuals = self:GetHighVisuals()
 		self.Ptype = 1
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 15, 14, 100
+			"eff_jack_gmod_heavyfire", 15, 14, 75
 		}
 
-		self.CastLight = (HighVisuals and (math.random(1, 5) == 1))
+		self.CastLight = (self.HighVisuals and (math.random(1, 5) == 1)) and JMod.Config.QoL.NukeFlashLightEnabled
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
@@ -189,6 +204,11 @@ elseif CLIENT then
 	local Col = Color(255, 255, 255, 255)
 
 	function ENT:Think()
+		local HighVis = self:GetHighVisuals()
+		if (HighVis ~= self.HighVisuals) and (JMod.Config.QoL.NukeFlashLightEnabled) then
+			self.CastLight = HighVis
+			self.HighVisuals = HighVis
+		end
 		if self.CastLight and not GAMEMODE.Lagging then
 			local dlight = DynamicLight(self:EntIndex())
 
@@ -207,14 +227,15 @@ elseif CLIENT then
 
 	function ENT:Draw()
 		local Time, Pos = CurTime(), self:GetPos()
+		local Vec = (Pos - EyePos()):GetNormalized()
 		render.SetMaterial(GlowSprite)
-		render.DrawSprite(Pos + self.Offset, self.SizeX, self.SizeY, Col)
+		render.DrawSprite(Pos + self.Offset - Vec * 75, self.SizeX, self.SizeY, Col)
 
 		if (self.NextRandomize < Time) then
-			self.Offset = VectorRand() * self.Size * math.Rand(0, .25)
-			self.SizeX = self.Size * math.Rand(.75, 1.25)
-			self.SizeY = self.Size * math.Rand(.75, 1.25)
-			self.NextRandomize = Time + .2
+			self.Offset = VectorRand() * self.Size * math.Rand(0, .15)
+			self.SizeX = self.Size * math.Rand(.85, 1.15)
+			self.SizeY = self.Size * math.Rand(.85, 1.15)
+			self.NextRandomize = Time + math.Rand(0.1, 0.2)
 		end
 	end
 end

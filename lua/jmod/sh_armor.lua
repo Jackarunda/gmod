@@ -972,6 +972,30 @@ JMod.ArmorTable = {
 		wgt = 5,
 		dur = 50,
 		ent = "ent_jack_gmod_ezarmor_pouch"
+	},
+	["Flamethrower-Tank"] = {
+		PrintName = "Flamethrower Tank",
+		mdl = "models/jmod/props/backpack_3.mdl",
+		clr = {
+			r = 255,
+			g = 255,
+			b = 255
+		},
+		slots = {
+			back = 1
+		},
+		eff = {
+			weapon = "wep_jack_gmod_ezflamethrower",
+			explosive = true
+		},
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Spine2",
+		siz = Vector(1, 1, 1),
+		pos = Vector(-2, 0, 0),
+		ang = Angle(-90, 0, 90),
+		wgt = 5,
+		dur = 100,
+		ent = "ent_jack_gmod_ezarmor_flametank"
 	}
 }
 

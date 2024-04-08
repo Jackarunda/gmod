@@ -623,7 +623,9 @@ function SWEP:Reload()
 					if Take > 0 then
 						Ent:SetEZsupplies(typ, amt - Take, self.Owner)
 						self:SetEZsupplies(typ, CurAmt + Take)
+						JMod.ResourceEffect(typ, Ent:LocalToWorld(Ent:OBBCenter()), self:GetPos(), amt, 1, 1, 2)
 						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+						self.NextSwitch = Time + .5
 
 						return
 					end

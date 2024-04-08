@@ -416,6 +416,16 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if not Info then return end
 	local Specs = JMod.ArmorTable[Info.name]
 
+	if Specs.eff and Specs.eff.weapon then
+		local Wep = ply:GetWeapon(Specs.eff.weapon)
+
+		if IsValid(Wep) then
+			local PastSwep = ply:GetPreviousWeapon()
+			if IsValid(PastSwep) then ply:SelectWeapon(PastSwep:GetClass()) end
+			Wep:Remove()
+		end
+	end
+
 	timer.Simple(math.Rand(0, .5), function()
 		if broken then
 			ply:EmitSound("snds_jack_gmod/armorbreak.wav", 60, math.random(80, 120))
@@ -431,7 +441,9 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
 
-	if not broken then
+	if broken then
+		hook.Run("JModHookArmorBroken", ply, Info)
+	else
 		Ent = ents.Create(Specs.ent)
 		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
 		Ent:SetAngles(AngleRand())

@@ -764,6 +764,19 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
+				if playa.EZarmor.effects.weapon then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.weapon then
+							if not playa:HasWeapon(Info.eff.weapon) then
+								local Sweppy = playa:Give(Info.eff.weapon)
+								Sweppy.EZarmorID = id
+							end
+						end
+					end
+				end
+
 				JMod.CalcSpeed(playa)
 				JMod.EZarmorSync(playa)
 			end

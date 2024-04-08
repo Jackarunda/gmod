@@ -459,10 +459,11 @@ function SWEP:Reload()
 					local CurAmt = self:GetEZsupplies(typ) or 0
 					local Take = math.min(amt, 100 - CurAmt)
 					
-					Ent:SetEZsupplies(typ, amt - Take, self.Owner)
-					self:SetEZsupplies(typ, CurAmt + Take)
 					if Take > 0 then
+						Ent:SetEZsupplies(typ, amt - Take, self.Owner)
+						self:SetEZsupplies(typ, CurAmt + Take)
 						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+						JMod.ResourceEffect(typ, Ent:LocalToWorld(Ent:OBBCenter()), self:GetPos(), amt, 1, 1, 2)
 					end
 				end
 			end

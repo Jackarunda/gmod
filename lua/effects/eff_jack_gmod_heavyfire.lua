@@ -4,24 +4,26 @@
 	local Scayul = 1
 	self.Scayul = Scayul
 	local Vel = data:GetStart()
-	local InitialVel = Vel + VectorRand() * math.Rand(0, 300)
+	local InitialVel = Vel + VectorRand() * math.Rand(0, 200)
 
 	if true then
-		local particle = self.Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos)
-		particle:SetVelocity(InitialVel)
-		particle:SetAirResistance(100)
-		particle:SetGravity(Vector(0, 0, 200))
-		particle:SetDieTime(math.Rand(.6, 1))
-		particle:SetStartAlpha(255)
-		particle:SetEndAlpha(0)
-		local Size = math.random(100, 200) * Scayul
-		particle:SetStartSize(Size / 50)
-		particle:SetEndSize(Size)
-		particle:SetRoll(math.Rand(-2, 2))
-		particle:SetRollDelta(math.Rand(-2, 2))
-		particle:SetColor(255, 255, 255)
-		particle:SetLighting(false)
-		particle:SetCollide(false)
+		for i = 1, 5 * Scayul do
+			local particle = self.Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + VectorRand() * math.Rand(0, 50))
+			particle:SetVelocity(InitialVel)
+			particle:SetAirResistance(100)
+			particle:SetGravity(Vector(0, 0, 200))
+			particle:SetDieTime(math.Rand(.6, 1))
+			particle:SetStartAlpha(255)
+			particle:SetEndAlpha(0)
+			local Size = math.random(30, 80) * Scayul
+			particle:SetStartSize(Size / 50)
+			particle:SetEndSize(Size)
+			particle:SetRoll(math.Rand(-2, 2))
+			particle:SetRollDelta(math.Rand(-2, 2))
+			particle:SetColor(255, 150, 150)
+			particle:SetLighting(false)
+			particle:SetCollide(false)
+		end
 	end
 
 	if (math.random(1, 2) == 2) and not GAMEMODE.Lagging then
