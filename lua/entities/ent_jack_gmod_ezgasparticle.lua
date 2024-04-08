@@ -30,10 +30,15 @@ if SERVER then
 			phys:EnableGravity(false)
 		end
 		self:SetModelScale(2)
-		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
-		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
+		self:SetLifeTime(math.random(50, 100))
+	end
+
+	function ENT:SetLifeTime(tim)
+		local Time = CurTime()
+		self.LifeTime = tim * JMod.Config.Particles.PoisonGasLingerTime
+		self.DieTime = Time + self.LifeTime
 	end
 
 	function ENT:ShouldDamage(ent)
