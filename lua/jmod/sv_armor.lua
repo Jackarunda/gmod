@@ -421,7 +421,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 		if IsValid(Wep) then
 			local PastSwep = ply:GetPreviousWeapon()
-			if IsValid(PastSwep) then ply:SelectWeapon(PastSwep:GetClass()) end
+			if IsValid(PastSwep) and (ply:GetActiveWeapon() == Wep) then ply:SelectWeapon(PastSwep:GetClass()) end
 			Wep:Remove()
 		end
 	end
@@ -662,10 +662,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			local mats = ""
 
 			for k, v in pairs(RepairRecipe) do
-				mats = mats .. k .. ", "
+				if next(RepairRecipe, k) ~= nil then
+					mats = mats .. k .. ", "
+				else
+					mats = mats .. k
+				end
 			end
 
-			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need " .. mats)
+			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need: \n" .. mats)
 		elseif RepairStatus == 2 then
 			ply:PrintMessage(HUD_PRINTCENTER, "Item repaired")
 
