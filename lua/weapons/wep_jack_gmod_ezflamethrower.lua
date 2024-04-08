@@ -177,6 +177,12 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
 	end
+	if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+		local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
+		if ArmorItem.chrg and ArmorItem.chrg[typ] then
+			ArmorItem.chrg[typ] = amt
+		end
+	end
 end
 
 function SWEP:Cease()
@@ -252,8 +258,13 @@ function SWEP:PrimaryAttack()
 					JMod.SetEZowner(Flame, self.EZowner or self)
 					Flame:Spawn()
 					Flame:Activate()
-					-- self:SetFuel(math.Clamp(Fuel - 1, 0, 100))
-					-- self:SetGas(math.Clamp(Gas - 1, 0, 100))
+					self:SetFuel(math.Clamp(Fuel - 1, 0, 100))
+					self:SetGas(math.Clamp(Gas - 1, 0, 100))
+					if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+						local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
+						ArmorItem.chrg.fuel = self:GetFuel()
+						ArmorItem.chrg.gas = self:GetGas()
+					end
 				end
 			end
 		else
@@ -421,6 +432,14 @@ function SWEP:Think()
 		self:Cease()
 	else
 		self:SetHoldType("smg")
+	end
+
+	if SERVER then
+		if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+			local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
+			self:SetFuel(ArmorItem.chrg.fuel)
+			self:SetGas(ArmorItem.chrg.gas)
+		end
 	end
 end
 

@@ -975,12 +975,13 @@ JMod.ArmorTable = {
 	},
 	["Flamethrower-Tank"] = {
 		PrintName = "Flamethrower Tank",
-		mdl = "models/jmod/props/backpack_3.mdl",
+		mdl =  "models/jmod/props/backpack_3.mdl",--"models/weapons/sanic/w_m2f2.mdl",
 		clr = {
-			r = 255,
-			g = 255,
-			b = 255
+			r = 0,
+			g = 0,
+			b = 0
 		},
+		clrForced = true,
 		slots = {
 			back = 1
 		},
@@ -988,12 +989,16 @@ JMod.ArmorTable = {
 			weapon = "wep_jack_gmod_ezflamethrower",
 			explosive = true
 		},
+		chrg = {
+			fuel = 100,
+			gas = 100,
+		},
 		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
-		pos = Vector(-2, 0, 0),
+		pos = Vector(-2, 0, 0),--pos = Vector(-3, -49.3, 0),
 		ang = Angle(-90, 0, 90),
-		wgt = 5,
+		wgt = 30,
 		dur = 100,
 		ent = "ent_jack_gmod_ezarmor_flametank"
 	}
@@ -1149,6 +1154,8 @@ if CLIENT then
 		if isnumber(tonumber(slot)) then
 			slot = ArmorNames[tonumber(slot)]
 		end
+
+		if not(action) or not(slot) then return end
 		
 		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
 		if not ItemID then
@@ -1159,7 +1166,31 @@ if CLIENT then
 			net.WriteString(ItemID)
 			net.SendToServer()
 		end
-	end, nil, "First argument is action, second arg is slot to apply the action to")
+	end, function(cmd, params)
+		-- Normalizes the string
+		params = params:Trim():lower()
+		-- Splits the string into an array
+		params = string.Explode('%s+',params,true)
+		
+		local Suggestions = {}
+
+		if #params < 2 then
+			for _, action in ipairs(ArmorCommands) do
+				if string.find(action, params[1]) then
+					table.insert(Suggestions, cmd .. " " .. action)
+				end
+			end
+		else
+			for _, slot in ipairs(ArmorNames) do
+				if string.find(slot, params[2]) then
+					table.insert(Suggestions, cmd .. " " .. params[1] .. " " .. slot)
+				end
+			end
+		end
+
+		return Suggestions
+
+	end, "First argument is action, second arg is slot to apply the action to")
 end
 
 -- Debug
