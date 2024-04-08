@@ -53,7 +53,7 @@ SWEP.Flamin = false
 SWEP.NextIgniteTry = 0
 
 function SWEP:Initialize()
-	self:SetHoldType("smg1")
+	self:SetHoldType("smg")
 	self:SCKInitialize()
 	self.NextIdle = 0
 	self:Deploy()
@@ -97,14 +97,15 @@ function SWEP:DrawWorldModel()
 	if (self:GetIsFlamin()) then
 		render.SetMaterial(GlowSprite)
 		local Dir = self.Owner:GetAimVector()
-		local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 17 - self.Owner:GetUp() * 17 - Dir * 60
+		--local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 10 - self.Owner:GetUp() * 17 - Dir * 60
+		local Pos = self:GetAttachment(1).Pos
 		for i = 1, 20 do
 			local Inv = 20 - i
-			render.DrawSprite(Pos + Dir * (i * 2 + math.random(100, 130)), 1 * Inv, 1 * Inv, Color(255, 150, 100, 255))
+			render.DrawSprite(Pos + Dir * (i * 2 + math.random(0, 30)), 1 * Inv, 1 * Inv, Color(255, 150, 100, 255))
 		end
 		local dlight = DynamicLight(self:EntIndex())
 		if dlight then
-			dlight.pos = Pos + Dir * 50
+			dlight.pos = Pos + Dir * 1
 			dlight.r = 255
 			dlight.g = 150
 			dlight.b = 100
@@ -187,7 +188,7 @@ end
 
 function SWEP:PrimaryAttack()
 	local Time = CurTime()
-	if self.Owner:KeyDown(IN_SPEED) then return end
+	if self.Owner:KeyDown(IN_SPEED) then self:Cease() return end
 	self:Pawnch()
 	self:SetNextPrimaryFire(CurTime() + .05)
 	self:SetNextSecondaryFire(CurTime() + 1)
@@ -222,6 +223,8 @@ function SWEP:PrimaryAttack()
 				Fsh:SetScale(.5)
 				Fsh:SetNormal(AimVec)
 				Fsh:SetStart(self.Owner:GetVelocity())
+				Fsh:SetEntity(self)
+				Fsh:SetAttachment(1)
 				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 			end
 			if self.Flamin then
@@ -229,7 +232,7 @@ function SWEP:PrimaryAttack()
 				self.Owner:ViewPunch(AngleRand() * .002)
 				local Foof = EffectData()
 				Foof:SetNormal(FireAng:Forward())
-				Foof:SetScale(1)
+				Foof:SetScale(2)
 				Foof:SetStart(FireAng:Forward() * 1200)
 				Foof:SetEntity(self)
 				Foof:SetAttachment(1)
@@ -240,7 +243,7 @@ function SWEP:PrimaryAttack()
 					FirePos = FlameTr.HitPos
 					local Flame = ents.Create("ent_jack_gmod_eznapalm")
 					Flame:SetPos(FirePos)
-					local FlyAng = (FireAng:Forward() + VectorRand() * .2):Angle()
+					local FlyAng = (FireAng:Forward() + VectorRand() * .1):Angle()
 					Flame:SetAngles(FlyAng)
 					Flame:SetOwner(JMod.GetEZowner(self))
 					Flame.HighVisuals = (math.random(1, 2) == 1)

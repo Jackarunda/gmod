@@ -11,7 +11,8 @@
 		local FireParticle = Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + Norm * i * 10 * Scl)
 
 		if FireParticle then
-			FireParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start * math.Rand(.5, 1.5))
+			local Vel = Norm * Scl + VectorRand() * 15 * Scl
+			FireParticle:SetVelocity(Vel + Start * math.Rand(.5, 1.5))
 			FireParticle:SetAirResistance(math.random(10, 100) * i)
 			FireParticle:SetDieTime(math.Rand(.5, 1) * Scl ^ .5)
 			FireParticle:SetStartAlpha(255)

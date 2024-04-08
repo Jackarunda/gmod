@@ -1,17 +1,19 @@
 ﻿function EFFECT:Init(data)
-	local vOffset = data:GetOrigin()
+	local Pos = data:GetOrigin()
 	local Scayul = data:GetScale()
 	local Dir = data:GetNormal()
 	local Vel = data:GetStart()
 	local Scl = Scayul
-	local Pos = vOffset
+	local Attach = data:GetAttachment()
+	if Attach > 0 and (LocalPlayer():ShouldDrawLocalPlayer()) then
+		Pos = self:GetTracerShootPos(Pos, data:GetEntity(), Attach)
+	end
 	local UnderWater = self:WaterLevel() == 3
-	local emitter = ParticleEmitter(vOffset)
+	local emitter = ParticleEmitter(Pos)
 
 	if emitter then
 		if not UnderWater then
 			for i = 0, 30 * Scayul ^ 0.5 do
-				local Pos = data:GetOrigin()
 				local particle = emitter:Add("sprites/mat_jack_nicespark", Pos)
 
 				if particle then

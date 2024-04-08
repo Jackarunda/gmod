@@ -44,10 +44,12 @@ if SERVER then
 
 		if self.HighVisuals then
 			self:SetHighVisuals(true)
-			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -self.Range), {self})
+			if self:WaterLevel() > 0 then
+				local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -self.Range), {self})
 
-			if Tr.Hit then
-				util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+				if Tr.Hit then
+					util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+				end
 			end
 		end
 	end
@@ -112,8 +114,10 @@ if SERVER then
 
 				if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
 					FireNearby = v.HighVisuals
-					if (v:GetPos():Distance(Pos) < self.Range * 0.1) then
-						v:Remove()
+					if (v:GetPos():Distance(Pos) < self.Range * 0.2) then
+						if self.DieTime > v.DieTime then
+							v:Remove()
+						end
 					end
 				end
 				if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and util.QuickTrace(self:GetPos(), v:GetPos() - self:GetPos(), selfg).Entity == v then
@@ -141,23 +145,16 @@ if SERVER then
 			if vFireInstalled and (math.random(1, 100) == 1) then
 				CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), self:GetOwner())
 			end
-
-			if math.random(1, 50) == 1 then
-				local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
-
-				if Tr.Hit then
-					util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-				end
-			end
 		end
 
 		if (self.NextEnvThink < Time) then
 			self.NextEnvThink = Time + 5
-			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
+			local Pos = self:GetPos()
+			local Tr = util.QuickTrace(Pos, Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then
 				if (math.random(1, 15) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-					Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
+					Gas:SetPos(Pos + Vector(0, 0, 10))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, false)
 					Gas:Spawn()
@@ -167,6 +164,14 @@ if SERVER then
 			end
 			if Water > 0 then
 				self:Remove()
+			else
+				if math.random(1, 5) == 1 then
+					local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
+	
+					if Tr.Hit then
+						util.Decal("Scorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+					end
+				end
 			end
 		end
 
