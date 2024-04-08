@@ -11,7 +11,7 @@
 		local FireParticle = Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + Norm * i * 10 * Scl)
 
 		if FireParticle then
-			FireParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start)
+			FireParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start * math.Rand(.5, 1.5))
 			FireParticle:SetAirResistance(math.random(10, 100) * i)
 			FireParticle:SetDieTime(math.Rand(.5, 1) * Scl ^ .5)
 			FireParticle:SetStartAlpha(255)
@@ -26,6 +26,29 @@
 			FireParticle:SetLighting(false)
 			local Brightness = math.Rand(.5, 1)
 			FireParticle:SetColor(255 * Brightness, 100 * Brightness, 1 * Brightness)
+			FireParticle:SetCollide(true)
+		end
+	end
+
+	for i = 1, 5 * Scl ^ .5 do
+		local FireParticle = Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + Norm * i * 10 * Scl)
+
+		if FireParticle then
+			FireParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start * math.Rand(.5, 1.5))
+			FireParticle:SetAirResistance(math.random(10, 100) * i)
+			FireParticle:SetDieTime(math.Rand(.1, .5) * Scl ^ .5)
+			FireParticle:SetStartAlpha(255)
+			FireParticle:SetEndAlpha(0)
+			local Size = math.Rand(1, 3) * Scl
+			FireParticle:SetStartSize(Size / 1)
+			FireParticle:SetEndSize(Size * 8)
+			FireParticle:SetRoll(math.Rand(-5, 5))
+			FireParticle:SetRollDelta(math.Rand(-1, 1))
+			local Vec = Vector(0, 0, math.random(-120, 0)) * Scl
+			FireParticle:SetGravity(Vec)
+			FireParticle:SetLighting(false)
+			local Brightness = math.Rand(.5, 1)
+			FireParticle:SetColor(255, 220, 200)
 			FireParticle:SetCollide(true)
 		end
 	end
@@ -54,35 +77,7 @@
 			local Brightness = math.Rand(.5, 1)
 			SmokeParticle:SetColor(50, 50, 50)
 			SmokeParticle:SetCollide(true)
-			SmokeParticle:SetBounce(1)
-		end
-	end
-
-	for i = 1, 3 do
-		local DistFactor = math.Rand(.8, 1)
-
-		local Sprite = table.Random({"particle/smokestack", "particles/smokey", "particle/particle_smokegrenade", "sprites/mat_jack_smoke1", "sprites/mat_jack_smoke2", "sprites/mat_jack_smoke3"})
-
-		local ShortSmokeParticle = Emitter:Add(Sprite, Pos + Norm * DistFactor * 250 * Scl)
-
-		if ShortSmokeParticle then
-			ShortSmokeParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start)
-			ShortSmokeParticle:SetAirResistance(100)
-			ShortSmokeParticle:SetDieTime(math.Rand(.5, 3) * Scl ^ .75)
-			ShortSmokeParticle:SetStartAlpha(200)
-			ShortSmokeParticle:SetEndAlpha(0)
-			local Size = math.Rand(10, 20) * Scl
-			ShortSmokeParticle:SetStartSize(0)
-			ShortSmokeParticle:SetEndSize(Size * 10)
-			ShortSmokeParticle:SetRoll(math.Rand(-5, 5))
-			ShortSmokeParticle:SetRollDelta(math.Rand(-1, 1))
-			local Vec = VectorRand() * 50 + Vector(0, 0, 350) + JMod.Wind * 300 * Scl
-			ShortSmokeParticle:SetGravity(Vec)
-			ShortSmokeParticle:SetLighting(false)
-			local Brightness = math.Rand(.5, 1)
-			ShortSmokeParticle:SetColor(50, 50, 50)
-			ShortSmokeParticle:SetCollide(true)
-			ShortSmokeParticle:SetBounce(1)
+			SmokeParticle:SetBounce(.1)
 		end
 	end
 
