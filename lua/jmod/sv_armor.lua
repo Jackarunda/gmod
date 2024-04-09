@@ -745,6 +745,13 @@ net.Receive("JMod_Inventory", function(ln, ply)
 				sound.Play("items/ammo_pickup.wav", ply:GetPos(), 60, math.random(100, 140))
 			end
 		end
+	elseif ActionType == 5 then
+		local ItemData = ply.EZarmor.items[ID]
+		local ItemInfo = JMod.ArmorTable[ItemData.name]
+		if not ItemInfo["clrForced"] then
+			local NewColor = net.ReadColor()
+			ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b}
+		end
 	end
 
 	JMod.CalcSpeed(ply)

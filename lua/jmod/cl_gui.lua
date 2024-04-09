@@ -1017,6 +1017,44 @@ local ArmorSlotButtons = {
 			net.WriteString(itemID)
 			net.SendToServer()
 		end
+	},
+	{
+		title = "Color",
+		visTestFunc = function(slot, itemID, itemData, itemInfo) return not(itemInfo.clrForced) end,
+		actionFunc = function(slot, itemID, itemData, itemInfo)
+			local Panel = vgui.Create("DFrame")
+			Panel:SetSize(300, 240)
+			Panel:SetPos(ScrW()/2 - 150, ScrH()/2 - 120)
+			Panel:SetTitle("Color Picker")
+			Panel:MakePopup()
+
+			function Panel:Paint(w, h)
+				BlurBackground(self)
+			end
+			
+			local ColorPicker = vgui.Create("DColorMixer", Panel)
+			ColorPicker:SetPos(10, 30)
+			ColorPicker:SetSize(280, 160)
+			if itemData.col then
+				ColorPicker:SetColor(Color(itemData.col.r, itemData.col.g, itemData.col.b))
+			end
+			
+			local Button = vgui.Create("DButton", Panel)
+			Button:SetPos(110, 200)
+			Button:SetSize(80, 30)
+			Button:SetText("Change")
+			Button.DoClick = function()
+				local ColorTab = ColorPicker:GetColor()
+				net.Start("JMod_Inventory")
+				net.WriteInt(5, 8) -- color
+				net.WriteString(itemID)
+				net.WriteColor(Color(ColorTab.r, ColorTab.g, ColorTab.b))
+				net.SendToServer()
+				Panel:Close()
+			end
+			
+			return
+		end
 	}
 }
 
