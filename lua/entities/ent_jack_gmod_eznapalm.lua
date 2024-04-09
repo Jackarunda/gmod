@@ -8,6 +8,10 @@ ENT.NoSitAllowed = true
 -- Halo FTW
 local ThinkRate = 22 --Hz
 
+function ENT:SetupDataTables()
+	self:NetworkVar("Bool", 1, "Burning")
+end
+
 if SERVER then
 	function ENT:Initialize()
 		self.Ptype = 6
@@ -41,10 +45,11 @@ if SERVER then
 		self.NextFizz = 0
 		self.DamageMul = (self.DamageMul or 1) * math.Rand(.9, 1.1)
 		self.SpeedMul = self.SpeedMul or 1
-		self:SetDTFloat(0, 0)
 		self.Bounces = 0
 		self.MaxBounces = 10
 		self.DieTime = Time + math.Rand(self.TypeInfo[11], self.TypeInfo[12])
+		if self.Burnin == nil then self.Burnin = true end
+		self:SetBurning(self.Burnin)
 		---- compensate for inherited velocity ----
 		local CurVel = self:GetForward() * self.TypeInfo[8] * self.SpeedMul
 		local NewVel = CurVel + (self.InitialVel or Vector(0, 0, 0))
@@ -138,9 +143,15 @@ if SERVER then
 
 				if math.random(1, 2) == 1 then
 					local Zap = EffectData()
-					Zap:SetOrigin(Pos + self.CurVel / ThinkRate)
-					Zap:SetStart(self.CurVel)
-					util.Effect(self.TypeInfo[13], Zap, true, true)
+					if not self.Burnin then
+						Zap:SetOrigin(Pos)
+						Zap:SetStart(self.CurVel:GetNormalized() * 1)
+						util.Effect("eff_jack_gmod_spranklerspray", Zap, true, true)
+					else
+						Zap:SetOrigin(Pos + self.CurVel / ThinkRate)
+						Zap:SetStart(self.CurVel)
+						util.Effect(self.TypeInfo[13], Zap, true, true)
+					end
 				end
 			end
 
@@ -181,7 +192,7 @@ if SERVER then
 	end
 
 	function ENT:Detonate(tr)
-		local Att, Pos = self:GetOwner(), (tr and tr.HitPos) or self:GetPos()
+		local Att, Pos = JMod.GetEZowner(self), (tr and tr.HitPos) or self:GetPos()
 
 		if not IsValid(Att) then
 			Att = self
@@ -201,14 +212,16 @@ if SERVER then
 		end
 
 		if tr and tr.Hit then
-			local Mul = self.DamageMul
-			local Dam = DamageInfo()
-			Dam:SetDamageType(DMG_BURN)
-			Dam:SetDamage(math.random(10, 20) * Mul)
-			Dam:SetDamagePosition(Pos)
-			Dam:SetAttacker((IsValid(Att) and Att) or self)
-			Dam:SetInflictor(Inflictor(self))
-			tr.Entity:TakeDamageInfo(Dam)
+			if self.Burnin then
+				local Mul = self.DamageMul
+				local Dam = DamageInfo()
+				Dam:SetDamageType(DMG_BURN)
+				Dam:SetDamage(math.random(10, 20) * Mul)
+				Dam:SetDamagePosition(Pos)
+				Dam:SetAttacker(Att)
+				Dam:SetInflictor(Inflictor(self))
+				tr.Entity:TakeDamageInfo(Dam)
+			end
 
 
 			local Haz = ents.Create("ent_jack_gmod_ezfirehazard")
@@ -217,10 +230,12 @@ if SERVER then
 				Haz:SetDTInt(0, 1)
 				Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
 				Haz:SetAngles(tr.HitNormal:Angle())
-				JMod.SetEZowner(Haz, self.EZowner)
+				JMod.SetEZowner(Haz, JMod.GetEZowner(self))
 				Haz.HighVisuals = self.HighVisuals
+				Haz.Burnin = self.Burnin
 				Haz:Spawn()
 				Haz:Activate()
+				
 
 				if not tr.Entity:IsWorld() then
 					Haz:SetParent(tr.Entity)
@@ -266,8 +281,9 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 	function ENT:Think()
-		if (math.random(1, 3) == 3) then
-			local Type, Pos, Dir, Ang = self:GetDTInt(0), self.RenderPos, self:GetForward(), self:GetAngles()
+		self.Burnin = self:GetBurning()
+		if self.Burnin and (math.random(1, 3) == 3) then
+			local Pos, Dir, Ang = self.RenderPos, self:GetForward(), self:GetAngles()
 			local dlight = DynamicLight(self:EntIndex())
 
 			if dlight then
@@ -285,8 +301,8 @@ elseif CLIENT then
 
 	function ENT:Draw()
 		local Time = CurTime()
-		if self.RenderTime > Time then return end
-		local Type, Pos, Dir, Ang = self:GetDTInt(0), self.RenderPos, self:GetForward(), self:GetAngles()
+		if not (self.Burnin) then return end
+		local Pos, Dir, Ang = self.RenderPos, self:GetForward(), self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Right(), self.TypeInfo[7].p)
 		Ang:RotateAroundAxis(Ang:Up(), self.TypeInfo[7].y)
 		Ang:RotateAroundAxis(Ang:Forward(), self.TypeInfo[7].r)

@@ -1573,6 +1573,44 @@ function JMod.RemoveConnection(machine, connection)
 	machine.EZconnections[connection] = nil
 end
 
+function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, numFire)
+	-- spark/smoke effects
+	for i = 1, numExplo do
+		JMod.Sploom(attacker, pos + VectorRand() * powerMult, powerMult, 100)
+	end
+	for i = 1, numBullet do
+		local dir = VectorRand():GetNormalized()
+		local firer = (IsValid(attacker) and attacker) or game.GetWorld()
+
+		firer:FireBullets({
+			Attacker = attacker,
+			Damage = powerMult,
+			Force = 0,
+			Num = 1,
+			Src = pos,
+			Tracer = 0,
+			TracerName = "Tracer",
+			Dir = dir,
+			Spread = 1,
+			AmmoType = "Buckshot"
+		})
+	end
+	for i = 1, numFire do
+		local FireVec = (VectorRand() * powerMult + Vector(0, 0, .3)):GetNormalized()
+		FireVec.z = FireVec.z / 2
+		local Flame = ents.Create("ent_jack_gmod_eznapalm")
+		Flame:SetPos(pos + VectorRand() * 10)
+		Flame:SetAngles(FireVec:Angle())
+		Flame:SetOwner(JMod.GetEZowner(attacker))
+		JMod.SetEZowner(Flame, attacker.EZowner or attacker)
+		Flame.SpeedMul = (powerMult / 10) + .5
+		Flame.Creator = attacker
+		Flame.HighVisuals = math.random(1, numFire) >= numFire / 2
+		Flame:Spawn()
+		Flame:Activate()
+	end
+end
+
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)
 	if ent.block_pickup then
 		JMod.Hint(ply, "blockphysgun")
