@@ -44,7 +44,7 @@
 		particle:SetCollide(true)
 	end
 
-	if (math.random(1, 3) == 3) and not GAMEMODE.Lagging then
+	if (math.random(1, 3) == 3) and not GAMEMODE.Lagging and JMod.Config.QoL.NiceFire then
 		local particle = self.Emitter:Add("sprites/heatwave", Pos)
 		particle:SetVelocity(InitialVel)
 		particle:SetAirResistance(200)

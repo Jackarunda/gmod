@@ -6,7 +6,7 @@ ENT.KillName = "Fire Hazard"
 ENT.NoSitAllowed = true
 ENT.IsRemoteKiller = true
 ENT.JModHighlyFlammableFunc = "Detonate"
-local ThinkRate = 22 --Hz
+local ThinkRate = 5 --Hz
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 0, "HighVisuals")
@@ -140,7 +140,7 @@ if SERVER then
 
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
 						FireNearby = v.HighVisuals
-						if (v:GetPos():Distance(Pos) < self.Range * 0.2) then
+						if (v:GetPos():Distance(Pos) < self.Range * 0.3) then
 							if self.DieTime > v.DieTime then
 								v:Remove()
 							end
@@ -210,7 +210,6 @@ if SERVER then
 			end
 		end
 	
-
 		if self.DieTime < Time then
 			self:Remove()
 
@@ -231,7 +230,7 @@ elseif CLIENT then
 			"eff_jack_gmod_heavyfire", 15, 14, 75
 		}
 
-		self.CastLight = (self.HighVisuals and (math.random(1, 5) == 1)) and JMod.Config.QoL.NukeFlashLightEnabled
+		self.CastLight = (self.HighVisuals and (math.random(1, 5) == 1)) and JMod.Config.QoL.NiceFire
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
@@ -248,7 +247,7 @@ elseif CLIENT then
 		self.Burnin = self:GetBurning()
 		if not self.Burnin then return end
 		local HighVis = self:GetHighVisuals()
-		if (HighVis ~= self.HighVisuals) and (JMod.Config.QoL.NukeFlashLightEnabled) then
+		if (HighVis ~= self.HighVisuals) and (JMod.Config.QoL.NiceFire) then
 			self.CastLight = HighVis
 			self.HighVisuals = HighVis
 		end
