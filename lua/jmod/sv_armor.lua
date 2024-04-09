@@ -750,7 +750,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 		local ItemInfo = JMod.ArmorTable[ItemData.name]
 		if not ItemInfo["clrForced"] then
 			local NewColor = net.ReadColor()
-			ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b}
+			ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
 		end
 	end
 

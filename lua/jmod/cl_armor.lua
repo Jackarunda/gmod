@@ -62,10 +62,15 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 								Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
 								Mdl:SetRenderOrigin(Pos)
 								Mdl:SetRenderAngles(Ang)
+								local Mat = Matrix()
+								Mat:Scale(ArmorInfo.siz)
+								Mdl:EnableMatrix("RenderMultiply", Mat)
+							else
+								Mdl:SetupBones()
+								for i = 0, Mdl:GetBoneCount() do
+									Mdl:ManipulateBoneScale(i, ArmorInfo.siz)
+								end
 							end
-							local Mat = Matrix()
-							Mat:Scale(ArmorInfo.siz)
-							Mdl:EnableMatrix("RenderMultiply", Mat)
 							local OldR, OldG, OldB = render.GetColorModulation()
 							local Colr = armorData.col
 							render.SetColorModulation(Colr.r / 255, Colr.g / 255, Colr.b / 255)
@@ -80,8 +85,9 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 								Mdl:SetSkin(ArmorInfo.skin)
 							end
 
-							Mdl:SetupBones()
-							if not(ArmorInfo.merge) or nomerge then
+							local NoDraw = hook.Run("JModHookArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
+
+							if not(NoDraw) and (not(ArmorInfo.merge) or nomerge) then
 								Mdl:DrawModel()
 							end
 							render.SetColorModulation(OldR, OldG, OldB)
@@ -137,6 +143,17 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 		end
 	end
 end
+
+hook.Add("JModHookArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, ArmorData, ArmorInfo) 
+	if ArmorInfo.eff and ArmorInfo.eff.weapon then
+		if IsValid(ply) and ply:IsPlayer() then
+			local wep = ply:GetActiveWeapon()
+			if IsValid(wep) and wep:GetClass() == ArmorInfo.eff.weapon then
+				return true
+			end
+		end
+	end
+end)
 
 hook.Add("PostPlayerDraw", "JMOD_ArmorPlayerDraw", function(ply)
 	if not IsValid(ply) then return end

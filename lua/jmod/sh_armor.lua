@@ -975,7 +975,7 @@ JMod.ArmorTable = {
 	},
 	["Flamethrower-Tank"] = {
 		PrintName = "Flamethrower Tank",
-		mdl = "models/weapons/sanic/w_m2f2.mdl", --"models/jmod/props/backpack_3.mdl",
+		mdl = "models/weapons/sanic/w_m2f2_static.mdl",
 		clr = {
 			r = 255,
 			g = 255,
@@ -989,13 +989,21 @@ JMod.ArmorTable = {
 			fuel = 100,
 			gas = 100,
 		},
-		weapon = "wep_jack_gmod_ezflamethrower",
-		explosive = true,
+		eff = {
+			weapon = "wep_jack_gmod_ezflamethrower",
+			explosive = true
+		},
+		bdg = {
+			[1] = 0
+		},
+		snds = {
+			eq = "snd_jack_clothequip.wav",
+			uneq = "snd_jack_clothunequip.wav"
+		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
-		merge = true,
 		siz = Vector(1, 1, 1),
-		pos = Vector(-3, -49.3, 0),
+		pos = Vector(0.1, -10.1, -0.5),
 		ang = Angle(-90, 0, 90),
 		wgt = 30,
 		dur = 50,
