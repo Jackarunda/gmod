@@ -9,7 +9,7 @@ function JMod.CopyArmorTableToPlayer(ply)
 	end
 end
 
-function JMod.ArmorPlayerModelDraw(ply)
+function JMod.ArmorPlayerModelDraw(ply, nomerge)
 	if ply.EZarmor then
 		if not ply.EZarmorModels then
 			ply.EZarmorModels = {}
@@ -27,6 +27,7 @@ function JMod.ArmorPlayerModelDraw(ply)
 		for id, armorData in pairs(ply.EZarmor.items) do
 			local ArmorInfo = JMod.ArmorTableCopy[armorData.name]
 
+			if not ArmorInfo then continue end
 			if armorData.tgl and ArmorInfo.tgl then
 				ArmorInfo = table.Merge(table.FullCopy(ArmorInfo), ArmorInfo.tgl)
 
@@ -49,16 +50,19 @@ function JMod.ArmorPlayerModelDraw(ply)
 					local Index = ply:LookupBone(ArmorInfo.bon)
 
 					if Index then
-						local Pos, Ang = ply:GetBonePosition(Index)
+						local Matric = ply:GetBoneMatrix(Index)
+						local Pos, Ang = Matric:GetTranslation(), Matric:GetAngles()
 
 						if Pos and Ang then
-							local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
-							Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
-							Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
-							Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
-							Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
-							Mdl:SetRenderOrigin(Pos)
-							Mdl:SetRenderAngles(Ang)
+							if not(ArmorInfo.merge) or nomerge then
+								local Right, Forward, Up = Ang:Right(), Ang:Forward(), Ang:Up()
+								Pos = Pos + Right * ArmorInfo.pos.x + Forward * ArmorInfo.pos.y + Up * ArmorInfo.pos.z
+								Ang:RotateAroundAxis(Right, ArmorInfo.ang.p)
+								Ang:RotateAroundAxis(Up, ArmorInfo.ang.y)
+								Ang:RotateAroundAxis(Forward, ArmorInfo.ang.r)
+								Mdl:SetRenderOrigin(Pos)
+								Mdl:SetRenderAngles(Ang)
+							end
 							local Mat = Matrix()
 							Mat:Scale(ArmorInfo.siz)
 							Mdl:EnableMatrix("RenderMultiply", Mat)
@@ -76,7 +80,10 @@ function JMod.ArmorPlayerModelDraw(ply)
 								Mdl:SetSkin(ArmorInfo.skin)
 							end
 
-							Mdl:DrawModel()
+							Mdl:SetupBones()
+							if not(ArmorInfo.merge) or nomerge then
+								Mdl:DrawModel()
+							end
 							render.SetColorModulation(OldR, OldG, OldB)
 						end
 
@@ -94,43 +101,22 @@ function JMod.ArmorPlayerModelDraw(ply)
 				-- create it
 				local Mdl = ClientsideModel(ArmorInfo.mdl)
 				Mdl:SetModel(ArmorInfo.mdl) -- Garrry!
-				Mdl:SetPos(ply:GetPos())
 				Mdl:SetMaterial(ArmorInfo.mat or "")
-				Mdl:SetParent(ply)
-				Mdl:SetNoDraw(true)
+				Mdl:SetMoveType(MOVETYPE_NONE)
+				if ArmorInfo.merge and not(nomerge) then
+					Mdl:SetParent(ply, 0)
+					Mdl:AddEffects(EF_BONEMERGE)
+					Mdl:AddEffects(EF_BONEMERGE_FASTCULL)
+					--Mdl:SetPredictable(true)
+					--Mdl:FollowBone(ply, 0)
+				else
+					Mdl:SetPos(ply:GetPos())
+					Mdl:SetParent(ply)
+					Mdl:SetNoDraw(true)
+				end
 				ply.EZarmorModels[id] = Mdl
 			end
 		end
-		--[[]
-		if ply:GetNW2Bool("EZparachuting", false) then
-			if IsValid(ply.EZparachute) then
-				local Dir, Aim = ply:GetVelocity():GetNormalized(), ply:GetAngles()
-				local AimDirAng = Angle(Dir:Angle().p, Aim.y, Dir:Angle().r)
-				local BPos = ply:GetBonePosition(ply:LookupBone("ValveBiped.Bip01_Spine2"))
-				local Pos = BPos + AimDirAng:Forward() * ply.EZarmor.effects.parachute.offset or 0
-				AimDirAng:RotateAroundAxis(AimDirAng:Right(), 90)
-				ply.EZparachute:SetRenderOrigin(Pos)
-				ply.EZparachute:SetRenderAngles(AimDirAng)
-				local Mat = Matrix()
-				local ChuteProg = ply:GetNW2Float("ChuteProg", 1)
-				local ChuteZ, ChuteExpand = math.Clamp(ChuteProg, 0, 1), math.Clamp(ChuteProg - 1, 0.1, 1)
-				local Siz = Vector(1 * ChuteExpand, 1 * ChuteExpand, 1 * ChuteZ)
-				Mat:Scale(Siz)
-				ply.EZparachute:EnableMatrix("RenderMultiply", Mat)
-				ply.EZparachute:DrawModel()
-			elseif ply.EZarmor.effects.parachute then
-				-- create it
-				local Mdl = ClientsideModel(ply.EZarmor.effects.parachute.mdl)
-				Mdl:SetModel(ply.EZarmor.effects.parachute.mdl) -- Garrry!
-				Mdl:SetPos(ply:GetPos())
-				Mdl:SetParent(ply)
-				Mdl:SetNoDraw(true)
-				ply.EZparachute = Mdl
-			end
-		elseif IsValid(ply.EZparachute) then
-			ply.EZparachute:Remove()
-		end
-		]]--
 		if ply.EZarmorboneedited then
 			local edited = false
 

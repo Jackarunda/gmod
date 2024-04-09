@@ -1542,7 +1542,8 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetLookAt(PlayerDisplay:GetEntity():GetBonePosition(0))
 	PlayerDisplay:SetFOV(37)
 	PlayerDisplay:SetCursor("arrow")
-	local Ent = PlayerDisplay:GetEntity()
+	local FakePly = PlayerDisplay:GetEntity()
+	FakePly:SetLOD(0)
 
 	local PDispBT = vgui.Create("DButton", motherFrame)
 	PDispBT:SetPos(200, 30)
@@ -1576,28 +1577,28 @@ net.Receive("JMod_Inventory", function()
 		end
 	end
 
-	Ent:SetSkin(Ply:GetSkin())
-	--Ent:SetColor(Color(255, 208, 0))
-	--Ent:SetMaterial("models/mat_jack_aidboxside")
+	FakePly:SetSkin(Ply:GetSkin())
+	--FakePly:SetColor(Color(255, 208, 0))
+	--FakePly:SetMaterial("models/mat_jack_aidboxside")
 	for k, v in pairs( Ply:GetBodyGroups() ) do
 		local cur_bgid = Ply:GetBodygroup( v.id )
-		Ent:SetBodygroup( v.id, cur_bgid )
+		FakePly:SetBodygroup( v.id, cur_bgid )
 	end
-	Ent.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
+	FakePly.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
 	
 	
 	if Ply.EZarmor.suited then
-		Ent:SetColor(Ply:GetColor())
+		FakePly:SetColor(Ply:GetColor())
 		if Ply.EZarmor.bodygroups then
 			for k, v in pairs(Ply.EZarmor.bodygroups) do
-				Ent:SetBodygroup(k, v)
+				FakePly:SetBodygroup(k, v)
 			end
 		end
 	end
 
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor = Ply.EZarmor
-		JMod.ArmorPlayerModelDraw(ent)
+		JMod.ArmorPlayerModelDraw(ent, true)
 	end
 
 	function PlayerDisplay:DoClick()

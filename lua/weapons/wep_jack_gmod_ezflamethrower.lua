@@ -11,13 +11,13 @@ SWEP.DrawCrosshair = false
 SWEP.EZdroppable = false -- If this is to be attached to an armor piece
 SWEP.ViewModel = "models/weapons/sanic/c_m2.mdl"
 SWEP.WorldModel = "models/weapons/sanic/w_m2f2.mdl"
-SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
+--[[SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
 SWEP.BodyHolsterSlot = "hips"
 SWEP.BodyHolsterAng = Angle(-70, 0, 200)
 SWEP.BodyHolsterAngL = Angle(-70, -10, -30)
 SWEP.BodyHolsterPos = Vector(0, -15, 10)
 SWEP.BodyHolsterPosL = Vector(0, -15, -11)
-SWEP.BodyHolsterScale = .4
+SWEP.BodyHolsterScale = .4--]]
 SWEP.ViewModelFOV = 52
 SWEP.Slot = 0
 SWEP.SlotPos = 5
@@ -30,7 +30,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.ShowWorldModel = true
+--SWEP.ShowWorldModel = true
 
 SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxFuel = 100
@@ -57,6 +57,11 @@ function SWEP:Initialize()
 	self:SCKInitialize()
 	self.NextIdle = 0
 	self.NextSparkTime = 0
+	--[[timer.Simple(0, function() 
+		if IsValid(self) and self.EZarmorID then
+			self.ShowWorldModel = false
+		end
+	end)--]]
 	self:Deploy()
 
 	self:SetGas(0)
@@ -178,7 +183,7 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
 	end
-	if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+	if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
 		local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
 		if ArmorItem.chrg and ArmorItem.chrg[typ] then
 			ArmorItem.chrg[typ] = amt
@@ -365,8 +370,8 @@ function SWEP:OnDrop()
 	end--]]
 
 	if IsValid(self.Owner) then
-		if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
-			--JMod.RemoveArmorByID(self.Owner, self.EZarmorID)
+		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+			JMod.RemoveArmorByID(self.Owner, self.EZarmorID)
 		end
 	end
 
@@ -427,6 +432,11 @@ end
 
 function SWEP:Deploy()
 	if not IsValid(self.Owner) then return end
+	if SERVER then
+		if self.EZarmorID and not(self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID]) then
+			SafeRemoveEntity(self)
+		end
+	end
 	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
@@ -492,7 +502,7 @@ function SWEP:Think()
 	end
 
 	if SERVER then
-		if self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
 			local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
 			self:SetFuel(ArmorItem.chrg.fuel)
 			self:SetGas(ArmorItem.chrg.gas)
