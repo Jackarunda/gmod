@@ -84,6 +84,11 @@ if SERVER then
 			self.Durability = self.Durability - dmginfo:GetDamage() / 2
 
 			if self.Durability <= 0 then
+				if self.Specs.eff and self.Specs.eff.explosive and not(self.exploded) then
+					self.exploded = true
+					local FireAmt = 2--((Info.chrg and Info.chrg.fuel) or 1) / 10
+					JMod.EnergeticsCookoff(self:GetPos(), dmginfo:GetAttacker(), 1, 1, 0, FireAmt)
+				end
 				self:Remove()
 			end
 		end

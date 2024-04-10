@@ -442,7 +442,12 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
 
 	if broken then
-		hook.Run("JModHookArmorBroken", ply, Info)
+		hook.Run("JModHookArmorRemoved", ply, Info, Specs)
+
+		if Specs.eff.explosive then
+			local FireAmt = 2--((Info.chrg and Info.chrg.fuel) or 1) / 10
+			JMod.EnergeticsCookoff(ply:GetPos(), game.GetWorld(), 1, 1, 0, FireAmt)
+		end
 	else
 		Ent = ents.Create(Specs.ent)
 		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
@@ -806,3 +811,24 @@ concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
 		print("invalid aim target")
 	end
 end, nil, "Adds full armour to your target.")
+
+concommand.Add("jmod_debug_removearmor", function(ply, cmd, args)
+	if not ply:IsSuperAdmin() then return end
+	local target = ply
+
+	if args[1] == "looking" then
+		target = ply:GetEyeTrace().Entity
+	elseif tonumber(args[1]) and player.GetByID(tonumber(args[1])) then
+		target = player.GetByID(tonumber(args[1]))
+	end
+
+	if not IsValid(target) then
+		print("invalid target")
+
+		return
+	end
+
+	for k, v in pairs(ply.EZarmor.items) do
+		JMod.RemoveArmorByID(ply, k, tobool(args[2]))
+	end
+end, nil, "Removes armor from your target.")

@@ -996,17 +996,13 @@ JMod.ArmorTable = {
 		bdg = {
 			[1] = 0
 		},
-		snds = {
-			eq = "snd_jack_clothequip.wav",
-			uneq = "snd_jack_clothunequip.wav"
-		},
 		def = BasicArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
 		pos = Vector(0.1, -10.1, -0.5),
 		ang = Angle(-90, 0, 90),
 		wgt = 30,
-		dur = 50,
+		dur = 20,
 		ent = "ent_jack_gmod_ezarmor_flametank"
 	}
 }

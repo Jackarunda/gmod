@@ -1576,7 +1576,7 @@ end
 function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, numFire)
 	-- spark/smoke effects
 	for i = 1, numExplo do
-		JMod.Sploom(attacker, pos + VectorRand() * powerMult, powerMult, 100)
+		JMod.Sploom(attacker, pos + VectorRand() * powerMult, powerMult * 10, 50)
 	end
 	for i = 1, numBullet do
 		local dir = VectorRand():GetNormalized()
