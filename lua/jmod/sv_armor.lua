@@ -445,7 +445,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 		hook.Run("JModHookArmorRemoved", ply, Info, Specs)
 
 		if Specs.eff.explosive then
-			local FireAmt = 2--((Info.chrg and Info.chrg.fuel) or 1) / 10
+			local FireAmt = (Info.chrg and Info.chrg.fuel and math.random(2, 4)) or 0
 			JMod.EnergeticsCookoff(ply:GetPos(), game.GetWorld(), 1, 1, 0, FireAmt)
 		end
 	else
