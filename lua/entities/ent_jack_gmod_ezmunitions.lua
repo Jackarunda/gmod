@@ -17,6 +17,9 @@ ENT.ImpactNoise1 = "Metal_Box.ImpactHard"
 ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
+ENT.Cookoff = true
+ENT.Explosive = true
+ENT.IsBoolet = true
 
 ---
 if SERVER then

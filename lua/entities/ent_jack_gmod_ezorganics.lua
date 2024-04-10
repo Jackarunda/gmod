@@ -21,6 +21,7 @@ ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Plastic_Box.Break"
 ENT.Hint = nil
+ENT.Flammable = true
 
 ---
 if SERVER then

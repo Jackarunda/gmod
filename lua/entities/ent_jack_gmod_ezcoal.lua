@@ -17,6 +17,7 @@ ENT.Mass = 50
 ENT.ImpactNoise1 = "Rock.ImpactHard"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Boulder.ImpactHard"
+ENT.Flammable = true
 
 ENT.PropModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"}
 

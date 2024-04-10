@@ -6,7 +6,7 @@ ENT.KillName = "Fire Hazard"
 ENT.NoSitAllowed = true
 ENT.IsRemoteKiller = true
 ENT.JModHighlyFlammableFunc = "Detonate"
-local ThinkRate = 5 --Hz
+local ThinkRate = 10 --Hz
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Bool", 0, "HighVisuals")
@@ -19,7 +19,7 @@ if SERVER then
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 10, 20, 200
+			"eff_jack_gmod_heavyfire", 10, 20, 175
 		}
 
 		----
@@ -141,19 +141,19 @@ if SERVER then
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
 						FireNearby = v.HighVisuals
 						if (v:GetPos():Distance(Pos) < self.Range * 0.3) then
-							if self.DieTime > v.DieTime then
+							if self.DieTime > (v.DieTime or 0) then
 								v:Remove()
 							end
 						end
 					end
 
-					if v.JModHighlyFlammableFunc then
+					if v.JModHighlyFlammableFunc and JMod.VisCheck(self, v, self) then
 						JMod.SetEZowner(v, self.EZowner)
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
 					end
 
-					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v) then
+					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
 						local Dam = DamageInfo()
 						Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
 						Dam:SetDamageType(DMG_BURN)

@@ -71,10 +71,6 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 									Mdl:ManipulateBoneScale(i, ArmorInfo.siz)
 								end
 							end
-							local OldR, OldG, OldB = render.GetColorModulation()
-							local Colr = armorData.col
-							render.SetColorModulation(Colr.r / 255, Colr.g / 255, Colr.b / 255)
-
 							if ArmorInfo.bdg then
 								for k, v in pairs(ArmorInfo.bdg) do
 									Mdl:SetBodygroup(k, v)
@@ -83,6 +79,14 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 
 							if ArmorInfo.skin then
 								Mdl:SetSkin(ArmorInfo.skin)
+							end
+
+							local OldR, OldG, OldB = render.GetColorModulation()
+							local Colr = armorData.col
+							if (not(ArmorInfo.merge) or nomerge) then
+								render.SetColorModulation(Colr.r / 255, Colr.g / 255, Colr.b / 255)
+							else
+								Mdl:SetColor(Color(Colr.r, Colr.g, Colr.b))
 							end
 
 							local NoDraw = hook.Run("JModHookArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
@@ -137,7 +141,7 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 			end
 
 			if not edited then
-				print("not edited")
+				print("JMOD: bones not edited")
 				ply.EZarmorboneedited = false
 			end
 		end
@@ -148,8 +152,15 @@ hook.Add("JModHookArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, A
 	if ArmorInfo.eff and ArmorInfo.eff.weapon then
 		if IsValid(ply) and ply:IsPlayer() then
 			local wep = ply:GetActiveWeapon()
-			if IsValid(wep) and wep:GetClass() == ArmorInfo.eff.weapon then
-				return true
+			if IsValid(wep) and (wep:GetClass() == ArmorInfo.eff.weapon) then
+				if ArmorInfo.merge then
+					Mdl:SetNoDraw(true)
+				else
+
+					return true
+				end
+			elseif ArmorInfo.merge then
+				Mdl:SetNoDraw(false)
 			end
 		end
 	end

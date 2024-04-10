@@ -1561,8 +1561,7 @@ function JMod.RemoveConnection(machine, connection)
 	-- Check if connection is a entity first
 	if type(connection) == "Entity" and IsValid(connection) then
 		-- Check if it is connected
-		local connection = connection:EntIndex()
-		if type(connection) ~= "number" then return end
+		connection = connection:EntIndex()
 	end
 	if not(machine.EZconnections[connection]) then return end
 	local ConnectedEnt = Entity(connection)
@@ -1596,18 +1595,37 @@ function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, n
 		})
 	end
 	for i = 1, numFire do
-		local FireVec = (VectorRand() * powerMult + Vector(0, 0, .3)):GetNormalized()
+		--[[local FireVec = (VectorRand() * powerMult + Vector(0, 0, .3)):GetNormalized()
 		FireVec.z = FireVec.z / 2
 		local Flame = ents.Create("ent_jack_gmod_eznapalm")
 		Flame:SetPos(pos + VectorRand() * 10)
 		Flame:SetAngles(FireVec:Angle())
 		Flame:SetOwner(JMod.GetEZowner(attacker))
 		JMod.SetEZowner(Flame, attacker.EZowner or attacker)
-		Flame.SpeedMul = (powerMult / 10) + .5
+		Flame.SpeedMul = (powerMult / 20) + .5
 		Flame.Creator = attacker
 		Flame.HighVisuals = math.random(1, numFire) >= numFire / 2
 		Flame:Spawn()
-		Flame:Activate()
+		Flame:Activate()--]]
+		local tr = util.QuickTrace(pos, VectorRand() * powerMult, attacker)
+		local Haz = ents.Create("ent_jack_gmod_ezfirehazard")
+
+		if IsValid(Haz) then
+			Haz:SetDTInt(0, 1)
+			Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
+			Haz:SetAngles(tr.HitNormal:Angle())
+			JMod.SetEZowner(Haz, JMod.GetEZowner(attacker))
+			Haz.HighVisuals = true
+			Haz.Burnin = true
+			Haz:Spawn()
+			Haz:Activate()
+			
+			if IsValid(tr.Entity) and not tr.Entity:IsWorld() then
+				Haz:SetParent(tr.Entity)
+			else
+				Haz:SetParent(attacker)
+			end
+		end
 	end
 end
 

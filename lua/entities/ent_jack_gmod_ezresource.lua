@@ -10,6 +10,7 @@ ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
 ENT.EZstorageSpace = 0
+--ENT.JModHighlyFlammableFunc = "DoCookoff"
 ---
 local LoadOnSpawn = CreateConVar("jmod_debug_loadresourceonspawn", "0", FCVAR_NONE, "Attempts to load spawned resources directly into entities you are looking at")
 ---
@@ -100,6 +101,7 @@ if SERVER then
 		self.NextLoad = 0
 		self.Loaded = false
 		self.NextCombine = 0
+		self.NextFireThink = 0
 
 		---
 		timer.Simple(.01, function()
@@ -197,7 +199,8 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self.Entity:TakePhysicsDamage(dmginfo)
 
-		if dmginfo:GetDamage() > self.DamageThreshold then
+		local Dam = dmginfo:GetDamage()
+		if Dam > self.DamageThreshold then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
@@ -209,6 +212,10 @@ if SERVER then
 			end
 
 			self:Remove()
+		end
+
+		if self.Cookoff and (dmginfo:IsExplosionDamage() and self.Explosive) or (dmginfo:IsDamageType(DMG_BURN) and self.Flammable) and JMod.LinCh(Dam, 0, self.DamageThreshold) then
+			self:DoCookoff()
 		end
 	end
 
@@ -253,7 +260,42 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		local Time = CurTime()
+		if (self.NextFireThink < Time) and self:IsOnFire() then
+			self.NextFireThink = Time + .5
+			local FuelLeft = self:GetResource()
+			if self.Flammable then
+				if FuelLeft <= 2 then
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, FuelLeft / self.MaxResource, 1, 1)
+					self:Remove()
+				else
+					self:SetEZsupplies(self.EZsupplies, FuelLeft - math.random(0, 2), self)
+				end
+			end
+			if self.Cookoff and JMod.LinCh(FuelLeft * 2, 0, self.MaxResource) then
+				self:DoCookoff()
+			end
+		end
 		if self.CustomThink then return self:CustomThink() end
+	end
+
+	function ENT:DoCookoff(mult)
+		local FuelLeft = self:GetResource()
+		timer.Simple(math.Rand(0, 1), function()
+			if not(IsValid(self)) then return end
+			local Explodes, Boolets, Flames = 0, 0, 0
+			if self.Explosive then Explodes = 1 end
+			if self.IsBoolet then Boolets = math.max(FuelLeft * 0.01, 1) end
+			if self.Flammable then Flames = math.max(FuelLeft * 0.01, 1) end
+			local TotalEffects = Explodes + Boolets + (Flames * 3)
+			JMod.EnergeticsCookoff(self:GetPos(), self, FuelLeft / 100, Explodes, Boolets, Flames)
+			if FuelLeft <= (TotalEffects * 2) then
+				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, FuelLeft / self.MaxResource, 1, 1)
+				self:Remove()
+			else
+				self:SetEZsupplies(self.EZsupplies, FuelLeft - math.random(1, (TotalEffects * 2)), self)
+			end
+		end)
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
@@ -266,6 +308,7 @@ if SERVER then
 		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)
 		ent.NextCombine = Time + math.random(1, 5)
+		self.NextFireThink = Time + 1
 	end
 
 	function ENT:OnRemove()

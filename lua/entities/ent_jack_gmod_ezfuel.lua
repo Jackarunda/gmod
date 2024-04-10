@@ -18,6 +18,8 @@ ENT.ImpactNoise2 = "Metal_Box.ImpactHard"
 ENT.DamageThreshold = 80
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = nil
+ENT.Cookoff = true
+ENT.Flammable = true
 
 ---
 if SERVER then
@@ -49,38 +51,7 @@ if SERVER then
 			end
 		end
 	end
-
-	function ENT:AltUse(ply)
-	end
-
 	--
-	function ENT:OnTakeDamage(dmginfo)
-		self:TakePhysicsDamage(dmginfo)
-
-		if dmginfo:GetDamage() > self.DamageThreshold then
-			local Pos = self:GetPos()
-			sound.Play(self.BreakNoise, Pos)
-
-			--[[for i = 1, self:GetResource() / 2 do
-				self:UseEffect(Pos, game.GetWorld(), true)
-			end--]]
-			local Power = math.floor(self:GetResource() / self.MaxResource)
-			JMod.EnergeticsCookoff(Pos, game.GetWorld(), Power / 2, 1 * Power, 0, 5 * Power)
-
-			self:Remove()
-		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1 * math.Clamp(dmginfo:GetDamage() / 10, 1, 5) then
-			local Pos = self:GetPos()
-			sound.Play("ambient/fire/gascan_ignite1.wav", Pos, 70, 90)
-
-			--[[for i = 1, self:GetResource() / 2 do
-				self:UseEffect(Pos, game.GetWorld(), true)
-			end--]]
-			local Power =  math.floor(self:GetResource() / self.MaxResource)
-			JMod.EnergeticsCookoff(Pos, game.GetWorld(), Power / 2, 1 * Power, 0, 5 * Power)
-
-			self:Remove()
-		end
-	end
 elseif CLIENT then
 	function ENT:Draw()
 		self:DrawModel()
