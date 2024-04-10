@@ -17,7 +17,7 @@ ENT.ImpactNoise1 = "Wood_Box.ImpactHard"
 ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Wood_Box.Break"
-ENT.Explosive = true
+ENT.Explosive = 1
 ENT.Cookoff = true
 
 ---

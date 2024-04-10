@@ -31,7 +31,7 @@ if SERVER then
 				for k, ent in pairs(ents.FindInSphere(pos, 600)) do
 					local Vec = (ent:GetPos() - pos):GetNormalized()
 
-					if self:Visible(ent) then
+					if JMod.VisCheck(pos, ent, self) then
 						if ent:IsPlayer() or ent:IsNPC() then
 							ent:SetVelocity(Vec * 1000)
 						elseif IsValid(ent:GetPhysicsObject()) then
@@ -46,6 +46,27 @@ if SERVER then
 			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand() * math.random(300, 500))
 		end
 	end
+
+	--[[function ENT:CustomOnTakeDamage(dmginfo)
+		if dmginfo:IsBulletDamage() then
+			local Pos = self:GetPos()
+			if math.random(1, 2) == 1 then
+				JMod.Sploom(self.EZowner, Pos, math.random(50, 130))
+			end
+
+			for k, ent in pairs(ents.FindInSphere(Pos, 600)) do
+				local Vec = (ent:GetPos() - Pos):GetNormalized()
+
+				if JMod.VisCheck(Pos, ent, self) then
+					if ent:IsPlayer() or ent:IsNPC() then
+						ent:SetVelocity(Vec * 1000)
+					elseif IsValid(ent:GetPhysicsObject()) then
+						ent:GetPhysicsObject():ApplyForceCenter(Vec * 50000)
+					end
+				end
+			end
+		end
+	end-]]
 	--
 elseif CLIENT then
     local drawvec, drawang = Vector(0, 8.15, 15), Angle(-90, 0, 90)

@@ -19,7 +19,7 @@ if SERVER then
 
 		self.TypeInfo = {
 			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
-			"eff_jack_gmod_heavyfire", 10, 20, 175
+			"eff_jack_gmod_heavyfire", 10, 20, 150
 		}
 
 		----
@@ -142,6 +142,7 @@ if SERVER then
 						FireNearby = v.HighVisuals
 						if (v:GetPos():Distance(Pos) < self.Range * 0.3) then
 							if self.DieTime > (v.DieTime or 0) then
+								self.DieTime = self.DieTime + (((v.DieTime or 0) - Time) * 0.3)
 								v:Remove()
 							end
 						end
@@ -164,7 +165,7 @@ if SERVER then
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (v:IsOnFire() == false) and (math.random(1, 15) == 1) then
+						elseif (v:IsOnFire() == false) and (math.random(1, 30) == 1) then
 							v:Ignite(math.random(8, 12))
 						end
 					end

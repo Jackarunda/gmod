@@ -17,7 +17,7 @@ ENT.Mass = 50
 ENT.ImpactNoise1 = "Wood.ImpactHard"
 ENT.DamageThreshold = 90
 ENT.BreakNoise = "Wood.Break"
-ENT.Burnable = true
+ENT.Flammable = 1
 
 ---
 if SERVER then

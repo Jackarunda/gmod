@@ -27,7 +27,7 @@ if SERVER then
 	function ENT:UseEffect(pos, ent)
 		local FX = EffectData()
 		FX:SetOrigin(pos)
-		FX:SetScale(1)
+		FX:SetScale(2)
 		util.Effect("WaterSplash", FX, true, true)
 	end
 	function ENT:CustomImpact(data, physobj)
@@ -37,6 +37,30 @@ if SERVER then
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.WATER, data.HitPos, nil, 10, 1, 1)
 			data.HitEntity:Extinguish()
 			self:Extinguish()
+		end
+	end
+	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
+	function ENT:AltUse(ply)
+		local UsedWater = 0
+		for k, v in ipairs(ents.FindInSphere(self:GetPos(), 100)) do
+			if IsValid(v) and JMod.ClearLoS(self, v, false, 35) then
+				if v:IsOnFire() then 
+					v:Extinguish()
+					UsedWater = UsedWater + math.random(1, 3)
+				end
+				if EntsToRemove[v:GetClass()] and math.random(1, 3) >= 2 then
+					SafeRemoveEntity(v)
+					UsedWater = UsedWater + math.random(1, 3)
+				end
+				v:RemoveAllDecals()
+			end
+		end
+		if UsedWater > 0 then
+			local FX = EffectData()
+			FX:SetOrigin(self:GetPos() + self:GetUp() * 20)
+			FX:SetScale(2)
+			util.Effect("WaterSplash", FX, true, true)
+			self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER, self:GetResource() - UsedWater)
 		end
 	end
 elseif CLIENT then

@@ -17,12 +17,23 @@ ENT.Mass = 50
 ENT.ImpactNoise1 = "Rock.ImpactHard"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Boulder.ImpactHard"
-ENT.Flammable = true
+ENT.Flammable = 2
 
 ENT.PropModels = {"models/props_debris/concrete_spawnchunk001g.mdl", "models/props_debris/concrete_spawnchunk001k.mdl", "models/props_debris/concrete_chunk04a.mdl", "models/props_debris/concrete_chunk05g.mdl", "models/props_debris/concrete_spawnchunk001d.mdl"}
 
 ---
-if CLIENT then
+if SERVER then
+	function ENT:CustomThink()
+		if self:IsOnFire() and JMod.Config.QoL.NiceFire then
+			local Eff = EffectData()
+			local Up = self:GetUp()
+			Eff:SetOrigin(self:GetPos() + Up * 10)
+			Eff:SetNormal(Up)
+			Eff:SetScale(.05)
+			util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
+		end
+	end
+elseif CLIENT then
     local drawvec, drawang = Vector(0, -12, 1), Angle(90, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()

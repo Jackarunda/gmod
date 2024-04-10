@@ -19,7 +19,7 @@ ENT.DamageThreshold = 80
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = nil
 ENT.Cookoff = true
-ENT.Flammable = true
+ENT.Flammable = 5
 
 ---
 if SERVER then

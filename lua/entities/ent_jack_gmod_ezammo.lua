@@ -19,7 +19,7 @@ ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = "ammobox"
 ENT.Cookoff = true
-ENT.IsBoolet = true
+ENT.IsBoolet = 1
 
 ---
 local ShellEffects = {"RifleShellEject", "PistolShellEject", "ShotgunShellEject"}

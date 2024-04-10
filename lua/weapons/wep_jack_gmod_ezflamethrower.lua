@@ -271,8 +271,8 @@ function SWEP:PrimaryAttack()
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
-				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
-				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
 			end
 		else
 			self:Cease()

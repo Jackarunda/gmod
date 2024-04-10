@@ -18,6 +18,7 @@ ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Cardboard_Box.Break"
 ENT.Hint = "eat"
+ENT.Flammable = 1.5
 
 ---
 
