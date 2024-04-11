@@ -975,7 +975,7 @@ JMod.ArmorTable = {
 	},
 	["Flamethrower-Tank"] = {
 		PrintName = "Flamethrower Tank",
-		mdl = "models/weapons/sanic/w_m2f2_static.mdl",
+		mdl = "models/weapons/sanic/w_m2_static.mdl",
 		clr = {
 			r = 255,
 			g = 255,
@@ -1000,7 +1000,7 @@ JMod.ArmorTable = {
 		bon = "ValveBiped.Bip01_Spine2",
 		siz = Vector(1, 1, 1),
 		pos = Vector(0.1, -10.1, -0.5),
-		ang = Angle(180, 0, 90),
+		ang = Angle(90, 180, -90),
 		wgt = 30,
 		dur = 20,
 		ent = "ent_jack_gmod_ezarmor_flametank"

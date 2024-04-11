@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 47.5
+			Version = 47.75
 		},
 		General = {
 			Hints = true,
@@ -1850,6 +1850,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Weapons",
 				craftingType = "fabricator",
 				description = "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
+			},
+			["EZ Flamethrower"] = {
+				results = "wep_jack_gmod_ezflamethrower",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 25,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 100
+				},
+				category = "Weapons",
+				craftingType = "fabricator",
+				description = "A flamethrower. Use to burn your enemies to ashes."
 			},
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
