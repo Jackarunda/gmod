@@ -4,7 +4,7 @@ SWEP.PrintName = "EZ Flamethrower"
 SWEP.Author = "Jackarunda, AdventureBoots"
 SWEP.Purpose = ""
 JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_eztoolbox")
-SWEP.Spawnable = false
+SWEP.Spawnable = true
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
@@ -47,16 +47,16 @@ SWEP.WElements = {
 SWEP.LastSalvageAttempt = 0
 SWEP.NextSwitch = 0
 
-SWEP.NextIgnite = 0
-SWEP.Ignitin = false
-SWEP.Flamin = false
+SWEP.NextExtinguish = 0
 SWEP.NextIgniteTry = 0
+SWEP.NextSparkTime = 0
+
+local STATE_NOTHIN, STATE_SPRAYIN, STATE_FIZZLIN, STATE_IGNITIN, STATE_FLAMIN = 0, 1, 2, 3, 4
 
 function SWEP:Initialize()
 	self:SetHoldType("smg")
 	self:SCKInitialize()
 	self.NextIdle = 0
-	self.NextSparkTime = 0
 	--[[timer.Simple(0, function() 
 		if IsValid(self) and self.EZarmorID then
 			self.ShowWorldModel = false
@@ -76,7 +76,7 @@ local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 function SWEP:ViewModelDrawn()
 	self:SCKViewModelDrawn()
-	if (self:GetIsFlamin()) then
+	if (self:GetState() == STATE_FLAMIN) then
 		render.SetMaterial(GlowSprite)
 		local Dir = self.Owner:GetAimVector()
 		local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 18 - self.Owner:GetUp() * 18
@@ -100,7 +100,7 @@ end
 
 function SWEP:DrawWorldModel()
 	self:SCKDrawWorldModel()
-	if (self:GetIsFlamin()) then
+	if (self:GetState() == STATE_FLAMIN) then
 		render.SetMaterial(GlowSprite)
 		local Dir = self.Owner:GetAimVector()
 		--local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 10 - self.Owner:GetUp() * 17 - Dir * 60
@@ -135,7 +135,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 		Downness = Lerp(FT * 2, Downness, 0)
 	end
 
-	local Flamin = self:GetIsFlamin()
+	local Flamin = (self:GetState() == STATE_FLAMIN)
 
 	if (Flamin) then
 		Backness = Lerp(FT * 2, Backness, 10)
@@ -153,10 +153,11 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("Int", 0, "Fuel")
 	self:NetworkVar("Int", 1, "Gas")
-	self:NetworkVar("Bool", 0, "IsFlamin")
+	self:NetworkVar("Int", 3, "State")
 end
 
 function SWEP:UpdateNextIdle()
+	if not(self.Owner:IsPlayer()) then return end
 	local vm = self.Owner:GetViewModel()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
@@ -192,53 +193,58 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 end
 
 function SWEP:Cease()
-	self.Flamin = false
-	self.Throwin = false
-	self:SetIsFlamin(false)
+	self:SetState(STATE_NOTHIN)
 	if (self.SoundLoop) then self.SoundLoop:Stop() end
 end
 
 function SWEP:GetNozzle()
 	local AimVec = self.Owner:GetAimVector()
-	local FireAng = (AimVec + VectorRand(0, .1)):GetNormalized():Angle()
-	local FirePos = self.Owner:GetShootPos() + self.Owner:GetVelocity() * 0.1 + (FireAng:Forward() * 15 + FireAng:Right() * 4 + FireAng:Up() * -4)
+	local FirePos, FireAng
+	--local NozzleAtt = self:GetAttachment(1)
 	
+	if not(NozzleAtt and NozzleAtt.Pos) then
+		FireAng = (AimVec + VectorRand(0, .1)):GetNormalized():Angle()
+		FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 15 + FireAng:Right() * 4 + FireAng:Up() * -4)
+	else
+		FirePos, FireAng = NozzleAtt.Pos, NozzleAtt.Ang
+	end
+
 	return FirePos, FireAng, AimVec
 end
 
 function SWEP:PrimaryAttack()
 	local Time = CurTime()
+	local NextAttackTime = .05
 	self:Pawnch()
-	self:SetNextPrimaryFire(Time + .05)
+	self:SetNextPrimaryFire(Time + NextAttackTime)
 
 	if SERVER then
-		local Fuel, Gas = self:GetFuel(), self:GetGas()
-		if (Fuel > 0) and (Gas > 0) then
+		local Fuel, Gas, State = self:GetFuel(), self:GetGas(), self:GetState()
+		local HasFuel = (Fuel > 0) and (Gas > 0)
 
-			self.Owner:ViewPunch(AngleRand() * .002)
-
-			if not(self.Throwin) then
+		if not(HasFuel) then
+			self:Cease()
+		else
+			local FirePos, FireAng, AimVec = self:GetNozzle()
+			if (State == STATE_NOTHIN) then
+				self:SetState(STATE_SPRAYIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
 				self.SoundLoop = CreateSound(self, "ambient/gas/cannister_loop.wav")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
-			end
-			self.Throwin = true
-
-			if self.Ignitin and not(self.Flamin) then
-				if (self.NextIgnite < Time) then
-					if self.SoundLoop then self.SoundLoop:Stop() end
-					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.wav")
-					self.SoundLoop:SetSoundLevel(75)
-					self.SoundLoop:Play()
-					self.Ignitin = false
-					self.Flamin = true
-					self:SetIsFlamin(true)
-				end
-			end
-			
-			local FirePos, FireAng, AimVec = self:GetNozzle()
-			if self.Flamin then
+			elseif (State == STATE_SPRAYIN) then
+				local Foof = EffectData()
+				Foof:SetOrigin(FirePos)
+				Foof:SetScale(1)
+				Foof:SetStart(FireAng:Forward() * 3)
+				util.Effect("eff_jack_gmod_spranklerspray", Foof, true, true)
+			elseif (State == STATE_IGNITIN) then
+				self:SetState(STATE_FLAMIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			elseif (State == STATE_FLAMIN) then
 				self.Owner:MuzzleFlash()
 				local Foof = EffectData()
 				Foof:SetNormal(FireAng:Forward())
@@ -247,16 +253,10 @@ function SWEP:PrimaryAttack()
 				Foof:SetEntity(self)
 				Foof:SetAttachment(1)
 				util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
-				--
-			else
-				local Foof = EffectData()
-				Foof:SetOrigin(FirePos)
-				Foof:SetScale(1)
-				Foof:SetStart(FireAng:Forward() * 3)
-				util.Effect("eff_jack_gmod_spranklerspray", Foof, true, true)
 			end
 
-			if (math.Rand(0, 1) > .3) then
+			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
+				self.Owner:ViewPunch(AngleRand() * .002)
 				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
 				FirePos = FlameTr.HitPos
 				local Flame = ents.Create("ent_jack_gmod_eznapalm")
@@ -267,43 +267,45 @@ function SWEP:PrimaryAttack()
 				Flame.HighVisuals = (math.random(1, 2) == 1)
 				Flame.SpeedMul = math.Rand(.9, 1.1)
 				Flame.Creator = self.Owner
-				Flame.Burnin = self.Flamin
+				Flame.Burnin = (State == STATE_FLAMIN)
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
 				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
 				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
 			end
-		else
-			self:Cease()
+			self.NextExtinguish = Time + NextAttackTime * 2
 		end
 	end
 end
 
 function SWEP:SecondaryAttack()
 	local Time = CurTime()
-	if (self.Owner:KeyDown(IN_SPEED) or self.Owner:KeyDown(IN_RELOAD)) then self.Ignitin = false return end
-	if self.Flamin then 
-		self.Ignitin = false
-		self.NextIgnite = Time + 1
-
-		return 
-	end
+	local NextAttackTime = .05
+	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then return end
 	self:SetNextSecondaryFire(CurTime() + .05)
 	
 	if SERVER then
-		local Fuel, Gas = self:GetFuel(), self:GetGas()
+		local Fuel, Gas, State = self:GetFuel(), self:GetGas(), self:GetState()
 		if (Fuel > 0) and (Gas > 0) then
-			if (self.NextIgniteTry < Time) then
-				self.NextIgniteTry = Time + 1
-				if not self.Ignitin then
-					self.Ignitin = true
+			if (State == STATE_NOTHIN) then
+				if (self.NextIgniteTry < Time) then
+					self.NextIgniteTry = Time + 1
+					self:SetState(STATE_FIZZLIN)
 					if self.SoundLoop then self.SoundLoop:Stop() end
 					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
 					self.SoundLoop:SetSoundLevel(75)
 					self.SoundLoop:Play()
 				end
+			elseif (State == STATE_FIZZLIN) then
+				if (self.NextIgniteTry < Time) then
+					self.NextIgniteTry = Time + 1
+					self:SetState(STATE_IGNITIN)
+				end
 			end
+			self.NextExtinguish = Time + NextAttackTime * 2
+		else
+			self:Cease()
 		end
 	end
 end
@@ -437,6 +439,13 @@ function SWEP:Deploy()
 			SafeRemoveEntity(self)
 		end
 	end
+
+	local Time = CurTime()
+	self:SetNextPrimaryFire(Time + 1)
+	self:SetNextSecondaryFire(Time + 1)
+	self.NextExtinguishTime = Time
+
+	if not(self.Owner:IsPlayer()) then return end
 	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
@@ -445,47 +454,32 @@ function SWEP:Deploy()
 		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
 	end
 
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-
 	return true
 end
 
 function SWEP:Think()
 	local Time = CurTime()
 	local idletime = self.NextIdle
+	local State = self:GetState()
 
 	if idletime > 0 and Time > idletime then
 		self:UpdateNextIdle()
 	end
 
-	if (self.Owner:KeyDown(IN_SPEED) or self.Owner:KeyDown(IN_RELOAD)) then 
-		self:Cease() 
-		self.NextIgnite = Time + 1 
-	end
-
-	if not(self.Owner:KeyDown(IN_ATTACK)) then
-		self.Throwin = false
-		self.Flamin = false
-		self:SetIsFlamin(false)
-	end
-
-	if not(self.Owner:KeyDown(IN_ATTACK2)) then
-		self.Ignitin = false
-		self.NextIgnite = Time + 1
-	end
-
-	if not(self.Throwin) and not(self.Ignitin) then
+	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then
+		self:SetHoldType("normal")
 		self:Cease()
+	else
+		self:SetHoldType("smg")
 	end
 
-	if self.NextSparkTime < Time then
-		self.NextSparkTime = Time + 0.1
-		if self.Ignitin then
+	if (State == STATE_FIZZLIN) or (State == STATE_IGNITIN) then
+		if self.NextSparkTime < Time then
+			self.NextSparkTime = Time + 0.1
 			local FirePos, FireAng, AimVec = self:GetNozzle()
 			local Fsh = EffectData()
 			Fsh:SetOrigin(FirePos)
-			Fsh:SetScale(.5)
+			Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.25)
 			Fsh:SetNormal(AimVec)
 			Fsh:SetStart(self.Owner:GetVelocity())
 			Fsh:SetEntity(self)
@@ -493,12 +487,8 @@ function SWEP:Think()
 			util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 		end
 	end
-	
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		self:SetHoldType("normal")
+	if self.NextExtinguish < Time then
 		self:Cease()
-	else
-		self:SetHoldType("smg")
 	end
 
 	if SERVER then
@@ -522,7 +512,7 @@ end
 
 ----------------- sck -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.Owner) then
+	if CLIENT and IsValid(self.Owner) and self.Owner:IsPlayer() then
 		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
@@ -541,7 +531,7 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.WElements) -- create worldmodels
 
 		-- init view model bone build function
-		if IsValid(self.Owner) then
+		if IsValid(self.Owner) and self.Owner:IsPlayer() then
 			local vm = self.Owner:GetViewModel()
 
 			if IsValid(vm) then
@@ -568,6 +558,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
+		if not self.Owner:IsPlayer() then return end
 		local vm = self.Owner:GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end
