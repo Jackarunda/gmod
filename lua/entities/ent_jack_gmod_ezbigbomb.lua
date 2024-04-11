@@ -277,7 +277,7 @@ elseif CLIENT then
 		local Pos, Ang = self:GetPos(), self:GetAngles()
 		Ang:RotateAroundAxis(Ang:Up(), 90)
 		--self:DrawModel()
-		JMod.RenderModel(self.Mdl, Pos, Ang)
+		JMod.RenderModel(self.Mdl, Pos + Ang:Up() * -15, Ang)
 	end
 
 	function ENT:OnRemove()
