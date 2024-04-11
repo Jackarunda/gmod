@@ -152,11 +152,11 @@ hook.Add("JModHookArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, A
 	if ArmorInfo.eff and ArmorInfo.eff.weapon then
 		if IsValid(ply) and ply:IsPlayer() then
 			local wep = ply:GetActiveWeapon()
-			if IsValid(wep) and (wep:GetClass() == ArmorInfo.eff.weapon) then
+			if IsValid(wep) and (wep:GetClass() == ArmorInfo.eff.weapon) and not(IsValid(JMod.GetPlayerHeldEntity(ply))) then
 				if ArmorInfo.merge then
 					Mdl:SetNoDraw(true)
 				else
-
+					--Mdl:SetBodygroup(1, 1)
 					return true
 				end
 			elseif ArmorInfo.merge then

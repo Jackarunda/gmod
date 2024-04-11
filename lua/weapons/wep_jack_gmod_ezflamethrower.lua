@@ -11,16 +11,16 @@ SWEP.DrawCrosshair = false
 SWEP.EZdroppable = false -- If this is to be attached to an armor piece
 SWEP.ViewModel = "models/weapons/sanic/c_m2.mdl"
 SWEP.WorldModel = "models/weapons/sanic/w_m2f2.mdl"
---[[SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
-SWEP.BodyHolsterSlot = "hips"
+--[[SWEP.BodyHolsterModel = "models/weapons/sanic/w_m2_static.mdl"
+SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(-70, 0, 200)
-SWEP.BodyHolsterAngL = Angle(-70, -10, -30)
+SWEP.BodyHolsterAngL = Angle(-70, 0, 200)
 SWEP.BodyHolsterPos = Vector(0, -15, 10)
-SWEP.BodyHolsterPosL = Vector(0, -15, -11)
-SWEP.BodyHolsterScale = .4--]]
+SWEP.BodyHolsterPosL = Vector(0, -15, 10)
+SWEP.BodyHolsterScale = 1--]]
 SWEP.ViewModelFOV = 52
-SWEP.Slot = 0
-SWEP.SlotPos = 5
+SWEP.Slot = 4
+SWEP.SlotPos = 3
 SWEP.InstantPickup = true -- Fort Fights compatibility
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -223,6 +223,7 @@ function SWEP:PrimaryAttack()
 
 		if not(HasFuel) then
 			self:Cease()
+			self:Msg("Out of fuel and/or gas!\nPress Reload on resource container to refill.")
 		else
 			local FirePos, FireAng, AimVec = self:GetNozzle()
 			if (State == STATE_NOTHIN) then
@@ -250,7 +251,7 @@ function SWEP:PrimaryAttack()
 				Foof:SetScale(2)
 				Foof:SetStart(FireAng:Forward() * 1200)
 				Foof:SetEntity(self)
-				Foof:SetAttachment(1)
+				Foof:SetAttachment(2)
 				util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
 			end
 
@@ -294,6 +295,7 @@ function SWEP:SecondaryAttack()
 				if (self.NextIgniteTry < Time) then
 					self.NextIgniteTry = Time + 1
 					self:SetState(STATE_FIZZLIN)
+					self.Owner:EmitSound("snd_jack_spoonfling.wav", 75, 100)
 					if self.SoundLoop then self.SoundLoop:Stop() end
 					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
 					self.SoundLoop:SetSoundLevel(75)
@@ -301,13 +303,20 @@ function SWEP:SecondaryAttack()
 				end
 			elseif (State == STATE_FIZZLIN) then
 				if (self.NextIgniteTry < Time) then
-					self.NextIgniteTry = Time + 1
+					self.NextIgniteTry = Time + 1.8
 					self:SetState(STATE_IGNITIN)
+					if self.SoundLoop then self.SoundLoop:Stop() end
+					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+					self.SoundLoop:SetSoundLevel(75)
+					self.SoundLoop:Play()
 				end
 			end
-			self.NextExtinguishTime = Time + NextAttackTime * 2
+			if (State ~= STATE_SPRAYIN) then
+				self.NextExtinguishTime = Time + NextAttackTime * 2
+			end
 		else
 			self:Cease()
+			self:Msg("Out of fuel and/or gas!\nPress Reload on resource container to refill.")
 		end
 	end
 end
@@ -440,6 +449,7 @@ function SWEP:Deploy()
 		if self.EZarmorID and not(self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID]) then
 			SafeRemoveEntity(self)
 		end
+		JMod.Hint(self.Owner, "flamethrower ignite")
 	end
 
 	local Time = CurTime()
@@ -483,11 +493,11 @@ function SWEP:Think()
 			local FirePos, FireAng, AimVec = self:GetNozzle()
 			local Fsh = EffectData()
 			Fsh:SetOrigin(FirePos)
-			Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.25)
+			Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.1)
 			Fsh:SetNormal(AimVec)
 			Fsh:SetStart(self.Owner:GetVelocity())
 			Fsh:SetEntity(self)
-			Fsh:SetAttachment(1)
+			Fsh:SetAttachment(2)
 			util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 		end
 	end
@@ -502,6 +512,9 @@ function SWEP:Think()
 			self:SetGas(ArmorItem.chrg.gas)
 		end
 	end
+end
+
+function SWEP:Sprint()
 end
 
 function SWEP:DrawHUD()

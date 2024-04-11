@@ -162,3 +162,30 @@ hook.Add("StartCommand", "JMod_StartCommand", function(ply, ucmd)
 		ucmd:SetButtons(Btns)
 	end
 end)
+
+function JMod.GetPlayerHeldEntity(ply)
+	if not(IsValid(ply) and ply:Alive()) then return end
+	local HeldEntity = ply:GetNW2Entity("EZheldEnt", ply.EZheldEnt)
+	if IsValid(HeldEntity) then
+		return HeldEntity
+	end
+end
+
+function JMod.SetPlayerHeldEntity(ply, ent)
+	if not(IsValid(ply) and ply:Alive()) then return end
+	if IsValid(ent) then
+		ply.EZheldEnt = ent
+	else
+		ply.EZheldEnt = nil
+	end
+
+	ply:SetNW2Entity("EZheldEnt", ent)
+end
+
+hook.Add("OnPlayerPhysicsPickup", "JMod_PhysicsPickup", function(ply, ent)
+	JMod.SetPlayerHeldEntity(ply, ent)
+end)
+
+hook.Add("OnPlayerPhysicsDrop", "JMod_PhysicsDrop", function(ply, ent) 
+	JMod.SetPlayerHeldEntity(ply, nil)
+end)

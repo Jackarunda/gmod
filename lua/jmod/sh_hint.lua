@@ -592,6 +592,15 @@ JMod.Hints = {
 	["ent_jack_gmod_ezarmor_parachute"] = {
 		LangKey = "hint parachute"
 	},
+	["ent_jack_gmod_ezarmor_flametank"] = {
+		LangKey = "hint ent_jack_gmod_ezarmor_flametank",
+		Followup = "flamethrower ignite",
+		Repeat = 5
+	},
+	["flamethrower ignite"] = {
+		LangKey = "hint flamethrower ignite",
+		Repeat = 5
+	},
 	["headset radio"] = {
 		LangKey = "hint headset radio"
 	},

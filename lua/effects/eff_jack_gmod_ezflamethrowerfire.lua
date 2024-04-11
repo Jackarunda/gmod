@@ -2,8 +2,8 @@
 	local Pos, Norm, Scl = data:GetOrigin(), data:GetNormal(), data:GetScale()
 	local Start = data:GetStart()
 	local Attach = data:GetAttachment()
-	if Attach > 0 then
-		Pos = self:GetTracerShootPos(Pos, data:GetEntity(), Attach)
+	if (Attach - 1) > 0 then
+		Pos = self:GetTracerShootPos(Pos, data:GetEntity(), Attach - 1)
 	end
 	local Emitter = ParticleEmitter(Pos)
 
