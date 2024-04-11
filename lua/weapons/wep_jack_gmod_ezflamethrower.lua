@@ -4,7 +4,7 @@ SWEP.PrintName = "EZ Flamethrower"
 SWEP.Author = "Jackarunda, AdventureBoots"
 SWEP.Purpose = ""
 JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_eztoolbox")
-SWEP.Spawnable = true
+SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
@@ -215,7 +215,6 @@ end
 function SWEP:PrimaryAttack()
 	local Time = CurTime()
 	local NextAttackTime = .05
-	self:Pawnch()
 	self:SetNextPrimaryFire(Time + NextAttackTime)
 
 	if SERVER then
@@ -256,6 +255,7 @@ function SWEP:PrimaryAttack()
 			end
 
 			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
+				self:Pawnch()
 				self.Owner:ViewPunch(AngleRand() * .002)
 				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
 				FirePos = FlameTr.HitPos
@@ -274,7 +274,7 @@ function SWEP:PrimaryAttack()
 				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
 				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
 			end
-			self.NextExtinguish = Time + NextAttackTime * 2
+			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
 	end
 end
@@ -282,12 +282,14 @@ end
 function SWEP:SecondaryAttack()
 	local Time = CurTime()
 	local NextAttackTime = .05
+	self:SetNextSecondaryFire(CurTime() + NextAttackTime)
 	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then return end
-	self:SetNextSecondaryFire(CurTime() + .05)
+	if (State == STATE_FLAMIN) then return end
 	
 	if SERVER then
-		local Fuel, Gas, State = self:GetFuel(), self:GetGas(), self:GetState()
-		if (Fuel > 0) and (Gas > 0) then
+		local State = self:GetState()
+		local HasFuel = (self:GetFuel() > 0) and (self:GetGas() > 0)
+		if HasFuel then
 			if (State == STATE_NOTHIN) then
 				if (self.NextIgniteTry < Time) then
 					self.NextIgniteTry = Time + 1
@@ -303,7 +305,7 @@ function SWEP:SecondaryAttack()
 					self:SetState(STATE_IGNITIN)
 				end
 			end
-			self.NextExtinguish = Time + NextAttackTime * 2
+			self.NextExtinguishTime = Time + NextAttackTime * 2
 		else
 			self:Cease()
 		end
@@ -468,7 +470,9 @@ function SWEP:Think()
 
 	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then
 		self:SetHoldType("normal")
-		self:Cease()
+		if (State > STATE_NOTHIN) then
+			self:Cease()
+		end
 	else
 		self:SetHoldType("smg")
 	end
@@ -487,11 +491,11 @@ function SWEP:Think()
 			util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 		end
 	end
-	if self.NextExtinguish < Time then
-		self:Cease()
-	end
 
 	if SERVER then
+		if ((State == STATE_FLAMIN) and (self.Owner:IsPlayer() and not self.Owner:KeyDown(IN_ATTACK))) or ((State > STATE_NOTHIN) and (self.NextExtinguishTime < Time)) then
+			self:Cease()
+		end
 		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
 			local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
 			self:SetFuel(ArmorItem.chrg.fuel)
