@@ -108,7 +108,7 @@ if SERVER then
 			if self.NextFizz < Time then
 				self.NextFizz = Time + .5
 
-				if (Water < 1) and ((math.random(1, 2) == 2) or self.HighVisuals) then
+				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
 					local Zap = EffectData()
 					Zap:SetOrigin(Pos)
 					Zap:SetStart(self:GetVelocity())
@@ -131,7 +131,7 @@ if SERVER then
 				end
 
 				if IsValid(Par) then 
-					if Par:IsPlayer() and not Par:Alive() then
+					if Par:IsPlayer() and not(Par:Alive()) then
 						self:Remove()
 
 						return
