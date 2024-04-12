@@ -94,6 +94,12 @@ if SERVER then
 		end
 	end
 
+	function ENT:OnTakeDamage(dmginfo)
+		if not(self.Burnin) and dmginfo:IsDamageType(DMG_BURN) then
+			self:Detonate()
+		end
+	end
+
 	function ENT:Think()
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
 		local Water = self:WaterLevel()
@@ -177,7 +183,8 @@ if SERVER then
 				end
 
 				if vFireInstalled and (math.random(1, 100) == 1) then
-					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), self:GetOwner())
+					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), JMod.GetEZowner(self))
+					self:Remove()
 				end
 			end
 		end
@@ -252,7 +259,7 @@ elseif CLIENT then
 			self.CastLight = HighVis
 			self.HighVisuals = HighVis
 		end
-		if self.CastLight and not GAMEMODE.Lagging then
+		if self.CastLight and not(GAMEMODE.Lagging) and not(vFireInstalled) then
 			local dlight = DynamicLight(self:EntIndex())
 
 			if dlight then

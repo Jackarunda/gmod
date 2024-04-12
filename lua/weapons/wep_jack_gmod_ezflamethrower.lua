@@ -18,8 +18,8 @@ SWEP.BodyHolsterAngL = Angle(-70, 0, 200)
 SWEP.BodyHolsterPos = Vector(0, -15, 10)
 SWEP.BodyHolsterPosL = Vector(0, -15, 10)
 SWEP.BodyHolsterScale = 1--]]
-SWEP.ViewModelFOV = 52
-SWEP.Slot = 4
+SWEP.ViewModelFOV = 55
+SWEP.Slot = 3
 SWEP.SlotPos = 3
 SWEP.InstantPickup = true -- Fort Fights compatibility
 SWEP.Primary.ClipSize = -1
@@ -289,34 +289,41 @@ function SWEP:SecondaryAttack()
 	
 	if SERVER then
 		local State = self:GetState()
-		local HasFuel = (self:GetFuel() > 0) and (self:GetGas() > 0)
-		if HasFuel then
-			if (State == STATE_NOTHIN) then
-				if (self.NextIgniteTry < Time) then
-					self.NextIgniteTry = Time + 1
-					self:SetState(STATE_FIZZLIN)
-					self.Owner:EmitSound("snd_jack_spoonfling.wav", 75, 100)
-					if self.SoundLoop then self.SoundLoop:Stop() end
-					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
-					self.SoundLoop:SetSoundLevel(75)
-					self.SoundLoop:Play()
-				end
-			elseif (State == STATE_FIZZLIN) then
-				if (self.NextIgniteTry < Time) then
-					self.NextIgniteTry = Time + 1.8
-					self:SetState(STATE_IGNITIN)
-					if self.SoundLoop then self.SoundLoop:Stop() end
-					self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
-					self.SoundLoop:SetSoundLevel(75)
-					self.SoundLoop:Play()
+
+		if (State == STATE_NOTHIN) then
+			if (self.NextIgniteTry < Time) then
+				self.NextIgniteTry = Time + 1
+				self:SetState(STATE_FIZZLIN)
+				self.Owner:EmitSound("snd_jack_spoonfling.wav", 75, 100)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			end
+		elseif (State == STATE_FIZZLIN) then
+			if (self.NextIgniteTry < Time) then
+				self.NextIgniteTry = Time + 1.8
+				self:SetState(STATE_IGNITIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			end
+		elseif (State == STATE_IGNITIN) then
+			local FirePos, FireAng = self:GetNozzle()
+			local IgniteTr = util.QuickTrace(FirePos, FireAng:Forward() * 80, self.Owner)
+			if IgniteTr.Hit then
+				for k, v in pairs(ents.FindInSphere(IgniteTr.HitPos, 20)) do
+					if v.JModHighlyFlammableFunc then
+						JMod.SetEZowner(v, self.EZowner)
+						local Func = v[v.JModHighlyFlammableFunc]
+						Func(v)
+					end
 				end
 			end
-			if (State ~= STATE_SPRAYIN) then
-				self.NextExtinguishTime = Time + NextAttackTime * 2
-			end
-		else
-			self:Cease()
-			self:Msg("Out of fuel and/or gas!\nPress Reload on resource container to refill.")
+		end
+		if (State ~= STATE_SPRAYIN) then
+			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
 	end
 end
@@ -487,24 +494,35 @@ function SWEP:Think()
 		self:SetHoldType("smg")
 	end
 
+	
 	if (State == STATE_FIZZLIN) or (State == STATE_IGNITIN) then
 		if self.NextSparkTime < Time then
 			self.NextSparkTime = Time + 0.1
-			local FirePos, FireAng, AimVec = self:GetNozzle()
-			local Fsh = EffectData()
-			Fsh:SetOrigin(FirePos)
-			Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.1)
-			Fsh:SetNormal(AimVec)
-			Fsh:SetStart(self.Owner:GetVelocity())
-			Fsh:SetEntity(self)
-			Fsh:SetAttachment(2)
-			util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
+			if CLIENT then
+				local FirePos, FireAng, AimVec = self:GetNozzle()
+				local Fsh = EffectData()
+				Fsh:SetOrigin(FirePos)
+				Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.1)
+				Fsh:SetNormal(AimVec)
+				Fsh:SetStart(self.Owner:GetVelocity())
+				Fsh:SetEntity(self)
+				Fsh:SetAttachment(2)
+				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
+			end
 		end
 	end
 
 	if SERVER then
 		if ((State == STATE_FLAMIN) and (self.Owner:IsPlayer() and not self.Owner:KeyDown(IN_ATTACK))) or ((State > STATE_NOTHIN) and (self.NextExtinguishTime < Time)) then
-			self:Cease()
+			if self.Owner:IsPlayer() and self.Owner:KeyDown(IN_ATTACK2) then
+				self:SetState(STATE_IGNITIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			else
+				self:Cease()
+			end
 		end
 		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
 			local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
