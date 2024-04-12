@@ -227,6 +227,9 @@ SWEP.Hook_PostFireBullets = function(self)
 	end
 
 	if self.RicPenShotData and SERVER then
+		local Disp = self:GetDispersion() * ArcCW.MOAToAcc / 10
+		self:ApplyRandomSpread(RDir, Disp)
+
 		JMod.RicPenBullet(self.Owner, RPos, RDir, self.RicPenShotData[1] or 10, self.RicPenShotData[2], self.RicPenShotData[3], 1, self.RicPenShotData[4] or 5, "eff_jack_gmod_smallarmstracer", self.RicPenShotCallback and self.RicPenShotCallback)
 	end
 end
