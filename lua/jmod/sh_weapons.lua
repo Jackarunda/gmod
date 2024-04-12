@@ -418,7 +418,7 @@ JMod.AmmoTable = {
 		effrange = 100,
 		terminaldmg = 30,
 		penetration = 40,
-		ammoboxEnt = "ent_jack_gmod_ezammobox_bpmc"
+		--ammoboxEnt = "ent_jack_gmod_ezammobox_bpmc"
 	}
 }
 
