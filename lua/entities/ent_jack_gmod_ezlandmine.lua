@@ -139,6 +139,7 @@ if SERVER then
 		local Up = Vector(0, 0, 1)
 		local EffectType = 1
 		local Traec = util.QuickTrace(self:GetPos(), Vector(0, 0, -5), self.Entity)
+		local Owner = JMod.GetOwner(self)
 
 		if Traec.Hit then
 			if (Traec.MatType == MAT_DIRT) or (Traec.MatType == MAT_SAND) then
@@ -162,8 +163,8 @@ if SERVER then
 		util.Effect("eff_jack_minesplode", plooie, true, true)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
-		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
-		JMod.FragSplosion(self, SelfPos, 1000, 20 * JMod.Config.Explosives.Mine.Power, 3000, self.EZowner, Up, 1.2, 3)
+		JMod.Sploom(Owner, SelfPos, math.random(10, 20))
+		JMod.FragSplosion(self, SelfPos, 1000, 20 * JMod.Config.Explosives.Mine.Power, 3000, Owner, Up, 1.2, 3)
 		self:Remove()
 	end
 

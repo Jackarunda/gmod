@@ -45,7 +45,7 @@ if SERVER then
 	function ENT:Use(activator)
 		if self.NextUseTime > CurTime() then return end
 		local State = self:GetState()
-		local OldOwner = self.EZowner
+		local OldOwner = JMod.GetEZowner(self)
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator, true)
 		if State == STATE_BROKEN then

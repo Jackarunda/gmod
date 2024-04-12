@@ -123,7 +123,7 @@ if(SERVER)then
 
 	function ENT:Use(activator)
 		local State = self:GetState()
-		local OldOwner = self.EZowner
+		local OldOwner = JMod.GetEZowner(self)
 		local alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator, true)
 
