@@ -273,18 +273,22 @@ JMod.AmmoTable = {
 		basedmg = 40,
 		effrange = 100,
 		terminaldmg = 10,
-		penetration = 40
+		penetration = 40,
+		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrr"
 	},
 	["Light Rifle Round-Armor Piercing"] = {
 		armorpiercing = .2,
-		penetration = 70
+		penetration = 70,
+		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrap"
 	},
 	["Light Rifle Round-Ballistic Tip"] = {
 		expanding = .4,
-		penetration = 30
+		penetration = 30,
+		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrbt"
 	},
 	["Light Rifle Round-Tracer"] = {
-		tracer = true
+		tracer = true,
+		--ammoboxEnt = "ent_jack_gmod_ezammobox_lrrt"
 	},
 	["Medium Rifle Round"] = {
 		resourcetype = "ammo",
@@ -394,7 +398,8 @@ JMod.AmmoTable = {
 		carrylimit = 30,
 		ent = "ent_jack_gmod_ezarrow",
 		armorpiercing = .7,
-		basedmg = 75
+		basedmg = 75,
+		ammoboxEnt = "ent_jack_gmod_ezammobox_a"
 	},
 	["Black Powder Paper Cartridge"] = {
 		sizemult = 7,
@@ -403,7 +408,8 @@ JMod.AmmoTable = {
 		effrange = 50,
 		terminaldmg = 30,
 		penetration = 30,
-		dmgtype = DMG_BUCKSHOT
+		dmgtype = DMG_BUCKSHOT,
+		ammoboxEnt = "ent_jack_gmod_ezammobox_bppc"
 	},
 	["Black Powder Metallic Cartridge"] = {
 		sizemult = 6,
@@ -411,7 +417,8 @@ JMod.AmmoTable = {
 		basedmg = 90,
 		effrange = 100,
 		terminaldmg = 30,
-		penetration = 40
+		penetration = 40,
+		ammoboxEnt = "ent_jack_gmod_ezammobox_bpmc"
 	}
 }
 
@@ -444,6 +451,23 @@ function JMod.LoadAmmoTable(tbl)
 
 			if v.ent then
 				language.Add(v.ent, v.nicename or ("EZ " .. k))
+			end
+		end
+
+		if v.ammoboxEnt then
+			local BoxEnt = {}
+			BoxEnt.Base = "ent_jack_gmod_ezammobox"
+			BoxEnt.PrintName = "EZ " .. k
+			BoxEnt.Spawnable = true
+			BoxEnt.AdminOnly = v.AdminOnly or false
+			BoxEnt.Category = v.Category or "JMod - EZ Special Ammo"
+			BoxEnt.EZammo = k
+			BoxEnt.Model = v.ammoboxModel
+			BoxEnt.ModelScale = v.mdlScale or nil
+			scripted_ents.Register(BoxEnt, v.ammoboxEnt)
+
+			if CLIENT then
+				language.Add(v.ammoboxEnt, v.nicename or ("EZ " .. k))
 			end
 		end
 	end
