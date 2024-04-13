@@ -1395,6 +1395,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 end
 
 function JMod.ConsumeNutrients(ply, amt)
+	if not IsValid(ply) or not ply:Alive() then return false end
 	local Time = CurTime()
 	amt = math.Round(amt)
 	--
