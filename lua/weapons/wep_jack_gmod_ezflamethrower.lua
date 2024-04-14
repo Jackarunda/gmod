@@ -3,7 +3,7 @@ AddCSLuaFile()
 SWEP.PrintName = "EZ Flamethrower"
 SWEP.Author = "Jackarunda, AdventureBoots"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_eztoolbox")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezarmor_flamethrower")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
