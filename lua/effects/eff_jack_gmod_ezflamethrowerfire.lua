@@ -1,10 +1,11 @@
 ﻿function EFFECT:Init(data)
 	local Pos, Norm, Scl = data:GetOrigin(), data:GetNormal(), data:GetScale()
 	local Start = data:GetStart()
-	local Attach = data:GetAttachment()
-	if (Attach - 1) > 0 then
-		Pos = self:GetTracerShootPos(Pos, data:GetEntity(), Attach - 1)
+	local Ent = data:GetEntity()
+	if IsValid(Ent) then
+		Pos = self:GetTracerShootPos(Pos, Ent, data:GetAttachment())
 	end
+	
 	local Emitter = ParticleEmitter(Pos)
 
 	for i = 1, 5 * Scl ^ .5 do

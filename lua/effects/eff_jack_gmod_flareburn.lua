@@ -4,9 +4,9 @@
 	local Dir = data:GetNormal()
 	local Vel = data:GetStart()
 	local Scl = Scayul
-	local Attach = data:GetAttachment()
-	if (Attach - 1) > 0 and (LocalPlayer():ShouldDrawLocalPlayer()) then
-		Pos = self:GetTracerShootPos(Pos, data:GetEntity(), Attach - 1)
+	local Ent = data:GetEntity()
+	if IsValid(Ent) then
+		Pos = self:GetTracerShootPos(Pos, Ent, data:GetAttachment())
 	end
 	local UnderWater = self:WaterLevel() == 3
 	local emitter = ParticleEmitter(Pos)

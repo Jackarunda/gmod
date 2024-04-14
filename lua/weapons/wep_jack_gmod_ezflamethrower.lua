@@ -203,7 +203,7 @@ function SWEP:GetNozzle()
 	--local NozzleAtt = self:GetAttachment(1)
 	
 	if not(NozzleAtt and NozzleAtt.Pos) then
-		FireAng = (AimVec + VectorRand(0, .1)):GetNormalized():Angle()
+		FireAng = (AimVec + VectorRand(-.1, .1)):GetNormalized():Angle()
 		FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 15 + FireAng:Right() * 4 + FireAng:Up() * -4)
 	else
 		FirePos, FireAng = NozzleAtt.Pos, NozzleAtt.Ang
@@ -251,7 +251,7 @@ function SWEP:PrimaryAttack()
 				Foof:SetScale(2)
 				Foof:SetStart(FireAng:Forward() * 1200)
 				Foof:SetEntity(self)
-				Foof:SetAttachment(2)
+				Foof:SetAttachment(1)
 				util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
 			end
 
@@ -506,7 +506,7 @@ function SWEP:Think()
 				Fsh:SetNormal(AimVec)
 				Fsh:SetStart(self.Owner:GetVelocity())
 				Fsh:SetEntity(self)
-				Fsh:SetAttachment(2)
+				Fsh:SetAttachment(1)
 				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 			end
 		end
