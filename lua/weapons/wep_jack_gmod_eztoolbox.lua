@@ -223,6 +223,7 @@ function SWEP:Initialize()
 	self.NextTaskProgress = 0
 	self.CurTask = nil
 	self.CurrentBuildSize = 1
+	self.ModifcationCost = 20
 
 	if SERVER then
 		self.Craftables = {}
@@ -409,12 +410,12 @@ function SWEP:PrimaryAttack()
 		elseif IsValid(Ent) and Ent.ModPerfSpecs and self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 			local State = Ent:GetState()
 
-			if State == -1 then
+			if State == JMod.EZ_STATE_BROKEN then
 				self:Msg("device must be repaired before modifying")
-			elseif State ~= 0 then
+			elseif State ~= JMod.EZ_STATE_OFF then
 				self:Msg("device must be turned off to modify")
 			elseif JMod.HaveResourcesToPerformTask(nil, nil, {
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost
 			}, self) then
 				net.Start("JMod_ModifyMachine")
 				net.WriteEntity(Ent)
@@ -424,13 +425,17 @@ function SWEP:PrimaryAttack()
 					net.WriteBit(true)
 					net.WriteTable(Ent.AmmoTypes)
 					net.WriteString(Ent:GetAmmoType())
+				elseif Ent.LiquidTypes then
+					net.WriteBit(true)
+					net.WriteTable(Ent.LiquidTypes)
+					net.WriteString(Ent:GetLiquidType())
 				else
 					net.WriteBit(false)
 				end
 
 				net.Send(self.Owner)
 			else
-				self:Msg("needs 20 Parts nearby to perform modification")
+				self:Msg("needs " .. tostring(self.ModifcationCost) .. " Parts nearby to perform modification")
 			end
 		elseif IsValid(Ent) and Ent.EZupgradable then
 			local State = Ent:GetState()
@@ -495,9 +500,9 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
-	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20 }, self) then
+	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost }, self) then
 		local ChangedSomething = false
-		if ammoType ~= ent:GetAmmoType() then
+		if (ent.GetAmmoType and (ammoType ~= ent:GetAmmoType())) or (ent.GetLiquidType and (ammoType ~= ent:GetLiquidType())) then
 			ChangedSomething = true
 		else
 			for k, v in pairs(tbl) do
@@ -508,14 +513,14 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 		end
 		if ChangedSomething then
 			JMod.ConsumeResourcesInRange({
-				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 20
+				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost
 			}, nil, nil, self)
 		end
 
 		ent:SetMods(tbl, ammoType)
 		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
 	else
-		self:Msg("needs 20 Basic Parts nearby to perform modification")
+		self:Msg("needs " .. tostring(self.ModifcationCost) .. " Basic Parts nearby to perform modification")
 	end
 end
 

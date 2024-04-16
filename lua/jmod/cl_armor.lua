@@ -141,7 +141,7 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 			end
 
 			if not edited then
-				print("JMOD: bones not edited")
+				--print("JMOD: bones not edited")
 				ply.EZarmorboneedited = false
 			end
 		end
