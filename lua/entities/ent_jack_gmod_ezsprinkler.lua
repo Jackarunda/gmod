@@ -60,6 +60,7 @@ function ENT:SetMods(tbl, liquidType)
 	end
 	self:InitPerfSpecs((OldLiquidType ~= liquidType) or ((self.ModPerfSpecs.MaxLiquid < OldMaxLiquidSpec)))
 	self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, liquidType}
+	self:SetColor(self.LiquidTypes[liquidType].TankColor)
 	if SERVER then
 		self:SetupWire()
 	end
@@ -67,7 +68,11 @@ end
 
 function ENT:InitPerfSpecs(removeLiquid)
 	if not self.ModPerfSpecs then return end
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	if (self.StaticPerfSpecs) then
+		for specName, value in pairs(self.StaticPerfSpecs)do 
+			self[specName] = value 
+		end
+	end
 	for specName,value in pairs(self.DynamicPerfSpecs)do 
 		if(type(value)~="table")then
 			self[specName] = value
@@ -101,6 +106,12 @@ function ENT:InitPerfSpecs(removeLiquid)
 	end
 
 	self:SetLiquid((removeLiquid and 0) or math.min(self:GetLiquid(), self.MaxLiquid))
+	--[[if SERVER then
+		net.Start("JMod_MachineSync")
+		net.WriteEntity(self)
+		net.WriteTable(NetworkTable)
+		net.Broadcast()
+	end--]]
 end
 
 if(SERVER)then
@@ -117,7 +128,7 @@ if(SERVER)then
 		}
 		--
 		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
-		self:SetColor(self.LiquidTypes[self:GetLiquidType()].TankColor)
+		self:SetMods(self.ModPerfSpecs, self:GetLiquidType())
 		--
 		self.PerferredDonor = nil
 		if self.SpawnFull then
@@ -401,6 +412,7 @@ if(SERVER)then
 		self.NextLiquidThink = Time + math.Rand(0, 3)
 		self.NextUseTime = Time + math.Rand(0, 3)
 		self.NextEffThink = Time + math.Rand(0, 3)
+		self:SetMods(self.ModPerfSpecs, self:GetLiquidType())
 	end
 
 elseif(CLIENT)then
@@ -408,6 +420,7 @@ elseif(CLIENT)then
 		self:DrawShadow(true)
 		self.Sprinkleer = JMod.MakeModel(self, "models/jmod/machines/sprinkler_head.mdl")
 		self.Debug = false
+		self.ModPerfSpecs = {}
 	end
 
 	local DebugCooler = Color(61, 200, 255)
