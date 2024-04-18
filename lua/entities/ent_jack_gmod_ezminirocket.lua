@@ -15,17 +15,17 @@ local ThinkRate = 22 --Hz
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:DrawShadow(false)
-		self.Entity:SetCollisionBounds(Vector(-20, -20, -10), Vector(20, 20, 10))
-		self.Entity:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
-		local phys = self.Entity:GetPhysicsObject()
+		self:SetMoveType(MOVETYPE_NONE)
+		self:DrawShadow(false)
+		self:SetCollisionBounds(Vector(-20, -20, -10), Vector(20, 20, 10))
+		self:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
+		local phys = self:GetPhysicsObject()
 
 		if IsValid(phys) then
 			phys:EnableCollisions(false)
 		end
 
-		self.Entity:SetNotSolid(true)
+		self:SetNotSolid(true)
 		self.NextDet = 0
 		self.FuelLeft = 100
 		self.DieTime = CurTime() + 10

@@ -82,7 +82,7 @@ if SERVER then
 				if (self:GetState() == STATE_ARMED) and (math.random(1, 5) == 3) then
 					self:Detonate()
 				else
-					self.Entity:EmitSound("Canister.ImpactHard")
+					self:EmitSound("Canister.ImpactHard")
 				end
 			end
 		end
@@ -136,7 +136,7 @@ if SERVER then
 		util.Effect("Explosion", Sploom, true, true)
 		util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 150 * JMod.Config.Explosives.Mine.Power, math.random(50, 100) * JMod.Config.Explosives.Mine.Power)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
-		self.Entity:EmitSound("BaseExplosionEffect.Sound")
+		self:EmitSound("BaseExplosionEffect.Sound")
 		--self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
 		local Pos = self:GetPos()
 

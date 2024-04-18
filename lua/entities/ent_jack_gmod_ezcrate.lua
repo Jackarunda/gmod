@@ -57,13 +57,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/wood_crate002a.mdl")
+		self:SetModel("models/props_junk/wood_crate002a.mdl")
 		--self:SetModelScale(1.5,0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		---
 		self:SetResource(0)
 		self:ApplySupplyType("generic")
@@ -101,8 +101,8 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 100 then
-				self.Entity:EmitSound("Wood_Crate.ImpactHard")
-				self.Entity:EmitSound("Wood_Box.ImpactHard")
+				self:EmitSound("Wood_Crate.ImpactHard")
+				self:EmitSound("Wood_Box.ImpactHard")
 			end
 		end
 	end
@@ -118,7 +118,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if (dmginfo:GetDamage() > self.DamageThreshold) and not(self.Destroyed) then
 			self.Destroyed = true

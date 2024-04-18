@@ -19,12 +19,12 @@ end
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/gnome.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/props_junk/gnome.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		local Phys = self:GetPhysicsObject()
 
 		if IsValid(Phys) then
@@ -33,7 +33,7 @@ if SERVER then
 		end
 
 		timer.Simple(0, function()
-			self.Entity:PhysicsInit(SOLID_VPHYSICS)
+			self:PhysicsInit(SOLID_VPHYSICS)
 			local Phys = self:GetPhysicsObject()
 
 			if IsValid(Phys) then
@@ -52,14 +52,14 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 200 then
-				self.Entity:EmitSound("Drywall.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 				self.FreezeTime = CurTime() + 10
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		self.FreezeTime = CurTime() + 10
 	end
 

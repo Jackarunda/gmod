@@ -108,7 +108,7 @@ if SERVER then
 			if IsValid(Att) and (self.DropOwner == Att) then return end
 		end
 
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
 			JMod.SetEZowner(self, dmginfo:GetAttacker())

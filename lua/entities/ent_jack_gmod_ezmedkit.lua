@@ -46,12 +46,12 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/weapons/w_models/w_tooljox.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/weapons/w_models/w_tooljox.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		local Phys = self:GetPhysicsObject()
@@ -67,14 +67,14 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 100 then
-				self.Entity:EmitSound("Plastic_Box.ImpactHard")
-				self.Entity:EmitSound("Weapon.ImpactSoft")
+				self:EmitSound("Plastic_Box.ImpactHard")
+				self:EmitSound("Weapon.ImpactSoft")
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if dmginfo:GetDamage() > self.DamageThreshold then
 			local Pos = self:GetPos()

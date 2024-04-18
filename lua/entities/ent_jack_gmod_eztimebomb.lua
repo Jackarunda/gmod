@@ -37,12 +37,12 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/bombs/c4/w_c4_planted.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(ONOFF_USE)
+		self:SetModel("models/jmod/explosives/bombs/c4/w_c4_planted.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(ONOFF_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -82,14 +82,14 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self.Entity:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
+				self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
 		if dmginfo:GetInflictor() == self then return end
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		local Dmg = dmginfo:GetDamage()
 
 		if JMod.LinCh(Dmg, 60, 120) then
@@ -179,7 +179,7 @@ if SERVER then
 							self.StuckStick = Weld
 						end
 
-						self.Entity:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+						self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 						Dude:DropObject()
 					end
 				end

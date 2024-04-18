@@ -73,7 +73,7 @@ if SERVER then
 			if (self:GetState() == STATE_ARMED) and (math.random(1, 5) == 3) then
 				self:Detonate()
 			else
-				self.Entity:EmitSound("Drywall.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 			end
 		end
 	end

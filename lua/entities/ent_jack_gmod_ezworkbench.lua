@@ -30,7 +30,7 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self.Entity:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end

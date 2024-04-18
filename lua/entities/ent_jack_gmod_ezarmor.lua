@@ -42,7 +42,7 @@ if SERVER then
 			self:SetColor(Color(self.Specs.clr.r, self.Specs.clr.g, self.Specs.clr.b))
 		end
 
-		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
+		--self:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if self.ModelScale and not self.Specs.gayPhysics then
 			self:SetModelScale(self.ModelScale)
 		end

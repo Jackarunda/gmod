@@ -129,14 +129,14 @@ end
 
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/dav0r/hoverball.mdl")
-		self.Entity:SetMaterial("models/debug/debugwhite")
-		self.Entity:SetColor(Color(0, 0, 0))
-		self.Entity:SetModelScale(4, 1)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/dav0r/hoverball.mdl")
+		self:SetMaterial("models/debug/debugwhite")
+		self:SetColor(Color(0, 0, 0))
+		self:SetModelScale(4, 1)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
 		self.HawkingRadiationAge = JMod.Config.Machines.Blackhole.MaxAge - math.sqrt(JMod.Config.Machines.Blackhole.MaxAge) + 1
 
 		---

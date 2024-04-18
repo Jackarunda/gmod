@@ -172,10 +172,10 @@ if SERVER then
 			end
 
 			if (data.Speed > 80) and self and self.ImpactNoise1 then
-				self.Entity:EmitSound(self.ImpactNoise1)
+				self:EmitSound(self.ImpactNoise1)
 
 				if self.ImpactNoise2 then
-					self.Entity:EmitSound(self.ImpactNoise2)
+					self:EmitSound(self.ImpactNoise2)
 				end
 			end
 
@@ -197,7 +197,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		local Dam = dmginfo:GetDamage()
 		if Dam > self.DamageThreshold then

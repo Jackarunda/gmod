@@ -36,13 +36,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/mines/submine.mdl")
-		--self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/explosives/mines/submine.mdl")
+		--self:SetMaterial("models/mat_jack_dullscratchedmetal")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -105,7 +105,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 100, 200) then
 			if self:WaterLevel() > 0 then

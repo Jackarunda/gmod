@@ -12,12 +12,12 @@ ENT.NoEZbombletDet = true
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/weapons/ar2_grenade.mdl")
-		self.Entity:SetColor(Color(50, 50, 50))
-		self.Entity:PhysicsInitBox(Vector(-2, -2, -2), Vector(2, 2, 2))
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/weapons/ar2_grenade.mdl")
+		self:SetColor(Color(50, 50, 50))
+		self:PhysicsInitBox(Vector(-2, -2, -2), Vector(2, 2, 2))
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
 		self.IgnoreBlastTime = CurTime() + 2
 		timer.Simple(0, function()
 			if(IsValid(self))then
@@ -40,7 +40,7 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmginfo)
 		if self.IgnoreBlastTime < CurTime() then
-			self.Entity:TakePhysicsDamage(dmginfo)
+			self:TakePhysicsDamage(dmginfo)
 		end
 
 		if dmginfo:GetDamage() >= 80 then

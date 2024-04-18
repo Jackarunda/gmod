@@ -24,13 +24,13 @@ end
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/wood_crate002a.mdl")
-		self.Entity:SetModelScale(.4, 0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/props_junk/wood_crate002a.mdl")
+		self:SetModelScale(.4, 0)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		self.Durability = 100
 		local Phys = self:GetPhysicsObject()
 
@@ -39,8 +39,8 @@ if SERVER then
 		end
 
 		timer.Simple(0, function()
-			self.Entity:SetModelScale(1, .5)
-			self.Entity:PhysicsInit(SOLID_VPHYSICS)
+			self:SetModelScale(1, .5)
+			self:PhysicsInit(SOLID_VPHYSICS)
 			local Phys = self:GetPhysicsObject()
 
 			if IsValid(Phys) then
@@ -52,8 +52,8 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 100 then
-				self.Entity:EmitSound("Wood_Crate.ImpactHard")
-				self.Entity:EmitSound("Wood_Box.ImpactHard")
+				self:EmitSound("Wood_Crate.ImpactHard")
+				self:EmitSound("Wood_Box.ImpactHard")
 				local Threshold = 1000
 
 				if IsValid(JMod.BlackHole) then
@@ -72,7 +72,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		if dmginfo:IsDamageType(DMG_RADIATION) then return end
 		self.Durability = self.Durability - dmginfo:GetDamage()
 		self.LastDmgForce = dmginfo:GetDamageForce()

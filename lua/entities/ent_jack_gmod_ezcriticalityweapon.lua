@@ -35,12 +35,12 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/hunter/blocks/cube025x025x025.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -67,7 +67,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self.Entity:EmitSound("Canister.ImpactHard", 60, math.random(80, 120))
+				self:EmitSound("Canister.ImpactHard", 60, math.random(80, 120))
 
 				if self:GetState() == STATE_MELTED then
 					local Dmg = DamageInfo()
@@ -88,7 +88,7 @@ if SERVER then
 
 	function ENT:OnTakeDamage(dmginfo)
 		if dmginfo:GetInflictor() == self then return end
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		local Dmg = dmginfo:GetDamage()
 
 		if JMod.LinCh(Dmg, 50, 120) then

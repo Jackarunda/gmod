@@ -28,11 +28,11 @@ if SERVER then
 	end]]
 	-- (I don't know if you want to get rid of it RN)
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
-		self.Entity:PhysicsInit(SOLID_NONE)
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:SetSolid(SOLID_NONE)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
+		self:PhysicsInit(SOLID_NONE)
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetSolid(SOLID_NONE)
+		self:DrawShadow(true)
 
 		---
 		timer.Simple(0.1, function()
