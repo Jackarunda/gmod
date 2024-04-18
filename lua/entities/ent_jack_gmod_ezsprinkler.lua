@@ -379,6 +379,9 @@ if(SERVER)then
 
 				local TurnSpeed = 5
 				local RotMin, RotMax = self.Rotation.Min or 0, self.Rotation.Max or 360
+				if RotMin > RotMax then
+					RotMin, RotMax = RotMax, RotMin
+				end
 				if CurrentRot > RotMax then
 					self.Dir = "right"
 					if self.SoundLoop then

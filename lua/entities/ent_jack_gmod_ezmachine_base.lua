@@ -149,10 +149,12 @@ if(SERVER)then
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
 		--print(self:GetNW2Float("EZdurability", -1))
-		if self.SpawnFull then
-			self:SetElectricity(self.MaxElectricity)
-		else
-			self:SetElectricity(0)
+		if self.SetElectricity and self.MaxElectricity then
+			if self.SpawnFull then
+				self:SetElectricity(self.MaxElectricity)
+			else
+				self:SetElectricity(0)
+			end
 		end
 		---
 		if self.EZownerID then JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID)) end
