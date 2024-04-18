@@ -10,6 +10,7 @@ ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZlowFragPlease = true
+ENT.EZbuoyancy = .3
 ---
 ENT.Bombs = {}
 
@@ -30,18 +31,22 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/bomb_bay/bomb_bay_exterior.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
+		local phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(300)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
+			if IsValid(phys) then
+				phys:SetMass(300)
+				phys:Wake()
+				phys:EnableDrag(false)
+				phys:SetBuoyancyRatio(self.EZbuoyancy)
+			end
 		end)
 
 		---
@@ -177,7 +182,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 80, 160) then
 			self:Destroy(dmginfo)

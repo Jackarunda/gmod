@@ -121,6 +121,12 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.WATER,
 			JMod.EZ_RESOURCE_TYPES.POWER,
 		}
+		self.Rotation = {
+			Min = 0,
+			Max = 360
+		}
+		-- All moddable attributes
+		-- Each mod selected for it is +1, against it is -1
 		self.ModPerfSpecs = {
 			MaxLiquid = 0,
 			TurnSpeed = 0,
@@ -364,7 +370,7 @@ if(SERVER)then
 				end
 
 				local TurnSpeed = 5
-				local RotMin, RotMax = -180, 0
+				local RotMin, RotMax = self.Rotation.Min or 0, self.Rotation.Max or 360
 				if CurrentRot > RotMax then
 					self.Dir = "right"
 					if self.SoundLoop then

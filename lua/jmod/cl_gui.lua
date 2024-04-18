@@ -687,7 +687,9 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 					temp_ent.ClientOnly = true
 				end
 			end
-			temp_ent:Spawn()												-- have to do this to get an accurate bounding box
+			temp_ent:SetNextClientThink(CurTime() + 0.1)
+			temp_ent:SetNoDraw(true)
+			temp_ent:Spawn()									-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
 			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles
 			

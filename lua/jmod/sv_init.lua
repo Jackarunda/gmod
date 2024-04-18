@@ -1057,3 +1057,18 @@ end)
 hook.Add("PlayerCanHearPlayersVoice", "JMOD_PLAYERHEARVOICE", function(listener, talker)
 	if talker.EZarmor and talker.EZarmor.effects.teamComms then return JMod.PlayersCanComm(listener, talker) end
 end)
+
+local function ResetBouyancy(ply, ent)
+	if ent.EZbuoyancy then
+		local phys = ent:GetPhysicsObject()
+		timer.Simple(0, function()
+			if IsValid(phys) then
+				phys:SetBuoyancyRatio(ent.EZbuoyancy)
+			end
+		end)
+	end
+end
+
+hook.Add("PhysgunDrop", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("GravGunDrop", "JMod_ResetBouyancy", ResetBouyancy)

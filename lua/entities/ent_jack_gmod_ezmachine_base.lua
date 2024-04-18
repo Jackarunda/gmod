@@ -120,10 +120,15 @@ if(SERVER)then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		local phys = self:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:Wake()
-			phys:SetMass(self.Mass)
-		end
+		timer.Simple(0, function()
+			if phys:IsValid() then
+				phys:Wake()
+				phys:SetMass(self.Mass)
+				if self.EZbuoyancy then
+					phys:SetBuoyancyRatio(self.EZbuoyancy)
+				end
+			end
+		end)
 		self:SetState(JMod.EZ_STATE_OFF)
 		if self:GetGrade() == 0 then
 			self:SetGrade(JMod.EZ_GRADE_BASIC)

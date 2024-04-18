@@ -395,7 +395,11 @@ function JMod.MakeModel(self, mdl, mat, scale, col)
 	local Mdl = ClientsideModel(mdl)
 
 	if mat then
-		Mdl:SetMaterial(mat)
+		if isnumber(mat) then
+			Mdl:SetSkin(mat)
+		else
+			Mdl:SetMaterial(mat)
+		end
 	end
 
 	if scale then

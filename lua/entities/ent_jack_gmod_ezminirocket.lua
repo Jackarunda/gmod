@@ -157,11 +157,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/explosives/missile/missile_patriot.mdl")
-		self.Mdl:SetSkin(1)
-		self.Mdl:SetPos(self:GetPos())
-		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
+		self.Mdl = JMod.MakeModel(self, "models/jmod/explosives/missile/missile_patriot.mdl", 1)
 		self.RenderPos = self:GetPos()
 		self.NextRender = CurTime() + .05
 	end
@@ -172,33 +168,14 @@ elseif CLIENT then
 		end
 	end
 
-	function ENT:Think()
-	end
-
 	--
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
-	function ENT:Draw()
-		if self.NextRender > CurTime() then return end
-		local Pos, Ang, Dir = self.RenderPos, self:GetAngles(), self:GetRight()
-		Ang:RotateAroundAxis(Ang:Up(), 90)
-		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
-		self.Mdl:SetRenderAngles(Ang)
-		local Matricks = Matrix()
-		Matricks:Scale(Vector(.2, .4, .4))
-		self.Mdl:EnableMatrix("RenderMultiply", Matricks)
-		self.Mdl:DrawModel()
-		--
+	function ENT:Think()
 		self.BurnoutTime = self.BurnoutTime or CurTime() + 1
 
 		if self.BurnoutTime > CurTime() then
-			render.SetMaterial(GlowSprite)
-
-			for i = 1, 10 do
-				local Inv = 10 - i
-				render.DrawSprite(Pos + Dir * (i * 5 + math.random(30, 40) - 15), 3 * Inv, 3 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
-			end
+			local Pos, Dir = self.RenderPos, self:GetRight()
 
 			local dlight = DynamicLight(self:EntIndex())
 
@@ -211,6 +188,26 @@ elseif CLIENT then
 				dlight.Decay = 200
 				dlight.Size = 400
 				dlight.DieTime = CurTime() + .5
+			end
+		end
+	end
+
+	function ENT:Draw()
+		if self.NextRender > CurTime() then return end
+		local Pos, Ang, Dir = self.RenderPos, self:GetAngles(), self:GetRight()
+		Ang:RotateAroundAxis(Ang:Up(), 90)
+		--self:DrawModel()
+		local RenderPos = Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1
+		JMod.RenderModel(self.Mdl, RenderPos, Ang, Vector(.2, .4, .4), nil, nil, true)
+		--
+		self.BurnoutTime = self.BurnoutTime or CurTime() + 1
+
+		if self.BurnoutTime > CurTime() then
+			render.SetMaterial(GlowSprite)
+
+			for i = 1, 10 do
+				local Inv = 10 - i
+				render.DrawSprite(Pos + Dir * (i * 5 + math.random(30, 40) - 15), 3 * Inv, 3 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
 			end
 		end
 

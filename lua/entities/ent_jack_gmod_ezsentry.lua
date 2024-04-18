@@ -81,7 +81,8 @@ ENT.StaticPerfSpecs = {
 	BlacklistedNPCs = {"npc_enemyfinder", "bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground", "npc_bullseye"},
 	WhitelistedNPCs = {"npc_rollermine"},
 	SpecialTargetingHeights = {
-		["npc_rollermine"] = 15
+		["npc_rollermine"] = 15,
+		["npc_apcdriver"] = 30
 	},
 	MaxDurability = 100,
 	ThinkSpeed = 1,
@@ -1040,7 +1041,7 @@ if(SERVER)then
 			local CorrectedFirePosition = point + targVel * FlightTime
 			local ShootDir = (CorrectedFirePosition - ShootPos):GetNormalized()
 			-- ballistic calcs --
-			local Theta = math.deg(math.asin(Distance * Gravity / Speed ^ 2.5) / 2)
+			local Theta = math.deg(math.asin(Distance * Gravity / Speed ^ 2) / 2)
 
 			-- target too far away, no mathematical solution possible, shoot at 45 degrees
 			if Theta ~= Theta then
@@ -1073,38 +1074,33 @@ if(SERVER)then
 			local RPos, RDir = ShootPos + ShootAng:Right() * 100, -ShootAng:Right()
 			local Dist = 200
 
-			local Tr = util.QuickTrace(RPos, RDir * Dist, function(dumb)
-				if dumb == self then return false end
-				if dumb:IsPlayer() or dumb:IsNPC() then return false end
-				if dumb.IsEZrocket == true then return false end
-
-				return true
-			end)
+			local Tr = util.TraceLine({
+				start = RPos,
+				endpos = RPos - RDir * Dist,
+				filter = {self, Rocket},
+				mask = MASK_SOLID_BRUSHONLY
+			})
 
 			if Tr.Hit then
 				Dist = RPos:Distance(Tr.HitPos)
-
-				if SERVER then
-					JMod.Hint(JMod.GetEZowner(self), "backblast wall")
-				end
+				JMod.Hint(JMod.GetEZowner(self), "backblast wall")
 			end
 
 			for i = 1, 4 do
 				util.BlastDamage(self, JMod.GetEZowner(self) or self, RPos + RDir * (i * 40 - Dist) * self.BackBlast, 70 * self.BackBlast, 30 * self.BackBlast)
 			end
 
-			if SERVER then
-				local FooF = EffectData()
-				FooF:SetOrigin(RPos)
-				FooF:SetScale(self.BackBlast)
-				FooF:SetNormal(RDir)
-				util.Effect("eff_jack_gmod_smalldustshock", FooF, true, true)
-				local Ploom = EffectData()
-				Ploom:SetOrigin(RPos)
-				Ploom:SetScale(self.BackBlast)
-				Ploom:SetNormal(RDir)
-				util.Effect("eff_jack_gmod_ezbackblast", Ploom, true, true)
-			end
+			--
+			local FooF = EffectData()
+			FooF:SetOrigin(RPos)
+			FooF:SetScale(self.BackBlast)
+			FooF:SetNormal(RDir)
+			util.Effect("eff_jack_gmod_smalldustshock", FooF, true, true)
+			local Ploom = EffectData()
+			Ploom:SetOrigin(RPos)
+			Ploom:SetScale(self.BackBlast)
+			Ploom:SetNormal(RDir)
+			util.Effect("eff_jack_gmod_ezbackblast", Ploom, true, true)
 		elseif ProjType == "Pulse Laser" then
 			local Dmg, Inacc = self.Damage, .06 / self.Accuracy
 			local Force = Dmg / 5
