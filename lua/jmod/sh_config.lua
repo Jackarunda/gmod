@@ -1643,7 +1643,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 10
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = {"workbench", "fabricator"},
 				description = "First grenade launcher. A single grenade to turn shit into scrap."
 			},
 			["EZ Pistol"] = {
@@ -1783,7 +1783,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.PRECISIONPARTS] = 50
 				},
 				category = "Weapons",
-				craftingType = "workbench",
+				craftingType = {"workbench", "fabricator"},
 				description = "A rocket launcher. Launches rockets. What else did you think it did?"
 			},
 			["EZ Fully-Automatic Shotgun"] = {
@@ -2617,7 +2617,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 50
 				},
 				category = "Resources",
-				craftingType = "workbench",
+				craftingType = "fabricator",
 				description = "Ammo for your explosive toys."
 			},
 			["EZ Powder Keg"] = {
