@@ -797,7 +797,9 @@ local function GetAvailPts(specs)
 	local Pts = 0
 
 	for k, v in pairs(specs) do
-		Pts = Pts - v
+		if isnumber(v) then
+			Pts = Pts - v
+		end
 	end
 
 	return Pts
@@ -842,31 +844,68 @@ net.Receive("JMod_ModifyMachine", function()
 		Panel:SetPos(X, Y)
 		Panel:SetSize(275, 40)
 
-		function Panel:Paint(w, h)
-			surface.SetDrawColor(0, 0, 0, 100)
-			surface.DrawRect(0, 0, w, h)
-			draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-		end
+		if isnumber(value) then
+			function Panel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 100)
+				surface.DrawRect(0, 0, w, h)
+				draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			end
 
-		local MinButt = vgui.Create("DButton", Panel)
-		MinButt:SetPos(10, 10)
-		MinButt:SetSize(20, 20)
-		MinButt:SetText("-")
+			local MinButt = vgui.Create("DButton", Panel)
+			MinButt:SetPos(10, 10)
+			MinButt:SetSize(20, 20)
+			MinButt:SetText("-")
 
-		function MinButt:DoClick()
-			Specs[attrib] = math.Clamp(Specs[attrib] - 1, -10, 10)
-			AvailPts = GetAvailPts(Specs)
-		end
-
-		local MaxButt = vgui.Create("DButton", Panel)
-		MaxButt:SetPos(245, 10)
-		MaxButt:SetSize(20, 20)
-		MaxButt:SetText("+")
-
-		function MaxButt:DoClick()
-			if AvailPts > 0 then
-				Specs[attrib] = math.Clamp(Specs[attrib] + 1, -10, 10)
+			function MinButt:DoClick()
+				Specs[attrib] = math.Clamp(Specs[attrib] - 1, -10, 10)
 				AvailPts = GetAvailPts(Specs)
+			end
+
+			local MaxButt = vgui.Create("DButton", Panel)
+			MaxButt:SetPos(245, 10)
+			MaxButt:SetSize(20, 20)
+			MaxButt:SetText("+")
+
+			function MaxButt:DoClick()
+				if AvailPts > 0 then
+					Specs[attrib] = math.Clamp(Specs[attrib] + 1, -10, 10)
+					AvailPts = GetAvailPts(Specs)
+				end
+			end
+
+		elseif istable(value) then
+			function Panel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 100)
+				surface.DrawRect(0, 0, w, h)
+				draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				draw.SimpleText("Min", "DermaDefault", 75, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				draw.SimpleText("Max", "DermaDefault", 200, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			end
+
+			if isnumber(value.Min) and isnumber(value.Max) then
+				local MinNumBox = vgui.Create("DNumSlider", Panel)
+				--MinNumBox:SetPos(0, 5)
+				MinNumBox:Dock(LEFT)
+				--MinNumBox:SetWide(200)
+				MinNumBox:SetMin(-360)
+				MinNumBox:SetMax(360)
+				MinNumBox:SetDecimals(0)
+				MinNumBox:SetValue(Specs[attrib].Min)
+				MinNumBox.OnValueChanged = function(_, val)
+					Specs[attrib].Min = math.Round(val)
+				end
+				
+				local MaxNumBox = vgui.Create("DNumSlider", Panel)
+				--MaxNumBox:SetPos(50, 5)
+				MaxNumBox:Dock(RIGHT)
+				--MaxNumBox:SetWide(200)
+				MaxNumBox:SetMin(-360)
+				MaxNumBox:SetMax(360)
+				MaxNumBox:SetDecimals(0)
+				MaxNumBox:SetValue(Specs[attrib].Max)
+				MaxNumBox.OnValueChanged = function(_, val)
+					Specs[attrib].Max = math.Round(val)
+				end
 			end
 		end
 

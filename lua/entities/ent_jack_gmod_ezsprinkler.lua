@@ -82,17 +82,21 @@ function ENT:InitPerfSpecs(removeLiquid)
 	self.SprayRadius = self.SprayRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10
-	for attrib,value in pairs(self.ModPerfSpecs) do
-		local oldVal=self[attrib]
-		if value > 0 then
-			local ratio = (math.abs(value / MaxValue) + 1) ^ 1.5
-			self[attrib] = self[attrib] * ratio
+	for attrib, value in pairs(self.ModPerfSpecs) do
+		local oldVal =  self[attrib]
+		if istable(value) then
+			self[attrib] = value
+		else
+			if value > 0 then
+				local ratio = (math.abs(value / MaxValue) + 1) ^ 1.5
+				self[attrib] = self[attrib] * ratio
+				--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
+			elseif value < 0 then
+				local ratio = (math.abs(value / MaxValue) + 1) ^ 3
+				self[attrib] = self[attrib] / ratio
+			end
 			--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
-		elseif value < 0 then
-			local ratio = (math.abs(value / MaxValue) + 1) ^ 3
-			self[attrib] = self[attrib] / ratio
 		end
-		--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 	end
 
 	-- Finally apply LiquidType attributes
@@ -130,7 +134,11 @@ if(SERVER)then
 		self.ModPerfSpecs = {
 			MaxLiquid = 0,
 			TurnSpeed = 0,
-			SprayRadius = 0
+			SprayRadius = 0,
+			Rotation = {
+				Min = 0,
+				Max = 360
+			}
 		}
 		--
 		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
