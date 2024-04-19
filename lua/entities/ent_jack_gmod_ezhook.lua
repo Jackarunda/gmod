@@ -60,8 +60,23 @@ if SERVER then
 				local Ent = data.HitEntity
 				if (IsValid(Ent) and not(Ent:IsPlayer() or Ent:IsNPC() or Ent:IsNextBot() or Ent == self.EZconnector)) then
 					if self.EZhookType == "Plugin" then
+						local PlayerHolding = self:IsPlayerHolding()
+						local ConnectionRange = self.EZconnector.MaxConnectionRange or 1000
 						timer.Simple(0, function()
-							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), self.EZconnector.MaxConnectionRange or 1000)
+							local PlayerHolding = NULL
+							local NearbyPlayers = ents.FindInSphere(self:GetPos(), 100)
+							for i = 1, #NearbyPlayers do
+								local v = NearbyPlayers[i]
+								if v:IsPlayer() and (JMod.GetPlayerHeldEntity(v) == self) then
+									PlayerHolding = v
+								end
+							end
+							if IsValid(PlayerHolding) and PlayerHolding:KeyDown(JMod.Config.General.AltFunctionKey) then
+								local PluginPos = Ent.EZpowerSocket or Ent:OBBCenter()
+								local DistanceBetween = (self.EZconnector:GetPos() - Ent:LocalToWorld(PluginPos)):Length()
+								ConnectionRange = math.min(ConnectionRange, DistanceBetween + 10)
+							end
+							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), ConnectionRange)
 							if Connected then SafeRemoveEntity(self) end
 						end)
 					else
