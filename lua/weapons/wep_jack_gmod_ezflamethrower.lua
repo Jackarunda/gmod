@@ -200,16 +200,31 @@ end
 function SWEP:GetNozzle()
 	local AimVec = self.Owner:GetAimVector()
 	local FirePos, FireAng
-	--local NozzleAtt = self:GetAttachment(1)
+	local NozzleAtt = self:GetAttachment(1)
 	
-	if not(NozzleAtt and NozzleAtt.Pos) then
-		FireAng = (AimVec + VectorRand(-.1, .1)):GetNormalized():Angle()
-		FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 15 + FireAng:Right() * 4 + FireAng:Up() * -4)
-	else
+	if CLIENT then
 		FirePos, FireAng = NozzleAtt.Pos, NozzleAtt.Ang
+		if not self.Owner:ShouldDrawLocalPlayer() then
+			FireAng:RotateAroundAxis(FireAng:Up(), 10)
+			FireAng:RotateAroundAxis(FireAng:Right(), -5)
+			--FirePos = FirePos + FireAng:Up() * 30 + FireAng:Forward() * 20
+			FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
+		end
+	elseif SERVER then
+		FireAng = AimVec:Angle()
+		--FireAng:RotateAroundAxis(FireAng:Right(), 5)
+		FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
 	end
 
-	return FirePos, FireAng, AimVec
+	if SERVER then
+		debugoverlay.Cross(FirePos, 10, 2, Color(0, 89, 255), true)
+		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(0, 89, 255), false)
+	else
+		debugoverlay.Cross(FirePos, 10, 2, Color(255, 251, 0), true)
+		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(255, 251, 0), false)
+	end
+
+	return FirePos, FireAng
 end
 
 function SWEP:PrimaryAttack()
@@ -225,7 +240,7 @@ function SWEP:PrimaryAttack()
 			self:Cease()
 			self:Msg("Out of fuel and/or gas!\nPress Reload on resource container to refill.")
 		else
-			local FirePos, FireAng, AimVec = self:GetNozzle()
+			local FirePos, FireAng = self:GetNozzle()
 			if (State == STATE_NOTHIN) then
 				self:SetState(STATE_SPRAYIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
@@ -235,9 +250,13 @@ function SWEP:PrimaryAttack()
 			elseif (State == STATE_SPRAYIN) then
 				local Foof = EffectData()
 				Foof:SetOrigin(FirePos)
+				Foof:SetEntity(self)
+				Foof:SetAttachment(1)
 				Foof:SetScale(1)
 				Foof:SetStart(FireAng:Forward() * 3)
+				Foof:SetNormal(FireAng:Forward() * 3)
 				util.Effect("eff_jack_gmod_spranklerspray", Foof, true, true)
+				util.Effect("eff_jack_gmod_liquidtrail", Foof, true, true)
 			elseif (State == STATE_IGNITIN) then
 				self:SetState(STATE_FLAMIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
@@ -499,13 +518,13 @@ function SWEP:Think()
 		if self.NextSparkTime < Time then
 			self.NextSparkTime = Time + 0.1
 			if CLIENT then
-				local FirePos, FireAng, AimVec = self:GetNozzle()
+				local FirePos, FireAng = self:GetNozzle()
 				local Fsh = EffectData()
-				Fsh:SetOrigin(FirePos)
-				Fsh:SetScale(((State == STATE_IGNITIN) and 0.5) or 0.1)
-				Fsh:SetNormal(AimVec)
+				Fsh:SetOrigin(FirePos + FireAng:Forward() * 1)
+				Fsh:SetScale(((State == STATE_IGNITIN) and 1) or 0.5)
+				Fsh:SetNormal(self.Owner:GetAimVector())
 				Fsh:SetStart(self.Owner:GetVelocity())
-				Fsh:SetEntity(self)
+				Fsh:SetEntity(NULL)
 				Fsh:SetAttachment(1)
 				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 			end
