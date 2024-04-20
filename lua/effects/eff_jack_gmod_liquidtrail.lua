@@ -4,6 +4,9 @@ local GlowSprite = Material("sprites/mat_jack_basicglow")
 function EFFECT:Init(data)
 	local Dir = data:GetNormal()
 	local Pos = data:GetOrigin()
+	--if IsValid(data:GetEntity()) then
+		--Pos = self:GetTracerShootPos(Pos, data:GetEntity(), data:GetAttachment()) -- This causes bugs if the entity is undefiened
+	--end
 	local Time = CurTime()
 	self.DieTime = Time + 2
 	self.Particles = {}
@@ -25,7 +28,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:Think()
-	local Time, FT = CurTime(), FrameTime()
+	local Time, FT = CurTime(), FrameTime() / GetConVar("host_timescale"):GetFloat()
 	if (self.DieTime < Time) then return false end
 	for k, v in pairs(self.Particles) do
 		if not (v.stuck) then
