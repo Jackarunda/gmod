@@ -59,10 +59,9 @@ if SERVER then
 			if self:IsPlayerHolding() then
 				local Ent = data.HitEntity
 				if (IsValid(Ent) and not(Ent:IsPlayer() or Ent:IsNPC() or Ent:IsNextBot() or Ent == self.EZconnector)) then
-					if self.EZhookType == "Plugin" then
-						local PlayerHolding = self:IsPlayerHolding()
-						local ConnectionRange = self.EZconnector.MaxConnectionRange or 1000
-						timer.Simple(0, function()
+					timer.Simple(0, function()
+						if self.EZhookType == "Plugin" then
+							local ConnectionRange = self.EZconnector.MaxConnectionRange or 1000
 							local PlayerHolding = NULL
 							local NearbyPlayers = ents.FindInSphere(self:GetPos(), 100)
 							for i = 1, #NearbyPlayers do
@@ -78,31 +77,31 @@ if SERVER then
 							end
 							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), ConnectionRange)
 							if Connected then SafeRemoveEntity(self) end
-						end)
-					else
-						self.NextStick = Time + 1
-						local Ang = data.HitNormal:Angle()
-						Ang:RotateAroundAxis(Ang:Right(), 90)
-						self:SetAngles(Ang)
-						self:SetPos(data.HitPos)
-		
-						-- crash prevention
-						if data.HitEntity:GetClass() == "func_breakable" then
+						else
+							self.NextStick = Time + 1
+							local Ang = data.HitNormal:Angle()
+							Ang:RotateAroundAxis(Ang:Right(), 90)
+							self:SetAngles(Ang)
+							self:SetPos(data.HitPos)
+			
+							-- crash prevention
+							if data.HitEntity:GetClass() == "func_breakable" then
+								timer.Simple(0, function()
+									self:GetPhysicsObject():Sleep()
+								end)
+							end
 							timer.Simple(0, function()
-								self:GetPhysicsObject():Sleep()
+								local Weld = constraint.Weld(self, data.HitEntity, 0, 0, 8000, true, false)
+								self.StuckTo = data.HitEntity
+								self.StuckStick = Weld
 							end)
+			
+							self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+							self:SetState(STATE_HOOKED)
+							self:SetBodygroup(0, 0)
+							DropEntityIfHeld(self)
 						end
-						timer.Simple(0, function()
-							local Weld = constraint.Weld(self, data.HitEntity, 0, 0, 8000, true, false)
-							self.StuckTo = data.HitEntity
-							self.StuckStick = Weld
-						end)
-		
-						self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
-						self:SetState(STATE_HOOKED)
-						self:SetBodygroup(0, 0)
-						DropEntityIfHeld(self)
-					end
+					end)
 				end
 			end
 		end
