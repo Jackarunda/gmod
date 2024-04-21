@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 47.75
+			Version = 48
 		},
 		General = {
 			Hints = true,
@@ -1088,7 +1088,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Powerful nuclear weapon that will easily level a large portion of the map."
 			},
-			--[[["EZ Nuclear Rocket"] = {
+			["EZ Nuclear Rocket"] = {
 				results = "ent_jack_gmod_eznukerocket",
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 300,
@@ -1101,7 +1101,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Explosives",
 				craftingType = "toolbox",
 				description = "High velocity map deletion."
-			},]]--
+			},
 			["EZ Mini Naval Mine"] = {
 				results = "ent_jack_gmod_eznavalmine",
 				craftingReqs = {

@@ -1008,17 +1008,19 @@ function JMod.FindBoltPos(ply, origin, dir)
 		if not IsValid(Ent1:GetPhysicsObject()) then return nil end
 		local HitPos1 = HitTest.HitPos
 
-		HitTest = util.QuickTrace(HitPos1, HitTest.HitNormal * 40, {ply, Ent1})
-		if not(HitTest.Hit) then HitTest = util.QuickTrace(HitPos1, HitTest.HitNormal * -40, {ply, Ent1}) end
+		local HitTest2 = util.QuickTrace(HitPos1, HitTest.HitNormal * -30, {ply, Ent1})
+		if not(HitTest2.Hit) then 
+			HitTest2 = util.QuickTrace(HitPos1, HitTest.HitNormal * 30, {ply, Ent1})
+		end
 
-		if HitTest.Hit then
-			local Ent2 = HitTest.Entity
-			if (Ent1 == Ent2) or HitTest.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
+		if HitTest2.Hit then
+			local Ent2 = HitTest2.Entity
+			if (Ent1 == Ent2) or HitTest2.HitSky or Ent2:IsPlayer() or Ent2:IsNPC() then return nil end
 			if not Ent2:IsWorld() and not IsValid(Ent2:GetPhysicsObject()) then return nil end
 			local Dist = HitPos1:Distance(HitTest.HitPos)
 			if Dist > 30 then return nil end
 
-			return true, HitPos1, HitTest.HitPos, Ent1, Ent2
+			return true, HitPos1, HitTest2.HitPos, Ent1, Ent2
 		end
 	end
 end

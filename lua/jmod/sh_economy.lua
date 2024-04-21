@@ -736,10 +736,12 @@ function JMod.GetSalvageYield(ent)
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
 	local RagMass = nil
-	for i = 1, PhysNum do
-		local RagPhys = ent:GetPhysicsObjectNum(i)
-		if not IsValid(RagPhys) then break end
-		RagMass = (RagMass or 0) + RagPhys:GetMass()
+	if PhysNum > 1 then
+		for i = 1, PhysNum do
+			local RagPhys = ent:GetPhysicsObjectNum(i)
+			if not IsValid(RagPhys) then break end
+			RagMass = (RagMass or 0) + RagPhys:GetMass()
+		end
 	end
 	Mass = math.ceil((RagMass or Mass) ^ .9) -- exponent to keep yield from stupidheavy objects from ruining the game
 
