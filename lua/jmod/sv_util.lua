@@ -633,8 +633,10 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	ent.EZowner = newOwner
 	if newOwner:IsPlayer() then
 		ent.EZownerID = newOwner:SteamID64()
+		ent.EZownerTeam = newOwner:Team()
 	else
 		ent.EZownerID = nil
+		ent.EZownerTeam = nil
 	end
 
 	if setColor == true then
