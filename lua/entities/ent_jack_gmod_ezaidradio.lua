@@ -439,6 +439,14 @@ if(SERVER)then
 		return SuccessfulTransmit
 	end
 
+	function ENT:GetVoice()
+		if self.BFFd then
+			return "bff"
+		else
+			return "normal"
+		end
+	end
+
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
 		ent.NextWhine = Time + math.Rand(0, 3)
