@@ -113,14 +113,14 @@ if SERVER then
 				local EntPower = Ent:GetElectricity()
 				local ChargeDiff = SelfPower - EntPower
 				if (ChargeDiff >= 1) then
-					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2)
+					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, ChargeDiff / 2), SelfPower)
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerTaken)
 				end
 			elseif Ent.IsJackyEZcrate and (Ent.GetResourceType and ((Ent:GetResourceType() == JMod.EZ_RESOURCE_TYPES.POWER) or (Ent:GetResourceType() == "generic"))) then
 				local EntPower = Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER) or 0
 				if SelfPower > (self.MaxElectricity * .9) then
-					local PowerGiven = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower - (self.MaxElectricity * .9))
+					local PowerGiven = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower - (self.MaxElectricity * .9)), SelfPower)
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerGiven)
 				elseif SelfPower <= (self.MaxElectricity * .5) and (EntPower >= 1) then
@@ -131,7 +131,7 @@ if SERVER then
 				local EntPower = (Ent.GetEZsupplies and Ent:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.POWER)) or (Ent.GetElectricity and Ent:GetElectricity()) or Ent.Electricity or 0
 				local MaxElec = Ent.MaxElectricity or Ent.MaxResource or 100
 				if (MaxElec - EntPower) > MaxElec * .1 then
-					local PowerTaken = Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower)
+					local PowerTaken = math.min(Ent:TryLoadResource(JMod.EZ_RESOURCE_TYPES.POWER, SelfPower), SelfPower)
 					Ent.NextRefillTime = 0
 					self:SetElectricity(SelfPower - PowerTaken)
 				end
