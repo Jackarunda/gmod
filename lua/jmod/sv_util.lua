@@ -636,6 +636,10 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	ent.EZowner = newOwner
 	if newOwner:IsPlayer() then
 		ent.EZownerID = newOwner:SteamID64()
+		ent.EZownerTeam = newOwner:Team()
+	else
+		ent.EZownerID = nil
+		ent.EZownerTeam = nil
 	end
 
 	if setColor == true then
@@ -645,6 +649,32 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	if CPPI and isfunction(ent.CPPISetOwner) then
 		ent:CPPISetOwner(newOwner)
 	end
+end
+
+function JMod.AddFriend(ply, friend)
+	if not (IsValid(ply) and ply:IsPlayer() and IsValid(friend) and friend:IsPlayer()) then return end
+	ply.JModFriends = ply.JModFriends or {}
+
+	table.insert(ply.JModFriends, friend)
+
+	net.Start("JMod_Friends")
+		net.WriteBit(true)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.JModFriends)
+	net.Broadcast()
+end
+
+function JMod.RemoveFriend(ply, friend)
+	if not (IsValid(ply) and ply:IsPlayer() and IsValid(friend) and friend:IsPlayer()) then return end
+	ply.JModFriends = ply.JModFriends or {}
+	
+	table.RemoveByValue(ply.JModFriends, friend)
+
+	net.Start("JMod_Friends")
+		net.WriteBit(true)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.JModFriends)
+	net.Broadcast()
 end
 
 function JMod.ShouldAllowControl(self, ply, neutral)

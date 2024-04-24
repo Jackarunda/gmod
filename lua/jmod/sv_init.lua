@@ -80,12 +80,18 @@ local function JackaSpawnHook(ply, transition)
 	timer.Simple(1, function()
 		if (IsValid(ply)) then
 			if not(ply.JMod_DidPlayerReclaimItems) then
+				local PlayerTeam = ply:Team()
 				-- this will only run once per player per session
 				local ID, num = ply:SteamID64(), 0
-				for k, v in pairs(ents.GetAll()) do
+				for k, v in ents.Iterator() do
 					if (v.EZownerID and v.EZownerID == ID) then
-						JMod.SetEZowner(v, ply)
-						num = num + 1
+						local EntLastKnownTeam = v.EZownerTeam or TEAM_UNASSIGNED
+						if (EntLastKnownTeam == PlayerTeam) then
+							JMod.SetEZowner(v, ply)
+							num = num + 1
+						else
+							JMod.SetEZowner(v, game.GetWorld(), true)
+						end
 					end
 				end
 				ply.JMod_DidPlayerReclaimItems = true

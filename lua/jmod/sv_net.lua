@@ -158,11 +158,12 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	if not ply:Alive() then return end
 	local Ent, Action = net.ReadEntity(), net.ReadString()
 	if not IsValid(Ent) then return end
+	local Ent2 = net.ReadEntity()
+	print(Action, Ent, Ent2)
 
 	if Action == "connect" then
 		JMod.StartConnection(Ent, ply)
 	elseif Action == "disconnect" then
-		local Ent2 = net.ReadEntity()
 		if not IsValid(Ent2) then return end
 		JMod.RemoveConnection(Ent, Ent2)
 	elseif Action == "disconnect_all" then
@@ -174,7 +175,19 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 			end
 		end
 	elseif Action == "produce" then
-		Ent:ProduceResource(ply)
+		if IsValid(Ent2) and Ent2.ProduceResource then
+			Ent2:ProduceResource()
+		else
+			Ent:ProduceResource(ply)
+		end
+	elseif Action == "toggle" then
+		if IsValid(Ent2) then 
+			if Ent2:GetState() == JMod.EZ_STATE_OFF then
+				Ent2:TurnOn(ply)
+			elseif Ent2:GetState() >= JMod.EZ_STATE_ON then
+				Ent2:TurnOff(ply)
+			end
+		end
 	end
 end)
 

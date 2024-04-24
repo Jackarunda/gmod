@@ -52,11 +52,8 @@ function JMod.NotifyAllRadios(stationID, msgID, direct)
 				if direct then
 					radio:Speak(msgID)
 				else
-					if radio.BFFd then
-						radio:Speak(JMod.NotifyAllMsgs["bff"][msgID])
-					else
-						radio:Speak(JMod.NotifyAllMsgs["normal"][msgID])
-					end
+					local Personality = radio:GetVoice() or "normal"
+					radio:Speak(JMod.NotifyAllMsgs[Personality][msgID])
 				end
 			end
 

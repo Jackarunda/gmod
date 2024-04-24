@@ -309,7 +309,7 @@ local function FullBodyDmgHandling(ply, dmg, biological, isInSewage)
 		Protection = Protection * AmmoAPmul
 	end
 
-	Mul = (Mul * (1 - Protection)) / JMod.Config.Armor.ProtectionMult
+	Mul = (Mul * 1 - (Protection * JMod.Config.Armor.ProtectionMult))
 
 	if Mul < .001 then
 		dmg:ScaleDamage(0)

@@ -809,7 +809,7 @@ if(SERVER)then
 			local CoolinAmt, Kewlant, Severity = self.Cooling / 3, self:GetCoolant(), self.Heat / 300
 
 			if (Kewlant > 0) and (Severity > .1) then
-				self:SetCoolant(Kewlant - Severity ^ 2 * 20)
+				self:SetCoolant(math.min(Kewlant - Severity ^ 2 * 20, 0))
 				CoolinAmt = CoolinAmt * (200 * Severity ^ 2)
 			end
 
@@ -1029,7 +1029,7 @@ if(SERVER)then
 			Gnd:GetPhysicsObject():SetVelocity(self:GetVelocity() + ShootDir * Speed)
 		elseif ProjType == "Rocket Launcher" then
 			local Dmg, Inacc = self.Damage, .06 / self.Accuracy
-			AmmoConsume = 5
+			AmmoConsume = math.min(Ammo, 5)
 			sound.Play("snds_jack_gmod/sentry_gl.wav", SelfPos, 70, math.random(90, 110))
 			ParticleEffect("muzzleflash_m79", ShootPos, AimAng, self)
 			sound.Play("snds_jack_gmod/sentry_far.wav", SelfPos + Up, 100, math.random(90, 110))
@@ -1064,7 +1064,7 @@ if(SERVER)then
 			ShootAng:RotateAroundAxis(ShootAng:Up(), -90)
 			Rocket:SetAngles(ShootAng)
 			JMod.SetEZowner(Rocket, JMod.GetEZowner(self) or self)
-			Rocket.Damage = Dmg
+			Rocket.Damage = Dmg * (AmmoConsume / 5)
 			Rocket.CurVel = self:GetVelocity() + ShootDir * Speed
 			Rocket:Spawn()
 			Rocket:Activate()
@@ -1170,7 +1170,7 @@ if(SERVER)then
 		end
 
 		self.Heat = math.Clamp(self.Heat + Heat, 0, 100)
-		self:SetAmmo(Ammo - AmmoConsume)
+		self:SetAmmo(math.max(Ammo - AmmoConsume, 0))
 		self:ConsumeElectricity(ElecConsume)
 	end
 
