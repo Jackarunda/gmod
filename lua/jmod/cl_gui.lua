@@ -1689,45 +1689,59 @@ net.Receive("JMod_ModifyConnections", function()
 
 	for _, connection in ipairs(Connections) do
 		local Line = List:AddLine(connection.DisplayName, connection.Index)
-		local DisconnectIcon = vgui.Create("DImage", Line)
-		DisconnectIcon:SetImage("icon16/disconnect.png")
-		DisconnectIcon:SetSize(16, 16)
-		DisconnectIcon:Dock(RIGHT)
-	end
-
-	List.OnRowSelected = function(panel, rowIndex, row)
-		-- Send a disconnect command for the selected connection
-		net.Start("JMod_ModifyConnections")
-			net.WriteEntity(Ent)
-			net.WriteString("disconnect")
-			net.WriteEntity(Entity(tonumber(row:GetValue(2))))
-		net.SendToServer()
-		Frame:Close()
+		--local DisconnectIcon = vgui.Create("DImage", Line)
+		--DisconnectIcon:SetImage("icon16/disconnect.png")
+		--DisconnectIcon:SetSize(16, 16)
+		--DisconnectIcon:Dock(RIGHT)
 	end
 
 	local ButtonOptions = {
 		{Text = "Connect New", Func = "connect", Icon = "icon16/connect.png"},
+		{Text = "Disconnect", Func = "disconnect", Icon = "icon16/disconnect.png"},
 		{Text = "Disconnect All", Func = "disconnect_all", Icon = "icon16/disconnect.png"},
 		{Text = "Produce Resource", Func = "produce", Icon = "icon16/brick_add.png"},
+		{Text = "Toggle Machine", Func = "toggle", Icon = "icon16/brick.png"}
 	}
 
-	for k, v in ipairs(ButtonOptions) do
-		local SelectButton = vgui.Create("DButton", Frame)
-		SelectButton:SetText(v.Text)
-		SelectButton:SetHeight(22)
-		SelectButton:Dock(BOTTOM)
-		SelectButton.DoClick = function()
-			net.Start("JMod_ModifyConnections")
-				net.WriteEntity(Ent)
-				net.WriteString(v.Func)
-			net.SendToServer()
-			Frame:Close()
+	List.OnRowSelected = function(panel, rowIndex, row)
+		-- Open a dropdown menu to either turn on and off machine or disconnect it
+		local DropDown = vgui.Create("DMenu", Frame)
+		DropDown:SetSize(150, 20)
+		DropDown:SetX(List:GetX() + List:GetWide() - DropDown:GetWide() - 8)
+		DropDown:SetY(List:GetY() + 15 + (rowIndex * 17))
+		for k, v in ipairs(ButtonOptions) do
+			if (v.Func ~= "connect") and (v.Func ~= "disconnect_all") then
+				DropDown:AddOption(v.Text, function()
+					net.Start("JMod_ModifyConnections")
+						net.WriteEntity(Ent)
+						net.WriteString(v.Func)
+						net.WriteEntity(Entity(tonumber(row:GetValue(2))))
+					net.SendToServer()
+					Frame:Close()
+				end)
+			end
 		end
-		SelectButton:DockPadding(2, 2, 2, 2)
-		local Icon = vgui.Create("DImage", SelectButton)
-		Icon:SetImage(v.Icon)
-		Icon:SetSize(16, 16)
-		Icon:Dock(RIGHT)
+	end
+
+	for k, v in ipairs(ButtonOptions) do
+		if (v.Func ~= "disconnect") and (v.Func ~= "toggle") then
+			local SelectButton = vgui.Create("DButton", Frame)
+			SelectButton:SetText(v.Text)
+			SelectButton:SetHeight(22)
+			SelectButton:Dock(BOTTOM)
+			SelectButton.DoClick = function()
+				net.Start("JMod_ModifyConnections")
+					net.WriteEntity(Ent)
+					net.WriteString(v.Func)
+				net.SendToServer()
+				Frame:Close()
+			end
+			SelectButton:DockPadding(2, 2, 2, 2)
+			local Icon = vgui.Create("DImage", SelectButton)
+			Icon:SetImage(v.Icon)
+			Icon:SetSize(16, 16)
+			Icon:Dock(RIGHT)
+		end
 	end
 end)
 

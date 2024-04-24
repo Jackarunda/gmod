@@ -648,6 +648,32 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 	end
 end
 
+function JMod.AddFriend(ply, friend)
+	if not (IsValid(ply) and ply:IsPlayer() and IsValid(friend) and friend:IsPlayer()) then return end
+	ply.JModFriends = ply.JModFriends or {}
+
+	table.insert(ply.JModFriends, friend)
+
+	net.Start("JMod_Friends")
+		net.WriteBit(true)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.JModFriends)
+	net.Broadcast()
+end
+
+function JMod.RemoveFriend(ply, friend)
+	if not (IsValid(ply) and ply:IsPlayer() and IsValid(friend) and friend:IsPlayer()) then return end
+	ply.JModFriends = ply.JModFriends or {}
+	
+	table.RemoveByValue(ply.JModFriends, friend)
+
+	net.Start("JMod_Friends")
+		net.WriteBit(true)
+		net.WriteEntity(ply)
+		net.WriteTable(ply.JModFriends)
+	net.Broadcast()
+end
+
 function JMod.ShouldAllowControl(self, ply, neutral)
 	neutral = neutral or false
 	if not IsValid(ply) then return false end
@@ -1568,7 +1594,7 @@ function JMod.RemoveConnection(machine, connection)
 	-- Check if connection is a entity first
 	if type(connection) == "Entity" and IsValid(connection) then
 		-- Check if it is connected
-		local connection = connection:EntIndex()
+		connection = connection:EntIndex()
 		if type(connection) ~= "number" then return end
 	end
 	if not(machine.EZconnections[connection]) then return end

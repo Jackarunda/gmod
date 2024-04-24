@@ -62,12 +62,12 @@ if SERVER then
 					timer.Simple(0, function()
 						if self.EZhookType == "Plugin" then
 							local ConnectionRange = self.EZconnector.MaxConnectionRange or 1000
-							local PlayerHolding = NULL
+							local PlayerHolding = nil
 							local NearbyPlayers = ents.FindInSphere(self:GetPos(), 100)
 							for i = 1, #NearbyPlayers do
-								local v = NearbyPlayers[i]
-								if v:IsPlayer() and (JMod.GetPlayerHeldEntity(v) == self) then
-									PlayerHolding = v
+								local ply = NearbyPlayers[i]
+								if ply:IsPlayer() then--and (JMod.GetPlayerHeldEntity(ply) == self) then
+									PlayerHolding = ply
 								end
 							end
 							if IsValid(PlayerHolding) and PlayerHolding:KeyDown(JMod.Config.General.AltFunctionKey) then

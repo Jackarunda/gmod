@@ -99,10 +99,10 @@ if SERVER then
 	end
 
 	function ENT:DistributePower()
-		local SelfPower = self:GetElectricity()
-
 		for entID, cable in pairs(self.EZconnections) do
+			local SelfPower = self:GetElectricity()
 			local Ent, Cable = Entity(entID), cable
+
 			if not IsValid(Ent) or not IsValid(Cable) then
 				JMod.RemoveConnection(self, entID)
 			elseif Ent.EZpowerProducer then
