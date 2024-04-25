@@ -4,6 +4,8 @@ local GlowSprite = Material("sprites/mat_jack_basicglow")
 function EFFECT:Init(data)
 	local Dir = data:GetNormal()
 	local Pos = data:GetOrigin()
+	local Ent = data:GetEntity()
+	local Scl = data:GetScale()
 	local Time = CurTime()
 	self.DieTime = Time + 2
 	self.Particles = {}
@@ -11,17 +13,22 @@ function EFFECT:Init(data)
 	for i = 1, self.NumParticles do
 		local Fraction = i / self.NumParticles
 		local InverseFraction = 1 - Fraction
-		timer.Simple(Fraction / 2, function()
-			if IsValid(data:GetEntity()) then
-				--Pos = self:GetTracerShootPos(Pos, data:GetEntity(), data:GetAttachment()) -- This causes bugs if the entity is undefiened
-				Pos = data:GetEntity():LocalToWorld(Pos)
+		timer.Simple(Fraction / 10, function()
+			if IsValid(Ent) then
+				if Ent:IsWeapon() then
+					Pos = self:GetTracerShootPos(Pos, Ent, data:GetAttachment()) -- This causes bugs if the entity is undefiened
+				else
+					Pos = Ent:LocalToWorld(Pos)
+				end
 			end
+			local InWater = bit.band(util.PointContents(Pos), CONTENTS_WATER) == CONTENTS_WATER
+			local Scl = InWater and 10 or 3
 			table.insert(self.Particles, {
-				size = 1,
+				size = Scl,
 				opacity = 255,
 				pos = Pos,
 				vel = Dir * 1500 + VectorRand() * 15,
-				airResist = Fraction * 3,
+				airResist = Fraction * Scl,
 				stuck = false,
 				posParticle = i == math.ceil(self.NumParticles * .6),
 				growthSpeed = i / Fraction
@@ -53,7 +60,7 @@ function EFFECT:Think()
 			v.vel = v.vel * (1 - AirLoss)
 			v.vel = v.vel + JMod.Wind * FT * 100
 		end
-		v.size = v.size + v.growthSpeed * .05 * ((v.stuck and 2) or 1)
+		v.size = v.size + v.growthSpeed * .05 * ((v.stuck and 3) or 1)
 	end
 	return true
 end
@@ -67,7 +74,7 @@ function EFFECT:Render()
 			if (LastPos) then
 				local R = math.Clamp(175 + v.size * 1.5, 0, 255)
 				local G = math.Clamp(200 + v.size * 1.5, 0, 255)
-				local Mult = (v.stuck and 8) or 4
+				local Mult = (v.stuck and 12) or 6
 				local Col = Color(R, G, 255, 255 - math.Clamp(v.size * Mult, 0, 255))
 				render.DrawBeam(LastPos, v.pos, v.size ^ 1.1, 1, 0, Col)
 			end

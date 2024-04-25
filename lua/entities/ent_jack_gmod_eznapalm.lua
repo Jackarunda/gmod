@@ -146,6 +146,7 @@ if SERVER then
 					if not self.Burnin then
 						Zap:SetOrigin(Pos)
 						Zap:SetStart(self.CurVel:GetNormalized() * 1)
+						Zap:SetScale(2)
 						util.Effect("eff_jack_gmod_spranklerspray", Zap, true, true)
 					else
 						Zap:SetOrigin(Pos + self.CurVel / ThinkRate)
