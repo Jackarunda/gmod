@@ -58,6 +58,8 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	local Tr = ply:GetEyeTrace()
 	Eff:SetOrigin(Tr.HitPos + Tr.HitNormal)
 	Eff:SetNormal(Tr.HitNormal)
+	Eff:SetScale(1)
+	Eff:SetEntity(nil)
 	util.Effect("eff_jack_gmod_liquidtrail", Eff, true, true)
 	--]]
 	--print(JMod.GetHoliday())

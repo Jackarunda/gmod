@@ -208,7 +208,8 @@ function SWEP:GetNozzle()
 			FireAng:RotateAroundAxis(FireAng:Up(), 10)
 			FireAng:RotateAroundAxis(FireAng:Right(), -5)
 			--FirePos = FirePos + FireAng:Up() * 30 + FireAng:Forward() * 20
-			FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
+			FireAng = self.Owner:EyeAngles()
+			FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)--+ (FireAng:Forward() * -15 + FireAng:Right() * -10 + FireAng:Up() * -1)
 		end
 	elseif SERVER then
 		FireAng = AimVec:Angle()
@@ -291,8 +292,8 @@ function SWEP:PrimaryAttack()
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
+				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
 			end
 			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
@@ -520,7 +521,7 @@ function SWEP:Think()
 			if CLIENT then
 				local FirePos, FireAng = self:GetNozzle()
 				local Fsh = EffectData()
-				Fsh:SetOrigin(FirePos + FireAng:Forward() * 1)
+				Fsh:SetOrigin(FirePos)
 				Fsh:SetScale(((State == STATE_IGNITIN) and 1) or 0.5)
 				Fsh:SetNormal(self.Owner:GetAimVector())
 				Fsh:SetStart(self.Owner:GetVelocity())

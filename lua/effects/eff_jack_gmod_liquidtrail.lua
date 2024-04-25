@@ -4,9 +4,6 @@ local GlowSprite = Material("sprites/mat_jack_basicglow")
 function EFFECT:Init(data)
 	local Dir = data:GetNormal()
 	local Pos = data:GetOrigin()
-	--if IsValid(data:GetEntity()) then
-		--Pos = self:GetTracerShootPos(Pos, data:GetEntity(), data:GetAttachment()) -- This causes bugs if the entity is undefiened
-	--end
 	local Time = CurTime()
 	self.DieTime = Time + 2
 	self.Particles = {}
@@ -14,16 +11,22 @@ function EFFECT:Init(data)
 	for i = 1, self.NumParticles do
 		local Fraction = i / self.NumParticles
 		local InverseFraction = 1 - Fraction
-		table.insert(self.Particles, {
-			size = 1,
-			opacity = 255,
-			pos = Pos,
-			vel = Dir * Fraction * 1500 + VectorRand() * 15,
-			airResist = InverseFraction * 3,
-			stuck = false,
-			posParticle = i == math.ceil(self.NumParticles * .6),
-			growthSpeed = i
-		})
+		timer.Simple(Fraction / 2, function()
+			if IsValid(data:GetEntity()) then
+				--Pos = self:GetTracerShootPos(Pos, data:GetEntity(), data:GetAttachment()) -- This causes bugs if the entity is undefiened
+				Pos = data:GetEntity():LocalToWorld(Pos)
+			end
+			table.insert(self.Particles, {
+				size = 1,
+				opacity = 255,
+				pos = Pos,
+				vel = Dir * 1500 + VectorRand() * 15,
+				airResist = Fraction * 3,
+				stuck = false,
+				posParticle = i == math.ceil(self.NumParticles * .6),
+				growthSpeed = i / Fraction
+			})
+		end)
 	end
 end
 
@@ -64,7 +67,8 @@ function EFFECT:Render()
 			if (LastPos) then
 				local R = math.Clamp(175 + v.size * 1.5, 0, 255)
 				local G = math.Clamp(200 + v.size * 1.5, 0, 255)
-				local Col = Color(R, G, 255, 255 - math.Clamp(v.size * 4, 0, 255))
+				local Mult = (v.stuck and 8) or 4
+				local Col = Color(R, G, 255, 255 - math.Clamp(v.size * Mult, 0, 255))
 				render.DrawBeam(LastPos, v.pos, v.size ^ 1.1, 1, 0, Col)
 			end
 			LastPos = v.pos
@@ -72,11 +76,11 @@ function EFFECT:Render()
 		end
 	end
 
-	--[[
+	--[[]
 	render.SetMaterial(GlowSprite)
 	for k, v in pairs(self.Particles) do
-		render.DrawSprite(v.pos, 32, 32, color_white)
+		render.DrawSprite(v.pos, 32 * (1/k), 32 * (1/k), color_white)
 	end
 	--]]
-	-- render.DrawSprite(self.Entity:GetPos(), 32, 32, color_white)
+	--render.DrawSprite(self.Entity:GetPos(), 32, 32, color_white)
 end
