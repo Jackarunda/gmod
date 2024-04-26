@@ -88,6 +88,10 @@ if SERVER then
 		end)
 	end
 
+	function ENT:UpdateConfig()
+		self:CalcWeight()
+	end
+
 	function ENT:ApplySupplyType(typ)
 		self:SetResourceType(typ)
 		self.EZsupplies = typ
@@ -108,6 +112,7 @@ if SERVER then
 	end
 
 	function ENT:CalcWeight()
+		self.MaxResource = 100 * 20 * JMod.Config.ResourceEconomy.MaxResourceMult
 		local Frac = self:GetResource() / self.MaxResource
 		self:GetPhysicsObject():SetMass(100 + Frac * 300)
 		self:GetPhysicsObject():Wake()

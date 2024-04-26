@@ -269,7 +269,6 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 						Dir = Dir,
 						Spread = Spred,
 						AmmoType = "Buckshot" -- for identification as "fragments"
-						
 					})
 
 					BulletsFired = BulletsFired + 1
@@ -1241,7 +1240,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 		ent.EZpreviousMiningPos = pos
 
 		local Prog = ent:GetNW2Float("EZminingProgress", 0)
-		local AddAmt = math.random(15, 25) * mult
+		local AddAmt = math.random(15, 25) * mult * JMod.Config.ResourceEconomy.ExtractionSpeed
 
 		ent:SetNW2Float("EZminingProgress", math.Clamp(Prog + AddAmt, 0, 100))
 
@@ -1266,7 +1265,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				AmtToProduce = Rate * Prog
 			else
 				local AmtLeft = JMod.NaturalResourceTable[DepositKey].amt
-				AmtToProduce = math.min(AmtLeft, math.random(5, 10))
+				AmtToProduce = math.min(AmtLeft, math.random(5, 20))
 				if (JMod.NaturalResourceTable[DepositKey].typ == JMod.EZ_RESOURCE_TYPES.DIAMOND) then
 					AmtToProduce = math.min(AmtLeft, math.random(1, 2))
 				end
