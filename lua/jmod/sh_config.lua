@@ -2774,16 +2774,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
 			print("JMOD: config reset to default")
 		else
-			print("JMOD: no config detected, temporarily using default")
-		end
-	end
-	-- This is to make sure the ammo types are saved on config reload
-	JMod.LoadAmmoTable(JMod.AmmoTable)
-
-	print("JMOD: updating recipies...")
-	for k, v in pairs(ents.GetAll())do
-		if(IsValid(v) and v.UpdateConfig)then
-			v:UpdateConfig()
+			print("JMOD: no config detected(!), temporarily using default")
 		end
 	end
 
@@ -2847,6 +2838,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 	JMod.LuaConfig.BuildFuncs.EZchain = function(playa, position, angles)
 		JMod.Rope(playa, nil, nil, 2, 50000, "cable/mat_jack_gmod_chain")
 		playa.EZropeData = nil
+	end
+
+	hook.Run("JMod_PostLuaConfigLoad", JMod.Config)
+
+	-- This is to make sure the ammo types are saved on config reload
+	JMod.LoadAmmoTable(JMod.AmmoTable)
+
+	print("JMOD: updating recipies...")
+	for k, v in ents.Iterator() do
+		if(IsValid(v) and v.UpdateConfig)then
+			v:UpdateConfig()
+		end
 	end
 
 	SetArmorPlayerModelModifications()
