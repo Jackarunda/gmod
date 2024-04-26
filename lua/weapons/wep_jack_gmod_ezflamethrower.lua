@@ -32,7 +32,7 @@ SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 --SWEP.ShowWorldModel = true
 
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
+SWEP.EZconsumes = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxFuel = 100
 SWEP.MaxGas = 100
 
@@ -239,7 +239,7 @@ function SWEP:PrimaryAttack()
 
 		if not(HasFuel) then
 			self:Cease()
-			self:Msg("Out of fuel and/or gas!\nPress Reload on resource container to refill.")
+			self:Msg("Out of fuel and/or gas!\nPress Alt+Use on resource container to refill.")
 		else
 			local FirePos, FireAng = self:GetNozzle()
 			if (State == STATE_NOTHIN) then
@@ -257,7 +257,7 @@ function SWEP:PrimaryAttack()
 				util.Effect("eff_jack_gmod_spranklerspray", Splach, true, true)
 				local Squirt = EffectData()
 				Squirt:SetOrigin(FirePos)
-				Squirt:SetScale(5)
+				Squirt:SetScale(2)
 				Squirt:SetEntity(self)
 				Squirt:SetAttachment(1)
 				Squirt:SetNormal(FireAng:Forward())
@@ -296,8 +296,8 @@ function SWEP:PrimaryAttack()
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
-				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
-				--self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
 			end
 			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
@@ -362,13 +362,13 @@ function SWEP:Pawnch()
 end
 
 function SWEP:Reload()
-	if SERVER then
+	--[[if SERVER then
 		local Time = CurTime()
 		local Ent = self:WhomIlookinAt()
 		
 		if IsValid(Ent) and Ent.GetEZsupplies then
 			for typ, amt in pairs(Ent:GetEZsupplies()) do
-				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
+				if table.HasValue(self.EZconsumes, typ) and (amt > 0) then
 					local CurAmt = self:GetEZsupplies(typ) or 0
 					local Take = math.min(amt, 100 - CurAmt)
 					
@@ -381,7 +381,27 @@ function SWEP:Reload()
 				end
 			end
 		end
+	end--]]
+end
+
+function SWEP:TryLoadResource(typ, amt)
+	if amt < 1 then return 0 end
+	local Accepted = 0
+
+	for _, v in pairs(self.EZconsumes) do
+		if typ == v then
+			local CurAmt = self:GetEZsupplies(typ) or 0
+			local Take = math.min(amt, self.MaxFuel - CurAmt)
+			
+			if Take > 0 then
+				self:SetEZsupplies(typ, CurAmt + Take)
+				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				Accepted = Take
+			end
+		end
 	end
+
+	return Accepted
 end
 
 function SWEP:WhomIlookinAt()
