@@ -31,7 +31,7 @@ function JMod.GetStorageCapacity(ent)
 		Capacity = Specs.storage
 	elseif ent.EZstorageSpace or ent.MaxItems then
 		Capacity = ent.EZstorageSpace or ent.MaxItems
-	elseif IsValid(Phys) then
+	elseif IsValid(Phys) and (ent:GetClass() == "prop_physics") then
 		local Vol = Phys:GetVolume()
 		if Vol ~= nil then
 			local SurfID = util.GetSurfaceIndex(Phys:GetMaterial())
@@ -39,7 +39,8 @@ function JMod.GetStorageCapacity(ent)
 				local SurfData = util.GetSurfaceData(SurfID)
 				if SurfData.thickness > 0 then
 					local SurfArea = Phys:GetSurfaceArea()
-					Vol = Vol - (SurfArea * SurfData.thickness * 0.0254^3 * SurfData.density)
+					--0.0254 ^ 3 -- hu-in^3 or something like that
+					Vol = Vol - (SurfArea * SurfData.thickness * 0.000016387064 * SurfData.density)
 					Capacity = math.ceil(Vol / JMod.VOLUMEDIV)
 				end
 			end
