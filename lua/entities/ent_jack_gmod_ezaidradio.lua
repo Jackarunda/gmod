@@ -422,7 +422,7 @@ if(SERVER)then
 
 				SuccessfulTransmit = true
 			else
-				local Override, Words = hook.Run("JMod_CanRadioRequest", self, ply, Message)
+				local Override, Words = hook.Run("JMod_CanRadioRequest", ply, self, Message)
 				if Override then
 					SuccessfulTransmit = Override
 					self:Speak(Words or "transmition recieved", ParrotPhrase, ply)
