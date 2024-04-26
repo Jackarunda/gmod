@@ -237,7 +237,7 @@ function SWEP:Hitscan()
 						SafeRemoveEntityDelayed(tr.Entity, 0.1)
 					end
 				elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
-					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", 2)
+					local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
 
 					if Message then
 						if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then

@@ -183,10 +183,12 @@ function SWEP:Hitscan()
 			filter = self.Owner,
 			mask = MASK_SHOT_HULL
 		})
+		debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
 
 		if (tr.Hit) then
+			debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
 			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
-			local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+			local StrikePos = tr.HitPos--(self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 
 			timer.Simple((i * 0.4/170) + 0.1, function() 
 				if not(IsValid(self)) then return end
@@ -196,7 +198,7 @@ function SWEP:Hitscan()
 				PickDam:SetDamagePosition(StrikePos)
 				PickDam:SetDamageType(DMG_GENERIC)
 				PickDam:SetDamage(math.random(30, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
+				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 300)
 				if (IsValid(tr.Entity)) then tr.Entity:TakeDamageInfo(PickDam) end
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)

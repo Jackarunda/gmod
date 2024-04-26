@@ -30,7 +30,7 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES}
+SWEP.EZconsumes = {JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES}
 SWEP.MaxSupplies = 100
 SWEP.ShowWorldModel = false
 
@@ -449,25 +449,27 @@ function SWEP:FlingProp(mdl, pos, force)
 end
 
 function SWEP:Reload()
-	if SERVER then
-		local Time = CurTime()
-		local Ent = self:WhomIlookinAt()
-		
-		if IsValid(Ent) and Ent.GetEZsupplies then
-			for typ, amt in pairs(Ent:GetEZsupplies()) do
-				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
-					local CurAmt = self:GetEZsupplies(typ) or 0
-					local Take = math.min(amt, 100 - CurAmt)
-					
-					Ent:SetEZsupplies(typ, amt - Take, self.Owner)
-					self:SetEZsupplies(typ, CurAmt + Take)
-					if Take > 0 then
-						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
-					end
-				end
+	--
+end
+
+function SWEP:TryLoadResource(typ, amt)
+	if amt < 1 then return 0 end
+	local Accepted = 0
+
+	for _, v in pairs(self.EZconsumes) do
+		if typ == v then
+			local CurAmt = self:GetEZsupplies(typ) or 0
+			local Take = math.min(amt, self.MaxSupplies - CurAmt)
+			
+			if Take > 0 then
+				self:SetEZsupplies(typ, CurAmt + Take)
+				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				Accepted = Take
 			end
 		end
 	end
+
+	return Accepted
 end
 
 --

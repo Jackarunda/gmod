@@ -117,6 +117,11 @@ if SERVER then
 		end
 	end
 
+	function ENT:UpdateConfig()
+		self.MaxResource = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
+		self:SetResource(math.min(self:GetResource(), self.MaxResource))
+	end
+
 	function ENT:PhysicsCollide(data, physobj)
 		if self.Loaded then return end
 
@@ -153,7 +158,7 @@ if SERVER then
 				if Used > 0 then
 					self:SetResource(Resource - Used)
 
-					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), 1, 1, 1)
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), Used / self.MaxResource, 1, 1)
 
 					if Used >= Resource then
 						self.Loaded = true
@@ -236,8 +241,20 @@ if SERVER then
 				self:SetResource(NewCountTwo)
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResource, 1)
 			end
-		elseif self.AltUse and AltPressed then
-			self:AltUse(activator)
+		elseif AltPressed then
+			local Wep = activator:GetActiveWeapon()
+			local Used = 0
+			if IsValid(Wep) and Wep.TryLoadResource then
+				Used = Wep:TryLoadResource(self.EZsupplies, self:GetResource())
+				self:SetEZsupplies(self.EZsupplies, self:GetResource() - Used, activator)
+
+				if Used > 0 then
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), activator:LocalToWorld(activator:OBBCenter()), Used / self.MaxResource, 1, 1)
+				end
+			end
+			if (Used <= 0) and (self.AltUse) then
+				self:AltUse(activator)
+			end
 		else
 			JMod.Hint(activator, "resource manage")
 			activator:PickupObject(self)

@@ -31,7 +31,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
+SWEP.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxElectricity = 100
 SWEP.MaxGas = 100
 
@@ -612,24 +612,6 @@ end
 function SWEP:Reload()
 	if SERVER then
 		local Time = CurTime()
-		local Ent = self:WhomIlookinAt()
-		
-		if IsValid(Ent) and Ent.GetEZsupplies then
-			for typ, amt in pairs(Ent:GetEZsupplies()) do
-				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
-					local CurAmt = (self:GetEZsupplies(typ) or 0) + 8 * (self.CurrentBuildSize or 1)
-					local Take = math.min(amt, 100 - CurAmt)
-					
-					if Take > 0 then
-						Ent:SetEZsupplies(typ, amt - Take, self.Owner)
-						self:SetEZsupplies(typ, CurAmt + Take)
-						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
-
-						return
-					end
-				end
-			end
-		end
 
 		if self.Owner:KeyDown(JMod.Config.General.AltFunctionKey) then
 			self:SwitchSelectedBuild("")
@@ -644,6 +626,26 @@ function SWEP:Reload()
 			end
 		end
 	end
+end
+
+function SWEP:TryLoadResource(typ, amt)
+	if amt < 1 then return 0 end
+	local Accepted = 0
+
+	for _, v in pairs(self.EZconsumes) do
+		if typ == v then
+			local CurAmt = (self:GetEZsupplies(typ) or 0) + 8 * (self.CurrentBuildSize or 1)
+			local Take = math.min(amt, self.MaxElectricity - CurAmt)
+			
+			if Take > 0 then
+				self:SetEZsupplies(typ, CurAmt + Take)
+				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				Accepted = Take
+			end
+		end
+	end
+
+	return Accepted
 end
 
 function SWEP:BuildEffect(pos, buildType, suppressSound)
