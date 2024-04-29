@@ -136,7 +136,7 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
-		if self:WaterLevel() > 3 then return end
+		if self:WaterLevel() > 0 then return end
 		self:SetState(STATE_CONNECTING)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
 		self.ConnectionAttempts = 0
@@ -334,7 +334,7 @@ if(SERVER)then
 	end
 
 	function ENT:EZreceiveSpeech(ply, txt)
-		if self:WaterLevel() > 3 then return false end
+		if self:WaterLevel() > 0 then return false end
 		local State = self:GetState()
 		if State < 2 then return false end
 

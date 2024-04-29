@@ -139,7 +139,7 @@ if SERVER then
 		local Up = Vector(0, 0, 1)
 		local EffectType = 1
 		local Traec = util.QuickTrace(self:GetPos(), Vector(0, 0, -5), self.Entity)
-		local Owner = JMod.GetOwner(self)
+		local Owner = JMod.GetEZowner(self)
 
 		if Traec.Hit then
 			if (Traec.MatType == MAT_DIRT) or (Traec.MatType == MAT_SAND) then

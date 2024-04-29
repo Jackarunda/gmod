@@ -154,9 +154,8 @@ if SERVER then
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local Pos, Ang = self:GetPos(), self:GetAngles()
 		local droppedBomb = ents.Create(self.Bombs[slotNum][1])
-		droppedBomb:SetPos(Pos + Up * -50 + Forward * -6 + Right * 6)
-		droppedBomb:SetAngles(Ang + Angle(0, -90, 0))
-		droppedBomb:SetVelocity(self:GetVelocity())
+		droppedBomb:SetPos(Pos + Up * -60 + Forward * -6 + Right * 6)
+		droppedBomb:SetAngles(Ang + droppedBomb.JModPreferredCarryAngles or Angle(0, 0, 0))
 		JMod.SetEZowner(droppedBomb, ply)
 
 		if arm then
@@ -166,11 +165,22 @@ if SERVER then
 		droppedBomb:Spawn()
 		droppedBomb:Activate()
 
-		if arm then
-			droppedBomb:SetState(1)
-		else
-			droppedBomb:SetState(0)
-		end
+		timer.Simple(0, function()
+			if IsValid(droppedBomb) then
+				droppedBomb:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
+			end
+
+			if arm then
+				droppedBomb:SetState(1)
+				if droppedBomb.Launch then
+					droppedBomb:Launch(ply)
+				end
+			else
+				droppedBomb:SetState(0)
+			end
+		end)
+
+		self:EmitSound("snd_jack_metallicdrop.wav", 65, 90)
 
 		table.remove(self.Bombs, slotNum)
 
