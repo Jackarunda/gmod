@@ -52,6 +52,7 @@ if SERVER then
 
 		---
 		self.Fuze = 100
+		self.NextStick = 0
 		self:SetState(JMod.EZ_STATE_OFF)
 
 		if istable(WireLib) then
@@ -122,12 +123,45 @@ if SERVER then
 			if State == JMod.EZ_STATE_OFF and Alt then
 				self:Arm()
 				JMod.Hint(Dude, "fuse")
+			else
+				constraint.RemoveAll(self)
+				self.StuckStick = nil
+				self.StuckTo = nil
+				Dude:PickupObject(self)
+				self.NextStick = Time + .5
+				JMod.Hint(Dude, "sticky")
 			end
-
-			Dude:PickupObject(self)
 
 			if not Alt then
 				JMod.Hint(Dude, "arm")
+			end
+		else
+			if self:IsPlayerHolding() and (self.NextStick < Time) then
+				local Tr = util.QuickTrace(Dude:GetShootPos(), Dude:GetAimVector() * 80, {self, Dude})
+
+				if Tr.Hit and IsValid(Tr.Entity:GetPhysicsObject()) and not Tr.Entity:IsNPC() and not Tr.Entity:IsPlayer() then
+					self.NextStick = Time + .5
+					local Ang = Tr.HitNormal:Angle()
+					Ang:RotateAroundAxis(Ang:Right(), -90)
+					Ang:RotateAroundAxis(Ang:Up(), 180)
+					self:SetAngles(Ang)
+					self:SetPos(Tr.HitPos + Tr.HitNormal * 3)
+
+					-- crash prevention
+					if Tr.Entity:GetClass() == "func_breakable" then
+						timer.Simple(0, function()
+							self:GetPhysicsObject():Sleep()
+						end)
+					else
+						local Weld = constraint.Weld(self, Tr.Entity, 0, Tr.PhysicsBone, 3000, false, false)
+						self.StuckTo = Tr.Entity
+						self.StuckStick = Weld
+					end
+
+					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+					Dude:DropObject()
+					JMod.Hint(Dude, "arm")
+				end
 			end
 		end
 	end
@@ -166,13 +200,14 @@ if SERVER then
 					end
 				end)
 
-				JMod.WreckBuildings(self, SelfPos, PowerMult)
-				JMod.BlastDoors(self, SelfPos, PowerMult)
-
 				timer.Simple(0, function()
 					local ZaWarudo = game.GetWorld()
 					local Infl, Att = (IsValid(self) and self) or ZaWarudo, (IsValid(self) and IsValid(self.EZowner) and self.EZowner) or (IsValid(self) and self) or ZaWarudo
 					util.BlastDamage(Infl, Att, SelfPos, 120 * PowerMult, 180 * PowerMult)
+
+					JMod.WreckBuildings(self, SelfPos, PowerMult * .75)
+					JMod.BlastDoors(self, SelfPos, PowerMult)
+
 					self:Remove()
 				end)
 			end
@@ -188,11 +223,14 @@ if SERVER then
 		local state = self:GetState()
 
 		if state == JMod.EZ_STATE_ARMED then
-			local Fsh = EffectData()
-			Fsh:SetOrigin(self:GetPos() + self:GetForward() * 18 - self:GetRight() * 5)
-			Fsh:SetScale(1)
+			local FuseBase = self:GetPos() + self:GetForward() * 10
 			local Ang = self:GetForward():Angle()
-			Ang:RotateAroundAxis(self:GetUp(), 45)
+			Ang:RotateAroundAxis(self:GetUp(), 32)
+
+			local Fsh = EffectData()
+			local Frac = (self.Fuze / 100)
+			Fsh:SetOrigin(FuseBase + Ang:Forward() * 11 * Frac + Ang:Right() * -Frac)
+			Fsh:SetScale(1)
 			Fsh:SetNormal(Ang:Forward())
 			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
 			self:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))

@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/rocket_pod/rocket_pod01
+	$surfaceprop	metal
+	$blendtintbybasealpha	1
+}

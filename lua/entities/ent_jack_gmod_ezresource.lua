@@ -53,8 +53,8 @@ if SERVER then
 		if IsValid(HitEnt) and HitEnt.TryLoadResource then
 			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResource)
 			if Accepted > 0 then
+				JMod.ResourceEffect(self.EZsupplies, ent:LocalToWorld(ent:OBBCenter()), HitEnt:LocalToWorld(HitEnt:OBBCenter()), Accepted, 1, 1, 1)
 				ent:SetEZsupplies(self.EZsupplies, ent.MaxResource - Accepted, HitEnt)
-				--JMod.ResourceEffect(self.EZsupplies, ent:LocalToWorld(ent:OBBCenter()), HitEnt:LocalToWorld(HitEnt:OBBCenter()), Accepted, 1, 1, 1)
 			end
 		end
 		--local effectdata=EffectData()

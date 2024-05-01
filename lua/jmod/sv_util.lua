@@ -42,9 +42,12 @@ end
 function JMod.EZ_WeaponLaunch(ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local Weps = {}
+	local Pods = {}
 
-	for k, ent in pairs(ents.GetAll()) do
-		if ent.EZlaunchableWeaponArmedTime and IsValid(ent.EZowner) and ent.EZowner == ply and ent:GetState() == 1 then
+	for k, ent in ents.Iterator() do
+		if ent.EZlaunchableWeaponLoadTime and JMod.GetEZowner(ent) == ply then
+			table.insert(Pods, ent)
+		elseif ent.EZlaunchableWeaponArmedTime and JMod.GetEZowner(ent) == ply and ent:GetState() == 1 then
 			table.insert(Weps, ent)
 		end
 	end
@@ -58,14 +61,25 @@ function JMod.EZ_WeaponLaunch(ply)
 		end
 	end
 
+	for k, pod in pairs(Pods) do
+		if pod.EZlaunchableWeaponLoadTime < Earliest then
+			FirstWep = pod
+			Earliest = pod.EZlaunchableWeaponLoadTime
+		end
+	end
+
 	if IsValid(FirstWep) then
 		-- knock knock it's pizza time
 		FirstWep:EmitSound("buttons/button6.wav", 75, 110)
 
 		timer.Simple(.2, function()
 			if IsValid(FirstWep) then
-				FirstWep.DropOwner = ply
-				FirstWep:Launch()
+				if FirstWep.EZlaunchableWeaponLoadTime then
+					FirstWep:LaunchRocket(#FirstWep.Rockets, true, ply)
+				elseif FirstWep.EZlaunchableWeaponArmedTime then
+					FirstWep.DropOwner = ply
+					FirstWep:Launch()
+				end
 			end
 		end)
 	end
@@ -76,7 +90,7 @@ function JMod.EZ_BombDrop(ply)
 	local Boms = {}
 	local Bays = {}
 
-	for k, ent in pairs(ents.GetAll()) do
+	for k, ent in ents.Iterator() do
 		if ent.EZdroppableBombArmedTime and IsValid(ent.EZowner) and ent.EZowner == ply then
 			table.insert(Boms, ent)
 		elseif ent.EZdroppableBombLoadTime and IsValid(ent.EZowner) and ent.EZowner == ply then

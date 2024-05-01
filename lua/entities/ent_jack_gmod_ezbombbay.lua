@@ -12,7 +12,6 @@ ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
 ---
-ENT.Bombs = {}
 
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
@@ -48,6 +47,8 @@ if SERVER then
 				phys:SetBuoyancyRatio(self.EZbuoyancy)
 			end
 		end)
+
+		self.Bombs = {}
 
 		---
 		if istable(WireLib) then
@@ -226,9 +227,18 @@ if SERVER then
 		self:BombRelease(#self.Bombs, false)
 	end
 
+	function ENT:PostEntityCopy()
+		self.Bombs = table.FullCopy(self.Bombs)
+	end
+
 	function ENT:PostEntityPaste(ply, ent)
 		local Time = CurTime()
 		self.NextDropTime = Time + 1
+		if self.Bombs and #self.Bombs > 0 then
+			self.EZdroppableBombLoadTime = Time
+		else
+			self.EZdroppableBombLoadTime = nil
+		end
 	end
 elseif CLIENT then
 end
