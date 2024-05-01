@@ -70,14 +70,15 @@ if SERVER then
 	end
 
 	function ENT:TriggerInput(iname, value)
+		local NumRockets = #self.Rockets
 		if iname == "Launch" and value > 0 then
 			self:LaunchRocket(value, true)
 		elseif iname == "Launch" and value == -1 then
-			if #self.Rockets > 0 then
-				for i = 1, #self.Rockets do
-					timer.Simple(1 * i, function()
+			if NumRockets > 0 then
+				for i = 0, NumRockets do
+					timer.Simple(.6 * i, function()
 						if IsValid(self) then
-							self:LaunchRocket(i, true)
+							self:LaunchRocket(NumRockets - i, true)
 						end
 					end)
 				end
@@ -85,9 +86,9 @@ if SERVER then
 		elseif iname == "Unload" and value > 0 then
 			self:LaunchRocket(value, false)
 		elseif iname == "Unload" and value == -1 then
-			if #self.Rockets > 0 then
-				for i = 1, #self.Rockets do
-					timer.Simple(1 * i, function()
+			if NumRockets > 0 then
+				for i = 1, NumRockets do
+					timer.Simple(.2 * i, function()
 						if IsValid(self) then
 							self:LaunchRocket(i, false)
 						end
@@ -165,12 +166,14 @@ if SERVER then
 		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 8.5)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
-		LaunchedRocket.DropOwner = self
+		if arm then
+			LaunchedRocket.DropOwner = self
+		end
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
 
 		local Nocollide = constraint.NoCollide(self, LaunchedRocket, 0, 0)
-		if IsValid(Nocollide) then
+		if Nocollide and IsValid(Nocollide) then
 			Nocollide:Spawn()
 			Nocollide:Activate()
 			timer.Simple(1, function() 
@@ -179,9 +182,10 @@ if SERVER then
 				end
 			end)
 		end
-
+		
 		timer.Simple(0, function()
 			if IsValid(LaunchedRocket) then
+				--LaunchedRocket:GetPhysicsObject():EnableMotion(false)
 				LaunchedRocket:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
 			end
 
