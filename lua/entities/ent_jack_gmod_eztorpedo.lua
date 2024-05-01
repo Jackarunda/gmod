@@ -162,7 +162,7 @@ if SERVER then
 		self.Exploded = true
 		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
-		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetEZowner(self)
+		local SelfPos, Att = self:GetPos() + Vector(0, 0, 50), JMod.GetEZowner(self)
 		---
 		if not self:InWater() then
 			local Eff = "500lb_ground"
@@ -170,22 +170,24 @@ if SERVER then
 				Eff = "500lb_air"
 			end
 			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, 100)
 		else
 			local splad = EffectData()
 			splad:SetOrigin(SelfPos)
 			splad:SetScale(3)
 			splad:SetEntity(self)
 			util.Effect("eff_jack_gmod_watersplode", splad, true, true)
-			---
-			util.ScreenShake(SelfPos, 1000, 3, 3, 2000)
+			
 
 			---
 			for i = 1, 3 do
 				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 80, 100)
 				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 160, 50)
-				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 70, math.random(80, 110))
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, math.random(80, 110))
 			end
 		end
+		---
+		util.ScreenShake(SelfPos, 1000, 3, 3, 2000)
 
 		---
 		timer.Simple(.1, function()
@@ -237,7 +239,7 @@ if SERVER then
 					if OurVel.z > 0 then
 						CounterPush = -OurVel.z * .8
 					end
-					Phys:ApplyForceCenter(Forward * 20000 + Vector(0, 0, CounterPush))
+					Phys:ApplyForceCenter(Forward * 40000 + Vector(0, 0, CounterPush))
 					self.FuelLeft = self.FuelLeft - .2
 					---
 					local StartPos = SelfPos - Forward * 80 + Vector(0, 0, 100)
@@ -260,6 +262,8 @@ if SERVER then
 				self:Detonate()
 			end
 		end
+
+		JMod.AeroDrag(self, Forward, 4)
 
 		self:NextThink(CurTime() + .05)
 
