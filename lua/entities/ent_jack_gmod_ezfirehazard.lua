@@ -36,17 +36,18 @@ if SERVER then
 
 		local Time = CurTime()
 		self.NextFizz = 0
-		self.DamageMul = (self.DamageMul or 1) * math.Rand(.9, 1.1)
-		self.DieTime = Time + math.Rand(self.TypeInfo[4], self.TypeInfo[5])
+		self.Intensity = math.Rand(self.TypeInfo[4], self.TypeInfo[5])
+		self.DieTime = Time + self.Intensity
 		self.NextSound = 0
 		self.NextEffect = 0
 		self.NextEnvThink = Time + 3
-		self.Range = self.TypeInfo[6]
-		self.Power = 3
+		self.Power = self.Intensity / self.TypeInfo[5]
+		self.Range = self.TypeInfo[6] * self.Power
+		
 		if self.Burnin == nil then
 			self.Burnin = true 
 		elseif self.Burnin == false then
-			self.DieTime = self.DieTime + math.Rand(self.TypeInfo[4], self.TypeInfo[5])
+			self.DieTime = Time + self.Intensity * 2
 		end
 		self:SetBurning(self.Burnin)
 
@@ -84,7 +85,7 @@ if SERVER then
 		if self.Burnin then return end
 		self.Burnin = true
 		self:SetBurning(true)
-		self.DieTime = CurTime() + math.Rand(self.TypeInfo[4], self.TypeInfo[5])
+		self.DieTime = CurTime() + self.Intensity
 		if self:WaterLevel() <= 0 then
 			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -self.Range), {self})
 
@@ -147,8 +148,9 @@ if SERVER then
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
 						FireNearby = v.HighVisuals
 						if (v:GetPos():Distance(Pos) < self.Range * 0.3) then
-							if self.DieTime > (v.DieTime or 0) then
-								self.DieTime = self.DieTime + (((v.DieTime or 0) - Time) * 0.3)
+							local TheirIntensity = v.Intensity or 0
+							if self.Intensity > TheirIntensity then
+								self.Intensity = self.Intensity + TheirIntensity
 								v:Remove()
 							end
 						end
@@ -208,6 +210,7 @@ if SERVER then
 			if Water > 0 then
 				self:Remove()
 			elseif self.Burnin then
+				self.Intensity = self.Intensity - 1
 				if math.random(1, 5) == 1 then
 					local Tr = util.QuickTrace(Pos, VectorRand() * self.Range, {self})
 	
@@ -218,7 +221,7 @@ if SERVER then
 			end
 		end
 	
-		if self.DieTime < Time then
+		if (not(self.Burnin) and (self.DieTime < Time)) or self.Intensity <= 0 then
 			self:Remove()
 
 			return

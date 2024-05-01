@@ -874,32 +874,44 @@ net.Receive("JMod_ModifyMachine", function()
 			end
 
 		elseif istable(value) then
+			local IsMin = value.Min and isnumber(value.Min)
+
 			function Panel:Paint(w, h)
 				surface.SetDrawColor(0, 0, 0, 100)
 				surface.DrawRect(0, 0, w, h)
-				draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				draw.SimpleText("Min", "DermaDefault", 75, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-				draw.SimpleText("Max", "DermaDefault", 200, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				if IsMin then
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Min", "DermaDefault", 75, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Max", "DermaDefault", 200, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				else
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				end
 			end
 
-			if isnumber(value.Min) and isnumber(value.Max) then
+			if IsMin then
 				local MinNumBox = vgui.Create("DNumSlider", Panel)
 				--MinNumBox:SetPos(0, 5)
 				MinNumBox:Dock(LEFT)
 				--MinNumBox:SetWide(200)
 				MinNumBox:SetMin(-360)
-				MinNumBox:SetMax(360)
+				MinNumBox:SetMax(0)
 				MinNumBox:SetDecimals(0)
 				MinNumBox:SetValue(Specs[attrib].Min)
 				MinNumBox.OnValueChanged = function(_, val)
 					Specs[attrib].Min = math.Round(val)
 				end
-				
+			end
+
+			if value.Max and isnumber(value.Max) then
 				local MaxNumBox = vgui.Create("DNumSlider", Panel)
-				--MaxNumBox:SetPos(50, 5)
-				MaxNumBox:Dock(RIGHT)
-				--MaxNumBox:SetWide(200)
-				MaxNumBox:SetMin(-360)
+				if IsMin then
+					MaxNumBox:Dock(RIGHT)
+				else
+					--MaxNumBox:Dock(FILL)
+					MaxNumBox:SetPos(-50, 20)
+					MaxNumBox:SetSize(300, 20)
+				end
+				MaxNumBox:SetMin(0)
 				MaxNumBox:SetMax(360)
 				MaxNumBox:SetDecimals(0)
 				MaxNumBox:SetValue(Specs[attrib].Max)

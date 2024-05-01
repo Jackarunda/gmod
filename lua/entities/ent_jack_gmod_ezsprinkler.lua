@@ -23,24 +23,28 @@ ENT.StaticPerfSpecs = {
 }
 ENT.DynamicPerfSpecs={
 	MaxLiquid = 200,
-	TurnSpeed = 1,
+	TurnSpeed = 5,
 	SprayRadius = 400
 }
 ENT.LiquidTypes = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
 		TankColor = Color(61, 194, 255),
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
 	},
 	[JMod.EZ_RESOURCE_TYPES.FUEL] = {
 		TankColor = Color(255, 61, 61),
+		SoundRight = {"snds_jack_gmod/flamethrower_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/flamethrower_loop.wav", 120},
 	},
 	--[[[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = {
 		TankColor = Color(61, 255, 61),
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
 	}--]]
 }
 
 ENT.EZconsumes = nil
-ENT.SoundRight = "snds_jack_gmod/sprankler_slow_loop.wav"
-ENT.SoundLeft = "snds_jack_gmod/sprankler_fast_loop.wav"
 
 local STATE_BROKEN, STATE_OFF, STATE_ON = -1, 0, 1
 
@@ -61,6 +65,8 @@ function ENT:SetMods(tbl, liquidType)
 	self:InitPerfSpecs((OldLiquidType ~= liquidType) or ((self.ModPerfSpecs.MaxLiquid < OldMaxLiquidSpec)))
 	self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, liquidType}
 	self:SetColor(self.LiquidTypes[liquidType].TankColor)
+	self.SoundLeft = self.LiquidTypes[liquidType].SoundLeft
+	self.SoundRight = self.LiquidTypes[liquidType].SoundRight
 	if SERVER then
 		self:SetupWire()
 	end
@@ -125,20 +131,16 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.WATER,
 			JMod.EZ_RESOURCE_TYPES.POWER,
 		}
-		self.Rotation = {
-			Min = 0,
-			Max = 360
-		}
+		self.Rotation = {Max = 360}
+		self.SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"}
+		self.SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"}
 		-- All moddable attributes
 		-- Each mod selected for it is +1, against it is -1
 		self.ModPerfSpecs = {
 			MaxLiquid = 0,
 			TurnSpeed = 0,
 			SprayRadius = 0,
-			Rotation = {
-				Min = 0,
-				Max = 360
-			}
+			Rotation = {Max = 360}
 		}
 		--
 		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
@@ -164,7 +166,9 @@ if(SERVER)then
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
-		if Alt then
+		if Alt and self:GetPhysicsObject():IsMotionEnabled() then
+			activator:PickupObject(self)
+		else
 			if State == STATE_BROKEN then
 				JMod.Hint(activator, "destroyed", self)
 				return
@@ -173,8 +177,6 @@ if(SERVER)then
 			elseif State == STATE_ON then
 				self:TurnOff(activator)
 			end
-		else
-			activator:PickupObject(self)
 		end
 	end
 
@@ -185,7 +187,7 @@ if(SERVER)then
 			if IsValid(activator) then self.EZstayOn = true end
 			self:SetState(STATE_ON)
 			if not self.SoundLoop then
-				self.SoundLoop = CreateSound(self, (self.Dir == "left" and self.SoundLeft) or self.SoundRight)
+				self.SoundLoop = CreateSound(self, (self.Dir == "left" and self.SoundLeft[1]) or self.SoundRight[1])
 			end
 			self.SoundLoop:Play()
 			self.SoundLoop:SetSoundLevel(60)
@@ -377,27 +379,26 @@ if(SERVER)then
 					util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
 				end
 
-				local TurnSpeed = 5
-				local RotMin, RotMax = self.Rotation.Min or 0, self.Rotation.Max or 360
-				if RotMin > RotMax then
-					RotMin, RotMax = RotMax, RotMin
-				end
+				local TurnSpeed = self.TurnSpeed
+				local RotMin, RotMax = 0, self.Rotation.Max or 360
 				if CurrentRot > RotMax then
 					self.Dir = "right"
 					if self.SoundLoop then
 						self.SoundLoop:Stop()
 					end
-					self.SoundLoop = CreateSound(self, self.SoundRight)
+					self.SoundLoop = CreateSound(self, self.SoundRight[1])
 					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(60)
+					self.SoundLoop:SetSoundLevel(65)
+					self.SoundLoop:ChangePitch(self.SoundRight[2] or 100)
 				elseif CurrentRot < RotMin then
 					self.Dir = "left"
 					if self.SoundLoop then
 						self.SoundLoop:Stop()
 					end
-					self.SoundLoop = CreateSound(self, self.SoundLeft)
+					self.SoundLoop = CreateSound(self, self.SoundLeft[1])
 					self.SoundLoop:Play()
-					self.SoundLoop:SetSoundLevel(60)
+					self.SoundLoop:SetSoundLevel(65)
+					self.SoundLoop:ChangePitch(self.SoundLeft[2] or 100)
 				end
 				if self.Dir == "right" then
 					self:SetHeadRot(CurrentRot - TurnSpeed)
