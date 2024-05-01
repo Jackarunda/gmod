@@ -269,6 +269,18 @@ if SERVER then
 
 		return true
 	end
+
+	function ENT:PreEntityCopy()
+		self.StuckToID = self.StuckTo:EntIndex()
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		JMod.SetEZowner(self, ply, false)
+		self.EZlaunchableWeaponArmedTime = CurTime() - .1
+		if self.StuckToID then
+			self.StuckTo = createdEntities[self.StuckToID]
+		end
+	end
 elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 

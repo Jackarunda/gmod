@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 8)
 ENT.EZRackAngles = Angle(0, 0, 0)
+ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 
@@ -95,7 +96,7 @@ if SERVER then
 				return
 			end
 
-			if data.Speed > 2000 then
+			if (data.Speed > 2000) and not(self:IsPlayerHolding()) then
 				self:Break()
 			end
 		end
@@ -223,7 +224,10 @@ if SERVER then
 
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			local Tr = util.QuickTrace(self:GetPos(), self:GetRight() * i * 40, {self, self.DropOwner})
+			if Tr.Hit then
+				util.BlastDamage(self, JMod.GetEZowner(self), Tr.HitPos, 50, 50)
+			end
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)

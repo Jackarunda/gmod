@@ -666,8 +666,12 @@ elseif(CLIENT)then
 		local Ent = net.ReadEntity()
 		local NewSpecs = net.ReadTable()
 		if IsValid(Ent) then
-			for specName, value in pairs(NewSpecs) do
-				Ent[specName] = value
+			if Ent.OnMachineSync then
+				Ent:OnMachineSync(NewSpecs)
+			else
+				for specName, value in pairs(NewSpecs) do
+					Ent[specName] = value
+				end
 			end
 		end
 	end)

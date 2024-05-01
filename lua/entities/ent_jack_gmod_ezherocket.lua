@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 8)
 ENT.EZRackAngles = Angle(0, 0, 0)
+ENT.EZrocket = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 
@@ -91,7 +92,7 @@ if SERVER then
 				return
 			end
 
-			if data.Speed > 2000 then
+			if (data.Speed > 2000) and not(self:IsPlayerHolding()) then
 				self:Break()
 			end
 		end
