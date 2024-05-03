@@ -149,11 +149,11 @@ if SERVER then
 	function ENT:LaunchRocket(slotNum, arm, ply)
 		local Time = CurTime()
 		if self.NextLaunchTime and (self.NextLaunchTime > Time) then return end
-		self.NextLaunchTime = Time + .2
+		self.NextLaunchTime = Time + .1
 		local NumORockets = #self.Rockets
 		slotNum = slotNum or NumORockets
 		if NumORockets <= 0 then return end
-		if slotNum == 0 or slotNum > NumORockets then return end
+		if (slotNum == 0) or (slotNum > NumORockets) or not(self.Rockets[slotNum]) then return end
 
 		ply = ply or JMod.GetEZowner(self)
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
@@ -166,19 +166,15 @@ if SERVER then
 		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 8.5)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
-		if arm then
-			LaunchedRocket.DropOwner = self
-		end
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
 
-		local Nocollide = constraint.NoCollide(self, LaunchedRocket, 0, 0)
-		if Nocollide and IsValid(Nocollide) then
-			Nocollide:Spawn()
-			Nocollide:Activate()
-			timer.Simple(1, function() 
-				if IsValid(Nocollide) then
-					Nocollide:Remove()
+		if arm then
+			LaunchedRocket.DropOwner = self
+			local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0)
+			timer.Simple(1, function()
+				if IsValid(LaunchedRocket) then
+					constraint.RemoveConstraints(LaunchedRocket, "NoCollide")
 				end
 			end)
 		end
@@ -228,12 +224,15 @@ if SERVER then
 			JMod.DamageSpark(self)
 		end
 
-		for i = 1, #self.Rockets do
-			timer.Simple(0.2, function()
-				if IsValid(self) then
-					self:LaunchRocket(i, false, self.EZowner)
-				end
-			end)
+		local NumRockets = #self.Rockets
+		if NumRockets > 0 then
+			for i = 0, NumRockets do
+				timer.Simple(0.11 * i, function()
+					if IsValid(self) then
+						self:LaunchRocket(NumRockets - i, false, self.EZowner)
+					end
+				end)
+			end
 		end
 
 		timer.Simple(2, function()
@@ -253,6 +252,12 @@ if SERVER then
 	function ENT:PostEntityPaste(ply, ent, createdEnts)
 		local Time = CurTime()
 		self.NextLaunchTime = Time + 1
+		if #self.Rockets > 0 then
+			self.EZlaunchableWeaponLoadTime = Time
+		else
+			self.EZlaunchableWeaponLoadTime = nil
+		end
+		JMod.SetEZowner(self, ply, true)
 		timer.Simple(0, function()
 			if IsValid(self) then
 				self:SyncRockets()
