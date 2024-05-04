@@ -209,7 +209,7 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 
-		if JMod.LinCh(dmginfo:GetDamage(), 80, 160) then
+		if JMod.LinCh(dmginfo:GetDamage(), 160, 300) then
 			self:Destroy(dmginfo)
 		end
 	end
