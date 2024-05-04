@@ -152,32 +152,46 @@ if SERVER then
 		ply = ply or JMod.GetEZowner(self)
 		if NumOBombs <= 0 then return end
 		if slotNum == 0 or slotNum > NumOBombs then return end
+
 		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local Pos, Ang = self:GetPos(), self:GetAngles()
-		local droppedBomb = ents.Create(self.Bombs[slotNum][1])
-		droppedBomb:SetPos(Pos + Up * -60 + Forward * -6 + Right * 6)
-		droppedBomb:SetAngles(Ang + droppedBomb.JModPreferredCarryAngles or Angle(0, 0, 0))
-		JMod.SetEZowner(droppedBomb, ply)
-
+		local DroppedBomb = ents.Create(self.Bombs[slotNum][1])
+		DroppedBomb:SetPos(Pos + Up * -20 + Forward * -6 + Right * 6)
+		DroppedBomb:SetAngles(Ang + DroppedBomb.JModPreferredCarryAngles or Angle(0, 0, 0))
+		JMod.SetEZowner(DroppedBomb, ply)
 		if arm then
-			droppedBomb.DropOwner = ply
+			DroppedBomb.DropOwner = ply
+		end
+		DroppedBomb:Spawn()
+		DroppedBomb:Activate()
+
+		local Nocollide = constraint.NoCollide(self, DroppedBomb, 0, 0)
+		if IsValid(Nocollide) then
+			Nocollide:Spawn()
+			Nocollide:Activate()
+			timer.Simple(1, function() 
+				if IsValid(Nocollide) then
+					Nocollide:Remove()
+				end
+			end)
 		end
 
-		droppedBomb:Spawn()
-		droppedBomb:Activate()
-
 		timer.Simple(0, function()
-			if IsValid(droppedBomb) then
-				droppedBomb:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
+			if IsValid(DroppedBomb) then
+				DroppedBomb:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
 			end
 
 			if arm then
-				droppedBomb:SetState(1)
-				if droppedBomb.Launch then
-					droppedBomb:Launch(ply)
+				DroppedBomb:SetState(1)
+				if DroppedBomb.Launch then
+					timer.Simple(0.2, function()
+						if IsValid(DroppedBomb) then
+							DroppedBomb:Launch(ply)
+						end
+					end)
 				end
 			else
-				droppedBomb:SetState(0)
+				DroppedBomb:SetState(0)
 			end
 		end)
 
