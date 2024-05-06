@@ -944,12 +944,48 @@ net.Receive("JMod_Ravebreak", function()
 	LocalPlayer().JMod_RavebreakStartTime = CurTime() + 2.325
 	LocalPlayer().JMod_RavebreakEndTime = CurTime() + 25.5
 end)
-
 -- note that the song's beat is about .35 seconds
+
+local ParticleSpecs = {
+	[1] = { -- water
+		launchspeed = 600,
+		launchSize = 1,
+		lifeTime = 1.5,
+		mat = Material("effects/bloodstream"),
+		colorfunc = function(data)
+			local R = math.Clamp(175 + data.size * 1.5, 0, 255)
+			local G = math.Clamp(200 + data.size * 1.5, 0, 255)
+			local Mult = (data.stuck and 12) or 6
+			return Color(R, G, 255, 255 - math.Clamp(data.size * Mult, 0, 255))
+		end
+	}
+}
+local LiquidParticles = {}
+net.Receive("JMod_LiquidParticle", function()
+	local Pos = net.ReadVector()
+	local Norm = net.ReadVector()
+	local Group = net.ReadInt(8)
+	local Type = net.ReadInt(8)
+	local Specs = ParticleSpecs[Type]
+	table.insert(LiquidParticles, {
+		typ = Type,
+		group = Group,
+		size = Scl,
+		opacity = 255,
+		pos = Pos,
+		vel = Norm * 1500 + VectorRand() * 15,
+		airResist = 1,
+		stuck = false,
+		growthSpeed = 1
+	})
+end)
+
+--[[
 hook.Add("RenderScene", "JMod_RenderScene", function(origin, angs, fov)
 	render.SetAmbientLight(1, 1, 1)
 	render.SetLightingOrigin(Vector(-3400, 5300, 400))
 end)
+--]]
 --hook.Add("PostRender","JMod_PostRender",function()
 --	engine.LightStyle(0,"m")
 --end)

@@ -53,15 +53,18 @@ end, nil, "Removes JMod radiation and from map and players")
 
 concommand.Add("jmod_debug", function(ply, cmd, args)
 	if not(JMod.IsAdmin(ply)) then return end
-	---[[
-	local Eff = EffectData()
-	local Tr = ply:GetEyeTrace()
-	Eff:SetOrigin(Tr.HitPos + Tr.HitNormal)
-	Eff:SetNormal(Tr.HitNormal)
-	Eff:SetScale(1)
-	Eff:SetEntity(nil)
-	util.Effect("eff_jack_gmod_liquidtrail", Eff, true, true)
-	--]]
+	for i = 1, 30 do
+		timer.Simple(i / 10, function()
+			local Tr = ply:GetEyeTrace()
+			local Pos, Norm = Tr.HitPos, Tr.HitNormal
+			net.Start("JMod_LiquidParticle")
+			net.WriteVector(Pos)
+			net.WriteVector(Norm)
+			net.WriteInt(0, 8) -- which group of particles is this associated with
+			net.WriteInt(1, 8) -- particle type, in this case 1 = generic liquid
+			net.Broadcast()
+		end)
+	end
 	--print(JMod.GetHoliday())
 	--JMod.DebugArrangeEveryone(ply)
 	--JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.PROPELLANT, Vector(100, 0, -100), Vector(-100, 0, -100), 1, 1, 1, 0)
