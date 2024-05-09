@@ -37,7 +37,6 @@ if SERVER then
 		local Time = CurTime()
 		self.NextFizz = 0
 		self.Intensity = math.Rand(self.TypeInfo[4], self.TypeInfo[5])
-		self.DieTime = Time + self.Intensity
 		self.NextSound = 0
 		self.NextEffect = 0
 		self.NextEnvThink = Time + 3
@@ -46,8 +45,6 @@ if SERVER then
 		
 		if self.Burnin == nil then
 			self.Burnin = true 
-		elseif self.Burnin == false then
-			self.DieTime = Time + self.Intensity * 2
 		end
 		self:SetBurning(self.Burnin)
 
@@ -85,7 +82,6 @@ if SERVER then
 		if self.Burnin then return end
 		self.Burnin = true
 		self:SetBurning(true)
-		self.DieTime = CurTime() + self.Intensity
 		if self:WaterLevel() <= 0 then
 			local Tr = util.QuickTrace(self:GetPos(), Vector(0, 0, -self.Range), {self})
 
@@ -105,18 +101,21 @@ if SERVER then
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
 		local Water = self:WaterLevel()
 
-		if self.Burnin then 
+		if self.HighVisuals then
 			if self.NextFizz < Time then
 				self.NextFizz = Time + .5
 
 				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
 					local Zap = EffectData()
 					Zap:SetOrigin(Pos)
+					Zap:SetScale(1 * self.Intensity * .05)
 					Zap:SetStart(self:GetVelocity())
 					util.Effect(self.TypeInfo[3], Zap, true, true)
 				end
 			end
+		end
 
+		if self.Burnin then 
 			if self.NextSound < Time then
 				self.NextSound = Time + 1
 				self:EmitSound(table.Random(self.TypeInfo[2]), 75, math.random(90, 110))
@@ -142,17 +141,16 @@ if SERVER then
 				end
 
 				local FireNearby = false
+				local ActualRange = math.max(self.Range * (self.Intensity^.2), self.Range)
 
-				for k, v in pairs(ents.FindInSphere(Pos, self.Range)) do
-
+				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
-						FireNearby = v.HighVisuals
-						if (v:GetPos():Distance(Pos) < self.Range * 0.3) then
-							local TheirIntensity = v.Intensity or 0
-							if self.Intensity > TheirIntensity then
-								self.Intensity = self.Intensity + TheirIntensity
-								v:Remove()
-							end
+						FireNearby = v.GetHighVisuals and v:GetHighVisuals() or false
+						if (v:GetPos():Distance(Pos) < self.Range * 0.75) then
+							local LeftTillMax = (self.TypeInfo[5] * 2) - self.Intensity
+							local Taken = math.min(v.Intensity or 0, LeftTillMax)
+							self.Intensity = self.Intensity + Taken
+							v.Intensity = v.Intensity - Taken
 						end
 					end
 
@@ -188,6 +186,8 @@ if SERVER then
 					CreateVFireBall(math.random(20, 30), math.random(10, 20), self:GetPos(), VectorRand() * math.random(200, 400), JMod.GetEZowner(self))
 					self:Remove()
 				end
+
+				self.Intensity = math.Clamp(self.Intensity - .5, 0, self.TypeInfo[5] * 2)
 			end
 		end
 
@@ -221,7 +221,7 @@ if SERVER then
 			end
 		end
 	
-		if (not(self.Burnin) and (self.DieTime < Time)) or self.Intensity <= 0 then
+		if self.Intensity <= 0 then
 			self:Remove()
 
 			return
@@ -245,6 +245,7 @@ elseif CLIENT then
 		self.Size = self.TypeInfo[6]
 		--self.FlameSprite=Material("mats_jack_halo_sprites/flamelet"..math.random(1,5))
 		
+		self.NextFizz = 0
 		self.Offset = Vector(0, 0, 0)
 		self.SizeX = 1
 		self.SizeY = 1
@@ -257,11 +258,29 @@ elseif CLIENT then
 	function ENT:Think()
 		self.Burnin = self:GetBurning()
 		if not self.Burnin then return end
+
+		local Time, Pos = CurTime(), self:GetPos()
+		local Water = self:WaterLevel()
 		local HighVis = self:GetHighVisuals()
+
 		if (HighVis ~= self.HighVisuals) and (JMod.Config.QoL.NiceFire) then
 			self.CastLight = HighVis
 			self.HighVisuals = HighVis
 		end
+		--[[
+		if self.HighVisuals then
+			if self.NextFizz < Time then
+				self.NextFizz = Time + .5
+
+				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
+					local Zap = EffectData()
+					Zap:SetOrigin(Pos)
+					Zap:SetStart(self:GetVelocity())
+					util.Effect(self.TypeInfo[3], Zap, true, true)
+				end
+			end
+		end
+		]]--
 		if self.CastLight and not(GAMEMODE.Lagging) and not(vFireInstalled) then
 			local dlight = DynamicLight(self:EntIndex())
 

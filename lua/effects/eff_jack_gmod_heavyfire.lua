@@ -1,14 +1,14 @@
 ﻿function EFFECT:Init(data)
 	local Pos = data:GetOrigin()
 	self.Emitter = ParticleEmitter(Pos)
-	local Scayul = 1
+	local Scayul = data:GetScale()
 	self.Scayul = Scayul
 	local Vel = data:GetStart()
 	local InitialVel = Vel + VectorRand() * math.Rand(0, 200)
 
 	if true then
 		for i = 1, 5 * Scayul do
-			local particle = self.Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + VectorRand() * math.Rand(0, 50))
+			local particle = self.Emitter:Add("mats_jack_gmod_sprites/flamelet" .. math.random(1, 5), Pos + VectorRand() * math.Rand(0, 50) * Scayul^.1)
 			particle:SetVelocity(InitialVel)
 			particle:SetAirResistance(100)
 			particle:SetGravity(Vector(0, 0, 200))
@@ -27,7 +27,7 @@
 	end
 
 	if (math.random(1, 2) == 2) and not GAMEMODE.Lagging then
-		local particle = self.Emitter:Add(((math.random(1, 2) == 1) and "effects/thick_smoke") or "effects/thick_smoke2", Pos + Vector(0, 0, 5))
+		local particle = self.Emitter:Add(((math.random(1, 2) == 1) and "effects/thick_smoke") or "effects/thick_smoke2", Pos + Vector(0, 0, 5) * Scayul)
 		particle:SetVelocity(InitialVel + Vector(0, 0, 150))
 		particle:SetAirResistance(100)
 		particle:SetGravity(Vector(0, 0, 300))

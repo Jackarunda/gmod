@@ -173,16 +173,20 @@ if SERVER then
 		util.Effect("eff_jack_firebomb", Sploom, true, true)
 
 		---
+		local Owner = JMod.GetEZowner(self)
 		for i = 1, 100 do
-			local FireAng = (Dir + VectorRand() * .35 + Vector(0, 0, math.Rand(.01, .7))):Angle()
-			local Flame = ents.Create("ent_jack_gmod_eznapalm")
-			Flame.Creator = self
-			Flame:SetPos(SelfPos)
-			Flame:SetAngles(FireAng)
-			Flame:SetOwner(JMod.GetEZowner(self))
-			JMod.SetEZowner(Flame, self.EZowner or self)
-			Flame:Spawn()
-			Flame:Activate()
+			timer.Simple(i / 100, function()
+				local FireAng = (Dir + VectorRand() * .35 + Vector(0, 0, math.Rand(.01, .7))):Angle()
+				local Flame = ents.Create("ent_jack_gmod_eznapalm")
+				Flame.Creator = self
+				Flame:SetPos(SelfPos)
+				Flame:SetAngles(FireAng)
+				Flame:SetOwner(self)
+				JMod.SetEZowner(Flame, Owner)
+				Flame.HighVisuals = math.random(1, 5) == 1
+				Flame:Spawn()
+				Flame:Activate()
+			end)
 		end
 
 		---

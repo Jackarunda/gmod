@@ -607,7 +607,7 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 end)
 
 local Translucent = Color(255, 255, 255, 100)
-hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", function(bDepth, bSkybox)
+hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth, bSkybox)
 	local ply, Time = LocalPlayer(), CurTime()
 	
 	if ply:Alive() then
@@ -643,7 +643,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		if not IsValid(ToolBox) then return end
 		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
 		
-		 if ToolBox.EZpreview then
+		if ToolBox.EZpreview then
 		 	if ToolBox.EZpreview.Box then
 		 		if ToolBox:GetSelectedBuild() ~= "" then
 		 			local Filter = {ply}
@@ -710,7 +710,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		 			render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
 		 		end
 		 	end
-		 end
+		end
 	end
 end)
 
@@ -970,7 +970,7 @@ net.Receive("JMod_LiquidParticle", function()
 	table.insert(LiquidParticles, {
 		typ = Type,
 		group = Group,
-		size = Scl,
+		size = Specs.launchSize,
 		opacity = 255,
 		pos = Pos,
 		vel = Norm * 1500 + VectorRand() * 15,
@@ -978,6 +978,50 @@ net.Receive("JMod_LiquidParticle", function()
 		stuck = false,
 		growthSpeed = 1
 	})
+end)
+
+hook.Add("Think", "JMOD_LIQUIDSTREAMS", function()
+	local FT, Time = FrameTime(), CurTime()
+	for k, v in pairs(LiquidParticles) do
+		if not (v.stuck) then
+			local Travel = v.vel * FT
+			local Tr = util.TraceLine({
+				start = v.pos,
+				endpos = v.pos + Travel,
+				mask = MASK_NPCWORLDSTATIC
+			})
+			if (Tr.Hit) then
+				v.pos = Tr.HitPos + Tr.HitNormal
+				v.stuck = true
+			else
+				v.pos = v.pos + Travel
+			end
+			v.vel = v.vel - Vector(0, 0, 600  * FT)
+			local AirLoss = FT * v.airResist + .01
+			v.vel = v.vel * (1 - AirLoss)
+			v.vel = v.vel + JMod.Wind * FT * 100
+		end
+		v.size = v.size + v.growthSpeed * .05 * ((v.stuck and 3) or 1)
+	end
+end)
+
+hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWLIQUIDSTREAMS", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
+	local GroupPoses = {}
+	for k, v in pairs(LiquidParticles) do
+		local Specs = ParticleSpecs[v.typ]
+		if (v.size < 80) then
+			if (GroupPoses[v.group]) then
+				local R = math.Clamp(175 + v.size * 1.5, 0, 255)
+				local G = math.Clamp(200 + v.size * 1.5, 0, 255)
+				local Mult = (v.stuck and 12) or 6
+				local Col = Color(R, G, 255, 255 - math.Clamp(v.size * Mult, 0, 255))
+				render.SetMaterial(Specs.mat)
+				render.DrawBeam(GroupPoses[v.group], v.pos, v.size ^ 1.1, 1, 0, Col)
+			end
+			GroupPoses[v.group] = v.pos
+			Count = Count + 1
+		end
+	end
 end)
 
 --[[

@@ -58,10 +58,10 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 			local Tr = ply:GetEyeTrace()
 			local Pos, Norm = Tr.HitPos, Tr.HitNormal
 			net.Start("JMod_LiquidParticle")
-			net.WriteVector(Pos)
-			net.WriteVector(Norm)
-			net.WriteInt(0, 8) -- which group of particles is this associated with
-			net.WriteInt(1, 8) -- particle type, in this case 1 = generic liquid
+				net.WriteVector(Pos)
+				net.WriteVector(Norm)
+				net.WriteInt(0, 8) -- which group of particles is this associated with
+				net.WriteInt(1, 8) -- particle type, in this case 1 = generic liquid
 			net.Broadcast()
 		end)
 	end
