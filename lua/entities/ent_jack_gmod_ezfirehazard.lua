@@ -100,6 +100,7 @@ if SERVER then
 	function ENT:Think()
 		local Time, Pos, Dir = CurTime(), self:GetPos(), self:GetForward()
 		local Water = self:WaterLevel()
+		local Fraction = self.Intensity / (self.TypeInfo[5] * 2)
 
 		if self.HighVisuals then
 			if self.NextFizz < Time then
@@ -108,10 +109,10 @@ if SERVER then
 				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
 					local Zap = EffectData()
 					Zap:SetOrigin(Pos)
-					Zap:SetScale(1 * self.Intensity * .05)
+					Zap:SetScale(2.5 * Fraction)
 					Zap:SetStart(self:GetVelocity())
 					util.Effect(self.TypeInfo[3], Zap, true, true)
-				end
+				end--]]
 			end
 		end
 
@@ -119,7 +120,7 @@ if SERVER then
 			if self.NextSound < Time then
 				self.NextSound = Time + 1
 				self:EmitSound(table.Random(self.TypeInfo[2]), 75, math.random(90, 110))
-				if (math.random(1,2) == 1) then JMod.EmitAIsound(self:GetPos(), 300, .5, 8) end
+				if (math.random(1, 2) == 1) then JMod.EmitAIsound(self:GetPos(), 300, .5, 8) end
 			end
 
 			if self.NextEffect < Time then
@@ -141,7 +142,7 @@ if SERVER then
 				end
 
 				local FireNearby = false
-				local ActualRange = math.max(self.Range * (self.Intensity^.2), self.Range)
+				local ActualRange = math.max(self.Range * (Fraction^.2), self.Range)
 
 				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
@@ -150,7 +151,8 @@ if SERVER then
 							local LeftTillMax = (self.TypeInfo[5] * 2) - self.Intensity
 							local Taken = math.min(v.Intensity or 0, LeftTillMax)
 							self.Intensity = self.Intensity + Taken
-							v.Intensity = v.Intensity - Taken
+							--v.Intensity = v.Intensity - Taken
+							v:Remove()
 						end
 					end
 
@@ -161,6 +163,7 @@ if SERVER then
 					end
 
 					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
+						self.Power = Fraction * 2
 						local Dam = DamageInfo()
 						Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
 						Dam:SetDamageType(DMG_BURN)
@@ -172,7 +175,7 @@ if SERVER then
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
 						elseif (v:IsOnFire() == false) and (math.random(1, 30) == 1) then
-							v:Ignite(math.random(8, 12))
+							v:Ignite(math.random(8, 12) * Fraction, 0)
 						end
 					end
 				end
@@ -187,7 +190,7 @@ if SERVER then
 					self:Remove()
 				end
 
-				self.Intensity = math.Clamp(self.Intensity - .5, 0, self.TypeInfo[5] * 2)
+				self.Intensity = math.Clamp(self.Intensity - math.Rand(0.2, 0.5), 0, self.TypeInfo[5] * 2)
 			end
 		end
 
@@ -267,20 +270,20 @@ elseif CLIENT then
 			self.CastLight = HighVis
 			self.HighVisuals = HighVis
 		end
-		--[[
+		
 		if self.HighVisuals then
 			if self.NextFizz < Time then
 				self.NextFizz = Time + .5
 
-				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
+				--[[if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
 					local Zap = EffectData()
 					Zap:SetOrigin(Pos)
+					Zap:SetScale(1)
 					Zap:SetStart(self:GetVelocity())
 					util.Effect(self.TypeInfo[3], Zap, true, true)
-				end
+				end--]]
 			end
 		end
-		]]--
 		if self.CastLight and not(GAMEMODE.Lagging) and not(vFireInstalled) then
 			local dlight = DynamicLight(self:EntIndex())
 

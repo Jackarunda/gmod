@@ -376,6 +376,7 @@ if(SERVER)then
 					Foof:SetScale(2)
 					Foof:SetStart(SprayAngle:Forward() * 600)
 					Foof:SetOrigin(FirePos - SprayAngle:Forward() * 100)
+					Foof:SetAttachment(0)
 					util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
 				end
 
