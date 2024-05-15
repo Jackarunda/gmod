@@ -2869,6 +2869,7 @@ end
 
 function JMod.LoadDepositConfig(configID, forceMap)
 	if not configID then print("No valid ID") return end
+	configID = tostring(configID)
 	local MapName = game.GetMap()
 	if forceMap then
 		MapName = forceMap
@@ -2878,6 +2879,14 @@ function JMod.LoadDepositConfig(configID, forceMap)
 	
 	if FileContents then
 		local MapConfig = util.JSONToTable(FileContents) or {}
+
+		--PrintTable(MapConfig)
+		for k, v in pairs(MapConfig) do
+			if not(isstring(k)) then
+				MapConfig[tostring(k)] = v
+				MapConfig[k] = nil
+			end
+		end
 
 		if MapConfig[configID] then
 			local NewResourceTable = {}
@@ -2897,7 +2906,7 @@ function JMod.LoadDepositConfig(configID, forceMap)
 			return NewResourceTable
 		else
 			--PrintTable(MapConfig) -- Debug
-			return "JMod: Map name and/or config ID don't exsist"
+			return "JMod: Resource config ID " .. "jmod_resources_"..MapName..".txt \'" .. configID .."\' doesn't exsist"
 		end
 	else 
 		return "jmod_resources_"..MapName..".txt is missing or corrupt"
@@ -2906,6 +2915,7 @@ end
 
 function JMod.SaveDepositConfig(configID)
 	if not isstring(configID) then print("No valid ID") return end
+	configID = tostring(configID)
 	local MapName = game.GetMap()
 
 	local FileContents = file.Read("jmod_resources_"..MapName..".txt")
@@ -2929,9 +2939,30 @@ function JMod.SaveDepositConfig(configID)
 	end
 	Existing[configID] = NewResourceTable
 	file.Write("jmod_resources_"..MapName..".txt", util.TableToJSON(Existing))
-	print("JMod: Saved resource layout")
+	print("JMod: Saved resource layout to: " .. "jmod_resources_"..MapName..".txt" .. " with ID: " .. configID)
 	--PrintTable(Existing)
 end
+
+hook.Add("PersistenceSave", "JMOD_SaveDepositConfig", function(persistenceString) 
+	JMod.SaveDepositConfig(persistenceString)
+end)
+
+hook.Add("PersistenceLoad", "JMOD_LoadDepositConfig", function(persistenceString) 
+	local Info = JMod.LoadDepositConfig(persistenceString)
+
+	if type(Info) == "string" then
+		print(Info)
+		return
+	else
+		if SERVER and GetConVar("sv_cheats"):GetBool() == true then
+			JMod.NaturalResourceTable = Info
+			net.Start("JMod_NaturalResources")
+				net.WriteBool(false)
+				net.WriteTable(Info)
+			net.Broadcast()
+		end
+	end
+end)
 
 hook.Add("Initialize", "JMOD_Initialize", function()
 	if SERVER then
