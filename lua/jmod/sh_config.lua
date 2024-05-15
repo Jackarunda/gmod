@@ -2944,11 +2944,11 @@ function JMod.SaveDepositConfig(configID)
 end
 
 hook.Add("PersistenceSave", "JMOD_SaveDepositConfig", function(persistenceString) 
-	JMod.SaveDepositConfig(persistenceString)
+	JMod.SaveDepositConfig("Persistant" .. persistenceString)
 end)
 
 hook.Add("PersistenceLoad", "JMOD_LoadDepositConfig", function(persistenceString) 
-	local Info = JMod.LoadDepositConfig(persistenceString)
+	local Info = JMod.LoadDepositConfig("Persistant" .. persistenceString)
 
 	if type(Info) == "string" then
 		print(Info)
