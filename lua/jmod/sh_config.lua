@@ -2943,11 +2943,13 @@ function JMod.SaveDepositConfig(configID)
 	--PrintTable(Existing)
 end
 
-hook.Add("PersistenceSave", "JMOD_SaveDepositConfig", function(persistenceString) 
+hook.Add("PersistenceSave", "JMOD_SaveDepositConfig", function(persistenceString)
+	if not persistenceString then return end
 	JMod.SaveDepositConfig("Persistant" .. persistenceString)
 end)
 
-hook.Add("PersistenceLoad", "JMOD_LoadDepositConfig", function(persistenceString) 
+hook.Add("PersistenceLoad", "JMOD_LoadDepositConfig", function(persistenceString)
+	if not persistenceString then return end
 	local Info = JMod.LoadDepositConfig("Persistant" .. persistenceString)
 
 	if type(Info) == "string" then
