@@ -86,15 +86,19 @@ if(SERVER)then
 		end
 	end
 
+	local function ENT:StartSoundLoop()
+		self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
+		self.SoundLoop:SetSoundLevel(60)
+		self.SoundLoop:Play()
+	end
+
 	function ENT:TurnOn(activator)
 		if self:GetState() ~= STATE_OFF then return end
 		if self.EZinstalled then
 			if (self:GetElectricity() > 0) and (self.DepositKey) then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
-				self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
-				self.SoundLoop:SetSoundLevel(60)
-				self.SoundLoop:Play()
+				self:StartSoundLoop()
 				self:SetProgress(0)
 			else
 				JMod.Hint(activator, "nopower")
@@ -186,6 +190,8 @@ if(SERVER)then
 
 					return
 				end
+
+				if not self.SoundLoop then self:StartSoundLoop() end
 
 				-- This is just the rate at which we drill
 				local GradeModifier = JMod.EZ_GRADE_BUFFS[self:GetGrade()]
