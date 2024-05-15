@@ -86,7 +86,7 @@ if(SERVER)then
 		end
 	end
 
-	local function ENT:StartSoundLoop()
+	function ENT:StartSoundLoop()
 		self.SoundLoop = CreateSound(self, "snd_jack_betterdrill1.wav")
 		self.SoundLoop:SetSoundLevel(60)
 		self.SoundLoop:Play()
