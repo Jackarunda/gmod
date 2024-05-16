@@ -183,7 +183,7 @@ function SWEP:Hitscan()
 	local HitSomething = false 
 	
 	for i = 0, 170 do
-		timer.Simple(i * (0.4/170), function() 
+		timer.Simple(i * (0.04/170), function() 
 			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
 
 			local tr = util.TraceLine( {
@@ -192,20 +192,24 @@ function SWEP:Hitscan()
 				filter = self.Owner,
 				mask = MASK_SHOT_HULL
 			} )
+			debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
 
 			if (tr.Hit) then
+				debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
 				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
 				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 				HitSomething = true 
 
-				local PickDam = DamageInfo()
-				PickDam:SetAttacker(self.Owner)
-				PickDam:SetInflictor(self)
-				PickDam:SetDamagePosition(StrikePos)
-				PickDam:SetDamageType(DMG_GENERIC)
-				PickDam:SetDamage(math.random(30, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
-				tr.Entity:TakeDamageInfo(PickDam)
+				if IsValid(tr.Entity) then
+					local PickDam = DamageInfo()
+					PickDam:SetAttacker(self.Owner)
+					PickDam:SetInflictor(self)
+					PickDam:SetDamagePosition(StrikePos)
+					PickDam:SetDamageType(DMG_GENERIC)
+					PickDam:SetDamage(math.random(30, 50))
+					PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
+					tr.Entity:TakeDamageInfo(PickDam)
+				end
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 
