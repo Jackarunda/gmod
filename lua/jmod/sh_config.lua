@@ -2991,10 +2991,10 @@ hook.Add("JMod_CanKitBuild", "JMOD_KitBuildReqs", function(playa, toolbox, build
 		end
 
 		if not(playa.EZropeData) or not IsValid(playa.EZropeData.Ent) then
-			playa.EZropeData = {Pos = RopeTr.HitPos, Ent = RopeTr.Entity}
+			playa.EZropeData = {Pos = RopeTr.Entity:WorldToLocal(RopeTr.HitPos), Ent = RopeTr.Entity}
 			return false, "Cable started"
 		end
 
-		return true, "Cable finished", math.Round(playa.EZropeData.Pos:Distance(RopeTr.HitPos) / RopeCostList[buildInfo.results])
+		return true, "Cable finished", math.Round(playa.EZropeData.Ent:LocalToWorld(playa.EZropeData.Pos):Distance(RopeTr.HitPos) / RopeCostList[buildInfo.results])
 	end
 end)

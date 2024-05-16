@@ -1210,14 +1210,17 @@ function JMod.Rope(ply, origin, dir, width, strength, mat)
 		if origin and dir then
 			local RopeStartTr = util.QuickTrace(origin, dir * 80)
 			if not(RopeStartTr.Hit) then return end
-			RopeStartData = {Pos = RopeStartTr.HitPos, Ent = RopeStartTr.Entity}
+			RopeStartData = {Pos = RopeStartTr.Entity:WorldToLocal(RopeStartTr.HitPos), Ent = RopeStartTr.Entity}
 		else
+
 			return
 		end
 	end
+
 	local RopeTr = util.QuickTrace(origin or ply:GetShootPos(), (dir or ply:GetAimVector()) * 80, {ply})
-	local LropePos1, LropePos2 = ply.EZropeData.Ent:WorldToLocal(RopeStartData.Pos), RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
-	local Dist = RopeStartData.Pos:Distance(RopeTr.HitPos)
+	local LropePos1, LropePos2 = ply.EZropeData.Pos, RopeTr.Entity:WorldToLocal(RopeTr.HitPos)
+	local Dist = ply.EZropeData.Ent:LocalToWorld(RopeStartData.Pos):Distance(RopeTr.HitPos)
+
 	local Rope, Vrope = constraint.Rope(ply.EZropeData.Ent, RopeTr.Entity, 0, 0, LropePos1, LropePos2, Dist, 0, strength or 5000, width or 2, mat or "cable/cable2", false)
 	return Rope, RopeTr.Entity
 end
