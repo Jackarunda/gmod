@@ -95,8 +95,8 @@ SWEP.WElements = {
 }
 
 --
-SWEP.HitDistance		= 50
-SWEP.HitInclination		= 0.4
+SWEP.HitDistance		= 45
+SWEP.HitInclination		= 0.3
 SWEP.HitPushback		= 1000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
@@ -162,7 +162,16 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + 1.2)
 	self:SetNextSecondaryFire(CurTime() + .8)
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(true)
+	end
+
 	local Hit = self:Hitscan()
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(false)
+	end
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
@@ -175,11 +184,33 @@ end
 function SWEP:Hitscan()
 	if not SERVER then return end
 	--This function calculate the trajectory
+
+	local ShootPos = self.Owner:GetShootPos()
+	local Angles = self.Owner:EyeAngles()
 	
+	local Bone = self.Owner:LookupBone("ValveBiped.Bip01_R_Hand")
+	if Bone then
+		local Matty = self.Owner:GetBoneMatrix(Bone)
+		Angles = Matty:GetAngles()
+		Angles:RotateAroundAxis(Angles:Forward(), 190)
+		Angles:RotateAroundAxis(Angles:Right(), 10)
+		--Angles:RotateAroundAxis(Angles:Up(), 10)
+		ShootPos = Matty:GetTranslation()
+	end
+	local AngForward, AngRight, AngUp = Angles:Forward(), Angles:Right(), Angles:Up()
+	--debugoverlay.Line(ShootPos, ShootPos + AngUp * 100, 2, Color(255, 251, 0), false)
+	local Offset = AngUp * 10
+	if Bone then
+		Offset = AngRight * 1
+	end
+
 	for i = 0, 170 do
+		local ShootCos = math.cos(math.rad(i))
+		local ShootSin = math.sin(math.rad(i))
+		--print(i, ShootCos, ShootSin)
 		local tr = util.TraceLine( {
-			start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
-			endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
+			start = (ShootPos - Offset),
+			endpos = (ShootPos - Offset) + (AngUp * (self.HitDistance * 0.8 * ShootCos)) + (AngForward * (self.HitDistance * 1.2 * ShootSin)) + (AngRight * self.HitInclination * self.HitDistance * 1 * ShootCos) + AngRight * -10,
 			filter = self.Owner,
 			mask = MASK_SHOT_HULL
 		})
@@ -187,7 +218,7 @@ function SWEP:Hitscan()
 
 		if (tr.Hit) then
 			debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
-			local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
+			local StrikeVector = (AngUp * (self.HitDistance * 0.5 * ShootCos)) + (AngForward * (self.HitDistance * 1.5 * ShootSin)) + (AngRight * self.HitInclination * self.HitDistance * ShootCos)
 			local StrikePos = tr.HitPos--(self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 
 			timer.Simple((i * 0.4/170) + 0.1, function() 
@@ -256,15 +287,11 @@ function SWEP:Msg(msg)
 	self.Owner:PrintMessage(HUD_PRINTCENTER, msg)
 end
 
---,"fists_uppercut"} -- the uppercut looks so bad
-local Anims = {"misscenter1", "hitcenter1"}--{"fists_right", "fists_right", "fists_left", "fists_left"}
+local Anims = {"misscenter1", "hitcenter1"}
 
 function SWEP:Pawnch(hit)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
-	--vm:SendViewModelMatchingSequence(vm:LookupSequence(table.Random(Anims)))
-	--jprint(not(hit) and "false" or "true")
-	--jprint(vm:LookupSequence("hitcenter1"))
 	if hit then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("hitcenter1"))
 	else

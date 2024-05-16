@@ -96,7 +96,7 @@ SWEP.WElements = {
 
 --
 SWEP.HitDistance		= 64
-SWEP.HitInclination		= 0.4
+SWEP.HitInclination		= 0.2
 SWEP.HitPushback		= 2000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
@@ -162,14 +162,24 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + 1)
 	self:SetNextSecondaryFire(CurTime() + .8)
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(true)
+	end
+
 	local Hit = self:Hitscan()
+	self:Pawnch(Hit)
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(false)
+	end
+
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
 		end
 	end)
-	self:Pawnch(Hit)
 end
 
 local DirtTypes = {
@@ -183,7 +193,7 @@ function SWEP:Hitscan()
 	local HitSomething = false 
 	
 	for i = 0, 170 do
-		timer.Simple(i * (0.04/170), function() 
+		timer.Simple(i * (0.45/170), function() 
 			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
 
 			local tr = util.TraceLine( {
