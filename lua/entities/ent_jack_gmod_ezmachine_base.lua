@@ -620,6 +620,7 @@ if(SERVER)then
 				ent.NextUseTime = Time + 1
 			end
 			if ent.SoundLoop then
+				self.SoundLoop:Stop()
 				self.SoundLoop = nil
 			end
 			if ent.OnPostEntityPaste then

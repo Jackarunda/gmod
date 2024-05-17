@@ -124,6 +124,14 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 		invEnt.JModInv = nil
 	end
 
+	if invEnt:IsPlayer() then 
+		net.Start("JMod_ItemInventory")
+			net.WriteEntity(invEnt)
+			net.WriteString("update")
+			net.WriteTable(invEnt.JModInv)
+		net.Send(invEnt)
+	end
+
 	return RemovedItems
 end
 

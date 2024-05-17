@@ -1537,7 +1537,11 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		invEnt = LocalPlayer()
 	end
 
-	invEnt.JModInv = newInv
+	if newInv and istable(newInv) then
+		invEnt.JModInv = newInv
+	end
+
+	if not (command or isstring(command)) then return end
 
 	if command == "open_menu" then
 		local frame = vgui.Create("DFrame")
