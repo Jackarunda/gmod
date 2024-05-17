@@ -205,20 +205,25 @@ function SWEP:Hitscan()
 	end
 
 	for i = 0, 170 do
+		if not (i % 10 == 0) then continue end
+
 		local ShootCos = math.cos(math.rad(i))
 		local ShootSin = math.sin(math.rad(i))
+		local SwingDir = (AngUp * (self.HitDistance * 0.8 * ShootCos)) + (AngForward * (self.HitDistance * 1.3 * ShootSin)) + (AngRight * self.HitInclination * self.HitDistance * 1 * ShootCos) + AngRight * -10
 		--print(i, ShootCos, ShootSin)
 		local tr = util.TraceLine( {
 			start = (ShootPos - Offset),
-			endpos = (ShootPos - Offset) + (AngUp * (self.HitDistance * 0.8 * ShootCos)) + (AngForward * (self.HitDistance * 1.2 * ShootSin)) + (AngRight * self.HitInclination * self.HitDistance * 1 * ShootCos) + AngRight * -10,
+			endpos = (ShootPos - Offset) + SwingDir,
 			filter = self.Owner,
 			mask = MASK_SHOT_HULL
 		})
 		debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
+		local PickLength = 10
+		debugoverlay.Line(tr.HitPos, tr.HitPos + (AngUp * PickLength * ShootCos) + (AngForward * PickLength * ShootSin) + (AngRight * self.HitInclination * 1 * ShootCos), 2, Color(255, 166, 0), false)
 
 		if (tr.Hit) then
 			debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
-			local StrikeVector = (AngUp * (self.HitDistance * 0.5 * ShootCos)) + (AngForward * (self.HitDistance * 1.5 * ShootSin)) + (AngRight * self.HitInclination * self.HitDistance * ShootCos)
+			local StrikeVector = SwingDir
 			local StrikePos = tr.HitPos--(self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 
 			timer.Simple((i * 0.4/170) + 0.1, function() 
