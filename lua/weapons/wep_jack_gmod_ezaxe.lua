@@ -7,7 +7,7 @@ JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezaxe")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 SWEP.EZdroppable = true
 SWEP.ViewModel = "models/weapons/HL2meleepack/v_axe.mdl"
 SWEP.WorldModel = "models/props_forest/axe.mdl"
@@ -84,177 +84,34 @@ function SWEP:Initialize()
 	self.NextIdle = 0
 	self:Deploy()
 	self:SetTaskProgress(0)
-	self.TaskEntity = nil
 	self.NextTaskProgress = 0
-	self.CurTask = nil
-	self.CurrentBuildSize = 1
+	self:SetSwinging(false)
+	self.SwingProgress = 1
 end
-
-function SWEP:PreDrawViewModel(vm, wep, ply)
-	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
-end
-
-function SWEP:ViewModelDrawn()
-	--self:SCKViewModelDrawn()
-end
-
-function SWEP:DrawWorldModel()
-	self:SCKDrawWorldModel()
-end
-
-local Downness = 0
-
-function SWEP:GetViewModelPosition(pos, ang)
-	local FT = FrameTime()
-
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		Downness = Lerp(FT * 2, Downness, 5)
-	else
-		Downness = Lerp(FT * 2, Downness, -2)
-	end
-
-	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
-
-	return pos, ang
-end--]]
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
-end
-
-function SWEP:UpdateNextIdle()
-	local vm = self.Owner:GetViewModel()
-	self.NextIdle = CurTime() + vm:SequenceDuration()
+	self:NetworkVar("Bool", 0, "Swinging")
 end
 
 function SWEP:PrimaryAttack()
-	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:SetNextPrimaryFire(CurTime() + .9)
+	local Owner = self:GetOwner()
+	if Owner:KeyDown(IN_SPEED) then return end
+	if self:GetSwinging() then return end
+	self:SetNextPrimaryFire(CurTime() + 1.1)
 	self:SetNextSecondaryFire(CurTime() + 1)
 
-	local IsPlaya = self.Owner:IsPlayer()
+	local IsPlaya = Owner:IsPlayer()
 	if (IsPlaya) then
-		self:GetOwner():LagCompensation(true)
+		Owner:LagCompensation(true)
 	end
-
-	timer.Simple(0.1, function()
-		if IsValid(self) then
-			self:EmitSound( SwingSound )
-			local Hit = self:Hitscan()
-		end
-	end)
 
 	self:Pawnch()
+	self:SetSwinging(true)
+	self.SwingProgress = -100
+
 	if (IsPlaya) then
-		self:GetOwner():LagCompensation(false)
-	end
-end
-
-local FleshTypes = {
-	MAT_ANTLION,
-	MAT_FLESH,
-	MAT_BLOODYFLESH,
-	MAT_FLESH,
-	MAT_ALIENFLESH
-}
-
-function SWEP:Hitscan()
-	if not SERVER then return end
-	--This function calculate the trajectory
-	local HitSomething = false 
-
-	for i = 0, 170 do
-		timer.Simple(i * (0.35/170), function() 
-			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething or (i % 5 ~= 0) then return end
-
-			local tr = util.TraceLine( {
-				start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
-				endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) ),
-				filter = self.Owner,
-				mask = MASK_SHOT_HULL
-			} )
-
-			debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
-
-			if ( tr.Hit ) then
-				HitSomething = true
-				debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
-
-				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
-				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
-
-				local PickDam = DamageInfo()
-				PickDam:SetAttacker(self.Owner)
-				PickDam:SetInflictor(self)
-				PickDam:SetDamagePosition(tr.HitPos)
-				PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
-				PickDam:SetDamage(math.random(35, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
-
-				if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") then
-					sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
-					tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
-					self:SetTaskProgress(0)
-					--
-					local vPoint = (tr.HitPos)
-					local effectdata = EffectData()
-					effectdata:SetOrigin( vPoint )
-					util.Effect( "BloodImpact", effectdata )
-					--
-				elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
-					local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
-					if Mesg then
-						self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
-						self:SetTaskProgress(0)
-					else
-						self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
-						PickDam:SetDamage(0)
-					end
-				elseif JMod.IsDoor(tr.Entity) then
-					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
-					self:SetTaskProgress(0)
-				else
-					sound.Play(HitSoundWorld, tr.HitPos, 10, math.random(75, 100), 1)
-				end
-
-				tr.Entity:TakeDamageInfo(PickDam)
-
-				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
-				util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, self.Owner})
-				return true
-			end
-		end)
-	end
-end
-
-function SWEP:TryBustDoor(ent, dmg, pos)
-	if not self.DoorBreachPower then return end
-	self.NextDoorShot = self.NextDoorShot or 0
-	if self.NextDoorShot > CurTime() then return end
-	local ArccWDoorBust = GetConVar("arccw_doorbust")
-	if (ArccWDoorBust and ArccWDoorBust:GetInt() == 0) or not(IsValid(ent)) or not(JMod.IsDoor(ent)) then return end
-	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
-	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
-	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
-	-- Magic number: 119.506 is the size of door01_left
-	-- The bigger the door is, the harder it is to bust
-	local threshold = ((ArccWDoorBust and GetConVar("arccw_doorbust_threshold"):GetInt()) or 1) * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
-	JMod.Hint(self.Owner, "shotgun breach")
-	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
-	local Amt = dmg * self.DoorBreachPower * WorkSpread
-	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
-	if ent.ArcCW_BustDamage > threshold then
-		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-		ent.ArcCW_BustDamage = nil
-
-		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
-		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-			if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
-				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
-				otherDoor.ArcCW_BustDamage = nil
-				break
-			end
-		end
+		Owner:LagCompensation(false)
 	end
 end
 
@@ -263,16 +120,21 @@ function SWEP:Msg(msg)
 end
 
 function SWEP:Pawnch()
+	if not IsFirstTimePredicted() then return end
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = self.Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
 	self:UpdateNextIdle()
 end
 
+function SWEP:UpdateNextIdle()
+	local vm = self.Owner:GetViewModel()
+	self.NextIdle = CurTime() + vm:SequenceDuration()
+end
+
 function SWEP:Reload()
 	--
 end
-
 
 function SWEP:WhomIlookinAt()
 	local Filter = {self.Owner}
@@ -287,7 +149,7 @@ function SWEP:WhomIlookinAt()
 end
 
 function SWEP:SecondaryAttack()
-	self:SetNextPrimaryFire(CurTime() + .9)
+	self:SetNextPrimaryFire(CurTime() + 1)
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	--self:EmitSound( SwingSound )
@@ -392,16 +254,59 @@ function SWEP:Deploy()
 		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
 	end
 
-	self:SetNextPrimaryFire(CurTime() + .5)
-	self:SetNextSecondaryFire(CurTime() + .5)
+	local Delay = vm:SequenceDuration(vm:LookupSequence("draw"))
+	self:SetNextPrimaryFire(CurTime() + Delay)
+	self:SetNextSecondaryFire(CurTime() + Delay)
 
 	return true
 end
+
+local FleshTypes = {
+	MAT_ANTLION,
+	MAT_FLESH,
+	MAT_BLOODYFLESH,
+	MAT_FLESH,
+	MAT_ALIENFLESH
+}
+
+function SWEP:TryBustDoor(ent, dmg, pos)
+	if not self.DoorBreachPower then return end
+	self.NextDoorShot = self.NextDoorShot or 0
+	if self.NextDoorShot > CurTime() then return end
+	local ArccWDoorBust = GetConVar("arccw_doorbust")
+	if (ArccWDoorBust and ArccWDoorBust:GetInt() == 0) or not(IsValid(ent)) or not(JMod.IsDoor(ent)) then return end
+	if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
+	if ent:GetPos():Distance(self:GetPos()) > 150 then return end -- ugh, arctic, lol
+	self.NextDoorShot = CurTime() + .05 -- we only want this to run once per shot
+	-- Magic number: 119.506 is the size of door01_left
+	-- The bigger the door is, the harder it is to bust
+	local threshold = ((ArccWDoorBust and GetConVar("arccw_doorbust_threshold"):GetInt()) or 1) * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+	JMod.Hint(self.Owner, "shotgun breach")
+	local WorkSpread = JMod.CalcWorkSpreadMult(ent, pos) ^ 1.1
+	local Amt = dmg * self.DoorBreachPower * WorkSpread
+	ent.ArcCW_BustDamage = (ent.ArcCW_BustDamage or 0) + Amt
+	if ent.ArcCW_BustDamage > threshold then
+		JMod.BlastThatDoor(ent, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+		ent.ArcCW_BustDamage = nil
+
+		-- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
+		for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
+			if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
+				JMod.BlastThatDoor(otherDoor, (ent:LocalToWorld(ent:OBBCenter()) - self:GetPos()):GetNormalized() * 100)
+				otherDoor.ArcCW_BustDamage = nil
+				break
+			end
+		end
+	end
+end
+
+local MaxSwingProgress = 120
 
 function SWEP:Think()
 	local Time = CurTime()
 	local vm = self.Owner:GetViewModel()
 	local idletime = self.NextIdle
+	local Swing = self:GetSwinging()
 
 	if idletime > 0 and Time > idletime then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("idle0"))
@@ -409,23 +314,112 @@ function SWEP:Think()
 	end
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+		self.SwingProgress = 0
+		self:SetSwinging(false)
 		self:SetHoldType("slam")
 	else
 		self:SetHoldType("melee2")
+		if Swing then
+			if self.SwingProgress < MaxSwingProgress then
+				self.SwingProgress = self.SwingProgress + (MaxSwingProgress * 0.05)
 
-		if self.Owner:KeyDown(IN_ATTACK2) then
-			if self.NextTaskProgress < Time then
-				self.NextTaskProgress = Time + .8
-				local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
-				local Task = "mining"
-				local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, {self.Owner})
-				local Ent, Pos = Tr.Entity, Tr.HitPos
+				if SERVER and self.SwingProgress >= 0 then
+					local p = self.SwingProgress
+					--if (p % 5 ~= 0) then return end
+
+					local tr = util.TraceLine( {
+						start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
+						endpos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)) + ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.7 * math.cos(math.rad(p)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(p)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(p)) ),
+						filter = self.Owner,
+						mask = MASK_SHOT_HULL
+					} )
+
+					debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
+
+					if ( tr.Hit ) then
+						self:SetSwinging(false)
+						debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
+
+						local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(p)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(p)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(p)) )
+						local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
+
+						local PickDam = DamageInfo()
+						PickDam:SetAttacker(self.Owner)
+						PickDam:SetInflictor(self)
+						PickDam:SetDamagePosition(tr.HitPos)
+						PickDam:SetDamageType(DMG_CLUB + DMG_SLASH)
+						PickDam:SetDamage(math.random(35, 50))
+						PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
+
+						if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") then
+							sound.Play(HitSoundBody, tr.HitPos, 75, 100, 1)
+							tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
+							self:SetTaskProgress(0)
+							--
+							local vPoint = (tr.HitPos)
+							local effectdata = EffectData()
+							effectdata:SetOrigin( vPoint )
+							util.Effect( "BloodImpact", effectdata )
+							--
+						elseif ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
+							local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, self.Owner, "salvage")
+							if Mesg then
+								self.Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
+								self:SetTaskProgress(0)
+							else
+								self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
+								PickDam:SetDamage(0)
+							end
+						elseif JMod.IsDoor(tr.Entity) then
+							self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
+							self:SetTaskProgress(0)
+						else
+							sound.Play(HitSoundWorld, tr.HitPos, 10, math.random(75, 100), 1)
+						end
+
+						tr.Entity:TakeDamageInfo(PickDam)
+
+						sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
+						util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, self.Owner})
+					end
+				end
+			else
+				self:SetSwinging(false)
+				self.SwingProgress = 0
 			end
-		elseif not self.Owner:KeyDown(IN_ATTACK) then
-			self:SetTaskProgress(0)
+		else
+			self.SwingProgress = 0
 		end
 	end
 end
+
+function SWEP:PreDrawViewModel(vm, wep, ply)
+	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+end
+
+function SWEP:ViewModelDrawn()
+	--self:SCKViewModelDrawn()
+end
+
+function SWEP:DrawWorldModel()
+	self:SCKDrawWorldModel()
+end
+
+local Downness = 0
+
+function SWEP:GetViewModelPosition(pos, ang)
+	local FT = FrameTime()
+
+	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+		Downness = Lerp(FT * 2, Downness, 5)
+	else
+		Downness = Lerp(FT * 2, Downness, -2)
+	end
+
+	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
+
+	return pos, ang
+end--]]
 
 local LastProg = 0
 
