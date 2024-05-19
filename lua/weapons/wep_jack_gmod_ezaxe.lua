@@ -67,12 +67,12 @@ SWEP.WElements = {
 }
 
 --
-SWEP.HitDistance		= 45
+SWEP.HitDistance		= 50
 SWEP.HitInclination		= 0.4
 SWEP.HitPushback		= 2000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
-local HitSoundWorld = Sound( "Metal.ImpactHard" )
+local HitSoundWorld = Sound( "SolidMetal.ImpactHard" )
 local HitSoundBody = Sound( "Flesh.ImpactHard" )
 local PushSoundBody = Sound( "Flesh.ImpactSoft" )
 --
@@ -129,15 +129,25 @@ end
 
 function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:SetNextPrimaryFire(CurTime() + .8)
-	self:SetNextSecondaryFire(CurTime() + .7)
+	self:SetNextPrimaryFire(CurTime() + .9)
+	self:SetNextSecondaryFire(CurTime() + 1)
+
+	local IsPlaya = self.Owner:IsPlayer()
+	if (IsPlaya) then
+		self:GetOwner():LagCompensation(true)
+	end
+
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
 			local Hit = self:Hitscan()
 		end
 	end)
+
 	self:Pawnch()
+	if (IsPlaya) then
+		self:GetOwner():LagCompensation(false)
+	end
 end
 
 local FleshTypes = {
@@ -154,8 +164,8 @@ function SWEP:Hitscan()
 	local HitSomething = false 
 
 	for i = 0, 170 do
-		timer.Simple(i * (0.4/170), function() 
-			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
+		timer.Simple(i * (0.35/170), function() 
+			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething or (i % 5 ~= 0) then return end
 
 			local tr = util.TraceLine( {
 				start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
@@ -164,10 +174,11 @@ function SWEP:Hitscan()
 				mask = MASK_SHOT_HULL
 			} )
 
-			--This if shot the bullets
+			debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
 
 			if ( tr.Hit ) then
 				HitSomething = true
+				debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
 
 				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
 				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
@@ -203,7 +214,7 @@ function SWEP:Hitscan()
 					self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
 					self:SetTaskProgress(0)
 				else
-					sound.Play("Metal.ImpactHard", tr.HitPos, 10, math.random(75, 100), 1)
+					sound.Play(HitSoundWorld, tr.HitPos, 10, math.random(75, 100), 1)
 				end
 
 				tr.Entity:TakeDamageInfo(PickDam)
@@ -276,8 +287,8 @@ function SWEP:WhomIlookinAt()
 end
 
 function SWEP:SecondaryAttack()
-	self:SetNextPrimaryFire(CurTime() + .8)
-	self:SetNextSecondaryFire(CurTime() + .7)
+	self:SetNextPrimaryFire(CurTime() + .9)
+	self:SetNextSecondaryFire(CurTime() + 1)
 
 	--self:EmitSound( SwingSound )
 

@@ -1250,6 +1250,13 @@ if SERVER then
 						table.sort(Resources, function(a, b) return a.siz > b.siz end)
 						JMod.NaturalResourceTable = Resources
 						print("JMOD: resource generation finished with " .. #Resources .. " resource deposits")
+
+						if GetConVar("sv_cheats"):GetBool() then
+							net.Start("JMod_NaturalResources")
+								net.WriteBool(false)
+								net.WriteTable(JMod.NaturalResourceTable)
+							net.Broadcast()
+						end
 					elseif i % 1000 == 0 then
 						print("JMOD: " .. math.Round(i / MaxTries * 100) .. "%")
 					end

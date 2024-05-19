@@ -140,8 +140,8 @@ concommand.Add("jmod_deposits_load", function(ply, cmd, args)
 	else
 		JMod.NaturalResourceTable = Info
 		net.Start("JMod_NaturalResources")
-		net.WriteBool(false)
-		net.WriteTable(JMod.NaturalResourceTable)
+			net.WriteBool(false)
+			net.WriteTable(JMod.NaturalResourceTable)
 		net.Send(ply)
 	end
 end, nil, "Loads a specified deposit layout, first argument is layout ID, second is map name. \n Only use second argument to force load from a differnt map")

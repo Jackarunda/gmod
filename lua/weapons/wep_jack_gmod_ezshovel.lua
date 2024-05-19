@@ -96,7 +96,7 @@ SWEP.WElements = {
 
 --
 SWEP.HitDistance		= 64
-SWEP.HitInclination		= 0.4
+SWEP.HitInclination		= 0.2
 SWEP.HitPushback		= 2000
 
 local SwingSound = Sound( "Weapon_Crowbar.Single" )
@@ -162,14 +162,24 @@ function SWEP:PrimaryAttack()
 	if self.Owner:KeyDown(IN_SPEED) then return end
 	self:SetNextPrimaryFire(CurTime() + 1)
 	self:SetNextSecondaryFire(CurTime() + .8)
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(true)
+	end
+
 	local Hit = self:Hitscan()
+	self:Pawnch(Hit)
+
+	if (self:GetOwner():IsPlayer()) then
+		self:GetOwner():LagCompensation(false)
+	end
+
 	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
 		end
 	end)
-	self:Pawnch(Hit)
 end
 
 local DirtTypes = {
@@ -183,8 +193,8 @@ function SWEP:Hitscan()
 	local HitSomething = false 
 	
 	for i = 0, 170 do
-		timer.Simple(i * (0.4/170), function() 
-			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
+		timer.Simple(i * (0.45/170), function() 
+			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething or HitSomething or (i % 5 ~= 0) then return end
 
 			local tr = util.TraceLine( {
 				start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
@@ -192,20 +202,24 @@ function SWEP:Hitscan()
 				filter = self.Owner,
 				mask = MASK_SHOT_HULL
 			} )
+			debugoverlay.Line(tr.StartPos, tr.HitPos, 2, Color(255, 38, 0), false)
 
 			if (tr.Hit) then
+				debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
 				local StrikeVector = ( self.Owner:EyeAngles():Up() * ( self.HitDistance * 0.5 * math.cos(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Forward() * ( self.HitDistance * 1.5 * math.sin(math.rad(i)) ) ) + ( self.Owner:EyeAngles():Right() * self.HitInclination * self.HitDistance * math.cos(math.rad(i)) )
 				local StrikePos = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 15))
 				HitSomething = true 
 
-				local PickDam = DamageInfo()
-				PickDam:SetAttacker(self.Owner)
-				PickDam:SetInflictor(self)
-				PickDam:SetDamagePosition(StrikePos)
-				PickDam:SetDamageType(DMG_GENERIC)
-				PickDam:SetDamage(math.random(30, 50))
-				PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
-				tr.Entity:TakeDamageInfo(PickDam)
+				if IsValid(tr.Entity) then
+					local PickDam = DamageInfo()
+					PickDam:SetAttacker(self.Owner)
+					PickDam:SetInflictor(self)
+					PickDam:SetDamagePosition(StrikePos)
+					PickDam:SetDamageType(DMG_GENERIC)
+					PickDam:SetDamage(math.random(30, 50))
+					PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
+					tr.Entity:TakeDamageInfo(PickDam)
+				end
 
 				sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 
