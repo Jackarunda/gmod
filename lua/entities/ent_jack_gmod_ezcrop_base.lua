@@ -85,7 +85,7 @@ if(SERVER)then
 			phys:Wake()
 			phys:SetMass(self.Mass)
 		end
-		self.DamageTypeTable = JMod.TreeArmorTable
+		self.DamageModifierTable = JMod.TreeArmorTable
 		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.WOOD] = 100}
 		self.MaxWater = 100
 
@@ -163,7 +163,7 @@ if(SERVER)then
 
 	function ENT:DetermineDamageMultiplier(dmg)
 		local Mult = .5 / (self.Armor or 1)
-		for typ, mul in pairs(self.DamageTypeTable)do
+		for typ, mul in pairs(self.DamageModifierTable)do
 			if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
 		end
 		if(self.CustomDetermineDmgMult)then Mult = Mult * self:CustomDetermineDmgMult(dmg) end

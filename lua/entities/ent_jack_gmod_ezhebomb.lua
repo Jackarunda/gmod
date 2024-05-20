@@ -182,7 +182,7 @@ if SERVER then
 		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 120)
 
 		timer.Simple(.25, function()
-			util.BlastDamage(game.GetWorld(), Att, SelfPos, 1600, 120)
+			util.BlastDamage(game.GetWorld(), JMod.GetEZowner(self), SelfPos, 1600, 120)
 		end)
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 500)) do

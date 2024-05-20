@@ -194,7 +194,7 @@ function SWEP:Hitscan()
 	
 	for i = 0, 170 do
 		timer.Simple(i * (0.45/170), function() 
-			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething then return end
+			if not(IsValid(self)) or not(IsValid(self.Owner)) or HitSomething or HitSomething or (i % 5 ~= 0) then return end
 
 			local tr = util.TraceLine( {
 				start = (self.Owner:GetShootPos() - (self.Owner:EyeAngles():Up() * 10)),
