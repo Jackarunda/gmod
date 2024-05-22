@@ -6,6 +6,7 @@ ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = ""
 ENT.Spawnable = true
+ENT.AdminOnly = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/radioisotope-powergenerator.mdl"
 --
@@ -126,7 +127,7 @@ if(SERVER)then
 	end
 
 	function ENT:OnDestroy()
-		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 30 do
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 15 do
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas.Range = 500
