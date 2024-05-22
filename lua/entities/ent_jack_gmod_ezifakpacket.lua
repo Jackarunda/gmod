@@ -56,8 +56,9 @@ if SERVER then
 			activator.EZhealth = activator.EZhealth or 0
 			local Missing = Max - (Helf + activator.EZhealth)
 			if Missing > 0 then
-				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
+				local AddAmt = math.min(Missing, 15 * JMod.Config.Tools.Medkit.HealMult)
 				activator.EZhealth = activator.EZhealth + AddAmt
+				JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES, self:LocalToWorld(self:OBBCenter()), nil, 1)
 				--
 				self:Remove()
 			end
