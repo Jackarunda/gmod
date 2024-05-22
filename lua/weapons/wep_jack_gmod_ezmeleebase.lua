@@ -43,6 +43,9 @@ SWEP.PrimaryAttackSpeed = 1
 SWEP.SecondaryAttackSpeed 	= 1
 SWEP.DoorBreachPower 	= 1
 --
+SWEP.SprintCancel 	= true
+SWEP.StrongSwing 	= false
+--
 SWEP.SwingSound 	= Sound( "Weapon_Crowbar.Single" )
 SWEP.HitSoundWorld 	= Sound( "SolidMetal.ImpactHard" )
 SWEP.HitSoundBody 	= Sound( "Flesh.ImpactHard" )
@@ -71,7 +74,7 @@ end
 
 function SWEP:PrimaryAttack()
 	local Owner = self:GetOwner()
-	if Owner:KeyDown(IN_SPEED) then return end
+	if self.SprintCancel and Owner:KeyDown(IN_SPEED) then return end
 	if self:GetSwinging() then return end
 
 	self:SetNextPrimaryFire(CurTime() + 1.1)
@@ -82,7 +85,13 @@ function SWEP:PrimaryAttack()
 		Owner:LagCompensation(true)
 	end
 
-	self:EmitSound(self.SwingSound)
+	local SwingSound = self.SwingSound
+	if SwingSound then
+		if istable(SwingSound) then
+			SwingSound = SwingSound[math.random(#SwingSound)]
+		end
+		self:EmitSound(SwingSound)
+	end
 	self:Pawnch()
 	self:SetSwinging(true)
 	self.SwingProgress = -self.SwingPullback
@@ -98,6 +107,7 @@ function SWEP:Pawnch()
 	Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
+	Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
 	self:UpdateNextIdle()
 end
 
@@ -147,7 +157,11 @@ function SWEP:Think()
 		self:UpdateNextIdle()
 	end
 
-	if (Owner:KeyDown(IN_SPEED)) or (Owner:KeyDown(IN_ZOOM)) then
+	if self.CustomThink then
+		self:CustomThink()
+	end
+
+	if (self.SprintCancel and not self.StrongSwing) and (Owner:KeyDown(IN_SPEED)) or (Owner:KeyDown(IN_ZOOM)) then
 		self.SwingProgress = 0
 		self:SetSwinging(false)
 		self:SetHoldType(self.SprintHoldType)
@@ -164,31 +178,17 @@ function SWEP:Think()
 
 					local SwingPos = Owner:GetShootPos()
 					local SwingAng = Owner:EyeAngles()
-
-					--local Bone = Owner:LookupBone("ValveBiped.Bip01_R_Hand")
-					if Bone then
-						local Matty = Owner:GetBoneMatrix(Bone)
-						SwingPos = Matty:GetTranslation()
-						--SwingAng = Matty:GetAngles()
-						--SwingAng:RotateAroundAxis(SwingAng:Forward(), 180)
-					else
-						--
-					end
-
 					SwingAng:RotateAroundAxis(SwingAng:Forward(), 45)
 					SwingAng:RotateAroundAxis(SwingAng:Right(), math.deg(SwingCos))
 					SwingAng:RotateAroundAxis(SwingAng:Up(), 8)
 
 					local SwingUp, SwingForward, SwingRight = SwingAng:Up(), SwingAng:Forward(), SwingAng:Right()
 					
-					local Offset = SwingRight * 10 + SwingForward * SwingSin * 10
-					if Bone then
-						Offset = SwingRight * 0
-					end
+					local Offset = SwingRight * 12 + SwingForward * SwingSin * 15 + SwingUp * -5
 
 					local tr = util.TraceLine( {
 						start = (SwingPos + Offset),
-						endpos = (SwingPos + Offset) + SwingForward * self.HitDistance,
+						endpos = (SwingPos + Offset) + SwingForward * self.HitDistance + SwingRight * -self.HitInclination,
 						filter = Owner,
 						mask = MASK_SHOT_HULL
 					})
@@ -199,12 +199,22 @@ function SWEP:Think()
 						self:SetSwinging(false)
 						debugoverlay.Cross(tr.HitPos, 10, 2, Color(255, 38, 0), true)
 
+						if self.FinishSwing then
+							self:FinishSwing(self.SwingProgress)
+						end
+
 						if self.OnHit then
 							self:OnHit(p, tr)
 						end
 
 						if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(), "npc") then
-							sound.Play(self.HitSoundBody, tr.HitPos, 75, 100, 1)
+							local BodySound = self.HitSoundBody
+							if BodySound then
+								if istable(BodySound) then
+									BodySound = BodySound[math.random(#BodySound)]
+								end
+								sound.Play(BodySound, tr.HitPos, 10, math.random(75, 100), 1)
+							end
 							tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 							self:SetTaskProgress(0)
 							--
@@ -214,11 +224,25 @@ function SWEP:Think()
 							util.Effect( "BloodImpact", effectdata )
 							--
 						else
-							sound.Play(self.HitSoundWorld, tr.HitPos, 10, math.random(75, 100), 1)
+							local WorldSound = self.HitSoundWorld
+							if WorldSound then
+								if istable(WorldSound) then
+									WorldSound = WorldSound[math.random(#WorldSound)]
+								end
+								sound.Play(WorldSound, tr.HitPos, 10, math.random(75, 100), 1)
+							end
+						end
+						
+						local ImpactSound = util.GetSurfaceData(tr.SurfaceProps).impactHardSound
+						if (ImpactSound) then
+							sound.Play(ImpactSound, tr.HitPos, 75, 100, 1)
 						end
 					end
 				end
 			else
+				if self.FinishSwing then
+					self:FinishSwing(self.SwingProgress)
+				end
 				self:SetSwinging(false)
 				self.SwingProgress = 0
 			end

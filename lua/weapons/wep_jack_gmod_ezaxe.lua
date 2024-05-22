@@ -59,10 +59,13 @@ SWEP.HitInclination		= 0.4
 SWEP.HitPushback		= 2000
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1
-SWEP.SwingPullback 		= 100
+SWEP.SwingPullback 		= 90
 SWEP.PrimaryAttackSpeed = 1
 SWEP.SecondaryAttackSpeed 	= 1
 SWEP.DoorBreachPower 	= 2
+--
+SWEP.SprintCancel 	= true
+SWEP.StrongSwing 	= true
 --
 SWEP.SwingSound 	= Sound( "Weapon_Crowbar.Single" )
 SWEP.HitSoundWorld 	= Sound( "SolidMetal.ImpactHard" )
@@ -75,13 +78,21 @@ SWEP.SprintHoldType = "melee2"
 
 function SWEP:CustomInit()
 	self:SetTaskProgress(0)
-	self.NextTaskProgress = 0
+	self.NextTaskTime = 0
 	self:SetSwinging(false)
 	self.SwingProgress = 1
 end
 
 function SWEP:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "TaskProgress")
+end
+
+function SWEP:CustomThink()
+	local Time = CurTime()
+	if self.NextTaskTime < Time then
+		self:SetTaskProgress(0)
+		self.NextTaskTime = Time + 1.5
+	end
 end
 
 local FleshTypes = {
@@ -94,20 +105,20 @@ local FleshTypes = {
 
 function SWEP:OnHit(swingProgress, tr)
 	local Owner = self:GetOwner()
-	local SwingCos = math.cos(math.rad(swingProgress))
-	local SwingSin = math.sin(math.rad(swingProgress))
+	--local SwingCos = math.cos(math.rad(swingProgress))
+	--local SwingSin = math.sin(math.rad(swingProgress))
 	local SwingAng = Owner:EyeAngles()
 	local SwingPos = Owner:GetShootPos()
 	local StrikeVector = tr.HitNormal
 	local StrikePos = (SwingPos - (SwingAng:Up() * 15))
 
-	local PickDam = DamageInfo()
-	PickDam:SetAttacker(Owner)
-	PickDam:SetInflictor(self)
-	PickDam:SetDamagePosition(tr.HitPos)
-	PickDam:SetDamageType(DMG_SLASH)
-	PickDam:SetDamage(math.random(35, 50))
-	PickDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
+	local AxeDam = DamageInfo()
+	AxeDam:SetAttacker(Owner)
+	AxeDam:SetInflictor(self)
+	AxeDam:SetDamagePosition(tr.HitPos)
+	AxeDam:SetDamageType(DMG_SLASH)
+	AxeDam:SetDamage(math.random(35, 50))
+	AxeDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
 
 	if ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
 		local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, Owner, "salvage")
@@ -116,17 +127,23 @@ function SWEP:OnHit(swingProgress, tr)
 			self:SetTaskProgress(0)
 		else
 			self:SetTaskProgress(tr.Entity:GetNW2Float("EZsalvageProgress", 0))
-			PickDam:SetDamage(0)
+			AxeDam:SetDamage(0)
 		end
 	elseif JMod.IsDoor(tr.Entity) then
 		self:TryBustDoor(tr.Entity, math.random(35, 50), tr.HitPos)
 		self:SetTaskProgress(0)
+	else
+		self:SetTaskProgress(0)
 	end
 
-	tr.Entity:TakeDamageInfo(PickDam)
+	tr.Entity:TakeDamageInfo(AxeDam)
 
 	sound.Play(util.GetSurfaceData(tr.SurfaceProps).impactHardSound, tr.HitPos, 75, 100, 1)
 	util.Decal("ManhackCut", tr.HitPos + tr.HitNormal * 10, tr.HitPos - tr.HitNormal * 10, {self, Owner})
+end
+
+function SWEP:FinishSwing(swingProgress)
+	self:SetTaskProgress(0)
 end
 
 local Downness = 0
