@@ -198,7 +198,7 @@ if SERVER then
 
 		for i = 1, 50 do
 			timer.Simple(i / 150, function()
-				sound.Play("ambient/machines/thumper_hit.wav", SelfPos + VectorRand() * math.random(1, 1000), 140, math.random(120, 130))
+				sound.Play("ambient/machines/thumper_hit.ogg", SelfPos + VectorRand() * math.random(1, 1000), 140, math.random(120, 130))
 			end)
 		end
 

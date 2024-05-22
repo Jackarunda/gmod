@@ -97,11 +97,11 @@ SWEP.MeleeTime = .5
 SWEP.MeleeDelay = .3
 SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 
-SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav", "physics/metal/weapon_impact_hard2.wav", "physics/metal/weapon_impact_hard3.wav"}
+SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.ogg", "physics/metal/weapon_impact_hard2.ogg", "physics/metal/weapon_impact_hard3.ogg"}
 
-SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav", "physics/body/body_medium_impact_hard3.wav", "physics/body/body_medium_impact_hard4.wav", "physics/body/body_medium_impact_hard5.wav", "physics/body/body_medium_impact_hard6.wav"}
+SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.ogg", "physics/body/body_medium_impact_hard3.ogg", "physics/body/body_medium_impact_hard4.ogg", "physics/body/body_medium_impact_hard5.ogg", "physics/body/body_medium_impact_hard6.ogg"}
 
-SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.ogg"
 SWEP.MeleeVolume = 65
 SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"
@@ -127,7 +127,7 @@ hook.Add("InitPostEntity", "JMod_ArcCW_InitPostEntity", function()
 	if not ArcCW then return end
 
 	-- the default arccw ricochet sounds are fucking deafening
-	ArcCW.RicochetSounds = {"weapons/arccw/ricochet01_quiet.wav", "weapons/arccw/ricochet02_quiet.wav", "weapons/arccw/ricochet03_quiet.wav", "weapons/arccw/ricochet04_quiet.wav", "weapons/arccw/ricochet05_quiet.wav"}
+	ArcCW.RicochetSounds = {"weapons/arccw/ricochet01_quiet.ogg", "weapons/arccw/ricochet02_quiet.ogg", "weapons/arccw/ricochet03_quiet.ogg", "weapons/arccw/ricochet04_quiet.ogg", "weapons/arccw/ricochet05_quiet.ogg"}
 end)
 
 -- arccw hooks to do extra stuff --
@@ -272,14 +272,14 @@ local WDir, StabilityStamina, BreathStatus = VectorRand(), 100, false
 local function FocusIn(wep)
 	if not BreathStatus then
 		BreathStatus = true
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_in.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_in.ogg")
 	end
 end
 
 local function FocusOut(wep)
 	if BreathStatus then
 		BreathStatus = false
-		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_out.wav")
+		surface.PlaySound("snds_jack_gmod/ez_weapons/focus_out.ogg")
 	end
 end
 

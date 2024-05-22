@@ -37,7 +37,7 @@ if SERVER then
 			end
 
 			for i = 1, 2 do
-				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", pos + VectorRand() * 1000, 140, math.random(90, 110))
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", pos + VectorRand() * 1000, 140, math.random(90, 110))
 			end
 
 			timer.Simple(.1, function()

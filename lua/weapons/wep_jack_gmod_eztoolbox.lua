@@ -339,7 +339,7 @@ function SWEP:BuildItem(selectedBuild)
 				if IsValid(self) then
 					if i < BuildSteps then
 						if Sound then
-							sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+							sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", Pos, 60, math.random(80, 120))
 						end
 					else
 						local Class = BuildInfo.results
@@ -639,7 +639,7 @@ function SWEP:TryLoadResource(typ, amt)
 			
 			if Take > 0 then
 				self:SetEZsupplies(typ, CurAmt + Take)
-				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				sound.Play("snds_jack_gmod/gas_load.ogg", self:GetPos(), 65, math.random(90, 110))
 				Accepted = Take
 			end
 		end
@@ -670,8 +670,8 @@ function SWEP:UpgradeEffect(pos, scale, suppressSound)
 	util.Effect("Sparks", effectdata, true, true)
 
 	if not suppressSound then
-		sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
-		sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", pos, 60, math.random(80, 120))
+		sound.Play("snds_jack_gmod/ez_tools/hit.ogg", pos + VectorRand(), 60, math.random(80, 120))
+		sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", pos, 60, math.random(80, 120))
 	end
 end
 
@@ -765,7 +765,7 @@ function SWEP:Deploy()
 	if IsValid(vm) and vm.LookupSequence then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
 		self:UpdateNextIdle()
-		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	if SERVER then
@@ -829,8 +829,8 @@ function SWEP:Think()
 							self:Msg(Message)
 						else
 							self:Pawnch()
-							sound.Play("snds_jack_gmod/ez_tools/hit.wav", Pos + VectorRand(), 60, math.random(50, 70))
-							sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".wav", Pos, 65, math.random(90, 110))
+							sound.Play("snds_jack_gmod/ez_tools/hit.ogg", Pos + VectorRand(), 60, math.random(50, 70))
+							sound.Play("snds_jack_gmod/ez_dismantling/" .. math.random(1, 10) .. ".ogg", Pos, 65, math.random(90, 110))
 							if SERVER then
 								JMod.Hint(self.Owner, "work spread")
 								self:SetTaskProgress(Ent:GetNW2Float("EZ"..Task.."Progress", 0))

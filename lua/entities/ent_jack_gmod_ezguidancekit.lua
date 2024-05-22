@@ -51,10 +51,10 @@ if SERVER then
 		end
 
 		if data.HitEntity.EZguidable and not data.HitEntity:GetGuided() and self:IsPlayerHolding() then
-			self:EmitSound("snd_jack_metallicload.wav", 60, math.random(90, 110))
+			self:EmitSound("snd_jack_metallicload.ogg", 60, math.random(90, 110))
 
 			for i = 1, 5 do
-				self:EmitSound("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", 60, math.random(90, 110))
+				self:EmitSound("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", 60, math.random(90, 110))
 			end
 
 			data.HitEntity:SetGuided(true)

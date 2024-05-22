@@ -106,7 +106,7 @@ if SERVER then
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
 			self.LastWateredTime = Time
-			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+			self:EmitSound("snds_jack_gmod/liquid_load.ogg", 60, math.random(120, 130))
 		end
 		return math.ceil(Accepted)
 	end
@@ -124,7 +124,7 @@ if SERVER then
 			Pop:SetPos(self:GetPos())
 			Pop:Spawn()
 			Pop:Activate()
-			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
 			self.NoMorePop = true
 			SafeRemoveEntityDelayed(self, 0)
 		end
@@ -183,7 +183,7 @@ if SERVER then
 				Pop:SetPos(self:GetPos())
 				Pop:Spawn()
 				Pop:Activate()
-				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+				self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
 				SafeRemoveEntityDelayed(self, 0)
 			end
 		elseif State == STATE_BURIED then

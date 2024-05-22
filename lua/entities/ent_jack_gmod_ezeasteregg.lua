@@ -52,7 +52,7 @@ if SERVER then
 		timer.Simple(.5, function()
 			if (IsValid(activator) and activator:Alive()) then
 				if JMod.ConsumeNutrients(activator, math.random(1, 15)) then
-					activator:EmitSound("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", 60, math.random(90, 110))
+					activator:EmitSound("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", 60, math.random(90, 110))
 				end
 				local Wep = activator:GetActiveWeapon()
 				if IsValid(Wep) and Wep.GetPrimaryAmmoType and Wep.GetMaxClip1 then
@@ -68,7 +68,7 @@ if SERVER then
 	function ENT:Break()
 		if (self.Opened) then return end
 		self.Opened = true
-		sound.Play("snds_jack_gmod/easter_egg_break.wav", self:GetPos() + Vector(0, 0, 40), 60, math.random(80, 120))
+		sound.Play("snds_jack_gmod/easter_egg_break.ogg", self:GetPos() + Vector(0, 0, 40), 60, math.random(80, 120))
 		self:SetBodygroup(1, 1)
 		self:GetPhysicsObject():ApplyForceCenter(Vector(0, 0, 1000))
 		self:GetPhysicsObject():AddAngleVelocity(VectorRand() * 100)
