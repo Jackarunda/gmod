@@ -53,7 +53,7 @@ if SERVER then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(10)
-		self.Durability = self.Durability or self.Specs.dur
+		self.Durability = self.Durability or self.Specs.dur or 1
 
 		if self.Specs.chrg then
 			self.ArmorCharges = self.ArmorCharges or table.FullCopy(self.Specs.chrg)

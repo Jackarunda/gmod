@@ -995,7 +995,7 @@ local SpriteResourceTypes = {JMod.EZ_RESOURCE_TYPES.GAS, JMod.EZ_RESOURCE_TYPES.
 
 function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpeed)
 	--print("Type: " .. tostring(typ) .. " From point: " .. tostring(fromPoint) .. " Amount: " .. amt)
-	amt = (amt and math.min(amt, 1)) or 1
+	amt = (amt and math.Clamp(amt, 0, 1)) or 1
 	spread = spread or 1
 	scale = scale or 1
 	upSpeed = upSpeed or 0
@@ -1008,7 +1008,7 @@ function JMod.ResourceEffect(typ, fromPoint, toPoint, amt, spread, scale, upSpee
 
 	for j = 0, 2 * amt do
 		timer.Simple(j / 20, function()
-			for i = 1, math.ceil(7 * amt * JMod.Config.Machines.SupplyEffectMult) do
+			for i = 1, math.ceil(amt * JMod.Config.Machines.SupplyEffectMult) do
 				local whee = EffectData()
 				whee:SetOrigin(fromPoint)
 				if toPoint then
