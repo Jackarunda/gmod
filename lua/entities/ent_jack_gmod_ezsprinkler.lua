@@ -170,6 +170,14 @@ if(SERVER)then
 		end
 	end
 
+	function ENT:IsEntInFieldOfView(ent)
+		if not IsValid(ent) then return false end
+		local SelfPos, EntPos = self:GetPos(), ent:GetPos()
+		if not (ent:GetPos().z <= SelfPos.z + 64) then return false end
+		--if (SelfPos - EntPos):GetNormalized():Dot(self:GetForward()) <= 0 then return false end
+		if JMod.ClearLoS(self, v, false, 34) then return true end
+	end
+
 	local ThinkRate = 60/12 --Hz
 	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
 
@@ -186,7 +194,7 @@ if(SERVER)then
 				local WaterConsumptionAmt = 4 * WaterConversionSpeed
 
 				for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRange)) do
-					if IsValid(v) and (v:GetPos().z <= SelfPos.z + 64) and JMod.ClearLoS(self, v, false, 34) then
+					if self:IsEntInFieldOfView(v) then
 						if v:IsOnFire() then v:Extinguish() end
 						if EntsToRemove[v:GetClass()] and math.random(1, 3) >= 2 then
 							SafeRemoveEntity(v)
