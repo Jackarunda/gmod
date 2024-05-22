@@ -32,10 +32,10 @@ if SERVER then
 		----------------------Kycea contribution Begin----------------------
 		timer.Simple(0, function()
 			if IsValid(Ragdoll) then
-				for i = 0, Ragdoll:GetPhysicsObjectCount() do
-					local Phys = Ragdoll:GetPhysicsObjectNum(i)
+				for i = 1, Ragdoll:GetPhysicsObjectCount() do
+					local Phys = Ragdoll:GetPhysicsObjectNum(i - 1)
 					if (Phys) and IsValid(Phys)then
-						local pos, ang = Ply:GetBonePosition(Ply:TranslatePhysBoneToBone(i))
+						local pos, ang = Ply:GetBonePosition(Ply:TranslatePhysBoneToBone(i - 1))
 						Phys:SetPos(pos)
 						Phys:SetVelocity(Ply:GetVelocity())
 						Phys:SetAngles(ang)
