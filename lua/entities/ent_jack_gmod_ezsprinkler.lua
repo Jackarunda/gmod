@@ -299,7 +299,8 @@ if(SERVER)then
 		if not IsValid(ent) then return false end
 		local SelfPos, EntPos = self:GetPos(), ent:GetPos()
 		if not (ent:GetPos().z <= SelfPos.z + 64) then return false end
-		--if (SelfPos - EntPos):GetNormalized():Dot(self:GetForward()) <= 0 then return false end
+		local TargetAngle = self:WorldToLocal(EntPos):Angle().y
+		if (TargetAngle > (360 - self.Rotation.Max)) then return false end
 		if JMod.ClearLoS(self, v, false, 34) then return true end
 	end
 
