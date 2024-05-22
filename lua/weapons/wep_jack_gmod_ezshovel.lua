@@ -173,7 +173,11 @@ function SWEP:OnHit(swingProgress, tr)
 end
 
 function SWEP:FinishSwing(swingProgress)
-	self:SetTaskProgress(0)
+	if swingProgress >= self.MaxSwingAngle then
+		self:SetTaskProgress(0)
+	else
+		self.NextTaskTime = CurTime() + 3
+	end
 end
 
 if CLIENT then
