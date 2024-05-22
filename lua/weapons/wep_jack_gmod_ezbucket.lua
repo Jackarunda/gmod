@@ -161,14 +161,14 @@ function SWEP:PrimaryAttack()
 			local SelfWater = self:GetWater()
 			if bit.band(util.PointContents(WaterTr.HitPos + Vector(0, 0, -4)), CONTENTS_WATER) == CONTENTS_WATER then
 				self:SetWater(math.Clamp(SelfWater + 50, 0, self.MaxWater))
-				sound.Play("snds_jack_gmod/liquid_load.wav", ShootPos, 90, math.random(90, 110), 1)
+				sound.Play("snds_jack_gmod/liquid_load.ogg", ShootPos, 90, math.random(90, 110), 1)
 			elseif IsValid(WaterTr.Entity) and WaterTr.Entity.GetEZsupplies then
 				local TheirWater = WaterTr.Entity:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER)
 				if TheirWater and (TheirWater > 0) then
 					local WaterToTake = math.Clamp(TheirWater, 0, self.MaxWater - SelfWater)
 					self:SetWater(math.Clamp(SelfWater + WaterToTake, 0, self.MaxWater))
 					WaterTr.Entity:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER, TheirWater - WaterToTake, self)
-					sound.Play("snds_jack_gmod/liquid_load.wav", ShootPos, 90, math.random(90, 110), 1)
+					sound.Play("snds_jack_gmod/liquid_load.ogg", ShootPos, 90, math.random(90, 110), 1)
 				end
 			end
 		end
@@ -210,17 +210,17 @@ function SWEP:SecondaryAttack()
 			if IsValid(SpawnTr.Entity) and SpawnTr.Entity:IsOnFire() then
 				self:SetWater(Water - math.random(2, 3))
 				SpawnTr.Entity:Extinguish()
-				sound.Play("snds_jack_gmod/hiss.wav", SpawnTr.HitPos, 100, math.random(90, 100))
+				sound.Play("snds_jack_gmod/hiss.ogg", SpawnTr.HitPos, 100, math.random(90, 100))
 			elseif IsValid(SpawnTr.Entity) and SpawnTr.Entity.TryLoadResource then
 				local WaterUsed = SpawnTr.Entity:TryLoadResource(JMod.EZ_RESOURCE_TYPES.WATER, Water)
 				if WaterUsed > 0 then
 					self:SetWater(math.Clamp(Water - WaterUsed, 0, self.MaxWater))
-					sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+					sound.Play("snds_jack_gmod/liquid_load.ogg", SpawnTr.HitPos, 90, math.random(90, 110), 1)
 				end
 			else
 				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.WATER, Water, self:WorldToLocal(SpawnTr.HitPos), SpawnTr.Normal:Angle(), self:WorldToLocal(self.Owner:GetShootPos() + self.Owner:GetAimVector() * 10))
 				self:SetWater(0)
-				sound.Play("snds_jack_gmod/liquid_load.wav", SpawnTr.HitPos, 90, math.random(90, 110), 1)
+				sound.Play("snds_jack_gmod/liquid_load.ogg", SpawnTr.HitPos, 90, math.random(90, 110), 1)
 			end
 		end
 	end
@@ -300,7 +300,7 @@ function SWEP:Deploy()
 	if IsValid(vm) and vm.LookupSequence then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
 		self:UpdateNextIdle()
-		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	if SERVER then

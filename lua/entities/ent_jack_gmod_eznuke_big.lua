@@ -97,7 +97,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -147,7 +147,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/nuke_arm.wav", 70, 80)
+				self:EmitSound("snds_jack_gmod/nuke_arm.ogg", 70, 80)
 				self.EZdroppableBombArmedTime = CurTime()
 				JMod.Hint(activator, "dualdet")
 			else
@@ -160,7 +160,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 100)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 100)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
@@ -190,7 +190,7 @@ if SERVER then
 		for i = 0, 100 do
 			timer.Simple(i / 10, function()
 				for k, playa in player.Iterator() do
-					playa:EmitSound("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", 60, 80 - i / 2)
+					playa:EmitSound("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", 60, 80 - i / 2)
 				end
 			end)
 		end

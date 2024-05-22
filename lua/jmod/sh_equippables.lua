@@ -240,7 +240,7 @@ elseif SERVER then
 			ply.EZequippables[slot] = nil
 		end
 
-		ply:EmitSound("snds_jack_gmod/equip" .. math.random(1, 5) .. ".wav", 60, math.random(90, 110))
+		ply:EmitSound("snds_jack_gmod/equip" .. math.random(1, 5) .. ".ogg", 60, math.random(90, 110))
 		SyncEquippables(ply)
 	end
 

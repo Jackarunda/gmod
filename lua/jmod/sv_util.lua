@@ -70,7 +70,7 @@ function JMod.EZ_WeaponLaunch(ply)
 
 	if IsValid(FirstWep) then
 		-- knock knock it's pizza time
-		FirstWep:EmitSound("buttons/button6.wav", 75, 110)
+		FirstWep:EmitSound("buttons/button6.ogg", 75, 110)
 
 		timer.Simple(.2, function()
 			if IsValid(FirstWep) then
@@ -116,7 +116,7 @@ function JMod.EZ_BombDrop(ply)
 
 	if IsValid(FirstBom) then
 		-- knock knock it's pizza time
-		FirstBom:EmitSound("buttons/button6.wav", 75, 120)
+		FirstBom:EmitSound("buttons/button6.ogg", 75, 120)
 
 		timer.Simple(.25, function()
 			if IsValid(FirstBom) then
@@ -141,7 +141,7 @@ function JMod.DamageSpark(ent)
 	effectdata:SetScale(math.Rand(.5, 1.5)) --length of strands
 	effectdata:SetRadius(math.Rand(2, 4)) --thickness of strands
 	util.Effect("Sparks", effectdata, true, true)
-	ent:EmitSound("snd_jack_turretfizzle.wav", 70, 100)
+	ent:EmitSound("snd_jack_turretfizzle.ogg", 70, 100)
 end
 
 -- copied from Homicide
@@ -609,7 +609,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	elseif ApproachAngle < (MaxRicAngle * .95) then
 		-- ping whiiiizzzz
 		if SERVER then
-			sound.Play("snds_jack_gmod/ricochet_" .. math.random(1, 2) .. ".wav", IPos, 60, math.random(90, 100))
+			sound.Play("snds_jack_gmod/ricochet_" .. math.random(1, 2) .. ".ogg", IPos, 60, math.random(90, 100))
 		end
 
 		local NewVec = AVec:Angle()
@@ -1083,7 +1083,7 @@ function JMod.Bolt(ply)
 	Bolt:SetParent(Ent1)
 	Ent1.EZnails = Ent1.EZnails or {}
 	table.insert(Ent1.EZnails, Bolt)
-	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", Pos, 60, math.random(80, 120))
 end
 
 function JMod.FindNailPos(ply, origin, dir)
@@ -1137,7 +1137,7 @@ function JMod.Nail(ply)
 	Nail:SetParent(Ent1)
 	Ent1.EZnails = Ent1.EZnails or {}
 	table.insert(Ent1.EZnails, Nail)
-	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(80, 120))
+	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", Pos, 60, math.random(80, 120))
 end
 
 function JMod.GetPackagableObject(packager, origin, dir)
@@ -1190,12 +1190,12 @@ function JMod.Package(packager)
 
 	if Ent then
 		JMod.PackageObject(Ent)
-		sound.Play("snds_jack_gmod/packagify.wav", packager:GetPos(), 60, math.random(90, 110))
+		sound.Play("snds_jack_gmod/packagify.ogg", packager:GetPos(), 60, math.random(90, 110))
 
 		for i = 1, 3 do
 			timer.Simple(i / 3, function()
 				if IsValid(packager) then
-					sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", packager:GetPos(), 60, math.random(80, 120))
+					sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", packager:GetPos(), 60, math.random(80, 120))
 				end
 			end)
 		end
@@ -1323,7 +1323,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 				ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 
 				if Prog >= 100 then
-					sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 70, math.random(50, 60))
+					sound.Play("snds_jack_gmod/ez_tools/hit.ogg", pos + VectorRand(), 70, math.random(50, 60))
 					constraint.RemoveAll(ent)
 					Phys:EnableMotion(true)
 					Phys:Wake()
@@ -1355,7 +1355,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 					ent:SetNW2Float("EZ"..task.."Progress", math.Clamp(Prog + AddAmt, 0, 100))
 					
 					if Prog >= 100 then
-						sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 70, math.random(50, 60))
+						sound.Play("snds_jack_gmod/ez_tools/hit.ogg", pos + VectorRand(), 70, math.random(50, 60))
 
 						for k, v in pairs(Yield) do
 							local AmtLeft = v
@@ -1486,8 +1486,8 @@ function JMod.BuildEffect(pos)
 	effectdata:SetScale(math.Rand(.5, 1.5) * Scale) --length of strands
 	effectdata:SetRadius(math.Rand(2, 4) * Scale) --thickness of strands
 	util.Effect("Sparks", effectdata,true,true)
-	sound.Play("snds_jack_gmod/ez_tools/hit.wav", pos + VectorRand(), 60, math.random(80, 120))
-	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1, 27)..".wav", pos, 60, math.random(80, 120))
+	sound.Play("snds_jack_gmod/ez_tools/hit.ogg", pos + VectorRand(), 60, math.random(80, 120))
+	sound.Play("snds_jack_gmod/ez_tools/"..math.random(1, 27)..".ogg", pos, 60, math.random(80, 120))
 	local eff = EffectData()
 	eff:SetOrigin(pos + VectorRand())
 	eff:SetScale(Scale)

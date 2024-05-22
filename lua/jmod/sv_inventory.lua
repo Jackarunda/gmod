@@ -324,17 +324,17 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		invEnt = ply
 	end
 
-	--jprint(((invEnt ~= ply) and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".wav"))
+	--jprint(((invEnt ~= ply) and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
 	if command == "take" then
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") return false end
 		if JMod.IsEntContained(target) and (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.AddToInventory(invEnt, target)
-		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothequip.wav"), Tr.HitPos, 60, math.random(90, 110))
+		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "drop" then
 		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
 		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
-		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.wav"), Tr.HitPos, 60, math.random(90, 110))
+		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif (command == "use") or (command == "prime") then
 		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
@@ -355,16 +355,16 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 				end
 			end
 		end
-		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.wav"), Tr.HitPos, 60, math.random(90, 110))
+		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "drop_res" then
 		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, Tr.HitPos + Vector(0, 0, 10), false)
-		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.wav"), Tr.HitPos, 60, math.random(90, 110))
+		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "take_res" then
 		if (Tr.Entity ~= invEnt) then return end
 		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
 		JMod.AddToInventory(ply, {resourceType, amt})
-		sound.Play("snd_jack_clothequip.wav", Tr.HitPos, 60, math.random(90, 110)) --"snds_jack_gmod/equip"..math.random(1, 5)..".wav"
+		sound.Play("snd_jack_clothequip.ogg", Tr.HitPos, 60, math.random(90, 110)) --"snds_jack_gmod/equip"..math.random(1, 5)..".ogg"
 	elseif command == "stow_res" then
 		if (Tr.Entity ~= invEnt) then return end
 		if not JMod.AddToInventory(invEnt, {resourceType, amt}) then
@@ -404,7 +404,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			net.WriteString("open_menu")
 			net.WriteTable(Tar.JModInv)
 		net.Send(ply)
-		sound.Play("snd_jack_clothequip.wav", ply:GetPos(), 50, math.random(90, 110))
+		sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 50, math.random(90, 110))
 	--elseif Tar.IsEZcorpse then
 	elseif not(Tar:IsConstrained()) and ((pickupWhiteList[Tar:GetClass()] and CanPickup(Tar)) or Tar.JModEZstorable or Tar.IsJackyEZresource) then
 		JMod.UpdateInv(ply)
@@ -441,7 +441,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 						ply:SetAnimation(PLAYER_ATTACK1)
 						--
 						JMod.Hint(ply,"hint item inventory add")
-						sound.Play("snd_jack_clothequip.wav", ply:GetPos(), 60, math.random(90, 110))
+						sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 60, math.random(90, 110))
 					end
 				else
 					JMod.Hint(ply,"hint item inventory full")
@@ -472,7 +472,7 @@ concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
 					timer.Simple(0.1, function()
 						if IsValid(item) and (item:GetState() == JMod.EZ_STATE_OFF) then item:Prime() end
 					end)
-					sound.Play("snd_jack_clothunequip.wav", ply:GetShootPos(), 60, math.random(90, 110))
+					sound.Play("snd_jack_clothunequip.ogg", ply:GetShootPos(), 60, math.random(90, 110))
 					return
 				end
 			end

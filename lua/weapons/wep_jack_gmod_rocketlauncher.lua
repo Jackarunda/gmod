@@ -36,9 +36,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/rocket_fire.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.ShakeOnShoot = 1
 SWEP.HoldtypeActive = "rpg"
@@ -94,7 +94,7 @@ SWEP.Animations = {
 				p = 90
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.ogg",
 				t = .15,
 				v = 65
 			},
@@ -104,7 +104,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.ogg",
 				t = .55,
 				v = 65
 			},
@@ -136,7 +136,7 @@ SWEP.Animations = {
 				p = 90
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.ogg",
 				t = .15,
 				v = 65
 			},
@@ -146,7 +146,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.ogg",
 				t = .55,
 				v = 65
 			},
@@ -186,7 +186,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/move1.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/move1.ogg",
 				t = .05,
 				v = 65
 			},
@@ -196,7 +196,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/move2.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/move2.ogg",
 				t = 1,
 				v = 65
 			},
@@ -211,12 +211,12 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/open.ogg",
 				t = 2.6,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.wav",
+				s = "snds_jack_gmod/ez_weapons/rocketlauncher/press.ogg",
 				t = 3,
 				v = 65
 			},

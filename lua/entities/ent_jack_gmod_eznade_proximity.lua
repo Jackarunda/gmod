@@ -36,7 +36,7 @@ if SERVER then
 
 		timer.Simple(1, function()
 			if IsValid(self) then
-				self:EmitSound("snd_jack_minearm.wav", 60, 110)
+				self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 				self:SetState(JMod.EZ_STATE_ARMED)
 			end
 		end)
@@ -58,7 +58,7 @@ if SERVER then
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
 					if JMod.ShouldAttack(self, targ) and self:CanSee(targ) then
 						self:SetState(JMod.EZ_STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+						sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then

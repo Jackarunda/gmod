@@ -70,8 +70,8 @@ if SERVER then
 				self.NextBiteTime = Time + math.Rand(1, 2)
 				timer.Simple(0.1, function()
 					if not(IsValid(self)) or not(IsValid(activator)) then return end
-					sound.Play("npc/headcrab/headbite.wav", self:GetPos(), 120, math.random(90, 110))
-					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+					sound.Play("npc/headcrab/headbite.ogg", self:GetPos(), 120, math.random(90, 110))
+					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", self:GetPos(), 60, math.random(90, 110))
 					local Dmg = DamageInfo()
 					Dmg:SetDamage(math.random(1, 2))
 					Dmg:SetDamageType(DMG_SLASH)
@@ -372,7 +372,7 @@ if SERVER then
 				elseif Objective == "eat" then
 					if Target then
 						Target:Remove()
-						sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+						sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", self:GetPos(), 60, math.random(90, 110))
 						self.Restlessness = self.Restlessness - 10
 					end
 				end
@@ -422,7 +422,7 @@ if SERVER then
 		end
 
 		for i = 1, 10 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
 		end
 
 		---
@@ -454,8 +454,8 @@ if SERVER then
 
 			if (Dist > 1000) and (Dist < 120000) then
 				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 90)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
+					ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 90)
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", ply:GetPos(), 60, 70)
 					util.ScreenShake(ply:GetPos(), 1000, 10, 5, 100)
 				end)
 			end

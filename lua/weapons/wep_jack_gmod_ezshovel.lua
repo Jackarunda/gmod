@@ -174,7 +174,7 @@ function SWEP:PrimaryAttack()
 		self:GetOwner():LagCompensation(false)
 	end
 
-	--sound.Play("weapon/crowbar/crowbar_swing1.wav", self:GetPos(), 75, 100, 1)
+	--sound.Play("weapon/crowbar/crowbar_swing1.ogg", self:GetPos(), 75, 100, 1)
 	timer.Simple(0.1, function()
 		if IsValid(self) then
 			self:EmitSound( SwingSound )
@@ -419,7 +419,7 @@ function SWEP:Deploy()
 	if IsValid(vm) and vm.LookupSequence then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("draw"))
 		self:UpdateNextIdle()
-		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	self:SetNextPrimaryFire(CurTime() + .7)

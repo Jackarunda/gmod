@@ -33,9 +33,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/caplock_handgun.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_pistol"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bpmuzzle"
@@ -107,7 +107,7 @@ SWEP.Animations = {
 		Mult = 1,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/cabr/cock.wav",
+				s = "snds_jack_gmod/ez_weapons/cabr/cock.ogg",
 				t = .7,
 				v = 55
 			},
@@ -130,17 +130,17 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/cabr/pull.wav",
+				s = "snds_jack_gmod/ez_weapons/cabr/pull.ogg",
 				t = .6,
 				v = 55
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/halfcock.ogg",
 				t = 1.5,
 				v = 55
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/cabr/out.wav",
+				s = "snds_jack_gmod/ez_weapons/cabr/out.ogg",
 				t = 2.8,
 				v = 60
 			},
@@ -150,17 +150,17 @@ SWEP.Animations = {
 				v = 55
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/cabr/in.wav",
+				s = "snds_jack_gmod/ez_weapons/cabr/in.ogg",
 				t = 4.15,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/fullcock.ogg",
 				t = 5.4,
 				v = 55
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/cabr/close.wav",
+				s = "snds_jack_gmod/ez_weapons/cabr/close.ogg",
 				t = 5.75,
 				v = 55
 			},

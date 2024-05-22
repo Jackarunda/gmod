@@ -85,13 +85,13 @@ if SERVER then
 		if State == STATE_OFF then
 			if Alt then
 				JMod.SetEZowner(self, activator)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
+				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
 				JMod.Hint(activator, "launch")
 			end
 		elseif State == STATE_ARMED then
-			self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
+			self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
 			self:SetState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self.EZlaunchableWeaponArmedTime = nil
@@ -125,7 +125,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -160,7 +160,7 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+		sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 		local SelfPos, Att = self:GetPos() + Vector(0, 0, 50), JMod.GetEZowner(self)
 		---
@@ -170,7 +170,7 @@ if SERVER then
 				Eff = "500lb_air"
 			end
 			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, 100)
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 80, 100)
 		else
 			local splad = EffectData()
 			splad:SetOrigin(SelfPos)
@@ -181,9 +181,9 @@ if SERVER then
 
 			---
 			for i = 1, 3 do
-				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 80, 100)
-				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 160, 50)
-				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, math.random(80, 110))
+				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 80, 100)
+				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 160, 50)
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 80, math.random(80, 110))
 			end
 		end
 		---

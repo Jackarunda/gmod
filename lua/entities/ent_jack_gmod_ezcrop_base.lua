@@ -294,14 +294,14 @@ if(SERVER)then
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetWater(Aqua+Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				--[[elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
 					local Chem = self:GetChemicals()
 					local Missing = self.MaxChemicals - Chem
 					if(Missing < 1)then return 0 end
 					Accepted = math.min(Missing,amt)
 					self:SetChemicals(Chem + Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.PROPELLENT)then
 					local Wata = self.Hydration
 					local Missing = 100 - Wata
@@ -309,7 +309,7 @@ if(SERVER)then
 					Accepted = math.min(Missing, amt)
 					self.Hydration = Wata + Accepted
 					self.LastWateredTime = Time
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 60, math.random(120, 130))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.EXPLOSIVES)then
 					local Wata = self.Hydration
 					local Missing = 100 - Wata
@@ -317,7 +317,7 @@ if(SERVER)then
 					Accepted = math.min(Missing, amt)
 					self.Hydration = Wata + Accepted
 					self.LastWateredTime = Time
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))--]]
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 60, math.random(120, 130))--]]
 				end
 				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
 				self.NextRefillTime = Time + 1

@@ -364,7 +364,7 @@ if(SERVER)then
 	function ENT:Break(dmginfo)
 		if(self:GetState() == JMod.EZ_STATE_BROKEN)then return end
 		self:SetState(JMod.EZ_STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
@@ -395,7 +395,7 @@ if(SERVER)then
 	function ENT:Destroy(dmginfo)
 		if(self.Destroyed)then return end
 		self.Destroyed = true
-		self:EmitSound("snd_jack_turretbreak.wav",70,math.random(80,120))
+		self:EmitSound("snd_jack_turretbreak.ogg",70,math.random(80,120))
 		for i = 1, 20 do JMod.DamageSpark(self) end
 
 		local StartPoint, ToPoint, Spread, Scale, UpSpeed = self:LocalToWorld(self:OBBCenter()), nil, 2, 1, 10
@@ -424,7 +424,7 @@ if(SERVER)then
 		if(absPath)then
 			sound.Play(str,self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,math.random(90,110))
 		else
-			sound.Play("snds_jack_gmod/"..str..".wav",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
+			sound.Play("snds_jack_gmod/"..str..".ogg",self:GetPos()+Vector(0,0,20)+VectorRand()*10,60,100)
 		end
 	end
 
@@ -432,7 +432,7 @@ if(SERVER)then
 		local Time=CurTime()
 		if(self.NextWhine<Time)then
 			self.NextWhine=Time+4
-			self:EmitSound("snds_jack_gmod/ezsentry_whine.wav",70,100)
+			self:EmitSound("snds_jack_gmod/ezsentry_whine.ogg",70,100)
 			self:ConsumeElectricity(.05)
 		end
 	end
@@ -453,7 +453,7 @@ if(SERVER)then
 					if(Missing <= 0)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetElectricity(Powa + Accepted)
-					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretbatteryload.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES)then
 					local Supps = self:GetSupplies()
 					local Missing = self.MaxSupplies - Supps
@@ -461,14 +461,14 @@ if(SERVER)then
 					--if(Missing<self.MaxSupplies*.1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetSupplies(Supps + Accepted)
-					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110)) -- TODO: new sound here
+					self:EmitSound("snd_jack_turretbatteryload.ogg", 65, math.random(90, 110)) -- TODO: new sound here
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
 					Accepted = math.min(Missing / 2, amt)
 					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
-					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
 					if(self.Durability > 0)then
 						if(self:GetState() == JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
@@ -480,49 +480,49 @@ if(SERVER)then
 					--if(Missing < self.MaxGas * .1)then return 0 end
 					Accepted=math.min(Missing, amt)
 					self:SetGas(Fool + Accepted)
-					self:EmitSound("snds_jack_gmod/gas_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/gas_load.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.AMMO)then
 					local Ammo = self:GetAmmo()
 					local Missing = self.MaxAmmo - Ammo
 					if(Missing <= 1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetAmmo(Ammo + Accepted)
-					self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretammoload.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.MUNITIONS)then
 					local Ammo = self:GetAmmo()
 					local Missing = self.MaxAmmo - Ammo
 					if(Missing <= 1)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetAmmo(Ammo + Accepted)
-					self:EmitSound("snd_jack_turretammoload.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretammoload.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.COOLANT)then
 					local Kewl = self:GetCoolant()
 					local Missing = self.MaxCoolant - Kewl
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetCoolant(Kewl+Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.WATER)then
 					local Aqua = self:GetWater()
 					local Missing = self.MaxWater - Aqua
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetWater(Aqua+Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.CHEMICALS)then
 					local Chem = self:GetChemicals()
 					local Missing = self.MaxChemicals - Chem
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetChemicals(Chem+Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.OIL)then
 					local Oil = self:GetOil()
 					local Missing = self.MaxOil - Oil
 					if(Missing < 1)then return 0 end
 					Accepted=math.min(Missing,amt)
 					self:SetOil(Oil+Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.URANIUM)then
 					local Uran = self:GetUranium()
 					local Missing = self.MaxUranium - Uran
@@ -545,7 +545,7 @@ if(SERVER)then
 						Accepted = math.min(Missing, amt)
 						self:SetFuel(Fuel + Accepted)
 					end
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				elseif(typ==JMod.EZ_RESOURCE_TYPES.COAL)then
 					if (self.FlexFuels and table.HasValue(self.FlexFuels, typ)) then
 						local Powa = self:GetElectricity()

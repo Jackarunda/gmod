@@ -63,10 +63,10 @@ if(SERVER)then
 		end
 		if IsValid(activator) then self.EZstayOn = true end
 		self:SetState(STATE_REFINING)
-		self:EmitSound("snd_jack_littleignite.wav")
+		self:EmitSound("snd_jack_littleignite.ogg")
 		timer.Simple(0.1, function()
 			if(self.SoundLoop)then self.SoundLoop:Stop() end
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.ogg")
 			self.SoundLoop:SetSoundLevel(50)
 			self.SoundLoop:Play()
 			self:SetProgress(0)
@@ -80,7 +80,7 @@ if(SERVER)then
 		self:ProduceResource()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 
-		self:EmitSound("snd_jack_littleignite.wav")
+		self:EmitSound("snd_jack_littleignite.ogg")
 	end
 
 	function ENT:Use(activator)
@@ -114,7 +114,7 @@ if(SERVER)then
 	end
 
 	function ENT:SpawnEffect(pos)
-		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
+		self:EmitSound("snds_jack_gmod/ding.ogg", 80, 120)
 	end
 
 	function ENT:ProduceResource()
@@ -138,7 +138,7 @@ if(SERVER)then
 			end)
 			i = i + 1
 		end
-		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
+		self:EmitSound("snds_jack_gmod/ding.ogg", 80, 120)
 	end
 
 	--[[function ENT:ResourceLoaded(typ, accepted)
@@ -163,7 +163,7 @@ if(SERVER)then
 					Foof:SetScale(10)
 					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
-					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+					self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 100)
 					return 
 				end
 				local Grade = self:GetGrade()

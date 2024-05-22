@@ -16,8 +16,8 @@ att.AdditionalSights = {
 		Ang = Angle(0, 0, 0),
 		Magnification = 1.3,
 		ScrollFunc = ArcCW.SCROLL_NONE,
-		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
-		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
+		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.ogg",
+		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.ogg"
 	}
 }
 

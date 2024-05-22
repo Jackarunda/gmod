@@ -463,7 +463,7 @@ function SWEP:TryLoadResource(typ, amt)
 			
 			if Take > 0 then
 				self:SetEZsupplies(typ, CurAmt + Take)
-				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				sound.Play("snds_jack_gmod/gas_load.ogg", self:GetPos(), 65, math.random(90, 110))
 				Accepted = Take
 			end
 		end
@@ -550,8 +550,8 @@ function SWEP:HealEffect(Ent)
 		Ent:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
 	end
 
-	sound.Play("snds_jack_gmod/ez_medical/hit.wav", Pos + Vector(0, 0, 1), 60, math.random(90, 110))
-	sound.Play("snds_jack_gmod/ez_medical/" .. math.random(1, 27) .. ".wav", Pos, 60, math.random(90, 110))
+	sound.Play("snds_jack_gmod/ez_medical/hit.ogg", Pos + Vector(0, 0, 1), 60, math.random(90, 110))
+	sound.Play("snds_jack_gmod/ez_medical/" .. math.random(1, 27) .. ".ogg", Pos, 60, math.random(90, 110))
 
 	if math.random(1, 2) == 1 then
 		local EffPos = Pos + VectorRand() * 3 - AimVec * 3
@@ -638,7 +638,7 @@ function SWEP:Deploy()
 	if IsValid(vm) then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_draw"))
 		self:UpdateNextIdle()
-		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	self:SetNextPrimaryFire(CurTime() + 1)

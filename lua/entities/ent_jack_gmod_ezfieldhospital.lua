@@ -305,7 +305,7 @@ if(SERVER)then
 					RemoveContamination(self.Patient, 140 * self.HealEfficiency * JMod.Config.Machines.MedBay.HealMult)
 				end
 
-				self:HealEffect("hl1/ambience/steamburst1.wav", true)
+				self:HealEffect("hl1/ambience/steamburst1.ogg", true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER, "decontaminating")
 			elseif gassed then
 				removeDelayedExposure(self.Patient, 3 * self.HealEfficiency * JMod.Config.Machines.MedBay.HealMult, "Mustard")
@@ -317,7 +317,7 @@ if(SERVER)then
 				removeDelayedExposure(self.Patient, 4.5 * self.HealEfficiency * JMod.Config.Machines.MedBay.HealMult, "Phosgene")
 				removeDelayedExposure(self.Patient, .105 * self.HealEfficiency * JMod.Config.Machines.MedBay.HealMult, "Sarin")
 				removeDelayedExposure(self.Patient, .045 * self.HealEfficiency * JMod.Config.Machines.MedBay.HealMult, "VX")
-				self:HealEffect("hl1/ambience/steamburst1.wav", true)
+				self:HealEffect("hl1/ambience/steamburst1.ogg", true)
 				self.Patient:PrintMessage(HUD_PRINTCENTER, "curing poisoning")
 			else
 				if Infection > 1 then

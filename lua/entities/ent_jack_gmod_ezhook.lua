@@ -55,7 +55,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		local Time = CurTime()
 		if Time > self.NextStick and data.DeltaTime > 0.2 and data.Speed > 50 then
-			self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
+			self:EmitSound("snd_jack_claythunk.ogg", 55, math.random(80, 120))
 			if self:IsPlayerHolding() then
 				local Ent = data.HitEntity
 				if (IsValid(Ent) and not(Ent:IsPlayer() or Ent:IsNPC() or Ent:IsNextBot() or Ent == self.EZconnector)) then
@@ -96,7 +96,7 @@ if SERVER then
 								self.StuckStick = Weld
 							end)
 			
-							self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+							self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
 							self:SetState(STATE_HOOKED)
 							self:SetBodygroup(0, 0)
 							DropEntityIfHeld(self)
@@ -140,7 +140,7 @@ if SERVER then
 				self.StuckStick = nil
 				self.StuckTo = nil
 				Dude:PickupObject(self)
-				self:EmitSound("snd_jack_claythunk.wav", 60, 70)
+				self:EmitSound("snd_jack_claythunk.ogg", 60, 70)
 				self:SetState(STATE_UNHOOKED)
 			end
 		else

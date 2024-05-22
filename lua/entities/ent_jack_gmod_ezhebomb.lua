@@ -93,7 +93,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -125,7 +125,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 110)
+				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 110)
 				self.EZdroppableBombArmedTime = CurTime()
 				JMod.Hint(activator, "impactdet")
 			else
@@ -138,7 +138,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 110)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 110)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
@@ -162,7 +162,7 @@ if SERVER then
 		end
 
 		for i = 1, 3 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
 		end
 
 		---
@@ -171,8 +171,8 @@ if SERVER then
 
 			if (Dist > 250) and (Dist < 4000) then
 				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 110)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
+					ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 110)
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", ply:GetPos(), 60, 70)
 					util.ScreenShake(ply:GetPos(), 1000, 3, 1, 100)
 				end)
 			end

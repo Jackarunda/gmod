@@ -7,7 +7,7 @@ ENT.Spawnable = false
 ENT.AdminSpawnable = false
 ENT.Model = "models/shells/shell_gndspoon.mdl"
 ENT.ModelScale = 1.5
-ENT.Sound = "snd_jack_spoonbounce.wav"
+ENT.Sound = "snd_jack_spoonbounce.ogg"
 
 if SERVER then
 	function ENT:Initialize()
