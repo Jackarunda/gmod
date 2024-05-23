@@ -18,7 +18,7 @@ if SERVER then
 		self.Ptype = 1
 
 		self.TypeInfo = {
-			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
+			"Napalm", {Sound("snds_jack_gmod/fire1.ogg"), Sound("snds_jack_gmod/fire2.ogg")},
 			"eff_jack_gmod_heavyfire", 10, 20, 150
 		}
 
@@ -240,7 +240,7 @@ elseif CLIENT then
 		self.Ptype = 1
 
 		self.TypeInfo = {
-			"Napalm", {Sound("snds_jack_gmod/fire1.wav"), Sound("snds_jack_gmod/fire2.wav")},
+			"Napalm", {Sound("snds_jack_gmod/fire1.ogg"), Sound("snds_jack_gmod/fire2.ogg")},
 			"eff_jack_gmod_heavyfire", 15, 14, 75
 		}
 

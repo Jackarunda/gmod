@@ -35,9 +35,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 160 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_musketoon.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_M3"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bphmuzzle"
@@ -181,41 +181,41 @@ SWEP.Animations = {
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/rip.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/rip.ogg",
 				t = 1.2,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/pour.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/pour.ogg",
 				t = 1.6,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/halfcock.ogg",
 				t = 3.6,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.ogg",
 				t = 3.9,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/primepan.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/primepan.ogg",
 				t = 4.1,
 				v = 65,
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.ogg",
 				t = 4.2,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/fullcock.ogg",
 				t = 4.3,
 				v = 65,
 				p = 100
@@ -227,7 +227,7 @@ SWEP.Animations = {
 				p = 130
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flb/shot_pour.wav",
+				s = "snds_jack_gmod/ez_weapons/flb/shot_pour.ogg",
 				t = 6.5,
 				v = 65,
 				p = 100
@@ -239,7 +239,7 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/drop.wav",
+				s = "snds_jack_gmod/ez_weapons/flm/drop.ogg",
 				t = 8,
 				v = 65,
 				p = 70

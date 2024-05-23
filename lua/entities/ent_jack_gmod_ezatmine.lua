@@ -122,7 +122,7 @@ if SERVER then
 				JMod.Hint(activator, "arm")
 			end
 		else
-			self:EmitSound("snd_jack_minearm.wav", 60, 70)
+			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
 			self:SetState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
@@ -132,7 +132,7 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+		sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 		timer.Simple(math.Rand(.1, .2) * JMod.Config.Explosives.Mine.Delay, function()
 			if not IsValid(self) then return end
@@ -144,8 +144,8 @@ if SERVER then
 			end
 
 			util.ScreenShake(SelfPos, 99999, 99999, 1, 1000)
-			self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 100, 130)
+			self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 100, 130)
 			JMod.Sploom(self.EZowner, SelfPos, 10)
 			local Att = JMod.GetEZowner(self)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 30), 100, 5500)
@@ -201,7 +201,7 @@ if SERVER then
 		JMod.Hint(armer, "mine friends")
 		JMod.SetEZowner(self, armer)
 		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.wav", 60, 90)
+		self:EmitSound("snd_jack_minearm.ogg", 60, 90)
 
 		if autoColor then
 			local Tr = util.QuickTrace(self:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), self)

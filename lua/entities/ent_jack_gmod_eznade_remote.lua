@@ -25,7 +25,7 @@ if SERVER then
 
 		timer.Simple(.1, function()
 			if IsValid(self) then
-				self:EmitSound("snd_jack_minearm.wav", 60, 110)
+				self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 				self:SetState(JMod.EZ_STATE_ARMED)
 			end
 		end)

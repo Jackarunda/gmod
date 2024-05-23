@@ -117,7 +117,7 @@ if SERVER then
 				JMod.Hint(activator, "arm")
 			end
 		else
-			self:EmitSound("snd_jack_minearm.wav", 60, 70)
+			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
 			self:SetState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 		end
@@ -137,7 +137,7 @@ if SERVER then
 		util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 150 * JMod.Config.Explosives.Mine.Power, math.random(50, 100) * JMod.Config.Explosives.Mine.Power)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
 		self:EmitSound("BaseExplosionEffect.Sound")
-		--self:EmitSound("snd_jack_fragsplodeclose.wav",90,100)
+		--self:EmitSound("snd_jack_fragsplodeclose.ogg",90,100)
 		local Pos = self:GetPos()
 
 		if self then
@@ -169,7 +169,7 @@ if SERVER then
 		if State ~= STATE_OFF then return end
 		JMod.SetEZowner(self, armer)
 		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.wav", 60, 110)
+		self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 
 		timer.Simple(3, function()
 			if IsValid(self) then
@@ -196,7 +196,7 @@ if SERVER then
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
 					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
 						self:SetState(STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+						sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then

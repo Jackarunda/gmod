@@ -120,9 +120,9 @@ if SERVER then
 			activator:PickupObject(self)
 			JMod.Hint(activator, "armor wear")
 		end
-		--activator:EmitSound("snd_jack_clothequip.wav",70,100)
-		--activator:EmitSound("snd_jack_gmod/armorstep1.wav",70,100)--5
-		--activator:EmitSound("snd_jack_gear1.wav",70,100)--6
+		--activator:EmitSound("snd_jack_clothequip.ogg",70,100)
+		--activator:EmitSound("snd_jack_gmod/armorstep1.ogg",70,100)--5
+		--activator:EmitSound("snd_jack_gear1.ogg",70,100)--6
 	end
 elseif CLIENT then
 	function ENT:Draw()

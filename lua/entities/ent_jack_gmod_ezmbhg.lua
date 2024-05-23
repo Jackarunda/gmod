@@ -70,7 +70,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -100,8 +100,8 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_CHARGING)
-				self:EmitSound("ambient/machines/thumper_startup1.wav")
-				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
+				self:EmitSound("ambient/machines/thumper_startup1.ogg")
+				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.ogg")
 				self.Hum:Play()
 				self.Hum:SetSoundLevel(100)
 			else
@@ -127,12 +127,12 @@ if SERVER then
 
 		for i = 1, 50 do
 			timer.Simple(i / 150, function()
-				sound.Play("ambient/machines/thumper_hit.wav", SelfPos + VectorRand() * math.random(1, 1000), 140, math.random(120, 130))
+				sound.Play("ambient/machines/thumper_hit.ogg", SelfPos + VectorRand() * math.random(1, 1000), 140, math.random(120, 130))
 			end)
 		end
 
 		for i = 1, 3 do
-			sound.Play("snds_jack_gmod/ezbhg_splode.wav", SelfPos + VectorRand(), 140, 100)
+			sound.Play("snds_jack_gmod/ezbhg_splode.ogg", SelfPos + VectorRand(), 140, 100)
 		end
 
 		util.ScreenShake(SelfPos, 99999, 99999, 3, 3000)

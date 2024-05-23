@@ -141,7 +141,7 @@ if SERVER then
 
 						if self.DisarmProgress >= self.DisarmNeeded then
 							self:SetState(STATE_OFF)
-							self:EmitSound("weapons/c4/c4_disarm.wav", 60, 120)
+							self:EmitSound("weapons/c4/c4_disarm.ogg", 60, 120)
 							self.DisarmProgress = 0
 						end
 
@@ -205,10 +205,10 @@ if SERVER then
 				sound.Play("BaseExplosionEffect.Sound", SelfPos, 120, math.random(90, 110))
 
 				for i = 1, 4 do
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
 				end
 
-				self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
+				self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 
 				timer.Simple(.1, function()
 					for i = 1, 5 do
@@ -247,7 +247,7 @@ if SERVER then
 		end
 
 		if self:GetState() == STATE_ARMED then
-			self:EmitSound("weapons/c4/c4_beep1.wav", 50, 100)
+			self:EmitSound("weapons/c4/c4_beep1.ogg", 50, 100)
 			JMod.EmitAIsound(self:GetPos(), 200, 1, 8)
 			self:SetTimer(self:GetTimer() - 1)
 

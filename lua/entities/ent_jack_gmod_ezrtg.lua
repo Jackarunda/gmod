@@ -71,7 +71,7 @@ if(SERVER)then
 		if (self:GetState() ~= STATE_OFF) then return end
 		if IsValid(activator) and not(auto) then
 			self.EZstayOn = true
-			self:EmitSound("buttons/button1.wav", 60, 80)
+			self:EmitSound("buttons/button1.ogg", 60, 80)
 		end
 		self.NextUseTime = CurTime() + 1
 		self:SetState(STATE_ON)
@@ -83,7 +83,7 @@ if(SERVER)then
 		self.NextUseTime = CurTime() + 1
 		if IsValid(activator) then 
 			self.EZstayOn = nil
-			self:EmitSound("buttons/button18.wav", 60, 80)
+			self:EmitSound("buttons/button18.ogg", 60, 80)
 		end
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
@@ -99,7 +99,7 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 60)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, 200)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		self:EmitSound("items/suitchargeok1.ogg", 80, 120)
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		

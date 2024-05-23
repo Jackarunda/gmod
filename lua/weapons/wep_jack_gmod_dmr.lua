@@ -28,9 +28,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 2 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_g3"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -110,7 +110,7 @@ SWEP.Animations = {
 		LHIKOut = 0.5,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/magout.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/magout.ogg",
 				t = .65,
 				v = 65
 			},
@@ -120,7 +120,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/magin.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/magin.ogg",
 				t = 2,
 				v = 65
 			},
@@ -148,7 +148,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/magout.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/magout.ogg",
 				t = .65,
 				v = 65
 			},
@@ -158,7 +158,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/magin.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/magin.ogg",
 				t = 2.05,
 				v = 65
 			},
@@ -168,12 +168,12 @@ SWEP.Animations = {
 				v = 50
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/boltpull.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/boltpull.ogg",
 				t = 3.25,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.wav",
+				s = "snds_jack_gmod/ez_weapons/dmr/boltrelease.ogg",
 				t = 3.5,
 				v = 65
 			},

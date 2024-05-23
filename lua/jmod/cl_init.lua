@@ -785,7 +785,7 @@ hook.Add("ShouldSit", "JMOD_SITANYWHERE_COMPATIBILITY", function(ply)
 end)
 
 local function CommNoise()
-	surface.PlaySound("snds_jack_gmod/radio_static" .. math.random(1, 3) .. ".wav")
+	surface.PlaySound("snds_jack_gmod/radio_static" .. math.random(1, 3) .. ".ogg")
 end
 
 hook.Add("PlayerStartVoice", "JMOD_PLAYERSTARTVOICE", function(ply)
@@ -793,7 +793,7 @@ hook.Add("PlayerStartVoice", "JMOD_PLAYERSTARTVOICE", function(ply)
 	if not LocalPlayer():Alive() then return end
 
 	if JMod.PlyHasArmorEff(ply, "teamComms") and JMod.PlayersCanComm(LocalPlayer(), ply) then
-		surface.PlaySound("snds_jack_gmod/radio_start.wav")
+		surface.PlaySound("snds_jack_gmod/radio_start.ogg")
 	end
 end)
 

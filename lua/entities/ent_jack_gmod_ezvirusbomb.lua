@@ -98,14 +98,14 @@ if SERVER then
 		if State == STATE_SEALED then
 			if Alt then
 				JMod.SetEZowner(self, activator)
-				self:EmitSound("snd_jack_pinpull.wav", 55, 100)
-				self:EmitSound("snd_jack_spoonfling.wav", 55, 100)
+				self:EmitSound("snd_jack_pinpull.ogg", 55, 100)
+				self:EmitSound("snd_jack_spoonfling.ogg", 55, 100)
 				self:SetState(STATE_TICKING)
 				JMod.Hint(activator, "gas spread")
 
 				timer.Simple(10, function()
 					if IsValid(self) then
-						self:EmitSound("snd_jack_sminepop.wav", 55, 120)
+						self:EmitSound("snd_jack_sminepop.ogg", 55, 120)
 						self:SetState(STATE_VENTING)
 					end
 				end)
@@ -119,7 +119,7 @@ if SERVER then
 	end
 
 	function ENT:EZdetonateOverride(detonator)
-		self:EmitSound("snd_jack_sminepop.wav", 55, 130)
+		self:EmitSound("snd_jack_sminepop.ogg", 55, 130)
 		self:SetState(STATE_VENTING)
 	end
 
@@ -148,7 +148,7 @@ if SERVER then
 		local State, Time = self:GetState(), CurTime()
 
 		if State == STATE_TICKING then
-			self:EmitSound("snd_jack_metallicclick.wav", 50, 100)
+			self:EmitSound("snd_jack_metallicclick.ogg", 50, 100)
 			self:NextThink(Time + 1)
 
 			return true
@@ -161,7 +161,7 @@ if SERVER then
 			Gas.CurVel = (self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)
 			self.ContainedGas = self.ContainedGas - 1
 			self:NextThink(Time + .2)
-			self:EmitSound("snds_jack_gmod/hiss.wav", 55, math.random(90, 110))
+			self:EmitSound("snds_jack_gmod/hiss.ogg", 55, math.random(90, 110))
 
 			if self.ContainedGas <= 0 then
 				self:Remove()

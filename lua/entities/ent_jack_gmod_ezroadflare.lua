@@ -129,7 +129,7 @@ if SERVER then
 	function ENT:Light()
 		if self:GetState() == STATE_BURNT then return end
 		self:SetState(STATE_BURNIN)
-		self.BurnSound = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+		self.BurnSound = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
 		self.BurnSound:Play()
 		---
 		local Spewn = ents.Create("ent_jack_spoon")

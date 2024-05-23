@@ -191,7 +191,7 @@ end
 function JMod.GeigerCounterSound(ply, intensity)
 	if intensity <= .1 and math.random(1, 2) == 1 then return end
 	local Num = math.Clamp(math.Round(math.Rand(0, intensity) * 15), 1, 10)
-	ply:EmitSound("snds_jack_gmod/geiger" .. Num .. ".wav", 55, math.random(95, 105))
+	ply:EmitSound("snds_jack_gmod/geiger" .. Num .. ".ogg", 55, math.random(95, 105))
 	--local Leaf = EffectData()
 	--Leaf:SetOrigin(ply:GetPos() + VectorRand(-100, 100) + Vector(0, 0, 64))
 	--util.Effect("eff_jack_gmod_ezleaf", Leaf, true, true)
@@ -606,7 +606,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					Dmg:SetDamagePosition(playa:GetShootPos())
 					playa:TakeDamageInfo(Dmg)
 					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/quiet_heartbeat.wav")
+					net.WriteString("snds_jack_gmod/quiet_heartbeat.ogg")
 					net.Send(playa)
 					JMod.Hint(playa, "bleeding")
 					--
@@ -666,7 +666,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				elseif playa.EZoxygen < 100 then
 					if playa.EZneedGasp then
-						sound.Play("snds_jack_gmod/drown_gasp.wav", playa:GetShootPos(), 60, math.random(90, 110))
+						sound.Play("snds_jack_gmod/drown_gasp.ogg", playa:GetShootPos(), 60, math.random(90, 110))
 						playa.EZneedGasp = false
 					end
 
@@ -716,7 +716,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					if Nuts > 100 then
 						if math.random(1, 3) == 3 then
 							playa:ViewPunch(Angle(math.random(2, 3), 0, 0))
-							playa:EmitSound("snd_jack_jmod_burp.wav", 100, math.random(80, 100))
+							playa:EmitSound("snd_jack_jmod_burp.ogg", 100, math.random(80, 100))
 						end
 					end
 				end
@@ -1044,7 +1044,7 @@ end)
 function JMod.EZ_Remote_Trigger(ply)
 	if not IsValid(ply) then return end
 	if not ply:Alive() then return end
-	sound.Play("snd_jack_detonator.wav", ply:GetShootPos(), 55, math.random(90, 110))
+	sound.Play("snd_jack_detonator.ogg", ply:GetShootPos(), 55, math.random(90, 110))
 
 	timer.Simple(.75, function()
 		if IsValid(ply) and ply:Alive() then

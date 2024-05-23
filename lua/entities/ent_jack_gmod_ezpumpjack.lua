@@ -95,7 +95,7 @@ if(SERVER)then
 			if (self:GetElectricity() > 0) then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.ogg")
 				self.SoundLoop:SetSoundLevel(65)
 				self.SoundLoop:Play()
 				self.WellPos = SelfPos + Forward * 120 - Right * 95
@@ -118,7 +118,7 @@ if(SERVER)then
 			self.SoundLoop:Stop()
 		end
 
-		self:EmitSound("snds_jack_gmod/pumpjack_stop.wav")
+		self:EmitSound("snds_jack_gmod/pumpjack_stop.ogg")
 	end
 
 	function ENT:Use(activator)

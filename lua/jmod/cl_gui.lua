@@ -87,7 +87,7 @@ local function PopulateList(parent, friendList, myself, W, H)
 			end
 
 			function Buttaloney:DoClick()
-				surface.PlaySound("garrysmod/ui_click.wav")
+				surface.PlaySound("garrysmod/ui_click.ogg")
 
 				if InLikeFlynn then
 					table.RemoveByValue(friendList, playa)
@@ -417,7 +417,7 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 					self.hovered = true
 
 					if self.enabled then
-						surface.PlaySound("snds_jack_gmod/ez_gui/hover_ready.wav")
+						surface.PlaySound("snds_jack_gmod/ez_gui/hover_ready.ogg")
 					end
 				end
 			else
@@ -472,11 +472,11 @@ local function PopulateItems(parent, items, typ, motherFrame, entity, enableFunc
 					end
 				end)
 
-				surface.PlaySound("snds_jack_gmod/ez_gui/click_big.wav")
+				surface.PlaySound("snds_jack_gmod/ez_gui/click_big.ogg")
 				motherFrame.positiveClosed = true
 				motherFrame:Close()
 			else
-				surface.PlaySound("snds_jack_gmod/ez_gui/miss.wav")
+				surface.PlaySound("snds_jack_gmod/ez_gui/miss.ogg")
 			end
 		end
 
@@ -548,7 +548,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	function MotherFrame:Paint()
 		if not self.storted then
 			self.storted = true
-			surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.wav")
+			surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.ogg")
 		end
 
 		BlurBackground(self)
@@ -565,7 +565,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 
 	function MotherFrame:OnClose()
 		if not self.positiveClosed then
-			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav")
+			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.ogg")
 		end
 		SelectionMenuOpen = false
 	end
@@ -626,7 +626,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 		end
 
 		function TabBtn:DoClick()
-			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
+			surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.ogg")
 			ActiveTab = self.Category
 			PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc, mult)
 		end
@@ -1000,7 +1000,7 @@ net.Receive("JMod_EZradio", function()
 		chat.AddText(unpack(tbl))
 
 		if LocalPlayer():GetPos():DistToSqr(radio:GetPos()) > 200 * 200 then
-			radio:EmitSound("/npc/combine_soldier/vo/off" .. math.random(1, 3) .. ".wav", 65, 120)
+			radio:EmitSound("/npc/combine_soldier/vo/off" .. math.random(1, 3) .. ".ogg", 65, 120)
 		end
 
 		return
