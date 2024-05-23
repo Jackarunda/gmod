@@ -39,7 +39,7 @@ local DetonationEffects = {
 			for k, v in pairs(ents.FindInSphere(pos, 1000)) do
 				if v:IsPlayer() then
 					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/cheeseforeveryone.mp3")
+					net.WriteString("snds_jack_gmod/cheeseforeveryone.ogg")
 					net.Send(v)
 				end
 			end
@@ -216,7 +216,7 @@ local DetonationEffects = {
 				if v:IsPlayer() or v:IsNPC() then
 					if v:IsPlayer() then
 						net.Start("JMod_SFX")
-						net.WriteString((Cena and "snds_jack_gmod/johncena.mp3") or "snds_jack_gmod/ohwatchout.mp3")
+						net.WriteString((Cena and "snds_jack_gmod/johncena.ogg") or "snds_jack_gmod/ohwatchout.ogg")
 						net.Send(v)
 					end
 
@@ -358,7 +358,7 @@ local DetonationEffects = {
 			for k, v in pairs(ents.FindInSphere(pos, 2000)) do
 				if v:IsPlayer() then
 					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/wtfboom.mp3")
+					net.WriteString("snds_jack_gmod/wtfboom.ogg")
 					net.Send(v)
 				end
 			end
@@ -452,7 +452,7 @@ local DetonationEffects = {
 			end
 
 			net.Start("JMod_SFX")
-			net.WriteString("snds_jack_gmod/windowsfuckup.mp3")
+			net.WriteString("snds_jack_gmod/windowsfuckup.ogg")
 			net.Broadcast()
 
 			timer.Simple(3.8, function()

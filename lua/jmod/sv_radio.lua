@@ -135,11 +135,11 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 						Box:Spawn()
 						Box:SetPackageName(station.deliveryType)
 						---
-						sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.mp3") or "snd_jack_flyby_drop.mp3", DropPos, 150, 100)
+						sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.ogg") or "snd_jack_flyby_drop.ogg", DropPos, 150, 100)
 
 						for k, playa in pairs(ents.FindInSphere(DropPos, 6000)) do
 							if playa:IsPlayer() then
-								sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.mp3") or "snd_jack_flyby_drop.mp3", playa:GetShootPos(), 50, 100)
+								sound.Play((IsChrimsas and "snd_jack_flyby_drop_Christmas.ogg") or "snd_jack_flyby_drop.ogg", playa:GetShootPos(), 50, 100)
 							end
 						end
 
@@ -451,11 +451,11 @@ concommand.Add("jmod_airdropplayer", function(ply, cmd, args)
 			Box:SetPackageName(ply:Nick())
 			TargetPly:EnterVehicle(Box.Pod)
 			---
-			sound.Play("snd_jack_flyby_drop.mp3", DropPos, 150, 100)
+			sound.Play("snd_jack_flyby_drop.ogg", DropPos, 150, 100)
 
 			for k, playa in pairs(ents.FindInSphere(DropPos, 6000)) do
 				if playa:IsPlayer() then
-					sound.Play("snd_jack_flyby_drop.mp3", playa:GetShootPos(), 50, 100)
+					sound.Play("snd_jack_flyby_drop.ogg", playa:GetShootPos(), 50, 100)
 				end
 			end
 		end)
