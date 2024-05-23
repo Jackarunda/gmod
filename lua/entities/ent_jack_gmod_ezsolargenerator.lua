@@ -115,10 +115,10 @@ if(SERVER)then
 		if self:GetState() > STATE_OFF then return end
 		if (self:CheckSky() > 0) then
 			if IsValid(activator) then self.EZstayOn = true end
-			self:EmitSound("buttons/button1.ogg", 60, 80)
+			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
 		elseif not(auto) then
-			self:EmitSound("buttons/button2.ogg", 60, 100)
+			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 		self.PowerSLI = 0
 	end
@@ -126,7 +126,7 @@ if(SERVER)then
 	function ENT:TurnOff(activator, auto)
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
-		self:EmitSound("buttons/button18.ogg", 60, 80)
+		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		self.PowerSLI = 0 
@@ -140,7 +140,7 @@ if(SERVER)then
 		effectdata:SetScale(math.Rand(.5,1.5))
 		effectdata:SetRadius(math.Rand(2,4))
 		util.Effect("Sparks", effectdata)
-		self:EmitSound("items/suitchargeok1.ogg", 80, 120)
+		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
 	function ENT:ProduceResource()
@@ -151,7 +151,7 @@ if(SERVER)then
 		local pos = SelfPos + Forward*15 - Up*50 - Right*2
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, 200)
-		self:EmitSound("items/suitchargeok1.ogg", 80, 120)
+		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 		--self:SpawnEffect(pos)
 
 

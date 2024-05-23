@@ -111,7 +111,7 @@ if(SERVER)then
 						timer.Simple(i/100,function()
 							if(IsValid(self))then
 								if(i<BuildSteps)then
-									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".ogg",Pos,60,math.random(80,120))
+									sound.Play("snds_jack_gmod/ez_tools/"..math.random(1,27)..".wav",Pos,60,math.random(80,120))
 								else
 									JMod.BuildRecipe(ItemInfo.results, ply, Pos, Ang, ItemInfo.skin)
 									JMod.BuildEffect(Pos)

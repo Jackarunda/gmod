@@ -30,10 +30,10 @@ if SERVER then
 
 		if self.Splitterring then
 			self:SetMaterial("models/mats_jack_nades/stick_grenade_frag")
-			self:EmitSound("snds_jack_gmod/metal_shf.ogg", 60, 120)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 120)
 		else
 			self:SetMaterial("models/mats_jack_nades/stick_grenade")
-			self:EmitSound("snds_jack_gmod/metal_shf.ogg", 60, 80)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 80)
 		end
 	end
 
@@ -41,7 +41,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 
 		if self.Splitterring then
 			local plooie = EffectData()

@@ -27,9 +27,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_m14"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -110,7 +110,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/ssr/close.ogg",
+				s = "snds_jack_gmod/ez_weapons/ssr/close.wav",
 				t = .1,
 				v = 60
 			}
@@ -143,7 +143,7 @@ SWEP.Animations = {
 				p = 150
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/ssr/open.ogg",
+				s = "snds_jack_gmod/ez_weapons/ssr/open.wav",
 				t = .4,
 				v = 65
 			},
@@ -154,17 +154,17 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/ssr/align.ogg",
+				s = "snds_jack_gmod/ez_weapons/ssr/align.wav",
 				t = 1.15,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/ssr/in.ogg",
+				s = "snds_jack_gmod/ez_weapons/ssr/in.wav",
 				t = 1.4,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/ssr/close.ogg",
+				s = "snds_jack_gmod/ez_weapons/ssr/close.wav",
 				t = 2,
 				v = 65
 			},

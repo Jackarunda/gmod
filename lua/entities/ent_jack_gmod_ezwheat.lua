@@ -81,7 +81,7 @@ if(SERVER)then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (data.Speed > 20) and (data.DeltaTime > 0.2) then
-			self:EmitSound("snds_jack_gmod/ez_foliage/grass_brush_" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110), .5)
+			self:EmitSound("snds_jack_gmod/ez_foliage/grass_brush_" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110), .5)
 		end
 		if (self.Mutated) and (data.Speed > 30) and (data.DeltaTime > 0.2) and IsValid(data.HitEntity) and (data.HitEntity:IsPlayer()) then
 			local PlyToCut = data.HitEntity
@@ -93,7 +93,7 @@ if(SERVER)then
 			PlyToCut:TakeDamageInfo(Cut)
 			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
 			PlyToCut:ViewPunch(Angle(0, 0, math.random(-8, 8)))
-			self:EmitSound("npc/headcrab/headbite.ogg", 100, 100)
+			self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
 		end
 	end
 

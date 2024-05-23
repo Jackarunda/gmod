@@ -19,8 +19,8 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos, Time = self:GetPos() + Vector(0, 0, 10), CurTime()
 		JMod.Sploom(self.EZowner, self:GetPos(), 20)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 140)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 140)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 140)
 		local plooie = EffectData()
 		plooie:SetOrigin(SelfPos)
 		plooie:SetScale(1)

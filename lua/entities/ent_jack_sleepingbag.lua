@@ -10,7 +10,7 @@ ENT.JModEZstorable = true
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"
-local ClothSounds = {"snds_jack_gmod/equip1.ogg", "snds_jack_gmod/equip2.ogg", "snds_jack_gmod/equip3.ogg", "snds_jack_gmod/equip4.ogg", "snds_jack_gmod/equip5.ogg"}
+local ClothSounds = {"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
 
 if (CLIENT) then
 	function ENT:Draw()
@@ -79,7 +79,7 @@ elseif (SERVER) then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 
-		sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+		sound.Play("snd_jack_clothequip.wav", self:GetPos(), 65, math.random(90, 110))
 		
 		local phys = self:GetPhysicsObject()
 		if phys:IsValid() then
@@ -116,7 +116,7 @@ elseif (SERVER) then
 			Ang:RotateAroundAxis(Ang:Right(), -90)
 			self:SetAngles(Ang)
 		end
-		sound.Play("snd_jack_clothunequip.ogg", self:GetPos(), 65, math.random(90, 110))
+		sound.Play("snd_jack_clothunequip.wav", self:GetPos(), 65, math.random(90, 110))
 		self:CreatePod()
 	end
 
@@ -139,7 +139,7 @@ elseif (SERVER) then
 						if not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
 							self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
 							self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-							sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
+							sound.Play("snd_jack_clothequip.wav", self:GetPos(), 65, math.random(90, 110))
 						end
 					end
 				else

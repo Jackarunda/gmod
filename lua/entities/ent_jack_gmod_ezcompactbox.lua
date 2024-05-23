@@ -152,11 +152,11 @@ if SERVER then
 		effectdata:SetScale(math.Rand(2, 6) * Scale) --length of strands
 		effectdata:SetRadius(math.Rand(8, 16) * Scale) --thickness of strands
 		util.Effect("Sparks", effectdata, true, true)
-		sound.Play("snds_jack_gmod/unpackage.ogg", pos, 60, math.random(90, 110))
+		sound.Play("snds_jack_gmod/unpackage.wav", pos, 60, math.random(90, 110))
 
 		for i = 1, 4 do
 			timer.Simple(i / 5, function()
-				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", pos, 60, math.random(80, 120))
+				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", pos, 60, math.random(80, 120))
 			end)
 		end
 	end
@@ -164,13 +164,13 @@ if SERVER then
 	function ENT:Unpackage()
 		if self.Unpackaging then return end
 		self.Unpackaging = true
-		self:EmitSound("snd_jack_metallicclick.ogg", 60, 100)
+		self:EmitSound("snd_jack_metallicclick.wav", 60, 100)
 
 		for i = 1, 4 do
 			timer.Simple(i, function()
 				if not IsValid(self) then return end
 				if i < 4 then
-					self:EmitSound("snd_jack_metallicclick.ogg", 50, 100)
+					self:EmitSound("snd_jack_metallicclick.wav", 50, 100)
 				else
 					if self.Boxes then
 						local AllTogether = true

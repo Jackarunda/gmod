@@ -68,8 +68,8 @@ if SERVER then
 		self.FiredFlareForThisThreatCycle = false
 		self.NextFlareFire = 0
 
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/warmine_mk2.ogg")
-		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/warmine_mk2.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/warmine_mk2.wav")
+		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/warmine_mk2.wav")
 	end
 
 	function ENT:TriggerInput(iname, value)
@@ -111,10 +111,10 @@ if SERVER then
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
 			if (JMod.ShouldAllowControl(self, activator)) then
-				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 90)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 90)
 				timer.Simple(.5, function()
 					if (IsValid(self)) then
-						self:EmitSound("snds_jack_gmod/simple_drill.ogg", 60, 100)
+						self:EmitSound("snds_jack_gmod/simple_drill.wav", 60, 100)
 					end
 				end)
 				if (self.SoundLoop) then self.SoundLoop:Stop() end
@@ -149,7 +149,7 @@ if SERVER then
 		end
 
 		for i = 1, 2 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
 		end
 
 		---
@@ -194,10 +194,10 @@ if SERVER then
 		JMod.SetEZowner(self, armer)
 		JMod.Colorify(self)
 		self:SetState(STATE_ARMING)
-		self:EmitSound("snds_jack_gmod/simple_drill.ogg", 60, 100)
+		self:EmitSound("snds_jack_gmod/simple_drill.wav", 60, 100)
 		timer.Simple(.5, function()
 			if (IsValid(self)) then
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 90)
+				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 90)
 			end
 		end)
 
@@ -271,7 +271,7 @@ if SERVER then
 		Flare:Spawn()
 		Flare:Activate()
 		Flare:GetPhysicsObject():SetVelocity(Vector(0, 0, 1500) + VectorRand() * math.random(0, 100))
-		self:EmitSound("snds_jack_gmod/flaregun_fire.ogg", 75, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/flaregun_fire.wav", 75, math.random(90, 110))
 	end
 
 	function ENT:Think()

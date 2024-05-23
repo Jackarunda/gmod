@@ -46,7 +46,7 @@ if(SERVER)then
 		self.ConnectionlessThinks = 0
 		---
 		local Path = "/npc/combine_soldier/vo/"
-		local Files, Folders = file.Find("sound" .. Path .. "*.ogg", "GAME")
+		local Files, Folders = file.Find("sound" .. Path .. "*.wav", "GAME")
 		self.Voices = Files
 	end
 
@@ -138,14 +138,14 @@ if(SERVER)then
 	function ENT:TurnOn(activator)
 		if self:WaterLevel() > 0 then return end
 		self:SetState(STATE_CONNECTING)
-		self:EmitSound("snds_jack_gmod/ezsentry_startup.ogg", 65, 100)
+		self:EmitSound("snds_jack_gmod/ezsentry_startup.wav", 65, 100)
 		self.ConnectionAttempts = 0
 	end
 
 	function ENT:TurnOff()
 		if (self:GetState() <= 0) then return end
 		self:SetState(STATE_OFF)
-		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.ogg", 65, 100)
+		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.wav", 65, 100)
 	end
 
 	function ENT:Speak(msg, parrot, parrotply)
@@ -309,7 +309,7 @@ if(SERVER)then
 
 		if self.NextWhine < Time then
 			self.NextWhine = Time + 4
-			self:EmitSound("snds_jack_gmod/ezsentry_whine.ogg", 70, 100)
+			self:EmitSound("snds_jack_gmod/ezsentry_whine.wav", 70, 100)
 			self:ConsumeElectricity(.02)
 		end
 	end
@@ -461,7 +461,7 @@ elseif(CLIENT)then
 		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
-		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.ogg","GAME")
+		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
 		self.Voices=Files
 	end
 

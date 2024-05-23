@@ -71,7 +71,7 @@ if SERVER then
 			if self:GetState() == JMod.EZ_STATE_OFF then
 				self:SetState(JMod.EZ_STATE_ARMING)
 				self:SetBodygroup(0, 1)
-				self:EmitSound("snd_jack_minearm.ogg", 60, 100)
+				self:EmitSound("snd_jack_minearm.wav", 60, 100)
 
 				timer.Simple(3, function()
 					if IsValid(self) then
@@ -131,7 +131,7 @@ if SERVER then
 				if Alt then
 					self:SetState(JMod.EZ_STATE_ARMING)
 					self:SetBodygroup(0, 1)
-					self:EmitSound("snd_jack_minearm.ogg", 60, 100)
+					self:EmitSound("snd_jack_minearm.wav", 60, 100)
 
 					timer.Simple(3, function()
 						if IsValid(self) then
@@ -166,7 +166,7 @@ if SERVER then
 					JMod.Hint(Dude, "sticky", selfg)
 				end
 			else
-				self:EmitSound("snd_jack_minearm.ogg", 60, 70)
+				self:EmitSound("snd_jack_minearm.wav", 60, 70)
 				self:SetState(JMod.EZ_STATE_OFF)
 				self:SetBodygroup(0, 0)
 			end
@@ -201,7 +201,7 @@ if SERVER then
 							end
 						end
 
-						self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+						self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 						Dude:DropObject()
 
 						if not JMod.Hint(Dude, "arm") then

@@ -32,9 +32,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 6 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/pistol.ogg"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/pistol.ogg"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.ogg"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/pistol.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/pistol.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_pistol"
 SWEP.ShellModel = "models/jhells/shell_9mm.mdl"
@@ -102,19 +102,19 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/open.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/open.wav",
 				t = .3,
 				v = 55,
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/fidget.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/fidget.wav",
 				t = .4,
 				v = 55,
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/close.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/close.wav",
 				t = .6,
 				v = 50,
 				p = 110
@@ -149,7 +149,7 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/open.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/open.wav",
 				t = .4,
 				v = 60
 			},
@@ -160,7 +160,7 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/out.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/out.wav",
 				t = 1.7,
 				v = 55
 			},
@@ -171,12 +171,12 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/in.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/in.wav",
 				t = 2.45,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/revolver/close.ogg",
+				s = "snds_jack_gmod/ez_weapons/revolver/close.wav",
 				t = 3.25,
 				v = 60
 			},

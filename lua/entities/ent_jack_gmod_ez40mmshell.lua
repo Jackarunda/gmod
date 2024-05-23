@@ -33,7 +33,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
-				self:EmitSound("player/pl_shell" .. math.random(1, 3) .. ".ogg", 60, 60)
+				self:EmitSound("player/pl_shell" .. math.random(1, 3) .. ".wav", 60, 60)
 			end
 		end
 	end

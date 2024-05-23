@@ -94,7 +94,7 @@ if SERVER then
 		if JMod.LinCh(Dmg, 50, 120) then
 			JMod.SetEZowner(self, dmginfo:GetAttacker() or self.EZowner)
 			local Pos = self:GetPos()
-			self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
+			self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 			local Owner, Count = self.EZowner, 50
 
 			timer.Simple(.5, function()
@@ -119,8 +119,8 @@ if SERVER then
 		if State == STATE_OFF then
 			if Alt then
 				JMod.SetEZowner(self, activator)
-				self:EmitSound("snd_jack_pinpull.ogg", 60, 100)
-				self:EmitSound("snd_jack_spoonfling.ogg", 60, 100)
+				self:EmitSound("snd_jack_pinpull.wav", 60, 100)
+				self:EmitSound("snd_jack_spoonfling.wav", 60, 100)
 				self:SetState(STATE_TICKING)
 
 				timer.Simple(20, function()
@@ -154,12 +154,12 @@ if SERVER then
 		local State = self:GetState()
 
 		if (State ~= STATE_BROKEN) and (State ~= STATE_IRRADIATING) then
-			self:EmitSound("snds_jack_gmod/criticality_weapon_engage.ogg", 60, 100)
+			self:EmitSound("snds_jack_gmod/criticality_weapon_engage.wav", 60, 100)
 			self:SetState(STATE_IRRADIATING)
 
 			timer.Simple(.5, function()
 				if IsValid(self) then
-					self.SoundLoop = CreateSound(self, "snds_jack_gmod/criticality_weapon_hum.ogg")
+					self.SoundLoop = CreateSound(self, "snds_jack_gmod/criticality_weapon_hum.wav")
 					self.SoundLoop:Play()
 					self.SoundLoop:SetSoundLevel(40)
 				end
@@ -259,7 +259,7 @@ if SERVER then
 		local State, Time, SelfPos = self:GetState(), CurTime(), self:GetPos() + Vector(0, 0, 15)
 
 		if State == STATE_TICKING then
-			self:EmitSound("snd_jack_metallicclick.ogg", 50, 100)
+			self:EmitSound("snd_jack_metallicclick.wav", 50, 100)
 			self:NextThink(Time + 1)
 
 			return true

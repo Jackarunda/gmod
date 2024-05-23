@@ -399,7 +399,7 @@ net.Receive(
         function MotherFrame:Paint()
             if not self.storted then
                 self.storted = true
-                surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.ogg")
+                surface.PlaySound("snds_jack_gmod/ez_gui/menu_open.wav")
             end
 
             BlurBackground(self)
@@ -412,7 +412,7 @@ net.Receive(
         end
 
         function MotherFrame:OnClose()
-            if not self.positiveClosed then surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.ogg") end
+            if not self.positiveClosed then surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.wav") end
             SelectionMenuOpen = false
             if timer.Exists("configui_reset_timeout") then timer.Remove("configui_reset_timeout") end
         end
@@ -532,7 +532,7 @@ net.Receive(
             end
 
             function TabBtn:DoClick()
-                surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.ogg")
+                surface.PlaySound("snds_jack_gmod/ez_gui/click_smol.wav")
                 ActiveTab = self.Category
                 PopulateControls(ActiveTabPanel, categories[ActiveTab], MotherFrame)
             end

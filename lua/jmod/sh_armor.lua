@@ -168,7 +168,7 @@ JMod.ArmorTable = {
 		ang = Angle(100, 180, 90),
 		wgt = 5,
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
-		sndlop = "snds_jack_gmod/mask_breathe.ogg",
+		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_gasmask",
 		tgl = {
 			pos = Vector(3, 3, 0),
@@ -232,7 +232,7 @@ JMod.ArmorTable = {
 			power = 20
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
-		eqsnd = "snds_jack_gmod/tinycapcharge.ogg",
+		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
 		ent = "ent_jack_gmod_ezarmor_nvgs",
 		eff = {
 			nightVision = true
@@ -267,7 +267,7 @@ JMod.ArmorTable = {
 			power = 20
 		},
 		mskmat = "mats_jack_gmod_sprites/vignette.png",
-		eqsnd = "snds_jack_gmod/tinycapcharge.ogg",
+		eqsnd = "snds_jack_gmod/tinycapcharge.wav",
 		ent = "ent_jack_gmod_ezarmor_thermals",
 		eff = {
 			thermalVision = true
@@ -303,7 +303,7 @@ JMod.ArmorTable = {
 		},
 		wgt = 5,
 		dur = 2,
-		sndlop = "snds_jack_gmod/mask_breathe.ogg",
+		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		ent = "ent_jack_gmod_ezarmor_respirator",
 		tgl = {
 			def = NonArmorProtectionProfile,
@@ -903,12 +903,12 @@ JMod.ArmorTable = {
 			[2] = 1
 		},
 		snds = {
-			eq = "snd_jack_clothequip.ogg",
-			uneq = "snd_jack_clothunequip.ogg"
+			eq = "snd_jack_clothequip.wav",
+			uneq = "snd_jack_clothunequip.wav"
 		},
 		plymdl = "models/bloocobalt/splinter cell/chemsuit_cod.mdl", -- https://steamcommunity.com/sharedfiles/filedetails/?id=243665786&searchtext=splinter+cell+blacklist
 		mskmat = "mats_jack_gmod_sprites/vignette_gray.png",
-		sndlop = "snds_jack_gmod/mask_breathe.ogg",
+		sndlop = "snds_jack_gmod/mask_breathe.wav",
 		wgt = 15,
 		dur = 8,
 		ent = "ent_jack_gmod_ezarmor_hazmat"
@@ -1152,7 +1152,7 @@ sound.Add({	name = "JMod_ZipLine_Clip",
 	volume	= 1.0,
 	level	= 50,
 	pitch	= { 90, 110 },
-	sound	= { "npc/combine_soldier/zipline_clip1.ogg", "npc/combine_soldier/zipline_clip2.ogg"}
+	sound	= { "npc/combine_soldier/zipline_clip1.wav", "npc/combine_soldier/zipline_clip2.wav"}
 } )
 
 sound.Add({	name = "JMod_ParaWep_Deploy",
@@ -1160,8 +1160,8 @@ sound.Add({	name = "JMod_ParaWep_Deploy",
 	volume	= 1.0,
 	level	= 100,
 	pitch	= { 105, 110 },
-	--sound	= {"jessev92/parachute/deploy1.ogg","jessev92/parachute/deploy2.ogg","jessev92/parachute/deploy3.ogg","jessev92/parachute/deploy4.ogg","jessev92/parachute/deploy5.ogg"}
-	sound	= {"common/null.ogg"}
+	--sound	= {"jessev92/parachute/deploy1.wav","jessev92/parachute/deploy2.wav","jessev92/parachute/deploy3.wav","jessev92/parachute/deploy4.wav","jessev92/parachute/deploy5.wav"}
+	sound	= {"common/null.wav"}
 })
 
 sound.Add({	name = "JMod_BF2142_Para_Deploy",
@@ -1169,7 +1169,7 @@ sound.Add({	name = "JMod_BF2142_Para_Deploy",
 	volume	= 1.0,
 	level	= 75,
 	pitch	= { 105, 110 },
-	sound	= {"jessev92/bf2142/vehicles/parachute_open.ogg"}
+	sound	= {"jessev92/bf2142/vehicles/parachute_open.wav"}
 })
 
 sound.Add({	name = "JMod_BF2_Para_Deploy",
@@ -1177,7 +1177,7 @@ sound.Add({	name = "JMod_BF2_Para_Deploy",
 	volume	= 1.0,
 	level	= 75,
 	pitch	= { 105, 110 },
-	sound	= {"jessev92/bf2/vehicles/parachute_deploy.ogg"}
+	sound	= {"jessev92/bf2/vehicles/parachute_deploy.wav"}
 })
 
 sound.Add({	name = "JMod_BF2_Para_Idle",
@@ -1185,5 +1185,5 @@ sound.Add({	name = "JMod_BF2_Para_Idle",
 	volume	= 1.0,
 	level	= 75,
 	pitch	= { 105, 110 },
-	sound	= {"jessev92/bf2/vehicles/parachute_ride_loop.ogg"}
+	sound	= {"jessev92/bf2/vehicles/parachute_ride_loop.wav"}
 })

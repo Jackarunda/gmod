@@ -19,7 +19,7 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos = self:GetPos()
 		JMod.Sploom(self.EZowner, self:GetPos(), math.random(10, 20), 254)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local plooie = EffectData()
 		plooie:SetOrigin(SelfPos)
 		plooie:SetScale(.5)

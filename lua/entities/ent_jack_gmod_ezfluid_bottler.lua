@@ -38,7 +38,7 @@ if SERVER then
 		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
 		self.NextLogicThink = 0
 	end
 
@@ -77,7 +77,7 @@ if SERVER then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * 60)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, self:GetFluidType(), amt, pos, Angle(0, 0, 0), -Forward, 300)
-		self:EmitSound("snds_jack_gmod/ding.ogg", 80, 120)
+		self:EmitSound("snds_jack_gmod/ding.wav", 80, 120)
 		if chemAmt >= 1 then
 			self:SetChemicals(math.Clamp(self:GetChemicals() - chemAmt, 0, 100))
 			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.CHEMICALS, chemAmt, pos, Angle(0, 0, 0), -Forward, 300)
@@ -92,20 +92,20 @@ if SERVER then
 		if self:GetState() > STATE_OFF then return end
 		if self:GetElectricity() > 0 then
 			if IsValid(activator) then self.EZstayOn = true end
-			self:EmitSound("buttons/button1.ogg", 60, 80)
+			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
 			self:CheckWaterLevel()
 			self.NextUseTime = CurTime() + 1
 			self.SoundLoop:Play()
 		else
-			self:EmitSound("buttons/button2.ogg", 60, 100)
+			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 	end
 
 	function ENT:TurnOff(activator)
 		if (self:GetState() <= STATE_OFF) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
-		self:EmitSound("buttons/button18.ogg", 60, 80)
+		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)

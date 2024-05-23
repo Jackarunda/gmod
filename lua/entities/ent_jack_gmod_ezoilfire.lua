@@ -42,7 +42,7 @@ if SERVER then
 				util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			end
 
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.ogg")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 			self.SoundLoop:SetSoundLevel(80)
 			self.SoundLoop:Play()
 		end)

@@ -26,9 +26,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 12 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.ogg"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.ogg"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.ogg"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/flintlock_longgun.wav"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/shotgun_far.wav"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_M3"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bpmuzzle"
@@ -193,12 +193,12 @@ SWEP.Animations = {
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/rip.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/rip.wav",
 				t = 2.1,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/pour.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/pour.wav",
 				t = 3.1,
 				v = 65
 			},
@@ -209,7 +209,7 @@ SWEP.Animations = {
 				p = 130
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/drop.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/drop.wav",
 				t = 6.1,
 				v = 65,
 				p = 100
@@ -221,31 +221,31 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/halfcock.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/halfcock.wav",
 				t = 7.6,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/openfrizzen.wav",
 				t = 7.9,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/primepan.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/primepan.wav",
 				t = 8.1,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/closefrizzen.wav",
 				t = 8.2,
 				v = 65,
 				p = 100
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/flm/fullcock.ogg",
+				s = "snds_jack_gmod/ez_weapons/flm/fullcock.wav",
 				t = 8.3,
 				v = 65,
 				p = 100

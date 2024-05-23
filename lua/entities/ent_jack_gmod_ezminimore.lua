@@ -109,7 +109,7 @@ if SERVER then
 				JMod.Hint(activator, "arm")
 			end
 		else
-			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
+			self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_OFF)
 			self:DrawShadow(true)
 			JMod.BlockPhysgunPickup(self, false)
@@ -128,7 +128,7 @@ if SERVER then
 		plooie:SetNormal(Up)
 		util.Effect("eff_jack_minesplode", plooie, true, true)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 
 		if JMod.Config.Explosives.FragExplosions then
@@ -151,7 +151,7 @@ if SERVER then
 
 		if not tr.Hit or tr.HitNormal.z <= 0.6 then
 			JMod.Hint(armer, "horizontal surface")
-			self:EmitSound("buttons/button18.ogg", 60, 110)
+			self:EmitSound("buttons/button18.wav", 60, 110)
 
 			return
 		end
@@ -159,7 +159,7 @@ if SERVER then
 		JMod.SetEZowner(self, armer)
 		JMod.Hint(armer, "mine friends")
 		self:SetState(STATE_ARMING)
-		self:EmitSound("snd_jack_minearm.ogg", 60, 110)
+		self:EmitSound("snd_jack_minearm.wav", 60, 110)
 		local ang = tr.HitNormal:Angle()
 		ang:RotateAroundAxis(ang:Right(), -90)
 		ang:RotateAroundAxis(ang:Up(), self:GetAngles().yaw - ang.yaw)
@@ -186,7 +186,7 @@ if SERVER then
 			for k, targ in pairs(ents.FindInSphere(self:GetPos() + Dir * 200, 150)) do
 				if (not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle())) and JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ) then
 					self:SetState(STATE_WARNING)
-					sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
+					sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 					timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 						if IsValid(self) then

@@ -68,7 +68,7 @@ if SERVER then
 			self:Remove()
 		elseif (dmginfo:IsDamageType(DMG_BURN) or dmginfo:IsDamageType(DMG_DIRECT)) and math.random() <= 0.1 * math.Clamp(dmginfo:GetDamage() / 10, 1, 5) then
 			local Pos = self:GetPos()
-			sound.Play("ambient/fire/gascan_ignite1.ogg", Pos, 70, 90)
+			sound.Play("ambient/fire/gascan_ignite1.wav", Pos, 70, 90)
 
 			for i = 1, self:GetResource() / 2 do
 				self:UseEffect(Pos, game.GetWorld(), true)

@@ -88,14 +88,14 @@ if SERVER then
 		self.EZcolorable = false
 		self.MaxConnectionRange = 1000
 		self.CurrentCableLength = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 	end
 
 	function ENT:Ratchet(amt)
 		if not(IsValid(self.Chain)) or (self:GetState() < STATE_OFF) then return end
 		amt = amt or 5
 		if amt < 0 then
-			sound.Play("snds_jack_gmod/ezsentry_turn.ogg", self:GetPos(), 60, math.random(90, 95))
+			sound.Play("snds_jack_gmod/ezsentry_turn.wav", self:GetPos(), 60, math.random(90, 95))
 			if (self:GetElectricity() <= 0) then self:TurnOff() end
 			self:ConsumeElectricity(-amt * 0.05)
 		end
@@ -130,7 +130,7 @@ if SERVER then
 
 	function ENT:StartSound()
 		if not self.SoundLoop then
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 		end
 		self.SoundLoop:Play()
 	end
@@ -228,7 +228,7 @@ if SERVER then
 		if self.Hooker then
 			self.Hooker = CreatedEntities[self.Hooker:EntIndex()]
 		end
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 		timer.Simple(1, function()
 			if IsValid(self) and IsValid(self.Hooker) then
 				self.Chain = constraint.Find(self, self.Hooker, "Elastic", 0, 0)

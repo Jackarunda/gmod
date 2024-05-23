@@ -48,7 +48,7 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 		if self.SpawnFull then
 			self:SetGas(self.MaxGas)
 			self:SetUranium(self.MaxUranium)
@@ -81,7 +81,7 @@ if(SERVER)then
 		if (self:GetGas() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
 			if IsValid(activator) then self.EZstayOn = true end
 			self.NextUseTime = CurTime() + 1
-			self:EmitSound("ambient/machines/keyboard7_clicks_enter.ogg", 70, 100)
+			self:EmitSound("ambient/machines/keyboard7_clicks_enter.wav", 70, 100)
 			self:SetState(STATE_ON)
 			timer.Simple(.8, function()
 				if IsValid(self) and (self:GetState() == STATE_ON) then
@@ -91,7 +91,7 @@ if(SERVER)then
 				end
 			end)
 		else
-			self:EmitSound("snds_jack_gmod/afh_unseal.ogg", 70, 100)
+			self:EmitSound("snds_jack_gmod/afh_unseal.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "refill centrifuge", self)
 		end
@@ -102,7 +102,7 @@ if(SERVER)then
 		if IsValid(activator) then self.EZstayOn = nil end
 		self.NextUseTime = CurTime() + 1
 		if self.SoundLoop then self.SoundLoop:Stop() end
-		self:EmitSound("snds_jack_gmod/afh_shutdown.ogg", 70, 100)
+		self:EmitSound("snds_jack_gmod/afh_shutdown.wav", 70, 100)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 	end

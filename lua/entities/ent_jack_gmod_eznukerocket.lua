@@ -97,7 +97,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -147,7 +147,7 @@ if SERVER then
 		if State == STATE_OFF then
 			if Alt then
 				JMod.SetEZowner(self, activator)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
+				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
 				self:SetState(STATE_ARMED)
 				self.EZlaunchableWeaponArmedTime = CurTime()
 				JMod.Hint(activator, "launch")
@@ -156,7 +156,7 @@ if SERVER then
 				JMod.Hint(activator, "arm")
 			end
 		elseif State == STATE_ARMED then
-			self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
+			self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
 			self:SetState(STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self.EZlaunchableWeaponArmedTime = nil
@@ -191,7 +191,7 @@ if SERVER then
 		end
 
 		for i = 1, 19 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
 		end
 
 		---
@@ -315,7 +315,7 @@ if SERVER then
 		Phys:Wake()
 		Phys:ApplyForceCenter(-self:GetRight() * 20000)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(60, 80))
+		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(60, 80))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(self:GetRight())

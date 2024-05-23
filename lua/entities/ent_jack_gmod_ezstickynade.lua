@@ -8,7 +8,7 @@ ENT.Spawnable = true
 ENT.Model = "models/jmod/explosives/grenades/stickynade/sticky_grenade.mdl"
 --ENT.ModelScale=2.25
 ENT.SpoonModel = "models/jmod/explosives/grenades/stickynade/sticky_grenade_pin.mdl"
-ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.ogg"
+ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 ENT.PinBodygroup = {2, 1}
 ENT.SpoonBodygroup = nil
 ENT.DetDelay = 4
@@ -65,7 +65,7 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos = self:GetPos()
 		JMod.Sploom(JMod.GetEZowner(self), SelfPos, 160)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)
 		Blam:SetScale(0.5)

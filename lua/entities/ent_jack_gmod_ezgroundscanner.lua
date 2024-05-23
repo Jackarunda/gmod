@@ -51,9 +51,9 @@ if(SERVER)then
 		self.EZupgradable=true
 		---
 		self:SetProgress(0)
-		self.Snd1=CreateSound(self,"snds_jack_gmod/40hz_sine1.ogg")
-		self.Snd2=CreateSound(self,"snds_jack_gmod/40hz_sine2.ogg")
-		self.Snd3=CreateSound(self,"snds_jack_gmod/40hz_sine3.ogg")
+		self.Snd1=CreateSound(self,"snds_jack_gmod/40hz_sine1.wav")
+		self.Snd2=CreateSound(self,"snds_jack_gmod/40hz_sine2.wav")
+		self.Snd3=CreateSound(self,"snds_jack_gmod/40hz_sine3.wav")
 		self.Snd1:SetSoundLevel(100)
 		self.Snd2:SetSoundLevel(100)
 		self.Snd3:SetSoundLevel(100)
@@ -66,7 +66,7 @@ if(SERVER)then
 		if self:GetElectricity() > 0 then
 			if IsValid(activator) then self.EZstayOn = true end
 			self:SetState(JMod.EZ_STATE_ON)
-			self:SFX("snd_jack_metallicclick.ogg")
+			self:SFX("snd_jack_metallicclick.wav")
 		else
 			JMod.Hint(activator,"nopower")
 		end
@@ -76,7 +76,7 @@ if(SERVER)then
 		if (self:GetState() <= JMod.EZ_STATE_OFF) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
 		self:SetState(JMod.EZ_STATE_OFF)
-		self:EmitSound("snd_jack_metallicclick.ogg",50,100)
+		self:EmitSound("snd_jack_metallicclick.wav",50,100)
 		self.Snd1:Stop()
 		self.Snd2:Stop()
 		self.Snd3:Stop()
@@ -233,7 +233,7 @@ if(SERVER)then
 			end
 		end
 		if(#Results>0)then
-			self:SFX("snds_jack_gmod/tone_good.ogg")
+			self:SFX("snds_jack_gmod/tone_good.wav")
 			-- need to convert all the positions to local coordinates
 			local Pos,Ang=self:GetPos(),self:GetAngles()
 			Ang:RotateAroundAxis(Ang:Right(),-90)
@@ -246,7 +246,7 @@ if(SERVER)then
 				return a.siz>b.siz
 			end)
 		else
-			self:SFX("snds_jack_gmod/tone_meh.ogg")
+			self:SFX("snds_jack_gmod/tone_meh.wav")
 		end
 		net.Start("JMod_ResourceScanner")
 		net.WriteEntity(self)

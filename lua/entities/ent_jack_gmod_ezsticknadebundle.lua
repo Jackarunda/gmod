@@ -26,10 +26,10 @@ if SERVER then
 
 		if self.Splitterring then
 			self:SetMaterial("models/mats_jack_nades/stick_grenade_frag")
-			self:EmitSound("snds_jack_gmod/metal_shf.ogg", 60, 120)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 120)
 		else
 			self:SetMaterial("models/mats_jack_nades/stick_grenade")
-			self:EmitSound("snds_jack_gmod/metal_shf.ogg", 60, 80)
+			self:EmitSound("snds_jack_gmod/metal_shf.wav", 60, 80)
 		end
 	end
 
@@ -71,14 +71,14 @@ if SERVER then
 					util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 					for i = 1, 2 do
-						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
+						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
 					end
 
 					for i = 1, PowerMult do
 						sound.Play("BaseExplosionEffect.Sound", SelfPos, 120, math.random(90, 110))
 					end
 
-					self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+					self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 
 					timer.Simple(.1, function()
 						for i = 1, 5 do

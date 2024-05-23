@@ -45,7 +45,7 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav")
 	end
 
 	function ENT:Use(activator)
@@ -76,12 +76,12 @@ if(SERVER)then
 		if (self:GetFuel() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
-			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.ogg") end
+			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav") end
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
 		elseif IsValid(activator) and not(auto) then
 			self.EZstayOn = true
-			self:EmitSound("snds_jack_gmod/genny_start_fail.ogg", 70, 100)
+			self:EmitSound("snds_jack_gmod/genny_start_fail.wav", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")
 		end
@@ -92,7 +92,7 @@ if(SERVER)then
 		self.NextUseTime = CurTime() + 1
 		if IsValid(activator) then self.EZstayOn = nil end
 		if self.SoundLoop then self.SoundLoop:Stop() end
-		self:EmitSound("snds_jack_gmod/genny_stop.ogg", 70, 100)
+		self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 	end
@@ -117,7 +117,7 @@ if(SERVER)then
 		effectdata:SetScale(math.Rand(.5, 1.5))
 		effectdata:SetRadius(math.Rand(2, 4))
 		util.Effect("Sparks", effectdata)
-		--self:EmitSound("items/suitchargeok1.ogg", 75, 120)
+		--self:EmitSound("items/suitchargeok1.wav", 75, 120)
 	end
 
 	function ENT:ProduceResource()

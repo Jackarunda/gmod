@@ -23,11 +23,11 @@ SWEP.Firemodes = {
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "knife"
 
-SWEP.MeleeSwingSound = {"snds_jack_gmod/ez_weapons/knives/swing1.ogg", "snds_jack_gmod/ez_weapons/knives/swing1.ogg"}
+SWEP.MeleeSwingSound = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing1.wav"}
 
-SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.ogg", "snds_jack_gmod/ez_weapons/knives/hit2.ogg", "snds_jack_gmod/ez_weapons/knives/hit3.ogg"}
+SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.wav", "snds_jack_gmod/ez_weapons/knives/hit2.wav", "snds_jack_gmod/ez_weapons/knives/hit3.wav"}
 
-SWEP.MeleeHitNPCSound = {"snds_jack_gmod/ez_weapons/knives/slice1.ogg", "snds_jack_gmod/ez_weapons/knives/slice1.ogg", "snds_jack_gmod/ez_weapons/knives/slice1.ogg", "snds_jack_gmod/ez_weapons/knives/slice2.ogg", "snds_jack_gmod/ez_weapons/knives/slice2.ogg", "snds_jack_gmod/ez_weapons/knives/slice2.ogg"}
+SWEP.MeleeHitNPCSound = {"snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice1.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav", "snds_jack_gmod/ez_weapons/knives/slice2.wav"}
 
 --[[
 vm_knifeonly_drop
@@ -62,7 +62,7 @@ SWEP.Animations = {
 		Source = "vm_knifeonly_swipe",
 		SoundTable = {
 			{
-				s = {"snds_jack_gmod/ez_weapons/knives/swing1.ogg", "snds_jack_gmod/ez_weapons/knives/swing2.ogg"},
+				s = {"snds_jack_gmod/ez_weapons/knives/swing1.wav", "snds_jack_gmod/ez_weapons/knives/swing2.wav"},
 				t = 0,
 				v = 60
 			}

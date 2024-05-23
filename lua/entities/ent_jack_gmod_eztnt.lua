@@ -101,7 +101,7 @@ if SERVER then
 
 	function ENT:Arm()
 		if self:GetState() == JMod.EZ_STATE_ARMED then return end
-		self:EmitSound("snds_jack_gmod/ignite.ogg", 60, 100)
+		self:EmitSound("snds_jack_gmod/ignite.wav", 60, 100)
 
 		timer.Simple(.5, function()
 			if IsValid(self) then
@@ -158,7 +158,7 @@ if SERVER then
 						self.StuckStick = Weld
 					end
 
-					self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 					Dude:DropObject()
 					JMod.Hint(Dude, "arm")
 				end
@@ -181,14 +181,14 @@ if SERVER then
 				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 				for i = 1, 2 do
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
 				end
 
 				for i = 1, PowerMult do
 					sound.Play("BaseExplosionEffect.Sound", SelfPos, 120, math.random(90, 110))
 				end
 
-				self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+				self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
 
 				timer.Simple(.1, function()
 					for i = 1, 5 do
@@ -233,7 +233,7 @@ if SERVER then
 			Fsh:SetScale(1)
 			Fsh:SetNormal(Ang:Forward())
 			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
-			self.Entity:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
+			self.Entity:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
 			self.Fuze = self.Fuze - .5
 

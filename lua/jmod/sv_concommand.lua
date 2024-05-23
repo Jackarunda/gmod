@@ -73,7 +73,7 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	Flare:Spawn()
 	Flare:Activate()
 	Flare:GetPhysicsObject():SetVelocity(Vector(0, 0, 1500) + VectorRand() * math.random(0, 100))
-	sound.Play("snds_jack_gmod/flaregun_fire.ogg", Tr.HitPos, 75, math.random(90, 110))
+	sound.Play("snds_jack_gmod/flaregun_fire.wav", Tr.HitPos, 75, math.random(90, 110))
 	--]]
 	--[[
 	local tre = ents.Create("ent_jack_gmod_eztree")

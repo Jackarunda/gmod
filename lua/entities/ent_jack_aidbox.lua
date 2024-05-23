@@ -203,7 +203,7 @@ if SERVER then
 		Poof:SetOrigin(Pos)
 		Poof:SetScale(2)
 		util.Effect("eff_jack_aidopen", Poof, true, true)
-		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.ogg") or "snd_jack_aidboxopen.ogg"
+		local Snd = (self.Chrimsas and "snds_jack_gmod/rapid_present_unwrap.wav") or "snd_jack_aidboxopen.wav"
 		self:EmitSound(Snd, 75, 100)
 
 		if activator:IsPlayer() then
@@ -217,7 +217,7 @@ if SERVER then
 			activator:SetAnimation(PLAYER_ATTACK1)
 		end
 
-		local Snd = (self.Chrimsas and "snds_jack_gmod/merry_Christmas_group_shout.ogg") or "snd_jack_itemsget.ogg"
+		local Snd = (self.Chrimsas and "snds_jack_gmod/merry_Christmas_group_shout.wav") or "snd_jack_itemsget.wav"
 
 		timer.Simple(2, function()
 			sound.Play(Snd, Pos, 75, 100)
@@ -253,9 +253,9 @@ if SERVER then
 				if not self.last_sound or self.last_sound <= Time then
 					self.last_sound = Time + 2
 					if (self.Chrimsas) then
-						self:EmitSound("snds_jack_gmod/2-sec-jinglebell.ogg", 75, 100, 0.5)
+						self:EmitSound("snds_jack_gmod/2-sec-jinglebell.wav", 75, 100, 0.5)
 					else
-						self:EmitSound("snds_jack_gmod/ezsentry_disengage.ogg", 75, 70, 0.5)
+						self:EmitSound("snds_jack_gmod/ezsentry_disengage.wav", 75, 70, 0.5)
 					end
 				end
 

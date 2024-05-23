@@ -153,7 +153,7 @@ if SERVER then
 								self.StuckStick = Weld
 							end
 
-							self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
+							self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
 							Dude:DropObject()
 							JMod.Hint(Dude, "stick to self")
 						end
@@ -170,7 +170,7 @@ if SERVER then
 		self:SetState(STATE_BURNIN)
 		self:SetMaterial("models/jmod/props/jlowstick_on")
 		self:DrawShadow(false)
-		self:EmitSound("snds_jack_gmod/glowstick_start.ogg", 60, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/glowstick_start.wav", 60, math.random(90, 110))
 	end
 
 	ENT.Arm = ENT.Light -- for compatibility with the ColorAndArm feature

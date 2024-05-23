@@ -90,7 +90,7 @@ if(SERVER)then
 			self:SetState(STATE_ON)
 			timer.Simple(0.1, function()
 				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.ogg")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 				self.SoundLoop:SetSoundLevel(60)
 				self.SoundLoop:Play()
 			end)
@@ -105,7 +105,7 @@ if(SERVER)then
 		end
 		if IsValid(activator) and not(auto) then
 			self.EZstayOn = true
-			self:EmitSound("snd_jack_littleignite.ogg")
+			self:EmitSound("snd_jack_littleignite.wav")
 		end
 		self:UpdateWireOutputs()
 	end
@@ -115,8 +115,8 @@ if(SERVER)then
 		self.NextUseTime = CurTime() + 1
 		if IsValid(activator) then self.EZstayOn = true end
 		if self.SoundLoop then self.SoundLoop:Stop() end
-		--self:EmitSound("snds_jack_gmod/genny_stop.ogg", 70, 100)
-		self:EmitSound("snd_jack_littleignite.ogg")
+		--self:EmitSound("snds_jack_gmod/genny_stop.wav", 70, 100)
+		self:EmitSound("snd_jack_littleignite.wav")
 		self:SetState(STATE_OFF)
 		self:ProduceResource()
 		self:UpdateWireOutputs()
@@ -142,8 +142,8 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Right * -40 + Forward * 60)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, 200)
-		self:EmitSound("snds_jack_gmod/steam_whistle_start.ogg", 150, 100)
-		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.ogg", nil)
+		self:EmitSound("snds_jack_gmod/steam_whistle_start.wav", 150, 100)
+		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.wav", nil)
 		timer.Simple(0.16, function()
 			if not(IsValid(self)) then return end
 			self.SteamLoop:Play()
@@ -159,7 +159,7 @@ if(SERVER)then
 					if i == 10 then
 						self.SteamLoop:Stop()
 						timer.Simple(0, function()
-							if IsValid(self) then self:EmitSound("snds_jack_gmod/steam_whistle_end.ogg", 150, 100) end
+							if IsValid(self) then self:EmitSound("snds_jack_gmod/steam_whistle_end.wav", 150, 100) end
 						end)
 					end
 				end)
@@ -199,7 +199,7 @@ if(SERVER)then
 					Foof:SetScale(10)
 					Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 					util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
-					self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 100)
+					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
 					return 
 				end
 				local NRGperFuel = 1 * JMod.EnergyEconomyParameters.SteamGennyEfficiencies[Grade]
@@ -235,7 +235,7 @@ if(SERVER)then
 		if (self.NextFoofThink < Time) then
 			self.NextFoofThink = Time + .4/Grade
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.ogg", 75, math.random(75, 80) * Grade / 4)
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80) * Grade / 4)
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)
@@ -288,7 +288,7 @@ if(SERVER)then
 		Foof:SetScale(50)
 		Foof:SetStart(self:GetPhysicsObject():GetVelocity() + VectorRand() * math.random(10, 100))
 		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
-		self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 100)
+		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
 
 		local Steeam = (self:GetWater() / self.MaxWater) / (self:GetElectricity() / self.MaxElectricity)
 

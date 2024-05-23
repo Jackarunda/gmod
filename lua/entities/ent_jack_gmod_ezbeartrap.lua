@@ -157,10 +157,10 @@ if SERVER then
 					if self.PryProgress >= self.PryNeeded then
 						self.PryProgress = 0
 						self.EZtrappedEnt = nil
-						sound.Play("snds_jack_gmod/beartrap_set.ogg", self:GetPos(), 60, math.random(90, 110))
+						sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
 						self:SetBodygroup(1, 0)
 						timer.Simple(1, function()
-							if IsValid(self) and (self:GetState() == STATE_CLOSED) then self:SetBodygroup(1, 1) sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".ogg", self:GetPos(), 70, math.random(90, 110)) end
+							if IsValid(self) and (self:GetState() == STATE_CLOSED) then self:SetBodygroup(1, 1) sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".wav", self:GetPos(), 70, math.random(90, 110)) end
 						end)
 					end
 
@@ -181,7 +181,7 @@ if SERVER then
 				end
 			end
 		elseif not (activator.KeyDown and activator:KeyDown(IN_SPEED)) then
-			--self:EmitSound("snd_jack_minearm.ogg", 60, 70)
+			--self:EmitSound("snd_jack_minearm.wav", 60, 70)
 			self:SetState(STATE_CLOSED)
 			self:SetBodygroup(1, 1)
 			JMod.SetEZowner(self, activator)
@@ -216,7 +216,7 @@ if SERVER then
 			end
 			victim:TakeDamageInfo(SnapDamage)
 		end
-		sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".ogg", SelfPos, 70, math.random(90, 110))
+		sound.Play("snds_jack_gmod/beartrap_snap" .. math.random(1, 2) .. ".wav", SelfPos, 70, math.random(90, 110))
 		self:SetBodygroup(1, 1)
 		self:SetMaterial("")
 		self:SetColor(Color(255, 255, 255))
@@ -246,7 +246,7 @@ if SERVER then
 				Fff:SetNormal(Tr.HitNormal)
 				Fff:SetScale(1)
 				util.Effect("eff_jack_sminebury", Fff, true, true)
-				sound.Play("snds_jack_gmod/beartrap_set.ogg", self:GetPos(), 60, math.random(90, 110))
+				sound.Play("snds_jack_gmod/beartrap_set.wav", self:GetPos(), 60, math.random(90, 110))
 				--
 				JMod.SetEZowner(self, armer or game.GetWorld())
 				self:SetState(STATE_OPEN)

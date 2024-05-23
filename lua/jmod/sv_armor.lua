@@ -1,4 +1,4 @@
-﻿local EquipSounds = {"snds_jack_gmod/equip1.ogg", "snds_jack_gmod/equip2.ogg", "snds_jack_gmod/equip3.ogg", "snds_jack_gmod/equip4.ogg", "snds_jack_gmod/equip5.ogg"}
+﻿local EquipSounds = {"snds_jack_gmod/equip1.wav", "snds_jack_gmod/equip2.wav", "snds_jack_gmod/equip3.wav", "snds_jack_gmod/equip4.wav", "snds_jack_gmod/equip5.wav"}
 
 local function IsDamageThisType(dmg, typ)
 	if type(typ) ~= "number" then return false end
@@ -262,7 +262,7 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 		if NoProtection and JMod.Config.QoL.RealisticLocationalDamage then
 			Mul = Mul * JMod.BodyPartDamageMults[hitgroup]
 		else
-			sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg", ply:GetShootPos() + VectorRand() * 10, 70, math.random(80,120))
+			sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".wav", ply:GetShootPos() + VectorRand() * 10, 70, math.random(80,120))
 		end
 
 		if ArmorPieceBroke then
@@ -406,7 +406,7 @@ hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, 
 	if ply.EZarmor then
 		--local Num=#table.GetKeys(ply.EZarmor.items)
 		if ply.EZarmor.totalWeight >= 150 then
-			ply:EmitSound("snd_jack_gear" .. tostring(math.random(1, 6)) .. ".ogg", 58, math.random(70, 130))
+			ply:EmitSound("snd_jack_gear" .. tostring(math.random(1, 6)) .. ".wav", 58, math.random(70, 130))
 		end
 	end
 end)
@@ -418,7 +418,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 	timer.Simple(math.Rand(0, .5), function()
 		if broken then
-			ply:EmitSound("snds_jack_gmod/armorbreak.ogg", 60, math.random(80, 120))
+			ply:EmitSound("snds_jack_gmod/armorbreak.wav", 60, math.random(80, 120))
 			ply:PrintMessage(HUD_PRINTTALK, Info.name .. " has been destroyed")
 		else
 			if Specs.snds and Specs.snds.uneq then
@@ -658,7 +658,7 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			ply:PrintMessage(HUD_PRINTCENTER, "Item repaired")
 
 			for i = 1, 10 do
-				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", ply:GetPos(), 60, math.random(80, 120))
+				sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".wav", ply:GetPos(), 60, math.random(80, 120))
 			end
 		end
 	elseif ActionType == 4 then
@@ -719,14 +719,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 
 				if PartialRecharge then
 					ply:PrintMessage(HUD_PRINTCENTER, "Item partially recharged, still needs: " .. mats)
-					sound.Play("items/ammo_pickup.ogg", ply:GetPos(), 60, math.random(100, 140))
+					sound.Play("items/ammo_pickup.wav", ply:GetPos(), 60, math.random(100, 140))
 				else
 					ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for recharge, needs: " .. mats)
 				end
 
 			elseif RechargeStatus == 2 then
 				ply:PrintMessage(HUD_PRINTCENTER, "Item recharged")
-				sound.Play("items/ammo_pickup.ogg", ply:GetPos(), 60, math.random(100, 140))
+				sound.Play("items/ammo_pickup.wav", ply:GetPos(), 60, math.random(100, 140))
 			end
 		end
 	end

@@ -127,7 +127,7 @@ if SERVER then
 		if RoomLeft >= bomb.EZbombBaySize then
 			table.insert(self.Bombs, {BombClass, bomb.EZbombBaySize})
 
-			self:EmitSound("snd_jack_metallicload.ogg", 65, 90)
+			self:EmitSound("snd_jack_metallicload.wav", 65, 90)
 
 			timer.Simple(0.1, function()
 				SafeRemoveEntity(bomb)
@@ -190,7 +190,7 @@ if SERVER then
 			end
 		end)
 
-		self:EmitSound("snd_jack_metallicdrop.ogg", 65, 90)
+		self:EmitSound("snd_jack_metallicdrop.wav", 65, 90)
 
 		table.remove(self.Bombs, slotNum)
 
@@ -212,7 +212,7 @@ if SERVER then
 	function ENT:Destroy(dmginfo)
 		if self.Destroyed then return end
 		self.Destroyed = true
-		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
