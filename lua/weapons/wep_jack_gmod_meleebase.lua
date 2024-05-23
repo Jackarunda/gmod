@@ -66,7 +66,7 @@ SWEP.Animations = {
 		Time = 0.5,
 		SoundTable = {
 			{
-				s = "weapons/arccw/knife/knife_deploy.wav",
+				s = "weapons/arccw/knife/knife_deploy.ogg",
 				t = 0
 			}
 		}

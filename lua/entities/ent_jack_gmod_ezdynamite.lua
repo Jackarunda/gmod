@@ -100,7 +100,7 @@ if SERVER then
 
 	function ENT:Arm()
 		if self:GetState() == JMod.EZ_STATE_ARMED then return end
-		self:EmitSound("snds_jack_gmod/ignite.wav", 60, 100)
+		self:EmitSound("snds_jack_gmod/ignite.ogg", 60, 100)
 
 		timer.Simple(.5, function()
 			if IsValid(self) then
@@ -137,7 +137,7 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos = self:GetPos()
 		JMod.Sploom(JMod.GetEZowner(self), SelfPos, 115)
-		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)
 		Blam:SetScale(0.5)
@@ -178,7 +178,7 @@ if SERVER then
 				Fsh:SetScale(1)
 				Fsh:SetNormal(-Att.Ang:Right())
 				util.Effect("eff_jack_fuzeburn", Fsh, true, true)
-				self:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))
+				self:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
 			end
 
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)

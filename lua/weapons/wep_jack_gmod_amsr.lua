@@ -31,9 +31,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 1 -- real bolt guns are more accurate than this, but whatever... gmod
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/heavy_rifle.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
 SWEP.ShootSoundExtraMult = 2
 SWEP.MuzzleEffect = "muzzle_center_M82"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -121,25 +121,25 @@ SWEP.Animations = {
 		ShellEjectAt = 1.1,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/up.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/up.ogg",
 				t = .75,
 				v = 60,
 				p = 90
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/back.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/back.ogg",
 				t = 0.8,
 				v = 60,
 				p = 90
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/forward.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/forward.ogg",
 				t = 1.6,
 				v = 60,
 				p = 90
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/down.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/down.ogg",
 				t = 1.8,
 				v = 60,
 				p = 90
@@ -168,7 +168,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/out.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/out.ogg",
 				t = .55,
 				v = 60
 			},
@@ -178,7 +178,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/in.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/in.ogg",
 				t = 2,
 				v = 60
 			},
@@ -206,12 +206,12 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/up.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/up.ogg",
 				t = .7,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/back.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/back.ogg",
 				t = .8,
 				v = 60
 			},
@@ -221,7 +221,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/out.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/out.ogg",
 				t = 2.9,
 				v = 60
 			},
@@ -231,17 +231,17 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/in.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/in.ogg",
 				t = 4.45,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/forward.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/forward.ogg",
 				t = 5.3,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/amsr/down.wav",
+				s = "snds_jack_gmod/ez_weapons/amsr/down.ogg",
 				t = 5.4,
 				v = 60
 			},

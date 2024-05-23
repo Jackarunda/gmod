@@ -192,7 +192,7 @@ function SWEP:Reload()
 					Ent:SetEZsupplies(typ, amt - Take, self.Owner)
 					self:SetEZsupplies(typ, CurAmt + Take)
 					if Take > 0 then
-						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
+						sound.Play("items/ammo_pickup.ogg", self:GetPos(), 65, math.random(90, 110))
 					end
 				end
 			end
@@ -290,7 +290,7 @@ function SWEP:Deploy()
 	if IsValid(vm) and vm.LookupSequence then
 		Downness = 10
 		self:UpdateNextIdle()
-		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	if SERVER then

@@ -68,7 +68,7 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 25 then
-			self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
+			self:EmitSound("snd_jack_claythunk.ogg", 55, math.random(80, 120))
 		end
 	end
 
@@ -115,7 +115,7 @@ if SERVER then
 			if State == STATE_OFF then
 				if Alt then
 					self:SetState(STATE_ARMED)
-					self:EmitSound("snd_jack_minearm.wav", 60, 100)
+					self:EmitSound("snd_jack_minearm.ogg", 60, 100)
 					JMod.Hint(Dude, "trigger")
 				else
 					constraint.RemoveAll(self)
@@ -126,7 +126,7 @@ if SERVER then
 					JMod.Hint(Dude, "sticky")
 				end
 			else
-				self:EmitSound("snd_jack_minearm.wav", 60, 70)
+				self:EmitSound("snd_jack_minearm.ogg", 60, 70)
 				self:SetState(STATE_OFF)
 			end
 		else
@@ -152,7 +152,7 @@ if SERVER then
 						self.StuckStick = Weld
 					end
 
-					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+					self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
 					Dude:DropObject()
 					JMod.Hint(Dude, "arm")
 				end
@@ -220,11 +220,11 @@ if SERVER then
 
 				if PowerMult > 1 then
 					for i = 1, PowerMult do
-						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
+						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
 					end
 				end
 
-				self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
+				self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 
 				timer.Simple(.1, function()
 					for i = 1, 5 do

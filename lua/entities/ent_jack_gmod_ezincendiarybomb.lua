@@ -101,7 +101,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -133,7 +133,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 120)
+				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = CurTime()
 				JMod.Hint(activator, "airburst")
 			else
@@ -146,7 +146,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 120)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")

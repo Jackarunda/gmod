@@ -31,7 +31,7 @@ function ENT:DoMusic()
 	end
 
 	if not self.NoSound then
-		local Loop = CreateSound(self, "snds_jack_gmod/fiddle_loop.wav")
+		local Loop = CreateSound(self, "snds_jack_gmod/fiddle_loop.ogg")
 		Loop:SetSoundLevel(50)
 		Loop:Play()
 		self.Snd = Loop
@@ -68,7 +68,7 @@ end
 
 function ENT:OnKilled(dmg)
 	self.EZowner = dmg:GetAttacker()
-	self:EmitSound("snds_jack_gmod/yee.wav")
+	self:EmitSound("snds_jack_gmod/yee.ogg")
 
 	timer.Simple(1.4, function()
 		if IsValid(self) then

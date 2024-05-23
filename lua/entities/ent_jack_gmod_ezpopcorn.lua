@@ -51,7 +51,7 @@ if SERVER then
 
 		if Alt then
 			if JMod.ConsumeNutrients(ply, 1) then
-				sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".wav", self:GetPos(), 60, math.random(90, 110))
+				sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", self:GetPos(), 60, math.random(90, 110))
 				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 
 				self:SetPop(self:GetPop() - 1)
@@ -63,10 +63,10 @@ if SERVER then
 					ply.JMod_WillAsplode = true
 					timer.Simple(math.random(1, 3), function()
 						if IsValid(ply) then
-							ply:EmitSound("vo/npc/male01/ohno.wav")
+							ply:EmitSound("vo/npc/male01/ohno.ogg")
 							timer.Simple(1, function()
 								if not IsValid(ply) then return end
-								ply:EmitSound("vo/npc/male01/question27.wav")
+								ply:EmitSound("vo/npc/male01/question27.ogg")
 								timer.Simple(2, function()
 									if not IsValid(ply) then return end
 									local Pos, Range = ply:GetPos() + Vector(0, 0, 40), 40

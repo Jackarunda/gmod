@@ -101,7 +101,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -138,7 +138,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.wav", 70, 120)
+				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = CurTime()
 				JMod.Hint(activator, "impactdet")
 			else
@@ -151,7 +151,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 70, 120)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
@@ -175,7 +175,7 @@ if SERVER then
 		end
 
 		for i = 1, 2 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
 		end
 
 		---
@@ -232,7 +232,7 @@ if SERVER then
 				self:SetSnakeye(true)
 				Phys:EnableDrag(true)
 				Phys:SetDragCoefficient(20)
-				self:EmitSound("buttons/lever6.wav", 70, 120)
+				self:EmitSound("buttons/lever6.ogg", 70, 120)
 			end
 		else
 			self.FreefallTicks = 0

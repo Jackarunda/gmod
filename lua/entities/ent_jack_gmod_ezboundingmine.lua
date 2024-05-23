@@ -88,7 +88,7 @@ if SERVER then
 			Fff:SetNormal(Tr.HitNormal)
 			Fff:SetScale(1)
 			util.Effect("eff_jack_sminebury", Fff, true, true)
-			self:EmitSound("snd_jack_pinpull.wav")
+			self:EmitSound("snd_jack_pinpull.ogg")
 			activator:EmitSound("Dirt.BulletImpact")
 			self.ShootDir = Tr.HitNormal
 			self:DrawShadow(false)
@@ -143,7 +143,7 @@ if SERVER then
 				JMod.Hint(activator, "arm boundingmine")
 			end
 		else
-			self:EmitSound("snd_jack_minearm.wav", 60, 70)
+			self:EmitSound("snd_jack_minearm.ogg", 60, 70)
 			self:SetState(JMod.EZ_STATE_OFF)
 			JMod.SetEZowner(self, activator)
 			self:DrawShadow(true)
@@ -190,7 +190,7 @@ if SERVER then
 
 		util.BlastDamage(self, JMod.GetEZowner(self), SelfPos, 120 * JMod.Config.Explosives.Mine.Power, 30 * JMod.Config.Explosives.Mine.Power)
 		util.ScreenShake(SelfPos, 99999, 99999, 1, 500)
-		self:EmitSound("snd_jack_fragsplodeclose.wav", 90, 100)
+		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 		JMod.FragSplosion(self, SelfPos, 3000, 20, 8000, JMod.GetEZowner(self), nil, nil, 3)
 		self:Remove()
@@ -228,8 +228,8 @@ if SERVER then
 		Poof:SetScale(1)
 		util.Effect("eff_jack_sminepop", Poof, true, true)
 		--util.SpriteTrail(self,0,Color(50,50,50,255),false,8,20,.5,1/(15+1)*0.5,"trails/smoke.vmt")
-		self:EmitSound("snd_jack_sminepop.wav")
-		sound.Play("snd_jack_sminepop.wav", self:GetPos(), 120, 80)
+		self:EmitSound("snd_jack_sminepop.ogg")
+		sound.Play("snd_jack_sminepop.ogg", self:GetPos(), 120, 80)
 
 		timer.Simple(math.Rand(.4, .5), function()
 			if IsValid(self) then
@@ -263,7 +263,7 @@ if SERVER then
 		JMod.SetEZowner(self, armer)
 		self:SetState(JMod.EZ_STATE_ARMING)
 		self:SetBodygroup(2, 1)
-		self:EmitSound("snd_jack_minearm.wav", 60, 110)
+		self:EmitSound("snd_jack_minearm.ogg", 60, 110)
 
 		timer.Simple(3, function()
 			if IsValid(self) then
@@ -283,7 +283,7 @@ if SERVER then
 				if not (targ == self) and (targ:IsPlayer() or targ:IsNPC() or targ:IsVehicle()) then
 					if JMod.ShouldAttack(self, targ) and JMod.ClearLoS(self, targ, false, 5) then
 						self:SetState(JMod.EZ_STATE_WARNING)
-						sound.Play("snds_jack_gmod/mine_warn.wav", self:GetPos() + Vector(0, 0, 30), 60, 100)
+						sound.Play("snds_jack_gmod/mine_warn.ogg", self:GetPos() + Vector(0, 0, 30), 60, 100)
 
 						timer.Simple(math.Rand(.15, .4) * JMod.Config.Explosives.Mine.Delay, function()
 							if IsValid(self) then

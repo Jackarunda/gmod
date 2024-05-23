@@ -106,7 +106,7 @@ if SERVER then
 			Accepted = math.min(Missing, amt)
 			self.Hydration = Wata + Accepted
 			self.LastWateredTime = Time
-			self:EmitSound("snds_jack_gmod/liquid_load.wav", 60, math.random(120, 130))
+			self:EmitSound("snds_jack_gmod/liquid_load.ogg", 60, math.random(120, 130))
 		end
 		return math.ceil(Accepted)
 	end

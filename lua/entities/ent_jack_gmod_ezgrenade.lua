@@ -180,7 +180,7 @@ if SERVER then
 			Spewn:SetPos(self:GetPos())
 			Spewn:Spawn()
 			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + VectorRand() * 250)
-			self:EmitSound("snd_jack_spoonfling.wav", 60, math.random(90, 110))
+			self:EmitSound("snd_jack_spoonfling.ogg", 60, math.random(90, 110))
 		end
 	end
 

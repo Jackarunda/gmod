@@ -18,7 +18,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		self.FuelLeft = 30
-		self:EmitSound("snd_jack_fragsplodeclose.wav", 70, 150)
+		self:EmitSound("snd_jack_fragsplodeclose.ogg", 70, 150)
 	end
 
 	function ENT:CustomThink()
@@ -31,7 +31,7 @@ if SERVER then
 				Gas:Activate()
 				Gas.Canister = self
 				Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100)
-				self:EmitSound("snd_jack_sss.wav", 55, 80)
+				self:EmitSound("snd_jack_sss.ogg", 55, 80)
 				self.FuelLeft = self.FuelLeft - 1
 
 				if self.FuelLeft <= 0 then

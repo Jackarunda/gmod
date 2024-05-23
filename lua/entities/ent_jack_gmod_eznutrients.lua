@@ -31,9 +31,9 @@ if SERVER then
 				timer.Simple(i / 4, function()
 					if IsValid(ply) then
 						if math.random(1, 2) == 1 then
-							ply:EmitSound("snd_jack_eat" .. tostring(math.random(1, 9)) .. ".wav", 75, math.Rand(90, 110))
+							ply:EmitSound("snd_jack_eat" .. tostring(math.random(1, 9)) .. ".ogg", 75, math.Rand(90, 110))
 						else
-							ply:EmitSound("snd_jack_drink" .. tostring(math.random(1, 2)) .. ".wav", 75, math.Rand(90, 110))
+							ply:EmitSound("snd_jack_drink" .. tostring(math.random(1, 2)) .. ".ogg", 75, math.Rand(90, 110))
 						end
 					end
 				end)
