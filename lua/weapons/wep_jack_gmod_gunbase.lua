@@ -97,11 +97,11 @@ SWEP.MeleeTime = .5
 SWEP.MeleeDelay = .3
 SWEP.MeleeSwingSound = JMod.GunHandlingSounds.cloth.loud
 
-SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.ogg", "physics/metal/weapon_impact_hard2.ogg", "physics/metal/weapon_impact_hard3.ogg"}
+SWEP.MeleeHitSound = {"physics/metal/weapon_impact_hard1.wav", "physics/metal/weapon_impact_hard2.wav", "physics/metal/weapon_impact_hard3.wav"}
 
-SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.ogg", "physics/body/body_medium_impact_hard3.ogg", "physics/body/body_medium_impact_hard4.ogg", "physics/body/body_medium_impact_hard5.ogg", "physics/body/body_medium_impact_hard6.ogg"}
+SWEP.MeleeHitNPCSound = {"physics/body/body_medium_impact_hard2.wav", "physics/body/body_medium_impact_hard3.wav", "physics/body/body_medium_impact_hard4.wav", "physics/body/body_medium_impact_hard5.wav", "physics/body/body_medium_impact_hard6.wav"}
 
-SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.ogg"
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
 SWEP.MeleeVolume = 65
 SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"

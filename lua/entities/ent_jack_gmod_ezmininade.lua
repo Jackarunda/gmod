@@ -23,7 +23,7 @@ if SERVER then
 		self.Entity:TakePhysicsDamage(dmginfo)
 
 		if dmginfo:GetInflictor() ~= self and dmginfo:GetDamage() >= 5 and not self.Exploded and self:GetState() ~= JMod.EZ_STATE_BROKEN then
-			self:EmitSound("physics/metal/metal_box_impact_bullet2.ogg", 75, 200)
+			self:EmitSound("physics/metal/metal_box_impact_bullet2.wav", 75, 200)
 			self:SetState(JMod.EZ_STATE_BROKEN)
 			local eff = EffectData()
 			eff:SetOrigin(self:GetPos())

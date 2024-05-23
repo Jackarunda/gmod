@@ -87,7 +87,7 @@ local function PopulateList(parent, friendList, myself, W, H)
 			end
 
 			function Buttaloney:DoClick()
-				surface.PlaySound("garrysmod/ui_click.ogg")
+				surface.PlaySound("garrysmod/ui_click.wav")
 
 				if InLikeFlynn then
 					table.RemoveByValue(friendList, playa)

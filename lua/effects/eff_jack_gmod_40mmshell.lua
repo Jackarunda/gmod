@@ -13,7 +13,7 @@ EFFECT.ShellModel = "models/jhells/shell_9mm.mdl"
 EFFECT.ShellPitch = 50
 EFFECT.ShellScale = 7
 
-EFFECT.Sounds = {"player/pl_shell1.ogg", "player/pl_shell2.ogg", "player/pl_shell3.ogg"}
+EFFECT.Sounds = {"player/pl_shell1.wav", "player/pl_shell2.wav", "player/pl_shell3.wav"}
 
 function EFFECT:Init(data)
 	local mag = 100

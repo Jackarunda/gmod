@@ -48,7 +48,7 @@ if SERVER then
 
 	function ENT:Prime()
 		if (self:GetState() == JMod.EZ_STATE_ARMED) or (self:GetState() == JMod.EZ_STATE_PRIMED) then return end
-		self:EmitSound("weapons/c4/c4_plant.ogg", 60, 80)
+		self:EmitSound("weapons/c4/c4_plant.wav", 60, 80)
 		self:SetState(JMod.EZ_STATE_PRIMED)
 		self.Plunger:SetParent(nil)
 		constraint.NoCollide(self, self.Plunger, 0, 0)

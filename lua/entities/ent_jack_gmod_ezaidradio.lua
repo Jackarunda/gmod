@@ -46,7 +46,7 @@ if(SERVER)then
 		self.ConnectionlessThinks = 0
 		---
 		local Path = "/npc/combine_soldier/vo/"
-		local Files, Folders = file.Find("sound" .. Path .. "*.ogg", "GAME")
+		local Files, Folders = file.Find("sound" .. Path .. "*.wav", "GAME")
 		self.Voices = Files
 	end
 
@@ -461,7 +461,7 @@ elseif(CLIENT)then
 		self.LeftHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.RightHandle=JMod.MakeModel(self,"models/props_wasteland/panel_leverhandle001a.mdl","phoenix_storms/metal")
 		self.MaxElectricity=100
-		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.ogg","GAME")
+		local Files,Folders=file.Find("sound/npc/combine_soldier/vo/*.wav","GAME")
 		self.Voices=Files
 	end
 

@@ -311,7 +311,7 @@ if SERVER then
 			self.EZlaunchBury = true
 			self.EZholdingPlayer = nil
 			--self:SetState(STATE_LAUNCHED)
-			--self:EmitSound("npc/roller/mine/rmine_predetonate.ogg")
+			--self:EmitSound("npc/roller/mine/rmine_predetonate.wav")
 
 			return true
 		else

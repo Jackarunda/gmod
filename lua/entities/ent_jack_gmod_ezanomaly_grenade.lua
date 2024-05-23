@@ -95,7 +95,7 @@ local DetonationEffects = {
 					v:Give("wep_jack_gmod_hands")
 					v:SelectWeapon("wep_jack_gmod_hands")
 					v:ViewPunch(Angle(0, 30, 0))
-					v:EmitSound("physics/body/body_medium_impact_hard6.ogg", 50, 100)
+					v:EmitSound("physics/body/body_medium_impact_hard6.wav", 50, 100)
 				end
 			end
 		end

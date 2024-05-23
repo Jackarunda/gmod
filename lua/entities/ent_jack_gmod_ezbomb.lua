@@ -164,7 +164,7 @@ if SERVER then
 		end
 
 		for i = 1, 3 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
 		end
 
 		---

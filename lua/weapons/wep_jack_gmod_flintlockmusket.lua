@@ -69,7 +69,7 @@ SWEP.MeleeHitSound = {"snds_jack_gmod/ez_weapons/knives/hit1.ogg", "snds_jack_gm
 
 SWEP.MeleeHitNPCSound = {"snds_jack_gmod/knifestab.ogg", "snds_jack_gmod/knifestab.ogg", "snds_jack_gmod/knifestab.ogg", "snds_jack_gmod/knifestab.ogg", "snds_jack_gmod/knifestab.ogg"}
 
-SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.ogg"
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
 SWEP.MeleeVolume = 65
 SWEP.MeleePitch = 1
 SWEP.MeleeHitEffect = nil -- "BloodImpact"
