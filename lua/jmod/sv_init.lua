@@ -958,21 +958,23 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	local EZcorpse
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
-		local BodyGroupValues = ""
-		for i = 1, PlyRagdoll:GetNumBodyGroups() do
-			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
-		end
-		SafeRemoveEntity(PlyRagdoll)
-		EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
-		EZcorpse.DeadPlayer = ply
-		if ply.EZoverDamage then
-			EZcorpse.EZoverDamage = ply.EZoverDamage
-		end
-		EZcorpse.BodyGroupValues = BodyGroupValues
-		EZcorpse:Spawn()
-		EZcorpse:Activate()
-		if IsValid(EZcorpse.EZragdoll) then
-			EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+		if IsValid(PlyRagdoll) then
+			local BodyGroupValues = ""
+			for i = 1, PlyRagdoll:GetNumBodyGroups() do
+				BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
+			end
+			SafeRemoveEntity(PlyRagdoll)
+			EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+			EZcorpse.DeadPlayer = ply
+			if ply.EZoverDamage then
+				EZcorpse.EZoverDamage = ply.EZoverDamage
+			end
+			EZcorpse.BodyGroupValues = BodyGroupValues
+			EZcorpse:Spawn()
+			EZcorpse:Activate()
+			if IsValid(EZcorpse.EZragdoll) then
+				EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+			end
 		end
 	end
 	ply.EZoverDamage = nil
