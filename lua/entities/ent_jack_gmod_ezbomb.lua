@@ -173,7 +173,7 @@ if SERVER then
 
 			if (Dist > 250) and (Dist < 4000) then
 				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/big_bomb_far.wav", 55, 110)
+					ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 110)
 					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
 					util.ScreenShake(ply:GetPos(), 1000, 3, 1, 100)
 				end)
