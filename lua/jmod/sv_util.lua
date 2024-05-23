@@ -1636,7 +1636,7 @@ function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, n
 			local dir = VectorRand():GetNormalized()
 			local firer = (IsValid(attacker) and attacker) or game.GetWorld()
 
-			sound.Play("snd_jack_fireworkpop" .. math.random(1, 5) .. ".wav", pos + VectorRand() * 10, 75, math.random(90, 110))
+			sound.Play("snd_jack_fireworkpop" .. math.random(1, 5) .. ".ogg", pos + VectorRand() * 10, 75, math.random(90, 110))
 
 			firer:FireBullets({
 				Attacker = attacker,

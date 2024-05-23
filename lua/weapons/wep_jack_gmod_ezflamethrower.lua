@@ -268,7 +268,7 @@ function SWEP:PrimaryAttack()
 			elseif (State == STATE_IGNITIN) then
 				self:SetState(STATE_FLAMIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.ogg")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			elseif (State == STATE_FLAMIN) then
@@ -321,9 +321,9 @@ function SWEP:SecondaryAttack()
 			if (self.NextIgniteTry < Time) then
 				self.NextIgniteTry = Time + 1
 				self:SetState(STATE_FIZZLIN)
-				self.Owner:EmitSound("snd_jack_spoonfling.wav", 75, 100)
+				self.Owner:EmitSound("snd_jack_spoonfling.ogg", 75, 100)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			end
@@ -332,7 +332,7 @@ function SWEP:SecondaryAttack()
 				self.NextIgniteTry = Time + 1.8
 				self:SetState(STATE_IGNITIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			end
@@ -398,7 +398,7 @@ function SWEP:TryLoadResource(typ, amt)
 			
 			if Take > 0 then
 				self:SetEZsupplies(typ, CurAmt + Take)
-				sound.Play("snds_jack_gmod/gas_load.wav", self:GetPos(), 65, math.random(90, 110))
+				sound.Play("snds_jack_gmod/gas_load.ogg", self:GetPos(), 65, math.random(90, 110))
 				Accepted = Take
 			end
 		end
@@ -564,7 +564,7 @@ function SWEP:Think()
 			if self.Owner:IsPlayer() and self.Owner:KeyDown(IN_ATTACK2) then
 				self:SetState(STATE_IGNITIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			else

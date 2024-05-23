@@ -29,18 +29,18 @@ ENT.DynamicPerfSpecs={
 ENT.LiquidTypes = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
 		TankColor = Color(61, 194, 255),
-		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
-		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"},
 	},
 	[JMod.EZ_RESOURCE_TYPES.FUEL] = {
 		TankColor = Color(255, 61, 61),
-		SoundRight = {"snds_jack_gmod/flamethrower_loop.wav"},
-		SoundLeft = {"snds_jack_gmod/flamethrower_loop.wav", 120},
+		SoundRight = {"snds_jack_gmod/flamethrower_loop.ogg"},
+		SoundLeft = {"snds_jack_gmod/flamethrower_loop.ogg", 120},
 	},
 	--[[[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = {
 		TankColor = Color(61, 255, 61),
-		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
-		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"},
 	}--]]
 }
 
@@ -132,8 +132,8 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.POWER,
 		}
 		self.Rotation = {Max = 360}
-		self.SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"}
-		self.SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"}
+		self.SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"}
+		self.SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"}
 		-- All moddable attributes
 		-- Each mod selected for it is +1, against it is -1
 		self.ModPerfSpecs = {
@@ -267,7 +267,7 @@ if(SERVER)then
 					Accepted = math.min(Missing / 2, amt)
 					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
-					self:EmitSound("snd_jack_turretrepair.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
 					if(self.Durability > 0)then
 						if(self:GetState() == JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
 					end
@@ -278,14 +278,14 @@ if(SERVER)then
 					if(Missing <= 0)then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetElectricity(Powa + Accepted)
-					self:EmitSound("snd_jack_turretbatteryload.wav", 65, math.random(90, 110))
+					self:EmitSound("snd_jack_turretbatteryload.ogg", 65, math.random(90, 110))
 				elseif(typ == self:GetLiquidType())then
 					local Liquid = self:GetLiquid()
 					local Missing = self.MaxLiquid - Liquid
 					if( Missing < 1 )then return 0 end
 					Accepted = math.min(Missing, amt)
 					self:SetLiquid(Liquid + Accepted)
-					self:EmitSound("snds_jack_gmod/liquid_load.wav", 65, math.random(90, 110))
+					self:EmitSound("snds_jack_gmod/liquid_load.ogg", 65, math.random(90, 110))
 				end
 				if self.ResourceLoaded then self:ResourceLoaded(typ, Accepted) end
 				self.NextRefillTime = Time + 1

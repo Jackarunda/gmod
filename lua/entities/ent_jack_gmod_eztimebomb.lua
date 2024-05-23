@@ -82,7 +82,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self:EmitSound("snd_jack_claythunk.wav", 55, math.random(80, 120))
+				self:EmitSound("snd_jack_claythunk.ogg", 55, math.random(80, 120))
 			end
 		end
 	end
@@ -179,7 +179,7 @@ if SERVER then
 							self.StuckStick = Weld
 						end
 
-						self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+						self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
 						Dude:DropObject()
 					end
 				end
