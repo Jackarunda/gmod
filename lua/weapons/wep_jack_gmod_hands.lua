@@ -367,7 +367,7 @@ function SWEP:PrimaryAttack()
 	self:UpdateNextIdle()
 
 	if SERVER then
-		sound.Play("weapons/slam/throw.wav", self:GetPos(), 65, math.random(90, 110))
+		sound.Play("weapons/slam/throw.ogg", self:GetPos(), 65, math.random(90, 110))
 		self.Owner:ViewPunch(Angle(0, 0, math.random(-2, 2)))
 
 		timer.Simple(.075, function()

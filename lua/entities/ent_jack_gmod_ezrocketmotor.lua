@@ -91,7 +91,7 @@ if SERVER then
 	function ENT:Break()
 		if self:GetState() == STATE_BROKEN then return end
 		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.wav", 70, math.random(80, 120))
+		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
 
 		for i = 1, 20 do
 			JMod.DamageSpark(self)
@@ -126,7 +126,7 @@ if SERVER then
 				if Alt then
 					self:SetState(STATE_ARMED)
 					self.EZlaunchableWeaponArmedTime = CurTime()
-					self:EmitSound("snds_jack_gmod/bomb_arm.wav", 60, 120)
+					self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 60, 120)
 					JMod.Hint(activator, "launch")
 				else
 					constraint.RemoveAll(self)
@@ -139,7 +139,7 @@ if SERVER then
 					JMod.Hint(Dude, "sticky")
 				end
 			else
-				self:EmitSound("snds_jack_gmod/bomb_disarm.wav", 60, 120)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 60, 120)
 				self:SetState(STATE_OFF)
 				self.EZlaunchableWeaponArmedTime = CurTime()
 			end
@@ -166,7 +166,7 @@ if SERVER then
 						self:SetParent(Tr.Entity)
 					end
 
-					self:EmitSound("snd_jack_claythunk.wav", 65, math.random(80, 120))
+					self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
 					Dude:DropObject()
 					JMod.Hint(Dude, "arm")
 				end
@@ -196,7 +196,7 @@ if SERVER then
 			end
 		end
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.wav", 80, math.random(95, 105))
+		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(-self:GetUp())

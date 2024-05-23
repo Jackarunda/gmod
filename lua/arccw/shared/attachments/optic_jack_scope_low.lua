@@ -18,8 +18,8 @@ att.AdditionalSights = {
 		Magnification = 1.3, -- this is how much your eyes zoom into the scope, not scope magnification
 		ScrollFunc = ArcCW.SCROLL_NONE,
 		IgnoreExtra = true,
-		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.wav",
-		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.wav"
+		SwitchToSound = "snds_jack_gmod/ez_weapons/handling/aim1.ogg",
+		SwitchFromSound = "snds_jack_gmod/ez_weapons/handling/aim_out.ogg"
 	}
 }
 

@@ -55,7 +55,7 @@ if(SERVER)then
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
 		self.NextWaterLoseTime = 0
-		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.wav")
+		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.ogg")
 	end
 
 	function ENT:TryPlace()
@@ -124,7 +124,7 @@ if(SERVER)then
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, 300)
-		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		self:EmitSound("items/suitchargeok1.ogg", 80, 120)
 	end
 
 	function ENT:TurnOn(Dude, auto)
@@ -133,11 +133,11 @@ if(SERVER)then
 		if self.EZinstalled then
 			if IsValid(Dude) and not(auto) then
 				self.EZstayOn = true
-				self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+				self:EmitSound("snd_jack_rustywatervalve.ogg", 100, 120)
 				self.NextUse = CurTime() + 1
 				timer.Simple(0.6, function()
 					if not IsValid(self) then return end
-					self:EmitSound("snds_jack_gmod/hiss.wav", 100, 80)
+					self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 80)
 				end)
 			end
 			if (self:GetWater() > 0) and (self.DepositKey) then
@@ -163,7 +163,7 @@ if(SERVER)then
 		if IsValid(activator) then self.EZstayOn = nil end
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
-		self:EmitSound("snd_jack_rustywatervalve.wav", 100, 120)
+		self:EmitSound("snd_jack_rustywatervalve.ogg", 100, 120)
 		timer.Simple(1, function()
 			if not IsValid(self) then return end
 			if self.SoundLoop then 
@@ -229,7 +229,7 @@ if(SERVER)then
 		end
 
 		if State == STATE_RUNNING then
-			self:EmitSound("snds_jack_gmod/hiss.wav", 60, math.random(75, 80) * self.ChargeRate)
+			self:EmitSound("snds_jack_gmod/hiss.ogg", 60, math.random(75, 80) * self.ChargeRate)
 			local Foof = EffectData()
 			Foof:SetOrigin(self:GetPos() + self:GetUp() * 120 + self:GetForward() * 10)
 			Foof:SetNormal(self:GetUp())
@@ -256,7 +256,7 @@ if(SERVER)then
 		Foof:SetScale(50)
 		Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 		util.Effect("eff_jack_gmod_ezsteam", Foof, true, true)
-		self:EmitSound("snds_jack_gmod/hiss.wav", 100, 100)
+		self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 100)
 
 		local Range = 400
 		for _, ent in pairs(ents.FindInSphere(Pos, Range)) do

@@ -33,9 +33,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 6 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/magnum_revolver.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/magnum_revolver.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/magnum_revolver.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/magnum_revolver.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_pistol_deagle"
 SWEP.ShellModel = "models/jhells/shell_9mm.mdl"
@@ -114,12 +114,12 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.wav",
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/open.ogg",
 				t = .65,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.wav",
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/out.ogg",
 				t = .75,
 				v = 55
 			},
@@ -130,12 +130,12 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.wav",
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/in.ogg",
 				t = 1.9,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.wav",
+				s = "snds_jack_gmod/ez_weapons/magnumrevolver/close.ogg",
 				t = 2.8,
 				v = 60
 			},

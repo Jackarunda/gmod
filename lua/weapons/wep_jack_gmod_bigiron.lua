@@ -34,9 +34,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 10 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/small_shotgun.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/pistol_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_pistol_rbull"
 SWEP.ExtraMuzzleLua = "eff_jack_gmod_bpmuzzle"
@@ -262,17 +262,17 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.ogg",
 				t = .5,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.ogg",
 				t = 1.1,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.ogg",
 				t = 1.4,
 				v = 60
 			},
@@ -283,7 +283,7 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.ogg",
 				t = 2.3,
 				v = 60
 			}
@@ -305,17 +305,17 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/open.ogg",
 				t = .5,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/eject.ogg",
 				t = 1.1,
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/out.ogg",
 				t = 1.4,
 				v = 60
 			},
@@ -326,7 +326,7 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.ogg",
 				t = 2.3,
 				v = 60
 			}
@@ -349,7 +349,7 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/in.ogg",
 				t = .8,
 				v = 60
 			}
@@ -362,7 +362,7 @@ SWEP.Animations = {
 		LHIKIn = 0,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/shotrevolver/close.wav",
+				s = "snds_jack_gmod/ez_weapons/shotrevolver/close.ogg",
 				t = .4,
 				v = 60
 			},

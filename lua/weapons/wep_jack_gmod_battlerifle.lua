@@ -27,9 +27,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 3 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_g3"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -96,7 +96,7 @@ SWEP.Animations = {
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.ogg",
 				t = .3,
 				v = 65
 			},
@@ -106,12 +106,12 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.ogg",
 				t = 1.7,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.ogg",
 				t = 2.1,
 				v = 65
 			},
@@ -134,12 +134,12 @@ SWEP.Animations = {
 		LHIKOut = 0.5,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/pull_bolt.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/pull_bolt.ogg",
 				t = .1,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_out.ogg",
 				t = .7,
 				v = 65
 			},
@@ -149,12 +149,12 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_in.ogg",
 				t = 2.1,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/mag_tap.ogg",
 				t = 2.5,
 				v = 65
 			},
@@ -165,7 +165,7 @@ SWEP.Animations = {
 				p = 130
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.wav",
+				s = "snds_jack_gmod/ez_weapons/battle_rifle/bolt_release.ogg",
 				t = 3.2,
 				v = 65
 			},

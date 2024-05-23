@@ -82,8 +82,8 @@ local DetonationEffects = {
 	nope = {
 		col = Color(255, 255, 255),
 		func = function(self, pos, owner)
-			sound.Play("snds_jack_gmod/nope.wav", pos, 100, 100)
-			sound.Play("snds_jack_gmod/nope.wav", pos, 100, 100)
+			sound.Play("snds_jack_gmod/nope.ogg", pos, 100, 100)
+			sound.Play("snds_jack_gmod/nope.ogg", pos, 100, 100)
 
 			if IsValid(self) then
 				self:PoofEffect()
@@ -95,7 +95,7 @@ local DetonationEffects = {
 					v:Give("wep_jack_gmod_hands")
 					v:SelectWeapon("wep_jack_gmod_hands")
 					v:ViewPunch(Angle(0, 30, 0))
-					v:EmitSound("physics/body/body_medium_impact_hard6.wav", 50, 100)
+					v:EmitSound("physics/body/body_medium_impact_hard6.ogg", 50, 100)
 				end
 			end
 		end
@@ -103,7 +103,7 @@ local DetonationEffects = {
 	fart = {
 		col = Color(50, 40, 0),
 		func = function(self, pos, owner)
-			sound.Play("snds_jack_gmod/sadfart.wav", pos, 100, 100)
+			sound.Play("snds_jack_gmod/sadfart.ogg", pos, 100, 100)
 
 			if IsValid(self) then
 				self:PoofEffect()
@@ -168,7 +168,7 @@ local DetonationEffects = {
 						if i == 20 then
 							timer.Simple(2, function()
 								if IsValid(self) then
-									sound.Play("snds_jack_gmod/sadfart.wav", SelfPos, 100, 100)
+									sound.Play("snds_jack_gmod/sadfart.ogg", SelfPos, 100, 100)
 									self:PoofEffect()
 									self:Remove()
 								end
@@ -193,7 +193,7 @@ local DetonationEffects = {
 					v:SetMoveType(MOVETYPE_WALK)
 					v:SetVelocity(Vector(0, 0, math.random(1500, 2000)))
 					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/whee.wav")
+					net.WriteString("snds_jack_gmod/whee.ogg")
 					net.Send(v)
 				elseif v:IsNPC() then
 					v:SetVelocity(Vector(0, 0, math.random(1500, 2000)))
@@ -238,7 +238,7 @@ local DetonationEffects = {
 		col = Color(60, 60, 60),
 		func = function(self, pos, owner)
 			JMod.Sploom(owner, pos, 0)
-			sound.Play("snds_jack_gmod/spiders.wav", pos, 100, 100)
+			sound.Play("snds_jack_gmod/spiders.ogg", pos, 100, 100)
 
 			for i = 1, 100 do
 				local Nade = ents.Create("npc_headcrab_fast")
@@ -261,8 +261,8 @@ local DetonationEffects = {
 		col = Color(255, 100, 50),
 		func = function(self, pos, owner)
 			JMod.Sploom(owner, pos, 0)
-			sound.Play("snds_jack_gmod/soldier_firefirefire.wav", pos, 100, 100)
-			sound.Play("snds_jack_gmod/soldier_firefirefire.wav", pos, 100, 100)
+			sound.Play("snds_jack_gmod/soldier_firefirefire.ogg", pos, 100, 100)
+			sound.Play("snds_jack_gmod/soldier_firefirefire.ogg", pos, 100, 100)
 
 			for k, v in pairs(ents.FindInSphere(pos, 1000)) do
 				if v.Ignite then
@@ -434,7 +434,7 @@ local DetonationEffects = {
 
 				timer.Simple(0, function()
 					net.Start("JMod_SFX")
-					net.WriteString("snds_jack_gmod/oof.wav")
+					net.WriteString("snds_jack_gmod/oof.ogg")
 					net.Broadcast()
 
 					for k, v in player.Iterator() do
@@ -534,7 +534,7 @@ if SERVER then
 			Spewn:SetMaterial(self.Material)
 			Spewn:SetColor(self:GetColor())
 			Spewn:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity() + VectorRand() * 250)
-			self:EmitSound("snd_jack_spoonfling.wav", 60, math.random(80, 100))
+			self:EmitSound("snd_jack_spoonfling.ogg", 60, math.random(80, 100))
 		end
 	end
 

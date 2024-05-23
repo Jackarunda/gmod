@@ -578,26 +578,26 @@ end
 
 JMod.GunHandlingSounds = {
 	draw = {
-		handgun = {"snds_jack_gmod/ez_weapons/handling/draw_pistol1.wav", "snds_jack_gmod/ez_weapons/handling/draw_pistol2.wav", "snds_jack_gmod/ez_weapons/handling/draw_pistol3.wav", "snds_jack_gmod/ez_weapons/handling/draw_pistol4.wav", "snds_jack_gmod/ez_weapons/handling/draw_pistol5.wav", "snds_jack_gmod/ez_weapons/handling/draw_pistol6.wav"},
-		longgun = {"snds_jack_gmod/ez_weapons/handling/draw_longgun1.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun2.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun3.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun4.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun5.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun6.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun7.wav", "snds_jack_gmod/ez_weapons/handling/draw_longgun8.wav"}
+		handgun = {"snds_jack_gmod/ez_weapons/handling/draw_pistol1.ogg", "snds_jack_gmod/ez_weapons/handling/draw_pistol2.ogg", "snds_jack_gmod/ez_weapons/handling/draw_pistol3.ogg", "snds_jack_gmod/ez_weapons/handling/draw_pistol4.ogg", "snds_jack_gmod/ez_weapons/handling/draw_pistol5.ogg", "snds_jack_gmod/ez_weapons/handling/draw_pistol6.ogg"},
+		longgun = {"snds_jack_gmod/ez_weapons/handling/draw_longgun1.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun2.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun3.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun4.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun5.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun6.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun7.ogg", "snds_jack_gmod/ez_weapons/handling/draw_longgun8.ogg"}
 	},
 	tap = {
-		magwell = {"snds_jack_gmod/ez_weapons/handling/tap_magwell1.wav", "snds_jack_gmod/ez_weapons/handling/tap_magwell2.wav", "snds_jack_gmod/ez_weapons/handling/tap_magwell3.wav", "snds_jack_gmod/ez_weapons/handling/tap_magwell4.wav", "snds_jack_gmod/ez_weapons/handling/tap_magwell5.wav", "snds_jack_gmod/ez_weapons/handling/tap_magwell6.wav"},
-		metallic = {"snds_jack_gmod/ez_weapons/handling/tap_metallic.wav"}
+		magwell = {"snds_jack_gmod/ez_weapons/handling/tap_magwell1.ogg", "snds_jack_gmod/ez_weapons/handling/tap_magwell2.ogg", "snds_jack_gmod/ez_weapons/handling/tap_magwell3.ogg", "snds_jack_gmod/ez_weapons/handling/tap_magwell4.ogg", "snds_jack_gmod/ez_weapons/handling/tap_magwell5.ogg", "snds_jack_gmod/ez_weapons/handling/tap_magwell6.ogg"},
+		metallic = {"snds_jack_gmod/ez_weapons/handling/tap_metallic.ogg"}
 	},
 	aim = {
-		inn = {"snds_jack_gmod/ez_weapons/handling/aim1.wav", "snds_jack_gmod/ez_weapons/handling/aim2.wav", "snds_jack_gmod/ez_weapons/handling/aim3.wav", "snds_jack_gmod/ez_weapons/handling/aim4.wav", "snds_jack_gmod/ez_weapons/handling/aim5.wav", "snds_jack_gmod/ez_weapons/handling/aim6.wav"},
-		out = {"snds_jack_gmod/ez_weapons/handling/aim_out.wav"},
-		minor = {"snds_jack_gmod/ez_weapons/handling/aim_minor.wav"}
+		inn = {"snds_jack_gmod/ez_weapons/handling/aim1.ogg", "snds_jack_gmod/ez_weapons/handling/aim2.ogg", "snds_jack_gmod/ez_weapons/handling/aim3.ogg", "snds_jack_gmod/ez_weapons/handling/aim4.ogg", "snds_jack_gmod/ez_weapons/handling/aim5.ogg", "snds_jack_gmod/ez_weapons/handling/aim6.ogg"},
+		out = {"snds_jack_gmod/ez_weapons/handling/aim_out.ogg"},
+		minor = {"snds_jack_gmod/ez_weapons/handling/aim_minor.ogg"}
 	},
 	cloth = {
-		loud = {"snds_jack_gmod/ez_weapons/handling/cloth_loud.wav"},
-		quiet = {"snds_jack_gmod/ez_weapons/handling/cloth_quiet.wav"},
-		magpull = {"snds_jack_gmod/ez_weapons/handling/cloth_magpull1.wav", "snds_jack_gmod/ez_weapons/handling/cloth_magpull2.wav", "snds_jack_gmod/ez_weapons/handling/cloth_magpull3.wav", "snds_jack_gmod/ez_weapons/handling/cloth_magpull4.wav"},
-		move = {"snds_jack_gmod/ez_weapons/handling/cloth_move.wav"}
+		loud = {"snds_jack_gmod/ez_weapons/handling/cloth_loud.ogg"},
+		quiet = {"snds_jack_gmod/ez_weapons/handling/cloth_quiet.ogg"},
+		magpull = {"snds_jack_gmod/ez_weapons/handling/cloth_magpull1.ogg", "snds_jack_gmod/ez_weapons/handling/cloth_magpull2.ogg", "snds_jack_gmod/ez_weapons/handling/cloth_magpull3.ogg", "snds_jack_gmod/ez_weapons/handling/cloth_magpull4.ogg"},
+		move = {"snds_jack_gmod/ez_weapons/handling/cloth_move.ogg"}
 	},
-	grab = {"snds_jack_gmod/ez_weapons/handling/grab1.wav"},
-	shotshell = {"snds_jack_gmod/ez_weapons/handling/shotshell_insert1.wav", "snds_jack_gmod/ez_weapons/handling/shotshell_insert2.wav", "snds_jack_gmod/ez_weapons/handling/shotshell_insert3.wav", "snds_jack_gmod/ez_weapons/handling/shotshell_insert4.wav"}
+	grab = {"snds_jack_gmod/ez_weapons/handling/grab1.ogg"},
+	shotshell = {"snds_jack_gmod/ez_weapons/handling/shotshell_insert1.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert2.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert3.ogg", "snds_jack_gmod/ez_weapons/handling/shotshell_insert4.ogg"}
 }
 
 if CLIENT then

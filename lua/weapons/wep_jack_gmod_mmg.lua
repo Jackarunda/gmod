@@ -37,9 +37,9 @@ SWEP.Firemodes = {
 }
 
 SWEP.AccuracyMOA = 4 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
-SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.wav"
-SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.wav"
+SWEP.FirstShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.ShootSound = "snds_jack_gmod/ez_weapons/medium_rifle.ogg"
+SWEP.DistantShootSound = "snds_jack_gmod/ez_weapons/rifle_far.ogg"
 SWEP.ShootSoundExtraMult = 1
 SWEP.MuzzleEffect = "muzzleflash_g3"
 SWEP.ShellModel = "models/jhells/shell_762nato.mdl"
@@ -149,12 +149,12 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/back.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/back.ogg",
 				t = .4,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/forward.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/forward.ogg",
 				t = .7,
 				v = 65
 			},
@@ -164,32 +164,32 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/moving.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/moving.ogg",
 				t = 1.3,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/open.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/open.ogg",
 				t = 2.5,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/out.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/out.ogg",
 				t = 3.3,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/boxdraw.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/boxdraw.ogg",
 				t = 4.1,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/in.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/in.ogg",
 				t = 4.9,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/chain.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/chain.ogg",
 				t = 5.85,
 				v = 65
 			},
@@ -199,17 +199,17 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/close.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/close.ogg",
 				t = 6.85,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/bang.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/bang.ogg",
 				t = 7.45,
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/mmg/shoulder.wav",
+				s = "snds_jack_gmod/ez_weapons/mmg/shoulder.ogg",
 				t = 8.35,
 				v = 65,
 				p = 80

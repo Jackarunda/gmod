@@ -45,9 +45,9 @@ SWEP.Firemodes = {
 
 SWEP.AccuracyMOA = 9 -- accuracy in Minutes of Angle. There are 60 MOA in a degree. No shit, sherlock
 
-SWEP.FirstShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.wav", "snds_jack_gmod/ez_weapons/crossbow/fire2.wav", "snds_jack_gmod/ez_weapons/crossbow/fire3.wav"}
+SWEP.FirstShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.ogg", "snds_jack_gmod/ez_weapons/crossbow/fire2.ogg", "snds_jack_gmod/ez_weapons/crossbow/fire3.ogg"}
 
-SWEP.ShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.wav", "snds_jack_gmod/ez_weapons/crossbow/fire2.wav", "snds_jack_gmod/ez_weapons/crossbow/fire3.wav"}
+SWEP.ShootSound = {"snds_jack_gmod/ez_weapons/crossbow/fire1.ogg", "snds_jack_gmod/ez_weapons/crossbow/fire2.ogg", "snds_jack_gmod/ez_weapons/crossbow/fire3.ogg"}
 
 SWEP.DistantShootSound = ""
 SWEP.ShootSoundExtraMult = 0
@@ -140,7 +140,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/crossbow/pull.wav",
+				s = "snds_jack_gmod/ez_weapons/crossbow/pull.ogg",
 				t = 0.9,
 				v = 55
 			},
@@ -151,13 +151,13 @@ SWEP.Animations = {
 				p = 110
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/crossbow/in.wav",
+				s = "snds_jack_gmod/ez_weapons/crossbow/in.ogg",
 				t = 2.4,
 				v = 55,
 				p = 120
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/crossbow/clack.wav",
+				s = "snds_jack_gmod/ez_weapons/crossbow/clack.ogg",
 				t = 3.3,
 				v = 55
 			},

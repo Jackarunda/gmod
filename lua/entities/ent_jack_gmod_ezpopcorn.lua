@@ -35,13 +35,13 @@ if SERVER then
 
 	--[[function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 50 then
-			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
 		end
 	end--]]
 	
 	function ENT:OnTakeDamage(damage)
 		if damage:IsDamageType(DMG_BURN) or damage:IsDamageType(DMG_SLOWBURN) then
-			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
 		end
 	end
 
@@ -63,10 +63,10 @@ if SERVER then
 					ply.JMod_WillAsplode = true
 					timer.Simple(math.random(1, 3), function()
 						if IsValid(ply) then
-							ply:EmitSound("vo/npc/male01/ohno.wav")
+							ply:EmitSound("vo/npc/male01/ohno.ogg")
 							timer.Simple(1, function()
 								if not IsValid(ply) then return end
-								ply:EmitSound("vo/npc/male01/question27.wav")
+								ply:EmitSound("vo/npc/male01/question27.ogg")
 								timer.Simple(2, function()
 									if not IsValid(ply) then return end
 									local Pos, Range = ply:GetPos() + Vector(0, 0, 40), 40
