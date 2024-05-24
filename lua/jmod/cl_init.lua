@@ -948,41 +948,64 @@ end)
 
 local ParticleSpecs = {
 	[1] = { -- water
-		launchspeed = 600,
+		launchspeed = 1000,
 		launchSize = 1,
 		lifeTime = 1.5,
-		mat = Material("effects/bloodstream"),
+		finalSize = 80,
+		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorfunc = function(data)
 			local R = math.Clamp(175 + data.size * 1.5, 0, 255)
 			local G = math.Clamp(200 + data.size * 1.5, 0, 255)
 			local Mult = (data.stuck and 12) or 6
 			return Color(R, G, 255, 255 - math.Clamp(data.size * Mult, 0, 255))
 		end
+	},
+	[2] = { -- flaming liquid
+		launchspeed = 1500,
+		launchSize = 1,
+		lifeTime = .5,
+		finalSize = 100,
+		mat = Material("effects/mat_jack_gmod_liquidstream"),
+		colorfunc = function(data)
+			local R = math.Clamp(200 + data.size * 2, 0, 255)
+			local G = math.Clamp(170 + data.size * 1.5, 0, 255)
+			local Mult = (data.stuck and 20) or 10
+			return Color(R, G, 160, 255 - math.Clamp(data.size * Mult, 0, 255))
+		end
 	}
 }
 local LiquidParticles = {}
 net.Receive("JMod_LiquidParticle", function()
 	local Pos = net.ReadVector()
-	local Norm = net.ReadVector()
+	local VelDir = net.ReadVector()
+	local Amt = net.ReadInt(8)
 	local Group = net.ReadInt(8)
 	local Type = net.ReadInt(8)
 	local Specs = ParticleSpecs[Type]
-	table.insert(LiquidParticles, {
-		typ = Type,
-		group = Group,
-		size = Specs.launchSize,
-		opacity = 255,
-		pos = Pos,
-		vel = Norm * 1500 + VectorRand() * 15,
-		airResist = 1,
-		stuck = false,
-		growthSpeed = 1
-	})
+	for i = 1, Amt do
+		timer.Simple((i - 1) * 0.1, function()
+			table.insert(LiquidParticles, {
+				typ = Type,
+				group = Group,
+				size = Specs.launchSize,
+				opacity = 255,
+				pos = Pos,
+				vel = VelDir + VectorRand() * 15,
+				airResist = 1,
+				stuck = false,
+				growthSpeed = Specs.finalSize / Specs.lifeTime
+			})
+		end)
+	end
+	--jprint("Liquid Spawned")
+	--PrintTable(LiquidParticles)
 end)
 
+-- Liquid Think
 hook.Add("Think", "JMOD_LIQUIDSTREAMS", function()
 	local FT, Time = FrameTime(), CurTime()
 	for k, v in pairs(LiquidParticles) do
+		local Specs = ParticleSpecs[v.typ]
 		if not (v.stuck) then
 			local Travel = v.vel * FT
 			local Tr = util.TraceLine({
@@ -996,30 +1019,35 @@ hook.Add("Think", "JMOD_LIQUIDSTREAMS", function()
 			else
 				v.pos = v.pos + Travel
 			end
-			v.vel = v.vel - Vector(0, 0, 600  * FT)
+			v.vel = v.vel - Vector(0, 0, 600 * FT)
 			local AirLoss = FT * v.airResist + .01
 			v.vel = v.vel * (1 - AirLoss)
 			v.vel = v.vel + JMod.Wind * FT * 100
 		end
-		v.size = v.size + v.growthSpeed * .05 * ((v.stuck and 3) or 1)
+		v.size = v.size + v.growthSpeed * ((v.stuck and 10) or 1) * FT
+		if (v.size > Specs.finalSize) then
+			table.remove(LiquidParticles, k)
+		end
 	end
 end)
 
+-- Liquid Render
 hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWLIQUIDSTREAMS", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
 	local GroupPoses = {}
 	for k, v in pairs(LiquidParticles) do
 		local Specs = ParticleSpecs[v.typ]
-		if (v.size < 80) then
-			if (GroupPoses[v.group]) then
+		local LastPos = GroupPoses[v.group] or v.pos
+		if (v.size < Specs.finalSize) then
+			if (LastPos) and not(LastPos:Distance(v.pos) > Specs.launchspeed) then
 				local R = math.Clamp(175 + v.size * 1.5, 0, 255)
 				local G = math.Clamp(200 + v.size * 1.5, 0, 255)
 				local Mult = (v.stuck and 12) or 6
-				local Col = Color(R, G, 255, 255 - math.Clamp(v.size * Mult, 0, 255))
+				local Col = Specs.colorfunc({size = v.size, stuck = v.stuck, group = v.group})
 				render.SetMaterial(Specs.mat)
-				render.DrawBeam(GroupPoses[v.group], v.pos, v.size ^ 1.1, 1, 0, Col)
+				render.DrawBeam(LastPos, v.pos, v.size ^ 1.1, 1, 0, Col)
 			end
 			GroupPoses[v.group] = v.pos
-			Count = Count + 1
+			--Count = Count + 1
 		end
 	end
 end)

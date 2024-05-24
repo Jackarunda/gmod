@@ -242,6 +242,8 @@ function SWEP:PrimaryAttack()
 			self:Msg("Out of fuel and/or gas!\nPress Alt+Use on resource container to refill.")
 		else
 			local FirePos, FireAng = self:GetNozzle()
+			local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
+			--JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
 			if (State == STATE_NOTHIN) then
 				self:SetState(STATE_SPRAYIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
@@ -252,23 +254,17 @@ function SWEP:PrimaryAttack()
 				if self.NextSparkTime < Time then
 					self.NextSparkTime = Time + 0.1
 					local Splach = EffectData()
-					local SplachTr = util.QuickTrace(FirePos, FireAng:Forward() * 100, self.Owner)
-					Splach:SetOrigin(SplachTr.HitPos + SplachTr.HitNormal * 20 + FireAng:Right() * 5 - FireAng:Up() * 10)
-					Splach:SetStart(FireAng:Forward() * 2)
+					local SplachTr = util.QuickTrace(FirePos + FireRight * 2 + FireUp * 2, FireForward * 50, self.Owner)
+					Splach:SetOrigin(SplachTr.HitPos + SplachTr.HitNormal * 20 + FireRight * 5 - FireUp * 10)
+					Splach:SetStart(FireForward * 2)
 					Splach:SetScale(1)
 					util.Effect("eff_jack_gmod_spranklerspray", Splach, true, true)
-					local Squirt = EffectData()
-					Squirt:SetOrigin(FirePos)
-					Squirt:SetScale(2)
-					Squirt:SetEntity(self)
-					Squirt:SetAttachment(1)
-					Squirt:SetNormal(FireAng:Forward())
-					util.Effect("eff_jack_gmod_liquidtrail", Squirt, true, true)
+					JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 1)
 				end
 			elseif (State == STATE_IGNITIN) then
 				self:SetState(STATE_FLAMIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.ogg")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.wav")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			elseif (State == STATE_FLAMIN) then
@@ -280,6 +276,7 @@ function SWEP:PrimaryAttack()
 				Foof:SetEntity(self)
 				Foof:SetAttachment(1)
 				util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
+				JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
 			end
 
 			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
@@ -364,29 +361,6 @@ function SWEP:Pawnch()
 	self:UpdateNextIdle()
 end
 
-function SWEP:Reload()
-	--[[if SERVER then
-		local Time = CurTime()
-		local Ent = self:WhomIlookinAt()
-		
-		if IsValid(Ent) and Ent.GetEZsupplies then
-			for typ, amt in pairs(Ent:GetEZsupplies()) do
-				if table.HasValue(self.EZconsumes, typ) and (amt > 0) then
-					local CurAmt = self:GetEZsupplies(typ) or 0
-					local Take = math.min(amt, 100 - CurAmt)
-					
-					if Take > 0 then
-						Ent:SetEZsupplies(typ, amt - Take, self.Owner)
-						self:SetEZsupplies(typ, CurAmt + Take)
-						sound.Play("items/ammo_pickup.wav", self:GetPos(), 65, math.random(90, 110))
-						JMod.ResourceEffect(typ, Ent:LocalToWorld(Ent:OBBCenter()), self:GetPos(), amt, 1, 1, 2)
-					end
-				end
-			end
-		end
-	end--]]
-end
-
 function SWEP:TryLoadResource(typ, amt)
 	if amt < 1 then return 0 end
 	local Accepted = 0
@@ -406,36 +380,8 @@ function SWEP:TryLoadResource(typ, amt)
 
 	return Accepted
 end
-
-function SWEP:WhomIlookinAt()
-	local Filter = {self.Owner}
-
-	for k, v in pairs(ents.FindByClass("npc_bullseye")) do
-		table.insert(Filter, v)
-	end
-
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, Filter)
-
-	return Tr.Entity, Tr.HitPos, Tr.HitNormal
-end
-
 --
 function SWEP:OnDrop()
-	--[[local Pack = ents.Create("ent_jack_gmod_ezflamethrower")
-	Pack:SetPos(self:GetPos())
-	Pack:SetAngles(self:GetAngles())
-	Pack:Spawn()
-	Pack:Activate()
-
-	Pack:SetFuel(self:GetFuel())
-	Pack:SetGas(self:GetGas())
-
-	local Phys = Pack:GetPhysicsObject()
-
-	if Phys then
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
-	end--]]
-
 	if IsValid(self.Owner) then
 		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
 			JMod.RemoveArmorByID(self.Owner, self.EZarmorID)

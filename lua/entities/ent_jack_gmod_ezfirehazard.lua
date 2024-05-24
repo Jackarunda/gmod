@@ -106,7 +106,7 @@ if SERVER then
 			if self.NextFizz < Time then
 				self.NextFizz = Time + .5
 
-				if (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
+				if (self.Burnin) and (Water < 1) and ((math.random(1, 3) == 1) or self.HighVisuals) then
 					local Zap = EffectData()
 					Zap:SetOrigin(Pos)
 					Zap:SetScale(2.5 * Fraction)
@@ -145,14 +145,17 @@ if SERVER then
 				local ActualRange = math.max(self.Range * (Fraction^.2), self.Range)
 
 				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
-					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) then
+					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and JMod.ClearLoS(self, v) then
 						FireNearby = v.GetHighVisuals and v:GetHighVisuals() or false
-						if (v:GetPos():Distance(Pos) < self.Range * 0.75) then
+						local TheirPos = v:GetPos()
+						if (TheirPos:Distance(Pos) < self.Range * 0.5) then
 							local LeftTillMax = (self.TypeInfo[5] * 2) - self.Intensity
-							local Taken = math.min(v.Intensity or 0, LeftTillMax)
+							local TheirIntensity = v.Intensity or 0
+							local Taken = math.min(TheirIntensity, LeftTillMax)
 							self.Intensity = self.Intensity + Taken
-							--v.Intensity = v.Intensity - Taken
+							--v.Intensity = TheirIntensity - Taken
 							v:Remove()
+							self:SetPos(Pos + (TheirPos - Pos):GetNormalized() * self.Range * 0.5)
 						end
 					end
 
