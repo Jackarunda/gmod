@@ -78,7 +78,7 @@ if SERVER then
 	function ENT:DamageObj(obj)
 		local Dmg, Helf = DamageInfo(), obj:Health()
 		Dmg:SetDamageType(DMG_NERVEGAS)
-		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetDamage(math.random(3, 10) * JMod.Config.Particles.PoisonGasDamage)
 		Dmg:SetInflictor(self)
 		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
 		Dmg:SetDamagePosition(obj:GetPos())

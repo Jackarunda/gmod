@@ -138,16 +138,17 @@ if SERVER then
 						return
 					end
 				elseif Water > 0 then
-					self:SetPos(Pos + Vector(0, 0, 10))
+					self:SetPos(util.TraceLine({start = Pos, endpos = Pos + Vector(0, 0, 10), filter = self}).HitPos)
 				end
 
 				local FireNearby = false
 				local ActualRange = math.max(self.Range * (Fraction^.2), self.Range)
 
 				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
+					local TheirPos = v:GetPos()
+
 					if (v:GetClass() == "ent_jack_gmod_ezfirehazard") and (v ~= self) and JMod.ClearLoS(self, v) then
 						FireNearby = v.GetHighVisuals and v:GetHighVisuals() or false
-						local TheirPos = v:GetPos()
 						if (TheirPos:Distance(Pos) < self.Range * 0.5) then
 							local LeftTillMax = (self.TypeInfo[5] * 2) - self.Intensity
 							local TheirIntensity = v.Intensity or 0
@@ -166,9 +167,10 @@ if SERVER then
 					end
 
 					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
-						self.Power = Fraction * 2
+						self.Power = math.max(Fraction * 20, 5)
+						local DistanceFactor = (1 - Pos:Distance(TheirPos) / self.Range) ^ 2
 						local Dam = DamageInfo()
-						Dam:SetDamage(self.Power * math.Rand(.75, 1.25))
+						Dam:SetDamage(self.Power * math.Rand(1, 5) * DistanceFactor )
 						Dam:SetDamageType(DMG_BURN)
 						Dam:SetDamagePosition(Pos)
 						Dam:SetAttacker(Att)
@@ -204,7 +206,7 @@ if SERVER then
 			if not (Tr.HitSky) then
 				if (math.random(1, (self.Burnin and 2) or 20) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
-					Gas:SetPos(Pos + Vector(0, 0, 10))
+					Gas:SetPos(Pos + Vector(0, 0, Tr.HitPos))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, false)
 					Gas:Spawn()
@@ -308,7 +310,7 @@ elseif CLIENT then
 		local Time, Pos = CurTime(), self:GetPos()
 		local Vec = (Pos - EyePos()):GetNormalized()
 		render.SetMaterial(GlowSprite)
-		render.DrawSprite(Pos + self.Offset - Vec * 75, self.SizeX, self.SizeY, Col)
+		render.DrawSprite(Pos + self.Offset - Vec * 75, self.SizeX * .5, self.SizeY * .5, Col)
 
 		if (self.NextRandomize < Time) then
 			self.Offset = VectorRand() * self.Size * math.Rand(0, .15)

@@ -146,6 +146,17 @@ if SERVER then
 					end
 				end
 			end
+			local Bone = self.EZragdoll:LookupBone("ValveBiped.Bip01_Head1")
+			if Bone then
+				local Matty = self.EZragdoll:GetBoneMatrix(Bone)
+				if Matty then
+					local Skull = ents.Create("prop_physics")
+					Skull:SetModel("models/gibs/hgibs.mdl")
+					Skull:SetPos(Matty:GetTranslation())
+					Skull:SetAngles(Matty:GetAngles())
+					Skull:Spawn()
+				end
+			end
 			SafeRemoveEntity(self.EZragdoll)
 		end
 	end
