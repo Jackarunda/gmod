@@ -8,7 +8,7 @@ ENT.Spawnable = true
 ENT.Model = "models/jmod/explosives/grenades/impactnade/impact_grenade.mdl"
 --ENT.ModelScale=1.5
 ENT.SpoonModel = "models/jmod/explosives/grenades/impactnade/impact_grenade_cap.mdl"
-ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.ogg"
+ENT.SpoonSound = "physics/cardboard/cardboard_box_impact_soft2.wav"
 ENT.SpoonBodygroup = {2, 1}
 local BaseClass = baseclass.Get(ENT.Base)
 
@@ -16,7 +16,7 @@ if SERVER then
 	function ENT:Prime()
 		if (self:GetState() ~= JMod.EZ_STATE_OFF) then return end
 		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.ogg", 60, 100)
+		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		self:SpoonEffect()
 		self:SetBodygroup(self.SpoonBodygroup[1], self.SpoonBodygroup[2])
 	end

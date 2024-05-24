@@ -51,7 +51,7 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 50 then
-			self:EmitSound("physics/body/body_medium_impact_soft7.ogg", 60, math.random(70, 130))
+			self:EmitSound("physics/body/body_medium_impact_soft7.wav", 60, math.random(70, 130))
 			if (data.Speed > 100) and (self:GetState() == STATE_COOKING) then
 				timer.Simple(0, function() self:Detonate() end)
 			end
@@ -148,7 +148,7 @@ if SERVER then
 				Pop:SetPos(self:GetPos())
 				Pop:Spawn()
 				Pop:Activate()
-				self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 				self.NoMorePop = true
 				SafeRemoveEntityDelayed(self, 0)
 			elseif (State == STATE_COOKING) then

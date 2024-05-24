@@ -124,7 +124,7 @@ if SERVER then
 			Pop:SetPos(self:GetPos())
 			Pop:Spawn()
 			Pop:Activate()
-			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 			self.NoMorePop = true
 			SafeRemoveEntityDelayed(self, 0)
 		end
@@ -183,7 +183,7 @@ if SERVER then
 				Pop:SetPos(self:GetPos())
 				Pop:Spawn()
 				Pop:Activate()
-				self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 				SafeRemoveEntityDelayed(self, 0)
 			end
 		elseif State == STATE_BURIED then

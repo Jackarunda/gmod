@@ -214,7 +214,7 @@ if SERVER then
 	function ENT:Prime()
 		if (self:GetState() ~= JMod.EZ_STATE_OFF) then return end
 		self:SetState(JMod.EZ_STATE_PRIMED)
-		self:EmitSound("weapons/pinpull.ogg", 60, 100)
+		self:EmitSound("weapons/pinpull.wav", 60, 100)
 		if self.PinBodygroup then self:SetBodygroup(self.PinBodygroup[1], self.PinBodygroup[2]) end
 	end
 

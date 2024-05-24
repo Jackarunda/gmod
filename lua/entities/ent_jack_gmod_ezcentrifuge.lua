@@ -81,7 +81,7 @@ if(SERVER)then
 		if (self:GetGas() > 0) and (self:GetUranium() > 0) and (self:GetElectricity() > 0) then
 			if IsValid(activator) then self.EZstayOn = true end
 			self.NextUseTime = CurTime() + 1
-			self:EmitSound("ambient/machines/keyboard7_clicks_enter.ogg", 70, 100)
+			self:EmitSound("ambient/machines/keyboard7_clicks_enter.wav", 70, 100)
 			self:SetState(STATE_ON)
 			timer.Simple(.8, function()
 				if IsValid(self) and (self:GetState() == STATE_ON) then

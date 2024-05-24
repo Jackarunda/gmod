@@ -35,13 +35,13 @@ if SERVER then
 
 	--[[function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 and data.Speed > 50 then
-			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 		end
 	end--]]
 	
 	function ENT:OnTakeDamage(damage)
 		if damage:IsDamageType(DMG_BURN) or damage:IsDamageType(DMG_SLOWBURN) then
-			self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+			self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 		end
 	end
 
@@ -52,7 +52,7 @@ if SERVER then
 		if Alt then
 			if JMod.ConsumeNutrients(ply, 1) then
 				sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", self:GetPos(), 60, math.random(90, 110))
-				self:EmitSound("garrysmod/balloon_pop_cute.ogg", 60, math.random(70, 130))
+				self:EmitSound("garrysmod/balloon_pop_cute.wav", 60, math.random(70, 130))
 
 				self:SetPop(self:GetPop() - 1)
 

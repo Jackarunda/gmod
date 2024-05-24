@@ -93,7 +93,7 @@ if(SERVER)then
 			PlyToCut:TakeDamageInfo(Cut)
 			PlyToCut:SetVelocity(-data.TheirOldVelocity*.9)
 			PlyToCut:ViewPunch(Angle(0, 0, math.random(-8, 8)))
-			self:EmitSound("npc/headcrab/headbite.ogg", 100, 100)
+			self:EmitSound("npc/headcrab/headbite.wav", 100, 100)
 		end
 	end
 

@@ -164,7 +164,7 @@ if SERVER then
 		end
 
 		for i = 1, 10 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))
 		end
 
 		---
@@ -174,7 +174,7 @@ if SERVER then
 			if (Dist > 500) and (Dist < 8000) then
 				timer.Simple(Dist / 6000, function()
 					ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 110)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", ply:GetPos(), 60, 70)
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
 					util.ScreenShake(ply:GetPos(), 1000, 3, 2, 100)
 				end)
 			end

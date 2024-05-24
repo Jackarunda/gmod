@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 48
+			Version = 48.5
 		},
 		General = {
 			Hints = true,
@@ -1453,6 +1453,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Resources",
 				craftingType = "fabricator",
 				description = "5 Advanced Parts for use in hyper-advanced technology"
+			},
+			["EZ Advanced Textiles"] = {
+				results = "ent_jack_gmod_ezadvtextiles",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 20
+				},
+				category = "Resources",
+				craftingType = {"workbench", "fabricator"},
+				description = "Advanced fabrics for use in high-tier clothing."
 			},
 			["EZ Chemicals"] = {
 				results = "ent_jack_gmod_ezchemicals",

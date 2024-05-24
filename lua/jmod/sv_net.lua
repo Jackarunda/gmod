@@ -134,7 +134,7 @@ net.Receive("JMod_EZtimeBomb", function(ln, ply)
 		ent.DisarmNeeded = math.Round(math.min(tim, 600) / 4)
 		ent:NextThink(CurTime() + 1)
 		ent:SetState(1)
-		ent:EmitSound("weapons/c4/c4_plant.ogg", 60, 120)
+		ent:EmitSound("weapons/c4/c4_plant.wav", 60, 120)
 		ent:EmitSound("snd_jack_minearm.ogg", 60, 100)
 	end
 end)

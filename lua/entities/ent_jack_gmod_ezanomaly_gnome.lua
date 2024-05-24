@@ -70,7 +70,7 @@ if SERVER then
 				self.NextBiteTime = Time + math.Rand(1, 2)
 				timer.Simple(0.1, function()
 					if not(IsValid(self)) or not(IsValid(activator)) then return end
-					sound.Play("npc/headcrab/headbite.ogg", self:GetPos(), 120, math.random(90, 110))
+					sound.Play("npc/headcrab/headbite.wav", self:GetPos(), 120, math.random(90, 110))
 					sound.Play("snds_jack_gmod/nom" .. math.random(1, 5) .. ".ogg", self:GetPos(), 60, math.random(90, 110))
 					local Dmg = DamageInfo()
 					Dmg:SetDamage(math.random(1, 2))
