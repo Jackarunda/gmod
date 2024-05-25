@@ -946,7 +946,8 @@ net.Receive("JMod_Ravebreak", function()
 end)
 -- note that the song's beat is about .35 seconds
 
-local ParticleSpecs = {
+-- Liquid Effects
+JMod.ParticleSpecs = {
 	[1] = { -- water
 		launchspeed = 1000,
 		launchSize = 1,
@@ -974,6 +975,7 @@ local ParticleSpecs = {
 		end
 	}
 }
+
 local LiquidParticles = {}
 net.Receive("JMod_LiquidParticle", function()
 	local Pos = net.ReadVector()
@@ -981,22 +983,23 @@ net.Receive("JMod_LiquidParticle", function()
 	local Amt = net.ReadInt(8)
 	local Group = net.ReadInt(8)
 	local Type = net.ReadInt(8)
-	local Specs = ParticleSpecs[Type]
-	for i = 1, Amt do
-		timer.Simple((i - 1) * 0.1, function()
-			table.insert(LiquidParticles, {
-				typ = Type,
-				group = Group,
-				size = Specs.launchSize,
-				opacity = 255,
-				pos = Pos,
-				vel = VelDir + VectorRand() * 15,
-				airResist = 1,
-				stuck = false,
-				growthSpeed = Specs.finalSize / Specs.lifeTime
-			})
-		end)
-	end
+	local Specs = JMod.ParticleSpecs[Type]
+		for i = 1, Amt do
+			timer.Simple((i - 1) * 0.1, function()
+				table.insert(LiquidParticles, {
+					typ = Type,
+					group = Group,
+					size = Specs.launchSize,
+					opacity = 255,
+					pos = Pos,
+					vel = VelDir * Specs.launchspeed + VectorRand() * 15,
+					airResist = 1,
+					stuck = false,
+					growthSpeed = Specs.finalSize / Specs.lifeTime
+				})
+			end)
+		end
+	--JMod.LiquidSpray(Pos, VelDir, Amt, Group, Type)
 	--jprint("Liquid Spawned")
 	--PrintTable(LiquidParticles)
 end)
@@ -1005,7 +1008,7 @@ end)
 hook.Add("Think", "JMOD_LIQUIDSTREAMS", function()
 	local FT, Time = FrameTime(), CurTime()
 	for k, v in pairs(LiquidParticles) do
-		local Specs = ParticleSpecs[v.typ]
+		local Specs = JMod.ParticleSpecs[v.typ]
 		if not (v.stuck) then
 			local Travel = v.vel * FT
 			local Tr = util.TraceLine({
@@ -1035,7 +1038,7 @@ end)
 hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWLIQUIDSTREAMS", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
 	local GroupPoses = {}
 	for k, v in pairs(LiquidParticles) do
-		local Specs = ParticleSpecs[v.typ]
+		local Specs = JMod.ParticleSpecs[v.typ]
 		local LastPos = GroupPoses[v.group] or v.pos
 		if (v.size < Specs.finalSize) then
 			if (LastPos) and not(LastPos:Distance(v.pos) > Specs.launchspeed) then

@@ -51,16 +51,6 @@ concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 	end
 end, nil, "Removes JMod radiation and from map and players")
 
-function JMod.LiquidSpray(pos, vel, amt, group, typ)
-	net.Start("JMod_LiquidParticle")
-		net.WriteVector(pos)
-		net.WriteVector(vel)
-		net.WriteInt(amt, 8)
-		net.WriteInt(group, 8) -- which group of particles is this associated with
-		net.WriteInt(typ, 8) -- particle type, in this case 1 = generic liquid
-	net.Broadcast()
-end
-
 concommand.Add("jmod_debug", function(ply, cmd, args)
 	if not(JMod.IsAdmin(ply)) then return end
 	local Tr = ply:GetEyeTrace()

@@ -189,3 +189,17 @@ end)
 hook.Add("OnPlayerPhysicsDrop", "JMod_PhysicsDrop", function(ply, ent) 
 	JMod.SetPlayerHeldEntity(ply, nil)
 end)
+
+function JMod.LiquidSpray(pos, vel, amt, group, typ)
+	if SERVER then
+		net.Start("JMod_LiquidParticle")
+			net.WriteVector(pos)
+			net.WriteVector(vel)
+			net.WriteInt(amt, 8)
+			net.WriteInt(group, 8) -- which group of particles is this associated with
+			net.WriteInt(typ, 8) -- particle type, in this case 1 = generic liquid
+		net.Broadcast()
+	elseif CLIENT then
+		-- TODO
+	end
+end
