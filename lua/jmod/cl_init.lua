@@ -947,123 +947,112 @@ end)
 -- note that the song's beat is about .35 seconds
 
 -- Liquid Effects
+local WaterSprite = Material("effects/splash1")
+
 JMod.ParticleSpecs = {
 	[1] = { -- water
-		launchspeed = 1000,
-		launchSize = 1,
-		lifeTime = 1.5,
-		finalSize = 80,
+		launchSpeed = 1500,
+		launchSize = 5,
+		lifeTime = 2,
+		finalSize = 120,
+		airResist = .2,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
-		colorfunc = function(data)
-			local R = math.Clamp(175 + data.size * 1.5, 0, 255)
-			local G = math.Clamp(200 + data.size * 1.5, 0, 255)
-			local Mult = (data.stuck and 12) or 6
-			return Color(R, G, 255, 255 - math.Clamp(data.size * Mult, 0, 255))
+		colorFunc = function(self)
+			return Color(200, 220, 255, 200 * (1 - self.lifeProgress))
+		end,
+		particleDrawFunc = function(self, size, col)
+			render.SetMaterial(WaterSprite)
+			render.DrawSprite(self.pos, size * 2, size * 2, col)
+		end,
+		impactFunc = function(self, normal)
+			if math.random(1, 2) == 1 then
+				local Splach = EffectData()
+				Splach:SetOrigin(self.pos)
+				Splach:SetNormal(normal)
+				Splach:SetScale(math.random(2, 10))
+				util.Effect("WaterSplash", Splach)
+			end
 		end
 	},
 	[2] = { -- flaming liquid
-		launchspeed = 1500,
-		launchSize = 1,
-		lifeTime = .5,
-		finalSize = 100,
+		launchSpeed = 1500,
+		launchSize = 5,
+		lifeTime = 2,
+		finalSize = 120,
+		airResist = .2,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
-		colorfunc = function(data)
-			local R = math.Clamp(200 + data.size * 2, 0, 255)
-			local G = math.Clamp(170 + data.size * 1.5, 0, 255)
-			local Mult = (data.stuck and 20) or 10
+		colorFunc = function(self)
 			return Color(R, G, 160, 255 - math.Clamp(data.size * Mult, 0, 255))
 		end
 	}
 }
 
-local LiquidParticles = {}
+JMod.LiquidParticles = {}
+
 net.Receive("JMod_LiquidParticle", function()
 	local Pos = net.ReadVector()
-	local VelDir = net.ReadVector()
+	local Dir = net.ReadVector()
 	local Amt = net.ReadInt(8)
 	local Group = net.ReadInt(8)
 	local Type = net.ReadInt(8)
-	local Specs = JMod.ParticleSpecs[Type]
-		for i = 1, Amt do
-			timer.Simple((i - 1) * 0.1, function()
-				table.insert(LiquidParticles, {
-					typ = Type,
-					group = Group,
-					size = Specs.launchSize,
-					opacity = 255,
-					pos = Pos,
-					vel = VelDir * Specs.launchspeed + VectorRand() * 15,
-					airResist = 1,
-					stuck = false,
-					growthSpeed = Specs.finalSize / Specs.lifeTime
-				})
-			end)
-		end
-	--JMod.LiquidSpray(Pos, VelDir, Amt, Group, Type)
-	--jprint("Liquid Spawned")
-	--PrintTable(LiquidParticles)
+	JMod.LiquidSpray(Pos, Dir, Amt, Group, Type)
 end)
 
 -- Liquid Think
-hook.Add("Think", "JMOD_LIQUIDSTREAMS", function()
+hook.Add("Think", "JMod_LiquidStreams", function()
 	local FT, Time = FrameTime(), CurTime()
-	for k, v in pairs(LiquidParticles) do
+	for k, v in pairs(JMod.LiquidParticles) do
 		local Specs = JMod.ParticleSpecs[v.typ]
-		if not (v.stuck) then
-			local Travel = v.vel * FT
-			local Tr = util.TraceLine({
-				start = v.pos,
-				endpos = v.pos + Travel,
-				mask = MASK_NPCWORLDSTATIC
-			})
-			if (Tr.Hit) then
-				v.pos = Tr.HitPos + Tr.HitNormal
-				v.stuck = true
-			else
-				v.pos = v.pos + Travel
+		local Travel = v.vel * FT
+		local Tr = util.TraceLine({
+			start = v.pos,
+			endpos = v.pos + Travel,
+			mask = MASK_NPCWORLDSTATIC + MASK_WATER
+		})
+		if (Tr.Hit) then
+			v.pos = Tr.HitPos + Tr.HitNormal
+			-- deflect when hitting a surface
+			v.vel = Tr.HitNormal * 70 + VectorRand() * 70
+			v.dieTime = v.dieTime - FT * 30 -- disperse quickly
+			if (Specs.impactFunc) then
+				Specs.impactFunc(v, Tr.HitNormal)
 			end
-			v.vel = v.vel - Vector(0, 0, 600 * FT)
-			local AirLoss = FT * v.airResist + .01
-			v.vel = v.vel * (1 - AirLoss)
-			v.vel = v.vel + JMod.Wind * FT * 100
+		else
+			v.pos = v.pos + Travel
 		end
-		v.size = v.size + v.growthSpeed * ((v.stuck and 10) or 1) * FT
-		if (v.size > Specs.finalSize) then
-			table.remove(LiquidParticles, k)
+		v.vel = v.vel - Vector(0, 0, 600 * FT)
+		local AirLoss = FT * Specs.airResist
+		v.vel = v.vel * (1 - AirLoss)
+		vel = v.vel + JMod.Wind * FT * 200
+		if (v.dieTime < Time) then
+			table.remove(JMod.LiquidParticles, k)
+		else
+			local TimeLeft = v.dieTime - Time
+			v.lifeProgress = 1 - (TimeLeft / Specs.lifeTime)
 		end
 	end
 end)
 
 -- Liquid Render
-hook.Add("PostDrawTranslucentRenderables", "JMOD_DRAWLIQUIDSTREAMS", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
-	local GroupPoses = {}
-	for k, v in pairs(LiquidParticles) do
+local GlowSprite = Material("sprites/mat_jack_basicglow")
+hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
+	local GroupPositions = {}
+	for k, v in pairs(JMod.LiquidParticles) do
 		local Specs = JMod.ParticleSpecs[v.typ]
-		local LastPos = GroupPoses[v.group] or v.pos
-		if (v.size < Specs.finalSize) then
-			if (LastPos) and not(LastPos:Distance(v.pos) > Specs.launchspeed) then
-				local R = math.Clamp(175 + v.size * 1.5, 0, 255)
-				local G = math.Clamp(200 + v.size * 1.5, 0, 255)
-				local Mult = (v.stuck and 12) or 6
-				local Col = Specs.colorfunc({size = v.size, stuck = v.stuck, group = v.group})
-				render.SetMaterial(Specs.mat)
-				render.DrawBeam(LastPos, v.pos, v.size ^ 1.1, 1, 0, Col)
-			end
-			GroupPoses[v.group] = v.pos
-			--Count = Count + 1
+		local Size = Specs.launchSize + (Specs.finalSize - Specs.launchSize) * v.lifeProgress
+		local Col = Specs.colorFunc(v)
+		if (Specs.particleDrawFunc) then
+			Specs.particleDrawFunc(v, Size, Col)
 		end
+		local LastPos = GroupPositions[v.group] or v.pos
+		if (LastPos) and not(LastPos:Distance(v.pos) > Specs.launchSpeed) then
+			render.SetMaterial(Specs.mat)
+			render.DrawBeam(LastPos, v.pos, Size, 1, 0, Col)
+		end
+		GroupPositions[v.group] = v.pos
 	end
 end)
 
---[[
-hook.Add("RenderScene", "JMod_RenderScene", function(origin, angs, fov)
-	render.SetAmbientLight(1, 1, 1)
-	render.SetLightingOrigin(Vector(-3400, 5300, 400))
-end)
---]]
---hook.Add("PostRender","JMod_PostRender",function()
---	engine.LightStyle(0,"m")
---end)
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine
