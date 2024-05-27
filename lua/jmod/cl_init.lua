@@ -951,38 +951,41 @@ local WaterSprite = Material("effects/splash1")
 
 JMod.ParticleSpecs = {
 	[1] = { -- water
-		launchSpeed = 1500,
 		launchSize = 5,
 		lifeTime = 2,
 		finalSize = 120,
 		airResist = .2,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
-			return Color(200, 220, 255, 200 * (1 - self.lifeProgress))
+			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 200 * (1 - self.lifeProgress))
 		end,
 		particleDrawFunc = function(self, size, col)
 			render.SetMaterial(WaterSprite)
 			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
-			if math.random(1, 2) == 1 then
+			if self.lifeProgress > .8 then
 				local Splach = EffectData()
 				Splach:SetOrigin(self.pos)
 				Splach:SetNormal(normal)
 				Splach:SetScale(math.random(2, 10))
-				util.Effect("WaterSplash", Splach)
+				--util.Effect("WaterSplash", Splach)
+			else
+				self.lifeProgress = self.lifeProgress + .02
 			end
-		end
+		end,
+		--soundeff = Sound("snds_jack_gmod/spray.wav")
 	},
 	[2] = { -- flaming liquid
-		launchSpeed = 1500,
 		launchSize = 5,
 		lifeTime = 2,
 		finalSize = 120,
 		airResist = .2,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
-			return Color(R, G, 160, 255 - math.Clamp(data.size * Mult, 0, 255))
+			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			return Color(160 * AmbiLight.x, 160 * AmbiLight.y, 100 * AmbiLight.z, 200 * (1 - self.lifeProgress))
 		end
 	}
 }
@@ -1001,34 +1004,36 @@ end)
 -- Liquid Think
 hook.Add("Think", "JMod_LiquidStreams", function()
 	local FT, Time = FrameTime(), CurTime()
-	for k, v in pairs(JMod.LiquidParticles) do
-		local Specs = JMod.ParticleSpecs[v.typ]
-		local Travel = v.vel * FT
-		local Tr = util.TraceLine({
-			start = v.pos,
-			endpos = v.pos + Travel,
-			mask = MASK_NPCWORLDSTATIC + MASK_WATER
-		})
-		if (Tr.Hit) then
-			v.pos = Tr.HitPos + Tr.HitNormal
-			-- deflect when hitting a surface
-			v.vel = Tr.HitNormal * 70 + VectorRand() * 70
-			v.dieTime = v.dieTime - FT * 30 -- disperse quickly
-			if (Specs.impactFunc) then
-				Specs.impactFunc(v, Tr.HitNormal)
+	for groupID, group in pairs(JMod.LiquidParticles) do
+		for k, particle in pairs(group) do
+			local Specs = JMod.ParticleSpecs[particle.typ]
+			local Travel = particle.vel * FT
+			local Tr = util.TraceLine({
+				start = particle.pos,
+				endpos = particle.pos + Travel,
+				mask = MASK_NPCWORLDSTATIC + MASK_WATER
+			})
+			if (Tr.Hit) then
+				particle.pos = Tr.HitPos + Tr.HitNormal
+				-- deflect when hitting a surface
+				particle.vel = Tr.HitNormal * 70 + VectorRand() * 70
+				particle.dieTime = particle.dieTime - FT * 30 -- disperse quickly
+				if (Specs.impactFunc) then
+					Specs.impactFunc(particle, Tr.HitNormal)
+				end
+			else
+				particle.pos = particle.pos + Travel
 			end
-		else
-			v.pos = v.pos + Travel
-		end
-		v.vel = v.vel - Vector(0, 0, 600 * FT)
-		local AirLoss = FT * Specs.airResist
-		v.vel = v.vel * (1 - AirLoss)
-		vel = v.vel + JMod.Wind * FT * 200
-		if (v.dieTime < Time) then
-			table.remove(JMod.LiquidParticles, k)
-		else
-			local TimeLeft = v.dieTime - Time
-			v.lifeProgress = 1 - (TimeLeft / Specs.lifeTime)
+			particle.vel = particle.vel - Vector(0, 0, 600 * FT)
+			local AirLoss = FT * Specs.airResist
+			particle.vel = particle.vel * (1 - AirLoss)
+			vel = particle.vel + JMod.Wind * FT * 200
+			if (particle.dieTime < Time) then
+				table.remove(JMod.LiquidParticles[groupID], k)
+			else
+				local TimeLeft = particle.dieTime - Time
+				particle.lifeProgress = 1 - (TimeLeft / Specs.lifeTime)
+			end
 		end
 	end
 end)
@@ -1036,20 +1041,27 @@ end)
 -- Liquid Render
 local GlowSprite = Material("sprites/mat_jack_basicglow")
 hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
-	local GroupPositions = {}
-	for k, v in pairs(JMod.LiquidParticles) do
-		local Specs = JMod.ParticleSpecs[v.typ]
-		local Size = Specs.launchSize + (Specs.finalSize - Specs.launchSize) * v.lifeProgress
-		local Col = Specs.colorFunc(v)
-		if (Specs.particleDrawFunc) then
-			Specs.particleDrawFunc(v, Size, Col)
+	if bDrawingSkybox then return end
+	for groupID, group in pairs(JMod.LiquidParticles) do
+		local LastPos = nil
+		for k, particle in pairs(group) do
+			local Specs = JMod.ParticleSpecs[particle.typ]
+			local Size = Specs.launchSize + (Specs.finalSize - Specs.launchSize) * particle.lifeProgress
+			local Col = Specs.colorFunc(particle, Size)
+			if (Specs.particleDrawFunc) then
+				Specs.particleDrawFunc(particle, Size, Col)
+			end
+			if (LastPos) then
+				render.SetMaterial(Specs.mat)
+				local DistQou = math.ceil(LastPos:Distance(particle.pos) / Specs.finalSize)
+				for i = 1, DistQou do
+					DistFrac = i / DistQou
+					local LerpVel = LerpVector(DistFrac, LastPos, particle.pos)
+					render.DrawBeam(LastPos, LerpVel, Size, 1, 0, Col)
+				end
+			end
+			LastPos = particle.pos
 		end
-		local LastPos = GroupPositions[v.group] or v.pos
-		if (LastPos) and not(LastPos:Distance(v.pos) > Specs.launchSpeed) then
-			render.SetMaterial(Specs.mat)
-			render.DrawBeam(LastPos, v.pos, Size, 1, 0, Col)
-		end
-		GroupPositions[v.group] = v.pos
 	end
 end)
 

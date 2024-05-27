@@ -191,6 +191,8 @@ hook.Add("OnPlayerPhysicsDrop", "JMod_PhysicsDrop", function(ply, ent)
 end)
 
 function JMod.LiquidSpray(pos, dir, amt, group, typ)
+	local group = group or 1
+	local amt = amt or 1
 	if SERVER then
 		net.Start("JMod_LiquidParticle")
 		net.WriteVector(pos)
@@ -201,13 +203,14 @@ function JMod.LiquidSpray(pos, dir, amt, group, typ)
 		net.Broadcast()
 	elseif CLIENT then
 		local Specs = JMod.ParticleSpecs[typ]
+		if not(Specs) then return end
 		for i = 1, amt do
 			timer.Simple((i - 1) * 0.1, function()
-				table.insert(JMod.LiquidParticles, {
+				JMod.LiquidParticles[group] = JMod.LiquidParticles[group] or {}
+				table.insert(JMod.LiquidParticles[group], {
 					typ = typ,
-					group = group,
 					pos = pos,
-					vel = dir * Specs.launchSpeed + VectorRand() * 20,
+					vel = dir + VectorRand() * 20,
 					dieTime = CurTime() + Specs.lifeTime,
 					impacted = false,
 					lifeProgress = 0 -- for calc caching

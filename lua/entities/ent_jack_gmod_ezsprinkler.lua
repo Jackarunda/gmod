@@ -29,18 +29,18 @@ ENT.DynamicPerfSpecs={
 ENT.LiquidTypes = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
 		TankColor = Color(61, 194, 255),
-		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"},
-		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"},
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
 	},
 	[JMod.EZ_RESOURCE_TYPES.FUEL] = {
 		TankColor = Color(255, 61, 61),
-		SoundRight = {"snds_jack_gmod/flamethrower_loop.ogg"},
-		SoundLeft = {"snds_jack_gmod/flamethrower_loop.ogg", 120},
+		SoundRight = {"snds_jack_gmod/flamethrower_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/flamethrower_loop.wav", 120},
 	},
 	--[[[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = {
 		TankColor = Color(61, 255, 61),
-		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"},
-		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"},
+		SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"},
+		SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"},
 	}--]]
 }
 
@@ -132,8 +132,8 @@ if(SERVER)then
 			JMod.EZ_RESOURCE_TYPES.POWER,
 		}
 		self.Rotation = {Max = 360}
-		self.SoundRight = {"snds_jack_gmod/sprankler_slow_loop.ogg"}
-		self.SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.ogg"}
+		self.SoundRight = {"snds_jack_gmod/sprankler_slow_loop.wav"}
+		self.SoundLeft = {"snds_jack_gmod/sprankler_fast_loop.wav"}
 		-- All moddable attributes
 		-- Each mod selected for it is +1, against it is -1
 		self.ModPerfSpecs = {
@@ -354,15 +354,17 @@ if(SERVER)then
 				SprayAngle:RotateAroundAxis(SprayAngle:Right(), 35)
 				
 				if LiquidTyp == JMod.EZ_RESOURCE_TYPES.WATER then
+					local SplachPos = SelfPos + self:GetUp() * 35
 					local Splach = EffectData()
-					Splach:SetOrigin(SelfPos + self:GetUp() * 35 + SprayAngle:Forward() * 2)
+					Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
 					local Zoop = SprayAngle:Forward()
 					if (self.Dir == "left") then
-						Zoop = Zoop / 1
+						Zoop = Zoop / 2
 					end
 					Splach:SetStart(Zoop)
 					Splach:SetScale((self.Dir == "right") and 1 or .4)
 					util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
+					JMod.LiquidSpray(SplachPos, Zoop * 500, 1, self:EntIndex(), 1)
 
 				elseif LiquidTyp == JMod.EZ_RESOURCE_TYPES.FUEL then
 					local FirePos = util.QuickTrace(SelfPos + self:GetUp() * 35, SprayAngle:Forward() * 100, self).HitPos

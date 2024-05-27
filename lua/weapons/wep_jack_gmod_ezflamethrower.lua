@@ -259,7 +259,7 @@ function SWEP:PrimaryAttack()
 					Splach:SetStart(FireForward * 2)
 					Splach:SetScale(1)
 					util.Effect("eff_jack_gmod_spranklerspray", Splach, true, true)
-					JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 1)
+					JMod.LiquidSpray(FirePos + FireRight, FireForward * 1000, 1, self:EntIndex(), 1)
 				end
 			elseif (State == STATE_IGNITIN) then
 				self:SetState(STATE_FLAMIN)
