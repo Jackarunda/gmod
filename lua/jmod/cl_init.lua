@@ -972,7 +972,7 @@ JMod.ParticleSpecs = {
 				Splach:SetScale(math.random(2, 10))
 				--util.Effect("WaterSplash", Splach)
 			else
-				self.lifeProgress = self.lifeProgress + .02
+				self.lifeProgress = self.lifeProgress + .5
 			end
 		end,
 		--soundeff = Sound("snds_jack_gmod/spray.wav")
