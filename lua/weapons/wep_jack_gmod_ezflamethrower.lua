@@ -247,7 +247,7 @@ function SWEP:PrimaryAttack()
 			if (State == STATE_NOTHIN) then
 				self:SetState(STATE_SPRAYIN)
 				if self.SoundLoop then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "ambient/gas/cannister_loop.wav")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_liquid_spray.wav")
 				self.SoundLoop:SetSoundLevel(75)
 				self.SoundLoop:Play()
 			elseif (State == STATE_SPRAYIN) then
