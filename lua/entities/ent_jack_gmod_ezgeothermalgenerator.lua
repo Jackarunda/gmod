@@ -204,13 +204,14 @@ if(SERVER)then
 					return 
 				end
 
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
+				local DepositInfo = JMod.NaturalResourceTable[self.DepositKey]
+				if not(DepositInfo and DepositInfo.rate and (DepositInfo.rate > 0)) then 
 					self:TurnOff()
 
 					return
 				end
 
-				local FlowRate = JMod.NaturalResourceTable[self.DepositKey].rate --* JMod.Config.ResourceEconomy.ExtractionSpeed
+				local FlowRate = DepositInfo.rate --* JMod.Config.ResourceEconomy.ExtractionSpeed
 				self:SetProgress(self:GetProgress() + FlowRate / (self.ChargeRate))
 
 				if self.NextWaterLoseTime < Time then
