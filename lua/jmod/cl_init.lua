@@ -972,10 +972,9 @@ JMod.ParticleSpecs = {
 				Splach:SetScale(math.random(2, 10))
 				--util.Effect("WaterSplash", Splach)
 			else
-				self.lifeProgress = self.lifeProgress + .5
+				self.dieTime = self.dieTime - .5
 			end
-		end,
-		--soundeff = Sound("snds_jack_gmod/spray.wav")
+		end
 	},
 	[2] = { -- flaming liquid
 		launchSize = 5,
@@ -1055,8 +1054,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 				render.SetMaterial(Specs.mat)
 				local DistQou = math.ceil(LastPos:Distance(particle.pos) / Specs.finalSize)
 				for i = 1, DistQou do
-					DistFrac = i / DistQou
+					local DistFrac = i / DistQou
 					local LerpVel = LerpVector(DistFrac, LastPos, particle.pos)
+
 					render.DrawBeam(LastPos, LerpVel, Size, 1, 0, Col)
 				end
 			end
