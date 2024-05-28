@@ -1097,13 +1097,18 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 			end
 			if (LastPos) then
 				render.SetMaterial(Specs.mat)
-				local DistQou = math.ceil(LastPos:Distance(particle.pos) / Specs.finalSize)
+				--[[local DistQou = math.ceil(LastPos:Distance(particle.pos) / Specs.finalSize)
 				for i = 1, DistQou do
 					local DistFrac = i / DistQou
-					local LerpVel = LerpVector(DistFrac, LastPos, particle.pos)
+					local FinalPos = particle.pos
+					if i == DistQou then
+						FinalPos = particle.pos - particle.vel:GetNormalized() * 12
+					end
+					local LerpVel = LerpVector(DistFrac, LastPos, FinalPos)
 
 					render.DrawBeam(LastPos, LerpVel, Size, 1, 0, Col)
-				end
+				end--]]
+				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
 			end
 			LastPos = particle.pos
 		end

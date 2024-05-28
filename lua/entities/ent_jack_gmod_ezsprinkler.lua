@@ -356,7 +356,7 @@ if(SERVER)then
 				SprayAngle:RotateAroundAxis(SprayAngle:Right(), 35)
 				
 				if LiquidTyp == JMod.EZ_RESOURCE_TYPES.WATER then
-					local SplachPos = SelfPos + self:GetUp() * 35
+					local SplachPos = SelfPos + self:GetUp() * 36
 					local Splach = EffectData()
 					Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
 					local Zoop = SprayAngle:Forward()
