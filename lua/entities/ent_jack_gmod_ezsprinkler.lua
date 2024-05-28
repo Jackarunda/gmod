@@ -85,7 +85,7 @@ function ENT:InitPerfSpecs(removeLiquid)
 		end
 	end
 	self.MaxLiquid = math.Round(self.MaxLiquid/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
-	self.SprayRadius = self.SprayRadius*52.493 -- convert meters to source units
+	--self.SprayRadius = self.SprayRadius*52.493 -- convert meters to source units
 	
 	local MaxValue=10
 	for attrib, value in pairs(self.ModPerfSpecs) do
@@ -321,6 +321,8 @@ if(SERVER)then
 					local WaterDeliveryAmt = 1 * LiquidConversionSpeed
 					local WaterConsumptionAmt = 4 * LiquidConversionSpeed
 
+					--debugoverlay.Sphere(SelfPos, self.SprayRadius, 1, Color(0, 255, 0), false)
+					--print("Spray Radius: "..self.SprayRadius)
 					for k, v in ipairs(ents.FindInSphere(self:GetPos(), self.SprayRadius)) do
 						if self:IsEntInFieldOfView(v) then
 							if v:IsOnFire() then v:Extinguish() end
@@ -363,8 +365,8 @@ if(SERVER)then
 					end
 					Splach:SetStart(Zoop)
 					Splach:SetScale((self.Dir == "right") and 1 or .4)
-					util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
-					JMod.LiquidSpray(SplachPos, Zoop * 500, 1, self:EntIndex(), 1)
+					--util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
+					JMod.LiquidSpray(SplachPos, Zoop * 600, 1, self:EntIndex(), 3)
 
 				elseif LiquidTyp == JMod.EZ_RESOURCE_TYPES.FUEL then
 					local FirePos = util.QuickTrace(SelfPos + self:GetUp() * 35, SprayAngle:Forward() * 100, self).HitPos
