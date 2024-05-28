@@ -951,13 +951,16 @@ local WaterSprite = Material("effects/splash1")
 
 JMod.ParticleSpecs = {
 	[1] = { -- water
-		launchSize = 5,
+		launchSize = 2,
 		lifeTime = 2,
-		finalSize = 120,
-		airResist = .2,
+		finalSize = 160,
+		airResist = .1,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
 			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
+			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
+			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)
 			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 200 * (1 - self.lifeProgress))
 		end,
 		particleDrawFunc = function(self, size, col)
@@ -965,14 +968,12 @@ JMod.ParticleSpecs = {
 			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
-			if self.lifeProgress > .8 then
+			if math.random(1, 2) == 1 then
 				local Splach = EffectData()
-				Splach:SetOrigin(self.pos)
+				Splach:SetOrigin(self.pos - normal * .5)
 				Splach:SetNormal(normal)
-				Splach:SetScale(math.random(2, 10))
-				--util.Effect("WaterSplash", Splach)
-			else
-				self.dieTime = self.dieTime - .5
+				Splach:SetScale(math.Rand(2, 3))
+				util.Effect("eff_jack_gmod_tinysplash", Splach)
 			end
 		end
 	},
@@ -980,11 +981,10 @@ JMod.ParticleSpecs = {
 		launchSize = 5,
 		lifeTime = 2,
 		finalSize = 120,
-		airResist = .2,
+		airResist = .1,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
-			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
-			return Color(160 * AmbiLight.x, 160 * AmbiLight.y, 100 * AmbiLight.z, 200 * (1 - self.lifeProgress))
+			return Color(255, 200, 100, 200 * (1 - self.lifeProgress))
 		end
 	}
 }

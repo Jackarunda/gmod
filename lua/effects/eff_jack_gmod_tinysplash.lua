@@ -4,17 +4,16 @@ function EFFECT:Init(data)
 	self.Scale = data:GetScale()
 	self.Pos = data:GetOrigin()
 	self.Mine = data:GetEntity()
-	self.DieTime = CurTime() + math.Rand(.5, 1)
+	self.DieTime = CurTime() + math.Rand(.25, .75)
 	self.Size = 5
-	self.Normal = Vector(0, 0, 1)
+	self.Normal = data:GetNormal()
 	---
 	local emitter = ParticleEmitter(self.Pos)
 
 	for i = 1, 2 do
 		local Sprite = table.Random({"effects/splash1", "effects/splash2", "effects/splash4"})
-
 		local particle = emitter:Add(Sprite, self.Pos)
-		particle:SetVelocity(VectorRand() * math.Rand(0, 50) * self.Scale + Vector(0, 0, math.Rand(50, 100) * self.Scale))
+		particle:SetVelocity(VectorRand() * math.Rand(0, 30) * self.Scale + Vector(0, 0, math.Rand(20, 40) * self.Scale))
 		particle:SetCollide(false)
 		particle:SetLighting(false)
 		particle:SetBounce(.01)
@@ -35,7 +34,7 @@ end
 
 function EFFECT:Think()
 	if self.DieTime > CurTime() then
-		self.Size = self.Size + .3
+		self.Size = self.Size + .3 * self.Scale ^ 1.5
 		self:NextThink(CurTime() + .1)
 
 		return true
@@ -47,11 +46,8 @@ end
 function EFFECT:Render()
 	local TimeLeftFraction = self.DieTime - CurTime()
 	local Opacity = math.Clamp(TimeLeftFraction * 255, 0, 255)
-	--print(Opacity)
-	---
 	render.SetMaterial(Wake)
 	render.DrawQuadEasy(self.Pos + self.Normal * 5, self.Normal, self.Size, self.Size, Color(255, 255, 255, Opacity))
 	render.DrawQuadEasy(self.Pos + self.Normal * 5, self.Normal, self.Size, self.Size, Color(255, 255, 255, Opacity))
-
 	return
 end
