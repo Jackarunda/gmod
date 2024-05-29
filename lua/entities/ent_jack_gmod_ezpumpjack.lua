@@ -254,7 +254,7 @@ if(SERVER)then
 		end
 		if not(self.DepositKey)then return end
 		if(self:GetResourceType() == "oil")then
-			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
+			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN) or self:IsOnFire())then 
 				createOilFire()
 			elseif dmginfo:IsDamageType(DMG_BLAST + DMG_BLAST_SURFACE + DMG_PLASMA + DMG_ENERGYBEAM) and (math.random(0, 100) > 50) then
 				createOilFire()

@@ -157,6 +157,19 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
+		local Pos, Dir = self:GetPos(), self:GetRight()
+		local dlight = DynamicLight(self:EntIndex())
+
+		if dlight then
+			dlight.pos = Pos + Dir * 200
+			dlight.r = 255
+			dlight.g = 60
+			dlight.b = 10
+			dlight.brightness = 8
+			dlight.Decay = 200
+			dlight.Size = 1000
+			dlight.DieTime = CurTime() + .5
+		end
 	end
 
 	---
@@ -174,19 +187,6 @@ elseif CLIENT then
 
 		for i = 1, 3 do
 			render.DrawSprite(Pos + Dir * (i * math.random(50, 80)), 250, 200, Color(255, 255 - i * 10, 255 - i * 20, 255))
-		end
-
-		local dlight = DynamicLight(self:EntIndex())
-
-		if dlight then
-			dlight.pos = Pos + Dir * 200
-			dlight.r = 255
-			dlight.g = 60
-			dlight.b = 10
-			dlight.brightness = 8
-			dlight.Decay = 200
-			dlight.Size = 1000
-			dlight.DieTime = CurTime() + .5
 		end
 	end
 
