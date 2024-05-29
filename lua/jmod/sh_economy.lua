@@ -815,6 +815,9 @@ function JMod.GetSalvageYield(ent)
 		else
 			Results[k] = math.ceil(v * .6)
 		end
+		if ent.LVS and ent.ExplodedAlready then
+			Results[k] = Results[k] * .5
+		end
 	end
 
 	if ent.IsJackyEZmachine then
