@@ -948,6 +948,7 @@ end)
 
 -- Liquid Effects
 local WaterSprite = Material("effects/splash1")
+local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 50)
 
 JMod.ParticleSpecs = {
 	[1] = { -- jellied fuel
@@ -1020,8 +1021,38 @@ JMod.ParticleSpecs = {
 			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 100 * (1 - self.lifeProgress))
 		end,
 		particleDrawFunc = function(self, size, col)
-			render.SetMaterial(WaterSprite)
-			render.DrawSprite(self.pos, size * 2, size * 2, col)
+			-- Rainbows :D
+			local SunInfo = util.GetSunInfo()
+			local ViewPos = EyePos()
+			local ViewDir = EyeAngles()
+			local ScreenWidth, ScreenHeight = ScrW(), ScrH()
+			local FoV = 1 / (LocalPlayer():GetFOV() / 90)
+			-- STENCIL TEST
+			render.SetStencilEnable( true )
+				render.ClearStencil()
+				--
+				render.SetStencilTestMask( 255 )
+				render.SetStencilWriteMask( 255 )
+				render.SetStencilReferenceValue( 1 )
+				--
+				render.SetStencilFailOperation( STENCILOPERATION_KEEP )
+				render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
+				render.SetStencilZFailOperation( STENCILOPERATION_KEEP )
+				--
+				render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
+				--
+				render.SetMaterial(WaterSprite)
+				render.DrawSprite(self.pos, size * 2, size * 2, col)
+				--
+				render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
+				render.SetStencilPassOperation( STENCILOPERATION_KEEP )
+
+				--START REAL DRAW
+				render.SetMaterial(RainbowSprite)
+				render.DrawSprite(ViewPos - SunInfo.direction * 254 * FoV + ViewDir:Up() * 86, 600 * FoV, 254 * FoV, RainbowCol)
+				--END
+			render.SetStencilEnable( false )
+			-- STENCIL TEST
 		end,
 		impactFunc = function(self, normal)
 				local Splach = EffectData()
@@ -1086,6 +1117,7 @@ end)
 local GlowSprite = Material("sprites/mat_jack_basicglow")
 hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
 	if bDrawingSkybox then return end
+
 	for groupID, group in pairs(JMod.LiquidParticles) do
 		local LastPos = nil
 		for k, particle in pairs(group) do
@@ -1097,17 +1129,6 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 			end
 			if (LastPos) then
 				render.SetMaterial(Specs.mat)
-				--[[local DistQou = math.ceil(LastPos:Distance(particle.pos) / Specs.finalSize)
-				for i = 1, DistQou do
-					local DistFrac = i / DistQou
-					local FinalPos = particle.pos
-					if i == DistQou then
-						FinalPos = particle.pos - particle.vel:GetNormalized() * 12
-					end
-					local LerpVel = LerpVector(DistFrac, LastPos, FinalPos)
-
-					render.DrawBeam(LastPos, LerpVel, Size, 1, 0, Col)
-				end--]]
 				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
 			end
 			LastPos = particle.pos
