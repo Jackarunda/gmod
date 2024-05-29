@@ -1026,7 +1026,7 @@ JMod.ParticleSpecs = {
 			local ViewPos = EyePos()
 			local ViewDir = EyeAngles()
 			local ScreenWidth, ScreenHeight = ScrW(), ScrH()
-			local FoV = 1 / (LocalPlayer():GetFOV() / 90)
+			--local FoV = 1 / (LocalPlayer():GetFOV() / 90)
 			-- STENCIL TEST
 			render.SetStencilEnable( true )
 				render.ClearStencil()
@@ -1049,7 +1049,7 @@ JMod.ParticleSpecs = {
 
 				--START REAL DRAW
 				render.SetMaterial(RainbowSprite)
-				render.DrawSprite(ViewPos - SunInfo.direction * 254 * FoV + ViewDir:Up() * 86, 600 * FoV, 254 * FoV, RainbowCol)
+				render.DrawSprite(ViewPos - SunInfo.direction * 254 + ViewDir:Up() * 86, 600, 254, RainbowCol)
 				--END
 			render.SetStencilEnable( false )
 			-- STENCIL TEST

@@ -156,7 +156,9 @@ if SERVER then
 							self.Intensity = self.Intensity + Taken
 							--v.Intensity = TheirIntensity - Taken
 							v:Remove()
-							self:SetPos(Pos + (TheirPos - Pos):GetNormalized() * self.Range * 0.5)
+							if not IsValid(self:GetParent()) then
+								self:SetPos(Pos + (TheirPos - Pos):GetNormalized() * self.Range * 0.5)
+							end
 						end
 					end
 
