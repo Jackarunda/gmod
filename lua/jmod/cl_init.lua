@@ -948,7 +948,7 @@ end)
 
 -- Liquid Effects
 local WaterSprite = Material("effects/splash1")
-local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 50)
+local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 10)
 
 JMod.ParticleSpecs = {
 	[1] = { -- jellied fuel
@@ -1049,7 +1049,7 @@ JMod.ParticleSpecs = {
 
 				--START REAL DRAW
 				render.SetMaterial(RainbowSprite)
-				render.DrawSprite(ViewPos - SunInfo.direction * 254 + ViewDir:Up() * 86, 600, 254, RainbowCol)
+				render.DrawSprite(ViewPos - SunInfo.direction * 250 + ViewDir:Up() * 200, 500, 250, RainbowCol)
 				--END
 			render.SetStencilEnable( false )
 			-- STENCIL TEST
