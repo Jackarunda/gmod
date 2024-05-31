@@ -101,6 +101,7 @@ if SERVER then
 		timer.Simple(0, function()
 			if IsValid(self) and IsValid(self.EZragdoll) then
 				self:SetParent(self.EZragdoll)
+				self:SetPos(Vector(0, 0, 0))
 			else
 				SafeRemoveEntity(self)
 			end
@@ -128,6 +129,23 @@ if SERVER then
 			end
 		end
 
+		if IsValid(self.Eater) then
+			if (self.Eater:GetPos():Distance(self:GetPos()) < 100) then
+				self.Eater:SetActivity(ACT_MELEE_ATTACK1)
+			else
+				self.Eater:SetSaveValue("m_vecLastPosition", self:GetPos())
+				self.Eater:SetSchedule(SCHED_FORCED_GO)
+			end
+		elseif not IsValid(self.Eater) then
+			for k, npc in pairs(ents.FindByClass("npc_antlion")) do
+				if (npc:GetPos():Distance(self:GetPos()) < 1000) and (npc:GetActivity() == ACT_IDLE) then
+					self.Eater = npc
+
+					break
+				end
+			end
+		end--]]
+
 		self:NextThink(Time + 1)
 
 		return true
@@ -154,7 +172,10 @@ if SERVER then
 					Skull:SetModel("models/gibs/hgibs.mdl")
 					Skull:SetPos(Matty:GetTranslation())
 					Skull:SetAngles(Matty:GetAngles())
+					Skull:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 					Skull:Spawn()
+					Skull:Activate()
+					SafeRemoveEntityDelayed(Skull, 10)
 				end
 			end
 			SafeRemoveEntity(self.EZragdoll)
