@@ -1158,16 +1158,28 @@ if CLIENT then
 			slot = ArmorNames[tonumber(slot)]
 		end
 
-		if not(action) or not(slot) then return end
+		if not(action) then return end
 		
-		local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
-		if not ItemID then
-			ply:PrintMessage(HUD_PRINTCENTER, "There's nothing in slot " .. slot)
+		if not(slot) then
+			for number, slot in ipairs(ArmorNames) do
+				local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
+				if ItemID then
+					net.Start("JMod_Inventory")
+					net.WriteInt(action, 8)
+					net.WriteString(ItemID)
+					net.SendToServer()
+				end
+			end
 		else
-			net.Start("JMod_Inventory")
-			net.WriteInt(action, 8)
-			net.WriteString(ItemID)
-			net.SendToServer()
+			local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(ply.EZarmor, slot)
+			if not ItemID then
+				ply:PrintMessage(HUD_PRINTCENTER, "There's nothing in slot " .. slot)
+			else
+				net.Start("JMod_Inventory")
+				net.WriteInt(action, 8)
+				net.WriteString(ItemID)
+				net.SendToServer()
+			end
 		end
 	end, function(cmd, params)
 		-- Normalizes the string
