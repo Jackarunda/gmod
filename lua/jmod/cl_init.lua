@@ -948,7 +948,7 @@ end)
 
 -- Liquid Effects
 local WaterSprite = Material("effects/splash1")
-local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 10)
+local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 20)
 
 JMod.ParticleSpecs = {
 	[1] = { -- jellied fuel
@@ -1021,38 +1021,8 @@ JMod.ParticleSpecs = {
 			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 100 * (1 - self.lifeProgress))
 		end,
 		particleDrawFunc = function(self, size, col)
-			-- Rainbows :D
-			local SunInfo = util.GetSunInfo()
-			local ViewPos = EyePos()
-			local ViewDir = EyeAngles()
-			local ScreenWidth, ScreenHeight = ScrW(), ScrH()
-			--local FoV = 1 / (LocalPlayer():GetFOV() / 90)
-			-- STENCIL TEST
-			render.SetStencilEnable( true )
-				render.ClearStencil()
-				--
-				render.SetStencilTestMask( 255 )
-				render.SetStencilWriteMask( 255 )
-				render.SetStencilReferenceValue( 1 )
-				--
-				render.SetStencilFailOperation( STENCILOPERATION_KEEP )
-				render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
-				render.SetStencilZFailOperation( STENCILOPERATION_KEEP )
-				--
-				render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
-				--
-				render.SetMaterial(WaterSprite)
-				render.DrawSprite(self.pos, size * 2, size * 2, col)
-				--
-				render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
-				render.SetStencilPassOperation( STENCILOPERATION_KEEP )
-
-				--START REAL DRAW
-				render.SetMaterial(RainbowSprite)
-				render.DrawSprite(ViewPos - SunInfo.direction * 250 + ViewDir:Up() * 200, 500, 250, RainbowCol)
-				--END
-			render.SetStencilEnable( false )
-			-- STENCIL TEST
+			render.SetMaterial(WaterSprite)
+			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
 				local Splach = EffectData()
@@ -1117,10 +1087,15 @@ end)
 local GlowSprite = Material("sprites/mat_jack_basicglow")
 hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
 	if bDrawingSkybox then return end
-
+	local SunInfo = util.GetSunInfo()
+	local ViewPos = EyePos()
+	local ViewDir = EyeAngles()
+	--local ScreenWidth, ScreenHeight = ScrW(), ScrH()
+	--local FoV = 1 / (LocalPlayer():GetFOV() / 90)
 	for groupID, group in pairs(JMod.LiquidParticles) do
+		local NumberOfParticles = #group
 		local LastPos = nil
-		for k, particle in pairs(group) do
+		for k, particle in ipairs(group) do
 			local Specs = JMod.ParticleSpecs[particle.typ]
 			local Size = Specs.launchSize + (Specs.finalSize - Specs.launchSize) * particle.lifeProgress
 			local Col = Specs.colorFunc(particle, Size)
@@ -1128,8 +1103,46 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 				Specs.particleDrawFunc(particle, Size, Col)
 			end
 			if (LastPos) then
-				render.SetMaterial(Specs.mat)
-				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
+				-- God's promise to not flood the earth with water
+				-- STENCIL TEST
+				render.SetStencilEnable( true )
+					render.ClearStencil()
+					--
+					render.SetStencilTestMask( 255 )
+					render.SetStencilWriteMask( 255 )
+					render.SetStencilReferenceValue( 1 )
+					--
+					render.SetStencilFailOperation( STENCILOPERATION_KEEP )
+					render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
+					render.SetStencilZFailOperation( STENCILOPERATION_KEEP )
+					--
+					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
+					-- RENDER NORMAL STUFF HERE
+					render.SetMaterial(Specs.mat)
+					render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
+					-- Alternate method that uses segmented beams
+					--[[if k == 2 then
+						render.StartBeam(NumberOfParticles)
+						--print("starting beam")
+					else
+						render.AddBeam(particle.pos, Size, 0, Col)
+						--print("adding beam", k)
+					end
+					if (k == NumberOfParticles) and (NumberOfParticles > 1) then
+						render.EndBeam()
+						--print("ending beam", NumberOfParticles)
+					end--]]
+					
+					-- RAINBOW WILL BE RENDERED BEHIND
+					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
+					render.SetStencilPassOperation( STENCILOPERATION_KEEP )
+
+					--START REAL RAINBOW DRAW
+					render.SetMaterial(RainbowSprite)
+					render.DrawSprite(ViewPos - SunInfo.direction * 250 + ViewDir:Up() * 200, 200, 100, RainbowCol)
+					--END
+				render.SetStencilEnable( false )
+				-- STENCIL TEST
 			end
 			LastPos = particle.pos
 		end
