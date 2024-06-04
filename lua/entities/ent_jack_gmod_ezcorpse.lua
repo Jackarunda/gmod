@@ -12,7 +12,7 @@ if SERVER then
 	function ENT:Initialize()
 		if not self.DeadPlayer then self:Remove() return end
 		self.EZoverDamage = self.EZoverDamage or 0
-		self.TimeTillRemoval = JMod.Config.QoL.JModCorpseStayTime
+		self.TimeTillRemoval = JMod.Config.QoL.JModCorpseStayTime * 60
 
 		self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
@@ -123,7 +123,7 @@ if SERVER then
 		end
 
 		if self.VeryDead then
-			self.TimeTillRemoval = math.Clamp(self.TimeTillRemoval - 1, 0, JMod.Config.QoL.JModCorpseStayTime)
+			self.TimeTillRemoval = math.Clamp(self.TimeTillRemoval - 1, 0, JMod.Config.QoL.JModCorpseStayTime * 60)
 			if self.TimeTillRemoval <= 0 then
 				self:Remove()
 			end

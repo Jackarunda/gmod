@@ -39,6 +39,11 @@ elseif (SERVER) then
 	end
 
 	function ENT:CreatePod()
+		if(IsValid(self.Pod))then
+			self.Pod:SetParent(nil)
+			self.Pod:Fire("kill")
+			self.Pod = nil
+		end
 		self.Pod = ents.Create("prop_vehicle_prisoner_pod")
 		self.Pod:SetModel("models/vehicles/prisoner_pod_inner.mdl")
 		local Ang, Up, Right, Forward = self:GetAngles(), self:GetUp(), self:GetRight(), self:GetForward()
@@ -66,10 +71,8 @@ elseif (SERVER) then
 		--JMod.SetEZowner(self, nil)
 		if(IsValid(self.Pod))then
 			self.Pod:SetParent(nil)
-			--self.Pod:SetNotSolid(false)
-			self.Pod:Remove()
-			--self.Pod = nil
-			--SafeRemoveEntity(self.Pod)
+			self.Pod:Fire("kill")
+			self.Pod = nil
 		end
 
 		self:SetModel(MODEL_ROLLED)
