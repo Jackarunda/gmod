@@ -200,20 +200,29 @@ end
 function SWEP:GetNozzle()
 	local Owner = self.Owner
 	local AimVec = Owner:GetAimVector()
+	local ShootPos = Owner:GetShootPos()
 	local FirePos, FireAng
 	--
 	
 	if CLIENT then
 		FireAng = Owner:EyeAngles()
+		local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
 		if not Owner:ShouldDrawLocalPlayer() then
-			FirePos = Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
+			FirePos = ShootPos + (FireForward * 20 + FireRight * 4 + FireUp * -4)
 		else
-			FirePos = Owner:GetShootPos() + (FireAng:Forward() * 40 + FireAng:Right() * 8 + FireAng:Up() * -15)
+			FirePos = ShootPos + (FireForward * 40 + FireRight * 8 + FireUp * -15)
 		end
 	elseif SERVER then
 		FireAng = AimVec:Angle()
+		local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
 		--FireAng:RotateAroundAxis(FireAng:Right(), 5)
-		FirePos = Owner:GetShootPos() + (FireAng:Forward() * 40 + FireAng:Right() * 8 + FireAng:Up() * -15)
+		FirePos = ShootPos + (FireForward * 40 + FireRight * 8 + FireUp * -15)
+	end
+
+	local SafetyTr = util.QuickTrace(ShootPos, FirePos - ShootPos, Owner)
+
+	if (SafetyTr.Hit) then
+		FirePos = SafetyTr.HitPos
 	end
 
 	if SERVER then
