@@ -198,23 +198,22 @@ function SWEP:Cease()
 end
 
 function SWEP:GetNozzle()
-	local AimVec = self.Owner:GetAimVector()
+	local Owner = self.Owner
+	local AimVec = Owner:GetAimVector()
 	local FirePos, FireAng
-	local NozzleAtt = self:GetAttachment(1)
+	--
 	
 	if CLIENT then
-		FirePos, FireAng = NozzleAtt.Pos, NozzleAtt.Ang
-		if not self.Owner:ShouldDrawLocalPlayer() then
-			FireAng:RotateAroundAxis(FireAng:Up(), 10)
-			FireAng:RotateAroundAxis(FireAng:Right(), -5)
-			--FirePos = FirePos + FireAng:Up() * 30 + FireAng:Forward() * 20
-			FireAng = self.Owner:EyeAngles()
-			FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)--+ (FireAng:Forward() * -15 + FireAng:Right() * -10 + FireAng:Up() * -1)
+		FireAng = Owner:EyeAngles()
+		if not Owner:ShouldDrawLocalPlayer() then
+			FirePos = Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
+		else
+			FirePos = Owner:GetShootPos() + (FireAng:Forward() * 40 + FireAng:Right() * 8 + FireAng:Up() * -15)
 		end
 	elseif SERVER then
 		FireAng = AimVec:Angle()
 		--FireAng:RotateAroundAxis(FireAng:Right(), 5)
-		FirePos = self.Owner:GetShootPos() + (FireAng:Forward() * 20 + FireAng:Right() * 4 + FireAng:Up() * -4)
+		FirePos = Owner:GetShootPos() + (FireAng:Forward() * 40 + FireAng:Right() * 8 + FireAng:Up() * -15)
 	end
 
 	if SERVER then
