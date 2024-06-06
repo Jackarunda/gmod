@@ -79,7 +79,7 @@ function ENT:InitPerfSpecs(removeLiquid)
 			self[specName] = value 
 		end
 	end
-	for specName,value in pairs(self.DynamicPerfSpecs)do 
+	for specName, value in pairs(self.DynamicPerfSpecs)do 
 		if(type(value)~="table")then
 			self[specName] = value
 		end
@@ -371,18 +371,22 @@ if(SERVER)then
 				elseif LiquidTyp == JMod.EZ_RESOURCE_TYPES.FUEL then
 					local FirePos = util.QuickTrace(SelfPos + self:GetUp() * 35, SprayAngle:Forward() * 100, self).HitPos
 					
-					local Flame = ents.Create("ent_jack_gmod_eznapalm")
-					Flame:SetPos(FirePos)
-					local FlyAng = (SprayAngle:Forward() + VectorRand() * .1):Angle()
-					Flame:SetAngles(FlyAng)
-					Flame:SetOwner(JMod.GetEZowner(self))
-					Flame.HighVisuals = (math.random(1, 2) == 1)
-					Flame.SpeedMul = math.Rand(.5, .8)
-					Flame.Creator = self
-					Flame.Burnin = true
-					JMod.SetEZowner(Flame, self.Owner)
-					Flame:Spawn()
-					Flame:Activate()
+					if math.random(1, 2) == 1 then
+						local Flame = ents.Create("ent_jack_gmod_eznapalm")
+						Flame:SetPos(FirePos)
+						local FlyAng = (SprayAngle:Forward() + VectorRand() * .1):Angle()
+						Flame:SetAngles(FlyAng)
+						Flame:SetOwner(JMod.GetEZowner(self))
+						Flame.HighVisuals = (math.random(1, 2) == 1)
+						local RadiusMult = (self.SprayRadius / 400)
+						Flame.SpeedMul = math.Rand(.5, .8) * RadiusMult
+						Flame.LifeTime = math.random(1, 1.5)  * RadiusMult
+						Flame.Creator = self
+						Flame.Burnin = true
+						JMod.SetEZowner(Flame, self.Owner)
+						Flame:Spawn()
+						Flame:Activate()
+					end
 					--
 					local Foof = EffectData()
 					Foof:SetNormal(SprayAngle:Forward())
@@ -496,9 +500,9 @@ elseif(CLIENT)then
 
 				cam.Start3D2D(SelfPos - Forward * 1 - Up * 8 - Right * 12, DisplayAng, .06)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(PowFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(PowFrac * self.MaxElectricity)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(string.upper(self:GetLiquidType()), "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(WaterFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(WR, WG, WB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(WaterFrac * self.MaxLiquid)) .. "%", "JMod-Display", 0, 120, Color(WR, WG, WB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				--draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				--draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()

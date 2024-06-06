@@ -506,7 +506,7 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 			ChangedSomething = true
 		else
 			for k, v in pairs(tbl) do
-				if ent.ModPerfSpecs[k] ~= v then
+				if not istable(ent.ModPerfSpecs[k]) and ent.ModPerfSpecs[k] ~= v then
 					ChangedSomething = true
 				end
 			end
@@ -515,10 +515,10 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 			JMod.ConsumeResourcesInRange({
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost
 			}, nil, nil, self)
+			self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
 		end
 
 		ent:SetMods(tbl, ammoType)
-		self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
 	else
 		self:Msg("needs " .. tostring(self.ModifcationCost) .. " Basic Parts nearby to perform modification")
 	end
