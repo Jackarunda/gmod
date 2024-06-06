@@ -947,7 +947,7 @@ end)
 -- note that the song's beat is about .35 seconds
 
 -- Liquid Effects
-local WaterSprite = Material("effects/splash1")
+local WaterSprite, FireSprite = Material("effects/splash1"), Material("effects/fire_cloud1")
 local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 20)
 
 JMod.ParticleSpecs = {
@@ -981,31 +981,25 @@ JMod.ParticleSpecs = {
 	},
 	[2] = { -- flamethrower
 		launchSize = 2,
-		lifeTime = 2,
-		finalSize = 160,
-		airResist = .1,
+		lifeTime = .8,
+		finalSize = 200,
+		airResist = .3,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
 			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
 			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
 			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
 			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)
-			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 100 * (1 - self.lifeProgress))
+			return Color(220 * AmbiLight.x, 200 * AmbiLight.y, 100 * AmbiLight.z, 100 * (1 - self.lifeProgress))
 		end,
 		particleDrawFunc = function(self, size, col)
-			render.SetMaterial(WaterSprite)
+			render.SetMaterial(FireSprite)
 			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
-			--if math.random(1, 2) == 1 then
-				local Splach = EffectData()
-				Splach:SetOrigin(self.pos - normal * .5)
-				Splach:SetNormal(normal)
-				Splach:SetScale(math.Rand(1, 3))
-				util.Effect("eff_jack_gmod_tinysplash", Splach)
-			--end
-			self.dieTime = self.dieTime - .2
-		end
+			self.dieTime = self.dieTime - .5
+		end,
+		gravity = -200
 	},
 	[3] = { -- SprinklerWater
 		launchSize = 1,
@@ -1031,7 +1025,8 @@ JMod.ParticleSpecs = {
 				Splach:SetScale(math.Rand(1, 3))
 				util.Effect("eff_jack_gmod_tinysplash", Splach)
 			self.dieTime = self.dieTime - .2
-		end
+		end,
+		stencilTest = true
 	},
 }
 
@@ -1069,7 +1064,7 @@ hook.Add("Think", "JMod_LiquidStreams", function()
 			else
 				particle.pos = particle.pos + Travel
 			end
-			particle.vel = particle.vel - Vector(0, 0, 600 * FT)
+			particle.vel = particle.vel - Vector(0, 0, (Specs.gravity or 600) * FT)
 			local AirLoss = FT * Specs.airResist
 			particle.vel = particle.vel * (1 - AirLoss)
 			vel = particle.vel + JMod.Wind * FT * 200
@@ -1104,8 +1099,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 			end
 			if (LastPos) then
 				-- God's promise to not flood the earth with water
-				-- STENCIL TEST
-				render.SetStencilEnable( true )
+				if Specs.stencilTest then
+					-- STENCIL TEST
+					render.SetStencilEnable( true )
 					render.ClearStencil()
 					--
 					render.SetStencilTestMask( 255 )
@@ -1118,8 +1114,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 					--
 					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
 					-- RENDER NORMAL STUFF HERE
-					render.SetMaterial(Specs.mat)
-					render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
+				end
+				render.SetMaterial(Specs.mat)
+				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
 					-- Alternate method that uses segmented beams
 					--[[if k == 2 then
 						render.StartBeam(NumberOfParticles)
@@ -1132,7 +1129,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 						render.EndBeam()
 						--print("ending beam", NumberOfParticles)
 					end--]]
-					
+				if Specs.stencilTest then
 					-- RAINBOW WILL BE RENDERED BEHIND
 					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
 					render.SetStencilPassOperation( STENCILOPERATION_KEEP )
@@ -1141,8 +1138,9 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 					render.SetMaterial(RainbowSprite)
 					render.DrawSprite(ViewPos - SunInfo.direction * 250 + ViewDir:Up() * 200, 200, 100, RainbowCol)
 					--END
-				render.SetStencilEnable( false )
-				-- STENCIL TEST
+					render.SetStencilEnable( false )
+					-- STENCIL TEST
+				end
 			end
 			LastPos = particle.pos
 		end

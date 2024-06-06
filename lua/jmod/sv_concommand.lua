@@ -55,7 +55,7 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 	if not(JMod.IsAdmin(ply)) then return end
 	for i = 1, 100 do
 		timer.Simple(i / 20, function()
-			JMod.LiquidSpray(ply:GetShootPos() - ply:GetUp() * 10 + ply:GetRight() * 10, ply:GetAimVector() * 1000, 1, 1, 1)
+			JMod.LiquidSpray(ply:GetShootPos() - ply:GetUp() * 10 + ply:GetRight() * 10, ply:GetAimVector() * 1000, 1, 1, 2)
 		end)
 	end
 	--print(JMod.GetHoliday())
