@@ -301,6 +301,7 @@ function SWEP:PrimaryAttack()
 				Flame.SpeedMul = math.Rand(.9, 1.1)
 				Flame.Creator = self.Owner
 				Flame.Burnin = (State == STATE_FLAMIN)
+				Flame.LifeTime = math.random(1, 1.5)
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()

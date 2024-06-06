@@ -35,7 +35,6 @@ if SERVER then
 		end)
 
 		self:SetNotSolid(true)
-		local Time = CurTime()
 		self.Impacted = false
 		self.Stuck = false
 		self.StuckEnt = nil
@@ -46,8 +45,8 @@ if SERVER then
 		self.DamageMul = (self.DamageMul or 1) * math.Rand(.9, 1.1)
 		self.SpeedMul = self.SpeedMul or 1
 		self.Bounces = 0
-		self.MaxBounces = 10
-		self.DieTime = Time + math.Rand(self.TypeInfo[11], self.TypeInfo[12])
+		self.MaxBounces = self.MaxBounces or 10
+		self.LifeTime = self.LifeTime or math.Rand(self.TypeInfo[11], self.TypeInfo[12])
 		if self.Burnin == nil then self.Burnin = true end
 		self:SetBurning(self.Burnin)
 		---- compensate for inherited velocity ----
@@ -162,7 +161,8 @@ if SERVER then
 		end
 
 		if IsValid(self) then
-			if self.DieTime < Time then
+			self.LifeTime = (self.LifeTime or 1) - (1 / ThinkRate)
+			if self.LifeTime < 0 then
 				self:Detonate()
 
 				return
@@ -187,12 +187,14 @@ if SERVER then
 	end]]--
 
 	function ENT:OnTakeDamage(dmg)
-		if dmg:GetDamage() > 500 then
+		if dmg:GetDamage() > 100 then
 			self:Detonate()
 		end
 	end
 
 	function ENT:Detonate(tr)
+		if self.Exploded then return end
+		self.Exploded = true
 		local Att, Pos = JMod.GetEZowner(self), (tr and tr.HitPos) or self:GetPos()
 
 		if not IsValid(Att) then
@@ -245,7 +247,13 @@ if SERVER then
 
 			SafeRemoveEntity(self)
 		else
-			SafeRemoveEntity(self)
+			local eff = EffectData()
+			eff:SetOrigin(self:GetPos())
+			eff:SetNormal(self.CurVel:GetNormalized())
+			eff:SetScale(1)
+			util.Effect("eff_jack_gmod_heavyfire", eff)
+
+			SafeRemoveEntityDelayed(self, .1)
 		end
 	end
 elseif CLIENT then

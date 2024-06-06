@@ -953,9 +953,9 @@ local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Col
 JMod.ParticleSpecs = {
 	[1] = { -- jellied fuel
 		launchSize = 2,
-		lifeTime = 2,
-		finalSize = 160,
-		airResist = .1,
+		lifeTime = 1.5,
+		finalSize = 200,
+		airResist = .15,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
 			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
@@ -969,37 +969,41 @@ JMod.ParticleSpecs = {
 			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
-			--if math.random(1, 2) == 1 then
+			if math.random(1, 2) == 1 then
 				local Splach = EffectData()
 				Splach:SetOrigin(self.pos - normal * .5)
 				Splach:SetNormal(normal)
 				Splach:SetScale(math.Rand(1, 3))
 				util.Effect("eff_jack_gmod_tinysplash", Splach)
-			--end
+			end
 			self.dieTime = self.dieTime - .2
 		end
 	},
 	[2] = { -- flamethrower
 		launchSize = 2,
 		lifeTime = .8,
-		finalSize = 200,
-		airResist = .3,
+		finalSize = 250,
+		airResist = .1,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
 		colorFunc = function(self)
-			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			--[[local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
 			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
 			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
-			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)
-			return Color(220 * AmbiLight.x, 200 * AmbiLight.y, 100 * AmbiLight.z, 100 * (1 - self.lifeProgress))
+			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)--]]
+			local InverseLife = (1 - self.lifeProgress)
+			local R = 255
+			local G = Lerp(self.lifeProgress, 255, 230)
+			local B = Lerp(self.lifeProgress, 255, 50)
+			return Color(R, G, B, 255 * InverseLife)
 		end,
 		particleDrawFunc = function(self, size, col)
 			render.SetMaterial(FireSprite)
-			render.DrawSprite(self.pos, size * 2, size * 2, col)
+			render.DrawSprite(self.pos + Vector(0, 0, self.lifeProgress * size * .5), size * 1.5, size * 1.5, Color(255, 255, 255, 100 * (1 - self.lifeProgress)))
 		end,
 		impactFunc = function(self, normal)
-			self.dieTime = self.dieTime - .5
+			self.dieTime = self.dieTime - .1
 		end,
-		gravity = -200
+		gravity = 200
 	},
 	[3] = { -- SprinklerWater
 		launchSize = 1,
@@ -1019,11 +1023,11 @@ JMod.ParticleSpecs = {
 			render.DrawSprite(self.pos, size * 2, size * 2, col)
 		end,
 		impactFunc = function(self, normal)
-				local Splach = EffectData()
-				Splach:SetOrigin(self.pos - normal * .5)
-				Splach:SetNormal(normal)
-				Splach:SetScale(math.Rand(1, 3))
-				util.Effect("eff_jack_gmod_tinysplash", Splach)
+			local Splach = EffectData()
+			Splach:SetOrigin(self.pos - normal * .5)
+			Splach:SetNormal(normal)
+			Splach:SetScale(math.Rand(1, 3))
+			util.Effect("eff_jack_gmod_tinysplash", Splach)
 			self.dieTime = self.dieTime - .2
 		end,
 		stencilTest = true
