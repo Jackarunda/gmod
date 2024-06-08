@@ -705,7 +705,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if ent:IsWorld() then return false end
 	local SelfOwner = JMod.GetEZowner(self)
 
-	local Override = hook.Call("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
+	local Override = hook.Run("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if (Override ~= nil) then return Override end
 
 	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false
