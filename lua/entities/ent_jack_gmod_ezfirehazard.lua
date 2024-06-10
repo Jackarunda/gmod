@@ -139,6 +139,8 @@ if SERVER then
 					end
 				elseif Water > 0 then
 					self:SetPos(util.TraceLine({start = Pos, endpos = Pos + Vector(0, 0, 10), filter = self}).HitPos)
+				else
+					self:SetPos(util.TraceLine({start = Pos, endpos = Pos - Vector(0, 0, 10), filter = self}).HitPos)
 				end
 
 				local FireNearby = false
@@ -152,12 +154,26 @@ if SERVER then
 						if (TheirPos:Distance(Pos) < self.Range * 0.5) then
 							local LeftTillMax = (self.TypeInfo[5] * 2) - self.Intensity
 							local TheirIntensity = v.Intensity or 0
-							local Taken = math.min(TheirIntensity, LeftTillMax)
-							self.Intensity = self.Intensity + Taken
-							--v.Intensity = TheirIntensity - Taken
-							v:Remove()
-							if not IsValid(self:GetParent()) then
-								self:SetPos(Pos + (TheirPos - Pos):GetNormalized() * self.Range * 0.5)
+							local LeftTillTheirMax = ((v.TypeInfo[5] or self.TypeInfo[5]) * 2) - TheirIntensity
+
+							if (LeftTillMax >= self.TypeInfo[5]) and (LeftTillTheirMax > self.TypeInfo[5] * 0.5) then
+								local Taken = math.min(TheirIntensity, LeftTillMax)
+								self.Intensity = self.Intensity + Taken
+								--v.Intensity = TheirIntensity - Taken
+								v:Remove()
+								if not IsValid(self:GetParent()) then
+									self:SetPos(Pos + (TheirPos - Pos) * 0.5)
+									debugoverlay.Cross(self:GetPos(), 5, 2, Color(255, 0, 0), true)
+								end
+
+								break
+							elseif not IsValid(self:GetParent()) then
+								local PlaceToGo = Pos - (TheirPos - Pos) * 0.75 + VectorRand()
+								local MoveTr = util.QuickTrace(Pos, PlaceToGo - Pos, self)
+								debugoverlay.Line(Pos, MoveTr.HitPos, 2, Color(0, 255, 0), true)
+								self:SetPos(MoveTr.HitPos)
+
+								break
 							end
 						end
 					end
@@ -170,9 +186,9 @@ if SERVER then
 
 					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
 						self.Power = math.max(Fraction * 20, 5)
-						local DistanceFactor = (1 - Pos:Distance(TheirPos) / self.Range) ^ 2
+						local DistanceFactor = (1 - Pos:Distance(TheirPos) / self.Range) ^ 1.5
 						local Dam = DamageInfo()
-						Dam:SetDamage(self.Power * math.Rand(1, 5) * DistanceFactor )
+						Dam:SetDamage(self.Power * math.Rand(1, 5) * DistanceFactor)
 						Dam:SetDamageType(DMG_BURN)
 						Dam:SetDamagePosition(Pos)
 						Dam:SetAttacker(Att)
@@ -197,7 +213,7 @@ if SERVER then
 					self:Remove()
 				end
 
-				self.Intensity = math.Clamp(self.Intensity - math.Rand(0.2, 0.5), 0, self.TypeInfo[5] * 2)
+				self.Intensity = math.Clamp(self.Intensity - math.Rand(0.2, 1), 0, self.TypeInfo[5] * 2)
 			end
 		end
 
