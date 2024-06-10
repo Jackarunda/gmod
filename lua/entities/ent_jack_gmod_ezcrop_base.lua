@@ -259,20 +259,30 @@ if(SERVER)then
 		return math.Clamp(HitAmount, 0, 1) * SkyMod
 	end
 
+	local DayLightMultipliers = {
+		["Fog"] = 0.3,
+		["Cloudy"] = 0.1,
+		["Snowin'"] = 0.1,
+		["Sandstorm"] = 0.1,
+		["Lava Eruption"] = 0,
+		["Radioactive"] = 0
+	}
+
 	function ENT:GetDayLight()
 		if(StormFox)then
 			local Minutes = StormFox.GetTime()
 			local Frac = Minutes / 1440
 			Frac = (math.sin(Frac * math.pi * 2 - math.pi / 2) + 0.1)
-			local Mult = math.Clamp(Frac, 0, 1)
+			local Mult = Frac--math.Clamp(Frac, 0, 1)
 			if (StormFox.IsNight())then 
 				Mult = 0 
 			else
 				local Weather = StormFox.GetWeather()
-				if (Weather == "Fog") or (Weather == "Cloudy")then Mult = 0.3 
-				elseif (Weather == "Snowin'") or (Weather == "Sandstorm") then Mult = 0.1 
-				elseif (Weather == "Lava Eruption") or (Weather == "Radioactive") then Mult = 0 
-				else Mult = 1 end
+				if DayLightMultipliers[Weather] then 
+					Mult = Mult * DayLightMultipliers[Weather]
+				else 
+					Mult = 1 
+				end
 			end
 		end
 		return 1
