@@ -393,7 +393,7 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local allProps = ents.FindInSphere(pos, maxRange)
 
 	for k, prop in pairs(allProps) do
-		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignore) == false or prop.ExplProof == true) then
+		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or (prop.ExplProof == true) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignoreVisChecks) == false) then
 			local physObj = prop:GetPhysicsObject()
 			local propPos = prop:LocalToWorld(prop:OBBCenter())
 			local DistFrac = 1 - propPos:Distance(pos) / maxRange
@@ -431,7 +431,7 @@ end
 
 function JMod.BlastDoors(blaster, pos, power, range, ignoreVisChecks)
 	for k, door in pairs(ents.FindInSphere(pos, 40 * power * (range or 1))) do
-		if JMod.IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignore) ~= false then
+		if JMod.IsDoor(door) and hook.Run("JMod_CanDestroyDoor", door, blaster, pos, power, range, ignoreVisChecks) ~= false then
 			local proceed = ignoreVisChecks
 
 			if not proceed then
@@ -708,7 +708,7 @@ function JMod.ShouldAttack(self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if ent:IsWorld() then return false end
 	local SelfOwner = JMod.GetEZowner(self)
 
-	local Override = hook.Call("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
+	local Override = hook.Run("JMod_ShouldAttack", self, ent, vehiclesOnly, peaceWasNeverAnOption)
 	if (Override ~= nil) then return Override end
 
 	local Gaymode, PlayerToCheck, InVehicle = engine.ActiveGamemode(), nil, false

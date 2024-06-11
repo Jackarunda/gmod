@@ -81,6 +81,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff(JMod.GetEZowner(self))
 					end
+					self.EZstayOn = nil
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
@@ -91,7 +92,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
-		if self.EZinstalled and self.DepositKey then
+		if self.EZinstalled and JMod.NaturalResourceTable[self.DepositKey] then
 			if (self:GetElectricity() > 0) then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
@@ -199,7 +200,7 @@ if(SERVER)then
 				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
+				if .rate then
 					-- We get the rate
 					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
 					-- and set the progress to what it was last tick + our ability * the flowrate

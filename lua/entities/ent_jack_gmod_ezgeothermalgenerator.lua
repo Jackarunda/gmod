@@ -87,6 +87,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff()
 					end
+					self.EZstayOn = nil
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
@@ -140,7 +141,7 @@ if(SERVER)then
 					self:EmitSound("snds_jack_gmod/hiss.ogg", 100, 80)
 				end)
 			end
-			if (self:GetWater() > 0) and (self.DepositKey) then
+			if (self:GetWater() > 0) and JMod.NaturalResourceTable[self.DepositKey] then
 				self:SetState(STATE_RUNNING)
 				timer.Simple(1, function()
 					if not IsValid(self) then return end
