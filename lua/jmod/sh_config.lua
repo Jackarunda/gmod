@@ -2767,9 +2767,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 
 		if Existing then
 			if Existing.Version then
-				file.Write("jmod_config_old_legacy.txt", FileContents)
-				print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
-				print("JMOD: Writing old config to 'jmod_config_old_legacy.txt'...\n")
+				print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.")
+				forceNew = true
 			elseif Existing.Info.Version then
 				if (Existing.Info.Version == NewConfig.Info.Version) then
 					JMod.Config = util.JSONToTable(FileContents)
@@ -2787,6 +2786,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		end
 	else
 		print("JMOD: config missing or corrupted!! (can not update)")
+		forceNew = true
 	end
 
 	if not(JMod.Config) or forceNew then
@@ -2799,7 +2799,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
 			print("JMOD: config reset to default")
 		else
-			print("JMOD: no config detected(!), temporarily using default")
+			print("JMOD: no config detected, temporarily using default")
 		end
 	end
 
