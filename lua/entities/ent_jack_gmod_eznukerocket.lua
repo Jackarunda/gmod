@@ -222,7 +222,7 @@ if SERVER then
 
 			if Dist > 1000 then
 				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/nuke_far.mp3", 55, 100)
+					ply:EmitSound("snds_jack_gmod/nuke_far.ogg", 55, 100)
 					util.ScreenShake(ply:GetPos(), 1000, 10, 10, 100)
 				end)
 			end

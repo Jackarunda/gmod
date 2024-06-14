@@ -90,7 +90,7 @@ if(SERVER)then
 			self:SetState(STATE_ON)
 			timer.Simple(0.1, function()
 				if(self.SoundLoop)then self.SoundLoop:Stop() end
-				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.ogg")
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 				self.SoundLoop:SetSoundLevel(60)
 				self.SoundLoop:Play()
 			end)
@@ -143,7 +143,7 @@ if(SERVER)then
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 90, 0), Right * -60, 200)
 		self:EmitSound("snds_jack_gmod/steam_whistle_start.ogg", 150, 100)
-		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.ogg", nil)
+		self.SteamLoop = CreateSound(self, "snds_jack_gmod/steam_whistle_loop.wav", nil)
 		timer.Simple(0.16, function()
 			if not(IsValid(self)) then return end
 			self.SteamLoop:Play()

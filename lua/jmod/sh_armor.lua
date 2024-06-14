@@ -1185,5 +1185,5 @@ sound.Add({	name = "JMod_BF2_Para_Idle",
 	volume	= 1.0,
 	level	= 75,
 	pitch	= { 105, 110 },
-	sound	= {"jessev92/bf2/vehicles/parachute_ride_loop.ogg"}
+	sound	= {"jessev92/bf2/vehicles/parachute_ride_loop.wav"}
 })

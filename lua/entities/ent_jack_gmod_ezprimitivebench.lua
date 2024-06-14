@@ -132,7 +132,7 @@ if(SERVER)then
 		self:EmitSound("snd_jack_littleignite.ogg")
 		timer.Simple(0.1, function()
 			if(self.SoundLoop)then self.SoundLoop:Stop() end
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.ogg")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_fire_loop.wav")
 			self.SoundLoop:SetSoundLevel(50)
 			self.SoundLoop:Play()
 		end)
