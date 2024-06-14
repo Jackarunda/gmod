@@ -34,6 +34,14 @@ if SERVER then
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
+		self.AirResistance = 2
+		self:SetLifeTime(math.random(50, 100))
+	end
+
+	function ENT:SetLifeTime(tim)
+		local Time = CurTime()
+		self.LifeTime = tim * JMod.Config.Particles.PoisonGasLingerTime
+		self.DieTime = Time + self.LifeTime
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -113,13 +121,14 @@ if SERVER then
 			end
 		
 			-- apply acceleration
-			self.CurVel = self.CurVel + Force / ThinkRateHz
+			self.CurVel = self.CurVel + (Force / ThinkRateHz)
 
 			-- apply air resistance
-			self.CurVel = self.CurVel / 1
+			--self.CurVel = self.CurVel / (self.AirResistance / ThinkRateHz)
+			self.CurVel = Vector(math.Clamp(self.CurVel.x, -100, 100), math.Clamp(self.CurVel.y, -100, 100), math.Clamp(self.CurVel.z, -100, 100))
 
 			-- observe current velocity
-			local NewPos = SelfPos + self.CurVel / ThinkRateHz
+			local NewPos = SelfPos + (self.CurVel / ThinkRateHz)
 
 			-- make sure we're not gonna hit something. If so, bounce
 			local MoveTrace = util.TraceLine({

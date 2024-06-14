@@ -189,7 +189,8 @@ if(SERVER)then
 				
 				if not self.EZinstalled then self:TurnOff() return end
 
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
+				local Deposit = JMod.NaturalResourceTable[self.DepositKey]
+				if not Deposit then 
 					self:TurnOff()
 
 					return
@@ -200,9 +201,9 @@ if(SERVER)then
 				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
-				if .rate then
+				if Deposit.rate then
 					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					local flowRate = Deposit.rate
 					-- and set the progress to what it was last tick + our ability * the flowrate
 					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
 
@@ -216,7 +217,7 @@ if(SERVER)then
 					self:SetProgress(self:GetProgress() + pumpRate)
 
 					if self:GetProgress() >= 100 then
-						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+						local amtToPump = math.min(Deposit.amt, 100)
 						self:ProduceResource()
 					end
 				end
