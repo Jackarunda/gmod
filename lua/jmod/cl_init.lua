@@ -936,7 +936,7 @@ end)
 
 net.Receive("JMod_Ravebreak", function()
 	-- fucking HELL YES HERE WE GO
-	surface.PlaySound("snds_jack_gmod/ravebreak.mp3")
+	surface.PlaySound("snds_jack_gmod/ravebreak.ogg")
 	LocalPlayer().JMod_RavebreakStartTime = CurTime() + 2.325
 	LocalPlayer().JMod_RavebreakEndTime = CurTime() + 25.5
 end)

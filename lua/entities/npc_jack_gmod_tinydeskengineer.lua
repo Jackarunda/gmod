@@ -31,7 +31,7 @@ function ENT:DoMusic()
 	end
 
 	if not self.NoSound then
-		local Loop = CreateSound(self, "snds_jack_gmod/fiddle_loop.ogg")
+		local Loop = CreateSound(self, "snds_jack_gmod/fiddle_loop.wav")
 		Loop:SetSoundLevel(50)
 		Loop:Play()
 		self.Snd = Loop

@@ -45,7 +45,7 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav")
 	end
 
 	function ENT:Use(activator)
@@ -76,7 +76,7 @@ if(SERVER)then
 		if (self:GetFuel() > 0) then
 			self.NextUseTime = CurTime() + 1
 			self:SetState(STATE_ON)
-			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.ogg") end
+			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav") end
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
 		elseif IsValid(activator) and not(auto) then
