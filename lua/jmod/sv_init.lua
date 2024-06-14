@@ -1080,3 +1080,7 @@ end
 hook.Add("PhysgunDrop", "JMod_ResetBouyancy", ResetBouyancy)
 
 hook.Add("GravGunDrop", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("GravGunPunt", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("OnPlayerPhysicsDrop", "JMod_ResetBouyancy", ResetBouyancy)
