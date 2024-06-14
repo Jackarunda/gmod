@@ -60,7 +60,7 @@
 
 		local Sprite = table.Random({"particle/smokestack", "particles/smokey", "particle/particle_smokegrenade", "sprites/mat_jack_smoke1", "sprites/mat_jack_smoke2", "sprites/mat_jack_smoke3"})
 
-		local SmokeParticle = Emitter:Add(Sprite, Pos + Norm * DistFactor * 250 * Scl)
+		local SmokeParticle = Emitter:Add(Sprite, Pos + Norm * (DistFactor * 100) * Scl)
 
 		if SmokeParticle then
 			SmokeParticle:SetVelocity(Norm * Scl + VectorRand() * 10 * Scl + Start)

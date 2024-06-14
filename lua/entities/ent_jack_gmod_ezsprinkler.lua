@@ -352,7 +352,7 @@ if(SERVER)then
 				local SelfAng = self:GetAngles()
 
 				local SprayAngle = SelfAng:GetCopy()
-				SprayAngle:RotateAroundAxis(SprayAngle:Up(), CurrentRot)
+				SprayAngle:RotateAroundAxis(SprayAngle:Up(), CurrentRot - 90)
 				SprayAngle:RotateAroundAxis(SprayAngle:Right(), 35)
 				
 				if LiquidTyp == JMod.EZ_RESOURCE_TYPES.WATER then
@@ -371,6 +371,7 @@ if(SERVER)then
 				elseif LiquidTyp == JMod.EZ_RESOURCE_TYPES.FUEL then
 					local FirePos = util.QuickTrace(SelfPos + self:GetUp() * 35, SprayAngle:Forward() * 100, self).HitPos
 					
+					local RadiusMult = (self.SprayRadius / 400)
 					if math.random(1, 2) == 1 then
 						local Flame = ents.Create("ent_jack_gmod_eznapalm")
 						Flame:SetPos(FirePos)
@@ -378,9 +379,8 @@ if(SERVER)then
 						Flame:SetAngles(FlyAng)
 						Flame:SetOwner(JMod.GetEZowner(self))
 						Flame.HighVisuals = (math.random(1, 2) == 1)
-						local RadiusMult = (self.SprayRadius / 400)
-						Flame.SpeedMul = math.Rand(.5, .8) * RadiusMult
-						Flame.LifeTime = math.random(1, 1.5)  * RadiusMult
+						Flame.SpeedMul = math.Rand(.25, .5) * RadiusMult
+						Flame.LifeTime = math.random(2, 3)
 						Flame.Creator = self
 						Flame.Burnin = true
 						JMod.SetEZowner(Flame, self.Owner)
@@ -390,15 +390,17 @@ if(SERVER)then
 					--
 					local Foof = EffectData()
 					Foof:SetNormal(SprayAngle:Forward())
-					Foof:SetScale(2)
-					Foof:SetStart(SprayAngle:Forward() * 600)
+					Foof:SetScale(1.5)
+					Foof:SetStart(SprayAngle:Forward() * 300 * RadiusMult)
 					Foof:SetOrigin(FirePos - SprayAngle:Forward() * 100)
 					Foof:SetAttachment(0)
 					util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
+					JMod.LiquidSpray(FirePos, SprayAngle:Forward() * 300 * RadiusMult, 1, self:EntIndex(), 2)
 				end
 
 				local TurnSpeed = self.TurnSpeed
-				local RotMin, RotMax = 0, self.Rotation.Max or 360
+				local HalfOfRot = (self.Rotation.Max or 360) / 2
+				local RotMin, RotMax = -HalfOfRot, HalfOfRot
 				if CurrentRot > RotMax then
 					self.Dir = "right"
 					if self.SoundLoop then
@@ -477,7 +479,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		local SprinkleerAng = SelfAng:GetCopy()
-		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot())
+		SprinkleerAng:RotateAroundAxis(Up, self:GetHeadRot() - 90)
 		JMod.RenderModel(self.Sprinkleer, BasePos, SprinkleerAng)
 		---
 		if self.Debug then

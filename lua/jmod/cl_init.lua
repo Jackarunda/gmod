@@ -981,7 +981,7 @@ JMod.ParticleSpecs = {
 	},
 	[2] = { -- flamethrower
 		launchSize = 2,
-		lifeTime = .8,
+		lifeTime = 1,
 		finalSize = 250,
 		airResist = .1,
 		mat = Material("effects/mat_jack_gmod_liquidstream"),
@@ -994,7 +994,7 @@ JMod.ParticleSpecs = {
 			local R = 255
 			local G = Lerp(self.lifeProgress, 255, 230)
 			local B = Lerp(self.lifeProgress, 255, 50)
-			return Color(R, G, B, 255 * InverseLife)
+			return Color(R, G, B, 200 * InverseLife)
 		end,
 		particleDrawFunc = function(self, size, col)
 			render.SetMaterial(FireSprite)
