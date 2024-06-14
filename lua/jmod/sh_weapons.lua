@@ -315,7 +315,7 @@ JMod.AmmoTable = {
 		basedmg = 110,
 		effrange = 400,
 		terminaldmg = 20,
-		penetration = 90
+		penetration = 80
 	},
 	["Shotgun Round"] = {
 		resourcetype = "ammo",
