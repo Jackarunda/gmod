@@ -38,7 +38,7 @@ if SERVER then
 		self.Range = 1000
 		self.NextUseTime = 0
 		self:SetProgress(0)
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/compressor_loop.wav")
 		self.NextLogicThink = 0
 	end
 

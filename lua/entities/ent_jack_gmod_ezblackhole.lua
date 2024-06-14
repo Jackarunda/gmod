@@ -148,10 +148,10 @@ if SERVER then
 
 		---
 		self:SetAge(.01)
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezblackhole.mp3")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg")
 		self.SoundLoop:PlayEx(1, 100)
 		self.SoundLoop:SetSoundLevel(160)
-		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/ezblackhole.mp3")
+		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg")
 		self.SoundLoop2:PlayEx(1, 100)
 		self.SoundLoop2:SetSoundLevel(150)
 		---

@@ -188,7 +188,7 @@ if SERVER then
 				plooie:SetRadius(EffectType)
 				plooie:SetNormal(Up)
 				util.Effect("eff_jack_minesplode", plooie, true, true)
-				sound.Play("snd_jack_debris" .. math.random(1, 2) .. ".mp3", SelfPos, 80, math.random(90, 110))
+				sound.Play("snd_jack_debris" .. math.random(1, 2) .. ".ogg", SelfPos, 80, math.random(90, 110))
 			end)
 
 			self:Remove()
