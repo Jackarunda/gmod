@@ -1544,6 +1544,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	if not (command or isstring(command)) then return end
 
 	if command == "open_menu" then
+		if SelectionMenuOpen then return end
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(210, 312)
 		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
@@ -1595,6 +1596,8 @@ net.Receive("JMod_Inventory", function()
 
 	--PrintTable(Ply.JModInv)
 
+	if SelectionMenuOpen then return end
+
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(800, 400)
 	motherFrame:SetVisible(true)
@@ -1619,6 +1622,7 @@ net.Receive("JMod_Inventory", function()
 		if OpenDropdown then
 			OpenDropdown:Remove()
 		end
+		SelectionMenuOpen = false
 	end
 
 	local PDispBG = vgui.Create("DPanel", motherFrame)
@@ -1710,6 +1714,7 @@ net.Receive("JMod_Inventory", function()
 		for id, v in pairs(ent.EZarmor.items) do
 			if(ent.EZarmorModels[id])then ent.EZarmorModels[id]:Remove() end
 		end
+		SelectionMenuOpen = false
 	end
 
 	local ArmorButtonsLeft = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf"}
@@ -1763,6 +1768,8 @@ net.Receive("JMod_Inventory", function()
 		motherFrame:Close()
 		return true
 	end
+
+	SelectionMenuOpen = true
 end)
 
 net.Receive("JMod_ModifyConnections", function()
