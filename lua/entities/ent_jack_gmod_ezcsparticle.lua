@@ -10,7 +10,6 @@ ENT.AdminSpawnable = false
 ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
-ENT.EZgasParticle = true
 ENT.ThinkRate = 1
 ENT.AffectRange = 200
 --
@@ -35,18 +34,19 @@ if SERVER then
 	end
 
 	function ENT:DamageObj(obj)
-		local RespiratorMultiplier = 1
 		local Time = CurTime()
 		if obj:IsPlayer() then
 			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
-			
-			net.Start("JMod_VisionBlur")
-			net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
-			net.WriteFloat(2)
-			net.WriteBit(false)
-			net.Send(obj)
-			JMod.Hint(obj, "tear gas")
+
+			--JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
+
 			if faceProt < 1 then
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
+				net.WriteFloat(2)
+				net.WriteBit(false)
+				net.Send(obj)
+				JMod.Hint(obj, "tear gas")
 				JMod.TryCough(obj)
 			end
 		elseif obj:IsNPC() then
@@ -54,9 +54,9 @@ if SERVER then
 		end
 
 		if math.random(1, 20) == 1 then
-			local Dmg, Helf = DamageInfo(), obj:Health()
+			local Dmg = DamageInfo()
 			Dmg:SetDamageType(DMG_NERVEGAS)
-			Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage * RespiratorMultiplier)
+			Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
 			Dmg:SetInflictor(self)
 			Dmg:SetAttacker(JMod.GetEZowner(self))
 			Dmg:SetDamagePosition(obj:GetPos())
