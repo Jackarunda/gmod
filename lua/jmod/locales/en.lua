@@ -130,6 +130,8 @@
 	["hint ent_jack_gmod_ezarmor_nvgs"] = "NV Goggles makes it easy to see in the dark when worn",
 	["hint ent_jack_gmod_ezarmor_thermals"] = "Thermal Goggles highlights living things when worn",
 	["hint ent_jack_gmod_ezarmor_headset"] = "Headset allows you to privately communicate with your friends",
+	["hint ent_jack_gmod_ezarmor_flametank"] = "The flametank is an armor piece that gives you a flamethrower weapon",
+	["hint flamethrower ignite"] = "Use secondary attack to ignite the flamethrower before using primary to spray",
 	["hint headset radio"] = "You can also remotely communicate to aid radios",
 	["hint parachute"] = "Press jump to deploy parachute",
 	["hint armordurability"] = "One or more of your jmod armor pieces is about to be destroyed, repair from the inventory menu",

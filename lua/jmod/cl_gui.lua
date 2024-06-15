@@ -687,7 +687,9 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 					temp_ent.ClientOnly = true
 				end
 			end
-			temp_ent:Spawn()												-- have to do this to get an accurate bounding box
+			temp_ent:SetNextClientThink(CurTime() + 0.1)
+			temp_ent:SetNoDraw(true)
+			temp_ent:Spawn()									-- have to do this to get an accurate bounding box
 			local Min, Max = temp_ent:OBBMaxs(), temp_ent:OBBMins() 		-- couldn't find a better way
 			local Ang = temp_ent.JModPreferredCarryAngles and temp_ent.JModPreferredCarryAngles
 			
@@ -795,7 +797,9 @@ local function GetAvailPts(specs)
 	local Pts = 0
 
 	for k, v in pairs(specs) do
-		Pts = Pts - v
+		if isnumber(v) then
+			Pts = Pts - v
+		end
 	end
 
 	return Pts
@@ -840,31 +844,80 @@ net.Receive("JMod_ModifyMachine", function()
 		Panel:SetPos(X, Y)
 		Panel:SetSize(275, 40)
 
-		function Panel:Paint(w, h)
-			surface.SetDrawColor(0, 0, 0, 100)
-			surface.DrawRect(0, 0, w, h)
-			draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-		end
+		if isnumber(value) then
+			function Panel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 100)
+				surface.DrawRect(0, 0, w, h)
+				draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			end
 
-		local MinButt = vgui.Create("DButton", Panel)
-		MinButt:SetPos(10, 10)
-		MinButt:SetSize(20, 20)
-		MinButt:SetText("-")
+			local MinButt = vgui.Create("DButton", Panel)
+			MinButt:SetPos(10, 10)
+			MinButt:SetSize(20, 20)
+			MinButt:SetText("-")
 
-		function MinButt:DoClick()
-			Specs[attrib] = math.Clamp(Specs[attrib] - 1, -10, 10)
-			AvailPts = GetAvailPts(Specs)
-		end
-
-		local MaxButt = vgui.Create("DButton", Panel)
-		MaxButt:SetPos(245, 10)
-		MaxButt:SetSize(20, 20)
-		MaxButt:SetText("+")
-
-		function MaxButt:DoClick()
-			if AvailPts > 0 then
-				Specs[attrib] = math.Clamp(Specs[attrib] + 1, -10, 10)
+			function MinButt:DoClick()
+				Specs[attrib] = math.Clamp(Specs[attrib] - 1, -10, 10)
 				AvailPts = GetAvailPts(Specs)
+			end
+
+			local MaxButt = vgui.Create("DButton", Panel)
+			MaxButt:SetPos(245, 10)
+			MaxButt:SetSize(20, 20)
+			MaxButt:SetText("+")
+
+			function MaxButt:DoClick()
+				if AvailPts > 0 then
+					Specs[attrib] = math.Clamp(Specs[attrib] + 1, -10, 10)
+					AvailPts = GetAvailPts(Specs)
+				end
+			end
+
+		elseif istable(value) then
+			local IsMin = value.Min and isnumber(value.Min)
+
+			function Panel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 100)
+				surface.DrawRect(0, 0, w, h)
+				if IsMin then
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Min", "DermaDefault", 75, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Max", "DermaDefault", 200, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				else
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				end
+			end
+
+			if IsMin then
+				local MinNumBox = vgui.Create("DNumSlider", Panel)
+				--MinNumBox:SetPos(0, 5)
+				MinNumBox:Dock(LEFT)
+				--MinNumBox:SetWide(200)
+				MinNumBox:SetMin(-360)
+				MinNumBox:SetMax(0)
+				MinNumBox:SetDecimals(0)
+				MinNumBox:SetValue(Specs[attrib].Min)
+				MinNumBox.OnValueChanged = function(_, val)
+					Specs[attrib].Min = math.Round(val)
+				end
+			end
+
+			if value.Max and isnumber(value.Max) then
+				local MaxNumBox = vgui.Create("DNumSlider", Panel)
+				if IsMin then
+					MaxNumBox:Dock(RIGHT)
+				else
+					--MaxNumBox:Dock(FILL)
+					MaxNumBox:SetPos(-50, 20)
+					MaxNumBox:SetSize(300, 20)
+				end
+				MaxNumBox:SetMin(0)
+				MaxNumBox:SetMax(360)
+				MaxNumBox:SetDecimals(0)
+				MaxNumBox:SetValue(Specs[attrib].Max)
+				MaxNumBox.OnValueChanged = function(_, val)
+					Specs[attrib].Max = math.Round(val)
+				end
 			end
 		end
 
@@ -1017,13 +1070,52 @@ local ArmorSlotButtons = {
 			net.WriteString(itemID)
 			net.SendToServer()
 		end
+	},
+	{
+		title = "Color",
+		visTestFunc = function(slot, itemID, itemData, itemInfo) return not(itemInfo.clrForced) end,
+		actionFunc = function(slot, itemID, itemData, itemInfo)
+			local Panel = vgui.Create("DFrame")
+			Panel:SetSize(300, 240)
+			Panel:SetPos(ScrW()/2 - 150, ScrH()/2 - 120)
+			Panel:SetTitle("Color Picker")
+			Panel:MakePopup()
+
+			function Panel:Paint(w, h)
+				BlurBackground(self)
+			end
+			
+			local ColorPicker = vgui.Create("DColorMixer", Panel)
+			ColorPicker:SetPos(10, 30)
+			ColorPicker:SetSize(280, 160)
+			if itemData.col then
+				ColorPicker:SetColor(Color(itemData.col.r, itemData.col.g, itemData.col.b))
+			end
+			
+			local Button = vgui.Create("DButton", Panel)
+			Button:SetPos(110, 200)
+			Button:SetSize(80, 30)
+			Button:SetText("Change")
+			Button.DoClick = function()
+				local ColorTab = ColorPicker:GetColor()
+				net.Start("JMod_Inventory")
+				net.WriteInt(5, 8) -- color
+				net.WriteString(itemID)
+				net.WriteColor(Color(ColorTab.r, ColorTab.g, ColorTab.b))
+				net.SendToServer()
+				Panel:Close()
+			end
+			
+			return
+		end
 	}
 }
 
 local ArmorResourceNiceNames = {
 	chemicals = "Chemicals",
 	power = "Electricity",
-	gas = "Compressed Gas"
+	gas = "Compressed Gas",
+	fuel = "Fuel",
 }
 
 local OpenDropdown = nil
@@ -1545,7 +1637,8 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetLookAt(PlayerDisplay:GetEntity():GetBonePosition(0))
 	PlayerDisplay:SetFOV(37)
 	PlayerDisplay:SetCursor("arrow")
-	local Ent = PlayerDisplay:GetEntity()
+	local FakePly = PlayerDisplay:GetEntity()
+	FakePly:SetLOD(0)
 
 	local PDispBT = vgui.Create("DButton", motherFrame)
 	PDispBT:SetPos(200, 30)
@@ -1579,28 +1672,28 @@ net.Receive("JMod_Inventory", function()
 		end
 	end
 
-	Ent:SetSkin(Ply:GetSkin())
-	--Ent:SetColor(Color(255, 208, 0))
-	--Ent:SetMaterial("models/mat_jack_aidboxside")
+	FakePly:SetSkin(Ply:GetSkin())
+	--FakePly:SetColor(Color(255, 208, 0))
+	--FakePly:SetMaterial("models/mat_jack_aidboxside")
 	for k, v in pairs( Ply:GetBodyGroups() ) do
 		local cur_bgid = Ply:GetBodygroup( v.id )
-		Ent:SetBodygroup( v.id, cur_bgid )
+		FakePly:SetBodygroup( v.id, cur_bgid )
 	end
-	Ent.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
+	FakePly.GetPlayerColor = function() return Vector( GetConVarString( "cl_playercolor" ) ) end
 	
 	
 	if Ply.EZarmor.suited then
-		Ent:SetColor(Ply:GetColor())
+		FakePly:SetColor(Ply:GetColor())
 		if Ply.EZarmor.bodygroups then
 			for k, v in pairs(Ply.EZarmor.bodygroups) do
-				Ent:SetBodygroup(k, v)
+				FakePly:SetBodygroup(k, v)
 			end
 		end
 	end
 
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor = Ply.EZarmor
-		JMod.ArmorPlayerModelDraw(ent)
+		JMod.ArmorPlayerModelDraw(ent, true)
 	end
 
 	function PlayerDisplay:DoClick()

@@ -1,0 +1,5 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\weapons\sanic\m2\m2thrower"
+	"$bumpmap" "models\weapons\sanic\m2\m2_n"
+}

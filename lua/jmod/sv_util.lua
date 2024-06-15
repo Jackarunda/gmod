@@ -625,6 +625,9 @@ function JMod.GetEZowner(ent)
 	if ent.EZowner and IsValid(ent.EZowner) then
 
 		return ent.EZowner
+	elseif ent:IsPlayer() then
+			
+		return ent	
 	else
 		
 		return game.GetWorld()
@@ -1611,7 +1614,6 @@ function JMod.RemoveConnection(machine, connection)
 	if type(connection) == "Entity" and IsValid(connection) then
 		-- Check if it is connected
 		connection = connection:EntIndex()
-		if type(connection) ~= "number" then return end
 	end
 	if not(machine.EZconnections[connection]) then return end
 	local ConnectedEnt = Entity(connection)
@@ -1620,6 +1622,70 @@ function JMod.RemoveConnection(machine, connection)
 		Cable:Remove()
 	end
 	machine.EZconnections[connection] = nil
+end
+
+function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, numFire)
+	-- spark/smoke effects
+	for i = 1, numExplo do
+		timer.Simple(math.Rand(0, .5), function()
+			JMod.Sploom(attacker, pos + VectorRand() * powerMult, powerMult * 10, 50)
+		end)
+	end
+	for i = 1, numBullet do
+		timer.Simple(math.Rand(0, .5), function()
+			local dir = VectorRand():GetNormalized()
+			local firer = (IsValid(attacker) and attacker) or game.GetWorld()
+
+			sound.Play("snd_jack_fireworkpop" .. math.random(1, 5) .. ".ogg", pos + VectorRand() * 10, 75, math.random(90, 110))
+
+			firer:FireBullets({
+				Attacker = attacker,
+				Damage = powerMult,
+				Force = 0,
+				Num = 1,
+				Src = pos,
+				Tracer = 0,
+				TracerName = "Tracer",
+				Dir = dir,
+				Spread = 1,
+				AmmoType = "Buckshot"
+			})
+		end)
+	end
+	for i = 1, numFire do
+		local tr = util.QuickTrace(pos, VectorRand() * powerMult * 20, attacker)
+		if tr.Hit then
+			local Haz = ents.Create("ent_jack_gmod_ezfirehazard")
+
+			if IsValid(Haz) then
+				Haz:SetDTInt(0, 1)
+				Haz:SetPos(tr.HitPos + tr.HitNormal * 2)
+				Haz:SetAngles(tr.HitNormal:Angle())
+				JMod.SetEZowner(Haz, JMod.GetEZowner(attacker))
+				Haz.HighVisuals = true
+				Haz.Burnin = true
+				Haz:Spawn()
+				Haz:Activate()
+				
+				if IsValid(tr.Entity) and tr.Entity:IsWorld() then
+					Haz:SetParent(tr.Entity)
+				end
+			end
+		else
+			local FireVec = (VectorRand() * powerMult + Vector(0, 0, .3)):GetNormalized()
+			FireVec.z = FireVec.z / 2
+			local Flame = ents.Create("ent_jack_gmod_eznapalm")
+			Flame:SetPos(pos + VectorRand() * 10)
+			Flame:SetAngles(FireVec:Angle())
+			Flame:SetOwner(JMod.GetEZowner(attacker))
+			JMod.SetEZowner(Flame, attacker.EZowner or attacker)
+			Flame.SpeedMul = (powerMult / 4)
+			Flame.Creator = attacker
+			Flame.HighVisuals = math.random(1, numFire) >= numFire / 2
+			Flame:Spawn()
+			Flame:Activate()
+		end
+	end
 end
 
 hook.Add("PhysgunPickup", "EZPhysgunBlock", function(ply, ent)

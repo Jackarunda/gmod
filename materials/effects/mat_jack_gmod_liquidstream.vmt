@@ -1,0 +1,9 @@
+"Cable"
+{
+	"$basetexture"		"effects\tex_jack_gmod_liquidstream"
+	"$nocull"			"1"
+	"$MinLight"		"0.1"
+	"$MaxLight"		"0.3"
+	"$translucent" "1"
+	"$vertexcolor" "1"
+}

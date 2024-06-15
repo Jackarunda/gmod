@@ -35,15 +35,15 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/props/glowstick.mdl")
-		self.Entity:SetMaterial("models/jmod/props/jlowstick_off")
-		--self.Entity:SetModelScale(1.5,0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/jmod/props/glowstick.mdl")
+		self:SetMaterial("models/jmod/props/jlowstick_off")
+		--self:SetModelScale(1.5,0)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
 		self:SetUseType(ONOFF_USE)
-		self.Entity:SetColor(Color(130, 200, 120))
+		self:SetColor(Color(130, 200, 120))
 		self:GetPhysicsObject():SetMass(6)
 
 		---
@@ -72,13 +72,13 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self.Entity:EmitSound("Drywall.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 1, 50) then
 			local Pos, State = self:GetPos(), self:GetState()

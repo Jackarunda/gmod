@@ -70,12 +70,12 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.1 then
-			self.Entity:EmitSound("weapon.ImpactSoft")
+			self:EmitSound("weapon.ImpactSoft")
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 30, 100) then
 			self:Remove()

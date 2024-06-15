@@ -120,10 +120,15 @@ if(SERVER)then
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 		local phys = self:GetPhysicsObject()
-		if phys:IsValid() then
-			phys:Wake()
-			phys:SetMass(self.Mass)
-		end
+		timer.Simple(0, function()
+			if phys:IsValid() then
+				phys:Wake()
+				phys:SetMass(self.Mass)
+				if self.EZbuoyancy then
+					phys:SetBuoyancyRatio(self.EZbuoyancy)
+				end
+			end
+		end)
 		self:SetState(JMod.EZ_STATE_OFF)
 		if self:GetGrade() == 0 then
 			self:SetGrade(JMod.EZ_GRADE_BASIC)
@@ -144,10 +149,12 @@ if(SERVER)then
 		self.Durability = self.MaxDurability * JMod.Config.Machines.DurabilityMult
 		self:SetNW2Float("EZdurability", self.Durability)
 		--print(self:GetNW2Float("EZdurability", -1))
-		if self.SpawnFull then
-			self:SetElectricity(self.MaxElectricity)
-		else
-			self:SetElectricity(0)
+		if self.SetElectricity and self.MaxElectricity then
+			if self.SpawnFull then
+				self:SetElectricity(self.MaxElectricity)
+			else
+				self:SetElectricity(0)
+			end
 		end
 		---
 		if self.EZownerID then JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID)) end

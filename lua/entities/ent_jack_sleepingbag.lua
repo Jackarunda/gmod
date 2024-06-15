@@ -14,18 +14,18 @@ local ClothSounds = {"snds_jack_gmod/equip1.ogg", "snds_jack_gmod/equip2.ogg", "
 
 if (CLIENT) then
 	function ENT:Draw()
-		self.Entity:DrawModel()
+		self:DrawModel()
 	end
 elseif (SERVER) then
 
 	function ENT:Initialize()
 		self.State = STATE_ROLLED
-		self.Entity:SetModel(MODEL_ROLLED)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetModel(MODEL_ROLLED)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid( SOLID_VPHYSICS )
 		JMod.SetEZowner(self, nil)
-		local phys = self.Entity:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:Wake()
 			phys:SetMass(35)
@@ -165,7 +165,7 @@ elseif (SERVER) then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		if((dmginfo:IsDamageType(DMG_BURN)) or (dmginfo:IsDamageType(DMG_DIRECT)))then
 			if(math.random(1, 3) == 2)then self:Remove() end
 		end
@@ -173,7 +173,7 @@ elseif (SERVER) then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if((data.Speed > 50) and (data.DeltaTime > 0.2))then
-			self.Entity:EmitSound("Flesh.ImpactSoft")
+			self:EmitSound("Flesh.ImpactSoft")
 		end
 	end
 

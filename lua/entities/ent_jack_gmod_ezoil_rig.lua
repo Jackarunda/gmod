@@ -15,6 +15,7 @@ ENT.SpawnHeight = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZanchorage = 2000
 ENT.EZpowerSocket = Vector(0, 0, 130)
+ENT.EZbuoyancy = .8
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.OIL}
 ---
@@ -48,7 +49,7 @@ if SERVER then
             	JMod.Hint(JMod.GetEZowner(self), "liquid scan")
             end
         end)
-		self:GetPhysicsObject():SetBuoyancyRatio(.8)
+		self:GetPhysicsObject():SetBuoyancyRatio(self.EZbuoyancy)
 		self:GetPhysicsObject():Wake()
 	end
 
@@ -294,17 +295,6 @@ if SERVER then
 			end)
 		end
 	end
-
-	hook.Add("PhysgunDrop", "JMod_OilRig_SetBouyancyOnDrop", function(ply, ent)
-		if ent:GetClass() == "ent_jack_gmod_ezoil_rig" then
-			local phys = ent:GetPhysicsObject()
-			timer.Simple(0, function()
-				if IsValid(phys) then
-					phys:SetBuoyancyRatio(.8)
-				end
-			end)
-		end
-	end)
 
 elseif(CLIENT)then
 	function ENT:CustomInit()

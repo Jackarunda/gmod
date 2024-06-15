@@ -1,7 +1,12 @@
 ﻿local ANGLE = FindMetaTable("Angle")
+local VECTOR = FindMetaTable("Vector")
 
 function ANGLE:GetCopy()
 	return Angle(self.p, self.y, self.r)
+end
+
+function VECTOR:GetCopy()
+	return Vector(self.x, self.y, self.z)
 end
 
 function table.FullCopy(tab)

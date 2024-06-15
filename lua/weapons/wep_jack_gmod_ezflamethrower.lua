@@ -3,24 +3,24 @@ AddCSLuaFile()
 SWEP.PrintName = "EZ Flamethrower"
 SWEP.Author = "Jackarunda, AdventureBoots"
 SWEP.Purpose = ""
-JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_eztoolbox")
+JMod.SetWepSelectIcon(SWEP, "entities/ent_jack_gmod_ezarmor_flamethrower")
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
-SWEP.EZdroppable = true
+SWEP.EZdroppable = false -- If this is to be attached to an armor piece
 SWEP.ViewModel = "models/weapons/sanic/c_m2.mdl"
 SWEP.WorldModel = "models/weapons/sanic/w_m2f2.mdl"
-SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
-SWEP.BodyHolsterSlot = "hips"
+--[[SWEP.BodyHolsterModel = "models/weapons/sanic/w_m2_static.mdl"
+SWEP.BodyHolsterSlot = "back"
 SWEP.BodyHolsterAng = Angle(-70, 0, 200)
-SWEP.BodyHolsterAngL = Angle(-70, -10, -30)
+SWEP.BodyHolsterAngL = Angle(-70, 0, 200)
 SWEP.BodyHolsterPos = Vector(0, -15, 10)
-SWEP.BodyHolsterPosL = Vector(0, -15, -11)
-SWEP.BodyHolsterScale = .4
-SWEP.ViewModelFOV = 52
-SWEP.Slot = 0
-SWEP.SlotPos = 5
+SWEP.BodyHolsterPosL = Vector(0, -15, 10)
+SWEP.BodyHolsterScale = 1--]]
+SWEP.ViewModelFOV = 55
+SWEP.Slot = 4
+SWEP.SlotPos = 3
 SWEP.InstantPickup = true -- Fort Fights compatibility
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -30,38 +30,38 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.ShowWorldModel = true
-SWEP.EZaccepts = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
+--SWEP.ShowWorldModel = true
+
+SWEP.EZconsumes = {JMod.EZ_RESOURCE_TYPES.FUEL, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxFuel = 100
 SWEP.MaxGas = 100
 
 SWEP.VElements = {
+	--
 }
 
 SWEP.WElements = {
-	["mask"] = {
-		type = "Model",
-		model = "models/props_silo/welding_helmet.mdl",
-		bone = "ValveBiped.Bip01_Head1",
-		rel = "",
-		pos = Vector(2, 4, 0),
-		angle = Angle(90, -20, 0),
-		size = Vector(1.1, 1.1, 1.1),
-		color = Color(255, 255, 255, 255),
-		surpresslightning = false,
-		material = "",
-		skin = 0,
-		bodygroup = {}
-	}
+	--
 }
 
 SWEP.LastSalvageAttempt = 0
 SWEP.NextSwitch = 0
 
+SWEP.NextExtinguish = 0
+SWEP.NextIgniteTry = 0
+SWEP.NextSparkTime = 0
+
+local STATE_NOTHIN, STATE_SPRAYIN, STATE_FIZZLIN, STATE_IGNITIN, STATE_FLAMIN = 0, 1, 2, 3, 4
+
 function SWEP:Initialize()
-	self:SetHoldType("smg1")
+	self:SetHoldType("smg")
 	self:SCKInitialize()
 	self.NextIdle = 0
+	--[[timer.Simple(0, function() 
+		if IsValid(self) and self.EZarmorID then
+			self.ShowWorldModel = false
+		end
+	end)--]]
 	self:Deploy()
 
 	self:SetGas(0)
@@ -72,15 +72,59 @@ function SWEP:PreDrawViewModel(vm, wep, ply)
 	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
 end
 
+local GlowSprite = Material("mat_jack_gmod_glowsprite")
+
 function SWEP:ViewModelDrawn()
 	self:SCKViewModelDrawn()
+	if (self:GetState() == STATE_FLAMIN) then
+		render.SetMaterial(GlowSprite)
+		local Dir = self.Owner:GetAimVector()
+		local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 18 - self.Owner:GetUp() * 18
+		for i = 1, 10 do
+			local Inv = 10 - i
+			render.DrawSprite(Pos + Dir * (i * 20 + math.random(100, 130)), 4 * Inv, 4 * Inv, Color(255, 150, 100, 255))
+		end
+		local dlight = DynamicLight(self:EntIndex())
+		if dlight then
+			dlight.pos = Pos + Dir * 50
+			dlight.r = 255
+			dlight.g = 150
+			dlight.b = 100
+			dlight.brightness = 4
+			dlight.Decay = 200
+			dlight.Size = 400
+			dlight.DieTime = CurTime() + .5
+		end
+	end
 end
 
 function SWEP:DrawWorldModel()
 	self:SCKDrawWorldModel()
+	if (self:GetState() == STATE_FLAMIN) then
+		render.SetMaterial(GlowSprite)
+		local Dir = self.Owner:GetAimVector()
+		--local Pos = self.Owner:GetShootPos() + self.Owner:GetRight() * 10 - self.Owner:GetUp() * 17 - Dir * 60
+		local Pos = self:GetAttachment(1).Pos
+		for i = 1, 20 do
+			local Inv = 20 - i
+			render.DrawSprite(Pos + Dir * (i * 2 + math.random(0, 30)), 1 * Inv, 1 * Inv, Color(255, 150, 100, 255))
+		end
+		local dlight = DynamicLight(self:EntIndex())
+		if dlight then
+			dlight.pos = Pos + Dir * 1
+			dlight.r = 255
+			dlight.g = 150
+			dlight.b = 100
+			dlight.brightness = 4
+			dlight.Decay = 200
+			dlight.Size = 400
+			dlight.DieTime = CurTime() + .5
+		end
+	end
 end
 
 local Downness = 0
+local Backness = 0
 
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
@@ -91,7 +135,17 @@ function SWEP:GetViewModelPosition(pos, ang)
 		Downness = Lerp(FT * 2, Downness, 0)
 	end
 
+	local Flamin = (self:GetState() == STATE_FLAMIN)
+
+	if (Flamin) then
+		Backness = Lerp(FT * 2, Backness, 10)
+	else
+		Backness = Lerp(FT * 2, Backness, 0)
+	end
+
 	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
+	pos = pos - ang:Forward() * Backness
+	if (Flamin) then pos = pos + VectorRand() * .1 end
 
 	return pos, ang
 end
@@ -99,9 +153,11 @@ end
 function SWEP:SetupDataTables()
 	self:NetworkVar("Int", 0, "Fuel")
 	self:NetworkVar("Int", 1, "Gas")
+	self:NetworkVar("Int", 3, "State")
 end
 
 function SWEP:UpdateNextIdle()
+	if not(self.Owner:IsPlayer()) then return end
 	local vm = self.Owner:GetViewModel()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
@@ -128,43 +184,179 @@ function SWEP:SetEZsupplies(typ, amt, setter)
 	if ResourceSetMethod then
 		ResourceSetMethod(self, amt)
 	end
+	if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+		local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
+		if ArmorItem.chrg and ArmorItem.chrg[typ] then
+			ArmorItem.chrg[typ] = amt
+		end
+	end
 end
 
+function SWEP:Cease()
+	self:SetState(STATE_NOTHIN)
+	if (self.SoundLoop) then self.SoundLoop:Stop() end
+end
 
-function SWEP:PrimaryAttack()
-	if self.Owner:KeyDown(IN_SPEED) then return end
-	self:Pawnch()
-	self:SetNextPrimaryFire(CurTime() + .1)
-	self:SetNextSecondaryFire(CurTime() + 1)
+function SWEP:GetNozzle()
+	local Owner = self.Owner
+	local AimVec = Owner:GetAimVector()
+	local ShootPos = Owner:GetShootPos()
+	local FirePos, FireAng
+	--
+	
+	if CLIENT then
+		FireAng = Owner:EyeAngles()
+		local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
+		if not Owner:ShouldDrawLocalPlayer() then
+			FirePos = ShootPos + (FireForward * 20 + FireRight * 4 + FireUp * -4)
+		else
+			FirePos = ShootPos + (FireForward * 40 + FireRight * 8 + FireUp * -15)
+		end
+	elseif SERVER then
+		FireAng = AimVec:Angle()
+		local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
+		--FireAng:RotateAroundAxis(FireAng:Right(), 5)
+		FirePos = ShootPos + (FireForward * 40 + FireRight * 8 + FireUp * -15)
+	end
+
+	local SafetyTr = util.QuickTrace(ShootPos, FirePos - ShootPos, Owner)
+
+	if (SafetyTr.Hit) then
+		FirePos = SafetyTr.HitPos
+	end
 
 	if SERVER then
-		local Fuel, Gas = self:GetFuel(), self:GetGas()
+		debugoverlay.Cross(FirePos, 10, 2, Color(0, 89, 255), true)
+		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(0, 89, 255), false)
+	else
+		debugoverlay.Cross(FirePos, 10, 2, Color(255, 251, 0), true)
+		debugoverlay.Line(FirePos, FirePos + FireAng:Forward() * 5000, 2, Color(255, 251, 0), false)
+	end
 
-		if (Fuel > 0) and (Gas > 0) then
-			local AimVec = self.Owner:GetAimVector()
-			local FireAng = (AimVec + VectorRand(0, 0.1)):GetNormalized():Angle()
-			local FirePos = self.Owner:GetShootPos() + FireAng:Forward() * 24 + FireAng:Right() * 4 + FireAng:Up() * -5
-			local Flame = ents.Create("ent_jack_gmod_eznapalm")
-			Flame:SetPos(FirePos)
-			Flame:SetAngles(FireAng)
-			Flame:SetOwner(JMod.GetEZowner(self))
-			Flame.HighVisuals = (math.random(1, 2) == 1)
-			Flame.SpeedMul = math.Rand(1, 1.2)
-			Flame.Creator = self.Owner
-			JMod.SetEZowner(Flame, self.EZowner or self)
-			Flame:Spawn()
-			Flame:Activate()
-			--
-			local Foof = EffectData()
-			Foof:SetOrigin(FirePos)
-			Foof:SetNormal(FireAng:Forward())
-			Foof:SetScale(100)
-			Foof:SetStart(FireAng:Forward() * 1000)
-			Foof:SetAngles(Angle(50, 50, 50))
-			util.Effect("eff_jack_gmod_ezsmokesignal", Foof, true, true)
+	return FirePos, FireAng
+end
 
-			self:SetFuel(math.Clamp(Fuel - 1, 0, 100))
-			self:SetGas(math.Clamp(Gas - 1, 0, 100))
+function SWEP:PrimaryAttack()
+	local Time = CurTime()
+	local NextAttackTime = .05
+	self:SetNextPrimaryFire(Time + NextAttackTime)
+
+	if SERVER then
+		local Fuel, Gas, State = self:GetFuel(), self:GetGas(), self:GetState()
+		local HasFuel = (Fuel > 0) and (Gas > 0)
+
+		if not(HasFuel) then
+			self:Cease()
+			self:Msg("Out of fuel and/or gas!\nPress Alt+Use on resource container to refill.")
+		else
+			local FirePos, FireAng = self:GetNozzle()
+			local FireUp, FireRight, FireForward = FireAng:Up(), FireAng:Right(), FireAng:Forward()
+			--JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
+			if (State == STATE_NOTHIN) then
+				self:SetState(STATE_SPRAYIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/intense_liquid_spray.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			elseif (State == STATE_SPRAYIN) then
+				if self.NextSparkTime < Time then
+					self.NextSparkTime = Time + 0.1
+					local Splach = EffectData()
+					local SplachTr = util.QuickTrace(FirePos + FireRight * 2 + FireUp * 2, FireForward * 50, self.Owner)
+					Splach:SetOrigin(SplachTr.HitPos + SplachTr.HitNormal * 20 + FireRight * 5 - FireUp * 10)
+					Splach:SetStart(FireForward * 2)
+					Splach:SetScale(1)
+					util.Effect("eff_jack_gmod_spranklerspray", Splach, true, true)
+					JMod.LiquidSpray(FirePos + FireRight, FireForward * 1000, 1, self:EntIndex(), 1)
+				end
+			elseif (State == STATE_IGNITIN) then
+				self:SetState(STATE_FLAMIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flamethrower_loop.wav")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			elseif (State == STATE_FLAMIN) then
+				self.Owner:MuzzleFlash()
+				local Foof = EffectData()
+				Foof:SetNormal(FireAng:Forward())
+				Foof:SetScale(2)
+				Foof:SetStart(FireAng:Forward() * 1200)
+				Foof:SetEntity(self)
+				Foof:SetAttachment(1)
+				util.Effect("eff_jack_gmod_ezflamethrowerfire", Foof, true, true)
+				JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
+			end
+
+			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
+				self:Pawnch()
+				self.Owner:ViewPunch(AngleRand() * .002)
+				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
+				FirePos = FlameTr.HitPos
+				local Flame = ents.Create("ent_jack_gmod_eznapalm")
+				Flame:SetPos(FirePos)
+				local FlyAng = (FireAng:Forward() + VectorRand() * .1):Angle()
+				Flame:SetAngles(FlyAng)
+				Flame:SetOwner(JMod.GetEZowner(self))
+				Flame.HighVisuals = (math.random(1, 2) == 1)
+				Flame.SpeedMul = math.Rand(.9, 1.1)
+				Flame.Creator = self.Owner
+				Flame.Burnin = (State == STATE_FLAMIN)
+				Flame.LifeTime = math.random(1, 1.5)
+				JMod.SetEZowner(Flame, self.Owner)
+				Flame:Spawn()
+				Flame:Activate()
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+			end
+			self.NextExtinguishTime = Time + NextAttackTime * 2
+		end
+	end
+end
+
+function SWEP:SecondaryAttack()
+	local Time = CurTime()
+	local NextAttackTime = .05
+	self:SetNextSecondaryFire(CurTime() + NextAttackTime)
+	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then return end
+	if (State == STATE_FLAMIN) then return end
+	
+	if SERVER then
+		local State = self:GetState()
+
+		if (State == STATE_NOTHIN) then
+			if (self.NextIgniteTry < Time) then
+				self.NextIgniteTry = Time + 1
+				self:SetState(STATE_FIZZLIN)
+				self.Owner:EmitSound("snd_jack_spoonfling.ogg", 75, 100)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			end
+		elseif (State == STATE_FIZZLIN) then
+			if (self.NextIgniteTry < Time) then
+				self.NextIgniteTry = Time + 1.8
+				self:SetState(STATE_IGNITIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			end
+		elseif (State == STATE_IGNITIN) then
+			local FirePos, FireAng = self:GetNozzle()
+			local IgniteTr = util.QuickTrace(FirePos, FireAng:Forward() * 80, self.Owner)
+			if IgniteTr.Hit then
+				for k, v in pairs(ents.FindInSphere(IgniteTr.HitPos, 20)) do
+					if v.JModHighlyFlammableFunc then
+						JMod.SetEZowner(v, self.EZowner)
+						local Func = v[v.JModHighlyFlammableFunc]
+						Func(v)
+					end
+				end
+			end
+		end
+		if (State ~= STATE_SPRAYIN) then
+			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
 	end
 end
@@ -178,58 +370,31 @@ function SWEP:Pawnch()
 	self:UpdateNextIdle()
 end
 
-function SWEP:Reload()
-	if SERVER then
-		local Time = CurTime()
-		local Ent = self:WhomIlookinAt()
-		
-		if IsValid(Ent) and Ent.GetEZsupplies then
-			for typ, amt in pairs(Ent:GetEZsupplies()) do
-				if table.HasValue(self.EZaccepts, typ) and (amt > 0) then
-					local CurAmt = self:GetEZsupplies(typ) or 0
-					local Take = math.min(amt, 100 - CurAmt)
-					
-					Ent:SetEZsupplies(typ, amt - Take, self.Owner)
-					self:SetEZsupplies(typ, CurAmt + Take)
-					if Take > 0 then
-						sound.Play("items/ammo_pickup.ogg", self:GetPos(), 65, math.random(90, 110))
-					end
-				end
+function SWEP:TryLoadResource(typ, amt)
+	if amt < 1 then return 0 end
+	local Accepted = 0
+
+	for _, v in pairs(self.EZconsumes) do
+		if typ == v then
+			local CurAmt = self:GetEZsupplies(typ) or 0
+			local Take = math.min(amt, self.MaxFuel - CurAmt)
+			
+			if Take > 0 then
+				self:SetEZsupplies(typ, CurAmt + Take)
+				sound.Play("snds_jack_gmod/gas_load.ogg", self:GetPos(), 65, math.random(90, 110))
+				Accepted = Take
 			end
 		end
 	end
+
+	return Accepted
 end
-
-function SWEP:WhomIlookinAt()
-	local Filter = {self.Owner}
-
-	for k, v in pairs(ents.FindByClass("npc_bullseye")) do
-		table.insert(Filter, v)
-	end
-
-	local Tr = util.QuickTrace(self.Owner:GetShootPos(), self.Owner:GetAimVector() * 100, Filter)
-
-	return Tr.Entity, Tr.HitPos, Tr.HitNormal
-end
-
-function SWEP:SecondaryAttack()
-end
-
 --
 function SWEP:OnDrop()
-	local Pack = ents.Create("ent_jack_gmod_ezflamethrower")
-	Pack:SetPos(self:GetPos())
-	Pack:SetAngles(self:GetAngles())
-	Pack:Spawn()
-	Pack:Activate()
-
-	Pack:SetFuel(self:GetFuel())
-	Pack:SetGas(self:GetGas())
-
-	local Phys = Pack:GetPhysicsObject()
-
-	if Phys then
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+	if IsValid(self.Owner) then
+		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+			JMod.RemoveArmorByID(self.Owner, self.EZarmorID)
+		end
 	end
 
 	self:Remove()
@@ -237,6 +402,8 @@ end
 
 function SWEP:OnRemove()
 	self:SCKHolster()
+
+	self:Cease()
 
 	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
 		local vm = self.Owner:GetViewModel()
@@ -272,6 +439,8 @@ function SWEP:Holster(wep)
 	-- Not calling OnRemove to keep the models
 	self:SCKHolster()
 
+	self:Cease()
+
 	if IsValid(self.Owner) and CLIENT and self.Owner:IsPlayer() then
 		local vm = self.Owner:GetViewModel()
 
@@ -285,6 +454,19 @@ end
 
 function SWEP:Deploy()
 	if not IsValid(self.Owner) then return end
+	if SERVER then
+		if self.EZarmorID and not(self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID]) then
+			SafeRemoveEntity(self)
+		end
+		JMod.Hint(self.Owner, "flamethrower ignite")
+	end
+
+	local Time = CurTime()
+	self:SetNextPrimaryFire(Time + 1)
+	self:SetNextSecondaryFire(Time + 1)
+	self.NextExtinguishTime = Time
+
+	if not(self.Owner:IsPlayer()) then return end
 	local vm = self.Owner:GetViewModel()
 
 	if IsValid(vm) and vm.LookupSequence then
@@ -293,31 +475,66 @@ function SWEP:Deploy()
 		self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
-	if SERVER then
-		JMod.Hint(self.Owner, "building")
-	end
-
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-
 	return true
 end
 
 function SWEP:Think()
 	local Time = CurTime()
-	local vm = self.Owner:GetViewModel()
 	local idletime = self.NextIdle
+	local State = self:GetState()
 
 	if idletime > 0 and Time > idletime then
-		vm:SendViewModelMatchingSequence(vm:LookupSequence("fists_idle_0" .. math.random(1, 2)))
 		self:UpdateNextIdle()
 	end
 
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+	if self.Owner:IsPlayer() and (self.Owner:IsSprinting() or self.Owner:KeyDown(IN_ZOOM)) then
 		self:SetHoldType("normal")
+		if (State > STATE_NOTHIN) then
+			self:Cease()
+		end
 	else
 		self:SetHoldType("smg")
 	end
+
+	
+	if (State == STATE_FIZZLIN) or (State == STATE_IGNITIN) then
+		if self.NextSparkTime < Time then
+			self.NextSparkTime = Time + 0.1
+			if CLIENT then
+				local FirePos, FireAng = self:GetNozzle()
+				local Fsh = EffectData()
+				Fsh:SetOrigin(FirePos)
+				Fsh:SetScale(((State == STATE_IGNITIN) and 1) or 0.5)
+				Fsh:SetNormal(self.Owner:GetAimVector())
+				Fsh:SetStart(self.Owner:GetVelocity())
+				Fsh:SetEntity(NULL)
+				Fsh:SetAttachment(1)
+				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
+			end
+		end
+	end
+
+	if SERVER then
+		if ((State == STATE_FLAMIN) and (self.Owner:IsPlayer() and not self.Owner:KeyDown(IN_ATTACK))) or ((State > STATE_NOTHIN) and (self.NextExtinguishTime < Time)) then
+			if self.Owner:IsPlayer() and self.Owner:KeyDown(IN_ATTACK2) then
+				self:SetState(STATE_IGNITIN)
+				if self.SoundLoop then self.SoundLoop:Stop() end
+				self.SoundLoop = CreateSound(self, "snds_jack_gmod/flareburn.ogg")
+				self.SoundLoop:SetSoundLevel(75)
+				self.SoundLoop:Play()
+			else
+				self:Cease()
+			end
+		end
+		if self.EZarmorID and self.Owner.EZarmor and self.Owner.EZarmor.items[self.EZarmorID] then
+			local ArmorItem = self.Owner.EZarmor.items[self.EZarmorID]
+			self:SetFuel(ArmorItem.chrg.fuel)
+			self:SetGas(ArmorItem.chrg.gas)
+		end
+	end
+end
+
+function SWEP:Sprint()
 end
 
 function SWEP:DrawHUD()
@@ -332,7 +549,7 @@ end
 
 ----------------- sck -------------------
 function SWEP:SCKHolster()
-	if CLIENT and IsValid(self.Owner) then
+	if CLIENT and IsValid(self.Owner) and self.Owner:IsPlayer() then
 		local vm = self.Owner:GetViewModel()
 
 		if IsValid(vm) then
@@ -351,7 +568,7 @@ function SWEP:SCKInitialize()
 		self:CreateModels(self.WElements) -- create worldmodels
 
 		-- init view model bone build function
-		if IsValid(self.Owner) then
+		if IsValid(self.Owner) and self.Owner:IsPlayer() then
 			local vm = self.Owner:GetViewModel()
 
 			if IsValid(vm) then
@@ -378,6 +595,7 @@ if CLIENT then
 	SWEP.vRenderOrder = nil
 
 	function SWEP:SCKViewModelDrawn()
+		if not self.Owner:IsPlayer() then return end
 		local vm = self.Owner:GetViewModel()
 		if not IsValid(vm) then return end
 		if not self.VElements then return end

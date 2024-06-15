@@ -28,6 +28,7 @@ util.AddNetworkString("JMod_MachineSync")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
 util.AddNetworkString("JMod_ConfigUI")
 util.AddNetworkString("JMod_ApplyConfig")
+util.AddNetworkString("JMod_LiquidParticle")
 
 net.Receive("JMod_Friends", function(length, ply)
 	local List, Good = net.ReadTable(), true

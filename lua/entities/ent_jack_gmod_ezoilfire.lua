@@ -28,11 +28,11 @@ if SERVER then
 	end]]
 	-- (I don't know if you want to get rid of it RN)
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
-		self.Entity:PhysicsInit(SOLID_NONE)
-		self.Entity:SetMoveType(MOVETYPE_NONE)
-		self.Entity:SetSolid(SOLID_NONE)
-		self.Entity:DrawShadow(true)
+		self:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
+		self:PhysicsInit(SOLID_NONE)
+		self:SetMoveType(MOVETYPE_NONE)
+		self:SetSolid(SOLID_NONE)
+		self:DrawShadow(true)
 
 		---
 		timer.Simple(0.1, function()
@@ -157,6 +157,19 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
+		local Pos, Dir = self:GetPos(), self:GetRight()
+		local dlight = DynamicLight(self:EntIndex())
+
+		if dlight then
+			dlight.pos = Pos + Dir * 200
+			dlight.r = 255
+			dlight.g = 60
+			dlight.b = 10
+			dlight.brightness = 8
+			dlight.Decay = 200
+			dlight.Size = 1000
+			dlight.DieTime = CurTime() + .5
+		end
 	end
 
 	---
@@ -174,19 +187,6 @@ elseif CLIENT then
 
 		for i = 1, 3 do
 			render.DrawSprite(Pos + Dir * (i * math.random(50, 80)), 250, 200, Color(255, 255 - i * 10, 255 - i * 20, 255))
-		end
-
-		local dlight = DynamicLight(self:EntIndex())
-
-		if dlight then
-			dlight.pos = Pos + Dir * 200
-			dlight.r = 255
-			dlight.g = 60
-			dlight.b = 10
-			dlight.brightness = 8
-			dlight.Decay = 200
-			dlight.Size = 1000
-			dlight.DieTime = CurTime() + .5
 		end
 	end
 

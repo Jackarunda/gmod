@@ -770,6 +770,19 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
+				if playa.EZarmor.effects.weapon then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.weapon then
+							if not playa:HasWeapon(Info.eff.weapon) then
+								local Sweppy = playa:Give(Info.eff.weapon)
+								Sweppy.EZarmorID = id
+							end
+						end
+					end
+				end
+
 				JMod.CalcSpeed(playa)
 				JMod.EZarmorSync(playa)
 			end
@@ -945,21 +958,23 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	local EZcorpse
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
-		local BodyGroupValues = ""
-		for i = 1, PlyRagdoll:GetNumBodyGroups() do
-			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
-		end
-		SafeRemoveEntity(PlyRagdoll)
-		EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
-		EZcorpse.DeadPlayer = ply
-		if ply.EZoverDamage then
-			EZcorpse.EZoverDamage = ply.EZoverDamage
-		end
-		EZcorpse.BodyGroupValues = BodyGroupValues
-		EZcorpse:Spawn()
-		EZcorpse:Activate()
-		if IsValid(EZcorpse.EZragdoll) then
-			EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+		if IsValid(PlyRagdoll) then
+			local BodyGroupValues = ""
+			for i = 1, PlyRagdoll:GetNumBodyGroups() do
+				BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
+			end
+			SafeRemoveEntity(PlyRagdoll)
+			EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+			EZcorpse.DeadPlayer = ply
+			if ply.EZoverDamage then
+				EZcorpse.EZoverDamage = ply.EZoverDamage
+			end
+			EZcorpse.BodyGroupValues = BodyGroupValues
+			EZcorpse:Spawn()
+			EZcorpse:Activate()
+			if IsValid(EZcorpse.EZragdoll) then
+				EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+			end
 		end
 	end
 	ply.EZoverDamage = nil

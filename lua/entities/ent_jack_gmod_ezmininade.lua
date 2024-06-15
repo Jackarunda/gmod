@@ -20,7 +20,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if dmginfo:GetInflictor() ~= self and dmginfo:GetDamage() >= 5 and not self.Exploded and self:GetState() ~= JMod.EZ_STATE_BROKEN then
 			self:EmitSound("physics/metal/metal_box_impact_bullet2.wav", 75, 200)
@@ -71,7 +71,7 @@ if SERVER then
 
 	function ENT:PhysicsCollide(data, physobj)
 		if (not IsValid(self.AttachedBomb)) and self:IsPlayerHolding() and data.HitEntity.EZdetonateOverride then
-			self.Entity:EmitSound("Grenade.ImpactHard")
+			self:EmitSound("Grenade.ImpactHard")
 			self:SetPos(data.HitPos - data.HitNormal)
 			self.AttachedBomb = data.HitEntity
 			self.LastVel = data.HitEntity:GetVelocity()

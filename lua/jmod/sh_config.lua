@@ -113,6 +113,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
 			NukeFlashLightEnabled = false,
+			NiceFire = true,
 			ChangePitchWithHostTimeScale = true,
 			AllowActiveItemsInInventory = false,
 			SeasonalEventsEnabled = true
@@ -1860,6 +1861,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Weapons",
 				craftingType = "fabricator",
 				description = "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
+			},
+			["EZ Flamethrower"] = {
+				results = "ent_jack_gmod_ezarmor_flametank",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 25,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 100
+				},
+				category = "Weapons",
+				craftingType = "workbench",
+				description = "A flamethrower. Use to burn your enemies to ashes."
 			},
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",

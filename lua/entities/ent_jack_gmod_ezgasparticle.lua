@@ -30,8 +30,6 @@ if SERVER then
 			phys:EnableGravity(false)
 		end
 		self:SetModelScale(2)
-		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
-		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
 		self.AirResistance = 2
@@ -81,7 +79,7 @@ if SERVER then
 	function ENT:DamageObj(obj)
 		local Dmg, Helf = DamageInfo(), obj:Health()
 		Dmg:SetDamageType(DMG_NERVEGAS)
-		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetDamage(math.random(3, 10) * JMod.Config.Particles.PoisonGasDamage)
 		Dmg:SetInflictor(self)
 		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
 		Dmg:SetDamagePosition(obj:GetPos())
@@ -106,14 +104,14 @@ if SERVER then
 			self:CalcMove(ThinkRateHz)
 
 		else
-			local Force = (VectorRand() * 10) + JMod.Wind * 5
+			local Force = (VectorRand() * 5) + Vector(0, 0, -2) + JMod.Wind * 5
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 					if obj.EZgasParticle and not(obj.EZvirusParticle) then
 						-- repel in accordance with Ideal Gas Law
-						local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-						Force = Force - Vec * 1
+						local NormVec = (obj:GetPos() - SelfPos):GetNormalized()
+						Force = Force - NormVec * 1
 					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
 						self:DamageObj(obj)
 					end
