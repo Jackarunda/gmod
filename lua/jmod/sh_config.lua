@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 48.5
+			Version = 48.6
 		},
 		General = {
 			Hints = true,
@@ -618,7 +618,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					description = "20 units of Uranium, used in fissile material enrichment.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezuranium", 5}
+						{"ent_jack_gmod_ezuranium", 1, 20}
 					}
 				},
 				["diamond"] = {
