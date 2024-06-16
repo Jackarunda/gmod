@@ -50,6 +50,7 @@ function JMod.GetStorageCapacity(ent)
 end
 
 function JMod.IsEntContained(target, container)
+	jprint(target, " - ", container, " - ", target.EZInvOwner, " - ", target:GetParent())
 	local Contained = IsValid(target) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
 	if container then
 		Contained = Contained and (target.EZInvOwner == container)
@@ -320,10 +321,6 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 60, ply)
 	local InvSound = util.GetSurfaceData(Tr.SurfaceProps).impactSoftSound
 
-	if not IsValid(invEnt) then
-		invEnt = ply
-	end
-
 	--jprint(((invEnt ~= ply) and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
 	if command == "take" then
 		if not(IsValid(target)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
@@ -331,7 +328,12 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		JMod.AddToInventory(invEnt, target)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "drop" then
-		if not(JMod.IsEntContained(target, invEnt)) then JMod.Hint(ply, "hint item inventory missing") JMod.UpdateInv(invEnt) return false end
+		if not(JMod.IsEntContained(target, invEnt)) then 
+			JMod.Hint(ply, "hint item inventory missing") 
+			JMod.UpdateInv(invEnt) 
+
+			return false 
+		end
 		if (invEnt ~= ply) and (Tr.Entity ~= invEnt) then return end
 		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
