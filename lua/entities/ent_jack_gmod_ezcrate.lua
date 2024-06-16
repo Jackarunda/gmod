@@ -166,6 +166,7 @@ if SERVER then
 		self:CalcWeight()
 
 		if self:GetResource() <= 0 then
+			--self:SetResource(0)
 			self:ApplySupplyType("generic")
 		end
 	end
@@ -212,6 +213,7 @@ if SERVER then
 		local Type = self:GetResourceType()
 		if not(JMod.IsAdmin(ply)) and table.HasValue(RestrictedMaterials, Type) then
 			self:SetEZsupplies(Type, 0, self)
+			self:ApplySupplyType(self.EZsupplies)
 		end
 		self.NextLoad = 0
 	end

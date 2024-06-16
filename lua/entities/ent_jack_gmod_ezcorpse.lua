@@ -133,7 +133,7 @@ if SERVER then
 			if (self.Eater:GetPos():Distance(self:GetPos()) < 100) then
 				self.Eater:SetActivity(ACT_MELEE_ATTACK1)
 			else
-				self.Eater:SetSaveValue("m_vecLastPosition", self:GetPos())
+				self.Eater:SetLastPosition(self:GetPos())
 				self.Eater:SetSchedule(SCHED_FORCED_GO)
 			end
 		elseif not IsValid(self.Eater) then
