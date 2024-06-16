@@ -42,7 +42,7 @@ if SERVER then
 			end
 		end)
 		---
-		self:SetPop(3)
+		self:SetPop(2)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -107,7 +107,7 @@ elseif CLIENT then
 
 	function ENT:Draw()
 		local Matricks = Matrix()
-		Matricks:Scale(Vector(1*(self:GetPop()/2), 1, 1))
+		Matricks:Scale(Vector(1*(self:GetPop()/1), 1, 1))
 		self:EnableMatrix("RenderMultiply", Matricks)
 		self:DrawModel()
 	end

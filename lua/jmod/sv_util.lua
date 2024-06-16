@@ -1454,8 +1454,8 @@ function JMod.ConsumeNutrients(ply, amt)
 		NextEat = 0,
 		Nutrients = 0
 	}
-	if ply.EZnutrition.NextEat > Time then JMod.Hint(activator, "can not eat") return false end
-	if ply.EZnutrition.Nutrients >= 100 then JMod.Hint(ply, "nutrition filled") return false end
+	if (ply.EZnutrition.NextEat or 0) > Time then JMod.Hint(activator, "can not eat") return false end
+	if (ply.EZnutrition.Nutrients or 0) >= 100 then JMod.Hint(ply, "nutrition filled") return false end
 	--
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
 	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
