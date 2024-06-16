@@ -157,16 +157,6 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.Dir = "right"
-		self.SoundRight = "snds_jack_gmod/sprankler_slow_loop.wav"
-		self.SoundLeft = "snds_jack_gmod/sprankler_fast_loop.wav"
-		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
-		self.PerferredDonor = nil
-		if self.SpawnFull then
-			self:SetWater(self.MaxWater)
-		else
-			self:SetWater(0)
-		end
-		self:SetColor(Color(61, 194, 255))
 	end
 
 	function ENT:Use(activator)

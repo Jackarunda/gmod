@@ -143,10 +143,10 @@ if SERVER then
 				if math.random(1, 2) == 1 then
 					local Zap = EffectData()
 					if not self.Burnin then
-						Zap:SetOrigin(Pos)
+						--[[Zap:SetOrigin(Pos)
 						Zap:SetStart(self.CurVel:GetNormalized() * 1)
 						Zap:SetScale(2)
-						util.Effect("eff_jack_gmod_spranklerspray", Zap, true, true)
+						util.Effect("eff_jack_gmod_spranklerspray", Zap, true, true)--]]
 					else
 						Zap:SetOrigin(Pos + self.CurVel / ThinkRate)
 						Zap:SetStart(self.CurVel)
@@ -247,11 +247,13 @@ if SERVER then
 
 			SafeRemoveEntity(self)
 		else
-			local eff = EffectData()
-			eff:SetOrigin(self:GetPos())
-			eff:SetNormal(self.CurVel:GetNormalized())
-			eff:SetScale(1)
-			util.Effect("eff_jack_gmod_heavyfire", eff)
+			if self.Burnin then
+				local eff = EffectData()
+				eff:SetOrigin(self:GetPos())
+				eff:SetNormal(self.CurVel:GetNormalized())
+				eff:SetScale(1)
+				util.Effect("eff_jack_gmod_heavyfire", eff)
+			end
 
 			SafeRemoveEntityDelayed(self, .1)
 		end
@@ -287,7 +289,7 @@ elseif CLIENT then
 		self.SpawnTime = CurTime()
 	end
 
-	local GlowSprite = Material("mat_jack_gmod_glowsprite")
+	local GlowSprite, SplachSprite = Material("mat_jack_gmod_glowsprite"), Material("effects/splash1")
 
 	function ENT:Think()
 		self.Burnin = self:GetBurning()
@@ -306,35 +308,40 @@ elseif CLIENT then
 				dlight.DieTime = CurTime() + .1
 			end
 		end
+		self.RenderPos = LerpVector(FrameTime() * 20, self.RenderPos, self:GetPos())
 	end
 
 	function ENT:Draw()
 		local Time = CurTime()
-		if not (self.Burnin) then return end
-		local Pos, Dir, Ang = self.RenderPos, self:GetForward(), self:GetAngles()
-		Ang:RotateAroundAxis(Ang:Right(), self.TypeInfo[7].p)
-		Ang:RotateAroundAxis(Ang:Up(), self.TypeInfo[7].y)
-		Ang:RotateAroundAxis(Ang:Forward(), self.TypeInfo[7].r)
-		self.Mawdel:SetRenderAngles(Ang)
-		self.Mawdel:SetRenderOrigin(Pos)
-		local OrigR, OrigG, OrigB = render.GetColorModulation()
 		local Lived, ScatterFrac = Time - self.SpawnTime, 1
 
-		if Lived < .5 then
-			ScatterFrac = Lived * 2
+		if not (self.Burnin) then
+			render.SetMaterial(SplachSprite)
+			render.DrawSprite(self.RenderPos, 100 * Lived, 100 * Lived, Color(255, 255, 255, 200 / Lived))
+		else
+			local Pos, Dir, Ang = self.RenderPos, self:GetForward(), self:GetAngles()
+			Ang:RotateAroundAxis(Ang:Right(), self.TypeInfo[7].p)
+			Ang:RotateAroundAxis(Ang:Up(), self.TypeInfo[7].y)
+			Ang:RotateAroundAxis(Ang:Forward(), self.TypeInfo[7].r)
+			self.Mawdel:SetRenderAngles(Ang)
+			self.Mawdel:SetRenderOrigin(Pos)
+			local OrigR, OrigG, OrigB = render.GetColorModulation()
+
+			if Lived < .5 then
+				ScatterFrac = Lived * 2
+			end
+
+			ScatterFrac = ScatterFrac - .3
+			Pos = Pos + Dir * 10
+			render.SetMaterial(GlowSprite)
+			local Col = Color(self.TypeInfo[6].r, self.TypeInfo[6].g, self.TypeInfo[6].b, math.random(0, 255))
+
+			for i = 1, 20 do
+				render.DrawSprite(Pos - Dir * i * 5 + VectorRand() * math.Rand(0, 2) * i * ScatterFrac, 30 * ScatterFrac, 30 * ScatterFrac, Col)
+			end
+
+			render.SetColorModulation(OrigR, OrigG, OrigB)
 		end
-
-		ScatterFrac = ScatterFrac - .3
-		Pos = Pos + Dir * 10
-		render.SetMaterial(GlowSprite)
-		local Col = Color(self.TypeInfo[6].r, self.TypeInfo[6].g, self.TypeInfo[6].b, math.random(0, 255))
-
-		for i = 1, 20 do
-			render.DrawSprite(Pos - Dir * i * 5 + VectorRand() * math.Rand(0, 2) * i * ScatterFrac, 30 * ScatterFrac, 30 * ScatterFrac, Col)
-		end
-
-		render.SetColorModulation(OrigR, OrigG, OrigB)
-		self.RenderPos = LerpVector(FrameTime() * 20, self.RenderPos, self:GetPos())
 	end
 	function ENT:OnRemove()
 		if IsValid(self.Mawdel) then
