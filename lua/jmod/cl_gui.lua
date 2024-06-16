@@ -1233,7 +1233,7 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 end
 
 --Item Inventory
-local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt, resourceType)
+local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt)
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	local Matty = nil
 	if string.find(itemTable.ent:GetClass(), "prop_") then
@@ -1279,14 +1279,14 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-						net.WriteString("drop")
-						net.WriteEntity(itemTable.ent)
-						net.WriteEntity(invEnt)
+							net.WriteString("drop")
+							net.WriteEntity(itemTable.ent)
+							net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-						net.WriteString("missing")
-						net.WriteEntity(invEnt)
+							net.WriteString("missing")
+							net.WriteEntity(invEnt)
 						net.SendToServer()
 					end
 				end
@@ -1296,14 +1296,14 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-						net.WriteString("use")
-						net.WriteEntity(itemTable.ent)
-						net.WriteEntity(invEnt)
+							net.WriteString("use")
+							net.WriteEntity(itemTable.ent)
+							net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
-						net.WriteString("missing")
-						net.WriteEntity(Ply)
+							net.WriteString("missing")
+							net.WriteEntity(Ply)
 						net.SendToServer()
 					end
 				end
@@ -1323,23 +1323,17 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			}--]]
 		}
 
-		if itemTable.ent.Base then
-			local ItemBaseClass = itemTable.ent.Base
-
-			if ItemBaseClass and ((ItemBaseClass == "ent_jack_gmod_ezgrenade") or (ItemBaseClass == "ent_jack_gmod_ezmininade")) then
-				table.insert(Options, {
-					title="Prime",
-					actionFunc = function(itemTable)
-						net.Start("JMod_ItemInventory")
-						net.WriteString("prime")
-						net.WriteEntity(itemTable.ent)
-						if invEnt ~= Ply then
-							net.WriteEntity(invEnt)
-						end
-						net.SendToServer()
-					end
-				})
-			end
+		if itemTable.ent.EZinvPrime then
+			table.insert(Options, {
+				title="Prime",
+				actionFunc = function(itemTable)
+					net.Start("JMod_ItemInventory")
+					net.WriteString("prime")
+					net.WriteEntity(itemTable.ent)
+					net.WriteEntity(invEnt)
+					net.SendToServer()
+				end
+			})
 		end
 
 		if invEnt == Ply then
@@ -1355,6 +1349,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					else
 						net.Start("JMod_ItemInventory")
 							net.WriteString("missing")
+							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
 					end
@@ -1373,6 +1368,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 					else
 						net.Start("JMod_ItemInventory")
 							net.WriteString("missing")
+							net.WriteEntity(NULL)
 							net.WriteEntity(invEnt)
 						net.SendToServer()
 					end
@@ -1492,6 +1488,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(Ply:GetEyeTrace().Entity)
+					net.WriteEntity(invEnt)
 				net.SendToServer()
 				frame:Close()
 				if IsValid(parent) then
@@ -1510,6 +1507,7 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 					net.WriteUInt(amtSlide:GetValue(), 12)
 					net.WriteString(resourceType)
 					net.WriteEntity(invEnt)
+					net.WriteEntity(invEnt)
 				net.SendToServer()
 				frame:Close()
 				if IsValid(parent) then
@@ -1522,70 +1520,10 @@ local function CreateResButton(parent, resourceType, amt, x, y, w, h, scrollFram
 	end
 end
 
-net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
-	local invEnt = net.ReadEntity()
-	local command = net.ReadString()
-	local newInv = net.ReadTable()
-
-	if not(IsValid(invEnt)) then 
-		invEnt = LocalPlayer()
-	end
-
-	if newInv and istable(newInv) then
-		invEnt.JModInv = newInv
-	end
-
-	if not (command or isstring(command)) then return end
-
-	if command == "open_menu" then
-		if SelectionMenuOpen then return end
-		local frame = vgui.Create("DFrame")
-		frame:SetSize(210, 312)
-		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
-		frame:Center()
-		frame:MakePopup()
-		--frame:SetKeyboardInputEnabled(false)
-
-		frame.OnClose = function()
-			if OpenDropdown then
-				OpenDropdown:Remove()
-			end
-			frame = nil
-		end
-
-		frame.Paint = function(self, w, h)
-			BlurBackground(self)
-		end
-
-		local scrollPanel = vgui.Create("DScrollPanel", frame)
-		scrollPanel:SetSize(200, 370)
-		scrollPanel:SetPos(5, 30)
-		
-		local ShownItems = 0
-		if newInv then
-			for k, v in ipairs(newInv.items) do
-				CreateInvButton(frame, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
-				ShownItems = ShownItems + 1
-			end
-			if newInv.EZresources then
-				for k, v in pairs(newInv.EZresources) do
-					CreateResButton(frame, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
-					ShownItems = ShownItems + 1
-				end
-			end
-		end
-		local Status = vgui.Create("DLabel", frame)
-		Status:SetSize(200, 10)
-		Status:SetPos(2, 300)
-		Status:SetText("Current Inventory Space: " .. tostring(invEnt.JModInv.volume) .. "/" .. tostring(invEnt.JModInv.maxVolume))
-	end
-end)
-
-net.Receive("JMod_Inventory", function()
+local CurrentJModInvScreen = nil
+local JModInventoryMenu = function(PlyModel, itemTable)
 	local Ply = LocalPlayer()
-	local weight = Ply.EZarmor.totalWeight
-	local PlyModel = net.ReadString()
-	local itemTable = net.ReadTable()
+	local weight = (Ply.EZarmor) and (Ply.EZarmor.totalWeight) or 0
 	Ply.JModInv = itemTable
 
 	--PrintTable(Ply.JModInv)
@@ -1632,10 +1570,10 @@ net.Receive("JMod_Inventory", function()
 	PlayerDisplay:SetPos(0, 0)
 	PlayerDisplay:SetSize(PDispBG:GetWide(), PDispBG:GetTall())
 	PlayerDisplay:SetModel(PlyModel or Ply:GetModel())
-	PlayerDisplay:SetLookAt(PlayerDisplay:GetEntity():GetBonePosition(0))
+	local FakePly = PlayerDisplay:GetEntity()
+	PlayerDisplay:SetLookAt(FakePly:GetBonePosition(0))
 	PlayerDisplay:SetFOV(37)
 	PlayerDisplay:SetCursor("arrow")
-	local FakePly = PlayerDisplay:GetEntity()
 	FakePly:SetLOD(0)
 
 	local PDispBT = vgui.Create("DButton", motherFrame)
@@ -1709,6 +1647,7 @@ net.Receive("JMod_Inventory", function()
 			if(ent.EZarmorModels[id])then ent.EZarmorModels[id]:Remove() end
 		end
 		SelectionMenuOpen = false
+		CurrentJModInvScreen = nil
 	end
 
 	local ArmorButtonsLeft = {"head", "eyes", "mouthnose", "ears", "leftshoulder", "leftforearm", "leftthigh", "leftcalf"}
@@ -1730,28 +1669,37 @@ net.Receive("JMod_Inventory", function()
 	end
 	
 	--Item Inventory
-	local DScrollyPanel = vgui.Create( "DScrollPanel", motherFrame )
-	DScrollyPanel:SetPos(600, 30 + (#ShownCommands * 25))
-	DScrollyPanel:SetSize(180, 370-(#ShownCommands * 25))
-	
-	local ShownItems = 0
-	local ButtonSize = 55
-	if Ply.JModInv then
-		for k, v in ipairs(Ply.JModInv.items) do
-			CreateInvButton(motherFrame, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply)
-			ShownItems = ShownItems + 1
+	function motherFrame:UpdateItemInventory()
+		if self:Find("ItemInventory") then self:Find("ItemInventory"):Remove() end
+		local Ply = LocalPlayer()
+
+		local DScrollyPanel = vgui.Create( "DScrollPanel", self, "ItemInventory")
+		DScrollyPanel:SetPos(600, 30 + (#ShownCommands * 25))
+		DScrollyPanel:SetSize(180, 370 - (#ShownCommands * 25))
+		local ShownItems = 0
+		local ButtonSize = 55
+		if Ply.JModInv then
+			for k, v in ipairs(Ply.JModInv.items) do
+				CreateInvButton(self, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply)
+				ShownItems = ShownItems + 1
+			end
+			for k, v in pairs(Ply.JModInv.EZresources) do
+				CreateResButton(self, k, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply, k)
+				ShownItems = ShownItems + 1
+			end
 		end
-		for k, v in pairs(Ply.JModInv.EZresources) do
-			CreateResButton(motherFrame, k, v, (ShownItems % 3 * ButtonSize), (math.floor(ShownItems/3) * ButtonSize), ButtonSize, ButtonSize, DScrollyPanel, Ply, k)
-			ShownItems = ShownItems + 1
+		if ShownItems <= 0 then
+			if self:Find("GrabInfoLabel") then self:Find("GrabInfoLabel"):Remove() end
+			local InfoLabel = vgui.Create("DLabel", self, "GrabInfoLabel")
+			InfoLabel:SetPos(610, 100 + (#ShownCommands * 25))
+			InfoLabel:SetSize(300, 20)
+			InfoLabel:SetText("Use Grab command to pick up items.")
 		end
+		local weight = (Ply.EZarmor) and (Ply.EZarmor.totalWeight) or 0
+		self:SetTitle("Inventory | Current Inventory Weight: " .. weight .. "kg. | Current Inventory Volume: " .. tostring(Ply.JModInv.volume) .. "/" .. tostring(Ply.JModInv.maxVolume))
 	end
-	if ShownItems <= 0 then
-		local InfoLabel = vgui.Create("DLabel", motherFrame)
-		InfoLabel:SetPos(610, 100 + (#ShownCommands * 25))
-		InfoLabel:SetSize(300, 20)
-		InfoLabel:SetText("Use Grab command to pick up items.")
-	end
+
+	motherFrame:UpdateItemInventory()
 
 	function motherFrame:OnKeyCodePressed(num)
 		if num > 10 then return end
@@ -1764,6 +1712,85 @@ net.Receive("JMod_Inventory", function()
 	end
 
 	SelectionMenuOpen = true
+	CurrentJModInvScreen = motherFrame
+
+	return motherFrame
+end
+
+net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up stuff with JMOD HANDS
+	local invEnt = net.ReadEntity()
+	local command = net.ReadString()
+	local newInv = net.ReadTable()
+
+	if not(IsValid(invEnt)) then 
+		invEnt = LocalPlayer()
+	end
+
+	if newInv and istable(newInv) then
+		invEnt.JModInv = newInv
+	end
+
+	if not (command or isstring(command)) then return end
+
+	if command == "open_menu" then
+		if SelectionMenuOpen then return end
+		local frame = vgui.Create("DFrame")
+		frame:SetSize(210, 312)
+		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
+		frame:Center()
+		frame:MakePopup()
+		--frame:SetKeyboardInputEnabled(false)
+
+		frame.OnClose = function()
+			if OpenDropdown then
+				OpenDropdown:Remove()
+			end
+			frame = nil
+		end
+
+		frame.Paint = function(self, w, h)
+			BlurBackground(self)
+		end
+
+		function frame:UpdateItemInventory(invEnt, newInv)
+			local scrollPanel = vgui.Create("DScrollPanel", self)
+			scrollPanel:SetSize(200, 370)
+			scrollPanel:SetPos(5, 30)
+			
+			local ShownItems = 0
+			if newInv then
+				for k, v in ipairs(newInv.items) do
+					CreateInvButton(self, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
+					ShownItems = ShownItems + 1
+				end
+				if newInv.EZresources then
+					for k, v in pairs(newInv.EZresources) do
+						CreateResButton(self, k, v, (ShownItems % 4 * 50), (math.floor(ShownItems/4) * 50), 50, 50, scrollPanel, invEnt)
+						ShownItems = ShownItems + 1
+					end
+				end
+			end
+			local Status = vgui.Create("DLabel", self)
+			Status:SetSize(200, 10)
+			Status:SetPos(2, 300)
+			Status:SetText("Current Inventory Space: " .. tostring(invEnt.JModInv.volume) .. "/" .. tostring(invEnt.JModInv.maxVolume))
+		end
+
+		frame:UpdateItemInventory(invEnt, newInv)
+
+		CurrentJModInvScreen = frame
+	elseif command == "update" then
+		if IsValid(CurrentJModInvScreen) then
+			CurrentJModInvScreen:UpdateItemInventory(invEnt, newInv)
+		end
+	end
+end)
+
+net.Receive("JMod_Inventory", function()
+	if IsValid(CurrentJModInvScreen) then
+		CurrentJModInvScreen:Close()
+	end
+	JModInventoryMenu(net.ReadString(), net.ReadTable())
 end)
 
 net.Receive("JMod_ModifyConnections", function()
