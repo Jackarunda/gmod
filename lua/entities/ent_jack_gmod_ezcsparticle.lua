@@ -21,6 +21,7 @@ if SERVER then
 		self.NextDmg = Time + 2.5
 		self.CurVel = self.CurVel or VectorRand() * 50
 		self.AirResistance = 1
+		self.MaxVel = 150
 	end
 
 	function ENT:DamageObj(obj)
@@ -56,9 +57,9 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = VectorRand(-8, 8)
+		local RandDir = VectorRand(-6, 6)
 		RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 3)
+		local Force = RandDir + (JMod.Wind * 5) + Vector(0, 0, -6)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
@@ -76,7 +77,10 @@ if SERVER then
 		self.CurVel = self.CurVel + Force / ThinkRateHz
 
 		-- apply air resistance
-		self.CurVel = self.CurVel / 1.5
+		--self.CurVel = self.CurVel / 1.5
+
+		-- apply max velocity
+		self.CurVel = self.CurVel:GetNormalized() * math.min(self.CurVel:Length(), self.MaxVel)
 
 		-- observe current velocity
 		local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -90,7 +94,7 @@ if SERVER then
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
-			self:SetPos(NewPos)
+			self:SetPos(NewPos + MoveTrace.HitNormal * 10)
 		else
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
@@ -109,6 +113,7 @@ elseif CLIENT then
 		self.Visible = true
 		self.Show = true
 		self.siz = 1
+		self.RenderPos = self:GetPos()
 
 		timer.Simple(2, function()
 			if IsValid(self) then
@@ -139,7 +144,8 @@ elseif CLIENT then
 		if self.Show then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
+			render.DrawSprite(self.RenderPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
+			self.RenderPos = LerpVector(FrameTime() * 1, self.RenderPos, SelfPos)
 			self.siz = math.Clamp(self.siz + FrameTime() * 200, 0, 500)
 		end
 	end

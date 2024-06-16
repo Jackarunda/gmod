@@ -37,9 +37,9 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = Vector(math.random(-200, 200), math.random(-200, 200), math.random(-200, 100))
+		local RandDir = Vector(math.random(-10, 10), math.random(-10, 10), math.random(-15, 5))
 		--RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 3)
+		local Force = RandDir + (JMod.Wind * 10)
 
 		local NearbyParticles = 0
 		for key, obj in ipairs(ents.FindInSphere(SelfPos, self.AffectRange*1.5)) do
@@ -84,7 +84,7 @@ if SERVER then
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
-			self:SetPos(NewPos)
+			self:SetPos(NewPos + MoveTrace.HitNormal * 20)
 		else
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)

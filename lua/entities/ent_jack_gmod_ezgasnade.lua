@@ -31,7 +31,8 @@ if SERVER then
 				JMod.SetEZowner(Gas, Owner)
 				Gas:Spawn()
 				Gas:Activate()
-				Gas.CurVel = (SelfVel + VectorRand() * math.random(1, 200))
+				Gas.CurVel = (SelfVel + VectorRand(-200, 200))
+				Gas.MaxLife = 60
 			end)
 		end
 

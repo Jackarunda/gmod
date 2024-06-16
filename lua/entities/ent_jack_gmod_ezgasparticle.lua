@@ -108,9 +108,8 @@ if SERVER then
 		local OldPos = self:GetPos()
 		if self.CalcMove then
 			self:CalcMove(ThinkRateHz)
-
 		else
-			local Force = (VectorRand() * 5) + Vector(0, 0, -2) + JMod.Wind * 5
+			local Force = VectorRand(-5, 5) + Vector(0, 0, -6) + JMod.Wind * 8
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
@@ -129,7 +128,9 @@ if SERVER then
 
 			-- apply air resistance
 			--self.CurVel = self.CurVel / (self.AirResistance / ThinkRateHz)
-			self.CurVel = Vector(math.Clamp(self.CurVel.x, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.y, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.z, -self.MaxVel, self.MaxVel))
+
+			-- apply max velocity
+			self.CurVel = self.CurVel:GetNormalized() * math.min(self.CurVel:Length(), self.MaxVel)
 
 			-- observe current velocity
 			local NewPos = SelfPos + (self.CurVel / ThinkRateHz)
