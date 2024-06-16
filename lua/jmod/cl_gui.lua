@@ -1281,16 +1281,12 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 						net.Start("JMod_ItemInventory")
 						net.WriteString("drop")
 						net.WriteEntity(itemTable.ent)
-						if invEnt ~= Ply then
-							net.WriteEntity(invEnt)
-						end
+						net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
 						net.WriteString("missing")
-						if invEnt ~= Ply then
-							net.WriteEntity(invEnt)
-						end
+						net.WriteEntity(invEnt)
 						net.SendToServer()
 					end
 				end
@@ -1302,9 +1298,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 						net.Start("JMod_ItemInventory")
 						net.WriteString("use")
 						net.WriteEntity(itemTable.ent)
-						if invEnt ~= Ply then
-							net.WriteEntity(invEnt)
-						end
+						net.WriteEntity(invEnt)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
