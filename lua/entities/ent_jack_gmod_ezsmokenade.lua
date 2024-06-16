@@ -25,7 +25,7 @@ if SERVER then
 		if self.Exploded then
 			local Foof = EffectData()
 			Foof:SetOrigin(self:GetPos())
-			Foof:SetNormal(self:GetUp())
+			Foof:SetNormal(-self:GetUp())
 			Foof:SetScale(self.FuelLeft / 100)
 			Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 			util.Effect("eff_jack_gmod_ezsmokescreen", Foof, true, true)

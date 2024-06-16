@@ -168,6 +168,7 @@ if SERVER then
 				Fsh:SetScale((Fuel > 150 and .75) or .25)
 				Fsh:SetNormal(Up)
 				Fsh:SetStart(self:GetVelocity())
+				Fsh:SetEntity(self)
 				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 				-- this requires an attachment to be spec'd on the entity, and i can't be assed
 				--ParticleEffect("gf2_fountain_02_regulus_b_main",Pos,self:GetAngles(),self)
