@@ -127,7 +127,7 @@ if(SERVER)then
 	end
 
 	function ENT:OnDestroy()
-		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 15 do
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 5 do
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas.Range = 500

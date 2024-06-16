@@ -140,7 +140,7 @@ if SERVER then
 				Gas:Spawn()
 				Gas:Activate()
 				Gas.Canister = self
-				Gas.CurVel = SelfVel + VectorRand()
+				Gas.CurVel = SelfVel + VectorRand() * math.random(10, 100)
 			end)
 		end
 
@@ -166,7 +166,7 @@ if SERVER then
 			Gas:Spawn()
 			Gas:Activate()
 			Gas.Canister = self
-			Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp()
+			Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100)
 			self.ContainedGas = self.ContainedGas - 1
 			self:NextThink(Time + .2)
 			self:EmitSound("snds_jack_gmod/hiss.ogg", 65, math.random(90, 110))

@@ -12,25 +12,15 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.ThinkRate = 1
 ENT.AffectRange = 200
+ENT.MaxLife = 120
 --
 
 if SERVER then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		local Time = CurTime()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
-		self:SetMoveType(MOVETYPE_NONE)
-		self:SetNotSolid(true)
-		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
-		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
-		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 2.5
-		self.CurVel = self.CurVel or VectorRand()
+		self.CurVel = self.CurVel or VectorRand() * 50
+		self.AirResistance = 1
 	end
 
 	function ENT:DamageObj(obj)

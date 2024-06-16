@@ -14,6 +14,7 @@ ENT.EZgasParticle = true
 ENT.ThinkRate = 1
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 300
+ENT.MaxLife = 100
 --
 
 if SERVER then
@@ -33,12 +34,16 @@ if SERVER then
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
 		self.AirResistance = 2
-		self:SetLifeTime(math.random(50, 100))
+		self.MaxVel = 200--self.CurVel:Length() / self.AirResistance
+		self:SetLifeTime(math.random(self.MaxLife * .5, self.MaxLife) * JMod.Config.Particles.PoisonGasLingerTime)
+		if self.CustomInit then
+			self:CustomInit()
+		end
 	end
 
 	function ENT:SetLifeTime(tim)
 		local Time = CurTime()
-		self.LifeTime = tim * JMod.Config.Particles.PoisonGasLingerTime
+		self.LifeTime = tim
 		self.DieTime = Time + self.LifeTime
 	end
 
@@ -100,6 +105,7 @@ if SERVER then
 			return
 		end
 
+		local OldPos = self:GetPos()
 		if self.CalcMove then
 			self:CalcMove(ThinkRateHz)
 
@@ -123,7 +129,7 @@ if SERVER then
 
 			-- apply air resistance
 			--self.CurVel = self.CurVel / (self.AirResistance / ThinkRateHz)
-			self.CurVel = Vector(math.Clamp(self.CurVel.x, -100, 100), math.Clamp(self.CurVel.y, -100, 100), math.Clamp(self.CurVel.z, -100, 100))
+			self.CurVel = Vector(math.Clamp(self.CurVel.x, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.y, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.z, -self.MaxVel, self.MaxVel))
 
 			-- observe current velocity
 			local NewPos = SelfPos + (self.CurVel / ThinkRateHz)
@@ -147,6 +153,8 @@ if SERVER then
 				self.CurVel = -(CurVelAng:Forward() * Speed)
 			end
 		end
+
+		debugoverlay.Line(OldPos, self:GetPos(), 2, Color(0, 89, 255), true)
 
 		-- self:Extinguish()
 

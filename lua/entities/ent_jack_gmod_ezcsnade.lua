@@ -30,7 +30,7 @@ if SERVER then
 				Gas:Spawn()
 				Gas:Activate()
 				Gas.Canister = self
-				Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 100)
+				Gas.CurVel = self:GetPhysicsObject():GetVelocity() + self:GetUp() * math.random(10, 200)
 				self:EmitSound("snd_jack_sss.ogg", 55, 80)
 				self.FuelLeft = self.FuelLeft - 1
 
