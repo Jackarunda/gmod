@@ -220,7 +220,7 @@ if SERVER then
 
 				if PowerMult > 1 then
 					for i = 1, PowerMult do
-						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
+						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
 					end
 				end
 

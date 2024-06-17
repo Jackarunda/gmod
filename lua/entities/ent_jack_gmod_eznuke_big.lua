@@ -190,7 +190,7 @@ if SERVER then
 		for i = 0, 100 do
 			timer.Simple(i / 10, function()
 				for k, playa in player.Iterator() do
-					playa:EmitSound("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", 60, 80 - i / 2)
+					playa:EmitSound("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", 60, 80 - i / 2)
 				end
 			end)
 		end

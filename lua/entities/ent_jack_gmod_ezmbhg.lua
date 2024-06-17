@@ -100,8 +100,8 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_CHARGING)
-				self:EmitSound("ambient/machines/thumper_startup1.ogg")
-				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.ogg")
+				self:EmitSound("ambient/machines/thumper_startup1.wav")
+				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 				self.Hum:Play()
 				self.Hum:SetSoundLevel(100)
 			else

@@ -105,7 +105,7 @@ if SERVER then
 				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 				for i = 1, 2 do
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
 				end
 
 				for i = 1, PowerMult do

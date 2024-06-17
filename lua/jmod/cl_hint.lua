@@ -12,7 +12,7 @@
 	notification.AddLegacy(str, iconType, tiem)
 end)
 
---if not(specific)then surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".ogg" ) end
+--if not(specific)then surface.PlaySound( "ambient/water/drip" .. math.random( 1, 4 ) .. ".wav" ) end
 net.Receive("JMod_PlayerSpawn", function()
 	local DoHints = tobool(net.ReadBit())
 

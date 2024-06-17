@@ -145,7 +145,7 @@ if SERVER then
 
 			util.ScreenShake(SelfPos, 99999, 99999, 1, 1000)
 			self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 100, 130)
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 100, 130)
 			JMod.Sploom(self.EZowner, SelfPos, 10)
 			local Att = JMod.GetEZowner(self)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 30), 100, 5500)

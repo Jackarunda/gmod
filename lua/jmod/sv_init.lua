@@ -777,6 +777,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 						if Info.eff and Info.eff.weapon then
 							if not playa:HasWeapon(Info.eff.weapon) then
 								local Sweppy = playa:Give(Info.eff.weapon)
+								playa:SelectWeapon(Sweppy)
 								Sweppy.EZarmorID = id
 							end
 						end
