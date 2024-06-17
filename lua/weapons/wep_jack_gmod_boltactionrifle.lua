@@ -103,7 +103,7 @@ SWEP.Animations = {
 		ShellEjectAt = .4,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
 				t = .2,
 				v = 60
 			},
@@ -130,7 +130,7 @@ SWEP.Animations = {
 		ShellEjectAt = .5,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
 				t = .15,
 				v = 60
 			},
@@ -165,7 +165,7 @@ SWEP.Animations = {
 				v = 60
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/bar/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/bar/lift.wav",
 				t = .2,
 				v = 60
 			},
