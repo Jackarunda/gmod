@@ -61,7 +61,7 @@ if SERVER then
 
 	function ENT:Arm()
 		if (self:GetState() == JMod.EZ_STATE_ARMED) then return end
-		--self:EmitSound("buttons/button5.ogg",60,150)
+		--self:EmitSound("buttons/button5.wav",60,150)
 		self:SetState(JMod.EZ_STATE_ARMED)
 	end
 

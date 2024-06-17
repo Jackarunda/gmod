@@ -232,7 +232,7 @@ if SERVER then
 				self:SetSnakeye(true)
 				Phys:EnableDrag(true)
 				Phys:SetDragCoefficient(20)
-				self:EmitSound("buttons/lever6.ogg", 70, 120)
+				self:EmitSound("buttons/lever6.wav", 70, 120)
 			end
 		else
 			self.FreefallTicks = 0
