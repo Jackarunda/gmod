@@ -35,15 +35,15 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/flare.mdl")
-		self.Entity:SetMaterial("models/jflare")
-		self.Entity:SetModelScale(1.5, 0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
-		self.Entity:SetColor(Color(150, 40, 40))
+		self:SetModel("models/props_junk/flare.mdl")
+		self:SetMaterial("models/jflare")
+		self:SetModelScale(1.5, 0)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
+		self:SetColor(Color(150, 40, 40))
 		self:GetPhysicsObject():SetMass(8)
 
 		---
@@ -72,7 +72,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 25 then
-				self.Entity:EmitSound("Drywall.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 
 				if self:GetState() == STATE_BURNIN then
 					local Dmg = DamageInfo()
@@ -92,7 +92,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 1, 50) then
 			local Pos, State = self:GetPos(), self:GetState()
@@ -168,6 +168,7 @@ if SERVER then
 				Fsh:SetScale((Fuel > 150 and .75) or .25)
 				Fsh:SetNormal(Up)
 				Fsh:SetStart(self:GetVelocity())
+				Fsh:SetEntity(self)
 				util.Effect("eff_jack_gmod_flareburn", Fsh, true, true)
 				-- this requires an attachment to be spec'd on the entity, and i can't be assed
 				--ParticleEffect("gf2_fountain_02_regulus_b_main",Pos,self:GetAngles(),self)

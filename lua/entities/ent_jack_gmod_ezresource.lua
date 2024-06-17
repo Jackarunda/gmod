@@ -10,6 +10,7 @@ ENT.AdminSpawnable = false
 ---
 ENT.IsJackyEZresource = true
 ENT.EZstorageSpace = 0
+--ENT.JModHighlyFlammableFunc = "DoCookoff"
 ---
 local LoadOnSpawn = CreateConVar("jmod_debug_loadresourceonspawn", "0", FCVAR_NONE, "Attempts to load spawned resources directly into entities you are looking at")
 ---
@@ -100,6 +101,7 @@ if SERVER then
 		self.NextLoad = 0
 		self.Loaded = false
 		self.NextCombine = 0
+		self.NextFireThink = 0
 
 		---
 		timer.Simple(.01, function()
@@ -175,10 +177,10 @@ if SERVER then
 			end
 
 			if (data.Speed > 80) and self and self.ImpactNoise1 then
-				self.Entity:EmitSound(self.ImpactNoise1)
+				self:EmitSound(self.ImpactNoise1)
 
 				if self.ImpactNoise2 then
-					self.Entity:EmitSound(self.ImpactNoise2)
+					self:EmitSound(self.ImpactNoise2)
 				end
 			end
 
@@ -200,9 +202,10 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
-		if dmginfo:GetDamage() > self.DamageThreshold then
+		local Dam = dmginfo:GetDamage()
+		if Dam > self.DamageThreshold then
 			local Pos = self:GetPos()
 			sound.Play(self.BreakNoise, Pos)
 
@@ -215,6 +218,15 @@ if SERVER then
 
 			self:Remove()
 		end
+
+		if (dmginfo:GetAttacker() == self) or (dmginfo:GetInflictor() == self) then return end
+		if self.Cookoff and JMod.LinCh(Dam, 0, self.DamageThreshold) and ((dmginfo:IsExplosionDamage() and self.Explosive) or (dmginfo:IsDamageType(DMG_BURN) and self.Flammable)) then
+			self:DoCookoff()
+		elseif self.Flammable and (self.Flammable >= 0.5) and not(self:IsOnFire()) and JMod.LinCh(Dam, 0, self.Flammable) and dmginfo:IsDamageType(DMG_BURN) then
+			self:Ignite(math.random(self.Flammable * 3, self.Flammable * 5), 0)
+		end
+
+		if self.CustomOnTakeDamage then self:CustomOnTakeDamage(dmginfo) end
 	end
 
 	function ENT:Use(activator)
@@ -270,7 +282,52 @@ if SERVER then
 	end
 
 	function ENT:Think()
+		local Time = CurTime()
+		if (self.NextFireThink < Time) and self:IsOnFire() then
+			self.NextFireThink = Time + .5
+			local FuelLeft = self:GetResource()
+			if self.Flammable then
+				if FuelLeft <= 2 * self.Flammable then
+					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, FuelLeft / self.MaxResource, 1, 1)
+					self:Remove()
+				else
+					self:SetEZsupplies(self.EZsupplies, FuelLeft - math.random(0, 2 * self.Flammable), self)
+				end
+			end
+			if self.Cookoff and JMod.LinCh(FuelLeft, 0, self.MaxResource * 10) then
+				self:DoCookoff()
+			end
+		end
 		if self.CustomThink then return self:CustomThink() end
+	end
+
+	function ENT:DoCookoff()
+		if not(self.Cookoff) then return end
+		self.Cookoff = false
+		local FuelLeft = self:GetResource()
+		timer.Simple(math.Rand(0, 1), function()
+			if not(IsValid(self)) then return end
+			local Explodes, Boolets, Flames = 0, 0, 0
+			if self.Explosive then Explodes = math.max(FuelLeft * self.Explosive * 0.05, 1) end
+			if self.IsBoolet then Boolets = math.max(FuelLeft * self.IsBoolet * 1, 1) end
+			if self.Flammable and (self.Flammable > 0.5) then Flames = math.max(FuelLeft * self.Flammable * 0.05, 1) end
+			JMod.EnergeticsCookoff(self:GetPos(), self, FuelLeft / self.MaxResource, Explodes, Boolets, Flames)
+			if self.Fumigate then
+				for i = 1, FuelLeft * 0.2 do
+					timer.Simple(i / 200, function()
+						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						Gas:SetPos(SelfPos)
+						JMod.SetEZowner(Gas, Owner)
+						Gas:Spawn()
+						Gas:Activate()
+						Gas.Canister = self
+						Gas.CurVel = self:GetVelocity() + VectorRand()
+					end)
+				end
+			end
+			self:SetResource(0)
+			SafeRemoveEntityDelayed(self, 1)
+		end)
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
@@ -283,6 +340,7 @@ if SERVER then
 		JMod.SetEZowner(self, ply)
 		ent.NextLoad = Time + math.random(1, 5)
 		ent.NextCombine = Time + math.random(1, 5)
+		self.NextFireThink = Time + 1
 	end
 
 	function ENT:OnRemove()

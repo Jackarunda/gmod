@@ -135,6 +135,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
+		self:CalcWeight()
 		--if self:GetItemCount() <= 0 then return end
 		net.Start("JMod_ItemInventory")
 		net.WriteEntity(self)

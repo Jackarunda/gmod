@@ -17,6 +17,7 @@ ENT.ImpactNoise1 = "Canister.ImpactHard"
 ENT.DamageThreshold = 80
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = nil
+ENT.Flammable = 10
 
 ---
 if SERVER then
@@ -45,7 +46,7 @@ if SERVER then
 				for k, ent in pairs(ents.FindInSphere(pos, 600)) do
 					local Vec = (ent:GetPos() - pos):GetNormalized()
 
-					if self:Visible(ent) then
+					if JMod.VisCheck(self, ent, self) then
 						if ent:IsPlayer() or ent:IsNPC() then
 							ent:SetVelocity(Vec * 1000)
 						elseif IsValid(ent:GetPhysicsObject()) then
@@ -54,6 +55,18 @@ if SERVER then
 					end
 				end
 			end
+		end
+	end
+
+	function ENT:CustomThink()
+		if self:IsOnFire() then
+			local Pos, Up = self:GetPos(), self:GetUp()
+			local Fsh = EffectData()
+			Fsh:SetOrigin(self:GetPos() + Up * 10)
+			Fsh:SetScale(2)
+			Fsh:SetNormal(Up)
+			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
+			self:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
 		end
 	end
 

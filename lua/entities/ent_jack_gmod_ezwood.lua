@@ -17,6 +17,7 @@ ENT.Mass = 50
 ENT.ImpactNoise1 = "Wood.ImpactHard"
 ENT.DamageThreshold = 90
 ENT.BreakNoise = "Wood.Break"
+ENT.Flammable = 1
 
 ---
 if SERVER then
@@ -27,17 +28,6 @@ if SERVER then
 			Eff:SetEntity(ent)
 			Eff:SetStart(Vector(0, 0, 0))
 			--util.Effect("eff_jack_gmod_woodsplode", Eff, true, true)
-		end
-	end
-	function ENT:CustomThink()
-		if self:IsOnFire() then
-			local WoodLeft = self:GetResource()
-			if WoodLeft <= 2 then
-				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, self:GetResource() / self.MaxResource, 1, 1)
-				self:Remove()
-			else
-				self:SetEZsupplies(self.EZsupplies, WoodLeft - math.random(0, 2), self)
-			end
 		end
 	end
 elseif CLIENT then

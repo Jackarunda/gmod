@@ -19,12 +19,12 @@ end
 ---
 if SERVER then
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_junk/gnome.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/props_junk/gnome.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		local Phys = self:GetPhysicsObject()
 
 		if IsValid(Phys) then
@@ -33,7 +33,7 @@ if SERVER then
 		end
 
 		timer.Simple(0, function()
-			self.Entity:PhysicsInit(SOLID_VPHYSICS)
+			self:PhysicsInit(SOLID_VPHYSICS)
 			local Phys = self:GetPhysicsObject()
 
 			if IsValid(Phys) then
@@ -52,14 +52,14 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 200 then
-				self.Entity:EmitSound("Drywall.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 				self.FreezeTime = CurTime() + 10
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 		self.FreezeTime = CurTime() + 10
 	end
 
@@ -406,111 +406,33 @@ if SERVER then
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Power, Range = self:GetPos() + Vector(0, 0, 100), JMod.GetEZowner(self), JMod.Config.Explosives.Nuke.PowerMult, JMod.Config.Explosives.Nuke.RangeMult
 
-		--JMod.Sploom(Att,SelfPos,500)
-		timer.Simple(.1, function()
-			JMod.BlastDamageIgnoreWorld(SelfPos, Att, nil, 600, 800)
-		end)
+		local SelfPos = self:GetPos()
+		local Blam = EffectData()
+		Blam:SetOrigin(SelfPos)
+		Blam:SetScale(10)
+		util.Effect("eff_jack_plastisplosion", Blam, true, true)
+		util.ScreenShake(SelfPos, 99999, 99999, 1, 1000)
 
-		---
-		util.ScreenShake(SelfPos, 1000, 10, 5, 8000)
-		local Eff = "pcf_jack_moab"
-
-		if not util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld then
-			Eff = "pcf_jack_moab_air"
+		for i = 1, 2 do
+			sound.Play("BaseExplosionEffect.Sound", SelfPos, 120, math.random(90, 110))
 		end
 
-		for i = 1, 10 do
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 150, math.random(80, 110))
+		for i = 1, 2 do
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(90, 110))
 		end
-
-		---
-		SendClientNukeEffect(SelfPos, 8000)
-		---
-		if (JMod.Config.QoL.NukeFlashLightEnabled) then
-			local NukeFlash = ents.Create("ent_jack_gmod_nukeflash")
-			NukeFlash:SetPos(SelfPos + Vector(0, 0, 32))
-			NukeFlash.LifeDuration = 2
-			NukeFlash.MaxAltitude = 1000
-			NukeFlash:Spawn()
-			NukeFlash:Activate()
-		end
-
-		for h = 1, 40 do
-			timer.Simple(h / 10, function()
-				local ThermalRadiation = DamageInfo()
-				ThermalRadiation:SetDamageType(DMG_BURN)
-				ThermalRadiation:SetDamage((50 / h) * Power)
-				ThermalRadiation:SetAttacker(Att)
-				ThermalRadiation:SetInflictor(game.GetWorld())
-				util.BlastDamageInfo(ThermalRadiation, SelfPos, 12000)
-			end)
-		end
-
-		---
-		for k, ply in player.Iterator() do
-			local Dist = ply:GetPos():Distance(SelfPos)
-
-			if (Dist > 1000) and (Dist < 120000) then
-				timer.Simple(Dist / 6000, function()
-					ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 90)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", ply:GetPos(), 60, 70)
-					util.ScreenShake(ply:GetPos(), 1000, 10, 5, 100)
-				end)
-			end
-		end
-
-		---
-		for i = 1, 5 do
-			timer.Simple(i / 5, function()
-				util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 200 * i), 6000 * Range, 300 * Power)
-			end)
-		end
-
-		---
-		for k, ent in pairs(ents.FindInSphere(SelfPos, 2000)) do
-			if ent:GetClass() == "npc_helicopter" then
-				ent:Fire("selfdestruct", "", math.Rand(0, 2))
-			end
-		end
-
-		---
-		JMod.WreckBuildings(self, SelfPos, 15)
-		JMod.BlastDoors(self, SelfPos, 15)
-
-		---
-		timer.Simple(.2, function()
-			local Tr = util.QuickTrace(SelfPos + Vector(0, 0, 100), Vector(0, 0, -400))
-
-			if Tr.Hit then
-				util.Decal("GiantScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-			end
-		end)
-
-		---
-		self:Remove()
 
 		timer.Simple(.1, function()
-			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
-			local Eff = EffectData()
-			Eff:SetOrigin(SelfPos)
-			util.Effect("eff_jack_gmod_tinynukeflash", Eff, true, true)
-		end)
-
-		---
-		timer.Simple(5, function()
-			for j = 1, 10 do
-				timer.Simple(j / 10, function()
-					for k = 1, 5 * JMod.Config.Particles.NuclearRadiationMult do
-						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-						Gas:SetPos(SelfPos)
-						JMod.SetEZowner(Gas, Att)
-						Gas:Spawn()
-						Gas:Activate()
-						Gas.CurVel = (VectorRand() * math.random(1, 250) + Vector(0, 0, 600 * JMod.Config.Particles.NuclearRadiationMult))
-					end
-				end)
+			local MeltBlast = DamageInfo()
+			MeltBlast:SetInflictor(game.GetWorld())
+			MeltBlast:SetAttacker(game.GetWorld())
+			MeltBlast:SetDamage(250)
+			MeltBlast:SetDamageType(DMG_DISSOLVE)
+			util.BlastDamageInfo(MeltBlast, SelfPos, 400)
+			for k, v in pairs(ents.FindInSphere(SelfPos, 1000)) do 
+				if v:GetClass() == "npc_strider" then
+					v:Fire("break")
+				end
 			end
 		end)
 	end

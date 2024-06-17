@@ -395,7 +395,11 @@ function JMod.MakeModel(self, mdl, mat, scale, col)
 	local Mdl = ClientsideModel(mdl)
 
 	if mat then
-		Mdl:SetMaterial(mat)
+		if isnumber(mat) then
+			Mdl:SetSkin(mat)
+		else
+			Mdl:SetMaterial(mat)
+		end
 	end
 
 	if scale then
@@ -603,7 +607,7 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 end)
 
 local Translucent = Color(255, 255, 255, 100)
-hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", function(bDepth, bSkybox)
+hook.Add("PostDrawTranslucentRenderables", "JMOD_PLAYEREFFECTS", function(bDepth, bSkybox)
 	local ply, Time = LocalPlayer(), CurTime()
 	
 	if ply:Alive() then
@@ -639,7 +643,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		if not IsValid(ToolBox) then return end
 		if not ToolBox:GetClass() == "wep_jack_gmod_eztoolbox" then return end
 		
-		 if ToolBox.EZpreview then
+		if ToolBox.EZpreview then
 		 	if ToolBox.EZpreview.Box then
 		 		if ToolBox:GetSelectedBuild() ~= "" then
 		 			local Filter = {ply}
@@ -706,7 +710,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMOD_POSTTRANSLUCENTRENDERABLES", fu
 		 			render.DrawWireframeBox(Tr1.HitPos - Dir * 20, Dir:Angle(), Vector(21.5,.5,.5), Vector(-0,-.5,-.5), color_white, true)
 		 		end
 		 	end
-		 end
+		end
 	end
 end)
 
@@ -940,15 +944,213 @@ net.Receive("JMod_Ravebreak", function()
 	LocalPlayer().JMod_RavebreakStartTime = CurTime() + 2.325
 	LocalPlayer().JMod_RavebreakEndTime = CurTime() + 25.5
 end)
-
 -- note that the song's beat is about .35 seconds
-hook.Add("RenderScene", "JMod_RenderScene", function(origin, angs, fov)
-	render.SetAmbientLight(1, 1, 1)
-	render.SetLightingOrigin(Vector(-3400, 5300, 400))
+
+-- Liquid Effects
+local WaterSprite, FireSprite = Material("effects/splash1"), Material("effects/fire_cloud1")
+local RainbowSprite, RainbowCol = Material("effects/mat_jack_gmod_rainbow"), Color(255, 255, 255, 20)
+
+JMod.ParticleSpecs = {
+	[1] = { -- jellied fuel
+		launchSize = 2,
+		lifeTime = 1.5,
+		finalSize = 200,
+		airResist = .15,
+		mat = Material("effects/mat_jack_gmod_liquidstream"),
+		colorFunc = function(self)
+			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
+			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
+			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)
+			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 100 * (1 - self.lifeProgress))
+		end,
+		particleDrawFunc = function(self, size, col)
+			render.SetMaterial(WaterSprite)
+			render.DrawSprite(self.pos, size * 2, size * 2, col)
+		end,
+		impactFunc = function(self, normal)
+			if math.random(1, 2) == 1 then
+				local Splach = EffectData()
+				Splach:SetOrigin(self.pos - normal * .5)
+				Splach:SetNormal(normal)
+				Splach:SetScale(math.Rand(1, 3))
+				util.Effect("eff_jack_gmod_tinysplash", Splach)
+			end
+			self.dieTime = self.dieTime - .2
+		end
+	},
+	[2] = { -- flamethrower
+		launchSize = 2,
+		lifeTime = 1,
+		finalSize = 250,
+		airResist = .1,
+		mat = Material("effects/mat_jack_gmod_liquidstream"),
+		colorFunc = function(self)
+			--[[local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
+			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
+			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)--]]
+			local InverseLife = (1 - self.lifeProgress)
+			local R = 255
+			local G = Lerp(self.lifeProgress, 255, 230)
+			local B = Lerp(self.lifeProgress, 255, 50)
+			return Color(R, G, B, 200 * InverseLife)
+		end,
+		particleDrawFunc = function(self, size, col)
+			render.SetMaterial(FireSprite)
+			render.DrawSprite(self.pos + Vector(0, 0, self.lifeProgress * size * .5), size * 1.5, size * 1.5, Color(255, 255, 255, 100 * (1 - self.lifeProgress)))
+		end,
+		impactFunc = function(self, normal)
+			self.dieTime = self.dieTime - .1
+		end,
+		gravity = 200
+	},
+	[3] = { -- SprinklerWater
+		launchSize = 1,
+		lifeTime = 1.5,
+		finalSize = 200,
+		airResist = 1,
+		mat = Material("effects/mat_jack_gmod_liquidstream"),
+		colorFunc = function(self)
+			local AmbiLight = (render.GetLightColor(self.pos) or Vector(1, 1, 1))
+			AmbiLight.x = math.Clamp(AmbiLight.x + .2, 0, 1)
+			AmbiLight.y = math.Clamp(AmbiLight.y + .2, 0, 1)
+			AmbiLight.z = math.Clamp(AmbiLight.z + .2, 0, 1)
+			return Color(200 * AmbiLight.x, 220 * AmbiLight.y, 255 * AmbiLight.z, 100 * (1 - self.lifeProgress))
+		end,
+		particleDrawFunc = function(self, size, col)
+			render.SetMaterial(WaterSprite)
+			render.DrawSprite(self.pos, size * 2, size * 2, col)
+		end,
+		impactFunc = function(self, normal)
+			local Splach = EffectData()
+			Splach:SetOrigin(self.pos - normal * .5)
+			Splach:SetNormal(normal)
+			Splach:SetScale(math.Rand(1, 3))
+			util.Effect("eff_jack_gmod_tinysplash", Splach)
+			self.dieTime = self.dieTime - .2
+		end,
+		stencilTest = true
+	},
+}
+
+JMod.LiquidParticles = {}
+
+net.Receive("JMod_LiquidParticle", function()
+	local Pos = net.ReadVector()
+	local Dir = net.ReadVector()
+	local Amt = net.ReadInt(8)
+	local Group = net.ReadInt(8)
+	local Type = net.ReadInt(8)
+	JMod.LiquidSpray(Pos, Dir, Amt, Group, Type)
 end)
---hook.Add("PostRender","JMod_PostRender",function()
---	engine.LightStyle(0,"m")
---end)
+
+-- Liquid Think
+hook.Add("Think", "JMod_LiquidStreams", function()
+	local FT, Time = FrameTime(), CurTime()
+	for groupID, group in pairs(JMod.LiquidParticles) do
+		for k, particle in pairs(group) do
+			local Specs = JMod.ParticleSpecs[particle.typ]
+			local Travel = particle.vel * FT
+			local Tr = util.TraceLine({
+				start = particle.pos,
+				endpos = particle.pos + Travel,
+				mask = MASK_NPCWORLDSTATIC + MASK_WATER
+			})
+			if (Tr.Hit) then
+				particle.pos = Tr.HitPos + Tr.HitNormal
+				-- deflect when hitting a surface
+				particle.vel = Tr.HitNormal * 70 + VectorRand() * 70
+				particle.dieTime = particle.dieTime - FT * 30 -- disperse quickly
+				if (Specs.impactFunc) then
+					Specs.impactFunc(particle, Tr.HitNormal)
+				end
+			else
+				particle.pos = particle.pos + Travel
+			end
+			particle.vel = particle.vel - Vector(0, 0, (Specs.gravity or 600) * FT)
+			local AirLoss = FT * Specs.airResist
+			particle.vel = particle.vel * (1 - AirLoss)
+			vel = particle.vel + JMod.Wind * FT * 200
+			if (particle.dieTime < Time) then
+				table.remove(JMod.LiquidParticles[groupID], k)
+			else
+				local TimeLeft = particle.dieTime - Time
+				particle.lifeProgress = 1 - (TimeLeft / Specs.lifeTime)
+			end
+		end
+	end
+end)
+
+-- Liquid Render
+local GlowSprite = Material("sprites/mat_jack_basicglow")
+hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( bDrawingDepth, bDrawingSkybox, isDraw3DSkybox )
+	if bDrawingSkybox then return end
+	local SunInfo = util.GetSunInfo()
+	local ViewPos = EyePos()
+	local ViewDir = EyeAngles()
+	--local ScreenWidth, ScreenHeight = ScrW(), ScrH()
+	--local FoV = 1 / (LocalPlayer():GetFOV() / 90)
+	for groupID, group in pairs(JMod.LiquidParticles) do
+		local NumberOfParticles = #group
+		local LastPos = nil
+		for k, particle in ipairs(group) do
+			local Specs = JMod.ParticleSpecs[particle.typ]
+			local Size = Specs.launchSize + (Specs.finalSize - Specs.launchSize) * particle.lifeProgress
+			local Col = Specs.colorFunc(particle, Size)
+			if (Specs.particleDrawFunc) then
+				Specs.particleDrawFunc(particle, Size, Col)
+			end
+			if (LastPos) then
+				-- God's promise to not flood the earth with water
+				if Specs.stencilTest then
+					-- STENCIL TEST
+					render.SetStencilEnable( true )
+					render.ClearStencil()
+					--
+					render.SetStencilTestMask( 255 )
+					render.SetStencilWriteMask( 255 )
+					render.SetStencilReferenceValue( 1 )
+					--
+					render.SetStencilFailOperation( STENCILOPERATION_KEEP )
+					render.SetStencilPassOperation( STENCILOPERATION_REPLACE )
+					render.SetStencilZFailOperation( STENCILOPERATION_KEEP )
+					--
+					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_ALWAYS )
+					-- RENDER NORMAL STUFF HERE
+				end
+				render.SetMaterial(Specs.mat)
+				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
+					-- Alternate method that uses segmented beams
+					--[[if k == 2 then
+						render.StartBeam(NumberOfParticles)
+						--print("starting beam")
+					else
+						render.AddBeam(particle.pos, Size, 0, Col)
+						--print("adding beam", k)
+					end
+					if (k == NumberOfParticles) and (NumberOfParticles > 1) then
+						render.EndBeam()
+						--print("ending beam", NumberOfParticles)
+					end--]]
+				if Specs.stencilTest then
+					-- RAINBOW WILL BE RENDERED BEHIND
+					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
+					render.SetStencilPassOperation( STENCILOPERATION_KEEP )
+
+					--START REAL RAINBOW DRAW
+					render.SetMaterial(RainbowSprite)
+					render.DrawSprite(ViewPos - SunInfo.direction * 250 + ViewDir:Up() * 200, 200, 100, RainbowCol)
+					--END
+					render.SetStencilEnable( false )
+					-- STENCIL TEST
+				end
+			end
+			LastPos = particle.pos
+		end
+	end
+end)
+
 --[[
 ValveBiped.Bip01_Pelvis
 ValveBiped.Bip01_Spine

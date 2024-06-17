@@ -42,7 +42,7 @@ if SERVER then
 			self:SetColor(Color(self.Specs.clr.r, self.Specs.clr.g, self.Specs.clr.b))
 		end
 
-		--self.Entity:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
+		--self:PhysicsInitBox(Vector(-10,-10,-10),Vector(10,10,10))
 		if self.ModelScale and not self.Specs.gayPhysics then
 			self:SetModelScale(self.ModelScale)
 		end
@@ -84,6 +84,11 @@ if SERVER then
 			self.Durability = self.Durability - dmginfo:GetDamage() / 2
 
 			if self.Durability <= 0 then
+				if self.Specs.eff and self.Specs.eff.explosive and not(self.exploded) then
+					self.exploded = true
+					local FireAmt = 2--((Info.chrg and Info.chrg.fuel) or 1) / 10
+					JMod.EnergeticsCookoff(self:GetPos(), dmginfo:GetAttacker(), 1, 1, 0, FireAmt)
+				end
 				self:Remove()
 			end
 		end

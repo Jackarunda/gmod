@@ -23,13 +23,13 @@ if SERVER then
 	function ENT:UseEffect(pos, ent, destructive)
 		if destructive and not self.Sploomd then
 			self.Sploomd = true
-			local Owner, Count = self.EZowner, self:GetResource() / 10
+			local Owner, Count = self.EZowner, self:GetResource()
 
 			timer.Simple(.5, function()
-				for i = 1, JMod.Config.Particles.NuclearRadiationMult * Count * 10 do
+				for i = 1, math.floor(JMod.Config.Particles.NuclearRadiationMult * Count) do
 					timer.Simple(i * .05, function()
 						local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-						Gas.Range = 500
+						Gas.AffectRange = 500
 						Gas:SetPos(pos)
 						JMod.SetEZowner(Gas, Owner or game.GetWorld())
 						Gas:Spawn()

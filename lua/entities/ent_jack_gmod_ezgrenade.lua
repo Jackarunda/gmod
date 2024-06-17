@@ -23,6 +23,7 @@ ENT.SpoonBodygroup = {2, 1} -- Body group to change to when we release the spoon
 ENT.DetDelay = nil -- Delay before detonation
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.JModEZstorable = true
+ENT.EZinvPrime = true
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")

@@ -82,7 +82,7 @@ if SERVER then
 			self:SetChemicals(math.Clamp(self:GetChemicals() - chemAmt, 0, 100))
 			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.CHEMICALS, chemAmt, pos, Angle(0, 0, 0), -Forward, 300)
 		end
-		if chemAmt >= 1 then
+		if fissileAmt >= 1 then
 			self:SetFissile(math.Clamp(self:GetFissile() - fissileAmt, 0, 100))
 			JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, fissileAmt, pos, Angle(0, 0, 0), -Forward, 300)
 		end

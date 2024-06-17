@@ -815,6 +815,9 @@ function JMod.GetSalvageYield(ent)
 		else
 			Results[k] = math.ceil(v * .6)
 		end
+		if ent.LVS and ent.ExplodedAlready then
+			Results[k] = Results[k] * .5
+		end
 	end
 
 	if ent.IsJackyEZmachine then
@@ -846,7 +849,15 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
-	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nnumber of physics: " .. PhysNum .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized)
+	local FinalResults, Message = hook.Run("JMod_SalvageResults", ent, Results, Mat, Mdl, Specialized)
+
+	if istable(FinalResults) then
+		Results = FinalResults
+	elseif isbool(FinalResults) and (FinalResults == false) then
+		Results = {}
+	end
+
+	return Results, "salvaging results for " .. tostring(ent) .. ":\nphysmat: " .. Mat .. "\nnumber of physics: " .. PhysNum .. "\nmodel: " .. Mdl .. "\nspecialized: " .. tostring(Specialized) .. "\n" .. tostring(Message)
 end
 
 function JMod.CalculateUpgradeCosts(buildRequirements)

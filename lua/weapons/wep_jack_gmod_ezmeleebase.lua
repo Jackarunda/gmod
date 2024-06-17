@@ -335,7 +335,7 @@ function SWEP:Deploy()
 	if IsValid(vm) and vm.LookupSequence then
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("draw"))
 		self:UpdateNextIdle()
-		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".wav", 65, math.random(90, 110))
+		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
 	end
 
 	local Delay = vm:SequenceDuration(vm:LookupSequence("draw"))

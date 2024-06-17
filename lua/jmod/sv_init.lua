@@ -770,6 +770,20 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 					end
 				end
 
+				if playa.EZarmor.effects.weapon then
+					for id, armorData in pairs(playa.EZarmor.items) do
+						local Info = JMod.ArmorTable[armorData.name]
+
+						if Info.eff and Info.eff.weapon then
+							if not playa:HasWeapon(Info.eff.weapon) then
+								local Sweppy = playa:Give(Info.eff.weapon)
+								playa:SelectWeapon(Sweppy)
+								Sweppy.EZarmorID = id
+							end
+						end
+					end
+				end
+
 				JMod.CalcSpeed(playa)
 				JMod.EZarmorSync(playa)
 			end
@@ -945,21 +959,23 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 	local EZcorpse
 	if ShouldJModCorpse then
 		local PlyRagdoll = ply:GetRagdollEntity()
-		local BodyGroupValues = ""
-		for i = 1, PlyRagdoll:GetNumBodyGroups() do
-			BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
-		end
-		SafeRemoveEntity(PlyRagdoll)
-		EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
-		EZcorpse.DeadPlayer = ply
-		if ply.EZoverDamage then
-			EZcorpse.EZoverDamage = ply.EZoverDamage
-		end
-		EZcorpse.BodyGroupValues = BodyGroupValues
-		EZcorpse:Spawn()
-		EZcorpse:Activate()
-		if IsValid(EZcorpse.EZragdoll) then
-			EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+		if IsValid(PlyRagdoll) then
+			local BodyGroupValues = ""
+			for i = 1, PlyRagdoll:GetNumBodyGroups() do
+				BodyGroupValues = BodyGroupValues .. tostring(PlyRagdoll:GetBodygroup(i - 1))
+			end
+			SafeRemoveEntity(PlyRagdoll)
+			EZcorpse = ents.Create("ent_jack_gmod_ezcorpse")
+			EZcorpse.DeadPlayer = ply
+			if ply.EZoverDamage then
+				EZcorpse.EZoverDamage = ply.EZoverDamage
+			end
+			EZcorpse.BodyGroupValues = BodyGroupValues
+			EZcorpse:Spawn()
+			EZcorpse:Activate()
+			if IsValid(EZcorpse.EZragdoll) then
+				EZcorpse.EZragdoll.EZstorageSpace = JMod.GetStorageCapacity(ply) 
+			end
 		end
 	end
 	ply.EZoverDamage = nil
@@ -1050,3 +1066,22 @@ end)
 hook.Add("PlayerCanHearPlayersVoice", "JMOD_PLAYERHEARVOICE", function(listener, talker)
 	if talker.EZarmor and talker.EZarmor.effects.teamComms then return JMod.PlayersCanComm(listener, talker) end
 end)
+
+local function ResetBouyancy(ply, ent)
+	if ent.EZbuoyancy then
+		local phys = ent:GetPhysicsObject()
+		timer.Simple(0, function()
+			if IsValid(phys) then
+				phys:SetBuoyancyRatio(ent.EZbuoyancy)
+			end
+		end)
+	end
+end
+
+hook.Add("PhysgunDrop", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("GravGunDrop", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("GravGunPunt", "JMod_ResetBouyancy", ResetBouyancy)
+
+hook.Add("OnPlayerPhysicsDrop", "JMod_ResetBouyancy", ResetBouyancy)

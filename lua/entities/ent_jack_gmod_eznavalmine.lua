@@ -10,6 +10,7 @@ ENT.AdminSpawnable = true
 ---
 ENT.EZscannerDanger = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZbombBaySize = 25
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 
@@ -35,13 +36,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/jmod/explosives/mines/submine.mdl")
-		--self.Entity:SetMaterial("models/mat_jack_dullscratchedmetal")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/jmod/explosives/mines/submine.mdl")
+		--self:SetMaterial("models/mat_jack_dullscratchedmetal")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -104,7 +105,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 100, 200) then
 			if self:WaterLevel() > 0 then
@@ -176,9 +177,9 @@ if SERVER then
 
 				---
 				for i = 1, 3 do
-					sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 80, 100)
-					sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 160, 50)
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 70, math.random(80, 110))
+					sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 80, 100)
+					sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 160, 50)
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 70, math.random(80, 110))
 				end
 
 				---

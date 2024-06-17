@@ -18,6 +18,7 @@ ENT.Mass = 30
 ENT.ImpactNoise1 = "Flesh.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Flesh.ImpactSoft"
+ENT.Flammable = 2
 
 ---
 if SERVER then

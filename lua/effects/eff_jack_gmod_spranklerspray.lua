@@ -1,13 +1,13 @@
 ﻿local Wake = Material("effects/splashwake1")
 
 function EFFECT:Init(data)
-	self.Scale = data:GetScale()
+	self.Scl = data:GetScale()
 	self.Pos = data:GetOrigin()
 	self.Dir = data:GetStart()
 	---
 	local emitter = ParticleEmitter(self.Pos)
 
-	for i = 1, 20 * self.Scale do
+	for i = 1, 20 * self.Scl do
 		local Sprite = table.Random({"effects/splash1", "effects/splash2", "effects/splash4"})
 
 		local particle = emitter:Add(Sprite, self.Pos)
@@ -17,7 +17,7 @@ function EFFECT:Init(data)
 		particle:SetBounce(.01)
 		particle:SetGravity(Vector(0, 0, -600))
 		particle:SetAirResistance(math.random(0, 50))
-		particle:SetDieTime(math.Rand(.5, 1.2) * self.Scale)
+		particle:SetDieTime(math.Rand(.5, 1.2) * self.Scl)
 		particle:SetStartAlpha(255)
 		particle:SetEndAlpha(0)
 		particle:SetStartSize(1)

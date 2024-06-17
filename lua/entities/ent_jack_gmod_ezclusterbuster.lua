@@ -40,8 +40,8 @@ if SERVER then
 	function ENT:Initialize()
 		self:SetModel("models/jmod/explosives/bombs/bomb_cbu.mdl")
 		self:SetSkin(1)
-		--self.Entity:SetMaterial("models/jmod/explosives/bombs/cluster_buster")
-		--self.Entity:SetModelScale(1.5,0)
+		--self:SetMaterial("models/jmod/explosives/bombs/cluster_buster")
+		--self:SetModelScale(1.5,0)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
@@ -112,7 +112,7 @@ if SERVER then
 			if IsValid(Att) and (self.DropOwner == Att) then return end
 		end
 
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 50, 100) then
 			if math.random(1, 5) == 1 then

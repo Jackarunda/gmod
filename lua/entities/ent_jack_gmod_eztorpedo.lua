@@ -170,7 +170,7 @@ if SERVER then
 				Eff = "500lb_air"
 			end
 			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 80, 100)
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, 100)
 		else
 			local splad = EffectData()
 			splad:SetOrigin(SelfPos)
@@ -181,9 +181,9 @@ if SERVER then
 
 			---
 			for i = 1, 3 do
-				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 80, 100)
-				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".ogg", SelfPos, 160, 50)
-				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 80, math.random(80, 110))
+				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 80, 100)
+				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 160, 50)
+				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, math.random(80, 110))
 			end
 		end
 		---

@@ -34,14 +34,14 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self.Entity:SetModel("models/props_wasteland/laundry_washer001a.mdl")
-		self.Entity:SetMaterial("models/mat_jack_gmod_ezmbhg")
-		--self.Entity:SetModelScale(.75,0)
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		self:SetModel("models/props_wasteland/laundry_washer001a.mdl")
+		self:SetMaterial("models/mat_jack_gmod_ezmbhg")
+		--self:SetModelScale(.75,0)
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 
 		---
 		timer.Simple(.01, function()
@@ -58,7 +58,7 @@ if SERVER then
 	function ENT:PhysicsCollide(data, physobj)
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
-				self.Entity:EmitSound("Canister.ImpactHard")
+				self:EmitSound("Canister.ImpactHard")
 			end
 
 			if data.Speed > 1000 then
@@ -84,7 +84,7 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 100, 200) then
 			self:Break()
@@ -100,8 +100,8 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_CHARGING)
-				self:EmitSound("ambient/machines/thumper_startup1.ogg")
-				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.ogg")
+				self:EmitSound("ambient/machines/thumper_startup1.wav")
+				self.Hum = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 				self.Hum:Play()
 				self.Hum:SetSoundLevel(100)
 			else

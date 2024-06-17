@@ -9,6 +9,11 @@ ENT.Spawnable = true
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ---
+
+function ENT:SetupDataTables()
+	self:NetworkVar("Int", 0, "Pop")
+end
+
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 20
@@ -36,6 +41,8 @@ if SERVER then
 				Phys:Wake()
 			end
 		end)
+		---
+		self:SetPop(2)
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
@@ -52,20 +59,29 @@ if SERVER then
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 
 		if Alt then
+			local Used = false
 			local Helf, Max = activator:Health(), activator:GetMaxHealth()
 			activator.EZhealth = activator.EZhealth or 0
 			local Missing = Max - (Helf + activator.EZhealth)
 			if Missing > 0 then
-				local AddAmt = math.min(Missing, 15 * JMod.Config.Tools.Medkit.HealMult)
+				local AddAmt = math.min(Missing, 5 * JMod.Config.Tools.Medkit.HealMult)
 				activator.EZhealth = activator.EZhealth + AddAmt
 				JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES, self:LocalToWorld(self:OBBCenter()), nil, 1)
 				--
-				self:Remove()
+				--self:Remove()
+				Used = true
 			end
 			if activator.EZbleeding and (activator.EZbleeding > 0) then
 				activator:PrintMessage(HUD_PRINTCENTER, "stopping bleeding")
 				activator.EZbleeding = math.Clamp(activator.EZbleeding - JMod.Config.Tools.Medkit.HealMult * 50, 0, 9e9)
 				activator:ViewPunch(Angle(math.Rand(-2, 2), math.Rand(-2, 2), math.Rand(-2, 2)))
+				--self:Remove()
+				Used = true
+			end
+			if Used then
+				self:SetPop(self:GetPop() - 1)
+			end
+			if self:GetPop() <= 0 then
 				self:Remove()
 			end
 		else
@@ -75,7 +91,9 @@ if SERVER then
 	end
 
 	function ENT:Think()
-		-- Haha
+		if self:GetPop() <= 0 then
+			self:Remove()
+		end
 	end
 
 	function ENT:OnRemove()
@@ -83,8 +101,14 @@ if SERVER then
 	end
 	
 elseif CLIENT then
+	function ENT:Initialize()
+		--
+	end
 
 	function ENT:Draw()
+		local Matricks = Matrix()
+		Matricks:Scale(Vector(1*(self:GetPop()/1), 1, 1))
+		self:EnableMatrix("RenderMultiply", Matricks)
 		self:DrawModel()
 	end
 

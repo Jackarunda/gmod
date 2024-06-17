@@ -181,7 +181,7 @@ if SERVER then
 				util.ScreenShake(SelfPos, 99999, 99999, 1, 750 * PowerMult)
 
 				for i = 1, 2 do
-					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
+					sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 140, math.random(80, 110))
 				end
 
 				for i = 1, PowerMult do
@@ -233,7 +233,7 @@ if SERVER then
 			Fsh:SetScale(1)
 			Fsh:SetNormal(Ang:Forward())
 			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
-			self.Entity:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
+			self:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
 			self.Fuze = self.Fuze - .5
 

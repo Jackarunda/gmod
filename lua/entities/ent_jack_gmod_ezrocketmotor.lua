@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
 ENT.ThrustPower = 20000
 ENT.JModHighlyFlammableFunc = "Launch"
+ENT.JModEZstorable = true
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED, STATE_LAUNCHED = -1, 0, 1, 2
 

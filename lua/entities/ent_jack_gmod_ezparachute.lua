@@ -213,6 +213,8 @@ elseif CLIENT then
 		local FT = FrameTime()
 		local ChuteProg = self:GetNW2Float("ChuteProg", 0)
 		local Owner = self:GetNW2Entity("Owner")
+		self.LerpedYaw = self.LerpedYaw or 0
+		self.LerpedPitch = self.LerpedPitch or 0
 		if IsValid(Owner) then
 			local Dir = Owner:GetVelocity():GetNormalized()
 			local DirAng = Dir:Angle()

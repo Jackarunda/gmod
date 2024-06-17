@@ -77,7 +77,7 @@ if SERVER then
 	function ENT:Arm()
 		if self.Ignited then return end
 		self.Ignited = true
-		self.Entity:EmitSound("snd_jack_sss.ogg", 60, math.Rand(90, 110))
+		self:EmitSound("snd_jack_sss.ogg", 60, math.Rand(90, 110))
 
 		for i = 1, 8 do
 			local Fsh = EffectData()

@@ -127,15 +127,15 @@ if(SERVER)then
 	end
 
 	function ENT:OnDestroy()
-		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 15 do
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 3 do
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
-				Gas.Range = 500
+				Gas.Range = 250
 				Gas:SetPos(self:GetPos())
 				JMod.SetEZowner(Gas, JMod.GetEZowner(self))
 				Gas:Spawn()
 				Gas:Activate()
-				Gas.CurVel = (VectorRand() * math.random(1, 1000) + Vector(0, 0, 100 * JMod.Config.Particles.NuclearRadiationMult))
+				Gas.CurVel = (VectorRand() * math.random(1, 200) + Vector(0, 0, 10 * JMod.Config.Particles.NuclearRadiationMult))
 			end)
 		end
 	end

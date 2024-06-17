@@ -81,6 +81,7 @@ if(SERVER)then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff(JMod.GetEZowner(self))
 					end
+					self.EZstayOn = nil
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
@@ -91,7 +92,7 @@ if(SERVER)then
 		if self:GetState() ~= STATE_OFF then return end
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
-		if self.EZinstalled and self.DepositKey then
+		if self.EZinstalled and JMod.NaturalResourceTable[self.DepositKey] then
 			if (self:GetElectricity() > 0) then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
@@ -188,7 +189,8 @@ if(SERVER)then
 				
 				if not self.EZinstalled then self:TurnOff() return end
 
-				if not JMod.NaturalResourceTable[self.DepositKey] then 
+				local Deposit = JMod.NaturalResourceTable[self.DepositKey]
+				if not Deposit then 
 					self:TurnOff()
 
 					return
@@ -199,9 +201,9 @@ if(SERVER)then
 				local pumpRate = 1 * (JMod.EZ_GRADE_BUFFS[self:GetGrade()] ^ 2) * JMod.Config.ResourceEconomy.ExtractionSpeed
 				-- Here's where we do the rescource deduction, and barrel production
 				-- If it's a flow (i.e. water)
-				if JMod.NaturalResourceTable[self.DepositKey].rate then
+				if Deposit.rate then
 					-- We get the rate
-					local flowRate = JMod.NaturalResourceTable[self.DepositKey].rate
+					local flowRate = Deposit.rate
 					-- and set the progress to what it was last tick + our ability * the flowrate
 					self:SetProgress(self:GetProgress() + pumpRate * flowRate)
 
@@ -215,7 +217,7 @@ if(SERVER)then
 					self:SetProgress(self:GetProgress() + pumpRate)
 
 					if self:GetProgress() >= 100 then
-						local amtToPump = math.min(JMod.NaturalResourceTable[self.DepositKey].amt, 100)
+						local amtToPump = math.min(Deposit.amt, 100)
 						self:ProduceResource()
 					end
 				end
@@ -254,7 +256,7 @@ if(SERVER)then
 		end
 		if not(self.DepositKey)then return end
 		if(self:GetResourceType() == "oil")then
-			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN))then 
+			if(dmginfo:IsDamageType(DMG_BURN+DMG_SLOWBURN) or self:IsOnFire())then 
 				createOilFire()
 			elseif dmginfo:IsDamageType(DMG_BLAST + DMG_BLAST_SURFACE + DMG_PLASMA + DMG_ENERGYBEAM) and (math.random(0, 100) > 50) then
 				createOilFire()

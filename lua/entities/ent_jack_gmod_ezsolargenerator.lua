@@ -213,6 +213,17 @@ if(SERVER)then
 		return .5
 	end
 
+	local WeatherModifiers = {
+		["Fog"] = 0.3,
+		["Cloudy"] = 0.3,
+		["Sandstorm"] = 0.1,
+		["Rainin'"] = 0.1,
+		["Sleet"] = 0.1,
+		["Snowin'"] = 0.1,
+		["Lava Eruption"] = 0,
+		["Radioactive"] = 0
+	}
+
 	function ENT:Think()
 		local State = self:GetState()
 
@@ -226,10 +237,7 @@ if(SERVER)then
 					weatherMult = 0 
 				else
 					local weather = StormFox.GetWeather()
-					if (weather == "Fog") or (weather == "Cloudy")then weatherMult = 0.3 
-					elseif (weather == "Rainin'") or (weather =="Sleet") or (weather =="Snowin'") or (weather =="Sandstorm")then weatherMult = 0.1 
-					elseif (weather == "Lava Eruption") or (weather =="Radioactive")then weatherMult = 0 
-					else weatherMult = 1 end
+					if (WeatherModifiers[weather])then weatherMult = WeatherModifiers[weather] else weatherMult = 1 end
 				end
 			end
 

@@ -14,6 +14,7 @@ ENT.EZgasParticle = true
 ENT.ThinkRate = 1
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 300
+ENT.MaxLife = 100
 --
 
 if SERVER then
@@ -30,10 +31,20 @@ if SERVER then
 			phys:EnableGravity(false)
 		end
 		self:SetModelScale(2)
-		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
-		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
+		self.AirResistance = 2
+		self.MaxVel = 200--self.CurVel:Length() / self.AirResistance
+		self:SetLifeTime(math.random(self.MaxLife * .5, self.MaxLife) * JMod.Config.Particles.PoisonGasLingerTime)
+		if self.CustomInit then
+			self:CustomInit()
+		end
+	end
+
+	function ENT:SetLifeTime(tim)
+		local Time = CurTime()
+		self.LifeTime = tim
+		self.DieTime = Time + self.LifeTime
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -73,7 +84,7 @@ if SERVER then
 	function ENT:DamageObj(obj)
 		local Dmg, Helf = DamageInfo(), obj:Health()
 		Dmg:SetDamageType(DMG_NERVEGAS)
-		Dmg:SetDamage(math.random(2, 8) * JMod.Config.Particles.PoisonGasDamage)
+		Dmg:SetDamage(math.random(3, 10) * JMod.Config.Particles.PoisonGasDamage)
 		Dmg:SetInflictor(self)
 		Dmg:SetAttacker(JMod.GetEZowner(self) or self)
 		Dmg:SetDamagePosition(obj:GetPos())
@@ -94,18 +105,18 @@ if SERVER then
 			return
 		end
 
+		local OldPos = self:GetPos()
 		if self.CalcMove then
 			self:CalcMove(ThinkRateHz)
-
 		else
-			local Force = (VectorRand() * 10) + JMod.Wind * 5
+			local Force = VectorRand(-5, 5) + Vector(0, 0, -6) + JMod.Wind * 8
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 					if obj.EZgasParticle and not(obj.EZvirusParticle) then
 						-- repel in accordance with Ideal Gas Law
-						local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-						Force = Force - Vec * 1
+						local NormVec = (obj:GetPos() - SelfPos):GetNormalized()
+						Force = Force - NormVec * 1
 					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
 						self:DamageObj(obj)
 					end
@@ -113,13 +124,16 @@ if SERVER then
 			end
 		
 			-- apply acceleration
-			self.CurVel = self.CurVel + Force / ThinkRateHz
+			self.CurVel = self.CurVel + (Force / ThinkRateHz)
 
 			-- apply air resistance
-			self.CurVel = self.CurVel / 1
+			--self.CurVel = self.CurVel / (self.AirResistance / ThinkRateHz)
+
+			-- apply max velocity
+			self.CurVel = self.CurVel:GetNormalized() * math.min(self.CurVel:Length(), self.MaxVel)
 
 			-- observe current velocity
-			local NewPos = SelfPos + self.CurVel / ThinkRateHz
+			local NewPos = SelfPos + (self.CurVel / ThinkRateHz)
 
 			-- make sure we're not gonna hit something. If so, bounce
 			local MoveTrace = util.TraceLine({
@@ -140,6 +154,8 @@ if SERVER then
 				self.CurVel = -(CurVelAng:Forward() * Speed)
 			end
 		end
+
+		debugoverlay.Line(OldPos, self:GetPos(), 2, Color(0, 89, 255), true)
 
 		-- self:Extinguish()
 

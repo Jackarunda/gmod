@@ -416,6 +416,16 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	if not Info then return end
 	local Specs = JMod.ArmorTable[Info.name]
 
+	if Specs.eff and Specs.eff.weapon then
+		local Wep = ply:GetWeapon(Specs.eff.weapon)
+
+		if IsValid(Wep) then
+			local PastSwep = ply:GetPreviousWeapon()
+			if IsValid(PastSwep) and (ply:GetActiveWeapon() == Wep) then ply:SelectWeapon(PastSwep:GetClass()) end
+			Wep:Remove()
+		end
+	end
+
 	timer.Simple(math.Rand(0, .5), function()
 		if broken then
 			ply:EmitSound("snds_jack_gmod/armorbreak.ogg", 60, math.random(80, 120))
@@ -431,7 +441,14 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 
 	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
 
-	if not broken then
+	if broken then
+		hook.Run("JModHookArmorRemoved", ply, Info, Specs)
+
+		if Specs.eff and Specs.eff.explosive then
+			local FireAmt = (Info.chrg and Info.chrg.fuel and math.random(2, 4)) or 0
+			JMod.EnergeticsCookoff(ply:GetPos(), game.GetWorld(), 1, 1, 0, FireAmt)
+		end
+	else
 		Ent = ents.Create(Specs.ent)
 		Ent:SetPos(ply:GetShootPos() + ply:GetAimVector() * 30 + VectorRand() * math.random(1, 20))
 		Ent:SetAngles(AngleRand())
@@ -650,10 +667,14 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			local mats = ""
 
 			for k, v in pairs(RepairRecipe) do
-				mats = mats .. k .. ", "
+				if next(RepairRecipe, k) ~= nil then
+					mats = mats .. k .. ", "
+				else
+					mats = mats .. k
+				end
 			end
 
-			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need " .. mats)
+			ply:PrintMessage(HUD_PRINTCENTER, "Missing resources for repair, need: \n" .. mats)
 		elseif RepairStatus == 2 then
 			ply:PrintMessage(HUD_PRINTCENTER, "Item repaired")
 
@@ -729,6 +750,13 @@ net.Receive("JMod_Inventory", function(ln, ply)
 				sound.Play("items/ammo_pickup.ogg", ply:GetPos(), 60, math.random(100, 140))
 			end
 		end
+	elseif ActionType == 5 then
+		local ItemData = ply.EZarmor.items[ID]
+		local ItemInfo = JMod.ArmorTable[ItemData.name]
+		if not ItemInfo["clrForced"] then
+			local NewColor = net.ReadColor()
+			ply.EZarmor.items[ID].col = {r = NewColor.r, g = NewColor.g, b = NewColor.b, a = 255}
+		end
 	end
 
 	JMod.CalcSpeed(ply)
@@ -783,3 +811,24 @@ concommand.Add("jmod_debug_givearmortotarget", function(ply, cmd, args)
 		print("invalid aim target")
 	end
 end, nil, "Adds full armour to your target.")
+
+concommand.Add("jmod_debug_removearmor", function(ply, cmd, args)
+	if not ply:IsSuperAdmin() then return end
+	local target = ply
+
+	if args[1] == "looking" then
+		target = ply:GetEyeTrace().Entity
+	elseif tonumber(args[1]) and player.GetByID(tonumber(args[1])) then
+		target = player.GetByID(tonumber(args[1]))
+	end
+
+	if not IsValid(target) then
+		print("invalid target")
+
+		return
+	end
+
+	for k, v in pairs(ply.EZarmor.items) do
+		JMod.RemoveArmorByID(ply, k, tobool(args[2]))
+	end
+end, nil, "Removes armor from your target.")

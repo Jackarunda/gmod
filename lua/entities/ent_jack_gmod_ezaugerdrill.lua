@@ -65,6 +65,7 @@ if(SERVER)then
 			
 			if not self.DepositKey then
 				JMod.Hint(JMod.GetEZowner(self), "ground drill")
+				self.EZstayOn = nil
 			elseif(GroundIsSolid)then
 				--
 				local HitAngle = Tr.HitNormal:Angle()
@@ -94,7 +95,7 @@ if(SERVER)then
 
 	function ENT:TurnOn(activator)
 		if self:GetState() ~= STATE_OFF then return end
-		if self.EZinstalled and self.DepositKey then
+		if self.EZinstalled and JMod.NaturalResourceTable[self.DepositKey] then
 			if (self:GetElectricity() > 0) then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)

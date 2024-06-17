@@ -10,43 +10,34 @@ ENT.AdminSpawnable = false
 ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
-ENT.EZgasParticle = true
 ENT.ThinkRate = 1
 ENT.AffectRange = 200
+ENT.MaxLife = 120
 --
 
 if SERVER then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		local Time = CurTime()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
-		self:SetMoveType(MOVETYPE_NONE)
-		self:SetNotSolid(true)
-		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
-		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
-		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 2.5
-		self.CurVel = self.CurVel or VectorRand()
+		self.CurVel = self.CurVel or VectorRand() * 50
+		self.AirResistance = 1
+		self.MaxVel = 150
 	end
 
 	function ENT:DamageObj(obj)
-		local RespiratorMultiplier = 1
 		local Time = CurTime()
 		if obj:IsPlayer() then
 			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
-			
-			net.Start("JMod_VisionBlur")
-			net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
-			net.WriteFloat(2)
-			net.WriteBit(false)
-			net.Send(obj)
-			JMod.Hint(obj, "tear gas")
+
+			--JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
+
 			if faceProt < 1 then
+				net.Start("JMod_VisionBlur")
+				net.WriteFloat(5 * math.Clamp(1 - faceProt, 0, 1))
+				net.WriteFloat(2)
+				net.WriteBit(false)
+				net.Send(obj)
+				JMod.Hint(obj, "tear gas")
 				JMod.TryCough(obj)
 			end
 		elseif obj:IsNPC() then
@@ -54,9 +45,9 @@ if SERVER then
 		end
 
 		if math.random(1, 20) == 1 then
-			local Dmg, Helf = DamageInfo(), obj:Health()
+			local Dmg = DamageInfo()
 			Dmg:SetDamageType(DMG_NERVEGAS)
-			Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage * RespiratorMultiplier)
+			Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
 			Dmg:SetInflictor(self)
 			Dmg:SetAttacker(JMod.GetEZowner(self))
 			Dmg:SetDamagePosition(obj:GetPos())
@@ -66,9 +57,9 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = VectorRand(-8, 8)
+		local RandDir = VectorRand(-6, 6)
 		RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 3)
+		local Force = RandDir + (JMod.Wind * 5) + Vector(0, 0, -6)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
@@ -86,7 +77,10 @@ if SERVER then
 		self.CurVel = self.CurVel + Force / ThinkRateHz
 
 		-- apply air resistance
-		self.CurVel = self.CurVel / 1.5
+		--self.CurVel = self.CurVel / 1.5
+
+		-- apply max velocity
+		self.CurVel = self.CurVel:GetNormalized() * math.min(self.CurVel:Length(), self.MaxVel)
 
 		-- observe current velocity
 		local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -100,7 +94,7 @@ if SERVER then
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
-			self:SetPos(NewPos)
+			self:SetPos(NewPos + MoveTrace.HitNormal * 10)
 		else
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
@@ -119,6 +113,7 @@ elseif CLIENT then
 		self.Visible = true
 		self.Show = true
 		self.siz = 1
+		self.RenderPos = self:GetPos()
 
 		timer.Simple(2, function()
 			if IsValid(self) then
@@ -149,7 +144,8 @@ elseif CLIENT then
 		if self.Show then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(SelfPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
+			render.DrawSprite(self.RenderPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
+			self.RenderPos = LerpVector(FrameTime() * 1, self.RenderPos, SelfPos)
 			self.siz = math.Clamp(self.siz + FrameTime() * 200, 0, 500)
 		end
 	end

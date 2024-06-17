@@ -43,13 +43,13 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		--self.Entity:SetModel("models/mechanics/wheels/wheel_smooth_24.mdl")
-		self.Entity:SetModel("models/props_pipes/pipe03_connector01.mdl")
-		self.Entity:PhysicsInit(SOLID_VPHYSICS)
-		self.Entity:SetMoveType(MOVETYPE_VPHYSICS)
-		self.Entity:SetSolid(SOLID_VPHYSICS)
-		self.Entity:DrawShadow(true)
-		self.Entity:SetUseType(SIMPLE_USE)
+		--self:SetModel("models/mechanics/wheels/wheel_smooth_24.mdl")
+		self:SetModel("models/props_pipes/pipe03_connector01.mdl")
+		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
+		self:DrawShadow(true)
+		self:SetUseType(SIMPLE_USE)
 		self:GetPhysicsObject():SetMass(10)
 
 		---
@@ -84,14 +84,14 @@ if SERVER then
 				if (self:GetState() == STATE_ARMED) and (math.random(1, 5) == 1) then
 					self:Detonate()
 				else
-					self.Entity:EmitSound("Weapon.ImpactHard")
+					self:EmitSound("Weapon.ImpactHard")
 				end
 			end
 		end
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		self.Entity:TakePhysicsDamage(dmginfo)
+		self:TakePhysicsDamage(dmginfo)
 
 		if JMod.LinCh(dmginfo:GetDamage(), 50, 150) then
 			local Pos, State = self:GetPos(), self:GetState()
@@ -145,7 +145,7 @@ if SERVER then
 
 			util.ScreenShake(SelfPos, 99999, 99999, 1, 1000)
 			self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
-			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".ogg", SelfPos, 100, 130)
+			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 100, 130)
 			JMod.Sploom(self.EZowner, SelfPos, 10)
 			local Att = JMod.GetEZowner(self)
 			util.BlastDamage(self, Att, SelfPos + Vector(0, 0, 30), 100, 5500)

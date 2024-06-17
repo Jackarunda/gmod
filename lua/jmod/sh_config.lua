@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 48
+			Version = 48.6
 		},
 		General = {
 			Hints = true,
@@ -113,6 +113,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			BleedDmgMult = 0,
 			BleedSpeedMult = 0,
 			NukeFlashLightEnabled = false,
+			NiceFire = true,
 			ChangePitchWithHostTimeScale = true,
 			AllowActiveItemsInInventory = false,
 			SeasonalEventsEnabled = true
@@ -617,7 +618,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 					description = "20 units of Uranium, used in fissile material enrichment.",
 					category = "Resources",
 					results = {
-						{"ent_jack_gmod_ezuranium", 5}
+						{"ent_jack_gmod_ezuranium", 1, 20}
 					}
 				},
 				["diamond"] = {
@@ -1453,6 +1454,17 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "fabricator",
 				description = "5 Advanced Parts for use in hyper-advanced technology"
 			},
+			["EZ Advanced Textiles"] = {
+				results = "ent_jack_gmod_ezadvtextiles",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CLOTH] = 100,
+					[JMod.EZ_RESOURCE_TYPES.PLASTIC] = 20,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 20
+				},
+				category = "Resources",
+				craftingType = {"workbench", "fabricator"},
+				description = "Advanced fabrics for use in high-tier clothing."
+			},
 			["EZ Chemicals"] = {
 				results = "ent_jack_gmod_ezchemicals",
 				craftingReqs = {
@@ -1849,6 +1861,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Weapons",
 				craftingType = "fabricator",
 				description = "A Multiple Rocket Launcher. The holy grail. Use this to strike down the deserving."
+			},
+			["EZ Flamethrower"] = {
+				results = "ent_jack_gmod_ezarmor_flametank",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
+					[JMod.EZ_RESOURCE_TYPES.RUBBER] = 25,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100,
+					[JMod.EZ_RESOURCE_TYPES.FUEL] = 100
+				},
+				category = "Weapons",
+				craftingType = "workbench",
+				description = "A flamethrower. Use to burn your enemies to ashes."
 			},
 			["EZ Toolbox"] = {
 				results = "ent_jack_gmod_eztoolbox",
@@ -2742,9 +2767,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 
 		if Existing then
 			if Existing.Version then
-				file.Write("jmod_config_old_legacy.txt", FileContents)
-				print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.\n")
-				print("JMOD: Writing old config to 'jmod_config_old_legacy.txt'...\n")
+				print("JMOD: Your config is from a JMod version before the config reformat, old config will no longer work as-is.")
+				forceNew = true
 			elseif Existing.Info.Version then
 				if (Existing.Info.Version == NewConfig.Info.Version) then
 					JMod.Config = util.JSONToTable(FileContents)
@@ -2762,6 +2786,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		end
 	else
 		print("JMOD: config missing or corrupted!! (can not update)")
+		forceNew = true
 	end
 
 	if not(JMod.Config) or forceNew then
@@ -2774,7 +2799,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			file.Write("jmod_config.txt", util.TableToJSON(JMod.Config, true))
 			print("JMOD: config reset to default")
 		else
-			print("JMOD: no config detected(!), temporarily using default")
+			print("JMOD: no config detected, temporarily using default")
 		end
 	end
 

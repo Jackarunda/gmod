@@ -192,6 +192,7 @@ JMod.EZ_STATE_ARMED = 4
 JMod.EZ_STATE_WARNING = 5
 
 JMod.EZ_HAZARD_PARTICLES = {
+	["ent_jack_gmod_ezcsparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .2},
 	["ent_jack_gmod_ezgasparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .5},
 	["ent_jack_gmod_ezvirusparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .1},
 	["ent_jack_gmod_ezfalloutparticle"] = {JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, .2}
@@ -263,7 +264,7 @@ JMod.DefualtArmorTable={
 	[DMG_BLAST]=.8,
 	[DMG_CLUB]=.5,
 	[DMG_SHOCK]=1,
-	[DMG_BURN]=.3,
+	[DMG_BURN]=.2,
 	[DMG_ACID]=.4,
 	[DMG_PLASMA]=.4,
 	[DMG_DROWN]=0,

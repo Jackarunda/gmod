@@ -131,10 +131,10 @@ if(SERVER)then
 				local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
 				Ent.EZowner = self.EZowner
-				Ent.LifeTime = 15
+				Ent.MaxLife = 15
 				Ent.DmgAmt = 1
-				Ent.Range = 500
-				Ent.DragMult = .3
+				Ent.Range = 250
+				Ent.Canister = self
 				Ent:Spawn()
 				Ent:Activate()
 				Ent.CurVel = self:GetVelocity()
@@ -143,7 +143,7 @@ if(SERVER)then
 	end
 
 	function ENT:OnDestroy()
-		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 10 do
+		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 2 do
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas.Range = 500

@@ -28,6 +28,7 @@ util.AddNetworkString("JMod_MachineSync")
 util.AddNetworkString("JMod_Debugging") -- engineer gaming
 util.AddNetworkString("JMod_ConfigUI")
 util.AddNetworkString("JMod_ApplyConfig")
+util.AddNetworkString("JMod_LiquidParticle")
 
 net.Receive("JMod_Friends", function(length, ply)
 	local List, Good = net.ReadTable(), true
@@ -159,7 +160,7 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	local Ent, Action = net.ReadEntity(), net.ReadString()
 	if not IsValid(Ent) then return end
 	local Ent2 = net.ReadEntity()
-	print(Action, Ent, Ent2)
+	--print(Action, Ent, Ent2)
 
 	if Action == "connect" then
 		JMod.StartConnection(Ent, ply)
@@ -181,7 +182,7 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 			Ent:ProduceResource(ply)
 		end
 	elseif Action == "toggle" then
-		if IsValid(Ent2) then 
+		if IsValid(Ent2) and Ent2.GetState then 
 			if Ent2:GetState() == JMod.EZ_STATE_OFF then
 				Ent2:TurnOn(ply)
 			elseif Ent2:GetState() >= JMod.EZ_STATE_ON then

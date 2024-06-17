@@ -44,7 +44,7 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self.Entity:GetPhysicsObject()
+		local phys = self:GetPhysicsObject()
 		if phys:IsValid()then
 			phys:SetBuoyancyRatio(.3)
 		end
@@ -104,16 +104,16 @@ if(SERVER)then
 		local State = self:GetState()
 		if(State == STATE_FINE) then
 			if (self:GetElectricity() > 0) then
-				if Alt then
-					self:TurnOn(activator)
-				else
+				--if Alt then
+					--self:TurnOn(activator)
+				--else
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
 					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
-				end
+				--end
 			else
 				JMod.Hint(activator, "refillprimbench")
 			end
@@ -295,9 +295,9 @@ if(SERVER)then
 			timer.Simple(0.3, function()
 				if IsValid(self) then
 					JMod.MachineSpawnResource(self, RefinedType, amt, spawnVec, spawnAng, ejectVec, 200)
-					if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 200) then
+					--[[if (OreType == JMod.EZ_RESOURCE_TYPES.SAND) and (amt >= 25) and math.random(0, 200) then
 						JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.DIAMOND, 1, spawnVec + Up * 4, spawnAng, ejectVec, false)
-					end
+					end--]]
 				end
 			end)
 			self:SetProgress(0)
@@ -307,6 +307,9 @@ if(SERVER)then
 		local OreLeft = self:GetOre()
 		if OreLeft <= 0 then
 			self:SetOreType("generic")
+			if self:GetState() == STATE_PROCESSING then
+				self:TurnOff()
+			end
 		elseif OreType ~= "generic" then
 			self:SetOre(0)
 			self:SetOreType("generic")

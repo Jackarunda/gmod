@@ -12,27 +12,18 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.EZfalloutParticle = true
 ENT.JModDontIrradiate = true
-ENT.AffectRange = 2500
-ENT.ThinkRate = 1
+ENT.AffectRange = 500
+ENT.ThinkRate = .5
+ENT.MaxLifeTime = 200
 --
 
 if SERVER then
-	function ENT:Initialize()
+	function ENT:CustomInit()
 		local Time = CurTime()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
-		self:SetMoveType(MOVETYPE_NONE)
-		self:SetNotSolid(true)
-		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
-		self.LifeTime = self.LifeTime or math.random(100, 200) * JMod.Config.Particles.NuclearRadiationMult
-		self.DieTime = Time + self.LifeTime
+		self.MaxVel = 250
+		self:SetLifeTime(math.random(100, 200) * JMod.Config.Particles.NuclearRadiationMult)
 		self.NextDmg = Time + math.random(1, 10)
-		self.FalloutEff = true--math.random(1, 5) == 1
+		--self.FalloutEff = true--math.random(1, 5) == 1
 	end
 
 	function ENT:ShouldDamage(ent)
@@ -46,13 +37,13 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = Vector(math.random(-200, 200), math.random(-200, 200), math.random(-100, 100))
+		local RandDir = Vector(math.random(-10, 10), math.random(-10, 10), math.random(-15, 5))
 		--RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 3) + Vector(0, 0, -50)
+		local Force = RandDir + (JMod.Wind * 10)
 
 		local NearbyParticles = 0
-		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange*2)) do
-			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
+		for key, obj in ipairs(ents.FindInSphere(SelfPos, self.AffectRange*1.5)) do
+			if not(obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
@@ -63,12 +54,23 @@ if SERVER then
 				end
 			end
 		end
+
+		if (NearbyParticles > 15) then
+			self.NearbyParticleTick = (self.NearbyParticleTick or 0) + 1
+			if (self.NearbyParticleTick > 10) then
+				debugoverlay.Cross(SelfPos, 10, 2, Color(255, 38, 0), true)
+				SafeRemoveEntity(self)
+			end
+		else
+			self.NearbyParticleTick = 0
+		end
 	
 		-- apply acceleration
 		self.CurVel = self.CurVel + Force / ThinkRateHz
 
 		-- apply air resistance
-		self.CurVel = self.CurVel / 1.5
+		--self.CurVel = self.CurVel / 1.5
+		self.CurVel = Vector(math.Clamp(self.CurVel.x, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.y, -self.MaxVel, self.MaxVel), math.Clamp(self.CurVel.z, -self.MaxVel, self.MaxVel))
 
 		-- observe current velocity
 		local NewPos = SelfPos + self.CurVel / ThinkRateHz
@@ -82,14 +84,14 @@ if SERVER then
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
-			self:SetPos(NewPos)
+			self:SetPos(NewPos + MoveTrace.HitNormal * 20)
 		else
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
 			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
 			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
 			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
-			self.CurVel = -(CurVelAng:Forward() * Speed * 2)
+			self.CurVel = -(CurVelAng:Forward() * Speed * .5) -- Except for this part
 		end
 
 		--[[if self.FalloutEff and self.NextDmg < Time then

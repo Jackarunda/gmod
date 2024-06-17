@@ -18,12 +18,14 @@ ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Box.Break"
 ENT.Hint = "ammobox"
+ENT.Cookoff = true
+ENT.IsBoolet = 1
 
 ---
 local ShellEffects = {"RifleShellEject", "PistolShellEject", "ShotgunShellEject"}
 
 if SERVER then
-	function ENT:UseEffect(pos, ent)
+	function ENT:UseEffect(pos, ent, destructive)
 		for i = 1, 30 * JMod.Config.Machines.SupplyEffectMult do
 			timer.Simple(i / 200, function()
 				local Eff = EffectData()

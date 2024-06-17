@@ -162,3 +162,60 @@ hook.Add("StartCommand", "JMod_StartCommand", function(ply, ucmd)
 		ucmd:SetButtons(Btns)
 	end
 end)
+
+function JMod.GetPlayerHeldEntity(ply)
+	if not(IsValid(ply) and ply:Alive()) then return end
+	local HeldEntity = ply:GetNW2Entity("EZheldEnt", ply.EZheldEnt)
+	if IsValid(HeldEntity) then
+		return HeldEntity
+	end
+end
+
+function JMod.SetPlayerHeldEntity(ply, ent)
+	if not(IsValid(ply) and ply:Alive()) then return end
+	if IsValid(ent) then
+		ply.EZheldEnt = ent
+	else
+		ply.EZheldEnt = nil
+	end
+
+	ply:SetNW2Entity("EZheldEnt", ent)
+end
+
+hook.Add("OnPlayerPhysicsPickup", "JMod_PhysicsPickup", function(ply, ent)
+	JMod.SetPlayerHeldEntity(ply, ent)
+end)
+
+hook.Add("OnPlayerPhysicsDrop", "JMod_PhysicsDrop", function(ply, ent) 
+	JMod.SetPlayerHeldEntity(ply, nil)
+end)
+
+function JMod.LiquidSpray(pos, dir, amt, group, typ)
+	local group = group or 1
+	local amt = amt or 1
+	if SERVER then
+		net.Start("JMod_LiquidParticle")
+		net.WriteVector(pos)
+		net.WriteVector(dir)
+		net.WriteInt(amt, 8)
+		net.WriteInt(group, 8) -- which group of particles is this associated with
+		net.WriteInt(typ, 8) -- particle type, in this case 1 = generic liquid
+		net.Broadcast()
+	elseif CLIENT then
+		local Specs = JMod.ParticleSpecs[typ]
+		if not(Specs) then return end
+		for i = 1, amt do
+			timer.Simple((i - 1) * 0.1, function()
+				JMod.LiquidParticles[group] = JMod.LiquidParticles[group] or {}
+				table.insert(JMod.LiquidParticles[group], {
+					typ = typ,
+					pos = pos,
+					vel = dir + VectorRand() * 20,
+					dieTime = CurTime() + Specs.lifeTime,
+					impacted = false,
+					lifeProgress = 0 -- for calc caching
+				})
+			end)
+		end
+	end
+end

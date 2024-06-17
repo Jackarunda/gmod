@@ -15,6 +15,7 @@ ENT.SpawnHeight = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZanchorage = 2000
 ENT.EZpowerSocket = Vector(0, 0, 130)
+ENT.EZbuoyancy = .8
 ---
 ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.OIL}
 ---
@@ -48,7 +49,7 @@ if SERVER then
             	JMod.Hint(JMod.GetEZowner(self), "liquid scan")
             end
         end)
-		self:GetPhysicsObject():SetBuoyancyRatio(.8)
+		self:GetPhysicsObject():SetBuoyancyRatio(self.EZbuoyancy)
 		self:GetPhysicsObject():Wake()
 	end
 
@@ -90,6 +91,7 @@ if SERVER then
 					if self:GetState() > STATE_OFF then
 						self:TurnOff(self.EZowner)
 					end
+					self.EZstayOn = nil
 					JMod.Hint(JMod.GetEZowner(self), "machine mounting problem")
 				end
 			end
@@ -101,7 +103,7 @@ if SERVER then
 		local SelfPos, Forward, Right = self:GetPos(), self:GetForward(), self:GetRight()
 
 		if self.EZinstalled then
-			if (self:GetElectricity() > 0) and (self.DepositKey) then
+			if (self:GetElectricity() > 0) and JMod.NaturalResourceTable[self.DepositKey] then
 				if IsValid(activator) then self.EZstayOn = true end
 				self:SetState(STATE_RUNNING)
 				self.SoundLoop = CreateSound(self, "snds_jack_gmod/pumpjack_start_loop.wav")
@@ -293,17 +295,6 @@ if SERVER then
 			end)
 		end
 	end
-
-	hook.Add("PhysgunDrop", "JMod_OilRig_SetBouyancyOnDrop", function(ply, ent)
-		if ent:GetClass() == "ent_jack_gmod_ezoil_rig" then
-			local phys = ent:GetPhysicsObject()
-			timer.Simple(0, function()
-				if IsValid(phys) then
-					phys:SetBuoyancyRatio(.8)
-				end
-			end)
-		end
-	end)
 
 elseif(CLIENT)then
 	function ENT:CustomInit()
