@@ -117,7 +117,7 @@ if(SERVER)then
 		effectdata:SetScale(math.Rand(.5, 1.5))
 		effectdata:SetRadius(math.Rand(2, 4))
 		util.Effect("Sparks", effectdata)
-		--self:EmitSound("items/suitchargeok1.ogg", 75, 120)
+		--self:EmitSound("items/suitchargeok1.wav", 75, 120)
 	end
 
 	function ENT:ProduceResource()

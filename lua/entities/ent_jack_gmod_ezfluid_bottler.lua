@@ -92,7 +92,7 @@ if SERVER then
 		if self:GetState() > STATE_OFF then return end
 		if self:GetElectricity() > 0 then
 			if IsValid(activator) then self.EZstayOn = true end
-			self:EmitSound("buttons/button1.ogg", 60, 80)
+			self:EmitSound("buttons/button1.wav", 60, 80)
 			self:SetState(STATE_ON)
 			self:CheckWaterLevel()
 			self.NextUseTime = CurTime() + 1
@@ -105,7 +105,7 @@ if SERVER then
 	function ENT:TurnOff(activator)
 		if (self:GetState() <= STATE_OFF) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
-		self:EmitSound("buttons/button18.ogg", 60, 80)
+		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:ProduceResource()
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)
