@@ -98,7 +98,7 @@ if SERVER then
 			self.NextUseTime = CurTime() + 1
 			self.SoundLoop:Play()
 		else
-			self:EmitSound("buttons/button2.ogg", 60, 100)
+			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
 	end
 

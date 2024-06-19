@@ -51,11 +51,11 @@ if(SERVER)then
 		else
 			self:SetWater(0)
 		end
-		self:TurnOn()
+		self:TryPlace()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
 		self.NextWaterLoseTime = 0
-		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.ogg")
+		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.wav")
 	end
 
 	function ENT:TryPlace()
