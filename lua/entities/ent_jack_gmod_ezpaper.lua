@@ -1,16 +1,16 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezresource"
-ENT.PrintName = "EZ Paper Roll"
+ENT.PrintName = "EZ Paper Ream"
 ENT.Category = "JMod - EZ Resources"
 ENT.IconOverride = "materials/ez_resource_icons/paper.png"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.EZsupplies = JMod.EZ_RESOURCE_TYPES.PAPER
-ENT.JModPreferredCarryAngles = Angle(0, -90, 100)
-ENT.Model = "models/jmod/resources/cylinderx15.mdl"
-ENT.Material = "models/mat_jack_gmod_paperroll"
+ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.Model = "models/jmod/resources/ez_paper.mdl"
+--ENT.Material = "models/mat_jack_gmod_paperroll"
 ENT.PhysMat = "paper"
 ENT.Color = Color(200, 200, 200)
 --ENT.ModelScale=1.5
@@ -26,7 +26,7 @@ if SERVER then
 	end
 	-- todo: find a particle effect for this
 elseif CLIENT then
-    local drawvec, drawang = Vector(0, -.5, 9), Angle(0, 0, 0)
+    local drawvec, drawang = Vector(6.4, -.5, 0), Angle(0, 0, 90)
 	function ENT:Draw()
 		self:DrawModel()
 
