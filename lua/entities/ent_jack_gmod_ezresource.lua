@@ -104,13 +104,17 @@ if SERVER then
 		self.NextFireThink = 0
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			if IsValid(self) then
+			if IsValid(Phys) then
 				if self.PhysMat then
-					self:GetPhysicsObject():SetMaterial(self.PhysMat)
+					Phys:SetMaterial(self.PhysMat)
 				end
-				self:GetPhysicsObject():SetMass(math.max(self.Mass))
-				self:GetPhysicsObject():Wake()
+				if self.EZbuoyancy then
+					Phys:SetBuoyancyRatio(self.EZbuoyancy)
+				end
+				Phys:SetMass(math.max(self.Mass))
+				Phys:Wake()
 			end
 		end)
 
