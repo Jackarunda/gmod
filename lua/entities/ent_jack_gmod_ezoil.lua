@@ -20,6 +20,7 @@ ENT.ImpactNoise2 = "Weapon.ImpactSoft"
 ENT.DamageThreshold = 120
 ENT.BreakNoise = "Metal_Barrel.Break"
 ENT.Flammable = 2
+ENT.EZbuoyancy = .3
 
 --ENT.Hint="coolant"
 ---
