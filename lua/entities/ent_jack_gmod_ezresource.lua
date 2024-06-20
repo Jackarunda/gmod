@@ -110,11 +110,11 @@ if SERVER then
 				if self.PhysMat then
 					Phys:SetMaterial(self.PhysMat)
 				end
+				Phys:SetMass(math.max(self.Mass))
+				Phys:Wake()
 				if self.EZbuoyancy then
 					Phys:SetBuoyancyRatio(self.EZbuoyancy)
 				end
-				Phys:SetMass(math.max(self.Mass))
-				Phys:Wake()
 			end
 		end)
 
