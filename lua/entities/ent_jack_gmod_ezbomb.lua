@@ -12,21 +12,29 @@ ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 20)
 ENT.EZRackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 12
-ENT.EZguidable = true
 ---
+ENT.EZguidable = true
+ENT.Model = "models/hunter/blocks/cube025x2x025.mdl"
+ENT.Mass = 150
+ENT.DetSpeed = 700
+ENT.DetType = "impactdet"
+ENT.Durability = 150
+
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 
 function ENT:SetupDataTables()
 	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Bool", 0, "Guided")
+	if self.EZguidable then
+		self:NetworkVar("Bool", 0, "Guided")
+	end
 end
 
 ---
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
+		local SpawnPos = tr.HitPos + tr.HitNormal * (self.SpawnHeight or 40)
 		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180, 0, 0))
+		ent:SetAngles(ent.JModPreferredCarryAngles)
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
@@ -39,36 +47,56 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/hunter/blocks/cube025x2x025.mdl")
+		self:SetModel(self.Model)
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 
+		if self.Material then
+			self:SetMaterial(self.Material)
+		end
+
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
+			if IsValid(Phys) then
+				Phys:SetMass(self.Mass)
+				Phys:Wake()
+				Phys:EnableDrag(false)
+				Phys:SetDamping(0, 0)
+				if self.EZbouyancy then
+					Phys:SetBuoyancyRatio(self.EZbuoyancy)
+				end
+			end
 		end)
 
 		---
 		self:SetState(STATE_OFF)
 		self.LastUse = 0
+		self.FreefallTicks = 0
 
+		self:SetupWire()
+	end
+
+	function ENT:SetupWire()
 		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
+			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm", "Drop"}, {"Directly detonates the bomb", "Arms bomb when > 0", "Drop the bomb"})
 
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
+			self.Outputs = WireLib.CreateOutputs(self, {"State", "Dropped", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "Outputs 1 when dropped", "True when guided"})
 		end
 	end
 
 	function ENT:TriggerInput(iname, value)
-		if iname == "Detonate" and value > 0 then
+		if (iname == "Detonate") and (value > 0) then
 			self:Detonate()
 		elseif iname == "Arm" and value > 0 then
 			self:SetState(STATE_ARMED)
+		elseif iname == "Arm" and value == 0 then
+			self:SetState(STATE_OFF)
+		elseif iname == "Drop" and value > 0 then
+			self:Drop()
 		end
 	end
 
@@ -80,13 +108,17 @@ if SERVER then
 				self:EmitSound("Canister.ImpactHard")
 			end
 
-			if (data.Speed > 700) and (self:GetState() == STATE_ARMED) then
-				self:Detonate()
+			if (data.Speed > self.DetSpeed) and (self:GetState() == STATE_ARMED) then
+				timer.Simple(0, function() 
+					if IsValid(self) then 
+						self:Detonate() 
+					end 
+				end)
 
 				return
 			end
 
-			if data.Speed > 2000 then
+			if data.Speed > self.Durability * 10 then
 				self:Break()
 			end
 		end
@@ -112,9 +144,15 @@ if SERVER then
 
 		self:TakePhysicsDamage(dmginfo)
 
-		if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
-			JMod.SetEZowner(self, dmginfo:GetAttacker())
-			self:Detonate()
+		if JMod.LinCh(dmginfo:GetDamage(), self.Durability * .5, self.Durability) then
+			local Pos, State = self:GetPos(), self:GetState()
+
+			if State == STATE_ARMED and not(dmginfo:IsBulletDamage()) then
+				JMod.SetEZowner(self, dmginfo:GetAttacker())
+				self:Detonate()
+			else
+				self:Break()
+			end
 		end
 	end
 
@@ -127,9 +165,9 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 110)
+				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = CurTime()
-				JMod.Hint(activator, "impactdet")
+				JMod.Hint(activator, self.DetType)
 			else
 				JMod.Hint(activator, "double tap to arm")
 			end
@@ -140,7 +178,7 @@ if SERVER then
 
 			if Time - self.LastUse < .2 then
 				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 110)
+				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 120)
 				self.EZdroppableBombArmedTime = nil
 			else
 				JMod.Hint(activator, "double tap to disarm")
@@ -227,7 +265,7 @@ if SERVER then
 	function ENT:Think()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
+			if self.EZguidable then WireLib.TriggerOutput(self, "Guided", self:GetGuided()) end
 		end
 
 		local Phys, UseAeroDrag = self:GetPhysicsObject(), true
@@ -249,11 +287,27 @@ if SERVER then
 		--end
 		--end
 		--end
-		JMod.AeroDrag(self, -self:GetRight(), 4)
-		self:NextThink(CurTime() + .1)
+		if self.AeroDragThink then
+			return self:AeroDragThink()
+		else
+			JMod.AeroDrag(self, -self:GetRight(), 4)
 
-		return true
+			self:NextThink(CurTime() + .1)
+
+			return true
+		end
 	end
+
+	function ENT:Drop(ply)
+		constraint.RemoveAll(self)
+		self:GetPhysicsObject():EnableMotion(true)
+		self:GetPhysicsObject():Wake()
+		self.DropOwner = ply
+		if WireLib then
+			WireLib.TriggerOutput(self, "Dropped", 1)
+		end
+	end
+
 elseif CLIENT then
 	function ENT:Initialize()
 		self.Mdl = ClientsideModel("models/jmod/mk82_gbu.mdl")
@@ -265,7 +319,7 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
-		if (not self.Guided) and self:GetGuided() then
+		if self.EZguidable and (not self.Guided) and self:GetGuided() then
 			self.Guided = true
 			self.Mdl:SetBodygroup(0, 1)
 		end

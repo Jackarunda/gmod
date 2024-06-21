@@ -3,7 +3,7 @@ AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgrenade"
 ENT.Author = "Jackarunda, TheOnly8Z"
 ENT.Category = "JMod - EZ Explosives"
-ENT.PrintName = "EZ Sticky Bomb"
+ENT.PrintName = "EZ Sticky Grenade"
 ENT.Spawnable = true
 ENT.Model = "models/jmod/explosives/grenades/stickynade/sticky_grenade.mdl"
 --ENT.ModelScale=2.25

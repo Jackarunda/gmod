@@ -121,10 +121,14 @@ function JMod.EZ_BombDrop(ply)
 		timer.Simple(.25, function()
 			if IsValid(FirstBom) then
 				if FirstBom.EZdroppableBombArmedTime then
-					constraint.RemoveAll(FirstBom)
-					FirstBom:GetPhysicsObject():EnableMotion(true)
-					FirstBom:GetPhysicsObject():Wake()
-					FirstBom.DropOwner = ply
+					if FirstBom.Drop then
+						FirstBom:Drop(ply)
+					else
+						constraint.RemoveAll(FirstBom)
+						FirstBom:GetPhysicsObject():EnableMotion(true)
+						FirstBom:GetPhysicsObject():Wake()
+						FirstBom.DropOwner = ply
+					end
 				elseif FirstBom.EZdroppableBombLoadTime then
 					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
 				end
@@ -228,7 +232,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	zReduction = zReduction or 2
 
 	if not JMod.Config.Explosives.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragDmg * 8, fragDmg)
+		util.BlastDamage(shooter, attacker, origin, fragMaxDist * .25, fragDmg)
 
 		return
 	end
@@ -276,7 +280,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					firer:FireBullets({
 						Attacker = attacker,
 						Damage = fragDmg * DmgMul,
-						Force = fragDmg / 8 * DmgMul,
+						Force = fragDmg / 10 * DmgMul,
 						Num = 1,
 						Src = origin,
 						Tracer = 0,
