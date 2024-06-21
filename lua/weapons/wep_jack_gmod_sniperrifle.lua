@@ -119,7 +119,7 @@ SWEP.Animations = {
 		ShellEjectAt = .8,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
 				t = .25,
 				v = 60
 			},
@@ -152,7 +152,7 @@ SWEP.Animations = {
 		ShellEjectAt = .9,
 		SoundTable = {
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
 				t = .25,
 				v = 60
 			},
@@ -192,7 +192,7 @@ SWEP.Animations = {
 				v = 65
 			},
 			{
-				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.ogg",
+				s = "snds_jack_gmod/ez_weapons/sniper_rifle/lift.wav",
 				t = .35,
 				v = 60
 			},

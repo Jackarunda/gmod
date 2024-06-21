@@ -235,7 +235,7 @@ if(SERVER)then
 		if (self.NextFoofThink < Time) then
 			self.NextFoofThink = Time + .4/Grade
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.ogg", 75, math.random(75, 80) * Grade / 4)
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80) * Grade / 2)
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)

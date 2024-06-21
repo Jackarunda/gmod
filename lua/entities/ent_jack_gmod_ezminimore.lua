@@ -151,7 +151,7 @@ if SERVER then
 
 		if not tr.Hit or tr.HitNormal.z <= 0.6 then
 			JMod.Hint(armer, "horizontal surface")
-			self:EmitSound("buttons/button18.ogg", 60, 110)
+			self:EmitSound("buttons/button18.wav", 60, 110)
 
 			return
 		end

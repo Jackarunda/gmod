@@ -99,7 +99,7 @@ if SERVER then
 				Dude:PickupObject(self)
 			end
 
-			self:EmitSound("items/ammocrate_open.ogg", 70, self.Pouring and 130 or 100)
+			self:EmitSound("items/ammocrate_open.wav", 70, self.Pouring and 130 or 100)
 
 			return
 		end

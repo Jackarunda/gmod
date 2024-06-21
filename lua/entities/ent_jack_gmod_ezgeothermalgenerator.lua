@@ -51,11 +51,11 @@ if(SERVER)then
 		else
 			self:SetWater(0)
 		end
-		self:TurnOn()
+		self:TryPlace()
 		self.NextUse = 0
 		self.NextResourceThinkTime = 0
 		self.NextWaterLoseTime = 0
-		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.ogg")
+		self.SoundLoop = CreateSound(self, "snd_jack_waterturbine.wav")
 	end
 
 	function ENT:TryPlace()
@@ -125,7 +125,7 @@ if(SERVER)then
 		local pos = SelfPos + Up*20 - Right*50 + Forward*25
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(0, 0, 0), Up, 300)
-		self:EmitSound("items/suitchargeok1.ogg", 80, 120)
+		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
 	function ENT:TurnOn(Dude, auto)
