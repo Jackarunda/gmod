@@ -57,6 +57,9 @@ if SERVER then
 		if self.Material then
 			self:SetMaterial(self.Material)
 		end
+		if self.Skin then
+			self:SetSkin(self.Skin)
+		end
 
 		---
 		local Phys = self:GetPhysicsObject()
