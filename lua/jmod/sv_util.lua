@@ -70,7 +70,7 @@ function JMod.EZ_WeaponLaunch(ply)
 
 	if IsValid(FirstWep) then
 		-- knock knock it's pizza time
-		FirstWep:EmitSound("buttons/button6.ogg", 75, 110)
+		FirstWep:EmitSound("buttons/button6.wav", 75, 110)
 
 		timer.Simple(.2, function()
 			if IsValid(FirstWep) then
@@ -116,7 +116,7 @@ function JMod.EZ_BombDrop(ply)
 
 	if IsValid(FirstBom) then
 		-- knock knock it's pizza time
-		FirstBom:EmitSound("buttons/button6.ogg", 75, 120)
+		FirstBom:EmitSound("buttons/button6.wav", 75, 120)
 
 		timer.Simple(.25, function()
 			if IsValid(FirstBom) then

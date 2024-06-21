@@ -48,7 +48,7 @@ if(SERVER)then
 		self.NextUseTime = 0
 		self.NextEffThink = 0
 		self.NextEnvThink = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezbhg_hum.wav")
 		if self.SpawnFull then
 			self:SetGas(self.MaxGas)
 			self:SetUranium(self.MaxUranium)
