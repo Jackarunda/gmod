@@ -134,7 +134,7 @@ if SERVER then
 		if data.DeltaTime > 0.2 then
 			local Time = CurTime()
 
-			if data.HitEntity.ClassName == self.ClassName and self.NextCombine < Time and data.HitEntity.NextCombine < Time then
+			if (data.HitEntity.ClassName == self.ClassName) and (self.NextCombine < Time) and (data.HitEntity.NextCombine < Time) then
 				-- determine a priority, favor the item that has existed longer
 				if self:EntIndex() < data.HitEntity:EntIndex() then
 					-- don't run twice on every collision
@@ -151,7 +151,7 @@ if SERVER then
 				end
 			end
 
-			if data.HitEntity.EZconsumes and table.HasValue(data.HitEntity.EZconsumes, self.EZsupplies) and (self.NextLoad < Time) and self:IsPlayerHolding() then
+			if data.HitEntity.EZconsumes and table.HasValue(data.HitEntity.EZconsumes, self.EZsupplies) and (self.NextLoad < Time) and (self:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then
 				if self:GetResource() <= 0 then
 					self:Remove()
 
