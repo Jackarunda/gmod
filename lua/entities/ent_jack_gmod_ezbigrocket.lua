@@ -207,7 +207,7 @@ if SERVER then
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetForward() * 20000 + self.UpLift)
+		Phys:ApplyForceCenter(-self:GetForward() * 20000 + self.UpLift * .5)
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 90, math.random(85, 95))
 		local Eff = EffectData()
@@ -266,6 +266,14 @@ if SERVER then
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			end
+			
+			for k, v in pairs(ents.FindInCone(self:GetPos(), self:GetForward(), 200, 0.707)) do
+				if JMod.ShouldAttack(self, v, false, false) then
+					self:Detonate()
+
+					break
+				end
+			end
 		end
 
 		self:NextThink(CurTime() + .05)
@@ -321,5 +329,5 @@ elseif CLIENT then
 		end
 	end
 
-	language.Add("ent_jack_gmod_ezherocket", "EZ HE Rocket")
+	language.Add("ent_jack_gmod_ezherocket", "EZ Heavy Rocket")
 end
