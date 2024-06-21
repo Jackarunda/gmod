@@ -4,12 +4,12 @@ ENT.Type = "anim"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
-ENT.PrintName = "EZ HEAT Rocket"
+ENT.PrintName = "EZ Heavy Rocket"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, -1.5, 0)
+ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZRackOffset = Vector(0, 0, 0)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
@@ -37,22 +37,18 @@ if SERVER then
 	end
 
 	function ENT:Initialize()
-		self:SetModel("models/hunter/plates/plate150.mdl")
+		self:SetModel("models/jmod/explosives/ez_hrocket.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
 
-		local Phys = self:GetPhysicsObject()
 		---
 		timer.Simple(.01, function()
-			if IsValid(Phys) then
-				Phys:SetMaterial("metal")
-				Phys:SetMass(40)
-				Phys:Wake()
-				Phys:EnableDrag(false)
-			end
+			self:GetPhysicsObject():SetMass(40)
+			self:GetPhysicsObject():Wake()
+			self:GetPhysicsObject():EnableDrag(false)
 		end)
 
 		---
@@ -160,16 +156,13 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
-		JMod.Sploom(Att, SelfPos, 10)
+		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), self:GetForward()
+		JMod.Sploom(Att, SelfPos, 300)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
-
 		---
-		for i = 1, 10 do
-			util.BlastDamage(self, Att, SelfPos + Dir * 30 * i, 100 - i * 7, 3000 - i * 290)
-		end
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 50), 250, 200)
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do
 			if ent:GetClass() == "npc_helicopter" then
@@ -178,8 +171,8 @@ if SERVER then
 		end
 
 		---
-		JMod.WreckBuildings(self, SelfPos, 2)
-		JMod.BlastDoors(self, SelfPos, 2)
+		JMod.WreckBuildings(self, SelfPos, 4)
+		JMod.BlastDoors(self, SelfPos, 4)
 
 		---
 		timer.Simple(.2, function()
@@ -196,9 +189,9 @@ if SERVER then
 		Ang:RotateAroundAxis(Ang:Forward(), -90)
 
 		timer.Simple(.1, function()
-			ParticleEffect("50lb_air", SelfPos + Dir * 130, Ang)
-			ParticleEffect("50lb_air", SelfPos, Ang)
+			ParticleEffect("50lb_air", SelfPos - Dir * 20, Ang)
 			ParticleEffect("50lb_air", SelfPos - Dir * 50, Ang)
+			ParticleEffect("50lb_air", SelfPos - Dir * 80, Ang)
 		end)
 	end
 
@@ -214,21 +207,18 @@ if SERVER then
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift)
+		Phys:ApplyForceCenter(-self:GetForward() * 20000 + self.UpLift)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
+		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 90, math.random(85, 95))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(self:GetRight())
+		Eff:SetNormal(-self:GetForward())
 		Eff:SetScale(4)
 		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
 
 		---
 		for i = 1, 4 do
-			local Tr = util.QuickTrace(self:GetPos(), self:GetRight() * i * 40, {self, self.DropOwner})
-			if Tr.Hit then
-				util.BlastDamage(self, JMod.GetEZowner(self), Tr.HitPos, 50, 50)
-			end
+			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + -self:GetForward() * i * 40, 50, 50)
 		end
 
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 300)
@@ -243,6 +233,13 @@ if SERVER then
 		end)
 
 		JMod.Hint(JMod.GetEZowner(self), "backblast", self:GetPos())
+		---
+		timer.Simple(.5, function()
+			if IsValid(self) then
+				self:GetPhysicsObject():ApplyTorqueCenter(self:GetForward() * 2000)
+				self:SetBodygroup(1, 1)
+			end
+		end)
 	end
 
 	function ENT:EZdetonateOverride(detonator)
@@ -256,16 +253,16 @@ if SERVER then
 		end
 
 		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, -self:GetRight(), .75)
+		JMod.AeroDrag(self, self:GetForward(), 1)
 
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift)
-				self.FuelLeft = self.FuelLeft - 5
+				Phys:ApplyForceCenter(self:GetForward() * 20000 + self.UpLift)
+				self.FuelLeft = self.FuelLeft - 2.5
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(self:GetRight())
+				Eff:SetNormal(-self:GetForward())
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			end
@@ -277,20 +274,15 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/explosives/missile/missile_patriot.mdl")
-		self.Mdl:SetSkin(2)
-		self.Mdl:SetModelScale(.45, 0)
-		self.Mdl:SetPos(self:GetPos())
-		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
+		self:SetModel("models/jmod/explosives/ez_hrocket.mdl")
 	end
 
 	function ENT:Think()
-		local Pos, Dir = self:GetPos(), self:GetRight()
+		local Pos, Dir = self:GetPos(), -self:GetForward()
 		local Time = CurTime()
-		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or Time + 1
 
+		if self:GetState() == STATE_LAUNCHED then
+			self.BurnoutTime = self.BurnoutTime or Time + 2
 			if self.BurnoutTime > Time then
 				local dlight = DynamicLight(self:EntIndex())
 
@@ -312,16 +304,12 @@ elseif CLIENT then
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 
 	function ENT:Draw()
-		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
+		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), -self:GetForward()
 		local Time = CurTime()
 		Ang:RotateAroundAxis(Ang:Up(), 90)
-		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		self:DrawModel()
 
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or Time + 1
-
 			if self.BurnoutTime > Time then
 				render.SetMaterial(GlowSprite)
 
@@ -333,11 +321,5 @@ elseif CLIENT then
 		end
 	end
 
-	function ENT:OnRemove()
-		if self.Mdl then
-			self.Mdl:Remove()
-		end
-	end
-
-	language.Add("ent_jack_gmod_ezheatrocket", "EZ HEAT Rocket")
+	language.Add("ent_jack_gmod_ezherocket", "EZ HE Rocket")
 end
