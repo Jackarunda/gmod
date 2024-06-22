@@ -277,6 +277,23 @@ elseif(CLIENT)then
 	end
 	local WhiteSquare = Material("white_square")
 	local HeatWaveMat = Material("sprites/heatwave")
+	function ENT:Think()
+		local State = self:GetState()
+		if (State == STATE_SMELTING) and JMod.Config.QoL.NiceFire then
+			local GlowPos = self:GetPos() + self:GetUp * 61 + self:GetRight * 14.5
+			local light = DynamicLight(self:EntIndex())
+			if (light) then
+				light.Pos = GlowPos
+				light.r = 255
+				light.g = 200
+				light.b = 100
+				light.Brightness = 4
+				light.Decay = 1000
+				light.Size = 200 * math.Rand(.9, 1)
+				light.DieTime = CurTime() + 0.1
+			end
+		end
+	end
 	function ENT:Draw()
 		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
 		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
@@ -312,20 +329,11 @@ elseif(CLIENT)then
 			for i = 1, 20 do
 				render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 40, 20, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), GlowAng.r)
 			end
-			render.SetMaterial(HeatWaveMat)
-			for i = 1, 2 do
-				render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 120) - Right * 8 + Forward * 10, 60, 60, Color(255, 255 - i * 10, 255 - i * 20, 25))
-			end
-			local light = DynamicLight(self:EntIndex())
-			if (light) then
-				light.Pos = GlowPos + Right * 7 + Up * 1
-				light.r = 255
-				light.g = 200
-				light.b = 100
-				light.Brightness = 4
-				light.Decay = 1000
-				light.Size = 200 * math.Rand(.9, 1)
-				light.DieTime = CurTime() + 0.1
+			if JMod.Config.QoL.NiceFire then
+				render.SetMaterial(HeatWaveMat)
+				for i = 1, 2 do
+					render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 120) - Right * 8 + Forward * 10, 60, 60, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				end
 			end
 		end
 		---

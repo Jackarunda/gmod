@@ -183,10 +183,12 @@ elseif CLIENT then
 			render.DrawSprite(Pos + Dir * (i * math.random(30, 60)), 150, 150, Color(255, 255 - i * 10, 255 - i * 20, 255))
 		end
 
-		render.SetMaterial(HeatWaveMat)
+		if JMod.Config.QoL.NiceFire then
+			render.SetMaterial(HeatWaveMat)
 
-		for i = 1, 3 do
-			render.DrawSprite(Pos + Dir * (i * math.random(50, 80)), 250, 200, Color(255, 255 - i * 10, 255 - i * 20, 255))
+			for i = 1, 3 do
+				render.DrawSprite(Pos + Dir * (i * math.random(50, 80)), 250, 200, Color(255, 255 - i * 10, 255 - i * 20, 255))
+			end
 		end
 	end
 
