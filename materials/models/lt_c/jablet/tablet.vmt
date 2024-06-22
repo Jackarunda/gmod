@@ -1,0 +1,11 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models\LT_C\Jablet\Tablet"
+	"$halflambert" "1"
+	"$bumpmap" "models\LT_C\Jablet\Tablet_n"
+
+	"$phong" "1"
+	"$phongexponenttexture" "models\LT_C\Jablet\Tablet_exp"
+	"$phongboost" "1"
+	"$phongfresnelranges"	"[1 1 1]"
+}
