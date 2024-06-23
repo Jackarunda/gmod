@@ -280,7 +280,7 @@ elseif(CLIENT)then
 	function ENT:Think()
 		local State = self:GetState()
 		if (State == STATE_SMELTING) and JMod.Config.QoL.NiceFire then
-			local GlowPos = self:GetPos() + self:GetUp * 61 + self:GetRight * 14.5
+			local GlowPos = self:GetPos() + self:GetUp() * 61 + self:GetRight() * 14.5
 			local light = DynamicLight(self:EntIndex())
 			if (light) then
 				light.Pos = GlowPos

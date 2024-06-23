@@ -1234,6 +1234,7 @@ end
 
 --Item Inventory
 local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEnt)
+	if not(itemTable or IsValid(itemTable.ent)) then return end
 	local Buttalony, Ply = vgui.Create("DButton", scrollFrame), LocalPlayer()
 	local Matty = nil
 	if string.find(itemTable.ent:GetClass(), "prop_") then
