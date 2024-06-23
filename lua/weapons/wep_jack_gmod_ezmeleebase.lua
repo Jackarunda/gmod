@@ -7,7 +7,7 @@ SWEP.Purpose = ""
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
+SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
@@ -107,7 +107,7 @@ function SWEP:Pawnch()
 	Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
-	Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
+	--Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
 	self:UpdateNextIdle()
 end
 
@@ -364,8 +364,10 @@ function SWEP:GetViewModelPosition(pos, ang)
 
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
 		Downness = Lerp(FT * 2, Downness, 5)
+	elseif (self:GetSwinging()) then
+		Downness = Lerp(FT * 2, Downness, 0)
 	else
-		Downness = Lerp(FT * 2, Downness, -2)
+		Downness = Lerp(FT * 2, Downness, -3)
 	end
 
 	ang:RotateAroundAxis(ang:Right(), -Downness * 5)

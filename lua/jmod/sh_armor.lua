@@ -101,6 +101,7 @@ JMod.BodyPartDamageMults = {
 }
 
 local BasicArmorProtectionProfile = {
+	--[DMG_GENERIC] = .999,
 	[DMG_BUCKSHOT] = .999,
 	[DMG_CLUB] = .99,
 	[DMG_SLASH] = .99,
@@ -116,6 +117,7 @@ local BasicArmorProtectionProfile = {
 }
 
 local PoorArmorProtectionProfile = {
+	--[DMG_GENERIC] = .6,
 	[DMG_BUCKSHOT] = .6,
 	[DMG_CLUB] = .6,
 	[DMG_SLASH] = .6,
@@ -131,6 +133,7 @@ local PoorArmorProtectionProfile = {
 }
 
 local NonArmorProtectionProfile = {
+	--[DMG_GENERIC] = .05,
 	[DMG_BUCKSHOT] = .05,
 	[DMG_BLAST] = .05,
 	[DMG_BULLET] = .05,
