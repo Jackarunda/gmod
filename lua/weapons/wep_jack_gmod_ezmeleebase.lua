@@ -35,6 +35,8 @@ SWEP.DropEnt = ""
 --
 SWEP.HitDistance		= 50
 SWEP.HitInclination		= 0.4
+SWEP.HitHeight 			= 0
+SWEP.HitAngle 			= 45
 SWEP.HitPushback		= 2000
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1
@@ -53,6 +55,7 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 --
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
+SWEP.HideViewModel = false
 --
 
 function SWEP:Initialize()
@@ -77,7 +80,7 @@ function SWEP:PrimaryAttack()
 	if self.SprintCancel and Owner:KeyDown(IN_SPEED) then return end
 	if self:GetSwinging() then return end
 
-	self:SetNextPrimaryFire(CurTime() + 1.1)
+	self:SetNextPrimaryFire(CurTime() + self.PrimaryAttackSpeed)
 	self:SetNextSecondaryFire(CurTime() + 1)
 
 	local IsPlaya = Owner:IsPlayer()
@@ -178,7 +181,7 @@ function SWEP:Think()
 
 					local SwingPos = Owner:GetShootPos()
 					local SwingAng = Owner:EyeAngles()
-					SwingAng:RotateAroundAxis(SwingAng:Forward(), 45)
+					SwingAng:RotateAroundAxis(SwingAng:Forward(), self.HitAngle)
 					SwingAng:RotateAroundAxis(SwingAng:Right(), math.deg(SwingCos))
 					SwingAng:RotateAroundAxis(SwingAng:Up(), 8)
 
@@ -188,7 +191,7 @@ function SWEP:Think()
 
 					local tr = util.TraceLine( {
 						start = (SwingPos + Offset),
-						endpos = (SwingPos + Offset) + SwingForward * self.HitDistance + SwingRight * -self.HitInclination,
+						endpos = (SwingPos + Offset) + SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitHeight,
 						filter = Owner,
 						mask = MASK_SHOT_HULL
 					})
@@ -346,7 +349,9 @@ function SWEP:Deploy()
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
-	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+	if self.HideViewModel then
+		vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+	end
 end
 
 function SWEP:ViewModelDrawn()
@@ -365,7 +370,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
 		Downness = Lerp(FT * 2, Downness, 5)
 	elseif (self:GetSwinging()) then
-		Downness = Lerp(FT * 2, Downness, 0)
+		Downness = Lerp(FT * 2, Downness, -1)
 	else
 		Downness = Lerp(FT * 2, Downness, -3)
 	end

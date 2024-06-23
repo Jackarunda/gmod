@@ -146,22 +146,6 @@ function SWEP:FinishSwing(swingProgress)
 	self:SetTaskProgress(0)
 end
 
-local Downness = 0
-
-function SWEP:GetViewModelPosition(pos, ang)
-	local FT = FrameTime()
-
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
-		Downness = Lerp(FT * 2, Downness, 5)
-	else
-		Downness = Lerp(FT * 2, Downness, -2)
-	end
-
-	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
-
-	return pos, ang
-end
-
 local LastProg = 0
 
 function SWEP:DrawHUD()
