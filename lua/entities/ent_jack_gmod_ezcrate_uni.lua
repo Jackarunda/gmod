@@ -43,10 +43,10 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:SetItemCount(0)
 
-		self.EZconsumes = {self.ItemType}
+		--self.EZconsumes = {self.ItemType}
 
 		self.NextLoad = 0
-		self.Items = {}
+		self.Items = self.Items or {}
 
 		timer.Simple(.01, function()
 			self:CalcWeight()
@@ -149,6 +149,13 @@ if SERVER then
 
 	--pfahahaha
 	function ENT:OnRemove()
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		if (ent.AdminOnly and ent.AdminOnly == true) and not(JMod.IsAdmin(ply)) then
+			SafeRemoveEntity(ent)
+		end
+		ent.NextLoad = 0
 	end
 	--aw fuck you
 elseif CLIENT then
