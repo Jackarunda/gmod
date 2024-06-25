@@ -55,7 +55,7 @@ if SERVER then
 			local Col = self:GetColor()
 			Foof:SetAngles(Angle(Col.r, Col.g, Col.b))
 			util.Effect("eff_jack_gmod_ezsmokesignal", Foof, true, true)
-			self:EmitSound("snd_jack_sss.ogg", 55, 80)
+			self:EmitSound("snd_jack_sss.wav", 55, 80)
 			self.FuelLeft = self.FuelLeft - .5
 
 			if self.FuelLeft <= 0 then

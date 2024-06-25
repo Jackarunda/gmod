@@ -233,7 +233,7 @@ if SERVER then
 			Fsh:SetScale(1)
 			Fsh:SetNormal(Ang:Forward())
 			util.Effect("eff_jack_fuzeburn", Fsh, true, true)
-			self:EmitSound("snd_jack_sss.ogg", 65, math.Rand(90, 110))
+			self:EmitSound("snd_jack_sss.wav", 65, math.Rand(90, 110))
 			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
 			self.Fuze = self.Fuze - .5
 
