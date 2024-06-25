@@ -179,6 +179,9 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 			target:GetPhysicsObject():EnableMotion(false)
 			target:GetPhysicsObject():Sleep()
 		end
+		if invEnt:GetPersistent() then
+			target:SetPersistent(true)
+		end
 		table.insert(jmodinv.items, {name = target.PrintName or target:GetModel(), ent = target})
 
 		local Children = target:GetChildren()
