@@ -1394,6 +1394,9 @@ elseif(CLIENT)then
 		local AimUp, AimRight, AimForward = AimAngle:Up(), AimAngle:Right(), AimAngle:Forward()
 
 		if AmmoType ~= self.LastAmmoType then
+			if not IsValid(self.MachineGun) then
+				self.MachineGun = JMod.MakeModel(self,"models/jmod/ez/sentrygun.mdl")
+			end
 			self.LastAmmoType = AmmoType
 			self.MachineGun:SetBodygroup(0, AmmoBGs[AmmoType])
 		end
