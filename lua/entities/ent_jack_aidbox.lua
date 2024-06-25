@@ -167,7 +167,9 @@ if SERVER then
 							end
 						else -- the only other supported table contains a count as [2] and potentially a resourceAmt as [3]
 							for i = 1, v[2] or 1 do
-								SpawnItem(v[1], pos, owner, v[3] or nil)
+								timer.Simple(i / 10, function()
+									SpawnItem(v[1], pos, owner, v[3] or nil)
+								end)
 							end
 						end
 					end
