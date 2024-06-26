@@ -58,15 +58,15 @@ if SERVER then
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
 		local RandDir = VectorRand(-6, 6)
-		RandDir.z = RandDir.z / 2
-		local Force = RandDir + (JMod.Wind * 5) + Vector(0, 0, -6)
+		RandDir.z = RandDir.z * .5
+		local Force = RandDir + (JMod.Wind * 5) + Vector(0, 0, -8)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * 1
+					Force = Force - Vec * .3
 				elseif self.NextDmg < Time and self:ShouldDamage(obj) then
 					self:DamageObj(obj)
 				end
@@ -94,11 +94,11 @@ if SERVER then
 		})
 		if not MoveTrace.Hit then
 			-- move unobstructed
-			self:SetPos(NewPos + MoveTrace.HitNormal * 10)
+			self:SetPos(NewPos + MoveTrace.HitNormal * 1)
 		else
 			-- bounce in accordance with Ideal Gas Law
-			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
-			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
+			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 10)
+			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length() * .8
 			CurVelAng:RotateAroundAxis(MoveTrace.HitNormal, 180)
 			local H = Vector(self.CurVel.x, self.CurVel.y, self.CurVel.z)
 			self.CurVel = -(CurVelAng:Forward() * Speed)
