@@ -1055,7 +1055,7 @@ hook.Add("Think", "JMod_LiquidStreams", function()
 			local Tr = util.TraceLine({
 				start = particle.pos,
 				endpos = particle.pos + Travel,
-				mask = MASK_NPCWORLDSTATIC + MASK_WATER
+				mask = MASK_SHOT
 			})
 			if (Tr.Hit) then
 				particle.pos = Tr.HitPos + Tr.HitNormal

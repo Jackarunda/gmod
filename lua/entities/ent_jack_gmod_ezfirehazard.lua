@@ -74,8 +74,7 @@ if SERVER then
 
 	local DamageBlacklist = {
 		["vfire_ball"] = true,
-		["ent_jack_gmod_ezfirehazard"] = true,
-		["ent_jack_gmod_eznapalm"] = true
+		["ent_jack_gmod_ezfirehazard"] = true
 	}
 
 	function ENT:Detonate()
@@ -95,6 +94,28 @@ if SERVER then
 		if not(self.Burnin) and dmginfo:IsDamageType(DMG_BURN) then
 			self:Detonate()
 		end
+	end
+
+	local FlammableMaterials = {
+		[MAT_WOOD] = true, 
+		[MAT_FLESH] = true, 
+		[MAT_GRASS] = true, 
+		[MAT_FOLIAGE] = true, 
+		[MAT_ANTLION] = true
+	}
+
+	local function ShouldIgnite(ent)
+		if not IsValid(ent) then return false end
+		if ent:IsOnFire() then return false end
+		if ent:IsPlayer() then return true end
+		if ent:IsNPC() then return true end
+		if ent:IsNextBot() then return true end
+		local PhysicsMat = ent:GetMaterialType()
+
+		if FlammableMaterials[PhysicsMat] then
+			return true
+		end
+		return false
 	end
 
 	function ENT:Think()
@@ -144,7 +165,7 @@ if SERVER then
 				end
 
 				local FireNearby = false
-				local ActualRange = math.max(self.Range * (Fraction^.2), self.Range)
+				local ActualRange = math.min(self.Range * Fraction, self.Range)
 
 				for k, v in pairs(ents.FindInSphere(Pos, ActualRange)) do
 					local TheirPos = v:GetPos()
@@ -176,19 +197,16 @@ if SERVER then
 								break
 							end
 						end
-					end
-
-					if v.JModHighlyFlammableFunc and JMod.VisCheck(self, v, self) then
+					elseif v.JModHighlyFlammableFunc and JMod.VisCheck(self, v, self) then
 						JMod.SetEZowner(v, self.EZowner)
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
-					end
-
-					if not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
-						self.Power = math.max(Fraction * 20, 5)
-						local DistanceFactor = (1 - Pos:Distance(TheirPos) / self.Range) ^ 1.5
+					elseif not DamageBlacklist[v:GetClass()] and IsValid(v:GetPhysicsObject()) and JMod.VisCheck(self, v, self) then
+						self.Power = math.max(Fraction * 10, 5)
+						local DistanceFactor = math.max( 1 - ( Pos:Distance( TheirPos ) / self.Range ), 0 ) ^ 1.5
 						local Dam = DamageInfo()
-						Dam:SetDamage(self.Power * math.Rand(1, 5) * DistanceFactor)
+						Dam:SetDamage(self.Power * DistanceFactor)
+						--jprint(self.Power * DistanceFactor)
 						Dam:SetDamageType(DMG_BURN)
 						Dam:SetDamagePosition(Pos)
 						Dam:SetAttacker(Att)
@@ -197,7 +215,7 @@ if SERVER then
 
 						if vFireInstalled then
 							CreateVFireEntFires(v, math.random(1, 3))
-						elseif (v:IsOnFire() == false) and (math.random(1, 30) == 1) then
+						elseif (ShouldIgnite(v)) and (math.random(1, 30) == 1) then
 							v:Ignite(math.random(8, 12) * Fraction, 0)
 						end
 					end

@@ -187,8 +187,10 @@ if SERVER then
 	end]]--
 
 	function ENT:OnTakeDamage(dmg)
-		if dmg:GetDamage() > 100 then
+		if dmg:IsDamageType(DMG_BURN) then
 			self:Detonate()
+		elseif dmg:IsExplosionDamage() then
+			SafeRemoveEntityDelayed(self, 0)
 		end
 	end
 
