@@ -1423,6 +1423,7 @@ if SERVER then
 						Loot = ents.Create("prop_physics")
 						Loot:SetModel(ScroungedItem)
 						Loot:SetHealth(100)
+						JMod.SetEZowner(Loot, ply)
 						-- Make this prop unbreakable
 						Loot:SetKeyValue("overridescript", "damage_table,")
 					else
