@@ -150,11 +150,11 @@ if(SERVER)then
 			if (self.Hydration > 0) then
 				local Growth = Light * Sky * Ground * 2
 				if (self.Helf < 100) then -- heal
-					self.Helf = math.Clamp(self.Helf + Growth * JMod.Config.ResourceEconomy.CropGrowthMult, 0, 100)
+					self.Helf = math.Clamp(self.Helf + Growth * JMod.Config.ResourceEconomy.GrowthSpeedMult, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth * JMod.Config.ResourceEconomy.CropGrowthMult, 0, (self.Mutated and 65) or 100)
+					self.Growth = math.Clamp(self.Growth + Growth * JMod.Config.ResourceEconomy.GrowthSpeedMult, 0, (self.Mutated and 65) or 100)
 				end
-				local WaterLoss = math.Clamp(1 - Water, .05, 1) * JMod.Config.ResourceEconomy.CropWaterLossMult
+				local WaterLoss = math.Clamp(1 - Water, .05, 1) * JMod.Config.ResourceEconomy.WaterRequirementMult
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
 			else
 				self.Helf = math.Clamp(self.Helf - 1, 0, 100)

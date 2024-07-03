@@ -102,8 +102,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			ScroungeDespawnTimeMult = 1,
 			ScroungeResultAmount = 5,
 			ForceLoadAllResources = false,
-			CropGrowthMult = 1,
-			CropWaterLossMult = 1
+			GrowthSpeedMult = 1,
+			WaterRequirementMult = 1
 		},
 		QoL = {
 			RealisticLocationalDamage = false,
