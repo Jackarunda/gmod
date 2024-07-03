@@ -51,7 +51,7 @@ if SERVER then
 		self:SetBurning(self.Burnin)
 		---- compensate for inherited velocity ----
 		local CurVel = self:GetForward() * self.TypeInfo[8] * self.SpeedMul
-		local NewVel = CurVel + (self.InitialVel or Vector(0, 0, 0))
+		local NewVel = CurVel + (self.InitialVel or Vector(0, 0, 100))
 		self:SetAngles(NewVel:Angle())
 		self.CurVel = NewVel
 		self.InitialVel = nil
@@ -187,11 +187,11 @@ if SERVER then
 	end]]--
 
 	function ENT:OnTakeDamage(dmg)
-		if dmg:IsDamageType(DMG_BURN) then
+		--[[if dmg:IsDamageType(DMG_BURN) then
 			self:Detonate()
 		elseif dmg:IsExplosionDamage() then
 			SafeRemoveEntityDelayed(self, 0)
-		end
+		end--]]
 	end
 
 	function ENT:Detonate(tr)

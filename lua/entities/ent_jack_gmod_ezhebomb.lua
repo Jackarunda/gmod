@@ -27,7 +27,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetEZowner(self)
-		JMod.Sploom(Att, SelfPos, 150)
+		JMod.Sploom(Att, SelfPos, 50)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
 		local Eff = "500lb_ground"
@@ -54,7 +54,7 @@ if SERVER then
 		end
 
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 120)
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 300)
 
 		timer.Simple(.25, function()
 			util.BlastDamage(game.GetWorld(), JMod.GetEZowner(self), SelfPos, 1600, 120)

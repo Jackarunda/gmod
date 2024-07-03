@@ -17,26 +17,25 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos, Owner, SelfVel = self:LocalToWorld(self:OBBCenter()), self.EZowner or self, self:GetPhysicsObject():GetVelocity()
-		local Boom = ents.Create("env_explosion")
-		Boom:SetPos(SelfPos)
-		Boom:SetKeyValue("imagnitude", "50")
-		Boom:SetOwner(Owner)
-		Boom:Spawn()
-		Boom:Fire("explode", 0)
+		JMod.Sploom(Owner, SelfPos, 10, 50)
 
+		local FireSpeed = .5
 		for i = 1, 25 do
 			local FireVec = (self:GetVelocity() / 500 + VectorRand() * .3 + Vector(0, 0, .3)):GetNormalized()
-			FireVec.z = FireVec.z / 2
-			local Flame = ents.Create("ent_jack_gmod_eznapalm")
-			Flame:SetPos(SelfPos + Vector(0, 0, 10))
-			Flame:SetAngles(FireVec:Angle())
-			Flame:SetOwner(JMod.GetEZowner(self))
-			JMod.SetEZowner(Flame, self.EZowner or self)
-			Flame.SpeedMul = self:GetVelocity():Length() / 1000 + .5
-			Flame.Creator = self
-			Flame.HighVisuals = true
-			Flame:Spawn()
-			Flame:Activate()
+			local Owner = JMod.GetEZowner(self)
+			timer.Simple(i / 25, function()
+				FireVec.z = FireVec.z / 2
+				local Flame = ents.Create("ent_jack_gmod_eznapalm")
+				Flame.Creator = self
+				Flame:SetPos(SelfPos + Vector(0, 0, 10))
+				Flame:SetAngles(FireVec:Angle())
+				JMod.SetEZowner(Flame, JMod.GetEZowner(self))
+				Flame.InitialVel = FireVec
+				Flame.SpeedMul = FireSpeed
+				Flame.HighVisuals = math.random(1, 5) == 1
+				Flame:Spawn()
+				Flame:Activate()
+			end)
 		end
 
 		self:Remove()

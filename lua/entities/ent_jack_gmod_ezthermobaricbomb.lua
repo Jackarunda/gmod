@@ -61,7 +61,12 @@ if SERVER then
 			util.ScreenShake(SelfPos, 1000, 3, 2, 2000 * Oof)
 			---
 			util.BlastDamage(game.GetWorld(), Att, SelfPos, 2000 * Oof, 200 * Oof)
-
+			---
+			for k, v in ipairs(ents.FindInSphere(SelfPos, 2000 * Oof)) do
+				if v:GetClass() == "ent_jack_gmod_ezoilfire" then
+					v:Diffuse()
+				end
+			end
 			---
 			for i = 1, 2 * Oof do
 				sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos + VectorRand() * 1000, 160, math.random(80, 110))

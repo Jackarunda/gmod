@@ -28,12 +28,11 @@ if SERVER then
 
 	function ENT:Initialize()
 		self:SetModel("models/props_wasteland/prison_pipefaucet001a.mdl")
-		self:PhysicsInit(SOLID_NONE)
+		self:PhysicsInit(SOLID_OBB)
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetSolid(SOLID_NONE)
 		self:DrawShadow(true)
 		self:SetAngles(Angle(180, 0, 90))
-		self:SetPos(self:GetPos() + Vector(0, 0, 10))
 
 		---
 		timer.Simple(0.1, function()
@@ -74,6 +73,7 @@ if SERVER then
 		self.SoundLoop:SetSoundLevel(80)
 		self.SoundLoop:Play()
 		self:SetBurning(false)
+		self.RemoveTime = self.RemoveTime - 250
 	end
 
 	function ENT:CanSee(ent)
@@ -134,17 +134,17 @@ if SERVER then
 			JMod.LiquidSpray(SelfPos + SelfUp + SelfRight * 10, SelfRight * 1200, 1, self:EntIndex(), 1)
 		else
 			local Eff = EffectData()
-			Eff:SetOrigin(SelfUp + SelfRight * 10)
+			Eff:SetOrigin(SelfPos + SelfUp + SelfRight * 10)
 			Eff:SetNormal(SelfRight)
 			Eff:SetScale(1)
 			util.Effect("eff_jack_gmod_ezoilfiresmoke", Eff, true)
 
 			if self.DepositKey and JMod.NaturalResourceTable[self.DepositKey] then
 				if JMod.DepleteNaturalResource(self.DepositKey, .1) then
-					self:Remove()
+					SafeRemoveEntity(self)
 				end
 			else
-				self:Remove()
+				--SafeRemoveEntity(self)
 			end
 
 			self:BurnStuff()
@@ -153,20 +153,21 @@ if SERVER then
 		if math.random(1, 4) == 1 then
 			local FireVec = VectorRand() + Vector(0, 0, 2)
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
+			Flame.Creator = self
 			Flame:SetPos(SelfPos + Vector(0, 0, 10))
 			Flame:SetAngles(FireVec:Angle())
 			Flame:SetOwner(JMod.GetEZowner(self))
 			JMod.SetEZowner(Flame, self.EZowner or self)
+			Flame.InitalVel = FireVec * 200
 			Flame.SpeedMul = 1
-			Flame.Creator = self
-			Flame.HighVisuals = true
+			Flame.HighVisuals = math.random(1, 5) == 1
 			Flame.Burnin = self:GetBurning()
 			Flame:Spawn()
 			Flame:Activate()
 		end
 
 		if Time > self.RemoveTime then
-			self:Remove()
+			SafeRemoveEntity(self)
 		end
 		
 		self:NextThink(Time + .1)
@@ -175,15 +176,15 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		if dmginfo:IsExplosionDamage() and (dmginfo:GetDamage() >= 250) then
-			--SafeRemoveEntityDelayed(self, 0)
-		elseif dmginfo:IsDamageType(DMG_BURN) and (math.random(1, 10) == 1) then
+		if dmginfo:IsExplosionDamage() and (dmginfo:GetDamage() >= 200) then
+			self:Diffuse()
+		elseif dmginfo:IsDamageType(DMG_BURN) and (math.random(1, 5) == 1) then
 			self:GoFlamin()
 		end
 	end
 
 	function ENT:OnRemove()
-		if self.SoundLoop then
+		if IsValid(self.SoundLoop) then
 			self.SoundLoop:Stop()
 		end
 	end

@@ -33,6 +33,7 @@ if SERVER then
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1000)
 		---
 		local Dir = self:GetPhysicsObject():GetVelocity():GetNormalized()
+		local Speed = math.Clamp(self:GetPhysicsObject():GetVelocity():Length(), 0, self.DetSpeed * .5)
 		---
 		local Sploom = EffectData()
 		Sploom:SetOrigin(SelfPos)
@@ -51,6 +52,7 @@ if SERVER then
 				Flame:SetAngles(FireAng)
 				Flame:SetOwner(self)
 				JMod.SetEZowner(Flame, Owner)
+				Flame.InitialVel = Dir * Speed
 				Flame.HighVisuals = math.random(1, 5) == 1
 				Flame:Spawn()
 				Flame:Activate()

@@ -6,6 +6,8 @@ ENT.KillName = "Fire Hazard"
 ENT.NoSitAllowed = true
 ENT.IsRemoteKiller = true
 ENT.JModHighlyFlammableFunc = "Detonate"
+ENT.Burnin = true
+
 local ThinkRate = 10 --Hz
 
 function ENT:SetupDataTables()
@@ -43,9 +45,6 @@ if SERVER then
 		self.Power = self.Intensity / self.TypeInfo[5]
 		self.Range = self.TypeInfo[6] * self.Power
 		
-		if self.Burnin == nil then
-			self.Burnin = true 
-		end
 		self:SetBurning(self.Burnin)
 
 		if self.HighVisuals then
@@ -91,7 +90,9 @@ if SERVER then
 	end
 
 	function ENT:OnTakeDamage(dmginfo)
-		if not(self.Burnin) and dmginfo:IsDamageType(DMG_BURN) then
+		if dmginfo:IsExplosionDamage() and (dmginfo:GetDamage() >= self.Intensity * 1.5) then
+			SafeRemoveEntity(self)
+		elseif not(self.Burnin) and dmginfo:IsDamageType(DMG_BURN) then
 			self:Detonate()
 		end
 	end
