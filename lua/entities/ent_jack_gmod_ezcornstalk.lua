@@ -120,9 +120,9 @@ if(SERVER)then
 			if (self.Hydration > 0) then
 				local Growth = Light * Sky * Ground * 2
 				if (self.Helf < 100) then -- heal
-					self.Helf = math.Clamp(self.Helf + Growth, 0, 100)
+					self.Helf = math.Clamp(self.Helf + Growth * JMod.Config.ResourceEconomy.CropGrowthMult, 0, 100)
 				else
-					self.Growth = math.Clamp(self.Growth + Growth, 0, 100)
+					self.Growth = math.Clamp(self.Growth + Growth * JMod.Config.ResourceEconomy.CropGrowthMult, 0, 100)
 				end
 				if self.Growth > 66 then
 					--if (math.random(1, 2) == 1) then
@@ -134,7 +134,7 @@ if(SERVER)then
 						util.Effect("eff_jack_gmod_ezcorndust", Leaf, true, true)
 					--end
 				end
-				local WaterLoss = math.Clamp(1 - Water, .05, 1)
+				local WaterLoss = math.Clamp(1 - Water, .05, 1) * JMod.Config.ResourceEconomy.CropWaterLossMult
 				self.Hydration = math.Clamp(self.Hydration - WaterLoss, 0, 100)
 			else
 				self.Helf = math.Clamp(self.Helf - 1, 0, 100)
