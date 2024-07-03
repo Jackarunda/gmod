@@ -191,12 +191,13 @@ if SERVER then
 				Phys:EnableMotion(true)
 				Phys:Wake()
 				local CenterOfMass = self.StuckTo:LocalToWorld(Phys:GetMassCenter())
-				if self:GetPos():Distance(CenterOfMass) < 64 then
+				if self:GetPos():Distance(CenterOfMass) < 128 then
 					self.ThrustStuckTo = true
 				end
 			end
 			if self.StuckTo.Drop then
 				self.StuckTo:Drop(JMod.GetEZowner(self))
+				self.StuckTo:SetState(JMod.EZ_STATE_ON)
 			end
 		end
 		---
@@ -243,7 +244,7 @@ if SERVER then
 			end
 
 			if self.FuelLeft > 0 then
-				if not ThrustStuckTo then
+				if self.ThrustStuckTo then
 					Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
 				else 
 					Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
@@ -267,6 +268,7 @@ if SERVER then
 				end
 				if IsValid(self.StuckTo) then
 					if not(self.StuckTo.JModHighlyFlammableFunc) and self.StuckTo.Launch then
+						self.StuckTo:SetState(JMod.EZ_STATE_ON)
 						self.StuckTo:Launch()
 					end
 				end
