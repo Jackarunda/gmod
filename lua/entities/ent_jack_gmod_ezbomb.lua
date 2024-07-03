@@ -13,6 +13,7 @@ ENT.EZRackOffset = Vector(0, 0, 20)
 ENT.EZRackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 12
 ---
+ENT.EZbomb = true
 ENT.EZguidable = true
 ENT.Model = "models/hunter/blocks/cube025x2x025.mdl"
 ENT.Mass = 150

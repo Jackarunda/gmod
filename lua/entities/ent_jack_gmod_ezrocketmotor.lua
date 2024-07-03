@@ -191,9 +191,12 @@ if SERVER then
 				Phys:EnableMotion(true)
 				Phys:Wake()
 				local CenterOfMass = self.StuckTo:LocalToWorld(Phys:GetMassCenter())
-				if self:GetPos():Distance(CenterOfMass) < 50 then
+				if self:GetPos():Distance(CenterOfMass) < 64 then
 					self.ThrustStuckTo = true
 				end
+			end
+			if self.StuckTo.Drop then
+				self.StuckTo:Drop(JMod.GetEZowner(self))
 			end
 		end
 		---
@@ -233,13 +236,18 @@ if SERVER then
 		--end
 
 		if State == STATE_LAUNCHED then
-			local Phys = self:GetPhysicsObject()
-			if IsValid(self.StuckTo) and IsValid(self.StuckTo:GetPhysicsObject()) then
-				Phys = self.StuckTo:GetPhysicsObject()
+			local Phys = nil
+			local EntToPush = (IsValid(self.StuckTo) and self.StuckTo) or self
+			if IsValid(EntToPush:GetPhysicsObject()) then
+				Phys = EntToPush:GetPhysicsObject()
 			end
 
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
+				if not ThrustStuckTo then
+					Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
+				else 
+					Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
+				end
 				self.FuelLeft = self.FuelLeft - 1.75
 				--jprint(1 / self.FuelLeft)
 				---
@@ -255,6 +263,11 @@ if SERVER then
 						JMod.SetEZowner(v, self.EZowner)
 						local Func = v[v.JModHighlyFlammableFunc]
 						Func(v)
+					end
+				end
+				if IsValid(self.StuckTo) then
+					if not(self.StuckTo.JModHighlyFlammableFunc) and self.StuckTo.Launch then
+						self.StuckTo:Launch()
 					end
 				end
 				timer.Simple(1, function()
