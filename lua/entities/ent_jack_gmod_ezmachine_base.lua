@@ -652,21 +652,25 @@ if(SERVER)then
 				end
 			end
 			if ent.EZconnections then
-				for entID, cable in pairs(ent.EZconnections) do
-					--print(ent, entID, cable, createdEntities[entID])
-					if createdEntities[entID] then
-						local ConnectedEnt = createdEntities[entID]
-						if IsValid(ConnectedEnt) then
-							local CableConnection = constraint.FindConstraintEntity(ent, "Rope")
-							--print(ConnectedEnt, CableConnection)
-							if IsValid(CableConnection) then
-								ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
-								ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
-								break
+				timer.Simple(0, function()
+					if not IsValid(ent) then return end
+					--print("Machine with connection: "..tostring(ent))
+					for entID, cable in pairs(ent.EZconnections) do
+						--print("Original ID for connection: "..tostring(entID), "| Cable: "..tostring(cable), "| New entity: "..tostring(createdEntities[entID]))
+						if createdEntities[entID] then
+							local ConnectedEnt = createdEntities[entID]
+							if IsValid(ConnectedEnt) then
+								local CableConnection = constraint.FindConstraintEntity(ent, "Rope")
+								--print(ConnectedEnt, CableConnection)
+								if IsValid(CableConnection) then
+									ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
+									ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
+									break
+								end
 							end
 						end
 					end
-				end
+				end)
 			end
 		end
 	end
