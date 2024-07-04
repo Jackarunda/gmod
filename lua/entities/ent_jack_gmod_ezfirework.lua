@@ -168,14 +168,17 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
 		JMod.Sploom(Att, SelfPos, 100)
-		local Flame = ents.Create("ent_jack_gmod_eznapalm")
-		Flame.Creator = self
-		Flame:SetPos(SelfPos)
-		Flame:SetOwner(Att)
-		Flame.InitialVel = Dir * self:GetVelocity():Length() * .5
-		Flame.HighVisuals = false
-		Flame:Spawn()
-		Flame:Activate()
+		local InitialVel = Dir * self:GetVelocity():Length() * .2
+		timer.Simple(0, function()
+			local Flame = ents.Create("ent_jack_gmod_eznapalm")
+			Flame:SetPos(SelfPos)
+			Flame:SetOwner(Att)
+			Flame.InitialVel = InitialVel
+			Flame.HighVisuals = false
+			Flame.LifeTime = .5
+			Flame:Spawn()
+			Flame:Activate()
+		end)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 1, 1500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
@@ -201,7 +204,7 @@ if SERVER then
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
-		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat())
+		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * .75)
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
