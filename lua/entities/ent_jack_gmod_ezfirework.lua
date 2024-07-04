@@ -8,6 +8,7 @@ ENT.PrintName = "EZ Firework Rocket"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
+ENT.JModHighlyFlammableFunc = "Launch"
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, -1.5, -2.5)
 ENT.EZRackAngles = Angle(0, 0, 0)
@@ -167,6 +168,14 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
 		JMod.Sploom(Att, SelfPos, 100)
+		local Flame = ents.Create("ent_jack_gmod_eznapalm")
+		Flame.Creator = self
+		Flame:SetPos(SelfPos)
+		Flame:SetOwner(Att)
+		Flame.InitialVel = Dir * self:GetVelocity():Length()
+		Flame.HighVisuals = false
+		Flame:Spawn()
+		Flame:Activate()
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 1, 1500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
