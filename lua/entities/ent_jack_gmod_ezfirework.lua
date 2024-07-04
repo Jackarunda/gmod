@@ -172,7 +172,7 @@ if SERVER then
 		Flame.Creator = self
 		Flame:SetPos(SelfPos)
 		Flame:SetOwner(Att)
-		Flame.InitialVel = Dir * self:GetVelocity():Length()
+		Flame.InitialVel = Dir * self:GetVelocity():Length() * .5
 		Flame.HighVisuals = false
 		Flame:Spawn()
 		Flame:Activate()

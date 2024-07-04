@@ -265,9 +265,24 @@ elseif CLIENT then
 
 	function ENT:Initialize()
 		self:SetModel("models/jmod/rocket_pod/rocket_pod01.mdl")
+		self.RenderRockets = {}
 	end
 
-	function ENT:Think() end
+	function ENT:Think() 
+		if next(self.RenderRockets) then
+			local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+			for k, renderRocket in pairs(self.RenderRockets) do
+				if IsValid(renderRocket) then
+					local PodAngle = SelfAng:GetCopy()
+					PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (k - 1))
+					PodAngle:RotateAroundAxis(PodAngle:Up(), 0 + renderRocket.JModPreferredCarryAngles.y)
+					local RocketRackOffset = renderRocket.EZRackOffset
+					renderRocket:SetPos(SelfPos + PodAngle:Up() * (10 + RocketRackOffset.y) + self:GetForward() * (RocketRackOffset.z) + self:GetRight() * (RocketRackOffset.x))
+					renderRocket:SetAngles(PodAngle)
+				end
+			end
+		end
+	end
 
 	function ENT:OnMachineSync(newSpecs)
 		self.RenderRockets = self.RenderRockets or {}
@@ -298,7 +313,7 @@ elseif CLIENT then
 					self.RenderRockets[k] = RenderRocket
 				end
 			end
-		end
+		end--]]
 	end--]]
 
 	function ENT:Draw()

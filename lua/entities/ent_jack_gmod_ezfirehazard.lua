@@ -162,7 +162,7 @@ if SERVER then
 				elseif Water > 0 then
 					self:SetPos(util.TraceLine({start = Pos, endpos = Pos + Vector(0, 0, 10), filter = self}).HitPos)
 				else
-					self:SetPos(util.TraceLine({start = Pos, endpos = Pos - Vector(0, 0, 10), filter = self}).HitPos)
+					self:SetPos(util.TraceLine({start = Pos, endpos = Pos - Vector(0, 0, 30), filter = self}).HitPos)
 				end
 
 				local FireNearby = false
