@@ -268,22 +268,6 @@ elseif CLIENT then
 		self.RenderRockets = {}
 	end
 
-	function ENT:Think() 
-		if next(self.RenderRockets) then
-			local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-			for k, renderRocket in pairs(self.RenderRockets) do
-				if IsValid(renderRocket) then
-					local PodAngle = SelfAng:GetCopy()
-					PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (k - 1))
-					PodAngle:RotateAroundAxis(PodAngle:Up(), 0 + renderRocket.JModPreferredCarryAngles.y)
-					local RocketRackOffset = renderRocket.EZRackOffset
-					renderRocket:SetPos(SelfPos + PodAngle:Up() * (10 + RocketRackOffset.y) + self:GetForward() * (RocketRackOffset.z) + self:GetRight() * (RocketRackOffset.x))
-					renderRocket:SetAngles(PodAngle)
-				end
-			end
-		end
-	end
-
 	function ENT:OnMachineSync(newSpecs)
 		self.RenderRockets = self.RenderRockets or {}
 		for num, model in pairs(self.RenderRockets) do
@@ -309,15 +293,28 @@ elseif CLIENT then
 					RenderRocket:SetPos(SelfPos + PodAngle:Up() * (10 + RenderRocket.EZRackOffset.y) + self:GetForward() * (RenderRocket.EZRackOffset.z) + self:GetRight() * (RenderRocket.EZRackOffset.x))
 					RenderRocket:SetAngles(PodAngle)
 					RenderRocket:SetParent(self)
+					RenderRocket:SetNoDraw(true)
 					RenderRocket:Spawn()
 					self.RenderRockets[k] = RenderRocket
 				end
 			end
-		end--]]
-	end--]]
+		end
+	end
 
 	function ENT:Draw()
 		self:DrawModel()
+		if next(self.RenderRockets) then
+			local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+			for k, model in pairs(self.RenderRockets) do
+				if IsValid(model) then
+					local PodAngle = SelfAng:GetCopy()
+					PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (k - 1))
+					PodAngle:RotateAroundAxis(PodAngle:Up(), 0 + model.JModPreferredCarryAngles.y)
+					local RenderPos = SelfPos + PodAngle:Up() * (10 + model.EZRackOffset.y) + self:GetForward() * (model.EZRackOffset.z) + self:GetRight() * (model.EZRackOffset.x)
+					JMod.RenderModel(model, RenderPos, PodAngle)
+				end
+			end
+		end
 	end
 
 	function ENT:OnRemove()
