@@ -1462,7 +1462,7 @@ function JMod.ConsumeNutrients(ply, amt)
 	if (ply.EZnutrition.Nutrients or 0) >= 100 then JMod.Hint(ply, "nutrition filled") return false end
 	--
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
-	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
+	ply.EZnutrition.Nutrients = math.Round(ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency)
 
 	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
 		local Old = ply:getDarkRPVar("energy")
@@ -1475,13 +1475,11 @@ end
 
 function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
-	if ply.EZnutrition then
+	local PlyHealth = ply:Health()
+	local PlyMaxHealth = ply:GetMaxHealth()
 
-		return 1 + (ply.EZnutrition.Nutrients * 0.1) * JMod.Config.General.HandGrabStrength
-	else
-		
-		return 1 * JMod.Config.General.HandGrabStrength
-	end
+	--jprint(1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength)
+	return 1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength
 end
 
 function JMod.BuildEffect(pos)

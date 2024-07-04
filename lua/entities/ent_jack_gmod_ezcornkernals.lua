@@ -202,7 +202,7 @@ if SERVER then
 			end
 		elseif State == STATE_GERMINATING then
 			if not IsValid(self.GroundWeld) then self:Degenerate() end
-			if ((Time - 60 * (1 / math.max(JMod.Config.ResourceEconomy.GrowthSpeedMult, 0.01))) > self.LastTouchedTime \) then
+			if ((Time - 60 * (1 / math.max(JMod.Config.ResourceEconomy.GrowthSpeedMult, 0.01))) > self.LastTouchedTime) then
 				self:SpawnCorn()
 			end
 		end

@@ -41,6 +41,7 @@ SWEP.HitPushback		= 2000
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1
 SWEP.SwingPullback 		= 0
+SWEP.SwingOffset 		= Vector(12, 15, -5)
 SWEP.PrimaryAttackSpeed = 1
 SWEP.SecondaryAttackSpeed 	= 1
 SWEP.DoorBreachPower 	= 1
@@ -187,7 +188,7 @@ function SWEP:Think()
 
 					local SwingUp, SwingForward, SwingRight = SwingAng:Up(), SwingAng:Forward(), SwingAng:Right()
 					
-					local Offset = SwingRight * 12 + SwingForward * SwingSin * 15 + SwingUp * -5
+					local Offset = SwingRight * self.SwingOffset.x + SwingForward * SwingSin * self.SwingOffset.y + SwingUp * self.SwingOffset.z
 
 					local tr = util.TraceLine( {
 						start = (SwingPos + Offset),
