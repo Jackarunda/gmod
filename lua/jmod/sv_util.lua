@@ -979,7 +979,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(SpawnAngle or Resource.JModPreferredCarryAngles or Angle(0, 0, 0))
 			Resource:Spawn()
-			JMod.SetEZowner(MachineOwner)
+			JMod.SetEZowner(Resource, MachineOwner)
 			Resource:SetResource(SpawnAmount)
 			Resource:Activate()
 		end)

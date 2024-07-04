@@ -365,6 +365,7 @@ local Handcraft = function(ply, cmd, args)
 			Bench:SetPos(WherePutBench.HitPos + Vector(0, 0, 30))
 			Bench:SetAngles(-ply:GetAngles())
 			Bench:Spawn()
+			JMod.SetEZowner(Bench, ply)
 			Bench:Activate()
 		end)
 		
