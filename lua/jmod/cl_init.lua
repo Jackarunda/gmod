@@ -442,7 +442,7 @@ function JMod.RenderModel(mdl, pos, ang, scale, color, mat, fullbright, transluc
 	local RenderCol = color or Vector(1, 1, 1)
 	render.SetColorModulation(RenderCol.x, RenderCol.y, RenderCol.z)
 
-	if mat then
+	if mat and not(tonumber(mat)) then
 		render.ModelMaterialOverride(mat)
 	end
 
