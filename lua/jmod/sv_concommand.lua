@@ -60,7 +60,7 @@ concommand.Add("jmod_debug", function(ply, cmd, args)
 		end)
 	end
 	--]]
-	--[[
+	---[[
 	local EffData = EffectData()
 	EffData:SetOrigin(ply:GetShootPos() + ply:GetAimVector() * 2000)
 	util.Effect("eff_jack_gmod_firework", EffData, true, true)

@@ -38,7 +38,6 @@ if(SERVER)then
 		self.NextUse = 0
 		self.PowerSLI = 0 -- Power Since Last Interaction
 		self.MaxPowerSLI = 500
-		local mapName = game.GetMap()
 	end
 
 	function ENT:SetupWire()

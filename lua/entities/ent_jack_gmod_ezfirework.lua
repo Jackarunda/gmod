@@ -72,7 +72,7 @@ if SERVER then
 		if not IsValid(self) then return end
 		if data.DeltaTime > 0.2 then
 			if data.Speed > 50 then
-				self:EmitSound("Canister.ImpactHard")
+				self:EmitSound("Drywall.ImpactHard")
 			end
 			local DetSpd = 300
 			if (data.Speed > DetSpd) and (self:GetState() == STATE_LAUNCHED) then
@@ -181,7 +181,14 @@ if SERVER then
 		end)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 1, 1500)
-		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
+		local pitch = math.random(95, 105)
+		self:EmitSound("snds_jack_gmod/firework_pop_crackle.ogg", 100, pitch)
+		for k, v in pairs(player.GetAll()) do
+			local plyPos = v:GetShootPos()
+			if (plyPos:Distance(SelfPos) < 10000) then
+				sound.Play("snds_jack_gmod/firework_pop_crackle.ogg", plyPos, 40, pitch)
+			end
+		end
 		---
 		timer.Simple(.2, function()
 			local Tr = util.QuickTrace(SelfPos - Dir * 100, Dir * 300)
@@ -211,8 +218,8 @@ if SERVER then
 		Phys:Wake()
 		Phys:ApplyForceCenter(-self:GetRight() * 5000 + self.UpLift)
 		---
-		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
-		sound.Play("snds_jack_gmod/bottle_rocket_scream.ogg", self:GetPos(), 80, math.random(90, 110))
+		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 50, math.random(95, 105))
+		sound.Play("snds_jack_gmod/bottle_rocket_scream.ogg", self:GetPos(), 100, math.random(90, 110))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
 		Eff:SetNormal(self:GetRight())
