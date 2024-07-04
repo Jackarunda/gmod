@@ -1859,6 +1859,7 @@ net.Receive("JMod_ModifyConnections", function()
 				net.Start("JMod_ModifyConnections")
 					net.WriteEntity(Ent)
 					net.WriteString(v.Func)
+					net.WriteEntity(NULL)
 				net.SendToServer()
 				Frame:Close()
 			end

@@ -1626,6 +1626,13 @@ function JMod.RemoveConnection(machine, connection)
 	machine.EZconnections[connection] = nil
 end
 
+function JMod.ConnectionValid(machine, otherMachine)
+	if not(IsValid(machine) and IsValid(otherMachine)) then return false end
+	if not(machine.EZconnections and otherMachine.EZconnections) then return false end
+	if not(IsValid(machine.EZconnections[otherMachine:EntIndex()])) then return false end
+	return true
+end
+
 function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, numFire)
 	-- spark/smoke effects
 	for i = 1, numExplo do

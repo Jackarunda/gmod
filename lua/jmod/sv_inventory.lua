@@ -326,7 +326,8 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	local NonPlyInv = (invEnt ~= ply)
 	local CanSeeNonPlyInv = (Tr.Entity == invEnt)
 
-	--jprint(((invEnt ~= ply) and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
+	--jprint(command, invEnt, desiredAmt, resourceType, target)
+	--jprint((NonPlyInv and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
 	if command == "take" then
 		if not(IsValid(target)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
