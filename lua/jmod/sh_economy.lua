@@ -1297,18 +1297,18 @@ if SERVER then
 			["models/props_c17/metalpot002a.mdl"] = 1,
 			["models/props_debris/wood_chunk06a.mdl"] = 1,
 			["models/props_interiors/pot01a.mdl"] = 2,
-			["models/props_junk/garbage_coffeemug001a.mdl"] = 1,
-			["models/props_junk/garbage_glassbottle001a.mdl"] = 2,
+			["models/jmod_scrounge/garbage_coffeemug001a_jmod.mdl"] = 1,
+			["models/jmod_scrounge/garbage_glassbottle001a_jmod.mdl"] = 2,
 			["models/props_junk/garbage_milkcarton001a.mdl"] = 3,
 			["models/props_junk/garbage_metalcan002a.mdl"] = 4,
 			["models/props_junk/garbage_takeoutcarton001a.mdl"] = 1,
 			["models/props_junk/garbage_plasticbottle003a.mdl"] = 2,
 			["models/props_junk/garbage_plasticbottle001a.mdl"] = 2,
-			["models/props_junk/glassbottle01a.mdl"] = 1,
-			["models/props_junk/glassjug01.mdl"] = 1,
+			["models/jmod_scrounge/glassbottle01a_jmod.mdl"] = 1,
+			["models/jmod_scrounge/glassjug01_jmod.mdl"] = 1,
 			["models/props_junk/metal_paintcan001a.mdl"] = 1,
 			["models/props_junk/shoe001a.mdl"] = 1,
-			["models/props_junk/terracotta01.mdl"] = 1,
+			["models/jmod_scrounge/terracotta01_jmod.mdl"] = 1,
 			["models/props_junk/trafficcone001a.mdl"] = 1,
 			["models/props_junk/plasticcrate01a.mdl"] = 1,
 			["models/props_junk/metalbucket02a.mdl"] = 2,
@@ -1325,7 +1325,7 @@ if SERVER then
 			["ent_jack_gmod_ezwheatseed"] = 1,
 			["ent_jack_gmod_ezcornkernals"] = 1,
 			["ent_jack_gmod_ezacorn"] = 1.5,
-			["models/props_foliage/driftwood_03a.mdl"] = 2,
+			["models/jmod_scrounge/logs.mdl"] = 2,
 			["models/props_debris/wood_chunk06a.mdl"] = 3,
 			["models/props_junk/watermelon01.mdl"] = 1,
 			["models/jmod/resources/rock05a.mdl"] = 2,
@@ -1399,20 +1399,22 @@ if SERVER then
 
 		local StuffPerScrounge, SpawnedItems, AttemptedCount, MaxAttempts = math.Round(JMod.Config.ResourceEconomy.ScroungeResultAmount), 0, 0, 1000
 		local LastEnv
+		local StartPos = util.QuickTrace(Pos, Vector(0, 0, Range * .5), ply).HitPos
 		while ((SpawnedItems < StuffPerScrounge) and (AttemptedCount < MaxAttempts)) do
 			AttemptedCount = AttemptedCount + 1
-			local PotentialSpawnPos = Pos + Vector(math.random(-Range, Range), math.random(-Range, Range), math.random(0, Range))
-			local Contents = util.PointContents(PotentialSpawnPos)
-			if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+			--local Contents = util.PointContents(PotentialSpawnPos)
+			--if (bit.band(Contents, CONTENTS_EMPTY) == CONTENTS_EMPTY) or (bit.band(Contents, CONTENTS_TESTFOGVOLUME) == CONTENTS_TESTFOGVOLUME) then
+				local ConeVec = (Pos - StartPos + VectorRand() * Range * .3):GetNormalized()
 				local AntiClipTr = util.TraceHull({
-					start = PotentialSpawnPos,
-					endpos = PotentialSpawnPos,
+					start = StartPos,
+					endpos = StartPos + ConeVec * Range * 2,
 					mins = Vector(-20, -20, -20),
 					maxs = Vector(20, 20, 20),
 					mask = MASK_SOLID,
 					filter = {ply}
 				})
-				if not AntiClipTr.Hit then
+				debugoverlay.Line(StartPos, AntiClipTr.HitPos, 5, Color(255, 0, 0), true)
+				if AntiClipTr.Hit and (AntiClipTr.Entity == game.GetWorld()) then
 					local EnvironmentType = table.Random(ScroungeResults)
 					local SelectedScroungeTable = ScroungeTable[EnvironmentType]
 					local ScroungedItem = table.Random(SelectedScroungeTable)
@@ -1422,24 +1424,32 @@ if SERVER then
 					elseif string.find(ScroungedItem, ".mdl") then
 						Loot = ents.Create("prop_physics")
 						Loot:SetModel(ScroungedItem)
-						Loot:SetHealth(100)
 						JMod.SetEZowner(Loot, ply)
-						-- Make this prop unbreakable
-						Loot:SetKeyValue("overridescript", "damage_table,")
+						local NumBodyGroups = Loot:GetNumBodyGroups()
+						if NumBodyGroups > 0 then
+							for i = 0, NumBodyGroups - 1 do
+								Loot:SetBodygroup(math.random(0, NumBodyGroups - 1), math.random(0, Loot:GetBodygroupCount(i)))
+							end
+						end
+						if Loot:SkinCount() > 0 then
+							Loot:SetSkin(math.random(0, Loot:SkinCount() - 1))
+						end
 					else
 						Loot = ents.Create(ScroungedItem)
 					end
-					local PosSet = util.QuickTrace(PotentialSpawnPos, Vector(0, 0, -1000))
-					local Mins, Maxs = Loot:GetCollisionBounds()
-					local BBVec = Maxs - Mins
-					local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
-					Loot:SetPos(PosSet.HitPos + Vector(0, 0, SpawnHeight + 2))
-					Loot:SetAngles(AngleRand())
-					Loot:Spawn()
-					Loot:Activate()
-					JMod.SetEZowner(Loot, ply)
-					SpawnedItems = SpawnedItems + 1
-					LastEnv = EnvironmentType
+					local PosSetTr = util.QuickTrace(AntiClipTr.HitPos, Vector(0, 0, -Range))
+					if PosSetTr.Hit and PosSetTr.Entity == game.GetWorld() then
+						local Mins, Maxs = Loot:GetCollisionBounds()
+						local BBVec = Maxs - Mins
+						local SpawnHeight = math.max(BBVec.x, BBVec.y, BBVec.z)
+						Loot:SetPos(PosSetTr.HitPos + Vector(0, 0, SpawnHeight + 2))
+						Loot:SetAngles(AngleRand())
+						Loot:Spawn()
+						Loot:Activate()
+						JMod.SetEZowner(Loot, ply)
+						SpawnedItems = SpawnedItems + 1
+						LastEnv = EnvironmentType
+					end
 
 					if JMod.Config.ResourceEconomy.ScroungeDespawnTimeMult > 0 then
 						timer.Simple(3, function()
@@ -1465,7 +1475,7 @@ if SERVER then
 						end)
 					end
 				end
-			end
+			--end
 		end
 
 		if not Debug then
