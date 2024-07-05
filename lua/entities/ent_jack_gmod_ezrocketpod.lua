@@ -181,14 +181,16 @@ if SERVER then
 		if (slotNum == 0) or (slotNum > NumORockets) or not(self.Rockets[slotNum]) then return end
 
 		ply = ply or JMod.GetEZowner(self)
-		local Up, Forward, Right = self:GetUp(), self:GetForward(), self:GetRight()
+		local Up, Ford, Right = self:GetUp(), self:GetForward(), self:GetRight()
 		local Pos, Ang = self:GetPos(), self:GetAngles()
 		local LaunchedRocket = ents.Create(self.Rockets[slotNum])
 
 		local PodAngle = Ang:GetCopy()
-		PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (slotNum - 1))
+		--PodAngle:RotateAroundAxis(Ford, 30)
+		PodAngle:RotateAroundAxis(Ford, 60 * (slotNum - 1))
+		PodAngle:RotateAroundAxis(PodAngle:Right(), -LaunchedRocket.JModPreferredCarryAngles.p)
 		PodAngle:RotateAroundAxis(PodAngle:Up(), LaunchedRocket.JModPreferredCarryAngles.y)
-		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + self:GetForward() * 40)
+		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + Ford * 40)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
@@ -304,6 +306,11 @@ elseif CLIENT then
 			for k, rocketClass in pairs(self.Rockets) do
 				local DisplaySpecs = self.RocketDisplaySpecs[rocketClass]
 				self.RocketModels[k] = JMod.MakeModel(self, DisplaySpecs.mdl, DisplaySpecs.mat, DisplaySpecs.siz, DisplaySpecs.col)
+				if DisplaySpecs.bg then
+					for group, state in pairs(DisplaySpecs.bg) do
+						self.RocketModels[k]:SetBodygroup(group, state)
+					end
+				end
 			end
 		end
 	end
@@ -318,8 +325,8 @@ elseif CLIENT then
 					local DisplaySpecs = self.RocketDisplaySpecs[rocketClass]
 					local pos, ang = SelfPos:GetCopy(), SelfAng:GetCopy()
 					local rotateAng = ang:GetCopy()
-					rotateAng:RotateAroundAxis(Ford, 30)
-					rotateAng:RotateAroundAxis(Ford, k * 60)
+					rotateAng:RotateAroundAxis(Ford, -30)
+					rotateAng:RotateAroundAxis(Ford, -60 * k)
 					pos = pos + rotateAng:Right() * 10 - Ford
 					pos = pos + Ford * DisplaySpecs.pos.y + Right * DisplaySpecs.pos.x + Up * DisplaySpecs.pos.z
 					ang:RotateAroundAxis(Up, DisplaySpecs.ang.y)

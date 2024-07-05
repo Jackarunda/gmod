@@ -9,8 +9,8 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModHighlyFlammableFunc = "Launch"
-ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, -1.5, -2.5)
+ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.EZRackOffset = Vector(0, -1.5, -2)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ENT.UsableMats = {MAT_DIRT, MAT_FOLIAGE, MAT_SAND, MAT_SLOSH, MAT_GRASS, MAT_SNOW}
@@ -24,7 +24,7 @@ if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
 		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180, 0, 0))
+		ent:SetAngles(Angle(0, 0, 90))
 		ent:SetPos(SpawnPos)
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
@@ -35,12 +35,16 @@ if SERVER then
 		return ent
 	end
 	function ENT:Initialize()
-		self:SetModel("models/hunter/plates/plate1.mdl")
+		--self:SetModel("models/hunter/plates/plate1.mdl")
+		self:SetModel("models/jmod/explosives/ez_fireworks.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
+		---
+		self:SetSkin(math.random(0, 1))
+		self:SetColor(Color(0, 0, 255))
 		---
 		timer.Simple(.01, function()
 			self:GetPhysicsObject():SetMass(20)
@@ -112,8 +116,8 @@ if SERVER then
 		local Tr = util.QuickTrace(activator:GetShootPos(), activator:GetAimVector() * 100, {activator, self})
 		if Tr.Hit and table.HasValue(self.UsableMats, Tr.MatType) and IsValid(Tr.Entity:GetPhysicsObject()) then
 			local Ang = (Tr.HitNormal + VectorRand() * .3):GetNormalized():Angle()
-			Ang:RotateAroundAxis(Ang:Up(), -90)
-			local Pos = Tr.HitPos + Tr.HitNormal * 20
+			Ang:RotateAroundAxis(Ang:Right(), -90)
+			local Pos = Tr.HitPos + Tr.HitNormal * 25
 			self:SetAngles(Ang)
 			self:SetPos(Pos)
 			--self:GetPhysicsObject():SetVelocity(Vector(0, 0, 0))
@@ -137,7 +141,7 @@ if SERVER then
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		if State == STATE_OFF then
 			if Alt then
-				JMod.SetEZowner(self, activator)
+				JMod.SetEZowner(self, activator, true)
 				if (self:Bury(activator)) then
 					self:SetState(STATE_ARMED)
 					self.EZlaunchableWeaponArmedTime = CurTime()
@@ -166,7 +170,7 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
+		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetUp()
 		JMod.Sploom(Att, SelfPos, 100)
 		local InitialVel = Dir * self:GetVelocity():Length() * .2
 		timer.Simple(0, function()
@@ -210,24 +214,25 @@ if SERVER then
 	--
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
+		local LaunchDir = -self:GetUp()
 		self:SetState(STATE_LAUNCHED)
 		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * .75)
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetRight() * 5000 + self.UpLift)
+		Phys:ApplyForceCenter(-LaunchDir * 5000 + self.UpLift)
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 50, math.random(95, 105))
 		sound.Play("snds_jack_gmod/bottle_rocket_scream.ogg", self:GetPos(), 100, math.random(90, 110))
 		local Eff = EffectData()
 		Eff:SetOrigin(self:GetPos())
-		Eff:SetNormal(self:GetRight())
+		Eff:SetNormal(LaunchDir)
 		Eff:SetScale(4)
 		util.Effect("eff_jack_gmod_rocketthrust", Eff, true, true)
 		---
 		for i = 1, 4 do
-			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + self:GetRight() * i * 40, 50, 50)
+			util.BlastDamage(self, JMod.GetEZowner(self), self:GetPos() + LaunchDir * i * 40, 50, 50)
 		end
 		util.ScreenShake(self:GetPos(), 20, 255, .5, 200)
 		---
@@ -238,6 +243,7 @@ if SERVER then
 				self:Detonate()
 			end
 		end)
+		self:SetBodygroup(1, 1)
 	end
 	function ENT:EZdetonateOverride(detonator)
 		self:Detonate()
@@ -247,16 +253,17 @@ if SERVER then
 			WireLib.TriggerOutput(self, "State", self:GetState())
 			WireLib.TriggerOutput(self, "Fuel", self.FuelLeft)
 		end
+		local LaunchDir = -self:GetUp()
 		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, -self:GetRight(), .75)
+		JMod.AeroDrag(self, -LaunchDir, .75)
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 2000 + self.UpLift)
+				Phys:ApplyForceCenter(-LaunchDir * 2000 + self.UpLift)
 				self.FuelLeft = self.FuelLeft - 5
 				---
 				local Eff = EffectData()
 				Eff:SetOrigin(self:GetPos())
-				Eff:SetNormal(self:GetRight())
+				Eff:SetNormal(LaunchDir)
 				Eff:SetScale(1)
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			end
@@ -266,14 +273,10 @@ if SERVER then
 	end
 elseif CLIENT then
 	function ENT:Initialize()
-		self.Mdl = ClientsideModel("models/jmod/explosives/ez_fireworks.mdl")
-		self.Mdl:SetSkin(1)
-		self.Mdl:SetPos(self:GetPos())
-		self.Mdl:SetParent(self)
-		self.Mdl:SetNoDraw(true)
-	end
+		self:SetModel("models/jmod/explosives/ez_fireworks.mdl")
+	end--]]
 	function ENT:Think()
-		local Pos, Dir = self:GetPos(), self:GetRight()
+		local Pos, Dir = self:GetPos(), -self:GetUp()
 		local Time = CurTime()
 		if self:GetState() == STATE_LAUNCHED then
 			self.BurnoutTime = self.BurnoutTime or Time + 1
@@ -295,13 +298,10 @@ elseif CLIENT then
 	--
 	local GlowSprite = Material("mat_jack_gmod_glowsprite")
 	function ENT:Draw()
-		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
+		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), -self:GetUp()
 		local Time = CurTime()
 		Ang:RotateAroundAxis(Ang:Forward(), -90)
-		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 8 - Ang:Right() * -1.5)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
+		self:DrawModel()
 		if self:GetState() == STATE_LAUNCHED then
 			self.BurnoutTime = self.BurnoutTime or Time + 1
 			if self.BurnoutTime > Time then
@@ -311,11 +311,6 @@ elseif CLIENT then
 					render.DrawSprite(Pos + Dir * (i * 10 + math.random(30, 40)), 5 * Inv, 5 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
 				end
 			end
-		end
-	end
-	function ENT:OnRemove()
-		if self.Mdl then
-			self.Mdl:Remove()
 		end
 	end
 	language.Add("ent_jack_gmod_ezfirework", "EZ Firework Rocket")
