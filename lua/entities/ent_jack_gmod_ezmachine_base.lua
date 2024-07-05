@@ -475,11 +475,14 @@ if(SERVER)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
 					Accepted = math.min(Missing / 2, amt)
+					local Broken = false
+					if self.Durability <= 0 then Broken = true end
 					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
 					if(self.Durability > 0)then
 						if(self:GetState() == JMod.EZ_STATE_BROKEN)then self:SetState(JMod.EZ_STATE_OFF) end
+						if Broken and self.OnRepair then self:OnRepair() end
 					end
 					self:SetNW2Float("EZdurability", self.Durability)
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.GAS)then
