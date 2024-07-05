@@ -24,7 +24,7 @@ ENT.RocketDisplaySpecs = {
 		pos = Vector(0, 25, 0),
 		ang = Angle(-90, 0, 0),
 		mat = 1,
-		bg = { [1] = 1 }
+		bg = { [1] = 1 } -- todo
 	},
 	["ent_jack_gmod_ezheatrocket"] = {
 		mdl = "models/jmod/explosives/missile/missile_patriot.mdl",
@@ -37,7 +37,8 @@ ENT.RocketDisplaySpecs = {
 		mdl = "models/jmod/explosives/missile/missile_patriot.mdl",
 		siz = .7,
 		pos = Vector(0, 0, 0),
-		ang = Angle(0, 0, 0)
+		ang = Angle(0, 0, 0),
+		mat = 1
 	}
 }
 ---
