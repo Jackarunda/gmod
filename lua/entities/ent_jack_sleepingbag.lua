@@ -135,7 +135,7 @@ elseif (SERVER) then
 			end
 		else
 			if (self.State == STATE_UNROLLED) then
-				if (self.EZowner and IsValid(self.EZowner)) then
+				if IsValid(self.EZowner) and IsValid(ply.JModSpawnPointEntity) and (ply.JModSpawnPointEntity == self) then
 					if (ply ~= self.EZowner) then
 						JMod.Hint(ply,"sleeping bag someone else")
 					else

@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 48.8
+			Version = 49
 		},
 		General = {
 			Hints = true,
@@ -1038,6 +1038,18 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				category = "Other",
 				craftingType = "workbench",
 				description = "Attach to an object and launch to propell it away."
+			},
+			["EZ Firework Rocket"] = {
+				results = "ent_jack_gmod_ezfirework",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.CHEMICALS] = 10,
+					[JMod.EZ_RESOURCE_TYPES.PROPELLANT] = 30,
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 20
+				},
+				sizeScale = .1,
+				category = "Other",
+				craftingType = "workbench",
+				description = "Firework to celebrate the holidays with. Or set stuff on fire."
 			},
 			["EZ Incendiary Bomb"] = {
 				results = "ent_jack_gmod_ezincendiarybomb",
