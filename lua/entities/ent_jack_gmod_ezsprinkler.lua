@@ -18,7 +18,6 @@ ENT.SpawnHeight = 1
 ENT.StaticPerfSpecs = {
 	MaxElectricity = 100,
 	MaxDurability = 50,
-	MaxLiquid = 200,
 	Armor = 1
 }
 ENT.DynamicPerfSpecs={
@@ -361,8 +360,8 @@ if(SERVER)then
 						Zoop = Zoop * .5
 					end
 					local SplachPos = SelfPos + self:GetUp() * 36 + SprayAngle:Forward() * 3
-					local Splach = EffectData()
-					--[[Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
+					--[[local Splach = EffectData()
+					Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
 					Splach:SetStart(Zoop)
 					Splach:SetScale((self.Dir == "right") and 1 or .4)
 					util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
