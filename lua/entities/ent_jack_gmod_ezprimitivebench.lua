@@ -104,16 +104,16 @@ if(SERVER)then
 		local State = self:GetState()
 		if(State == STATE_FINE) then
 			if (self:GetElectricity() > 0) then
-				--if Alt then
-					--self:TurnOn(activator)
-				--else
+				if Alt and (self:GetOre() > 0) then
+					self:TurnOn(activator)
+				else
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
 					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
-				--end
+				end
 			else
 				JMod.Hint(activator, "refillprimbench")
 			end
