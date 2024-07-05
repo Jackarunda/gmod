@@ -172,14 +172,14 @@ if SERVER then
 		self.Exploded = true
 		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetUp()
 		JMod.Sploom(Att, SelfPos, 100)
-		local InitialVel = Dir * self:GetVelocity():Length() * .2
+		local InitialVel = VectorRand() * 100
 		timer.Simple(0, function()
 			local Flame = ents.Create("ent_jack_gmod_eznapalm")
 			Flame:SetPos(SelfPos)
 			Flame:SetOwner(Att)
 			Flame.InitialVel = InitialVel
 			Flame.HighVisuals = false
-			Flame.LifeTime = .5
+			Flame.LifeTime = 1
 			Flame:Spawn()
 			Flame:Activate()
 		end)
@@ -255,7 +255,7 @@ if SERVER then
 		end
 		local LaunchDir = -self:GetUp()
 		local Phys = self:GetPhysicsObject()
-		JMod.AeroDrag(self, -LaunchDir, .75)
+		JMod.AeroDrag(self, -LaunchDir, 1)
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
 				Phys:ApplyForceCenter(-LaunchDir * 2000 + self.UpLift)
