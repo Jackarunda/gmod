@@ -55,27 +55,6 @@ local function JackaSpawnHook(ply, transition)
 		end
 	end
 	
-	local STATE_ROLLED, STATE_UNROLLED = 0, 1
-	local sleepingbag = ply.JModSpawnPointEntity
-	if IsValid(sleepingbag) and (sleepingbag.State == STATE_UNROLLED)then
-		if (sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
-			sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
-			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
-				local Up = sleepingbag:GetUp()
-				ply:SetPos(sleepingbag:GetPos())
-				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
-				net.Start("JMod_VisionBlur")
-					net.WriteFloat(5)
-					net.WriteFloat(2000)
-					net.WriteBit(true)
-				net.Send(ply)
-				sleepingbag.Pod.EZvehicleEjectPos = nil
-			end
-		else
-			JMod.Hint(ply,"sleeping bag wait")
-		end
-	end
-	
 	-- Greetings, Reclaimer. I am 343 Guilty Spark, monitor of Installation 04
 	timer.Simple(1, function()
 		if (IsValid(ply)) then
@@ -107,6 +86,30 @@ end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
 hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) JackaSpawnHook(ply, transit) ; JMod.LuaConfigSync(false) end)
+
+hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, spawnpoint) 
+	local STATE_ROLLED, STATE_UNROLLED = 0, 1
+	local sleepingbag = ply.JModSpawnPointEntity
+	if IsValid(sleepingbag) and (sleepingbag.State == STATE_UNROLLED)then
+		if (sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
+			sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
+			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
+				ply:SetPos(sleepingbag:GetPos())
+				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
+				net.Start("JMod_VisionBlur")
+					net.WriteFloat(5)
+					net.WriteFloat(2000)
+					net.WriteBit(true)
+				net.Send(ply)
+				sleepingbag.Pod.EZvehicleEjectPos = nil
+				
+				return sleepingbag
+			end
+		else
+			JMod.Hint(ply,"sleeping bag wait")
+		end
+	end
+end)
 
 function JMod.SyncBleeding(ply)
 	net.Start("JMod_Bleeding")

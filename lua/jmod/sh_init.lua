@@ -193,6 +193,7 @@ end)
 function JMod.LiquidSpray(pos, dir, amt, group, typ)
 	local group = group or 1
 	local amt = amt or 1
+	local dir = dir or Vector(0, 0, 1)
 	if SERVER then
 		net.Start("JMod_LiquidParticle")
 		net.WriteVector(pos)
