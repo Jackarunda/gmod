@@ -1,0 +1,25 @@
+"VertexLitGeneric"
+{
+	"$additive" 1
+
+	"$basetexture" "Models\LT_C\Jablet\glass_matte"
+	"$halflambert" 1
+	"$bumpmap" "Models\LT_C\Jablet\glass_n"
+
+	$ambientocclusion 0
+
+	"$phong" "1"
+	"$phongexponent" 7.5
+	"$phongboost" ".025"
+	"$phongfresnelranges"	"[ .7 1.2 5]"
+
+	"$rimlight" "1"						
+	"$rimlightexponent" "5"				
+	"$rimlightboost" ".1"
+	"$rimmask" "1"
+}
+
+
+
+
+

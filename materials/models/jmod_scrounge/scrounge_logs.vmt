@@ -1,0 +1,8 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod_scrounge/scrounge_logs
+	$bumpmap	models/jmod_scrounge/scrounge_logs_n
+	$halflambert	1
+	$detail detail\metal_detail_01
+	$detailscale	3
+}

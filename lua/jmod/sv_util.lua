@@ -121,10 +121,14 @@ function JMod.EZ_BombDrop(ply)
 		timer.Simple(.25, function()
 			if IsValid(FirstBom) then
 				if FirstBom.EZdroppableBombArmedTime then
-					constraint.RemoveAll(FirstBom)
-					FirstBom:GetPhysicsObject():EnableMotion(true)
-					FirstBom:GetPhysicsObject():Wake()
-					FirstBom.DropOwner = ply
+					if FirstBom.Drop then
+						FirstBom:Drop(ply)
+					else
+						constraint.RemoveAll(FirstBom)
+						FirstBom:GetPhysicsObject():EnableMotion(true)
+						FirstBom:GetPhysicsObject():Wake()
+						FirstBom.DropOwner = ply
+					end
 				elseif FirstBom.EZdroppableBombLoadTime then
 					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
 				end
@@ -228,7 +232,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 	zReduction = zReduction or 2
 
 	if not JMod.Config.Explosives.FragExplosions then
-		util.BlastDamage(shooter, attacker, origin, fragDmg * 8, fragDmg)
+		util.BlastDamage(shooter, attacker, origin, fragMaxDist * .25, fragDmg)
 
 		return
 	end
@@ -276,7 +280,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					firer:FireBullets({
 						Attacker = attacker,
 						Damage = fragDmg * DmgMul,
-						Force = fragDmg / 8 * DmgMul,
+						Force = fragDmg / 10 * DmgMul,
 						Num = 1,
 						Src = origin,
 						Tracer = 0,
@@ -382,7 +386,7 @@ function JMod.BlastDamageIgnoreWorld(pos, att, infl, dmg, range)
 	end
 end
 
-local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash"}
+local WreckBlacklist = {"gmod_lamp", "gmod_cameraprop", "gmod_light", "ent_jack_gmod_nukeflash", "ent_jack_gmod_ezoilfire"}
 
 function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local origPower = power
@@ -975,7 +979,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetPos(SpawnPos)
 			Resource:SetAngles(SpawnAngle or Resource.JModPreferredCarryAngles or Angle(0, 0, 0))
 			Resource:Spawn()
-			JMod.SetEZowner(MachineOwner)
+			JMod.SetEZowner(Resource, MachineOwner)
 			Resource:SetResource(SpawnAmount)
 			Resource:Activate()
 		end)
@@ -1458,7 +1462,7 @@ function JMod.ConsumeNutrients(ply, amt)
 	if (ply.EZnutrition.Nutrients or 0) >= 100 then JMod.Hint(ply, "nutrition filled") return false end
 	--
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
-	ply.EZnutrition.Nutrients = ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency
+	ply.EZnutrition.Nutrients = math.Round(ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency)
 
 	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
 		local Old = ply:getDarkRPVar("energy")
@@ -1471,13 +1475,11 @@ end
 
 function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
-	if ply.EZnutrition then
+	local PlyHealth = ply:Health()
+	local PlyMaxHealth = ply:GetMaxHealth()
 
-		return 1 + (ply.EZnutrition.Nutrients * 0.1) * JMod.Config.General.HandGrabStrength
-	else
-		
-		return 1 * JMod.Config.General.HandGrabStrength
-	end
+	--jprint(1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength)
+	return 1 + (math.max(PlyHealth - PlyMaxHealth, 0) ^ 1.2 / (PlyMaxHealth)) * JMod.Config.General.HandGrabStrength
 end
 
 function JMod.BuildEffect(pos)
@@ -1622,6 +1624,13 @@ function JMod.RemoveConnection(machine, connection)
 		Cable:Remove()
 	end
 	machine.EZconnections[connection] = nil
+end
+
+function JMod.ConnectionValid(machine, otherMachine)
+	if not(IsValid(machine) and IsValid(otherMachine)) then return false end
+	if not(machine.EZconnections and otherMachine.EZconnections) then return false end
+	if not(IsValid(machine.EZconnections[otherMachine:EntIndex()])) then return false end
+	return true
 end
 
 function JMod.EnergeticsCookoff(pos, attacker, powerMult, numExplo, numBullet, numFire)

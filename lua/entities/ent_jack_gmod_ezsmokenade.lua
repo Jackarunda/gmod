@@ -29,7 +29,7 @@ if SERVER then
 			Foof:SetScale(self.FuelLeft / 100)
 			Foof:SetStart(self:GetPhysicsObject():GetVelocity())
 			util.Effect("eff_jack_gmod_ezsmokescreen", Foof, true, true)
-			self:EmitSound("snd_jack_sss.ogg", 55, 80)
+			self:EmitSound("snd_jack_sss.wav", 55, 80)
 			self.FuelLeft = self.FuelLeft - .5
 
 			if self.FuelLeft <= 0 then

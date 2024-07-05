@@ -1,0 +1,6 @@
+VertexLitGeneric
+{
+	$basetexture	models/jmod/explosives/ez_hrocket
+	$bumpmap	models/jmod/explosives/ez_hrocket_n
+	$phong	1
+}

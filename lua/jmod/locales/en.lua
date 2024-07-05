@@ -12,6 +12,7 @@
 	["hint activate"] = "Hold Walk and press Use to activate",
 	["hint trigger"] = "Type *trigger* in chat or command jmod_ez_trigger to detonate",
 	["hint launch"] = "Type *launch* in chat or command jmod_ez_launch to fire one rocket",
+	["hint remote guidance"] = "Use a JMod EZ Tablet to take control of this weapon",
 	["hint bombdrop"] = "Type *bomb* in chat or command jmod_ez_bombdrop to deweld bomb",
 	["hint mine friends"] = "Set your friends with command jmod_friends; friends won't trigger your smart mines",
 	["hint prime"] = "Hold Walk and press Use to pick up and prime grenade",

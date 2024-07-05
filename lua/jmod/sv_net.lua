@@ -176,13 +176,13 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 			end
 		end
 	elseif Action == "produce" then
-		if IsValid(Ent2) and Ent2.ProduceResource then
+		if IsValid(Ent2) and JMod.ConnectionValid(Ent, Ent2) and Ent2.ProduceResource then
 			Ent2:ProduceResource()
 		else
 			Ent:ProduceResource(ply)
 		end
 	elseif Action == "toggle" then
-		if IsValid(Ent2) and Ent2.GetState then 
+		if IsValid(Ent2) and JMod.ConnectionValid(Ent, Ent2) and Ent2.GetState then 
 			if Ent2:GetState() == JMod.EZ_STATE_OFF then
 				Ent2:TurnOn(ply)
 			elseif Ent2:GetState() >= JMod.EZ_STATE_ON then

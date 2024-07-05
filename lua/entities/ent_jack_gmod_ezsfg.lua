@@ -235,7 +235,7 @@ if(SERVER)then
 		if (self.NextFoofThink < Time) then
 			self.NextFoofThink = Time + .4/Grade
 			if (State == STATE_ON) then
-				self:EmitSound("snds_jack_gmod/hiss.ogg", 75, math.random(75, 80) * Grade / 4)
+				self:EmitSound("snds_jack_gmod/hiss.wav", 75, math.random(75, 80) * Grade / 2)
 				local Foof = EffectData()
 				Foof:SetOrigin(self:GetPos() + Up * 30 + Right * -25 + Forward * 35)
 				Foof:SetNormal(-Right)
@@ -377,10 +377,12 @@ elseif(CLIENT)then
 				for i = 1, 20 do
 					render.DrawQuadEasy(GlowPos + GlowDir * i / 2.5 * math.Rand(.9, 1), GlowDir, 24, 12, Color( 255 - i * 1, 255 - i * 9, 200 - i * 10, 55 - i * 2.5 ), Roll)
 				end
-				render.SetMaterial(HeatWaveMat)
-				for i = 1, 2 do
-					--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
-					--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+				if JMod.Config.QoL.NiceFire then
+					render.SetMaterial(HeatWaveMat)
+					for i = 1, 2 do
+						--render.DrawSprite(BasePos + Up * (i * math.random(10, 30) + 80) + Forward * 70, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+						--render.DrawSprite(BasePos + Up * 60 + Right * (i * math.random(5, -5)) - Forward * 24, 30, 30, Color(255, 255 - i * 10, 255 - i * 20, 25))
+					end
 				end
 			end
 		end

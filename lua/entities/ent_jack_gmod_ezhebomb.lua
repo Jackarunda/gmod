@@ -1,6 +1,6 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type = "anim"
+ENT.Base = "ent_jack_gmod_ezbomb"
 ENT.Author = "Jackarunda"
 ENT.Category = "JMod - EZ Explosives"
 ENT.Information = "glhfggwpezpznore"
@@ -9,150 +9,25 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZguidable = true
+ENT.EZRackOffset = Vector(0, 0, 20)
+ENT.EZRackAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 12
+ENT.EZguidable = false
 ---
-local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
+ENT.Model = "models/hunter/blocks/cube025x075x025.mdl"
+ENT.Mass = 150
+ENT.DetSpeed = 500
 
-function ENT:SetupDataTables()
-	self:NetworkVar("Int", 0, "State")
-	self:NetworkVar("Bool", 0, "Guided")
-end
+local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 
 ---
 if SERVER then
-	function ENT:SpawnFunction(ply, tr)
-		local SpawnPos = tr.HitPos + tr.HitNormal * 40
-		local ent = ents.Create(self.ClassName)
-		ent:SetAngles(Angle(180, 0, 0))
-		ent:SetPos(SpawnPos)
-		JMod.SetEZowner(ent, ply)
-		ent:Spawn()
-		ent:Activate()
-		--local effectdata=EffectData()
-		--effectdata:SetEntity(ent)
-		--util.Effect("propspawn",effectdata)
-
-		return ent
-	end
-
-	function ENT:Initialize()
-		self:SetModel("models/hunter/blocks/cube025x075x025.mdl")
-		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)
-		self:SetSolid(SOLID_VPHYSICS)
-		self:DrawShadow(true)
-		self:SetUseType(SIMPLE_USE)
-
-		---
-		timer.Simple(.01, function()
-			self:GetPhysicsObject():SetMass(150)
-			self:GetPhysicsObject():Wake()
-			self:GetPhysicsObject():EnableDrag(false)
-		end)
-
-		---
-		self:SetState(STATE_OFF)
-		self.LastUse = 0
-
-		if istable(WireLib) then
-			self.Inputs = WireLib.CreateInputs(self, {"Detonate", "Arm"}, {"Directly detonates the bomb", "Arms bomb when > 0"})
-
-			self.Outputs = WireLib.CreateOutputs(self, {"State", "Guided"}, {"-1 broken \n 0 off \n 1 armed", "True when guided"})
-		end
-	end
-
-	function ENT:TriggerInput(iname, value)
-		if iname == "Detonate" and value > 0 then
-			self:Detonate()
-		elseif iname == "Arm" and value > 0 then
-			self:SetState(STATE_ARMED)
-		end
-	end
-
-	function ENT:PhysicsCollide(data, physobj)
-		if not IsValid(self) then return end
-
-		if data.DeltaTime > 0.2 then
-			if data.Speed > 50 then
-				self:EmitSound("Canister.ImpactHard")
-			end
-
-			if (data.Speed > 500) and (self:GetState() == STATE_ARMED) then
-				self:Detonate()
-
-				return
-			end
-
-			if data.Speed > 2000 then
-				self:Break()
-			end
-		end
-	end
-
-	function ENT:Break()
-		if self:GetState() == STATE_BROKEN then return end
-		self:SetState(STATE_BROKEN)
-		self:EmitSound("snd_jack_turretbreak.ogg", 70, math.random(80, 120))
-
-		for i = 1, 20 do
-			JMod.DamageSpark(self)
-		end
-
-		SafeRemoveEntityDelayed(self, 10)
-	end
-
-	function ENT:OnTakeDamage(dmginfo)
-		if IsValid(self.DropOwner) then
-			local Att = dmginfo:GetAttacker()
-			if IsValid(Att) and (self.DropOwner == Att) then return end
-		end
-
-		self:TakePhysicsDamage(dmginfo)
-
-		if JMod.LinCh(dmginfo:GetDamage(), 70, 150) then
-			JMod.SetEZowner(self, dmginfo:GetAttacker())
-			self:Detonate()
-		end
-	end
-
-	function ENT:Use(activator)
-		local State, Time = self:GetState(), CurTime()
-		if State < 0 then return end
-
-		if State == STATE_OFF then
-			JMod.SetEZowner(self, activator)
-
-			if Time - self.LastUse < .2 then
-				self:SetState(STATE_ARMED)
-				self:EmitSound("snds_jack_gmod/bomb_arm.ogg", 70, 110)
-				self.EZdroppableBombArmedTime = CurTime()
-				JMod.Hint(activator, "impactdet")
-			else
-				JMod.Hint(activator, "double tap to arm")
-			end
-
-			self.LastUse = Time
-		elseif State == STATE_ARMED then
-			JMod.SetEZowner(self, activator)
-
-			if Time - self.LastUse < .2 then
-				self:SetState(STATE_OFF)
-				self:EmitSound("snds_jack_gmod/bomb_disarm.ogg", 70, 110)
-				self.EZdroppableBombArmedTime = nil
-			else
-				JMod.Hint(activator, "double tap to disarm")
-			end
-
-			self.LastUse = Time
-		end
-	end
 
 	function ENT:Detonate()
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetEZowner(self)
-		JMod.Sploom(Att, SelfPos, 150)
+		JMod.Sploom(Att, SelfPos, 50)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
 		local Eff = "500lb_ground"
@@ -179,7 +54,7 @@ if SERVER then
 		end
 
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 120)
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 300)
 
 		timer.Simple(.25, function()
 			util.BlastDamage(game.GetWorld(), JMod.GetEZowner(self), SelfPos, 1600, 120)
@@ -212,39 +87,7 @@ if SERVER then
 		end)
 	end
 
-	function ENT:OnRemove()
-	end
-
-	--
-	function ENT:EZdetonateOverride(detonator)
-		self:Detonate()
-	end
-
-	function ENT:Think()
-		if istable(WireLib) then
-			WireLib.TriggerOutput(self, "State", self:GetState())
-			WireLib.TriggerOutput(self, "Guided", self:GetGuided())
-		end
-
-		local Phys, UseAeroDrag = self:GetPhysicsObject(), true
-		--if((self:GetState()==STATE_ARMED)and(self:GetGuided())and not(constraint.HasConstraints(self)))then
-		--for k,designator in pairs(ents.FindByClass("wep_jack_gmod_ezdesignator"))do
-		--if((designator:GetLasing())and(designator.EZowner)and(JMod.ShouldAllowControl(self,designator.EZowner)))then
-		--[[
-					local TargPos,SelfPos=ents.FindByClass("npc_*")[1]:GetPos(),self:GetPos()--designator.EZowner:GetEyeTrace().HitPos
-					local TargVec=TargPos-SelfPos
-					local Dist,Dir,Vel=TargVec:Length(),TargVec:GetNormalized(),Phys:GetVelocity()
-					local Speed=Vel:Length()
-					if(Speed<=0)then return end
-					local ETA=Dist/Speed
-					jprint(ETA)
-					TargPos=TargPos--Vel*ETA/2
-					JMod.Sploom(self,TargPos,1)
-					JMod.AeroGuide(self,-self:GetRight(),TargPos,1,1,.2,10)
-					--]]
-		--end
-		--end
-		--end
+	function ENT:AreoDragThink()
 		JMod.AeroDrag(self, -self:GetRight(), 2)
 		self:NextThink(CurTime() + .1)
 
@@ -261,12 +104,8 @@ elseif CLIENT then
 		--self.Guided=false
 	end
 
-	--[[function ENT:Think()
-		if((not(self.Guided))and(self:GetGuided()))then
-			self.Guided=true
-			self.Mdl:SetBodygroup(0,1)
-		end
-	end]]
+	function ENT:Think()
+	end
 	--
 	function ENT:Draw()
 		local Pos, Ang = self:GetPos(), self:GetAngles()

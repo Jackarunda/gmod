@@ -1,0 +1,8 @@
+"UnLitGeneric"
+{
+	"$baseTexture" "models\LT_C\Jablet\overlay_map"
+	"$halflambert" "1"
+	$translucent 1
+
+	$ambientocclusion 0
+}

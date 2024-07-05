@@ -289,10 +289,10 @@ elseif CLIENT then
 			ang:RotateAroundAxis(ang:Up(), -90)
 			local Up, Right, Forward = ang:Up(), ang:Right(), ang:Forward()
 			local Amb = render.GetLightColor(SelfPos)
-			local Brightness = (Amb.x + Amb.y + Amb.z) / 3
+			local Brightness = .01 + (Amb.x + Amb.y + Amb.z) / 3
 			local Opacity = math.random(50, 255) * Brightness
 			cam.Start3D2D(SelfPos + Up * 13.3 - Right * 6 - Forward * -6.8, ang, .1)
-			draw.SimpleTextOutlined(GetTimeString(self:GetTimer()), "JMod-NumberLCD", 0, 0, Color(255, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(200, 0, 0, Opacity))
+				draw.SimpleTextOutlined(GetTimeString(self:GetTimer()), "JMod-NumberLCD", 0, 0, Color(255, 200, 200, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(200, 0, 0, Opacity))
 			cam.End3D2D()
 		end
 	end

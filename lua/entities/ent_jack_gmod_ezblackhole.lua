@@ -202,6 +202,7 @@ if SERVER then
 			end)
 		end
 
+		--JMod.GenerateNaturalResources()
 		RunConsoleCommand("r_cleardecals")
 		self:Remove()
 	end

@@ -52,6 +52,9 @@ JMod.Hints = {
 		LangKey = "hint launch",
 		Followup = "bind cmd"
 	},
+	["remote guidance"] = {
+		LangKey = "hint remote guidance"
+	},
 	["bombdrop"] = {
 		LangKey = "hint bombdrop",
 		Followup = "bind cmd"

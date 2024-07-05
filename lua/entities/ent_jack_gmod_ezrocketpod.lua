@@ -11,8 +11,37 @@ ENT.AdminSpawnable = false
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
+ENT.RocketDisplaySpecs = {
+	["ent_jack_gmod_ezbigrocket"] = {
+		mdl = "models/jmod/explosives/ez_hrocket.mdl",
+		siz = 1,
+		pos = Vector(0, 0, 0),
+		ang = Angle(0, 0, 0)
+	},
+	["ent_jack_gmod_ezfirework"] = {
+		mdl = "models/jmod/explosives/ez_fireworks.mdl",
+		siz = 1.1,
+		pos = Vector(0, 25, 0),
+		ang = Angle(-90, 0, 0),
+		mat = 1,
+		bg = { [1] = 1 } -- todo
+	},
+	["ent_jack_gmod_ezheatrocket"] = {
+		mdl = "models/jmod/explosives/missile/missile_patriot.mdl",
+		siz = .7,
+		pos = Vector(0, 0, 0),
+		ang = Angle(0, 0, 0),
+		mat = 2
+	},
+	["ent_jack_gmod_ezherocket"] = {
+		mdl = "models/jmod/explosives/missile/missile_patriot.mdl",
+		siz = .7,
+		pos = Vector(0, 0, 0),
+		ang = Angle(0, 0, 0),
+		mat = 1
+	}
+}
 ---
-
 if SERVER then
 	function ENT:SpawnFunction(ply, tr)
 		local SpawnPos = tr.HitPos + tr.HitNormal * 40
@@ -36,7 +65,6 @@ if SERVER then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-
 		---
 		local phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
@@ -48,11 +76,9 @@ if SERVER then
 			end
 		end)
 		self.Rockets = self.Rockets or {}
-
 		---
 		if istable(WireLib) then
 			self.Inputs = WireLib.CreateInputs(self, {"Launch [NORMAL]", "Unload [NORMAL]"}, {"Fires the specified rocket, input -1 to fire them all", "Unloads rocket"})
-
 			self.Outputs = WireLib.CreateOutputs(self, {"LastRocket [STRING]", "Amount [NORMAL]"}, {"The last loaded rocket", "How many rockets are contained in the launcher"})
 		end
 	end
@@ -60,7 +86,6 @@ if SERVER then
 	function ENT:UpdateWireOutputs()
 		if istable(WireLib) then
 			WireLib.TriggerOutput(self, "Amount", #self.Rockets)
-
 			if #self.Rockets > 0 then
 				WireLib.TriggerOutput(self, "LastRocket", tostring(self.Rockets[#self.Rockets]))
 			else
@@ -120,10 +145,10 @@ if SERVER then
 	end
 
 	function ENT:SyncRockets() 
-		self.Rockets = self.Rockets or {}
+		self.RenderRockets = self.RenderRockets or {}
 		net.Start("JMod_MachineSync")
-			net.WriteEntity(self)
-			net.WriteTable({Rockets = self.Rockets})
+		net.WriteEntity(self)
+		net.WriteTable({Rockets = self.Rockets})
 		net.Broadcast()
 	end
 
@@ -162,36 +187,28 @@ if SERVER then
 
 		local PodAngle = Ang:GetCopy()
 		PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (slotNum - 1))
-		PodAngle:RotateAroundAxis(PodAngle:Up(), -90)
-		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 8.5)
+		PodAngle:RotateAroundAxis(PodAngle:Up(), LaunchedRocket.JModPreferredCarryAngles.y)
+		LaunchedRocket:SetPos(Pos + PodAngle:Up() * 10 + self:GetForward() * 40)
 		LaunchedRocket:SetAngles(PodAngle)
 		JMod.SetEZowner(LaunchedRocket, ply)
 		LaunchedRocket:Spawn()
 		LaunchedRocket:Activate()
-
-		if arm then
-			LaunchedRocket.DropOwner = self
-			local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0)
-			timer.Simple(1, function()
-				if IsValid(LaunchedRocket) then
-					constraint.RemoveConstraints(LaunchedRocket, "NoCollide")
-				end
-			end)
-		end
 		
 		timer.Simple(0, function()
 			if IsValid(LaunchedRocket) then
 				--LaunchedRocket:GetPhysicsObject():EnableMotion(false)
 				LaunchedRocket:GetPhysicsObject():SetVelocity(self:GetPhysicsObject():GetVelocity())
-			end
-
-			if arm then
-				LaunchedRocket:SetState(1)
-				if LaunchedRocket.Launch then
-					LaunchedRocket:Launch(ply)
+				if arm then
+					LaunchedRocket.DropOwner = self
+					LaunchedRocket:SetState(1)
+					if LaunchedRocket.Launch then
+						LaunchedRocket:Launch(ply)
+						local Nocollider = constraint.NoCollide(self, LaunchedRocket, 0, 0)
+						constraint.RemoveConstraints(LaunchedRocket, "NoCollide")
+					end
+				else
+					LaunchedRocket:SetState(0)
 				end
-			else
-				LaunchedRocket:SetState(0)
 			end
 		end)
 
@@ -245,66 +262,73 @@ if SERVER then
 		self:LaunchRocket(#self.Rockets, false)
 	end
 
-	function ENT:PostEntityCopy()
-		self.Rockets = table.FullCopy(self.Rockets)
+	function ENT:PreEntityCopy()
+		self.DupeRockets = table.FullCopy(self.Rockets)
 	end
 
 	function ENT:PostEntityPaste(ply, ent, createdEnts)
 		local Time = CurTime()
-		self.NextLaunchTime = Time + 1
-		if #self.Rockets > 0 then
-			self.EZlaunchableWeaponLoadTime = Time
+		ent.NextLaunchTime = Time + 1
+		if #ent.DupeRockets > 0 then
+			ent.Rockets = table.FullCopy(ent.DupeRockets)
+			ent.EZlaunchableWeaponLoadTime = Time
 		else
-			self.EZlaunchableWeaponLoadTime = nil
+			ent.EZlaunchableWeaponLoadTime = nil
 		end
-		JMod.SetEZowner(self, ply, true)
 		timer.Simple(0, function()
-			if IsValid(self) then
-				self:SyncRockets()
+			if IsValid(ent) then
+				ent:SyncRockets()
 			end
 		end)
+		JMod.SetEZowner(ent, ply, true)
 	end
 
 elseif CLIENT then
 
 	function ENT:Initialize()
-		--
+		self:SetModel("models/jmod/rocket_pod/rocket_pod01.mdl")
+		self.Rockets = {}
+		self.RocketModels = {}
 	end
 
 	function ENT:OnMachineSync(newSpecs)
-		self.RenderRockets = self.RenderRockets or {}
-		for num, model in pairs(self.RenderRockets) do
-			if IsValid(model) then
-				model:Remove()
-			end
+		for k, v in pairs(self.RocketModels) do
+			v:Remove()
 		end
-
+		self.RocketModels = {}
 		for specName, value in pairs(newSpecs) do
 			self[specName] = value
 		end
-
 		if next(self.Rockets) then
 			local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
-			for k, v in pairs(self.Rockets) do
-				local RenderRocket = ents.CreateClientside(v)
-
-				if IsValid(RenderRocket) then
-					local PodAngle = SelfAng:GetCopy()
-					PodAngle:RotateAroundAxis(PodAngle:Forward(), 60 * (k - 1))
-					PodAngle:RotateAroundAxis(PodAngle:Up(), -90)
-					RenderRocket:SetPos(SelfPos + PodAngle:Up() * 8.5 + PodAngle:Right() * 2.5)
-					RenderRocket:SetAngles(PodAngle)
-					RenderRocket:SetParent(self)
-					RenderRocket:Spawn()
-					self.RenderRockets[k] = RenderRocket
-				end
+			for k, rocketClass in pairs(self.Rockets) do
+				local DisplaySpecs = self.RocketDisplaySpecs[rocketClass]
+				self.RocketModels[k] = JMod.MakeModel(self, DisplaySpecs.mdl, DisplaySpecs.mat, DisplaySpecs.siz, DisplaySpecs.col)
 			end
 		end
 	end
 
 	function ENT:Draw()
 		self:DrawModel()
-
+		if next(self.Rockets) then
+			local SelfPos, SelfAng = self:GetPos(), self:GetAngles()
+			local Up, Right, Ford = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+			for k, rocketClass in pairs(self.Rockets) do
+				if self.RocketModels[k] then
+					local DisplaySpecs = self.RocketDisplaySpecs[rocketClass]
+					local pos, ang = SelfPos:GetCopy(), SelfAng:GetCopy()
+					local rotateAng = ang:GetCopy()
+					rotateAng:RotateAroundAxis(Ford, 30)
+					rotateAng:RotateAroundAxis(Ford, k * 60)
+					pos = pos + rotateAng:Right() * 10 - Ford
+					pos = pos + Ford * DisplaySpecs.pos.y + Right * DisplaySpecs.pos.x + Up * DisplaySpecs.pos.z
+					ang:RotateAroundAxis(Up, DisplaySpecs.ang.y)
+					ang:RotateAroundAxis(Right, DisplaySpecs.ang.p)
+					ang:RotateAroundAxis(Ford, DisplaySpecs.ang.r)
+					JMod.RenderModel(self.RocketModels[k], pos, ang, Vector(DisplaySpecs.siz, DisplaySpecs.siz, DisplaySpecs.siz), DisplaySpecs.col, DisplaySpecs.mat)
+				end
+			end
+		end
 	end
 
 	function ENT:OnRemove()
@@ -313,7 +337,6 @@ elseif CLIENT then
 			if IsValid(model) then
 				model:Remove()
 			end
-		end	
+		end
 	end
 end
---

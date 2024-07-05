@@ -479,7 +479,7 @@ function JMod.GenerateWeaponEntities(tbl)
 		if info.noent then continue end
 
 		local WeaponEnt = {}
-		WeaponEnt.Base = "ent_jack_gmod_ezweapon"
+		WeaponEnt.Base = info.BaseEnt or "ent_jack_gmod_ezweapon"
 		WeaponEnt.PrintName = info.PrintName or name
 		if info.Spawnable == nil then
 			WeaponEnt.Spawnable = true
@@ -518,8 +518,8 @@ function JMod.LoadAdditionalWeaponEntities()
 end
 hook.Add("Initialize", "JMod_LoadAdditionalWeaponEntities", JMod.LoadAdditionalWeaponEntities)
 
---JMod.LoadAdditionalAmmo()
---JMod.LoadAdditionalWeaponEntities()
+JMod.LoadAdditionalAmmo()
+JMod.LoadAdditionalWeaponEntities()
 
 function JMod.GetAmmoSpecs(typ)
 	if not JMod.AmmoTable[typ] then return nil end

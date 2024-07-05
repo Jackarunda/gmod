@@ -31,7 +31,7 @@
 		if particle then
 			particle:SetVelocity(math.Rand(8, 16) * VectorRand() * Scayul * i ^ 1.2)
 			particle:SetAirResistance(1000)
-			particle:SetDieTime(math.Rand(1, 3))
+			particle:SetDieTime(math.Rand(1, 10))
 			particle:SetStartAlpha(math.Rand(10, 255))
 			particle:SetEndAlpha(0)
 			particle:SetStartSize(math.Rand(1, 15) * Scayul)

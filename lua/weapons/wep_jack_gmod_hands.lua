@@ -434,13 +434,20 @@ end
 
 function SWEP:Reload()
 	if not IsFirstTimePredicted() then return end
-	
+	local Time = CurTime()
+	local Alt = self.Owner:KeyDown(JMod.Config.General.AltFunctionKey)
+
 	if not(self:GetFists()) then -- Pick up to inv
-		if self:GetCarrying() and IsValid(self:GetCarrying()) then
+		if IsValid(self:GetCarrying()) then
 			local Tar = self:GetCarrying()
 			local ply = self.Owner
 			
 			JMod.EZ_GrabItem(ply, nil, {Tar})
+		else
+			--[[if self.Owner:HasWeapon("wep_jack_gmod_eztoolbox") then
+				local ToolBox = self.Owner:GetWeapon("wep_jack_gmod_eztoolbox")
+				ToolBox:Reload()
+			end--]]
 		end
 	end
 	

@@ -194,7 +194,7 @@ if SERVER then
 				self.LastWateredTime = Time
 			end
 			self.Hydration = math.Clamp(self.Hydration + Water, 0, 100)
-			if (self.Hydration >= 25) then
+			if (self.Hydration >= 25 * JMod.Config.ResourceEconomy.WaterRequirementMult) then
 				self:SetState(STATE_GERMINATING)
 				self:SetColor(Color(150, 150, 150))
 			elseif (self.Hydration <= 1) and ((Time - 600) > self.LastWateredTime) then
@@ -202,7 +202,7 @@ if SERVER then
 			end
 		elseif State == STATE_GERMINATING then
 			if not IsValid(self.GroundWeld) then self:Degenerate() end
-			if ((Time - 60) > self.LastTouchedTime) then
+			if ((Time - 60 * (1 / math.max(JMod.Config.ResourceEconomy.GrowthSpeedMult, 0.01))) > self.LastTouchedTime) then
 				self:SpawnCorn()
 			end
 		end

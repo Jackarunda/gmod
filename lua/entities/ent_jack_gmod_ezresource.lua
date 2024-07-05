@@ -104,13 +104,17 @@ if SERVER then
 		self.NextFireThink = 0
 
 		---
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(.01, function()
-			if IsValid(self) then
+			if IsValid(Phys) then
 				if self.PhysMat then
-					self:GetPhysicsObject():SetMaterial(self.PhysMat)
+					Phys:SetMaterial(self.PhysMat)
 				end
-				self:GetPhysicsObject():SetMass(math.max(self.Mass))
-				self:GetPhysicsObject():Wake()
+				Phys:SetMass(math.max(self.Mass))
+				Phys:Wake()
+				if self.EZbuoyancy then
+					Phys:SetBuoyancyRatio(self.EZbuoyancy)
+				end
 			end
 		end)
 
@@ -130,7 +134,7 @@ if SERVER then
 		if data.DeltaTime > 0.2 then
 			local Time = CurTime()
 
-			if data.HitEntity.ClassName == self.ClassName and self.NextCombine < Time and data.HitEntity.NextCombine < Time then
+			if (data.HitEntity.ClassName == self.ClassName) and (self.NextCombine < Time) and (data.HitEntity.NextCombine < Time) then
 				-- determine a priority, favor the item that has existed longer
 				if self:EntIndex() < data.HitEntity:EntIndex() then
 					-- don't run twice on every collision
@@ -147,7 +151,7 @@ if SERVER then
 				end
 			end
 
-			if data.HitEntity.EZconsumes and table.HasValue(data.HitEntity.EZconsumes, self.EZsupplies) and (self.NextLoad < Time) and self:IsPlayerHolding() then
+			if data.HitEntity.EZconsumes and table.HasValue(data.HitEntity.EZconsumes, self.EZsupplies) and (self.NextLoad < Time) and (self:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then
 				if self:GetResource() <= 0 then
 					self:Remove()
 

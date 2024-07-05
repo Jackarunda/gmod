@@ -88,7 +88,7 @@ if SERVER then
 		self.EZcolorable = false
 		self.MaxConnectionRange = 1000
 		self.CurrentCableLength = 0
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 	end
 
 	function ENT:Ratchet(amt)
@@ -130,7 +130,7 @@ if SERVER then
 
 	function ENT:StartSound()
 		if not self.SoundLoop then
-			self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+			self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 		end
 		self.SoundLoop:Play()
 	end
@@ -228,7 +228,7 @@ if SERVER then
 		if self.Hooker then
 			self.Hooker = CreatedEntities[self.Hooker:EntIndex()]
 		end
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.ogg")
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/slow_ratchet.wav")
 		timer.Simple(1, function()
 			if IsValid(self) and IsValid(self.Hooker) then
 				self.Chain = constraint.Find(self, self.Hooker, "Elastic", 0, 0)

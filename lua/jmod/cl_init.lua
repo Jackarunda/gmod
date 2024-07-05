@@ -442,7 +442,7 @@ function JMod.RenderModel(mdl, pos, ang, scale, color, mat, fullbright, transluc
 	local RenderCol = color or Vector(1, 1, 1)
 	render.SetColorModulation(RenderCol.x, RenderCol.y, RenderCol.z)
 
-	if mat then
+	if mat and not(tonumber(mat)) then
 		render.ModelMaterialOverride(mat)
 	end
 
@@ -1055,7 +1055,7 @@ hook.Add("Think", "JMod_LiquidStreams", function()
 			local Tr = util.TraceLine({
 				start = particle.pos,
 				endpos = particle.pos + Travel,
-				mask = MASK_NPCWORLDSTATIC + MASK_WATER
+				mask = MASK_SHOT
 			})
 			if (Tr.Hit) then
 				particle.pos = Tr.HitPos + Tr.HitNormal

@@ -159,7 +159,7 @@ if SERVER then
 
 			timer.Simple(.5, function()
 				if IsValid(self) then
-					self.SoundLoop = CreateSound(self, "snds_jack_gmod/criticality_weapon_hum.ogg")
+					self.SoundLoop = CreateSound(self, "snds_jack_gmod/criticality_weapon_hum.wav")
 					self.SoundLoop:Play()
 					self.SoundLoop:SetSoundLevel(40)
 				end

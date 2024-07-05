@@ -9,7 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZRackOffset = Vector(0, 0, 8)
+ENT.EZRackOffset = Vector(0, -1.5, -2.5)
 ENT.EZRackAngles = Angle(0, 0, 0)
 ENT.EZrocket = true
 ---
@@ -202,11 +202,12 @@ if SERVER then
 	function ENT:Launch()
 		if self:GetState() ~= STATE_ARMED then return end
 		self:SetState(STATE_LAUNCHED)
+		self.UpLift = Vector(0, 0, GetConVar("sv_gravity"):GetFloat() * 2)
 		local Phys = self:GetPhysicsObject()
 		constraint.RemoveAll(self)
 		Phys:EnableMotion(true)
 		Phys:Wake()
-		Phys:ApplyForceCenter(-self:GetRight() * 20000)
+		Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift)
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
 		local Eff = EffectData()
@@ -249,7 +250,7 @@ if SERVER then
 
 		if self:GetState() == STATE_LAUNCHED then
 			if self.FuelLeft > 0 then
-				Phys:ApplyForceCenter(-self:GetRight() * 20000)
+				Phys:ApplyForceCenter(-self:GetRight() * 20000 + self.UpLift + VectorRand() * 500)
 				self.FuelLeft = self.FuelLeft - 5
 				---
 				local Eff = EffectData()
@@ -275,30 +276,12 @@ elseif CLIENT then
 	end
 
 	function ENT:Think()
-	end
-
-	--
-	local GlowSprite = Material("mat_jack_gmod_glowsprite")
-
-	function ENT:Draw()
-		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
-		Ang:RotateAroundAxis(Ang:Up(), 90)
-		--self:DrawModel()
-		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
-		self.Mdl:SetRenderAngles(Ang)
-		self.Mdl:DrawModel()
-
+		local Pos, Dir = self:GetPos(), self:GetRight()
+		local Time = CurTime()
 		if self:GetState() == STATE_LAUNCHED then
-			self.BurnoutTime = self.BurnoutTime or CurTime() + 1
+			self.BurnoutTime = self.BurnoutTime or Time + 1
 
-			if self.BurnoutTime > CurTime() then
-				render.SetMaterial(GlowSprite)
-
-				for i = 1, 10 do
-					local Inv = 10 - i
-					render.DrawSprite(Pos + Dir * (i * 10 + math.random(30, 40)), 5 * Inv, 5 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
-				end
-
+			if self.BurnoutTime > Time then
 				local dlight = DynamicLight(self:EntIndex())
 
 				if dlight then
@@ -309,9 +292,41 @@ elseif CLIENT then
 					dlight.brightness = 2
 					dlight.Decay = 200
 					dlight.Size = 400
-					dlight.DieTime = CurTime() + .5
+					dlight.DieTime = Time + .5
 				end
 			end
+		end
+	end
+
+	--
+	local GlowSprite = Material("mat_jack_gmod_glowsprite")
+
+	function ENT:Draw()
+		local Pos, Ang, Dir = self:GetPos(), self:GetAngles(), self:GetRight()
+		local Time = CurTime()
+		Ang:RotateAroundAxis(Ang:Up(), 90)
+		--self:DrawModel()
+		self.Mdl:SetRenderOrigin(Pos + Ang:Up() * 1.5 - Ang:Right() * 0 - Ang:Forward() * 1)
+		self.Mdl:SetRenderAngles(Ang)
+		self.Mdl:DrawModel()
+
+		if self:GetState() == STATE_LAUNCHED then
+			self.BurnoutTime = self.BurnoutTime or Time + 1
+
+			if self.BurnoutTime > Time then
+				render.SetMaterial(GlowSprite)
+
+				for i = 1, 10 do
+					local Inv = 10 - i
+					render.DrawSprite(Pos + Dir * (i * 10 + math.random(30, 40)), 5 * Inv, 5 * Inv, Color(255, 255 - i * 10, 255 - i * 20, 255))
+				end
+			end
+		end
+	end
+
+	function ENT:OnRemove()
+		if self.Mdl then
+			self.Mdl:Remove()
 		end
 	end
 

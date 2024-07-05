@@ -356,7 +356,7 @@ if(SERVER)then
 				SprayAngle:RotateAroundAxis(SprayAngle:Right(), 35)
 				
 				if LiquidTyp == JMod.EZ_RESOURCE_TYPES.WATER then
-					local SplachPos = SelfPos + self:GetUp() * 36
+					--[[local SplachPos = SelfPos + self:GetUp() * 36
 					local Splach = EffectData()
 					Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
 					local Zoop = SprayAngle:Forward()
@@ -365,7 +365,7 @@ if(SERVER)then
 					end
 					Splach:SetStart(Zoop)
 					Splach:SetScale((self.Dir == "right") and 1 or .4)
-					--util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
+					util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
 					JMod.LiquidSpray(SplachPos, Zoop * 600, 1, self:EntIndex(), 3)
 
 				elseif LiquidTyp == JMod.EZ_RESOURCE_TYPES.FUEL then
