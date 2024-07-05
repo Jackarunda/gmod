@@ -148,12 +148,14 @@ if SERVER then
 
 		---
 		self:SetAge(.01)
-		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg")
+		self.SoundRecipientFilter = RecipientFilter(true)
+		self.SoundRecipientFilter:AddPVS()
+		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg", self.SoundRecipientFilter)
 		self.SoundLoop:PlayEx(1, 100)
-		self.SoundLoop:SetSoundLevel(160)
-		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg")
+		self.SoundLoop:SetSoundLevel(180)
+		self.SoundLoop2 = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg", self.SoundRecipientFilter)
 		self.SoundLoop2:PlayEx(1, 100)
-		self.SoundLoop2:SetSoundLevel(150)
+		self.SoundLoop2:SetSoundLevel(180)
 		---
 		JMod.BlackHole = self -- global var for ease of comps for bullet hook
 	end
