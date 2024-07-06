@@ -93,7 +93,7 @@ if(SERVER)then
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
-		if typ == self:GetOreType() and accepted >= 1 then
+		if (typ == self:GetOreType()) and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
 		self:UpdateWireOutputs()
@@ -102,6 +102,9 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		local State = self:GetState()
+		if not IsValid(JMod.GetEZowner(self)) then 
+			JMod.SetEZowner(self, activator)
+		end
 		if(State == STATE_FINE) then
 			if (self:GetElectricity() > 0) then
 				if Alt and (self:GetOre() > 0) then
