@@ -149,7 +149,7 @@ if SERVER then
 		---
 		self:SetAge(.01)
 		self.SoundRecipientFilter = RecipientFilter(true)
-		self.SoundRecipientFilter:AddPVS()
+		self.SoundRecipientFilter:AddPVS(self:GetPos())
 		self.SoundLoop = CreateSound(self, "snds_jack_gmod/ezblackhole.ogg", self.SoundRecipientFilter)
 		self.SoundLoop:PlayEx(1, 100)
 		self.SoundLoop:SetSoundLevel(180)
