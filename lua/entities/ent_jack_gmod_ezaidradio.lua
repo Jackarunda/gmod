@@ -150,6 +150,8 @@ if(SERVER)then
 
 	function ENT:Speak(msg, parrot, parrotply)
 		if self:GetState() < 1 then return end
+		if not msg then msg = "uhhhh" end
+
 		self:ConsumeElectricity()
 
 		if parrot then
