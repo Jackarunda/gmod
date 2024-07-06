@@ -287,7 +287,7 @@ function SWEP:PrimaryAttack()
 				JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
 			end
 
-			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
+			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) then
 				self:Pawnch()
 				self.Owner:ViewPunch(AngleRand() * .002)
 				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
