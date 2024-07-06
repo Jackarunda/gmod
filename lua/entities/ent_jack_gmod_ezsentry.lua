@@ -809,7 +809,7 @@ if(SERVER)then
 			local CoolinAmt, Kewlant, Severity = self.Cooling / 3, self:GetCoolant(), self.Heat / 300
 
 			if (Kewlant > 0) and (Severity > .1) then
-				self:SetCoolant(math.min(Kewlant - Severity ^ 2 * 20, 0))
+				self:SetCoolant(math.max(Kewlant - Severity ^ 2 * 20, 0))
 				CoolinAmt = CoolinAmt * (200 * Severity ^ 2)
 			end
 
