@@ -20,7 +20,6 @@ if SERVER then
 			"NAPALM", "Napalm", Model("models/weapons/ar2_grenade.mdl"), {""},
 			"models/mat_jack_gmod_brightwhite", Color(255, 255, 255), Angle(0, 0, 0), 600, .5, .5, .5, 5, "eff_jack_gmod_fire", false, true, false
 		}
-
 		-----
 		self:SetMoveType(MOVETYPE_NONE)
 		self:DrawShadow(false)
