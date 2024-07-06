@@ -135,7 +135,7 @@ if(SERVER)then
 		end
 		self:InitPerfSpecs()
 		self.DamageModifierTable = JMod.DefualtArmorTable
-		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
+		self.BackupRecipe = self.BackupRecipe or {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
 
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end

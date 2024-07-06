@@ -36,6 +36,12 @@ ENT.StaticPerfSpecs={
 	Armor = .7
 }
 ENT.ResourceReqMult = 1.3
+ENT.BackupRecipe = {
+	[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, 
+	[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, 
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 8
+}
+
 local STATE_BROKEN, STATE_FINE, STATE_PROCESSING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
