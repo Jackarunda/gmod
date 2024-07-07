@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 49
+			Version = 49.5
 		},
 		General = {
 			Hints = true,
@@ -958,6 +958,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				craftingType = "toolbox",
 				description = "Standard HE bomb with a very thin shell that produces no significant fragmentation."
 			},
+			["EZ Torpedo"] = {
+				results = "ent_jack_gmod_eztorpedo",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 50,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 25,
+					[JMod.EZ_RESOURCE_TYPES.EXPLOSIVES] = 250,
+					[JMod.EZ_RESOURCE_TYPES.GAS] = 100
+				},
+				sizescale = 1,
+				category = "Explosives",
+				craftingType = "toolbox",
+				description = "The shark of death, travels in a straight path via gas propeller."
+			},
 			["EZ Cluster Bomb"] = {
 				results = "ent_jack_gmod_ezclusterbomb",
 				craftingReqs = {
@@ -1049,7 +1062,19 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				sizeScale = .1,
 				category = "Other",
 				craftingType = "workbench",
-				description = "Firework to celebrate the holidays with. Or set stuff on fire."
+				description = "Firework to celebrate the holidays with.\n Or set stuff on fire."
+			},
+			["EZ Rocket Pod"] = {
+				results = "ent_jack_gmod_ezrocketpod",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.STEEL] = 30,
+					[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 100,
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10
+				},
+				sizeScale = 1,
+				category = "Other",
+				craftingType = "toolbox",
+				description = "Allows you to load multiple rockets\n and launch them in a reliable way."
 			},
 			["EZ Incendiary Bomb"] = {
 				results = "ent_jack_gmod_ezincendiarybomb",
@@ -2300,12 +2325,23 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				results = JMod.ArmorTable["Heavy-Riot-Helmet"].ent,
 				craftingReqs = {
 					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 10,
-					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
-					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 15,
 				},
 				category = "Apparel",
 				craftingType = "workbench",
 				description = "Heavy riot helmet with proper ballistic protection."
+			},
+			["EZ Heavy Helmet"] = {
+				results = JMod.ArmorTable["Heavy-Helmet"].ent,
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 5,
+					[JMod.EZ_RESOURCE_TYPES.ADVANCEDTEXTILES] = 10,
+					[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 10,
+					[JMod.EZ_RESOURCE_TYPES.TUNGSTEN] = 5
+				},
+				category = "Apparel",
+				craftingType = "workbench",
+				description = "A heavy helmet that provides good defense without taking up your face slots."
 			},
 			["EZ Ultra Heavy Helmet"] = {
 				results = JMod.ArmorTable["Ultra-Heavy-Helmet"].ent,
