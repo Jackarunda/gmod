@@ -1103,7 +1103,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 			end
 			if (LastPos) then
 				-- God's promise to not flood the earth with water
-				if Specs.stencilTest then
+				if Specs.stencilTest and SunInfo then
 					-- STENCIL TEST
 					render.SetStencilEnable( true )
 					render.ClearStencil()
@@ -1121,19 +1121,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 				end
 				render.SetMaterial(Specs.mat)
 				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
-					-- Alternate method that uses segmented beams
-					--[[if k == 2 then
-						render.StartBeam(NumberOfParticles)
-						--print("starting beam")
-					else
-						render.AddBeam(particle.pos, Size, 0, Col)
-						--print("adding beam", k)
-					end
-					if (k == NumberOfParticles) and (NumberOfParticles > 1) then
-						render.EndBeam()
-						--print("ending beam", NumberOfParticles)
-					end--]]
-				if Specs.stencilTest then
+				if Specs.stencilTest and SunInfo then
 					-- RAINBOW WILL BE RENDERED BEHIND
 					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
 					render.SetStencilPassOperation( STENCILOPERATION_KEEP )
