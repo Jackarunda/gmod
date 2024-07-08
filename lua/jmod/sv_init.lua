@@ -85,7 +85,10 @@ local function JackaSpawnHook(ply, transition)
 end
 
 hook.Add("PlayerSpawn", "JMod_PlayerSpawn", JackaSpawnHook)
-hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) JackaSpawnHook(ply, transit) ; JMod.LuaConfigSync(false) end)
+hook.Add("PlayerInitialSpawn", "JMod_PlayerInitialSpawn", function(ply, transit) 
+	JackaSpawnHook(ply, transit) 
+	JMod.LuaConfigSync(false) 
+end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, spawnpoint) 
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
@@ -857,7 +860,7 @@ function JMod.LuaConfigSync(copyArmorOffsets)
 	ToSend.WeaponSwayMult = JMod.Config.Weapons.SwayMult
 	ToSend.Blackhole = JMod.Config.Machines.Blackhole
 	ToSend.CopyArmorOffsets = copyArmorOffsets or false
-	ToSend.QoL = JMod.Config.QoL
+	ToSend.QoL = table.FullCopy(JMod.Config.QoL)
 	ToSend.MaxResourceMult =JMod.Config.ResourceEconomy.MaxResourceMult
 	net.Start("JMod_LuaConfigSync")
 		net.WriteData(util.Compress(util.TableToJSON(ToSend)))

@@ -13,7 +13,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		Note = "radio packages must have all lower-case names, see http://wiki.garrysmod.com/page/Enums/IN for key numbers",
 		Info = {
 			Author = "Jackarunda & Friends",
-			Version = 49.5
+			Version = 49.6
 		},
 		General = {
 			Hints = true,
@@ -43,7 +43,8 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			SwayMult = 1,
 			AmmoCarryLimitMult = 1,
 			WeaponAmmoBlacklist = {"XBowBolt", "AR2AltFire"},
-			AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"}
+			AmmoTypesThatAreMunitions = {"RPG_Round", "RPG_Rocket", "SMG1_Grenade", "Grenade", "GrenadeHL1", "MP5_Grenade", "slam"},
+			FlamethrowerFuelDrainMult = 1
 		},
 		Machines = {
 			Sentry = {

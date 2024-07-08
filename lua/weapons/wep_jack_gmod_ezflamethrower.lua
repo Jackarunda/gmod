@@ -305,8 +305,9 @@ function SWEP:PrimaryAttack()
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+				local DrainMult = JMod.Config.Weapons.FlamethrowerFuelDrainMult or 1
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1 * DrainMult, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1 * DrainMult, 0, 100))
 			end
 			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end
