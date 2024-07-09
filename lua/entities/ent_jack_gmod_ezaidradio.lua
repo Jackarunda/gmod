@@ -244,7 +244,7 @@ if(SERVER)then
 				end
 				self.ConnectionAttempts = self.ConnectionAttempts + 1
 
-					if self.ConnectionAttempts > 5 then
+					if self.ConnectionAttempts > 3 then
 						self:Speak("Can not establish connection to any outpost. Shutting down.")
 
 						timer.Simple(1.2, function()
@@ -424,10 +424,14 @@ if(SERVER)then
 
 				SuccessfulTransmit = true
 			else
-				local Override, Words = hook.Run("JMod_CanRadioRequest", ply, self, Message)
+				local Override, Words = hook.Run("JMod_CustomRadioRequest", ply, self, Message)
 				if Override then
 					SuccessfulTransmit = Override
-					self:Speak(Words or "transmition recieved", ParrotPhrase, ply)
+					if Words then
+						self:Speak(Words, ParrotPhrase, ply)
+					else
+						self:Speak("Transmission recieved", ParrotPhrase, ply)
+					end
 				else
 					self:Speak("I don't understand. Try 'help'", ParrotPhrase, ply)
 				end

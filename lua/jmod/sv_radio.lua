@@ -270,42 +270,19 @@ function JMod.EZradioEstablish(transceiver, teamID, reassign)
 
 	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), nil
 
-	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) then
-		if JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY then
-			return
-		end
-	else
+	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) and (JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY) then
+		return
+	end
+
+	if not ChosenStation then
 		for k, id in pairs(AlliedStations) do
-			local Taken = false
-	
-			--[[for _, radio in ipairs(FindEZradios()) do
-				if radio ~= transceiver and radio:GetState() > 0 and radio:GetOutpostID() == id then
-					Taken = true
-					break
-				end
-			end--]]
-			--print(Taken)
-	
-			if not Taken and (JMod.EZ_RADIO_STATIONS[id].state == JMod.EZ_STATION_STATE_READY) then
+			local station = JMod.EZ_RADIO_STATIONS[id]
+
+			if (station.state == JMod.EZ_STATION_STATE_READY) then
 				ChosenStation = id
 				break
 			end
 		end
-	end
-
-	if not ChosenStation then
-		for k, v in pairs(AlliedStations) do
-			local station = JMod.EZ_RADIO_STATIONS[v]
-
-			if station.state == JMod.EZ_STATION_STATE_READY then
-				ChosenStation = v
-				break
-			end
-		end
-	end
-
-	if not ChosenStation then
-		ChosenStation = table.Random(AlliedStations)
 	end
 
 	if ChosenStation then
