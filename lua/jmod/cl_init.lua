@@ -290,7 +290,6 @@ local WDir = VectorRand()
 hook.Add("CreateMove", "ParachuteShake", function(cmd)
 	local Ply = LocalPlayer()
 	if not Ply:Alive() then return end
-	local Wep = Ply:GetActiveWeapon()
 
 	if Ply:GetNW2Bool("EZparachuting", false) then
 		local Amt, Sporadicness, FT = 30, 20, FrameTime()
@@ -306,6 +305,23 @@ hook.Add("CreateMove", "ParachuteShake", function(cmd)
 		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
 		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
 		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * FT * Amt * S)
+		cmd:SetViewAngles(EAng)
+	else
+		Ply.LerpedYaw = cmd:GetViewAngles().y
+	end
+end)
+
+hook.Add("CreateMove", "RocketSpeen", function(cmd)
+	local Ply = LocalPlayer()
+	if not Ply:Alive() then return end
+
+	if Ply:GetNW2Bool("EZrocketSpin", false) then
+		local FT = FrameTime()
+
+		local Spin, EAng = 1200, cmd:GetViewAngles()
+		local WDir = Ply:GetVelocity():GetNormalized()
+		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * Spin * FT)
 		cmd:SetViewAngles(EAng)
 	else
 		Ply.LerpedYaw = cmd:GetViewAngles().y

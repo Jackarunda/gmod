@@ -991,6 +991,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		ply.EZkillme = nil
 	end
 	ply.JMod_WillAsplode = nil
+	ply:SetNW2Bool("EZrocketSpin", false)
 
 	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
 	if (ply.JModInv and (ShouldInvDrop or ShouldJModCorpse)) then
