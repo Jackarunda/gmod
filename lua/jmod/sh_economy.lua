@@ -1340,7 +1340,7 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
-		local Debug = args[1] --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
+		local Debug = (args and args[1]) or false --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
 
 		if Debug then
 			if not JMod.IsAdmin(ply) then print("JMod: This console command only works for admins") return end
