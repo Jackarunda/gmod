@@ -381,7 +381,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
 	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
 	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
-	JMod.Config.QoL = Payload.QoL
+	JMod.Config.QoL = table.FullCopy(Payload.QoL)
 	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
 
 	if tobool(net.ReadBit()) then

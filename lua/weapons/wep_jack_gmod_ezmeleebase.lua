@@ -340,11 +340,10 @@ function SWEP:Deploy()
 		vm:SendViewModelMatchingSequence(vm:LookupSequence("draw"))
 		self:UpdateNextIdle()
 		--self:EmitSound("snds_jack_gmod/toolbox" .. math.random(1, 7) .. ".ogg", 65, math.random(90, 110))
+		local Delay = vm:SequenceDuration(vm:LookupSequence("draw"))
+		self:SetNextPrimaryFire(CurTime() + Delay)
+		self:SetNextSecondaryFire(CurTime() + Delay)
 	end
-
-	local Delay = vm:SequenceDuration(vm:LookupSequence("draw"))
-	self:SetNextPrimaryFire(CurTime() + Delay)
-	self:SetNextSecondaryFire(CurTime() + Delay)
 
 	return true
 end
