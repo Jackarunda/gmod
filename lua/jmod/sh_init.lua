@@ -99,7 +99,7 @@ local cheats = GetConVar("sv_cheats")
 local timeScale = GetConVar("host_timescale")
 
 hook.Add("EntityEmitSound", "JMOD_EntityEmitSound", function(t)
-	if not(JMod.Config.QoL.ChangePitchWithHostTimeScale) then return end
+	if not(JMod.Config and JMod.Config.QoL.ChangePitchWithHostTimeScale) then return end
 	local p = t.Pitch
 
 	if game.GetTimeScale() ~= 1 then
@@ -193,6 +193,7 @@ end)
 function JMod.LiquidSpray(pos, dir, amt, group, typ)
 	local group = group or 1
 	local amt = amt or 1
+	local dir = dir or Vector(0, 0, 1)
 	if SERVER then
 		net.Start("JMod_LiquidParticle")
 		net.WriteVector(pos)

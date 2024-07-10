@@ -36,6 +36,12 @@ ENT.StaticPerfSpecs={
 	Armor = .7
 }
 ENT.ResourceReqMult = 1.3
+ENT.BackupRecipe = {
+	[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, 
+	[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, 
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 8
+}
+
 local STATE_BROKEN, STATE_FINE, STATE_PROCESSING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -93,7 +99,7 @@ if(SERVER)then
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
-		if typ == self:GetOreType() and accepted >= 1 then
+		if (typ == self:GetOreType()) and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
 		self:UpdateWireOutputs()
@@ -102,18 +108,21 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		local State = self:GetState()
+		if not IsValid(JMod.GetEZowner(self)) then 
+			JMod.SetEZowner(self, activator)
+		end
 		if(State == STATE_FINE) then
 			if (self:GetElectricity() > 0) then
-				--if Alt then
-					--self:TurnOn(activator)
-				--else
+				if Alt and (self:GetOre() > 0) then
+					self:TurnOn(activator)
+				else
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
 					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
-				--end
+				end
 			else
 				JMod.Hint(activator, "refillprimbench")
 			end

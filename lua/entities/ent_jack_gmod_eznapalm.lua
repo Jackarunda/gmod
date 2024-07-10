@@ -4,6 +4,9 @@ ENT.Base = "base_anim"
 ENT.PrintName = "Projectile"
 ENT.KillName = "Projectile"
 ENT.NoSitAllowed = true
+ENT.MaxLifeTime = 5
+ENT.DefaultSpeed = 600
+ENT.FireEffect = "eff_jack_gmod_fire"
 -- this has been copied over from Slayer and modified, which is why it looks so weird
 -- Halo FTW
 local ThinkRate = 22 --Hz
@@ -14,26 +17,8 @@ end
 
 if SERVER then
 	function ENT:Initialize()
-		self.Ptype = 6
-
-		self.TypeInfo = {
-			"NAPALM", "Napalm", Model("models/weapons/ar2_grenade.mdl"), {""},
-			"models/mat_jack_gmod_brightwhite", Color(255, 255, 255), Angle(0, 0, 0), 600, .5, .5, .5, 5, "eff_jack_gmod_fire", false, true, false
-		}
-
-		-----
 		self:SetMoveType(MOVETYPE_NONE)
 		self:DrawShadow(false)
-		self:SetCollisionBounds(Vector(-20, -20, -10), Vector(20, 20, 10))
-		self:PhysicsInitBox(Vector(-20, -20, -10), Vector(20, 20, 10))
-		local phys = self:GetPhysicsObject()
-
-		timer.Simple(0, function()
-			if IsValid(phys) then
-				phys:EnableCollisions(false)
-			end
-		end)
-
 		self:SetNotSolid(true)
 		self.Impacted = false
 		self.Stuck = false
@@ -46,11 +31,11 @@ if SERVER then
 		self.SpeedMul = self.SpeedMul or 1
 		self.Bounces = 0
 		self.MaxBounces = self.MaxBounces or 10
-		self.LifeTime = self.LifeTime or math.Rand(self.TypeInfo[11], self.TypeInfo[12])
+		self.LifeTime = self.LifeTime or math.Rand(self.MaxLifeTime * .1, self.MaxLifeTime)
 		if self.Burnin == nil then self.Burnin = true end
 		self:SetBurning(self.Burnin)
 		---- compensate for inherited velocity ----
-		local CurVel = self:GetForward() * self.TypeInfo[8] * self.SpeedMul
+		local CurVel = self:GetForward() * self.DefaultSpeed * self.SpeedMul
 		local NewVel = CurVel + (self.InitialVel or Vector(0, 0, 100))
 		self:SetAngles(NewVel:Angle())
 		self.CurVel = NewVel
@@ -103,7 +88,7 @@ if SERVER then
 			local Filter = {self, self.Creator}
 
 			--Tr=util.TraceLine({start=Pos,endpos=Pos+self.CurVel/ThinkRate,filter=Filter})
-			local Mask, HitWater, HitChainLink = MASK_SHOT, self.TypeInfo[15], self.TypeInfo[16]
+			local Mask, HitWater, HitChainLink = MASK_SHOT, true, false
 
 			if HitWater then
 				Mask = Mask + MASK_WATER
@@ -137,7 +122,7 @@ if SERVER then
 		else
 			self:SetPos(Pos + self.CurVel / ThinkRate)
 
-			if self.TypeInfo[13] and self.NextFizz < Time and (self.Armed or not self.ArmTime) then
+			if self.NextFizz < Time and (self.Armed or not self.ArmTime) then
 				self.NextFizz = Time + .2
 
 				if math.random(1, 2) == 1 then
@@ -150,14 +135,12 @@ if SERVER then
 					else
 						Zap:SetOrigin(Pos + self.CurVel / ThinkRate)
 						Zap:SetStart(self.CurVel)
-						util.Effect(self.TypeInfo[13], Zap, true, true)
+						util.Effect(self.FireEffect, Zap, true, true)
 					end
 				end
 			end
 
-			if self.TypeInfo[9] > 0 then
-				self.CurVel = self.CurVel + physenv.GetGravity() / ThinkRate * self.TypeInfo[9]
-			end
+			self.CurVel = self.CurVel + physenv.GetGravity() / ThinkRate * .5
 		end
 
 		if IsValid(self) then
@@ -201,19 +184,6 @@ if SERVER then
 
 		if not IsValid(Att) then
 			Att = self
-		end
-
-		if tr and self.TypeInfo[14] then
-			local bullet = {}
-			bullet.Num = 1
-			bullet.Src = self:GetPos()
-			bullet.Dir = self:GetForward()
-			bullet.Spread = Vector(0, 0, 0)
-			bullet.Tracer = 0
-			bullet.Force = 1
-			bullet.Damage = 1
-			bullet.Attacker = Att
-			self:FireBullets(bullet)
 		end
 
 		if tr and tr.Hit then
@@ -261,30 +231,14 @@ if SERVER then
 		end
 	end
 elseif CLIENT then
+	ENT.MawdelScale = .5
+
 	function ENT:Initialize()
-		self.Ptype = 6
-
-		self.TypeInfo = {
-			"NAPALM", "Napalm", Model("models/weapons/ar2_grenade.mdl"), {""},
-			"models/mat_jack_gmod_brightwhite", Color(255, 255, 255), Angle(0, 0, 0), 1200, .5, .5, .5, 2, "eff_jack_gmod_fire", false, true, false
-		}
-
 		self.RenderPos = self:GetPos() + self:GetForward() * 20
 		self.RenderTime = CurTime() + .175 -- don't draw if we're not fucking moving, gmod sucks so bad
-		self.Mawdel = ClientsideModel(self.TypeInfo[3])
-
-		if self.TypeInfo[10] ~= 1 then
-			self.Mawdel:SetModelScale(self.TypeInfo[10])
-		end
-
-		if self.TypeInfo[5] then
-			self.Mawdel:SetMaterial(self.TypeInfo[5])
-		end
-
-		if self.TypeInfo[6] then
-			self.Mawdel:SetColor(self.TypeInfo[6])
-		end
-
+		self.Mawdel = ClientsideModel(Model("models/weapons/ar2_grenade.mdl"))
+		self.Mawdel:SetModelScale(self.MawdelScale)
+		self.Mawdel:SetMaterial("models/mat_jack_gmod_brightwhite")
 		self.Mawdel:SetPos(self:GetPos())
 		self.Mawdel:SetParent(self)
 		self.Mawdel:SetNoDraw(true)
@@ -301,9 +255,9 @@ elseif CLIENT then
 
 			if dlight then
 				dlight.pos = Pos - Dir * 15
-				dlight.r = self.TypeInfo[6].r
-				dlight.g = self.TypeInfo[6].g
-				dlight.b = self.TypeInfo[6].b
+				dlight.r = 255
+				dlight.g = 255
+				dlight.b = 255
 				dlight.brightness = 2
 				dlight.Decay = 1000
 				dlight.Size = 200
@@ -322,9 +276,6 @@ elseif CLIENT then
 			render.DrawSprite(self.RenderPos, 100 * Lived, 100 * Lived, Color(255, 255, 255, 200 / Lived))
 		else
 			local Pos, Dir, Ang = self.RenderPos, self:GetForward(), self:GetAngles()
-			Ang:RotateAroundAxis(Ang:Right(), self.TypeInfo[7].p)
-			Ang:RotateAroundAxis(Ang:Up(), self.TypeInfo[7].y)
-			Ang:RotateAroundAxis(Ang:Forward(), self.TypeInfo[7].r)
 			self.Mawdel:SetRenderAngles(Ang)
 			self.Mawdel:SetRenderOrigin(Pos)
 			local OrigR, OrigG, OrigB = render.GetColorModulation()
@@ -336,7 +287,7 @@ elseif CLIENT then
 			ScatterFrac = ScatterFrac - .3
 			Pos = Pos + Dir * 10
 			render.SetMaterial(GlowSprite)
-			local Col = Color(self.TypeInfo[6].r, self.TypeInfo[6].g, self.TypeInfo[6].b, math.random(0, 255))
+			local Col = Color(255, 255, 255, math.random(0, 255))
 
 			for i = 1, 20 do
 				render.DrawSprite(Pos - Dir * i * 5 + VectorRand() * math.Rand(0, 2) * i * ScatterFrac, 30 * ScatterFrac, 30 * ScatterFrac, Col)

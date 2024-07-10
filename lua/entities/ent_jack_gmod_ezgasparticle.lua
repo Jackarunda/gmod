@@ -20,16 +20,9 @@ ENT.MaxLife = 100
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetNotSolid(true)
 		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
 		self:SetModelScale(2)
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
@@ -143,6 +136,11 @@ if SERVER then
 				mask = MASK_SHOT
 			})
 			if not MoveTrace.Hit then
+				if MoveTrace.HitSky then
+					SafeRemoveEntity(self)
+	
+					return
+				end
 				-- move unobstructed
 				self:SetPos(NewPos)
 			else
@@ -181,6 +179,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	local Mat = Material("particle/smokestack")
+	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 
 	function ENT:Initialize()
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
@@ -191,7 +190,7 @@ elseif CLIENT then
 
 		timer.Simple(2, function()
 			if IsValid(self) then
-				self.Visible = math.random(1, 5) == 2
+				self.Visible = math.random(1, 5) == 1
 			end
 		end)
 
@@ -202,7 +201,8 @@ elseif CLIENT then
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
-			self:DrawModel()
+			render.SetMaterial(DebugMat)
+			render.DrawSprite(self:GetPos(), 50, 50, Color(134, 224, 60, 200))
 		end
 		if (self:GetDTBool(0)) then return end
 

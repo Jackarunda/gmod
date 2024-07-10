@@ -107,6 +107,7 @@ if SERVER then
 
 elseif CLIENT then
 	local Mat = Material("effects/smoke_b")
+	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 
 	function ENT:Initialize()
 		self.Col = Color(255, 255, 255)
@@ -130,7 +131,8 @@ elseif CLIENT then
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
-			self:DrawModel()
+			render.SetMaterial(DebugMat)
+			render.DrawSprite(self:GetPos(), 50, 50, Color(255, 255, 255, 200))
 		end
 
 		local Time = CurTime()

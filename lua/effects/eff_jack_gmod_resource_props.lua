@@ -40,12 +40,12 @@ local ElectronicsModels = {
 	"models/props/cs_office/computer_caseb_p9a.mdl"
 }
 local PartsModels = {
-	"models/jmod/props/bolt/bolt.mdl",
-	"models/jmod/props/bolt/bolt.mdl",
-	"models/jmod/props/bolt/bolt.mdl",
-	"models/jmod/props/bolt/bolt.mdl",
-	"models/jmod/props/bolt/bolt.mdl",
-	"models/jmod/props/bolt/bolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
+	"models/jmod/props/ezbolt.mdl",
 	"models/Mechanics/gears/gear12x12_small.mdl",
 	"models/Mechanics/gears/gear12x6.mdl",
 	"models/Mechanics/gears/gear16x24_small.mdl",

@@ -128,9 +128,9 @@ function SWEP:CanPickup(ent)
 	if ent:IsNPC() then return false end
 	if ent:IsPlayer() then return false end
 	if ent:IsWorld() then return false end
---	if ent:GetParent() then return false end
+	--if ent:GetParent() then return false end
 	local class = ent:GetClass()
---	if pickupWhiteList[class] then return true end
+	--if pickupWhiteList[class] then return true end
 	if CLIENT then return true end
 	if ent:IsPlayerHolding() then return false end
 	if IsValid(ent:GetPhysicsObject()) and ent:GetPhysicsObject():IsMotionEnabled() then return true end

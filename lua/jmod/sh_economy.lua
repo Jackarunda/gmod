@@ -1340,7 +1340,7 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
-		local Debug = args[1] --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
+		local Debug = (args and args[1]) or false --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
 
 		if Debug then
 			if not JMod.IsAdmin(ply) then print("JMod: This console command only works for admins") return end
@@ -1571,7 +1571,12 @@ elseif CLIENT then
 		if IsValid(Wep) and Wep.ScanResults then
 			for k, v in pairs(Wep.ScanResults) do
 				-- let's draw this closer to the ground
-				local DrawTrace = util.QuickTrace(v.pos + Vector(0, 0, 20), Vector(0, 0, -200), {Ply, Wep})
+				local DrawTrace = util.TraceLine({
+					start = v.pos + Vector(0, 0, 20),
+					endpos = v.pos + Vector(0, 0, -2),
+					filter = {Ply, Wep},
+					mask = MASK_SOLID_BRUSHONLY
+				})
 				local Ang = DrawTrace.HitNormal:Angle()
 				Ang:RotateAroundAxis(Ang:Right(), -90)
 				JMod.HoloGraphicDisplay(nil, DrawTrace.HitPos + DrawTrace.HitNormal * 5, Ang, 1, 30000, function()
