@@ -1464,14 +1464,18 @@ function JMod.ConsumeNutrients(ply, amt)
 	ply.EZnutrition.NextEat = Time + amt / JMod.Config.FoodSpecs.EatSpeed
 	ply.EZnutrition.Nutrients = math.Round(ply.EZnutrition.Nutrients + amt * JMod.Config.FoodSpecs.ConversionEfficiency)
 
-	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
-		local Old = ply:getDarkRPVar("energy")
-		ply:setDarkRPVar("energy", math.Clamp(Old + amt * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
-	end
+	local result = hook.Run("JMod_ConsumeNutrients", ply, amt)
 
 	ply:PrintMessage(HUD_PRINTCENTER, "nutrition: " .. ply.EZnutrition.Nutrients .. "/100")
 	return true
 end
+
+hook.Add("JMod_ConsumeNutrients", "DarkRP_EnergyCompat", function(ply, amt)
+	if ply.getDarkRPVar and ply.setDarkRPVar and ply:getDarkRPVar("energy") then
+		local Old = ply:getDarkRPVar("energy")
+		ply:setDarkRPVar("energy", math.Clamp(Old + amt * JMod.Config.FoodSpecs.ConversionEfficiency, 0, 100))
+	end
+end)
 
 function JMod.GetPlayerStrength(ply)
 	if not(IsValid(ply) and ply:IsPlayer() and ply:Alive()) then return 0 end
