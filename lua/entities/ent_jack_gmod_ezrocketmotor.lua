@@ -199,6 +199,9 @@ if SERVER then
 				self.StuckTo:Drop(JMod.GetEZowner(self))
 				self.StuckTo:SetState(JMod.EZ_STATE_ON)
 			end
+		elseif JMod.IsEntContained(self) then
+			self.StuckTo = self.EZInvOwner
+			self.ThrustStuckTo = true
 		end
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
@@ -244,10 +247,14 @@ if SERVER then
 			end
 
 			if self.FuelLeft > 0 then
-				if self.ThrustStuckTo then
-					Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
-				else 
-					Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
+				if EntToPush:GetMoveType() == MOVETYPE_WALK then
+					EntToPush:SetVelocity(self:GetUp() * self.ThrustPower * .5)
+				else
+					if self.ThrustStuckTo then
+						Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
+					else 
+						Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
+					end
 				end
 				self.FuelLeft = self.FuelLeft - 1.75
 				--jprint(1 / self.FuelLeft)
