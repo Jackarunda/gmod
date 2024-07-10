@@ -247,8 +247,12 @@ if SERVER then
 			end
 
 			if self.FuelLeft > 0 then
-				if EntToPush:GetMoveType() == MOVETYPE_WALK then
-					EntToPush:SetVelocity(self:GetUp() * self.ThrustPower * .5)
+				if EntToPush:IsPlayer() then
+					local AimVec = EntToPush:GetAimVector()
+					EntToPush:SetVelocity((self:GetUp() + AimVec + VectorRand()):GetNormalized() * self.ThrustPower * .015)
+					local Velocity = EntToPush:GetVelocity()
+					local Difference = (AimVec - Velocity):GetNormalized():Angle()
+					EntToPush:SetEyeAngles(EntToPush:GetAngles() + Angle(0, Difference.y * math.random(0.1, 1), 0))
 				else
 					if self.ThrustStuckTo then
 						Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
@@ -266,6 +270,9 @@ if SERVER then
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
 				self.Spent = true
+				if EntToPush:IsPlayer() then
+					--EntToPush:SetEyeAngles(Angle(0, 0, 0))
+				end
 				for k, v in pairs(ents.FindInSphere(self:GetPos(), 30)) do
 					if v.JModHighlyFlammableFunc then
 						JMod.SetEZowner(v, self.EZowner)
