@@ -15,13 +15,13 @@ ENT.Mass = 250
 ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxFuel = 200
 }
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1,
-	Armor = 1
+	Armor = 3
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,

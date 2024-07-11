@@ -21,7 +21,7 @@ ENT.StaticPerfSpecs = {
 	MaxDurability = 120
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = 3
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS

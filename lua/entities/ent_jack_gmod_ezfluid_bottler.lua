@@ -19,7 +19,7 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 100
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1,
+	Armor = 2,
 	ChargeSpeed = 1
 }
 

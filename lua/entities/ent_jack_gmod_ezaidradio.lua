@@ -19,7 +19,7 @@ ENT.EZradio = true
 ----
 ENT.StaticPerfSpecs={
 	MaxDurability=100,
-	Armor=.8
+	Armor=2
 }
 ----
 local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1

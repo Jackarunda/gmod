@@ -17,7 +17,8 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 0
 }
 ENT.DynamicPerfSpecs = {
-	ChargeSpeed = 1
+	ChargeSpeed = 1,
+	Armor = 1
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(0, 0, -30)

@@ -32,8 +32,8 @@ ENT.FlexFuels = {JMod.EZ_RESOURCE_TYPES.WOOD, JMod.EZ_RESOURCE_TYPES.COAL}
 ENT.EZcolorable = false
 ---
 ENT.StaticPerfSpecs={
-	MaxDurability = 90,
-	Armor = .7
+	MaxDurability = 80,
+	Armor = 1
 }
 ENT.ResourceReqMult = 1.3
 ENT.BackupRecipe = {

@@ -15,13 +15,13 @@ ENT.Mass = 8000
 ENT.EZanchorage = 2000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 0,
 	MaxWater = 200
 }
 --
 ENT.DynamicPerfSpecs = {
-	Armor = 2,
+	Armor = 3,
 	ChargeRate = 1
 }
 --

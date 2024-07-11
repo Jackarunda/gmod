@@ -18,7 +18,7 @@ ENT.MaxConnectionRange = 1000
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 1000,
 	MaxDurability = 100,
-	Armor = 1.5
+	Armor = 2.5
 }
 
 if SERVER then

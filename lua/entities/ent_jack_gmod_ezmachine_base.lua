@@ -345,7 +345,7 @@ if(SERVER)then
 	end
 
 	function ENT:DetermineDamageMultiplier(dmg)
-		local Mult = .5 / (self.Armor or 1)
+		local Mult = 1 / (self.Armor or 1)
 		if self.DamageModifierTable then
 			for typ, mul in pairs(self.DamageModifierTable)do
 				if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
@@ -367,7 +367,7 @@ if(SERVER)then
 		self:SetNW2Float("EZdurability", self.Durability)
 
 		if(self.Durability <= 0)then self:Break(dmginfo) end
-		if(self.Durability <= -(self.MaxDurability * 2))then self:Destroy(dmginfo) end
+		if(self.Durability <= (self.MaxDurability * -2))then self:Destroy(dmginfo) end
 	end
 
 	function ENT:Break(dmginfo)
@@ -474,10 +474,10 @@ if(SERVER)then
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
-					Accepted = math.min(Missing / 2, amt)
+					Accepted = math.min(Missing / 3, amt)
 					local Broken = false
 					if self.Durability <= 0 then Broken = true end
-					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
+					self.Durability = math.min(self.Durability + (Accepted * 3), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
 					if(self.Durability > 0)then

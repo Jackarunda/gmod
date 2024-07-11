@@ -19,11 +19,11 @@ ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.WATER, JMod.EZ_RESOURCE_TYPES
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 400,
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 3
 }
 ENT.EZpowerSocket = Vector(-90, 80, 0)
 ---

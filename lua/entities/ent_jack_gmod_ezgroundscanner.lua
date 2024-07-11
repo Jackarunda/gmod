@@ -34,7 +34,7 @@ ENT.PhysMatDetectionWhitelist={
 ENT.StaticPerfSpecs={
 	MaxElectricity=100,
 	MaxDurability=100,
-	Armor=1
+	Armor=3
 }
 ENT.DynamicPerfSpecs={
 	Armor=.8,
