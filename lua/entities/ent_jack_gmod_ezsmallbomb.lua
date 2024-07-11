@@ -80,7 +80,7 @@ if SERVER then
 		end)
 
 		---
-		JMod.FragSplosion(self, SelfPos, 10000, 200, 8000, JMod.GetEZowner(self))
+		JMod.FragSplosion(self, SelfPos, 5000, 100, 4000, JMod.GetEZowner(self), nil, nil, 10)
 		---
 		self:Remove()
 

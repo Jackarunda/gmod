@@ -64,7 +64,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos = self:GetPos()
-		JMod.Sploom(JMod.GetEZowner(self), SelfPos, 160)
+		JMod.Sploom(JMod.GetEZowner(self), SelfPos, 200)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 		local Blam = EffectData()
 		Blam:SetOrigin(SelfPos)
@@ -82,7 +82,7 @@ if SERVER then
 			dmginfo:SetInflictor(self)
 			dmginfo:SetAttacker(JMod.GetEZowner(self))
 			dmginfo:SetDamagePosition(SelfPos)
-			dmginfo:SetDamageForce((self.StickObj:GetPos() - self:GetPos()):GetNormalized() * 1000)
+			dmginfo:SetDamageForce((self.StickObj:GetPos() - self:GetPos()):GetNormalized() * 500)
 			self.StickObj:TakeDamageInfo(dmginfo)
 		end
 

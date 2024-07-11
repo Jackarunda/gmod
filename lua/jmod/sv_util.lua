@@ -267,30 +267,38 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 
 			if Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets) then
 				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease
+				debugoverlay.Line(origin, Tr.HitPos, 5, Color(255, 0, 0), true)
 
 				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
-					local DmgMul = 1
+					local DmgMul = .25
 
-					if BulletsFired > 500 then
-						DmgMul = 5
+					if BulletsFired > MaxBullets * .75 then
+						DmgMul = DmgMul * 5 --?
 					end
 
 					local firer = (IsValid(shooter) and shooter) or game.GetWorld()
 
-					firer:FireBullets({
-						Attacker = attacker,
-						Damage = fragDmg * DmgMul,
-						Force = fragDmg / 10 * DmgMul,
-						Num = 1,
-						Src = origin,
-						Tracer = 0,
-						Dir = Dir,
-						Spread = Spred,
-						AmmoType = "Buckshot" -- for identification as "fragments"
-					})
+					local DistFactor = (-Tr.Fraction + 1.2)^2
+					local DamageToDeal = fragDmg * DmgMul * DistFactor
+					--print("DamageToDeal: " .. DamageToDeal)
+					if DamageToDeal >= 1 then
+						firer:FireBullets({
+							Attacker = attacker,
+							Damage = DamageToDeal,
+							Force = DamageToDeal * .02,
+							Num = 1,
+							Src = origin,
+							Tracer = 0,
+							Dir = Dir,
+							Spread = Spred,
+							AmmoType = "Buckshot" -- for identification as "fragments"
+						})
+					end
 
 					BulletsFired = BulletsFired + 1
 				end
+			else
+				debugoverlay.Line(origin, Tr.HitPos, 2, Color(217, 255, 0), true)
 			end
 		end)
 	end

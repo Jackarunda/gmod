@@ -27,7 +27,7 @@ if SERVER then
 		if self.Exploded then return end
 		self.Exploded = true
 		local SelfPos, Att = self:GetPos() + Vector(0, 0, 60), JMod.GetEZowner(self)
-		JMod.Sploom(Att, SelfPos, 50)
+		JMod.Sploom(Att, SelfPos, 100)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 4000)
 		local Eff = "500lb_ground"
