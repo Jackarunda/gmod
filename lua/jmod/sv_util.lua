@@ -237,6 +237,15 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 		return
 	end
 
+	local WaterDivider = 1
+	for i = 1, 4 do
+		if bit.band(util.PointContents(origin + Vector(0, 0, i * 50)), CONTENTS_WATER) == CONTENTS_WATER then
+			WaterDivider = i
+		else
+			break
+		end
+	end
+
 	local Spred = Vector(0, 0, 0)
 	local BulletsFired, MaxBullets, disperseTime = 0, 300, .5
 
@@ -263,14 +272,14 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 				Dir:Normalize()
 			end
 
-			local Tr = util.QuickTrace(origin, Dir * fragMaxDist, shooter)
+			local Tr = util.QuickTrace(origin, Dir * fragMaxDist / WaterDivider, shooter)
 
 			if Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets) then
 				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease
 				debugoverlay.Line(origin, Tr.HitPos, 5, Color(255, 0, 0), true)
 
 				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
-					local DmgMul = .25
+					local DmgMul = 1 / WaterDivider
 
 					if BulletsFired > MaxBullets * .75 then
 						DmgMul = DmgMul * 5 --?
@@ -904,9 +913,10 @@ end
 function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnPos, relativeSpawnAngle, ejectionVector, findCrateRange)
 	amount = math.Round(amount)
 	if not(amount) or (amount < 1) then return end --print("[JMOD] " .. tostring(machine) .. " tried to produce a resource with 0 value") return end
+	machine.NextRefillTime = CurTime() + 1
 	local SpawnPos, SpawnAngle, MachineOwner = machine:LocalToWorld(relativeSpawnPos), relativeSpawnAngle and machine:LocalToWorldAngles(relativeSpawnAngle), JMod.GetEZowner(machine)
 	local MachineCenter = machine:LocalToWorld(machine:OBBCenter())
-	if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and machine.EZconnections then
+	if (resourceType == JMod.EZ_RESOURCE_TYPES.POWER) and (machine.GetState and machine:GetState() == JMod.EZ_STATE_ON) and machine.EZconnections then
 		local PowerToGive = amount
 		for entID, cable in pairs(machine.EZconnections) do
 			local Ent, Cable = Entity(entID), cable
