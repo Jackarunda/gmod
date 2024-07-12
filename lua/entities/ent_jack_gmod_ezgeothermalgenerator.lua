@@ -21,7 +21,7 @@ ENT.StaticPerfSpecs = {
 }
 --
 ENT.DynamicPerfSpecs = {
-	Armor = 3,
+	Armor = 2,
 	ChargeRate = 1
 }
 --

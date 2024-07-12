@@ -23,7 +23,7 @@ ENT.StaticPerfSpecs = {
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1,
-	Armor = 3
+	Armor = 2
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,

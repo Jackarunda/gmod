@@ -25,7 +25,7 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 400,
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 3
+	Armor = 2
 }
 ---
 local STATE_BROKEN, STATE_OFF, STATE_RUNNING = -1, 0, 1

@@ -84,7 +84,7 @@ ENT.StaticPerfSpecs = {
 		["npc_rollermine"] = 15,
 		["npc_apcdriver"] = 30
 	},
-	MaxDurability = 150,
+	MaxDurability = 100,
 	ThinkSpeed = 1,
 	Efficiency = .8,
 	ShotCount = 1,
