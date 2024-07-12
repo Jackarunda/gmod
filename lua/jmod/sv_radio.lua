@@ -34,7 +34,7 @@ end
 
 local function FindEZradios() 
 	local Radios = {}
-	for _, v in ipairs(ents.GetAll()) do
+	for _, v in ents.Iterator() do
 		if v.EZradio and (v.EZradio == true) then
 			table.insert(Radios, v)
 		end
@@ -364,8 +364,7 @@ end, nil, "Removes a radio outpost for your team.")
 local function GetPlayerFromNick(nickname)
 	if not nickname then return nil end
 	nickname = string.lower(nickname)
-	local Entities = ents.GetAll()
-	for _, v in ipairs(Entities) do
+	for _, v in ents.Iterator() do
 		if not(IsValid(v)) and (v:IsPlayer()) and (string.lower(v:Nick())) == nickname then
 
 			return v

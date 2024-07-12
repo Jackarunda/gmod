@@ -589,7 +589,7 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 			NextWHOTcheck = Time + .5
 			WHOTents = {}
 
-			for k, v in pairs(ents.GetAll()) do
+			for k, v in ents.Iterator() do
 				if IsWHOT(v) then
 					table.insert(WHOTents, v)
 				end
