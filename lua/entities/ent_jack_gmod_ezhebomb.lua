@@ -11,7 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZRackOffset = Vector(0, 0, 20)
 ENT.EZRackAngles = Angle(0, -90, 0)
-ENT.EZbombBaySize = 12
+ENT.EZbombBaySize = 5
 ENT.EZguidable = false
 ---
 ENT.Model = "models/hunter/blocks/cube025x075x025.mdl"
@@ -54,10 +54,10 @@ if SERVER then
 		end
 
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 700, 300)
+		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 300), 800, 300)
 
 		timer.Simple(.25, function()
-			util.BlastDamage(game.GetWorld(), JMod.GetEZowner(self), SelfPos, 1600, 120)
+			util.BlastDamage(game.GetWorld(), Att, SelfPos, 1600, 120)
 		end)
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 500)) do
@@ -87,7 +87,7 @@ if SERVER then
 		end)
 	end
 
-	function ENT:AreoDragThink()
+	function ENT:AeroDragThink()
 		JMod.AeroDrag(self, -self:GetRight(), 2)
 		self:NextThink(CurTime() + .1)
 
