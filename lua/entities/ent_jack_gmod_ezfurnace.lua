@@ -32,12 +32,12 @@ ENT.EZconsumes = {
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxElectricity = 500,
 	MaxOre = 500
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = 2
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL }
 ---

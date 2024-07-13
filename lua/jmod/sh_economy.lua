@@ -737,7 +737,7 @@ function JMod.GetSalvageYield(ent)
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
 	local RagMass = nil
 	if PhysNum > 1 then
-		for i = 1, PhysNum do
+		for i = 0, PhysNum - 1 do
 			local RagPhys = ent:GetPhysicsObjectNum(i)
 			if not IsValid(RagPhys) then break end
 			RagMass = (RagMass or 0) + RagPhys:GetMass()

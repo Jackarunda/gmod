@@ -15,8 +15,8 @@ ENT.Mass = 30
 --
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 100,
-	MaxDurability = 100,
-	Armor = 1.5
+	MaxDurability = 50,
+	Armor = 3
 }
 
 local STATE_BROKEN, STATE_OFF, STATE_WINDING, STATE_SPEELING = -1, 0, 1, 2

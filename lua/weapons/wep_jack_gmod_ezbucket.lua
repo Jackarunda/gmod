@@ -162,13 +162,15 @@ function SWEP:PrimaryAttack()
 			if bit.band(util.PointContents(WaterTr.HitPos + Vector(0, 0, -4)), CONTENTS_WATER) == CONTENTS_WATER then
 				self:SetWater(math.Clamp(SelfWater + 50, 0, self.MaxWater))
 				sound.Play("snds_jack_gmod/liquid_load.ogg", ShootPos, 90, math.random(90, 110), 1)
-			elseif IsValid(WaterTr.Entity) and WaterTr.Entity.GetEZsupplies then
-				local TheirWater = WaterTr.Entity:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER)
-				if TheirWater and (TheirWater > 0) then
-					local WaterToTake = math.Clamp(TheirWater, 0, self.MaxWater - SelfWater)
-					self:SetWater(math.Clamp(SelfWater + WaterToTake, 0, self.MaxWater))
-					WaterTr.Entity:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER, TheirWater - WaterToTake, self)
-					sound.Play("snds_jack_gmod/liquid_load.ogg", ShootPos, 90, math.random(90, 110), 1)
+			elseif IsValid(WaterTr.Entity) then 
+				if WaterTr.Entity.GetEZsupplies then
+					local TheirWater = WaterTr.Entity:GetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER)
+					if TheirWater and (TheirWater > 0) then
+						local WaterToTake = math.Clamp(TheirWater, 0, self.MaxWater - SelfWater)
+						self:SetWater(math.Clamp(SelfWater + WaterToTake, 0, self.MaxWater))
+						WaterTr.Entity:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.WATER, TheirWater - WaterToTake, self)
+						sound.Play("snds_jack_gmod/liquid_load.ogg", ShootPos, 90, math.random(90, 110), 1)
+					end
 				end
 			end
 		end

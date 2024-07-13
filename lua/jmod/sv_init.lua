@@ -42,7 +42,7 @@ local function JackaSpawnHook(ply, transition)
 	end)
 
 	if JMod.Config.Explosives.BombOwnershipLossOnRespawn then
-		for k, ent in pairs(ents.GetAll()) do
+		for k, ent in ents.Iterator() do
 			local EZowner = JMod.GetEZowner(ent)
 
 			if ent.EZdroppableBombArmedTime and IsValid(EZowner) and EZowner == ply then
@@ -569,12 +569,11 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		EasterEggThink()
 	end
 
-	local Playas = player.GetAll()
+	local PlyIterator, Playas, startingindex = player.Iterator()
 	---
-	for i = 1, #Playas do
-		local playa = Playas[i]
-		if playa:Alive() then
+	for k, playa in PlyIterator, Playas, startingindex do
 
+		if playa:Alive() then
 			if playa.EZhealth then
 				local Healin = playa.EZhealth
 
@@ -690,7 +689,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextNutritionThink < Time then
 		NextNutritionThink = Time + 10 / JMod.Config.FoodSpecs.DigestSpeed
 
-		for _, playa in ipairs(Playas) do
+		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZnutrition then
 				if playa:Alive() then
 					local RestMult = (playa.JMod_IsSleeping and 2) or 1
@@ -734,7 +733,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 	if NextArmorThink < Time then
 		NextArmorThink = Time + 2
 
-		for _, playa in ipairs(Playas) do
+		for _, playa in PlyIterator, Playas, startingindex do
 			if playa.EZarmor and playa:Alive() then
 				if playa.EZarmor.effects.nightVision then
 					for id, armorData in pairs(playa.EZarmor.items) do
@@ -801,7 +800,7 @@ hook.Add("Think", "JMOD_SERVER_THINK", function()
 		NextSlowThink = Time + 2
 
 		if JMod.Config.QoL.ExtinguishUnderwater then
-			for k, v in pairs(ents.GetAll()) do
+			for k, v in ents.Iterator() do
 				if v.IsOnFire and v.WaterLevel then
 					if v:IsOnFire() and (v:WaterLevel() >= 3) then
 						v:Extinguish()
@@ -934,12 +933,18 @@ concommand.Add("jacky_player_debug", function(ply, cmd, args)
 	if not GetConVar("sv_cheats"):GetBool() then return end
 	if not ply:IsSuperAdmin() then return end
 
-	for k, v in player.Iterator() do
-		if v ~= ply then
-			v:SetPos(ply:GetPos() + Vector(100 * k, 0, 0))
+	--[[local ValidEntNum = 1
+	for k, v in ents.Iterator() do
+		if IsValid(v) and v ~= ply and (v:IsPlayer() or string.find(v:GetClass(), "npc_")) then
+			local Ang = ply:GetAngles()
+			Ang:RotateAroundAxis(Ang:Up(), ValidEntNum * 42)
+			local Dir = Ang:Forward()
+			v:SetPos(ply:GetPos() + Dir * ValidEntNum * 100)
 			v:SetHealth(100)
+			ValidEntNum = ValidEntNum + 1
 		end
-	end
+	end--]]
+	JMod.DebugArrangeEveryone(ply)
 end, nil, "(CHEAT, ADMIN ONLY) Resets players' health.")
 
 hook.Add("GetFallDamage", "JMod_FallDamage", function(ply, spd)
@@ -991,6 +996,7 @@ hook.Add("PlayerDeath", "JMOD_SERVER_PLAYERDEATH", function(ply, inflictor, atta
 		ply.EZkillme = nil
 	end
 	ply.JMod_WillAsplode = nil
+	ply:SetNW2Bool("EZrocketSpin", false)
 
 	local ShouldInvDrop = JMod.Config.QoL.JModInvDropOnDeath
 	if (ply.JModInv and (ShouldInvDrop or ShouldJModCorpse)) then
@@ -1055,7 +1061,7 @@ function JMod.EZ_Remote_Trigger(ply)
 
 	timer.Simple(.75, function()
 		if IsValid(ply) and ply:Alive() then
-			for k, v in pairs(ents.GetAll()) do
+			for k, v in ents.Iterator() do
 				if v.JModEZremoteTriggerFunc and v.EZowner and (v.EZowner == ply) then
 					v:JModEZremoteTriggerFunc(ply)
 				end

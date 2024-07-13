@@ -435,7 +435,7 @@ if(SERVER)then
 	end
 
 	function ENT:CustomDetermineDmgMult(dmginfo)
-		local Mult=1
+		local Mult=.2 -- Let's just make it tougher overall
 		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
 		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
 		local AimAng=self:GetAngles()

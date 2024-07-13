@@ -16,11 +16,11 @@ ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.EZupgradable = true
 ENT.EZanchorage = 500
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 3
 }
 --
 --ENT.WhitelistedResources = {}

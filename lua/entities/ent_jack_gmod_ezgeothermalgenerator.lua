@@ -15,7 +15,7 @@ ENT.Mass = 8000
 ENT.EZanchorage = 2000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 0,
 	MaxWater = 200
 }

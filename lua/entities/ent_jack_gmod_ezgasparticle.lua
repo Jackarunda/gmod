@@ -15,6 +15,7 @@ ENT.ThinkRate = 1
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 300
 ENT.MaxLife = 100
+ENT.MaxVel = 100
 --
 
 if SERVER then
@@ -27,7 +28,6 @@ if SERVER then
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
 		self.AirResistance = 2
-		self.MaxVel = 200--self.CurVel:Length() / self.AirResistance
 		self:SetLifeTime(math.random(self.MaxLife * .5, self.MaxLife) * JMod.Config.Particles.PoisonGasLingerTime)
 		if self.CustomInit then
 			self:CustomInit()
@@ -41,7 +41,7 @@ if SERVER then
 	end
 
 	function ENT:ShouldDamage(ent)
-		if not(math.random(1, 3) == 1) then return end
+		if not(math.random(1, 2) == 1) then return end
 		if not IsValid(ent) then return end
 		if ent.EZgasParticle == true then return end
 		if ent:IsPlayer() then return ent:Alive() end
@@ -102,14 +102,14 @@ if SERVER then
 		if self.CalcMove then
 			self:CalcMove(ThinkRateHz)
 		else
-			local Force = VectorRand(-5, 5) + Vector(0, 0, -6) + JMod.Wind * 8
+			local Force = VectorRand(-4, 4) + Vector(0, 0, -8) + JMod.Wind * 4
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 					if obj.EZgasParticle and not(obj.EZvirusParticle) then
 						-- repel in accordance with Ideal Gas Law
 						local NormVec = (obj:GetPos() - SelfPos):GetNormalized()
-						Force = Force - NormVec * 1
+						Force = Force - NormVec * .5
 					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
 						self:DamageObj(obj)
 					end

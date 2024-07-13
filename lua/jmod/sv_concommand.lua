@@ -37,7 +37,7 @@ end, nil, "Does a server-wide admin cleanup of everything, including players.")
 
 concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 	if (IsValid(ply) and ply:IsSuperAdmin()) or not IsValid(ply) then
-		for k, v in pairs(ents.GetAll()) do
+		for k, v in ents.Iterator() do
 			if v.EZfalloutParticle then
 				v:Remove()
 			end

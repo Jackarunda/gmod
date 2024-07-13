@@ -177,8 +177,8 @@ if SERVER then
 				util.Decal("BigScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
 			end
 		end)
-
-		JMod.FragSplosion(self, SelfPos, 10000, 200, 1500, JMod.GetEZowner(self), nil, nil, 4)
+		local Up = self:GetUp()
+		JMod.FragSplosion(self, SelfPos + Up * 5, 10000, 200, 1500, JMod.GetEZowner(self), Up, 1.2)
 		---
 		self:Remove()
 

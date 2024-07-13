@@ -17,13 +17,13 @@ ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
 	MaxElectricity = 100,
-	MaxDurability = 50,
-	Armor = 1
+	MaxDurability = 50
 }
 ENT.DynamicPerfSpecs={
 	MaxLiquid = 200,
 	TurnSpeed = 5,
-	SprayRadius = 400
+	SprayRadius = 400,
+	Armor = 1
 }
 ENT.LiquidTypes = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
@@ -139,7 +139,8 @@ if(SERVER)then
 			MaxLiquid = 0,
 			TurnSpeed = 0,
 			SprayRadius = 0,
-			Rotation = {Max = 360}
+			Rotation = {Max = 360},
+			Armor = 0
 		}
 		--
 		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)

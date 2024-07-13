@@ -22,7 +22,7 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
 	MaxDurability = 150,
-	Armor = .8,
+	Armor = 1,
 	MaxElectricity = 300,
 	MaxGas = 300,
 	MaxChemicals = 100,

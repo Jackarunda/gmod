@@ -80,7 +80,7 @@ function SWEP:CustomThink()
 
 	if self.NextTaskTime < Time then
 		self:SetTaskProgress(0)
-		self.NextTaskTime = Time + 3
+		self.NextTaskTime = Time + self.PrimaryAttackSpeed + 1
 	end
 
 	if CLIENT then
@@ -149,7 +149,7 @@ function SWEP:FinishSwing(swingProgress)
 	if swingProgress >= self.MaxSwingAngle then
 		self:SetTaskProgress(0)
 	else
-		self.NextTaskTime = CurTime() + 3
+		self.NextTaskTime = CurTime() + self.PrimaryAttackSpeed + 1
 	end
 end
 

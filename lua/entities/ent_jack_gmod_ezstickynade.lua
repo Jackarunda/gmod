@@ -82,7 +82,7 @@ if SERVER then
 			dmginfo:SetInflictor(self)
 			dmginfo:SetAttacker(JMod.GetEZowner(self))
 			dmginfo:SetDamagePosition(SelfPos)
-			dmginfo:SetDamageForce((self.StickObj:GetPos() - self:GetPos()):GetNormalized() * 1000)
+			dmginfo:SetDamageForce((self.StickObj:GetPos() - self:GetPos()):GetNormalized() * 500)
 			self.StickObj:TakeDamageInfo(dmginfo)
 		end
 

@@ -10,9 +10,10 @@ ENT.AdminSpawnable = false
 ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
-ENT.ThinkRate = 1
-ENT.AffectRange = 200
+ENT.ThinkRate = 2
+ENT.AffectRange = 250
 ENT.MaxLife = 120
+ENT.MaxVel = 100
 --
 
 if SERVER then
@@ -21,7 +22,6 @@ if SERVER then
 		self.NextDmg = Time + 2.5
 		self.CurVel = self.CurVel or VectorRand() * 50
 		self.AirResistance = 1
-		self.MaxVel = 150
 	end
 
 	function ENT:DamageObj(obj)
@@ -29,7 +29,7 @@ if SERVER then
 		if obj:IsPlayer() then
 			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 
-			--JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
+			JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
 
 			if faceProt < 1 then
 				net.Start("JMod_VisionBlur")
@@ -59,14 +59,14 @@ if SERVER then
 		local SelfPos, Time = self:GetPos(), CurTime()
 		local RandDir = VectorRand(-6, 6)
 		RandDir.z = RandDir.z * .5
-		local Force = RandDir + (JMod.Wind * 5) + Vector(0, 0, -8)
+		local Force = RandDir + (JMod.Wind * 4) + Vector(0, 0, -8)
 
 		for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 			if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 				if obj.EZgasParticle and not(obj.EZvirusParticle) then
 					-- repel in accordance with Ideal Gas Law
 					local Vec = (obj:GetPos() - SelfPos):GetNormalized()
-					Force = Force - Vec * .3
+					Force = Force - Vec * .5
 				elseif self.NextDmg < Time and self:ShouldDamage(obj) then
 					self:DamageObj(obj)
 				end

@@ -18,7 +18,7 @@ ENT.MaxConnectionRange = 1000
 ENT.StaticPerfSpecs={ 
 	MaxElectricity = 1000,
 	MaxDurability = 100,
-	Armor = 1.5
+	Armor = 2.5
 }
 
 if SERVER then
@@ -151,12 +151,12 @@ if SERVER then
 	function ENT:ProduceResource(activator)
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local PowerLeft = self:GetElectricity()
-		local amt = math.Clamp(math.floor(PowerLeft), 0, 100)
+		local Amt = math.Clamp(math.floor(PowerLeft), 0, 100)
 
-		if amt <= 0 then return end
-		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 20)
-		self:SetElectricity(PowerLeft - amt)
-		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, false)
+		if Amt <= 0 then return end
+		local SpawnPos = self:WorldToLocal(SelfPos + Up * 16 + Forward * 32)
+		self:SetElectricity(PowerLeft - Amt)
+		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, Amt, SpawnPos, Angle(0, 0, 0), Forward * 10, false)
 	end
 
 	function ENT:OnRemove()
