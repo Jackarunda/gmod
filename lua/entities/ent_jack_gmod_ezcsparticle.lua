@@ -29,7 +29,7 @@ if SERVER then
 		if obj:IsPlayer() then
 			local faceProt, skinProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 
-			--JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
+			JMod.DepleteArmorChemicalCharge(obj, (faceProt + skinProt) * 4 * .02)
 
 			if faceProt < 1 then
 				net.Start("JMod_VisionBlur")

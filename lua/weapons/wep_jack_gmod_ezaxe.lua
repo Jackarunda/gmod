@@ -104,6 +104,10 @@ local FleshTypes = {
 	MAT_ALIENFLESH
 }
 
+local function ShouldSalvage(tr)
+	return (table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll")) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics")))
+end
+
 function SWEP:OnHit(swingProgress, tr)
 	local Owner = self:GetOwner()
 	--local SwingCos = math.cos(math.rad(swingProgress))
@@ -121,7 +125,7 @@ function SWEP:OnHit(swingProgress, tr)
 	AxeDam:SetDamage(math.random(35, 50))
 	AxeDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
 
-	if ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
+	if ShouldSalvage(tr) then
 		local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, Owner, "salvage")
 		if Mesg then
 			Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
