@@ -1,0 +1,9 @@
+"VertexLitGeneric"
+{
+	"$basetexture" "models/entities/tex_jack_wpinbomb"
+	"$surfaceprop" "metal"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "models/entities/tex_jack_scratchedmetal_envmapmask"
+	"$model" 1
+}
+
