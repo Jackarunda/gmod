@@ -74,6 +74,7 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 --
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
+SWEP.SwingVisualLowerAmount = -3
 --
 
 function SWEP:CustomInit()
@@ -91,7 +92,7 @@ function SWEP:CustomThink()
 	local Time = CurTime()
 	if self.NextTaskTime < Time then
 		self:SetTaskProgress(0)
-		self.NextTaskTime = Time + 1.5
+		self.NextTaskTime = Time + self.PrimaryAttackSpeed + 1
 	end
 end
 
@@ -143,7 +144,11 @@ function SWEP:OnHit(swingProgress, tr)
 end
 
 function SWEP:FinishSwing(swingProgress)
-	self:SetTaskProgress(0)
+	if swingProgress >= self.MaxSwingAngle then
+		self:SetTaskProgress(0)
+	else
+		self.NextTaskTime = CurTime() + self.PrimaryAttackSpeed + 1
+	end
 end
 
 local LastProg = 0

@@ -48,6 +48,7 @@ SWEP.DoorBreachPower 	= 1
 --
 SWEP.SprintCancel 	= true
 SWEP.StrongSwing 	= false
+SWEP.SecondaryPush	= true
 --
 SWEP.SwingSound 	= Sound( "Weapon_Crowbar.Single" )
 SWEP.HitSoundWorld 	= Sound( "SolidMetal.ImpactHard" )
@@ -57,12 +58,14 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
 SWEP.HideViewModel = false
+SWEP.SwingVisualLowerAmount = -1
 --
 
 function SWEP:Initialize()
 	self:SetHoldType(self.IdleHoldType)
 	self:SCKInitialize()
 	self.NextIdle = 0
+	self.DistanceCompensation = 0
 	self:Deploy()
 	if self.CustomInit then
 		self:CustomInit()
@@ -76,14 +79,27 @@ function SWEP:SetupDataTables()
 	end
 end
 
-function SWEP:PrimaryAttack()
+function SWEP:Swing(secondary)
 	local Owner = self:GetOwner()
 	if self.SprintCancel and Owner:KeyDown(IN_SPEED) then return end
 	if self:GetSwinging() then return end
 
-	self:SetNextPrimaryFire(CurTime() + self.PrimaryAttackSpeed)
-	self:SetNextSecondaryFire(CurTime() + 1)
+	local Tr = util.QuickTrace(Owner:GetShootPos(), Owner:GetAimVector() * self.HitDistance, Owner)
 
+	if Tr.Hit then
+		self.DistanceCompensation = math.min(Tr.Fraction, .3) * self.HitDistance
+	else
+		self.DistanceCompensation = 0
+	end
+
+	if secondary then
+		self:SetNextPrimaryFire(CurTime() + self.SecondaryAttackSpeed)
+		self:SetNextSecondaryFire(CurTime() + self.SecondaryAttackSpeed)
+	else
+		self:SetNextPrimaryFire(CurTime() + self.PrimaryAttackSpeed)
+		self:SetNextSecondaryFire(CurTime() + self.PrimaryAttackSpeed)
+	end
+	
 	local IsPlaya = Owner:IsPlayer()
 	if (IsPlaya) then
 		Owner:LagCompensation(true)
@@ -98,11 +114,54 @@ function SWEP:PrimaryAttack()
 	end
 	self:Pawnch()
 	self:SetSwinging(true)
+	self.WasSecondarySwing = secondary
 	self.SwingProgress = -self.SwingPullback
 
 	if (IsPlaya) then
 		Owner:LagCompensation(false)
 	end
+end
+
+function SWEP:PrimaryAttack()
+	self:Swing(false)
+end
+
+function SWEP:SecondaryAttack()
+	self:SetNextPrimaryFire(CurTime() + 1)
+	self:SetNextSecondaryFire(CurTime() + 1)
+	local Owner = self:GetOwner()
+
+	if self.SecondaryPush then
+		local vm = Owner:GetViewModel()
+		vm:SendViewModelMatchingSequence(vm:LookupSequence( "pushback" ))
+
+		local tr = util.TraceLine( {
+			start = Owner:GetShootPos(),
+			endpos = Owner:GetShootPos() + Owner:GetAimVector() * 1.5 * 40,
+			filter = Owner,
+			mask = MASK_SHOT_HULL
+		} )
+
+		if ( tr.Hit ) then
+			local PushVector = Owner:GetAimVector() * 1000
+			if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
+				tr.Entity:SetVelocity(PushVector * Vector( 1, 1, 0 ))
+			elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
+				tr.Entity:GetPhysicsObject():ApplyForceOffset(PushVector, tr.HitPos)
+			end
+			Owner:SetVelocity( -PushVector * .25 * Vector( 1, 1, 0 ))
+			Owner:SetAnimation(PLAYER_RELOAD)
+
+			local PushSound = self.PushSoundBody
+			if istable(PushSound) then
+				PushSound = PushSound[math.random(#PushSound)]
+			end
+			self:EmitSound(PushSound)
+		end
+	else
+		self:Swing(true)
+	end
+	self:UpdateNextIdle()
 end
 
 function SWEP:Pawnch()
@@ -112,40 +171,6 @@ function SWEP:Pawnch()
 	local vm = Owner:GetViewModel()
 	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
 	--Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
-	self:UpdateNextIdle()
-end
-
-function SWEP:SecondaryAttack()
-	self:SetNextPrimaryFire(CurTime() + 1)
-	self:SetNextSecondaryFire(CurTime() + 1)
-	local Owner = self:GetOwner()
-
-	local vm = Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence(vm:LookupSequence( "pushback" ))
-
-	local tr = util.TraceLine( {
-		start = Owner:GetShootPos(),
-		endpos = Owner:GetShootPos() + Owner:GetAimVector() * 1.5 * 40,
-		filter = Owner,
-		mask = MASK_SHOT_HULL
-	} )
-
-	if ( tr.Hit ) then
-		local PushVector = Owner:GetAimVector() * 1000
-		if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(),"npc") or string.find(tr.Entity:GetClass(),"prop_ragdoll") or string.find(tr.Entity:GetClass(),"prop_physics") then
-			tr.Entity:SetVelocity(PushVector * Vector( 1, 1, 0 ))
-		elseif IsValid(tr.Entity) and IsValid(tr.Entity:GetPhysicsObject()) then
-			tr.Entity:GetPhysicsObject():ApplyForceOffset(PushVector, tr.HitPos)
-		end
-		Owner:SetVelocity( -PushVector * .25 * Vector( 1, 1, 0 ))
-		Owner:SetAnimation(PLAYER_RELOAD)
-
-		local PushSound = self.PushSoundBody
-		if istable(PushSound) then
-			PushSound = PushSound[math.random(#PushSound)]
-		end
-		self:EmitSound(PushSound)
-	end
 	self:UpdateNextIdle()
 end
 
@@ -189,10 +214,12 @@ function SWEP:Think()
 					local SwingUp, SwingForward, SwingRight = SwingAng:Up(), SwingAng:Forward(), SwingAng:Right()
 					
 					local Offset = SwingRight * self.SwingOffset.x + SwingForward * SwingSin * self.SwingOffset.y + SwingUp * self.SwingOffset.z
-
+					local StartPos = (SwingPos + Offset) + SwingForward * -self.DistanceCompensation
+					local EndVector = SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitHeight
+					
 					local tr = util.TraceLine( {
-						start = (SwingPos + Offset),
-						endpos = (SwingPos + Offset) + SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitHeight,
+						start = StartPos,
+						endpos = StartPos + EndVector,
 						filter = Owner,
 						mask = MASK_SHOT_HULL
 					})
@@ -208,7 +235,7 @@ function SWEP:Think()
 						end
 
 						if self.OnHit then
-							self:OnHit(p, tr)
+							self:OnHit(p, tr, self.WasSecondarySwing)
 						end
 
 						if tr.Entity:IsPlayer() or string.find(tr.Entity:GetClass(), "npc") then
@@ -367,10 +394,10 @@ local Downness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+	if (self.SprintCancel and self.Owner:KeyDown(IN_SPEED)) or self.Owner:KeyDown(IN_ZOOM) then
 		Downness = Lerp(FT * 2, Downness, 5)
 	elseif (self:GetSwinging()) then
-		Downness = Lerp(FT * 2, Downness, -1)
+		Downness = Lerp(FT * 2, Downness, self.SwingVisualLowerAmount)
 	else
 		Downness = Lerp(FT * 2, Downness, -3)
 	end
