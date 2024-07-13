@@ -87,7 +87,7 @@ function SWEP:Swing(secondary)
 	local Tr = util.QuickTrace(Owner:GetShootPos(), Owner:GetAimVector() * self.HitDistance, Owner)
 
 	if Tr.Hit then
-		self.DistanceCompensation = math.min(Tr.Fraction, .3) * self.HitDistance
+		--self.DistanceCompensation = math.min(Tr.Fraction, .3) * self.HitDistance
 	else
 		self.DistanceCompensation = 0
 	end
