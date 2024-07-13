@@ -7,7 +7,7 @@ SWEP.Purpose = ""
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = false
+SWEP.DrawCrosshair = true
 SWEP.EZdroppable = true
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
@@ -25,6 +25,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
 SWEP.ShowWorldModel = false
+SWEP.ShowViewModel = true
 
 --
 SWEP.VElements = {}
@@ -35,9 +36,10 @@ SWEP.DropEnt = ""
 --
 SWEP.HitDistance		= 50
 SWEP.HitInclination		= 0.4
-SWEP.HitHeight 			= 0
+SWEP.HitSpace 			= 0
 SWEP.HitAngle 			= 45
 SWEP.HitPushback		= 2000
+SWEP.StartSwingAngle 	= 0
 SWEP.MaxSwingAngle		= 120
 SWEP.SwingSpeed 		= 1
 SWEP.SwingPullback 		= 0
@@ -57,7 +59,6 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 --
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
-SWEP.HideViewModel = false
 SWEP.SwingVisualLowerAmount = -1
 --
 
@@ -215,7 +216,7 @@ function SWEP:Think()
 					
 					local Offset = SwingRight * self.SwingOffset.x + SwingForward * SwingSin * self.SwingOffset.y + SwingUp * self.SwingOffset.z
 					local StartPos = (SwingPos + Offset) + SwingForward * -self.DistanceCompensation
-					local EndVector = SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitHeight
+					local EndVector = SwingForward * self.HitDistance + SwingRight * -self.HitInclination + SwingUp * self.HitSpace - SwingUp * self.StartSwingAngle
 					
 					local tr = util.TraceLine( {
 						start = StartPos,
@@ -247,7 +248,8 @@ function SWEP:Think()
 								sound.Play(BodySound, tr.HitPos, 10, math.random(75, 100), 1)
 							end
 							tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
-							self:SetTaskProgress(0)
+							--
+							if self.SetTaskProgress then self:SetTaskProgress(0) end
 							--
 							local vPoint = (tr.HitPos)
 							local effectdata = EffectData()
@@ -376,13 +378,13 @@ function SWEP:Deploy()
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
-	if self.HideViewModel then
+	if not self.ShowViewModel then
 		vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
 	end
 end
 
 function SWEP:ViewModelDrawn()
-	--self:SCKViewModelDrawn()
+	self:SCKViewModelDrawn()
 end
 
 function SWEP:DrawWorldModel()
