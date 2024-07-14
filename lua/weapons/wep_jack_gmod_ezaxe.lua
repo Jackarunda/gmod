@@ -19,7 +19,7 @@ SWEP.Slot = 1
 SWEP.SlotPos = 5
 
 SWEP.VElements = {
-	["axe"] = {
+	--[[["axe"] = {
 		type = "Model",
 		model = "models/props_forest/axe.mdl",
 		bone = "ValveBiped.Bip01_L_Hand",
@@ -32,7 +32,7 @@ SWEP.VElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.WElements = {
@@ -49,7 +49,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.DropEnt = "ent_jack_gmod_ezaxe"
