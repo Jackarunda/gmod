@@ -275,37 +275,38 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 			local Tr = util.QuickTrace(origin, Dir * fragMaxDist / WaterDivider, shooter)
 
 			if Tr.Hit and not Tr.HitSky and not Tr.HitWorld and (BulletsFired < MaxBullets) then
-				local LowFrag = (Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease
 				debugoverlay.Line(origin, Tr.HitPos, 5, Color(255, 0, 0), true)
+				local DmgMul = 1 / WaterDivider
 
-				if (not LowFrag) or (LowFrag and math.random(1, 4) == 2) then
-					local DmgMul = 1 / WaterDivider
-
-					if BulletsFired > MaxBullets * .75 then
-						DmgMul = DmgMul * 5 --?
-					end
-
-					local firer = (IsValid(shooter) and shooter) or game.GetWorld()
-
-					local DistFactor = (-Tr.Fraction + 1.2)^2
-					local DamageToDeal = fragDmg * DmgMul * DistFactor
-					--print("DamageToDeal: " .. DamageToDeal)
-					if DamageToDeal >= 1 then
-						firer:FireBullets({
-							Attacker = attacker,
-							Damage = DamageToDeal,
-							Force = DamageToDeal * .02,
-							Num = 1,
-							Src = origin,
-							Tracer = 0,
-							Dir = Dir,
-							Spread = Spred,
-							AmmoType = "Buckshot" -- for identification as "fragments"
-						})
-					end
-
-					BulletsFired = BulletsFired + 1
+				if ((Tr.Entity.IsVehicle and Tr.Entity:IsVehicle()) or Tr.Entity.LFS or Tr.Entity.LVS or Tr.Entity.EZlowFragPlease) then
+					DmgMul = DmgMul * .25 -- This is basically the same as lowering the amount of frags by 25%
 				end
+
+				if Tr.Entity:GetPhysicsObject():GetMass() > 300 then
+					DmgMul = 1
+					fragDmg = 1
+				end
+
+				local firer = (IsValid(shooter) and shooter) or game.GetWorld()
+
+				local DistFactor = (-Tr.Fraction + 1.2)^2
+				local DamageToDeal = fragDmg * DmgMul * DistFactor
+				--print("DamageToDeal: " .. DamageToDeal)
+				if DamageToDeal >= 1 then
+					firer:FireBullets({
+						Attacker = attacker,
+						Damage = DamageToDeal,
+						Force = DamageToDeal * .02,
+						Num = 1,
+						Src = origin,
+						Tracer = 0,
+						Dir = Dir,
+						Spread = Spred,
+						AmmoType = "Buckshot" -- for identification as "fragments"
+					})
+				end
+
+				BulletsFired = BulletsFired + 1
 			else
 				debugoverlay.Line(origin, Tr.HitPos, 2, Color(217, 255, 0), true)
 			end
