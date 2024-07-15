@@ -7,7 +7,7 @@ SWEP.Purpose = ""
 SWEP.Spawnable = false
 SWEP.UseHands = true
 SWEP.DrawAmmo = false
-SWEP.DrawCrosshair = true
+SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
 SWEP.ViewModel = ""
 SWEP.WorldModel = ""
@@ -59,6 +59,7 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 --
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
+SWEP.SwingSeq = "misscenter1"
 SWEP.SwingVisualLowerAmount = -1
 --
 
@@ -170,7 +171,7 @@ function SWEP:Pawnch()
 	local Owner = self:GetOwner()
 	Owner:SetAnimation(PLAYER_ATTACK1)
 	local vm = Owner:GetViewModel()
-	vm:SendViewModelMatchingSequence(vm:LookupSequence("misscenter1"))
+	vm:SendViewModelMatchingSequence(vm:LookupSequence(self.SwingSeq))
 	--Owner:ViewPunch(Angle(math.random(-10, -5), math.random(-5, 0), 0))
 	self:UpdateNextIdle()
 end
@@ -401,7 +402,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 	elseif (self:GetSwinging()) then
 		Downness = Lerp(FT * 2, Downness, self.SwingVisualLowerAmount)
 	else
-		Downness = Lerp(FT * 2, Downness, -3)
+		Downness = Lerp(FT * 2, Downness, 0)
 	end
 
 	ang:RotateAroundAxis(ang:Right(), -Downness * 5)
