@@ -291,7 +291,6 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 
 				local DistFactor = (-Tr.Fraction + 1.2)^2
 				local DamageToDeal = fragDmg * DmgMul * DistFactor
-				--print("DamageToDeal: " .. DamageToDeal)
 				if DamageToDeal >= 1 then
 					firer:FireBullets({
 						Attacker = attacker,

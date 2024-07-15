@@ -32,9 +32,9 @@ if SERVER then
 
 		--              shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
 		if GroundTr.Hit then
-			JMod.FragSplosion(self, SelfPos + Vector(0, 0, 5), 1500, 80, 2500, JMod.GetEZowner(self), GroundTr.HitNormal, 2, 25)
+			JMod.FragSplosion(self, SelfPos + Vector(0, 0, 5), 3000, 80, 2500, JMod.GetEZowner(self), GroundTr.HitNormal, .8, 40)
 		else
-			JMod.FragSplosion(self, SelfPos, 2000, 80, 2500, JMod.GetEZowner(self), nil, nil, 2)
+			JMod.FragSplosion(self, SelfPos, 3000, 80, 2500, JMod.GetEZowner(self), nil, nil, 2)
 		end
 		self:Remove()
 	end
