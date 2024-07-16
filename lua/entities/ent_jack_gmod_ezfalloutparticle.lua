@@ -83,14 +83,14 @@ if SERVER then
 			mask = MASK_SHOT+MASK_WATER
 		})
 		if not MoveTrace.Hit then
-			if MoveTrace.HitSky then
+			-- move unobstructed
+			self:SetPos(NewPos + MoveTrace.HitNormal * 20)
+		else
+			if MoveTrace.HitSky and math.random(1, 3) == 1 then
 				SafeRemoveEntity(self)
 
 				return
 			end
-			-- move unobstructed
-			self:SetPos(NewPos + MoveTrace.HitNormal * 20)
-		else
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
 			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
