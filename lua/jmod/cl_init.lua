@@ -907,8 +907,8 @@ net.Receive("JMod_NuclearBlast", function()
 				local Vec = ent:GetPos() - pos
 				local Dir = Vec:GetNormalized()
 
-				for i = 0, 100 do
-					local Phys = ent:GetPhysicsObjectNum(i)
+				for i = 1, math.min(ent:GetPhysicsObjectCount(), 50) do
+					local Phys = ent:GetPhysicsObjectNum(i - 1)
 
 					if Phys then
 						Phys:ApplyForceCenter(Dir * 1e10)

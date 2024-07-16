@@ -727,18 +727,26 @@ local BlacklistedGroups = {COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON}
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
 	if ent.GetState and (ent:GetState() >= 1) then return {}, "bruh, it's active" end
+
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
+
 	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), bit.bor(COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON))) then return {}, "cannot salvage: bad collision group" end
 	if ent:IsWorld() then return {}, "can't salvage the world" end
+
 	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
+
 	if not IsValid(Phys) then return {}, "cannot salvage: invalid physics" end
+
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
+
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
+
 	local RagMass = nil
+
 	if PhysNum > 1 then
-		for i = 0, PhysNum - 1 do
-			local RagPhys = ent:GetPhysicsObjectNum(i)
+		for i = 1, PhysNum do
+			local RagPhys = ent:GetPhysicsObjectNum(i - 1)
 			if not IsValid(RagPhys) then break end
 			RagMass = (RagMass or 0) + RagPhys:GetMass()
 		end
@@ -752,6 +760,7 @@ function JMod.GetSalvageYield(ent)
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
 	if ent:IsNPC() or ent:IsPlayer() then return {}, (tostring(ent.PrintName or "They") .. " don't want to be salvaged") or ".." end
+	
 	local AnnoyedReplyTable = {
 		"no",
 		"...no",
