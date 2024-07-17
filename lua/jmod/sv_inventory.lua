@@ -233,7 +233,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 						Box:SetAngles(Angle(0, 0, 0))
 						Box:Spawn()
 						Box:Activate()
-						Box:SetResource(AmountToGive)
+						Box:SetEZsupplies(Box.EZsupplies, AmountToGive)
 					end)
 					Safety = Safety + 1
 				end

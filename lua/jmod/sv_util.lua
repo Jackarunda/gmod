@@ -998,7 +998,7 @@ function JMod.MachineSpawnResource(machine, resourceType, amount, relativeSpawnP
 			Resource:SetAngles(SpawnAngle or Resource.JModPreferredCarryAngles or Angle(0, 0, 0))
 			Resource:Spawn()
 			JMod.SetEZowner(Resource, MachineOwner)
-			Resource:SetResource(SpawnAmount)
+			Resource:SetEZsupplies(resourceType, SpawnAmount)
 			Resource:Activate()
 		end)
 
@@ -1392,7 +1392,7 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 								Ent:SetAngles(AngleRand())
 								Ent:Spawn()
 								Ent:Activate()
-								Ent:SetResource(Remove)
+								Ent:SetEZsupplies(k, Remove)
 								JMod.SetEZowner(Ent, deconstructor)
 								timer.Simple(.1, function()
 									if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 
@@ -1426,7 +1426,7 @@ function JMod.BuildRecipe(results, ply, Pos, Ang, skinNum)
 			Ent:Spawn()
 			Ent:Activate()
 			if (results[3]) then
-				Ent:SetResource(results[3])
+				Ent:SetEZsupplies(Ent.EZsupplies, results[3])
 			end
 		end
 	else

@@ -33,7 +33,7 @@ if SERVER then
 	function ENT:CustomImpact(data, physobj)
 		if data.HitEntity:IsOnFire() and (self:GetResource() > 1) then
 			local WatLeftOver = self:GetResource() - 2
-			self:SetResource(WatLeftOver)
+			self:SetEZsupplies(self.EZsupplies, WatLeftOver)
 			JMod.ResourceEffect(JMod.EZ_RESOURCE_TYPES.WATER, data.HitPos, nil, 10, 1, 1)
 			data.HitEntity:Extinguish()
 			self:Extinguish()

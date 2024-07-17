@@ -32,10 +32,10 @@ function ENT:GetEZsupplies(typ)
 end
 
 function ENT:SetEZsupplies(typ, amt, setter)
-	if not SERVER then  return end -- Important because this is shared as well
+	if not SERVER then return end -- Important because this is shared as well
 	if typ ~= self.EZsupplies then return end -- Type doesn't matter because we only have one type, but we have it here because of uniformness
-	if amt <= 0 then self:Remove() return end -- We be empty, therefore, useless
-	self:SetResource(math.max(amt, 0)) -- Otherwise, just set our resource to the new value
+	if amt < 1 then self:Remove() return end -- We be empty, therefore, useless
+	self:SetResource(math.max(amt, 1)) -- Otherwise, just set our resource to the new value
 end
 
 ---
@@ -48,7 +48,7 @@ if SERVER then
 		JMod.SetEZowner(ent, ply)
 		ent:Spawn()
 		ent:Activate()
-		ent:SetResource(ent.MaxResource)
+		ent:SetEZsupplies(self.EZsupplies, ent.MaxResource)
 		local HitEnt = tr.Entity
 		if IsValid(HitEnt) and HitEnt.TryLoadResource then
 			local Accepted = HitEnt:TryLoadResource(self.EZsupplies, ent.MaxResource)
@@ -125,7 +125,7 @@ if SERVER then
 
 	function ENT:UpdateConfig()
 		self.MaxResource = 100 * JMod.Config.ResourceEconomy.MaxResourceMult
-		self:SetResource(math.min(self:GetResource(), self.MaxResource))
+		self:SetEZsupplies(self.EZsupplies, math.min(self:GetResource(), self.MaxResource))
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -142,7 +142,7 @@ if SERVER then
 					local Sum = self:GetResource() + data.HitEntity:GetResource()
 
 					if Sum <= self.MaxResource then
-						self:SetResource(Sum)
+						self:SetEZsupplies(self.EZsupplies, Sum)
 						data.HitEntity:Remove()
 						JMod.ResourceEffect(self.EZsupplies, data.HitPos, data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()))
 
@@ -162,7 +162,7 @@ if SERVER then
 				local Used = data.HitEntity:TryLoadResource(self.EZsupplies, Resource)
 
 				if Used > 0 then
-					self:SetResource(Resource - Used)
+					self:SetEZsupplies(self.EZsupplies, Resource - Used)
 
 					JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), data.HitEntity:LocalToWorld(data.HitEntity:OBBCenter()), Used / self.MaxResource, 1, 1)
 
@@ -245,7 +245,7 @@ if SERVER then
 				Box:SetAngles(self:GetAngles())
 				Box:Spawn()
 				Box:Activate()
-				Box:SetResource(NewCountOne)
+				Box:SetEZsupplies(self.EZsupplies, NewCountOne)
 				--
 				timer.Simple(0.1, function()
 					if IsValid(Box) and IsValid(activator) and activator:Alive() then
@@ -254,7 +254,7 @@ if SERVER then
 				end)
 				Box.NextCombine = CurTime() + 2
 				self.NextCombine = CurTime() + 2
-				self:SetResource(NewCountTwo)
+				self:SetEZsupplies(self.EZsupplies, NewCountTwo)
 				JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / self.MaxResource, 1)
 			end
 		elseif AltPressed then
@@ -329,7 +329,7 @@ if SERVER then
 					end)
 				end
 			end
-			self:SetResource(0)
+			self:SetEZsupplies(self.EZsupplies, 0)
 			SafeRemoveEntityDelayed(self, 1)
 		end)
 	end
