@@ -195,7 +195,7 @@ if SERVER then
 			end
 		end)
 
-		self:EmitSound("snd_jack_metallicdrop.ogg", 65, 90)
+		self:EmitSound("snd_jack_metallicclick.ogg", 65, 90)
 
 		table.remove(self.Bombs, slotNum)
 
