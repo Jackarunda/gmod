@@ -11,6 +11,7 @@ ENT.SpoonEnt = nil
 ENT.Mass = 20
 ENT.HardThrowStr = 250
 ENT.SoftThrowStr = 125
+ENT.EZinvPrime = false
 
 ENT.Hints = {"arm"}
 

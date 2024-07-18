@@ -412,7 +412,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	local TargetEntity = args[1] 
 
 	if not IsValid(TargetEntity) then
-		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 60, ply).Entity
+		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 65, ply).Entity
 	end
 
 	if not(IsValid(TargetEntity)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
@@ -436,7 +436,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			local IsResources = false
 
 			if TargetEntity.IsJackyEZresource then
-				RoomWeNeed = math.min(TargetEntity:GetEZsupplies(TargetEntity.EZsupplies) * ResourceWeight, RoomLeft)
+				RoomWeNeed = math.min((TargetEntity:GetEZsupplies(TargetEntity.EZsupplies) or 0) * ResourceWeight, RoomLeft)
 				IsResources = true
 			elseif RoomWeNeed ~= nil then
 				if TargetEntity.EZstorageVolumeOverride then
@@ -475,26 +475,21 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	end
 end
 
-local QuickNadeBlackList = {"ent_jack_gmod_ezsatchelcharge"}
-
 concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	if (ply.EZnextQuickNadeTime or 0) > CurTime() then return end
 	ply.EZnextQuickNadeTime = CurTime() + 1
 	for k, tbl in ipairs(ply.JModInv.items) do
 		local Item = tbl.ent
-		if IsValid(Item) and Item.Base and not(table.HasValue(QuickNadeBlackList, Item:GetClass())) then
-			local ItemBaseClass = Item.Base
-			if (ItemBaseClass == "ent_jack_gmod_ezgrenade") or (ItemBaseClass == "ent_jack_gmod_ezmininade") then
-				local item = JMod.RemoveFromInventory(ply, Item, ply:GetShootPos() + ply:GetAimVector() * 10)
-				if item then
-					item:Use(ply, ply, USE_ON)
-					timer.Simple(0.1, function()
-						if IsValid(item) and (item:GetState() == JMod.EZ_STATE_OFF) then item:Prime() end
-					end)
-					sound.Play("snd_jack_clothunequip.ogg", ply:GetShootPos(), 60, math.random(90, 110))
-					return
-				end
+		if IsValid(Item) and Item.EZinvPrime or Item.EZinvThrowable then
+			local item = JMod.RemoveFromInventory(ply, Item, ply:GetShootPos() + ply:GetAimVector() * 10)
+			if item then
+				item:Use(ply, ply, USE_ON)
+				timer.Simple(0.1, function()
+					if IsValid(item) and item.GetState and item.Prime and (item:GetState() == JMod.EZ_STATE_OFF) then item:Prime() end
+				end)
+				sound.Play("snd_jack_clothunequip.ogg", ply:GetShootPos(), 60, math.random(90, 110))
+				return
 			end
 		end
 	end
