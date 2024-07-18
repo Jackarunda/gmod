@@ -282,7 +282,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 					DmgMul = DmgMul * .25 -- This is basically the same as lowering the amount of frags by 25%
 				end
 
-				if Tr.Entity:GetPhysicsObject():GetMass() > 300 then
+				if IsValid(Tr.Entity:GetPhysicsObject()) and (Tr.Entity:GetPhysicsObject():GetMass() > 300) then
 					DmgMul = 1
 					fragDmg = 1
 				end
