@@ -205,7 +205,9 @@ if SERVER then
 		end
 
 		if State == JMod.EZ_STATE_ARMED then
-			JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
+			if not self:GetNoDraw() then
+				JMod.EmitAIsound(self:GetPos(), 500, .5, 8)
+			end
 			self:NextThink(Time + .5)
 
 			return true
