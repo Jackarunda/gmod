@@ -817,17 +817,30 @@ function JMod.EnemiesNearPoint(ent, pos, range, vehiclesOnly)
 end
 
 function JMod.EMP(pos, range)
+	--debugoverlay.Sphere(pos, range, 5, Color(0, 0, 255), true)
 	for k, ent in pairs(ents.FindInSphere(pos, range)) do
-		if ent.SetState and ent.SetElectricity and ent.GetState and ent:GetState() > 0 then
+		if ent.IsJackyEZmachine and ent.SetState and ent.GetState and (ent:GetState() > 0) then
 			if ent.TurnOff then 
 				ent:TurnOff() 
 			else
 				ent:SetState(JMod.EZ_STATE_OFF)
 			end
-			ent.EZstaysOn = nil
+			ent.EZstayOn = nil
+		end
+		if ent.LVS and ent.StopEngine then
+			ent:StopEngine()
+			ent.EZengineNextStartTime = CurTime() + 30
 		end
 	end
 end
+
+hook.Add( "LVS.IsEngineStartAllowed", "JMod_DisableEMPedEngines", function(veh)
+	if veh.EZengineNextStartTime and (veh.EZengineNextStartTime > CurTime()) then
+		return false
+	else
+		veh.EZengineNextStartTime = nil 
+	end
+end)
 
 function JMod.Colorify(ent)
 	if (ent.EZcolorable ~= nil) and (ent.EZcolorable == false) then return end
@@ -872,7 +885,7 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 			if key == IN_ATTACK then
 				timer.Simple(0, function()
 					if IsValid(Phys) then
-						Phys:ApplyForceCenter(ply:GetAimVector() * (hardstr or 600) * Phys:GetMass())
+						Phys:ApplyForceCenter(ply:GetAimVector() * (hardstr or 600) * Phys:GetMass() * JMod.GetPlayerStrength(playa))
 
 						if item.EZspinThrow then
 							Phys:ApplyForceOffset(ply:GetAimVector() * Phys:GetMass() * 50, Phys:GetMassCenter() + Vector(0, 0, 10))
@@ -886,7 +899,7 @@ function JMod.ThrowablePickup(playa, item, hardstr, softstr)
 
 				timer.Simple(0, function()
 					if IsValid(Phys) then
-						Phys:ApplyForceCenter(vec * (softstr or 400) * Phys:GetMass())
+						Phys:ApplyForceCenter(vec * (softstr or 400) * Phys:GetMass() * JMod.GetPlayerStrength(playa))
 					end
 				end)
 			elseif key == IN_USE then

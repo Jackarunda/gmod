@@ -138,7 +138,7 @@ if SERVER then
 
 				---
 				if i == 1 then
-					JMod.EMP(SelfPos, renj * 10000)
+					JMod.EMP(SelfPos, renj * 20000)
 
 					for k, ent in pairs(ents.FindInSphere(SelfPos, renj)) do
 						if ent:GetClass() == "npc_helicopter" then
