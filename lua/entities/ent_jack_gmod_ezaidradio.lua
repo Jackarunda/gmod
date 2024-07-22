@@ -237,22 +237,22 @@ if(SERVER)then
 				self:ConsumeElectricity()
 
 				if self:TryFindSky() then
-					self:Speak("Broadcast received, establishing comm line...")
+					self:Speak("Attempting to establish comm line...")
 					self:Connect(self.EZowner)
 				else
 					JMod.Hint(JMod.GetEZowner(self), "aid sky")
 				end
 				self.ConnectionAttempts = self.ConnectionAttempts + 1
 
-					if self.ConnectionAttempts > 3 then
-						self:Speak("Can not establish connection to any outpost. Shutting down.")
+				if self.ConnectionAttempts > 3 then
+					self:Speak("Can not establish connection to any outpost. Shutting down.")
 
-						timer.Simple(1.2, function()
-							if IsValid(self) then
-								self:TurnOff()
-							end
-						end)
-					end
+					timer.Simple(1.2, function()
+						if IsValid(self) then
+							self:TurnOff()
+						end
+					end)
+				end
 			elseif State > 0 then
 				self:ConsumeElectricity(0.3)
 
@@ -288,14 +288,15 @@ if(SERVER)then
 	end
 
 	function ENT:TryFindSky()
-		local SelfPos = self:LocalToWorld(Vector(10, 0, 45))
+		local TestPos = self:LocalToWorld(Vector(10, 0, 45))
 
 		for i = 1, 3 do
 			local Dir = self:LocalToWorldAngles(Angle(-50 + i * 5, 0, 0)):Forward()
 
+			--debugoverlay.Line(TestPos, TestPos + Dir * 9e9, 2, Color(0, 89, 255), true)
 			local HitSky = util.TraceLine({
-				start = SelfPos,
-				endpos = SelfPos + Dir * 9e9,
+				start = TestPos,
+				endpos = TestPos + Dir * 9e9,
 				filter = {self},
 				mask = MASK_OPAQUE
 			}).HitSky
