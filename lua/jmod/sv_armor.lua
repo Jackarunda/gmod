@@ -400,6 +400,8 @@ function JMod.CalcSpeed(ply)
 
 	local WeighedFrac = TotalWeight / 250
 	ply.EZarmor.speedfrac = math.Clamp(1 - (.8 * WeighedFrac * JMod.Config.Armor.WeightMult), .05, 1)
+
+	hook.Run("JMod_CalcArmorSpeed", ply)
 end
 
 hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, vol, filter)

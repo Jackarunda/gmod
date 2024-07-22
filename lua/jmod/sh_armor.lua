@@ -1149,12 +1149,12 @@ if CLIENT then
 		local action = args[1]
 		local slot = args[2]
 
-		if not(action) or not(slot) then return end
+		if not(action) then return end
 
 		if not isnumber(tonumber(action)) then
 			action = table.KeyFromValue(ArmorCommands, action)
 		end
-		if isnumber(tonumber(slot)) then
+		if slot and isnumber(tonumber(slot)) then
 			slot = ArmorNames[tonumber(slot)]
 		end
 

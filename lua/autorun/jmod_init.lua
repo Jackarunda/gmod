@@ -161,11 +161,6 @@ JMod.EZ_RESOURCE_TYPE_METHODS = {
 	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "Concrete"
 }
 
-JMod.EZ_WEIGHTLESS_RESOURCE_TYPES = {
-	[JMod.EZ_RESOURCE_TYPES.POWER] = true,
-	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = true
-}
-
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC = 1
 JMod.EZ_GRADE_COPPER = 2
