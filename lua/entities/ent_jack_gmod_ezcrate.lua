@@ -79,6 +79,7 @@ if SERVER then
 		---
 		if istable(WireLib) then
 			self.Outputs = WireLib.CreateOutputs(self, {"Type [STRING]", "Amount Left [NORMAL]"}, {"Will be 'generic' by default", "Amount of resources left in the crate"})
+			self.Inputs = WireLib.CreateInputs(self, {"Drop [NORMAL]"}, {"Drops the amount specified in the input"})
 		end
 		---
 		timer.Simple(.01, function()
@@ -86,6 +87,14 @@ if SERVER then
 				self:CalcWeight()
 			end
 		end)
+	end
+
+	function ENT:TriggerInput(iname, value)
+		if iname == "Drop" then
+			if value > 0 then
+				self:DropAmount(value)
+			end
+		end
 	end
 
 	function ENT:UpdateConfig()
@@ -164,6 +173,14 @@ if SERVER then
 		self:SetEZsupplies(self:GetResourceType(), Resource - Given)
 		self:EmitSound("Ammo_Crate.Close")
 		self:CalcWeight()
+	end
+
+	function ENT:DropAmount(amt)
+		local Resource = self:GetResource()
+		if Resource <= 0 then return end
+		local Given = math.min(Resource, amt)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), Given, Vector(0, 0, 6), Angle(0, 0, 0), nil, nil)
+		self:SetEZsupplies(self:GetResourceType(), Resource - Given)
 	end
 
 	function ENT:Think()
