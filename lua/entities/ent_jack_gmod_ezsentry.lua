@@ -95,7 +95,7 @@ ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
 	TurnSpeed=60,
 	TargetingRadius=15,
-	Armor=1,
+	Armor=3,
 	FireRate=6,
 	Damage=15,
 	Accuracy=1,
@@ -435,7 +435,7 @@ if(SERVER)then
 	end
 
 	function ENT:CustomDetermineDmgMult(dmginfo)
-		local Mult=.2 -- Let's just make it tougher overall
+		local Mult= 1--.2 -- Let's just make it tougher overall
 		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
 		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
 		local AimAng=self:GetAngles()

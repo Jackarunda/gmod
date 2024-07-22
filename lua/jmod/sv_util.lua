@@ -283,8 +283,7 @@ function JMod.FragSplosion(shooter, origin, fragNum, fragDmg, fragMaxDist, attac
 				end
 
 				if IsValid(Tr.Entity:GetPhysicsObject()) and (Tr.Entity:GetPhysicsObject():GetMass() > 300) then
-					DmgMul = 1
-					fragDmg = 1
+					DmgMul = 1 / fragDmg
 				end
 
 				local firer = (IsValid(shooter) and shooter) or game.GetWorld()
