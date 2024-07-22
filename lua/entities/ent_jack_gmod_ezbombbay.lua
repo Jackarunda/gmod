@@ -120,7 +120,7 @@ if SERVER then
 	end
 
 	function ENT:LoadBomb(bomb)
-		if not (IsValid(bomb) and bomb:IsPlayerHolding()) then return end
+		if not (IsValid(bomb) and bomb:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then return end
 		local RoomLeft = 100
 
 		for k, bombInfo in pairs(self.Bombs) do
