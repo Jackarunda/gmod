@@ -118,7 +118,7 @@ function JMod.EZ_BombDrop(ply)
 		-- knock knock it's pizza time
 		FirstBom:EmitSound("buttons/button6.wav", 75, 120)
 
-		timer.Simple(.25, function()
+		timer.Simple(.2, function()
 			if IsValid(FirstBom) then
 				if FirstBom.EZdroppableBombArmedTime then
 					if FirstBom.Drop then

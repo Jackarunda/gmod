@@ -174,34 +174,46 @@ function ENT:InitPerfSpecs(removeAmmo)
 	if not self.ModPerfSpecs then return end
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	local NetworkTable = {}
+	for specName, value in pairs(self.StaticPerfSpecs)do 
+		self[specName] = value 
+		NetworkTable[specName] = value
+	end
 	for specName,value in pairs(self.DynamicPerfSpecs)do 
 		if(type(value)~="table")then
-			self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp 
+			local NewValue = value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp
+			self[specName] = NewValue
+			NetworkTable[specName] = NewValue
 		end
 	end
-	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
-	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
+	self.MaxAmmo = math.Round(self.MaxAmmo/100) * 100 -- a sight for sore eyes, ey jack?-titanicjames
+	self.TargetingRadius = self.TargetingRadius * 52.493 -- convert meters to source units
 	
-	local MaxValue=10
-	for attrib,value in pairs(self.ModPerfSpecs) do
-		local oldVal=self[attrib]
+	local MaxValue = 10
+	for attrib, value in pairs(self.ModPerfSpecs) do
+		local oldVal = self[attrib]
 		if value > 0 then
 			local ratio = (math.abs(value / MaxValue) + 1) ^ 1.5
-			self[attrib] = self[attrib] * ratio
+			local NewValue = self[attrib] * ratio
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
 			--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		elseif value < 0 then
 			local ratio = (math.abs(value / MaxValue) + 1) ^ 3
-			self[attrib] = self[attrib] / ratio
+			local NewValue = self[attrib] / ratio
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
+			--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		end
-		--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 	end
 
 	-- Finally apply AmmoType attributes
 	if self.AmmoTypes[self:GetAmmoType()] then
 		for attrib, mult in pairs(self.AmmoTypes[self:GetAmmoType()]) do
 			--print("applying AmmoType multiplier of "..mult .." to "..attrib..": "..self[attrib].." -> "..self[attrib]*mult)
-			self[attrib] = self[attrib] * mult
+			local NewValue = self[attrib] * mult
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
 		end
 	end
 
@@ -212,6 +224,13 @@ function ENT:InitPerfSpecs(removeAmmo)
 		-- except for lasers cause they don't use ammo
 		self:SetAmmo(self.MaxAmmo)
 		self.MaxElectricity = self.MaxAmmo / 1.5
+		NetworkTable.MaxElectricity = self.MaxAmmo / 1.5
+	end
+	if SERVER then
+		net.Start("JMod_MachineSync")
+		net.WriteEntity(self)
+		net.WriteTable(NetworkTable)
+		net.Broadcast()
 	end
 end
 
