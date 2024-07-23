@@ -155,7 +155,7 @@ function ENT:SetMods(tbl, ammoType)
 			// no exploit
 			self:SetElectricity(0)
 		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -20, 50), Angle(0, 0, 0), self:GetRight(), 100)
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -30, 50), Angle(0, 0, 0), self:GetRight(), nil)
 	end
 	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
 	if(ammoType=="Pulse Laser")then
@@ -440,10 +440,10 @@ if(SERVER)then
 	end
 
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .04)
-		if(self:GetAmmoType()=="Pulse Laser")then
-			amt=amt/JMod.EZ_GRADE_BUFFS[self:GetGrade()]
-		end
+		amt=(amt or .03)
+		--if(self:GetAmmoType()=="Pulse Laser")then
+			amt = amt / JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+		--end
 
 		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0, self.MaxElectricity)
 		self:SetElectricity(NewAmt)
@@ -618,7 +618,7 @@ if(SERVER)then
 			return nil
 		end
 
-		self:ConsumeElectricity(.02)
+		self:ConsumeElectricity(.01)
 		self.NextTargetSearch = Time + (.5 / self.SearchSpeed) -- limit searching cause it's expensive
 		local SelfPos = self:GetPos()
 		local Objects, PotentialTargets = ents.FindInSphere(SelfPos, self.TargetingRadius), {}
