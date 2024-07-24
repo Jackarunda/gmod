@@ -126,9 +126,9 @@ if(SERVER)then
 	function ENT:TurnOff(activator, auto)
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
+		self:ProduceResource()
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:SetState(STATE_OFF)
-		self:ProduceResource()
 		self.PowerSLI = 0 
 	end
 
@@ -153,7 +153,6 @@ if(SERVER)then
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, 200)
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 		--self:SpawnEffect(pos)
-
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		
