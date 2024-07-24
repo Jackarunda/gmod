@@ -289,7 +289,7 @@ elseif CLIENT then
 			render.SetMaterial(GlowSprite)
 			local Col = Color(255, 255, 255, math.random(0, 255))
 
-			for i = 1, 20 do
+			for i = 1, 10 do
 				render.DrawSprite(Pos - Dir * i * 5 + VectorRand() * math.Rand(0, 2) * i * ScatterFrac, 30 * ScatterFrac, 30 * ScatterFrac, Col)
 			end
 

@@ -151,14 +151,14 @@ if SERVER then
 					if (ply ~= self.EZowner) then
 						JMod.Hint(ply,"sleeping bag someone else")
 					elseif not IsValid(self.Pod:GetDriver()) then -- Get inside if already yours
-						if (IsValid(ply.JModSpawnPointEntity)) then 
+						if (IsValid(ply.JModSpawnPointEntity)) and (ply.JModSpawnPointEntity ~= self) then 
 							JMod.SetEZowner(ply.JModSpawnPointEntity, nil) 
 							ply.JModSpawnPointEntity:SetColor(Color(100,100,100))
+							ply.JModSpawnPointEntity = self
+							local Col = ply:GetPlayerColor()
+							self:SetColor(Color(255*Col.x,255*Col.y,255*Col.z))
+							JMod.Hint(ply, "sleeping bag set spawn")
 						end
-						ply.JModSpawnPointEntity = self
-						local Col = ply:GetPlayerColor()
-						self:SetColor(Color(255*Col.x,255*Col.y,255*Col.z))
-						JMod.Hint(ply, "sleeping bag set spawn")
 						self.Pod.EZvehicleEjectPos = self.Pod:WorldToLocal(ply:GetPos())
 						self.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 						sound.Play("snd_jack_clothequip.ogg", self:GetPos(), 65, math.random(90, 110))
