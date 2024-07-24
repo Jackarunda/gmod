@@ -609,6 +609,15 @@ if(SERVER)then
 		return 0
 	end
 
+	--[[function ENT:OnEntityCopyTableFinish(tbl)
+		if self.EZconnections then
+			tbl.EZconnections = table.FullCopy(self.EZconnections)
+			print("Copying EZ connections")
+			print(self.EZconnections)
+			print(tbl.EZconnections)
+		end
+	end--]]
+
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
@@ -655,21 +664,22 @@ if(SERVER)then
 				timer.Simple(0, function()
 					if not IsValid(ent) then return end
 					--print("Machine with connection: "..tostring(ent))
+					local NewConnections = {}
 					for entID, cable in pairs(ent.EZconnections) do
 						--print("Original ID for connection: "..tostring(entID), "| Cable: "..tostring(cable), "| New entity: "..tostring(createdEntities[entID]))
+						local NewEntIndex = entID
 						if createdEntities[entID] then
 							local ConnectedEnt = createdEntities[entID]
 							if IsValid(ConnectedEnt) then
 								local CableConnection = constraint.FindConstraintEntity(ent, "Rope")
 								--print(ConnectedEnt, CableConnection)
 								if IsValid(CableConnection) then
-									ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
-									ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
+									NewConnections[ConnectedEnt:EntIndex()] = CableConnection
 								end
 							end
 						end
-						ent.EZconnections[entID] = nil
 					end
+					ent.EZconnections = NewConnections
 				end)
 			end
 			if ent.OnPostEntityPaste then

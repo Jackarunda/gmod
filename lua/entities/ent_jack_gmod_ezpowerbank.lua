@@ -85,7 +85,6 @@ if SERVER then
 		end
 	end
 
-	-- TODO: Figure out some logic inconsitancies with auto-turn on/off
 	function ENT:Think()
 		local Time, State = CurTime(), self:GetState()
 		self.EZconnections = self.EZconnections or {}
