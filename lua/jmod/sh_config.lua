@@ -2905,7 +2905,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 		local Rope, Ent2 = JMod.Rope(playa, nil, nil, 2, 20000, "cable/cable2")
 		local PlugPos = Ent2:WorldToLocal(position)
 		local RopeDist = math.ceil(playa.EZropeData.Ent:GetPos():Distance(position))
-		if JMod.CreateConnection(Ent1, Ent2, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) or JMod.CreateConnection(Ent2, Ent1, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) then
+		if JMod.CreateResourceConnection(Ent1, Ent2, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) or JMod.CreateResourceConnection(Ent2, Ent1, JMod.EZ_RESOURCE_TYPES.POWER, PlugPos, RopeDist, Rope) then
 			local effectdata = EffectData()
 			effectdata:SetOrigin(position)
 			effectdata:SetScale(1)

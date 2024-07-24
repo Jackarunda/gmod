@@ -395,7 +395,7 @@ if(SERVER)then
 		end
 		if self.EZconnections then
 			for entID, cable in ipairs(self.EZconnections) do
-				JMod.RemoveConnection(self, entID)
+				JMod.RemoveResourceConnection(self, entID)
 			end
 		end
 		if(self.OnBreak)then self:OnBreak() end
@@ -620,16 +620,13 @@ if(SERVER)then
 			elseif self.EZownerID then
 				JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID), true)
 			end
-			ent.NextRefillTime = Time + 1
+			ent.NextRefillTime = 0
 			if ent.NextUseTime then
 				ent.NextUseTime = Time + 1
 			end
 			if ent.SoundLoop then
 				self.SoundLoop:Stop()
 				self.SoundLoop = nil
-			end
-			if ent.OnPostEntityPaste then
-				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
 			if not(JMod.IsAdmin(ply)) and not(ent:GetPersistent()) then
 				if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
@@ -668,12 +665,15 @@ if(SERVER)then
 								if IsValid(CableConnection) then
 									ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
 									ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
-									break
 								end
 							end
 						end
+						ent.EZconnections[entID] = nil
 					end
 				end)
+			end
+			if ent.OnPostEntityPaste then
+				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
 		end
 	end

@@ -75,7 +75,7 @@ if SERVER then
 								local DistanceBetween = (self.EZconnector:GetPos() - Ent:LocalToWorld(PluginPos)):Length()
 								ConnectionRange = math.min(ConnectionRange, DistanceBetween + 10)
 							end
-							local Connected = JMod.CreateConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), ConnectionRange)
+							local Connected = JMod.CreateResourceConnection(self.EZconnector, Ent, JMod.EZ_RESOURCE_TYPES.POWER, Ent:WorldToLocal(data.HitPos), ConnectionRange)
 							if Connected then SafeRemoveEntity(self) end
 						else
 							self.NextStick = Time + 1
