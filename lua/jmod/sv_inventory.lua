@@ -69,32 +69,32 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 	local jmodinvfinal = table.Copy(JMod.DEFAULT_INVENTORY)
 	jmodinvfinal.maxVolume = Capacity
 
-	for k, v in ipairs(invEnt.JModInv.items) do
-		--print(JMod.IsEntContained(v.ent, invEnt), v.ent:GetPhysicsObject():GetMass(), Capacity)
+	for k, iteminfo in ipairs(invEnt.JModInv.items) do
+		--print(JMod.IsEntContained(iteminfo.ent, invEnt), iteminfo.ent:GetPhysicsObject():GetMass(), Capacity)
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
 		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
-		if (Capacity > 0) and JMod.IsEntContained(v.ent, invEnt) and (v.ent:EntIndex() ~= -1) then
-			local Phys = v.ent:GetPhysicsObject()
-			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (v.ent.GetState and v.ent:GetState() ~= 0)) then
+		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
+			local Phys = iteminfo.ent:GetPhysicsObject()
+			if IsValid(Phys) and not((JMod.Config.QoL.AllowActiveItemsInInventory == false) and (iteminfo.ent.GetState and iteminfo.ent:GetState() ~= 0)) then
 				local Vol = Phys:GetVolume()
 				if (Vol ~= nil) then
 					Vol = math.ceil(Vol / JMod.VOLUMEDIV)
-					if v.ent.EZstorageVolumeOverride then
-						Vol = v.ent.EZstorageVolumeOverride
+					if iteminfo.ent.EZstorageVolumeOverride then
+						Vol = iteminfo.ent.EZstorageVolumeOverride
 					end
 					if (Capacity >= (jmodinvfinal.volume + Vol)) then
 						jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
 						jmodinvfinal.volume = math.Round(jmodinvfinal.volume + Vol, 2)
 					else
-						local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and TrPos, true, transfer)
+						local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
 						table.insert(RemovedItems, Removed)
 					end
 				end
 			else
-				local Removed = JMod.RemoveFromInventory(invEnt, v.ent, not(noplace) and TrPos, true, transfer)
+				local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
 				table.insert(RemovedItems, Removed)
 			end
-			table.insert(jmodinvfinal.items, v)
+			table.insert(jmodinvfinal.items, iteminfo)
 		end
 	end
 	for typ, amt in pairs(invEnt.JModInv.EZresources) do
@@ -161,7 +161,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		else
 			jmodinv.EZresources[res] = (jmodinv.EZresources[res] or 0) + amt
 		end
-	else
+	elseif IsValid(target) then
 		DropEntityIfHeld(target)
 		constraint.RemoveAll(target)
 		target.EZInvOwner = invEnt
