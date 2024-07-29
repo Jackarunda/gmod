@@ -31,8 +31,8 @@ if SERVER then
 				for k, ent in pairs(ents.FindInSphere(pos, 600)) do
 					local Vec = (ent:GetPos() - pos):GetNormalized()
 
-					if JMod.VisCheck(pos, ent, self) then
-						if ent:IsPlayer() or ent:IsNPC() then
+					if JMod.VisCheck(nil, ent, self) then
+						if ent:GetMoveType() == MOVETYPE_WALK then
 							ent:SetVelocity(Vec * 1000)
 						elseif IsValid(ent:GetPhysicsObject()) then
 							ent:GetPhysicsObject():ApplyForceCenter(Vec * 50000)

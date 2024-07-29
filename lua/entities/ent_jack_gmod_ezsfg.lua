@@ -250,7 +250,7 @@ if(SERVER)then
 			if (State == STATE_ON) then
 				local Tr = util.QuickTrace(self:GetPos() + Forward * 70, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) and (math.random(1, Grade) == 1) then
-					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+					local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 					Gas:SetPos(self:GetPos() + Forward * 120 + Vector(0, 0, 100))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, true)

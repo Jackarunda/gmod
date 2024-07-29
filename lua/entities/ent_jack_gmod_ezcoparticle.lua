@@ -1,7 +1,7 @@
 ﻿-- Based off of JMOD EZ Gas Particle, created by Freaking Fission, uses some code from GChem
 AddCSLuaFile()
 ENT.Base = "ent_jack_gmod_ezgasparticle"
-ENT.PrintName = "EZ CS Gas"
+ENT.PrintName = "EZ Carbon-monoxide Gas"
 ENT.Author = "Jackarunda, Freaking Fission"
 ENT.NoSitAllowed = true
 ENT.Editable = false
@@ -11,7 +11,7 @@ ENT.AdminOnly = false
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 --
 ENT.ThinkRate = 2
-ENT.AffectRange = 250
+ENT.AffectRange = 200
 ENT.MaxLife = 120
 ENT.MaxVel = 100
 --
@@ -29,22 +29,14 @@ if SERVER then
 		if obj:IsPlayer() then
 			local inhaleProt, skinProt, eyeProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
 
-			JMod.DepleteArmorChemicalCharge(obj, (inhaleProt + skinProt + eyeProt) * .06)
+			JMod.DepleteArmorChemicalCharge(obj, (inhaleProt) * .06)
 
-			if eyeProt < 1 then
-				net.Start("JMod_VisionBlur")
-				net.WriteFloat(5 * math.Clamp(1 - eyeProt, 0, 1))
-				net.WriteFloat(2)
-				net.WriteBit(false)
-				net.Send(obj)
-				JMod.Hint(obj, "tear gas")
-			end
 			if inhaleProt < 1 then
 				JMod.TryCough(obj)
 				if math.random(1, 10) == 1 then
 					local Dmg = DamageInfo()
 					Dmg:SetDamageType(DMG_NERVEGAS)
-					Dmg:SetDamage(math.random(1, 4) * JMod.Config.Particles.PoisonGasDamage)
+					Dmg:SetDamage(math.random(3, 10) * JMod.Config.Particles.PoisonGasDamage)
 					Dmg:SetInflictor(self)
 					Dmg:SetAttacker(JMod.GetEZowner(self))
 					Dmg:SetDamagePosition(obj:GetPos())
@@ -111,10 +103,10 @@ elseif CLIENT then
 	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 
 	function ENT:Initialize()
-		self.Col = Color(255, 255, 255)
+		self.Col = Color(124, 124, 124)
 		self.Visible = true
 		self.Show = true
-		self.siz = 1
+		self.siz = .5
 		self.RenderPos = self:GetPos()
 
 		timer.Simple(2, function()
@@ -131,21 +123,15 @@ elseif CLIENT then
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
 			render.SetMaterial(DebugMat)
-			render.DrawSprite(self:GetPos(), 50, 50, Color(255, 255, 255, 200))
+			render.DrawSprite(self:GetPos(), 50, 50, Color(48, 48, 48, 200))
 		end
 
 		local Time = CurTime()
 
-		if self.NextVisCheck < Time then
-			self.NextVisCheck = Time + 1
-			self.Show = self.Visible and 1 / FrameTime() > 50
-		end
-		self.Show = self.Visible
-
-		if self.Show then
+		if self.Visible then
 			local SelfPos = self:GetPos()
 			render.SetMaterial(Mat)
-			render.DrawSprite(self.RenderPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 15))
+			render.DrawSprite(self.RenderPos, self.siz, self.siz, Color(self.Col.r, self.Col.g, self.Col.b, 5))
 			self.RenderPos = LerpVector(FrameTime() * 1, self.RenderPos, SelfPos)
 			self.siz = math.Clamp(self.siz + FrameTime() * 200, 0, 500)
 		end

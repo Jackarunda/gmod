@@ -102,6 +102,8 @@ local function IsHitToBack(ply, dmg)
 	return ApproachAngle < -45
 end
 
+local NonProtectiveSlots = {"ears", "back", "waist"}
+
 local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shouldDmgArmor, cumulativeCoverage)
 	local Protection, Busted = 0, false
 
@@ -125,13 +127,13 @@ local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shou
 			local CumulativeDivisor = 0
 
 			for armorSlot, coverage in pairs(ArmorInfo.slots) do
-				if (armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist") then
+				if not table.HasValue(NonProtectiveSlots, armorSlot) then
 					CumulativeDivisor = CumulativeDivisor + 1
 				end
 			end
 
 			for armorSlot, coverage in pairs(ArmorInfo.slots) do
-				if (armorSlot ~= "ears") and (armorSlot ~= "back") and (armorSlot ~= "waist") and (armorSlot == slot) then
+				if not(table.HasValue(NonProtectiveSlots, armorSlot)) and (armorSlot == slot) then
 					if not(ArmorInfo.def) then break end
 					for damType, damProtection in pairs(ArmorInfo.def) do
 						if IsDamageThisType(dmg, damType) then

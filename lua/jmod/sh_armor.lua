@@ -220,7 +220,10 @@ JMod.ArmorTable = {
 		slots = {
 			eyes = 1
 		},
-		def = NonArmorProtectionProfile,
+		def = table.Inherit({
+			[DMG_NERVEGAS] = .8,
+			[DMG_RADIATION] = .75
+		}, NonArmorProtectionProfile),
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
 		entsiz = 1.5,
@@ -255,7 +258,10 @@ JMod.ArmorTable = {
 		slots = {
 			eyes = 1
 		},
-		def = NonArmorProtectionProfile,
+		def = table.Inherit({
+			[DMG_NERVEGAS] = .8,
+			[DMG_RADIATION] = .75
+		}, NonArmorProtectionProfile),
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
 		entsiz = 1.5,
@@ -291,7 +297,7 @@ JMod.ArmorTable = {
 			mouthnose = 1
 		},
 		def = table.Inherit({
-			[DMG_NERVEGAS] = .25,
+			[DMG_NERVEGAS] = 1,
 			[DMG_RADIATION] = .75
 		}, NonArmorProtectionProfile),
 		bon = "ValveBiped.Bip01_Head1",
@@ -1041,7 +1047,7 @@ hook.Add("Initialize", "JMod_LoadAdditionalArmor", LoadAdditionalArmor)
 
 -- support third-party integration of gas-based weapons
 function JMod.GetArmorBiologicalResistance(ply, typ)
-	local faceResist, skinResist = 0, 0
+	local inhaleResist, skinResist, eyeProtect = 0, 0, 0
 
 	if ply.EZarmor then
 		for k, armorData in pairs(ply.EZarmor.items) do
@@ -1050,13 +1056,14 @@ function JMod.GetArmorBiologicalResistance(ply, typ)
 
 				if not (ArmorInfo.chrg and ArmorInfo.chrg.chemicals and armorData.chrg.chemicals <= 0) then
 					skinResist = skinResist + (ArmorInfo.def[typ] or 0) * ((ArmorInfo.slots.chest or 0) + (ArmorInfo.slots.abdomen or 0)) / 2
-					faceResist = faceResist + (ArmorInfo.def[typ] or 0) * ((ArmorInfo.slots.eyes or 0) + (ArmorInfo.slots.mouthnose or 0)) / 2
+					inhaleResist = inhaleResist + (ArmorInfo.def[typ] or 0) * (ArmorInfo.slots.mouthnose or 0)
+					eyeProtect = eyeProtect + (ArmorInfo.def[typ] or 0) * (ArmorInfo.slots.eyes or 0)
 				end
 			end
 		end
 	end
 
-	return faceResist, skinResist
+	return inhaleResist, skinResist, eyeProtect
 end
 
 function JMod.DepleteArmorChemicalCharge(ply, amt)

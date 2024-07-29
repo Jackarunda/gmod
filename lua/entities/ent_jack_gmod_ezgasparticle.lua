@@ -41,9 +41,8 @@ if SERVER then
 	end
 
 	function ENT:ShouldDamage(ent)
-		if not(math.random(1, 2) == 1) then return end
-		if not IsValid(ent) then return end
-		if ent.EZgasParticle == true then return end
+		if not IsValid(ent) then return false end
+		if ent.EZgasParticle == true then return false end
 		if ent:IsPlayer() then return ent:Alive() end
 
 		if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
@@ -135,15 +134,20 @@ if SERVER then
 				filter = { self, self.Canister },
 				mask = MASK_SHOT
 			})
+			if MoveTrace.StartSolid then
+				SafeRemoveEntity(self)
+
+				return
+			end
 			if not MoveTrace.Hit then
+				-- move unobstructed
+				self:SetPos(NewPos)
+			else
 				if MoveTrace.HitSky then
 					SafeRemoveEntity(self)
 	
 					return
 				end
-				-- move unobstructed
-				self:SetPos(NewPos)
-			else
 				-- bounce in accordance with Ideal Gas Law
 				self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
 				local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
@@ -204,7 +208,6 @@ elseif CLIENT then
 			render.SetMaterial(DebugMat)
 			render.DrawSprite(self:GetPos(), 50, 50, Color(134, 224, 60, 200))
 		end
-		if (self:GetDTBool(0)) then return end
 
 		local Time = CurTime()
 

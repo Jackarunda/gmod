@@ -205,7 +205,7 @@ if(SERVER)then
 				local Tr = util.QuickTrace(FirePos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 						Gas:SetPos(Tr.HitPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
