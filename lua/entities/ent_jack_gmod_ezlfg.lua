@@ -79,8 +79,9 @@ if(SERVER)then
 			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav") end
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
-		elseif IsValid(activator) and not(auto) then
 			self.EZstayOn = true
+		elseif IsValid(activator) and not(auto) then
+			self.EZstayOn = nil
 			self:EmitSound("snds_jack_gmod/genny_start_fail.ogg", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")
