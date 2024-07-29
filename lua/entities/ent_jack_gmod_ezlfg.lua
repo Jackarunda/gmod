@@ -195,17 +195,17 @@ if(SERVER)then
 				end
 			elseif (State == STATE_BROKEN) and self:GetFuel() > 0 then
 				local FuelHazard = ents.Create("ent_jack_gmod_eznapalm")
-				FuelHazard:SetPos(self:GetPos() + self:GetForward() * 100)
+				FuelHazard:SetPos(self:GetPos() + self:GetForward() * 50 + self:GetUp() * 50)
 				FuelHazard:SetOwner(JMod.GetEZowner(self))
 				FuelHazard.HighVisuals = (math.random(1, 2) == 1)
-				FuelHazard.SpeedMul = 0.5
+				FuelHazard.SpeedMul = 0.01
 				FuelHazard.Creator = self.Owner
 				FuelHazard.Burnin = false
 				FuelHazard.LifeTime = math.random(1, 3)
 				JMod.SetEZowner(Flame, self.Owner)
 				FuelHazard:Spawn()
 				FuelHazard:Activate()
-				debugoverlay.Cross(self:GetPos() + self:GetForward() * 50, 10, 2, Color(255, 0, 0), true)
+				debugoverlay.Cross(self:GetPos() + self:GetForward() * 50 + self:GetUp() * 50, 10, 2, Color(255, 0, 0), true)
 
 				self:ConsumeFuel(2)
 			end

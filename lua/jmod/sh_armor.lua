@@ -220,10 +220,7 @@ JMod.ArmorTable = {
 		slots = {
 			eyes = 1
 		},
-		def = table.Inherit({
-			[DMG_NERVEGAS] = .8,
-			[DMG_RADIATION] = .75
-		}, NonArmorProtectionProfile),
+		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
 		entsiz = 1.5,
@@ -258,10 +255,7 @@ JMod.ArmorTable = {
 		slots = {
 			eyes = 1
 		},
-		def = table.Inherit({
-			[DMG_NERVEGAS] = .8,
-			[DMG_RADIATION] = .75
-		}, NonArmorProtectionProfile),
+		def = NonArmorProtectionProfile,
 		bon = "ValveBiped.Bip01_Head1",
 		siz = Vector(1.05, 1.05, 1.05),
 		entsiz = 1.5,
@@ -297,7 +291,7 @@ JMod.ArmorTable = {
 			mouthnose = 1
 		},
 		def = table.Inherit({
-			[DMG_NERVEGAS] = 1,
+			[DMG_NERVEGAS] = .75,
 			[DMG_RADIATION] = .75
 		}, NonArmorProtectionProfile),
 		bon = "ValveBiped.Bip01_Head1",

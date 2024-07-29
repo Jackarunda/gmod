@@ -236,7 +236,7 @@ if SERVER then
 			local Pos = self:GetPos()
 			local Tr = util.QuickTrace(Pos, Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then
-				if (math.random(1, (self.Burnin and 2) or 20) == 1) then
+				if (math.random(1, (self.Burnin and 2) or 50) == 1) then
 					local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 					Gas:SetPos(Pos + Vector(0, 0, Tr.HitPos))
 					JMod.SetEZowner(Gas, self.EZowner)
