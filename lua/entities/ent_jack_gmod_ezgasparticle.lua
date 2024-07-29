@@ -15,7 +15,7 @@ ENT.ThinkRate = 1
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 300
 ENT.MaxLife = 100
-ENT.MaxVel = 100
+ENT.MaxVel = 80
 --
 
 if SERVER then
@@ -84,7 +84,10 @@ if SERVER then
 
 		if (obj:Health() < Helf) and obj:IsPlayer() then
 			JMod.Hint(obj, "gas damage")
-			JMod.TryCough(obj)
+			local inhaleProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
+			if inhaleProt < .75 then
+				JMod.TryCough(obj)
+			end
 		end
 	end
 

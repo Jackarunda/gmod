@@ -39,7 +39,7 @@ if SERVER then
 				net.Send(obj)
 				JMod.Hint(obj, "tear gas")
 			end
-			if inhaleProt < 1 then
+			if inhaleProt < .75 then
 				JMod.TryCough(obj)
 				if math.random(1, 10) == 1 then
 					local Dmg = DamageInfo()
