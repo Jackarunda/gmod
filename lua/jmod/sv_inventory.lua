@@ -517,3 +517,17 @@ concommand.Add("jmod_debug_stow", function(ply, cmd, args)
 		end
 	end
 end, nil, "Attempts to stow first item of inventory in container")
+
+hook.Add("EntityRemoved", "JMOD_DUMPINVENTORY", function(ent)
+	if ent.JModInv then
+		local Pos = ent:GetPos()
+		for k, v in pairs(ent.JModInv.EZresources) do
+			local ColTr = util.QuickTrace(Pos, VectorRand() * 50, ent)
+			JMod.RemoveFromInventory(ent, {k, v}, ColTr.HitPos, true, false)
+		end
+		for _, v in ipairs(ent.JModInv.items) do
+			local ColTr = util.QuickTrace(Pos, VectorRand() * 50, ent)
+			JMod.RemoveFromInventory(ent, v.ent, ColTr.HitPos, true, false)
+		end
+	end
+end)

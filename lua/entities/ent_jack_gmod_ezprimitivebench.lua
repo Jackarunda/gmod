@@ -251,11 +251,11 @@ if(SERVER)then
 								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
 								i = i + 1
 							end
-							if Ent.JModInv then
+							--[[if Ent.JModInv then
 								for _, v in ipairs(Ent.JModInv.items) do
 									JMod.RemoveFromInventory(Ent, v.ent, Pos + VectorRand() * 50)
 								end
-							end
+							end--]]
 							SafeRemoveEntity(Ent)
 						end
 					end)

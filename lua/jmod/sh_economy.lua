@@ -852,11 +852,11 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
-	if ent.JModInv then
+	--[[if ent.JModInv then
 		for k, v in pairs(ent.JModInv.EZresources) do
 			Results[k] = (Results[k] or 0) + v
 		end
-	end
+	end--]]
 
 	local FinalResults, Message = hook.Run("JMod_SalvageResults", ent, Results, Mat, Mdl, Specialized)
 
