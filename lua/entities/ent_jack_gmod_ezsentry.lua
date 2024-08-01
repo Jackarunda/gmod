@@ -391,7 +391,6 @@ if(SERVER)then
 			NextDeEsc = 0, -- next de-escalation to the watching state
 			NextSearchChange = 0, -- time to move on to the next phase of searching
 			State = 0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
-			
 		}
 		self.EngageOverride = nil
 		self.AimOverride = nil
@@ -400,6 +399,7 @@ if(SERVER)then
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
+		self:SetState(STATE_WATCHING)
 		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 	end
 

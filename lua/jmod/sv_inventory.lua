@@ -519,7 +519,7 @@ concommand.Add("jmod_debug_stow", function(ply, cmd, args)
 end, nil, "Attempts to stow first item of inventory in container")
 
 hook.Add("EntityRemoved", "JMOD_DUMPINVENTORY", function(ent)
-	if ent.JModInv then
+	if not(ent:IsPlayer()) and ent.JModInv then
 		local Pos = ent:GetPos()
 		for k, v in pairs(ent.JModInv.EZresources) do
 			local ColTr = util.QuickTrace(Pos, VectorRand() * 50, ent)
