@@ -435,6 +435,11 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 
 				if proceed then
 					if mass <= myDestroyThreshold then
+						if (DistFrac >= .9) and string.find(physObj:GetMaterial(), "metal") then
+							timer.Simple(.1, function()
+								JMod.FragSplosion(blaster, propPos, mass * 10, 100, maxRange * 100, game.GetWorld(), (propPos - pos):GetNormalized(), DistFrac)
+							end)
+						end
 						SafeRemoveEntity(prop)
 					elseif mass <= myLoosenThreshold then
 						physObj:EnableMotion(true)
@@ -1414,11 +1419,11 @@ function JMod.EZprogressTask(ent, pos, deconstructor, task, mult)
 								AmtLeft = AmtLeft - Remove
 							end
 						end
-						if ent.JModInv then
+						--[[if ent.JModInv then
 							for _, v in ipairs(ent.JModInv.items) do
 								JMod.RemoveFromInventory(ent, v.ent, pos + VectorRand() * 50)
 							end
-						end
+						end--]]
 						SafeRemoveEntity(ent)
 					end
 				end
