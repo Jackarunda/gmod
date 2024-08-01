@@ -31,19 +31,17 @@ if SERVER then
 				for k, ent in pairs(ents.FindInSphere(pos, 600)) do
 					local Vec = (ent:GetPos() - pos):GetNormalized()
 
+					local Phys = ent:GetPhysicsObject()
 					if JMod.VisCheck(nil, ent, self) then
 						if ent:GetMoveType() == MOVETYPE_WALK then
 							ent:SetVelocity(Vec * 1000)
-						elseif IsValid(ent:GetPhysicsObject()) then
-							ent:GetPhysicsObject():ApplyForceCenter(Vec * 50000)
+						elseif IsValid(Phys) then
+							Phys:Wake()
+							Phys:ApplyForceCenter(Vec * 50000)
 						end
 					end
 				end
 			end
-		end
-
-		if vFireInstalled and math.random() <= 0.05 then
-			CreateVFireBall(math.random(3, 5), math.random(3, 5), pos, VectorRand() * math.random(300, 500))
 		end
 	end
 
