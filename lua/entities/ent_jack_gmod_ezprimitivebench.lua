@@ -326,7 +326,7 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TryBuild(itemName,ply)
+	function ENT:TryBuild(itemName, ply)
 		local ItemInfo=self.Craftables[itemName]
 
 		local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil,200,ItemInfo.craftingReqs,self,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
@@ -368,6 +368,13 @@ if(SERVER)then
 
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
+	end
+
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		self.NextSmeltThink = Time + math.Rand(0, 1)
+		self.NextEffThink = Time + math.Rand(0, 3)
+		self.NextEnvThink = Time + math.Rand(0, 5)
 	end
 
 elseif(CLIENT)then
