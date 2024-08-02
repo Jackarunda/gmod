@@ -527,7 +527,6 @@ hook.Add("OnPlayerHitGround", "JMOD_HITGROUND", function(ply, water, float, spee
 end)
 
 
-
 local NextMainThink, NextNutritionThink, NextArmorThink, NextSlowThink, NextNatrualThink, NextSync = 0, 0, 0, 0, 0, 0
 local WindChange = Vector(0, 0, 0)
 
@@ -1053,22 +1052,6 @@ hook.Add("PlayerLeaveVehicle", "JMOD_LEAVEVEHICLE", function(ply, veh)
 		veh.EZvehicleEjectPos = nil
 	end
 end)
-
-function JMod.EZ_Remote_Trigger(ply)
-	if not IsValid(ply) then return end
-	if not ply:Alive() then return end
-	sound.Play("snd_jack_detonator.ogg", ply:GetShootPos(), 55, math.random(90, 110))
-
-	timer.Simple(.75, function()
-		if IsValid(ply) and ply:Alive() then
-			for k, v in ents.Iterator() do
-				if v.JModEZremoteTriggerFunc and v.EZowner and (v.EZowner == ply) then
-					v:JModEZremoteTriggerFunc(ply)
-				end
-			end
-		end
-	end)
-end
 
 hook.Add("PlayerCanSeePlayersChat", "JMOD_PLAYERSEECHAT", function(txt, teamOnly, listener, talker)
 	if not IsValid(talker) then return end

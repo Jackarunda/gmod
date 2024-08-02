@@ -1,15 +1,6 @@
 ﻿JMod.VOLUMEDIV = 500
 JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
 
-function JMod.EZ_Open_Inventory(ply)
-	JMod.Hint(ply, "scrounge")
-	JMod.UpdateInv(ply)
-	net.Start("JMod_Inventory")
-		net.WriteString(ply:GetModel())
-		net.WriteTable(ply.JModInv)
-	net.Send(ply)
-end
-
 function JMod.GetStorageCapacity(ent)
 	if not(IsValid(ent)) then return 0 end
 	if ent.IsJackyEZcrate then return 0 end
@@ -478,6 +469,15 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			JMod.Hint(ply,"hint item inventory full")
 		end
 	end
+end
+
+function JMod.EZ_Open_Inventory(ply)
+	JMod.Hint(ply, "scrounge")
+	JMod.UpdateInv(ply)
+	net.Start("JMod_Inventory")
+		net.WriteString(ply:GetModel())
+		net.WriteTable(ply.JModInv)
+	net.Send(ply)
 end
 
 concommand.Add("jmod_ez_quicknade", function(ply, cmd, args)
