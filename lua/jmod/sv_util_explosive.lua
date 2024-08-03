@@ -165,7 +165,7 @@ function JMod.WreckBuildings(blaster, pos, power, range, ignoreVisChecks)
 	local allProps = ents.FindInSphere(pos, maxRange)
 
 	for k, prop in pairs(allProps) do
-		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or (prop.ExplProof == true) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignoreVisChecks) == false) then
+		if not (table.HasValue(WreckBlacklist, prop:GetClass()) or (prop:IsNPC() or prop:IsPlayer()) or (prop.ExplProof == true) or hook.Run("JMod_CanDestroyProp", prop, blaster, pos, power, range, ignoreVisChecks) == false) then
 			local physObj = prop:GetPhysicsObject()
 			local propPos = prop:LocalToWorld(prop:OBBCenter())
 			local DistFrac = 1 - propPos:Distance(pos) / maxRange
