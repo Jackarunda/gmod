@@ -113,10 +113,6 @@ if(SERVER)then
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
 	end
 
-	function ENT:SpawnEffect(pos)
-		self:EmitSound("snds_jack_gmod/ding.ogg", 80, 120)
-	end
-
 	function ENT:ProduceResource()
 		local SelfPos, Forward, Up, Right = self:GetPos(), self:GetForward(), self:GetUp(), self:GetRight()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)

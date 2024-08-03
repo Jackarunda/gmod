@@ -466,7 +466,6 @@ if(SERVER)then
 			Mult=Mult*.2
 			if(math.random(1,2)==1)then
 				local SelfPos=self:GetPos()
-				sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg",SelfPos+VectorRand(),70,math.random(80,120))
 				local effectdata=EffectData()
 				effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
 				effectdata:SetNormal(VectorRand())
@@ -475,6 +474,7 @@ if(SERVER)then
 				effectdata:SetRadius(2) --thickness of strands
 				util.Effect("Sparks",effectdata,true,true)
 				if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg",SelfPos+VectorRand(),70,math.random(80,120))
 					local RicDir=VectorRand()
 					RicDir.z=RicDir.z/2
 					RicDir:Normalize()
