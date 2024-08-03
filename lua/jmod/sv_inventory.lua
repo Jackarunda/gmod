@@ -145,7 +145,7 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	if AddingResource then
 		local res, amt = target[1], target[2] or 9e9
 		if IsValid(res) and res.IsJackyEZresource then
-			local SuppliesLeft = res:GetEZsupplies(res.EZsupplies) -- You better not return nil
+			local SuppliesLeft = res:GetEZsupplies(res.EZsupplies) or 0
 			jmodinv.EZresources[res.EZsupplies] = (jmodinv.EZresources[res.EZsupplies] or 0) + math.min(SuppliesLeft, amt)
 			res:SetEZsupplies(res.EZsupplies, SuppliesLeft - (amt or SuppliesLeft))
 			JMod.ResourceEffect(res.EZsupplies, res:LocalToWorld(res:OBBCenter()), invEnt:LocalToWorld(invEnt:OBBCenter()), 1, 1, 1)
