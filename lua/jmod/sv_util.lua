@@ -1,6 +1,7 @@
 ﻿-- this causes an object to rotate to point forward while moving, like a dart
 function JMod.AeroDrag(ent, forward, mult, spdReq)
-	if constraint.HasConstraints(ent) then return end
+	--if constraint.HasConstraints(ent) then return end
+	if constraint.FindConstraint(ent, "Weld") then return end
 	if ent:IsPlayerHolding() then return end
 	local Phys = ent:GetPhysicsObject()
 	if not IsValid(Phys) then return end
