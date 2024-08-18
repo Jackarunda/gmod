@@ -503,7 +503,7 @@ end
 
 function JMod.EZradioRequest(transceiver, id, ply, pkg, bff)
 	local PackageInfo, Station, Time = JMod.Config.RadioSpecs.AvailablePackages[pkg], JMod.EZ_RADIO_STATIONS[id], CurTime()
-	if not Station then return end
+	if not Station then return "No station with that ID" end
 	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
 	transceiver.BFFd = bff
 	local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)
