@@ -164,7 +164,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
-		JMod.Colorify(self)
+		--JMod.Colorify(self)
 
 		if Alt and self:GetPhysicsObject():IsMotionEnabled() then
 			activator:PickupObject(self)

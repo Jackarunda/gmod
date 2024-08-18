@@ -9,6 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZcolorable = true
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
 ENT.RocketDisplaySpecs = {

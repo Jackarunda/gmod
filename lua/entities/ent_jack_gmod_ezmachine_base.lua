@@ -705,7 +705,11 @@ elseif(CLIENT)then
 
 	function ENT:Initialize()
 		self:SetModel(self.Model)
-		if self.ClientOnly then return end
+		if self.ClientOnly then 
+			self:SetNextClientThink(CurTime() + 1)
+
+			return 
+		end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
 		if(self.CustomInit)then self:CustomInit() end

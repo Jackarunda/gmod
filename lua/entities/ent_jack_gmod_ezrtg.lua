@@ -14,6 +14,7 @@ ENT.EZupgradable = true
 ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZcolorable = true
 ENT.Mass = 250
 ENT.SpawnHeight = 1
 --

@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/machines/oil_refinery.mdl"
 ENT.Mass = 4000
 ENT.SpawnHeight = 10
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.OIL,

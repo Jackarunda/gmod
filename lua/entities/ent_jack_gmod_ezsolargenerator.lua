@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 ENT.Mass = 100
 --
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 75,

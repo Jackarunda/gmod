@@ -11,6 +11,7 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/gas_smelter.mdl"
 ENT.Mass = 750
 ENT.SpawnHeight = 10
+ENT.EZcolorable = true
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,

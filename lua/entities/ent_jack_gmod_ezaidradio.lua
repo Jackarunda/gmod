@@ -13,6 +13,7 @@ ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezradio"
 ENT.Mass=150
 ----
+ENT.EZcolorable = true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ENT.EZradio = true

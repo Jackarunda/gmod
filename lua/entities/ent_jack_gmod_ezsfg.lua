@@ -14,6 +14,7 @@ ENT.EZupgradable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 400
 ENT.SpawnHeight = 5
+ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 200,

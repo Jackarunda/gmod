@@ -8,6 +8,7 @@ ENT.EZrespawnPoint = true
 ENT.Mass = 35
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 90)
+ENT.EZcolorable = true
 
 local STATE_ROLLED, STATE_UNROLLED = 0, 1
 local MODEL_ROLLED, MODEL_UNROLLED = "models/jmod/props/sleeping_bag_rolled.mdl","models/jmod/props/sleeping_bag.mdl"

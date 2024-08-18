@@ -1,6 +1,6 @@
 -- Jackarunda, AdventureBoots 2023
 AddCSLuaFile()
-ENT.Type = "anim"
+ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.PrintName = "EZ Fabricator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
@@ -11,6 +11,8 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.Model = "models/jmod/machines/parts_machine.mdl"
 ENT.Mass = 1000
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.EZcolorable = true
+---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.WATER,
@@ -18,7 +20,6 @@ ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.CHEMICALS,
 	JMod.EZ_RESOURCE_TYPES.POWER
 }
-ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
 	MaxDurability = 150,

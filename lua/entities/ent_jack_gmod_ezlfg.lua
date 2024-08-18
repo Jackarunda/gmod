@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/machines/diesel_jenerator.mdl"
 ENT.EZupgradable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.Mass = 250
 ENT.SpawnHeight = 1
 --

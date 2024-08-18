@@ -99,7 +99,7 @@ function JMod.SetEZowner(ent, newOwner, setColor)
 end
 
 function JMod.Colorify(ent)
-	if (ent.EZcolorable ~= nil) and (ent.EZcolorable == false) then return end
+	if not (ent.EZcolorable and ent.EZcolorable == true) then return end
 	if IsValid(JMod.GetEZowner(ent)) then
 		if engine.ActiveGamemode() == "sandbox" and ent.EZowner:Team() == TEAM_UNASSIGNED then
 			local Col = ent.EZowner:GetPlayerColor()

@@ -15,6 +15,7 @@ ENT.Mat="models/mat_jack_gmod_groundscanner"
 ENT.Mass=200
 ---
 ENT.JModPreferredCarryAngles=Angle(-90,180,0)
+ENT.EZcolorable = true
 ENT.PhysMatDetectionWhitelist={
 	"metal",
 	"metalvehicle",

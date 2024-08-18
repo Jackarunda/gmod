@@ -13,6 +13,7 @@ ENT.Model = "models/jmod/machines/oil_rig.mdl"
 ENT.Mass = 3000
 ENT.SpawnHeight = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.EZanchorage = 2000
 ENT.EZpowerSocket = Vector(0, 0, 130)
 ENT.EZbuoyancy = .8
