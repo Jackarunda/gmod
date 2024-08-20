@@ -9,8 +9,8 @@ SWEP.UseHands = true
 SWEP.DrawAmmo = false
 SWEP.DrawCrosshair = false
 SWEP.EZdroppable = true
-SWEP.ViewModel = "models/weapons/c_arms_citizen.mdl"
-SWEP.WorldModel = "models/props_c17/tools_wrench01a.mdl"
+SWEP.ViewModel = "models/jmod/ez/c_repairkit.mdl" --"models/weapons/c_arms_citizen.mdl"
+SWEP.WorldModel = "models/jmod/ez/c_repairkit.mdl" --"models/props_c17/tools_wrench01a.mdl"
 SWEP.BodyHolsterModel = "models/weapons/w_models/w_tooljox.mdl"
 SWEP.BodyHolsterSlot = "hips"
 SWEP.BodyHolsterAng = Angle(-70, 0, 200)
@@ -30,13 +30,13 @@ SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = true
 SWEP.Secondary.Ammo = "none"
-SWEP.ShowWorldModel = false
+SWEP.ShowWorldModel = true
 SWEP.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.GAS}
 SWEP.MaxElectricity = 100
 SWEP.MaxGas = 100
 
 SWEP.VElements = {
-	["wrench"] = {
+	--[[["wrench"] = {
 		type = "Model",
 		model = "models/props_c17/tools_wrench01a.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
@@ -63,7 +63,7 @@ SWEP.VElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.WElements = {
@@ -81,7 +81,7 @@ SWEP.WElements = {
 		skin = 0,
 		bodygroup = {}
 	},
-	["wrench"] = {
+	--[[["wrench"] = {
 		type = "Model",
 		model = "models/props_c17/tools_wrench01a.mdl",
 		bone = "ValveBiped.Bip01_R_Hand",
@@ -108,7 +108,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	},
+	},--]]
 	["torch"] = {
 		type = "Model",
 		model = "models/props_silo/welding_torch.mdl",
@@ -244,7 +244,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:PreDrawViewModel(vm, wep, ply)
-	vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
+	--vm:SetMaterial("engine/occlusionproxy") -- Hide that view model with hacky material
 end
 
 function SWEP:ViewModelDrawn()
@@ -709,7 +709,7 @@ function SWEP:OnDrop()
 	local Phys = Kit:GetPhysicsObject()
 
 	if Phys then
-		Phys:SetVelocity(self:GetPhysicsObject():GetVelocity() / 2)
+		Phys:SetVelocity(self:GetVelocity() / 2)
 	end
 
 	self:Remove()
@@ -783,7 +783,7 @@ function SWEP:Deploy()
 	return true
 end
 
-function SWEP:CreateResourceEntity(pos, typ, amt)
+--[[function SWEP:CreateResourceEntity(pos, typ, amt)
 	local Ent = ents.Create(JMod.EZ_RESOURCE_ENTITIES[typ])
 	Ent:SetPos(pos)
 	Ent:SetAngles(AngleRand())
@@ -797,7 +797,7 @@ function SWEP:CreateResourceEntity(pos, typ, amt)
 			Ent:GetPhysicsObject():SetVelocity(Vector(0, 0, 0)) --- This is so jank
 		end
 	end)
-end
+end--]]
 
 function SWEP:Think()
 	local Time = CurTime()
