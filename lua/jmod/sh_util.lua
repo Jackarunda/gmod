@@ -194,12 +194,14 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
 		if obj.GetEZsupplies and JMod.VisCheck(pos, obj, sourceEnt) then
 			local Supplies = obj:GetEZsupplies()
+			if obj.ClassName == "ent_aboot_gmod_ezshippingcontainer" then PrintTable(Supplies) end
 			for k, v in pairs(Supplies) do
 				if k ~= "generic" then 
 					Results[k] = (Results[k] or 0) + v
 				end
 			end
-		elseif obj.JModInv and JMod.VisCheck(pos, obj, sourceEnt) then
+		end 
+		if obj.JModInv and JMod.VisCheck(pos, obj, sourceEnt) then
 			local Supplies = obj.JModInv.EZresources
 			for k, v in pairs(Supplies) do
 				if k ~= "generic" then 

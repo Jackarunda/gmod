@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.EZscannerDanger = true
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZcolorable = true
 
 ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 
@@ -132,7 +133,7 @@ if SERVER then
 		JMod.Sploom(self.EZowner, SelfPos, math.random(10, 20))
 
 		if JMod.Config.Explosives.FragExplosions then
-			JMod.FragSplosion(self, SelfPos, 1000, 10, 8000, JMod.GetEZowner(self), Up, .9)
+			JMod.FragSplosion(self, SelfPos, 1000, 10, 5000, JMod.GetEZowner(self), Up, .9)
 		else
 			util.BlastDamage(self, JMod.GetEZowner(self), SelfPos + Up * 350, 350, 110)
 		end

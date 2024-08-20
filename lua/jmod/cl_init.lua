@@ -290,7 +290,6 @@ local WDir = VectorRand()
 hook.Add("CreateMove", "ParachuteShake", function(cmd)
 	local Ply = LocalPlayer()
 	if not Ply:Alive() then return end
-	local Wep = Ply:GetActiveWeapon()
 
 	if Ply:GetNW2Bool("EZparachuting", false) then
 		local Amt, Sporadicness, FT = 30, 20, FrameTime()
@@ -306,6 +305,23 @@ hook.Add("CreateMove", "ParachuteShake", function(cmd)
 		EAng.pitch = math.NormalizeAngle(EAng.pitch + math.sin(RealTime() * 2) * 0.02)
 		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
 		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * FT * Amt * S)
+		cmd:SetViewAngles(EAng)
+	else
+		Ply.LerpedYaw = cmd:GetViewAngles().y
+	end
+end)
+
+hook.Add("CreateMove", "RocketSpeen", function(cmd)
+	local Ply = LocalPlayer()
+	if not Ply:Alive() then return end
+
+	if Ply:GetNW2Bool("EZrocketSpin", false) then
+		local FT = FrameTime()
+
+		local Spin, EAng = 1200, cmd:GetViewAngles()
+		local WDir = Ply:GetVelocity():GetNormalized()
+		Ply.LerpedYaw = math.ApproachAngle(Ply.LerpedYaw, EAng.y, FT * 120)
+		EAng.yaw = Ply.LerpedYaw + math.NormalizeAngle(WDir.x * Spin * FT)
 		cmd:SetViewAngles(EAng)
 	else
 		Ply.LerpedYaw = cmd:GetViewAngles().y
@@ -381,7 +397,7 @@ net.Receive("JMod_LuaConfigSync", function(dataLength)
 	JMod.Config.General = {AltFunctionKey = Payload.AltFunctionKey}
 	JMod.Config.Machines = {Blackhole = Payload.Blackhole}
 	JMod.Config.Weapons = {SwayMult = Payload.WeaponSwayMult}
-	JMod.Config.QoL = Payload.QoL
+	JMod.Config.QoL = table.FullCopy(Payload.QoL)
 	JMod.Config.ResourceEconomy = {MaxResourceMult = Payload.MaxResourceMult}
 
 	if tobool(net.ReadBit()) then
@@ -573,7 +589,7 @@ hook.Add("PostDrawOpaqueRenderables", "JMOD_POSTOPAQUERENDERABLES", function()
 			NextWHOTcheck = Time + .5
 			WHOTents = {}
 
-			for k, v in pairs(ents.GetAll()) do
+			for k, v in ents.Iterator() do
 				if IsWHOT(v) then
 					table.insert(WHOTents, v)
 				end
@@ -891,8 +907,8 @@ net.Receive("JMod_NuclearBlast", function()
 				local Vec = ent:GetPos() - pos
 				local Dir = Vec:GetNormalized()
 
-				for i = 0, 100 do
-					local Phys = ent:GetPhysicsObjectNum(i)
+				for i = 1, math.min(ent:GetPhysicsObjectCount(), 50) do
+					local Phys = ent:GetPhysicsObjectNum(i - 1)
 
 					if Phys then
 						Phys:ApplyForceCenter(Dir * 1e10)
@@ -1103,7 +1119,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 			end
 			if (LastPos) then
 				-- God's promise to not flood the earth with water
-				if Specs.stencilTest then
+				if Specs.stencilTest and SunInfo then
 					-- STENCIL TEST
 					render.SetStencilEnable( true )
 					render.ClearStencil()
@@ -1121,19 +1137,7 @@ hook.Add("PostDrawTranslucentRenderables", "JMod_DrawLiquidStreams", function( b
 				end
 				render.SetMaterial(Specs.mat)
 				render.DrawBeam(LastPos, particle.pos, Size, 1, 0, Col)
-					-- Alternate method that uses segmented beams
-					--[[if k == 2 then
-						render.StartBeam(NumberOfParticles)
-						--print("starting beam")
-					else
-						render.AddBeam(particle.pos, Size, 0, Col)
-						--print("adding beam", k)
-					end
-					if (k == NumberOfParticles) and (NumberOfParticles > 1) then
-						render.EndBeam()
-						--print("ending beam", NumberOfParticles)
-					end--]]
-				if Specs.stencilTest then
+				if Specs.stencilTest and SunInfo then
 					-- RAINBOW WILL BE RENDERED BEHIND
 					render.SetStencilCompareFunction( STENCILCOMPARISONFUNCTION_EQUAL )
 					render.SetStencilPassOperation( STENCILOPERATION_KEEP )

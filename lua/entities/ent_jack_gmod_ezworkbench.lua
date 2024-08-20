@@ -1,32 +1,33 @@
 -- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.PrintName="EZ Workbench"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Machines"
-ENT.Information="glhfggwpezpznore"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
-ENT.RenderGroup=RENDERGROUP_TRANSLUCENT
-ENT.Model="models/jmod/machines/workstations/weaponworkbench01.mdl"
-ENT.Mass=500
-ENT.JModPreferredCarryAngles=Angle(0,180,0)
+ENT.Base = "ent_jack_gmod_ezmachine_base"
+ENT.PrintName = "EZ Workbench"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Machines"
+ENT.Information = "glhfggwpezpznore"
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
+ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+ENT.Model = "models/jmod/machines/workstations/weaponworkbench01.mdl"
+ENT.Mass = 500
+ENT.JModPreferredCarryAngles = Angle(0,180,0)
+ENT.EZcolorable = true
+--
 ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.POWER,
 	JMod.EZ_RESOURCE_TYPES.GAS
 }
-ENT.Base="ent_jack_gmod_ezmachine_base"
 ---
 ENT.StaticPerfSpecs={
-	MaxDurability=100,
-	Armor=.8,
-	MaxGas=100,
-	MaxElectricity=100
+	MaxDurability = 120,
+	Armor = 2,
+	MaxGas = 100,
+	MaxElectricity = 100
 }
-local STATE_BROKEN,STATE_FINE=-1,0
+local STATE_BROKEN, STATE_FINE = -1,0
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Float",1,"Gas")
+	self:NetworkVar("Float", 1, "Gas")
 end
 if(SERVER)then
 	function ENT:CustomInit()

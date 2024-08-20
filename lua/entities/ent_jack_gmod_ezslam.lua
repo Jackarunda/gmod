@@ -10,6 +10,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ---
 ENT.JModPreferredCarryAngles = Angle(90, 0, 180)
+ENT.EZcolorable = true
 ENT.JModEZstorable = true
 
 ---

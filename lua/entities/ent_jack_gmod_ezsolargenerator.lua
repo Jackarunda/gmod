@@ -11,13 +11,15 @@ ENT.Model = "models/jmod/machines/Scaffolding_smol.mdl"
 ENT.Mass = 100
 --
 ENT.JModPreferredCarryAngles = Angle(90, 0, 0)
+ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 75,
 	MaxElectricity = 0
 }
 ENT.DynamicPerfSpecs = {
-	ChargeSpeed = 1
+	ChargeSpeed = 1,
+	Armor = 1
 }
 ENT.EZpowerProducer = true
 ENT.EZpowerSocket = Vector(0, 0, -30)
@@ -125,21 +127,10 @@ if(SERVER)then
 	function ENT:TurnOff(activator, auto)
 		if (self:GetState() <= 0) then return end
 		if IsValid(activator) then self.EZstayOn = nil end
+		self:ProduceResource()
 		self:EmitSound("buttons/button18.wav", 60, 80)
 		self:SetState(STATE_OFF)
-		self:ProduceResource()
 		self.PowerSLI = 0 
-	end
-
-	function ENT:SpawnEffect(pos)
-		local effectdata=EffectData()
-		effectdata:SetOrigin(pos)
-		effectdata:SetNormal((VectorRand()+Vector(0,0,1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(5,10))
-		effectdata:SetScale(math.Rand(.5,1.5))
-		effectdata:SetRadius(math.Rand(2,4))
-		util.Effect("Sparks", effectdata)
-		self:EmitSound("items/suitchargeok1.wav", 80, 120)
 	end
 
 	function ENT:ProduceResource()
@@ -151,8 +142,6 @@ if(SERVER)then
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, self:WorldToLocal(pos), Angle(-90, 0, 0), Up*-300, 200)
 		self:EmitSound("items/suitchargeok1.wav", 80, 120)
-		--self:SpawnEffect(pos)
-
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		

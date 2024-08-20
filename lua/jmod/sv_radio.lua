@@ -34,7 +34,7 @@ end
 
 local function FindEZradios() 
 	local Radios = {}
-	for _, v in ipairs(ents.GetAll()) do
+	for _, v in ents.Iterator() do
 		if v.EZradio and (v.EZradio == true) then
 			table.insert(Radios, v)
 		end
@@ -270,42 +270,19 @@ function JMod.EZradioEstablish(transceiver, teamID, reassign)
 
 	local OriginalStation, ChosenStation = transceiver:GetOutpostID(), nil
 
-	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) then
-		if JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY then
-			return
-		end
-	else
+	if not(reassign) and (OriginalStation ~= 0) and (JMod.EZ_RADIO_STATIONS[OriginalStation] and (JMod.EZ_RADIO_STATIONS[OriginalStation].teamID == teamID)) and (JMod.EZ_RADIO_STATIONS[OriginalStation].state == JMod.EZ_STATION_STATE_READY) then
+		return
+	end
+
+	if not ChosenStation then
 		for k, id in pairs(AlliedStations) do
-			local Taken = false
-	
-			--[[for _, radio in ipairs(FindEZradios()) do
-				if radio ~= transceiver and radio:GetState() > 0 and radio:GetOutpostID() == id then
-					Taken = true
-					break
-				end
-			end--]]
-			--print(Taken)
-	
-			if not Taken and (JMod.EZ_RADIO_STATIONS[id].state == JMod.EZ_STATION_STATE_READY) then
+			local station = JMod.EZ_RADIO_STATIONS[id]
+
+			if (station.state == JMod.EZ_STATION_STATE_READY) then
 				ChosenStation = id
 				break
 			end
 		end
-	end
-
-	if not ChosenStation then
-		for k, v in pairs(AlliedStations) do
-			local station = JMod.EZ_RADIO_STATIONS[v]
-
-			if station.state == JMod.EZ_STATION_STATE_READY then
-				ChosenStation = v
-				break
-			end
-		end
-	end
-
-	if not ChosenStation then
-		ChosenStation = table.Random(AlliedStations)
 	end
 
 	if ChosenStation then
@@ -387,8 +364,7 @@ end, nil, "Removes a radio outpost for your team.")
 local function GetPlayerFromNick(nickname)
 	if not nickname then return nil end
 	nickname = string.lower(nickname)
-	local Entities = ents.GetAll()
-	for _, v in ipairs(Entities) do
+	for _, v in ents.Iterator() do
 		if not(IsValid(v)) and (v:IsPlayer()) and (string.lower(v:Nick())) == nickname then
 
 			return v
@@ -527,7 +503,7 @@ end
 
 function JMod.EZradioRequest(transceiver, id, ply, pkg, bff)
 	local PackageInfo, Station, Time = JMod.Config.RadioSpecs.AvailablePackages[pkg], JMod.EZ_RADIO_STATIONS[id], CurTime()
-	if not Station then return end
+	if not Station then return "No station with that ID" end
 	JMod.NotifyAllRadios(id) -- do a notify to update all radio states
 	transceiver.BFFd = bff
 	local override, msg = hook.Run("JMod_CanRadioRequest", ply, transceiver, pkg)

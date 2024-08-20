@@ -9,6 +9,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = false
 ---
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZcolorable = true
 ENT.EZlowFragPlease = true
 ENT.EZbuoyancy = .3
 ENT.RocketDisplaySpecs = {
@@ -153,7 +154,7 @@ if SERVER then
 	end
 
 	function ENT:LoadRocket(rocket)
-		if not (IsValid(rocket) and rocket:IsPlayerHolding()) then return end
+		if not (IsValid(rocket) and rocket:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then return end
 		local RoomLeft = 6 - #self.Rockets
 
 		if RoomLeft > 0 then
@@ -214,7 +215,7 @@ if SERVER then
 			end
 		end)
 
-		self:EmitSound("snd_jack_metallicdrop.ogg", 65, 90)
+		self:EmitSound("snd_jack_metallicclick.ogg", 65, 90)
 
 		table.remove(self.Rockets, slotNum)
 

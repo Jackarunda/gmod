@@ -15,26 +15,19 @@ ENT.ThinkRate = 1
 ENT.JModDontIrradiate = true
 ENT.AffectRange = 300
 ENT.MaxLife = 100
+ENT.MaxVel = 80
 --
 
 if SERVER then
 	function ENT:Initialize()
 		local Time = CurTime()
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetNotSolid(true)
 		self:DrawShadow(false)
-		local phys = self:GetPhysicsObject()
-		if IsValid(phys) then
-			phys:EnableCollisions(false)
-			phys:EnableGravity(false)
-		end
 		self:SetModelScale(2)
 		self.NextDmg = Time + 5
 		self.CurVel = self.CurVel or VectorRand() * 10
 		self.AirResistance = 2
-		self.MaxVel = 200--self.CurVel:Length() / self.AirResistance
 		self:SetLifeTime(math.random(self.MaxLife * .5, self.MaxLife) * JMod.Config.Particles.PoisonGasLingerTime)
 		if self.CustomInit then
 			self:CustomInit()
@@ -48,9 +41,8 @@ if SERVER then
 	end
 
 	function ENT:ShouldDamage(ent)
-		if not(math.random(1, 3) == 1) then return end
-		if not IsValid(ent) then return end
-		if ent.EZgasParticle == true then return end
+		if not IsValid(ent) then return false end
+		if ent.EZgasParticle == true then return false end
 		if ent:IsPlayer() then return ent:Alive() end
 
 		if (ent:IsNPC() or ent:IsNextBot()) and ent.Health and ent:Health() then
@@ -92,7 +84,10 @@ if SERVER then
 
 		if (obj:Health() < Helf) and obj:IsPlayer() then
 			JMod.Hint(obj, "gas damage")
-			JMod.TryCough(obj)
+			local inhaleProt = JMod.GetArmorBiologicalResistance(obj, DMG_NERVEGAS)
+			if inhaleProt < .75 then
+				JMod.TryCough(obj)
+			end
 		end
 	end
 
@@ -109,14 +104,14 @@ if SERVER then
 		if self.CalcMove then
 			self:CalcMove(ThinkRateHz)
 		else
-			local Force = VectorRand(-5, 5) + Vector(0, 0, -6) + JMod.Wind * 8
+			local Force = VectorRand(-4, 4) + Vector(0, 0, -8) + JMod.Wind * 4
 
 			for key, obj in pairs(ents.FindInSphere(SelfPos, self.AffectRange)) do
 				if math.random(1, 2) == 1 and not (obj == self) and self:CanSee(obj) then
 					if obj.EZgasParticle and not(obj.EZvirusParticle) then
 						-- repel in accordance with Ideal Gas Law
 						local NormVec = (obj:GetPos() - SelfPos):GetNormalized()
-						Force = Force - NormVec * 1
+						Force = Force - NormVec * .5
 					elseif (self.NextDmg < Time) and self:ShouldDamage(obj) then
 						self:DamageObj(obj)
 					end
@@ -142,10 +137,20 @@ if SERVER then
 				filter = { self, self.Canister },
 				mask = MASK_SHOT
 			})
+			if MoveTrace.StartSolid then
+				SafeRemoveEntity(self)
+
+				return
+			end
 			if not MoveTrace.Hit then
 				-- move unobstructed
 				self:SetPos(NewPos)
 			else
+				if MoveTrace.HitSky then
+					SafeRemoveEntity(self)
+	
+					return
+				end
 				-- bounce in accordance with Ideal Gas Law
 				self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
 				local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
@@ -181,6 +186,7 @@ if SERVER then
 	end
 elseif CLIENT then
 	local Mat = Material("particle/smokestack")
+	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 
 	function ENT:Initialize()
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
@@ -191,7 +197,7 @@ elseif CLIENT then
 
 		timer.Simple(2, function()
 			if IsValid(self) then
-				self.Visible = math.random(1, 5) == 2
+				self.Visible = math.random(1, 5) == 1
 			end
 		end)
 
@@ -202,9 +208,9 @@ elseif CLIENT then
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
-			self:DrawModel()
+			render.SetMaterial(DebugMat)
+			render.DrawSprite(self:GetPos(), 50, 50, Color(134, 224, 60, 200))
 		end
-		if (self:GetDTBool(0)) then return end
 
 		local Time = CurTime()
 

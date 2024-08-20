@@ -81,6 +81,16 @@ function SWEP:CustomThink()
 		self:SetTaskProgress(0)
 		self.NextTaskTime = Time + 1.5
 	end
+
+	if CLIENT then
+		if self.ScanResults then
+			self.LastScanTime = self.LastScanTime or Time
+			if self.LastScanTime < (Time - 30) then
+				self.ScanResults = nil
+				self.LastScanTime = nil
+			end
+		end
+	end
 end
 
 local DirtTypes = {
@@ -176,7 +186,7 @@ function SWEP:FinishSwing(swingProgress)
 	if swingProgress >= self.MaxSwingAngle then
 		self:SetTaskProgress(0)
 	else
-		self.NextTaskTime = CurTime() + 3
+		self.NextTaskTime = CurTime() + self.PrimaryAttackSpeed + 1
 	end
 end
 

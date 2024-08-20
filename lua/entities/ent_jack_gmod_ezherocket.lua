@@ -162,7 +162,14 @@ if SERVER then
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 		---
-		util.BlastDamage(game.GetWorld(), Att, SelfPos + Vector(0, 0, 50), 200, 200)
+		local BlastDmg = DamageInfo()
+		BlastDmg:SetDamage(300)
+		BlastDmg:SetDamageType(DMG_BLAST)
+		BlastDmg:SetDamageForce(self:GetRight() * 100)
+		BlastDmg:SetDamagePosition(self:GetPos())
+		BlastDmg:SetAttacker(self)
+		BlastDmg:SetInflictor(self)
+		util.BlastDamageInfo(BlastDmg, self:GetPos(), 300)
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do
 			if ent:GetClass() == "npc_helicopter" then

@@ -2,4 +2,14 @@
 {
 	"$baseTexture" "models\weapons\sanic\m2\Flamethrowerpack"
 	"$bumpmap" "models\weapons\sanic\m2\m2textn"
+
+	$detail "detail/metal_detail_01"
+	$detailscale 8
+	$detailblendfactor .5
+	$detailblendmode 0
+	$surfaceprop "metal"
+	$phong "1"
+	$phongfresnelranges "[1 1 1]"
+	$phongboost ".1"
+	$phongexponent "20"
 }

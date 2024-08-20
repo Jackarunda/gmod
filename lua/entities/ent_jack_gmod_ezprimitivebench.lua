@@ -32,10 +32,16 @@ ENT.FlexFuels = {JMod.EZ_RESOURCE_TYPES.WOOD, JMod.EZ_RESOURCE_TYPES.COAL}
 ENT.EZcolorable = false
 ---
 ENT.StaticPerfSpecs={
-	MaxDurability = 90,
-	Armor = .7
+	MaxDurability = 80,
+	Armor = 1
 }
 ENT.ResourceReqMult = 1.3
+ENT.BackupRecipe = {
+	[JMod.EZ_RESOURCE_TYPES.WOOD] = 25, 
+	[JMod.EZ_RESOURCE_TYPES.CERAMIC] = 15, 
+	[JMod.EZ_RESOURCE_TYPES.ALUMINUM] = 8
+}
+
 local STATE_BROKEN, STATE_FINE, STATE_PROCESSING = -1, 0, 1
 function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 1, "Progress")
@@ -93,7 +99,7 @@ if(SERVER)then
 	end
 
 	function ENT:ResourceLoaded(typ, accepted)
-		if typ == self:GetOreType() and accepted >= 1 then
+		if (typ == self:GetOreType()) and accepted >= 1 then
 			self:TurnOn(self.EZowner)
 		end
 		self:UpdateWireOutputs()
@@ -102,18 +108,21 @@ if(SERVER)then
 	function ENT:Use(activator)
 		local Alt = activator and activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		local State = self:GetState()
+		if not IsValid(JMod.GetEZowner(self)) then 
+			JMod.SetEZowner(self, activator)
+		end
 		if(State == STATE_FINE) then
 			if (self:GetElectricity() > 0) then
-				--if Alt then
-					--self:TurnOn(activator)
-				--else
+				if Alt and (self:GetOre() > 0) then
+					self:TurnOn(activator)
+				else
 					net.Start("JMod_EZworkbench")
 					net.WriteEntity(self)
 					net.WriteTable(self.Craftables)
 					net.WriteFloat(self.ResourceReqMult)
 					net.Send(activator)
 					JMod.Hint(activator, "craft")
-				--end
+				end
 			else
 				JMod.Hint(activator, "refillprimbench")
 			end
@@ -196,7 +205,7 @@ if(SERVER)then
 				local Tr = util.QuickTrace(FirePos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 						Gas:SetPos(Tr.HitPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
@@ -242,11 +251,11 @@ if(SERVER)then
 								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
 								i = i + 1
 							end
-							if Ent.JModInv then
+							--[[if Ent.JModInv then
 								for _, v in ipairs(Ent.JModInv.items) do
 									JMod.RemoveFromInventory(Ent, v.ent, Pos + VectorRand() * 50)
 								end
-							end
+							end--]]
 							SafeRemoveEntity(Ent)
 						end
 					end)
@@ -317,7 +326,7 @@ if(SERVER)then
 		end
 	end
 
-	function ENT:TryBuild(itemName,ply)
+	function ENT:TryBuild(itemName, ply)
 		local ItemInfo=self.Craftables[itemName]
 
 		local EnoughStuff, StuffLeft = JMod.HaveResourcesToPerformTask(nil,200,ItemInfo.craftingReqs,self,nil,(not(ItemInfo.noRequirementScaling) and self.ResourceReqMult) or 1)
@@ -359,6 +368,13 @@ if(SERVER)then
 
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
+	end
+
+	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
+		local Time = CurTime()
+		self.NextSmeltThink = Time + math.Rand(0, 1)
+		self.NextEffThink = Time + math.Rand(0, 3)
+		self.NextEnvThink = Time + math.Rand(0, 5)
 	end
 
 elseif(CLIENT)then

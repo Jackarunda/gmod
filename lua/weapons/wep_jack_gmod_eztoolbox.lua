@@ -790,7 +790,7 @@ end
 	Ent:SetCreator(self.Owner)
 	Ent:Spawn()
 	Ent:Activate()
-	Ent:SetResource(amt)
+	Ent:SetEZsupplies(Ent.EZsupplies, amt)
 	JMod.SetEZowner(Ent, self.Owner)
 	timer.Simple(.1, function()
 		if (IsValid(Ent) and IsValid(Ent:GetPhysicsObject())) then 

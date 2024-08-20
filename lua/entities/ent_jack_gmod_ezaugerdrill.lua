@@ -13,14 +13,15 @@ ENT.Model = "models/jmodels/props/machines/drill_support.mdl"
 ENT.Mass = 2000
 ENT.SpawnHeight = 115
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.EZupgradable = true
 ENT.EZanchorage = 500
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 400
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 2
+	Armor = 3
 }
 --
 --ENT.WhitelistedResources = {}

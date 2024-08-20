@@ -287,7 +287,7 @@ function SWEP:PrimaryAttack()
 				JMod.LiquidSpray(FirePos + FireRight * 2, FireForward * 1000, 1, self:EntIndex(), 2)
 			end
 
-			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) and (math.Rand(0, 1) > .3) then
+			if ((State == STATE_FLAMIN) or (State == STATE_SPRAYIN)) then
 				self:Pawnch()
 				self.Owner:ViewPunch(AngleRand() * .002)
 				local FlameTr = util.QuickTrace(FirePos, FireAng:Forward() * 200, self.Owner)
@@ -305,8 +305,9 @@ function SWEP:PrimaryAttack()
 				JMod.SetEZowner(Flame, self.Owner)
 				Flame:Spawn()
 				Flame:Activate()
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1, 0, 100))
-				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1, 0, 100))
+				local DrainMult = JMod.Config.Weapons.FlamethrowerFuelDrainMult or 1
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.FUEL, math.Clamp(Fuel - 1 * DrainMult, 0, 100))
+				self:SetEZsupplies(JMod.EZ_RESOURCE_TYPES.GAS, math.Clamp(Gas - 1 * DrainMult, 0, 100))
 			end
 			self.NextExtinguishTime = Time + NextAttackTime * 2
 		end

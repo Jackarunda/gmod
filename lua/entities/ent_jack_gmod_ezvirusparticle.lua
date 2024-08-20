@@ -20,8 +20,6 @@ if SERVER then
 		self.LifeTime = math.random(50, 100) * JMod.Config.Particles.PoisonGasLingerTime
 		self.DieTime = Time + self.LifeTime
 		self.NextDmg = Time + 5
-		self:SetModel("models/dav0r/hoverball.mdl")
-		self:SetMaterial("models/debug/debugwhite")
 		self:SetMoveType(MOVETYPE_NONE)
 		self:SetNotSolid(true)
 		self:DrawShadow(false)
@@ -66,6 +64,7 @@ if SERVER then
 	end
 
 elseif CLIENT then
+	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 	function ENT:Initialize()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 	end
@@ -73,7 +72,8 @@ elseif CLIENT then
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
-			self:DrawModel()
+			render.SetMaterial(DebugMat)
+			render.DrawSprite(self:GetPos(), 40, 40, Color(255, 166, 0, 200))
 		end
 	end
 end

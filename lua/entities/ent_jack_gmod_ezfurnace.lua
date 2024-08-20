@@ -11,6 +11,7 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/gas_smelter.mdl"
 ENT.Mass = 750
 ENT.SpawnHeight = 10
+ENT.EZcolorable = true
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -32,12 +33,12 @@ ENT.EZconsumes = {
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxElectricity = 500,
 	MaxOre = 500
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = 2
 }
 ENT.FlexFuels = { JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL }
 ---
@@ -247,7 +248,7 @@ if(SERVER)then
 			local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
 			if not (Tr.HitSky) then
 				for i = 1, 1 do
-					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+					local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 					Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, true)

@@ -11,6 +11,7 @@ ENT.Model = "models/jmod/machines/oil_refinery.mdl"
 ENT.Mass = 4000
 ENT.SpawnHeight = 10
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.OIL,
@@ -22,13 +23,13 @@ ENT.EZconsumes = {
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 250,
+	MaxDurability = 300,
 	MaxElectricity = 500,
 	MaxOil = 500
 }
 ENT.DynamicPerfSpecs = {
 	ProductionSpeed = 1,
-	Armor = 1
+	Armor = 2
 }
 ENT.FlexFuels = {JMod.EZ_RESOURCE_TYPES.COAL, JMod.EZ_RESOURCE_TYPES.FUEL}
 ---
@@ -111,10 +112,6 @@ if(SERVER)then
 
 	function ENT:OnRemove()
 		if(self.SoundLoop)then self.SoundLoop:Stop() end
-	end
-
-	function ENT:SpawnEffect(pos)
-		self:EmitSound("snds_jack_gmod/ding.ogg", 80, 120)
 	end
 
 	function ENT:ProduceResource()
@@ -202,7 +199,7 @@ if(SERVER)then
 				local Tr=util.QuickTrace(GasPos, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					for i = 1, 1 do
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 						Gas:SetPos(GasPos)
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)

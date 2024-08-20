@@ -40,7 +40,7 @@ if SERVER then
 				end)
 			end
 			JMod.ResourceEffect(self.EZsupplies, self:LocalToWorld(self:OBBCenter()), nil, 1, self:GetResource() / 100, 1)
-			self:SetResource(self:GetResource() - AmtToRemove)
+			self:SetEZsupplies(self.EZsupplies, self:GetResource() - AmtToRemove)
 
 			if self:GetResource() <= 0 then
 				self:Remove()

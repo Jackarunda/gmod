@@ -161,11 +161,6 @@ JMod.EZ_RESOURCE_TYPE_METHODS = {
 	[JMod.EZ_RESOURCE_TYPES.CONCRETE] = "Concrete"
 }
 
-JMod.EZ_WEIGHTLESS_RESOURCE_TYPES = {
-	[JMod.EZ_RESOURCE_TYPES.POWER] = true,
-	[JMod.EZ_RESOURCE_TYPES.ANTIMATTER] = true
-}
-
 -- EZ item quality grade (upgrade level) definitions
 JMod.EZ_GRADE_BASIC = 1
 JMod.EZ_GRADE_COPPER = 2
@@ -193,6 +188,7 @@ JMod.EZ_STATE_WARNING = 5
 
 JMod.EZ_HAZARD_PARTICLES = {
 	["ent_jack_gmod_ezcsparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .2},
+	["ent_jack_gmod_ezcoparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, 0},
 	["ent_jack_gmod_ezgasparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .5},
 	["ent_jack_gmod_ezvirusparticle"] = {JMod.EZ_RESOURCE_TYPES.CHEMICALS, .1},
 	["ent_jack_gmod_ezfalloutparticle"] = {JMod.EZ_RESOURCE_TYPES.FISSILEMATERIAL, .2}
@@ -255,60 +251,63 @@ JMod.HitMatColors = {
 }
 
 JMod.DefualtArmorTable={
-	[DMG_BUCKSHOT]=.2,
-	[DMG_SNIPER]=.6,
-	[DMG_CRUSH]=.6,
-	[DMG_VEHICLE]=.6,
-	[DMG_BULLET]=.3,
+	[DMG_BUCKSHOT]=.1,
+	[DMG_CRUSH]=.5,
+	[DMG_VEHICLE]=.5,
+	[DMG_BULLET]=.2,
 	[DMG_SLASH]=.2,
-	[DMG_BLAST]=.8,
+	[DMG_BLAST]=1,
+	[DMG_BLAST_SURFACE]=1,
 	[DMG_CLUB]=.5,
 	[DMG_SHOCK]=1,
-	[DMG_BURN]=.2,
+	[DMG_BURN]=.3,
+	[DMG_SLOWBURN]=.3,
 	[DMG_ACID]=.4,
 	[DMG_PLASMA]=.4,
+	[DMG_AIRBOAT]=.75,
+	[DMG_SONIC]=.1,
+	-- Machines should never be damaged by these
 	[DMG_DROWN]=0,
 	[DMG_PARALYZE]=0,
 	[DMG_NERVEGAS]=0,
 	[DMG_POISON]=0,
 	[DMG_RADIATION]=0,
-	[DMG_FALL]=1,
-	[DMG_SONIC]=.6,
-	[DMG_ENERGYBEAM]=.8,
-	[DMG_SLOWBURN]=.1,
-	[DMG_PHYSGUN]=1,
-	[DMG_AIRBOAT]=.75,
-	[DMG_DISSOLVE]=.8,
-	[DMG_BLAST_SURFACE]=.8,
-	[DMG_DIRECT]=.3,
+	-- These damages should always be applied
+	[DMG_SNIPER]=1,
 	[DMG_GENERIC]=1,
+	[DMG_FALL]=1,
+	[DMG_ENERGYBEAM]=1,
+	[DMG_PHYSGUN]=1,
+	[DMG_DIRECT]=1,
+	[DMG_DISSOLVE]=1,
 	[DMG_MISSILEDEFENSE]=1
 }
 
 JMod.TreeArmorTable={
+	[DMG_SLASH]=1.1,
+	[DMG_BLAST]=1.1,
+	[DMG_CLUB]=1.1,
 	[DMG_BUCKSHOT]=.1,
 	[DMG_SNIPER]=.2,
 	[DMG_CRUSH]=.9,
 	[DMG_BULLET]=.1,
-	[DMG_SLASH]=1.1,
-	[DMG_BLAST]=1.1,
-	[DMG_CLUB]=1.1,
 	[DMG_SHOCK]=.9,
 	[DMG_BURN]=.3,
-	[DMG_ACID]=1,
+	[DMG_SLOWBURN]=.3,
+	[DMG_AIRBOAT]=.5,
 	[DMG_PLASMA]=.3,
-	[DMG_VEHICLE]=1,
+	[DMG_RADIATION]=.2,
+	-- These values are more black and white
+	[DMG_POISON]=0,
 	[DMG_DROWN]=0,
 	[DMG_PARALYZE]=0,
 	[DMG_NERVEGAS]=0,
-	[DMG_POISON]=0,
-	[DMG_RADIATION]=.2,
 	[DMG_FALL]=0,
 	[DMG_SONIC]=0,
 	[DMG_ENERGYBEAM]=1,
-	[DMG_SLOWBURN]=.3,
 	[DMG_PHYSGUN]=1,
-	[DMG_AIRBOAT]=.5,
+	[DMG_ACID]=1,
+	[DMG_VEHICLE]=1,
 	[DMG_DISSOLVE]=1,
 	[DMG_BLAST_SURFACE]=1,
 	[DMG_DIRECT]=1,

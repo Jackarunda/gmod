@@ -727,18 +727,26 @@ local BlacklistedGroups = {COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON}
 function JMod.GetSalvageYield(ent)
 	if not IsValid(ent) then return {}, "" end
 	if ent.GetState and (ent:GetState() >= 1) then return {}, "bruh, it's active" end
+
 	local Class, Mdl = string.lower(ent:GetClass()), string.lower(ent:GetModel())
+
 	if table.HasValue(BlacklistedGroups, bit.band(ent:GetCollisionGroup(), bit.bor(COLLISION_GROUP_DEBRIS, COLLISION_GROUP_WEAPON))) then return {}, "cannot salvage: bad collision group" end
 	if ent:IsWorld() then return {}, "can't salvage the world" end
+
 	local PhysNum = ent:GetPhysicsObjectCount()
 	local Phys = ent:GetPhysicsObject()
+
 	if not IsValid(Phys) then return {}, "cannot salvage: invalid physics" end
+
 	local Mat, Mass = string.lower(Phys:GetMaterial()), Phys:GetMass()
+
 	if not (Mat and Mass and (Mass > 0)) then return {}, "cannot salvage: corrupt physics" end
+
 	local RagMass = nil
+
 	if PhysNum > 1 then
 		for i = 1, PhysNum do
-			local RagPhys = ent:GetPhysicsObjectNum(i)
+			local RagPhys = ent:GetPhysicsObjectNum(i - 1)
 			if not IsValid(RagPhys) then break end
 			RagMass = (RagMass or 0) + RagPhys:GetMass()
 		end
@@ -752,6 +760,7 @@ function JMod.GetSalvageYield(ent)
 
 	if Mass > 10000 then return {}, "cannot salvage: too large" end
 	if ent:IsNPC() or ent:IsPlayer() then return {}, (tostring(ent.PrintName or "They") .. " don't want to be salvaged") or ".." end
+	
 	local AnnoyedReplyTable = {
 		"no",
 		"...no",
@@ -843,11 +852,11 @@ function JMod.GetSalvageYield(ent)
 		end
 	end
 
-	if ent.JModInv then
+	--[[if ent.JModInv then
 		for k, v in pairs(ent.JModInv.EZresources) do
 			Results[k] = (Results[k] or 0) + v
 		end
-	end
+	end--]]
 
 	local FinalResults, Message = hook.Run("JMod_SalvageResults", ent, Results, Mat, Mdl, Specialized)
 
@@ -1340,7 +1349,7 @@ if SERVER then
 
 	function JMod.EZ_ScroungeArea(ply, cmd, args)
 		local Time = CurTime()
-		local Debug = args[1] --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
+		local Debug = (args and args[1]) or false --JMod.IsAdmin(ply) and GetConVar("sv_cheats"):GetBool()
 
 		if Debug then
 			if not JMod.IsAdmin(ply) then print("JMod: This console command only works for admins") return end

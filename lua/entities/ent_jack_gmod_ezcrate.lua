@@ -79,6 +79,7 @@ if SERVER then
 		---
 		if istable(WireLib) then
 			self.Outputs = WireLib.CreateOutputs(self, {"Type [STRING]", "Amount Left [NORMAL]"}, {"Will be 'generic' by default", "Amount of resources left in the crate"})
+			self.Inputs = WireLib.CreateInputs(self, {"Drop [NORMAL]"}, {"Drops the amount specified in the input"})
 		end
 		---
 		timer.Simple(.01, function()
@@ -86,6 +87,14 @@ if SERVER then
 				self:CalcWeight()
 			end
 		end)
+	end
+
+	function ENT:TriggerInput(iname, value)
+		if iname == "Drop" then
+			if value > 0 then
+				self:DropAmount(value)
+			end
+		end
 	end
 
 	function ENT:UpdateConfig()
@@ -154,31 +163,32 @@ if SERVER then
 		Box:SetAngles(self:GetAngles())
 		Box:Spawn()
 		Box:Activate()
-		Box:SetResource(Given)
+		Box:SetEZsupplies(self:GetResourceType(), Given)
 		timer.Simple(0.1, function()
 			if IsValid(Box) and IsValid(activator) and activator:Alive() then
 				activator:PickupObject(Box)
 			end
 		end)
 		Box.NextLoad = CurTime() + 2
-		self:SetResource(Resource - Given)
+		self:SetEZsupplies(self:GetResourceType(), Resource - Given)
 		self:EmitSound("Ammo_Crate.Close")
 		self:CalcWeight()
+	end
 
-		if self:GetResource() <= 0 then
-			--self:SetResource(0)
-			self:ApplySupplyType("generic")
-		end
+	function ENT:DropAmount(amt)
+		local Resource = self:GetResource()
+		if Resource <= 0 then return end
+		local Given = math.min(Resource, amt)
+		JMod.MachineSpawnResource(self, self:GetResourceType(), Given, Vector(0, 0, 6), Angle(0, 0, 0), nil, nil)
+		self:SetEZsupplies(self:GetResourceType(), Resource - Given)
 	end
 
 	function ENT:Think()
 	end
 
-	--pfahahaha
 	function ENT:OnRemove()
 	end
 
-	--aw fuck you
 	function ENT:TryLoadResource(typ, amt, overrideTimer)
 		local Time = CurTime()
 		if (self.NextLoad > Time) and not(overrideTimer) then self.NextLoad = math.min(self.NextLoad, Time + .5) return 0 end
@@ -190,12 +200,13 @@ if SERVER then
 		end
 
 		-- Consider the loaded type
-		if typ == self:GetResourceType() then
+		local OurNewType = self:GetResourceType()
+		if typ == OurNewType then
 			local Resource = self:GetResource()
 			local Missing = self.MaxResource - Resource
 			if Missing <= 0 then return 0 end
 			local Accepted = math.min(Missing, amt)
-			self:SetResource(Resource + Accepted)
+			self:SetEZsupplies(OurNewType, Resource + Accepted)
 			self:CalcWeight()
 			self.NextLoad = Time + .5
 

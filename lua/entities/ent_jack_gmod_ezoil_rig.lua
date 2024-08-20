@@ -13,6 +13,7 @@ ENT.Model = "models/jmod/machines/oil_rig.mdl"
 ENT.Mass = 3000
 ENT.SpawnHeight = 50
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.EZanchorage = 2000
 ENT.EZpowerSocket = Vector(0, 0, 130)
 ENT.EZbuoyancy = .8
@@ -21,7 +22,7 @@ ENT.WhitelistedResources = {JMod.EZ_RESOURCE_TYPES.OIL}
 ---
 ENT.EZupgradable = true
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 400,
 }
 ENT.DynamicPerfSpecs = {
@@ -311,8 +312,6 @@ elseif(CLIENT)then
 		--local PipeLength = self:GetPipeLength()
 
 		self:DrawModel()
-
-		if self.LastGrade ~= Grade then self:SetSubMaterial(0, JMod.EZ_GRADE_MATS[Grade]:GetName()) end
 		--
 		local BasePos = SelfPos + Up * 30
 		local Obscured=false--util.TraceLine({start=EyePos(),endpos=BasePos,filter={LocalPlayer(),self},mask=MASK_OPAQUE}).Hit
@@ -321,6 +320,10 @@ elseif(CLIENT)then
 		if((not(DetailDraw))and(Obscured))then return end -- if player is far and sentry is obscured, draw nothing
 		if(Obscured)then DetailDraw=false end -- if obscured, at least disable details
 		if(State==STATE_BROKEN)then DetailDraw=false end -- look incomplete to indicate damage, save on gpu comp too
+
+		--if self.LastGrade ~= Grade then self:SetSubMaterial(0, JMod.EZ_GRADE_MATS[Grade]:GetName()) end
+		self:SetSubMaterial(0, JMod.EZ_GRADE_MATS[Grade]:GetName())
+
 		if(DetailDraw)then
 			local LadderAng=SelfAng:GetCopy()
 			LadderAng:RotateAroundAxis(Up,0)

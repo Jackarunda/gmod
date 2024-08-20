@@ -169,6 +169,17 @@ if SERVER then
 			if not util.QuickTrace(SelfPos, Vector(0, 0, -300), {self}).HitWorld then
 				Eff = "500lb_air"
 			end
+			for k, ply in player.Iterator() do
+				local Dist = ply:GetPos():Distance(SelfPos)
+	
+				if (Dist > 250) and (Dist < 5000) then
+					timer.Simple(Dist / 6000, function()
+						ply:EmitSound("snds_jack_gmod/big_bomb_far.ogg", 55, 110)
+						sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", ply:GetPos(), 60, 70)
+						util.ScreenShake(ply:GetPos(), 1000, 3, 1, 100)
+					end)
+				end
+			end
 			ParticleEffect(Eff, SelfPos, Angle(0, 0, 0))
 			sound.Play("ambient/explosions/explode_" .. math.random(1, 9) .. ".wav", SelfPos, 80, 100)
 		else
@@ -178,8 +189,6 @@ if SERVER then
 			splad:SetEntity(self)
 			util.Effect("eff_jack_gmod_watersplode", splad, true, true)
 			
-
-			---
 			for i = 1, 3 do
 				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 80, 100)
 				sound.Play("ambient/water/water_splash" .. math.random(1, 3) .. ".wav", SelfPos, 160, 50)

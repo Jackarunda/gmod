@@ -1008,6 +1008,13 @@ net.Receive("JMod_EZradio", function()
 
 	local Radio = net.ReadEntity()
 	local Orderables = net.ReadTable()
+	JMod.Config.RadioSpecs = {
+		DeliveryTimeMult = 1,
+		ParachuteDragMult = 1,
+		StartingOutpostCount = 1,
+		AvailablePackages = {}
+	}
+	JMod.Config.RadioSpecs.AvailablePackages = Orderables
 
 	if SelectionMenuOpen then return end
 	StandardSelectionMenu('selecting', "EZ Radio", Orderables, Radio, function(name, info, ply, ent)
@@ -1856,11 +1863,42 @@ net.Receive("JMod_ModifyConnections", function()
 			SelectButton:SetHeight(22)
 			SelectButton:Dock(BOTTOM)
 			SelectButton.DoClick = function()
-				net.Start("JMod_ModifyConnections")
-					net.WriteEntity(Ent)
-					net.WriteString(v.Func)
-					net.WriteEntity(NULL)
-				net.SendToServer()
+				if v.Func == "disconnect_all" then
+					local ConfirmPopup = vgui.Create("DFrame")
+					ConfirmPopup:SetTitle("Confirm Disconnect All")
+					ConfirmPopup:SetSize(300, 100)
+					ConfirmPopup:Center()
+					ConfirmPopup:MakePopup()
+
+					local ConfirmButton = vgui.Create("DButton", ConfirmPopup)
+					ConfirmButton:SetText("Disconnect All")
+					ConfirmButton:SetHeight(22)
+					ConfirmButton:Dock(BOTTOM)
+					ConfirmButton.DoClick = function()
+						net.Start("JMod_ModifyConnections")
+							net.WriteEntity(Ent)
+							net.WriteString(v.Func)
+							net.WriteEntity(NULL)
+						net.SendToServer()
+						ConfirmPopup:Close()
+					end
+					ConfirmButton:DockPadding(2, 2, 2, 2)
+
+					local CancelButton = vgui.Create("DButton", ConfirmPopup)
+					CancelButton:SetText("Cancel")
+					CancelButton:SetHeight(22)
+					CancelButton:Dock(BOTTOM)
+					CancelButton.DoClick = function()
+						ConfirmPopup:Close()
+					end
+					CancelButton:DockPadding(2, 2, 2, 2)
+				else
+					net.Start("JMod_ModifyConnections")
+						net.WriteEntity(Ent)
+						net.WriteString(v.Func)
+						net.WriteEntity(NULL)
+					net.SendToServer()
+				end
 				Frame:Close()
 			end
 			SelectButton:DockPadding(2, 2, 2, 2)

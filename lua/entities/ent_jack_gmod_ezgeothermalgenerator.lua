@@ -10,12 +10,13 @@ ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/geothermal.mdl"
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.SpawnHeight = 52
 ENT.Mass = 8000
 ENT.EZanchorage = 2000
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 300,
+	MaxDurability = 400,
 	MaxElectricity = 0,
 	MaxWater = 200
 }

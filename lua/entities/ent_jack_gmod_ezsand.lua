@@ -31,7 +31,7 @@ if SERVER then
 		dmginfo:SetDamage(DmgAmt / ResourceAmt)
 		dmginfo:SetDamageForce(DmgVec / (ResourceAmt^2))
 		self:TakePhysicsDamage(dmginfo)
-		self:SetResource(math.Clamp(ResourceAmt - DmgAmt / 100, 0, 100))
+		self:SetEZsupplies(self.EZsupplies, math.Clamp(ResourceAmt - DmgAmt / 100, 0, 100))
 
 		if dmginfo:GetDamage() > self.DamageThreshold then
 			local Pos = self:GetPos()

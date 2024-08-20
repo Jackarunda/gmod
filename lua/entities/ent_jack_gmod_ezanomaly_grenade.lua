@@ -456,7 +456,7 @@ local DetonationEffects = {
 			net.Broadcast()
 
 			timer.Simple(3.8, function()
-				for k, v in pairs(ents.GetAll()) do
+				for k, v in ents.Iterator() do
 					local CanModel = v.SetModel and v.GetPhysicsObject and IsValid(v:GetPhysicsObject()) and not v:IsWorld()
 					local CanMaterial = v.SetMaterial and not v:IsWorld()
 

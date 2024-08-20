@@ -37,7 +37,7 @@ if SERVER then
 
 	function ENT:CalcMove(ThinkRateHz)
 		local SelfPos, Time = self:GetPos(), CurTime()
-		local RandDir = Vector(math.random(-10, 10), math.random(-10, 10), math.random(-15, 5))
+		local RandDir = Vector(math.random(-10, 10), math.random(-10, 10), math.random(-20, 5))
 		--RandDir.z = RandDir.z / 2
 		local Force = RandDir + (JMod.Wind * 10)
 
@@ -86,6 +86,11 @@ if SERVER then
 			-- move unobstructed
 			self:SetPos(NewPos + MoveTrace.HitNormal * 20)
 		else
+			if MoveTrace.HitSky and math.random(1, 3) == 1 then
+				SafeRemoveEntity(self)
+
+				return
+			end
 			-- bounce in accordance with Ideal Gas Law
 			self:SetPos(MoveTrace.HitPos + MoveTrace.HitNormal * 1)
 			local CurVelAng, Speed = self.CurVel:Angle(), self.CurVel:Length()
@@ -107,12 +112,13 @@ elseif CLIENT then
 	--[[function ENT:Initialize()
 		self:SetModelScale(10, 0)
 	end]]--
+	local DebugMat = Material("sprites/mat_jack_jackconfetti")
 
 	function ENT:DrawTranslucent()
 		self.DebugShow = LocalPlayer().EZshowGasParticles or false
 		if self.DebugShow then
-			self:DrawModel()
-			self:SetModelScale(10, 0)
+			render.SetMaterial(DebugMat)
+			render.DrawSprite(self:GetPos(), 100, 100, Color(82, 77, 65, 200))
 		end
 	end
 end

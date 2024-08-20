@@ -10,7 +10,6 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.DamageThreshold = 120
-ENT.MaxItems = JMod.EZsmallCrateSize or 100
 ENT.KeepJModInv = true
 
 ---
@@ -43,10 +42,9 @@ if SERVER then
 		self:SetUseType(SIMPLE_USE)
 		self:SetItemCount(0)
 
-		--self.EZconsumes = {self.ItemType}
-
+		self.MaxItems = JMod.EZsmallCrateSize or 100 * JMod.Config.QoL.InventorySizeMult
 		self.NextLoad = 0
-		self.Items = self.Items or {}
+		--self.Items = self.Items or {}
 
 		timer.Simple(.01, function()
 			self:CalcWeight()
@@ -58,7 +56,7 @@ if SERVER then
 		--self:GetPhysicsObject():SetMass(50 + (self:GetItemCount() / self.MaxItems) * 250)
 		self:GetPhysicsObject():SetMass(50 + self.JModInv.weight)
 		self:GetPhysicsObject():Wake()
-		self:SetItemCount(self.JModInv.volume)
+		self:SetItemCount(self.JModInv.volume / math.max(JMod.Config.QoL.InventorySizeMult, 0.01))
 	end
 
 	function ENT:PhysicsCollide(data, physobj)
@@ -168,20 +166,20 @@ elseif CLIENT then
 		self:DrawModel()
 
 		if DetailDraw then
-			local Up, Right, Forward, Resource = Ang:Up(), Ang:Right(), Ang:Forward(), tostring(self:GetItemCount())
+			local Up, Right, Forward, ItemCount = Ang:Up(), Ang:Right(), Ang:Forward(), tostring(self:GetItemCount())
 			Ang:RotateAroundAxis(Ang:Right(), 90)
 			Ang:RotateAroundAxis(Ang:Up(), -90)
 			cam.Start3D2D(Pos + Up * 10 - Forward * 19.8 + Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("STORAGE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("Capacity: " .. ItemCount .. "/100", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 			---
 			Ang:RotateAroundAxis(Ang:Right(), 180)
 			cam.Start3D2D(Pos + Up * 10 + Forward * 20.1 - Right, Ang, .15)
 			draw.SimpleText("JACKARUNDA INDUSTRIES", "JMod-Stencil-S", 0, 0, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			draw.SimpleText("STORAGE", "JMod-Stencil", 0, 15, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-			draw.SimpleText("Capacity: " .. Resource .. "/" .. self.MaxItems, "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+			draw.SimpleText("Capacity: " .. ItemCount .. "/100", "JMod-Stencil-S", 0, 70, TxtCol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			cam.End3D2D()
 		end
 	end

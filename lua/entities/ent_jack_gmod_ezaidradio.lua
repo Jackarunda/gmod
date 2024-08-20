@@ -13,13 +13,14 @@ ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezradio"
 ENT.Mass=150
 ----
+ENT.EZcolorable = true
 ENT.JModPreferredCarryAngles=Angle(0,0,0)
 ENT.SpawnHeight=20
 ENT.EZradio = true
 ----
 ENT.StaticPerfSpecs={
 	MaxDurability=100,
-	Armor=.8
+	Armor=2
 }
 ----
 local STATE_BROKEN,STATE_OFF,STATE_CONNECTING=-1,0,1
@@ -150,6 +151,8 @@ if(SERVER)then
 
 	function ENT:Speak(msg, parrot, parrotply)
 		if self:GetState() < 1 then return end
+		if not msg then msg = "uhhhh" end
+
 		self:ConsumeElectricity()
 
 		if parrot then
@@ -235,22 +238,22 @@ if(SERVER)then
 				self:ConsumeElectricity()
 
 				if self:TryFindSky() then
-					self:Speak("Broadcast received, establishing comm line...")
+					self:Speak("Attempting to establish comm line...")
 					self:Connect(self.EZowner)
 				else
 					JMod.Hint(JMod.GetEZowner(self), "aid sky")
 				end
 				self.ConnectionAttempts = self.ConnectionAttempts + 1
 
-					if self.ConnectionAttempts > 5 then
-						self:Speak("Can not establish connection to any outpost. Shutting down.")
+				if self.ConnectionAttempts > 3 then
+					self:Speak("Can not establish connection to any outpost. Shutting down.")
 
-						timer.Simple(1.2, function()
-							if IsValid(self) then
-								self:TurnOff()
-							end
-						end)
-					end
+					timer.Simple(1.2, function()
+						if IsValid(self) then
+							self:TurnOff()
+						end
+					end)
+				end
 			elseif State > 0 then
 				self:ConsumeElectricity(0.3)
 
@@ -286,14 +289,15 @@ if(SERVER)then
 	end
 
 	function ENT:TryFindSky()
-		local SelfPos = self:LocalToWorld(Vector(10, 0, 45))
+		local TestPos = self:LocalToWorld(Vector(10, 0, 45))
 
 		for i = 1, 3 do
 			local Dir = self:LocalToWorldAngles(Angle(-50 + i * 5, 0, 0)):Forward()
 
+			--debugoverlay.Line(TestPos, TestPos + Dir * 9e9, 2, Color(0, 89, 255), true)
 			local HitSky = util.TraceLine({
-				start = SelfPos,
-				endpos = SelfPos + Dir * 9e9,
+				start = TestPos,
+				endpos = TestPos + Dir * 9e9,
 				filter = {self},
 				mask = MASK_OPAQUE
 			}).HitSky
@@ -422,10 +426,14 @@ if(SERVER)then
 
 				SuccessfulTransmit = true
 			else
-				local Override, Words = hook.Run("JMod_CanRadioRequest", ply, self, Message)
+				local Override, Words = hook.Run("JMod_CustomRadioRequest", ply, self, Message)
 				if Override then
 					SuccessfulTransmit = Override
-					self:Speak(Words or "transmition recieved", ParrotPhrase, ply)
+					if Words then
+						self:Speak(Words, ParrotPhrase, ply)
+					else
+						self:Speak("Transmission recieved", ParrotPhrase, ply)
+					end
 				else
 					self:Speak("I don't understand. Try 'help'", ParrotPhrase, ply)
 				end

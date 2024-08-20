@@ -14,16 +14,17 @@ ENT.EZupgradable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ENT.Mass = 400
 ENT.SpawnHeight = 5
+ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 120,
+	MaxDurability = 200,
 	MaxElectricity = 1000,
 	MaxWater = 300
 }
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1,
-	Armor = 1
+	Armor = 2
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -250,7 +251,7 @@ if(SERVER)then
 			if (State == STATE_ON) then
 				local Tr = util.QuickTrace(self:GetPos() + Forward * 70, Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) and (math.random(1, Grade) == 1) then
-					local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+					local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 					Gas:SetPos(self:GetPos() + Forward * 120 + Vector(0, 0, 100))
 					JMod.SetEZowner(Gas, self.EZowner)
 					Gas:SetDTBool(0, true)

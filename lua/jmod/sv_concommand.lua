@@ -1,4 +1,117 @@
-﻿
+﻿function JMod.EZ_WeaponLaunch(ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local Weps = {}
+	local Pods = {}
+
+	for k, ent in ents.Iterator() do
+		if ent.EZlaunchableWeaponLoadTime and JMod.GetEZowner(ent) == ply then
+			table.insert(Pods, ent)
+		elseif ent.EZlaunchableWeaponArmedTime and JMod.GetEZowner(ent) == ply and ent:GetState() == 1 then
+			table.insert(Weps, ent)
+		end
+	end
+
+	local FirstWep, Earliest = nil, 9e9
+
+	for k, wep in pairs(Weps) do
+		if wep.EZlaunchableWeaponArmedTime < Earliest then
+			FirstWep = wep
+			Earliest = wep.EZlaunchableWeaponArmedTime
+		end
+	end
+
+	for k, pod in pairs(Pods) do
+		if pod.EZlaunchableWeaponLoadTime < Earliest then
+			FirstWep = pod
+			Earliest = pod.EZlaunchableWeaponLoadTime
+		end
+	end
+
+	if IsValid(FirstWep) then
+		-- knock knock it's pizza time
+		FirstWep:EmitSound("buttons/button6.wav", 75, 110)
+
+		timer.Simple(.2, function()
+			if IsValid(FirstWep) then
+				if FirstWep.EZlaunchableWeaponLoadTime then
+					FirstWep:LaunchRocket(#FirstWep.Rockets, true, ply)
+				elseif FirstWep.EZlaunchableWeaponArmedTime then
+					FirstWep.DropOwner = ply
+					FirstWep:Launch()
+				end
+			end
+		end)
+	end
+end
+
+function JMod.EZ_BombDrop(ply)
+	if not (IsValid(ply) and ply:Alive()) then return end
+	local Boms = {}
+	local Bays = {}
+
+	for k, ent in ents.Iterator() do
+		if ent.EZdroppableBombArmedTime and IsValid(ent.EZowner) and ent.EZowner == ply then
+			table.insert(Boms, ent)
+		elseif ent.EZdroppableBombLoadTime and IsValid(ent.EZowner) and ent.EZowner == ply then
+			table.insert(Bays, ent)
+		end
+	end
+
+	local FirstBom, Earliest = nil, 9e9
+
+	for k, bay in pairs(Bays) do
+		if (bay.EZdroppableBombLoadTime < Earliest) and (#bay.Bombs > 0) then
+			FirstBom = bay
+			Earliest = bay.EZdroppableBombLoadTime
+		end
+	end
+
+	for k, bom in pairs(Boms) do
+		if (bom.EZdroppableBombArmedTime < Earliest) and (constraint.HasConstraints(bom) or not bom:GetPhysicsObject():IsMotionEnabled()) then
+			FirstBom = bom
+			Earliest = bom.EZdroppableBombArmedTime
+		end
+	end
+
+	if IsValid(FirstBom) then
+		-- knock knock it's pizza time
+		FirstBom:EmitSound("buttons/button6.wav", 75, 120)
+
+		timer.Simple(.2, function()
+			if IsValid(FirstBom) then
+				if FirstBom.EZdroppableBombArmedTime then
+					if FirstBom.Drop then
+						FirstBom:Drop(ply)
+					else
+						constraint.RemoveAll(FirstBom)
+						FirstBom:GetPhysicsObject():EnableMotion(true)
+						FirstBom:GetPhysicsObject():Wake()
+						FirstBom.DropOwner = ply
+					end
+				elseif FirstBom.EZdroppableBombLoadTime then
+					FirstBom:BombRelease(#FirstBom.Bombs, true, ply)
+				end
+			end
+		end)
+	end
+end
+
+function JMod.EZ_Remote_Trigger(ply)
+	if not IsValid(ply) then return end
+	if not ply:Alive() then return end
+	sound.Play("snd_jack_detonator.ogg", ply:GetShootPos(), 55, math.random(90, 110))
+
+	timer.Simple(.75, function()
+		if IsValid(ply) and ply:Alive() then
+			for k, v in ents.Iterator() do
+				if v.JModEZremoteTriggerFunc and v.EZowner and (v.EZowner == ply) then
+					v:JModEZremoteTriggerFunc(ply)
+				end
+			end
+		end
+	end)
+end
+
 concommand.Add("jmod_friends", function(ply)
 	net.Start("JMod_Friends")
 	net.WriteBit(false)
@@ -37,7 +150,7 @@ end, nil, "Does a server-wide admin cleanup of everything, including players.")
 
 concommand.Add("jmod_admin_sanitizemap", function(ply, cmd, args)
 	if (IsValid(ply) and ply:IsSuperAdmin()) or not IsValid(ply) then
-		for k, v in pairs(ents.GetAll()) do
+		for k, v in ents.Iterator() do
 			if v.EZfalloutParticle then
 				v:Remove()
 			end

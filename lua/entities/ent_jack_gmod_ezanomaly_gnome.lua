@@ -262,10 +262,8 @@ if SERVER then
 	end
 
 	function ENT:FindPatsy(victim)
-		local Playas = player.GetAll()
-
-		if #Playas > 1 then
-			for k, v in pairs(Playas) do
+		if player.GetCount() > 1 then
+			for k, v in player.Iterator() do
 				if v ~= victim then return v end
 			end
 		end

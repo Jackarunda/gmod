@@ -28,11 +28,14 @@ if SERVER then
 		util.Effect("eff_jack_minesplode", plooie, true, true)
 		util.ScreenShake(SelfPos, 20, 20, 1, 1000)
 
-		local OnGround = util.QuickTrace(SelfPos + Vector(0, 0, 5), Vector(0, 0, -15), {self}).Hit
+		local GroundTr = util.QuickTrace(SelfPos + Vector(0, 0, 5), Vector(0, 0, -15), {self})
 
-		local Spred = Vector(0, 0, 0)
 		--              shooter, origin, fragNum, fragDmg, fragMaxDist, attacker, direction, spread, zReduction
-		JMod.FragSplosion(self, SelfPos + Vector(0, 0, 10), 3000, 80, 2500, JMod.GetEZowner(self))
+		if GroundTr.Hit then
+			JMod.FragSplosion(self, SelfPos + Vector(0, 0, 5), 3000, 80, 2500, JMod.GetEZowner(self), GroundTr.HitNormal, .8, 40)
+		else
+			JMod.FragSplosion(self, SelfPos, 3000, 80, 2500, JMod.GetEZowner(self), nil, nil, 2)
+		end
 		self:Remove()
 	end
 elseif CLIENT then

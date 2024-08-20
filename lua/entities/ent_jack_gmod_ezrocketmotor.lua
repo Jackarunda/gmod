@@ -199,6 +199,10 @@ if SERVER then
 				self.StuckTo:Drop(JMod.GetEZowner(self))
 				self.StuckTo:SetState(JMod.EZ_STATE_ON)
 			end
+		elseif JMod.IsEntContained(self) then
+			self.StuckTo = self.EZInvOwner
+			self.ThrustStuckTo = true
+			self.StuckTo:SetNW2Bool("EZrocketSpin", true)
 		end
 		---
 		self:EmitSound("snds_jack_gmod/rocket_launch.ogg", 80, math.random(95, 105))
@@ -244,10 +248,15 @@ if SERVER then
 			end
 
 			if self.FuelLeft > 0 then
-				if self.ThrustStuckTo then
-					Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
-				else 
-					Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
+				if EntToPush:IsPlayer() then
+					local AimVec = EntToPush:GetAimVector()
+					EntToPush:SetVelocity((self:GetUp() + AimVec * 2 + VectorRand()):GetNormalized() * self.ThrustPower * .015)
+				else
+					if self.ThrustStuckTo then
+						Phys:ApplyForceCenter(self:GetUp() * self.ThrustPower)
+					else 
+						Phys:ApplyForceOffset(self:GetUp() * self.ThrustPower, self:GetPos() + self:GetUp() * 10)
+					end
 				end
 				self.FuelLeft = self.FuelLeft - 1.75
 				--jprint(1 / self.FuelLeft)
@@ -259,6 +268,9 @@ if SERVER then
 				util.Effect("eff_jack_gmod_rockettrail", Eff, true, true)
 			elseif not self.Spent then
 				self.Spent = true
+				if EntToPush:IsPlayer() then
+					EntToPush:SetNW2Bool("EZrocketSpin", false)
+				end
 				for k, v in pairs(ents.FindInSphere(self:GetPos(), 30)) do
 					if v.JModHighlyFlammableFunc then
 						JMod.SetEZowner(v, self.EZowner)

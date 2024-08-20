@@ -19,7 +19,7 @@ ENT.StaticPerfSpecs = {
 	MaxElectricity = 100
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1,
+	Armor = 2,
 	ChargeSpeed = 1
 }
 
@@ -96,7 +96,9 @@ if SERVER then
 			self:SetState(STATE_ON)
 			self:CheckWaterLevel()
 			self.NextUseTime = CurTime() + 1
-			self.SoundLoop:Play()
+			if self.SoundLoop then
+				self.SoundLoop:Stop()
+			end
 		else
 			self:EmitSound("buttons/button2.wav", 60, 100)
 		end
@@ -110,7 +112,9 @@ if SERVER then
 		self:SetState(STATE_OFF)
 		self:SetProgress(0)
 		self.NextUseTime = CurTime() + 1
-		self.SoundLoop:Stop()
+		if self.SoundLoop then
+			self.SoundLoop:Stop()
+		end
 	end
 
 	function ENT:CheckWaterLevel()

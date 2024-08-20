@@ -11,17 +11,18 @@ ENT.Model = "models/jmod/machines/diesel_jenerator.mdl"
 ENT.EZupgradable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZcolorable = true
 ENT.Mass = 250
 ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxFuel = 200
 }
 
 ENT.DynamicPerfSpecs = {
 	ChargeSpeed = 1,
-	Armor = 1
+	Armor = 2
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -79,8 +80,9 @@ if(SERVER)then
 			if not self.SoundLoop then self.SoundLoop = CreateSound(self, "snds_jack_gmod/genny_start_loop.wav") end
 			self.SoundLoop:SetSoundLevel(70)
 			self.SoundLoop:Play()
-		elseif IsValid(activator) and not(auto) then
 			self.EZstayOn = true
+		elseif IsValid(activator) and not(auto) then
+			self.EZstayOn = nil
 			self:EmitSound("snds_jack_gmod/genny_start_fail.ogg", 70, 100)
 			self.NextUseTime = CurTime() + 1
 			JMod.Hint(activator, "need fuel")
@@ -109,17 +111,6 @@ if(SERVER)then
 		if self.SoundLoop then self.SoundLoop:Stop() end
 	end
 
-	function ENT:SpawnEffect(pos)
-		local effectdata = EffectData()
-		effectdata:SetOrigin(pos)
-		effectdata:SetNormal((VectorRand() + Vector(0, 0, 1)):GetNormalized())
-		effectdata:SetMagnitude(math.Rand(5, 10))
-		effectdata:SetScale(math.Rand(.5, 1.5))
-		effectdata:SetRadius(math.Rand(2, 4))
-		util.Effect("Sparks", effectdata)
-		--self:EmitSound("items/suitchargeok1.wav", 75, 120)
-	end
-
 	function ENT:ProduceResource()
 		local SelfPos, Up, Forward, Right = self:GetPos(), self:GetUp(), self:GetForward(), self:GetRight()
 		local amt = math.Clamp(math.floor(self:GetProgress()), 0, 100)
@@ -128,7 +119,6 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 30 + Forward * 60)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, 0, 0), Forward * 60, 200)
-		self:SpawnEffect(self:LocalToWorld(pos))
 	end
 
 	function ENT:ConsumeFuel(amt)
@@ -184,7 +174,7 @@ if(SERVER)then
 				local Tr=util.QuickTrace(self:GetPos(), Vector(0, 0, 9e9), self)
 				if not (Tr.HitSky) then
 					if (math.random(1, 3) == 1) then
-						local Gas = ents.Create("ent_jack_gmod_ezgasparticle")
+						local Gas = ents.Create("ent_jack_gmod_ezcoparticle")
 						Gas:SetPos(self:GetPos() + Vector(0, 0, 100))
 						JMod.SetEZowner(Gas, self.EZowner)
 						Gas:SetDTBool(0, true)
@@ -193,6 +183,21 @@ if(SERVER)then
 						Gas.CurVel = (VectorRand() * math.random(1, 100))
 					end
 				end
+			elseif (State == STATE_BROKEN) and self:GetFuel() > 0 then
+				local FuelHazard = ents.Create("ent_jack_gmod_eznapalm")
+				FuelHazard:SetPos(self:GetPos() + self:GetForward() * 50 + self:GetUp() * 50)
+				FuelHazard:SetOwner(JMod.GetEZowner(self))
+				FuelHazard.HighVisuals = (math.random(1, 2) == 1)
+				FuelHazard.SpeedMul = 0.01
+				FuelHazard.Creator = self.Owner
+				FuelHazard.Burnin = false
+				FuelHazard.LifeTime = math.random(1, 3)
+				JMod.SetEZowner(Flame, self.Owner)
+				FuelHazard:Spawn()
+				FuelHazard:Activate()
+				debugoverlay.Cross(self:GetPos() + self:GetForward() * 50 + self:GetUp() * 50, 10, 2, Color(255, 0, 0), true)
+
+				self:ConsumeFuel(2)
 			end
 		end
 
@@ -261,7 +266,6 @@ elseif(CLIENT)then
 				draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()
-
 			end
 		end
 	end

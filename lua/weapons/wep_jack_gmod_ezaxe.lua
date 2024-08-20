@@ -19,7 +19,7 @@ SWEP.Slot = 1
 SWEP.SlotPos = 5
 
 SWEP.VElements = {
-	["axe"] = {
+	--[[["axe"] = {
 		type = "Model",
 		model = "models/props_forest/axe.mdl",
 		bone = "ValveBiped.Bip01_L_Hand",
@@ -32,7 +32,7 @@ SWEP.VElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.WElements = {
@@ -49,7 +49,7 @@ SWEP.WElements = {
 		material = "",
 		skin = 0,
 		bodygroup = {}
-	}
+	}--]]
 }
 
 SWEP.DropEnt = "ent_jack_gmod_ezaxe"
@@ -74,6 +74,7 @@ SWEP.PushSoundBody 	= Sound( "Flesh.ImpactSoft" )
 --
 SWEP.IdleHoldType 	= "melee2"
 SWEP.SprintHoldType = "melee2"
+SWEP.SwingVisualLowerAmount = -3
 --
 
 function SWEP:CustomInit()
@@ -91,7 +92,7 @@ function SWEP:CustomThink()
 	local Time = CurTime()
 	if self.NextTaskTime < Time then
 		self:SetTaskProgress(0)
-		self.NextTaskTime = Time + 1.5
+		self.NextTaskTime = Time + self.PrimaryAttackSpeed + 1
 	end
 end
 
@@ -102,6 +103,10 @@ local FleshTypes = {
 	MAT_FLESH,
 	MAT_ALIENFLESH
 }
+
+local function ShouldSalvage(tr)
+	return (table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll")) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics")))
+end
 
 function SWEP:OnHit(swingProgress, tr)
 	local Owner = self:GetOwner()
@@ -120,7 +125,7 @@ function SWEP:OnHit(swingProgress, tr)
 	AxeDam:SetDamage(math.random(35, 50))
 	AxeDam:SetDamageForce(StrikeVector:GetNormalized() * 2000)
 
-	if ((table.HasValue(FleshTypes, util.GetSurfaceData(tr.SurfaceProps).material)) and (string.find(tr.Entity:GetClass(), "prop_ragdoll"))) or ((util.GetSurfaceData(tr.SurfaceProps).material == MAT_WOOD) and (string.find(tr.Entity:GetClass(), "prop_physics"))) then
+	if ShouldSalvage(tr) then
 		local Mesg = JMod.EZprogressTask(tr.Entity, tr.HitPos, Owner, "salvage")
 		if Mesg then
 			Owner:PrintMessage(HUD_PRINTCENTER, Mesg)
@@ -143,7 +148,11 @@ function SWEP:OnHit(swingProgress, tr)
 end
 
 function SWEP:FinishSwing(swingProgress)
-	self:SetTaskProgress(0)
+	if swingProgress >= self.MaxSwingAngle then
+		self:SetTaskProgress(0)
+	else
+		self.NextTaskTime = CurTime() + self.PrimaryAttackSpeed + 1
+	end
 end
 
 local LastProg = 0

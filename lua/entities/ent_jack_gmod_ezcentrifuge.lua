@@ -17,14 +17,14 @@ ENT.SpawnHeight = 1
 ENT.EZcolorable = true
 --
 ENT.StaticPerfSpecs = {
-	MaxDurability = 100,
+	MaxDurability = 200,
 	MaxElectricity = 500,
 	MaxUranium = 500,
 	MaxGas = 200
 }
 
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = 2
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,

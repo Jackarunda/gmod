@@ -17,6 +17,7 @@ ENT.EZpowerSocket=Vector(-5, 0, 1)
 ENT.EZupgradable=true
 ENT.Model="models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat="models/mat_jack_gmod_ezsentry"
+ENT.EZcolorable = true
 ENT.Mass=250
 -- config --
 ENT.AmmoTypes = {
@@ -95,7 +96,7 @@ ENT.DynamicPerfSpecs={
 	MaxAmmo=300,
 	TurnSpeed=60,
 	TargetingRadius=15,
-	Armor=1,
+	Armor=4,
 	FireRate=6,
 	Damage=15,
 	Accuracy=1,
@@ -155,7 +156,7 @@ function ENT:SetMods(tbl, ammoType)
 			// no exploit
 			self:SetElectricity(0)
 		end
-		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -20, 50), Angle(0, 0, 0), self:GetRight(), 100)
+		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -30, 50), Angle(0, 0, 0), self:GetRight(), nil)
 	end
 	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
 	if(ammoType=="Pulse Laser")then
@@ -174,34 +175,46 @@ function ENT:InitPerfSpecs(removeAmmo)
 	if not self.ModPerfSpecs then return end
 	local PerfMult=self:GetPerfMult() or 1
 	local Grade=self:GetGrade()
-	for specName,value in pairs(self.StaticPerfSpecs)do self[specName]=value end
+	local NetworkTable = {}
+	for specName, value in pairs(self.StaticPerfSpecs)do 
+		self[specName] = value 
+		NetworkTable[specName] = value
+	end
 	for specName,value in pairs(self.DynamicPerfSpecs)do 
 		if(type(value)~="table")then
-			self[specName]=value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp 
+			local NewValue = value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp
+			self[specName] = NewValue
+			NetworkTable[specName] = NewValue
 		end
 	end
-	self.MaxAmmo=math.Round(self.MaxAmmo/100)*100 -- a sight for sore eyes, ey jack?-titanicjames
-	self.TargetingRadius=self.TargetingRadius*52.493 -- convert meters to source units
+	self.MaxAmmo = math.Round(self.MaxAmmo/100) * 100 -- a sight for sore eyes, ey jack?-titanicjames
+	self.TargetingRadius = self.TargetingRadius * 52.493 -- convert meters to source units
 	
-	local MaxValue=10
-	for attrib,value in pairs(self.ModPerfSpecs) do
-		local oldVal=self[attrib]
+	local MaxValue = 10
+	for attrib, value in pairs(self.ModPerfSpecs) do
+		local oldVal = self[attrib]
 		if value > 0 then
 			local ratio = (math.abs(value / MaxValue) + 1) ^ 1.5
-			self[attrib] = self[attrib] * ratio
+			local NewValue = self[attrib] * ratio
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
 			--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		elseif value < 0 then
 			local ratio = (math.abs(value / MaxValue) + 1) ^ 3
-			self[attrib] = self[attrib] / ratio
+			local NewValue = self[attrib] / ratio
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
+			--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 		end
-		--print(attrib.." "..value.." ----- "..oldVal.." -> "..self[attrib])
 	end
 
 	-- Finally apply AmmoType attributes
 	if self.AmmoTypes[self:GetAmmoType()] then
 		for attrib, mult in pairs(self.AmmoTypes[self:GetAmmoType()]) do
 			--print("applying AmmoType multiplier of "..mult .." to "..attrib..": "..self[attrib].." -> "..self[attrib]*mult)
-			self[attrib] = self[attrib] * mult
+			local NewValue = self[attrib] * mult
+			self[attrib] = NewValue
+			NetworkTable[attrib] = NewValue
 		end
 	end
 
@@ -212,6 +225,13 @@ function ENT:InitPerfSpecs(removeAmmo)
 		-- except for lasers cause they don't use ammo
 		self:SetAmmo(self.MaxAmmo)
 		self.MaxElectricity = self.MaxAmmo / 1.5
+		NetworkTable.MaxElectricity = self.MaxAmmo / 1.5
+	end
+	if SERVER then
+		net.Start("JMod_MachineSync")
+		net.WriteEntity(self)
+		net.WriteTable(NetworkTable)
+		net.Broadcast()
 	end
 end
 
@@ -372,7 +392,6 @@ if(SERVER)then
 			NextDeEsc = 0, -- next de-escalation to the watching state
 			NextSearchChange = 0, -- time to move on to the next phase of searching
 			State = 0 -- 0=not searching, 1=aiming at last known point, 2=aiming at predicted point
-			
 		}
 		self.EngageOverride = nil
 		self.AimOverride = nil
@@ -381,6 +400,7 @@ if(SERVER)then
 	
 	function ENT:OnPostEntityPaste(ply, ent, createdEntities)
 		self:ResetMemory()
+		self:SetState(STATE_WATCHING)
 		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 	end
 
@@ -421,10 +441,10 @@ if(SERVER)then
 	end
 
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .04)
-		if(self:GetAmmoType()=="Pulse Laser")then
-			amt=amt/JMod.EZ_GRADE_BUFFS[self:GetGrade()]
-		end
+		amt=(amt or .03)
+		--if(self:GetAmmoType()=="Pulse Laser")then
+			amt = amt / JMod.EZ_GRADE_BUFFS[self:GetGrade()]
+		--end
 
 		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0, self.MaxElectricity)
 		self:SetElectricity(NewAmt)
@@ -435,7 +455,7 @@ if(SERVER)then
 	end
 
 	function ENT:CustomDetermineDmgMult(dmginfo)
-		local Mult=1
+		local Mult= 1--.2 -- Let's just make it tougher overall
 		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
 		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
 		local AimAng=self:GetAngles()
@@ -447,7 +467,6 @@ if(SERVER)then
 			Mult=Mult*.2
 			if(math.random(1,2)==1)then
 				local SelfPos=self:GetPos()
-				sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg",SelfPos+VectorRand(),70,math.random(80,120))
 				local effectdata=EffectData()
 				effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
 				effectdata:SetNormal(VectorRand())
@@ -456,6 +475,7 @@ if(SERVER)then
 				effectdata:SetRadius(2) --thickness of strands
 				util.Effect("Sparks",effectdata,true,true)
 				if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
+					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg",SelfPos+VectorRand(),70,math.random(80,120))
 					local RicDir=VectorRand()
 					RicDir.z=RicDir.z/2
 					RicDir:Normalize()
@@ -599,7 +619,7 @@ if(SERVER)then
 			return nil
 		end
 
-		self:ConsumeElectricity(.02)
+		self:ConsumeElectricity(.01)
 		self.NextTargetSearch = Time + (.5 / self.SearchSpeed) -- limit searching cause it's expensive
 		local SelfPos = self:GetPos()
 		local Objects, PotentialTargets = ents.FindInSphere(SelfPos, self.TargetingRadius), {}
@@ -809,7 +829,7 @@ if(SERVER)then
 			local CoolinAmt, Kewlant, Severity = self.Cooling / 3, self:GetCoolant(), self.Heat / 300
 
 			if (Kewlant > 0) and (Severity > .1) then
-				self:SetCoolant(math.min(Kewlant - Severity ^ 2 * 20, 0))
+				self:SetCoolant(math.max(Kewlant - Severity ^ 2 * 20, 0))
 				CoolinAmt = CoolinAmt * (200 * Severity ^ 2)
 			end
 

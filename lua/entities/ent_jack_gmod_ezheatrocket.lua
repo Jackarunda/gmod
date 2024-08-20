@@ -160,15 +160,35 @@ if SERVER then
 		if self.NextDet > CurTime() then return end
 		if self.Exploded then return end
 		self.Exploded = true
-		local SelfPos, Att, Dir = self:GetPos() + Vector(0, 0, 30), JMod.GetEZowner(self), -self:GetRight()
+		local Dir = -self:GetRight()
+		local SelfPos, Att = self:GetPos(), JMod.GetEZowner(self)
 		JMod.Sploom(Att, SelfPos, 10)
 		---
 		util.ScreenShake(SelfPos, 1000, 3, 2, 1500)
 		self:EmitSound("snd_jack_fragsplodeclose.ogg", 90, 100)
 
 		---
-		for i = 1, 10 do
-			util.BlastDamage(self, Att, SelfPos + Dir * 30 * i, 100 - i * 7, 3000 - i * 290)
+		local BlastDmg = DamageInfo()
+		BlastDmg:SetDamageType(DMG_BLAST)
+		BlastDmg:SetDamage(100)
+		BlastDmg:SetAttacker(Att)
+		BlastDmg:SetInflictor(self)
+		BlastDmg:SetDamageForce(Dir * 100)
+		util.BlastDamageInfo(BlastDmg, SelfPos + Dir * 30, 200)
+
+		local BlastTr = util.QuickTrace(SelfPos + Dir * 20, Dir * 100, self)
+		debugoverlay.Line(SelfPos, BlastTr.HitPos, 3, Color(255, 0, 0), true)
+
+		if BlastTr.Hit and IsValid(BlastTr.Entity) then
+			debugoverlay.Cross(BlastTr.HitPos, 5, 5, Color(251, 255, 0), true)
+			local PeirceDmg = DamageInfo()
+			PeirceDmg:SetAttacker(Att)
+			PeirceDmg:SetInflictor(self)
+			PeirceDmg:SetDamageType(DMG_SNIPER)
+			PeirceDmg:SetDamage(1500 * math.Rand(.8, 1.2))
+			PeirceDmg:SetDamagePosition(SelfPos)
+			PeirceDmg:SetDamageForce(Dir * 5000 * math.Rand(.8, 1.2))
+			BlastTr.Entity:TakeDamageInfo(PeirceDmg)
 		end
 
 		for k, ent in pairs(ents.FindInSphere(SelfPos, 200)) do

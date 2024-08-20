@@ -135,7 +135,7 @@ if(SERVER)then
 		end
 		self:InitPerfSpecs()
 		self.DamageModifierTable = JMod.DefualtArmorTable
-		self.BackupRecipe = {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
+		self.BackupRecipe = self.BackupRecipe or {[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = 100}
 
 		--=== Put things that shoulf be overrideable by machines above this line. ====-
 		if(self.CustomInit)then self:CustomInit() end
@@ -345,7 +345,7 @@ if(SERVER)then
 	end
 
 	function ENT:DetermineDamageMultiplier(dmg)
-		local Mult = .5 / (self.Armor or 1)
+		local Mult = 1 / (self.Armor or 1)
 		if self.DamageModifierTable then
 			for typ, mul in pairs(self.DamageModifierTable)do
 				if(dmg:IsDamageType(typ))then Mult = Mult * mul break end
@@ -367,7 +367,7 @@ if(SERVER)then
 		self:SetNW2Float("EZdurability", self.Durability)
 
 		if(self.Durability <= 0)then self:Break(dmginfo) end
-		if(self.Durability <= -(self.MaxDurability * 2))then self:Destroy(dmginfo) end
+		if(self.Durability <= (self.MaxDurability * -2))then self:Destroy(dmginfo) end
 	end
 
 	function ENT:Break(dmginfo)
@@ -395,7 +395,7 @@ if(SERVER)then
 		end
 		if self.EZconnections then
 			for entID, cable in ipairs(self.EZconnections) do
-				JMod.RemoveConnection(self, entID)
+				JMod.RemoveResourceConnection(self, entID)
 			end
 		end
 		if(self.OnBreak)then self:OnBreak() end
@@ -474,10 +474,10 @@ if(SERVER)then
 				elseif(typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS)then
 					local Missing = self.MaxDurability - self.Durability
 					if(Missing <= 0)then return 0 end
-					Accepted = math.min(Missing / 2, amt)
+					Accepted = math.min(Missing / 3, amt)
 					local Broken = false
 					if self.Durability <= 0 then Broken = true end
-					self.Durability = math.min(self.Durability + (Accepted * 2), self.MaxDurability)
+					self.Durability = math.min(self.Durability + (Accepted * 3), self.MaxDurability)
 					if(self.Durability >= self.MaxDurability)then self:RemoveAllDecals() end
 					self:EmitSound("snd_jack_turretrepair.ogg", 65, math.random(90, 110))
 					if(self.Durability > 0)then
@@ -609,6 +609,15 @@ if(SERVER)then
 		return 0
 	end
 
+	--[[function ENT:OnEntityCopyTableFinish(tbl)
+		if self.EZconnections then
+			tbl.EZconnections = table.FullCopy(self.EZconnections)
+			print("Copying EZ connections")
+			print(self.EZconnections)
+			print(tbl.EZconnections)
+		end
+	end--]]
+
 	-- Entity save/dupe functionality
 	function ENT:PostEntityPaste(ply, ent, createdEntities)
 		local Time = CurTime()
@@ -620,16 +629,13 @@ if(SERVER)then
 			elseif self.EZownerID then
 				JMod.SetEZowner(self, player.GetBySteamID64(self.EZownerID), true)
 			end
-			ent.NextRefillTime = Time + 1
+			ent.NextRefillTime = 0
 			if ent.NextUseTime then
 				ent.NextUseTime = Time + 1
 			end
 			if ent.SoundLoop then
 				self.SoundLoop:Stop()
 				self.SoundLoop = nil
-			end
-			if ent.OnPostEntityPaste then
-				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
 			if not(JMod.IsAdmin(ply)) and not(ent:GetPersistent()) then
 				if ent.EZconsumes and not(JMod.Config.Machines.SpawnMachinesFull) then
@@ -658,22 +664,26 @@ if(SERVER)then
 				timer.Simple(0, function()
 					if not IsValid(ent) then return end
 					--print("Machine with connection: "..tostring(ent))
+					local NewConnections = {}
 					for entID, cable in pairs(ent.EZconnections) do
 						--print("Original ID for connection: "..tostring(entID), "| Cable: "..tostring(cable), "| New entity: "..tostring(createdEntities[entID]))
+						local NewEntIndex = entID
 						if createdEntities[entID] then
 							local ConnectedEnt = createdEntities[entID]
 							if IsValid(ConnectedEnt) then
 								local CableConnection = constraint.FindConstraintEntity(ent, "Rope")
 								--print(ConnectedEnt, CableConnection)
 								if IsValid(CableConnection) then
-									ent.EZconnections[ConnectedEnt:EntIndex()] = CableConnection
-									ConnectedEnt.EZconnections[ent:EntIndex()] = CableConnection
-									break
+									NewConnections[ConnectedEnt:EntIndex()] = CableConnection
 								end
 							end
 						end
 					end
+					ent.EZconnections = NewConnections
 				end)
+			end
+			if ent.OnPostEntityPaste then
+				ent:OnPostEntityPaste(ply, ent, createdEntities)
 			end
 		end
 	end
@@ -695,7 +705,11 @@ elseif(CLIENT)then
 
 	function ENT:Initialize()
 		self:SetModel(self.Model)
-		if self.ClientOnly then return end
+		if self.ClientOnly then 
+			self:SetNextClientThink(CurTime() + 1)
+
+			return 
+		end
 		self.StaticPerfSpecs.BaseClass=nil
 		self.DynamicPerfSpecs.BaseClass=nil
 		if(self.CustomInit)then self:CustomInit() end

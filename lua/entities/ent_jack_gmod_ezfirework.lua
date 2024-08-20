@@ -187,7 +187,7 @@ if SERVER then
 		util.ScreenShake(SelfPos, 1000, 3, 1, 1500)
 		local pitch = math.random(95, 105)
 		self:EmitSound("snds_jack_gmod/firework_pop_crackle.ogg", 100, pitch)
-		for k, v in pairs(player.GetAll()) do
+		for k, v in player.Iterator() do
 			local plyPos = v:GetShootPos()
 			if (plyPos:Distance(SelfPos) < 10000) then
 				sound.Play("snds_jack_gmod/firework_pop_crackle.ogg", plyPos, 40, pitch)

@@ -159,6 +159,7 @@ if SERVER then
 			Gas:Spawn()
 			Gas:Activate()
 			Gas.CurVel = (self:GetPhysicsObject():GetVelocity() + self:GetUp() * 500)
+			Gas.Container = self
 			self.ContainedGas = self.ContainedGas - 1
 			self:NextThink(Time + .2)
 			self:EmitSound("snds_jack_gmod/hiss.ogg", 55, math.random(90, 110))

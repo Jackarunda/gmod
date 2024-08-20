@@ -17,14 +17,13 @@ ENT.SpawnHeight = 1
 --
 ENT.StaticPerfSpecs = {
 	MaxElectricity = 100,
-	MaxDurability = 50,
-	MaxLiquid = 200,
-	Armor = 1
+	MaxDurability = 50
 }
 ENT.DynamicPerfSpecs={
 	MaxLiquid = 200,
 	TurnSpeed = 5,
-	SprayRadius = 400
+	SprayRadius = 400,
+	Armor = 1
 }
 ENT.LiquidTypes = {
 	[JMod.EZ_RESOURCE_TYPES.WATER] = {
@@ -140,7 +139,8 @@ if(SERVER)then
 			MaxLiquid = 0,
 			TurnSpeed = 0,
 			SprayRadius = 0,
-			Rotation = {Max = 360}
+			Rotation = {Max = 360},
+			Armor = 0
 		}
 		--
 		self:SetLiquidType(JMod.EZ_RESOURCE_TYPES.WATER)
@@ -164,7 +164,7 @@ if(SERVER)then
 		local State = self:GetState()
 		local Alt = activator:KeyDown(JMod.Config.General.AltFunctionKey)
 		JMod.SetEZowner(self, activator)
-		JMod.Colorify(self)
+		--JMod.Colorify(self)
 
 		if Alt and self:GetPhysicsObject():IsMotionEnabled() then
 			activator:PickupObject(self)
@@ -361,8 +361,8 @@ if(SERVER)then
 						Zoop = Zoop * .5
 					end
 					local SplachPos = SelfPos + self:GetUp() * 36 + SprayAngle:Forward() * 3
-					local Splach = EffectData()
-					--[[Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
+					--[[local Splach = EffectData()
+					Splach:SetOrigin(SplachPos + SprayAngle:Forward() * 2)
 					Splach:SetStart(Zoop)
 					Splach:SetScale((self.Dir == "right") and 1 or .4)
 					util.Effect("eff_jack_gmod_spranklerspray", Splach)--]]
@@ -502,9 +502,9 @@ elseif(CLIENT)then
 
 				cam.Start3D2D(SelfPos - Forward * 1 - Up * 8 - Right * 12, DisplayAng, .06)
 				draw.SimpleTextOutlined("POWER", "JMod-Display", 0, 0, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(PowFrac * self.MaxElectricity)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(PowFrac * 100)) .. "%", "JMod-Display", 0, 30, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				draw.SimpleTextOutlined(string.upper(self:GetLiquidType()), "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				draw.SimpleTextOutlined(tostring(math.Round(WaterFrac * self.MaxLiquid)) .. "%", "JMod-Display", 0, 120, Color(WR, WG, WB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+				draw.SimpleTextOutlined(tostring(math.Round(WaterFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(WR, WG, WB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				--draw.SimpleTextOutlined("FUEL", "JMod-Display", 0, 90, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				--draw.SimpleTextOutlined(tostring(math.Round(FuelFrac * 100)) .. "%", "JMod-Display", 0, 120, Color(FR, FG, FB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
 				cam.End3D2D()

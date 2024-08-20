@@ -14,6 +14,7 @@ ENT.EZupgradable = true
 ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
+ENT.EZcolorable = true
 ENT.Mass = 250
 ENT.SpawnHeight = 1
 --
@@ -21,7 +22,7 @@ ENT.StaticPerfSpecs = {
 	MaxDurability = 120
 }
 ENT.DynamicPerfSpecs = {
-	Armor = 1
+	Armor = 3
 }
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS
