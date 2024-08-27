@@ -283,10 +283,12 @@ function SWEP:UpdateNextIdle()
 	self.NextIdle = CurTime() + vm:SequenceDuration()
 end
 
-function SWEP:GetEZsupplies(resourceType)
+function SWEP:GetEZsupplies(resourceType, getter)
+	local BuildSizeMult = self.CurrentBuildSize or 0
+	if IsValid(getter) and getter == self then BuildSizeMult = 0 end
 	local AvaliableResources = {
-		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * (self.CurrentBuildSize or 1)),
-		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * (self.CurrentBuildSize or 1))
+		[JMod.EZ_RESOURCE_TYPES.POWER] = math.floor(self:GetElectricity() - 8 * BuildSizeMult),
+		[JMod.EZ_RESOURCE_TYPES.GAS] = math.floor(self:GetGas() - 4 * BuildSizeMult)
 	}
 	if resourceType then
 		if AvaliableResources[resourceType] and AvaliableResources[resourceType] > 0 then
@@ -639,7 +641,7 @@ function SWEP:TryLoadResource(typ, amt)
 
 	for _, v in pairs(self.EZconsumes) do
 		if typ == v then
-			local CurAmt = (self:GetEZsupplies(typ) or 0) + 8 * (self.CurrentBuildSize or 1)
+			local CurAmt = (self:GetEZsupplies(typ, self) or 0) + 8 * (self.CurrentBuildSize or 0)
 			local Take = math.min(amt, self.MaxElectricity - CurAmt)
 			
 			if Take > 0 then
