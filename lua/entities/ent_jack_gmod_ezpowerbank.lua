@@ -155,7 +155,10 @@ if SERVER then
 		if Amt <= 0 then return end
 		local SpawnPos = self:WorldToLocal(SelfPos + Up * 16 + Forward * 32)
 		self:SetElectricity(PowerLeft - Amt)
+		local OldState = self:GetState()
+		self:SetState(JMod.EZ_STATE_OFF) -- Hacky
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, Amt, SpawnPos, Angle(0, 0, 0), Forward * 10, false)
+		self:SetState(OldState)
 	end
 
 	function ENT:OnRemove()

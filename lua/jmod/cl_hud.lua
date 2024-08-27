@@ -2,7 +2,7 @@
 
 local function FindPlyMemory()
 	local files, folders = file.Find("screenshots/*.jpg", "MOD")
-	if not(files) then return nil end
+	if not(files) and not next(files) then return nil end
 	return Material("../screenshots/"..tostring(table.Random(files)))
 end
 
