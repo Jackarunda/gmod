@@ -10,7 +10,7 @@ ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.Model = "models/jmod/machines/primitive_bench.mdl"
-ENT.Mass = 200
+ENT.Mass = 250
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -255,11 +255,6 @@ if(SERVER)then
 								JMod.MachineSpawnResource(self, k, v, self:WorldToLocal(Pos + VectorRand() * 40), Angle(0, 0, 0), Vector(0, 0, 100), 200)
 								i = i + 1
 							end
-							--[[if Ent.JModInv then
-								for _, v in ipairs(Ent.JModInv.items) do
-									JMod.RemoveFromInventory(Ent, v.ent, Pos + VectorRand() * 50)
-								end
-							end--]]
 							SafeRemoveEntity(Ent)
 						end
 					end)
@@ -410,22 +405,22 @@ elseif(CLIENT)then
 				DisplayAng:RotateAroundAxis(Forward, 90)
 				DisplayAng:RotateAroundAxis(Up, 90)
 				local Opacity = math.random(50, 200)
-				cam.Start3D2D(BasePos - Up * 38 + Right * 50 + Forward * 1.8, DisplayAng, .04)
-				--draw.SimpleTextOutlined("JMOD","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				local ProFrac = self:GetProgress() / 100
-				local OreFrac = self:GetOre() / self.MaxOre
-				local ElecFrac = self:GetElectricity() / self.MaxElectricity
-				local R, G, B = JMod.GoodBadColor(ProFrac)
-				local OR, OG, OB = JMod.GoodBadColor(OreFrac)
-				local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
-				draw.SimpleTextOutlined("FUEL "..math.Round(ElecFrac * 100).."%","JMod-Display",0,0,Color(ER, EG, EB, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
-				if (State == STATE_PROCESSING) then
-					draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 0, 90, Color(228, 215, 101, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined("REMAINING", "JMod-Display", 0, 120,Color(228, 215, 101, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-					draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 0, 150, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
-				end
+				cam.Start3D2D(BasePos - Up * 30 + Right * 45 + Forward * 18.5, DisplayAng, .04)
+					--draw.SimpleTextOutlined("JMOD","JMod-Display",0,0,Color(255,255,255,Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					local ProFrac = self:GetProgress() / 100
+					local OreFrac = self:GetOre() / self.MaxOre
+					local ElecFrac = self:GetElectricity() / self.MaxElectricity
+					local R, G, B = JMod.GoodBadColor(ProFrac)
+					local OR, OG, OB = JMod.GoodBadColor(OreFrac)
+					local ER, EG, EB = JMod.GoodBadColor(ElecFrac)
+					draw.SimpleTextOutlined("FUEL "..math.Round(ElecFrac * 100).."%","JMod-Display",0,0,Color(ER, EG, EB, Opacity),TEXT_ALIGN_CENTER,TEXT_ALIGN_TOP,3,Color(0,0,0,Opacity))
+					if (State == STATE_PROCESSING) then
+						draw.SimpleTextOutlined("PROGRESS", "JMod-Display", 0, 30, Color(255, 255, 255, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+						draw.SimpleTextOutlined(tostring(math.Round(ProFrac * 100)) .. "%", "JMod-Display", 0, 60, Color(R, G, B, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+						draw.SimpleTextOutlined(string.upper(self:GetOreType()), "JMod-Display", 0, 90, Color(228, 215, 101, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+						draw.SimpleTextOutlined("REMAINING", "JMod-Display", 0, 120,Color(228, 215, 101, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+						draw.SimpleTextOutlined(tostring(math.Round(OreFrac * self.MaxOre)), "JMod-Display", 0, 150, Color(OR, OG, OB, Opacity), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 3, Color(0, 0, 0, Opacity))
+					end
 				cam.End3D2D()
 			end
 		end
