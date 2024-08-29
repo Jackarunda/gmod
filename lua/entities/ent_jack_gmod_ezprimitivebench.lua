@@ -236,8 +236,12 @@ if(SERVER)then
 			if (IsValid(Ent) and Ent:IsPlayerHolding()) then Held = true end
 			if (data.Speed > 150) then
 				if Held and (Ent:GetPhysicsObject():GetMass() <= 35) and ((Ent:GetClass() == "prop_physics") or (table.HasValue(SalvageableMats, Ent:GetMaterialType()))) then
-					DropEntityIfHeld(Ent)
+					timer.Simple(0, function()
+						if not IsValid(Ent) then return end
+						DropEntityIfHeld(Ent)
+					end)
 					timer.Simple(0.1, function()
+						if not IsValid(Ent) then return end
 						local Yield, Message = JMod.GetSalvageYield(Ent)
 
 						if #table.GetKeys(Yield) <= 0 then
