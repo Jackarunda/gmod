@@ -375,6 +375,22 @@ function SWEP:BuildItem(selectedBuild)
 									Ent:SetSkin(BuildInfo.skin)
 								end
 							end
+							if BuildInfo.color and istable(BuildInfo.color) then
+								Ent:SetColor(Color(BuildInfo.color.r, BuildInfo.color.g, BuildInfo.color.b))
+							end
+							if BuildInfo.material then
+								Ent:SetMaterial(BuildInfo.material)
+							end
+							if BuildInfo.subMaterial and istable(BuildInfo.subMaterial) then
+								for k, v in pairs(BuildInfo.subMaterial) do
+									Ent:SetSubMaterial(k, v)
+								end
+							end
+							if BuildInfo.bodyGroups and istable(BuildInfo.bodyGroups) then
+								for k, v in pairs(BuildInfo.bodyGroups) do
+									Ent:SetBodygroup(k, v)
+								end
+							end
 							JMod.Hint(self.Owner, Class)
 							self:SetElectricity(math.Clamp(self:GetElectricity() - 8 * (BuildInfo.sizeScale or 1), 0, self.MaxElectricity))
 							self:SetGas(math.Clamp(self:GetGas() - 4 * (BuildInfo.sizeScale or 1), 0, self.MaxGas))
