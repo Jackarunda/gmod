@@ -1,7 +1,7 @@
 ﻿local blurMat = Material("pp/blurscreen")
 local Dynamic = 0
 local FriendMenuOpen = false
-local SelectionMenuOpen = false
+local CurrentSelectionMenu = nil
 local CurrentColor = Color(255, 255, 255)
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
@@ -488,53 +488,78 @@ local function CacheSelectionMenuIcon(name, info)
 	if not JMod.SelectionMenuIcons[name] then
 		if file.Exists("materials/jmod_selection_menu_icons/" .. tostring(name) .. ".png", "GAME") then
 			JMod.SelectionMenuIcons[name] = Material("jmod_selection_menu_icons/" .. tostring(name) .. ".png")
-		elseif info and file.Exists("materials/entities/" .. tostring(info) .. ".png", "GAME") then
-			JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".png")
-		elseif info and file.Exists("materials/spawnicons/" .. string.Replace(tostring(info), ".mdl", "") .. ".png", "GAME") then
-			JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. string.Replace(tostring(info), ".mdl", "") .. ".png")
-		else
-			-- special logic for random tables and resources and such
-			local itemClass = info
+		elseif info then
+			if file.Exists("materials/entities/" .. tostring(info) .. ".png", "GAME") then
+				JMod.SelectionMenuIcons[name] = Material("entities/" .. tostring(info) .. ".png")
+			elseif string.find(tostring(info), ".mdl") then
+				local CleanStringName = string.Replace(tostring(info), ".mdl", "")
+				if file.Exists("materials/spawnicons/" .. CleanStringName .. ".png", "GAME") then
+					JMod.SelectionMenuIcons[name] = Material("spawnicons/" .. CleanStringName .. ".png")
+				else
+					local Buttalony = vgui.Create("SpawnIcon")
+					Buttalony:SetModel(tostring(info))
+					Buttalony:SetSize(64, 64)
+					Buttalony:RebuildSpawnIcon()
+					hook.Add("SpawniconGenerated", "JMod_ImagePrecacher_" .. name, function(lastModel, imageName, modelsLeft) 
+						--print(lastModel, imageName, modelsLeft)
+						if not(lastModel) and lastModel == tostring(info) then return end
+						imageName = imageName:Replace("materials\\", "")
+						imageName = imageName:Replace("materials/", "")
+						JMod.SelectionMenuIcons[name] = Material(imageName)
+						hook.Remove("SpawniconGenerated", "JMod_ImagePrecacher_" .. name)
+						if IsValid(Buttalony) then
+							Buttalony:Remove()
+						end
+					end)
+					--JMod.SelectionMenuIcons[name] = QuestionMarkIcon
+				end
+			else
+				-- special logic for random tables and resources and such
+				local itemClass = info
 
-			if type(itemClass) == "table" then
-				itemClass = itemClass[1]
-			end
-
-			if type(itemClass) == "table" then
-				itemClass = itemClass[1]
-			end
-
-			if itemClass == "RAND" then
-				JMod.SelectionMenuIcons[name] = QuestionMarkIcon
-			elseif type(itemClass) == "string" then
-				local IsResource = false
-
-				for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
-					if v == itemClass then
-						IsResource = true
-						JMod.SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
-					end
+				if type(itemClass) == "table" then
+					itemClass = itemClass[1]
 				end
 
-				if not IsResource then
-					JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+				if type(itemClass) == "table" then
+					itemClass = itemClass[1]
+				end
+
+				if itemClass == "RAND" then
+					JMod.SelectionMenuIcons[name] = QuestionMarkIcon
+				elseif type(itemClass) == "string" then
+					local IsResource = false
+
+					for k, v in pairs(JMod.EZ_RESOURCE_ENTITIES) do
+						if v == itemClass then
+							IsResource = true
+							JMod.SelectionMenuIcons[name] = JMod.EZ_RESOURCE_TYPE_ICONS_SMOL[k]
+						end
+					end
+
+					if not IsResource then
+						JMod.SelectionMenuIcons[name] = Material("entities/" .. itemClass .. ".png")
+					end
 				end
 			end
 		end
 	end
+
 	return JMod.SelectionMenuIcons[name]
 end
 
 local function StandardSelectionMenu(typ, displayString, data, entity, enableFunc, clickFunc, sidePanelFunc, mult)
 	mult = mult or 1
 	-- first, populate icons
-	if SelectionMenuOpen then return end
+	if IsValid(CurrentSelectionMenu) then return end
 	for name, info in pairs(data) do
 		CacheSelectionMenuIcon(name, info.results or "") 
 	end
 
 	-- then, populate info with nearby available resources
-	LocallyAvailableResources = JMod.CountResourcesInRange(entity:GetPos(), 150, entity)
+	if typ == "crafting" then
+		LocallyAvailableResources = JMod.CountResourcesInRange(entity:LocalToWorld(entity:OBBCenter()), 150, entity)
+	end
 	-- then, proceed with making the rest of the menu
 	local MotherFrame = vgui.Create("DFrame")
 	MotherFrame.positiveClosed = false
@@ -567,7 +592,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 		if not self.positiveClosed then
 			surface.PlaySound("snds_jack_gmod/ez_gui/menu_close.ogg")
 		end
-		SelectionMenuOpen = false
+		CurrentSelectionMenu = nil
 	end
 
 	local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
@@ -636,7 +661,7 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 
 	PopulateItems(ActiveTabPanel, Categories[ActiveTab], typ, MotherFrame, entity, enableFunc, clickFunc, mult)
 
-	SelectionMenuOpen = true
+	CurrentSelectionMenu = MotherFrame
 	return MotherFrame
 end
 
@@ -653,7 +678,7 @@ net.Receive("JMod_EZtoolbox", function()
 	local Buildables = net.ReadTable()
 	local Kit = net.ReadEntity()
 
-	if SelectionMenuOpen then return end
+	if IsValid(CurrentSelectionMenu) then return end
 	local MotherFrame = StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, function(name, info, ply, ent) -- enable func
 return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
 		-- click func
@@ -738,9 +763,11 @@ net.Receive("JMod_EZworkbench", function()
 	local Buildables = net.ReadTable()
 	local Multiplier = net.ReadFloat()
 
-	if SelectionMenuOpen then return end
-	StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, (not(info.noRequirementScaling) and Multiplier) or 1) end, function(name, info, ply, ent)
+	if IsValid(CurrentSelectionMenu) then return end
+	local MotherFrame = StandardSelectionMenu('crafting', Bench.PrintName, Buildables, Bench, 
+	function(name, info, ply, ent) -- enable func
+		return JMod.HaveResourcesToPerformTask(ent:GetPos(), 200, info.craftingReqs, ent, LocallyAvailableResources, (not(info.noRequirementScaling) and Multiplier) or 1) 
+	end, function(name, info, ply, ent)
 		-- click func
 		net.Start("JMod_EZworkbench")
 		net.WriteEntity(ent)
@@ -1016,8 +1043,8 @@ net.Receive("JMod_EZradio", function()
 	}
 	JMod.Config.RadioSpecs.AvailablePackages = Orderables
 
-	if SelectionMenuOpen then return end
-	StandardSelectionMenu('selecting', "EZ Radio", Orderables, Radio, function(name, info, ply, ent)
+	if IsValid(CurrentSelectionMenu) then return end
+	local MotherFrame = StandardSelectionMenu('selecting', "EZ Radio", Orderables, Radio, function(name, info, ply, ent)
 		-- enable func
 		local override, msg = hook.Run("JMod_CanRadioRequest", ply, ent, name)
 		if override == false then return false end
@@ -1536,7 +1563,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 
 	--PrintTable(Ply.JModInv)
 
-	if SelectionMenuOpen then return end
+	if IsValid(CurrentSelectionMenu) then return end
 
 	local motherFrame = vgui.Create("DFrame")
 	motherFrame:SetSize(800, 400)
@@ -1562,7 +1589,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		if OpenDropdown then
 			OpenDropdown:Remove()
 		end
-		SelectionMenuOpen = false
+		CurrentSelectionMenu = nil
 	end
 
 	local PDispBG = vgui.Create("DPanel", motherFrame)
@@ -1654,7 +1681,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		for id, v in pairs(ent.EZarmor.items) do
 			if(ent.EZarmorModels[id])then ent.EZarmorModels[id]:Remove() end
 		end
-		SelectionMenuOpen = false
+		CurrentSelectionMenu = nil
 		CurrentJModInvScreen = nil
 	end
 
@@ -1719,7 +1746,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		return true
 	end
 
-	SelectionMenuOpen = true
+	CurrentSelectionMenu = motherFrame
 	CurrentJModInvScreen = motherFrame
 
 	return motherFrame
@@ -1741,7 +1768,7 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	if not (command or isstring(command)) then return end
 
 	if command == "open_menu" then
-		if SelectionMenuOpen then return end
+		if IsValid(CurrentSelectionMenu) then return end
 		local frame = vgui.Create("DFrame")
 		frame:SetSize(210, 312)
 		frame:SetTitle((invEnt.PrintName or invEnt:GetClass() or "Player"))
