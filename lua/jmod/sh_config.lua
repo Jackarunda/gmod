@@ -712,6 +712,30 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 			-- String starting with FUNC direct to function
 			-- A table with the setup {class, number} will spawn that number of class
 			-- If you add a second number to that table, if the class is an EZ resource, it will attempt to set the resource to that number
+			
+			-- Example Prop Craftable
+			["EZ Fake Firework"] = {
+				results = "models/jmod/explosives/ez_fireworks.mdl",
+				craftingReqs = {
+					[JMod.EZ_RESOURCE_TYPES.PAPER] = 1
+				},
+				skin = 0,
+				--subMaterial = {
+				--	[1] = "models/debug/debugwhite"
+				--},
+				bodygroups = {
+					[1] = 1
+				},
+				color = {
+					r = 255,
+					g = 255,
+					b = 0
+				},
+				sizeScale = .05,
+				category = "Props",
+				craftingType = "none",
+				description = "Fake firework"
+			},
 			["EZ Nail"] = {
 				results = "FUNC EZnail",
 				craftingReqs = {

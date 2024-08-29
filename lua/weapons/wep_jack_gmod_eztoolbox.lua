@@ -388,8 +388,8 @@ function SWEP:BuildItem(selectedBuild)
 									Ent:SetSubMaterial(k, v)
 								end
 							end
-							if BuildInfo.bodyGroups and istable(BuildInfo.bodyGroups) then
-								for k, v in pairs(BuildInfo.bodyGroups) do
+							if BuildInfo.bodygroups and istable(BuildInfo.bodygroups) then
+								for k, v in pairs(BuildInfo.bodygroups) do
 									Ent:SetBodygroup(k, v)
 								end
 							end
