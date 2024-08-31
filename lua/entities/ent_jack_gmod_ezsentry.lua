@@ -694,6 +694,9 @@ if(SERVER)then
 				elseif State == STATE_OVERHEATED then
 					if self.Heat < 45 then
 						self:SetState(STATE_WATCHING)
+					else
+						self.FireOverride = false
+						self.NextFire = self.NextRealThink
 					end
 				else
 					if Ammo <= 0 then
@@ -836,11 +839,9 @@ if(SERVER)then
 			self.Heat = math.Clamp(self.Heat - CoolinAmt, 0, 100)
 		end
 
-		if self.Firing or self.FireOverride then
-			if self.NextFire < Time then
-				self.NextFire = Time + 1 / self.FireRate --  (1/self.FireRate^1.2+0.05) 
-				self:FireAtPoint(self.SearchData.LastKnownPos, self.SearchData.LastKnownVel or Vector(0, 0, 0))
-			end
+		if (self.Firing or self.FireOverride) and (self.NextFire < Time) then
+			self.NextFire = Time + 1 / self.FireRate -- (1/self.FireRate^1.2+0.05) 
+			self:FireAtPoint(self.SearchData.LastKnownPos, self.SearchData.LastKnownVel or Vector(0, 0, 0))
 		end
 
 		self:NextThink(Time + .02)
