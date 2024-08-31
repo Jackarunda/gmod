@@ -345,6 +345,9 @@ if(SERVER)then
 		if ent.NextUseTime then
 			ent.NextUseTime = Time + 1
 		end
+		if ent.UpdateAppearance then
+			ent:UpdateAppearance()
+		end
 	end
 
 	hook.Add("GravGunOnPickedUp", "JMOD_Fruit_GravGun_TimeReset", function(ply, ent) 
