@@ -36,7 +36,9 @@ hook.Add( "LVS.IsEngineStartAllowed", "JMod_DisableEMPedEngines", function(veh)
 end)
 
 function JMod.EZinstallMachine(machine, install)
-	install = install or true
+	if not(IsValid(machine)) then return end
+	if ((machine.EZinstalled or false) == install) then return end
+	if (install == nil) then install = true end
 	if not(IsValid(machine)) then return end
 	local Phys = machine:GetPhysicsObject()
 	if not(IsValid(Phys)) then return end
@@ -72,6 +74,26 @@ function JMod.StartResourceConnection(machine, ply)
 	ply:DropObject()
 	ply:PickupObject(Plugy)
 end
+
+--[[function JModResourceCable(Machine1, Connection, connectionData)
+	local Machine2 = connectionData.EntToConnect
+	if not(IsValid(Machine1) and IsValid(Machine2) and IsValid(Connection)) then return end
+	Ent1.EZconnections = Ent1.EZconnections or {}
+	Ent2.EZconnections = Ent2.EZconnections or {}
+
+
+	constraint.AddConstraintTable( Machine1, Connection, Machine2 )
+
+	Ent2:SetTable( {
+		Type = "JModResourceCable",
+		Ent1 = Machine1,
+		Ent2 = Connection,
+		MyCoolData = MyCoolData
+	} )
+
+	return Connection
+end
+duplicator.RegisterConstraint("JModResourceCable", JModResourceCable, "Machine1", "Connection", "MyCoolData")--]]
 
 function JMod.CreateResourceConnection(machine, ent, resType, plugPos, dist, newCable)
 	dist = dist or 1000

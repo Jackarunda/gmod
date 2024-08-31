@@ -288,7 +288,7 @@ if(SERVER)then
 					--jprint(PhysDamage)
 					--jprint("Their Speed: ", math.Round(CollisionDir:Length()), "Resultant force: "..tostring(math.Round(TheirForce - ForceThreshold)))
 					
-					if (TheirForce >= ForceThreshold) then
+					if (TheirForce >= ForceThreshold) and (Ent ~= World) then
 						JMod.EZinstallMachine(self, false)
 					end
 					if PhysDamage >= 1 and not(Held) then
