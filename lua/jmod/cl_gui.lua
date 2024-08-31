@@ -21,20 +21,20 @@ local LocallyAvailableResources = nil -- this is here solely for caching and eff
 local QuestionMarkIcon = Material("question_mark.png")
 
 local JModIcon, JModLegacyIcon = "jmod_icon", "jmod_icon_legacy.png"
-list.Set( "ContentCategoryIcons", "JMod - EZ Armor", JModIcon.."_armor.png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Explosives", JModIcon.."_explosives.png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Machines", JModIcon.."_machines.png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Misc.", JModIcon..".png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Resources", JModIcon.."_resources.png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon.."_specialammo.png" )
-list.Set( "ContentCategoryIcons", "JMod - EZ Weapons", JModIcon.."_weapons.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Armor", JModIcon.."_armor.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Explosives", JModIcon.."_explosives.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Machines", JModIcon.."_machines.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Misc.", JModIcon..".png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Resources", JModIcon.."_resources.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Special Ammo", JModIcon.."_specialammo.png" )
+list.Set("ContentCategoryIcons", "JMod - EZ Weapons", JModIcon.."_weapons.png" )
 --
-list.Set( "ContentCategoryIcons", "JMod - LEGACY Armor", JModLegacyIcon )
-list.Set( "ContentCategoryIcons", "JMod - LEGACY Explosives", JModLegacyIcon )
-list.Set( "ContentCategoryIcons", "JMod - LEGACY Sentries", JModLegacyIcon )
-list.Set( "ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
-list.Set( "ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
-list.Set( "ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY Armor", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY Explosives", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY Sentries", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
+list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
@@ -501,14 +501,15 @@ local function CacheSelectionMenuIcon(name, info)
 					Buttalony:SetSize(64, 64)
 					Buttalony:RebuildSpawnIcon()
 					hook.Add("SpawniconGenerated", "JMod_ImagePrecacher_" .. name, function(lastModel, imageName, modelsLeft) 
-						--print(lastModel, imageName, modelsLeft)
-						if not(lastModel) and lastModel == tostring(info) then return end
-						imageName = imageName:Replace("materials\\", "")
-						imageName = imageName:Replace("materials/", "")
-						JMod.SelectionMenuIcons[name] = Material(imageName)
-						hook.Remove("SpawniconGenerated", "JMod_ImagePrecacher_" .. name)
-						if IsValid(Buttalony) then
-							Buttalony:Remove()
+						print(name, tostring(info), lastModel, imageName, modelsLeft)
+						if (lastModel) and (lastModel == tostring(info)) then
+							imageName = imageName:Replace("materials\\", "")
+							imageName = imageName:Replace("materials/", "")
+							JMod.SelectionMenuIcons[name] = Material(imageName)
+							hook.Remove("SpawniconGenerated", "JMod_ImagePrecacher_" .. name)
+							if IsValid(Buttalony) then
+								Buttalony:Remove()
+							end
 						end
 					end)
 					--JMod.SelectionMenuIcons[name] = QuestionMarkIcon
