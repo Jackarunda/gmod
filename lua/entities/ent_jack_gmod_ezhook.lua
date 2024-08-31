@@ -99,7 +99,7 @@ if SERVER then
 							self:EmitSound("snd_jack_claythunk.ogg", 65, math.random(80, 120))
 							self:SetState(STATE_HOOKED)
 							self:SetBodygroup(0, 0)
-							DropEntityIfHeld(self)
+							self:ForcePlayerDrop()
 						end
 					end)
 				end
