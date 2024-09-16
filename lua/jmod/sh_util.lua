@@ -396,7 +396,7 @@ end
 
 function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 	if not IsValid(ent2) then return false end
-	local SelfPos, TargPos = ent1:LocalToWorld(ent1:OBBCenter()) + vector_up * (up or 1), ent2:LocalToWorld(ent2:OBBCenter()) + vector_up
+	local SelfPos, TargPos = ent1:LocalToWorld(ent1:OBBCenter()) + ent1:GetUp() * (up or 1), ent2:LocalToWorld(ent2:OBBCenter())
 
 	local Mask = MASK_SHOT + MASK_WATER
 	if onlyHitWorld then
