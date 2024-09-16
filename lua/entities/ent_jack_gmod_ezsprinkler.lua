@@ -153,6 +153,7 @@ if(SERVER)then
 			self:SetLiquid(0)
 		end
 		--
+		self.ThinkRate = 60/12
 		self.NextLiquidThink = 0
 		self.NextUseTime = 0
 		self.NextEffThink = 0
@@ -298,13 +299,12 @@ if(SERVER)then
 	function ENT:IsEntInFieldOfView(ent)
 		if not IsValid(ent) then return false end
 		local SelfPos, EntPos = self:GetPos(), ent:GetPos()
-		if not (ent:GetPos().z <= SelfPos.z + 64) then return false end
+		if not (EntPos.z <= (SelfPos.z + 64)) then return false end
 		local TargetAngle = self:WorldToLocal(EntPos):Angle().y
-		if (TargetAngle > (360 - self.Rotation.Max)) then return false end
-		if JMod.ClearLoS(self, v, false, 34) then return true end
+		if (TargetAngle < (360 - self.Rotation.Max)) then return false end
+		if JMod.ClearLoS(self, ent, false, 34) then return true end
 	end
 
-	local ThinkRate = 60/12 --Hz
 	local EntsToRemove = {["ent_jack_gmod_eznapalm"] = true, ["ent_jack_gmod_ezfirehazard"] = true}
 
 	function ENT:Think()
@@ -315,7 +315,7 @@ if(SERVER)then
 		self:UpdateWireOutputs()
 
 		if self.NextLiquidThink < Time then
-			self.NextLiquidThink = Time + ThinkRate
+			self.NextLiquidThink = Time + self.ThinkRate
 			if State == STATE_ON then
 				if LiquidTyp == JMod.EZ_RESOURCE_TYPES.WATER then
 					local WaterDeliveryAmt = 1 * LiquidConversionSpeed
@@ -330,6 +330,7 @@ if(SERVER)then
 								SafeRemoveEntity(v)
 							end
 							if  v.Hydration and table.HasValue(v.EZconsumes, JMod.EZ_RESOURCE_TYPES.WATER) then
+								debugoverlay.Line(self:GetPos() + Vector(0, 0, 64), v:GetPos(), 2, Color(0, 225, 255), true)
 								v.Hydration = math.Clamp(v.Hydration + WaterDeliveryAmt, 0, 100)
 							end
 							v:RemoveAllDecals()
