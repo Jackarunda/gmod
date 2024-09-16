@@ -415,6 +415,7 @@ hook.Add("PlayerFootstep", "JMOD_PlayerFootstep", function(ply, pos, foot, snd, 
 		if ply.EZarmor.totalWeight >= 150 then
 			ply:EmitSound("snd_jack_gear" .. tostring(math.random(1, 6)) .. ".ogg", 58, math.random(70, 130))
 		end
+		--local InventoryItems = ply.JModInv and ply.JModInv.items
 	end
 end)
 

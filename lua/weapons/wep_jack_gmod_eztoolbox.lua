@@ -432,7 +432,7 @@ function SWEP:PrimaryAttack()
 				self:Msg("device must be repaired before modifying")
 			elseif State ~= JMod.EZ_STATE_OFF then
 				self:Msg("device must be turned off to modify")
-			elseif JMod.HaveResourcesToPerformTask(nil, nil, {
+			elseif JMod.HaveResourcesToPerformTask(self.Owner:GetShootPos(), 150, {
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost
 			}, self) then
 				net.Start("JMod_ModifyMachine")
@@ -513,12 +513,11 @@ end
 
 function SWEP:ModifyMachine(ent, tbl, ammoType)
 	local State = ent:GetState()
-
 	if State == -1 then
 		self:Msg("device must be repaired before modifying")
 	elseif State ~= 0 then
 		self:Msg("device must be turned off to modify")
-	elseif JMod.HaveResourcesToPerformTask(nil, nil, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost }, self) then
+	elseif JMod.HaveResourcesToPerformTask(self.Owner:GetShootPos(), 150, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost }, self) then
 		local ChangedSomething = false
 		if (ent.GetAmmoType and (ammoType ~= ent:GetAmmoType())) or (ent.GetLiquidType and (ammoType ~= ent:GetLiquidType())) then
 			ChangedSomething = true
