@@ -520,7 +520,7 @@ JMod.Hints = {
 	},
 	["ifak"] = {
 		LangKey = "hint ifak",
-		Repeat = 5
+		RepeatCount = 5
 	},
 	["ent_jack_gmod_ezbeartrap"] = {
 		LangKey = "hint ent_jack_gmod_ezbeartrap"
@@ -565,7 +565,7 @@ JMod.Hints = {
 	},
 	["hint item inventory missing"] = {
 		LangKey = "hint item inventory missing",
-		Repeat = 100
+		RepeatCount = 100
 	},
 	["hint item inventory full"] = {
 		LangKey = "hint item inventory full"
@@ -598,11 +598,11 @@ JMod.Hints = {
 	["ent_jack_gmod_ezarmor_flametank"] = {
 		LangKey = "hint ent_jack_gmod_ezarmor_flametank",
 		Followup = "flamethrower ignite",
-		Repeat = 5
+		RepeatCount = 5
 	},
 	["flamethrower ignite"] = {
 		LangKey = "hint flamethrower ignite",
-		Repeat = 5
+		RepeatCount = 5
 	},
 	["headset radio"] = {
 		LangKey = "hint headset radio"
