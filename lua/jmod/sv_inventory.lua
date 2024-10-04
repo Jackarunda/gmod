@@ -1,5 +1,6 @@
 ﻿JMod.VOLUMEDIV = 500
 JMod.DEFAULT_INVENTORY = {EZresources = {}, items = {}, weight = 0, volume = 0, maxVolume = 0}
+JMod.GRABDISTANCE = 70
 
 function JMod.GetStorageCapacity(ent)
 	if not(IsValid(ent)) then return 0 end
@@ -317,22 +318,26 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	end
 	local invEnt = net.ReadEntity()
 
-	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 60, ply)
+	local Tr = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply)
 	local InvSound = util.GetSurfaceData(Tr.SurfaceProps).impactSoftSound
 	local NonPlyInv = (invEnt ~= ply)
 	local CanSeeNonPlyInv = (Tr.Entity == invEnt)
 
 	--jprint(command, invEnt, desiredAmt, resourceType, target)
 	--jprint((NonPlyInv and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
+	
+	-- 'take' means from another inventory, use grab if it's on the ground
 	if command == "take" then
 		if not(IsValid(target)) then 
 			JMod.Hint(ply, "hint item inventory missing") 
 			JMod.UpdateInv(invEnt) 
 			return false 
 		end
-		if JMod.IsEntContained(target) and NonPlyInv and not(CanSeeNonPlyInv) then JMod.UpdateInv(invEnt) return end
-		JMod.AddToInventory(invEnt, target)
-		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
+		if CanSeeNonPlyInv and JMod.IsEntContained(target, invEnt) then
+			JMod.AddToInventory(invEnt, target)
+			JMod.UpdateInv(invEnt)
+			sound.Play((InvSound) or ("snd_jack_clothequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
+		end
 	elseif command == "drop" then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
 		if not(JMod.IsEntContained(target, invEnt)) then 
@@ -341,7 +346,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 
 			return false 
 		end
-		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
+		JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Tr.HitNormal * 10)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 		JMod.Hint(ply,"hint item inventory drop")
 	elseif (command == "use") or (command == "prime") then
@@ -351,7 +356,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 			JMod.UpdateInv(invEnt) 
 			return false 
 		end
-		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Vector(0, 0, 10))
+		local item = JMod.RemoveFromInventory(invEnt, target, Tr.HitPos + Tr.HitNormal * 10)
 		if item then
 			Phys = item:GetPhysicsObject()
 			if pickupWhiteList[item:GetClass()] and IsValid(Phys) and (Phys:GetMass() <= 35) then
@@ -371,7 +376,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	elseif command == "drop_res" then
 		if NonPlyInv and not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, invEnt.JModInv.EZresources[resourceType] or 0)
-		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, Tr.HitPos + Vector(0, 0, 10), false)
+		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, Tr.HitPos + Tr.HitNormal * 10, false)
 		sound.Play(((invEnt ~= ply) and InvSound) or ("snd_jack_clothunequip.ogg"), Tr.HitPos, 60, math.random(90, 110))
 	elseif command == "take_res" then
 		if not(CanSeeNonPlyInv) then return end
@@ -405,10 +410,10 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	if (ply.EZnextGrabTime or 0) > Time then return end
 	ply.EZnextGrabTime = Time + 1
 
-	local TargetEntity = args[1] 
+	local TargetEntity = args[1]
 
 	if not IsValid(TargetEntity) then
-		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * 65, ply).Entity
+		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply).Entity
 	end
 
 	if not(IsValid(TargetEntity)) then ply:PrintMessage(HUD_PRINTCENTER, "Nothing to grab") return end
@@ -523,14 +528,14 @@ hook.Add("EntityRemoved", "JMOD_DUMPINVENTORY", function(ent)
 		local Pos = ent:GetPos()
 		if ent.JModInv.EZresources then
 			for k, v in pairs(ent.JModInv.EZresources) do
-				local ColTr = util.QuickTrace(Pos, VectorRand() * 50, ent)
+				local ColTr = util.QuickTrace(Pos, VectorRand() * JMod.GRABDISTANCE, ent)
 				JMod.RemoveFromInventory(ent, {k, v}, ColTr.HitPos, true, false)
 			end
 		end
 
 		if ent.JModInv.items then
 			for _, v in ipairs(ent.JModInv.items) do
-				local ColTr = util.QuickTrace(Pos, VectorRand() * 50, ent)
+				local ColTr = util.QuickTrace(Pos, VectorRand() * JMod.GRABDISTANCE, ent)
 				JMod.RemoveFromInventory(ent, v.ent, ColTr.HitPos, true, false)
 			end
 		end
