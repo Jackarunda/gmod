@@ -392,17 +392,22 @@ if(SERVER)then
 	end
 elseif(CLIENT)then
 	function ENT:CustomInit()
-		self.Camera=JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
-		self.TopCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
-		self.BottomCanopy=JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.Camera = JMod.MakeModel(self,"models/props_combine/combinecamera001.mdl")
+		self.TopCanopy = JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
+		self.BottomCanopy = JMod.MakeModel(self,"models/props_phx/construct/windows/window_dome360.mdl")
 		self.TopCanopy:SetSubMaterial(0,"mri-scanner/mri-dome_side")
 		self.BottomCanopy:SetSubMaterial(0,"mri-scanner/mri-dome_side")
 		self.TopCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
 		self.BottomCanopy:SetSubMaterial(2,"mri-scanner/mri-dome")
-		self.Rotator=JMod.MakeModel(self,"models/hunter/tubes/tube4x4x1.mdl")
+		self.Rotator = JMod.MakeModel(self,"models/hunter/tubes/tube4x4x1.mdl")
 		-- models/props_phx/construct/glass/glass_dome360.mdl
-		self.OpenAmt=1
-		self.DriveCycle=0
+		self.OpenAmt = 1
+		self.DriveCycle = 0
+	end
+
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		self.OpenAmt = 1
+		self.DriveCycle = 0
 	end
 
 	function ENT:Think()
