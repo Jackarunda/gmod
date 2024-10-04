@@ -293,6 +293,11 @@ elseif(CLIENT)then
 		self.DriveMomentum = 0
 	end
 
+	function ENT:PostEntityPaste(ply, ent, createdEntities)
+		self.DriveCycle = 0
+		self.DriveMomentum = 0
+	end
+
 	--[[
 	0	Base
 	1	WalkingBeam
