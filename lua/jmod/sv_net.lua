@@ -193,8 +193,11 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 end)
 
 net.Receive("JMod_SaveLoadDeposits", function(ln, ply) 
+	if not(JMod.IsAdmin(ply)) then return end
+	
 	local Operation = net.ReadString()
 	local EntryID = net.ReadString()
+
 	if IsValid(ply) then 
 		--print(Operation, EntryID)
 		if string.lower(Operation) == "save" then
