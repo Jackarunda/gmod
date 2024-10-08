@@ -797,11 +797,17 @@ function JMod.GetSalvageYield(ent)
 	end
 
 	local ScaleByMass = true
+	if ent.BackupRecipe and istable(ent.BackupRecipe) then
+		Info = ent.BackupRecipe
+		ScaleByMass = false
+	end
+
 	for name, info in pairs(JMod.Config.Craftables) do
-		--jprint((info.results == Mdl))
 		if isstring(info.results) and ((info.results == Class) or (string.lower(info.results) == Mdl)) then
 			Info = info.craftingReqs
 			ScaleByMass = false
+
+			break
 		end
 	end
 

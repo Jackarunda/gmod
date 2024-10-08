@@ -350,4 +350,10 @@ if SERVER then
 	function ENT:OnRemove()
 		--
 	end
+elseif CLIENT then
+	function ENT:Initialize()
+		if self.Color then
+			self:SetColor(self.Color)
+		end
+	end--]]
 end
