@@ -325,7 +325,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 
 	--jprint(command, invEnt, desiredAmt, resourceType, target)
 	--jprint((NonPlyInv and InvSound) or ("snds_jack_gmod/equip"..math.random(1, 5)..".ogg"))
-	
+
 	-- 'take' means from another inventory, use grab if it's on the ground
 	if command == "take" then
 		if not(IsValid(target)) then 

@@ -92,21 +92,21 @@ end)
 
 hook.Add("PlayerSelectSpawn", "JMod_SleepingBagSpawn", function(ply, spawnpoint) 
 	local STATE_ROLLED, STATE_UNROLLED = 0, 1
-	local sleepingbag = ply.JModSpawnPointEntity
-	if IsValid(sleepingbag) and (sleepingbag.State == STATE_UNROLLED)then
-		if (sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
-			sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
-			if not IsValid(sleepingbag.Pod:GetDriver()) then --Get inside when respawn
-				ply:SetPos(sleepingbag:GetPos())
-				sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
+	local Sleepingbag = ply.JModSpawnPointEntity
+	if IsValid(Sleepingbag) and (Sleepingbag.State == STATE_UNROLLED) and (IsValid(Sleepingbag.Pod)) then
+		if (Sleepingbag.nextSpawnTime < ply.JModSpawnTime) then
+			Sleepingbag.nextSpawnTime = ply.JModSpawnTime + 60
+			if not IsValid(Sleepingbag.Pod:GetDriver()) then --Get inside when respawn
+				ply:SetPos(Sleepingbag:GetPos())
+				Sleepingbag.Pod:Fire("EnterVehicle", "nil", 0, ply, ply)
 				net.Start("JMod_VisionBlur")
 					net.WriteFloat(5)
 					net.WriteFloat(2000)
 					net.WriteBit(true)
 				net.Send(ply)
-				sleepingbag.Pod.EZvehicleEjectPos = nil
+				Sleepingbag.Pod.EZvehicleEjectPos = nil
 				
-				return sleepingbag
+				return Sleepingbag
 			end
 		else
 			JMod.Hint(ply,"sleeping bag wait")
