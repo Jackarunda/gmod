@@ -92,7 +92,7 @@ ENT.StaticPerfSpecs = {
 	BarrelLength = 29,
 	MaxCoolant = 100
 }
-ENT.DynamicPerfSpecs={
+ENT.DynamicPerfSpecs = {
 	MaxAmmo=300,
 	TurnSpeed=60,
 	TargetingRadius=15,
@@ -104,38 +104,32 @@ ENT.DynamicPerfSpecs={
 	TargetLockTime=5,
 	Cooling=1
 }
-ENT.DynamicPerfSpecExp=1.2
+ENT.DynamicPerfSpecExp = 1.2
 
 ENT.AmmoRefundTable = {
 	["Bullet"] = {
 		varToRead = "Ammo",
-		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
 	},
 	["Buckshot"] = {
 		varToRead = "Ammo",
-		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
 	},
 	["API Bullet"] = {
 		varToRead = "Ammo",
-		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
 	},
 	["HE Grenade"] = {
 		varToRead = "Ammo",
-		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS
 	},
 	["Rocket Launcher"] = {
 		varToRead = "Ammo",
-		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS
 	},
 	["Pulse Laser"] = {
 		varToRead = "Electricity",
-		spawnType = JMod.EZ_RESOURCE_TYPES.POWER,
-		conversionMult = 1
+		spawnType = JMod.EZ_RESOURCE_TYPES.POWER
 	}
 }
 
@@ -149,7 +143,7 @@ function ENT:SetMods(tbl, ammoType)
 		local AmmoTypeToSpawn = RefundInfo.spawnType
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
 		local NetVarValue = self[NetVarValueName](self)
-		local AmtToSpawn = NetVarValue * RefundInfo.conversionMult
+		local AmtToSpawn = NetVarValue
 		if (OldAmmo == "Pulse Laser") then
 			// we were using Electricity as ammo, and now our MaxElectricity is about to change
 			// we're gonna kick our all our Electricity, so set ours to 0
@@ -167,7 +161,7 @@ function ENT:SetMods(tbl, ammoType)
 		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
 	end
 	if SERVER then
-		self:SetupWire()
+		--self:SetupWire()
 	end
 end
 
@@ -269,8 +263,9 @@ if(SERVER)then
 		local WireOutputs = {"State [NORMAL]", "Grade [NORMAL]"}
 		local WireOutputDesc = {"The state of the machine \n-1 is broken \n0 is off \n1 is on", "The machine grade"}
 		for _, typ in ipairs(self.EZconsumes) do
-			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then typ = "Durability" end
-			local ResourceName = string.Replace(typ, " ", "")
+			local TypeName = typ
+			if typ == JMod.EZ_RESOURCE_TYPES.BASICPARTS then TypeName = "Durability" end
+			local ResourceName = string.Replace(TypeName, " ", "")
 			local ResourceDesc = "Amount of "..ResourceName.." left"
 			--
 			local OutResourceName = string.gsub(ResourceName, "^%l", string.upper).." [NORMAL]"
@@ -678,13 +673,13 @@ if(SERVER)then
 
 	function ENT:Think()
 		local Time = CurTime()
-		self:UpdateWireOutputs()
 
 		if self.NextRealThink < Time then
 			local Electricity, Ammo = self:GetElectricity(), self:GetAmmo()
 			self.NextRealThink = Time + .25 / self.ThinkSpeed
 			self.Firing = false
 			local State = self:GetState()
+			self:UpdateWireOutputs()
 
 			if State > 0 then
 				if self.Heat > 90 then
