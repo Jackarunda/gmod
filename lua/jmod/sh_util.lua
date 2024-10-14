@@ -170,6 +170,7 @@ function JMod.VisCheck(pos, target, sourceEnt)
 
 	if sourceEnt then
 		table.insert(filter, sourceEnt)
+		if sourceEnt.GetOwner and IsValid(sourceEnt:GetOwner()) then table.insert(filter, sourceEnt:GetOwner()) end
 	end
 
 	if target and target.GetPos then
