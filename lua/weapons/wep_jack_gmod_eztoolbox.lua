@@ -519,7 +519,9 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 		self:Msg("device must be turned off to modify")
 	elseif JMod.HaveResourcesToPerformTask(self.Owner:GetShootPos(), 150, { [JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost }, self) then
 		local ChangedSomething = false
-		if (ent.GetAmmoType and (ammoType ~= ent:GetAmmoType())) or (ent.GetLiquidType and (ammoType ~= ent:GetLiquidType())) then
+		if (ent.GetAmmoType and (ammoType ~= ent:GetAmmoType())) then
+			ChangedSomething = true
+		elseif (ent.GetLiquidType and (ammoType ~= ent:GetLiquidType())) then
 			ChangedSomething = true
 		else
 			for k, v in pairs(tbl) do
