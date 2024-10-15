@@ -355,15 +355,20 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 		filter = {ent}
 	})
 
-	if not initialTrace.Hit then return end
-	local AVec, IPos, TNorm, SMul = initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType]
-	local Eff = EffectData()
-	Eff:SetOrigin(IPos)
-	Eff:SetScale(.5)
-	Eff:SetNormal(TNorm)
-	util.Effect("eff_jack_gmod_efpburst", Eff, true, true)
-
-	if doBlasts then
+	if not initialTrace.Hit or initialTrace.HitSky then return end
+	local AVec, IPos, TNorm, SMul = initialTrace.Normal, initialTrace.HitPos, initialTrace.HitNormal, SurfaceHardness[initialTrace.MatType] or .99
+	local DontStop = false
+	if (util.GetSurfacePropName(initialTrace.SurfaceProps) == "chainlink") and math.Rand(0, 1) < SMul then
+		DontStop = true
+	else
+		local Eff = EffectData()
+		Eff:SetOrigin(IPos)
+		Eff:SetScale(.5)
+		Eff:SetNormal(TNorm)
+		util.Effect("eff_jack_gmod_efpburst", Eff, true, true)
+	end
+	
+	if doBlasts and not DontStop then
 		util.BlastDamage(ent, Attacker, IPos + TNorm * 2, dmg / 6, dmg / 4)
 
 		timer.Simple(0, function()
@@ -375,7 +380,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 		end)
 	end
 
-	if wreckShit and not initialTrace.HitWorld then
+	if wreckShit and not initialTrace.HitWorld and not DontStop then
 		local Phys = initialTrace.Entity:GetPhysicsObject()
 
 		if IsValid(Phys) then
@@ -399,7 +404,7 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	local MaxRicAngle = 60 * SMul
 
 	-- all the way through (hot)
-	if ApproachAngle > (MaxRicAngle * 1.05) then
+	if ApproachAngle > (MaxRicAngle * 1.05) or DontStop then
 		local MaxDist, SearchPos, SearchDist, Penetrated = (dmg / SMul) * .15 * (penMul or 1), IPos, 5, false
 
 		while (not Penetrated) and (SearchDist < MaxDist) do
@@ -414,32 +419,34 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 		end
 
 		if Penetrated then
-			ent:FireBullets({
-				Attacker = Attacker,
-				Damage = 1,
-				Force = 1,
-				Num = 1,
-				Tracer = 0,
-				TracerName = "",
-				Dir = -AVec,
-				Spread = Vector(0, 0, 0),
-				Src = SearchPos + AVec
-			})
+			if not DontStop then
+				ent:FireBullets({
+					Attacker = Attacker,
+					Damage = 1,
+					Force = 1,
+					Num = 1,
+					Tracer = 0,
+					TracerName = "",
+					Dir = -AVec,
+					Spread = Vector(0, 0, 0),
+					Src = SearchPos + AVec
+				})
 
-			if doBlasts then
-				util.BlastDamage(ent, Attacker, SearchPos + AVec * 2, dmg / 4, dmg / 4)
+				if doBlasts then
+					util.BlastDamage(ent, Attacker, SearchPos + AVec * 2, dmg / 4, dmg / 4)
 
-				timer.Simple(0, function()
-					local Tr = util.QuickTrace(SearchPos + AVec, -AVec * 20)
+					timer.Simple(0, function()
+						local Tr = util.QuickTrace(SearchPos + AVec, -AVec * 20)
 
-					if Tr.Hit then
-						util.Decal("FadingScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
-					end
-				end)
+						if Tr.Hit then
+							util.Decal("FadingScorch", Tr.HitPos + Tr.HitNormal, Tr.HitPos - Tr.HitNormal)
+						end
+					end)
+				end
 			end
 
-			local ThroughFrac = 1 - SearchDist / MaxDist
-			JMod.RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * .7, doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+			local ThroughFrac = (1 - SearchDist / MaxDist)
+			JMod.RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * (DontStop and 1 or .7), doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
 		end
 	elseif ApproachAngle < (MaxRicAngle * .95) then
 		-- ping whiiiizzzz

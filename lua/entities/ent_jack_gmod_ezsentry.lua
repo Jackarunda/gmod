@@ -1,24 +1,25 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.Base="ent_jack_gmod_ezmachine_base"
-ENT.PrintName="EZ Sentry"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Machines"
-ENT.Information="glhfggwpezpznore"
-ENT.NoSitAllowed=true
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
-ENT.SpawnHeight=15
-ENT.EZconsumes=nil
-ENT.EZscannerDanger=true
-ENT.JModPreferredCarryAngles=Angle(0,0,0)
-ENT.EZpowerSocket=Vector(-5, 0, 1)
-ENT.EZupgradable=true
-ENT.Model="models/props_phx/oildrum001_explosive.mdl"
-ENT.Mat="models/mat_jack_gmod_ezsentry"
+ENT.Type = "anim"
+ENT.Base = "ent_jack_gmod_ezmachine_base"
+ENT.PrintName = "EZ Sentry"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Machines"
+ENT.Information = "glhfggwpezpznore"
+ENT.NoSitAllowed = true
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
+--- JMod specific stuff
+ENT.SpawnHeight = 15
+ENT.EZconsumes = nil
+ENT.EZscannerDanger = true
+ENT.JModPreferredCarryAngles = Angle(0,0,0)
+ENT.EZpowerSocket = Vector(-5, 0, 1)
+ENT.EZupgradable = true
+ENT.Model = "models/props_phx/oildrum001_explosive.mdl"
+ENT.Mat = "models/mat_jack_gmod_ezsentry"
 ENT.EZcolorable = true
-ENT.Mass=250
+ENT.Mass = 250
 -- config --
 ENT.AmmoTypes = {
 	["Bullet"] = {}, -- Simple pew pew
@@ -37,7 +38,8 @@ ENT.AmmoTypes = {
 		TurnSpeed = 1.5
 	}, -- multiple bullets each doing self.Damage
 	["API Bullet"] = {
-		FireRate = .75,
+		MaxAmmo = .75,
+		FireRate = .6,
 		Damage = .3
 	}, -- Armor Piercing Incendiary, pierces through things and lights fires
 	["HE Grenade"] = {
@@ -93,16 +95,16 @@ ENT.StaticPerfSpecs = {
 	MaxCoolant = 100
 }
 ENT.DynamicPerfSpecs = {
-	MaxAmmo=300,
-	TurnSpeed=60,
-	TargetingRadius=15,
-	Armor=4,
-	FireRate=6,
-	Damage=15,
-	Accuracy=1,
-	SearchSpeed=.5,
-	TargetLockTime=5,
-	Cooling=1
+	MaxAmmo = 300,
+	TurnSpeed = 60,
+	TargetingRadius = 15,
+	Armor = 4,
+	FireRate = 6,
+	Damage = 15,
+	Accuracy = 1,
+	SearchSpeed = .5,
+	TargetLockTime = 5,
+	Cooling = 1
 }
 ENT.DynamicPerfSpecExp = 1.2
 
@@ -167,15 +169,15 @@ end
 
 function ENT:InitPerfSpecs(removeAmmo)
 	if not self.ModPerfSpecs then return end
-	local PerfMult=self:GetPerfMult() or 1
-	local Grade=self:GetGrade()
+	local PerfMult = self:GetPerfMult() or 1
+	local Grade = self:GetGrade()
 	local NetworkTable = {}
 	for specName, value in pairs(self.StaticPerfSpecs)do 
 		self[specName] = value 
 		NetworkTable[specName] = value
 	end
 	for specName,value in pairs(self.DynamicPerfSpecs)do 
-		if(type(value)~="table")then
+		if(type(value) ~= "table")then
 			local NewValue = value*PerfMult*JMod.EZ_GRADE_BUFFS[Grade]^self.DynamicPerfSpecExp
 			self[specName] = NewValue
 			NetworkTable[specName] = NewValue
@@ -213,7 +215,8 @@ function ENT:InitPerfSpecs(removeAmmo)
 	end
 
 	if self:GetAmmoType() ~= "Pulse Laser" then
-		-- no juking the ammo capacity, fag
+		-- we're not using Electricity as our ammo, so set it to 0
+		-- no exploit
 		self:SetAmmo((removeAmmo and 0) or math.min(self:GetAmmo(), self.MaxAmmo))
 	else
 		-- except for lasers cause they don't use ammo
@@ -232,12 +235,12 @@ end
 ----
 local STATE_BROKEN,STATE_OFF,STATE_WATCHING,STATE_SEARCHING,STATE_ENGAGING,STATE_WHINING,STATE_OVERHEATED=-1,0,1,2,3,4,5
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Int",2,"Ammo")
-	self:NetworkVar("Float",1,"AimPitch")
-	self:NetworkVar("Float",2,"AimYaw")
-	self:NetworkVar("Float",3,"PerfMult")
-	self:NetworkVar("Float",4,"Coolant")
-	self:NetworkVar("String",0,"AmmoType")
+	self:NetworkVar("Int", 2, "Ammo")
+	self:NetworkVar("Float", 1, "AimPitch")
+	self:NetworkVar("Float", 2, "AimYaw")
+	self:NetworkVar("Float", 3, "PerfMult")
+	self:NetworkVar("Float", 4, "Coolant")
+	self:NetworkVar("String", 0, "AmmoType")
 end
 if(SERVER)then
 	function ENT:SetupWire()
@@ -356,8 +359,8 @@ if(SERVER)then
 		self:Point(0, 0)
 		self.SearchStageTime = self.SearchTime / 2
 		--self:SetAmmo(self.MaxAmmo)
-		self.NextWhine=0
-		self.Heat=0
+		self.NextWhine = 0
+		self.Heat = 0
 		self:ResetMemory()
 		self:CreateNPCTarget()
 		---
@@ -450,39 +453,39 @@ if(SERVER)then
 	end
 
 	function ENT:CustomDetermineDmgMult(dmginfo)
-		local Mult= 1--.2 -- Let's just make it tougher overall
-		local IncomingVec=dmginfo:GetDamageForce():GetNormalized()
-		local Up,Right,Forward=self:GetUp(),self:GetRight(),self:GetForward()
-		local AimAng=self:GetAngles()
-		AimAng:RotateAroundAxis(Right,self:GetAimPitch())
-		AimAng:RotateAroundAxis(Up,self:GetAimYaw())
-		local AimVec=AimAng:Forward()
-		local AttackAngle=-math.deg(math.asin(AimVec:Dot(IncomingVec)))
-		if(AttackAngle>=60)then
-			Mult=Mult*.2
-			if(math.random(1,2)==1)then
-				local SelfPos=self:GetPos()
-				local effectdata=EffectData()
-				effectdata:SetOrigin(SelfPos+Up*30+AimVec*20)
+		local Mult = 1--.2 -- Let's just make it tougher overall
+		local IncomingVec = dmginfo:GetDamageForce():GetNormalized()
+		local Up, Right, Forward = self:GetUp(), self:GetRight(), self:GetForward()
+		local AimAng = self:GetAngles()
+		AimAng:RotateAroundAxis(Right, self:GetAimPitch())
+		AimAng:RotateAroundAxis(Up, self:GetAimYaw())
+		local AimVec = AimAng:Forward()
+		local AttackAngle =- math.deg(math.asin(AimVec:Dot(IncomingVec)))
+		if(AttackAngle >= 60)then
+			Mult = Mult*.2
+			if(math.random(1,2) == 1)then
+				local SelfPos = self:GetPos()
+				local effectdata = EffectData()
+				effectdata:SetOrigin(SelfPos + Up * 30 + AimVec * 20)
 				effectdata:SetNormal(VectorRand())
 				effectdata:SetMagnitude(2) --amount and shoot hardness
 				effectdata:SetScale(1) --length of strands
 				effectdata:SetRadius(2) --thickness of strands
-				util.Effect("Sparks",effectdata,true,true)
-				if(dmginfo:IsDamageType(DMG_BULLET)or(dmginfo:IsDamageType(DMG_BUCKSHOT)))then
-					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg",SelfPos+VectorRand(),70,math.random(80,120))
-					local RicDir=VectorRand()
-					RicDir.z=RicDir.z/2
+				util.Effect("Sparks", effectdata, true, true)
+				if (dmginfo:IsDamageType(DMG_BULLET) or (dmginfo:IsDamageType(DMG_BUCKSHOT))) then
+					sound.Play("snds_jack_gmod/ricochet_"..math.random(1,2)..".ogg", SelfPos+VectorRand(), 70, math.random(80, 120))
+					local RicDir = VectorRand()
+					RicDir.z = RicDir.z * .5
 					RicDir:Normalize()
 					self:FireBullets({
-						Src=SelfPos,
-						Dir=RicDir,
-						Tracer=1,
-						Num=1,
-						Spread=Vector(0,0,0),
-						Damage=10,
-						Force=50,
-						Attacker=dmginfo:GetAttacker() or self
+						Src = SelfPos,
+						Dir = RicDir,
+						Tracer = 1,
+						Num = 1,
+						Spread = Vector(0,0,0),
+						Damage = 10,
+						Force = 50,
+						Attacker = dmginfo:GetAttacker() or self
 					})
 				end
 			end
@@ -580,7 +583,7 @@ if(SERVER)then
 	-- 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
 	-- if we name it something else, then it works fine
 	-- i hate retarded gmod script kiddies
-	function ENT:CanSee2(ent)
+	function ENT:CanSeeTarget(ent)
 		if not IsValid(ent) then return false end
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
 		local Dist = TargPos:Distance(SelfPos)
@@ -601,9 +604,10 @@ if(SERVER)then
 		if not IsValid(ent) then return false end
 		if ent == self.NPCTarget then return false end
 
-		return JMod.ShouldAttack(self, ent) and self:CanSee2(ent)
+		return JMod.ShouldAttack(self, ent) and self:CanSeeTarget(ent)
 	end
 
+	-- We should make this use a coroutine for effiecency
 	function ENT:TryFindTarget()
 		local Time = CurTime()
 
@@ -627,7 +631,7 @@ if(SERVER)then
 
 		if #PotentialTargets > 0 then
 			table.sort(PotentialTargets, function(a, b)
-				local DistA, DistB = a:GetPos():Distance(SelfPos), b:GetPos():Distance(SelfPos)
+				local DistA, DistB = a:GetPos():DistToSqr(SelfPos), b:GetPos():DistToSqr(SelfPos)
 
 				return DistA < DistB
 			end)
@@ -709,7 +713,7 @@ if(SERVER)then
 
 				if Target then
 					self:Engage(Target)
-				else
+				elseif not self.AimOverride then -- Don't return to forward if we are being aimed manually
 					self:ReturnToForward()
 				end
 			elseif State == STATE_SEARCHING then
@@ -835,8 +839,8 @@ if(SERVER)then
 		end
 
 		if (self.Firing or self.FireOverride) and (self.NextFire < Time) then
-			self.NextFire = Time + 1 / self.FireRate -- (1/self.FireRate^1.2+0.05) 
-			self:FireAtPoint(self.SearchData.LastKnownPos, self.SearchData.LastKnownVel or Vector(0, 0, 0))
+			self.NextFire = Time + 1 / self.FireRate -- (1/self.FireRate^1.2+0.05)
+			self:FireAtPoint((self.FireOverride and vector_origin) or self.SearchData.LastKnownPos, self.SearchData.LastKnownVel or Vector(0, 0, 0))
 		end
 
 		self:NextThink(Time + .02)
@@ -854,8 +858,8 @@ if(SERVER)then
 		local AimForward = AimAng:Forward()
 		local ShootPos = SelfPos + Up * 38 + AimForward * self.BarrelLength
 
-		if not point then
-			local Trace = util.QuickTrace(ShootPos, AimForward * 1000, self)
+		if not(point) or (point == vector_origin) then
+			local Trace = util.QuickTrace(ShootPos, AimForward * 100, self)
 			point = Trace.HitPos
 		end
 
@@ -1178,10 +1182,11 @@ if(SERVER)then
 
 		---
 		if math.random(1, 2) == 2 then
-			local Force = -AimForward * 15 * self.Damage * self.ShotCount * 2
+			local Force = -AimForward * 20 * self.Damage * self.ShotCount * 2
 
 			if Force:Length() > 2000 then
-				self:GetPhysicsObject():ApplyForceCenter(Force)
+				--self:GetPhysicsObject():ApplyForceCenter(Force)
+				self:GetPhysicsObject():ApplyForceOffset(Force, SelfPos + Up * 40)
 			end
 		end
 
@@ -1201,6 +1206,7 @@ if(SERVER)then
 		return -CurPitchOffset - GoalPitch , CurYawOffset - GoalYaw
 	end
 
+	-- Are we even using this?
 	function ENT:RandomMove()
 		local X, Y = self:GetAimYaw(), self:GetAimPitch()
 		self:Point(Y + math.Rand(-1, 1) * self.TurnSpeed / 8, X + math.Rand(-1, 1) * self.TurnSpeed / 4)
@@ -1219,7 +1225,7 @@ if(SERVER)then
 			sound.Play("snds_jack_gmod/ezsentry_turn.ogg", self:GetPos(), 60, math.random(95, 105))
 		end
 
-		self:ConsumeElectricity()
+		self:ConsumeElectricity(0.02)
 	end
 
 	function ENT:Turn(pitch, yaw)
