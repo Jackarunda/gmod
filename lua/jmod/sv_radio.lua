@@ -319,7 +319,9 @@ function JMod.RemoveRadioOutPost(teamID)
 	end
 
 	for _, radio in ipairs(FindEZradios()) do
-		radio:TurnOff()
+		if radio:GetOutpostID() == RemovedOutpost then
+			radio:StartConnecting()
+		end
 	end
 
 	local TeamName = team.GetName(tonumber(teamID))

@@ -137,14 +137,20 @@ if(SERVER)then
 	end
 
 	function ENT:TurnOn(activator)
+		if self:GetState() ~= STATE_OFF then return end
 		if self:WaterLevel() > 0 then return end
-		self:SetState(STATE_CONNECTING)
+		self:StartConnecting(activator)
 		self:EmitSound("snds_jack_gmod/ezsentry_startup.ogg", 65, 100)
+	end
+
+	function ENT:StartConnecting(activator)
+		if (self:GetState() <= STATE_BROKEN) then return end
+		self:SetState(STATE_CONNECTING)
 		self.ConnectionAttempts = 0
 	end
 
 	function ENT:TurnOff()
-		if (self:GetState() <= 0) then return end
+		if (self:GetState() <= STATE_BROKEN) then return end
 		self:SetState(STATE_OFF)
 		self:EmitSound("snds_jack_gmod/ezsentry_shutdown.ogg", 65, 100)
 	end
