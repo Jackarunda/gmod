@@ -134,7 +134,10 @@ if SERVER then
 		JMod.SetEZowner(self, Dude)
 		JMod.Hint(Dude, self.ClassName)
 		local Time = CurTime()
-		if self.ShiftAltUse and Dude:KeyDown(JMod.Config.General.AltFunctionKey) and Dude:KeyDown(IN_SPEED) then return self:ShiftAltUse(Dude, tobool(onOff)) end
+		if self.ShiftAltUse and Dude:KeyDown(JMod.Config.General.AltFunctionKey) and Dude:KeyDown(IN_SPEED) then 
+			
+			return self:ShiftAltUse(Dude, tobool(onOff)) 
+		end
 
 		if tobool(onOff) then
 			local State = self:GetState()
