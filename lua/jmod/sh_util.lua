@@ -417,9 +417,11 @@ function JMod.ClearLoS(ent1, ent2, ignoreWater, up, onlyHitWorld)
 end
 
 function JMod.PlyHasArmorEff(ply, eff)
-	if IsValid(ply) and ply.EZarmor and eff then
-		if (ply.EZarmor and istable(ply.EZarmor.effects)) then
+	if IsValid(ply) and ply.EZarmor and ply.EZarmor.effects then 
+		if eff then
 			return ply.EZarmor.effects[eff]
+		else
+			return ply.EZarmor.effects
 		end
 	else
 		return false
