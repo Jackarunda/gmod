@@ -127,7 +127,9 @@ if(SERVER)then
 		timer.Simple(0, function()
 			if Phys:IsValid() then
 				Phys:Wake()
-				phys:SetMass(self.Mass)
+				if self.Mass then
+					Phys:SetMass(self.Mass)
+				end
 				if self.EZbuoyancy then
 					Phys:SetBuoyancyRatio(self.EZbuoyancy)
 				end
