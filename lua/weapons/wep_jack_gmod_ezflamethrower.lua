@@ -129,7 +129,7 @@ local Backness = 0
 function SWEP:GetViewModelPosition(pos, ang)
 	local FT = FrameTime()
 
-	if (self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM)) then
+	if IsValid(self.Owner) and ((self.Owner:KeyDown(IN_SPEED)) or (self.Owner:KeyDown(IN_ZOOM))) then
 		Downness = Lerp(FT * 2, Downness, 10)
 	else
 		Downness = Lerp(FT * 2, Downness, 0)

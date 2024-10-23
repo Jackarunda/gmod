@@ -1002,7 +1002,7 @@ JMod.ArmorTable = {
 		pos = Vector(0.1, -10.1, -0.5),
 		ang = Angle(90, 180, -90),
 		wgt = 30,
-		dur = 20,
+		dur = 50,
 		ent = "ent_jack_gmod_ezarmor_flametank"
 	}
 }

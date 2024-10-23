@@ -99,10 +99,10 @@ local function IsHitToBack(ply, dmg)
 	local FacingDir, DmgDir = ply:GetAimVector(), dmg:GetDamageForce():GetNormalized()
 	local ApproachAngle = -math.deg(math.asin(DmgDir:Dot(FacingDir)))
 
-	return ApproachAngle < -45
+	return ApproachAngle < -30
 end
 
-local NonProtectiveSlots = {"ears", "back", "waist"}
+local NonProtectiveSlots = {"ears", "waist"}
 
 local function GetProtectionFromSlot(ply, slot, dmg, dmgAmt, protectionMul, shouldDmgArmor, cumulativeCoverage)
 	local Protection, Busted = 0, false
@@ -221,7 +221,12 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 				RelevantSlots.head = 1
 			end
 		elseif hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC then
-			RelevantSlots.chest = 1
+			if IsHitToBack(ply, dmg) then
+				RelevantSlots.chest = .1
+				RelevantSlots.back = .9
+			else
+				RelevantSlots.chest = 1
+			end
 		elseif hitgroup == HITGROUP_STOMACH then
 			RelevantSlots.abdomen = .5
 			RelevantSlots.pelvis = .5
