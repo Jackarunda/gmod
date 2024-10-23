@@ -12,6 +12,7 @@ ENT.Model = "models/jmod/machines/workstations/weaponworkbench01.mdl"
 ENT.Mass = 500
 ENT.JModPreferredCarryAngles = Angle(0,180,0)
 ENT.EZcolorable = true
+ENT.EZbuoyancy = .3
 --
 ENT.EZconsumes={
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -31,10 +32,6 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self:GetPhysicsObject()
-		if phys:IsValid()then
-			phys:SetBuoyancyRatio(.3)
-		end
 		if self.SpawnFull then
 			self:SetGas(self.MaxGas)
 		else

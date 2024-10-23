@@ -8,10 +8,12 @@ ENT.Information = "glhfggwpezpznore"
 ENT.Spawnable = true
 ENT.AdminSpawnable = true
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
+---
 ENT.Model = "models/jmod/machines/parts_machine.mdl"
 ENT.Mass = 1000
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
 ENT.EZcolorable = true
+ENT.EZbouyancy = .3
 ---
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
@@ -40,11 +42,6 @@ end
 
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self:GetPhysicsObject()
-		if phys:IsValid()then
-			phys:SetBuoyancyRatio(.3)
-		end
-		---
 		if not(self.EZowner)then self:SetColor(Color(45, 101, 153)) end
 		self:UpdateConfig()
 		---

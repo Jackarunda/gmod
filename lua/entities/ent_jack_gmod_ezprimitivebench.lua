@@ -12,6 +12,7 @@ ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 ENT.Model = "models/jmod/machines/primitive_bench.mdl"
 ENT.Mass = 250
 ENT.JModPreferredCarryAngles = Angle(0, 180, 0)
+ENT.EZbuoyancy = .3
 ENT.EZconsumes = {
 	JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.WOOD,
@@ -50,10 +51,6 @@ function ENT:CustomSetupDataTables()
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self:GetPhysicsObject()
-		if phys:IsValid()then
-			phys:SetBuoyancyRatio(.3)
-		end
 		if not(self.EZowner)then self:SetColor(Color(255, 255, 255)) end
 		self:UpdateConfig()
 		self:SetProgress(0)

@@ -13,6 +13,7 @@ ENT.EZscannerDanger = true
 ENT.JModGUIcolorable = true
 ENT.JModEZstorable = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
+ENT.EZbuoyancy = .4
 
 ENT.BlacklistedNPCs = {"bullseye_strider_focus", "npc_turret_floor", "npc_turret_ceiling", "npc_turret_ground"}
 
@@ -243,7 +244,7 @@ if SERVER then
 
 		if State == STATE_ARMED then
 			if self.NextDet < CurTime() then
-				self:GetPhysicsObject():SetBuoyancyRatio(.4)
+				self:GetPhysicsObject():SetBuoyancyRatio(self.EZbuoyancy)
 
 				if JMod.EnemiesNearPoint(self, self:GetPos(), 100, true) then
 					self:Detonate()

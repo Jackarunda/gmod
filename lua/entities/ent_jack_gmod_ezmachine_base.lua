@@ -123,13 +123,13 @@ if(SERVER)then
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)
 		self:SetUseType(SIMPLE_USE)
-		local phys = self:GetPhysicsObject()
+		local Phys = self:GetPhysicsObject()
 		timer.Simple(0, function()
-			if phys:IsValid() then
-				phys:Wake()
+			if Phys:IsValid() then
+				Phys:Wake()
 				phys:SetMass(self.Mass)
 				if self.EZbuoyancy then
-					phys:SetBuoyancyRatio(self.EZbuoyancy)
+					Phys:SetBuoyancyRatio(self.EZbuoyancy)
 				end
 			end
 		end)

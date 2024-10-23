@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.EZscannerDanger = true
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
 ENT.EZbombBaySize = 25
+ENT.EZbuoyancy = .4
 ---
 local STATE_BROKEN, STATE_OFF, STATE_ARMED = -1, 0, 1
 
@@ -250,7 +251,7 @@ if SERVER then
 				self.Moored = true
 			else
 				if self.NextDet < CurTime() then
-					self:GetPhysicsObject():SetBuoyancyRatio(.4)
+					self:GetPhysicsObject():SetBuoyancyRatio(self.EZbuoyancy)
 
 					if JMod.EnemiesNearPoint(self, self:GetPos(), 300, true) then
 						self:Detonate()

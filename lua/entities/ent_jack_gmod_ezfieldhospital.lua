@@ -1,46 +1,42 @@
 ﻿-- Jackarunda 2021
 AddCSLuaFile()
-ENT.Type="anim"
-ENT.PrintName="EZ Automated Field Hospital"
-ENT.Author="Jackarunda"
-ENT.Category="JMod - EZ Machines"
-ENT.Information="glhfggwpezpznore"
-ENT.Spawnable=true
-ENT.AdminSpawnable=true
-ENT.Base="ent_jack_gmod_ezmachine_base"
+ENT.Type = "anim"
+ENT.PrintName = "EZ Automated Field Hospital"
+ENT.Author = "Jackarunda"
+ENT.Category = "JMod - EZ Machines"
+ENT.Information = "glhfggwpezpznore"
+ENT.Spawnable = true
+ENT.AdminSpawnable = true
+ENT.Base = "ent_jack_gmod_ezmachine_base"
 ---
-ENT.Model="models/mri-sjanner/mri-sjanner.mdl"
-ENT.Mass=750
-ENT.EZconsumes={
+ENT.Model = "models/mri-sjanner/mri-sjanner.mdl"
+ENT.Mass = 750
+ENT.EZconsumes = {
     JMod.EZ_RESOURCE_TYPES.POWER,
     JMod.EZ_RESOURCE_TYPES.BASICPARTS,
 	JMod.EZ_RESOURCE_TYPES.MEDICALSUPPLIES
 }
 ENT.EZcolorable = true
+ENT.EZbouyancy = .3
 -- Config --
 ENT.StaticPerfSpecs={
-	MaxDurability=100
+	MaxDurability = 100
 }
 ENT.DynamicPerfSpecs={
-	Armor=.7,
-	MaxSupplies=50,
-	ElectricalEfficiency=1,
-	HealEfficiency=1,
-	HealSpeed=1
+	Armor = .7,
+	MaxSupplies = 50,
+	ElectricalEfficiency = 1,
+	HealEfficiency = 1,
+	HealSpeed = 1
 }
 
 ----
 local STATE_BROKEN,STATE_OFF,STATE_ON,STATE_OCCUPIED,STATE_WORKING=-1,0,1,2,3
 function ENT:CustomSetupDataTables()
-	self:NetworkVar("Int",2,"Supplies")
+	self:NetworkVar("Int", 2, "Supplies")
 end
 if(SERVER)then
 	function ENT:CustomInit()
-		local phys = self:GetPhysicsObject()
-		if phys:IsValid()then
-			phys:SetBuoyancyRatio(.3)
-		end
-
 		if self.SpawnFull then
 			self:SetSupplies(self.MaxSupplies)
 		else
