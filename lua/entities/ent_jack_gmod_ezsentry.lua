@@ -20,6 +20,7 @@ ENT.Model = "models/props_phx/oildrum001_explosive.mdl"
 ENT.Mat = "models/mat_jack_gmod_ezsentry"
 ENT.EZcolorable = true
 ENT.Mass = 250
+ENT.EZbuoyancy = .3
 -- config --
 ENT.AmmoTypes = {
 	["Bullet"] = {}, -- Simple pew pew
@@ -118,7 +119,7 @@ ENT.AmmoRefundTable = {
 		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
 	},
 	["API Bullet"] = {
-		varToRead = "Ammo",
+		varToRead = "Munitions",
 		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
 	},
 	["HE Grenade"] = {
@@ -140,13 +141,15 @@ function ENT:SetMods(tbl, ammoType)
 	self.ModPerfSpecs = tbl
 	local OldAmmo = self:GetAmmoType()
 	self:SetAmmoType(ammoType)
-	if (OldAmmo~=ammoType)or(self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec) then
+	local AmmoSpecsChanged = (OldAmmo ~= ammoType) or (self.ModPerfSpecs.MaxAmmo < OldMaxAmmoSpec)
+	if (AmmoSpecsChanged) then
 		local RefundInfo = self.AmmoRefundTable[OldAmmo]
 		local AmmoTypeToSpawn = RefundInfo.spawnType
 		local NetVarValueName = "Get" .. RefundInfo.varToRead
 		local NetVarValue = self[NetVarValueName](self)
 		local AmtToSpawn = NetVarValue
-		if (OldAmmo == "Pulse Laser") then
+
+		if (AmmoTypeToSpawn == JMod.EZ_RESOURCE_TYPES.POWER) then
 			// we were using Electricity as ammo, and now our MaxElectricity is about to change
 			// we're gonna kick our all our Electricity, so set ours to 0
 			// no exploit
@@ -154,16 +157,13 @@ function ENT:SetMods(tbl, ammoType)
 		end
 		JMod.MachineSpawnResource(self, AmmoTypeToSpawn, AmtToSpawn, Vector(0, -30, 50), Angle(0, 0, 0), self:GetRight(), nil)
 	end
-	self:InitPerfSpecs((OldAmmo~=ammoType)or((self.ModPerfSpecs.MaxAmmo<OldMaxAmmoSpec)))
-	if(ammoType=="Pulse Laser")then
-		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
-	elseif(ammoType=="HE Grenade")or(ammoType=="Rocket Launcher")then
-		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.MUNITIONS,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
+	self:InitPerfSpecs(AmmoSpecsChanged)
+
+	local NewAmmoSpawnType = self.AmmoRefundTable[ammoType].spawnType
+	if (NewAmmoSpawnType == JMod.EZ_RESOURCE_TYPES.POWER) then
+		self.EZconsumes = {JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.COOLANT}
 	else
-		self.EZconsumes={JMod.EZ_RESOURCE_TYPES.AMMO,JMod.EZ_RESOURCE_TYPES.POWER,JMod.EZ_RESOURCE_TYPES.BASICPARTS,JMod.EZ_RESOURCE_TYPES.COOLANT}
-	end
-	if SERVER then
-		--self:SetupWire()
+		self.EZconsumes = {NewAmmoSpawnType, JMod.EZ_RESOURCE_TYPES.POWER, JMod.EZ_RESOURCE_TYPES.BASICPARTS, JMod.EZ_RESOURCE_TYPES.COOLANT}
 	end
 end
 
@@ -205,16 +205,21 @@ function ENT:InitPerfSpecs(removeAmmo)
 	end
 
 	-- Finally apply AmmoType attributes
-	if self.AmmoTypes[self:GetAmmoType()] then
-		for attrib, mult in pairs(self.AmmoTypes[self:GetAmmoType()]) do
-			--print("applying AmmoType multiplier of "..mult .." to "..attrib..": "..self[attrib].." -> "..self[attrib]*mult)
-			local NewValue = self[attrib] * mult
-			self[attrib] = NewValue
-			NetworkTable[attrib] = NewValue
+	local AmmoType = self:GetAmmoType()
+	if self.AmmoTypes[AmmoType] then
+		for attrib, mult in pairs(self.AmmoTypes[AmmoType]) do
+			if istable(mult) then
+				mult = nil
+			else
+				--print("applying AmmoType multiplier of "..mult .." to "..attrib..": "..self[attrib].." -> "..self[attrib]*mult)
+				local NewValue = self[attrib] * mult
+				self[attrib] = NewValue
+				NetworkTable[attrib] = NewValue
+			end
 		end
 	end
 
-	if self:GetAmmoType() ~= "Pulse Laser" then
+	if self.AmmoRefundTable[AmmoType].spawnType ~= JMod.EZ_RESOURCE_TYPES.POWER then
 		-- we're not using Electricity as our ammo, so set it to 0
 		-- no exploit
 		self:SetAmmo((removeAmmo and 0) or math.min(self:GetAmmo(), self.MaxAmmo))
@@ -242,7 +247,9 @@ function ENT:CustomSetupDataTables()
 	self:NetworkVar("Float", 4, "Coolant")
 	self:NetworkVar("String", 0, "AmmoType")
 end
+
 if(SERVER)then
+	--- Wire Stuff
 	function ENT:SetupWire()
 		if not(istable(WireLib)) then return end
 		local WireInputs = {
@@ -325,18 +332,10 @@ if(SERVER)then
 			end
 		end
 	end
+	--- End Wire stuff
 
 	function ENT:CustomInit()
-		local phys=self:GetPhysicsObject()
-		if phys:IsValid()then
-			phys:SetBuoyancyRatio(.3)
-		end
-		self.EZconsumes = {
-			JMod.EZ_RESOURCE_TYPES.AMMO,
-			JMod.EZ_RESOURCE_TYPES.POWER,
-			JMod.EZ_RESOURCE_TYPES.BASICPARTS,
-			JMod.EZ_RESOURCE_TYPES.COOLANT
-		}
+		self.EZconsumes = {}
 		-- All moddable attributes
 		-- Each mod selected for it is +1, against it is -1
 		self.ModPerfSpecs = {
@@ -356,9 +355,8 @@ if(SERVER)then
 		self:SetPerfMult(JMod.Config.Machines.Sentry.PerformanceMult)
 		self:SetMods(self.ModPerfSpecs, self:GetAmmoType())
 		---
-		self:Point(0, 0)
+		--self:ReturnToForward()
 		self.SearchStageTime = self.SearchTime / 2
-		--self:SetAmmo(self.MaxAmmo)
 		self.NextWhine = 0
 		self.Heat = 0
 		self:ResetMemory()
@@ -380,7 +378,6 @@ if(SERVER)then
 		self.NextTargetSearch = 0
 		self.Target = nil
 		self.NextTargetReSearch = 0
-		self.NextFixTime = 0
 		self.NextUseTime = 0
 
 		self.SearchData = {
@@ -439,10 +436,8 @@ if(SERVER)then
 	end
 
 	function ENT:ConsumeElectricity(amt)
-		amt=(amt or .03)
-		--if(self:GetAmmoType()=="Pulse Laser")then
-			amt = amt / JMod.EZ_GRADE_BUFFS[self:GetGrade()]
-		--end
+		amt = (amt or .03)
+		amt = amt / JMod.EZ_GRADE_BUFFS[self:GetGrade()]
 
 		local NewAmt = math.Clamp(self:GetElectricity() - amt, 0, self.MaxElectricity)
 		self:SetElectricity(NewAmt)
@@ -580,9 +575,6 @@ if(SERVER)then
 		end
 	end
 
-	-- 12/8/2023: there's an addon in the jackarunda sandbox collection (we don't know which one) that will override this function on the sentries if it's named CanSee
-	-- if we name it something else, then it works fine
-	-- i hate retarded gmod script kiddies
 	function ENT:CanSeeTarget(ent)
 		if not IsValid(ent) then return false end
 		local TargPos, SelfPos = self:DetermineTargetAimPoint(ent), self:GetPos() + self:GetUp() * 35
@@ -621,29 +613,20 @@ if(SERVER)then
 		self:ConsumeElectricity(.01)
 		self.NextTargetSearch = Time + (.5 / self.SearchSpeed) -- limit searching cause it's expensive
 		local SelfPos = self:GetPos()
-		local Objects, PotentialTargets = ents.FindInSphere(SelfPos, self.TargetingRadius), {}
+		local Objects, ClosestTarget, ClosestDist = ents.FindInSphere(SelfPos, self.TargetingRadius), nil, 9e9
 
 		for k, PotentialTarget in pairs(Objects) do
 			if self:CanEngage(PotentialTarget) then
-				table.insert(PotentialTargets, PotentialTarget)
+				self:MakeHostileToMe(PotentialTarget)
+				local DistToTarg = PotentialTarget:GetPos():Distance(SelfPos)
+				if not(ClosestTarget) or (DistToTarg < ClosestDist) then
+					ClosestTarget = PotentialTarget
+					ClosestDist = DistToTarg
+				end
 			end
 		end
 
-		if #PotentialTargets > 0 then
-			table.sort(PotentialTargets, function(a, b)
-				local DistA, DistB = a:GetPos():DistToSqr(SelfPos), b:GetPos():DistToSqr(SelfPos)
-
-				return DistA < DistB
-			end)
-
-			for k, v in pairs(PotentialTargets) do
-				self:MakeHostileToMe(v)
-			end
-
-			return PotentialTargets[1]
-		end
-
-		return nil
+		return ClosestTarget
 	end
 
 	function ENT:Engage(target)
@@ -808,11 +791,6 @@ if(SERVER)then
 				self:Whine()
 			end
 
-			if self.NextFixTime < Time then
-				self.NextFixTime = Time + 10
-				self:GetPhysicsObject():SetBuoyancyRatio(.3)
-			end
-
 			---
 			if self.Heat > 55 then
 				local SelfPos, Up, Right, Forward = self:GetPos(), self:GetUp(), self:GetRight(), self:GetForward()
@@ -865,6 +843,9 @@ if(SERVER)then
 
 		---
 		local AmmoConsume, ElecConsume = 1, .02
+		if self.AmmoRefundTable[ProjType].spawnType == JMod.EZ_RESOURCE_TYPES.POWER then
+			AmmoConsume = 0
+		end
 		local Heat = self.Damage * self.ShotCount / 30
 		self:AddVisualRecoil(Heat * 2)
 
@@ -1176,7 +1157,6 @@ if(SERVER)then
 			end
 
 			Heat = Heat * 3
-			AmmoConsume = 0
 			ElecConsume = .025 * Dmg
 		end
 
