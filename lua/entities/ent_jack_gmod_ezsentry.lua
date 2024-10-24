@@ -120,7 +120,7 @@ ENT.AmmoRefundTable = {
 	},
 	["API Bullet"] = {
 		varToRead = "Munitions",
-		spawnType = JMod.EZ_RESOURCE_TYPES.AMMO
+		spawnType = JMod.EZ_RESOURCE_TYPES.MUNITIONS
 	},
 	["HE Grenade"] = {
 		varToRead = "Ammo",
