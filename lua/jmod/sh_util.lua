@@ -166,7 +166,7 @@ end
 
 function JMod.VisCheck(pos, target, sourceEnt)
 	local filter = {}
-	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) + Vector(0, 0, 5)
+	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 
 	if sourceEnt then
 		table.insert(filter, sourceEnt)
@@ -176,17 +176,8 @@ function JMod.VisCheck(pos, target, sourceEnt)
 	if target and target.GetPos then
 		if target:GetNoDraw() then return false end
 		table.insert(filter, target)
-		target = target:LocalToWorld(target:OBBCenter()) + Vector(0, 0, 5)
+		target = target:LocalToWorld(target:OBBCenter())
 	end
-
-	-- right here: issue, this trace hits Worldspawn[0]
-	print(pos:Distance(target))
-	print(util.TraceLine({
-		start = pos,
-		endpos = target,
-		filter = filter,
-		mask = MASK_SOLID
-	}).Entity)
 
 	return not util.TraceLine({
 		start = pos,
@@ -198,7 +189,7 @@ end
 
 function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 	if cache then return cache end
-	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
+	pos = pos or (IsValid(sourceEnt) and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 	local Results = {}
 	--debugoverlay.Cross(pos, 10, 2, Color(255, 255, 255), true)
 
@@ -257,7 +248,7 @@ end
 
 function JMod.ConsumeResourcesInRange(requirements, pos, range, sourceEnt, useResourceEffects, propsToConsume, mult)
 	mult = mult or 1
-	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
+	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 	local AllDone, Attempts, RequirementsRemaining = false, 0, table.FullCopy(requirements)
 
 	while not (AllDone or (Attempts > 1000)) do

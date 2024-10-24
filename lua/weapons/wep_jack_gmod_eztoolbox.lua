@@ -531,13 +531,15 @@ function SWEP:ModifyMachine(ent, tbl, ammoType)
 			end
 		end
 		if ChangedSomething then
-			JMod.ConsumeResourcesInRange({
+			local SuccessfulConsume = JMod.ConsumeResourcesInRange({
 				[JMod.EZ_RESOURCE_TYPES.BASICPARTS] = self.ModifcationCost
-			}, nil, nil, self)
-			self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
+			}, self.Owner:GetShootPos(), nil, self)
+			
+			if SuccessfulConsume then
+				ent:SetMods(tbl, ammoType)
+				self:UpgradeEffect(ent:GetPos() + Vector(0, 0, 30), 2)
+			end
 		end
-
-		ent:SetMods(tbl, ammoType)
 	else
 		self:Msg("needs " .. tostring(self.ModifcationCost) .. " Basic Parts nearby to perform modification")
 	end
