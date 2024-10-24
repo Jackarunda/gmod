@@ -711,13 +711,13 @@ net.Receive("JMod_Inventory", function(ln, ply)
 			end
 
 			if RechargeStatus == 1 then
-				local AvaliableResources, ResourcesToConsume = JMod.CountResourcesInRange(nil, nil, ply), {}
+				local AvailableResources, ResourcesToConsume = JMod.CountResourcesInRange(nil, nil, ply), {}
 
 				for resourceName, missing in pairs(RechargeRecipe) do
 					missing = math.ceil(missing)
-					if AvaliableResources[resourceName] then
-						local AmtToConsume = math.Clamp(AvaliableResources[resourceName], 0, missing)
-						ResourcesToConsume[resourceName] = math.Clamp(AvaliableResources[resourceName], 0, missing)
+					if AvailableResources[resourceName] then
+						local AmtToConsume = math.Clamp(AvailableResources[resourceName], 0, missing)
+						ResourcesToConsume[resourceName] = math.Clamp(AvailableResources[resourceName], 0, missing)
 						ItemData.chrg[resourceName] = math.Clamp(ItemData.chrg[resourceName] + AmtToConsume, 0, ItemInfo.chrg[resourceName])
 
 						if AmtToConsume >= missing then

@@ -2379,7 +2379,7 @@ function JMod.InitGlobalConfig(forceNew, configToApply)
 				},
 				category = "Apparel",
 				craftingType = "workbench",
-				description = "Strongest helmet avaliable, at the cost of weight and vision."
+				description = "Strongest helmet available, at the cost of weight and vision."
 			},
 			["EZ Light Left Shoulder Armor"] = {
 				results = JMod.ArmorTable["Light-Left-Shoulder"].ent,

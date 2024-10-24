@@ -223,7 +223,7 @@ if(SERVER)then
 		timer.Simple(1, function()
 			if IsValid(self) then
 				if reassign and (OldID == OutpostID) then
-					self:Speak("No other avaliable J.I. Radio Outpost found")
+					self:Speak("No other available J.I. Radio Outpost found")
 				elseif Station and istable(Station) then
 					self:Speak("Comm line established with J.I. Radio Outpost " .. OutpostID .. "\nBearing: " .. tostring(math.Round(Station.outpostDirection:Angle().y)))
 				else

@@ -166,7 +166,7 @@ end
 
 function JMod.VisCheck(pos, target, sourceEnt)
 	local filter = {}
-	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
+	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) + Vector(0, 0, 5)
 
 	if sourceEnt then
 		table.insert(filter, sourceEnt)
@@ -176,8 +176,17 @@ function JMod.VisCheck(pos, target, sourceEnt)
 	if target and target.GetPos then
 		if target:GetNoDraw() then return false end
 		table.insert(filter, target)
-		target = target:LocalToWorld(target:OBBCenter())
+		target = target:LocalToWorld(target:OBBCenter()) + Vector(0, 0, 5)
 	end
+
+	-- right here: issue, this trace hits Worldspawn[0]
+	print(pos:Distance(target))
+	print(util.TraceLine({
+		start = pos,
+		endpos = target,
+		filter = filter,
+		mask = MASK_SOLID
+	}).Entity)
 
 	return not util.TraceLine({
 		start = pos,
@@ -325,16 +334,16 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 	for k, obj in pairs(ents.FindInSphere(pos, range or 150)) do
 		if not(sourceEnt and obj == sourceEnt) then
 			if obj.GetEZsupplies then
-				local AvaliableResources = obj:GetEZsupplies(typ)
-				if AvaliableResources and (AvaliableResources >= amt) then
+				local AvailableResources = obj:GetEZsupplies(typ)
+				if AvailableResources and (AvailableResources >= amt) then
 					if JMod.VisCheck(pos, obj, sourceEnt) then
 
 						return obj
 					end
 				end
 			elseif obj.JModInv then
-				local AvaliableResources = obj.JModInv.EZresources[typ]
-				if AvaliableResources and (AvaliableResources >= amt) then
+				local AvailableResources = obj.JModInv.EZresources[typ]
+				if AvailableResources and (AvailableResources >= amt) then
 					if JMod.VisCheck(pos, obj, sourceEnt) then
 
 						return obj
@@ -344,9 +353,9 @@ function JMod.FindResourceContainer(typ, amt, pos, range, sourceEnt)
 		end
 	end
 	if ValidSource and sourceEnt.GetEZsupplies then
-		local AvaliableResources = sourceEnt:GetEZsupplies(typ)
-		if AvaliableResources then
-			if (typ and AvaliableResources >= amt) then
+		local AvailableResources = sourceEnt:GetEZsupplies(typ)
+		if AvailableResources then
+			if (typ and AvailableResources >= amt) then
 
 				return sourceEnt
 			end
@@ -356,7 +365,7 @@ end
 
 function JMod.FindSuitableScrap(pos, range, sourceEnt)
 	pos = (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter())) or pos
-	local AvaliableResources, LocalScrap = {}, {}
+	local AvailableResources, LocalScrap = {}, {}
 
 	for k, obj in ipairs(ents.FindInSphere(pos, range or 200)) do 
 		local Clss = obj:GetClass()
@@ -369,14 +378,14 @@ function JMod.FindSuitableScrap(pos, range, sourceEnt)
 					LocalScrap[EntID] = {}
 					for k, v in pairs(Yield) do
 						LocalScrap[EntID][k] = v
-						AvaliableResources[k] = (AvaliableResources[k] or 0) + v
+						AvailableResources[k] = (AvailableResources[k] or 0) + v
 					end
 				end
 			end
 		end
 	end
 
-	return AvaliableResources, LocalScrap
+	return AvailableResources, LocalScrap
 end
 
 function JMod.TryCough(ent)
