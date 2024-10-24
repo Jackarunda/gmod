@@ -222,8 +222,8 @@ local function LocationalDmgHandling(ply, hitgroup, dmg)
 			end
 		elseif hitgroup == HITGROUP_CHEST or hitgroup == HITGROUP_GENERIC then
 			if IsHitToBack(ply, dmg) then
-				RelevantSlots.chest = .1
-				RelevantSlots.back = .9
+				RelevantSlots.chest = 1
+				RelevantSlots.back = 1
 			else
 				RelevantSlots.chest = 1
 			end
