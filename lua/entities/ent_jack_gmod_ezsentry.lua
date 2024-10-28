@@ -65,7 +65,6 @@ ENT.AmmoTypes = {
 		MaxElectricity = 2,
 		BarrelLength = .75
 	} -- bzew
-	
 }
 
 --[[
@@ -1275,7 +1274,7 @@ elseif(CLIENT)then
 	end
 
 	function ENT:AddVisualRecoil(amt)
-		self.VisualRecoil = math.Clamp(self.VisualRecoil + amt, 0, 5)
+		self.VisualRecoil = math.Clamp(self.VisualRecoil + amt, 0, 3)
 	end
 
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
@@ -1410,7 +1409,7 @@ elseif(CLIENT)then
 		else
 			JMod.RenderModel(self.MachineGun, BasePos + AimUp * .5 - AimForward * (1 + self.VisualRecoil) - AimRight * .5, AimAngle)
 		end
-		self.VisualRecoil = math.Clamp(self.VisualRecoil - FT * 4, 0, 5)
+		self.VisualRecoil = math.Clamp(self.VisualRecoil - FT * 10, 0, 3)
 		---
 		local ShieldAngle = AimAngle:GetCopy()
 		ShieldAngle:RotateAroundAxis(ShieldAngle:Right(), 130)

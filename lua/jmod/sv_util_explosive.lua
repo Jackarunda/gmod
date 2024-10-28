@@ -363,7 +363,11 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 	else
 		local Eff = EffectData()
 		Eff:SetOrigin(IPos)
-		Eff:SetScale(.5)
+		if doBlasts then
+			Eff:SetScale(.5)
+		else
+			Eff:SetScale(.2)
+		end
 		Eff:SetNormal(TNorm)
 		util.Effect("eff_jack_gmod_efpburst", Eff, true, true)
 	end
@@ -446,7 +450,9 @@ function JMod.RicPenBullet(ent, pos, dir, dmg, doBlasts, wreckShit, num, penMul,
 			end
 
 			local ThroughFrac = (1 - SearchDist / MaxDist)
-			JMod.RicPenBullet(ent, SearchPos + AVec, AVec, dmg * ThroughFrac * (DontStop and 1 or .7), doBlasts, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
+			local IntDef = SMul * ThroughFrac * .05
+			--print("throughfrac", ThroughFrac, "intdef", IntDef) 
+			JMod.RicPenBullet(ent, SearchPos + AVec, AVec + VectorRand(-IntDef, IntDef), dmg * ThroughFrac * (DontStop and 1 or .7), DontStop, wreckShit, (num or 0) + 1, penMul, tracerName, callback)
 		end
 	elseif ApproachAngle < (MaxRicAngle * .95) then
 		-- ping whiiiizzzz
