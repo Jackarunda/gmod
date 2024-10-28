@@ -249,7 +249,6 @@ if SERVER then
 						CounterPush = -OurVel.z * .8
 					end
 					Phys:ApplyForceCenter(Forward * 40000 + Vector(0, 0, CounterPush))
-					self.FuelLeft = self.FuelLeft - .2
 					---
 					local StartPos = SelfPos - Forward * 80 + Vector(0, 0, 100)
 					local WakeTr = util.TraceLine({
@@ -267,6 +266,7 @@ if SERVER then
 						util.Effect("WaterSplash", Eff, true, true)
 					end
 				end
+				self.FuelLeft = self.FuelLeft - .2
 			else
 				self:Detonate()
 			end
