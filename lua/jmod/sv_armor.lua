@@ -72,7 +72,7 @@ function JMod.EZarmorSync(ply)
 		ply:SetNW2Bool("EZparachuting", false)
 	end
 
-	hook.Run("JModHookEZArmorSync", ply)
+	hook.Run("JMod_EZarmorSync", ply)
 
 	net.Start("JMod_EZarmorSync")
 		net.WriteEntity(ply)
@@ -455,7 +455,7 @@ function JMod.RemoveArmorByID(ply, ID, broken)
 	local Ent -- This is for if we can stow stuff in the armor when it's unequpped
 
 	if broken then
-		hook.Run("JModHookArmorRemoved", ply, Info, Specs)
+		hook.Run("JMod_ArmorRemoved", ply, Info, Specs)
 
 		if Specs.eff and Specs.eff.explosive then
 			local FireAmt = (Info.chrg and Info.chrg.fuel and math.random(2, 4)) or 0

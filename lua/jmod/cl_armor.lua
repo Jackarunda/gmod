@@ -89,7 +89,7 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 								Mdl:SetColor(Color(Colr.r, Colr.g, Colr.b))
 							end
 
-							local NoDraw = hook.Run("JModHookArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
+							local NoDraw = hook.Run("JMod_ArmorModelDraw", ply, Mdl, armorData, ArmorInfo)
 
 							if not(NoDraw) and (not(ArmorInfo.merge) or nomerge) then
 								Mdl:DrawModel()
@@ -148,7 +148,7 @@ function JMod.ArmorPlayerModelDraw(ply, nomerge)
 	end
 end
 
-hook.Add("JModHookArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, ArmorData, ArmorInfo) 
+hook.Add("JMod_ArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, ArmorData, ArmorInfo) 
 	if ArmorInfo.eff and ArmorInfo.eff.weapon then
 		if IsValid(ply) and ply:IsPlayer() then
 			local wep = ply:GetActiveWeapon()

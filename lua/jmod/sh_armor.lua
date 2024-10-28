@@ -11,7 +11,7 @@ player_manager.AddValidHands("JMod_HazMat", "models/bloocobalt/splinter cell/che
 		head (if hit angle isn't from front)
 	HITGROUP_CHEST
 		chest (all of HITGROUP_CHEST)
-		back (nonprotective: receives damage but doesn't protect, 1/4)
+		back (all of HITGROUP_CHEST if hit is from back)
 	HITGROUP_STOMACH
 		abdomen (all of HITGROUP_STOMACH)
 	HITGROUP_LEFTLEG
