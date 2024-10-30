@@ -1378,7 +1378,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 				actionFunc = function(itemTable)
 					if IsValid(itemTable.ent) then
 						net.Start("JMod_ItemInventory")
-							net.WriteString("take")
+							net.WriteString("stow")
 							net.WriteEntity(itemTable.ent)
 							net.WriteEntity(Ply:GetEyeTrace().Entity)
 						net.SendToServer()
@@ -1399,7 +1399,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 						net.Start("JMod_ItemInventory")
 							net.WriteString("take")
 							net.WriteEntity(itemTable.ent)
-							net.WriteEntity(Ply)
+							net.WriteEntity(Ply:GetEyeTrace().Entity)
 						net.SendToServer()
 					else
 						net.Start("JMod_ItemInventory")
