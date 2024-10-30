@@ -41,6 +41,30 @@ function JMod.GetStorageCapacity(ent)
 	return Capacity * JMod.Config.QoL.InventorySizeMult
 end
 
+function JMod.GetItemVolumeWeight(ent)
+	if not IsValid(ent) then return nil end
+	local Phys = ent:GetPhysicsObject()
+	if not IsValid(Phys) then return nil end
+
+	local Vol = Phys:GetVolume()
+	local Mass = 0
+	if Vol == nil then
+		local Mins, Maxs = ent:GetCollisionBounds()
+		local X = math.abs(Maxs.x - Mins.x)
+		local Y = math.abs(Maxs.y - Mins.y)
+		local Z = math.abs(Maxs.z - Mins.z)
+		Vol = X * Y * Z
+	end
+	Vol = ent.EZstorageVolumeOverride or math.Round(Vol / JMod.VOLUMEDIV, 2)
+	Mass = math.ceil(Phys:GetMass())
+	if ent.IsJackyEZresource then
+		Vol = 1
+		Mass = 1
+	end
+
+	return Vol, Mass
+end
+
 function JMod.IsEntContained(target, container)
 	--jprint(target, " - ", container, " - ", target.EZInvOwner, " - ", target:GetParent())
 	local Contained = IsValid(target) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
@@ -66,25 +90,18 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 	jmodinvfinal.maxVolume = Capacity
 
 	for k, iteminfo in ipairs(invEnt.JModInv.items) do
-		--print(JMod.IsEntContained(iteminfo.ent, invEnt), iteminfo.ent:GetPhysicsObject():GetMass(), Capacity)
+		
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
 		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
-			local Phys = iteminfo.ent:GetPhysicsObject()
-			if IsValid(Phys) and not(IsActiveItemAllowed(iteminfo.ent)) then
-				local Vol = Phys:GetVolume()
-				if (Vol ~= nil) then
-					Vol = math.ceil(Vol / JMod.VOLUMEDIV)
-					if iteminfo.ent.EZstorageVolumeOverride then
-						Vol = iteminfo.ent.EZstorageVolumeOverride
-					end
-					if (Capacity >= (jmodinvfinal.volume + Vol)) then
-						jmodinvfinal.weight = math.Round(jmodinvfinal.weight + Phys:GetMass())
-						jmodinvfinal.volume = math.Round(jmodinvfinal.volume + Vol, 2)
-					else
-						local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
-						table.insert(RemovedItems, Removed)
-					end
+			local Vol, Mass = JMod.GetItemVolumeWeight(iteminfo.ent)
+			if (Vol ~= nil) and not(IsActiveItemAllowed(iteminfo.ent)) then
+				if (Capacity >= (jmodinvfinal.volume + Vol)) then
+					jmodinvfinal.weight = jmodinvfinal.weight + Mass
+					jmodinvfinal.volume = jmodinvfinal.volume + math.Round(Vol, 2)
+				else
+					local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
+					table.insert(RemovedItems, Removed)
 				end
 			else
 				local Removed = JMod.RemoveFromInventory(invEnt, iteminfo.ent, not(noplace) and TrPos, true, transfer)
@@ -131,10 +148,12 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 	return RemovedItems
 end
 
+-- First arg is inventory entity, second is item or table representing resources, third is to cancel the auto-update
 function JMod.AddToInventory(invEnt, target, noUpdate)
 	--jprint(invEnt, target, noUpdate)
 	invEnt = invEnt or target.EZInvOwner
-	if JMod.GetStorageCapacity(invEnt) <= 0 then return false end
+	local Capacity = JMod.GetStorageCapacity(invEnt)
+	if Capacity <= 0 then return false end
 	local AddingResource = istable(target)
 	if not(AddingResource) and (target:IsPlayer() or IsActiveItemAllowed(target) or (target:EntIndex() == -1)) then return false end -- Open up! The fun police are here!
 
@@ -457,25 +476,17 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			net.WriteTable(TargetEntity.JModInv)
 		net.Send(ply)
 		sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 50, math.random(90, 110))
-	--elseif TargetEntity.IsEZcorpse then
 	elseif not(TargetEntity:IsConstrained()) and CanPickup(TargetEntity) then
 		JMod.UpdateInv(ply)
-		local Phys = TargetEntity:GetPhysicsObject()
-		local RoomLeft = (ply.JModInv.maxVolume) - (ply.JModInv.volume)
+		local RoomLeft = math.floor((ply.JModInv.maxVolume) - (ply.JModInv.volume))
 		if RoomLeft > 0 then
 			local ResourceWeight = (JMod.EZ_RESOURCE_INV_WEIGHT / JMod.Config.ResourceEconomy.MaxResourceMult)
-			local RoomWeNeed = Phys:GetVolume()
+			local RoomWeNeed = JMod.GetItemVolumeWeight(TargetEntity)
 			local IsResources = false
 
 			if TargetEntity.IsJackyEZresource then
 				RoomWeNeed = math.min((TargetEntity:GetEZsupplies(TargetEntity.EZsupplies) or 0) * ResourceWeight, RoomLeft)
 				IsResources = true
-			elseif RoomWeNeed ~= nil then
-				if TargetEntity.EZstorageVolumeOverride then
-					RoomWeNeed = TargetEntity.EZstorageVolumeOverride
-				else
-					RoomWeNeed = math.ceil(RoomWeNeed / JMod.VOLUMEDIV)
-				end
 			end
 			
 			if (RoomWeNeed ~= nil) then
