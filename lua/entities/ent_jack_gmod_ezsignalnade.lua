@@ -17,7 +17,7 @@ ENT.DetDelay = 2
 
 if SERVER then
 	function ENT:Use(activator, activatorAgain, onOff)
-		if self.Exploded then return end
+		--if self.Exploded then return end
 		local Dude = activator or activatorAgain
 		JMod.SetEZowner(self, Dude)
 		local Time = CurTime()
@@ -59,7 +59,7 @@ if SERVER then
 			self.FuelLeft = self.FuelLeft - .5
 
 			if self.FuelLeft <= 0 then
-				SafeRemoveEntityDelayed(self, 1)
+				SafeRemoveEntityDelayed(self, 2)
 			end
 		end
 	end

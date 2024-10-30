@@ -11,6 +11,7 @@ ENT.AdminSpawnable = true
 ENT.JModGUIcolorable = true
 ---
 ENT.JModEZstorable = true
+ENT.JModEZallowedActive = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---
 local STATE_OFF, STATE_BURNIN, STATE_BURNT = 0, 1, 2
@@ -214,12 +215,14 @@ elseif CLIENT then
 		local State, Fuel, Pos, Ang = self:GetState(), self:GetFuel(), self:GetPos(), self:GetAngles()
 
 		if State == STATE_BURNIN then
-			local Up, Right, Forward, Mult, Col = Ang:Up(), Ang:Right(), Ang:Forward(), (Fuel > 30 and 1) or .5, self:GetColor()
+			local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
+			local FaceDir = EyeVector()
+			local Mult, Col = (Fuel > 30 and 1) or .5, self:GetColor()
 			local R, G, B = math.Clamp(Col.r + 20, 0, 255), math.Clamp(Col.g + 20, 0, 255), math.Clamp(Col.b + 20, 0, 255)
 			local DLight = DynamicLight(self:EntIndex())
 
 			if DLight then
-				DLight.Pos = Pos + Up * 10 + Vector(0, 0, 10)
+				DLight.Pos = Pos + Up * 10 + FaceDir * 10
 				DLight.r = R
 				DLight.g = G
 				DLight.b = B
