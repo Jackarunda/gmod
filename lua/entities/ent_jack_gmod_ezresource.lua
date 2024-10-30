@@ -89,7 +89,14 @@ if SERVER then
 			self:SetSkin(table.Random(self.RandomSkins))
 		end
 
-		self:PhysicsInit(SOLID_VPHYSICS)
+		if self.PhysBox then
+			self:PhysicsInitBox(
+				Vector(self.PhysBox.Mins.x, self.PhysBox.Mins.y, self.PhysBox.Mins.z), 
+				Vector(self.PhysBox.Maxs.x, self.PhysBox.Maxs.y, self.PhysBox.Maxs.z)
+			)
+		else
+			self:PhysicsInit(SOLID_VPHYSICS)
+		end
 		self:SetMoveType(MOVETYPE_VPHYSICS)
 		self:SetSolid(SOLID_VPHYSICS)
 		self:DrawShadow(true)

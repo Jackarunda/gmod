@@ -22,6 +22,10 @@ ENT.DamageThreshold = 120
 ENT.BreakNoise = "Plastic_Box.Break"
 ENT.Hint = nil
 ENT.Flammable = .5
+ENT.PhysBox = {
+	Mins = Vector(-11, -16, -9.3),
+	Maxs = Vector(11, 16, 9.2)
+}
 
 ---
 if SERVER then
