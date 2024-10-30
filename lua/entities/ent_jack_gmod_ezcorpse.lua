@@ -13,11 +13,12 @@ if SERVER then
 		if not self.DeadPlayer then self:Remove() return end
 		self.EZoverDamage = self.EZoverDamage or 0
 		self.TimeTillRemoval = JMod.Config.QoL.JModCorpseStayTime * 60
+		self.NextSoundTime = CurTime()
 
 		self:SetModel("models/hunter/blocks/cube025x025x025.mdl")
 		self:PhysicsInit(SOLID_VPHYSICS)
-		self:SetMoveType(MOVETYPE_VPHYSICS)	
-		self:SetSolid(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_NONE)	
+		self:SetSolid(SOLID_NONE)
 		self:SetNoDraw(true)
 
 		local Ply = self.DeadPlayer
@@ -97,11 +98,13 @@ if SERVER then
 			Ply.EZparachute = nil
 		end
 		Ragdoll.IsEZcorpse = true
+		Ragdoll.DeadPlayer = Ply
+		Ragdoll.EZcorpseEntity = self
 		self.EZragdoll = Ragdoll
 		timer.Simple(0, function()
 			if IsValid(self) and IsValid(self.EZragdoll) then
 				self:SetParent(self.EZragdoll)
-				self:SetPos(Vector(0, 0, 0))
+				self:SetPos(self.EZragdoll:GetPos())
 			else
 				SafeRemoveEntity(self)
 			end
@@ -129,7 +132,7 @@ if SERVER then
 			end
 		end
 
-		if IsValid(self.Eater) then
+		--[[if IsValid(self.Eater) then
 			if (self.Eater:GetPos():Distance(self:GetPos()) < 100) then
 				self.Eater:SetActivity(ACT_MELEE_ATTACK1)
 			else
@@ -145,10 +148,43 @@ if SERVER then
 				end
 			end
 		end--]]
+		if self.NextSoundTime <= Time then
+			self.NextSoundTime = Time + 3
+			JMod.EmitAIsound(self:GetPos(), 1000, 3, SOUND_CARCASS)
+		end--]]
 
 		self:NextThink(Time + 1)
 
 		return true
+	end
+
+	function ENT:Bury()
+		local GraveTr = util.QuickTrace(self.EZragdoll:GetPos(), Vector(0, 0, -9e9), {self, self.EZragdoll})
+		timer.Simple(0.1, function()
+			if IsValid(self) then
+				local GraveStone = ents.Create("prop_physics")
+				GraveStone:SetModel("models/props_c17/gravestone002a.mdl")
+				GraveStone:SetPos(GraveTr.HitPos)
+				GraveStone:SetAngles(Angle(0, 0, 0))
+				GraveStone:Spawn()
+				GraveStone:Activate()
+				local WeldTr = util.QuickTrace(GraveTr.HitPos + Vector(0, 0, 20), Vector(0, 0, -40), {GraveStone, self, self.EZragdoll})
+				if WeldTr.Hit then
+					GraveStone:SetPos(WeldTr.HitPos)
+					local StoneAng = WeldTr.HitNormal:Angle()
+					StoneAng:RotateAroundAxis(StoneAng:Right(), -90)
+					GraveStone:SetAngles(StoneAng)
+					GraveStone:SetPos(GraveTr.HitPos + StoneAng:Up() * 25)
+					constraint.Weld(WeldTr.Entity, GraveStone, 0, 0, 10000, false, false)
+				end
+			end
+		end)
+		SafeRemoveEntityDelayed(self.EZragdoll, 0.11)
+		local Fff = EffectData()
+		Fff:SetOrigin(GraveTr.HitPos)
+		Fff:SetNormal(GraveTr.HitNormal)
+		Fff:SetScale(5)
+		util.Effect("eff_jack_sminebury", Fff, true, true)
 	end
 
 	function ENT:OnRemove() 

@@ -113,7 +113,7 @@ function SWEP:OnHit(swingProgress, tr)
 		PickDam:SetInflictor(self)
 		PickDam:SetDamagePosition(StrikePos)
 		PickDam:SetDamageType(DMG_CLUB)
-		PickDam:SetDamage(math.random(30, 50))
+		PickDam:SetDamage(math.random(20, 50))
 		PickDam:SetDamageForce(StrikeVector:GetNormalized() * 30)
 		tr.Entity:TakeDamageInfo(PickDam)
 	end
@@ -121,28 +121,8 @@ function SWEP:OnHit(swingProgress, tr)
 	if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or string.find(tr.Entity:GetClass(),"prop_ragdoll") then
 		tr.Entity:SetVelocity( self.Owner:GetAimVector() * Vector( 1, 1, 0 ) * self.HitPushback )
 		self:SetTaskProgress(0)
-		if tr.Entity.IsEZcorpse then
-			local GravePos = util.QuickTrace(tr.HitPos, Vector(0, 0, -9e9), {tr.Entity}).HitPos
-			timer.Simple(0.2, function()
-				--if IsValid(tr.Entity) then
-					local GraveStone = ents.Create("prop_physics")
-					GraveStone:SetModel("models/props_c17/gravestone002a.mdl")
-					GraveStone:SetPos(GravePos)
-					GraveStone:SetAngles(Angle(0, 0, 0))
-					GraveStone:Spawn()
-					GraveStone:Activate()
-					local WeldTr = util.QuickTrace(GravePos + Vector(0, 0, 20), Vector(0, 0, -40), {GraveStone, tr.Entity, self.Owner})
-					if WeldTr.Hit then
-						GraveStone:SetPos(WeldTr.HitPos)
-						local StoneAng = WeldTr.HitNormal:Angle()
-						StoneAng:RotateAroundAxis(StoneAng:Right(), -90)
-						GraveStone:SetAngles(StoneAng)
-						GraveStone:SetPos(GravePos + StoneAng:Up() * 25)
-						constraint.Weld(WeldTr.Entity, GraveStone, 0, 0, 10000, false, false)
-					end
-				--end
-			end)
-			SafeRemoveEntityDelayed(tr.Entity, 0.1)
+		if tr.Entity.IsEZcorpse and IsValid(tr.Entity.EZcorpseEntity) then
+			tr.Entity.EZcorpseEntity:Bury()
 		end
 	elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
 		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
