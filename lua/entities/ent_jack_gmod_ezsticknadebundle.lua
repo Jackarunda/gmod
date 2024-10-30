@@ -16,7 +16,7 @@ ENT.EZspinThrow = true
 ENT.PinBodygroup = nil -- No pin
 ENT.SpoonBodygroup = {4, 1}
 ENT.DetDelay = 4
---ENT.EZstorageVolumeOverride=2
+--ENT.EZstorageVolumeOverride=4
 local BaseClass = baseclass.Get(ENT.Base)
 
 if SERVER then
