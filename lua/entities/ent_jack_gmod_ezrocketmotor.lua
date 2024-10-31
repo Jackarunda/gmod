@@ -200,7 +200,7 @@ if SERVER then
 				self.StuckTo:SetState(JMod.EZ_STATE_ON)
 			end
 		elseif JMod.IsEntContained(self) then
-			self.StuckTo = self.EZInvOwner
+			self.StuckTo = self:GetNW2Entity("EZInvOwner", self)
 			self.ThrustStuckTo = true
 			self.StuckTo:SetNW2Bool("EZrocketSpin", true)
 		end

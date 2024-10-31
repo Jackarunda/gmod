@@ -12,7 +12,7 @@ ENT.JModGUIcolorable = true
 ---
 ENT.JModEZstorable = true
 ENT.EZstorageVolumeOverride = .5
-ENT.JModEZallowedActive = true
+ENT.JModInvAllowedActive = true
 ENT.JModPreferredCarryAngles = Angle(0, 0, 0)
 ---
 local STATE_OFF, STATE_BURNIN, STATE_BURNT = 0, 1, 2
@@ -82,15 +82,13 @@ if SERVER then
 	function ENT:OnTakeDamage(dmginfo)
 		self:TakePhysicsDamage(dmginfo)
 
-		if JMod.LinCh(dmginfo:GetDamage(), 1, 50) then
+		if JMod.LinCh(dmginfo:GetDamage(), 1, 30) then
 			local Pos, State = self:GetPos(), self:GetState()
 
-			if math.random(1, 2) == 1 then
-				self:Light()
-			else
-				sound.Play("Metal_Box.Break", Pos)
-				self:Remove()
-			end
+			sound.Play("Flesh.Break", Pos)
+			self:Remove()
+		else
+			self:Light()
 		end
 	end
 
@@ -206,24 +204,57 @@ if SERVER then
 
 	function ENT:OnRemove()
 	end
+
+	hook.Add("JMod_OnInventoryAdd", "JMod_GlowstickInventoryAdd", function(invEnt, target, jmodinv)
+		if not(IsValid(invEnt) and IsValid(target)) then return end
+		if (target:GetClass() == "ent_jack_gmod_ezglowstick") and (target:GetState() == STATE_BURNIN) then
+			target:SetNoDraw(false)
+		end
+	end)
 	--
 elseif CLIENT then
 	function ENT:Initialize()
+		self.AttachedToPlayer = false
 	end
 
+	local OffsetVec, OffsetAng = Vector(-12, -3, -10), Angle(-70, 0, 90)
 	--
 	function ENT:Think()
 		local State, Fuel, Pos, Ang = self:GetState(), self:GetFuel(), self:GetPos(), self:GetAngles()
 
 		if State == STATE_BURNIN then
 			local Up, Right, Forward = Ang:Up(), Ang:Right(), Ang:Forward()
-			local FaceDir = EyeVector()
+			local InventoryEnt = self:GetNW2Entity("EZInvOwner", NULL)
+
+			if IsValid(InventoryEnt) then
+				local BoneIndex = InventoryEnt:LookupBone("ValveBiped.Bip01_Spine4")
+				if BoneIndex then
+					Pos, Ang = InventoryEnt:GetBonePosition(BoneIndex)
+					local BoneUp, BoneRight, BoneForward = Ang:Up(), Ang:Right(), Ang:Forward()
+					Pos = Pos + BoneRight * OffsetVec.x + BoneUp * OffsetVec.y + BoneForward * OffsetVec.z
+					Ang:RotateAroundAxis(BoneRight, OffsetAng.p)
+					Ang:RotateAroundAxis(BoneUp, OffsetAng.y)
+					Ang:RotateAroundAxis(BoneForward, OffsetAng.r)
+
+					self:SetRenderOrigin(Pos)
+					self:SetRenderAngles(Ang)
+					self.AttachedToPlayer = true
+				else
+					self:SetRenderOrigin(nil)
+					self:SetRenderAngles(nil)
+					self.AttachedToPlayer = false
+				end
+			else
+				self:SetRenderOrigin(nil)
+				self:SetRenderAngles(nil)
+				self.AttachedToPlayer = false
+			end
 			local Mult, Col = (Fuel > 30 and 1) or .5, self:GetColor()
 			local R, G, B = math.Clamp(Col.r + 20, 0, 255), math.Clamp(Col.g + 20, 0, 255), math.Clamp(Col.b + 20, 0, 255)
 			local DLight = DynamicLight(self:EntIndex())
 
 			if DLight then
-				DLight.Pos = Pos + Up * 10 + FaceDir * 10
+				DLight.Pos = Pos + Up * 10
 				DLight.r = R
 				DLight.g = G
 				DLight.b = B
@@ -239,6 +270,13 @@ elseif CLIENT then
 	local GlowSprite = Material("sprites/mat_jack_basicglow")
 
 	function ENT:Draw()
+		local Client = LocalPlayer()
+		local InventoryEnt = self:GetNW2Entity("EZInvOwner", NULL)
+
+		if self.AttachedToPlayer and (Client == InventoryEnt) and not Client:ShouldDrawLocalPlayer() then
+			return
+		end
+
 		self:DrawModel()
 	end
 

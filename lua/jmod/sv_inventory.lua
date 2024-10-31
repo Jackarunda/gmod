@@ -66,16 +66,24 @@ function JMod.GetItemVolumeWeight(ent)
 end
 
 function JMod.IsEntContained(target, container)
-	--jprint(target, " - ", container, " - ", target.EZInvOwner, " - ", target:GetParent())
-	local Contained = IsValid(target) and IsValid(target.EZInvOwner) and IsValid(target:GetParent()) and (target:GetParent() == target.EZInvOwner)
+	if not IsValid(target) then return false end
+	local TargetContainer = target:GetNW2Entity("EZInvOwner", NULL)
+	local Contained = IsValid(TargetContainer) and IsValid(target:GetParent()) and (target:GetParent() == TargetContainer)
 	if container then
-		Contained = Contained and (target.EZInvOwner == container)
+		Contained = Contained and (TargetContainer == container)
 	end
 	return Contained
 end
 
 local function IsActiveItemAllowed(ent)
-	return (not(ent.JModEZallowedActive) and (JMod.Config.QoL.AllowActiveItemsInInventory == false)) and (ent.GetState and ent:GetState() ~= 0)
+	if not IsValid(ent) then return false end
+	if not(JMod.Config.QoL.AllowActiveItemsInInventory) and (ent.GetState and ent:GetState() ~= 0) then
+		return ent.JModInvAllowedActive
+	else
+		return true
+	end
+
+	return false
 end
 
 function JMod.UpdateInv(invEnt, noplace, transfer)
@@ -90,12 +98,11 @@ function JMod.UpdateInv(invEnt, noplace, transfer)
 	jmodinvfinal.maxVolume = Capacity
 
 	for k, iteminfo in ipairs(invEnt.JModInv.items) do
-		
 		local RandomPos = Vector(math.random(-100, 100), math.random(-100, 100), math.random(100, 100))
 		local TrPos = util.QuickTrace(EntPos, RandomPos, {invEnt}).HitPos
 		if (Capacity > 0) and JMod.IsEntContained(iteminfo.ent, invEnt) and (iteminfo.ent:EntIndex() ~= -1) then
 			local Vol, Mass = JMod.GetItemVolumeWeight(iteminfo.ent)
-			if (Vol ~= nil) and not(IsActiveItemAllowed(iteminfo.ent)) then
+			if (Vol ~= nil) and IsActiveItemAllowed(iteminfo.ent) then
 				if (Capacity >= (jmodinvfinal.volume + Vol)) then
 					jmodinvfinal.weight = jmodinvfinal.weight + Mass
 					jmodinvfinal.volume = jmodinvfinal.volume + math.Round(Vol, 2)
@@ -151,14 +158,14 @@ end
 -- First arg is inventory entity, second is item or table representing resources, third is to cancel the auto-update
 function JMod.AddToInventory(invEnt, target, noUpdate)
 	--jprint(invEnt, target, noUpdate)
-	invEnt = invEnt or target.EZInvOwner
+	invEnt = invEnt or target:GetNW2Entity("EZInvOwner", NULL)
 	local Capacity = JMod.GetStorageCapacity(invEnt)
 	if Capacity <= 0 then return false end
 	local AddingResource = istable(target)
-	if not(AddingResource) and (target:IsPlayer() or IsActiveItemAllowed(target) or (target:EntIndex() == -1)) then return false end -- Open up! The fun police are here!
+	if not(AddingResource) and (target:IsPlayer() or not(IsActiveItemAllowed(target)) or (target:EntIndex() == -1)) then return false end -- Open up! The fun police are here!
 
 	if JMod.IsEntContained(target) then
-		JMod.RemoveFromInventory(target.EZInvOwner, target, nil, false, true)
+		JMod.RemoveFromInventory(target:GetNW2Entity("EZInvOwner", NULL), target, nil, false, true)
 	end
 
 	local jmodinv = invEnt.JModInv or table.Copy(JMod.DEFAULT_INVENTORY)
@@ -176,8 +183,10 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	elseif IsValid(target) then
 		target:ForcePlayerDrop()
 		constraint.RemoveAll(target)
-		target.EZInvOwner = invEnt
+		target:SetNW2Entity("EZInvOwner", invEnt)
+
 		local BoneID = invEnt:LookupBone("ValveBiped.Bip01_Spine1")
+
 		if BoneID then
 			target.EZoldMoveType = target:GetMoveType()
 			target.EZoldNoBoneFollow = target:IsEffectActive(EF_FOLLOWBONE)
@@ -186,8 +195,10 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 			end
 			target:SetMoveType(MOVETYPE_NONE)
 			target:SetParent(invEnt, BoneID)
-			target:SetPos(invEnt:GetBonePosition(BoneID))
-			target:SetAngles(target.JModPreferredCarryAngles or Angle(0, 0, 0))
+
+			local Pos, Ang = invEnt:GetBonePosition(BoneID)
+			target:SetPos(Pos)
+			target:SetAngles(Ang)
 		else
 			target:SetParent(invEnt)
 			target:SetPos(invEnt:OBBCenter())
@@ -235,11 +246,12 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 		JMod.Hint(invEnt,"hint item inventory add")
 	end
 
+	hook.Run("JMod_OnInventoryAdd", invEnt, target, jmodinv)
 	return true
 end
 
 function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
-	invEnt = invEnt or target.EZInvOwner
+	invEnt = invEnt or target:GetNW2Entity("EZInvOwner", NULL)
 	if not(IsValid(invEnt)) then return end
 
 	local RemovingResource = istable(target)
@@ -269,7 +281,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 			invEnt.JModInv.EZresources[resTyp] = invEnt.JModInv.EZresources[resTyp] - amt
 		end
 	elseif JMod.IsEntContained(target, invEnt) then 
-		target.EZInvOwner = nil
+		target:SetNW2Entity("EZInvOwner", nil)
 
 		if not(pos) and not(transfer) then
 			SafeRemoveEntityDelayed(target, 0)
@@ -316,11 +328,7 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 		JMod.UpdateInv(invEnt)
 	end
 
-	if invEnt.NextLoad and invEnt.CalcWeight then 
-		invEnt.NextLoad = CurTime() + 2
-		invEnt:EmitSound("Ammo_Crate.Close")
-		invEnt:CalcWeight()
-	end
+	hook.Run("JMod_OnInventoryRemove", invEnt, target, jmodinv)
 
 	if RemovingResource then
 		return target[1], target[2]
@@ -328,6 +336,14 @@ function JMod.RemoveFromInventory(invEnt, target, pos, noUpdate, transfer)
 		return target
 	end
 end
+
+hook.Add("JMod_OnInventoryRemove", "JMod_OnInventoryRemove", function(invEnt, target, jmodinv)
+	if invEnt.NextLoad and invEnt.CalcWeight then 
+		invEnt.NextLoad = CurTime() + 2
+		invEnt:EmitSound("Ammo_Crate.Close")
+		invEnt:CalcWeight()
+	end
+end)
 
 local pickupWhiteList = {
 	["prop_ragdoll"] = false,
