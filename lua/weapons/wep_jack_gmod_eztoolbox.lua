@@ -320,20 +320,21 @@ function SWEP:BuildItem(selectedBuild)
 	end
 	local Sound = not BuildInfo.noSound
 	local Reqs = table.FullCopy(BuildInfo.craftingReqs)
+	local ConsumePos = self.Owner:GetShootPos()
 
-	if JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self) then
+	if JMod.HaveResourcesToPerformTask(ConsumePos, nil, Reqs, self) then
 		local override, msg, mult = hook.Run("JMod_CanKitBuild", self.Owner, self, BuildInfo)
 
 		if override ~= nil and override == false then
 			self:Msg(msg or "cannot build")
 
 			return
-		elseif mult and not(JMod.HaveResourcesToPerformTask(nil, nil, Reqs, self, nil, mult)) then
+		elseif mult and not(JMod.HaveResourcesToPerformTask(ConsumePos, nil, Reqs, self, nil, mult)) then
 			self:Msg("Insufficient resources to finish build")
 
 			return
 		end
-		JMod.ConsumeResourcesInRange(Reqs, nil, nil, self, false, nil, mult or 1)
+		JMod.ConsumeResourcesInRange(Reqs, ConsumePos, nil, self, false, nil, mult or 1)
 		Built = true
 		local BuildSteps = math.ceil(20 * (BuildInfo.sizeScale or 1))
 
