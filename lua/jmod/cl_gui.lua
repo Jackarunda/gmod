@@ -2,7 +2,6 @@
 local Dynamic = 0
 local FriendMenuOpen = false
 local CurrentSelectionMenu = nil
-local CurrentColor = Color(255, 255, 255)
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
 local FavMat = Material("icon16/star.png")
@@ -56,7 +55,7 @@ local function BlurBackground(panel)
 	Dynamic = math.Clamp(Dynamic + (1 / FrameRate) * 7, 0, 1)
 end
 
-local function PopulateList(parent, friendList, myself, W, H)
+local function PopulateFriendList(parent, friendList, myself, W, H)
 	parent:Clear()
 	local Y = 0
 
@@ -95,7 +94,7 @@ local function PopulateList(parent, friendList, myself, W, H)
 					table.insert(friendList, playa)
 				end
 
-				PopulateList(parent, friendList, myself, W, H)
+				PopulateFriendList(parent, friendList, myself, W, H)
 			end
 
 			local IsFriendIcon = vgui.Create("DSprite", Panel)
@@ -230,7 +229,7 @@ net.Receive("JMod_Friends", function()
 	local Scroll = vgui.Create("DScrollPanel", Frame)
 	Scroll:SetSize(W - 15, H)
 	Scroll:SetPos(10, 30)
-	PopulateList(Scroll, FriendList, Myself, W, H)
+	PopulateFriendList(Scroll, FriendList, Myself, W, H)
 end)
 
 local OldMouseX, OldMouseY = 0, 0
@@ -238,7 +237,6 @@ net.Receive("JMod_ColorAndArm", function()
 	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
 
 	if UpdateColor == true then
-		CurrentColor = Ent:GetColor()
 		input.SetCursorPos(OldMouseX, OldMouseY)
 	end
 	if not IsValid(Ent) then return end
@@ -266,9 +264,9 @@ net.Receive("JMod_ColorAndArm", function()
 			local Col = Picker:GetColor()
 			net.Start("JMod_ColorAndArm")
 			net.WriteEntity(Ent)
-			net.WriteBit(false)
+			net.WriteBool(false)
 			net.WriteColor(Color(Col.r, Col.g, Col.b))
-			net.WriteBit(false)
+			net.WriteBool(false)
 			net.SendToServer()
 		end
 	end
@@ -289,9 +287,9 @@ net.Receive("JMod_ColorAndArm", function()
 		local Col = Picker:GetColor()
 		net.Start("JMod_ColorAndArm")
 		net.WriteEntity(Ent)
-		net.WriteBit(false)
+		net.WriteBool(false)
 		net.WriteColor(Color(Col.r, Col.g, Col.b))
-		net.WriteBit(true)
+		net.WriteBool(true)
 		net.SendToServer()
 		Frame:Close()
 	end
@@ -304,24 +302,38 @@ net.Receive("JMod_ColorAndArm", function()
 	function ButtWhat:DoClick()
 		net.Start("JMod_ColorAndArm")
 		net.WriteEntity(Ent)
-		net.WriteBit(true)
+		net.WriteBool(true)
 		net.WriteColor(Color(255, 255, 255))
-		net.WriteBit(false)
+		net.WriteBool(false)
 		net.SendToServer()
 		OldMouseX, OldMouseY = input.GetCursorPos()
+		Frame:Close()
+	end
+	if LocalPlayer():KeyDown(IN_SPEED) then
+		net.Start("JMod_ColorAndArm")
+		net.WriteEntity(Ent)
+		net.WriteBool(true)
+		net.WriteColor(Color(255, 255, 255))
+		net.WriteBool(true)
+		net.SendToServer()
 		Frame:Close()
 	end
 end)
 
 net.Receive("JMod_ArmorColor", function()
-	local Ent, NextColorCheck = net.ReadEntity(), 0
+	local Ent, UpdateColor, NextColorCheck = net.ReadEntity(), net.ReadBool(), 0
+
+	if UpdateColor == true then
+		input.SetCursorPos(OldMouseX, OldMouseY)
+	end
+
 	if not IsValid(Ent) then return end
 	local Frame = vgui.Create("DFrame")
 	Frame:SetSize(200, 300)
 	Frame:SetPos(ScrW() * .4 - 200, ScrH() * .5)
 	Frame:SetDraggable(true)
 	Frame:ShowCloseButton(true)
-	Frame:SetTitle("EZ Armor")
+	Frame:SetTitle("EZ Armor Color")
 	Frame:MakePopup()
 	local Picker
 
@@ -337,13 +349,10 @@ net.Receive("JMod_ArmorColor", function()
 			end
 
 			NextColorCheck = Time + .25
-			local Col = Picker:GetColor()
-			Col.r = math.max(Col.r, 50)
-			Col.g = math.max(Col.g, 50)
-			Col.b = math.max(Col.b, 50)
 			net.Start("JMod_ArmorColor")
 			net.WriteEntity(Ent)
-			net.WriteColor(Color(Col.r, Col.g, Col.b))
+			net.WriteBool(false)
+			net.WriteColor(Picker:GetColor())
 			net.WriteBit(false)
 			net.SendToServer()
 		end
@@ -356,19 +365,42 @@ net.Receive("JMod_ArmorColor", function()
 	Picker:SetWangs(false)
 	Picker:SetPalette(true)
 	Picker:SetColor(Ent:GetColor())
+
 	local Butt = vgui.Create("DButton", Frame)
 	Butt:SetPos(5, 245)
-	Butt:SetSize(190, 50)
+	Butt:SetSize(95, 50)
 	Butt:SetText("EQUIP")
 
 	function Butt:DoClick()
-		local Col = Picker:GetColor()
-		Col.r = math.max(Col.r, 50)
-		Col.g = math.max(Col.g, 50)
-		Col.b = math.max(Col.b, 50)
 		net.Start("JMod_ArmorColor")
 		net.WriteEntity(Ent)
-		net.WriteColor(Color(Col.r, Col.g, Col.b))
+		net.WriteBool(false)
+		net.WriteColor(Picker:GetColor())
+		net.WriteBit(true)
+		net.SendToServer()
+		Frame:Close()
+	end
+
+	local ButtWhat = vgui.Create("DButton", Frame)
+	ButtWhat:SetPos(100, 245)
+	ButtWhat:SetSize(95, 50)
+	ButtWhat:SetText("AUTO-COLOR")
+
+	function ButtWhat:DoClick()
+		net.Start("JMod_ArmorColor")
+		net.WriteEntity(Ent)
+		net.WriteBool(true)
+		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
+		net.WriteBit(false)
+		net.SendToServer()
+		OldMouseX, OldMouseY = input.GetCursorPos()
+		Frame:Close()
+	end
+	if LocalPlayer():KeyDown(IN_SPEED) then
+		net.Start("JMod_ArmorColor")
+		net.WriteEntity(Ent)
+		net.WriteBool(false)
+		net.WriteColor(LocalPlayer():GetPlayerColor():ToColor())
 		net.WriteBit(true)
 		net.SendToServer()
 		Frame:Close()
@@ -1057,6 +1089,8 @@ net.Receive("JMod_EZradio", function()
 	end, nil)
 end)
 
+local OpenDropdown = nil
+
 -- no side display for now
 local ArmorSlotButtons = {
 	{
@@ -1076,7 +1110,8 @@ local ArmorSlotButtons = {
 			net.WriteInt(2, 8) -- toggle
 			net.WriteString(itemID)
 			net.SendToServer()
-		end
+		end,
+		dontClose = true
 	},
 	{
 		title = "Repair",
@@ -1086,7 +1121,8 @@ local ArmorSlotButtons = {
 			net.WriteInt(3, 8) -- repair
 			net.WriteString(itemID)
 			net.SendToServer()
-		end
+		end,
+		dontClose = true
 	},
 	{
 		title = "Recharge",
@@ -1104,45 +1140,57 @@ local ArmorSlotButtons = {
 			net.WriteInt(4, 8) -- recharge
 			net.WriteString(itemID)
 			net.SendToServer()
-		end
+		end,
+		dontClose = true
 	},
 	{
 		title = "Color",
 		visTestFunc = function(slot, itemID, itemData, itemInfo) return not(itemInfo.clrForced) end,
-		actionFunc = function(slot, itemID, itemData, itemInfo)
+		actionFunc = function(slot, itemID, itemData, itemInfo, motherFrame)
 			local Panel = vgui.Create("DFrame")
-			Panel:SetSize(300, 240)
-			Panel:SetPos(ScrW()/2 - 150, ScrH()/2 - 120)
-			Panel:SetTitle("Color Picker")
+			Panel:SetSize(200, 300)
+			Panel:SetPos(ScrW()/2, ScrH()/2 - 300)
+			Panel:SetTitle("EZ Armor Color")
 			Panel:MakePopup()
 
 			function Panel:Paint(w, h)
 				BlurBackground(self)
 			end
-			
+
 			local ColorPicker = vgui.Create("DColorMixer", Panel)
-			ColorPicker:SetPos(10, 30)
-			ColorPicker:SetSize(280, 160)
+			ColorPicker:SetPos(5, 25)
+			ColorPicker:SetSize(190, 215)
+			ColorPicker:SetAlphaBar(false)
+			ColorPicker:SetWangs(false)
+			ColorPicker:SetPalette(true)
 			if itemData.col then
 				ColorPicker:SetColor(Color(itemData.col.r, itemData.col.g, itemData.col.b))
 			end
 			
-			local Button = vgui.Create("DButton", Panel)
-			Button:SetPos(110, 200)
-			Button:SetSize(80, 30)
-			Button:SetText("Change")
-			Button.DoClick = function()
-				local ColorTab = ColorPicker:GetColor()
+			local Buttony = vgui.Create("DButton", Panel)
+			Buttony:SetPos(5, 245)
+			Buttony:SetSize(95, 50)
+			Buttony:SetText("CHANGE")
+			Buttony.DoClick = function()
 				net.Start("JMod_Inventory")
 				net.WriteInt(5, 8) -- color
 				net.WriteString(itemID)
-				net.WriteColor(Color(ColorTab.r, ColorTab.g, ColorTab.b))
+				local Col = ColorPicker:GetColor()
+				net.WriteColor(Color(Col.r, Col.g, Col.b))
 				net.SendToServer()
-				Panel:Close()
 			end
-			
-			return
-		end
+
+			local AutoButtony = vgui.Create("DButton", Panel)
+			AutoButtony:SetPos(100, 245)
+			AutoButtony:SetSize(95, 50)
+			AutoButtony:SetText("AUTO-COLOR")
+			AutoButtony.DoClick = function()
+				ColorPicker:SetColor(LocalPlayer():GetPlayerColor():ToColor())
+			end
+
+			OpenDropdown = Panel
+		end,
+		dontClose = true
 	}
 }
 
@@ -1153,8 +1201,6 @@ local ArmorResourceNiceNames = {
 	fuel = "Fuel",
 }
 
-local OpenDropdown = nil
-
 local function CreateArmorSlotButton(parent, slot, x, y)
 	local Buttalony, Ply = vgui.Create("DButton", parent), LocalPlayer()
 	Buttalony:SetSize(180, 40)
@@ -1164,6 +1210,7 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 	local ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(Ply.EZarmor, slot)
 
 	function Buttalony:Paint(w, h)
+		ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(Ply.EZarmor, slot)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
 		draw.SimpleText(JMod.ArmorSlotNiceNames[slot], "DermaDefault", Buttalony:GetWide() / 2, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
@@ -1175,27 +1222,32 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			if ItemData.tgl and ItemInfo.tgl.slots[slot] == 0 then
 				Str = "DISENGAGED"
 			end
+			--
+			local DuribilityFrac = ItemData.dur / ItemInfo.dur
+			local DurR, DurB, DurG, DurA = JMod.GoodBadColor(DuribilityFrac, false, 25)
+			surface.SetDrawColor(DurR, DurB, DurG, DurA)
+			surface.DrawRect(0, 0, w * DuribilityFrac, h)
+			--
+			local DurDesc = "Durability: " .. math.Round(ItemData.dur, 1) .. "/" .. ItemInfo.dur
+
+			if ItemInfo.chrg then
+				for resource, maxAmt in pairs(ItemInfo.chrg) do
+					DurDesc = DurDesc .. "\n" .. ArmorResourceNiceNames[resource] .. ": " .. math.Round(ItemData.chrg[resource], 1) .. "/" .. maxAmt
+				end
+			end
+
+			Buttalony:SetTooltip(DurDesc)
+		else
+			Buttalony:SetTooltip("slot is empty")
 		end
 		draw.SimpleText(Str, "DermaDefault", Buttalony:GetWide() / 2, 25, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
-	if ItemID then
-		local str = "Durability: " .. math.Round(ItemData.dur, 1) .. "/" .. ItemInfo.dur
-
-		if ItemInfo.chrg then
-			for resource, maxAmt in pairs(ItemInfo.chrg) do
-				str = str .. "\n" .. ArmorResourceNiceNames[resource] .. ": " .. math.Round(ItemData.chrg[resource], 1) .. "/" .. maxAmt
-			end
-		end
-
-		Buttalony:SetTooltip(str)
-	else
-		Buttalony:SetTooltip("slot is empty")
-	end
-
 	function Buttalony:DoClick()
-		if OpenDropdown then
+		if IsValid(OpenDropdown) then
 			OpenDropdown:Remove()
+
+			--return
 		end
 
 		if not ItemID then return end
@@ -1227,9 +1279,11 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			Butt:SetText(option.title)
 
 			function Butt:DoClick()
-				option.actionFunc(slot, ItemID, ItemData, ItemInfo)
-				if IsValid(parent) then
+				option.actionFunc(slot, ItemID, ItemData, ItemInfo, motherFrame)
+				if not(option.dontClose) and IsValid(parent) then
 					parent:Close()
+				else
+					Dropdown:Remove()
 				end
 			end
 		end
@@ -1559,10 +1613,12 @@ end
 local CurrentJModInvScreen = nil
 local JModInventoryMenu = function(PlyModel, itemTable)
 	local Ply = LocalPlayer()
+	--[[if IsValid(PlyModel) then
+		Ply = PlyModel
+		PlyModel = Ply:GetModel()
+	end--]]
 	local weight = (Ply.EZarmor) and (Ply.EZarmor.totalWeight) or 0
 	Ply.JModInv = itemTable
-
-	--PrintTable(Ply.JModInv)
 
 	if IsValid(CurrentSelectionMenu) then return end
 
@@ -1579,12 +1635,6 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 
 	motherFrame:MakePopup()
 	motherFrame:Center()
-
-	function motherFrame:OnKeyCodePressed(key)
-		if key == KEY_Q or key == KEY_ESCAPE or key == KEY_E then
-			self:Close()
-		end
-	end
 
 	function motherFrame:OnClose()
 		if OpenDropdown then
@@ -1610,6 +1660,7 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 	PlayerDisplay:SetLookAt(FakePly:GetBonePosition(0))
 	PlayerDisplay:SetFOV(37)
 	PlayerDisplay:SetCursor("arrow")
+	motherFrame.PlayerDisplay = PlayerDisplay
 	FakePly:SetLOD(0)
 
 	local PDispBT = vgui.Create("DButton", motherFrame)
@@ -1738,17 +1789,23 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 	motherFrame:UpdateItemInventory()
 
 	function motherFrame:OnKeyCodePressed(num)
-		if num > 10 then return end
 		if num == 1 then num = 11 end -- Weird wrap around for the 0 slot
 		if ShownCommands[num - 1] then
 			Ply:ConCommand("jmod_ez_"..ShownCommands[num - 1])
+			motherFrame:Close()
+			
+			return true
+		elseif num == KEY_Q or num == KEY_ESCAPE or num == KEY_E then
+			motherFrame:Close()
+
+			return true
 		end
-		motherFrame:Close()
-		return true
 	end
 
 	CurrentSelectionMenu = motherFrame
 	CurrentJModInvScreen = motherFrame
+
+	local ModifiedMenu = hook.Run("JMod_ModifyInventoryScreen", motherFrame) -- Thinking about this for special item functions
 
 	return motherFrame
 end

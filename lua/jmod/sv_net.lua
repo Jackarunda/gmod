@@ -58,24 +58,30 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
 	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
 
-	local AutoColor = net.ReadBit()
+	local AutoColor = net.ReadBool()
 	local Col = net.ReadColor()
+	local AutoArm = net.ReadBool()
 
-	if AutoColor == 1 then
-		local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
-		if Tr.Hit then
-			local Info = JMod.HitMatColors[Tr.MatType]
+	if AutoColor then
+		if ent.EZscannerDanger then
+			local Tr = util.QuickTrace(ent:GetPos() + Vector(0, 0, 10), Vector(0, 0, -50), ent)
+			if Tr.Hit then
+				local Info = JMod.HitMatColors[Tr.MatType]
 
-			if Info then
-				ent:SetColor(Info[1])
+				if Info then
+					ent:SetColor(Info[1])
 
-				if Info[2] then
-					ent:SetMaterial(Info[2])
+					if Info[2] then
+						ent:SetMaterial(Info[2])
+					end
 				end
 			end
+		else
+			local PlyCol = ply:GetPlayerColor():ToColor()
+			ent:SetColor(PlyCol)
 		end
 		timer.Simple(.1, function()
-			if not(IsValid(ent) and IsValid(ply) and ply:Alive()) then return end
+			if not(IsValid(ent) and IsValid(ply) and ply:Alive()) or (AutoArm) then return end
 			net.Start("JMod_ColorAndArm")
 			net.WriteEntity(ent)
 			net.WriteBool(true)
@@ -85,7 +91,7 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 		ent:SetColor(Col)
 	end
 
-	if net.ReadBit() == 1 then
+	if AutoArm then
 		if ent.Prime then
 			ent:Prime(ply)
 		elseif ent.Arm then
@@ -98,11 +104,28 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local Armor = net.ReadEntity()
 	if not IsValid(Armor) or not Armor.ArmorName then return end
+	if JMod.ArmorTable[Armor.ArmorName].clrForced then return end
+
+	local AutoColor = net.ReadBool()
 	local Col = net.ReadColor()
-	Armor:SetColor(Col)
+	Col.r = math.max(Col.r, 50)
+	Col.g = math.max(Col.g, 50)
+	Col.b = math.max(Col.b, 50)
+	Armor:SetColor(Color(Col.r, Col.g, Col.b))
+
+	if AutoColor == true then
+		timer.Simple(0.1, function()
+			if not(IsValid(Armor) and IsValid(ply) and ply:Alive()) then return end
+			net.Start("JMod_ArmorColor")
+			net.WriteEntity(Armor)
+			net.WriteBool(true)
+			net.Send(ply)
+		end)
+	end
+	
 	local Equip = tobool(net.ReadBit())
 
-	if Equip then
+	if Equip and ply:GetPos():Distance(Armor:GetPos()) < 150 then
 		JMod.Hint(ply, "armor weight")
 		JMod.EZ_Equip_Armor(ply, Armor)
 	end

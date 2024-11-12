@@ -105,6 +105,7 @@ if SERVER then
 			else
 				net.Start("JMod_ArmorColor")
 				net.WriteEntity(self)
+				net.WriteBool(false)
 				net.Send(activator)
 			end
 
