@@ -344,15 +344,36 @@ function JMod.Nail(ply)
 	local Success, Pos, Vec, Ent1, Ent2 = JMod.FindNailPos(ply)
 	if not Success then return end
 	local Weld = constraint.Find(Ent1, Ent2, "Weld", 0, 0)
+	local DistMult = 1
+
+	Ent1.EZnails = Ent1.EZnails or {}
+	if Ent1.EZnails[1] then
+		local Size, LocalPos, Barycenter = (Ent1:OBBMaxs() - Ent1:OBBMins()):Length(), Ent1:WorldToLocal(Pos), Vector(0, 0, 0)
+		
+		for k, nail in pairs(Ent1.EZnails) do
+			if IsValid(nail) then
+				local EZnailPos = Ent1:WorldToLocal(nail:GetPos())
+				Barycenter = Barycenter + EZnailPos
+			end
+		end
+
+		Barycenter = Barycenter / #Ent1.EZnails
+		DistMult = (LocalPos:Distance(Barycenter) * 5) / Size -- The multiplier by 5 is the most the strength will be multiplied by
+	end
 
 	if Weld then
-		local Strength = Weld:GetTable().forcelimit + 5000
+		local Strength = Weld:GetTable().forcelimit + (5000 * DistMult)
 		Weld:Remove()
 
 		timer.Simple(.01, function()
 			Weld = constraint.Weld(Ent1, Ent2, 0, 0, Strength, false, false)
 		end)
 	else
+		for k, v in pairs(Ent1.EZnails) do
+			if IsValid(v) then
+				v:Remove()
+			end
+		end
 		Weld = constraint.Weld(Ent1, Ent2, 0, 0, 5000, false, false)
 	end
 
@@ -365,8 +386,9 @@ function JMod.Nail(ply)
 	Nail:Spawn()
 	Nail:Activate()
 	Nail:SetParent(Ent1)
-	Ent1.EZnails = Ent1.EZnails or {}
+
 	table.insert(Ent1.EZnails, Nail)
+
 	sound.Play("snds_jack_gmod/ez_tools/" .. math.random(1, 27) .. ".ogg", Pos, 60, math.random(80, 120))
 end
 
