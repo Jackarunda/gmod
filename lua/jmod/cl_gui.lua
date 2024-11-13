@@ -261,10 +261,10 @@ net.Receive("JMod_ColorAndArm", function()
 			end
 
 			NextColorCheck = Time + .25
-			local Col = Picker:GetColor()
 			net.Start("JMod_ColorAndArm")
 			net.WriteEntity(Ent)
 			net.WriteBool(false)
+			local Col = Picker:GetColor()
 			net.WriteColor(Color(Col.r, Col.g, Col.b))
 			net.WriteBool(false)
 			net.SendToServer()
@@ -284,10 +284,10 @@ net.Receive("JMod_ColorAndArm", function()
 	Butt:SetText("ARM")
 
 	function Butt:DoClick()
-		local Col = Picker:GetColor()
 		net.Start("JMod_ColorAndArm")
 		net.WriteEntity(Ent)
 		net.WriteBool(false)
+		local Col = Picker:GetColor()
 		net.WriteColor(Color(Col.r, Col.g, Col.b))
 		net.WriteBool(true)
 		net.SendToServer()
@@ -352,7 +352,8 @@ net.Receive("JMod_ArmorColor", function()
 			net.Start("JMod_ArmorColor")
 			net.WriteEntity(Ent)
 			net.WriteBool(false)
-			net.WriteColor(Picker:GetColor())
+			local Col = Picker:GetColor()
+			net.WriteColor(Color(Col.r, Col.b, Col.g))
 			net.WriteBit(false)
 			net.SendToServer()
 		end
@@ -375,7 +376,8 @@ net.Receive("JMod_ArmorColor", function()
 		net.Start("JMod_ArmorColor")
 		net.WriteEntity(Ent)
 		net.WriteBool(false)
-		net.WriteColor(Picker:GetColor())
+		local Col = Picker:GetColor()
+		net.WriteColor(Color(Col.r, Col.b, Col.g))
 		net.WriteBit(true)
 		net.SendToServer()
 		Frame:Close()
@@ -1231,9 +1233,14 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			local DurDesc = "Durability: " .. math.Round(ItemData.dur, 1) .. "/" .. ItemInfo.dur
 
 			if ItemInfo.chrg then
-				for resource, maxAmt in pairs(ItemInfo.chrg) do
-					DurDesc = DurDesc .. "\n" .. ArmorResourceNiceNames[resource] .. ": " .. math.Round(ItemData.chrg[resource], 1) .. "/" .. maxAmt
+				local AvgChrg = 0
+				for res, maxAmt in pairs(ItemInfo.chrg) do
+					DurDesc = DurDesc .. "\n" .. ArmorResourceNiceNames[res] .. ": " .. math.Round(ItemData.chrg[res], 1) .. "/" .. maxAmt
+					AvgChrg = AvgChrg + ItemData.chrg[res] / maxAmt
 				end
+				surface.SetDrawColor(255, 255, 255, 100)
+				local ChargeBarHeight = h / 10
+				surface.DrawRect(0, h - ChargeBarHeight, w * AvgChrg, ChargeBarHeight)
 			end
 
 			Buttalony:SetTooltip(DurDesc)
@@ -1247,7 +1254,7 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 		if IsValid(OpenDropdown) then
 			OpenDropdown:Remove()
 
-			--return
+			return
 		end
 
 		if not ItemID then return end
@@ -1260,7 +1267,7 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 		end
 
 		local Dropdown = vgui.Create("DPanel", parent)
-		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40)
+		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40 + 35)
 		local ecks, why = gui.MousePos()
 		local harp, darp = parent:GetPos()
 		local fack, fock = parent:GetSize()
@@ -1270,11 +1277,14 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 		function Dropdown:Paint(w, h)
 			surface.SetDrawColor(70, 70, 70, 220)
 			surface.DrawRect(0, 0, w, h)
+			if not ItemID then 
+				Dropdown:Remove()
+			end
 		end
 
 		for k, option in pairs(Options) do
 			local Butt = vgui.Create("DButton", Dropdown)
-			Butt:SetPos(5, k * 40 - 35)
+			Butt:SetPos(5, k * 40)
 			Butt:SetSize(floop - 10, 30)
 			Butt:SetText(option.title)
 
@@ -1673,6 +1683,12 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 		surface.DrawRect(0, 0, w, h)
 	end
 
+	function PDispBT:DoClick()
+		if OpenDropdown then
+			OpenDropdown:Remove()
+		end
+	end
+
 	local entAngs = nil
 	local curDif = nil
 	local lastCurPos = input.GetCursorPos()
@@ -1717,12 +1733,6 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 	function PlayerDisplay:PostDrawModel(ent)
 		ent.EZarmor = Ply.EZarmor
 		JMod.ArmorPlayerModelDraw(ent, true)
-	end
-
-	function PlayerDisplay:DoClick()
-		if OpenDropdown then
-			OpenDropdown:Remove()
-		end
 	end
 
 	function motherFrame:OnRemove()

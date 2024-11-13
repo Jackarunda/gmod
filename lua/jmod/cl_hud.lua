@@ -13,7 +13,7 @@ local WasSleepy = false
 local ColorableVignette = Material("mats_jack_gmod_sprites/hard_vignette_colorable.png")
 local CurrentBleed = 0
 hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
-	local ply, Play = LocalPlayer(), false
+	local ply, PlaySndLoop = LocalPlayer(), false
 	local W, H, FT = ScrW(), ScrH(), FrameTime()
 	local Alive, ThirdPerson = ply:Alive(), ply:ShouldDrawLocalPlayer()
 	local Wakin = ply.JMod_RequiredWakeAmount or 0
@@ -40,9 +40,9 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 			end
 		end
 
-		Play = Alive and ply.EZarmor.sndlop and not ThirdPerson
+		PlaySndLoop = Alive and ply.EZarmor.sndlop and not ThirdPerson
 
-		if Play then
+		if PlaySndLoop then
 			if not MskSndLops[ply.EZarmor.sndlop] then
 				MskSndLops[ply.EZarmor.sndlop] = CreateSound(ply, ply.EZarmor.sndlop)
 				MskSndLops[ply.EZarmor.sndlop]:Play()
@@ -62,7 +62,7 @@ hook.Add("HUDPaintBackground", "JMOD_HUDBG", function()
 		CurrentBleed = Lerp(FT, CurrentBleed, TargetBleed)
 	end
 
-	if not Play then
+	if not PlaySndLoop then
 		for k, v in pairs(MskSndLops) do
 			v:Stop()
 			MskSndLops[k] = nil

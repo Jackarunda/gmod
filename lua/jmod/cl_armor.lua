@@ -156,7 +156,6 @@ hook.Add("JMod_ArmorModelDraw", "JMod_NoDrawArmorSweps", function(ply, Mdl, Armo
 				if ArmorInfo.merge then
 					Mdl:SetNoDraw(true)
 				else
-					--Mdl:SetBodygroup(1, 1)
 					return true
 				end
 			elseif ArmorInfo.merge then
