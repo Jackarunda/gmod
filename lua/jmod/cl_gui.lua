@@ -1,6 +1,4 @@
-﻿local blurMat = Material("pp/blurscreen")
-local Dynamic = 0
-local FriendMenuOpen = false
+﻿local FriendMenuOpen = false
 local CurrentSelectionMenu = nil
 local YesMat = Material("icon16/accept.png")
 local NoMat = Material("icon16/cancel.png")
@@ -43,24 +41,33 @@ list.Set("ContentCategoryIcons", "JMod - LEGACY Misc.", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY NPCs", JModLegacyIcon )
 list.Set("ContentCategoryIcons", "JMod - LEGACY Weapons", JModLegacyIcon )
 
+local BlurryMenus = CreateClientConVar("jmod_enable_blurry_menus", "1", true)
+local blurMat = Material("pp/blurscreen")
+local Dynamic = 0
 local function BlurBackground(panel)
 	if not (IsValid(panel) and panel:IsVisible()) then return end
 	local layers, density, alpha = 1, 1, 255
 	local x, y = panel:LocalToScreen(0, 0)
-	surface.SetDrawColor(255, 255, 255, alpha)
-	surface.SetMaterial(blurMat)
 	local FrameRate, Num, Dark = 1 / FrameTime(), 5, 150
 
-	for i = 1, Num do
-		blurMat:SetFloat("$blur", (i / layers) * density * Dynamic)
-		blurMat:Recompute()
-		render.UpdateScreenEffectTexture()
-		surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
-	end
+	if BlurryMenus:GetBool() then
+		surface.SetDrawColor(255, 255, 255, alpha)
+		surface.SetMaterial(blurMat)
 
-	surface.SetDrawColor(0, 0, 0, Dark * Dynamic)
-	surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
-	Dynamic = math.Clamp(Dynamic + (1 / FrameRate) * 7, 0, 1)
+		for i = 1, Num do
+			blurMat:SetFloat("$blur", (i / layers) * density * Dynamic)
+			blurMat:Recompute()
+			render.UpdateScreenEffectTexture()
+			surface.DrawTexturedRect(-x, -y, ScrW(), ScrH())
+		end
+
+		surface.SetDrawColor(0, 0, 0, Dark * Dynamic)
+		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
+		Dynamic = math.Clamp(Dynamic + (1 / FrameRate) * 7, 0, 1)
+	else
+		surface.SetDrawColor(0, 0, 0, 180)
+		surface.DrawRect(0, 0, panel:GetWide(), panel:GetTall())
+	end
 end
 
 local function PopulateFriendList(parent, friendList, myself, W, H)
