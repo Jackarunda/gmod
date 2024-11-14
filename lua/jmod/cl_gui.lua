@@ -1247,12 +1247,15 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			local DurDesc = "Durability: " .. math.Round(ItemData.dur, 1) .. "/" .. ItemInfo.dur
 
 			if ItemInfo.chrg then
-				local AvgChrg = 0
-				local ChargeBarHeight = h / 10
+				local ChargeBarHeight = h / 20
+				local Index = 1
 
 				for res, maxAmt in pairs(ItemInfo.chrg) do
+					local BarColor = ResourceColors[res]
+					surface.SetDrawColor(BarColor.r, BarColor.g, BarColor.b, 200)
+					surface.DrawRect(0, h - ChargeBarHeight * Index, w * (ItemData.chrg[res] / maxAmt), ChargeBarHeight)
 					DurDesc = DurDesc .. "\n" .. ArmorResourceNiceNames[res] .. ": " .. math.Round(ItemData.chrg[res], 1) .. "/" .. maxAmt
-					AvgChrg = AvgChrg + ItemData.chrg[res] / maxAmt
+					Index = Index + 1
 				end
 			end
 
