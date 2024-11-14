@@ -8,6 +8,14 @@ local FavMat = Material("icon16/star.png")
 local FriendMat = Material("icon16/user_green.png")
 local NotFriendMat = Material("icon16/user_red.png")
 
+-- this is here for caching common colors used in paint functions
+local TextColors = {
+	ButtonText = Color(255, 255, 255, 100),
+	ButtonTextBright = Color(255, 255, 255, 255),
+	ButtonTextDark = Color(0, 0, 0, 255),
+	DescText = Color(255, 255, 255, 200),
+}
+
 local SpecialIcons = {
 	["geothermal"] = Material("ez_resource_icons/geothermal.png"),
 	["warning"] = Material("ez_misc_icons/warning.png")
@@ -70,7 +78,7 @@ local function PopulateFriendList(parent, friendList, myself, W, H)
 			function Panel:Paint(w, h)
 				surface.SetDrawColor(0, 0, 0, 100)
 				surface.DrawRect(0, 0, w, h)
-				draw.SimpleText((playa:IsValid() and playa:Nick()) or "DISCONNECTED", "DermaDefault", 5, 3, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+				draw.SimpleText((playa:IsValid() and playa:Nick()) or "DISCONNECTED", "DermaDefault", 5, 3, TextColors.ButtonTextBright, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 			end
 
 			local Buttaloney = vgui.Create("DButton", Panel)
@@ -910,7 +918,7 @@ net.Receive("JMod_ModifyMachine", function()
 			function Panel:Paint(w, h)
 				surface.SetDrawColor(0, 0, 0, 100)
 				surface.DrawRect(0, 0, w, h)
-				draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+				draw.SimpleText(attrib .. ": " .. Specs[attrib], "DermaDefault", 137, 10, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 			end
 
 			local MinButt = vgui.Create("DButton", Panel)
@@ -942,11 +950,11 @@ net.Receive("JMod_ModifyMachine", function()
 				surface.SetDrawColor(0, 0, 0, 100)
 				surface.DrawRect(0, 0, w, h)
 				if IsMin then
-					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-					draw.SimpleText("Min", "DermaDefault", 75, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
-					draw.SimpleText("Max", "DermaDefault", 200, 12, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Min", "DermaDefault", 75, 12, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText("Max", "DermaDefault", 200, 12, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 				else
-					draw.SimpleText(attrib, "DermaDefault", 137, 5, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
+					draw.SimpleText(attrib, "DermaDefault", 137, 5, TextColors.ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 				end
 			end
 
@@ -996,9 +1004,9 @@ net.Receive("JMod_ModifyMachine", function()
 	Display:SetPos(100, 315)
 
 	function Display:Paint()
-		local Col = (ErrorTime > CurTime() and Color(255, 0, 0, 255)) or Color(255, 255, 255, 255)
+		local Col = (ErrorTime > CurTime() and Color(255, 0, 0, 255)) or TextColors.ButtonTextBright
 		draw.SimpleText("Available spec points: " .. AvailPts, "DermaDefault", 250, 0, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-		draw.SimpleText("Trade traits to achieve desired performance", "DermaDefault", 250, 20, Color(255, 255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+		draw.SimpleText("Trade traits to achieve desired performance", "DermaDefault", 250, 20, TextColors.ButtonTextBright, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 	end
 
 	local Apply = vgui.Create("DButton", bg)
@@ -1202,6 +1210,12 @@ local ArmorResourceNiceNames = {
 	gas = "Compressed Gas",
 	fuel = "Fuel",
 }
+local ResourceColors = {
+	chemicals = Color(19, 155, 19),
+	power = Color(200, 200, 0),
+	gas = Color(132, 187, 187),
+	fuel = Color(200, 20, 0),
+}
 
 local function CreateArmorSlotButton(parent, slot, x, y)
 	local Buttalony, Ply = vgui.Create("DButton", parent), LocalPlayer()
@@ -1215,7 +1229,7 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 		ItemID, ItemData, ItemInfo = JMod.GetItemInSlot(Ply.EZarmor, slot)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
-		draw.SimpleText(JMod.ArmorSlotNiceNames[slot], "DermaDefault", Buttalony:GetWide() / 2, 10, Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(JMod.ArmorSlotNiceNames[slot], "DermaDefault", Buttalony:GetWide() / 2, 10, ButtonTextBright, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 
 		local Str = "--EMPTY--"
 		if ItemID then
@@ -1234,20 +1248,19 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 
 			if ItemInfo.chrg then
 				local AvgChrg = 0
+				local ChargeBarHeight = h / 10
+
 				for res, maxAmt in pairs(ItemInfo.chrg) do
 					DurDesc = DurDesc .. "\n" .. ArmorResourceNiceNames[res] .. ": " .. math.Round(ItemData.chrg[res], 1) .. "/" .. maxAmt
 					AvgChrg = AvgChrg + ItemData.chrg[res] / maxAmt
 				end
-				surface.SetDrawColor(255, 255, 255, 100)
-				local ChargeBarHeight = h / 10
-				surface.DrawRect(0, h - ChargeBarHeight, w * AvgChrg, ChargeBarHeight)
 			end
 
 			Buttalony:SetTooltip(DurDesc)
 		else
 			Buttalony:SetTooltip("slot is empty")
 		end
-		draw.SimpleText(Str, "DermaDefault", Buttalony:GetWide() / 2, 25, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(Str, "DermaDefault", Buttalony:GetWide() / 2, 25, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	function Buttalony:DoClick()
@@ -1266,8 +1279,14 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			end
 		end
 
+		local ChargeBarHeight = 15
+		local StartHeight = 20
+		if ItemInfo.chrg then
+			StartHeight = StartHeight + (ChargeBarHeight * table.Count(ItemInfo.chrg) + 5)
+		end
+
 		local Dropdown = vgui.Create("DPanel", parent)
-		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40 + 35)
+		Dropdown:SetSize(Buttalony:GetWide(), #Options * 40 + StartHeight)
 		local ecks, why = gui.MousePos()
 		local harp, darp = parent:GetPos()
 		local fack, fock = parent:GetSize()
@@ -1280,13 +1299,38 @@ local function CreateArmorSlotButton(parent, slot, x, y)
 			if not ItemID then 
 				Dropdown:Remove()
 			end
+
+			local DurDesc = "Durability: " .. math.Round(ItemData.dur, 1) .. "/" .. ItemInfo.dur
+			draw.SimpleText(DurDesc, DermaDefault, w / 2, ChargeBarHeight - ChargeBarHeight * 0.75, TextColors.DescText, TEXT_ALIGN_CENTER)
+
+			if ItemInfo.chrg then
+				local Index = 1
+
+				for res, maxAmt in pairs(ItemInfo.chrg) do
+					local BarColor = ResourceColors[res]
+					surface.SetDrawColor(BarColor.r, BarColor.g, BarColor.b, 100)
+					local HeightStep = Index * ChargeBarHeight * 1.1 + 5
+					surface.DrawRect(5, HeightStep, w * (ItemData.chrg[res] / maxAmt) - 10, ChargeBarHeight)
+					draw.SimpleText(ArmorResourceNiceNames[res] .. ": " .. math.Round(ItemData.chrg[res], 1) .. "/" .. maxAmt, DermaDefault, w / 2, HeightStep, TextColors.DescText, TEXT_ALIGN_CENTER)
+					Index = Index + 1
+				end
+				
+			end
 		end
 
 		for k, option in pairs(Options) do
 			local Butt = vgui.Create("DButton", Dropdown)
-			Butt:SetPos(5, k * 40)
+			Butt:SetPos(5, (k - 1) * 40 + StartHeight + 5)
 			Butt:SetSize(floop - 10, 30)
-			Butt:SetText(option.title)
+			--Butt:SetText(option.title)
+			Butt:SetText("")
+
+			function Butt:Paint(w, h)
+				surface.SetDrawColor(255, 255, 255, 200)
+				surface.DrawRect(0, 0, w, h)
+		
+				draw.SimpleText(option.title, "DermaDefault", w / 2, h / 2, TextColors.ButtonTextDark, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+			end
 
 			function Butt:DoClick()
 				option.actionFunc(slot, ItemID, ItemData, ItemInfo, motherFrame)
@@ -1313,7 +1357,7 @@ local function CreateCommandButton(parent, commandTbl, x, y, num)
 		surface.SetDrawColor(50, 50, 50, 100)
 		surface.DrawRect(0, 0, w, h)
 
-		draw.SimpleText(num..": "..commandTbl.name, "DermaDefault", Buttalony:GetWide() / 2, 10, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		draw.SimpleText(num..": "..commandTbl.name, "DermaDefault", w / 2, 10, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	local HelpStr = commandTbl.helpTxt
@@ -1361,7 +1405,7 @@ local function CreateInvButton(parent, itemTable, x, y, w, h, scrollFrame, invEn
 			surface.SetDrawColor(255, 255, 255, 100)
 			surface.DrawOutlinedRect(0, 0, w, h, 1)
 		end
-		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, Color(200, 200, 200, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+		--draw.SimpleText(itemTable.name, "DermaDefault", Buttalony:GetWide() / 2, 40, TextColors.ButtonText, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
 	end
 
 	local HelpStr = itemTable.name
@@ -1811,6 +1855,8 @@ local JModInventoryMenu = function(PlyModel, itemTable)
 			return true
 		end
 	end
+
+	--function motherFrame
 
 	CurrentSelectionMenu = motherFrame
 	CurrentJModInvScreen = motherFrame
