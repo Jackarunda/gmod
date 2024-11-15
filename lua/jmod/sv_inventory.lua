@@ -5,6 +5,7 @@ JMod.GRABDISTANCE = 70
 function JMod.GetStorageCapacity(ent)
 	if not(IsValid(ent)) then return 0 end
 	if ent.IsJackyEZcrate then return 0 end
+	if ent.IsJackyEZresource then return 0 end
 	local Capacity = 0
 	local Phys = ent:GetPhysicsObject()
 
@@ -173,10 +174,12 @@ function JMod.AddToInventory(invEnt, target, noUpdate)
 	if AddingResource then
 		local res, amt = target[1], target[2] or Capacity
 		if IsValid(res) and res.IsJackyEZresource then
-			local SuppliesLeft = res:GetEZsupplies(res.EZsupplies) or 0
-			jmodinv.EZresources[res.EZsupplies] = (jmodinv.EZresources[res.EZsupplies] or 0) + math.min(SuppliesLeft, amt)
-			res:SetEZsupplies(res.EZsupplies, SuppliesLeft - (amt or SuppliesLeft))
-			JMod.ResourceEffect(res.EZsupplies, res:LocalToWorld(res:OBBCenter()), invEnt:LocalToWorld(invEnt:OBBCenter()), 1, 1, 1)
+			resEnt = res
+			res = resEnt.EZsupplies
+			local SuppliesLeft = resEnt:GetEZsupplies(res) or 0
+			jmodinv.EZresources[res] = (jmodinv.EZresources[res] or 0) + math.min(SuppliesLeft, amt)
+			resEnt:SetEZsupplies(res, SuppliesLeft - (amt or SuppliesLeft))
+			JMod.ResourceEffect(res, resEnt:LocalToWorld(resEnt:OBBCenter()), invEnt:LocalToWorld(invEnt:OBBCenter()), 1, 1, 1)
 		else
 			jmodinv.EZresources[res] = (jmodinv.EZresources[res] or 0) + amt
 		end
@@ -447,7 +450,11 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 	elseif command == "take_res" then
 		if not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, invEnt.JModInv.EZresources[resourceType] or 0)
-		JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
+		if invEnt.IsJackyEZresource then
+			invEnt:SetEZsupplies(resourceType, invEnt:GetEZsupplies(resourceType) - amt)
+		else
+			JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
+		end
 		JMod.AddToInventory(ply, {resourceType, amt})
 		sound.Play("snd_jack_clothequip.ogg", Tr.HitPos, 60, math.random(90, 110)) --"snds_jack_gmod/equip"..math.random(1, 5)..".ogg"
 	elseif command == "stow_res" then
@@ -476,9 +483,9 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 	if (ply.EZnextGrabTime or 0) > Time then return end
 	ply.EZnextGrabTime = Time + 1
 
-	local TargetEntity = args[1]
+	local TargetEntity = isnumber(args[1]) and Entity(tonumber(args[1]))
 
-	if not IsValid(TargetEntity) then
+	if not(IsValid(TargetEntity) and (TargetEntity:GetPos():Distance(ply:GetShootPos()) < JMod.GRABDISTANCE)) then
 		TargetEntity = util.QuickTrace(ply:GetShootPos(), ply:GetAimVector() * JMod.GRABDISTANCE, ply).Entity
 	end
 
@@ -492,6 +499,7 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			net.WriteTable(TargetEntity.JModInv)
 		net.Send(ply)
 		sound.Play("snd_jack_clothequip.ogg", ply:GetPos(), 50, math.random(90, 110))
+
 	elseif not(TargetEntity:IsConstrained()) and CanPickup(TargetEntity) then
 		JMod.UpdateInv(ply)
 		local RoomLeft = math.floor((ply.JModInv.maxVolume) - (ply.JModInv.volume))
@@ -501,12 +509,28 @@ function JMod.EZ_GrabItem(ply, cmd, args)
 			local IsResources = false
 
 			if TargetEntity.IsJackyEZresource then
-				RoomWeNeed = math.min((TargetEntity:GetEZsupplies(TargetEntity.EZsupplies) or 0) * ResourceWeight, RoomLeft)
+				local Amt = tonumber(args[2])
+				if not Amt then
+					if ply:KeyDown(IN_SPEED) then
+						Amt = 9e9
+					else
+						net.Start("JMod_ItemInventory")
+							net.WriteEntity(TargetEntity)
+							net.WriteString("take_res")
+							net.WriteTable({})
+						net.Send(ply)
+
+						return 
+					end
+				end
+
+				Amt = math.floor(Amt or TargetEntity:GetEZsupplies(TargetEntity.EZsupplies))
+				RoomWeNeed = math.min(Amt * ResourceWeight, RoomLeft)
 				IsResources = true
 			end
 			
 			if (RoomWeNeed ~= nil) then
-				if (RoomWeNeed <= RoomLeft) then 
+				if (RoomWeNeed <= RoomLeft) then
 					local Added = JMod.AddToInventory(ply, (IsResources and {TargetEntity, RoomWeNeed / ResourceWeight}) or TargetEntity)
 					--
 					if not(Added) then

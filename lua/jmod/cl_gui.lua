@@ -22,7 +22,7 @@ local SpecialIcons = {
 local RankIcons = {Material("ez_rank_icons/grade_1.png"), Material("ez_rank_icons/grade_2.png"), Material("ez_rank_icons/grade_3.png"), Material("ez_rank_icons/grade_4.png"), Material("ez_rank_icons/grade_5.png")}
 
 JMod.SelectionMenuIcons = {}
-local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, i sure hope it doesn't bite me in the ass
+local LocallyAvailableResources = nil -- this is here solely for caching and efficieny purposes, I sure hope it doesn't bite me in the ass
 local QuestionMarkIcon = Material("question_mark.png")
 
 local JModIcon, JModLegacyIcon = "jmod_icon", "jmod_icon_legacy.png"
@@ -368,7 +368,7 @@ net.Receive("JMod_ArmorColor", function()
 			net.WriteEntity(Ent)
 			net.WriteBool(false)
 			local Col = Picker:GetColor()
-			net.WriteColor(Color(Col.r, Col.b, Col.g))
+			net.WriteColor(Color(Col.r, Col.g, Col.b))
 			net.WriteBit(false)
 			net.SendToServer()
 		end
@@ -392,7 +392,7 @@ net.Receive("JMod_ArmorColor", function()
 		net.WriteEntity(Ent)
 		net.WriteBool(false)
 		local Col = Picker:GetColor()
-		net.WriteColor(Color(Col.r, Col.b, Col.g))
+		net.WriteColor(Color(Col.r, Col.g, Col.b))
 		net.WriteBit(true)
 		net.SendToServer()
 		Frame:Close()
@@ -1881,8 +1881,9 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 	local command = net.ReadString()
 	local newInv = net.ReadTable()
 
+	local Ply = LocalPlayer()
 	if not(IsValid(invEnt)) then 
-		invEnt = LocalPlayer()
+		invEnt = Ply
 	end
 
 	if newInv and istable(newInv) then
@@ -1942,6 +1943,41 @@ net.Receive("JMod_ItemInventory", function(len, sender) -- for when we pick up s
 		if IsValid(CurrentJModInvScreen) then
 			CurrentJModInvScreen:UpdateItemInventory(invEnt, newInv)
 		end
+	elseif command == "take_res" then
+		if OpenDropdown then
+			OpenDropdown:Remove()
+		end
+
+		local ResourceGrabFrame = vgui.Create("DFrame")
+		ResourceGrabFrame:SetSize(350, 120)
+		ResourceGrabFrame:SetTitle("Resource take amount")
+		ResourceGrabFrame:Center()
+		ResourceGrabFrame:MakePopup()
+
+		function ResourceGrabFrame:Paint(w, h)
+			BlurBackground(self)
+		end
+
+		local amtSlide = vgui.Create("DNumSlider", ResourceGrabFrame)
+		amtSlide:SetText(string.upper(invEnt.EZsupplies))
+		amtSlide:SetSize(280, 20)
+		amtSlide:SetPos((ResourceGrabFrame:GetWide() - amtSlide:GetWide()) / 2, 30)
+		amtSlide:SetMin(0)
+		amtSlide:SetMax(invEnt:GetEZsupplies(invEnt.EZsupplies))
+		amtSlide:SetValue(((JMod.Config.ResourceEconomy and JMod.Config.ResourceEconomy.MaxResourceMult) or 1) * 100)
+		amtSlide:SetDecimals(0)
+		
+		local tek = vgui.Create("DButton", ResourceGrabFrame)
+		tek:SetSize(ResourceGrabFrame:GetWide() / 2, 30)
+		tek:SetPos(ResourceGrabFrame:GetWide() / 4, 80)
+		tek:SetText("TAKE")
+
+		function tek:DoClick()
+			Ply:ConCommand("jmod_ez_grab " .. tostring(invEnt:EntIndex()) .. " " .. amtSlide:GetValue())
+			ResourceGrabFrame:Close()
+		end
+
+		OpenDropdown = ResourceGrabFrame
 	end
 end)
 
