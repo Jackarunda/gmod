@@ -9,23 +9,32 @@
 	self.Opacity = 1
 	local emitter = ParticleEmitter(vOffset)
 
-	for i = 0, 100 * Scayul ^ 2 do
+	local Tr = util.TraceLine({
+		start = vOffset,
+		endpos = vOffset - self.Normal * 10
+	})
+	local MatColor = Color(105, 100, 90)
+	if Tr.HitWorld then
+		MatColor = JMod.HitMatColors[Tr.MatType][1]
+	end
+
+	for i = 0, 100 * Scayul do
 		local sprite = "effects/fleck_cement" .. math.random(1, 2)
-		local Debris = emitter:Add(sprite, vOffset)
+		local Debris = emitter:Add(sprite, vOffset + VectorRand() * 5 * Scayul + self.Normal)
 
 		if Debris then
-			Debris:SetVelocity(VectorRand() * math.Rand(50, 75) * Scayul ^ 0.5 + Vector(0, 0, math.Rand(50, 75)))
+			Debris:SetVelocity(VectorRand() * math.Rand(50, 75) * Scayul ^ 0.5 + self.Normal * math.Rand(50, 75))
 			Debris:SetDieTime(3 * math.random(1, 2))
 			Debris:SetStartAlpha(255)
 			Debris:SetEndAlpha(0)
 			Debris:SetStartSize(math.random(1, 5) * Scayul ^ 0.5)
-			Debris:SetRoll(math.Rand(0, 360))
-			Debris:SetRollDelta(math.Rand(-5, 5))
-			Debris:SetAirResistance(1)
-			Debris:SetColor(105, 100, 90)
-			Debris:SetGravity(Vector(0, 0, -800))
+			Debris:SetRoll(math.Rand(0, 3))
+			Debris:SetRollDelta(math.Rand(-2, 2))
+			Debris:SetAirResistance(.8)
+			Debris:SetColor(MatColor.r, MatColor.g, MatColor.b)
+			Debris:SetGravity(Vector(0, 0, -600))
 			Debris:SetCollide(true)
-			Debris:SetBounce(.2)
+			Debris:SetBounce(0)
 			Debris:SetLighting(true)
 		end
 	end

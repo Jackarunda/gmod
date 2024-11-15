@@ -125,13 +125,14 @@ function SWEP:OnHit(swingProgress, tr)
 			tr.Entity.EZcorpseEntity:Bury()
 		end
 	elseif tr.Entity:IsWorld() and (table.HasValue(DirtTypes, util.GetSurfaceData(tr.SurfaceProps).material)) then
-		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .25)
+		local Message = JMod.EZprogressTask(self, tr.HitPos, self.Owner, "mining", JMod.GetPlayerStrength(self.Owner) ^ .5)
 
 		if Message then
 			if (tr.MatType == MAT_SAND) or (tr.MatType == MAT_DIRT) then
 				self:SetResourceType(JMod.EZ_RESOURCE_TYPES.SAND)
 				self:SetTaskProgress(100)
-				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), nil, 200)
+				JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.SAND, math.random(5, 10), self:WorldToLocal(tr.HitPos + Vector(0, 0, 8)), Angle(0, 0, 0), self.Owner:GetShootPos(), 200)
+				--sound.Play("physics/concrete/boulder_impact_hard" .. math.random(1, 3) .. ".wav", tr.HitPos + VectorRand(), 75, math.random(50, 70))
 			else
 				self:Msg(Message)
 				self:SetTaskProgress(0)
@@ -141,6 +142,12 @@ function SWEP:OnHit(swingProgress, tr)
 			sound.Play("Dirt.Impact", tr.HitPos + VectorRand(), 75, math.random(50, 70))
 			self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 		end
+
+		local Dirt = EffectData()
+		Dirt:SetOrigin(tr.HitPos)
+		Dirt:SetNormal(tr.HitNormal)
+		Dirt:SetScale(2)
+		util.Effect("eff_jack_sminebury", Dirt, true, true)
 
 		if (math.random(1, 1000) == 1) then 
 			local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 

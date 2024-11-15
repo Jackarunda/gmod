@@ -125,6 +125,12 @@ function SWEP:OnHit(swingProgress, tr)
 			self:SetTaskProgress(self:GetNW2Float("EZminingProgress", 0))
 		end
 
+		local Dirt = EffectData()
+		Dirt:SetOrigin(tr.HitPos)
+		Dirt:SetNormal(tr.HitNormal)
+		Dirt:SetScale(1.5)
+		util.Effect("eff_jack_sminebury", Dirt, true, true)
+
 		if (math.random(1, 1000) == 1) then 
 			local Deposit = JMod.GetDepositAtPos(nil, tr.HitPos, 1.5) 
 			if ((tr.MatType == MAT_SAND) or (JMod.NaturalResourceTable[Deposit] and JMod.NaturalResourceTable[Deposit].typ == JMod.EZ_RESOURCE_TYPES.SAND)) then
