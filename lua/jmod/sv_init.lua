@@ -235,7 +235,7 @@ function JMod.FalloutIrradiate(self, obj)
 		---
 		local DmgTaken = Helf - obj:Health()
 
-		if (DmgTaken > 0) and JMod.Config.Explosives.Nuke.RadiationSickness then
+		if (DmgTaken > 1) and JMod.Config.Explosives.Nuke.RadiationSickness then
 			obj.EZirradiated = (obj.EZirradiated or 0) + DmgTaken * 3
 
 			timer.Simple(10, function()

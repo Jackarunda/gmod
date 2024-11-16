@@ -172,7 +172,7 @@ elseif(CLIENT)then
 		self:DrawModel()
 		---
 		local CylinderAng = SelfAng:GetCopy()
-		CylinderAng:RotateAroundAxis(Right, 0)
+		--CylinderAng:RotateAroundAxis(Right, 0)
 		JMod.RenderModel(self.Cylinder, BasePos + Up * 18.5, CylinderAng, Vector(0.26, 0.26, 1), nil, JMod.EZ_GRADE_MATS[Grade])
 		
 		if DetailDraw then

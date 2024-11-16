@@ -5,19 +5,22 @@ ENT.PrintName = "EZ Mini Radioisotope Thermoelectric Generator"
 ENT.Author = "Jackarunda, AdventureBoots"
 ENT.Category = "JMod - EZ Machines"
 ENT.Information = "Probably came out of a soviet satillite"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.AdminOnly = true
 ENT.Base = "ent_jack_gmod_ezmachine_base"
 ENT.Model = "models/jmod/machines/radioisotope-powergenerator-small.mdl"
 ENT.Mat = "models/jmod/machines/rtg_assembly_soviet.vmt"
 --
 ENT.EZupgradable = false
-ENT.EZcolorable = false
+ENT.EZcolorable = true
 --
 ENT.JModPreferredCarryAngles = Angle(0, -90, 0)
-ENT.EZcolorable = true
-ENT.Mass = 40
+ENT.Mass = 30
 ENT.SpawnHeight = 1
+--
+ENT.JModEZstorable = true
+ENT.EZstorageVolumeOverride = 10
+ENT.JModInvAllowedActive = true
 --
 ENT.StaticPerfSpecs = {
 	MaxDurability = 100
@@ -55,17 +58,17 @@ if(SERVER)then
 		JMod.SetEZowner(self, activator)
 		JMod.Colorify(self)
 
-		if State == STATE_BROKEN then
-			JMod.Hint(activator, "destroyed", self)
-			return
-		elseif State == STATE_OFF then
-			self:TurnOn(activator)
-		elseif State == STATE_ON then
-			if Alt then
+		if Alt then
+			if State == STATE_BROKEN then
+				JMod.Hint(activator, "destroyed", self)
+				return
+			elseif State == STATE_OFF then
+				self:TurnOn(activator)
+			elseif State == STATE_ON then
 				self:TurnOff(activator)
-			else
-				activator:PickupObject(self)
 			end
+		else
+			activator:PickupObject(self)
 		end
 	end
 
@@ -100,7 +103,7 @@ if(SERVER)then
 		local pos = self:WorldToLocal(SelfPos + Up * 10 + Right * 14)
 		JMod.MachineSpawnResource(self, JMod.EZ_RESOURCE_TYPES.POWER, amt, pos, Angle(0, -90, 0), Forward * 60, 100)
 		self:SetProgress(math.Clamp(self:GetProgress() - amt, 0, 100))
-		self:EmitSound("items/suitchargeok1.wav", 80, 120)
+		--self:EmitSound("items/suitchargeok1.wav", 80, 120)
 
 		self.PowerSLI = math.Clamp(self.PowerSLI + amt, 0, self.MaxPowerSLI)
 		
@@ -120,6 +123,22 @@ if(SERVER)then
 				local PowerPerMin = 5
 				local PowerToProduce = (PowerPerMin/60)
 
+				local InventoryOwner = self:GetNW2Entity("EZInvOwner", NULL)
+				if IsValid(InventoryOwner) and InventoryOwner.EZarmor then
+					for id, armorData in pairs(InventoryOwner.EZarmor.items) do
+						local ArmodInfo = JMod.ArmorTable[armorData.name]
+						if ArmodInfo and armorData.chrg then
+							for k, v in pairs(armorData.chrg) do
+								if k == "power" then
+									local NeededPower = ArmodInfo.chrg.power - armorData.chrg.power
+									local PowerToGive = math.min(NeededPower, PowerToProduce)
+									armorData.chrg.power = armorData.chrg.power + PowerToGive
+									PowerToProduce = PowerToProduce - PowerToGive
+								end
+							end
+						end
+					end
+				end
 				self:SetProgress(self:GetProgress() + PowerToProduce)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
@@ -127,18 +146,13 @@ if(SERVER)then
 		end
 
 		if self.NextEnvThink < Time then
-			self.NextEnvThink = Time + math.random(10, 20)
-			if math.random(1, 100) == 1 then
-				local Ent = ents.Create("ent_jack_gmod_ezfalloutparticle")
-				Ent:SetPos(self:GetPos() + Vector(0, 0, 10))
-				Ent.EZowner = self.EZowner
-				Ent.MaxLife = 15
-				Ent.DmgAmt = 1
-				Ent.Range = 250
-				Ent.Canister = self
-				Ent:Spawn()
-				Ent:Activate()
-				Ent.CurVel = self:GetVelocity()
+			self.NextEnvThink = Time + math.random(15, 60)
+			if JMod.LinCh(100 - self.Durability, 10, 100) then
+				for k, ent in pairs(ents.FindInSphere(self:GetPos(), 100)) do
+					if JMod.ShouldDamageBiologically(ent) and JMod.VisCheck(self:GetPos(), ent, self) then
+						JMod.FalloutIrradiate(self, ent)
+					end
+				end
 			end
 		end
 	end
@@ -165,8 +179,31 @@ if(SERVER)then
 	end
 
 elseif(CLIENT)then
+	local GlowyColor = Vector(.3, 2, .2)
+	local GlowyScale = Vector(.2, 1, 2)
 	function ENT:CustomInit()
 		self:DrawShadow(true)
+		self.Cylinder = JMod.MakeModel(self, "models/hunter/tubes/tube2x2x05.mdl", "models/debug/debugwhite")
+	end
+
+	function ENT:Think()
+		local SelfPos, SelfAng, State = self:GetPos(), self:GetAngles(), self:GetState()
+		if State ~= STATE_ON then return end
+		local Up, Right, Forward = SelfAng:Up(), SelfAng:Right(), SelfAng:Forward()
+		local GlowCol = GlowyColor:ToColor()
+		local DLight = DynamicLight(self:EntIndex())
+
+		if DLight then
+			DLight.Pos = SelfPos + Up * 20
+			DLight.r = GlowCol.r
+			DLight.g = GlowCol.g
+			DLight.b = GlowCol.b
+			DLight.Brightness = .7
+			DLight.Size = 100
+			DLight.Decay = 15000
+			DLight.DieTime = CurTime() + .1
+			DLight.Style = 0
+		end
 	end
 
 	function ENT:Draw()
@@ -184,6 +221,8 @@ elseif(CLIENT)then
 		if(State == STATE_BROKEN)then DetailDraw = false end -- look incomplete to indicate damage, save on gpu comp too
 		---
 		self:DrawModel()
+		local GlowyBasePos = SelfPos + Up * 20
+		JMod.RenderModel(self.Cylinder, GlowyBasePos, SelfAng, Vector(0.13, 0.13, .5), GlowyColor, nil, State == STATE_ON)
 		---
 		
 		if DetailDraw then
