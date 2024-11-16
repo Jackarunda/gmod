@@ -187,6 +187,7 @@ if SERVER then
 elseif CLIENT then
 	local Mat = Material("particle/smokestack")
 	local DebugMat = Material("sprites/mat_jack_jackconfetti")
+	local Cheating = GetConVar("sv_cheats")
 
 	function ENT:Initialize()
 		self.Col = Color(math.random(100, 120), math.random(100, 150), 100)
@@ -202,11 +203,11 @@ elseif CLIENT then
 		end)
 
 		self.NextVisCheck = CurTime() + 6
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		self.DebugShow = (LocalPlayer().EZshowGasParticles and Cheating:GetBool()) or false
 	end
 
 	function ENT:DrawTranslucent()
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		self.DebugShow = (LocalPlayer().EZshowGasParticles and Cheating:GetBool()) or false
 		if self.DebugShow then
 			render.SetMaterial(DebugMat)
 			render.DrawSprite(self:GetPos(), 50, 50, Color(134, 224, 60, 200))

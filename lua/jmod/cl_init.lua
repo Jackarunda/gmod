@@ -880,10 +880,10 @@ concommand.Add("jacky_supershadows", function(ply, cmd, args)
 end, nil, "Enables higher detailed shadows; great for photography.")
 
 concommand.Add("jmod_debug_showgasparticles", function(ply, cmd, args)
-	if IsValid(ply) and not ply:IsSuperAdmin() then return end
+	if not IsValid(ply) and GetConVar("sv_cheats"):GetBool() then return end
 	ply.EZshowGasParticles = not (ply.EZshowGasParticles or false)
 	print("gas particle display: " .. tostring(ply.EZshowGasParticles))
-end, nil, JMod.Lang("command jmod_debug_showgasparticles"))
+end, nil, JMod.Lang("command jmod_debug_showgasparticles"), nil)
 
 net.Receive("JMod_NuclearBlast", function()
 	local pos, renj, intens = net.ReadVector(), net.ReadFloat(), net.ReadFloat()

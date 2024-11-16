@@ -113,9 +113,10 @@ elseif CLIENT then
 		self:SetModelScale(10, 0)
 	end]]--
 	local DebugMat = Material("sprites/mat_jack_jackconfetti")
+	local Cheating = GetConVar("sv_cheats")
 
 	function ENT:DrawTranslucent()
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		self.DebugShow = (LocalPlayer().EZshowGasParticles and Cheating:GetBool()) or false
 		if self.DebugShow then
 			render.SetMaterial(DebugMat)
 			render.DrawSprite(self:GetPos(), 100, 100, Color(82, 77, 65, 200))

@@ -65,12 +65,13 @@ if SERVER then
 
 elseif CLIENT then
 	local DebugMat = Material("sprites/mat_jack_jackconfetti")
+	local Cheating = GetConVar("sv_cheats")
 	function ENT:Initialize()
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		self.DebugShow = (LocalPlayer().EZshowGasParticles and Cheating:GetBool()) or false
 	end
 
 	function ENT:DrawTranslucent()
-		self.DebugShow = LocalPlayer().EZshowGasParticles or false
+		self.DebugShow = (LocalPlayer().EZshowGasParticles and Cheating:GetBool()) or false
 		if self.DebugShow then
 			render.SetMaterial(DebugMat)
 			render.DrawSprite(self:GetPos(), 40, 40, Color(255, 166, 0, 200))
