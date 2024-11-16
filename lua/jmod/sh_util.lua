@@ -166,7 +166,7 @@ end
 
 function JMod.VisCheck(pos, target, sourceEnt)
 	local filter = {}
-	pos = pos or (sourceEnt and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
+	pos = pos or (IsValid(sourceEnt) and sourceEnt:LocalToWorld(sourceEnt:OBBCenter()))
 
 	if sourceEnt then
 		table.insert(filter, sourceEnt)

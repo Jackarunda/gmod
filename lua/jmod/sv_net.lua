@@ -56,7 +56,7 @@ net.Receive("JMod_ColorAndArm", function(l, ply)
 	if not (IsValid(ply) and ply:Alive()) then return end
 	local ent = net.ReadEntity()
 	if not (IsValid(ent) and ent.JModGUIcolorable) then return end
-	if ply:GetPos():DistToSqr(ent:GetPos()) > 15000 then return end
+	if (ply:GetPos():Distance(ent:GetPos()) > 150) then return end
 
 	local AutoColor = net.ReadBool()
 	local Col = net.ReadColor()
@@ -105,6 +105,7 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 	local Armor = net.ReadEntity()
 	if not IsValid(Armor) or not Armor.ArmorName then return end
 	if JMod.ArmorTable[Armor.ArmorName].clrForced then return end
+	if (ply:GetPos():Distance(Armor:GetPos()) > 150) then return end
 
 	local AutoColor = net.ReadBool()
 	local Col = net.ReadColor()
@@ -125,7 +126,7 @@ net.Receive("JMod_ArmorColor", function(ln, ply)
 	
 	local Equip = tobool(net.ReadBit())
 
-	if Equip and ply:GetPos():Distance(Armor:GetPos()) < 150 then
+	if Equip and JMod.VisCheck(ply:GetShootPos(), Armor, ply) then
 		JMod.Hint(ply, "armor weight")
 		JMod.EZ_Equip_Armor(ply, Armor)
 	end
@@ -184,6 +185,7 @@ net.Receive("JMod_ModifyConnections", function(ln, ply)
 	if not IsValid(Ent) then return end
 	local Ent2 = net.ReadEntity()
 	--print(Action, Ent, Ent2)
+	if (JMod.GetEZowner(Ent) ~= ply) then return end
 
 	if Action == "connect" then
 		JMod.StartResourceConnection(Ent, ply)
