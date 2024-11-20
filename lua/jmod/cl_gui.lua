@@ -146,6 +146,13 @@ function JMod.StandardResourceDisplay(typ, amt, maximum, x, y, siz, vertical, fo
 		draw.SimpleText(typ, font, x, y - siz / 2 - 10, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 		draw.SimpleText(UnitText, font, x, y + siz / 2 + 10, Col, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP)
 	else
+		--[[local typExplode = string.Explode(" ", typ)
+		for i = 1, #typExplode do
+			typExplode[i] = string.upper(string.sub(typExplode[i], 1, 1)) .. string.sub(typExplode[i], 2) .. "\n"
+		end
+		typ = table.concat(typExplode)
+		local fontsize = draw.GetFontHeight(font)
+		draw.DrawText(typ, font, x - siz / 2 - 10, y / #typExplode - fontsize / 2, Col, TEXT_ALIGN_RIGHT)--]]
 		draw.SimpleText(typ, font, x - siz / 2 - 10, y, Col, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 		draw.SimpleText(UnitText, font, x + siz / 2 + 10, y, Col, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
 	end
@@ -658,8 +665,21 @@ local function StandardSelectionMenu(typ, displayString, data, entity, enableFun
 	local TabPanelX, TabPanelW = 10, W - 20
 
 	if sidePanelFunc then
-		TabPanelX = W * .25 + 10
-		TabPanelW = W * .75 - 20
+		local WidthModifier = 200
+		MotherFrame:SetWide(W + WidthModifier)
+		MotherFrame:SetX(MotherFrame:GetX() - WidthModifier / 2)
+		--TabPanelX = W * .25 + 10
+		--TabPanelW = W * .75 - 20
+		local SidePanel = vgui.Create("DPanel", MotherFrame)
+		SidePanel:Dock(RIGHT)
+		SidePanel:DockMargin(0, 0, 0, 0)
+		SidePanel:SetSize(200, H)
+		function SidePanel:Paint(w, h)
+			surface.SetDrawColor(0, 0, 0, 50)
+			surface.DrawRect(0, 0, w, h)
+		end
+		MotherFrame.SidePanel = SidePanel
+		sidePanelFunc(SidePanel)
 	end
 
 	TabPanel:SetPos(TabPanelX, 30)
@@ -729,9 +749,12 @@ net.Receive("JMod_EZtoolbox", function()
 	local Kit = net.ReadEntity()
 
 	if IsValid(CurrentSelectionMenu) then return end
-	local MotherFrame = StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, function(name, info, ply, ent) -- enable func
-return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) end, function(name, info, ply, ent)
-		-- click func
+	local MotherFrame = StandardSelectionMenu('crafting', "EZ Tool Box", Buildables, Kit, 
+	function(name, info, ply, ent) -- enable func
+
+		return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent, LocallyAvailableResources) 
+	end, 
+	function(name, info, ply, ent)-- click func
 		net.Start("JMod_EZtoolbox")
 		net.WriteEntity(ent)
 		net.WriteString(name)
@@ -781,7 +804,32 @@ return JMod.HaveResourcesToPerformTask(ent:GetPos(), 150, info.craftingReqs, ent
 
 			ent.EZpreview = {Box = {mins = Min, maxs = Max}, SizeScale = info.sizeScale and info.sizeScale, SpawnAngles = Ang and Ang}
 		end
-	end, nil)
+	end, 
+	function(parent)
+		local W, H, Myself = parent:GetWide(), parent:GetTall(), LocalPlayer()
+
+		local ResourceScroller = vgui.Create("DScrollPanel", parent)
+		ResourceScroller:SetSize(W - 20, H - 20)
+		ResourceScroller:SetPos(10, 10)
+		ResourceScroller:Dock(FILL)
+		ResourceScroller:DockMargin(0, 0, 0, 0)
+		ResourceScroller:SetPaintBackground(false)
+		ResourceScroller.VerticalScrollbar = true
+		ResourceScroller.HorizontalScrollbar = false
+
+		for k, v in pairs(LocallyAvailableResources) do
+			local ResourcePanel = vgui.Create("DPanel", ResourceScroller)
+			ResourcePanel:SetSize(W - 20, 40)
+			ResourcePanel:Dock(TOP)
+			ResourcePanel:DockMargin(0, 0, 0, 5)
+			function ResourcePanel:Paint(w, h)
+				surface.SetDrawColor(0, 0, 0, 50)
+				surface.DrawRect(0, 0, w, h)
+				JMod.StandardResourceDisplay(k, v, nil, w * .55, h * .5, 30, false, "JMod-Stencil-XS")
+			end
+			ResourcePanel:SetTooltip(k .. " x" .. v)
+		end
+	end)
 
 	--[[local W, H, Myself = MotherFrame:GetWide(), MotherFrame:GetTall(), LocalPlayer()
 	MotherFrame:SetTall(550)
