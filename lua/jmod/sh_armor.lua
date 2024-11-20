@@ -346,6 +346,33 @@ JMod.ArmorTable = {
 			ang = Angle(100, 0, 90)
 		}
 	},
+	["Glasses"] = {
+		PrintName = "Glasses",
+		mdl = "models/jmod/glasses_classic.mdl", -- csgo misc?
+		slots = {
+			eyes = 1
+		},
+		def = NonArmorProtectionProfile,
+		bon = "ValveBiped.Bip01_Head1",
+		siz = Vector(1, 1, 1),
+		pos = Vector(2, 2.4, 0.1),
+		ang = Angle(-80, 0, -90),
+		mskmat = "mats_jack_gmod_sprites/glasses",
+		wgt = 1,
+		dur = 2,
+		ent = "ent_jack_gmod_ezarmor_glasses",
+		eff = {
+			glasses = true
+		},
+		--[[tgl = {
+			eff = {},
+			slots = {
+				eyes = 0
+			},
+			pos = Vector(1.5, -2.5, .1),
+			ang = Angle(100, 0, 90)
+		}--]]
+	},
 	["Light-Helmet"] = {
 		PrintName = "Helmet-Light",
 		mdl = "models/player/helmet_achhc_black/achhc_black.mdl", -- tarkov
