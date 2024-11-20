@@ -112,7 +112,7 @@ if(SERVER)then
 		local Res = {}
 		for k, v in pairs(tbl) do
 			local DiffVec = pos - v.pos
-			if (DiffVec.x - v.siz <= rng) and (DiffVec.y - v.siz <= rng) then
+			if (math.abs(DiffVec.x) - v.siz*.5 <= rng) and (math.abs(DiffVec.y) - v.siz*.5 <= rng) then
 				table.insert(Res, {
 					typ = v.typ,
 					pos = v.pos,
