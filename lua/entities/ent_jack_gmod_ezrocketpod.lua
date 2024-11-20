@@ -155,6 +155,8 @@ if SERVER then
 
 	function ENT:LoadRocket(rocket)
 		if not (IsValid(rocket) and rocket:IsPlayerHolding() or JMod.Config.ResourceEconomy.ForceLoadAllResources) then return end
+		if rocket.AlreadyLoaded then return end
+		rocket.AlreadyLoaded = true
 		local RoomLeft = 6 - #self.Rockets
 
 		if RoomLeft > 0 then

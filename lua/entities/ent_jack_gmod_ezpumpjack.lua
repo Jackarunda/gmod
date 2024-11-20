@@ -307,13 +307,14 @@ elseif(CLIENT)then
 		local State, Grade, Time = self:GetState(), self:GetGrade(), CurTime()
 		local FT = FrameTime()
 
+		if self.ClientOnly then return end
 		if State == STATE_RUNNING then
 			self.DriveMomentum = math.Clamp(self.DriveMomentum + FT / 3, 0, 0.4)
 		else
 			self.DriveMomentum = math.Clamp(self.DriveMomentum - FT / 3, 0, 0.4)
 		end
-		self.DriveCycle=self.DriveCycle+self.DriveMomentum*Grade*FT*100
-		if(self.DriveCycle>360)then self.DriveCycle=0 end
+		self.DriveCycle = self.DriveCycle + self.DriveMomentum * Grade * FT * 100
+		if (self.DriveCycle > 360) then self.DriveCycle = self.DriveCycle - 360 end
 	end
 
 	
