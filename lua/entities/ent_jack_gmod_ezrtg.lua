@@ -123,6 +123,8 @@ if(SERVER)then
 				self:SetProgress(self:GetProgress() + PowerToProduce)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
+			elseif State == STATE_BROKEN then
+				JMod.DamageSpark(self)
 			end
 		end
 	end

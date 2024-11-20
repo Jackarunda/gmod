@@ -142,12 +142,15 @@ if(SERVER)then
 				self:SetProgress(self:GetProgress() + PowerToProduce)
 
 				if self:GetProgress() >= 100 then self:ProduceResource() end
+			elseif State == STATE_BROKEN then
+				JMod.DamageSpark(self)
 			end
 		end
 
 		if self.NextEnvThink < Time then
 			self.NextEnvThink = Time + math.random(15, 60)
 			if JMod.LinCh(100 - self.Durability, 10, 100) then
+				JMod.DamageSpark(self)
 				for k, ent in pairs(ents.FindInSphere(self:GetPos(), 100)) do
 					if JMod.ShouldDamageBiologically(ent) and JMod.VisCheck(self:GetPos(), ent, self) then
 						JMod.FalloutIrradiate(self, ent)
@@ -159,11 +162,12 @@ if(SERVER)then
 
 	function ENT:OnDestroy()
 		for i = 1, JMod.Config.Particles.NuclearRadiationMult * 2 do
+			local SelfPos, EZowner = self:GetPos(), JMod.GetEZowner(self)
 			timer.Simple(i * .05, function()
 				local Gas = ents.Create("ent_jack_gmod_ezfalloutparticle")
 				Gas.Range = 500
-				Gas:SetPos(self:GetPos())
-				JMod.SetEZowner(Gas, JMod.GetEZowner(self))
+				Gas:SetPos(SelfPos)
+				JMod.SetEZowner(Gas, EZowner)
 				Gas:Spawn()
 				Gas:Activate()
 				Gas.CurVel = (VectorRand() * math.random(1, 1000) + Vector(0, 0, 100 * JMod.Config.Particles.NuclearRadiationMult))
