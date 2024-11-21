@@ -103,6 +103,9 @@ if SERVER then
 			local Yay = ents.Create(itemClass)
 			Yay:SetPos(pos + VectorRand() * math.Rand(0, 30))
 			Yay:SetAngles(VectorRand():Angle())
+			if Yay.IsJackyEZmachine and JMod.Config.Machines.SpawnMachinesFull then
+				Yay.SpawnFull = true
+			end
 			Yay:Spawn()
 			Yay:Activate()
 
@@ -136,7 +139,7 @@ if SERVER then
 		end
 	end
 
-	local function SpawnContents(contents, pos, owner)
+	function JMod.SpawnRadioContents(contents, pos, owner)
 		local typ = type(contents)
 
 		if typ == "string" then
@@ -185,9 +188,7 @@ if SERVER then
 		activator.NextAidBoxOpenTime = Time + 2
 		local Pos = self:LocalToWorld(self:OBBCenter() + Vector(0, 0, 10))
 		--
-		SpawnContents(self.Contents or {
-			{"item_ammo_pistol", 1}
-		}, Pos, activator)
+		JMod.SpawnRadioContents(self.Contents or "ent_jack_gmod_ezeasteregg", Pos, activator)
 		--
 		local Up = self:GetUp()
 		local Right = self:GetRight()
