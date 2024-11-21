@@ -203,7 +203,7 @@ function JMod.CountResourcesInRange(pos, range, sourceEnt, cache)
 			end
 		end 
 		if obj.JModInv and JMod.VisCheck(pos, obj, sourceEnt) then
-			local Supplies = obj.JModInv.EZresources
+			local Supplies = obj.JModInv.EZresources or {}
 			for k, v in pairs(Supplies) do
 				if k ~= "generic" then 
 					Results[k] = (Results[k] or 0) + v
