@@ -451,6 +451,7 @@ net.Receive("JMod_ItemInventory", function(len, ply)
 		if not(CanSeeNonPlyInv) then return end
 		local amt = math.Clamp(desiredAmt, 0, invEnt.JModInv.EZresources[resourceType] or 0)
 		if invEnt.IsJackyEZresource then
+			amt = math.Clamp(desiredAmt, 0, invEnt:GetEZsupplies(resourceType) or 0)
 			invEnt:SetEZsupplies(resourceType, invEnt:GetEZsupplies(resourceType) - amt)
 		else
 			JMod.RemoveFromInventory(invEnt, {resourceType, amt}, nil, false)
