@@ -111,9 +111,20 @@ hook.Add("Think", "JMod_RADIO_THINK", function()
 				station.state = JMod.EZ_STATION_STATE_BUSY
 				local DropPos = JMod.FindDropPosFromSignalOrigin(station.deliveryLocation)
 
-				local AlternateDelivery = hook.Run("JMod_OnRadioDeliver", stationID, DropPos)
+				local AlternateDelivery, ReturnToBaseModifier = hook.Run("JMod_OnRadioDeliver", stationID, DropPos)
 
-				if AlternateDelivery and AlternateDelivery == true then return end
+				if AlternateDelivery ~= nil then
+					if AlternateDelivery == true then
+						JMod.NotifyAllRadios(stationID, "good drop")
+					else
+						JMod.NotifyAllRadios(stationID, "drop failed")
+					end
+					if ReturnToBaseModifier then
+						station.nextDeliveryTime = Time + math.ceil(math.min(JMod.Config.RadioSpecs.DeliveryTimeMult * math.Rand(30, 60), ReturnToBaseModifier))
+					end
+
+					return 
+				end
 				
 				if DropPos then
 					local DropVelocity = station.outpostDirection
